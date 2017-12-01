@@ -1,0 +1,3 @@
+[submodule "app/src/main/cpp/vrb"]
+	path = app/src/main/cpp/vrb
+	url = https://github.com/bluemarvin/vrb.git
