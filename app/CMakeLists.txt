@@ -19,10 +19,13 @@ add_library( # Sets the name of the library.
              # Provides a relative path to your source file(s).
              src/main/cpp/native-lib.cpp
              src/main/cpp/BrowserWorld.cpp
+             src/main/cpp/BrowserWorldFileReader.cpp
              src/main/cpp/Camera.cpp
+             src/main/cpp/vrb/src/GLError.cpp
              src/main/cpp/vrb/src/Parser_obj.cpp
              src/main/cpp/vrb/src/RenderObject.cpp
              src/main/cpp/vrb/src/RenderObjectFactory_obj.cpp
+             src/main/cpp/vrb/src/RenderObjectState.cpp
            )
 
 # Searches for a specified prebuilt library and stores the path as a
@@ -47,5 +50,6 @@ target_link_libraries( # Specifies the target library.
                        # Links the target library to the log library
                        # included in the NDK.
                        ${log-lib}
+                       EGL
                        GLESv2
                       )

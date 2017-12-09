@@ -10,11 +10,13 @@ public:
   ~Camera();
   void SetPosition(const vrb::Vector& aPosition);
   void SetHeading(const float aHeading);
+  void SetPitch(const float aPitch);
   vrb::Matrix GetView();
 
 protected:
   vrb::Vector mPosition;
   float mHeading;
+  float mPitch;
 };
 
 
