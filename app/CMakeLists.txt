@@ -19,13 +19,24 @@ add_library( # Sets the name of the library.
              # Provides a relative path to your source file(s).
              src/main/cpp/native-lib.cpp
              src/main/cpp/BrowserWorld.cpp
-             src/main/cpp/BrowserWorldFileReader.cpp
-             src/main/cpp/Camera.cpp
+             src/main/cpp/vrb/src/CameraSimple.cpp
+             src/main/cpp/vrb/src/Context.cpp
+             src/main/cpp/vrb/src/CullVisitor.cpp
+             src/main/cpp/vrb/src/Drawable.cpp
+             src/main/cpp/vrb/src/DrawableList.cpp
+             src/main/cpp/vrb/src/FileReaderAndroid.cpp
              src/main/cpp/vrb/src/GLError.cpp
-             src/main/cpp/vrb/src/Parser_obj.cpp
-             src/main/cpp/vrb/src/RenderObject.cpp
-             src/main/cpp/vrb/src/RenderObjectFactory_obj.cpp
-             src/main/cpp/vrb/src/RenderObjectState.cpp
+             src/main/cpp/vrb/src/Geometry.cpp
+             src/main/cpp/vrb/src/Group.cpp
+             src/main/cpp/vrb/src/ParserObj.cpp
+             src/main/cpp/vrb/src/Node.cpp
+             src/main/cpp/vrb/src/NodeFactoryObj.cpp
+             src/main/cpp/vrb/src/RenderState.cpp
+             src/main/cpp/vrb/src/ResourceGL.cpp
+             src/main/cpp/vrb/src/Texture.cpp
+             src/main/cpp/vrb/src/TextureCache.cpp
+             src/main/cpp/vrb/src/Transform.cpp
+             src/main/cpp/vrb/src/VertexArray.cpp
            )
 
 # Searches for a specified prebuilt library and stores the path as a
@@ -36,9 +47,11 @@ add_library( # Sets the name of the library.
 
 find_library( # Sets the name of the path variable.
               log-lib
-              # Specifies the name of the NDK library that
-              # you want CMake to locate.
               log )
+
+find_library( # Sets the name of the path variable.
+              android-lib
+              android )
 
 # Specifies libraries CMake should link to your target library. You
 # can link multiple libraries, such as libraries you define in this
@@ -50,6 +63,7 @@ target_link_libraries( # Specifies the target library.
                        # Links the target library to the log library
                        # included in the NDK.
                        ${log-lib}
+                       ${android-lib}
                        EGL
                        GLESv2
                       )

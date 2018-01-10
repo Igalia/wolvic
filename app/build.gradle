@@ -14,7 +14,7 @@ android {
         }
         externalNativeBuild {
             cmake {
-                cppFlags "-std=c++11" +
+                cppFlags "-std=c++14" +
                          " -I" + file("src/main/cpp/vrb/include").absolutePath
                 arguments "-DANDROID_STL=c++_shared"
             }
@@ -29,6 +29,15 @@ android {
     externalNativeBuild {
         cmake {
             path "CMakeLists.txt"
+        }
+    }
+    sourceSets {
+        main {
+            java.srcDirs = [
+                    'app',
+                    'src/main/java',
+                    'src/main/cpp/vrb/android/java'
+            ]
         }
     }
 }

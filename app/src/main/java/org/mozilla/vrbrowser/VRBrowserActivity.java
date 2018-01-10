@@ -32,7 +32,7 @@ public class VRBrowserActivity extends Activity {
     private final Runnable activityCreatedRunnable = new Runnable() {
         @Override
         public void run() {
-            activityCreated();
+            activityCreated(getAssets());
         }
     };
 
@@ -62,7 +62,7 @@ public class VRBrowserActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         mView = new GLSurfaceView(this);
-        mView.setEGLContextClientVersion(2);
+        mView.setEGLContextClientVersion(3);
         mView.setEGLConfigChooser(8, 8, 8, 0, 16, 0);
         mView.setPreserveEGLContextOnPause(true);
         mView.setRenderer(
@@ -84,7 +84,6 @@ public class VRBrowserActivity extends Activity {
                 });
         mView.queueEvent(activityCreatedRunnable);
         setContentView(mView);
-        loadAssets();
     }
 
     @Override
@@ -107,36 +106,10 @@ public class VRBrowserActivity extends Activity {
         mView.queueEvent(activityDestroyedRunnable);
     }
 
-    /* package */
-    void loadAssets() {
-        String fileName = "teapot.obj";
-        AssetManager assetManager = getAssets();
-        try {
-            InputStream in = assetManager.open(fileName);
-            startModel(fileName);
-            byte[] chunk = new byte[1024];
-            int size;
-            while ((size = in.read(chunk)) != -1) {
-                parseChunk(chunk, size);
-            }
-            finishModel();
-            in.close();
-        } catch(Exception e) {
-            Log.e(LOGTAG, "Failed to load model: " + fileName);
-            e.printStackTrace();
-        }
-    }
-    /* package */
-    void processMessage(final String aType, final String aData) {
-
-    }
-    private native void activityCreated();
+    private native void activityCreated(Object aAssetManager);
     private native void activityPaused();
     private native void activityResumed();
     private native void activityDestroyed();
-    private native void startModel(String name);
-    private native void parseChunk(byte[] aChunk, int length);
-    private native void finishModel();
     private native void initGL();
     private native void updateGL(int width, int height);
     private native void drawGL();
