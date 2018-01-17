@@ -12,8 +12,6 @@
 #include "vrb/Transform.h"
 #include "vrb/Vector.h"
 
-#include <vector>
-
 using namespace vrb;
 
 struct BrowserWorld::State {
@@ -92,7 +90,7 @@ BrowserWorld::Draw() {
   m.context->Update();
   m.model->SetTransform(vrb::Matrix::Rotation(vrb::Vector(0.0f, 1.0f, 0.0f), m.heading));
   m.drawList->Reset();
-  m.root->Cull(m.cullVisitor, m.drawList);
+  m.root->Cull(*m.cullVisitor, *m.drawList);
   m.drawList->Draw(*m.camera);
   m.heading += M_PI / 60.0f;
   if (m.heading > (2.0f * M_PI)) { m.heading = 0.0f; }

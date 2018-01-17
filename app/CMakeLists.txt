@@ -28,6 +28,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/vrb/src/GLError.cpp
              src/main/cpp/vrb/src/Geometry.cpp
              src/main/cpp/vrb/src/Group.cpp
+             src/main/cpp/vrb/src/Light.cpp
              src/main/cpp/vrb/src/ParserObj.cpp
              src/main/cpp/vrb/src/Node.cpp
              src/main/cpp/vrb/src/NodeFactoryObj.cpp
