@@ -4,6 +4,7 @@
 
 #include "BrowserWorld.h"
 #include "vrb/Logger.h"
+#include "vrb/GLError.h"
 
 static BrowserWorldPtr sWorld;
 
@@ -48,14 +49,17 @@ JNI_METHOD(void, initGL)
 
 JNI_METHOD(void, updateGL)
 (JNIEnv*, jobject, int width, int height) {
-  glViewport(0, 0, width, height);
-  glClearColor(0.0, 0.0, 0.0, 1.0);
+  VRB_CHECK(glViewport(0, 0, width, height));
+  VRB_CHECK(glClearColor(0.0, 0.0, 0.0, 1.0));
+  VRB_CHECK(glEnable(GL_DEPTH_TEST));
+  VRB_CHECK(glEnable(GL_CULL_FACE));
+  // VRB_CHECK(glDisable(GL_CULL_FACE));
   sWorld->SetViewport(width, height);
 }
 
 JNI_METHOD(void, drawGL)
 (JNIEnv*, jobject) {
-  glClear(GL_COLOR_BUFFER_BIT);
+  VRB_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
   sWorld->Draw();
 }
 
