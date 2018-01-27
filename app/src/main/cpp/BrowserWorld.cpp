@@ -78,6 +78,7 @@ VRB_LINE;
       m.factory->SetModelRoot(m.model);
       m.parser->LoadModel("vr_controller_daydream.obj");
       //m.parser->LoadModel("teapot.obj");
+      //m.parser->LoadModel("daydream.obj");
       m.root->AddNode(m.model);
     }
     m.context->InitializeGL();
@@ -94,12 +95,13 @@ BrowserWorld::Shutdown() {
 void
 BrowserWorld::Draw() {
   m.context->Update();
+  //m.model->SetTransform(vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), M_PI * 0.5f));
   m.model->SetTransform(vrb::Matrix::Rotation(vrb::Vector(0.0f, 0.0f, 1.0f), m.heading).PreMultiply(vrb::Matrix::Rotation(vrb::Vector(0.0f, 1.0f, 0.0f), m.heading)));
   //m.model->SetTransform(vrb::Matrix::Rotation(vrb::Vector(0.0f, 1.0f, 0.0f), m.heading));
   m.drawList->Reset();
   m.root->Cull(*m.cullVisitor, *m.drawList);
   m.drawList->Draw(*m.camera);
-  m.heading += M_PI / 60.0f;
+  m.heading += M_PI / 120.0f;
   if (m.heading > (2.0f * M_PI)) { m.heading = 0.0f; }
 }
 
