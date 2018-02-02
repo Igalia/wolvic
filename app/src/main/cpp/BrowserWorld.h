@@ -9,17 +9,20 @@
 
 class BrowserWorld;
 typedef std::shared_ptr<BrowserWorld> BrowserWorldPtr;
+typedef std::weak_ptr<BrowserWorld> BrowserWorldWeakPtr;
 
 class BrowserWorld {
 public:
   static BrowserWorldPtr Create();
   vrb::ContextPtr GetContext();
-  void SetViewport(const float aWidth, const float aHight);
-  void InitializeJava(JNIEnv* aEnv, jobject& aAssetManager);
+  void SetViewport(const float aWidth, const float aHeight);
+  void InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetManager);
   void InitializeGL();
   void Shutdown();
-  //void AddRenderObject(vrb::RenderObjectPtr& aObject);
   void Draw();
+
+  void SetSurfaceTexture(const std::string& aName, jobject& aSurface);
+  void CreateBrowser();
 
 protected:
   struct State;

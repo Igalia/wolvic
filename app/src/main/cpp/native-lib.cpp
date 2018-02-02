@@ -23,12 +23,12 @@ JNI_METHOD(void, activityResumed)
 }
 
 JNI_METHOD(void, activityCreated)
-(JNIEnv* aEnv, jobject, jobject aAssetManager) {
+(JNIEnv* aEnv, jobject aActivity, jobject aAssetManager) {
   if (!sWorld) {
     sWorld = BrowserWorld::Create();
   }
 
-  sWorld->InitializeJava(aEnv, aAssetManager);
+  sWorld->InitializeJava(aEnv, aActivity, aAssetManager);
 }
 
 JNI_METHOD(void, activityDestroyed)

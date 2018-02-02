@@ -1,18 +1,24 @@
 package org.mozilla.vrbrowser;
 
 import android.app.Activity;
-import android.content.Context;
+//import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
-import android.content.res.AssetManager;
+//import android.content.res.AssetManager;
 import android.util.Log;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.SurfaceTexture;
+import android.view.Surface;
 
-import java.io.InputStream;
-import java.io.IOException;
-import android.os.Vibrator;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
-import android.view.View;
+//import java.io.InputStream;
+//import java.io.IOException;
+//import android.os.Vibrator;
+//import android.view.KeyEvent;
+//import android.view.MotionEvent;
+//import android.view.View;
 //import com.google.vr.ndk.base.AndroidCompat;
 //import com.google.vr.ndk.base.GvrLayout;
 import javax.microedition.khronos.egl.EGLConfig;
@@ -28,6 +34,7 @@ public class VRBrowserActivity extends Activity {
     }
 
     private GLSurfaceView mView;
+    private Surface mBrowserSurface;
 
     private final Runnable activityCreatedRunnable = new Runnable() {
         @Override
@@ -104,6 +111,24 @@ public class VRBrowserActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         mView.queueEvent(activityDestroyedRunnable);
+    }
+
+    private void setSurfaceTexture(String aName, final SurfaceTexture aTexture, final int aWidth, final int aHeight) {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                createBrowser(aTexture, aWidth, aHeight);
+            }
+        });
+    }
+
+    private void createBrowser(SurfaceTexture aTexture, int aWidth, int aHeight) {
+        mBrowserSurface = new Surface(aTexture);
+        Canvas canvas = mBrowserSurface.lockCanvas(new Rect(0, 0, aWidth, aHeight));
+        Paint paint = new Paint();
+        paint.setColor(Color.RED);
+        paint.setStyle(Paint.Style.FILL);
+        canvas.drawPaint(paint);
+        mBrowserSurface.unlockCanvasAndPost(canvas);
     }
 
     private native void activityCreated(Object aAssetManager);
