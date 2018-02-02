@@ -33,6 +33,7 @@ public:
   SurfaceObserver(BrowserWorldWeakPtr& aWorld);
   ~SurfaceObserver();
   void SurfaceTextureCreated(const std::string& aName, GLuint aHandle, jobject aSurfaceTexture) override;
+  void SurfaceTextureHandleUpdated(const std::string aName, GLuint aHandle) override;
   void SurfaceTextureDestroyed(const std::string& aName) override;
   void SurfaceTextureCreationError(const std::string& aName, const std::string& aReason) override;
 
@@ -50,6 +51,9 @@ SurfaceObserver::SurfaceTextureCreated(const std::string& aName, GLuint aHandle,
     world->SetSurfaceTexture(aName, aSurfaceTexture);
   }
 }
+
+void
+SurfaceObserver::SurfaceTextureHandleUpdated(const std::string aName, GLuint aHandle) {}
 
 void
 SurfaceObserver::SurfaceTextureDestroyed(const std::string& aName) {
@@ -72,6 +76,8 @@ SurfaceObserver::SurfaceTextureCreationError(const std::string& aName, const std
 struct BrowserWorld::State {
   BrowserWorldWeakPtr self;
   SurfaceObserverPtr surfaceObserver;
+  bool paused;
+  bool glInitialized;
   float heading;
   ContextPtr context;
   ContextWeak contextWeak;
@@ -79,7 +85,8 @@ struct BrowserWorld::State {
   ParserObjPtr parser;
   GroupPtr root;
   LightPtr light;
-  TransformPtr model;
+  TransformPtr browser;
+  TransformPtr controller;
   TextureSurfacePtr browserSurface;
   CullVisitorPtr cullVisitor;
   DrawableListPtr drawList;
@@ -89,7 +96,7 @@ struct BrowserWorld::State {
   jmethodID setSurfaceTextureMethod;
 
 
-  State() : heading(0.0f), env(nullptr), activity(nullptr), setSurfaceTextureMethod(nullptr) {
+  State() : paused(true), glInitialized(false), heading(0.0f), env(nullptr), activity(nullptr), setSurfaceTextureMethod(nullptr) {
     context = Context::Create();
     contextWeak = context;
     factory = NodeFactoryObj::Create(contextWeak);
@@ -121,9 +128,21 @@ BrowserWorld::GetContext() {
 }
 
 void
+BrowserWorld::Pause() {
+  m.paused = true;
+}
+
+void
+BrowserWorld::Resume() {
+  m.paused = false;
+}
+
+void
 BrowserWorld::SetViewport(const float aWidth, const float aHeight) {
   m.camera->SetViewport(aWidth, aHeight);
-  m.camera->SetTransform(Matrix::Position(Vector(0.0f, 0.0f, 12.0f)));
+  const bool wider = (aWidth > aHeight);
+  m.camera->SetFieldOfView((wider ? 60.0f : -1.0f), (wider ? -1.0f : 60.0f));
+  m.camera->SetTransform(Matrix::Position(Vector(0.0f, 0.0f, 16.0f)));
 }
 
 void
@@ -153,16 +172,19 @@ void
 BrowserWorld::InitializeGL() {
 VRB_LINE;
   if (m.context) {
-    if (!m.model) {
+    if (!m.browser) {
       CreateBrowser();
-      //m.model = Transform::Create(m.contextWeak);
-      //m.factory->SetModelRoot(m.model);
-      //m.parser->LoadModel("vr_controller_daydream.obj");
+    }
+    if (!m.controller) {
+      m.controller = Transform::Create(m.contextWeak);
+      m.factory->SetModelRoot(m.controller);
+      m.parser->LoadModel("vr_controller_daydream.obj");
       //m.parser->LoadModel("teapot.obj");
       //m.parser->LoadModel("daydream.obj");
-      //m.root->AddNode(m.model);
+      m.root->AddNode(m.controller);
+      m.controller->SetTransform(Matrix::Position(Vector(0.0f, 0.0f, 15.5f)));
     }
-    m.context->InitializeGL();
+    m.glInitialized = m.context->InitializeGL();
   }
 }
 
@@ -170,20 +192,31 @@ void
 BrowserWorld::Shutdown() {
   if (m.context) {
     m.context->Shutdown();
+    m.glInitialized = false;
   }
   if (m.env) {
     m.env->DeleteGlobalRef(m.activity);
   }
   m.activity = nullptr;
   m.setSurfaceTextureMethod = nullptr;
+  m.paused = true;
 }
 
 void
 BrowserWorld::Draw() {
+  if (m.paused) {
+    return;
+  }
+  if (!m.glInitialized) {
+    m.glInitialized = m.context->InitializeGL();
+    if (!m.glInitialized) {
+      return;
+    }
+  }
   m.context->Update();
-  //m.model->SetTransform(vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), M_PI * 0.5f));
-  //m.model->SetTransform(vrb::Matrix::Rotation(vrb::Vector(0.0f, 0.0f, 1.0f), m.heading).PreMultiply(vrb::Matrix::Rotation(vrb::Vector(0.0f, 1.0f, 0.0f), m.heading)));
-  m.model->SetTransform(vrb::Matrix::Rotation(vrb::Vector(0.0f, 1.0f, 0.0f), m.heading));
+  //m.browser->SetTransform(vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), M_PI * 0.5f));
+  m.controller->SetTransform(Matrix::Position(Vector(0.0f, 0.0f, 15.5f)).PostMultiply(Matrix::Rotation(Vector(0.0f, 0.0f, 1.0f), m.heading).PreMultiply(Matrix::Rotation(Vector(0.0f, 1.0f, 0.0f), m.heading))));
+  m.browser->SetTransform(Matrix::Rotation(Vector(0.0f, 1.0f, 0.0f), m.heading));
   m.drawList->Reset();
   m.root->Cull(*m.cullVisitor, *m.drawList);
   m.drawList->Draw(*m.camera);
@@ -209,10 +242,10 @@ BrowserWorld::CreateBrowser() {
   array->AppendVertex(Vector(kLength, kLength, 0.0f)); // Top right
   array->AppendVertex(Vector(-kLength, kLength, 0.0f)); // Top left
 
-  array->AppendUV(Vector(0.0f, 0.0f, 0.0f));
-  array->AppendUV(Vector(1.0f, 0.0f, 0.0f));
-  array->AppendUV(Vector(1.0f, 1.0f, 0.0f));
   array->AppendUV(Vector(0.0f, 1.0f, 0.0f));
+  array->AppendUV(Vector(1.0f, 1.0f, 0.0f));
+  array->AppendUV(Vector(1.0f, 0.0f, 0.0f));
+  array->AppendUV(Vector(0.0f, 0.0f, 0.0f));
 
   const Vector kNormal(0.0f, 0.0f, 1.0f); // out of the screen
   array->AppendNormal(kNormal);
@@ -251,9 +284,9 @@ BrowserWorld::CreateBrowser() {
   normalIndex.push_back(2);
   geometry->AddFace(index, index, normalIndex);
 
-  m.model = Transform::Create(m.contextWeak);
-  m.model->AddNode(geometry);
-  m.root->AddNode(m.model);
+  m.browser = Transform::Create(m.contextWeak);
+  m.browser->AddNode(geometry);
+  m.root->AddNode(m.browser);
 }
 
 BrowserWorld::BrowserWorld(State& aState) : m(aState) {}

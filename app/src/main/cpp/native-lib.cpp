@@ -16,10 +16,17 @@ extern "C" {
 
 JNI_METHOD(void, activityPaused)
 (JNIEnv*, jobject) {
+  if (sWorld) {
+    sWorld->Pause();
+    sWorld->Shutdown();
+  }
 }
 
 JNI_METHOD(void, activityResumed)
 (JNIEnv*, jobject) {
+  if (sWorld) {
+    sWorld->Resume();
+  }
 }
 
 JNI_METHOD(void, activityCreated)
@@ -33,9 +40,7 @@ JNI_METHOD(void, activityCreated)
 
 JNI_METHOD(void, activityDestroyed)
 (JNIEnv* env, jobject) {
-  if (sWorld) {
-    sWorld->Shutdown();
-  }
+
 }
 
 JNI_METHOD(void, initGL)

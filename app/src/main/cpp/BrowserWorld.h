@@ -15,6 +15,8 @@ class BrowserWorld {
 public:
   static BrowserWorldPtr Create();
   vrb::ContextPtr GetContext();
+  void Pause();
+  void Resume();
   void SetViewport(const float aWidth, const float aHeight);
   void InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetManager);
   void InitializeGL();
