@@ -18,7 +18,6 @@ JNI_METHOD(void, activityPaused)
 (JNIEnv*, jobject) {
   if (sWorld) {
     sWorld->Pause();
-    sWorld->Shutdown();
   }
 }
 
@@ -40,10 +39,12 @@ JNI_METHOD(void, activityCreated)
 
 JNI_METHOD(void, activityDestroyed)
 (JNIEnv* env, jobject) {
-
+  if (sWorld) {
+    sWorld->ShutdownJava();
+  }
 }
 
-JNI_METHOD(void, initGL)
+JNI_METHOD(void, initializeGL)
 (JNIEnv*, jobject) {
   if (!sWorld) {
     sWorld = BrowserWorld::Create();
@@ -62,10 +63,19 @@ JNI_METHOD(void, updateGL)
   sWorld->SetViewport(width, height);
 }
 
+
+
 JNI_METHOD(void, drawGL)
 (JNIEnv*, jobject) {
   VRB_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
   sWorld->Draw();
+}
+
+JNI_METHOD(void, shutdownGL)
+(JNIEnv*, jobject) {
+  if (sWorld) {
+    sWorld->ShutdownGL();
+  }
 }
 
 } // extern "C"

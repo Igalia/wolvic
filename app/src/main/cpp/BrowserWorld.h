@@ -20,7 +20,8 @@ public:
   void SetViewport(const float aWidth, const float aHeight);
   void InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetManager);
   void InitializeGL();
-  void Shutdown();
+  void ShutdownJava();
+  void ShutdownGL();
   void Draw();
 
   void SetSurfaceTexture(const std::string& aName, jobject& aSurface);

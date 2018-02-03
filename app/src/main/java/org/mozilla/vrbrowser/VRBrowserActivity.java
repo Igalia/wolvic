@@ -8,13 +8,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.graphics.SurfaceTexture;
 import android.view.Surface;
+import android.view.SurfaceHolder;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import org.mozilla.gecko.GeckoSession;
-
-import android.os.Bundle;
 
 public class VRBrowserActivity extends Activity {
     static String LOGTAG = "VRBrowser";
@@ -47,6 +46,7 @@ public class VRBrowserActivity extends Activity {
         public void run() {
             synchronized (this) {
                 activityPaused();
+                shutdownGL();
                 notifyAll();
             }
         }
@@ -69,13 +69,13 @@ public class VRBrowserActivity extends Activity {
         mView = new GLSurfaceView(this);
         mView.setEGLContextClientVersion(3);
         mView.setEGLConfigChooser(8, 8, 8, 0, 16, 0);
-        mView.setPreserveEGLContextOnPause(true);
+        //mView.setPreserveEGLContextOnPause(true);
         mView.setRenderer(
                 new GLSurfaceView.Renderer() {
                     @Override
                     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
                         Log.e(LOGTAG, "In onSurfaceCreated");
-                        initGL();
+                        initializeGL();
                     }
 
                     @Override
@@ -110,10 +110,6 @@ public class VRBrowserActivity extends Activity {
 
     private void loadFromIntent(final Intent intent) {
         final Uri uri = intent.getData();
-//        if (intent.hasCategory(Constants.DAYDREAM_CATEGORY)) {
-//            Log.e(LOGTAG,"Intent has DAYDREAM_CATEGORY");
-//            return;
-//        }
         Log.e(LOGTAG, "Load URI from intent: " + (uri != null ? uri.toString() : DEFAULT_URL));
         String uriValue = (uri != null ? uri.toString() : DEFAULT_URL);
         mSession.loadUri(uriValue);
@@ -170,7 +166,8 @@ public class VRBrowserActivity extends Activity {
     private native void activityPaused();
     private native void activityResumed();
     private native void activityDestroyed();
-    private native void initGL();
+    private native void initializeGL();
     private native void updateGL(int width, int height);
+    private native void shutdownGL();
     private native void drawGL();
 }

@@ -170,7 +170,6 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
 
 void
 BrowserWorld::InitializeGL() {
-VRB_LINE;
   if (m.context) {
     if (!m.browser) {
       CreateBrowser();
@@ -184,22 +183,27 @@ VRB_LINE;
       m.root->AddNode(m.controller);
       m.controller->SetTransform(Matrix::Position(Vector(0.0f, 0.0f, 15.5f)));
     }
-    m.glInitialized = m.context->InitializeGL();
+    if (!m.glInitialized) {
+      m.glInitialized = m.context->InitializeGL();
+    }
   }
 }
 
 void
-BrowserWorld::Shutdown() {
-  if (m.context) {
-    m.context->Shutdown();
-    m.glInitialized = false;
-  }
+BrowserWorld::ShutdownJava() {
   if (m.env) {
     m.env->DeleteGlobalRef(m.activity);
   }
   m.activity = nullptr;
   m.setSurfaceTextureMethod = nullptr;
-  m.paused = true;
+}
+
+void
+BrowserWorld::ShutdownGL() {
+  if (m.context) {
+    m.context->ShutdownGL();
+  }
+  m.glInitialized = false;
 }
 
 void
