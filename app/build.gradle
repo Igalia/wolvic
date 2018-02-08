@@ -31,6 +31,44 @@ android {
             path "CMakeLists.txt"
         }
     }
+
+    productFlavors {
+        googlevr {
+            externalNativeBuild {
+                cmake {
+                    cppFlags " -I" + file("${project.rootDir}/gvr-android-sdk/libraries/headers").absolutePath
+                    arguments "-DVR_SDK_LIB=googlevr-lib"
+                }
+            }
+        }
+        oculusvr {
+            externalNativeBuild {
+                cmake {
+                    cppFlags " -I" + file("${project.rootDir}/third_party/ovr_mobile/VrApi/Include").absolutePath
+                    arguments "-DVR_SDK_LIB=oculusvr-lib"
+                }
+            }
+        }
+        svr {
+            externalNativeBuild {
+                cmake {
+                    cppFlags " -I" + file("${project.rootDir}/third_party/svr/public").absolutePath
+                    arguments "-DVR_SDK_LIB=svr-lib"
+                }
+            }
+        }
+        wavevr {
+            externalNativeBuild {
+                cmake {
+                    cppFlags " -I" + file("${project.rootDir}/third_party/wavesdk/build/wvr_client/include").absolutePath
+                    arguments "-DVR_SDK_LIB=wavevr-lib"
+                }
+            }
+        }
+    }
+
+    flavorDimensions "default"
+
     sourceSets {
         main {
             java.srcDirs = [
@@ -38,6 +76,18 @@ android {
                     'src/main/java',
                     'src/main/cpp/vrb/android/java'
             ]
+        }
+
+        oculusvr {
+            jniLibs.srcDirs = ["${project.rootDir}/third_party/ovr_mobile/VrApi/Libs"]
+        }
+
+        svr {
+            jniLibs.srcDirs = ["${project.rootDir}/third_party/svr/libs"]
+        }
+
+        wavevr {
+            jniLibs.srcDirs = ["${project.rootDir}/third_party/wavesdk/build/wvr_client/jni"]
         }
     }
 }
@@ -50,4 +100,8 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     compile project(':geckoview-withGeckoBinaries')
+
+    googlevrCompile 'com.google.vr:sdk-base:1.120.0'
+    svrCompile fileTree(dir: "${project.rootDir}/third_party/svr/", include: ['*.jar'])
+    wavevrCompile project(':wavesdk')
 }
