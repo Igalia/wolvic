@@ -58,6 +58,23 @@ find_library( # Sets the name of the path variable.
               android-lib
               android )
 
+add_library(oculusvr-lib SHARED IMPORTED)
+set_target_properties(oculusvr-lib PROPERTIES IMPORTED_LOCATION
+                      ${CMAKE_SOURCE_DIR}/../third_party/ovr_mobile/VrApi/Libs/${ANDROID_ABI}/libvrapi.so)
+
+add_library(googlevr-lib SHARED IMPORTED)
+set_target_properties(googlevr-lib PROPERTIES IMPORTED_LOCATION
+                      ${CMAKE_SOURCE_DIR}/../gvr-android-sdk/libraries/jni/${ANDROID_ABI}/libgvr.so)
+
+add_library(svr-lib SHARED IMPORTED)
+set_target_properties(svr-lib PROPERTIES IMPORTED_LOCATION
+                      ${CMAKE_SOURCE_DIR}/../third_party/svr/libs/${ANDROID_ABI}/libsvrapi.so )
+
+add_library(wavevr-lib SHARED IMPORTED)
+set_target_properties(wavevr-lib PROPERTIES IMPORTED_LOCATION
+                      ${CMAKE_SOURCE_DIR}/../third_party/wavesdk/build/wvr_client/jni/${ANDROID_ABI}/libwvr_api.so )
+
+
 # Specifies libraries CMake should link to your target library. You
 # can link multiple libraries, such as libraries you define in this
 # build script, prebuilt third-party libraries, or system libraries.
