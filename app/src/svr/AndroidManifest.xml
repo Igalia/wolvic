@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.mozilla.vrbrowser">
+    <!-- Make accelerometer and gyroscope hard requirements for good head tracking. -->
+    <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true"/>
+    <uses-feature android:name="android.hardware.sensor.gyroscope" android:required="true"/>
+    <meta-data android:name="com.osterhoutgroup.input_mode" android:value="Mouse" />
+
+    <application>
+        <meta-data android:name="com.samsung.android.vr.application.mode" android:value="vr_only"/>
+        <activity android:name=".VRBrowserActivity" android:screenOrientation="reverseLandscape">
+            <!-- Intent filter that enables this app to be launched from the
+Snapdragon Launcher menu. -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="com.qti.intent.category.SNAPDRAGON_VR"/>
+            </intent-filter>
+        </activity>
+        <uses-library android:name="com.osterhoutgroup.api.ext" android:required="false" />
+    </application>
+</manifest>
