@@ -74,6 +74,26 @@ SurfaceObserver::SurfaceTextureCreationError(const std::string& aName, const std
   
 }
 
+struct ControllerRecord {
+  int32_t index;
+  TransformPtr controller;
+  ControllerRecord(const int32_t aIndex) : index(aIndex) {}
+  ControllerRecord(const ControllerRecord& aRecord) : index(aRecord.index), controller(aRecord.controller) {}
+  ControllerRecord(ControllerRecord&& aRecord) : index(aRecord.index), controller(std::move(aRecord.controller)) {}
+  ControllerRecord& operator=(const ControllerRecord& aRecord) {
+    index = aRecord.index;
+    controller = aRecord.controller;
+    return *this;
+  }
+
+  ControllerRecord& operator=(ControllerRecord&& aRecord) {
+    index = aRecord.index;
+    controller = std::move(aRecord.controller);
+    return *this;
+  }
+private:
+  ControllerRecord() = delete;
+};
 
 } // namespace
 
@@ -92,7 +112,8 @@ struct BrowserWorld::State {
   GroupPtr root;
   LightPtr light;
   TransformPtr browser;
-  TransformPtr controller;
+  int32_t controllerCount;
+  std::vector<ControllerRecord> controllers;
   TextureSurfacePtr browserSurface;
   CullVisitorPtr cullVisitor;
   DrawableListPtr drawList;
@@ -103,7 +124,7 @@ struct BrowserWorld::State {
   jmethodID setSurfaceTextureMethod;
 
 
-  State() : paused(true), glInitialized(false), heading(0.0f), env(nullptr), activity(nullptr), setSurfaceTextureMethod(nullptr) {
+  State() : paused(true), glInitialized(false), heading(0.0f), controllerCount(0), env(nullptr), activity(nullptr), setSurfaceTextureMethod(nullptr) {
     context = Context::Create();
     contextWeak = context;
     factory = NodeFactoryObj::Create(contextWeak);
@@ -139,8 +160,11 @@ BrowserWorld::RegisterDeviceDelegate(DeviceDelegatePtr aDelegate) {
   if (m.device) {
     m.leftCamera = m.device->GetCamera(DeviceDelegate::CameraEnum::Left);
     m.rightCamera = m.device->GetCamera(DeviceDelegate::CameraEnum::Right);
+    m.controllerCount = m.device->GetControllerCount();
   } else {
     m.leftCamera = m.rightCamera = nullptr;
+    m.controllers.clear();
+    m.controllerCount = 0;
   }
 }
 
@@ -183,14 +207,15 @@ BrowserWorld::InitializeGL() {
     if (!m.browser) {
       CreateBrowser();
     }
-    if (!m.controller) {
-      m.controller = Transform::Create(m.contextWeak);
-      m.factory->SetModelRoot(m.controller);
-      m.parser->LoadModel("vr_controller_daydream.obj");
-      //m.parser->LoadModel("teapot.obj");
-      //m.parser->LoadModel("daydream.obj");
-      m.root->AddNode(m.controller);
-      m.controller->SetTransform(Matrix::Position(Vector(0.0f, 0.0f, 15.5f)));
+    if ((m.controllers.size() == 0) && (m.controllerCount > 0)) {
+      for (int32_t ix = 0; ix < m.controllerCount; ix++) {
+        ControllerRecord record(ix);
+        record.controller = Transform::Create(m.contextWeak);
+        m.factory->SetModelRoot(record.controller);
+        m.parser->LoadModel(m.device->GetControllerModelName(ix));
+        m.root->AddNode(record.controller);
+        m.controllers.push_back(std::move(record));
+      }
     }
     if (!m.glInitialized) {
       m.glInitialized = m.context->InitializeGL();
@@ -231,18 +256,18 @@ BrowserWorld::Draw() {
   }
   m.device->ProcessEvents();
   m.context->Update();
-  //m.browser->SetTransform(vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), M_PI * 0.5f));
-  m.controller->SetTransform(Matrix::Position(Vector(0.0f, 0.0f, 15.5f)).PostMultiply(Matrix::Rotation(Vector(0.0f, 0.0f, 1.0f), m.heading).PreMultiply(Matrix::Rotation(Vector(0.0f, 1.0f, 0.0f), m.heading))));
+  for (ControllerRecord& record: m.controllers) {
+    record.controller->SetTransform(m.device->GetControllerTransform(record.index));
+  }
   m.browser->SetTransform(Matrix::Rotation(Vector(0.0f, 1.0f, 0.0f), m.heading));
   m.drawList->Reset();
   m.root->Cull(*m.cullVisitor, *m.drawList);
+  m.device->StartFrame();
   m.device->BindEye(DeviceDelegate::CameraEnum::Left);
   m.drawList->Draw(*m.leftCamera);
-  m.device->UnbindEye(DeviceDelegate::CameraEnum::Left);
   m.device->BindEye(DeviceDelegate::CameraEnum::Right);
   m.drawList->Draw(*m.rightCamera);
-  m.device->UnbindEye(DeviceDelegate::CameraEnum::Right);
-  m.device->SubmitFrame();
+  m.device->EndFrame();
   m.heading += M_PI / 120.0f;
   if (m.heading > (2.0f * M_PI)) { m.heading = 0.0f; }
 }

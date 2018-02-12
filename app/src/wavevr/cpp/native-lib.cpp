@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
   eError = WVR_Init(WVR_AppType_VRContent);
   if (eError != WVR_InitError_None) {
     VRB_LOG("Unable to init VR runtime: %s", WVR_GetInitErrorString(eError));
-    return false;
+    return 1;
   }
 
   // Must initialize render runtime before all OpenGL code.
