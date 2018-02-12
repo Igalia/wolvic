@@ -16,8 +16,8 @@ public:
   virtual int32_t GetControllerCount() const = 0;
   virtual const std::string GetControllerModelName(const int32_t aWhichContorller) const = 0;
   virtual void ProcessEvents() = 0;
-  virtual const vrb::Matrix& GetControllerTransform(const int32_t aWhichController);
-  virtual void StartFrame();
+  virtual const vrb::Matrix& GetControllerTransform(const int32_t aWhichController) = 0;
+  virtual void StartFrame() = 0;
   virtual void BindEye(const CameraEnum aWhich) = 0;
   virtual void EndFrame() = 0;
 protected:
