@@ -81,6 +81,7 @@ SurfaceObserver::SurfaceTextureCreationError(const std::string& aName, const std
 struct BrowserWorld::State {
   BrowserWorldWeakPtr self;
   SurfaceObserverPtr surfaceObserver;
+  DeviceDelegatePtr device;
   bool paused;
   bool glInitialized;
   float heading;
@@ -95,7 +96,8 @@ struct BrowserWorld::State {
   TextureSurfacePtr browserSurface;
   CullVisitorPtr cullVisitor;
   DrawableListPtr drawList;
-  CameraSimplePtr camera;
+  CameraPtr leftCamera;
+  CameraPtr rightCamera;
   JNIEnv* env;
   jobject activity;
   jmethodID setSurfaceTextureMethod;
@@ -113,7 +115,6 @@ struct BrowserWorld::State {
     browserSurface = TextureSurface::Create(contextWeak, "browser");
     cullVisitor = CullVisitor::Create(contextWeak);
     drawList = DrawableList::Create(contextWeak);
-    camera = CameraSimple::Create(contextWeak);
   }
 };
 
@@ -133,6 +134,17 @@ BrowserWorld::GetContext() {
 }
 
 void
+BrowserWorld::RegisterDeviceDelegate(DeviceDelegatePtr aDelegate) {
+  m.device = aDelegate;
+  if (m.device) {
+    m.leftCamera = m.device->GetCamera(DeviceDelegate::CameraEnum::Left);
+    m.rightCamera = m.device->GetCamera(DeviceDelegate::CameraEnum::Right);
+  } else {
+    m.leftCamera = m.rightCamera = nullptr;
+  }
+}
+
+void
 BrowserWorld::Pause() {
   m.paused = true;
 }
@@ -140,14 +152,6 @@ BrowserWorld::Pause() {
 void
 BrowserWorld::Resume() {
   m.paused = false;
-}
-
-void
-BrowserWorld::SetViewport(const float aWidth, const float aHeight) {
-  m.camera->SetViewport(aWidth, aHeight);
-  const bool wider = (aWidth > aHeight);
-  m.camera->SetFieldOfView((wider ? 60.0f : -1.0f), (wider ? -1.0f : 60.0f));
-  m.camera->SetTransform(Matrix::Position(Vector(0.0f, 0.0f, 16.0f)));
 }
 
 void
@@ -213,6 +217,9 @@ BrowserWorld::ShutdownGL() {
 
 void
 BrowserWorld::Draw() {
+  if (!m.device) {
+    return;
+  }
   if (m.paused) {
     return;
   }
@@ -222,13 +229,20 @@ BrowserWorld::Draw() {
       return;
     }
   }
+  m.device->ProcessEvents();
   m.context->Update();
   //m.browser->SetTransform(vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), M_PI * 0.5f));
   m.controller->SetTransform(Matrix::Position(Vector(0.0f, 0.0f, 15.5f)).PostMultiply(Matrix::Rotation(Vector(0.0f, 0.0f, 1.0f), m.heading).PreMultiply(Matrix::Rotation(Vector(0.0f, 1.0f, 0.0f), m.heading))));
   m.browser->SetTransform(Matrix::Rotation(Vector(0.0f, 1.0f, 0.0f), m.heading));
   m.drawList->Reset();
   m.root->Cull(*m.cullVisitor, *m.drawList);
-  m.drawList->Draw(*m.camera);
+  m.device->BindEye(DeviceDelegate::CameraEnum::Left);
+  m.drawList->Draw(*m.leftCamera);
+  m.device->UnbindEye(DeviceDelegate::CameraEnum::Left);
+  m.device->BindEye(DeviceDelegate::CameraEnum::Right);
+  m.drawList->Draw(*m.rightCamera);
+  m.device->UnbindEye(DeviceDelegate::CameraEnum::Right);
+  m.device->SubmitFrame();
   m.heading += M_PI / 120.0f;
   if (m.heading > (2.0f * M_PI)) { m.heading = 0.0f; }
 }

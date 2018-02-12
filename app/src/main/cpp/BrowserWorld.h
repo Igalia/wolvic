@@ -9,6 +9,8 @@
 #include "vrb/Forward.h"
 #include "vrb/MacroUtils.h"
 
+#include "DeviceDelegate.h"
+
 #include <jni.h>
 #include <memory>
 
@@ -20,9 +22,9 @@ class BrowserWorld {
 public:
   static BrowserWorldPtr Create();
   vrb::ContextPtr GetContext();
+  void RegisterDeviceDelegate(DeviceDelegatePtr aDelegate);
   void Pause();
   void Resume();
-  void SetViewport(const float aWidth, const float aHeight);
   void InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetManager);
   void InitializeGL();
   void ShutdownJava();

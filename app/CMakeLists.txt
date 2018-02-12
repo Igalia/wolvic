@@ -5,6 +5,8 @@
 
 cmake_minimum_required(VERSION 3.4.1)
 
+
+
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
 # You can define multiple libraries, and CMake builds them for you.
@@ -17,7 +19,6 @@ add_library( # Sets the name of the library.
              SHARED
 
              # Provides a relative path to your source file(s).
-             src/main/cpp/native-lib.cpp
              src/main/cpp/BrowserWorld.cpp
              src/main/cpp/vrb/src/CameraSimple.cpp
              src/main/cpp/vrb/src/Context.cpp
@@ -34,6 +35,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/vrb/src/NodeFactoryObj.cpp
              src/main/cpp/vrb/src/RenderState.cpp
              src/main/cpp/vrb/src/ResourceGL.cpp
+             src/main/cpp/vrb/src/RunnableQueue.cpp
              src/main/cpp/vrb/src/SurfaceTextureFactory.cpp
              src/main/cpp/vrb/src/Texture.cpp
              src/main/cpp/vrb/src/TextureCache.cpp
@@ -44,6 +46,19 @@ add_library( # Sets the name of the library.
              src/main/cpp/vrb/src/VertexArray.cpp
            )
 
+if(WAVEVR)
+target_sources(
+    native-lib
+    PUBLIC
+    src/wavevr/cpp/native-lib.cpp
+    )
+else()
+target_sources(
+    native-lib
+    PUBLIC
+    src/main/cpp/native-lib.cpp
+    )
+endif()
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
 # default, you only need to specify the name of the public NDK library

@@ -15,6 +15,7 @@ android {
         externalNativeBuild {
             cmake {
                 cppFlags "-std=c++14" +
+                         " -I" + file("src/main/cpp").absolutePath +
                          " -I" + file("src/main/cpp/vrb/include").absolutePath
                 arguments "-DANDROID_STL=c++_shared"
             }
@@ -31,6 +32,8 @@ android {
             path "CMakeLists.txt"
         }
     }
+
+
 
     productFlavors {
         googlevr {
@@ -61,7 +64,7 @@ android {
             externalNativeBuild {
                 cmake {
                     cppFlags " -I" + file("${project.rootDir}/third_party/wavesdk/build/wvr_client/include").absolutePath
-                    arguments "-DVR_SDK_LIB=wavevr-lib"
+                    arguments "-DVR_SDK_LIB=wavevr-lib", "-DWAVEVR=ON"
                 }
             }
         }
@@ -73,7 +76,6 @@ android {
         main {
             java.srcDirs = [
                     'app',
-                    'src/main/java',
                     'src/main/cpp/vrb/android/java'
             ]
         }
@@ -87,6 +89,9 @@ android {
         }
 
         wavevr {
+            java.srcDirs = [
+                    'src/wavevr/java'
+            ]
             jniLibs.srcDirs = ["${project.rootDir}/third_party/wavesdk/build/wvr_client/jni"]
         }
     }
@@ -99,9 +104,9 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
-    compile project(':geckoview-withGeckoBinaries')
+    implementation project(':geckoview-withGeckoBinaries')
 
-    googlevrCompile 'com.google.vr:sdk-base:1.120.0'
-    svrCompile fileTree(dir: "${project.rootDir}/third_party/svr/", include: ['*.jar'])
-    wavevrCompile project(':wavesdk')
+    googlevrImplementation 'com.google.vr:sdk-base:1.120.0'
+    svrImplementation fileTree(dir: "${project.rootDir}/third_party/svr/", include: ['*.jar'])
+    wavevrImplementation project(':wavesdk')
 }
