@@ -13,6 +13,7 @@ class DeviceDelegate {
 public:
   enum class CameraEnum { Left, Right };
   virtual vrb::CameraPtr GetCamera(const CameraEnum aWhich) = 0;
+  virtual void SetClipPlanes(const float aNear, const float aFar) = 0;
   virtual int32_t GetControllerCount() const = 0;
   virtual const std::string GetControllerModelName(const int32_t aWhichContorller) const = 0;
   virtual void ProcessEvents() = 0;

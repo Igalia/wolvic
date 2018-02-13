@@ -161,6 +161,7 @@ BrowserWorld::RegisterDeviceDelegate(DeviceDelegatePtr aDelegate) {
     m.leftCamera = m.device->GetCamera(DeviceDelegate::CameraEnum::Left);
     m.rightCamera = m.device->GetCamera(DeviceDelegate::CameraEnum::Right);
     m.controllerCount = m.device->GetControllerCount();
+    m.device->SetClipPlanes(0.1f, 100.f);
   } else {
     m.leftCamera = m.rightCamera = nullptr;
     m.controllers.clear();

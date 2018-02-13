@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
   VRB_CHECK(glEnable(GL_CULL_FACE));
   // VRB_CHECK(glDisable(GL_CULL_FACE));
   sWorld->InitializeGL();
-  while (!quit) {
+  while (sDevice->IsRunning()) {
     sQueue->ProcessRunnables();
     VRB_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
     sWorld->Draw();
