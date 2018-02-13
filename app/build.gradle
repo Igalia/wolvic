@@ -80,11 +80,23 @@ android {
             ]
         }
 
+        googlevr {
+            java.srcDirs = [
+                    'src/common/nativeactivity'
+            ]
+        }
+
         oculusvr {
+            java.srcDirs = [
+                    'src/common/nativeactivity'
+            ]
             jniLibs.srcDirs = ["${project.rootDir}/third_party/ovr_mobile/VrApi/Libs"]
         }
 
         svr {
+            java.srcDirs = [
+                    'src/common/nativeactivity'
+            ]
             jniLibs.srcDirs = ["${project.rootDir}/third_party/svr/libs"]
         }
 

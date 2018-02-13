@@ -8,6 +8,7 @@
     <application>
         <meta-data android:name="com.samsung.android.vr.application.mode" android:value="vr_only"/>
         <activity android:name=".VRBrowserActivity" android:screenOrientation="reverseLandscape">
+            <meta-data android:name="android.app.lib_name" android:value="native-lib" />
             <!-- Intent filter that enables this app to be launched from the
 Snapdragon Launcher menu. -->
             <intent-filter>

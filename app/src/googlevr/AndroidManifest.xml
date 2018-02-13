@@ -5,6 +5,7 @@
             android:screenOrientation="landscape"
             android:enableVrMode="@string/gvr_vr_mode_component"
             android:resizeableActivity="false">
+            <meta-data android:name="android.app.lib_name" android:value="native-lib" />
             <!-- Intent filter that enables this app to be launched from the
 Daydream Home menu. -->
             <intent-filter>
