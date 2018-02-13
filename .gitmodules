@@ -1,6 +1,6 @@
 [submodule "app/src/main/cpp/vrb"]
 	path = app/src/main/cpp/vrb
-	url = https://github.com/mozvr/vrb.git
+	url = https://github.com/MozillaReality/vrb.git
 [submodule "gvr-android-sdk"]
 	path = gvr-android-sdk
 	url = https://github.com/googlevr/gvr-android-sdk.git
