@@ -59,6 +59,7 @@ target_sources(
     native-lib
     PUBLIC
     src/main/cpp/native-lib.cpp
+    src/main/cpp/BrowserEGLContext.cpp
     )
 endif()
 # Searches for a specified prebuilt library and stores the path as a
