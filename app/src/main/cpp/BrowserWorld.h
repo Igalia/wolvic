@@ -21,7 +21,7 @@ typedef std::weak_ptr<BrowserWorld> BrowserWorldWeakPtr;
 class BrowserWorld {
 public:
   static BrowserWorldPtr Create();
-  vrb::ContextPtr GetContext();
+  vrb::ContextWeak GetWeakContext();
   void RegisterDeviceDelegate(DeviceDelegatePtr aDelegate);
   void Pause();
   void Resume();

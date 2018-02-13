@@ -5,7 +5,7 @@
 
 #include <jni.h>
 #include <string>
-#include <GLES2/gl2.h>
+#include <GLES3/gl3.h>
 #include <wvr/wvr.h>
 #include <wvr/wvr_render.h>
 #include <wvr/wvr_device.h>
@@ -15,12 +15,14 @@
 #include <wvr/wvr_events.h>
 
 #include "BrowserWorld.h"
+#include "DeviceDelegateWaveVR.h"
 #include "vrb/Logger.h"
 #include "vrb/GLError.h"
 #include "vrb/RunnableQueue.h"
 
 static vrb::RunnableQueuePtr sQueue;
 static BrowserWorldPtr sWorld;
+static DeviceDelegateWaveVRPtr sDevice;
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -41,9 +43,8 @@ JNI_METHOD(void, activityResumed)
 int main(int argc, char *argv[]) {
 
   bool quit = false;
-  WVR_InitError eError = WVR_InitError_None;
   VRB_LOG("Call WVR_Init");
-  eError = WVR_Init(WVR_AppType_VRContent);
+  WVR_InitError eError = WVR_Init(WVR_AppType_VRContent);
   if (eError != WVR_InitError_None) {
     VRB_LOG("Unable to init VR runtime: %s", WVR_GetInitErrorString(eError));
     return 1;
@@ -57,6 +58,8 @@ int main(int argc, char *argv[]) {
   if (pError != WVR_RenderError_None) {
     VRB_LOG("Present init failed - Error[%d]", pError);
   }
+  sDevice = DeviceDelegateWaveVR::Create(sWorld->GetWeakContext());
+  sWorld->RegisterDeviceDelegate(sDevice);
   VRB_CHECK(glClearColor(0.0, 0.0, 0.0, 1.0));
   VRB_CHECK(glEnable(GL_DEPTH_TEST));
   VRB_CHECK(glEnable(GL_CULL_FACE));

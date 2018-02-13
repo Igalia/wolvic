@@ -56,3 +56,5 @@ infer-out/
 fastlane/
 
 app/.externalNativeBuild
+
+*.swp

@@ -25,6 +25,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/vrb/src/CullVisitor.cpp
              src/main/cpp/vrb/src/Drawable.cpp
              src/main/cpp/vrb/src/DrawableList.cpp
+             src/main/cpp/vrb/src/FBO.cpp
              src/main/cpp/vrb/src/FileReaderAndroid.cpp
              src/main/cpp/vrb/src/GLError.cpp
              src/main/cpp/vrb/src/Geometry.cpp
@@ -51,6 +52,7 @@ target_sources(
     native-lib
     PUBLIC
     src/wavevr/cpp/native-lib.cpp
+    src/wavevr/cpp/DeviceDelegateWaveVR.cpp
     )
 else()
 target_sources(

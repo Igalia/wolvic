@@ -149,8 +149,8 @@ BrowserWorld::Create() {
   return result;
 }
 
-vrb::ContextPtr
-BrowserWorld::GetContext() {
+vrb::ContextWeak
+BrowserWorld::GetWeakContext() {
   return m.context;
 }
 
