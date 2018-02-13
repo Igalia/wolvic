@@ -25,6 +25,7 @@ public:
   void RegisterDeviceDelegate(DeviceDelegatePtr aDelegate);
   void Pause();
   void Resume();
+  bool IsPaused() const;
   void InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetManager);
   void InitializeGL();
   void ShutdownJava();

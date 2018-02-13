@@ -61,7 +61,13 @@ target_sources(
     src/main/cpp/native-lib.cpp
     src/main/cpp/BrowserEGLContext.cpp
     )
+
+include(AndroidNdkModules)
+android_ndk_import_module_native_app_glue()
+target_link_libraries(native-lib native_app_glue)
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -u ANativeActivity_onCreate")
 endif()
+
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
 # default, you only need to specify the name of the public NDK library

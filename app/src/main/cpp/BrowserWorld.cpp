@@ -178,6 +178,11 @@ BrowserWorld::Resume() {
   m.paused = false;
 }
 
+bool
+BrowserWorld::IsPaused() const {
+  return m.paused;
+}
+
 void
 BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetManager) {
   if (m.context) {

@@ -10,77 +10,129 @@
 #include "BrowserWorld.h"
 #include "vrb/Logger.h"
 #include "vrb/GLError.h"
-
-static BrowserWorldPtr sWorld;
+#include "BrowserEGLContext.h"
+#include <android_native_app_glue.h>
+#include <cstdlib>
+#include <vrb/RunnableQueue.h>
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
     Java_org_mozilla_vrbrowser_VRBrowserActivity_##method_name
 
-extern "C" {
 
-JNI_METHOD(void, activityPaused)
-(JNIEnv*, jobject) {
-  if (sWorld) {
-    sWorld->Pause();
+struct AppContext {
+  vrb::RunnableQueuePtr mQueue;
+  BrowserWorldPtr mWorld;
+  BrowserEGLContextPtr mEgl;
+};
+
+void
+CommandCallback(android_app *aApp, int32_t aCmd) {
+  AppContext *ctx = (AppContext *) aApp->userData;
+
+  switch (aCmd) {
+    // A new ANativeWindow is ready for use. Upon receiving this command,
+    // android_app->window will contain the new window surface.
+    case APP_CMD_INIT_WINDOW:
+      VRB_LOG("APP_CMD_INIT_WINDOW %p", aApp->window);
+      if (!ctx->mEgl) {
+        ctx->mEgl = BrowserEGLContext::Create();
+        ctx->mEgl->Initialize(aApp->window);
+        ctx->mEgl->MakeCurrent();
+        VRB_CHECK(glClearColor(0.0, 0.0, 0.0, 1.0));
+        VRB_CHECK(glEnable(GL_DEPTH_TEST));
+        VRB_CHECK(glEnable(GL_CULL_FACE));
+        ctx->mWorld->InitializeGL();
+      } else {
+        ctx->mEgl->SurfaceChanged(aApp->window);
+        ctx->mEgl->MakeCurrent();
+      }
+      break;
+
+    // The existing ANativeWindow needs to be terminated.  Upon receiving this command,
+    // android_app->window still contains the existing window;
+    // after calling android_app_exec_cmd it will be set to NULL.
+    case APP_CMD_TERM_WINDOW:
+      VRB_LOG("APP_CMD_TERM_WINDOW");
+      if (ctx->mEgl) {
+        ctx->mEgl->SurfaceDestroyed();
+      }
+      break;
+    // The app's activity has been paused.
+    case APP_CMD_PAUSE:
+      VRB_LOG("APP_CMD_PAUSE");
+      ctx->mWorld->Pause();
+      break;
+
+    // The app's activity has been resumed.
+    case APP_CMD_RESUME:
+      VRB_LOG("APP_CMD_RESUME");
+      ctx->mWorld->Resume();
+      break;
+
+    // the app's activity is being destroyed,
+    // and waiting for the app thread to clean up and exit before proceeding.
+    case APP_CMD_DESTROY:
+      VRB_LOG("APP_CMD_DESTROY");
+      ctx->mWorld->ShutdownJava();
+      break;
+
+    default:
+      break;
   }
 }
 
-JNI_METHOD(void, activityResumed)
-(JNIEnv*, jobject) {
-  if (sWorld) {
-    sWorld->Resume();
-  }
-}
 
-JNI_METHOD(void, activityCreated)
-(JNIEnv* aEnv, jobject aActivity, jobject aAssetManager) {
-  if (!sWorld) {
-    sWorld = BrowserWorld::Create();
+void
+android_main(android_app *aAppState) {
+  pthread_setname_np(pthread_self(), "VRRenderer");
+
+  if (!ALooper_forThread()) {
+    ALooper_prepare(0);
   }
 
-  sWorld->InitializeJava(aEnv, aActivity, aAssetManager);
-}
+  // Attach JNI thread
+  JNIEnv *jniEnv;
+  (*aAppState->activity->vm).AttachCurrentThread(&jniEnv, NULL);
 
-JNI_METHOD(void, activityDestroyed)
-(JNIEnv* env, jobject) {
-  if (sWorld) {
-    sWorld->ShutdownJava();
+  // Create Browser context
+  auto appContext = std::make_shared<AppContext>();
+  appContext->mQueue = vrb::RunnableQueue::Create(aAppState->activity->vm);
+  appContext->mWorld = BrowserWorld::Create();
+
+  // Set up activity & SurfaceView life cycle callbacks
+  aAppState->userData = appContext.get();
+  aAppState->onAppCmd = CommandCallback;
+
+  // Main render loop
+  while (true) {
+    int events;
+    android_poll_source *pSource;
+
+    // Loop until all events are read
+    // If the activity is paused use a blocking call to read events.
+    while (ALooper_pollAll(appContext->mWorld->IsPaused() ? -1 : 0,
+                           NULL,
+                           &events,
+                           (void **) &pSource) >= 0) {
+      // Process event.
+      if (pSource) {
+        pSource->process(aAppState, pSource);
+      }
+
+      // Check if we are exiting.
+      if (aAppState->destroyRequested != 0) {
+        appContext->mWorld->ShutdownGL();
+        appContext->mEgl->Destroy();
+        aAppState->activity->vm->DetachCurrentThread();
+        exit(0);
+      }
+    }
+
+    appContext->mQueue->ProcessRunnables();
+    if (!appContext->mWorld->IsPaused() && appContext->mEgl && appContext->mEgl->IsSurfaceReady()) {
+      VRB_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+      appContext->mWorld->Draw();
+    }
   }
 }
-
-JNI_METHOD(void, initializeGL)
-(JNIEnv*, jobject) {
-  if (!sWorld) {
-    sWorld = BrowserWorld::Create();
-  }
-
-  sWorld->InitializeGL();
-}
-
-JNI_METHOD(void, updateGL)
-(JNIEnv*, jobject, int width, int height) {
-  VRB_CHECK(glViewport(0, 0, width, height));
-  VRB_CHECK(glClearColor(0.0, 0.0, 0.0, 1.0));
-  VRB_CHECK(glEnable(GL_DEPTH_TEST));
-  VRB_CHECK(glEnable(GL_CULL_FACE));
-  // VRB_CHECK(glDisable(GL_CULL_FACE));
-  sWorld->SetViewport(width, height);
-}
-
-
-
-JNI_METHOD(void, drawGL)
-(JNIEnv*, jobject) {
-  VRB_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-  sWorld->Draw();
-}
-
-JNI_METHOD(void, shutdownGL)
-(JNIEnv*, jobject) {
-  if (sWorld) {
-    sWorld->ShutdownGL();
-  }
-}
-
-} // extern "C"
