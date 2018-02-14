@@ -20,6 +20,7 @@
 #include "vrb/GLError.h"
 #include "vrb/RunnableQueue.h"
 
+static bool sJavaInitialized = false;
 static vrb::RunnableQueuePtr sQueue;
 static BrowserWorldPtr sWorld;
 static DeviceDelegateWaveVRPtr sDevice;
@@ -64,9 +65,15 @@ int main(int argc, char *argv[]) {
   VRB_CHECK(glEnable(GL_DEPTH_TEST));
   VRB_CHECK(glEnable(GL_CULL_FACE));
   // VRB_CHECK(glDisable(GL_CULL_FACE));
+  while(!sJavaInitialized) {
+    sQueue->ProcessRunnables();
+  }
+  VRB_LOG("Java Initialized.");
   sWorld->InitializeGL();
+  sWorld->Resume();
   while (sDevice->IsRunning()) {
     sQueue->ProcessRunnables();
+    //VRB_LOG("About to DRAW!");
     VRB_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
     sWorld->Draw();
   }
@@ -81,17 +88,18 @@ JNI_METHOD(void, queueRunnable)
 
 JNI_METHOD(void, initializeJava)
 (JNIEnv* aEnv, jobject aActivity, jobject aAssets) {
+  sJavaInitialized = true;
   sWorld->InitializeJava(aEnv, aActivity, aAssets);
-  WVR_RegisterMain(main);
 }
 
 jint JNI_OnLoad(JavaVM* aVm, void*) {
   sQueue = vrb::RunnableQueue::Create(aVm);
   sWorld = BrowserWorld::Create();
+  WVR_RegisterMain(main);
   return JNI_VERSION_1_6;
 }
 
-jint JNI_OnUnLoad(JavaVM* vm, void* reserved) {
+void JNI_OnUnLoad(JavaVM* vm, void* reserved) {
   sWorld->ShutdownJava();
   sQueue = nullptr;
   sWorld = nullptr;

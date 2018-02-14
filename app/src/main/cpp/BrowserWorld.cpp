@@ -104,7 +104,6 @@ struct BrowserWorld::State {
   DeviceDelegatePtr device;
   bool paused;
   bool glInitialized;
-  float heading;
   ContextPtr context;
   ContextWeak contextWeak;
   NodeFactoryObjPtr factory;
@@ -124,7 +123,7 @@ struct BrowserWorld::State {
   jmethodID setSurfaceTextureMethod;
 
 
-  State() : paused(true), glInitialized(false), heading(0.0f), controllerCount(0), env(nullptr), activity(nullptr), setSurfaceTextureMethod(nullptr) {
+  State() : paused(true), glInitialized(false), controllerCount(0), env(nullptr), activity(nullptr), setSurfaceTextureMethod(nullptr) {
     context = Context::Create();
     contextWeak = context;
     factory = NodeFactoryObj::Create(contextWeak);
@@ -205,24 +204,26 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
   if (!m.setSurfaceTextureMethod) {
     VRB_LOG("Failed to find Java method: %s %s", kSetSurfaceTextureName, kSetSurfaceTextureSignature);
   }
+
+  if (!m.browser) {
+    CreateBrowser();
+  }
+  if ((m.controllers.size() == 0) && (m.controllerCount > 0)) {
+    for (int32_t ix = 0; ix < m.controllerCount; ix++) {
+      ControllerRecord record(ix);
+      record.controller = Transform::Create(m.contextWeak);
+      m.factory->SetModelRoot(record.controller);
+      m.parser->LoadModel(m.device->GetControllerModelName(ix));
+      m.root->AddNode(record.controller);
+      m.controllers.push_back(std::move(record));
+    }
+  }
 }
 
 void
 BrowserWorld::InitializeGL() {
   if (m.context) {
-    if (!m.browser) {
-      CreateBrowser();
-    }
-    if ((m.controllers.size() == 0) && (m.controllerCount > 0)) {
-      for (int32_t ix = 0; ix < m.controllerCount; ix++) {
-        ControllerRecord record(ix);
-        record.controller = Transform::Create(m.contextWeak);
-        m.factory->SetModelRoot(record.controller);
-        m.parser->LoadModel(m.device->GetControllerModelName(ix));
-        m.root->AddNode(record.controller);
-        m.controllers.push_back(std::move(record));
-      }
-    }
+
     if (!m.glInitialized) {
       m.glInitialized = m.context->InitializeGL();
     }
@@ -249,14 +250,17 @@ BrowserWorld::ShutdownGL() {
 void
 BrowserWorld::Draw() {
   if (!m.device) {
+    VRB_LOG("No device");
     return;
   }
   if (m.paused) {
+    VRB_LOG("Paused");
     return;
   }
   if (!m.glInitialized) {
     m.glInitialized = m.context->InitializeGL();
     if (!m.glInitialized) {
+      VRB_LOG("FAILED to initialize GL");
       return;
     }
   }
@@ -265,7 +269,7 @@ BrowserWorld::Draw() {
   for (ControllerRecord& record: m.controllers) {
     record.controller->SetTransform(m.device->GetControllerTransform(record.index));
   }
-  m.browser->SetTransform(Matrix::Rotation(Vector(0.0f, 1.0f, 0.0f), m.heading));
+  m.browser->SetTransform(Matrix::Position(Vector(0.0f, 0.0f, -15.0f)));
   m.drawList->Reset();
   m.root->Cull(*m.cullVisitor, *m.drawList);
   m.device->StartFrame();
@@ -274,8 +278,6 @@ BrowserWorld::Draw() {
   m.device->BindEye(DeviceDelegate::CameraEnum::Right);
   m.drawList->Draw(*m.rightCamera);
   m.device->EndFrame();
-  m.heading += M_PI / 120.0f;
-  if (m.heading > (2.0f * M_PI)) { m.heading = 0.0f; }
 }
 
 void
