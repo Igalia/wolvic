@@ -36,6 +36,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/vrb/src/ParserObj.cpp
              src/main/cpp/vrb/src/Node.cpp
              src/main/cpp/vrb/src/NodeFactoryObj.cpp
+             src/main/cpp/vrb/src/Quaternion.cpp
              src/main/cpp/vrb/src/RenderState.cpp
              src/main/cpp/vrb/src/ResourceGL.cpp
              src/main/cpp/vrb/src/RunnableQueue.cpp
