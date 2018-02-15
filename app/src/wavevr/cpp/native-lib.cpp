@@ -20,6 +20,8 @@
 #include "vrb/GLError.h"
 #include "vrb/RunnableQueue.h"
 
+using namespace crow;
+
 static bool sJavaInitialized = false;
 static vrb::RunnableQueuePtr sQueue;
 static BrowserWorldPtr sWorld;

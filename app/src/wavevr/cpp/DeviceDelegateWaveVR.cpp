@@ -18,6 +18,8 @@
 #include <wvr/wvr_system.h>
 #include <wvr/wvr_events.h>
 
+namespace crow {
+
 struct DeviceDelegateWaveVR::State {
   vrb::ContextWeak context;
   bool isRunning;
@@ -424,3 +426,5 @@ DeviceDelegateWaveVR::IsRunning() {
 
 DeviceDelegateWaveVR::DeviceDelegateWaveVR(State& aState) : m(aState) {}
 DeviceDelegateWaveVR::~DeviceDelegateWaveVR() { m.Shutdown(); }
+
+} // namespace crow

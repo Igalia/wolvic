@@ -8,6 +8,8 @@
 #include <EGL/eglext.h>
 #include <android_native_app_glue.h>
 
+namespace crow {
+
 BrowserEGLContext::BrowserEGLContext()
   : mMajorVersion(0), mMinorVersion(0), mDisplay(0), mConfig(0), mSurface(0), mContext(0),
     mNativeWindow(nullptr) {
@@ -242,3 +244,5 @@ BrowserEGLContext::ErrorToString(EGLint error) {
       return "Unknown Error";
   }
 }
+
+} // namespace crow

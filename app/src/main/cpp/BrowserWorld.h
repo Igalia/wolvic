@@ -14,6 +14,8 @@
 #include <jni.h>
 #include <memory>
 
+namespace crow {
+
 class BrowserWorld;
 typedef std::shared_ptr<BrowserWorld> BrowserWorldPtr;
 typedef std::weak_ptr<BrowserWorld> BrowserWorldWeakPtr;
@@ -31,22 +33,20 @@ public:
   void ShutdownJava();
   void ShutdownGL();
   void Draw();
-
   void SetSurfaceTexture(const std::string& aName, jobject& aSurface);
-
 protected:
   struct State;
   BrowserWorld(State& aState);
   ~BrowserWorld();
-
   void CreateBrowser();
   void CreateFloor();
   void AddControllerPointer();
-
 private:
   State& m;
   BrowserWorld() = delete;
   VRB_NO_DEFAULTS(BrowserWorld)
 };
+
+} // namespace crow
 
 #endif // BROWSERWORLD_H

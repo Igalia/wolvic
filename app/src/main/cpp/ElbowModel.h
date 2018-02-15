@@ -10,6 +10,8 @@
 #include "vrb/MacroUtils.h"
 #include <memory>
 
+namespace crow {
+
 class ElbowModel;
 typedef std::shared_ptr<ElbowModel> ElbowModelPtr;
 
@@ -28,5 +30,6 @@ private:
   VRB_NO_DEFAULTS(ElbowModel)
 };
 
+} // namespace crow
 
 #endif //VRBROWSER_ELBOWMODEL_H

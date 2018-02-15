@@ -5,6 +5,8 @@
 
 struct ANativeWindow;
 
+namespace crow {
+
 class BrowserEGLContext;
 
 typedef std::shared_ptr<BrowserEGLContext> BrowserEGLContextPtr;
@@ -32,3 +34,5 @@ private:
   EGLContext mContext;
   ANativeWindow *mNativeWindow;
 };
+
+} // namespace crow

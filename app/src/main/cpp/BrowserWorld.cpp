@@ -29,15 +29,15 @@ using namespace vrb;
 
 namespace {
 
-static const char *kSetSurfaceTextureName = "setSurfaceTexture";
-static const char *kSetSurfaceTextureSignature = "(Ljava/lang/String;Landroid/graphics/SurfaceTexture;II)V";
-static const char *kTileTexture = "tile.png";
+static const char* kSetSurfaceTextureName = "setSurfaceTexture";
+static const char* kSetSurfaceTextureSignature = "(Ljava/lang/String;Landroid/graphics/SurfaceTexture;II)V";
+static const char* kTileTexture = "tile.png";
 class SurfaceObserver;
 typedef std::shared_ptr<SurfaceObserver> SurfaceObserverPtr;
 
 class SurfaceObserver : public SurfaceTextureObserver {
 public:
-  SurfaceObserver(BrowserWorldWeakPtr& aWorld);
+  SurfaceObserver(crow::BrowserWorldWeakPtr& aWorld);
   ~SurfaceObserver();
   void SurfaceTextureCreated(const std::string& aName, GLuint aHandle, jobject aSurfaceTexture) override;
   void SurfaceTextureHandleUpdated(const std::string aName, GLuint aHandle) override;
@@ -45,15 +45,15 @@ public:
   void SurfaceTextureCreationError(const std::string& aName, const std::string& aReason) override;
 
 protected:
-  BrowserWorldWeakPtr mWorld;
+  crow::BrowserWorldWeakPtr mWorld;
 };
 
-SurfaceObserver::SurfaceObserver(BrowserWorldWeakPtr& aWorld) : mWorld(aWorld) {}
+SurfaceObserver::SurfaceObserver(crow::BrowserWorldWeakPtr& aWorld) : mWorld(aWorld) {}
 SurfaceObserver::~SurfaceObserver() {}
 
 void
 SurfaceObserver::SurfaceTextureCreated(const std::string& aName, GLuint aHandle, jobject aSurfaceTexture) {
-  BrowserWorldPtr world = mWorld.lock();
+  crow::BrowserWorldPtr world = mWorld.lock();
   if (world) {
     world->SetSurfaceTexture(aName, aSurfaceTexture);
   }
@@ -64,7 +64,7 @@ SurfaceObserver::SurfaceTextureHandleUpdated(const std::string aName, GLuint aHa
 
 void
 SurfaceObserver::SurfaceTextureDestroyed(const std::string& aName) {
-  BrowserWorldPtr world = mWorld.lock();
+  crow::BrowserWorldPtr world = mWorld.lock();
   if (world) {
     jobject nullObject = nullptr;
     world->SetSurfaceTexture(aName, nullObject);
@@ -100,6 +100,8 @@ private:
 } // namespace
 
 
+namespace crow {
+
 struct BrowserWorld::State {
   BrowserWorldWeakPtr self;
   SurfaceObserverPtr surfaceObserver;
@@ -125,7 +127,8 @@ struct BrowserWorld::State {
   jmethodID setSurfaceTextureMethod;
 
 
-  State() : paused(true), glInitialized(false), controllerCount(0), env(nullptr), activity(nullptr), setSurfaceTextureMethod(nullptr) {
+  State() : paused(true), glInitialized(false), controllerCount(0), env(nullptr), activity(nullptr),
+            setSurfaceTextureMethod(nullptr) {
     context = Context::Create();
     contextWeak = context;
     factory = NodeFactoryObj::Create(contextWeak);
@@ -202,9 +205,11 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
   if (!clazz) {
     return;
   }
-  m.setSurfaceTextureMethod = m.env->GetMethodID(clazz, kSetSurfaceTextureName, kSetSurfaceTextureSignature);
+  m.setSurfaceTextureMethod = m.env->GetMethodID(clazz, kSetSurfaceTextureName,
+                                                 kSetSurfaceTextureSignature);
   if (!m.setSurfaceTextureMethod) {
-    VRB_LOG("Failed to find Java method: %s %s", kSetSurfaceTextureName, kSetSurfaceTextureSignature);
+    VRB_LOG("Failed to find Java method: %s %s", kSetSurfaceTextureName,
+            kSetSurfaceTextureSignature);
   }
 
   if (!m.browser) {
@@ -294,6 +299,7 @@ BrowserWorld::SetSurfaceTexture(const std::string& aName, jobject& aSurface) {
 }
 
 BrowserWorld::BrowserWorld(State& aState) : m(aState) {}
+
 BrowserWorld::~BrowserWorld() {}
 
 void
@@ -316,7 +322,8 @@ BrowserWorld::CreateBrowser() {
 
   RenderStatePtr state = RenderState::Create(m.contextWeak);
   state->SetTexture(m.browserSurface);
-  state->SetMaterial(Color(0.4f, 0.4f, 0.4f), Color(1.0f, 1.0f, 1.0f), Color(0.0f, 0.0f, 0.0f), 0.0f);
+  state->SetMaterial(Color(0.4f, 0.4f, 0.4f), Color(1.0f, 1.0f, 1.0f), Color(0.0f, 0.0f, 0.0f),
+                     0.0f);
   GeometryPtr geometry = Geometry::Create(m.contextWeak);
   geometry->SetVertexArray(array);
   geometry->SetRenderState(state);
@@ -379,7 +386,8 @@ BrowserWorld::CreateFloor() {
     tile->SetTextureParameter(GL_TEXTURE_WRAP_T, GL_REPEAT);
     state->SetTexture(tile);
   }
-  state->SetMaterial(Color(0.4f, 0.4f, 0.4f), Color(1.0f, 1.0f, 1.0f), Color(0.0f, 0.0f, 0.0f), 0.0f);
+  state->SetMaterial(Color(0.4f, 0.4f, 0.4f), Color(1.0f, 1.0f, 1.0f), Color(0.0f, 0.0f, 0.0f),
+                     0.0f);
   GeometryPtr geometry = Geometry::Create(m.contextWeak);
   geometry->SetVertexArray(array);
   geometry->SetRenderState(state);
@@ -399,6 +407,7 @@ BrowserWorld::CreateFloor() {
 
   m.root->AddNode(geometry);
 }
+
 void
 BrowserWorld::AddControllerPointer() {
   VertexArrayPtr array = VertexArray::Create(m.contextWeak);
@@ -419,7 +428,8 @@ BrowserWorld::AddControllerPointer() {
 
 
   RenderStatePtr state = RenderState::Create(m.contextWeak);
-  state->SetMaterial(Color(0.6f, 0.0f, 0.0f), Color(1.0f, 0.0f, 0.0f), Color(0.0f, 0.0f, 0.0f), 0.0f);
+  state->SetMaterial(Color(0.6f, 0.0f, 0.0f), Color(1.0f, 0.0f, 0.0f), Color(0.5f, 0.5f, 0.5f),
+                     96.078431);
   GeometryPtr geometry = Geometry::Create(m.contextWeak);
   geometry->SetVertexArray(array);
   geometry->SetRenderState(state);
@@ -455,4 +465,5 @@ BrowserWorld::AddControllerPointer() {
   }
 }
 
+} // namespace crow
 

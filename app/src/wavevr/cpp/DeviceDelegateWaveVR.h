@@ -6,6 +6,8 @@
 #include "DeviceDelegate.h"
 #include <memory>
 
+namespace crow {
+
 class DeviceDelegateWaveVR;
 typedef std::shared_ptr<DeviceDelegateWaveVR> DeviceDelegateWaveVRPtr;
 
@@ -33,4 +35,5 @@ private:
   VRB_NO_DEFAULTS(DeviceDelegateWaveVR)
 };
 
+} // namespace crow
 #endif // DEVICE_DELEGATE_WAVE_VR_DOT_H

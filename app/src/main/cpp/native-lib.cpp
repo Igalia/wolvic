@@ -19,6 +19,7 @@
   JNIEXPORT return_type JNICALL              \
     Java_org_mozilla_vrbrowser_VRBrowserActivity_##method_name
 
+using namespace crow;
 
 struct AppContext {
   vrb::RunnableQueuePtr mQueue;

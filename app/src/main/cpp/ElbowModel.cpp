@@ -8,14 +8,16 @@
 #include "vrb/Matrix.h"
 #include "vrb/Vector.h"
 
+namespace crow {
+
 struct ElbowModel::State {
   vrb::Vector elbowOffset;
   vrb::Vector lowerArm;
   vrb::Matrix result;
+
   State()
-      : elbowOffset(0.2f, -0.3f, -0.15f)
-      , lowerArm(0.0f, 0.0f, -0.4f)
-  {}
+      : elbowOffset(0.2f, -0.3f, -0.15f), lowerArm(0.0f, 0.0f, -0.4f) {}
+
   void Initialize(const HandEnum aHand) {
     if (aHand == HandEnum::Left) {
       elbowOffset.x() = -elbowOffset.x();
@@ -40,3 +42,5 @@ ElbowModel::GetTransform(const vrb::Matrix& aHeadTransform, const vrb::Matrix& a
 
 ElbowModel::ElbowModel(State& aState) : m(aState) {}
 ElbowModel::~ElbowModel() {}
+
+} // namespace crow
