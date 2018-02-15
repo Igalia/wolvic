@@ -19,6 +19,7 @@
 #include "vrb/ParserObj.h"
 #include "vrb/RenderState.h"
 #include "vrb/SurfaceTextureFactory.h"
+#include "vrb/TextureCache.h"
 #include "vrb/TextureSurface.h"
 #include "vrb/Transform.h"
 #include "vrb/VertexArray.h"
@@ -30,6 +31,7 @@ namespace {
 
 static const char *kSetSurfaceTextureName = "setSurfaceTexture";
 static const char *kSetSurfaceTextureSignature = "(Ljava/lang/String;Landroid/graphics/SurfaceTexture;II)V";
+static const char *kTileTexture = "tile.png";
 class SurfaceObserver;
 typedef std::shared_ptr<SurfaceObserver> SurfaceObserverPtr;
 
@@ -217,6 +219,8 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
       m.root->AddNode(record.controller);
       m.controllers.push_back(std::move(record));
     }
+    AddControllerPointer();
+    CreateFloor();
   }
 }
 
@@ -269,7 +273,7 @@ BrowserWorld::Draw() {
   for (ControllerRecord& record: m.controllers) {
     record.controller->SetTransform(m.device->GetControllerTransform(record.index));
   }
-  m.browser->SetTransform(Matrix::Position(Vector(0.0f, 0.0f, -15.0f)));
+  m.browser->SetTransform(Matrix::Position(Vector(0.0f, 0.0f, -18.0f)));
   m.drawList->Reset();
   m.root->Cull(*m.cullVisitor, *m.drawList);
   m.device->StartFrame();
@@ -284,19 +288,23 @@ void
 BrowserWorld::SetSurfaceTexture(const std::string& aName, jobject& aSurface) {
   if (m.env && m.activity && m.setSurfaceTextureMethod) {
     jstring name = m.env->NewStringUTF(aName.c_str());
-    m.env->CallVoidMethod(m.activity, m.setSurfaceTextureMethod, name, aSurface, 1024, 1024);
+    m.env->CallVoidMethod(m.activity, m.setSurfaceTextureMethod, name, aSurface, 1920, 1080);
     m.env->DeleteLocalRef(name);
   }
 }
 
+BrowserWorld::BrowserWorld(State& aState) : m(aState) {}
+BrowserWorld::~BrowserWorld() {}
+
 void
 BrowserWorld::CreateBrowser() {
   VertexArrayPtr array = VertexArray::Create(m.contextWeak);
-  const float kLength = 5.0f;
-  array->AppendVertex(Vector(-kLength, -kLength, 0.0f)); // Bottom left
-  array->AppendVertex(Vector(kLength, -kLength, 0.0f)); // Bottom right
-  array->AppendVertex(Vector(kLength, kLength, 0.0f)); // Top right
-  array->AppendVertex(Vector(-kLength, kLength, 0.0f)); // Top left
+  const float kWidth = 9.0f;
+  const float kHeight = kWidth * 0.5625f;
+  array->AppendVertex(Vector(-kWidth, -kHeight, 0.0f)); // Bottom left
+  array->AppendVertex(Vector(kWidth, -kHeight, 0.0f)); // Bottom right
+  array->AppendVertex(Vector(kWidth, kHeight, 0.0f)); // Top right
+  array->AppendVertex(Vector(-kWidth, kHeight, 0.0f)); // Top left
 
   array->AppendUV(Vector(0.0f, 1.0f, 0.0f));
   array->AppendUV(Vector(1.0f, 1.0f, 0.0f));
@@ -345,6 +353,106 @@ BrowserWorld::CreateBrowser() {
   m.root->AddNode(m.browser);
 }
 
-BrowserWorld::BrowserWorld(State& aState) : m(aState) {}
+void
+BrowserWorld::CreateFloor() {
+  VertexArrayPtr array = VertexArray::Create(m.contextWeak);
+  const float kLength = 5.0f;
+  const float kFloor = -2.0f;
+  array->AppendVertex(Vector(-kLength, kFloor, kLength)); // Bottom left
+  array->AppendVertex(Vector(kLength, kFloor, kLength)); // Bottom right
+  array->AppendVertex(Vector(kLength, kFloor, -kLength)); // Top right
+  array->AppendVertex(Vector(-kLength, kFloor, -kLength)); // Top left
 
-BrowserWorld::~BrowserWorld() {}
+  const float kUV = kLength * 2.0f;
+  array->AppendUV(Vector(0.0f, 0.0f, 0.0f));
+  array->AppendUV(Vector(kUV, 0.0f, 0.0f));
+  array->AppendUV(Vector(kUV, kUV, 0.0f));
+  array->AppendUV(Vector(0.0f, kUV, 0.0f));
+
+  const Vector kNormal(0.0f, 1.0f, 0.0f);
+  array->AppendNormal(kNormal);
+
+  RenderStatePtr state = RenderState::Create(m.contextWeak);
+  TexturePtr tile = m.context->GetTextureCache()->LoadTexture(kTileTexture);
+  if (tile) {
+    tile->SetTextureParameter(GL_TEXTURE_WRAP_S, GL_REPEAT);
+    tile->SetTextureParameter(GL_TEXTURE_WRAP_T, GL_REPEAT);
+    state->SetTexture(tile);
+  }
+  state->SetMaterial(Color(0.4f, 0.4f, 0.4f), Color(1.0f, 1.0f, 1.0f), Color(0.0f, 0.0f, 0.0f), 0.0f);
+  GeometryPtr geometry = Geometry::Create(m.contextWeak);
+  geometry->SetVertexArray(array);
+  geometry->SetRenderState(state);
+
+  std::vector<int> index;
+  index.push_back(1);
+  index.push_back(2);
+  index.push_back(3);
+  index.push_back(4);
+  std::vector<int> normalIndex;
+  normalIndex.push_back(1);
+  normalIndex.push_back(1);
+  normalIndex.push_back(1);
+  normalIndex.push_back(1);
+  geometry->AddFace(index, index, normalIndex);
+
+
+  m.root->AddNode(geometry);
+}
+void
+BrowserWorld::AddControllerPointer() {
+  VertexArrayPtr array = VertexArray::Create(m.contextWeak);
+  const float kLength = -5.0f;
+  const float kHeight = 0.0008f;
+
+  array->AppendVertex(Vector(-kHeight, -kHeight, 0.0f)); // Bottom left
+  array->AppendVertex(Vector(kHeight, -kHeight, 0.0f)); // Bottom right
+  array->AppendVertex(Vector(kHeight, kHeight, 0.0f)); // Top right
+  array->AppendVertex(Vector(-kHeight, kHeight, 0.0f)); // Top left
+  array->AppendVertex(Vector(0.0f, 0.0f, kLength)); // Tip
+
+  array->AppendNormal(Vector(-1.0f, -1.0f, 0.0f).Normalize()); // Bottom left
+  array->AppendNormal(Vector(1.0f, -1.0f, 0.0f).Normalize()); // Bottom right
+  array->AppendNormal(Vector(1.0f, 1.0f, 0.0f).Normalize()); // Top right
+  array->AppendNormal(Vector(-1.0f, 1.0f, 0.0f).Normalize()); // Top left
+  array->AppendNormal(Vector(0.0f, 0.0f, -1.0f).Normalize()); // in to the screen
+
+
+  RenderStatePtr state = RenderState::Create(m.contextWeak);
+  state->SetMaterial(Color(0.6f, 0.0f, 0.0f), Color(1.0f, 0.0f, 0.0f), Color(0.0f, 0.0f, 0.0f), 0.0f);
+  GeometryPtr geometry = Geometry::Create(m.contextWeak);
+  geometry->SetVertexArray(array);
+  geometry->SetRenderState(state);
+
+  std::vector<int> index;
+  std::vector<int> uvIndex;
+
+  index.push_back(1);
+  index.push_back(2);
+  index.push_back(5);
+  geometry->AddFace(index, uvIndex, index);
+
+  index.clear();
+  index.push_back(2);
+  index.push_back(3);
+  index.push_back(5);
+  geometry->AddFace(index, uvIndex, index);
+
+  index.clear();
+  index.push_back(3);
+  index.push_back(4);
+  index.push_back(5);
+  geometry->AddFace(index, uvIndex, index);
+
+  index.clear();
+  index.push_back(4);
+  index.push_back(1);
+  index.push_back(5);
+  geometry->AddFace(index, uvIndex, index);
+
+  for (ControllerRecord& record: m.controllers) {
+    record.controller->AddNode(geometry);
+  }
+}
+
+

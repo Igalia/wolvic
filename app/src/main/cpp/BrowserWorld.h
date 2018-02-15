@@ -33,12 +33,15 @@ public:
   void Draw();
 
   void SetSurfaceTexture(const std::string& aName, jobject& aSurface);
-  void CreateBrowser();
 
 protected:
   struct State;
   BrowserWorld(State& aState);
   ~BrowserWorld();
+
+  void CreateBrowser();
+  void CreateFloor();
+  void AddControllerPointer();
 
 private:
   State& m;

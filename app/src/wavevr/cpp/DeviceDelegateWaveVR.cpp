@@ -1,4 +1,5 @@
 #include "DeviceDelegateWaveVR.h"
+#include "ElbowModel.h"
 
 #include "vrb/CameraEye.h"
 #include "vrb/ConcreteClass.h"
@@ -34,6 +35,7 @@ struct DeviceDelegateWaveVR::State {
   uint32_t renderWidth;
   uint32_t renderHeight;
   WVR_DevicePosePair_t devicePairs[WVR_DEVICE_COUNT_LEVEL_1];
+  ElbowModelPtr elbow;
   State()
       : isRunning(true)
       , near(0.1f)
@@ -102,6 +104,7 @@ struct DeviceDelegateWaveVR::State {
     FillFBOQueue(leftTextureQueue, leftFBOQueue);
     rightTextureQueue = WVR_ObtainTextureQueue(WVR_TextureTarget_2D, WVR_TextureFormat_RGBA, WVR_TextureType_UnsignedByte, renderWidth, renderHeight, 0);
     FillFBOQueue(rightTextureQueue, rightFBOQueue);
+    elbow = ElbowModel::Create(ElbowModel::HandEnum::Right);
   }
 
   void Shutdown() {
@@ -341,8 +344,9 @@ DeviceDelegateWaveVR::StartFrame() {
   m.rightFBOIndex = WVR_GetAvailableTextureIndex(m.rightTextureQueue);
   // Update cameras
   WVR_GetSyncPose(WVR_PoseOriginModel_OriginOnHead, m.devicePairs, WVR_DEVICE_COUNT_LEVEL_1);
+  vrb::Matrix hmd = vrb::Matrix::Identity();
   if (m.devicePairs[WVR_DEVICE_HMD].pose.isValidPose) {
-    vrb::Matrix hmd = vrb::Matrix::FromColumnMajor(m.devicePairs[WVR_DEVICE_HMD].pose.poseMatrix.m);
+    hmd = vrb::Matrix::FromColumnMajor(m.devicePairs[WVR_DEVICE_HMD].pose.poseMatrix.m);
     m.cameras[m.cameraIndex(CameraEnum::Left)]->SetHeadTransform(hmd);
     m.cameras[m.cameraIndex(CameraEnum::Right)]->SetHeadTransform(hmd);
   } else {
@@ -363,8 +367,11 @@ DeviceDelegateWaveVR::StartFrame() {
     if (!pose.isValidPose) {
       continue;
     }
-
-    m.controller = vrb::Matrix::FromColumnMajor(pose.poseMatrix.m);
+    vrb::Matrix controllerTransform = vrb::Matrix::FromColumnMajor(pose.poseMatrix.m);
+    if (m.elbow) {
+      controllerTransform = m.elbow->GetTransform(hmd, controllerTransform);
+    }
+    m.controller = controllerTransform;
   }
 }
 

@@ -64,6 +64,7 @@ int main(int argc, char *argv[]) {
   VRB_CHECK(glClearColor(0.0, 0.0, 0.0, 1.0));
   VRB_CHECK(glEnable(GL_DEPTH_TEST));
   VRB_CHECK(glEnable(GL_CULL_FACE));
+  VRB_CHECK(glEnable(GL_BLEND));
   // VRB_CHECK(glDisable(GL_CULL_FACE));
   while(!sJavaInitialized) {
     sQueue->ProcessRunnables();
