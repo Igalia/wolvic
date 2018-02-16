@@ -19,6 +19,7 @@ add_library( # Sets the name of the library.
              SHARED
 
              # Provides a relative path to your source file(s).
+             src/main/cpp/BrowserWindow.cpp
              src/main/cpp/BrowserWorld.cpp
              src/main/cpp/ElbowModel.cpp
              src/main/cpp/vrb/src/CameraEye.cpp

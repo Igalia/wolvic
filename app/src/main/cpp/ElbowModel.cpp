@@ -37,7 +37,7 @@ ElbowModel::GetTransform(const vrb::Matrix& aHeadTransform, const vrb::Matrix& a
   vrb::Vector arm = aDeviceRotation.MultiplyDirection(m.lowerArm);
   vrb::Vector offset = aHeadTransform.MultiplyPosition(m.elbowOffset);
   m.result = aDeviceRotation.PreMultiply(vrb::Matrix::Position(offset + arm));
-  return m.result; // .TranslateInPlace(offset);
+  return m.result;
 }
 
 ElbowModel::ElbowModel(State& aState) : m(aState) {}

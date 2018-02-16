@@ -4,6 +4,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "BrowserWorld.h"
+#include "BrowserWindow.h"
 #include "vrb/CameraSimple.h"
 #include "vrb/Color.h"
 #include "vrb/ConcreteClass.h"
@@ -104,6 +105,7 @@ namespace crow {
 
 struct BrowserWorld::State {
   BrowserWorldWeakPtr self;
+  BrowserWindowPtr window;
   SurfaceObserverPtr surfaceObserver;
   DeviceDelegatePtr device;
   bool paused;
@@ -114,10 +116,8 @@ struct BrowserWorld::State {
   ParserObjPtr parser;
   GroupPtr root;
   LightPtr light;
-  TransformPtr browser;
   int32_t controllerCount;
   std::vector<ControllerRecord> controllers;
-  TextureSurfacePtr browserSurface;
   CullVisitorPtr cullVisitor;
   DrawableListPtr drawList;
   CameraPtr leftCamera;
@@ -137,9 +137,10 @@ struct BrowserWorld::State {
     root = Group::Create(contextWeak);
     light = Light::Create(contextWeak);
     root->AddLight(light);
-    browserSurface = TextureSurface::Create(contextWeak, "browser");
     cullVisitor = CullVisitor::Create(contextWeak);
     drawList = DrawableList::Create(contextWeak);
+    window = BrowserWindow::Create(contextWeak);
+    root->AddNode(window->GetRoot());
   }
 };
 
@@ -212,9 +213,6 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
             kSetSurfaceTextureSignature);
   }
 
-  if (!m.browser) {
-    CreateBrowser();
-  }
   if ((m.controllers.size() == 0) && (m.controllerCount > 0)) {
     for (int32_t ix = 0; ix < m.controllerCount; ix++) {
       ControllerRecord record(ix);
@@ -232,7 +230,6 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
 void
 BrowserWorld::InitializeGL() {
   if (m.context) {
-
     if (!m.glInitialized) {
       m.glInitialized = m.context->InitializeGL();
     }
@@ -275,10 +272,15 @@ BrowserWorld::Draw() {
   }
   m.device->ProcessEvents();
   m.context->Update();
+  m.window->SetTransform(Matrix::Position(Vector(0.0f, -3.0f, -18.0f)));
   for (ControllerRecord& record: m.controllers) {
-    record.controller->SetTransform(m.device->GetControllerTransform(record.index));
+    vrb::Matrix transform = m.device->GetControllerTransform(record.index);
+    record.controller->SetTransform(transform);
+    vrb::Vector result;
+    if (m.window->TestControllerIntersection(transform, result)) {
+      VRB_LOG("Got intersection at: %s", result.ToString().c_str());
+    }
   }
-  m.browser->SetTransform(Matrix::Position(Vector(0.0f, 0.0f, -18.0f)));
   m.drawList->Reset();
   m.root->Cull(*m.cullVisitor, *m.drawList);
   m.device->StartFrame();
@@ -293,7 +295,9 @@ void
 BrowserWorld::SetSurfaceTexture(const std::string& aName, jobject& aSurface) {
   if (m.env && m.activity && m.setSurfaceTextureMethod) {
     jstring name = m.env->NewStringUTF(aName.c_str());
-    m.env->CallVoidMethod(m.activity, m.setSurfaceTextureMethod, name, aSurface, 1920, 1080);
+    int32_t width = 0, height = 0;
+    m.window->GetSurfaceTextureSize(width, height);
+    m.env->CallVoidMethod(m.activity, m.setSurfaceTextureMethod, name, aSurface, width, height);
     m.env->DeleteLocalRef(name);
   }
 }
@@ -303,68 +307,10 @@ BrowserWorld::BrowserWorld(State& aState) : m(aState) {}
 BrowserWorld::~BrowserWorld() {}
 
 void
-BrowserWorld::CreateBrowser() {
-  VertexArrayPtr array = VertexArray::Create(m.contextWeak);
-  const float kWidth = 9.0f;
-  const float kHeight = kWidth * 0.5625f;
-  array->AppendVertex(Vector(-kWidth, -kHeight, 0.0f)); // Bottom left
-  array->AppendVertex(Vector(kWidth, -kHeight, 0.0f)); // Bottom right
-  array->AppendVertex(Vector(kWidth, kHeight, 0.0f)); // Top right
-  array->AppendVertex(Vector(-kWidth, kHeight, 0.0f)); // Top left
-
-  array->AppendUV(Vector(0.0f, 1.0f, 0.0f));
-  array->AppendUV(Vector(1.0f, 1.0f, 0.0f));
-  array->AppendUV(Vector(1.0f, 0.0f, 0.0f));
-  array->AppendUV(Vector(0.0f, 0.0f, 0.0f));
-
-  const Vector kNormal(0.0f, 0.0f, 1.0f); // out of the screen
-  array->AppendNormal(kNormal);
-
-  RenderStatePtr state = RenderState::Create(m.contextWeak);
-  state->SetTexture(m.browserSurface);
-  state->SetMaterial(Color(0.4f, 0.4f, 0.4f), Color(1.0f, 1.0f, 1.0f), Color(0.0f, 0.0f, 0.0f),
-                     0.0f);
-  GeometryPtr geometry = Geometry::Create(m.contextWeak);
-  geometry->SetVertexArray(array);
-  geometry->SetRenderState(state);
-
-  std::vector<int> index;
-  index.push_back(1);
-  index.push_back(2);
-  index.push_back(3);
-  index.push_back(4);
-  std::vector<int> normalIndex;
-  normalIndex.push_back(1);
-  normalIndex.push_back(1);
-  normalIndex.push_back(1);
-  normalIndex.push_back(1);
-  geometry->AddFace(index, index, normalIndex);
-
-  // Draw the back for now
-  index.clear();
-  index.push_back(1);
-  index.push_back(4);
-  index.push_back(3);
-  index.push_back(2);
-
-  array->AppendNormal(-kNormal);
-  normalIndex.clear();
-  normalIndex.push_back(2);
-  normalIndex.push_back(2);
-  normalIndex.push_back(2);
-  normalIndex.push_back(2);
-  geometry->AddFace(index, index, normalIndex);
-
-  m.browser = Transform::Create(m.contextWeak);
-  m.browser->AddNode(geometry);
-  m.root->AddNode(m.browser);
-}
-
-void
 BrowserWorld::CreateFloor() {
   VertexArrayPtr array = VertexArray::Create(m.contextWeak);
   const float kLength = 5.0f;
-  const float kFloor = -2.0f;
+  const float kFloor = 0.0f;
   array->AppendVertex(Vector(-kLength, kFloor, kLength)); // Bottom left
   array->AppendVertex(Vector(kLength, kFloor, kLength)); // Bottom right
   array->AppendVertex(Vector(kLength, kFloor, -kLength)); // Top right
@@ -403,7 +349,6 @@ BrowserWorld::CreateFloor() {
   normalIndex.push_back(1);
   normalIndex.push_back(1);
   geometry->AddFace(index, index, normalIndex);
-
 
   m.root->AddNode(geometry);
 }

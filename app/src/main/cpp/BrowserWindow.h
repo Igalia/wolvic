@@ -12,6 +12,8 @@
 #include <memory>
 #include <string>
 
+namespace crow {
+
 class BrowserWindow;
 typedef std::shared_ptr<BrowserWindow> BrowserWindowPtr;
 
@@ -21,9 +23,10 @@ public:
   const std::string& GetSurfaceTextureName() const;
   void GetSurfaceTextureSize(int32_t& aWidth, int32_t& aHeight) const;
   void GetWindowMinAndMax(vrb::Vector& aMin, vrb::Vector& aMax) const;
-  bool TestControllerIntersection(const vrb::Matrix& aContorller, vrb::Vector& aResult) const;
+  bool TestControllerIntersection(const vrb::Matrix& aController, vrb::Vector& aResult) const;
   const vrb::Matrix GetTransform() const;
   void SetTransform(const vrb::Matrix& aTransform);
+  vrb::NodePtr GetRoot();
 protected:
   struct State;
   BrowserWindow(State& aState, vrb::ContextWeak& aContext);
@@ -33,5 +36,7 @@ private:
   BrowserWindow() = delete;
   VRB_NO_DEFAULTS(BrowserWindow)
 };
+
+} // namespace crow
 
 #endif //VRBROWSER_BROWSERWINDOW_H

@@ -342,6 +342,7 @@ DeviceDelegateWaveVR::GetControllerTransform(const int32_t aWhichController) {
 
 void
 DeviceDelegateWaveVR::StartFrame() {
+  static const vrb::Vector kAverageHeight(0.0f, 1.7f, 0.0f);
   m.leftFBOIndex = WVR_GetAvailableTextureIndex(m.leftTextureQueue);
   m.rightFBOIndex = WVR_GetAvailableTextureIndex(m.rightTextureQueue);
   // Update cameras
@@ -349,6 +350,7 @@ DeviceDelegateWaveVR::StartFrame() {
   vrb::Matrix hmd = vrb::Matrix::Identity();
   if (m.devicePairs[WVR_DEVICE_HMD].pose.isValidPose) {
     hmd = vrb::Matrix::FromColumnMajor(m.devicePairs[WVR_DEVICE_HMD].pose.poseMatrix.m);
+    hmd.TranslateInPlace(kAverageHeight);
     m.cameras[m.cameraIndex(CameraEnum::Left)]->SetHeadTransform(hmd);
     m.cameras[m.cameraIndex(CameraEnum::Right)]->SetHeadTransform(hmd);
   } else {
@@ -372,6 +374,8 @@ DeviceDelegateWaveVR::StartFrame() {
     vrb::Matrix controllerTransform = vrb::Matrix::FromColumnMajor(pose.poseMatrix.m);
     if (m.elbow) {
       controllerTransform = m.elbow->GetTransform(hmd, controllerTransform);
+    } else {
+      controllerTransform.TranslateInPlace(kAverageHeight);
     }
     m.controller = controllerTransform;
   }

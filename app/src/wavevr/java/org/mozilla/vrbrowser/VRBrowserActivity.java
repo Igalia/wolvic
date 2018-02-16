@@ -23,7 +23,7 @@ public class VRBrowserActivity extends VRActivity {
 
     private static GeckoSession mSession;
     private static Surface mBrowserSurface;
-    static final String DEFAULT_URL = "https://mozvr.com";
+    static final String DEFAULT_URL = "https://vr.mozilla.org";
     static String LOGTAG = "VRB";
 
     public VRBrowserActivity() {

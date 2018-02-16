@@ -38,7 +38,6 @@ protected:
   struct State;
   BrowserWorld(State& aState);
   ~BrowserWorld();
-  void CreateBrowser();
   void CreateFloor();
   void AddControllerPointer();
 private:
