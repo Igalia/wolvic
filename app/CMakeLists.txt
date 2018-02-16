@@ -24,6 +24,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/ElbowModel.cpp
              src/main/cpp/vrb/src/CameraEye.cpp
              src/main/cpp/vrb/src/CameraSimple.cpp
+             src/main/cpp/vrb/src/ClassLoaderAndroid.cpp
              src/main/cpp/vrb/src/Context.cpp
              src/main/cpp/vrb/src/CullVisitor.cpp
              src/main/cpp/vrb/src/Drawable.cpp

@@ -182,6 +182,14 @@ BrowserWindow::TestControllerIntersection(const vrb::Matrix& aController, vrb::V
     return true;
   }
 
+  if (result.x() > m.windowMax.x()) { result.x() = m.windowMax.x(); }
+  else if (result.x() < m.windowMin.x()) { result.x() = m.windowMin.x(); }
+
+  if (result.y() > m.windowMax.y()) { result.y() = m.windowMax.y(); }
+  else if (result.y() < m.windowMin.y()) { result.y() = m.windowMin.y(); }
+
+  m.pointer->SetTransform(vrb::Matrix::Position(result));
+
   return false;
 }
 

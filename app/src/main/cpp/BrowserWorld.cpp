@@ -192,7 +192,7 @@ BrowserWorld::IsPaused() const {
 void
 BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetManager) {
   if (m.context) {
-    m.context->InitializeJava(aEnv, aAssetManager);
+    m.context->InitializeJava(aEnv, aActivity, aAssetManager);
   }
   m.env = aEnv;
   if (!m.env) {
