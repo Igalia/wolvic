@@ -23,7 +23,8 @@ public:
   const std::string& GetSurfaceTextureName() const;
   void GetSurfaceTextureSize(int32_t& aWidth, int32_t& aHeight) const;
   void GetWindowMinAndMax(vrb::Vector& aMin, vrb::Vector& aMax) const;
-  bool TestControllerIntersection(const vrb::Matrix& aController, vrb::Vector& aResult) const;
+  bool TestControllerIntersection(const vrb::Matrix& aController, vrb::Vector& aResult, bool& aIsInWindow) const;
+  void ConvertToBrowserCoordinates(const vrb::Vector& point, int32_t& aX, int32_t& aY) const;
   const vrb::Matrix GetTransform() const;
   void SetTransform(const vrb::Matrix& aTransform);
   vrb::NodePtr GetRoot();

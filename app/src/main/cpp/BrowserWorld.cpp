@@ -32,6 +32,8 @@ namespace {
 
 static const char* kSetSurfaceTextureName = "setSurfaceTexture";
 static const char* kSetSurfaceTextureSignature = "(Ljava/lang/String;Landroid/graphics/SurfaceTexture;II)V";
+static const char* kUpdateMotionEventName = "updateMotionEvent";
+static const char* kUpdateMotionEventSignature = "(IIZII)V";
 static const char* kTileTexture = "tile.png";
 class SurfaceObserver;
 typedef std::shared_ptr<SurfaceObserver> SurfaceObserverPtr;
@@ -79,8 +81,11 @@ SurfaceObserver::SurfaceTextureCreationError(const std::string& aName, const std
 
 struct ControllerRecord {
   int32_t index;
+  bool pressed;
+  int32_t xx;
+  int32_t yy;
   TransformPtr controller;
-  ControllerRecord(const int32_t aIndex) : index(aIndex) {}
+  ControllerRecord(const int32_t aIndex) : index(aIndex), pressed(false), xx(0), yy(0) {}
   ControllerRecord(const ControllerRecord& aRecord) : index(aRecord.index), controller(aRecord.controller) {}
   ControllerRecord(ControllerRecord&& aRecord) : index(aRecord.index), controller(std::move(aRecord.controller)) {}
   ControllerRecord& operator=(const ControllerRecord& aRecord) {
@@ -125,10 +130,10 @@ struct BrowserWorld::State {
   JNIEnv* env;
   jobject activity;
   jmethodID setSurfaceTextureMethod;
-
+  jmethodID updateMotionEventMethod;
 
   State() : paused(true), glInitialized(false), controllerCount(0), env(nullptr), activity(nullptr),
-            setSurfaceTextureMethod(nullptr) {
+            setSurfaceTextureMethod(nullptr), updateMotionEventMethod(nullptr) {
     context = Context::Create();
     contextWeak = context;
     factory = NodeFactoryObj::Create(contextWeak);
@@ -206,11 +211,19 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
   if (!clazz) {
     return;
   }
+
   m.setSurfaceTextureMethod = m.env->GetMethodID(clazz, kSetSurfaceTextureName,
                                                  kSetSurfaceTextureSignature);
   if (!m.setSurfaceTextureMethod) {
     VRB_LOG("Failed to find Java method: %s %s", kSetSurfaceTextureName,
             kSetSurfaceTextureSignature);
+  }
+
+  m.updateMotionEventMethod = m.env->GetMethodID(clazz, kUpdateMotionEventName, kUpdateMotionEventSignature);
+
+  if (!m.updateMotionEventMethod) {
+    VRB_LOG("Failed to find Java method: %s %s", kUpdateMotionEventName,
+            kUpdateMotionEventSignature);
   }
 
   if ((m.controllers.size() == 0) && (m.controllerCount > 0)) {
@@ -243,6 +256,7 @@ BrowserWorld::ShutdownJava() {
   }
   m.activity = nullptr;
   m.setSurfaceTextureMethod = nullptr;
+  m.updateMotionEventMethod = nullptr;
 }
 
 void
@@ -277,8 +291,20 @@ BrowserWorld::Draw() {
     vrb::Matrix transform = m.device->GetControllerTransform(record.index);
     record.controller->SetTransform(transform);
     vrb::Vector result;
-    if (m.window->TestControllerIntersection(transform, result)) {
-      VRB_LOG("Got intersection at: %s", result.ToString().c_str());
+    bool isInWindow = false;
+    if (m.window->TestControllerIntersection(transform, result, isInWindow)) {
+      if (m.updateMotionEventMethod) {
+        int32_t theX = 0, theY = 0;
+        m.window->ConvertToBrowserCoordinates(result, theX, theY);
+        bool changed = false; // not used yet.
+        bool pressed = m.device->GetControllerButtonState(record.index, 0, changed);
+        if ((record.xx != theX) || (record.yy != theY) || (record.pressed != pressed)) {
+          m.env->CallVoidMethod(m.activity, m.updateMotionEventMethod, 0, record.index, pressed, theX, theY);
+          record.xx = theX;
+          record.yy = theY;
+          record.pressed = pressed;
+        }
+      }
     }
   }
   m.drawList->Reset();

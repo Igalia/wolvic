@@ -340,6 +340,20 @@ DeviceDelegateWaveVR::GetControllerTransform(const int32_t aWhichController) {
   return m.controller;
 }
 
+bool
+DeviceDelegateWaveVR::GetControllerButtonState(const int32_t aWhichController, const int32_t aWhichButton, bool& aChangedState) {
+  bool result = false;
+  static WVR_DeviceType controllerArray[] = {WVR_DeviceType_Controller_Right}; //, WVR_DeviceType_Controller_Left};
+  int controllerCount = sizeof(controllerArray)/sizeof(controllerArray[0]);
+
+  for (int idx = 0; idx < controllerCount; idx++) {
+    if (WVR_GetInputButtonState(controllerArray[idx], WVR_InputId_Alias1_Touchpad)) {
+      result = true;
+    }
+  }
+  return result;
+}
+
 void
 DeviceDelegateWaveVR::StartFrame() {
   static const vrb::Vector kAverageHeight(0.0f, 1.7f, 0.0f);

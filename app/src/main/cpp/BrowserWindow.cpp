@@ -152,7 +152,7 @@ BrowserWindow::GetWindowMinAndMax(vrb::Vector& aMin, vrb::Vector& aMax) const {
 static const float kEpsilon = 0.00000001f;
 
 bool
-BrowserWindow::TestControllerIntersection(const vrb::Matrix& aController, vrb::Vector& aResult) const {
+BrowserWindow::TestControllerIntersection(const vrb::Matrix& aController, vrb::Vector& aResult, bool& aIsInWindow) const {
   vrb::Vector point;
   vrb::Vector direction(0.0f, 0.0f, -1.0f); // forward;
   point = aController.MultiplyPosition(point);
@@ -177,11 +177,12 @@ BrowserWindow::TestControllerIntersection(const vrb::Matrix& aController, vrb::V
 
   if ((result.x() >= m.windowMin.x()) && (result.y() >= m.windowMin.y()) &&(result.z() >= m.windowMin.z()) &&
       (result.x() <= m.windowMax.x()) && (result.y() <= m.windowMax.y()) &&(result.z() <= m.windowMax.z())) {
-    aResult = result;
-    m.pointer->SetTransform(vrb::Matrix::Position(result));
-    return true;
+    aIsInWindow = true;
   }
 
+  aResult = result;
+
+  // Clamp to keep pointer in window.
   if (result.x() > m.windowMax.x()) { result.x() = m.windowMax.x(); }
   else if (result.x() < m.windowMin.x()) { result.x() = m.windowMin.x(); }
 
@@ -190,7 +191,20 @@ BrowserWindow::TestControllerIntersection(const vrb::Matrix& aController, vrb::V
 
   m.pointer->SetTransform(vrb::Matrix::Position(result));
 
-  return false;
+  return true;
+}
+
+void
+BrowserWindow::ConvertToBrowserCoordinates(const vrb::Vector& point, int32_t& aX, int32_t& aY) const {
+  vrb::Vector value = point;
+  // Clamp value to window bounds.
+  if (value.x() > m.windowMax.x()) { value.x() = m.windowMax.x(); }
+  else if (value.x() < m.windowMin.x()) { value.x() = m.windowMin.x(); }
+  // Convert to window coordinates.
+  if (value.y() > m.windowMax.y()) { value.y() = m.windowMax.y(); }
+  else if (value.y() < m.windowMin.y()) { value.y() = m.windowMin.y(); }
+  aX = (int32_t)(((value.x() - m.windowMin.x()) / (m.windowMax.x() - m.windowMin.x())) * (float)m.textureWidth);
+  aY = (int32_t)(((m.windowMax.y() - value.y()) / (m.windowMax.y() - m.windowMin.y())) * (float)m.textureHeight);
 }
 
 const vrb::Matrix

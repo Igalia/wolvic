@@ -76,6 +76,7 @@ android {
         main {
             java.srcDirs = [
                     'app',
+                    'src/common/shared',
                     'src/main/cpp/vrb/android/java'
             ]
         }

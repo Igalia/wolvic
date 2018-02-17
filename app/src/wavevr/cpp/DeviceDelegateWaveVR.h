@@ -21,6 +21,7 @@ public:
   const std::string GetControllerModelName(const int32_t aWhichContorller) const override;
   void ProcessEvents() override;
   const vrb::Matrix& GetControllerTransform(const int32_t aWhichController) override;
+  bool GetControllerButtonState(const int32_t aWhichController, const int32_t aWhichButton, bool& aChangedState) override;
   void StartFrame() override;
   void BindEye(const CameraEnum aWhich) override;
   void EndFrame() override;

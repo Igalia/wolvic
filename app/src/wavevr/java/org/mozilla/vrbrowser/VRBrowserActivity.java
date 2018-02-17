@@ -1,3 +1,8 @@
+/* -*- Mode: Java; c-basic-offset: 4; tab-width: 4; indent-tabs-mode: nil; -*-
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.vrbrowser;
 
 import com.htc.vr.sdk.VRActivity;
@@ -7,9 +12,8 @@ import android.content.res.AssetManager;
 import android.graphics.SurfaceTexture;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Keep;
 import android.util.Log;
-
-
 import android.view.Surface;
 
 import org.mozilla.gecko.GeckoSession;
@@ -23,7 +27,7 @@ public class VRBrowserActivity extends VRActivity {
 
     private static GeckoSession mSession;
     private static Surface mBrowserSurface;
-    static final String DEFAULT_URL = "https://vr.mozilla.org";
+    static final String DEFAULT_URL = "https://www.polygon.com/"; // https://vr.mozilla.org";
     static String LOGTAG = "VRB";
 
     public VRBrowserActivity() {
@@ -67,6 +71,7 @@ public class VRBrowserActivity extends VRActivity {
         mSession.loadUri(uriValue);
     }
 
+    @Keep
     private void setSurfaceTexture(String aName, final SurfaceTexture aTexture, final int aWidth, final int aHeight) {
         runOnUiThread(new Runnable() {
             public void run() {
@@ -83,6 +88,16 @@ public class VRBrowserActivity extends VRActivity {
             mSession.acquireDisplay().surfaceChanged(mBrowserSurface, aWidth, aHeight);
             mSession.openWindow(this);
         }
+    }
+
+    @Keep
+    private void updateMotionEvent(final int aTarget, final int aDevice, final boolean aPressed, final int aX, final int aY) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                MotionEventGenerator.dispatch(mSession.getPanZoomController(), aDevice, aPressed, aX, aY);
+            }
+        });
     }
 
     private native void queueRunnable(Runnable aRunnable);
