@@ -58,3 +58,6 @@ fastlane/
 app/.externalNativeBuild
 
 *.swp
+
+# Testing Oculus signature
+oculussig_*

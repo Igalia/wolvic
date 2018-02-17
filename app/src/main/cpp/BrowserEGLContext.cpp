@@ -103,7 +103,14 @@ BrowserEGLContext::Initialize(ANativeWindow *aNativeWindow) {
     return false;
   }
 
-  mSurface = eglCreateWindowSurface(mDisplay, mConfig, mNativeWindow, nullptr);
+  //mSurface = eglCreateWindowSurface(mDisplay, mConfig, mNativeWindow, nullptr);
+  const EGLint surfaceAttribs[] = {
+  		EGL_WIDTH, 16,
+  		EGL_HEIGHT, 16,
+  		EGL_NONE
+  };
+
+  mSurface = eglCreatePbufferSurface(mDisplay, mConfig, surfaceAttribs);
 
   if (mSurface == EGL_NO_SURFACE) {
     VRB_LOG("eglCreateWindowSurface() failed: %s", ErrorToString(eglGetError()));
@@ -161,7 +168,14 @@ BrowserEGLContext::SurfaceChanged(ANativeWindow *aWindow) {
     return;
   }
   mNativeWindow = aWindow;
-  mSurface = eglCreateWindowSurface(mDisplay, mConfig, aWindow, nullptr);
+
+  const EGLint surfaceAttribs[] = {
+  		EGL_WIDTH, 16,
+  		EGL_HEIGHT, 16,
+  		EGL_NONE
+  };
+
+  mSurface = eglCreatePbufferSurface(mDisplay, mConfig, surfaceAttribs);
   if (mSurface == EGL_NO_SURFACE) {
     VRB_LOG("eglCreateWindowSurface() failed: %s", ErrorToString(eglGetError()));
   }

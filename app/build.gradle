@@ -47,8 +47,9 @@ android {
         oculusvr {
             externalNativeBuild {
                 cmake {
-                    cppFlags " -I" + file("${project.rootDir}/third_party/ovr_mobile/VrApi/Include").absolutePath
-                    arguments "-DVR_SDK_LIB=oculusvr-lib"
+                    cppFlags " -I" + file("${project.rootDir}/third_party/ovr_mobile/VrApi/Include").absolutePath +
+                             " -I" + file("${project.rootDir}/app/src/oculusvr/cpp").absolutePath
+                    arguments "-DVR_SDK_LIB=oculusvr-lib", "-DOCULUSVR=ON"
                 }
             }
         }

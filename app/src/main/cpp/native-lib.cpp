@@ -14,6 +14,10 @@
 #include <android_native_app_glue.h>
 #include <cstdlib>
 #include <vrb/RunnableQueue.h>
+#include "DeviceDelegateOculusVR.h"
+#include <android/looper.h>
+#include <unistd.h>
+
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -21,10 +25,23 @@
 
 using namespace crow;
 
+static
+jobject GetAssetManager(JNIEnv * aEnv, jobject aActivity) {
+  jclass clazz = aEnv->GetObjectClass(aActivity);
+  jmethodID method = aEnv->GetMethodID(clazz, "getAssets", "()Landroid/content/res/AssetManager;");
+  jobject result =  aEnv->CallObjectMethod(aActivity, method);
+  if (!result) {
+    VRB_LOG("Failed to get AssetManager instance!");
+  }
+  return result;
+}
+
+
 struct AppContext {
   vrb::RunnableQueuePtr mQueue;
   BrowserWorldPtr mWorld;
   BrowserEGLContextPtr mEgl;
+  DeviceDelegateOculusVRPtr mDevice;
 };
 
 void
@@ -48,6 +65,11 @@ CommandCallback(android_app *aApp, int32_t aCmd) {
         ctx->mEgl->SurfaceChanged(aApp->window);
         ctx->mEgl->MakeCurrent();
       }
+
+      if (!ctx->mWorld->IsPaused() && !ctx->mDevice->IsInVRMode()) {
+        ctx->mDevice->EnterVR(*ctx->mEgl);
+      }
+
       break;
 
     // The existing ANativeWindow needs to be terminated.  Upon receiving this command,
@@ -55,6 +77,9 @@ CommandCallback(android_app *aApp, int32_t aCmd) {
     // after calling android_app_exec_cmd it will be set to NULL.
     case APP_CMD_TERM_WINDOW:
       VRB_LOG("APP_CMD_TERM_WINDOW");
+      if (ctx->mDevice->IsInVRMode()) {
+         ctx->mDevice->LeaveVR();
+      }
       if (ctx->mEgl) {
         ctx->mEgl->SurfaceDestroyed();
       }
@@ -63,12 +88,18 @@ CommandCallback(android_app *aApp, int32_t aCmd) {
     case APP_CMD_PAUSE:
       VRB_LOG("APP_CMD_PAUSE");
       ctx->mWorld->Pause();
+      if (ctx->mDevice->IsInVRMode()) {
+        ctx->mDevice->LeaveVR();
+      }
       break;
 
     // The app's activity has been resumed.
     case APP_CMD_RESUME:
       VRB_LOG("APP_CMD_RESUME");
       ctx->mWorld->Resume();
+      if (!ctx->mDevice->IsInVRMode() && ctx->mEgl && ctx->mEgl->IsSurfaceReady() ) {
+         ctx->mDevice->EnterVR(*ctx->mEgl);
+      }
       break;
 
     // the app's activity is being destroyed,
@@ -83,10 +114,8 @@ CommandCallback(android_app *aApp, int32_t aCmd) {
   }
 }
 
-
 void
 android_main(android_app *aAppState) {
-  pthread_setname_np(pthread_self(), "VRRenderer");
 
   if (!ALooper_forThread()) {
     ALooper_prepare(0);
@@ -100,6 +129,15 @@ android_main(android_app *aAppState) {
   auto appContext = std::make_shared<AppContext>();
   appContext->mQueue = vrb::RunnableQueue::Create(aAppState->activity->vm);
   appContext->mWorld = BrowserWorld::Create();
+
+  // Create device delegate
+  appContext->mDevice = DeviceDelegateOculusVR::Create(appContext->mWorld->GetWeakContext(), aAppState);
+  appContext->mWorld->RegisterDeviceDelegate(appContext->mDevice);
+
+  // Initialize java
+  auto assetManager = GetAssetManager(jniEnv, aAppState->activity->clazz);
+  appContext->mWorld->InitializeJava(jniEnv, aAppState->activity->clazz, assetManager);
+  jniEnv->DeleteLocalRef(assetManager);
 
   // Set up activity & SurfaceView life cycle callbacks
   aAppState->userData = appContext.get();
@@ -129,9 +167,11 @@ android_main(android_app *aAppState) {
         exit(0);
       }
     }
-
+    if (appContext->mEgl) {
+      appContext->mEgl->MakeCurrent();
+    }
     appContext->mQueue->ProcessRunnables();
-    if (!appContext->mWorld->IsPaused() && appContext->mEgl && appContext->mEgl->IsSurfaceReady()) {
+    if (!appContext->mWorld->IsPaused() && appContext->mDevice->IsInVRMode()) {
       VRB_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
       appContext->mWorld->Draw();
     }

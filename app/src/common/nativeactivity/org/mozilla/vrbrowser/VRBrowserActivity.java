@@ -7,10 +7,13 @@ package org.mozilla.vrbrowser;
 
 import android.app.NativeActivity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Keep;
 import android.util.Log;
 import android.graphics.SurfaceTexture;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.SurfaceView;
 
@@ -18,7 +21,7 @@ import org.mozilla.gecko.GeckoSession;
 
 public class VRBrowserActivity extends NativeActivity {
     static String LOGTAG = "VRBrowser";
-    static final String DEFAULT_URL = "https://mozvr.com";
+    static final String DEFAULT_URL = "https://www.youtube.com";
     // Used to load the 'native-lib' library on application startup.
     static {
         System.loadLibrary("native-lib");
@@ -36,8 +39,11 @@ public class VRBrowserActivity extends NativeActivity {
             mSession = new GeckoSession();
         }
         getWindow().takeSurface(null);
+        getWindow().takeInputQueue(null);
         SurfaceView surfaceView = new SurfaceView(this);
         surfaceView.getHolder().addCallback(this);
+        surfaceView.setZOrderOnTop(true);
+        surfaceView.setBackgroundColor(Color.BLUE);
 
         setContentView(surfaceView);
         loadFromIntent(getIntent());
@@ -96,5 +102,20 @@ public class VRBrowserActivity extends NativeActivity {
             mSession.acquireDisplay().surfaceChanged(mBrowserSurface, aWidth, aHeight);
             mSession.openWindow(this);
         }
+    }
+
+    @Keep
+    private void updateMotionEvent(final int aTarget, final int aDevice, final boolean aPressed, final int aX, final int aY) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                MotionEventGenerator.dispatch(mSession.getPanZoomController(), aDevice, aPressed, aX, aY);
+            }
+        });
+    }
+
+    @Override
+    public void onBackPressed() {
+       mSession.goBack();
     }
 }

@@ -24,6 +24,10 @@ public:
   bool IsSurfaceReady() const;
   bool MakeCurrent();
   bool SwapBuffers();
+
+  EGLDisplay Display() const { return mDisplay; }
+  EGLContext Context() const { return mContext; }
+
   BrowserEGLContext();
 private:
   EGLint mMajorVersion;
