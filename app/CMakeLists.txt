@@ -61,6 +61,13 @@ target_sources(
     src/wavevr/cpp/native-lib.cpp
     src/wavevr/cpp/DeviceDelegateWaveVR.cpp
     )
+elseif(GOOGLEVR)
+target_sources(
+    native-lib
+    PUBLIC
+    src/googlevr/cpp/native-lib.cpp
+    src/googlevr/cpp/DeviceDelegateGoogleVR.cpp
+    )
 else()
 target_sources(
     native-lib

@@ -1,16 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.mozilla.vrbrowser">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="org.mozilla.vrbrowser">
     <application>
         <activity android:name=".VRBrowserActivity"
             android:screenOrientation="landscape"
             android:enableVrMode="@string/gvr_vr_mode_component"
-            android:resizeableActivity="false">
+            android:resizeableActivity="false"
+            tools:node="replace">
             <meta-data android:name="android.app.lib_name" android:value="native-lib" />
-            <!-- Intent filter that enables this app to be launched from the
-Daydream Home menu. -->
+            <!-- Intent filter that enables this app to be launched from the Daydream Home menu. -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="com.google.intent.category.DAYDREAM"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="com.google.intent.category.DAYDREAM"/>
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".BrowserActivity"
+            android:launchMode="singleInstance"
+            android:configChanges="orientation|screenSize|keyboard|keyboardHidden|navigation"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER"/>
+                <category android:name="android.intent.category.APP_BROWSER" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.LAUNCHER" />
+                <data android:scheme="http" />
+                <data android:scheme="https" />
             </intent-filter>
         </activity>
     </application>

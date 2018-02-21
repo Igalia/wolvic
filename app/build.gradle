@@ -33,14 +33,16 @@ android {
         }
     }
 
-
+    packagingOptions {
+        pickFirst '/lib/*/libgvr.so'
+    }
 
     productFlavors {
         googlevr {
             externalNativeBuild {
                 cmake {
                     cppFlags " -I" + file("${project.rootDir}/gvr-android-sdk/libraries/headers").absolutePath
-                    arguments "-DVR_SDK_LIB=googlevr-lib"
+                    arguments "-DVR_SDK_LIB=googlevr-lib", "-DGOOGLEVR=ON"
                 }
             }
         }
@@ -84,7 +86,7 @@ android {
 
         googlevr {
             java.srcDirs = [
-                    'src/common/nativeactivity'
+                    'src/googlevr/java'
             ]
         }
 
