@@ -14,9 +14,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Keep;
 import android.util.Log;
-import android.view.Surface;
 
 import org.mozilla.gecko.GeckoSession;
+
+import java.util.HashMap;
 
 public class VRBrowserActivity extends VRActivity {
 
@@ -25,10 +26,11 @@ public class VRBrowserActivity extends VRActivity {
         System.loadLibrary("native-lib");
     }
 
-    private static GeckoSession mSession;
-    private static Surface mBrowserSurface;
     static final String DEFAULT_URL = "https://www.polygon.com/"; // https://vr.mozilla.org";
-    static String LOGTAG = "VRB";
+    static final String LOGTAG = "VRB";
+    String mTargetUrl;
+    BrowserWidget mCurrentBrowser;
+    HashMap<Integer, Widget> mWidgets;
 
     public VRBrowserActivity() {
         super.setUsingRenderBaseActivity(true);
@@ -38,15 +40,14 @@ public class VRBrowserActivity extends VRActivity {
     protected void onCreate(Bundle savedInstanceState) {
         Log.e(LOGTAG,"In onCreate");
         super.onCreate(savedInstanceState);
-        if (mSession == null) {
-            mSession = new GeckoSession();
-        }
         queueRunnable(new Runnable() {
             @Override
             public void run() {
                 initializeJava(getAssets());
             }
         });
+
+        mWidgets = new HashMap<>();
 
         loadFromIntent(getIntent());
     }
@@ -64,38 +65,51 @@ public class VRBrowserActivity extends VRActivity {
         }
     }
 
-    private void loadFromIntent(final Intent intent) {
+    void loadFromIntent(final Intent intent) {
         final Uri uri = intent.getData();
         Log.e(LOGTAG, "Load URI from intent: " + (uri != null ? uri.toString() : DEFAULT_URL));
-        String uriValue = (uri != null ? uri.toString() : DEFAULT_URL);
-        mSession.loadUri(uriValue);
+        mTargetUrl = (uri != null ? uri.toString() : DEFAULT_URL);
+        if (mCurrentBrowser != null) {
+            mCurrentBrowser.getSession().loadUri(mTargetUrl);
+            mTargetUrl = "";
+        }
     }
 
-    @Keep
-    private void setSurfaceTexture(String aName, final SurfaceTexture aTexture, final int aWidth, final int aHeight) {
-        runOnUiThread(new Runnable() {
-            public void run() {
-                createBrowser(aTexture, aWidth, aHeight);
+    void createWidget(final int aType, final int aHandle, SurfaceTexture aTexture, int aWidth, int aHeight) {
+        Widget widget = null;
+        if (aType == Widget.Browser) {
+            mCurrentBrowser = new BrowserWidget(this, new GeckoSession());
+            if (mTargetUrl != "") {
+                mCurrentBrowser.getSession().loadUri(mTargetUrl);
+                mTargetUrl = "";
             }
-        });
-    }
+            widget = mCurrentBrowser;
+        }
 
-    private void createBrowser(SurfaceTexture aTexture, int aWidth, int aHeight) {
-        if (aTexture != null) {
-            //Log.e(LOGTAG,"In createBrowser");
-            aTexture.setDefaultBufferSize(aWidth, aHeight);
-            mBrowserSurface = new Surface(aTexture);
-            mSession.acquireDisplay().surfaceChanged(mBrowserSurface, aWidth, aHeight);
-            mSession.openWindow(this);
+        if (widget != null) {
+            widget.setSurfaceTexture(aTexture, aWidth, aHeight);
+            mWidgets.put(aHandle, widget);
         }
     }
 
     @Keep
-    private void updateMotionEvent(final int aTarget, final int aDevice, final boolean aPressed, final int aX, final int aY) {
+    void dispatchCreateWidget(final int aType, final int aHandle, final SurfaceTexture aTexture, final int aWidth, final int aHeight) {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                createWidget(aType, aHandle, aTexture, aWidth, aHeight);
+            }
+        });
+    }
+
+    @Keep
+    void updateMotionEvent(final int aHandle, final int aDevice, final boolean aPressed, final int aX, final int aY) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                MotionEventGenerator.dispatch(mSession.getPanZoomController(), aDevice, aPressed, aX, aY);
+                Widget widget = mWidgets.get(aHandle);
+                if (widget != null) {
+                    MotionEventGenerator.dispatch(widget, aDevice, aPressed, aX, aY);
+                }
             }
         });
     }

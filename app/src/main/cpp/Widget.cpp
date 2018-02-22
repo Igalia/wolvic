@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#include "BrowserWindow.h"
+#include "Widget.h"
 #include "vrb/ConcreteClass.h"
 
 #include "vrb/Color.h"
@@ -21,11 +21,13 @@ namespace crow {
 
 const float kWidth = 9.0f;
 const float kHeight = kWidth * 0.5625f;
-static uint32_t sWindowCount;
+static uint32_t sWidgetCount;
 
-struct BrowserWindow::State {
+struct Widget::State {
   vrb::ContextWeak context;
   std::string name;
+  int32_t type;
+  uint32_t handle;
   int32_t textureWidth;
   int32_t textureHeight;
   vrb::Vector windowMin;
@@ -36,16 +38,20 @@ struct BrowserWindow::State {
   vrb::TransformPtr pointer;
 
   State()
-      : textureWidth(1920)
+      : type(0)
+      , handle(0)
+      , textureWidth(1920)
       , textureHeight(1080)
       , windowMin(-kWidth, 0.0f, 0.0f)
       , windowMax(kWidth, kHeight * 2.0f, 0.0f)
   {}
 
-  void Initialize() {
-    name = "crow::BrowserWindow-";
-    name += std::to_string(sWindowCount);
-    sWindowCount++;
+  void Initialize(const int32_t aType) {
+    type = aType;
+    handle = sWidgetCount;
+    sWidgetCount++;
+    name = "crow::Widget-";
+    name += std::to_string(type) + "-" + std::to_string(handle);
     surface = vrb::TextureSurface::Create(context, name);
     vrb::VertexArrayPtr array = vrb::VertexArray::Create(context);
     const vrb::Vector bottomRight(windowMax.x(), windowMin.y(), windowMin.z());
@@ -127,24 +133,47 @@ struct BrowserWindow::State {
   }
 };
 
-BrowserWindowPtr
-BrowserWindow::Create(vrb::ContextWeak aContext) {
-  return std::make_shared<vrb::ConcreteClass<BrowserWindow, BrowserWindow::State> >(aContext);
+WidgetPtr
+Widget::Create(vrb::ContextWeak aContext, const int32_t aType) {
+  WidgetPtr result = std::make_shared<vrb::ConcreteClass<Widget, Widget::State> >(aContext);
+  result->m.Initialize(aType);
+  return result;
+}
+
+WidgetPtr
+Widget::Create(vrb::ContextWeak aContext, const int aType, const int32_t aWidth, const int32_t aHeight, const vrb::Vector& aMin, const vrb::Vector& aMax) {
+  WidgetPtr result = std::make_shared<vrb::ConcreteClass<Widget, Widget::State> >(aContext);
+  result->m.textureWidth = aWidth;
+  result->m.textureHeight = aHeight;
+  result->m.windowMin = aMin;
+  result->m.windowMax = aMax;
+  result->m.Initialize(aType);
+  return result;
+}
+
+int32_t
+Widget::GetType() const {
+  return m.type;
+}
+
+uint32_t
+Widget::GetHandle() const {
+  return m.handle;
 }
 
 const std::string&
-BrowserWindow::GetSurfaceTextureName() const {
+Widget::GetSurfaceTextureName() const {
   return m.name;
 }
 
 void
-BrowserWindow::GetSurfaceTextureSize(int32_t& aWidth, int32_t& aHeight) const {
+Widget::GetSurfaceTextureSize(int32_t& aWidth, int32_t& aHeight) const {
   aWidth = m.textureWidth;
   aHeight = m.textureHeight;
 }
 
 void
-BrowserWindow::GetWindowMinAndMax(vrb::Vector& aMin, vrb::Vector& aMax) const {
+Widget::GetWidgetMinAndMax(vrb::Vector& aMin, vrb::Vector& aMax) const {
   aMin = m.windowMin;
   aMax = m.windowMax;
 }
@@ -152,14 +181,11 @@ BrowserWindow::GetWindowMinAndMax(vrb::Vector& aMin, vrb::Vector& aMax) const {
 static const float kEpsilon = 0.00000001f;
 
 bool
-BrowserWindow::TestControllerIntersection(const vrb::Matrix& aController, vrb::Vector& aResult, bool& aIsInWindow) const {
-  vrb::Vector point;
-  vrb::Vector direction(0.0f, 0.0f, -1.0f); // forward;
-  point = aController.MultiplyPosition(point);
-  direction = aController.MultiplyDirection(direction);
+Widget::TestControllerIntersection(const vrb::Vector& aStartPoint, const vrb::Vector& aDirection, vrb::Vector& aResult, bool& aIsInWidget, float& aDistance) const {
+  aDistance = -1.0f;
   vrb::Matrix modelView = m.root->GetTransform().Inverse();
-  point = modelView.MultiplyPosition(point);
-  direction = modelView.MultiplyDirection(direction);
+  vrb::Vector point = modelView.MultiplyPosition(aStartPoint);
+  vrb::Vector direction = modelView.MultiplyDirection(aDirection);
   const float dotNormals = direction.Dot(m.windowNormal);
   if (dotNormals > -kEpsilon) {
     // Not pointed at the plane
@@ -177,10 +203,12 @@ BrowserWindow::TestControllerIntersection(const vrb::Matrix& aController, vrb::V
 
   if ((result.x() >= m.windowMin.x()) && (result.y() >= m.windowMin.y()) &&(result.z() >= m.windowMin.z()) &&
       (result.x() <= m.windowMax.x()) && (result.y() <= m.windowMax.y()) &&(result.z() <= m.windowMax.z())) {
-    aIsInWindow = true;
+    aIsInWidget = true;
   }
 
   aResult = result;
+
+  aDistance = (aResult - point).Magnitude();
 
   // Clamp to keep pointer in window.
   if (result.x() > m.windowMax.x()) { result.x() = m.windowMax.x(); }
@@ -195,7 +223,7 @@ BrowserWindow::TestControllerIntersection(const vrb::Matrix& aController, vrb::V
 }
 
 void
-BrowserWindow::ConvertToBrowserCoordinates(const vrb::Vector& point, int32_t& aX, int32_t& aY) const {
+Widget::ConvertToWidgetCoordinates(const vrb::Vector& point, int32_t& aX, int32_t& aY) const {
   vrb::Vector value = point;
   // Clamp value to window bounds.
   if (value.x() > m.windowMax.x()) { value.x() = m.windowMax.x(); }
@@ -207,26 +235,30 @@ BrowserWindow::ConvertToBrowserCoordinates(const vrb::Vector& point, int32_t& aX
   aY = (int32_t)(((m.windowMax.y() - value.y()) / (m.windowMax.y() - m.windowMin.y())) * (float)m.textureHeight);
 }
 
+void
+Widget::ConvertToWorldCoordinates(const vrb::Vector& aPoint, vrb::Vector& aResult) const {
+  aResult = m.root->GetTransform().MultiplyPosition(aPoint);
+}
+
 const vrb::Matrix
-BrowserWindow::GetTransform() const {
+Widget::GetTransform() const {
   return m.root->GetTransform();
 }
 
 void
-BrowserWindow::SetTransform(const vrb::Matrix& aTransform) {
+Widget::SetTransform(const vrb::Matrix& aTransform) {
   m.root->SetTransform(aTransform);
 }
 
 vrb::NodePtr
-BrowserWindow::GetRoot() {
+Widget::GetRoot() {
   return m.root;
 }
 
-BrowserWindow::BrowserWindow(State& aState, vrb::ContextWeak& aContext) : m(aState) {
+Widget::Widget(State& aState, vrb::ContextWeak& aContext) : m(aState) {
   m.context = aContext;
-  m.Initialize();
 }
 
-BrowserWindow::~BrowserWindow() {}
+Widget::~Widget() {}
 
 } // namespace crow

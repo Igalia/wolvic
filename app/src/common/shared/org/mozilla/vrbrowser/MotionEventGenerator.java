@@ -5,8 +5,6 @@
 
 package org.mozilla.vrbrowser;
 
-import org.mozilla.gecko.gfx.NativePanZoomController;
-
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -36,7 +34,7 @@ class MotionEventGenerator {
 
     private static SparseArray<Device> devices = new SparseArray<Device>();
 
-    static void dispatch(NativePanZoomController aController, int aDevice, boolean aPressed, int aX, int aY) {
+    static void dispatch(Widget aWidget, int aDevice, boolean aPressed, int aX, int aY) {
         Device device = devices.get(aDevice);
         if (device == null) {
             device = new Device();
@@ -84,9 +82,9 @@ class MotionEventGenerator {
                 /*source*/ InputDevice.SOURCE_TOUCHSCREEN,
                 /*flags*/ 0);
         if (hover) {
-            aController.onMotionEvent(event);
+            aWidget.onHoverEvent(event);
             return;
         }
-        aController.onTouchEvent(event);
+        aWidget.onTouchEvent(event);
     }
 }

@@ -4,7 +4,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "BrowserWorld.h"
-#include "BrowserWindow.h"
+#include "Widget.h"
 #include "vrb/CameraSimple.h"
 #include "vrb/Color.h"
 #include "vrb/ConcreteClass.h"
@@ -30,8 +30,11 @@ using namespace vrb;
 
 namespace {
 
-static const char* kSetSurfaceTextureName = "setSurfaceTexture";
-static const char* kSetSurfaceTextureSignature = "(Ljava/lang/String;Landroid/graphics/SurfaceTexture;II)V";
+// Must be kept in sync with Widget.java
+static const int BrowserWidgetType = 0;
+
+static const char* kDispatchCreateWidgetName = "dispatchCreateWidget";
+static const char* kDispatchCreateWidgetSignature = "(IILandroid/graphics/SurfaceTexture;II)V";
 static const char* kUpdateMotionEventName = "updateMotionEvent";
 static const char* kUpdateMotionEventSignature = "(IIZII)V";
 static const char* kTileTexture = "tile.png";
@@ -81,14 +84,16 @@ SurfaceObserver::SurfaceTextureCreationError(const std::string& aName, const std
 
 struct ControllerRecord {
   int32_t index;
+  uint32_t widget;
   bool pressed;
   int32_t xx;
   int32_t yy;
   TransformPtr controller;
-  ControllerRecord(const int32_t aIndex) : index(aIndex), pressed(false), xx(0), yy(0) {}
-  ControllerRecord(const ControllerRecord& aRecord) : index(aRecord.index), controller(aRecord.controller) {}
-  ControllerRecord(ControllerRecord&& aRecord) : index(aRecord.index), controller(std::move(aRecord.controller)) {}
+  ControllerRecord(const int32_t aIndex) : widget(0), index(aIndex), pressed(false), xx(0), yy(0) {}
+  ControllerRecord(const ControllerRecord& aRecord) : widget(aRecord.widget), index(aRecord.index), controller(aRecord.controller) {}
+  ControllerRecord(ControllerRecord&& aRecord) : widget(aRecord.widget), index(aRecord.index), controller(std::move(aRecord.controller)) {}
   ControllerRecord& operator=(const ControllerRecord& aRecord) {
+    widget = aRecord.widget;
     index = aRecord.index;
     controller = aRecord.controller;
     return *this;
@@ -96,6 +101,10 @@ struct ControllerRecord {
 
   ControllerRecord& operator=(ControllerRecord&& aRecord) {
     index = aRecord.index;
+    widget = aRecord.widget;
+    pressed = aRecord.pressed;
+    xx = aRecord.xx;
+    yy = aRecord.yy;
     controller = std::move(aRecord.controller);
     return *this;
   }
@@ -110,7 +119,7 @@ namespace crow {
 
 struct BrowserWorld::State {
   BrowserWorldWeakPtr self;
-  BrowserWindowPtr window;
+  std::vector<WidgetPtr> widgets;
   SurfaceObserverPtr surfaceObserver;
   DeviceDelegatePtr device;
   bool paused;
@@ -127,13 +136,15 @@ struct BrowserWorld::State {
   DrawableListPtr drawList;
   CameraPtr leftCamera;
   CameraPtr rightCamera;
+  float nearClip;
+  float farClip;
   JNIEnv* env;
   jobject activity;
-  jmethodID setSurfaceTextureMethod;
+  jmethodID dispatchCreateWidgetMethod;
   jmethodID updateMotionEventMethod;
 
-  State() : paused(true), glInitialized(false), controllerCount(0), env(nullptr), activity(nullptr),
-            setSurfaceTextureMethod(nullptr), updateMotionEventMethod(nullptr) {
+  State() : paused(true), glInitialized(false), controllerCount(0), env(nullptr), nearClip(0.1f), farClip(100.0f), activity(nullptr),
+            dispatchCreateWidgetMethod(nullptr), updateMotionEventMethod(nullptr) {
     context = Context::Create();
     contextWeak = context;
     factory = NodeFactoryObj::Create(contextWeak);
@@ -144,8 +155,10 @@ struct BrowserWorld::State {
     root->AddLight(light);
     cullVisitor = CullVisitor::Create(contextWeak);
     drawList = DrawableList::Create(contextWeak);
-    window = BrowserWindow::Create(contextWeak);
-    root->AddNode(window->GetRoot());
+    WidgetPtr browser = Widget::Create(contextWeak, BrowserWidgetType);
+    browser->SetTransform(Matrix::Position(Vector(0.0f, -3.0f, -18.0f)));
+    root->AddNode(browser->GetRoot());
+    widgets.push_back(std::move(browser));
   }
 };
 
@@ -171,7 +184,7 @@ BrowserWorld::RegisterDeviceDelegate(DeviceDelegatePtr aDelegate) {
     m.leftCamera = m.device->GetCamera(DeviceDelegate::CameraEnum::Left);
     m.rightCamera = m.device->GetCamera(DeviceDelegate::CameraEnum::Right);
     m.controllerCount = m.device->GetControllerCount();
-    m.device->SetClipPlanes(0.1f, 100.f);
+    m.device->SetClipPlanes(m.nearClip, m.farClip);
   } else {
     m.leftCamera = m.rightCamera = nullptr;
     m.controllers.clear();
@@ -212,11 +225,11 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
     return;
   }
 
-  m.setSurfaceTextureMethod = m.env->GetMethodID(clazz, kSetSurfaceTextureName,
-                                                 kSetSurfaceTextureSignature);
-  if (!m.setSurfaceTextureMethod) {
-    VRB_LOG("Failed to find Java method: %s %s", kSetSurfaceTextureName,
-            kSetSurfaceTextureSignature);
+  m.dispatchCreateWidgetMethod = m.env->GetMethodID(clazz, kDispatchCreateWidgetName,
+                                                 kDispatchCreateWidgetSignature);
+  if (!m.dispatchCreateWidgetMethod) {
+    VRB_LOG("Failed to find Java method: %s %s", kDispatchCreateWidgetName,
+            kDispatchCreateWidgetSignature);
   }
 
   m.updateMotionEventMethod = m.env->GetMethodID(clazz, kUpdateMotionEventName, kUpdateMotionEventSignature);
@@ -255,7 +268,7 @@ BrowserWorld::ShutdownJava() {
     m.env->DeleteGlobalRef(m.activity);
   }
   m.activity = nullptr;
-  m.setSurfaceTextureMethod = nullptr;
+  m.dispatchCreateWidgetMethod = nullptr;
   m.updateMotionEventMethod = nullptr;
 }
 
@@ -286,24 +299,39 @@ BrowserWorld::Draw() {
   }
   m.device->ProcessEvents();
   m.context->Update();
-  m.window->SetTransform(Matrix::Position(Vector(0.0f, -3.0f, -18.0f)));
   for (ControllerRecord& record: m.controllers) {
     vrb::Matrix transform = m.device->GetControllerTransform(record.index);
     record.controller->SetTransform(transform);
-    vrb::Vector result;
-    bool isInWindow = false;
-    if (m.window->TestControllerIntersection(transform, result, isInWindow)) {
-      if (m.updateMotionEventMethod) {
-        int32_t theX = 0, theY = 0;
-        m.window->ConvertToBrowserCoordinates(result, theX, theY);
-        bool changed = false; // not used yet.
-        bool pressed = m.device->GetControllerButtonState(record.index, 0, changed);
-        if ((record.xx != theX) || (record.yy != theY) || (record.pressed != pressed)) {
-          m.env->CallVoidMethod(m.activity, m.updateMotionEventMethod, 0, record.index, pressed, theX, theY);
-          record.xx = theX;
-          record.yy = theY;
-          record.pressed = pressed;
+    vrb::Vector start = transform.MultiplyPosition(vrb::Vector());
+    vrb::Vector direction = transform.MultiplyDirection(vrb::Vector(0.0f, 0.0f, -1.0f));
+    WidgetPtr hitWidget;
+    float hitDistance = m.farClip;
+    vrb::Vector hitPoint;
+    for (WidgetPtr widget: m.widgets) {
+      vrb::Vector result;
+      float distance = 0.0f;
+      bool isInWidget = false;
+      if (widget->TestControllerIntersection(start, direction, result, isInWidget, distance)) {
+        if (isInWidget && (distance < hitDistance)) {
+          hitWidget = widget;
+          hitDistance = distance;
+          hitPoint = result;
         }
+      }
+    }
+    if (m.updateMotionEventMethod && hitWidget) {
+      int32_t theX = 0, theY = 0;
+      hitWidget->ConvertToWidgetCoordinates(hitPoint, theX, theY);
+      bool changed = false; // not used yet.
+      bool pressed = m.device->GetControllerButtonState(record.index, 0, changed);
+      const uint32_t handle = hitWidget->GetHandle();
+      if ((record.xx != theX) || (record.yy != theY) || (record.pressed != pressed) || record.widget != handle) {
+        m.env->CallVoidMethod(m.activity, m.updateMotionEventMethod, handle, record.index, pressed,
+                              theX, theY);
+        record.widget = handle;
+        record.xx = theX;
+        record.yy = theY;
+        record.pressed = pressed;
       }
     }
   }
@@ -319,12 +347,16 @@ BrowserWorld::Draw() {
 
 void
 BrowserWorld::SetSurfaceTexture(const std::string& aName, jobject& aSurface) {
-  if (m.env && m.activity && m.setSurfaceTextureMethod) {
-    jstring name = m.env->NewStringUTF(aName.c_str());
-    int32_t width = 0, height = 0;
-    m.window->GetSurfaceTextureSize(width, height);
-    m.env->CallVoidMethod(m.activity, m.setSurfaceTextureMethod, name, aSurface, width, height);
-    m.env->DeleteLocalRef(name);
+  if (m.env && m.activity && m.dispatchCreateWidgetMethod) {
+    for (WidgetPtr& widget: m.widgets) {
+      if (aName == widget->GetSurfaceTextureName()) {
+        int32_t width = 0, height = 0;
+        widget->GetSurfaceTextureSize(width, height);
+        m.env->CallVoidMethod(m.activity, m.dispatchCreateWidgetMethod, widget->GetType(),
+                              widget->GetHandle(), aSurface, width, height);
+        return;
+      }
+    }
   }
 }
 

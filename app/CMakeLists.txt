@@ -19,7 +19,7 @@ add_library( # Sets the name of the library.
              SHARED
 
              # Provides a relative path to your source file(s).
-             src/main/cpp/BrowserWindow.cpp
+             src/main/cpp/Widget.cpp
              src/main/cpp/BrowserWorld.cpp
              src/main/cpp/ElbowModel.cpp
              src/main/cpp/vrb/src/CameraEye.cpp
@@ -32,6 +32,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/vrb/src/FBO.cpp
              src/main/cpp/vrb/src/FileReaderAndroid.cpp
              src/main/cpp/vrb/src/GLError.cpp
+             src/main/cpp/vrb/src/GLExtensions.cpp
              src/main/cpp/vrb/src/Geometry.cpp
              src/main/cpp/vrb/src/Group.cpp
              src/main/cpp/vrb/src/Light.cpp
@@ -127,5 +128,5 @@ target_link_libraries( # Specifies the target library.
                        ${log-lib}
                        ${android-lib}
                        EGL
-                       GLESv2
+                       GLESv3
                       )
