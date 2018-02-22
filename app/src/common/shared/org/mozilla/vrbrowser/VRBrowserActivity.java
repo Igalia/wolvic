@@ -5,8 +5,6 @@
 
 package org.mozilla.vrbrowser;
 
-import com.htc.vr.sdk.VRActivity;
-
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.SurfaceTexture;
@@ -19,7 +17,7 @@ import org.mozilla.gecko.GeckoSession;
 
 import java.util.HashMap;
 
-public class VRBrowserActivity extends VRActivity {
+public class VRBrowserActivity extends PlatformActivity {
 
     // Used to load the 'native-lib' library on application startup.
     static {
@@ -32,23 +30,12 @@ public class VRBrowserActivity extends VRActivity {
     BrowserWidget mCurrentBrowser;
     HashMap<Integer, Widget> mWidgets;
 
-    public VRBrowserActivity() {
-        super.setUsingRenderBaseActivity(true);
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.e(LOGTAG,"In onCreate");
         super.onCreate(savedInstanceState);
-        queueRunnable(new Runnable() {
-            @Override
-            public void run() {
-                initializeJava(getAssets());
-            }
-        });
 
         mWidgets = new HashMap<>();
-
         loadFromIntent(getIntent());
     }
 
@@ -113,7 +100,4 @@ public class VRBrowserActivity extends VRActivity {
             }
         });
     }
-
-    private native void queueRunnable(Runnable aRunnable);
-    private native void initializeJava(AssetManager aAssets);
 }

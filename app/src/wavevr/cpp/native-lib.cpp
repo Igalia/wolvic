@@ -29,7 +29,7 @@ static DeviceDelegateWaveVRPtr sDevice;
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
-    Java_org_mozilla_vrbrowser_VRBrowserActivity_##method_name
+    Java_org_mozilla_vrbrowser_PlatformActivity_##method_name
 
 extern "C" {
 
