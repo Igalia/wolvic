@@ -13,6 +13,7 @@
 #include "vrb/RenderState.h"
 #include "vrb/SurfaceTextureFactory.h"
 #include "vrb/TextureSurface.h"
+#include "vrb/Toggle.h"
 #include "vrb/Transform.h"
 #include "vrb/Vector.h"
 #include "vrb/VertexArray.h"
@@ -33,8 +34,10 @@ struct Widget::State {
   vrb::Vector windowMin;
   vrb::Vector windowMax;
   vrb::Vector windowNormal;
-  vrb::TransformPtr root;
+  vrb::TogglePtr root;
+  vrb::TransformPtr transform;
   vrb::TextureSurfacePtr surface;
+  vrb::TogglePtr pointerToggle;
   vrb::TransformPtr pointer;
 
   State()
@@ -103,8 +106,10 @@ struct Widget::State {
     normalIndex.push_back(2);
     geometry->AddFace(index, index, normalIndex);
 
-    root = vrb::Transform::Create(context);
-    root->AddNode(geometry);
+    transform = vrb::Transform::Create(context);
+    transform->AddNode(geometry);
+    root = vrb::Toggle::Create(context);
+    root->AddNode(transform);
     const float kOffset = 0.1f;
     array = vrb::VertexArray::Create(context);
     array->AppendVertex(vrb::Vector(0.1f, -0.2f, kOffset));
@@ -129,7 +134,9 @@ struct Widget::State {
     geometry->SetRenderState(state);
     pointer = vrb::Transform::Create(context);
     pointer->AddNode(geometry);
-    root->AddNode(pointer);
+    pointerToggle = vrb::Toggle::Create(context);
+    pointerToggle->AddNode(pointer);
+    transform->AddNode(pointerToggle);
   }
 };
 
@@ -195,7 +202,10 @@ static const float kEpsilon = 0.00000001f;
 bool
 Widget::TestControllerIntersection(const vrb::Vector& aStartPoint, const vrb::Vector& aDirection, vrb::Vector& aResult, bool& aIsInWidget, float& aDistance) const {
   aDistance = -1.0f;
-  vrb::Matrix modelView = m.root->GetTransform().Inverse();
+  if (!m.root->IsEnabled(*m.transform)) {
+    return false;
+  }
+  vrb::Matrix modelView = m.transform->GetTransform().Inverse();
   vrb::Vector point = modelView.MultiplyPosition(aStartPoint);
   vrb::Vector direction = modelView.MultiplyDirection(aDirection);
   const float dotNormals = direction.Dot(m.windowNormal);
@@ -249,17 +259,27 @@ Widget::ConvertToWidgetCoordinates(const vrb::Vector& point, int32_t& aX, int32_
 
 void
 Widget::ConvertToWorldCoordinates(const vrb::Vector& aPoint, vrb::Vector& aResult) const {
-  aResult = m.root->GetTransform().MultiplyPosition(aPoint);
+  aResult = m.transform->GetTransform().MultiplyPosition(aPoint);
 }
 
 const vrb::Matrix
 Widget::GetTransform() const {
-  return m.root->GetTransform();
+  return m.transform->GetTransform();
 }
 
 void
 Widget::SetTransform(const vrb::Matrix& aTransform) {
-  m.root->SetTransform(aTransform);
+  m.transform->SetTransform(aTransform);
+}
+
+void
+Widget::ToggleWidget(const bool aEnabled) {
+  m.root->ToggleAll(aEnabled);
+}
+
+void
+Widget::TogglePointer(const bool aEnabled) {
+  m.pointerToggle->ToggleAll(aEnabled);
 }
 
 vrb::NodePtr

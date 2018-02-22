@@ -306,6 +306,7 @@ BrowserWorld::Draw() {
   }
   m.device->ProcessEvents();
   m.context->Update();
+  std::vector<Widget*> active;
   for (ControllerRecord& record: m.controllers) {
     vrb::Matrix transform = m.device->GetControllerTransform(record.index);
     record.controller->SetTransform(transform);
@@ -315,6 +316,7 @@ BrowserWorld::Draw() {
     float hitDistance = m.farClip;
     vrb::Vector hitPoint;
     for (WidgetPtr widget: m.widgets) {
+      widget->TogglePointer(false);
       vrb::Vector result;
       float distance = 0.0f;
       bool isInWidget = false;
@@ -327,6 +329,7 @@ BrowserWorld::Draw() {
       }
     }
     if (m.updateMotionEventMethod && hitWidget) {
+      active.push_back(hitWidget.get());
       int32_t theX = 0, theY = 0;
       hitWidget->ConvertToWidgetCoordinates(hitPoint, theX, theY);
       bool changed = false; // not used yet.
@@ -342,6 +345,10 @@ BrowserWorld::Draw() {
       }
     }
   }
+  for (Widget* widget: active) {
+    widget->TogglePointer(true);
+  }
+  active.clear();
   m.drawList->Reset();
   m.root->Cull(*m.cullVisitor, *m.drawList);
   m.device->StartFrame();

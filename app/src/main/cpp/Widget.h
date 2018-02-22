@@ -32,6 +32,8 @@ public:
   void ConvertToWorldCoordinates(const vrb::Vector& aPoint, vrb::Vector& aResult) const;
   const vrb::Matrix GetTransform() const;
   void SetTransform(const vrb::Matrix& aTransform);
+  void ToggleWidget(const bool aEnabled);
+  void TogglePointer(const bool aEnabled);
   vrb::NodePtr GetRoot();
 protected:
   struct State;
