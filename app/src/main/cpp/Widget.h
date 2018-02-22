@@ -20,6 +20,7 @@ typedef std::shared_ptr<Widget> WidgetPtr;
 class Widget {
 public:
   static WidgetPtr Create(vrb::ContextWeak aContext, const int aType);
+  static WidgetPtr Create(vrb::ContextWeak aContext, const int aType, const int32_t aWidth, const int32_t aHeight, float aWorldWidth);
   static WidgetPtr Create(vrb::ContextWeak aContext, const int aType, const int32_t aWidth, const int32_t aHeight, const vrb::Vector& aMin, const vrb::Vector& aMax);
   int32_t GetType() const;
   uint32_t GetHandle() const;

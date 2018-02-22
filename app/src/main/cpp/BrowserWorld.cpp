@@ -31,7 +31,8 @@ using namespace vrb;
 namespace {
 
 // Must be kept in sync with Widget.java
-static const int BrowserWidgetType = 0;
+static const int WidgetTypeBrowser = 0;
+static const int WidgetTypeURLBar = 1;
 
 static const char* kDispatchCreateWidgetName = "dispatchCreateWidget";
 static const char* kDispatchCreateWidgetSignature = "(IILandroid/graphics/SurfaceTexture;II)V";
@@ -155,10 +156,16 @@ struct BrowserWorld::State {
     root->AddLight(light);
     cullVisitor = CullVisitor::Create(contextWeak);
     drawList = DrawableList::Create(contextWeak);
-    WidgetPtr browser = Widget::Create(contextWeak, BrowserWidgetType);
+
+    WidgetPtr browser = Widget::Create(contextWeak, WidgetTypeBrowser);
     browser->SetTransform(Matrix::Position(Vector(0.0f, -3.0f, -18.0f)));
     root->AddNode(browser->GetRoot());
     widgets.push_back(std::move(browser));
+
+    WidgetPtr urlbar = Widget::Create(contextWeak, WidgetTypeURLBar, 1920, 200, 9.0f);
+    urlbar->SetTransform(Matrix::Position(Vector(0.0f, 7.5f, -18.0f)));
+    root->AddNode(urlbar->GetRoot());
+    widgets.push_back(std::move(urlbar));
   }
 };
 

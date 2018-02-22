@@ -71,6 +71,8 @@ public class VRBrowserActivity extends PlatformActivity {
                 mTargetUrl = "";
             }
             widget = mCurrentBrowser;
+        } else if (aType == Widget.URLBar) {
+            widget = (Widget) getLayoutInflater().inflate(R.layout.url, null);
         }
 
         if (widget != null) {
