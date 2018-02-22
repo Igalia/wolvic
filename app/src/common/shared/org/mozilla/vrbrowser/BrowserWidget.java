@@ -32,12 +32,12 @@ class BrowserWidget implements Widget {
     }
 
     @Override
-    public void onTouchEvent(MotionEvent aEvent) {
+    public void handleTouchEvent(MotionEvent aEvent) {
       mSession.getPanZoomController().onTouchEvent(aEvent);
     }
 
     @Override
-    public void onHoverEvent(MotionEvent aEvent) {
+    public void handleHoverEvent(MotionEvent aEvent) {
         mSession.getPanZoomController().onMotionEvent(aEvent);
     }
 

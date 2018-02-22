@@ -82,9 +82,9 @@ class MotionEventGenerator {
                 /*source*/ InputDevice.SOURCE_TOUCHSCREEN,
                 /*flags*/ 0);
         if (hover) {
-            aWidget.onHoverEvent(event);
+            aWidget.handleHoverEvent(event);
             return;
         }
-        aWidget.onTouchEvent(event);
+        aWidget.handleTouchEvent(event);
     }
 }

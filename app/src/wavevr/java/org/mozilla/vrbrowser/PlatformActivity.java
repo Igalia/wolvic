@@ -8,6 +8,7 @@ package org.mozilla.vrbrowser;
 import com.htc.vr.sdk.VRActivity;
 import android.content.res.AssetManager;
 import android.os.Bundle;
+import android.view.View;
 
 public class PlatformActivity extends VRActivity {
     public PlatformActivity() {
@@ -24,6 +25,10 @@ public class PlatformActivity extends VRActivity {
             }
         });
     }
+
+    protected void addWidget(View aView, int aWidth, int aHeight) {
+    }
+
 
     protected native void queueRunnable(Runnable aRunnable);
     protected native void initializeJava(AssetManager aAssets);

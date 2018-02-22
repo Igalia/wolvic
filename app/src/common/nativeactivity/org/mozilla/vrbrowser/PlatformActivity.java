@@ -10,10 +10,13 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceView;
+import android.view.View;
+import android.widget.FrameLayout;
 
 public class PlatformActivity extends NativeActivity {
     static String LOGTAG = "VRBrowser";
     private SurfaceView mSurfaceView;
+    private FrameLayout mFrameLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,11 +25,19 @@ public class PlatformActivity extends NativeActivity {
 
         getWindow().takeSurface(null);
         getWindow().takeInputQueue(null);
+
+        mFrameLayout = new FrameLayout(this);
         SurfaceView surfaceView = new SurfaceView(this);
+        surfaceView.setClickable(true);
         surfaceView.getHolder().addCallback(this);
         surfaceView.setZOrderOnTop(true);
         surfaceView.setBackgroundColor(Color.BLUE);
+        mFrameLayout.addView(surfaceView, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
 
-        setContentView(surfaceView);
+        setContentView(mFrameLayout);
+    }
+
+    protected void addWidget(View aView, int aWidth, int aHeight) {
+        mFrameLayout.addView(aView, 0, new FrameLayout.LayoutParams(aWidth, aHeight));
     }
 }

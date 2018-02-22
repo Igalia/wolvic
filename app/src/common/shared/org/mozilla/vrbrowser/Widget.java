@@ -5,13 +5,13 @@
 
 package org.mozilla.vrbrowser;
 
-import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.view.MotionEvent;
 
-interface Widget {
+public interface Widget {
     int Browser = 0;
+    int URLBar = 1;
     void setSurfaceTexture(SurfaceTexture aTexture, final int aWidth, final int aHeight);
-    void onTouchEvent(MotionEvent aEvent);
-    void onHoverEvent(MotionEvent aEvent);
+    void handleTouchEvent(MotionEvent aEvent);
+    void handleHoverEvent(MotionEvent aEvent);
 }

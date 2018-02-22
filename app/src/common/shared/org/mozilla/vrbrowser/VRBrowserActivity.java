@@ -6,12 +6,12 @@
 package org.mozilla.vrbrowser;
 
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.graphics.SurfaceTexture;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Keep;
 import android.util.Log;
+import android.view.View;
 
 import org.mozilla.gecko.GeckoSession;
 
@@ -76,6 +76,11 @@ public class VRBrowserActivity extends PlatformActivity {
         if (widget != null) {
             widget.setSurfaceTexture(aTexture, aWidth, aHeight);
             mWidgets.put(aHandle, widget);
+        }
+
+        if (aType != Widget.Browser) {
+            // Add hidden UI widget to the platform window for invalidation
+            addWidget((View) widget, aWidth, aHeight);
         }
     }
 
