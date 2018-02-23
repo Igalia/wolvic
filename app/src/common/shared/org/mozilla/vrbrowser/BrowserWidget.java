@@ -10,6 +10,7 @@ import android.graphics.SurfaceTexture;
 import android.view.MotionEvent;
 import android.view.Surface;
 
+import org.mozilla.gecko.GeckoSessionSettings;
 import org.mozilla.gecko.gfx.NativePanZoomController;
 import org.mozilla.gecko.GeckoSession;
 
@@ -21,6 +22,8 @@ class BrowserWidget implements Widget {
     BrowserWidget(Context aContext, GeckoSession aSession) {
         mContext = aContext;
         mSession = aSession;
+        // Remove once e10s issues have been resolved.
+        mSession.getSettings().setBoolean(GeckoSessionSettings.USE_MULTIPROCESS, false);
     }
 
     @Override
