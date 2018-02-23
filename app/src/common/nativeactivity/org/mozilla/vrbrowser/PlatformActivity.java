@@ -15,7 +15,6 @@ import android.widget.FrameLayout;
 
 public class PlatformActivity extends NativeActivity {
     static String LOGTAG = "VRBrowser";
-    private SurfaceView mSurfaceView;
     private FrameLayout mFrameLayout;
 
     @Override
@@ -31,7 +30,6 @@ public class PlatformActivity extends NativeActivity {
         surfaceView.setClickable(true);
         surfaceView.getHolder().addCallback(this);
         surfaceView.setZOrderOnTop(true);
-        surfaceView.setBackgroundColor(Color.BLUE);
         mFrameLayout.addView(surfaceView, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
 
         setContentView(mFrameLayout);
