@@ -39,6 +39,7 @@ struct Widget::State {
   vrb::TextureSurfacePtr surface;
   vrb::TogglePtr pointerToggle;
   vrb::TransformPtr pointer;
+  vrb::NodePtr pointerGeometry;
 
   State()
       : type(0)
@@ -76,6 +77,7 @@ struct Widget::State {
     state->SetMaterial(vrb::Color(0.4f, 0.4f, 0.4f), vrb::Color(1.0f, 1.0f, 1.0f), vrb::Color(0.0f, 0.0f, 0.0f),
                        0.0f);
     vrb::GeometryPtr geometry = vrb::Geometry::Create(context);
+    pointerGeometry = geometry;
     geometry->SetVertexArray(array);
     geometry->SetRenderState(state);
 
@@ -285,6 +287,23 @@ Widget::TogglePointer(const bool aEnabled) {
 vrb::NodePtr
 Widget::GetRoot() {
   return m.root;
+}
+
+vrb::NodePtr
+Widget::GetPointerGeometry() {
+  return m.pointerGeometry;
+}
+
+void
+Widget::SetPointerGeometry(vrb::NodePtr& aNode) {
+  if (!aNode) {
+    return;
+  }
+  if (m.pointerGeometry) {
+    m.pointer->RemoveNode(*m.pointerGeometry);
+  }
+  m.pointerGeometry = aNode;
+  m.pointer->AddNode(aNode);
 }
 
 Widget::Widget(State& aState, vrb::ContextWeak& aContext) : m(aState) {

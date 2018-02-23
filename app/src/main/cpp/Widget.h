@@ -35,6 +35,8 @@ public:
   void ToggleWidget(const bool aEnabled);
   void TogglePointer(const bool aEnabled);
   vrb::NodePtr GetRoot();
+  vrb::NodePtr GetPointerGeometry();
+  void SetPointerGeometry(vrb::NodePtr& aNode);
 protected:
   struct State;
   Widget(State& aState, vrb::ContextWeak& aContext);
