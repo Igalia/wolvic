@@ -21,15 +21,17 @@
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
-    Java_org_mozilla_vrbrowser_VRBrowserActivity_##method_name
+    Java_org_mozilla_vrbrowser_PlatformActivity_##method_name
 
 using namespace crow;
 
-static
-jobject GetAssetManager(JNIEnv * aEnv, jobject aActivity) {
+namespace {
+
+jobject
+GetAssetManager(JNIEnv *aEnv, jobject aActivity) {
   jclass clazz = aEnv->GetObjectClass(aActivity);
   jmethodID method = aEnv->GetMethodID(clazz, "getAssets", "()Landroid/content/res/AssetManager;");
-  jobject result =  aEnv->CallObjectMethod(aActivity, method);
+  jobject result = aEnv->CallObjectMethod(aActivity, method);
   if (!result) {
     VRB_LOG("Failed to get AssetManager instance!");
   }
@@ -43,6 +45,10 @@ struct AppContext {
   BrowserEGLContextPtr mEgl;
   DeviceDelegateOculusVRPtr mDevice;
 };
+typedef std::shared_ptr<AppContext> AppContextPtr;
+
+AppContextPtr sAppContext;
+}
 
 void
 CommandCallback(android_app *aApp, int32_t aCmd) {
@@ -114,6 +120,8 @@ CommandCallback(android_app *aApp, int32_t aCmd) {
   }
 }
 
+extern "C" {
+
 void
 android_main(android_app *aAppState) {
 
@@ -126,21 +134,22 @@ android_main(android_app *aAppState) {
   (*aAppState->activity->vm).AttachCurrentThread(&jniEnv, NULL);
 
   // Create Browser context
-  auto appContext = std::make_shared<AppContext>();
-  appContext->mQueue = vrb::RunnableQueue::Create(aAppState->activity->vm);
-  appContext->mWorld = BrowserWorld::Create();
+  sAppContext = std::make_shared<AppContext>();
+  sAppContext->mQueue = vrb::RunnableQueue::Create(aAppState->activity->vm);
+  sAppContext->mWorld = BrowserWorld::Create();
 
   // Create device delegate
-  appContext->mDevice = DeviceDelegateOculusVR::Create(appContext->mWorld->GetWeakContext(), aAppState);
-  appContext->mWorld->RegisterDeviceDelegate(appContext->mDevice);
+  sAppContext->mDevice = DeviceDelegateOculusVR::Create(sAppContext->mWorld->GetWeakContext(),
+                                                       aAppState);
+  sAppContext->mWorld->RegisterDeviceDelegate(sAppContext->mDevice);
 
   // Initialize java
   auto assetManager = GetAssetManager(jniEnv, aAppState->activity->clazz);
-  appContext->mWorld->InitializeJava(jniEnv, aAppState->activity->clazz, assetManager);
+  sAppContext->mWorld->InitializeJava(jniEnv, aAppState->activity->clazz, assetManager);
   jniEnv->DeleteLocalRef(assetManager);
 
   // Set up activity & SurfaceView life cycle callbacks
-  aAppState->userData = appContext.get();
+  aAppState->userData = sAppContext.get();
   aAppState->onAppCmd = CommandCallback;
 
   // Main render loop
@@ -150,7 +159,7 @@ android_main(android_app *aAppState) {
 
     // Loop until all events are read
     // If the activity is paused use a blocking call to read events.
-    while (ALooper_pollAll(appContext->mWorld->IsPaused() ? -1 : 0,
+    while (ALooper_pollAll(sAppContext->mWorld->IsPaused() ? -1 : 0,
                            NULL,
                            &events,
                            (void **) &pSource) >= 0) {
@@ -161,19 +170,29 @@ android_main(android_app *aAppState) {
 
       // Check if we are exiting.
       if (aAppState->destroyRequested != 0) {
-        appContext->mWorld->ShutdownGL();
-        appContext->mEgl->Destroy();
+        sAppContext->mWorld->ShutdownGL();
+        sAppContext->mEgl->Destroy();
         aAppState->activity->vm->DetachCurrentThread();
+        sAppContext.reset();
         exit(0);
       }
     }
-    if (appContext->mEgl) {
-      appContext->mEgl->MakeCurrent();
+    if (sAppContext->mEgl) {
+      sAppContext->mEgl->MakeCurrent();
     }
-    appContext->mQueue->ProcessRunnables();
-    if (!appContext->mWorld->IsPaused() && appContext->mDevice->IsInVRMode()) {
+    sAppContext->mQueue->ProcessRunnables();
+    if (!sAppContext->mWorld->IsPaused() && sAppContext->mDevice->IsInVRMode()) {
       VRB_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-      appContext->mWorld->Draw();
+      sAppContext->mWorld->Draw();
     }
   }
 }
+
+JNI_METHOD(void, queueRunnable)
+(JNIEnv *aEnv, jobject, jobject aRunnable) {
+  if (sAppContext) {
+    sAppContext->mQueue->AddRunnable(aEnv, aRunnable);
+  }
+}
+
+} // extern "C"

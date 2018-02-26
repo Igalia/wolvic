@@ -8,12 +8,16 @@ package org.mozilla.vrbrowser;
 import android.content.Intent;
 import android.graphics.SurfaceTexture;
 import android.net.Uri;
+import android.opengl.GLES11Ext;
+import android.opengl.GLES20;
 import android.os.Bundle;
 import android.support.annotation.Keep;
 import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
 
 import org.mozilla.gecko.GeckoSession;
+import org.mozilla.vrbrowser.ui.OffscreenDisplay;
 
 import java.util.HashMap;
 
@@ -29,6 +33,8 @@ public class VRBrowserActivity extends PlatformActivity {
     String mTargetUrl;
     BrowserWidget mCurrentBrowser;
     HashMap<Integer, Widget> mWidgets;
+    OffscreenDisplay mOffscreenDisplay;
+    FrameLayout mWidgetContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +42,14 @@ public class VRBrowserActivity extends PlatformActivity {
         super.onCreate(savedInstanceState);
 
         mWidgets = new HashMap<>();
+        mWidgetContainer = new FrameLayout(this);
         loadFromIntent(getIntent());
+        queueRunnable(new Runnable() {
+            @Override
+            public void run() {
+                createOffscreenDisplay();
+            }
+        });
     }
 
     @Override
@@ -81,8 +94,8 @@ public class VRBrowserActivity extends PlatformActivity {
         }
 
         if (aType != Widget.Browser) {
-            // Add hidden UI widget to the platform window for invalidation
-            addWidget((View) widget, aWidth, aHeight);
+            // Add hidden UI widget to a virtual display for invalidation
+            mWidgetContainer.addView((View) widget, new FrameLayout.LayoutParams(aWidth, aHeight));
         }
     }
 
@@ -104,6 +117,30 @@ public class VRBrowserActivity extends PlatformActivity {
                 if (widget != null) {
                     MotionEventGenerator.dispatch(widget, aDevice, aPressed, aX, aY);
                 }
+            }
+        });
+    }
+
+    void createOffscreenDisplay() {
+        int[] ids = new int[1];
+        GLES20.glGenTextures(1, ids, 0);
+        GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, ids[0]);
+
+        GLES20.glTexParameterf(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
+        GLES20.glTexParameterf(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+        GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
+        GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+        int error = GLES20.glGetError();
+        if (error != GLES20.GL_NO_ERROR) {
+            Log.e(LOGTAG, "OpenGL Error creating OffscreenDisplay: " + error);
+        }
+
+        final SurfaceTexture texture = new SurfaceTexture(ids[0]);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mOffscreenDisplay = new OffscreenDisplay(VRBrowserActivity.this, texture, 16, 16);
+                mOffscreenDisplay.setContentView(mWidgetContainer);
             }
         });
     }
