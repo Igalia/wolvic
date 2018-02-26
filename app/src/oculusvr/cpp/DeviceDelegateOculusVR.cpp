@@ -55,7 +55,9 @@ struct OculusEyeSwapChain {
       VRB_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
       VRB_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 
-      VRB_CHECK(fbo->SetTextureHandle(texture, aWidth, aHeight));
+      vrb::FBO::Attributes attributes;
+      attributes.samples = 2;
+      VRB_CHECK(fbo->SetTextureHandle(texture, aWidth, aHeight, attributes));
       if (fbo->IsValid()) {
         fbos.push_back(fbo);
       } else {
