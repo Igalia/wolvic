@@ -59,10 +59,13 @@ struct DeviceDelegateWaveVR::State {
     return -1;
   }
 
+
   void FillFBOQueue(void* aTextureQueue, std::vector<vrb::FBOPtr>& aFBOQueue) {
+    vrb::FBO::Attributes attributes;
+    attributes.samples = 4;
     for (int ix = 0; ix < WVR_GetTextureQueueLength(aTextureQueue); ix++) {
       vrb::FBOPtr fbo = vrb::FBO::Create(context);
-      fbo->SetTextureHandle((GLuint)WVR_GetTexture(aTextureQueue, ix).id, renderWidth, renderHeight);
+      fbo->SetTextureHandle((GLuint)WVR_GetTexture(aTextureQueue, ix).id, renderWidth, renderHeight, attributes);
       if (fbo->IsValid()) {
         aFBOQueue.push_back(fbo);
       } else {
