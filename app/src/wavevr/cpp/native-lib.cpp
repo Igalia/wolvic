@@ -63,7 +63,6 @@ int main(int argc, char *argv[]) {
   }
   sDevice = DeviceDelegateWaveVR::Create(sWorld->GetWeakContext());
   sWorld->RegisterDeviceDelegate(sDevice);
-  VRB_CHECK(glClearColor(0.0, 0.0, 0.0, 1.0));
   VRB_CHECK(glEnable(GL_DEPTH_TEST));
   VRB_CHECK(glEnable(GL_CULL_FACE));
   VRB_CHECK(glEnable(GL_BLEND));

@@ -194,6 +194,7 @@ void
 BrowserWorld::RegisterDeviceDelegate(DeviceDelegatePtr aDelegate) {
   m.device = aDelegate;
   if (m.device) {
+    m.device->SetClearColor(vrb::Color(0.15f, 0.15f, 0.15f));
     m.leftCamera = m.device->GetCamera(DeviceDelegate::CameraEnum::Left);
     m.rightCamera = m.device->GetCamera(DeviceDelegate::CameraEnum::Right);
     m.controllerCount = m.device->GetControllerCount();

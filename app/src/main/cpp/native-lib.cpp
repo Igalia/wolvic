@@ -63,7 +63,6 @@ CommandCallback(android_app *aApp, int32_t aCmd) {
         ctx->mEgl = BrowserEGLContext::Create();
         ctx->mEgl->Initialize(aApp->window);
         ctx->mEgl->MakeCurrent();
-        VRB_CHECK(glClearColor(0.0, 0.0, 0.0, 1.0));
         VRB_CHECK(glEnable(GL_DEPTH_TEST));
         VRB_CHECK(glEnable(GL_CULL_FACE));
         ctx->mWorld->InitializeGL();

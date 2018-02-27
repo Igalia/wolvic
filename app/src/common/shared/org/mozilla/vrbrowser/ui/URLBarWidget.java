@@ -11,12 +11,14 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.util.Log;
 
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.BrowserSession;
 import org.mozilla.vrbrowser.R;
 
 public class URLBarWidget extends UIWidget implements GeckoSession.NavigationListener {
+    private static final String LOGTAG = "VRB";
     private BrowserSession mSession;
     private ImageButton mBackButton;
     private ImageButton mForwardButton;
@@ -75,6 +77,7 @@ public class URLBarWidget extends UIWidget implements GeckoSession.NavigationLis
             @Override
             public void onClick(View v) {
                 if (mSession != null) {
+                    Log.e(LOGTAG, "Clicked RELOAD");
                     mSession.getGeckoSession().reload();
                 }
             }
@@ -101,6 +104,7 @@ public class URLBarWidget extends UIWidget implements GeckoSession.NavigationLis
 
     private void updateViews() {
         if (mSession != null) {
+            Log.e(LOGTAG, "updateViews");
             mBackButton.setEnabled(mSession.canGoBack());
             mForwardButton.setEnabled(mSession.canGoForward());
             mReloadButton.setEnabled(mSession.getUrl() != null);
@@ -117,6 +121,7 @@ public class URLBarWidget extends UIWidget implements GeckoSession.NavigationLis
     public void onLocationChange(GeckoSession session, String url) {
         if (mURLBar != null) {
             mURLBar.setText(url);
+            mReloadButton.setEnabled(true);
         }
     }
 

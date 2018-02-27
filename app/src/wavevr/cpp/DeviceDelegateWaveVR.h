@@ -17,6 +17,7 @@ public:
   // DeviceDelegate interface
   GestureDelegateConstPtr GetGestureDelegate() override;
   vrb::CameraPtr GetCamera(const CameraEnum aWhich) override;
+  void SetClearColor(const vrb::Color& aColor) override;
   void SetClipPlanes(const float aNear, const float aFar) override;
   int32_t GetControllerCount() const override;
   const std::string GetControllerModelName(const int32_t aWhichContorller) const override;

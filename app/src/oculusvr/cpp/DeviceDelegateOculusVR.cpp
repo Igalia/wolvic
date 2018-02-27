@@ -10,6 +10,7 @@
 #include <android_native_app_glue.h>
 #include <EGL/egl.h>
 #include "vrb/CameraEye.h"
+#include "vrb/Color.h"
 #include "vrb/ConcreteClass.h"
 #include "vrb/FBO.h"
 #include "vrb/GLError.h"
@@ -90,6 +91,7 @@ struct DeviceDelegateOculusVR::State {
   ovrTracking2 predictedTracking = {};
   uint32_t renderWidth = 0;
   uint32_t renderHeight = 0;
+  vrb::Color clearColor;
   float near = 0.1f;
   float far = 100.f;
   ovrDeviceID controllerID = ovrDeviceIdType_Invalid;
@@ -233,6 +235,11 @@ DeviceDelegateOculusVR::GetCamera(const CameraEnum aWhich) {
 }
 
 void
+DeviceDelegateOculusVR::SetClearColor(const vrb::Color& aColor) {
+  m.clearColor = aColor;
+}
+
+void
 DeviceDelegateOculusVR::SetClipPlanes(const float aNear, const float aFar) {
   m.near = aNear;
   m.far = aFar;
@@ -313,6 +320,7 @@ DeviceDelegateOculusVR::StartFrame() {
   m.cameras[VRAPI_EYE_RIGHT]->SetHeadTransform(head);
 
   m.UpdateControllers(head);
+  VRB_CHECK(glClearColor(m.clearColor.Red(), m.clearColor.Green(), m.clearColor.Blue(), m.clearColor.Alpha()));
 }
 
 void
@@ -339,7 +347,6 @@ DeviceDelegateOculusVR::BindEye(const CameraEnum aWhich) {
   if (m.currentFBO) {
     m.currentFBO->Bind();
     VRB_CHECK(glViewport(0, 0, m.renderWidth, m.renderHeight));
-    //VRB_CHECK(glClearColor(1.0, 0.0, 0.0, 1.0));
     VRB_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
   } else {
     VRB_LOG("No Swap chain FBO found");

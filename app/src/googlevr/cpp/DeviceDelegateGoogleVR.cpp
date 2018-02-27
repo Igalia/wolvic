@@ -8,6 +8,7 @@
 #include "GestureDelegate.h"
 
 #include "vrb/CameraEye.h"
+#include "vrb/Color.h"
 #include "vrb/ConcreteClass.h"
 #include "vrb/FBO.h"
 #include "vrb/GLError.h"
@@ -52,6 +53,7 @@ struct DeviceDelegateGoogleVR::State {
   vrb::ContextWeak context;
   float near;
   float far;
+  vrb::Color clearColor;
   vrb::CameraEyePtr cameras[2];
   vrb::Matrix controller;
   bool clicked;
@@ -266,6 +268,11 @@ DeviceDelegateGoogleVR::GetCamera(const CameraEnum aWhich) {
 }
 
 void
+DeviceDelegateGoogleVR::SetClearColor(const vrb::Color& aColor) {
+  m.clearColor = aColor;
+}
+
+void
 DeviceDelegateGoogleVR::SetClipPlanes(const float aNear, const float aFar) {
   m.near = aNear;
   m.far = aFar;
@@ -324,6 +331,7 @@ DeviceDelegateGoogleVR::StartFrame() {
   }
 
   GVR_CHECK(gvr_frame_bind_buffer(m.frame, 0));
+  VRB_CHECK(glClearColor(m.clearColor.Red(), m.clearColor.Green(), m.clearColor.Blue(), m.clearColor.Alpha()));
   glEnable(GL_BLEND);
 }
 

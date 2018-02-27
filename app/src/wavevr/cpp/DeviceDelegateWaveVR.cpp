@@ -8,6 +8,7 @@
 #include "GestureDelegate.h"
 
 #include "vrb/CameraEye.h"
+#include "vrb/Color.h"
 #include "vrb/ConcreteClass.h"
 #include "vrb/FBO.h"
 #include "vrb/GLError.h"
@@ -29,6 +30,7 @@ namespace crow {
 struct DeviceDelegateWaveVR::State {
   vrb::ContextWeak context;
   bool isRunning;
+  vrb::Color clearColor;
   float near;
   float far;
   void* leftTextureQueue;
@@ -144,6 +146,10 @@ DeviceDelegateWaveVR::GetCamera(const CameraEnum aWhich) {
   return m.cameras[index];
 }
 
+void
+DeviceDelegateWaveVR::SetClearColor(const vrb::Color& aColor) {
+  m.clearColor = aColor;
+}
 void
 DeviceDelegateWaveVR::SetClipPlanes(const float aNear, const float aFar) {
   m.near = aNear;
@@ -374,6 +380,7 @@ DeviceDelegateWaveVR::GetControllerButtonState(const int32_t aWhichController, c
 
 void
 DeviceDelegateWaveVR::StartFrame() {
+  VRB_CHECK(glClearColor(m.clearColor.Red(), m.clearColor.Green(), m.clearColor.Blue(), m.clearColor.Alpha()));
   static const vrb::Vector kAverageHeight(0.0f, 1.7f, 0.0f);
   m.leftFBOIndex = WVR_GetAvailableTextureIndex(m.leftTextureQueue);
   m.rightFBOIndex = WVR_GetAvailableTextureIndex(m.rightTextureQueue);

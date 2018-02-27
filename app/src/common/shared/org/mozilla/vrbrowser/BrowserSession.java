@@ -17,7 +17,7 @@ public class BrowserSession implements GeckoSession.NavigationListener {
     private boolean mCanGoForward;
     private CopyOnWriteArrayList<GeckoSession.NavigationListener> mNavigationListeners;
 
-    public BrowserSession(GeckoSession aSession) {
+    BrowserSession(GeckoSession aSession) {
         mSession = aSession;
         mNavigationListeners = new CopyOnWriteArrayList<>();
 
@@ -42,7 +42,7 @@ public class BrowserSession implements GeckoSession.NavigationListener {
         return mSession;
     }
 
-    public void loadUri(String aUri) {
+    void loadUri(String aUri) {
         mSession.loadUri(aUri);
         mUri = aUri;
     }

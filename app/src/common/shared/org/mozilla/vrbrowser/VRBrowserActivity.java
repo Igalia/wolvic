@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Keep;
 import android.util.Log;
 import android.view.View;
@@ -24,13 +25,25 @@ import java.util.HashMap;
 
 public class VRBrowserActivity extends PlatformActivity {
 
+    class SwipeRunnable implements Runnable {
+        boolean mCanceled = false;
+        @Override
+        public void run() {
+            if (!mCanceled) {
+                mLastGesture = NoGesture;
+            }
+        }
+    }
+
     // Used to load the 'native-lib' library on application startup.
     static {
         System.loadLibrary("native-lib");
     }
 
+    static final int NoGesture = -1;
     static final int GestureSwipeLeft = 0;
     static final int GestureSwipeRight = 1;
+    static final int SwipeDelay = 1000; // milliseconds
 
     static final String DEFAULT_URL = "https://www.polygon.com/"; // https://vr.mozilla.org";
     static final String LOGTAG = "VRB";
@@ -39,9 +52,13 @@ public class VRBrowserActivity extends PlatformActivity {
     HashMap<Integer, Widget> mWidgets;
     OffscreenDisplay mOffscreenDisplay;
     FrameLayout mWidgetContainer;
+    int mLastGesture;
+    SwipeRunnable mLastRunnable;
+    Handler mHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mLastGesture = NoGesture;
         Log.e(LOGTAG,"In onCreate");
         super.onCreate(savedInstanceState);
 
@@ -135,12 +152,27 @@ public class VRBrowserActivity extends PlatformActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (aType == GestureSwipeLeft) {
+                boolean consumed = false;
+                if ((aType == GestureSwipeLeft) && (mLastGesture == GestureSwipeLeft)) {
                     Log.e(LOGTAG, "Go BACK!");
                     mCurrentSession.getGeckoSession().goBack();
-                } else if (aType == GestureSwipeRight) {
+                    consumed = true;
+                } else if ((aType == GestureSwipeRight) && (mLastGesture == GestureSwipeRight)) {
                     Log.e(LOGTAG, "Go FORWARD!");
                     mCurrentSession.getGeckoSession().goForward();
+                    consumed = true;
+                }
+                if (mLastRunnable != null) {
+                    mLastRunnable.mCanceled = true;
+                    mLastRunnable = null;
+                }
+                if (consumed) {
+                    mLastGesture = NoGesture;
+
+                } else {
+                    mLastGesture = aType;
+                    mLastRunnable = new SwipeRunnable();
+                    mHandler.postDelayed(mLastRunnable, SwipeDelay);
                 }
             }
         });
