@@ -10,41 +10,40 @@ import android.graphics.SurfaceTexture;
 import android.view.MotionEvent;
 import android.view.Surface;
 
-import org.mozilla.gecko.GeckoSessionSettings;
-import org.mozilla.gecko.gfx.NativePanZoomController;
-import org.mozilla.gecko.GeckoSession;
-
 class BrowserWidget implements Widget {
     Context mContext;
-    GeckoSession mSession;
+    BrowserSession mSession;
     Surface mSurface;
 
-    BrowserWidget(Context aContext, GeckoSession aSession) {
+    BrowserWidget(Context aContext, BrowserSession aSession) {
         mContext = aContext;
         mSession = aSession;
-        // Remove once e10s issues have been resolved.
-        mSession.getSettings().setBoolean(GeckoSessionSettings.USE_MULTIPROCESS, false);
     }
 
     @Override
     public void setSurfaceTexture(SurfaceTexture aTexture, final int aWidth, final int aHeight) {
         aTexture.setDefaultBufferSize(aWidth, aHeight);
         mSurface = new Surface(aTexture);
-        mSession.acquireDisplay().surfaceChanged(mSurface, aWidth, aHeight);
-        mSession.openWindow(mContext);
+        mSession.getGeckoSession().acquireDisplay().surfaceChanged(mSurface, aWidth, aHeight);
+        mSession.getGeckoSession().openWindow(mContext);
     }
 
     @Override
     public void handleTouchEvent(MotionEvent aEvent) {
-      mSession.getPanZoomController().onTouchEvent(aEvent);
+      mSession.getGeckoSession().getPanZoomController().onTouchEvent(aEvent);
     }
 
     @Override
     public void handleHoverEvent(MotionEvent aEvent) {
-        mSession.getPanZoomController().onMotionEvent(aEvent);
+        mSession.getGeckoSession().getPanZoomController().onMotionEvent(aEvent);
     }
 
-    GeckoSession getSession() {
+    @Override
+    public void releaseWidget() {
+        mSession.getGeckoSession().closeWindow();
+    }
+
+    BrowserSession getSession() {
         return mSession;
     }
 }

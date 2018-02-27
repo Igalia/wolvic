@@ -18,6 +18,7 @@ import android.widget.FrameLayout;
 
 import org.mozilla.gecko.GeckoSession;
 import org.mozilla.vrbrowser.ui.OffscreenDisplay;
+import org.mozilla.vrbrowser.ui.URLBarWidget;
 
 import java.util.HashMap;
 
@@ -31,7 +32,7 @@ public class VRBrowserActivity extends PlatformActivity {
     static final String DEFAULT_URL = "https://www.polygon.com/"; // https://vr.mozilla.org";
     static final String LOGTAG = "VRB";
     String mTargetUrl;
-    BrowserWidget mCurrentBrowser;
+    BrowserSession mCurrentSession;
     HashMap<Integer, Widget> mWidgets;
     OffscreenDisplay mOffscreenDisplay;
     FrameLayout mWidgetContainer;
@@ -69,23 +70,28 @@ public class VRBrowserActivity extends PlatformActivity {
         final Uri uri = intent.getData();
         Log.e(LOGTAG, "Load URI from intent: " + (uri != null ? uri.toString() : DEFAULT_URL));
         mTargetUrl = (uri != null ? uri.toString() : DEFAULT_URL);
-        if (mCurrentBrowser != null) {
-            mCurrentBrowser.getSession().loadUri(mTargetUrl);
+        if (mCurrentSession != null) {
+            mCurrentSession.loadUri(mTargetUrl);
             mTargetUrl = "";
         }
     }
 
     void createWidget(final int aType, final int aHandle, SurfaceTexture aTexture, int aWidth, int aHeight) {
+        if (mCurrentSession == null) {
+            mCurrentSession = new BrowserSession(new GeckoSession());
+        }
         Widget widget = null;
         if (aType == Widget.Browser) {
-            mCurrentBrowser = new BrowserWidget(this, new GeckoSession());
-            if (mTargetUrl != "") {
-                mCurrentBrowser.getSession().loadUri(mTargetUrl);
-                mTargetUrl = "";
+            widget = new BrowserWidget(this, mCurrentSession);
+            if (mTargetUrl != null && mTargetUrl.length() > 0) {
+                mCurrentSession.loadUri(mTargetUrl);
+            } else {
+                mCurrentSession.loadUri(DEFAULT_URL);
             }
-            widget = mCurrentBrowser;
         } else if (aType == Widget.URLBar) {
-            widget = (Widget) getLayoutInflater().inflate(R.layout.url, null);
+            URLBarWidget urlWidget = (URLBarWidget) getLayoutInflater().inflate(R.layout.url, null);
+            urlWidget.setSession(mCurrentSession);
+            widget = urlWidget;
         }
 
         if (widget != null) {

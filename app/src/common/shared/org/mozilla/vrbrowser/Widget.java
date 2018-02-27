@@ -14,4 +14,5 @@ public interface Widget {
     void setSurfaceTexture(SurfaceTexture aTexture, final int aWidth, final int aHeight);
     void handleTouchEvent(MotionEvent aEvent);
     void handleHoverEvent(MotionEvent aEvent);
+    void releaseWidget();
 }

@@ -52,6 +52,13 @@ public class UIWidget extends FrameLayout implements Widget {
         this.dispatchHoverEvent(aEvent);
     }
 
+    @Override
+    public void releaseWidget() {
+        if (mRenderer != null) {
+            mRenderer.release();
+            mRenderer = null;
+        }
+    }
 
     @Override
     public void draw(Canvas aCanvas) {
