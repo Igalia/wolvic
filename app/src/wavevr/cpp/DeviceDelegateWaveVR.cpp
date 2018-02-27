@@ -1,5 +1,11 @@
+/* -*- Mode: C++; tab-width: 20; indent-tabs-mode: nil; c-basic-offset: 2 -*-
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 #include "DeviceDelegateWaveVR.h"
 #include "ElbowModel.h"
+#include "GestureDelegate.h"
 
 #include "vrb/CameraEye.h"
 #include "vrb/ConcreteClass.h"
@@ -38,6 +44,7 @@ struct DeviceDelegateWaveVR::State {
   uint32_t renderHeight;
   WVR_DevicePosePair_t devicePairs[WVR_DEVICE_COUNT_LEVEL_1];
   ElbowModelPtr elbow;
+  GestureDelegatePtr gestures;
   State()
       : isRunning(true)
       , near(0.1f)
@@ -51,6 +58,7 @@ struct DeviceDelegateWaveVR::State {
       , renderHeight(0)
   {
     memset((void*)devicePairs, 0, sizeof(WVR_DevicePosePair_t) * WVR_DEVICE_COUNT_LEVEL_1);
+    gestures = GestureDelegate::Create();
   }
 
   int32_t cameraIndex(CameraEnum aWhich) {
@@ -125,6 +133,10 @@ DeviceDelegateWaveVR::Create(vrb::ContextWeak aContext) {
   return result;
 }
 
+GestureDelegateConstPtr
+DeviceDelegateWaveVR::GetGestureDelegate() {
+  return m.gestures;
+}
 vrb::CameraPtr
 DeviceDelegateWaveVR::GetCamera(const CameraEnum aWhich) {
   const int32_t index = m.cameraIndex(aWhich);
@@ -154,6 +166,7 @@ DeviceDelegateWaveVR::GetControllerModelName(const int32_t) const {
 void
 DeviceDelegateWaveVR::ProcessEvents() {
   WVR_Event_t event;
+  m.gestures->Reset();
   while(WVR_PollEventQueue(&event)) {
     WVR_EventType type = event.common.type;
     switch (type) {
@@ -242,11 +255,13 @@ DeviceDelegateWaveVR::ProcessEvents() {
       case WVR_EventType_TouchpadSwipe_LeftToRight:
         {
           VRB_LOG("WVR_EventType_TouchpadSwipe_LeftToRight");
+          m.gestures->AddGesture(GestureType::SwipeRight);
         }
         break;
       case WVR_EventType_TouchpadSwipe_RightToLeft:
         {
           VRB_LOG("WVR_EventType_TouchpadSwipe_RightToLeft");
+          m.gestures->AddGesture(GestureType::SwipeLeft);
         }
         break;
       case WVR_EventType_TouchpadSwipe_DownToUp:

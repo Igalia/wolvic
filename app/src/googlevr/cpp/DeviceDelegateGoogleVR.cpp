@@ -1,5 +1,11 @@
+/* -*- Mode: C++; tab-width: 20; indent-tabs-mode: nil; c-basic-offset: 2 -*-
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 #include "DeviceDelegateGoogleVR.h"
 #include "ElbowModel.h"
+#include "GestureDelegate.h"
 
 #include "vrb/CameraEye.h"
 #include "vrb/ConcreteClass.h"
@@ -11,6 +17,7 @@
 
 #include "vr/gvr/capi/include/gvr.h"
 #include "vr/gvr/capi/include/gvr_controller.h"
+#include "vr/gvr/capi/include/gvr_gesture.h"
 
 #include <vector>
 
@@ -33,6 +40,7 @@ struct DeviceDelegateGoogleVR::State {
   gvr_context* gvr;
   gvr_controller_context* controllerContext;
   gvr_controller_state* controllerState;
+  gvr_gesture_context* gestureContext;
   gvr_buffer_viewport_list* viewportList;
   gvr_buffer_viewport* leftViewport;
   gvr_buffer_viewport* rightViewport;
@@ -49,10 +57,12 @@ struct DeviceDelegateGoogleVR::State {
   bool clicked;
   ElbowModel::HandEnum hand;
   ElbowModelPtr elbow;
+  GestureDelegatePtr gestures;
   State()
       : gvr(nullptr)
       , controllerContext(nullptr)
       , controllerState(nullptr)
+      , gestureContext(nullptr)
       , viewportList(nullptr)
       , leftViewport(nullptr)
       , rightViewport(nullptr)
@@ -65,6 +75,7 @@ struct DeviceDelegateGoogleVR::State {
       , hand(ElbowModel::HandEnum::Right)
   {
     frameBufferSize = {0,0};
+    gestures = GestureDelegate::Create();
   }
 
   gvr_context* GetContext() { return gvr; }
@@ -101,6 +112,7 @@ struct DeviceDelegateGoogleVR::State {
               ElbowModel::HandEnum::Right : ElbowModel::HandEnum::Left);
     }
     elbow = ElbowModel::Create(hand);
+    gestureContext = gvr_gesture_context_create();
   }
 
   void Shutdown() {
@@ -189,6 +201,44 @@ struct DeviceDelegateGoogleVR::State {
       if (touched) {
       }
     }
+
+    if (!gestures) {
+      return;
+    }
+    // Detect the gestures.
+    gvr_gesture_update(controllerState, gestureContext);
+
+    // Get the number of detected gestures.
+    const int32_t gestureCount = gvr_gesture_get_count(gestureContext);
+    gestures->Reset();
+    for (int count = 0; count < gestureCount; count++) {
+      const gvr_gesture* gesture = gvr_gesture_get(gestureContext, count);
+      switch (gvr_gesture_get_type(gesture)) {
+        case GVR_GESTURE_SWIPE:
+          {
+            // Handle swipe gesture.
+            gvr_gesture_direction direction = gvr_gesture_get_direction(gesture);
+            if (direction == GVR_GESTURE_DIRECTION_LEFT) {
+              gestures->AddGesture(GestureType::SwipeLeft);
+            } else if (direction == GVR_GESTURE_DIRECTION_RIGHT) {
+              gestures->AddGesture(GestureType::SwipeRight);
+            }
+          }
+          break;
+        case GVR_GESTURE_SCROLL_START:
+          // Handle the start of a sequence of scroll gestures.
+          break;
+        case GVR_GESTURE_SCROLL_UPDATE:
+          // Handle an update in a sequence of scroll gestures.
+          break;
+        case GVR_GESTURE_SCROLL_END:
+          // Handle the end of a sequence of scroll gestures.
+          break;
+        default:
+          // Unexpected gesture type.
+          break;
+      }
+    }
   }
 };
 
@@ -204,6 +254,10 @@ DeviceDelegateGoogleVR::Create(vrb::ContextWeak aContext, void* aGVRContext) {
   return result;
 }
 
+GestureDelegateConstPtr
+DeviceDelegateGoogleVR::GetGestureDelegate() {
+  return m.gestures;
+}
 vrb::CameraPtr
 DeviceDelegateGoogleVR::GetCamera(const CameraEnum aWhich) {
   const int32_t index = m.cameraIndex(aWhich);
@@ -323,6 +377,7 @@ DeviceDelegateGoogleVR::Pause() {
     VRB_LOG("Pause GVR controller");
     gvr_controller_pause(m.controllerContext);
   }
+
   if (m.gvr) {
     VRB_LOG("Pause GVR tracking");
     gvr_pause_tracking(m.gvr);

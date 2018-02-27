@@ -15,6 +15,7 @@ class DeviceDelegateWaveVR : public DeviceDelegate {
 public:
   static DeviceDelegateWaveVRPtr Create(vrb::ContextWeak aContext);
   // DeviceDelegate interface
+  GestureDelegateConstPtr GetGestureDelegate() override;
   vrb::CameraPtr GetCamera(const CameraEnum aWhich) override;
   void SetClipPlanes(const float aNear, const float aFar) override;
   int32_t GetControllerCount() const override;

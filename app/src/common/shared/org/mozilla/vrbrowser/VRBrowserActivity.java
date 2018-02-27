@@ -16,7 +16,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import org.mozilla.gecko.GeckoSession;
+import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.ui.OffscreenDisplay;
 import org.mozilla.vrbrowser.ui.URLBarWidget;
 
@@ -28,6 +28,9 @@ public class VRBrowserActivity extends PlatformActivity {
     static {
         System.loadLibrary("native-lib");
     }
+
+    static final int GestureSwipeLeft = 0;
+    static final int GestureSwipeRight = 1;
 
     static final String DEFAULT_URL = "https://www.polygon.com/"; // https://vr.mozilla.org";
     static final String LOGTAG = "VRB";
@@ -122,6 +125,22 @@ public class VRBrowserActivity extends PlatformActivity {
                 Widget widget = mWidgets.get(aHandle);
                 if (widget != null) {
                     MotionEventGenerator.dispatch(widget, aDevice, aPressed, aX, aY);
+                }
+            }
+        });
+    }
+
+    @Keep
+    void dispatchGesture(final int aType) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (aType == GestureSwipeLeft) {
+                    Log.e(LOGTAG, "Go BACK!");
+                    mCurrentSession.getGeckoSession().goBack();
+                } else if (aType == GestureSwipeRight) {
+                    Log.e(LOGTAG, "Go FORWARD!");
+                    mCurrentSession.getGeckoSession().goForward();
                 }
             }
         });

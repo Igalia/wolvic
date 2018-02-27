@@ -12,7 +12,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
-import org.mozilla.gecko.GeckoSession;
+import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.BrowserSession;
 import org.mozilla.vrbrowser.R;
 
@@ -33,6 +33,11 @@ public class URLBarWidget extends UIWidget implements GeckoSession.NavigationLis
 
     public URLBarWidget(Context aContext, AttributeSet aAttrs, int aDefStyle) {
         super(aContext, aAttrs, aDefStyle);
+    }
+
+    @Override
+    public void onNewSession(GeckoSession aSession, String aUrl, GeckoSession.Response<GeckoSession> aResponse) {
+
     }
 
     @Override

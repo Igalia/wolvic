@@ -16,9 +16,9 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import org.mozilla.gecko.GeckoSession;
-import org.mozilla.gecko.GeckoSessionSettings;
-import org.mozilla.gecko.GeckoView;
+import org.mozilla.geckoview.GeckoSession;
+import org.mozilla.geckoview.GeckoSessionSettings;
+import org.mozilla.geckoview.GeckoView;
 import org.mozilla.gecko.util.GeckoBundle;
 
 public class BrowserActivity extends Activity {
@@ -139,6 +139,9 @@ public class BrowserActivity extends Activity {
     }
 
     private class Navigation implements GeckoSession.NavigationListener {
+        public void onNewSession(GeckoSession session, String url, GeckoSession.Response<GeckoSession> response) {
+
+        }
         public void onLocationChange(GeckoSession session, String url) {
             mURLBar.setText(url);
         }

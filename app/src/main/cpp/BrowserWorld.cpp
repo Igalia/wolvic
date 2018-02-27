@@ -34,10 +34,15 @@ namespace {
 static const int WidgetTypeBrowser = 0;
 static const int WidgetTypeURLBar = 1;
 
+static const int GestureSwipeLeft = 0;
+static const int GestureSwipeRight = 1;
+
 static const char* kDispatchCreateWidgetName = "dispatchCreateWidget";
 static const char* kDispatchCreateWidgetSignature = "(IILandroid/graphics/SurfaceTexture;II)V";
 static const char* kUpdateMotionEventName = "updateMotionEvent";
 static const char* kUpdateMotionEventSignature = "(IIZII)V";
+static const char* kDispatchGestureName = "dispatchGesture";
+static const char* kDispatchGestureSignature = "(I)V";
 static const char* kTileTexture = "tile.png";
 class SurfaceObserver;
 typedef std::shared_ptr<SurfaceObserver> SurfaceObserverPtr;
@@ -143,9 +148,10 @@ struct BrowserWorld::State {
   jobject activity;
   jmethodID dispatchCreateWidgetMethod;
   jmethodID updateMotionEventMethod;
-
+  jmethodID dispatchGestureMethod;
+  GestureDelegateConstPtr gestures;
   State() : paused(true), glInitialized(false), controllerCount(0), env(nullptr), nearClip(0.1f), farClip(100.0f), activity(nullptr),
-            dispatchCreateWidgetMethod(nullptr), updateMotionEventMethod(nullptr) {
+            dispatchCreateWidgetMethod(nullptr), updateMotionEventMethod(nullptr), dispatchGestureMethod(nullptr) {
     context = Context::Create();
     contextWeak = context;
     factory = NodeFactoryObj::Create(contextWeak);
@@ -192,10 +198,12 @@ BrowserWorld::RegisterDeviceDelegate(DeviceDelegatePtr aDelegate) {
     m.rightCamera = m.device->GetCamera(DeviceDelegate::CameraEnum::Right);
     m.controllerCount = m.device->GetControllerCount();
     m.device->SetClipPlanes(m.nearClip, m.farClip);
+    m.gestures = m.device->GetGestureDelegate();
   } else {
     m.leftCamera = m.rightCamera = nullptr;
     m.controllers.clear();
     m.controllerCount = 0;
+    m.gestures = nullptr;
   }
 }
 
@@ -235,15 +243,19 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
   m.dispatchCreateWidgetMethod = m.env->GetMethodID(clazz, kDispatchCreateWidgetName,
                                                  kDispatchCreateWidgetSignature);
   if (!m.dispatchCreateWidgetMethod) {
-    VRB_LOG("Failed to find Java method: %s %s", kDispatchCreateWidgetName,
-            kDispatchCreateWidgetSignature);
+    VRB_LOG("Failed to find Java method: %s %s", kDispatchCreateWidgetName, kDispatchCreateWidgetSignature);
   }
 
   m.updateMotionEventMethod = m.env->GetMethodID(clazz, kUpdateMotionEventName, kUpdateMotionEventSignature);
 
   if (!m.updateMotionEventMethod) {
-    VRB_LOG("Failed to find Java method: %s %s", kUpdateMotionEventName,
-            kUpdateMotionEventSignature);
+    VRB_LOG("Failed to find Java method: %s %s", kUpdateMotionEventName, kUpdateMotionEventSignature);
+  }
+
+  m.dispatchGestureMethod = m.env->GetMethodID(clazz, kDispatchGestureName, kDispatchGestureSignature);
+
+  if (!m.dispatchGestureMethod) {
+    VRB_LOG("Failed to find Java method: %s %s", kDispatchGestureName, kDispatchGestureSignature);
   }
 
   if ((m.controllers.size() == 0) && (m.controllerCount > 0)) {
@@ -327,6 +339,22 @@ BrowserWorld::Draw() {
           hitPoint = result;
         }
       }
+    }
+    if (m.gestures) {
+      const int32_t gestureCount = m.gestures->GetGestureCount();
+      for (int32_t count = 0; count < gestureCount; count++) {
+        const GestureType type = m.gestures->GetGestureType(count);
+        int32_t javaType = -1;
+        if (type == GestureType::SwipeLeft) {
+          javaType = GestureSwipeLeft;
+        } else if (type == GestureType::SwipeRight) {
+          javaType = GestureSwipeRight;
+        }
+        if (javaType >= 0 && m.dispatchGestureMethod) {
+          m.env->CallVoidMethod(m.activity, m.dispatchGestureMethod, javaType);
+        }
+      }
+
     }
     if (m.updateMotionEventMethod && hitWidget) {
       active.push_back(hitWidget.get());

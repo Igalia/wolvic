@@ -5,8 +5,8 @@
 
 package org.mozilla.vrbrowser;
 
-import org.mozilla.gecko.GeckoSession;
-import org.mozilla.gecko.GeckoSessionSettings;
+import org.mozilla.geckoview.GeckoSession;
+import org.mozilla.geckoview.GeckoSessionSettings;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -55,6 +55,11 @@ public class BrowserSession implements GeckoSession.NavigationListener {
 
     public void removeNavigationListener(GeckoSession.NavigationListener aListener) {
         mNavigationListeners.remove(aListener);
+    }
+
+    @Override
+    public void onNewSession(GeckoSession aSession, String aUrl, GeckoSession.Response<GeckoSession> aResponse) {
+
     }
 
     @Override
