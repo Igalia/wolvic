@@ -10,7 +10,6 @@
 #include "vrb/CameraEye.h"
 #include "vrb/Color.h"
 #include "vrb/ConcreteClass.h"
-#include "vrb/FBO.h"
 #include "vrb/GLError.h"
 #include "vrb/Matrix.h"
 #include "vrb/Quaternion.h"

@@ -202,6 +202,11 @@ BrowserWorld::RegisterDeviceDelegate(DeviceDelegatePtr aDelegate) {
     m.gestures = m.device->GetGestureDelegate();
   } else {
     m.leftCamera = m.rightCamera = nullptr;
+    for (ControllerRecord& record: m.controllers) {
+      if (record.controller) {
+        m.root->RemoveNode(*record.controller);
+      }
+    }
     m.controllers.clear();
     m.controllerCount = 0;
     m.gestures = nullptr;
