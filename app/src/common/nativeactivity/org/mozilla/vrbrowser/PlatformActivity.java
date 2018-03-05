@@ -8,6 +8,8 @@ package org.mozilla.vrbrowser;
 import android.app.NativeActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.WindowManager;
 
 public class PlatformActivity extends NativeActivity {
     static String LOGTAG = "VRBrowser";
@@ -17,6 +19,48 @@ public class PlatformActivity extends NativeActivity {
         Log.e(LOGTAG,"in onCreate");
         super.onCreate(savedInstanceState);
         getWindow().takeInputQueue(null);
+        // Keep the screen on
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        // Set up full screen
+        addFullScreenListener();
+    }
+
+    @Override
+    protected void onResume() {
+        setFullScreen();
+        super.onResume();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            setFullScreen();
+        }
+    }
+
+    protected void setFullScreen() {
+        int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+
+
+        getWindow().getDecorView().setSystemUiVisibility(flags);
+    }
+
+    private void addFullScreenListener() {
+        View decorView = getWindow().getDecorView();
+        decorView.setOnSystemUiVisibilityChangeListener(
+                new View.OnSystemUiVisibilityChangeListener() {
+                    public void onSystemUiVisibilityChange(int visibility) {
+                        if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
+                            setFullScreen();
+                        }
+                    }
+                });
     }
 
     protected native void queueRunnable(Runnable aRunnable);
