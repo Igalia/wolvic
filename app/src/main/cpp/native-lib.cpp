@@ -14,16 +14,28 @@
 #include <android_native_app_glue.h>
 #include <cstdlib>
 #include <vrb/RunnableQueue.h>
+#if defined(OCULUSVR)
 #include "DeviceDelegateOculusVR.h"
+#elif defined(SNAPDRAGONVR)
+#include "DeviceDelegateSVR.h"
+#endif
+
 #include <android/looper.h>
 #include <unistd.h>
-
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
     Java_org_mozilla_vrbrowser_PlatformActivity_##method_name
 
 using namespace crow;
+
+#if defined(OCULUSVR)
+typedef DeviceDelegateOculusVR PlatformDeviceDelegate;
+typedef DeviceDelegateOculusVRPtr PlatformDeviceDelegatePtr;
+#elif defined(SNAPDRAGONVR)
+typedef DeviceDelegateSVR PlatformDeviceDelegate;
+typedef DeviceDelegateSVRPtr PlatformDeviceDelegatePtr;
+#endif
 
 namespace {
 
@@ -43,7 +55,7 @@ struct AppContext {
   vrb::RunnableQueuePtr mQueue;
   BrowserWorldPtr mWorld;
   BrowserEGLContextPtr mEgl;
-  DeviceDelegateOculusVRPtr mDevice;
+  PlatformDeviceDelegatePtr mDevice;
 };
 typedef std::shared_ptr<AppContext> AppContextPtr;
 
@@ -138,8 +150,8 @@ android_main(android_app *aAppState) {
   sAppContext->mWorld = BrowserWorld::Create();
 
   // Create device delegate
-  sAppContext->mDevice = DeviceDelegateOculusVR::Create(sAppContext->mWorld->GetWeakContext(),
-                                                       aAppState);
+  sAppContext->mDevice = PlatformDeviceDelegate::Create(sAppContext->mWorld->GetWeakContext(),
+                                                        aAppState);
   sAppContext->mWorld->RegisterDeviceDelegate(sAppContext->mDevice);
 
   // Initialize java

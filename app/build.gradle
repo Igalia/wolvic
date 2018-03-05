@@ -50,7 +50,8 @@ android {
             externalNativeBuild {
                 cmake {
                     cppFlags " -I" + file("${project.rootDir}/third_party/ovr_mobile/VrApi/Include").absolutePath +
-                             " -I" + file("${project.rootDir}/app/src/oculusvr/cpp").absolutePath
+                             " -I" + file("${project.rootDir}/app/src/oculusvr/cpp").absolutePath +
+                             " -DOCULUSVR"
                     arguments "-DVR_SDK_LIB=oculusvr-lib", "-DOCULUSVR=ON"
                 }
             }
@@ -58,8 +59,10 @@ android {
         svr {
             externalNativeBuild {
                 cmake {
-                    cppFlags " -I" + file("${project.rootDir}/third_party/svr/public").absolutePath
-                    arguments "-DVR_SDK_LIB=svr-lib"
+                    cppFlags " -I" + file("${project.rootDir}/third_party/svr/public").absolutePath +
+                             " -I" + file("${project.rootDir}/app/src/svr/cpp").absolutePath +
+                             " -DSNAPDRAGONVR"
+                    arguments "-DVR_SDK_LIB=svr-lib", "-DSNAPDRAGONVR=ON"
                 }
             }
         }
