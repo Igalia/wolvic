@@ -47,8 +47,6 @@ public class VRBrowserActivity extends PlatformActivity {
 
     static final String DEFAULT_URL = "https://www.polygon.com/"; // https://vr.mozilla.org";
     static final String LOGTAG = "VRB";
-    String mTargetUrl;
-    BrowserSession mCurrentSession;
     HashMap<Integer, Widget> mWidgets;
     OffscreenDisplay mOffscreenDisplay;
     FrameLayout mWidgetContainer;
@@ -58,8 +56,8 @@ public class VRBrowserActivity extends PlatformActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.e(LOGTAG, "VRBrowserActivity onCreate");
         mLastGesture = NoGesture;
-        Log.e(LOGTAG,"In onCreate");
         super.onCreate(savedInstanceState);
 
         mWidgets = new HashMap<>();
@@ -75,7 +73,7 @@ public class VRBrowserActivity extends PlatformActivity {
 
     @Override
     protected void onNewIntent(final Intent intent) {
-        Log.e(LOGTAG,"In onNewIntent");
+        Log.e(LOGTAG,"VRBrowserActivity onNewIntent");
         super.onNewIntent(intent);
         setIntent(intent);
         final String action = intent.getAction();
@@ -88,29 +86,36 @@ public class VRBrowserActivity extends PlatformActivity {
 
     void loadFromIntent(final Intent intent) {
         final Uri uri = intent.getData();
-        Log.e(LOGTAG, "Load URI from intent: " + (uri != null ? uri.toString() : DEFAULT_URL));
-        mTargetUrl = (uri != null ? uri.toString() : DEFAULT_URL);
-        if (mCurrentSession != null) {
-            mCurrentSession.loadUri(mTargetUrl);
-            mTargetUrl = "";
+        if (SessionStore.get().getCurrentSession() == null) {
+            String url = (uri != null ? uri.toString() : DEFAULT_URL);
+            int id = SessionStore.get().createSession();
+            SessionStore.get().setCurrentSession(id, this);
+            SessionStore.get().loadUri(url);
+            Log.e(LOGTAG, "Load creating session and loading URI:" + url);
+        } else if (uri != null) {
+            SessionStore.get().loadUri(uri.toString());
         }
+
     }
 
     void createWidget(final int aType, final int aHandle, SurfaceTexture aTexture, int aWidth, int aHeight) {
-        if (mCurrentSession == null) {
-            mCurrentSession = new BrowserSession(new GeckoSession());
+        Widget widget = mWidgets.get(aHandle);
+        if (widget != null) {
+            Log.e(LOGTAG, "Widget of type: " + aType + " already created");
+            widget.setSurfaceTexture(aTexture, aWidth, aHeight);
+            return;
+        } else {
+            Log.e(LOGTAG, "CREATE WIDGET TYPE: " + aType);
         }
-        Widget widget = null;
         if (aType == Widget.Browser) {
-            widget = new BrowserWidget(this, mCurrentSession);
-            if (mTargetUrl != null && mTargetUrl.length() > 0) {
-                mCurrentSession.loadUri(mTargetUrl);
-            } else {
-                mCurrentSession.loadUri(DEFAULT_URL);
+            if (SessionStore.get().getCurrentSession() == null) {
+                int id = SessionStore.get().createSession();
+                SessionStore.get().setCurrentSession(id, this);
             }
+            int currentSession = SessionStore.get().getCurrentSessionId();
+            widget = new BrowserWidget(this, currentSession);
         } else if (aType == Widget.URLBar) {
             URLBarWidget urlWidget = (URLBarWidget) getLayoutInflater().inflate(R.layout.url, null);
-            urlWidget.setSession(mCurrentSession);
             widget = urlWidget;
         }
 
@@ -120,6 +125,7 @@ public class VRBrowserActivity extends PlatformActivity {
         }
 
         if (aType != Widget.Browser) {
+            Log.e(LOGTAG, "********** ADDING WIDGET TO VIEW ***************");
             // Add hidden UI widget to a virtual display for invalidation
             mWidgetContainer.addView((View) widget, new FrameLayout.LayoutParams(aWidth, aHeight));
         }
@@ -142,6 +148,8 @@ public class VRBrowserActivity extends PlatformActivity {
                 Widget widget = mWidgets.get(aHandle);
                 if (widget != null) {
                     MotionEventGenerator.dispatch(widget, aDevice, aPressed, aX, aY);
+                } else {
+                    Log.e(LOGTAG, "Failed to find widget: " + aHandle);
                 }
             }
         });
@@ -155,11 +163,11 @@ public class VRBrowserActivity extends PlatformActivity {
                 boolean consumed = false;
                 if ((aType == GestureSwipeLeft) && (mLastGesture == GestureSwipeLeft)) {
                     Log.e(LOGTAG, "Go BACK!");
-                    mCurrentSession.getGeckoSession().goBack();
+                    SessionStore.get().goBack();
                     consumed = true;
                 } else if ((aType == GestureSwipeRight) && (mLastGesture == GestureSwipeRight)) {
                     Log.e(LOGTAG, "Go FORWARD!");
-                    mCurrentSession.getGeckoSession().goForward();
+                    SessionStore.get().goForward();
                     consumed = true;
                 }
                 if (mLastRunnable != null) {
@@ -196,7 +204,7 @@ public class VRBrowserActivity extends PlatformActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mOffscreenDisplay = new OffscreenDisplay(VRBrowserActivity.this, texture, 16, 16);
+                mOffscreenDisplay = new OffscreenDisplay(VRBrowserActivity.this, texture, 1920, 200);
                 mOffscreenDisplay.setContentView(mWidgetContainer);
             }
         });

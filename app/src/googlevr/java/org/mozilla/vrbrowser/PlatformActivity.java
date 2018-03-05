@@ -6,34 +6,24 @@
 package org.mozilla.vrbrowser;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 
-import java.util.Locale;
-
 import com.google.vr.ndk.base.AndroidCompat;
-import com.google.vr.ndk.base.GvrApi;
 import com.google.vr.ndk.base.GvrLayout;
-import com.google.vr.sdk.base.Constants;
-
-import org.mozilla.geckoview.GeckoSession;
-import org.mozilla.geckoview.GeckoSessionSettings;
-import org.mozilla.geckoview.GeckoView;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import org.mozilla.vrbrowser.BrowserActivity;
+
 public class PlatformActivity extends Activity {
-    static String LOGTAG = "VRBrowser";
-    static final String DEFAULT_URL = "https://vr.mozilla.org";
+    static String LOGTAG = "VRB";
     // Used to load the 'native-lib' library on application startup.
     static {
         System.loadLibrary("native-lib");
@@ -45,7 +35,10 @@ public class PlatformActivity extends Activity {
     private final Runnable activityDestroyedRunnable = new Runnable() {
         @Override
         public void run() {
-            activityDestroyed();
+            synchronized (this) {
+                activityDestroyed();
+                notifyAll();
+            }
         }
     };
 
@@ -54,7 +47,6 @@ public class PlatformActivity extends Activity {
         public void run() {
             synchronized (this) {
                 activityPaused();
-                shutdownGL();
                 notifyAll();
             }
         }
@@ -69,6 +61,7 @@ public class PlatformActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.e(LOGTAG, "PlatformActivity onCreate");
         super.onCreate(savedInstanceState);
 
         if (AndroidCompat.setVrModeEnabled(this, true)) {
@@ -91,7 +84,6 @@ public class PlatformActivity extends Activity {
                     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
                         Log.e(LOGTAG, "In onSurfaceCreated");
                         activityCreated(getAssets(), mLayout.getGvrApi().getNativeGvrContext());
-                        initializeGL();
                     }
 
                     @Override
@@ -110,7 +102,7 @@ public class PlatformActivity extends Activity {
         mLayout.getUiLayout().setCloseButtonListener(new Runnable() {
             @Override
             public void run() {
-                //stopPresenting();
+                startActivity(new Intent(PlatformActivity.this, BrowserActivity.class));
             }
         });
 
@@ -120,7 +112,7 @@ public class PlatformActivity extends Activity {
 
     @Override
     protected void onPause() {
-        Log.e(LOGTAG, "In onPause");
+        Log.e(LOGTAG, "PlatformActivity onPause");
         synchronized (activityPausedRunnable) {
             mView.queueEvent(activityPausedRunnable);
             try {
@@ -136,7 +128,7 @@ public class PlatformActivity extends Activity {
 
     @Override
     protected void onResume() {
-        Log.e(LOGTAG, "in onResume");
+        Log.e(LOGTAG, "PlatformActivity onResume");
         super.onResume();
         mLayout.onResume();
         mView.onResume();
@@ -146,8 +138,16 @@ public class PlatformActivity extends Activity {
 
     @Override
     protected void onDestroy() {
+        Log.e(LOGTAG, "PlatformActivity onDestroy");
         super.onDestroy();
-        mView.queueEvent(activityDestroyedRunnable);
+        synchronized (activityDestroyedRunnable) {
+            mView.queueEvent(activityDestroyedRunnable);
+            try {
+                activityDestroyedRunnable.wait();
+            } catch(InterruptedException e) {
+
+            }
+        }
     }
 
     void setImmersiveSticky() {
@@ -170,7 +170,5 @@ public class PlatformActivity extends Activity {
     private native void activityPaused();
     private native void activityResumed();
     private native void activityDestroyed();
-    private native void initializeGL();
-    private native void shutdownGL();
     private native void drawGL();
 }

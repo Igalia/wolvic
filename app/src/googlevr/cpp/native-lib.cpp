@@ -26,22 +26,29 @@ JNI_METHOD(void, activityPaused)
     sDevice->Pause();
   }
   sWorld->Pause();
+  sWorld->ShutdownGL();
 }
 
 JNI_METHOD(void, activityResumed)
 (JNIEnv*, jobject) {
   if (sDevice) {
+    //sDevice->InitializeGL();
     sDevice->Resume();
   }
+  sWorld->InitializeGL();
   sWorld->Resume();
 }
 
 JNI_METHOD(void, activityCreated)
 (JNIEnv* aEnv, jobject aActivity, jobject aAssetManager, int64_t aGVRContext) {
-  sDevice = crow::DeviceDelegateGoogleVR::Create(sWorld->GetWeakContext(), (void*)aGVRContext);
+  if (!sDevice) {
+    sDevice = crow::DeviceDelegateGoogleVR::Create(sWorld->GetWeakContext(), (void*) aGVRContext);
+  }
+  sDevice->InitializeGL();
   sDevice->Resume();
   sWorld->RegisterDeviceDelegate(sDevice);
   sWorld->InitializeJava(aEnv, aActivity, aAssetManager);
+  sWorld->InitializeGL();
 }
 
 JNI_METHOD(void, activityDestroyed)
@@ -51,20 +58,9 @@ JNI_METHOD(void, activityDestroyed)
   sDevice = nullptr;
 }
 
-JNI_METHOD(void, initializeGL)
-(JNIEnv*, jobject) {
-  sDevice->InitializeGL();
-  sWorld->InitializeGL();
-}
-
 JNI_METHOD(void, drawGL)
 (JNIEnv*, jobject) {
   sWorld->Draw();
-}
-
-JNI_METHOD(void, shutdownGL)
-(JNIEnv*, jobject) {
-  sWorld->ShutdownGL();
 }
 
 jint JNI_OnLoad(JavaVM* aVm, void*) {

@@ -12,12 +12,15 @@ import android.graphics.SurfaceTexture;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.ViewParent;
+import android.util.Log;
 import android.widget.FrameLayout;
 
 import org.mozilla.vrbrowser.Widget;
 
 public class UIWidget extends FrameLayout implements Widget {
     UISurfaceTextureRenderer mRenderer;
+    SurfaceTexture mTexture;
+    static final String LOGTAG = "VRB";
 
     public UIWidget(Context aContext) {
         super(aContext);
@@ -33,6 +36,11 @@ public class UIWidget extends FrameLayout implements Widget {
 
     @Override
     public void setSurfaceTexture(SurfaceTexture aTexture, final int aWidth, final int aHeight) {
+        if (mTexture!= null && (mTexture.equals(aTexture))) {
+            Log.e(LOGTAG, "TEXTURE ALREADY SET");
+            return;
+        }
+        mTexture = aTexture;
         if (mRenderer != null) {
             mRenderer.release();
         }
@@ -58,6 +66,7 @@ public class UIWidget extends FrameLayout implements Widget {
             mRenderer.release();
             mRenderer = null;
         }
+        // mTexture = null;
     }
 
     @Override
@@ -76,7 +85,7 @@ public class UIWidget extends FrameLayout implements Widget {
         }
         mRenderer.drawEnd();
     }
-
+    /*
     @Override
     public ViewParent invalidateChildInParent(int[] aLocation, Rect aDirty) {
         ViewParent parent =  super.invalidateChildInParent(aLocation, aDirty);
@@ -85,6 +94,5 @@ public class UIWidget extends FrameLayout implements Widget {
             invalidate();
         }
         return parent;
-    }
-
+    }*/
 }

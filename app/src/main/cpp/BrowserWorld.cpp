@@ -230,6 +230,7 @@ BrowserWorld::IsPaused() const {
 
 void
 BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetManager) {
+  VRB_LOG("BrowserWorld::InitializeJava");
   if (m.context) {
     m.context->InitializeJava(aEnv, aActivity, aAssetManager);
   }
@@ -280,25 +281,40 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
 
 void
 BrowserWorld::InitializeGL() {
+  VRB_LOG("BrowserWorld::InitializeGL");
   if (m.context) {
     if (!m.glInitialized) {
       m.glInitialized = m.context->InitializeGL();
+      if (!m.glInitialized) {
+        return;
+      }
+      SurfaceTextureFactoryPtr factory = m.context->GetSurfaceTextureFactory();
+      for (WidgetPtr& widget: m.widgets) {
+        const std::string name = widget->GetSurfaceTextureName();
+        jobject surface = factory->LookupSurfaceTexture(name);
+        if (surface) {
+          SetSurfaceTexture(name, surface);
+        }
+      }
     }
   }
 }
 
 void
 BrowserWorld::ShutdownJava() {
+  VRB_LOG("BrowserWorld::ShutdownJava");
   if (m.env) {
     m.env->DeleteGlobalRef(m.activity);
   }
   m.activity = nullptr;
   m.dispatchCreateWidgetMethod = nullptr;
   m.updateMotionEventMethod = nullptr;
+  m.env = nullptr;
 }
 
 void
 BrowserWorld::ShutdownGL() {
+  VRB_LOG("BrowserWorld::ShutdownGL");
   if (m.context) {
     m.context->ShutdownGL();
   }
@@ -312,7 +328,7 @@ BrowserWorld::Draw() {
     return;
   }
   if (m.paused) {
-    VRB_LOG("Paused");
+    VRB_LOG("BrowserWorld Paused");
     return;
   }
   if (!m.glInitialized) {
@@ -395,6 +411,7 @@ BrowserWorld::Draw() {
 
 void
 BrowserWorld::SetSurfaceTexture(const std::string& aName, jobject& aSurface) {
+  VRB_LOG("SetSurfaceTexture: %s", aName.c_str());
   if (m.env && m.activity && m.dispatchCreateWidgetMethod) {
     for (WidgetPtr& widget: m.widgets) {
       if (aName == widget->GetSurfaceTextureName()) {

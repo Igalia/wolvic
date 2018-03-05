@@ -9,41 +9,55 @@ import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.view.MotionEvent;
 import android.view.Surface;
+import android.util.Log;
+
+import org.mozilla.geckoview.GeckoSession;
 
 class BrowserWidget implements Widget {
-    Context mContext;
-    BrowserSession mSession;
-    Surface mSurface;
+    private static final String LOGTAG = "VRB";
+    private Context mContext;
+    private int mSessionId;
+    private Surface mSurface;
 
-    BrowserWidget(Context aContext, BrowserSession aSession) {
+    BrowserWidget(Context aContext, int aSessionId) {
         mContext = aContext;
-        mSession = aSession;
+        mSessionId = aSessionId;
     }
 
     @Override
     public void setSurfaceTexture(SurfaceTexture aTexture, final int aWidth, final int aHeight) {
+        GeckoSession session = SessionStore.get().getSession(mSessionId);
+        if (session == null) {
+            return;
+        }
         aTexture.setDefaultBufferSize(aWidth, aHeight);
         mSurface = new Surface(aTexture);
-        mSession.getGeckoSession().acquireDisplay().surfaceChanged(mSurface, aWidth, aHeight);
-        mSession.getGeckoSession().openWindow(mContext);
+        session.acquireDisplay().surfaceChanged(mSurface, aWidth, aHeight);
     }
 
     @Override
     public void handleTouchEvent(MotionEvent aEvent) {
-      mSession.getGeckoSession().getPanZoomController().onTouchEvent(aEvent);
+        GeckoSession session = SessionStore.get().getSession(mSessionId);
+        if (session == null) {
+            return;
+        }
+        session.getPanZoomController().onTouchEvent(aEvent);
     }
 
     @Override
     public void handleHoverEvent(MotionEvent aEvent) {
-        mSession.getGeckoSession().getPanZoomController().onMotionEvent(aEvent);
+        GeckoSession session = SessionStore.get().getSession(mSessionId);
+        if (session == null) {
+            return;
+        }
+        session.getPanZoomController().onMotionEvent(aEvent);
     }
 
     @Override
     public void releaseWidget() {
-        mSession.getGeckoSession().closeWindow();
-    }
-
-    BrowserSession getSession() {
-        return mSession;
+        GeckoSession session = SessionStore.get().getSession(mSessionId);
+        if (session == null) {
+            return;
+        }
     }
 }

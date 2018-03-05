@@ -31,10 +31,10 @@ class UISurfaceTextureRenderer {
 
     void release() {
         if(mSurface != null){
-            mSurface.release();
+            //mSurface.release();
         }
         if(mSurfaceTexture != null){
-            mSurfaceTexture.release();
+            //mSurfaceTexture.release();
         }
         mSurface = null;
         mSurfaceTexture = null;

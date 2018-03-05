@@ -72,16 +72,16 @@ public class OffscreenDisplay {
         }
 
         if (mVirtualDisplay != null) {
-            mVirtualDisplay.release();
+            //mVirtualDisplay.release();
             mVirtualDisplay = null;
         }
 
         if (mSurface != null) {
-            mSurface.release();
+            //mSurface.release();
         }
 
         if (mTexture != null) {
-            mTexture.release();
+            //mTexture.release();
         }
     }
 
@@ -94,6 +94,7 @@ public class OffscreenDisplay {
         public void onCreate(Bundle savedInstanceState) {
 
             super.onCreate(savedInstanceState);
+            /*
             getWindow()
                     .getDecorView()
                     .setSystemUiVisibility(
@@ -103,6 +104,7 @@ public class OffscreenDisplay {
                                     | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                                     | View.SYSTEM_UI_FLAG_FULLSCREEN
                                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+                                    */
         }
     }
 }

@@ -33,6 +33,7 @@ public:
   void BindEye(const CameraEnum aWhich) override;
   void EndFrame() override;
   // DeviceDelegateGoogleVR interface
+  void SetGVRContext(void* aGVRContext);
   void InitializeGL();
   void Pause();
   void Resume();

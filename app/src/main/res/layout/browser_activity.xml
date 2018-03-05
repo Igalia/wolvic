@@ -10,31 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-
-            <ImageButton
-                android:id="@+id/reloadButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:src="@drawable/ic_refresh_black_24px" />
-
-            <EditText
-                android:id="@+id/urlBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="100"
-                android:ems="10"
-                android:inputType="textUri"
-                android:text="URL" />
-
-        </LinearLayout>
-
+        <include layout="@layout/url_layout" />
         <org.mozilla.geckoview.GeckoView
             android:id="@+id/geckoview"
             android:layout_width="match_parent"

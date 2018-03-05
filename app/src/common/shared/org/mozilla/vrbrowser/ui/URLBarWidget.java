@@ -14,12 +14,11 @@ import android.widget.ImageButton;
 import android.util.Log;
 
 import org.mozilla.geckoview.GeckoSession;
-import org.mozilla.vrbrowser.BrowserSession;
+import org.mozilla.vrbrowser.SessionStore;
 import org.mozilla.vrbrowser.R;
 
 public class URLBarWidget extends UIWidget implements GeckoSession.NavigationDelegate {
     private static final String LOGTAG = "VRB";
-    private BrowserSession mSession;
     private ImageButton mBackButton;
     private ImageButton mForwardButton;
     private ImageButton mReloadButton;
@@ -53,73 +52,39 @@ public class URLBarWidget extends UIWidget implements GeckoSession.NavigationDel
         mURLBar.setTextIsSelectable(false);
         mURLBar.setCursorVisible(false);
 
-        updateViews();
-
         mBackButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mSession != null) {
-                    mSession.getGeckoSession().goBack();
-                }
+                SessionStore.get().goBack();
             }
         });
 
         mForwardButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mSession != null) {
-                    mSession.getGeckoSession().goForward();
-                }
+                SessionStore.get().goForward();
             }
         });
 
         mReloadButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mSession != null) {
-                    Log.e(LOGTAG, "Clicked RELOAD");
-                    mSession.getGeckoSession().reload();
-                }
+                SessionStore.get().reload();
             }
         });
+        SessionStore.get().addListener(this);
     }
 
     @Override
     public void releaseWidget() {
         super.releaseWidget();
-        if (mSession != null) {
-            mSession.removeNavigationListener(this);
-        }
-        mSession = null;
-    }
-
-    public void setSession(BrowserSession aSession) {
-        if (mSession != null) {
-            mSession.removeNavigationListener(this);
-        }
-        mSession = aSession;
-        mSession.addNavigationListener(this);
-        updateViews();
-    }
-
-    private void updateViews() {
-        if (mSession != null) {
-            Log.e(LOGTAG, "updateViews");
-            mBackButton.setEnabled(mSession.canGoBack());
-            mForwardButton.setEnabled(mSession.canGoForward());
-            mReloadButton.setEnabled(mSession.getUrl() != null);
-            mURLBar.setText(mSession.getUrl());
-        } else {
-            mBackButton.setEnabled(false);
-            mForwardButton.setEnabled(false);
-            mReloadButton.setEnabled(false);
-            mURLBar.setText("");
-        }
+        SessionStore.get().removeListener(this);
     }
 
     @Override
     public void onLocationChange(GeckoSession session, String url) {
         if (mURLBar != null) {
+            Log.e(LOGTAG, "Got location change: " + url);
             mURLBar.setText(url);
             mReloadButton.setEnabled(true);
         }
@@ -127,17 +92,26 @@ public class URLBarWidget extends UIWidget implements GeckoSession.NavigationDel
 
     @Override
     public void onCanGoBack(GeckoSession session, boolean canGoBack) {
-        mBackButton.setEnabled(canGoBack);
+        if (mBackButton != null) {
+            Log.e(LOGTAG, "Got onCanGoBack: " + (canGoBack ? "TRUE" : "FALSE"));
+            mBackButton.setEnabled(canGoBack);
+            mBackButton.setClickable(canGoBack);
+        }
     }
 
     @Override
     public void onCanGoForward(GeckoSession session, boolean canGoForward) {
-        mForwardButton.setEnabled(canGoForward);
+        if (mForwardButton != null) {
+            Log.e(LOGTAG, "Got onCanGoForward: " + (canGoForward ? "TRUE" : "FALSE"));
+            mForwardButton.setEnabled(canGoForward);
+            mForwardButton.setClickable(canGoForward);
+        }
     }
 
     @Override
     public boolean onLoadUri(GeckoSession session, String uri, TargetWindow where) {
         if (mURLBar != null) {
+            Log.e(LOGTAG, "Got onLoadUri: " + uri);
             mURLBar.setText(uri);
         }
         return false;

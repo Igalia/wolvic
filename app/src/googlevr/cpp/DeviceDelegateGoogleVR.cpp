@@ -331,7 +331,7 @@ DeviceDelegateGoogleVR::StartFrame() {
 
   GVR_CHECK(gvr_frame_bind_buffer(m.frame, 0));
   VRB_CHECK(glClearColor(m.clearColor.Red(), m.clearColor.Green(), m.clearColor.Blue(), m.clearColor.Alpha()));
-  glEnable(GL_BLEND);
+  VRB_CHECK(glEnable(GL_BLEND));
 }
 
 static void
@@ -370,6 +370,11 @@ DeviceDelegateGoogleVR::EndFrame() {
 }
 
 void
+DeviceDelegateGoogleVR::SetGVRContext(void* aGVRContext) {
+
+}
+
+void
 DeviceDelegateGoogleVR::InitializeGL() {
   gvr_initialize_gl(m.gvr);
   m.CreateSwapChain();
@@ -382,24 +387,25 @@ void
 DeviceDelegateGoogleVR::Pause() {
   if (m.controllerContext) {
     VRB_LOG("Pause GVR controller");
-    gvr_controller_pause(m.controllerContext);
+    GVR_CHECK(gvr_controller_pause(m.controllerContext));
   }
 
   if (m.gvr) {
     VRB_LOG("Pause GVR tracking");
-    gvr_pause_tracking(m.gvr);
+    GVR_CHECK(gvr_pause_tracking(m.gvr));
   }
 }
 
 void
 DeviceDelegateGoogleVR::Resume() {
   if (m.gvr) {
-    VRB_LOG("Resume GVR tracking")
-    gvr_resume_tracking(m.gvr);
+    VRB_LOG("Resume GVR tracking");
+    GVR_CHECK(gvr_refresh_viewer_profile(m.gvr));
+    GVR_CHECK(gvr_resume_tracking(m.gvr));
   }
   if (m.controllerContext) {
     VRB_LOG("Resume GVR controller");
-    gvr_controller_resume(m.controllerContext);
+    GVR_CHECK(gvr_controller_resume(m.controllerContext));
   }
 }
 

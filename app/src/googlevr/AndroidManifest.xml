@@ -7,6 +7,8 @@
             android:screenOrientation="landscape"
             android:enableVrMode="@string/gvr_vr_mode_component"
             android:resizeableActivity="false"
+            android:launchMode="singleInstance"
+            android:configChanges="orientation|screenSize|keyboard|keyboardHidden|navigation"
             tools:node="replace">
             <meta-data android:name="com.google.android.vr.icon"
                 android:resource="@drawable/crow2" />

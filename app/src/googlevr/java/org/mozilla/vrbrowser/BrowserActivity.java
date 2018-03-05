@@ -4,6 +4,8 @@ import android.app.Activity;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,9 +22,10 @@ import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.geckoview.GeckoView;
 import org.mozilla.gecko.util.GeckoBundle;
+import org.mozilla.vrbrowser.SessionStore;
 
 public class BrowserActivity extends Activity {
-    private static final String LOGTAG = "GeckoViewVR";
+    private static final String LOGTAG = "VRB";
 
     private static final String DEFAULT_URL = "https://vr.mozilla.org";
     private static final int REQUEST_PERMISSIONS = 2;
@@ -31,30 +34,26 @@ public class BrowserActivity extends Activity {
     private GeckoView mGeckoView;
     private GeckoSession mGeckoSession;
     private EditText mURLBar;
+    private ImageButton mReloadButton;
+    private ImageButton mBackButton;
+    private ImageButton mForwardButton;
+    private Navigation mNavigation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.e(LOGTAG, "BrowserActivity onCreate");
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.browser_activity);
 
+        mNavigation = new Navigation();
+        SessionStore.get().addListener(mNavigation);
+
         // Keep the screen on
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
         mContainer = findViewById(R.id.container);
         mGeckoView = findViewById(R.id.geckoview);
-        mGeckoSession = new GeckoSession();
-        mGeckoView.setSession(mGeckoSession);
-        mGeckoSession.setNavigationDelegate(new Navigation());
-        //final BasicGeckoViewPrompt prompt = new BasicGeckoViewPrompt(this);
-        //prompt.filePickerRequestCode = REQUEST_FILE_PICKER;
-        //mGeckoSession.setPromptDelegate(prompt);
-        final MyGeckoViewPermission permission = new MyGeckoViewPermission();
-        permission.androidPermissionRequestCode = REQUEST_PERMISSIONS;
-        mGeckoSession.setPermissionDelegate(permission);
-        mGeckoView.getSettings().setBoolean(GeckoSessionSettings.USE_MULTIPROCESS, false);
-        //mGeckoView.getSettings().setBoolean(GeckoSessionSettings.USE_REMOTE_DEBUGGER, true);
-        mGeckoView.requestFocus();
+        mGeckoView.coverUntilFirstPaint(Color.TRANSPARENT);
         setupUI();
         setContentView(mContainer);
         loadFromIntent(getIntent());
@@ -74,21 +73,33 @@ public class BrowserActivity extends Activity {
 
     @Override
     public void onBackPressed() {
+        SessionStore.get().goBack();
         super.onBackPressed();
     }
 
     @Override
     protected void onPause() {
+        Log.e(LOGTAG, "BrowserActivity onPause");
+        if (mGeckoView != null) {
+            mGeckoView.setSession(null);
+        }
         super.onPause();
     }
 
     @Override
     protected void onResume() {
+        Log.e(LOGTAG, "BrowserActivity onResume");
+        if (mGeckoSession != null && mGeckoView != null) {
+            mGeckoView.setSession(mGeckoSession);
+            mGeckoView.requestFocus();
+        }
         super.onResume();
     }
 
     @Override
     protected void onDestroy() {
+        Log.e(LOGTAG, "BrowserActivity onDestroy");
+        SessionStore.get().removeListener(mNavigation);
         super.onDestroy();
     }
 
@@ -109,7 +120,7 @@ public class BrowserActivity extends Activity {
                                            final String[] permissions,
                                            final int[] grantResults) {
         Log.e(LOGTAG,"Got onRequestPermissionsResult");
-        if (requestCode == REQUEST_PERMISSIONS) {
+        if (requestCode == REQUEST_PERMISSIONS && (mGeckoSession != null)) {
             final MyGeckoViewPermission permission = (MyGeckoViewPermission)
                     mGeckoSession.getPermissionDelegate();
             permission.onRequestPermissionsResult(permissions, grantResults);
@@ -120,10 +131,28 @@ public class BrowserActivity extends Activity {
 
     private void loadFromIntent(final Intent intent) {
         final Uri uri = intent.getData();
-        Log.e(LOGTAG, "Load URI from intent: " + (uri != null ? uri.toString() : DEFAULT_URL));
-        String uriValue = (uri != null ? uri.toString() : DEFAULT_URL);
+        mGeckoSession = SessionStore.get().getCurrentSession();
+        String uriValue;
+        if (mGeckoSession == null) {
+            int id = SessionStore.get().createSession();
+            SessionStore.get().setCurrentSession(id, this);
+            mGeckoSession = SessionStore.get().getCurrentSession();
+            final MyGeckoViewPermission permission = new MyGeckoViewPermission();
+            permission.androidPermissionRequestCode = REQUEST_PERMISSIONS;
+            mGeckoSession.setPermissionDelegate(permission);
+            uriValue = (uri != null ? uri.toString() : DEFAULT_URL);
+            Log.e(LOGTAG, "BrowserActivity create session and load URI from intent: " + uriValue);
+            mGeckoSession.loadUri(uriValue);
+            mGeckoView.setSession(mGeckoSession);
+        } else if (uri != null) {
+            uriValue = uri.toString();
+            Log.e(LOGTAG, "BrowserActivity load URI from intent: " + uriValue);
+            mGeckoSession.loadUri(uriValue);
+        } else {
+            uriValue = SessionStore.get().getCurrentUri();
+            Log.e(LOGTAG, "BrowserActivity URI current session: " + uriValue);
+        }
         mURLBar.setText(uriValue);
-        mGeckoSession.loadUri(uriValue);
     }
 
     public void setFullScreen() {
@@ -143,13 +172,19 @@ public class BrowserActivity extends Activity {
 
         }
         public void onLocationChange(GeckoSession session, String url) {
-            mURLBar.setText(url);
+            if (mURLBar != null) {
+                mURLBar.setText(url);
+            }
         }
         public void onCanGoBack(GeckoSession session, boolean canGoBack){
-
+            if (mBackButton != null) {
+                mBackButton.setEnabled(canGoBack);
+            }
         }
         public void onCanGoForward(GeckoSession session, boolean canGoForward){
-
+            if (mForwardButton != null) {
+                mForwardButton.setEnabled(canGoForward);
+            }
         }
         public boolean onLoadUri(GeckoSession session, String uri, TargetWindow where) {
             return false;
@@ -157,14 +192,34 @@ public class BrowserActivity extends Activity {
     }
 
     private void setupUI() {
-        ImageButton reloadButton = findViewById(R.id.reloadButton);
+        mReloadButton = findViewById(R.id.reloadButton);
+        mBackButton = findViewById(R.id.backButton);
+        mForwardButton = findViewById(R.id.forwardButton);
         mURLBar = findViewById(R.id.urlBar);
 
-        reloadButton.setOnClickListener(new View.OnClickListener() {
+        mReloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (mGeckoSession != null) {
                     mGeckoSession.reload();
+                }
+            }
+        });
+
+        mBackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mGeckoSession != null) {
+                    mGeckoSession.goBack();
+                }
+            }
+        });
+
+        mForwardButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mGeckoSession != null) {
+                    mGeckoSession.goForward();
                 }
             }
         });
@@ -175,7 +230,9 @@ public class BrowserActivity extends Activity {
                 if (i == EditorInfo.IME_ACTION_NEXT) {
                     String uri = textView.getText().toString();
                     Log.e(LOGTAG, "Got URI: " + uri);
-                    mGeckoSession.loadUri(uri);
+                    if (mGeckoSession != null) {
+                        mGeckoSession.loadUri(uri);
+                    }
                     setFullScreen();
                 }
                 return false;
