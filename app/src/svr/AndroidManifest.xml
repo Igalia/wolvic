@@ -6,7 +6,7 @@
     <meta-data android:name="com.osterhoutgroup.input_mode" android:value="Mouse" />
 
     <application>
-        <meta-data android:name="com.samsung.android.vr.application.mode" android:value="vr_only"/>
+        <meta-data android:name="com.osterhoutgroup.display_mode" android:value="extend"/>
         <activity android:name=".VRBrowserActivity" android:screenOrientation="reverseLandscape">
             <meta-data android:name="android.app.lib_name" android:value="native-lib" />
             <!-- Intent filter that enables this app to be launched from the
