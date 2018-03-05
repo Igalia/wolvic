@@ -10,12 +10,12 @@ import org.mozilla.geckoview.GeckoSessionSettings;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class BrowserSession implements GeckoSession.NavigationListener {
+public class BrowserSession implements GeckoSession.NavigationDelegate {
     private GeckoSession mSession;
     private String mUri;
     private boolean mCanGoBack;
     private boolean mCanGoForward;
-    private CopyOnWriteArrayList<GeckoSession.NavigationListener> mNavigationListeners;
+    private CopyOnWriteArrayList<GeckoSession.NavigationDelegate> mNavigationListeners;
 
     BrowserSession(GeckoSession aSession) {
         mSession = aSession;
@@ -23,7 +23,7 @@ public class BrowserSession implements GeckoSession.NavigationListener {
 
         // Remove once e10s issues have been resolved.
         mSession.getSettings().setBoolean(GeckoSessionSettings.USE_MULTIPROCESS, false);
-        mSession.setNavigationListener(this);
+        mSession.setNavigationDelegate(this);
     }
 
     public String getUrl() {
@@ -47,13 +47,13 @@ public class BrowserSession implements GeckoSession.NavigationListener {
         mUri = aUri;
     }
 
-    public void addNavigationListener(GeckoSession.NavigationListener aListener) {
+    public void addNavigationListener(GeckoSession.NavigationDelegate aListener) {
         if (!mNavigationListeners.contains(aListener)) {
             mNavigationListeners.add(aListener);
         }
     }
 
-    public void removeNavigationListener(GeckoSession.NavigationListener aListener) {
+    public void removeNavigationListener(GeckoSession.NavigationDelegate aListener) {
         mNavigationListeners.remove(aListener);
     }
 
@@ -65,7 +65,7 @@ public class BrowserSession implements GeckoSession.NavigationListener {
     @Override
     public void onLocationChange(GeckoSession session, String url) {
         mUri = url;
-        for (GeckoSession.NavigationListener listener: mNavigationListeners) {
+        for (GeckoSession.NavigationDelegate listener: mNavigationListeners) {
             listener.onLocationChange(session, url);
         }
     }
@@ -73,7 +73,7 @@ public class BrowserSession implements GeckoSession.NavigationListener {
     @Override
     public void onCanGoBack(GeckoSession session, boolean canGoBack) {
         mCanGoBack = canGoBack;
-        for (GeckoSession.NavigationListener listener: mNavigationListeners) {
+        for (GeckoSession.NavigationDelegate listener: mNavigationListeners) {
             listener.onCanGoBack(session, canGoBack);
         }
     }
@@ -81,7 +81,7 @@ public class BrowserSession implements GeckoSession.NavigationListener {
     @Override
     public void onCanGoForward(GeckoSession session, boolean canGoForward) {
         mCanGoForward = canGoForward;
-        for (GeckoSession.NavigationListener listener: mNavigationListeners) {
+        for (GeckoSession.NavigationDelegate listener: mNavigationListeners) {
             listener.onCanGoForward(session, canGoForward);
         }
     }
@@ -90,7 +90,7 @@ public class BrowserSession implements GeckoSession.NavigationListener {
     public boolean onLoadUri(GeckoSession session, String uri, TargetWindow where) {
         mUri = uri;
         boolean result = false;
-        for (GeckoSession.NavigationListener listener: mNavigationListeners) {
+        for (GeckoSession.NavigationDelegate listener: mNavigationListeners) {
             result |= listener.onLoadUri(session, uri, where);
         }
         return result;

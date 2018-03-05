@@ -17,7 +17,7 @@ import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.BrowserSession;
 import org.mozilla.vrbrowser.R;
 
-public class URLBarWidget extends UIWidget implements GeckoSession.NavigationListener {
+public class URLBarWidget extends UIWidget implements GeckoSession.NavigationDelegate {
     private static final String LOGTAG = "VRB";
     private BrowserSession mSession;
     private ImageButton mBackButton;

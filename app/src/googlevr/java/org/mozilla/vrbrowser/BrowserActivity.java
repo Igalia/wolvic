@@ -45,7 +45,7 @@ public class BrowserActivity extends Activity {
         mGeckoView = findViewById(R.id.geckoview);
         mGeckoSession = new GeckoSession();
         mGeckoView.setSession(mGeckoSession);
-        mGeckoSession.setNavigationListener(new Navigation());
+        mGeckoSession.setNavigationDelegate(new Navigation());
         //final BasicGeckoViewPrompt prompt = new BasicGeckoViewPrompt(this);
         //prompt.filePickerRequestCode = REQUEST_FILE_PICKER;
         //mGeckoSession.setPromptDelegate(prompt);
@@ -138,7 +138,7 @@ public class BrowserActivity extends Activity {
         getWindow().getDecorView().setSystemUiVisibility(flags);
     }
 
-    private class Navigation implements GeckoSession.NavigationListener {
+    private class Navigation implements GeckoSession.NavigationDelegate {
         public void onNewSession(GeckoSession session, String url, GeckoSession.Response<GeckoSession> response) {
 
         }
@@ -209,16 +209,16 @@ public class BrowserActivity extends Activity {
         }
 
         @Override
-        public void requestAndroidPermissions(final GeckoSession session, final String[] permissions,
-                                              final Callback callback) {
+        public void onAndroidPermissionsRequest(final GeckoSession session, final String[] permissions,
+                                                final Callback callback) {
             mCallback = callback;
             requestPermissions(permissions, androidPermissionRequestCode);
         }
 
         @Override
-        public void requestContentPermission(final GeckoSession session, final String uri,
-                                             final String type, final String access,
-                                             final Callback callback) {
+        public void onContentPermissionRequest(final GeckoSession session, final String uri,
+                                               final int type, final String access,
+                                               final Callback callback) {
 /*            final int resId;
             if ("geolocation".equals(type)) {
                 resId = R.string.request_geolocation;
@@ -237,10 +237,11 @@ public class BrowserActivity extends Activity {
         }
 
         @Override
-        public void requestMediaPermission(GeckoSession geckoSession, String s, MediaSource[] mediaSources, MediaSource[] mediaSources1, MediaCallback mediaCallback) {
+        public void onMediaPermissionRequest(GeckoSession geckoSession, String s,
+                                             MediaSource[] mediaSources, MediaSource[] mediaSources1,
+                                             MediaCallback mediaCallback) {
 
         }
-
 
         private void normalizeMediaName(final GeckoBundle[] sources) {
 /*            if (sources == null) {
