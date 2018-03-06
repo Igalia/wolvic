@@ -207,7 +207,7 @@ Widget::TestControllerIntersection(const vrb::Vector& aStartPoint, const vrb::Ve
   if (!m.root->IsEnabled(*m.transform)) {
     return false;
   }
-  vrb::Matrix modelView = m.transform->GetTransform().Inverse();
+  vrb::Matrix modelView = m.transform->GetTransform().AfineInverse();
   vrb::Vector point = modelView.MultiplyPosition(aStartPoint);
   vrb::Vector direction = modelView.MultiplyDirection(aDirection);
   const float dotNormals = direction.Dot(m.windowNormal);

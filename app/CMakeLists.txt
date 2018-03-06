@@ -69,6 +69,13 @@ target_sources(
     src/googlevr/cpp/native-lib.cpp
     src/googlevr/cpp/DeviceDelegateGoogleVR.cpp
     )
+elseif(NOAPI)
+target_sources(
+    native-lib
+    PUBLIC
+    src/noapi/cpp/native-lib.cpp
+    src/noapi/cpp/DeviceDelegateNoAPI.cpp
+    )
 else()
 target_sources(
     native-lib

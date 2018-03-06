@@ -50,8 +50,8 @@ android {
             externalNativeBuild {
                 cmake {
                     cppFlags " -I" + file("${project.rootDir}/third_party/ovr_mobile/VrApi/Include").absolutePath +
-                             " -I" + file("${project.rootDir}/app/src/oculusvr/cpp").absolutePath +
-                             " -DOCULUSVR"
+                            " -I" + file("${project.rootDir}/app/src/oculusvr/cpp").absolutePath +
+                            " -DOCULUSVR"
                     arguments "-DVR_SDK_LIB=oculusvr-lib", "-DOCULUSVR=ON"
                 }
             }
@@ -60,8 +60,8 @@ android {
             externalNativeBuild {
                 cmake {
                     cppFlags " -I" + file("${project.rootDir}/third_party/svr/public").absolutePath +
-                             " -I" + file("${project.rootDir}/app/src/svr/cpp").absolutePath +
-                             " -DSNAPDRAGONVR"
+                            " -I" + file("${project.rootDir}/app/src/svr/cpp").absolutePath +
+                            " -DSNAPDRAGONVR"
                     arguments "-DVR_SDK_LIB=svr-lib", "-DSNAPDRAGONVR=ON"
                 }
             }
@@ -71,6 +71,14 @@ android {
                 cmake {
                     cppFlags " -I" + file("${project.rootDir}/third_party/wavesdk/build/wvr_client/include").absolutePath
                     arguments "-DVR_SDK_LIB=wavevr-lib", "-DWAVEVR=ON"
+                }
+            }
+        }
+        noapi {
+            externalNativeBuild {
+                cmake {
+                    cppFlags " -DVRBROWSER_NO_VR_API"
+                    arguments "-DNOAPI=ON"
                 }
             }
         }
@@ -113,19 +121,24 @@ android {
             ]
             jniLibs.srcDirs = ["${project.rootDir}/third_party/wavesdk/build/wvr_client/jni"]
         }
+        noapi {
+            java.srcDirs = [
+                    'src/noapi/java'
+            ]
+        }
     }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     implementation project(':geckoview-withGeckoBinaries')
-
     googlevrImplementation 'com.google.vr:sdk-base:1.120.0'
     svrImplementation fileTree(dir: "${project.rootDir}/third_party/svr/", include: ['*.jar'])
     wavevrImplementation project(':wavesdk')
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
 }

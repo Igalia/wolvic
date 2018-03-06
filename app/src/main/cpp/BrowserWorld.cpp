@@ -269,9 +269,12 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
     for (int32_t ix = 0; ix < m.controllerCount; ix++) {
       ControllerRecord record(ix);
       record.controller = Transform::Create(m.contextWeak);
-      m.factory->SetModelRoot(record.controller);
-      m.parser->LoadModel(m.device->GetControllerModelName(ix));
-      m.root->AddNode(record.controller);
+      const std::string fileName = m.device->GetControllerModelName(ix);
+      if (!fileName.empty()) {
+        m.factory->SetModelRoot(record.controller);
+        m.parser->LoadModel(m.device->GetControllerModelName(ix));
+        m.root->AddNode(record.controller);
+      }
       m.controllers.push_back(std::move(record));
     }
     AddControllerPointer();
@@ -404,8 +407,11 @@ BrowserWorld::Draw() {
   m.device->StartFrame();
   m.device->BindEye(DeviceDelegate::CameraEnum::Left);
   m.drawList->Draw(*m.leftCamera);
+  // When running the noapi flavor, we only want to render one eye.
+#if !defined(VRBROWSER_NO_VR_API)
   m.device->BindEye(DeviceDelegate::CameraEnum::Right);
   m.drawList->Draw(*m.rightCamera);
+#endif // !defined(VRBROWSER_NO_VR_API)
   m.device->EndFrame();
 }
 
