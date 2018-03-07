@@ -90,7 +90,9 @@ public class BrowserActivity extends Activity {
     protected void onResume() {
         Log.e(LOGTAG, "BrowserActivity onResume");
         if (mGeckoSession != null && mGeckoView != null) {
-            mGeckoView.setSession(mGeckoSession);
+            if (!mGeckoSession.isOpen()) {
+                mGeckoView.setSession(mGeckoSession);
+            }
             mGeckoView.requestFocus();
         }
         super.onResume();
