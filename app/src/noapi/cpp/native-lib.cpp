@@ -75,6 +75,11 @@ JNI_METHOD(void, moveAxis)
   sDevice->MoveAxis(aX, aY, aZ);
 }
 
+JNI_METHOD(void, rotateHeading)
+(JNIEnv*, jobject, float aHeading) {
+  sDevice->RotateHeading(aHeading);
+}
+
 JNI_METHOD(void, touchEvent)
 (JNIEnv*, jobject, bool aDown, float aX, float aY) {
   sDevice->TouchEvent(aDown, aX, aY);

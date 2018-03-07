@@ -19,6 +19,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 public class PlatformActivity extends Activity {
     static String LOGTAG = "VRB";
+    static final float ROTATION = 0.098174770424681f;
     // Used to load the 'native-lib' library on application startup.
     static {
         System.loadLibrary("native-lib");
@@ -205,13 +206,36 @@ public class PlatformActivity extends Activity {
                 dispatchMoveAxis(0,0,0);
             }
         });
+
+        findViewById(R.id.right_turn_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dispatchRotateHeading(-ROTATION);
+            }
+        });
+
+        findViewById(R.id.left_turn_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dispatchRotateHeading(ROTATION);
+            }
+        });
     }
 
-    private void dispatchMoveAxis(final int aX, final int aY, final int aZ) {
+    private void dispatchMoveAxis(final float aX, final float aY, final float aZ) {
         mView.queueEvent(new Runnable() {
             @Override
             public void run() {
                 moveAxis(aX, aY, aZ);
+            }
+        });
+    }
+
+    private void dispatchRotateHeading(final float aHeading) {
+        mView.queueEvent(new Runnable() {
+            @Override
+            public void run() {
+                rotateHeading(aHeading);
             }
         });
     }
@@ -223,5 +247,6 @@ public class PlatformActivity extends Activity {
     private native void activityDestroyed();
     private native void drawGL();
     private native void moveAxis(float aX, float aY, float aZ);
+    private native void rotateHeading(float aHeading);
     private native void touchEvent(boolean aDown, float aX, float aY);
 }

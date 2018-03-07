@@ -26,9 +26,14 @@ struct DeviceDelegateNoAPI::State {
   vrb::Matrix controller;
   vrb::CameraSimplePtr camera;
   vrb::Color clearColor;
+  float heading;
+  vrb::Matrix headingMatrix;
+  vrb::Vector position;
   bool clicked;
   State()
       : controller(vrb::Matrix::Identity())
+      , headingMatrix(vrb::Matrix::Identity())
+      , position(sHomePosition)
       , clicked(false)
   {
   }
@@ -82,6 +87,8 @@ DeviceDelegateNoAPI::GetControllerModelName(const int32_t) const {
 
 void
 DeviceDelegateNoAPI::ProcessEvents() {
+  m.camera->SetTransform(m.headingMatrix.Translate(m.position));
+
 }
 
 const vrb::Matrix&
@@ -139,15 +146,25 @@ DeviceDelegateNoAPI::Resume() {
 void
 DeviceDelegateNoAPI::MoveAxis(const float aX, const float aY, const float aZ) {
   if (!aX && !aY && !aZ) {
-    m.camera->SetTransform(vrb::Matrix::Translation(sHomePosition));
+    m.position = sHomePosition;
+    m.heading = 0.0f;
+    m.headingMatrix = vrb::Matrix::Identity();
     return;
   }
-  vrb::Matrix translation = m.camera->GetTransform();
-  translation.TranslateInPlace(vrb::Vector(aX, aY, aZ));
-  m.camera->SetTransform(translation);
+  m.position += m.headingMatrix.MultiplyDirection(vrb::Vector(aX, aY, aZ));
 }
 
+static const vrb::Vector sUp(0.0f, 1.0f, 0.0f);
+
+void
+DeviceDelegateNoAPI::RotateHeading(const float aHeading) {
+  m.heading += aHeading;
+  m.headingMatrix = vrb::Matrix::Rotation(sUp, m.heading);
+}
+
+
 static const vrb::Vector sForward(0.0f, 0.0f, -1.0f);
+
 void
 DeviceDelegateNoAPI::TouchEvent(const bool aDown, const float aX, const float aY) {
   m.clicked = aDown;
@@ -176,8 +193,6 @@ DeviceDelegateNoAPI::TouchEvent(const bool aDown, const float aX, const float aY
   m.controller = vrb::Matrix::Rotation(up, angle);
   m.controller.TranslateInPlace(start);
 }
-
-
 
 DeviceDelegateNoAPI::DeviceDelegateNoAPI(State& aState) : m(aState) {}
 DeviceDelegateNoAPI::~DeviceDelegateNoAPI() { m.Shutdown(); }
