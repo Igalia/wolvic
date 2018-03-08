@@ -85,14 +85,14 @@ public class UIWidget extends FrameLayout implements Widget {
         }
         mRenderer.drawEnd();
     }
-    /*
+
     @Override
     public ViewParent invalidateChildInParent(int[] aLocation, Rect aDirty) {
         ViewParent parent =  super.invalidateChildInParent(aLocation, aDirty);
-        if (parent != null) {
+        if (parent != null && mRenderer != null) {
             // TODO: transform rect and use invalidate(dirty)
-            invalidate();
+            postInvalidate();
         }
         return parent;
-    }*/
+    }
 }
