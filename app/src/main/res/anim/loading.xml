@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fillBefore="true">
+
+     <scale
+        android:interpolator="@android:anim/linear_interpolator"
+        android:fromXScale="0.3"
+        android:toXScale="0.05"
+        android:fromYScale="0.3"
+        android:toYScale="0.05"
+        android:pivotX="50%"
+        android:pivotY="50%"
+        android:duration="500"
+        android:repeatMode="reverse"
+        android:repeatCount="infinite"
+        />
+
+    <translate
+        android:interpolator="@android:anim/accelerate_decelerate_interpolator"
+        android:fromXDelta="-25%"
+        android:toXDelta="25%"
+        android:duration="1000"
+        android:startOffset="0"
+        android:repeatMode="reverse"
+        android:repeatCount="infinite"/>
+</set>

@@ -6,10 +6,8 @@
 package org.mozilla.vrbrowser.ui;
 
 import android.content.Context;
-import android.text.InputType;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.util.Log;
 
@@ -17,40 +15,37 @@ import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.SessionStore;
 import org.mozilla.vrbrowser.R;
 
-public class URLBarWidget extends UIWidget implements GeckoSession.NavigationDelegate {
+public class URLBarWidget extends UIWidget implements GeckoSession.NavigationDelegate, GeckoSession.ProgressDelegate {
     private static final String LOGTAG = "VRB";
     private ImageButton mBackButton;
     private ImageButton mForwardButton;
     private ImageButton mReloadButton;
-    private EditText mURLBar;
+    private ImageButton mHomeButton;
+    private NavigationURLBar mURLBar;
+    private boolean mIsLoading;
 
     public URLBarWidget(Context aContext) {
         super(aContext);
+        initialize(aContext);
     }
 
     public URLBarWidget(Context aContext, AttributeSet aAttrs) {
         super(aContext, aAttrs);
+        initialize(aContext);
     }
 
     public URLBarWidget(Context aContext, AttributeSet aAttrs, int aDefStyle) {
         super(aContext, aAttrs, aDefStyle);
+        initialize(aContext);
     }
 
-    @Override
-    public void onNewSession(GeckoSession aSession, String aUrl, GeckoSession.Response<GeckoSession> aResponse) {
-
-    }
-
-    @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
+    private void initialize(Context aContext) {
+        inflate(aContext, R.layout.navigation_bar, this);
         mBackButton = findViewById(R.id.backButton);
         mForwardButton = findViewById(R.id.forwardButton);
         mReloadButton = findViewById(R.id.reloadButton);
+        mHomeButton = findViewById(R.id.homeButton);
         mURLBar = findViewById(R.id.urlBar);
-        mURLBar.setRawInputType(InputType.TYPE_NULL);
-        mURLBar.setTextIsSelectable(false);
-        mURLBar.setCursorVisible(false);
 
         mBackButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -69,29 +64,49 @@ public class URLBarWidget extends UIWidget implements GeckoSession.NavigationDel
         mReloadButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                SessionStore.get().reload();
+                if (mIsLoading) {
+                    SessionStore.get().stop();
+                } else {
+                    SessionStore.get().reload();
+                }
             }
         });
-        SessionStore.get().addListener(this);
+
+        mHomeButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SessionStore.get().loadUri(SessionStore.DEFAULT_URL);
+            }
+        });
+
+        SessionStore.get().addNavigationListener(this);
+        SessionStore.get().addProgressListener(this);
     }
+
+    @Override
+    public void onNewSession(GeckoSession aSession, String aUrl, GeckoSession.Response<GeckoSession> aResponse) {
+
+    }
+
 
     @Override
     public void releaseWidget() {
         super.releaseWidget();
-        SessionStore.get().removeListener(this);
+        SessionStore.get().removeNavigationListener(this);
+        SessionStore.get().removeProgressListener(this);
     }
 
     @Override
     public void onLocationChange(GeckoSession session, String url) {
         if (mURLBar != null) {
             Log.e(LOGTAG, "Got location change: " + url);
-            mURLBar.setText(url);
+            mURLBar.setURL(url);
             mReloadButton.setEnabled(true);
         }
     }
 
     @Override
-    public void onCanGoBack(GeckoSession session, boolean canGoBack) {
+    public void onCanGoBack(GeckoSession aSession, boolean canGoBack) {
         if (mBackButton != null) {
             Log.e(LOGTAG, "Got onCanGoBack: " + (canGoBack ? "TRUE" : "FALSE"));
             mBackButton.setEnabled(canGoBack);
@@ -100,7 +115,7 @@ public class URLBarWidget extends UIWidget implements GeckoSession.NavigationDel
     }
 
     @Override
-    public void onCanGoForward(GeckoSession session, boolean canGoForward) {
+    public void onCanGoForward(GeckoSession aSession, boolean canGoForward) {
         if (mForwardButton != null) {
             Log.e(LOGTAG, "Got onCanGoForward: " + (canGoForward ? "TRUE" : "FALSE"));
             mForwardButton.setEnabled(canGoForward);
@@ -109,12 +124,47 @@ public class URLBarWidget extends UIWidget implements GeckoSession.NavigationDel
     }
 
     @Override
-    public boolean onLoadUri(GeckoSession session, String uri, TargetWindow where) {
+    public boolean onLoadUri(GeckoSession aSession, String uri, TargetWindow where) {
         if (mURLBar != null) {
             Log.e(LOGTAG, "Got onLoadUri: " + uri);
-            mURLBar.setText(uri);
+            mURLBar.setURL(uri);
         }
         return false;
+    }
+
+    // Progress Listener
+
+    @Override
+    public void onPageStart(GeckoSession aSession, String aUri) {
+        if (mURLBar != null) {
+            Log.e(LOGTAG, "Got onPageStart: " + aUri);
+            mURLBar.setURL(aUri);
+            mURLBar.setIsLoading(true);
+        }
+        mIsLoading = true;
+        if (mReloadButton != null) {
+            mReloadButton.setImageResource(R.drawable.icon_exit_normal);
+        }
+    }
+
+    @Override
+    public void onPageStop(GeckoSession aSession, boolean b) {
+        if (mURLBar != null) {
+            Log.e(LOGTAG, "Got onPageStop");
+            mURLBar.setIsLoading(false);
+        }
+        mIsLoading = false;
+        if (mReloadButton != null) {
+            mReloadButton.setImageResource(R.drawable.ic_icon_reload);
+        }
+    }
+
+    @Override
+    public void onSecurityChange(GeckoSession geckoSession, SecurityInformation securityInformation) {
+        if (mURLBar != null) {
+            Log.e(LOGTAG, "Got onSecurityChange: " + securityInformation.isSecure);
+            mURLBar.setIsInsecure(!securityInformation.isSecure);
+        }
     }
 }
 

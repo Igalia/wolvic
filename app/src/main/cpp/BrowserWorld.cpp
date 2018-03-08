@@ -168,8 +168,8 @@ struct BrowserWorld::State {
     root->AddNode(browser->GetRoot());
     widgets.push_back(std::move(browser));
 
-    WidgetPtr urlbar = Widget::Create(contextWeak, WidgetTypeURLBar, 1920, 200, 9.0f);
-    urlbar->SetTransform(Matrix::Position(Vector(0.0f, 7.5f, -18.0f)));
+    WidgetPtr urlbar = Widget::Create(contextWeak, WidgetTypeURLBar, 1920 * 1.5f, 175 * 1.5f, 9.0f);
+    urlbar->SetTransform(Matrix::Position(Vector(0.0f, 7.15f, -18.0f)));
     root->AddNode(urlbar->GetRoot());
     widgets.push_back(std::move(urlbar));
   }

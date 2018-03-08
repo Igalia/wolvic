@@ -33,6 +33,7 @@
             android:name=".BrowserActivity"
             android:launchMode="singleInstance"
             android:configChanges="orientation|screenSize|keyboard|keyboardHidden|navigation"
+            android:theme="@style/AppTheme"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

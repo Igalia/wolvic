@@ -10,7 +10,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-        <include layout="@layout/url_layout" />
+        <org.mozilla.vrbrowser.ui.URLBarWidget
+            android:id="@+id/navigationBar2D"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
         <org.mozilla.geckoview.GeckoView
             android:id="@+id/geckoview"
             android:layout_width="match_parent"

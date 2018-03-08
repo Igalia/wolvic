@@ -1,11 +1,53 @@
 <resources>
+    <!-- Theme attributes -->
+    <declare-styleable name="AppTheme">
+        <attr name="navigationBarStyle" format="reference" />
+        <attr name="navigationBarButtonStyle" format="reference" />
+        <attr name="urlBarIconStyle" format="reference" />
+        <attr name="navigationBarButtonTint" format="reference" />
+        <attr name="urlProtocolColor" format="color" />
+    </declare-styleable>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+    <!-- Button attributes -->
+    <declare-styleable name="NavigationBarButton">
+        <attr name="disabledTintColor" format="color" />
+    </declare-styleable>
+
+
+    <style name="navigationBarTheme">
+        <item name="android:background">@drawable/navigation_bar_background</item>
+        <item name="android:padding">12dp</item>
+    </style>
+
+    <style name="navigationBarButtonTheme">
+        <item name="android:background">@drawable/navigation_bar_button</item>
+        <item name="android:paddingLeft">15dp</item>
+        <item name="android:paddingRight">15dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:layout_width">50dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="disabledTintColor">@color/midnight</item>
+    </style>
+
+    <style name="urlBarIconTheme">
+        <item name="android:background">@null</item>
+        <item name="android:paddingLeft">0dp</item>
+        <item name="android:paddingRight">0dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:layout_width">30dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:scaleType">fitCenter</item>
+    </style>
+
+    <style name="AppTheme" parent="android:Theme.Black.NoTitleBar.Fullscreen">
+        <item name="navigationBarStyle">@style/navigationBarTheme</item>
+        <item name="navigationBarButtonStyle">@style/navigationBarButtonTheme</item>
+        <item name="urlBarIconStyle">@style/urlBarIconTheme</item>
+        <item name="navigationBarButtonTint">@color/midnight</item>
+        <item name="urlProtocolColor">@color/concrete</item>
     </style>
 
 </resources>

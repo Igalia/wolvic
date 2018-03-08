@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
@@ -23,6 +24,7 @@ import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.geckoview.GeckoView;
 import org.mozilla.gecko.util.GeckoBundle;
 import org.mozilla.vrbrowser.SessionStore;
+import org.mozilla.vrbrowser.ui.URLBarWidget;
 
 public class BrowserActivity extends Activity {
     private static final String LOGTAG = "VRB";
@@ -33,11 +35,8 @@ public class BrowserActivity extends Activity {
     private FrameLayout mContainer;
     private GeckoView mGeckoView;
     private GeckoSession mGeckoSession;
-    private EditText mURLBar;
-    private ImageButton mReloadButton;
-    private ImageButton mBackButton;
-    private ImageButton mForwardButton;
-    private Navigation mNavigation;
+    private URLBarWidget mNavigationBar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,16 +44,13 @@ public class BrowserActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.browser_activity);
-
-        mNavigation = new Navigation();
-        SessionStore.get().addListener(mNavigation);
+        mNavigationBar = findViewById(R.id.navigationBar2D);
 
         // Keep the screen on
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         mContainer = findViewById(R.id.container);
         mGeckoView = findViewById(R.id.geckoview);
         mGeckoView.coverUntilFirstPaint(Color.TRANSPARENT);
-        setupUI();
         setContentView(mContainer);
         loadFromIntent(getIntent());
     }
@@ -101,7 +97,9 @@ public class BrowserActivity extends Activity {
     @Override
     protected void onDestroy() {
         Log.e(LOGTAG, "BrowserActivity onDestroy");
-        SessionStore.get().removeListener(mNavigation);
+        if (mNavigationBar != null) {
+            mNavigationBar.releaseWidget();
+        }
         super.onDestroy();
     }
 
@@ -154,7 +152,6 @@ public class BrowserActivity extends Activity {
             uriValue = SessionStore.get().getCurrentUri();
             Log.e(LOGTAG, "BrowserActivity URI current session: " + uriValue);
         }
-        mURLBar.setText(uriValue);
     }
 
     public void setFullScreen() {
@@ -168,80 +165,6 @@ public class BrowserActivity extends Activity {
 
         getWindow().getDecorView().setSystemUiVisibility(flags);
     }
-
-    private class Navigation implements GeckoSession.NavigationDelegate {
-        public void onNewSession(GeckoSession session, String url, GeckoSession.Response<GeckoSession> response) {
-
-        }
-        public void onLocationChange(GeckoSession session, String url) {
-            if (mURLBar != null) {
-                mURLBar.setText(url);
-            }
-        }
-        public void onCanGoBack(GeckoSession session, boolean canGoBack){
-            if (mBackButton != null) {
-                mBackButton.setEnabled(canGoBack);
-            }
-        }
-        public void onCanGoForward(GeckoSession session, boolean canGoForward){
-            if (mForwardButton != null) {
-                mForwardButton.setEnabled(canGoForward);
-            }
-        }
-        public boolean onLoadUri(GeckoSession session, String uri, TargetWindow where) {
-            return false;
-        }
-    }
-
-    private void setupUI() {
-        mReloadButton = findViewById(R.id.reloadButton);
-        mBackButton = findViewById(R.id.backButton);
-        mForwardButton = findViewById(R.id.forwardButton);
-        mURLBar = findViewById(R.id.urlBar);
-
-        mReloadButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mGeckoSession != null) {
-                    mGeckoSession.reload();
-                }
-            }
-        });
-
-        mBackButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mGeckoSession != null) {
-                    mGeckoSession.goBack();
-                }
-            }
-        });
-
-        mForwardButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mGeckoSession != null) {
-                    mGeckoSession.goForward();
-                }
-            }
-        });
-
-        mURLBar.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                if (i == EditorInfo.IME_ACTION_NEXT) {
-                    String uri = textView.getText().toString();
-                    Log.e(LOGTAG, "Got URI: " + uri);
-                    if (mGeckoSession != null) {
-                        mGeckoSession.loadUri(uri);
-                    }
-                    setFullScreen();
-                }
-                return false;
-            }
-        });
-    }
-
 
     private class MyGeckoViewPermission implements GeckoSession.PermissionDelegate {
 

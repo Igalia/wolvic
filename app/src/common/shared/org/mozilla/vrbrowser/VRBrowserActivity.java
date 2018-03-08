@@ -45,7 +45,6 @@ public class VRBrowserActivity extends PlatformActivity {
     static final int GestureSwipeRight = 1;
     static final int SwipeDelay = 1000; // milliseconds
 
-    static final String DEFAULT_URL = "https://www.polygon.com/"; // https://vr.mozilla.org";
     static final String LOGTAG = "VRB";
     HashMap<Integer, Widget> mWidgets;
     OffscreenDisplay mOffscreenDisplay;
@@ -87,7 +86,7 @@ public class VRBrowserActivity extends PlatformActivity {
     void loadFromIntent(final Intent intent) {
         final Uri uri = intent.getData();
         if (SessionStore.get().getCurrentSession() == null) {
-            String url = (uri != null ? uri.toString() : DEFAULT_URL);
+            String url = (uri != null ? uri.toString() : SessionStore.DEFAULT_URL);
             int id = SessionStore.get().createSession();
             SessionStore.get().setCurrentSession(id, this);
             SessionStore.get().loadUri(url);
@@ -115,8 +114,7 @@ public class VRBrowserActivity extends PlatformActivity {
             int currentSession = SessionStore.get().getCurrentSessionId();
             widget = new BrowserWidget(this, currentSession);
         } else if (aType == Widget.URLBar) {
-            URLBarWidget urlWidget = (URLBarWidget) getLayoutInflater().inflate(R.layout.url, null);
-            widget = urlWidget;
+            widget = new URLBarWidget(this);
         }
 
         if (widget != null) {

@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<org.mozilla.vrbrowser.ui.URLBarWidget xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/container"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <include layout="@layout/url_layout"/>
-</org.mozilla.vrbrowser.ui.URLBarWidget>
