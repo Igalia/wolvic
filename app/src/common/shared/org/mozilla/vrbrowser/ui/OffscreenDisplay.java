@@ -17,8 +17,10 @@ import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.View;
+import android.util.Log;
 
 public class OffscreenDisplay {
+    final String LOGTAG = "VRB";
     private Context mContext;
     private VirtualDisplay mVirtualDisplay;
     private SurfaceTexture mTexture;
@@ -30,6 +32,7 @@ public class OffscreenDisplay {
     public OffscreenDisplay(Context aContext, SurfaceTexture aTexture, int aWidth, int aHeight) {
         mContext = aContext;
         aTexture.setDefaultBufferSize(aWidth, aHeight);
+        mTexture = aTexture;
         mSurface = new Surface(aTexture);
 
         DisplayManager manager = (DisplayManager) aContext.getSystemService(Context.DISPLAY_SERVICE);
@@ -72,16 +75,16 @@ public class OffscreenDisplay {
         }
 
         if (mVirtualDisplay != null) {
-            //mVirtualDisplay.release();
+            mVirtualDisplay.release();
             mVirtualDisplay = null;
         }
 
         if (mSurface != null) {
-            //mSurface.release();
+            mSurface.release();
         }
 
         if (mTexture != null) {
-            //mTexture.release();
+            mTexture.release();
         }
     }
 
@@ -94,17 +97,18 @@ public class OffscreenDisplay {
         public void onCreate(Bundle savedInstanceState) {
 
             super.onCreate(savedInstanceState);
-            /*
-            getWindow()
-                    .getDecorView()
-                    .setSystemUiVisibility(
-                            View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-                                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-                                    */
+            try {
+                getWindow()
+                        .getDecorView()
+                        .setSystemUiVisibility(
+                                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+            } catch (Exception e) {
+            }
         }
     }
 }

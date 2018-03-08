@@ -12,6 +12,7 @@ import android.graphics.SurfaceTexture;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.ViewParent;
+import android.view.View;
 import android.util.Log;
 import android.widget.FrameLayout;
 
@@ -66,7 +67,7 @@ public class UIWidget extends FrameLayout implements Widget {
             mRenderer.release();
             mRenderer = null;
         }
-        // mTexture = null;
+        mTexture = null;
     }
 
     @Override
@@ -84,6 +85,15 @@ public class UIWidget extends FrameLayout implements Widget {
             super.draw(textureCanvas);
         }
         mRenderer.drawEnd();
+    }
+
+    @Override
+    public void onDescendantInvalidated (View child, View target) {
+        super.onDescendantInvalidated(child, target);
+        if (mRenderer != null) {
+            // TODO: transform rect and use invalidate(dirty)
+            postInvalidate();
+        }
     }
 
     @Override
