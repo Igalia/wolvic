@@ -45,6 +45,21 @@ public class BrowserActivity extends Activity {
 
         setContentView(R.layout.browser_activity);
         mNavigationBar = findViewById(R.id.navigationBar2D);
+        EditText editText = findViewById(R.id.urlEditText);
+        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (i == EditorInfo.IME_ACTION_NEXT) {
+                    String uri = textView.getText().toString();
+                    Log.e(LOGTAG, "Got URI: " + uri);
+                    if (mGeckoSession != null) {
+                        mGeckoSession.loadUri(uri);
+                    }
+                    setFullScreen();
+                }
+                return false;
+            }
+        });
 
         // Keep the screen on
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
