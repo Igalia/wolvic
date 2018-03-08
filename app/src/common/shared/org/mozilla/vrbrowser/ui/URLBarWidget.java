@@ -124,7 +124,7 @@ public class URLBarWidget extends UIWidget implements GeckoSession.NavigationDel
     }
 
     @Override
-    public boolean onLoadUri(GeckoSession aSession, String uri, TargetWindow where) {
+    public boolean onLoadRequest(GeckoSession session, String uri, int target) {
         if (mURLBar != null) {
             Log.e(LOGTAG, "Got onLoadUri: " + uri);
             mURLBar.setURL(uri);

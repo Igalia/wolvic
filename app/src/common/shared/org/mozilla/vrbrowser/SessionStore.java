@@ -142,7 +142,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         if (state != null) {
             mCurrentSession = state.mSession;
             if (!mCurrentSession.isOpen()) {
-                mCurrentSession.openWindow(aContext);
+                mCurrentSession.open(aContext);
             }
         }
         dumpAllState();
@@ -246,7 +246,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     }
 
     @Override
-    public boolean onLoadUri(GeckoSession aSession, String aUri, TargetWindow aTarget) {
+    public boolean onLoadRequest(GeckoSession aSession, String aUri, int aTarget) {
         return false;
     }
 
