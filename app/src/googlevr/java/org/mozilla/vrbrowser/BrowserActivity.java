@@ -92,7 +92,7 @@ public class BrowserActivity extends Activity {
     protected void onPause() {
         Log.e(LOGTAG, "BrowserActivity onPause");
         if (mGeckoView != null) {
-            mGeckoView.setSession(null);
+            mGeckoView.releaseSession();
         }
         super.onPause();
     }
@@ -101,7 +101,8 @@ public class BrowserActivity extends Activity {
     protected void onResume() {
         Log.e(LOGTAG, "BrowserActivity onResume");
         if (mGeckoSession != null && mGeckoView != null) {
-            if (!mGeckoSession.isOpen()) {
+            if (!mGeckoSession.equals(mGeckoView.getSession())) {
+                mGeckoView.releaseSession();
                 mGeckoView.setSession(mGeckoSession);
             }
             mGeckoView.requestFocus();
