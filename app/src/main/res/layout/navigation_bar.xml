@@ -48,6 +48,6 @@
             style="?attr/navigationBarButtonStyle"
             android:layout_weight="1"
             android:layout_marginStart="10dp"
-            android:src="@drawable/icon_exit_normal" />
+            android:src="@drawable/ic_icon_exit" />
     </LinearLayout>
 </merge>

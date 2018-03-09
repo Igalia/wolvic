@@ -39,5 +39,6 @@
         android:id="@+id/microphoneButton"
         style="?attr/urlBarIconStyle"
         android:layout_gravity="end"
-        android:src="@drawable/icon_microphone_normal" />
+        android:tint="@color/dusk"
+        android:src="@drawable/ic_icon_microphone" />
 </merge>

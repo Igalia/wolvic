@@ -143,7 +143,7 @@ public class URLBarWidget extends UIWidget implements GeckoSession.NavigationDel
         }
         mIsLoading = true;
         if (mReloadButton != null) {
-            mReloadButton.setImageResource(R.drawable.icon_exit_normal);
+            mReloadButton.setImageResource(R.drawable.ic_icon_exit);
         }
     }
 
