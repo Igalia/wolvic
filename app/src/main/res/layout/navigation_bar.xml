@@ -46,6 +46,7 @@
         <org.mozilla.vrbrowser.ui.NavigationBarButton
             android:id="@+id/closeButton"
             style="?attr/navigationBarButtonStyle"
+            android:visibility="gone"
             android:layout_weight="1"
             android:layout_marginStart="10dp"
             android:src="@drawable/ic_icon_exit" />

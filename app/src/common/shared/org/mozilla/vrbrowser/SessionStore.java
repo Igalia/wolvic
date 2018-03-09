@@ -160,6 +160,19 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         return result;
     }
 
+    public boolean canGoBack() {
+        if (mCurrentSession == null) {
+            return false;
+        }
+
+        State state = mSessions.get(mCurrentSession.hashCode());
+        if (state != null) {
+            return state.mCanGoBack;
+        }
+
+        return false;
+    }
+
     public void goBack() {
         if (mCurrentSession == null) {
              return;

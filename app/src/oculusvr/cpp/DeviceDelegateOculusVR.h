@@ -39,6 +39,7 @@ public:
   void EnterVR(const crow::BrowserEGLContext& aEGLContext);
   void LeaveVR();
   bool IsInVRMode() const;
+  bool ExitApp();
 protected:
   struct State;
   DeviceDelegateOculusVR(State& aState);

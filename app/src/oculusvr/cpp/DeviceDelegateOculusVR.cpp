@@ -24,6 +24,7 @@
 #include "VrApi.h"
 #include "VrApi_Helpers.h"
 #include "VrApi_Input.h"
+#include "VrApi_SystemUtils.h"
 
 namespace crow {
 
@@ -432,6 +433,12 @@ DeviceDelegateOculusVR::LeaveVR() {
 bool
 DeviceDelegateOculusVR::IsInVRMode() const {
   return m.ovr != nullptr;
+}
+
+bool
+DeviceDelegateOculusVR::ExitApp() {
+  vrapi_ShowSystemUI(&m.java, VRAPI_SYS_UI_CONFIRM_QUIT_MENU);
+  return true;
 }
 
 DeviceDelegateOculusVR::DeviceDelegateOculusVR(State &aState) : m(aState) {}

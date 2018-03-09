@@ -71,6 +71,12 @@ public class VRBrowserActivity extends PlatformActivity {
     }
 
     @Override
+    public void onDestroy() {
+        mOffscreenDisplay.release();
+        super.onDestroy();
+    }
+
+    @Override
     protected void onNewIntent(final Intent intent) {
         Log.e(LOGTAG,"VRBrowserActivity onNewIntent");
         super.onNewIntent(intent);
@@ -95,6 +101,15 @@ public class VRBrowserActivity extends PlatformActivity {
             SessionStore.get().loadUri(uri.toString());
         }
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (SessionStore.get().canGoBack()) {
+            SessionStore.get().goBack();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     void createWidget(final int aType, final int aHandle, SurfaceTexture aTexture, int aWidth, int aHeight) {

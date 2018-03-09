@@ -21,8 +21,14 @@ public class URLBarWidget extends UIWidget implements GeckoSession.NavigationDel
     private ImageButton mForwardButton;
     private ImageButton mReloadButton;
     private ImageButton mHomeButton;
+    private ImageButton mCloseButton;
     private NavigationURLBar mURLBar;
     private boolean mIsLoading;
+    private URLBarWidget.Delegate mDelegate;
+
+    public interface Delegate {
+        void onCloseClick();
+    }
 
     public URLBarWidget(Context aContext) {
         super(aContext);
@@ -45,6 +51,7 @@ public class URLBarWidget extends UIWidget implements GeckoSession.NavigationDel
         mForwardButton = findViewById(R.id.forwardButton);
         mReloadButton = findViewById(R.id.reloadButton);
         mHomeButton = findViewById(R.id.homeButton);
+        mCloseButton = findViewById(R.id.closeButton);
         mURLBar = findViewById(R.id.urlBar);
 
         mBackButton.setOnClickListener(new OnClickListener() {
@@ -79,8 +86,26 @@ public class URLBarWidget extends UIWidget implements GeckoSession.NavigationDel
             }
         });
 
+        mCloseButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mDelegate != null) {
+                    mDelegate.onCloseClick();
+                }
+            }
+        });
+
         SessionStore.get().addNavigationListener(this);
         SessionStore.get().addProgressListener(this);
+    }
+
+    public void setDelegate(Delegate aDelegate) {
+        mDelegate = aDelegate;
+        if (aDelegate != null) {
+            mCloseButton.setVisibility(View.VISIBLE);
+        } else {
+            mCloseButton.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override

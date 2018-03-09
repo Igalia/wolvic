@@ -26,6 +26,16 @@ public class PlatformActivity extends NativeActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        queueRunnable(new Runnable() {
+            @Override
+            public void run() {
+                platformExit();
+            }
+        });
+    }
+
+    @Override
     protected void onResume() {
         setFullScreen();
         super.onResume();
@@ -64,4 +74,5 @@ public class PlatformActivity extends NativeActivity {
     }
 
     protected native void queueRunnable(Runnable aRunnable);
+    protected native boolean platformExit();
 }

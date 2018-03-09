@@ -206,4 +206,12 @@ JNI_METHOD(void, queueRunnable)
   }
 }
 
+JNI_METHOD(jboolean, platformExit)
+(JNIEnv *aEnv, jobject, jobject aRunnable) {
+  if (sAppContext && sAppContext->mDevice) {
+    return (jboolean) sAppContext->mDevice->ExitApp();
+  }
+  return (jboolean) false;
+}
+
 } // extern "C"

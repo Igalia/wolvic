@@ -441,6 +441,11 @@ DeviceDelegateSVR::IsInVRMode() const {
   return m.isInVRMode;
 }
 
+bool
+DeviceDelegateSVR::ExitApp() {
+    return false;
+}
+
 DeviceDelegateSVR::DeviceDelegateSVR(State &aState) : m(aState) {}
 
 DeviceDelegateSVR::~DeviceDelegateSVR() { m.Shutdown(); }
