@@ -3,10 +3,10 @@
     <item android:state_pressed="true" >
         <shape android:shape="rectangle"  >
             <corners android:radius="3dip" />
-            <solid android:color="#9EA3AB"/>
+            <solid android:color="#b7b7b8"/>
         </shape>
     </item>
-    <item android:state_focused="true">
+    <item android:state_hovered="true" android:state_pressed="false">
         <shape android:shape="rectangle"  >
             <corners android:radius="3dip" />
             <solid android:color="@color/concrete"/>
