@@ -58,7 +58,7 @@ public class UIWidget extends FrameLayout implements Widget {
 
     @Override
     public void handleHoverEvent(MotionEvent aEvent) {
-        this.dispatchHoverEvent(aEvent);
+        this.dispatchGenericMotionEvent(aEvent);
     }
 
     @Override
