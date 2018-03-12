@@ -60,6 +60,21 @@ public class VRBrowserActivity extends PlatformActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.e(LOGTAG, "VRBrowserActivity onCreate");
+        // Temporary fix for GeckoView start up bug where first page loaded
+        // would be blank.
+        if (SessionStore.get().getCurrentSession() == null) {
+            int id = SessionStore.get().createSession();
+            SessionStore.get().setCurrentSession(id, this);
+
+        }
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.e(LOGTAG, "LOADING: " + SessionStore.DEFAULT_URL);
+                SessionStore.get().loadUri(SessionStore.DEFAULT_URL);
+            }
+        }, 2000);
+        // End temporary fix
         mLastGesture = NoGesture;
         super.onCreate(savedInstanceState);
 
@@ -104,8 +119,12 @@ public class VRBrowserActivity extends PlatformActivity {
 
     @Override
     protected void onDestroy() {
-        mOffscreenDisplay.release();
-        mAudioEngine.release();
+        if (mOffscreenDisplay != null) {
+            mOffscreenDisplay.release();
+        }
+        if (mAudioEngine != null) {
+            mAudioEngine.release();
+        }
         super.onDestroy();
     }
 
@@ -131,9 +150,9 @@ public class VRBrowserActivity extends PlatformActivity {
             SessionStore.get().loadUri(url);
             Log.e(LOGTAG, "Load creating session and loading URI:" + url);
         } else if (uri != null) {
+            Log.e(LOGTAG, "Got URI: " + uri.toString());
             SessionStore.get().loadUri(uri.toString());
         }
-
     }
 
     @Override
@@ -187,7 +206,7 @@ public class VRBrowserActivity extends PlatformActivity {
     }
 
     @Keep
-    void updateMotionEvent(final int aHandle, final int aDevice, final boolean aPressed, final int aX, final int aY) {
+    void handleMotionEvent(final int aHandle, final int aDevice, final boolean aPressed, final float aX, final float aY) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -202,7 +221,22 @@ public class VRBrowserActivity extends PlatformActivity {
     }
 
     @Keep
-    void dispatchGesture(final int aType) {
+    void handleScrollEvent(final int aHandle, final int aDevice, final float aX, final float aY) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Widget widget = mWidgets.get(aHandle);
+                if (widget != null) {
+                    MotionEventGenerator.dispatchScroll(widget, aDevice, aX, aY);
+                } else {
+                    Log.e(LOGTAG, "Failed to find widget: " + aHandle);
+                }
+            }
+        });
+    }
+
+    @Keep
+    void handleGesture(final int aType) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -233,7 +267,7 @@ public class VRBrowserActivity extends PlatformActivity {
     }
 
     @Keep
-    void updateAudioPose(float qx, float qy, float qz, float qw, float px, float py, float pz) {
+    void handleAudioPose(float qx, float qy, float qz, float qw, float px, float py, float pz) {
         mAudioEngine.setPose(qx, qy, qz, qw, px, py, pz);
 
         // https://developers.google.com/vr/reference/android/com/google/vr/sdk/audio/GvrAudioEngine.html#resume()

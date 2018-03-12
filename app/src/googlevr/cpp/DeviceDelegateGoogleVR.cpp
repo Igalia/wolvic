@@ -56,6 +56,9 @@ struct DeviceDelegateGoogleVR::State {
   vrb::CameraEyePtr cameras[2];
   vrb::Matrix controller;
   bool clicked;
+  bool touched;
+  float touchX;
+  float touchY;
   ElbowModel::HandEnum hand;
   ElbowModelPtr elbow;
   GestureDelegatePtr gestures;
@@ -72,6 +75,9 @@ struct DeviceDelegateGoogleVR::State {
       , near(0.1f)
       , far(100.f)
       , clicked(false)
+      , touched(false)
+      , touchX(0.0f)
+      , touchY(0.0f)
       , controller(vrb::Matrix::Identity())
       , hand(ElbowModel::HandEnum::Right)
   {
@@ -187,19 +193,16 @@ struct DeviceDelegateGoogleVR::State {
     for (int ix = 1; ix < GVR_CONTROLLER_BUTTON_COUNT; ix++) {
       const uint64_t buttonMask = (uint64_t)0x01 << (ix - 1);
       bool pressed = gvr_controller_state_get_button_state(controllerState, ix);
-      bool touched = pressed;
       if (ix == GVR_CONTROLLER_BUTTON_CLICK) {
         touched = gvr_controller_state_is_touching(controllerState);
-        double xAxis = 0.0;
-        double yAxis = 0.0;
         if (touched) {
           gvr_vec2f axes = gvr_controller_state_get_touch_pos(controllerState);
+          touchX = axes.x;
+          touchY = axes.y;
+        } else {
+          touchX = touchY = 0.0f;
         }
         clicked = pressed;
-      }
-      if (pressed) {
-      }
-      if (touched) {
       }
     }
 
@@ -315,6 +318,13 @@ DeviceDelegateGoogleVR::GetControllerTransform(const int32_t aWhichController) {
 bool
 DeviceDelegateGoogleVR::GetControllerButtonState(const int32_t aWhichController, const int32_t aWhichButton, bool& aChangedState) {
   return m.clicked;
+}
+
+bool
+DeviceDelegateGoogleVR::GetControllerScrolled(const int32_t aWhichController, float& aScrollX, float& aScrollY) {
+  aScrollX = m.touchX;
+  aScrollY = m.touchY;
+  return m.touched;
 }
 
 void

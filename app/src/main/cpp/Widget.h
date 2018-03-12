@@ -28,7 +28,7 @@ public:
   void GetSurfaceTextureSize(int32_t& aWidth, int32_t& aHeight) const;
   void GetWidgetMinAndMax(vrb::Vector& aMin, vrb::Vector& aMax) const;
   bool TestControllerIntersection(const vrb::Vector& aStartPoint, const vrb::Vector& aDirection, vrb::Vector& aResult, bool& aIsInWidget, float& aDistance) const;
-  void ConvertToWidgetCoordinates(const vrb::Vector& aPoint, int32_t& aX, int32_t& aY) const;
+  void ConvertToWidgetCoordinates(const vrb::Vector& aPoint, float& aX, float& aY) const;
   void ConvertToWorldCoordinates(const vrb::Vector& aPoint, vrb::Vector& aResult) const;
   const vrb::Matrix GetTransform() const;
   void SetTransform(const vrb::Matrix& aTransform);

@@ -12,6 +12,7 @@ import android.view.InputDevice;
 import android.util.SparseArray;
 
 class MotionEventGenerator {
+    static final String LOGTAG = "VRB";
     static class Device {
         Widget mPreviousWidget = null;
         boolean mWasPressed;
@@ -44,8 +45,6 @@ class MotionEventGenerator {
         int action = 0;
         boolean moving = (device.mCoords[0].x != aX) || (device.mCoords[0].y != aY);
         boolean hover = false;
-        float previousX = device.mCoords[0].x;
-        float previousY = device.mCoords[0].y;
         device.mCoords[0].x = aX;
         device.mCoords[0].y = aY;
         if (aPressed) {
@@ -66,7 +65,6 @@ class MotionEventGenerator {
             action |= MotionEvent.ACTION_HOVER_MOVE;
             hover = true;
             if ((device.mPreviousWidget == null) || (!device.mPreviousWidget.equals(aWidget))) {
-                Log.e("VRB", "HOVER ENTER!");
                 action |= MotionEvent.ACTION_HOVER_ENTER;
             }
         } else {
@@ -74,6 +72,7 @@ class MotionEventGenerator {
             return;
         }
         device.mPreviousWidget = aWidget;
+
         MotionEvent event = MotionEvent.obtain(
                 /*mDownTime*/ device.mDownTime,
                 /*eventTime*/ SystemClock.uptimeMillis(),
@@ -94,5 +93,34 @@ class MotionEventGenerator {
             return;
         }
         aWidget.handleTouchEvent(event);
+    }
+
+    static void dispatchScroll(Widget aWidget, int aDevice, float aX, float aY) {
+        Device device = devices.get(aDevice);
+        if (device == null) {
+            device = new Device();
+            devices.put(aDevice, device);
+        }
+        device.mPreviousWidget = aWidget;
+        device.mCoords[0].setAxisValue(MotionEvent.AXIS_VSCROLL, aY);
+        device.mCoords[0].setAxisValue(MotionEvent.AXIS_HSCROLL, aX);
+        MotionEvent event = MotionEvent.obtain(
+                /*mDownTime*/ device.mDownTime,
+                /*eventTime*/ SystemClock.uptimeMillis(),
+                /*action*/ MotionEvent.ACTION_SCROLL,
+                /*pointerCount*/ 1,
+                /*pointerProperties*/ device.mProperties,
+                /*pointerCoords*/ device.mCoords,
+                /*metaState*/ 0,
+                /*buttonState*/ 0,
+                /*xPrecision*/ 0,
+                /*yPrecision*/ 0,
+                /*deviceId*/ aDevice,
+                /*edgeFlags*/ 0,
+                /*source*/ InputDevice.SOURCE_TOUCHSCREEN,
+                /*flags*/ 0);
+        aWidget.handleHoverEvent(event);
+        device.mCoords[0].setAxisValue(MotionEvent.AXIS_VSCROLL, 0.0f);
+        device.mCoords[0].setAxisValue(MotionEvent.AXIS_HSCROLL, 0.0f);
     }
 }

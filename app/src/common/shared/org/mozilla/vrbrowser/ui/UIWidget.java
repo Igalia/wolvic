@@ -53,6 +53,7 @@ public class UIWidget extends FrameLayout implements Widget {
 
     @Override
     public void handleTouchEvent(MotionEvent aEvent) {
+        requestFocus();
         this.dispatchTouchEvent(aEvent);
     }
 

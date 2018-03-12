@@ -24,8 +24,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         }
         return mInstance;
     }
-
-    public static final String DEFAULT_URL = "https://www.polygon.com/"; // https://vr.mozilla.org";
+    public static final String DEFAULT_URL = "resource://android/assets/html/index.html"; // "http://bluemarvin.github.io/html/crow.html"; // "https://vr.mozilla.org";
 
     private LinkedList<GeckoSession.NavigationDelegate> mNavigationListeners;
     private LinkedList<GeckoSession.ProgressDelegate> mProgressListeners;
@@ -265,7 +264,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
 
     @Override
     public void onNewSession(GeckoSession aSession, String aUri, GeckoSession.Response<GeckoSession> aResponse) {
-
+        aResponse.respond(null);
     }
 
     // Progress Listener

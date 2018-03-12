@@ -247,7 +247,7 @@ Widget::TestControllerIntersection(const vrb::Vector& aStartPoint, const vrb::Ve
 }
 
 void
-Widget::ConvertToWidgetCoordinates(const vrb::Vector& point, int32_t& aX, int32_t& aY) const {
+Widget::ConvertToWidgetCoordinates(const vrb::Vector& point, float& aX, float& aY) const {
   vrb::Vector value = point;
   // Clamp value to window bounds.
   if (value.x() > m.windowMax.x()) { value.x() = m.windowMax.x(); }
@@ -255,8 +255,8 @@ Widget::ConvertToWidgetCoordinates(const vrb::Vector& point, int32_t& aX, int32_
   // Convert to window coordinates.
   if (value.y() > m.windowMax.y()) { value.y() = m.windowMax.y(); }
   else if (value.y() < m.windowMin.y()) { value.y() = m.windowMin.y(); }
-  aX = (int32_t)(((value.x() - m.windowMin.x()) / (m.windowMax.x() - m.windowMin.x())) * (float)m.textureWidth);
-  aY = (int32_t)(((m.windowMax.y() - value.y()) / (m.windowMax.y() - m.windowMin.y())) * (float)m.textureHeight);
+  aX = (((value.x() - m.windowMin.x()) / (m.windowMax.x() - m.windowMin.x())) * (float)m.textureWidth);
+  aY = (((m.windowMax.y() - value.y()) / (m.windowMax.y() - m.windowMin.y())) * (float)m.textureHeight);
 }
 
 void

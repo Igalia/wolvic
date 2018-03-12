@@ -30,8 +30,6 @@ import org.mozilla.vrbrowser.ui.URLBarWidget;
 
 public class BrowserActivity extends Activity {
     private static final String LOGTAG = "VRB";
-
-    private static final String DEFAULT_URL = "https://vr.mozilla.org";
     private static final int REQUEST_PERMISSIONS = 2;
     /* package */ static final int REQUEST_FILE_PICKER = 1;
     private FrameLayout mContainer;
@@ -90,7 +88,10 @@ public class BrowserActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        SessionStore.get().goBack();
+        if (SessionStore.get().canGoBack()) {
+            SessionStore.get().goBack();
+            return;
+        }
         super.onBackPressed();
     }
 
@@ -165,7 +166,7 @@ public class BrowserActivity extends Activity {
             final MyGeckoViewPermission permission = new MyGeckoViewPermission();
             permission.androidPermissionRequestCode = REQUEST_PERMISSIONS;
             mGeckoSession.setPermissionDelegate(permission);
-            uriValue = (uri != null ? uri.toString() : DEFAULT_URL);
+            uriValue = (uri != null ? uri.toString() : SessionStore.DEFAULT_URL);
             Log.e(LOGTAG, "BrowserActivity create session and load URI from intent: " + uriValue);
             mGeckoSession.loadUri(uriValue);
             mGeckoView.setSession(mGeckoSession);

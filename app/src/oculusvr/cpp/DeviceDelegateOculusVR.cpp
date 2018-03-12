@@ -290,6 +290,14 @@ DeviceDelegateOculusVR::GetControllerButtonState(const int32_t aWhichController,
   return (m.controllerState.Buttons & GEAR_VR_BUTTONS[aWhichButton]) != 0;
 }
 
+bool
+DeviceDelegateOculusVR::GetControllerScrolled(const int32_t aWhichController, float& aScrollX, float& aScrollY) {
+  aScrollX = (m.controllerState.TrackpadPosition.x / (float)m.controllerCapabilities.TrackpadMaxX) * 5.0f;
+  aScrollY = (m.controllerState.TrackpadPosition.y / (float)m.controllerCapabilities.TrackpadMaxY) * 5.0f;
+  if (m.controllerState.TrackpadStatus) { VRB_LOG("Scroll: %f %f", aScrollX, aScrollY); }
+  return m.controllerState.TrackpadStatus;
+}
+
 void
 DeviceDelegateOculusVR::StartFrame() {
   if (!m.ovr) {

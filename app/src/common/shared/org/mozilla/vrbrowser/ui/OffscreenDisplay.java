@@ -47,7 +47,6 @@ public class OffscreenDisplay {
 
         mVirtualDisplay = manager.createVirtualDisplay("OffscreenViews", aWidth, aHeight,
                                                        mDefaultMetrics.densityDpi, mSurface, flags);
-
         mPresentation = new OffscreenPresentation(mContext, mVirtualDisplay.getDisplay());
         mPresentation.show();
     }

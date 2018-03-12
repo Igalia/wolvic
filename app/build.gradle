@@ -39,6 +39,9 @@ android {
 
     productFlavors {
         googlevr {
+            //ndk {
+            //    abiFilters "arm64-v8a"
+            //}
             externalNativeBuild {
                 cmake {
                     cppFlags " -I" + file("${project.rootDir}/gvr-android-sdk/libraries/headers").absolutePath
@@ -47,6 +50,9 @@ android {
             }
         }
         oculusvr {
+            //ndk {
+            //    abiFilters "arm64-v8a"
+            //}
             externalNativeBuild {
                 cmake {
                     cppFlags " -I" + file("${project.rootDir}/third_party/ovr_mobile/VrApi/Include").absolutePath +
@@ -75,6 +81,9 @@ android {
             }
         }
         noapi {
+            //ndk {
+            //    abiFilters "arm64-v8a"
+            //}
             externalNativeBuild {
                 cmake {
                     cppFlags " -DVRBROWSER_NO_VR_API"
@@ -137,9 +146,13 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     implementation project(':geckoview-withGeckoBinaries')
-    googlevrImplementation 'com.google.vr:sdk-base:1.120.0'
+    //googlevrImplementation 'org.mozilla:geckoview-nightly-arm64-v8a:61.0a1'
+    //oculusvrImplementation 'org.mozilla:geckoview-nightly-arm64-v8a:61.0a1'
+    //noapiImplementation 'org.mozilla:geckoview-nightly-armeabi-v7a:61.0a1' //org.mozilla:geckoview-nightly-arm64-v8a:61.0a1'
+    //wavevrImplementation 'org.mozilla:geckoview-nightly-armeabi-v7a:61.0a1'
+    //svrImplementation 'org.mozilla:geckoview-nightly-armeabi-v7a:61.0a1'
+    googlevrImplementation 'com.google.vr:sdk-base:1.130.0'
     svrImplementation fileTree(dir: "${project.rootDir}/third_party/svr/", include: ['*.jar'])
     wavevrImplementation project(':wavesdk')
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.google.vr:sdk-audio:1.120.0'
+    implementation 'com.google.vr:sdk-audio:1.130.0'
 }

@@ -378,10 +378,31 @@ DeviceDelegateWaveVR::GetControllerButtonState(const int32_t aWhichController, c
   for (int idx = 0; idx < controllerCount; idx++) {
     if (WVR_GetInputButtonState(controllerArray[idx], WVR_InputId_Alias1_Touchpad)) {
       result = true;
+    } else if (WVR_GetInputButtonState(controllerArray[idx], WVR_InputId_Alias1_Bumper)) {
+      result = true;
     }
   }
   return result;
 }
+
+bool
+DeviceDelegateWaveVR::GetControllerScrolled(const int32_t aWhichController, float& aScrollX, float& aScrollY) {
+  bool result = false;
+  static WVR_DeviceType controllerArray[] = {WVR_DeviceType_Controller_Right}; //, WVR_DeviceType_Controller_Left};
+  int controllerCount = sizeof(controllerArray)/sizeof(controllerArray[0]);
+
+  for (int idx = 0; idx < controllerCount; idx++) {
+    if (WVR_GetInputTouchState(controllerArray[idx], WVR_InputId_Alias1_Touchpad)) {
+      result = true;
+      WVR_Axis_t axis = WVR_GetInputAnalogAxis(controllerArray[idx], WVR_InputId_Alias1_Touchpad);
+      aScrollX = axis.x;
+      aScrollY = -axis.y;
+    }
+  }
+
+  return result;
+}
+
 
 void
 DeviceDelegateWaveVR::StartFrame() {

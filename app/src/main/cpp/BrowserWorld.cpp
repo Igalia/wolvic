@@ -37,14 +37,18 @@ static const int WidgetTypeURLBar = 1;
 static const int GestureSwipeLeft = 0;
 static const int GestureSwipeRight = 1;
 
+static const float kScrollFactor = 20.0f; // Just picked what fell right.
+
 static const char* kDispatchCreateWidgetName = "dispatchCreateWidget";
 static const char* kDispatchCreateWidgetSignature = "(IILandroid/graphics/SurfaceTexture;II)V";
-static const char* kUpdateAudioPoseName = "updateAudioPose";
-static const char* kUpdateAudioPoseSignature = "(FFFFFFF)V";
-static const char* kUpdateMotionEventName = "updateMotionEvent";
-static const char* kUpdateMotionEventSignature = "(IIZII)V";
-static const char* kDispatchGestureName = "dispatchGesture";
-static const char* kDispatchGestureSignature = "(I)V";
+static const char* kHandleMotionEventName = "handleMotionEvent";
+static const char* kHandleMotionEventSignature = "(IIZFF)V";
+static const char* kHandleScrollEvent = "handleScrollEvent";
+static const char* kHandleScrollEventSignature = "(IIFF)V";
+static const char* kHandleAudioPoseName = "handleAudioPose";
+static const char* kHandleAudioPoseSignature = "(FFFFFFF)V";
+static const char* kHandleGestureName = "handleGesture";
+static const char* kHandleGestureSignature = "(I)V";
 static const char* kTileTexture = "tile.png";
 class SurfaceObserver;
 typedef std::shared_ptr<SurfaceObserver> SurfaceObserverPtr;
@@ -94,25 +98,33 @@ struct ControllerRecord {
   int32_t index;
   uint32_t widget;
   bool pressed;
-  int32_t xx;
-  int32_t yy;
+  float xx;
+  float yy;
+  float touched;
+  float touchPadX;
+  float touchPadY;
   TransformPtr controller;
-  ControllerRecord(const int32_t aIndex) : widget(0), index(aIndex), pressed(false), xx(0), yy(0) {}
+  ControllerRecord(const int32_t aIndex) : widget(0), index(aIndex), pressed(false), xx(0.0f), yy(0.0f),
+                                           touched(false), touchPadX(0.0f), touchPadY(0.0f) {}
   ControllerRecord(const ControllerRecord& aRecord) : widget(aRecord.widget), index(aRecord.index), controller(aRecord.controller) {}
   ControllerRecord(ControllerRecord&& aRecord) : widget(aRecord.widget), index(aRecord.index), controller(std::move(aRecord.controller)) {}
-  ControllerRecord& operator=(const ControllerRecord& aRecord) {
-    widget = aRecord.widget;
-    index = aRecord.index;
-    controller = aRecord.controller;
-    return *this;
-  }
-
-  ControllerRecord& operator=(ControllerRecord&& aRecord) {
+  void CopyValues(const ControllerRecord& aRecord) {
     index = aRecord.index;
     widget = aRecord.widget;
     pressed = aRecord.pressed;
     xx = aRecord.xx;
     yy = aRecord.yy;
+    touched = aRecord.touched;
+    touchPadX = aRecord.touchPadX;
+    touchPadY = aRecord.touchPadY;
+  }
+  ControllerRecord& operator=(const ControllerRecord& aRecord) {
+    CopyValues(aRecord);
+    controller = aRecord.controller;
+    return *this;
+  }
+  ControllerRecord& operator=(ControllerRecord&& aRecord) {
+    CopyValues(aRecord);
     controller = std::move(aRecord.controller);
     return *this;
   }
@@ -149,12 +161,13 @@ struct BrowserWorld::State {
   JNIEnv* env;
   jobject activity;
   jmethodID dispatchCreateWidgetMethod;
-  jmethodID updateAudioPose;
-  jmethodID updateMotionEventMethod;
-  jmethodID dispatchGestureMethod;
+  jmethodID handleMotionEventMethod;
+  jmethodID handleScrollEventMethod;
+  jmethodID handleAudioPoseMethod;
+  jmethodID handleGestureMethod;
   GestureDelegateConstPtr gestures;
   State() : paused(true), glInitialized(false), controllerCount(0), env(nullptr), nearClip(0.1f), farClip(100.0f), activity(nullptr),
-            dispatchCreateWidgetMethod(nullptr), updateAudioPose(nullptr), updateMotionEventMethod(nullptr), dispatchGestureMethod(nullptr) {
+            dispatchCreateWidgetMethod(nullptr), handleMotionEventMethod(nullptr), handleScrollEventMethod(nullptr), handleAudioPoseMethod(nullptr), handleGestureMethod(nullptr) {
     context = Context::Create();
     contextWeak = context;
     factory = NodeFactoryObj::Create(contextWeak);
@@ -176,7 +189,83 @@ struct BrowserWorld::State {
     root->AddNode(urlbar->GetRoot());
     widgets.push_back(std::move(urlbar));
   }
+
+  void UpdateControllers();
 };
+
+void
+BrowserWorld::State::UpdateControllers() {
+  std::vector<Widget*> active;
+  for (ControllerRecord& record: controllers) {
+    vrb::Matrix transform = device->GetControllerTransform(record.index);
+    record.controller->SetTransform(transform);
+    vrb::Vector start = transform.MultiplyPosition(vrb::Vector());
+    vrb::Vector direction = transform.MultiplyDirection(vrb::Vector(0.0f, 0.0f, -1.0f));
+    WidgetPtr hitWidget;
+    float hitDistance = farClip;
+    vrb::Vector hitPoint;
+    for (WidgetPtr widget: widgets) {
+      widget->TogglePointer(false);
+      vrb::Vector result;
+      float distance = 0.0f;
+      bool isInWidget = false;
+      if (widget->TestControllerIntersection(start, direction, result, isInWidget, distance)) {
+        if (isInWidget && (distance < hitDistance)) {
+          hitWidget = widget;
+          hitDistance = distance;
+          hitPoint = result;
+        }
+      }
+    }
+    if (gestures) {
+      const int32_t gestureCount = gestures->GetGestureCount();
+      for (int32_t count = 0; count < gestureCount; count++) {
+        const GestureType type = gestures->GetGestureType(count);
+        int32_t javaType = -1;
+        if (type == GestureType::SwipeLeft) {
+          javaType = GestureSwipeLeft;
+        } else if (type == GestureType::SwipeRight) {
+          javaType = GestureSwipeRight;
+        }
+        if (javaType >= 0 &&handleGestureMethod) {
+         env->CallVoidMethod(activity, handleGestureMethod, javaType);
+        }
+      }
+    }
+    if (handleMotionEventMethod && hitWidget) {
+      active.push_back(hitWidget.get());
+      float theX = 0.0f, theY = 0.0f;
+      hitWidget->ConvertToWidgetCoordinates(hitPoint, theX, theY);
+      bool changed = false; // not used yet.
+      bool pressed = device->GetControllerButtonState(record.index, 0, changed);
+      const uint32_t handle = hitWidget->GetHandle();
+      if ((record.xx != theX) || (record.yy != theY) || (record.pressed != pressed) || record.widget != handle) {
+        env->CallVoidMethod(activity, handleMotionEventMethod, handle, record.index, pressed,
+                            theX, theY);
+        record.widget = handle;
+        record.xx = theX;
+        record.yy = theY;
+        record.pressed = pressed;
+      }
+      float scrollX = 0.0f, scrollY = 0.0f;
+      if (device->GetControllerScrolled(record.index, scrollX, scrollY)) {
+        if (record.touched && !record.pressed) {
+          env->CallVoidMethod(activity, handleScrollEventMethod, record.widget, record.index,
+                              (scrollX - record.touchPadX) * kScrollFactor, (scrollY - record.touchPadY) * kScrollFactor);
+        }
+        record.touched = true;
+        record.touchPadX = scrollX;
+        record.touchPadY = scrollY;
+      } else {
+        record.touched = false;
+      }
+    }
+  }
+  for (Widget* widget: active) {
+    widget->TogglePointer(true);
+  }
+  active.clear();
+}
 
 
 BrowserWorldPtr
@@ -256,21 +345,28 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
     VRB_LOG("Failed to find Java method: %s %s", kDispatchCreateWidgetName, kDispatchCreateWidgetSignature);
   }
 
-  m.updateAudioPose =  m.env->GetMethodID(clazz, kUpdateAudioPoseName, kUpdateAudioPoseSignature);
-  if (!m.updateAudioPose) {
-    VRB_LOG("Failed to find Java method: %s %s", kUpdateAudioPoseName, kUpdateAudioPoseSignature);
+  m.handleMotionEventMethod = m.env->GetMethodID(clazz, kHandleMotionEventName, kHandleMotionEventSignature);
+
+  if (!m.handleMotionEventMethod) {
+    VRB_LOG("Failed to find Java method: %s %s", kHandleMotionEventName, kHandleMotionEventSignature);
   }
 
-  m.updateMotionEventMethod = m.env->GetMethodID(clazz, kUpdateMotionEventName, kUpdateMotionEventSignature);
+  m.handleScrollEventMethod = m.env->GetMethodID(clazz, kHandleScrollEvent, kHandleScrollEventSignature);
 
-  if (!m.updateMotionEventMethod) {
-    VRB_LOG("Failed to find Java method: %s %s", kUpdateMotionEventName, kUpdateMotionEventSignature);
+  if (m.handleScrollEventMethod) {
+    VRB_LOG("Failed to find Java method: %s %s", kHandleScrollEvent, kHandleScrollEventSignature)
   }
 
-  m.dispatchGestureMethod = m.env->GetMethodID(clazz, kDispatchGestureName, kDispatchGestureSignature);
+  m.handleAudioPoseMethod =  m.env->GetMethodID(clazz, kHandleAudioPoseName, kHandleAudioPoseSignature);
 
-  if (!m.dispatchGestureMethod) {
-    VRB_LOG("Failed to find Java method: %s %s", kDispatchGestureName, kDispatchGestureSignature);
+  if (!m.handleAudioPoseMethod) {
+    VRB_LOG("Failed to find Java method: %s %s", kHandleAudioPoseName, kHandleAudioPoseSignature);
+  }
+
+  m.handleGestureMethod = m.env->GetMethodID(clazz, kHandleGestureName, kHandleGestureSignature);
+
+  if (!m.handleGestureMethod) {
+    VRB_LOG("Failed to find Java method: %s %s", kHandleGestureName, kHandleGestureSignature);
   }
 
   if ((m.controllers.size() == 0) && (m.controllerCount > 0)) {
@@ -319,9 +415,10 @@ BrowserWorld::ShutdownJava() {
   }
   m.activity = nullptr;
   m.dispatchCreateWidgetMethod = nullptr;
-  m.dispatchGestureMethod = nullptr;
-  m.updateAudioPose = nullptr;
-  m.updateMotionEventMethod = nullptr;
+  m.handleMotionEventMethod = nullptr;
+  m.handleScrollEventMethod = nullptr;
+  m.handleAudioPoseMethod = nullptr;
+  m.handleGestureMethod = nullptr;
   m.env = nullptr;
 }
 
@@ -353,65 +450,7 @@ BrowserWorld::Draw() {
   }
   m.device->ProcessEvents();
   m.context->Update();
-  std::vector<Widget*> active;
-  for (ControllerRecord& record: m.controllers) {
-    vrb::Matrix transform = m.device->GetControllerTransform(record.index);
-    record.controller->SetTransform(transform);
-    vrb::Vector start = transform.MultiplyPosition(vrb::Vector());
-    vrb::Vector direction = transform.MultiplyDirection(vrb::Vector(0.0f, 0.0f, -1.0f));
-    WidgetPtr hitWidget;
-    float hitDistance = m.farClip;
-    vrb::Vector hitPoint;
-    for (WidgetPtr widget: m.widgets) {
-      widget->TogglePointer(false);
-      vrb::Vector result;
-      float distance = 0.0f;
-      bool isInWidget = false;
-      if (widget->TestControllerIntersection(start, direction, result, isInWidget, distance)) {
-        if (isInWidget && (distance < hitDistance)) {
-          hitWidget = widget;
-          hitDistance = distance;
-          hitPoint = result;
-        }
-      }
-    }
-    if (m.gestures) {
-      const int32_t gestureCount = m.gestures->GetGestureCount();
-      for (int32_t count = 0; count < gestureCount; count++) {
-        const GestureType type = m.gestures->GetGestureType(count);
-        int32_t javaType = -1;
-        if (type == GestureType::SwipeLeft) {
-          javaType = GestureSwipeLeft;
-        } else if (type == GestureType::SwipeRight) {
-          javaType = GestureSwipeRight;
-        }
-        if (javaType >= 0 && m.dispatchGestureMethod) {
-          m.env->CallVoidMethod(m.activity, m.dispatchGestureMethod, javaType);
-        }
-      }
-
-    }
-    if (m.updateMotionEventMethod && hitWidget) {
-      active.push_back(hitWidget.get());
-      int32_t theX = 0, theY = 0;
-      hitWidget->ConvertToWidgetCoordinates(hitPoint, theX, theY);
-      bool changed = false; // not used yet.
-      bool pressed = m.device->GetControllerButtonState(record.index, 0, changed);
-      const uint32_t handle = hitWidget->GetHandle();
-      if ((record.xx != theX) || (record.yy != theY) || (record.pressed != pressed) || record.widget != handle) {
-        m.env->CallVoidMethod(m.activity, m.updateMotionEventMethod, handle, record.index, pressed,
-                              theX, theY);
-        record.widget = handle;
-        record.xx = theX;
-        record.yy = theY;
-        record.pressed = pressed;
-      }
-    }
-  }
-  for (Widget* widget: active) {
-    widget->TogglePointer(true);
-  }
-  active.clear();
+  m.UpdateControllers();
   m.drawList->Reset();
   m.root->Cull(*m.cullVisitor, *m.drawList);
   m.device->StartFrame();
@@ -425,11 +464,11 @@ BrowserWorld::Draw() {
   m.device->EndFrame();
 
   // Update the 3d audio engine with the most recent head rotation.
-  if (m.updateAudioPose) {
+  if (m.handleAudioPoseMethod) {
     const vrb::Matrix &head = m.device->GetHeadTransform();
     const vrb::Vector p = head.GetTranslation();
     const vrb::Quaternion q(head);
-    m.env->CallVoidMethod(m.activity, m.updateAudioPose, q.x(), q.y(), q.z(), q.w(), p.x(), p.y(), p.z());
+    m.env->CallVoidMethod(m.activity, m.handleAudioPoseMethod, q.x(), q.y(), q.z(), q.w(), p.x(), p.y(), p.z());
   }
 
 }
