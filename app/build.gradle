@@ -141,4 +141,5 @@ dependencies {
     svrImplementation fileTree(dir: "${project.rootDir}/third_party/svr/", include: ['*.jar'])
     wavevrImplementation project(':wavesdk')
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.google.vr:sdk-audio:1.120.0'
 }

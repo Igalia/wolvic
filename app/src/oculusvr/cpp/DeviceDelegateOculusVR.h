@@ -25,6 +25,7 @@ public:
   // DeviceDelegate interface
   GestureDelegateConstPtr GetGestureDelegate() override { return nullptr; }
   vrb::CameraPtr GetCamera(const CameraEnum aWhich) override;
+  const vrb::Matrix& GetHeadTransform() const override;
   void SetClearColor(const vrb::Color& aColor) override;
   void SetClipPlanes(const float aNear, const float aFar) override;
   int32_t GetControllerCount() const override;

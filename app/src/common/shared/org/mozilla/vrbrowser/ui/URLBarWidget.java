@@ -14,9 +14,11 @@ import android.util.Log;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.SessionStore;
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.audio.AudioEngine;
 
 public class URLBarWidget extends UIWidget implements GeckoSession.NavigationDelegate, GeckoSession.ProgressDelegate {
     private static final String LOGTAG = "VRB";
+    private AudioEngine mAudio;
     private ImageButton mBackButton;
     private ImageButton mForwardButton;
     private ImageButton mReloadButton;
@@ -47,6 +49,7 @@ public class URLBarWidget extends UIWidget implements GeckoSession.NavigationDel
 
     private void initialize(Context aContext) {
         inflate(aContext, R.layout.navigation_bar, this);
+        mAudio = AudioEngine.fromContext(aContext);
         mBackButton = findViewById(R.id.backButton);
         mForwardButton = findViewById(R.id.forwardButton);
         mReloadButton = findViewById(R.id.reloadButton);
@@ -58,6 +61,9 @@ public class URLBarWidget extends UIWidget implements GeckoSession.NavigationDel
             @Override
             public void onClick(View v) {
                 SessionStore.get().goBack();
+                if (mAudio != null) {
+                    mAudio.playSound(AudioEngine.Sound.BACK);
+                }
             }
         });
 
@@ -65,6 +71,9 @@ public class URLBarWidget extends UIWidget implements GeckoSession.NavigationDel
             @Override
             public void onClick(View v) {
                 SessionStore.get().goForward();
+                if (mAudio != null) {
+                    mAudio.playSound(AudioEngine.Sound.CLICK);
+                }
             }
         });
 
@@ -76,6 +85,9 @@ public class URLBarWidget extends UIWidget implements GeckoSession.NavigationDel
                 } else {
                     SessionStore.get().reload();
                 }
+                if (mAudio != null) {
+                    mAudio.playSound(AudioEngine.Sound.CLICK);
+                }
             }
         });
 
@@ -83,6 +95,9 @@ public class URLBarWidget extends UIWidget implements GeckoSession.NavigationDel
             @Override
             public void onClick(View v) {
                 SessionStore.get().loadUri(SessionStore.DEFAULT_URL);
+                if (mAudio != null) {
+                    mAudio.playSound(AudioEngine.Sound.CLICK);
+                }
             }
         });
 

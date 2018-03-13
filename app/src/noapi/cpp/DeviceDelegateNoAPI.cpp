@@ -64,6 +64,11 @@ DeviceDelegateNoAPI::GetCamera(const CameraEnum aWhich) {
   return m.camera;
 }
 
+const vrb::Matrix&
+DeviceDelegateNoAPI::GetHeadTransform() const {
+  return m.camera->GetTransform();
+}
+
 void
 DeviceDelegateNoAPI::SetClearColor(const vrb::Color& aColor) {
   m.clearColor = aColor;

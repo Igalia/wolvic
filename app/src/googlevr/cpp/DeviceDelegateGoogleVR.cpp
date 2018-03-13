@@ -266,6 +266,11 @@ DeviceDelegateGoogleVR::GetCamera(const CameraEnum aWhich) {
   return m.cameras[index];
 }
 
+const vrb::Matrix&
+DeviceDelegateGoogleVR::GetHeadTransform() const {
+  return m.cameras[0]->GetHeadTransform();
+}
+
 void
 DeviceDelegateGoogleVR::SetClearColor(const vrb::Color& aColor) {
   m.clearColor = aColor;

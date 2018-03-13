@@ -235,6 +235,11 @@ DeviceDelegateOculusVR::GetCamera(const CameraEnum aWhich) {
   return m.cameras[index];
 }
 
+const vrb::Matrix&
+DeviceDelegateOculusVR::GetHeadTransform() const {
+  return m.cameras[0]->GetHeadTransform();
+}
+
 void
 DeviceDelegateOculusVR::SetClearColor(const vrb::Color& aColor) {
   m.clearColor = aColor;

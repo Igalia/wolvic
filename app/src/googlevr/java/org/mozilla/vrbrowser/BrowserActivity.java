@@ -24,6 +24,8 @@ import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.geckoview.GeckoView;
 import org.mozilla.gecko.util.GeckoBundle;
 import org.mozilla.vrbrowser.SessionStore;
+import org.mozilla.vrbrowser.audio.AudioEngine;
+import org.mozilla.vrbrowser.audio.VRAudioTheme;
 import org.mozilla.vrbrowser.ui.URLBarWidget;
 
 public class BrowserActivity extends Activity {
@@ -36,12 +38,16 @@ public class BrowserActivity extends Activity {
     private GeckoView mGeckoView;
     private GeckoSession mGeckoSession;
     private URLBarWidget mNavigationBar;
+    private AudioEngine mAudioEngine;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.e(LOGTAG, "BrowserActivity onCreate");
         super.onCreate(savedInstanceState);
+
+        mAudioEngine = new AudioEngine(this, new VRAudioTheme());
+        mAudioEngine.preloadAsync();
 
         setContentView(R.layout.browser_activity);
         mNavigationBar = findViewById(R.id.navigationBar2D);
@@ -94,6 +100,7 @@ public class BrowserActivity extends Activity {
         if (mGeckoView != null) {
             mGeckoView.releaseSession();
         }
+        mAudioEngine.pauseEngine();
         super.onPause();
     }
 
@@ -107,6 +114,7 @@ public class BrowserActivity extends Activity {
             }
             mGeckoView.requestFocus();
         }
+        mAudioEngine.resumeEngine();
         super.onResume();
     }
 
@@ -116,6 +124,7 @@ public class BrowserActivity extends Activity {
         if (mNavigationBar != null) {
             mNavigationBar.releaseWidget();
         }
+        mAudioEngine.release();
         super.onDestroy();
     }
 

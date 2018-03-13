@@ -39,6 +39,8 @@ static const int GestureSwipeRight = 1;
 
 static const char* kDispatchCreateWidgetName = "dispatchCreateWidget";
 static const char* kDispatchCreateWidgetSignature = "(IILandroid/graphics/SurfaceTexture;II)V";
+static const char* kUpdateAudioPoseName = "updateAudioPose";
+static const char* kUpdateAudioPoseSignature = "(FFFFFFF)V";
 static const char* kUpdateMotionEventName = "updateMotionEvent";
 static const char* kUpdateMotionEventSignature = "(IIZII)V";
 static const char* kDispatchGestureName = "dispatchGesture";
@@ -147,11 +149,12 @@ struct BrowserWorld::State {
   JNIEnv* env;
   jobject activity;
   jmethodID dispatchCreateWidgetMethod;
+  jmethodID updateAudioPose;
   jmethodID updateMotionEventMethod;
   jmethodID dispatchGestureMethod;
   GestureDelegateConstPtr gestures;
   State() : paused(true), glInitialized(false), controllerCount(0), env(nullptr), nearClip(0.1f), farClip(100.0f), activity(nullptr),
-            dispatchCreateWidgetMethod(nullptr), updateMotionEventMethod(nullptr), dispatchGestureMethod(nullptr) {
+            dispatchCreateWidgetMethod(nullptr), updateAudioPose(nullptr), updateMotionEventMethod(nullptr), dispatchGestureMethod(nullptr) {
     context = Context::Create();
     contextWeak = context;
     factory = NodeFactoryObj::Create(contextWeak);
@@ -251,6 +254,11 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
                                                  kDispatchCreateWidgetSignature);
   if (!m.dispatchCreateWidgetMethod) {
     VRB_LOG("Failed to find Java method: %s %s", kDispatchCreateWidgetName, kDispatchCreateWidgetSignature);
+  }
+
+  m.updateAudioPose =  m.env->GetMethodID(clazz, kUpdateAudioPoseName, kUpdateAudioPoseSignature);
+  if (!m.updateAudioPose) {
+    VRB_LOG("Failed to find Java method: %s %s", kUpdateAudioPoseName, kUpdateAudioPoseSignature);
   }
 
   m.updateMotionEventMethod = m.env->GetMethodID(clazz, kUpdateMotionEventName, kUpdateMotionEventSignature);
@@ -413,6 +421,15 @@ BrowserWorld::Draw() {
   m.drawList->Draw(*m.rightCamera);
 #endif // !defined(VRBROWSER_NO_VR_API)
   m.device->EndFrame();
+
+  // Update the 3d audio engine with the most recent head rotation.
+  if (m.updateAudioPose) {
+    const vrb::Matrix &head = m.device->GetHeadTransform();
+    const vrb::Vector p = head.GetTranslation();
+    const vrb::Quaternion q(head);
+    m.env->CallVoidMethod(m.activity, m.updateAudioPose, q.x(), q.y(), q.z(), q.w(), p.x(), p.y(), p.z());
+  }
+
 }
 
 void

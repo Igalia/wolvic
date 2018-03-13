@@ -18,6 +18,8 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import org.mozilla.geckoview.GeckoSession;
+import org.mozilla.vrbrowser.audio.AudioEngine;
+import org.mozilla.vrbrowser.audio.VRAudioTheme;
 import org.mozilla.vrbrowser.ui.OffscreenDisplay;
 import org.mozilla.vrbrowser.ui.URLBarWidget;
 
@@ -47,11 +49,13 @@ public class VRBrowserActivity extends PlatformActivity {
 
     static final String LOGTAG = "VRB";
     HashMap<Integer, Widget> mWidgets;
+    AudioEngine mAudioEngine;
     OffscreenDisplay mOffscreenDisplay;
     FrameLayout mWidgetContainer;
     int mLastGesture;
     SwipeRunnable mLastRunnable;
     Handler mHandler = new Handler();
+    Runnable mAudioUpdateRunnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +65,22 @@ public class VRBrowserActivity extends PlatformActivity {
 
         mWidgets = new HashMap<>();
         mWidgetContainer = new FrameLayout(this);
+
+        mAudioEngine = new AudioEngine(this, new VRAudioTheme());
+        mAudioEngine.preloadAsync(new Runnable() {
+            @Override
+            public void run() {
+                Log.i(LOGTAG, "AudioEngine sounds preloaded!");
+                // mAudioEngine.playSound(AudioEngine.Sound.AMBIENT, true);
+            }
+        });
+        mAudioUpdateRunnable = new Runnable() {
+            @Override
+            public void run() {
+                mAudioEngine.update();
+            }
+        };
+
         loadFromIntent(getIntent());
         queueRunnable(new Runnable() {
             @Override
@@ -71,8 +91,21 @@ public class VRBrowserActivity extends PlatformActivity {
     }
 
     @Override
-    public void onDestroy() {
+    protected void onPause() {
+        mAudioEngine.pauseEngine();
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        mAudioEngine.resumeEngine();
+        super.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
         mOffscreenDisplay.release();
+        mAudioEngine.release();
         super.onDestroy();
     }
 
@@ -197,6 +230,15 @@ public class VRBrowserActivity extends PlatformActivity {
                 }
             }
         });
+    }
+
+    @Keep
+    void updateAudioPose(float qx, float qy, float qz, float qw, float px, float py, float pz) {
+        mAudioEngine.setPose(qx, qy, qz, qw, px, py, pz);
+
+        // https://developers.google.com/vr/reference/android/com/google/vr/sdk/audio/GvrAudioEngine.html#resume()
+        // The update method must be called from the main thread at a regular rate.
+        runOnUiThread(mAudioUpdateRunnable);
     }
 
     void createOffscreenDisplay() {

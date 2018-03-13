@@ -26,6 +26,8 @@ public class NavigationBarButton extends AppCompatImageButton {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.NavigationBarButton, defStyleAttr, 0);
         mDisabledTintColor = a.getColor(0, R.styleable.NavigationBarButton_disabledTintColor);
         a.recycle();
+
+        setSoundEffectsEnabled(false);
     }
 
     public void setEnabled(boolean enabled) {

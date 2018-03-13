@@ -146,6 +146,11 @@ DeviceDelegateWaveVR::GetCamera(const CameraEnum aWhich) {
   return m.cameras[index];
 }
 
+const vrb::Matrix&
+DeviceDelegateWaveVR::GetHeadTransform() const {
+  return m.cameras[0]->GetHeadTransform();
+}
+
 void
 DeviceDelegateWaveVR::SetClearColor(const vrb::Color& aColor) {
   m.clearColor = aColor;

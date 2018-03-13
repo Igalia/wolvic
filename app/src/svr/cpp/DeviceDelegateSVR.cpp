@@ -225,6 +225,11 @@ DeviceDelegateSVR::GetCamera(const CameraEnum aWhich) {
   return m.cameras[index];
 }
 
+const vrb::Matrix&
+DeviceDelegateSVR::GetHeadTransform() const {
+  return m.cameras[0]->GetHeadTransform();
+}
+
 void
 DeviceDelegateSVR::SetClearColor(const vrb::Color& aColor) {
   m.clearColor = aColor;
