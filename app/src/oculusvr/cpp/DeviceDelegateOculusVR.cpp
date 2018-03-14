@@ -168,17 +168,21 @@ struct DeviceDelegateOculusVR::State {
 
     int index = 0;
     while (true) {
-      ovrInputCapabilityHeader caps = {};
-      if (vrapi_EnumerateInputDevices(ovr, index++, &caps) < 0) {
+      ovrInputCapabilityHeader capsHeader = {};
+      if (vrapi_EnumerateInputDevices(ovr, index++, &capsHeader) < 0) {
         // No more input devices to enumerate
         break;
       }
 
-      if (caps.Type == ovrControllerType_TrackedRemote) {
+      if (capsHeader.Type == ovrControllerType_TrackedRemote) {
         // We are only interested in the remote controller input device
-        controllerID = caps.DeviceID;
-        controllerCapabilities.Header.Type = ovrControllerType_TrackedRemote;
-        vrapi_GetInputDeviceCapabilities(ovr, &controllerCapabilities.Header);
+        controllerCapabilities.Header = capsHeader;
+        ovrResult result = vrapi_GetInputDeviceCapabilities(ovr, &controllerCapabilities.Header);
+        if (result != ovrSuccess) {
+          VRB_LOG("vrapi_GetInputDeviceCapabilities failed with error: %d", result);
+          continue;
+        }
+        controllerID = capsHeader.DeviceID;
         if (controllerCapabilities.ControllerCapabilities & ovrControllerCaps_LeftHand) {
           elbow = crow::ElbowModel::Create(crow::ElbowModel::HandEnum::Left);
         } else {
