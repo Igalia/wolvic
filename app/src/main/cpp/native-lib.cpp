@@ -79,7 +79,7 @@ CommandCallback(android_app *aApp, int32_t aCmd) {
         VRB_CHECK(glEnable(GL_CULL_FACE));
         ctx->mWorld->InitializeGL();
       } else {
-        ctx->mEgl->SurfaceChanged(aApp->window);
+        ctx->mEgl->UpdateNativeWindow(aApp->window);
         ctx->mEgl->MakeCurrent();
       }
 
@@ -98,7 +98,7 @@ CommandCallback(android_app *aApp, int32_t aCmd) {
          ctx->mDevice->LeaveVR();
       }
       if (ctx->mEgl) {
-        ctx->mEgl->SurfaceDestroyed();
+        ctx->mEgl->UpdateNativeWindow(nullptr);
       }
       break;
     // The app's activity has been paused.
@@ -123,7 +123,6 @@ CommandCallback(android_app *aApp, int32_t aCmd) {
     // and waiting for the app thread to clean up and exit before proceeding.
     case APP_CMD_DESTROY:
       VRB_LOG("APP_CMD_DESTROY");
-      ctx->mWorld->ShutdownJava();
       break;
 
     default:
@@ -181,11 +180,13 @@ android_main(android_app *aAppState) {
 
       // Check if we are exiting.
       if (aAppState->destroyRequested != 0) {
+        sAppContext->mEgl->MakeCurrent();
         sAppContext->mWorld->ShutdownGL();
+        sAppContext->mWorld->ShutdownJava();
         sAppContext->mEgl->Destroy();
-        aAppState->activity->vm->DetachCurrentThread();
         sAppContext.reset();
-        exit(0);
+        aAppState->activity->vm->DetachCurrentThread();
+        return;
       }
     }
     if (sAppContext->mEgl) {

@@ -319,6 +319,8 @@ BrowserWorld::ShutdownJava() {
   }
   m.activity = nullptr;
   m.dispatchCreateWidgetMethod = nullptr;
+  m.dispatchGestureMethod = nullptr;
+  m.updateAudioPose = nullptr;
   m.updateMotionEventMethod = nullptr;
   m.env = nullptr;
 }

@@ -103,7 +103,6 @@ BrowserEGLContext::Initialize(ANativeWindow *aNativeWindow) {
     return false;
   }
 
-  //mSurface = eglCreateWindowSurface(mDisplay, mConfig, mNativeWindow, nullptr);
   const EGLint surfaceAttribs[] = {
   		EGL_WIDTH, 16,
   		EGL_HEIGHT, 16,
@@ -157,50 +156,14 @@ BrowserEGLContext::Destroy() {
   }
 }
 
-
-// Handle Android Life Cycle.
-// Android has started the activity or sent it to foreground.
-// Create a new surface and attach it to the recreated ANativeWindow.
-// Restore the EGLContext.
 void
-BrowserEGLContext::SurfaceChanged(ANativeWindow *aWindow) {
-  if (mSurface != EGL_NO_SURFACE) {
-    return;
-  }
+BrowserEGLContext::UpdateNativeWindow(ANativeWindow *aWindow) {
   mNativeWindow = aWindow;
-
-  const EGLint surfaceAttribs[] = {
-  		EGL_WIDTH, 16,
-  		EGL_HEIGHT, 16,
-  		EGL_NONE
-  };
-
-  mSurface = eglCreatePbufferSurface(mDisplay, mConfig, surfaceAttribs);
-  if (mSurface == EGL_NO_SURFACE) {
-    VRB_LOG("eglCreateWindowSurface() failed: %s", ErrorToString(eglGetError()));
-  }
-}
-
-// Handle Android Life Cycle.
-// Android has stopped the activity or sent it to background.
-// Release the surface attached to the destroyed ANativeWindow.
-// The EGLContext is not destroyed so it can be restored later.
-void
-BrowserEGLContext::SurfaceDestroyed() {
-  if (mSurface != EGL_NO_SURFACE) {
-    if (eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT) == EGL_FALSE) {
-      VRB_LOG("eglMakeCurrent() failed: %s", ErrorToString(eglGetError()));
-    }
-    if (eglDestroySurface(mDisplay, mSurface) == EGL_FALSE) {
-      VRB_LOG("eglDestroySurface() failed: %s", ErrorToString(eglGetError()));
-    }
-    mSurface = EGL_NO_SURFACE;
-  }
 }
 
 bool
 BrowserEGLContext::IsSurfaceReady() const {
-  return mSurface != EGL_NO_SURFACE;
+  return mSurface != EGL_NO_SURFACE && mNativeWindow != nullptr;
 }
 
 bool

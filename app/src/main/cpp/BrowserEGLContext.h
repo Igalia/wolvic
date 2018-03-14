@@ -19,8 +19,7 @@ public:
 
   bool Initialize(ANativeWindow *aWindow);
   void Destroy();
-  void SurfaceChanged(ANativeWindow *aWindow);
-  void SurfaceDestroyed();
+  void UpdateNativeWindow(ANativeWindow *aWindow);
   bool IsSurfaceReady() const;
   bool MakeCurrent();
   bool SwapBuffers();
