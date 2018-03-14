@@ -100,7 +100,10 @@ public class AudioEngine {
         mSourceIds.clear();
         mEngines.remove(mContext);
         for (Sound sound: Sound.values()) {
-            mEngine.unloadSoundFile(mTheme.getPath(sound));
+            String path = mTheme.getPath(sound);
+            if (path != null && sound.getType() != SoundType.FIELD) {
+                mEngine.unloadSoundFile(mTheme.getPath(sound));
+            }
         }
     }
 
