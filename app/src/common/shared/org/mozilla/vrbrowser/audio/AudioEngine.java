@@ -65,7 +65,7 @@ public class AudioEngine {
 
     public void preload() {
         for (Sound sound: Sound.values()) {
-            if (sound.getType() != SoundType.FIELD) {
+            if (sound.getType() == SoundType.FIELD) {
                 // Ambisonic soundfields do *not* need to be preloaded
                 // They are directly streamed and rendered from the compressed audio file.
                 // The handle automatically destroys itself at the moment the sound playback has stopped.
