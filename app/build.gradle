@@ -154,5 +154,5 @@ dependencies {
     googlevrImplementation 'com.google.vr:sdk-base:1.130.0'
     svrImplementation fileTree(dir: "${project.rootDir}/third_party/svr/", include: ['*.jar'])
     wavevrImplementation project(':wavesdk')
-    implementation 'com.google.vr:sdk-audio:1.130.0'
+    implementation 'com.google.vr:sdk-audio:1.120.0'
 }
