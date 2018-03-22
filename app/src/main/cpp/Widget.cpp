@@ -225,8 +225,8 @@ Widget::TestControllerIntersection(const vrb::Vector& aStartPoint, const vrb::Ve
   const float length = dotV / dotNormals;
   vrb::Vector result = point + (direction * length);
 
-  if ((result.x() >= m.windowMin.x()) && (result.y() >= m.windowMin.y()) &&(result.z() >= m.windowMin.z()) &&
-      (result.x() <= m.windowMax.x()) && (result.y() <= m.windowMax.y()) &&(result.z() <= m.windowMax.z())) {
+  if ((result.x() >= m.windowMin.x()) && (result.y() >= m.windowMin.y()) &&(result.z() >= (m.windowMin.z() - 0.1f)) &&
+      (result.x() <= m.windowMax.x()) && (result.y() <= m.windowMax.y()) &&(result.z() <= (m.windowMax.z() + 0.1f))) {
     aIsInWidget = true;
   }
 
