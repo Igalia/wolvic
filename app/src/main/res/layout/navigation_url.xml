@@ -16,22 +16,13 @@
         android:id="@+id/urlLeftContainer"
         android:visibility="gone"
         android:background="@drawable/url_left_background"
-        android:layout_width="30dp"
+        android:layout_width="50dp"
         android:layout_height="match_parent">
         <ImageView
             android:id="@+id/insecureIcon"
-            android:visibility="gone"
             style="?attr/urlBarIconStyle"
             android:src="@drawable/icon_lock_insecure_network"
             android:layout_centerInParent="true"
-            />
-        <ImageView
-            android:id="@+id/loadingView"
-            android:visibility="gone"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_centerInParent="true"
-            android:src="@drawable/loading_shape"
             />
     </RelativeLayout>
 

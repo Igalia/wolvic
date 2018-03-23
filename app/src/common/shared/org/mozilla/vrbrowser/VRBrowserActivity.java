@@ -17,11 +17,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.audio.VRAudioTheme;
+import org.mozilla.vrbrowser.ui.BrowserHeaderWidget;
 import org.mozilla.vrbrowser.ui.OffscreenDisplay;
-import org.mozilla.vrbrowser.ui.URLBarWidget;
+import org.mozilla.vrbrowser.ui.NavigationBar;
 
 import java.util.HashMap;
 
@@ -181,7 +181,7 @@ public class VRBrowserActivity extends PlatformActivity {
             int currentSession = SessionStore.get().getCurrentSessionId();
             widget = new BrowserWidget(this, currentSession);
         } else if (aType == Widget.URLBar) {
-            widget = new URLBarWidget(this);
+            widget = new BrowserHeaderWidget(this);
         }
 
         if (widget != null) {

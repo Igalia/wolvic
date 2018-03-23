@@ -3,7 +3,10 @@
     <LinearLayout
         style="?attr/navigationBarStyle"
         android:layout_width="match_parent"
-        android:layout_height="64dp"
+        android:layout_height="50dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="8dp"
+
         android:orientation="horizontal">
 
         <org.mozilla.vrbrowser.ui.NavigationBarButton
@@ -11,44 +14,37 @@
             style="?attr/navigationBarButtonStyle"
             android:layout_weight="1"
             android:tint="@color/midnight"
-            android:stateListAnimator="@anim/loading"
             android:src="@drawable/ic_icon_back" />
 
         <org.mozilla.vrbrowser.ui.NavigationBarButton
             android:id="@+id/forwardButton"
             style="?attr/navigationBarButtonStyle"
             android:layout_weight="1"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="30dp"
             android:src="@drawable/ic_icon_forward" />
 
         <org.mozilla.vrbrowser.ui.NavigationBarButton
             android:id="@+id/reloadButton"
             style="?attr/navigationBarButtonStyle"
             android:layout_weight="1"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="30dp"
             android:src="@drawable/ic_icon_reload" />
 
         <org.mozilla.vrbrowser.ui.NavigationBarButton
             android:id="@+id/homeButton"
             style="?attr/navigationBarButtonStyle"
             android:layout_weight="1"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="30dp"
             android:src="@drawable/ic_icon_home" />
 
         <org.mozilla.vrbrowser.ui.NavigationURLBar
             android:id="@+id/urlBar"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical"
             android:orientation="horizontal"
             android:layout_weight="100"
-            android:layout_marginStart="10dp" />
+            android:layout_marginStart="25dp" />
 
-        <org.mozilla.vrbrowser.ui.NavigationBarButton
-            android:id="@+id/closeButton"
-            style="?attr/navigationBarButtonStyle"
-            android:visibility="gone"
-            android:layout_weight="1"
-            android:layout_marginStart="10dp"
-            android:src="@drawable/ic_icon_exit" />
     </LinearLayout>
 </merge>

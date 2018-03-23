@@ -26,16 +26,17 @@ import org.mozilla.gecko.util.GeckoBundle;
 import org.mozilla.vrbrowser.SessionStore;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.audio.VRAudioTheme;
-import org.mozilla.vrbrowser.ui.URLBarWidget;
+import org.mozilla.vrbrowser.ui.BrowserHeaderWidget;
+import org.mozilla.vrbrowser.ui.NavigationBar;
 
-public class BrowserActivity extends Activity {
+public class BrowserActivity extends Activity implements SessionStore.SessionChangeListener {
     private static final String LOGTAG = "VRB";
     private static final int REQUEST_PERMISSIONS = 2;
     /* package */ static final int REQUEST_FILE_PICKER = 1;
     private FrameLayout mContainer;
     private GeckoView mGeckoView;
     private GeckoSession mGeckoSession;
-    private URLBarWidget mNavigationBar;
+    private BrowserHeaderWidget mBrowserHeader;
     private AudioEngine mAudioEngine;
 
 
@@ -48,7 +49,7 @@ public class BrowserActivity extends Activity {
         mAudioEngine.preloadAsync();
 
         setContentView(R.layout.browser_activity);
-        mNavigationBar = findViewById(R.id.navigationBar2D);
+        mBrowserHeader = findViewById(R.id.browserHeader);
         EditText editText = findViewById(R.id.urlEditText);
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -72,6 +73,9 @@ public class BrowserActivity extends Activity {
         mGeckoView.coverUntilFirstPaint(Color.TRANSPARENT);
         setContentView(mContainer);
         loadFromIntent(getIntent());
+
+        SessionStore.get().addSessionChangeListener(this);
+
     }
 
     @Override
@@ -122,10 +126,11 @@ public class BrowserActivity extends Activity {
     @Override
     protected void onDestroy() {
         Log.e(LOGTAG, "BrowserActivity onDestroy");
-        if (mNavigationBar != null) {
-            mNavigationBar.releaseWidget();
+        if (mBrowserHeader != null) {
+            mBrowserHeader.releaseWidget();
         }
         mAudioEngine.release();
+        SessionStore.get().removeSessionChangeListener(this);
         super.onDestroy();
     }
 
@@ -190,6 +195,27 @@ public class BrowserActivity extends Activity {
 
 
         getWindow().getDecorView().setSystemUiVisibility(flags);
+    }
+
+    @Override
+    public void onNewSession(GeckoSession aSession, int aId) {
+
+    }
+
+    @Override
+    public void onRemoveSession(GeckoSession aSession, int aId) {
+
+    }
+
+    @Override
+    public void onCurrentSessionChange(GeckoSession aSession, int aId) {
+        if (aSession != mGeckoSession) {
+            if (mGeckoView.getSession() != null) {
+                mGeckoView.releaseSession();
+            }
+            mGeckoView.setSession(aSession);
+            mGeckoSession = aSession;
+        }
     }
 
     private class MyGeckoViewPermission implements GeckoSession.PermissionDelegate {

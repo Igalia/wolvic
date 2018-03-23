@@ -29,14 +29,13 @@ import org.mozilla.vrbrowser.R;
 public class NavigationURLBar extends FrameLayout {
     private EditText mURL;
     private ImageButton mMicrophoneButton;
-    private ImageView mLoadingView;
-    private Animation mLoadingAnimation;
     private ImageView mInsecureIcon;
     private RelativeLayout mURLLeftContainer;
     private boolean mIsLoading = false;
     private boolean mIsInsecure = false;
     private int mDefaultURLLeftPadding = 0;
     private int mURLProtocolColor;
+    private int mURLWebsiteColor;
 
     public NavigationURLBar(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -48,8 +47,6 @@ public class NavigationURLBar extends FrameLayout {
         mURL = findViewById(R.id.urlEditText);
         mMicrophoneButton = findViewById(R.id.microphoneButton);
         mURLLeftContainer = findViewById(R.id.urlLeftContainer);
-        mLoadingView = findViewById(R.id.loadingView);
-        mLoadingAnimation = AnimationUtils.loadAnimation(aContext, R.anim.loading);
         mInsecureIcon = findViewById(R.id.insecureIcon);
         mDefaultURLLeftPadding = mURL.getPaddingLeft();
 
@@ -57,6 +54,8 @@ public class NavigationURLBar extends FrameLayout {
         Resources.Theme theme = aContext.getTheme();
         theme.resolveAttribute(R.attr.urlProtocolColor, typedValue, true);
         mURLProtocolColor = typedValue.data;
+        theme.resolveAttribute(R.attr.urlWebsiteColor, typedValue, true);
+        mURLWebsiteColor = typedValue.data;
     }
 
     public void setURL(String aURL) {
@@ -66,25 +65,14 @@ public class NavigationURLBar extends FrameLayout {
         }
         if (index > 0) {
             SpannableString spannable = new SpannableString(aURL);
-            ForegroundColorSpan color = new ForegroundColorSpan(mURLProtocolColor);
-            spannable.setSpan(color, 0, index + 3, 0);
+            ForegroundColorSpan color1 = new ForegroundColorSpan(mURLProtocolColor);
+            ForegroundColorSpan color2 = new ForegroundColorSpan(mURLWebsiteColor);
+            spannable.setSpan(color1, 0, index + 3, 0);
+            spannable.setSpan(color2, index + 3, aURL.length(), 0);
             mURL.setText(spannable);
         } else {
             mURL.setText(aURL);
         }
-    }
-
-    public void setIsLoading(boolean aIsLoading) {
-        if (aIsLoading == mIsLoading) {
-            return;
-        }
-        mIsLoading = aIsLoading;
-        if (aIsLoading) {
-            mLoadingView.startAnimation(mLoadingAnimation);
-        } else {
-            mLoadingView.clearAnimation();
-        }
-        syncViews();
     }
 
     public void setIsInsecure(boolean aIsInsecure) {
@@ -95,19 +83,7 @@ public class NavigationURLBar extends FrameLayout {
     }
 
     private void syncViews() {
-        if (mIsLoading) {
-            mLoadingView.setVisibility(View.VISIBLE);
-        } else {
-            mLoadingView.setVisibility(View.GONE);
-        }
-
-        if (!mIsLoading && mIsInsecure) {
-            mInsecureIcon.setVisibility(View.VISIBLE);
-        } else {
-            mInsecureIcon.setVisibility(View.GONE);
-        }
-
-        boolean showContainer = mIsLoading || mIsInsecure;
+        boolean showContainer = mIsInsecure;
         int leftPadding = mDefaultURLLeftPadding;
         if (showContainer) {
             mURLLeftContainer.setVisibility(View.VISIBLE);

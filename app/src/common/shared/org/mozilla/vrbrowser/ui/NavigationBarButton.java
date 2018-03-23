@@ -6,15 +6,17 @@
 package org.mozilla.vrbrowser.ui;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.util.AttributeSet;
 import android.support.v7.widget.AppCompatImageButton;
+import android.util.Log;
 
 import org.mozilla.vrbrowser.R;
 
 public class NavigationBarButton extends AppCompatImageButton {
-    private int mDisabledTintColor;
+    private ColorStateList mTintColorList;
 
     public NavigationBarButton(Context context, AttributeSet attrs) {
         this(context, attrs, R.attr.imageButtonStyle);
@@ -24,19 +26,18 @@ public class NavigationBarButton extends AppCompatImageButton {
         super(context, attrs, defStyleAttr);
 
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.NavigationBarButton, defStyleAttr, 0);
-        mDisabledTintColor = a.getColor(0, R.styleable.NavigationBarButton_disabledTintColor);
+        mTintColorList = a.getColorStateList(R.styleable.NavigationBarButton_tintColorList);
         a.recycle();
 
         setSoundEffectsEnabled(false);
     }
 
-    public void setEnabled(boolean enabled) {
-        super.setEnabled(enabled);
-        if (enabled) {
-            setColorFilter(Color.WHITE);
-        } else {
-            setColorFilter(mDisabledTintColor);
+    @Override
+    protected void drawableStateChanged() {
+        super.drawableStateChanged();
+        if (mTintColorList != null && mTintColorList.isStateful()) {
+            int color = mTintColorList.getColorForState(getDrawableState(), 0);
+            setColorFilter(color);
         }
     }
-
 }

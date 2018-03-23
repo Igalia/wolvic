@@ -1,0 +1,7 @@
+<resources>
+    <dimen name="header_button_margin">20dp</dimen>
+    <dimen name="tab_default_width">155dp</dimen>
+    <dimen name="tab_truncation_threshold">100dp</dimen>
+    <!-- header_button_margin + add_button_size -->
+    <dimen name="tab_layout_add_margin">46dp</dimen>
+</resources>

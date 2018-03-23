@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="black">#000000</color>
+    <color name="twilight">#0b1926</color>
     <color name="midnight">#19212A</color>
+    <color name="ocean">#314259</color>
     <color name="dusk">#304251</color>
+    <color name="sky">#75eff9</color>
+    <color name="dawn">#c5cadc</color>
     <color name="concrete">#9ea3ab</color>
     <color name="silver">#e3e4e5</color>
     <color name="white">#ffffff</color>
+    <color name="fire">#ee513f</color>
+    <color name="spark">#f7ce4d</color>
 </resources>

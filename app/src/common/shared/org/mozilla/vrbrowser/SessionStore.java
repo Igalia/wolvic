@@ -10,12 +10,16 @@ import android.content.Context;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoSessionSettings;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
+import android.media.MediaCas;
 import android.util.Log;
 
-public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSession.ProgressDelegate {
+public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSession.ProgressDelegate, GeckoSession.ContentDelegate {
     private static SessionStore mInstance;
     private static final String LOGTAG = "VRB";
     public static SessionStore get() {
@@ -28,6 +32,15 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
 
     private LinkedList<GeckoSession.NavigationDelegate> mNavigationListeners;
     private LinkedList<GeckoSession.ProgressDelegate> mProgressListeners;
+    private LinkedList<GeckoSession.ContentDelegate> mContentListeners;
+    private LinkedList<SessionChangeListener> mSessionChangeListeners;
+
+
+    public interface SessionChangeListener {
+        void onNewSession(GeckoSession aSession, int aId);
+        void onRemoveSession(GeckoSession aSession, int aId);
+        void onCurrentSessionChange(GeckoSession aSession, int aId);
+    }
 
     class State {
         boolean mCanGoBack;
@@ -35,6 +48,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         boolean mIsLoading;
         GeckoSession.ProgressDelegate.SecurityInformation mSecurityInformation;
         String mUri;
+        String mTitle;
         GeckoSession mSession;
     }
 
@@ -44,6 +58,9 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     private SessionStore() {
         mNavigationListeners = new LinkedList<>();
         mProgressListeners = new LinkedList<>();
+        mContentListeners = new LinkedList<>();
+        mSessionChangeListeners = new LinkedList<>();
+
         mSessions = new HashMap<>();
     }
 
@@ -52,6 +69,9 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             dumpState(listener);
         }
         for (GeckoSession.ProgressDelegate listener: mProgressListeners) {
+            dumpState(listener);
+        }
+        for (GeckoSession.ContentDelegate listener: mContentListeners) {
             dumpState(listener);
         }
     }
@@ -94,6 +114,18 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         }
     }
 
+    private void dumpState(GeckoSession.ContentDelegate aListener) {
+        String title = "";
+        if (mCurrentSession != null) {
+            State state = mSessions.get(mCurrentSession.hashCode());
+            if (state != null) {
+                title = state.mTitle;
+            }
+        }
+
+        aListener.onTitleChange(mCurrentSession, title);
+    }
+
     public void addNavigationListener(GeckoSession.NavigationDelegate aListener) {
         mNavigationListeners.add(aListener);
         dumpState(aListener);
@@ -112,6 +144,23 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         mProgressListeners.remove(aListener);
     }
 
+    public void addContentListener(GeckoSession.ContentDelegate aListener) {
+        mContentListeners.add(aListener);
+        dumpState(aListener);
+    }
+
+    public void removeContentListener(GeckoSession.ContentDelegate aListener) {
+        mContentListeners.remove(aListener);
+    }
+
+    public void addSessionChangeListener(SessionChangeListener aListener) {
+        mSessionChangeListeners.add(aListener);
+    }
+
+    public void removeSessionChangeListener(SessionChangeListener aListener) {
+        mSessionChangeListeners.remove(aListener);
+    }
+
     public int createSession() {
         State state = new State();
         state.mSession = new GeckoSession();
@@ -124,7 +173,27 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
                 GeckoSession.TrackingProtectionDelegate.CATEGORY_CONTENT);
         state.mSession.setNavigationDelegate(this);
         state.mSession.setProgressDelegate(this);
+        state.mSession.setContentDelegate(this);
+        for (SessionChangeListener listener: mSessionChangeListeners) {
+            listener.onNewSession(state.mSession, result);
+        }
+
         return result;
+    }
+
+    public void removeSession(int aSessionId) {
+        GeckoSession session = getSession(aSessionId);
+        if (session != null) {
+            session.setContentDelegate(null);
+            session.setNavigationDelegate(null);
+            session.setProgressDelegate(null);
+            mSessions.remove(aSessionId);
+            for (SessionChangeListener listener: mSessionChangeListeners) {
+                listener.onRemoveSession(session, aSessionId);
+            }
+            session.setActive(false);
+            session.stop();
+        }
     }
 
     public GeckoSession getSession(int aId) {
@@ -135,6 +204,19 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         return result.mSession;
     }
 
+    public Integer getSessionId(GeckoSession aSession) {
+        for (Map.Entry<Integer, State> entry : mSessions.entrySet()) {
+            if (entry.getValue().mSession == aSession) {
+                return  entry.getKey();
+            }
+        }
+        return null;
+    }
+
+    public List<Integer> getSessions() {
+        return new ArrayList<>(mSessions.keySet());
+    }
+
     public void setCurrentSession(int aId, Context aContext) {
         mCurrentSession = null;
         State state = mSessions.get(aId);
@@ -142,6 +224,9 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             mCurrentSession = state.mSession;
             if (!mCurrentSession.isOpen()) {
                 mCurrentSession.open(aContext);
+            }
+            for (SessionChangeListener listener: mSessionChangeListeners) {
+                listener.onCurrentSessionChange(mCurrentSession, aId);
             }
         }
         dumpAllState();
@@ -307,5 +392,40 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         for (GeckoSession.ProgressDelegate listener: mProgressListeners) {
             listener.onSecurityChange(aSession, aInformation);
         }
+    }
+
+    // Content Delegate
+    @Override
+    public void onTitleChange(GeckoSession aSession, String aTitle) {
+        Log.e(LOGTAG, "SessionStore onTitleChange");
+        State state = mSessions.get(aSession.hashCode());
+        if (state == null) {
+            return;
+        }
+
+        state.mTitle = aTitle;
+        for (GeckoSession.ContentDelegate listener: mContentListeners) {
+            listener.onTitleChange(aSession, aTitle);
+        }
+    }
+
+    @Override
+    public void onFocusRequest(GeckoSession aSession) {
+
+    }
+
+    @Override
+    public void onCloseRequest(GeckoSession aSession) {
+
+    }
+
+    @Override
+    public void onFullScreen(GeckoSession aSession, boolean b) {
+
+    }
+
+    @Override
+    public void onContextMenu(GeckoSession aSession, int i, int i1, String s, String s1) {
+
     }
 }

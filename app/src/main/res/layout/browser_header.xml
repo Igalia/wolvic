@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="3dp"
+        android:paddingEnd="3dp"
+        android:paddingTop="3dp"
+        android:background="@drawable/browser_header_background">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:paddingStart="0dp"
+            android:paddingEnd="10dp"
+            android:orientation="horizontal">
+
+            <org.mozilla.vrbrowser.ui.NavigationBarButton
+                android:id="@+id/tabScrollLeftButton"
+                android:visibility="gone"
+                android:layout_marginStart="0dp"
+                android:background="@drawable/tab_inactive"
+                style="?attr/headerButtonStyle"
+                android:src="@drawable/ic_icon_tabs_scroll_left" />
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="100">
+                <org.mozilla.vrbrowser.ui.CustomTabLayout
+                    android:id="@+id/tabContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="@dimen/tab_layout_add_margin"
+                    app:tabMaxWidth="@dimen/tab_default_width"
+                    app:tabIndicatorColor="@android:color/transparent"
+                    app:tabIndicatorHeight="0dp"
+                    app:tabPaddingStart="0dp"
+                    app:tabPaddingEnd="0dp"
+                    app:tabMode="scrollable"
+                    app:tabGravity="fill">
+                </org.mozilla.vrbrowser.ui.CustomTabLayout>
+
+                <org.mozilla.vrbrowser.ui.NavigationBarButton
+                    android:id="@+id/addTabButton"
+                    style="?attr/headerButtonStyle"
+                    android:src="@drawable/ic_icon_add" />
+            </FrameLayout>
+
+
+            <LinearLayout
+                android:id="@+id/truncateContainer"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@drawable/tab_inactive"
+                android:paddingEnd="@dimen/header_button_margin"
+                android:orientation="horizontal">
+
+                <org.mozilla.vrbrowser.ui.NavigationBarButton
+                    android:id="@+id/tabScrollRightButton"
+                    style="?attr/headerButtonStyle"
+                    android:src="@drawable/ic_icon_tabs_scroll_right" />
+
+                <org.mozilla.vrbrowser.ui.NavigationBarButton
+                    android:id="@+id/tabTruncateAddTabButton"
+                    style="?attr/headerButtonStyle"
+                    android:src="@drawable/ic_icon_add" />
+
+                <org.mozilla.vrbrowser.ui.NavigationBarButton
+                    android:id="@+id/tabListAllButton"
+                    style="?attr/headerButtonStyle"
+                    android:src="@drawable/ic_icon_tabs_list_all" />
+
+            </LinearLayout>
+
+            <org.mozilla.vrbrowser.ui.NavigationBarButton
+                android:id="@+id/focusWindowButton"
+                style="?attr/headerButtonStyle"
+                android:src="@drawable/ic_icon_focus_mode" />
+            <org.mozilla.vrbrowser.ui.NavigationBarButton
+                android:id="@+id/closeWindowButton"
+                style="?attr/headerButtonStyle"
+                android:src="@drawable/ic_icon_exit" />
+        </LinearLayout>
+
+        <org.mozilla.vrbrowser.ui.NavigationBar
+            android:id="@+id/navigationBar2D"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+</merge>

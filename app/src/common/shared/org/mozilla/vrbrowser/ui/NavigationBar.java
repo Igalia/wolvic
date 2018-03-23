@@ -8,6 +8,7 @@ package org.mozilla.vrbrowser.ui;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.util.Log;
 
@@ -16,33 +17,32 @@ import org.mozilla.vrbrowser.SessionStore;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 
-public class URLBarWidget extends UIWidget implements GeckoSession.NavigationDelegate, GeckoSession.ProgressDelegate {
+public class NavigationBar extends FrameLayout implements GeckoSession.NavigationDelegate, GeckoSession.ProgressDelegate {
     private static final String LOGTAG = "VRB";
     private AudioEngine mAudio;
     private ImageButton mBackButton;
     private ImageButton mForwardButton;
     private ImageButton mReloadButton;
     private ImageButton mHomeButton;
-    private ImageButton mCloseButton;
     private NavigationURLBar mURLBar;
     private boolean mIsLoading;
-    private URLBarWidget.Delegate mDelegate;
+    private NavigationBar.Delegate mDelegate;
 
     public interface Delegate {
         void onCloseClick();
     }
 
-    public URLBarWidget(Context aContext) {
+    public NavigationBar(Context aContext) {
         super(aContext);
         initialize(aContext);
     }
 
-    public URLBarWidget(Context aContext, AttributeSet aAttrs) {
+    public NavigationBar(Context aContext, AttributeSet aAttrs) {
         super(aContext, aAttrs);
         initialize(aContext);
     }
 
-    public URLBarWidget(Context aContext, AttributeSet aAttrs, int aDefStyle) {
+    public NavigationBar(Context aContext, AttributeSet aAttrs, int aDefStyle) {
         super(aContext, aAttrs, aDefStyle);
         initialize(aContext);
     }
@@ -54,7 +54,6 @@ public class URLBarWidget extends UIWidget implements GeckoSession.NavigationDel
         mForwardButton = findViewById(R.id.forwardButton);
         mReloadButton = findViewById(R.id.reloadButton);
         mHomeButton = findViewById(R.id.homeButton);
-        mCloseButton = findViewById(R.id.closeButton);
         mURLBar = findViewById(R.id.urlBar);
 
         mBackButton.setOnClickListener(new OnClickListener() {
@@ -101,14 +100,6 @@ public class URLBarWidget extends UIWidget implements GeckoSession.NavigationDel
             }
         });
 
-        mCloseButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mDelegate != null) {
-                    mDelegate.onCloseClick();
-                }
-            }
-        });
 
         SessionStore.get().addNavigationListener(this);
         SessionStore.get().addProgressListener(this);
@@ -116,11 +107,6 @@ public class URLBarWidget extends UIWidget implements GeckoSession.NavigationDel
 
     public void setDelegate(Delegate aDelegate) {
         mDelegate = aDelegate;
-        if (aDelegate != null) {
-            mCloseButton.setVisibility(View.VISIBLE);
-        } else {
-            mCloseButton.setVisibility(View.INVISIBLE);
-        }
     }
 
     @Override
@@ -128,10 +114,7 @@ public class URLBarWidget extends UIWidget implements GeckoSession.NavigationDel
 
     }
 
-
-    @Override
-    public void releaseWidget() {
-        super.releaseWidget();
+    public void release() {
         SessionStore.get().removeNavigationListener(this);
         SessionStore.get().removeProgressListener(this);
     }
@@ -179,7 +162,6 @@ public class URLBarWidget extends UIWidget implements GeckoSession.NavigationDel
         if (mURLBar != null) {
             Log.e(LOGTAG, "Got onPageStart: " + aUri);
             mURLBar.setURL(aUri);
-            mURLBar.setIsLoading(true);
         }
         mIsLoading = true;
         if (mReloadButton != null) {
@@ -189,10 +171,6 @@ public class URLBarWidget extends UIWidget implements GeckoSession.NavigationDel
 
     @Override
     public void onPageStop(GeckoSession aSession, boolean b) {
-        if (mURLBar != null) {
-            Log.e(LOGTAG, "Got onPageStop");
-            mURLBar.setIsLoading(false);
-        }
         mIsLoading = false;
         if (mReloadButton != null) {
             mReloadButton.setImageResource(R.drawable.ic_icon_reload);

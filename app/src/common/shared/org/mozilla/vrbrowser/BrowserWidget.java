@@ -11,17 +11,23 @@ import android.view.MotionEvent;
 import android.view.Surface;
 import android.util.Log;
 
+import org.mozilla.gecko.gfx.GeckoDisplay;
 import org.mozilla.geckoview.GeckoSession;
 
-class BrowserWidget implements Widget {
+class BrowserWidget implements Widget, SessionStore.SessionChangeListener{
     private static final String LOGTAG = "VRB";
     private Context mContext;
     private int mSessionId;
+    private GeckoDisplay mDisplay;
     private Surface mSurface;
+    private SurfaceTexture mSurfaceTexture;
+    private int mWidth;
+    private int mHeight;
 
     BrowserWidget(Context aContext, int aSessionId) {
         mContext = aContext;
         mSessionId = aSessionId;
+        SessionStore.get().addSessionChangeListener(this);
     }
 
     @Override
@@ -30,9 +36,13 @@ class BrowserWidget implements Widget {
         if (session == null) {
             return;
         }
+        mWidth = aWidth;
+        mHeight = aHeight;
+        mSurfaceTexture = aTexture;
         aTexture.setDefaultBufferSize(aWidth, aHeight);
         mSurface = new Surface(aTexture);
-        session.acquireDisplay().surfaceChanged(mSurface, aWidth, aHeight);
+        mDisplay = session.acquireDisplay();
+        mDisplay.surfaceChanged(mSurface, aWidth, aHeight);
     }
 
     @Override
@@ -55,9 +65,39 @@ class BrowserWidget implements Widget {
 
     @Override
     public void releaseWidget() {
+        SessionStore.get().removeSessionChangeListener(this);
         GeckoSession session = SessionStore.get().getSession(mSessionId);
         if (session == null) {
             return;
         }
+    }
+
+    // SessionStore.GeckoSessionChange
+
+    @Override
+    public void onNewSession(GeckoSession aSession, int aId) {
+
+    }
+
+    @Override
+    public void onRemoveSession(GeckoSession aSession, int aId) {
+
+    }
+
+    @Override
+    public void onCurrentSessionChange(GeckoSession aSession, int aId) {
+        if (mSessionId == aId) {
+            return;
+        }
+
+        GeckoSession oldSession = SessionStore.get().getSession(mSessionId);
+        if (oldSession != null && mDisplay != null) {
+            mDisplay.surfaceDestroyed();
+            oldSession.releaseDisplay(mDisplay);
+        }
+
+        mSessionId = aId;
+        mDisplay = aSession.acquireDisplay();
+        mDisplay.surfaceChanged(mSurface, mWidth, mHeight);
     }
 }
