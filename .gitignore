@@ -61,3 +61,8 @@ app/.externalNativeBuild
 
 # Testing Oculus signature
 oculussig_*
+
+# Third Party SDKs
+third_party
+
+user.properties
