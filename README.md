@@ -22,6 +22,7 @@ git submodule update --init --recursive
 ```bash
 cd gvr-android-sdk && ./gradlew :extractNdk
 ```
+* If you get an error extracting the NDK, you might need to copy the local.properties file from the root project directory into the gvr-android-sdk directory. If this file doesn't exist at the top level either. Open the top level project in Android Studio and it should be created.
 
 * Finally, open the project with [Android Studio](https://developer.android.com/studio/index.html), build and run it.
 
