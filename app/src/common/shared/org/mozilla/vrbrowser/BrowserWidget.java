@@ -6,15 +6,20 @@
 package org.mozilla.vrbrowser;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.util.Log;
+import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputConnection;
 
 import org.mozilla.gecko.gfx.GeckoDisplay;
 import org.mozilla.geckoview.GeckoSession;
 
-class BrowserWidget implements Widget, SessionStore.SessionChangeListener{
+class BrowserWidget extends View implements Widget, SessionStore.SessionChangeListener {
     private static final String LOGTAG = "VRB";
     private Context mContext;
     private int mSessionId;
@@ -25,9 +30,13 @@ class BrowserWidget implements Widget, SessionStore.SessionChangeListener{
     private int mHeight;
 
     BrowserWidget(Context aContext, int aSessionId) {
+        super(aContext);
         mContext = aContext;
         mSessionId = aSessionId;
         SessionStore.get().addSessionChangeListener(this);
+        setVisibility(View.VISIBLE);
+        //setFocusable(View.FOCUSABLE);
+        setFocusableInTouchMode(true);
     }
 
     @Override
@@ -47,6 +56,10 @@ class BrowserWidget implements Widget, SessionStore.SessionChangeListener{
 
     @Override
     public void handleTouchEvent(MotionEvent aEvent) {
+        if (aEvent.getActionMasked() == MotionEvent.ACTION_DOWN) {
+            Log.e(LOGTAG, "************** REQUESTING FOCUS");
+            requestFocus();
+        }
         GeckoSession session = SessionStore.get().getSession(mSessionId);
         if (session == null) {
             return;
@@ -99,5 +112,79 @@ class BrowserWidget implements Widget, SessionStore.SessionChangeListener{
         mSessionId = aId;
         mDisplay = aSession.acquireDisplay();
         mDisplay.surfaceChanged(mSurface, mWidth, mHeight);
+    }
+
+    // View
+    @Override
+    public InputConnection onCreateInputConnection(final EditorInfo outAttrs) {
+        Log.e(LOGTAG, "BrowserWidget onCreateInputConnection");
+        GeckoSession session = SessionStore.get().getSession(mSessionId);
+        if (session == null) {
+            return null;
+        }
+        return session.getTextInputController().onCreateInputConnection(outAttrs);
+    }
+
+    @Override
+    public boolean onKeyPreIme(int aKeyCode, KeyEvent aEvent) {
+        if (super.onKeyPreIme(aKeyCode, aEvent)) {
+            return true;
+        }
+        GeckoSession session = SessionStore.get().getSession(mSessionId);
+        return (session != null) && session.getTextInputController().onKeyPreIme(aKeyCode, aEvent);
+    }
+
+    @Override
+    public boolean onKeyUp(int aKeyCode, KeyEvent aEvent) {
+        if (super.onKeyUp(aKeyCode, aEvent)) {
+            return true;
+        }
+        GeckoSession session = SessionStore.get().getSession(mSessionId);
+        return (session != null) && session.getTextInputController().onKeyUp(aKeyCode, aEvent);
+    }
+
+    @Override
+    public boolean onKeyDown(int aKeyCode, KeyEvent aEvent) {
+        if (super.onKeyDown(aKeyCode, aEvent)) {
+            return true;
+        }
+        GeckoSession session = SessionStore.get().getSession(mSessionId);
+        return (session != null) && session.getTextInputController().onKeyDown(aKeyCode, aEvent);
+    }
+
+    @Override
+    public boolean onKeyLongPress(int aKeyCode, KeyEvent aEvent) {
+        if (super.onKeyLongPress(aKeyCode, aEvent)) {
+            return true;
+        }
+        GeckoSession session = SessionStore.get().getSession(mSessionId);
+        return (session != null) && session.getTextInputController().onKeyLongPress(aKeyCode, aEvent);
+    }
+
+    @Override
+    public boolean onKeyMultiple(int aKeyCode, int repeatCount, KeyEvent aEvent) {
+        if (super.onKeyMultiple(aKeyCode, repeatCount, aEvent)) {
+            return true;
+        }
+        GeckoSession session = SessionStore.get().getSession(mSessionId);
+        return (session != null) && session.getTextInputController().onKeyMultiple(aKeyCode, repeatCount, aEvent);
+    }
+    
+    @Override
+    protected void onFocusChanged(boolean aGainFocus, int aDirection, Rect aPreviouslyFocusedRect) {
+        super.onFocusChanged(aGainFocus, aDirection, aPreviouslyFocusedRect);
+        Log.e(LOGTAG, "BrowserWidget onFoucusChanged: " + (aGainFocus ? "TRUE" : "FALSE"));
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent aEvent) {
+        GeckoSession session = SessionStore.get().getSession(mSessionId);
+        return (session != null) && session.getPanZoomController().onTouchEvent(aEvent);
+    }
+
+    @Override
+    public boolean onGenericMotionEvent(MotionEvent aEvent) {
+        GeckoSession session = SessionStore.get().getSession(mSessionId);
+        return (session != null) && session.getPanZoomController().onMotionEvent(aEvent);
     }
 }

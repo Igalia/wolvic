@@ -281,7 +281,7 @@ public class BrowserHeaderWidget extends UIWidget
     }
 
     @Override
-    public void onContextMenu(GeckoSession aSession, int i, int i1, String s, String s1) {
+    public void onContextMenu(GeckoSession aSession, int i, int i1, String s, int i2, String s1) {
 
     }
 

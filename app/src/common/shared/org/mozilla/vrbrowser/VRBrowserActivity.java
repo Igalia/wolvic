@@ -73,7 +73,7 @@ public class VRBrowserActivity extends PlatformActivity {
                 Log.e(LOGTAG, "LOADING: " + SessionStore.DEFAULT_URL);
                 SessionStore.get().loadUri(SessionStore.DEFAULT_URL);
             }
-        }, 2000);
+        }, 2500);
         // End temporary fix
         mLastGesture = NoGesture;
         super.onCreate(savedInstanceState);
@@ -189,11 +189,11 @@ public class VRBrowserActivity extends PlatformActivity {
             mWidgets.put(aHandle, widget);
         }
 
-        if (aType != Widget.Browser) {
+        //if (aType != Widget.Browser) {
             Log.e(LOGTAG, "********** ADDING WIDGET TO VIEW ***************");
             // Add hidden UI widget to a virtual display for invalidation
             mWidgetContainer.addView((View) widget, new FrameLayout.LayoutParams(aWidth, aHeight));
-        }
+        //}
     }
 
     @Keep
@@ -293,7 +293,7 @@ public class VRBrowserActivity extends PlatformActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mOffscreenDisplay = new OffscreenDisplay(VRBrowserActivity.this, texture, 1920, 200);
+                mOffscreenDisplay = new OffscreenDisplay(VRBrowserActivity.this, texture, 16, 16);
                 mOffscreenDisplay.setContentView(mWidgetContainer);
             }
         });

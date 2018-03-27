@@ -21,6 +21,7 @@ import org.mozilla.vrbrowser.Widget;
 public class UIWidget extends FrameLayout implements Widget {
     UISurfaceTextureRenderer mRenderer;
     SurfaceTexture mTexture;
+    int mOffset[] = new int[2];
     static final String LOGTAG = "VRB";
 
     public UIWidget(Context aContext) {
@@ -53,7 +54,12 @@ public class UIWidget extends FrameLayout implements Widget {
 
     @Override
     public void handleTouchEvent(MotionEvent aEvent) {
-        requestFocus();
+        if (aEvent.getActionMasked() == MotionEvent.ACTION_DOWN) {
+            requestFocus();
+        }
+        this.getLocationInWindow(mOffset);
+        //Log.e(LOGTAG, "mOffset: " + mOffset[0] + " " + mOffset[1]);
+        aEvent.offsetLocation(mOffset[0], mOffset[1]);
         this.dispatchTouchEvent(aEvent);
     }
 

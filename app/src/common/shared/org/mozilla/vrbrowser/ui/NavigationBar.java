@@ -111,7 +111,7 @@ public class NavigationBar extends FrameLayout implements GeckoSession.Navigatio
 
     @Override
     public void onNewSession(GeckoSession aSession, String aUrl, GeckoSession.Response<GeckoSession> aResponse) {
-
+        aResponse.respond(null);
     }
 
     public void release() {
@@ -147,12 +147,12 @@ public class NavigationBar extends FrameLayout implements GeckoSession.Navigatio
     }
 
     @Override
-    public boolean onLoadRequest(GeckoSession session, String uri, int target) {
+    public void onLoadRequest(GeckoSession session, String uri, int target, GeckoSession.Response<Boolean> aResponse) {
         if (mURLBar != null) {
             Log.e(LOGTAG, "Got onLoadUri: " + uri);
             mURLBar.setURL(uri);
         }
-        return false;
+        aResponse.respond(null);
     }
 
     // Progress Listener

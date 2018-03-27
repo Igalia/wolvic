@@ -136,9 +136,9 @@ struct DeviceDelegateOculusVR::State {
     initialized = true;
 
     renderWidth = (uint32_t) vrapi_GetSystemPropertyInt(&java,
-                                                        VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_WIDTH);
+                                                        VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_WIDTH) * 1.5;
     renderHeight = (uint32_t) vrapi_GetSystemPropertyInt(&java,
-                                                         VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_HEIGHT);
+                                                         VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_HEIGHT) * 1.5;
 
     for (int i = 0; i < VRAPI_EYE_COUNT; ++i) {
       cameras[i] = vrb::CameraEye::Create(context);
@@ -294,7 +294,6 @@ bool
 DeviceDelegateOculusVR::GetControllerScrolled(const int32_t aWhichController, float& aScrollX, float& aScrollY) {
   aScrollX = (m.controllerState.TrackpadPosition.x / (float)m.controllerCapabilities.TrackpadMaxX) * 5.0f;
   aScrollY = (m.controllerState.TrackpadPosition.y / (float)m.controllerCapabilities.TrackpadMaxY) * 5.0f;
-  if (m.controllerState.TrackpadStatus) { VRB_LOG("Scroll: %f %f", aScrollX, aScrollY); }
   return m.controllerState.TrackpadStatus;
 }
 

@@ -8,6 +8,7 @@ package org.mozilla.vrbrowser.ui;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Typeface;
+import android.text.InputType;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
@@ -45,6 +46,7 @@ public class NavigationURLBar extends FrameLayout {
     private void initialize(Context aContext) {
         inflate(aContext, R.layout.navigation_url, this);
         mURL = findViewById(R.id.urlEditText);
+        mURL.setShowSoftInputOnFocus(false);
         mMicrophoneButton = findViewById(R.id.microphoneButton);
         mURLLeftContainer = findViewById(R.id.urlLeftContainer);
         mInsecureIcon = findViewById(R.id.insecureIcon);
