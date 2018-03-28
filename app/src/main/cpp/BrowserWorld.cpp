@@ -183,8 +183,14 @@ struct BrowserWorld::State {
     browser->SetTransform(Matrix::Position(Vector(0.0f, -3.0f, -18.0f)));
     root->AddNode(browser->GetRoot());
     widgets.push_back(std::move(browser));
-
-    WidgetPtr urlbar = Widget::Create(contextWeak, WidgetTypeURLBar, 1920 * 1.5f, 275 * 1.5f, 9.0f);
+#if defined(VRBROWSER_GOOGLEVR)
+    static const float kUIScaleFactor = 1.0f;
+#else
+    static const float kUIScaleFactor = 1.5f;
+#endif // defined(VRBROWSER_GOOGLEVR)
+    WidgetPtr urlbar = Widget::Create(contextWeak, WidgetTypeURLBar,
+                                      (int32_t) (1920.0f * kUIScaleFactor),
+                                      (int32_t) (275.0f * kUIScaleFactor), 9.0f);
     urlbar->SetTransform(Matrix::Position(Vector(0.0f, 7.15f, -18.0f)));
     root->AddNode(urlbar->GetRoot());
     widgets.push_back(std::move(urlbar));

@@ -44,7 +44,8 @@ android {
             //}
             externalNativeBuild {
                 cmake {
-                    cppFlags " -I" + file("${project.rootDir}/gvr-android-sdk/libraries/headers").absolutePath
+                    cppFlags " -I" + file("${project.rootDir}/gvr-android-sdk/libraries/headers").absolutePath +
+                            " -DVRBROWSER_GOOGLEVR"
                     arguments "-DVR_SDK_LIB=googlevr-lib", "-DGOOGLEVR=ON"
                 }
             }

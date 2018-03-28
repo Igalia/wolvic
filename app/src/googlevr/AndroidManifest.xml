@@ -12,9 +12,9 @@
             android:configChanges="orientation|screenSize|keyboard|keyboardHidden|navigation"
             tools:node="replace">
             <meta-data android:name="com.google.android.vr.icon"
-                android:resource="@drawable/crow2" />
+                android:resource="@drawable/ffgvr_foreground" />
             <meta-data android:name="com.google.android.vr.icon_background"
-                android:resource="@drawable/crow_background2" />
+                android:resource="@drawable/ffgvr_background" />
             <meta-data android:name="android.app.lib_name" android:value="native-lib" />
             <!-- Intent filter that enables this app to be launched from the Daydream Home menu. -->
             <intent-filter>

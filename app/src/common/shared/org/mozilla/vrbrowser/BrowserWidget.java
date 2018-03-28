@@ -34,9 +34,11 @@ class BrowserWidget extends View implements Widget, SessionStore.SessionChangeLi
         mContext = aContext;
         mSessionId = aSessionId;
         SessionStore.get().addSessionChangeListener(this);
-        setVisibility(View.VISIBLE);
-        //setFocusable(View.FOCUSABLE);
         setFocusableInTouchMode(true);
+        GeckoSession session = SessionStore.get().getSession(mSessionId);
+        if (session != null) {
+            session.getTextInputController().setView(this);
+        }
     }
 
     @Override
@@ -83,6 +85,7 @@ class BrowserWidget extends View implements Widget, SessionStore.SessionChangeLi
         if (session == null) {
             return;
         }
+        session.getTextInputController().setView(this);
     }
 
     // SessionStore.GeckoSessionChange
@@ -105,6 +108,7 @@ class BrowserWidget extends View implements Widget, SessionStore.SessionChangeLi
 
         GeckoSession oldSession = SessionStore.get().getSession(mSessionId);
         if (oldSession != null && mDisplay != null) {
+            oldSession.getTextInputController().setView(null);
             mDisplay.surfaceDestroyed();
             oldSession.releaseDisplay(mDisplay);
         }
@@ -112,6 +116,7 @@ class BrowserWidget extends View implements Widget, SessionStore.SessionChangeLi
         mSessionId = aId;
         mDisplay = aSession.acquireDisplay();
         mDisplay.surfaceChanged(mSurface, mWidth, mHeight);
+        aSession.getTextInputController().setView(this);
     }
 
     // View
@@ -122,6 +127,7 @@ class BrowserWidget extends View implements Widget, SessionStore.SessionChangeLi
         if (session == null) {
             return null;
         }
+        //session.getTextInputController().setView(this);
         return session.getTextInputController().onCreateInputConnection(outAttrs);
     }
 
