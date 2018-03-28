@@ -1,15 +1,15 @@
 ## Setup instructions
 
-* Clone VRBrowser
+* Clone FirefoxReality
 ```bash
-git clone git@github.com:MozillaReality/VRBrowser.git
+git clone git@github.com:MozillaReality/FirefoxReality.git
 ```
 * Fetch git submodules. You may need https://blog.github.com/2013-09-03-two-factor-authentication/#how-does-it-work-for-command-line-git
 ```bash
 git submodule update --init --recursive
 ```
 
-* You can build VRBrowser for different devices:
+* You can build FirefoxReality for different devices:
     * googlevr => Daydream
     * noapi => Runs on standard Android phone without headset (intended for testing)
     * oculusvr => GearVR & Oculus Go
@@ -18,7 +18,7 @@ git submodule update --init --recursive
 
 * Building for Oculus Mobile, SVR, and WaveVR require access to their respective SDKs which are not included.
 
-* If you want to build VRBrowser for Daydream/googlevr, you need to run:
+* If you want to build FirefoxReality for Daydream/googlevr, you need to run:
 ```bash
 cd gvr-android-sdk && ./gradlew :extractNdk
 ```
