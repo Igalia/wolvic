@@ -51,6 +51,7 @@ public class BrowserActivity extends Activity implements SessionStore.SessionCha
         setContentView(R.layout.browser_activity);
         mBrowserHeader = findViewById(R.id.browserHeader);
         EditText editText = findViewById(R.id.urlEditText);
+        editText.setShowSoftInputOnFocus(true);
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {

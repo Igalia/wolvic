@@ -54,6 +54,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
 
     private GeckoSession mCurrentSession;
     private HashMap<Integer, State> mSessions;
+    private boolean mShowSoftInputOnFocus = true;
 
     private SessionStore() {
         mNavigationListeners = new LinkedList<>();
@@ -164,6 +165,9 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     public int createSession() {
         State state = new State();
         state.mSession = new GeckoSession();
+        // Commented out until Bug 1450142 lands
+        // state.mSession.getTextInput().setShowSoftInputOnFocus(mShowSoftInputOnFocus);
+
         int result = state.mSession.hashCode();
         mSessions.put(result, state);
         state.mSession.getSettings().setBoolean(GeckoSessionSettings.USE_MULTIPROCESS, false);
@@ -301,6 +305,16 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             return -1;
         }
         return mCurrentSession.hashCode();
+    }
+
+    public void setShowSoftInputOnFocus(final boolean aShowSoftInputOnFocus) {
+        mShowSoftInputOnFocus = aShowSoftInputOnFocus;
+        // Commented out until Bug 1450142 lands
+        /*
+        for (HashMap.Entry<Integer, State> entry : mSessions.entrySet()) {
+            entry.getValue().mSession.getTextInput().setShowSoftInputOnFocus(mShowSoftInputOnFocus);
+        }
+        */
     }
 
     @Override

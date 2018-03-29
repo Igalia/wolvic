@@ -60,21 +60,7 @@ public class VRBrowserActivity extends PlatformActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.e(LOGTAG, "VRBrowserActivity onCreate");
-        // Temporary fix for GeckoView start up bug where first page loaded
-        // would be blank.
-        if (SessionStore.get().getCurrentSession() == null) {
-            int id = SessionStore.get().createSession();
-            SessionStore.get().setCurrentSession(id, this);
 
-        }
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Log.e(LOGTAG, "LOADING: " + SessionStore.DEFAULT_URL);
-                SessionStore.get().loadUri(SessionStore.DEFAULT_URL);
-            }
-        }, 2500);
-        // End temporary fix
         mLastGesture = NoGesture;
         super.onCreate(savedInstanceState);
 
@@ -107,12 +93,14 @@ public class VRBrowserActivity extends PlatformActivity {
 
     @Override
     protected void onPause() {
+        SessionStore.get().setShowSoftInputOnFocus(true);
         mAudioEngine.pauseEngine();
         super.onPause();
     }
 
     @Override
     protected void onResume() {
+        SessionStore.get().setShowSoftInputOnFocus(false);
         mAudioEngine.resumeEngine();
         super.onResume();
     }
@@ -189,11 +177,8 @@ public class VRBrowserActivity extends PlatformActivity {
             mWidgets.put(aHandle, widget);
         }
 
-        //if (aType != Widget.Browser) {
-            Log.e(LOGTAG, "********** ADDING WIDGET TO VIEW ***************");
-            // Add hidden UI widget to a virtual display for invalidation
-            mWidgetContainer.addView((View) widget, new FrameLayout.LayoutParams(aWidth, aHeight));
-        //}
+        // Add hidden UI widget to a virtual display for invalidation
+        mWidgetContainer.addView((View) widget, new FrameLayout.LayoutParams(aWidth, aHeight));
     }
 
     @Keep
