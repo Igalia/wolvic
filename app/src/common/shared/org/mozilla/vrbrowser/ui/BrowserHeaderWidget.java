@@ -285,6 +285,11 @@ public class BrowserHeaderWidget extends UIWidget
 
     }
 
+    @Override
+    public void onExternalResponse(GeckoSession session, GeckoSession.WebResponseInfo response) {
+
+    }
+
     // CustomTabLayout.TruncateDelegate
     @Override
     public void onTruncateChange(boolean truncate) {

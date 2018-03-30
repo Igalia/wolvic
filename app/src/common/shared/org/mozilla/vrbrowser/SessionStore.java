@@ -165,8 +165,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     public int createSession() {
         State state = new State();
         state.mSession = new GeckoSession();
-        // Commented out until Bug 1450142 lands
-        // state.mSession.getTextInput().setShowSoftInputOnFocus(mShowSoftInputOnFocus);
+        //state.mSession.getTextInput().setShowSoftInputOnFocus(mShowSoftInputOnFocus);
 
         int result = state.mSession.hashCode();
         mSessions.put(result, state);
@@ -309,12 +308,9 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
 
     public void setShowSoftInputOnFocus(final boolean aShowSoftInputOnFocus) {
         mShowSoftInputOnFocus = aShowSoftInputOnFocus;
-        // Commented out until Bug 1450142 lands
-        /*
         for (HashMap.Entry<Integer, State> entry : mSessions.entrySet()) {
-            entry.getValue().mSession.getTextInput().setShowSoftInputOnFocus(mShowSoftInputOnFocus);
+            //entry.getValue().mSession.getTextInput().setShowSoftInputOnFocus(mShowSoftInputOnFocus);
         }
-        */
     }
 
     @Override
@@ -440,6 +436,11 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
 
     @Override
     public void onContextMenu(GeckoSession aSession, int i, int i1, String s, int i2, String s1) {
+
+    }
+
+    @Override
+    public void onExternalResponse(GeckoSession session, GeckoSession.WebResponseInfo response) {
 
     }
 }

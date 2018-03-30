@@ -103,6 +103,8 @@ public class UIWidget extends FrameLayout implements Widget {
         }
     }
 
+    // Need to keep this deprecated function to work on N versions of Android.
+    @SuppressWarnings("deprecation")
     @Override
     public ViewParent invalidateChildInParent(int[] aLocation, Rect aDirty) {
         ViewParent parent =  super.invalidateChildInParent(aLocation, aDirty);
