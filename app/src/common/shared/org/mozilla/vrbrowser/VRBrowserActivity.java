@@ -13,6 +13,7 @@ import android.opengl.GLES20;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Keep;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -258,6 +259,12 @@ public class VRBrowserActivity extends PlatformActivity {
         // https://developers.google.com/vr/reference/android/com/google/vr/sdk/audio/GvrAudioEngine.html#resume()
         // The update method must be called from the main thread at a regular rate.
         runOnUiThread(mAudioUpdateRunnable);
+    }
+
+    @Keep
+    int getDisplayDensity() {
+        DisplayMetrics dm = getResources().getDisplayMetrics();
+        return dm.densityDpi;
     }
 
     void createOffscreenDisplay() {

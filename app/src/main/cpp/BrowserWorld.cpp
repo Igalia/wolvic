@@ -41,6 +41,8 @@ static const float kScrollFactor = 20.0f; // Just picked what fell right.
 
 static const char* kDispatchCreateWidgetName = "dispatchCreateWidget";
 static const char* kDispatchCreateWidgetSignature = "(IILandroid/graphics/SurfaceTexture;II)V";
+static const char* kGetDisplayDensityName = "getDisplayDensity";
+static const char* kGetDisplayDensitySignature = "()I";
 static const char* kHandleMotionEventName = "handleMotionEvent";
 static const char* kHandleMotionEventSignature = "(IIZFF)V";
 static const char* kHandleScrollEvent = "handleScrollEvent";
@@ -160,6 +162,7 @@ struct BrowserWorld::State {
   float farClip;
   JNIEnv* env;
   jobject activity;
+  int displayDensity;
   jmethodID dispatchCreateWidgetMethod;
   jmethodID handleMotionEventMethod;
   jmethodID handleScrollEventMethod;
@@ -178,26 +181,32 @@ struct BrowserWorld::State {
     root->AddLight(light);
     cullVisitor = CullVisitor::Create(contextWeak);
     drawList = DrawableList::Create(contextWeak);
+  }
 
+  void InitializeWindows();
+  void UpdateControllers();
+};
+
+void
+BrowserWorld::State::InitializeWindows() {
     WidgetPtr browser = Widget::Create(contextWeak, WidgetTypeBrowser);
     browser->SetTransform(Matrix::Position(Vector(0.0f, -3.0f, -18.0f)));
     root->AddNode(browser->GetRoot());
     widgets.push_back(std::move(browser));
-#if defined(VRBROWSER_GOOGLEVR)
+/*#if defined(VRBROWSER_GOOGLEVR)
     static const float kUIScaleFactor = 1.0f;
 #else
     static const float kUIScaleFactor = 1.5f;
-#endif // defined(VRBROWSER_GOOGLEVR)
+#endif // defined(VRBROWSER_GOOGLEVR*/
+    const float uiScaleFactor = displayDensity/420.0f;
+
     WidgetPtr urlbar = Widget::Create(contextWeak, WidgetTypeURLBar,
-                                      (int32_t) (1920.0f * kUIScaleFactor),
-                                      (int32_t) (275.0f * kUIScaleFactor), 9.0f);
+                                      (int32_t) (1920.0f * uiScaleFactor),
+                                      (int32_t) (275.0f * uiScaleFactor), 9.0f);
     urlbar->SetTransform(Matrix::Position(Vector(0.0f, 7.15f, -18.0f)));
     root->AddNode(urlbar->GetRoot());
     widgets.push_back(std::move(urlbar));
-  }
-
-  void UpdateControllers();
-};
+}
 
 void
 BrowserWorld::State::UpdateControllers() {
@@ -374,6 +383,13 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
   if (!m.handleGestureMethod) {
     VRB_LOG("Failed to find Java method: %s %s", kHandleGestureName, kHandleGestureSignature);
   }
+
+  jmethodID getDisplayDensityMethod =  m.env->GetMethodID(clazz, kGetDisplayDensityName, kGetDisplayDensitySignature);
+  if (getDisplayDensityMethod) {
+    m.displayDensity = m.env->CallIntMethod(m.activity, getDisplayDensityMethod);
+  }
+
+  m.InitializeWindows();
 
   if ((m.controllers.size() == 0) && (m.controllerCount > 0)) {
     for (int32_t ix = 0; ix < m.controllerCount; ix++) {
