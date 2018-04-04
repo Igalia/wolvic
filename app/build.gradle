@@ -50,6 +50,20 @@ android {
                 }
             }
         }
+
+        googlevrFlat {
+            //ndk {
+            //    abiFilters "arm64-v8a"
+            //}
+            externalNativeBuild {
+                cmake {
+                    cppFlags " -I" + file("${project.rootDir}/gvr-android-sdk/libraries/headers").absolutePath +
+                            " -DVRBROWSER_GOOGLEVR"
+                    arguments "-DVR_SDK_LIB=googlevr-lib", "-DGOOGLEVR=ON"
+                }
+            }
+        }
+
         oculusvr {
             //ndk {
             //    abiFilters "arm64-v8a"
@@ -111,6 +125,13 @@ android {
             ]
         }
 
+        googlevrFlat {
+            java.srcDirs = [
+                    'src/googlevr/java',
+                    'src/googlevrFlat/java'
+            ]
+        }
+
         oculusvr {
             java.srcDirs = [
                     'src/common/nativeactivity'
@@ -147,6 +168,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     googlevrImplementation 'com.google.vr:sdk-base:1.130.0'
+    googlevrFlatImplementation 'com.google.vr:sdk-base:1.130.0'
     svrImplementation fileTree(dir: "${project.rootDir}/third_party/svr/", include: ['*.jar'])
     implementation 'com.android.support:design:26.1.0'
     implementation 'com.google.vr:sdk-audio:1.130.0'

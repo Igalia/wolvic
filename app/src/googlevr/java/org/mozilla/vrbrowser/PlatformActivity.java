@@ -20,7 +20,6 @@ import com.google.vr.ndk.base.GvrLayout;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import org.mozilla.vrbrowser.BrowserActivity;
 
 public class PlatformActivity extends Activity {
     static String LOGTAG = "VRB";
@@ -31,6 +30,7 @@ public class PlatformActivity extends Activity {
 
     private GvrLayout mLayout;
     private GLSurfaceView mView;
+    private static final String FLAT_ACTIVITY_CLASSNAME = "org.mozilla.vrbrowser.BrowserActivity";
 
     private final Runnable activityDestroyedRunnable = new Runnable() {
         @Override
@@ -99,12 +99,19 @@ public class PlatformActivity extends Activity {
 
         mLayout.setAsyncReprojectionEnabled(true);
         mLayout.setPresentationView(mView);
-        mLayout.getUiLayout().setCloseButtonListener(new Runnable() {
-            @Override
-            public void run() {
-                startActivity(new Intent(PlatformActivity.this, BrowserActivity.class));
-            }
-        });
+
+        try {
+            final Class flatActivityClass = Class.forName(FLAT_ACTIVITY_CLASSNAME);
+            mLayout.getUiLayout().setCloseButtonListener(new Runnable() {
+                @Override
+                public void run() {
+                    startActivity(new Intent(PlatformActivity.this, flatActivityClass));
+                }
+            });
+        }
+        catch (ClassNotFoundException ex) {
+
+        }
 
         setImmersiveSticky();
         setContentView(mLayout);
