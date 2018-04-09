@@ -37,7 +37,7 @@
             android:ellipsize="none"
             android:text="@string/new_tab"/>
 
-        <ImageButton
+        <org.mozilla.vrbrowser.ui.NavigationBarButton
             android:id="@+id/tabCloseButton"
             style="?attr/tabButtonStyle"
             android:layout_marginStart="8dp"
