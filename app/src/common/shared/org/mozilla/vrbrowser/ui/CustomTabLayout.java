@@ -91,13 +91,33 @@ public class CustomTabLayout extends TabLayout {
     @Override
     public void addTab(@NonNull Tab tab, int position, boolean setSelected) {
         super.addTab(tab, position, setSelected);
+        checkRelayout();
 
         TabView view = (TabView) tab.getCustomView();
         if (view != null) {
             view.setIsTruncating(mIsTruncating);
+            view.animateAdd();
+        }
+    }
+
+
+    public void removeTabAnimated(final TabLayout.Tab aTab) {
+        TabView view = (TabView) aTab.getCustomView();
+        if (view == null) {
+            return;
         }
 
-        checkRelayout();
+        int position = aTab.getPosition();
+        removeTab(aTab);
+
+        // Animate siblings
+        int count = getTabCount();
+        for (int i = position; i < count; ++i) {
+            TabView siblingView = (TabView) getTabAt(i).getCustomView();
+            if (siblingView != null) {
+                siblingView.animateSiblingRemove();
+            }
+        }
     }
 
     @Override

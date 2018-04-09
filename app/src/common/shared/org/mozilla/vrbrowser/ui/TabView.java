@@ -9,8 +9,12 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.ScaleAnimation;
+import android.view.animation.TranslateAnimation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -30,6 +34,8 @@ public class TabView extends LinearLayout {
     private ImageView mTabLoadingView;
     private ImageButton mTabCloseButton;
     private Animation mLoadingAnimation;
+    private TabCloseCallback mTabCloseCallback;
+    public static final int TAB_ANIMATION_DURATION = 100;
 
     public TabView(Context aContext) {
         super(aContext);
@@ -122,6 +128,29 @@ public class TabView extends LinearLayout {
             mIsTruncating = truncating;
             updateCloseIcon();
         }
+    }
+
+    public void animateAdd() {
+        Animation anim = new TranslateAnimation(
+                TranslateAnimation.RELATIVE_TO_SELF,-1.0f,
+                TranslateAnimation.RELATIVE_TO_SELF, 0.0f,
+                TranslateAnimation.RELATIVE_TO_SELF,0.0f,
+                TranslateAnimation.RELATIVE_TO_SELF,0.0f);
+        anim.setFillAfter(false);
+        anim.setDuration(TAB_ANIMATION_DURATION);
+        this.startAnimation(anim);
+    }
+
+    public void animateSiblingRemove() {
+        final ViewGroup parent = (ViewGroup) getParent();
+        Animation anim = new TranslateAnimation(
+                TranslateAnimation.RELATIVE_TO_SELF,1.0f,
+                TranslateAnimation.RELATIVE_TO_SELF, 0.0f,
+                TranslateAnimation.RELATIVE_TO_SELF,0.0f,
+                TranslateAnimation.RELATIVE_TO_SELF,0.0f);
+        anim.setFillAfter(false);
+        anim.setDuration(TAB_ANIMATION_DURATION);
+        parent.startAnimation(anim);
     }
 
     private void updateCloseIcon() {

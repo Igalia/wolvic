@@ -5,6 +5,8 @@ import android.content.Context;
 import android.support.design.widget.TabLayout;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -248,20 +250,18 @@ public class BrowserHeaderWidget extends UIWidget
     // SessionStore.SessionChangeListener
     @Override
     public void onNewSession(GeckoSession aSession, int aId) {
-        createTab(aId, false);
+        TabLayout.Tab tab = createTab(aId, false);
+        if (aSession == SessionStore.get().getCurrentSession()) {
+            mTabContainer.scrollToTab(tab, false);
+            tab.select();
+        }
     }
 
     @Override
     public void onRemoveSession(GeckoSession aSession, int aId) {
         TabLayout.Tab tab = findTab(aId);
         if (tab != null) {
-            mTabContainer.removeTab(tab);
-            // Create a new session to prevent windows with 0 tabs
-            if (mTabContainer.getTabCount() <= 0) {
-                int id = SessionStore.get().createSession();
-                SessionStore.get().setCurrentSession(id, mContext);
-                SessionStore.get().loadUri(SessionStore.DEFAULT_URL);
-            }
+            mTabContainer.removeTabAnimated(tab);
         }
     }
 
@@ -358,7 +358,21 @@ public class BrowserHeaderWidget extends UIWidget
     @Override
     public void onTabUsedSpaceChange(int width) {
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)mAddTabButton.getLayoutParams();
+        int prev = params.leftMargin;
         params.setMargins(mHeaderButtonMargin + width, params.topMargin, params.rightMargin, params.bottomMargin);
         mAddTabButton.setLayoutParams(params);
+
+        int diff = params.leftMargin - prev;
+        if (!mIsTruncatingTabs & diff != 0) {
+            // Animate layout change for adding & removing tabs
+            Animation anim = new TranslateAnimation(
+                    TranslateAnimation.RELATIVE_TO_SELF, -diff/ mAddTabButton.getMeasuredWidth(),
+                    TranslateAnimation.RELATIVE_TO_SELF, 0.0f,
+                    TranslateAnimation.RELATIVE_TO_SELF,0.0f,
+                    TranslateAnimation.RELATIVE_TO_SELF,0.0f);
+            anim.setFillAfter(false);
+            anim.setDuration(TabView.TAB_ANIMATION_DURATION);
+            mAddTabButton.startAnimation(anim);
+        }
     }
 }
