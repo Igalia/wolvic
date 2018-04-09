@@ -57,45 +57,35 @@ public class CustomTabLayout extends TabLayout {
         mDelegate = delegate;
     }
 
-    public void scrollToTab(TabLayout.Tab aTab) {
-        final int tabIndex = getIndexForTab(aTab);
-        // Without the delay scrolling doesn't work ok in all situations
-        // (e.g scrolling after just creating a new tab)
+    public void scrollToTab(TabLayout.Tab aTab, boolean animated) {
+        final int tabIndex = aTab.getPosition();
         if (tabIndex >= 0) {
+            scrollTo( tabIndex * mTabCurrentWidth, animated);
+        }
+    }
+
+    public void scrollLeft(boolean animated) {
+        scrollTo(getScrollX() - mTabCurrentWidth, animated);
+    }
+
+    public void scrollRight(boolean animated) {
+        scrollTo(getScrollX() + mTabCurrentWidth, animated);
+    }
+
+    private void scrollTo(final int x, boolean animated) {
+        final int y = getScrollY();
+        if (animated) {
+            smoothScrollTo(x, y);
+        } else {
+            // Without the delay scrolling doesn't work ok in all situations
+            // (e.g scrolling after just creating a new tab)
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    setScrollX(tabIndex * mTabCurrentWidth);
+                    scrollTo(x, y);
                 }
             }, 10);
         }
-    }
-
-    public void scrollLeft() {
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                setScrollX(getScrollX() - mTabCurrentWidth);
-            }
-        }, 10);
-    }
-
-    public void scrollRight() {
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                setScrollX(getScrollX() + mTabCurrentWidth);
-            }
-        }, 10);
-    }
-
-    private int getIndexForTab(TabLayout.Tab aTab) {
-        for (int i = 0; i < getTabCount(); ++i) {
-            if (getTabAt(i) == aTab) {
-                return i;
-            }
-        }
-        return -1;
     }
 
     @Override

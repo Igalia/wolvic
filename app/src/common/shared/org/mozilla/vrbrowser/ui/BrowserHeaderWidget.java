@@ -70,7 +70,7 @@ public class BrowserHeaderWidget extends UIWidget
         mTabsScrollLeftButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mTabContainer.scrollLeft();
+                mTabContainer.scrollLeft(true);
             }
         });
 
@@ -78,7 +78,7 @@ public class BrowserHeaderWidget extends UIWidget
         tabsScrollRightButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mTabContainer.scrollRight();
+                mTabContainer.scrollRight(true);
             }
         });
 
@@ -269,7 +269,7 @@ public class BrowserHeaderWidget extends UIWidget
     public void onCurrentSessionChange(GeckoSession aSession, int aId) {
         TabLayout.Tab tab = findTab(aId);
         if (tab != null) {
-            mTabContainer.scrollToTab(tab);
+            mTabContainer.scrollToTab(tab, false);
             tab.select();
         }
     }
