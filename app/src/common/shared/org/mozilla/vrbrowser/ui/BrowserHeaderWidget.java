@@ -126,12 +126,19 @@ public class BrowserHeaderWidget extends UIWidget
         SessionStore.get().loadUri(SessionStore.DEFAULT_URL);
     }
 
-    private void createTab(int aSessionId, boolean aSelected) {
+    private TabLayout.Tab createTab(int aSessionId, boolean aSelected) {
         TabLayout.Tab tab = mTabContainer.newTab();
         TabView tabView = new TabView(mContext);
         tabView.setSessionId(aSessionId);
+        tabView.setTabCloseCallback(new TabView.TabCloseCallback() {
+            @Override
+            public void onTabClose(TabView aTab) {
+                closeTab(aTab);
+            }
+        });
         tab.setCustomView(tabView);
         mTabContainer.addTab(tab, aSelected);
+        return tab;
     }
 
     @Override
@@ -171,6 +178,40 @@ public class BrowserHeaderWidget extends UIWidget
         if (tabView != null) {
             tabView.setIsSelected(true);
         }
+    }
+
+    private void closeTab(TabView aTabToRemove) {
+        int sessionToRemove = aTabToRemove.getSessionId();
+        TabLayout.Tab tab = findTab(sessionToRemove);
+        if (tab == null) {
+            return;
+        }
+        int tabIndex = tab.getPosition();
+        int count = mTabContainer.getTabCount();
+        if (count > tabIndex + 1) {
+            // Select next Tab/Session if available
+            if (aTabToRemove.isSelected()) {
+                mTabContainer.getTabAt(tabIndex + 1).select();
+            }
+        }
+        else if (tabIndex > 0) {
+            // Select prev Tab/Session
+            if (aTabToRemove.isSelected()) {
+                mTabContainer.getTabAt(tabIndex - 1).select();
+            }
+        }
+        else {
+            // Delete the only tab
+            // Create a new empty session and make it current
+            SessionStore.get().removeSessionChangeListener(this);
+            int sessionId = SessionStore.get().createSession();
+            aTabToRemove.setSessionId(sessionId);
+            SessionStore.get().setCurrentSession(sessionId, mContext);
+            SessionStore.get().loadUri(SessionStore.DEFAULT_URL);
+            SessionStore.get().addSessionChangeListener(this);
+        }
+        // Remove session
+        SessionStore.get().removeSession(sessionToRemove);
     }
 
 

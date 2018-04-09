@@ -57,7 +57,9 @@ public class TabView extends LinearLayout {
         mTabCloseButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                SessionStore.get().removeSession(mSessionId);
+                if (mTabCloseCallback != null) {
+                    mTabCloseCallback.onTabClose(TabView.this);
+                }
             }
         });
 
@@ -72,6 +74,12 @@ public class TabView extends LinearLayout {
         return mSessionId;
     }
 
+    public interface TabCloseCallback {
+        void onTabClose(TabView aTab);
+    }
+    public void setTabCloseCallback(TabCloseCallback aCallback) {
+        mTabCloseCallback = aCallback;
+    }
 
     public void setTitle(String aTitle) {
         mTabTitleView.setText(aTitle);
