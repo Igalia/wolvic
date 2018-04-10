@@ -62,6 +62,19 @@ public class VRBrowserActivity extends PlatformActivity {
     protected void onCreate(Bundle savedInstanceState) {
         Log.e(LOGTAG, "VRBrowserActivity onCreate");
 
+        SessionStore.get().setContext(this);
+
+        if (SessionStore.get().getCurrentSession() == null) {
+            int id = SessionStore.get().createSession();
+            SessionStore.get().setCurrentSession(id);
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                   SessionStore.get().getCurrentSession().loadUri(SessionStore.DEFAULT_URL);
+                }
+            }, 2000);
+        }
+
         mLastGesture = NoGesture;
         super.onCreate(savedInstanceState);
 
@@ -135,7 +148,7 @@ public class VRBrowserActivity extends PlatformActivity {
         if (SessionStore.get().getCurrentSession() == null) {
             String url = (uri != null ? uri.toString() : SessionStore.DEFAULT_URL);
             int id = SessionStore.get().createSession();
-            SessionStore.get().setCurrentSession(id, this);
+            SessionStore.get().setCurrentSession(id);
             SessionStore.get().loadUri(url);
             Log.e(LOGTAG, "Load creating session and loading URI:" + url);
         } else if (uri != null) {
@@ -165,7 +178,7 @@ public class VRBrowserActivity extends PlatformActivity {
         if (aType == Widget.Browser) {
             if (SessionStore.get().getCurrentSession() == null) {
                 int id = SessionStore.get().createSession();
-                SessionStore.get().setCurrentSession(id, this);
+                SessionStore.get().setCurrentSession(id);
             }
             int currentSession = SessionStore.get().getCurrentSessionId();
             widget = new BrowserWidget(this, currentSession);

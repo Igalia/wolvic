@@ -7,6 +7,7 @@ package org.mozilla.vrbrowser;
 
 import android.content.Context;
 
+import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoSessionSettings;
 
@@ -52,6 +53,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         GeckoSession mSession;
     }
 
+    private GeckoRuntime mRuntime;
     private GeckoSession mCurrentSession;
     private HashMap<Integer, State> mSessions;
     private boolean mShowSoftInputOnFocus = true;
@@ -63,6 +65,14 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         mSessionChangeListeners = new LinkedList<>();
 
         mSessions = new HashMap<>();
+    }
+
+    public void setContext(Context aContext) {
+        if (mRuntime == null) {
+            mRuntime = GeckoRuntime.create(aContext);
+        } else {
+            mRuntime.attachTo(aContext);
+        }
     }
 
     private void dumpAllState() {
@@ -165,7 +175,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     public int createSession() {
         State state = new State();
         state.mSession = new GeckoSession();
-        //state.mSession.getTextInput().setShowSoftInputOnFocus(mShowSoftInputOnFocus);
+        state.mSession.getTextInput().setShowSoftInputOnFocus(mShowSoftInputOnFocus);
 
         int result = state.mSession.hashCode();
         mSessions.put(result, state);
@@ -220,13 +230,17 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         return new ArrayList<>(mSessions.keySet());
     }
 
-    public void setCurrentSession(int aId, Context aContext) {
+    public void setCurrentSession(int aId) {
+        if (mRuntime == null) {
+            Log.e(LOGTAG, "SessionStore failed to set current session, GeckoRuntime is null");
+            return;
+        }
         mCurrentSession = null;
         State state = mSessions.get(aId);
         if (state != null) {
             mCurrentSession = state.mSession;
             if (!mCurrentSession.isOpen()) {
-                mCurrentSession.open(aContext);
+                mCurrentSession.open(mRuntime);
             }
             for (SessionChangeListener listener: mSessionChangeListeners) {
                 listener.onCurrentSessionChange(mCurrentSession, aId);
@@ -309,7 +323,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     public void setShowSoftInputOnFocus(final boolean aShowSoftInputOnFocus) {
         mShowSoftInputOnFocus = aShowSoftInputOnFocus;
         for (HashMap.Entry<Integer, State> entry : mSessions.entrySet()) {
-            //entry.getValue().mSession.getTextInput().setShowSoftInputOnFocus(mShowSoftInputOnFocus);
+            entry.getValue().mSession.getTextInput().setShowSoftInputOnFocus(mShowSoftInputOnFocus);
         }
     }
 
@@ -354,6 +368,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
 
     @Override
     public void onLoadRequest(GeckoSession aSession, String aUri, int aTarget, GeckoSession.Response<Boolean> aResponse) {
+        Log.e("reb", "SessionStore got onLoadRequest: " + aUri);
         aResponse.respond(null);
     }
 

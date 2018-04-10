@@ -124,7 +124,7 @@ public class BrowserHeaderWidget extends UIWidget
 
     private void addTabClick() {
         int sessionId = SessionStore.get().createSession();
-        SessionStore.get().setCurrentSession(sessionId, mContext);
+        SessionStore.get().setCurrentSession(sessionId);
         SessionStore.get().loadUri(SessionStore.DEFAULT_URL);
     }
 
@@ -161,7 +161,7 @@ public class BrowserHeaderWidget extends UIWidget
         if (tabView != null) {
             tabView.setIsSelected(true);
             if (SessionStore.get().getCurrentSessionId() != tabView.getSessionId()) {
-                SessionStore.get().setCurrentSession(tabView.getSessionId(), mContext);
+                SessionStore.get().setCurrentSession(tabView.getSessionId());
             }
         }
     }
@@ -208,7 +208,7 @@ public class BrowserHeaderWidget extends UIWidget
             SessionStore.get().removeSessionChangeListener(this);
             int sessionId = SessionStore.get().createSession();
             aTabToRemove.setSessionId(sessionId);
-            SessionStore.get().setCurrentSession(sessionId, mContext);
+            SessionStore.get().setCurrentSession(sessionId);
             SessionStore.get().loadUri(SessionStore.DEFAULT_URL);
             SessionStore.get().addSessionChangeListener(this);
         }

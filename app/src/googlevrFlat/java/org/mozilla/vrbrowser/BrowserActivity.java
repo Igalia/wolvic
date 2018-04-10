@@ -45,6 +45,8 @@ public class BrowserActivity extends Activity implements SessionStore.SessionCha
         Log.e(LOGTAG, "BrowserActivity onCreate");
         super.onCreate(savedInstanceState);
 
+        SessionStore.get().setContext(this);
+
         mAudioEngine = new AudioEngine(this, new VRAudioTheme());
         mAudioEngine.preloadAsync();
 
@@ -167,7 +169,7 @@ public class BrowserActivity extends Activity implements SessionStore.SessionCha
         String uriValue;
         if (mGeckoSession == null) {
             int id = SessionStore.get().createSession();
-            SessionStore.get().setCurrentSession(id, this);
+            SessionStore.get().setCurrentSession(id);
             mGeckoSession = SessionStore.get().getCurrentSession();
             final MyGeckoViewPermission permission = new MyGeckoViewPermission();
             permission.androidPermissionRequestCode = REQUEST_PERMISSIONS;
