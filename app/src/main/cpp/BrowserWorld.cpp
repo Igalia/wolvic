@@ -169,8 +169,10 @@ struct BrowserWorld::State {
   jmethodID handleAudioPoseMethod;
   jmethodID handleGestureMethod;
   GestureDelegateConstPtr gestures;
+  bool windowsInitialized;
   State() : paused(true), glInitialized(false), controllerCount(0), env(nullptr), nearClip(0.1f), farClip(100.0f), activity(nullptr),
-            dispatchCreateWidgetMethod(nullptr), handleMotionEventMethod(nullptr), handleScrollEventMethod(nullptr), handleAudioPoseMethod(nullptr), handleGestureMethod(nullptr) {
+            dispatchCreateWidgetMethod(nullptr), handleMotionEventMethod(nullptr), handleScrollEventMethod(nullptr), handleAudioPoseMethod(nullptr), handleGestureMethod(nullptr),
+            windowsInitialized(false) {
     context = Context::Create();
     contextWeak = context;
     factory = NodeFactoryObj::Create(contextWeak);
@@ -189,18 +191,22 @@ struct BrowserWorld::State {
 
 void
 BrowserWorld::State::InitializeWindows() {
-    WidgetPtr browser = Widget::Create(contextWeak, WidgetTypeBrowser);
-    browser->SetTransform(Matrix::Position(Vector(0.0f, -3.0f, -18.0f)));
-    root->AddNode(browser->GetRoot());
-    widgets.push_back(std::move(browser));
-    const float uiScaleFactor = displayDensity/420.0f;
+  if (windowsInitialized) {
+    return;
+  }
+  WidgetPtr browser = Widget::Create(contextWeak, WidgetTypeBrowser);
+  browser->SetTransform(Matrix::Position(Vector(0.0f, -3.0f, -18.0f)));
+  root->AddNode(browser->GetRoot());
+  widgets.push_back(std::move(browser));
+  const float uiScaleFactor = displayDensity/420.0f;
 
-    WidgetPtr urlbar = Widget::Create(contextWeak, WidgetTypeURLBar,
-                                      (int32_t) (1920.0f * uiScaleFactor),
-                                      (int32_t) (275.0f * uiScaleFactor), 9.0f);
-    urlbar->SetTransform(Matrix::Position(Vector(0.0f, 7.15f, -18.0f)));
-    root->AddNode(urlbar->GetRoot());
-    widgets.push_back(std::move(urlbar));
+  WidgetPtr urlbar = Widget::Create(contextWeak, WidgetTypeURLBar,
+                                    (int32_t) (1920.0f * uiScaleFactor),
+                                    (int32_t) (275.0f * uiScaleFactor), 9.0f);
+  urlbar->SetTransform(Matrix::Position(Vector(0.0f, 7.15f, -18.0f)));
+  root->AddNode(urlbar->GetRoot());
+  widgets.push_back(std::move(urlbar));
+  windowsInitialized = true;
 }
 
 void
