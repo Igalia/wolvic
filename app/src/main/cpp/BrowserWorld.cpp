@@ -193,11 +193,6 @@ BrowserWorld::State::InitializeWindows() {
     browser->SetTransform(Matrix::Position(Vector(0.0f, -3.0f, -18.0f)));
     root->AddNode(browser->GetRoot());
     widgets.push_back(std::move(browser));
-/*#if defined(VRBROWSER_GOOGLEVR)
-    static const float kUIScaleFactor = 1.0f;
-#else
-    static const float kUIScaleFactor = 1.5f;
-#endif // defined(VRBROWSER_GOOGLEVR*/
     const float uiScaleFactor = displayDensity/420.0f;
 
     WidgetPtr urlbar = Widget::Create(contextWeak, WidgetTypeURLBar,
