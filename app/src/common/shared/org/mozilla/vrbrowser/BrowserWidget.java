@@ -99,12 +99,15 @@ class BrowserWidget extends View implements Widget, SessionStore.SessionChangeLi
 
     @Override
     public void onCurrentSessionChange(GeckoSession aSession, int aId) {
+        Log.e(LOGTAG, "onCurrentSessionChange: " + this.toString());
         if (mSessionId == aId) {
+            Log.e(LOGTAG, "BrowserWidget.onCurrentSessionChange session id same, bail: " + aId);
             return;
         }
 
         GeckoSession oldSession = SessionStore.get().getSession(mSessionId);
         if (oldSession != null && mDisplay != null) {
+            Log.e(LOGTAG, "Detach from previous session: " + mSessionId);
             oldSession.getTextInput().setView(null);
             mDisplay.surfaceDestroyed();
             oldSession.releaseDisplay(mDisplay);
@@ -112,6 +115,7 @@ class BrowserWidget extends View implements Widget, SessionStore.SessionChangeLi
 
         mSessionId = aId;
         mDisplay = aSession.acquireDisplay();
+        Log.e(LOGTAG, "surfaceChanged: " + aId);
         mDisplay.surfaceChanged(mSurface, mWidth, mHeight);
         aSession.getTextInput().setView(this);
     }

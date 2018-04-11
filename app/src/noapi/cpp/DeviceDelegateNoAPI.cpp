@@ -186,12 +186,12 @@ DeviceDelegateNoAPI::TouchEvent(const bool aDown, const float aX, const float aY
   vrb::Matrix inversePerspective = m.camera->GetPerspective().Inverse();
   start = inversePerspective.MultiplyPosition(start);
   end = inversePerspective.MultiplyPosition(end);
-  VRB_LOG("1 Down: %s start:%s end:%s",(aDown?"TRUE":"FALSE"),start.ToString().c_str(), end.ToString().c_str());
+  //VRB_LOG("1 Down: %s start:%s end:%s",(aDown?"TRUE":"FALSE"),start.ToString().c_str(), end.ToString().c_str());
 
   vrb::Matrix view = m.camera->GetTransform();
   start = view.MultiplyPosition(start);
   end = view.MultiplyPosition(end);
-  VRB_LOG("2 Down: %s start:%s end:%s",(aDown?"TRUE":"FALSE"),start.ToString().c_str(), end.ToString().c_str());
+  //VRB_LOG("2 Down: %s start:%s end:%s",(aDown?"TRUE":"FALSE"),start.ToString().c_str(), end.ToString().c_str());
   const vrb::Vector direction = (end - start).Normalize();
   const vrb::Vector up = sForward.Cross(direction);
   const float angle = acosf(sForward.Dot(direction));

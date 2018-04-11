@@ -29,7 +29,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         }
         return mInstance;
     }
-    public static final String DEFAULT_URL = "resource://android/assets/html/index.html"; // "http://bluemarvin.github.io/html/crow.html"; // "https://vr.mozilla.org";
+    public static final String DEFAULT_URL = "resource://android/assets/html/index.html";
 
     private LinkedList<GeckoSession.NavigationDelegate> mNavigationListeners;
     private LinkedList<GeckoSession.ProgressDelegate> mProgressListeners;
@@ -332,6 +332,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         Log.e(LOGTAG, "SessionStore onLocationChange: " + aUri);
         State state = mSessions.get(aSession.hashCode());
         if (state == null) {
+            Log.e(LOGTAG, "Unknown session!");
             return;
         }
         state.mUri = aUri;
@@ -368,13 +369,23 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
 
     @Override
     public void onLoadRequest(GeckoSession aSession, String aUri, int aTarget, GeckoSession.Response<Boolean> aResponse) {
-        Log.e("reb", "SessionStore got onLoadRequest: " + aUri);
         aResponse.respond(null);
     }
 
     @Override
     public void onNewSession(GeckoSession aSession, String aUri, GeckoSession.Response<GeckoSession> aResponse) {
-        aResponse.respond(null);
+        Log.e(LOGTAG,"Got onNewSession: " + aUri);
+        int sessionId = createSession();
+        mCurrentSession = null;
+        State state = mSessions.get(sessionId);
+        if (state != null) {
+            mCurrentSession = state.mSession;
+            for (SessionChangeListener listener: mSessionChangeListeners) {
+                listener.onCurrentSessionChange(mCurrentSession, sessionId);
+            }
+        }
+        dumpAllState();
+        aResponse.respond(getSession(sessionId));
     }
 
     // Progress Listener
