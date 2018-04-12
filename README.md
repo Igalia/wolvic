@@ -61,4 +61,4 @@ Create a file called user.settings in the top level project directory. Add a var
  geckoViewLocal=/path/to/your/build/obj-arm-linux-androideabi/gradle/build/mobile/android/geckoview/outputs/aar/geckoview-local-withGeckoBinaries-noMinApi-debug.aar
 ```
 
-
+[![Task Status](https://github.taskcluster.net/v1/repository/USERNAME/REPONAME/BRANCHNAME/badge.svg)](https://github.taskcluster.net/v1/repository/MozillaReality/FirefoxReality/master/latest)
