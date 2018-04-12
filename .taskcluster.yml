@@ -1,0 +1,117 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+version: 0
+allowPullRequests: public
+tasks:
+###############################################################################
+# Task: Pull requests
+#
+# Triggered whenever a pull request is opened or updated.
+#
+# - Build the app (all flavors)
+###############################################################################
+  - provisionerId: '{{ taskcluster.docker.provisionerId }}'
+    workerType: '{{ taskcluster.docker.workerType }}'
+    extra:
+      github:
+        events:
+          - pull_request.opened
+          - pull_request.edited
+          - pull_request.synchronize
+          - pull_request.reopened
+    payload:
+      maxRunTime: 3600
+      deadline: "{{ '2 hours' | $fromNow }}"
+      image: 'bluemarvin/firefoxreality'
+      command:
+        - /bin/bash
+        - '--login'
+        - '-cx'
+        - >-
+          git fetch {{ event.head.repo.url }} {{ event.head.repo.branch }}
+          && git config advice.detachedHead false
+          && git checkout {{event.head.sha}}
+          && git submodule update
+          && ./gradlew --no-daemon clean assembleGooglevr assembleNoapi
+    metadata:
+      name: Firefox Reality for Android - Build - Pull Request
+      description: Building Firefox Reality for Android (via Gradle) - triggered by a pull request.
+      owner: '{{ event.head.user.email }}'
+      source: '{{ event.head.repo.url }}'
+###############################################################################
+# Task: Master builds
+#
+# Triggered whenever something is pushed/merged to the master branch.
+###############################################################################
+  - provisionerId: '{{ taskcluster.docker.provisionerId }}'
+    workerType: '{{ taskcluster.docker.workerType }}'
+    extra:
+      github:
+        env: true
+        events:
+          - push
+        branches:
+          - master
+    payload:
+      maxRunTime: 3600
+      deadline: "{{ '2 hours' | $fromNow }}"
+      image: 'bluemarvin/firefoxreality'
+      command:
+        - /bin/bash
+        - '--login'
+        - '-cx'
+        - >-
+          git fetch origin
+          && git config advice.detachedHead false
+          && git checkout {{event.head.sha}}
+          && git submodule update
+    metadata:
+      name: Firefox Reality for Android - Build - Master update
+      description: Building Firefox Reality for Android (via Gradle) - triggered by update to master
+      owner: '{{ event.head.user.email }}'
+      source: '{{ event.head.repo.url }}'
+###############################################################################
+# Task: Release builds
+#
+# Triggered when a new tag or release is published (in any branch)
+#
+# - Build (unsigned) release versions of the app with release translations and
+#   adjust token.
+###############################################################################
+#  - provisionerId: '{{ taskcluster.docker.provisionerId }}'
+#    workerType: '{{ taskcluster.docker.workerType }}'
+#    extra:
+#      github:
+#        events:
+#          - release
+#    scopes:
+#      - "secrets:get:project/focus/tokens"
+#    payload:
+#      maxRunTime: 3600
+#      deadline: "{{ '2 hours' | $fromNow }}"
+#      image: 'bluemarvin/firefoxreality'
+#      command:
+#        - /bin/bash
+#        - '--login'
+#        - '-cx'
+#        - >-
+#          git fetch origin --tags
+#          && git config advice.detachedHead false
+#          && git checkout {{ event.version }}
+#          && python tools/taskcluster/get-adjust-token.py
+#          && python tools/l10n/filter-release-translations.py
+#          && ./gradlew --no-daemon clean test assembleRelease
+#      artifacts:
+#        'public':
+#          type: 'directory'
+#          path: '/opt/focus-android/app/build/outputs/apk'
+#          expires: "{{ '1 week' | $fromNow }}"
+#      features:
+#        taskclusterProxy: true
+#    metadata:
+#      name: Focus for Android - Release build ({{ event.version }})
+#      description: Building release versions of Firefox Focus/Klar
+#      owner: '{{ event.head.user.email }}'
+#      source: '{{ event.head.repo.url }}'
