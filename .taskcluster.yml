@@ -67,6 +67,7 @@ tasks:
           && git config advice.detachedHead false
           && git checkout {{event.head.sha}}
           && git submodule update
+          && ./gradlew --no-daemon clean assembleGooglevr assembleNoapi
     metadata:
       name: Firefox Reality for Android - Build - Master update
       description: Building Firefox Reality for Android (via Gradle) - triggered by update to master
