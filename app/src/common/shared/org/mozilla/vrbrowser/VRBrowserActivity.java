@@ -303,4 +303,6 @@ public class VRBrowserActivity extends PlatformActivity {
             }
         });
     }
+
+    private native void addWidgetNative(WidgetPlacement aWidget);
 }

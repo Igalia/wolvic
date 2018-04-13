@@ -19,10 +19,12 @@ namespace crow {
 class BrowserWorld;
 typedef std::shared_ptr<BrowserWorld> BrowserWorldPtr;
 typedef std::weak_ptr<BrowserWorld> BrowserWorldWeakPtr;
+class WidgetPlacement;
 
 class BrowserWorld {
 public:
   static BrowserWorldPtr Create();
+  static BrowserWorldPtr& Instance();
   vrb::ContextWeak GetWeakContext();
   void RegisterDeviceDelegate(DeviceDelegatePtr aDelegate);
   void Pause();
@@ -34,6 +36,8 @@ public:
   void ShutdownGL();
   void Draw();
   void SetSurfaceTexture(const std::string& aName, jobject& aSurface);
+  void AddWidget(const WidgetPlacement& placement);
+  JNIEnv* GetJNIEnv() const;
 protected:
   struct State;
   BrowserWorld(State& aState);

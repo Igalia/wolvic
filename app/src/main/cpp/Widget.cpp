@@ -199,6 +199,12 @@ Widget::GetWidgetMinAndMax(vrb::Vector& aMin, vrb::Vector& aMax) const {
   aMax = m.windowMax;
 }
 
+void
+Widget::GetWorldSize(float& aWidth, float& aHeight) const {
+  aWidth = m.windowMax.x() - m.windowMin.x();
+  aHeight = m.windowMax.y() - m.windowMin.y();
+}
+
 static const float kEpsilon = 0.00000001f;
 
 bool
@@ -285,12 +291,17 @@ Widget::TogglePointer(const bool aEnabled) {
 }
 
 vrb::NodePtr
-Widget::GetRoot() {
+Widget::GetRoot() const {
   return m.root;
 }
 
+vrb::TransformPtr
+Widget::GetTransformNode() const {
+  return m.transform;
+}
+
 vrb::NodePtr
-Widget::GetPointerGeometry() {
+Widget::GetPointerGeometry() const {
   return m.pointerGeometry;
 }
 

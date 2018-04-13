@@ -11,6 +11,8 @@
 
 #include <memory>
 #include <string>
+#include <vector>
+#include <functional>
 
 namespace crow {
 
@@ -27,6 +29,7 @@ public:
   const std::string& GetSurfaceTextureName() const;
   void GetSurfaceTextureSize(int32_t& aWidth, int32_t& aHeight) const;
   void GetWidgetMinAndMax(vrb::Vector& aMin, vrb::Vector& aMax) const;
+  void GetWorldSize(float& aWidth, float& aHeight) const;
   bool TestControllerIntersection(const vrb::Vector& aStartPoint, const vrb::Vector& aDirection, vrb::Vector& aResult, bool& aIsInWidget, float& aDistance) const;
   void ConvertToWidgetCoordinates(const vrb::Vector& aPoint, float& aX, float& aY) const;
   void ConvertToWorldCoordinates(const vrb::Vector& aPoint, vrb::Vector& aResult) const;
@@ -34,8 +37,9 @@ public:
   void SetTransform(const vrb::Matrix& aTransform);
   void ToggleWidget(const bool aEnabled);
   void TogglePointer(const bool aEnabled);
-  vrb::NodePtr GetRoot();
-  vrb::NodePtr GetPointerGeometry();
+  vrb::NodePtr GetRoot() const;
+  vrb::TransformPtr GetTransformNode() const;
+  vrb::NodePtr GetPointerGeometry() const;
   void SetPointerGeometry(vrb::NodePtr& aNode);
 protected:
   struct State;

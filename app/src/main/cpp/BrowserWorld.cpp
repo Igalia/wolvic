@@ -5,6 +5,7 @@
 
 #include "BrowserWorld.h"
 #include "Widget.h"
+#include "WidgetPlacement.h"
 #include "vrb/CameraSimple.h"
 #include "vrb/Color.h"
 #include "vrb/ConcreteClass.h"
@@ -25,6 +26,7 @@
 #include "vrb/Transform.h"
 #include "vrb/VertexArray.h"
 #include "vrb/Vector.h"
+#include <functional>
 
 using namespace vrb;
 
@@ -38,6 +40,8 @@ static const int GestureSwipeLeft = 0;
 static const int GestureSwipeRight = 1;
 
 static const float kScrollFactor = 20.0f; // Just picked what fell right.
+
+static crow::BrowserWorld* sWorld;
 
 static const char* kDispatchCreateWidgetName = "dispatchCreateWidget";
 static const char* kDispatchCreateWidgetSignature = "(IILandroid/graphics/SurfaceTexture;II)V";
@@ -187,6 +191,8 @@ struct BrowserWorld::State {
 
   void InitializeWindows();
   void UpdateControllers();
+  WidgetPtr GetWidget(int32_t aHandle) const;
+  WidgetPtr FindWidget(const std::function<bool(const WidgetPtr&)>& aCondition) const;
 };
 
 void
@@ -220,7 +226,7 @@ BrowserWorld::State::UpdateControllers() {
     WidgetPtr hitWidget;
     float hitDistance = farClip;
     vrb::Vector hitPoint;
-    for (WidgetPtr widget: widgets) {
+    for (const WidgetPtr& widget: widgets) {
       widget->TogglePointer(false);
       vrb::Vector result;
       float distance = 0.0f;
@@ -283,6 +289,22 @@ BrowserWorld::State::UpdateControllers() {
   active.clear();
 }
 
+WidgetPtr
+BrowserWorld::State::GetWidget(int32_t aHandle) const {
+  return FindWidget([=](const WidgetPtr& aWidget){
+    return aWidget->GetHandle() == aHandle;
+  });
+}
+
+WidgetPtr
+BrowserWorld::State::FindWidget(const std::function<bool(const WidgetPtr&)>& aCondition) const {
+  for (const WidgetPtr & widget: widgets) {
+    if (aCondition(widget)) {
+      return widget;
+    }
+  }
+  return {};
+}
 
 BrowserWorldPtr
 BrowserWorld::Create() {
@@ -500,21 +522,70 @@ void
 BrowserWorld::SetSurfaceTexture(const std::string& aName, jobject& aSurface) {
   VRB_LOG("SetSurfaceTexture: %s", aName.c_str());
   if (m.env && m.activity && m.dispatchCreateWidgetMethod) {
-    for (WidgetPtr& widget: m.widgets) {
-      if (aName == widget->GetSurfaceTextureName()) {
-        int32_t width = 0, height = 0;
-        widget->GetSurfaceTextureSize(width, height);
-        m.env->CallVoidMethod(m.activity, m.dispatchCreateWidgetMethod, widget->GetType(),
-                              widget->GetHandle(), aSurface, width, height);
-        return;
-      }
+    WidgetPtr widget = m.FindWidget([=](const WidgetPtr& aWidget) {
+      return aName == aWidget->GetSurfaceTextureName();
+    });
+    if (widget) {
+      int32_t width = 0, height = 0;
+      widget->GetSurfaceTextureSize(width, height);
+      m.env->CallVoidMethod(m.activity, m.dispatchCreateWidgetMethod, widget->GetType(),
+                            widget->GetHandle(), aSurface, width, height);
     }
   }
 }
 
-BrowserWorld::BrowserWorld(State& aState) : m(aState) {}
+void
+BrowserWorld::AddWidget(const WidgetPlacement& placement) {
+  WidgetPtr parent = m.GetWidget(placement.parentHandle);
+  if (!parent) {
+    VRB_LOG("Can't find Widget with handle: %d", placement.parentHandle);
+    return;
+  }
 
-BrowserWorld::~BrowserWorld() {}
+  int32_t parentWidth, parentHeight;
+  float parentWorldWith, parentWorldHeight;
+  parent->GetSurfaceTextureSize(parentWidth, parentHeight);
+  parent->GetWorldSize(parentWorldWith, parentWorldHeight);
+
+  float worldWidth = parentWorldWith * placement.width / parentWidth;
+  float worldHeight;
+
+  WidgetPtr widget = Widget::Create(m.contextWeak,
+                                    placement.widgetType,
+                                    placement.width,
+                                    placement.height,
+                                    worldWidth);
+  widget->GetWorldSize(worldWidth, worldHeight);
+
+  vrb::Vector translation = placement.translation;
+  // Widget anchor point
+  translation -= vrb::Vector(placement.anchor.x() * worldWidth,
+                             placement.anchor.y() * worldHeight,
+                             0.0f);
+  // Parent anchor point
+  translation += vrb::Vector(parentWorldWith * placement.parentAnchor.x(),
+                             parentWorldHeight * placement.parentAnchor.y(),
+                             0.0f);
+
+  widget->SetTransform(vrb::Matrix::Translation(translation));
+  parent->GetTransformNode()->AddNode(widget->GetRoot());
+  m.widgets.push_back(widget);
+}
+
+JNIEnv*
+BrowserWorld::GetJNIEnv() const {
+  return m.env;
+}
+
+BrowserWorld::BrowserWorld(State& aState) : m(aState) {
+  sWorld = this;
+}
+
+BrowserWorld::~BrowserWorld() {
+ if (sWorld == this) {
+  sWorld = nullptr;
+ }
+}
 
 void
 BrowserWorld::CreateFloor() {
@@ -622,3 +693,19 @@ BrowserWorld::AddControllerPointer() {
 
 } // namespace crow
 
+
+#define JNI_METHOD(return_type, method_name) \
+  JNIEXPORT return_type JNICALL              \
+    Java_org_mozilla_vrbrowser_VRBrowserActivity_##method_name
+
+extern "C" {
+
+JNI_METHOD(void, addWidgetNative)
+(JNIEnv*, jobject thiz, jobject data) {
+  crow::WidgetPlacementPtr placement = crow::WidgetPlacement::FromJava(sWorld->GetJNIEnv(), data);
+  if (placement && sWorld) {
+    sWorld->AddWidget(*placement);
+  }
+}
+
+} // extern "C"
