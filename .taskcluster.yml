@@ -24,7 +24,7 @@ tasks:
     payload:
       maxRunTime: 3600
       deadline: "{{ '2 hours' | $fromNow }}"
-      image: 'bluemarvin/firefoxreality'
+      image: 'mozillamixedreality/firefoxreality'
       command:
         - /bin/bash
         - '--login'
@@ -57,7 +57,7 @@ tasks:
     payload:
       maxRunTime: 3600
       deadline: "{{ '2 hours' | $fromNow }}"
-      image: 'bluemarvin/firefoxreality'
+      image: 'mozillamixedreality/firefoxreality'
       command:
         - /bin/bash
         - '--login'
@@ -92,7 +92,7 @@ tasks:
 #    payload:
 #      maxRunTime: 3600
 #      deadline: "{{ '2 hours' | $fromNow }}"
-#      image: 'bluemarvin/firefoxreality'
+#      image: 'mozillamixedreality/firefoxreality'
 #      command:
 #        - /bin/bash
 #        - '--login'
