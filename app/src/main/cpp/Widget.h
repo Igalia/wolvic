@@ -41,6 +41,8 @@ public:
   vrb::TransformPtr GetTransformNode() const;
   vrb::NodePtr GetPointerGeometry() const;
   void SetPointerGeometry(vrb::NodePtr& aNode);
+  void SetAddCallbackId(int32_t aCallbackId);
+  int32_t GetAddCallbackId() const;
 protected:
   struct State;
   Widget(State& aState, vrb::ContextWeak& aContext);

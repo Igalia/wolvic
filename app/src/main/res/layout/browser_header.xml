@@ -77,9 +77,9 @@
             </LinearLayout>
 
             <org.mozilla.vrbrowser.ui.NavigationBarButton
-                android:id="@+id/focusWindowButton"
+                android:id="@+id/moreMenuButton"
                 style="?attr/headerButtonStyle"
-                android:src="@drawable/ic_icon_focus_mode" />
+                android:src="@drawable/ic_icon_more" />
             <org.mozilla.vrbrowser.ui.NavigationBarButton
                 android:id="@+id/closeWindowButton"
                 style="?attr/headerButtonStyle"

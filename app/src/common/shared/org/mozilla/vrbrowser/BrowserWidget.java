@@ -27,6 +27,7 @@ class BrowserWidget extends View implements Widget, SessionStore.SessionChangeLi
     private SurfaceTexture mSurfaceTexture;
     private int mWidth;
     private int mHeight;
+    private int mHandle;
 
     BrowserWidget(Context aContext, int aSessionId) {
         super(aContext);
@@ -52,6 +53,21 @@ class BrowserWidget extends View implements Widget, SessionStore.SessionChangeLi
         mSurface = new Surface(aTexture);
         mDisplay = session.acquireDisplay();
         mDisplay.surfaceChanged(mSurface, aWidth, aHeight);
+    }
+
+    @Override
+    public void setHandle(int aHandle) {
+        mHandle = aHandle;
+    }
+
+    @Override
+    public int getHandle() {
+        return mHandle;
+    }
+
+    @Override
+    public void setWidgetManager(WidgetManagerDelegate aWidgetManager) {
+
     }
 
     @Override

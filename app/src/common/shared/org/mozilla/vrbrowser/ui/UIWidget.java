@@ -17,11 +17,14 @@ import android.util.Log;
 import android.widget.FrameLayout;
 
 import org.mozilla.vrbrowser.Widget;
+import org.mozilla.vrbrowser.WidgetManagerDelegate;
 
 public class UIWidget extends FrameLayout implements Widget {
     UISurfaceTextureRenderer mRenderer;
     SurfaceTexture mTexture;
     int mOffset[] = new int[2];
+    protected int mHandle;
+    protected WidgetManagerDelegate mWidgetManager;
     static final String LOGTAG = "VRB";
 
     public UIWidget(Context aContext) {
@@ -53,6 +56,21 @@ public class UIWidget extends FrameLayout implements Widget {
     }
 
     @Override
+    public void setHandle(int aHandle) {
+        mHandle = aHandle;
+    }
+
+    @Override
+    public int getHandle() {
+        return mHandle;
+    }
+
+    @Override
+    public void setWidgetManager(WidgetManagerDelegate aWidgetManager) {
+        mWidgetManager = aWidgetManager;
+    }
+
+    @Override
     public void handleTouchEvent(MotionEvent aEvent) {
         if (aEvent.getActionMasked() == MotionEvent.ACTION_DOWN) {
             requestFocus();
@@ -75,6 +93,7 @@ public class UIWidget extends FrameLayout implements Widget {
             mRenderer = null;
         }
         mTexture = null;
+        mWidgetManager = null;
     }
 
     @Override

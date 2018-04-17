@@ -6,15 +6,15 @@
 package org.mozilla.vrbrowser;
 
 public class WidgetPlacement {
-    int widgetType;
-    int width;
-    int height;
-    float anchorX = 0.5f;
-    float anchorY = 0.5f;
-    float translationX;
-    float translationY;
-    float translationZ;
-    int parentHandle;
-    float parentAnchorX = 0.5f;
-    float parentAnchorY = 0.5f;
+    public int widgetType;
+    public int width;
+    public int height;
+    public float anchorX = 0.5f;
+    public float anchorY = 0.5f;
+    public float translationX;
+    public float translationY;
+    public float translationZ;
+    public int parentHandle;
+    public float parentAnchorX = 0.5f;
+    public float parentAnchorY = 0.5f;
 }

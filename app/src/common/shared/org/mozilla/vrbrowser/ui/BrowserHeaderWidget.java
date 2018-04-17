@@ -14,19 +14,25 @@ import android.widget.LinearLayout;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.SessionStore;
+import org.mozilla.vrbrowser.Widget;
+import org.mozilla.vrbrowser.WidgetManagerDelegate;
+import org.mozilla.vrbrowser.WidgetPlacement;
 
 
 public class BrowserHeaderWidget extends UIWidget
         implements TabLayout.OnTabSelectedListener, CustomTabLayout.Delegate,
-        SessionStore.SessionChangeListener, GeckoSession.ContentDelegate, GeckoSession.ProgressDelegate {
+        SessionStore.SessionChangeListener, GeckoSession.ContentDelegate, GeckoSession.ProgressDelegate,
+        MoreMenuWidget.Delegate {
     private Context mContext;
     private CustomTabLayout mTabContainer;
     private ImageButton mAddTabButton;
     private ImageButton mTabsScrollLeftButton;
     private LinearLayout mTruncateContainer;
+    private NavigationBar mNavigationBar;
     private boolean mIsTruncatingTabs = false;
     private int mHeaderButtonMargin;
     private int mTabLayoutAddMargin;
+    private MoreMenuWidget mMoreMenu;
 
     public BrowserHeaderWidget(Context aContext) {
         super(aContext);
@@ -48,6 +54,7 @@ public class BrowserHeaderWidget extends UIWidget
         inflate(aContext, R.layout.browser_header, this);
 
         mTruncateContainer = findViewById(R.id.truncateContainer);
+        mNavigationBar = findViewById(R.id.navigationBar2D);
         mHeaderButtonMargin = getResources().getDimensionPixelSize(R.dimen.header_button_margin);
         mTabLayoutAddMargin = getResources().getDimensionPixelSize(R.dimen.tab_layout_add_margin);
 
@@ -55,7 +62,7 @@ public class BrowserHeaderWidget extends UIWidget
         mAddTabButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                addTabClick();
+                addTabClick(false);
             }
         });
 
@@ -63,7 +70,7 @@ public class BrowserHeaderWidget extends UIWidget
         mTruncateAddTabButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                addTabClick();
+                addTabClick(false);
             }
         });
 
@@ -92,11 +99,11 @@ public class BrowserHeaderWidget extends UIWidget
             }
         });
 
-        ImageButton mFocusWindowButton = findViewById(R.id.focusWindowButton);
-        mFocusWindowButton.setOnClickListener(new OnClickListener() {
+        ImageButton mMoreMenuButton = findViewById(R.id.moreMenuButton);
+        mMoreMenuButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                // showMoreMenu();
             }
         });
 
@@ -122,7 +129,33 @@ public class BrowserHeaderWidget extends UIWidget
         SessionStore.get().addProgressListener(this);
     }
 
-    private void addTabClick() {
+    private void showMoreMenu() {
+        if (mMoreMenu == null) {
+            WidgetPlacement placement = new WidgetPlacement();
+            placement.widgetType = Widget.MoreMenu;
+            placement.parentHandle = getHandle();
+            placement.width = 300;
+            placement.height = 100;
+            placement.parentAnchorX = 1.0f;
+            placement.parentAnchorY = 1.0f;
+            placement.anchorX = (placement.width - 46.0f)/placement.width;
+            placement.anchorY = 0.0f;
+            placement.translationY = 6.0f;
+
+            mWidgetManager.addWidget(placement, new WidgetManagerDelegate.WidgetAddCallback() {
+                @Override
+                public void onWidgetAdd(Widget aWidget) {
+                    mMoreMenu = (MoreMenuWidget) aWidget;
+                    mMoreMenu.setDelegate(BrowserHeaderWidget.this);
+                }
+            });
+        }
+        else {
+            mWidgetManager.setWidgetVisible(mMoreMenu.getHandle(), true);
+        }
+    }
+
+    private void addTabClick(boolean privateTab) {
         int sessionId = SessionStore.get().createSession();
         SessionStore.get().setCurrentSession(sessionId);
         SessionStore.get().loadUri(SessionStore.DEFAULT_URL);
@@ -374,5 +407,22 @@ public class BrowserHeaderWidget extends UIWidget
             anim.setDuration(TabView.TAB_ANIMATION_DURATION);
             mAddTabButton.startAnimation(anim);
         }
+    }
+
+    // MoreMenu Delegate
+    @Override
+    public void onNewPrivateTabClick() {
+        addTabClick(true);
+        mWidgetManager.setWidgetVisible(mMoreMenu.getHandle(), false);
+    }
+
+    @Override
+    public void onFocusModeClick() {
+        mWidgetManager.setWidgetVisible(mMoreMenu.getHandle(), false);
+    }
+
+    @Override
+    public void onMenuCloseClick() {
+        mWidgetManager.setWidgetVisible(mMoreMenu.getHandle(), false);
     }
 }
