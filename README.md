@@ -55,7 +55,7 @@ If you run the APK on an Android device outside of Daydream or GearVR, it will r
 
 ## Using a custom GeckoView
 
-Create a file called user.settings in the top level project directory. Add a variable called geckoViewLocal and set it to the location of your locally built AAR:
+Create a file called user.properties in the top level project directory. Add a variable called geckoViewLocal and set it to the location of your locally built AAR:
 
 ```
  geckoViewLocal=/path/to/your/build/obj-arm-linux-androideabi/gradle/build/mobile/android/geckoview/outputs/aar/geckoview-local-withGeckoBinaries-noMinApi-debug.aar
