@@ -134,14 +134,14 @@ android {
 
         oculusvr {
             java.srcDirs = [
-                    'src/common/nativeactivity'
+                    'src/oculusvr/java'
             ]
             jniLibs.srcDirs = ["${project.rootDir}/third_party/ovr_mobile/VrApi/Libs"]
         }
 
         svr {
             java.srcDirs = [
-                    'src/common/nativeactivity'
+                    'src/svr/java'
             ]
             jniLibs.srcDirs = ["${project.rootDir}/third_party/svr/libs"]
         }

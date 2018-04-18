@@ -26,6 +26,8 @@
 
 namespace crow {
 
+const uint64_t SVR_BUTTONS[] = { svrControllerButton::PrimaryIndexTrigger, svrControllerButton::PrimaryThumbstick };
+
 class SVREyeSwapChain;
 typedef std::shared_ptr<SVREyeSwapChain> SVREyeSwapChainPtr;
 
@@ -98,6 +100,9 @@ struct DeviceDelegateSVR::State {
   svrControllerState controllerState = {};
   vrb::Matrix controllerTransform = vrb::Matrix::Identity();
   crow::ElbowModelPtr elbow;
+  bool usingHeadTrackingInput = false;
+  bool scrollUpdated = false;
+  float scrollDelta = 0;
 
   int32_t cameraIndex(CameraEnum aWhich) {
     if (CameraEnum::Left == aWhich) { return 0; }
@@ -191,14 +196,22 @@ struct DeviceDelegateSVR::State {
     }
   }
 
+  void FallbackToHeadTrackingInput(const vrb::Matrix & head) {
+    controllerTransform = head;
+    usingHeadTrackingInput = true;
+    controllerState.analog2D[0].x = 0.0;
+    controllerState.analog2D[0].y = 0.0;
+  }
 
   void UpdateControllers(const vrb::Matrix & head) {
     if (controllerHandle < 0) {
+      FallbackToHeadTrackingInput(head);
       return;
     }
 
     controllerState = svrControllerGetState(controllerHandle);
     if (controllerState.connectionState != svrControllerConnectionState::kConnected) {
+      FallbackToHeadTrackingInput(head);
       return;
     }
 
@@ -206,6 +219,7 @@ struct DeviceDelegateSVR::State {
     vrb::Quaternion quat(-rotation.x, -rotation.y, rotation.z, rotation.w);
     controllerTransform = vrb::Matrix::Rotation(quat);
     controllerTransform = elbow->GetTransform(ElbowModel::HandEnum::Right, head, controllerTransform);
+    usingHeadTrackingInput = false;
   }
 };
 
@@ -267,12 +281,42 @@ DeviceDelegateSVR::GetControllerTransform(const int32_t aWhichController) {
 
 bool
 DeviceDelegateSVR::GetControllerButtonState(const int32_t aWhichController, const int32_t aWhichButton, bool& aChangedState) {
-  static const uint64_t SVR_BUTTONS[] = { svrControllerButton::PrimaryIndexTrigger, svrControllerButton::PrimaryThumbstick };
   if (aWhichButton > sizeof(SVR_BUTTONS)/ sizeof(SVR_BUTTONS[0])) {
     return false;
   }
 
-  return (m.controllerState.buttonState & SVR_BUTTONS[aWhichButton]) != 0;
+  bool result = (m.controllerState.buttonState & SVR_BUTTONS[aWhichButton]) != 0;
+  m.controllerState.buttonState = 0;
+  return result;
+}
+
+bool
+DeviceDelegateSVR::GetControllerScrolled(const int32_t aWhichController, float& aScrollX, float& aScrollY) {
+  aScrollX = m.controllerState.analog2D[0].x;
+  aScrollY = m.controllerState.analog2D[0].y;
+  if (m.usingHeadTrackingInput) {
+    bool result = m.scrollUpdated;
+    m.scrollUpdated = false;
+    return result;
+  } else {
+    return m.controllerState.isTouching;
+  }
+}
+
+bool
+DeviceDelegateSVR::GetScrolledDelta(const int32_t aWhichController, float& aScrollX, float& aScrollY) {
+  if (fabs(m.scrollDelta) != 0.0) {
+    aScrollX = 0.0f;
+    aScrollY = m.scrollDelta;
+    m.scrollDelta = 0.0f;
+    return true;
+  }
+  return false;
+}
+
+bool
+DeviceDelegateSVR::IsControllerUsingHeadTracking(const int32_t aWhichController) const {
+  return m.usingHeadTrackingInput;
 }
 
 void
@@ -328,7 +372,7 @@ DeviceDelegateSVR::BindEye(const CameraEnum aWhich) {
   }
 
   if (m.currentEye >= 0) {
-    svrEndEye(kEyeBufferStereoSeparate, (svrWhichEye) m.currentEye);
+    svrEndEye((svrWhichEye) m.currentEye);
   }
 
   const auto &swapChain = m.eyeSwapChains[index];
@@ -338,7 +382,7 @@ DeviceDelegateSVR::BindEye(const CameraEnum aWhich) {
   if (m.currentFBO) {
     m.currentFBO->Bind();
     m.currentEye = index;
-    svrBeginEye(kEyeBufferStereoSeparate, (svrWhichEye) m.currentEye);
+    svrBeginEye((svrWhichEye) m.currentEye);
     VRB_CHECK(glViewport(0, 0, m.renderWidth, m.renderHeight));
     VRB_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
   } else {
@@ -354,7 +398,7 @@ DeviceDelegateSVR::EndFrame() {
   }
 
   if (m.currentEye >= 0) {
-    svrEndEye(kEyeBufferStereoSeparate, (svrWhichEye) m.currentEye);
+    svrEndEye((svrWhichEye) m.currentEye);
     m.currentEye = -1;
   }
 
@@ -376,18 +420,16 @@ DeviceDelegateSVR::EndFrame() {
   // Field of view used to generate this frame (larger than device fov to provide timewarp margin).
   // A 0 value uses the SVR fov.
   params.fieldOfView = 0.0;
-  // Separate eye buffers for the left and right eyes.
-  params.eyeBufferType = kEyeBufferStereoSeparate;
 
   for (uint32_t eyeIndex = 0; eyeIndex < kNumEyes; eyeIndex++) {
     uint32_t swapChainIndex = m.frameIndex % m.eyeSwapChains[eyeIndex]->swapChainLength;
-    params.eyeLayers[eyeIndex].imageType = kTypeTexture;
-    params.eyeLayers[eyeIndex].imageHandle = m.eyeSwapChains[eyeIndex]->textures[swapChainIndex];
-    params.eyeLayers[eyeIndex].imageCoords = m.layoutCoords;
+    params.renderLayers[eyeIndex].imageType = kTypeTexture;
+    params.renderLayers[eyeIndex].imageHandle = m.eyeSwapChains[eyeIndex]->textures[swapChainIndex];
+    params.renderLayers[eyeIndex].imageCoords = m.layoutCoords;
     if (eyeIndex == kLeftEye) {
-      params.eyeLayers[eyeIndex].eyeMask = kEyeMaskLeft;
+      params.renderLayers[eyeIndex].eyeMask = kEyeMaskLeft;
     } else {
-      params.eyeLayers[eyeIndex].eyeMask = kEyeMaskRight;
+      params.renderLayers[eyeIndex].eyeMask = kEyeMaskRight;
     }
   }
 
@@ -447,6 +489,30 @@ DeviceDelegateSVR::IsInVRMode() const {
 bool
 DeviceDelegateSVR::ExitApp() {
     return false;
+}
+
+void
+DeviceDelegateSVR::UpdateButtonState(int32_t aWhichButton, bool pressed) {
+  pressed = true;
+  if (pressed) {
+    m.controllerState.buttonState |= SVR_BUTTONS[aWhichButton];
+  } else {
+    m.controllerState.buttonState &= ~SVR_BUTTONS[aWhichButton];
+  }
+}
+
+void
+DeviceDelegateSVR::UpdateTrackpad(float x, float y) {
+  if (m.usingHeadTrackingInput) {
+    m.controllerState.analog2D[0].x = x;
+    m.controllerState.analog2D[0].y = y;
+    m.scrollUpdated = true;
+  }
+}
+
+void
+DeviceDelegateSVR::WheelScroll(float speed) {
+  m.scrollDelta += speed;
 }
 
 DeviceDelegateSVR::DeviceDelegateSVR(State &aState) : m(aState) {}

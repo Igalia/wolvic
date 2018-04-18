@@ -33,7 +33,9 @@ public:
   void ProcessEvents() override;
   const vrb::Matrix& GetControllerTransform(const int32_t aWhichController) override;
   bool GetControllerButtonState(const int32_t aWhichController, const int32_t aWhichButton, bool& aChangedState) override;
-  bool GetControllerScrolled(const int32_t aWhichController, float& aScrollX, float& aScrollY) override { return false; }
+  bool GetControllerScrolled(const int32_t aWhichController, float& aScrollX, float& aScrollY) override;
+  bool GetScrolledDelta(const int32_t aWhichController, float& aScrollX, float& aScrollY) override;
+  bool IsControllerUsingHeadTracking(const int32_t aWhichController) const override;
   void StartFrame() override;
   void BindEye(const CameraEnum aWhich) override;
   void EndFrame() override;
@@ -42,6 +44,9 @@ public:
   void LeaveVR();
   bool IsInVRMode() const;
   bool ExitApp();
+  void UpdateButtonState(int32_t aWhichButton, bool pressed);
+  void UpdateTrackpad(float x, float y);
+  void WheelScroll(float speed);
 protected:
   struct State;
   DeviceDelegateSVR(State& aState);

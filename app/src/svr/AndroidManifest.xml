@@ -3,7 +3,6 @@
     <!-- Make accelerometer and gyroscope hard requirements for good head tracking. -->
     <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true"/>
     <uses-feature android:name="android.hardware.sensor.gyroscope" android:required="true"/>
-    <meta-data android:name="com.osterhoutgroup.input_mode" android:value="Mouse" />
 
     <application>
         <meta-data android:name="com.osterhoutgroup.display_mode" android:value="extend"/>

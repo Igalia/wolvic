@@ -130,6 +130,50 @@ CommandCallback(android_app *aApp, int32_t aCmd) {
   }
 }
 
+#if defined(SNAPDRAGONVR)
+int32_t
+InputCallback(struct android_app *aApp, AInputEvent *aEvent) {
+  AppContext *ctx = (AppContext *) aApp->userData;
+  if (!ctx->mDevice) {
+    return 0;
+  }
+	const int type = AInputEvent_getType(aEvent);
+
+	if (type == AINPUT_EVENT_TYPE_KEY) {
+		const int keyCode = AKeyEvent_getKeyCode(aEvent);
+		const int action = AKeyEvent_getAction(aEvent);
+		if (action == AKEY_EVENT_ACTION_MULTIPLE) {
+		  return 0;
+		}
+
+		if (action == AKEY_EVENT_ACTION_UP && (keyCode == AKEYCODE_DPAD_CENTER  || keyCode == AKEYCODE_ENTER)) {
+      ctx->mDevice->UpdateButtonState(0, true);
+      return 1;
+		}
+		else if (keyCode == AKEYCODE_DPAD_LEFT) {
+		  // Wheel moved: simulate scroll
+		  ctx->mDevice->WheelScroll(-0.25);
+		  return 1;
+		}
+		else if (keyCode == AKEYCODE_DPAD_RIGHT) {
+		  // Wheel moved: simulate scroll
+		  ctx->mDevice->WheelScroll(0.25);
+		  return 1;
+		}
+	}
+	else if (type == AINPUT_EVENT_TYPE_MOTION) {
+	  const int source = AInputEvent_getSource(aEvent);
+	  if (source == AINPUT_SOURCE_TRACKBALL) {
+	    const float x = AMotionEvent_getX(aEvent, 0);
+	    const float y = AMotionEvent_getY(aEvent, 0);
+	    ctx->mDevice->UpdateTrackpad(x, y);
+	  }
+	}
+
+	return 0;
+}
+#endif // defined(SNAPDRAGONVR)
+
 extern "C" {
 
 void
@@ -161,6 +205,9 @@ android_main(android_app *aAppState) {
   // Set up activity & SurfaceView life cycle callbacks
   aAppState->userData = sAppContext.get();
   aAppState->onAppCmd = CommandCallback;
+#if defined(SNAPDRAGONVR)
+  aAppState->onInputEvent = InputCallback;
+#endif
 
   // Main render loop
   while (true) {
