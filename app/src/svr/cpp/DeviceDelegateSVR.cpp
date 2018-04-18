@@ -174,7 +174,7 @@ struct DeviceDelegateSVR::State {
 
     UpdatePerspective(info);
     UpdateLayoutCoords(0.f, 0.f, 1.f, 1.f);
-    elbow = crow::ElbowModel::Create(crow::ElbowModel::HandEnum::Right);
+    elbow = crow::ElbowModel::Create();
   }
 
   void Shutdown() {
@@ -205,7 +205,7 @@ struct DeviceDelegateSVR::State {
     const svrQuaternion& rotation = controllerState.rotation;
     vrb::Quaternion quat(-rotation.x, -rotation.y, rotation.z, rotation.w);
     controllerTransform = vrb::Matrix::Rotation(quat);
-    controllerTransform = elbow->GetTransform(head, controllerTransform);
+    controllerTransform = elbow->GetTransform(ElbowModel::HandEnum::Right, head, controllerTransform);
   }
 };
 
@@ -420,8 +420,6 @@ DeviceDelegateSVR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
   }
 
   m.controllerHandle = svrControllerStartTracking("");
-  crow::ElbowModel::Create(crow::ElbowModel::HandEnum::Left);
-
   m.isInVRMode = true;
 }
 

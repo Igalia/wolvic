@@ -11,31 +11,26 @@
 namespace crow {
 
 struct ElbowModel::State {
-  vrb::Vector elbowOffset;
-  vrb::Vector lowerArm;
+  const vrb::Vector rightElbowOffset;
+  const vrb::Vector leftElbowOffset;
+  const vrb::Vector lowerArm;
   vrb::Matrix result;
 
   State()
-      : elbowOffset(0.2f, -0.3f, -0.15f), lowerArm(0.0f, 0.0f, -0.4f) {}
-
-  void Initialize(const HandEnum aHand) {
-    if (aHand == HandEnum::Left) {
-      elbowOffset.x() = -elbowOffset.x();
-    }
-  }
+      : rightElbowOffset(0.2f, -0.3f, -0.15f)
+      , leftElbowOffset(-rightElbowOffset.x(), rightElbowOffset.y(), rightElbowOffset.z())
+      , lowerArm(0.0f, 0.0f, -0.4f) {}
 };
 
 ElbowModelPtr
-ElbowModel::Create(const HandEnum aHand) {
-  ElbowModelPtr result = std::make_shared<vrb::ConcreteClass<ElbowModel, ElbowModel::State> >();
-  result->m.Initialize(aHand);
-  return result;
+ElbowModel::Create() {
+  return std::make_shared<vrb::ConcreteClass<ElbowModel, ElbowModel::State> >();
 }
 
 const vrb::Matrix&
-ElbowModel::GetTransform(const vrb::Matrix& aHeadTransform, const vrb::Matrix& aDeviceRotation) {
+ElbowModel::GetTransform(const HandEnum aHand, const vrb::Matrix& aHeadTransform, const vrb::Matrix& aDeviceRotation) {
   vrb::Vector arm = aDeviceRotation.MultiplyDirection(m.lowerArm);
-  vrb::Vector offset = aHeadTransform.MultiplyPosition(m.elbowOffset);
+  vrb::Vector offset = aHeadTransform.MultiplyPosition(aHand == HandEnum::Right ? m.rightElbowOffset : m.leftElbowOffset);
   m.result = aDeviceRotation.PreMultiply(vrb::Matrix::Position(offset + arm));
   return m.result;
 }
