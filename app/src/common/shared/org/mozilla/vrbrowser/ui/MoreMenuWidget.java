@@ -25,9 +25,9 @@ import org.mozilla.vrbrowser.R;
 import java.util.ArrayList;
 
 public class MoreMenuWidget extends UIWidget {
-    private ListView mListView;
-    private ImageButton mCloseButton;
+    private MenuAdapter mAdapter;
     private MoreMenuWidget.Delegate mDelegate;
+    private MenuItem mPrivateBrowsingItem;
 
     public MoreMenuWidget(Context aContext) {
         super(aContext);
@@ -50,10 +50,10 @@ public class MoreMenuWidget extends UIWidget {
 
     private void initialize(Context aContext) {
         inflate(aContext, R.layout.more_menu, this);
-        mCloseButton = findViewById(R.id.moreMenuCloseButton);
-        mListView = findViewById(R.id.moreMenuList);
+        ImageButton closeButton = findViewById(R.id.moreMenuCloseButton);
+        ListView listView = findViewById(R.id.moreMenuList);
 
-        mCloseButton.setOnClickListener(new OnClickListener() {
+        closeButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mDelegate != null) {
@@ -63,14 +63,15 @@ public class MoreMenuWidget extends UIWidget {
         });
 
         final ArrayList<MenuItem> items = new ArrayList<>();
-        items.add(new MenuItem(R.string.menu_add_private_tab, R.drawable.ic_icon_focus_mode, new Runnable() {
+        mPrivateBrowsingItem = new MenuItem(R.string.menu_enter_private_browsing, R.drawable.ic_icon_menu_private_browsing, new Runnable() {
             @Override
             public void run() {
                 if (mDelegate != null) {
-                    mDelegate.onNewPrivateTabClick();
+                    mDelegate.onTogglePrivateBrowsing();
                 }
             }
-        }));
+        });
+        items.add(mPrivateBrowsingItem);
 
         items.add(new MenuItem(R.string.menu_focus_mode, R.drawable.ic_icon_focus_mode, new Runnable() {
             @Override
@@ -81,10 +82,10 @@ public class MoreMenuWidget extends UIWidget {
             }
         }));
 
-        MenuAdapter adapter = new MenuAdapter(aContext, items);
-        mListView.setAdapter(adapter);
+        mAdapter = new MenuAdapter(aContext, items);
+        listView.setAdapter(mAdapter);
 
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position,
                                     long id) {
@@ -96,8 +97,16 @@ public class MoreMenuWidget extends UIWidget {
         });
     }
 
+    public void updatePrivateBrowsing(boolean aIsPrivate) {
+        int stringId = aIsPrivate ? R.string.menu_exit_private_browsing : R.string.menu_enter_private_browsing;
+        if (mPrivateBrowsingItem.mStringId != stringId) {
+            mPrivateBrowsingItem.mStringId = stringId;
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+
     public interface Delegate {
-        void onNewPrivateTabClick();
+        void onTogglePrivateBrowsing();
         void onFocusModeClick();
         void onMenuCloseClick();
     }

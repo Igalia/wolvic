@@ -2,6 +2,7 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
     <LinearLayout
         style="?attr/navigationBarStyle"
+        android:id="@+id/navigationBarContainer"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:paddingStart="20dp"

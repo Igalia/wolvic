@@ -12,12 +12,14 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import org.mozilla.geckoview.GeckoSession;
+import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.SessionStore;
 import org.mozilla.vrbrowser.Widget;
 import org.mozilla.vrbrowser.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.WidgetPlacement;
 
+import java.util.List;
 
 public class BrowserHeaderWidget extends UIWidget
         implements TabLayout.OnTabSelectedListener, CustomTabLayout.Delegate,
@@ -33,6 +35,8 @@ public class BrowserHeaderWidget extends UIWidget
     private int mHeaderButtonMargin;
     private int mTabLayoutAddMargin;
     private MoreMenuWidget mMoreMenu;
+    private boolean mIsPrivateBrowsing = false;
+    private boolean mAnimateTabs = true;
 
     public BrowserHeaderWidget(Context aContext) {
         super(aContext);
@@ -62,7 +66,7 @@ public class BrowserHeaderWidget extends UIWidget
         mAddTabButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                addTabClick(false);
+                addTabClick();
             }
         });
 
@@ -70,7 +74,7 @@ public class BrowserHeaderWidget extends UIWidget
         mTruncateAddTabButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                addTabClick(false);
+                addTabClick();
             }
         });
 
@@ -103,7 +107,7 @@ public class BrowserHeaderWidget extends UIWidget
         mMoreMenuButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                // showMoreMenu();
+                showMoreMenu();
             }
         });
 
@@ -119,14 +123,24 @@ public class BrowserHeaderWidget extends UIWidget
         mTabContainer.addOnTabSelectedListener(this);
         mTabContainer.setDelegate(this);
 
-        int currentSessionId = SessionStore.get().getCurrentSessionId();
-        for (int sessionId: SessionStore.get().getSessions()) {
-            createTab(sessionId, currentSessionId == sessionId);
-        }
-
         SessionStore.get().addSessionChangeListener(this);
         SessionStore.get().addContentListener(this);
         SessionStore.get().addProgressListener(this);
+
+        fillTabs();
+    }
+
+    private void fillTabs() {
+        mTabContainer.removeAllTabs();
+
+        int currentSessionId = SessionStore.get().getCurrentSessionId();
+        List<Integer> sessionIds = SessionStore.get().getSessionsByPrivateMode(mIsPrivateBrowsing);
+        for (int sessionId: sessionIds) {
+            createTab(sessionId, currentSessionId == sessionId, false);
+        }
+        for (Integer sessionId: sessionIds) {
+            SessionStore.get().dumpAllState(sessionId);
+        }
     }
 
     private void showMoreMenu() {
@@ -147,6 +161,7 @@ public class BrowserHeaderWidget extends UIWidget
                 public void onWidgetAdd(Widget aWidget) {
                     mMoreMenu = (MoreMenuWidget) aWidget;
                     mMoreMenu.setDelegate(BrowserHeaderWidget.this);
+                    mMoreMenu.updatePrivateBrowsing(mIsPrivateBrowsing);
                 }
             });
         }
@@ -155,13 +170,15 @@ public class BrowserHeaderWidget extends UIWidget
         }
     }
 
-    private void addTabClick(boolean privateTab) {
-        int sessionId = SessionStore.get().createSession();
+    private void addTabClick() {
+        SessionStore.SessionSettings settings = new SessionStore.SessionSettings();
+        settings.privateMode = mIsPrivateBrowsing;
+        int sessionId = SessionStore.get().createSession(settings);
         SessionStore.get().setCurrentSession(sessionId);
         SessionStore.get().loadUri(SessionStore.DEFAULT_URL);
     }
 
-    private TabLayout.Tab createTab(int aSessionId, boolean aSelected) {
+    private TabLayout.Tab createTab(int aSessionId, boolean aSelected, boolean aAnimated) {
         TabLayout.Tab tab = mTabContainer.newTab();
         TabView tabView = new TabView(mContext);
         tabView.setSessionId(aSessionId);
@@ -171,6 +188,10 @@ public class BrowserHeaderWidget extends UIWidget
                 closeTab(aTab);
             }
         });
+        tabView.setIsPrivate(mIsPrivateBrowsing);
+        if (aAnimated) {
+            tabView.animateAdd();
+        }
         tab.setCustomView(tabView);
         mTabContainer.addTab(tab, aSelected);
         return tab;
@@ -280,10 +301,37 @@ public class BrowserHeaderWidget extends UIWidget
         return null;
     }
 
+    private void togglePrivateBrowsing() {
+        mIsPrivateBrowsing = !mIsPrivateBrowsing;
+        boolean prevAnimateTabs = mAnimateTabs;
+        mAnimateTabs = false;
+
+        List<Integer> sessionIds = SessionStore.get().getSessionsByPrivateMode(mIsPrivateBrowsing);
+        if (sessionIds.size() == 0) {
+            // The new set must have at least one session
+            SessionStore.SessionSettings settings = new SessionStore.SessionSettings();
+            settings.privateMode = mIsPrivateBrowsing;
+            int sessionId = SessionStore.get().createSession(settings);
+            SessionStore.get().setCurrentSession(sessionId);
+            SessionStore.get().loadUri(SessionStore.DEFAULT_URL);
+        } else {
+            // Make the first session of the new set current
+            SessionStore.get().setCurrentSession(sessionIds.get(0));
+        }
+
+        mNavigationBar.setIsPrivate(mIsPrivateBrowsing);
+        fillTabs();
+        if (mMoreMenu != null) {
+            mMoreMenu.updatePrivateBrowsing(mIsPrivateBrowsing);
+        }
+        mAnimateTabs = prevAnimateTabs;
+    }
+
     // SessionStore.SessionChangeListener
     @Override
     public void onNewSession(GeckoSession aSession, int aId) {
-        TabLayout.Tab tab = createTab(aId, false);
+        aSession.getSettings().setBoolean(GeckoSessionSettings.USE_PRIVATE_MODE, mIsPrivateBrowsing);
+        TabLayout.Tab tab = createTab(aId, false, mAnimateTabs);
         if (aSession == SessionStore.get().getCurrentSession()) {
             mTabContainer.scrollToTab(tab, false);
             tab.select();
@@ -396,7 +444,7 @@ public class BrowserHeaderWidget extends UIWidget
         mAddTabButton.setLayoutParams(params);
 
         int diff = params.leftMargin - prev;
-        if (!mIsTruncatingTabs & diff != 0) {
+        if (!mIsTruncatingTabs & diff != 0 && mAnimateTabs) {
             // Animate layout change for adding & removing tabs
             Animation anim = new TranslateAnimation(
                     TranslateAnimation.RELATIVE_TO_SELF, -diff/ mAddTabButton.getMeasuredWidth(),
@@ -411,8 +459,8 @@ public class BrowserHeaderWidget extends UIWidget
 
     // MoreMenu Delegate
     @Override
-    public void onNewPrivateTabClick() {
-        addTabClick(true);
+    public void onTogglePrivateBrowsing() {
+        togglePrivateBrowsing();
         mWidgetManager.setWidgetVisible(mMoreMenu.getHandle(), false);
     }
 

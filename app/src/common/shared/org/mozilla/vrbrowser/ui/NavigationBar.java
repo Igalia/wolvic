@@ -6,11 +6,13 @@
 package org.mozilla.vrbrowser.ui;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.util.Log;
+import android.widget.LinearLayout;
 
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.SessionStore;
@@ -19,6 +21,7 @@ import org.mozilla.vrbrowser.audio.AudioEngine;
 
 public class NavigationBar extends FrameLayout implements GeckoSession.NavigationDelegate, GeckoSession.ProgressDelegate {
     private static final String LOGTAG = "VRB";
+    private LinearLayout mContainer;
     private AudioEngine mAudio;
     private ImageButton mBackButton;
     private ImageButton mForwardButton;
@@ -26,7 +29,9 @@ public class NavigationBar extends FrameLayout implements GeckoSession.Navigatio
     private ImageButton mHomeButton;
     private NavigationURLBar mURLBar;
     private boolean mIsLoading;
+    private boolean mIsPrivate;
     private NavigationBar.Delegate mDelegate;
+    private Drawable mDefaultBackground;
 
     public interface Delegate {
         void onCloseClick();
@@ -50,6 +55,8 @@ public class NavigationBar extends FrameLayout implements GeckoSession.Navigatio
     private void initialize(Context aContext) {
         inflate(aContext, R.layout.navigation_bar, this);
         mAudio = AudioEngine.fromContext(aContext);
+        mContainer = findViewById(R.id.navigationBarContainer);
+        mDefaultBackground = mContainer.getBackground();
         mBackButton = findViewById(R.id.backButton);
         mForwardButton = findViewById(R.id.forwardButton);
         mReloadButton = findViewById(R.id.reloadButton);
@@ -107,6 +114,17 @@ public class NavigationBar extends FrameLayout implements GeckoSession.Navigatio
 
     public void setDelegate(Delegate aDelegate) {
         mDelegate = aDelegate;
+    }
+
+    public void setIsPrivate(boolean aPrivate) {
+        if (mIsPrivate != aPrivate) {
+            mIsPrivate = aPrivate;
+            if (aPrivate) {
+                mContainer.setBackgroundResource(R.color.eggplant);
+            } else {
+                mContainer.setBackground(mDefaultBackground);
+            }
+        }
     }
 
     @Override

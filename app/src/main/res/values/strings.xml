@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Firefox Reality</string>
     <string name="new_tab">New tab</string>
-    <string name="menu_add_private_tab">Private Browser Tab</string>
+    <string name="menu_enter_private_browsing">Enter Private Browsing</string>
+    <string name="menu_exit_private_browsing">Exit Private Browsing</string>
     <string name="menu_focus_mode">Focus Mode</string>
 </resources>

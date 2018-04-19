@@ -28,6 +28,7 @@ public class TabView extends LinearLayout {
     private boolean mIsFirst = false;
     private boolean mIsLoading = false;
     private boolean mIsTruncating = false;
+    private boolean mIsPrivate = false;
     private int mSessionId;
     private TextView mTabTitleView;
     private ImageView mTabFaviconView;
@@ -130,6 +131,14 @@ public class TabView extends LinearLayout {
         }
     }
 
+    public void setIsPrivate(boolean aPrivate) {
+        if (mIsPrivate != aPrivate) {
+            mIsPrivate = aPrivate;
+            updateBackground();
+            updateFavicon();
+        }
+    }
+
     public void animateAdd() {
         Animation anim = new TranslateAnimation(
                 TranslateAnimation.RELATIVE_TO_SELF,-1.0f,
@@ -163,11 +172,19 @@ public class TabView extends LinearLayout {
 
     private void updateBackground() {
         if (mIsFirst && mIsSelected) {
-            setBackgroundResource(R.drawable.tab_active_first);
+            setBackgroundResource(mIsPrivate ? R.drawable.tab_active_private_first : R.drawable.tab_active_first);
         } else if (mIsSelected) {
-            setBackgroundResource(R.drawable.tab_active);
+            setBackgroundResource(mIsPrivate ? R.drawable.tab_active_private : R.drawable.tab_active);
         } else {
             setBackgroundResource(R.drawable.tab_inactive_with_hover);
+        }
+    }
+
+    private void updateFavicon() {
+        if (mIsPrivate) {
+            mTabFaviconView.setImageResource(R.drawable.ic_private_browsing);
+        } else {
+            mTabFaviconView.setImageResource(R.drawable.ic_icon_favicon_placeholder);
         }
     }
 }

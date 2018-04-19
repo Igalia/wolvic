@@ -96,7 +96,6 @@ public class CustomTabLayout extends TabLayout {
         TabView view = (TabView) tab.getCustomView();
         if (view != null) {
             view.setIsTruncating(mIsTruncating);
-            view.animateAdd();
         }
     }
 
