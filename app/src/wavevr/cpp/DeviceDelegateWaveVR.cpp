@@ -119,7 +119,7 @@ struct DeviceDelegateWaveVR::State {
     FillFBOQueue(leftTextureQueue, leftFBOQueue);
     rightTextureQueue = WVR_ObtainTextureQueue(WVR_TextureTarget_2D, WVR_TextureFormat_RGBA, WVR_TextureType_UnsignedByte, renderWidth, renderHeight, 0);
     FillFBOQueue(rightTextureQueue, rightFBOQueue);
-    elbow = ElbowModel::Create(ElbowModel::HandEnum::Right);
+    elbow = ElbowModel::Create();
   }
 
   void Shutdown() {
@@ -422,6 +422,7 @@ DeviceDelegateWaveVR::StartFrame() {
     VRB_LOG("Invalid pose returned");
   }
 
+  WVR_DeviceType role = WVR_GetDefaultControllerRole();
   for (uint32_t id = WVR_DEVICE_HMD + 1; id < WVR_DEVICE_COUNT_LEVEL_1; id++) {
     if ((m.devicePairs[id].type != WVR_DeviceType_Controller_Right) &&
         (m.devicePairs[id].type != WVR_DeviceType_Controller_Left)) {
@@ -438,7 +439,11 @@ DeviceDelegateWaveVR::StartFrame() {
     }
     vrb::Matrix controllerTransform = vrb::Matrix::FromColumnMajor(pose.poseMatrix.m);
     if (m.elbow) {
-      controllerTransform = m.elbow->GetTransform(hmd, controllerTransform);
+      ElbowModel::HandEnum hand = ElbowModel::HandEnum::Right;
+      if (role != m.devicePairs[id].type) {
+        hand = ElbowModel::HandEnum::Left;
+      }
+      controllerTransform = m.elbow->GetTransform(hand, hmd, controllerTransform);
     } else {
       controllerTransform.TranslateInPlace(kAverageHeight);
     }

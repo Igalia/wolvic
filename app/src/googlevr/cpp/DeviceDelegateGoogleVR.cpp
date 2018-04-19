@@ -96,7 +96,7 @@ struct DeviceDelegateGoogleVR::State {
   void Initialize() {
     cameras[cameraIndex(CameraEnum::Left)] = vrb::CameraEye::Create(context);
     cameras[cameraIndex(CameraEnum::Right)] = vrb::CameraEye::Create(context);
-    elbow = ElbowModel::Create(ElbowModel::HandEnum::Right);
+    elbow = ElbowModel::Create();
     GVR_CHECK(gvr_refresh_viewer_profile(gvr));
     viewportList = GVR_CHECK(gvr_buffer_viewport_list_create(gvr));
     leftViewport = GVR_CHECK(gvr_buffer_viewport_create(gvr));
@@ -118,7 +118,6 @@ struct DeviceDelegateGoogleVR::State {
       hand = ((gvr_user_prefs_get_controller_handedness(prefs) == GVR_CONTROLLER_RIGHT_HANDED) ?
               ElbowModel::HandEnum::Right : ElbowModel::HandEnum::Left);
     }
-    elbow = ElbowModel::Create(hand);
     gestureContext = gvr_gesture_context_create();
   }
 
@@ -186,7 +185,7 @@ struct DeviceDelegateGoogleVR::State {
     vrb::Quaternion quat(ori.qx, ori.qy, ori.qz, ori.qw);
     controller = vrb::Matrix::Rotation(vrb::Quaternion(ori.qx, ori.qy, ori.qz, ori.qw));
     if (elbow) {
-      controller = elbow->GetTransform(headMatrix, controller);
+      controller = elbow->GetTransform(hand, headMatrix, controller);
     }
 
     // Index 0 is the dummy button so skip it.

@@ -100,6 +100,7 @@ struct DeviceDelegateOculusVR::State {
   vrb::Matrix controllerTransform = vrb::Matrix::Identity();
   ovrInputStateTrackedRemote controllerState = {};
   crow::ElbowModelPtr elbow;
+  ElbowModel::HandEnum hand = ElbowModel::HandEnum::Right;
 
   int32_t cameraIndex(CameraEnum aWhich) {
     if (CameraEnum::Left == aWhich) { return 0; }
@@ -119,6 +120,7 @@ struct DeviceDelegateOculusVR::State {
   }
 
   void Initialize() {
+    elbow = ElbowModel::Create();
     vrb::ContextPtr localContext = context.lock();
 
     java.Vm = app->activity->vm;
@@ -184,11 +186,10 @@ struct DeviceDelegateOculusVR::State {
         }
         controllerID = capsHeader.DeviceID;
         if (controllerCapabilities.ControllerCapabilities & ovrControllerCaps_LeftHand) {
-          elbow = crow::ElbowModel::Create(crow::ElbowModel::HandEnum::Left);
+          hand = ElbowModel::HandEnum::Left;
         } else {
-          elbow = crow::ElbowModel::Create(crow::ElbowModel::HandEnum::Right);
+          hand = ElbowModel::HandEnum::Right;
         }
-        return;
       }
     }
   }
@@ -215,7 +216,7 @@ struct DeviceDelegateOculusVR::State {
       auto & position = tracking.HeadPose.Pose.Position;
       controllerTransform.TranslateInPlace(vrb::Vector(position.x, position.y, position.z));
     } else {
-      controllerTransform = elbow->GetTransform(head, controllerTransform);
+      controllerTransform = elbow->GetTransform(hand, head, controllerTransform);
     }
 
     controllerState.Header.ControllerType = ovrControllerType_TrackedRemote;

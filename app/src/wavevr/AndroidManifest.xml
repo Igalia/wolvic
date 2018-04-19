@@ -17,7 +17,7 @@
             android:name="com.htc.vr.sdk.VRNativeActivity"
             tools:node="remove" />
         <meta-data android:name="com.htc.vr.content.NumDoFHmd" android:value="6DoF"/>
-        <meta-data android:name="com.htc.vr.content.NumDoFController" android:value="6DoF"/>
+        <meta-data android:name="com.htc.vr.content.NumDoFController" android:value="3,6DoF"/>
         <!--Please consider the DoF support of HMD and controller individually for your content.-->
         <!--Set value “3DoF” if your content only considers the rotation pose. -->
         <!--Set value “6DoF” if your content considers both rotation and position pose. -->
