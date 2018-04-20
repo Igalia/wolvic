@@ -53,6 +53,17 @@ If you get an error extracting the NDK, you might need to copy the local.propert
 
 If you run the APK on an Android device outside of Daydream or GearVR, it will run in flat mode. To run in VR, put the device into a headset and run the app from the VR launcher.
 
+*If you want to build FirefoxReality for WaveVR SDK*
+
+Download the VIVE Wave SDK from the [VIVE developer website](https://vivedeveloper.com/) and unzip it.
+Then from the project root run:
+```bash
+mkdir -p third_party/wavesdk
+cp /path/to/the/sdk/2.0.32/SDK/libs/wvr_client.aar third_party/wavesdk
+cp ./extra/wavesdk/build.gradle ./third_party/wavesdk
+```
+Make certain to set the build flavor to wavevrDebug in AndroidStudio before building the project.
+
 ## Using a custom GeckoView
 
 Create a file called user.properties in the top level project directory. Add a variable called geckoViewLocal and set it to the location of your locally built AAR:

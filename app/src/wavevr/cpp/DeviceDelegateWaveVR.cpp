@@ -285,7 +285,7 @@ DeviceDelegateWaveVR::ProcessEvents() {
           VRB_LOG("WVR_EventType_TouchpadSwipe_UpToDown");
         }
         break;
-      case WVR_EventType_Settings_ControllerRoleChange:
+      case WVR_EventType_Settings_Controller:
         {
           VRB_LOG("WVR_EventType_Settings_ControllerRoleChange");
         }
@@ -329,32 +329,6 @@ DeviceDelegateWaveVR::ProcessEvents() {
         {
           VRB_LOG("WVR_EventType_TouchUntapped");
         }
-        break;
-      case WVR_EventType_ApplicationPause:
-        {
-          VRB_LOG("WVR_EventType_ApplicationPause");
-        }
-        break;
-      case WVR_EventType_ApplicationResume:
-        {
-          VRB_LOG("WVR_EventType_ApplicationResume");
-        }
-        break;
-      case WVR_EventType_BackKeyPressed:
-        {
-          VRB_LOG("WVR_EventType_BackKeyPressed");
-        }
-        break;
-      case WVR_EventType_SurfaceChanged:
-        {
-          VRB_LOG("WVR_EventType_SurfaceChanged");
-        }
-        break;
-      case WVR_EventType_SurfaceDestroyed:
-        {
-          VRB_LOG("WVR_EventType_SurfaceDestroyed");
-        }
-        break;
       default:
         {
           VRB_LOG("Unknown WVR_EventType");
@@ -372,7 +346,7 @@ DeviceDelegateWaveVR::GetControllerTransform(const int32_t aWhichController) {
 bool
 DeviceDelegateWaveVR::GetControllerButtonState(const int32_t aWhichController, const int32_t aWhichButton, bool& aChangedState) {
   bool result = false;
-  static WVR_DeviceType controllerArray[] = {WVR_DeviceType_Controller_Right}; //, WVR_DeviceType_Controller_Left};
+  static WVR_DeviceType controllerArray[] = {WVR_DeviceType_Controller_Right, WVR_DeviceType_Controller_Left};
   int controllerCount = sizeof(controllerArray)/sizeof(controllerArray[0]);
 
   for (int idx = 0; idx < controllerCount; idx++) {
@@ -388,7 +362,7 @@ DeviceDelegateWaveVR::GetControllerButtonState(const int32_t aWhichController, c
 bool
 DeviceDelegateWaveVR::GetControllerScrolled(const int32_t aWhichController, float& aScrollX, float& aScrollY) {
   bool result = false;
-  static WVR_DeviceType controllerArray[] = {WVR_DeviceType_Controller_Right}; //, WVR_DeviceType_Controller_Left};
+  static WVR_DeviceType controllerArray[] = {WVR_DeviceType_Controller_Right, WVR_DeviceType_Controller_Left};
   int controllerCount = sizeof(controllerArray)/sizeof(controllerArray[0]);
 
   for (int idx = 0; idx < controllerCount; idx++) {
@@ -440,7 +414,7 @@ DeviceDelegateWaveVR::StartFrame() {
     vrb::Matrix controllerTransform = vrb::Matrix::FromColumnMajor(pose.poseMatrix.m);
     if (m.elbow) {
       ElbowModel::HandEnum hand = ElbowModel::HandEnum::Right;
-      if (role != m.devicePairs[id].type) {
+      if (m.devicePairs[id].type == WVR_DeviceType_Controller_Left) {
         hand = ElbowModel::HandEnum::Left;
       }
       controllerTransform = m.elbow->GetTransform(hand, hmd, controllerTransform);

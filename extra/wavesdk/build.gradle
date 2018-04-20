@@ -1,0 +1,15 @@
+configurations.maybeCreate("default")
+artifacts.add("default", file('wvr_client.aar'))
+
+def aarFilename = "wvr_client"
+
+// unzip aar
+def unzipDir = file("${buildDir}/${aarFilename}")
+def aarFile = file("${projectDir}/${aarFilename}.aar")
+if (aarFile != null) {
+    copy {
+        println 'unzip ' + aarFile
+        from zipTree(aarFile)
+        into unzipDir
+    }
+}
