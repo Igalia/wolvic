@@ -27,6 +27,10 @@
 namespace crow {
 
 const uint64_t SVR_BUTTONS[] = { svrControllerButton::PrimaryIndexTrigger, svrControllerButton::PrimaryThumbstick };
+const int32_t kButtonCount = sizeof(SVR_BUTTONS) / sizeof(SVR_BUTTONS[0]);
+
+const int32_t kHeadControllerId = 0;
+const int32_t kControllerId = 1;
 
 class SVREyeSwapChain;
 typedef std::shared_ptr<SVREyeSwapChain> SVREyeSwapChainPtr;
@@ -101,8 +105,10 @@ struct DeviceDelegateSVR::State {
   vrb::Matrix controllerTransform = vrb::Matrix::Identity();
   crow::ElbowModelPtr elbow;
   bool usingHeadTrackingInput = false;
-  bool scrollUpdated = false;
-  float scrollDelta = 0;
+  float scrollDelta = 0.0f;
+  bool headControllerCreated = false;
+  bool controllerCreated = false;
+  ControllerDelegatePtr controller;
 
   int32_t cameraIndex(CameraEnum aWhich) {
     if (CameraEnum::Left == aWhich) { return 0; }
@@ -196,14 +202,41 @@ struct DeviceDelegateSVR::State {
     }
   }
 
+  void SetButtonState(const int32_t aController) {
+    bool pressed = false;
+    for (int32_t button = 0; button < kButtonCount; button++) {
+      if ((controllerState.buttonState & SVR_BUTTONS[button]) != 0) {
+        pressed = true;
+      }
+    }
+    controller->SetButtonState(aController, 0, pressed);
+  }
+
+
   void FallbackToHeadTrackingInput(const vrb::Matrix & head) {
-    controllerTransform = head;
-    usingHeadTrackingInput = true;
-    controllerState.analog2D[0].x = 0.0;
-    controllerState.analog2D[0].y = 0.0;
+    if (!headControllerCreated || !usingHeadTrackingInput) {
+      if (!headControllerCreated) {
+        controller->CreateController(kHeadControllerId, -1);
+        headControllerCreated = true;
+      }
+      controller->SetEnabled(kHeadControllerId, true);
+      if (controllerCreated) {
+        controller->SetEnabled(kControllerId, false);
+      }
+      usingHeadTrackingInput = true;
+    }
+    controller->SetTransform(kHeadControllerId, head);
+    SetButtonState(kHeadControllerId);
+    if (fabsf(scrollDelta) != 0.0f) {
+      controller->SetScrolledDelta(kHeadControllerId, 0.0f, scrollDelta);
+      scrollDelta = 0.0f;
+    }
   }
 
   void UpdateControllers(const vrb::Matrix & head) {
+    if (!controller) {
+      return;
+    }
     if (controllerHandle < 0) {
       FallbackToHeadTrackingInput(head);
       return;
@@ -215,11 +248,30 @@ struct DeviceDelegateSVR::State {
       return;
     }
 
+    if (usingHeadTrackingInput || !controllerCreated) {
+      if (!controllerCreated) {
+        controller->CreateController(kControllerId, 0);
+        controllerCreated = true;
+      }
+      if (usingHeadTrackingInput) {
+        controller->SetEnabled(kHeadControllerId, false);
+      }
+      controller->SetEnabled(kControllerId, true);
+      controller->SetVisible(kControllerId, true);
+      usingHeadTrackingInput = false;
+    }
     const svrQuaternion& rotation = controllerState.rotation;
     vrb::Quaternion quat(-rotation.x, -rotation.y, rotation.z, rotation.w);
     controllerTransform = vrb::Matrix::Rotation(quat);
-    controllerTransform = elbow->GetTransform(ElbowModel::HandEnum::Right, head, controllerTransform);
-    usingHeadTrackingInput = false;
+    controllerTransform = elbow->GetTransform(ElbowModel::HandEnum::Right, head,
+                                              controllerTransform);
+    controller->SetTransform(1, controllerTransform);
+    SetButtonState(kControllerId);
+    if (controllerState.isTouching) {
+      controller->SetTouchPosition(kControllerId, controllerState.analog2D[0].x, controllerState.analog2D[0].y);
+    } else {
+      controller->EndTouch(kControllerId);
+    }
   }
 };
 
@@ -257,66 +309,31 @@ DeviceDelegateSVR::SetClipPlanes(const float aNear, const float aFar) {
   m.UpdatePerspective(info);
 }
 
+void
+DeviceDelegateSVR::SetControllerDelegate(ControllerDelegatePtr& aController) {
+  m.controller = aController;
+}
+
+void
+DeviceDelegateSVR::ReleaseControllerDelegate() {
+  m.controller = nullptr;
+}
+
 int32_t
-DeviceDelegateSVR::GetControllerCount() const {
+DeviceDelegateSVR::GetControllerModelCount() const {
   return 1;
 }
 
 const std::string
-DeviceDelegateSVR::GetControllerModelName(const int32_t) const {
+DeviceDelegateSVR::GetControllerModelName(const int32_t aModelIndex) const {
   // FIXME: Need SVR based controller
   static const std::string name("vr_controller_daydream.obj");
-  return name;
+  return aModelIndex == 0 ? name : "";
 }
 
 void
 DeviceDelegateSVR::ProcessEvents() {
 
-}
-
-const vrb::Matrix &
-DeviceDelegateSVR::GetControllerTransform(const int32_t aWhichController) {
-  return m.controllerTransform;
-}
-
-bool
-DeviceDelegateSVR::GetControllerButtonState(const int32_t aWhichController, const int32_t aWhichButton, bool& aChangedState) {
-  if (aWhichButton > sizeof(SVR_BUTTONS)/ sizeof(SVR_BUTTONS[0])) {
-    return false;
-  }
-
-  bool result = (m.controllerState.buttonState & SVR_BUTTONS[aWhichButton]) != 0;
-  m.controllerState.buttonState = 0;
-  return result;
-}
-
-bool
-DeviceDelegateSVR::GetControllerScrolled(const int32_t aWhichController, float& aScrollX, float& aScrollY) {
-  aScrollX = m.controllerState.analog2D[0].x;
-  aScrollY = m.controllerState.analog2D[0].y;
-  if (m.usingHeadTrackingInput) {
-    bool result = m.scrollUpdated;
-    m.scrollUpdated = false;
-    return result;
-  } else {
-    return m.controllerState.isTouching;
-  }
-}
-
-bool
-DeviceDelegateSVR::GetScrolledDelta(const int32_t aWhichController, float& aScrollX, float& aScrollY) {
-  if (fabs(m.scrollDelta) != 0.0) {
-    aScrollX = 0.0f;
-    aScrollY = m.scrollDelta;
-    m.scrollDelta = 0.0f;
-    return true;
-  }
-  return false;
-}
-
-bool
-DeviceDelegateSVR::IsControllerUsingHeadTracking(const int32_t aWhichController) const {
-  return m.usingHeadTrackingInput;
 }
 
 void
@@ -493,7 +510,7 @@ DeviceDelegateSVR::ExitApp() {
 
 void
 DeviceDelegateSVR::UpdateButtonState(int32_t aWhichButton, bool pressed) {
-  pressed = true;
+  //pressed = true;
   if (pressed) {
     m.controllerState.buttonState |= SVR_BUTTONS[aWhichButton];
   } else {
@@ -506,7 +523,6 @@ DeviceDelegateSVR::UpdateTrackpad(float x, float y) {
   if (m.usingHeadTrackingInput) {
     m.controllerState.analog2D[0].x = x;
     m.controllerState.analog2D[0].y = y;
-    m.scrollUpdated = true;
   }
 }
 

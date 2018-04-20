@@ -101,6 +101,7 @@ struct DeviceDelegateOculusVR::State {
   ovrInputStateTrackedRemote controllerState = {};
   crow::ElbowModelPtr elbow;
   ElbowModel::HandEnum hand = ElbowModel::HandEnum::Right;
+  ControllerDelegatePtr controller;
 
   int32_t cameraIndex(CameraEnum aWhich) {
     if (CameraEnum::Left == aWhich) { return 0; }
@@ -137,10 +138,10 @@ struct DeviceDelegateOculusVR::State {
     }
     initialized = true;
 
-    renderWidth = (uint32_t) vrapi_GetSystemPropertyInt(&java,
-                                                        VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_WIDTH) * 1.5;
-    renderHeight = (uint32_t) vrapi_GetSystemPropertyInt(&java,
-                                                         VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_HEIGHT) * 1.5;
+    renderWidth = (uint32_t)(vrapi_GetSystemPropertyInt(&java,
+                                                        VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_WIDTH) * 1.5f);
+    renderHeight = (uint32_t)(vrapi_GetSystemPropertyInt(&java,
+                                                         VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_HEIGHT) * 1.5f);
 
     for (int i = 0; i < VRAPI_EYE_COUNT; ++i) {
       cameras[i] = vrb::CameraEye::Create(context);
@@ -164,7 +165,7 @@ struct DeviceDelegateOculusVR::State {
   }
 
   void UpdateControllerID() {
-    if (!ovr || (controllerID != ovrDeviceIdType_Invalid)) {
+    if (!controller || !ovr || (controllerID != ovrDeviceIdType_Invalid)) {
       return;
     }
 
@@ -173,6 +174,7 @@ struct DeviceDelegateOculusVR::State {
       ovrInputCapabilityHeader capsHeader = {};
       if (vrapi_EnumerateInputDevices(ovr, index++, &capsHeader) < 0) {
         // No more input devices to enumerate
+        controller->SetEnabled(0, false);
         break;
       }
 
@@ -190,16 +192,21 @@ struct DeviceDelegateOculusVR::State {
         } else {
           hand = ElbowModel::HandEnum::Right;
         }
+        controller->SetEnabled(0, true);
+        controller->SetVisible(0, true);
+        return;
       }
     }
   }
 
   void UpdateControllers(const vrb::Matrix & head) {
     UpdateControllerID();
+    if (!controller) {
+      return;
+    }
     if (controllerID == ovrDeviceIdType_Invalid) {
       return;
     }
-
     ovrTracking tracking = {};
     if (vrapi_GetInputTrackingState(ovr, controllerID, 0, &tracking) != ovrSuccess) {
       VRB_LOG("Failed to read controller tracking state");
@@ -219,8 +226,27 @@ struct DeviceDelegateOculusVR::State {
       controllerTransform = elbow->GetTransform(hand, head, controllerTransform);
     }
 
+    controller->SetTransform(0, controllerTransform);
+
     controllerState.Header.ControllerType = ovrControllerType_TrackedRemote;
     vrapi_GetCurrentInputState(ovr, controllerID, &controllerState.Header);
+
+    static const ovrButton GEAR_VR_BUTTONS[] = { ovrButton_A, ovrButton_Enter };
+    bool pressed = false;
+    for (int32_t button = 0; button < sizeof(GEAR_VR_BUTTONS); button++) {
+      if ((controllerState.Buttons & GEAR_VR_BUTTONS[button]) != 0) {
+        pressed = true;
+      }
+    }
+    controller->SetButtonState(0, 0, pressed);
+
+    float scrollX = (controllerState.TrackpadPosition.x / (float)controllerCapabilities.TrackpadMaxX) * 5.0f;
+    float scrollY = (controllerState.TrackpadPosition.y / (float)controllerCapabilities.TrackpadMaxY) * 5.0f;
+    if (controllerState.TrackpadStatus && !pressed) {
+      controller->SetTouchPosition(0, scrollX, scrollY);
+    } else {
+      controller->EndTouch(0);
+    }
   }
 };
 
@@ -257,45 +283,32 @@ DeviceDelegateOculusVR::SetClipPlanes(const float aNear, const float aFar) {
   m.UpdatePerspective();
 }
 
+void
+DeviceDelegateOculusVR::SetControllerDelegate(ControllerDelegatePtr& aController) {
+  m.controller = aController;
+  m.controller->CreateController(0, 0);
+}
+
+void
+DeviceDelegateOculusVR::ReleaseControllerDelegate() {
+  m.controller = nullptr;
+}
+
 int32_t
-DeviceDelegateOculusVR::GetControllerCount() const {
+DeviceDelegateOculusVR::GetControllerModelCount() const {
   return 1;
 }
 
 const std::string
-DeviceDelegateOculusVR::GetControllerModelName(const int32_t) const {
+DeviceDelegateOculusVR::GetControllerModelName(const int32_t aModelIndex) const {
   // FIXME: Need Oculus based controller
   static const std::string name("vr_controller_daydream.obj");
-  return name;
+  return aModelIndex == 0 ? name : "";
 }
 
 void
 DeviceDelegateOculusVR::ProcessEvents() {
 
-}
-
-const vrb::Matrix &
-DeviceDelegateOculusVR::GetControllerTransform(const int32_t aWhichController) {
-  return m.controllerTransform;
-}
-
-bool
-DeviceDelegateOculusVR::GetControllerButtonState(const int32_t aWhichController, const int32_t aWhichButton, bool& aChangedState) {
-  // For the Gear VR Controller, only the following ovrButton types are reported to the application:
-  // ovrButton_Back, ovrButton_A, ovrButton_Enter
-  static const ovrButton GEAR_VR_BUTTONS[] = { ovrButton_A, ovrButton_Back, ovrButton_Enter };
-  if (aWhichButton > sizeof(GEAR_VR_BUTTONS)/ sizeof(GEAR_VR_BUTTONS[0])) {
-    return false;
-  }
-
-  return (m.controllerState.Buttons & GEAR_VR_BUTTONS[aWhichButton]) != 0;
-}
-
-bool
-DeviceDelegateOculusVR::GetControllerScrolled(const int32_t aWhichController, float& aScrollX, float& aScrollY) {
-  aScrollX = (m.controllerState.TrackpadPosition.x / (float)m.controllerCapabilities.TrackpadMaxX) * 5.0f;
-  aScrollY = (m.controllerState.TrackpadPosition.y / (float)m.controllerCapabilities.TrackpadMaxY) * 5.0f;
-  return m.controllerState.TrackpadStatus;
 }
 
 void

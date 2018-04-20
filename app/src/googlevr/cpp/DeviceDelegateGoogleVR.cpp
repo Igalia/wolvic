@@ -19,7 +19,28 @@
 #include "vr/gvr/capi/include/gvr_controller.h"
 #include "vr/gvr/capi/include/gvr_gesture.h"
 
+#include <array>
 #include <vector>
+
+namespace {
+
+static const int32_t kMaxControllerCount = 2;
+
+struct Controller {
+  vrb::Matrix transform;
+  bool enabled;
+  bool clicked;
+  bool touched;
+  crow::ElbowModel::HandEnum hand;
+  Controller()
+      : transform(vrb::Matrix::Identity())
+      , enabled(false)
+      , clicked(false)
+      , touched(false)
+  {}
+};
+
+}
 
 namespace crow {
 
@@ -54,14 +75,10 @@ struct DeviceDelegateGoogleVR::State {
   float far;
   vrb::Color clearColor;
   vrb::CameraEyePtr cameras[2];
-  vrb::Matrix controller;
-  bool clicked;
-  bool touched;
-  float touchX;
-  float touchY;
-  ElbowModel::HandEnum hand;
   ElbowModelPtr elbow;
   GestureDelegatePtr gestures;
+  crow::ControllerDelegatePtr controllerDelegate;
+  std::array<Controller, kMaxControllerCount> controllers;
   State()
       : gvr(nullptr)
       , controllerContext(nullptr)
@@ -74,12 +91,6 @@ struct DeviceDelegateGoogleVR::State {
       , frame(nullptr)
       , near(0.1f)
       , far(100.f)
-      , clicked(false)
-      , touched(false)
-      , touchX(0.0f)
-      , touchY(0.0f)
-      , controller(vrb::Matrix::Identity())
-      , hand(ElbowModel::HandEnum::Right)
   {
     frameBufferSize = {0,0};
     gestures = GestureDelegate::Create();
@@ -115,8 +126,12 @@ struct DeviceDelegateGoogleVR::State {
     controllerState = GVR_CHECK(gvr_controller_state_create());
     const gvr_user_prefs* prefs = GVR_CHECK(gvr_get_user_prefs(gvr));
     if (prefs) {
-      hand = ((gvr_user_prefs_get_controller_handedness(prefs) == GVR_CONTROLLER_RIGHT_HANDED) ?
+      controllers[0].hand = ((gvr_user_prefs_get_controller_handedness(prefs) == GVR_CONTROLLER_RIGHT_HANDED) ?
               ElbowModel::HandEnum::Right : ElbowModel::HandEnum::Left);
+      controllers[1].hand = (controllers[0].hand == ElbowModel::HandEnum::Right ? ElbowModel::HandEnum::Left : ElbowModel::HandEnum::Right);
+    } else {
+      controllers[0].hand = ElbowModel::HandEnum::Right;
+      controllers[1].hand = ElbowModel::HandEnum::Left;
     }
     gestureContext = gvr_gesture_context_create();
   }
@@ -176,35 +191,52 @@ struct DeviceDelegateGoogleVR::State {
 
   void
   UpdateControllers() {
-    GVR_CHECK(gvr_controller_state_update(controllerContext, 0, controllerState));
-    if (gvr_controller_state_get_connection_state(controllerState) != GVR_CONTROLLER_CONNECTED) {
-      VRB_LOG("Controller not connected.");
+    int32_t controllerCount = GVR_CHECK(gvr_controller_get_count(controllerContext));
+    if (controllerCount > kMaxControllerCount) {
+      controllerCount = kMaxControllerCount;
+    }
+    if (!controllerDelegate) {
       return;
     }
-    gvr_quatf ori = gvr_controller_state_get_orientation(controllerState);
-    vrb::Quaternion quat(ori.qx, ori.qy, ori.qz, ori.qw);
-    controller = vrb::Matrix::Rotation(vrb::Quaternion(ori.qx, ori.qy, ori.qz, ori.qw));
-    if (elbow) {
-      controller = elbow->GetTransform(hand, headMatrix, controller);
-    }
-
-    // Index 0 is the dummy button so skip it.
-    for (int ix = 1; ix < GVR_CONTROLLER_BUTTON_COUNT; ix++) {
-      const uint64_t buttonMask = (uint64_t)0x01 << (ix - 1);
-      bool pressed = gvr_controller_state_get_button_state(controllerState, ix);
-      if (ix == GVR_CONTROLLER_BUTTON_CLICK) {
-        touched = gvr_controller_state_is_touching(controllerState);
-        if (touched) {
-          gvr_vec2f axes = gvr_controller_state_get_touch_pos(controllerState);
-          touchX = axes.x;
-          touchY = axes.y;
-        } else {
-          touchX = touchY = 0.0f;
+    for (int32_t index = 0; index < controllerCount; index++) {
+      Controller& controller = controllers[index];
+      GVR_CHECK(gvr_controller_state_update(controllerContext, index, controllerState));
+      if (gvr_controller_state_get_connection_state(controllerState) != GVR_CONTROLLER_CONNECTED) {
+        VRB_LOG("Controller not connected.");
+        controllerDelegate->SetEnabled(index, false);
+        continue;
+      } else if (!controller.enabled) {
+        controller.enabled = true;
+        controllerDelegate->SetEnabled(index, true);
+        controllerDelegate->SetVisible(index, true);
+      }
+      gvr_quatf ori = gvr_controller_state_get_orientation(controllerState);
+      vrb::Quaternion quat(ori.qx, ori.qy, ori.qz, ori.qw);
+      controller.transform = vrb::Matrix::Rotation(vrb::Quaternion(ori.qx, ori.qy, ori.qz, ori.qw));
+      if (elbow) {
+        controller.transform = elbow->GetTransform(controller.hand, headMatrix, controller.transform);
+      }
+      controllerDelegate->SetTransform(index, controller.transform);
+      // Index 0 is the dummy button so skip it.
+      for (int ix = 1; ix < GVR_CONTROLLER_BUTTON_COUNT; ix++) {
+        const uint64_t buttonMask = (uint64_t) 0x01 << (ix - 1);
+        bool clicked = gvr_controller_state_get_button_state(controllerState, ix);
+        if (ix == GVR_CONTROLLER_BUTTON_CLICK) {
+          bool touched = gvr_controller_state_is_touching(controllerState);
+          if (touched) {
+            gvr_vec2f axes = gvr_controller_state_get_touch_pos(controllerState);
+            controllerDelegate->SetTouchPosition(index, axes.x, axes.y);
+          } else if (touched != controller.touched){
+            controllerDelegate->EndTouch(index);
+          }
+          controller.touched = touched;
+          if (controller.clicked != clicked) {
+            controllerDelegate->SetButtonState(index, 0, clicked);
+          }
+          controller.clicked = clicked;
         }
-        clicked = pressed;
       }
     }
-
     if (!gestures) {
       return;
     }
@@ -284,15 +316,31 @@ DeviceDelegateGoogleVR::SetClipPlanes(const float aNear, const float aFar) {
   m.far = aFar;
 }
 
+void
+DeviceDelegateGoogleVR::SetControllerDelegate(ControllerDelegatePtr& aController) {
+  m.controllerDelegate = aController;
+  if (!m.controllerDelegate) {
+    return;
+  }
+  for (int32_t index = 0; index < kMaxControllerCount; index++) {
+    m.controllerDelegate->CreateController(index, 0);
+  }
+}
+
+void
+DeviceDelegateGoogleVR::ReleaseControllerDelegate() {
+  m.controllerDelegate = nullptr;
+}
+
 int32_t
-DeviceDelegateGoogleVR::GetControllerCount() const {
+DeviceDelegateGoogleVR::GetControllerModelCount() const {
   return 1;
 }
 
 const std::string
-DeviceDelegateGoogleVR::GetControllerModelName(const int32_t) const {
+DeviceDelegateGoogleVR::GetControllerModelName(const int32_t aModelIndex) const {
   static const std::string name("vr_controller_daydream.obj");
-  return name;
+  return aModelIndex == 0 ? name : "";
 }
 
 void
@@ -307,23 +355,6 @@ DeviceDelegateGoogleVR::ProcessEvents() {
   m.headMatrix.TranslateInPlace(kAverageHeight);
   m.UpdateCameras();
   m.UpdateControllers();
-}
-
-const vrb::Matrix&
-DeviceDelegateGoogleVR::GetControllerTransform(const int32_t aWhichController) {
-  return m.controller;
-}
-
-bool
-DeviceDelegateGoogleVR::GetControllerButtonState(const int32_t aWhichController, const int32_t aWhichButton, bool& aChangedState) {
-  return m.clicked;
-}
-
-bool
-DeviceDelegateGoogleVR::GetControllerScrolled(const int32_t aWhichController, float& aScrollX, float& aScrollY) {
-  aScrollX = m.touchX;
-  aScrollY = m.touchY;
-  return m.touched;
 }
 
 void
@@ -383,10 +414,6 @@ DeviceDelegateGoogleVR::EndFrame() {
   GVR_CHECK(gvr_frame_submit(&m.frame, m.viewportList, m.gvrHeadMatrix));
 }
 
-void
-DeviceDelegateGoogleVR::SetGVRContext(void* aGVRContext) {
-
-}
 
 void
 DeviceDelegateGoogleVR::InitializeGL() {

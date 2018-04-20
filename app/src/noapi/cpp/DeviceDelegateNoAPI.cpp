@@ -19,11 +19,12 @@
 
 namespace crow {
 
+static const int32_t kControllerIndex = 0;
 static vrb::Vector sHomePosition(0.0f, 1.7f, 0.0f);
 
 struct DeviceDelegateNoAPI::State {
   vrb::ContextWeak context;
-  vrb::Matrix controller;
+  ControllerDelegatePtr controller;
   vrb::CameraSimplePtr camera;
   vrb::Color clearColor;
   float heading;
@@ -31,8 +32,7 @@ struct DeviceDelegateNoAPI::State {
   vrb::Vector position;
   bool clicked;
   State()
-      : controller(vrb::Matrix::Identity())
-      , headingMatrix(vrb::Matrix::Identity())
+      : headingMatrix(vrb::Matrix::Identity())
       , position(sHomePosition)
       , clicked(false)
   {
@@ -60,7 +60,7 @@ DeviceDelegateNoAPI::GetGestureDelegate() {
   return nullptr;
 }
 vrb::CameraPtr
-DeviceDelegateNoAPI::GetCamera(const CameraEnum aWhich) {
+DeviceDelegateNoAPI::GetCamera(const CameraEnum) {
   return m.camera;
 }
 
@@ -79,9 +79,21 @@ DeviceDelegateNoAPI::SetClipPlanes(const float aNear, const float aFar) {
   m.camera->SetClipRange(aNear, aFar);
 }
 
+void
+DeviceDelegateNoAPI::SetControllerDelegate(ControllerDelegatePtr& aController) {
+  m.controller = aController;
+  m.controller->CreateController(0, -1);
+  m.controller->SetEnabled(kControllerIndex, true);
+}
+
+void
+DeviceDelegateNoAPI::ReleaseControllerDelegate() {
+    m.controller = nullptr;
+}
+
 int32_t
-DeviceDelegateNoAPI::GetControllerCount() const {
-  return 1;
+DeviceDelegateNoAPI::GetControllerModelCount() const {
+  return 0;
 }
 
 const std::string
@@ -93,17 +105,6 @@ DeviceDelegateNoAPI::GetControllerModelName(const int32_t) const {
 void
 DeviceDelegateNoAPI::ProcessEvents() {
   m.camera->SetTransform(m.headingMatrix.Translate(m.position));
-
-}
-
-const vrb::Matrix&
-DeviceDelegateNoAPI::GetControllerTransform(const int32_t aWhichController) {
-  return m.controller;
-}
-
-bool
-DeviceDelegateNoAPI::GetControllerButtonState(const int32_t aWhichController, const int32_t aWhichButton, bool& aChangedState) {
-  return m.clicked;
 }
 
 void
@@ -116,7 +117,7 @@ DeviceDelegateNoAPI::StartFrame() {
 }
 
 void
-DeviceDelegateNoAPI::BindEye(const CameraEnum aWhich) {
+DeviceDelegateNoAPI::BindEye(const CameraEnum) {
   // noop
 }
 
@@ -172,7 +173,13 @@ static const vrb::Vector sForward(0.0f, 0.0f, -1.0f);
 
 void
 DeviceDelegateNoAPI::TouchEvent(const bool aDown, const float aX, const float aY) {
-  m.clicked = aDown;
+  if (!m.controller) {
+    return;
+  }
+  if (aDown != m.clicked) {
+    m.controller->SetButtonState(kControllerIndex, 0, aDown);
+    m.clicked = aDown;
+  }
   const float viewportWidth = m.camera->GetViewportWidth();
   const float viewportHeight = m.camera->GetViewportHeight();
   if ((viewportWidth <= 0.0f) || (viewportHeight <= 0.0f)) {
@@ -195,8 +202,9 @@ DeviceDelegateNoAPI::TouchEvent(const bool aDown, const float aX, const float aY
   const vrb::Vector direction = (end - start).Normalize();
   const vrb::Vector up = sForward.Cross(direction);
   const float angle = acosf(sForward.Dot(direction));
-  m.controller = vrb::Matrix::Rotation(up, angle);
-  m.controller.TranslateInPlace(start);
+  vrb::Matrix transform = vrb::Matrix::Rotation(up, angle);
+  transform.TranslateInPlace(start);
+  m.controller->SetTransform(kControllerIndex, transform);
 }
 
 DeviceDelegateNoAPI::DeviceDelegateNoAPI(State& aState) : m(aState) {}

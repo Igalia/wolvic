@@ -45,7 +45,7 @@ protected:
   BrowserWorld(State& aState);
   ~BrowserWorld();
   void CreateFloor();
-  void AddControllerPointer();
+  void CreateControllerPointer();
 private:
   State& m;
   BrowserWorld() = delete;

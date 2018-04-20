@@ -4,6 +4,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "BrowserWorld.h"
+#include "ControllerDelegate.h"
 #include "Widget.h"
 #include "WidgetPlacement.h"
 #include "vrb/CameraSimple.h"
@@ -24,6 +25,7 @@
 #include "vrb/SurfaceTextureFactory.h"
 #include "vrb/TextureCache.h"
 #include "vrb/TextureSurface.h"
+#include "vrb/Toggle.h"
 #include "vrb/Transform.h"
 #include "vrb/VertexArray.h"
 #include "vrb/Vector.h"
@@ -78,7 +80,7 @@ SurfaceObserver::SurfaceObserver(crow::BrowserWorldWeakPtr& aWorld) : mWorld(aWo
 SurfaceObserver::~SurfaceObserver() {}
 
 void
-SurfaceObserver::SurfaceTextureCreated(const std::string& aName, GLuint aHandle, jobject aSurfaceTexture) {
+SurfaceObserver::SurfaceTextureCreated(const std::string& aName, GLuint, jobject aSurfaceTexture) {
   crow::BrowserWorldPtr world = mWorld.lock();
   if (world) {
     world->SetSurfaceTexture(aName, aSurfaceTexture);
@@ -86,7 +88,7 @@ SurfaceObserver::SurfaceTextureCreated(const std::string& aName, GLuint aHandle,
 }
 
 void
-SurfaceObserver::SurfaceTextureHandleUpdated(const std::string aName, GLuint aHandle) {}
+SurfaceObserver::SurfaceTextureHandleUpdated(const std::string, GLuint) {}
 
 void
 SurfaceObserver::SurfaceTextureDestroyed(const std::string& aName) {
@@ -102,43 +104,234 @@ SurfaceObserver::SurfaceTextureCreationError(const std::string& aName, const std
   
 }
 
-struct ControllerRecord {
+struct Controller {
   int32_t index;
+  bool enabled;
   uint32_t widget;
+  float pointerX;
+  float pointerY;
   bool pressed;
-  float xx;
-  float yy;
-  float touched;
-  float touchPadX;
-  float touchPadY;
-  TransformPtr controller;
-  ControllerRecord(const int32_t aIndex) : widget(0), index(aIndex), pressed(false), xx(0.0f), yy(0.0f),
-                                           touched(false), touchPadX(0.0f), touchPadY(0.0f) {}
-  ControllerRecord(const ControllerRecord& aRecord) : widget(aRecord.widget), index(aRecord.index), controller(aRecord.controller) {}
-  ControllerRecord(ControllerRecord&& aRecord) : widget(aRecord.widget), index(aRecord.index), controller(std::move(aRecord.controller)) {}
-  void CopyValues(const ControllerRecord& aRecord) {
-    index = aRecord.index;
-    widget = aRecord.widget;
-    pressed = aRecord.pressed;
-    xx = aRecord.xx;
-    yy = aRecord.yy;
-    touched = aRecord.touched;
-    touchPadX = aRecord.touchPadX;
-    touchPadY = aRecord.touchPadY;
+  bool wasPressed;
+  bool touched;
+  bool wasTouched;
+  float touchX;
+  float touchY;
+  float lastTouchX;
+  float lastTouchY;
+  float scrollDeltaX;
+  float scrollDeltaY;
+  TransformPtr transform;
+  Matrix transformMatrix;
+  
+  Controller() : index(-1), enabled(false), widget(0),
+                 pointerX(0.0f), pointerY(0.0f),
+                 pressed(false), wasPressed(false),
+                 touched(false), wasTouched(false),
+                 touchX(0.0f), touchY(0.0f),
+                 lastTouchX(0.0f), lastTouchY(0.0f),
+                 scrollDeltaX(0.0f), scrollDeltaY(0.0f),
+                 transformMatrix(Matrix::Identity()) {}
+
+  Controller(const Controller& aController) {
+    *this = aController;
   }
-  ControllerRecord& operator=(const ControllerRecord& aRecord) {
-    CopyValues(aRecord);
-    controller = aRecord.controller;
+
+  ~Controller() {
+    Reset();
+  }
+
+  Controller& operator=(const Controller& aController) {
+    index = aController.index;
+    enabled = aController.enabled;
+    widget = aController.widget;
+    pointerX = aController.pointerX;
+    pointerY = aController.pointerY;
+    pressed = aController.pressed;
+    wasPressed = aController.wasPressed;
+    touched = aController.touched;
+    wasTouched = aController.wasTouched;
+    touchX = aController.touchX;
+    touchY= aController.touchY;
+    lastTouchX = aController.lastTouchX;
+    lastTouchY = aController.lastTouchY;
+    scrollDeltaX = aController.scrollDeltaX;
+    scrollDeltaY = aController.scrollDeltaY;
+    transform = aController.transform;
+    transformMatrix = aController.transformMatrix;
     return *this;
   }
-  ControllerRecord& operator=(ControllerRecord&& aRecord) {
-    CopyValues(aRecord);
-    controller = std::move(aRecord.controller);
-    return *this;
+
+  void Reset() {
+    index = -1;
+    enabled = false;
+    widget = 0;
+    pointerX = pointerY = 0.0f;
+    pressed = wasPressed = false;
+    touched = wasTouched = false;
+    touchX = touchY = 0.0f;
+    lastTouchX = lastTouchY = 0.0f;
+    scrollDeltaX = scrollDeltaY = 0.0f;
+    if (transform) {
+      transform = nullptr;
+    }
+    transformMatrix = Matrix::Identity();
   }
-private:
-  ControllerRecord() = delete;
 };
+
+class ControllerContainer;
+typedef std::shared_ptr<ControllerContainer> ControllerContainerPtr;
+
+class ControllerContainer : public crow::ControllerDelegate {
+public:
+  static ControllerContainerPtr Create();
+  ControllerContainer() : modelsLoaded(false) {}
+  ~ControllerContainer();
+  void SetUpModelsGroup(const int32_t aModelIndex);
+  // crow::ControllerDelegate interface
+  void CreateController(const int32_t aControllerIndex, const int32_t aModelIndex) override;
+  void DestroyController(const int32_t aControllerIndex) override;
+  void SetEnabled(const int32_t aControllerIndex, const bool aEnabled) override;
+  void SetVisible(const int32_t aControllerIndex, const bool aVisible) override;
+  void SetTransform(const int32_t aControllerIndex, const vrb::Matrix& aTransform) override;
+  void SetButtonState(const int32_t aControllerIndex, const int32_t aWhichButton, const bool aPressed) override;
+  void SetTouchPosition(const int32_t aControllerIndex, const float aTouchX, const float aTouchY) override;
+  void EndTouch(const int32_t aControllerIndex) override;
+  void SetScrolledDelta(const int32_t aControllerIndex, const float aScrollDeltaX, const float aScrollDeltaY) override;
+  std::vector<Controller> list;
+  ContextWeak context;
+  TogglePtr root;
+  bool modelsLoaded;
+  std::vector<GroupPtr> models;
+  GeometryPtr pointerModel;
+  bool Contains(const int32_t aControllerIndex) {
+    return (aControllerIndex >= 0) && (aControllerIndex < list.size());
+  }
+};
+
+ControllerContainerPtr
+ControllerContainer::Create() {
+  return std::make_shared<ControllerContainer>();
+}
+
+ControllerContainer::~ControllerContainer() {
+  if (root) {
+    root->RemoveFromParents();
+    root = nullptr;
+  }
+}
+
+void
+ControllerContainer::SetUpModelsGroup(const int32_t aModelIndex) {
+  if (models.size() >= aModelIndex) {
+    models.resize((size_t)(aModelIndex + 1));
+  }
+  if (!models[aModelIndex]) {
+    models[aModelIndex] = std::move(Group::Create(context));
+  }
+}
+
+void
+ControllerContainer::CreateController(const int32_t aControllerIndex, const int32_t aModelIndex) {
+  if ((size_t)aControllerIndex >= list.size()) {
+    list.resize((size_t)aControllerIndex + 1);
+  }
+  Controller& controller = list[aControllerIndex];
+  controller.index = aControllerIndex;
+  if (!controller.transform && (aModelIndex >= 0)) {
+    SetUpModelsGroup(aModelIndex);
+    controller.transform = Transform::Create(context);
+    if ((models.size() >= aModelIndex) && models[aModelIndex]) {
+      controller.transform->AddNode(models[aModelIndex]);
+      if (pointerModel) {
+        controller.transform->AddNode(pointerModel);
+      }
+      if (root) {
+        root->AddNode(controller.transform);
+        root->ToggleChild(*controller.transform, false);
+      }
+    } else {
+      VRB_LOG("FAILED TO ADD MODEL");
+    }
+  }
+}
+
+void
+ControllerContainer::DestroyController(const int32_t aControllerIndex) {
+  if (Contains(aControllerIndex)) {
+    list[aControllerIndex].Reset();
+  }
+}
+
+void
+ControllerContainer::SetEnabled(const int32_t aControllerIndex, const bool aEnabled) {
+  if (!Contains(aControllerIndex)) {
+    return;
+  }
+  list[aControllerIndex].enabled = aEnabled;
+  if (!aEnabled) {
+    SetVisible(aControllerIndex, false);
+  }
+}
+
+void
+ControllerContainer::SetVisible(const int32_t aControllerIndex, const bool aVisible) {
+  if (!Contains(aControllerIndex)) {
+    return;
+  }
+  Controller& controller = list[aControllerIndex];
+  if (controller.transform) {
+    root->ToggleChild(*controller.transform, aVisible);
+  }
+}
+
+void
+ControllerContainer::SetTransform(const int32_t aControllerIndex, const vrb::Matrix& aTransform) {
+  if (!Contains(aControllerIndex)) {
+    return;
+  }
+  Controller& controller = list[aControllerIndex];
+  controller.transformMatrix = aTransform;
+  if (controller.transform) {
+    controller.transform->SetTransform(aTransform);
+  }
+}
+
+void
+ControllerContainer::SetButtonState(const int32_t aControllerIndex, const int32_t aWhichButton, const bool aPressed) {
+  if (!Contains(aControllerIndex)) {
+    return;
+  }
+  list[aControllerIndex].pressed = aPressed;
+}
+
+void
+ControllerContainer::SetTouchPosition(const int32_t aControllerIndex, const float aTouchX, const float aTouchY) {
+  if (!Contains(aControllerIndex)) {
+    return;
+  }
+  Controller& controller = list[aControllerIndex];
+  controller.touched = true;
+  controller.touchX = aTouchX;
+  controller.touchY = aTouchY;
+}
+
+void
+ControllerContainer::EndTouch(const int32_t aControllerIndex) {
+  if (!Contains(aControllerIndex)) {
+    return;
+  }
+  list[aControllerIndex].touched = false;
+}
+
+void
+ControllerContainer::SetScrolledDelta(const int32_t aControllerIndex, const float aScrollDeltaX, const float aScrollDeltaY) {
+  if (!Contains(aControllerIndex)) {
+    return;
+  }
+  Controller& controller = list[aControllerIndex];
+  controller.scrollDeltaX = aScrollDeltaX;
+  controller.scrollDeltaY = aScrollDeltaY;
+}
 
 } // namespace
 
@@ -158,8 +351,7 @@ struct BrowserWorld::State {
   ParserObjPtr parser;
   GroupPtr root;
   LightPtr light;
-  int32_t controllerCount;
-  std::vector<ControllerRecord> controllers;
+  ControllerContainerPtr controllers;
   CullVisitorPtr cullVisitor;
   DrawableListPtr drawList;
   CameraPtr leftCamera;
@@ -176,8 +368,12 @@ struct BrowserWorld::State {
   jmethodID handleGestureMethod;
   GestureDelegateConstPtr gestures;
   bool windowsInitialized;
-  State() : paused(true), glInitialized(false), controllerCount(0), env(nullptr), nearClip(0.1f), farClip(100.0f), activity(nullptr),
-            dispatchCreateWidgetMethod(nullptr), handleMotionEventMethod(nullptr), handleScrollEventMethod(nullptr), handleAudioPoseMethod(nullptr), handleGestureMethod(nullptr),
+
+  State() : paused(true), glInitialized(false), env(nullptr), nearClip(0.1f),
+            farClip(100.0f), activity(nullptr),
+            dispatchCreateWidgetMethod(nullptr), handleMotionEventMethod(nullptr),
+            handleScrollEventMethod(nullptr), handleAudioPoseMethod(nullptr),
+            handleGestureMethod(nullptr),
             windowsInitialized(false) {
     context = Context::Create();
     contextWeak = context;
@@ -189,6 +385,9 @@ struct BrowserWorld::State {
     root->AddLight(light);
     cullVisitor = CullVisitor::Create(contextWeak);
     drawList = DrawableList::Create(contextWeak);
+    controllers = ControllerContainer::Create();
+    controllers->context = contextWeak;
+    controllers->root = Toggle::Create(contextWeak);
   }
 
   void InitializeWindows();
@@ -219,11 +418,12 @@ BrowserWorld::State::InitializeWindows() {
 void
 BrowserWorld::State::UpdateControllers() {
   std::vector<Widget*> active;
-  for (ControllerRecord& record: controllers) {
-    vrb::Matrix transform = device->GetControllerTransform(record.index);
-    record.controller->SetTransform(transform);
-    vrb::Vector start = transform.MultiplyPosition(vrb::Vector());
-    vrb::Vector direction = transform.MultiplyDirection(vrb::Vector(0.0f, 0.0f, -1.0f));
+  for (Controller& controller: controllers->list) {
+    if (!controller.enabled || (controller.index < 0)) {
+      continue;
+    }
+    vrb::Vector start = controller.transformMatrix.MultiplyPosition(vrb::Vector());
+    vrb::Vector direction = controller.transformMatrix.MultiplyDirection(vrb::Vector(0.0f, 0.0f, -1.0f));
     WidgetPtr hitWidget;
     float hitDistance = farClip;
     vrb::Vector hitPoint;
@@ -240,47 +440,44 @@ BrowserWorld::State::UpdateControllers() {
         }
       }
     }
-    if (gestures) {
-      const int32_t gestureCount = gestures->GetGestureCount();
-      for (int32_t count = 0; count < gestureCount; count++) {
-        const GestureType type = gestures->GetGestureType(count);
-        int32_t javaType = -1;
-        if (type == GestureType::SwipeLeft) {
-          javaType = GestureSwipeLeft;
-        } else if (type == GestureType::SwipeRight) {
-          javaType = GestureSwipeRight;
-        }
-        if (javaType >= 0 &&handleGestureMethod) {
-         env->CallVoidMethod(activity, handleGestureMethod, javaType);
-        }
-      }
-    }
     if (handleMotionEventMethod && hitWidget) {
       active.push_back(hitWidget.get());
       float theX = 0.0f, theY = 0.0f;
       hitWidget->ConvertToWidgetCoordinates(hitPoint, theX, theY);
-      bool changed = false; // not used yet.
-      bool pressed = device->GetControllerButtonState(record.index, 0, changed);
       const uint32_t handle = hitWidget->GetHandle();
-      if ((record.xx != theX) || (record.yy != theY) || (record.pressed != pressed) || record.widget != handle) {
-        env->CallVoidMethod(activity, handleMotionEventMethod, handle, record.index, pressed,
+      if ((controller.pointerX != theX) ||
+          (controller.pointerY != theY) ||
+          (controller.pressed != controller.wasPressed) || controller.widget != handle) {
+        env->CallVoidMethod(activity, handleMotionEventMethod, handle, controller.index,
+                            controller.pressed,
                             theX, theY);
-        record.widget = handle;
-        record.xx = theX;
-        record.yy = theY;
-        record.pressed = pressed;
+        controller.widget = handle;
+        controller.pointerX = theX;
+        controller.pointerY = theY;
+        controller.wasPressed = controller.pressed;
       }
-      float scrollX = 0.0f, scrollY = 0.0f;
-      if (device->GetControllerScrolled(record.index, scrollX, scrollY)) {
-        if (record.touched && !record.pressed) {
-          env->CallVoidMethod(activity, handleScrollEventMethod, record.widget, record.index,
-                              (scrollX - record.touchPadX) * kScrollFactor, (scrollY - record.touchPadY) * kScrollFactor);
+      if ((controller.scrollDeltaX != 0.0f) || controller.scrollDeltaY != 0.0f) {
+        env->CallVoidMethod(activity, handleScrollEventMethod, controller.widget, controller.index,
+                            controller.scrollDeltaX, controller.scrollDeltaY);
+        controller.scrollDeltaX = 0.0f;
+        controller.scrollDeltaY = 0.0f;
+      }
+      if (!controller.pressed) {
+        if (controller.touched) {
+          if (!controller.wasTouched) {
+            controller.wasTouched = controller.touched;
+          } else {
+            env->CallVoidMethod(activity, handleScrollEventMethod, controller.widget,
+                                controller.index,
+                                (controller.touchX - controller.lastTouchX) * kScrollFactor,
+                                (controller.touchY - controller.lastTouchY) * kScrollFactor);
+          }
+          controller.lastTouchX = controller.touchX;
+          controller.lastTouchY = controller.touchY;
+        } else {
+          controller.wasTouched = false;
+          controller.lastTouchX = controller.lastTouchY = 0.0f;
         }
-        record.touched = true;
-        record.touchPadX = scrollX;
-        record.touchPadY = scrollY;
-      } else {
-        record.touched = false;
       }
     }
   }
@@ -288,6 +485,21 @@ BrowserWorld::State::UpdateControllers() {
     widget->TogglePointer(true);
   }
   active.clear();
+  if (gestures) {
+    const int32_t gestureCount = gestures->GetGestureCount();
+    for (int32_t count = 0; count < gestureCount; count++) {
+      const GestureType type = gestures->GetGestureType(count);
+      int32_t javaType = -1;
+      if (type == GestureType::SwipeLeft) {
+        javaType = GestureSwipeLeft;
+      } else if (type == GestureType::SwipeRight) {
+        javaType = GestureSwipeRight;
+      }
+      if (javaType >= 0 &&handleGestureMethod) {
+        env->CallVoidMethod(activity, handleGestureMethod, javaType);
+      }
+    }
+  }
 }
 
 WidgetPtr
@@ -323,23 +535,26 @@ BrowserWorld::GetWeakContext() {
 
 void
 BrowserWorld::RegisterDeviceDelegate(DeviceDelegatePtr aDelegate) {
+  DeviceDelegatePtr previousDevice = std::move(m.device);
   m.device = aDelegate;
   if (m.device) {
     m.device->SetClearColor(vrb::Color(0.15f, 0.15f, 0.15f));
     m.leftCamera = m.device->GetCamera(DeviceDelegate::CameraEnum::Left);
     m.rightCamera = m.device->GetCamera(DeviceDelegate::CameraEnum::Right);
-    m.controllerCount = m.device->GetControllerCount();
+    ControllerDelegatePtr delegate = m.controllers;
     m.device->SetClipPlanes(m.nearClip, m.farClip);
+    m.device->SetControllerDelegate(delegate);
     m.gestures = m.device->GetGestureDelegate();
-  } else {
+  } else if (previousDevice) {
     m.leftCamera = m.rightCamera = nullptr;
-    for (ControllerRecord& record: m.controllers) {
-      if (record.controller) {
-        m.root->RemoveNode(*record.controller);
+    for (Controller& controller: m.controllers->list) {
+      if (controller.transform) {
+        controller.transform->RemoveFromParents();
       }
+      controller.Reset();
+
     }
-    m.controllers.clear();
-    m.controllerCount = 0;
+    previousDevice->ReleaseControllerDelegate();
     m.gestures = nullptr;
   }
 }
@@ -392,7 +607,7 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
 
   m.handleScrollEventMethod = m.env->GetMethodID(clazz, kHandleScrollEvent, kHandleScrollEventSignature);
 
-  if (m.handleScrollEventMethod) {
+  if (!m.handleScrollEventMethod) {
     VRB_LOG("Failed to find Java method: %s %s", kHandleScrollEvent, kHandleScrollEventSignature)
   }
 
@@ -415,20 +630,20 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
 
   m.InitializeWindows();
 
-  if ((m.controllers.size() == 0) && (m.controllerCount > 0)) {
-    for (int32_t ix = 0; ix < m.controllerCount; ix++) {
-      ControllerRecord record(ix);
-      record.controller = Transform::Create(m.contextWeak);
-      const std::string fileName = m.device->GetControllerModelName(ix);
+  if (!m.controllers->modelsLoaded) {
+    const int32_t modelCount = m.device->GetControllerModelCount();
+    for (int32_t index = 0; index < modelCount; index++) {
+      const std::string fileName = m.device->GetControllerModelName(index);
       if (!fileName.empty()) {
-        m.factory->SetModelRoot(record.controller);
-        m.parser->LoadModel(m.device->GetControllerModelName(ix));
-        m.root->AddNode(record.controller);
+        m.controllers->SetUpModelsGroup(index);
+        m.factory->SetModelRoot(m.controllers->models[index]);
+        m.parser->LoadModel(fileName);
       }
-      m.controllers.push_back(std::move(record));
     }
-    AddControllerPointer();
+    m.root->AddNode(m.controllers->root);
+    CreateControllerPointer();
     CreateFloor();
+    m.controllers->modelsLoaded = true;
   }
 }
 
@@ -556,8 +771,8 @@ BrowserWorld::AddWidget(const WidgetPlacement& placement, int32_t aCallbackId) {
 
   WidgetPtr widget = Widget::Create(m.contextWeak,
                                     placement.widgetType,
-                                    placement.width * m.displayDensity,
-                                    placement.height * m.displayDensity,
+                                    (int32_t)(placement.width * m.displayDensity),
+                                    (int32_t)(placement.height * m.displayDensity),
                                     worldWidth);
   widget->SetAddCallbackId(aCallbackId);
   widget->GetWorldSize(worldWidth, worldHeight);
@@ -662,7 +877,10 @@ BrowserWorld::CreateFloor() {
 }
 
 void
-BrowserWorld::AddControllerPointer() {
+BrowserWorld::CreateControllerPointer() {
+  if (m.controllers->pointerModel) {
+    return;
+  }
   VertexArrayPtr array = VertexArray::Create(m.contextWeak);
   const float kLength = -5.0f;
   const float kHeight = 0.0008f;
@@ -713,8 +931,11 @@ BrowserWorld::AddControllerPointer() {
   index.push_back(5);
   geometry->AddFace(index, uvIndex, index);
 
-  for (ControllerRecord& record: m.controllers) {
-    record.controller->AddNode(geometry);
+  m.controllers->pointerModel = std::move(geometry);
+  for (Controller& controller: m.controllers->list) {
+    if (controller.transform) {
+      controller.transform->AddNode(m.controllers->pointerModel);
+    }
   }
 }
 
