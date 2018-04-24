@@ -13,6 +13,7 @@ import org.mozilla.geckoview.GeckoSessionSettings;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -64,7 +65,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         mContentListeners = new LinkedList<>();
         mSessionChangeListeners = new LinkedList<>();
 
-        mSessions = new HashMap<>();
+        mSessions = new LinkedHashMap<>();
     }
 
     public void setContext(Context aContext) {
@@ -129,7 +130,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         }
     }
 
-    private void dumpState(GeckoSession aSession, GeckoSession.ContentDelegate aListener) {
+    public void dumpState(GeckoSession aSession, GeckoSession.ContentDelegate aListener) {
         String title = "";
         if (aSession != null) {
             State state = mSessions.get(aSession.hashCode());

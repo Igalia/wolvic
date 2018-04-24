@@ -24,7 +24,7 @@ import java.util.List;
 public class BrowserHeaderWidget extends UIWidget
         implements TabLayout.OnTabSelectedListener, CustomTabLayout.Delegate,
         SessionStore.SessionChangeListener, GeckoSession.ContentDelegate, GeckoSession.ProgressDelegate,
-        MoreMenuWidget.Delegate {
+        MoreMenuWidget.Delegate, TabOverflowWidget.Delegate {
     private Context mContext;
     private CustomTabLayout mTabContainer;
     private ImageButton mAddTabButton;
@@ -35,6 +35,7 @@ public class BrowserHeaderWidget extends UIWidget
     private int mHeaderButtonMargin;
     private int mTabLayoutAddMargin;
     private MoreMenuWidget mMoreMenu;
+    private TabOverflowWidget mTabOverflowMenu;
     private boolean mIsPrivateBrowsing = false;
     private boolean mAnimateTabs = true;
 
@@ -87,6 +88,7 @@ public class BrowserHeaderWidget extends UIWidget
             }
         });
 
+
         ImageButton tabsScrollRightButton = findViewById(R.id.tabScrollRightButton);
         tabsScrollRightButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -99,7 +101,7 @@ public class BrowserHeaderWidget extends UIWidget
         tabListAllButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                showTabOverflow();
             }
         });
 
@@ -168,6 +170,13 @@ public class BrowserHeaderWidget extends UIWidget
         else {
             mWidgetManager.setWidgetVisible(mMoreMenu.getHandle(), true);
         }
+        hideTabOverflow();
+    }
+
+    private void hideMoreMenu() {
+        if (mMoreMenu != null && mMoreMenu.getVisibility() == View.VISIBLE) {
+            mWidgetManager.setWidgetVisible(mMoreMenu.getHandle(), false);
+        }
     }
 
     private void addTabClick() {
@@ -195,6 +204,47 @@ public class BrowserHeaderWidget extends UIWidget
         tab.setCustomView(tabView);
         mTabContainer.addTab(tab, aSelected);
         return tab;
+    }
+
+    private void showTabOverflow() {
+        if (mTabOverflowMenu == null) {
+            WidgetPlacement placement = new WidgetPlacement();
+            placement.widgetType = Widget.TabOverflowMenu;
+            placement.parentHandle = getHandle();
+            placement.width = 350;
+            placement.height = 275;
+            placement.parentAnchorX = 1.0f;
+            placement.parentAnchorY = 0.0f;
+            placement.anchorX = 1.0f;
+            placement.anchorY = 1.0f;
+            placement.translationX = -10.0f;
+            placement.translationY = -120.0f;
+            placement.translationZ = 2.0f;
+
+            mWidgetManager.addWidget(placement, new WidgetManagerDelegate.WidgetAddCallback() {
+                @Override
+                public void onWidgetAdd(Widget aWidget) {
+                    mTabOverflowMenu = (TabOverflowWidget) aWidget;
+                    mTabOverflowMenu.setDelegate(BrowserHeaderWidget.this);
+                    mTabOverflowMenu.updatePrivateBrowsing(mIsPrivateBrowsing);
+                }
+            });
+        } else if (mTabOverflowMenu.getVisibility() == View.VISIBLE) {
+            // Hide the tab overflow menu if we click the button while it's already opened
+            hideTabOverflow();
+
+        } else {
+            mTabOverflowMenu.onShow();
+            mWidgetManager.setWidgetVisible(mTabOverflowMenu.getHandle(), true);
+        }
+        hideMoreMenu();
+    }
+
+    private void hideTabOverflow() {
+        if (mTabOverflowMenu != null && mTabOverflowMenu.getVisibility() == View.VISIBLE) {
+            mTabOverflowMenu.onHide();
+            mWidgetManager.setWidgetVisible(mTabOverflowMenu.getHandle(), false);
+        }
     }
 
     @Override
@@ -323,6 +373,9 @@ public class BrowserHeaderWidget extends UIWidget
         fillTabs();
         if (mMoreMenu != null) {
             mMoreMenu.updatePrivateBrowsing(mIsPrivateBrowsing);
+        }
+        if (mTabOverflowMenu != null) {
+            mTabOverflowMenu.updatePrivateBrowsing(mIsPrivateBrowsing);
         }
         mAnimateTabs = prevAnimateTabs;
     }
@@ -473,4 +526,16 @@ public class BrowserHeaderWidget extends UIWidget
     public void onMenuCloseClick() {
         mWidgetManager.setWidgetVisible(mMoreMenu.getHandle(), false);
     }
+
+    // TabOverFlow Delegate
+
+    @Override
+    public void onTabOverflowClick(int aSessionId) {
+        if (SessionStore.get().getCurrentSessionId() != aSessionId) {
+            SessionStore.get().setCurrentSession(aSessionId);
+        }
+        hideTabOverflow();
+    }
+
+
 }

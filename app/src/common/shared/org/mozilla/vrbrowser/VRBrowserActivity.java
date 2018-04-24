@@ -25,6 +25,7 @@ import org.mozilla.vrbrowser.ui.BrowserHeaderWidget;
 import org.mozilla.vrbrowser.ui.MoreMenuWidget;
 import org.mozilla.vrbrowser.ui.OffscreenDisplay;
 import org.mozilla.vrbrowser.ui.NavigationBar;
+import org.mozilla.vrbrowser.ui.TabOverflowWidget;
 import org.mozilla.vrbrowser.ui.UIWidget;
 
 import java.util.HashMap;
@@ -191,6 +192,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             widget = new BrowserHeaderWidget(this);
         } else if (aType == Widget.MoreMenu) {
             widget = new MoreMenuWidget(this);
+        } else if (aType == Widget.TabOverflowMenu) {
+            widget = new TabOverflowWidget(this);
         }
 
         if (widget != null) {
@@ -320,7 +323,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         });
     }
 
-
     // WidgetManagerDelegate
     @Override
     public void addWidget(final WidgetPlacement aPlacement, final WidgetAddCallback aCallback) {
@@ -346,11 +348,15 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 setWidgetVisibleNative(aHandle, aVisible);
             }
         });
+
+        Widget widget = mWidgets.get(aHandle);
+        if (widget != null) {
+            ((UIWidget) widget).setVisibility(aVisible ? View.VISIBLE : View.GONE);
+        }
     }
 
     @Override
     public void removeWidget(final int aHandle) {
-
         Widget widget = mWidgets.remove(aHandle);
         if (widget instanceof View) {
             mWidgetContainer.removeView((View) widget);
