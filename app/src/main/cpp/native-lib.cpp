@@ -152,12 +152,12 @@ InputCallback(struct android_app *aApp, AInputEvent *aEvent) {
 		}
 		else if (keyCode == AKEYCODE_DPAD_LEFT) {
 		  // Wheel moved: simulate scroll
-		  ctx->mDevice->WheelScroll(-0.25);
+		  ctx->mDevice->WheelScroll(-2.0);
 		  return 1;
 		}
 		else if (keyCode == AKEYCODE_DPAD_RIGHT) {
 		  // Wheel moved: simulate scroll
-		  ctx->mDevice->WheelScroll(0.25);
+		  ctx->mDevice->WheelScroll(2.0);
 		  return 1;
 		}
 	}

@@ -102,6 +102,7 @@ struct DeviceDelegateSVR::State {
   float far = 100.f;
   int32_t controllerHandle = -1;
   svrControllerState controllerState = {};
+  svrControllerState headControllerState = {};
   vrb::Matrix controllerTransform = vrb::Matrix::Identity();
   crow::ElbowModelPtr elbow;
   bool usingHeadTrackingInput = false;
@@ -204,12 +205,19 @@ struct DeviceDelegateSVR::State {
 
   void SetButtonState(const int32_t aController) {
     bool pressed = false;
+
+    svrControllerState& state = aController == kHeadControllerId ? headControllerState : controllerState;
+
     for (int32_t button = 0; button < kButtonCount; button++) {
-      if ((controllerState.buttonState & SVR_BUTTONS[button]) != 0) {
+      if ((state.buttonState & SVR_BUTTONS[button]) != 0) {
         pressed = true;
       }
     }
     controller->SetButtonState(aController, 0, pressed);
+    if (aController == kHeadControllerId) {
+      // Workaround for repeated KEY_DOWN events bug in ODG
+      state.buttonState = 0;
+    }
   }
 
 
@@ -230,6 +238,12 @@ struct DeviceDelegateSVR::State {
     if (fabsf(scrollDelta) != 0.0f) {
       controller->SetScrolledDelta(kHeadControllerId, 0.0f, scrollDelta);
       scrollDelta = 0.0f;
+    }
+    if (headControllerState.isTouching) {
+      controller->SetTouchPosition(kHeadControllerId, headControllerState.analog2D[0].x, headControllerState.analog2D[0].y);
+      headControllerState.isTouching = false;
+    } else {
+      controller->EndTouch(kHeadControllerId);
     }
   }
 
@@ -265,7 +279,7 @@ struct DeviceDelegateSVR::State {
     controllerTransform = vrb::Matrix::Rotation(quat);
     controllerTransform = elbow->GetTransform(ElbowModel::HandEnum::Right, head,
                                               controllerTransform);
-    controller->SetTransform(1, controllerTransform);
+    controller->SetTransform(kControllerId, controllerTransform);
     SetButtonState(kControllerId);
     if (controllerState.isTouching) {
       controller->SetTouchPosition(kControllerId, controllerState.analog2D[0].x, controllerState.analog2D[0].y);
@@ -510,20 +524,18 @@ DeviceDelegateSVR::ExitApp() {
 
 void
 DeviceDelegateSVR::UpdateButtonState(int32_t aWhichButton, bool pressed) {
-  //pressed = true;
   if (pressed) {
-    m.controllerState.buttonState |= SVR_BUTTONS[aWhichButton];
+    m.headControllerState.buttonState |= SVR_BUTTONS[aWhichButton];
   } else {
-    m.controllerState.buttonState &= ~SVR_BUTTONS[aWhichButton];
+    m.headControllerState.buttonState &= ~SVR_BUTTONS[aWhichButton];
   }
 }
 
 void
 DeviceDelegateSVR::UpdateTrackpad(float x, float y) {
-  if (m.usingHeadTrackingInput) {
-    m.controllerState.analog2D[0].x = x;
-    m.controllerState.analog2D[0].y = y;
-  }
+  m.headControllerState.analog2D[0].x = x;
+  m.headControllerState.analog2D[0].y = y;
+  m.headControllerState.isTouching = true;
 }
 
 void
