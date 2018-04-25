@@ -26,6 +26,12 @@
 
 namespace crow {
 
+const uint64_t SVR_BUTTONS[] = { svrControllerButton::PrimaryIndexTrigger, svrControllerButton::PrimaryThumbstick };
+const int32_t kButtonCount = sizeof(SVR_BUTTONS) / sizeof(SVR_BUTTONS[0]);
+
+const int32_t kHeadControllerId = 0;
+const int32_t kControllerId = 1;
+
 class SVREyeSwapChain;
 typedef std::shared_ptr<SVREyeSwapChain> SVREyeSwapChainPtr;
 
@@ -96,8 +102,14 @@ struct DeviceDelegateSVR::State {
   float far = 100.f;
   int32_t controllerHandle = -1;
   svrControllerState controllerState = {};
+  svrControllerState headControllerState = {};
   vrb::Matrix controllerTransform = vrb::Matrix::Identity();
   crow::ElbowModelPtr elbow;
+  bool usingHeadTrackingInput = false;
+  float scrollDelta = 0.0f;
+  bool headControllerCreated = false;
+  bool controllerCreated = false;
+  ControllerDelegatePtr controller;
 
   int32_t cameraIndex(CameraEnum aWhich) {
     if (CameraEnum::Left == aWhich) { return 0; }
@@ -191,21 +203,89 @@ struct DeviceDelegateSVR::State {
     }
   }
 
+  void SetButtonState(const int32_t aController) {
+    bool pressed = false;
+
+    svrControllerState& state = aController == kHeadControllerId ? headControllerState : controllerState;
+
+    for (int32_t button = 0; button < kButtonCount; button++) {
+      if ((state.buttonState & SVR_BUTTONS[button]) != 0) {
+        pressed = true;
+      }
+    }
+    controller->SetButtonState(aController, 0, pressed);
+    if (aController == kHeadControllerId) {
+      // Workaround for repeated KEY_DOWN events bug in ODG
+      state.buttonState = 0;
+    }
+  }
+
+
+  void FallbackToHeadTrackingInput(const vrb::Matrix & head) {
+    if (!headControllerCreated || !usingHeadTrackingInput) {
+      if (!headControllerCreated) {
+        controller->CreateController(kHeadControllerId, -1);
+        headControllerCreated = true;
+      }
+      controller->SetEnabled(kHeadControllerId, true);
+      if (controllerCreated) {
+        controller->SetEnabled(kControllerId, false);
+      }
+      usingHeadTrackingInput = true;
+    }
+    controller->SetTransform(kHeadControllerId, head);
+    SetButtonState(kHeadControllerId);
+    if (fabsf(scrollDelta) != 0.0f) {
+      controller->SetScrolledDelta(kHeadControllerId, 0.0f, scrollDelta);
+      scrollDelta = 0.0f;
+    }
+    if (headControllerState.isTouching) {
+      controller->SetTouchPosition(kHeadControllerId, headControllerState.analog2D[0].x, headControllerState.analog2D[0].y);
+      headControllerState.isTouching = false;
+    } else {
+      controller->EndTouch(kHeadControllerId);
+    }
+  }
 
   void UpdateControllers(const vrb::Matrix & head) {
+    if (!controller) {
+      return;
+    }
     if (controllerHandle < 0) {
+      FallbackToHeadTrackingInput(head);
       return;
     }
 
     controllerState = svrControllerGetState(controllerHandle);
     if (controllerState.connectionState != svrControllerConnectionState::kConnected) {
+      FallbackToHeadTrackingInput(head);
       return;
     }
 
+    if (usingHeadTrackingInput || !controllerCreated) {
+      if (!controllerCreated) {
+        controller->CreateController(kControllerId, 0);
+        controllerCreated = true;
+      }
+      if (usingHeadTrackingInput) {
+        controller->SetEnabled(kHeadControllerId, false);
+      }
+      controller->SetEnabled(kControllerId, true);
+      controller->SetVisible(kControllerId, true);
+      usingHeadTrackingInput = false;
+    }
     const svrQuaternion& rotation = controllerState.rotation;
     vrb::Quaternion quat(-rotation.x, -rotation.y, rotation.z, rotation.w);
     controllerTransform = vrb::Matrix::Rotation(quat);
-    controllerTransform = elbow->GetTransform(ElbowModel::HandEnum::Right, head, controllerTransform);
+    controllerTransform = elbow->GetTransform(ElbowModel::HandEnum::Right, head,
+                                              controllerTransform);
+    controller->SetTransform(kControllerId, controllerTransform);
+    SetButtonState(kControllerId);
+    if (controllerState.isTouching) {
+      controller->SetTouchPosition(kControllerId, controllerState.analog2D[0].x, controllerState.analog2D[0].y);
+    } else {
+      controller->EndTouch(kControllerId);
+    }
   }
 };
 
@@ -243,36 +323,31 @@ DeviceDelegateSVR::SetClipPlanes(const float aNear, const float aFar) {
   m.UpdatePerspective(info);
 }
 
+void
+DeviceDelegateSVR::SetControllerDelegate(ControllerDelegatePtr& aController) {
+  m.controller = aController;
+}
+
+void
+DeviceDelegateSVR::ReleaseControllerDelegate() {
+  m.controller = nullptr;
+}
+
 int32_t
-DeviceDelegateSVR::GetControllerCount() const {
+DeviceDelegateSVR::GetControllerModelCount() const {
   return 1;
 }
 
 const std::string
-DeviceDelegateSVR::GetControllerModelName(const int32_t) const {
+DeviceDelegateSVR::GetControllerModelName(const int32_t aModelIndex) const {
   // FIXME: Need SVR based controller
   static const std::string name("vr_controller_daydream.obj");
-  return name;
+  return aModelIndex == 0 ? name : "";
 }
 
 void
 DeviceDelegateSVR::ProcessEvents() {
 
-}
-
-const vrb::Matrix &
-DeviceDelegateSVR::GetControllerTransform(const int32_t aWhichController) {
-  return m.controllerTransform;
-}
-
-bool
-DeviceDelegateSVR::GetControllerButtonState(const int32_t aWhichController, const int32_t aWhichButton, bool& aChangedState) {
-  static const uint64_t SVR_BUTTONS[] = { svrControllerButton::PrimaryIndexTrigger, svrControllerButton::PrimaryThumbstick };
-  if (aWhichButton > sizeof(SVR_BUTTONS)/ sizeof(SVR_BUTTONS[0])) {
-    return false;
-  }
-
-  return (m.controllerState.buttonState & SVR_BUTTONS[aWhichButton]) != 0;
 }
 
 void
@@ -328,7 +403,7 @@ DeviceDelegateSVR::BindEye(const CameraEnum aWhich) {
   }
 
   if (m.currentEye >= 0) {
-    svrEndEye(kEyeBufferStereoSeparate, (svrWhichEye) m.currentEye);
+    svrEndEye((svrWhichEye) m.currentEye);
   }
 
   const auto &swapChain = m.eyeSwapChains[index];
@@ -338,7 +413,7 @@ DeviceDelegateSVR::BindEye(const CameraEnum aWhich) {
   if (m.currentFBO) {
     m.currentFBO->Bind();
     m.currentEye = index;
-    svrBeginEye(kEyeBufferStereoSeparate, (svrWhichEye) m.currentEye);
+    svrBeginEye((svrWhichEye) m.currentEye);
     VRB_CHECK(glViewport(0, 0, m.renderWidth, m.renderHeight));
     VRB_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
   } else {
@@ -354,7 +429,7 @@ DeviceDelegateSVR::EndFrame() {
   }
 
   if (m.currentEye >= 0) {
-    svrEndEye(kEyeBufferStereoSeparate, (svrWhichEye) m.currentEye);
+    svrEndEye((svrWhichEye) m.currentEye);
     m.currentEye = -1;
   }
 
@@ -376,18 +451,16 @@ DeviceDelegateSVR::EndFrame() {
   // Field of view used to generate this frame (larger than device fov to provide timewarp margin).
   // A 0 value uses the SVR fov.
   params.fieldOfView = 0.0;
-  // Separate eye buffers for the left and right eyes.
-  params.eyeBufferType = kEyeBufferStereoSeparate;
 
   for (uint32_t eyeIndex = 0; eyeIndex < kNumEyes; eyeIndex++) {
     uint32_t swapChainIndex = m.frameIndex % m.eyeSwapChains[eyeIndex]->swapChainLength;
-    params.eyeLayers[eyeIndex].imageType = kTypeTexture;
-    params.eyeLayers[eyeIndex].imageHandle = m.eyeSwapChains[eyeIndex]->textures[swapChainIndex];
-    params.eyeLayers[eyeIndex].imageCoords = m.layoutCoords;
+    params.renderLayers[eyeIndex].imageType = kTypeTexture;
+    params.renderLayers[eyeIndex].imageHandle = m.eyeSwapChains[eyeIndex]->textures[swapChainIndex];
+    params.renderLayers[eyeIndex].imageCoords = m.layoutCoords;
     if (eyeIndex == kLeftEye) {
-      params.eyeLayers[eyeIndex].eyeMask = kEyeMaskLeft;
+      params.renderLayers[eyeIndex].eyeMask = kEyeMaskLeft;
     } else {
-      params.eyeLayers[eyeIndex].eyeMask = kEyeMaskRight;
+      params.renderLayers[eyeIndex].eyeMask = kEyeMaskRight;
     }
   }
 
@@ -447,6 +520,27 @@ DeviceDelegateSVR::IsInVRMode() const {
 bool
 DeviceDelegateSVR::ExitApp() {
     return false;
+}
+
+void
+DeviceDelegateSVR::UpdateButtonState(int32_t aWhichButton, bool pressed) {
+  if (pressed) {
+    m.headControllerState.buttonState |= SVR_BUTTONS[aWhichButton];
+  } else {
+    m.headControllerState.buttonState &= ~SVR_BUTTONS[aWhichButton];
+  }
+}
+
+void
+DeviceDelegateSVR::UpdateTrackpad(float x, float y) {
+  m.headControllerState.analog2D[0].x = x;
+  m.headControllerState.analog2D[0].y = y;
+  m.headControllerState.isTouching = true;
+}
+
+void
+DeviceDelegateSVR::WheelScroll(float speed) {
+  m.scrollDelta += speed;
 }
 
 DeviceDelegateSVR::DeviceDelegateSVR(State &aState) : m(aState) {}

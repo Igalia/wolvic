@@ -15,6 +15,7 @@
 #include "vrb/Matrix.h"
 #include "vrb/Vector.h"
 
+#include <array>
 #include <vector>
 
 #include <wvr/wvr.h>
@@ -26,6 +27,20 @@
 #include <wvr/wvr_events.h>
 
 namespace crow {
+
+static const int32_t kMaxControllerCount = 2;
+
+struct Controller {
+  int32_t index;
+  WVR_DeviceType type;
+  bool enabled;
+  bool touched;
+  Controller()
+      : index(-1)
+      , enabled(false)
+      , touched(false)
+  {}
+};
 
 struct DeviceDelegateWaveVR::State {
   vrb::ContextWeak context;
@@ -41,19 +56,19 @@ struct DeviceDelegateWaveVR::State {
   std::vector<vrb::FBOPtr> leftFBOQueue;
   std::vector<vrb::FBOPtr> rightFBOQueue;
   vrb::CameraEyePtr cameras[2];
-  vrb::Matrix controller;
   uint32_t renderWidth;
   uint32_t renderHeight;
   WVR_DevicePosePair_t devicePairs[WVR_DEVICE_COUNT_LEVEL_1];
   ElbowModelPtr elbow;
+  ControllerDelegatePtr delegate;
   GestureDelegatePtr gestures;
+  std::array<Controller, kMaxControllerCount> controllers;
   State()
       : isRunning(true)
       , near(0.1f)
       , far(100.f)
       , leftFBOIndex(0)
       , rightFBOIndex(0)
-      , controller(vrb::Matrix::Identity())
       , leftTextureQueue(nullptr)
       , rightTextureQueue(nullptr)
       , renderWidth(0)
@@ -61,6 +76,14 @@ struct DeviceDelegateWaveVR::State {
   {
     memset((void*)devicePairs, 0, sizeof(WVR_DevicePosePair_t) * WVR_DEVICE_COUNT_LEVEL_1);
     gestures = GestureDelegate::Create();
+    for (int32_t index = 0; index < kMaxControllerCount; index++) {
+      controllers[index].index = index;
+      if (index == 0) {
+        controllers[index].type = WVR_DeviceType_Controller_Right;
+      } else {
+        controllers[index].type = WVR_DeviceType_Controller_Left;
+      }
+    }
   }
 
   int32_t cameraIndex(CameraEnum aWhich) {
@@ -125,6 +148,42 @@ struct DeviceDelegateWaveVR::State {
   void Shutdown() {
 
   }
+
+  void UpdateControllers() {
+    if (!delegate) {
+      return;
+    }
+
+    for (int index = 0; index < kMaxControllerCount; index++) {
+      Controller& controller = controllers[index];
+      if(!WVR_IsDeviceConnected(controller.type)) {
+        if (controller.enabled) {
+          delegate->SetEnabled(index, false);
+          controller.enabled = false;
+        }
+        continue;
+      } else if (!controller.enabled) {
+        controller.enabled = true;
+        delegate->SetEnabled(index, true);
+        delegate->SetVisible(index, true);
+      }
+      bool pressed = false;
+      if (WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Touchpad)) {
+        pressed = true;
+      } else if (WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Bumper)) {
+        pressed = true;
+      }
+      delegate->SetButtonState(index, 0, pressed);
+      if (WVR_GetInputTouchState(controller.type, WVR_InputId_Alias1_Touchpad)) {
+        WVR_Axis_t axis = WVR_GetInputAnalogAxis(controller.type, WVR_InputId_Alias1_Touchpad);
+        delegate->SetTouchPosition(index, axis.x, -axis.y);
+        controllers[index].touched = true;
+      } else if (controllers[index].touched) {
+        controllers[index].touched = false;
+        delegate->EndTouch(index);
+      }
+    }
+  }
 };
 
 DeviceDelegateWaveVRPtr
@@ -162,16 +221,32 @@ DeviceDelegateWaveVR::SetClipPlanes(const float aNear, const float aFar) {
   m.InitializeCameras();
 }
 
+void
+DeviceDelegateWaveVR::SetControllerDelegate(ControllerDelegatePtr& aController) {
+  m.delegate = aController;
+  if (!m.delegate) {
+    return;
+  }
+  for (int32_t index = 0; index < kMaxControllerCount; index++) {
+    m.delegate->CreateController(index, 0);
+  }
+}
+
+void
+DeviceDelegateWaveVR::ReleaseControllerDelegate() {
+  m.delegate = nullptr;
+}
+
 int32_t
-DeviceDelegateWaveVR::GetControllerCount() const {
+DeviceDelegateWaveVR::GetControllerModelCount() const {
   return 1;
 }
 
 const std::string
-DeviceDelegateWaveVR::GetControllerModelName(const int32_t) const {
+DeviceDelegateWaveVR::GetControllerModelName(const int32_t aModelIndex) const {
   // FIXME: Need Focus based controller
   static const std::string name("vr_controller_daydream.obj");
-  return name;
+  return aModelIndex == 0 ? name : "";
 }
 
 void
@@ -336,47 +411,8 @@ DeviceDelegateWaveVR::ProcessEvents() {
         break;
     }
   }
+  m.UpdateControllers();
 }
-
-const vrb::Matrix&
-DeviceDelegateWaveVR::GetControllerTransform(const int32_t aWhichController) {
-  return m.controller;
-}
-
-bool
-DeviceDelegateWaveVR::GetControllerButtonState(const int32_t aWhichController, const int32_t aWhichButton, bool& aChangedState) {
-  bool result = false;
-  static WVR_DeviceType controllerArray[] = {WVR_DeviceType_Controller_Right, WVR_DeviceType_Controller_Left};
-  int controllerCount = sizeof(controllerArray)/sizeof(controllerArray[0]);
-
-  for (int idx = 0; idx < controllerCount; idx++) {
-    if (WVR_GetInputButtonState(controllerArray[idx], WVR_InputId_Alias1_Touchpad)) {
-      result = true;
-    } else if (WVR_GetInputButtonState(controllerArray[idx], WVR_InputId_Alias1_Bumper)) {
-      result = true;
-    }
-  }
-  return result;
-}
-
-bool
-DeviceDelegateWaveVR::GetControllerScrolled(const int32_t aWhichController, float& aScrollX, float& aScrollY) {
-  bool result = false;
-  static WVR_DeviceType controllerArray[] = {WVR_DeviceType_Controller_Right, WVR_DeviceType_Controller_Left};
-  int controllerCount = sizeof(controllerArray)/sizeof(controllerArray[0]);
-
-  for (int idx = 0; idx < controllerCount; idx++) {
-    if (WVR_GetInputTouchState(controllerArray[idx], WVR_InputId_Alias1_Touchpad)) {
-      result = true;
-      WVR_Axis_t axis = WVR_GetInputAnalogAxis(controllerArray[idx], WVR_InputId_Alias1_Touchpad);
-      aScrollX = axis.x;
-      aScrollY = -axis.y;
-    }
-  }
-
-  return result;
-}
-
 
 void
 DeviceDelegateWaveVR::StartFrame() {
@@ -395,18 +431,18 @@ DeviceDelegateWaveVR::StartFrame() {
   } else {
     VRB_LOG("Invalid pose returned");
   }
-
-  WVR_DeviceType role = WVR_GetDefaultControllerRole();
+  if (!m.delegate) {
+    return;
+  }
   for (uint32_t id = WVR_DEVICE_HMD + 1; id < WVR_DEVICE_COUNT_LEVEL_1; id++) {
     if ((m.devicePairs[id].type != WVR_DeviceType_Controller_Right) &&
         (m.devicePairs[id].type != WVR_DeviceType_Controller_Left)) {
       continue;
     }
-
-    if (!WVR_IsDeviceConnected(m.devicePairs[id].type)) {
+    Controller& controller = m.devicePairs[id].type == m.controllers[0].type ? m.controllers[0] : m.controllers[1];
+    if (!controller.enabled) {
       continue;
     }
-
     const WVR_PoseState_t &pose = m.devicePairs[id].pose;
     if (!pose.isValidPose) {
       continue;
@@ -421,7 +457,7 @@ DeviceDelegateWaveVR::StartFrame() {
     } else {
       controllerTransform.TranslateInPlace(kAverageHeight);
     }
-    m.controller = controllerTransform;
+    m.delegate->SetTransform(controller.index, controllerTransform);
   }
 }
 

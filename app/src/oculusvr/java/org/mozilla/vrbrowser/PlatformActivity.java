@@ -8,6 +8,9 @@ package org.mozilla.vrbrowser;
 import android.app.NativeActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.InputDevice;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -72,6 +75,7 @@ public class PlatformActivity extends NativeActivity {
                     }
                 });
     }
+
 
     protected native void queueRunnable(Runnable aRunnable);
     protected native boolean platformExit();

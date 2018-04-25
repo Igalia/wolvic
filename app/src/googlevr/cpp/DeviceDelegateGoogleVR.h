@@ -25,17 +25,15 @@ public:
   const vrb::Matrix& GetHeadTransform() const override;
   void SetClearColor(const vrb::Color& aColor) override;
   void SetClipPlanes(const float aNear, const float aFar) override;
-  int32_t GetControllerCount() const override;
-  const std::string GetControllerModelName(const int32_t aWhichController) const override;
+  void SetControllerDelegate(ControllerDelegatePtr& aController) override;
+  void ReleaseControllerDelegate() override;
+  int32_t GetControllerModelCount() const override;
+  const std::string GetControllerModelName(const int32_t aModelIndex) const override;
   void ProcessEvents() override;
-  const vrb::Matrix& GetControllerTransform(const int32_t aWhichController) override;
-  bool GetControllerButtonState(const int32_t aWhichController, const int32_t aWhichButton, bool& aChangedState) override;
-  bool GetControllerScrolled(const int32_t aWhichController, float& aScrollX, float& aScrollY) override;
   void StartFrame() override;
   void BindEye(const CameraEnum aWhich) override;
   void EndFrame() override;
   // DeviceDelegateGoogleVR interface
-  void SetGVRContext(void* aGVRContext);
   void InitializeGL();
   void Pause();
   void Resume();

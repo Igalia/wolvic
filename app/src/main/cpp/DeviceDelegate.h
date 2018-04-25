@@ -8,6 +8,7 @@
 
 #include "vrb/MacroUtils.h"
 #include "vrb/Forward.h"
+#include "ControllerDelegate.h"
 #include "GestureDelegate.h"
 
 #include <memory>
@@ -27,13 +28,11 @@ public:
   virtual const vrb::Matrix& GetHeadTransform() const = 0;
   virtual void SetClearColor(const vrb::Color& aColor) = 0;
   virtual void SetClipPlanes(const float aNear, const float aFar) = 0;
-  virtual int32_t GetControllerCount() const = 0;
-  virtual const std::string GetControllerModelName(const int32_t aWhichController) const = 0;
+  virtual void SetControllerDelegate(ControllerDelegatePtr& aController) = 0;
+  virtual void ReleaseControllerDelegate() = 0;
+  virtual int32_t GetControllerModelCount() const = 0;
+  virtual const std::string GetControllerModelName(const int32_t aModelIndex) const = 0;
   virtual void ProcessEvents() = 0;
-  virtual const vrb::Matrix& GetControllerTransform(const int32_t aWhichController) = 0;
-  virtual bool GetControllerButtonState(const int32_t aWhichController, const int32_t aWhichButton,
-                                        bool& aChangedState) = 0;
-  virtual bool GetControllerScrolled(const int32_t aWhichController, float& aScrollX, float& aScrollY) = 0;
   virtual void StartFrame() = 0;
   virtual void BindEye(const CameraEnum aWhich) = 0;
   virtual void EndFrame() = 0;
