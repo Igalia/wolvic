@@ -24,7 +24,7 @@ class MotionEventGenerator {
             mProperties = new MotionEvent.PointerProperties[1];
             mProperties[0] = new MotionEvent.PointerProperties();
             mProperties[0].id = 0;
-            mProperties[0].toolType = MotionEvent.TOOL_TYPE_FINGER;
+            mProperties[0].toolType = MotionEvent.TOOL_TYPE_MOUSE; // TOOL_TYPE_FINGER;
             mCoords = new MotionEvent.PointerCoords[1];
             mCoords[0] = new MotionEvent.PointerCoords();
             mCoords[0].toolMajor = 2;
@@ -86,7 +86,7 @@ class MotionEventGenerator {
                 /*yPrecision*/ 0,
                 /*deviceId*/ aDevice,
                 /*edgeFlags*/ 0,
-                /*source*/ InputDevice.SOURCE_TOUCHSCREEN,
+                /*source*/ InputDevice.SOURCE_MOUSE, // SOURCE_TOUCHSCREEN,
                 /*flags*/ 0);
         if (hover) {
             aWidget.handleHoverEvent(event);
@@ -117,7 +117,7 @@ class MotionEventGenerator {
                 /*yPrecision*/ 0,
                 /*deviceId*/ aDevice,
                 /*edgeFlags*/ 0,
-                /*source*/ InputDevice.SOURCE_TOUCHSCREEN,
+                /*source*/ InputDevice.SOURCE_MOUSE, // SOURCE_TOUCHSCREEN,
                 /*flags*/ 0);
         aWidget.handleHoverEvent(event);
         device.mCoords[0].setAxisValue(MotionEvent.AXIS_VSCROLL, 0.0f);
