@@ -7,6 +7,7 @@ package org.mozilla.vrbrowser;
 
 import android.content.Context;
 
+import org.mozilla.geckoview.GeckoResponse;
 import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoSessionSettings;
@@ -396,12 +397,12 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     }
 
     @Override
-    public void onLoadRequest(GeckoSession aSession, String aUri, int aTarget, GeckoSession.Response<Boolean> aResponse) {
+    public void onLoadRequest(GeckoSession aSession, String aUri, int aTarget, GeckoResponse<Boolean> aResponse) {
         aResponse.respond(null);
     }
 
     @Override
-    public void onNewSession(GeckoSession aSession, String aUri, GeckoSession.Response<GeckoSession> aResponse) {
+    public void onNewSession(GeckoSession aSession, String aUri, GeckoResponse<GeckoSession> aResponse) {
         Log.e(LOGTAG,"Got onNewSession: " + aUri);
         int sessionId = createSession();
         mCurrentSession = null;

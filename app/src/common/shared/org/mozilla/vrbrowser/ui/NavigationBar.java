@@ -14,6 +14,7 @@ import android.widget.ImageButton;
 import android.util.Log;
 import android.widget.LinearLayout;
 
+import org.mozilla.geckoview.GeckoResponse;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.SessionStore;
 import org.mozilla.vrbrowser.R;
@@ -128,7 +129,7 @@ public class NavigationBar extends FrameLayout implements GeckoSession.Navigatio
     }
 
     @Override
-    public void onNewSession(GeckoSession aSession, String aUrl, GeckoSession.Response<GeckoSession> aResponse) {
+    public void onNewSession(GeckoSession aSession, String aUrl, GeckoResponse<GeckoSession> aResponse) {
         aResponse.respond(null);
     }
 
@@ -165,7 +166,7 @@ public class NavigationBar extends FrameLayout implements GeckoSession.Navigatio
     }
 
     @Override
-    public void onLoadRequest(GeckoSession session, String uri, int target, GeckoSession.Response<Boolean> aResponse) {
+    public void onLoadRequest(GeckoSession session, String uri, int target, GeckoResponse<Boolean> aResponse) {
         if (mURLBar != null) {
             Log.e(LOGTAG, "Got onLoadUri: " + uri);
             mURLBar.setURL(uri);
