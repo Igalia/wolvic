@@ -47,6 +47,13 @@ tasks:
 ###############################################################################
   - provisionerId: '{{ taskcluster.docker.provisionerId }}'
     workerType: '{{ taskcluster.docker.workerType }}'
+    extra:
+      github:
+        env: true
+        events:
+          - push
+        branches:
+          - master
     scopes:
       - "secrets:get:project/firefoxreality/github-deploy-key"
       - "secrets:get:project/firefoxreality/preview-keystore"
