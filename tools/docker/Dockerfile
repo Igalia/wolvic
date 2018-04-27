@@ -27,6 +27,7 @@ RUN apt-get install -y openjdk-8-jdk \
 					   imagemagick \
 					   locales
 RUN gem install fastlane
+RUN pip install taskcluster
 
 RUN locale-gen en_US.UTF-8
 

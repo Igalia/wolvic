@@ -47,17 +47,17 @@ tasks:
 ###############################################################################
   - provisionerId: '{{ taskcluster.docker.provisionerId }}'
     workerType: '{{ taskcluster.docker.workerType }}'
-    extra:
-      github:
-        env: true
-        events:
-          - push
-        branches:
-          - master
+    scopes:
+      - "secrets:get:project/firefoxreality/github-deploy-key"
+      - "secrets:get:project/firefoxreality/preview-keystore"
+      - "secrets:get:project/firefoxreality/keystore-password"
+      - "secrets:get:project/firefoxreality/key-password"
     payload:
       maxRunTime: 3600
       deadline: "{{ '2 hours' | $fromNow }}"
       image: 'mozillamixedreality/firefoxreality'
+      features:
+        taskclusterProxy: true
       command:
         - /bin/bash
         - '--login'
@@ -65,9 +65,17 @@ tasks:
         - >-
           git fetch origin
           && git config advice.detachedHead false
-          && git checkout {{event.head.sha}}
+          && git rebase origin/master
           && git submodule update
-          && ./gradlew --no-daemon clean assembleGooglevr assembleNoapi
+          && . tools/taskcluster/get_third_party.sh
+          && cp tools/gradle/user.properties .
+          && ./gradlew --no-daemon clean assembleGooglevr assembleNoapi assembleWavevr assembleSvr assembleOculusvr
+          && . tools/taskcluster/sign.sh
+      artifacts:
+        'public':
+          type: 'directory'
+          path: '/opt/FirefoxReality/builds/'
+          expires: "{{ '1 week' | $fromNow }}"
     metadata:
       name: Firefox Reality for Android - Build - Master update
       description: Building Firefox Reality for Android (via Gradle) - triggered by update to master

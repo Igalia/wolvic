@@ -1,0 +1,3 @@
+Host github.com
+  StrictHostKeyChecking no
+  IdentityFile ~/.ssh/deploymentkey_rsa

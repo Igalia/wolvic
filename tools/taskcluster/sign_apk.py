@@ -1,0 +1,71 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+"""
+This script aligns as signs the apks using the options passed in.
+"""
+import getopt;
+import glob
+import os
+import subprocess
+import sys
+
+def main(name, argv):
+   store = ''
+   store_password = ''
+   key_password = ''
+   alias_name = '';
+   try:
+      opts, args = getopt.getopt(argv,"hs:p:k:a:")
+   except getopt.GetoptError:
+      print name + '-s <key store file> -p <key store password file> -k <key password file> -a <key alias>'
+      sys.exit(2)
+   for opt, arg in opts:
+      if opt == '-h':
+         print name + '-s <key store file> -p <key store password file> -k <key password file> -a <key alias>'
+         sys.exit()
+      elif opt in ("-s"):
+         store = arg
+      elif opt in ("-p"):
+         store_password = arg
+      elif opt in ("-k"):
+         key_password = arg
+      elif opt in ("-a"):
+         alias_name = arg
+
+   build_output_path = './app/build/outputs/apk'
+
+   # Run zipalign
+   for apk in glob.glob(build_output_path + "/*/*/*-unsigned.apk"):
+      split = os.path.splitext(apk)
+      print subprocess.check_output(["zipalign", "-f", "-v", "-p", "4", apk, split[0] + "-aligned" + split[1]])
+
+   # Sign APKs
+   for apk in glob.glob(build_output_path + "/*/*/*-aligned.apk"):
+      print "Signing", apk
+      print subprocess.check_output([
+           "apksigner", "sign",
+           "--ks", store,
+           "--ks-key-alias", alias_name,
+           "--ks-pass", "file:" + store_password,
+           "--key-pass", "file:" + key_password,
+           "-v",
+           "--out", apk.replace('unsigned', 'signed'),
+           apk])
+
+   # Create folder for saving build artifacts
+   artifacts_path = './builds'
+   if not os.path.exists(artifacts_path):
+      os.makedirs(artifacts_path)
+
+   # Verify signature and move APK to artifact path
+   for apk in glob.glob(build_output_path + "/*/*/*-signed-*.apk"):
+      print "Verifying", apk
+      print subprocess.check_output(['apksigner', 'verify', apk])
+
+      print "Archiving", apk
+      os.rename(apk, artifacts_path + "/" + os.path.basename(apk))
+
+if __name__ == "__main__":
+   main(sys.argv[0], sys.argv[1:])
