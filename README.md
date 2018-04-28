@@ -72,4 +72,4 @@ Create a file called user.properties in the top level project directory. Add a v
  geckoViewLocal=/path/to/your/build/obj-arm-linux-androideabi/gradle/build/mobile/android/geckoview/outputs/aar/geckoview-local-withGeckoBinaries-noMinApi-debug.aar
 ```
 
-[![Task Status](https://github.taskcluster.net/v1/repository/MozillaReality/FirefoxReality/master/badge.svg)](https://github.taskcluster.net/v1/repository/MozillaReality/FirefoxReality/master/latest) [Build info](https://github.taskcluster.net/v1/repository/MozillaReality/FirefoxReality/master/latest)
+[![Task Status](https://github.taskcluster.net/v1/repository/MozillaReality/FirefoxReality/master/badge.svg)](https://github.taskcluster.net/v1/repository/MozillaReality/FirefoxReality/master/latest) [Build Results](https://github.taskcluster.net/v1/repository/MozillaReality/FirefoxReality/master/latest)
