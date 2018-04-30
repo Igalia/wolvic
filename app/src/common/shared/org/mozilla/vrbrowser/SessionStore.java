@@ -396,7 +396,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     }
 
     @Override
-    public void onLoadRequest(GeckoSession aSession, String aUri, int aTarget, GeckoResponse<Boolean> aResponse) {
+    public void onLoadRequest(GeckoSession aSession, String aUri, int target, int flags, GeckoResponse<Boolean> aResponse) {
         aResponse.respond(null);
     }
 
