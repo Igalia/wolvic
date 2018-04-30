@@ -16,7 +16,7 @@ android {
         }
         externalNativeBuild {
             cmake {
-                cppFlags "-std=c++14 -fexceptions -frtti" +
+                cppFlags "-std=c++14 -fexceptions -frtti -Werror" +
                          " -I" + file("src/main/cpp").absolutePath +
                          " -I" + file("src/main/cpp/vrb/include").absolutePath
                 arguments "-DANDROID_STL=c++_shared"
