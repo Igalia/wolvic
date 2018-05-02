@@ -231,9 +231,12 @@ struct DeviceDelegateGoogleVR::State {
           }
           controller.touched = touched;
           if (controller.clicked != clicked) {
-            controllerDelegate->SetButtonState(index, 0, clicked);
+            controllerDelegate->SetButtonState(index, ControllerDelegate::BUTTON_TOUCHPAD, clicked);
           }
           controller.clicked = clicked;
+        }
+        else if (ix == GVR_CONTROLLER_BUTTON_APP) {
+          controllerDelegate->SetButtonState(index, ControllerDelegate::BUTTON_MENU, clicked);
         }
       }
     }

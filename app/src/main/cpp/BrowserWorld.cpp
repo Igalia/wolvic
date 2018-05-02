@@ -110,8 +110,8 @@ struct Controller {
   uint32_t widget;
   float pointerX;
   float pointerY;
-  bool pressed;
-  bool wasPressed;
+  int32_t buttonState;
+  int32_t lastButtonState;
   bool touched;
   bool wasTouched;
   float touchX;
@@ -125,7 +125,7 @@ struct Controller {
   
   Controller() : index(-1), enabled(false), widget(0),
                  pointerX(0.0f), pointerY(0.0f),
-                 pressed(false), wasPressed(false),
+                 buttonState(0), lastButtonState(0),
                  touched(false), wasTouched(false),
                  touchX(0.0f), touchY(0.0f),
                  lastTouchX(0.0f), lastTouchY(0.0f),
@@ -146,8 +146,8 @@ struct Controller {
     widget = aController.widget;
     pointerX = aController.pointerX;
     pointerY = aController.pointerY;
-    pressed = aController.pressed;
-    wasPressed = aController.wasPressed;
+    buttonState = aController.buttonState;
+    lastButtonState = aController.lastButtonState;
     touched = aController.touched;
     wasTouched = aController.wasTouched;
     touchX = aController.touchX;
@@ -166,7 +166,7 @@ struct Controller {
     enabled = false;
     widget = 0;
     pointerX = pointerY = 0.0f;
-    pressed = wasPressed = false;
+    buttonState = lastButtonState = 0;
     touched = wasTouched = false;
     touchX = touchY = 0.0f;
     lastTouchX = lastTouchY = 0.0f;
@@ -175,6 +175,10 @@ struct Controller {
       transform = nullptr;
     }
     transformMatrix = Matrix::Identity();
+  }
+
+  bool HasButtonChanged(int32_t aWhichButton) {
+    return (buttonState & aWhichButton) != (lastButtonState & aWhichButton);
   }
 };
 
@@ -301,7 +305,11 @@ ControllerContainer::SetButtonState(const int32_t aControllerIndex, const int32_
   if (!Contains(aControllerIndex)) {
     return;
   }
-  list[aControllerIndex].pressed = aPressed;
+  if (aPressed) {
+    list[aControllerIndex].buttonState |= aWhichButton;
+  } else {
+    list[aControllerIndex].buttonState &= ~aWhichButton;
+  }
 }
 
 void
@@ -445,16 +453,19 @@ BrowserWorld::State::UpdateControllers() {
       float theX = 0.0f, theY = 0.0f;
       hitWidget->ConvertToWidgetCoordinates(hitPoint, theX, theY);
       const uint32_t handle = hitWidget->GetHandle();
+      const bool pressed = controller.buttonState & ControllerDelegate::BUTTON_TRIGGER ||
+                           controller.buttonState & ControllerDelegate::BUTTON_TOUCHPAD;
+      const bool wasPressed = controller.lastButtonState & ControllerDelegate::BUTTON_TRIGGER ||
+                              controller.lastButtonState & ControllerDelegate::BUTTON_TOUCHPAD;
       if ((controller.pointerX != theX) ||
           (controller.pointerY != theY) ||
-          (controller.pressed != controller.wasPressed) || controller.widget != handle) {
+          (controller.widget != handle) ||
+          (pressed != wasPressed)) {
         env->CallVoidMethod(activity, handleMotionEventMethod, handle, controller.index,
-                            controller.pressed,
-                            theX, theY);
+                            pressed, theX, theY);
         controller.widget = handle;
         controller.pointerX = theX;
         controller.pointerY = theY;
-        controller.wasPressed = controller.pressed;
       }
       if ((controller.scrollDeltaX != 0.0f) || controller.scrollDeltaY != 0.0f) {
         env->CallVoidMethod(activity, handleScrollEventMethod, controller.widget, controller.index,
@@ -462,7 +473,7 @@ BrowserWorld::State::UpdateControllers() {
         controller.scrollDeltaX = 0.0f;
         controller.scrollDeltaY = 0.0f;
       }
-      if (!controller.pressed) {
+      if (!pressed) {
         if (controller.touched) {
           if (!controller.wasTouched) {
             controller.wasTouched = controller.touched;
@@ -480,6 +491,7 @@ BrowserWorld::State::UpdateControllers() {
         }
       }
     }
+    controller.lastButtonState = controller.buttonState;
   }
   for (Widget* widget: active) {
     widget->TogglePointer(true);

@@ -231,18 +231,14 @@ struct DeviceDelegateOculusVR::State {
     controllerState.Header.ControllerType = ovrControllerType_TrackedRemote;
     vrapi_GetCurrentInputState(ovr, controllerID, &controllerState.Header);
 
-    static const ovrButton GEAR_VR_BUTTONS[] = { ovrButton_A, ovrButton_Enter };
-    bool pressed = false;
-    for (int32_t button = 0; button < sizeof(GEAR_VR_BUTTONS); button++) {
-      if ((controllerState.Buttons & GEAR_VR_BUTTONS[button]) != 0) {
-        pressed = true;
-      }
-    }
-    controller->SetButtonState(0, 0, pressed);
+    const bool triggerPressed = (controllerState.Buttons & ovrButton_A) != 0;
+    const bool touchpadPressed = (controllerState.Buttons & ovrButton_Enter) != 0;
+    controller->SetButtonState(0, ControllerDelegate::BUTTON_TRIGGER, triggerPressed);
+    controller->SetButtonState(0, ControllerDelegate::BUTTON_TOUCHPAD, touchpadPressed);
 
     float scrollX = (controllerState.TrackpadPosition.x / (float)controllerCapabilities.TrackpadMaxX) * 5.0f;
     float scrollY = (controllerState.TrackpadPosition.y / (float)controllerCapabilities.TrackpadMaxY) * 5.0f;
-    if (controllerState.TrackpadStatus && !pressed) {
+    if (controllerState.TrackpadStatus && !touchpadPressed) {
       controller->SetTouchPosition(0, scrollX, scrollY);
     } else {
       controller->EndTouch(0);

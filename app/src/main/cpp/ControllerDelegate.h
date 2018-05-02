@@ -14,6 +14,11 @@ typedef std::shared_ptr<ControllerDelegate> ControllerDelegatePtr;
 
 class ControllerDelegate {
 public:
+  enum Button {
+    BUTTON_TRIGGER   = 1 << 0,
+    BUTTON_TOUCHPAD  = 1 << 1,
+    BUTTON_MENU      = 1 << 2,
+  };
   virtual void CreateController(const int32_t aControllerIndex, const int32_t aModelIndex) = 0;
   virtual void DestroyController(const int32_t aControllerIndex) = 0;
   virtual void SetEnabled(const int32_t aControllerIndex, const bool aEnabled) = 0;

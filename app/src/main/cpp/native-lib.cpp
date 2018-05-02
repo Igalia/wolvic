@@ -147,7 +147,11 @@ InputCallback(struct android_app *aApp, AInputEvent *aEvent) {
 		}
 
 		if (action == AKEY_EVENT_ACTION_UP && (keyCode == AKEYCODE_DPAD_CENTER  || keyCode == AKEYCODE_ENTER)) {
-      ctx->mDevice->UpdateButtonState(0, true);
+      ctx->mDevice->UpdateButtonState(ControllerDelegate::BUTTON_TRIGGER, true);
+      return 1;
+		}
+		else if (action == AKEY_EVENT_ACTION_UP && keyCode == AKEYCODE_MENU) {
+      ctx->mDevice->UpdateButtonState(ControllerDelegate::BUTTON_MENU, true);
       return 1;
 		}
 		else if (keyCode == AKEYCODE_DPAD_LEFT) {

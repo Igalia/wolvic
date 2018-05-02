@@ -26,9 +26,6 @@
 
 namespace crow {
 
-const uint64_t SVR_BUTTONS[] = { svrControllerButton::PrimaryIndexTrigger, svrControllerButton::PrimaryThumbstick };
-const int32_t kButtonCount = sizeof(SVR_BUTTONS) / sizeof(SVR_BUTTONS[0]);
-
 const int32_t kHeadControllerId = 0;
 const int32_t kControllerId = 1;
 
@@ -208,12 +205,10 @@ struct DeviceDelegateSVR::State {
 
     svrControllerState& state = aController == kHeadControllerId ? headControllerState : controllerState;
 
-    for (int32_t button = 0; button < kButtonCount; button++) {
-      if ((state.buttonState & SVR_BUTTONS[button]) != 0) {
-        pressed = true;
-      }
-    }
-    controller->SetButtonState(aController, 0, pressed);
+    controller->SetButtonState(aController, ControllerDelegate::BUTTON_TRIGGER, state.buttonState & svrControllerButton::PrimaryIndexTrigger);
+    controller->SetButtonState(aController, ControllerDelegate::BUTTON_TOUCHPAD, state.buttonState & svrControllerButton::PrimaryThumbstick);
+    controller->SetButtonState(aController, ControllerDelegate::BUTTON_MENU, state.buttonState & svrControllerButton::Start);
+
     if (aController == kHeadControllerId) {
       // Workaround for repeated KEY_DOWN events bug in ODG
       state.buttonState = 0;
@@ -524,10 +519,12 @@ DeviceDelegateSVR::ExitApp() {
 
 void
 DeviceDelegateSVR::UpdateButtonState(int32_t aWhichButton, bool pressed) {
+  int32_t buttonMask = aWhichButton == ControllerDelegate::BUTTON_MENU ? svrControllerButton::Start :
+                                                                         svrControllerButton::PrimaryIndexTrigger;
   if (pressed) {
-    m.headControllerState.buttonState |= SVR_BUTTONS[aWhichButton];
+    m.headControllerState.buttonState |= buttonMask;
   } else {
-    m.headControllerState.buttonState &= ~SVR_BUTTONS[aWhichButton];
+    m.headControllerState.buttonState &= ~buttonMask;
   }
 }
 

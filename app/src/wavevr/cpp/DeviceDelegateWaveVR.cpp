@@ -167,13 +167,14 @@ struct DeviceDelegateWaveVR::State {
         delegate->SetEnabled(index, true);
         delegate->SetVisible(index, true);
       }
-      bool pressed = false;
-      if (WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Touchpad)) {
-        pressed = true;
-      } else if (WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Bumper)) {
-        pressed = true;
-      }
-      delegate->SetButtonState(index, 0, pressed);
+
+      delegate->SetButtonState(index, ControllerDelegate::BUTTON_TRIGGER,
+                               WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Bumper));
+      delegate->SetButtonState(index, ControllerDelegate::BUTTON_TOUCHPAD,
+                               WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Touchpad));
+      delegate->SetButtonState(index, ControllerDelegate::BUTTON_MENU,
+                               WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Menu));
+
       if (WVR_GetInputTouchState(controller.type, WVR_InputId_Alias1_Touchpad)) {
         WVR_Axis_t axis = WVR_GetInputAnalogAxis(controller.type, WVR_InputId_Alias1_Touchpad);
         delegate->SetTouchPosition(index, axis.x, -axis.y);
