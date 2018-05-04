@@ -20,6 +20,7 @@
 
 #include <vector>
 #include <cstdlib>
+#include <unistd.h>
 
 #include "VrApi.h"
 #include "VrApi_Helpers.h"
@@ -439,6 +440,10 @@ DeviceDelegateOculusVR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
 
   if (!m.ovr) {
     VRB_LOG("Entering VR mode failed");
+  } else {
+    vrapi_SetClockLevels(m.ovr, 4, 4);
+    vrapi_SetPerfThread(m.ovr, VRAPI_PERF_THREAD_TYPE_MAIN, gettid());
+    vrapi_SetPerfThread(m.ovr, VRAPI_PERF_THREAD_TYPE_RENDERER, gettid());
   }
 
   //vrapi_SetRemoteEmulation(m.ovr, false);

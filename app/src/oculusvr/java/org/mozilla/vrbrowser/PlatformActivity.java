@@ -15,13 +15,13 @@ import android.view.View;
 import android.view.WindowManager;
 
 public class PlatformActivity extends NativeActivity {
-    static String LOGTAG = "VRBrowser";
+    static String LOGTAG = "VRB";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.e(LOGTAG,"in onCreate");
         super.onCreate(savedInstanceState);
-        getWindow().takeInputQueue(null);
+        //getWindow().takeInputQueue(null);
         // Keep the screen on
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         // Set up full screen
