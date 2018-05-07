@@ -73,6 +73,7 @@ struct DeviceDelegateGoogleVR::State {
   vrb::ContextWeak context;
   float near;
   float far;
+  bool sixDofHead;
   vrb::Color clearColor;
   vrb::CameraEyePtr cameras[2];
   ElbowModelPtr elbow;
@@ -91,6 +92,7 @@ struct DeviceDelegateGoogleVR::State {
       , frame(nullptr)
       , near(0.1f)
       , far(100.f)
+      , sixDofHead(false)
   {
     frameBufferSize = {0,0};
     gestures = GestureDelegate::Create();
@@ -352,8 +354,10 @@ DeviceDelegateGoogleVR::ProcessEvents() {
   gvr_clock_time_point when = GVR_CHECK(gvr_get_time_point_now());
   // 50ms into the future is what GVR docs recommends using for head rotation prediction.
   when.monotonic_system_time_nanos += 50000000;
-  m.gvrHeadMatrix = GVR_CHECK(gvr_get_head_space_from_start_space_rotation(m.gvr, when));
-  m.gvrHeadMatrix = GVR_CHECK(gvr_apply_neck_model(m.gvr, m.gvrHeadMatrix, 1.0));
+  m.gvrHeadMatrix = GVR_CHECK(gvr_get_head_space_from_start_space_transform(m.gvr, when));
+  if (!m.sixDofHead) {
+    m.gvrHeadMatrix = GVR_CHECK(gvr_apply_neck_model(m.gvr, m.gvrHeadMatrix, 1.0));
+  }
   m.headMatrix = vrb::Matrix::FromRowMajor(m.gvrHeadMatrix.m);
   m.headMatrix.TranslateInPlace(kAverageHeight);
   m.UpdateCameras();
@@ -425,6 +429,8 @@ DeviceDelegateGoogleVR::InitializeGL() {
   m.InitializeControllers();
   VRB_CHECK(glEnable(GL_DEPTH_TEST));
   VRB_CHECK(glEnable(GL_CULL_FACE));
+  m.sixDofHead = GVR_CHECK(gvr_is_feature_supported(m.gvr, GVR_FEATURE_HEAD_POSE_6DOF));
+  VRB_LOG("6DoF head tracking supported: %s", (m.sixDofHead ? "True" : "False"));
 }
 
 void
