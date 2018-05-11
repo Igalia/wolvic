@@ -177,7 +177,7 @@ DeviceDelegateNoAPI::TouchEvent(const bool aDown, const float aX, const float aY
     return;
   }
   if (aDown != m.clicked) {
-    m.controller->SetButtonState(kControllerIndex, 0, aDown);
+    m.controller->SetButtonState(kControllerIndex, ControllerDelegate::BUTTON_TRIGGER, aDown);
     m.clicked = aDown;
   }
   const float viewportWidth = m.camera->GetViewportWidth();
