@@ -108,20 +108,20 @@ struct DeviceDelegateWaveVR::State {
   }
 
   void InitializeCameras() {
-    vrb::Matrix leftProjection = vrb::Matrix::FromColumnMajor(
+    vrb::Matrix leftProjection = vrb::Matrix::FromRowMajor(
         WVR_GetProjection(WVR_Eye_Left, near, far).m);
     cameras[cameraIndex(CameraEnum::Left)]->SetPerspective(leftProjection);
 
-    vrb::Matrix rightProjection = vrb::Matrix::FromColumnMajor(
+    vrb::Matrix rightProjection = vrb::Matrix::FromRowMajor(
         WVR_GetProjection(WVR_Eye_Right, near, far).m);
     cameras[cameraIndex(CameraEnum::Right)]->SetPerspective(rightProjection);
 
 
-    vrb::Matrix leftEyeOffset = vrb::Matrix::FromColumnMajor(
+    vrb::Matrix leftEyeOffset = vrb::Matrix::FromRowMajor(
         WVR_GetTransformFromEyeToHead(WVR_Eye_Left, WVR_NumDoF_6DoF).m); //.Inverse();
     cameras[cameraIndex(CameraEnum::Left)]->SetEyeTransform(leftEyeOffset);
 
-    vrb::Matrix rightEyeOffset = vrb::Matrix::FromColumnMajor(
+    vrb::Matrix rightEyeOffset = vrb::Matrix::FromRowMajor(
         WVR_GetTransformFromEyeToHead(WVR_Eye_Right, WVR_NumDoF_6DoF).m); //.Inverse();
     cameras[cameraIndex(CameraEnum::Right)]->SetEyeTransform(rightEyeOffset);
   }
@@ -425,7 +425,7 @@ DeviceDelegateWaveVR::StartFrame() {
   WVR_GetSyncPose(WVR_PoseOriginModel_OriginOnHead, m.devicePairs, WVR_DEVICE_COUNT_LEVEL_1);
   vrb::Matrix hmd = vrb::Matrix::Identity();
   if (m.devicePairs[WVR_DEVICE_HMD].pose.isValidPose) {
-    hmd = vrb::Matrix::FromColumnMajor(m.devicePairs[WVR_DEVICE_HMD].pose.poseMatrix.m);
+    hmd = vrb::Matrix::FromRowMajor(m.devicePairs[WVR_DEVICE_HMD].pose.poseMatrix.m);
     hmd.TranslateInPlace(kAverageHeight);
     m.cameras[m.cameraIndex(CameraEnum::Left)]->SetHeadTransform(hmd);
     m.cameras[m.cameraIndex(CameraEnum::Right)]->SetHeadTransform(hmd);
@@ -448,7 +448,7 @@ DeviceDelegateWaveVR::StartFrame() {
     if (!pose.isValidPose) {
       continue;
     }
-    vrb::Matrix controllerTransform = vrb::Matrix::FromColumnMajor(pose.poseMatrix.m);
+    vrb::Matrix controllerTransform = vrb::Matrix::FromRowMajor(pose.poseMatrix.m);
     if (m.elbow) {
       ElbowModel::HandEnum hand = ElbowModel::HandEnum::Right;
       if (m.devicePairs[id].type == WVR_DeviceType_Controller_Left) {

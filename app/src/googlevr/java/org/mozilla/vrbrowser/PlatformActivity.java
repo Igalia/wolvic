@@ -64,15 +64,17 @@ public class PlatformActivity extends Activity {
         Log.e(LOGTAG, "PlatformActivity onCreate");
         super.onCreate(savedInstanceState);
 
-        if (AndroidCompat.setVrModeEnabled(this, true)) {
-            AndroidCompat.setSustainedPerformanceMode(this, true);
-        }
+        AndroidCompat.setVrModeEnabled(this, true);
 
         // Keep the screen on
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         mView = new GLSurfaceView(this);
         mLayout = new GvrLayout(this);
+
+        if (mLayout.setAsyncReprojectionEnabled(true)) {
+            AndroidCompat.setSustainedPerformanceMode(this, true);
+        }
 
         mView.setEGLContextClientVersion(3);
         mView.setEGLConfigChooser(8, 8, 8, 0, 16, 0);

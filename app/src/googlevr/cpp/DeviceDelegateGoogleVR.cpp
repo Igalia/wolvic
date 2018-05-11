@@ -359,6 +359,7 @@ DeviceDelegateGoogleVR::ProcessEvents() {
     m.gvrHeadMatrix = GVR_CHECK(gvr_apply_neck_model(m.gvr, m.gvrHeadMatrix, 1.0));
   }
   m.headMatrix = vrb::Matrix::FromRowMajor(m.gvrHeadMatrix.m);
+  m.headMatrix = m.headMatrix.Inverse();
   m.headMatrix.TranslateInPlace(kAverageHeight);
   m.UpdateCameras();
   m.UpdateControllers();
