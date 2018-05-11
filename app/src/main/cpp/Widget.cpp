@@ -41,6 +41,7 @@ struct Widget::State {
   vrb::TogglePtr pointerToggle;
   vrb::TransformPtr pointer;
   vrb::NodePtr pointerGeometry;
+  bool pointerEnabled = true;
 
   State()
       : type(0)
@@ -289,6 +290,9 @@ Widget::ToggleWidget(const bool aEnabled) {
 
 void
 Widget::TogglePointer(const bool aEnabled) {
+  if (!m.pointerEnabled) {
+    return;
+  }
   m.pointerToggle->ToggleAll(aEnabled);
 }
 
@@ -319,6 +323,11 @@ Widget::SetPointerGeometry(vrb::NodePtr& aNode) {
   m.pointer->AddNode(aNode);
 }
 
+void
+Widget::SetPointerEnabled(bool aEnabled) {
+  m.pointerEnabled = aEnabled;
+  m.pointerToggle->ToggleAll(aEnabled);
+}
 
 void
 Widget::SetAddCallbackId(int32_t aCallbackId) {

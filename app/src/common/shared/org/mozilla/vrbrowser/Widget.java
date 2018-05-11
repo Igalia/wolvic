@@ -13,6 +13,7 @@ public interface Widget {
     int URLBar = 1;
     int MoreMenu = 2;
     int TabOverflowMenu = 3;
+    int KeyboardWidget = 4;
     void setSurfaceTexture(SurfaceTexture aTexture, final int aWidth, final int aHeight);
     void setHandle(int aHandle);
     int getHandle();

@@ -4,4 +4,15 @@
     <dimen name="tab_truncation_threshold">100dp</dimen>
     <!-- header_button_margin + add_button_size -->
     <dimen name="tab_layout_add_margin">46dp</dimen>
+    <!-- Keyboard -->
+    <dimen name="keyboard_width">626dp</dimen>
+    <dimen name="keyboard_height">202dp</dimen>
+    <dimen name="keyboard_horizontal_gap">14dp</dimen>
+    <dimen name="keyboard_vertical_gap">6dp</dimen>
+    <dimen name="keyboard_key_width">36dp</dimen>
+    <dimen name="keyboard_key_height">36dp</dimen>
+    <dimen name="keyboard_key_rounded_corner">18dp</dimen>
+    <dimen name="keyboard_key_space_width">384dp</dimen>
+    <dimen name="keyboard_key_enter_width">89dp</dimen>
+    <dimen name="keyboard_key_enter_margin">38dp</dimen>
 </resources>

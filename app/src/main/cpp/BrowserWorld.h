@@ -36,8 +36,9 @@ public:
   void ShutdownGL();
   void Draw();
   void SetSurfaceTexture(const std::string& aName, jobject& aSurface);
-  void AddWidget(const WidgetPlacement& placement, int32_t aCallbackId);
+  void AddWidget(const WidgetPlacement& placement, bool aVisible, int32_t aCallbackId);
   void SetWidgetVisible(int32_t aHandle, bool aVisible);
+  void TransformWidget(int32_t aHandle, const WidgetPlacement& aPlacement);
   void RemoveWidget(int32_t aHandle);
   JNIEnv* GetJNIEnv() const;
 protected:

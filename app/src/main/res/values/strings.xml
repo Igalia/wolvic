@@ -4,4 +4,5 @@
     <string name="menu_enter_private_browsing">Enter Private Browsing</string>
     <string name="menu_exit_private_browsing">Exit Private Browsing</string>
     <string name="menu_focus_mode">Focus Mode</string>
+    <string name="keyboard_enter_label">ENTER</string>
 </resources>

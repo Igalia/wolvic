@@ -766,10 +766,38 @@ BrowserWorld::SetSurfaceTexture(const std::string& aName, jobject& aSurface) {
 }
 
 void
-BrowserWorld::AddWidget(const WidgetPlacement& placement, int32_t aCallbackId) {
-  WidgetPtr parent = m.GetWidget(placement.parentHandle);
+BrowserWorld::AddWidget(const WidgetPlacement& aPlacement, bool aVisible, int32_t aCallbackId) {
+  WidgetPtr parent = m.GetWidget(aPlacement.parentHandle);
   if (!parent) {
-    VRB_LOG("Can't find Widget with handle: %d", placement.parentHandle);
+    VRB_LOG("Can't find Widget with handle: %d", aPlacement.parentHandle);
+    return;
+  }
+
+  float worldWidth = aPlacement.width * kWorldDPIRatio * aPlacement.worldScale;
+
+  WidgetPtr widget = Widget::Create(m.contextWeak,
+                                    aPlacement.widgetType,
+                                    (int32_t)(aPlacement.width * m.displayDensity),
+                                    (int32_t)(aPlacement.height * m.displayDensity),
+                                    worldWidth);
+  widget->SetAddCallbackId(aCallbackId);
+  m.root->AddNode(widget->GetRoot());
+  m.widgets.push_back(widget);
+  widget->ToggleWidget(aVisible);
+  TransformWidget(widget->GetHandle(), aPlacement);
+}
+
+void
+BrowserWorld::TransformWidget(int32_t aHandle, const WidgetPlacement& aPlacement) {
+  WidgetPtr widget = m.GetWidget(aHandle);
+  if (!widget) {
+      VRB_LOG("Can't find Widget with handle: %d", aHandle);
+      return;
+  }
+
+  WidgetPtr parent = m.GetWidget(aPlacement.parentHandle);
+  if (!parent) {
+    VRB_LOG("Can't find Widget with handle: %d", aPlacement.parentHandle);
     return;
   }
 
@@ -778,32 +806,34 @@ BrowserWorld::AddWidget(const WidgetPlacement& placement, int32_t aCallbackId) {
   parent->GetSurfaceTextureSize(parentWidth, parentHeight);
   parent->GetWorldSize(parentWorldWith, parentWorldHeight);
 
-  float worldWidth = placement.width * kWorldDPIRatio;
-  float worldHeight;
-
-  WidgetPtr widget = Widget::Create(m.contextWeak,
-                                    placement.widgetType,
-                                    (int32_t)(placement.width * m.displayDensity),
-                                    (int32_t)(placement.height * m.displayDensity),
-                                    worldWidth);
-  widget->SetAddCallbackId(aCallbackId);
+  float worldWidth, worldHeight;
   widget->GetWorldSize(worldWidth, worldHeight);
 
-  vrb::Vector translation = vrb::Vector(placement.translation.x() * kWorldDPIRatio,
-                                        placement.translation.y() * kWorldDPIRatio,
-                                        placement.translation.z() * kWorldDPIRatio);
+  vrb::Matrix transform = vrb::Matrix::Identity();
+  if (aPlacement.rotation != 0.0) {
+    transform = vrb::Matrix::Rotation(aPlacement.rotationAxis, aPlacement.rotation);
+  }
+
+  vrb::Vector translation = vrb::Vector(aPlacement.translation.x() * kWorldDPIRatio,
+                                        aPlacement.translation.y() * kWorldDPIRatio,
+                                        aPlacement.translation.z() * kWorldDPIRatio);
   // Widget anchor point
-  translation -= vrb::Vector((placement.anchor.x() - 0.5f) * worldWidth,
-                             placement.anchor.y() * worldHeight,
+  translation -= vrb::Vector((aPlacement.anchor.x() - 0.5f) * worldWidth,
+                             aPlacement.anchor.y() * worldHeight,
                              0.0f);
   // Parent anchor point
-  translation += vrb::Vector(parentWorldWith * placement.parentAnchor.x() - parentWorldWith * 0.5f,
-                             parentWorldHeight * placement.parentAnchor.y(),
+  translation += vrb::Vector(parentWorldWith * aPlacement.parentAnchor.x() - parentWorldWith * 0.5f,
+                             parentWorldHeight * aPlacement.parentAnchor.y(),
                              0.0f);
 
-  widget->SetTransform(parent->GetTransform().PostMultiply(vrb::Matrix::Translation(translation)));
-  m.root->AddNode(widget->GetRoot());
-  m.widgets.push_back(widget);
+  transform.TranslateInPlace(translation);
+  widget->SetTransform(parent->GetTransform().PostMultiply(transform));
+  // Fixme: Remove this once we have proper scaling of the pointer
+  if (aPlacement.worldScale != 1.0f) {
+    VRB_LOG("Baina nor da %f", aPlacement.worldScale);
+    widget->SetPointerEnabled(false);
+  }
+
 }
 
 void
@@ -961,10 +991,10 @@ BrowserWorld::CreateControllerPointer() {
 extern "C" {
 
 JNI_METHOD(void, addWidgetNative)
-(JNIEnv*, jobject thiz, jobject data, jint aCallbackId) {
-  crow::WidgetPlacementPtr placement = crow::WidgetPlacement::FromJava(sWorld->GetJNIEnv(), data);
+(JNIEnv*, jobject thiz, jobject aPlacement, jboolean aVisible, jint aCallbackId) {
+  crow::WidgetPlacementPtr placement = crow::WidgetPlacement::FromJava(sWorld->GetJNIEnv(), aPlacement);
   if (placement && sWorld) {
-    sWorld->AddWidget(*placement, aCallbackId);
+    sWorld->AddWidget(*placement, aVisible, aCallbackId);
   }
 }
 
@@ -972,6 +1002,14 @@ JNI_METHOD(void, setWidgetVisibleNative)
 (JNIEnv*, jobject thiz, jint aHandle, jboolean aVisible) {
   if (sWorld) {
     sWorld->SetWidgetVisible(aHandle, aVisible);
+  }
+}
+
+JNI_METHOD(void, updateWidgetPlacementNative)
+(JNIEnv*, jobject thiz, jint aHandle, jobject aPlacement) {
+  crow::WidgetPlacementPtr placement = crow::WidgetPlacement::FromJava(sWorld->GetJNIEnv(), aPlacement);
+  if (placement) {
+    sWorld->TransformWidget(aHandle, *placement);
   }
 }
 

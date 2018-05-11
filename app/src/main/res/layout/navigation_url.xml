@@ -10,7 +10,9 @@
         android:drawablePadding="20dp"
         android:ems="10"
         android:inputType="textUri"
-        android:background="@drawable/url_background" />
+        android:background="@drawable/url_background"
+        android:textColor="@color/ocean"
+        android:selectAllOnFocus="true" />
 
     <RelativeLayout
         android:id="@+id/urlLeftContainer"

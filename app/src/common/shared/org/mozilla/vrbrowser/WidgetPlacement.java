@@ -14,7 +14,12 @@ public class WidgetPlacement {
     public float translationX;
     public float translationY;
     public float translationZ;
+    public float rotationAxisX;
+    public float rotationAxisY;
+    public float rotationAxisZ;
+    public float rotation;
     public int parentHandle;
     public float parentAnchorX = 0.5f;
     public float parentAnchorY = 0.5f;
+    public float worldScale = 1.0f;
 }

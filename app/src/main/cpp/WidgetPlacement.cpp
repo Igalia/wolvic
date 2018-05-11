@@ -35,9 +35,14 @@ WidgetPlacement::FromJava(JNIEnv* aEnv, jobject& aObject) {
   GET_FLOAT_FIELD(translation.x(), "translationX");
   GET_FLOAT_FIELD(translation.y(), "translationY");
   GET_FLOAT_FIELD(translation.z(), "translationZ");
+  GET_FLOAT_FIELD(rotationAxis.x(), "rotationAxisX");
+  GET_FLOAT_FIELD(rotationAxis.y(), "rotationAxisY");
+  GET_FLOAT_FIELD(rotationAxis.z(), "rotationAxisZ");
+  GET_FLOAT_FIELD(rotation, "rotation");
   GET_INT_FIELD(parentHandle);
   GET_FLOAT_FIELD(parentAnchor.x(), "parentAnchorX");
   GET_FLOAT_FIELD(parentAnchor.y(), "parentAnchorY");
+  GET_FLOAT_FIELD(worldScale, "worldScale");
 
   return result;
 }

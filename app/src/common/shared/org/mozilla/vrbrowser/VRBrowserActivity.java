@@ -13,15 +13,22 @@ import android.opengl.GLES20;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Keep;
+import android.support.annotation.Nullable;
+import android.text.Editable;
+import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.audio.VRAudioTheme;
 import org.mozilla.vrbrowser.ui.BrowserHeaderWidget;
+import org.mozilla.vrbrowser.ui.KeyboardWidget;
 import org.mozilla.vrbrowser.ui.MoreMenuWidget;
 import org.mozilla.vrbrowser.ui.OffscreenDisplay;
 import org.mozilla.vrbrowser.ui.NavigationBar;
@@ -62,6 +69,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     SwipeRunnable mLastRunnable;
     Handler mHandler = new Handler();
     Runnable mAudioUpdateRunnable;
+    BrowserWidget mBrowserWidget;
+    KeyboardWidget mKeyboard;
+    private boolean mWasBrowserPressed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +96,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mWidgets = new HashMap<>();
         mWidgetAddCallbacks = new SparseArray<>();
         mWidgetContainer = new FrameLayout(this);
+        mWidgetContainer.getViewTreeObserver().addOnGlobalFocusChangeListener(new ViewTreeObserver.OnGlobalFocusChangeListener() {
+            @Override
+            public void onGlobalFocusChanged(View oldFocus, View newFocus) {
+                checkKeyboardFocus(newFocus);
+            }
+        });
 
         mAudioEngine = new AudioEngine(this, new VRAudioTheme());
         mAudioEngine.preloadAsync(new Runnable() {
@@ -187,13 +203,18 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 SessionStore.get().setCurrentSession(id);
             }
             int currentSession = SessionStore.get().getCurrentSessionId();
-            widget = new BrowserWidget(this, currentSession);
+            mBrowserWidget = new BrowserWidget(this, currentSession);
+            widget = mBrowserWidget;
+            createKeyboard();
+
         } else if (aType == Widget.URLBar) {
             widget = new BrowserHeaderWidget(this);
         } else if (aType == Widget.MoreMenu) {
             widget = new MoreMenuWidget(this);
         } else if (aType == Widget.TabOverflowMenu) {
             widget = new TabOverflowWidget(this);
+        } else if (aType == Widget.KeyboardWidget) {
+            widget = new KeyboardWidget(this);
         }
 
         if (widget != null) {
@@ -211,6 +232,59 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         if (callback != null) {
             mWidgetAddCallbacks.remove(aCallbackId);
             callback.onWidgetAdd(widget);
+        }
+    }
+
+    void createKeyboard() {
+        if (mKeyboard != null) {
+            return;
+        }
+
+        final WidgetPlacement placement = new WidgetPlacement();
+        placement.widgetType = Widget.KeyboardWidget;
+        placement.parentHandle = mBrowserWidget.getHandle();
+        placement.width = 640;
+        placement.height = 192;
+        placement.parentAnchorX = 0.5f;
+        placement.parentAnchorY = 0.5f;
+        placement.anchorX = 0.5f;
+        placement.anchorY = 0.5f;
+        placement.translationZ = 660.0f;
+        placement.rotationAxisX = 1.0f;
+        placement.rotation = (float)Math.toRadians(-15.0f);
+        placement.worldScale = 0.11f;
+
+        addWidget(placement, false, new WidgetAddCallback() {
+            @Override
+            public void onWidgetAdd(Widget aWidget) {
+                mKeyboard = (KeyboardWidget) aWidget;
+                mKeyboard.setPlacement(placement);
+            }
+        });
+
+    }
+
+    void checkKeyboardFocus(View focusedView) {
+        if (mKeyboard == null) {
+            return;
+        }
+
+        boolean showKeyboard = focusedView.onCheckIsTextEditor();
+        WidgetPlacement updatedPlacement = null;
+        if (showKeyboard) {
+            mKeyboard.setFocusedView(focusedView);
+            // Fixme: Improve keyboard placement once GeckoView API lands a way to detect the TextView position on a webpage
+            // For now we just use different placements for navigation bar &  GeckoView
+            float translationY = focusedView == mBrowserWidget ? -30.0f : -20.0f;
+            if (translationY != mKeyboard.getPlacement().translationY) {
+                updatedPlacement = mKeyboard.getPlacement();
+                updatedPlacement.translationY = translationY;
+            }
+
+        }
+        boolean keyboardIsVisible = mKeyboard.getVisibility() == View.VISIBLE;
+        if (showKeyboard != keyboardIsVisible || (updatedPlacement != null)) {
+            updateWidget(mKeyboard.getHandle(), showKeyboard, updatedPlacement);
         }
     }
 
@@ -233,6 +307,18 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                     MotionEventGenerator.dispatch(widget, aDevice, aPressed, aX, aY);
                 } else {
                     Log.e(LOGTAG, "Failed to find widget: " + aHandle);
+                }
+                // Fixme: Remove this once the new Keyboard delegate lands in GeckoView
+                if (widget == mBrowserWidget) {
+                    if (mWasBrowserPressed != aPressed) {
+                        mHandler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                checkKeyboardFocus(mBrowserWidget);
+                            }
+                        }, 150);
+                    }
+                    mWasBrowserPressed = aPressed;
                 }
             }
         });
@@ -325,7 +411,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     // WidgetManagerDelegate
     @Override
-    public void addWidget(final WidgetPlacement aPlacement, final WidgetAddCallback aCallback) {
+    public void addWidget(final WidgetPlacement aPlacement, final boolean aVisible, final WidgetAddCallback aCallback) {
         int id = 0;
         if (aCallback != null) {
             id = ++mWidgetAddCallbackIndex;
@@ -335,16 +421,19 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         queueRunnable(new Runnable() {
             @Override
             public void run() {
-                addWidgetNative(aPlacement, callbackId);
+                addWidgetNative(aPlacement, aVisible, callbackId);
             }
         });
     }
 
     @Override
-    public void setWidgetVisible(final int aHandle, final boolean aVisible) {
+    public void updateWidget(final int aHandle, final boolean aVisible, @Nullable final WidgetPlacement aPlacement) {
         queueRunnable(new Runnable() {
             @Override
             public void run() {
+                if (aPlacement != null) {
+                    updateWidgetPlacementNative(aHandle, aPlacement);
+                }
                 setWidgetVisibleNative(aHandle, aVisible);
             }
         });
@@ -369,7 +458,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         });
     }
 
-    private native void addWidgetNative(WidgetPlacement aWidget, int aCallbackId);
+
+    private native void addWidgetNative(WidgetPlacement aWidget, boolean aVisible, int aCallbackId);
     private native void setWidgetVisibleNative(int aHandle, boolean aVisible);
+    private native void updateWidgetPlacementNative(int aHandle, WidgetPlacement aPlacement);
     private native void removeWidgetNative(int aHandle);
 }

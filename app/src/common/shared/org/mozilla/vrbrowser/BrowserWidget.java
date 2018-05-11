@@ -148,6 +148,13 @@ class BrowserWidget extends View implements Widget, SessionStore.SessionChangeLi
     }
 
     @Override
+    public boolean onCheckIsTextEditor() {
+        GeckoSession session = SessionStore.get().getSession(mSessionId);
+        return session != null && session.getTextInput().isInputActive();
+    }
+
+
+    @Override
     public boolean onKeyPreIme(int aKeyCode, KeyEvent aEvent) {
         if (super.onKeyPreIme(aKeyCode, aEvent)) {
             return true;
@@ -195,7 +202,8 @@ class BrowserWidget extends View implements Widget, SessionStore.SessionChangeLi
     @Override
     protected void onFocusChanged(boolean aGainFocus, int aDirection, Rect aPreviouslyFocusedRect) {
         super.onFocusChanged(aGainFocus, aDirection, aPreviouslyFocusedRect);
-        Log.e(LOGTAG, "BrowserWidget onFoucusChanged: " + (aGainFocus ? "TRUE" : "FALSE"));
+        GeckoSession session = SessionStore.get().getSession(mSessionId);
+        Log.e(LOGTAG, "BrowserWidget onFocusChanged: " + (aGainFocus ? "TRUE" : "FALSE"));
     }
 
     @Override

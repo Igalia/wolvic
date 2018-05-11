@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/keyboard_background">
+
+        <org.mozilla.vrbrowser.ui.CustomKeyboardView
+            android:id="@+id/keyboard"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:verticalCorrection="0dp"
+            android:paddingStart="6dp"
+            android:paddingEnd="0dp"
+            android:paddingTop="20dp"
+            android:layout_gravity="center"
+            android:keyBackground="@drawable/keyboard_button_background"
+            android:background="@null"
+            android:shadowColor="@android:color/transparent"
+            android:shadowRadius="0.0">
+        </org.mozilla.vrbrowser.ui.CustomKeyboardView>
+        
+        <org.mozilla.vrbrowser.ui.NavigationBarButton
+            android:id="@+id/keyboardCloseButton"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="25dp"
+            android:layout_marginTop="20dp"
+            app:tintColorList="@drawable/keyboard_button_icon"
+            android:padding="10dp"
+            android:src="@drawable/ic_icon_exit"
+            android:scaleType="fitCenter"
+            android:background="@drawable/keyboard_button_background"
+            />
+
+    </RelativeLayout>
+</merge>

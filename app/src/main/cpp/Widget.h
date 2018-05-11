@@ -41,6 +41,7 @@ public:
   vrb::TransformPtr GetTransformNode() const;
   vrb::NodePtr GetPointerGeometry() const;
   void SetPointerGeometry(vrb::NodePtr& aNode);
+  void SetPointerEnabled(bool aEnabled);
   void SetAddCallbackId(int32_t aCallbackId);
   int32_t GetAddCallbackId() const;
 protected:

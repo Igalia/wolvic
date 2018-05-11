@@ -21,8 +21,11 @@ struct WidgetPlacement {
   int32_t height;
   vrb::Vector anchor;
   vrb::Vector translation;
+  vrb::Vector rotationAxis;
+  float rotation;
   int32_t parentHandle;
   vrb::Vector parentAnchor;
+  float worldScale;
 
   static WidgetPlacementPtr FromJava(JNIEnv* aEnv, jobject& aObject);
 private:

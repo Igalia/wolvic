@@ -158,7 +158,7 @@ public class BrowserHeaderWidget extends UIWidget
             placement.anchorY = 0.0f;
             placement.translationY = 6.0f;
 
-            mWidgetManager.addWidget(placement, new WidgetManagerDelegate.WidgetAddCallback() {
+            mWidgetManager.addWidget(placement, true, new WidgetManagerDelegate.WidgetAddCallback() {
                 @Override
                 public void onWidgetAdd(Widget aWidget) {
                     mMoreMenu = (MoreMenuWidget) aWidget;
@@ -168,14 +168,14 @@ public class BrowserHeaderWidget extends UIWidget
             });
         }
         else {
-            mWidgetManager.setWidgetVisible(mMoreMenu.getHandle(), true);
+            mWidgetManager.updateWidget(mMoreMenu.getHandle(), true, null);
         }
         hideTabOverflow();
     }
 
     private void hideMoreMenu() {
         if (mMoreMenu != null && mMoreMenu.getVisibility() == View.VISIBLE) {
-            mWidgetManager.setWidgetVisible(mMoreMenu.getHandle(), false);
+            mWidgetManager.updateWidget(mMoreMenu.getHandle(), false, null);
         }
     }
 
@@ -221,7 +221,7 @@ public class BrowserHeaderWidget extends UIWidget
             placement.translationY = -120.0f;
             placement.translationZ = 2.0f;
 
-            mWidgetManager.addWidget(placement, new WidgetManagerDelegate.WidgetAddCallback() {
+            mWidgetManager.addWidget(placement, true, new WidgetManagerDelegate.WidgetAddCallback() {
                 @Override
                 public void onWidgetAdd(Widget aWidget) {
                     mTabOverflowMenu = (TabOverflowWidget) aWidget;
@@ -235,7 +235,7 @@ public class BrowserHeaderWidget extends UIWidget
 
         } else {
             mTabOverflowMenu.onShow();
-            mWidgetManager.setWidgetVisible(mTabOverflowMenu.getHandle(), true);
+            mWidgetManager.updateWidget(mTabOverflowMenu.getHandle(), true, null);
         }
         hideMoreMenu();
     }
@@ -243,7 +243,7 @@ public class BrowserHeaderWidget extends UIWidget
     private void hideTabOverflow() {
         if (mTabOverflowMenu != null && mTabOverflowMenu.getVisibility() == View.VISIBLE) {
             mTabOverflowMenu.onHide();
-            mWidgetManager.setWidgetVisible(mTabOverflowMenu.getHandle(), false);
+            mWidgetManager.updateWidget(mTabOverflowMenu.getHandle(), false, null);
         }
     }
 
@@ -514,17 +514,17 @@ public class BrowserHeaderWidget extends UIWidget
     @Override
     public void onTogglePrivateBrowsing() {
         togglePrivateBrowsing();
-        mWidgetManager.setWidgetVisible(mMoreMenu.getHandle(), false);
+        mWidgetManager.updateWidget(mMoreMenu.getHandle(), false, null);
     }
 
     @Override
     public void onFocusModeClick() {
-        mWidgetManager.setWidgetVisible(mMoreMenu.getHandle(), false);
+        mWidgetManager.updateWidget(mMoreMenu.getHandle(), false, null);
     }
 
     @Override
     public void onMenuCloseClick() {
-        mWidgetManager.setWidgetVisible(mMoreMenu.getHandle(), false);
+        mWidgetManager.updateWidget(mMoreMenu.getHandle(), false, null);
     }
 
     // TabOverFlow Delegate
@@ -536,6 +536,5 @@ public class BrowserHeaderWidget extends UIWidget
         }
         hideTabOverflow();
     }
-
 
 }
