@@ -251,11 +251,15 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             return;
         }
 
-        final String str = String.valueOf((char) primaryCode);
+        String str = String.valueOf((char) primaryCode);
+        if (mKeyboardview.isShifted() && Character.isLowerCase(str.charAt(0))) {
+            str = str.toUpperCase();
+        }
+        final String result = str;
         postInputCommand(new Runnable() {
             @Override
             public void run() {
-                mInputConnection.commitText(str, 1);
+                mInputConnection.commitText(result, 1);
             }
         });
     }

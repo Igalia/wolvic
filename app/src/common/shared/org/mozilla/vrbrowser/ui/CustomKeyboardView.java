@@ -702,7 +702,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
             keyBackground.setState(drawableState);
 
             // Switch the character to uppercase if shift is pressed
-            String label = key.label == null? null : adjustCase(key.label).toString();
+            String label = key.label == null ? null : adjustCase(key.label).toString();
 
             final Rect bounds = keyBackground.getBounds();
             if (key.width != bounds.right ||
