@@ -76,10 +76,8 @@ tasks:
           && git submodule update
           && . tools/taskcluster/get_third_party.sh
           && cp tools/gradle/taskcluster.properties ./user.properties
-          && ./gradlew --no-daemon clean assembleGooglevr assembleNoapi assembleWavevr assembleSvr
+          && ./gradlew --no-daemon clean assembleGooglevr assembleNoapi assembleWavevr assembleSvr assembleOculusvr
           && . tools/taskcluster/sign.sh
-# Disable building Oculus for now since it can't be installed
-# assembleOculusvr
       artifacts:
         'public':
           type: 'directory'
