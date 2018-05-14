@@ -132,7 +132,7 @@ struct DeviceDelegateWaveVR::State {
     cameras[cameraIndex(CameraEnum::Right)] = vrb::CameraEye::Create(context);
     InitializeCameras();
     WVR_GetRenderTargetSize(&renderWidth, &renderHeight);
-    glViewport(0, 0, renderWidth, renderHeight);
+    VRB_GL_CHECK(glViewport(0, 0, renderWidth, renderHeight));
     VRB_LOG("Recommended size is %ux%u", renderWidth, renderHeight);
     if (renderWidth == 0 || renderHeight == 0) {
       VRB_LOG("Please check Wave server configuration");
