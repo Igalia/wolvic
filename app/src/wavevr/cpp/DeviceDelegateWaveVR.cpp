@@ -417,7 +417,7 @@ DeviceDelegateWaveVR::ProcessEvents() {
 
 void
 DeviceDelegateWaveVR::StartFrame() {
-  VRB_CHECK(glClearColor(m.clearColor.Red(), m.clearColor.Green(), m.clearColor.Blue(), m.clearColor.Alpha()));
+  VRB_GL_CHECK(glClearColor(m.clearColor.Red(), m.clearColor.Green(), m.clearColor.Blue(), m.clearColor.Alpha()));
   static const vrb::Vector kAverageHeight(0.0f, 1.7f, 0.0f);
   m.leftFBOIndex = WVR_GetAvailableTextureIndex(m.leftTextureQueue);
   m.rightFBOIndex = WVR_GetAvailableTextureIndex(m.rightTextureQueue);
@@ -476,8 +476,8 @@ DeviceDelegateWaveVR::BindEye(const CameraEnum aWhich) {
   }
   if (m.currentFBO) {
     m.currentFBO->Bind();
-    VRB_CHECK(glViewport(0, 0, m.renderWidth, m.renderHeight));
-    VRB_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+    VRB_GL_CHECK(glViewport(0, 0, m.renderWidth, m.renderHeight));
+    VRB_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
   } else {
     VRB_LOG("No FBO found");
   }

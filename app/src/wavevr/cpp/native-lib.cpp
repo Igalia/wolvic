@@ -63,10 +63,10 @@ int main(int argc, char *argv[]) {
   }
   sDevice = DeviceDelegateWaveVR::Create(sWorld->GetWeakContext());
   sWorld->RegisterDeviceDelegate(sDevice);
-  VRB_CHECK(glEnable(GL_DEPTH_TEST));
-  VRB_CHECK(glEnable(GL_CULL_FACE));
-  VRB_CHECK(glEnable(GL_BLEND));
-  // VRB_CHECK(glDisable(GL_CULL_FACE));
+  VRB_GL_CHECK(glEnable(GL_DEPTH_TEST));
+  VRB_GL_CHECK(glEnable(GL_CULL_FACE));
+  VRB_GL_CHECK(glEnable(GL_BLEND));
+  // VRB_GL_CHECK(glDisable(GL_CULL_FACE));
   while(!sJavaInitialized) {
     sQueue->ProcessRunnables();
   }
@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
   while (sDevice->IsRunning()) {
     sQueue->ProcessRunnables();
     //VRB_LOG("About to DRAW!");
-    VRB_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+    VRB_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
     sWorld->Draw();
   }
   sWorld->ShutdownGL();

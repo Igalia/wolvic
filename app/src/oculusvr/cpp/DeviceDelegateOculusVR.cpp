@@ -52,15 +52,15 @@ struct OculusEyeSwapChain {
     for (int i = 0; i < swapChainLength; ++i) {
       vrb::FBOPtr fbo = vrb::FBO::Create(aContext);
       auto texture = vrapi_GetTextureSwapChainHandle(ovrSwapChain, i);
-      VRB_CHECK(glBindTexture(GL_TEXTURE_2D, texture));
-      VRB_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-      VRB_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-      VRB_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-      VRB_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+      VRB_GL_CHECK(glBindTexture(GL_TEXTURE_2D, texture));
+      VRB_GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+      VRB_GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+      VRB_GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+      VRB_GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 
       vrb::FBO::Attributes attributes;
       attributes.samples = 2;
-      VRB_CHECK(fbo->SetTextureHandle(texture, aWidth, aHeight, attributes));
+      VRB_GL_CHECK(fbo->SetTextureHandle(texture, aWidth, aHeight, attributes));
       if (fbo->IsValid()) {
         fbos.push_back(fbo);
       } else {
@@ -348,7 +348,7 @@ DeviceDelegateOculusVR::StartFrame() {
   m.cameras[VRAPI_EYE_RIGHT]->SetHeadTransform(head);
 
   m.UpdateControllers(head);
-  VRB_CHECK(glClearColor(m.clearColor.Red(), m.clearColor.Green(), m.clearColor.Blue(), m.clearColor.Alpha()));
+  VRB_GL_CHECK(glClearColor(m.clearColor.Red(), m.clearColor.Green(), m.clearColor.Blue(), m.clearColor.Alpha()));
 }
 
 void
@@ -374,8 +374,8 @@ DeviceDelegateOculusVR::BindEye(const CameraEnum aWhich) {
 
   if (m.currentFBO) {
     m.currentFBO->Bind();
-    VRB_CHECK(glViewport(0, 0, m.renderWidth, m.renderHeight));
-    VRB_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+    VRB_GL_CHECK(glViewport(0, 0, m.renderWidth, m.renderHeight));
+    VRB_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
   } else {
     VRB_LOG("No Swap chain FBO found");
   }

@@ -48,18 +48,18 @@ struct SVREyeSwapChain {
     for (int i = 0; i < swapChainLength; ++i) {
       vrb::FBOPtr fbo = vrb::FBO::Create(aContext);
       GLuint textureId;
-      VRB_CHECK(glGenTextures(1, &textureId));
-      VRB_CHECK(glBindTexture(GL_TEXTURE_2D, textureId));
-      VRB_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-      VRB_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-      VRB_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-      VRB_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-      VRB_CHECK(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, aWidth, aHeight, 0,
+      VRB_GL_CHECK(glGenTextures(1, &textureId));
+      VRB_GL_CHECK(glBindTexture(GL_TEXTURE_2D, textureId));
+      VRB_GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+      VRB_GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+      VRB_GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+      VRB_GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+      VRB_GL_CHECK(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, aWidth, aHeight, 0,
                              GL_RGBA, GL_UNSIGNED_BYTE, nullptr));
 
       vrb::FBO::Attributes attributes;
       attributes.samples = 2;
-      VRB_CHECK(fbo->SetTextureHandle(textureId, aWidth, aHeight, attributes));
+      VRB_GL_CHECK(fbo->SetTextureHandle(textureId, aWidth, aHeight, attributes));
       if (fbo->IsValid()) {
         textures.push_back(textureId);
         fbos.push_back(fbo);
@@ -72,7 +72,7 @@ struct SVREyeSwapChain {
   void Destroy() {
     fbos.clear();
     for(GLuint textureId: textures) {
-      VRB_CHECK(glDeleteTextures(1, &textureId));
+      VRB_GL_CHECK(glDeleteTextures(1, &textureId));
     }
     textures.clear();
     swapChainLength = 0;
@@ -376,7 +376,7 @@ DeviceDelegateSVR::StartFrame() {
   m.cameras[kRightEye]->SetHeadTransform(head);
 
   m.UpdateControllers(head);
-  VRB_CHECK(glClearColor(m.clearColor.Red(), m.clearColor.Green(), m.clearColor.Blue(), m.clearColor.Alpha()));
+  VRB_GL_CHECK(glClearColor(m.clearColor.Red(), m.clearColor.Green(), m.clearColor.Blue(), m.clearColor.Alpha()));
 }
 
 void
@@ -409,8 +409,8 @@ DeviceDelegateSVR::BindEye(const CameraEnum aWhich) {
     m.currentFBO->Bind();
     m.currentEye = index;
     svrBeginEye((svrWhichEye) m.currentEye);
-    VRB_CHECK(glViewport(0, 0, m.renderWidth, m.renderHeight));
-    VRB_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+    VRB_GL_CHECK(glViewport(0, 0, m.renderWidth, m.renderHeight));
+    VRB_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
   } else {
     VRB_LOG("No Swap chain FBO found");
   }

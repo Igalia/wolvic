@@ -383,8 +383,8 @@ DeviceDelegateGoogleVR::StartFrame() {
   }
 
   GVR_CHECK(gvr_frame_bind_buffer(m.frame, 0));
-  VRB_CHECK(glClearColor(m.clearColor.Red(), m.clearColor.Green(), m.clearColor.Blue(), m.clearColor.Alpha()));
-  VRB_CHECK(glEnable(GL_BLEND));
+  VRB_GL_CHECK(glClearColor(m.clearColor.Red(), m.clearColor.Green(), m.clearColor.Blue(), m.clearColor.Alpha()));
+  VRB_GL_CHECK(glEnable(GL_BLEND));
 }
 
 static void
@@ -395,10 +395,10 @@ SetUpViewportAndScissor(const gvr_sizei& framebuf_size,
   int bottom = static_cast<int>(rect.bottom * framebuf_size.width);
   int width = static_cast<int>((rect.right - rect.left) * framebuf_size.width);
   int height = static_cast<int>((rect.top - rect.bottom) * framebuf_size.height);
-  VRB_CHECK(glViewport(left, bottom, width, height));
-  VRB_CHECK(glEnable(GL_SCISSOR_TEST));
-  VRB_CHECK(glScissor(left, bottom, width, height));
-  VRB_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+  VRB_GL_CHECK(glViewport(left, bottom, width, height));
+  VRB_GL_CHECK(glEnable(GL_SCISSOR_TEST));
+  VRB_GL_CHECK(glScissor(left, bottom, width, height));
+  VRB_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }
 
 void
@@ -428,8 +428,8 @@ DeviceDelegateGoogleVR::InitializeGL() {
   gvr_initialize_gl(m.gvr);
   m.CreateSwapChain();
   m.InitializeControllers();
-  VRB_CHECK(glEnable(GL_DEPTH_TEST));
-  VRB_CHECK(glEnable(GL_CULL_FACE));
+  VRB_GL_CHECK(glEnable(GL_DEPTH_TEST));
+  VRB_GL_CHECK(glEnable(GL_CULL_FACE));
   m.sixDofHead = GVR_CHECK(gvr_is_feature_supported(m.gvr, GVR_FEATURE_HEAD_POSE_6DOF));
   VRB_LOG("6DoF head tracking supported: %s", (m.sixDofHead ? "True" : "False"));
 }

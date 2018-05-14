@@ -75,8 +75,8 @@ CommandCallback(android_app *aApp, int32_t aCmd) {
         ctx->mEgl = BrowserEGLContext::Create();
         ctx->mEgl->Initialize(aApp->window);
         ctx->mEgl->MakeCurrent();
-        VRB_CHECK(glEnable(GL_DEPTH_TEST));
-        VRB_CHECK(glEnable(GL_CULL_FACE));
+        VRB_GL_CHECK(glEnable(GL_DEPTH_TEST));
+        VRB_GL_CHECK(glEnable(GL_CULL_FACE));
         ctx->mWorld->InitializeGL();
       } else {
         ctx->mEgl->UpdateNativeWindow(aApp->window);
@@ -245,7 +245,7 @@ android_main(android_app *aAppState) {
     }
     sAppContext->mQueue->ProcessRunnables();
     if (!sAppContext->mWorld->IsPaused() && sAppContext->mDevice->IsInVRMode()) {
-      VRB_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+      VRB_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
       sAppContext->mWorld->Draw();
     }
   }

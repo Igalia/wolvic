@@ -109,11 +109,11 @@ DeviceDelegateNoAPI::ProcessEvents() {
 
 void
 DeviceDelegateNoAPI::StartFrame() {
-  VRB_CHECK(glClearColor(m.clearColor.Red(), m.clearColor.Green(), m.clearColor.Blue(), m.clearColor.Alpha()));
-  VRB_CHECK(glEnable(GL_DEPTH_TEST));
-  VRB_CHECK(glEnable(GL_CULL_FACE));
-  VRB_CHECK(glEnable(GL_BLEND));
-  VRB_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+  VRB_GL_CHECK(glClearColor(m.clearColor.Red(), m.clearColor.Green(), m.clearColor.Blue(), m.clearColor.Alpha()));
+  VRB_GL_CHECK(glEnable(GL_DEPTH_TEST));
+  VRB_GL_CHECK(glEnable(GL_CULL_FACE));
+  VRB_GL_CHECK(glEnable(GL_BLEND));
+  VRB_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }
 
 void
@@ -135,7 +135,7 @@ DeviceDelegateNoAPI::SetViewport(const int aWidth, const int aHeight) {
     m.camera->SetFieldOfView(-1.0f, 60.0f);
   }
   VRB_LOG("********* SETTING VIEWPORT %d %d", aWidth, aHeight);
-  VRB_CHECK(glViewport(0, 0, aWidth, aHeight));
+  VRB_GL_CHECK(glViewport(0, 0, aWidth, aHeight));
 }
 
 

@@ -176,10 +176,6 @@ struct Controller {
     }
     transformMatrix = Matrix::Identity();
   }
-
-  bool HasButtonChanged(int32_t aWhichButton) {
-    return (buttonState & aWhichButton) != (lastButtonState & aWhichButton);
-  }
 };
 
 class ControllerContainer;
@@ -665,8 +661,8 @@ BrowserWorld::InitializeGL() {
   if (m.context) {
     if (!m.glInitialized) {
       m.glInitialized = m.context->InitializeGL();
-      VRB_CHECK(glEnable(GL_BLEND));
-      VRB_CHECK(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+      VRB_GL_CHECK(glEnable(GL_BLEND));
+      VRB_GL_CHECK(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
       if (!m.glInitialized) {
         return;
       }
@@ -942,7 +938,7 @@ BrowserWorld::CreateControllerPointer() {
 
   RenderStatePtr state = RenderState::Create(m.contextWeak);
   state->SetMaterial(Color(0.6f, 0.0f, 0.0f), Color(1.0f, 0.0f, 0.0f), Color(0.5f, 0.5f, 0.5f),
-                     96.078431);
+                     96.078431f);
   GeometryPtr geometry = Geometry::Create(m.contextWeak);
   geometry->SetVertexArray(array);
   geometry->SetRenderState(state);
@@ -991,7 +987,7 @@ BrowserWorld::CreateControllerPointer() {
 extern "C" {
 
 JNI_METHOD(void, addWidgetNative)
-(JNIEnv*, jobject thiz, jobject aPlacement, jboolean aVisible, jint aCallbackId) {
+(JNIEnv*, jobject, jobject aPlacement, jboolean aVisible, jint aCallbackId) {
   crow::WidgetPlacementPtr placement = crow::WidgetPlacement::FromJava(sWorld->GetJNIEnv(), aPlacement);
   if (placement && sWorld) {
     sWorld->AddWidget(*placement, aVisible, aCallbackId);
@@ -999,14 +995,14 @@ JNI_METHOD(void, addWidgetNative)
 }
 
 JNI_METHOD(void, setWidgetVisibleNative)
-(JNIEnv*, jobject thiz, jint aHandle, jboolean aVisible) {
+(JNIEnv*, jobject, jint aHandle, jboolean aVisible) {
   if (sWorld) {
     sWorld->SetWidgetVisible(aHandle, aVisible);
   }
 }
 
 JNI_METHOD(void, updateWidgetPlacementNative)
-(JNIEnv*, jobject thiz, jint aHandle, jobject aPlacement) {
+(JNIEnv*, jobject, jint aHandle, jobject aPlacement) {
   crow::WidgetPlacementPtr placement = crow::WidgetPlacement::FromJava(sWorld->GetJNIEnv(), aPlacement);
   if (placement) {
     sWorld->TransformWidget(aHandle, *placement);
@@ -1014,7 +1010,7 @@ JNI_METHOD(void, updateWidgetPlacementNative)
 }
 
 JNI_METHOD(void, removeWidgetNative)
-(JNIEnv*, jobject thiz, jint aHandle) {
+(JNIEnv*, jobject, jint aHandle) {
   if (sWorld) {
     sWorld->RemoveWidget(aHandle);
   }
