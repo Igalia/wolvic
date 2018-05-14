@@ -752,7 +752,7 @@ void
 BrowserWorld::SetSurfaceTexture(const std::string& aName, jobject& aSurface) {
   VRB_LOG("SetSurfaceTexture: %s", aName.c_str());
   if (m.env && m.activity && m.dispatchCreateWidgetMethod) {
-    WidgetPtr widget = m.FindWidget([=](const WidgetPtr& aWidget) {
+    WidgetPtr widget = m.FindWidget([=](const WidgetPtr& aWidget) -> bool {
       return aName == aWidget->GetSurfaceTextureName();
     });
     if (widget) {
