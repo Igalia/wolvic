@@ -806,7 +806,7 @@ BrowserWorld::TransformWidget(int32_t aHandle, const WidgetPlacement& aPlacement
   widget->GetWorldSize(worldWidth, worldHeight);
 
   vrb::Matrix transform = vrb::Matrix::Identity();
-  if (aPlacement.rotation != 0.0) {
+  if (aPlacement.rotationAxis.Magnitude() > std::numeric_limits<float>::epsilon()) {
     transform = vrb::Matrix::Rotation(aPlacement.rotationAxis, aPlacement.rotation);
   }
 
