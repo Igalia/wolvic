@@ -202,7 +202,6 @@ class BrowserWidget extends View implements Widget, SessionStore.SessionChangeLi
     @Override
     protected void onFocusChanged(boolean aGainFocus, int aDirection, Rect aPreviouslyFocusedRect) {
         super.onFocusChanged(aGainFocus, aDirection, aPreviouslyFocusedRect);
-        GeckoSession session = SessionStore.get().getSession(mSessionId);
         Log.e(LOGTAG, "BrowserWidget onFocusChanged: " + (aGainFocus ? "TRUE" : "FALSE"));
     }
 
