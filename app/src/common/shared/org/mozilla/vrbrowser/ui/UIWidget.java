@@ -72,12 +72,6 @@ public class UIWidget extends FrameLayout implements Widget {
 
     @Override
     public void handleTouchEvent(MotionEvent aEvent) {
-        if (aEvent.getActionMasked() == MotionEvent.ACTION_DOWN) {
-            requestFocus();
-        }
-        this.getLocationInWindow(mOffset);
-        //Log.e(LOGTAG, "mOffset: " + mOffset[0] + " " + mOffset[1]);
-        aEvent.offsetLocation(mOffset[0], mOffset[1]);
         this.dispatchTouchEvent(aEvent);
     }
 

@@ -14,17 +14,19 @@ import android.util.SparseArray;
 class MotionEventGenerator {
     static final String LOGTAG = "VRB";
     static class Device {
+        int mDevice;
         Widget mPreviousWidget = null;
         boolean mWasPressed;
         long mDownTime;
         MotionEvent.PointerProperties mProperties[];
         MotionEvent.PointerCoords mCoords[];
 
-        Device() {
+        Device(final int aDevice) {
+            mDevice = aDevice;
             mProperties = new MotionEvent.PointerProperties[1];
             mProperties[0] = new MotionEvent.PointerProperties();
             mProperties[0].id = 0;
-            mProperties[0].toolType = MotionEvent.TOOL_TYPE_MOUSE; // TOOL_TYPE_FINGER;
+            mProperties[0].toolType = MotionEvent.TOOL_TYPE_FINGER;
             mCoords = new MotionEvent.PointerCoords[1];
             mCoords[0] = new MotionEvent.PointerCoords();
             mCoords[0].toolMajor = 2;
@@ -34,92 +36,90 @@ class MotionEventGenerator {
         }
     }
 
-    private static SparseArray<Device> devices = new SparseArray<Device>();
+    private static SparseArray<Device> devices = new SparseArray<>();
+
+    private static void generateEvent(Widget aWidget, Device aDevice, int aAction, boolean aGeneric) {
+        MotionEvent event = MotionEvent.obtain(
+                /*mDownTime*/ aDevice.mDownTime,
+                /*eventTime*/ SystemClock.uptimeMillis(),
+                /*action*/ aAction,
+                /*pointerCount*/ 1,
+                /*pointerProperties*/ aDevice.mProperties,
+                /*pointerCoords*/ aDevice.mCoords,
+                /*metaState*/ 0,
+                /*buttonState*/ 0,
+                /*xPrecision*/ 0,
+                /*yPrecision*/ 0,
+                /*deviceId*/ aDevice.mDevice,
+                /*edgeFlags*/ 0,
+                /*source*/ InputDevice.SOURCE_TOUCHSCREEN,
+                /*flags*/ 0);
+        if (aGeneric) {
+            aWidget.handleHoverEvent(event);
+        } else {
+            aWidget.handleTouchEvent(event);
+        }
+        event.recycle();
+    }
 
     static void dispatch(Widget aWidget, int aDevice, boolean aPressed, float aX, float aY) {
         Device device = devices.get(aDevice);
         if (device == null) {
-            device = new Device();
+            device = new Device(aDevice);
             devices.put(aDevice, device);
         }
-        int action = 0;
         boolean moving = (device.mCoords[0].x != aX) || (device.mCoords[0].y != aY);
-        boolean hover = false;
-        device.mCoords[0].x = aX;
-        device.mCoords[0].y = aY;
-        if (aPressed) {
-            device.mCoords[0].pressure = 1.0f;
-        } else {
-            device.mCoords[0].pressure = 0.0f;
+        if (aWidget != null) {
+            device.mCoords[0].x = aX;
+            device.mCoords[0].y = aY;
+            if (aPressed) {
+                device.mCoords[0].pressure = 1.0f;
+            } else {
+                device.mCoords[0].pressure = 0.0f;
+            }
+        }
+        if ((device.mPreviousWidget != null) && (aWidget == null || (!aWidget.equals(device.mPreviousWidget)))) {
+            if (device.mWasPressed) {
+                generateEvent(device.mPreviousWidget, device, MotionEvent.ACTION_CANCEL, false);
+                device.mWasPressed = false;
+            }
+            generateEvent(device.mPreviousWidget, device, MotionEvent.ACTION_HOVER_ENTER, true);
+            generateEvent(device.mPreviousWidget, device, MotionEvent.ACTION_HOVER_MOVE, true);
+        }
+        if (aWidget == null) {
+            device.mPreviousWidget = null;
+            return;
         }
         if (aPressed && !device.mWasPressed) {
             device.mDownTime = SystemClock.uptimeMillis();
             device.mWasPressed = true;
-            action |= MotionEvent.ACTION_DOWN;
+            generateEvent(aWidget, device, MotionEvent.ACTION_HOVER_EXIT, true);
+            generateEvent(aWidget, device, MotionEvent.ACTION_DOWN, false);
         } else if (!aPressed && device.mWasPressed) {
             device.mWasPressed = false;
-            action |= MotionEvent.ACTION_UP;
+            generateEvent(aWidget, device, MotionEvent.ACTION_UP, false);
+            generateEvent(aWidget, device, MotionEvent.ACTION_HOVER_ENTER, true);
         } else if (moving && aPressed) {
-            action |= MotionEvent.ACTION_MOVE;
-        } else if (moving && !aPressed) {
-            action |= MotionEvent.ACTION_HOVER_MOVE;
-            hover = true;
-            if ((device.mPreviousWidget == null) || (!device.mPreviousWidget.equals(aWidget))) {
-                action |= MotionEvent.ACTION_HOVER_ENTER;
-            }
+            generateEvent(aWidget, device, MotionEvent.ACTION_MOVE, false);
+        } else if (moving) {
+            generateEvent(aWidget, device, MotionEvent.ACTION_HOVER_MOVE, true);
         } else {
             Log.e("VRB", "Unknown touch event action");
             return;
         }
         device.mPreviousWidget = aWidget;
-
-        MotionEvent event = MotionEvent.obtain(
-                /*mDownTime*/ device.mDownTime,
-                /*eventTime*/ SystemClock.uptimeMillis(),
-                /*action*/ action,
-                /*pointerCount*/ 1,
-                /*pointerProperties*/ device.mProperties,
-                /*pointerCoords*/ device.mCoords,
-                /*metaState*/ 0,
-                /*buttonState*/ 0,
-                /*xPrecision*/ 0,
-                /*yPrecision*/ 0,
-                /*deviceId*/ aDevice,
-                /*edgeFlags*/ 0,
-                /*source*/ InputDevice.SOURCE_MOUSE, // SOURCE_TOUCHSCREEN,
-                /*flags*/ 0);
-        if (hover) {
-            aWidget.handleHoverEvent(event);
-            return;
-        }
-        aWidget.handleTouchEvent(event);
     }
 
     static void dispatchScroll(Widget aWidget, int aDevice, float aX, float aY) {
         Device device = devices.get(aDevice);
         if (device == null) {
-            device = new Device();
+            device = new Device(aDevice);
             devices.put(aDevice, device);
         }
         device.mPreviousWidget = aWidget;
         device.mCoords[0].setAxisValue(MotionEvent.AXIS_VSCROLL, aY);
         device.mCoords[0].setAxisValue(MotionEvent.AXIS_HSCROLL, aX);
-        MotionEvent event = MotionEvent.obtain(
-                /*mDownTime*/ device.mDownTime,
-                /*eventTime*/ SystemClock.uptimeMillis(),
-                /*action*/ MotionEvent.ACTION_SCROLL,
-                /*pointerCount*/ 1,
-                /*pointerProperties*/ device.mProperties,
-                /*pointerCoords*/ device.mCoords,
-                /*metaState*/ 0,
-                /*buttonState*/ 0,
-                /*xPrecision*/ 0,
-                /*yPrecision*/ 0,
-                /*deviceId*/ aDevice,
-                /*edgeFlags*/ 0,
-                /*source*/ InputDevice.SOURCE_MOUSE, // SOURCE_TOUCHSCREEN,
-                /*flags*/ 0);
-        aWidget.handleHoverEvent(event);
+        generateEvent(aWidget, device, MotionEvent.ACTION_SCROLL, true);
         device.mCoords[0].setAxisValue(MotionEvent.AXIS_VSCROLL, 0.0f);
         device.mCoords[0].setAxisValue(MotionEvent.AXIS_HSCROLL, 0.0f);
     }

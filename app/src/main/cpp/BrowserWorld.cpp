@@ -422,6 +422,9 @@ BrowserWorld::State::InitializeWindows() {
 void
 BrowserWorld::State::UpdateControllers() {
   std::vector<Widget*> active;
+  for (const WidgetPtr& widget: widgets) {
+    widget->TogglePointer(false);
+  }
   for (Controller& controller: controllers->list) {
     if (!controller.enabled || (controller.index < 0)) {
       continue;
@@ -432,7 +435,6 @@ BrowserWorld::State::UpdateControllers() {
     float hitDistance = farClip;
     vrb::Vector hitPoint;
     for (const WidgetPtr& widget: widgets) {
-      widget->TogglePointer(false);
       vrb::Vector result;
       float distance = 0.0f;
       bool isInWidget = false;
@@ -486,6 +488,10 @@ BrowserWorld::State::UpdateControllers() {
           controller.lastTouchX = controller.lastTouchY = 0.0f;
         }
       }
+    } else if (handleMotionEventMethod && controller.widget) {
+      env->CallVoidMethod(activity, handleMotionEventMethod, 0, controller.index,
+                          false, 0.0f, 0.0f);
+      controller.widget = 0;
     }
     controller.lastButtonState = controller.buttonState;
   }
