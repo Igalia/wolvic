@@ -33,6 +33,7 @@ import org.mozilla.vrbrowser.SessionStore;
 
 import java.net.URI;
 import java.net.URL;
+import java.util.regex.Pattern;
 
 public class NavigationURLBar extends FrameLayout {
     private EditText mURL;
@@ -45,6 +46,7 @@ public class NavigationURLBar extends FrameLayout {
     private int mDefaultURLLeftPadding = 0;
     private int mURLProtocolColor;
     private int mURLWebsiteColor;
+    private Pattern mURLPattern;
 
     public NavigationURLBar(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -53,6 +55,7 @@ public class NavigationURLBar extends FrameLayout {
 
     private void initialize(Context aContext) {
         inflate(aContext, R.layout.navigation_url, this);
+        mURLPattern = Pattern.compile("[\\d\\w][.][\\d\\w]");
         mURL = findViewById(R.id.urlEditText);
         mURL.setShowSoftInputOnFocus(false);
         mURL.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -81,6 +84,7 @@ public class NavigationURLBar extends FrameLayout {
         setFocusable(true);
         setFocusableInTouchMode(true);
         setClickable(true);
+
     }
 
     public void setURL(String aURL) {
@@ -125,10 +129,21 @@ public class NavigationURLBar extends FrameLayout {
     }
 
     private void handleURLEdit(String text) {
+        text = text.trim();
         URI uri = null;
         try {
-            URL url = new URL(text);
-            uri = url.toURI();
+            boolean hasProtocol = text.contains("://");
+            String urlText = text;
+            // Detect when the protocol is missing from the URL.
+            // Look for a separated '.' in the text with no white spaces.
+            if (!hasProtocol && !urlText.contains(" ") && mURLPattern.matcher(urlText).find()) {
+                urlText = "https://" + urlText;
+                hasProtocol = true;
+            }
+            if (hasProtocol) {
+                URL url = new URL(urlText);
+                uri = url.toURI();
+            }
         }
         catch (Exception ex) {
         }
