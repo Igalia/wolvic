@@ -203,6 +203,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             int currentSession = SessionStore.get().getCurrentSessionId();
             mBrowserWidget = new BrowserWidget(this, currentSession);
             widget = mBrowserWidget;
+            // Handle must be set before keyboard can be created.
+            widget.setHandle(aHandle);
             createKeyboard();
 
         } else if (aType == Widget.URLBar) {
@@ -215,11 +217,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             widget = new KeyboardWidget(this);
         }
 
-        if (widget != null) {
-            widget.setSurfaceTexture(aTexture, aWidth, aHeight);
-            mWidgets.put(aHandle, widget);
+        if (widget == null) {
+            return;
         }
 
+        widget.setSurfaceTexture(aTexture, aWidth, aHeight);
+        mWidgets.put(aHandle, widget);
         widget.setHandle(aHandle);
         widget.setWidgetManager(this);
 
@@ -301,11 +304,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             @Override
             public void run() {
                 Widget widget = mWidgets.get(aHandle);
-                if (widget != null) {
-                    MotionEventGenerator.dispatch(widget, aDevice, aPressed, aX, aY);
-                } else {
-                    Log.e(LOGTAG, "Failed to find widget: " + aHandle);
-                }
+                MotionEventGenerator.dispatch(widget, aDevice, aPressed, aX, aY);
+
                 // Fixme: Remove this once the new Keyboard delegate lands in GeckoView
                 if (widget == mBrowserWidget) {
                     if (mWasBrowserPressed != aPressed) {

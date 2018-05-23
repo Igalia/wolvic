@@ -94,6 +94,8 @@ public class PlatformActivity extends Activity {
             return false;
         }
 
+        // Log.e(LOGTAG, "real onTouchEvent: " + aEvent.toString());
+
         final boolean down = (aEvent.getActionMasked() & MotionEvent.ACTION_UP) != MotionEvent.ACTION_UP;
 
         final float xx = aEvent.getX(0);
@@ -102,6 +104,30 @@ public class PlatformActivity extends Activity {
             @Override
             public void run() {
                 touchEvent(down, xx, yy);
+            }
+        });
+        return true;
+    }
+
+    @Override
+    public boolean onGenericMotionEvent(MotionEvent aEvent) {
+        if (aEvent.getActionIndex() != 0) {
+            Log.e(LOGTAG,"aEvent.getActionIndex()=" + aEvent.getActionIndex());
+            return false;
+        }
+
+        if (aEvent.getAction() != MotionEvent.ACTION_HOVER_MOVE) {
+            return false;
+        }
+
+        // Log.e(LOGTAG, "real onGenericMotionEvent: " + aEvent.toString());
+
+        final float xx = aEvent.getX(0);
+        final float yy = aEvent.getY(0);
+        mView.queueEvent(new Runnable() {
+            @Override
+            public void run() {
+                touchEvent(false, xx, yy);
             }
         });
         return true;

@@ -55,8 +55,8 @@ struct Widget::State {
 
   void Initialize(const int32_t aType) {
     type = aType;
-    handle = sWidgetCount;
     sWidgetCount++;
+    handle = sWidgetCount;
     name = "crow::Widget-";
     name += std::to_string(type) + "-" + std::to_string(handle);
     surface = vrb::TextureSurface::Create(context, name);
