@@ -129,14 +129,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     protected void onPause() {
-        SessionStore.get().setShowSoftInputOnFocus(true);
         mAudioEngine.pauseEngine();
         super.onPause();
     }
 
     @Override
     protected void onResume() {
-        SessionStore.get().setShowSoftInputOnFocus(false);
         mAudioEngine.resumeEngine();
         super.onResume();
     }
