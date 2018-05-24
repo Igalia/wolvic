@@ -177,7 +177,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     }
 
     public static class SessionSettings {
-        public boolean multiprocess = false;
+        public boolean multiprocess = true;
         public boolean privateMode = false;
         public boolean trackingProtection = true;
     }
