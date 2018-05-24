@@ -11,6 +11,7 @@ import org.mozilla.geckoview.GeckoResponse;
 import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoSessionSettings;
+import org.mozilla.geckoview.SessionTextInput;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,11 +20,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.inputmethod.CursorAnchorInfo;
+import android.view.inputmethod.ExtractedText;
+import android.view.inputmethod.ExtractedTextRequest;
 
 public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSession.ProgressDelegate, GeckoSession.ContentDelegate {
     private static SessionStore mInstance;
     private static final String LOGTAG = "VRB";
+    private static DelegateStub sDelegateStub = new DelegateStub();
     public static SessionStore get() {
         if (mInstance == null) {
             mInstance = new SessionStore();
@@ -182,12 +188,22 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         public boolean trackingProtection = true;
     }
 
+    static private class DelegateStub implements SessionTextInput.Delegate {
+        public void restartInput(@RestartReason int reason) {}
+        public void showSoftInput() {}
+        public void hideSoftInput() {}
+        public void updateSelection(int selStart, int selEnd, int compositionStart, int compositionEnd) {}
+        public void updateExtractedText(@NonNull ExtractedTextRequest request, @NonNull ExtractedText text) {}
+        public void updateCursorAnchorInfo(@NonNull CursorAnchorInfo info) {}
+    }
+
     public int createSession() {
         return createSession(new SessionSettings());
     }
     public int createSession(SessionSettings aSettings) {
         State state = new State();
         state.mSession = new GeckoSession();
+        state.mSession.getTextInput().setDelegate(sDelegateStub); // prevent default soft keyboard behaviour
 
         int result = state.mSession.hashCode();
         mSessions.put(result, state);
