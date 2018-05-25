@@ -11,6 +11,7 @@ import org.mozilla.vrbrowser.ui.KeyboardWidget;
 import org.mozilla.vrbrowser.ui.PermissionWidget;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class PermissionDelegate implements GeckoSession.PermissionDelegate {
     static final int PERMISSION_REQUEST_CODE = 1143;
@@ -90,17 +91,29 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate {
 
     @Override
     public void onAndroidPermissionsRequest(GeckoSession aSession, String[] permissions, Callback aCallback) {
-        Log.d(LOGTAG, "onAndroidPermissionsRequest: " + permissions);
+        Log.d(LOGTAG, "onAndroidPermissionsRequest: " + Arrays.toString(permissions));
         ArrayList<String> missingPermissions = new ArrayList<>();
+        ArrayList<String> filteredPemissions = new ArrayList<>();
         for (String permission: permissions) {
+            if (PlatformActivity.filterPermission(permission)) {
+                Log.d(LOGTAG, "Skipping permission: " + permission);
+                filteredPemissions.add(permission);
+                continue;
+            }
+            Log.e(LOGTAG, "permission = " + permission);
             if (mContext.checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
                 missingPermissions.add(permission);
             }
         }
 
         if (missingPermissions.size() == 0) {
-            Log.d(LOGTAG, "Android permissions granted");
-            aCallback.grant();
+            if (filteredPemissions.size() == 0) {
+                Log.d(LOGTAG, "Android permissions granted");
+                aCallback.grant();
+            } else {
+                Log.d(LOGTAG, "Android permissions rejected");
+                aCallback.reject();
+            }
         } else {
             Log.d(LOGTAG, "Request Android permissions: " + missingPermissions);
             mCallback = aCallback;

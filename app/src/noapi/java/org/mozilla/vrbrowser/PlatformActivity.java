@@ -25,6 +25,10 @@ public class PlatformActivity extends Activity {
         System.loadLibrary("native-lib");
     }
 
+    static boolean filterPermission(final String aPermission) {
+        return false;
+    }
+
     private GLSurfaceView mView;
 
     private final Runnable activityDestroyedRunnable = new Runnable() {

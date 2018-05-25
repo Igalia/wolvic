@@ -28,6 +28,10 @@ public class PlatformActivity extends Activity {
         System.loadLibrary("native-lib");
     }
 
+    static boolean filterPermission(final String aPermission) {
+        return false;
+    }
+
     private GvrLayout mLayout;
     private GLSurfaceView mView;
     private static final String FLAT_ACTIVITY_CLASSNAME = "org.mozilla.vrbrowser.BrowserActivity";
