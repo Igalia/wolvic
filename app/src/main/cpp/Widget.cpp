@@ -41,7 +41,6 @@ struct Widget::State {
   vrb::TogglePtr pointerToggle;
   vrb::TransformPtr pointer;
   vrb::NodePtr pointerGeometry;
-  bool pointerEnabled = true;
 
   State()
       : type(0)
@@ -80,7 +79,6 @@ struct Widget::State {
     state->SetMaterial(vrb::Color(0.4f, 0.4f, 0.4f), vrb::Color(1.0f, 1.0f, 1.0f), vrb::Color(0.0f, 0.0f, 0.0f),
                        0.0f);
     vrb::GeometryPtr geometry = vrb::Geometry::Create(context);
-    pointerGeometry = geometry;
     geometry->SetVertexArray(array);
     geometry->SetRenderState(state);
 
@@ -139,6 +137,7 @@ struct Widget::State {
     geometry->SetRenderState(state);
     pointer = vrb::Transform::Create(context);
     pointer->AddNode(geometry);
+    pointerGeometry = geometry;
     pointerToggle = vrb::Toggle::Create(context);
     pointerToggle->AddNode(pointer);
     transform->AddNode(pointerToggle);
@@ -250,7 +249,7 @@ Widget::TestControllerIntersection(const vrb::Vector& aStartPoint, const vrb::Ve
   if (result.y() > m.windowMax.y()) { result.y() = m.windowMax.y(); }
   else if (result.y() < m.windowMin.y()) { result.y() = m.windowMin.y(); }
 
-  m.pointer->SetTransform(vrb::Matrix::Position(result));
+  m.pointer->SetTransform(vrb::Matrix::Position(vrb::Vector(result.x(), result.y(), result.z())));
 
   return true;
 }
@@ -290,9 +289,6 @@ Widget::ToggleWidget(const bool aEnabled) {
 
 void
 Widget::TogglePointer(const bool aEnabled) {
-  if (!m.pointerEnabled) {
-    return;
-  }
   m.pointerToggle->ToggleAll(aEnabled);
 }
 
@@ -321,12 +317,6 @@ Widget::SetPointerGeometry(vrb::NodePtr& aNode) {
   }
   m.pointerGeometry = aNode;
   m.pointer->AddNode(aNode);
-}
-
-void
-Widget::SetPointerEnabled(bool aEnabled) {
-  m.pointerEnabled = aEnabled;
-  m.pointerToggle->ToggleAll(aEnabled);
 }
 
 void

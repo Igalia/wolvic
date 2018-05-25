@@ -27,6 +27,11 @@ WidgetPlacement::FromJava(JNIEnv* aEnv, jobject& aObject) {
   result->to = aEnv->GetFloatField(aObject, f); \
 }
 
+#define GET_BOOLEAN_FIELD(name) { \
+  jfieldID f = aEnv->GetFieldID(clazz, #name, "Z"); \
+  result->name = aEnv->GetBooleanField(aObject, f); \
+}
+
   GET_INT_FIELD(widgetType);
   GET_INT_FIELD(width);
   GET_INT_FIELD(height);
@@ -43,6 +48,7 @@ WidgetPlacement::FromJava(JNIEnv* aEnv, jobject& aObject) {
   GET_FLOAT_FIELD(parentAnchor.x(), "parentAnchorX");
   GET_FLOAT_FIELD(parentAnchor.y(), "parentAnchorY");
   GET_FLOAT_FIELD(worldScale, "worldScale");
+  GET_BOOLEAN_FIELD(showPointer);
 
   return result;
 }

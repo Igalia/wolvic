@@ -22,4 +22,5 @@ public class WidgetPlacement {
     public float parentAnchorX = 0.5f;
     public float parentAnchorY = 0.5f;
     public float worldScale = 1.0f;
+    public boolean showPointer = true;
 }

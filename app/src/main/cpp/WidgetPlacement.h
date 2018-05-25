@@ -26,6 +26,7 @@ struct WidgetPlacement {
   int32_t parentHandle;
   vrb::Vector parentAnchor;
   float worldScale;
+  bool showPointer;
 
   static WidgetPlacementPtr FromJava(JNIEnv* aEnv, jobject& aObject);
 private:

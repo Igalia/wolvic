@@ -254,6 +254,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         placement.rotationAxisX = 1.0f;
         placement.rotation = (float)Math.toRadians(-15.0f);
         placement.worldScale = 0.11f;
+        placement.showPointer = false;
 
         addWidget(placement, false, new WidgetAddCallback() {
             @Override

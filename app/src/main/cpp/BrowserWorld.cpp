@@ -787,6 +787,11 @@ BrowserWorld::AddWidget(const WidgetPlacement& aPlacement, bool aVisible, int32_
   m.widgets.push_back(widget);
   widget->ToggleWidget(aVisible);
   TransformWidget(widget->GetHandle(), aPlacement);
+
+  if (!aPlacement.showPointer) {
+    vrb::NodePtr emptyNode = vrb::Group::Create(m.contextWeak);
+    widget->SetPointerGeometry(emptyNode);
+  }
 }
 
 void
@@ -830,12 +835,6 @@ BrowserWorld::TransformWidget(int32_t aHandle, const WidgetPlacement& aPlacement
 
   transform.TranslateInPlace(translation);
   widget->SetTransform(parent->GetTransform().PostMultiply(transform));
-  // Fixme: Remove this once we have proper scaling of the pointer
-  if (aPlacement.worldScale != 1.0f) {
-    VRB_LOG("Baina nor da %f", aPlacement.worldScale);
-    widget->SetPointerEnabled(false);
-  }
-
 }
 
 void
