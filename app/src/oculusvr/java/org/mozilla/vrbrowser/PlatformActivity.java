@@ -17,6 +17,10 @@ import android.view.WindowManager;
 public class PlatformActivity extends NativeActivity {
     static String LOGTAG = "VRB";
 
+    static boolean filterPermission(final String aPermission) {
+        return false;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.e(LOGTAG,"in onCreate");

@@ -6,11 +6,20 @@
 package org.mozilla.vrbrowser;
 
 import com.htc.vr.sdk.VRActivity;
+
+import android.Manifest;
 import android.content.res.AssetManager;
 import android.os.Bundle;
 
 public class PlatformActivity extends VRActivity {
     static final String LOGTAG = "VRB";
+
+    static boolean filterPermission(final String aPermission) {
+        if (aPermission.equals(Manifest.permission.CAMERA)) {
+            return true;
+        }
+        return false;
+    }
 
     public PlatformActivity() {
         super.setUsingRenderBaseActivity(true);
