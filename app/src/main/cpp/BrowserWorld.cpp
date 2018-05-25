@@ -353,11 +353,13 @@ struct BrowserWorld::State {
   ContextWeak contextWeak;
   NodeFactoryObjPtr factory;
   ParserObjPtr parser;
-  GroupPtr root;
+  GroupPtr rootOpaque;
+  GroupPtr rootTransparent;
   LightPtr light;
   ControllerContainerPtr controllers;
   CullVisitorPtr cullVisitor;
-  DrawableListPtr drawList;
+  DrawableListPtr drawListOpaque;
+  DrawableListPtr drawListTransparent;
   CameraPtr leftCamera;
   CameraPtr rightCamera;
   float nearClip;
@@ -384,11 +386,14 @@ struct BrowserWorld::State {
     factory = NodeFactoryObj::Create(contextWeak);
     parser = ParserObj::Create(contextWeak);
     parser->SetObserver(factory);
-    root = Group::Create(contextWeak);
+    rootOpaque = Group::Create(contextWeak);
+    rootTransparent = Group::Create(contextWeak);
     light = Light::Create(contextWeak);
-    root->AddLight(light);
+    rootOpaque->AddLight(light);
+    rootTransparent->AddLight(light);
     cullVisitor = CullVisitor::Create(contextWeak);
-    drawList = DrawableList::Create(contextWeak);
+    drawListOpaque = DrawableList::Create(contextWeak);
+    drawListTransparent = DrawableList::Create(contextWeak);
     controllers = ControllerContainer::Create();
     controllers->context = contextWeak;
     controllers->root = Toggle::Create(contextWeak);
@@ -407,14 +412,14 @@ BrowserWorld::State::InitializeWindows() {
   }
   WidgetPtr browser = Widget::Create(contextWeak, WidgetTypeBrowser);
   browser->SetTransform(Matrix::Position(Vector(0.0f, -3.0f, -18.0f)));
-  root->AddNode(browser->GetRoot());
+  rootOpaque->AddNode(browser->GetRoot());
   widgets.push_back(std::move(browser));
 
   WidgetPtr urlbar = Widget::Create(contextWeak, WidgetTypeURLBar,
                                     (int32_t) (720.0f * displayDensity),
                                     (int32_t) (103.0f * displayDensity), 720.0f * kWorldDPIRatio);
   urlbar->SetTransform(Matrix::Position(Vector(0.0f, 7.15f, -18.0f)));
-  root->AddNode(urlbar->GetRoot());
+  rootOpaque->AddNode(urlbar->GetRoot());
   widgets.push_back(std::move(urlbar));
   windowsInitialized = true;
 }
@@ -654,7 +659,7 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
         m.parser->LoadModel(fileName);
       }
     }
-    m.root->AddNode(m.controllers->root);
+    m.rootOpaque->AddNode(m.controllers->root);
     CreateControllerPointer();
     CreateFloor();
     m.controllers->modelsLoaded = true;
@@ -728,15 +733,23 @@ BrowserWorld::Draw() {
   m.device->ProcessEvents();
   m.context->Update();
   m.UpdateControllers();
-  m.drawList->Reset();
-  m.root->Cull(*m.cullVisitor, *m.drawList);
+  m.drawListOpaque->Reset();
+  m.drawListTransparent->Reset();
+  m.rootOpaque->Cull(*m.cullVisitor, *m.drawListOpaque);
+  m.rootTransparent->Cull(*m.cullVisitor, *m.drawListTransparent);
   m.device->StartFrame();
   m.device->BindEye(DeviceDelegate::CameraEnum::Left);
-  m.drawList->Draw(*m.leftCamera);
+  m.drawListOpaque->Draw(*m.leftCamera);
+  VRB_GL_CHECK(glDepthMask(GL_FALSE));
+  m.drawListTransparent->Draw(*m.leftCamera);
+  VRB_GL_CHECK(glDepthMask(GL_TRUE));
   // When running the noapi flavor, we only want to render one eye.
 #if !defined(VRBROWSER_NO_VR_API)
   m.device->BindEye(DeviceDelegate::CameraEnum::Right);
-  m.drawList->Draw(*m.rightCamera);
+  m.drawListOpaque->Draw(*m.rightCamera);
+  VRB_GL_CHECK(glDepthMask(GL_FALSE));
+  m.drawListTransparent->Draw(*m.rightCamera);
+  VRB_GL_CHECK(glDepthMask(GL_TRUE));
 #endif // !defined(VRBROWSER_NO_VR_API)
   m.device->EndFrame();
 
@@ -783,7 +796,7 @@ BrowserWorld::AddWidget(const WidgetPlacement& aPlacement, bool aVisible, int32_
                                     (int32_t)(aPlacement.height * m.displayDensity),
                                     worldWidth);
   widget->SetAddCallbackId(aCallbackId);
-  m.root->AddNode(widget->GetRoot());
+  m.rootTransparent->AddNode(widget->GetRoot());
   m.widgets.push_back(widget);
   widget->ToggleWidget(aVisible);
   TransformWidget(widget->GetHandle(), aPlacement);
@@ -916,7 +929,7 @@ BrowserWorld::CreateFloor() {
   normalIndex.push_back(1);
   geometry->AddFace(index, index, normalIndex);
 
-  m.root->AddNode(geometry);
+  m.rootOpaque->AddNode(geometry);
 }
 
 void

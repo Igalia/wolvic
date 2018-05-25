@@ -110,6 +110,8 @@ struct Widget::State {
     geometry->AddFace(index, index, normalIndex);
 
     transform = vrb::Transform::Create(context);
+    pointerToggle = vrb::Toggle::Create(context);
+    transform->AddNode(pointerToggle);
     transform->AddNode(geometry);
     root = vrb::Toggle::Create(context);
     root->AddNode(transform);
@@ -138,9 +140,7 @@ struct Widget::State {
     pointer = vrb::Transform::Create(context);
     pointer->AddNode(geometry);
     pointerGeometry = geometry;
-    pointerToggle = vrb::Toggle::Create(context);
     pointerToggle->AddNode(pointer);
-    transform->AddNode(pointerToggle);
   }
 };
 
