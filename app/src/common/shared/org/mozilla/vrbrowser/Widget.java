@@ -14,6 +14,7 @@ public interface Widget {
     int MoreMenu = 2;
     int TabOverflowMenu = 3;
     int KeyboardWidget = 4;
+    int PermissionWidget = 5;
     void setSurfaceTexture(SurfaceTexture aTexture, final int aWidth, final int aHeight);
     void setHandle(int aHandle);
     int getHandle();

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="100"
+            android:orientation="vertical"
+            android:padding="20dp"
+            android:background="@drawable/permission_background">
+
+            <ImageButton
+                android:id="@+id/permissionIcon"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="100"
+                android:tint="@color/fog"
+                android:layout_gravity="center"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_icon_dialog_camera"
+                android:background="@null"
+                />
+
+            <TextView
+                android:id="@+id/permissionText"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="100"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textSize="17sp"
+                android:textColor="@color/fog"
+                android:autoSizeTextType="uniform"
+                android:text="@string/permission_camera_and_microphone"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <org.mozilla.vrbrowser.ui.NavigationBarButton
+                android:id="@+id/permissionCancelButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                app:tintColorList="@drawable/main_button_icon_color"
+                android:padding="10dp"
+                android:src="@drawable/ic_icon_dialog_cancel"
+                android:scaleType="fitCenter"
+                android:background="@drawable/main_button"
+                />
+
+            <org.mozilla.vrbrowser.ui.NavigationBarButton
+                android:id="@+id/permissionAllowButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="20dp"
+                app:tintColorList="@drawable/main_button_icon_color"
+                android:padding="10dp"
+                android:src="@drawable/ic_icon_dialog_accept"
+                android:scaleType="fitCenter"
+                android:background="@drawable/main_button"
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</merge>

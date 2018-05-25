@@ -14,16 +14,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Keep;
 import android.support.annotation.Nullable;
-import android.text.Editable;
-import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.audio.VRAudioTheme;
@@ -31,7 +27,7 @@ import org.mozilla.vrbrowser.ui.BrowserHeaderWidget;
 import org.mozilla.vrbrowser.ui.KeyboardWidget;
 import org.mozilla.vrbrowser.ui.MoreMenuWidget;
 import org.mozilla.vrbrowser.ui.OffscreenDisplay;
-import org.mozilla.vrbrowser.ui.NavigationBar;
+import org.mozilla.vrbrowser.ui.PermissionWidget;
 import org.mozilla.vrbrowser.ui.TabOverflowWidget;
 import org.mozilla.vrbrowser.ui.UIWidget;
 
@@ -71,6 +67,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     Runnable mAudioUpdateRunnable;
     BrowserWidget mBrowserWidget;
     KeyboardWidget mKeyboard;
+    PermissionDelegate mPermissionDelegate;
     private boolean mWasBrowserPressed = false;
 
     @Override
@@ -102,6 +99,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 checkKeyboardFocus(newFocus);
             }
         });
+
+        mPermissionDelegate = new PermissionDelegate(this, this);
 
         mAudioEngine = new AudioEngine(this, new VRAudioTheme());
         mAudioEngine.preloadAsync(new Runnable() {
@@ -146,6 +145,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         }
         if (mAudioEngine != null) {
             mAudioEngine.release();
+        }
+        if (mPermissionDelegate != null) {
+            mPermissionDelegate.release();
         }
         super.onDestroy();
     }
@@ -205,6 +207,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             widget = mBrowserWidget;
             // Handle must be set before keyboard can be created.
             widget.setHandle(aHandle);
+            mPermissionDelegate.setParentWidgetHandle(aHandle);
             createKeyboard();
 
         } else if (aType == Widget.URLBar) {
@@ -215,6 +218,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             widget = new TabOverflowWidget(this);
         } else if (aType == Widget.KeyboardWidget) {
             widget = new KeyboardWidget(this);
+        }  else if (aType == Widget.PermissionWidget) {
+            widget = new PermissionWidget(this);
         }
 
         if (widget == null) {
@@ -455,6 +460,14 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 removeWidgetNative(aHandle);
             }
         });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (mPermissionDelegate != null) {
+            mPermissionDelegate.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
 

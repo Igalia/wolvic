@@ -5,4 +5,9 @@
     <string name="menu_exit_private_browsing">Exit Private Browsing</string>
     <string name="menu_focus_mode">Focus Mode</string>
     <string name="keyboard_enter_label">ENTER</string>
+    <string name="permission_camera">Will you allow %1$s to use your camera?</string>
+    <string name="permission_microphone">Will you allow %1$s to use your microphone?</string>
+    <string name="permission_camera_and_microphone">Will you allow %1$s to use your camera and microphone?</string>
+    <string name="permission_location">Will you allow %1$s to access your location?</string>
+    <string name="permission_notification">Will you allow %1$s to send notifications?</string>
 </resources>

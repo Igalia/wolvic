@@ -63,6 +63,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     private GeckoRuntime mRuntime;
     private GeckoSession mCurrentSession;
     private HashMap<Integer, State> mSessions;
+    private GeckoSession.PermissionDelegate mPermissionDelegate;
 
     private SessionStore() {
         mNavigationListeners = new LinkedList<>();
@@ -218,6 +219,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         state.mSession.setNavigationDelegate(this);
         state.mSession.setProgressDelegate(this);
         state.mSession.setContentDelegate(this);
+        state.mSession.setPermissionDelegate(mPermissionDelegate);
         for (SessionChangeListener listener: mSessionChangeListeners) {
             listener.onNewSession(state.mSession, result);
         }
@@ -360,6 +362,13 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             return -1;
         }
         return mCurrentSession.hashCode();
+    }
+
+    public void setPermissionDelegate(GeckoSession.PermissionDelegate aDelegate) {
+        mPermissionDelegate = aDelegate;
+        for (HashMap.Entry<Integer, State> entry : mSessions.entrySet()) {
+            entry.getValue().mSession.setPermissionDelegate(aDelegate);
+        }
     }
 
     @Override
