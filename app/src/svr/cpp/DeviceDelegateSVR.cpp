@@ -474,8 +474,8 @@ DeviceDelegateSVR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
 
   svrBeginParams params = {};
   params.mainThreadId = gettid();
-  params.cpuPerfLevel = svrPerfLevel::kPerfSystem;
-  params.gpuPerfLevel = svrPerfLevel::kPerfSystem;
+  params.cpuPerfLevel = svrPerfLevel::kPerfMaximum;
+  params.gpuPerfLevel = svrPerfLevel::kPerfMaximum;
   params.nativeWindow = m.app->window;
   params.isProtectedContent = false;
 
