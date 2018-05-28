@@ -15,4 +15,6 @@
     <dimen name="keyboard_key_space_width">384dp</dimen>
     <dimen name="keyboard_key_enter_width">89dp</dimen>
     <dimen name="keyboard_key_enter_margin">38dp</dimen>
+    <dimen name="keyboard_key_text_size">14dp</dimen>
+    <dimen name="keyboard_ley_longtext_size">13dp</dimen>
 </resources>

@@ -294,9 +294,9 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
         previewLayout = 0;
         mPreviewOffset = 0;
         mPreviewHeight = 80;
-        mKeyTextSize = 40;
+        mKeyTextSize = context.getResources().getDimensionPixelSize(R.dimen.keyboard_key_text_size);
         mKeyTextColor = 0xFFFFFFFF;
-        mLabelTextSize = 34;
+        mLabelTextSize = context.getResources().getDimensionPixelSize(R.dimen.keyboard_ley_longtext_size);
         mPopupLayout = 0;
         mShadowColor = 0;
         mShadowRadius = 0;
