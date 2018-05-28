@@ -557,7 +557,11 @@ BrowserWorld::RegisterDeviceDelegate(DeviceDelegatePtr aDelegate) {
   DeviceDelegatePtr previousDevice = std::move(m.device);
   m.device = aDelegate;
   if (m.device) {
+#if defined(SNAPDRAGONVR)
+    m.device->SetClearColor(vrb::Color(0.0f, 0.0f, 0.0f));
+#else
     m.device->SetClearColor(vrb::Color(0.15f, 0.15f, 0.15f));
+#endif
     m.leftCamera = m.device->GetCamera(DeviceDelegate::CameraEnum::Left);
     m.rightCamera = m.device->GetCamera(DeviceDelegate::CameraEnum::Right);
     ControllerDelegatePtr delegate = m.controllers;
