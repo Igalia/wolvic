@@ -20,10 +20,6 @@ import javax.microedition.khronos.opengles.GL10;
 public class PlatformActivity extends Activity {
     static String LOGTAG = "VRB";
     static final float ROTATION = 0.098174770424681f;
-    // Used to load the 'native-lib' library on application startup.
-    static {
-        System.loadLibrary("native-lib");
-    }
 
     static boolean filterPermission(final String aPermission) {
         return false;
@@ -145,7 +141,7 @@ public class PlatformActivity extends Activity {
             try {
                 activityPausedRunnable.wait();
             } catch(InterruptedException e) {
-
+                Log.e(LOGTAG, "activityPausedRunnable interrupted: " + e.toString());
             }
         }
         mView.onPause();
@@ -170,22 +166,22 @@ public class PlatformActivity extends Activity {
             try {
                 activityDestroyedRunnable.wait();
             } catch(InterruptedException e) {
-
+                Log.e(LOGTAG, "activityDestroyedRunnable interrupted: " + e.toString());
             }
         }
     }
 
-    void setImmersiveSticky() {
-        getWindow()
-                .getDecorView()
-                .setSystemUiVisibility(
-                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                                | View.SYSTEM_UI_FLAG_FULLSCREEN
-                                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-    }
+//    void setImmersiveSticky() {
+//        getWindow()
+//                .getDecorView()
+//                .setSystemUiVisibility(
+//                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+//                                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+//                                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+//                                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+//                                | View.SYSTEM_UI_FLAG_FULLSCREEN
+//                                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+//    }
 
     void queueRunnable(Runnable aRunnable) {
         mView.queueEvent(aRunnable);

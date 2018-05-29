@@ -5,11 +5,9 @@
 
 #include <jni.h>
 #include <string>
-#include <GLES2/gl2.h>
 
 #include "BrowserWorld.h"
 #include "DeviceDelegateGoogleVR.h"
-#include "vrb/GLError.h"
 
 static crow::BrowserWorldPtr sWorld;
 static crow::DeviceDelegateGoogleVRPtr sDevice;
@@ -32,7 +30,6 @@ JNI_METHOD(void, activityPaused)
 JNI_METHOD(void, activityResumed)
 (JNIEnv*, jobject) {
   if (sDevice) {
-    //sDevice->InitializeGL();
     sDevice->Resume();
   }
   sWorld->InitializeGL();
@@ -40,7 +37,7 @@ JNI_METHOD(void, activityResumed)
 }
 
 JNI_METHOD(void, activityCreated)
-(JNIEnv* aEnv, jobject aActivity, jobject aAssetManager, int64_t aGVRContext) {
+(JNIEnv* aEnv, jobject aActivity, jobject aAssetManager, jlong aGVRContext) {
   if (!sDevice) {
     sDevice = crow::DeviceDelegateGoogleVR::Create(sWorld->GetWeakContext(), (void*) aGVRContext);
   }
@@ -52,7 +49,7 @@ JNI_METHOD(void, activityCreated)
 }
 
 JNI_METHOD(void, activityDestroyed)
-(JNIEnv* env, jobject) {
+(JNIEnv*, jobject) {
   sWorld->ShutdownJava();
   sWorld->RegisterDeviceDelegate(nullptr);
   sDevice = nullptr;
@@ -63,12 +60,12 @@ JNI_METHOD(void, drawGL)
   sWorld->Draw();
 }
 
-jint JNI_OnLoad(JavaVM* aVm, void*) {
+jint JNI_OnLoad(JavaVM*, void*) {
   sWorld = crow::BrowserWorld::Create();
   return JNI_VERSION_1_6;
 }
 
-void JNI_OnUnLoad(JavaVM* vm, void* reserved) {
+void JNI_OnUnload(JavaVM*, void*) {
   sWorld = nullptr;
   sDevice = nullptr;
 }

@@ -50,7 +50,7 @@ JNI_METHOD(void, activityCreated)
 }
 
 JNI_METHOD(void, updateViewport)
-(JNIEnv*, jobject, int aWidth, int aHeight) {
+(JNIEnv*, jobject, jint aWidth, jint aHeight) {
   if (sDevice) {
     sDevice->SetViewport(aWidth, aHeight);
   } else {
@@ -71,26 +71,26 @@ JNI_METHOD(void, drawGL)
 }
 
 JNI_METHOD(void, moveAxis)
-(JNIEnv*, jobject, float aX, float aY, float aZ) {
+(JNIEnv*, jobject, jfloat aX, jfloat aY, jfloat aZ) {
   sDevice->MoveAxis(aX, aY, aZ);
 }
 
 JNI_METHOD(void, rotateHeading)
-(JNIEnv*, jobject, float aHeading) {
+(JNIEnv*, jobject, jfloat aHeading) {
   sDevice->RotateHeading(aHeading);
 }
 
 JNI_METHOD(void, touchEvent)
-(JNIEnv*, jobject, bool aDown, float aX, float aY) {
+(JNIEnv*, jobject, jboolean aDown, jfloat aX, jfloat aY) {
   sDevice->TouchEvent(aDown, aX, aY);
 }
 
-jint JNI_OnLoad(JavaVM* aVm, void*) {
+jint JNI_OnLoad(JavaVM*, void*) {
   sWorld = crow::BrowserWorld::Create();
   return JNI_VERSION_1_6;
 }
 
-void JNI_OnUnLoad(JavaVM* vm, void* reserved) {
+void JNI_OnUnload(JavaVM*, void*) {
   sWorld = nullptr;
   sDevice = nullptr;
 }

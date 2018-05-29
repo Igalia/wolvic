@@ -20,13 +20,8 @@ import com.google.vr.ndk.base.GvrLayout;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-
 public class PlatformActivity extends Activity {
     static String LOGTAG = "VRB";
-    // Used to load the 'native-lib' library on application startup.
-    static {
-        System.loadLibrary("native-lib");
-    }
 
     static boolean filterPermission(final String aPermission) {
         return false;
@@ -115,8 +110,8 @@ public class PlatformActivity extends Activity {
                 }
             });
         }
-        catch (ClassNotFoundException ex) {
-
+        catch (ClassNotFoundException e) {
+            Log.e(LOGTAG,"Class not found: " + e.toString());
         }
 
         setImmersiveSticky();
@@ -131,7 +126,7 @@ public class PlatformActivity extends Activity {
             try {
                 activityPausedRunnable.wait();
             } catch(InterruptedException e) {
-
+                Log.e(LOGTAG,"activityPausedRunnable interrupted: " + e.toString());
             }
         }
         mLayout.onPause();
@@ -158,7 +153,7 @@ public class PlatformActivity extends Activity {
             try {
                 activityDestroyedRunnable.wait();
             } catch(InterruptedException e) {
-
+                Log.e(LOGTAG,"activityDestroyedRunnable interrupted: " + e.toString());
             }
         }
     }
