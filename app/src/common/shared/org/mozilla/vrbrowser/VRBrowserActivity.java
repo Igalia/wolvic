@@ -76,17 +76,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         SessionStore.get().setContext(this);
 
-        if (SessionStore.get().getCurrentSession() == null) {
-            int id = SessionStore.get().createSession();
-            SessionStore.get().setCurrentSession(id);
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                   SessionStore.get().getCurrentSession().loadUri(SessionStore.DEFAULT_URL);
-                }
-            }, 2000);
-        }
-
         mLastGesture = NoGesture;
         super.onCreate(savedInstanceState);
 
