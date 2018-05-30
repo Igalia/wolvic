@@ -77,6 +77,10 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     public void setContext(Context aContext) {
         if (mRuntime == null) {
             mRuntime = GeckoRuntime.create(aContext);
+            mRuntime.getSettings().setTrackingProtectionCategories(GeckoSession.TrackingProtectionDelegate.CATEGORY_AD |
+                    GeckoSession.TrackingProtectionDelegate.CATEGORY_ANALYTIC |
+                    GeckoSession.TrackingProtectionDelegate.CATEGORY_SOCIAL |
+                    GeckoSession.TrackingProtectionDelegate.CATEGORY_CONTENT);
         } else {
             mRuntime.attachTo(aContext);
         }
@@ -210,12 +214,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         mSessions.put(result, state);
         state.mSession.getSettings().setBoolean(GeckoSessionSettings.USE_MULTIPROCESS, aSettings.multiprocess);
         state.mSession.getSettings().setBoolean(GeckoSessionSettings.USE_PRIVATE_MODE, aSettings.privateMode);
-        if (aSettings.trackingProtection) {
-            state.mSession.enableTrackingProtection(GeckoSession.TrackingProtectionDelegate.CATEGORY_AD |
-                    GeckoSession.TrackingProtectionDelegate.CATEGORY_ANALYTIC |
-                    GeckoSession.TrackingProtectionDelegate.CATEGORY_SOCIAL |
-                    GeckoSession.TrackingProtectionDelegate.CATEGORY_CONTENT);
-        }
+        state.mSession.getSettings().setBoolean(GeckoSessionSettings.USE_TRACKING_PROTECTION, aSettings.trackingProtection);
         state.mSession.setNavigationDelegate(this);
         state.mSession.setProgressDelegate(this);
         state.mSession.setContentDelegate(this);
