@@ -35,10 +35,6 @@ using namespace vrb;
 
 namespace {
 
-// Must be kept in sync with Widget.java
-static const int WidgetTypeBrowser = 0;
-static const int WidgetTypeURLBar = 1;
-
 static const int GestureSwipeLeft = 0;
 static const int GestureSwipeRight = 1;
 
@@ -48,9 +44,7 @@ static const float kWorldDPIRatio = 18.0f/720.0f;
 static crow::BrowserWorld* sWorld;
 
 static const char* kDispatchCreateWidgetName = "dispatchCreateWidget";
-static const char* kDispatchCreateWidgetSignature = "(IILandroid/graphics/SurfaceTexture;III)V";
-static const char* kGetDisplayDensityName = "getDisplayDensity";
-static const char* kGetDisplayDensitySignature = "()F";
+static const char* kDispatchCreateWidgetSignature = "(ILandroid/graphics/SurfaceTexture;II)V";
 static const char* kHandleMotionEventName = "handleMotionEvent";
 static const char* kHandleMotionEventSignature = "(IIZFF)V";
 static const char* kHandleScrollEvent = "handleScrollEvent";
@@ -366,7 +360,6 @@ struct BrowserWorld::State {
   float farClip;
   JNIEnv* env;
   jobject activity;
-  float displayDensity;
   jmethodID dispatchCreateWidgetMethod;
   jmethodID handleMotionEventMethod;
   jmethodID handleScrollEventMethod;
@@ -399,30 +392,11 @@ struct BrowserWorld::State {
     controllers->root = Toggle::Create(contextWeak);
   }
 
-  void InitializeWindows();
   void UpdateControllers();
   WidgetPtr GetWidget(int32_t aHandle) const;
   WidgetPtr FindWidget(const std::function<bool(const WidgetPtr&)>& aCondition) const;
 };
 
-void
-BrowserWorld::State::InitializeWindows() {
-  if (windowsInitialized) {
-    return;
-  }
-  WidgetPtr browser = Widget::Create(contextWeak, WidgetTypeBrowser);
-  browser->SetTransform(Matrix::Position(Vector(0.0f, -3.0f, -18.0f)));
-  rootOpaque->AddNode(browser->GetRoot());
-  widgets.push_back(std::move(browser));
-
-  WidgetPtr urlbar = Widget::Create(contextWeak, WidgetTypeURLBar,
-                                    (int32_t) (720.0f * displayDensity),
-                                    (int32_t) (103.0f * displayDensity), 720.0f * kWorldDPIRatio);
-  urlbar->SetTransform(Matrix::Position(Vector(0.0f, 7.15f, -18.0f)));
-  rootOpaque->AddNode(urlbar->GetRoot());
-  widgets.push_back(std::move(urlbar));
-  windowsInitialized = true;
-}
 
 void
 BrowserWorld::State::UpdateControllers() {
@@ -646,13 +620,6 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
     VRB_LOG("Failed to find Java method: %s %s", kHandleGestureName, kHandleGestureSignature);
   }
 
-  jmethodID getDisplayDensityMethod =  m.env->GetMethodID(clazz, kGetDisplayDensityName, kGetDisplayDensitySignature);
-  if (getDisplayDensityMethod) {
-    m.displayDensity = m.env->CallFloatMethod(m.activity, getDisplayDensityMethod);
-  }
-
-  m.InitializeWindows();
-
   if (!m.controllers->modelsLoaded) {
     const int32_t modelCount = m.device->GetControllerModelCount();
     for (int32_t index = 0; index < modelCount; index++) {
@@ -777,33 +744,36 @@ BrowserWorld::SetSurfaceTexture(const std::string& aName, jobject& aSurface) {
     if (widget) {
       int32_t width = 0, height = 0;
       widget->GetSurfaceTextureSize(width, height);
-      int32_t callbackId = widget->GetAddCallbackId();
-      m.env->CallVoidMethod(m.activity, m.dispatchCreateWidgetMethod, widget->GetType(),
-                            widget->GetHandle(), aSurface, width, height, callbackId);
+      m.env->CallVoidMethod(m.activity, m.dispatchCreateWidgetMethod, widget->GetHandle(), aSurface, width, height);
     }
   }
 }
 
 void
-BrowserWorld::AddWidget(const WidgetPlacement& aPlacement, bool aVisible, int32_t aCallbackId) {
-  WidgetPtr parent = m.GetWidget(aPlacement.parentHandle);
-  if (!parent) {
-    VRB_LOG("Can't find Widget with handle: %d", aPlacement.parentHandle);
+BrowserWorld::AddWidget(int32_t aHandle, const WidgetPlacement& aPlacement) {
+  if (m.GetWidget(aHandle)) {
+    VRB_LOG("Widget with handle %d already added, updating it.", aHandle);
+    UpdateWidget(aHandle, aPlacement);
     return;
   }
-
-  float worldWidth = aPlacement.width * kWorldDPIRatio * aPlacement.worldScale;
+  float worldWidth = aPlacement.worldWidth;
+  if (worldWidth <= 0.0f) {
+    worldWidth = aPlacement.width * kWorldDPIRatio;
+  }
 
   WidgetPtr widget = Widget::Create(m.contextWeak,
-                                    aPlacement.widgetType,
-                                    (int32_t)(aPlacement.width * m.displayDensity),
-                                    (int32_t)(aPlacement.height * m.displayDensity),
+                                    aHandle,
+                                    (int32_t)(aPlacement.width * aPlacement.density),
+                                    (int32_t)(aPlacement.height * aPlacement.density),
                                     worldWidth);
-  widget->SetAddCallbackId(aCallbackId);
-  m.rootTransparent->AddNode(widget->GetRoot());
+  if (aPlacement.opaque) {
+    m.rootOpaque->AddNode(widget->GetRoot());
+  } else {
+    m.rootTransparent->AddNode(widget->GetRoot());
+  }
+
   m.widgets.push_back(widget);
-  widget->ToggleWidget(aVisible);
-  TransformWidget(widget->GetHandle(), aPlacement);
+  UpdateWidget(widget->GetHandle(), aPlacement);
 
   if (!aPlacement.showPointer) {
     vrb::NodePtr emptyNode = vrb::Group::Create(m.contextWeak);
@@ -812,23 +782,24 @@ BrowserWorld::AddWidget(const WidgetPlacement& aPlacement, bool aVisible, int32_
 }
 
 void
-BrowserWorld::TransformWidget(int32_t aHandle, const WidgetPlacement& aPlacement) {
+BrowserWorld::UpdateWidget(int32_t aHandle, const WidgetPlacement& aPlacement) {
   WidgetPtr widget = m.GetWidget(aHandle);
   if (!widget) {
       VRB_LOG("Can't find Widget with handle: %d", aHandle);
       return;
   }
 
+  widget->ToggleWidget(aPlacement.visible);
+
   WidgetPtr parent = m.GetWidget(aPlacement.parentHandle);
-  if (!parent) {
-    VRB_LOG("Can't find Widget with handle: %d", aPlacement.parentHandle);
-    return;
-  }
 
   int32_t parentWidth, parentHeight;
   float parentWorldWith, parentWorldHeight;
-  parent->GetSurfaceTextureSize(parentWidth, parentHeight);
-  parent->GetWorldSize(parentWorldWith, parentWorldHeight);
+
+  if (parent) {
+    parent->GetSurfaceTextureSize(parentWidth, parentHeight);
+    parent->GetWorldSize(parentWorldWith, parentWorldHeight);
+  }
 
   float worldWidth, worldHeight;
   widget->GetWorldSize(worldWidth, worldHeight);
@@ -846,20 +817,15 @@ BrowserWorld::TransformWidget(int32_t aHandle, const WidgetPlacement& aPlacement
                              aPlacement.anchor.y() * worldHeight,
                              0.0f);
   // Parent anchor point
-  translation += vrb::Vector(parentWorldWith * aPlacement.parentAnchor.x() - parentWorldWith * 0.5f,
-                             parentWorldHeight * aPlacement.parentAnchor.y(),
-                             0.0f);
+  if (parent) {
+    translation += vrb::Vector(
+        parentWorldWith * aPlacement.parentAnchor.x() - parentWorldWith * 0.5f,
+        parentWorldHeight * aPlacement.parentAnchor.y(),
+        0.0f);
+  }
 
   transform.TranslateInPlace(translation);
-  widget->SetTransform(parent->GetTransform().PostMultiply(transform));
-}
-
-void
-BrowserWorld::SetWidgetVisible(int32_t aHandle, bool aVisible) {
-  WidgetPtr widget = m.GetWidget(aHandle);
-  if (widget) {
-    widget->ToggleWidget(aVisible);
-  }
+  widget->SetTransform(parent ? parent->GetTransform().PostMultiply(transform) : transform);
 }
 
 void
@@ -1009,25 +975,18 @@ BrowserWorld::CreateControllerPointer() {
 extern "C" {
 
 JNI_METHOD(void, addWidgetNative)
-(JNIEnv*, jobject, jobject aPlacement, jboolean aVisible, jint aCallbackId) {
-  crow::WidgetPlacementPtr placement = crow::WidgetPlacement::FromJava(sWorld->GetJNIEnv(), aPlacement);
+(JNIEnv* aEnv, jobject, jint aHandle, jobject aPlacement) {
+  crow::WidgetPlacementPtr placement = crow::WidgetPlacement::FromJava(aEnv, aPlacement);
   if (placement && sWorld) {
-    sWorld->AddWidget(*placement, aVisible, aCallbackId);
+    sWorld->AddWidget(aHandle, *placement);
   }
 }
 
-JNI_METHOD(void, setWidgetVisibleNative)
-(JNIEnv*, jobject, jint aHandle, jboolean aVisible) {
-  if (sWorld) {
-    sWorld->SetWidgetVisible(aHandle, aVisible);
-  }
-}
-
-JNI_METHOD(void, updateWidgetPlacementNative)
-(JNIEnv*, jobject, jint aHandle, jobject aPlacement) {
-  crow::WidgetPlacementPtr placement = crow::WidgetPlacement::FromJava(sWorld->GetJNIEnv(), aPlacement);
+JNI_METHOD(void, updateWidgetNative)
+(JNIEnv* aEnv, jobject, jint aHandle, jobject aPlacement) {
+  crow::WidgetPlacementPtr placement = crow::WidgetPlacement::FromJava(aEnv, aPlacement);
   if (placement) {
-    sWorld->TransformWidget(aHandle, *placement);
+    sWorld->UpdateWidget(aHandle, *placement);
   }
 }
 

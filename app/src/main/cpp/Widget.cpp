@@ -20,18 +20,12 @@
 
 namespace crow {
 
-const float kWidth = 9.0f;
-const float kHeight = kWidth * 0.5625f;
-static uint32_t sWidgetCount;
-
 struct Widget::State {
   vrb::ContextWeak context;
   std::string name;
-  int32_t type;
   uint32_t handle;
   int32_t textureWidth;
   int32_t textureHeight;
-  int32_t addCallbackId;
   vrb::Vector windowMin;
   vrb::Vector windowMax;
   vrb::Vector windowNormal;
@@ -43,21 +37,16 @@ struct Widget::State {
   vrb::NodePtr pointerGeometry;
 
   State()
-      : type(0)
-      , handle(0)
+      : handle(0)
       , textureWidth(1920)
       , textureHeight(1080)
-      , addCallbackId(0)
-      , windowMin(-kWidth, 0.0f, 0.0f)
-      , windowMax(kWidth, kHeight * 2.0f, 0.0f)
+      , windowMin(0.0f, 0.0f, 0.0f)
+      , windowMax(0.0f, 0.0f * 2.0f, 0.0f)
   {}
 
-  void Initialize(const int32_t aType) {
-    type = aType;
-    sWidgetCount++;
-    handle = sWidgetCount;
-    name = "crow::Widget-";
-    name += std::to_string(type) + "-" + std::to_string(handle);
+  void Initialize(const int aHandle) {
+    handle = aHandle;
+    name = "crow::Widget-" + std::to_string(handle);
     surface = vrb::TextureSurface::Create(context, name);
     vrb::VertexArrayPtr array = vrb::VertexArray::Create(context);
     const vrb::Vector bottomRight(windowMax.x(), windowMin.y(), windowMin.z());
@@ -145,38 +134,26 @@ struct Widget::State {
 };
 
 WidgetPtr
-Widget::Create(vrb::ContextWeak aContext, const int32_t aType) {
-  WidgetPtr result = std::make_shared<vrb::ConcreteClass<Widget, Widget::State> >(aContext);
-  result->m.Initialize(aType);
-  return result;
-}
-
-WidgetPtr
-Widget::Create(vrb::ContextWeak aContext, const int aType, const int32_t aWidth, const int32_t aHeight, float aWorldWidth) {
+Widget::Create(vrb::ContextWeak aContext, const int aHandle, const int32_t aWidth, const int32_t aHeight, float aWorldWidth) {
   WidgetPtr result = std::make_shared<vrb::ConcreteClass<Widget, Widget::State> >(aContext);
   result->m.textureWidth = aWidth;
   result->m.textureHeight = aHeight;
   const float aspect = (float)aWidth / (float)aHeight;
   result->m.windowMin = vrb::Vector(-aWorldWidth * 0.5f, 0.0f, 0.0f);
   result->m.windowMax = vrb::Vector(aWorldWidth *0.5f, aWorldWidth/aspect, 0.0f);
-  result->m.Initialize(aType);
+  result->m.Initialize(aHandle);
   return result;
 }
 
 WidgetPtr
-Widget::Create(vrb::ContextWeak aContext, const int aType, const int32_t aWidth, const int32_t aHeight, const vrb::Vector& aMin, const vrb::Vector& aMax) {
+Widget::Create(vrb::ContextWeak aContext, const int aHandle, const int32_t aWidth, const int32_t aHeight, const vrb::Vector& aMin, const vrb::Vector& aMax) {
   WidgetPtr result = std::make_shared<vrb::ConcreteClass<Widget, Widget::State> >(aContext);
   result->m.textureWidth = aWidth;
   result->m.textureHeight = aHeight;
   result->m.windowMin = aMin;
   result->m.windowMax = aMax;
-  result->m.Initialize(aType);
+  result->m.Initialize(aHandle);
   return result;
-}
-
-int32_t
-Widget::GetType() const {
-  return m.type;
 }
 
 uint32_t
@@ -317,16 +294,6 @@ Widget::SetPointerGeometry(vrb::NodePtr& aNode) {
   }
   m.pointerGeometry = aNode;
   m.pointer->AddNode(aNode);
-}
-
-void
-Widget::SetAddCallbackId(int32_t aCallbackId) {
-  m.addCallbackId = aCallbackId;
-}
-
-int32_t
-Widget::GetAddCallbackId() const {
-  return m.addCallbackId;
 }
 
 Widget::Widget(State& aState, vrb::ContextWeak& aContext) : m(aState) {

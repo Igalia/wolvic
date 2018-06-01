@@ -13,10 +13,8 @@ import android.opengl.GLES20;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Keep;
-import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
@@ -24,13 +22,11 @@ import android.widget.FrameLayout;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.audio.VRAudioTheme;
 import org.mozilla.vrbrowser.ui.BrowserHeaderWidget;
+import org.mozilla.vrbrowser.ui.BrowserWidget;
 import org.mozilla.vrbrowser.ui.KeyboardWidget;
-import org.mozilla.vrbrowser.ui.MoreMenuWidget;
 import org.mozilla.vrbrowser.ui.OffscreenDisplay;
-import org.mozilla.vrbrowser.ui.PermissionWidget;
-import org.mozilla.vrbrowser.ui.TabOverflowWidget;
-import org.mozilla.vrbrowser.ui.UIWidget;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class VRBrowserActivity extends PlatformActivity implements WidgetManagerDelegate {
@@ -56,8 +52,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     static final String LOGTAG = "VRB";
     HashMap<Integer, Widget> mWidgets;
-    SparseArray<WidgetAddCallback> mWidgetAddCallbacks;
-    private int mWidgetAddCallbackIndex;
+    private int mWidgetHandleIndex = 1;
     AudioEngine mAudioEngine;
     OffscreenDisplay mOffscreenDisplay;
     FrameLayout mWidgetContainer;
@@ -80,7 +75,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         super.onCreate(savedInstanceState);
 
         mWidgets = new HashMap<>();
-        mWidgetAddCallbacks = new SparseArray<>();
         mWidgetContainer = new FrameLayout(this);
         mWidgetContainer.getViewTreeObserver().addOnGlobalFocusChangeListener(new ViewTreeObserver.OnGlobalFocusChangeListener() {
             @Override
@@ -113,6 +107,28 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 createOffscreenDisplay();
             }
         });
+        initializeWorld();
+    }
+
+    protected void initializeWorld() {
+        // Create browser widget
+        if (SessionStore.get().getCurrentSession() == null) {
+            int id = SessionStore.get().createSession();
+            SessionStore.get().setCurrentSession(id);
+        }
+        int currentSession = SessionStore.get().getCurrentSessionId();
+        mBrowserWidget = new BrowserWidget(this, currentSession);
+        mPermissionDelegate.setParentWidgetHandle(mBrowserWidget.getHandle());
+
+        // Create Browser navigation widget
+        BrowserHeaderWidget header = new BrowserHeaderWidget(this);
+        header.getPlacement().parentHandle = mBrowserWidget.getHandle();
+
+        // Create keyboard widget
+        mKeyboard = new KeyboardWidget(this);
+        mKeyboard.getPlacement().parentHandle = mBrowserWidget.getHandle();
+
+        addWidgets(Arrays.<Widget>asList(mBrowserWidget, header, mKeyboard));
     }
 
     @Override
@@ -177,118 +193,46 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         }
     }
 
-    void createWidget(final int aType, final int aHandle, SurfaceTexture aTexture, int aWidth, int aHeight, int aCallbackId) {
-        Widget widget = mWidgets.get(aHandle);
-        if (widget != null) {
-            Log.e(LOGTAG, "Widget of type: " + aType + " already created");
-            widget.setSurfaceTexture(aTexture, aWidth, aHeight);
-            return;
-        } else {
-            Log.e(LOGTAG, "CREATE WIDGET TYPE: " + aType);
-        }
-        if (aType == Widget.Browser) {
-            if (SessionStore.get().getCurrentSession() == null) {
-                int id = SessionStore.get().createSession();
-                SessionStore.get().setCurrentSession(id);
-            }
-            int currentSession = SessionStore.get().getCurrentSessionId();
-            mBrowserWidget = new BrowserWidget(this, currentSession);
-            widget = mBrowserWidget;
-            // Handle must be set before keyboard can be created.
-            widget.setHandle(aHandle);
-            mPermissionDelegate.setParentWidgetHandle(aHandle);
-            createKeyboard();
-
-        } else if (aType == Widget.URLBar) {
-            widget = new BrowserHeaderWidget(this);
-        } else if (aType == Widget.MoreMenu) {
-            widget = new MoreMenuWidget(this);
-        } else if (aType == Widget.TabOverflowMenu) {
-            widget = new TabOverflowWidget(this);
-        } else if (aType == Widget.KeyboardWidget) {
-            widget = new KeyboardWidget(this);
-        }  else if (aType == Widget.PermissionWidget) {
-            widget = new PermissionWidget(this);
-        }
-
-        if (widget == null) {
-            return;
-        }
-
-        widget.setSurfaceTexture(aTexture, aWidth, aHeight);
-        mWidgets.put(aHandle, widget);
-        widget.setHandle(aHandle);
-        widget.setWidgetManager(this);
-
-        // Add hidden UI widget to a virtual display for invalidation
-        mWidgetContainer.addView((View) widget, new FrameLayout.LayoutParams(aWidth, aHeight));
-
-        WidgetAddCallback callback = mWidgetAddCallbacks.get(aCallbackId);
-        if (callback != null) {
-            mWidgetAddCallbacks.remove(aCallbackId);
-            callback.onWidgetAdd(widget);
-        }
-    }
-
-    void createKeyboard() {
-        if (mKeyboard != null) {
-            return;
-        }
-
-        final WidgetPlacement placement = new WidgetPlacement();
-        placement.widgetType = Widget.KeyboardWidget;
-        placement.parentHandle = mBrowserWidget.getHandle();
-        placement.width = 640;
-        placement.height = 192;
-        placement.parentAnchorX = 0.5f;
-        placement.parentAnchorY = 0.5f;
-        placement.anchorX = 0.5f;
-        placement.anchorY = 0.5f;
-        placement.translationZ = 660.0f;
-        placement.rotationAxisX = 1.0f;
-        placement.rotation = (float)Math.toRadians(-15.0f);
-        placement.worldScale = 0.11f;
-        placement.showPointer = false;
-
-        addWidget(placement, false, new WidgetAddCallback() {
-            @Override
-            public void onWidgetAdd(Widget aWidget) {
-                mKeyboard = (KeyboardWidget) aWidget;
-                mKeyboard.setPlacement(placement);
-            }
-        });
-
-    }
-
     void checkKeyboardFocus(View focusedView) {
         if (mKeyboard == null) {
             return;
         }
 
         boolean showKeyboard = focusedView.onCheckIsTextEditor();
-        WidgetPlacement updatedPlacement = null;
+        boolean placementUpdated = false;
         if (showKeyboard) {
             mKeyboard.setFocusedView(focusedView);
             // Fixme: Improve keyboard placement once GeckoView API lands a way to detect the TextView position on a webpage
             // For now we just use different placements for navigation bar &  GeckoView
             float translationY = focusedView == mBrowserWidget ? -30.0f : -20.0f;
             if (translationY != mKeyboard.getPlacement().translationY) {
-                updatedPlacement = mKeyboard.getPlacement();
-                updatedPlacement.translationY = translationY;
+                mKeyboard.getPlacement().translationY = translationY;
+                placementUpdated = true;
             }
 
         }
         boolean keyboardIsVisible = mKeyboard.getVisibility() == View.VISIBLE;
-        if (showKeyboard != keyboardIsVisible || (updatedPlacement != null)) {
-            updateWidget(mKeyboard.getHandle(), showKeyboard, updatedPlacement);
+        if (showKeyboard != keyboardIsVisible || placementUpdated) {
+            mKeyboard.getPlacement().visible = showKeyboard;
+            updateWidget(mKeyboard);
         }
     }
 
+
     @Keep
-    void dispatchCreateWidget(final int aType, final int aHandle, final SurfaceTexture aTexture, final int aWidth, final int aHeight, final int aCallbackId) {
+    void dispatchCreateWidget(final int aHandle, final SurfaceTexture aTexture, final int aWidth, final int aHeight) {
         runOnUiThread(new Runnable() {
             public void run() {
-                createWidget(aType, aHandle, aTexture, aWidth, aHeight, aCallbackId);
+                Widget widget = mWidgets.get(aHandle);
+                if (widget == null) {
+                    Log.e(LOGTAG, "Widget " + aHandle + " not found");
+                    return;
+                }
+                widget.setSurfaceTexture(aTexture, aWidth, aHeight);
+                // Add widget to a virtual display for invalidation
+                if (((View)widget).getParent() == null) {
+                    mWidgetContainer.addView((View) widget, new FrameLayout.LayoutParams(aWidth, aHeight));
+                }
             }
         });
     }
@@ -372,12 +316,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         runOnUiThread(mAudioUpdateRunnable);
     }
 
-    @Keep
-    float getDisplayDensity() {
-        DisplayMetrics dm = getResources().getDisplayMetrics();
-        return dm.density;
-    }
-
     void createOffscreenDisplay() {
         int[] ids = new int[1];
         GLES20.glGenTextures(1, ids, 0);
@@ -402,51 +340,65 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         });
     }
 
+    @Override
+    public int newWidgetHandle() {
+        return mWidgetHandleIndex++;
+    }
+
+
+    public void addWidgets(final Iterable<Widget> aWidgets) {
+        for (Widget widget: aWidgets) {
+            mWidgets.put(widget.getHandle(), widget);
+            ((View)widget).setVisibility(widget.getPlacement().visible ? View.VISIBLE : View.GONE);
+        }
+        queueRunnable(new Runnable() {
+            @Override
+            public void run() {
+                for (Widget widget: aWidgets) {
+                    addWidgetNative(widget.getHandle(), widget.getPlacement());
+                }
+            }
+        });
+    }
+
     // WidgetManagerDelegate
     @Override
-    public void addWidget(final WidgetPlacement aPlacement, final boolean aVisible, final WidgetAddCallback aCallback) {
-        int id = 0;
-        if (aCallback != null) {
-            id = ++mWidgetAddCallbackIndex;
-            mWidgetAddCallbacks.put(id, aCallback);
-        }
-        final int callbackId = id;
+    public void addWidget(final Widget aWidget) {
+        mWidgets.put(aWidget.getHandle(), aWidget);
+        ((View)aWidget).setVisibility(aWidget.getPlacement().visible ? View.VISIBLE : View.GONE);
+
         queueRunnable(new Runnable() {
             @Override
             public void run() {
-                addWidgetNative(aPlacement, aVisible, callbackId);
+                addWidgetNative(aWidget.getHandle(), aWidget.getPlacement());
             }
         });
     }
 
     @Override
-    public void updateWidget(final int aHandle, final boolean aVisible, @Nullable final WidgetPlacement aPlacement) {
+    public void updateWidget(final Widget aWidget) {
         queueRunnable(new Runnable() {
             @Override
             public void run() {
-                if (aPlacement != null) {
-                    updateWidgetPlacementNative(aHandle, aPlacement);
-                }
-                setWidgetVisibleNative(aHandle, aVisible);
+                updateWidgetNative(aWidget.getHandle(), aWidget.getPlacement());
             }
         });
 
-        Widget widget = mWidgets.get(aHandle);
-        if (widget != null) {
-            ((UIWidget) widget).setVisibility(aVisible ? View.VISIBLE : View.GONE);
+        boolean visible = aWidget.getPlacement().visible;
+        View view = (View)aWidget;
+        if (visible != (view.getVisibility() == View.VISIBLE)) {
+            view.setVisibility(visible ? View.VISIBLE : View.GONE);
         }
     }
 
     @Override
-    public void removeWidget(final int aHandle) {
-        Widget widget = mWidgets.remove(aHandle);
-        if (widget instanceof View) {
-            mWidgetContainer.removeView((View) widget);
-        }
+    public void removeWidget(final Widget aWidget) {
+        mWidgets.remove(aWidget.getHandle());
+        mWidgetContainer.removeView((View) aWidget);
         queueRunnable(new Runnable() {
             @Override
             public void run() {
-                removeWidgetNative(aHandle);
+                removeWidgetNative(aWidget.getHandle());
             }
         });
     }
@@ -460,8 +412,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
 
-    private native void addWidgetNative(WidgetPlacement aWidget, boolean aVisible, int aCallbackId);
-    private native void setWidgetVisibleNative(int aHandle, boolean aVisible);
-    private native void updateWidgetPlacementNative(int aHandle, WidgetPlacement aPlacement);
+    private native void addWidgetNative(int aHandle, WidgetPlacement aPlacement);
+    private native void updateWidgetNative(int aHandle, WidgetPlacement aPlacement);
     private native void removeWidgetNative(int aHandle);
 }

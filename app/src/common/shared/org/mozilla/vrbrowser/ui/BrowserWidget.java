@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.vrbrowser;
+package org.mozilla.vrbrowser.ui;
 
 import android.content.Context;
 import android.graphics.Rect;
@@ -18,8 +18,12 @@ import android.view.inputmethod.InputConnection;
 
 import org.mozilla.gecko.gfx.GeckoDisplay;
 import org.mozilla.geckoview.GeckoSession;
+import org.mozilla.vrbrowser.SessionStore;
+import org.mozilla.vrbrowser.Widget;
+import org.mozilla.vrbrowser.WidgetManagerDelegate;
+import org.mozilla.vrbrowser.WidgetPlacement;
 
-class BrowserWidget extends View implements Widget, SessionStore.SessionChangeListener {
+public class BrowserWidget extends View implements Widget, SessionStore.SessionChangeListener {
     private static final String LOGTAG = "VRB";
     private int mSessionId;
     private GeckoDisplay mDisplay;
@@ -28,8 +32,9 @@ class BrowserWidget extends View implements Widget, SessionStore.SessionChangeLi
     private int mWidth;
     private int mHeight;
     private int mHandle;
+    private WidgetPlacement mWidgetPlacement;
 
-    BrowserWidget(Context aContext, int aSessionId) {
+    public BrowserWidget(Context aContext, int aSessionId) {
         super(aContext);
         mSessionId = aSessionId;
         SessionStore.get().addSessionChangeListener(this);
@@ -38,6 +43,23 @@ class BrowserWidget extends View implements Widget, SessionStore.SessionChangeLi
         if (session != null) {
             session.getTextInput().setView(this);
         }
+        mHandle = ((WidgetManagerDelegate)aContext).newWidgetHandle();
+        mWidgetPlacement = new WidgetPlacement(aContext);
+        initializeWidgetPlacement(mWidgetPlacement);
+
+    }
+
+    private void initializeWidgetPlacement(WidgetPlacement aPlacement) {
+        aPlacement.width = 1920;
+        aPlacement.height = 1080;
+        aPlacement.density = 1.0f;
+        aPlacement.translationX = 0.0f;
+        aPlacement.translationY = WidgetPlacement.unitFromMeters(-3.0f);
+        aPlacement.translationZ = WidgetPlacement.unitFromMeters(-18.0f);
+        aPlacement.worldWidth = 18.0f;
+        aPlacement.anchorX = 0.5f;
+        aPlacement.anchorY = 0.0f;
+        aPlacement.opaque = true;
     }
 
     @Override
@@ -56,19 +78,15 @@ class BrowserWidget extends View implements Widget, SessionStore.SessionChangeLi
     }
 
     @Override
-    public void setHandle(int aHandle) {
-        mHandle = aHandle;
-    }
-
-    @Override
     public int getHandle() {
         return mHandle;
     }
 
     @Override
-    public void setWidgetManager(WidgetManagerDelegate aWidgetManager) {
-
+    public WidgetPlacement getPlacement() {
+        return mWidgetPlacement;
     }
+
 
     @Override
     public void handleTouchEvent(MotionEvent aEvent) {

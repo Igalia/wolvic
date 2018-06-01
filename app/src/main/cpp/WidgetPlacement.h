@@ -16,7 +16,6 @@ class WidgetPlacement;
 typedef std::shared_ptr<WidgetPlacement> WidgetPlacementPtr;
 
 struct WidgetPlacement {
-  int32_t widgetType;
   int32_t width;
   int32_t height;
   vrb::Vector anchor;
@@ -25,7 +24,10 @@ struct WidgetPlacement {
   float rotation;
   int32_t parentHandle;
   vrb::Vector parentAnchor;
-  float worldScale;
+  float density;
+  float worldWidth;
+  bool visible;
+  bool opaque;
   bool showPointer;
 
   static WidgetPlacementPtr FromJava(JNIEnv* aEnv, jobject& aObject);

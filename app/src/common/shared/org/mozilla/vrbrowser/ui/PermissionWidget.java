@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.WidgetPlacement;
 
 import java.net.URI;
 import java.net.URL;
@@ -80,6 +81,18 @@ public class PermissionWidget extends UIWidget {
         });
     }
 
+    @Override
+    void initializeWidgetPlacement(WidgetPlacement aPlacement) {
+        aPlacement.width = 300;
+        aPlacement.height = 230;
+        aPlacement.parentAnchorX = 0.5f;
+        aPlacement.parentAnchorY = 0.5f;
+        aPlacement.anchorX = 0.5f;
+        aPlacement.anchorY = 0.5f;
+        aPlacement.translationZ = 400.0f;
+        aPlacement.worldWidth = 6.0f;
+    }
+
     public void showPrompt(String aUri, PermissionType aType, GeckoSession.PermissionDelegate.Callback aCallback) {
         int messageId;
         int iconId;
@@ -122,7 +135,8 @@ public class PermissionWidget extends UIWidget {
         mPermissionMessage.setText(str);
         mPermissionIcon.setImageResource(iconId);
 
-        mWidgetManager.updateWidget(mHandle, true, null);
+        mWidgetPlacement.visible = true;
+        mWidgetManager.updateWidget(this);
     }
 
     String getRequesterName(String aUri) {
@@ -137,7 +151,8 @@ public class PermissionWidget extends UIWidget {
     }
 
     private void handlePermissionResult(boolean aGranted) {
-        mWidgetManager.updateWidget(mHandle, false, null);
+        mWidgetPlacement.visible = false;
+        mWidgetManager.updateWidget(this);
         if (mPermissionCallback == null) {
             return;
         }

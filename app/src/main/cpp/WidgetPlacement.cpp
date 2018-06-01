@@ -9,7 +9,7 @@ namespace crow {
 
 WidgetPlacementPtr
 WidgetPlacement::FromJava(JNIEnv* aEnv, jobject& aObject) {
-  if (!aObject) {
+  if (!aObject || !aEnv) {
     return nullptr;
   }
 
@@ -32,7 +32,6 @@ WidgetPlacement::FromJava(JNIEnv* aEnv, jobject& aObject) {
   result->name = aEnv->GetBooleanField(aObject, f); \
 }
 
-  GET_INT_FIELD(widgetType);
   GET_INT_FIELD(width);
   GET_INT_FIELD(height);
   GET_FLOAT_FIELD(anchor.x(), "anchorX");
@@ -47,7 +46,10 @@ WidgetPlacement::FromJava(JNIEnv* aEnv, jobject& aObject) {
   GET_INT_FIELD(parentHandle);
   GET_FLOAT_FIELD(parentAnchor.x(), "parentAnchorX");
   GET_FLOAT_FIELD(parentAnchor.y(), "parentAnchorY");
-  GET_FLOAT_FIELD(worldScale, "worldScale");
+  GET_FLOAT_FIELD(density, "density");
+  GET_FLOAT_FIELD(worldWidth, "worldWidth");
+  GET_BOOLEAN_FIELD(visible);
+  GET_BOOLEAN_FIELD(opaque);
   GET_BOOLEAN_FIELD(showPointer);
 
   return result;

@@ -34,13 +34,9 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private CustomKeyboard mKeyboardSymbols2;
     private Drawable mShiftOnIcon;
     private Drawable mShiftOffIcon;
-    KeyCharacterMap mMap = KeyCharacterMap.load(KeyCharacterMap.VIRTUAL_KEYBOARD);
-    char mChar[] = new char[1];
     private View mFocusedView;
     private InputConnection mInputConnection;
     private EditorInfo mEditorInfo = new EditorInfo();
-    private StringBuilder mComposing = new StringBuilder();
-    private WidgetPlacement mPlacement;
 
     public KeyboardWidget(Context aContext) {
         super(aContext);
@@ -92,6 +88,22 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         });
     }
 
+    @Override
+    void initializeWidgetPlacement(WidgetPlacement aPlacement) {
+        aPlacement.width = 640;
+        aPlacement.height = 192;
+        aPlacement.parentAnchorX = 0.5f;
+        aPlacement.parentAnchorY = 0.5f;
+        aPlacement.anchorX = 0.5f;
+        aPlacement.anchorY = 0.5f;
+        aPlacement.translationZ = 660.0f;
+        aPlacement.rotationAxisX = 1.0f;
+        aPlacement.rotation = (float)Math.toRadians(-15.0f);
+        aPlacement.worldWidth = 1.7f;
+        aPlacement.showPointer = false;
+        aPlacement.visible = false;
+    }
+
     public void setFocusedView(View aFocusedView) {
         mFocusedView = aFocusedView;
         mFocusedView.getHandler();
@@ -107,16 +119,10 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
        if (mFocusedView != null) {
            mFocusedView.clearFocus();
        }
-       mWidgetManager.updateWidget(getHandle(), false, null);
+       mWidgetPlacement.visible = false;
+       mWidgetManager.updateWidget(this);
     }
 
-    public void setPlacement(WidgetPlacement aPlacement) {
-        mPlacement = aPlacement;
-    }
-
-    public WidgetPlacement getPlacement() {
-        return mPlacement;
-    }
 
     @Override
     public void onPress(int primaryCode) {

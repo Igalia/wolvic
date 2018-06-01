@@ -21,6 +21,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.WidgetPlacement;
 
 import java.util.ArrayList;
 
@@ -43,6 +44,7 @@ public class MoreMenuWidget extends UIWidget {
         super(aContext, aAttrs, aDefStyle);
         initialize(aContext);
     }
+
 
     public void setDelegate(MoreMenuWidget.Delegate aDelegate) {
         mDelegate = aDelegate;
@@ -95,6 +97,17 @@ public class MoreMenuWidget extends UIWidget {
                 }
             }
         });
+    }
+
+    @Override
+    void initializeWidgetPlacement(WidgetPlacement aPlacement) {
+        aPlacement.width = 300;
+        aPlacement.height = 100;
+        aPlacement.parentAnchorX = 1.0f;
+        aPlacement.parentAnchorY = 1.0f;
+        aPlacement.anchorX = (aPlacement.width - 46.0f) / aPlacement.width;
+        aPlacement.anchorY = 0.0f;
+        aPlacement.translationY = 6.0f;
     }
 
     public void updatePrivateBrowsing(boolean aIsPrivate) {

@@ -18,26 +18,39 @@ import android.widget.FrameLayout;
 
 import org.mozilla.vrbrowser.Widget;
 import org.mozilla.vrbrowser.WidgetManagerDelegate;
+import org.mozilla.vrbrowser.WidgetPlacement;
 
-public class UIWidget extends FrameLayout implements Widget {
+public abstract class UIWidget extends FrameLayout implements Widget {
     UISurfaceTextureRenderer mRenderer;
     SurfaceTexture mTexture;
-    int mOffset[] = new int[2];
     protected int mHandle;
+    protected WidgetPlacement mWidgetPlacement;
     protected WidgetManagerDelegate mWidgetManager;
     static final String LOGTAG = "VRB";
 
     public UIWidget(Context aContext) {
         super(aContext);
+        initialize();
     }
 
     public UIWidget(Context aContext, AttributeSet aAttrs) {
         super(aContext, aAttrs);
+        initialize();
     }
 
     public UIWidget(Context aContext, AttributeSet aAttrs, int aDefStyle) {
         super(aContext, aAttrs, aDefStyle);
+        initialize();
     }
+
+    private void initialize() {
+        mWidgetManager = (WidgetManagerDelegate) getContext();
+        mWidgetPlacement = new WidgetPlacement(getContext());
+        mHandle = mWidgetManager.newWidgetHandle();
+        initializeWidgetPlacement(mWidgetPlacement);
+    }
+
+    abstract void initializeWidgetPlacement(WidgetPlacement aPlacement);
 
     @Override
     public void setSurfaceTexture(SurfaceTexture aTexture, final int aWidth, final int aHeight) {
@@ -55,10 +68,6 @@ public class UIWidget extends FrameLayout implements Widget {
         setWillNotDraw(mRenderer == null);
     }
 
-    @Override
-    public void setHandle(int aHandle) {
-        mHandle = aHandle;
-    }
 
     @Override
     public int getHandle() {
@@ -66,9 +75,10 @@ public class UIWidget extends FrameLayout implements Widget {
     }
 
     @Override
-    public void setWidgetManager(WidgetManagerDelegate aWidgetManager) {
-        mWidgetManager = aWidgetManager;
+    public WidgetPlacement getPlacement() {
+        return mWidgetPlacement;
     }
+
 
     @Override
     public void handleTouchEvent(MotionEvent aEvent) {

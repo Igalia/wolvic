@@ -1,13 +1,11 @@
 package org.mozilla.vrbrowser;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.util.Log;
 
 import org.mozilla.geckoview.GeckoSession;
-import org.mozilla.vrbrowser.ui.KeyboardWidget;
 import org.mozilla.vrbrowser.ui.PermissionWidget;
 
 import java.util.ArrayList;
@@ -22,7 +20,7 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate {
     private GeckoSession.PermissionDelegate.Callback mCallback;
     private PermissionWidget mPermissionWidget;
 
-    public PermissionDelegate(Context aContext, WidgetManagerDelegate aWidgetManager) {
+    PermissionDelegate(Context aContext, WidgetManagerDelegate aWidgetManager) {
         mContext = aContext;
         mWidgetManager = aWidgetManager;
         SessionStore.get().setPermissionDelegate(this);
@@ -54,27 +52,9 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate {
 
     private void handleContentPermission(final String aUri, final PermissionWidget.PermissionType aType, final Callback aCallback) {
         if (mPermissionWidget == null) {
-            WidgetPlacement placement = new WidgetPlacement();
-            placement.widgetType = Widget.PermissionWidget;
-            placement.parentHandle = mParentWidgetHandle;
-            placement.width = 300;
-            placement.height = 230;
-            placement.parentAnchorX = 0.5f;
-            placement.parentAnchorY = 0.5f;
-            placement.anchorX = 0.5f;
-            placement.anchorY = 0.5f;
-            placement.translationZ = 400.0f;
-            placement.worldScale = 0.8f;
-
-            mWidgetManager.addWidget(placement, true, new WidgetManagerDelegate.WidgetAddCallback() {
-                @Override
-                public void onWidgetAdd(Widget aWidget) {
-                    mPermissionWidget = (PermissionWidget) aWidget;
-                    handleContentPermission(aUri, aType, aCallback);
-                }
-            });
-
-            return;
+            mPermissionWidget = new PermissionWidget(mContext);
+            mPermissionWidget.getPlacement().parentHandle = mParentWidgetHandle;
+            mWidgetManager.addWidget(mPermissionWidget);
         }
 
         mPermissionWidget.showPrompt(aUri, aType, aCallback);
@@ -86,8 +66,6 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate {
         mContext = null;
         mWidgetManager = null;
     }
-
-
 
     @Override
     public void onAndroidPermissionsRequest(GeckoSession aSession, String[] permissions, Callback aCallback) {

@@ -19,6 +19,7 @@ import android.widget.TextView;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.SessionStore;
+import org.mozilla.vrbrowser.WidgetPlacement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +44,7 @@ public class TabOverflowWidget extends UIWidget {
         initialize(aContext);
     }
 
+
     public void setDelegate(Delegate aDelegate) {
         mDelegate = aDelegate;
     }
@@ -63,6 +65,19 @@ public class TabOverflowWidget extends UIWidget {
                 }
             }
         });
+    }
+
+    @Override
+    void initializeWidgetPlacement(WidgetPlacement aPlacement) {
+        aPlacement.width = 350;
+        aPlacement.height = 275;
+        aPlacement.parentAnchorX = 1.0f;
+        aPlacement.parentAnchorY = 0.0f;
+        aPlacement.anchorX = 1.0f;
+        aPlacement.anchorY = 1.0f;
+        aPlacement.translationX = -10.0f;
+        aPlacement.translationY = -120.0f;
+        aPlacement.translationZ = 2.0f;
     }
 
     public void updatePrivateBrowsing(boolean mPrivateMode) {
