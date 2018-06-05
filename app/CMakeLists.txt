@@ -48,6 +48,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/vrb/src/SurfaceTextureFactory.cpp
              src/main/cpp/vrb/src/Texture.cpp
              src/main/cpp/vrb/src/TextureCache.cpp
+             src/main/cpp/vrb/src/TextureCubeMap.cpp
              src/main/cpp/vrb/src/TextureGL.cpp
              src/main/cpp/vrb/src/TextureSurface.cpp
              src/main/cpp/vrb/src/Toggle.cpp
