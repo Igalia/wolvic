@@ -15,6 +15,7 @@ import org.mozilla.geckoview.SessionTextInput;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,7 +30,7 @@ import android.view.inputmethod.ExtractedTextRequest;
 public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSession.ProgressDelegate, GeckoSession.ContentDelegate {
     private static SessionStore mInstance;
     private static final String LOGTAG = "VRB";
-    private static DelegateStub sDelegateStub = new DelegateStub();
+    private static DelegateStub sDelegateStub;
     public static SessionStore get() {
         if (mInstance == null) {
             mInstance = new SessionStore();
@@ -42,7 +43,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     private LinkedList<GeckoSession.ProgressDelegate> mProgressListeners;
     private LinkedList<GeckoSession.ContentDelegate> mContentListeners;
     private LinkedList<SessionChangeListener> mSessionChangeListeners;
-
+    private HashSet<Integer> mInputActiveSessions;
 
     public interface SessionChangeListener {
         void onNewSession(GeckoSession aSession, int aId);
@@ -70,8 +71,13 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         mProgressListeners = new LinkedList<>();
         mContentListeners = new LinkedList<>();
         mSessionChangeListeners = new LinkedList<>();
+        mInputActiveSessions = new HashSet<>();
 
         mSessions = new LinkedHashMap<>();
+
+        if (sDelegateStub == null) {
+            sDelegateStub = new DelegateStub(mInputActiveSessions);
+        }
     }
 
     public void setContext(Context aContext) {
@@ -193,13 +199,30 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         public boolean trackingProtection = true;
     }
 
-    static private class DelegateStub implements SessionTextInput.Delegate {
-        public void restartInput(@RestartReason int reason) {}
-        public void showSoftInput() {}
-        public void hideSoftInput() {}
-        public void updateSelection(int selStart, int selEnd, int compositionStart, int compositionEnd) {}
-        public void updateExtractedText(@NonNull ExtractedTextRequest request, @NonNull ExtractedText text) {}
-        public void updateCursorAnchorInfo(@NonNull CursorAnchorInfo info) {}
+    static private class DelegateStub implements GeckoSession.TextInputDelegate {
+        private HashSet<Integer> mInputActiveSessions;
+
+        DelegateStub(HashSet<Integer> aSet) {
+            mInputActiveSessions = aSet;
+        }
+        @Override
+        public void restartInput(@NonNull GeckoSession session, int reason) {
+
+        }
+        @Override
+        public void showSoftInput(@NonNull GeckoSession session) {
+            mInputActiveSessions.add(SessionStore.get().getSessionId(session));
+        }
+        @Override
+        public void hideSoftInput(@NonNull GeckoSession session) {
+            mInputActiveSessions.remove(SessionStore.get().getSessionId(session));
+        }
+        @Override
+        public void updateSelection(@NonNull GeckoSession session, int selStart, int selEnd, int compositionStart, int compositionEnd) {}
+        @Override
+        public void updateExtractedText(@NonNull GeckoSession session, @NonNull ExtractedTextRequest request, @NonNull ExtractedText text) {}
+        @Override
+        public void updateCursorAnchorInfo(@NonNull GeckoSession session, @NonNull CursorAnchorInfo info) {}
     }
 
     public int createSession() {
@@ -302,6 +325,10 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             result = state.mUri;
         }
         return result;
+    }
+
+    public boolean isInputActive(int aSessionId) {
+        return mInputActiveSessions.contains(aSessionId);
     }
 
     public boolean canGoBack() {

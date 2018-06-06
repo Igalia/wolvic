@@ -167,8 +167,7 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
 
     @Override
     public boolean onCheckIsTextEditor() {
-        GeckoSession session = SessionStore.get().getSession(mSessionId);
-        return session != null && session.getTextInput().isInputActive();
+        return SessionStore.get().isInputActive(mSessionId);
     }
 
 
