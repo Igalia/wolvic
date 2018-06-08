@@ -78,17 +78,19 @@ class MotionEventGenerator {
                 device.mCoords[0].pressure = 0.0f;
             }
         }
-        if ((device.mPreviousWidget != null) && (aWidget == null || (!aWidget.equals(device.mPreviousWidget)))) {
+        if ((device.mPreviousWidget != null) && (device.mPreviousWidget != aWidget)) {
             if (device.mWasPressed) {
                 generateEvent(device.mPreviousWidget, device, MotionEvent.ACTION_CANCEL, false);
                 device.mWasPressed = false;
             }
-            generateEvent(device.mPreviousWidget, device, MotionEvent.ACTION_HOVER_ENTER, true);
-            generateEvent(device.mPreviousWidget, device, MotionEvent.ACTION_HOVER_MOVE, true);
+            generateEvent(device.mPreviousWidget, device, MotionEvent.ACTION_HOVER_EXIT, true);
         }
         if (aWidget == null) {
             device.mPreviousWidget = null;
             return;
+        }
+        if (aWidget != device.mPreviousWidget) {
+            generateEvent(aWidget, device, MotionEvent.ACTION_HOVER_ENTER, true);
         }
         if (aPressed && !device.mWasPressed) {
             device.mDownTime = SystemClock.uptimeMillis();
