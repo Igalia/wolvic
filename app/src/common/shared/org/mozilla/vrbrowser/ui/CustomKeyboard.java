@@ -28,6 +28,10 @@ public class CustomKeyboard extends Keyboard {
         super(context, xmlLayoutResId);
     }
 
+    public CustomKeyboard (Context context, int layoutTemplateResId, CharSequence characters, int columns, int horizontalPadding) {
+        super(context, layoutTemplateResId, characters, columns, horizontalPadding);
+    }
+
     @Override
     protected Key createKeyFromXml(Resources res, Row parent, int x, int y, XmlResourceParser parser) {
         Key key = super.createKeyFromXml(res, parent, x, y, parser);

@@ -17,26 +17,21 @@
 package org.mozilla.vrbrowser.ui;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Paint.Align;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
-import android.graphics.Typeface;
-import android.graphics.Paint.Align;
 import android.graphics.Region.Op;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.Keyboard.Key;
 import android.media.AudioManager;
 import android.os.Handler;
 import android.os.Message;
-import android.os.UserHandle;
-import android.provider.Settings;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -46,7 +41,6 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup.LayoutParams;
 import android.view.accessibility.AccessibilityEvent;
-import android.view.accessibility.AccessibilityManager;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
@@ -86,6 +80,8 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
          * key, the value will be zero.
          */
         void onPress(int primaryCode);
+
+        void onLongPress(Key popupKey);
 
         /**
          * Called when the user releases a key. This is sent after the {@link #onKey} is called.
@@ -157,7 +153,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
 
     private PopupWindow mPopupKeyboard;
     private View mMiniKeyboardContainer;
-    private android.inputmethodservice.KeyboardView mMiniKeyboard;
+    private CustomKeyboardView mMiniKeyboard;
     private boolean mMiniKeyboardOnScreen;
     private View mPopupParent;
     private int mMiniKeyboardOffsetX;
@@ -297,7 +293,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
         mKeyTextSize = context.getResources().getDimensionPixelSize(R.dimen.keyboard_key_text_size);
         mKeyTextColor = 0xFFFFFFFF;
         mLabelTextSize = context.getResources().getDimensionPixelSize(R.dimen.keyboard_ley_longtext_size);
-        mPopupLayout = 0;
+        mPopupLayout = R.layout.keyboard;
         mShadowColor = 0;
         mShadowRadius = 0;
         mBackgroundDimAmount = 0.5f;
@@ -1054,81 +1050,11 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
      * method on the base class if the subclass doesn't wish to handle the call.
      */
     protected boolean onLongPress(Key popupKey) {
-        int popupKeyboardId = popupKey.popupResId;
-
-        if (popupKeyboardId != 0) {
-            mMiniKeyboardContainer = mMiniKeyboardCache.get(popupKey);
-            if (mMiniKeyboardContainer == null) {
-                LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(
-                        Context.LAYOUT_INFLATER_SERVICE);
-                mMiniKeyboardContainer = inflater.inflate(mPopupLayout, null);
-                mMiniKeyboard = (android.inputmethodservice.KeyboardView) mMiniKeyboardContainer.findViewById(0);
-                        // InternalResources.internalId("keyboardView"));
-                View closeButton = mMiniKeyboardContainer.findViewById(0);
-                        // InternalResources.internalId("closeButton"));
-                if (closeButton != null) closeButton.setOnClickListener(this);
-                mMiniKeyboard.setOnKeyboardActionListener(new android.inputmethodservice.KeyboardView.OnKeyboardActionListener() {
-                    public void onKey(int primaryCode, int[] keyCodes) {
-                        mKeyboardActionListener.onKey(primaryCode, keyCodes);
-                        dismissPopupKeyboard();
-                    }
-
-                    public void onText(CharSequence text) {
-                        mKeyboardActionListener.onText(text);
-                        dismissPopupKeyboard();
-                    }
-
-                    public void swipeLeft() { }
-                    public void swipeRight() { }
-                    public void swipeUp() { }
-                    public void swipeDown() { }
-                    public void onPress(int primaryCode) {
-                        mKeyboardActionListener.onPress(primaryCode);
-                    }
-                    public void onRelease(int primaryCode) {
-                        mKeyboardActionListener.onRelease(primaryCode);
-                    }
-                });
-                //mInputView.setSuggest(mSuggest);
-                Keyboard keyboard;
-                if (popupKey.popupCharacters != null) {
-                    keyboard = new Keyboard(getContext(), popupKeyboardId,
-                            popupKey.popupCharacters, -1, getPaddingLeft() + getPaddingRight());
-                } else {
-                    keyboard = new Keyboard(getContext(), popupKeyboardId);
-                }
-                mMiniKeyboard.setKeyboard(keyboard);
-                mMiniKeyboard.setPopupParent(this);
-                mMiniKeyboardContainer.measure(
-                        MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.AT_MOST),
-                        MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.AT_MOST));
-
-                mMiniKeyboardCache.put(popupKey, mMiniKeyboardContainer);
-            } else {
-                mMiniKeyboard = (android.inputmethodservice.KeyboardView) mMiniKeyboardContainer.findViewById(0);
-                // InternalResources.internalId("keyboardView"));
-            }
-            getLocationInWindow(mCoordinates);
-            mPopupX = popupKey.x + getPaddingLeft();
-            mPopupY = popupKey.y + getPaddingTop();
-            mPopupX = mPopupX + popupKey.width - mMiniKeyboardContainer.getMeasuredWidth();
-            mPopupY = mPopupY - mMiniKeyboardContainer.getMeasuredHeight();
-            final int x = mPopupX + mMiniKeyboardContainer.getPaddingRight() + mCoordinates[0];
-            final int y = mPopupY + mMiniKeyboardContainer.getPaddingBottom() + mCoordinates[1];
-            mMiniKeyboard.setPopupOffset(x < 0 ? 0 : x, y);
-            mMiniKeyboard.setShifted(isShifted());
-            mPopupKeyboard.setContentView(mMiniKeyboardContainer);
-            mPopupKeyboard.setWidth(mMiniKeyboardContainer.getMeasuredWidth());
-            mPopupKeyboard.setHeight(mMiniKeyboardContainer.getMeasuredHeight());
-            mPopupKeyboard.showAtLocation(this, Gravity.NO_GRAVITY, x, y);
-            mMiniKeyboardOnScreen = true;
-            //mMiniKeyboard.onTouchEvent(getTranslatedEvent(me));
-            invalidateAllKeys();
-            return true;
+        if (mKeyboardActionListener != null) {
+            mKeyboardActionListener.onLongPress(popupKey);
         }
         return false;
     }
-
 
     @Override
     public boolean onTouchEvent(MotionEvent me) {
