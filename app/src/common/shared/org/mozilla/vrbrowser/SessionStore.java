@@ -539,4 +539,10 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     public void onExternalResponse(GeckoSession session, GeckoSession.WebResponseInfo response) {
 
     }
+
+    @Override
+    public void onCrash(GeckoSession session) {
+
+    }
+
 }
