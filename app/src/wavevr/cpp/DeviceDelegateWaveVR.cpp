@@ -366,26 +366,6 @@ DeviceDelegateWaveVR::ProcessEvents() {
           VRB_LOG("WVR_EventType_Settings_ControllerRoleChange");
         }
         break;
-      case WVR_EventType_OutOfWall:
-        {
-          VRB_LOG("WVR_EventType_OutOfWall");
-        }
-        break;
-      case WVR_EventType_BackWithinWall:
-        {
-          VRB_LOG("WVR_EventType_BackWithinWall");
-        }
-        break;
-      case WVR_EventType_DeviceLoading:
-        {
-          VRB_LOG("WVR_EventType_DeviceLoading");
-        }
-        break;
-      case WVR_EventType_DeviceLoadingDone:
-        {
-          VRB_LOG("WVR_EventType_DeviceLoadingDone");
-        }
-        break;
       case WVR_EventType_ButtonPressed:
         {
           VRB_LOG("WVR_EventType_ButtonPressed");
