@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.Widget;
 import org.mozilla.vrbrowser.WidgetPlacement;
 
 import java.net.URI;
@@ -83,14 +84,15 @@ public class PermissionWidget extends UIWidget {
 
     @Override
     void initializeWidgetPlacement(WidgetPlacement aPlacement) {
-        aPlacement.width = 300;
-        aPlacement.height = 230;
+        Context context = getContext();
+        aPlacement.width = WidgetPlacement.dpDimension(context, R.dimen.permission_width);
+        aPlacement.height = WidgetPlacement.dpDimension(context, R.dimen.permission_height);
+        aPlacement.worldWidth = WidgetPlacement.floatDimension(context, R.dimen.permission_world_width);
+        aPlacement.translationZ = WidgetPlacement.unitFromMeters(context, R.dimen.permission_distance_from_browser);
         aPlacement.parentAnchorX = 0.5f;
         aPlacement.parentAnchorY = 0.5f;
         aPlacement.anchorX = 0.5f;
         aPlacement.anchorY = 0.5f;
-        aPlacement.translationZ = 400.0f;
-        aPlacement.worldWidth = 6.0f;
     }
 
     public void showPrompt(String aUri, PermissionType aType, GeckoSession.PermissionDelegate.Callback aCallback) {

@@ -4,10 +4,8 @@
         style="?attr/navigationBarStyle"
         android:id="@+id/navigationBarContainer"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:paddingStart="20dp"
-        android:paddingEnd="8dp"
-
+        android:layout_height="40dp"
+        android:padding="0dp"
         android:orientation="horizontal">
 
         <org.mozilla.vrbrowser.ui.NavigationBarButton
@@ -21,21 +19,21 @@
             android:id="@+id/forwardButton"
             style="?attr/navigationBarButtonStyle"
             android:layout_weight="1"
-            android:layout_marginStart="30dp"
+            android:layout_marginStart="10dp"
             android:src="@drawable/ic_icon_forward" />
 
         <org.mozilla.vrbrowser.ui.NavigationBarButton
             android:id="@+id/reloadButton"
             style="?attr/navigationBarButtonStyle"
             android:layout_weight="1"
-            android:layout_marginStart="30dp"
+            android:layout_marginStart="10dp"
             android:src="@drawable/ic_icon_reload" />
 
         <org.mozilla.vrbrowser.ui.NavigationBarButton
             android:id="@+id/homeButton"
             style="?attr/navigationBarButtonStyle"
             android:layout_weight="1"
-            android:layout_marginStart="30dp"
+            android:layout_marginStart="10dp"
             android:src="@drawable/ic_icon_home" />
 
         <org.mozilla.vrbrowser.ui.NavigationURLBar
@@ -45,7 +43,14 @@
             android:layout_gravity="center_vertical"
             android:orientation="horizontal"
             android:layout_weight="100"
-            android:layout_marginStart="25dp" />
+            android:layout_marginStart="10dp" />
+
+        <org.mozilla.vrbrowser.ui.NavigationBarButton
+            android:id="@+id/focusButton"
+            style="?attr/navigationBarButtonStyle"
+            android:layout_weight="1"
+            android:layout_marginStart="10dp"
+            android:src="@drawable/ic_icon_focus_mode" />
 
     </LinearLayout>
 </merge>

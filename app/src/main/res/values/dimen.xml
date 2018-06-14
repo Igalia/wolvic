@@ -1,10 +1,15 @@
 <resources>
-    <dimen name="header_button_margin">20dp</dimen>
-    <dimen name="tab_default_width">155dp</dimen>
-    <dimen name="tab_truncation_threshold">100dp</dimen>
-    <!-- header_button_margin + add_button_size -->
-    <dimen name="tab_layout_add_margin">46dp</dimen>
+    <!-- Browser window -->
+    <dimen name="browser_width_pixels">1920px</dimen>
+    <dimen name="browser_height_pixels">1080px</dimen>
+    <item name="browser_world_width" format="float" type="dimen">4.0</item>
+    <item name="browser_world_y" format="float" type="dimen">1.6</item>
+    <item name="browser_world_z" format="float" type="dimen">-4.2</item>
+
     <!-- Keyboard -->
+    <item name="keyboard_world_width" format="float" type="dimen">2.4</item>
+    <item name="keyboard_distance_from_browser" format="float" type="dimen">2.0</item>
+    <item name="keyboard_world_rotation" format="float" type="dimen">-30.0</item>
     <dimen name="keyboard_width">626dp</dimen>
     <dimen name="keyboard_height">202dp</dimen>
     <dimen name="keyboard_horizontal_gap">14dp</dimen>
@@ -17,4 +22,19 @@
     <dimen name="keyboard_key_enter_margin">38dp</dimen>
     <dimen name="keyboard_key_text_size">14dp</dimen>
     <dimen name="keyboard_ley_longtext_size">13dp</dimen>
+
+    <!-- Permission Prompt -->
+    <item name="permission_world_width" format="float" type="dimen">1.6</item>
+    <item name="permission_distance_from_browser" format="float" type="dimen">0.6</item>
+    <dimen name="permission_width">300dp</dimen>
+    <dimen name="permission_height">230dp</dimen>
+
+
+    <!-- Navigation bar -->
+    <dimen name="header_button_margin">20dp</dimen>
+    <dimen name="tab_default_width">155dp</dimen>
+    <dimen name="tab_truncation_threshold">100dp</dimen>
+    <!-- header_button_margin + add_button_size -->
+    <dimen name="tab_layout_add_margin">46dp</dimen>
+
 </resources>

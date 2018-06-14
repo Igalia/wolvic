@@ -6,9 +6,10 @@
 package org.mozilla.vrbrowser;
 
 import android.content.Context;
+import android.util.TypedValue;
 
 public class WidgetPlacement {
-    static final float WORLD_DPI_RATIO = 18.0f/720.0f;
+    static final float WORLD_DPI_RATIO = 2.0f/720.0f;
 
     public WidgetPlacement(Context aContext) {
         density = aContext.getResources().getDisplayMetrics().density;
@@ -32,10 +33,28 @@ public class WidgetPlacement {
     public float parentAnchorY = 0.5f;
     public boolean visible = true;
     public boolean opaque = false;
-    public boolean showPointer = true;
+    public boolean showPointer = false;
 
+    public static int pixelDimension(Context aContext, int aDimensionID) {
+        return aContext.getResources().getDimensionPixelSize(aDimensionID);
+    }
+
+    public static int dpDimension(Context aContext, int aDimensionID) {
+        return (int) (aContext.getResources().getDimension(aDimensionID) / aContext.getResources().getDisplayMetrics().density);
+    }
+
+    public static float floatDimension(Context aContext, int aDimensionID) {
+        TypedValue outValue = new TypedValue();
+        aContext.getResources().getValue(aDimensionID, outValue, true);
+        return outValue.getFloat();
+    }
 
     public static float unitFromMeters(float aMeters) {
         return aMeters / WORLD_DPI_RATIO;
     }
+
+    public static float unitFromMeters(Context aContext, int aDimensionId) {
+        return unitFromMeters(floatDimension(aContext, aDimensionId));
+    }
+
 }

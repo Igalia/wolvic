@@ -31,6 +31,7 @@ struct Widget::State {
   vrb::Vector windowNormal;
   vrb::TogglePtr root;
   vrb::TransformPtr transform;
+  vrb::GeometryPtr widgetGeometry;
   vrb::TextureSurfacePtr surface;
   vrb::TogglePtr pointerToggle;
   vrb::TransformPtr pointer;
@@ -68,6 +69,7 @@ struct Widget::State {
     state->SetMaterial(vrb::Color(0.4f, 0.4f, 0.4f), vrb::Color(1.0f, 1.0f, 1.0f), vrb::Color(0.0f, 0.0f, 0.0f),
                        0.0f);
     vrb::GeometryPtr geometry = vrb::Geometry::Create(context);
+    widgetGeometry = geometry;
     geometry->SetVertexArray(array);
     geometry->SetRenderState(state);
 
@@ -176,6 +178,42 @@ void
 Widget::GetWidgetMinAndMax(vrb::Vector& aMin, vrb::Vector& aMax) const {
   aMin = m.windowMin;
   aMax = m.windowMax;
+}
+
+void
+Widget::SetWorldWidth(float aWorldWidth) const {
+  const float aspect = (float)m.textureWidth / (float)m.textureHeight;
+  m.windowMin = vrb::Vector(-aWorldWidth * 0.5f, 0.0f, 0.0f);
+  m.windowMax = vrb::Vector(aWorldWidth *0.5f, aWorldWidth/aspect, 0.0f);
+
+  vrb::VertexArrayPtr array = m.widgetGeometry->GetVertexArray();
+  const vrb::Vector bottomRight(m.windowMax.x(), m.windowMin.y(), m.windowMin.z());
+  array->SetVertex(0, m.windowMin); // Bottom left
+  array->SetVertex(1, bottomRight); // Bottom right
+  array->SetVertex(2, m.windowMax); // Top right
+  array->SetVertex(3, vrb::Vector(m.windowMin.x(), m.windowMax.y(), m.windowMax.z())); // Top left
+
+  vrb::RenderStatePtr state = vrb::RenderState::Create(m.context);
+  state->SetTexture(m.surface);
+  state->SetMaterial(vrb::Color(0.4f, 0.4f, 0.4f), vrb::Color(1.0f, 1.0f, 1.0f), vrb::Color(0.0f, 0.0f, 0.0f),
+                     0.0f);
+  vrb::GeometryPtr geometry = vrb::Geometry::Create(m.context);
+  geometry->SetVertexArray(array);
+  geometry->SetRenderState(state);
+
+  int n = m.widgetGeometry->GetFaceCount();
+  for (int i = 0; i < n; ++i) {
+    auto & face = m.widgetGeometry->GetFace(i);
+    std::vector<int> vertices(face.vertices.begin(), face.vertices.end());
+    std::vector<int> uvs(face.uvs.begin(), face.uvs.end());
+    std::vector<int> normals(face.normals.begin(), face.normals.end());
+
+    geometry->AddFace(vertices, uvs, normals);
+  }
+
+  m.widgetGeometry->RemoveFromParents();
+  m.transform->AddNode(geometry);
+  m.widgetGeometry = geometry;
 }
 
 void

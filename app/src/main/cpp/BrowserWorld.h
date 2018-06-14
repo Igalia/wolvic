@@ -44,8 +44,10 @@ protected:
   struct State;
   BrowserWorld(State& aState);
   ~BrowserWorld();
+  vrb::TransformPtr CreateSkyBox(const std::string& basePath);
   void CreateFloor();
   void CreateControllerPointer();
+  float DistanceToNode(const vrb::NodePtr& aNode, const vrb::Vector& aPosition) const;
 private:
   State& m;
   BrowserWorld() = delete;

@@ -13,7 +13,6 @@ import android.opengl.GLES20;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Keep;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -21,9 +20,9 @@ import android.widget.FrameLayout;
 
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.audio.VRAudioTheme;
-import org.mozilla.vrbrowser.ui.BrowserHeaderWidget;
 import org.mozilla.vrbrowser.ui.BrowserWidget;
 import org.mozilla.vrbrowser.ui.KeyboardWidget;
+import org.mozilla.vrbrowser.ui.NavigationBarWidget;
 import org.mozilla.vrbrowser.ui.OffscreenDisplay;
 
 import java.util.Arrays;
@@ -121,14 +120,14 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mPermissionDelegate.setParentWidgetHandle(mBrowserWidget.getHandle());
 
         // Create Browser navigation widget
-        BrowserHeaderWidget header = new BrowserHeaderWidget(this);
-        header.getPlacement().parentHandle = mBrowserWidget.getHandle();
+        NavigationBarWidget navigationBar = new NavigationBarWidget(this);
+        navigationBar.getPlacement().parentHandle = mBrowserWidget.getHandle();
 
         // Create keyboard widget
         mKeyboard = new KeyboardWidget(this);
         mKeyboard.getPlacement().parentHandle = mBrowserWidget.getHandle();
 
-        addWidgets(Arrays.<Widget>asList(mBrowserWidget, header, mKeyboard));
+        addWidgets(Arrays.<Widget>asList(mBrowserWidget, navigationBar, mKeyboard));
     }
 
     @Override
@@ -202,14 +201,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         boolean placementUpdated = false;
         if (showKeyboard) {
             mKeyboard.setFocusedView(focusedView);
-            // Fixme: Improve keyboard placement once GeckoView API lands a way to detect the TextView position on a webpage
-            // For now we just use different placements for navigation bar &  GeckoView
-            float translationY = focusedView == mBrowserWidget ? -30.0f : -20.0f;
-            if (translationY != mKeyboard.getPlacement().translationY) {
-                mKeyboard.getPlacement().translationY = translationY;
-                placementUpdated = true;
-            }
-
         }
         boolean keyboardIsVisible = mKeyboard.getVisibility() == View.VISIBLE;
         if (showKeyboard != keyboardIsVisible || placementUpdated) {
@@ -356,6 +347,17 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             public void run() {
                 for (Widget widget: aWidgets) {
                     addWidgetNative(widget.getHandle(), widget.getPlacement());
+                }
+            }
+        });
+    }
+
+    public void updateWidgets(final Iterable<Widget> aWidgets) {
+        queueRunnable(new Runnable() {
+            @Override
+            public void run() {
+                for (Widget widget: aWidgets) {
+                    updateWidgetNative(widget.getHandle(), widget.getPlacement());
                 }
             }
         });

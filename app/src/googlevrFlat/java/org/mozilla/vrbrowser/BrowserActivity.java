@@ -26,8 +26,6 @@ import org.mozilla.gecko.util.GeckoBundle;
 import org.mozilla.vrbrowser.SessionStore;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.audio.VRAudioTheme;
-import org.mozilla.vrbrowser.ui.BrowserHeaderWidget;
-import org.mozilla.vrbrowser.ui.NavigationBar;
 
 public class BrowserActivity extends Activity implements SessionStore.SessionChangeListener {
     private static final String LOGTAG = "VRB";

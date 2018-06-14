@@ -5,33 +5,46 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="0dp"
+        android:paddingStart="20dp"
         android:paddingEnd="40dp"
-        android:drawableStart="@drawable/url_left_background"
-        android:drawablePadding="20dp"
         android:ems="10"
         android:inputType="textUri"
         android:background="@drawable/url_background"
-        android:textColor="@color/ocean"
+        android:textColor="@color/fog"
         android:selectAllOnFocus="true" />
 
     <RelativeLayout
         android:id="@+id/urlLeftContainer"
         android:visibility="gone"
-        android:background="@drawable/url_left_background"
+        android:background="@null"
         android:layout_width="50dp"
         android:layout_height="match_parent">
         <ImageView
+            android:id="@+id/loadingView"
+            android:visibility="gone"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/loading_shape"
+            android:layout_centerInParent="true"
+            />
+
+        <ImageView
             android:id="@+id/insecureIcon"
-            style="?attr/urlBarIconStyle"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:padding="5dp"
+            android:visibility="gone"
             android:src="@drawable/icon_lock_insecure_network"
             android:layout_centerInParent="true"
             />
+
     </RelativeLayout>
 
-    <ImageButton
+    <org.mozilla.vrbrowser.ui.NavigationBarButton
         android:id="@+id/microphoneButton"
         style="?attr/urlBarIconStyle"
-        android:layout_gravity="end"
-        android:tint="@color/dusk"
+        android:layout_gravity="center_vertical|end"
+        android:tint="@color/fog"
         android:src="@drawable/ic_icon_microphone" />
 </merge>

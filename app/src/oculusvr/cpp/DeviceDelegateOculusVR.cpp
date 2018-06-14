@@ -242,6 +242,7 @@ struct DeviceDelegateOculusVR::State {
     if (controllerState.TrackpadStatus && !touchpadPressed) {
       controller->SetTouchPosition(0, scrollX, scrollY);
     } else {
+      controller->SetTouchPosition(0, scrollX, scrollY);
       controller->EndTouch(0);
     }
   }

@@ -18,6 +18,7 @@ import android.view.inputmethod.InputConnection;
 
 import org.mozilla.gecko.gfx.GeckoDisplay;
 import org.mozilla.geckoview.GeckoSession;
+import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.SessionStore;
 import org.mozilla.vrbrowser.Widget;
 import org.mozilla.vrbrowser.WidgetManagerDelegate;
@@ -50,15 +51,16 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
     }
 
     private void initializeWidgetPlacement(WidgetPlacement aPlacement) {
-        aPlacement.width = 1920;
-        aPlacement.height = 1080;
+        Context context = getContext();
+        aPlacement.worldWidth =  WidgetPlacement.floatDimension(context, R.dimen.browser_world_width);
+        aPlacement.width = WidgetPlacement.pixelDimension(context, R.dimen.browser_width_pixels);
+        aPlacement.height = WidgetPlacement.pixelDimension(context, R.dimen.browser_height_pixels);
         aPlacement.density = 1.0f;
         aPlacement.translationX = 0.0f;
-        aPlacement.translationY = WidgetPlacement.unitFromMeters(-3.0f);
-        aPlacement.translationZ = WidgetPlacement.unitFromMeters(-18.0f);
-        aPlacement.worldWidth = 18.0f;
+        aPlacement.translationY = WidgetPlacement.unitFromMeters(context, R.dimen.browser_world_y);
+        aPlacement.translationZ = WidgetPlacement.unitFromMeters(context, R.dimen.browser_world_z);
         aPlacement.anchorX = 0.5f;
-        aPlacement.anchorY = 0.0f;
+        aPlacement.anchorY = 0.5f;
         aPlacement.opaque = true;
     }
 
@@ -86,7 +88,6 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
     public WidgetPlacement getPlacement() {
         return mWidgetPlacement;
     }
-
 
     @Override
     public void handleTouchEvent(MotionEvent aEvent) {

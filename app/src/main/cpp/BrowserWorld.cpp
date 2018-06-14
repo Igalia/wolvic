@@ -25,11 +25,14 @@
 #include "vrb/SurfaceTextureFactory.h"
 #include "vrb/TextureCache.h"
 #include "vrb/TextureSurface.h"
+#include "vrb/TextureCubeMap.h"
 #include "vrb/Toggle.h"
 #include "vrb/Transform.h"
 #include "vrb/VertexArray.h"
 #include "vrb/Vector.h"
+#include <array>
 #include <functional>
+#include <vrb/include/vrb/TextureGL.h>
 
 using namespace vrb;
 
@@ -39,7 +42,7 @@ static const int GestureSwipeLeft = 0;
 static const int GestureSwipeRight = 1;
 
 static const float kScrollFactor = 20.0f; // Just picked what fell right.
-static const float kWorldDPIRatio = 18.0f/720.0f;
+static const float kWorldDPIRatio = 2.0f/720.0f;
 
 static crow::BrowserWorld* sWorld;
 
@@ -54,6 +57,7 @@ static const char* kHandleAudioPoseSignature = "(FFFFFFF)V";
 static const char* kHandleGestureName = "handleGesture";
 static const char* kHandleGestureSignature = "(I)V";
 static const char* kTileTexture = "tile.png";
+
 class SurfaceObserver;
 typedef std::shared_ptr<SurfaceObserver> SurfaceObserverPtr;
 
@@ -347,6 +351,7 @@ struct BrowserWorld::State {
   ContextWeak contextWeak;
   NodeFactoryObjPtr factory;
   ParserObjPtr parser;
+  GroupPtr rootOpaqueParent;
   GroupPtr rootOpaque;
   GroupPtr rootTransparent;
   LightPtr light;
@@ -367,6 +372,7 @@ struct BrowserWorld::State {
   jmethodID handleGestureMethod;
   GestureDelegateConstPtr gestures;
   bool windowsInitialized;
+  TransformPtr skybox;
 
   State() : paused(true), glInitialized(false), env(nullptr), nearClip(0.1f),
             farClip(100.0f), activity(nullptr),
@@ -382,6 +388,8 @@ struct BrowserWorld::State {
     rootOpaque = Group::Create(contextWeak);
     rootTransparent = Group::Create(contextWeak);
     light = Light::Create(contextWeak);
+    rootOpaqueParent = Group::Create(contextWeak);
+    rootOpaqueParent->AddNode(rootOpaque);
     rootOpaque->AddLight(light);
     rootTransparent->AddLight(light);
     cullVisitor = CullVisitor::Create(contextWeak);
@@ -472,7 +480,6 @@ BrowserWorld::State::UpdateControllers() {
                           false, 0.0f, 0.0f);
       controller.widget = 0;
     }
-    controller.lastButtonState = controller.buttonState;
   }
   for (Widget* widget: active) {
     widget->TogglePointer(true);
@@ -632,6 +639,8 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
     }
     m.rootOpaque->AddNode(m.controllers->root);
     CreateControllerPointer();
+    m.skybox = CreateSkyBox("cubemap/space");
+    m.rootOpaqueParent->AddNode(m.skybox);
     CreateFloor();
     m.controllers->modelsLoaded = true;
   }
@@ -701,14 +710,25 @@ BrowserWorld::Draw() {
       return;
     }
   }
+
   m.device->ProcessEvents();
   m.context->Update();
   m.UpdateControllers();
   m.drawListOpaque->Reset();
   m.drawListTransparent->Reset();
-  m.rootOpaque->Cull(*m.cullVisitor, *m.drawListOpaque);
-  m.rootTransparent->Cull(*m.cullVisitor, *m.drawListTransparent);
+
+  m.rootOpaqueParent->Cull(*m.cullVisitor, *m.drawListOpaque);
+
   m.device->StartFrame();
+
+
+  vrb::Vector headPosition = m.device->GetHeadTransform().GetTranslation();
+  m.skybox->SetTransform(vrb::Matrix::Translation(headPosition));
+  m.rootTransparent->SortNodes([=](const NodePtr& a, const NodePtr& b) {
+    return DistanceToNode(a, headPosition) < DistanceToNode(b, headPosition);
+  });
+  m.rootTransparent->Cull(*m.cullVisitor, *m.drawListTransparent);
+
   m.device->BindEye(DeviceDelegate::CameraEnum::Left);
   m.drawListOpaque->Draw(*m.leftCamera);
   VRB_GL_CHECK(glDepthMask(GL_FALSE));
@@ -804,6 +824,17 @@ BrowserWorld::UpdateWidget(int32_t aHandle, const WidgetPlacement& aPlacement) {
   float worldWidth, worldHeight;
   widget->GetWorldSize(worldWidth, worldHeight);
 
+  float newWorldWidth = aPlacement.worldWidth;
+  if (newWorldWidth <= 0.0f) {
+    newWorldWidth = aPlacement.width * kWorldDPIRatio;
+  }
+
+  if (newWorldWidth != worldWidth) {
+    VRB_LOG("baina nor da ordu honetan? %f %f", newWorldWidth, worldWidth);
+    widget->SetWorldWidth(newWorldWidth);
+    widget->GetWorldSize(worldWidth, worldHeight);
+  }
+
   vrb::Matrix transform = vrb::Matrix::Identity();
   if (aPlacement.rotationAxis.Magnitude() > std::numeric_limits<float>::epsilon()) {
     transform = vrb::Matrix::Rotation(aPlacement.rotationAxis, aPlacement.rotation);
@@ -855,52 +886,78 @@ BrowserWorld::~BrowserWorld() {
  }
 }
 
-void
-BrowserWorld::CreateFloor() {
+vrb::TransformPtr
+BrowserWorld::CreateSkyBox(const std::string& basePath) {
+  std::array<GLfloat, 24> cubeVertices {
+    -1.0f,  1.0f,  1.0f, // 0
+    -1.0f, -1.0f,  1.0f, // 1
+     1.0f, -1.0f,  1.0f, // 2
+     1.0f,  1.0f,  1.0f, // 3
+    -1.0f,  1.0f, -1.0f, // 4
+    -1.0f, -1.0f, -1.0f, // 5
+     1.0f, -1.0f, -1.0f, // 6
+     1.0f,  1.0f, -1.0f, // 7
+  };
+
+  std::array<GLushort, 24> cubeIndices {
+      0, 1, 2, 3,
+      3, 2, 6, 7,
+      7, 6, 5, 4,
+      4, 5, 1, 0,
+      0, 3, 7, 4,
+      1, 5, 6, 2
+  };
+
   VertexArrayPtr array = VertexArray::Create(m.contextWeak);
-  const float kLength = 5.0f;
-  const float kFloor = 0.0f;
-  array->AppendVertex(Vector(-kLength, kFloor, kLength)); // Bottom left
-  array->AppendVertex(Vector(kLength, kFloor, kLength)); // Bottom right
-  array->AppendVertex(Vector(kLength, kFloor, -kLength)); // Top right
-  array->AppendVertex(Vector(-kLength, kFloor, -kLength)); // Top left
+  const float kLength = 50.0f;
+  for (int i = 0; i < cubeVertices.size(); i += 3) {
+    array->AppendVertex(Vector(-kLength * cubeVertices[i], -kLength * cubeVertices[i + 1], -kLength * cubeVertices[i + 2]));
+    array->AppendUV(Vector(-kLength * cubeVertices[i], -kLength * cubeVertices[i + 1], -kLength * cubeVertices[i + 2]));
+  }
 
-  const float kUV = kLength * 2.0f;
-  array->AppendUV(Vector(0.0f, 0.0f, 0.0f));
-  array->AppendUV(Vector(kUV, 0.0f, 0.0f));
-  array->AppendUV(Vector(kUV, kUV, 0.0f));
-  array->AppendUV(Vector(0.0f, kUV, 0.0f));
+  vrb::GeometryPtr geometry = vrb::Geometry::Create(m.contextWeak);
+  geometry->SetVertexArray(array);
 
-  const Vector kNormal(0.0f, 1.0f, 0.0f);
-  array->AppendNormal(kNormal);
+
+  for (int i = 0; i < cubeIndices.size(); i += 4) {
+    std::vector<int> indices = {cubeIndices[i] + 1, cubeIndices[i + 1] + 1, cubeIndices[i + 2] + 1, cubeIndices[i + 3] + 1};
+    geometry->AddFace(indices, indices, {});
+  }
 
   RenderStatePtr state = RenderState::Create(m.contextWeak);
-  TexturePtr tile = m.context->GetTextureCache()->LoadTexture(kTileTexture);
-  if (tile) {
-    tile->SetTextureParameter(GL_TEXTURE_WRAP_S, GL_REPEAT);
-    tile->SetTextureParameter(GL_TEXTURE_WRAP_T, GL_REPEAT);
-    state->SetTexture(tile);
-  }
-  state->SetMaterial(Color(0.4f, 0.4f, 0.4f), Color(1.0f, 1.0f, 1.0f), Color(0.0f, 0.0f, 0.0f),
-                     0.0f);
-  GeometryPtr geometry = Geometry::Create(m.contextWeak);
-  geometry->SetVertexArray(array);
+  TextureCubeMapPtr cubemap = vrb::TextureCubeMap::Create(m.contextWeak);
+  cubemap->SetTextureParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  cubemap->SetTextureParameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  cubemap->SetTextureParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  cubemap->SetTextureParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  cubemap->SetTextureParameter(GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+  state->SetTexture(cubemap);
+
+  auto path = [&](const std::string& name) { return basePath + "/" + name + ".jpg"; };
+  vrb::TextureCubeMap::Load(m.contextWeak, cubemap, path("posx"), path("negx"), path("posy"), path("negy"), path("posz"), path("negz"));
+
+  state->SetMaterial(Color(1.0f, 1.0f, 1.0f), Color(1.0f, 1.0f, 1.0f), Color(0.0f, 0.0f, 0.0f), 0.0f);
   geometry->SetRenderState(state);
-
-  std::vector<int> index;
-  index.push_back(1);
-  index.push_back(2);
-  index.push_back(3);
-  index.push_back(4);
-  std::vector<int> normalIndex;
-  normalIndex.push_back(1);
-  normalIndex.push_back(1);
-  normalIndex.push_back(1);
-  normalIndex.push_back(1);
-  geometry->AddFace(index, index, normalIndex);
-
-  m.rootOpaque->AddNode(geometry);
+  vrb::TransformPtr transform = vrb::Transform::Create(m.contextWeak);
+  transform->AddNode(geometry);
+  transform->SetTransform(Matrix::Position(vrb::Vector(0.0f, 0.0f, 0.0f)));
+  return transform;
 }
+
+
+void
+BrowserWorld::CreateFloor() {
+  vrb::TransformPtr model = Transform::Create(m.contextWeak);
+  m.factory->SetModelRoot(model);
+  m.parser->LoadModel("FirefoxPlatform2_low.obj");
+  m.rootOpaque->AddNode(model);
+  vrb::Matrix transform = vrb::Matrix::Identity();
+  transform.ScaleInPlace(Vector(40.0, 40.0, 40.0));
+  transform.TranslateInPlace(Vector(0.0, -2.5f, 1.0));
+  transform.PostMultiplyInPlace(vrb::Matrix::Rotation(Vector(1.0, 0.0, 0.0), M_PI * 0.5f));
+  model->SetTransform(transform);
+}
+
 
 void
 BrowserWorld::CreateControllerPointer() {
@@ -963,6 +1020,22 @@ BrowserWorld::CreateControllerPointer() {
       controller.transform->AddNode(m.controllers->pointerModel);
     }
   }
+}
+
+float
+BrowserWorld::DistanceToNode(const vrb::NodePtr& aTargetNode, const vrb::Vector& aPosition) const {
+  float result = -1;
+  Node::Traverse(aTargetNode, [&](const NodePtr &aNode, const GroupPtr &aTraversingFrom) {
+    vrb::TransformPtr transform = std::dynamic_pointer_cast<vrb::Transform>(aNode);
+    if (transform) {
+      vrb::Vector targetPos = transform->GetTransform().GetTranslation();
+      result = (targetPos - aPosition).Magnitude();
+      return true;
+    }
+    return false;
+  });
+
+  return result;
 }
 
 } // namespace crow

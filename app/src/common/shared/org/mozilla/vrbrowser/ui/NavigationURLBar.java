@@ -37,9 +37,10 @@ import java.util.regex.Pattern;
 
 public class NavigationURLBar extends FrameLayout {
     private EditText mURL;
-    private String mLatestURL;
     private ImageButton mMicrophoneButton;
     private ImageView mInsecureIcon;
+    private ImageView mLoadingView;
+    private Animation mLoadingAnimation;
     private RelativeLayout mURLLeftContainer;
     private boolean mIsLoading = false;
     private boolean mIsInsecure = false;
@@ -71,6 +72,8 @@ public class NavigationURLBar extends FrameLayout {
         mMicrophoneButton = findViewById(R.id.microphoneButton);
         mURLLeftContainer = findViewById(R.id.urlLeftContainer);
         mInsecureIcon = findViewById(R.id.insecureIcon);
+        mLoadingView = findViewById(R.id.loadingView);
+        mLoadingAnimation = AnimationUtils.loadAnimation(aContext, R.anim.loading);
         mDefaultURLLeftPadding = mURL.getPaddingLeft();
 
         TypedValue typedValue = new TypedValue();
@@ -84,11 +87,9 @@ public class NavigationURLBar extends FrameLayout {
         setFocusable(true);
         setFocusableInTouchMode(true);
         setClickable(true);
-
     }
 
     public void setURL(String aURL) {
-        mLatestURL = aURL;
         int index = -1;
         if (aURL != null) {
             index = aURL.indexOf("://");
@@ -106,6 +107,10 @@ public class NavigationURLBar extends FrameLayout {
         }
     }
 
+    public void setURLText(String aText) {
+        mURL.setText(aText);
+    }
+
     public void setIsInsecure(boolean aIsInsecure) {
         if (mIsInsecure != aIsInsecure) {
             mIsInsecure = aIsInsecure;
@@ -113,13 +118,27 @@ public class NavigationURLBar extends FrameLayout {
         }
     }
 
+    public void setIsLoading(boolean aIsLoading) {
+        if (mIsLoading != aIsLoading) {
+            mIsLoading = aIsLoading;
+            if (mIsLoading) {
+                mLoadingView.startAnimation(mLoadingAnimation);
+            } else {
+                mLoadingView.clearAnimation();
+            }
+            syncViews();
+        }
+    }
+
     private void syncViews() {
-        boolean showContainer = mIsInsecure;
+        boolean showContainer = mIsInsecure || mIsLoading;
         int leftPadding = mDefaultURLLeftPadding;
         if (showContainer) {
             mURLLeftContainer.setVisibility(View.VISIBLE);
             mURLLeftContainer.measure(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-            leftPadding += mURLLeftContainer.getMeasuredWidth();
+            mLoadingView.setVisibility(mIsLoading ? View.VISIBLE : View.GONE);
+            mInsecureIcon.setVisibility(!mIsLoading && mIsInsecure ? View.VISIBLE : View.GONE);
+            leftPadding = mURLLeftContainer.getMeasuredWidth();
         }
         else {
             mURLLeftContainer.setVisibility(View.GONE);
