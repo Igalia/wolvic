@@ -39,10 +39,10 @@ struct Widget::State {
 
   State()
       : handle(0)
-      , textureWidth(1920)
-      , textureHeight(1080)
+      , textureWidth(0)
+      , textureHeight(0)
       , windowMin(0.0f, 0.0f, 0.0f)
-      , windowMax(0.0f, 0.0f * 2.0f, 0.0f)
+      , windowMax(0.0f, 0.0f, 0.0f)
   {}
 
   float CalculatePointerScale() {
@@ -113,7 +113,7 @@ struct Widget::State {
     transform->AddNode(geometry);
     root = vrb::Toggle::Create(context);
     root->AddNode(transform);
-    const float kOffset = 0.1f;
+    const float kOffset = 0.01f;
     array = vrb::VertexArray::Create(context);
     const float scale = CalculatePointerScale();
     array->AppendVertex(vrb::Vector(0.1f * scale, -0.2f * scale, kOffset));
@@ -272,7 +272,7 @@ Widget::TestControllerIntersection(const vrb::Vector& aStartPoint, const vrb::Ve
   if (result.y() > m.windowMax.y()) { result.y() = m.windowMax.y(); }
   else if (result.y() < m.windowMin.y()) { result.y() = m.windowMin.y(); }
 
-  m.pointer->SetTransform(vrb::Matrix::Position(vrb::Vector(result.x(), result.y(), result.z())));
+  m.pointer->SetTransform(vrb::Matrix::Translation(vrb::Vector(result.x(), result.y(), 0.0f)));
 
   return true;
 }
