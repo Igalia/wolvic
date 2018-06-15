@@ -5,22 +5,19 @@
 
 package org.mozilla.vrbrowser.ui;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.inputmethodservice.Keyboard;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.TextView;
+import android.widget.RelativeLayout;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.WidgetPlacement;
@@ -32,11 +29,17 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private CustomKeyboard mKeyboardQuerty;
     private CustomKeyboard mKeyboardSymbols1;
     private CustomKeyboard mKeyboardSymbols2;
+    private ViewGroup mVoiceInput;
     private Drawable mShiftOnIcon;
     private Drawable mShiftOffIcon;
     private View mFocusedView;
     private InputConnection mInputConnection;
     private EditorInfo mEditorInfo = new EditorInfo();
+
+    private boolean mIsPopupVisible = false;
+    private RelativeLayout.LayoutParams mOriginalLayoutParams;
+    private NavigationBarButton mKeyboardIcon;
+    private int mKeyboardPopupLeftMargin;
 
     public KeyboardWidget(Context aContext) {
         super(aContext);
@@ -57,6 +60,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private void initialize(Context aContext) {
         inflate(aContext, R.layout.keyboard, this);
         mKeyboardview = findViewById(R.id.keyboard);
+        mVoiceInput = findViewById(R.id.keyboard_microphone);
 
         mKeyboardQuerty = new CustomKeyboard(aContext.getApplicationContext(), R.xml.keyboard_qwerty);
         mKeyboardSymbols1 = new CustomKeyboard(aContext.getApplicationContext(), R.xml.keyboard_symbols);
@@ -86,6 +90,18 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                 dismiss();
             }
         });
+
+        mKeyboardIcon = findViewById(R.id.keyboard_icon);
+        mKeyboardIcon.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mKeyboardview.setVisibility(View.VISIBLE);
+                mVoiceInput.setVisibility(View.GONE);
+            }
+        });
+
+        mKeyboardPopupLeftMargin = new Float(getResources().getDimension(
+                R.dimen.keyboard_popup_left_margin)).intValue();
     }
 
     @Override
@@ -106,6 +122,13 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     }
 
     public void setFocusedView(View aFocusedView) {
+        mKeyboardview.setKeyboard(mKeyboardQuerty);
+        if (mOriginalLayoutParams != null)
+            mKeyboardview.setLayoutParams(mOriginalLayoutParams);
+        mKeyboardview.setVisibility(View.VISIBLE);
+        mVoiceInput.setVisibility(View.GONE);
+        mIsPopupVisible = false;
+
         mFocusedView = aFocusedView;
         mFocusedView.getHandler();
         if (aFocusedView != null) {
@@ -128,6 +151,52 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     @Override
     public void onPress(int primaryCode) {
         Log.d("VRB", "Keyboard onPress " + primaryCode);
+    }
+
+    @Override
+    public void onLongPress(Keyboard.Key popupKey) {
+        if (popupKey.popupCharacters != null) {
+            mOriginalLayoutParams = (RelativeLayout.LayoutParams) mKeyboardview.getLayoutParams();
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.WRAP_CONTENT,
+                    RelativeLayout.LayoutParams.WRAP_CONTENT);
+
+            StringBuilder popupCharacters = new StringBuilder(popupKey.popupCharacters);
+            switch (popupKey.codes[0]) {
+                case 98:
+                case 104:
+                case 105:
+                case 106:
+                case 107:
+                case 108:
+                case 109:
+                case 110:
+                case 111:
+                case 112:
+                case 117:
+                case 187:{
+                    params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                    params.rightMargin = getWidth() - popupKey.x - mKeyboardPopupLeftMargin;
+                    if (popupCharacters.length() > 6) {
+                        popupCharacters.insert(5, popupCharacters.charAt(0));
+                        popupCharacters.substring(1);
+                    } else {
+                        popupCharacters.reverse();
+                    }
+                }
+                break;
+                default:{
+                    params.leftMargin = popupKey.x;
+                }
+            }
+
+            CustomKeyboard popupKeyboard = new CustomKeyboard(getContext(), popupKey.popupResId,
+                    popupCharacters, 6, 0);
+            mKeyboardview.setKeyboard(popupKeyboard);
+            params.topMargin= popupKey.y;
+            mKeyboardview.setLayoutParams(params);
+            mIsPopupVisible = true;
+        }
     }
 
     @Override
@@ -155,13 +224,18 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                 handleDone();
                 break;
             case CustomKeyboard.KEYCODE_VOICE_INPUT:
-                // TODO
+                handleVoiceInput();
                 break;
             case CustomKeyboard.KEYCODE_STRING_COM:
                 handleText(".com");
                 break;
             default:
                 handleKey(primaryCode, keyCodes);
+                if (mIsPopupVisible) {
+                    mKeyboardview.setKeyboard(mKeyboardQuerty);
+                    mKeyboardview.setLayoutParams(mOriginalLayoutParams);
+                    mIsPopupVisible = false;
+                }
                 break;
         }
     }
@@ -282,6 +356,11 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                 mInputConnection.commitText(aText, 1);
             }
         });
+    }
+
+    private void handleVoiceInput() {
+        mKeyboardview.setVisibility(View.GONE);
+        mVoiceInput.setVisibility(View.VISIBLE);
     }
 
     private void postInputCommand(Runnable aRunnable) {

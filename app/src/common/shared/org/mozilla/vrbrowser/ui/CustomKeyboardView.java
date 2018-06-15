@@ -32,6 +32,7 @@ import android.media.AudioManager;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -565,7 +566,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
     }
 
     private CharSequence adjustCase(CharSequence label) {
-        if (mKeyboard.isShifted() && label != null && label.length() < 3
+        if (mKeyboard.isShifted() && label != null && label.length() > 0 && label.length() < 3
                 && Character.isLowerCase(label.charAt(0))) {
             label = label.toString().toUpperCase();
         }
