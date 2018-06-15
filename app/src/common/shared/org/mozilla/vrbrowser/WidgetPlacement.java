@@ -33,7 +33,7 @@ public class WidgetPlacement {
     public float parentAnchorY = 0.5f;
     public boolean visible = true;
     public boolean opaque = false;
-    public boolean showPointer = false;
+    public boolean showPointer = true;
 
     public static int pixelDimension(Context aContext, int aDimensionID) {
         return aContext.getResources().getDimensionPixelSize(aDimensionID);

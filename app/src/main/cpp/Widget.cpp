@@ -45,6 +45,13 @@ struct Widget::State {
       , windowMax(0.0f, 0.0f * 2.0f, 0.0f)
   {}
 
+  float CalculatePointerScale() {
+    const float width = windowMax.x() - windowMin.x();
+    const float height = windowMax.y() - windowMin.y();
+    const float max = (width < height ? height : width);
+    float result = max * 0.1f;
+    return result;
+  }
   void Initialize(const int aHandle) {
     handle = aHandle;
     name = "crow::Widget-" + std::to_string(handle);
@@ -108,8 +115,9 @@ struct Widget::State {
     root->AddNode(transform);
     const float kOffset = 0.1f;
     array = vrb::VertexArray::Create(context);
-    array->AppendVertex(vrb::Vector(0.1f, -0.2f, kOffset));
-    array->AppendVertex(vrb::Vector(0.2f, -0.1f, kOffset));
+    const float scale = CalculatePointerScale();
+    array->AppendVertex(vrb::Vector(0.1f * scale, -0.2f * scale, kOffset));
+    array->AppendVertex(vrb::Vector(0.2f * scale, -0.1f * scale, kOffset));
     array->AppendVertex(vrb::Vector(0.0f, 0.0f, kOffset));
     array->AppendNormal(vrb::Vector(0.0f, 0.0f, 1.0f));
     index.clear();

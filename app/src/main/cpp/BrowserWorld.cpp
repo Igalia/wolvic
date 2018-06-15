@@ -813,15 +813,15 @@ BrowserWorld::UpdateWidget(int32_t aHandle, const WidgetPlacement& aPlacement) {
 
   WidgetPtr parent = m.GetWidget(aPlacement.parentHandle);
 
-  int32_t parentWidth, parentHeight;
-  float parentWorldWith, parentWorldHeight;
+  int32_t parentWidth = 0, parentHeight = 0;
+  float parentWorldWith = 0.0f, parentWorldHeight = 0.0f;
 
   if (parent) {
     parent->GetSurfaceTextureSize(parentWidth, parentHeight);
     parent->GetWorldSize(parentWorldWith, parentWorldHeight);
   }
 
-  float worldWidth, worldHeight;
+  float worldWidth = 0.0f, worldHeight = 0.0f;
   widget->GetWorldSize(worldWidth, worldHeight);
 
   float newWorldWidth = aPlacement.worldWidth;
@@ -830,7 +830,6 @@ BrowserWorld::UpdateWidget(int32_t aHandle, const WidgetPlacement& aPlacement) {
   }
 
   if (newWorldWidth != worldWidth) {
-    VRB_LOG("baina nor da ordu honetan? %f %f", newWorldWidth, worldWidth);
     widget->SetWorldWidth(newWorldWidth);
     widget->GetWorldSize(worldWidth, worldHeight);
   }
