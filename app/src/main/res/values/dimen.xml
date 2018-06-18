@@ -17,9 +17,10 @@
     <dimen name="keyboard_key_width">36dp</dimen>
     <dimen name="keyboard_key_height">36dp</dimen>
     <dimen name="keyboard_key_rounded_corner">18dp</dimen>
-    <dimen name="keyboard_key_space_width">384dp</dimen>
+    <dimen name="keyboard_key_space_width">386dp</dimen>
     <dimen name="keyboard_key_enter_width">89dp</dimen>
-    <dimen name="keyboard_key_enter_margin">38dp</dimen>
+    <dimen name="keyboard_key_enter_margin">36dp</dimen>
+    <dimen name="keyboard_key_a_margin">25dp</dimen>
     <dimen name="keyboard_key_text_size">14dp</dimen>
     <dimen name="keyboard_ley_longtext_size">13dp</dimen>
 
@@ -37,4 +38,6 @@
     <!-- header_button_margin + add_button_size -->
     <dimen name="tab_layout_add_margin">46dp</dimen>
 
+    <dimen name="keyboard_microphone_margin_left">50dp</dimen>
+    <dimen name="keyboard_popup_left_margin">90dp</dimen>
 </resources>
