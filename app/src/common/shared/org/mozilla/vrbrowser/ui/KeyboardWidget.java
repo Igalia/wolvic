@@ -102,6 +102,17 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
         mKeyboardPopupLeftMargin = new Float(getResources().getDimension(
                 R.dimen.keyboard_popup_left_margin)).intValue();
+
+        setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mIsPopupVisible) {
+                    mKeyboardview.setKeyboard(mKeyboardQuerty);
+                    mKeyboardview.setLayoutParams(mOriginalLayoutParams);
+                    mIsPopupVisible = false;
+                }
+            }
+        });
     }
 
     @Override
