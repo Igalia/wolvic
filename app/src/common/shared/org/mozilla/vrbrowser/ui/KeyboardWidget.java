@@ -81,8 +81,8 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         });
         mKeyboardview.setOnKeyboardActionListener(this);
 
-        mShiftOnIcon = getResources().getDrawable(R.drawable.ic_icon_keyboard_shift_on);
-        mShiftOffIcon = getResources().getDrawable(R.drawable.ic_icon_keyboard_shift_off);
+        mShiftOnIcon = getResources().getDrawable(R.drawable.ic_icon_keyboard_shift_on, getContext().getTheme());
+        mShiftOffIcon = getResources().getDrawable(R.drawable.ic_icon_keyboard_shift_off, getContext().getTheme());
         ImageButton closeKeyboardButton = findViewById(R.id.keyboardCloseButton);
         closeKeyboardButton.setOnClickListener(new OnClickListener() {
             @Override

@@ -43,7 +43,11 @@ public class CustomKeyboard extends Keyboard {
         int mDefaultHorizontalGap = getParentFieldInt(this, "mDefaultHorizontalGap");
         int mDefaultVerticalGap = getParentFieldInt(this, "mDefaultVerticalGap");
         int mDisplayWidth = getParentFieldInt(this, "mDisplayWidth");
-        ArrayList<Row> rows = (ArrayList<Row>)getParentFieldObject(this, "rows");
+        ArrayList<Row> rows = null;
+        Object rowsObj = getParentFieldObject(this, "rows");
+        if (rowsObj != null && rowsObj instanceof ArrayList) {
+            rows = (ArrayList<Row>)rowsObj;
+        }
 
         int rowsNum = (int)Math.ceil((characters.length()+0.1)/columns);
         final int maxColumns = columns == -1 ? Integer.MAX_VALUE : columns;
@@ -80,8 +84,13 @@ public class CustomKeyboard extends Keyboard {
             column++;
             x += key.width + key.gap;
             getKeys().add(key);
-            ArrayList<Key> mKeys = (ArrayList<Key>) getFieldObject(mRows[rowIndex], "mKeys");
-            mKeys.add(key);
+            Object keysObj = getFieldObject(mRows[rowIndex], "mKeys");
+            if (keysObj != null && getFieldObject(mRows[rowIndex], "mKeys") instanceof ArrayList) {
+                ArrayList<Key> mKeys = (ArrayList<Key>) keysObj;
+                if (mKeys != null) {
+                    mKeys.add(key);
+                }
+            }
             int mTotalWidth = getParentFieldInt(this, "mTotalWidth");
             if (x > mTotalWidth) {
                 setParentField(this, "mTotalWidth", x);
@@ -89,7 +98,8 @@ public class CustomKeyboard extends Keyboard {
         }
 
         for (Row row : mRows) {
-            rows.add(row);
+            if (rows != null)
+                rows.add(row);
         }
         setParentField(this, "mTotalHeight", y + mDefaultHeight);
     }
@@ -112,7 +122,7 @@ public class CustomKeyboard extends Keyboard {
             return mField.get(obj);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
-            return 0;
+            return null;
         }
     }
     private Object getParentFieldObject(Object obj, String fieldName) {
@@ -122,7 +132,7 @@ public class CustomKeyboard extends Keyboard {
             return mField.get(this);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
-            return 0;
+            return null;
         }
     }
 
