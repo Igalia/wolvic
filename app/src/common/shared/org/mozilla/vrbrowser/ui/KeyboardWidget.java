@@ -9,21 +9,27 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.inputmethodservice.Keyboard;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.CursorAnchorInfo;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.ExtractedText;
+import android.view.inputmethod.ExtractedTextRequest;
 import android.view.inputmethod.InputConnection;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
+import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.SessionStore;
 import org.mozilla.vrbrowser.WidgetPlacement;
 
 
-public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKeyboardActionListener {
+public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKeyboardActionListener, GeckoSession.TextInputDelegate {
     private static final String LOGTAG = "VRB";
     private CustomKeyboardView mKeyboardview;
     private CustomKeyboard mKeyboardQuerty;
@@ -33,6 +39,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private Drawable mShiftOnIcon;
     private Drawable mShiftOffIcon;
     private View mFocusedView;
+    private BrowserWidget mBrowserWidget;
     private InputConnection mInputConnection;
     private EditorInfo mEditorInfo = new EditorInfo();
 
@@ -113,6 +120,22 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                 }
             }
         });
+
+        mKeyboardview.setKeyboard(mKeyboardQuerty);
+        if (mOriginalLayoutParams != null)
+            mKeyboardview.setLayoutParams(mOriginalLayoutParams);
+        mKeyboardview.setVisibility(View.VISIBLE);
+        mVoiceInput.setVisibility(View.GONE);
+        mIsPopupVisible = false;
+
+        SessionStore.get().addTextInputListener(this);
+    }
+
+    @Override
+    public void releaseWidget() {
+        SessionStore.get().removeTextInputListener(this);
+        mBrowserWidget = null;
+        super.releaseWidget();
     }
 
     @Override
@@ -132,21 +155,27 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         aPlacement.visible = false;
     }
 
-    public void setFocusedView(View aFocusedView) {
-        mKeyboardview.setKeyboard(mKeyboardQuerty);
-        if (mOriginalLayoutParams != null)
-            mKeyboardview.setLayoutParams(mOriginalLayoutParams);
-        mKeyboardview.setVisibility(View.VISIBLE);
-        mVoiceInput.setVisibility(View.GONE);
-        mIsPopupVisible = false;
+    public void setBrowserWidget(BrowserWidget aWidget) {
+        mBrowserWidget = aWidget;
+        if (mBrowserWidget != null) {
+            mWidgetPlacement.parentHandle = mBrowserWidget.getHandle();
+        }
+    }
 
+    public void updateFocusedView(View aFocusedView) {
         mFocusedView = aFocusedView;
-        mFocusedView.getHandler();
-        if (aFocusedView != null) {
+        if (aFocusedView != null && aFocusedView.onCheckIsTextEditor()) {
             mInputConnection = aFocusedView.onCreateInputConnection(mEditorInfo);
             ((CustomKeyboard)mKeyboardview.getKeyboard()).setImeOptions(mEditorInfo.imeOptions);
         } else {
             mInputConnection = null;
+        }
+
+        boolean showKeyboard = mInputConnection != null;
+        boolean keyboardIsVisible = this.getVisibility() == View.VISIBLE;
+        if (showKeyboard != keyboardIsVisible) {
+            getPlacement().visible = showKeyboard;
+            mWidgetManager.updateWidget(this);
         }
     }
 
@@ -294,16 +323,17 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     }
 
     private void handleBackspace() {
+        final InputConnection connection = mInputConnection;
         postInputCommand(new Runnable() {
             @Override
             public void run() {
                 CharSequence selectedText = mInputConnection.getSelectedText(0);
                 if (selectedText == null || selectedText.length() == 0) {
                     // No selected text to delete. Remove the character before the cursor.
-                    mInputConnection.deleteSurroundingText(1, 0);
+                    connection.deleteSurroundingText(1, 0);
                 } else {
                     // Delete the selected text
-                    mInputConnection.commitText("", 1);
+                    connection.commitText("", 1);
                 }
             }
         });
@@ -311,11 +341,12 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     }
 
     private void handleDone() {
+        final InputConnection connection = mInputConnection;
         final int action = mEditorInfo.imeOptions & EditorInfo.IME_MASK_ACTION;
         postInputCommand(new Runnable() {
             @Override
             public void run() {
-                mInputConnection.performEditorAction(action);
+                connection.performEditorAction(action);
 
             }
         });
@@ -348,10 +379,11 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             str = str.toUpperCase();
         }
         final String result = str;
+        final InputConnection connection = mInputConnection;
         postInputCommand(new Runnable() {
             @Override
             public void run() {
-                mInputConnection.commitText(result, 1);
+                connection.commitText(result, 1);
             }
         });
     }
@@ -361,10 +393,11 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             return;
         }
 
+        final InputConnection connection = mInputConnection;
         postInputCommand(new Runnable() {
             @Override
             public void run() {
-                mInputConnection.commitText(aText, 1);
+                connection.commitText(aText, 1);
             }
         });
     }
@@ -386,5 +419,48 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         } else {
             aRunnable.run();
         }
+    }
+
+    // GeckoSession.TextInputDelegate
+
+    @Override
+    public void restartInput(@NonNull GeckoSession session, int reason) {
+
+    }
+
+    @Override
+    public void showSoftInput(@NonNull GeckoSession session) {
+        if (mFocusedView != mBrowserWidget || getVisibility() != View.VISIBLE) {
+            updateFocusedView(mBrowserWidget);
+        }
+    }
+
+    @Override
+    public void hideSoftInput(@NonNull GeckoSession session) {
+        if (mFocusedView == mBrowserWidget && getVisibility() == View.VISIBLE) {
+            dismiss();
+        }
+    }
+
+    @Override
+    public void updateSelection(@NonNull GeckoSession session, int selStart, int selEnd, int compositionStart, int compositionEnd) {
+        if (mFocusedView != mBrowserWidget || mInputConnection == null) {
+            return;
+        }
+
+        if (compositionStart >= 0 && compositionEnd >= 0) {
+            mInputConnection.setComposingRegion(compositionStart, compositionEnd);
+        }
+        mInputConnection.setSelection(selStart, selEnd);
+    }
+
+    @Override
+    public void updateExtractedText(@NonNull GeckoSession session, @NonNull ExtractedTextRequest request, @NonNull ExtractedText text) {
+
+    }
+
+    @Override
+    public void updateCursorAnchorInfo(@NonNull GeckoSession session, @NonNull CursorAnchorInfo info) {
+
     }
 }
