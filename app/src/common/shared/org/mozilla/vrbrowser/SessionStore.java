@@ -27,10 +27,9 @@ import android.view.inputmethod.CursorAnchorInfo;
 import android.view.inputmethod.ExtractedText;
 import android.view.inputmethod.ExtractedTextRequest;
 
-public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSession.ProgressDelegate, GeckoSession.ContentDelegate {
+public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSession.ProgressDelegate, GeckoSession.ContentDelegate, GeckoSession.TextInputDelegate {
     private static SessionStore mInstance;
     private static final String LOGTAG = "VRB";
-    private static DelegateStub sDelegateStub;
     public static SessionStore get() {
         if (mInstance == null) {
             mInstance = new SessionStore();
@@ -43,7 +42,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     private LinkedList<GeckoSession.ProgressDelegate> mProgressListeners;
     private LinkedList<GeckoSession.ContentDelegate> mContentListeners;
     private LinkedList<SessionChangeListener> mSessionChangeListeners;
-    private HashSet<Integer> mInputActiveSessions;
+    private LinkedList<GeckoSession.TextInputDelegate> mTextInputListeners;
 
     public interface SessionChangeListener {
         void onNewSession(GeckoSession aSession, int aId);
@@ -55,6 +54,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         boolean mCanGoBack;
         boolean mCanGoForward;
         boolean mIsLoading;
+        boolean mIsInputActive;
         GeckoSession.ProgressDelegate.SecurityInformation mSecurityInformation;
         String mUri;
         String mTitle;
@@ -71,13 +71,9 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         mProgressListeners = new LinkedList<>();
         mContentListeners = new LinkedList<>();
         mSessionChangeListeners = new LinkedList<>();
-        mInputActiveSessions = new HashSet<>();
+        mTextInputListeners = new LinkedList<>();
 
         mSessions = new LinkedHashMap<>();
-
-        if (sDelegateStub == null) {
-            sDelegateStub = new DelegateStub(mInputActiveSessions);
-        }
     }
 
     public void setContext(Context aContext) {
@@ -193,37 +189,20 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         mSessionChangeListeners.remove(aListener);
     }
 
+    public void addTextInputListener(GeckoSession.TextInputDelegate aListener) {
+        mTextInputListeners.add(aListener);
+    }
+
+    public void removeTextInputListener(GeckoSession.TextInputDelegate aListener) {
+        mTextInputListeners.remove(aListener);
+    }
+
     public static class SessionSettings {
         public boolean multiprocess = true;
         public boolean privateMode = false;
         public boolean trackingProtection = true;
     }
 
-    static private class DelegateStub implements GeckoSession.TextInputDelegate {
-        private HashSet<Integer> mInputActiveSessions;
-
-        DelegateStub(HashSet<Integer> aSet) {
-            mInputActiveSessions = aSet;
-        }
-        @Override
-        public void restartInput(@NonNull GeckoSession session, int reason) {
-
-        }
-        @Override
-        public void showSoftInput(@NonNull GeckoSession session) {
-            mInputActiveSessions.add(SessionStore.get().getSessionId(session));
-        }
-        @Override
-        public void hideSoftInput(@NonNull GeckoSession session) {
-            mInputActiveSessions.remove(SessionStore.get().getSessionId(session));
-        }
-        @Override
-        public void updateSelection(@NonNull GeckoSession session, int selStart, int selEnd, int compositionStart, int compositionEnd) {}
-        @Override
-        public void updateExtractedText(@NonNull GeckoSession session, @NonNull ExtractedTextRequest request, @NonNull ExtractedText text) {}
-        @Override
-        public void updateCursorAnchorInfo(@NonNull GeckoSession session, @NonNull CursorAnchorInfo info) {}
-    }
 
     public int createSession() {
         return createSession(new SessionSettings());
@@ -231,7 +210,6 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     public int createSession(SessionSettings aSettings) {
         State state = new State();
         state.mSession = new GeckoSession();
-        state.mSession.getTextInput().setDelegate(sDelegateStub); // prevent default soft keyboard behaviour
 
         int result = state.mSession.hashCode();
         mSessions.put(result, state);
@@ -241,6 +219,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         state.mSession.setNavigationDelegate(this);
         state.mSession.setProgressDelegate(this);
         state.mSession.setContentDelegate(this);
+        state.mSession.getTextInput().setDelegate(this);
         state.mSession.setPermissionDelegate(mPermissionDelegate);
         for (SessionChangeListener listener: mSessionChangeListeners) {
             listener.onNewSession(state.mSession, result);
@@ -255,6 +234,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             session.setContentDelegate(null);
             session.setNavigationDelegate(null);
             session.setProgressDelegate(null);
+            session.getTextInput().setDelegate(null);
             mSessions.remove(aSessionId);
             for (SessionChangeListener listener: mSessionChangeListeners) {
                 listener.onRemoveSession(session, aSessionId);
@@ -328,7 +308,11 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     }
 
     public boolean isInputActive(int aSessionId) {
-        return mInputActiveSessions.contains(aSessionId);
+        SessionStore.State state = mSessions.get(aSessionId);
+        if (state != null) {
+            return state.mIsInputActive;
+        }
+        return false;
     }
 
     public boolean canGoBack() {
@@ -543,6 +527,70 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     @Override
     public void onCrash(GeckoSession session) {
 
+    }
+
+    // TextInput Delegate
+
+    @Override
+    public void restartInput(@NonNull GeckoSession aSession, int reason) {
+        if (aSession == mCurrentSession) {
+            for (GeckoSession.TextInputDelegate listener : mTextInputListeners) {
+                listener.restartInput(aSession, reason);
+            }
+        }
+    }
+
+    @Override
+    public void showSoftInput(@NonNull GeckoSession aSession) {
+        SessionStore.State state = mSessions.get(getSessionId(aSession));
+        if (state != null) {
+            state.mIsInputActive = true;
+        }
+        if (aSession == mCurrentSession) {
+            for (GeckoSession.TextInputDelegate listener : mTextInputListeners) {
+                listener.showSoftInput(aSession);
+            }
+        }
+    }
+
+    @Override
+    public void hideSoftInput(@NonNull GeckoSession aSession) {
+        SessionStore.State state = mSessions.get(getSessionId(aSession));
+        if (state != null) {
+            state.mIsInputActive = false;
+        }
+        if (aSession == mCurrentSession) {
+            for (GeckoSession.TextInputDelegate listener : mTextInputListeners) {
+                listener.hideSoftInput(aSession);
+            }
+        }
+    }
+
+    @Override
+    public void updateSelection(@NonNull GeckoSession aSession, int selStart, int selEnd, int compositionStart, int compositionEnd) {
+        if (aSession == mCurrentSession) {
+            for (GeckoSession.TextInputDelegate listener : mTextInputListeners) {
+                listener.updateSelection(aSession, selStart, selEnd, compositionStart, compositionEnd);
+            }
+        }
+    }
+
+    @Override
+    public void updateExtractedText(@NonNull GeckoSession aSession, @NonNull ExtractedTextRequest request, @NonNull ExtractedText text) {
+        if (aSession == mCurrentSession) {
+            for (GeckoSession.TextInputDelegate listener : mTextInputListeners) {
+                listener.updateExtractedText(aSession, request, text);
+            }
+        }
+    }
+
+    @Override
+    public void updateCursorAnchorInfo(@NonNull GeckoSession aSession, @NonNull CursorAnchorInfo info) {
+        if (aSession == mCurrentSession) {
+            for (GeckoSession.TextInputDelegate listener : mTextInputListeners) {
+                listener.updateCursorAnchorInfo(aSession, info);
+            }
+        }
     }
 
 }

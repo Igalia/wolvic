@@ -62,7 +62,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     BrowserWidget mBrowserWidget;
     KeyboardWidget mKeyboard;
     PermissionDelegate mPermissionDelegate;
-    private boolean mWasBrowserPressed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +77,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mWidgetContainer.getViewTreeObserver().addOnGlobalFocusChangeListener(new ViewTreeObserver.OnGlobalFocusChangeListener() {
             @Override
             public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-                checkKeyboardFocus(newFocus);
+                if (mKeyboard != null) {
+                    mKeyboard.updateFocusedView(newFocus);
+                }
             }
         });
 
@@ -125,7 +126,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         // Create keyboard widget
         mKeyboard = new KeyboardWidget(this);
-        mKeyboard.getPlacement().parentHandle = mBrowserWidget.getHandle();
+        mKeyboard.setBrowserWidget(mBrowserWidget);
 
         addWidgets(Arrays.<Widget>asList(mBrowserWidget, navigationBar, mKeyboard));
     }
@@ -192,24 +193,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         }
     }
 
-    void checkKeyboardFocus(View focusedView) {
-        if (mKeyboard == null) {
-            return;
-        }
-
-        boolean showKeyboard = focusedView.onCheckIsTextEditor();
-        boolean placementUpdated = false;
-        if (showKeyboard) {
-            mKeyboard.setFocusedView(focusedView);
-        }
-        boolean keyboardIsVisible = mKeyboard.getVisibility() == View.VISIBLE;
-        if (showKeyboard != keyboardIsVisible || placementUpdated) {
-            mKeyboard.getPlacement().visible = showKeyboard;
-            updateWidget(mKeyboard);
-        }
-    }
-
-
     @Keep
     void dispatchCreateWidget(final int aHandle, final SurfaceTexture aTexture, final int aWidth, final int aHeight) {
         runOnUiThread(new Runnable() {
@@ -235,19 +218,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             public void run() {
                 Widget widget = mWidgets.get(aHandle);
                 MotionEventGenerator.dispatch(widget, aDevice, aPressed, aX, aY);
-
-                // Fixme: Remove this once the new Keyboard delegate lands in GeckoView
-                if (widget == mBrowserWidget) {
-                    if (mWasBrowserPressed != aPressed) {
-                        mHandler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                checkKeyboardFocus(mBrowserWidget);
-                            }
-                        }, 150);
-                    }
-                    mWasBrowserPressed = aPressed;
-                }
             }
         });
     }
