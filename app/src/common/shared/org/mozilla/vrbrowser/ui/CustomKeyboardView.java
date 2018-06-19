@@ -726,7 +726,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
                         (key.width - padding.left - padding.right) / 2
                                 + padding.left,
                         (key.height - padding.top - padding.bottom) / 2
-                                + (paint.getTextSize() - paint.descent()) / 2 + padding.top,
+                                + (paint.getTextSize() / 2)  - paint.descent() + padding.top,
                         paint);
                 // Turn off drop shadow
                 paint.setShadowLayer(0, 0, 0, 0);
