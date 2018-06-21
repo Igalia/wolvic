@@ -45,6 +45,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/vrb/src/RenderState.cpp
              src/main/cpp/vrb/src/ResourceGL.cpp
              src/main/cpp/vrb/src/RunnableQueue.cpp
+             src/main/cpp/vrb/src/ShaderUtil.cpp
              src/main/cpp/vrb/src/SurfaceTextureFactory.cpp
              src/main/cpp/vrb/src/Texture.cpp
              src/main/cpp/vrb/src/TextureCache.cpp
