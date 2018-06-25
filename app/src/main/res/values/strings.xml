@@ -11,4 +11,14 @@
     <string name="permission_location">Will you allow %1$s to access your location?</string>
     <string name="permission_notification">Will you allow %1$s to send notifications?</string>
     <string name="speak_now">Speak now</string>
+    <string name="settings_version">version %1$s</string>
+    <string name="settings_crash_reporting">Crash Reporting</string>
+    <string name="settings_telemetry">Telemetry</string>
+    <string name="settings_privacy">Privacy Policy</string>
+    <string name="settings_key_crash">settings_crash</string>
+    <string name="settings_key_telemetry">settings_telemetry</string>
+    <string name="private_policy_url">https://www.mozilla.org/en-US/privacy/firefox/</string>
+    <string name="crash_reporting_restart">Restart Required</string>
+    <string name="crash_reporting_text">You must restart the Firefox Reality app in order to \ncomplete changes. Would you like to do that now?</string>
+    <string name="crash_reporting_button">Restart Now</string>
 </resources>

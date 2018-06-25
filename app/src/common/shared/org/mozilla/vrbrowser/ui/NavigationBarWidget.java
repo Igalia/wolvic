@@ -7,14 +7,14 @@ package org.mozilla.vrbrowser.ui;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
-import android.util.Log;
 
 import org.mozilla.geckoview.GeckoResponse;
 import org.mozilla.geckoview.GeckoSession;
-import org.mozilla.vrbrowser.SessionStore;
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.SessionStore;
 import org.mozilla.vrbrowser.WidgetPlacement;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 
@@ -26,7 +26,13 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private ImageButton mReloadButton;
     private ImageButton mHomeButton;
     private NavigationURLBar mURLBar;
+    private ImageButton mFocusButton;
+    private SettingsDelegate mSettingsDelegate;
     private boolean mIsLoading;
+
+    public interface SettingsDelegate {
+        void openSettings();
+    }
 
     public NavigationBarWidget(Context aContext) {
         super(aContext);
@@ -51,6 +57,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mReloadButton = findViewById(R.id.reloadButton);
         mHomeButton = findViewById(R.id.homeButton);
         mURLBar = findViewById(R.id.urlBar);
+        mFocusButton = findViewById(R.id.focusButton);
 
         mBackButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -96,6 +103,17 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             }
         });
 
+        mFocusButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mSettingsDelegate != null)
+                    mSettingsDelegate.openSettings();
+
+                if (mAudio != null) {
+                    mAudio.playSound(AudioEngine.Sound.CLICK);
+                }
+            }
+        });
 
         SessionStore.get().addNavigationListener(this);
         SessionStore.get().addProgressListener(this);
@@ -116,6 +134,10 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         aPlacement.parentAnchorY = 0.0f;
         aPlacement.translationY = -20;
         aPlacement.opaque = false;
+    }
+
+    public void setSettingDelegate(SettingsDelegate aDelegate) {
+        mSettingsDelegate = aDelegate;
     }
 
     @Override

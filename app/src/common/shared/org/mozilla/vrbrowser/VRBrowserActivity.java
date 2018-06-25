@@ -24,6 +24,7 @@ import org.mozilla.vrbrowser.ui.BrowserWidget;
 import org.mozilla.vrbrowser.ui.KeyboardWidget;
 import org.mozilla.vrbrowser.ui.NavigationBarWidget;
 import org.mozilla.vrbrowser.ui.OffscreenDisplay;
+import org.mozilla.vrbrowser.ui.SettingsWidget;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -62,6 +63,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     BrowserWidget mBrowserWidget;
     KeyboardWidget mKeyboard;
     PermissionDelegate mPermissionDelegate;
+    SettingsWidget mSettingsWidget;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,15 +122,25 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mBrowserWidget = new BrowserWidget(this, currentSession);
         mPermissionDelegate.setParentWidgetHandle(mBrowserWidget.getHandle());
 
+        // Settings Widget
+        mSettingsWidget = new SettingsWidget(VRBrowserActivity.this);
+        mSettingsWidget.hide();
+
         // Create Browser navigation widget
         NavigationBarWidget navigationBar = new NavigationBarWidget(this);
+        navigationBar.setSettingDelegate(new NavigationBarWidget.SettingsDelegate() {
+            @Override
+            public void openSettings() {
+                mSettingsWidget.show();
+            }
+        });
         navigationBar.getPlacement().parentHandle = mBrowserWidget.getHandle();
 
         // Create keyboard widget
         mKeyboard = new KeyboardWidget(this);
         mKeyboard.setBrowserWidget(mBrowserWidget);
 
-        addWidgets(Arrays.<Widget>asList(mBrowserWidget, navigationBar, mKeyboard));
+        addWidgets(Arrays.<Widget>asList(mBrowserWidget, navigationBar, mKeyboard, mSettingsWidget));
     }
 
     @Override
@@ -382,7 +394,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             mPermissionDelegate.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
-
 
     private native void addWidgetNative(int aHandle, WidgetPlacement aPlacement);
     private native void updateWidgetNative(int aHandle, WidgetPlacement aPlacement);

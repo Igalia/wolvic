@@ -17,5 +17,6 @@
     <color name="asphalt">#3d3d3d</color>
     <color name="fog">#e2e6eb</color>
     <color name="fog_url_protocol">#c2c6cb</color>
-
+    <color name="grass">#8dc63f</color>
+    <color name="dessert">#ef4136</color>
 </resources>

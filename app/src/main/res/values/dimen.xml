@@ -40,4 +40,15 @@
 
     <dimen name="keyboard_microphone_margin_left">50dp</dimen>
     <dimen name="keyboard_popup_left_margin">90dp</dimen>
+
+    <!-- Settings Dialog -->
+    <item name="settings_world_y" format="float" type="dimen">1.6</item>
+    <item name="settings_world_z" format="float" type="dimen">-2.2</item>
+    <dimen name="settings_width">435dp</dimen>
+    <dimen name="settings_height">350dp</dimen>
+
+    <!-- Crash Reporting Dialog -->
+    <item name="crash_world_z" format="float" type="dimen">0.1</item>
+    <dimen name="crash_width">435dp</dimen>
+    <dimen name="crash_height">350dp</dimen>
 </resources>

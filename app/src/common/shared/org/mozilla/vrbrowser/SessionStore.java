@@ -6,26 +6,25 @@
 package org.mozilla.vrbrowser;
 
 import android.content.Context;
-
-import org.mozilla.geckoview.GeckoResponse;
-import org.mozilla.geckoview.GeckoRuntime;
-import org.mozilla.geckoview.GeckoSession;
-import org.mozilla.geckoview.GeckoSessionSettings;
-import org.mozilla.geckoview.SessionTextInput;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.inputmethod.CursorAnchorInfo;
 import android.view.inputmethod.ExtractedText;
 import android.view.inputmethod.ExtractedTextRequest;
+
+import org.mozilla.geckoview.GeckoResponse;
+import org.mozilla.geckoview.GeckoRuntime;
+import org.mozilla.geckoview.GeckoRuntimeSettings;
+import org.mozilla.geckoview.GeckoSession;
+import org.mozilla.geckoview.GeckoSessionSettings;
+import org.mozilla.vrbrowser.ui.SettingsStore;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSession.ProgressDelegate, GeckoSession.ContentDelegate, GeckoSession.TextInputDelegate {
     private static SessionStore mInstance;
@@ -78,11 +77,15 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
 
     public void setContext(Context aContext) {
         if (mRuntime == null) {
-            mRuntime = GeckoRuntime.create(aContext);
-            mRuntime.getSettings().setTrackingProtectionCategories(GeckoSession.TrackingProtectionDelegate.CATEGORY_AD |
+            GeckoRuntimeSettings.Builder runtimeSettingsBuilder = new GeckoRuntimeSettings.Builder();
+            runtimeSettingsBuilder.javaCrashReportingEnabled(SettingsStore.getInstance(aContext).isCrashReportingEnabled());
+            runtimeSettingsBuilder.nativeCrashReportingEnabled(SettingsStore.getInstance(aContext).isCrashReportingEnabled());
+            runtimeSettingsBuilder.trackingProtectionCategories(GeckoSession.TrackingProtectionDelegate.CATEGORY_AD |
                     GeckoSession.TrackingProtectionDelegate.CATEGORY_ANALYTIC |
                     GeckoSession.TrackingProtectionDelegate.CATEGORY_SOCIAL |
                     GeckoSession.TrackingProtectionDelegate.CATEGORY_CONTENT);
+
+            mRuntime = GeckoRuntime.create(aContext, runtimeSettingsBuilder.build());
         } else {
             mRuntime.attachTo(aContext);
         }

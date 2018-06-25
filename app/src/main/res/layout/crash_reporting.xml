@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:background="@drawable/permission_background">
+
+        <ImageView
+            android:id="@+id/ff_logo_settings"
+            android:layout_marginTop="15dp"
+            android:layout_width="67dp"
+            android:layout_height="67dp"
+            android:layout_gravity="center"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ff_logo" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="30dp"
+            android:gravity="center"
+            android:text="@string/crash_reporting_restart"
+            android:textColor="@color/fog"
+            android:textSize="22sp"
+            android:typeface="sans"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="15dp"
+            android:gravity="center"
+            android:text="@string/crash_reporting_text"
+            android:textColor="@color/fog"
+            android:textSize="14sp"
+            android:typeface="sans" />
+
+        <TextView
+            android:id="@+id/crashAcceptButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="30dp"
+            android:padding="10dp"
+            android:gravity="center"
+            android:text="@string/crash_reporting_button"
+            android:textColor="@drawable/main_button_icon_color"
+            android:textSize="14sp"
+            android:typeface="sans"
+            android:textStyle="bold"
+            android:background="@drawable/rectangle_button_background"
+            android:clickable="true"
+            />
+        <org.mozilla.vrbrowser.ui.NavigationBarButton
+            android:id="@+id/crashCancelButton"
+            style="?attr/navigationBarButtonStyle"
+            android:layout_height="40dp"
+            android:layout_marginTop="27dp"
+            android:layout_gravity="center_horizontal"
+            android:tint="@color/midnight"
+            android:src="@drawable/ic_icon_back" />
+
+    </LinearLayout>
+</merge>
