@@ -452,6 +452,13 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
 
     @Override
     public void onNewSession(GeckoSession aSession, String aUri, GeckoResponse<GeckoSession> aResponse) {
+        // Fixme: Remove this and uncomment the old code when we support multiple tabs or windows.
+        // Until the carrousel is ready, we need to stack the new link in the current session instead of setting a different session.
+        if (mCurrentSession != null) {
+            mCurrentSession.loadUri(aUri);
+        }
+        aResponse.respond(null);
+        /*
         Log.e(LOGTAG,"Got onNewSession: " + aUri);
         int sessionId = createSession();
         mCurrentSession = null;
@@ -463,7 +470,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             }
         }
         dumpAllState(mCurrentSession);
-        aResponse.respond(getSession(sessionId));
+        aResponse.respond(getSession(sessionId));*/
     }
 
     // Progress Listener
