@@ -19,6 +19,9 @@ namespace crow {
 class Widget;
 typedef std::shared_ptr<Widget> WidgetPtr;
 
+class WidgetPlacement;
+typedef std::shared_ptr<WidgetPlacement> WidgetPlacementPtr;
+
 class Widget {
 public:
   static WidgetPtr Create(vrb::ContextWeak aContext, const int aHandle, const int32_t aWidth, const int32_t aHeight, float aWorldWidth);
@@ -27,6 +30,7 @@ public:
   uint32_t GetHandle() const;
   const std::string& GetSurfaceTextureName() const;
   void GetSurfaceTextureSize(int32_t& aWidth, int32_t& aHeight) const;
+  void SetSurfaceTextureSize(int32_t aWidth, int32_t aHeight);
   void GetWidgetMinAndMax(vrb::Vector& aMin, vrb::Vector& aMax) const;
   void SetWorldWidth(float aWorldWidth) const;
   void GetWorldSize(float& aWidth, float& aHeight) const;
@@ -37,11 +41,17 @@ public:
   void SetTransform(const vrb::Matrix& aTransform);
   void ToggleWidget(const bool aEnabled);
   void TogglePointer(const bool aEnabled);
+  bool IsVisible() const;
   vrb::NodePtr GetRoot() const;
   vrb::TransformPtr GetTransformNode() const;
   vrb::NodePtr GetPointerGeometry() const;
   void SetPointerGeometry(vrb::NodePtr& aNode);
-  void SetPointerEnabled(bool aEnabled);
+  const WidgetPlacementPtr& GetPlacement() const;
+  void SetPlacement(const WidgetPlacementPtr& aPlacement);
+  void StartResize();
+  void FinishResize();
+  bool IsResizing() const;
+  void HandleResize(const vrb::Vector& aPoint, bool aPressed, bool& aResized, bool &aResizeEnded);
 protected:
   struct State;
   Widget(State& aState, vrb::ContextWeak& aContext);

@@ -49,7 +49,7 @@ public class SettingsWidget extends UIWidget {
 
         mCrashReportingWidget = new CrashReportingWidget(getContext());
         mCrashReportingWidget.getPlacement().parentHandle = getHandle();
-        mCrashReportingWidget.hide();
+        mCrashReportingWidget.getPlacement().visible = false;
         mWidgetManager.addWidget(mCrashReportingWidget);
 
         cancelButton.setOnClickListener(new OnClickListener() {

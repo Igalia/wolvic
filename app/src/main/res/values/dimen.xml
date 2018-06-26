@@ -6,6 +6,10 @@
     <item name="browser_world_y" format="float" type="dimen">1.6</item>
     <item name="browser_world_z" format="float" type="dimen">-4.2</item>
 
+    <!-- Navigation bar -->
+    <dimen name="navigation_bar_width">720dp</dimen>
+    <dimen name="navigation_bar_height">45dp</dimen>
+
     <!-- Keyboard -->
     <item name="keyboard_world_width" format="float" type="dimen">2.4</item>
     <item name="keyboard_distance_from_browser" format="float" type="dimen">2.0</item>
@@ -29,14 +33,6 @@
     <item name="permission_distance_from_browser" format="float" type="dimen">0.6</item>
     <dimen name="permission_width">300dp</dimen>
     <dimen name="permission_height">230dp</dimen>
-
-
-    <!-- Navigation bar -->
-    <dimen name="header_button_margin">20dp</dimen>
-    <dimen name="tab_default_width">155dp</dimen>
-    <dimen name="tab_truncation_threshold">100dp</dimen>
-    <!-- header_button_margin + add_button_size -->
-    <dimen name="tab_layout_add_margin">46dp</dimen>
 
     <dimen name="keyboard_microphone_margin_left">50dp</dimen>
     <dimen name="keyboard_popup_left_margin">90dp</dimen>

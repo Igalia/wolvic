@@ -11,6 +11,7 @@ import android.util.TypedValue;
 public class WidgetPlacement {
     static final float WORLD_DPI_RATIO = 2.0f/720.0f;
 
+    private WidgetPlacement() {}
     public WidgetPlacement(Context aContext) {
         density = aContext.getResources().getDisplayMetrics().density;
     }
@@ -34,6 +35,42 @@ public class WidgetPlacement {
     public boolean visible = true;
     public boolean opaque = false;
     public boolean showPointer = true;
+
+    public WidgetPlacement clone() {
+        WidgetPlacement w = new WidgetPlacement();
+        w.copyFrom(this);
+        return w;
+    }
+
+    public void copyFrom(WidgetPlacement w) {
+        this.density = w.density;
+        this.width = w.width;
+        this.height = w.height;
+        this.worldWidth = w.worldWidth;
+        this.anchorX = w.anchorX;
+        this.anchorY = w.anchorY;
+        this.translationX = w.translationX;
+        this.translationY = w.translationY;
+        this.translationZ = w.translationZ;
+        this.rotationAxisX = w.rotationAxisX;
+        this.rotationAxisY = w.rotationAxisY;
+        this.rotationAxisZ = w.rotationAxisZ;
+        this.rotation = w.rotation;
+        this.parentHandle = w.parentHandle;
+        this.parentAnchorX = w.parentAnchorX;
+        this.parentAnchorY = w.parentAnchorY;
+        this.visible = w.visible;
+        this.opaque = w.opaque;
+        this.showPointer = w.showPointer;
+    }
+
+    public int textureWidth() {
+        return (int) Math.ceil(width * density);
+    }
+
+    public int textureHeight() {
+        return (int) Math.ceil(height * density);
+    }
 
     public static int pixelDimension(Context aContext, int aDimensionID) {
         return aContext.getResources().getDimensionPixelSize(aDimensionID);

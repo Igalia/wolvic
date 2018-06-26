@@ -10,9 +10,11 @@ import android.view.MotionEvent;
 
 public interface Widget {
     void setSurfaceTexture(SurfaceTexture aTexture, final int aWidth, final int aHeight);
+    void resizeSurfaceTexture(final int aWidth, final int aHeight);
     int getHandle();
     WidgetPlacement getPlacement();
     void handleTouchEvent(MotionEvent aEvent);
     void handleHoverEvent(MotionEvent aEvent);
+    void handleResizeEvent(float aWorldWidth, float aWorldHeight);
     void releaseWidget();
 }

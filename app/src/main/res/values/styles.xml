@@ -1,13 +1,12 @@
 <resources>
     <!-- Theme attributes -->
     <declare-styleable name="AppTheme">
-        <attr name="headerButtonStyle" format="reference" />
-        <attr name="tabButtonStyle" format="reference" />
         <attr name="dialogButtonStyle" format="reference" />
         <attr name="settingsButtonStyle" format="reference" />
         <attr name="tabStyle" format="reference" />
         <attr name="navigationBarStyle" format="reference" />
         <attr name="navigationBarButtonStyle" format="reference" />
+        <attr name="navigationBarTextButtonStyle" format="reference" />
         <attr name="urlBarIconStyle" format="reference" />
         <attr name="navigationBarButtonTint" format="reference" />
         <attr name="urlProtocolColor" format="color" />
@@ -17,6 +16,10 @@
     <!-- Button attributes -->
     <declare-styleable name="NavigationBarButton">
         <attr name="tintColorList" format="reference|color" />
+    </declare-styleable>
+
+    <declare-styleable name="NavigationBarTextButton">
+        <attr name="textTintColorList" format="reference|color" />
     </declare-styleable>
 
     <style name="navigationBarTheme">
@@ -45,18 +48,16 @@
         <item name="android:backgroundTint">@drawable/settings_button_color</item>
     </style>
 
-    <style name="headerButtonTheme" parent="navigationBarButtonTheme">
-        <item name="android:layout_width">26dp</item>
-        <item name="android:layout_height">26dp</item>
-        <item name="android:layout_marginLeft">@dimen/header_button_margin</item>
-        <item name="tintColorList">@drawable/header_button_color</item>
+    <style name="navigationBarTextButtonTheme">
+        <item name="android:background">@drawable/main_button</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:textAlignment">center</item>
+        <item name="textTintColorList">@drawable/main_button_icon_color</item>
     </style>
 
-    <style name="tabButtonTheme" parent="navigationBarButtonTheme">
-        <item name="android:layout_width">20dp</item>
-        <item name="android:layout_height">20dp</item>
-        <item name="tintColorList">@drawable/tab_button_color</item>
-    </style>
 
     <style name="dialogButtonTheme">
         <item name="android:background">@drawable/dialog_background</item>
@@ -88,13 +89,12 @@
         <item name="android:windowActionBar">false</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="headerButtonStyle">@style/headerButtonTheme</item>
-        <item name="tabButtonStyle">@style/tabButtonTheme</item>
         <item name="dialogButtonStyle">@style/dialogButtonTheme</item>
         <item name="settingsButtonStyle">@style/settingsButtonTheme</item>
         <item name="tabStyle">@style/tabTheme</item>
         <item name="navigationBarStyle">@style/navigationBarTheme</item>
         <item name="navigationBarButtonStyle">@style/navigationBarButtonTheme</item>
+        <item name="navigationBarTextButtonStyle">@style/navigationBarTextButtonTheme</item>
         <item name="urlBarIconStyle">@style/urlBarIconTheme</item>
         <item name="urlProtocolColor">@color/fog_url_protocol</item>
         <item name="urlWebsiteColor">@color/fog</item>

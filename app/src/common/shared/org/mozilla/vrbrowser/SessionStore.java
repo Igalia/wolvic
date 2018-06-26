@@ -57,6 +57,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         GeckoSession.ProgressDelegate.SecurityInformation mSecurityInformation;
         String mUri;
         String mTitle;
+        boolean mFullScreen;
         GeckoSession mSession;
     }
 
@@ -366,6 +367,26 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         mCurrentSession.loadUri(aUri);
     }
 
+    public boolean isInFullScreen() {
+        if (mCurrentSession == null) {
+            return false;
+        }
+
+        State state = mSessions.get(mCurrentSession.hashCode());
+        if (state != null) {
+            return state.mFullScreen;
+        }
+
+        return false;
+    }
+
+    public void exitFullScreen() {
+        if (mCurrentSession == null) {
+            return;
+        }
+        mCurrentSession.exitFullScreen();
+    }
+
     public GeckoSession getCurrentSession() {
         return mCurrentSession;
     }
@@ -513,8 +534,16 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     }
 
     @Override
-    public void onFullScreen(GeckoSession aSession, boolean b) {
-
+    public void onFullScreen(GeckoSession aSession, boolean aFullScreen) {
+        Log.e(LOGTAG, "SessionStore onFullScreen");
+        State state = mSessions.get(aSession.hashCode());
+        if (state == null) {
+            return;
+        }
+        state.mFullScreen = aFullScreen;
+        for (GeckoSession.ContentDelegate listener: mContentListeners) {
+            listener.onFullScreen(aSession, aFullScreen);
+        }
     }
 
     @Override

@@ -21,9 +21,12 @@ add_library( # Sets the name of the library.
              # Provides a relative path to your source file(s).
              src/main/cpp/BrowserWorld.cpp
              src/main/cpp/ElbowModel.cpp
+             src/main/cpp/FadeBlitter.cpp
              src/main/cpp/GestureDelegate.cpp
+             src/main/cpp/Quad.cpp
              src/main/cpp/Widget.cpp
              src/main/cpp/WidgetPlacement.cpp
+             src/main/cpp/WidgetResizer.cpp
              src/main/cpp/vrb/src/CameraEye.cpp
              src/main/cpp/vrb/src/CameraSimple.cpp
              src/main/cpp/vrb/src/ClassLoaderAndroid.cpp

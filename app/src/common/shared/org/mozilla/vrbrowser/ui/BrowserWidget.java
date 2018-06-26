@@ -34,10 +34,12 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
     private int mHeight;
     private int mHandle;
     private WidgetPlacement mWidgetPlacement;
+    private WidgetManagerDelegate mWidgetManager;
 
     public BrowserWidget(Context aContext, int aSessionId) {
         super(aContext);
         mSessionId = aSessionId;
+        mWidgetManager = (WidgetManagerDelegate) aContext;
         SessionStore.get().addSessionChangeListener(this);
         setFocusableInTouchMode(true);
         GeckoSession session = SessionStore.get().getSession(mSessionId);
@@ -61,7 +63,6 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
         aPlacement.translationZ = WidgetPlacement.unitFromMeters(context, R.dimen.browser_world_z);
         aPlacement.anchorX = 0.5f;
         aPlacement.anchorY = 0.5f;
-        aPlacement.opaque = true;
     }
 
     @Override
@@ -76,6 +77,12 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
         aTexture.setDefaultBufferSize(aWidth, aHeight);
         mSurface = new Surface(aTexture);
         mDisplay = session.acquireDisplay();
+        mDisplay.surfaceChanged(mSurface, aWidth, aHeight);
+    }
+
+    @Override
+    public void resizeSurfaceTexture(final int aWidth, final int aHeight) {
+        mSurfaceTexture.setDefaultBufferSize(aWidth, aHeight);
         mDisplay.surfaceChanged(mSurface, aWidth, aHeight);
     }
 
@@ -109,6 +116,24 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
             return;
         }
         session.getPanZoomController().onMotionEvent(aEvent);
+    }
+
+    @Override
+    public void handleResizeEvent(float aWorldWidth, float aWorldHeight) {
+        int defaultWidth = WidgetPlacement.pixelDimension(getContext(), R.dimen.browser_width_pixels);
+        int defaultHeight = WidgetPlacement.pixelDimension(getContext(), R.dimen.browser_height_pixels);
+        float defaultAspect = (float) defaultWidth / (float) defaultHeight;
+        float worldAspect = aWorldWidth / aWorldHeight;
+
+        if (worldAspect > defaultAspect) {
+            mWidgetPlacement.height = (int) Math.ceil(defaultWidth / worldAspect);
+            mWidgetPlacement.width = defaultWidth;
+        } else {
+            mWidgetPlacement.width = (int) Math.ceil(defaultHeight * worldAspect);
+            mWidgetPlacement.height = defaultHeight;
+        }
+        mWidgetPlacement.worldWidth = aWorldWidth;
+        mWidgetManager.updateWidget(this);
     }
 
     @Override

@@ -5,6 +5,7 @@
 
 #include "BrowserWorld.h"
 #include "ControllerDelegate.h"
+#include "FadeBlitter.h"
 #include "Widget.h"
 #include "WidgetPlacement.h"
 #include "vrb/CameraSimple.h"
@@ -30,9 +31,9 @@
 #include "vrb/Transform.h"
 #include "vrb/VertexArray.h"
 #include "vrb/Vector.h"
+#include "Quad.h"
 #include <array>
 #include <functional>
-#include <vrb/include/vrb/TextureGL.h>
 
 using namespace vrb;
 
@@ -56,6 +57,8 @@ static const char* kHandleAudioPoseName = "handleAudioPose";
 static const char* kHandleAudioPoseSignature = "(FFFFFFF)V";
 static const char* kHandleGestureName = "handleGesture";
 static const char* kHandleGestureSignature = "(I)V";
+static const char* kHandleResizeName = "handleResize";
+static const char* kHandleResizeSignature = "(IFF)V";
 static const char* kTileTexture = "tile.png";
 
 class SurfaceObserver;
@@ -370,9 +373,11 @@ struct BrowserWorld::State {
   jmethodID handleScrollEventMethod;
   jmethodID handleAudioPoseMethod;
   jmethodID handleGestureMethod;
+  jmethodID handleResizeMethod;
   GestureDelegateConstPtr gestures;
   bool windowsInitialized;
   TransformPtr skybox;
+  FadeBlitterPtr fadeBlitter;
 
   State() : paused(true), glInitialized(false), env(nullptr), nearClip(0.1f),
             farClip(100.0f), activity(nullptr),
@@ -400,14 +405,14 @@ struct BrowserWorld::State {
     controllers->root = Toggle::Create(contextWeak);
   }
 
-  void UpdateControllers();
+  void UpdateControllers(bool& aUpdateWidgets);
   WidgetPtr GetWidget(int32_t aHandle) const;
   WidgetPtr FindWidget(const std::function<bool(const WidgetPtr&)>& aCondition) const;
 };
 
 
 void
-BrowserWorld::State::UpdateControllers() {
+BrowserWorld::State::UpdateControllers(bool& aUpdateWidgets) {
   std::vector<Widget*> active;
   for (const WidgetPtr& widget: widgets) {
     widget->TogglePointer(false);
@@ -433,7 +438,22 @@ BrowserWorld::State::UpdateControllers() {
         }
       }
     }
-    if (handleMotionEventMethod && hitWidget) {
+    if (hitWidget && hitWidget->IsResizing()) {
+      active.push_back(hitWidget.get());
+      const bool pressed = controller.buttonState & ControllerDelegate::BUTTON_TRIGGER ||
+                           controller.buttonState & ControllerDelegate::BUTTON_TOUCHPAD;
+      bool aResized = false, aResizeEnded = false;
+      hitWidget->HandleResize(hitPoint, pressed, aResized, aResizeEnded);
+      if (aResized) {
+        aUpdateWidgets = true;
+      }
+      if (aResizeEnded && handleResizeMethod) {
+        float width, height;
+        hitWidget->GetWorldSize(width, height);
+        env->CallVoidMethod(activity, handleResizeMethod, hitWidget->GetHandle(), width, height);
+      }
+    }
+    else if (handleMotionEventMethod && hitWidget) {
       active.push_back(hitWidget.get());
       float theX = 0.0f, theY = 0.0f;
       hitWidget->ConvertToWidgetCoordinates(hitPoint, theX, theY);
@@ -627,6 +647,12 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
     VRB_LOG("Failed to find Java method: %s %s", kHandleGestureName, kHandleGestureSignature);
   }
 
+  m.handleResizeMethod = m.env->GetMethodID(clazz, kHandleResizeName, kHandleResizeSignature);
+
+  if (!m.handleResizeMethod) {
+    VRB_LOG("Failed to find Java method: %s %s", kHandleResizeName, kHandleResizeSignature);
+  }
+
   if (!m.controllers->modelsLoaded) {
     const int32_t modelCount = m.device->GetControllerModelCount();
     for (int32_t index = 0; index < modelCount; index++) {
@@ -643,6 +669,7 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
     m.rootOpaqueParent->AddNode(m.skybox);
     CreateFloor();
     m.controllers->modelsLoaded = true;
+    m.fadeBlitter = FadeBlitter::Create(m.contextWeak);
   }
 }
 
@@ -713,7 +740,11 @@ BrowserWorld::Draw() {
 
   m.device->ProcessEvents();
   m.context->Update();
-  m.UpdateControllers();
+  bool updateWidgets = false;
+  m.UpdateControllers(updateWidgets);
+  if (updateWidgets) {
+    UpdateVisibleWidgets();
+  }
   m.drawListOpaque->Reset();
   m.drawListTransparent->Reset();
 
@@ -731,6 +762,9 @@ BrowserWorld::Draw() {
 
   m.device->BindEye(DeviceDelegate::CameraEnum::Left);
   m.drawListOpaque->Draw(*m.leftCamera);
+  if (m.fadeBlitter && m.fadeBlitter->IsVisible()) {
+    m.fadeBlitter->Draw();
+  }
   VRB_GL_CHECK(glDepthMask(GL_FALSE));
   m.drawListTransparent->Draw(*m.leftCamera);
   VRB_GL_CHECK(glDepthMask(GL_TRUE));
@@ -738,6 +772,9 @@ BrowserWorld::Draw() {
 #if !defined(VRBROWSER_NO_VR_API)
   m.device->BindEye(DeviceDelegate::CameraEnum::Right);
   m.drawListOpaque->Draw(*m.rightCamera);
+  if (m.fadeBlitter && m.fadeBlitter->IsVisible()) {
+    m.fadeBlitter->Draw();
+  }
   VRB_GL_CHECK(glDepthMask(GL_FALSE));
   m.drawListTransparent->Draw(*m.rightCamera);
   VRB_GL_CHECK(glDepthMask(GL_TRUE));
@@ -770,23 +807,23 @@ BrowserWorld::SetSurfaceTexture(const std::string& aName, jobject& aSurface) {
 }
 
 void
-BrowserWorld::AddWidget(int32_t aHandle, const WidgetPlacement& aPlacement) {
+BrowserWorld::AddWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement) {
   if (m.GetWidget(aHandle)) {
     VRB_LOG("Widget with handle %d already added, updating it.", aHandle);
     UpdateWidget(aHandle, aPlacement);
     return;
   }
-  float worldWidth = aPlacement.worldWidth;
+  float worldWidth = aPlacement->worldWidth;
   if (worldWidth <= 0.0f) {
-    worldWidth = aPlacement.width * kWorldDPIRatio;
+    worldWidth = aPlacement->width * kWorldDPIRatio;
   }
 
   WidgetPtr widget = Widget::Create(m.contextWeak,
                                     aHandle,
-                                    (int32_t)(aPlacement.width * aPlacement.density),
-                                    (int32_t)(aPlacement.height * aPlacement.density),
+                                    (int32_t)(ceilf(aPlacement->width * aPlacement->density)),
+                                    (int32_t)(ceilf(aPlacement->height * aPlacement->density)),
                                     worldWidth);
-  if (aPlacement.opaque) {
+  if (aPlacement->opaque) {
     m.rootOpaque->AddNode(widget->GetRoot());
   } else {
     m.rootTransparent->AddNode(widget->GetRoot());
@@ -795,23 +832,26 @@ BrowserWorld::AddWidget(int32_t aHandle, const WidgetPlacement& aPlacement) {
   m.widgets.push_back(widget);
   UpdateWidget(widget->GetHandle(), aPlacement);
 
-  if (!aPlacement.showPointer) {
+  if (!aPlacement->showPointer) {
     vrb::NodePtr emptyNode = vrb::Group::Create(m.contextWeak);
     widget->SetPointerGeometry(emptyNode);
   }
 }
 
 void
-BrowserWorld::UpdateWidget(int32_t aHandle, const WidgetPlacement& aPlacement) {
+BrowserWorld::UpdateWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement) {
   WidgetPtr widget = m.GetWidget(aHandle);
   if (!widget) {
       VRB_LOG("Can't find Widget with handle: %d", aHandle);
       return;
   }
 
-  widget->ToggleWidget(aPlacement.visible);
+  widget->SetPlacement(aPlacement);
+  widget->ToggleWidget(aPlacement->visible);
+  widget->SetSurfaceTextureSize((int32_t)(ceilf(aPlacement->width * aPlacement->density)),
+                                (int32_t)(ceilf(aPlacement->height * aPlacement->density)));
 
-  WidgetPtr parent = m.GetWidget(aPlacement.parentHandle);
+  WidgetPtr parent = m.GetWidget(aPlacement->parentHandle);
 
   int32_t parentWidth = 0, parentHeight = 0;
   float parentWorldWith = 0.0f, parentWorldHeight = 0.0f;
@@ -824,9 +864,9 @@ BrowserWorld::UpdateWidget(int32_t aHandle, const WidgetPlacement& aPlacement) {
   float worldWidth = 0.0f, worldHeight = 0.0f;
   widget->GetWorldSize(worldWidth, worldHeight);
 
-  float newWorldWidth = aPlacement.worldWidth;
+  float newWorldWidth = aPlacement->worldWidth;
   if (newWorldWidth <= 0.0f) {
-    newWorldWidth = aPlacement.width * kWorldDPIRatio;
+    newWorldWidth = aPlacement->width * kWorldDPIRatio;
   }
 
   if (newWorldWidth != worldWidth) {
@@ -835,22 +875,22 @@ BrowserWorld::UpdateWidget(int32_t aHandle, const WidgetPlacement& aPlacement) {
   }
 
   vrb::Matrix transform = vrb::Matrix::Identity();
-  if (aPlacement.rotationAxis.Magnitude() > std::numeric_limits<float>::epsilon()) {
-    transform = vrb::Matrix::Rotation(aPlacement.rotationAxis, aPlacement.rotation);
+  if (aPlacement->rotationAxis.Magnitude() > std::numeric_limits<float>::epsilon()) {
+    transform = vrb::Matrix::Rotation(aPlacement->rotationAxis, aPlacement->rotation);
   }
 
-  vrb::Vector translation = vrb::Vector(aPlacement.translation.x() * kWorldDPIRatio,
-                                        aPlacement.translation.y() * kWorldDPIRatio,
-                                        aPlacement.translation.z() * kWorldDPIRatio);
+  vrb::Vector translation = vrb::Vector(aPlacement->translation.x() * kWorldDPIRatio,
+                                        aPlacement->translation.y() * kWorldDPIRatio,
+                                        aPlacement->translation.z() * kWorldDPIRatio);
   // Widget anchor point
-  translation -= vrb::Vector((aPlacement.anchor.x() - 0.5f) * worldWidth,
-                             aPlacement.anchor.y() * worldHeight,
+  translation -= vrb::Vector((aPlacement->anchor.x() - 0.5f) * worldWidth,
+                             (aPlacement->anchor.y() - 0.5f) * worldHeight,
                              0.0f);
   // Parent anchor point
   if (parent) {
     translation += vrb::Vector(
-        parentWorldWith * aPlacement.parentAnchor.x() - parentWorldWith * 0.5f,
-        parentWorldHeight * aPlacement.parentAnchor.y(),
+        parentWorldWith * aPlacement->parentAnchor.x() - parentWorldWith * 0.5f,
+        parentWorldHeight * aPlacement->parentAnchor.y() - parentWorldHeight * 0.5f,
         0.0f);
   }
 
@@ -868,6 +908,42 @@ BrowserWorld::RemoveWidget(int32_t aHandle) {
       m.widgets.erase(it);
     }
   }
+}
+
+void
+BrowserWorld::StartWidgetResize(int32_t aHandle) {
+  WidgetPtr widget = m.GetWidget(aHandle);
+  if (widget) {
+    widget->StartResize();
+  }
+}
+
+void
+BrowserWorld::FinishWidgetResize(int32_t aHandle) {
+  WidgetPtr widget = m.GetWidget(aHandle);
+  if (!widget) {
+    return;
+  }
+  widget->FinishResize();
+}
+
+void
+BrowserWorld::UpdateVisibleWidgets() {
+  for (const WidgetPtr& widget: m.widgets) {
+    if (widget->IsVisible() && !widget->IsResizing()) {
+      UpdateWidget(widget->GetHandle(), widget->GetPlacement());
+    }
+  }
+}
+
+void
+BrowserWorld::FadeOut() {
+  m.fadeBlitter->FadeOut();
+}
+
+void
+BrowserWorld::FadeIn() {
+  m.fadeBlitter->FadeIn();
 }
 
 JNIEnv*
@@ -1050,7 +1126,7 @@ JNI_METHOD(void, addWidgetNative)
 (JNIEnv* aEnv, jobject, jint aHandle, jobject aPlacement) {
   crow::WidgetPlacementPtr placement = crow::WidgetPlacement::FromJava(aEnv, aPlacement);
   if (placement && sWorld) {
-    sWorld->AddWidget(aHandle, *placement);
+    sWorld->AddWidget(aHandle, placement);
   }
 }
 
@@ -1058,7 +1134,7 @@ JNI_METHOD(void, updateWidgetNative)
 (JNIEnv* aEnv, jobject, jint aHandle, jobject aPlacement) {
   crow::WidgetPlacementPtr placement = crow::WidgetPlacement::FromJava(aEnv, aPlacement);
   if (placement) {
-    sWorld->UpdateWidget(aHandle, *placement);
+    sWorld->UpdateWidget(aHandle, placement);
   }
 }
 
@@ -1066,6 +1142,34 @@ JNI_METHOD(void, removeWidgetNative)
 (JNIEnv*, jobject, jint aHandle) {
   if (sWorld) {
     sWorld->RemoveWidget(aHandle);
+  }
+}
+
+JNI_METHOD(void, startWidgetResizeNative)
+(JNIEnv* aEnv, jobject, jint aHandle) {
+  if (sWorld) {
+    sWorld->StartWidgetResize(aHandle);
+  }
+}
+
+JNI_METHOD(void, finishWidgetResizeNative)
+(JNIEnv* aEnv, jobject, jint aHandle) {
+  if (sWorld) {
+    sWorld->FinishWidgetResize(aHandle);
+  }
+}
+
+JNI_METHOD(void, fadeOutWorldNative)
+(JNIEnv* aEnv, jobject, jint aHandle) {
+  if (sWorld) {
+    sWorld->FadeOut();
+  }
+}
+
+JNI_METHOD(void, fadeInWorldNative)
+(JNIEnv* aEnv, jobject, jint aHandle) {
+  if (sWorld) {
+    sWorld->FadeIn();
   }
 }
 

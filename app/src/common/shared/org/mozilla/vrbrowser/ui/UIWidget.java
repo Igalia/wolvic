@@ -27,6 +27,8 @@ public abstract class UIWidget extends FrameLayout implements Widget {
     protected WidgetPlacement mWidgetPlacement;
     protected WidgetManagerDelegate mWidgetManager;
     static final String LOGTAG = "VRB";
+    protected int mInitialWidth;
+    protected int mInitialHeight;
 
     public UIWidget(Context aContext) {
         super(aContext);
@@ -48,6 +50,8 @@ public abstract class UIWidget extends FrameLayout implements Widget {
         mWidgetPlacement = new WidgetPlacement(getContext());
         mHandle = mWidgetManager.newWidgetHandle();
         initializeWidgetPlacement(mWidgetPlacement);
+        mInitialWidth = mWidgetPlacement.width;
+        mInitialHeight = mWidgetPlacement.height;
     }
 
     abstract void initializeWidgetPlacement(WidgetPlacement aPlacement);
@@ -68,6 +72,17 @@ public abstract class UIWidget extends FrameLayout implements Widget {
         setWillNotDraw(mRenderer == null);
     }
 
+    @Override
+    public void resizeSurfaceTexture(final int aWidth, final int aHeight) {
+        if (mRenderer != null){
+            mRenderer.resize(aWidth, aHeight);
+        }
+
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) getLayoutParams();
+        params.width = aWidth;
+        params.height = aHeight;
+        setLayoutParams(params);
+    }
 
     @Override
     public int getHandle() {
@@ -88,6 +103,24 @@ public abstract class UIWidget extends FrameLayout implements Widget {
     @Override
     public void handleHoverEvent(MotionEvent aEvent) {
         this.dispatchGenericMotionEvent(aEvent);
+    }
+
+    @Override
+    public void handleResizeEvent(float aWorldWidth, float aWorldHeight) {
+        int defaultWidth = mInitialWidth;
+        int defaultHeight = mInitialHeight;
+        float defaultAspect = (float) defaultWidth / (float) defaultHeight;
+        float worldAspect = aWorldWidth / aWorldHeight;
+
+        if (worldAspect > defaultAspect) {
+            mWidgetPlacement.height = (int) Math.ceil(defaultWidth / worldAspect);
+            mWidgetPlacement.width = defaultWidth;
+        } else {
+            mWidgetPlacement.width = (int) Math.ceil(defaultHeight * worldAspect);
+            mWidgetPlacement.height = defaultHeight;
+        }
+        mWidgetPlacement.worldWidth = aWorldWidth;
+        mWidgetManager.updateWidget(this);
     }
 
     @Override
