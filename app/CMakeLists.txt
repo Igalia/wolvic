@@ -24,6 +24,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/FadeBlitter.cpp
              src/main/cpp/GestureDelegate.cpp
              src/main/cpp/Quad.cpp
+             src/main/cpp/Tray.cpp
              src/main/cpp/Widget.cpp
              src/main/cpp/WidgetPlacement.cpp
              src/main/cpp/WidgetResizer.cpp

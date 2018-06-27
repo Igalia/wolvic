@@ -51,6 +51,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     static final int GestureSwipeRight = 1;
     static final int SwipeDelay = 1000; // milliseconds
 
+    static final int TrayEventHelp = 0;
+    static final int TrayEventSettings = 1;
+    static final int TrayEventPrivate = 2;
+
     static final String LOGTAG = "VRB";
     HashMap<Integer, Widget> mWidgets;
     private int mWidgetHandleIndex = 1;
@@ -274,6 +278,17 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                     mLastRunnable = new SwipeRunnable();
                     mHandler.postDelayed(mLastRunnable, SwipeDelay);
                 }
+            }
+        });
+    }
+
+    @Keep
+    void handleTrayEvent(final int aType) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Log.i(LOGTAG, "Tray event not implemented: " + aType);
+                mAudioEngine.playSound(AudioEngine.Sound.CLICK);
             }
         });
     }

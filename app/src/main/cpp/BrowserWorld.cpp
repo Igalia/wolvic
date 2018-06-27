@@ -6,6 +6,7 @@
 #include "BrowserWorld.h"
 #include "ControllerDelegate.h"
 #include "FadeBlitter.h"
+#include "Tray.h"
 #include "Widget.h"
 #include "WidgetPlacement.h"
 #include "vrb/CameraSimple.h"
@@ -59,6 +60,9 @@ static const char* kHandleGestureName = "handleGesture";
 static const char* kHandleGestureSignature = "(I)V";
 static const char* kHandleResizeName = "handleResize";
 static const char* kHandleResizeSignature = "(IFF)V";
+static const char* kHandleTrayEventName = "handleTrayEvent";
+static const char* kHandleTrayEventSignature = "(I)V";
+
 static const char* kTileTexture = "tile.png";
 
 class SurfaceObserver;
@@ -364,6 +368,7 @@ struct BrowserWorld::State {
   DrawableListPtr drawListTransparent;
   CameraPtr leftCamera;
   CameraPtr rightCamera;
+  TrayPtr tray;
   float nearClip;
   float farClip;
   JNIEnv* env;
@@ -374,6 +379,7 @@ struct BrowserWorld::State {
   jmethodID handleAudioPoseMethod;
   jmethodID handleGestureMethod;
   jmethodID handleResizeMethod;
+  jmethodID handleTrayEventMethod;
   GestureDelegateConstPtr gestures;
   bool windowsInitialized;
   TransformPtr skybox;
@@ -384,6 +390,7 @@ struct BrowserWorld::State {
             dispatchCreateWidgetMethod(nullptr), handleMotionEventMethod(nullptr),
             handleScrollEventMethod(nullptr), handleAudioPoseMethod(nullptr),
             handleGestureMethod(nullptr),
+            handleTrayEventMethod(nullptr),
             windowsInitialized(false) {
     context = Context::Create();
     contextWeak = context;
@@ -438,6 +445,31 @@ BrowserWorld::State::UpdateControllers(bool& aUpdateWidgets) {
         }
       }
     }
+
+    if (tray) {
+      vrb::Vector result;
+      float distance = 0.0f;
+      bool isInside = false;
+      bool trayActive = false;
+      if (tray->TestControllerIntersection(start, direction, result, isInside, distance)) {
+        if (isInside && (distance < hitDistance)) {
+          hitWidget.reset();
+          hitDistance = distance;
+          hitPoint = result;
+          trayActive = true;
+        }
+      }
+      const bool pressed = controller.buttonState & ControllerDelegate::BUTTON_TRIGGER ||
+                           controller.buttonState & ControllerDelegate::BUTTON_TOUCHPAD;
+      int32_t trayEvent = tray->ProcessEvents(trayActive, pressed);
+      if (trayEvent == Tray::IconHide) {
+        tray->Toggle(false);
+      }
+      if (trayEvent >= 0 && handleTrayEventMethod) {
+        env->CallVoidMethod(activity, handleTrayEventMethod, trayEvent);
+      }
+    }
+
     if (hitWidget && hitWidget->IsResizing()) {
       active.push_back(hitWidget.get());
       const bool pressed = controller.buttonState & ControllerDelegate::BUTTON_TRIGGER ||
@@ -653,6 +685,12 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
     VRB_LOG("Failed to find Java method: %s %s", kHandleResizeName, kHandleResizeSignature);
   }
 
+  m.handleTrayEventMethod = m.env->GetMethodID(clazz, kHandleTrayEventName, kHandleTrayEventSignature);
+
+  if (!m.handleTrayEventMethod) {
+     VRB_LOG("Failed to find Java method: %s %s", kHandleTrayEventName, kHandleTrayEventSignature);
+  }
+
   if (!m.controllers->modelsLoaded) {
     const int32_t modelCount = m.device->GetControllerModelCount();
     for (int32_t index = 0; index < modelCount; index++) {
@@ -668,6 +706,7 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
     m.skybox = CreateSkyBox("cubemap/space");
     m.rootOpaqueParent->AddNode(m.skybox);
     CreateFloor();
+    // CreateTray();
     m.controllers->modelsLoaded = true;
     m.fadeBlitter = FadeBlitter::Create(m.contextWeak);
   }
@@ -708,6 +747,7 @@ BrowserWorld::ShutdownJava() {
   m.handleScrollEventMethod = nullptr;
   m.handleAudioPoseMethod = nullptr;
   m.handleGestureMethod = nullptr;
+  m.handleTrayEventMethod = nullptr;
   m.env = nullptr;
 }
 
@@ -1033,6 +1073,17 @@ BrowserWorld::CreateFloor() {
   model->SetTransform(transform);
 }
 
+
+void
+BrowserWorld::CreateTray() {
+  m.tray = Tray::Create(m.contextWeak);
+  m.tray->Load(m.factory, m.parser);
+  m.rootOpaque->AddNode(m.tray->GetRoot());
+
+  vrb::Matrix transform = vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), 40.0f * M_PI/180.0f);
+  transform.TranslateInPlace(Vector(0.0f, 0.1f, -1.2f));
+  m.tray->SetTransform(transform);
+}
 
 void
 BrowserWorld::CreateControllerPointer() {
