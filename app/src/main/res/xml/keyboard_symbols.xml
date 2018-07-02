@@ -27,7 +27,8 @@
         <Key android:codes="36" android:keyLabel="$"/>
         <Key android:codes="38" android:keyLabel="&amp;"/>
         <Key android:codes="34" android:keyLabel="&quot;"/>
-        <Key android:codes="-4" android:keyLabel="@string/keyboard_enter_label" android:keyWidth="@dimen/keyboard_key_enter_width" android:horizontalGap="@dimen/keyboard_key_enter_margin" android:keyEdgeFlags="right"/>
+        <Key android:codes="33" android:keyLabel="!" android:horizontalGap="@dimen/keyboard_key_enter_margin"/>
+        <Key android:codes="-5" android:keyIcon="@drawable/ic_icon_keyboard_backspace" android:isRepeatable="true" android:keyEdgeFlags="right"/>
     </Row>
 
     <Row>
@@ -41,8 +42,7 @@
         <Key android:codes="60" android:keyLabel="&lt;"/>
         <Key android:codes="62" android:keyLabel="&gt;"/>
         <Key android:codes="39" android:keyLabel="\'"/>
-        <Key android:codes="33" android:keyLabel="!" />
-        <Key android:codes="-5" android:keyIcon="@drawable/ic_icon_keyboard_backspace" android:isRepeatable="true" android:keyEdgeFlags="right"/>
+        <Key android:codes="-4" android:keyLabel="@string/keyboard_enter_label" android:keyWidth="@dimen/keyboard_key_enter_width" android:keyEdgeFlags="right"/>
     </Row>
 
     <Row>

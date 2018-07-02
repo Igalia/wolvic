@@ -14,16 +14,16 @@
     <item name="keyboard_world_width" format="float" type="dimen">2.4</item>
     <item name="keyboard_distance_from_browser" format="float" type="dimen">2.0</item>
     <item name="keyboard_world_rotation" format="float" type="dimen">-30.0</item>
-    <dimen name="keyboard_width">626dp</dimen>
+    <dimen name="keyboard_width">629dp</dimen>
     <dimen name="keyboard_height">202dp</dimen>
     <dimen name="keyboard_horizontal_gap">14dp</dimen>
     <dimen name="keyboard_vertical_gap">6dp</dimen>
     <dimen name="keyboard_key_width">36dp</dimen>
     <dimen name="keyboard_key_height">36dp</dimen>
     <dimen name="keyboard_key_rounded_corner">18dp</dimen>
-    <dimen name="keyboard_key_space_width">386dp</dimen>
+    <dimen name="keyboard_key_space_width">389dp</dimen>
     <dimen name="keyboard_key_enter_width">89dp</dimen>
-    <dimen name="keyboard_key_enter_margin">36dp</dimen>
+    <dimen name="keyboard_key_enter_margin">42dp</dimen>
     <dimen name="keyboard_key_a_margin">25dp</dimen>
     <dimen name="keyboard_key_text_size">14dp</dimen>
     <dimen name="keyboard_ley_longtext_size">13dp</dimen>

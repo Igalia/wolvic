@@ -47,6 +47,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private RelativeLayout.LayoutParams mOriginalLayoutParams;
     private NavigationBarButton mKeyboardIcon;
     private int mKeyboardPopupLeftMargin;
+    private ImageButton mCloseKeyboardButton;
 
     public KeyboardWidget(Context aContext) {
         super(aContext);
@@ -90,8 +91,8 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
         mShiftOnIcon = getResources().getDrawable(R.drawable.ic_icon_keyboard_shift_on, getContext().getTheme());
         mShiftOffIcon = getResources().getDrawable(R.drawable.ic_icon_keyboard_shift_off, getContext().getTheme());
-        ImageButton closeKeyboardButton = findViewById(R.id.keyboardCloseButton);
-        closeKeyboardButton.setOnClickListener(new OnClickListener() {
+        mCloseKeyboardButton = findViewById(R.id.keyboardCloseButton);
+        mCloseKeyboardButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 dismiss();
@@ -117,6 +118,8 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                     mKeyboardview.setKeyboard(mKeyboardQuerty);
                     mKeyboardview.setLayoutParams(mOriginalLayoutParams);
                     mIsPopupVisible = false;
+
+                    mCloseKeyboardButton.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -236,6 +239,8 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             params.topMargin= popupKey.y;
             mKeyboardview.setLayoutParams(params);
             mIsPopupVisible = true;
+
+            mCloseKeyboardButton.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -275,6 +280,8 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                     mKeyboardview.setKeyboard(mKeyboardQuerty);
                     mKeyboardview.setLayoutParams(mOriginalLayoutParams);
                     mIsPopupVisible = false;
+
+                    mCloseKeyboardButton.setVisibility(View.VISIBLE);
                 }
                 break;
         }
