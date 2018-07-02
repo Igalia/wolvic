@@ -6,6 +6,7 @@
 package org.mozilla.vrbrowser;
 
 import android.content.Context;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.inputmethod.CursorAnchorInfo;
@@ -19,6 +20,8 @@ import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.ui.SettingsStore;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -36,6 +39,10 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         return mInstance;
     }
     public static final String DEFAULT_URL = "resource://android/assets/html/index.html";
+    public static final String ERROR_URL = "resource://android/assets/html/error.html";
+
+    public static final String NET_ERROR = "about:neterror";
+    public static final String CERT_ERROR = "about:certerror";
 
     private LinkedList<GeckoSession.NavigationDelegate> mNavigationListeners;
     private LinkedList<GeckoSession.ProgressDelegate> mProgressListeners;
@@ -445,8 +452,65 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         }
     }
 
+    String mLastLoadedErrorURI;
+    String mLastValidURI;
+
     @Override
     public void onLoadRequest(GeckoSession aSession, String aUri, int target, int flags, GeckoResponse<Boolean> aResponse) {
+        boolean isErrorPage = false;
+        if (aUri.startsWith(NET_ERROR)) {
+            isErrorPage = true;
+            mLastLoadedErrorURI = aUri;
+
+        } else if (aUri.startsWith(CERT_ERROR)) {
+            isErrorPage = true;
+            mLastLoadedErrorURI = aUri;
+        }
+
+        if (isErrorPage) {
+            aSession.loadUri(ERROR_URL);
+            aResponse.respond(true);
+
+        } else if (aUri.equalsIgnoreCase(ERROR_URL)) {
+            int parseStartPos = 0;
+            if (mLastLoadedErrorURI.startsWith(NET_ERROR)) {
+                parseStartPos = NET_ERROR.length() + 1;
+
+            } else if (mLastLoadedErrorURI.startsWith(CERT_ERROR)) {
+                parseStartPos = CERT_ERROR.length() + 1;
+            }
+
+            try {
+                Map<String, String> query_pairs = new LinkedHashMap<>();
+                String query = mLastLoadedErrorURI.substring(parseStartPos);
+                String[] pairs = query.split("&");
+                for (String pair : pairs) {
+                    int idx = pair.indexOf("=");
+                    query_pairs.put(URLDecoder.decode(pair.substring(0, idx), "UTF-8"), URLDecoder.decode(pair.substring(idx + 1), "UTF-8"));
+                }
+
+                final String errorType = query_pairs.get("e");
+                final String errorURL = query_pairs.get("u");
+                final String errorDescription = query_pairs.get("d");
+
+                final GeckoSession session = aSession;
+                Handler handler = new Handler();
+                Runnable r = new Runnable() {
+                    public void run() {
+                        // FIXME: The referrer doesn't seem to work on Gecko right now, so when going back we always go back to the error page
+                        session.loadUri("javascript:updateMessage('" + errorType + "', '" + errorURL + "', '" + errorDescription + "');");
+                    }
+                };
+                handler.postDelayed(r, 0);
+
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+
+        } else if (!aUri.startsWith("javascript:")) {
+            mLastValidURI = aUri;
+        }
+
         aResponse.respond(null);
     }
 
