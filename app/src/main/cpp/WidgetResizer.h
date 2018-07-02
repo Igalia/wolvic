@@ -21,7 +21,7 @@ typedef std::shared_ptr<WidgetResizer> WidgetResizerPtr;
 
 class WidgetResizer {
 public:
-  static WidgetResizerPtr Create(vrb::ContextWeak aContext, const vrb::Vector& aMin, const vrb::Vector& aMax);
+  static WidgetResizerPtr Create(vrb::CreationContextPtr& aContext, const vrb::Vector& aMin, const vrb::Vector& aMax);
   vrb::NodePtr GetRoot() const;
   void SetSize(const vrb::Vector& aMin, const vrb::Vector& aMax);
   void ToggleVisible(bool aVisible);
@@ -31,7 +31,7 @@ public:
   const vrb::Vector& GetCurrentMax() const;
 protected:
   struct State;
-  WidgetResizer(State& aState, vrb::ContextWeak& aContext);
+  WidgetResizer(State& aState, vrb::CreationContextPtr& aContext);
   ~WidgetResizer();
 private:
   State& m;

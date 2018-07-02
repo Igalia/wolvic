@@ -21,7 +21,7 @@ namespace crow {
 
   class Tray {
   public:
-    static TrayPtr Create(vrb::ContextWeak aContext);
+    static TrayPtr Create(vrb::CreationContextPtr& aContext);
     static const int32_t IconHelp = 0;
     static const int32_t IconSettings = 1;
     static const int32_t IconPrivate = 2;
@@ -39,7 +39,7 @@ namespace crow {
     vrb::NodePtr GetRoot() const;
   protected:
     struct State;
-    Tray(State& aState, vrb::ContextWeak& aContext);
+    Tray(State& aState, vrb::CreationContextPtr& aContext);
     ~Tray();
   private:
     State& m;

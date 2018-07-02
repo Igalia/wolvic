@@ -12,7 +12,7 @@
 #include "vrb/CameraSimple.h"
 #include "vrb/Color.h"
 #include "vrb/ConcreteClass.h"
-#include "vrb/Context.h"
+#include "vrb/CreationContext.h"
 #include "vrb/CullVisitor.h"
 #include "vrb/DrawableList.h"
 #include "vrb/Geometry.h"
@@ -21,8 +21,10 @@
 #include "vrb/Light.h"
 #include "vrb/Logger.h"
 #include "vrb/Matrix.h"
+#include "vrb/ModelLoaderAndroid.h"
 #include "vrb/NodeFactoryObj.h"
 #include "vrb/ParserObj.h"
+#include "vrb/RenderContext.h"
 #include "vrb/RenderState.h"
 #include "vrb/SurfaceTextureFactory.h"
 #include "vrb/TextureCache.h"
@@ -45,8 +47,6 @@ static const int GestureSwipeRight = 1;
 
 static const float kScrollFactor = 20.0f; // Just picked what fell right.
 static const float kWorldDPIRatio = 2.0f/720.0f;
-
-static crow::BrowserWorld* sWorld;
 
 static const char* kDispatchCreateWidgetName = "dispatchCreateWidget";
 static const char* kDispatchCreateWidgetSignature = "(ILandroid/graphics/SurfaceTexture;II)V";
@@ -203,7 +203,7 @@ public:
   void EndTouch(const int32_t aControllerIndex) override;
   void SetScrolledDelta(const int32_t aControllerIndex, const float aScrollDeltaX, const float aScrollDeltaY) override;
   std::vector<Controller> list;
-  ContextWeak context;
+  CreationContextWeak context;
   TogglePtr root;
   bool modelsLoaded;
   std::vector<GroupPtr> models;
@@ -231,7 +231,8 @@ ControllerContainer::SetUpModelsGroup(const int32_t aModelIndex) {
     models.resize((size_t)(aModelIndex + 1));
   }
   if (!models[aModelIndex]) {
-    models[aModelIndex] = std::move(Group::Create(context));
+    CreationContextPtr create = context.lock();
+    models[aModelIndex] = std::move(Group::Create(create));
   }
 }
 
@@ -244,7 +245,8 @@ ControllerContainer::CreateController(const int32_t aControllerIndex, const int3
   controller.index = aControllerIndex;
   if (!controller.transform && (aModelIndex >= 0)) {
     SetUpModelsGroup(aModelIndex);
-    controller.transform = Transform::Create(context);
+    CreationContextPtr create = context.lock();
+    controller.transform = Transform::Create(create);
     if ((models.size() >= aModelIndex) && models[aModelIndex]) {
       controller.transform->AddNode(models[aModelIndex]);
       if (pointerModel) {
@@ -354,10 +356,9 @@ struct BrowserWorld::State {
   DeviceDelegatePtr device;
   bool paused;
   bool glInitialized;
-  ContextPtr context;
-  ContextWeak contextWeak;
-  NodeFactoryObjPtr factory;
-  ParserObjPtr parser;
+  RenderContextPtr context;
+  CreationContextPtr create;
+  ModelLoaderAndroidPtr loader;
   GroupPtr rootOpaqueParent;
   GroupPtr rootOpaque;
   GroupPtr rootTransparent;
@@ -392,24 +393,22 @@ struct BrowserWorld::State {
             handleGestureMethod(nullptr),
             handleTrayEventMethod(nullptr),
             windowsInitialized(false) {
-    context = Context::Create();
-    contextWeak = context;
-    factory = NodeFactoryObj::Create(contextWeak);
-    parser = ParserObj::Create(contextWeak);
-    parser->SetObserver(factory);
-    rootOpaque = Group::Create(contextWeak);
-    rootTransparent = Group::Create(contextWeak);
-    light = Light::Create(contextWeak);
-    rootOpaqueParent = Group::Create(contextWeak);
+    context = RenderContext::Create();
+    create = context->GetRenderThreadCreationContext();
+    loader = ModelLoaderAndroid::Create(context);
+    rootOpaque = Group::Create(create);
+    rootTransparent = Group::Create(create);
+    light = Light::Create(create);
+    rootOpaqueParent = Group::Create(create);
     rootOpaqueParent->AddNode(rootOpaque);
     rootOpaque->AddLight(light);
     rootTransparent->AddLight(light);
-    cullVisitor = CullVisitor::Create(contextWeak);
-    drawListOpaque = DrawableList::Create(contextWeak);
-    drawListTransparent = DrawableList::Create(contextWeak);
+    cullVisitor = CullVisitor::Create(create);
+    drawListOpaque = DrawableList::Create(create);
+    drawListTransparent = DrawableList::Create(create);
     controllers = ControllerContainer::Create();
-    controllers->context = contextWeak;
-    controllers->root = Toggle::Create(contextWeak);
+    controllers->context = create;
+    controllers->root = Toggle::Create(create);
   }
 
   void UpdateControllers(bool& aUpdateWidgets);
@@ -571,17 +570,23 @@ BrowserWorld::State::FindWidget(const std::function<bool(const WidgetPtr&)>& aCo
   return {};
 }
 
-BrowserWorldPtr
-BrowserWorld::Create() {
-  BrowserWorldPtr result = std::make_shared<vrb::ConcreteClass<BrowserWorld, BrowserWorld::State> >();
-  result->m.self = result;
-  result->m.surfaceObserver = std::make_shared<SurfaceObserver>(result->m.self);
-  result->m.context->GetSurfaceTextureFactory()->AddGlobalObserver(result->m.surfaceObserver);
-  return result;
+static BrowserWorldPtr sWorldInstance;
+
+BrowserWorld&
+BrowserWorld::Instance() {
+  if (!sWorldInstance) {
+    sWorldInstance = Create();
+  }
+  return *sWorldInstance;
 }
 
-vrb::ContextWeak
-BrowserWorld::GetWeakContext() {
+void
+BrowserWorld::Destroy() {
+  sWorldInstance = nullptr;
+}
+
+vrb::RenderContextPtr&
+BrowserWorld::GetRenderContext() {
   return m.context;
 }
 
@@ -648,7 +653,7 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
   if (!clazz) {
     return;
   }
-
+  m.loader->InitializeJava(aEnv, aActivity, aAssetManager);
   m.dispatchCreateWidgetMethod = m.env->GetMethodID(clazz, kDispatchCreateWidgetName,
                                                  kDispatchCreateWidgetSignature);
   if (!m.dispatchCreateWidgetMethod) {
@@ -697,8 +702,7 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
       const std::string fileName = m.device->GetControllerModelName(index);
       if (!fileName.empty()) {
         m.controllers->SetUpModelsGroup(index);
-        m.factory->SetModelRoot(m.controllers->models[index]);
-        m.parser->LoadModel(fileName);
+        m.loader->LoadModel(fileName, m.controllers->models[index]);
       }
     }
     m.rootOpaque->AddNode(m.controllers->root);
@@ -708,7 +712,7 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
     CreateFloor();
     // CreateTray();
     m.controllers->modelsLoaded = true;
-    m.fadeBlitter = FadeBlitter::Create(m.contextWeak);
+    m.fadeBlitter = FadeBlitter::Create(m.create);
   }
 }
 
@@ -858,7 +862,7 @@ BrowserWorld::AddWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement) {
     worldWidth = aPlacement->width * kWorldDPIRatio;
   }
 
-  WidgetPtr widget = Widget::Create(m.contextWeak,
+  WidgetPtr widget = Widget::Create(m.context,
                                     aHandle,
                                     (int32_t)(ceilf(aPlacement->width * aPlacement->density)),
                                     (int32_t)(ceilf(aPlacement->height * aPlacement->density)),
@@ -873,7 +877,7 @@ BrowserWorld::AddWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement) {
   UpdateWidget(widget->GetHandle(), aPlacement);
 
   if (!aPlacement->showPointer) {
-    vrb::NodePtr emptyNode = vrb::Group::Create(m.contextWeak);
+    vrb::NodePtr emptyNode = vrb::Group::Create(m.create);
     widget->SetPointerGeometry(emptyNode);
   }
 }
@@ -991,15 +995,18 @@ BrowserWorld::GetJNIEnv() const {
   return m.env;
 }
 
-BrowserWorld::BrowserWorld(State& aState) : m(aState) {
-  sWorld = this;
+BrowserWorldPtr
+BrowserWorld::Create() {
+  BrowserWorldPtr result = std::make_shared<vrb::ConcreteClass<BrowserWorld, BrowserWorld::State> >();
+  result->m.self = result;
+  result->m.surfaceObserver = std::make_shared<SurfaceObserver>(result->m.self);
+  result->m.context->GetSurfaceTextureFactory()->AddGlobalObserver(result->m.surfaceObserver);
+  return result;
 }
 
-BrowserWorld::~BrowserWorld() {
- if (sWorld == this) {
-  sWorld = nullptr;
- }
-}
+BrowserWorld::BrowserWorld(State& aState) : m(aState) {}
+
+BrowserWorld::~BrowserWorld() {}
 
 vrb::TransformPtr
 BrowserWorld::CreateSkyBox(const std::string& basePath) {
@@ -1023,14 +1030,14 @@ BrowserWorld::CreateSkyBox(const std::string& basePath) {
       1, 5, 6, 2
   };
 
-  VertexArrayPtr array = VertexArray::Create(m.contextWeak);
+  VertexArrayPtr array = VertexArray::Create(m.create);
   const float kLength = 50.0f;
   for (int i = 0; i < cubeVertices.size(); i += 3) {
     array->AppendVertex(Vector(-kLength * cubeVertices[i], -kLength * cubeVertices[i + 1], -kLength * cubeVertices[i + 2]));
     array->AppendUV(Vector(-kLength * cubeVertices[i], -kLength * cubeVertices[i + 1], -kLength * cubeVertices[i + 2]));
   }
 
-  vrb::GeometryPtr geometry = vrb::Geometry::Create(m.contextWeak);
+  vrb::GeometryPtr geometry = vrb::Geometry::Create(m.create);
   geometry->SetVertexArray(array);
 
 
@@ -1039,8 +1046,8 @@ BrowserWorld::CreateSkyBox(const std::string& basePath) {
     geometry->AddFace(indices, indices, {});
   }
 
-  RenderStatePtr state = RenderState::Create(m.contextWeak);
-  TextureCubeMapPtr cubemap = vrb::TextureCubeMap::Create(m.contextWeak);
+  RenderStatePtr state = RenderState::Create(m.create);
+  TextureCubeMapPtr cubemap = vrb::TextureCubeMap::Create(m.create);
   cubemap->SetTextureParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   cubemap->SetTextureParameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   cubemap->SetTextureParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -1049,11 +1056,11 @@ BrowserWorld::CreateSkyBox(const std::string& basePath) {
   state->SetTexture(cubemap);
 
   auto path = [&](const std::string& name) { return basePath + "/" + name + ".jpg"; };
-  vrb::TextureCubeMap::Load(m.contextWeak, cubemap, path("posx"), path("negx"), path("posy"), path("negy"), path("posz"), path("negz"));
+  vrb::TextureCubeMap::Load(m.create, cubemap, path("posx"), path("negx"), path("posy"), path("negy"), path("posz"), path("negz"));
 
   state->SetMaterial(Color(1.0f, 1.0f, 1.0f), Color(1.0f, 1.0f, 1.0f), Color(0.0f, 0.0f, 0.0f), 0.0f);
   geometry->SetRenderState(state);
-  vrb::TransformPtr transform = vrb::Transform::Create(m.contextWeak);
+  vrb::TransformPtr transform = vrb::Transform::Create(m.create);
   transform->AddNode(geometry);
   transform->SetTransform(Matrix::Position(vrb::Vector(0.0f, 0.0f, 0.0f)));
   return transform;
@@ -1062,9 +1069,8 @@ BrowserWorld::CreateSkyBox(const std::string& basePath) {
 
 void
 BrowserWorld::CreateFloor() {
-  vrb::TransformPtr model = Transform::Create(m.contextWeak);
-  m.factory->SetModelRoot(model);
-  m.parser->LoadModel("FirefoxPlatform2_low.obj");
+  vrb::TransformPtr model = Transform::Create(m.create);
+  m.loader->LoadModel("FirefoxPlatform2_low.obj", model);
   m.rootOpaque->AddNode(model);
   vrb::Matrix transform = vrb::Matrix::Identity();
   transform.ScaleInPlace(Vector(40.0, 40.0, 40.0));
@@ -1076,8 +1082,8 @@ BrowserWorld::CreateFloor() {
 
 void
 BrowserWorld::CreateTray() {
-  m.tray = Tray::Create(m.contextWeak);
-  m.tray->Load(m.factory, m.parser);
+  m.tray = Tray::Create(m.create);
+  //m.tray->Load(m.factory, m.parser);
   m.rootOpaque->AddNode(m.tray->GetRoot());
 
   vrb::Matrix transform = vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), 40.0f * M_PI/180.0f);
@@ -1090,7 +1096,7 @@ BrowserWorld::CreateControllerPointer() {
   if (m.controllers->pointerModel) {
     return;
   }
-  VertexArrayPtr array = VertexArray::Create(m.contextWeak);
+  VertexArrayPtr array = VertexArray::Create(m.create);
   const float kLength = -5.0f;
   const float kHeight = 0.0008f;
 
@@ -1107,10 +1113,10 @@ BrowserWorld::CreateControllerPointer() {
   array->AppendNormal(Vector(0.0f, 0.0f, -1.0f).Normalize()); // in to the screen
 
 
-  RenderStatePtr state = RenderState::Create(m.contextWeak);
+  RenderStatePtr state = RenderState::Create(m.create);
   state->SetMaterial(Color(0.6f, 0.0f, 0.0f), Color(1.0f, 0.0f, 0.0f), Color(0.5f, 0.5f, 0.5f),
                      96.078431f);
-  GeometryPtr geometry = Geometry::Create(m.contextWeak);
+  GeometryPtr geometry = Geometry::Create(m.create);
   geometry->SetVertexArray(array);
   geometry->SetRenderState(state);
 
@@ -1176,8 +1182,8 @@ extern "C" {
 JNI_METHOD(void, addWidgetNative)
 (JNIEnv* aEnv, jobject, jint aHandle, jobject aPlacement) {
   crow::WidgetPlacementPtr placement = crow::WidgetPlacement::FromJava(aEnv, aPlacement);
-  if (placement && sWorld) {
-    sWorld->AddWidget(aHandle, placement);
+  if (placement) {
+    crow::BrowserWorld::Instance().AddWidget(aHandle, placement);
   }
 }
 
@@ -1185,43 +1191,33 @@ JNI_METHOD(void, updateWidgetNative)
 (JNIEnv* aEnv, jobject, jint aHandle, jobject aPlacement) {
   crow::WidgetPlacementPtr placement = crow::WidgetPlacement::FromJava(aEnv, aPlacement);
   if (placement) {
-    sWorld->UpdateWidget(aHandle, placement);
+    crow::BrowserWorld::Instance().UpdateWidget(aHandle, placement);
   }
 }
 
 JNI_METHOD(void, removeWidgetNative)
 (JNIEnv*, jobject, jint aHandle) {
-  if (sWorld) {
-    sWorld->RemoveWidget(aHandle);
-  }
+  crow::BrowserWorld::Instance().RemoveWidget(aHandle);
 }
 
 JNI_METHOD(void, startWidgetResizeNative)
 (JNIEnv* aEnv, jobject, jint aHandle) {
-  if (sWorld) {
-    sWorld->StartWidgetResize(aHandle);
-  }
+  crow::BrowserWorld::Instance().StartWidgetResize(aHandle);
 }
 
 JNI_METHOD(void, finishWidgetResizeNative)
 (JNIEnv* aEnv, jobject, jint aHandle) {
-  if (sWorld) {
-    sWorld->FinishWidgetResize(aHandle);
-  }
+  crow::BrowserWorld::Instance().FinishWidgetResize(aHandle);
 }
 
 JNI_METHOD(void, fadeOutWorldNative)
 (JNIEnv* aEnv, jobject, jint aHandle) {
-  if (sWorld) {
-    sWorld->FadeOut();
-  }
+  crow::BrowserWorld::Instance().FadeOut();
 }
 
 JNI_METHOD(void, fadeInWorldNative)
 (JNIEnv* aEnv, jobject, jint aHandle) {
-  if (sWorld) {
-    sWorld->FadeIn();
-  }
+  crow::BrowserWorld::Instance().FadeIn();
 }
 
 } // extern "C"

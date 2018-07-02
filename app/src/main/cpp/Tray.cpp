@@ -127,7 +127,7 @@ namespace {
 namespace crow {
 
   struct Tray::State {
-    vrb::ContextWeak context;
+    vrb::CreationContextWeak context;
     vrb::TogglePtr root;
     vrb::TransformPtr transform;
     std::vector<TrayIconPtr> icons;
@@ -136,14 +136,18 @@ namespace crow {
     State() {}
 
     void Initialize() {
-      transform = vrb::Transform::Create(context);
-      root = vrb::Toggle::Create(context);
+      vrb::CreationContextPtr create = context.lock();
+      if (!create) {
+        return;
+      }
+      transform = vrb::Transform::Create(create);
+      root = vrb::Toggle::Create(create);
       root->AddNode(transform);
     }
   };
 
   TrayPtr
-  Tray::Create(vrb::ContextWeak aContext) {
+  Tray::Create(vrb::CreationContextPtr& aContext) {
     TrayPtr result = std::make_shared<vrb::ConcreteClass<Tray, Tray::State> >(aContext);
     result->m.Initialize();
     return result;
@@ -248,7 +252,7 @@ namespace crow {
     return m.root;
   }
 
-  Tray::Tray(State& aState, vrb::ContextWeak& aContext) : m(aState) {
+  Tray::Tray(State& aState, vrb::CreationContextPtr& aContext) : m(aState) {
     m.context = aContext;
   }
 

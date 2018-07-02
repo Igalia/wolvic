@@ -15,6 +15,7 @@
 #include "vrb/FBO.h"
 #include "vrb/GLError.h"
 #include "vrb/Matrix.h"
+#include "vrb/RenderContext.h"
 #include "vrb/Vector.h"
 #include "vrb/Quaternion.h"
 
@@ -41,7 +42,7 @@ struct SVREyeSwapChain {
     return std::make_shared<SVREyeSwapChain>();
   }
 
-  void Init(vrb::ContextWeak &aContext, uint32_t aSwapChainLength, uint32_t aWidth, uint32_t aHeight) {
+  void Init(vrb::RenderContextPtr& aContext, uint32_t aSwapChainLength, uint32_t aWidth, uint32_t aHeight) {
     Destroy();
     swapChainLength = aSwapChainLength;
 
@@ -80,7 +81,7 @@ struct SVREyeSwapChain {
 };
 
 struct DeviceDelegateSVR::State {
-  vrb::ContextWeak context;
+  vrb::RenderContextWeak context;
   android_app* app = nullptr;
   bool initialized = false;
   svrInitParams java = {};
@@ -151,7 +152,7 @@ struct DeviceDelegateSVR::State {
   }
 
   void Initialize() {
-    vrb::ContextPtr localContext = context.lock();
+    vrb::RenderContextPtr localContext = context.lock();
 
     java.javaVm = app->activity->vm;
     (*app->activity->vm).AttachCurrentThread(&java.javaEnv, NULL);
@@ -173,7 +174,7 @@ struct DeviceDelegateSVR::State {
     far = info.leftEyeFrustum.far;
 
     for (int i = 0; i < kNumEyes; ++i) {
-      cameras[i] = vrb::CameraEye::Create(context);
+      cameras[i] = vrb::CameraEye::Create(localContext->GetRenderThreadCreationContext());
       eyeSwapChains[i] = SVREyeSwapChain::create();
     }
 
@@ -285,7 +286,7 @@ struct DeviceDelegateSVR::State {
 };
 
 DeviceDelegateSVRPtr
-DeviceDelegateSVR::Create(vrb::ContextWeak aContext, android_app *aApp) {
+DeviceDelegateSVR::Create(vrb::RenderContextPtr& aContext, android_app *aApp) {
   DeviceDelegateSVRPtr result = std::make_shared<vrb::ConcreteClass<DeviceDelegateSVR, DeviceDelegateSVR::State> >();
   result->m.context = aContext;
   result->m.app = aApp;
@@ -468,8 +469,9 @@ DeviceDelegateSVR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
     return;
   }
 
+  vrb::RenderContextPtr render = m.context.lock();
   for (int i = 0; i < kNumEyes; ++i) {
-    m.eyeSwapChains[i]->Init(m.context, 2, m.renderWidth, m.renderHeight);
+    m.eyeSwapChains[i]->Init(render, 2, m.renderWidth, m.renderHeight);
   }
 
   svrBeginParams params = {};

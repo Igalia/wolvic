@@ -18,17 +18,17 @@ typedef std::shared_ptr<FadeBlitter> FadeBlitterPtr;
 
 class FadeBlitter : protected vrb::ResourceGL {
 public:
-  static FadeBlitterPtr Create(vrb::ContextWeak& aContext);
+  static FadeBlitterPtr Create(vrb::CreationContextPtr& aContext);
   void Draw();
   bool IsVisible() const;
   void FadeIn();
   void FadeOut();
 protected:
   struct State;
-  FadeBlitter(State& aState, vrb::ContextWeak& aContext);
+  FadeBlitter(State& aState, vrb::CreationContextPtr& aContext);
   ~FadeBlitter();
-  void InitializeGL(vrb::Context& aContext) override;
-  void ShutdownGL(vrb::Context& aContext) override;
+  void InitializeGL(vrb::RenderContext& aContext) override;
+  void ShutdownGL(vrb::RenderContext& aContext) override;
 private:
   State& m;
   FadeBlitter() = delete;

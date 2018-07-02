@@ -21,7 +21,7 @@ typedef std::shared_ptr<DeviceDelegateOculusVR> DeviceDelegateOculusVRPtr;
 
 class DeviceDelegateOculusVR : public DeviceDelegate {
 public:
-  static DeviceDelegateOculusVRPtr Create(vrb::ContextWeak aContext, android_app* aApp);
+  static DeviceDelegateOculusVRPtr Create(vrb::RenderContextPtr& aContext, android_app* aApp);
   // DeviceDelegate interface
   GestureDelegateConstPtr GetGestureDelegate() override { return nullptr; }
   vrb::CameraPtr GetCamera(const CameraEnum aWhich) override;

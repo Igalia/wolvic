@@ -11,8 +11,9 @@
 #include "vrb/GLError.h"
 #include "vrb/Logger.h"
 
-static crow::BrowserWorldPtr sWorld;
 static crow::DeviceDelegateNoAPIPtr sDevice;
+
+using namespace crow;
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -25,8 +26,8 @@ JNI_METHOD(void, activityPaused)
   if (sDevice) {
     sDevice->Pause();
   }
-  sWorld->Pause();
-  sWorld->ShutdownGL();
+  BrowserWorld::Instance().Pause();
+  BrowserWorld::Instance().ShutdownGL();
 }
 
 JNI_METHOD(void, activityResumed)
@@ -34,19 +35,19 @@ JNI_METHOD(void, activityResumed)
   if (sDevice) {
     sDevice->Resume();
   }
-  sWorld->InitializeGL();
-  sWorld->Resume();
+  BrowserWorld::Instance().InitializeGL();
+  BrowserWorld::Instance().Resume();
 }
 
 JNI_METHOD(void, activityCreated)
 (JNIEnv* aEnv, jobject aActivity, jobject aAssetManager) {
   if (!sDevice) {
-    sDevice = crow::DeviceDelegateNoAPI::Create(sWorld->GetWeakContext());
+    sDevice = crow::DeviceDelegateNoAPI::Create(BrowserWorld::Instance().GetRenderContext());
   }
   sDevice->Resume();
-  sWorld->RegisterDeviceDelegate(sDevice);
-  sWorld->InitializeJava(aEnv, aActivity, aAssetManager);
-  sWorld->InitializeGL();
+  BrowserWorld::Instance().RegisterDeviceDelegate(sDevice);
+  BrowserWorld::Instance().InitializeJava(aEnv, aActivity, aAssetManager);
+  BrowserWorld::Instance().InitializeGL();
 }
 
 JNI_METHOD(void, updateViewport)
@@ -60,14 +61,14 @@ JNI_METHOD(void, updateViewport)
 
 JNI_METHOD(void, activityDestroyed)
 (JNIEnv*, jobject) {
-  sWorld->ShutdownJava();
-  sWorld->RegisterDeviceDelegate(nullptr);
+  BrowserWorld::Instance().ShutdownJava();
+  BrowserWorld::Instance().RegisterDeviceDelegate(nullptr);
   sDevice = nullptr;
 }
 
 JNI_METHOD(void, drawGL)
 (JNIEnv*, jobject) {
-  sWorld->Draw();
+  BrowserWorld::Instance().Draw();
 }
 
 JNI_METHOD(void, moveAxis)
@@ -86,12 +87,10 @@ JNI_METHOD(void, touchEvent)
 }
 
 jint JNI_OnLoad(JavaVM*, void*) {
-  sWorld = crow::BrowserWorld::Create();
   return JNI_VERSION_1_6;
 }
 
 void JNI_OnUnload(JavaVM*, void*) {
-  sWorld = nullptr;
   sDevice = nullptr;
 }
 

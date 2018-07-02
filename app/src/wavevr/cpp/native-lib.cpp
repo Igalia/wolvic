@@ -24,7 +24,6 @@ using namespace crow;
 
 static bool sJavaInitialized = false;
 static vrb::RunnableQueuePtr sQueue;
-static BrowserWorldPtr sWorld;
 static DeviceDelegateWaveVRPtr sDevice;
 
 #define JNI_METHOD(return_type, method_name) \
@@ -35,17 +34,15 @@ extern "C" {
 
 JNI_METHOD(void, activityPaused)
 (JNIEnv*, jobject) {
-  sWorld->Pause();
+  BrowserWorld::Instance().Pause();
 }
 
 JNI_METHOD(void, activityResumed)
 (JNIEnv*, jobject) {
-  sWorld->Resume();
+  BrowserWorld::Instance().Resume();
 }
 
 int main(int argc, char *argv[]) {
-
-  bool quit = false;
   VRB_LOG("Call WVR_Init");
   WVR_InitError eError = WVR_Init(WVR_AppType_VRContent);
   if (eError != WVR_InitError_None) {
@@ -61,8 +58,8 @@ int main(int argc, char *argv[]) {
   if (pError != WVR_RenderError_None) {
     VRB_LOG("Present init failed - Error[%d]", pError);
   }
-  sDevice = DeviceDelegateWaveVR::Create(sWorld->GetWeakContext());
-  sWorld->RegisterDeviceDelegate(sDevice);
+  sDevice = DeviceDelegateWaveVR::Create(BrowserWorld::Instance().GetRenderContext());
+  BrowserWorld::Instance().RegisterDeviceDelegate(sDevice);
   VRB_GL_CHECK(glEnable(GL_DEPTH_TEST));
   VRB_GL_CHECK(glEnable(GL_CULL_FACE));
   VRB_GL_CHECK(glEnable(GL_BLEND));
@@ -71,15 +68,15 @@ int main(int argc, char *argv[]) {
     sQueue->ProcessRunnables();
   }
   VRB_LOG("Java Initialized.");
-  sWorld->InitializeGL();
-  sWorld->Resume();
+  BrowserWorld::Instance().InitializeGL();
+  BrowserWorld::Instance().Resume();
   while (sDevice->IsRunning()) {
     sQueue->ProcessRunnables();
     //VRB_LOG("About to DRAW!");
     VRB_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-    sWorld->Draw();
+    BrowserWorld::Instance().Draw();
   }
-  sWorld->ShutdownGL();
+  BrowserWorld::Instance().ShutdownGL();
   return 0;
 }
 
@@ -91,20 +88,17 @@ JNI_METHOD(void, queueRunnable)
 JNI_METHOD(void, initializeJava)
 (JNIEnv* aEnv, jobject aActivity, jobject aAssets) {
   sJavaInitialized = true;
-  sWorld->InitializeJava(aEnv, aActivity, aAssets);
+  BrowserWorld::Instance().InitializeJava(aEnv, aActivity, aAssets);
 }
 
 jint JNI_OnLoad(JavaVM* aVm, void*) {
   sQueue = vrb::RunnableQueue::Create(aVm);
-  sWorld = BrowserWorld::Create();
   WVR_RegisterMain(main);
   return JNI_VERSION_1_6;
 }
 
-void JNI_OnUnLoad(JavaVM* vm, void* reserved) {
-  sWorld->ShutdownJava();
+void JNI_OnUnload(JavaVM* vm, void* reserved) {
   sQueue = nullptr;
-  sWorld = nullptr;
 }
 
 } // extern "C"

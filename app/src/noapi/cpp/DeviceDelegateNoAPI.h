@@ -18,7 +18,7 @@ typedef std::shared_ptr<DeviceDelegateNoAPI> DeviceDelegateNoAPIPtr;
 
 class DeviceDelegateNoAPI : public DeviceDelegate {
 public:
-  static DeviceDelegateNoAPIPtr Create(vrb::ContextWeak aContext);
+  static DeviceDelegateNoAPIPtr Create(vrb::RenderContextPtr& aContext);
   // DeviceDelegate interface
   GestureDelegateConstPtr GetGestureDelegate() override;
   vrb::CameraPtr GetCamera(const CameraEnum aWhich) override;

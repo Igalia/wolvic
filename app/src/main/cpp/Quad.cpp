@@ -7,7 +7,7 @@
 #include "vrb/ConcreteClass.h"
 
 #include "vrb/Color.h"
-#include "vrb/Context.h"
+#include "vrb/CreationContext.h"
 #include "vrb/Matrix.h"
 #include "vrb/Geometry.h"
 #include "vrb/RenderState.h"
@@ -21,7 +21,7 @@
 namespace crow {
 
 struct Quad::State {
-  vrb::ContextWeak context;
+  vrb::CreationContextWeak context;
   int32_t textureWidth;
   int32_t textureHeight;
   vrb::TogglePtr root;
@@ -43,10 +43,11 @@ struct Quad::State {
   {}
 
   void Initialize() {
-    geometry = Quad::CreateGeometry(context, worldMin, worldMax);
-    transform = vrb::Transform::Create(context);
+    vrb::CreationContextPtr create = context.lock();
+    geometry = Quad::CreateGeometry(create, worldMin, worldMax);
+    transform = vrb::Transform::Create(create);
     transform->AddNode(geometry);
-    root = vrb::Toggle::Create(context);
+    root = vrb::Toggle::Create(create);
     root->AddNode(transform);
     if (scaleMode != ScaleMode::Fill) {
       UpdateVertexArray();
@@ -125,7 +126,7 @@ struct Quad::State {
 };
 
 QuadPtr
-Quad::Create(vrb::ContextWeak aContext, const vrb::Vector& aMin, const vrb::Vector& aMax) {
+Quad::Create(vrb::CreationContextPtr aContext, const vrb::Vector& aMin, const vrb::Vector& aMax) {
   QuadPtr result = std::make_shared<vrb::ConcreteClass<Quad, Quad::State> >(aContext);
   result->m.worldMin = aMin;
   result->m.worldMax = aMax;
@@ -134,7 +135,7 @@ Quad::Create(vrb::ContextWeak aContext, const vrb::Vector& aMin, const vrb::Vect
 }
 
 vrb::GeometryPtr
-Quad::CreateGeometry(vrb::ContextWeak aContext, const vrb::Vector &aMin, const vrb::Vector &aMax) {
+Quad::CreateGeometry(vrb::CreationContextPtr aContext, const vrb::Vector &aMin, const vrb::Vector &aMax) {
   vrb::VertexArrayPtr array = vrb::VertexArray::Create(aContext);
   const vrb::Vector bottomRight(aMax.x(), aMin.y(), aMin.z());
   array->AppendVertex(aMin); // Bottom left
@@ -186,7 +187,7 @@ Quad::CreateGeometry(vrb::ContextWeak aContext, const vrb::Vector &aMin, const v
 }
 
 vrb::GeometryPtr
-Quad::CreateGeometry(vrb::ContextWeak aContext, const float aWorldWidth, const float aWorldHeight) {
+Quad::CreateGeometry(vrb::CreationContextPtr aContext, const float aWorldWidth, const float aWorldHeight) {
   vrb::Vector max(aWorldWidth * 0.5f, aWorldHeight * 0.5f, 0.0f);
   return Quad::CreateGeometry(aContext, -max, max);
 }
@@ -222,8 +223,9 @@ Quad::SetBackgroundColor(const vrb::Color& aColor) {
   }
   m.backgroundColor = aColor;
   if (!m.backgroundGeometry) {
-    m.backgroundGeometry = Quad::CreateGeometry(m.context, 1.0f, 1.0f);
-    m.backgroundTransform = vrb::Transform::Create(m.context);
+    vrb::CreationContextPtr create = m.context.lock();
+    m.backgroundGeometry = Quad::CreateGeometry(create, 1.0f, 1.0f);
+    m.backgroundTransform = vrb::Transform::Create(create);
     m.backgroundTransform->AddNode(m.backgroundGeometry);
     m.root->AddNode(m.backgroundTransform);
   }
@@ -380,7 +382,7 @@ Quad::ConvertToQuadCoordinates(const vrb::Vector& point, float& aX, float& aY, b
   aY = (((m.worldMax.y() - value.y()) / (m.worldMax.y() - m.worldMin.y())) * (float)m.textureHeight);
 }
 
-Quad::Quad(State& aState, vrb::ContextWeak& aContext) : m(aState) {
+Quad::Quad(State& aState, vrb::CreationContextPtr& aContext) : m(aState) {
   m.context = aContext;
 }
 

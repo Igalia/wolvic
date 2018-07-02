@@ -70,7 +70,7 @@ struct FadeBlitter::State : public vrb::ResourceGL::State {
 };
 
 FadeBlitterPtr
-FadeBlitter::Create(vrb::ContextWeak& aContext) {
+FadeBlitter::Create(vrb::CreationContextPtr& aContext) {
   return std::make_shared<vrb::ConcreteClass<FadeBlitter, FadeBlitter::State> >(aContext);
 }
 
@@ -120,7 +120,7 @@ FadeBlitter::FadeOut() {
   m.animations = kAnimationLength;
 }
 
-FadeBlitter::FadeBlitter(State& aState, vrb::ContextWeak& aContext)
+FadeBlitter::FadeBlitter(State& aState, vrb::CreationContextPtr& aContext)
     : vrb::ResourceGL(aState, aContext)
     , m(aState)
 {}
@@ -128,7 +128,7 @@ FadeBlitter::FadeBlitter(State& aState, vrb::ContextWeak& aContext)
 FadeBlitter::~FadeBlitter() {}
 
 void
-FadeBlitter::InitializeGL(vrb::Context& aContext) {
+FadeBlitter::InitializeGL(vrb::RenderContext& aContext) {
   m.vertexShader = vrb::LoadShader(GL_VERTEX_SHADER, sVertexShader);
   m.fragmentShader = vrb::LoadShader(GL_FRAGMENT_SHADER, sFragmentShader);
   if (m.vertexShader && m.fragmentShader) {
@@ -141,7 +141,7 @@ FadeBlitter::InitializeGL(vrb::Context& aContext) {
 }
 
 void
-FadeBlitter::ShutdownGL(vrb::Context& aContext) {
+FadeBlitter::ShutdownGL(vrb::RenderContext& aContext) {
   if (m.program) {
     VRB_GL_CHECK(glDeleteProgram(m.program));
     m.program = 0;

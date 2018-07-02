@@ -15,8 +15,9 @@
 #include "vrb/FBO.h"
 #include "vrb/GLError.h"
 #include "vrb/Matrix.h"
-#include "vrb/Vector.h"
 #include "vrb/Quaternion.h"
+#include "vrb/RenderContext.h"
+#include "vrb/Vector.h"
 
 #include <vector>
 #include <cstdlib>
@@ -42,7 +43,7 @@ struct OculusEyeSwapChain {
     return std::make_shared<OculusEyeSwapChain>();
   }
 
-  void Init(vrb::ContextWeak &aContext, uint32_t aWidth, uint32_t aHeight) {
+  void Init(vrb::RenderContextPtr& aContext, uint32_t aWidth, uint32_t aHeight) {
     Destroy();
     ovrSwapChain = vrapi_CreateTextureSwapChain(VRAPI_TEXTURE_TYPE_2D,
                                                 VRAPI_TEXTURE_FORMAT_8888,
@@ -80,7 +81,7 @@ struct OculusEyeSwapChain {
 };
 
 struct DeviceDelegateOculusVR::State {
-  vrb::ContextWeak context;
+  vrb::RenderContextWeak context;
   android_app* app = nullptr;
   bool initialized = false;
   ovrJava java = {};
@@ -123,7 +124,7 @@ struct DeviceDelegateOculusVR::State {
 
   void Initialize() {
     elbow = ElbowModel::Create();
-    vrb::ContextPtr localContext = context.lock();
+    vrb::RenderContextPtr localContext = context.lock();
 
     java.Vm = app->activity->vm;
     (*app->activity->vm).AttachCurrentThread(&java.Env, NULL);
@@ -145,7 +146,7 @@ struct DeviceDelegateOculusVR::State {
                                                          VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_HEIGHT) * 1.5f);
 
     for (int i = 0; i < VRAPI_EYE_COUNT; ++i) {
-      cameras[i] = vrb::CameraEye::Create(context);
+      cameras[i] = vrb::CameraEye::Create(localContext->GetRenderThreadCreationContext());
       eyeSwapChains[i] = OculusEyeSwapChain::create();
     }
     UpdatePerspective();
@@ -249,7 +250,7 @@ struct DeviceDelegateOculusVR::State {
 };
 
 DeviceDelegateOculusVRPtr
-DeviceDelegateOculusVR::Create(vrb::ContextWeak aContext, android_app *aApp) {
+DeviceDelegateOculusVR::Create(vrb::RenderContextPtr& aContext, android_app *aApp) {
   DeviceDelegateOculusVRPtr result = std::make_shared<vrb::ConcreteClass<DeviceDelegateOculusVR, DeviceDelegateOculusVR::State> >();
   result->m.context = aContext;
   result->m.app = aApp;
@@ -425,8 +426,9 @@ DeviceDelegateOculusVR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
     return;
   }
 
+  vrb::RenderContextPtr render = m.context.lock();
   for (int i = 0; i < VRAPI_EYE_COUNT; ++i) {
-    m.eyeSwapChains[i]->Init(m.context, m.renderWidth, m.renderHeight);
+    m.eyeSwapChains[i]->Init(render, m.renderWidth, m.renderHeight);
   }
 
   ovrModeParms modeParms = vrapi_DefaultModeParms(&m.java);

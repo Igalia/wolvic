@@ -13,6 +13,7 @@
 #include "vrb/GLError.h"
 #include "vrb/Matrix.h"
 #include "vrb/Quaternion.h"
+#include "vrb/RenderContext.h"
 #include "vrb/Vector.h"
 
 #include <vector>
@@ -23,7 +24,7 @@ static const int32_t kControllerIndex = 0;
 static vrb::Vector sHomePosition(0.0f, 1.7f, 0.0f);
 
 struct DeviceDelegateNoAPI::State {
-  vrb::ContextWeak context;
+  vrb::RenderContextWeak context;
   ControllerDelegatePtr controller;
   vrb::CameraSimplePtr camera;
   vrb::Color clearColor;
@@ -39,7 +40,12 @@ struct DeviceDelegateNoAPI::State {
   }
 
   void Initialize() {
-    camera = vrb::CameraSimple::Create(context);
+    vrb::RenderContextPtr render = context.lock();
+    if (!render) {
+      return;
+    }
+    vrb::CreationContextPtr create = render->GetRenderThreadCreationContext();
+    camera = vrb::CameraSimple::Create(create);
     camera->SetTransform(vrb::Matrix::Translation(sHomePosition));
   }
 
@@ -48,7 +54,7 @@ struct DeviceDelegateNoAPI::State {
 };
 
 DeviceDelegateNoAPIPtr
-DeviceDelegateNoAPI::Create(vrb::ContextWeak aContext) {
+DeviceDelegateNoAPI::Create(vrb::RenderContextPtr& aContext) {
   DeviceDelegateNoAPIPtr result = std::make_shared<vrb::ConcreteClass<DeviceDelegateNoAPI, DeviceDelegateNoAPI::State> >();
   result->m.context = aContext;
   result->m.Initialize();

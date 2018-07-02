@@ -31,7 +31,8 @@ add_library( # Sets the name of the library.
              src/main/cpp/vrb/src/CameraEye.cpp
              src/main/cpp/vrb/src/CameraSimple.cpp
              src/main/cpp/vrb/src/ClassLoaderAndroid.cpp
-             src/main/cpp/vrb/src/Context.cpp
+             src/main/cpp/vrb/src/ContextSynchronizer.cpp
+             src/main/cpp/vrb/src/CreationContext.cpp
              src/main/cpp/vrb/src/CullVisitor.cpp
              src/main/cpp/vrb/src/Drawable.cpp
              src/main/cpp/vrb/src/DrawableList.cpp
@@ -43,9 +44,11 @@ add_library( # Sets the name of the library.
              src/main/cpp/vrb/src/Group.cpp
              src/main/cpp/vrb/src/Light.cpp
              src/main/cpp/vrb/src/ParserObj.cpp
+             src/main/cpp/vrb/src/ModelLoaderAndroid.cpp
              src/main/cpp/vrb/src/Node.cpp
              src/main/cpp/vrb/src/NodeFactoryObj.cpp
              src/main/cpp/vrb/src/Quaternion.cpp
+             src/main/cpp/vrb/src/RenderContext.cpp
              src/main/cpp/vrb/src/RenderState.cpp
              src/main/cpp/vrb/src/ResourceGL.cpp
              src/main/cpp/vrb/src/RunnableQueue.cpp

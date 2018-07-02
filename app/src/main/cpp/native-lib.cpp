@@ -53,7 +53,6 @@ GetAssetManager(JNIEnv *aEnv, jobject aActivity) {
 
 struct AppContext {
   vrb::RunnableQueuePtr mQueue;
-  BrowserWorldPtr mWorld;
   BrowserEGLContextPtr mEgl;
   PlatformDeviceDelegatePtr mDevice;
 };
@@ -77,13 +76,13 @@ CommandCallback(android_app *aApp, int32_t aCmd) {
         ctx->mEgl->MakeCurrent();
         VRB_GL_CHECK(glEnable(GL_DEPTH_TEST));
         VRB_GL_CHECK(glEnable(GL_CULL_FACE));
-        ctx->mWorld->InitializeGL();
+        BrowserWorld::Instance().InitializeGL();
       } else {
         ctx->mEgl->UpdateNativeWindow(aApp->window);
         ctx->mEgl->MakeCurrent();
       }
 
-      if (!ctx->mWorld->IsPaused() && !ctx->mDevice->IsInVRMode()) {
+      if (!BrowserWorld::Instance().IsPaused() && !ctx->mDevice->IsInVRMode()) {
         ctx->mDevice->EnterVR(*ctx->mEgl);
       }
 
@@ -104,7 +103,7 @@ CommandCallback(android_app *aApp, int32_t aCmd) {
     // The app's activity has been paused.
     case APP_CMD_PAUSE:
       VRB_LOG("APP_CMD_PAUSE");
-      ctx->mWorld->Pause();
+      BrowserWorld::Instance().Pause();
       if (ctx->mDevice->IsInVRMode()) {
         ctx->mDevice->LeaveVR();
       }
@@ -113,7 +112,7 @@ CommandCallback(android_app *aApp, int32_t aCmd) {
     // The app's activity has been resumed.
     case APP_CMD_RESUME:
       VRB_LOG("APP_CMD_RESUME");
-      ctx->mWorld->Resume();
+      BrowserWorld::Instance().Resume();
       if (!ctx->mDevice->IsInVRMode() && ctx->mEgl && ctx->mEgl->IsSurfaceReady() ) {
          ctx->mDevice->EnterVR(*ctx->mEgl);
       }
@@ -194,16 +193,15 @@ android_main(android_app *aAppState) {
   // Create Browser context
   sAppContext = std::make_shared<AppContext>();
   sAppContext->mQueue = vrb::RunnableQueue::Create(aAppState->activity->vm);
-  sAppContext->mWorld = BrowserWorld::Create();
 
   // Create device delegate
-  sAppContext->mDevice = PlatformDeviceDelegate::Create(sAppContext->mWorld->GetWeakContext(),
+  sAppContext->mDevice = PlatformDeviceDelegate::Create(BrowserWorld::Instance().GetRenderContext(),
                                                         aAppState);
-  sAppContext->mWorld->RegisterDeviceDelegate(sAppContext->mDevice);
+  BrowserWorld::Instance().RegisterDeviceDelegate(sAppContext->mDevice);
 
   // Initialize java
   auto assetManager = GetAssetManager(jniEnv, aAppState->activity->clazz);
-  sAppContext->mWorld->InitializeJava(jniEnv, aAppState->activity->clazz, assetManager);
+  BrowserWorld::Instance().InitializeJava(jniEnv, aAppState->activity->clazz, assetManager);
   jniEnv->DeleteLocalRef(assetManager);
 
   // Set up activity & SurfaceView life cycle callbacks
@@ -220,7 +218,7 @@ android_main(android_app *aAppState) {
 
     // Loop until all events are read
     // If the activity is paused use a blocking call to read events.
-    while (ALooper_pollAll(sAppContext->mWorld->IsPaused() ? -1 : 0,
+    while (ALooper_pollAll(BrowserWorld::Instance().IsPaused() ? -1 : 0,
                            NULL,
                            &events,
                            (void **) &pSource) >= 0) {
@@ -232,8 +230,8 @@ android_main(android_app *aAppState) {
       // Check if we are exiting.
       if (aAppState->destroyRequested != 0) {
         sAppContext->mEgl->MakeCurrent();
-        sAppContext->mWorld->ShutdownGL();
-        sAppContext->mWorld->ShutdownJava();
+        BrowserWorld::Instance().ShutdownGL();
+        BrowserWorld::Instance().ShutdownJava();
         sAppContext->mEgl->Destroy();
         sAppContext.reset();
         aAppState->activity->vm->DetachCurrentThread();
@@ -244,9 +242,9 @@ android_main(android_app *aAppState) {
       sAppContext->mEgl->MakeCurrent();
     }
     sAppContext->mQueue->ProcessRunnables();
-    if (!sAppContext->mWorld->IsPaused() && sAppContext->mDevice->IsInVRMode()) {
+    if (!BrowserWorld::Instance().IsPaused() && sAppContext->mDevice->IsInVRMode()) {
       VRB_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-      sAppContext->mWorld->Draw();
+      BrowserWorld::Instance().Draw();
     }
   }
 }

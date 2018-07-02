@@ -13,6 +13,7 @@
 #include "vrb/GLError.h"
 #include "vrb/Matrix.h"
 #include "vrb/Quaternion.h"
+#include "vrb/RenderContext.h"
 #include "vrb/Vector.h"
 
 #include "vr/gvr/capi/include/gvr.h"
@@ -70,7 +71,7 @@ struct DeviceDelegateGoogleVR::State {
   gvr_swap_chain* swapChain;
   gvr_frame* frame;
   gvr_sizei frameBufferSize;
-  vrb::ContextWeak context;
+  vrb::RenderContextWeak context;
   float near;
   float far;
   bool sixDofHead;
@@ -107,8 +108,13 @@ struct DeviceDelegateGoogleVR::State {
   }
 
   void Initialize() {
-    cameras[cameraIndex(CameraEnum::Left)] = vrb::CameraEye::Create(context);
-    cameras[cameraIndex(CameraEnum::Right)] = vrb::CameraEye::Create(context);
+    vrb::RenderContextPtr render = context.lock();
+    if (!render) {
+      return;
+    }
+    vrb::CreationContextPtr create = render->GetRenderThreadCreationContext();
+    cameras[cameraIndex(CameraEnum::Left)] = vrb::CameraEye::Create(create);
+    cameras[cameraIndex(CameraEnum::Right)] = vrb::CameraEye::Create(create);
     elbow = ElbowModel::Create();
     GVR_CHECK(gvr_refresh_viewer_profile(gvr));
     viewportList = GVR_CHECK(gvr_buffer_viewport_list_create(gvr));
@@ -286,7 +292,7 @@ struct DeviceDelegateGoogleVR::State {
 #define GET_GVR_CONTEXT() m.GetContext()
 
 DeviceDelegateGoogleVRPtr
-DeviceDelegateGoogleVR::Create(vrb::ContextWeak aContext, void* aGVRContext) {
+DeviceDelegateGoogleVR::Create(vrb::RenderContextPtr& aContext, void* aGVRContext) {
   DeviceDelegateGoogleVRPtr result = std::make_shared<vrb::ConcreteClass<DeviceDelegateGoogleVR, DeviceDelegateGoogleVR::State> >();
   result->m.context = aContext;
   result->m.gvr = (gvr_context*)aGVRContext;

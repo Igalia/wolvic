@@ -24,8 +24,8 @@ typedef std::shared_ptr<WidgetPlacement> WidgetPlacementPtr;
 
 class Widget {
 public:
-  static WidgetPtr Create(vrb::ContextWeak aContext, const int aHandle, const int32_t aWidth, const int32_t aHeight, float aWorldWidth);
-  static WidgetPtr Create(vrb::ContextWeak aContext, const int aHandle, const int32_t aWidth, const int32_t aHeight, const vrb::Vector& aMin, const vrb::Vector& aMax);
+  static WidgetPtr Create(vrb::RenderContextPtr& aContext, const int aHandle, const int32_t aWidth, const int32_t aHeight, float aWorldWidth);
+  static WidgetPtr Create(vrb::RenderContextPtr& aContext, const int aHandle, const int32_t aWidth, const int32_t aHeight, const vrb::Vector& aMin, const vrb::Vector& aMax);
   int32_t GetType() const;
   uint32_t GetHandle() const;
   const std::string& GetSurfaceTextureName() const;
@@ -54,7 +54,7 @@ public:
   void HandleResize(const vrb::Vector& aPoint, bool aPressed, bool& aResized, bool &aResizeEnded);
 protected:
   struct State;
-  Widget(State& aState, vrb::ContextWeak& aContext);
+  Widget(State& aState, vrb::RenderContextPtr& aContext);
   ~Widget();
 private:
   State& m;

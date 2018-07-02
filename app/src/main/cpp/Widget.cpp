@@ -10,7 +10,7 @@
 #include "vrb/ConcreteClass.h"
 
 #include "vrb/Color.h"
-#include "vrb/Context.h"
+#include "vrb/RenderContext.h"
 #include "vrb/Matrix.h"
 #include "vrb/Geometry.h"
 #include "vrb/RenderState.h"
@@ -24,7 +24,7 @@
 namespace crow {
 
 struct Widget::State {
-  vrb::ContextWeak context;
+  vrb::RenderContextWeak context;
   std::string name;
   uint32_t handle;
   QuadPtr quad;
@@ -55,22 +55,26 @@ struct Widget::State {
   void Initialize(const int aHandle, const vrb::Vector& aWindowMin, const vrb::Vector& aWindowMax, const int32_t aTextureWidth, const int32_t aTextureHeight) {
     handle = aHandle;
     name = "crow::Widget-" + std::to_string(handle);
-    surface = vrb::TextureSurface::Create(context, name);
-
-    quad = Quad::Create(context, aWindowMin, aWindowMax);
+    vrb::RenderContextPtr render = context.lock();
+    if (!render) {
+      return;
+    }
+    surface = vrb::TextureSurface::Create(render, name);
+    vrb::CreationContextPtr create = render->GetRenderThreadCreationContext();
+    quad = Quad::Create(create, aWindowMin, aWindowMax);
     quad->SetTexture(surface, aTextureWidth, aTextureHeight);
     quad->SetMaterial(vrb::Color(0.4f, 0.4f, 0.4f), vrb::Color(1.0f, 1.0f, 1.0f), vrb::Color(0.0f, 0.0f, 0.0f), 0.0f);
 
-    transform = vrb::Transform::Create(context);
-    pointerToggle = vrb::Toggle::Create(context);
+    transform = vrb::Transform::Create(create);
+    pointerToggle = vrb::Toggle::Create(create);
     transform->AddNode(pointerToggle);
     transform->AddNode(quad->GetRoot());
-    root = vrb::Toggle::Create(context);
+    root = vrb::Toggle::Create(create);
     root->AddNode(transform);
 
     const float kOffset = 0.01f;
-    vrb::VertexArrayPtr array = vrb::VertexArray::Create(context);
-    array = vrb::VertexArray::Create(context);
+    vrb::VertexArrayPtr array = vrb::VertexArray::Create(create);
+    array = vrb::VertexArray::Create(create);
     const float scale = CalculatePointerScale();
     array->AppendVertex(vrb::Vector(0.1f * scale, -0.2f * scale, kOffset));
     array->AppendVertex(vrb::Vector(0.2f * scale, -0.1f * scale, kOffset));
@@ -85,14 +89,14 @@ struct Widget::State {
     normalIndex.push_back(1);
     normalIndex.push_back(1);
     std::vector<int> uvIndex;
-    vrb::GeometryPtr geometry = vrb::Geometry::Create(context);
+    vrb::GeometryPtr geometry = vrb::Geometry::Create(create);
     geometry->SetVertexArray(array);
     geometry->AddFace(index, uvIndex, normalIndex);
-    vrb::RenderStatePtr state = vrb::RenderState::Create(context);
+    vrb::RenderStatePtr state = vrb::RenderState::Create(create);
     state->SetMaterial(vrb::Color(1.0f, 0.0f, 0.0f), vrb::Color(1.0f, 0.0f, 0.0f), vrb::Color(0.0f, 0.0f, 0.0f),
                        0.0f);
     geometry->SetRenderState(state);
-    pointer = vrb::Transform::Create(context);
+    pointer = vrb::Transform::Create(create);
     pointer->AddNode(geometry);
     pointerGeometry = geometry;
     pointerToggle->AddNode(pointer);
@@ -101,7 +105,7 @@ struct Widget::State {
 };
 
 WidgetPtr
-Widget::Create(vrb::ContextWeak aContext, const int aHandle, const int32_t aWidth, const int32_t aHeight, float aWorldWidth) {
+Widget::Create(vrb::RenderContextPtr& aContext, const int aHandle, const int32_t aWidth, const int32_t aHeight, float aWorldWidth) {
   WidgetPtr result = std::make_shared<vrb::ConcreteClass<Widget, Widget::State> >(aContext);
   const float aspect = (float)aWidth / (float)aHeight;
   const float worldHeight = aWorldWidth / aspect;
@@ -112,7 +116,7 @@ Widget::Create(vrb::ContextWeak aContext, const int aHandle, const int32_t aWidt
 }
 
 WidgetPtr
-Widget::Create(vrb::ContextWeak aContext, const int aHandle, const int32_t aWidth, const int32_t aHeight, const vrb::Vector& aMin, const vrb::Vector& aMax) {
+Widget::Create(vrb::RenderContextPtr& aContext, const int aHandle, const int32_t aWidth, const int32_t aHeight, const vrb::Vector& aMin, const vrb::Vector& aMax) {
   WidgetPtr result = std::make_shared<vrb::ConcreteClass<Widget, Widget::State> >(aContext);
   result->m.Initialize(aHandle, aMin, aMax, aWidth, aHeight);
   return result;
@@ -262,7 +266,12 @@ Widget::StartResize() {
   if (m.resizer) {
     m.resizer->SetSize(m.quad->GetWorldMin(), m.quad->GetWorldMax());
   } else {
-    m.resizer = WidgetResizer::Create(m.context, m.quad->GetWorldMin(), m.quad->GetWorldMax());
+    vrb::RenderContextPtr render = m.context.lock();
+    if (!render) {
+      return;
+    }
+    vrb::CreationContextPtr create = render->GetRenderThreadCreationContext();
+    m.resizer = WidgetResizer::Create(create, m.quad->GetWorldMin(), m.quad->GetWorldMax());
     m.transform->InsertNode(m.resizer->GetRoot(), 0);
   }
   m.resizing = true;
@@ -295,7 +304,7 @@ Widget::HandleResize(const vrb::Vector& aPoint, bool aPressed, bool& aResized, b
   }
 }
 
-Widget::Widget(State& aState, vrb::ContextWeak& aContext) : m(aState) {
+Widget::Widget(State& aState, vrb::RenderContextPtr& aContext) : m(aState) {
   m.context = aContext;
 }
 

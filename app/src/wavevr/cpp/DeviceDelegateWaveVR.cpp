@@ -13,6 +13,7 @@
 #include "vrb/FBO.h"
 #include "vrb/GLError.h"
 #include "vrb/Matrix.h"
+#include "vrb/RenderContext.h"
 #include "vrb/Vector.h"
 
 #include <array>
@@ -43,7 +44,7 @@ struct Controller {
 };
 
 struct DeviceDelegateWaveVR::State {
-  vrb::ContextWeak context;
+  vrb::RenderContextWeak context;
   bool isRunning;
   vrb::Color clearColor;
   float near;
@@ -96,8 +97,9 @@ struct DeviceDelegateWaveVR::State {
   void FillFBOQueue(void* aTextureQueue, std::vector<vrb::FBOPtr>& aFBOQueue) {
     vrb::FBO::Attributes attributes;
     attributes.samples = 4;
+    vrb::RenderContextPtr render = context.lock();
     for (int ix = 0; ix < WVR_GetTextureQueueLength(aTextureQueue); ix++) {
-      vrb::FBOPtr fbo = vrb::FBO::Create(context);
+      vrb::FBOPtr fbo = vrb::FBO::Create(render);
       fbo->SetTextureHandle((GLuint)WVR_GetTexture(aTextureQueue, ix).id, renderWidth, renderHeight, attributes);
       if (fbo->IsValid()) {
         aFBOQueue.push_back(fbo);
@@ -127,9 +129,13 @@ struct DeviceDelegateWaveVR::State {
   }
 
   void Initialize() {
-    vrb::ContextPtr localContext = context.lock();
-    cameras[cameraIndex(CameraEnum::Left)] = vrb::CameraEye::Create(context);
-    cameras[cameraIndex(CameraEnum::Right)] = vrb::CameraEye::Create(context);
+    vrb::RenderContextPtr localContext = context.lock();
+    if (!localContext) {
+      return;
+    }
+    vrb::CreationContextPtr create = localContext->GetRenderThreadCreationContext();
+    cameras[cameraIndex(CameraEnum::Left)] = vrb::CameraEye::Create(create);
+    cameras[cameraIndex(CameraEnum::Right)] = vrb::CameraEye::Create(create);
     InitializeCameras();
     WVR_GetRenderTargetSize(&renderWidth, &renderHeight);
     VRB_GL_CHECK(glViewport(0, 0, renderWidth, renderHeight));
@@ -188,7 +194,7 @@ struct DeviceDelegateWaveVR::State {
 };
 
 DeviceDelegateWaveVRPtr
-DeviceDelegateWaveVR::Create(vrb::ContextWeak aContext) {
+DeviceDelegateWaveVR::Create(vrb::RenderContextPtr& aContext) {
   DeviceDelegateWaveVRPtr result = std::make_shared<vrb::ConcreteClass<DeviceDelegateWaveVR, DeviceDelegateWaveVR::State> >();
   result->m.context = aContext;
   result->m.Initialize();

@@ -13,7 +13,7 @@ typedef std::shared_ptr<DeviceDelegateWaveVR> DeviceDelegateWaveVRPtr;
 
 class DeviceDelegateWaveVR : public DeviceDelegate {
 public:
-  static DeviceDelegateWaveVRPtr Create(vrb::ContextWeak aContext);
+  static DeviceDelegateWaveVRPtr Create(vrb::RenderContextPtr& aContext);
   // DeviceDelegate interface
   GestureDelegateConstPtr GetGestureDelegate() override;
   vrb::CameraPtr GetCamera(const CameraEnum aWhich) override;

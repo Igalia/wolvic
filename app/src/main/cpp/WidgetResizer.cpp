@@ -8,7 +8,7 @@
 #include "vrb/ConcreteClass.h"
 
 #include "vrb/Color.h"
-#include "vrb/Context.h"
+#include "vrb/CreationContext.h"
 #include "vrb/Matrix.h"
 #include "vrb/Geometry.h"
 #include "vrb/RenderState.h"
@@ -53,7 +53,7 @@ static void UpdateResizeMaterial(const vrb::GeometryPtr& aGeometry, ResizeState 
 }
 
 struct ResizeBar {
-  static ResizeBarPtr Create(vrb::ContextWeak& aContext, const vrb::Vector& aCenter, const vrb::Vector& aScale) {
+  static ResizeBarPtr Create(vrb::CreationContextPtr& aContext, const vrb::Vector& aCenter, const vrb::Vector& aScale) {
     auto result = std::make_shared<ResizeBar>();
     result->center = aCenter;
     result->scale = aScale;
@@ -92,7 +92,7 @@ struct ResizeHandle {
     Both
   };
 
-  static ResizeHandlePtr Create(vrb::ContextWeak& aContext, const vrb::Vector& aCenter, ResizeMode aResizeMode, const std::vector<ResizeBarPtr>& aAttachedBars) {
+  static ResizeHandlePtr Create(vrb::CreationContextPtr& aContext, const vrb::Vector& aCenter, ResizeMode aResizeMode, const std::vector<ResizeBarPtr>& aAttachedBars) {
     auto result = std::make_shared<ResizeHandle>();
     result->center = aCenter;
     result->resizeMode = aResizeMode;
@@ -117,7 +117,7 @@ struct ResizeHandle {
     }
   }
 
-  static vrb::GeometryPtr CreateGeometry(vrb::ContextWeak& aContext) {
+  static vrb::GeometryPtr CreateGeometry(vrb::CreationContextPtr& aContext) {
     vrb::VertexArrayPtr array = vrb::VertexArray::Create(aContext);
     array->AppendVertex(vrb::Vector(0.0f, 0.0f, 0.0f));
     array->AppendNormal(vrb::Vector(0.0f, 0.0f, 1.0f));
@@ -166,7 +166,7 @@ struct ResizeHandle {
 };
 
 struct WidgetResizer::State {
-  vrb::ContextWeak context;
+  vrb::CreationContextWeak context;
   vrb::Vector min;
   vrb::Vector max;
   vrb::Vector resizeStartMin;
@@ -186,7 +186,11 @@ struct WidgetResizer::State {
   {}
 
   void Initialize() {
-    root = vrb::Toggle::Create(context);
+    vrb::CreationContextPtr create = context.lock();
+    if (!create) {
+      return;
+    }
+    root = vrb::Toggle::Create(create);
 
     vrb::Vector horizontalSize(0.0f, 0.5f, 0.0f);
     vrb::Vector verticalSize(0.5f, 0.0f, 0.0f);
@@ -212,14 +216,22 @@ struct WidgetResizer::State {
   }
 
   ResizeBarPtr CreateResizeBar(const vrb::Vector& aCenter, vrb::Vector aScale) {
-    ResizeBarPtr result = ResizeBar::Create(context, aCenter, aScale);
+    vrb::CreationContextPtr create = context.lock();
+    if (!create) {
+      return nullptr;
+    }
+    ResizeBarPtr result = ResizeBar::Create(create, aCenter, aScale);
     resizeBars.push_back(result);
     root->AddNode(result->transform);
     return result;
   }
 
   ResizeHandlePtr CreateResizeHandle(const vrb::Vector& aCenter, ResizeHandle::ResizeMode aResizeMode, const std::vector<ResizeBarPtr>& aBars) {
-    ResizeHandlePtr result = ResizeHandle::Create(context, aCenter, aResizeMode, aBars);
+    vrb::CreationContextPtr create = context.lock();
+    if (!create) {
+      return nullptr;
+    }
+    ResizeHandlePtr result = ResizeHandle::Create(create, aCenter, aResizeMode, aBars);
     resizeHandles.push_back(result);
     root->InsertNode(result->transform, 0);
     return result;
@@ -304,7 +316,7 @@ struct WidgetResizer::State {
 };
 
 WidgetResizerPtr
-WidgetResizer::Create(vrb::ContextWeak aContext, const vrb::Vector& aMin, const vrb::Vector& aMax) {
+WidgetResizer::Create(vrb::CreationContextPtr& aContext, const vrb::Vector& aMin, const vrb::Vector& aMax) {
   WidgetResizerPtr result = std::make_shared<vrb::ConcreteClass<WidgetResizer, WidgetResizer::State> >(aContext);
   result->m.min = aMin;
   result->m.max = aMax;
@@ -397,7 +409,7 @@ WidgetResizer::GetCurrentMax() const {
 }
 
 
-WidgetResizer::WidgetResizer(State& aState, vrb::ContextWeak& aContext) : m(aState) {
+WidgetResizer::WidgetResizer(State& aState, vrb::CreationContextPtr& aContext) : m(aState) {
   m.context = aContext;
 }
 

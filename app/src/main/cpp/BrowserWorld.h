@@ -24,9 +24,9 @@ typedef std::shared_ptr<WidgetPlacement> WidgetPlacementPtr;
 
 class BrowserWorld {
 public:
-  static BrowserWorldPtr Create();
-  static BrowserWorldPtr& Instance();
-  vrb::ContextWeak GetWeakContext();
+  static BrowserWorld& Instance();
+  static void Destroy();
+  vrb::RenderContextPtr& GetRenderContext();
   void RegisterDeviceDelegate(DeviceDelegatePtr aDelegate);
   void Pause();
   void Resume();
@@ -48,6 +48,7 @@ public:
   JNIEnv* GetJNIEnv() const;
 protected:
   struct State;
+  static BrowserWorldPtr Create();
   BrowserWorld(State& aState);
   ~BrowserWorld();
   vrb::TransformPtr CreateSkyBox(const std::string& basePath);
