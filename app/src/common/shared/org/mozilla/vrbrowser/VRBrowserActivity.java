@@ -20,6 +20,7 @@ import android.widget.FrameLayout;
 
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.audio.VRAudioTheme;
+import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.ui.BrowserWidget;
 import org.mozilla.vrbrowser.ui.KeyboardWidget;
 import org.mozilla.vrbrowser.ui.NavigationBarWidget;
@@ -117,6 +118,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 createOffscreenDisplay();
             }
         });
+        TelemetryWrapper.init(this);
         initializeWorld();
     }
 
@@ -142,15 +144,23 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        TelemetryWrapper.stopMainActivity(this);
+    }
+
+    @Override
     protected void onPause() {
         mAudioEngine.pauseEngine();
         super.onPause();
+        TelemetryWrapper.stopSession(this);
     }
 
     @Override
     protected void onResume() {
         mAudioEngine.resumeEngine();
         super.onResume();
+        TelemetryWrapper.startSession(this);
     }
 
     @Override

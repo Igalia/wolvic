@@ -174,6 +174,7 @@ dependencies {
     svrImplementation fileTree(dir: "${project.rootDir}/third_party/svr/", include: ['*.jar'])
     implementation 'com.android.support:design:26.1.0'
     implementation 'com.google.vr:sdk-audio:1.140.0'
+    implementation "org.mozilla.components:telemetry:0.10"
 }
 
 if (findProject(':wavesdk')) {
