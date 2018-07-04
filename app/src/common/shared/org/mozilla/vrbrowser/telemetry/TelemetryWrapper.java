@@ -1,6 +1,7 @@
 package org.mozilla.vrbrowser.telemetry;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.StrictMode;
 import android.support.annotation.UiThread;
@@ -68,34 +69,21 @@ public class TelemetryWrapper {
     }
 
     @UiThread
-    public static void startSession(Context aContext) {
-        if (!SettingsStore.getInstance(aContext).isTelemetryEnabled()) {
-            return;
-        }
-
+    public static void start() {
         TelemetryHolder.get().recordSessionStart();
         TelemetryEvent.create(Category.ACTION, Method.FOREGROUND, Object.APP).queue();
     }
 
     @UiThread
-    public static void stopSession(Context aContext) {
-        if (!SettingsStore.getInstance(aContext).isTelemetryEnabled()) {
-            return;
-        }
-
-        TelemetryHolder.get().recordSessionEnd();
+    public static void stop() {
         TelemetryEvent.create(Category.ACTION, Method.BACKGROUND, Object.APP).queue();
-    }
-
-    public static void stopMainActivity(Context aContext) {
-        if (!SettingsStore.getInstance(aContext).isTelemetryEnabled()) {
-            return;
-        }
+        TelemetryHolder.get().recordSessionEnd();
 
         TelemetryHolder.get()
                 .queuePing(TelemetryCorePingBuilder.TYPE)
                 .queuePing(TelemetryMobileEventPingBuilder.TYPE)
                 .scheduleUpload();
     }
+
 }
 

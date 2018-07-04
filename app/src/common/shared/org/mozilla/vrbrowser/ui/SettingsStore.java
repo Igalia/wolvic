@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.StrictMode;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 
 import org.mozilla.telemetry.TelemetryHolder;
@@ -33,7 +34,7 @@ public class SettingsStore {
 
     public SettingsStore(Context aContext) {
         mContext = aContext;
-        mPrefs = ((Activity)aContext).getPreferences(Context.MODE_PRIVATE);
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(aContext);
     }
 
     public boolean isCrashReportingEnabled() {

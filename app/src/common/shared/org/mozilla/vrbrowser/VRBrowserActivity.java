@@ -118,7 +118,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 createOffscreenDisplay();
             }
         });
-        TelemetryWrapper.init(this);
         initializeWorld();
     }
 
@@ -144,23 +143,27 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        TelemetryWrapper.start();
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
-        TelemetryWrapper.stopMainActivity(this);
+        TelemetryWrapper.stop();
     }
 
     @Override
     protected void onPause() {
         mAudioEngine.pauseEngine();
         super.onPause();
-        TelemetryWrapper.stopSession(this);
     }
 
     @Override
     protected void onResume() {
         mAudioEngine.resumeEngine();
         super.onResume();
-        TelemetryWrapper.startSession(this);
     }
 
     @Override
