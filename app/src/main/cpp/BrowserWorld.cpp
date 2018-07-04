@@ -1211,12 +1211,12 @@ JNI_METHOD(void, finishWidgetResizeNative)
 }
 
 JNI_METHOD(void, fadeOutWorldNative)
-(JNIEnv* aEnv, jobject, jint aHandle) {
+(JNIEnv* aEnv, jobject) {
   crow::BrowserWorld::Instance().FadeOut();
 }
 
 JNI_METHOD(void, fadeInWorldNative)
-(JNIEnv* aEnv, jobject, jint aHandle) {
+(JNIEnv* aEnv, jobject) {
   crow::BrowserWorld::Instance().FadeIn();
 }
 

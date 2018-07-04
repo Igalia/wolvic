@@ -257,7 +257,7 @@ JNI_METHOD(void, queueRunnable)
 }
 
 JNI_METHOD(jboolean, platformExit)
-(JNIEnv *aEnv, jobject, jobject aRunnable) {
+(JNIEnv *, jobject) {
   if (sAppContext && sAppContext->mDevice) {
     return (jboolean) sAppContext->mDevice->ExitApp();
   }
