@@ -232,6 +232,7 @@ android_main(android_app *aAppState) {
         sAppContext->mEgl->MakeCurrent();
         BrowserWorld::Instance().ShutdownGL();
         BrowserWorld::Instance().ShutdownJava();
+        BrowserWorld::Destroy();
         sAppContext->mEgl->Destroy();
         sAppContext.reset();
         aAppState->activity->vm->DetachCurrentThread();
