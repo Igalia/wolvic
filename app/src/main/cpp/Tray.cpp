@@ -15,6 +15,7 @@
 #include "vrb/Transform.h"
 #include "vrb/Toggle.h"
 #include "vrb/VertexArray.h"
+#include "vrb/ModelLoaderAndroid.h"
 
 using namespace vrb;
 static const float kEpsilon = 0.00000001f;
@@ -83,23 +84,26 @@ namespace {
         iconState = aIconState;
         vrb::Color color = ambient;
         if (iconState == IconState::Hovered) {
-          color = Color(0xEE513FFF);
+          color = Color(0xE2E6EBFF);
         } else if (iconState == IconState::Pressed) {
-          color = Color(0xF7CE4DFF);
+          color = Color(0x232426FF);
         }
-        vrb::RenderStatePtr renderState = icon->GetRenderState();
-        if (renderState) {
-          renderState->SetMaterial(color, diffuse, specular, specularExponent);
+
+        if (icon) {
+          vrb::RenderStatePtr renderState = icon->GetRenderState();
+          if (renderState) {
+            renderState->SetMaterial(color, diffuse, specular, specularExponent);
+          }
         }
       }
     }
 
     bool Intersect(const vrb::Vector& aStartPoint, const vrb::Vector& aDirection, vrb::Vector& aResult, bool& aInside) {
       const float dotNormals = aDirection.Dot(colliderNormal);
-      if (dotNormals > -kEpsilon) {
-        // Not pointed at the plane
-        return false;
-      }
+//      if (dotNormals > -kEpsilon) {
+//        // Not pointed at the plane
+//        return false;
+//      }
       const float dotV = (colliderMin - aStartPoint).Dot(colliderNormal);
 
       if ((dotV < kEpsilon) && (dotV > -kEpsilon)) {
@@ -132,6 +136,7 @@ namespace crow {
     vrb::TransformPtr transform;
     std::vector<TrayIconPtr> icons;
     TrayIconPtr activeIcon;
+    bool loaded = false;
 
     State() {}
 
@@ -154,34 +159,37 @@ namespace crow {
   }
 
   void
-  Tray::Load(const vrb::NodeFactoryObjPtr& aFactory, const vrb::ParserObjPtr& aParser) {
-    aFactory->SetModelRoot(m.transform);
-    aParser->LoadModel("tray.obj");
+  Tray::Load(const vrb::ModelLoaderAndroidPtr& aLoader) {
+      LoadFinishedCallback callback = [&](GroupPtr& fromParent) {
+          m.icons = {
+                  TrayIcon::Create("Help", IconHelp, "Button1"),
+                  TrayIcon::Create("Settings", IconSettings, "Button2"),
+                  TrayIcon::Create("Private", IconPrivate, "Button3"),
+                  TrayIcon::Create("New", IconNew, "Button4"),
+                  TrayIcon::Create("Notification", IconNotification, "Button5"),
+                  TrayIcon::Create("Hide", IconHide, "Button6"),
+                  TrayIcon::Create("Exit", IconExit, "Button7")
+          };
 
-    m.icons = {
-       TrayIcon::Create("Help", IconHelp, "Button1"),
-       TrayIcon::Create("Settings", IconSettings, "Button2"),
-       TrayIcon::Create("Private", IconPrivate, "Button3"),
-       TrayIcon::Create("New", IconNew, "Button4"),
-       TrayIcon::Create("Notification", IconNotification, "Button5"),
-       TrayIcon::Create("Hide", IconHide, "Button6"),
-       TrayIcon::Create("Exit", IconExit, "Button7")
-    };
+          Node::Traverse(m.transform, [&](const NodePtr& aNode, const GroupPtr& fromParent) {
+              std::string nodeName = aNode->GetName();
+              for (TrayIconPtr& icon: m.icons) {
+                  if (nodeName.find(icon->iconName) == 0) {
+                      icon->SetIconGeometry(std::dynamic_pointer_cast<Geometry>(aNode));
+                      break;
+                  }
+                  else if (nodeName == icon->colliderName) {
+                      icon->SetCollider(std::dynamic_pointer_cast<Geometry>(aNode));
+                      break;
+                  }
+              }
 
-    Node::Traverse(m.transform, [&](const NodePtr& aNode, const GroupPtr& fromParent) {
-      std::string nodeName = aNode->GetName();
-      for (TrayIconPtr& icon: m.icons) {
-        if (nodeName.find(icon->iconName) == 0) {
-          icon->SetIconGeometry(std::dynamic_pointer_cast<Geometry>(aNode));
-          break;
-        }
-        else if (nodeName == icon->colliderName) {
-          icon->SetCollider(std::dynamic_pointer_cast<Geometry>(aNode));
-          break;
-        }
-      }
-      return false;
-    });
+              return false;
+          });
+
+          m.loaded = true;
+      };
+      aLoader->LoadModel("Minitray.obj", m.transform, callback);
   }
 
   bool
@@ -215,7 +223,6 @@ namespace crow {
   int32_t
   Tray::ProcessEvents(bool aTrayActive, bool aPressed) {
     int32_t result = -1;
-
     for (const TrayIconPtr& icon: m.icons) {
       if (aTrayActive && icon == m.activeIcon) {
         if (icon->iconState == TrayIcon::IconState::Pressed && !aPressed) {
@@ -245,6 +252,11 @@ namespace crow {
   void
   Tray::Toggle(const bool aEnabled) {
     m.root->ToggleAll(aEnabled);
+  }
+
+  bool
+  Tray::IsLoaded() const {
+      return m.loaded;
   }
 
   vrb::NodePtr

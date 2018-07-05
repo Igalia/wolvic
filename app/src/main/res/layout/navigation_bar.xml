@@ -120,6 +120,5 @@
                 android:layout_marginStart="10dp"
                 android:src="@drawable/ic_icon_back" />
         </LinearLayout>
-
     </RelativeLayout>
 </merge>

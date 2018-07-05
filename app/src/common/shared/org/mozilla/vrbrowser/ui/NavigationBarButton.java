@@ -8,14 +8,12 @@ package org.mozilla.vrbrowser.ui;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.util.AttributeSet;
 import android.support.v7.widget.AppCompatImageButton;
-import android.util.Log;
 
 import org.mozilla.vrbrowser.R;
 
-public class NavigationBarButton extends AppCompatImageButton {
+public class NavigationBarButton extends AppCompatImageButton implements CustomUIButton {
     private ColorStateList mTintColorList;
 
     public NavigationBarButton(Context context, AttributeSet attrs) {
@@ -40,6 +38,17 @@ public class NavigationBarButton extends AppCompatImageButton {
     protected void drawableStateChanged() {
         super.drawableStateChanged();
         if (mTintColorList != null && mTintColorList.isStateful()) {
+            int color = mTintColorList.getColorForState(getDrawableState(), 0);
+            setColorFilter(color);
+        }
+    }
+
+    @Override
+    public void setTintColorList(int aColorListId) {
+        mTintColorList = getContext().getResources().getColorStateList(
+                aColorListId,
+                getContext().getTheme());
+        if (mTintColorList != null) {
             int color = mTintColorList.getColorForState(getDrawableState(), 0);
             setColorFilter(color);
         }

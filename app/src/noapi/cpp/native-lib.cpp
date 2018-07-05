@@ -63,6 +63,7 @@ JNI_METHOD(void, activityDestroyed)
 (JNIEnv*, jobject) {
   BrowserWorld::Instance().ShutdownJava();
   BrowserWorld::Instance().RegisterDeviceDelegate(nullptr);
+  BrowserWorld::Instance().Destroy();
   sDevice = nullptr;
 }
 

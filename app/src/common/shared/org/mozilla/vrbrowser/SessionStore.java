@@ -44,6 +44,8 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     public static final String NET_ERROR = "about:neterror";
     public static final String CERT_ERROR = "about:certerror";
 
+    public static final int NO_SESSION_ID = -1;
+
     private LinkedList<GeckoSession.NavigationDelegate> mNavigationListeners;
     private LinkedList<GeckoSession.ProgressDelegate> mProgressListeners;
     private LinkedList<GeckoSession.ContentDelegate> mContentListeners;
@@ -400,7 +402,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
 
     public int getCurrentSessionId() {
         if (mCurrentSession == null) {
-            return -1;
+            return NO_SESSION_ID;
         }
         return mCurrentSession.hashCode();
     }

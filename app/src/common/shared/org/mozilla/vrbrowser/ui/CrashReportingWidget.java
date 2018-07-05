@@ -77,6 +77,7 @@ public class CrashReportingWidget extends UIWidget {
 
     @Override
     void initializeWidgetPlacement(WidgetPlacement aPlacement) {
+        aPlacement.visible = false;
         aPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.crash_width);
         aPlacement.height = WidgetPlacement.dpDimension(getContext(), R.dimen.crash_height);
         aPlacement.parentAnchorX = 0.5f;
@@ -88,12 +89,11 @@ public class CrashReportingWidget extends UIWidget {
 
     public void show() {
         getPlacement().visible = true;
-        mWidgetManager.updateWidget(this);
+        mWidgetManager.addWidget(this);
     }
 
     public void hide() {
-        getPlacement().visible = false;
-        mWidgetManager.updateWidget(this);
+        mWidgetManager.removeWidget(this);
     }
 
     private void handleRestartApp() {

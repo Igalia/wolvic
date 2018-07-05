@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        style="?attr/navigationBarStyle"
+        android:layout_width="@dimen/tray_width"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:padding="0dp"
+        android:gravity="center">
+
+        <org.mozilla.vrbrowser.ui.NavigationBarButton
+            android:id="@+id/closeButton"
+            style="?attr/navigationBarButtonStyle"
+            android:src="@drawable/ic_icon_dialog_cancel" />
+    </LinearLayout>
+</merge>

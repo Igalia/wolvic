@@ -47,11 +47,6 @@ public class SettingsWidget extends UIWidget {
 
         ImageButton cancelButton = findViewById(R.id.settingsCancelButton);
 
-        mCrashReportingWidget = new CrashReportingWidget(getContext());
-        mCrashReportingWidget.getPlacement().parentHandle = getHandle();
-        mCrashReportingWidget.getPlacement().visible = false;
-        mWidgetManager.addWidget(mCrashReportingWidget);
-
         cancelButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,6 +110,7 @@ public class SettingsWidget extends UIWidget {
 
     @Override
     void initializeWidgetPlacement(WidgetPlacement aPlacement) {
+        aPlacement.visible = false;
         aPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.settings_width);
         aPlacement.height = WidgetPlacement.dpDimension(getContext(), R.dimen.settings_height);
         aPlacement.parentAnchorX = 0.5f;
@@ -127,16 +123,21 @@ public class SettingsWidget extends UIWidget {
 
     public void show() {
         getPlacement().visible = true;
-        mWidgetManager.updateWidget(this);
+        mWidgetManager.addWidget(this);
     }
 
     public void hide() {
-        getPlacement().visible = false;
-        mWidgetManager.updateWidget(this);
+        mWidgetManager.removeWidget(this);
     }
 
     private void onSettingsCrashReportingChange(boolean isEnabled) {
         SettingsStore.getInstance(getContext()).setCrashReportingEnabled(isEnabled);
+
+        if (mCrashReportingWidget == null) {
+            mCrashReportingWidget = new CrashReportingWidget(getContext());
+            mCrashReportingWidget.getPlacement().parentHandle = getHandle();
+        }
+
         mCrashReportingWidget.show();
     }
 

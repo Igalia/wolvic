@@ -13,6 +13,8 @@ import android.view.MotionEvent;
 import android.view.Surface;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 
@@ -258,5 +260,9 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
     public boolean onGenericMotionEvent(MotionEvent aEvent) {
         GeckoSession session = SessionStore.get().getSession(mSessionId);
         return (session != null) && session.getPanZoomController().onMotionEvent(aEvent);
+    }
+
+    public void setPrivateBrowsingEnabled(boolean isEnabled) {
+        // TODO: Fade in/out the browser window. Waiting for https://github.com/MozillaReality/FirefoxReality/issues/77
     }
 }

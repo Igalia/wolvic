@@ -18,6 +18,8 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 
+import org.mozilla.geckoview.GeckoSession;
+import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.audio.VRAudioTheme;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
@@ -26,12 +28,14 @@ import org.mozilla.vrbrowser.ui.KeyboardWidget;
 import org.mozilla.vrbrowser.ui.NavigationBarWidget;
 import org.mozilla.vrbrowser.ui.OffscreenDisplay;
 import org.mozilla.vrbrowser.ui.SettingsWidget;
+import org.mozilla.vrbrowser.ui.TopBarWidget;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-public class VRBrowserActivity extends PlatformActivity implements WidgetManagerDelegate {
+public class VRBrowserActivity extends PlatformActivity implements WidgetManagerDelegate, TopBarWidget.TopBarDelegate {
+
     class SwipeRunnable implements Runnable {
         boolean mCanceled = false;
         @Override
@@ -68,9 +72,14 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     Runnable mAudioUpdateRunnable;
     BrowserWidget mBrowserWidget;
     KeyboardWidget mKeyboard;
+    NavigationBarWidget mNavigationBar;
+    TopBarWidget mTopBar;
     PermissionDelegate mPermissionDelegate;
     LinkedList<WidgetManagerDelegate.Listener> mWidgetEventListeners;
     LinkedList<Runnable> mBackHandlers;
+    SettingsWidget mSettingsWidget;
+    private boolean mWasBrowserPressed = false;
+    int mPreviousSessionId = SessionStore.NO_SESSION_ID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,14 +141,19 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mPermissionDelegate.setParentWidgetHandle(mBrowserWidget.getHandle());
 
         // Create Browser navigation widget
-        NavigationBarWidget navigationBar = new NavigationBarWidget(this);
-        navigationBar.setBrowserWidget(mBrowserWidget);
+        mNavigationBar = new NavigationBarWidget(this);
+        mNavigationBar.setBrowserWidget(mBrowserWidget);
 
         // Create keyboard widget
         mKeyboard = new KeyboardWidget(this);
         mKeyboard.setBrowserWidget(mBrowserWidget);
 
-        addWidgets(Arrays.<Widget>asList(mBrowserWidget, navigationBar, mKeyboard));
+        // Create the top bar
+        mTopBar = new TopBarWidget(this);
+        mTopBar.getPlacement().parentHandle = mBrowserWidget.getHandle();
+        mTopBar.setDelegate(this);
+
+        addWidgets(Arrays.<Widget>asList(mBrowserWidget, mNavigationBar, mKeyboard, mTopBar));
     }
 
     @Override
@@ -300,7 +314,22 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Log.i(LOGTAG, "Tray event not implemented: " + aType);
+                switch (aType) {
+                    case TrayEventHelp: {
+
+                    }
+                    break;
+                    case TrayEventSettings: {
+                        if (mSettingsWidget == null)
+                            mSettingsWidget = new SettingsWidget(VRBrowserActivity.this);
+                        mSettingsWidget.show();
+                    }
+                    break;
+                    case TrayEventPrivate: {
+                        onPrivateBrowsingClicked();
+                    }
+                    break;
+                }
                 mAudioEngine.playSound(AudioEngine.Sound.CLICK);
             }
         });
@@ -504,6 +533,75 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (mPermissionDelegate != null) {
             mPermissionDelegate.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    public void onPrivateBrowsingClicked() {
+        GeckoSession currentSession = SessionStore.get().getCurrentSession();
+        if (currentSession == null)
+            return;
+
+        boolean isPrivateMode  = currentSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
+
+        if (!isPrivateMode) {
+            fadeOutWorld();
+            // TODO: Fade out the browser window. Waiting for https://github.com/MozillaReality/FirefoxReality/issues/77
+
+            if (mPreviousSessionId == SessionStore.NO_SESSION_ID) {
+                mPreviousSessionId = SessionStore.get().getCurrentSessionId();
+
+                SessionStore.SessionSettings settings = new SessionStore.SessionSettings();
+                settings.privateMode = true;
+                int id = SessionStore.get().createSession(settings);
+                SessionStore.get().setCurrentSession(id);
+                SessionStore.get().loadUri(SessionStore.DEFAULT_URL);
+
+            } else {
+                int sessionId = SessionStore.get().getCurrentSessionId();
+                SessionStore.get().setCurrentSession(mPreviousSessionId);
+                mPreviousSessionId = sessionId;
+            }
+
+            mNavigationBar.setPrivateBrowsingEnabled(true);
+            mTopBar.setPrivateBrowsingEnabled(true);
+            mBrowserWidget.setPrivateBrowsingEnabled(true);
+
+        } else {
+            fadeInWorld();
+            // TODO: Fade in the browser window. Waiting for https://github.com/MozillaReality/FirefoxReality/issues/77
+
+            int sessionId = SessionStore.get().getCurrentSessionId();
+            SessionStore.get().setCurrentSession(mPreviousSessionId);
+            mPreviousSessionId = sessionId;
+
+            mNavigationBar.setPrivateBrowsingEnabled(false);
+            mTopBar.setPrivateBrowsingEnabled(false);
+            mBrowserWidget.setPrivateBrowsingEnabled(false);
+        }
+    }
+
+    // TopBarDelegate
+    @Override
+    public void onCloseClicked() {
+        GeckoSession currentSession = SessionStore.get().getCurrentSession();
+        if (currentSession == null)
+            return;
+
+        boolean isPrivateMode  = currentSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
+
+        if (isPrivateMode) {
+            fadeInWorld();
+            // TODO: Fade in the browser window. Waiting for https://github.com/MozillaReality/FirefoxReality/issues/77
+
+            int privateSessionId = SessionStore.get().getCurrentSessionId();
+            SessionStore.get().setCurrentSession(mPreviousSessionId);
+            mPreviousSessionId = SessionStore.NO_SESSION_ID;
+
+            mNavigationBar.setPrivateBrowsingEnabled(false);
+            mTopBar.setPrivateBrowsingEnabled(false);
+            mBrowserWidget.setPrivateBrowsingEnabled(false);
+
+            SessionStore.get().removeSession(privateSessionId);
         }
     }
 

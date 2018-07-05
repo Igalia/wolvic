@@ -30,12 +30,13 @@ namespace crow {
     static const int32_t IconHide = 5;
     static const int32_t IconExit = 6;
 
-    void Load(const vrb::NodeFactoryObjPtr& factory, const vrb::ParserObjPtr& aParser);
+    void Load(const vrb::ModelLoaderAndroidPtr& aLoader);
     bool TestControllerIntersection(const vrb::Vector& aStartPoint, const vrb::Vector& aDirection, vrb::Vector& aResult, bool& aIsInWidget, float& aDistance) const;
     int32_t ProcessEvents(bool aTrayActive, bool aPressed);
     const vrb::Matrix& GetTransform() const;
     void SetTransform(const vrb::Matrix& aTransform);
     void Toggle(const bool aEnabled);
+    bool IsLoaded() const;
     vrb::NodePtr GetRoot() const;
   protected:
     struct State;

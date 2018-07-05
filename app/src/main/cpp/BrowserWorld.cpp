@@ -445,7 +445,7 @@ BrowserWorld::State::UpdateControllers(bool& aUpdateWidgets) {
       }
     }
 
-    if (tray) {
+    if (tray && tray->IsLoaded()) {
       vrb::Vector result;
       float distance = 0.0f;
       bool isInside = false;
@@ -710,7 +710,7 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
     m.skybox = CreateSkyBox("cubemap/space");
     m.rootOpaqueParent->AddNode(m.skybox);
     CreateFloor();
-    // CreateTray();
+    CreateTray();
     m.controllers->modelsLoaded = true;
     m.fadeBlitter = FadeBlitter::Create(m.create);
   }
@@ -1083,11 +1083,11 @@ BrowserWorld::CreateFloor() {
 void
 BrowserWorld::CreateTray() {
   m.tray = Tray::Create(m.create);
-  //m.tray->Load(m.factory, m.parser);
+  m.tray->Load(m.loader);
   m.rootOpaque->AddNode(m.tray->GetRoot());
 
-  vrb::Matrix transform = vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), 40.0f * M_PI/180.0f);
-  transform.TranslateInPlace(Vector(0.0f, 0.1f, -1.2f));
+  vrb::Matrix transform = vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), -40.0f * M_PI/180.0f);
+  transform.TranslateInPlace(Vector(0.0f, 0.0f, -3.0f));
   m.tray->SetTransform(transform);
 }
 

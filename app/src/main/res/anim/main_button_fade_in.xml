@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fillAfter="true" >
+
+    <alpha
+        android:duration="600"
+        android:fromAlpha="0.0"
+        android:interpolator="@anim/ease_in_out_cubic"
+        android:toAlpha="1.0" />
+
+</set>

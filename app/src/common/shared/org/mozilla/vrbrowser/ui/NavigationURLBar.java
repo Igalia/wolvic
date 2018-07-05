@@ -180,4 +180,11 @@ public class NavigationURLBar extends FrameLayout {
             SessionStore.get().loadUri(url);
         }
     }
+
+    public void setPrivateBrowsingEnabled(boolean isEnabled) {
+        if (isEnabled)
+            mURL.setBackground(getContext().getDrawable(R.drawable.url_background_private));
+        else
+            mURL.setBackground(getContext().getDrawable(R.drawable.url_background));
+    }
 }

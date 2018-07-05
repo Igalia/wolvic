@@ -10,8 +10,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageButton;
 
 import org.mozilla.geckoview.GeckoResponse;
 import org.mozilla.geckoview.GeckoSession;
@@ -22,15 +20,17 @@ import org.mozilla.vrbrowser.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.WidgetPlacement;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class NavigationBarWidget extends UIWidget implements GeckoSession.NavigationDelegate, GeckoSession.ProgressDelegate, GeckoSession.ContentDelegate, WidgetManagerDelegate.Listener {
     private static final String LOGTAG = "VRB";
     private AudioEngine mAudio;
-    private ImageButton mBackButton;
-    private ImageButton mForwardButton;
-    private ImageButton mReloadButton;
-    private ImageButton mHomeButton;
+    private NavigationBarButton mBackButton;
+    private NavigationBarButton mForwardButton;
+    private NavigationBarButton mReloadButton;
+    private NavigationBarButton mHomeButton;
     private NavigationURLBar mURLBar;
-    private ImageButton mFocusButton;
     private ViewGroup mNavigationContainer;
     private ViewGroup mFocusModeContainer;
     private ViewGroup mResizeModeContainer;
@@ -41,6 +41,15 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private boolean mFocusDueToFullScreen;
     private Runnable mFocusBackHandler;
     private Runnable mResizeBackHandler;
+    private NavigationBarButton mFocusEnterbutton;
+    private NavigationBarButton mFocusExitButton;
+    private NavigationBarButton mResizeEnterButton;
+    private NavigationBarButton mResizeExitButton;
+    private NavigationBarTextButton mPreset0;
+    private NavigationBarTextButton mPreset1;
+    private NavigationBarTextButton mPreset2;
+    private NavigationBarTextButton mPreset3;
+    private ArrayList<CustomUIButton> mButtons;
 
     public NavigationBarWidget(Context aContext) {
         super(aContext);
@@ -127,17 +136,17 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         });
 
 
-        ImageButton focusEnterbutton = findViewById(R.id.focusEnterButton);
-        ImageButton focusExitButton = findViewById(R.id.focusExitButton);
-        ImageButton resizeEnterButton = findViewById(R.id.resizeEnterButton);
-        ImageButton resizeExitButton = findViewById(R.id.resizeExitButton);
-        Button preset0 = findViewById(R.id.resizePreset0);
-        Button preset1 = findViewById(R.id.resizePreset1);
-        Button preset2 = findViewById(R.id.resizePreset2);
-        Button preset3 = findViewById(R.id.resizePreset3);
+        mFocusEnterbutton = findViewById(R.id.focusEnterButton);
+        mFocusExitButton = findViewById(R.id.focusExitButton);
+        mResizeEnterButton = findViewById(R.id.resizeEnterButton);
+        mResizeExitButton = findViewById(R.id.resizeExitButton);
+        mPreset0 = findViewById(R.id.resizePreset0);
+        mPreset1 = findViewById(R.id.resizePreset1);
+        mPreset2 = findViewById(R.id.resizePreset2);
+        mPreset3 = findViewById(R.id.resizePreset3);
 
 
-        focusEnterbutton.setOnClickListener(new OnClickListener() {
+        mFocusEnterbutton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 enterFocusMode();
@@ -147,7 +156,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             }
         });
 
-        focusExitButton.setOnClickListener(new OnClickListener() {
+        mFocusExitButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 exitFocusMode();
@@ -157,7 +166,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             }
         });
 
-        resizeEnterButton.setOnClickListener(new OnClickListener() {
+        mResizeEnterButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 enterResizeMode();
@@ -167,7 +176,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             }
         });
 
-        resizeExitButton.setOnClickListener(new OnClickListener() {
+        mResizeExitButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 exitResizeMode(true);
@@ -177,7 +186,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             }
         });
 
-        preset0.setOnClickListener(new OnClickListener() {
+        mPreset0.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 setResizePreset(0.5f);
@@ -187,7 +196,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             }
         });
 
-        preset1.setOnClickListener(new OnClickListener() {
+        mPreset1.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 setResizePreset(1.0f);
@@ -197,7 +206,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             }
         });
 
-        preset2.setOnClickListener(new OnClickListener() {
+        mPreset2.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 setResizePreset(2.0f);
@@ -207,7 +216,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             }
         });
 
-        preset3.setOnClickListener(new OnClickListener() {
+        mPreset3.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 setResizePreset(3.0f);
@@ -216,6 +225,12 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
                 }
             }
         });
+
+        mButtons = new ArrayList<>();
+        mButtons.addAll(Arrays.<CustomUIButton>asList(
+                mBackButton, mForwardButton, mReloadButton, mHomeButton,
+                mFocusEnterbutton, mFocusExitButton, mResizeEnterButton, mResizeExitButton,
+                mPreset0, mPreset1, mPreset2, mPreset3));
 
         SessionStore.get().addNavigationListener(this);
         SessionStore.get().addProgressListener(this);
@@ -401,6 +416,24 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             Log.e(LOGTAG, "Got onSecurityChange: " + securityInformation.isSecure);
             mURLBar.setIsInsecure(!securityInformation.isSecure);
         }
+    }
+
+    public void setPrivateBrowsingEnabled(boolean isEnabled) {
+        mURLBar.setPrivateBrowsingEnabled(isEnabled);
+
+        if (isEnabled) {
+            for (CustomUIButton button : mButtons) {
+                button.setBackground(getContext().getDrawable(R.drawable.main_button_private));
+                button.setTintColorList(R.drawable.main_button_icon_color_private);
+            }
+
+        } else {
+            for (CustomUIButton button : mButtons) {
+                button.setBackground(getContext().getDrawable(R.drawable.main_button));
+                button.setTintColorList(R.drawable.main_button_icon_color);
+            }
+        }
+
     }
 
     // Content delegate
