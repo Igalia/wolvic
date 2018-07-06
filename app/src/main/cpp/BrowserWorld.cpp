@@ -14,6 +14,7 @@
 #include "vrb/ConcreteClass.h"
 #include "vrb/CreationContext.h"
 #include "vrb/CullVisitor.h"
+#include "vrb/DataCache.h"
 #include "vrb/DrawableList.h"
 #include "vrb/Geometry.h"
 #include "vrb/GLError.h"
@@ -836,6 +837,12 @@ BrowserWorld::Draw() {
 }
 
 void
+BrowserWorld::SetTemporaryFilePath(const std::string& aPath) {
+  VRB_LOG("Got temp path: %s", aPath.c_str());
+  m.context->GetDataCache()->SetCachePath(aPath);
+}
+
+void
 BrowserWorld::SetSurfaceTexture(const std::string& aName, jobject& aSurface) {
   VRB_LOG("SetSurfaceTexture: %s", aName.c_str());
   if (m.env && m.activity && m.dispatchCreateWidgetMethod) {
@@ -1201,23 +1208,31 @@ JNI_METHOD(void, removeWidgetNative)
 }
 
 JNI_METHOD(void, startWidgetResizeNative)
-(JNIEnv* aEnv, jobject, jint aHandle) {
+(JNIEnv*, jobject, jint aHandle) {
   crow::BrowserWorld::Instance().StartWidgetResize(aHandle);
 }
 
 JNI_METHOD(void, finishWidgetResizeNative)
-(JNIEnv* aEnv, jobject, jint aHandle) {
+(JNIEnv*, jobject, jint aHandle) {
   crow::BrowserWorld::Instance().FinishWidgetResize(aHandle);
 }
 
 JNI_METHOD(void, fadeOutWorldNative)
-(JNIEnv* aEnv, jobject) {
+(JNIEnv*, jobject) {
   crow::BrowserWorld::Instance().FadeOut();
 }
 
 JNI_METHOD(void, fadeInWorldNative)
-(JNIEnv* aEnv, jobject) {
+(JNIEnv*, jobject) {
   crow::BrowserWorld::Instance().FadeIn();
+}
+
+JNI_METHOD(void, setTemporaryFilePath)
+(JNIEnv* aEnv, jobject, jstring aPath) {
+  const char *nativeString = aEnv->GetStringUTFChars(aPath, 0);
+  std::string path = nativeString;
+  aEnv->ReleaseStringUTFChars(aPath, nativeString);
+  crow::BrowserWorld::Instance().SetTemporaryFilePath(path);
 }
 
 } // extern "C"

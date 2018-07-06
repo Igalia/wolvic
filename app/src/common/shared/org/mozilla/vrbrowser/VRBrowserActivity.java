@@ -128,6 +128,13 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 createOffscreenDisplay();
             }
         });
+        final String tempPath = getCacheDir().getAbsolutePath();
+        queueRunnable(new Runnable() {
+            @Override
+            public void run() {
+                setTemporaryFilePath(tempPath);
+            }
+        });
         initializeWorld();
 
         int sessionId = SettingsStore.getInstance(this).getCurrentSessionId();
@@ -614,5 +621,5 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private native void finishWidgetResizeNative(int aHandle);
     private native void fadeOutWorldNative();
     private native void fadeInWorldNative();
-
+    private native void setTemporaryFilePath(String aPath);
 }

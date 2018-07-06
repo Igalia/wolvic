@@ -34,6 +34,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/vrb/src/ContextSynchronizer.cpp
              src/main/cpp/vrb/src/CreationContext.cpp
              src/main/cpp/vrb/src/CullVisitor.cpp
+             src/main/cpp/vrb/src/DataCache.cpp
              src/main/cpp/vrb/src/Drawable.cpp
              src/main/cpp/vrb/src/DrawableList.cpp
              src/main/cpp/vrb/src/FBO.cpp

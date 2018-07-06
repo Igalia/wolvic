@@ -13,7 +13,6 @@ public class VRBrowserApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
         TelemetryWrapper.init(this);
     }
 }
