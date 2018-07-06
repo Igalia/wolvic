@@ -20,6 +20,7 @@ import android.view.inputmethod.InputConnection;
 
 import org.mozilla.gecko.gfx.GeckoDisplay;
 import org.mozilla.geckoview.GeckoSession;
+import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.SessionStore;
 import org.mozilla.vrbrowser.Widget;
@@ -51,7 +52,6 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
         mHandle = ((WidgetManagerDelegate)aContext).newWidgetHandle();
         mWidgetPlacement = new WidgetPlacement(aContext);
         initializeWidgetPlacement(mWidgetPlacement);
-
     }
 
     private void initializeWidgetPlacement(WidgetPlacement aPlacement) {
@@ -180,6 +180,12 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
         Log.e(LOGTAG, "surfaceChanged: " + aId);
         mDisplay.surfaceChanged(mSurface, mWidth, mHeight);
         aSession.getTextInput().setView(this);
+
+        boolean isPrivateMode  = aSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
+        if (isPrivateMode)
+            setPrivateBrowsingEnabled(true);
+        else
+            setPrivateBrowsingEnabled(false);
     }
 
     // View
@@ -262,7 +268,7 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
         return (session != null) && session.getPanZoomController().onMotionEvent(aEvent);
     }
 
-    public void setPrivateBrowsingEnabled(boolean isEnabled) {
+    private void setPrivateBrowsingEnabled(boolean isEnabled) {
         // TODO: Fade in/out the browser window. Waiting for https://github.com/MozillaReality/FirefoxReality/issues/77
     }
 }

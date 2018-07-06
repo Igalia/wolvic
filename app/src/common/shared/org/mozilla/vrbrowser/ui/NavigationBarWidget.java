@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import org.mozilla.geckoview.GeckoResponse;
 import org.mozilla.geckoview.GeckoSession;
+import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.SessionStore;
 import org.mozilla.vrbrowser.Widget;
@@ -23,7 +24,7 @@ import org.mozilla.vrbrowser.audio.AudioEngine;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class NavigationBarWidget extends UIWidget implements GeckoSession.NavigationDelegate, GeckoSession.ProgressDelegate, GeckoSession.ContentDelegate, WidgetManagerDelegate.Listener {
+public class NavigationBarWidget extends UIWidget implements GeckoSession.NavigationDelegate, GeckoSession.ProgressDelegate, GeckoSession.ContentDelegate, WidgetManagerDelegate.Listener, SessionStore.SessionChangeListener {
     private static final String LOGTAG = "VRB";
     private AudioEngine mAudio;
     private NavigationBarButton mBackButton;
@@ -236,6 +237,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         SessionStore.get().addProgressListener(this);
         SessionStore.get().addContentListener(this);
         mWidgetManager.addListener(this);
+
+        SessionStore.get().addSessionChangeListener(this);
     }
 
     @Override
@@ -244,6 +247,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         SessionStore.get().removeNavigationListener(this);
         SessionStore.get().removeProgressListener(this);
         SessionStore.get().removeContentListener(this);
+        SessionStore.get().removeSessionChangeListener(this);
         mBrowserWidget = null;
         super.releaseWidget();
     }
@@ -418,7 +422,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         }
     }
 
-    public void setPrivateBrowsingEnabled(boolean isEnabled) {
+    private void setPrivateBrowsingEnabled(boolean isEnabled) {
         mURLBar.setPrivateBrowsingEnabled(isEnabled);
 
         if (isEnabled) {
@@ -506,5 +510,25 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mWidgetPlacement.worldWidth = targetWidth;
         mWidgetPlacement.width = (int) (WidgetPlacement.dpDimension(getContext(), R.dimen.navigation_bar_width) * ratio);
         mWidgetManager.updateWidget(this);
+    }
+
+    // SessionStore.SessionChangeListener
+    @Override
+    public void onNewSession(GeckoSession aSession, int aId) {
+
+    }
+
+    @Override
+    public void onRemoveSession(GeckoSession aSession, int aId) {
+
+    }
+
+    @Override
+    public void onCurrentSessionChange(GeckoSession aSession, int aId) {
+        boolean isPrivateMode  = aSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
+        if (isPrivateMode)
+            setPrivateBrowsingEnabled(true);
+        else
+            setPrivateBrowsingEnabled(false);
     }
 }

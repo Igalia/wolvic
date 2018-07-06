@@ -9,11 +9,14 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 
+import org.mozilla.geckoview.GeckoSession;
+import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.SessionStore;
 import org.mozilla.vrbrowser.WidgetPlacement;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 
-public class TopBarWidget extends UIWidget {
+public class TopBarWidget extends UIWidget implements SessionStore.SessionChangeListener {
     private static final String LOGTAG = "VRB";
 
     public interface TopBarDelegate {
@@ -56,6 +59,8 @@ public class TopBarWidget extends UIWidget {
         });
 
         mAudio = AudioEngine.fromContext(aContext);
+
+        SessionStore.get().addSessionChangeListener(this);
     }
 
     @Override
@@ -71,7 +76,14 @@ public class TopBarWidget extends UIWidget {
         aPlacement.parentAnchorY = 1.0f;
     }
 
-    public void setPrivateBrowsingEnabled(boolean isEnabled) {
+    @Override
+    public void releaseWidget() {
+        SessionStore.get().removeSessionChangeListener(this);
+
+        super.releaseWidget();
+    }
+
+    private void setPrivateBrowsingEnabled(boolean isEnabled) {
         if (isEnabled) {
             mCloseButton.setBackground(getContext().getDrawable(R.drawable.main_button_private));
             mCloseButton.setTintColorList(R.drawable.main_button_icon_color_private);
@@ -82,7 +94,27 @@ public class TopBarWidget extends UIWidget {
         }
     }
 
+    // SessionStore.SessionChangeListener
     public void setDelegate(TopBarDelegate aDelegate) {
         mDelegate = aDelegate;
+    }
+
+    @Override
+    public void onNewSession(GeckoSession aSession, int aId) {
+
+    }
+
+    @Override
+    public void onRemoveSession(GeckoSession aSession, int aId) {
+
+    }
+
+    @Override
+    public void onCurrentSessionChange(GeckoSession aSession, int aId) {
+        boolean isPrivateMode  = aSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
+        if (isPrivateMode)
+            setPrivateBrowsingEnabled(true);
+        else
+            setPrivateBrowsingEnabled(false);
     }
 }

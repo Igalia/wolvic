@@ -1,6 +1,5 @@
 package org.mozilla.vrbrowser.ui;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.StrictMode;
@@ -9,6 +8,7 @@ import android.support.annotation.NonNull;
 
 import org.mozilla.telemetry.TelemetryHolder;
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.SessionStore;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 
 
@@ -71,6 +71,27 @@ public class SettingsStore {
 
         TelemetryHolder.get().getConfiguration().setUploadEnabled(isEnabled);
         TelemetryHolder.get().getConfiguration().setCollectionEnabled(isEnabled);
+    }
+
+
+    public void setCurrentSessionId(int sessionId) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putInt(mContext.getString(R.string.settings_key_session_id), sessionId);
+        editor.commit();
+    }
+
+    public int getCurrentSessionId() {
+        return mPrefs.getInt(mContext.getString(R.string.settings_key_session_id), SessionStore.NO_SESSION_ID);
+    }
+
+    public void setPreviousSessionId(int sessionId) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putInt(mContext.getString(R.string.settings_key_previous_session_id), sessionId);
+        editor.commit();
+    }
+
+    public int getPreviousSessionId() {
+        return mPrefs.getInt(mContext.getString(R.string.settings_key_previous_session_id), SessionStore.NO_SESSION_ID);
     }
 
 }
