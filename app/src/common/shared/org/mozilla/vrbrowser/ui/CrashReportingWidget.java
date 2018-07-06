@@ -24,6 +24,7 @@ public class CrashReportingWidget extends UIWidget {
     private TextView mAcceptButton;
     private NavigationBarButton mCancelButton;
     private AudioEngine mAudio;
+    private Runnable mBackHandler;
 
     public CrashReportingWidget(Context aContext) {
         super(aContext);
@@ -73,6 +74,13 @@ public class CrashReportingWidget extends UIWidget {
         });
 
         mAudio = AudioEngine.fromContext(aContext);
+
+        mBackHandler = new Runnable() {
+            @Override
+            public void run() {
+                hide();
+            }
+        };
     }
 
     @Override
@@ -90,10 +98,12 @@ public class CrashReportingWidget extends UIWidget {
     public void show() {
         getPlacement().visible = true;
         mWidgetManager.addWidget(this);
+        mWidgetManager.pushBackHandler(mBackHandler);
     }
 
     public void hide() {
         mWidgetManager.removeWidget(this);
+        mWidgetManager.popBackHandler(mBackHandler);
     }
 
     private void handleRestartApp() {

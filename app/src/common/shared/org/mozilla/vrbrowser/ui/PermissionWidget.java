@@ -34,6 +34,7 @@ public class PermissionWidget extends UIWidget {
     private TextView mPermissionMessage;
     private ImageView mPermissionIcon;
     private GeckoSession.PermissionDelegate.Callback mPermissionCallback;
+    private Runnable mBackHandler;
 
     public enum PermissionType {
         Camera,
@@ -80,6 +81,15 @@ public class PermissionWidget extends UIWidget {
                 handlePermissionResult(true);
             }
         });
+
+        mBackHandler = new Runnable() {
+            @Override
+            public void run() {
+                mWidgetPlacement.visible = false;
+                mWidgetManager.updateWidget(PermissionWidget.this);
+                mWidgetManager.popBackHandler(mBackHandler);
+            }
+        };
     }
 
     @Override
@@ -139,6 +149,7 @@ public class PermissionWidget extends UIWidget {
 
         mWidgetPlacement.visible = true;
         mWidgetManager.updateWidget(this);
+        mWidgetManager.pushBackHandler(mBackHandler);
     }
 
     String getRequesterName(String aUri) {
@@ -155,6 +166,7 @@ public class PermissionWidget extends UIWidget {
     private void handlePermissionResult(boolean aGranted) {
         mWidgetPlacement.visible = false;
         mWidgetManager.updateWidget(this);
+        mWidgetManager.popBackHandler(mBackHandler);
         if (mPermissionCallback == null) {
             return;
         }

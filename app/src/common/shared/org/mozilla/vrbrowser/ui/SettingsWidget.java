@@ -26,6 +26,7 @@ public class SettingsWidget extends UIWidget {
 
     private AudioEngine mAudio;
     private CrashReportingWidget mCrashReportingWidget;
+    private Runnable mBackHandler;
 
     public SettingsWidget(Context aContext) {
         super(aContext);
@@ -106,6 +107,13 @@ public class SettingsWidget extends UIWidget {
         }
 
         mAudio = AudioEngine.fromContext(aContext);
+
+        mBackHandler = new Runnable() {
+            @Override
+            public void run() {
+                hide();
+            }
+        };
     }
 
     @Override
@@ -124,10 +132,12 @@ public class SettingsWidget extends UIWidget {
     public void show() {
         getPlacement().visible = true;
         mWidgetManager.addWidget(this);
+        mWidgetManager.pushBackHandler(mBackHandler);
     }
 
     public void hide() {
         mWidgetManager.removeWidget(this);
+        mWidgetManager.popBackHandler(mBackHandler);
     }
 
     private void onSettingsCrashReportingChange(boolean isEnabled) {
