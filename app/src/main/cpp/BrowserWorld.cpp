@@ -386,6 +386,7 @@ struct BrowserWorld::State {
   bool windowsInitialized;
   TransformPtr skybox;
   FadeBlitterPtr fadeBlitter;
+  uint32_t loaderDelay;
 
   State() : paused(true), glInitialized(false), env(nullptr), nearClip(0.1f),
             farClip(100.0f), activity(nullptr),
@@ -393,7 +394,8 @@ struct BrowserWorld::State {
             handleScrollEventMethod(nullptr), handleAudioPoseMethod(nullptr),
             handleGestureMethod(nullptr),
             handleTrayEventMethod(nullptr),
-            windowsInitialized(false) {
+            windowsInitialized(false),
+            loaderDelay(0) {
     context = RenderContext::Create();
     create = context->GetRenderThreadCreationContext();
     loader = ModelLoaderAndroid::Create(context);
@@ -728,7 +730,8 @@ BrowserWorld::InitializeGL() {
       if (!m.glInitialized) {
         return;
       }
-      m.loader->InitializeGL();
+      // delay the m.loader->InitializeGL() call to fix some issues with Daydream activities
+      m.loaderDelay = 3;
       SurfaceTextureFactoryPtr factory = m.context->GetSurfaceTextureFactory();
       for (WidgetPtr& widget: m.widgets) {
         const std::string name = widget->GetSurfaceTextureName();
@@ -787,6 +790,12 @@ BrowserWorld::Draw() {
     if (!m.glInitialized) {
       VRB_LOG("FAILED to initialize GL");
       return;
+    }
+  }
+  if (m.loaderDelay > 0) {
+    m.loaderDelay--;
+    if (m.loaderDelay == 0) {
+      m.loader->InitializeGL();
     }
   }
 
