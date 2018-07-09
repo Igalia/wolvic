@@ -322,8 +322,8 @@ DeviceDelegateOculusVR::StartFrame() {
   m.predictedTracking = vrapi_GetPredictedTracking2(m.ovr, m.predictedDisplayTime);
 
   float ipd = vrapi_GetInterpupillaryDistance(&m.predictedTracking);
-  m.cameras[VRAPI_EYE_LEFT]->SetEyeTransform(vrb::Matrix::Translation(vrb::Vector(-ipd, 0.f, 0.f)));
-  m.cameras[VRAPI_EYE_RIGHT]->SetEyeTransform(vrb::Matrix::Translation(vrb::Vector(ipd, 0.f, 0.f)));
+  m.cameras[VRAPI_EYE_LEFT]->SetEyeTransform(vrb::Matrix::Translation(vrb::Vector(-ipd * 0.5f, 0.f, 0.f)));
+  m.cameras[VRAPI_EYE_RIGHT]->SetEyeTransform(vrb::Matrix::Translation(vrb::Vector(ipd * 0.5f, 0.f, 0.f)));
 
   if (!(m.predictedTracking.Status & VRAPI_TRACKING_STATUS_HMD_CONNECTED)) {
     VRB_LOG("HMD not connected");
