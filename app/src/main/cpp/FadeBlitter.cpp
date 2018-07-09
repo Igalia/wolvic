@@ -128,7 +128,7 @@ FadeBlitter::FadeBlitter(State& aState, vrb::CreationContextPtr& aContext)
 FadeBlitter::~FadeBlitter() {}
 
 void
-FadeBlitter::InitializeGL(vrb::RenderContext& aContext) {
+FadeBlitter::InitializeGL() {
   m.vertexShader = vrb::LoadShader(GL_VERTEX_SHADER, sVertexShader);
   m.fragmentShader = vrb::LoadShader(GL_FRAGMENT_SHADER, sFragmentShader);
   if (m.vertexShader && m.fragmentShader) {
@@ -141,7 +141,7 @@ FadeBlitter::InitializeGL(vrb::RenderContext& aContext) {
 }
 
 void
-FadeBlitter::ShutdownGL(vrb::RenderContext& aContext) {
+FadeBlitter::ShutdownGL() {
   if (m.program) {
     VRB_GL_CHECK(glDeleteProgram(m.program));
     m.program = 0;

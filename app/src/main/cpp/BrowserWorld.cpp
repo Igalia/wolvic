@@ -728,6 +728,7 @@ BrowserWorld::InitializeGL() {
       if (!m.glInitialized) {
         return;
       }
+      m.loader->InitializeGL();
       SurfaceTextureFactoryPtr factory = m.context->GetSurfaceTextureFactory();
       for (WidgetPtr& widget: m.widgets) {
         const std::string name = widget->GetSurfaceTextureName();
@@ -759,6 +760,12 @@ BrowserWorld::ShutdownJava() {
 void
 BrowserWorld::ShutdownGL() {
   VRB_LOG("BrowserWorld::ShutdownGL");
+  if (!m.glInitialized) {
+    return;
+  }
+  if (m.loader) {
+    m.loader->ShutdownGL();
+  }
   if (m.context) {
     m.context->ShutdownGL();
   }

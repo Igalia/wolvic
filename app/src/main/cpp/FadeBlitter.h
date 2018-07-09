@@ -27,8 +27,8 @@ protected:
   struct State;
   FadeBlitter(State& aState, vrb::CreationContextPtr& aContext);
   ~FadeBlitter();
-  void InitializeGL(vrb::RenderContext& aContext) override;
-  void ShutdownGL(vrb::RenderContext& aContext) override;
+  void InitializeGL() override;
+  void ShutdownGL() override;
 private:
   State& m;
   FadeBlitter() = delete;

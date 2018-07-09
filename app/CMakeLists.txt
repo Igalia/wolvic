@@ -37,6 +37,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/vrb/src/DataCache.cpp
              src/main/cpp/vrb/src/Drawable.cpp
              src/main/cpp/vrb/src/DrawableList.cpp
+             src/main/cpp/vrb/src/EGLError.cpp
              src/main/cpp/vrb/src/FBO.cpp
              src/main/cpp/vrb/src/FileReaderAndroid.cpp
              src/main/cpp/vrb/src/GLError.cpp
@@ -54,6 +55,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/vrb/src/ResourceGL.cpp
              src/main/cpp/vrb/src/RunnableQueue.cpp
              src/main/cpp/vrb/src/ShaderUtil.cpp
+             src/main/cpp/vrb/src/SharedEGLContext.cpp
              src/main/cpp/vrb/src/SurfaceTextureFactory.cpp
              src/main/cpp/vrb/src/Texture.cpp
              src/main/cpp/vrb/src/TextureCache.cpp
