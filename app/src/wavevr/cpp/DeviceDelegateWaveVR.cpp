@@ -252,7 +252,7 @@ DeviceDelegateWaveVR::GetControllerModelCount() const {
 const std::string
 DeviceDelegateWaveVR::GetControllerModelName(const int32_t aModelIndex) const {
   // FIXME: Need Focus based controller
-  static const std::string name("vr_controller_daydream.obj");
+  static const std::string name("vr_controller_focus.obj");
   return aModelIndex == 0 ? name : "";
 }
 
