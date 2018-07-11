@@ -450,15 +450,21 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     }
 
     @Override
-    public void updateSelection(@NonNull GeckoSession session, int selStart, int selEnd, int compositionStart, int compositionEnd) {
+    public void updateSelection(@NonNull GeckoSession session, final int selStart, final int selEnd, final int compositionStart, final int compositionEnd) {
         if (mFocusedView != mBrowserWidget || mInputConnection == null) {
             return;
         }
 
-        if (compositionStart >= 0 && compositionEnd >= 0) {
-            mInputConnection.setComposingRegion(compositionStart, compositionEnd);
-        }
-        mInputConnection.setSelection(selStart, selEnd);
+        final InputConnection connection = mInputConnection;
+        postInputCommand(new Runnable() {
+            @Override
+            public void run() {
+                if (compositionStart >= 0 && compositionEnd >= 0) {
+                    connection.setComposingRegion(compositionStart, compositionEnd);
+                }
+                connection.setSelection(selStart, selEnd);
+            }
+        });
     }
 
     @Override

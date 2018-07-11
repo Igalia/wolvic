@@ -202,6 +202,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     protected void onDestroy() {
+        for (Widget widget: mWidgets.values()) {
+            widget.releaseWidget();
+        }
+
         if (mOffscreenDisplay != null) {
             mOffscreenDisplay.release();
         }
