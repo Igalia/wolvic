@@ -170,7 +170,7 @@ public class NavigationURLBar extends FrameLayout {
         String url;
         if (uri != null) {
             url = uri.toString();
-        } else  if (text.startsWith("resource://")) {
+        } else if (text.startsWith("about:") || text.startsWith("resource://")) {
             url = text;
         } else {
             url = "https://www.google.com/search?q=" + text;
