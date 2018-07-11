@@ -6,6 +6,7 @@
 package org.mozilla.vrbrowser.ui;
 
 import android.content.Context;
+import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.view.KeyEvent;
@@ -38,6 +39,7 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
     private int mHandle;
     private WidgetPlacement mWidgetPlacement;
     private WidgetManagerDelegate mWidgetManager;
+    private PointF mLastWorldSize;
 
     public BrowserWidget(Context aContext, int aSessionId) {
         super(aContext);
@@ -155,6 +157,8 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
         }
         mWidgetPlacement.worldWidth = aWorldWidth;
         mWidgetManager.updateWidget(this);
+
+        mLastWorldSize = new PointF(aWorldWidth, aWorldHeight);
     }
 
     @Override
@@ -289,5 +293,9 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
 
     private void setPrivateBrowsingEnabled(boolean isEnabled) {
         // TODO: Fade in/out the browser window. Waiting for https://github.com/MozillaReality/FirefoxReality/issues/77
+    }
+
+    protected  PointF getLastWorldSize() {
+        return mLastWorldSize;
     }
 }

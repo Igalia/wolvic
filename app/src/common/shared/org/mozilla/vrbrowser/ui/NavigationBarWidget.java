@@ -6,6 +6,7 @@
 package org.mozilla.vrbrowser.ui;
 
 import android.content.Context;
+import android.graphics.PointF;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -51,6 +52,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private NavigationBarTextButton mPreset2;
     private NavigationBarTextButton mPreset3;
     private ArrayList<CustomUIButton> mButtons;
+    private PointF mLastBrowserSize;
 
     public NavigationBarWidget(Context aContext) {
         super(aContext);
@@ -285,6 +287,9 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         AnimationHelper.fadeOut(mNavigationContainer, 0);
         mWidgetManager.fadeOutWorld();
 
+        if (mLastBrowserSize != null)
+            mBrowserWidget.handleResizeEvent(mLastBrowserSize.x, mLastBrowserSize.y);
+
         mWidgetPlacement.anchorX = 1.0f;
         mWidgetPlacement.parentAnchorX = 1.0f;
         mWidgetManager.updateWidget(this);
@@ -301,6 +306,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         AnimationHelper.fadeIn(mNavigationContainer, AnimationHelper.FADE_ANIMATION_DURATION);
         AnimationHelper.fadeOut(mFocusModeContainer, 0);
         mWidgetManager.fadeInWorld();
+        mLastBrowserSize = mBrowserWidget.getLastWorldSize();
         setResizePreset(1.0f);
 
         mWidgetPlacement.anchorX = 0.5f;
