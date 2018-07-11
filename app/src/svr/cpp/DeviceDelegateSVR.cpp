@@ -129,8 +129,10 @@ struct DeviceDelegateSVR::State {
     }
 
     if (immersiveDisplay) {
-      immersiveDisplay->SetFieldOfView(device::Eye::Left, fovx, fovx, fovy, fovy);
-      immersiveDisplay->SetFieldOfView(device::Eye::Right, fovx, fovx, fovy, fovy);
+      const float fovxDegrees = fovx * 180.0f / (float) M_PI;
+      const float fovyDegrees = fovy * 180.0f / (float) M_PI;
+      immersiveDisplay->SetFieldOfView(device::Eye::Left, fovxDegrees, fovxDegrees, fovyDegrees, fovyDegrees);
+      immersiveDisplay->SetFieldOfView(device::Eye::Right, fovxDegrees, fovxDegrees, fovyDegrees, fovyDegrees);
     }
   }
 
@@ -328,7 +330,7 @@ DeviceDelegateSVR::RegisterImmersiveDisplay(ImmersiveDisplayPtr aDisplay) {
     return;
   }
 
-  m.immersiveDisplay->SetDeviceName("Daydream");
+  m.immersiveDisplay->SetDeviceName("ODG");
   m.immersiveDisplay->SetCapabilityFlags(device::Position | device::Orientation | device::Present);
   m.immersiveDisplay->SetEyeResolution(m.renderWidth, m.renderHeight);
   m.immersiveDisplay->CompleteEnumeration();
@@ -417,7 +419,9 @@ DeviceDelegateSVR::StartFrame() {
   }
 
   static const vrb::Vector kAverageHeight(0.0f, 1.7f, 0.0f);
-  head.TranslateInPlace(kAverageHeight);
+  if (m.renderMode == device::RenderMode::StandAlone) {
+    head.TranslateInPlace(kAverageHeight);
+  }
 
   m.cameras[kLeftEye]->SetHeadTransform(head);
   m.cameras[kRightEye]->SetHeadTransform(head);
