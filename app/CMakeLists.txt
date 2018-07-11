@@ -5,12 +5,12 @@
 
 cmake_minimum_required(VERSION 3.4.1)
 
-
-
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
 # You can define multiple libraries, and CMake builds them for you.
 # Gradle automatically packages shared libraries with your APK.
+
+add_subdirectory(src/main/cpp/vrb/src)
 
 add_library( # Sets the name of the library.
              native-lib
@@ -34,44 +34,6 @@ add_library( # Sets the name of the library.
              src/main/cpp/Widget.cpp
              src/main/cpp/WidgetPlacement.cpp
              src/main/cpp/WidgetResizer.cpp
-             src/main/cpp/vrb/src/CameraEye.cpp
-             src/main/cpp/vrb/src/CameraSimple.cpp
-             src/main/cpp/vrb/src/ClassLoaderAndroid.cpp
-             src/main/cpp/vrb/src/ContextSynchronizer.cpp
-             src/main/cpp/vrb/src/CreationContext.cpp
-             src/main/cpp/vrb/src/CullVisitor.cpp
-             src/main/cpp/vrb/src/DataCache.cpp
-             src/main/cpp/vrb/src/Drawable.cpp
-             src/main/cpp/vrb/src/DrawableList.cpp
-             src/main/cpp/vrb/src/EGLError.cpp
-             src/main/cpp/vrb/src/FBO.cpp
-             src/main/cpp/vrb/src/FileReaderAndroid.cpp
-             src/main/cpp/vrb/src/GLError.cpp
-             src/main/cpp/vrb/src/GLExtensions.cpp
-             src/main/cpp/vrb/src/Geometry.cpp
-             src/main/cpp/vrb/src/Group.cpp
-             src/main/cpp/vrb/src/Light.cpp
-             src/main/cpp/vrb/src/ParserObj.cpp
-             src/main/cpp/vrb/src/ModelLoaderAndroid.cpp
-             src/main/cpp/vrb/src/Node.cpp
-             src/main/cpp/vrb/src/NodeFactoryObj.cpp
-             src/main/cpp/vrb/src/Quaternion.cpp
-             src/main/cpp/vrb/src/RenderContext.cpp
-             src/main/cpp/vrb/src/RenderState.cpp
-             src/main/cpp/vrb/src/ResourceGL.cpp
-             src/main/cpp/vrb/src/RunnableQueue.cpp
-             src/main/cpp/vrb/src/ShaderUtil.cpp
-             src/main/cpp/vrb/src/SharedEGLContext.cpp
-             src/main/cpp/vrb/src/SurfaceTextureFactory.cpp
-             src/main/cpp/vrb/src/Texture.cpp
-             src/main/cpp/vrb/src/TextureCache.cpp
-             src/main/cpp/vrb/src/TextureCubeMap.cpp
-             src/main/cpp/vrb/src/TextureGL.cpp
-             src/main/cpp/vrb/src/TextureSurface.cpp
-             src/main/cpp/vrb/src/Toggle.cpp
-             src/main/cpp/vrb/src/Transform.cpp
-             src/main/cpp/vrb/src/Updatable.cpp
-             src/main/cpp/vrb/src/VertexArray.cpp
            )
 
 if(WAVEVR)
@@ -162,6 +124,7 @@ set_target_properties(wavevr-lib PROPERTIES IMPORTED_LOCATION
 
 target_link_libraries( # Specifies the target library.
                        native-lib
+                       vrb
 
                        # Link VR_SDK_LIB exported from gradle flavors
                        ${VR_SDK_LIB}
