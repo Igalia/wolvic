@@ -72,4 +72,10 @@ Create a file called user.properties in the top level project directory. Add a v
  geckoViewLocal=/path/to/your/build/obj-arm-linux-androideabi/gradle/build/mobile/android/geckoview/outputs/aar/geckoview-local-withGeckoBinaries-noMinApi-debug.aar
 ```
 
+## Debugging tips
+
+- When using the native debuger you can ignore the first SIGSEGV: address access protected stop in GV thread. It´s not a crash and you can click resume to continue debugging.
+- On some platforms such as Oculus Go the native debugger stops on each input event. You can set this LLDB post attach command in Android Studio to fix the problem: ```pro hand -p true -s false SIGILL```
+
+
 [![Task Status](https://github.taskcluster.net/v1/repository/MozillaReality/FirefoxReality/master/badge.svg)](https://github.taskcluster.net/v1/repository/MozillaReality/FirefoxReality/master/latest) [Build results](https://github.taskcluster.net/v1/repository/MozillaReality/FirefoxReality/master/latest)
