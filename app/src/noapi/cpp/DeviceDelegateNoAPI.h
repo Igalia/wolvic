@@ -20,8 +20,11 @@ class DeviceDelegateNoAPI : public DeviceDelegate {
 public:
   static DeviceDelegateNoAPIPtr Create(vrb::RenderContextPtr& aContext);
   // DeviceDelegate interface
+  void SetRenderMode(const device::RenderMode aMode) override;
+  device::RenderMode GetRenderMode() override;
+  void RegisterImmersiveDisplay(ImmersiveDisplayPtr aDisplay) override;
   GestureDelegateConstPtr GetGestureDelegate() override;
-  vrb::CameraPtr GetCamera(const CameraEnum aWhich) override;
+  vrb::CameraPtr GetCamera(const device::Eye) override;
   const vrb::Matrix& GetHeadTransform() const override;
   void SetClearColor(const vrb::Color& aColor) override;
   void SetClipPlanes(const float aNear, const float aFar) override;
@@ -31,7 +34,7 @@ public:
   const std::string GetControllerModelName(const int32_t aModelIndex) const override;
   void ProcessEvents() override;
   void StartFrame() override;
-  void BindEye(const CameraEnum aWhich) override;
+  void BindEye(const device::Eye) override;
   void EndFrame() override;
   // DeviceDelegateNoAPI interface
   void SetViewport(const int aWidth, const int aHeight);

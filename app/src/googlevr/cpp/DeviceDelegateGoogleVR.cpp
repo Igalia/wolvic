@@ -22,6 +22,7 @@
 
 #include <array>
 #include <vector>
+#include <EGL/egl.h>
 
 namespace {
 
@@ -63,6 +64,7 @@ struct DeviceDelegateGoogleVR::State {
   gvr_controller_context* controllerContext;
   gvr_controller_state* controllerState;
   gvr_gesture_context* gestureContext;
+  device::RenderMode renderMode;
   gvr_buffer_viewport_list* viewportList;
   gvr_buffer_viewport* leftViewport;
   gvr_buffer_viewport* rightViewport;
@@ -70,6 +72,7 @@ struct DeviceDelegateGoogleVR::State {
   vrb::Matrix headMatrix;
   gvr_swap_chain* swapChain;
   gvr_frame* frame;
+  gvr_sizei maxRenderSize;
   gvr_sizei frameBufferSize;
   vrb::RenderContextWeak context;
   float near;
@@ -81,11 +84,13 @@ struct DeviceDelegateGoogleVR::State {
   GestureDelegatePtr gestures;
   crow::ControllerDelegatePtr controllerDelegate;
   std::array<Controller, kMaxControllerCount> controllers;
+  ImmersiveDisplayPtr immersiveDisplay;
   State()
       : gvr(nullptr)
       , controllerContext(nullptr)
       , controllerState(nullptr)
       , gestureContext(nullptr)
+      , renderMode(device::RenderMode::StandAlone)
       , viewportList(nullptr)
       , leftViewport(nullptr)
       , rightViewport(nullptr)
@@ -96,16 +101,12 @@ struct DeviceDelegateGoogleVR::State {
       , sixDofHead(false)
   {
     frameBufferSize = {0,0};
+    maxRenderSize = {0,0};
     gestures = GestureDelegate::Create();
   }
 
   gvr_context* GetContext() { return gvr; }
 
-  int32_t cameraIndex(CameraEnum aWhich) {
-    if (CameraEnum::Left == aWhich) { return 0; }
-    else if (CameraEnum::Right == aWhich) { return 1; }
-    return -1;
-  }
 
   void Initialize() {
     vrb::RenderContextPtr render = context.lock();
@@ -113,8 +114,8 @@ struct DeviceDelegateGoogleVR::State {
       return;
     }
     vrb::CreationContextPtr create = render->GetRenderThreadCreationContext();
-    cameras[cameraIndex(CameraEnum::Left)] = vrb::CameraEye::Create(create);
-    cameras[cameraIndex(CameraEnum::Right)] = vrb::CameraEye::Create(create);
+    cameras[device::EyeIndex(device::Eye::Left)] = vrb::CameraEye::Create(create);
+    cameras[device::EyeIndex(device::Eye::Right)] = vrb::CameraEye::Create(create);
     elbow = ElbowModel::Create();
     GVR_CHECK(gvr_refresh_viewer_profile(gvr));
     viewportList = GVR_CHECK(gvr_buffer_viewport_list_create(gvr));
@@ -148,17 +149,45 @@ struct DeviceDelegateGoogleVR::State {
   }
 
   void
+  SetRenderMode(const device::RenderMode aMode) {
+    if (aMode != renderMode) {
+      renderMode = aMode;
+      // Fixme: GL_INVALID_OPERATION using a specific SurfaceTexture when we create a new SwapChain
+      // CreateSwapChain();
+    }
+  }
+
+  gvr_sizei GetImmersiveModeSize() {
+    // GVR SDK states that thee maximum effective render target size can be very large.
+    // Most applications need to scale down to compensate.
+    // Half pixel sizes are used by scaling each dimension by sqrt(2)/2 ~= 7/10ths.
+    gvr_sizei result;
+    result.width = (7 * maxRenderSize.width) / 10;
+    result.height = (7 * maxRenderSize.height) / 10;
+    return result;
+  }
+
+  void
   CreateSwapChain()  {
     if (swapChain) {
       // gvr_swap_chain_destroy will set the pointer to null
       GVR_CHECK(gvr_swap_chain_destroy(&swapChain));
     }
     gvr_buffer_spec* spec = GVR_CHECK(gvr_buffer_spec_create(gvr));
-    gvr_sizei size = GVR_CHECK(gvr_get_maximum_effective_render_target_size(gvr));
-    GVR_CHECK(gvr_buffer_spec_set_size(spec, size));
-    GVR_CHECK(gvr_buffer_spec_set_samples(spec, 4));
-    GVR_CHECK(gvr_buffer_spec_set_color_format(spec, GVR_COLOR_FORMAT_RGBA_8888));
-    GVR_CHECK(gvr_buffer_spec_set_depth_stencil_format(spec, GVR_DEPTH_STENCIL_FORMAT_DEPTH_16));
+    gvr_sizei size = maxRenderSize;
+    if (renderMode == device::RenderMode::Immersive) {
+      size = GetImmersiveModeSize();
+      GVR_CHECK(gvr_buffer_spec_set_size(spec, size));
+      GVR_CHECK(gvr_buffer_spec_set_samples(spec, 0));
+      GVR_CHECK(gvr_buffer_spec_set_color_format(spec, GVR_COLOR_FORMAT_RGBA_8888));
+      GVR_CHECK(gvr_buffer_spec_set_depth_stencil_format(spec, GVR_DEPTH_STENCIL_FORMAT_DEPTH_16));
+    } else {
+      GVR_CHECK(gvr_buffer_spec_set_size(spec, size));
+      GVR_CHECK(gvr_buffer_spec_set_samples(spec, 2));
+      GVR_CHECK(gvr_buffer_spec_set_color_format(spec, GVR_COLOR_FORMAT_RGBA_8888));
+      GVR_CHECK(gvr_buffer_spec_set_depth_stencil_format(spec, GVR_DEPTH_STENCIL_FORMAT_DEPTH_16));
+    }
+
     swapChain = GVR_CHECK(gvr_swap_chain_create(gvr, (const gvr_buffer_spec**)&spec, 1));
     GVR_CHECK(gvr_buffer_spec_destroy(&spec));
     GVR_CHECK(gvr_get_recommended_buffer_viewports(gvr, viewportList));
@@ -169,32 +198,54 @@ struct DeviceDelegateGoogleVR::State {
       GVR_CHECK(gvr_swap_chain_resize_buffer(swapChain, 0, frameBufferSize));
       VRB_LOG("Resize Swap Chain %d,%d", frameBufferSize.width, frameBufferSize.height);
     }
+
+    if (immersiveDisplay) {
+      immersiveDisplay->SetEyeResolution(frameBufferSize.width / 2, frameBufferSize.height);
+    }
   }
 
   void
   UpdateCameras() {
-    for (uint32_t eyeIndex = 0; eyeIndex < 2; eyeIndex++) {
-      gvr_mat4f eye = GVR_CHECK(gvr_get_eye_from_head_matrix(gvr, eyeIndex));
-      cameras[eyeIndex]->SetEyeTransform(vrb::Matrix::Translation(vrb::Vector(-eye.m[0][3], -eye.m[1][3], -eye.m[2][3])));
-      cameras[eyeIndex]->SetHeadTransform(headMatrix);
+    gvr_mat4f eyes[GVR_NUM_EYES];
+    for (int32_t index = 0; index < GVR_NUM_EYES; index++) {
+      eyes[index] = GVR_CHECK(gvr_get_eye_from_head_matrix(gvr, index));
+      cameras[index]->SetEyeTransform(vrb::Matrix::Translation(
+          vrb::Vector(-eyes[index].m[0][3], -eyes[index].m[1][3], -eyes[index].m[2][3])));
+      cameras[index]->SetHeadTransform(headMatrix);
     }
+
     if (!viewportList || !leftViewport || !rightViewport) {
       VRB_LOG("ERROR: view port lists not created");
       return;
     }
+
     GVR_CHECK(gvr_get_recommended_buffer_viewports(gvr, viewportList));
     GVR_CHECK(gvr_buffer_viewport_list_get_item(viewportList, 0, leftViewport));
     GVR_CHECK(gvr_buffer_viewport_list_get_item(viewportList, 1, rightViewport));
 
-    gvr_rectf fov = GVR_CHECK(gvr_buffer_viewport_get_source_fov(leftViewport));
-    cameras[cameraIndex(CameraEnum::Left)]->SetPerspective(
-        vrb::Matrix::PerspectiveMatrixFromDegrees(fov.left, fov.right, fov.top, fov.bottom, near, far));
-    //VRB_LOG("FOV:L top:%f right:%f bottom:%f left:%f", fov.top, fov.right, fov.bottom, fov.left);
+    gvr_rectf fovs[GVR_NUM_EYES];
+    fovs[GVR_LEFT_EYE] = GVR_CHECK(gvr_buffer_viewport_get_source_fov(leftViewport));
+    fovs[GVR_RIGHT_EYE] = GVR_CHECK(gvr_buffer_viewport_get_source_fov(rightViewport));
 
-    fov = GVR_CHECK(gvr_buffer_viewport_get_source_fov(rightViewport));
-    cameras[cameraIndex(CameraEnum::Right)]->SetPerspective(
-        vrb::Matrix::PerspectiveMatrixFromDegrees(fov.left, fov.right, fov.top, fov.bottom, near, far));
-    //VRB_LOG("FOV:R top:%f right:%f bottom:%f left:%f",fov.top, fov.right, fov.bottom, fov.left);
+    for (int32_t index = 0; index < GVR_NUM_EYES; index++) {
+      cameras[index]->SetPerspective(
+          vrb::Matrix::PerspectiveMatrixFromDegrees(fovs[index].left, fovs[index].right,
+                                                    fovs[index].top, fovs[index].bottom,
+                                                    near, far));
+    }
+
+    if (!immersiveDisplay) {
+      return;
+    }
+
+    for (int32_t index = 0; index < GVR_NUM_EYES; index++) {
+      const device::Eye which = (index == GVR_LEFT_EYE ? device::Eye::Left : device::Eye::Right);
+      immersiveDisplay->SetEyeOffset(which,
+                                     -eyes[index].m[0][3], -eyes[index].m[1][3],
+                                     -eyes[index].m[2][3]);
+      immersiveDisplay->SetFieldOfView(which, fovs[index].left, fovs[index].right, fovs[index].top,
+                                       fovs[index].bottom);
+    }
   }
 
   void
@@ -300,13 +351,39 @@ DeviceDelegateGoogleVR::Create(vrb::RenderContextPtr& aContext, void* aGVRContex
   return result;
 }
 
+void
+DeviceDelegateGoogleVR::SetRenderMode(const device::RenderMode aMode) {
+  m.SetRenderMode(aMode);
+}
+
+device::RenderMode
+DeviceDelegateGoogleVR::GetRenderMode() {
+  return m.renderMode;
+}
+
+void
+DeviceDelegateGoogleVR::RegisterImmersiveDisplay(ImmersiveDisplayPtr aDisplay) {
+  m.immersiveDisplay = std::move(aDisplay);
+
+  if (!m.immersiveDisplay) {
+    return;
+  }
+
+  m.immersiveDisplay->SetDeviceName("Daydream");
+  m.immersiveDisplay->SetCapabilityFlags(device::Position | device::Orientation | device::Present);
+  gvr_sizei size = m.GetImmersiveModeSize();
+  m.immersiveDisplay->SetEyeResolution(size.width / 2, size.height);
+  m.immersiveDisplay->CompleteEnumeration();
+  m.UpdateCameras();
+}
+
 GestureDelegateConstPtr
 DeviceDelegateGoogleVR::GetGestureDelegate() {
   return m.gestures;
 }
 vrb::CameraPtr
-DeviceDelegateGoogleVR::GetCamera(const CameraEnum aWhich) {
-  const int32_t index = m.cameraIndex(aWhich);
+DeviceDelegateGoogleVR::GetCamera(const device::Eye aWhich) {
+  const int32_t index = device::EyeIndex(aWhich);
   if (index < 0) { return nullptr; }
   return m.cameras[index];
 }
@@ -356,6 +433,11 @@ DeviceDelegateGoogleVR::GetControllerModelName(const int32_t aModelIndex) const 
 
 void
 DeviceDelegateGoogleVR::ProcessEvents() {
+  m.UpdateControllers();
+}
+
+void
+DeviceDelegateGoogleVR::StartFrame() {
   static const vrb::Vector kAverageHeight(0.0f, 1.7f, 0.0f);
   gvr_clock_time_point when = GVR_CHECK(gvr_get_time_point_now());
   // 50ms into the future is what GVR docs recommends using for head rotation prediction.
@@ -366,13 +448,10 @@ DeviceDelegateGoogleVR::ProcessEvents() {
   }
   m.headMatrix = vrb::Matrix::FromRowMajor(m.gvrHeadMatrix.m);
   m.headMatrix = m.headMatrix.Inverse();
-  m.headMatrix.TranslateInPlace(kAverageHeight);
+  if (m.renderMode == device::RenderMode::StandAlone) {
+    m.headMatrix.TranslateInPlace(kAverageHeight);
+  }
   m.UpdateCameras();
-  m.UpdateControllers();
-}
-
-void
-DeviceDelegateGoogleVR::StartFrame() {
 
   m.frame = GVR_CHECK(gvr_swap_chain_acquire_frame(m.swapChain));
   if (!m.frame) {
@@ -381,11 +460,7 @@ DeviceDelegateGoogleVR::StartFrame() {
     // issue.
     VRB_LOG("Unable to acquire GVR frame. Recreating swap chain.");
     m.CreateSwapChain();
-    m.frame = GVR_CHECK(gvr_swap_chain_acquire_frame(m.swapChain));
-    if (!m.frame) {
-      VRB_LOG("Unable to acquire GVR frame. Recreating swap chain failed.");
-      return;
-    }
+    VRB_GL_CHECK(glEnable(GL_BLEND));
   }
 
   GVR_CHECK(gvr_frame_bind_buffer(m.frame, 0));
@@ -408,15 +483,14 @@ SetUpViewportAndScissor(const gvr_sizei& framebuf_size,
 }
 
 void
-DeviceDelegateGoogleVR::BindEye(const CameraEnum aWhich) {
-  if (aWhich == CameraEnum::Left) {
+DeviceDelegateGoogleVR::BindEye(const device::Eye aWhich) {
+  if (aWhich == device::Eye::Left) {
     SetUpViewportAndScissor(m.frameBufferSize, m.leftViewport);
-  } else if (aWhich == CameraEnum::Right) {
+  } else if (aWhich == device::Eye::Right) {
     SetUpViewportAndScissor(m.frameBufferSize, m.rightViewport);
   } else {
     VRB_LOG("Unable to bind unknown eye type");
   }
-
 }
 
 void
@@ -432,6 +506,7 @@ DeviceDelegateGoogleVR::EndFrame() {
 void
 DeviceDelegateGoogleVR::InitializeGL() {
   gvr_initialize_gl(m.gvr);
+  m.maxRenderSize =  GVR_CHECK(gvr_get_maximum_effective_render_target_size(m.gvr));
   m.CreateSwapChain();
   m.InitializeControllers();
   VRB_GL_CHECK(glEnable(GL_DEPTH_TEST));

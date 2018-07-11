@@ -46,12 +46,15 @@ public:
   void UpdateVisibleWidgets();
   void FadeOut();
   void FadeIn();
+  void ExitImmersive();
   JNIEnv* GetJNIEnv() const;
 protected:
   struct State;
   static BrowserWorldPtr Create();
   BrowserWorld(State& aState);
   ~BrowserWorld();
+  void DrawWorld();
+  void DrawImmersive();
   vrb::TransformPtr CreateSkyBox(const std::string& basePath);
   void CreateFloor();
   void CreateTray();

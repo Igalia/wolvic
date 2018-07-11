@@ -43,7 +43,7 @@ struct OculusEyeSwapChain {
     return std::make_shared<OculusEyeSwapChain>();
   }
 
-  void Init(vrb::RenderContextPtr& aContext, uint32_t aWidth, uint32_t aHeight) {
+  void Init(vrb::RenderContextPtr& aContext, device::RenderMode aMode, uint32_t aWidth, uint32_t aHeight) {
     Destroy();
     ovrSwapChain = vrapi_CreateTextureSwapChain(VRAPI_TEXTURE_TYPE_2D,
                                                 VRAPI_TEXTURE_FORMAT_8888,
@@ -60,7 +60,14 @@ struct OculusEyeSwapChain {
       VRB_GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 
       vrb::FBO::Attributes attributes;
-      attributes.samples = 2;
+      if (aMode == device::RenderMode::Immersive) {
+        attributes.depth = false;
+        attributes.samples = 0;
+      } else {
+        attributes.depth = true;
+        attributes.samples = 2;
+      }
+
       VRB_GL_CHECK(fbo->SetTextureHandle(texture, aWidth, aHeight, attributes));
       if (fbo->IsValid()) {
         fbos.push_back(fbo);
@@ -87,6 +94,7 @@ struct DeviceDelegateOculusVR::State {
   ovrJava java = {};
   ovrMobile* ovr = nullptr;
   OculusEyeSwapChainPtr eyeSwapChains[VRAPI_EYE_COUNT];
+  device::RenderMode renderMode = device::RenderMode::StandAlone;
   vrb::FBOPtr currentFBO;
   vrb::CameraEyePtr cameras[2];
   uint32_t frameIndex = 0;
@@ -104,12 +112,8 @@ struct DeviceDelegateOculusVR::State {
   crow::ElbowModelPtr elbow;
   ElbowModel::HandEnum hand = ElbowModel::HandEnum::Right;
   ControllerDelegatePtr controller;
+  ImmersiveDisplayPtr immersiveDisplay;
 
-  int32_t cameraIndex(CameraEnum aWhich) {
-    if (CameraEnum::Left == aWhich) { return 0; }
-    else if (CameraEnum::Right == aWhich) { return 1; }
-    return -1;
-  }
 
   void UpdatePerspective() {
     float fovX = vrapi_GetSystemPropertyFloat(&java, VRAPI_SYS_PROP_SUGGESTED_EYE_FOV_DEGREES_X);
@@ -258,9 +262,46 @@ DeviceDelegateOculusVR::Create(vrb::RenderContextPtr& aContext, android_app *aAp
   return result;
 }
 
+void
+DeviceDelegateOculusVR::SetRenderMode(const device::RenderMode aMode) {
+  if (aMode == m.renderMode) {
+    return;
+  }
+  m.renderMode = aMode;
+  vrb::RenderContextPtr render = m.context.lock();
+  for (int i = 0; i < VRAPI_EYE_COUNT; ++i) {
+    m.eyeSwapChains[i]->Init(render, m.renderMode, m.renderWidth, m.renderHeight);
+  }
+}
+
+device::RenderMode
+DeviceDelegateOculusVR::GetRenderMode() {
+  return m.renderMode;
+}
+
+void
+DeviceDelegateOculusVR::RegisterImmersiveDisplay(ImmersiveDisplayPtr aDisplay) {
+  m.immersiveDisplay = std::move(aDisplay);
+
+  if (!m.immersiveDisplay) {
+    return;
+  }
+
+  m.immersiveDisplay->SetDeviceName("Oculus");
+  m.immersiveDisplay->SetCapabilityFlags(device::Position | device::Orientation | device::Present);
+  m.immersiveDisplay->SetEyeResolution(m.renderWidth, m.renderHeight);
+  m.immersiveDisplay->CompleteEnumeration();
+
+  const float fovx = vrapi_GetSystemPropertyFloat(&m.java, VRAPI_SYS_PROP_SUGGESTED_EYE_FOV_DEGREES_X) * 0.5f;
+  const float fovy = vrapi_GetSystemPropertyFloat(&m.java, VRAPI_SYS_PROP_SUGGESTED_EYE_FOV_DEGREES_Y) * 0.5f;
+
+  m.immersiveDisplay->SetFieldOfView(device::Eye::Left, fovx, fovx, fovy, fovy);
+  m.immersiveDisplay->SetFieldOfView(device::Eye::Right, fovx, fovx, fovy, fovy);
+}
+
 vrb::CameraPtr
-DeviceDelegateOculusVR::GetCamera(const CameraEnum aWhich) {
-  const int32_t index = m.cameraIndex(aWhich);
+DeviceDelegateOculusVR::GetCamera(const device::Eye aWhich) {
+  const int32_t index = device::EyeIndex(aWhich);
   if (index < 0) { return nullptr; }
   return m.cameras[index];
 }
@@ -344,23 +385,36 @@ DeviceDelegateOculusVR::StartFrame() {
   }
 
   static const vrb::Vector kAverageHeight(0.0f, 1.7f, 0.0f);
-  head.TranslateInPlace(kAverageHeight);
+  if (m.renderMode == device::RenderMode::StandAlone) {
+    head.TranslateInPlace(kAverageHeight);
+  }
 
   m.cameras[VRAPI_EYE_LEFT]->SetHeadTransform(head);
   m.cameras[VRAPI_EYE_RIGHT]->SetHeadTransform(head);
+
+  if (m.immersiveDisplay && m.renderMode == device::RenderMode::StandAlone) {
+    m.immersiveDisplay->SetEyeOffset(device::Eye::Left, -ipd * 0.5, 0.f, 0.f);
+    m.immersiveDisplay->SetEyeOffset(device::Eye::Right, ipd * 0.5f, 0.f, 0.f);
+    device::CapabilityFlags caps = device::Orientation | device::Present;
+    if (m.predictedTracking.Status & VRAPI_TRACKING_STATUS_POSITION_TRACKED) {
+      caps |= device::Position;
+    }
+    m.immersiveDisplay->SetCapabilityFlags(caps);
+  }
+
 
   m.UpdateControllers(head);
   VRB_GL_CHECK(glClearColor(m.clearColor.Red(), m.clearColor.Green(), m.clearColor.Blue(), m.clearColor.Alpha()));
 }
 
 void
-DeviceDelegateOculusVR::BindEye(const CameraEnum aWhich) {
+DeviceDelegateOculusVR::BindEye(const device::Eye aWhich) {
   if (!m.ovr) {
     VRB_LOG("BindEye called while not in VR mode");
     return;
   }
 
-  int32_t index = m.cameraIndex(aWhich);
+  int32_t index = device::EyeIndex(aWhich);
   if (index < 0) {
     VRB_LOG("No eye found");
     return;
@@ -428,7 +482,7 @@ DeviceDelegateOculusVR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
 
   vrb::RenderContextPtr render = m.context.lock();
   for (int i = 0; i < VRAPI_EYE_COUNT; ++i) {
-    m.eyeSwapChains[i]->Init(render, m.renderWidth, m.renderHeight);
+    m.eyeSwapChains[i]->Init(render, m.renderMode, m.renderWidth, m.renderHeight);
   }
 
   ovrModeParms modeParms = vrapi_DefaultModeParms(&m.java);

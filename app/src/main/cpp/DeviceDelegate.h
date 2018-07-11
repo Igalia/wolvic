@@ -8,6 +8,7 @@
 
 #include "vrb/MacroUtils.h"
 #include "vrb/Forward.h"
+#include "Device.h"
 #include "ControllerDelegate.h"
 #include "GestureDelegate.h"
 
@@ -18,13 +19,30 @@ namespace crow {
 class DeviceDelegate;
 typedef std::shared_ptr<DeviceDelegate> DeviceDelegatePtr;
 
+class ImmersiveDisplay;
+typedef std::shared_ptr<ImmersiveDisplay> ImmersiveDisplayPtr;
+
+
+class ImmersiveDisplay {
+public:
+  virtual void SetDeviceName(const std::string& aName) = 0;
+  virtual void SetCapabilityFlags(const device::CapabilityFlags aFlags) = 0;
+  virtual void SetFieldOfView(const device::Eye aEye, const double aLeftDegrees,
+                      const double aRightDegrees,
+                      const double aTopDegrees,
+                      const double aBottomDegrees) = 0;
+  virtual void SetEyeOffset(const device::Eye aEye, const float aX, const float aY, const float aZ) = 0;
+  virtual void SetEyeResolution(const int32_t aWidth, const int32_t aHeight) = 0;
+  virtual void CompleteEnumeration() = 0;
+};
+
 class DeviceDelegate {
 public:
-  enum class CameraEnum {
-    Left, Right
-  };
+  virtual void SetRenderMode(const device::RenderMode aMode) = 0;
+  virtual device::RenderMode GetRenderMode() = 0;
+  virtual void RegisterImmersiveDisplay(ImmersiveDisplayPtr aDisplay) = 0;
   virtual GestureDelegateConstPtr GetGestureDelegate() = 0;
-  virtual vrb::CameraPtr GetCamera(const CameraEnum aWhich) = 0;
+  virtual vrb::CameraPtr GetCamera(const device::Eye aWhich) = 0;
   virtual const vrb::Matrix& GetHeadTransform() const = 0;
   virtual void SetClearColor(const vrb::Color& aColor) = 0;
   virtual void SetClipPlanes(const float aNear, const float aFar) = 0;
@@ -34,7 +52,7 @@ public:
   virtual const std::string GetControllerModelName(const int32_t aModelIndex) const = 0;
   virtual void ProcessEvents() = 0;
   virtual void StartFrame() = 0;
-  virtual void BindEye(const CameraEnum aWhich) = 0;
+  virtual void BindEye(const device::Eye aWhich) = 0;
   virtual void EndFrame() = 0;
 protected:
   DeviceDelegate() {}

@@ -67,6 +67,25 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
         aPlacement.anchorY = 0.5f;
     }
 
+    public void pauseCompositor() {
+        if (mDisplay == null) {
+            return;
+        }
+
+        mDisplay.surfaceDestroyed();
+    }
+
+    public void resumeCompositor() {
+        if (mDisplay == null) {
+            return;
+        }
+        if (mSurface == null) {
+            return;
+        }
+
+        mDisplay.surfaceChanged(mSurface, mWidth, mHeight);
+    }
+
     @Override
     public void setSurfaceTexture(SurfaceTexture aTexture, final int aWidth, final int aHeight) {
         GeckoSession session = SessionStore.get().getSession(mSessionId);

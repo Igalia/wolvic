@@ -29,6 +29,8 @@ namespace crow {
 
 const int32_t kHeadControllerId = 0;
 const int32_t kControllerId = 1;
+const int32_t kSwapChainLength = 2;
+const float kIPD = 0.064f;
 
 class SVREyeSwapChain;
 typedef std::shared_ptr<SVREyeSwapChain> SVREyeSwapChainPtr;
@@ -42,7 +44,7 @@ struct SVREyeSwapChain {
     return std::make_shared<SVREyeSwapChain>();
   }
 
-  void Init(vrb::RenderContextPtr& aContext, uint32_t aSwapChainLength, uint32_t aWidth, uint32_t aHeight) {
+  void Init(vrb::RenderContextPtr& aContext, device::RenderMode aRenderMode, uint32_t aSwapChainLength, uint32_t aWidth, uint32_t aHeight) {
     Destroy();
     swapChainLength = aSwapChainLength;
 
@@ -59,7 +61,13 @@ struct SVREyeSwapChain {
                              GL_RGBA, GL_UNSIGNED_BYTE, nullptr));
 
       vrb::FBO::Attributes attributes;
-      attributes.samples = 2;
+      if (aRenderMode == device::RenderMode::Immersive) {
+        attributes.samples = 0;
+        attributes.depth = false;
+      } else {
+        attributes.samples = 2;
+        attributes.depth = true;
+      }
       VRB_GL_CHECK(fbo->SetTextureHandle(textureId, aWidth, aHeight, attributes));
       if (fbo->IsValid()) {
         textures.push_back(textureId);
@@ -87,6 +95,7 @@ struct DeviceDelegateSVR::State {
   svrInitParams java = {};
   bool isInVRMode = false;
   SVREyeSwapChainPtr eyeSwapChains[kNumEyes];
+  device::RenderMode renderMode = device::RenderMode::StandAlone;
   vrb::FBOPtr currentFBO;
   int32_t currentEye = -1;
   vrb::CameraEyePtr cameras[2];
@@ -108,12 +117,7 @@ struct DeviceDelegateSVR::State {
   bool headControllerCreated = false;
   bool controllerCreated = false;
   ControllerDelegatePtr controller;
-
-  int32_t cameraIndex(CameraEnum aWhich) {
-    if (CameraEnum::Left == aWhich) { return 0; }
-    else if (CameraEnum::Right == aWhich) { return 1; }
-    return -1;
-  }
+  ImmersiveDisplayPtr immersiveDisplay;
 
   void UpdatePerspective(const svrDeviceInfo& aInfo) {
     const float fovx = aInfo.targetFovXRad * 0.5f;
@@ -122,6 +126,11 @@ struct DeviceDelegateSVR::State {
 
     for (int i = 0; i < kNumEyes; ++i) {
       cameras[i]->SetPerspective(perspective);
+    }
+
+    if (immersiveDisplay) {
+      immersiveDisplay->SetFieldOfView(device::Eye::Left, fovx, fovx, fovy, fovy);
+      immersiveDisplay->SetFieldOfView(device::Eye::Right, fovx, fovx, fovy, fovy);
     }
   }
 
@@ -178,9 +187,8 @@ struct DeviceDelegateSVR::State {
       eyeSwapChains[i] = SVREyeSwapChain::create();
     }
 
-    const float ipd = 0.064f;
-    cameras[kLeftEye]->SetEyeTransform(vrb::Matrix::Translation(vrb::Vector(-ipd * 0.5f, 0.f, 0.f)));
-    cameras[kRightEye]->SetEyeTransform(vrb::Matrix::Translation(vrb::Vector(ipd * 0.5f, 0.f, 0.f)));
+    cameras[kLeftEye]->SetEyeTransform(vrb::Matrix::Translation(vrb::Vector(-kIPD * 0.5f, 0.f, 0.f)));
+    cameras[kRightEye]->SetEyeTransform(vrb::Matrix::Translation(vrb::Vector(kIPD * 0.5f, 0.f, 0.f)));
 
     UpdatePerspective(info);
     UpdateLayoutCoords(0.f, 0.f, 1.f, 1.f);
@@ -294,9 +302,47 @@ DeviceDelegateSVR::Create(vrb::RenderContextPtr& aContext, android_app *aApp) {
   return result;
 }
 
+
+void
+DeviceDelegateSVR::SetRenderMode(const device::RenderMode aMode) {
+  if (aMode == m.renderMode) {
+    return;
+  }
+  m.renderMode = aMode;
+  vrb::RenderContextPtr render = m.context.lock();
+  for (int i = 0; i < kSwapChainLength; ++i) {
+    m.eyeSwapChains[i]->Init(render, m.renderMode, kSwapChainLength, m.renderWidth, m.renderHeight);
+  }
+}
+
+device::RenderMode
+DeviceDelegateSVR::GetRenderMode() {
+  return m.renderMode;
+}
+
+void
+DeviceDelegateSVR::RegisterImmersiveDisplay(ImmersiveDisplayPtr aDisplay) {
+  m.immersiveDisplay = std::move(aDisplay);
+
+  if (!m.immersiveDisplay) {
+    return;
+  }
+
+  m.immersiveDisplay->SetDeviceName("Daydream");
+  m.immersiveDisplay->SetCapabilityFlags(device::Position | device::Orientation | device::Present);
+  m.immersiveDisplay->SetEyeResolution(m.renderWidth, m.renderHeight);
+  m.immersiveDisplay->CompleteEnumeration();
+
+  m.immersiveDisplay->SetEyeOffset(device::Eye::Left, -kIPD * 0.5f, 0.f, 0.f);
+  m.immersiveDisplay->SetEyeOffset(device::Eye::Right, kIPD * 0.5f, 0.f, 0.f);
+
+  svrDeviceInfo info = svrGetDeviceInfo();
+  m.UpdatePerspective(info);
+}
+
 vrb::CameraPtr
-DeviceDelegateSVR::GetCamera(const CameraEnum aWhich) {
-  const int32_t index = m.cameraIndex(aWhich);
+DeviceDelegateSVR::GetCamera(const device::Eye aWhich) {
+  const int32_t index = device::EyeIndex(aWhich);
   if (index < 0) { return nullptr; }
   return m.cameras[index];
 }
@@ -381,13 +427,13 @@ DeviceDelegateSVR::StartFrame() {
 }
 
 void
-DeviceDelegateSVR::BindEye(const CameraEnum aWhich) {
+DeviceDelegateSVR::BindEye(const device::Eye aWhich) {
   if (!m.isInVRMode) {
     VRB_LOG("BindEye called while not in VR mode");
     return;
   }
 
-  int32_t index = m.cameraIndex(aWhich);
+  int32_t index = device::EyeIndex(aWhich);
   if (index < 0) {
     VRB_LOG("No eye found");
     return;
@@ -471,7 +517,7 @@ DeviceDelegateSVR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
 
   vrb::RenderContextPtr render = m.context.lock();
   for (int i = 0; i < kNumEyes; ++i) {
-    m.eyeSwapChains[i]->Init(render, 2, m.renderWidth, m.renderHeight);
+    m.eyeSwapChains[i]->Init(render, m.renderMode, kSwapChainLength, m.renderWidth, m.renderHeight);
   }
 
   svrBeginParams params = {};

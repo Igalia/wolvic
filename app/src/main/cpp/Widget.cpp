@@ -52,6 +52,7 @@ struct Widget::State {
     float result = max * 0.1f;
     return result;
   }
+
   void Initialize(const int aHandle, const vrb::Vector& aWindowMin, const vrb::Vector& aWindowMax, const int32_t aTextureWidth, const int32_t aTextureHeight) {
     handle = aHandle;
     name = "crow::Widget-" + std::to_string(handle);

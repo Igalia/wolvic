@@ -51,6 +51,7 @@ struct DeviceDelegateWaveVR::State {
   float far;
   void* leftTextureQueue;
   void* rightTextureQueue;
+  device::RenderMode renderMode;
   int32_t leftFBOIndex;
   int32_t rightFBOIndex;
   vrb::FBOPtr currentFBO;
@@ -64,10 +65,12 @@ struct DeviceDelegateWaveVR::State {
   ControllerDelegatePtr delegate;
   GestureDelegatePtr gestures;
   std::array<Controller, kMaxControllerCount> controllers;
+  ImmersiveDisplayPtr immersiveDisplay;
   State()
       : isRunning(true)
       , near(0.1f)
       , far(100.f)
+      , renderMode(device::RenderMode::StandAlone)
       , leftFBOIndex(0)
       , rightFBOIndex(0)
       , leftTextureQueue(nullptr)
@@ -85,12 +88,6 @@ struct DeviceDelegateWaveVR::State {
         controllers[index].type = WVR_DeviceType_Controller_Left;
       }
     }
-  }
-
-  int32_t cameraIndex(CameraEnum aWhich) {
-    if (CameraEnum::Left == aWhich) { return 0; }
-    else if (CameraEnum::Right == aWhich) { return 1; }
-    return -1;
   }
 
 
@@ -112,20 +109,40 @@ struct DeviceDelegateWaveVR::State {
   void InitializeCameras() {
     vrb::Matrix leftProjection = vrb::Matrix::FromRowMajor(
         WVR_GetProjection(WVR_Eye_Left, near, far).m);
-    cameras[cameraIndex(CameraEnum::Left)]->SetPerspective(leftProjection);
+    cameras[device::EyeIndex(device::Eye::Left)]->SetPerspective(leftProjection);
 
     vrb::Matrix rightProjection = vrb::Matrix::FromRowMajor(
         WVR_GetProjection(WVR_Eye_Right, near, far).m);
-    cameras[cameraIndex(CameraEnum::Right)]->SetPerspective(rightProjection);
+    cameras[device::EyeIndex(device::Eye::Right)]->SetPerspective(rightProjection);
 
 
     vrb::Matrix leftEyeOffset = vrb::Matrix::FromRowMajor(
         WVR_GetTransformFromEyeToHead(WVR_Eye_Left, WVR_NumDoF_6DoF).m); //.Inverse();
-    cameras[cameraIndex(CameraEnum::Left)]->SetEyeTransform(leftEyeOffset);
+    cameras[device::EyeIndex(device::Eye::Left)]->SetEyeTransform(leftEyeOffset);
 
     vrb::Matrix rightEyeOffset = vrb::Matrix::FromRowMajor(
         WVR_GetTransformFromEyeToHead(WVR_Eye_Right, WVR_NumDoF_6DoF).m); //.Inverse();
-    cameras[cameraIndex(CameraEnum::Right)]->SetEyeTransform(rightEyeOffset);
+    cameras[device::EyeIndex(device::Eye::Right)]->SetEyeTransform(rightEyeOffset);
+
+    if (!immersiveDisplay) {
+      return;
+    }
+
+    const float toDegrees = 180.0f / (float)M_PI;
+
+    for (WVR_Eye eye : {WVR_Eye_Left, WVR_Eye_Right}) {
+      const WVR_Matrix4f_t eyeHead = WVR_GetTransformFromEyeToHead(eye, WVR_NumDoF_6DoF);
+      const device::Eye deviceEye = eye == WVR_Eye_Left ? device::Eye::Left : device::Eye::Right;
+      immersiveDisplay->SetEyeOffset(deviceEye, eyeHead.m[0][3], eyeHead.m[1][3], eyeHead.m[2][3]);
+
+      float left, right, top, bottom;
+      WVR_GetClippingPlaneBoundary(eye, &left, &right, &top, &bottom);
+      const float fovLeft = atan(left / near) * toDegrees * 0.5f;
+      const float fovRight = atan(right / near) * toDegrees * 0.5f;
+      const float fovTop = atan(top / near) * toDegrees * 0.5f;
+      const float fovBottom = atan(bottom / near) * toDegrees * 0.5f;
+      immersiveDisplay->SetFieldOfView(deviceEye, fovLeft, fovRight, fovTop, fovBottom);
+    }
   }
 
   void Initialize() {
@@ -134,8 +151,8 @@ struct DeviceDelegateWaveVR::State {
       return;
     }
     vrb::CreationContextPtr create = localContext->GetRenderThreadCreationContext();
-    cameras[cameraIndex(CameraEnum::Left)] = vrb::CameraEye::Create(create);
-    cameras[cameraIndex(CameraEnum::Right)] = vrb::CameraEye::Create(create);
+    cameras[device::EyeIndex(device::Eye::Left)] = vrb::CameraEye::Create(create);
+    cameras[device::EyeIndex(device::Eye::Right)] = vrb::CameraEye::Create(create);
     InitializeCameras();
     WVR_GetRenderTargetSize(&renderWidth, &renderHeight);
     VRB_GL_CHECK(glViewport(0, 0, renderWidth, renderHeight));
@@ -201,13 +218,42 @@ DeviceDelegateWaveVR::Create(vrb::RenderContextPtr& aContext) {
   return result;
 }
 
+void
+DeviceDelegateWaveVR::SetRenderMode(const device::RenderMode aMode) {
+  if (aMode == m.renderMode) {
+    return;
+  }
+  m.renderMode = aMode;
+}
+
+device::RenderMode
+DeviceDelegateWaveVR::GetRenderMode() {
+  return m.renderMode;
+}
+
+void
+DeviceDelegateWaveVR::RegisterImmersiveDisplay(ImmersiveDisplayPtr aDisplay) {
+  m.immersiveDisplay = std::move(aDisplay);
+
+  if (!m.immersiveDisplay) {
+    return;
+  }
+
+  m.immersiveDisplay->SetDeviceName("Wave");
+  m.immersiveDisplay->SetCapabilityFlags(device::Position | device::Orientation | device::Present);
+  m.immersiveDisplay->SetEyeResolution(m.renderWidth, m.renderHeight);
+  m.immersiveDisplay->CompleteEnumeration();
+  m.InitializeCameras();
+}
+
+
 GestureDelegateConstPtr
 DeviceDelegateWaveVR::GetGestureDelegate() {
   return m.gestures;
 }
 vrb::CameraPtr
-DeviceDelegateWaveVR::GetCamera(const CameraEnum aWhich) {
-  const int32_t index = m.cameraIndex(aWhich);
+DeviceDelegateWaveVR::GetCamera(const device::Eye aWhich) {
+  const int32_t index = device::EyeIndex(aWhich);
   if (index < 0) { return nullptr; }
   return m.cameras[index];
 }
@@ -412,9 +458,11 @@ DeviceDelegateWaveVR::StartFrame() {
   vrb::Matrix hmd = vrb::Matrix::Identity();
   if (m.devicePairs[WVR_DEVICE_HMD].pose.isValidPose) {
     hmd = vrb::Matrix::FromRowMajor(m.devicePairs[WVR_DEVICE_HMD].pose.poseMatrix.m);
-    hmd.TranslateInPlace(kAverageHeight);
-    m.cameras[m.cameraIndex(CameraEnum::Left)]->SetHeadTransform(hmd);
-    m.cameras[m.cameraIndex(CameraEnum::Right)]->SetHeadTransform(hmd);
+    if (m.renderMode == device::RenderMode::StandAlone) {
+      hmd.TranslateInPlace(kAverageHeight);
+    }
+    m.cameras[device::EyeIndex(device::Eye::Left)]->SetHeadTransform(hmd);
+    m.cameras[device::EyeIndex(device::Eye::Right)]->SetHeadTransform(hmd);
   } else {
     VRB_LOG("Invalid pose returned");
   }
@@ -449,13 +497,13 @@ DeviceDelegateWaveVR::StartFrame() {
 }
 
 void
-DeviceDelegateWaveVR::BindEye(const CameraEnum aWhich) {
+DeviceDelegateWaveVR::BindEye(const device::Eye aWhich) {
   if (m.currentFBO) {
     m.currentFBO->Unbind();
   }
-  if (aWhich == CameraEnum::Left) {
+  if (aWhich == device::Eye::Left) {
     m.currentFBO = m.leftFBOQueue[m.leftFBOIndex];
-  } else if (aWhich == CameraEnum::Right) {
+  } else if (aWhich == device::Eye::Right) {
     m.currentFBO = m.rightFBOQueue[m.rightFBOIndex];
   } else {
     m.currentFBO = nullptr;

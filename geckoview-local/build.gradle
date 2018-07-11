@@ -1,4 +1,4 @@
-configurations.maybeCreate("default")
+configurations.maybeCreate('default')
 
 if (gradle.hasProperty('geckoViewLocal')) {
     def aar = new File(gradle.geckoViewLocal)

@@ -12,6 +12,7 @@ import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Keep;
 import android.util.Log;
 import android.view.View;
@@ -20,6 +21,7 @@ import android.widget.FrameLayout;
 
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoSessionSettings;
+import org.mozilla.gecko.GeckoVRManager;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.audio.VRAudioTheme;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
@@ -79,13 +81,14 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     LinkedList<WidgetManagerDelegate.Listener> mWidgetEventListeners;
     LinkedList<Runnable> mBackHandlers;
     SettingsWidget mSettingsWidget;
-    private boolean mWasBrowserPressed = false;
+    private boolean mIsPresentingImmersive = false;
     int mPreviousSessionId = SessionStore.NO_SESSION_ID;
+    private Thread mUiThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.e(LOGTAG, "VRBrowserActivity onCreate");
-
+        mUiThread = Thread.currentThread();
         SessionStore.get().setContext(this);
 
         mLastGesture = NoGesture;
@@ -244,6 +247,15 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public void onBackPressed() {
+        if (mIsPresentingImmersive) {
+            queueRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    exitImmersiveNative();
+                }
+            });
+            return;
+        }
         if (mBackHandlers.size() > 0) {
             mBackHandlers.getLast().run();
             return;
@@ -378,6 +390,65 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 }
             }
         });
+    }
+
+    @Keep
+    void registerExternalContext(long aContext) {
+        GeckoVRManager.setExternalContext(aContext);
+    }
+
+    class PauseCompositorRunnable implements Runnable {
+        public boolean done;
+        @Override
+        public void run() {
+            synchronized (VRBrowserActivity.this) {
+                if (mBrowserWidget != null) {
+                    Log.e(LOGTAG, "About to pause Compositor");
+                    mBrowserWidget.pauseCompositor();
+                    Log.e(LOGTAG, "Compositor Paused");
+                }
+                done = true;
+                VRBrowserActivity.this.notify();
+            }
+        }
+    }
+
+    @Keep
+    void pauseGeckoViewCompositor() {
+        if (Thread.currentThread() == mUiThread) {
+            return;
+        }
+        mIsPresentingImmersive = true;
+        PauseCompositorRunnable runnable = new PauseCompositorRunnable();
+
+        synchronized (this) {
+            runOnUiThread(runnable);
+            while (!runnable.done) {
+                try {
+                    this.wait();
+                } catch (InterruptedException e) {
+                    Log.e(LOGTAG, "Waiting for compositor pause interrupted");
+                }
+            }
+        }
+    }
+
+    @Keep
+    void resumeGeckoViewCompositor() {
+        if (Thread.currentThread() == mUiThread) {
+            return;
+        }
+        mIsPresentingImmersive = false;
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (mBrowserWidget != null) {
+                    mBrowserWidget.resumeCompositor();
+                    Log.e(LOGTAG, "Compositor Resumed");
+                }
+            }
+        }, 20);
     }
 
     void createOffscreenDisplay() {
@@ -622,4 +693,5 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private native void fadeOutWorldNative();
     private native void fadeInWorldNative();
     private native void setTemporaryFilePath(String aPath);
+    private native void exitImmersiveNative();
 }

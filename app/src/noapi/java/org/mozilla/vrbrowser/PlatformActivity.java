@@ -94,16 +94,26 @@ public class PlatformActivity extends Activity {
             return false;
         }
 
-        // Log.e(LOGTAG, "real onTouchEvent: " + aEvent.toString());
+        int action = aEvent.getAction();
+        boolean down = false;
+        if (action == MotionEvent.ACTION_DOWN) {
+            down = true;
+        } else if (action == MotionEvent.ACTION_UP) {
+            down = false;
+        } else {
+            return false;
+        }
 
-        final boolean down = (aEvent.getActionMasked() & MotionEvent.ACTION_UP) != MotionEvent.ACTION_UP;
+
+        Log.e(LOGTAG, "real onTouchEvent: " + aEvent.toString());
+        final boolean isDown = down;
 
         final float xx = aEvent.getX(0);
         final float yy = aEvent.getY(0);
         mView.queueEvent(new Runnable() {
             @Override
             public void run() {
-                touchEvent(down, xx, yy);
+                touchEvent(isDown, xx, yy);
             }
         });
         return true;
