@@ -47,6 +47,7 @@ public:
   void FadeOut();
   void FadeIn();
   void ExitImmersive();
+  void SetTrayVisible(bool visible) const;
   JNIEnv* GetJNIEnv() const;
 protected:
   struct State;

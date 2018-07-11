@@ -621,6 +621,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
+    public void setTrayVisible(boolean visible) {
+        setTrayVisibleNative(visible);
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (mPermissionDelegate != null) {
@@ -694,4 +699,5 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private native void fadeInWorldNative();
     private native void setTemporaryFilePath(String aPath);
     private native void exitImmersiveNative();
+    private native void setTrayVisibleNative(boolean visible);
 }

@@ -289,6 +289,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mWidgetPlacement.parentAnchorX = 1.0f;
         mWidgetManager.updateWidget(this);
         mWidgetManager.pushBackHandler(mFocusBackHandler);
+
+        mWidgetManager.setTrayVisible(false);
     }
 
     private void exitFocusMode() {
@@ -309,6 +311,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         if (SessionStore.get().isInFullScreen()) {
             SessionStore.get().exitFullScreen();
         }
+
+        mWidgetManager.setTrayVisible(true);
     }
 
     private void enterResizeMode() {

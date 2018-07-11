@@ -1097,6 +1097,12 @@ BrowserWorld::CreateTray() {
 }
 
 void
+BrowserWorld::SetTrayVisible(bool visible) const {
+  if (m.tray)
+    m.tray->Toggle(visible);
+}
+
+void
 BrowserWorld::CreateControllerPointer() {
   if (m.controllers->pointerModel) {
     return;
@@ -1236,6 +1242,11 @@ JNI_METHOD(void, setTemporaryFilePath)
 JNI_METHOD(void, exitImmersiveNative)
 (JNIEnv* aEnv, jobject) {
   crow::BrowserWorld::Instance().ExitImmersive();
+}
+
+JNI_METHOD(void, setTrayVisibleNative)
+(JNIEnv* aEnv, jobject, jboolean visible) {
+  crow::BrowserWorld::Instance().SetTrayVisible(visible);
 }
 
 } // extern "C"

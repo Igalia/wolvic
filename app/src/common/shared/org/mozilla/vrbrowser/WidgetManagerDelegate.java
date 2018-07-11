@@ -18,4 +18,5 @@ public interface WidgetManagerDelegate {
     void popBackHandler(Runnable aRunnable);
     void fadeOutWorld();
     void fadeInWorld();
+    void setTrayVisible(boolean visible);
 }
