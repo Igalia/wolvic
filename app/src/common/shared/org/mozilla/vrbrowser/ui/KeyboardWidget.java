@@ -183,7 +183,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     }
 
     public void dismiss() {
-       if (mFocusedView != null) {
+       if (mFocusedView != null && mFocusedView != mBrowserWidget) {
            mFocusedView.clearFocus();
        }
        mWidgetPlacement.visible = false;
