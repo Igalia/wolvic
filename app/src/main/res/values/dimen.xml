@@ -49,15 +49,8 @@
     <dimen name="crash_width">435dp</dimen>
     <dimen name="crash_height">350dp</dimen>
 
-    <!-- Tray -->
-    <dimen name="tray_width">626dp</dimen>
-    <dimen name="tray_height">100dp</dimen>
-    <item name="tray_world_width" format="float" type="dimen">4.0</item>
-    <item name="tray_world_y" format="float" type="dimen">-1.0</item>
-
     <!-- Top Bar -->
-    <dimen name="top_bar_width">626dp</dimen>
-    <dimen name="top_bar_height">100dp</dimen>
-    <item name="top_bar_world_width" format="float" type="dimen">4.0</item>
-    <item name="top_bar_world_y" format="float" type="dimen">0.1</item>
+    <dimen name="top_bar_width">40dp</dimen>
+    <dimen name="top_bar_height">40dp</dimen>
+    <item name="top_bar_world_y" format="float" type="dimen">0.15</item>
 </resources>

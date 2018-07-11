@@ -170,7 +170,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         // Create the top bar
         mTopBar = new TopBarWidget(this);
-        mTopBar.getPlacement().parentHandle = mBrowserWidget.getHandle();
+        mTopBar.setBrowserWidget(mBrowserWidget);
         mTopBar.setDelegate(this);
 
         addWidgets(Arrays.<Widget>asList(mBrowserWidget, mNavigationBar, mKeyboard, mTopBar));
