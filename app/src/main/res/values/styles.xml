@@ -14,6 +14,11 @@
     </declare-styleable>
 
     <!-- Button attributes -->
+    <declare-styleable name="SettingsButton">
+        <attr name="settingsButtonIcon" format="integer" />
+        <attr name="settingsButtonText" format="string" />
+    </declare-styleable>
+
     <declare-styleable name="NavigationBarButton">
         <attr name="tintColorList" format="reference|color" />
     </declare-styleable>
@@ -42,10 +47,12 @@
         <item name="android:layout_width">121dp</item>
         <item name="android:layout_height">136dp</item>
         <item name="android:background">@drawable/ic_menu_settings_honeycomb_fill</item>
-        <item name="android:foreground">@drawable/ic_menu_settings_honeycomb_outline_1pt</item>
+        <item name="android:foreground">@drawable/ic_menu_settings_honeycomb_outline_2pt</item>
         <item name="android:scaleType">fitCenter</item>
         <item name="android:gravity">center</item>
         <item name="android:backgroundTint">@drawable/settings_button_color</item>
+        <item name="android:icon">@drawable/ic_settings_privacypolicy</item>
+        <item name="android:text"></item>
     </style>
 
     <style name="navigationBarTextButtonTheme">

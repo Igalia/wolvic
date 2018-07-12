@@ -5,7 +5,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:gravity="center_horizontal"
-        android:background="@drawable/permission_background">
+        android:background="@drawable/settings_background">
 
         <ImageView
             android:id="@+id/ff_logo_settings"

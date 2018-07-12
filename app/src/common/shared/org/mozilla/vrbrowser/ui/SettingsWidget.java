@@ -106,6 +106,18 @@ public class SettingsWidget extends UIWidget {
             e.printStackTrace();
         }
 
+        SettingsButton reportButton = findViewById(R.id.reportButton);
+        reportButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mAudio != null) {
+                    mAudio.playSound(AudioEngine.Sound.CLICK);
+                }
+
+                onSettingsReportClick();
+            }
+        });
+
         mAudio = AudioEngine.fromContext(aContext);
 
         mBackHandler = new Runnable() {
@@ -161,6 +173,15 @@ public class SettingsWidget extends UIWidget {
         int sessionId = SessionStore.get().createSession(settings);
         SessionStore.get().setCurrentSession(sessionId);
         SessionStore.get().loadUri(getContext().getString(R.string.private_policy_url));
+
+        hide();
+    }
+
+    private void onSettingsReportClick() {
+        SessionStore.SessionSettings settings = new SessionStore.SessionSettings();
+        int sessionId = SessionStore.get().createSession(settings);
+        SessionStore.get().setCurrentSession(sessionId);
+        SessionStore.get().loadUri(getContext().getString(R.string.private_report_url));
 
         hide();
     }

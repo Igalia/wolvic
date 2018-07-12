@@ -1,10 +1,13 @@
 package org.mozilla.vrbrowser.ui;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -17,19 +20,18 @@ public class SettingsButton extends LinearLayout {
 
     private ImageView mIcon;
     private TextView mText;
-
-    public SettingsButton(Context context) {
-        super(context);
-        initialize(context);
-    }
+    private String mButtonText;
+    private Drawable mButtonIcon;
 
     public SettingsButton(Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
-        initialize(context);
+        this(context, attrs, R.style.settingsButtonTheme);
     }
 
     public SettingsButton(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.SettingsButton, defStyleAttr, 0);
+        mButtonText = attributes.getString(R.styleable.SettingsButton_settingsButtonText);
+        mButtonIcon = attributes.getDrawable(R.styleable.SettingsButton_settingsButtonIcon);
         initialize(context);
     }
 
@@ -40,7 +42,12 @@ public class SettingsButton extends LinearLayout {
         setFocusable(true);
 
         mIcon = findViewById(R.id.settings_button_icon);
+        if (mButtonIcon != null)
+            mIcon.setImageDrawable(mButtonIcon);
+
         mText = findViewById(R.id.settings_button_text);
+        if (mButtonText != null)
+            mText.setText(mButtonText);
 
         setOnHoverListener(new OnHoverListener() {
             @Override
