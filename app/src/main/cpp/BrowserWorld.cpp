@@ -4,7 +4,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "BrowserWorld.h"
-#include "ControllerDelegate.h"
+#include "Controller.h"
+#include "ControllerContainer.h"
 #include "FadeBlitter.h"
 #include "Tray.h"
 #include "Device.h"
@@ -100,241 +101,6 @@ SurfaceObserver::SurfaceTextureCreationError(const std::string& aName, const std
   
 }
 
-struct Controller {
-  int32_t index;
-  bool enabled;
-  uint32_t widget;
-  float pointerX;
-  float pointerY;
-  int32_t buttonState;
-  int32_t lastButtonState;
-  bool touched;
-  bool wasTouched;
-  float touchX;
-  float touchY;
-  float lastTouchX;
-  float lastTouchY;
-  float scrollDeltaX;
-  float scrollDeltaY;
-  TransformPtr transform;
-  Matrix transformMatrix;
-  
-  Controller() : index(-1), enabled(false), widget(0),
-                 pointerX(0.0f), pointerY(0.0f),
-                 buttonState(0), lastButtonState(0),
-                 touched(false), wasTouched(false),
-                 touchX(0.0f), touchY(0.0f),
-                 lastTouchX(0.0f), lastTouchY(0.0f),
-                 scrollDeltaX(0.0f), scrollDeltaY(0.0f),
-                 transformMatrix(Matrix::Identity()) {}
-
-  Controller(const Controller& aController) {
-    *this = aController;
-  }
-
-  ~Controller() {
-    Reset();
-  }
-
-  Controller& operator=(const Controller& aController) {
-    index = aController.index;
-    enabled = aController.enabled;
-    widget = aController.widget;
-    pointerX = aController.pointerX;
-    pointerY = aController.pointerY;
-    buttonState = aController.buttonState;
-    lastButtonState = aController.lastButtonState;
-    touched = aController.touched;
-    wasTouched = aController.wasTouched;
-    touchX = aController.touchX;
-    touchY= aController.touchY;
-    lastTouchX = aController.lastTouchX;
-    lastTouchY = aController.lastTouchY;
-    scrollDeltaX = aController.scrollDeltaX;
-    scrollDeltaY = aController.scrollDeltaY;
-    transform = aController.transform;
-    transformMatrix = aController.transformMatrix;
-    return *this;
-  }
-
-  void Reset() {
-    index = -1;
-    enabled = false;
-    widget = 0;
-    pointerX = pointerY = 0.0f;
-    buttonState = lastButtonState = 0;
-    touched = wasTouched = false;
-    touchX = touchY = 0.0f;
-    lastTouchX = lastTouchY = 0.0f;
-    scrollDeltaX = scrollDeltaY = 0.0f;
-    if (transform) {
-      transform = nullptr;
-    }
-    transformMatrix = Matrix::Identity();
-  }
-};
-
-class ControllerContainer;
-typedef std::shared_ptr<ControllerContainer> ControllerContainerPtr;
-
-class ControllerContainer : public crow::ControllerDelegate {
-public:
-  static ControllerContainerPtr Create();
-  ControllerContainer() : modelsLoaded(false) {}
-  ~ControllerContainer();
-  void SetUpModelsGroup(const int32_t aModelIndex);
-  // crow::ControllerDelegate interface
-  void CreateController(const int32_t aControllerIndex, const int32_t aModelIndex) override;
-  void DestroyController(const int32_t aControllerIndex) override;
-  void SetEnabled(const int32_t aControllerIndex, const bool aEnabled) override;
-  void SetVisible(const int32_t aControllerIndex, const bool aVisible) override;
-  void SetTransform(const int32_t aControllerIndex, const vrb::Matrix& aTransform) override;
-  void SetButtonState(const int32_t aControllerIndex, const int32_t aWhichButton, const bool aPressed) override;
-  void SetTouchPosition(const int32_t aControllerIndex, const float aTouchX, const float aTouchY) override;
-  void EndTouch(const int32_t aControllerIndex) override;
-  void SetScrolledDelta(const int32_t aControllerIndex, const float aScrollDeltaX, const float aScrollDeltaY) override;
-  std::vector<Controller> list;
-  CreationContextWeak context;
-  TogglePtr root;
-  bool modelsLoaded;
-  std::vector<GroupPtr> models;
-  GeometryPtr pointerModel;
-  bool Contains(const int32_t aControllerIndex) {
-    return (aControllerIndex >= 0) && (aControllerIndex < list.size());
-  }
-};
-
-ControllerContainerPtr
-ControllerContainer::Create() {
-  return std::make_shared<ControllerContainer>();
-}
-
-ControllerContainer::~ControllerContainer() {
-  if (root) {
-    root->RemoveFromParents();
-    root = nullptr;
-  }
-}
-
-void
-ControllerContainer::SetUpModelsGroup(const int32_t aModelIndex) {
-  if (models.size() >= aModelIndex) {
-    models.resize((size_t)(aModelIndex + 1));
-  }
-  if (!models[aModelIndex]) {
-    CreationContextPtr create = context.lock();
-    models[aModelIndex] = std::move(Group::Create(create));
-  }
-}
-
-void
-ControllerContainer::CreateController(const int32_t aControllerIndex, const int32_t aModelIndex) {
-  if ((size_t)aControllerIndex >= list.size()) {
-    list.resize((size_t)aControllerIndex + 1);
-  }
-  Controller& controller = list[aControllerIndex];
-  controller.index = aControllerIndex;
-  if (!controller.transform && (aModelIndex >= 0)) {
-    SetUpModelsGroup(aModelIndex);
-    CreationContextPtr create = context.lock();
-    controller.transform = Transform::Create(create);
-    if ((models.size() >= aModelIndex) && models[aModelIndex]) {
-      controller.transform->AddNode(models[aModelIndex]);
-      if (pointerModel) {
-        controller.transform->AddNode(pointerModel);
-      }
-      if (root) {
-        root->AddNode(controller.transform);
-        root->ToggleChild(*controller.transform, false);
-      }
-    } else {
-      VRB_LOG("FAILED TO ADD MODEL");
-    }
-  }
-}
-
-void
-ControllerContainer::DestroyController(const int32_t aControllerIndex) {
-  if (Contains(aControllerIndex)) {
-    list[aControllerIndex].Reset();
-  }
-}
-
-void
-ControllerContainer::SetEnabled(const int32_t aControllerIndex, const bool aEnabled) {
-  if (!Contains(aControllerIndex)) {
-    return;
-  }
-  list[aControllerIndex].enabled = aEnabled;
-  if (!aEnabled) {
-    SetVisible(aControllerIndex, false);
-  }
-}
-
-void
-ControllerContainer::SetVisible(const int32_t aControllerIndex, const bool aVisible) {
-  if (!Contains(aControllerIndex)) {
-    return;
-  }
-  Controller& controller = list[aControllerIndex];
-  if (controller.transform) {
-    root->ToggleChild(*controller.transform, aVisible);
-  }
-}
-
-void
-ControllerContainer::SetTransform(const int32_t aControllerIndex, const vrb::Matrix& aTransform) {
-  if (!Contains(aControllerIndex)) {
-    return;
-  }
-  Controller& controller = list[aControllerIndex];
-  controller.transformMatrix = aTransform;
-  if (controller.transform) {
-    controller.transform->SetTransform(aTransform);
-  }
-}
-
-void
-ControllerContainer::SetButtonState(const int32_t aControllerIndex, const int32_t aWhichButton, const bool aPressed) {
-  if (!Contains(aControllerIndex)) {
-    return;
-  }
-  if (aPressed) {
-    list[aControllerIndex].buttonState |= aWhichButton;
-  } else {
-    list[aControllerIndex].buttonState &= ~aWhichButton;
-  }
-}
-
-void
-ControllerContainer::SetTouchPosition(const int32_t aControllerIndex, const float aTouchX, const float aTouchY) {
-  if (!Contains(aControllerIndex)) {
-    return;
-  }
-  Controller& controller = list[aControllerIndex];
-  controller.touched = true;
-  controller.touchX = aTouchX;
-  controller.touchY = aTouchY;
-}
-
-void
-ControllerContainer::EndTouch(const int32_t aControllerIndex) {
-  if (!Contains(aControllerIndex)) {
-    return;
-  }
-  list[aControllerIndex].touched = false;
-}
-
-void
-ControllerContainer::SetScrolledDelta(const int32_t aControllerIndex, const float aScrollDeltaX, const float aScrollDeltaY) {
-  if (!Contains(aControllerIndex)) {
-    return;
-  }
-  Controller& controller = list[aControllerIndex];
-  controller.scrollDeltaX = aScrollDeltaX;
-  controller.scrollDeltaY = aScrollDeltaY;
-}
-
 } // namespace
 
 namespace crow {
@@ -346,6 +112,7 @@ struct BrowserWorld::State {
   DeviceDelegatePtr device;
   bool paused;
   bool glInitialized;
+  bool modelsLoaded;
   RenderContextPtr context;
   CreationContextPtr create;
   ModelLoaderAndroidPtr loader;
@@ -373,7 +140,7 @@ struct BrowserWorld::State {
   uint32_t loaderDelay;
   bool exitImmersiveRequested;
 
-  State() : paused(true), glInitialized(false), env(nullptr), nearClip(0.1f),
+  State() : paused(true), glInitialized(false), modelsLoaded(false), env(nullptr), nearClip(0.1f),
             farClip(100.0f), activity(nullptr), windowsInitialized(false), exitImmersiveRequested(false), loaderDelay(0) {
     context = RenderContext::Create();
     create = context->GetRenderThreadCreationContext();
@@ -388,25 +155,24 @@ struct BrowserWorld::State {
     cullVisitor = CullVisitor::Create(create);
     drawListOpaque = DrawableList::Create(create);
     drawListTransparent = DrawableList::Create(create);
-    controllers = ControllerContainer::Create();
-    controllers->context = create;
-    controllers->root = Toggle::Create(create);
+    controllers = ControllerContainer::Create(create);
     externalVR = ExternalVR::Create();
     blitter = ExternalBlitter::Create(create);
+    fadeBlitter = FadeBlitter::Create(create);
   }
 
-  void UpdateControllers(bool& aUpdateWidgets);
+  void UpdateControllers(bool& aRelayoutWidgets);
   WidgetPtr GetWidget(int32_t aHandle) const;
   WidgetPtr FindWidget(const std::function<bool(const WidgetPtr&)>& aCondition) const;
 };
 
 void
-BrowserWorld::State::UpdateControllers(bool& aUpdateWidgets) {
+BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
   std::vector<Widget*> active;
   for (const WidgetPtr& widget: widgets) {
     widget->TogglePointer(false);
   }
-  for (Controller& controller: controllers->list) {
+  for (Controller& controller: controllers->GetControllers()) {
     if (!controller.enabled || (controller.index < 0)) {
       continue;
     }
@@ -459,7 +225,7 @@ BrowserWorld::State::UpdateControllers(bool& aUpdateWidgets) {
       bool aResized = false, aResizeEnded = false;
       hitWidget->HandleResize(hitPoint, pressed, aResized, aResizeEnded);
       if (aResized) {
-        aUpdateWidgets = true;
+        aRelayoutWidgets = true;
       }
       if (aResizeEnded) {
         float width, height;
@@ -590,15 +356,9 @@ BrowserWorld::RegisterDeviceDelegate(DeviceDelegatePtr aDelegate) {
     m.gestures = m.device->GetGestureDelegate();
   } else if (previousDevice) {
     m.leftCamera = m.rightCamera = nullptr;
-    for (Controller& controller: m.controllers->list) {
-      if (controller.transform) {
-        controller.transform->RemoveFromParents();
-      }
-      controller.Reset();
-
-    }
-    previousDevice->ReleaseControllerDelegate();
+    m.controllers->Reset();
     m.gestures = nullptr;
+    previousDevice->ReleaseControllerDelegate();
   }
 }
 
@@ -641,23 +401,21 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
   m.loader->InitializeJava(aEnv, aActivity, aAssetManager);
   VRBrowser::RegisterExternalContext((jlong)m.externalVR->GetSharedData());
 
-  if (!m.controllers->modelsLoaded) {
+  if (!m.modelsLoaded) {
     const int32_t modelCount = m.device->GetControllerModelCount();
     for (int32_t index = 0; index < modelCount; index++) {
       const std::string fileName = m.device->GetControllerModelName(index);
       if (!fileName.empty()) {
-        m.controllers->SetUpModelsGroup(index);
-        m.loader->LoadModel(fileName, m.controllers->models[index]);
+        m.controllers->LoadControllerModel(index, m.loader, fileName);
       }
     }
-    m.rootOpaque->AddNode(m.controllers->root);
-    CreateControllerPointer();
+    m.controllers->InitializePointer();
+    m.rootOpaque->AddNode(m.controllers->GetRoot());
     m.skybox = CreateSkyBox("cubemap/space");
     m.rootOpaqueParent->AddNode(m.skybox);
     CreateFloor();
     CreateTray();
-    m.controllers->modelsLoaded = true;
-    m.fadeBlitter = FadeBlitter::Create(m.create);
+    m.modelsLoaded = true;
   }
 }
 
@@ -741,8 +499,8 @@ BrowserWorld::Draw() {
 
   m.device->ProcessEvents();
   m.context->Update();
-  bool updateWidgets = false;
-  m.UpdateControllers(updateWidgets);
+  bool relayoutWidgets = false;
+  m.UpdateControllers(relayoutWidgets);
   m.externalVR->PullBrowserState();
   if (m.exitImmersiveRequested && m.externalVR->IsPresenting()) {
     m.externalVR->StopPresenting();
@@ -752,7 +510,7 @@ BrowserWorld::Draw() {
   if (m.externalVR->IsPresenting()) {
     DrawImmersive();
   } else {
-    if (updateWidgets) {
+    if (relayoutWidgets) {
       UpdateVisibleWidgets();
     }
     DrawWorld();
@@ -1100,69 +858,6 @@ void
 BrowserWorld::SetTrayVisible(bool visible) const {
   if (m.tray)
     m.tray->Toggle(visible);
-}
-
-void
-BrowserWorld::CreateControllerPointer() {
-  if (m.controllers->pointerModel) {
-    return;
-  }
-  VertexArrayPtr array = VertexArray::Create(m.create);
-  const float kLength = -5.0f;
-  const float kHeight = 0.0008f;
-
-  array->AppendVertex(Vector(-kHeight, -kHeight, 0.0f)); // Bottom left
-  array->AppendVertex(Vector(kHeight, -kHeight, 0.0f)); // Bottom right
-  array->AppendVertex(Vector(kHeight, kHeight, 0.0f)); // Top right
-  array->AppendVertex(Vector(-kHeight, kHeight, 0.0f)); // Top left
-  array->AppendVertex(Vector(0.0f, 0.0f, kLength)); // Tip
-
-  array->AppendNormal(Vector(-1.0f, -1.0f, 0.0f).Normalize()); // Bottom left
-  array->AppendNormal(Vector(1.0f, -1.0f, 0.0f).Normalize()); // Bottom right
-  array->AppendNormal(Vector(1.0f, 1.0f, 0.0f).Normalize()); // Top right
-  array->AppendNormal(Vector(-1.0f, 1.0f, 0.0f).Normalize()); // Top left
-  array->AppendNormal(Vector(0.0f, 0.0f, -1.0f).Normalize()); // in to the screen
-
-
-  RenderStatePtr state = RenderState::Create(m.create);
-  state->SetMaterial(Color(0.6f, 0.0f, 0.0f), Color(1.0f, 0.0f, 0.0f), Color(0.5f, 0.5f, 0.5f),
-                     96.078431f);
-  GeometryPtr geometry = Geometry::Create(m.create);
-  geometry->SetVertexArray(array);
-  geometry->SetRenderState(state);
-
-  std::vector<int> index;
-  std::vector<int> uvIndex;
-
-  index.push_back(1);
-  index.push_back(2);
-  index.push_back(5);
-  geometry->AddFace(index, uvIndex, index);
-
-  index.clear();
-  index.push_back(2);
-  index.push_back(3);
-  index.push_back(5);
-  geometry->AddFace(index, uvIndex, index);
-
-  index.clear();
-  index.push_back(3);
-  index.push_back(4);
-  index.push_back(5);
-  geometry->AddFace(index, uvIndex, index);
-
-  index.clear();
-  index.push_back(4);
-  index.push_back(1);
-  index.push_back(5);
-  geometry->AddFace(index, uvIndex, index);
-
-  m.controllers->pointerModel = std::move(geometry);
-  for (Controller& controller: m.controllers->list) {
-    if (controller.transform) {
-      controller.transform->AddNode(m.controllers->pointerModel);
-    }
-  }
 }
 
 float

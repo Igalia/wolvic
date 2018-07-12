@@ -59,7 +59,6 @@ protected:
   vrb::TransformPtr CreateSkyBox(const std::string& basePath);
   void CreateFloor();
   void CreateTray();
-  void CreateControllerPointer();
   float DistanceToNode(const vrb::NodePtr& aNode, const vrb::Vector& aPosition) const;
 private:
   State& m;

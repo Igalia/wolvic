@@ -20,6 +20,8 @@ add_library( # Sets the name of the library.
 
              # Provides a relative path to your source file(s).
              src/main/cpp/BrowserWorld.cpp
+             src/main/cpp/Controller.cpp
+             src/main/cpp/ControllerContainer.cpp
              src/main/cpp/ElbowModel.cpp
              src/main/cpp/FadeBlitter.cpp
              src/main/cpp/GestureDelegate.cpp
