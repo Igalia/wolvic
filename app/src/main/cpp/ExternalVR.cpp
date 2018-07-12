@@ -290,10 +290,10 @@ void
 ExternalVR::RequestFrame(const vrb::Matrix& aHeadTransform) {
   vrb::Quaternion quaternion(aHeadTransform);
   vrb::Vector translation = aHeadTransform.GetTranslation();
-  memcpy(&(m.system.sensorState.orientation), quaternion.Data(),
-         sizeof(m.system.sensorState.orientation));
-  memcpy(&(m.system.sensorState.position), translation.Data(),
-         sizeof(m.system.sensorState.position));
+  memcpy(&(m.system.sensorState.pose.orientation), quaternion.Data(),
+         sizeof(m.system.sensorState.pose.orientation));
+  memcpy(&(m.system.sensorState.pose.position), translation.Data(),
+         sizeof(m.system.sensorState.pose.position));
   m.system.sensorState.inputFrameID++;
   m.system.displayState.mLastSubmittedFrameId = m.lastFrameId;
 
