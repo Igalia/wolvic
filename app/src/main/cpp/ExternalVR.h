@@ -36,6 +36,7 @@ public:
   void PushSystemState();
   void PullBrowserState(bool aBlock = true);
   bool IsFirstPresentingFrame() const;
+  void HandleFirstPresentingFrame();
   bool IsPresenting() const;
   void RequestFrame(const vrb::Matrix& aHeadTransform);
   void GetFrameResult(int32_t& aSurfaceHandle, device::EyeRect& aLeftEye, device::EyeRect& aRightEye) const;

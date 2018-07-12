@@ -263,12 +263,6 @@ ExternalVR::PullBrowserState(bool aBlock) {
   }
 
   m.firstPresentingFrame = !wasPresenting && IsPresenting();
-  if (m.firstPresentingFrame) {
-    m.system.displayState.mLastSubmittedFrameSuccessful = false;
-    m.system.displayState.mLastSubmittedFrameId = m.browser.layerState[0].layer_stereo_immersive.mFrameId;
-    m.lastFrameId = m.browser.layerState[0].layer_stereo_immersive.mFrameId;
-    PushSystemState();
-  }
   if (wasPresenting && !IsPresenting()) {
     m.lastFrameId = m.browser.layerState[0].layer_stereo_immersive.mFrameId;
     VRBrowser::ResumeCompositor();
@@ -278,6 +272,17 @@ ExternalVR::PullBrowserState(bool aBlock) {
 bool
 ExternalVR::IsFirstPresentingFrame() const {
   return IsPresenting() && m.firstPresentingFrame;
+}
+
+void
+ExternalVR::HandleFirstPresentingFrame() {
+  m.system.displayState.pausingCompositor = true;
+  m.system.displayState.mLastSubmittedFrameId = 0;
+  m.lastFrameId = 0;
+  PushSystemState();
+  VRBrowser::PauseCompositor();
+  m.system.displayState.pausingCompositor = false;
+  PushSystemState();
 }
 
 bool

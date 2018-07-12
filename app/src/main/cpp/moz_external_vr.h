@@ -262,6 +262,7 @@ struct VRDisplayState
 
 #if defined(__ANDROID__)
   bool shutdown;
+  bool pausingCompositor;
 #endif // defined(__ANDROID__)
   char mDisplayName[kVRDisplayNameMaxLen];
   VRDisplayCapabilityFlags mCapabilityFlags;

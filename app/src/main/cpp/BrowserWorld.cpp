@@ -986,7 +986,7 @@ BrowserWorld::DrawWorld() {
 void
 BrowserWorld::DrawImmersive() {
   if (m.externalVR->IsFirstPresentingFrame()) {
-    VRBrowser::PauseCompositor();
+    m.externalVR->HandleFirstPresentingFrame();
   }
   m.device->SetRenderMode(device::RenderMode::Immersive);
   /*
