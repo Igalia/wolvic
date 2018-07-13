@@ -294,7 +294,8 @@ ExternalVR::IsPresenting() const {
 
 void
 ExternalVR::RequestFrame(const vrb::Matrix& aHeadTransform) {
-  vrb::Quaternion quaternion(aHeadTransform);
+  const vrb::Matrix inverseHeadTransform = aHeadTransform.Inverse();
+  vrb::Quaternion quaternion(inverseHeadTransform);
   vrb::Vector translation = aHeadTransform.GetTranslation();
   memcpy(&(m.system.sensorState.pose.orientation), quaternion.Data(),
          sizeof(m.system.sensorState.pose.orientation));
@@ -303,10 +304,8 @@ ExternalVR::RequestFrame(const vrb::Matrix& aHeadTransform) {
   m.system.sensorState.inputFrameID++;
   m.system.displayState.mLastSubmittedFrameId = m.lastFrameId;
 
-  vrb::Matrix leftView = vrb::Matrix::Position(m.eyeOffsets[device::EyeIndex(device::Eye::Left)]).PostMultiply(aHeadTransform);
-  leftView = vrb::Matrix::FromRowMajor(leftView.Data());
-  vrb::Matrix rightView = vrb::Matrix::Position(m.eyeOffsets[device::EyeIndex(device::Eye::Right)]).PostMultiply(aHeadTransform);
-  rightView = vrb::Matrix::FromRowMajor(rightView.Data());
+  vrb::Matrix leftView = vrb::Matrix::Position(-m.eyeOffsets[device::EyeIndex(device::Eye::Left)]).PostMultiply(inverseHeadTransform);
+  vrb::Matrix rightView = vrb::Matrix::Position(-m.eyeOffsets[device::EyeIndex(device::Eye::Right)]).PostMultiply(inverseHeadTransform);
   memcpy(&(m.system.sensorState.leftViewMatrix), leftView.Data(),
          sizeof(m.system.sensorState.leftViewMatrix));
   memcpy(&(m.system.sensorState.rightViewMatrix), rightView.Data(),
