@@ -12,6 +12,9 @@
 
 namespace crow {
 
+static const int kControllerMaxButtonCount = 4;
+static const int kControllerMaxAxes = 6;
+
 struct Controller {
   int32_t index;
   bool enabled;
@@ -30,6 +33,14 @@ struct Controller {
   float scrollDeltaY;
   vrb::TransformPtr transform;
   vrb::Matrix transformMatrix;
+  std::string immersiveName;
+  uint64_t immersivePressedState;
+  uint64_t immersiveTouchedState;
+  float immersiveTriggerValues[kControllerMaxButtonCount];
+  uint32_t numButtons;
+  float immersiveAxes[kControllerMaxAxes];
+  uint32_t numAxes;
+  bool leftHanded;
 
   Controller();
   Controller(const Controller& aController);

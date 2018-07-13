@@ -499,8 +499,6 @@ BrowserWorld::Draw() {
 
   m.device->ProcessEvents();
   m.context->Update();
-  bool relayoutWidgets = false;
-  m.UpdateControllers(relayoutWidgets);
   m.externalVR->PullBrowserState();
   if (m.exitImmersiveRequested && m.externalVR->IsPresenting()) {
     m.externalVR->StopPresenting();
@@ -510,6 +508,8 @@ BrowserWorld::Draw() {
   if (m.externalVR->IsPresenting()) {
     DrawImmersive();
   } else {
+    bool relayoutWidgets = false;
+    m.UpdateControllers(relayoutWidgets);
     if (relayoutWidgets) {
       UpdateVisibleWidgets();
     }
@@ -756,7 +756,7 @@ BrowserWorld::DrawImmersive() {
    */
   m.device->StartFrame();
   VRB_GL_CHECK(glDepthMask(GL_FALSE));
-  m.externalVR->RequestFrame(m.device->GetHeadTransform());
+  m.externalVR->RequestFrame(m.device->GetHeadTransform(), m.controllers->GetControllers());
   int32_t surfaceHandle = 0;
   device::EyeRect leftEye, rightEye;
   m.externalVR->GetFrameResult(surfaceHandle, leftEye, rightEye);

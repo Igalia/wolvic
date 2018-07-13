@@ -137,7 +137,7 @@ DeviceDelegateNoAPI::SetClipPlanes(const float aNear, const float aFar) {
 void
 DeviceDelegateNoAPI::SetControllerDelegate(ControllerDelegatePtr& aController) {
   m.controller = aController;
-  m.controller->CreateController(0, -1);
+  m.controller->CreateController(0, -1, "");
   m.controller->SetEnabled(kControllerIndex, true);
 }
 
@@ -235,7 +235,7 @@ DeviceDelegateNoAPI::TouchEvent(const bool aDown, const float aX, const float aY
     return;
   }
   if (aDown != m.clicked) {
-    m.controller->SetButtonState(kControllerIndex, ControllerDelegate::BUTTON_TRIGGER, aDown);
+    m.controller->SetButtonState(kControllerIndex, ControllerDelegate::BUTTON_TRIGGER, 0, aDown, aDown);
     m.clicked = aDown;
   }
   const float viewportWidth = m.camera->GetViewportWidth();

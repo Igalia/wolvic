@@ -24,12 +24,16 @@ public:
     BUTTON_TOUCHPAD  = 1 << 1,
     BUTTON_MENU      = 1 << 2,
   };
-  virtual void CreateController(const int32_t aControllerIndex, const int32_t aModelIndex) = 0;
+
+  virtual void CreateController(const int32_t aControllerIndex, const int32_t aModelIndex, const std::string& aImmersiveName) = 0;
   virtual void DestroyController(const int32_t aControllerIndex) = 0;
   virtual void SetEnabled(const int32_t aControllerIndex, const bool aEnabled) = 0;
   virtual void SetVisible(const int32_t aControllerIndex, const bool aVisible) = 0;
   virtual void SetTransform(const int32_t aControllerIndex, const vrb::Matrix& aTransform) = 0;
-  virtual void SetButtonState(const int32_t aControllerIndex, const int32_t aWhichButton, const bool aPressed) = 0;
+  virtual void SetButtonCount(const int32_t aControllerIndex, const uint32_t aNumButtons) = 0;
+  virtual void SetButtonState(const int32_t aControllerIndex, const Button aWhichButton, const int32_t aImmersiveIndex, const bool aPressed, const bool aTouched, const float aImmersiveTrigger = -1.0f) = 0;
+  virtual void SetAxes(const int32_t aControllerIndex, const float* aData, const uint32_t aLength) = 0;
+  virtual void SetLeftHanded(const int32_t aControllerIndex, const bool aLeftHanded) = 0;
   virtual void SetTouchPosition(const int32_t aControllerIndex, const float aTouchX, const float aTouchY) = 0;
   virtual void EndTouch(const int32_t aControllerIndex) = 0;
   virtual void SetScrolledDelta(const int32_t aControllerIndex, const float aScrollDeltaX, const float aScrollDeltaY) = 0;

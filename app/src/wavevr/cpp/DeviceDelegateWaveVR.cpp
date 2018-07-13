@@ -137,10 +137,10 @@ struct DeviceDelegateWaveVR::State {
 
       float left, right, top, bottom;
       WVR_GetClippingPlaneBoundary(eye, &left, &right, &top, &bottom);
-      const float fovLeft = atan(left / near) * toDegrees * 0.5f;
+      const float fovLeft = atan(-left / near) * toDegrees * 0.5f;
       const float fovRight = atan(right / near) * toDegrees * 0.5f;
       const float fovTop = atan(top / near) * toDegrees * 0.5f;
-      const float fovBottom = atan(bottom / near) * toDegrees * 0.5f;
+      const float fovBottom = atan(-bottom / near) * toDegrees * 0.5f;
       immersiveDisplay->SetFieldOfView(deviceEye, fovLeft, fovRight, fovTop, fovBottom);
     }
   }
@@ -191,21 +191,32 @@ struct DeviceDelegateWaveVR::State {
         delegate->SetVisible(index, true);
       }
 
-      delegate->SetButtonState(index, ControllerDelegate::BUTTON_TRIGGER,
-                               WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Bumper));
-      delegate->SetButtonState(index, ControllerDelegate::BUTTON_TOUCHPAD,
-                               WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Touchpad));
-      delegate->SetButtonState(index, ControllerDelegate::BUTTON_MENU,
-                               WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Menu));
+      const bool bumperPressed = WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Bumper);
+      const bool touchpadPressed = WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Touchpad);
+      const bool touchpadTouched = WVR_GetInputTouchState(controller.type, WVR_InputId_Alias1_Touchpad);
+      const bool menuPressed = WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Menu);
 
-      if (WVR_GetInputTouchState(controller.type, WVR_InputId_Alias1_Touchpad)) {
+      delegate->SetButtonCount(index, 3);
+      delegate->SetButtonState(index, ControllerDelegate::BUTTON_TRIGGER, 0, bumperPressed, bumperPressed);
+      delegate->SetButtonState(index, ControllerDelegate::BUTTON_TOUCHPAD, 1, touchpadPressed, touchpadTouched);
+      delegate->SetButtonState(index, ControllerDelegate::BUTTON_MENU, 2, menuPressed, menuPressed);
+
+      const int32_t kNumAxes = 2;
+      float immersiveAxes[kNumAxes] = { 0.0f, 0.0f };
+
+      if (touchpadTouched) {
         WVR_Axis_t axis = WVR_GetInputAnalogAxis(controller.type, WVR_InputId_Alias1_Touchpad);
         delegate->SetTouchPosition(index, axis.x, -axis.y);
+        immersiveAxes[0] = axis.x;
+        immersiveAxes[1] = -axis.y;
         controllers[index].touched = true;
       } else if (controllers[index].touched) {
         controllers[index].touched = false;
         delegate->EndTouch(index);
       }
+
+      delegate->SetAxes(index, immersiveAxes, kNumAxes);
+
     }
   }
 };
@@ -281,7 +292,7 @@ DeviceDelegateWaveVR::SetControllerDelegate(ControllerDelegatePtr& aController) 
     return;
   }
   for (int32_t index = 0; index < kMaxControllerCount; index++) {
-    m.delegate->CreateController(index, 0);
+    m.delegate->CreateController(index, 0, "HTC Vive Focus Controller");
   }
 }
 

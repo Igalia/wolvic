@@ -216,9 +216,14 @@ struct DeviceDelegateSVR::State {
 
     svrControllerState& state = aController == kHeadControllerId ? headControllerState : controllerState;
 
-    controller->SetButtonState(aController, ControllerDelegate::BUTTON_TRIGGER, state.buttonState & svrControllerButton::PrimaryIndexTrigger);
-    controller->SetButtonState(aController, ControllerDelegate::BUTTON_TOUCHPAD, state.buttonState & svrControllerButton::PrimaryThumbstick);
-    controller->SetButtonState(aController, ControllerDelegate::BUTTON_MENU, state.buttonState & svrControllerButton::Start);
+    controller->SetButtonCount(aController, 3);
+    const bool triggerPressed = (bool)(state.buttonState & svrControllerButton::PrimaryIndexTrigger);
+    const bool touchpadPressed = (bool)(state.buttonState & svrControllerButton::PrimaryThumbstick);
+    const bool touchpadTouched = (bool) state.isTouching;
+    const bool menuPressed = (bool)(state.buttonState & svrControllerButton::Start);
+    controller->SetButtonState(aController, ControllerDelegate::BUTTON_TRIGGER, 0, triggerPressed, triggerPressed, controllerState.analog1D[0]);
+    controller->SetButtonState(aController, ControllerDelegate::BUTTON_TOUCHPAD, 1, touchpadPressed, touchpadTouched);
+    controller->SetButtonState(aController, ControllerDelegate::BUTTON_MENU, 2, menuPressed, menuPressed);
 
     if (aController == kHeadControllerId) {
       // Workaround for repeated KEY_DOWN events bug in ODG
@@ -230,7 +235,7 @@ struct DeviceDelegateSVR::State {
   void FallbackToHeadTrackingInput(const vrb::Matrix & head) {
     if (!headControllerCreated || !usingHeadTrackingInput) {
       if (!headControllerCreated) {
-        controller->CreateController(kHeadControllerId, -1);
+        controller->CreateController(kHeadControllerId, -1, "");
         headControllerCreated = true;
       }
       controller->SetEnabled(kHeadControllerId, true);
@@ -247,7 +252,7 @@ struct DeviceDelegateSVR::State {
     }
     if (headControllerState.isTouching) {
       controller->SetTouchPosition(kHeadControllerId, headControllerState.analog2D[0].x, headControllerState.analog2D[0].y);
-      headControllerState.isTouching = false;
+      headControllerState.isTouching = 0;
     } else {
       controller->EndTouch(kHeadControllerId);
     }
@@ -270,7 +275,7 @@ struct DeviceDelegateSVR::State {
 
     if (usingHeadTrackingInput || !controllerCreated) {
       if (!controllerCreated) {
-        controller->CreateController(kControllerId, 0);
+        controller->CreateController(kControllerId, 0, "ODG Controller");
         controllerCreated = true;
       }
       if (usingHeadTrackingInput) {
@@ -283,15 +288,19 @@ struct DeviceDelegateSVR::State {
     const svrQuaternion& rotation = controllerState.rotation;
     vrb::Quaternion quat(-rotation.x, -rotation.y, rotation.z, rotation.w);
     controllerTransform = vrb::Matrix::Rotation(quat);
-    controllerTransform = elbow->GetTransform(ElbowModel::HandEnum::Right, head,
-                                              controllerTransform);
+    controllerTransform = elbow->GetTransform(ElbowModel::HandEnum::Right, head, controllerTransform);
     controller->SetTransform(kControllerId, controllerTransform);
     SetButtonState(kControllerId);
+
     if (controllerState.isTouching) {
       controller->SetTouchPosition(kControllerId, controllerState.analog2D[0].x, controllerState.analog2D[0].y);
     } else {
       controller->EndTouch(kControllerId);
     }
+
+    const int kNumAxes = 3;
+    float immersiveAxes[kNumAxes] = { controllerState.analog2D[0].x, controllerState.analog2D[0].y, controllerState.analog1D[0]};
+    controller->SetAxes(kControllerId, immersiveAxes, kNumAxes);
   }
 };
 
@@ -584,7 +593,7 @@ void
 DeviceDelegateSVR::UpdateTrackpad(float x, float y) {
   m.headControllerState.analog2D[0].x = x;
   m.headControllerState.analog2D[0].y = y;
-  m.headControllerState.isTouching = true;
+  m.headControllerState.isTouching = 1;
 }
 
 void

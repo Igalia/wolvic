@@ -198,6 +198,7 @@ struct DeviceDelegateOculusVR::State {
         } else {
           hand = ElbowModel::HandEnum::Right;
         }
+        controller->SetLeftHanded(0, hand == ElbowModel::HandEnum::Left);
         controller->SetEnabled(0, true);
         controller->SetVisible(0, true);
         return;
@@ -238,18 +239,26 @@ struct DeviceDelegateOculusVR::State {
     vrapi_GetCurrentInputState(ovr, controllerID, &controllerState.Header);
 
     const bool triggerPressed = (controllerState.Buttons & ovrButton_A) != 0;
-    const bool touchpadPressed = (controllerState.Buttons & ovrButton_Enter) != 0;
-    controller->SetButtonState(0, ControllerDelegate::BUTTON_TRIGGER, triggerPressed);
-    controller->SetButtonState(0, ControllerDelegate::BUTTON_TOUCHPAD, touchpadPressed);
+    const bool trackpadPressed = (controllerState.Buttons & ovrButton_Enter) != 0;
+    const bool trackpadTouched = (bool) controllerState.TrackpadStatus;
+    controller->SetButtonState(0, ControllerDelegate::BUTTON_TRIGGER, 0, triggerPressed, triggerPressed);
+    controller->SetButtonState(0, ControllerDelegate::BUTTON_TOUCHPAD, 1, trackpadPressed, trackpadTouched);
 
-    float scrollX = (controllerState.TrackpadPosition.x / (float)controllerCapabilities.TrackpadMaxX) * 5.0f;
-    float scrollY = (controllerState.TrackpadPosition.y / (float)controllerCapabilities.TrackpadMaxY) * 5.0f;
-    if (controllerState.TrackpadStatus && !touchpadPressed) {
+    const float trackpadX = controllerState.TrackpadPosition.x / (float)controllerCapabilities.TrackpadMaxX;
+    const float trackpadY = controllerState.TrackpadPosition.y / (float)controllerCapabilities.TrackpadMaxY;
+    float scrollX = trackpadX * 5.0f;
+    float scrollY = trackpadY * 5.0f;
+    if (trackpadTouched && !trackpadPressed) {
       controller->SetTouchPosition(0, scrollX, scrollY);
     } else {
       controller->SetTouchPosition(0, scrollX, scrollY);
       controller->EndTouch(0);
     }
+
+    const int32_t kNumAxes = 2;
+    float axes[kNumAxes] = { trackpadTouched ? trackpadX * 2.0f - 1.0f : 0.0f,
+                             trackpadTouched ? trackpadY * 2.0f - 1.0f : 0.0f };
+    controller->SetAxes(0, axes, kNumAxes);
   }
 };
 
@@ -288,7 +297,7 @@ DeviceDelegateOculusVR::RegisterImmersiveDisplay(ImmersiveDisplayPtr aDisplay) {
   }
 
   m.immersiveDisplay->SetDeviceName("Oculus");
-  m.immersiveDisplay->SetCapabilityFlags(device::Position | device::Orientation | device::Present);
+  m.immersiveDisplay->SetCapabilityFlags(device::Orientation | device::Present);
   m.immersiveDisplay->SetEyeResolution(m.renderWidth, m.renderHeight);
   m.immersiveDisplay->CompleteEnumeration();
 
@@ -326,7 +335,8 @@ DeviceDelegateOculusVR::SetClipPlanes(const float aNear, const float aFar) {
 void
 DeviceDelegateOculusVR::SetControllerDelegate(ControllerDelegatePtr& aController) {
   m.controller = aController;
-  m.controller->CreateController(0, 0);
+  m.controller->CreateController(0, 0, "Gear VR Remote Controller");
+  m.controller->SetButtonCount(0, 2);
 }
 
 void
@@ -393,7 +403,7 @@ DeviceDelegateOculusVR::StartFrame() {
   m.cameras[VRAPI_EYE_RIGHT]->SetHeadTransform(head);
 
   if (m.immersiveDisplay && m.renderMode == device::RenderMode::StandAlone) {
-    m.immersiveDisplay->SetEyeOffset(device::Eye::Left, -ipd * 0.5, 0.f, 0.f);
+    m.immersiveDisplay->SetEyeOffset(device::Eye::Left, -ipd * 0.5f, 0.f, 0.f);
     m.immersiveDisplay->SetEyeOffset(device::Eye::Right, ipd * 0.5f, 0.f, 0.f);
     device::CapabilityFlags caps = device::Orientation | device::Present;
     if (m.predictedTracking.Status & VRAPI_TRACKING_STATUS_POSITION_TRACKED) {

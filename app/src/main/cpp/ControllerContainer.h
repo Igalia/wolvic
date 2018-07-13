@@ -32,12 +32,15 @@ public:
   std::vector<Controller>& GetControllers();
   const std::vector<Controller>& GetControllers() const;
   // crow::ControllerDelegate interface
-  void CreateController(const int32_t aControllerIndex, const int32_t aModelIndex) override;
+  void CreateController(const int32_t aControllerIndex, const int32_t aModelIndex, const std::string& aImmersiveName) override;
   void DestroyController(const int32_t aControllerIndex) override;
   void SetEnabled(const int32_t aControllerIndex, const bool aEnabled) override;
   void SetVisible(const int32_t aControllerIndex, const bool aVisible) override;
   void SetTransform(const int32_t aControllerIndex, const vrb::Matrix& aTransform) override;
-  void SetButtonState(const int32_t aControllerIndex, const int32_t aWhichButton, const bool aPressed) override;
+  void SetButtonCount(const int32_t aControllerIndex, const uint32_t aNumButtons) override;
+  void SetButtonState(const int32_t aControllerIndex, const Button aWhichButton, const int32_t aImmersiveIndex, const bool aPressed, const bool aTouched, const float aImmersiveTrigger = -1.0f) override;
+  void SetAxes(const int32_t aControllerIndex, const float* aData, const uint32_t aLength) override;
+  void SetLeftHanded(const int32_t aControllerIndex, const bool aLeftHanded) override;
   void SetTouchPosition(const int32_t aControllerIndex, const float aTouchX, const float aTouchY) override;
   void EndTouch(const int32_t aControllerIndex) override;
   void SetScrolledDelta(const int32_t aControllerIndex, const float aScrollDeltaX, const float aScrollDeltaY) override;

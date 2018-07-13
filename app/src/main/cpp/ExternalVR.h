@@ -7,10 +7,12 @@
 #define VRBROWSER_EXTERNALVR_H
 
 #include "vrb/MacroUtils.h"
+#include "Controller.h"
 #include "DeviceDelegate.h"
 #include "Device.h"
 #include <memory>
 #include <string>
+#include <vector>
 
 namespace mozilla { namespace gfx { struct VRExternalShmem; } }
 
@@ -38,7 +40,7 @@ public:
   bool IsFirstPresentingFrame() const;
   void HandleFirstPresentingFrame();
   bool IsPresenting() const;
-  void RequestFrame(const vrb::Matrix& aHeadTransform);
+  void RequestFrame(const vrb::Matrix& aHeadTransform, const std::vector<Controller>& aControllers);
   void GetFrameResult(int32_t& aSurfaceHandle, device::EyeRect& aLeftEye, device::EyeRect& aRightEye) const;
   void StopPresenting();
   void CompleteEnumeration() override;

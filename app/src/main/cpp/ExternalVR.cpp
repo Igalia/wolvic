@@ -293,7 +293,7 @@ ExternalVR::IsPresenting() const {
 }
 
 void
-ExternalVR::RequestFrame(const vrb::Matrix& aHeadTransform) {
+ExternalVR::RequestFrame(const vrb::Matrix& aHeadTransform, const std::vector<Controller>& aControllers) {
   const vrb::Matrix inverseHeadTransform = aHeadTransform.Inverse();
   vrb::Quaternion quaternion(inverseHeadTransform);
   vrb::Vector translation = aHeadTransform.GetTranslation();
@@ -310,6 +310,34 @@ ExternalVR::RequestFrame(const vrb::Matrix& aHeadTransform) {
          sizeof(m.system.sensorState.leftViewMatrix));
   memcpy(&(m.system.sensorState.rightViewMatrix), rightView.Data(),
          sizeof(m.system.sensorState.rightViewMatrix));
+
+
+  memset(m.system.controllerState, 0, sizeof(m.system.controllerState));
+  for (int i = 0; i < aControllers.size(); ++i) {
+    const Controller& controller = aControllers[i];
+    if (controller.immersiveName.empty() || !controller.enabled) {
+      continue;
+    }
+    mozilla::gfx::VRControllerState& immersiveController = m.system.controllerState[i];
+    memcpy(immersiveController.controllerName, controller.immersiveName.c_str(), controller.immersiveName.size() + 1);
+    immersiveController.numButtons = controller.numButtons;
+    immersiveController.buttonPressed = controller.immersivePressedState;
+    immersiveController.buttonTouched = controller.immersiveTouchedState;
+    for (int i = 0; i< controller.numButtons; ++i) {
+      immersiveController.triggerValue[i] = controller.immersiveTriggerValues[i];
+    }
+    immersiveController.numAxes = controller.numAxes;
+    for (int i = 0; i< controller.numAxes; ++i) {
+      immersiveController.axisValue[i] = controller.immersiveAxes[i];
+    }
+    immersiveController.hand = controller.leftHanded ? mozilla::gfx::ControllerHand::Left : mozilla::gfx::ControllerHand::Right;
+
+    immersiveController.flags = mozilla::gfx::ControllerCapabilityFlags::Cap_Orientation;
+    immersiveController.isOrientationValid = true;
+    vrb::Quaternion quaternion(controller.transformMatrix);
+    quaternion = quaternion.Inverse();
+    memcpy(&(immersiveController.pose.orientation), quaternion.Data(), sizeof(immersiveController.pose.orientation));
+  }
 
   PushSystemState();
   Wait wait(m.data.browserMutex, m.data.browserCond);

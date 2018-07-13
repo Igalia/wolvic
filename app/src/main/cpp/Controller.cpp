@@ -13,15 +13,9 @@ using namespace vrb;
 
 namespace crow {
 
-Controller::Controller() :
-    index(-1), enabled(false), widget(0),
-    pointerX(0.0f), pointerY(0.0f),
-    buttonState(0), lastButtonState(0),
-    touched(false), wasTouched(false),
-    touchX(0.0f), touchY(0.0f),
-    lastTouchX(0.0f), lastTouchY(0.0f),
-    scrollDeltaX(0.0f), scrollDeltaY(0.0f),
-    transformMatrix(Matrix::Identity()) {}
+Controller::Controller() { 
+  Reset();
+}
 
 Controller::Controller(const Controller& aController) {
   *this = aController;
@@ -50,6 +44,14 @@ Controller::operator=(const Controller& aController) {
   scrollDeltaY = aController.scrollDeltaY;
   transform = aController.transform;
   transformMatrix = aController.transformMatrix;
+  immersiveName = aController.immersiveName;
+  immersivePressedState = aController.immersivePressedState;
+  immersiveTouchedState = aController.immersiveTouchedState;
+  memcpy(immersiveTriggerValues, aController.immersiveTriggerValues, sizeof(immersiveTriggerValues));
+  numButtons = aController.numButtons;
+  memcpy(immersiveAxes, aController.immersiveAxes, sizeof(immersiveAxes));
+  numAxes = aController.numAxes;
+  leftHanded = aController.leftHanded;
   return *this;
 }
 
@@ -68,6 +70,14 @@ Controller::Reset() {
     transform = nullptr;
   }
   transformMatrix = Matrix::Identity();
+  immersiveName.clear();
+  immersivePressedState = 0;
+  immersiveTouchedState = 0;
+  memset(immersiveTriggerValues, 0, sizeof(immersiveTriggerValues));
+  numButtons = 0;
+  memset(immersiveAxes, 0, sizeof(immersiveAxes));
+  numAxes = 0;
+  leftHanded = false;
 }
 
 } // namespace crow

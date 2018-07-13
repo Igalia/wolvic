@@ -276,26 +276,31 @@ struct DeviceDelegateGoogleVR::State {
         controller.transform = elbow->GetTransform(controller.hand, headMatrix, controller.transform);
       }
       controllerDelegate->SetTransform(index, controller.transform);
+      controllerDelegate->SetLeftHanded(index, controller.hand == ElbowModel::HandEnum::Left);
+      controllerDelegate->SetButtonCount(index, 2);
       // Index 0 is the dummy button so skip it.
       for (int ix = 1; ix < GVR_CONTROLLER_BUTTON_COUNT; ix++) {
         const uint64_t buttonMask = (uint64_t) 0x01 << (ix - 1);
-        bool clicked = gvr_controller_state_get_button_state(controllerState, ix);
+        const bool clicked = gvr_controller_state_get_button_state(controllerState, ix);
         if (ix == GVR_CONTROLLER_BUTTON_CLICK) {
-          bool touched = gvr_controller_state_is_touching(controllerState);
+          const bool touched = gvr_controller_state_is_touching(controllerState);
+          const int kNumImmersiveAxes = 2;
+          float immersiveAxes[kNumImmersiveAxes] = { 0.0f, 0.0f };
           if (touched) {
             gvr_vec2f axes = gvr_controller_state_get_touch_pos(controllerState);
+            immersiveAxes[0] = axes.x * 2.0f - 1.0f;
+            immersiveAxes[1] = axes.y * 2.0f - 1.0f;
             controllerDelegate->SetTouchPosition(index, axes.x, axes.y);
           } else if (touched != controller.touched){
             controllerDelegate->EndTouch(index);
           }
           controller.touched = touched;
-          if (controller.clicked != clicked) {
-            controllerDelegate->SetButtonState(index, ControllerDelegate::BUTTON_TOUCHPAD, clicked);
-          }
           controller.clicked = clicked;
+          controllerDelegate->SetButtonState(index, ControllerDelegate::BUTTON_TOUCHPAD, 0, clicked, touched);
+          controllerDelegate->SetAxes(index, immersiveAxes, kNumImmersiveAxes);
         }
         else if (ix == GVR_CONTROLLER_BUTTON_APP) {
-          controllerDelegate->SetButtonState(index, ControllerDelegate::BUTTON_MENU, clicked);
+          controllerDelegate->SetButtonState(index, ControllerDelegate::BUTTON_MENU, 1, clicked, clicked);
         }
       }
     }
@@ -411,7 +416,7 @@ DeviceDelegateGoogleVR::SetControllerDelegate(ControllerDelegatePtr& aController
     return;
   }
   for (int32_t index = 0; index < kMaxControllerCount; index++) {
-    m.controllerDelegate->CreateController(index, 0);
+    m.controllerDelegate->CreateController(index, 0, "Daydream Controller");
   }
 }
 

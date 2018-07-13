@@ -154,12 +154,13 @@ ControllerContainer::GetControllers() const {
 // crow::ControllerDelegate interface
 
 void
-ControllerContainer::CreateController(const int32_t aControllerIndex, const int32_t aModelIndex) {
+ControllerContainer::CreateController(const int32_t aControllerIndex, const int32_t aModelIndex, const std::string& aImmersiveName) {
   if ((size_t)aControllerIndex >= m.list.size()) {
     m.list.resize((size_t)aControllerIndex + 1);
   }
   Controller& controller = m.list[aControllerIndex];
   controller.index = aControllerIndex;
+  controller.immersiveName = aImmersiveName;
   if (!controller.transform && (aModelIndex >= 0)) {
     m.SetUpModelsGroup(aModelIndex);
     CreationContextPtr create = m.context.lock();
@@ -221,15 +222,61 @@ ControllerContainer::SetTransform(const int32_t aControllerIndex, const vrb::Mat
 }
 
 void
-ControllerContainer::SetButtonState(const int32_t aControllerIndex, const int32_t aWhichButton, const bool aPressed) {
+ControllerContainer::SetButtonCount(const int32_t aControllerIndex, const uint32_t aNumButtons) {
   if (!m.Contains(aControllerIndex)) {
     return;
   }
+  m.list[aControllerIndex].numButtons = aNumButtons;
+}
+
+void
+ControllerContainer::SetButtonState(const int32_t aControllerIndex, const Button aWhichButton, const int32_t aImmersiveIndex, const bool aPressed, const bool aTouched, const float aImmersiveTrigger) {
+  if (!m.Contains(aControllerIndex)) {
+    return;
+  }
+
+  const int32_t immersiveButtonMask = 1 << aImmersiveIndex;
+
   if (aPressed) {
     m.list[aControllerIndex].buttonState |= aWhichButton;
+    m.list[aControllerIndex].immersivePressedState |= immersiveButtonMask;
   } else {
     m.list[aControllerIndex].buttonState &= ~aWhichButton;
+    m.list[aControllerIndex].immersivePressedState &= ~immersiveButtonMask;
   }
+
+  if (aTouched) {
+    m.list[aControllerIndex].immersiveTouchedState |= immersiveButtonMask;
+  } else {
+    m.list[aControllerIndex].immersiveTouchedState &= ~immersiveButtonMask;
+  }
+
+  float trigger = aImmersiveTrigger;
+  if (trigger < 0.0f) {
+    trigger = aPressed ? 1.0f : 0.0f;
+  }
+  m.list[aControllerIndex].immersiveTriggerValues[aImmersiveIndex] = trigger;
+}
+
+void
+ControllerContainer::SetAxes(const int32_t aControllerIndex, const float* aData, const uint32_t aLength) {
+  if (!m.Contains(aControllerIndex)) {
+    return;
+  }
+
+  m.list[aControllerIndex].numAxes = aLength;
+  for (int i = 0; i < aLength; ++i) {
+    m.list[aControllerIndex].immersiveAxes[i] = aData[i];
+  }
+}
+
+void
+ControllerContainer::SetLeftHanded(const int32_t aControllerIndex, const bool aLeftHanded) {
+  if (!m.Contains(aControllerIndex)) {
+    return;
+  }
+
+  m.list[aControllerIndex].leftHanded = aLeftHanded;
 }
 
 void
