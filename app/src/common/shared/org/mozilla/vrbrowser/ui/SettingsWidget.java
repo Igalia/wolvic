@@ -72,6 +72,7 @@ public class SettingsWidget extends UIWidget {
         });
 
         Switch crashReportingSwitch  = findViewById(R.id.crash_reporting_switch);
+        crashReportingSwitch.setChecked(SettingsStore.getInstance(getContext()).isCrashReportingEnabled());
         crashReportingSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -82,9 +83,9 @@ public class SettingsWidget extends UIWidget {
                 onSettingsCrashReportingChange(b);
             }
         });
-        crashReportingSwitch.setChecked(SettingsStore.getInstance(getContext()).isCrashReportingEnabled());
 
         Switch telemetrySwitch  = findViewById(R.id.telemetry_switch);
+        telemetrySwitch.setChecked(SettingsStore.getInstance(getContext()).isTelemetryEnabled());
         telemetrySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -95,7 +96,6 @@ public class SettingsWidget extends UIWidget {
                 onSettingsTelemetryChange(b);
             }
         });
-        telemetrySwitch.setChecked(SettingsStore.getInstance(getContext()).isTelemetryEnabled());
 
         TextView versionText = findViewById(R.id.versionText);
         try {
