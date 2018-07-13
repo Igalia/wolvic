@@ -97,8 +97,8 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
                     GeckoSession.TrackingProtectionDelegate.CATEGORY_CONTENT);
 
             mRuntime = GeckoRuntime.create(aContext, runtimeSettingsBuilder.build());
-            // PrefsHelper.setPref("dom.vr.enabled", true);
-            // PrefsHelper.setPref("dom.vr.external.enabled", true);
+            PrefsHelper.setPref("dom.vr.enabled", true);
+            PrefsHelper.setPref("dom.vr.external.enabled", true);
             PrefsHelper.setPref("webgl.enable-surface-texture", true);
         } else {
             mRuntime.attachTo(aContext);
