@@ -28,11 +28,11 @@
             android:gravity="center"
             android:text="@string/settings_version"
             android:textColor="@color/white"
-            android:textSize="10sp"
-            android:typeface="sans"
+            android:textSize="@dimen/settings_font_size"
+            android:fontFamily="sans-serif-light"
             android:layout_below="@id/ff_logo_settings"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="5dp"/>
 
         <LinearLayout
             style="?attr/settingsButtonStyle"
@@ -51,7 +51,7 @@
                 android:paddingBottom="10dp"
                 android:text="@string/settings_crash_reporting"
                 android:textColor="@color/white"
-                android:textSize="10sp" />
+                android:textSize="@dimen/settings_font_size" />
 
             <Switch
                 android:id="@+id/crash_reporting_switch"
@@ -81,7 +81,7 @@
                 android:paddingBottom="10dp"
                 android:text="@string/settings_telemetry"
                 android:textColor="@color/white"
-                android:textSize="10sp" />
+                android:textSize="@dimen/settings_font_size" />
 
             <Switch
                 android:id="@+id/telemetry_switch"

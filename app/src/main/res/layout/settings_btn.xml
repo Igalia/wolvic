@@ -15,6 +15,6 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:text="@string/settings_privacy"
-        android:textSize="10sp"
+        android:textSize="@dimen/settings_font_size"
         android:fontFamily="sans-serif-light"/>
 </merge>

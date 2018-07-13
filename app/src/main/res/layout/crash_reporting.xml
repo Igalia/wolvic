@@ -9,10 +9,10 @@
 
         <ImageView
             android:id="@+id/ff_logo_settings"
-            android:layout_marginTop="15dp"
             android:layout_width="67dp"
             android:layout_height="67dp"
             android:layout_gravity="center"
+            android:layout_marginTop="20dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ff_logo" />
 
@@ -20,13 +20,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:gravity="center"
             android:text="@string/crash_reporting_restart"
             android:textColor="@color/fog"
             android:textSize="22sp"
-            android:typeface="sans"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:typeface="sans" />
 
         <TextView
             android:layout_width="wrap_content"

@@ -40,9 +40,10 @@
 
     <!-- Settings Dialog -->
     <item name="settings_world_y" format="float" type="dimen">1.6</item>
-    <item name="settings_world_z" format="float" type="dimen">-2.2</item>
+    <item name="settings_world_z" format="float" type="dimen">-1.8</item>
     <dimen name="settings_width">450dp</dimen>
     <dimen name="settings_height">350dp</dimen>
+    <dimen name="settings_font_size">11sp</dimen>
 
     <!-- Crash Reporting Dialog -->
     <item name="crash_world_z" format="float" type="dimen">0.1</item>
