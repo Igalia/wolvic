@@ -276,12 +276,13 @@ ExternalVR::IsFirstPresentingFrame() const {
 
 void
 ExternalVR::HandleFirstPresentingFrame() {
-  m.system.displayState.pausingCompositor = true;
+  // Set mSuppressFrames to avoid a deadlock between the compositor sync pause call and the gfxVRExternal SubmitFrame result wait.
+  m.system.displayState.mSuppressFrames = true;
   m.system.displayState.mLastSubmittedFrameId = 0;
   m.lastFrameId = 0;
   PushSystemState();
   VRBrowser::PauseCompositor();
-  m.system.displayState.pausingCompositor = false;
+  m.system.displayState.mSuppressFrames = false;
   PushSystemState();
 }
 

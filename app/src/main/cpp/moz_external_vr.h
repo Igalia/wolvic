@@ -262,13 +262,13 @@ struct VRDisplayState
 
 #if defined(__ANDROID__)
   bool shutdown;
-  bool pausingCompositor;
 #endif // defined(__ANDROID__)
   char mDisplayName[kVRDisplayNameMaxLen];
   VRDisplayCapabilityFlags mCapabilityFlags;
   VRFieldOfView mEyeFOV[VRDisplayState::NumEyes];
   Point3D_POD mEyeTranslation[VRDisplayState::NumEyes];
   IntSize_POD mEyeResolution;
+  bool mSuppressFrames;
   bool mIsConnected;
   bool mIsMounted;
   FloatSize_POD mStageSize;
