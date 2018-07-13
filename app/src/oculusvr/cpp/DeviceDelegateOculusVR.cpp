@@ -119,7 +119,7 @@ struct DeviceDelegateOculusVR::State {
     float fovX = vrapi_GetSystemPropertyFloat(&java, VRAPI_SYS_PROP_SUGGESTED_EYE_FOV_DEGREES_X);
     float fovY = vrapi_GetSystemPropertyFloat(&java, VRAPI_SYS_PROP_SUGGESTED_EYE_FOV_DEGREES_Y);
 
-    ovrMatrix4f projection = ovrMatrix4f_CreateProjectionFov(fovX, fovX, 0.0, 0.0, near, far);
+    ovrMatrix4f projection = ovrMatrix4f_CreateProjectionFov(fovX, fovY, 0.0, 0.0, near, far);
     auto matrix = vrb::Matrix::FromRowMajor(projection.M);
     for (int i = 0; i < VRAPI_EYE_COUNT; ++i) {
       cameras[i]->SetPerspective(matrix);
