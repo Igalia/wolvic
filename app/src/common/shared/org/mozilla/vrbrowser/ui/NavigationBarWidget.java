@@ -7,12 +7,13 @@ package org.mozilla.vrbrowser.ui;
 
 import android.content.Context;
 import android.graphics.PointF;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.mozilla.geckoview.GeckoResponse;
+import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.R;
@@ -356,8 +357,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     @Override
-    public void onNewSession(GeckoSession aSession, String aUrl, GeckoResponse<GeckoSession> aResponse) {
-        aResponse.respond(null);
+    public GeckoResult<GeckoSession> onNewSession(@NonNull GeckoSession aSession, @NonNull String aUri) {
+        return null;
     }
 
     public void release() {
@@ -393,12 +394,12 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     @Override
-    public void onLoadRequest(GeckoSession aSession, String aUri, int target, int flags, GeckoResponse<Boolean> aResponse) {
+    public GeckoResult<Boolean> onLoadRequest(GeckoSession aSession, String aUri, int target, int flags) {
         if (mURLBar != null) {
             Log.e(LOGTAG, "Got onLoadUri: " + aUri);
             mURLBar.setURL(aUri);
         }
-        aResponse.respond(null);
+        return null;
     }
 
     // Progress Listener

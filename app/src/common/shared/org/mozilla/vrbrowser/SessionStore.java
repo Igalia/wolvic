@@ -15,6 +15,7 @@ import android.view.inputmethod.ExtractedTextRequest;
 
 import org.mozilla.gecko.PrefsHelper;
 import org.mozilla.geckoview.GeckoResponse;
+import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoRuntimeSettings;
 import org.mozilla.geckoview.GeckoSession;
@@ -462,7 +463,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     String mLastValidURI;
 
     @Override
-    public void onLoadRequest(GeckoSession aSession, String aUri, int target, int flags, GeckoResponse<Boolean> aResponse) {
+    public GeckoResult<Boolean> onLoadRequest(GeckoSession aSession, String aUri, int target, int flags) {
         boolean isErrorPage = false;
         if (aUri.startsWith(NET_ERROR)) {
             isErrorPage = true;
@@ -475,7 +476,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
 
         if (isErrorPage) {
             aSession.loadUri(ERROR_URL);
-            aResponse.respond(true);
+            return GeckoResult.fromValue(true);
 
         } else if (aUri.equalsIgnoreCase(ERROR_URL)) {
             int parseStartPos = 0;
@@ -517,17 +518,17 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             mLastValidURI = aUri;
         }
 
-        aResponse.respond(null);
+        return null;
     }
 
     @Override
-    public void onNewSession(GeckoSession aSession, String aUri, GeckoResponse<GeckoSession> aResponse) {
+    public GeckoResult<GeckoSession> onNewSession(@NonNull GeckoSession aSession, @NonNull String aUri) {
         // Fixme: Remove this and uncomment the old code when we support multiple tabs or windows.
         // Until the carrousel is ready, we need to stack the new link in the current session instead of setting a different session.
         if (mCurrentSession != null) {
             mCurrentSession.loadUri(aUri);
         }
-        aResponse.respond(null);
+        return null;
         /*
         Log.e(LOGTAG,"Got onNewSession: " + aUri);
         int sessionId = createSession();
