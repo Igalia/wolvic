@@ -583,6 +583,13 @@ BrowserWorld::UpdateWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement
       return;
   }
 
+  int32_t oldWidth = 0;
+  int32_t oldHeight = 0;
+  if (widget->GetPlacement()) {
+      oldWidth = widget->GetPlacement()->width;
+      oldHeight = widget->GetPlacement()->height;
+  }
+
   widget->SetPlacement(aPlacement);
   widget->ToggleWidget(aPlacement->visible);
   widget->SetSurfaceTextureSize((int32_t)(ceilf(aPlacement->width * aPlacement->density)),
@@ -606,7 +613,7 @@ BrowserWorld::UpdateWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement
     newWorldWidth = aPlacement->width * kWorldDPIRatio;
   }
 
-  if (newWorldWidth != worldWidth) {
+  if (newWorldWidth != worldWidth || oldWidth != aPlacement->width || oldHeight != aPlacement->height) {
     widget->SetWorldWidth(newWorldWidth);
     widget->GetWorldSize(worldWidth, worldHeight);
   }
