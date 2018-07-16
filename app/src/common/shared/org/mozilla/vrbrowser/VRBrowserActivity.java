@@ -649,6 +649,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             fadeOutWorld();
             // TODO: Fade out the browser window. Waiting for https://github.com/MozillaReality/FirefoxReality/issues/77
 
+            SessionStore.get().getCurrentSession().setActive(false);
             if (mPreviousSessionId == SessionStore.NO_SESSION_ID) {
                 mPreviousSessionId = SessionStore.get().getCurrentSessionId();
 
@@ -662,15 +663,18 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 int sessionId = SessionStore.get().getCurrentSessionId();
                 SessionStore.get().setCurrentSession(mPreviousSessionId);
                 mPreviousSessionId = sessionId;
+                SessionStore.get().getCurrentSession().setActive(true);
             }
 
         } else {
             fadeInWorld();
             // TODO: Fade in the browser window. Waiting for https://github.com/MozillaReality/FirefoxReality/issues/77
 
+            SessionStore.get().getCurrentSession().setActive(false);
             int sessionId = SessionStore.get().getCurrentSessionId();
             SessionStore.get().setCurrentSession(mPreviousSessionId);
             mPreviousSessionId = sessionId;
+            SessionStore.get().getCurrentSession().setActive(true);
         }
     }
 
@@ -692,6 +696,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             mPreviousSessionId = SessionStore.NO_SESSION_ID;
 
             SessionStore.get().removeSession(privateSessionId);
+            SessionStore.get().getCurrentSession().setActive(true);
         }
     }
 
