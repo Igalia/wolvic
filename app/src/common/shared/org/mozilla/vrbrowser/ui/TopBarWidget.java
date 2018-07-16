@@ -125,10 +125,22 @@ public class TopBarWidget extends UIWidget implements SessionStore.SessionChange
     @Override
     public void onCurrentSessionChange(GeckoSession aSession, int aId) {
         boolean isPrivateMode  = aSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
-        if (isPrivateMode)
+        if (isPrivateMode) {
+            show();
             setPrivateBrowsingEnabled(true);
-        else
+        } else {
+            hide();
             setPrivateBrowsingEnabled(false);
+        }
+    }
+
+    public void show() {
+        getPlacement().visible = true;
+        mWidgetManager.addWidget(this);
+    }
+
+    public void hide() {
+        mWidgetManager.removeWidget(this);
     }
 
     // WidgetManagerDelegate.Listener

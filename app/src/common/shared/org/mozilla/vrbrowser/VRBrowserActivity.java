@@ -173,7 +173,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mTopBar.setBrowserWidget(mBrowserWidget);
         mTopBar.setDelegate(this);
 
-        addWidgets(Arrays.<Widget>asList(mBrowserWidget, mNavigationBar, mKeyboard, mTopBar));
+        addWidgets(Arrays.<Widget>asList(mBrowserWidget, mNavigationBar, mKeyboard));
     }
 
     @Override
