@@ -55,7 +55,7 @@ public class SettingsWidget extends UIWidget {
                     mAudio.playSound(AudioEngine.Sound.CLICK);
                 }
 
-                hide();
+                toggle();
             }
         });
 
@@ -123,7 +123,7 @@ public class SettingsWidget extends UIWidget {
         mBackHandler = new Runnable() {
             @Override
             public void run() {
-                hide();
+                toggle();
             }
         };
     }
@@ -141,15 +141,21 @@ public class SettingsWidget extends UIWidget {
         aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.settings_world_z);
     }
 
-    public void show() {
-        getPlacement().visible = true;
-        mWidgetManager.addWidget(this);
-        mWidgetManager.pushBackHandler(mBackHandler);
-    }
+    public void toggle() {
+        if (getPlacement().visible) {
+            getPlacement().visible = false;
+            mWidgetManager.removeWidget(this);
+            mWidgetManager.popBackHandler(mBackHandler);
 
-    public void hide() {
-        mWidgetManager.removeWidget(this);
-        mWidgetManager.popBackHandler(mBackHandler);
+            if (mCrashReportingWidget != null) {
+                mCrashReportingWidget.hide();
+            }
+
+        } else {
+            getPlacement().visible = true;
+            mWidgetManager.addWidget(this);
+            mWidgetManager.pushBackHandler(mBackHandler);
+        }
     }
 
     private void onSettingsCrashReportingChange(boolean isEnabled) {
@@ -174,7 +180,7 @@ public class SettingsWidget extends UIWidget {
         SessionStore.get().setCurrentSession(sessionId);
         SessionStore.get().loadUri(getContext().getString(R.string.private_policy_url));
 
-        hide();
+        toggle();
     }
 
     private void onSettingsReportClick() {
@@ -183,7 +189,7 @@ public class SettingsWidget extends UIWidget {
         SessionStore.get().setCurrentSession(sessionId);
         SessionStore.get().loadUri(getContext().getString(R.string.private_report_url));
 
-        hide();
+        toggle();
     }
 
 }

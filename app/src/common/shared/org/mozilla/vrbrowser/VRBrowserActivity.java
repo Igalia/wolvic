@@ -357,9 +357,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                     }
                     break;
                     case TrayEventSettings: {
-                        if (mSettingsWidget == null)
+                        if (mSettingsWidget == null) {
                             mSettingsWidget = new SettingsWidget(VRBrowserActivity.this);
-                        mSettingsWidget.show();
+                        }
+                        mSettingsWidget.toggle();
                     }
                     break;
                     case TrayEventPrivate: {
