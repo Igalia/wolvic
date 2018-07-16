@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
@@ -16,10 +17,15 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import org.mozilla.geckoview.GeckoRuntimeSettings;
+import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.SessionStore;
 import org.mozilla.vrbrowser.WidgetPlacement;
 import org.mozilla.vrbrowser.audio.AudioEngine;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLEncoder;
 
 public class SettingsWidget extends UIWidget {
     private static final String LOGTAG = "VRB";
@@ -176,18 +182,37 @@ public class SettingsWidget extends UIWidget {
 
     private void onSettingsPrivacyClick() {
         SessionStore.SessionSettings settings = new SessionStore.SessionSettings();
-        int sessionId = SessionStore.get().createSession(settings);
-        SessionStore.get().setCurrentSession(sessionId);
+        GeckoSession session = SessionStore.get().getCurrentSession();
+        if (session == null) {
+            int sessionId = SessionStore.get().createSession(settings);
+            SessionStore.get().setCurrentSession(sessionId);
+        }
+
         SessionStore.get().loadUri(getContext().getString(R.string.private_policy_url));
 
         toggle();
     }
 
     private void onSettingsReportClick() {
+        String url = SessionStore.get().getCurrentUri();
+
         SessionStore.SessionSettings settings = new SessionStore.SessionSettings();
-        int sessionId = SessionStore.get().createSession(settings);
-        SessionStore.get().setCurrentSession(sessionId);
-        SessionStore.get().loadUri(getContext().getString(R.string.private_report_url));
+        GeckoSession session = SessionStore.get().getCurrentSession();
+        if (session == null) {
+            int sessionId = SessionStore.get().createSession(settings);
+            SessionStore.get().setCurrentSession(sessionId);
+        }
+
+        try {
+            // In case the user had no active sessions when reporting just leave the URL field empty
+            url = (url != null) ? URLEncoder.encode(url, "UTF-8") : "";
+
+        } catch (UnsupportedEncodingException e) {
+            Log.e(LOGTAG, "Cannot encode URL: " + url);
+            url = "";
+        }
+
+        SessionStore.get().loadUri(getContext().getString(R.string.private_report_url, url));
 
         toggle();
     }
