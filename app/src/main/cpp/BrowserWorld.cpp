@@ -47,6 +47,12 @@
 #include <array>
 #include <functional>
 
+#define ASSERT_ON_RENDER_THREAD(X)                                          \
+  if (m.context && !m.context->IsOnRenderThread()) {                        \
+    VRB_ERROR("Function: '%s' not called on render thread.", __FUNCTION__); \
+    return X;                                                               \
+  }
+
 using namespace vrb;
 
 namespace {
@@ -339,6 +345,7 @@ BrowserWorld::GetRenderContext() {
 
 void
 BrowserWorld::RegisterDeviceDelegate(DeviceDelegatePtr aDelegate) {
+  ASSERT_ON_RENDER_THREAD();
   DeviceDelegatePtr previousDevice = std::move(m.device);
   m.device = aDelegate;
   if (m.device) {
@@ -364,21 +371,25 @@ BrowserWorld::RegisterDeviceDelegate(DeviceDelegatePtr aDelegate) {
 
 void
 BrowserWorld::Pause() {
+  ASSERT_ON_RENDER_THREAD();
   m.paused = true;
 }
 
 void
 BrowserWorld::Resume() {
+  ASSERT_ON_RENDER_THREAD();
   m.paused = false;
 }
 
 bool
 BrowserWorld::IsPaused() const {
+  ASSERT_ON_RENDER_THREAD(m.paused);
   return m.paused;
 }
 
 void
 BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetManager) {
+  ASSERT_ON_RENDER_THREAD();
   VRB_LOG("BrowserWorld::InitializeJava");
   if (m.context) {
     m.context->InitializeJava(aEnv, aActivity, aAssetManager);
@@ -421,6 +432,7 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
 
 void
 BrowserWorld::InitializeGL() {
+  ASSERT_ON_RENDER_THREAD();
   VRB_LOG("BrowserWorld::InitializeGL");
   if (m.context) {
     if (!m.glInitialized) {
@@ -448,6 +460,7 @@ BrowserWorld::InitializeGL() {
 
 void
 BrowserWorld::ShutdownJava() {
+  ASSERT_ON_RENDER_THREAD();
   VRB_LOG("BrowserWorld::ShutdownJava");
   GeckoSurfaceTexture::ShutdownJava();
   VRBrowser::ShutdownJava();
@@ -460,6 +473,7 @@ BrowserWorld::ShutdownJava() {
 
 void
 BrowserWorld::ShutdownGL() {
+  ASSERT_ON_RENDER_THREAD();
   VRB_LOG("BrowserWorld::ShutdownGL");
   if (!m.glInitialized) {
     return;
@@ -475,6 +489,7 @@ BrowserWorld::ShutdownGL() {
 
 void
 BrowserWorld::Draw() {
+  ASSERT_ON_RENDER_THREAD();
   if (!m.device) {
     VRB_LOG("No device");
     return;
@@ -526,12 +541,14 @@ BrowserWorld::Draw() {
 
 void
 BrowserWorld::SetTemporaryFilePath(const std::string& aPath) {
+  ASSERT_ON_RENDER_THREAD();
   VRB_LOG("Got temp path: %s", aPath.c_str());
   m.context->GetDataCache()->SetCachePath(aPath);
 }
 
 void
 BrowserWorld::SetSurfaceTexture(const std::string& aName, jobject& aSurface) {
+  ASSERT_ON_RENDER_THREAD();
   VRB_LOG("SetSurfaceTexture: %s", aName.c_str());
   WidgetPtr widget = m.FindWidget([=](const WidgetPtr& aWidget) -> bool {
     return aName == aWidget->GetSurfaceTextureName();
@@ -545,6 +562,7 @@ BrowserWorld::SetSurfaceTexture(const std::string& aName, jobject& aSurface) {
 
 void
 BrowserWorld::AddWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement) {
+  ASSERT_ON_RENDER_THREAD();
   if (m.GetWidget(aHandle)) {
     VRB_LOG("Widget with handle %d already added, updating it.", aHandle);
     UpdateWidget(aHandle, aPlacement);
@@ -577,6 +595,7 @@ BrowserWorld::AddWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement) {
 
 void
 BrowserWorld::UpdateWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement) {
+  ASSERT_ON_RENDER_THREAD();
   WidgetPtr widget = m.GetWidget(aHandle);
   if (!widget) {
       VRB_LOG("Can't find Widget with handle: %d", aHandle);
@@ -644,6 +663,7 @@ BrowserWorld::UpdateWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement
 
 void
 BrowserWorld::RemoveWidget(int32_t aHandle) {
+  ASSERT_ON_RENDER_THREAD();
   WidgetPtr widget = m.GetWidget(aHandle);
   if (widget) {
     widget->GetRoot()->RemoveFromParents();
@@ -656,6 +676,7 @@ BrowserWorld::RemoveWidget(int32_t aHandle) {
 
 void
 BrowserWorld::StartWidgetResize(int32_t aHandle) {
+  ASSERT_ON_RENDER_THREAD();
   WidgetPtr widget = m.GetWidget(aHandle);
   if (widget) {
     widget->StartResize();
@@ -664,6 +685,7 @@ BrowserWorld::StartWidgetResize(int32_t aHandle) {
 
 void
 BrowserWorld::FinishWidgetResize(int32_t aHandle) {
+  ASSERT_ON_RENDER_THREAD();
   WidgetPtr widget = m.GetWidget(aHandle);
   if (!widget) {
     return;
@@ -673,6 +695,7 @@ BrowserWorld::FinishWidgetResize(int32_t aHandle) {
 
 void
 BrowserWorld::UpdateVisibleWidgets() {
+  ASSERT_ON_RENDER_THREAD();
   for (const WidgetPtr& widget: m.widgets) {
     if (widget->IsVisible() && !widget->IsResizing()) {
       UpdateWidget(widget->GetHandle(), widget->GetPlacement());
@@ -682,21 +705,25 @@ BrowserWorld::UpdateVisibleWidgets() {
 
 void
 BrowserWorld::FadeOut() {
+  ASSERT_ON_RENDER_THREAD();
   m.fadeBlitter->FadeOut();
 }
 
 void
 BrowserWorld::FadeIn() {
+  ASSERT_ON_RENDER_THREAD();
   m.fadeBlitter->FadeIn();
 }
 
 void
 BrowserWorld::ExitImmersive() {
+  ASSERT_ON_RENDER_THREAD();
   m.exitImmersiveRequested = true;
 }
 
 JNIEnv*
 BrowserWorld::GetJNIEnv() const {
+  ASSERT_ON_RENDER_THREAD(nullptr);
   return m.env;
 }
 
@@ -780,19 +807,20 @@ BrowserWorld::DrawImmersive() {
 
 vrb::TransformPtr
 BrowserWorld::CreateSkyBox(const std::string& basePath) {
+  ASSERT_ON_RENDER_THREAD(nullptr);
   vrb::TransformPtr transform = vrb::Transform::Create(m.create);
   transform->SetTransform(Matrix::Position(vrb::Vector(0.0f, 0.0f, 0.0f)));
 
   LoadTask task = [basePath](CreationContextPtr& aContext) -> GroupPtr {
     std::array<GLfloat, 24> cubeVertices{
-        -1.0f, 1.0f, 1.0f, // 0
-        -1.0f, -1.0f, 1.0f, // 1
-        1.0f, -1.0f, 1.0f, // 2
-        1.0f, 1.0f, 1.0f, // 3
-        -1.0f, 1.0f, -1.0f, // 4
-        -1.0f, -1.0f, -1.0f, // 5
-        1.0f, -1.0f, -1.0f, // 6
-        1.0f, 1.0f, -1.0f, // 7
+      -1.0f,  1.0f,  1.0f, // 0
+      -1.0f, -1.0f,  1.0f, // 1
+       1.0f, -1.0f,  1.0f, // 2
+       1.0f,  1.0f,  1.0f, // 3
+      -1.0f,  1.0f, -1.0f, // 4
+      -1.0f, -1.0f, -1.0f, // 5
+       1.0f, -1.0f, -1.0f, // 6
+       1.0f,  1.0f, -1.0f, // 7
     };
 
     std::array<GLushort, 24> cubeIndices{
@@ -849,6 +877,7 @@ BrowserWorld::CreateSkyBox(const std::string& basePath) {
 
 void
 BrowserWorld::CreateFloor() {
+  ASSERT_ON_RENDER_THREAD();
   vrb::TransformPtr model = Transform::Create(m.create);
   m.loader->LoadModel("FirefoxPlatform2_low.obj", model);
   m.rootOpaque->AddNode(model);
@@ -862,6 +891,7 @@ BrowserWorld::CreateFloor() {
 
 void
 BrowserWorld::CreateTray() {
+  ASSERT_ON_RENDER_THREAD();
   m.tray = Tray::Create(m.create);
   m.tray->Load(m.loader);
   m.rootOpaque->AddNode(m.tray->GetRoot());
@@ -873,12 +903,14 @@ BrowserWorld::CreateTray() {
 
 void
 BrowserWorld::SetTrayVisible(bool visible) const {
+  ASSERT_ON_RENDER_THREAD();
   if (m.tray)
     m.tray->Toggle(visible);
 }
 
 float
 BrowserWorld::DistanceToNode(const vrb::NodePtr& aTargetNode, const vrb::Vector& aPosition) const {
+  ASSERT_ON_RENDER_THREAD(0.0f);
   float result = -1;
   Node::Traverse(aTargetNode, [&](const NodePtr &aNode, const GroupPtr &aTraversingFrom) {
     vrb::TransformPtr transform = std::dynamic_pointer_cast<vrb::Transform>(aNode);

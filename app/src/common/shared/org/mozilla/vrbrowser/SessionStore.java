@@ -87,6 +87,14 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         mSessions = new LinkedHashMap<>();
     }
 
+    public void clearListeners() {
+        mNavigationListeners.clear();
+        mProgressListeners.clear();
+        mContentListeners.clear();
+        mSessionChangeListeners.clear();
+        mTextInputListeners.clear();
+    }
+
     public void setContext(Context aContext) {
         if (mRuntime == null) {
             GeckoRuntimeSettings.Builder runtimeSettingsBuilder = new GeckoRuntimeSettings.Builder();

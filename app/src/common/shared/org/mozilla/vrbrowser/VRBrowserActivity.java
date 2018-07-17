@@ -218,7 +218,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         SettingsStore.getInstance(this).setCurrentSessionId(SessionStore.get().getCurrentSessionId());
         SettingsStore.getInstance(this).setPreviousSessionId(mPreviousSessionId);
-
+        SessionStore.get().clearListeners();
         super.onDestroy();
     }
 
@@ -309,7 +309,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 if (widget != null) {
                     MotionEventGenerator.dispatchScroll(widget, aDevice, aX, aY);
                 } else {
-                    Log.e(LOGTAG, "Failed to find widget: " + aHandle);
+                    Log.e(LOGTAG, "Failed to find widget for scroll event: " + aHandle);
                 }
             }
         });
@@ -391,7 +391,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 if (widget != null) {
                     widget.handleResizeEvent(aWorldWidth, aWorldHeight);
                 } else {
-                    Log.e(LOGTAG, "Failed to find widget: " + aHandle);
+                    Log.e(LOGTAG, "Failed to find widget for resize: " + aHandle);
                 }
             }
         });
@@ -506,7 +506,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     public void addWidget(final Widget aWidget) {
         mWidgets.put(aWidget.getHandle(), aWidget);
         ((View)aWidget).setVisibility(aWidget.getPlacement().visible ? View.VISIBLE : View.GONE);
-
         queueRunnable(new Runnable() {
             @Override
             public void run() {
