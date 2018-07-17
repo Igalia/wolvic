@@ -13,6 +13,7 @@ import android.view.inputmethod.CursorAnchorInfo;
 import android.view.inputmethod.ExtractedText;
 import android.view.inputmethod.ExtractedTextRequest;
 
+import org.mozilla.gecko.GeckoProfile;
 import org.mozilla.gecko.PrefsHelper;
 import org.mozilla.geckoview.GeckoResponse;
 import org.mozilla.geckoview.GeckoResult;
@@ -22,6 +23,10 @@ import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.ui.SettingsStore;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -97,6 +102,8 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
 
     public void setContext(Context aContext) {
         if (mRuntime == null) {
+            // FIXME: Once GeckoView has a prefs API
+            vrPrefsWorkAround(aContext);
             GeckoRuntimeSettings.Builder runtimeSettingsBuilder = new GeckoRuntimeSettings.Builder();
             runtimeSettingsBuilder.javaCrashReportingEnabled(SettingsStore.getInstance(aContext).isCrashReportingEnabled());
             runtimeSettingsBuilder.nativeCrashReportingEnabled(SettingsStore.getInstance(aContext).isCrashReportingEnabled());
@@ -106,9 +113,6 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
                     GeckoSession.TrackingProtectionDelegate.CATEGORY_CONTENT);
 
             mRuntime = GeckoRuntime.create(aContext, runtimeSettingsBuilder.build());
-            PrefsHelper.setPref("dom.vr.enabled", true);
-            PrefsHelper.setPref("dom.vr.external.enabled", true);
-            PrefsHelper.setPref("webgl.enable-surface-texture", true);
         } else {
             mRuntime.attachTo(aContext);
         }
@@ -426,6 +430,22 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             entry.getValue().mSession.setPermissionDelegate(aDelegate);
         }
     }
+
+    private void vrPrefsWorkAround(Context aContext) {
+        File path = GeckoProfile.initFromArgs(aContext, null).getDir();
+        String prefFileName = path.getAbsolutePath() + File.separator + "user.js";
+        Log.i(LOGTAG, "Creating file: " + prefFileName);
+        try (FileOutputStream out = new FileOutputStream(prefFileName)) {
+            out.write("pref(\"dom.vr.enabled\", true);\n".getBytes());
+            out.write("pref(\"dom.vr.external.enabled\", true);\n".getBytes());
+            out.write("pref(\"webgl.enable-surface-texture\", true);\n".getBytes());
+        } catch (FileNotFoundException e) {
+            Log.e(LOGTAG, "Unable to create file: '" + prefFileName + "' got exception: " + e.toString());
+        } catch (IOException e) {
+            Log.e(LOGTAG, "Unable to write file: '" + prefFileName + "' got exception: " + e.toString());
+        }
+    }
+
 
     @Override
     public void onLocationChange(GeckoSession aSession, String aUri) {
