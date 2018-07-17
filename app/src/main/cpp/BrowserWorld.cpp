@@ -780,59 +780,69 @@ BrowserWorld::DrawImmersive() {
 
 vrb::TransformPtr
 BrowserWorld::CreateSkyBox(const std::string& basePath) {
-  std::array<GLfloat, 24> cubeVertices {
-    -1.0f,  1.0f,  1.0f, // 0
-    -1.0f, -1.0f,  1.0f, // 1
-     1.0f, -1.0f,  1.0f, // 2
-     1.0f,  1.0f,  1.0f, // 3
-    -1.0f,  1.0f, -1.0f, // 4
-    -1.0f, -1.0f, -1.0f, // 5
-     1.0f, -1.0f, -1.0f, // 6
-     1.0f,  1.0f, -1.0f, // 7
-  };
-
-  std::array<GLushort, 24> cubeIndices {
-      0, 1, 2, 3,
-      3, 2, 6, 7,
-      7, 6, 5, 4,
-      4, 5, 1, 0,
-      0, 3, 7, 4,
-      1, 5, 6, 2
-  };
-
-  VertexArrayPtr array = VertexArray::Create(m.create);
-  const float kLength = 50.0f;
-  for (int i = 0; i < cubeVertices.size(); i += 3) {
-    array->AppendVertex(Vector(-kLength * cubeVertices[i], -kLength * cubeVertices[i + 1], -kLength * cubeVertices[i + 2]));
-    array->AppendUV(Vector(-kLength * cubeVertices[i], -kLength * cubeVertices[i + 1], -kLength * cubeVertices[i + 2]));
-  }
-
-  vrb::GeometryPtr geometry = vrb::Geometry::Create(m.create);
-  geometry->SetVertexArray(array);
-
-
-  for (int i = 0; i < cubeIndices.size(); i += 4) {
-    std::vector<int> indices = {cubeIndices[i] + 1, cubeIndices[i + 1] + 1, cubeIndices[i + 2] + 1, cubeIndices[i + 3] + 1};
-    geometry->AddFace(indices, indices, {});
-  }
-
-  RenderStatePtr state = RenderState::Create(m.create);
-  TextureCubeMapPtr cubemap = vrb::TextureCubeMap::Create(m.create);
-  cubemap->SetTextureParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  cubemap->SetTextureParameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  cubemap->SetTextureParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  cubemap->SetTextureParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  cubemap->SetTextureParameter(GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-  state->SetTexture(cubemap);
-
-  auto path = [&](const std::string& name) { return basePath + "/" + name + ".jpg"; };
-  vrb::TextureCubeMap::Load(m.create, cubemap, path("posx"), path("negx"), path("posy"), path("negy"), path("posz"), path("negz"));
-
-  state->SetMaterial(Color(1.0f, 1.0f, 1.0f), Color(1.0f, 1.0f, 1.0f), Color(0.0f, 0.0f, 0.0f), 0.0f);
-  geometry->SetRenderState(state);
   vrb::TransformPtr transform = vrb::Transform::Create(m.create);
-  transform->AddNode(geometry);
   transform->SetTransform(Matrix::Position(vrb::Vector(0.0f, 0.0f, 0.0f)));
+
+  LoadTask task = [basePath](CreationContextPtr& aContext) -> GroupPtr {
+    std::array<GLfloat, 24> cubeVertices{
+        -1.0f, 1.0f, 1.0f, // 0
+        -1.0f, -1.0f, 1.0f, // 1
+        1.0f, -1.0f, 1.0f, // 2
+        1.0f, 1.0f, 1.0f, // 3
+        -1.0f, 1.0f, -1.0f, // 4
+        -1.0f, -1.0f, -1.0f, // 5
+        1.0f, -1.0f, -1.0f, // 6
+        1.0f, 1.0f, -1.0f, // 7
+    };
+
+    std::array<GLushort, 24> cubeIndices{
+        0, 1, 2, 3,
+        3, 2, 6, 7,
+        7, 6, 5, 4,
+        4, 5, 1, 0,
+        0, 3, 7, 4,
+        1, 5, 6, 2
+    };
+
+    VertexArrayPtr array = VertexArray::Create(aContext);
+    const float kLength = 50.0f;
+    for (int i = 0; i < cubeVertices.size(); i += 3) {
+      array->AppendVertex(Vector(-kLength * cubeVertices[i], -kLength * cubeVertices[i + 1],
+                                 -kLength * cubeVertices[i + 2]));
+      array->AppendUV(Vector(-kLength * cubeVertices[i], -kLength * cubeVertices[i + 1],
+                             -kLength * cubeVertices[i + 2]));
+    }
+
+    vrb::GeometryPtr geometry = vrb::Geometry::Create(aContext);
+    geometry->SetVertexArray(array);
+
+    for (int i = 0; i < cubeIndices.size(); i += 4) {
+      std::vector<int> indices = {cubeIndices[i] + 1, cubeIndices[i + 1] + 1,
+                                  cubeIndices[i + 2] + 1, cubeIndices[i + 3] + 1};
+      geometry->AddFace(indices, indices, {});
+    }
+
+    RenderStatePtr state = RenderState::Create(aContext);
+    TextureCubeMapPtr cubemap = vrb::TextureCubeMap::Create(aContext);
+    cubemap->SetTextureParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    cubemap->SetTextureParameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    cubemap->SetTextureParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    cubemap->SetTextureParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    cubemap->SetTextureParameter(GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    state->SetTexture(cubemap);
+
+    auto path = [&](const std::string& name) { return basePath + "/" + name + ".jpg"; };
+    vrb::TextureCubeMap::Load(aContext, cubemap, path("posx"), path("negx"), path("posy"),
+                              path("negy"), path("posz"), path("negz"));
+
+    state->SetMaterial(Color(1.0f, 1.0f, 1.0f), Color(1.0f, 1.0f, 1.0f), Color(0.0f, 0.0f, 0.0f),
+                       0.0f);
+    geometry->SetRenderState(state);
+    vrb::GroupPtr group = vrb::Transform::Create(aContext);
+    group->AddNode(geometry);
+    return group;
+  };
+  m.loader->RunLoadTask(transform, task);
   return transform;
 }
 
