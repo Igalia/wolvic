@@ -107,10 +107,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             GeckoRuntimeSettings.Builder runtimeSettingsBuilder = new GeckoRuntimeSettings.Builder();
             runtimeSettingsBuilder.javaCrashReportingEnabled(SettingsStore.getInstance(aContext).isCrashReportingEnabled());
             runtimeSettingsBuilder.nativeCrashReportingEnabled(SettingsStore.getInstance(aContext).isCrashReportingEnabled());
-            runtimeSettingsBuilder.trackingProtectionCategories(GeckoSession.TrackingProtectionDelegate.CATEGORY_AD |
-                    GeckoSession.TrackingProtectionDelegate.CATEGORY_ANALYTIC |
-                    GeckoSession.TrackingProtectionDelegate.CATEGORY_SOCIAL |
-                    GeckoSession.TrackingProtectionDelegate.CATEGORY_CONTENT);
+            runtimeSettingsBuilder.trackingProtectionCategories(GeckoSession.TrackingProtectionDelegate.CATEGORY_ALL);
 
             mRuntime = GeckoRuntime.create(aContext, runtimeSettingsBuilder.build());
         } else {
