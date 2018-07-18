@@ -33,6 +33,7 @@ struct Widget::State {
   vrb::TextureSurfacePtr surface;
   vrb::TogglePtr pointerToggle;
   vrb::TransformPtr pointer;
+  vrb::TransformPtr pointerScale;
   vrb::NodePtr pointerGeometry;
   WidgetPlacementPtr placement;
   WidgetResizerPtr resizer;
@@ -42,16 +43,6 @@ struct Widget::State {
       : handle(0)
       , resizing(false)
   {}
-
-  float CalculatePointerScale() {
-    vrb::Vector windowMin, windowMax;
-    quad->GetWorldMinAndMax(windowMin, windowMax);
-    const float width = windowMax.x() - windowMin.x();
-    const float height = windowMax.y() - windowMin.y();
-    const float max = (width < height ? height : width);
-    float result = max * 0.1f;
-    return result;
-  }
 
   void Initialize(const int aHandle, const vrb::Vector& aWindowMin, const vrb::Vector& aWindowMax, const int32_t aTextureWidth, const int32_t aTextureHeight) {
     handle = aHandle;
@@ -74,11 +65,11 @@ struct Widget::State {
     root->AddNode(transform);
 
     const float kOffset = 0.01f;
+    const float scale = 0.02f;
     vrb::VertexArrayPtr array = vrb::VertexArray::Create(create);
     array = vrb::VertexArray::Create(create);
-    const float scale = CalculatePointerScale();
-    array->AppendVertex(vrb::Vector(0.1f * scale, -0.2f * scale, kOffset));
-    array->AppendVertex(vrb::Vector(0.2f * scale, -0.1f * scale, kOffset));
+    array->AppendVertex(vrb::Vector(0.5f * scale, -1.0f * scale, kOffset));
+    array->AppendVertex(vrb::Vector(1.0f * scale, -0.5f * scale, kOffset));
     array->AppendVertex(vrb::Vector(0.0f, 0.0f, kOffset));
     array->AppendNormal(vrb::Vector(0.0f, 0.0f, 1.0f));
     std::vector<int> index;
@@ -97,8 +88,11 @@ struct Widget::State {
     state->SetMaterial(vrb::Color(1.0f, 0.0f, 0.0f), vrb::Color(1.0f, 0.0f, 0.0f), vrb::Color(0.0f, 0.0f, 0.0f),
                        0.0f);
     geometry->SetRenderState(state);
+    pointerScale = vrb::Transform::Create(create);
+    pointerScale->SetTransform(vrb::Matrix::Identity());
+    pointerScale->AddNode(geometry);
     pointer = vrb::Transform::Create(create);
-    pointer->AddNode(geometry);
+    pointer->AddNode(pointerScale);
     pointerGeometry = geometry;
     pointerToggle->AddNode(pointer);
   }
@@ -206,6 +200,10 @@ Widget::GetTransform() const {
 
 void
 Widget::SetTransform(const vrb::Matrix& aTransform) {
+  vrb::Vector point;
+  point = aTransform.MultiplyPosition(point);
+  const float scale = fabsf(point.z());
+  m.pointerScale->SetTransform(vrb::Matrix::Identity().ScaleInPlace(vrb::Vector(scale, scale, scale)));
   m.transform->SetTransform(aTransform);
 }
 
