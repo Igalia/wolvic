@@ -92,7 +92,12 @@ public class NavigationURLBar extends FrameLayout {
     public void setURL(String aURL) {
         int index = -1;
         if (aURL != null) {
-            index = aURL.indexOf("://");
+            if (aURL.startsWith("jar:"))
+                return;
+            else if (aURL.startsWith("resource:"))
+                aURL = "";
+            else
+                index = aURL.indexOf("://");
         }
         mURL.setText(aURL);
         if (index > 0) {
