@@ -247,6 +247,7 @@ ExternalVR::PushSystemState() {
   Lock lock(m.data.systemMutex);
   if (lock.IsLocked()) {
     memcpy(&(m.data.state), &(m.system), sizeof(mozilla::gfx::VRSystemState));
+    pthread_cond_signal(&m.data.systemCond);
   }
 }
 
