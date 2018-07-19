@@ -44,7 +44,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private boolean mFocusDueToFullScreen;
     private Runnable mFocusBackHandler;
     private Runnable mResizeBackHandler;
-    private NavigationBarButton mFocusEnterbutton;
+    private NavigationBarButton mFocusEnterButton;
     private NavigationBarButton mFocusExitButton;
     private NavigationBarButton mResizeEnterButton;
     private NavigationBarButton mResizeExitButton;
@@ -140,7 +140,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         });
 
 
-        mFocusEnterbutton = findViewById(R.id.focusEnterButton);
+        mFocusEnterButton = findViewById(R.id.focusEnterButton);
         mFocusExitButton = findViewById(R.id.focusExitButton);
         mResizeEnterButton = findViewById(R.id.resizeEnterButton);
         mResizeExitButton = findViewById(R.id.resizeExitButton);
@@ -150,7 +150,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mPreset3 = findViewById(R.id.resizePreset3);
 
 
-        mFocusEnterbutton.setOnClickListener(new OnClickListener() {
+        mFocusEnterButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 enterFocusMode();
@@ -233,7 +233,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mButtons = new ArrayList<>();
         mButtons.addAll(Arrays.<CustomUIButton>asList(
                 mBackButton, mForwardButton, mReloadButton, mHomeButton,
-                mFocusEnterbutton, mFocusExitButton, mResizeEnterButton, mResizeExitButton,
+                mFocusEnterButton, mFocusExitButton, mResizeEnterButton, mResizeExitButton,
                 mPreset0, mPreset1, mPreset2, mPreset3));
 
         SessionStore.get().addNavigationListener(this);
@@ -286,6 +286,10 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mIsInFocusMode = true;
         AnimationHelper.fadeIn(mFocusModeContainer, AnimationHelper.FADE_ANIMATION_DURATION);
         AnimationHelper.fadeOut(mNavigationContainer, 0);
+        mFocusEnterButton.setHovered(false);
+        mFocusEnterButton.setPressed(false);
+        mFocusExitButton.setHovered(false);
+        mFocusExitButton.setPressed(false);
         mWidgetManager.fadeOutWorld();
 
         if (mLastBrowserSize != null)
@@ -306,6 +310,10 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mIsInFocusMode = false;
         AnimationHelper.fadeIn(mNavigationContainer, AnimationHelper.FADE_ANIMATION_DURATION);
         AnimationHelper.fadeOut(mFocusModeContainer, 0);
+        mFocusEnterButton.setHovered(false);
+        mFocusEnterButton.setPressed(false);
+        mFocusExitButton.setHovered(false);
+        mFocusExitButton.setPressed(false);
         mWidgetManager.fadeInWorld();
         mLastBrowserSize = mBrowserWidget.getLastWorldSize();
         setResizePreset(1.0f);
