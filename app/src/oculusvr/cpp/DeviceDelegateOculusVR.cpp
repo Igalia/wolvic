@@ -124,6 +124,14 @@ struct DeviceDelegateOculusVR::State {
     for (int i = 0; i < VRAPI_EYE_COUNT; ++i) {
       cameras[i]->SetPerspective(matrix);
     }
+
+    if (immersiveDisplay) {
+      const float fovXHalf = fovX * 0.5f;
+      const float fovYHalf = fovY * 0.5f;
+
+      immersiveDisplay->SetFieldOfView(device::Eye::Left, fovXHalf, fovXHalf, fovYHalf, fovYHalf);
+      immersiveDisplay->SetFieldOfView(device::Eye::Right, fovXHalf, fovXHalf, fovYHalf, fovYHalf);
+    }
   }
 
   void Initialize() {
@@ -301,11 +309,7 @@ DeviceDelegateOculusVR::RegisterImmersiveDisplay(ImmersiveDisplayPtr aDisplay) {
   m.immersiveDisplay->SetEyeResolution(m.renderWidth, m.renderHeight);
   m.immersiveDisplay->CompleteEnumeration();
 
-  const float fovx = vrapi_GetSystemPropertyFloat(&m.java, VRAPI_SYS_PROP_SUGGESTED_EYE_FOV_DEGREES_X) * 0.5f;
-  const float fovy = vrapi_GetSystemPropertyFloat(&m.java, VRAPI_SYS_PROP_SUGGESTED_EYE_FOV_DEGREES_Y) * 0.5f;
-
-  m.immersiveDisplay->SetFieldOfView(device::Eye::Left, fovx, fovx, fovy, fovy);
-  m.immersiveDisplay->SetFieldOfView(device::Eye::Right, fovx, fovx, fovy, fovy);
+  m.UpdatePerspective();
 }
 
 vrb::CameraPtr
@@ -381,18 +385,9 @@ DeviceDelegateOculusVR::StartFrame() {
     return;
   }
 
-  vrb::Matrix head = vrb::Matrix::Identity();
-  if (m.predictedTracking.Status & VRAPI_TRACKING_STATUS_ORIENTATION_TRACKED) {
-    auto &orientation = m.predictedTracking.HeadPose.Pose.Orientation;
-    vrb::Quaternion quat(orientation.x, orientation.y, orientation.z, orientation.w);
-    head = vrb::Matrix::Rotation(quat);
-  }
+  ovrMatrix4f matrix = vrapi_GetTransformFromPose(&m.predictedTracking.HeadPose.Pose);
+  vrb::Matrix head = vrb::Matrix::FromRowMajor(matrix.M[0]);
 
-  if (m.predictedTracking.Status & VRAPI_TRACKING_STATUS_POSITION_TRACKED) {
-    auto &position = m.predictedTracking.HeadPose.Pose.Position;
-    vrb::Vector translation(position.x, position.y, position.z);
-    head.TranslateInPlace(translation);
-  }
 
   static const vrb::Vector kAverageHeight(0.0f, 1.7f, 0.0f);
   if (m.renderMode == device::RenderMode::StandAlone) {
@@ -402,7 +397,7 @@ DeviceDelegateOculusVR::StartFrame() {
   m.cameras[VRAPI_EYE_LEFT]->SetHeadTransform(head);
   m.cameras[VRAPI_EYE_RIGHT]->SetHeadTransform(head);
 
-  if (m.immersiveDisplay && m.renderMode == device::RenderMode::StandAlone) {
+  if (m.immersiveDisplay && m.renderMode == device::RenderMode::Immersive) {
     m.immersiveDisplay->SetEyeOffset(device::Eye::Left, -ipd * 0.5f, 0.f, 0.f);
     m.immersiveDisplay->SetEyeOffset(device::Eye::Right, ipd * 0.5f, 0.f, 0.f);
     device::CapabilityFlags caps = device::Orientation | device::Present;
