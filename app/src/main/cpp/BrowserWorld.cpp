@@ -147,7 +147,7 @@ struct BrowserWorld::State {
   bool exitImmersiveRequested;
 
   State() : paused(true), glInitialized(false), modelsLoaded(false), env(nullptr), nearClip(0.1f),
-            farClip(100.0f), activity(nullptr), windowsInitialized(false), exitImmersiveRequested(false), loaderDelay(0) {
+            farClip(300.0f), activity(nullptr), windowsInitialized(false), exitImmersiveRequested(false), loaderDelay(0) {
     context = RenderContext::Create();
     create = context->GetRenderThreadCreationContext();
     loader = ModelLoaderAndroid::Create(context);
@@ -833,7 +833,7 @@ BrowserWorld::CreateSkyBox(const std::string& basePath) {
     };
 
     VertexArrayPtr array = VertexArray::Create(aContext);
-    const float kLength = 50.0f;
+    const float kLength = 140.0f;
     for (int i = 0; i < cubeVertices.size(); i += 3) {
       array->AppendVertex(Vector(-kLength * cubeVertices[i], -kLength * cubeVertices[i + 1],
                                  -kLength * cubeVertices[i + 2]));
