@@ -100,6 +100,8 @@ public class PlatformActivity extends Activity {
             down = true;
         } else if (action == MotionEvent.ACTION_UP) {
             down = false;
+        } else if (action == MotionEvent.ACTION_MOVE) {
+            down = true;
         } else {
             return false;
         }
