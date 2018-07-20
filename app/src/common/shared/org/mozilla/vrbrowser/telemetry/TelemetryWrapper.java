@@ -1,7 +1,6 @@
 package org.mozilla.vrbrowser.telemetry;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.StrictMode;
 import android.support.annotation.UiThread;
@@ -17,7 +16,7 @@ import org.mozilla.telemetry.serialize.JSONPingSerializer;
 import org.mozilla.telemetry.storage.FileTelemetryStorage;
 import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.ui.SettingsStore;
+import org.mozilla.vrbrowser.SettingsStore;
 
 
 public class TelemetryWrapper {

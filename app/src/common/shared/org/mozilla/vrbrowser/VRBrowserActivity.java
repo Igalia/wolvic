@@ -29,7 +29,6 @@ import org.mozilla.vrbrowser.ui.BrowserWidget;
 import org.mozilla.vrbrowser.ui.KeyboardWidget;
 import org.mozilla.vrbrowser.ui.NavigationBarWidget;
 import org.mozilla.vrbrowser.ui.OffscreenDisplay;
-import org.mozilla.vrbrowser.ui.SettingsStore;
 import org.mozilla.vrbrowser.ui.SettingsWidget;
 import org.mozilla.vrbrowser.ui.TopBarWidget;
 
@@ -139,15 +138,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             }
         });
         initializeWorld();
-
-        int sessionId = SettingsStore.getInstance(this).getCurrentSessionId();
-        if (sessionId != SessionStore.NO_SESSION_ID) {
-            GeckoSession session = SessionStore.get().getSession(sessionId);
-            if (session != null) {
-                SessionStore.get().setCurrentSession(sessionId);
-                mPreviousSessionId = SettingsStore.getInstance(this).getPreviousSessionId();
-            }
-        }
     }
 
     protected void initializeWorld() {
@@ -216,8 +206,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             mPermissionDelegate.release();
         }
 
-        SettingsStore.getInstance(this).setCurrentSessionId(SessionStore.get().getCurrentSessionId());
-        SettingsStore.getInstance(this).setPreviousSessionId(mPreviousSessionId);
         SessionStore.get().clearListeners();
         super.onDestroy();
     }
@@ -272,6 +260,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Keep
+    @SuppressWarnings("unused")
     void dispatchCreateWidget(final int aHandle, final SurfaceTexture aTexture, final int aWidth, final int aHeight) {
         runOnUiThread(new Runnable() {
             public void run() {
@@ -290,6 +279,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Keep
+    @SuppressWarnings("unused")
     void handleMotionEvent(final int aHandle, final int aDevice, final boolean aPressed, final float aX, final float aY) {
         runOnUiThread(new Runnable() {
             @Override
@@ -301,6 +291,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Keep
+    @SuppressWarnings("unused")
     void handleScrollEvent(final int aHandle, final int aDevice, final float aX, final float aY) {
         runOnUiThread(new Runnable() {
             @Override
@@ -316,6 +307,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Keep
+    @SuppressWarnings("unused")
     void handleGesture(final int aType) {
         runOnUiThread(new Runnable() {
             @Override
@@ -347,6 +339,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Keep
+    @SuppressWarnings("unused")
     void handleTrayEvent(final int aType) {
         runOnUiThread(new Runnable() {
             @Override
@@ -374,6 +367,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Keep
+    @SuppressWarnings({"UnusedDeclaration"})
     void handleAudioPose(float qx, float qy, float qz, float qw, float px, float py, float pz) {
         mAudioEngine.setPose(qx, qy, qz, qw, px, py, pz);
 
@@ -383,6 +377,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Keep
+    @SuppressWarnings("unused")
     void handleResize(final int aHandle, final float aWorldWidth, final float aWorldHeight) {
         runOnUiThread(new Runnable() {
             @Override
@@ -398,6 +393,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Keep
+    @SuppressWarnings("unused")
     void registerExternalContext(long aContext) {
         GeckoVRManager.setExternalContext(aContext);
     }
@@ -419,6 +415,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Keep
+    @SuppressWarnings("unused")
     void pauseGeckoViewCompositor() {
         if (Thread.currentThread() == mUiThread) {
             return;
@@ -439,6 +436,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Keep
+    @SuppressWarnings("unused")
     void resumeGeckoViewCompositor() {
         if (Thread.currentThread() == mUiThread) {
             return;

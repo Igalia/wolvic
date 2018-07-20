@@ -14,14 +14,11 @@ import android.view.inputmethod.ExtractedText;
 import android.view.inputmethod.ExtractedTextRequest;
 
 import org.mozilla.gecko.GeckoProfile;
-import org.mozilla.gecko.PrefsHelper;
-import org.mozilla.geckoview.GeckoResponse;
 import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoRuntimeSettings;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoSessionSettings;
-import org.mozilla.vrbrowser.ui.SettingsStore;
 
 import java.io.File;
 import java.io.FileNotFoundException;
