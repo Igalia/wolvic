@@ -18,25 +18,17 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
-
-import org.mozilla.geckoview.GeckoSession;
-import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.gecko.GeckoVRManager;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.audio.VRAudioTheme;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
-import org.mozilla.vrbrowser.ui.BrowserWidget;
-import org.mozilla.vrbrowser.ui.KeyboardWidget;
-import org.mozilla.vrbrowser.ui.NavigationBarWidget;
-import org.mozilla.vrbrowser.ui.OffscreenDisplay;
-import org.mozilla.vrbrowser.ui.SettingsWidget;
-import org.mozilla.vrbrowser.ui.TopBarWidget;
+import org.mozilla.vrbrowser.ui.*;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-public class VRBrowserActivity extends PlatformActivity implements WidgetManagerDelegate, TopBarWidget.TopBarDelegate {
+public class VRBrowserActivity extends PlatformActivity implements WidgetManagerDelegate {
 
     class SwipeRunnable implements Runnable {
         boolean mCanceled = false;
@@ -81,7 +73,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     LinkedList<Runnable> mBackHandlers;
     SettingsWidget mSettingsWidget;
     private boolean mIsPresentingImmersive = false;
-    int mPreviousSessionId = SessionStore.NO_SESSION_ID;
     private Thread mUiThread;
 
     @Override
@@ -161,7 +152,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         // Create the top bar
         mTopBar = new TopBarWidget(this);
         mTopBar.setBrowserWidget(mBrowserWidget);
-        mTopBar.setDelegate(this);
 
         addWidgets(Arrays.<Widget>asList(mBrowserWidget, mNavigationBar, mKeyboard));
     }
@@ -357,7 +347,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                     }
                     break;
                     case TrayEventPrivate: {
-                        onPrivateBrowsingClicked();
+                        SessionStore.get().switchPrivateMode();
                     }
                     break;
                 }
@@ -604,22 +594,26 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public void fadeOutWorld() {
-        queueRunnable(new Runnable() {
-            @Override
-            public void run() {
-                fadeOutWorldNative();
-            }
-        });
+        if (SessionStore.get().isCurrentSessionPrivate() ^ mNavigationBar.isInFocusMode()) {
+            queueRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    fadeOutWorldNative();
+                }
+            });
+        }
     }
 
     @Override
     public void fadeInWorld() {
-        queueRunnable(new Runnable() {
-            @Override
-            public void run() {
-                fadeInWorldNative();
-            }
-        });
+        if (!SessionStore.get().isCurrentSessionPrivate() && !mNavigationBar.isInFocusMode()) {
+            queueRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    fadeInWorldNative();
+                }
+            });
+        }
     }
 
     @Override
@@ -632,68 +626,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (mPermissionDelegate != null) {
             mPermissionDelegate.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }
-
-    public void onPrivateBrowsingClicked() {
-        GeckoSession currentSession = SessionStore.get().getCurrentSession();
-        if (currentSession == null)
-            return;
-
-        boolean isPrivateMode  = currentSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
-
-        if (!isPrivateMode) {
-            fadeOutWorld();
-            // TODO: Fade out the browser window. Waiting for https://github.com/MozillaReality/FirefoxReality/issues/77
-
-            SessionStore.get().getCurrentSession().setActive(false);
-            if (mPreviousSessionId == SessionStore.NO_SESSION_ID) {
-                mPreviousSessionId = SessionStore.get().getCurrentSessionId();
-
-                SessionStore.SessionSettings settings = new SessionStore.SessionSettings();
-                settings.privateMode = true;
-                int id = SessionStore.get().createSession(settings);
-                SessionStore.get().setCurrentSession(id);
-                SessionStore.get().loadUri(SessionStore.DEFAULT_URL);
-
-            } else {
-                int sessionId = SessionStore.get().getCurrentSessionId();
-                SessionStore.get().setCurrentSession(mPreviousSessionId);
-                mPreviousSessionId = sessionId;
-                SessionStore.get().getCurrentSession().setActive(true);
-            }
-
-        } else {
-            fadeInWorld();
-            // TODO: Fade in the browser window. Waiting for https://github.com/MozillaReality/FirefoxReality/issues/77
-
-            SessionStore.get().getCurrentSession().setActive(false);
-            int sessionId = SessionStore.get().getCurrentSessionId();
-            SessionStore.get().setCurrentSession(mPreviousSessionId);
-            mPreviousSessionId = sessionId;
-            SessionStore.get().getCurrentSession().setActive(true);
-        }
-    }
-
-    // TopBarDelegate
-    @Override
-    public void onCloseClicked() {
-        GeckoSession currentSession = SessionStore.get().getCurrentSession();
-        if (currentSession == null)
-            return;
-
-        boolean isPrivateMode  = currentSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
-
-        if (isPrivateMode) {
-            fadeInWorld();
-            // TODO: Fade in the browser window. Waiting for https://github.com/MozillaReality/FirefoxReality/issues/77
-
-            int privateSessionId = SessionStore.get().getCurrentSessionId();
-            SessionStore.get().setCurrentSession(mPreviousSessionId);
-            mPreviousSessionId = SessionStore.NO_SESSION_ID;
-
-            SessionStore.get().removeSession(privateSessionId);
-            SessionStore.get().getCurrentSession().setActive(true);
         }
     }
 

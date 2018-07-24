@@ -21,12 +21,7 @@ import org.mozilla.vrbrowser.audio.AudioEngine;
 public class TopBarWidget extends UIWidget implements SessionStore.SessionChangeListener, WidgetManagerDelegate.Listener {
     private static final String LOGTAG = "VRB";
 
-    public interface TopBarDelegate {
-        void onCloseClicked();
-    }
-
     private NavigationBarButton mCloseButton;
-    private TopBarDelegate mDelegate;
     private AudioEngine mAudio;
     private BrowserWidget mBrowserWidget;
 
@@ -56,8 +51,7 @@ public class TopBarWidget extends UIWidget implements SessionStore.SessionChange
                     mAudio.playSound(AudioEngine.Sound.CLICK);
                 }
 
-                if (mDelegate != null)
-                    mDelegate.onCloseClicked();
+                SessionStore.get().exitPrivateMode();
             }
         });
 
@@ -108,9 +102,6 @@ public class TopBarWidget extends UIWidget implements SessionStore.SessionChange
     }
 
     // SessionStore.SessionChangeListener
-    public void setDelegate(TopBarDelegate aDelegate) {
-        mDelegate = aDelegate;
-    }
 
     @Override
     public void onNewSession(GeckoSession aSession, int aId) {
@@ -128,9 +119,16 @@ public class TopBarWidget extends UIWidget implements SessionStore.SessionChange
         if (isPrivateMode) {
             show();
             setPrivateBrowsingEnabled(true);
+
+            mWidgetManager.fadeOutWorld();
+            // TODO: Fade out the browser window. Waiting for https://github.com/MozillaReality/FirefoxReality/issues/77
+
         } else {
             hide();
             setPrivateBrowsingEnabled(false);
+
+            mWidgetManager.fadeInWorld();
+            // TODO: Fade in the browser window. Waiting for https://github.com/MozillaReality/FirefoxReality/issues/77
         }
     }
 

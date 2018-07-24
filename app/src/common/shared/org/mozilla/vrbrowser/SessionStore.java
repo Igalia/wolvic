@@ -78,6 +78,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     private GeckoSession mCurrentSession;
     private HashMap<Integer, State> mSessions;
     private GeckoSession.PermissionDelegate mPermissionDelegate;
+    private int mPreviousSessionId = SessionStore.NO_SESSION_ID;
 
     private SessionStore() {
         mNavigationListeners = new LinkedList<>();
@@ -305,6 +306,9 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             Log.e(LOGTAG, "SessionStore failed to set current session, GeckoRuntime is null");
             return;
         }
+        if (mCurrentSession != null)
+            mCurrentSession.setActive(false);
+
         mCurrentSession = null;
         State state = mSessions.get(aId);
         if (state != null) {
@@ -317,6 +321,9 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             }
         }
         dumpAllState(mCurrentSession);
+
+        if (mCurrentSession != null)
+            mCurrentSession.setActive(true);
     }
 
     public String getCurrentUri() {
@@ -440,6 +447,54 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         }
     }
 
+    public void switchPrivateMode() {
+        if (mCurrentSession == null)
+            return;
+
+        boolean isPrivateMode  = mCurrentSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
+        if (!isPrivateMode) {
+            if (mPreviousSessionId == SessionStore.NO_SESSION_ID) {
+                mPreviousSessionId = getCurrentSessionId();
+
+                SessionStore.SessionSettings settings = new SessionStore.SessionSettings();
+                settings.privateMode = true;
+                int id = SessionStore.get().createSession(settings);
+                setCurrentSession(id);
+                loadUri(DEFAULT_URL);
+
+            } else {
+                int sessionId = getCurrentSessionId();
+                setCurrentSession(mPreviousSessionId);
+                mPreviousSessionId = sessionId;
+            }
+
+        } else {
+            int sessionId = getCurrentSessionId();
+            setCurrentSession(mPreviousSessionId);
+            mPreviousSessionId = sessionId;
+        }
+    }
+
+    public void exitPrivateMode() {
+        if (mCurrentSession == null)
+            return;
+
+        boolean isPrivateMode  = mCurrentSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
+        if (isPrivateMode) {
+            int privateSessionId = getCurrentSessionId();
+            setCurrentSession(mPreviousSessionId);
+            mPreviousSessionId = SessionStore.NO_SESSION_ID;
+
+            removeSession(privateSessionId);
+        }
+    }
+
+    public boolean isCurrentSessionPrivate() {
+        if (mCurrentSession != null)
+            return mCurrentSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
+
+        return false;
+    }
 
     @Override
     public void onLocationChange(GeckoSession aSession, String aUri) {

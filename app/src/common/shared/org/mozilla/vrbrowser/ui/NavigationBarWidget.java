@@ -291,7 +291,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mFocusEnterButton.setPressed(false);
         mFocusExitButton.setHovered(false);
         mFocusExitButton.setPressed(false);
-        mWidgetManager.fadeOutWorld();
 
         GeckoSession currentSession = SessionStore.get().getCurrentSession();
         boolean isPrivateMode = currentSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
@@ -322,7 +321,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mFocusEnterButton.setPressed(false);
         mFocusExitButton.setHovered(false);
         mFocusExitButton.setPressed(false);
-        mWidgetManager.fadeInWorld();
 
         GeckoSession currentSession = SessionStore.get().getCurrentSession();
         boolean isPrivateMode = currentSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
@@ -377,6 +375,10 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         float targetHeight = (float) Math.sqrt(area / aspect);
 
         mBrowserWidget.handleResizeEvent(targetWidth, targetHeight);
+    }
+
+    public boolean isInFocusMode() {
+        return mIsInFocusMode;
     }
 
     @Override
