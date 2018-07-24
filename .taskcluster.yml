@@ -59,6 +59,7 @@ tasks:
       - "secrets:get:project/firefoxreality/preview-keystore"
       - "secrets:get:project/firefoxreality/keystore-password"
       - "secrets:get:project/firefoxreality/key-password"
+      - "secrets:get:project/firefoxreality/symbols-token"
     payload:
       maxRunTime: 3600
       deadline: "{{ '2 hours' | $fromNow }}"
@@ -78,6 +79,7 @@ tasks:
           && cp tools/gradle/taskcluster.properties ./user.properties
           && ./gradlew --no-daemon clean assembleGooglevr assembleNoapi assembleWavevr assembleSvr assembleOculusvr
           && . tools/taskcluster/sign.sh
+          && . tools/taskcluster/upload_symbols.sh
       artifacts:
         'public':
           type: 'directory'
