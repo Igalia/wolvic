@@ -45,12 +45,17 @@
 
 #include <array>
 #include <functional>
+#include <fstream>
 
 #define ASSERT_ON_RENDER_THREAD(X)                                          \
   if (m.context && !m.context->IsOnRenderThread()) {                        \
     VRB_ERROR("Function: '%s' not called on render thread.", __FUNCTION__); \
     return X;                                                               \
   }
+
+
+#define INJECT_ENVIRONMENT_PATH "environment/environment.obj"
+#define INJECT_SKYBOX_PATH "skybox"
 
 using namespace vrb;
 
@@ -396,7 +401,14 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
     }
     m.controllers->InitializePointer();
     m.rootOpaque->AddNode(m.controllers->GetRoot());
-    m.skybox = CreateSkyBox("cubemap/space");
+    std::string skyboxPath = "cubemap/space";
+#ifdef INJECT_SKYBOX_PATH
+    std::string storagePath = VRBrowser::GetStorageAbsolutePath(INJECT_SKYBOX_PATH);
+    if (std::ifstream(storagePath)) {
+      skyboxPath = storagePath;
+    }
+#endif
+    m.skybox = CreateSkyBox(skyboxPath.c_str());
     m.rootOpaqueParent->AddNode(m.skybox);
     CreateFloor();
     m.modelsLoaded = true;
@@ -852,7 +864,14 @@ void
 BrowserWorld::CreateFloor() {
   ASSERT_ON_RENDER_THREAD();
   vrb::TransformPtr model = Transform::Create(m.create);
-  m.loader->LoadModel("FirefoxPlatform2_low.obj", model);
+  std::string environmentPath = "FirefoxPlatform2_low.obj";
+#ifdef INJECT_ENVIRONMENT_PATH
+  std::string injectPath = VRBrowser::GetStorageAbsolutePath(INJECT_ENVIRONMENT_PATH);
+  if (std::ifstream(injectPath)) {
+    environmentPath = injectPath;
+  }
+#endif
+  m.loader->LoadModel(environmentPath, model);
   m.rootOpaque->AddNode(model);
   vrb::Matrix transform = vrb::Matrix::Identity();
   transform.ScaleInPlace(Vector(40.0, 40.0, 40.0));

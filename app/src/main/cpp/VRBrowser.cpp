@@ -30,6 +30,8 @@ static const char* kPauseCompositorName = "pauseGeckoViewCompositor";
 static const char* kPauseCompositorSignature = "()V";
 static const char* kResumeCompositorName = "resumeGeckoViewCompositor";
 static const char* kResumeCompositorSignature = "()V";
+static const char* kGetStorageAbsolutePathName = "getStorageAbsolutePath";
+static const char* kGetStorageAbsolutePathSignature = "()Ljava/lang/String;";
 
 static JNIEnv* sEnv;
 static jobject sActivity;
@@ -43,7 +45,7 @@ static jmethodID sHandleTrayEvent;
 static jmethodID sRegisterExternalContext;
 static jmethodID sPauseCompositor;
 static jmethodID sResumeCompositor;
-
+static jmethodID sGetStorageAbsolutePath;
 }
 
 namespace crow {
@@ -73,6 +75,7 @@ VRBrowser::InitializeJava(JNIEnv* aEnv, jobject aActivity) {
   sRegisterExternalContext = FindJNIMethodID(sEnv, browserClass, kRegisterExternalContextName, kRegisterExternalContextSignature);
   sPauseCompositor = FindJNIMethodID(sEnv, browserClass, kPauseCompositorName, kPauseCompositorSignature);
   sResumeCompositor = FindJNIMethodID(sEnv, browserClass, kResumeCompositorName, kResumeCompositorSignature);
+  sGetStorageAbsolutePath = FindJNIMethodID(sEnv, browserClass, kGetStorageAbsolutePathName, kGetStorageAbsolutePathSignature);
 }
 
 void
@@ -166,6 +169,26 @@ VRBrowser::ResumeCompositor() {
   if (!ValidateMethodID(sEnv, sActivity, sResumeCompositor, __FUNCTION__)) { return; }
   sEnv->CallVoidMethod(sActivity, sResumeCompositor);
   CheckJNIException(sEnv, __FUNCTION__);
+}
+
+std::string
+VRBrowser::GetStorageAbsolutePath(const std::string& aRelativePath) {
+  if (!ValidateMethodID(sEnv, sActivity, sGetStorageAbsolutePath, __FUNCTION__)) { return ""; }
+  jstring jStr = (jstring) sEnv->CallObjectMethod(sActivity, sGetStorageAbsolutePath);
+  CheckJNIException(sEnv, __FUNCTION__);
+  if (!jStr) {
+    return aRelativePath;
+  }
+
+  const char *cstr = sEnv->GetStringUTFChars(jStr, nullptr);
+  std::string str = std::string(cstr);
+  sEnv->ReleaseStringUTFChars(jStr, cstr);
+
+  if (aRelativePath.empty()) {
+    return str;
+  } else {
+    return str + "/" + aRelativePath;
+  }
 }
 
 } // namespace crow

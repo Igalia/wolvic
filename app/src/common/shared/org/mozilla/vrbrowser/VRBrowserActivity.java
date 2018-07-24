@@ -415,6 +415,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         }, 20);
     }
 
+    @Keep
+    String getStorageAbsolutePath() {
+        return getExternalFilesDir(null).getAbsolutePath();
+    }
+
     void createOffscreenDisplay() {
         int[] ids = new int[1];
         GLES20.glGenTextures(1, ids, 0);

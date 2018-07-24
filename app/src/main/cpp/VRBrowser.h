@@ -9,6 +9,7 @@
 #include "vrb/MacroUtils.h"
 
 #include <memory>
+#include <string>
 #include <jni.h>
 
 namespace crow {
@@ -26,6 +27,7 @@ void HandleTrayEvent(jint aType);
 void RegisterExternalContext(jlong aContext);
 void PauseCompositor();
 void ResumeCompositor();
+std::string GetStorageAbsolutePath(const std::string& aRelativePath);
 } // namespace VRBrowser;
 
 } // namespace crow
