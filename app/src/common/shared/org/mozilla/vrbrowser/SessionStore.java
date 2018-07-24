@@ -33,7 +33,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSession.ProgressDelegate, GeckoSession.ContentDelegate, GeckoSession.TextInputDelegate {
+public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSession.ProgressDelegate, GeckoSession.ContentDelegate, GeckoSession.TextInputDelegate, GeckoSession.TrackingProtectionDelegate {
     private static SessionStore mInstance;
     private static final String LOGTAG = "VRB";
     public static SessionStore get() {
@@ -105,7 +105,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             GeckoRuntimeSettings.Builder runtimeSettingsBuilder = new GeckoRuntimeSettings.Builder();
             runtimeSettingsBuilder.javaCrashReportingEnabled(SettingsStore.getInstance(aContext).isCrashReportingEnabled());
             runtimeSettingsBuilder.nativeCrashReportingEnabled(SettingsStore.getInstance(aContext).isCrashReportingEnabled());
-            runtimeSettingsBuilder.trackingProtectionCategories(GeckoSession.TrackingProtectionDelegate.CATEGORY_ALL);
+            runtimeSettingsBuilder.trackingProtectionCategories(GeckoSession.TrackingProtectionDelegate.CATEGORY_AD | GeckoSession.TrackingProtectionDelegate.CATEGORY_SOCIAL | GeckoSession.TrackingProtectionDelegate.CATEGORY_ANALYTIC);
 
             mRuntime = GeckoRuntime.create(aContext, runtimeSettingsBuilder.build());
         } else {
@@ -246,6 +246,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         state.mSession.setContentDelegate(this);
         state.mSession.getTextInput().setDelegate(this);
         state.mSession.setPermissionDelegate(mPermissionDelegate);
+        state.mSession.setTrackingProtectionDelegate(this);
         for (SessionChangeListener listener: mSessionChangeListeners) {
             listener.onNewSession(state.mSession, result);
         }
@@ -781,6 +782,25 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             for (GeckoSession.TextInputDelegate listener : mTextInputListeners) {
                 listener.updateCursorAnchorInfo(aSession, info);
             }
+        }
+    }
+
+    @Override
+    public void onTrackerBlocked(GeckoSession session, String uri, int categories) {
+        if ((categories & GeckoSession.TrackingProtectionDelegate.CATEGORY_AD) != 0) {
+          Log.i(LOGTAG, "Blocking Ad: " + uri);
+        }
+
+        if ((categories & GeckoSession.TrackingProtectionDelegate.CATEGORY_ANALYTIC) != 0) {
+            Log.i(LOGTAG, "Blocking Analytic: " + uri);
+        }
+
+        if ((categories & GeckoSession.TrackingProtectionDelegate.CATEGORY_CONTENT) != 0) {
+            Log.i(LOGTAG, "Blocking Content: " + uri);
+        }
+
+        if ((categories & GeckoSession.TrackingProtectionDelegate.CATEGORY_SOCIAL) != 0) {
+            Log.i(LOGTAG, "Blocking Social: " + uri);
         }
     }
 
