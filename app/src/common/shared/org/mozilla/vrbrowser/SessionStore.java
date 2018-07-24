@@ -363,7 +363,11 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         if (mCurrentSession == null) {
              return;
         }
-        mCurrentSession.goBack();
+        if (isInFullScreen()) {
+            exitFullScreen();
+        } else {
+            mCurrentSession.goBack();
+        }
     }
 
     public void goForward() {
