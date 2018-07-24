@@ -163,6 +163,7 @@ struct ResizeHandle {
   vrb::GeometryPtr geometry;
   vrb::TransformPtr transform;
   ResizeState resizeState;
+  float touchRatio;
 };
 
 struct WidgetResizer::State {
@@ -206,7 +207,7 @@ struct WidgetResizer::State {
     CreateResizeHandle(vrb::Vector(0.0f, 1.0f, 0.0f), ResizeHandle::ResizeMode::Both, {leftTop, topLeft});
     CreateResizeHandle(vrb::Vector(1.0f, 1.0f, 0.0f), ResizeHandle::ResizeMode::Both, {rightTop, topRight});
     CreateResizeHandle(vrb::Vector(0.0f, 0.0f, 0.0f), ResizeHandle::ResizeMode::Both, {leftBottom, bottomLeft});
-    CreateResizeHandle(vrb::Vector(1.0f, 0.0f, 0.0f), ResizeHandle::ResizeMode::Both, {rightBottom, bottomRight});
+    CreateResizeHandle(vrb::Vector(1.0f, 0.0f, 0.0f), ResizeHandle::ResizeMode::Both, {rightBottom, bottomRight}, 1.0f);
     CreateResizeHandle(vrb::Vector(0.5f, 1.0f, 0.0f), ResizeHandle::ResizeMode::Vertical, {topLeft, topRight});
     CreateResizeHandle(vrb::Vector(0.5f, 0.0f, 0.0f), ResizeHandle::ResizeMode::Vertical, {bottomLeft, bottomRight});
     CreateResizeHandle(vrb::Vector(0.0f, 0.5f, 0.0f), ResizeHandle::ResizeMode::Horizontal, {leftTop, leftBottom});
@@ -226,12 +227,13 @@ struct WidgetResizer::State {
     return result;
   }
 
-  ResizeHandlePtr CreateResizeHandle(const vrb::Vector& aCenter, ResizeHandle::ResizeMode aResizeMode, const std::vector<ResizeBarPtr>& aBars) {
+  ResizeHandlePtr CreateResizeHandle(const vrb::Vector& aCenter, ResizeHandle::ResizeMode aResizeMode, const std::vector<ResizeBarPtr>& aBars, const float aTouchRatio = 2.0f) {
     vrb::CreationContextPtr create = context.lock();
     if (!create) {
       return nullptr;
     }
     ResizeHandlePtr result = ResizeHandle::Create(create, aCenter, aResizeMode, aBars);
+    result->touchRatio = aTouchRatio;
     resizeHandles.push_back(result);
     root->InsertNode(result->transform, 0);
     return result;
@@ -268,7 +270,7 @@ struct WidgetResizer::State {
     for (const ResizeHandlePtr& handle: resizeHandles) {
       vrb::Vector worldCenter(min.x() + WorldWidth() * handle->center.x(), min.y() + WorldHeight() * handle->center.y(), 0.0f);
       float distance = (point - worldCenter).Magnitude();
-      if (distance < kHandleRadius * 2.0f) {
+      if (distance < kHandleRadius * handle->touchRatio) {
         return handle;
       }
     }
