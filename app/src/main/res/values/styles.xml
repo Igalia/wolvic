@@ -5,7 +5,9 @@
         <attr name="settingsButtonStyle" format="reference" />
         <attr name="tabStyle" format="reference" />
         <attr name="navigationBarStyle" format="reference" />
+        <attr name="uiButtonStyle" format="reference" />
         <attr name="navigationBarButtonStyle" format="reference" />
+        <attr name="trayButtonStyle" format="reference" />
         <attr name="navigationBarTextButtonStyle" format="reference" />
         <attr name="urlBarIconStyle" format="reference" />
         <attr name="navigationBarButtonTint" format="reference" />
@@ -19,11 +21,13 @@
         <attr name="settingsButtonText" format="string" />
     </declare-styleable>
 
-    <declare-styleable name="NavigationBarButton">
+    <declare-styleable name="UIButton">
         <attr name="tintColorList" format="reference|color" />
+        <attr name="privateModeTintColorList" format="reference|color" />
+        <attr name="privateModeBackground" format="integer" />
     </declare-styleable>
 
-    <declare-styleable name="NavigationBarTextButton">
+    <declare-styleable name="UITextButton">
         <attr name="textTintColorList" format="reference|color" />
     </declare-styleable>
 
@@ -32,14 +36,24 @@
         <item name="android:padding">0dp</item>
     </style>
 
-    <style name="navigationBarButtonTheme">
-        <item name="android:background">@drawable/main_button</item>
+    <style name="uiButtonTheme">
         <item name="android:padding">10dp</item>
         <item name="android:layout_gravity">center_vertical</item>
         <item name="android:layout_width">40dp</item>
         <item name="android:layout_height">40dp</item>
         <item name="android:scaleType">fitCenter</item>
         <item name="tintColorList">@drawable/main_button_icon_color</item>
+        <item name="privateModeTintColorList">@drawable/main_button_icon_color_private</item>
+    </style>
+
+    <style name="navigationBarButtonTheme" parent="uiButtonTheme">
+        <item name="android:background">@drawable/main_button</item>
+        <item name="privateModeBackground">@drawable/main_button_private</item>
+    </style>
+
+    <style name="trayButtonTheme" parent="uiButtonTheme">
+        <item name="android:background">@drawable/tray_button_background</item>
+        <item name="privateModeBackground">@drawable/tray_button_background_private</item>
     </style>
 
     <style name="settingsButtonTheme">
@@ -101,6 +115,8 @@
         <item name="tabStyle">@style/tabTheme</item>
         <item name="navigationBarStyle">@style/navigationBarTheme</item>
         <item name="navigationBarButtonStyle">@style/navigationBarButtonTheme</item>
+        <item name="trayButtonStyle">@style/trayButtonTheme</item>
+        <item name="uiButtonStyle">@style/uiButtonTheme</item>
         <item name="navigationBarTextButtonStyle">@style/navigationBarTextButtonTheme</item>
         <item name="urlBarIconStyle">@style/urlBarIconTheme</item>
         <item name="urlProtocolColor">@color/fog_url_protocol</item>

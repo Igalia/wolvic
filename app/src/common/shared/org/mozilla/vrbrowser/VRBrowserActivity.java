@@ -50,10 +50,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     static final int GestureSwipeRight = 1;
     static final int SwipeDelay = 1000; // milliseconds
 
-    static final int TrayEventHelp = 0;
-    static final int TrayEventSettings = 1;
-    static final int TrayEventPrivate = 2;
-
     static final String LOGTAG = "VRB";
     HashMap<Integer, Widget> mWidgets;
     private int mWidgetHandleIndex = 1;
@@ -68,10 +64,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     KeyboardWidget mKeyboard;
     NavigationBarWidget mNavigationBar;
     TopBarWidget mTopBar;
+    TrayWidget mTray;
     PermissionDelegate mPermissionDelegate;
     LinkedList<WidgetManagerDelegate.Listener> mWidgetEventListeners;
     LinkedList<Runnable> mBackHandlers;
-    SettingsWidget mSettingsWidget;
     private boolean mIsPresentingImmersive = false;
     private Thread mUiThread;
 
@@ -153,7 +149,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mTopBar = new TopBarWidget(this);
         mTopBar.setBrowserWidget(mBrowserWidget);
 
-        addWidgets(Arrays.<Widget>asList(mBrowserWidget, mNavigationBar, mKeyboard));
+        // Create Tray
+        mTray = new TrayWidget(this);
+
+        addWidgets(Arrays.<Widget>asList(mBrowserWidget, mNavigationBar, mKeyboard, mTray));
     }
 
     @Override
@@ -324,34 +323,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                     mLastRunnable = new SwipeRunnable();
                     mHandler.postDelayed(mLastRunnable, SwipeDelay);
                 }
-            }
-        });
-    }
-
-    @Keep
-    @SuppressWarnings("unused")
-    void handleTrayEvent(final int aType) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                switch (aType) {
-                    case TrayEventHelp: {
-
-                    }
-                    break;
-                    case TrayEventSettings: {
-                        if (mSettingsWidget == null) {
-                            mSettingsWidget = new SettingsWidget(VRBrowserActivity.this);
-                        }
-                        mSettingsWidget.toggle();
-                    }
-                    break;
-                    case TrayEventPrivate: {
-                        SessionStore.get().switchPrivateMode();
-                    }
-                    break;
-                }
-                mAudioEngine.playSound(AudioEngine.Sound.CLICK);
             }
         });
     }
@@ -618,7 +589,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public void setTrayVisible(boolean visible) {
-        setTrayVisibleNative(visible);
+        mTray.setVisible(visible);
     }
 
     @Override
@@ -638,5 +609,4 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private native void fadeInWorldNative();
     private native void setTemporaryFilePath(String aPath);
     private native void exitImmersiveNative();
-    private native void setTrayVisibleNative(boolean visible);
 }

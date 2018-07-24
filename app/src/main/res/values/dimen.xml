@@ -37,7 +37,6 @@
     <dimen name="keyboard_microphone_margin_left">50dp</dimen>
     <dimen name="keyboard_popup_left_margin">90dp</dimen>
 
-
     <!-- Settings Dialog -->
     <item name="settings_world_y" format="float" type="dimen">1.6</item>
     <item name="settings_world_z" format="float" type="dimen">-1.8</item>
@@ -54,4 +53,11 @@
     <dimen name="top_bar_width">40dp</dimen>
     <dimen name="top_bar_height">40dp</dimen>
     <item name="top_bar_world_y" format="float" type="dimen">0.15</item>
+
+    <!-- Tray -->
+    <item name="tray_world_y" format="float" type="dimen">-0.25</item>
+    <item name="tray_world_z" format="float" type="dimen">-3.5</item>
+    <item name="tray_world_width" format="float" type="dimen">2.0</item>
+    <dimen name="tray_width">200dp</dimen>
+    <dimen name="tray_height">40dp</dimen>
 </resources>

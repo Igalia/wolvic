@@ -21,7 +21,7 @@ import org.mozilla.vrbrowser.audio.AudioEngine;
 public class TopBarWidget extends UIWidget implements SessionStore.SessionChangeListener, WidgetManagerDelegate.Listener {
     private static final String LOGTAG = "VRB";
 
-    private NavigationBarButton mCloseButton;
+    private UIButton mCloseButton;
     private AudioEngine mAudio;
     private BrowserWidget mBrowserWidget;
 
@@ -73,6 +73,7 @@ public class TopBarWidget extends UIWidget implements SessionStore.SessionChange
         aPlacement.anchorY = 0.5f;
         aPlacement.parentAnchorX = 0.5f;
         aPlacement.parentAnchorY = 1.0f;
+        aPlacement.opaque = false;
     }
 
     @Override
@@ -90,17 +91,6 @@ public class TopBarWidget extends UIWidget implements SessionStore.SessionChange
         mBrowserWidget = aWidget;
     }
 
-    private void setPrivateBrowsingEnabled(boolean isEnabled) {
-        if (isEnabled) {
-            mCloseButton.setBackground(getContext().getDrawable(R.drawable.main_button_private));
-            mCloseButton.setTintColorList(R.drawable.main_button_icon_color_private);
-
-        } else {
-            mCloseButton.setBackground(getContext().getDrawable(R.drawable.main_button));
-            mCloseButton.setTintColorList(R.drawable.main_button_icon_color);
-        }
-    }
-
     // SessionStore.SessionChangeListener
 
     @Override
@@ -116,29 +106,17 @@ public class TopBarWidget extends UIWidget implements SessionStore.SessionChange
     @Override
     public void onCurrentSessionChange(GeckoSession aSession, int aId) {
         boolean isPrivateMode  = aSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
-        if (isPrivateMode) {
-            show();
-            setPrivateBrowsingEnabled(true);
-
-            mWidgetManager.fadeOutWorld();
-            // TODO: Fade out the browser window. Waiting for https://github.com/MozillaReality/FirefoxReality/issues/77
-
-        } else {
-            hide();
-            setPrivateBrowsingEnabled(false);
-
-            mWidgetManager.fadeInWorld();
-            // TODO: Fade in the browser window. Waiting for https://github.com/MozillaReality/FirefoxReality/issues/77
-        }
+        setVisible(isPrivateMode);
+        mCloseButton.setPrivateMode(isPrivateMode);
     }
 
-    public void show() {
-        getPlacement().visible = true;
-        mWidgetManager.addWidget(this);
-    }
+    public void setVisible(boolean isVisible) {
+        getPlacement().visible = isVisible;
 
-    public void hide() {
-        mWidgetManager.removeWidget(this);
+        if (isVisible)
+            mWidgetManager.addWidget(this);
+        else
+            mWidgetManager.removeWidget(this);
     }
 
     // WidgetManagerDelegate.Listener

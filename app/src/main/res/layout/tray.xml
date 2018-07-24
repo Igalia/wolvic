@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+       xmlns:app="http://schemas.android.com/apk/res-auto">
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center">
+
+    <LinearLayout
+            android:id="@+id/tray_container"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        <org.mozilla.vrbrowser.ui.UIButton
+                android:id="@+id/helpButton"
+                style="?attr/trayButtonStyle"
+                app:privateModeBackground="@drawable/tray_button_background"
+                android:src="@drawable/ic_tray_help"
+                android:rotation="-15" android:translationX="5dp" android:translationY="0dp"
+                android:translationZ="0dp"/>
+        <org.mozilla.vrbrowser.ui.UIButton
+                android:id="@+id/privateButton"
+                style="?attr/trayButtonStyle"
+                android:src="@drawable/ic_tray_private"
+                android:layout_marginBottom="5dp"/>
+        <org.mozilla.vrbrowser.ui.UIButton
+                android:id="@+id/settingsButton"
+                style="?attr/trayButtonStyle"
+                app:privateModeBackground="@drawable/tray_button_background"
+                android:src="@drawable/ic_tray_settings"
+                android:rotation="15" android:translationX="-5dp"/>
+    </LinearLayout>
+
+    </RelativeLayout>
+</merge>

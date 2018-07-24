@@ -7,7 +7,6 @@
 #include "Controller.h"
 #include "ControllerContainer.h"
 #include "FadeBlitter.h"
-#include "Tray.h"
 #include "Device.h"
 #include "DeviceDelegate.h"
 #include "ExternalBlitter.h"
@@ -132,7 +131,6 @@ struct BrowserWorld::State {
   DrawableListPtr drawListTransparent;
   CameraPtr leftCamera;
   CameraPtr rightCamera;
-  TrayPtr tray;
   float nearClip;
   float farClip;
   JNIEnv* env;
@@ -197,30 +195,6 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
           hitDistance = distance;
           hitPoint = result;
         }
-      }
-    }
-
-    if (tray && tray->IsLoaded()) {
-      vrb::Vector result;
-      float distance = 0.0f;
-      bool isInside = false;
-      bool trayActive = false;
-      if (tray->TestControllerIntersection(start, direction, result, isInside, distance)) {
-        if (isInside && (distance < hitDistance)) {
-          hitWidget.reset();
-          hitDistance = distance;
-          hitPoint = result;
-          trayActive = true;
-        }
-      }
-      const bool pressed = controller.buttonState & ControllerDelegate::BUTTON_TRIGGER ||
-                           controller.buttonState & ControllerDelegate::BUTTON_TOUCHPAD;
-      int32_t trayEvent = tray->ProcessEvents(trayActive, pressed);
-      if (trayEvent == Tray::IconHide) {
-        tray->Toggle(false);
-      }
-      if (trayEvent >= 0) {
-        VRBrowser::HandleTrayEvent(trayEvent);
       }
     }
 
@@ -425,7 +399,6 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
     m.skybox = CreateSkyBox("cubemap/space");
     m.rootOpaqueParent->AddNode(m.skybox);
     CreateFloor();
-    CreateTray();
     m.modelsLoaded = true;
   }
 }
@@ -888,26 +861,6 @@ BrowserWorld::CreateFloor() {
   model->SetTransform(transform);
 }
 
-
-void
-BrowserWorld::CreateTray() {
-  ASSERT_ON_RENDER_THREAD();
-  m.tray = Tray::Create(m.create);
-  m.tray->Load(m.loader);
-  m.rootOpaque->AddNode(m.tray->GetRoot());
-
-  vrb::Matrix transform = vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), -40.0f * M_PI/180.0f);
-  transform.TranslateInPlace(Vector(0.0f, 0.0f, -3.0f));
-  m.tray->SetTransform(transform);
-}
-
-void
-BrowserWorld::SetTrayVisible(bool visible) const {
-  ASSERT_ON_RENDER_THREAD();
-  if (m.tray)
-    m.tray->Toggle(visible);
-}
-
 float
 BrowserWorld::DistanceToNode(const vrb::NodePtr& aTargetNode, const vrb::Vector& aPosition) const {
   ASSERT_ON_RENDER_THREAD(0.0f);
@@ -986,11 +939,6 @@ JNI_METHOD(void, setTemporaryFilePath)
 JNI_METHOD(void, exitImmersiveNative)
 (JNIEnv* aEnv, jobject) {
   crow::BrowserWorld::Instance().ExitImmersive();
-}
-
-JNI_METHOD(void, setTrayVisibleNative)
-(JNIEnv* aEnv, jobject, jboolean visible) {
-  crow::BrowserWorld::Instance().SetTrayVisible(visible);
 }
 
 } // extern "C"

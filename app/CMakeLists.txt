@@ -26,7 +26,6 @@ add_library( # Sets the name of the library.
              src/main/cpp/FadeBlitter.cpp
              src/main/cpp/GestureDelegate.cpp
              src/main/cpp/Quad.cpp
-             src/main/cpp/Tray.cpp
              src/main/cpp/ExternalBlitter.cpp
              src/main/cpp/ExternalVR.cpp
              src/main/cpp/GeckoSurfaceTexture.cpp

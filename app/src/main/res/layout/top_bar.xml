@@ -5,7 +5,7 @@
         android:layout_height="match_parent"
         android:gravity="center">
 
-        <org.mozilla.vrbrowser.ui.NavigationBarButton
+        <org.mozilla.vrbrowser.ui.UIButton
             android:id="@+id/closeButton"
             style="?attr/navigationBarButtonStyle"
             android:src="@drawable/ic_icon_dialog_cancel" />

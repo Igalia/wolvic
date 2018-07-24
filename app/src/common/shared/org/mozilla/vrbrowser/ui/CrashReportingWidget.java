@@ -22,7 +22,7 @@ public class CrashReportingWidget extends UIWidget {
     private static final String LOGTAG = "VRB";
 
     private TextView mAcceptButton;
-    private NavigationBarButton mCancelButton;
+    private UIButton mCancelButton;
     private AudioEngine mAudio;
     private Runnable mBackHandler;
 

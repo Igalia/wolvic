@@ -13,18 +13,18 @@ import android.util.AttributeSet;
 
 import org.mozilla.vrbrowser.R;
 
-public class NavigationBarTextButton extends AppCompatButton implements CustomUIButton {
+public class UITextButton extends AppCompatButton implements CustomUIButton {
     private ColorStateList mTintColorList;
 
-    public NavigationBarTextButton(Context context, AttributeSet attrs) {
+    public UITextButton(Context context, AttributeSet attrs) {
         this(context, attrs, R.attr.imageButtonStyle);
     }
 
-    public NavigationBarTextButton(Context context, AttributeSet attrs, int defStyleAttr) {
+    public UITextButton(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.NavigationBarTextButton, defStyleAttr, 0);
-        mTintColorList = a.getColorStateList(R.styleable.NavigationBarTextButton_textTintColorList);
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.UITextButton, defStyleAttr, 0);
+        mTintColorList = a.getColorStateList(R.styleable.UITextButton_textTintColorList);
         if (mTintColorList != null) {
             int color = mTintColorList.getColorForState(getDrawableState(), 0);
             setTextColor(color);
@@ -32,6 +32,16 @@ public class NavigationBarTextButton extends AppCompatButton implements CustomUI
         a.recycle();
 
         setSoundEffectsEnabled(false);
+    }
+
+    private void setTintColorList(int aColorListId) {
+        mTintColorList = getContext().getResources().getColorStateList(
+                aColorListId,
+                getContext().getTheme());
+        if (mTintColorList != null) {
+            int color = mTintColorList.getColorForState(getDrawableState(), 0);
+            setTextColor(color);
+        }
     }
 
     @Override
@@ -44,13 +54,14 @@ public class NavigationBarTextButton extends AppCompatButton implements CustomUI
     }
 
     @Override
-    public void setTintColorList(int aColorListId) {
-        mTintColorList = getContext().getResources().getColorStateList(
-                aColorListId,
-                getContext().getTheme());
-        if (mTintColorList != null) {
-            int color = mTintColorList.getColorForState(getDrawableState(), 0);
-            setTextColor(color);
+    public void setPrivateMode(boolean isEnabled) {
+        if (isEnabled) {
+            setBackground(getContext().getDrawable(R.drawable.main_button_private));
+            setTintColorList(R.drawable.main_button_icon_color_private);
+
+        } else {
+            setBackground(getContext().getDrawable(R.drawable.main_button));
+            setTintColorList(R.drawable.main_button_icon_color);
         }
     }
 }

@@ -4,6 +4,6 @@ import android.graphics.drawable.Drawable;
 
 public interface CustomUIButton {
 
-    void setTintColorList(int aColorListId);
     void setBackground(Drawable background);
+    void setPrivateMode(boolean isEnabled);
 }

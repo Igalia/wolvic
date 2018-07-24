@@ -186,7 +186,7 @@ public class NavigationURLBar extends FrameLayout {
         }
     }
 
-    public void setPrivateBrowsingEnabled(boolean isEnabled) {
+    public void setPrivateMode(boolean isEnabled) {
         if (isEnabled)
             mURL.setBackground(getContext().getDrawable(R.drawable.url_background_private));
         else

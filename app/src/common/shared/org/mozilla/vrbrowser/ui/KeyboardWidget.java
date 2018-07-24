@@ -45,7 +45,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
     private boolean mIsPopupVisible = false;
     private RelativeLayout.LayoutParams mOriginalLayoutParams;
-    private NavigationBarButton mKeyboardIcon;
+    private UIButton mKeyboardIcon;
     private int mKeyboardPopupLeftMargin;
     private ImageButton mCloseKeyboardButton;
 

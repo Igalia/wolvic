@@ -115,7 +115,7 @@
             android:layout_marginTop="10dp"
             android:layout_below="@id/versionText"/>
 
-        <org.mozilla.vrbrowser.ui.NavigationBarButton
+        <org.mozilla.vrbrowser.ui.UIButton
             android:id="@+id/settingsCancelButton"
             android:layout_width="40dp"
             android:layout_height="40dp"

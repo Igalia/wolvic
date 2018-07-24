@@ -29,10 +29,10 @@ import java.util.Arrays;
 public class NavigationBarWidget extends UIWidget implements GeckoSession.NavigationDelegate, GeckoSession.ProgressDelegate, GeckoSession.ContentDelegate, WidgetManagerDelegate.Listener, SessionStore.SessionChangeListener {
     private static final String LOGTAG = "VRB";
     private AudioEngine mAudio;
-    private NavigationBarButton mBackButton;
-    private NavigationBarButton mForwardButton;
-    private NavigationBarButton mReloadButton;
-    private NavigationBarButton mHomeButton;
+    private UIButton mBackButton;
+    private UIButton mForwardButton;
+    private UIButton mReloadButton;
+    private UIButton mHomeButton;
     private NavigationURLBar mURLBar;
     private ViewGroup mNavigationContainer;
     private ViewGroup mFocusModeContainer;
@@ -44,14 +44,14 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private boolean mFocusDueToFullScreen;
     private Runnable mFocusBackHandler;
     private Runnable mResizeBackHandler;
-    private NavigationBarButton mFocusEnterButton;
-    private NavigationBarButton mFocusExitButton;
-    private NavigationBarButton mResizeEnterButton;
-    private NavigationBarButton mResizeExitButton;
-    private NavigationBarTextButton mPreset0;
-    private NavigationBarTextButton mPreset1;
-    private NavigationBarTextButton mPreset2;
-    private NavigationBarTextButton mPreset3;
+    private UIButton mFocusEnterButton;
+    private UIButton mFocusExitButton;
+    private UIButton mResizeEnterButton;
+    private UIButton mResizeExitButton;
+    private UITextButton mPreset0;
+    private UITextButton mPreset1;
+    private UITextButton mPreset2;
+    private UITextButton mPreset3;
     private ArrayList<CustomUIButton> mButtons;
     private PointF mLastBrowserSize;
 
@@ -292,11 +292,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mFocusExitButton.setHovered(false);
         mFocusExitButton.setPressed(false);
 
-        GeckoSession currentSession = SessionStore.get().getCurrentSession();
-        boolean isPrivateMode = currentSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
-        if (!isPrivateMode) {
-            mWidgetManager.fadeOutWorld();
-        }
+        mWidgetManager.fadeOutWorld();
 
         if (mLastBrowserSize != null)
             mBrowserWidget.handleResizeEvent(mLastBrowserSize.x, mLastBrowserSize.y);
@@ -322,11 +318,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mFocusExitButton.setHovered(false);
         mFocusExitButton.setPressed(false);
 
-        GeckoSession currentSession = SessionStore.get().getCurrentSession();
-        boolean isPrivateMode = currentSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
-        if (!isPrivateMode) {
-            mWidgetManager.fadeInWorld();
-        }
+        mWidgetManager.fadeInWorld();
 
         mLastBrowserSize = mBrowserWidget.getLastWorldSize();
         setResizePreset(1.0f);
@@ -458,24 +450,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         }
     }
 
-    private void setPrivateBrowsingEnabled(boolean isEnabled) {
-        mURLBar.setPrivateBrowsingEnabled(isEnabled);
-
-        if (isEnabled) {
-            for (CustomUIButton button : mButtons) {
-                button.setBackground(getContext().getDrawable(R.drawable.main_button_private));
-                button.setTintColorList(R.drawable.main_button_icon_color_private);
-            }
-
-        } else {
-            for (CustomUIButton button : mButtons) {
-                button.setBackground(getContext().getDrawable(R.drawable.main_button));
-                button.setTintColorList(R.drawable.main_button_icon_color);
-            }
-        }
-
-    }
-
     // Content delegate
 
     @Override
@@ -562,9 +536,10 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     @Override
     public void onCurrentSessionChange(GeckoSession aSession, int aId) {
         boolean isPrivateMode  = aSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
-        if (isPrivateMode)
-            setPrivateBrowsingEnabled(true);
-        else
-            setPrivateBrowsingEnabled(false);
+        mURLBar.setPrivateMode(isPrivateMode);
+
+        for (CustomUIButton button : mButtons) {
+            button.setPrivateMode(isPrivateMode);
+        }
     }
 }

@@ -34,7 +34,7 @@
             android:text="@string/speak_now"
             android:textSize="12sp" />
 
-        <org.mozilla.vrbrowser.ui.NavigationBarButton
+        <org.mozilla.vrbrowser.ui.UIButton
             android:id="@+id/keyboard_icon"
             android:layout_width="@dimen/keyboard_key_width"
             android:layout_height="@dimen/keyboard_key_height"

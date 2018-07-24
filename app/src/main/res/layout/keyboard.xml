@@ -31,7 +31,7 @@
                 android:layout_height="match_parent"/>
         </LinearLayout>
         
-        <org.mozilla.vrbrowser.ui.NavigationBarButton
+        <org.mozilla.vrbrowser.ui.UIButton
             android:id="@+id/keyboardCloseButton"
             android:layout_width="36dp"
             android:layout_height="36dp"
