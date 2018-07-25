@@ -22,8 +22,8 @@ static const char* kHandleGestureName = "handleGesture";
 static const char* kHandleGestureSignature = "(I)V";
 static const char* kHandleResizeName = "handleResize";
 static const char* kHandleResizeSignature = "(IFF)V";
-static const char* kHandleTrayEventName = "handleTrayEvent";
-static const char* kHandleTrayEventSignature = "(I)V";
+static const char* kHandleBackEventName = "handleBack";
+static const char* kHandleBackEventSignature = "()V";
 static const char* kRegisterExternalContextName = "registerExternalContext";
 static const char* kRegisterExternalContextSignature = "(J)V";
 static const char* kPauseCompositorName = "pauseGeckoViewCompositor";
@@ -41,7 +41,7 @@ static jmethodID sHandleScrollEvent;
 static jmethodID sHandleAudioPose;
 static jmethodID sHandleGesture;
 static jmethodID sHandleResize;
-static jmethodID sHandleTrayEvent;
+static jmethodID sHandleBack;
 static jmethodID sRegisterExternalContext;
 static jmethodID sPauseCompositor;
 static jmethodID sResumeCompositor;
@@ -71,7 +71,7 @@ VRBrowser::InitializeJava(JNIEnv* aEnv, jobject aActivity) {
   sHandleAudioPose = FindJNIMethodID(sEnv, browserClass, kHandleAudioPoseName, kHandleAudioPoseSignature);
   sHandleGesture = FindJNIMethodID(sEnv, browserClass, kHandleGestureName, kHandleGestureSignature);
   sHandleResize = FindJNIMethodID(sEnv, browserClass, kHandleResizeName, kHandleResizeSignature);
-  sHandleTrayEvent = FindJNIMethodID(sEnv, browserClass, kHandleTrayEventName, kHandleTrayEventSignature);
+  sHandleBack = FindJNIMethodID(sEnv, browserClass, kHandleBackEventName, kHandleBackEventSignature);
   sRegisterExternalContext = FindJNIMethodID(sEnv, browserClass, kRegisterExternalContextName, kRegisterExternalContextSignature);
   sPauseCompositor = FindJNIMethodID(sEnv, browserClass, kPauseCompositorName, kPauseCompositorSignature);
   sResumeCompositor = FindJNIMethodID(sEnv, browserClass, kResumeCompositorName, kResumeCompositorSignature);
@@ -94,7 +94,7 @@ VRBrowser::ShutdownJava() {
   sHandleAudioPose = nullptr;
   sHandleGesture = nullptr;
   sHandleResize = nullptr;
-  sHandleTrayEvent = nullptr;
+  sHandleBack = nullptr;
   sRegisterExternalContext = nullptr;
   sPauseCompositor = nullptr;
   sResumeCompositor = nullptr;
@@ -144,9 +144,9 @@ VRBrowser::HandleResize(jint aWidgetHandle, jfloat aWorldWidth, jfloat aWorldHei
 }
 
 void
-VRBrowser::HandleTrayEvent(jint aType) {
-  if (!ValidateMethodID(sEnv, sActivity, sHandleTrayEvent, __FUNCTION__)) { return; }
-  sEnv->CallVoidMethod(sActivity, sHandleTrayEvent, aType);
+VRBrowser::HandleBack() {
+  if (!ValidateMethodID(sEnv, sActivity, sHandleBack, __FUNCTION__)) { return; }
+  sEnv->CallVoidMethod(sActivity, sHandleBack);
   CheckJNIException(sEnv, __FUNCTION__);
 }
 

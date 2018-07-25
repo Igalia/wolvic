@@ -23,7 +23,7 @@ void HandleScrollEvent(jint aWidgetHandle, jint aController, jfloat aX, jfloat a
 void HandleAudioPose(jfloat qx, jfloat qy, jfloat qz, jfloat qw, jfloat px, jfloat py, jfloat pz);
 void HandleGesture(jint aType);
 void HandleResize(jint aWidgetHandle, jfloat aWorldWidth, jfloat aWorldHeight);
-void HandleTrayEvent(jint aType);
+void HandleBack();
 void RegisterExternalContext(jlong aContext);
 void PauseCompositor();
 void ResumeCompositor();

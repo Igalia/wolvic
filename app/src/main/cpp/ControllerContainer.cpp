@@ -239,23 +239,29 @@ ControllerContainer::SetButtonState(const int32_t aControllerIndex, const Button
 
   if (aPressed) {
     m.list[aControllerIndex].buttonState |= aWhichButton;
-    m.list[aControllerIndex].immersivePressedState |= immersiveButtonMask;
   } else {
     m.list[aControllerIndex].buttonState &= ~aWhichButton;
-    m.list[aControllerIndex].immersivePressedState &= ~immersiveButtonMask;
   }
 
-  if (aTouched) {
-    m.list[aControllerIndex].immersiveTouchedState |= immersiveButtonMask;
-  } else {
-    m.list[aControllerIndex].immersiveTouchedState &= ~immersiveButtonMask;
-  }
+  if (aImmersiveIndex >= 0) {
+    if (aPressed) {
+      m.list[aControllerIndex].immersivePressedState |= immersiveButtonMask;
+    } else {
+      m.list[aControllerIndex].immersivePressedState &= ~immersiveButtonMask;
+    }
 
-  float trigger = aImmersiveTrigger;
-  if (trigger < 0.0f) {
-    trigger = aPressed ? 1.0f : 0.0f;
+    if (aTouched) {
+      m.list[aControllerIndex].immersiveTouchedState |= immersiveButtonMask;
+    } else {
+      m.list[aControllerIndex].immersiveTouchedState &= ~immersiveButtonMask;
+    }
+
+    float trigger = aImmersiveTrigger;
+    if (trigger < 0.0f) {
+      trigger = aPressed ? 1.0f : 0.0f;
+    }
+    m.list[aControllerIndex].immersiveTriggerValues[aImmersiveIndex] = trigger;
   }
-  m.list[aControllerIndex].immersiveTriggerValues[aImmersiveIndex] = trigger;
 }
 
 void

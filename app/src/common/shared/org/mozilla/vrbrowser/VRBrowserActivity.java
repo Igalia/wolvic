@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Keep;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
@@ -323,6 +324,18 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                     mLastRunnable = new SwipeRunnable();
                     mHandler.postDelayed(mLastRunnable, SwipeDelay);
                 }
+            }
+        });
+    }
+
+    @SuppressWarnings({"UnusedDeclaration"})
+    @Keep
+    void handleBack() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK));
+                dispatchKeyEvent(new KeyEvent (KeyEvent.ACTION_UP, KeyEvent.KEYCODE_BACK));
             }
         });
     }

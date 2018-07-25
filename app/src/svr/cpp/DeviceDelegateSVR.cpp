@@ -223,7 +223,7 @@ struct DeviceDelegateSVR::State {
     const bool menuPressed = (bool)(state.buttonState & svrControllerButton::Start);
     controller->SetButtonState(aController, ControllerDelegate::BUTTON_TRIGGER, 0, triggerPressed, triggerPressed, controllerState.analog1D[0]);
     controller->SetButtonState(aController, ControllerDelegate::BUTTON_TOUCHPAD, 1, touchpadPressed, touchpadTouched);
-    controller->SetButtonState(aController, ControllerDelegate::BUTTON_MENU, 2, menuPressed, menuPressed);
+    controller->SetButtonState(aController, ControllerDelegate::BUTTON_APP, 2, menuPressed, menuPressed);
 
     if (aController == kHeadControllerId) {
       // Workaround for repeated KEY_DOWN events bug in ODG
@@ -580,7 +580,7 @@ DeviceDelegateSVR::ExitApp() {
 
 void
 DeviceDelegateSVR::UpdateButtonState(int32_t aWhichButton, bool pressed) {
-  int32_t buttonMask = aWhichButton == ControllerDelegate::BUTTON_MENU ? svrControllerButton::Start :
+  int32_t buttonMask = aWhichButton == ControllerDelegate::BUTTON_APP ? svrControllerButton::Start :
                                                                          svrControllerButton::PrimaryIndexTrigger;
   if (pressed) {
     m.headControllerState.buttonState |= buttonMask;

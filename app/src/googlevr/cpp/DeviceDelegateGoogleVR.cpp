@@ -277,7 +277,7 @@ struct DeviceDelegateGoogleVR::State {
       }
       controllerDelegate->SetTransform(index, controller.transform);
       controllerDelegate->SetLeftHanded(index, controller.hand == ElbowModel::HandEnum::Left);
-      controllerDelegate->SetButtonCount(index, 2);
+      controllerDelegate->SetButtonCount(index, 1); // For immersive mode
       // Index 0 is the dummy button so skip it.
       for (int ix = 1; ix < GVR_CONTROLLER_BUTTON_COUNT; ix++) {
         const uint64_t buttonMask = (uint64_t) 0x01 << (ix - 1);
@@ -300,7 +300,7 @@ struct DeviceDelegateGoogleVR::State {
           controllerDelegate->SetAxes(index, immersiveAxes, kNumImmersiveAxes);
         }
         else if (ix == GVR_CONTROLLER_BUTTON_APP) {
-          controllerDelegate->SetButtonState(index, ControllerDelegate::BUTTON_MENU, 1, clicked, clicked);
+          controllerDelegate->SetButtonState(index, ControllerDelegate::BUTTON_APP, -1, clicked, clicked);
         }
       }
     }

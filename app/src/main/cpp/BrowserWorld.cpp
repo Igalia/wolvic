@@ -193,6 +193,11 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
     if (!controller.enabled || (controller.index < 0)) {
       continue;
     }
+
+    if (!(controller.lastButtonState & ControllerDelegate::BUTTON_APP) && (controller.buttonState & ControllerDelegate::BUTTON_APP)) {
+      VRBrowser::HandleBack();
+    }
+
     vrb::Vector start = controller.transformMatrix.MultiplyPosition(vrb::Vector());
     vrb::Vector direction = controller.transformMatrix.MultiplyDirection(vrb::Vector(0.0f, 0.0f, -1.0f));
     WidgetPtr hitWidget;
@@ -277,6 +282,7 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
       VRBrowser::HandleMotionEvent(0, controller.index, JNI_FALSE, 0.0f, 0.0f);
       controller.widget = 0;
     }
+    controller.lastButtonState = controller.buttonState;
   }
   for (Widget* widget: active) {
     widget->TogglePointer(true);
