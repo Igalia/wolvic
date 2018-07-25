@@ -56,6 +56,7 @@
 
 #define INJECT_ENVIRONMENT_PATH "environment/environment.obj"
 #define INJECT_SKYBOX_PATH "skybox"
+#define SPACE_THEME 0
 
 using namespace vrb;
 
@@ -67,7 +68,11 @@ static const int GestureSwipeRight = 1;
 static const float kScrollFactor = 20.0f; // Just picked what fell right.
 static const float kWorldDPIRatio = 2.0f/720.0f;
 
-static const std::string CubemapDay = "cubemap/meadow/day";
+#if SPACE_THEME == 1
+  static const std::string CubemapDay = "cubemap/space";
+#else
+  static const std::string CubemapDay = "cubemap/meadow/day";
+#endif
 
 class SurfaceObserver;
 typedef std::shared_ptr<SurfaceObserver> SurfaceObserverPtr;
@@ -870,7 +875,11 @@ void
 BrowserWorld::CreateFloor() {
   ASSERT_ON_RENDER_THREAD();
   vrb::TransformPtr model = Transform::Create(m.create);
+#if SPACE_THEME == 1
+  std::string environmentPath = "FirefoxPlatform2_low.obj";
+#else
   std::string environmentPath = "meadow_v4.obj";
+#endif
 #ifdef INJECT_ENVIRONMENT_PATH
   std::string injectPath = VRBrowser::GetStorageAbsolutePath(INJECT_ENVIRONMENT_PATH);
   if (std::ifstream(injectPath)) {
@@ -880,6 +889,11 @@ BrowserWorld::CreateFloor() {
   m.loader->LoadModel(environmentPath, model);
   m.rootOpaque->AddNode(model);
   vrb::Matrix transform = vrb::Matrix::Identity();
+#if SPACE_THEME == 1
+  transform.ScaleInPlace(Vector(40.0, 40.0, 40.0));
+  transform.TranslateInPlace(Vector(0.0, -2.5f, 1.0));
+  transform.PostMultiplyInPlace(vrb::Matrix::Rotation(Vector(1.0, 0.0, 0.0), float(M_PI * 0.5)));
+#endif
   model->SetTransform(transform);
 }
 
