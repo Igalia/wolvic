@@ -26,15 +26,16 @@ import org.mozilla.gecko.util.GeckoBundle;
 import org.mozilla.vrbrowser.SessionStore;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.audio.VRAudioTheme;
+import org.mozilla.vrbrowser.ui.NavigationBarWidget;
 
-public class BrowserActivity extends Activity implements SessionStore.SessionChangeListener {
+public class BrowserActivity extends Activity implements SessionStore.SessionChangeListener, WidgetManagerDelegate  {
     private static final String LOGTAG = "VRB";
     private static final int REQUEST_PERMISSIONS = 2;
     /* package */ static final int REQUEST_FILE_PICKER = 1;
     private FrameLayout mContainer;
     private GeckoView mGeckoView;
     private GeckoSession mGeckoSession;
-    private BrowserHeaderWidget mBrowserHeader;
+    private NavigationBarWidget mBrowserHeader;
     private AudioEngine mAudioEngine;
 
 
@@ -217,6 +218,71 @@ public class BrowserActivity extends Activity implements SessionStore.SessionCha
             mGeckoView.setSession(aSession);
             mGeckoSession = aSession;
         }
+    }
+
+    @Override
+    public int newWidgetHandle() {
+        return 0;
+    }
+
+    @Override
+    public void addWidget(Widget aWidget) {
+
+    }
+
+    @Override
+    public void updateWidget(Widget aWidget) {
+
+    }
+
+    @Override
+    public void removeWidget(Widget aWidget) {
+
+    }
+
+    @Override
+    public void startWidgetResize(Widget aWidget) {
+
+    }
+
+    @Override
+    public void finishWidgetResize(Widget aWidget) {
+
+    }
+
+    @Override
+    public void addListener(Listener aListener) {
+
+    }
+
+    @Override
+    public void removeListener(Listener aListener) {
+
+    }
+
+    @Override
+    public void pushBackHandler(Runnable aRunnable) {
+
+    }
+
+    @Override
+    public void popBackHandler(Runnable aRunnable) {
+
+    }
+
+    @Override
+    public void fadeOutWorld() {
+
+    }
+
+    @Override
+    public void fadeInWorld() {
+
+    }
+
+    @Override
+    public void setTrayVisible(boolean visible) {
+
     }
 
     private class MyGeckoViewPermission implements GeckoSession.PermissionDelegate {
