@@ -12,6 +12,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoSession;
@@ -54,6 +56,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private UITextButton mPreset3;
     private ArrayList<CustomUIButton> mButtons;
     private PointF mLastBrowserSize;
+    private int mURLBarLayoutIndex;
 
     public NavigationBarWidget(Context aContext) {
         super(aContext);
@@ -284,8 +287,22 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             return;
         }
         mIsInFocusMode = true;
-        AnimationHelper.fadeIn(mFocusModeContainer, AnimationHelper.FADE_ANIMATION_DURATION);
-        AnimationHelper.fadeOut(mNavigationContainer, 0);
+        AnimationHelper.fadeIn(mFocusModeContainer, AnimationHelper.FADE_ANIMATION_DURATION, new Runnable() {
+            @Override
+            public void run() {
+                // Set up required to show the URLBar while in focus mode
+                mURLBarLayoutIndex = mNavigationContainer.indexOfChild(mURLBar);
+                mNavigationContainer.removeView(mURLBar);
+                LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) mURLBar.getLayoutParams();
+                params.width = (int)(WidgetPlacement.pixelDimension(getContext(), R.dimen.browser_width_pixels) * 0.8);
+                params.weight = 1;
+                mURLBar.setLayoutParams(params);
+                mFocusModeContainer.addView(mURLBar, 0);
+                mURLBar.setVisibility(View.INVISIBLE);
+                mURLBar.setClickable(false);
+            }
+        });
+        AnimationHelper.fadeOut(mNavigationContainer, 0, null);
 
         mFocusEnterButton.setHovered(false);
         mFocusEnterButton.setPressed(false);
@@ -310,9 +327,20 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             return;
         }
         mIsInFocusMode = false;
-        AnimationHelper.fadeIn(mNavigationContainer, AnimationHelper.FADE_ANIMATION_DURATION);
-        AnimationHelper.fadeOut(mFocusModeContainer, 0);
 
+        // Restore URL bar to normal mode
+        mFocusModeContainer.removeView(mURLBar);
+        mNavigationContainer.addView(mURLBar, mURLBarLayoutIndex);
+        mURLBar.setVisibility(View.VISIBLE);
+        mURLBar.setAlpha(1.0f);
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) mURLBar.getLayoutParams();
+        params.width = LayoutParams.WRAP_CONTENT;
+        params.weight = 100;
+        mURLBar.setLayoutParams(params);
+        mURLBar.setClickable(true);
+
+        AnimationHelper.fadeIn(mNavigationContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
+        AnimationHelper.fadeOut(mFocusModeContainer, 0, null);
         mFocusEnterButton.setHovered(false);
         mFocusEnterButton.setPressed(false);
         mFocusExitButton.setHovered(false);
@@ -341,8 +369,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         }
         mIsResizing = true;
         mWidgetManager.startWidgetResize(mBrowserWidget);
-        AnimationHelper.fadeIn(mResizeModeContainer, AnimationHelper.FADE_ANIMATION_DURATION);
-        AnimationHelper.fadeOut(mFocusModeContainer, 0);
+        AnimationHelper.fadeIn(mResizeModeContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
+        AnimationHelper.fadeOut(mFocusModeContainer, 0, null);
         mWidgetManager.pushBackHandler(mResizeBackHandler);
     }
 
@@ -352,8 +380,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         }
         mIsResizing = false;
         mWidgetManager.finishWidgetResize(mBrowserWidget);
-        AnimationHelper.fadeIn(mFocusModeContainer, AnimationHelper.FADE_ANIMATION_DURATION);
-        AnimationHelper.fadeOut(mResizeModeContainer, 0);
+        AnimationHelper.fadeIn(mFocusModeContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
+        AnimationHelper.fadeOut(mResizeModeContainer, 0, null);
         mWidgetManager.popBackHandler(mResizeBackHandler);
     }
 
@@ -431,6 +459,9 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         if (mReloadButton != null) {
             mReloadButton.setImageResource(R.drawable.ic_icon_exit);
         }
+        if (mIsInFocusMode && !mIsResizing) {
+            AnimationHelper.fadeIn(mURLBar, 0, null);
+        }
     }
 
     @Override
@@ -439,6 +470,9 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mURLBar.setIsLoading(false);
         if (mReloadButton != null) {
             mReloadButton.setImageResource(R.drawable.ic_icon_reload);
+        }
+        if (mIsInFocusMode) {
+            AnimationHelper.fadeOut(mURLBar, 0, null);
         }
     }
 

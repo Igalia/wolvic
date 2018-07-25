@@ -192,4 +192,10 @@ public class NavigationURLBar extends FrameLayout {
         else
             mURL.setBackground(getContext().getDrawable(R.drawable.url_background));
     }
+
+    @Override
+    public void setClickable(boolean clickable) {
+        super.setClickable(clickable);
+        mURL.setEnabled(clickable);
+    }
 }
