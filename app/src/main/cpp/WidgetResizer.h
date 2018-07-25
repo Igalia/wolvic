@@ -27,6 +27,7 @@ public:
   void ToggleVisible(bool aVisible);
   bool TestIntersection(const vrb::Vector& point) const;
   void HandleResizeGestures(const vrb::Vector& aPoint, bool aPressed, bool& aResized, bool &aResizeEnded);
+  void HoverExitResize();
   const vrb::Vector& GetCurrentMin() const;
   const vrb::Vector& GetCurrentMax() const;
 protected:

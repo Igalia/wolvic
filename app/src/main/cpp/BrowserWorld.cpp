@@ -155,6 +155,7 @@ struct BrowserWorld::State {
   FadeBlitterPtr fadeBlitter;
   uint32_t loaderDelay;
   bool exitImmersiveRequested;
+  WidgetPtr resizingWidget;
 
   State() : paused(true), glInitialized(false), modelsLoaded(false), env(nullptr), nearClip(0.1f),
             farClip(300.0f), activity(nullptr), windowsInitialized(false), exitImmersiveRequested(false), loaderDelay(0) {
@@ -210,12 +211,18 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
       }
     }
 
+    if ((!hitWidget || !hitWidget->IsResizing()) && resizingWidget) {
+      resizingWidget->HoverExitResize();
+      resizingWidget.reset();
+    }
+
     if (hitWidget && hitWidget->IsResizing()) {
       active.push_back(hitWidget.get());
       const bool pressed = controller.buttonState & ControllerDelegate::BUTTON_TRIGGER ||
                            controller.buttonState & ControllerDelegate::BUTTON_TOUCHPAD;
       bool aResized = false, aResizeEnded = false;
       hitWidget->HandleResize(hitPoint, pressed, aResized, aResizeEnded);
+      resizingWidget = hitWidget;
       if (aResized) {
         aRelayoutWidgets = true;
       }

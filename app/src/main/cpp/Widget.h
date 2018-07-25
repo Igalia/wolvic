@@ -52,6 +52,7 @@ public:
   void FinishResize();
   bool IsResizing() const;
   void HandleResize(const vrb::Vector& aPoint, bool aPressed, bool& aResized, bool &aResizeEnded);
+  void HoverExitResize();
 protected:
   struct State;
   Widget(State& aState, vrb::RenderContextPtr& aContext);

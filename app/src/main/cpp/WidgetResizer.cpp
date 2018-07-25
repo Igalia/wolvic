@@ -30,7 +30,7 @@ static const float kHandleRadius = 0.08f;
 static const vrb::Vector kMinResize(1.5f, 1.5f, 0.0f);
 static const vrb::Vector kMaxResize(8.0f, 4.5f, 0.0f);
 static vrb::Color kDefaultColor(0x2BD5D5FF);
-static vrb::Color kHoverColor(0x2BD5D5FF);
+static vrb::Color kHoverColor(0xf7ce4dff);
 static vrb::Color kActiveColor(0xf7ce4dff);
 
 enum class ResizeState {
@@ -398,6 +398,14 @@ WidgetResizer::HandleResizeGestures(const vrb::Vector& aPoint, bool aPressed, bo
   }
 
   m.wasPressed = aPressed;
+}
+
+void
+WidgetResizer::HoverExitResize() {
+  for (const ResizeHandlePtr& handle: m.resizeHandles) {
+    handle->SetResizeState(ResizeState::Default);
+  }
+  m.wasPressed = false;
 }
 
 const vrb::Vector&

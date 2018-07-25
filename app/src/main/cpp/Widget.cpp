@@ -303,6 +303,14 @@ Widget::HandleResize(const vrb::Vector& aPoint, bool aPressed, bool& aResized, b
   }
 }
 
+void
+Widget::HoverExitResize() {
+  if (m.resizing) {
+    m.resizer->HoverExitResize();
+  }
+}
+
+
 Widget::Widget(State& aState, vrb::RenderContextPtr& aContext) : m(aState) {
   m.context = aContext;
 }
