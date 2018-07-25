@@ -287,6 +287,19 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         return null;
     }
 
+    public String gerUriFromSession(GeckoSession aSession) {
+        Integer sessionId = getSessionId(aSession);
+        if (sessionId == null) {
+            return "";
+        }
+        State state = mSessions.get(sessionId);
+        if (state != null) {
+            return state.mUri;
+        }
+
+        return "";
+    }
+
     public List<Integer> getSessions() {
         return new ArrayList<>(mSessions.keySet());
     }
