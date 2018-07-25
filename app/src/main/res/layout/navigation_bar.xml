@@ -118,7 +118,7 @@
                 android:id="@+id/resizeExitButton"
                 style="?attr/navigationBarButtonStyle"
                 android:layout_marginStart="10dp"
-                android:src="@drawable/ic_icon_back" />
+                android:src="@drawable/ic_icon_focus_mode_resize_done" />
         </LinearLayout>
     </RelativeLayout>
 </merge>
