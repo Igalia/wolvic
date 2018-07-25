@@ -57,6 +57,7 @@ protected:
   void DrawWorld();
   void DrawImmersive();
   vrb::TransformPtr CreateSkyBox(const std::string& basePath);
+  void LoadSkybox(const vrb::TransformPtr transform, const std::string& basePath);
   void CreateFloor();
   void CreateTray();
   float DistanceToNode(const vrb::NodePtr& aNode, const vrb::Vector& aPosition) const;

@@ -67,6 +67,8 @@ static const int GestureSwipeRight = 1;
 static const float kScrollFactor = 20.0f; // Just picked what fell right.
 static const float kWorldDPIRatio = 2.0f/720.0f;
 
+static const std::string CubemapDay = "cubemap/meadow/day";
+
 class SurfaceObserver;
 typedef std::shared_ptr<SurfaceObserver> SurfaceObserverPtr;
 
@@ -401,7 +403,7 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
     }
     m.controllers->InitializePointer();
     m.rootOpaque->AddNode(m.controllers->GetRoot());
-    std::string skyboxPath = "cubemap/space";
+    std::string skyboxPath = CubemapDay;
 #ifdef INJECT_SKYBOX_PATH
     std::string storagePath = VRBrowser::GetStorageAbsolutePath(INJECT_SKYBOX_PATH);
     if (std::ifstream(storagePath)) {
@@ -795,26 +797,31 @@ BrowserWorld::CreateSkyBox(const std::string& basePath) {
   ASSERT_ON_RENDER_THREAD(nullptr);
   vrb::TransformPtr transform = vrb::Transform::Create(m.create);
   transform->SetTransform(Matrix::Position(vrb::Vector(0.0f, 0.0f, 0.0f)));
+  LoadSkybox(transform, basePath);
+  return transform;
+}
 
-  LoadTask task = [basePath](CreationContextPtr& aContext) -> GroupPtr {
+void
+BrowserWorld::LoadSkybox(const vrb::TransformPtr transform, const std::string &basePath) {
+  LoadTask task = [basePath](CreationContextPtr &aContext) -> GroupPtr {
     std::array<GLfloat, 24> cubeVertices{
-      -1.0f,  1.0f,  1.0f, // 0
-      -1.0f, -1.0f,  1.0f, // 1
-       1.0f, -1.0f,  1.0f, // 2
-       1.0f,  1.0f,  1.0f, // 3
-      -1.0f,  1.0f, -1.0f, // 4
+      -1.0f, 1.0f, 1.0f, // 0
+      -1.0f, -1.0f, 1.0f, // 1
+      1.0f, -1.0f, 1.0f, // 2
+      1.0f, 1.0f, 1.0f, // 3
+      -1.0f, 1.0f, -1.0f, // 4
       -1.0f, -1.0f, -1.0f, // 5
-       1.0f, -1.0f, -1.0f, // 6
-       1.0f,  1.0f, -1.0f, // 7
+      1.0f, -1.0f, -1.0f, // 6
+      1.0f, 1.0f, -1.0f, // 7
     };
 
     std::array<GLushort, 24> cubeIndices{
-        0, 1, 2, 3,
-        3, 2, 6, 7,
-        7, 6, 5, 4,
-        4, 5, 1, 0,
-        0, 3, 7, 4,
-        1, 5, 6, 2
+      0, 1, 2, 3,
+      3, 2, 6, 7,
+      7, 6, 5, 4,
+      4, 5, 1, 0,
+      0, 3, 7, 4,
+      1, 5, 6, 2
     };
 
     VertexArrayPtr array = VertexArray::Create(aContext);
@@ -844,7 +851,7 @@ BrowserWorld::CreateSkyBox(const std::string& basePath) {
     cubemap->SetTextureParameter(GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
     state->SetTexture(cubemap);
 
-    auto path = [&](const std::string& name) { return basePath + "/" + name + ".jpg"; };
+    auto path = [&](const std::string &name) { return basePath + "/" + name + ".jpg"; };
     vrb::TextureCubeMap::Load(aContext, cubemap, path("posx"), path("negx"), path("posy"),
                               path("negy"), path("posz"), path("negz"));
 
@@ -855,16 +862,15 @@ BrowserWorld::CreateSkyBox(const std::string& basePath) {
     group->AddNode(geometry);
     return group;
   };
-  m.loader->RunLoadTask(transform, task);
-  return transform;
-}
 
+  m.loader->RunLoadTask(transform, task);
+}
 
 void
 BrowserWorld::CreateFloor() {
   ASSERT_ON_RENDER_THREAD();
   vrb::TransformPtr model = Transform::Create(m.create);
-  std::string environmentPath = "FirefoxPlatform2_low.obj";
+  std::string environmentPath = "meadow_v4.obj";
 #ifdef INJECT_ENVIRONMENT_PATH
   std::string injectPath = VRBrowser::GetStorageAbsolutePath(INJECT_ENVIRONMENT_PATH);
   if (std::ifstream(injectPath)) {
@@ -874,9 +880,6 @@ BrowserWorld::CreateFloor() {
   m.loader->LoadModel(environmentPath, model);
   m.rootOpaque->AddNode(model);
   vrb::Matrix transform = vrb::Matrix::Identity();
-  transform.ScaleInPlace(Vector(40.0, 40.0, 40.0));
-  transform.TranslateInPlace(Vector(0.0, -2.5f, 1.0));
-  transform.PostMultiplyInPlace(vrb::Matrix::Rotation(Vector(1.0, 0.0, 0.0), float(M_PI * 0.5)));
   model->SetTransform(transform);
 }
 
