@@ -8,6 +8,7 @@
         <org.mozilla.vrbrowser.ui.UIButton
             android:id="@+id/closeButton"
             style="?attr/navigationBarButtonStyle"
+            android:padding="5dp"
             android:src="@drawable/ic_icon_dialog_cancel" />
 
     </RelativeLayout>
