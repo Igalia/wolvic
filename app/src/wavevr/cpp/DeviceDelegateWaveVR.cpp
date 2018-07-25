@@ -107,41 +107,27 @@ struct DeviceDelegateWaveVR::State {
   }
 
   void InitializeCameras() {
-    vrb::Matrix leftProjection = vrb::Matrix::FromRowMajor(
-        WVR_GetProjection(WVR_Eye_Left, near, far).m);
-    cameras[device::EyeIndex(device::Eye::Left)]->SetPerspective(leftProjection);
-
-    vrb::Matrix rightProjection = vrb::Matrix::FromRowMajor(
-        WVR_GetProjection(WVR_Eye_Right, near, far).m);
-    cameras[device::EyeIndex(device::Eye::Right)]->SetPerspective(rightProjection);
-
-
-    vrb::Matrix leftEyeOffset = vrb::Matrix::FromRowMajor(
-        WVR_GetTransformFromEyeToHead(WVR_Eye_Left, WVR_NumDoF_6DoF).m); //.Inverse();
-    cameras[device::EyeIndex(device::Eye::Left)]->SetEyeTransform(leftEyeOffset);
-
-    vrb::Matrix rightEyeOffset = vrb::Matrix::FromRowMajor(
-        WVR_GetTransformFromEyeToHead(WVR_Eye_Right, WVR_NumDoF_6DoF).m); //.Inverse();
-    cameras[device::EyeIndex(device::Eye::Right)]->SetEyeTransform(rightEyeOffset);
-
-    if (!immersiveDisplay) {
-      return;
-    }
-
-    const float toDegrees = 180.0f / (float)M_PI;
-
     for (WVR_Eye eye : {WVR_Eye_Left, WVR_Eye_Right}) {
-      const WVR_Matrix4f_t eyeHead = WVR_GetTransformFromEyeToHead(eye, WVR_NumDoF_6DoF);
       const device::Eye deviceEye = eye == WVR_Eye_Left ? device::Eye::Left : device::Eye::Right;
-      immersiveDisplay->SetEyeOffset(deviceEye, eyeHead.m[0][3], eyeHead.m[1][3], eyeHead.m[2][3]);
+      vrb::Matrix eyeOffset = vrb::Matrix::FromRowMajor(WVR_GetTransformFromEyeToHead(eye, WVR_NumDoF_6DoF).m);
+      cameras[device::EyeIndex(deviceEye)]->SetEyeTransform(eyeOffset);
 
       float left, right, top, bottom;
       WVR_GetClippingPlaneBoundary(eye, &left, &right, &top, &bottom);
-      const float fovLeft = atan(-left / near) * toDegrees * 0.5f;
-      const float fovRight = atan(right / near) * toDegrees * 0.5f;
-      const float fovTop = atan(top / near) * toDegrees * 0.5f;
-      const float fovBottom = atan(-bottom / near) * toDegrees * 0.5f;
-      immersiveDisplay->SetFieldOfView(deviceEye, fovLeft, fovRight, fovTop, fovBottom);
+      const float fovLeft = -atan(left);
+      const float fovRight = atan(right);
+      const float fovTop = atan(top);
+      const float fovBottom = -atan(bottom);
+
+      vrb::Matrix projection = vrb::Matrix::PerspectiveMatrix(fovLeft, fovRight, fovTop, fovBottom, near, far);
+      cameras[device::EyeIndex(deviceEye)]->SetPerspective(projection);
+
+      if (immersiveDisplay) {
+        vrb::Vector translation = eyeOffset.GetTranslation();
+        immersiveDisplay->SetEyeOffset(deviceEye, translation.x(), translation.y(), translation.z());
+        const float toDegrees = 180.0f / (float)M_PI;
+        immersiveDisplay->SetFieldOfView(deviceEye, fovLeft * toDegrees, fovRight * toDegrees, fovTop * toDegrees, fovBottom * toDegrees);
+      }
     }
   }
 
