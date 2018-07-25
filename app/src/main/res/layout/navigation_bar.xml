@@ -71,6 +71,7 @@
                 android:id="@+id/resizeEnterButton"
                 style="?attr/navigationBarButtonStyle"
                 android:layout_marginStart="10dp"
+                android:padding="5dp"
                 android:src="@drawable/ic_icon_focus_mode_resize" />
 
             <org.mozilla.vrbrowser.ui.UIButton
