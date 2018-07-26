@@ -11,7 +11,7 @@
     <string name="permission_location">Will you allow %1$s to access your location?</string>
     <string name="permission_notification">Will you allow %1$s to send notifications?</string>
     <string name="speak_now">Speak now</string>
-    <string name="settings_version">version %1$s</string>
+    <string name="settings_version">version %1$s\n(%2$s)</string>
     <string name="settings_crash_reporting">Crash Reporting</string>
     <string name="settings_telemetry">Telemetry</string>
     <string name="settings_privacy">Privacy Policy</string>
@@ -21,6 +21,7 @@
     <string name="settings_key_telemetry">settings_telemetry</string>
     <string name="settings_key_session_id">session_id</string>
     <string name="settings_key_previous_session_id">previous_session_id</string>
+    <string name="settings_version_developer">Developer Build</string>
     <string name="private_policy_url">https://www.mozilla.org/en-US/privacy/firefox/</string>
     <string name="private_report_url">https://mixedreality.mozilla.org/fxr/report?src=browser-fxr&amp;url=%1$s</string>
     <string name="crash_reporting_restart">Restart Required</string>

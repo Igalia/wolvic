@@ -15,16 +15,16 @@ import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.TextView;
-
 import org.mozilla.geckoview.GeckoSession;
-import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.SessionStore;
-import org.mozilla.vrbrowser.SettingsStore;
-import org.mozilla.vrbrowser.WidgetPlacement;
+import org.mozilla.vrbrowser.*;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 public class SettingsWidget extends UIWidget {
     private static final String LOGTAG = "VRB";
@@ -105,7 +105,7 @@ public class SettingsWidget extends UIWidget {
         TextView versionText = findViewById(R.id.versionText);
         try {
             PackageInfo pInfo = getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), 0);
-            versionText.setText(String.format(getResources().getString(R.string.settings_version), pInfo.versionName));
+            versionText.setText(String.format(getResources().getString(R.string.settings_version), pInfo.versionName, versionCodeToDate(BuildConfig.VERSION_CODE)));
 
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
@@ -214,6 +214,43 @@ public class SettingsWidget extends UIWidget {
         SessionStore.get().loadUri(getContext().getString(R.string.private_report_url, url));
 
         toggle();
+    }
+
+    /**
+     * The version code is composed like: yDDDHHmm
+     *  * y   = Double digit year, with 16 substracted: 2017 -> 17 -> 1
+     *  * DDD = Day of the year, pad with zeros if needed: September 6th -> 249
+     *  * HH  = Hour in day (00-23)
+     *  * mm  = Minute in hour
+     *
+     * For September 6th, 2017, 9:41 am this will generate the versionCode: 12490941 (1-249-09-41).
+     *
+     * For local debug builds we use a fixed versionCode to not mess with the caching mechanism of the build
+     * system. The fixed local build number is 1.
+     *
+     * @param aVersionCode
+     * @return String The converted date in the format yyyy-MM-dd
+     */
+    private String versionCodeToDate(int aVersionCode) {
+        String versionCode = Integer.toString(aVersionCode);
+
+        String formatted;
+        try {
+            int year = Integer.parseInt(versionCode.substring(1, 2)) + 2016;
+            int dayOfYear = Integer.parseInt(versionCode.substring(2, 5));
+
+            GregorianCalendar cal = (GregorianCalendar)GregorianCalendar.getInstance();
+            cal.set(Calendar.YEAR, year);
+            cal.set(Calendar.DAY_OF_YEAR, dayOfYear);
+
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            formatted = format.format(cal.getTime());
+
+        } catch (StringIndexOutOfBoundsException e) {
+            formatted = getContext().getString(R.string.settings_version_developer);
+        }
+
+        return formatted;
     }
 
 }
