@@ -681,6 +681,11 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         }
     }
 
+    @Override
+    public void onProgressChange(GeckoSession aSession, int aValue) {
+
+    }
+
     // Content Delegate
     @Override
     public void onTitleChange(GeckoSession aSession, String aTitle) {

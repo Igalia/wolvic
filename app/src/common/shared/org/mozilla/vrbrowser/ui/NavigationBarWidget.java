@@ -487,6 +487,11 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         }
     }
 
+    @Override
+    public void onProgressChange(GeckoSession aSession, int aValue) {
+
+    }
+
     // Content delegate
 
     @Override
