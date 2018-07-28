@@ -178,11 +178,26 @@ struct BrowserWorld::State {
     fadeBlitter = FadeBlitter::Create(create);
   }
 
+  void CheckBackButton();
   void UpdateControllers(bool& aRelayoutWidgets);
   WidgetPtr GetWidget(int32_t aHandle) const;
   WidgetPtr FindWidget(const std::function<bool(const WidgetPtr&)>& aCondition) const;
 };
 
+void
+BrowserWorld::State::CheckBackButton() {
+  for (Controller& controller: controllers->GetControllers()) {
+    if (!controller.enabled || (controller.index < 0)) {
+      continue;
+    }
+
+    if (!(controller.lastButtonState & ControllerDelegate::BUTTON_APP) &&
+        (controller.buttonState & ControllerDelegate::BUTTON_APP)) {
+      controller.lastButtonState = controller.buttonState;
+      VRBrowser::HandleBack();
+    }
+  }
+}
 void
 BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
   std::vector<Widget*> active;
@@ -526,6 +541,7 @@ BrowserWorld::Draw() {
     m.exitImmersiveRequested = false;
   }
   if (m.externalVR->IsPresenting()) {
+    m.CheckBackButton();
     DrawImmersive();
   } else {
     bool relayoutWidgets = false;
