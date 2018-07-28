@@ -261,10 +261,14 @@ struct DeviceDelegateGoogleVR::State {
       Controller& controller = controllers[index];
       GVR_CHECK(gvr_controller_state_update(controllerContext, index, controllerState));
       if (gvr_controller_state_get_connection_state(controllerState) != GVR_CONTROLLER_CONNECTED) {
-        VRB_LOG("Controller not connected.");
-        controllerDelegate->SetEnabled(index, false);
+        if (controller.enabled) {
+          VRB_ERROR("Controller not connected.");
+          controller.enabled = false;
+          controllerDelegate->SetEnabled(index, false);
+        }
         continue;
       } else if (!controller.enabled) {
+        VRB_LOG("Controller Connected");
         controller.enabled = true;
         controllerDelegate->SetEnabled(index, true);
         controllerDelegate->SetVisible(index, true);
