@@ -45,7 +45,7 @@ GetAssetManager(JNIEnv *aEnv, jobject aActivity) {
   jmethodID method = aEnv->GetMethodID(clazz, "getAssets", "()Landroid/content/res/AssetManager;");
   jobject result = aEnv->CallObjectMethod(aActivity, method);
   if (!result) {
-    VRB_LOG("Failed to get AssetManager instance!");
+    VRB_ERROR("Failed to get AssetManager instance!");
   }
   return result;
 }

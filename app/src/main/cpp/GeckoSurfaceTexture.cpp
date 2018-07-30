@@ -123,16 +123,16 @@ GeckoSurfaceTexturePtr
 GeckoSurfaceTexture::Create(const int32_t aHandle) {
   GeckoSurfaceTexturePtr result;
   if (!sEnv) {
-    VRB_LOG("Unable to create GeckoSurfaceTexture. Java not initialized?");
+    VRB_ERROR("Unable to create GeckoSurfaceTexture. Java not initialized?");
     return result;
   }
   if (!sLookup) {
-    VRB_LOG("GeckoSurfaceTexture.lookup method missing");
+    VRB_ERROR("GeckoSurfaceTexture.lookup method missing");
     return result;
   }
   jobject surface = sEnv->CallStaticObjectMethod(sGeckoSurfaceTextureClass, sLookup, aHandle);
   if (!surface) {
-    VRB_LOG("Unable to find GeckoSurfaceTexture with handle: %d", aHandle);
+    VRB_ERROR("Unable to find GeckoSurfaceTexture with handle: %d", aHandle);
     return result;
   }
   result = std::make_shared<vrb::ConcreteClass<GeckoSurfaceTexture, GeckoSurfaceTexture::State> >();
@@ -207,7 +207,7 @@ GeckoSurfaceTexture::DecrementUse() {
 GeckoSurfaceTexture::GeckoSurfaceTexture(State& aState) : m(aState) {}
 GeckoSurfaceTexture::~GeckoSurfaceTexture() {
   if (m.surface) {
-    VRB_LOG("**** DESTROY GeckoSurfaceTexture");
+    VRB_LOG("Destroy GeckoSurfaceTexture");
     ReleaseTexImage();
     if (IsAttachedToGLContext(eglGetCurrentContext())) {
       DetachFromGLContext();

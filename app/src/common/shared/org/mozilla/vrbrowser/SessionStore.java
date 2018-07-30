@@ -519,7 +519,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
 
     @Override
     public void onLocationChange(GeckoSession aSession, String aUri) {
-        Log.e(LOGTAG, "SessionStore onLocationChange: " + aUri);
+        Log.d(LOGTAG, "SessionStore onLocationChange: " + aUri);
         State state = mSessions.get(aSession.hashCode());
         if (state == null) {
             Log.e(LOGTAG, "Unknown session!");
@@ -533,7 +533,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
 
     @Override
     public void onCanGoBack(GeckoSession aSession, boolean aCanGoBack) {
-        Log.e(LOGTAG, "SessionStore onCanGoBack: " + (aCanGoBack ? "TRUE" : "FALSE"));
+        Log.d(LOGTAG, "SessionStore onCanGoBack: " + (aCanGoBack ? "true" : "false"));
         State state = mSessions.get(aSession.hashCode());
         if (state == null) {
             return;
@@ -546,7 +546,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
 
     @Override
     public void onCanGoForward(GeckoSession aSession, boolean aCanGoForward) {
-        Log.e(LOGTAG, "SessionStore onCanGoForward: " + (aCanGoForward ? "TRUE" : "FALSE"));
+        Log.d(LOGTAG, "SessionStore onCanGoForward: " + (aCanGoForward ? "true" : "false"));
         State state = mSessions.get(aSession.hashCode());
         if (state == null) {
             return;
@@ -645,7 +645,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     // Progress Listener
     @Override
     public void onPageStart(GeckoSession aSession, String aUri) {
-        Log.e(LOGTAG, "SessionStore onPageStart: " + aUri);
+        Log.d(LOGTAG, "SessionStore onPageStart");
         State state = mSessions.get(aSession.hashCode());
         if (state == null) {
             return;
@@ -658,7 +658,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
 
     @Override
     public void onPageStop(GeckoSession aSession, boolean b) {
-        Log.e(LOGTAG, "SessionStore onPageStop");
+        Log.d(LOGTAG, "SessionStore onPageStop");
         State state = mSessions.get(aSession.hashCode());
         if (state == null) {
             return;
@@ -671,8 +671,13 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     }
 
     @Override
+    public void onProgressChange(GeckoSession session, int progress) {
+
+    }
+
+    @Override
     public void onSecurityChange(GeckoSession aSession, SecurityInformation aInformation) {
-        Log.e(LOGTAG, "SessionStore onPageStop");
+        Log.d(LOGTAG, "SessionStore onPageStop");
         State state = mSessions.get(aSession.hashCode());
         if (state == null) {
             return;
@@ -684,15 +689,10 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         }
     }
 
-    @Override
-    public void onProgressChange(GeckoSession aSession, int aValue) {
-
-    }
-
     // Content Delegate
     @Override
     public void onTitleChange(GeckoSession aSession, String aTitle) {
-        Log.e(LOGTAG, "SessionStore onTitleChange");
+        Log.d(LOGTAG, "SessionStore onTitleChange");
         State state = mSessions.get(aSession.hashCode());
         if (state == null) {
             return;
@@ -716,7 +716,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
 
     @Override
     public void onFullScreen(GeckoSession aSession, boolean aFullScreen) {
-        Log.e(LOGTAG, "SessionStore onFullScreen");
+        Log.d(LOGTAG, "SessionStore onFullScreen");
         State state = mSessions.get(aSession.hashCode());
         if (state == null) {
             return;

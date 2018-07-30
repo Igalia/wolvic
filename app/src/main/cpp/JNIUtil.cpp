@@ -10,11 +10,11 @@ namespace crow {
 jmethodID
 FindJNIMethodID(JNIEnv* aEnv, jclass aClass, const char* aName, const char* aSignature, const bool aIsStatic) {
   if (!aEnv) {
-    VRB_LOG("Null JNIEnv, unable to find JNI method: %s", aName);
+    VRB_ERROR("Null JNIEnv, unable to find JNI method: %s", aName);
     return nullptr;
   }
   if (!aClass) {
-    VRB_LOG("Null java class. Unable to find JNI method: %s", aName);
+    VRB_ERROR("Null java class. Unable to find JNI method: %s", aName);
     return nullptr;
   }
   jmethodID result = nullptr;
@@ -24,7 +24,7 @@ FindJNIMethodID(JNIEnv* aEnv, jclass aClass, const char* aName, const char* aSig
     result = aEnv->GetMethodID(aClass, aName, aSignature);
   }
   if (aEnv->ExceptionCheck() == JNI_TRUE) {
-    VRB_LOG("Failed to find JNI method: %s %s", aName, aSignature);
+    VRB_ERROR("Failed to find JNI method: %s %s", aName, aSignature);
     aEnv->ExceptionClear();
     return nullptr;
   }
@@ -34,15 +34,15 @@ FindJNIMethodID(JNIEnv* aEnv, jclass aClass, const char* aName, const char* aSig
 bool
 ValidateMethodID(JNIEnv* aEnv, jobject aObject, jmethodID aMethod, const char* aName) {
   if (!aEnv) {
-    VRB_LOG("JNI::%s failed. Java not initialized.", aName);
+    VRB_ERROR("JNI::%s failed. Java not initialized.", aName);
     return false;
   }
   if (!aMethod) {
-    VRB_LOG("JNI::%s failed. Java method is null", aName);
+    VRB_ERROR("JNI::%s failed. Java method is null", aName);
     return false;
   }
   if (!aObject) {
-    VRB_LOG("JNI::%s failed. Java object is null", aName);
+    VRB_ERROR("JNI::%s failed. Java object is null", aName);
     return false;
   }
   return true;
@@ -55,7 +55,7 @@ CheckJNIException(JNIEnv* aEnv, const char* aName) {
   }
   if (aEnv->ExceptionCheck() == JNI_TRUE) {
     aEnv->ExceptionClear();
-    VRB_LOG("Java exception encountered when calling %s", aName);
+    VRB_ERROR("Java exception encountered when calling %s", aName);
   }
 }
 

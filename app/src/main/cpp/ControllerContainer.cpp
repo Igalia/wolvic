@@ -175,7 +175,7 @@ ControllerContainer::CreateController(const int32_t aControllerIndex, const int3
         m.root->ToggleChild(*controller.transform, false);
       }
     } else {
-      VRB_LOG("FAILED TO ADD MODEL");
+      VRB_ERROR("Failed to add controller model");
     }
   }
 }

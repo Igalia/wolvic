@@ -168,7 +168,7 @@ public class AudioEngine {
 
     public void setSoundPosition(Sound aSound, float x, float y, float z) {
         if (aSound.getType() != SoundType.OBJECT) {
-            Log.e(LOGTAG, "Sound position can only be set for SoundType.OBJECT!");
+            Log.e(LOGTAG, "Sound position can only be set for SoundType.Object!");
             return;
         }
         Integer sourceId = findSourceId(aSound);

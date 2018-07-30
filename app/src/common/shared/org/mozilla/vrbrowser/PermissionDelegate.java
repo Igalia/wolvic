@@ -78,7 +78,7 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate {
                 filteredPemissions.add(permission);
                 continue;
             }
-            Log.e(LOGTAG, "permission = " + permission);
+            Log.d(LOGTAG, "permission = " + permission);
             if (mContext.checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
                 missingPermissions.add(permission);
             }

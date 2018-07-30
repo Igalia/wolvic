@@ -83,7 +83,6 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mKeyboardview.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
-                Log.e("VRB", "OnKeyListener: " + i + " " + keyEvent.toString());
                 return false;
             }
         });

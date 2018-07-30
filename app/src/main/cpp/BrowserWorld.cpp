@@ -511,7 +511,7 @@ void
 BrowserWorld::Draw() {
   ASSERT_ON_RENDER_THREAD();
   if (!m.device) {
-    VRB_LOG("No device");
+    VRB_WARN("No device");
     return;
   }
   if (m.paused) {
@@ -521,7 +521,7 @@ BrowserWorld::Draw() {
   if (!m.glInitialized) {
     m.glInitialized = m.context->InitializeGL();
     if (!m.glInitialized) {
-      VRB_LOG("FAILED to initialize GL");
+      VRB_LOG("Failed to initialize GL");
       return;
     }
   }
@@ -619,7 +619,7 @@ BrowserWorld::UpdateWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement
   ASSERT_ON_RENDER_THREAD();
   WidgetPtr widget = m.GetWidget(aHandle);
   if (!widget) {
-      VRB_LOG("Can't find Widget with handle: %d", aHandle);
+      VRB_ERROR("Can't find Widget with handle: %d", aHandle);
       return;
   }
 

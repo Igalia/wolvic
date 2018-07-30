@@ -122,7 +122,6 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
     @Override
     public void handleTouchEvent(MotionEvent aEvent) {
         if (aEvent.getActionMasked() == MotionEvent.ACTION_DOWN) {
-            Log.e(LOGTAG, "************** REQUESTING FOCUS");
             requestFocus();
         }
         GeckoSession session = SessionStore.get().getSession(mSessionId);
@@ -184,15 +183,15 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
 
     @Override
     public void onCurrentSessionChange(GeckoSession aSession, int aId) {
-        Log.e(LOGTAG, "onCurrentSessionChange: " + this.toString());
+        Log.d(LOGTAG, "onCurrentSessionChange: " + this.toString());
         if (mSessionId == aId) {
-            Log.e(LOGTAG, "BrowserWidget.onCurrentSessionChange session id same, bail: " + aId);
+            Log.d(LOGTAG, "BrowserWidget.onCurrentSessionChange session id same, bail: " + aId);
             return;
         }
 
         GeckoSession oldSession = SessionStore.get().getSession(mSessionId);
         if (oldSession != null && mDisplay != null) {
-            Log.e(LOGTAG, "Detach from previous session: " + mSessionId);
+            Log.d(LOGTAG, "Detach from previous session: " + mSessionId);
             oldSession.getTextInput().setView(null);
             mDisplay.surfaceDestroyed();
             oldSession.releaseDisplay(mDisplay);
@@ -200,7 +199,7 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
 
         mSessionId = aId;
         mDisplay = aSession.acquireDisplay();
-        Log.e(LOGTAG, "surfaceChanged: " + aId);
+        Log.d(LOGTAG, "surfaceChanged: " + aId);
         mDisplay.surfaceChanged(mSurface, mWidth, mHeight);
         aSession.getTextInput().setView(this);
 
@@ -214,7 +213,7 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
     // View
     @Override
     public InputConnection onCreateInputConnection(final EditorInfo outAttrs) {
-        Log.e(LOGTAG, "BrowserWidget onCreateInputConnection");
+        Log.d(LOGTAG, "BrowserWidget onCreateInputConnection");
         GeckoSession session = SessionStore.get().getSession(mSessionId);
         if (session == null) {
             return null;
@@ -276,7 +275,7 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
     @Override
     protected void onFocusChanged(boolean aGainFocus, int aDirection, Rect aPreviouslyFocusedRect) {
         super.onFocusChanged(aGainFocus, aDirection, aPreviouslyFocusedRect);
-        Log.e(LOGTAG, "BrowserWidget onFocusChanged: " + (aGainFocus ? "TRUE" : "FALSE"));
+        Log.d(LOGTAG, "BrowserWidget onFocusChanged: " + (aGainFocus ? "true" : "false"));
     }
 
     @Override

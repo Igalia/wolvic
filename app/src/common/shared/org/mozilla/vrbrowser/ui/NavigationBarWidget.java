@@ -414,7 +414,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     @Override
     public void onLocationChange(GeckoSession session, String url) {
         if (mURLBar != null) {
-            Log.e(LOGTAG, "Got location change: " + url);
+            Log.d(LOGTAG, "Got location change");
             mURLBar.setURL(url);
             mReloadButton.setEnabled(true);
         }
@@ -423,7 +423,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     @Override
     public void onCanGoBack(GeckoSession aSession, boolean canGoBack) {
         if (mBackButton != null) {
-            Log.e(LOGTAG, "Got onCanGoBack: " + (canGoBack ? "TRUE" : "FALSE"));
+            Log.d(LOGTAG, "Got onCanGoBack: " + (canGoBack ? "true" : "false"));
             mBackButton.setEnabled(canGoBack);
             mBackButton.setClickable(canGoBack);
         }
@@ -432,7 +432,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     @Override
     public void onCanGoForward(GeckoSession aSession, boolean canGoForward) {
         if (mForwardButton != null) {
-            Log.e(LOGTAG, "Got onCanGoForward: " + (canGoForward ? "TRUE" : "FALSE"));
+            Log.d(LOGTAG, "Got onCanGoForward: " + (canGoForward ? "true" : "false"));
             mForwardButton.setEnabled(canGoForward);
             mForwardButton.setClickable(canGoForward);
         }
@@ -441,7 +441,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     @Override
     public GeckoResult<Boolean> onLoadRequest(GeckoSession aSession, String aUri, int target, int flags) {
         if (mURLBar != null) {
-            Log.e(LOGTAG, "Got onLoadUri: " + aUri);
+            Log.d(LOGTAG, "Got onLoadUri");
             mURLBar.setURL(aUri);
         }
         return null;
@@ -451,7 +451,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     @Override
     public void onPageStart(GeckoSession aSession, String aUri) {
         if (mURLBar != null) {
-            Log.e(LOGTAG, "Got onPageStart: " + aUri);
+            Log.d(LOGTAG, "Got onPageStart");
             mURLBar.setURL(aUri);
         }
         mIsLoading = true;
@@ -477,6 +477,11 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     @Override
+    public void onProgressChange(GeckoSession session, int progress) {
+
+    }
+
+    @Override
     public void onSecurityChange(GeckoSession geckoSession, SecurityInformation securityInformation) {
         if (mURLBar != null) {
             boolean isSecure = securityInformation.isSecure;
@@ -485,11 +490,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             }
             mURLBar.setIsInsecure(!isSecure);
         }
-    }
-
-    @Override
-    public void onProgressChange(GeckoSession aSession, int aValue) {
-
     }
 
     // Content delegate

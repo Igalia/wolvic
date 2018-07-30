@@ -96,7 +96,7 @@ ExternalBlitter::StartFrame(const int32_t aSurfaceHandle, const device::EyeRect&
   }
 
   if (!m.surface) {
-    VRB_LOG("Failed to find GeckoSurfaceTexture for handle: %d", aSurfaceHandle);
+    VRB_ERROR("Failed to find GeckoSurfaceTexture for handle: %d", aSurfaceHandle);
     return;
   }
 
@@ -114,7 +114,7 @@ ExternalBlitter::StartFrame(const int32_t aSurfaceHandle, const device::EyeRect&
 void
 ExternalBlitter::Draw(const device::Eye aEye) {
   if (!m.program || !m.surface) {
-    VRB_LOG("ExternalBlitter::Draw FAILED!");
+    VRB_ERROR("ExternalBlitter::Draw FAILED!");
     return;
   }
   const GLboolean enabled = glIsEnabled(GL_DEPTH_TEST);

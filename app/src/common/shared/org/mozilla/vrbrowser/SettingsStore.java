@@ -12,7 +12,7 @@ import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 
 public class SettingsStore {
 
-    private static final String LOGTAG = "SettingsStore";
+    private static final String LOGTAG = "VRB";
 
     private static SettingsStore mSettingsInstance;
 

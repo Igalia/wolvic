@@ -24,7 +24,7 @@ bool
 BrowserEGLContext::Initialize(ANativeWindow *aNativeWindow) {
   mDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
   if (eglInitialize(mDisplay, &mMajorVersion, &mMinorVersion) == EGL_FALSE) {
-    VRB_LOG("eglInitialize() failed: %s", ErrorToString(eglGetError()));
+    VRB_ERROR("eglInitialize() failed: %s", ErrorToString(eglGetError()));
     return false;
   }
 
@@ -36,7 +36,7 @@ BrowserEGLContext::Initialize(ANativeWindow *aNativeWindow) {
   EGLConfig configs[MAX_CONFIGS];
   EGLint numConfigs = 0;
   if (eglGetConfigs(mDisplay, configs, MAX_CONFIGS, &numConfigs) == EGL_FALSE) {
-    VRB_LOG("eglGetConfigs() failed: %s", ErrorToString(eglGetError()));
+    VRB_ERROR("eglGetConfigs() failed: %s", ErrorToString(eglGetError()));
     return false;
   }
 
@@ -81,7 +81,7 @@ BrowserEGLContext::Initialize(ANativeWindow *aNativeWindow) {
   }
 
   if (mConfig == 0) {
-    VRB_LOG("eglChooseConfig() failed: %s", ErrorToString(eglGetError()));
+    VRB_ERROR("eglChooseConfig() failed: %s", ErrorToString(eglGetError()));
     return false;
   }
 
@@ -99,7 +99,7 @@ BrowserEGLContext::Initialize(ANativeWindow *aNativeWindow) {
 
   mContext = eglCreateContext(mDisplay, mConfig, EGL_NO_CONTEXT, contextAttribs);
   if (mContext == EGL_NO_CONTEXT) {
-    VRB_LOG("eglCreateContext() failed: %s", ErrorToString(eglGetError()));
+    VRB_ERROR("eglCreateContext() failed: %s", ErrorToString(eglGetError()));
     return false;
   }
 
@@ -112,14 +112,14 @@ BrowserEGLContext::Initialize(ANativeWindow *aNativeWindow) {
   mSurface = eglCreatePbufferSurface(mDisplay, mConfig, surfaceAttribs);
 
   if (mSurface == EGL_NO_SURFACE) {
-    VRB_LOG("eglCreateWindowSurface() failed: %s", ErrorToString(eglGetError()));
+    VRB_ERROR("eglCreateWindowSurface() failed: %s", ErrorToString(eglGetError()));
     eglDestroyContext(mDisplay, mContext);
     mContext = EGL_NO_CONTEXT;
     return false;
   }
 
   if (eglMakeCurrent(mDisplay, mSurface, mSurface, mContext) == EGL_FALSE) {
-    VRB_LOG("eglMakeCurrent() failed: %s", ErrorToString(eglGetError()));
+    VRB_ERROR("eglMakeCurrent() failed: %s", ErrorToString(eglGetError()));
     eglDestroySurface(mDisplay, mSurface);
     eglDestroyContext(mDisplay, mContext);
     mContext = EGL_NO_CONTEXT;
@@ -133,24 +133,24 @@ void
 BrowserEGLContext::Destroy() {
   if (mDisplay) {
     if (eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT) == EGL_FALSE) {
-      VRB_LOG("eglMakeCurrent() failed: %s", ErrorToString(eglGetError()));
+      VRB_ERROR("eglMakeCurrent() failed: %s", ErrorToString(eglGetError()));
     }
   }
   if (mContext != EGL_NO_CONTEXT) {
     if (eglDestroyContext(mDisplay, mContext) == EGL_FALSE) {
-      VRB_LOG("eglDestroyContext() failed: %s", ErrorToString(eglGetError()));
+      VRB_ERROR("eglDestroyContext() failed: %s", ErrorToString(eglGetError()));
     }
     mContext = EGL_NO_CONTEXT;
   }
   if (mSurface != EGL_NO_SURFACE) {
     if (eglDestroySurface(mDisplay, mSurface) == EGL_FALSE) {
-      VRB_LOG("eglDestroySurface() failed: %s", ErrorToString(eglGetError()));
+      VRB_ERROR("eglDestroySurface() failed: %s", ErrorToString(eglGetError()));
     }
     mSurface = EGL_NO_SURFACE;
   }
   if (mDisplay) {
     if (eglTerminate(mDisplay) == EGL_FALSE) {
-      VRB_LOG("eglTerminate() failed: %s", ErrorToString(eglGetError()));
+      VRB_ERROR("eglTerminate() failed: %s", ErrorToString(eglGetError()));
     }
     mDisplay = 0;
   }
@@ -169,7 +169,7 @@ BrowserEGLContext::IsSurfaceReady() const {
 bool
 BrowserEGLContext::MakeCurrent() {
   if (eglMakeCurrent(mDisplay, mSurface, mSurface, mContext) == EGL_FALSE) {
-    VRB_LOG("eglMakeCurrent() failed: %s", ErrorToString(eglGetError()));
+    VRB_ERROR("eglMakeCurrent() failed: %s", ErrorToString(eglGetError()));
     return false;
   }
   return true;
@@ -178,7 +178,7 @@ BrowserEGLContext::MakeCurrent() {
 bool
 BrowserEGLContext::SwapBuffers() {
   if (eglSwapBuffers(mDisplay, mSurface) == EGL_FALSE) {
-    VRB_LOG("SwapBuffers() failed: %s", ErrorToString(eglGetError()));
+    VRB_ERROR("SwapBuffers() failed: %s", ErrorToString(eglGetError()));
     return false;
   }
   return true;

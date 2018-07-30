@@ -59,7 +59,7 @@ public abstract class UIWidget extends FrameLayout implements Widget {
     @Override
     public void setSurfaceTexture(SurfaceTexture aTexture, final int aWidth, final int aHeight) {
         if (mTexture!= null && (mTexture.equals(aTexture))) {
-            Log.e(LOGTAG, "TEXTURE ALREADY SET");
+            Log.d(LOGTAG, "Texture already set");
             return;
         }
         mTexture = aTexture;

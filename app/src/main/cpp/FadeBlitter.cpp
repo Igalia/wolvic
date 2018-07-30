@@ -78,7 +78,7 @@ FadeBlitter::Create(vrb::CreationContextPtr& aContext) {
 void
 FadeBlitter::Draw() {
   if (!m.program) {
-    VRB_LOG("FadeBlitter::Draw FAILED!");
+    VRB_ERROR("FadeBlitter::Draw Failed! Shader not found");
     return;
   }
 

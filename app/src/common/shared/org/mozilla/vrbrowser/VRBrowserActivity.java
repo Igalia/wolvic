@@ -74,7 +74,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.e(LOGTAG, "VRBrowserActivity onCreate");
         mUiThread = Thread.currentThread();
         SessionStore.get().setContext(this);
 
@@ -202,7 +201,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     protected void onNewIntent(final Intent intent) {
-        Log.e(LOGTAG,"VRBrowserActivity onNewIntent");
+        Log.d(LOGTAG,"VRBrowserActivity onNewIntent");
         super.onNewIntent(intent);
         setIntent(intent);
         final String action = intent.getAction();
@@ -220,9 +219,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             int id = SessionStore.get().createSession();
             SessionStore.get().setCurrentSession(id);
             SessionStore.get().loadUri(url);
-            Log.e(LOGTAG, "Load creating session and loading URI:" + url);
+            Log.d(LOGTAG, "Creating session and loading URI:" + url);
         } else if (uri != null) {
-            Log.e(LOGTAG, "Got URI: " + uri.toString());
+            Log.d(LOGTAG, "Got URI: " + uri.toString());
             SessionStore.get().loadUri(uri.toString());
         }
     }
@@ -304,11 +303,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             public void run() {
                 boolean consumed = false;
                 if ((aType == GestureSwipeLeft) && (mLastGesture == GestureSwipeLeft)) {
-                    Log.e(LOGTAG, "Go BACK!");
+                    Log.d(LOGTAG, "Go back!");
                     SessionStore.get().goBack();
                     consumed = true;
                 } else if ((aType == GestureSwipeRight) && (mLastGesture == GestureSwipeRight)) {
-                    Log.e(LOGTAG, "Go FORWARD!");
+                    Log.d(LOGTAG, "Go forward!");
                     SessionStore.get().goForward();
                     consumed = true;
                 }
@@ -378,9 +377,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         public void run() {
             synchronized (VRBrowserActivity.this) {
                 if (mBrowserWidget != null) {
-                    Log.e(LOGTAG, "About to pause Compositor");
+                    Log.d(LOGTAG, "About to pause Compositor");
                     mBrowserWidget.pauseCompositor();
-                    Log.e(LOGTAG, "Compositor Paused");
+                    Log.d(LOGTAG, "Compositor Paused");
                 }
                 done = true;
                 VRBrowserActivity.this.notify();
@@ -422,7 +421,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             public void run() {
                 if (mBrowserWidget != null) {
                     mBrowserWidget.resumeCompositor();
-                    Log.e(LOGTAG, "Compositor Resumed");
+                    Log.d(LOGTAG, "Compositor Resumed");
                 }
             }
         }, 20);

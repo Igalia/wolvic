@@ -207,10 +207,8 @@ public class SettingsWidget extends UIWidget {
             url = (url != null) ? URLEncoder.encode(url, "UTF-8") : "";
 
         } catch (UnsupportedEncodingException e) {
-            Log.e(LOGTAG, "Cannot encode URL: " + url);
-            url = "";
+            Log.e(LOGTAG, "Cannot encode URL");
         }
-
         SessionStore.get().loadUri(getContext().getString(R.string.private_report_url, url));
 
         toggle();
