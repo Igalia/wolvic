@@ -20,7 +20,9 @@ public class SettingsButton extends LinearLayout {
 
     private ImageView mIcon;
     private TextView mText;
+    private TextView mSecondaryText;
     private String mButtonText;
+    private String mSecondaryButtonText;
     private Drawable mButtonIcon;
 
     public SettingsButton(Context context, @Nullable AttributeSet attrs) {
@@ -32,6 +34,7 @@ public class SettingsButton extends LinearLayout {
         TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.SettingsButton, defStyleAttr, 0);
         mButtonText = attributes.getString(R.styleable.SettingsButton_settingsButtonText);
         mButtonIcon = attributes.getDrawable(R.styleable.SettingsButton_settingsButtonIcon);
+        mSecondaryButtonText = attributes.getString(R.styleable.SettingsButton_settingsSecondaryText);
         initialize(context);
     }
 
@@ -42,12 +45,16 @@ public class SettingsButton extends LinearLayout {
         setFocusable(true);
 
         mIcon = findViewById(R.id.settings_button_icon);
-        if (mButtonIcon != null)
+        if (mIcon != null)
             mIcon.setImageDrawable(mButtonIcon);
 
         mText = findViewById(R.id.settings_button_text);
-        if (mButtonText != null)
+        if (mText != null)
             mText.setText(mButtonText);
+
+        mSecondaryText = findViewById(R.id.settings_secondary_text);
+        if (mSecondaryText != null)
+            mSecondaryText.setText(mSecondaryButtonText);
 
         setOnHoverListener(new OnHoverListener() {
             @Override
@@ -70,12 +77,14 @@ public class SettingsButton extends LinearLayout {
                         if (mIcon != null && mText != null) {
                             mIcon.setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.asphalt, getContext().getTheme()), PorterDuff.Mode.MULTIPLY));
                             mText.setTextColor(getContext().getColor(R.color.asphalt));
+                            mSecondaryText.setTextColor(getContext().getColor(R.color.asphalt));
                         }
                         break;
                     case MotionEvent.ACTION_HOVER_EXIT:
                         if (mIcon != null && mText != null) {
                             mIcon.setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.fog, getContext().getTheme()), PorterDuff.Mode.MULTIPLY));
                             mText.setTextColor(getContext().getColor(R.color.fog));
+                            mSecondaryText.setTextColor(getContext().getColor(R.color.fog));
                         }
                         break;
                 }

@@ -5,26 +5,24 @@
     <string name="menu_exit_private_browsing">Exit Private Browsing</string>
     <string name="menu_focus_mode">Focus Mode</string>
     <string name="keyboard_enter_label">ENTER</string>
+    <!-- Parameter will be replaced with the app name -->
     <string name="permission_camera">Will you allow %1$s to use your camera?</string>
+    <!-- Parameter will be replaced with the app name -->
     <string name="permission_microphone">Will you allow %1$s to use your microphone?</string>
+    <!-- Parameter will be replaced with the app name -->
     <string name="permission_camera_and_microphone">Will you allow %1$s to use your camera and microphone?</string>
+    <!-- Parameter will be replaced with the app name -->
     <string name="permission_location">Will you allow %1$s to access your location?</string>
+    <!-- Parameter will be replaced with the app name -->
     <string name="permission_notification">Will you allow %1$s to send notifications?</string>
     <string name="speak_now">Speak now</string>
-    <string name="settings_version">version %1$s\n(%2$s)</string>
+    <string name="settings_version">version %1$s</string>
     <string name="settings_crash_reporting">Crash Reporting</string>
     <string name="settings_telemetry">Telemetry</string>
     <string name="settings_privacy">Privacy Policy</string>
-    <string name="settings_report_issue">Report an issue\n mzl.la/fxr</string>
-    <string name="settings_key_crash">settings_crash</string>
-    <string name="settings_key_locale">settings_locale</string>
-    <string name="settings_key_telemetry">settings_telemetry</string>
-    <string name="settings_key_session_id">session_id</string>
-    <string name="settings_key_previous_session_id">previous_session_id</string>
+    <string name="settings_report_issue">Report an issue</string>
     <string name="settings_version_developer">Developer Build</string>
-    <string name="private_policy_url">https://www.mozilla.org/en-US/privacy/firefox/</string>
-    <string name="private_report_url">https://mixedreality.mozilla.org/fxr/report?src=browser-fxr&amp;url=%1$s</string>
     <string name="crash_reporting_restart">Restart Required</string>
-    <string name="crash_reporting_text">You must restart the Firefox Reality app in order to \ncomplete changes. Would you like to do that now?</string>
+    <string name="crash_reporting_text">You must restart the Firefox Reality app in order to complete changes. Would you like to do that now?</string>
     <string name="crash_reporting_button">Restart Now</string>
 </resources>

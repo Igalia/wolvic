@@ -105,11 +105,14 @@ public class SettingsWidget extends UIWidget {
         TextView versionText = findViewById(R.id.versionText);
         try {
             PackageInfo pInfo = getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), 0);
-            versionText.setText(String.format(getResources().getString(R.string.settings_version), pInfo.versionName, versionCodeToDate(BuildConfig.VERSION_CODE)));
+            versionText.setText(String.format(getResources().getString(R.string.settings_version), pInfo.versionName));
 
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
+
+        TextView buildText = findViewById(R.id.buildText);
+        buildText.setText(versionCodeToDate(BuildConfig.VERSION_CODE));
 
         SettingsButton reportButton = findViewById(R.id.reportButton);
         reportButton.setOnClickListener(new OnClickListener() {

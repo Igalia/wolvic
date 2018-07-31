@@ -33,6 +33,19 @@
             android:layout_below="@id/ff_logo_settings"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="5dp"/>
+        <TextView
+            android:id="@+id/buildText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="@string/settings_version_developer"
+            android:textColor="@color/white"
+            android:textSize="@dimen/settings_font_size"
+            android:fontFamily="sans-serif-light"
+            android:layout_below="@id/versionText"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="0dp"/>
 
         <LinearLayout
             style="?attr/settingsButtonStyle"
@@ -100,6 +113,7 @@
             style="?attr/settingsButtonStyle"
             app:settingsButtonIcon="@drawable/ic_settings_privacypolicy"
             app:settingsButtonText="@string/settings_privacy"
+            app:settingsSecondaryText=""
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="90dp"
             android:layout_marginTop="10dp"
@@ -110,6 +124,7 @@
             style="?attr/settingsButtonStyle"
             app:settingsButtonIcon="@drawable/ic_settings_reportissue"
             app:settingsButtonText="@string/settings_report_issue"
+            app:settingsSecondaryText="@string/bug_report_url"
             android:layout_alignParentRight="true"
             android:layout_marginRight="90dp"
             android:layout_marginTop="10dp"

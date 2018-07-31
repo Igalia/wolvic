@@ -13,8 +13,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
         android:gravity="center"
         android:text="@string/settings_privacy"
+        android:textSize="@dimen/settings_font_size"
+        android:fontFamily="sans-serif-light"/>
+    <TextView
+        android:id="@+id/settings_secondary_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:gravity="center"
+        android:text="Secondary text"
         android:textSize="@dimen/settings_font_size"
         android:fontFamily="sans-serif-light"/>
 </merge>

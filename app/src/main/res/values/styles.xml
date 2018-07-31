@@ -19,6 +19,7 @@
     <declare-styleable name="SettingsButton">
         <attr name="settingsButtonIcon" format="integer" />
         <attr name="settingsButtonText" format="string" />
+        <attr name="settingsSecondaryText" format="string" />
     </declare-styleable>
 
     <declare-styleable name="UIButton">
