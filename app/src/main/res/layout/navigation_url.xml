@@ -11,6 +11,7 @@
         android:inputType="textUri"
         android:background="@drawable/url_background"
         android:textColor="@color/fog"
+        android:textColorHighlight="@color/dusk"
         android:selectAllOnFocus="true" />
 
     <RelativeLayout
