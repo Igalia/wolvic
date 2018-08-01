@@ -644,6 +644,11 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         aResponse.respond(getSession(sessionId));*/
     }
 
+    @Override
+    public void onLoadError(GeckoSession session, String uri, int category, int error) {
+
+    }
+
     // Progress Listener
     @Override
     public void onPageStart(GeckoSession aSession, String aUri) {
