@@ -106,11 +106,11 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             runtimeSettingsBuilder.javaCrashReportingEnabled(SettingsStore.getInstance(aContext).isCrashReportingEnabled());
             runtimeSettingsBuilder.nativeCrashReportingEnabled(SettingsStore.getInstance(aContext).isCrashReportingEnabled());
             runtimeSettingsBuilder.trackingProtectionCategories(GeckoSession.TrackingProtectionDelegate.CATEGORY_AD | GeckoSession.TrackingProtectionDelegate.CATEGORY_SOCIAL | GeckoSession.TrackingProtectionDelegate.CATEGORY_ANALYTIC);
-            // Enable gecko console output for all builds until we have UI to toggle see:
-            // https://github.com/MozillaReality/FirefoxReality/issues/283
-            //if (BuildConfig.DEBUG) {
+
+            if (BuildConfig.DEBUG) {
                 runtimeSettingsBuilder.consoleOutput(true);
-            //}
+                runtimeSettingsBuilder.remoteDebuggingEnabled(true);
+            }
 
             mRuntime = GeckoRuntime.create(aContext, runtimeSettingsBuilder.build());
         } else {
