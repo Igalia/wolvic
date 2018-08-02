@@ -463,6 +463,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             out.write("pref(\"dom.vr.enabled\", true);\n".getBytes());
             out.write("pref(\"dom.vr.external.enabled\", true);\n".getBytes());
             out.write("pref(\"webgl.enable-surface-texture\", true);\n".getBytes());
+            out.write("pref(\"apz.allow_double_tap_zooming\", false);\n".getBytes());
         } catch (FileNotFoundException e) {
             Log.e(LOGTAG, "Unable to create file: '" + prefFileName + "' got exception: " + e.toString());
         } catch (IOException e) {
