@@ -162,6 +162,11 @@ struct DeviceDelegateOculusVR::State {
       eyeSwapChains[i] = OculusEyeSwapChain::create();
     }
     UpdatePerspective();
+
+    // Send the remote back button java events to the apps
+    vrapi_SetPropertyInt(&java, VRAPI_BLOCK_REMOTE_BUTTONS_WHEN_NOT_EMULATING_HMT, 0);
+    // Reorient the headset after controller recenter.
+    vrapi_SetPropertyInt(&java, VRAPI_REORIENT_HMD_ON_CONTROLLER_RECENTER, 1);
   }
 
   void Shutdown() {
