@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <RelativeLayout
+        android:id="@+id/versionLayout"
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="@dimen/settings_width"
         android:layout_height="@dimen/settings_height"

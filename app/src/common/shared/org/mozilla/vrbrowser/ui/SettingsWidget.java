@@ -10,7 +10,10 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.Switch;
@@ -24,7 +27,6 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.TimeZone;
 
 public class SettingsWidget extends UIWidget {
     private static final String LOGTAG = "VRB";
@@ -32,6 +34,29 @@ public class SettingsWidget extends UIWidget {
     private AudioEngine mAudio;
     private CrashReportingWidget mCrashReportingWidget;
     private Runnable mBackHandler;
+    private TextView mBuildText;
+
+    class VersionGestureListener extends GestureDetector.SimpleOnGestureListener {
+
+        private boolean mIsHash;
+
+        @Override
+        public boolean onDoubleTap(MotionEvent event) {
+            if (mIsHash)
+                mBuildText.setText(versionCodeToDate(BuildConfig.VERSION_CODE));
+            else
+                mBuildText.setText(BuildConfig.GIT_HASH);
+
+            mIsHash = !mIsHash;
+
+            return true;
+        }
+
+        @Override
+        public boolean onDown(MotionEvent e) {
+            return true;
+        }
+    }
 
     public SettingsWidget(Context aContext) {
         super(aContext);
@@ -111,8 +136,20 @@ public class SettingsWidget extends UIWidget {
             e.printStackTrace();
         }
 
-        TextView buildText = findViewById(R.id.buildText);
-        buildText.setText(versionCodeToDate(BuildConfig.VERSION_CODE));
+        mBuildText = findViewById(R.id.buildText);
+        mBuildText.setText(versionCodeToDate(BuildConfig.VERSION_CODE));
+
+        ViewGroup versionLayout = findViewById(R.id.versionLayout);
+        final GestureDetector gd = new GestureDetector(getContext(), new VersionGestureListener());
+        versionLayout.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (gd.onTouchEvent(motionEvent)) {
+                    return true;
+                }
+                return view.onTouchEvent(motionEvent);
+            }
+        });
 
         SettingsButton reportButton = findViewById(R.id.reportButton);
         reportButton.setOnClickListener(new OnClickListener() {
@@ -253,5 +290,4 @@ public class SettingsWidget extends UIWidget {
 
         return formatted;
     }
-
 }
