@@ -1,6 +1,15 @@
 apply plugin: 'com.android.application'
 apply from: "$project.rootDir/tools/gradle/versionCode.gradle"
 
+def getGitHash = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-parse', '--short', 'HEAD'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
 android {
     project.archivesBaseName = "FirefoxReality"
     compileSdkVersion 27
@@ -10,6 +19,7 @@ android {
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
+        buildConfigField "String", "GIT_HASH", "\"${getGitHash()}\""
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         ndk {
             abiFilters "armeabi-v7a"
