@@ -49,13 +49,11 @@ private:
 class Wait {
   pthread_mutex_t& mMutex;
   pthread_cond_t& mCond;
-  const float mWait;
   bool mLocked;
 public:
-  Wait(pthread_mutex_t& aMutex, pthread_cond_t& aCond, float aWait = 0.0f)
+  Wait(pthread_mutex_t& aMutex, pthread_cond_t& aCond)
       : mMutex(aMutex)
       , mCond(aCond)
-      , mWait(aWait)
       , mLocked(false)
   {}
 
@@ -65,14 +63,14 @@ public:
     }
   }
 
-  void DoWait() {
+  bool DoWait(const float aWait) {
     if (mLocked || pthread_mutex_lock(&mMutex) == 0) {
       mLocked = true;
-      if (mWait == 0.0f) {
-        pthread_cond_wait(&mCond, &mMutex);
+      if (aWait == 0.0f) {
+        return pthread_cond_wait(&mCond, &mMutex) == 0;
       } else {
         float sec = 0;
-        float nsec = modff(mWait, &sec);
+        float nsec = modff(aWait, &sec);
         struct timeval tv;
         struct timespec ts;
         gettimeofday(&tv, NULL);
@@ -82,9 +80,14 @@ public:
           ts.tv_nsec -= SecondsToNanosecondsI32;
           ts.tv_sec++;
         }
-        pthread_cond_timedwait(&mCond, &mMutex, &ts);
+        return pthread_cond_timedwait(&mCond, &mMutex, &ts) == 0;
       }
     }
+    return false;
+  }
+
+  bool DoWait() {
+    return DoWait(0.0f);
   }
 
   bool IsLocked() {
@@ -112,14 +115,6 @@ private:
   VRB_NO_DEFAULTS(Wait)
   VRB_NO_NEW_DELETE
 };
-
-void
-SignalCond(pthread_mutex_t& aMutex, pthread_cond_t& aCond) {
-  if (pthread_mutex_lock(&aMutex) == 0) {
-    pthread_cond_signal(&aCond);
-    pthread_mutex_unlock(&aMutex);
-  }
-}
 
 } // namespace
 
