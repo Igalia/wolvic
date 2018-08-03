@@ -402,7 +402,7 @@ DeviceDelegateOculusVR::StartFrame() {
   m.cameras[VRAPI_EYE_LEFT]->SetHeadTransform(head);
   m.cameras[VRAPI_EYE_RIGHT]->SetHeadTransform(head);
 
-  if (m.immersiveDisplay && m.renderMode == device::RenderMode::Immersive) {
+  if (m.immersiveDisplay) {
     m.immersiveDisplay->SetEyeOffset(device::Eye::Left, -ipd * 0.5f, 0.f, 0.f);
     m.immersiveDisplay->SetEyeOffset(device::Eye::Right, ipd * 0.5f, 0.f, 0.f);
     device::CapabilityFlags caps = device::Orientation | device::Present;

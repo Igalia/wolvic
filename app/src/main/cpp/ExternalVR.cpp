@@ -145,6 +145,7 @@ struct ExternalVR::State {
     const vrb::Matrix identity = vrb::Matrix::Identity();
     memcpy(&(system.sensorState.leftViewMatrix), identity.Data(), sizeof(system.sensorState.leftViewMatrix));
     memcpy(&(system.sensorState.rightViewMatrix), identity.Data(), sizeof(system.sensorState.rightViewMatrix));
+    system.sensorState.pose.orientation[3] = 1.0f;
     lastFrameId = 0;
     firstPresentingFrame = false;
   }
