@@ -472,6 +472,9 @@ DeviceDelegateOculusVR::EndFrame() {
 
   ovrSubmitFrameDescription2 frameDesc = {};
   frameDesc.Flags = 0;
+  if (m.renderMode == device::RenderMode::Immersive) {
+    frameDesc.Flags |= VRAPI_FRAME_FLAG_INHIBIT_VOLUME_LAYER;
+  }
   frameDesc.SwapInterval = 1;
   frameDesc.FrameIndex = m.frameIndex;
   frameDesc.DisplayTime = m.predictedDisplayTime;
