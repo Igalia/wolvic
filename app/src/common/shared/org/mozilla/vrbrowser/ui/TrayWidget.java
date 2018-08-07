@@ -21,6 +21,7 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
     private UIButton mPrivateButton;
     private AudioEngine mAudio;
     private SettingsWidget mSettingsWidget;
+    private boolean mIsLastSessionPrivate;
 
     public TrayWidget(Context aContext) {
         super(aContext);
@@ -79,6 +80,8 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
 
         mAudio = AudioEngine.fromContext(aContext);
 
+        mIsLastSessionPrivate = false;
+
         SessionStore.get().addSessionChangeListener(this);
     }
 
@@ -122,15 +125,19 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
     public void onCurrentSessionChange(GeckoSession aSession, int aId) {
         boolean isPrivateMode  = aSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
 
-        mPrivateButton.setPrivateMode(isPrivateMode);
-        if (isPrivateMode) {
-            mWidgetManager.fadeOutWorld();
-            mPrivateButton.setImageResource(R.drawable.ic_tray_private_on);
+        if (isPrivateMode != mIsLastSessionPrivate) {
+            mPrivateButton.setPrivateMode(isPrivateMode);
+            if (isPrivateMode) {
+                mWidgetManager.fadeOutWorld();
+                mPrivateButton.setImageResource(R.drawable.ic_tray_private_on);
 
-        } else {
-            mWidgetManager.fadeInWorld();
-            mPrivateButton.setImageResource(R.drawable.ic_tray_private);
+            } else {
+                mWidgetManager.fadeInWorld();
+                mPrivateButton.setImageResource(R.drawable.ic_tray_private);
+            }
         }
+
+        mIsLastSessionPrivate = isPrivateMode;
     }
 
     public void setVisible(boolean isVisible) {

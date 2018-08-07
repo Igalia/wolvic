@@ -101,7 +101,11 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mBackButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                SessionStore.get().goBack();
+                if (SessionStore.get().canGoBack())
+                    SessionStore.get().goBack();
+                else if (SessionStore.get().canUnstackSession())
+                    SessionStore.get().unstackSession();
+
                 if (mAudio != null) {
                     mAudio.playSound(AudioEngine.Sound.BACK);
                 }
@@ -423,9 +427,12 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     @Override
     public void onCanGoBack(GeckoSession aSession, boolean canGoBack) {
         if (mBackButton != null) {
-            Log.d(LOGTAG, "Got onCanGoBack: " + (canGoBack ? "true" : "false"));
-            mBackButton.setEnabled(canGoBack);
-            mBackButton.setClickable(canGoBack);
+            boolean enableBackButton = SessionStore.get().canUnstackSession() | canGoBack;
+
+            Log.d(LOGTAG, "Got onCanGoBack: " + (enableBackButton ? "true" : "false"));
+            mBackButton.setEnabled(enableBackButton);
+            mBackButton.setHovered(false);
+            mBackButton.setClickable(enableBackButton);
         }
     }
 
@@ -434,6 +441,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         if (mForwardButton != null) {
             Log.d(LOGTAG, "Got onCanGoForward: " + (canGoForward ? "true" : "false"));
             mForwardButton.setEnabled(canGoForward);
+            mForwardButton.setHovered(false);
             mForwardButton.setClickable(canGoForward);
         }
     }

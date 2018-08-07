@@ -243,7 +243,14 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         }
         if (SessionStore.get().canGoBack()) {
             SessionStore.get().goBack();
-        } else {
+
+        } else if (SessionStore.get().canUnstackSession()){
+            SessionStore.get().unstackSession();
+
+        } else if (SessionStore.get().isCurrentSessionPrivate()) {
+            SessionStore.get().exitPrivateMode();
+
+        } else{
             super.onBackPressed();
         }
     }

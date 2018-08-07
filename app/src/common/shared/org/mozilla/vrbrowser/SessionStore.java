@@ -26,12 +26,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSession.ProgressDelegate, GeckoSession.ContentDelegate, GeckoSession.TextInputDelegate, GeckoSession.TrackingProtectionDelegate {
     private static SessionStore mInstance;
@@ -77,6 +72,8 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     private GeckoRuntime mRuntime;
     private GeckoSession mCurrentSession;
     private HashMap<Integer, State> mSessions;
+    private Deque<Integer> mSessionsStack;
+    private Deque<Integer> mPrivateSessionsStack;
     private GeckoSession.PermissionDelegate mPermissionDelegate;
     private int mPreviousSessionId = SessionStore.NO_SESSION_ID;
 
@@ -88,6 +85,8 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         mTextInputListeners = new LinkedList<>();
 
         mSessions = new LinkedHashMap<>();
+        mSessionsStack = new ArrayDeque<>();
+        mPrivateSessionsStack = new ArrayDeque<>();
     }
 
     public void clearListeners() {
@@ -275,6 +274,30 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         }
     }
 
+    private void pushSession(int aSessionId) {
+        boolean isPrivateMode  = mCurrentSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
+        if (isPrivateMode)
+            mPrivateSessionsStack.push(aSessionId);
+        else
+            mSessionsStack.push(aSessionId);
+    }
+
+    private Integer popSession() {
+        boolean isPrivateMode  = mCurrentSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
+        if (isPrivateMode)
+            return mPrivateSessionsStack.pop();
+        else
+            return mSessionsStack.pop();
+    }
+
+    private Integer peekSession() {
+        boolean isPrivateMode  = mCurrentSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
+        if (isPrivateMode)
+            return mPrivateSessionsStack.peek();
+        else
+            return mSessionsStack.peek();
+    }
+
     public GeckoSession getSession(int aId) {
         State result = mSessions.get(aId);
         if (result == null) {
@@ -325,8 +348,10 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             Log.e(LOGTAG, "SessionStore failed to set current session, GeckoRuntime is null");
             return;
         }
-        if (mCurrentSession != null)
+
+        if (mCurrentSession != null) {
             mCurrentSession.setActive(false);
+        }
 
         mCurrentSession = null;
         State state = mSessions.get(aId);
@@ -482,7 +507,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
 
                 SessionStore.SessionSettings settings = new SessionStore.SessionSettings();
                 settings.privateMode = true;
-                int id = SessionStore.get().createSession(settings);
+                int id = createSession(settings);
                 setCurrentSession(id);
                 loadUri(DEFAULT_URL);
 
@@ -509,7 +534,15 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             setCurrentSession(mPreviousSessionId);
             mPreviousSessionId = SessionStore.NO_SESSION_ID;
 
+            // Remove current private session
             removeSession(privateSessionId);
+
+            // Remove all the stacked private sessions
+            for (Iterator<Integer> it = mPrivateSessionsStack.iterator(); it.hasNext();) {
+                int sessionId = it.next();
+                removeSession(sessionId);
+            }
+            mPrivateSessionsStack.clear();
         }
     }
 
@@ -518,6 +551,21 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             return mCurrentSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
 
         return false;
+    }
+
+    public boolean canUnstackSession() {
+        Integer prevSessionId = peekSession();
+
+        return prevSessionId != null;
+    }
+
+    public void unstackSession() {
+        Integer prevSessionId = popSession();
+        if (prevSessionId != null) {
+            int currentSession = getCurrentSessionId();
+            setCurrentSession(prevSessionId);
+            removeSession(currentSession);
+        }
     }
 
     @Override
@@ -565,6 +613,8 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
 
     @Override
     public GeckoResult<Boolean> onLoadRequest(GeckoSession aSession, String aUri, int target, int flags) {
+        Log.d(LOGTAG, "SessionStore onLoadRequest: " + aUri);
+
         boolean isErrorPage = false;
         if (aUri.startsWith(NET_ERROR)) {
             isErrorPage = true;
@@ -624,30 +674,37 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
 
     @Override
     public GeckoResult<GeckoSession> onNewSession(@NonNull GeckoSession aSession, @NonNull String aUri) {
-        // Fixme: Remove this and uncomment the old code when we support multiple tabs or windows.
-        // Until the carrousel is ready, we need to stack the new link in the current session instead of setting a different session.
-        if (mCurrentSession != null) {
-            mCurrentSession.loadUri(aUri);
+        Log.d(LOGTAG, "SessionStore onNewSession: " + aUri);
+
+        pushSession(getCurrentSessionId());
+
+        int sessionId;
+        boolean isPreviousPrivateMode = mCurrentSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
+        if (isPreviousPrivateMode) {
+            SessionStore.SessionSettings settings = new SessionStore.SessionSettings();
+            settings.privateMode = true;
+            sessionId = createSession(settings);
+
+        } else {
+            sessionId = createSession();
         }
-        return null;
-        /*
-        Log.e(LOGTAG,"Got onNewSession: " + aUri);
-        int sessionId = createSession();
+
         mCurrentSession = null;
         State state = mSessions.get(sessionId);
         if (state != null) {
             mCurrentSession = state.mSession;
-            for (SessionChangeListener listener: mSessionChangeListeners) {
+            for (SessionChangeListener listener : mSessionChangeListeners) {
                 listener.onCurrentSessionChange(mCurrentSession, sessionId);
             }
         }
         dumpAllState(mCurrentSession);
-        aResponse.respond(getSession(sessionId));*/
+
+        return GeckoResult.fromValue(getSession(sessionId));
     }
 
     @Override
     public void onLoadError(GeckoSession session, String uri, int category, int error) {
-
+        Log.d(LOGTAG, "SessionStore onLoadError: " + uri);
     }
 
     // Progress Listener
@@ -714,12 +771,15 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
 
     @Override
     public void onFocusRequest(GeckoSession aSession) {
-
+        Log.d(LOGTAG, "SessionStore onFocusRequest");
     }
 
     @Override
     public void onCloseRequest(GeckoSession aSession) {
-
+        int sessionId = getSessionId(aSession);
+        if (getCurrentSessionId() == sessionId) {
+            unstackSession();
+        }
     }
 
     @Override
