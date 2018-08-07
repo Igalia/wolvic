@@ -38,6 +38,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private ViewGroup mVoiceInput;
     private Drawable mShiftOnIcon;
     private Drawable mShiftOffIcon;
+    private Drawable mCapsLockOnIcon;
     private View mFocusedView;
     private BrowserWidget mBrowserWidget;
     private InputConnection mInputConnection;
@@ -48,6 +49,9 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private UIButton mKeyboardIcon;
     private int mKeyboardPopupLeftMargin;
     private ImageButton mCloseKeyboardButton;
+    private boolean mIsLongPress;
+    private boolean mIsMultiTap;
+    private boolean mIsCapsLock;
 
     public KeyboardWidget(Context aContext) {
         super(aContext);
@@ -90,6 +94,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
         mShiftOnIcon = getResources().getDrawable(R.drawable.ic_icon_keyboard_shift_on, getContext().getTheme());
         mShiftOffIcon = getResources().getDrawable(R.drawable.ic_icon_keyboard_shift_off, getContext().getTheme());
+        mCapsLockOnIcon = getResources().getDrawable(R.drawable.ic_icon_keyboard_caps, getContext().getTheme());
         mCloseKeyboardButton = findViewById(R.id.keyboardCloseButton);
         mCloseKeyboardButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -187,6 +192,10 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
        }
        mWidgetPlacement.visible = false;
        mWidgetManager.updateWidget(this);
+
+       mIsCapsLock = false;
+       mIsLongPress = false;
+       handleShift(false);
     }
 
 
@@ -237,10 +246,19 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             mKeyboardview.setKeyboard(popupKeyboard);
             params.topMargin= popupKey.y;
             mKeyboardview.setLayoutParams(params);
+            mKeyboardview.setShifted(mIsCapsLock);
+
             mIsPopupVisible = true;
 
             mCloseKeyboardButton.setVisibility(View.INVISIBLE);
+
+        } else if (popupKey.codes[0] == CustomKeyboard.KEYCODE_SHIFT) {
+            mIsLongPress = !mIsCapsLock;
         }
+    }
+
+    public void onMultiTap(Keyboard.Key key) {
+        mIsMultiTap = true;
     }
 
     @Override
@@ -259,7 +277,8 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                 handleSymbolsChange();
                 break;
             case Keyboard.KEYCODE_SHIFT:
-                handleShift();
+                mIsCapsLock = mIsLongPress || mIsMultiTap;
+                handleShift(!mKeyboardview.isShifted());
                 break;
             case Keyboard.KEYCODE_DELETE:
                 handleBackspace();
@@ -284,6 +303,13 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                 }
                 break;
         }
+
+        if (!mIsCapsLock && primaryCode != CustomKeyboard.KEYCODE_SHIFT) {
+            handleShift(false);
+        }
+
+        mIsLongPress = false;
+        mIsMultiTap = false;
     }
 
     @Override
@@ -311,18 +337,25 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
     }
 
-    private void handleShift() {
+    private void handleShift(boolean isShifted) {
         Keyboard keyboard = mKeyboardview.getKeyboard();
-        boolean shifted = !mKeyboardview.isShifted();
+        boolean shifted = isShifted;
         int shiftIndex = keyboard.getShiftKeyIndex();
         if (shiftIndex >= 0) {
             // Update shift icon
             Keyboard.Key key = keyboard.getKeys().get(shiftIndex);
             if (key != null) {
-                key.icon = shifted ? mShiftOnIcon : mShiftOffIcon;
+                if (mIsCapsLock) {
+                    key.icon = mCapsLockOnIcon;
+                    key.pressed = true;
+
+                } else {
+                    key.icon = shifted ? mShiftOnIcon : mShiftOffIcon;
+                    key.pressed = false;
+                }
             }
         }
-        mKeyboardview.setShifted(shifted);
+        mKeyboardview.setShifted(shifted || mIsCapsLock);
         if (mFocusedView != null) {
             ((CustomKeyboard)mKeyboardview.getKeyboard()).setImeOptions(mEditorInfo.imeOptions);
         }

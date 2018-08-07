@@ -84,6 +84,8 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
 
         void onLongPress(Key popupKey);
 
+        void onMultiTap(Key popupKey);
+
         /**
          * Called when the user releases a key. This is sent after the {@link #onKey} is called.
          * For keys that repeat, this is only called once.
@@ -837,6 +839,9 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
                         mTapCount = 0;
                     }
                     code = key.codes[mTapCount];
+
+                    if (mKeyboardActionListener != null)
+                        mKeyboardActionListener.onMultiTap(key);
                 }
                 mKeyboardActionListener.onKey(code, codes);
                 mKeyboardActionListener.onRelease(code);
@@ -1358,7 +1363,11 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
                 mTapCount = -1;
                 return;
             }
+
+        } else if (key.codes[0] == CustomKeyboard.KEYCODE_SHIFT) {
+            mInMultiTap = true;
         }
+
         if (eventTime > mLastTapTime + MULTITAP_INTERVAL || keyIndex != mLastSentIndex) {
             resetMultiTap();
         }
