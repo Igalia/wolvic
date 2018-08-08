@@ -53,7 +53,7 @@ public:
   virtual void ProcessEvents() = 0;
   virtual void StartFrame() = 0;
   virtual void BindEye(const device::Eye aWhich) = 0;
-  virtual void EndFrame() = 0;
+  virtual void EndFrame(bool aDiscard = false) = 0;
 protected:
   DeviceDelegate() {}
 

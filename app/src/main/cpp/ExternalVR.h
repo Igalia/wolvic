@@ -23,6 +23,12 @@ typedef std::shared_ptr<ExternalVR> ExternalVRPtr;
 
 class ExternalVR : public ImmersiveDisplay {
 public:
+  enum class VRState {
+    NotPresenting,
+    Loading,
+    LinkTraversal,
+    Rendering
+  };
   static ExternalVRPtr Create();
   mozilla::gfx::VRExternalShmem* GetSharedData();
   // DeviceDisplay interface
@@ -36,11 +42,12 @@ public:
   void SetEyeResolution(const int32_t aX, const int32_t aY) override;
   // ExternalVR interface
   void PushSystemState();
-  void PullBrowserState(bool aBlock = true);
-  bool IsFirstPresentingFrame() const;
-  void HandleFirstPresentingFrame();
+  void PullBrowserState();
+  void SetCompositorEnabled(bool aEnabled);
   bool IsPresenting() const;
-  void RequestFrame(const vrb::Matrix& aHeadTransform, const std::vector<Controller>& aControllers);
+  VRState GetVRState() const;
+  void PushFramePoses(const vrb::Matrix& aHeadTransform, const std::vector<Controller>& aControllers);
+  bool WaitFrameResult();
   void GetFrameResult(int32_t& aSurfaceHandle, device::EyeRect& aLeftEye, device::EyeRect& aRightEye) const;
   void StopPresenting();
   void CompleteEnumeration() override;

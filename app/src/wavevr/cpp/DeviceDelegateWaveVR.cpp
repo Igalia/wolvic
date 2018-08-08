@@ -66,6 +66,7 @@ struct DeviceDelegateWaveVR::State {
   GestureDelegatePtr gestures;
   std::array<Controller, kMaxControllerCount> controllers;
   ImmersiveDisplayPtr immersiveDisplay;
+  bool lastSubmitDiscarded;
   State()
       : isRunning(true)
       , near(0.1f)
@@ -77,6 +78,7 @@ struct DeviceDelegateWaveVR::State {
       , rightTextureQueue(nullptr)
       , renderWidth(0)
       , renderHeight(0)
+      , lastSubmitDiscarded(false)
   {
     memset((void*)devicePairs, 0, sizeof(WVR_DevicePosePair_t) * WVR_DEVICE_COUNT_LEVEL_1);
     gestures = GestureDelegate::Create();
@@ -448,8 +450,10 @@ void
 DeviceDelegateWaveVR::StartFrame() {
   VRB_GL_CHECK(glClearColor(m.clearColor.Red(), m.clearColor.Green(), m.clearColor.Blue(), m.clearColor.Alpha()));
   static const vrb::Vector kAverageHeight(0.0f, 1.7f, 0.0f);
-  m.leftFBOIndex = WVR_GetAvailableTextureIndex(m.leftTextureQueue);
-  m.rightFBOIndex = WVR_GetAvailableTextureIndex(m.rightTextureQueue);
+  if (!m.lastSubmitDiscarded) {
+    m.leftFBOIndex = WVR_GetAvailableTextureIndex(m.leftTextureQueue);
+    m.rightFBOIndex = WVR_GetAvailableTextureIndex(m.rightTextureQueue);
+  }
   // Update cameras
   WVR_GetSyncPose(WVR_PoseOriginModel_OriginOnHead, m.devicePairs, WVR_DEVICE_COUNT_LEVEL_1);
   vrb::Matrix hmd = vrb::Matrix::Identity();
@@ -515,10 +519,15 @@ DeviceDelegateWaveVR::BindEye(const device::Eye aWhich) {
 }
 
 void
-DeviceDelegateWaveVR::EndFrame() {
+DeviceDelegateWaveVR::EndFrame(const bool aDiscard) {
   if (m.currentFBO) {
     m.currentFBO->Unbind();
     m.currentFBO = nullptr;
+  }
+
+  m.lastSubmitDiscarded = aDiscard;
+  if (aDiscard) {
+    return;
   }
   // Left eye
   WVR_TextureParams_t leftEyeTexture = WVR_GetTexture(m.leftTextureQueue, m.leftFBOIndex);

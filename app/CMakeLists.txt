@@ -30,6 +30,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/ExternalVR.cpp
              src/main/cpp/GeckoSurfaceTexture.cpp
              src/main/cpp/GestureDelegate.cpp
+             src/main/cpp/LoadingAnimation.cpp
              src/main/cpp/JNIUtil.cpp
              src/main/cpp/VRBrowser.cpp
              src/main/cpp/Widget.cpp

@@ -27,9 +27,10 @@ public:
     AspectFill,
   };
   static QuadPtr Create(vrb::CreationContextPtr aContext, const vrb::Vector& aMin, const vrb::Vector& aMax);
+  static QuadPtr Create(vrb::CreationContextPtr aContext, const float aWorldWidth, const float aWorldHeight);
   static vrb::GeometryPtr CreateGeometry(vrb::CreationContextPtr aContext, const vrb::Vector& aMin, const vrb::Vector& aMax);
   static vrb::GeometryPtr CreateGeometry(vrb::CreationContextPtr aContext, const float aWorldWidth, const float aWorldHeight);
-  void SetTexture(const vrb::TextureSurfacePtr& aTexture, int32_t aWidth, int32_t aHeight);
+  void SetTexture(const vrb::TexturePtr& aTexture, int32_t aWidth, int32_t aHeight);
   void SetMaterial(const vrb::Color& aAmbient, const vrb::Color& aDiffuse, const vrb::Color& aSpecular, const float aSpecularExponent);
   void SetScaleMode(ScaleMode aScaleMode);
   void SetBackgroundColor(const vrb::Color& aColor);

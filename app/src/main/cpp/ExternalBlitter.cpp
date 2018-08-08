@@ -139,7 +139,7 @@ ExternalBlitter::Draw(const device::Eye aEye) {
 
 void
 ExternalBlitter::EndFrame() {
-  if (m.surface) {
+  if (m.surface && m.surface->IsAttachedToGLContext(eglGetCurrentContext())) {
     // We need to detach the SurfaceTexture to prevent the Gecko WebGL compositor from getting blocked.
     m.surface->DetachFromGLContext();
   }

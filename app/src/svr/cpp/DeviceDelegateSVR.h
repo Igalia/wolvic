@@ -38,7 +38,7 @@ public:
   void ProcessEvents() override;
   void StartFrame() override;
   void BindEye(const device::Eye aWhich) override;
-  void EndFrame() override;
+  void EndFrame(const bool aDiscard) override;
   // Custom methods for NativeActivity render loop based devices.
   void EnterVR(const crow::BrowserEGLContext& aEGLContext);
   void LeaveVR();

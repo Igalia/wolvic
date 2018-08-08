@@ -448,7 +448,7 @@ DeviceDelegateOculusVR::BindEye(const device::Eye aWhich) {
 }
 
 void
-DeviceDelegateOculusVR::EndFrame() {
+DeviceDelegateOculusVR::EndFrame(const bool aDiscard) {
   if (!m.ovr) {
     VRB_LOG("EndFrame called while not in VR mode");
     return;
@@ -456,6 +456,10 @@ DeviceDelegateOculusVR::EndFrame() {
   if (m.currentFBO) {
     m.currentFBO->Unbind();
     m.currentFBO.reset();
+  }
+
+  if (aDiscard) {
+    return;
   }
 
   auto layer = vrapi_DefaultLayerProjection2();

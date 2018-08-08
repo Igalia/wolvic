@@ -56,6 +56,7 @@ protected:
   ~BrowserWorld();
   void DrawWorld();
   void DrawImmersive();
+  void DrawLoadingAnimation();
   vrb::TransformPtr CreateSkyBox(const std::string& basePath);
   void LoadSkybox(const vrb::TransformPtr transform, const std::string& basePath);
   void CreateFloor();

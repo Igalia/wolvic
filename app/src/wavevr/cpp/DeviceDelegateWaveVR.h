@@ -30,7 +30,7 @@ public:
   void ProcessEvents() override;
   void StartFrame() override;
   void BindEye(const device::Eye aWhich) override;
-  void EndFrame() override;
+  void EndFrame(const bool aDiscard) override;
   // DeviceDelegateWaveVR interface
   bool IsRunning();
 protected:

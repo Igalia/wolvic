@@ -35,7 +35,7 @@ public:
   void ProcessEvents() override;
   void StartFrame() override;
   void BindEye(const device::Eye) override;
-  void EndFrame() override;
+  void EndFrame(const bool aDiscard) override;
   // DeviceDelegateNoAPI interface
   void SetViewport(const int aWidth, const int aHeight);
   void Pause();

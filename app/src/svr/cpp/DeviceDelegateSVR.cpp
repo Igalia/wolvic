@@ -477,7 +477,7 @@ DeviceDelegateSVR::BindEye(const device::Eye aWhich) {
 }
 
 void
-DeviceDelegateSVR::EndFrame() {
+DeviceDelegateSVR::EndFrame(const bool aDiscard) {
   if (!m.isInVRMode) {
     VRB_LOG("EndFrame called while not in VR mode");
     return;
@@ -491,6 +491,10 @@ DeviceDelegateSVR::EndFrame() {
   if (m.currentFBO) {
     m.currentFBO->Unbind();
     m.currentFBO.reset();
+  }
+
+  if (aDiscard) {
+    return;
   }
 
   svrFrameParams params = {};

@@ -12,6 +12,7 @@
 #include "ExternalBlitter.h"
 #include "ExternalVR.h"
 #include "GeckoSurfaceTexture.h"
+#include "LoadingAnimation.h"
 #include "Widget.h"
 #include "WidgetPlacement.h"
 #include "VRBrowser.h"
@@ -141,6 +142,7 @@ struct BrowserWorld::State {
   CullVisitorPtr cullVisitor;
   DrawableListPtr drawListOpaque;
   DrawableListPtr drawListTransparent;
+  DrawableListPtr drawListLoading;
   CameraPtr leftCamera;
   CameraPtr rightCamera;
   float nearClip;
@@ -156,6 +158,7 @@ struct BrowserWorld::State {
   uint32_t loaderDelay;
   bool exitImmersiveRequested;
   WidgetPtr resizingWidget;
+  LoadingAnimationPtr loadingAnimation;
 
   State() : paused(true), glInitialized(false), modelsLoaded(false), env(nullptr), nearClip(0.1f),
             farClip(300.0f), activity(nullptr), windowsInitialized(false), exitImmersiveRequested(false), loaderDelay(0) {
@@ -172,13 +175,16 @@ struct BrowserWorld::State {
     cullVisitor = CullVisitor::Create(create);
     drawListOpaque = DrawableList::Create(create);
     drawListTransparent = DrawableList::Create(create);
+    drawListLoading = DrawableList::Create(create);
     controllers = ControllerContainer::Create(create);
     externalVR = ExternalVR::Create();
     blitter = ExternalBlitter::Create(create);
     fadeBlitter = FadeBlitter::Create(create);
+    loadingAnimation = LoadingAnimation::Create(create);
   }
 
   void CheckBackButton();
+  bool CheckExitImmersive();
   void UpdateControllers(bool& aRelayoutWidgets);
   WidgetPtr GetWidget(int32_t aHandle) const;
   WidgetPtr FindWidget(const std::function<bool(const WidgetPtr&)>& aCondition) const;
@@ -198,6 +204,18 @@ BrowserWorld::State::CheckBackButton() {
     }
   }
 }
+
+bool
+BrowserWorld::State::CheckExitImmersive() {
+  if (exitImmersiveRequested && externalVR->IsPresenting()) {
+    externalVR->StopPresenting();
+    blitter->StopPresenting();
+    exitImmersiveRequested = false;
+    return true;
+  }
+  return false;
+}
+
 void
 BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
   std::vector<Widget*> active;
@@ -364,11 +382,7 @@ BrowserWorld::RegisterDeviceDelegate(DeviceDelegatePtr aDelegate) {
   m.device = aDelegate;
   if (m.device) {
     m.device->RegisterImmersiveDisplay(m.externalVR);
-#if defined(SNAPDRAGONVR)
     m.device->SetClearColor(vrb::Color(0.0f, 0.0f, 0.0f));
-#else
-    m.device->SetClearColor(vrb::Color(0.15f, 0.15f, 0.15f));
-#endif
     m.leftCamera = m.device->GetCamera(device::Eye::Left);
     m.rightCamera = m.device->GetCamera(device::Eye::Right);
     ControllerDelegatePtr delegate = m.controllers;
@@ -435,6 +449,7 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
       }
     }
     m.controllers->InitializePointer();
+    m.loadingAnimation->LoadModels(m.loader);
     m.rootOpaque->AddNode(m.controllers->GetRoot());
     std::string skyboxPath = CubemapDay;
 #ifdef INJECT_SKYBOX_PATH
@@ -535,11 +550,8 @@ BrowserWorld::Draw() {
   m.device->ProcessEvents();
   m.context->Update();
   m.externalVR->PullBrowserState();
-  if (m.exitImmersiveRequested && m.externalVR->IsPresenting()) {
-    m.externalVR->StopPresenting();
-    m.blitter->StopPresenting();
-    m.exitImmersiveRequested = false;
-  }
+
+  m.CheckExitImmersive();
   if (m.externalVR->IsPresenting()) {
     m.CheckBackButton();
     DrawImmersive();
@@ -763,6 +775,7 @@ BrowserWorld::~BrowserWorld() {}
 
 void
 BrowserWorld::DrawWorld() {
+  m.externalVR->SetCompositorEnabled(true);
   m.device->SetRenderMode(device::RenderMode::StandAlone);
   vrb::Vector headPosition = m.device->GetHeadTransform().GetTranslation();
   m.skybox->SetTransform(vrb::Matrix::Translation(headPosition));
@@ -774,6 +787,7 @@ BrowserWorld::DrawWorld() {
   m.rootOpaqueParent->Cull(*m.cullVisitor, *m.drawListOpaque);
   m.rootTransparent->Cull(*m.cullVisitor, *m.drawListTransparent);
   m.device->StartFrame();
+
   m.device->BindEye(device::Eye::Left);
   m.drawListOpaque->Draw(*m.leftCamera);
   if (m.fadeBlitter && m.fadeBlitter->IsVisible()) {
@@ -793,37 +807,54 @@ BrowserWorld::DrawWorld() {
   m.drawListTransparent->Draw(*m.rightCamera);
   VRB_GL_CHECK(glDepthMask(GL_TRUE));
 #endif // !defined(VRBROWSER_NO_VR_API)
-  m.device->EndFrame();
+
+  m.device->EndFrame(false);
 }
 
 void
 BrowserWorld::DrawImmersive() {
-  if (m.externalVR->IsFirstPresentingFrame()) {
-    m.externalVR->HandleFirstPresentingFrame();
-  }
+  m.externalVR->SetCompositorEnabled(false);
   m.device->SetRenderMode(device::RenderMode::Immersive);
-  /*
-  float r = (float)rand() / (float)RAND_MAX;
-  float g = (float)rand() / (float)RAND_MAX;
-  float b = (float)rand() / (float)RAND_MAX;
 
-  m.device->SetClearColor(vrb::Color(r, g, b));
-   */
   m.device->StartFrame();
   VRB_GL_CHECK(glDepthMask(GL_FALSE));
-  m.externalVR->RequestFrame(m.device->GetHeadTransform(), m.controllers->GetControllers());
-  int32_t surfaceHandle = 0;
-  device::EyeRect leftEye, rightEye;
-  m.externalVR->GetFrameResult(surfaceHandle, leftEye, rightEye);
-  m.blitter->StartFrame(surfaceHandle, leftEye, rightEye);
+  m.externalVR->PushFramePoses(m.device->GetHeadTransform(), m.controllers->GetControllers());
+  bool aDiscardFrame = !m.externalVR->WaitFrameResult();
+  ExternalVR::VRState state = m.externalVR->GetVRState();
+  if (state == ExternalVR::VRState::Rendering) {
+    if (!aDiscardFrame) {
+      int32_t surfaceHandle = 0;
+      device::EyeRect leftEye, rightEye;
+      m.externalVR->GetFrameResult(surfaceHandle, leftEye, rightEye);
+      m.blitter->StartFrame(surfaceHandle, leftEye, rightEye);
+      m.device->BindEye(device::Eye::Left);
+      m.blitter->Draw(device::Eye::Left);
+#if !defined(VRBROWSER_NO_VR_API)
+      m.device->BindEye(device::Eye::Right);
+      m.blitter->Draw(device::Eye::Right);
+#endif // !defined(VRBROWSER_NO_VR_API)
+    }
+    m.device->EndFrame(aDiscardFrame);
+    m.blitter->EndFrame();
+  } else {
+    DrawLoadingAnimation();
+    m.device->EndFrame(false);
+  }
+}
+
+void
+BrowserWorld::DrawLoadingAnimation() {
+  VRB_GL_CHECK(glDepthMask(GL_TRUE));
+  m.loadingAnimation->Update();
+  m.drawListLoading->Reset();
+  m.loadingAnimation->GetRoot()->Cull(*m.cullVisitor, *m.drawListLoading);
+
   m.device->BindEye(device::Eye::Left);
-  m.blitter->Draw(device::Eye::Left);
+  m.drawListLoading->Draw(*m.leftCamera);
 #if !defined(VRBROWSER_NO_VR_API)
   m.device->BindEye(device::Eye::Right);
-  m.blitter->Draw(device::Eye::Right);
+  m.drawListLoading->Draw(*m.rightCamera);
 #endif // !defined(VRBROWSER_NO_VR_API)
-  m.device->EndFrame();
-  m.blitter->EndFrame();
 }
 
 vrb::TransformPtr

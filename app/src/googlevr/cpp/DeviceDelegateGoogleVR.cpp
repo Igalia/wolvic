@@ -85,6 +85,8 @@ struct DeviceDelegateGoogleVR::State {
   crow::ControllerDelegatePtr controllerDelegate;
   std::array<Controller, kMaxControllerCount> controllers;
   ImmersiveDisplayPtr immersiveDisplay;
+  bool lastSubmitDiscarded;
+
   State()
       : gvr(nullptr)
       , controllerContext(nullptr)
@@ -99,6 +101,7 @@ struct DeviceDelegateGoogleVR::State {
       , near(0.1f)
       , far(100.f)
       , sixDofHead(false)
+      , lastSubmitDiscarded(false)
   {
     frameBufferSize = {0,0};
     maxRenderSize = {0,0};
@@ -462,14 +465,16 @@ DeviceDelegateGoogleVR::StartFrame() {
   }
   m.UpdateCameras();
 
-  m.frame = GVR_CHECK(gvr_swap_chain_acquire_frame(m.swapChain));
-  if (!m.frame) {
-    // Sometimes the swap chain seems to not initialized correctly so that
-    // frames can not be acquired. Recreating the swap chain seems to fix the
-    // issue.
-    VRB_LOG("Unable to acquire GVR frame. Recreating swap chain.");
-    m.CreateSwapChain();
-    VRB_GL_CHECK(glEnable(GL_BLEND));
+  if (!m.lastSubmitDiscarded) {
+    m.frame = GVR_CHECK(gvr_swap_chain_acquire_frame(m.swapChain));
+    if (!m.frame) {
+      // Sometimes the swap chain seems to not initialized correctly so that
+      // frames can not be acquired. Recreating the swap chain seems to fix the
+      // issue.
+      VRB_LOG("Unable to acquire GVR frame. Recreating swap chain.");
+      m.CreateSwapChain();
+      VRB_GL_CHECK(glEnable(GL_BLEND));
+    }
   }
 
   GVR_CHECK(gvr_frame_bind_buffer(m.frame, 0));
@@ -503,12 +508,15 @@ DeviceDelegateGoogleVR::BindEye(const device::Eye aWhich) {
 }
 
 void
-DeviceDelegateGoogleVR::EndFrame() {
+DeviceDelegateGoogleVR::EndFrame(const bool aDiscard) {
   if (!m.frame) {
     VRB_LOG("Unable to submit null frame");
   }
   GVR_CHECK(gvr_frame_unbind(m.frame));
-  GVR_CHECK(gvr_frame_submit(&m.frame, m.viewportList, m.gvrHeadMatrix));
+  m.lastSubmitDiscarded = aDiscard;
+  if (!aDiscard) {
+    GVR_CHECK(gvr_frame_submit(&m.frame, m.viewportList, m.gvrHeadMatrix));
+  }
 }
 
 

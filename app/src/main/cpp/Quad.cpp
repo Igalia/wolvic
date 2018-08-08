@@ -134,6 +134,15 @@ Quad::Create(vrb::CreationContextPtr aContext, const vrb::Vector& aMin, const vr
   return result;
 }
 
+QuadPtr
+Quad::Create(vrb::CreationContextPtr aContext, const float aWorldWidth, const float aWorldHeight) {
+  QuadPtr result = std::make_shared<vrb::ConcreteClass<Quad, Quad::State> >(aContext);
+  result->m.worldMin = vrb::Vector(-aWorldWidth * 0.5f, -aWorldHeight * 0.5f, 0.0f);
+  result->m.worldMax = vrb::Vector(aWorldWidth * 0.5f, aWorldHeight * 0.5f, 0.0f);
+  result->m.Initialize();
+  return result;
+}
+
 vrb::GeometryPtr
 Quad::CreateGeometry(vrb::CreationContextPtr aContext, const vrb::Vector &aMin, const vrb::Vector &aMax) {
   vrb::VertexArrayPtr array = vrb::VertexArray::Create(aContext);
@@ -193,7 +202,7 @@ Quad::CreateGeometry(vrb::CreationContextPtr aContext, const float aWorldWidth, 
 }
 
 void
-Quad::SetTexture(const vrb::TextureSurfacePtr& aTexture, int32_t aWidth, int32_t aHeight) {
+Quad::SetTexture(const vrb::TexturePtr& aTexture, int32_t aWidth, int32_t aHeight) {
   m.textureWidth = aWidth;
   m.textureHeight = aHeight;
   m.geometry->GetRenderState()->SetTexture(aTexture);

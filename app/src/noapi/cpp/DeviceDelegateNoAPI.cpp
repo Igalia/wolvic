@@ -177,7 +177,7 @@ DeviceDelegateNoAPI::BindEye(const device::Eye) {
 }
 
 void
-DeviceDelegateNoAPI::EndFrame() {
+DeviceDelegateNoAPI::EndFrame(const bool aDiscard) {
   // noop
 }
 
