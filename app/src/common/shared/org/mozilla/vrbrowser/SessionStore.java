@@ -6,26 +6,19 @@
 package org.mozilla.vrbrowser;
 
 import android.content.Context;
-import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.inputmethod.CursorAnchorInfo;
 import android.view.inputmethod.ExtractedText;
 import android.view.inputmethod.ExtractedTextRequest;
-
 import org.mozilla.gecko.GeckoProfile;
-import org.mozilla.geckoview.GeckoResult;
-import org.mozilla.geckoview.GeckoRuntime;
-import org.mozilla.geckoview.GeckoRuntimeSettings;
-import org.mozilla.geckoview.GeckoSession;
-import org.mozilla.geckoview.GeckoSessionSettings;
+import org.mozilla.geckoview.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.*;
 
 public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSession.ProgressDelegate, GeckoSession.ContentDelegate, GeckoSession.TextInputDelegate, GeckoSession.TrackingProtectionDelegate {
@@ -38,10 +31,6 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         return mInstance;
     }
     public static final String DEFAULT_URL = "resource://android/assets/html/index.html";
-    public static final String ERROR_URL = "resource://android/assets/html/error.html";
-
-    public static final String NET_ERROR = "about:neterror";
-    public static final String CERT_ERROR = "about:certerror";
 
     public static final int NO_SESSION_ID = -1;
 
@@ -76,6 +65,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     private Deque<Integer> mPrivateSessionsStack;
     private GeckoSession.PermissionDelegate mPermissionDelegate;
     private int mPreviousSessionId = SessionStore.NO_SESSION_ID;
+    private String mLastErrorUri;
 
     private SessionStore() {
         mNavigationListeners = new LinkedList<>();
@@ -576,7 +566,12 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             Log.e(LOGTAG, "Unknown session!");
             return;
         }
+
+        if (ErrorPages.isLocalErrorUri(aUri))
+            aUri = mLastErrorUri;
+        
         state.mUri = aUri;
+
         for (GeckoSession.NavigationDelegate listener: mNavigationListeners) {
             listener.onLocationChange(aSession, aUri);
         }
@@ -608,68 +603,15 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         }
     }
 
-    String mLastLoadedErrorURI;
-    String mLastValidURI;
+    @Nullable
+    public GeckoResult<Boolean> onLoadRequest(@NonNull GeckoSession aSession,
+                                       @NonNull String aUri,
+                                       @TargetWindow int target,
+                                       @LoadRequestFlags int flags) {
+        GeckoResult<Boolean> result = new GeckoResult<>();
+        result.complete(false);
 
-    @Override
-    public GeckoResult<Boolean> onLoadRequest(GeckoSession aSession, String aUri, int target, int flags) {
-        Log.d(LOGTAG, "SessionStore onLoadRequest: " + aUri);
-
-        boolean isErrorPage = false;
-        if (aUri.startsWith(NET_ERROR)) {
-            isErrorPage = true;
-            mLastLoadedErrorURI = aUri;
-
-        } else if (aUri.startsWith(CERT_ERROR)) {
-            isErrorPage = true;
-            mLastLoadedErrorURI = aUri;
-        }
-
-        if (isErrorPage) {
-            aSession.loadUri(ERROR_URL);
-            return GeckoResult.fromValue(true);
-
-        } else if (aUri.equalsIgnoreCase(ERROR_URL)) {
-            int parseStartPos = 0;
-            if (mLastLoadedErrorURI.startsWith(NET_ERROR)) {
-                parseStartPos = NET_ERROR.length() + 1;
-
-            } else if (mLastLoadedErrorURI.startsWith(CERT_ERROR)) {
-                parseStartPos = CERT_ERROR.length() + 1;
-            }
-
-            try {
-                Map<String, String> query_pairs = new LinkedHashMap<>();
-                String query = mLastLoadedErrorURI.substring(parseStartPos);
-                String[] pairs = query.split("&");
-                for (String pair : pairs) {
-                    int idx = pair.indexOf("=");
-                    query_pairs.put(URLDecoder.decode(pair.substring(0, idx), "UTF-8"), URLDecoder.decode(pair.substring(idx + 1), "UTF-8"));
-                }
-
-                final String errorType = query_pairs.get("e");
-                final String errorURL = query_pairs.get("u");
-                final String errorDescription = query_pairs.get("d");
-
-                final GeckoSession session = aSession;
-                Handler handler = new Handler();
-                Runnable r = new Runnable() {
-                    public void run() {
-                        // FIXME: The referrer doesn't seem to work on Gecko right now, so when going back we always go back to the error page
-                        session.loadUri("javascript:updateMessage('" + errorType + "', '" + errorURL + "', '" + errorDescription + "');");
-                    }
-                };
-                handler.postDelayed(r, 0);
-
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-
-        } else if (!aUri.startsWith("javascript:")) {
-            mLastValidURI = aUri;
-        }
-
-        return null;
+        return result;
     }
 
     @Override
@@ -705,6 +647,9 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     @Override
     public void onLoadError(GeckoSession session, String uri, int category, int error) {
         Log.d(LOGTAG, "SessionStore onLoadError: " + uri);
+
+        mLastErrorUri = uri;
+        session.loadUri(ErrorPages.fromGeckoErrorToErrorURI(uri, category, error));
     }
 
     // Progress Listener
