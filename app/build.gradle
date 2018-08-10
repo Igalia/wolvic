@@ -180,7 +180,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     googlevrImplementation 'com.google.vr:sdk-base:1.160.0'
-    googlevrFlatImplementation 'com.google.vr:sdk-base:1.150.0'
+    googlevrFlatImplementation 'com.google.vr:sdk-base:1.160.0'
     svrImplementation fileTree(dir: "${project.rootDir}/third_party/svr/", include: ['*.jar'])
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.google.vr:sdk-audio:1.160.0'
@@ -230,6 +230,9 @@ android.applicationVariants.all { variant ->
             versionCode = versionCode + (1 * multiplier)
         //}
         variant.mergedFlavor.versionCode = versionCode
+        variant.outputs.all { output ->
+            output.setVersionCodeOverride(versionCode)
+        }
     }
 
     println("----------------------------------------------")
