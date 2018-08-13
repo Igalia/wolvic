@@ -1,0 +1,105 @@
+:root {
+    --color-steel: #434c58;
+    --color-driftwood: #f4f4f4;
+    --color-dusk: #556f8e;
+    --color-void: #232426;
+    --color-purple: #331a50;
+}
+
+*,
+*:before,
+*:after {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+* {
+  font: 20px/1.2em BlinkMacSystemFont, -apple-system, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  line-height: 1.2em;
+}
+html,
+body {
+    background: var(--color-driftwood);
+    display: grid;
+    grid-template-rows: auto;
+    justify-items: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+h1 {
+    font-weight: bold;
+    font-size: 2em;
+    margin: 0 0 0.5em 0;
+    position: relative;
+}
+
+strong {
+    font-weight: bold;
+}
+
+ol {
+    list-style-type: decimal;
+}
+
+ol, ul {
+    list-style-position: inside;
+    margin: 1em 0 1em 0;
+}
+
+ol.two-column,
+ul.two-column {
+    column-count: 2;
+    column-gap: 1.5em;
+}
+
+li {
+    margin: 0.6em 0;
+    text-indent: -1em;
+    padding-left: 1em;
+}
+
+a {
+    color: var(--color-dusk);
+}
+
+button {
+    border: 2px solid var(--color-steel);
+    border-radius: 10px;
+    background: var(--color-steel);
+    cursor: pointer;
+    color: white;
+    font-weight: 900;
+    font-size: inherit;
+    font-family: inherit;
+    padding: 0 1em;
+    height: 3em;
+}
+
+button:hover {
+    background: transparent;
+    color: var(--color-steel);
+}
+
+button:active {
+    background: var(--color-void);
+    border-color: var(--color-void);
+    color: white;
+}
+
+.container {
+    width: 75%;
+    grid-column-start: 1;
+}
+
+.icon {
+    width: 4em;
+    height: 4em;
+}
+
+[data-page='private'] {
+    background: var(--color-purple);
+    color: white;`
+}
+
