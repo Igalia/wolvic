@@ -65,7 +65,8 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     private Deque<Integer> mPrivateSessionsStack;
     private GeckoSession.PermissionDelegate mPermissionDelegate;
     private int mPreviousSessionId = SessionStore.NO_SESSION_ID;
-    private String mLastErrorUri;
+    private String mLastUri;
+    private Context mContext;
 
     private SessionStore() {
         mNavigationListeners = new LinkedList<>();
@@ -87,6 +88,44 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         mTextInputListeners.clear();
     }
 
+    public static final String LOCAL_URI = "data:";
+
+    public static boolean isLocalPage(String aURI) {
+        if (aURI.startsWith(LOCAL_URI))
+            return true;
+
+        return false;
+    }
+
+    private InternalPages.PageResources errorPageResourcesForCategory(@LoadErrorCategory int category) {
+        switch (category) {
+            case GeckoSession.NavigationDelegate.ERROR_CATEGORY_UNKNOWN: {
+                return InternalPages.PageResources.create(R.raw.error_pages, R.raw.error_style);
+            }
+            case GeckoSession.NavigationDelegate.ERROR_CATEGORY_SECURITY: {
+                return InternalPages.PageResources.create(R.raw.error_pages, R.raw.error_style);
+            }
+            case GeckoSession.NavigationDelegate.ERROR_CATEGORY_NETWORK: {
+                return InternalPages.PageResources.create(R.raw.error_pages, R.raw.error_style);
+            }
+            case GeckoSession.NavigationDelegate.ERROR_CATEGORY_CONTENT: {
+                return InternalPages.PageResources.create(R.raw.error_pages, R.raw.error_style);
+            }
+            case GeckoSession.NavigationDelegate.ERROR_CATEGORY_URI: {
+                return InternalPages.PageResources.create(R.raw.error_pages, R.raw.error_style);
+            }
+            case GeckoSession.NavigationDelegate.ERROR_CATEGORY_PROXY: {
+                return InternalPages.PageResources.create(R.raw.error_pages, R.raw.error_style);
+            }
+            case GeckoSession.NavigationDelegate.ERROR_CATEGORY_SAFEBROWSING: {
+                return InternalPages.PageResources.create(R.raw.error_pages, R.raw.error_style);
+            }
+            default: {
+                return InternalPages.PageResources.create(R.raw.error_pages, R.raw.error_style);
+            }
+        }
+    }
+
     public void setContext(Context aContext) {
         if (mRuntime == null) {
             // FIXME: Once GeckoView has a prefs API
@@ -105,6 +144,8 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         } else {
             mRuntime.attachTo(aContext);
         }
+
+        mContext = aContext;
     }
 
     public void dumpAllState(Integer sessionId) {
@@ -499,7 +540,10 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
                 settings.privateMode = true;
                 int id = createSession(settings);
                 setCurrentSession(id);
-                loadUri(DEFAULT_URL);
+
+                mLastUri = "about:privatebrowsing";
+                InternalPages.PageResources pageResources = InternalPages.PageResources.create(R.raw.private_mode, R.raw.private_style);
+                getCurrentSession().loadData(InternalPages.createAboutPage(mContext, pageResources), "text/html");
 
             } else {
                 int sessionId = getCurrentSessionId();
@@ -524,10 +568,10 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             setCurrentSession(mPreviousSessionId);
             mPreviousSessionId = SessionStore.NO_SESSION_ID;
 
-            // Remove current private session
+            // Remove current private_mode session
             removeSession(privateSessionId);
 
-            // Remove all the stacked private sessions
+            // Remove all the stacked private_mode sessions
             for (Iterator<Integer> it = mPrivateSessionsStack.iterator(); it.hasNext();) {
                 int sessionId = it.next();
                 removeSession(sessionId);
@@ -567,8 +611,8 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             return;
         }
 
-        if (ErrorPages.isLocalErrorUri(aUri))
-            aUri = mLastErrorUri;
+        if (isLocalPage(aUri))
+            aUri = mLastUri;
         
         state.mUri = aUri;
 
@@ -609,7 +653,14 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
                                        @TargetWindow int target,
                                        @LoadRequestFlags int flags) {
         GeckoResult<Boolean> result = new GeckoResult<>();
-        result.complete(false);
+
+        if (aUri.equalsIgnoreCase("about:privatebrowsing")) {
+            switchPrivateMode();
+            result.complete(true);
+
+        } else {
+            result.complete(false);
+        }
 
         return result;
     }
@@ -648,8 +699,9 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     public void onLoadError(GeckoSession session, String uri, int category, int error) {
         Log.d(LOGTAG, "SessionStore onLoadError: " + uri);
 
-        mLastErrorUri = uri;
-        session.loadUri(ErrorPages.fromGeckoErrorToErrorURI(uri, category, error));
+        mLastUri = uri;
+        InternalPages.PageResources pageResources = errorPageResourcesForCategory(category);
+        session.loadData(InternalPages.createErrorPage(mContext, uri, pageResources, category, error), "text/html");
     }
 
     // Progress Listener
