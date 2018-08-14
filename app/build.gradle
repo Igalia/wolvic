@@ -162,6 +162,9 @@ android {
             java.srcDirs = [
                     'src/wavevr/java'
             ]
+            res.srcDirs = [
+                    'src/wavevr/res'
+            ]
             jniLibs.srcDirs = ["${project.rootDir}/third_party/wavesdk/build/wvr_client/jni"]
         }
         noapi {
