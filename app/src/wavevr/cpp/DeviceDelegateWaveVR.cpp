@@ -103,7 +103,7 @@ struct DeviceDelegateWaveVR::State {
       if (fbo->IsValid()) {
         aFBOQueue.push_back(fbo);
       } else {
-        VRB_LOG("FAILED to make valid FBO");
+        VRB_ERROR("FAILED to make valid FBO");
       }
     }
   }
@@ -144,9 +144,9 @@ struct DeviceDelegateWaveVR::State {
     InitializeCameras();
     WVR_GetRenderTargetSize(&renderWidth, &renderHeight);
     VRB_GL_CHECK(glViewport(0, 0, renderWidth, renderHeight));
-    VRB_LOG("Recommended size is %ux%u", renderWidth, renderHeight);
+    VRB_DEBUG("Recommended size is %ux%u", renderWidth, renderHeight);
     if (renderWidth == 0 || renderHeight == 0) {
-      VRB_LOG("Please check Wave server configuration");
+      VRB_ERROR("Please check Wave server configuration");
       return;
     }
     leftTextureQueue = WVR_ObtainTextureQueue(WVR_TextureTarget_2D, WVR_TextureFormat_RGBA, WVR_TextureType_UnsignedByte, renderWidth, renderHeight, 0);
@@ -179,7 +179,7 @@ struct DeviceDelegateWaveVR::State {
         delegate->SetVisible(index, true);
       }
 
-      const bool bumperPressed = WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Bumper);
+      const bool bumperPressed = WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Digital_Trigger);
       const bool touchpadPressed = WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Touchpad);
       const bool touchpadTouched = WVR_GetInputTouchState(controller.type, WVR_InputId_Alias1_Touchpad);
       const bool menuPressed = WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Menu);
@@ -305,141 +305,123 @@ void
 DeviceDelegateWaveVR::ProcessEvents() {
   WVR_Event_t event;
   m.gestures->Reset();
-  while(WVR_PollEventQueue(&event)) {
+  while (WVR_PollEventQueue(&event)) {
     WVR_EventType type = event.common.type;
     switch (type) {
-      case WVR_EventType_Quit:
-        {
-          VRB_LOG("WVR_EventType_Quit");
-          m.isRunning = false;
-        }
+      case WVR_EventType_Quit: {
+        VRB_DEBUG("WVR_EventType_Quit");
+        m.isRunning = false;
+      }
         break;
-      case WVR_EventType_DeviceConnected:
-        {
-          VRB_LOG("WVR_EventType_DeviceConnected");
-        }
+      case WVR_EventType_SystemInteractionModeChanged: {
+        VRB_DEBUG("WVR_EventType_SystemInteractionModeChanged");
+      }
         break;
-      case WVR_EventType_DeviceDisconnected:
-        {
-          VRB_LOG("WVR_EventType_DeviceDisconnected");
-        }
+      case WVR_EventType_SystemGazeTriggerTypeChanged: {
+        VRB_DEBUG("WVR_EventType_SystemGazeTriggerTypeChanged");
+      }
         break;
-      case WVR_EventType_DeviceStatusUpdate:
-        {
-          VRB_LOG("WVR_EventType_DeviceStatusUpdate");
-        }
+      case WVR_EventType_TrackingModeChanged: {
+        VRB_DEBUG("WVR_EventType_TrackingModeChanged");
+      }
         break;
-      case WVR_EventType_IpdChanged:
-        {
-          VRB_LOG("WVR_EventType_IpdChanged");
-          m.InitializeCameras();
-        }
+      case WVR_EventType_DeviceConnected: {
+        VRB_DEBUG("WVR_EventType_DeviceConnected");
+      }
         break;
-      case WVR_EventType_DeviceSuspend:
-        {
-          VRB_LOG("WVR_EventType_DeviceSuspend");
-        }
+      case WVR_EventType_DeviceDisconnected: {
+        VRB_DEBUG("WVR_EventType_DeviceDisconnected");
+      }
         break;
-      case WVR_EventType_DeviceResume:
-        {
-          VRB_LOG("WVR_EventType_DeviceResume");
-        }
+      case WVR_EventType_DeviceStatusUpdate: {
+        VRB_DEBUG("WVR_EventType_DeviceStatusUpdate");
+      }
         break;
-      case WVR_EventType_DeviceRoleChanged:
-        {
-          VRB_LOG("WVR_EventType_DeviceRoleChanged");
-        }
+      case WVR_EventType_IpdChanged: {
+        VRB_DEBUG("WVR_EventType_IpdChanged");
+        m.InitializeCameras();
+      }
         break;
-      case WVR_EventType_BatteryStatus_Update:
-        {
-          VRB_LOG("WVR_EventType_BatteryStatus_Update");
-        }
+      case WVR_EventType_DeviceSuspend: {
+        VRB_DEBUG("WVR_EventType_DeviceSuspend");
+      }
         break;
-      case WVR_EventType_ChargeStatus_Update:
-        {
-          VRB_LOG("WVR_EventType_ChargeStatus_Update");
-        }
+      case WVR_EventType_DeviceResume: {
+        VRB_DEBUG("WVR_EventType_DeviceResume");
+      }
         break;
-      case WVR_EventType_DeviceErrorStatus_Update:
-        {
-          VRB_LOG("WVR_EventType_DeviceErrorStatus_Update");
-        }
+      case WVR_EventType_DeviceRoleChanged: {
+        VRB_DEBUG("WVR_EventType_DeviceRoleChanged");
+      }
         break;
-      case WVR_EventType_BatteryTemperatureStatus_Update:
-        {
-          VRB_LOG("WVR_EventType_BatteryTemperatureStatus_Update");
-        }
+      case WVR_EventType_BatteryStatusUpdate: {
+        VRB_DEBUG("WVR_EventType_BatteryStatusUpdate");
+      }
         break;
-      case WVR_EventType_RecenterSuccess:
-        {
-          VRB_LOG("WVR_EventType_RecenterSuccess");
-        }
+      case WVR_EventType_ChargeStatusUpdate: {
+        VRB_DEBUG("WVR_EventType_ChargeStatusUpdate");
+      }
         break;
-      case WVR_EventType_RecenterFail:
-        {
-          VRB_LOG("WVR_EventType_RecenterFail");
-        }
+      case WVR_EventType_DeviceErrorStatusUpdate: {
+        VRB_DEBUG("WVR_EventType_DeviceErrorStatusUpdate");
+      }
         break;
-      case WVR_EventType_RecenterSuccess_3DoF:
-        {
-          VRB_LOG("WVR_EventType_RecenterSuccess_3DoF");
-        }
+      case WVR_EventType_BatteryTemperatureStatusUpdate: {
+        VRB_DEBUG("WVR_EventType_BatteryTemperatureStatusUpdate");
+      }
         break;
-      case WVR_EventType_RecenterFail_3DoF:
-        {
-          VRB_LOG("WVR_EventType_RecenterFail_3DoF");
-        }
+      case WVR_EventType_RecenterSuccess: {
+        VRB_DEBUG("WVR_EventType_RecenterSuccess");
+      }
         break;
-      case WVR_EventType_TouchpadSwipe_LeftToRight:
-        {
-          VRB_LOG("WVR_EventType_TouchpadSwipe_LeftToRight");
-          m.gestures->AddGesture(GestureType::SwipeRight);
-        }
+      case WVR_EventType_RecenterFail: {
+        VRB_DEBUG("WVR_EventType_RecenterFail");
+      }
         break;
-      case WVR_EventType_TouchpadSwipe_RightToLeft:
-        {
-          VRB_LOG("WVR_EventType_TouchpadSwipe_RightToLeft");
-          m.gestures->AddGesture(GestureType::SwipeLeft);
-        }
+      case WVR_EventType_RecenterSuccess3DoF: {
+        VRB_DEBUG("WVR_EventType_RecenterSuccess_3DoF");
+      }
         break;
-      case WVR_EventType_TouchpadSwipe_DownToUp:
-        {
-          VRB_LOG("WVR_EventType_TouchpadSwipe_DownToUp");
-        }
+      case WVR_EventType_RecenterFail3DoF: {
+        VRB_DEBUG("WVR_EventType_RecenterFail_3DoF");
+      }
         break;
-      case WVR_EventType_TouchpadSwipe_UpToDown:
-        {
-          VRB_LOG("WVR_EventType_TouchpadSwipe_UpToDown");
-        }
+      case WVR_EventType_ButtonPressed: {
+        VRB_DEBUG("WVR_EventType_ButtonPressed");
+      }
         break;
-      case WVR_EventType_Settings_Controller:
-        {
-          VRB_LOG("WVR_EventType_Settings_ControllerRoleChange");
-        }
+      case WVR_EventType_ButtonUnpressed: {
+        VRB_DEBUG("WVR_EventType_ButtonUnpressed");
+      }
         break;
-      case WVR_EventType_ButtonPressed:
-        {
-          VRB_LOG("WVR_EventType_ButtonPressed");
-        }
+      case WVR_EventType_TouchTapped: {
+        VRB_DEBUG("WVR_EventType_TouchTapped");
+      }
         break;
-      case WVR_EventType_ButtonUnpressed:
-        {
-          VRB_LOG("WVR_EventType_ButtonUnpressed");
-        }
+      case WVR_EventType_TouchUntapped: {
+        VRB_DEBUG("WVR_EventType_TouchUntapped");
+      }
+      case WVR_EventType_LeftToRightSwipe: {
+        VRB_DEBUG("WVR_EventType_LeftToRightSwipe");
+        m.gestures->AddGesture(GestureType::SwipeRight);
+      }
         break;
-      case WVR_EventType_TouchTapped:
-        {
-          VRB_LOG("WVR_EventType_TouchTapped");
-        }
+      case WVR_EventType_RightToLeftSwipe: {
+        VRB_DEBUG("WVR_EventType_RightToLeftSwipe");
+        m.gestures->AddGesture(GestureType::SwipeLeft);
+      }
         break;
-      case WVR_EventType_TouchUntapped:
-        {
-          VRB_LOG("WVR_EventType_TouchUntapped");
-        }
-      default:
-        {
-          VRB_LOG("Unknown WVR_EventType");
-        }
+      case WVR_EventType_DownToUpSwipe: {
+        VRB_DEBUG("WVR_EventType_DownToUpSwipe");
+      }
+        break;
+      case WVR_EventType_UpToDownSwipe: {
+        VRB_DEBUG("WVR_EventType_UpToDownSwipe");
+      }
+        break;
+      default: {
+        VRB_DEBUG("Unknown WVR_EventType");
+      }
         break;
     }
   }
@@ -465,7 +447,7 @@ DeviceDelegateWaveVR::StartFrame() {
     m.cameras[device::EyeIndex(device::Eye::Left)]->SetHeadTransform(hmd);
     m.cameras[device::EyeIndex(device::Eye::Right)]->SetHeadTransform(hmd);
   } else {
-    VRB_LOG("Invalid pose returned");
+    VRB_DEBUG("Invalid pose returned");
   }
   if (!m.delegate) {
     return;
@@ -514,7 +496,7 @@ DeviceDelegateWaveVR::BindEye(const device::Eye aWhich) {
     VRB_GL_CHECK(glViewport(0, 0, m.renderWidth, m.renderHeight));
     VRB_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
   } else {
-    VRB_LOG("No FBO found");
+    VRB_ERROR("No FBO found");
   }
 }
 
@@ -533,14 +515,14 @@ DeviceDelegateWaveVR::EndFrame(const bool aDiscard) {
   WVR_TextureParams_t leftEyeTexture = WVR_GetTexture(m.leftTextureQueue, m.leftFBOIndex);
   WVR_SubmitError result = WVR_SubmitFrame(WVR_Eye_Left, &leftEyeTexture);
   if (result != WVR_SubmitError_None) {
-    VRB_LOG("Failed to submit left eye frame");
+    VRB_ERROR("Failed to submit left eye frame");
   }
 
   // Right eye
   WVR_TextureParams_t rightEyeTexture = WVR_GetTexture(m.rightTextureQueue, m.rightFBOIndex);
   result = WVR_SubmitFrame(WVR_Eye_Right, &rightEyeTexture);
   if (result != WVR_SubmitError_None) {
-    VRB_LOG("Failed to submit right eye frame");
+    VRB_ERROR("Failed to submit right eye frame");
   }
 }
 
