@@ -76,7 +76,7 @@ public class PlatformActivity extends Activity {
         }
 
         mView.setEGLContextClientVersion(3);
-        mView.setEGLConfigChooser(8, 8, 8, 0, 16, 0);
+        mView.setEGLConfigChooser(8, 8, 8, 8, 24, 0);
         //mView.setPreserveEGLContextOnPause(true);
 
         mView.setRenderer(

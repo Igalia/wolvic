@@ -188,7 +188,7 @@ struct DeviceDelegateGoogleVR::State {
       GVR_CHECK(gvr_buffer_spec_set_size(spec, size));
       GVR_CHECK(gvr_buffer_spec_set_samples(spec, 2));
       GVR_CHECK(gvr_buffer_spec_set_color_format(spec, GVR_COLOR_FORMAT_RGBA_8888));
-      GVR_CHECK(gvr_buffer_spec_set_depth_stencil_format(spec, GVR_DEPTH_STENCIL_FORMAT_DEPTH_16));
+      GVR_CHECK(gvr_buffer_spec_set_depth_stencil_format(spec, GVR_DEPTH_STENCIL_FORMAT_DEPTH_24));
     }
 
     swapChain = GVR_CHECK(gvr_swap_chain_create(gvr, (const gvr_buffer_spec**)&spec, 1));
