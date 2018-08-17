@@ -138,6 +138,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             if (BuildConfig.DEBUG) {
                 runtimeSettingsBuilder.consoleOutput(true);
                 runtimeSettingsBuilder.remoteDebuggingEnabled(true);
+                runtimeSettingsBuilder.arguments(new String[] { "-purgecaches" });
             }
 
             mRuntime = GeckoRuntime.create(aContext, runtimeSettingsBuilder.build());
