@@ -265,17 +265,21 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                     Log.e(LOGTAG, "Widget " + aHandle + " not found");
                     return;
                 }
-                aTexture.setOnFrameAvailableListener(new SurfaceTexture.OnFrameAvailableListener() {
-                    @Override
-                    public void onFrameAvailable(SurfaceTexture surfaceTexture) {
-                        surfaceTexture.setOnFrameAvailableListener(null);
-                        if (!widget.getFirstDraw()) {
-                            widget.setFirstDraw(true);
-                            updateWidget(widget);
+                if (aTexture == null) {
+                    Log.d(LOGTAG, "Widget: " + aHandle + " (" + aWidth + "x" + aHeight + ") received a null surface texture.");
+                } else {
+                    aTexture.setOnFrameAvailableListener(new SurfaceTexture.OnFrameAvailableListener() {
+                        @Override
+                        public void onFrameAvailable(SurfaceTexture surfaceTexture) {
+                            surfaceTexture.setOnFrameAvailableListener(null);
+                            if (!widget.getFirstDraw()) {
+                                widget.setFirstDraw(true);
+                                updateWidget(widget);
+                            }
                         }
-                    }
 
-                }, mHandler);
+                    }, mHandler);
+                }
                 widget.setSurfaceTexture(aTexture, aWidth, aHeight);
                 // Add widget to a virtual display for invalidation
                 if (((View)widget).getParent() == null) {
