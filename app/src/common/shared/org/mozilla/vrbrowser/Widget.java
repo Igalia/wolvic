@@ -17,4 +17,6 @@ public interface Widget {
     void handleHoverEvent(MotionEvent aEvent);
     void handleResizeEvent(float aWorldWidth, float aWorldHeight);
     void releaseWidget();
+    void setFirstDraw(boolean aIsFirstDraw);
+    boolean getFirstDraw();
 }

@@ -26,8 +26,8 @@ class Widget {
 public:
   static WidgetPtr Create(vrb::RenderContextPtr& aContext, const int aHandle, const int32_t aWidth, const int32_t aHeight, float aWorldWidth);
   static WidgetPtr Create(vrb::RenderContextPtr& aContext, const int aHandle, const int32_t aWidth, const int32_t aHeight, const vrb::Vector& aMin, const vrb::Vector& aMax);
-  int32_t GetType() const;
   uint32_t GetHandle() const;
+  void ResetFirstDraw();
   const std::string& GetSurfaceTextureName() const;
   void GetSurfaceTextureSize(int32_t& aWidth, int32_t& aHeight) const;
   void SetSurfaceTextureSize(int32_t aWidth, int32_t aHeight);

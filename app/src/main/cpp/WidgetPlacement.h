@@ -29,6 +29,7 @@ struct WidgetPlacement {
   bool visible;
   bool opaque;
   bool showPointer;
+  bool firstDraw;
 
   static WidgetPlacementPtr FromJava(JNIEnv* aEnv, jobject& aObject);
 private:

@@ -699,6 +699,7 @@ BrowserWorld::RemoveWidget(int32_t aHandle) {
   ASSERT_ON_RENDER_THREAD();
   WidgetPtr widget = m.GetWidget(aHandle);
   if (widget) {
+    widget->ResetFirstDraw();
     widget->GetRoot()->RemoveFromParents();
     auto it = std::find(m.widgets.begin(), m.widgets.end(), widget);
     if (it != m.widgets.end()) {

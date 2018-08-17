@@ -260,11 +260,22 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     void dispatchCreateWidget(final int aHandle, final SurfaceTexture aTexture, final int aWidth, final int aHeight) {
         runOnUiThread(new Runnable() {
             public void run() {
-                Widget widget = mWidgets.get(aHandle);
+                final Widget widget = mWidgets.get(aHandle);
                 if (widget == null) {
                     Log.e(LOGTAG, "Widget " + aHandle + " not found");
                     return;
                 }
+                aTexture.setOnFrameAvailableListener(new SurfaceTexture.OnFrameAvailableListener() {
+                    @Override
+                    public void onFrameAvailable(SurfaceTexture surfaceTexture) {
+                        surfaceTexture.setOnFrameAvailableListener(null);
+                        if (!widget.getFirstDraw()) {
+                            widget.setFirstDraw(true);
+                            updateWidget(widget);
+                        }
+                    }
+
+                }, mHandler);
                 widget.setSurfaceTexture(aTexture, aWidth, aHeight);
                 // Add widget to a virtual display for invalidation
                 if (((View)widget).getParent() == null) {
@@ -537,6 +548,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     public void removeWidget(final Widget aWidget) {
         mWidgets.remove(aWidget.getHandle());
         mWidgetContainer.removeView((View) aWidget);
+        aWidget.setFirstDraw(false);
         queueRunnable(new Runnable() {
             @Override
             public void run() {

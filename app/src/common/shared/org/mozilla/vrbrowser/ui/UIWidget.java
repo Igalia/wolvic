@@ -134,6 +134,16 @@ public abstract class UIWidget extends FrameLayout implements Widget {
     }
 
     @Override
+    public void setFirstDraw(final boolean aIsFirstDraw) {
+        mWidgetPlacement.firstDraw = aIsFirstDraw;
+    }
+
+    @Override
+    public boolean getFirstDraw() {
+        return mWidgetPlacement.firstDraw;
+    }
+
+    @Override
     public void draw(Canvas aCanvas) {
         if (mRenderer == null) {
             super.draw(aCanvas);

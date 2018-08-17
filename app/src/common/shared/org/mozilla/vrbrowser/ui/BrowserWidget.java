@@ -170,6 +170,17 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
         session.getTextInput().setView(null);
     }
 
+
+    @Override
+    public void setFirstDraw(final boolean aIsFirstDraw) {
+        mWidgetPlacement.firstDraw = aIsFirstDraw;
+    }
+
+    @Override
+    public boolean getFirstDraw() {
+        return mWidgetPlacement.firstDraw;
+    }
+
     // SessionStore.GeckoSessionChange
     @Override
     public void onNewSession(GeckoSession aSession, int aId) {

@@ -35,6 +35,7 @@ public class WidgetPlacement {
     public boolean visible = true;
     public boolean opaque = false;
     public boolean showPointer = true;
+    public boolean firstDraw = false;
 
     public WidgetPlacement clone() {
         WidgetPlacement w = new WidgetPlacement();
@@ -62,6 +63,7 @@ public class WidgetPlacement {
         this.visible = w.visible;
         this.opaque = w.opaque;
         this.showPointer = w.showPointer;
+        this.firstDraw = w.firstDraw;
     }
 
     public int textureWidth() {

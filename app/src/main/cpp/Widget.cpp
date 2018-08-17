@@ -38,10 +38,12 @@ struct Widget::State {
   WidgetPlacementPtr placement;
   WidgetResizerPtr resizer;
   bool resizing;
+  bool toggleState;
 
   State()
       : handle(0)
       , resizing(false)
+      , toggleState(false)
   {}
 
   void Initialize(const int aHandle, const vrb::Vector& aWindowMin, const vrb::Vector& aWindowMax, const int32_t aTextureWidth, const int32_t aTextureHeight) {
@@ -95,8 +97,15 @@ struct Widget::State {
     pointer->AddNode(pointerScale);
     pointerGeometry = geometry;
     pointerToggle->AddNode(pointer);
+    root->ToggleAll(false);
   }
 
+  bool FirstDraw() {
+    if (!placement) {
+      return false;
+    }
+    return placement->firstDraw;
+  }
 };
 
 WidgetPtr
@@ -120,6 +129,16 @@ Widget::Create(vrb::RenderContextPtr& aContext, const int aHandle, const int32_t
 uint32_t
 Widget::GetHandle() const {
   return m.handle;
+}
+
+void
+Widget::ResetFirstDraw() {
+  if (m.placement) {
+    m.placement->firstDraw = false;
+  }
+  if (m.root) {
+    m.root->ToggleAll(false);
+  }
 }
 
 const std::string&
@@ -209,7 +228,10 @@ Widget::SetTransform(const vrb::Matrix& aTransform) {
 
 void
 Widget::ToggleWidget(const bool aEnabled) {
-  m.root->ToggleAll(aEnabled);
+  m.toggleState = aEnabled;
+  if (m.FirstDraw()) {
+    m.root->ToggleAll(aEnabled);
+  }
 }
 
 void
@@ -219,7 +241,7 @@ Widget::TogglePointer(const bool aEnabled) {
 
 bool
 Widget::IsVisible() const {
-  return m.root->IsEnabled(*m.transform);
+  return m.toggleState;
 }
 
 
@@ -257,6 +279,9 @@ Widget::GetPlacement() const {
 
 void
 Widget::SetPlacement(const WidgetPlacementPtr& aPlacement) {
+  if (!m.FirstDraw() && aPlacement && aPlacement->firstDraw && m.root) {
+      m.root->ToggleAll(m.toggleState);
+  }
   m.placement = aPlacement;
 }
 
