@@ -45,17 +45,11 @@ ol {
 
 ol, ul {
     list-style-position: inside;
-    margin: 1em 0 1em 0;
-}
-
-ol.two-column,
-ul.two-column {
-    column-count: 2;
-    column-gap: 1.5em;
+    margin: 1em 0;
 }
 
 li {
-    margin: 0.6em 0;
+    margin: 0.25em 0;
     text-indent: -1em;
     padding-left: 1em;
 }
@@ -97,6 +91,12 @@ button:active {
     width: 4em;
     height: 4em;
 }
+
+.two-column {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-column-gap: 1em;
+} 
 
 [data-page='private'] {
     background: var(--color-purple);
