@@ -13,6 +13,7 @@
 #include "ExternalVR.h"
 #include "GeckoSurfaceTexture.h"
 #include "LoadingAnimation.h"
+#include "SplashAnimation.h"
 #include "Widget.h"
 #include "WidgetPlacement.h"
 #include "VRBrowser.h"
@@ -142,7 +143,7 @@ struct BrowserWorld::State {
   CullVisitorPtr cullVisitor;
   DrawableListPtr drawListOpaque;
   DrawableListPtr drawListTransparent;
-  DrawableListPtr drawListLoading;
+  DrawableListPtr drawListCustom;
   CameraPtr leftCamera;
   CameraPtr rightCamera;
   float nearClip;
@@ -159,6 +160,7 @@ struct BrowserWorld::State {
   bool exitImmersiveRequested;
   WidgetPtr resizingWidget;
   LoadingAnimationPtr loadingAnimation;
+  SplashAnimationPtr splashAnimation;
 
   State() : paused(true), glInitialized(false), modelsLoaded(false), env(nullptr), nearClip(0.1f),
             farClip(300.0f), activity(nullptr), windowsInitialized(false), exitImmersiveRequested(false), loaderDelay(0) {
@@ -175,12 +177,13 @@ struct BrowserWorld::State {
     cullVisitor = CullVisitor::Create(create);
     drawListOpaque = DrawableList::Create(create);
     drawListTransparent = DrawableList::Create(create);
-    drawListLoading = DrawableList::Create(create);
+    drawListCustom = DrawableList::Create(create);
     controllers = ControllerContainer::Create(create);
     externalVR = ExternalVR::Create();
     blitter = ExternalBlitter::Create(create);
     fadeBlitter = FadeBlitter::Create(create);
     loadingAnimation = LoadingAnimation::Create(create);
+    splashAnimation = SplashAnimation::Create(create);
   }
 
   void CheckBackButton();
@@ -479,6 +482,9 @@ BrowserWorld::InitializeGL() {
       if (!m.glInitialized) {
         return;
       }
+      if (m.splashAnimation) {
+        m.splashAnimation->Load();
+      }
       // delay the m.loader->InitializeGL() call to fix some issues with Daydream activities
       m.loaderDelay = 3;
       SurfaceTextureFactoryPtr factory = m.context->GetSurfaceTextureFactory();
@@ -552,7 +558,10 @@ BrowserWorld::Draw() {
   m.externalVR->PullBrowserState();
 
   m.CheckExitImmersive();
-  if (m.externalVR->IsPresenting()) {
+  if (m.splashAnimation) {
+    DrawSplashAnimation();
+  }
+  else if (m.externalVR->IsPresenting()) {
     m.CheckBackButton();
     DrawImmersive();
   } else {
@@ -845,17 +854,40 @@ BrowserWorld::DrawImmersive() {
 
 void
 BrowserWorld::DrawLoadingAnimation() {
-  VRB_GL_CHECK(glDepthMask(GL_TRUE));
   m.loadingAnimation->Update();
-  m.drawListLoading->Reset();
-  m.loadingAnimation->GetRoot()->Cull(*m.cullVisitor, *m.drawListLoading);
+  m.drawListCustom->Reset();
+  m.loadingAnimation->GetRoot()->Cull(*m.cullVisitor, *m.drawListCustom);
 
   m.device->BindEye(device::Eye::Left);
-  m.drawListLoading->Draw(*m.leftCamera);
+  m.drawListCustom->Draw(*m.leftCamera);
 #if !defined(VRBROWSER_NO_VR_API)
   m.device->BindEye(device::Eye::Right);
-  m.drawListLoading->Draw(*m.rightCamera);
+  m.drawListCustom->Draw(*m.rightCamera);
 #endif // !defined(VRBROWSER_NO_VR_API)
+}
+
+
+void
+BrowserWorld::DrawSplashAnimation() {
+  if (!m.splashAnimation) {
+    return;
+  }
+  m.device->StartFrame();
+  const bool animationFinished = m.splashAnimation->Update(m.device->GetHeadTransform());
+  m.drawListCustom->Reset();
+  m.splashAnimation->GetRoot()->Cull(*m.cullVisitor, *m.drawListCustom);
+
+  m.device->BindEye(device::Eye::Left);
+  m.drawListCustom->Draw(*m.leftCamera);
+#if !defined(VRBROWSER_NO_VR_API)
+  m.device->BindEye(device::Eye::Right);
+  m.drawListCustom->Draw(*m.rightCamera);
+#endif // !defined(VRBROWSER_NO_VR_API)
+  m.device->EndFrame();
+  if (animationFinished) {
+    m.splashAnimation = nullptr;
+    FadeIn();
+  }
 }
 
 vrb::TransformPtr

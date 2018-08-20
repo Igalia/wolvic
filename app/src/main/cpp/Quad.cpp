@@ -326,6 +326,11 @@ Quad::GetTransformNode() const {
   return m.transform;
 }
 
+vrb::GeometryPtr
+Quad::GetGeometry() const {
+  return m.geometry;
+}
+
 static const float kEpsilon = 0.00000001f;
 
 bool

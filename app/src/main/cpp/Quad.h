@@ -47,6 +47,7 @@ public:
   vrb::Vector GetNormal() const;
   vrb::NodePtr GetRoot() const;
   vrb::TransformPtr GetTransformNode() const;
+  vrb::GeometryPtr GetGeometry() const;
   bool TestIntersection(const vrb::Vector& aStartPoint, const vrb::Vector& aDirection, vrb::Vector& aResult, bool aClamp, bool& aIsInside, float& aDistance) const;
   void ConvertToQuadCoordinates(const vrb::Vector& point, float& aX, float& aY, bool aClamp) const;
 

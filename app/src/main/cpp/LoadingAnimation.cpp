@@ -38,6 +38,8 @@ void
 LoadingAnimation::LoadModels(const vrb::ModelLoaderAndroidPtr& aLoader) {
   vrb::LoadTask task = [this](vrb::CreationContextPtr& aContext) -> vrb::GroupPtr {
     m.texture = aContext->LoadTexture("webvr_spinner.png", true);
+    m.texture->SetTextureParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    m.texture->SetTextureParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     return nullptr;
   };
 
