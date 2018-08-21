@@ -71,4 +71,14 @@ public class SettingsStore {
         TelemetryHolder.get().getConfiguration().setCollectionEnabled(isEnabled);
     }
 
+    public void setGeolocationData(String aGeolocationData) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putString(mContext.getString(R.string.settings_key_geolocation_data), aGeolocationData);
+        editor.commit();
+    }
+
+    public String getGeolocationData() {
+        return mPrefs.getString(mContext.getString(R.string.settings_key_geolocation_data), "");
+    }
+
 }

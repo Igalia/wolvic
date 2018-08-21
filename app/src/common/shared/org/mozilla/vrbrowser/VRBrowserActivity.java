@@ -22,6 +22,7 @@ import android.widget.FrameLayout;
 import org.mozilla.gecko.GeckoVRManager;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.audio.VRAudioTheme;
+import org.mozilla.vrbrowser.search.SearchEngine;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.ui.*;
 
@@ -125,6 +126,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             }
         });
         initializeWorld();
+
+        SearchEngine.get(this).update();
     }
 
     protected void initializeWorld() {

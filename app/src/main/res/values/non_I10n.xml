@@ -5,6 +5,24 @@
     <string name="settings_key_telemetry">settings_telemetry</string>
     <string name="settings_key_session_id">session_id</string>
     <string name="settings_key_previous_session_id">previous_session_id</string>
+    <string name="settings_key_geolocation_data">geolocation_data</string>
     <string name="private_policy_url">https://www.mozilla.org/privacy/firefox/</string>
     <string name="private_report_url">https://mixedreality.mozilla.org/fxr/report?src=browser-fxr&amp;label=browser-firefox-reality&amp;url=%1$s</string>
+
+    <!-- SEARCH ENGINES -->
+    <string name="geolocation_api_url">https://location.services.mozilla.com/v1/country</string>
+    <!-- Google -->
+    <string name="search_google_params">q=%1$s&amp;ie=utf-8&amp;oe=utf-8&amp;keyword=firefox-b-ab&amp;searchbar=firefox-b</string>
+    <string name="search_google_us_params">q=%1$s&amp;ie=utf-8&amp;oe=utf-8&amp;keyword=firefox-b-1-ab&amp;searchbar=firefox-b-1</string>
+    <string name="search_google">https://www.google.com/search</string>
+    <string name="search_google_us">https://www.google.com/search</string>
+    <!-- Baidu -->
+    <string name="search_baidu_params">wd=%1$s&amp;tn=monline_dg&amp;ie=utf-8</string>
+    <string name="search_baidu_cn">https://www.baidu.com/baidu</string>
+    <!-- Yandex -->
+    <string name="search_yandex_params">searchbar=2186618&amp;keyword=2186621&amp;contextmenu=2186623&amp;homepage=2186617&amp;newtab=2186620&amp;text=%1$s</string>
+    <string name="search_yandex_ru">https://yandex.ru/search</string>
+    <string name="search_yandex_by">https://yandex.by/search</string>
+    <string name="search_yandex_tr">https://yandex.com.tr/search</string>
+    <string name="search_yandex_kz">https://yandex.kz/search</string>
 </resources>

@@ -7,14 +7,9 @@ package org.mozilla.vrbrowser.ui;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Typeface;
-import android.text.InputType;
-import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
-import android.text.style.StyleSpan;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
@@ -30,6 +25,7 @@ import android.widget.TextView;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.SessionStore;
+import org.mozilla.vrbrowser.search.SearchEngine;
 
 import java.net.URI;
 import java.net.URL;
@@ -178,7 +174,7 @@ public class NavigationURLBar extends FrameLayout {
         } else if (text.startsWith("about:") || text.startsWith("resource://")) {
             url = text;
         } else {
-            url = "https://www.google.com/search?q=" + text;
+            url = SearchEngine.get(getContext()).getSearchURL(text);
         }
 
         if (SessionStore.get().getCurrentUri() != url) {
