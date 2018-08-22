@@ -508,4 +508,9 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     public void updateCursorAnchorInfo(@NonNull GeckoSession session, @NonNull CursorAnchorInfo info) {
 
     }
+
+    @Override
+    public void notifyAutoFill(GeckoSession session, int notification, int virtualId) {
+
+    }
 }

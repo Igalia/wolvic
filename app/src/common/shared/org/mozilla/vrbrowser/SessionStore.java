@@ -873,6 +873,11 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     }
 
     @Override
+    public void notifyAutoFill(GeckoSession session, int notification, int virtualId) {
+
+    }
+
+    @Override
     public void onTrackerBlocked(GeckoSession session, String uri, int categories) {
         if ((categories & GeckoSession.TrackingProtectionDelegate.CATEGORY_AD) != 0) {
           Log.i(LOGTAG, "Blocking Ad: " + uri);
