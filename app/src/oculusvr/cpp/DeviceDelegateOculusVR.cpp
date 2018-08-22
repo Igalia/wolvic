@@ -151,11 +151,7 @@ struct DeviceDelegateOculusVR::State {
       return;
     }
     initialized = true;
-
-    renderWidth = (uint32_t)(vrapi_GetSystemPropertyInt(&java,
-                                                        VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_WIDTH) * 1.5f);
-    renderHeight = (uint32_t)(vrapi_GetSystemPropertyInt(&java,
-                                                         VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_HEIGHT) * 1.5f);
+    SetRenderSize(device::RenderMode::StandAlone);
 
     for (int i = 0; i < VRAPI_EYE_COUNT; ++i) {
       cameras[i] = vrb::CameraEye::Create(localContext->GetRenderThreadCreationContext());
@@ -167,6 +163,15 @@ struct DeviceDelegateOculusVR::State {
     vrapi_SetPropertyInt(&java, VRAPI_BLOCK_REMOTE_BUTTONS_WHEN_NOT_EMULATING_HMT, 0);
     // Reorient the headset after controller recenter.
     vrapi_SetPropertyInt(&java, VRAPI_REORIENT_HMD_ON_CONTROLLER_RECENTER, 1);
+  }
+
+  void SetRenderSize(device::RenderMode aRenderMode) {
+    renderWidth = (uint32_t)(vrapi_GetSystemPropertyInt(&java, VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_WIDTH));
+    renderHeight = (uint32_t)(vrapi_GetSystemPropertyInt(&java, VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_HEIGHT));
+    if (renderMode == device::RenderMode::StandAlone) {
+      renderWidth *= 1.5f;
+      renderHeight *= 1.5f;
+    }
   }
 
   void Shutdown() {
@@ -290,6 +295,7 @@ DeviceDelegateOculusVR::SetRenderMode(const device::RenderMode aMode) {
     return;
   }
   m.renderMode = aMode;
+  m.SetRenderSize(aMode);
   vrb::RenderContextPtr render = m.context.lock();
   for (int i = 0; i < VRAPI_EYE_COUNT; ++i) {
     m.eyeSwapChains[i]->Init(render, m.renderMode, m.renderWidth, m.renderHeight);
