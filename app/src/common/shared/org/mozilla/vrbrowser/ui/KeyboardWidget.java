@@ -27,6 +27,7 @@ import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.SessionStore;
 import org.mozilla.vrbrowser.WidgetPlacement;
+import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 
 
 public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKeyboardActionListener, GeckoSession.TextInputDelegate {
@@ -444,6 +445,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private void handleVoiceInput() {
         mKeyboardview.setVisibility(View.GONE);
         mVoiceInput.setVisibility(View.VISIBLE);
+        TelemetryWrapper.voiceInputEvent();
     }
 
     private void postInputCommand(Runnable aRunnable) {

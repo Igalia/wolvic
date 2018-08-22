@@ -17,6 +17,10 @@ public class SearchEngine implements GeolocationTask.GeolocationTaskDelegate {
         private int mUrlResource;
         private int mQueryResource;
 
+        public String getURLResource(Context aContext) {
+            return aContext.getString(mUrlResource);
+        }
+
         public String getSearchQuery(Context aContext, String aQuery) {
             return aContext.getString(mUrlResource) + "?" + aContext.getString(mQueryResource, aQuery);
         }
@@ -83,6 +87,9 @@ public class SearchEngine implements GeolocationTask.GeolocationTaskDelegate {
 
     public String getSearchURL(String aQuery) {
         return mEngine.getSearchQuery(mContext, aQuery);
+    }
+    public String getURLResource() {
+        return mEngine.getURLResource(mContext);
     }
 
     public void update() {

@@ -26,6 +26,7 @@ import android.widget.TextView;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.SessionStore;
 import org.mozilla.vrbrowser.search.SearchEngine;
+import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 
 import java.net.URI;
 import java.net.URL;
@@ -66,6 +67,12 @@ public class NavigationURLBar extends FrameLayout {
             }
         });
         mMicrophoneButton = findViewById(R.id.microphoneButton);
+        mMicrophoneButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TelemetryWrapper.voiceInputEvent();
+            }
+        });
         mURLLeftContainer = findViewById(R.id.urlLeftContainer);
         mInsecureIcon = findViewById(R.id.insecureIcon);
         mLoadingView = findViewById(R.id.loadingView);
@@ -171,10 +178,14 @@ public class NavigationURLBar extends FrameLayout {
         String url;
         if (uri != null) {
             url = uri.toString();
+            TelemetryWrapper.urlBarEvent(true);
         } else if (text.startsWith("about:") || text.startsWith("resource://")) {
             url = text;
         } else {
             url = SearchEngine.get(getContext()).getSearchURL(text);
+
+            // Doing search in the URL bar, so sending "aIsURL: false" to telemetry.
+            TelemetryWrapper.urlBarEvent(false);
         }
 
         if (SessionStore.get().getCurrentUri() != url) {
