@@ -75,6 +75,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if (BuildConfig.FLAVOR == "oculusvr") {
+            workaroundGeckoSigAction();
+        }
         mUiThread = Thread.currentThread();
         SessionStore.get().setContext(this);
 
@@ -652,4 +655,5 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private native void fadeInWorldNative();
     private native void setTemporaryFilePath(String aPath);
     private native void exitImmersiveNative();
+    private native void workaroundGeckoSigAction();
 }

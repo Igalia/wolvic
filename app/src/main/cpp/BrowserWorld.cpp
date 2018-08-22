@@ -1070,4 +1070,13 @@ JNI_METHOD(void, exitImmersiveNative)
   crow::BrowserWorld::Instance().ExitImmersive();
 }
 
+JNI_METHOD(void, workaroundGeckoSigAction)
+(JNIEnv*, jobject) {
+  if (putenv(strdup("MOZ_DISABLE_SIG_HANDLER=1")) == 0) {
+    VRB_DEBUG("Successfully set MOZ_DISABLE_SIG_HANDLER");
+  } else {
+    VRB_ERROR("Failed to set MOZ_DISABLE_SIG_HANDLER");
+  }
+}
+
 } // extern "C"
