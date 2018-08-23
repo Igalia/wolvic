@@ -28,6 +28,7 @@ void RegisterExternalContext(jlong aContext);
 void PauseCompositor();
 void ResumeCompositor();
 std::string GetStorageAbsolutePath(const std::string& aRelativePath);
+bool isOverrideEnvPathEnabled();
 } // namespace VRBrowser;
 
 } // namespace crow

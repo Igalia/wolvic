@@ -18,11 +18,7 @@ import android.widget.LinearLayout;
 import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoSessionSettings;
-import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.SessionStore;
-import org.mozilla.vrbrowser.Widget;
-import org.mozilla.vrbrowser.WidgetManagerDelegate;
-import org.mozilla.vrbrowser.WidgetPlacement;
+import org.mozilla.vrbrowser.*;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 
 import java.util.ArrayList;
@@ -391,7 +387,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     private void setResizePreset(float aPreset) {
         float worldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.browser_world_width);
-        float aspect = (float) WidgetPlacement.pixelDimension(getContext(), R.dimen.browser_width_pixels) / (float) WidgetPlacement.pixelDimension(getContext(), R.dimen.browser_height_pixels);
+        float aspect = (float)SettingsStore.getInstance(getContext()).getWindowWidth() / (float)SettingsStore.getInstance(getContext()).getWindowHeight();
         float worldHeight = worldWidth / aspect;
         float area = worldWidth * worldHeight * aPreset;
 

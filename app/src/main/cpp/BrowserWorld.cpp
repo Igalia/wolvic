@@ -455,12 +455,12 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
     m.loadingAnimation->LoadModels(m.loader);
     m.rootOpaque->AddNode(m.controllers->GetRoot());
     std::string skyboxPath = CubemapDay;
-#ifdef INJECT_SKYBOX_PATH
-    std::string storagePath = VRBrowser::GetStorageAbsolutePath(INJECT_SKYBOX_PATH);
-    if (std::ifstream(storagePath)) {
-      skyboxPath = storagePath;
+    if (VRBrowser::isOverrideEnvPathEnabled()) {
+      std::string storagePath = VRBrowser::GetStorageAbsolutePath(INJECT_SKYBOX_PATH);
+      if (std::ifstream(storagePath)) {
+        skyboxPath = storagePath;
+      }
     }
-#endif
     m.skybox = CreateSkyBox(skyboxPath.c_str());
     m.rootOpaqueParent->AddNode(m.skybox);
     CreateFloor();
@@ -973,12 +973,12 @@ BrowserWorld::CreateFloor() {
 #else
   std::string environmentPath = "meadow_v4.obj";
 #endif
-#ifdef INJECT_ENVIRONMENT_PATH
-  std::string injectPath = VRBrowser::GetStorageAbsolutePath(INJECT_ENVIRONMENT_PATH);
-  if (std::ifstream(injectPath)) {
-    environmentPath = injectPath;
+  if (VRBrowser::isOverrideEnvPathEnabled()) {
+    std::string injectPath = VRBrowser::GetStorageAbsolutePath(INJECT_ENVIRONMENT_PATH);
+    if (std::ifstream(injectPath)) {
+      environmentPath = injectPath;
+    }
   }
-#endif
   m.loader->LoadModel(environmentPath, model);
   m.rootOpaque->AddNode(model);
   vrb::Matrix transform = vrb::Matrix::Identity();

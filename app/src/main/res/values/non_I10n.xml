@@ -3,9 +3,18 @@
     <string name="settings_key_crash">settings_crash</string>
     <string name="settings_key_locale">settings_locale</string>
     <string name="settings_key_telemetry">settings_telemetry</string>
-    <string name="settings_key_session_id">session_id</string>
-    <string name="settings_key_previous_session_id">previous_session_id</string>
     <string name="settings_key_geolocation_data">geolocation_data</string>
+    <string name="settings_key_remote_debugging">settings_remote_debugging</string>
+    <string name="settings_key_console_logs">settings_console_logs</string>
+    <string name="settings_key_environment_override">settings_environment_override</string>
+    <string name="settings_key_desktop_version">settings_desktop_version</string>
+    <string name="settings_key_input_mode">settings_touch_mode</string>
+    <string name="settings_key_display_density">settings_display_density</string>
+    <string name="settings_key_window_width">settings_window_width</string>
+    <string name="settings_key_window_height">settings_window_height</string>
+    <string name="settings_key_display_dpi">settings_display_dpi</string>
+    <string name="settings_key_max_window_width">settings_max_window_width</string>
+    <string name="settings_key_max_window_height">settings_max_window_height</string>
     <string name="private_policy_url">https://www.mozilla.org/privacy/firefox/</string>
     <string name="private_report_url">https://mixedreality.mozilla.org/fxr/report?src=browser-fxr&amp;label=browser-firefox-reality&amp;url=%1$s</string>
 

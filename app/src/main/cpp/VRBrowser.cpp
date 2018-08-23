@@ -32,6 +32,8 @@ static const char* kResumeCompositorName = "resumeGeckoViewCompositor";
 static const char* kResumeCompositorSignature = "()V";
 static const char* kGetStorageAbsolutePathName = "getStorageAbsolutePath";
 static const char* kGetStorageAbsolutePathSignature = "()Ljava/lang/String;";
+static const char* kIsOverrideEnvPathEnabledName = "isOverrideEnvPathEnabled";
+static const char* kIsOverrideEnvPathEnabledSignature = "()Z";
 
 static JNIEnv* sEnv;
 static jobject sActivity;
@@ -46,6 +48,7 @@ static jmethodID sRegisterExternalContext;
 static jmethodID sPauseCompositor;
 static jmethodID sResumeCompositor;
 static jmethodID sGetStorageAbsolutePath;
+static jmethodID sIsOverrideEnvPathEnabled;
 }
 
 namespace crow {
@@ -76,6 +79,7 @@ VRBrowser::InitializeJava(JNIEnv* aEnv, jobject aActivity) {
   sPauseCompositor = FindJNIMethodID(sEnv, browserClass, kPauseCompositorName, kPauseCompositorSignature);
   sResumeCompositor = FindJNIMethodID(sEnv, browserClass, kResumeCompositorName, kResumeCompositorSignature);
   sGetStorageAbsolutePath = FindJNIMethodID(sEnv, browserClass, kGetStorageAbsolutePathName, kGetStorageAbsolutePathSignature);
+  sIsOverrideEnvPathEnabled = FindJNIMethodID(sEnv, browserClass, kIsOverrideEnvPathEnabledName, kIsOverrideEnvPathEnabledSignature);
 }
 
 void
@@ -189,6 +193,15 @@ VRBrowser::GetStorageAbsolutePath(const std::string& aRelativePath) {
   } else {
     return str + "/" + aRelativePath;
   }
+}
+
+bool
+VRBrowser::isOverrideEnvPathEnabled() {
+  if (!ValidateMethodID(sEnv, sActivity, sIsOverrideEnvPathEnabled, __FUNCTION__)) { return false; }
+  jboolean jBool = sEnv->CallBooleanMethod(sActivity, sIsOverrideEnvPathEnabled);
+  CheckJNIException(sEnv, __FUNCTION__);
+
+  return jBool;
 }
 
 } // namespace crow

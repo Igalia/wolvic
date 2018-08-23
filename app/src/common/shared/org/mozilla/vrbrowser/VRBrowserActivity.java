@@ -611,7 +611,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public void fadeOutWorld() {
-        if (SessionStore.get().isCurrentSessionPrivate() ^ mNavigationBar.isInFocusMode()) {
+        if (SessionStore.get().isCurrentSessionPrivate() ^
+                mNavigationBar.isInFocusMode() ^
+                mTray.isSettingsDialogOpened()) {
             queueRunnable(new Runnable() {
                 @Override
                 public void run() {
@@ -623,7 +625,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public void fadeInWorld() {
-        if (!SessionStore.get().isCurrentSessionPrivate() && !mNavigationBar.isInFocusMode()) {
+        if ((!SessionStore.get().isCurrentSessionPrivate() &&
+                !mNavigationBar.isInFocusMode() &&
+                !mTray.isSettingsDialogOpened())) {
             queueRunnable(new Runnable() {
                 @Override
                 public void run() {
@@ -635,7 +639,20 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public void setTrayVisible(boolean visible) {
-        mTray.setVisible(visible);
+        if (visible) {
+            mTray.show();
+
+        } else {
+            mTray.hide();
+        }
+    }
+
+    @Override
+    public void setBrowserSize(float targetWidth, float targetHeight) {
+        mBrowserWidget.getPlacement().width = (int)targetWidth;
+        mBrowserWidget.getPlacement().height = (int)targetHeight;
+
+        updateWidget(mBrowserWidget);
     }
 
     @Override
@@ -644,6 +661,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         if (mPermissionDelegate != null) {
             mPermissionDelegate.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
+    }
+
+    //Keep
+    public boolean isOverrideEnvPathEnabled() {
+        return SettingsStore.getInstance(this).isEnvironmentOverrideEnabled();
     }
 
     private native void addWidgetNative(int aHandle, WidgetPlacement aPlacement);

@@ -5,7 +5,6 @@
 
 package org.mozilla.vrbrowser.ui;
 
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -13,36 +12,34 @@ import android.content.Intent;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
-
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.WidgetPlacement;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 
-public class CrashReportingWidget extends UIWidget {
+public class RestartDialogWidget extends UIWidget {
     private static final String LOGTAG = "VRB";
 
     private TextView mAcceptButton;
     private UIButton mCancelButton;
     private AudioEngine mAudio;
-    private Runnable mBackHandler;
 
-    public CrashReportingWidget(Context aContext) {
+    public RestartDialogWidget(Context aContext) {
         super(aContext);
         initialize(aContext);
     }
 
-    public CrashReportingWidget(Context aContext, AttributeSet aAttrs) {
+    public RestartDialogWidget(Context aContext, AttributeSet aAttrs) {
         super(aContext, aAttrs);
         initialize(aContext);
     }
 
-    public CrashReportingWidget(Context aContext, AttributeSet aAttrs, int aDefStyle) {
+    public RestartDialogWidget(Context aContext, AttributeSet aAttrs, int aDefStyle) {
         super(aContext, aAttrs, aDefStyle);
         initialize(aContext);
     }
 
     private void initialize(Context aContext) {
-        inflate(aContext, R.layout.crash_reporting, this);
+        inflate(aContext, R.layout.restart_dialog, this);
 
         mAcceptButton = findViewById(R.id.crashAcceptButton);
         mCancelButton = findViewById(R.id.crashCancelButton);
@@ -69,41 +66,24 @@ public class CrashReportingWidget extends UIWidget {
                     mAudio.playSound(AudioEngine.Sound.CLICK);
                 }
 
-                hide();
+                onBackButton();
             }
         });
 
         mAudio = AudioEngine.fromContext(aContext);
-
-        mBackHandler = new Runnable() {
-            @Override
-            public void run() {
-                hide();
-            }
-        };
     }
 
     @Override
     void initializeWidgetPlacement(WidgetPlacement aPlacement) {
         aPlacement.visible = false;
-        aPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.crash_width);
-        aPlacement.height = WidgetPlacement.dpDimension(getContext(), R.dimen.crash_height);
+        aPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.restart_dialog_width);
+        aPlacement.height = WidgetPlacement.dpDimension(getContext(), R.dimen.restart_dialog_height);
         aPlacement.parentAnchorX = 0.5f;
         aPlacement.parentAnchorY = 0.5f;
         aPlacement.anchorX = 0.5f;
         aPlacement.anchorY = 0.5f;
-        aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.crash_world_z);
-    }
-
-    public void show() {
-        getPlacement().visible = true;
-        mWidgetManager.addWidget(this);
-        mWidgetManager.pushBackHandler(mBackHandler);
-    }
-
-    public void hide() {
-        mWidgetManager.removeWidget(this);
-        mWidgetManager.popBackHandler(mBackHandler);
+        aPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.restart_dialog_world_y);
+        aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.restart_dialog_world_z);
     }
 
     private void handleRestartApp() {
@@ -118,6 +98,6 @@ public class CrashReportingWidget extends UIWidget {
         AlarmManager mgr = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
         mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
 
-        ((Activity)getContext()).finish();
+        System.exit(0);
     }
 }

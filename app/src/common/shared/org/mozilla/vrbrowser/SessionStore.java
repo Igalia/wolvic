@@ -6,12 +6,14 @@
 package org.mozilla.vrbrowser;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.inputmethod.CursorAnchorInfo;
 import android.view.inputmethod.ExtractedText;
 import android.view.inputmethod.ExtractedTextRequest;
+import org.mozilla.gecko.GeckoAppShell;
 import org.mozilla.gecko.GeckoProfile;
 import org.mozilla.geckoview.*;
 
@@ -134,14 +136,19 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             runtimeSettingsBuilder.javaCrashReportingEnabled(SettingsStore.getInstance(aContext).isCrashReportingEnabled());
             runtimeSettingsBuilder.nativeCrashReportingEnabled(SettingsStore.getInstance(aContext).isCrashReportingEnabled());
             runtimeSettingsBuilder.trackingProtectionCategories(GeckoSession.TrackingProtectionDelegate.CATEGORY_AD | GeckoSession.TrackingProtectionDelegate.CATEGORY_SOCIAL | GeckoSession.TrackingProtectionDelegate.CATEGORY_ANALYTIC);
+            runtimeSettingsBuilder.consoleOutput(SettingsStore.getInstance(aContext).isConsoleLogsEnabled());
+            runtimeSettingsBuilder.displayDensityOverride(SettingsStore.getInstance(aContext).getDisplayDensity());
+            runtimeSettingsBuilder.remoteDebuggingEnabled(SettingsStore.getInstance(aContext).isRemoteDebuggingEnabled());
+            runtimeSettingsBuilder.displayDpiOverride(SettingsStore.getInstance(aContext).getDisplayDpi());
+            runtimeSettingsBuilder.screenSizeOverride(SettingsStore.getInstance(aContext).getMaxWindowWidth(),
+                    SettingsStore.getInstance(aContext).getMaxWindowHeight());
 
             if (BuildConfig.DEBUG) {
-                runtimeSettingsBuilder.consoleOutput(true);
-                runtimeSettingsBuilder.remoteDebuggingEnabled(true);
                 runtimeSettingsBuilder.arguments(new String[] { "-purgecaches" });
             }
 
             mRuntime = GeckoRuntime.create(aContext, runtimeSettingsBuilder.build());
+
         } else {
             mRuntime.attachTo(aContext);
         }
@@ -258,12 +265,12 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         mTextInputListeners.remove(aListener);
     }
 
-    public static class SessionSettings {
+    public class SessionSettings {
         public boolean multiprocess = false;
         public boolean privateMode = false;
         public boolean trackingProtection = true;
+        public int userAgentMode = SettingsStore.getInstance(mContext).getUaMode();
     }
-
 
     public int createSession() {
         return createSession(new SessionSettings());
@@ -277,6 +284,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         state.mSession.getSettings().setBoolean(GeckoSessionSettings.USE_MULTIPROCESS, aSettings.multiprocess);
         state.mSession.getSettings().setBoolean(GeckoSessionSettings.USE_PRIVATE_MODE, aSettings.privateMode);
         state.mSession.getSettings().setBoolean(GeckoSessionSettings.USE_TRACKING_PROTECTION, aSettings.trackingProtection);
+        state.mSession.getSettings().setInt(GeckoSessionSettings.USER_AGENT_MODE, aSettings.userAgentMode);
         state.mSession.setNavigationDelegate(this);
         state.mSession.setProgressDelegate(this);
         state.mSession.setContentDelegate(this);
@@ -559,6 +567,13 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         }
     }
 
+    public void setUaMode(int mode) {
+        if (mCurrentSession != null) {
+            mCurrentSession.getSettings().setInt(GeckoSessionSettings.USER_AGENT_MODE, mode);
+            mCurrentSession.reload();
+        }
+    }
+
     public void exitPrivateMode() {
         if (mCurrentSession == null)
             return;
@@ -601,6 +616,14 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             setCurrentSession(prevSessionId);
             removeSession(currentSession);
         }
+    }
+
+    public void setConsoleOutputEnabled(boolean enabled) {
+        mRuntime.getSettings().setConsoleOutputEnabled(enabled);
+    }
+
+    public void setMaxWindowSize(int width, int height) {
+        GeckoAppShell.setScreenSizeOverride(new Rect(0, 0, width, height));
     }
 
     @Override

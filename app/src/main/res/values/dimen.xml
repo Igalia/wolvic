@@ -1,7 +1,7 @@
 <resources>
     <!-- Browser window -->
-    <dimen name="browser_width_pixels">1920px</dimen>
-    <dimen name="browser_height_pixels">1080px</dimen>
+    <dimen name="browser_width_pixels">800px</dimen>
+    <dimen name="browser_height_pixels">450px</dimen>
     <item name="browser_world_width" format="float" type="dimen">4.0</item>
     <item name="browser_world_y" format="float" type="dimen">1.6</item>
     <item name="browser_world_z" format="float" type="dimen">-4.2</item>
@@ -40,14 +40,16 @@
     <!-- Settings Dialog -->
     <item name="settings_world_y" format="float" type="dimen">1.6</item>
     <item name="settings_world_z" format="float" type="dimen">-1.8</item>
-    <dimen name="settings_width">450dp</dimen>
-    <dimen name="settings_height">350dp</dimen>
+    <dimen name="settings_width">550dp</dimen>
+    <dimen name="settings_height">500dp</dimen>
+    <dimen name="settings_button_height">320dp</dimen>
     <dimen name="settings_font_size">11sp</dimen>
 
     <!-- Crash Reporting Dialog -->
-    <item name="crash_world_z" format="float" type="dimen">0.1</item>
-    <dimen name="crash_width">435dp</dimen>
-    <dimen name="crash_height">350dp</dimen>
+    <item name="restart_dialog_world_y" format="float" type="dimen">1.6</item>
+    <item name="restart_dialog_world_z" format="float" type="dimen">-1.8</item>
+    <dimen name="restart_dialog_width">435dp</dimen>
+    <dimen name="restart_dialog_height">350dp</dimen>
 
     <!-- Top Bar -->
     <dimen name="top_bar_width">40dp</dimen>
@@ -60,4 +62,11 @@
     <item name="tray_world_width" format="float" type="dimen">2.0</item>
     <dimen name="tray_width">200dp</dimen>
     <dimen name="tray_height">40dp</dimen>
+
+    <!-- Developer Options Panel -->
+    <item name="developer_options_world_y" format="float" type="dimen">1.6</item>
+    <item name="developer_options_world_z" format="float" type="dimen">-1.8</item>
+    <dimen name="developer_options_width">470dp</dimen>
+    <dimen name="developer_options_height">380dp</dimen>
+    <dimen name="developer_options_font_size">11sp</dimen>
 </resources>

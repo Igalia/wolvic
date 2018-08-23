@@ -175,6 +175,11 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         if (aFocusedView != null && aFocusedView.onCheckIsTextEditor()) {
             mInputConnection = aFocusedView.onCreateInputConnection(mEditorInfo);
             ((CustomKeyboard)mKeyboardview.getKeyboard()).setImeOptions(mEditorInfo.imeOptions);
+            if ((mEditorInfo.inputType & EditorInfo.TYPE_CLASS_NUMBER) == EditorInfo.TYPE_CLASS_NUMBER)
+                mKeyboardview.setKeyboard(mKeyboardSymbols1);
+            else
+                mKeyboardview.setKeyboard(mKeyboardQuerty);
+
         } else {
             mInputConnection = null;
         }

@@ -22,11 +22,7 @@ import android.view.inputmethod.InputConnection;
 import org.mozilla.gecko.gfx.GeckoDisplay;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoSessionSettings;
-import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.SessionStore;
-import org.mozilla.vrbrowser.Widget;
-import org.mozilla.vrbrowser.WidgetManagerDelegate;
-import org.mozilla.vrbrowser.WidgetPlacement;
+import org.mozilla.vrbrowser.*;
 
 public class BrowserWidget extends View implements Widget, SessionStore.SessionChangeListener {
     private static final String LOGTAG = "VRB";
@@ -59,8 +55,8 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
     private void initializeWidgetPlacement(WidgetPlacement aPlacement) {
         Context context = getContext();
         aPlacement.worldWidth =  WidgetPlacement.floatDimension(context, R.dimen.browser_world_width);
-        aPlacement.width = WidgetPlacement.pixelDimension(context, R.dimen.browser_width_pixels);
-        aPlacement.height = WidgetPlacement.pixelDimension(context, R.dimen.browser_height_pixels);
+        aPlacement.width = SettingsStore.getInstance(getContext()).getWindowWidth();
+        aPlacement.height = SettingsStore.getInstance(getContext()).getWindowHeight();
         aPlacement.density = 1.0f;
         aPlacement.translationX = 0.0f;
         aPlacement.translationY = WidgetPlacement.unitFromMeters(context, R.dimen.browser_world_y);

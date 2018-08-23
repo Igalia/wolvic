@@ -19,4 +19,5 @@ public interface WidgetManagerDelegate {
     void fadeOutWorld();
     void fadeInWorld();
     void setTrayVisible(boolean visible);
+    void setBrowserSize(float targetWidth, float targetHeight);
 }

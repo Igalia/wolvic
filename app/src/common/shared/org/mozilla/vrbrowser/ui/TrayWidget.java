@@ -20,7 +20,7 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
     private UIButton mSettingsButton;
     private UIButton mPrivateButton;
     private AudioEngine mAudio;
-    private SettingsWidget mSettingsWidget;
+    private int mSettingsDialogHandle = -1;
     private boolean mIsLastSessionPrivate;
 
     public TrayWidget(Context aContext) {
@@ -71,10 +71,7 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
                     mAudio.playSound(AudioEngine.Sound.CLICK);
                 }
 
-                if (mSettingsWidget == null) {
-                    mSettingsWidget = new SettingsWidget(getContext());
-                }
-                mSettingsWidget.toggle();
+                showSettingsDialog();
             }
         });
 
@@ -140,13 +137,39 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
         mIsLastSessionPrivate = isPrivateMode;
     }
 
-    public void setVisible(boolean isVisible) {
-        getPlacement().visible = isVisible;
+    private void showSettingsDialog() {
+        UIWidget widget = getChild(mSettingsDialogHandle);
+        if (widget == null) {
+            widget = createChild(SettingsWidget.class, false);
+            mSettingsDialogHandle = widget.getHandle();
+        }
 
-        if (isVisible)
+        widget.toggle();
+    }
+
+    public boolean isSettingsDialogOpened() {
+        UIWidget widget = getChild(mSettingsDialogHandle);
+        if (widget != null) {
+            return widget.isOpened();
+        }
+
+        return false;
+    }
+
+    @Override
+    public void show() {
+        if (!mWidgetPlacement.visible) {
+            mWidgetPlacement.visible = true;
             mWidgetManager.addWidget(this);
-        else
+        }
+    }
+
+    @Override
+    public void hide() {
+        if (mWidgetPlacement.visible) {
+            mWidgetPlacement.visible = false;
             mWidgetManager.removeWidget(this);
+        }
     }
 
 }

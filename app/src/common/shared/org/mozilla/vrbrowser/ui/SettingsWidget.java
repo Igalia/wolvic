@@ -32,8 +32,8 @@ public class SettingsWidget extends UIWidget {
     private static final String LOGTAG = "VRB";
 
     private AudioEngine mAudio;
-    private CrashReportingWidget mCrashReportingWidget;
-    private Runnable mBackHandler;
+    private int mRestartDialogHandle = -1;
+    private int mDeveloperOptionsDialogHandle = -1;
     private TextView mBuildText;
 
     class VersionGestureListener extends GestureDetector.SimpleOnGestureListener {
@@ -85,7 +85,7 @@ public class SettingsWidget extends UIWidget {
                     mAudio.playSound(AudioEngine.Sound.CLICK);
                 }
 
-                toggle();
+                onBackButton();
             }
         });
 
@@ -163,14 +163,19 @@ public class SettingsWidget extends UIWidget {
             }
         });
 
-        mAudio = AudioEngine.fromContext(aContext);
-
-        mBackHandler = new Runnable() {
+        SettingsButton developerOptionsButton = findViewById(R.id.developerOptionsButton);
+        developerOptionsButton.setOnClickListener(new OnClickListener() {
             @Override
-            public void run() {
-                toggle();
+            public void onClick(View view) {
+                if (mAudio != null) {
+                    mAudio.playSound(AudioEngine.Sound.CLICK);
+                }
+
+                onDeveloperOptionsClick();
             }
-        };
+        });
+
+        mAudio = AudioEngine.fromContext(aContext);
     }
 
     @Override
@@ -186,32 +191,12 @@ public class SettingsWidget extends UIWidget {
         aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.settings_world_z);
     }
 
-    public void toggle() {
-        if (getPlacement().visible) {
-            getPlacement().visible = false;
-            mWidgetManager.removeWidget(this);
-            mWidgetManager.popBackHandler(mBackHandler);
-
-            if (mCrashReportingWidget != null) {
-                mCrashReportingWidget.hide();
-            }
-
-        } else {
-            getPlacement().visible = true;
-            mWidgetManager.addWidget(this);
-            mWidgetManager.pushBackHandler(mBackHandler);
-        }
-    }
-
     private void onSettingsCrashReportingChange(boolean isEnabled) {
         SettingsStore.getInstance(getContext()).setCrashReportingEnabled(isEnabled);
 
-        if (mCrashReportingWidget == null) {
-            mCrashReportingWidget = new CrashReportingWidget(getContext());
-            mCrashReportingWidget.getPlacement().parentHandle = getHandle();
-        }
+        showRestartDialog();
 
-        mCrashReportingWidget.show();
+        hide();
     }
 
     private void onSettingsTelemetryChange(boolean isEnabled) {
@@ -220,25 +205,23 @@ public class SettingsWidget extends UIWidget {
     }
 
     private void onSettingsPrivacyClick() {
-        SessionStore.SessionSettings settings = new SessionStore.SessionSettings();
         GeckoSession session = SessionStore.get().getCurrentSession();
         if (session == null) {
-            int sessionId = SessionStore.get().createSession(settings);
+            int sessionId = SessionStore.get().createSession();
             SessionStore.get().setCurrentSession(sessionId);
         }
 
         SessionStore.get().loadUri(getContext().getString(R.string.private_policy_url));
 
-        toggle();
+        hide();
     }
 
     private void onSettingsReportClick() {
         String url = SessionStore.get().getCurrentUri();
 
-        SessionStore.SessionSettings settings = new SessionStore.SessionSettings();
         GeckoSession session = SessionStore.get().getCurrentSession();
         if (session == null) {
-            int sessionId = SessionStore.get().createSession(settings);
+            int sessionId = SessionStore.get().createSession();
             SessionStore.get().setCurrentSession(sessionId);
         }
 
@@ -251,7 +234,13 @@ public class SettingsWidget extends UIWidget {
         }
         SessionStore.get().loadUri(getContext().getString(R.string.private_report_url, url));
 
-        toggle();
+        hide();
+    }
+
+    private void onDeveloperOptionsClick() {
+        showDeveloperOptionsDialog();
+
+        hide();
     }
 
     /**
@@ -289,5 +278,51 @@ public class SettingsWidget extends UIWidget {
         }
 
         return formatted;
+    }
+
+    private void showRestartDialog() {
+        UIWidget widget = getChild(mRestartDialogHandle);
+        if (widget == null) {
+            widget = createChild(RestartDialogWidget.class, false);
+            mRestartDialogHandle = widget.getHandle();
+        }
+
+        widget.show();
+
+        hide();
+    }
+
+    private void showDeveloperOptionsDialog() {
+        UIWidget widget = getChild(mDeveloperOptionsDialogHandle);
+        if (widget == null) {
+            widget = createChild(DeveloperOptionsWidget.class, false);
+            mDeveloperOptionsDialogHandle = widget.getHandle();
+        }
+
+        widget.show();
+
+        hide();
+    }
+
+    @Override
+    public void toggle() {
+        for (UIWidget child : mChildren.values()) {
+            if (child.getPlacement().visible)
+                return;
+        }
+
+        super.toggle();
+
+        if (!mWidgetPlacement.visible)
+            mWidgetManager.fadeInWorld();
+        else
+            mWidgetManager.fadeOutWorld();
+    }
+
+    @Override
+    protected void onBackButton() {
+        super.onBackButton();
+
+        mWidgetManager.fadeInWorld();
     }
 }
