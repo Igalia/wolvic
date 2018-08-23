@@ -46,8 +46,8 @@ def main(name, argv):
       print "Signing", apk
       print subprocess.check_output([
            "apksigner", "sign",
-           "--v1-signing-enabled true",
-           "--v2-signing-enabled false",
+           "--v1-signing-enabled", "true",
+           "--v2-signing-enabled", "false",
            "--ks", store,
            "--ks-key-alias", alias_name,
            "--ks-pass", "file:" + store_password,
