@@ -697,12 +697,13 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     }
 
     @Override
-    public void onLoadError(GeckoSession session, String uri, int category, int error) {
+    public GeckoResult<String> onLoadError(GeckoSession session, String uri, int category, int error) {
         Log.d(LOGTAG, "SessionStore onLoadError: " + uri);
 
         mLastUri = uri;
         InternalPages.PageResources pageResources = errorPageResourcesForCategory(category);
         session.loadData(InternalPages.createErrorPage(mContext, uri, pageResources, category, error), "text/html");
+        return null;
     }
 
     // Progress Listener

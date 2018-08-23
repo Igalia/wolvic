@@ -411,8 +411,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     @Override
-    public void onLoadError(GeckoSession session, String uri, int category, int error) {
-
+    public GeckoResult<String> onLoadError(GeckoSession session, String uri, int category, int error) {
+        return null;
     }
 
     public void release() {
