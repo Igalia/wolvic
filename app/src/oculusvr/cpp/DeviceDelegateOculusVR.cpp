@@ -165,12 +165,21 @@ struct DeviceDelegateOculusVR::State {
     vrapi_SetPropertyInt(&java, VRAPI_REORIENT_HMD_ON_CONTROLLER_RECENTER, 1);
   }
 
+  void GetImmersiveRenderSize(uint32_t& aWidth, uint32_t& aHeight) {
+    aWidth = (uint32_t)(vrapi_GetSystemPropertyInt(&java, VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_WIDTH));
+    aHeight = (uint32_t)(vrapi_GetSystemPropertyInt(&java, VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_HEIGHT));
+  }
+
+  void GetStandaloneRenderSize(uint32_t& aWidth, uint32_t& aHeight) {
+    aWidth = 1.5f * (uint32_t)(vrapi_GetSystemPropertyInt(&java, VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_WIDTH));
+    aHeight = 1.5f * (uint32_t)(vrapi_GetSystemPropertyInt(&java, VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_HEIGHT));
+  }
+
   void SetRenderSize(device::RenderMode aRenderMode) {
-    renderWidth = (uint32_t)(vrapi_GetSystemPropertyInt(&java, VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_WIDTH));
-    renderHeight = (uint32_t)(vrapi_GetSystemPropertyInt(&java, VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_HEIGHT));
     if (renderMode == device::RenderMode::StandAlone) {
-      renderWidth *= 1.5f;
-      renderHeight *= 1.5f;
+      GetStandaloneRenderSize(renderWidth, renderHeight);
+    } else {
+      GetImmersiveRenderSize(renderWidth, renderHeight);
     }
   }
 
@@ -317,7 +326,9 @@ DeviceDelegateOculusVR::RegisterImmersiveDisplay(ImmersiveDisplayPtr aDisplay) {
 
   m.immersiveDisplay->SetDeviceName("Oculus");
   m.immersiveDisplay->SetCapabilityFlags(device::Orientation | device::Present);
-  m.immersiveDisplay->SetEyeResolution(m.renderWidth, m.renderHeight);
+  uint32_t width, height;
+  m.GetImmersiveRenderSize(width, height);
+  m.immersiveDisplay->SetEyeResolution(width, height);
   m.immersiveDisplay->CompleteEnumeration();
 
   m.UpdatePerspective();
