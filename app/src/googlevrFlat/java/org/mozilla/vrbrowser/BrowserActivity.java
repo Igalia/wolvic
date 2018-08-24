@@ -173,7 +173,7 @@ public class BrowserActivity extends Activity implements SessionStore.SessionCha
             final MyGeckoViewPermission permission = new MyGeckoViewPermission();
             permission.androidPermissionRequestCode = REQUEST_PERMISSIONS;
             mGeckoSession.setPermissionDelegate(permission);
-            uriValue = (uri != null ? uri.toString() : SessionStore.DEFAULT_URL);
+            uriValue = (uri != null ? uri.toString() : SessionStore.get().getHomeUri());
             Log.e(LOGTAG, "BrowserActivity create session and load URI from intent: " + uriValue);
             mGeckoSession.loadUri(uriValue);
             mGeckoView.setSession(mGeckoSession);

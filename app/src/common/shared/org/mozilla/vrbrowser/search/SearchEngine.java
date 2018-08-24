@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.SessionStore;
 import org.mozilla.vrbrowser.SettingsStore;
 
 public class SearchEngine implements GeolocationTask.GeolocationTaskDelegate {
@@ -57,7 +58,6 @@ public class SearchEngine implements GeolocationTask.GeolocationTaskDelegate {
             else
                 return Engine.create(R.string.search_google, R.string.search_google_params);
         }
-
     }
 
     public static synchronized @NonNull
@@ -83,6 +83,7 @@ public class SearchEngine implements GeolocationTask.GeolocationTaskDelegate {
         String geolocationJson = SettingsStore.getInstance(mContext).getGeolocationData();
         GeolocationTask.GeolocationData data = GeolocationTask.GeolocationData.parse(geolocationJson);
         mEngine = Engine.getEngine(data);
+        SessionStore.get().setRegion(data.getCountryCode());
     }
 
     public String getSearchURL(String aQuery) {
@@ -112,7 +113,9 @@ public class SearchEngine implements GeolocationTask.GeolocationTaskDelegate {
         isUpdating = false;
 
         SettingsStore.getInstance(mContext).setGeolocationData(data.toString());
+
         mEngine = Engine.getEngine(data);
+        SessionStore.get().setRegion(data.getCountryCode());
 
         Log.d(LOGTAG, "Geolocation request success: " + data.toString());
     }
@@ -124,4 +127,3 @@ public class SearchEngine implements GeolocationTask.GeolocationTaskDelegate {
         Log.e(LOGTAG, "Geolocation request error: " + error);
     }
 }
-

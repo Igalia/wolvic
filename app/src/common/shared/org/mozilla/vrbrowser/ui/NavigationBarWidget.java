@@ -135,7 +135,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mHomeButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                SessionStore.get().loadUri(SessionStore.DEFAULT_URL);
+                SessionStore.get().loadUri(SessionStore.get().getHomeUri());
                 if (mAudio != null) {
                     mAudio.playSound(AudioEngine.Sound.CLICK);
                 }
@@ -494,9 +494,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     public void onSecurityChange(GeckoSession geckoSession, SecurityInformation securityInformation) {
         if (mURLBar != null) {
             boolean isSecure = securityInformation.isSecure;
-            if (SessionStore.DEFAULT_URL.equalsIgnoreCase(SessionStore.get().gerUriFromSession(geckoSession))) {
-                isSecure = true;
-            }
             mURLBar.setIsInsecure(!isSecure);
         }
     }

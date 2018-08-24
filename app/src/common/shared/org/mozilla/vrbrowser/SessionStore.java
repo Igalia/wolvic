@@ -32,8 +32,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         }
         return mInstance;
     }
-    public static final String DEFAULT_URL = "resource://android/assets/html/index.html";
-
+    private static final String HOME_WITHOUT_REGION_ORIGIN = "https://webxr.today";
     public static final int NO_SESSION_ID = -1;
 
     private LinkedList<GeckoSession.NavigationDelegate> mNavigationListeners;
@@ -67,6 +66,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     private Deque<Integer> mPrivateSessionsStack;
     private GeckoSession.PermissionDelegate mPermissionDelegate;
     private int mPreviousSessionId = SessionStore.NO_SESSION_ID;
+    private String mRegion;
     private String mLastUri;
     private Context mContext;
 
@@ -355,7 +355,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         return null;
     }
 
-    public String gerUriFromSession(GeckoSession aSession) {
+    public String getUriFromSession(GeckoSession aSession) {
         Integer sessionId = getSessionId(aSession);
         if (sessionId == null) {
             return "";
@@ -389,6 +389,8 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             return;
         }
 
+        Log.d(LOGTAG, "Creating session: " + aId);
+
         if (mCurrentSession != null) {
             mCurrentSession.setActive(false);
         }
@@ -408,6 +410,24 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
 
         if (mCurrentSession != null)
             mCurrentSession.setActive(true);
+    }
+
+    public void setRegion(String aRegion) {
+        Log.d(LOGTAG, "SessionStore setRegion: " + aRegion);
+        aRegion = aRegion != null ? aRegion.toLowerCase() : "worldwide";
+        mRegion = aRegion;
+    }
+
+    public String getHomeUri() {
+        String result = SessionStore.HOME_WITHOUT_REGION_ORIGIN;
+        if (mRegion != null) {
+            result = SessionStore.HOME_WITHOUT_REGION_ORIGIN + "/?region=" + mRegion;
+        }
+        return result;
+    }
+
+    public Boolean isHomeUri(String aUri) {
+        return aUri != null && aUri.toLowerCase().startsWith(SessionStore.HOME_WITHOUT_REGION_ORIGIN);
     }
 
     public String getCurrentUri() {
@@ -479,6 +499,10 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         if (mCurrentSession == null) {
             return;
         }
+        if (aUri == null) {
+            aUri = getHomeUri();
+        }
+        Log.d(LOGTAG, "Loading URI: " + aUri);
         mCurrentSession.loadUri(aUri);
     }
 
@@ -637,7 +661,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
 
         if (isLocalPage(aUri))
             aUri = mLastUri;
-        
+
         state.mUri = aUri;
 
         for (GeckoSession.NavigationDelegate listener: mNavigationListeners) {

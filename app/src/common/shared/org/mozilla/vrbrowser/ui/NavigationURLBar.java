@@ -97,7 +97,7 @@ public class NavigationURLBar extends FrameLayout {
         if (aURL != null) {
             if (aURL.startsWith("jar:"))
                 return;
-            else if (aURL.startsWith("resource:"))
+            else if (aURL.startsWith("resource:") || SessionStore.get().isHomeUri(aURL))
                 aURL = "";
             else
                 index = aURL.indexOf("://");
