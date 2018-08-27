@@ -155,8 +155,7 @@ struct DeviceDelegateGoogleVR::State {
   SetRenderMode(const device::RenderMode aMode) {
     if (aMode != renderMode) {
       renderMode = aMode;
-      // Fixme: GL_INVALID_OPERATION using a specific SurfaceTexture when we create a new SwapChain
-      // CreateSwapChain();
+      CreateSwapChain();
     }
   }
 
