@@ -32,7 +32,7 @@ public abstract class UIWidget extends FrameLayout implements Widget {
     static final String LOGTAG = "VRB";
     protected int mInitialWidth;
     protected int mInitialHeight;
-    private Runnable mBackHandler;
+    protected Runnable mBackHandler;
     protected HashMap<Integer, UIWidget> mChildren;
     protected UIWidgetDelegate mDelegate;
 

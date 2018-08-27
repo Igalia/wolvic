@@ -28,7 +28,7 @@
         <Key android:codes="107" android:keyLabel="k" android:popupCharacters="kƙꝁḱǩḳķ" android:popupKeyboard="@xml/keyboard_popup"/>
         <Key android:codes="108" android:keyLabel="l" android:popupCharacters="lĺłľḹl̃ļ" android:popupKeyboard="@xml/keyboard_popup" />
         <Key android:codes="63" android:keyLabel="\?" android:horizontalGap="@dimen/keyboard_key_enter_margin"/>
-        <Key android:codes="-5" android:keyIcon="@drawable/ic_icon_keyboard_backspace" android:isRepeatable="true" android:keyEdgeFlags="right"/>
+        <Key android:codes="-5" android:keyIcon="@drawable/ic_icon_keyboard_backspace" android:isRepeatable="false" android:keyEdgeFlags="right"/>
     </Row>
 
     <Row>

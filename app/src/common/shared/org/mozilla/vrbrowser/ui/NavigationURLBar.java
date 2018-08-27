@@ -7,7 +7,9 @@ package org.mozilla.vrbrowser.ui;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.text.Editable;
 import android.text.SpannableString;
+import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -66,13 +68,17 @@ public class NavigationURLBar extends FrameLayout {
             return false;
             }
         });
-        mMicrophoneButton = findViewById(R.id.microphoneButton);
-        mMicrophoneButton.setOnClickListener(new View.OnClickListener() {
+        mURL.setOnFocusChangeListener(new OnFocusChangeListener() {
             @Override
-            public void onClick(View v) {
-                TelemetryWrapper.voiceInputEvent();
+            public void onFocusChange(View view, boolean b) {
+                if (b && mURL.getText().length() > 0) {
+                    showVoiceSearch(false);
+                }
             }
         });
+        mURL.addTextChangedListener(mURLTextWatcher);
+        mMicrophoneButton = findViewById(R.id.microphoneButton);
+        mMicrophoneButton.setOnClickListener(mMicrophoneListener);
         mURLLeftContainer = findViewById(R.id.urlLeftContainer);
         mInsecureIcon = findViewById(R.id.insecureIcon);
         mLoadingView = findViewById(R.id.loadingView);
@@ -93,6 +99,8 @@ public class NavigationURLBar extends FrameLayout {
     }
 
     public void setURL(String aURL) {
+        mURL.removeTextChangedListener(mURLTextWatcher);
+
         int index = -1;
         if (aURL != null) {
             if (aURL.startsWith("jar:"))
@@ -113,10 +121,14 @@ public class NavigationURLBar extends FrameLayout {
         } else {
             mURL.setText(aURL);
         }
+
+        mURL.addTextChangedListener(mURLTextWatcher);
     }
 
     public void setURLText(String aText) {
+        mURL.removeTextChangedListener(mURLTextWatcher);
         mURL.setText(aText);
+        mURL.addTextChangedListener(mURLTextWatcher);
     }
 
     public void setIsInsecure(boolean aIsInsecure) {
@@ -135,6 +147,17 @@ public class NavigationURLBar extends FrameLayout {
                 mLoadingView.clearAnimation();
             }
             syncViews();
+        }
+    }
+
+    public void showVoiceSearch(boolean enabled) {
+        if (enabled) {
+            mMicrophoneButton.setImageResource(R.drawable.ic_icon_microphone);
+            mMicrophoneButton.setOnClickListener(mMicrophoneListener);
+
+        } else {
+            mMicrophoneButton.setImageResource(R.drawable.ic_icon_clear);
+            mMicrophoneButton.setOnClickListener(mClearListener);
         }
     }
 
@@ -191,6 +214,8 @@ public class NavigationURLBar extends FrameLayout {
         if (SessionStore.get().getCurrentUri() != url) {
             SessionStore.get().loadUri(url);
         }
+
+        showVoiceSearch(true);
     }
 
     public void setPrivateMode(boolean isEnabled) {
@@ -205,4 +230,40 @@ public class NavigationURLBar extends FrameLayout {
         super.setClickable(clickable);
         mURL.setEnabled(clickable);
     }
+
+    private OnClickListener mMicrophoneListener = new OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            TelemetryWrapper.voiceInputEvent();
+        }
+    };
+
+    private OnClickListener mClearListener = new OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            mURL.getText().clear();
+        }
+    };
+
+    private TextWatcher mURLTextWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            if (mURL.getText().length() > 0) {
+                showVoiceSearch(false);
+
+            } else {
+                showVoiceSearch(true);
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+
+        }
+    };
 }

@@ -136,6 +136,13 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mVoiceInput.setVisibility(View.GONE);
         mIsPopupVisible = false;
 
+        mBackHandler = new Runnable() {
+            @Override
+            public void run() {
+                onBackButton();
+            }
+        };
+
         SessionStore.get().addTextInputListener(this);
     }
 
@@ -187,6 +194,12 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         boolean showKeyboard = mInputConnection != null;
         boolean keyboardIsVisible = this.getVisibility() == View.VISIBLE;
         if (showKeyboard != keyboardIsVisible) {
+            if (showKeyboard) {
+                mWidgetManager.pushBackHandler(mBackHandler);
+            } else {
+                mWidgetManager.popBackHandler(mBackHandler);
+                mWidgetManager.keyboardDismissed();
+            }
             getPlacement().visible = showKeyboard;
             mWidgetManager.updateWidget(this);
         }
@@ -204,6 +217,9 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
        handleShift(false);
     }
 
+    protected void onBackButton() {
+        dismiss();
+    }
 
     @Override
     public void onPress(int primaryCode) {
@@ -260,6 +276,9 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
         } else if (popupKey.codes[0] == CustomKeyboard.KEYCODE_SHIFT) {
             mIsLongPress = !mIsCapsLock;
+
+        } else if (popupKey.codes[0] == Keyboard.KEYCODE_DELETE) {
+            handleBackspace(true);
         }
     }
 
@@ -287,7 +306,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                 handleShift(!mKeyboardview.isShifted());
                 break;
             case Keyboard.KEYCODE_DELETE:
-                handleBackspace();
+                handleBackspace(false);
                 break;
             case Keyboard.KEYCODE_DONE:
                 handleDone();
@@ -367,15 +386,24 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         }
     }
 
-    private void handleBackspace() {
+    private void handleBackspace(final boolean isLongPress) {
         final InputConnection connection = mInputConnection;
         postInputCommand(new Runnable() {
             @Override
             public void run() {
                 CharSequence selectedText = mInputConnection.getSelectedText(0);
                 if (selectedText == null || selectedText.length() == 0) {
-                    // No selected text to delete. Remove the character before the cursor.
-                    connection.deleteSurroundingText(1, 0);
+                    if (isLongPress) {
+                        CharSequence currentText = connection.getExtractedText(new ExtractedTextRequest(), 0).text;
+                        CharSequence beforeCursorText = connection.getTextBeforeCursor(currentText.length(), 0);
+                        CharSequence afterCursorText = connection.getTextAfterCursor(currentText.length(), 0);
+                        connection.deleteSurroundingText(beforeCursorText.length(), afterCursorText.length());
+
+                    } else {
+                        // No selected text to delete. Remove the character before the cursor.
+                        connection.deleteSurroundingText(1, 0);
+                    }
+
                 } else {
                     // Delete the selected text
                     connection.commitText("", 1);

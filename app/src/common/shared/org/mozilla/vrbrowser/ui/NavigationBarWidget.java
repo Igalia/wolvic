@@ -12,7 +12,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import org.mozilla.geckoview.GeckoResult;
@@ -258,10 +257,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         super.releaseWidget();
     }
 
-    public void setURLText(String aText) {
-        mURLBar.setURLText(aText);
-    }
-
     @Override
     void initializeWidgetPlacement(WidgetPlacement aPlacement) {
         aPlacement.width = WidgetPlacement.dpDimension(getContext(), R.dimen.navigation_bar_width);
@@ -399,6 +394,10 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     public boolean isInFocusMode() {
         return mIsInFocusMode;
+    }
+
+    public void showVoiceSearch() {
+        mURLBar.showVoiceSearch(true);
     }
 
     @Override
