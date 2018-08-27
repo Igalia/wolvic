@@ -81,10 +81,6 @@ ExternalBlitter::Create(vrb::CreationContextPtr& aContext) {
 void
 ExternalBlitter::StartFrame(const int32_t aSurfaceHandle, const device::EyeRect& aLeftEye,
                             const device::EyeRect& aRightEye) {
-  if (m.surface) {
-    m.surface->ReleaseTexImage();
-    m.surface = nullptr;
-  }
   std::map<const int32_t, GeckoSurfaceTexturePtr>::iterator iter = m.surfaceMap.find(aSurfaceHandle);
 
   if (iter == m.surfaceMap.end()) {
@@ -139,9 +135,10 @@ ExternalBlitter::Draw(const device::Eye aEye) {
 
 void
 ExternalBlitter::EndFrame() {
-  if (m.surface && m.surface->IsAttachedToGLContext(eglGetCurrentContext())) {
+  if (m.surface) {
     // We need to detach the SurfaceTexture to prevent the Gecko WebGL compositor from getting blocked.
-    m.surface->DetachFromGLContext();
+    m.surface->ReleaseTexImage();
+    m.surface = nullptr;
   }
 }
 

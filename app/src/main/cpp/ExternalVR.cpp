@@ -373,7 +373,7 @@ ExternalVR::WaitFrameResult() {
   while (true) {
     if (!IsPresenting() || m.browser.layerState[0].layer_stereo_immersive.mFrameId != m.lastFrameId) {
       m.firstPresentingFrame = false;
-      m.system.displayState.mLastSubmittedFrameSuccessful = m.browser.layerState[0].layer_stereo_immersive.mFrameId != 0;
+      m.system.displayState.mLastSubmittedFrameSuccessful = true;
       m.system.displayState.mLastSubmittedFrameId = m.browser.layerState[0].layer_stereo_immersive.mFrameId;
       // VRB_LOG("RequestFrame BREAK %llu",  m.browser.layerState[0].layer_stereo_immersive.mFrameId);
       break;
