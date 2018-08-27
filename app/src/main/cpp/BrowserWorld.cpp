@@ -479,9 +479,11 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
         skyboxPath = storagePath;
       }
     }
+#if !defined(SNAPDRAGONVR)
     m.skybox = CreateSkyBox(skyboxPath.c_str());
     m.rootOpaqueParent->AddNode(m.skybox);
     CreateFloor();
+#endif
     m.modelsLoaded = true;
   }
 }
@@ -806,7 +808,9 @@ BrowserWorld::DrawWorld() {
   m.externalVR->SetCompositorEnabled(true);
   m.device->SetRenderMode(device::RenderMode::StandAlone);
   vrb::Vector headPosition = m.device->GetHeadTransform().GetTranslation();
-  m.skybox->SetTransform(vrb::Matrix::Translation(headPosition));
+  if (m.skybox) {
+    m.skybox->SetTransform(vrb::Matrix::Translation(headPosition));
+  }
   m.rootTransparent->SortNodes([=](const NodePtr& a, const NodePtr& b) {
     return DistanceToNode(a, headPosition) < DistanceToNode(b, headPosition);
   });
