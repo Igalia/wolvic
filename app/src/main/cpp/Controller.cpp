@@ -52,6 +52,7 @@ Controller::operator=(const Controller& aController) {
   memcpy(immersiveAxes, aController.immersiveAxes, sizeof(immersiveAxes));
   numAxes = aController.numAxes;
   leftHanded = aController.leftHanded;
+  inDeadZone = aController.inDeadZone;
   return *this;
 }
 
@@ -78,6 +79,7 @@ Controller::Reset() {
   memset(immersiveAxes, 0, sizeof(immersiveAxes));
   numAxes = 0;
   leftHanded = false;
+  inDeadZone = true;
 }
 
 } // namespace crow

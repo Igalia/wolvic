@@ -219,6 +219,21 @@ BrowserWorld::State::CheckExitImmersive() {
   return false;
 }
 
+static bool
+OutOfDeadZone(Controller& aController, const float aX, const float aY) {
+  if (!aController.inDeadZone) {
+    return true;
+  }
+  const float kDeadZone = 20.0f;
+  const float xDistance = aX - aController.pointerX;
+  const float yDistance = aY - aController.pointerY;
+  aController.inDeadZone = sqrtf((xDistance * xDistance) + (yDistance * yDistance)) < kDeadZone;
+
+  // VRB_ERROR("Out of DEAD ZONE[%f]: %s", sqrtf((xDistance * xDistance) + (yDistance * yDistance)), (!aController.inDeadZone ? "TRUE" : "FALSE"));
+
+  return !aController.inDeadZone;
+}
+
 void
 BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
   std::vector<Widget*> active;
@@ -282,14 +297,17 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
                            controller.buttonState & ControllerDelegate::BUTTON_TOUCHPAD;
       const bool wasPressed = controller.lastButtonState & ControllerDelegate::BUTTON_TRIGGER ||
                               controller.lastButtonState & ControllerDelegate::BUTTON_TOUCHPAD;
-      if ((controller.pointerX != theX) ||
-          (controller.pointerY != theY) ||
-          (controller.widget != handle) ||
-          (pressed != wasPressed)) {
-        VRBrowser::HandleMotionEvent(handle, controller.index, jboolean(pressed), theX, theY);
+      if (!pressed && wasPressed) {
+        controller.inDeadZone = true;
+      }
+      const bool moved = pressed ? OutOfDeadZone(controller, theX, theY)
+          : (controller.pointerX != theX) || (controller.pointerY != theY);
+
+      if (moved || (controller.widget != handle) || (pressed != wasPressed)) {
         controller.widget = handle;
         controller.pointerX = theX;
         controller.pointerY = theY;
+        VRBrowser::HandleMotionEvent(handle, controller.index, jboolean(pressed), controller.pointerX, controller.pointerY);
       }
       if ((controller.scrollDeltaX != 0.0f) || controller.scrollDeltaY != 0.0f) {
         VRBrowser::HandleScrollEvent(controller.widget, controller.index,

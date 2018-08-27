@@ -41,6 +41,7 @@ struct Controller {
   float immersiveAxes[kControllerMaxAxes];
   uint32_t numAxes;
   bool leftHanded;
+  bool inDeadZone;
 
   Controller();
   Controller(const Controller& aController);
