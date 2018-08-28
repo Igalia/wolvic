@@ -36,6 +36,7 @@ public class DeveloperOptionsWidget extends UIWidget {
     private Switch mRemoteDebuggingSwitch;
     private Switch mConsoleLogsSwitch;
     private Switch mEnvOverrideSwitch;
+    private Switch mMultiprocessSwitch;
     private RadioGroup mUaModeRadio;
     private RadioButton mDesktopRadio;
     private RadioButton mRadioMobile;
@@ -103,12 +104,17 @@ public class DeveloperOptionsWidget extends UIWidget {
         mConsoleLogsSwitch = findViewById(R.id.developer_options_show_console_switch);
         mConsoleLogsSwitch.setOnCheckedChangeListener(mConsoleLogsListener);
         mConsoleLogsSwitch.setSoundEffectsEnabled(false);
-        setConsoleLogs(SettingsStore.getInstance(getContext()).isConsoleLogsEnabled());
+        setConsoleLogs(SettingsStore.getInstance(getContext()).isConsoleLogsEnabled(), false);
 
         mEnvOverrideSwitch = findViewById(R.id.developer_options_env_override_switch);
         mEnvOverrideSwitch.setOnCheckedChangeListener(mEnvOverrideListener);
         mEnvOverrideSwitch.setSoundEffectsEnabled(false);
         setEnvOverride(SettingsStore.getInstance(getContext()).isEnvironmentOverrideEnabled());
+
+        mMultiprocessSwitch = findViewById(R.id.developer_options_multiprocess_switch);
+        mMultiprocessSwitch.setOnCheckedChangeListener(mMultiprocessListener);
+        mMultiprocessSwitch.setSoundEffectsEnabled(false);
+        setMultiprocess(SettingsStore.getInstance(getContext()).isMultiprocessEnabled(), false);
 
         UaMode uaMode = UaMode.values()[SettingsStore.getInstance(getContext()).getUaMode()];
         mUaModeRadio = findViewById(R.id.radioUaMode);
@@ -120,7 +126,7 @@ public class DeveloperOptionsWidget extends UIWidget {
         mVrRadio = findViewById(R.id.radioVr);
         mVrRadio.setSoundEffectsEnabled(false);
         mUaModeRadio.setOnCheckedChangeListener(mUaModeListener);
-        setUaMode(uaMode);
+        setUaMode(uaMode, false);
 
         InputMode inputMode = InputMode.values()[SettingsStore.getInstance(getContext()).getInputMode()];
         mEventsRadio = findViewById(R.id.radioEvents);
@@ -187,7 +193,8 @@ public class DeveloperOptionsWidget extends UIWidget {
         mWindowSizeButton.setOnClickListener(mWindowSizeListener);
         setWindowSize(
                 SettingsStore.getInstance(getContext()).getWindowWidth(),
-                SettingsStore.getInstance(getContext()).getWindowHeight()
+                SettingsStore.getInstance(getContext()).getWindowHeight(),
+                false
         );
 
         mDpiText = findViewById(R.id.dpiText);
@@ -245,7 +252,8 @@ public class DeveloperOptionsWidget extends UIWidget {
         mMaxWindowSizeButton.setOnClickListener(mMaxWindowSizeListener);
         setMaxWindowSize(
                 SettingsStore.getInstance(getContext()).getMaxWindowWidth(),
-                SettingsStore.getInstance(getContext()).getMaxWindowHeight()
+                SettingsStore.getInstance(getContext()).getMaxWindowHeight(),
+                false
         );
 
         mResetButton= findViewById(R.id.resetButton);
@@ -298,7 +306,7 @@ public class DeveloperOptionsWidget extends UIWidget {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
 
-            setConsoleLogs(b);
+            setConsoleLogs(b, true);
         }
     };
 
@@ -315,6 +323,17 @@ public class DeveloperOptionsWidget extends UIWidget {
         }
     };
 
+    private CompoundButton.OnCheckedChangeListener mMultiprocessListener = new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
+
+            setMultiprocess(b, true);
+        }
+    };
+
     private RadioGroup.OnCheckedChangeListener mUaModeListener = new RadioGroup.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
@@ -322,7 +341,7 @@ public class DeveloperOptionsWidget extends UIWidget {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
 
-            setUaMode(getUaModeFromRadio(checkedId));
+            setUaMode(getUaModeFromRadio(checkedId), true);
         }
     };
 
@@ -386,7 +405,7 @@ public class DeveloperOptionsWidget extends UIWidget {
 
             int newWindowWidth = Integer.parseInt(mWindowWidthEdit.getText().toString());
             int newWindowHeight = Integer.parseInt(mWindowHeightEdit.getText().toString());
-            setWindowSize(newWindowWidth, newWindowHeight);
+            setWindowSize(newWindowWidth, newWindowHeight, true);
         }
     };
 
@@ -439,7 +458,7 @@ public class DeveloperOptionsWidget extends UIWidget {
 
             int newMaxWindowWidth = Integer.parseInt(mMaxWindowWidthEdit.getText().toString());
             int newMaxWindowHeight = Integer.parseInt(mMaxWindowHeightEdit.getText().toString());
-            setMaxWindowSize(newMaxWindowWidth, newMaxWindowHeight);
+            setMaxWindowSize(newMaxWindowWidth, newMaxWindowHeight, true);
         }
     };
 
@@ -456,19 +475,19 @@ public class DeveloperOptionsWidget extends UIWidget {
                 restart = true;
             }
 
-            setConsoleLogs(SettingsStore.CONSOLE_LOGS_DEFAULT);
+            setConsoleLogs(SettingsStore.CONSOLE_LOGS_DEFAULT, true);
 
             if (mEnvOverrideSwitch.isChecked() != SettingsStore.ENV_OVERRIDE_DEFAULT) {
                 setEnvOverride(SettingsStore.ENV_OVERRIDE_DEFAULT);
                 restart = true;
             }
 
-            setUaMode(SettingsStore.UA_MODE_DEFAULT);
+            setUaMode(SettingsStore.UA_MODE_DEFAULT, true);
             setInputMode(SettingsStore.INPUT_MODE_DEFAULT);
             restart = restart | setDisplayDensity(SettingsStore.DISPLAY_DENSITY_DEFAULT);
-            setWindowSize(SettingsStore.WINDOW_WIDTH_DEFAULT, SettingsStore.WINDOW_HEIGHT_DEFAULT);
+            setWindowSize(SettingsStore.WINDOW_WIDTH_DEFAULT, SettingsStore.WINDOW_HEIGHT_DEFAULT, true);
             restart = restart | setDisplayDpi(SettingsStore.DISPLAY_DPI_DEFAULT);
-            setMaxWindowSize(SettingsStore.MAX_WINDOW_WIDTH_DEFAULT, SettingsStore.MAX_WINDOW_HEIGHT_DEFAULT);
+            setMaxWindowSize(SettingsStore.MAX_WINDOW_WIDTH_DEFAULT, SettingsStore.MAX_WINDOW_HEIGHT_DEFAULT, true);
 
             if (restart)
                 showRestartDialog();
@@ -483,13 +502,16 @@ public class DeveloperOptionsWidget extends UIWidget {
         SettingsStore.getInstance(getContext()).setRemoteDebuggingEnabled(value);
     }
 
-    private void setConsoleLogs(boolean value) {
+    private void setConsoleLogs(boolean value, boolean doApply) {
         mConsoleLogsSwitch.setOnCheckedChangeListener(null);
         mConsoleLogsSwitch.setChecked(value);
         mConsoleLogsSwitch.setOnCheckedChangeListener(mConsoleLogsListener);
 
         SettingsStore.getInstance(getContext()).setConsoleLogsEnabled(value);
-        SessionStore.get().setConsoleOutputEnabled(value);
+
+        if (doApply) {
+            SessionStore.get().setConsoleOutputEnabled(value);
+        }
     }
 
     private void setEnvOverride(boolean value) {
@@ -498,6 +520,18 @@ public class DeveloperOptionsWidget extends UIWidget {
         mEnvOverrideSwitch.setOnCheckedChangeListener(mEnvOverrideListener);
 
         SettingsStore.getInstance(getContext()).setEnvironmentOverrideEnabled(value);
+    }
+
+    private void setMultiprocess(boolean value, boolean doApply) {
+        mMultiprocessSwitch.setOnCheckedChangeListener(null);
+        mMultiprocessSwitch.setChecked(value);
+        mMultiprocessSwitch.setOnCheckedChangeListener(mMultiprocessListener);
+
+        SettingsStore.getInstance(getContext()).setMultiprocessEnabled(value);
+
+        if (doApply) {
+            SessionStore.get().setMultiprocess(value);
+        }
     }
 
     private UaMode getUaModeFromRadio(int checkedId) {
@@ -516,7 +550,7 @@ public class DeveloperOptionsWidget extends UIWidget {
         return uaMode;
     }
 
-    private void setUaMode(UaMode uaMode) {
+    private void setUaMode(UaMode uaMode, boolean doApply) {
         mUaModeRadio.setOnCheckedChangeListener(null);
 
         if (uaMode == UaMode.DESKTOP) {
@@ -538,7 +572,10 @@ public class DeveloperOptionsWidget extends UIWidget {
         mUaModeRadio.setOnCheckedChangeListener(mUaModeListener);
 
         SettingsStore.getInstance(getContext()).setUaMode(uaMode.ordinal());
-        SessionStore.get().setUaMode(uaMode.ordinal());
+
+        if (doApply) {
+            SessionStore.get().setUaMode(uaMode.ordinal());
+        }
     }
 
     private InputMode getInputModeFromRadio(int checkedId) {
@@ -591,7 +628,7 @@ public class DeveloperOptionsWidget extends UIWidget {
         return updated;
     }
 
-    private void setWindowSize(int newWindowWidth, int newWindowHeight) {
+    private void setWindowSize(int newWindowWidth, int newWindowHeight, boolean doApply) {
         int prevWindowWidth = Integer.parseInt(mWindowWidthText.getText().toString());
         if (newWindowWidth <= 0) {
             newWindowWidth = prevWindowWidth;
@@ -616,7 +653,9 @@ public class DeveloperOptionsWidget extends UIWidget {
             SettingsStore.getInstance(getContext()).setWindowWidth(newWindowWidth);
             SettingsStore.getInstance(getContext()).setWindowHeight(newWindowHeight);
 
-            mWidgetManager.setBrowserSize(newWindowWidth, newWindowHeight);
+            if (doApply) {
+                mWidgetManager.setBrowserSize(newWindowWidth, newWindowHeight);
+            }
         }
 
         String newWindowWidthStr = Integer.toString(newWindowWidth);
@@ -647,7 +686,7 @@ public class DeveloperOptionsWidget extends UIWidget {
         return updated;
     }
 
-    private void setMaxWindowSize(int newMaxWindowWidth, int newMaxWindowHeight) {
+    private void setMaxWindowSize(int newMaxWindowWidth, int newMaxWindowHeight, boolean doApply) {
         int prevMaxWindowWidth = Integer.parseInt(mMaxWindowWidthText.getText().toString());
         if (newMaxWindowWidth <= 0) {
             newMaxWindowWidth = prevMaxWindowWidth;
@@ -673,7 +712,9 @@ public class DeveloperOptionsWidget extends UIWidget {
             SettingsStore.getInstance(getContext()).setMaxWindowWidth(newMaxWindowWidth);
             SettingsStore.getInstance(getContext()).setMaxWindowHeight(newMaxWindowHeight);
 
-            SessionStore.get().setMaxWindowSize(newMaxWindowWidth, newMaxWindowHeight);
+            if (doApply) {
+                SessionStore.get().setMaxWindowSize(newMaxWindowWidth, newMaxWindowHeight);
+            }
         }
 
         String newMaxWindowWidthStr = Integer.toString(newMaxWindowWidth);

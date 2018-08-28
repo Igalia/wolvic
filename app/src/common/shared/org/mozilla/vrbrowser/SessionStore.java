@@ -266,7 +266,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     }
 
     public class SessionSettings {
-        public boolean multiprocess = false;
+        public boolean multiprocess = SettingsStore.getInstance(mContext).isMultiprocessEnabled();
         public boolean privateMode = false;
         public boolean trackingProtection = true;
         public int userAgentMode = SettingsStore.getInstance(mContext).getUaMode();
@@ -648,6 +648,30 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
 
     public void setMaxWindowSize(int width, int height) {
         GeckoAppShell.setScreenSizeOverride(new Rect(0, 0, width, height));
+    }
+
+    public void setMultiprocess(final boolean enabled) {
+        if (mCurrentSession != null) {
+            final GeckoResult<GeckoSession.SessionState> state = mCurrentSession.saveState();
+            state.then(new GeckoResult.OnValueListener<GeckoSession.SessionState, Object>() {
+                @Nullable
+                @Override
+                public GeckoResult<Object> onValue(@Nullable GeckoSession.SessionState value) throws Throwable {
+                    mCurrentSession.stop();
+                    mCurrentSession.close();
+
+                    int oldSessionId = getCurrentSessionId();
+                    int sessionId = createSession();
+                    GeckoSession session = getSession(sessionId);
+                    session.getSettings().setBoolean(GeckoSessionSettings.USE_MULTIPROCESS, enabled);
+                    session.restoreState(value);
+                    setCurrentSession(sessionId);
+                    removeSession(oldSessionId);
+
+                    return null;
+                }
+            });
+        }
     }
 
     @Override
