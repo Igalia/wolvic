@@ -64,6 +64,10 @@ using namespace vrb;
 
 namespace {
 
+  static const vrb::Color kColorWhite = vrb::Color(1.0f, 1.0f, 1.0f);
+  static const vrb::Color kColorLavender = vrb::Color(0.76f, 0.49f, 0.98f);
+  static const vrb::Color kColorTangerine = vrb::Color(0.98f, 0.69f, 0.25f);
+
 static const int GestureSwipeLeft = 0;
 static const int GestureSwipeRight = 1;
 
@@ -138,12 +142,11 @@ struct BrowserWorld::State {
   GroupPtr rootOpaqueParent;
   GroupPtr rootOpaque;
   GroupPtr rootTransparent;
+  GroupPtr rootController;
   LightPtr light;
   ControllerContainerPtr controllers;
   CullVisitorPtr cullVisitor;
-  DrawableListPtr drawListOpaque;
-  DrawableListPtr drawListTransparent;
-  DrawableListPtr drawListCustom;
+  DrawableListPtr drawList;
   CameraPtr leftCamera;
   CameraPtr rightCamera;
   float nearClip;
@@ -161,6 +164,7 @@ struct BrowserWorld::State {
   WidgetPtr resizingWidget;
   LoadingAnimationPtr loadingAnimation;
   SplashAnimationPtr splashAnimation;
+  int colorIndex;
 
   State() : paused(true), glInitialized(false), modelsLoaded(false), env(nullptr), nearClip(0.1f),
             farClip(300.0f), activity(nullptr), windowsInitialized(false), exitImmersiveRequested(false), loaderDelay(0) {
@@ -169,21 +173,22 @@ struct BrowserWorld::State {
     loader = ModelLoaderAndroid::Create(context);
     rootOpaque = Group::Create(create);
     rootTransparent = Group::Create(create);
+    rootController = Group::Create(create);
     light = Light::Create(create);
     rootOpaqueParent = Group::Create(create);
     rootOpaqueParent->AddNode(rootOpaque);
     rootOpaque->AddLight(light);
     rootTransparent->AddLight(light);
+    rootController->AddLight(light);
     cullVisitor = CullVisitor::Create(create);
-    drawListOpaque = DrawableList::Create(create);
-    drawListTransparent = DrawableList::Create(create);
-    drawListCustom = DrawableList::Create(create);
+    drawList = DrawableList::Create(create);
     controllers = ControllerContainer::Create(create);
     externalVR = ExternalVR::Create();
     blitter = ExternalBlitter::Create(create);
     fadeBlitter = FadeBlitter::Create(create);
     loadingAnimation = LoadingAnimation::Create(create);
     splashAnimation = SplashAnimation::Create(create);
+    colorIndex = 0;
   }
 
   void CheckBackButton();
@@ -335,6 +340,34 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
     } else if (controller.widget) {
       VRBrowser::HandleMotionEvent(0, controller.index, JNI_FALSE, 0.0f, 0.0f);
       controller.widget = 0;
+
+    } else {
+      const bool pressed = controller.buttonState & ControllerDelegate::BUTTON_TRIGGER ||
+                           controller.buttonState & ControllerDelegate::BUTTON_TOUCHPAD;
+      const bool wasPressed = controller.lastButtonState & ControllerDelegate::BUTTON_TRIGGER ||
+                              controller.lastButtonState & ControllerDelegate::BUTTON_TOUCHPAD;
+      if (!pressed && wasPressed) {
+        colorIndex = colorIndex == 2 ? 0 : colorIndex+1;
+        switch (colorIndex) {
+          case 2:
+            for (WidgetPtr widget: widgets) {
+              widget->SetPointerColor(kColorLavender);
+            }
+            controllers->SetPointerColor(kColorLavender);
+            break;
+          case 1:
+            for (WidgetPtr widget: widgets) {
+              widget->SetPointerColor(kColorTangerine);
+            }
+            controllers->SetPointerColor(kColorTangerine);
+            break;
+          default:
+            for (WidgetPtr widget: widgets) {
+              widget->SetPointerColor(kColorWhite);
+            }
+            controllers->SetPointerColor(kColorWhite);
+        }
+      }
     }
     controller.lastButtonState = controller.buttonState;
   }
@@ -471,7 +504,7 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
     }
     m.controllers->InitializePointer();
     m.loadingAnimation->LoadModels(m.loader);
-    m.rootOpaque->AddNode(m.controllers->GetRoot());
+    m.rootController->AddNode(m.controllers->GetRoot());
     std::string skyboxPath = CubemapDay;
     if (VRBrowser::isOverrideEnvPathEnabled()) {
       std::string storagePath = VRBrowser::GetStorageAbsolutePath(INJECT_SKYBOX_PATH);
@@ -653,6 +686,17 @@ BrowserWorld::AddWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement) {
     vrb::NodePtr emptyNode = vrb::Group::Create(m.create);
     widget->SetPointerGeometry(emptyNode);
   }
+
+  switch (m.colorIndex) {
+    case 2:
+      widget->SetPointerColor(kColorLavender);
+      break;
+    case 1:
+      widget->SetPointerColor(kColorTangerine);
+      break;
+    default:
+      widget->SetPointerColor(kColorWhite);
+  }
 }
 
 void
@@ -814,29 +858,39 @@ BrowserWorld::DrawWorld() {
   m.rootTransparent->SortNodes([=](const NodePtr& a, const NodePtr& b) {
     return DistanceToNode(a, headPosition) < DistanceToNode(b, headPosition);
   });
-  m.drawListOpaque->Reset();
-  m.drawListTransparent->Reset();
-  m.rootOpaqueParent->Cull(*m.cullVisitor, *m.drawListOpaque);
-  m.rootTransparent->Cull(*m.cullVisitor, *m.drawListTransparent);
   m.device->StartFrame();
 
   m.device->BindEye(device::Eye::Left);
-  m.drawListOpaque->Draw(*m.leftCamera);
+  m.drawList->Reset();
+  m.rootOpaqueParent->Cull(*m.cullVisitor, *m.drawList);
+  m.drawList->Draw(*m.leftCamera);
   if (m.fadeBlitter && m.fadeBlitter->IsVisible()) {
     m.fadeBlitter->Draw();
   }
+  m.drawList->Reset();
+  m.rootController->Cull(*m.cullVisitor, *m.drawList);
+  m.drawList->Draw(*m.leftCamera);
   VRB_GL_CHECK(glDepthMask(GL_FALSE));
-  m.drawListTransparent->Draw(*m.leftCamera);
+  m.drawList->Reset();
+  m.rootTransparent->Cull(*m.cullVisitor, *m.drawList);
+  m.drawList->Draw(*m.leftCamera);
   VRB_GL_CHECK(glDepthMask(GL_TRUE));
   // When running the noapi flavor, we only want to render one eye.
 #if !defined(VRBROWSER_NO_VR_API)
   m.device->BindEye(device::Eye::Right);
-  m.drawListOpaque->Draw(*m.rightCamera);
+  m.drawList->Reset();
+  m.rootOpaqueParent->Cull(*m.cullVisitor, *m.drawList);
+  m.drawList->Draw(*m.rightCamera);
   if (m.fadeBlitter && m.fadeBlitter->IsVisible()) {
     m.fadeBlitter->Draw();
   }
+  m.drawList->Reset();
+  m.rootController->Cull(*m.cullVisitor, *m.drawList);
+  m.drawList->Draw(*m.rightCamera);
   VRB_GL_CHECK(glDepthMask(GL_FALSE));
-  m.drawListTransparent->Draw(*m.rightCamera);
+  m.drawList->Reset();
+  m.rootTransparent->Cull(*m.cullVisitor, *m.drawList);
+  m.drawList->Draw(*m.rightCamera);
   VRB_GL_CHECK(glDepthMask(GL_TRUE));
 #endif // !defined(VRBROWSER_NO_VR_API)
 
@@ -877,14 +931,14 @@ BrowserWorld::DrawImmersive() {
 void
 BrowserWorld::DrawLoadingAnimation() {
   m.loadingAnimation->Update();
-  m.drawListCustom->Reset();
-  m.loadingAnimation->GetRoot()->Cull(*m.cullVisitor, *m.drawListCustom);
+  m.drawList->Reset();
+  m.loadingAnimation->GetRoot()->Cull(*m.cullVisitor, *m.drawList);
 
   m.device->BindEye(device::Eye::Left);
-  m.drawListCustom->Draw(*m.leftCamera);
+  m.drawList->Draw(*m.leftCamera);
 #if !defined(VRBROWSER_NO_VR_API)
   m.device->BindEye(device::Eye::Right);
-  m.drawListCustom->Draw(*m.rightCamera);
+  m.drawList->Draw(*m.rightCamera);
 #endif // !defined(VRBROWSER_NO_VR_API)
 }
 
@@ -896,14 +950,14 @@ BrowserWorld::DrawSplashAnimation() {
   }
   m.device->StartFrame();
   const bool animationFinished = m.splashAnimation->Update(m.device->GetHeadTransform());
-  m.drawListCustom->Reset();
-  m.splashAnimation->GetRoot()->Cull(*m.cullVisitor, *m.drawListCustom);
+  m.drawList->Reset();
+  m.splashAnimation->GetRoot()->Cull(*m.cullVisitor, *m.drawList);
 
   m.device->BindEye(device::Eye::Left);
-  m.drawListCustom->Draw(*m.leftCamera);
+  m.drawList->Draw(*m.leftCamera);
 #if !defined(VRBROWSER_NO_VR_API)
   m.device->BindEye(device::Eye::Right);
-  m.drawListCustom->Draw(*m.rightCamera);
+  m.drawList->Draw(*m.rightCamera);
 #endif // !defined(VRBROWSER_NO_VR_API)
   m.device->EndFrame();
   if (animationFinished) {

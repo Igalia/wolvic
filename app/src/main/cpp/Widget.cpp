@@ -46,6 +46,50 @@ struct Widget::State {
       , toggleState(false)
   {}
 
+  vrb::GeometryPtr createCircle(const int resolution, const float radius, const float scale, const float offset) {
+    vrb::RenderContextPtr render = context.lock();
+    if (!render) {
+      return nullptr;
+    }
+
+    vrb::CreationContextPtr create = render->GetRenderThreadCreationContext();
+    vrb::GeometryPtr geometry = vrb::Geometry::Create(create);
+    vrb::VertexArrayPtr array = vrb::VertexArray::Create(create);
+    geometry->SetVertexArray(array);
+
+    array->AppendNormal(vrb::Vector(0.0f, 0.0f, 1.0f));
+
+    for (int i = 0; i <= resolution; i++) {
+      std::vector<int> normalIndex;
+      normalIndex.push_back(0);
+      normalIndex.push_back(0);
+      normalIndex.push_back(0);
+
+      std::vector<int> index;
+
+      array->AppendVertex(vrb::Vector(0.0f, 0.0f, offset));
+      index.push_back(i*3 + 1);
+
+      array->AppendVertex(vrb::Vector(
+        (radius * cos(i * M_PI * 2 / resolution)) * scale,
+        (radius * sin(i * M_PI * 2 / resolution)) * scale,
+        offset));
+      index.push_back(i*3 + 2);
+
+      array->AppendVertex(vrb::Vector(
+        (radius * cos((i + 1) * M_PI * 2 / resolution)) * scale,
+        (radius * sin((i + 1) * M_PI * 2 / resolution)) * scale,
+        offset));
+      index.push_back(i*3 + 3);
+
+      std::vector<int> uvIndex;
+
+      geometry->AddFace(index, uvIndex, normalIndex);
+    }
+
+    return geometry;
+  }
+
   void Initialize(const int aHandle, const vrb::Vector& aWindowMin, const vrb::Vector& aWindowMax, const int32_t aTextureWidth, const int32_t aTextureHeight) {
     handle = aHandle;
     name = "crow::Widget-" + std::to_string(handle);
@@ -67,32 +111,23 @@ struct Widget::State {
     root->AddNode(transform);
 
     const float kOffset = 0.01f;
-    const float scale = 0.02f;
-    vrb::VertexArrayPtr array = vrb::VertexArray::Create(create);
-    array = vrb::VertexArray::Create(create);
-    array->AppendVertex(vrb::Vector(0.5f * scale, -1.0f * scale, kOffset));
-    array->AppendVertex(vrb::Vector(1.0f * scale, -0.5f * scale, kOffset));
-    array->AppendVertex(vrb::Vector(0.0f, 0.0f, kOffset));
-    array->AppendNormal(vrb::Vector(0.0f, 0.0f, 1.0f));
-    std::vector<int> index;
-    index.push_back(1);
-    index.push_back(2);
-    index.push_back(3);
-    std::vector<int> normalIndex;
-    normalIndex.push_back(1);
-    normalIndex.push_back(1);
-    normalIndex.push_back(1);
-    std::vector<int> uvIndex;
-    vrb::GeometryPtr geometry = vrb::Geometry::Create(create);
-    geometry->SetVertexArray(array);
-    geometry->AddFace(index, uvIndex, normalIndex);
+    const float kScale = 0.02f;
+    const int kResolution = 24;
+    const float radius = 0.25f;
+
+    vrb::GeometryPtr geometry = createCircle(kResolution, radius, kScale, kOffset);
+    vrb::GeometryPtr geometryOuter = createCircle(kResolution, radius + 0.08f, kScale, kOffset);
+
     vrb::RenderStatePtr state = vrb::RenderState::Create(create);
-    state->SetMaterial(vrb::Color(1.0f, 0.0f, 0.0f), vrb::Color(1.0f, 0.0f, 0.0f), vrb::Color(0.0f, 0.0f, 0.0f),
-                       0.0f);
+    state->SetMaterial(vrb::Color(1.0f, 1.0f, 1.0f), vrb::Color(1.0f, 1.0f, 1.0f), vrb::Color(0.0f, 0.0f, 0.0f), 0.0f);
     geometry->SetRenderState(state);
+    vrb::RenderStatePtr stateOuter = vrb::RenderState::Create(create);
+    stateOuter->SetMaterial(vrb::Color(0.0f, 0.0f, 0.0f), vrb::Color(0.0f, 0.0f, 0.0f), vrb::Color(0.0f, 0.0f, 0.0f), 0.0f);
+    geometryOuter->SetRenderState(stateOuter);
     pointerScale = vrb::Transform::Create(create);
     pointerScale->SetTransform(vrb::Matrix::Identity());
     pointerScale->AddNode(geometry);
+    pointerScale->AddNode(geometryOuter);
     pointer = vrb::Transform::Create(create);
     pointer->AddNode(pointerScale);
     pointerGeometry = geometry;
@@ -335,6 +370,10 @@ Widget::HoverExitResize() {
   }
 }
 
+void Widget::SetPointerColor(const vrb::Color& aColor) {
+  vrb::GeometryPtr geometry = std::dynamic_pointer_cast<vrb::Geometry>(m.pointerGeometry);
+  geometry->GetRenderState()->SetMaterial(aColor, aColor, vrb::Color(0.0f, 0.0f, 0.0f), 0.0f);
+}
 
 Widget::Widget(State& aState, vrb::RenderContextPtr& aContext) : m(aState) {
   m.context = aContext;

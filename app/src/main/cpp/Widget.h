@@ -8,6 +8,7 @@
 
 #include "vrb/Forward.h"
 #include "vrb/MacroUtils.h"
+#include "vrb/Color.h"
 
 #include <memory>
 #include <string>
@@ -53,6 +54,7 @@ public:
   bool IsResizing() const;
   void HandleResize(const vrb::Vector& aPoint, bool aPressed, bool& aResized, bool &aResizeEnded);
   void HoverExitResize();
+  void SetPointerColor(const vrb::Color& aColor);
 protected:
   struct State;
   Widget(State& aState, vrb::RenderContextPtr& aContext);

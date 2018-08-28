@@ -74,8 +74,8 @@ ControllerContainer::InitializePointer() {
   }
   CreationContextPtr create = m.context.lock();
   VertexArrayPtr array = VertexArray::Create(create);
-  const float kLength = -5.0f;
-  const float kHeight = 0.0008f;
+  const float kLength = -1.0f;
+  const float kHeight = 0.005f;
 
   array->AppendVertex(Vector(-kHeight, -kHeight, 0.0f)); // Bottom left
   array->AppendVertex(Vector(kHeight, -kHeight, 0.0f)); // Bottom right
@@ -91,8 +91,8 @@ ControllerContainer::InitializePointer() {
 
 
   RenderStatePtr state = RenderState::Create(create);
-  state->SetMaterial(Color(0.6f, 0.0f, 0.0f), Color(1.0f, 0.0f, 0.0f), Color(0.5f, 0.5f, 0.5f),
-                     96.078431f);
+  state->SetMaterial(Color(1.0f, 1.0f, 1.0f), Color(1.0f, 1.0f, 1.0f), Color(0.0f, 0.0f, 0.0f), 0.0f);
+  state->SetLightsEnabled(false);
   GeometryPtr geometry = Geometry::Create(create);
   geometry->SetVertexArray(array);
   geometry->SetRenderState(state);
@@ -100,26 +100,26 @@ ControllerContainer::InitializePointer() {
   std::vector<int> index;
   std::vector<int> uvIndex;
 
+  index.push_back(2);
   index.push_back(1);
-  index.push_back(2);
-  index.push_back(5);
-  geometry->AddFace(index, uvIndex, index);
-
-  index.clear();
-  index.push_back(2);
-  index.push_back(3);
   index.push_back(5);
   geometry->AddFace(index, uvIndex, index);
 
   index.clear();
   index.push_back(3);
-  index.push_back(4);
+  index.push_back(2);
   index.push_back(5);
   geometry->AddFace(index, uvIndex, index);
 
   index.clear();
   index.push_back(4);
+  index.push_back(3);
+  index.push_back(5);
+  geometry->AddFace(index, uvIndex, index);
+
+  index.clear();
   index.push_back(1);
+  index.push_back(4);
   index.push_back(5);
   geometry->AddFace(index, uvIndex, index);
 
@@ -312,6 +312,15 @@ ControllerContainer::SetScrolledDelta(const int32_t aControllerIndex, const floa
   Controller& controller = m.list[aControllerIndex];
   controller.scrollDeltaX = aScrollDeltaX;
   controller.scrollDeltaY = aScrollDeltaY;
+}
+
+void ControllerContainer::SetPointerColor(const vrb::Color& aColor) const {
+  for (Controller& controller: m.list) {
+    if (controller.transform) {
+      GeometryPtr geometry = std::dynamic_pointer_cast<vrb::Geometry>(controller.transform->GetNode(1));
+      geometry->GetRenderState()->SetMaterial(aColor, aColor, vrb::Color(0.0f, 0.0f, 0.0f), 0.0f);
+    }
+  }
 }
 
 ControllerContainer::ControllerContainer(State& aState, vrb::CreationContextPtr& aContext) : m(aState) {

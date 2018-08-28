@@ -60,8 +60,8 @@
     <!-- Tray -->
     <item name="tray_world_y" format="float" type="dimen">-0.25</item>
     <item name="tray_world_z" format="float" type="dimen">-3.5</item>
-    <item name="tray_world_width" format="float" type="dimen">2.0</item>
-    <dimen name="tray_width">200dp</dimen>
+    <item name="tray_world_width" format="float" type="dimen">1.0</item>
+    <dimen name="tray_width">120dp</dimen>
     <dimen name="tray_height">40dp</dimen>
 
     <!-- Developer Options Panel -->
