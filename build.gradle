@@ -17,11 +17,9 @@ allprojects {
     repositories {
         google()
         jcenter()
+
         maven {
-            url 'https://index.taskcluster.net/v1/task/gecko.v2.mozilla-central.nightly.latest.mobile.android-aarch64-opt/artifacts/public/android/maven'
-        }
-        maven {
-            url 'https://index.taskcluster.net/v1/task/gecko.v2.mozilla-central.nightly.latest.mobile.android-api-16-opt/artifacts/public/android/maven'
+            url 'https://maven.mozilla.org/maven2'
         }
     }
 }
