@@ -269,6 +269,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         public boolean multiprocess = SettingsStore.getInstance(mContext).isMultiprocessEnabled();
         public boolean privateMode = false;
         public boolean trackingProtection = true;
+        public boolean suspendMediaWhenInactive = true;
         public int userAgentMode = SettingsStore.getInstance(mContext).getUaMode();
     }
 
@@ -284,6 +285,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         state.mSession.getSettings().setBoolean(GeckoSessionSettings.USE_MULTIPROCESS, aSettings.multiprocess);
         state.mSession.getSettings().setBoolean(GeckoSessionSettings.USE_PRIVATE_MODE, aSettings.privateMode);
         state.mSession.getSettings().setBoolean(GeckoSessionSettings.USE_TRACKING_PROTECTION, aSettings.trackingProtection);
+        state.mSession.getSettings().setBoolean(GeckoSessionSettings.SUSPEND_MEDIA_WHEN_INACTIVE, aSettings.suspendMediaWhenInactive);
         state.mSession.getSettings().setInt(GeckoSessionSettings.USER_AGENT_MODE, aSettings.userAgentMode);
         state.mSession.setNavigationDelegate(this);
         state.mSession.setProgressDelegate(this);
@@ -480,6 +482,14 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         }
         mCurrentSession.goForward();
     }
+
+    public void setActive(boolean aActive) {
+        if (mCurrentSession == null) {
+            return;
+        }
+        mCurrentSession.setActive(aActive);
+    }
+
 
     public void reload() {
         if (mCurrentSession == null) {

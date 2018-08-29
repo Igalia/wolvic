@@ -176,11 +176,13 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Override
     protected void onPause() {
         mAudioEngine.pauseEngine();
+        SessionStore.get().setActive(false);
         super.onPause();
     }
 
     @Override
     protected void onResume() {
+        SessionStore.get().setActive(true);
         mAudioEngine.resumeEngine();
         super.onResume();
     }
