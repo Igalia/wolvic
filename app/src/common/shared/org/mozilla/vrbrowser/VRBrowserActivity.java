@@ -175,6 +175,14 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     protected void onPause() {
+        if (mIsPresentingImmersive) {
+            queueRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    exitImmersiveNative();
+                }
+            });
+        }
         mAudioEngine.pauseEngine();
         SessionStore.get().setActive(false);
         super.onPause();
