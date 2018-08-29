@@ -280,7 +280,7 @@ DeviceDelegateWaveVR::SetControllerDelegate(ControllerDelegatePtr& aController) 
     return;
   }
   for (int32_t index = 0; index < kMaxControllerCount; index++) {
-    m.delegate->CreateController(index, 0, "HTC Vive Focus Controller");
+    m.delegate->CreateController(index, 0, "Gear VR Controller");
   }
 }
 

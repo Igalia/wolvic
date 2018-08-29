@@ -361,7 +361,7 @@ DeviceDelegateOculusVR::SetClipPlanes(const float aNear, const float aFar) {
 void
 DeviceDelegateOculusVR::SetControllerDelegate(ControllerDelegatePtr& aController) {
   m.controller = aController;
-  m.controller->CreateController(0, 0, "Gear VR Remote Controller");
+  m.controller->CreateController(0, 0, "Gear VR Controller");
   m.controller->SetButtonCount(0, 2);
 }
 
