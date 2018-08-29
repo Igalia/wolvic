@@ -273,8 +273,8 @@ struct DeviceDelegateOculusVR::State {
 
     const float trackpadX = controllerState.TrackpadPosition.x / (float)controllerCapabilities.TrackpadMaxX;
     const float trackpadY = controllerState.TrackpadPosition.y / (float)controllerCapabilities.TrackpadMaxY;
-    float scrollX = trackpadX * 5.0f;
-    float scrollY = trackpadY * 5.0f;
+    float scrollX = trackpadX;
+    float scrollY = trackpadY;
     if (trackpadTouched && !trackpadPressed) {
       controller->SetTouchPosition(0, scrollX, scrollY);
     } else {
