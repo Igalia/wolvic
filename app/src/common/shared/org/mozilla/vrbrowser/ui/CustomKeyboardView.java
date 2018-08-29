@@ -32,7 +32,6 @@ import android.media.AudioManager;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -103,7 +102,9 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
          * These codes are useful to correct for accidental presses of a key adjacent to
          * the intended key.
          */
-        void onKey(int primaryCode, int[] keyCodes);
+        void onKey(int primaryCode, int[] keyCodes, boolean hasPopup);
+
+        void onNoKey();
 
         /**
          * Sends a sequence of characters to the listener.
@@ -224,6 +225,8 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
     private SwipeTracker mSwipeTracker = new SwipeTracker();
     private int mSwipeThreshold;
     private boolean mDisambiguateSwipe;
+    private float mKeyboardHoveredPadding = 0.0f;
+    private float mKeyboardPressedPadding = 0.0f;
 
     // Variables for dealing with multiple pointers
     private int mOldPointerCount = 1;
@@ -231,6 +234,9 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
     private float mOldPointerY;
 
     private Drawable mKeyBackground;
+    private Drawable mKeyCapStartBackground = null;
+    private Drawable mKeyCapEndBackground = null;
+    private Drawable mKeySingleBackground = null;
 
     private static final int REPEAT_INTERVAL = 50; // ~20 keys per second
     private static final int REPEAT_START_DELAY = 400;
@@ -265,7 +271,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
 
     // Fork
     private Drawable mFeaturedKeyBackground;
-    private HashSet<Integer> mFeaturedKeyCodes = new HashSet<Integer>();
+    private HashSet<Integer> mFeaturedKeyCodes = new HashSet<>();
     private int mSelectedForegroundColor;
     private int mForegroundColor;
 
@@ -288,14 +294,15 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
 
         int previewLayout = 0;
         int keyTextSize = 0;
-        mKeyBackground = context.getDrawable(R.drawable.keyboard_button_background);
+        mKeyBackground = context.getDrawable(R.drawable.keyboard_key_background);
+        mKeyCapStartBackground = context.getDrawable(R.drawable.keyboard_key_background);
         mVerticalCorrection = 0;
         previewLayout = 0;
         mPreviewOffset = 0;
         mPreviewHeight = 80;
         mKeyTextSize = context.getResources().getDimensionPixelSize(R.dimen.keyboard_key_text_size);
         mKeyTextColor = 0xFFFFFFFF;
-        mLabelTextSize = context.getResources().getDimensionPixelSize(R.dimen.keyboard_ley_longtext_size);
+        mLabelTextSize = context.getResources().getDimensionPixelSize(R.dimen.keyboard_key_longtext_size);
         mPopupLayout = R.layout.keyboard;
         mShadowColor = 0;
         mShadowRadius = 0;
@@ -328,8 +335,10 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
         mPaint.setTypeface(Typeface.create("sans-serif",Typeface.NORMAL));
 
         mPadding = new Rect(0, 0, 0, 0);
-        mMiniKeyboardCache = new HashMap<Key,View>();
+        mMiniKeyboardCache = new HashMap<>();
         mKeyBackground.getPadding(mPadding);
+        mKeyboardHoveredPadding = getResources().getDimensionPixelSize(R.dimen.keyboard_key_hovered_padding);
+        mKeyboardPressedPadding = getResources().getDimensionPixelSize(R.dimen.keyboard_key_pressed_padding);
 
         mSwipeThreshold = (int) (500 * getResources().getDisplayMetrics().density);
         mDisambiguateSwipe = false;
@@ -339,7 +348,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
         resetMultiTap();
 
         mForegroundColor = context.getColor(R.color.fog);
-        mSelectedForegroundColor = context.getColor(R.color.void_color);
+        mSelectedForegroundColor = context.getColor(R.color.fog);
     }
 
     @Override
@@ -370,6 +379,42 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
                 }
             };
         }
+    }
+
+    public void setKeyBackground(Drawable resId) {
+        mKeyBackground = resId;
+    }
+
+    public void setKeyCapStartBackground(Drawable resId) {
+        mKeyCapStartBackground = resId;
+    }
+
+    public void setKeySingleStartBackground(Drawable resId) {
+        mKeySingleBackground = resId;
+    }
+
+    public void setKeyCapEndBackground(Drawable resId) {
+        mKeyCapEndBackground = resId;
+    }
+
+    public void setKeyTextColor(int color) {
+        mKeyTextColor = color;
+    }
+
+    public void setSelectedForegroundColor(int color) {
+        mSelectedForegroundColor = color;
+    }
+
+    public void setForegroundColor(int color) {
+        mForegroundColor = color;
+    }
+
+    public void setKeyboardHoveredPadding(int padding) {
+        mKeyboardHoveredPadding = padding;
+    }
+
+    public void setKeyboardPressedPadding(int padding) {
+        mKeyboardPressedPadding = padding;
     }
 
     private void initGestureDetector() {
@@ -694,9 +739,29 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
                 // Fork: implement hovered key
                 drawableState = KEY_STATE_HOVERED;
             }
+
+            boolean stateHovered = false;
+            boolean statePressed = false;
+            for (int state : drawableState) {
+                if (state == android.R.attr.state_hovered)
+                    stateHovered = true;
+                else if (state == android.R.attr.state_pressed)
+                    statePressed = true;
+            }
             Drawable keyBackground = mKeyBackground;
+            int columns = ((CustomKeyboard)mKeyboard).getMaxColums();
             if (mFeaturedKeyBackground != null && mFeaturedKeyCodes.contains(key.codes[0])) {
                 keyBackground = mFeaturedKeyBackground;
+
+            } else if ((i == columns && i == keyCount - 1) && mKeySingleBackground != null) {
+                keyBackground = mKeySingleBackground;
+
+            } else if ((i == 0 || i == columns) && mKeyCapStartBackground != null) {
+                keyBackground = mKeyCapStartBackground;
+
+            } else if ((i == keyCount  - 1 || i == columns - 1)&& mKeyCapEndBackground != null) {
+                keyBackground = mKeyCapEndBackground;
+
             }
             keyBackground.setState(drawableState);
 
@@ -711,36 +776,59 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
             canvas.translate(key.x + kbdPaddingLeft, key.y + kbdPaddingTop);
             keyBackground.draw(canvas);
 
+            // Get the button state related padding
+            float statePadding = 0.0f;
+            if (stateHovered) {
+                statePadding = -mKeyboardHoveredPadding;
+
+            } else if (statePressed) {
+                statePadding = mKeyboardPressedPadding;
+            }
+
             if (label != null) {
+                float descent = paint.descent();
+
                 // For characters, use large font. For labels like "Done", use small font.
                 if (label.length() > 1 && key.codes.length < 2) {
                     paint.setTextSize(mLabelTextSize);
                     paint.setTypeface(Typeface.DEFAULT_BOLD);
+                    descent = 0.0f;
+
                 } else {
                     paint.setTextSize(mKeyTextSize);
                     paint.setTypeface(Typeface.DEFAULT);
                 }
-                paint.setColor(key.pressed ? mSelectedForegroundColor : mForegroundColor);
+                if (!stateHovered && !statePressed) {
+                    paint.setColor(mKeyTextColor);
+
+                } else if (stateHovered) {
+                    paint.setColor(mForegroundColor);
+
+                } else if (statePressed) {
+                    paint.setColor(mSelectedForegroundColor);
+                }
+
                 // Draw a drop shadow for the text
                 paint.setShadowLayer(mShadowRadius, 0, 0, mShadowColor);
+
                 // Draw the text
                 canvas.drawText(label,
                         (key.width - padding.left - padding.right) / 2
-                                + padding.left,
+                                + padding.left  + statePadding,
                         (key.height - padding.top - padding.bottom) / 2
-                                + (paint.getTextSize() / 2)  - paint.descent() + padding.top,
+                                + (paint.getTextSize() / 2)  - descent + padding.top  + statePadding,
                         paint);
                 // Turn off drop shadow
                 paint.setShadowLayer(0, 0, 0, 0);
+
             } else if (key.icon != null) {
-                final int drawableX = (key.width - padding.left - padding.right
-                        - key.icon.getIntrinsicWidth()) / 2 + padding.left;
-                final int drawableY = (key.height - padding.top - padding.bottom
-                        - key.icon.getIntrinsicHeight()) / 2 + padding.top;
+                final float drawableX = (key.width - padding.left - padding.right - key.icon.getIntrinsicWidth()) / 2
+                        + padding.left + statePadding;
+                final float drawableY = (key.height - padding.top - padding.bottom - key.icon.getIntrinsicHeight()) / 2
+                        + padding.top + statePadding;
                 canvas.translate(drawableX, drawableY);
                 key.icon.setColorFilter(key.pressed ? mSelectedForegroundColor : mForegroundColor, PorterDuff.Mode.MULTIPLY);
-                key.icon.setBounds(0, 0,
-                        key.icon.getIntrinsicWidth(), key.icon.getIntrinsicHeight());
+                key.icon.setBounds(0, 0, key.icon.getIntrinsicWidth(), key.icon.getIntrinsicHeight());
                 key.icon.draw(canvas);
                 canvas.translate(-drawableX, -drawableY);
             }
@@ -823,18 +911,21 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
         if (index != NOT_A_KEY && index < mKeys.length) {
             final Key key = mKeys[index];
             if (key.text != null) {
-                mKeyboardActionListener.onText(key.text);
-                mKeyboardActionListener.onRelease(NOT_A_KEY);
+                if (mKeyboardActionListener != null) {
+                    mKeyboardActionListener.onText(key.text);
+                    mKeyboardActionListener.onRelease(NOT_A_KEY);
+                }
             } else {
                 int code = key.codes[0];
+                boolean hasPopup = key.popupCharacters != null && key.popupCharacters.length() > 0;
                 //TextEntryState.keyPressedAt(key, x, y);
                 int[] codes = new int[MAX_NEARBY_KEYS];
                 Arrays.fill(codes, NOT_A_KEY);
                 getKeyIndices(x, y, codes);
                 // Multi-tap
                 if (mInMultiTap) {
-                    if (mTapCount != -1) {
-                        mKeyboardActionListener.onKey(Keyboard.KEYCODE_DELETE, KEY_DELETE);
+                    if (mTapCount != -1 && mKeyboardActionListener != null) {
+                        mKeyboardActionListener.onKey(Keyboard.KEYCODE_DELETE, KEY_DELETE, hasPopup);
                     } else {
                         mTapCount = 0;
                     }
@@ -843,11 +934,18 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
                     if (mKeyboardActionListener != null)
                         mKeyboardActionListener.onMultiTap(key);
                 }
-                mKeyboardActionListener.onKey(code, codes);
-                mKeyboardActionListener.onRelease(code);
+                if (mKeyboardActionListener != null) {
+                    mKeyboardActionListener.onKey(code, codes, hasPopup);
+                    mKeyboardActionListener.onRelease(code);
+                }
             }
             mLastSentIndex = index;
             mLastTapTime = eventTime;
+
+        } else {
+            if (mKeyboardActionListener != null) {
+                mKeyboardActionListener.onNoKey();
+            }
         }
     }
 
@@ -1185,8 +1283,8 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
                 mDownTime = me.getEventTime();
                 mLastMoveTime = mDownTime;
                 checkMultiTap(eventTime, keyIndex);
-                mKeyboardActionListener.onPress(keyIndex != NOT_A_KEY ?
-                        mKeys[keyIndex].codes[0] : 0);
+                if (mKeyboardActionListener != null)
+                    mKeyboardActionListener.onPress(keyIndex != NOT_A_KEY ? mKeys[keyIndex].codes[0] : 0);
                 if (mCurrentKey >= 0 && mKeys[mCurrentKey].repeatable) {
                     mRepeatKeyIndex = mCurrentKey;
                     Message msg = mHandler.obtainMessage(MSG_REPEAT);
@@ -1286,19 +1384,27 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
     }
 
     protected void swipeRight() {
-        mKeyboardActionListener.swipeRight();
+        if (mKeyboardActionListener != null) {
+            mKeyboardActionListener.swipeRight();
+        }
     }
 
     protected void swipeLeft() {
-        mKeyboardActionListener.swipeLeft();
+        if (mKeyboardActionListener != null) {
+            mKeyboardActionListener.swipeLeft();
+        }
     }
 
     protected void swipeUp() {
-        mKeyboardActionListener.swipeUp();
+        if (mKeyboardActionListener != null) {
+            mKeyboardActionListener.swipeUp();
+        }
     }
 
     protected void swipeDown() {
-        mKeyboardActionListener.swipeDown();
+        if (mKeyboardActionListener != null) {
+            mKeyboardActionListener.swipeDown();
+        }
     }
 
     public void closing() {

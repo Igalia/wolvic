@@ -1,5 +1,3 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_pressed="true"
-        android:color="@color/void_color"/>
     <item android:color="@color/fog"/>
 </selector>

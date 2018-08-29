@@ -20,6 +20,7 @@ public class CustomKeyboard extends Keyboard {
 
     private Key mEnterKey;
     private Key mSpaceKey;
+    private int mMaxColums;
 
     public static final int KEYCODE_SYMBOLS_CHANGE = -10;
     public static final int KEYCODE_VOICE_INPUT = -11;
@@ -32,6 +33,8 @@ public class CustomKeyboard extends Keyboard {
 
     public CustomKeyboard (Context context, int layoutTemplateResId, CharSequence characters, int columns, int horizontalPadding) {
         this(context, layoutTemplateResId);
+
+        mMaxColums = columns;
 
         int x = 0;
         int y = 0;
@@ -212,5 +215,20 @@ public class CustomKeyboard extends Keyboard {
                 mEnterKey.label = "ENTER";
                 break;
         }
+    }
+
+    public int[] getShiftKeyIndices() {
+        try {
+            Field mField = getField(getClass().getSuperclass(), "mShiftKeyIndices");
+            mField.setAccessible(true);
+            return (int[])mField.get(this);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            return new int[]{-1, -1};
+        }
+    }
+
+    public int getMaxColums() {
+        return mMaxColums;
     }
 }

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <layer-list>
+            <item>
+                <shape android:shape="rectangle">
+                    <padding android:bottom="@dimen/keyboard_key_pressed_padding"
+                             android:right="@dimen/keyboard_key_pressed_padding"
+                             android:left="@dimen/keyboard_key_pressed_padding"
+                             android:top="@dimen/keyboard_key_pressed_padding"/>
+                </shape>
+            </item>
+            <item>
+                <shape android:shape="rectangle">
+                    <corners android:radius="@dimen/keyboard_key_rounded_corner"/>
+                    <solid android:color="@color/asphalt"/>
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+    <item android:state_hovered="true">
+        <layer-list>
+            <item>
+                <shape android:shape="rectangle">
+                    <padding android:right="@dimen/keyboard_key_hovered_padding"
+                             android:bottom="@dimen/keyboard_key_hovered_padding"/>
+                    <corners android:radius="@dimen/keyboard_key_rounded_corner"/>
+                    <solid android:color="#00000000"/>
+                </shape>
+            </item>
+            <item>
+                <shape android:shape="rectangle">
+                    <padding android:right="@dimen/keyboard_key_hovered_padding"
+                             android:bottom="@dimen/keyboard_key_hovered_padding"/>
+                    <corners android:radius="@dimen/keyboard_key_rounded_corner"/>
+                    <solid android:color="#10000000"/>
+                </shape>
+            </item>
+            <item>
+                <shape android:shape="rectangle">
+                    <padding android:right="@dimen/keyboard_key_hovered_padding"
+                             android:bottom="@dimen/keyboard_key_hovered_padding"/>
+                    <corners android:radius="@dimen/keyboard_key_rounded_corner"/>
+                    <solid android:color="#20000000"/>
+                </shape>
+            </item>
+            <item>
+                <shape android:shape="rectangle">
+                    <padding android:right="@dimen/keyboard_key_hovered_padding"
+                             android:bottom="@dimen/keyboard_key_hovered_padding"/>
+                    <corners android:radius="@dimen/keyboard_key_rounded_corner"/>
+                    <solid android:color="#30000000"/>
+                </shape>
+            </item>
+            <item>
+                <shape android:shape="rectangle">
+                    <padding android:right="@dimen/keyboard_key_hovered_padding"
+                             android:bottom="@dimen/keyboard_key_hovered_padding"/>
+                    <corners android:radius="@dimen/keyboard_key_rounded_corner"/>
+                    <solid android:color="#50000000"/>
+                </shape>
+            </item>
+            <item>
+                <shape android:shape="rectangle">
+                    <corners android:radius="@dimen/keyboard_key_rounded_corner"/>
+                    <solid android:color="@color/asphalt"/>
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+    <item android:state_hovered="false" android:drawable="@null">
+        <layer-list>
+            <item>
+                <shape android:shape="rectangle">
+                    <padding android:bottom="@dimen/keyboard_key_pressed_padding"
+                             android:right="@dimen/keyboard_key_pressed_padding"
+                             android:left="@dimen/keyboard_key_pressed_padding"
+                             android:top="@dimen/keyboard_key_pressed_padding"/>
+                </shape>
+            </item>
+            <item>
+                <shape android:shape="rectangle">
+                    <corners android:radius="@dimen/keyboard_key_rounded_corner"/>
+                    <solid android:color="@color/void_color"/>
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+</selector>

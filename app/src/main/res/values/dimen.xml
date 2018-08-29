@@ -12,22 +12,25 @@
 
     <!-- Keyboard -->
     <item name="keyboard_world_width" format="float" type="dimen">2.4</item>
-    <item name="keyboard_y_distance_from_browser" format="float" type="dimen">-0.11</item>
+    <item name="keyboard_y_distance_from_browser" format="float" type="dimen">-0.21</item>
     <item name="keyboard_z_distance_from_browser" format="float" type="dimen">2.0</item>
     <item name="keyboard_world_rotation" format="float" type="dimen">-35.0</item>
-    <dimen name="keyboard_width">629dp</dimen>
-    <dimen name="keyboard_height">202dp</dimen>
-    <dimen name="keyboard_horizontal_gap">14dp</dimen>
-    <dimen name="keyboard_vertical_gap">6dp</dimen>
-    <dimen name="keyboard_key_width">36dp</dimen>
-    <dimen name="keyboard_key_height">36dp</dimen>
+    <dimen name="keyboard_width">572dp</dimen>
+    <dimen name="keyboard_height">246dp</dimen>
+    <dimen name="keyboard_horizontal_gap">4dp</dimen>
+    <dimen name="keyboard_vertical_gap">4dp</dimen>
+    <item name="keyboard_distance_from_browser" format="float" type="dimen">2.0</item>
+    <dimen name="keyboard_key_width">38dp</dimen>
+    <dimen name="keyboard_key_height">38dp</dimen>
     <dimen name="keyboard_key_rounded_corner">18dp</dimen>
-    <dimen name="keyboard_key_space_width">389dp</dimen>
-    <dimen name="keyboard_key_enter_width">89dp</dimen>
-    <dimen name="keyboard_key_enter_margin">42dp</dimen>
-    <dimen name="keyboard_key_a_margin">25dp</dimen>
+    <dimen name="keyboard_key_space_width">316dp</dimen>
+    <dimen name="keyboard_key_enter_width">72dp</dimen>
+    <dimen name="keyboard_key_enter_margin">26dp</dimen>
+    <dimen name="keyboard_left_margin">20dp</dimen>
     <dimen name="keyboard_key_text_size">14dp</dimen>
-    <dimen name="keyboard_ley_longtext_size">13dp</dimen>
+    <dimen name="keyboard_key_longtext_size">12dp</dimen>
+    <dimen name="keyboard_key_hovered_padding">0.8dp</dimen>
+    <dimen name="keyboard_key_pressed_padding">1dp</dimen>
 
     <!-- Permission Prompt -->
     <item name="permission_world_width" format="float" type="dimen">1.6</item>
@@ -36,7 +39,7 @@
     <dimen name="permission_height">230dp</dimen>
 
     <dimen name="keyboard_microphone_margin_left">50dp</dimen>
-    <dimen name="keyboard_popup_left_margin">90dp</dimen>
+    <dimen name="keyboard_popup_left_margin">116dp</dimen>
 
     <!-- Settings Dialog -->
     <item name="settings_world_y" format="float" type="dimen">1.6</item>
