@@ -45,17 +45,35 @@
                             android:textSize="14sp"
                             android:textColor="@color/fog"
                             android:layout_alignParentStart="true"
-                            android:layout_toStartOf="@id/developer_options_remote_debugging_switch"/>
-                    <Switch
-                            android:id="@+id/developer_options_remote_debugging_switch"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:switchMinWidth="0dp"
-                            android:textOff=""
-                            android:textOn=""
-                            android:track="@drawable/switch_track"
-                            android:thumb="@drawable/switch_thumb"
-                            android:layout_alignParentEnd="true"/>
+                            android:layout_toStartOf="@id/developer_options_remote_debugging_layout"/>
+                    <LinearLayout android:id="@+id/developer_options_remote_debugging_layout"
+                                  android:orientation="vertical"
+                                  android:gravity="center"
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:layout_alignParentEnd="true">
+                        <Switch
+                                android:id="@+id/developer_options_remote_debugging_switch"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:switchMinWidth="0dp"
+                                android:textOff=""
+                                android:textOn=""
+                                android:track="@drawable/switch_track"
+                                android:thumb="@drawable/switch_thumb"/>
+                        <TextView
+                                android:id="@+id/developer_options_remote_debugging_switch_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:clickable="true"
+                                android:fontFamily="sans-serif-light"
+                                android:gravity="center"
+                                android:paddingTop="5dp"
+                                android:text="OFF"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/settings_font_size"
+                                android:textStyle="bold"/>
+                    </LinearLayout>
                 </RelativeLayout>
                 <View
                         android:layout_width="match_parent"
@@ -72,17 +90,35 @@
                             android:textSize="14sp"
                             android:textColor="@color/fog"
                             android:layout_alignParentStart="true"
-                            android:layout_toStartOf="@id/developer_options_show_console_switch"/>
-                    <Switch
-                            android:id="@+id/developer_options_show_console_switch"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:switchMinWidth="0dp"
-                            android:textOff=""
-                            android:textOn=""
-                            android:track="@drawable/switch_track"
-                            android:thumb="@drawable/switch_thumb"
-                            android:layout_alignParentEnd="true"/>
+                            android:layout_toStartOf="@id/developer_options_show_console_layout"/>
+                    <LinearLayout android:id="@+id/developer_options_show_console_layout"
+                                  android:orientation="vertical"
+                                  android:gravity="center"
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:layout_alignParentEnd="true">
+                        <Switch
+                                android:id="@+id/developer_options_show_console_switch"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:switchMinWidth="0dp"
+                                android:textOff=""
+                                android:textOn=""
+                                android:track="@drawable/switch_track"
+                                android:thumb="@drawable/switch_thumb"/>
+                        <TextView
+                                android:id="@+id/developer_options_show_console_switch_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:clickable="true"
+                                android:fontFamily="sans-serif-light"
+                                android:gravity="center"
+                                android:paddingTop="5dp"
+                                android:text="OFF"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/settings_font_size"
+                                android:textStyle="bold"/>
+                    </LinearLayout>
                 </RelativeLayout>
                 <View
                         android:layout_width="match_parent"
@@ -99,17 +135,35 @@
                             android:textSize="14sp"
                             android:textColor="@color/fog"
                             android:layout_alignParentStart="true"
-                            android:layout_toStartOf="@id/developer_options_env_override_switch"/>
-                    <Switch
-                            android:id="@+id/developer_options_env_override_switch"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:switchMinWidth="0dp"
-                            android:textOff=""
-                            android:textOn=""
-                            android:track="@drawable/switch_track"
-                            android:thumb="@drawable/switch_thumb"
-                            android:layout_alignParentEnd="true"/>
+                            android:layout_toStartOf="@id/developer_options_env_override_switch_layout"/>
+                    <LinearLayout android:id="@+id/developer_options_env_override_switch_layout"
+                                  android:orientation="vertical"
+                                  android:gravity="center"
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:layout_alignParentEnd="true">
+                        <Switch
+                                android:id="@+id/developer_options_env_override_switch"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:switchMinWidth="0dp"
+                                android:textOff=""
+                                android:textOn=""
+                                android:track="@drawable/switch_track"
+                                android:thumb="@drawable/switch_thumb"/>
+                        <TextView
+                                android:id="@+id/developer_options_env_override_switch_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:clickable="true"
+                                android:fontFamily="sans-serif-light"
+                                android:gravity="center"
+                                android:paddingTop="5dp"
+                                android:text="OFF"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/settings_font_size"
+                                android:textStyle="bold"/>
+                    </LinearLayout>
                 </RelativeLayout>
                 <View
                         android:layout_width="match_parent"
@@ -126,17 +180,35 @@
                             android:textSize="14sp"
                             android:textColor="@color/fog"
                             android:layout_alignParentStart="true"
-                            android:layout_toStartOf="@id/developer_options_multiprocess_switch"/>
-                    <Switch
-                            android:id="@+id/developer_options_multiprocess_switch"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:switchMinWidth="0dp"
-                            android:textOff=""
-                            android:textOn=""
-                            android:track="@drawable/switch_track"
-                            android:thumb="@drawable/switch_thumb"
-                            android:layout_alignParentEnd="true"/>
+                            android:layout_toStartOf="@id/developer_options_multiprocess_switch_layout"/>
+                    <LinearLayout android:id="@+id/developer_options_multiprocess_switch_layout"
+                                  android:orientation="vertical"
+                                  android:gravity="center"
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:layout_alignParentEnd="true">
+                        <Switch
+                                android:id="@+id/developer_options_multiprocess_switch"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:switchMinWidth="0dp"
+                                android:textOff=""
+                                android:textOn=""
+                                android:track="@drawable/switch_track"
+                                android:thumb="@drawable/switch_thumb"/>
+                        <TextView
+                                android:id="@+id/developer_options_multiprocess_switch_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:clickable="true"
+                                android:fontFamily="sans-serif-light"
+                                android:gravity="center"
+                                android:paddingTop="5dp"
+                                android:text="OFF"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/settings_font_size"
+                                android:textStyle="bold"/>
+                    </LinearLayout>
                 </RelativeLayout>
                 <View
                         android:layout_width="match_parent"

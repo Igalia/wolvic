@@ -90,7 +90,8 @@
                             android:clickable="true"
                             android:fontFamily="sans-serif-light"
                             android:gravity="center"
-                            android:paddingBottom="10dp"
+                            android:paddingTop="20dp"
+                            android:paddingBottom="5dp"
                             android:text="@string/settings_crash_reporting"
                             android:textColor="@color/white"
                             android:textSize="@dimen/settings_font_size"/>
@@ -104,6 +105,19 @@
                             android:textOn=""
                             android:track="@drawable/switch_track"
                             android:thumb="@drawable/switch_thumb"/>
+
+                    <TextView
+                            android:id="@+id/crash_reporting_switch_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:clickable="true"
+                            android:fontFamily="sans-serif-light"
+                            android:gravity="center"
+                            android:paddingTop="5dp"
+                            android:text="OFF"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/settings_font_size"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -120,7 +134,8 @@
                             android:clickable="true"
                             android:fontFamily="sans-serif-light"
                             android:gravity="center"
-                            android:paddingBottom="10dp"
+                            android:paddingTop="20dp"
+                            android:paddingBottom="5dp"
                             android:text="@string/settings_telemetry"
                             android:textColor="@color/white"
                             android:textSize="@dimen/settings_font_size"/>
@@ -134,6 +149,19 @@
                             android:textOn=""
                             android:track="@drawable/switch_track"
                             android:thumb="@drawable/switch_thumb"/>
+
+                    <TextView
+                            android:id="@+id/telemetry_switch_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:clickable="true"
+                            android:fontFamily="sans-serif-light"
+                            android:gravity="center"
+                            android:paddingTop="5dp"
+                            android:text="OFF"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/settings_font_size"/>
                 </LinearLayout>
 
 

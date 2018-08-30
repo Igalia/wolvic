@@ -101,8 +101,10 @@ public class SettingsWidget extends UIWidget {
             }
         });
 
+        final TextView crashReportingSwitchText  = findViewById(R.id.crash_reporting_switch_text);
         Switch crashReportingSwitch  = findViewById(R.id.crash_reporting_switch);
         crashReportingSwitch.setChecked(SettingsStore.getInstance(getContext()).isCrashReportingEnabled());
+        crashReportingSwitchText.setText(crashReportingSwitch.isChecked() ? getContext().getString(R.string.on) : getContext().getString(R.string.off));
         crashReportingSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -110,12 +112,16 @@ public class SettingsWidget extends UIWidget {
                     mAudio.playSound(AudioEngine.Sound.CLICK);
                 }
 
+                crashReportingSwitchText.setText(b ? getContext().getString(R.string.on) : getContext().getString(R.string.off));
                 onSettingsCrashReportingChange(b);
             }
         });
+        crashReportingSwitch.setSoundEffectsEnabled(false);
 
+        final TextView crashTelemetrySwitchText  = findViewById(R.id.telemetry_switch_text);
         Switch telemetrySwitch  = findViewById(R.id.telemetry_switch);
         telemetrySwitch.setChecked(SettingsStore.getInstance(getContext()).isTelemetryEnabled());
+        crashTelemetrySwitchText.setText(telemetrySwitch.isChecked() ? getContext().getString(R.string.on) : getContext().getString(R.string.off));
         telemetrySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -123,9 +129,11 @@ public class SettingsWidget extends UIWidget {
                     mAudio.playSound(AudioEngine.Sound.CLICK);
                 }
 
+                crashTelemetrySwitchText.setText(b ? getContext().getString(R.string.on) : getContext().getString(R.string.off));
                 onSettingsTelemetryChange(b);
             }
         });
+        telemetrySwitch.setSoundEffectsEnabled(false);
 
         TextView versionText = findViewById(R.id.versionText);
         try {
