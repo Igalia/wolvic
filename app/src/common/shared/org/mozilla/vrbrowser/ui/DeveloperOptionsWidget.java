@@ -99,7 +99,7 @@ public class DeveloperOptionsWidget extends UIWidget {
         mRemoteDebuggingSwitch = findViewById(R.id.developer_options_remote_debugging_switch);
         mRemoteDebuggingSwitch.setOnCheckedChangeListener(mRemoteDebuggingListener);
         mRemoteDebuggingSwitch.setSoundEffectsEnabled(false);
-        setRemoteDebugging(SettingsStore.getInstance(getContext()).isRemoteDebuggingEnabled());
+        setRemoteDebugging(SettingsStore.getInstance(getContext()).isRemoteDebuggingEnabled(), false);
 
         mConsoleLogsSwitch = findViewById(R.id.developer_options_show_console_switch);
         mConsoleLogsSwitch.setOnCheckedChangeListener(mConsoleLogsListener);
@@ -293,9 +293,7 @@ public class DeveloperOptionsWidget extends UIWidget {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
 
-            setRemoteDebugging(b);
-
-            showRestartDialog();
+            setRemoteDebugging(b, true);
         }
     };
 
@@ -471,7 +469,7 @@ public class DeveloperOptionsWidget extends UIWidget {
 
             boolean restart = false;
             if (mRemoteDebuggingSwitch.isChecked() != SettingsStore.REMOTE_DEBUGGING_DEFAULT) {
-                setRemoteDebugging(SettingsStore.REMOTE_DEBUGGING_DEFAULT);
+                setRemoteDebugging(SettingsStore.REMOTE_DEBUGGING_DEFAULT, true);
                 restart = true;
             }
 
@@ -494,12 +492,15 @@ public class DeveloperOptionsWidget extends UIWidget {
         }
     };
 
-    private void setRemoteDebugging(boolean value) {
+    private void setRemoteDebugging(boolean value, boolean doApply) {
         mRemoteDebuggingSwitch.setOnCheckedChangeListener(null);
         mRemoteDebuggingSwitch.setChecked(value);
         mRemoteDebuggingSwitch.setOnCheckedChangeListener(mRemoteDebuggingListener);
 
         SettingsStore.getInstance(getContext()).setRemoteDebuggingEnabled(value);
+        if (doApply) {
+            SessionStore.get().setRemoteDebugging(value);
+        }
     }
 
     private void setConsoleLogs(boolean value, boolean doApply) {

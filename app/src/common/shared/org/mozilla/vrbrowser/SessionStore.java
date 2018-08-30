@@ -653,7 +653,9 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     }
 
     public void setConsoleOutputEnabled(boolean enabled) {
-        mRuntime.getSettings().setConsoleOutputEnabled(enabled);
+        if (mRuntime != null) {
+            mRuntime.getSettings().setConsoleOutputEnabled(enabled);
+        }
     }
 
     public void setMaxWindowSize(int width, int height) {
@@ -667,20 +669,35 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
                 @Nullable
                 @Override
                 public GeckoResult<Object> onValue(@Nullable GeckoSession.SessionState value) throws Throwable {
-                    mCurrentSession.stop();
-                    mCurrentSession.close();
+                    if (value != null) {
+                        mCurrentSession.stop();
+                        mCurrentSession.close();
 
-                    int oldSessionId = getCurrentSessionId();
-                    int sessionId = createSession();
-                    GeckoSession session = getSession(sessionId);
-                    session.getSettings().setBoolean(GeckoSessionSettings.USE_MULTIPROCESS, enabled);
-                    session.restoreState(value);
-                    setCurrentSession(sessionId);
-                    removeSession(oldSessionId);
+                        int oldSessionId = getCurrentSessionId();
+                        int sessionId = createSession();
+                        GeckoSession session = getSession(sessionId);
+                        session.getSettings().setBoolean(GeckoSessionSettings.USE_MULTIPROCESS, enabled);
+                        session.restoreState(value);
+                        setCurrentSession(sessionId);
+                        removeSession(oldSessionId);
+                    }
 
                     return null;
                 }
+            }, new GeckoResult.OnExceptionListener<Object>() {
+                @Nullable
+                @Override
+                public GeckoResult<Object> onException(@NonNull Throwable exception) throws Throwable {
+                    Log.e(LOGTAG, "State saving exception while setting multiprocess mode: " + exception.getLocalizedMessage());
+                    return null;
+                }
             });
+        }
+    }
+
+    public void setRemoteDebugging(final boolean enabled) {
+        if (mRuntime != null) {
+            mRuntime.getSettings().setRemoteDebuggingEnabled(enabled);
         }
     }
 
