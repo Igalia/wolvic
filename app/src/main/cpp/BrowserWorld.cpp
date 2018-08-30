@@ -930,6 +930,7 @@ BrowserWorld::DrawImmersive() {
 
 void
 BrowserWorld::DrawLoadingAnimation() {
+  VRB_GL_CHECK(glDepthMask(GL_TRUE));
   m.loadingAnimation->Update();
   m.drawList->Reset();
   m.loadingAnimation->GetRoot()->Cull(*m.cullVisitor, *m.drawList);
