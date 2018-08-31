@@ -146,13 +146,21 @@ InputCallback(struct android_app *aApp, AInputEvent *aEvent) {
 		}
 
 		if (action == AKEY_EVENT_ACTION_UP && (keyCode == AKEYCODE_DPAD_CENTER  || keyCode == AKEYCODE_ENTER)) {
+      ctx->mDevice->UpdateButtonState(ControllerDelegate::BUTTON_TRIGGER, false);
+      return 1;
+		}
+    else if (action == AKEY_EVENT_ACTION_DOWN && (keyCode == AKEYCODE_DPAD_CENTER  || keyCode == AKEYCODE_ENTER)) {
       ctx->mDevice->UpdateButtonState(ControllerDelegate::BUTTON_TRIGGER, true);
       return 1;
-		}
+    }
 		else if (action == AKEY_EVENT_ACTION_UP && keyCode == AKEYCODE_MENU) {
-      ctx->mDevice->UpdateButtonState(ControllerDelegate::BUTTON_APP, true);
+      ctx->mDevice->UpdateButtonState(ControllerDelegate::BUTTON_APP, false);
       return 1;
 		}
+    else if (action == AKEY_EVENT_ACTION_DOWN && keyCode == AKEYCODE_MENU) {
+      ctx->mDevice->UpdateButtonState(ControllerDelegate::BUTTON_APP,  true);
+      return 1;
+    }
 		else if (keyCode == AKEYCODE_DPAD_LEFT) {
 		  // Wheel moved: simulate scroll
 		  ctx->mDevice->WheelScroll(-2.0);
@@ -166,11 +174,12 @@ InputCallback(struct android_app *aApp, AInputEvent *aEvent) {
 	}
 	else if (type == AINPUT_EVENT_TYPE_MOTION) {
 	  const int source = AInputEvent_getSource(aEvent);
-	  if (source == AINPUT_SOURCE_TRACKBALL) {
+    // Disable trackball scroll for now because the scroll it's not very stable
+	  /*if (source == AINPUT_SOURCE_TRACKBALL) {
 	    const float x = AMotionEvent_getX(aEvent, 0);
 	    const float y = AMotionEvent_getY(aEvent, 0);
 	    ctx->mDevice->UpdateTrackpad(x, y);
-	  }
+	  }*/
 	}
 
 	return 0;

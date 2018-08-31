@@ -224,11 +224,6 @@ struct DeviceDelegateSVR::State {
     controller->SetButtonState(aController, ControllerDelegate::BUTTON_TRIGGER, 0, triggerPressed, triggerPressed, controllerState.analog1D[0]);
     controller->SetButtonState(aController, ControllerDelegate::BUTTON_TOUCHPAD, 1, touchpadPressed, touchpadTouched);
     controller->SetButtonState(aController, ControllerDelegate::BUTTON_APP, 2, menuPressed, menuPressed);
-
-    if (aController == kHeadControllerId) {
-      // Workaround for repeated KEY_DOWN events bug in ODG
-      state.buttonState = 0;
-    }
   }
 
 
