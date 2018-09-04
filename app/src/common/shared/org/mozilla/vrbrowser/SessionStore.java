@@ -32,7 +32,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         }
         return mInstance;
     }
-    private static final String HOME_WITHOUT_REGION_ORIGIN = "https://webxr.today";
+    private static final String HOME_WITHOUT_REGION_ORIGIN = "https://webxr.today/";
     public static final int NO_SESSION_ID = -1;
 
     private LinkedList<GeckoSession.NavigationDelegate> mNavigationListeners;
@@ -416,14 +416,18 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
 
     public void setRegion(String aRegion) {
         Log.d(LOGTAG, "SessionStore setRegion: " + aRegion);
-        aRegion = aRegion != null ? aRegion.toLowerCase() : "worldwide";
-        mRegion = aRegion;
+        mRegion = aRegion != null ? aRegion.toLowerCase() : "worldwide";
+
+        // There is a region update and the home is already loaded
+        if (mCurrentSession != null && isHomeUri(getCurrentUri())) {
+            mCurrentSession.loadUri(SessionStore.HOME_WITHOUT_REGION_ORIGIN + "#region=" + mRegion);
+        }
     }
 
     public String getHomeUri() {
         String result = SessionStore.HOME_WITHOUT_REGION_ORIGIN;
         if (mRegion != null) {
-            result = SessionStore.HOME_WITHOUT_REGION_ORIGIN + "/?region=" + mRegion;
+            result = SessionStore.HOME_WITHOUT_REGION_ORIGIN + "?region=" + mRegion;
         }
         return result;
     }
@@ -509,6 +513,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         if (mCurrentSession == null) {
             return;
         }
+
         if (aUri == null) {
             aUri = getHomeUri();
         }
@@ -718,6 +723,11 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
 
         for (GeckoSession.NavigationDelegate listener: mNavigationListeners) {
             listener.onLocationChange(aSession, aUri);
+        }
+
+        // The homepage finishes loading after the region has been updated
+        if (mRegion != null && aUri.equalsIgnoreCase(SessionStore.HOME_WITHOUT_REGION_ORIGIN)) {
+            aSession.loadUri(SessionStore.HOME_WITHOUT_REGION_ORIGIN + "#region=" + mRegion);
         }
     }
 
