@@ -18,13 +18,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-
+import android.widget.*;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.SessionStore;
 import org.mozilla.vrbrowser.search.SearchEngine;
@@ -35,6 +29,7 @@ import java.net.URL;
 import java.util.regex.Pattern;
 
 public class NavigationURLBar extends FrameLayout {
+
     private EditText mURL;
     private ImageButton mMicrophoneButton;
     private ImageView mInsecureIcon;
@@ -47,6 +42,11 @@ public class NavigationURLBar extends FrameLayout {
     private int mURLProtocolColor;
     private int mURLWebsiteColor;
     private Pattern mURLPattern;
+    private NavigationURLBarDelegate mDelegate;
+
+    public interface NavigationURLBarDelegate {
+        void OnVoiceSearchClicked();
+    }
 
     public NavigationURLBar(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -96,6 +96,10 @@ public class NavigationURLBar extends FrameLayout {
         setFocusable(true);
         setFocusableInTouchMode(true);
         setClickable(true);
+    }
+
+    public void setDelegate(NavigationURLBarDelegate delegate) {
+        mDelegate = delegate;
     }
 
     public void setURL(String aURL) {
@@ -178,7 +182,7 @@ public class NavigationURLBar extends FrameLayout {
         mURL.setPadding(leftPadding, mURL.getPaddingTop(), mURL.getPaddingRight(), mURL.getPaddingBottom());
     }
 
-    private void handleURLEdit(String text) {
+    protected void handleURLEdit(String text) {
         text = text.trim();
         URI uri = null;
         try {
@@ -234,6 +238,9 @@ public class NavigationURLBar extends FrameLayout {
     private OnClickListener mMicrophoneListener = new OnClickListener() {
         @Override
         public void onClick(View view) {
+            if (mDelegate != null)
+                mDelegate.OnVoiceSearchClicked();
+
             TelemetryWrapper.voiceInputEvent();
         }
     };
@@ -266,4 +273,5 @@ public class NavigationURLBar extends FrameLayout {
 
         }
     };
+
 }

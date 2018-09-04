@@ -11,8 +11,10 @@ import org.mozilla.vrbrowser.ui.PermissionWidget;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class PermissionDelegate implements GeckoSession.PermissionDelegate {
+public class PermissionDelegate implements GeckoSession.PermissionDelegate, WidgetManagerDelegate.PermissionListener {
+
     static final int PERMISSION_REQUEST_CODE = 1143;
+
     static final String LOGTAG = "VRB";
     private Context mContext;
     private int mParentWidgetHandle;
@@ -23,6 +25,7 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate {
     PermissionDelegate(Context aContext, WidgetManagerDelegate aWidgetManager) {
         mContext = aContext;
         mWidgetManager = aWidgetManager;
+        mWidgetManager.addPermissionListener(this);
         SessionStore.get().setPermissionDelegate(this);
     }
 
@@ -30,6 +33,7 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate {
         mParentWidgetHandle = aHandle;
     }
 
+    @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode != PERMISSION_REQUEST_CODE || mCallback == null) {
             return;
@@ -61,6 +65,7 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate {
     }
 
     public void release() {
+        mWidgetManager.removePermissionListener(this);
         SessionStore.get().setPermissionDelegate(null);
         mCallback = null;
         mContext = null;

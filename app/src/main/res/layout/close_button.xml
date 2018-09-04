@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="horizontal">
+<org.mozilla.vrbrowser.ui.UIButton
+        android:id="@+id/closeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:tintColorList="@drawable/keyboard_button_icon"
+        android:padding="10dp"
+        android:src="@drawable/ic_icon_exit"
+        android:scaleType="fitCenter"
+        android:background="@drawable/keyboard_key_close_background"/>
+</LinearLayout>

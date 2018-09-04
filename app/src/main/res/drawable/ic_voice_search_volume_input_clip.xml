@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<clip xmlns:android="http://schemas.android.com/apk/res/android"
+      android:drawable="@drawable/ic_voice_search_volume_input"
+      android:clipOrientation="horizontal"
+      android:gravity="start" />

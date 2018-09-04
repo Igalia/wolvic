@@ -6,6 +6,9 @@ public interface WidgetManagerDelegate {
     interface Listener {
         void onWidgetUpdate(Widget aWidget);
     }
+    interface PermissionListener {
+        void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults);
+    }
     int newWidgetHandle();
     void addWidget(Widget aWidget);
     void updateWidget(Widget aWidget);
@@ -22,4 +25,6 @@ public interface WidgetManagerDelegate {
     void setBrowserSize(float targetWidth, float targetHeight);
     void keyboardDismissed();
     void updateEnvironment();
+    void addPermissionListener(PermissionListener aListener);
+    void removePermissionListener(PermissionListener aListener);
 }

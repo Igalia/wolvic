@@ -19,6 +19,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
+import com.mozilla.speechlibrary.MozillaSpeechService;
 import org.mozilla.gecko.GeckoVRManager;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.audio.VRAudioTheme;
@@ -69,6 +70,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     TrayWidget mTray;
     PermissionDelegate mPermissionDelegate;
     LinkedList<WidgetManagerDelegate.Listener> mWidgetEventListeners;
+    LinkedList<WidgetManagerDelegate.PermissionListener> mPermissionListeners;
     LinkedList<Runnable> mBackHandlers;
     private boolean mIsPresentingImmersive = false;
     private Thread mUiThread;
@@ -84,6 +86,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mLastGesture = NoGesture;
         super.onCreate(savedInstanceState);
 
+        mWidgetEventListeners = new LinkedList<>();
+        mPermissionListeners = new LinkedList<>();
+        mBackHandlers = new LinkedList<>();
+
         mWidgets = new HashMap<>();
         mWidgetContainer = new FrameLayout(this);
         mWidgetContainer.getViewTreeObserver().addOnGlobalFocusChangeListener(new ViewTreeObserver.OnGlobalFocusChangeListener() {
@@ -96,8 +102,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         });
 
         mPermissionDelegate = new PermissionDelegate(this, this);
-        mWidgetEventListeners = new LinkedList<>();
-        mBackHandlers = new LinkedList<>();
 
         mAudioEngine = new AudioEngine(this, new VRAudioTheme());
         mAudioEngine.preloadAsync(new Runnable() {
@@ -623,6 +627,18 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
+    public void addPermissionListener(PermissionListener aListener) {
+        if (!mPermissionListeners.contains(aListener)) {
+            mPermissionListeners.add(aListener);
+        }
+    }
+
+    @Override
+    public void removePermissionListener(PermissionListener aListener) {
+        mPermissionListeners.remove(aListener);
+    }
+
+    @Override
     public void pushBackHandler(Runnable aRunnable) {
         mBackHandlers.addLast(aRunnable);
     }
@@ -696,8 +712,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (mPermissionDelegate != null) {
-            mPermissionDelegate.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        for (PermissionListener listener : mPermissionListeners) {
+            listener.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 

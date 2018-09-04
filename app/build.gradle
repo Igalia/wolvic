@@ -188,6 +188,7 @@ dependencies {
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.google.vr:sdk-audio:1.160.0'
     implementation "org.mozilla.components:telemetry:0.10"
+    implementation "com.github.mozilla:mozillaspeechlibrary:1.0.4"
 }
 
 if (findProject(':wavesdk')) {

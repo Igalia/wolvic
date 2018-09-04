@@ -52,4 +52,11 @@
     <string name="developer_options_env_cave">Cave</string>
     <string name="on">ON</string>
     <string name="off">OFF</string>
+    <string name="voice_search_start_1">What would you like to</string>
+    <string name="voice_search_start_2">search on the web?</string>
+    <string name="voice_search_example">Example: Please say, \"360 videos, weather, news…\"</string>
+    <string name="voice_search_decoding">Searching…</string>
+    <string name="voice_search_error">Sorry! I couldn\'t understand.</string>
+    <string name="voice_search_try_again">Please try again.</string>
+    <string name="voice_search_permission_1">Please allow microphone access to use the voice search.</string>
 </resources>

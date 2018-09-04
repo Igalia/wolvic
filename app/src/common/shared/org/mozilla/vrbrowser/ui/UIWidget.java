@@ -275,12 +275,14 @@ public abstract class UIWidget extends FrameLayout implements Widget {
         if (child != null) {
             child.hide();
             mChildren.remove(aChildId);
+            child.releaseWidget();
         }
     }
 
     protected void removeAllChildren() {
         for (UIWidget child : mChildren.values()) {
             child.hide();
+            child.releaseWidget();
         }
         mChildren.clear();
     }

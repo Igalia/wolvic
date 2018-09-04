@@ -23,8 +23,13 @@ import org.mozilla.vrbrowser.audio.AudioEngine;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class NavigationBarWidget extends UIWidget implements GeckoSession.NavigationDelegate, GeckoSession.ProgressDelegate, GeckoSession.ContentDelegate, WidgetManagerDelegate.Listener, SessionStore.SessionChangeListener {
+public class NavigationBarWidget extends UIWidget implements GeckoSession.NavigationDelegate,
+        GeckoSession.ProgressDelegate, GeckoSession.ContentDelegate,
+        WidgetManagerDelegate.Listener, SessionStore.SessionChangeListener,
+        NavigationURLBar.NavigationURLBarDelegate, VoiceSearchWidget.VoiceSearchDelegate {
+
     private static final String LOGTAG = "VRB";
+
     private AudioEngine mAudio;
     private UIButton mBackButton;
     private UIButton mForwardButton;
@@ -52,6 +57,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private ArrayList<CustomUIButton> mButtons;
     private PointF mLastBrowserSize;
     private int mURLBarLayoutIndex;
+    private VoiceSearchWidget mVoiceSearchWidget;
 
     public NavigationBarWidget(Context aContext) {
         super(aContext);
@@ -238,10 +244,15 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
                 mFocusEnterButton, mFocusExitButton, mResizeEnterButton, mResizeExitButton,
                 mPreset0, mPreset1, mPreset2, mPreset3));
 
+        mURLBar.setDelegate(this);
+
         SessionStore.get().addNavigationListener(this);
         SessionStore.get().addProgressListener(this);
         SessionStore.get().addContentListener(this);
         mWidgetManager.addListener(this);
+
+        mVoiceSearchWidget = createChild(VoiceSearchWidget.class, false);
+        mVoiceSearchWidget.setDelegate(this);
 
         SessionStore.get().addSessionChangeListener(this);
     }
@@ -588,5 +599,27 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         for (CustomUIButton button : mButtons) {
             button.setPrivateMode(isPrivateMode);
         }
+    }
+
+    @Override
+    public void OnVoiceSearchClicked() {
+        if (!mVoiceSearchWidget.getPlacement().visible) {
+            mVoiceSearchWidget.show();
+        }
+    }
+
+    @Override
+    public void OnVoiceSearchResult(String transcription, float confidance) {
+        mURLBar.handleURLEdit(transcription);
+    }
+
+    @Override
+    public void OnVoiceSearchCanceled() {
+        // Nothing to do yet
+    }
+
+    @Override
+    public void OnVoiceSearchError() {
+        // Nothing to do yet
     }
 }

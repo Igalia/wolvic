@@ -73,4 +73,18 @@
     <dimen name="developer_options_width">470dp</dimen>
     <dimen name="developer_options_height">380dp</dimen>
     <dimen name="developer_options_font_size">11sp</dimen>
+
+    <!-- Voice search panel -->
+    <dimen name="voice_search_width">385dp</dimen>
+    <dimen name="voice_search_height">250dp</dimen>
+    <dimen name="voice_search_padding">40dp</dimen>
+    <item name="voice_search_world_z" format="float" type="dimen">0.04</item>
+
+    <!-- Voice search input -->
+    <dimen name="voice_search_input_width">305dp</dimen>
+    <dimen name="voice_search_input_height">65dp</dimen>
+
+    <!-- Close button -->
+    <dimen name="close_button_width">36dp</dimen>
+    <dimen name="close_button_height">36dp</dimen>
 </resources>
