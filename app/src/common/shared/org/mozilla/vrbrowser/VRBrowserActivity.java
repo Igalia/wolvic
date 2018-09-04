@@ -466,8 +466,21 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Keep
+    @SuppressWarnings("unused")
     String getStorageAbsolutePath() {
         return getExternalFilesDir(null).getAbsolutePath();
+    }
+
+    @Keep
+    @SuppressWarnings("unused")
+    public boolean isOverrideEnvPathEnabled() {
+        return SettingsStore.getInstance(this).isEnvironmentOverrideEnabled();
+    }
+
+    @Keep
+    @SuppressWarnings("unused")
+    public String getActiveEnvironment() {
+        return SettingsStore.getInstance(this).getEnvironment();
     }
 
     void createOffscreenDisplay() {
@@ -671,16 +684,21 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
+    public void updateEnvironment() {
+        queueRunnable(new Runnable() {
+            @Override
+            public void run() {
+                updateEnvironmentNative();
+            }
+        });
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (mPermissionDelegate != null) {
             mPermissionDelegate.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
-    }
-
-    //Keep
-    public boolean isOverrideEnvPathEnabled() {
-        return SettingsStore.getInstance(this).isEnvironmentOverrideEnabled();
     }
 
     private native void addWidgetNative(int aHandle, WidgetPlacement aPlacement);
@@ -693,4 +711,5 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private native void setTemporaryFilePath(String aPath);
     private native void exitImmersiveNative();
     private native void workaroundGeckoSigAction();
+    private native void updateEnvironmentNative();
 }

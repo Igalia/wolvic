@@ -77,7 +77,7 @@ static const float kWorldDPIRatio = 2.0f/720.0f;
 #if SPACE_THEME == 1
   static const std::string CubemapDay = "cubemap/space";
 #else
-  static const std::string CubemapDay = "cubemap/meadow/day";
+  static const std::string CubemapDay = "cubemap/day";
 #endif
 
 class SurfaceObserver;
@@ -505,7 +505,7 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
     m.controllers->InitializePointer();
     m.loadingAnimation->LoadModels(m.loader);
     m.rootController->AddNode(m.controllers->GetRoot());
-    std::string skyboxPath = CubemapDay;
+    std::string skyboxPath = VRBrowser::GetActiveEnvironment();
     if (VRBrowser::isOverrideEnvPathEnabled()) {
       std::string storagePath = VRBrowser::GetStorageAbsolutePath(INJECT_SKYBOX_PATH);
       if (std::ifstream(storagePath)) {
@@ -515,7 +515,8 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
 #if !defined(SNAPDRAGONVR)
     m.skybox = CreateSkyBox(skyboxPath.c_str());
     m.rootOpaqueParent->AddNode(m.skybox);
-    CreateFloor();
+    // Don't load the env model, we are going for skyboxes in v1.0
+//    CreateFloor();
 #endif
     m.modelsLoaded = true;
   }
@@ -639,6 +640,16 @@ BrowserWorld::SetTemporaryFilePath(const std::string& aPath) {
   ASSERT_ON_RENDER_THREAD();
   VRB_LOG("Got temp path: %s", aPath.c_str());
   m.context->GetDataCache()->SetCachePath(aPath);
+}
+
+void
+BrowserWorld::UpdateEnvironment() {
+  ASSERT_ON_RENDER_THREAD();
+  std::string env = VRBrowser::GetActiveEnvironment();
+  VRB_LOG("Setting environment: %s", env.c_str());
+  m.rootOpaqueParent->RemoveNode(*m.skybox);
+  m.skybox = CreateSkyBox(env.c_str());
+  m.rootOpaqueParent->AddNode(m.skybox);
 }
 
 void
@@ -1154,6 +1165,11 @@ JNI_METHOD(void, workaroundGeckoSigAction)
   } else {
     VRB_ERROR("Failed to set MOZ_DISABLE_SIG_HANDLER");
   }
+}
+
+JNI_METHOD(void, updateEnvironmentNative)
+(JNIEnv* aEnv, jobject) {
+  crow::BrowserWorld::Instance().UpdateEnvironment();
 }
 
 } // extern "C"

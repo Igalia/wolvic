@@ -16,6 +16,7 @@
     <string name="settings_key_display_dpi">settings_display_dpi</string>
     <string name="settings_key_max_window_width">settings_max_window_width</string>
     <string name="settings_key_max_window_height">settings_max_window_height</string>
+    <string name="settings_key_env">settings_env</string>
     <string name="private_policy_url">https://www.mozilla.org/privacy/firefox/</string>
     <string name="private_report_url">https://mixedreality.mozilla.org/fxr/report?src=browser-fxr&amp;label=browser-firefox-reality&amp;url=%1$s</string>
 

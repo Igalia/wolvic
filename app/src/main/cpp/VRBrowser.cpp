@@ -34,6 +34,8 @@ static const char* kGetStorageAbsolutePathName = "getStorageAbsolutePath";
 static const char* kGetStorageAbsolutePathSignature = "()Ljava/lang/String;";
 static const char* kIsOverrideEnvPathEnabledName = "isOverrideEnvPathEnabled";
 static const char* kIsOverrideEnvPathEnabledSignature = "()Z";
+static const char* kGetActiveEnvironment = "getActiveEnvironment";
+static const char* kGetActiveEnvironmentSignature = "()Ljava/lang/String;";
 
 static JNIEnv* sEnv;
 static jobject sActivity;
@@ -49,6 +51,7 @@ static jmethodID sPauseCompositor;
 static jmethodID sResumeCompositor;
 static jmethodID sGetStorageAbsolutePath;
 static jmethodID sIsOverrideEnvPathEnabled;
+static jmethodID sGetActiveEnvironment;
 }
 
 namespace crow {
@@ -80,6 +83,7 @@ VRBrowser::InitializeJava(JNIEnv* aEnv, jobject aActivity) {
   sResumeCompositor = FindJNIMethodID(sEnv, browserClass, kResumeCompositorName, kResumeCompositorSignature);
   sGetStorageAbsolutePath = FindJNIMethodID(sEnv, browserClass, kGetStorageAbsolutePathName, kGetStorageAbsolutePathSignature);
   sIsOverrideEnvPathEnabled = FindJNIMethodID(sEnv, browserClass, kIsOverrideEnvPathEnabledName, kIsOverrideEnvPathEnabledSignature);
+  sGetActiveEnvironment = FindJNIMethodID(sEnv, browserClass, kGetActiveEnvironment, kGetActiveEnvironmentSignature);
 }
 
 void
@@ -202,6 +206,22 @@ VRBrowser::isOverrideEnvPathEnabled() {
   CheckJNIException(sEnv, __FUNCTION__);
 
   return jBool;
+}
+
+std::string
+VRBrowser::GetActiveEnvironment() {
+  if (!ValidateMethodID(sEnv, sActivity, sGetActiveEnvironment, __FUNCTION__)) { return ""; }
+  jstring jStr = (jstring) sEnv->CallObjectMethod(sActivity, sGetActiveEnvironment);
+  CheckJNIException(sEnv, __FUNCTION__);
+  if (!jStr) {
+    return "cubemap/day";
+  }
+
+  const char *cstr = sEnv->GetStringUTFChars(jStr, nullptr);
+  std::string str = std::string(cstr);
+  sEnv->ReleaseStringUTFChars(jStr, cstr);
+
+  return "cubemap/" + str;
 }
 
 } // namespace crow

@@ -47,6 +47,9 @@
     <string name="developer_options_ua_vr">VR</string>
     <string name="developer_options_reset">Reset Developer Settings</string>
     <string name="developer_options_reset_button">Reset</string>
+    <string name="developer_options_env">Environment</string>
+    <string name="developer_options_env_meadow">Meadow</string>
+    <string name="developer_options_env_cave">Cave</string>
     <string name="on">ON</string>
     <string name="off">OFF</string>
 </resources>

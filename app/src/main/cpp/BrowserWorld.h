@@ -37,6 +37,7 @@ public:
   void ShutdownGL();
   void Draw();
   void SetTemporaryFilePath(const std::string& aPath);
+  void UpdateEnvironment();
   void SetSurfaceTexture(const std::string& aName, jobject& aSurface);
   void AddWidget(int32_t aHandle, const WidgetPlacementPtr& placement);
   void UpdateWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement);

@@ -21,4 +21,5 @@ public interface WidgetManagerDelegate {
     void setTrayVisible(boolean visible);
     void setBrowserSize(float targetWidth, float targetHeight);
     void keyboardDismissed();
+    void updateEnvironment();
 }

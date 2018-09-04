@@ -42,6 +42,7 @@ public class SettingsStore {
     public final static int DISPLAY_DPI_DEFAULT = 96;
     public final static int MAX_WINDOW_WIDTH_DEFAULT = 800;
     public final static int MAX_WINDOW_HEIGHT_DEFAULT = 450;
+    public final static String ENV_DEFAULT = "meadow";
 
     // Enable telemetry by default (opt-out).
     private final static boolean enableCrashReportingByDefault = false;
@@ -228,6 +229,17 @@ public class SettingsStore {
     public void setMaxWindowHeight(int aMaxWindowHeight) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putInt(mContext.getString(R.string.settings_key_max_window_height), aMaxWindowHeight);
+        editor.commit();
+    }
+
+    public String getEnvironment() {
+        return mPrefs.getString(
+                mContext.getString(R.string.settings_key_env), ENV_DEFAULT);
+    }
+
+    public void setEnvironment(String aEnv) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putString(mContext.getString(R.string.settings_key_env), aEnv);
         editor.commit();
     }
 

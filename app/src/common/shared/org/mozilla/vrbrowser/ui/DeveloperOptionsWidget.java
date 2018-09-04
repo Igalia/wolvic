@@ -45,6 +45,9 @@ public class DeveloperOptionsWidget extends UIWidget {
     private RadioGroup mEventsRadio;
     private RadioButton mTouchRadio;
     private RadioButton mMouseRadio;
+    private RadioGroup mEnvsRadio;
+    private RadioButton mMeadowRadio;
+    private RadioButton mCaveRadio;
     private TextView mDensityButton;
     private TextView mDensityText;
     private DeveloperOptionsEditText mDensityEdit;
@@ -118,6 +121,16 @@ public class DeveloperOptionsWidget extends UIWidget {
         mEnvOverrideSwitch.setOnCheckedChangeListener(mEnvOverrideListener);
         mEnvOverrideSwitch.setSoundEffectsEnabled(false);
         setEnvOverride(SettingsStore.getInstance(getContext()).isEnvironmentOverrideEnabled());
+
+        String env = SettingsStore.getInstance(getContext()).getEnvironment();
+        mEnvsRadio = findViewById(R.id.radioEnv);
+        mEnvsRadio.setSoundEffectsEnabled(false);
+        mMeadowRadio = findViewById(R.id.radioMeadow);
+        mMeadowRadio.setSoundEffectsEnabled(false);
+        mCaveRadio = findViewById(R.id.radioCave);
+        mCaveRadio.setSoundEffectsEnabled(false);
+        mEnvsRadio.setOnCheckedChangeListener(mEnvsListener);
+        setEnv(env, false);
 
         mMultiprocessSwitchText = findViewById(R.id.developer_options_multiprocess_switch_text);
         mMultiprocessSwitch = findViewById(R.id.developer_options_multiprocess_switch);
@@ -363,6 +376,18 @@ public class DeveloperOptionsWidget extends UIWidget {
         }
     };
 
+    private RadioGroup.OnCheckedChangeListener mEnvsListener = new RadioGroup.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
+
+            setEnv(getEnvFromRadio(checkedId), true);
+        }
+    };
+
+
     private OnClickListener mDensityListener = new OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -489,8 +514,11 @@ public class DeveloperOptionsWidget extends UIWidget {
                 restart = true;
             }
 
-            setMultiprocess(SettingsStore.MULTIPROCESS_DEFAULT, true);
+            if (!getEnvFromRadio(mEnvsRadio.getCheckedRadioButtonId()).equals(SettingsStore.ENV_DEFAULT)) {
+                setEnv(SettingsStore.ENV_DEFAULT, true);
+            }
 
+            setMultiprocess(SettingsStore.MULTIPROCESS_DEFAULT, true);
             setUaMode(SettingsStore.UA_MODE_DEFAULT, true);
             setInputMode(SettingsStore.INPUT_MODE_DEFAULT);
             restart = restart | setDisplayDensity(SettingsStore.DISPLAY_DENSITY_DEFAULT);
@@ -591,6 +619,43 @@ public class DeveloperOptionsWidget extends UIWidget {
 
         if (doApply) {
             SessionStore.get().setUaMode(uaMode.ordinal());
+        }
+    }
+
+    private String getEnvFromRadio(int checkedId) {
+        String env;
+        switch (checkedId) {
+            case R.id.radioMeadow:
+                env = "meadow";
+                break;
+            case  R.id.radioCave:
+                env = "cave";
+                break;
+            default:
+                env = "meadow";
+        }
+
+        return env;
+    }
+
+    private void setEnv(String env, boolean doApply) {
+        mEnvsRadio.setOnCheckedChangeListener(null);
+
+        if (env == "meadow") {
+            mCaveRadio.setChecked(false);
+            mMeadowRadio.setChecked(true);
+
+        } else if (env == "cave") {
+            mCaveRadio.setChecked(true);
+            mMeadowRadio.setChecked(false);
+        }
+
+        mEnvsRadio.setOnCheckedChangeListener(mEnvsListener);
+
+        SettingsStore.getInstance(getContext()).setEnvironment(env);
+
+        if (doApply) {
+            mWidgetManager.updateEnvironment();
         }
     }
 
