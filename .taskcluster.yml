@@ -125,7 +125,7 @@ tasks:
           && . tools/taskcluster/get_third_party.sh
           && cp tools/gradle/taskcluster.properties ./user.properties
           && ./gradlew --no-daemon clean assembleGooglevr assembleNoapi assembleWavevr assembleSvr assembleOculusvr
-          && . tools/taskcluster/sign.sh release-signing-token
+          && . tools/taskcluster/sign.sh release-signing-token -r
           && . tools/taskcluster/upload_symbols.sh
       artifacts:
         'public':

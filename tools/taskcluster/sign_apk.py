@@ -13,8 +13,9 @@ import sys
 
 def main(name, argv):
    token = ''
+   sign_url = 'https://autograph-edge.stage.mozaws.net/sign'
    try:
-      opts, args = getopt.getopt(argv,"ht:")
+      opts, args = getopt.getopt(argv,"ht:r")
    except getopt.GetoptError:
       print name + '-s <key store file> -p <key store password file> -k <key password file> -a <key alias>'
       sys.exit(2)
@@ -24,6 +25,8 @@ def main(name, argv):
          sys.exit()
       elif opt in ("-t"):
          token = arg
+      elif opt in ('-r'):
+         sign_url = 'https://autograph-edge.prod.mozaws.net/sign'
 
    build_output_path = './app/build/outputs/apk'
 
@@ -40,7 +43,7 @@ def main(name, argv):
             "-F", "input=@" + apk,
             "-o", apk.replace('unsigned', 'signed'),
             "-H", "Authorization: " + token,
-            "https://autograph-edge.prod.mozaws.net/sign"])
+            sign_url])
 
    # Create folder for saving build artifacts
    artifacts_path = './builds'
