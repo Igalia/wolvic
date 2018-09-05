@@ -177,8 +177,8 @@ struct BrowserWorld::State {
     light = Light::Create(create);
     rootOpaqueParent = Group::Create(create);
     rootOpaqueParent->AddNode(rootOpaque);
-    rootOpaque->AddLight(light);
-    rootTransparent->AddLight(light);
+    //rootOpaque->AddLight(light);
+    //rootTransparent->AddLight(light);
     rootController->AddLight(light);
     cullVisitor = CullVisitor::Create(create);
     drawList = DrawableList::Create(create);

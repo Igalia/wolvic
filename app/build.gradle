@@ -203,10 +203,9 @@ if (findProject(':geckoview-local')) {
     }
 } else {
     dependencies {
-        // Pining GeckoView version until https://bugzilla.mozilla.org/show_bug.cgi?id=1486831
-        // is resolved. To see what the latest geckoview-nightly version is go here:
-        // https://maven.mozilla.org/?prefix=maven2/org/mozilla/geckoview-nightly-armeabi-v7a/
-        implementation 'org.mozilla:geckoview-nightly-armeabi-v7a:63.0.20180829100130'
+        // To see what the latest geckoview-nightly version is go here:
+        // https://maven.mozilla.org/?prefix=maven2/org/mozilla/geckoview/geckoview-nightly-armeabi-v7a/
+        implementation 'org.mozilla.geckoview:geckoview-nightly-armeabi-v7a:64.0.20180905100117'
     }
 }
 
