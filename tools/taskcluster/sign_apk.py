@@ -12,27 +12,18 @@ import subprocess
 import sys
 
 def main(name, argv):
-   store = ''
-   store_password = ''
-   key_password = ''
-   alias_name = '';
+   token = ''
    try:
-      opts, args = getopt.getopt(argv,"hs:p:k:a:")
+      opts, args = getopt.getopt(argv,"ht:")
    except getopt.GetoptError:
       print name + '-s <key store file> -p <key store password file> -k <key password file> -a <key alias>'
       sys.exit(2)
    for opt, arg in opts:
       if opt == '-h':
-         print name + '-s <key store file> -p <key store password file> -k <key password file> -a <key alias>'
+         print name + '-t <token file name>'
          sys.exit()
-      elif opt in ("-s"):
-         store = arg
-      elif opt in ("-p"):
-         store_password = arg
-      elif opt in ("-k"):
-         key_password = arg
-      elif opt in ("-a"):
-         alias_name = arg
+      elif opt in ("-t"):
+         token = arg
 
    build_output_path = './app/build/outputs/apk'
 
@@ -45,16 +36,11 @@ def main(name, argv):
    for apk in glob.glob(build_output_path + "/*/*/*-aligned.apk"):
       print "Signing", apk
       print subprocess.check_output([
-           "apksigner", "sign",
-           "--v1-signing-enabled", "true",
-           "--v2-signing-enabled", "false",
-           "--ks", store,
-           "--ks-key-alias", alias_name,
-           "--ks-pass", "file:" + store_password,
-           "--key-pass", "file:" + key_password,
-           "-v",
-           "--out", apk.replace('unsigned', 'signed'),
-           apk])
+           "curl",
+            "-F", "input=@" + apk,
+            "-o", apk.replace('unsigned', 'signed'),
+            "-H", "Authorization: " + token,
+            "https://autograph-edge.prod.mozaws.net/sign"])
 
    # Create folder for saving build artifacts
    artifacts_path = './builds'

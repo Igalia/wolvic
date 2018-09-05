@@ -56,12 +56,10 @@ tasks:
           - master
     scopes:
       - "secrets:get:project/firefoxreality/github-deploy-key"
-      - "secrets:get:project/firefoxreality/preview-keystore"
-      - "secrets:get:project/firefoxreality/keystore-password"
-      - "secrets:get:project/firefoxreality/key-password"
+      - "secrets:get:project/firefoxreality/staging-signing-token"
       - "secrets:get:project/firefoxreality/symbols-token"
     payload:
-      maxRunTime: 3600
+      maxRunTime: 5000
       deadline: "{{ '2 hours' | $fromNow }}"
       image: 'mozillamixedreality/firefoxreality'
       features:
@@ -78,7 +76,7 @@ tasks:
           && . tools/taskcluster/get_third_party.sh
           && cp tools/gradle/taskcluster.properties ./user.properties
           && ./gradlew --no-daemon clean assembleGooglevr assembleNoapi assembleWavevr assembleSvr assembleOculusvr
-          && . tools/taskcluster/sign.sh
+          && . tools/taskcluster/sign.sh staging-signing-token
           && . tools/taskcluster/upload_symbols.sh
       artifacts:
         'public':
