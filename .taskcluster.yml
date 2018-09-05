@@ -45,7 +45,6 @@ tasks:
 #
 # Triggered whenever something is pushed/merged to the master branch.
 ###############################################################################
-#          && ./gradlew --no-daemon clean assembleGooglevr assembleNoapi assembleWavevr assembleSvr assembleOculusvr
   - provisionerId: '{{ taskcluster.docker.provisionerId }}'
     workerType: '{{ taskcluster.docker.workerType }}'
     extra:
@@ -76,7 +75,7 @@ tasks:
           && git submodule update
           && . tools/taskcluster/get_third_party.sh
           && cp tools/gradle/taskcluster.properties ./user.properties
-          && ./gradlew --no-daemon clean assembleOculusvr
+          && ./gradlew --no-daemon clean assembleGooglevr assembleNoapi assembleWavevr assembleSvr assembleOculusvr
           && . tools/taskcluster/sign.sh staging-signing-token
           && . tools/taskcluster/upload_symbols.sh
       artifacts:
