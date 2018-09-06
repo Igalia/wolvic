@@ -234,8 +234,17 @@ public class SettingsWidget extends UIWidget {
         }
 
         try {
-            // In case the user had no active sessions when reporting just leave the URL field empty
-            url = (url != null) ? URLEncoder.encode(url, "UTF-8") : "";
+            if (url == null) {
+                // In case the user had no active sessions when reporting, just leave the URL field empty.
+                url = "";
+            } else if (url.startsWith("jar:") || url.startsWith("resource:") || url.startsWith("about:")) {
+                url = "";
+            } else if (SessionStore.get().isHomeUri(url)) {
+                // Use the original URL (without any hash).
+                url = SessionStore.get().getHomeUri();
+            }
+
+            url = URLEncoder.encode(url, "UTF-8");
 
         } catch (UnsupportedEncodingException e) {
             Log.e(LOGTAG, "Cannot encode URL");
