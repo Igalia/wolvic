@@ -2,15 +2,11 @@
 
 The goal of the Firefox Reality project is to create a full-featured browser exclusively for *standalone* AR and VR headsets.
 
-_Warning:_ We have a long way to go before this project can be considered a "full-featured" browser, so if you build from this repo you can expect:
-
-- features will be missing or stubbed out
-- slow performance on current generation hardware (we're developing on pre-release headsets!)
-- temporary UI that will be replaced as new designs land
-
 You can find us on Twitter [@MozillaReality](https://twitter.com/mozillareality) and at [mixedreality@mozilla.com](mailto:mixedreality@mozilla.com).
 
 ## Setup instructions
+
+*Make sure you are using Android NDK r17b*
 
 *Clone FirefoxReality.*
 
