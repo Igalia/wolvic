@@ -204,6 +204,14 @@
                                      android:text="@string/developer_options_env_cave"
                                      android:paddingStart="10dp"
                                      android:paddingEnd="10dp"/>
+                        <RadioButton android:id="@+id/radioVoid"
+                                     android:layout_width="wrap_content"
+                                     android:layout_height="wrap_content"
+                                     android:background="@android:color/transparent"
+                                     android:button="@drawable/radio"
+                                     android:text="@string/developer_options_env_void"
+                                     android:paddingStart="10dp"
+                                     android:paddingEnd="10dp"/>
                     </RadioGroup>
                 </RelativeLayout>
                 <View

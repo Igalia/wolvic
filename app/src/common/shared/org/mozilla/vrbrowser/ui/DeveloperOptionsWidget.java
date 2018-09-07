@@ -48,6 +48,7 @@ public class DeveloperOptionsWidget extends UIWidget {
     private RadioGroup mEnvsRadio;
     private RadioButton mMeadowRadio;
     private RadioButton mCaveRadio;
+    private RadioButton mVoidRadio;
     private TextView mDensityButton;
     private TextView mDensityText;
     private DeveloperOptionsEditText mDensityEdit;
@@ -129,6 +130,8 @@ public class DeveloperOptionsWidget extends UIWidget {
         mMeadowRadio.setSoundEffectsEnabled(false);
         mCaveRadio = findViewById(R.id.radioCave);
         mCaveRadio.setSoundEffectsEnabled(false);
+        mVoidRadio = findViewById(R.id.radioVoid);
+        mVoidRadio.setSoundEffectsEnabled(false);
         mEnvsRadio.setOnCheckedChangeListener(mEnvsListener);
         setEnv(env, false);
 
@@ -631,6 +634,9 @@ public class DeveloperOptionsWidget extends UIWidget {
             case  R.id.radioCave:
                 env = "cave";
                 break;
+            case  R.id.radioVoid:
+                env = "void";
+                break;
             default:
                 env = "meadow";
         }
@@ -641,13 +647,20 @@ public class DeveloperOptionsWidget extends UIWidget {
     private void setEnv(String env, boolean doApply) {
         mEnvsRadio.setOnCheckedChangeListener(null);
 
-        if (env == "meadow") {
+        if (env.equalsIgnoreCase("meadow")) {
             mCaveRadio.setChecked(false);
             mMeadowRadio.setChecked(true);
+            mVoidRadio.setChecked(false);
 
-        } else if (env == "cave") {
+        } else if (env.equalsIgnoreCase("cave")) {
             mCaveRadio.setChecked(true);
             mMeadowRadio.setChecked(false);
+            mVoidRadio.setChecked(false);
+
+        } else if (env.equalsIgnoreCase("void")) {
+            mCaveRadio.setChecked(false);
+            mMeadowRadio.setChecked(false);
+            mVoidRadio.setChecked(true);
         }
 
         mEnvsRadio.setOnCheckedChangeListener(mEnvsListener);
