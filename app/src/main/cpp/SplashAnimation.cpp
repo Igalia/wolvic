@@ -29,7 +29,8 @@ struct SplashAnimation::State {
   QuadPtr logo;
   timespec start;
   float time;
-  State(): time(-1)
+  bool firstDraw;
+  State(): time(-1), firstDraw(true)
   {
   }
 
@@ -72,9 +73,13 @@ SplashAnimation::Update(const vrb::Matrix& aHeadTransform) {
   if (!m.logo) {
     return false;
   }
+  vrb::Vector position = aHeadTransform.GetTranslation();
+  if (m.firstDraw && position.Magnitude() > 0.1f) {
+    static const vrb::Vector offset(0.0f, -0.2f, -1.5f);
+    m.logo->GetTransformNode()->SetTransform(vrb::Matrix::Position(position + offset));
+    m.firstDraw = false;
+  }
   m.UpdateTime();
-  vrb::Matrix transform = aHeadTransform.PostMultiply(vrb::Matrix::Position(vrb::Vector(0.0f, 0.0f, -1.5f)));
-  m.logo->GetTransformNode()->SetTransform(transform);
   if (m.time >= SPLASH_SECONDS && m.time <= (SPLASH_SECONDS + FADE_OUT_TIME)) {
     float t = 1.0f - (m.time - SPLASH_SECONDS) / FADE_OUT_TIME;
     m.logo->GetGeometry()->GetRenderState()->SetTintColor(vrb::Color(t, t, t, 1.0f));
