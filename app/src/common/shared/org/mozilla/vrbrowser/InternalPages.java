@@ -175,8 +175,8 @@ public class InternalPages {
                     }
                     case NavigationDelegate.ERROR_SAFEBROWSING_PHISHING_URI: {
                         return LocalizedResources.create(
-                                R.string.error_safe_phising_uri_title,
-                                R.string.error_safe_phising_uri_message);
+                                R.string.error_safe_phishing_uri_title,
+                                R.string.error_safe_phishing_uri_message);
                     }
                 }
             }

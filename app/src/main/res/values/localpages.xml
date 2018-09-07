@@ -203,8 +203,8 @@
 <p>The site at %1$s has been reported as a potentially harmful site and has been blocked based on your security preferences.</p>
      ]]></string>
 
-    <string name="error_safe_phising_uri_title">Deceptive site issue</string>
-    <string name="error_safe_phising_uri_message"><![CDATA[
+    <string name="error_safe_phishing_uri_title">Deceptive site issue</string>
+    <string name="error_safe_phishing_uri_message"><![CDATA[
 <p>This web page at %1$s has been reported as a deceptive site and has been blocked based on your security preferences.</p>
      ]]></string>
 
