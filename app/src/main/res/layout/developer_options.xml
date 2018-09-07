@@ -296,8 +296,7 @@
                                      android:background="@android:color/transparent"
                                      android:button="@drawable/radio"
                                      android:text="@string/developer_options_ua_vr"
-                                     android:paddingStart="10dp"
-                                     android:checked="true"/>
+                                     android:paddingStart="10dp"/>
                     </RadioGroup>
                 </RelativeLayout>
                 <View
