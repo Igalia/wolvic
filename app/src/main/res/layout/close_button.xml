@@ -8,9 +8,9 @@
         android:id="@+id/closeButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:tintColorList="@drawable/keyboard_button_icon"
+        app:tintColorList="@drawable/dialog_close_button_icon_color"
         android:padding="10dp"
         android:src="@drawable/ic_icon_exit"
         android:scaleType="fitCenter"
-        android:background="@drawable/keyboard_key_close_background"/>
+        android:background="@drawable/dialog_close_button_background"/>
 </LinearLayout>
