@@ -36,6 +36,8 @@ static const char* kIsOverrideEnvPathEnabledName = "isOverrideEnvPathEnabled";
 static const char* kIsOverrideEnvPathEnabledSignature = "()Z";
 static const char* kGetActiveEnvironment = "getActiveEnvironment";
 static const char* kGetActiveEnvironmentSignature = "()Ljava/lang/String;";
+static const char* kGetPointerColor = "getPointerColor";
+static const char* kGetPointerColorSignature = "()I";
 
 static JNIEnv* sEnv;
 static jobject sActivity;
@@ -52,6 +54,7 @@ static jmethodID sResumeCompositor;
 static jmethodID sGetStorageAbsolutePath;
 static jmethodID sIsOverrideEnvPathEnabled;
 static jmethodID sGetActiveEnvironment;
+static jmethodID sGetPointerColor;
 }
 
 namespace crow {
@@ -84,6 +87,7 @@ VRBrowser::InitializeJava(JNIEnv* aEnv, jobject aActivity) {
   sGetStorageAbsolutePath = FindJNIMethodID(sEnv, browserClass, kGetStorageAbsolutePathName, kGetStorageAbsolutePathSignature);
   sIsOverrideEnvPathEnabled = FindJNIMethodID(sEnv, browserClass, kIsOverrideEnvPathEnabledName, kIsOverrideEnvPathEnabledSignature);
   sGetActiveEnvironment = FindJNIMethodID(sEnv, browserClass, kGetActiveEnvironment, kGetActiveEnvironmentSignature);
+  sGetPointerColor = FindJNIMethodID(sEnv, browserClass, kGetPointerColor, kGetPointerColorSignature);
 }
 
 void
@@ -222,6 +226,15 @@ VRBrowser::GetActiveEnvironment() {
   sEnv->ReleaseStringUTFChars(jStr, cstr);
 
   return "cubemap/" + str;
+}
+
+int32_t
+VRBrowser::GetPointerColor() {
+  if (!ValidateMethodID(sEnv, sActivity, sGetPointerColor, __FUNCTION__)) { return 16777215; }
+  jint jHexColor = (jint) sEnv->CallIntMethod(sActivity, sGetPointerColor);
+  CheckJNIException(sEnv, __FUNCTION__);
+
+  return (int32_t )jHexColor;
 }
 
 } // namespace crow

@@ -21,6 +21,9 @@
 #include "vrb/Vector.h"
 #include "vrb/VertexArray.h"
 
+#define POINTER_COLOR_OUTER vrb::Color(0.239f, 0.239f, 0.239f)
+#define POINTER_COLOR_INNER vrb::Color(1.0f, 1.0f, 1.0f)
+
 namespace crow {
 
 struct Widget::State {
@@ -119,10 +122,10 @@ struct Widget::State {
     vrb::GeometryPtr geometryOuter = createCircle(kResolution, radius + 0.08f, kScale, kOffset);
 
     vrb::RenderStatePtr state = vrb::RenderState::Create(create);
-    state->SetMaterial(vrb::Color(1.0f, 1.0f, 1.0f), vrb::Color(1.0f, 1.0f, 1.0f), vrb::Color(0.0f, 0.0f, 0.0f), 0.0f);
+    state->SetMaterial(POINTER_COLOR_INNER, POINTER_COLOR_INNER, vrb::Color(0.0f, 0.0f, 0.0f), 0.0f);
     geometry->SetRenderState(state);
     vrb::RenderStatePtr stateOuter = vrb::RenderState::Create(create);
-    stateOuter->SetMaterial(vrb::Color(0.0f, 0.0f, 0.0f), vrb::Color(0.0f, 0.0f, 0.0f), vrb::Color(0.0f, 0.0f, 0.0f), 0.0f);
+    stateOuter->SetMaterial(POINTER_COLOR_OUTER, POINTER_COLOR_OUTER, vrb::Color(0.0f, 0.0f, 0.0f), 0.0f);
     geometryOuter->SetRenderState(stateOuter);
     pointerScale = vrb::Transform::Create(create);
     pointerScale->SetTransform(vrb::Matrix::Identity());

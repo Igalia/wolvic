@@ -51,6 +51,9 @@
     <string name="developer_options_env_meadow">Meadow</string>
     <string name="developer_options_env_cave">Cave</string>
     <string name="developer_options_env_void">Void</string>
+    <string name="developer_options_pointer_color">Pointer Color</string>
+    <string name="developer_options_pointer_white">White</string>
+    <string name="developer_options_pointer_purple">Purple</string>
     <string name="on">ON</string>
     <string name="off">OFF</string>
     <string name="voice_search_start_1">What would you like to</string>

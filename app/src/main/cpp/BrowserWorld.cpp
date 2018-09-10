@@ -64,10 +64,6 @@ using namespace vrb;
 
 namespace {
 
-  static const vrb::Color kColorWhite = vrb::Color(1.0f, 1.0f, 1.0f);
-  static const vrb::Color kColorLavender = vrb::Color(0.76f, 0.49f, 0.98f);
-  static const vrb::Color kColorTangerine = vrb::Color(0.98f, 0.69f, 0.25f);
-
 static const int GestureSwipeLeft = 0;
 static const int GestureSwipeRight = 1;
 
@@ -341,33 +337,6 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
       VRBrowser::HandleMotionEvent(0, controller.index, JNI_FALSE, 0.0f, 0.0f);
       controller.widget = 0;
 
-    } else {
-      const bool pressed = controller.buttonState & ControllerDelegate::BUTTON_TRIGGER ||
-                           controller.buttonState & ControllerDelegate::BUTTON_TOUCHPAD;
-      const bool wasPressed = controller.lastButtonState & ControllerDelegate::BUTTON_TRIGGER ||
-                              controller.lastButtonState & ControllerDelegate::BUTTON_TOUCHPAD;
-      if (!pressed && wasPressed) {
-        colorIndex = colorIndex == 2 ? 0 : colorIndex+1;
-        switch (colorIndex) {
-          case 2:
-            for (WidgetPtr widget: widgets) {
-              widget->SetPointerColor(kColorLavender);
-            }
-            controllers->SetPointerColor(kColorLavender);
-            break;
-          case 1:
-            for (WidgetPtr widget: widgets) {
-              widget->SetPointerColor(kColorTangerine);
-            }
-            controllers->SetPointerColor(kColorTangerine);
-            break;
-          default:
-            for (WidgetPtr widget: widgets) {
-              widget->SetPointerColor(kColorWhite);
-            }
-            controllers->SetPointerColor(kColorWhite);
-        }
-      }
     }
     controller.lastButtonState = controller.buttonState;
   }
@@ -503,6 +472,7 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
       }
     }
     m.controllers->InitializePointer();
+    m.controllers->SetPointerColor(vrb::Color(VRBrowser::GetPointerColor()));
     m.loadingAnimation->LoadModels(m.loader);
     m.rootController->AddNode(m.controllers->GetRoot());
     std::string skyboxPath = VRBrowser::GetActiveEnvironment();
@@ -653,6 +623,19 @@ BrowserWorld::UpdateEnvironment() {
 }
 
 void
+BrowserWorld::UpdatePointerColor() {
+  ASSERT_ON_RENDER_THREAD();
+  int32_t color = VRBrowser::GetPointerColor();
+  VRB_LOG("Setting pointer color to: %d:", color);
+
+  for (const WidgetPtr& widget: m.widgets) {
+    widget->SetPointerColor(vrb::Color(color));
+  }
+  if (m.controllers)
+    m.controllers->SetPointerColor(vrb::Color(color));
+}
+
+void
 BrowserWorld::SetSurfaceTexture(const std::string& aName, jobject& aSurface) {
   ASSERT_ON_RENDER_THREAD();
   VRB_LOG("SetSurfaceTexture: %s", aName.c_str());
@@ -697,17 +680,7 @@ BrowserWorld::AddWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement) {
     vrb::NodePtr emptyNode = vrb::Group::Create(m.create);
     widget->SetPointerGeometry(emptyNode);
   }
-
-  switch (m.colorIndex) {
-    case 2:
-      widget->SetPointerColor(kColorLavender);
-      break;
-    case 1:
-      widget->SetPointerColor(kColorTangerine);
-      break;
-    default:
-      widget->SetPointerColor(kColorWhite);
-  }
+  widget->SetPointerColor(vrb::Color(VRBrowser::GetPointerColor()));
 }
 
 void
@@ -1170,6 +1143,11 @@ JNI_METHOD(void, workaroundGeckoSigAction)
 JNI_METHOD(void, updateEnvironmentNative)
 (JNIEnv* aEnv, jobject) {
   crow::BrowserWorld::Instance().UpdateEnvironment();
+}
+
+JNI_METHOD(void, updatePointerColorNative)
+(JNIEnv* aEnv, jobject) {
+  crow::BrowserWorld::Instance().UpdatePointerColor();
 }
 
 } // extern "C"

@@ -487,6 +487,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         return SettingsStore.getInstance(this).getEnvironment();
     }
 
+    @Keep
+    @SuppressWarnings("unused")
+    public int getPointerColor() {
+        return SettingsStore.getInstance(this).getPointerColor();
+    }
+
     void createOffscreenDisplay() {
         int[] ids = new int[1];
         GLES20.glGenTextures(1, ids, 0);
@@ -710,6 +716,16 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
+    public void updatePointerColor() {
+        queueRunnable(new Runnable() {
+            @Override
+            public void run() {
+                updatePointerColorNative();
+            }
+        });
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
@@ -729,4 +745,5 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private native void exitImmersiveNative();
     private native void workaroundGeckoSigAction();
     private native void updateEnvironmentNative();
+    private native void updatePointerColorNative();
 }

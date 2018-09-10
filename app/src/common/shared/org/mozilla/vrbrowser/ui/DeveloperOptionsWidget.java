@@ -6,6 +6,7 @@
 package org.mozilla.vrbrowser.ui;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.View;
@@ -20,6 +21,8 @@ import org.mozilla.vrbrowser.audio.AudioEngine;
 public class DeveloperOptionsWidget extends UIWidget {
 
     private static final String LOGTAG = "VRB";
+
+    private static final int COLOR_LAVANDER = Color.parseColor("#C27FFCFF");
 
     public enum InputMode {
         MOUSE,
@@ -49,6 +52,9 @@ public class DeveloperOptionsWidget extends UIWidget {
     private RadioButton mMeadowRadio;
     private RadioButton mCaveRadio;
     private RadioButton mVoidRadio;
+    private RadioGroup mPointerColorRadio;
+    private RadioButton mColorWhiteRadio;
+    private RadioButton mColorPurpleRadio;
     private TextView mDensityButton;
     private TextView mDensityText;
     private DeveloperOptionsEditText mDensityEdit;
@@ -134,6 +140,16 @@ public class DeveloperOptionsWidget extends UIWidget {
         mVoidRadio.setSoundEffectsEnabled(false);
         mEnvsRadio.setOnCheckedChangeListener(mEnvsListener);
         setEnv(env, false);
+
+        int pointerColor = SettingsStore.getInstance(getContext()).getPointerColor();
+        mPointerColorRadio = findViewById(R.id.radioPointerColor);
+        mPointerColorRadio.setSoundEffectsEnabled(false);
+        mColorWhiteRadio = findViewById(R.id.radioColorWhite);
+        mColorWhiteRadio.setSoundEffectsEnabled(false);
+        mColorPurpleRadio = findViewById(R.id.radioColorPurple);
+        mColorPurpleRadio.setSoundEffectsEnabled(false);
+        mPointerColorRadio.setOnCheckedChangeListener(mPointerColorListener);
+        setPointerColor(pointerColor, false);
 
         mMultiprocessSwitchText = findViewById(R.id.developer_options_multiprocess_switch_text);
         mMultiprocessSwitch = findViewById(R.id.developer_options_multiprocess_switch);
@@ -390,6 +406,16 @@ public class DeveloperOptionsWidget extends UIWidget {
         }
     };
 
+    private RadioGroup.OnCheckedChangeListener mPointerColorListener = new RadioGroup.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
+
+            setPointerColor(getPointerColorFromRadio(checkedId), true);
+        }
+    };
 
     private OnClickListener mDensityListener = new OnClickListener() {
         @Override
@@ -669,6 +695,43 @@ public class DeveloperOptionsWidget extends UIWidget {
 
         if (doApply) {
             mWidgetManager.updateEnvironment();
+        }
+    }
+
+    private int getPointerColorFromRadio(int checkedId) {
+        int color;
+        switch (checkedId) {
+            case R.id.radioColorWhite:
+                color = SettingsStore.POINTER_COLOR_DEFAULT_DEFAULT;
+                break;
+            case  R.id.radioColorPurple:
+                color = COLOR_LAVANDER;
+                break;
+            default:
+                color = SettingsStore.POINTER_COLOR_DEFAULT_DEFAULT;
+        }
+
+        return color;
+    }
+
+    private void setPointerColor(int color, boolean doApply) {
+        mPointerColorRadio.setOnCheckedChangeListener(null);
+
+        if (color == SettingsStore.POINTER_COLOR_DEFAULT_DEFAULT) {
+            mColorPurpleRadio.setChecked(false);
+            mColorWhiteRadio.setChecked(true);
+
+        } else if (color == COLOR_LAVANDER) {
+            mColorPurpleRadio.setChecked(true);
+            mColorWhiteRadio.setChecked(false);
+        }
+
+        mPointerColorRadio.setOnCheckedChangeListener(mPointerColorListener);
+
+        SettingsStore.getInstance(getContext()).setPointerColor(color);
+
+        if (doApply) {
+            mWidgetManager.updatePointerColor();
         }
     }
 

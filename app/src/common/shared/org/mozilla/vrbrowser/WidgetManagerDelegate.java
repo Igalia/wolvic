@@ -25,6 +25,7 @@ public interface WidgetManagerDelegate {
     void setBrowserSize(float targetWidth, float targetHeight);
     void keyboardDismissed();
     void updateEnvironment();
+    void updatePointerColor();
     void addPermissionListener(PermissionListener aListener);
     void removePermissionListener(PermissionListener aListener);
 }

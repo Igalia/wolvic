@@ -2,6 +2,7 @@ package org.mozilla.vrbrowser;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -42,6 +43,7 @@ public class SettingsStore {
     public final static int DISPLAY_DPI_DEFAULT = 96;
     public final static int MAX_WINDOW_WIDTH_DEFAULT = 800;
     public final static int MAX_WINDOW_HEIGHT_DEFAULT = 450;
+    public final static int POINTER_COLOR_DEFAULT_DEFAULT = Color.parseColor("#FFFFFF");
     public final static String ENV_DEFAULT = "cave";
 
     // Enable telemetry by default (opt-out).
@@ -240,6 +242,17 @@ public class SettingsStore {
     public void setEnvironment(String aEnv) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putString(mContext.getString(R.string.settings_key_env), aEnv);
+        editor.commit();
+    }
+
+    public int getPointerColor() {
+        return mPrefs.getInt(
+                mContext.getString(R.string.settings_key_pointer_color), POINTER_COLOR_DEFAULT_DEFAULT);
+    }
+
+    public void setPointerColor(int color) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putInt(mContext.getString(R.string.settings_key_pointer_color), color);
         editor.commit();
     }
 
