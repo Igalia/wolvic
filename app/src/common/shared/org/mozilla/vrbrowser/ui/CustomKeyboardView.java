@@ -925,7 +925,9 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
                 // Multi-tap
                 if (mInMultiTap) {
                     if (mTapCount != -1 && mKeyboardActionListener != null) {
-                        mKeyboardActionListener.onKey(Keyboard.KEYCODE_DELETE, KEY_DELETE, hasPopup);
+                        if (code != CustomKeyboard.KEYCODE_SHIFT) {
+                            mKeyboardActionListener.onKey(Keyboard.KEYCODE_DELETE, KEY_DELETE, hasPopup);
+                        }
                     } else {
                         mTapCount = 0;
                     }
