@@ -42,7 +42,7 @@ public class SettingsStore {
     public final static int DISPLAY_DPI_DEFAULT = 96;
     public final static int MAX_WINDOW_WIDTH_DEFAULT = 800;
     public final static int MAX_WINDOW_HEIGHT_DEFAULT = 450;
-    public final static String ENV_DEFAULT = "meadow";
+    public final static String ENV_DEFAULT = "cave";
 
     // Enable telemetry by default (opt-out).
     private final static boolean enableCrashReportingByDefault = false;
