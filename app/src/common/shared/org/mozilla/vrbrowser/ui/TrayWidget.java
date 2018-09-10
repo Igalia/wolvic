@@ -10,7 +10,9 @@ import android.util.AttributeSet;
 import android.view.View;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoSessionSettings;
-import org.mozilla.vrbrowser.*;
+import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.SessionStore;
+import org.mozilla.vrbrowser.WidgetPlacement;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 
 public class TrayWidget extends UIWidget implements SessionStore.SessionChangeListener {
@@ -48,6 +50,8 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
                 if (mAudio != null) {
                     mAudio.playSound(AudioEngine.Sound.CLICK);
                 }
+
+                onHelpButtonClicked();
             }
         });
 
@@ -170,6 +174,16 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
             mWidgetPlacement.visible = false;
             mWidgetManager.removeWidget(this);
         }
+    }
+
+    private void onHelpButtonClicked() {
+        GeckoSession session = SessionStore.get().getCurrentSession();
+        if (session == null) {
+            int sessionId = SessionStore.get().createSession();
+            SessionStore.get().setCurrentSession(sessionId);
+        }
+
+        SessionStore.get().loadUri(getContext().getString(R.string.help_url));
     }
 
 }

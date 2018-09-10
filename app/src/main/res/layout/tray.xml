@@ -15,7 +15,7 @@
                 android:id="@+id/helpButton"
                 style="?attr/trayButtonStyle"
                 app:privateModeBackground="@drawable/tray_button_background"
-                android:src="@drawable/ic_tray_help"
+                android:src="@drawable/ic_icon_tray_help_v2"
                 android:rotation="-15" android:translationX="5dp" android:translationY="0dp"
                 android:translationZ="0dp"/>
         <org.mozilla.vrbrowser.ui.UIButton

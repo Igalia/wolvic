@@ -20,6 +20,7 @@
     <string name="settings_key_env" translatable="false">settings_env</string>
     <string name="private_policy_url" translatable="false">https://www.mozilla.org/privacy/firefox/</string>
     <string name="private_report_url" translatable="false">https://mixedreality.mozilla.org/fxr/report?src=browser-fxr&amp;label=browser-firefox-reality&amp;url=%1$s</string>
+    <string name="help_url" translatable="false">https://support.mozilla.org/products/firefox-reality</string>
 
     <!-- SEARCH ENGINES -->
     <string name="geolocation_api_url" translatable="false">https://location.services.mozilla.com/v1/country</string>
