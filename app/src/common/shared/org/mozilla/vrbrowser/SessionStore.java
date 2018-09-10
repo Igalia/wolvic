@@ -33,6 +33,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         return mInstance;
     }
     private static final String HOME_WITHOUT_REGION_ORIGIN = "https://webxr.today/";
+    public static final String PRIVATE_BROWSING_URI = "about:privatebrowsing";
     public static final int NO_SESSION_ID = -1;
 
     private LinkedList<GeckoSession.NavigationDelegate> mNavigationListeners;
@@ -67,7 +68,6 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     private GeckoSession.PermissionDelegate mPermissionDelegate;
     private int mPreviousSessionId = SessionStore.NO_SESSION_ID;
     private String mRegion;
-    private String mLastUri;
     private Context mContext;
 
     private SessionStore() {
@@ -88,15 +88,6 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         mContentListeners.clear();
         mSessionChangeListeners.clear();
         mTextInputListeners.clear();
-    }
-
-    public static final String LOCAL_URI = "data:";
-
-    public static boolean isLocalPage(String aURI) {
-        if (aURI.startsWith(LOCAL_URI))
-            return true;
-
-        return false;
     }
 
     private InternalPages.PageResources errorPageResourcesForCategory(@LoadErrorCategory int category) {
@@ -420,7 +411,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
 
         // There is a region update and the home is already loaded
         if (mCurrentSession != null && isHomeUri(getCurrentUri())) {
-            mCurrentSession.loadUri(SessionStore.HOME_WITHOUT_REGION_ORIGIN + "#region=" + mRegion);
+            mCurrentSession.loadUri("javascript:window.location.replace('" + getHomeUri() + "');");
         }
     }
 
@@ -590,7 +581,6 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
                 int id = createSession(settings);
                 setCurrentSession(id);
 
-                mLastUri = "about:privatebrowsing";
                 InternalPages.PageResources pageResources = InternalPages.PageResources.create(R.raw.private_mode, R.raw.private_style);
                 getCurrentSession().loadData(InternalPages.createAboutPage(mContext, pageResources), "text/html");
 
@@ -716,9 +706,6 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             return;
         }
 
-        if (isLocalPage(aUri))
-            aUri = mLastUri;
-
         state.mUri = aUri;
 
         for (GeckoSession.NavigationDelegate listener: mNavigationListeners) {
@@ -727,7 +714,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
 
         // The homepage finishes loading after the region has been updated
         if (mRegion != null && aUri.equalsIgnoreCase(SessionStore.HOME_WITHOUT_REGION_ORIGIN)) {
-            aSession.loadUri(SessionStore.HOME_WITHOUT_REGION_ORIGIN + "#region=" + mRegion);
+            aSession.loadUri("javascript:window.location.replace('" + getHomeUri() + "');");
         }
     }
 
@@ -764,7 +751,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
                                        @LoadRequestFlags int flags) {
         GeckoResult<Boolean> result = new GeckoResult<>();
 
-        if (aUri.equalsIgnoreCase("about:privatebrowsing")) {
+        if (aUri.equalsIgnoreCase(PRIVATE_BROWSING_URI)) {
             switchPrivateMode();
             result.complete(true);
 
@@ -809,10 +796,8 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     public GeckoResult<String> onLoadError(GeckoSession session, String uri, int category, int error) {
         Log.d(LOGTAG, "SessionStore onLoadError: " + uri);
 
-        mLastUri = uri;
         InternalPages.PageResources pageResources = errorPageResourcesForCategory(category);
-        session.loadData(InternalPages.createErrorPage(mContext, uri, pageResources, category, error), "text/html");
-        return null;
+        return GeckoResult.fromValue(InternalPages.createErrorPage(mContext, uri, pageResources, category, error));
     }
 
     // Progress Listener

@@ -1,12 +1,15 @@
 package org.mozilla.vrbrowser;
 
 import android.content.Context;
+import android.util.Base64;
 import org.mozilla.geckoview.GeckoSession.NavigationDelegate;
 import org.mozilla.geckoview.GeckoSession.NavigationDelegate.LoadError;
 import org.mozilla.geckoview.GeckoSession.NavigationDelegate.LoadErrorCategory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 public class InternalPages {
 
@@ -202,7 +205,7 @@ public class InternalPages {
         }
     }
 
-    public static byte[] createErrorPage(Context context,
+    public static String createErrorPage(Context context,
                         String uri,
                         PageResources resources,
                         @LoadErrorCategory int errorCategory,
@@ -219,7 +222,7 @@ public class InternalPages {
                 .replace("%messageLong%", context.getString(localizedData.messageRes, uri))
                 .replace("%css%", css);
 
-        return html.getBytes();
+        return "data:text/html;base64," + Base64.encodeToString(html.getBytes(), Base64.DEFAULT);
     }
 
     public static byte[] createAboutPage(Context context,
