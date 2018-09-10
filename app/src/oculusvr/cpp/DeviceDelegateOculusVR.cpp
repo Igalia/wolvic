@@ -202,7 +202,7 @@ struct DeviceDelegateOculusVR::State {
   }
 
   void UpdateControllerID() {
-    if (!controller || !ovr || (controllerID != ovrDeviceIdType_Invalid)) {
+    if (!controller || !ovr) {
       return;
     }
 
