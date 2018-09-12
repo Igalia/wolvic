@@ -213,16 +213,16 @@
     <string name="private_browsing_body"><![CDATA[
 <h1>Private Browsing</h1>
 
-<p>When you browse in a Private Window. Firefox Reality <strong>does not save</strong>:</p>
+<p>When you browse in a Private Window, Firefox Reality <strong>does not save</strong>:</p>
 
 <ul class="two-column">
     <li>visited pages</li>
-    <li>cookies</li>
     <li>searches</li>
+    <li>cookies</li>
     <li>temporary files</li>
 </ul>
 
-<p>Private browsing <strong>doesn\'t make you anonymous</strong> on the Internet. Your employer or Internet service provider can still know what pages you visit.</p>
+<p>Private Browsing <strong>doesn\'t make you anonymous</strong> on the Internet. Your employer or Internet service provider can still know what page you visit.</p>
      ]]></string>
 
 </resources>
