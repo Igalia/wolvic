@@ -13,7 +13,9 @@ import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
 import android.util.TypedValue;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -74,6 +76,19 @@ public class NavigationURLBar extends FrameLayout {
                 if (b && mURL.getText().length() > 0) {
                     showVoiceSearch(false);
                 }
+
+                mURL.setSelection(mURL.getText().length(), 0);
+            }
+        });
+        final GestureDetector gd = new GestureDetector(getContext(), new UrlGestureListener());
+        gd.setOnDoubleTapListener(mUrlDoubleTapListener);
+        mURL.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (gd.onTouchEvent(motionEvent)) {
+                    return true;
+                }
+                return view.onTouchEvent(motionEvent);
             }
         });
         mURL.addTextChangedListener(mURLTextWatcher);
@@ -273,6 +288,37 @@ public class NavigationURLBar extends FrameLayout {
         @Override
         public void afterTextChanged(Editable editable) {
 
+        }
+    };
+
+    private class UrlGestureListener extends GestureDetector.SimpleOnGestureListener {
+
+        @Override
+        public boolean onDoubleTap(MotionEvent event) {
+            return true;
+        }
+
+        @Override
+        public boolean onDown(MotionEvent e) {
+            return false;
+        }
+    }
+
+    GestureDetector.OnDoubleTapListener mUrlDoubleTapListener = new GestureDetector.OnDoubleTapListener() {
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent motionEvent) {
+            return false;
+        }
+
+        @Override
+        public boolean onDoubleTap(MotionEvent motionEvent) {
+            return false;
+        }
+
+        @Override
+        public boolean onDoubleTapEvent(MotionEvent motionEvent) {
+            mURL.setSelection(mURL.getText().length(), 0);
+            return true;
         }
     };
 
