@@ -152,6 +152,26 @@ ExternalBlitter::StopPresenting() {
   m.surfaceMap.clear();
 }
 
+void
+ExternalBlitter::CancelFrame(const int32_t aSurfaceHandle) {
+  GeckoSurfaceTexturePtr surface;
+  auto iter = m.surfaceMap.find(aSurfaceHandle);
+  if (iter != m.surfaceMap.end()) {
+    surface = iter->second;
+  } else {
+    surface = GeckoSurfaceTexture::Create(aSurfaceHandle);
+  }
+
+  if (surface) {
+    EGLContext ctx = eglGetCurrentContext();
+    if (!surface->IsAttachedToGLContext(ctx)) {
+      surface->AttachToGLContext(ctx);
+    }
+    surface->UpdateTexImage();
+    surface->ReleaseTexImage();
+  }
+}
+
 ExternalBlitter::ExternalBlitter(State& aState, vrb::CreationContextPtr& aContext)
     : vrb::ResourceGL(aState, aContext)
     , m(aState)

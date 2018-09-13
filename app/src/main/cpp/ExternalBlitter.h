@@ -25,6 +25,7 @@ public:
   void Draw(const device::Eye aEye);
   void EndFrame();
   void StopPresenting();
+  void CancelFrame(const int32_t aSurfaceHandle);
 protected:
   struct State;
   ExternalBlitter(State& aState, vrb::CreationContextPtr& aContext);

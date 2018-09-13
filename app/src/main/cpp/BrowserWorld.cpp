@@ -889,13 +889,13 @@ BrowserWorld::DrawImmersive() {
   m.device->StartFrame();
   VRB_GL_CHECK(glDepthMask(GL_FALSE));
   m.externalVR->PushFramePoses(m.device->GetHeadTransform(), m.controllers->GetControllers());
+  int32_t surfaceHandle = 0;
+  device::EyeRect leftEye, rightEye;
   bool aDiscardFrame = !m.externalVR->WaitFrameResult();
+  m.externalVR->GetFrameResult(surfaceHandle, leftEye, rightEye);
   ExternalVR::VRState state = m.externalVR->GetVRState();
   if (state == ExternalVR::VRState::Rendering) {
     if (!aDiscardFrame) {
-      int32_t surfaceHandle = 0;
-      device::EyeRect leftEye, rightEye;
-      m.externalVR->GetFrameResult(surfaceHandle, leftEye, rightEye);
       m.blitter->StartFrame(surfaceHandle, leftEye, rightEye);
       m.device->BindEye(device::Eye::Left);
       m.blitter->Draw(device::Eye::Left);
@@ -907,6 +907,9 @@ BrowserWorld::DrawImmersive() {
     m.device->EndFrame(aDiscardFrame);
     m.blitter->EndFrame();
   } else {
+    if (surfaceHandle != 0) {
+      m.blitter->CancelFrame(surfaceHandle);
+    }
     DrawLoadingAnimation();
     m.device->EndFrame(false);
   }
