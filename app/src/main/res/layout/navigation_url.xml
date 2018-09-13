@@ -9,6 +9,7 @@
         android:paddingEnd="40dp"
         android:ems="10"
         android:inputType="textUri"
+        android:hint="@string/search_placeholder"
         android:background="@drawable/url_background"
         android:textColor="@color/fog"
         android:textColorHighlight="@color/dusk"
