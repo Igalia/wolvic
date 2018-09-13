@@ -73,8 +73,8 @@ public class NavigationURLBar extends FrameLayout {
         mURL.setOnFocusChangeListener(new OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
-                if (b && mURL.getText().length() > 0) {
-                    showVoiceSearch(false);
+                if (b) {
+                    showVoiceSearch(mURL.getText().length() == 0);
                 }
 
                 mURL.setSelection(mURL.getText().length(), 0);
@@ -172,7 +172,7 @@ public class NavigationURLBar extends FrameLayout {
     }
 
     public void showVoiceSearch(boolean enabled) {
-        if (enabled) {
+        if (enabled && mURL.getText().length() == 0) {
             mMicrophoneButton.setImageResource(R.drawable.ic_icon_microphone);
             mMicrophoneButton.setOnClickListener(mMicrophoneListener);
 
@@ -236,7 +236,7 @@ public class NavigationURLBar extends FrameLayout {
             SessionStore.get().loadUri(url);
         }
 
-        showVoiceSearch(true);
+        showVoiceSearch(text.isEmpty());
     }
 
     public void setPrivateMode(boolean isEnabled) {
