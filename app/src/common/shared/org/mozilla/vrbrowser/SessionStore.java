@@ -571,7 +571,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         if (mCurrentSession == null)
             return;
 
-        boolean isPrivateMode  = mCurrentSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
+        boolean isPrivateMode = mCurrentSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
         if (!isPrivateMode) {
             if (mPreviousSessionId == SessionStore.NO_SESSION_ID) {
                 mPreviousSessionId = getCurrentSessionId();

@@ -216,7 +216,7 @@ public class InternalPages {
         String css = readRawResourceString(context, resources.css);
 
         html = html
-                .replace("%page-title%", context.getString(R.string.errorpage_title))
+                .replace("%pageTitle%", context.getString(R.string.errorpage_title))
                 .replace("%button%", context.getString(R.string.errorpage_refresh))
                 .replace("%messageShort%", context.getString(localizedData.titleRes))
                 .replace("%messageLong%", context.getString(localizedData.messageRes, uri))
@@ -231,9 +231,10 @@ public class InternalPages {
         String css = readRawResourceString(context, resources.css);
 
         html = html
-                .replace("%page-title%", context.getString(R.string.private_browsing_title))
-                .replace("%page-body%", context.getString(R.string.private_browsing_body))
-                .replace("%css%", css);
+                .replace("%pageTitle%", context.getString(R.string.private_browsing_title))
+                .replace("%pageBody%", context.getString(R.string.private_browsing_body))
+                .replace("%css%", css)
+                .replace("%privateBrowsingSupportUrl%", context.getString(R.string.private_browsing_support_url));
 
         return html.getBytes();
     }

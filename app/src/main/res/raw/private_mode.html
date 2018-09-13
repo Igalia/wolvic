@@ -4,12 +4,12 @@
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" class="private">
     <head>
         <title>%pageTitle%</title>
         <style>%css%</style>
     </head>
-    <body data-page="private">
+    <body>
         <svg style="position: absolute; width: 4em; height: 4em; overflow: hidden" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
             <defs>
                 <symbol id="icon-private" viewBox="0 0 200 200">
@@ -19,7 +19,18 @@
         </svg>
         <div class="container">
             <svg class="icon"><use xlink:href="#icon-private"></use></svg>
-            <p>%page-body%</p>
+            <section class="section-main">%pageBody%</section>
         </div>
+        <script>
+          (() => {
+            const urls = {
+              privateBrowsingSupportUrl: '%privateBrowsingSupportUrl%'
+            };
+            const learnMoreEl = document.getElementById('learnMore');
+            if (learnMoreEl) {
+              learnMoreEl.href = urls.privateBrowsingSupportUrl;
+            }
+          })();
+        </script>
     </body>
 </html>
