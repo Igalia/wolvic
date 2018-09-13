@@ -205,7 +205,7 @@ if (findProject(':geckoview-local')) {
     dependencies {
         // To see what the latest geckoview-nightly version is go here:
         // https://maven.mozilla.org/?prefix=maven2/org/mozilla/geckoview/geckoview-nightly-armeabi-v7a/
-        implementation 'org.mozilla.geckoview:geckoview-nightly-armeabi-v7a:64.0.20180906153714'
+        implementation 'org.mozilla.geckoview:geckoview-nightly-armeabi-v7a:64.0.20180913143243'
     }
 }
 

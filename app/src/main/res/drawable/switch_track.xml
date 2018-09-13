@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_enabled="false">
+        <layer-list>
+            <item>
+                <shape
+                        android:dither="true"
+                        android:shape="rectangle"
+                        android:useLevel="false"
+                        android:visible="true">
+                    <gradient
+                            android:angle="270"
+                            android:endColor="@color/iron"
+                            android:startColor="@color/iron"/>
+                    <corners
+                            android:radius="16dp"/>
+                    <size
+                            android:width="20dp"
+                            android:height="20dp" />
+                </shape>
+            </item>
+
+        </layer-list>
+    </item>
     <item android:state_checked="true">
         <layer-list>
             <item>
