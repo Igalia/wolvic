@@ -127,7 +127,7 @@ public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate
     }
 
     @Override
-    void initializeWidgetPlacement(WidgetPlacement aPlacement) {
+    protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
         aPlacement.visible = false;
         aPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.voice_search_width);
         aPlacement.height = WidgetPlacement.dpDimension(getContext(), R.dimen.voice_search_height);

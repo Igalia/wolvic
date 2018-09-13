@@ -74,7 +74,7 @@ public class RestartDialogWidget extends UIWidget {
     }
 
     @Override
-    void initializeWidgetPlacement(WidgetPlacement aPlacement) {
+    protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
         aPlacement.visible = false;
         aPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.restart_dialog_width);
         aPlacement.height = WidgetPlacement.dpDimension(getContext(), R.dimen.restart_dialog_height);

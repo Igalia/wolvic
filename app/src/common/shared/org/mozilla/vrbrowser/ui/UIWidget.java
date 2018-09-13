@@ -72,7 +72,7 @@ public abstract class UIWidget extends FrameLayout implements Widget {
         };
     }
 
-    abstract void initializeWidgetPlacement(WidgetPlacement aPlacement);
+    protected abstract void initializeWidgetPlacement(WidgetPlacement aPlacement);
 
     @Override
     public void setSurfaceTexture(SurfaceTexture aTexture, final int aWidth, final int aHeight) {

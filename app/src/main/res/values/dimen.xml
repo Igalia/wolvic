@@ -87,4 +87,9 @@
     <!-- Close button -->
     <dimen name="close_button_width">36dp</dimen>
     <dimen name="close_button_height">36dp</dimen>
+
+    <!-- Choice prompt -->
+    <dimen name="choice_prompt_width">340dp</dimen>
+    <dimen name="choice_prompt_height">380dp</dimen>
+    <item name="choice_prompt_world_z" format="float" type="dimen">1.5</item>
 </resources>

@@ -183,7 +183,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     }
 
     @Override
-    void initializeWidgetPlacement(WidgetPlacement aPlacement) {
+    protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
         Context context = getContext();
         aPlacement.width = WidgetPlacement.dpDimension(context, R.dimen.keyboard_width);
         aPlacement.height = WidgetPlacement.dpDimension(context, R.dimen.keyboard_height);

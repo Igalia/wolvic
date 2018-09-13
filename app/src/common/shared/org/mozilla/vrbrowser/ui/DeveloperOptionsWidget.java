@@ -303,7 +303,7 @@ public class DeveloperOptionsWidget extends UIWidget {
     }
 
     @Override
-    void initializeWidgetPlacement(WidgetPlacement aPlacement) {
+    protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
         aPlacement.visible = false;
         aPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.developer_options_width);
         aPlacement.height = WidgetPlacement.dpDimension(getContext(), R.dimen.developer_options_height);

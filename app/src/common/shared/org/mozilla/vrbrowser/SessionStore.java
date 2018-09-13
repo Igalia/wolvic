@@ -23,7 +23,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 
-public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSession.ProgressDelegate, GeckoSession.ContentDelegate, GeckoSession.TextInputDelegate, GeckoSession.TrackingProtectionDelegate {
+public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSession.ProgressDelegate,
+        GeckoSession.ContentDelegate, GeckoSession.TextInputDelegate, GeckoSession.TrackingProtectionDelegate,
+        GeckoSession.PromptDelegate {
+
     private static SessionStore mInstance;
     private static final String LOGTAG = "VRB";
     public static SessionStore get() {
@@ -41,6 +44,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     private LinkedList<GeckoSession.ContentDelegate> mContentListeners;
     private LinkedList<SessionChangeListener> mSessionChangeListeners;
     private LinkedList<GeckoSession.TextInputDelegate> mTextInputListeners;
+    private LinkedList<GeckoSession.PromptDelegate> mPromptListeners;
 
     public interface SessionChangeListener {
         void onNewSession(GeckoSession aSession, int aId);
@@ -76,6 +80,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         mContentListeners = new LinkedList<>();
         mSessionChangeListeners = new LinkedList<>();
         mTextInputListeners = new LinkedList<>();
+        mPromptListeners = new LinkedList<>();
 
         mSessions = new LinkedHashMap<>();
         mSessionsStack = new ArrayDeque<>();
@@ -256,6 +261,14 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         mTextInputListeners.remove(aListener);
     }
 
+    public void addPromptListener(GeckoSession.PromptDelegate aListener) {
+        mPromptListeners.add(aListener);
+    }
+
+    public void removePromptListener(GeckoSession.PromptDelegate aListener) {
+        mPromptListeners.remove(aListener);
+    }
+
     public class SessionSettings {
         public boolean multiprocess = SettingsStore.getInstance(mContext).isMultiprocessEnabled();
         public boolean privateMode = false;
@@ -280,6 +293,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         state.mSession.getSettings().setInt(GeckoSessionSettings.USER_AGENT_MODE, aSettings.userAgentMode);
         state.mSession.setNavigationDelegate(this);
         state.mSession.setProgressDelegate(this);
+        state.mSession.setPromptDelegate(this);
         state.mSession.setContentDelegate(this);
         state.mSession.getTextInput().setDelegate(this);
         state.mSession.setPermissionDelegate(mPermissionDelegate);
@@ -988,6 +1002,79 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
 
         if ((categories & GeckoSession.TrackingProtectionDelegate.CATEGORY_SOCIAL) != 0) {
             Log.i(LOGTAG, "Blocking Social: " + uri);
+        }
+    }
+
+    // PromptDelegate
+    @Override
+    public void onAlert(GeckoSession session, String title, String msg, AlertCallback callback) {
+        if (session == mCurrentSession) {
+            for (GeckoSession.PromptDelegate listener : mPromptListeners) {
+                listener.onAlert(session, title, msg, callback);
+            }
+        }
+    }
+
+    @Override
+    public void onButtonPrompt(GeckoSession session, String title, String msg, String[] btnMsg, ButtonCallback callback) {
+        if (session == mCurrentSession) {
+            for (GeckoSession.PromptDelegate listener : mPromptListeners) {
+                listener.onButtonPrompt(session, title, msg, btnMsg, callback);
+            }
+        }
+    }
+
+    @Override
+    public void onTextPrompt(GeckoSession session, String title, String msg, String value, TextCallback callback) {
+        if (session == mCurrentSession) {
+            for (GeckoSession.PromptDelegate listener : mPromptListeners) {
+                listener.onTextPrompt(session, title, msg, value, callback);
+            }
+        }
+    }
+
+    @Override
+    public void onAuthPrompt(GeckoSession session, String title, String msg, AuthOptions options, AuthCallback callback) {
+        if (session == mCurrentSession) {
+            for (GeckoSession.PromptDelegate listener : mPromptListeners) {
+                listener.onAuthPrompt(session, title, msg, options, callback);
+            }
+        }
+    }
+
+    @Override
+    public void onChoicePrompt(GeckoSession session, String title, String msg, int type, Choice[] choices, ChoiceCallback callback) {
+        if (session == mCurrentSession) {
+            for (GeckoSession.PromptDelegate listener : mPromptListeners) {
+                listener.onChoicePrompt(session, title, msg, type, choices, callback);
+            }
+        }
+    }
+
+    @Override
+    public void onColorPrompt(GeckoSession session, String title, String value, TextCallback callback) {
+        if (session == mCurrentSession) {
+            for (GeckoSession.PromptDelegate listener : mPromptListeners) {
+                listener.onColorPrompt(session, title, value, callback);
+            }
+        }
+    }
+
+    @Override
+    public void onDateTimePrompt(GeckoSession session, String title, int type, String value, String min, String max, TextCallback callback) {
+        if (session == mCurrentSession) {
+            for (GeckoSession.PromptDelegate listener : mPromptListeners) {
+                listener.onDateTimePrompt(session, title, type, value, min, max, callback);
+            }
+        }
+    }
+
+    @Override
+    public void onFilePrompt(GeckoSession session, String title, int type, String[] mimeTypes, FileCallback callback) {
+        if (session == mCurrentSession) {
+            for (GeckoSession.PromptDelegate listener : mPromptListeners) {
+                listener.onFilePrompt(session, title, type, mimeTypes, callback);
+            }
         }
     }
 

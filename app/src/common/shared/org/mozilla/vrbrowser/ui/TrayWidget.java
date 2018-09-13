@@ -87,7 +87,7 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
     }
 
     @Override
-    void initializeWidgetPlacement(WidgetPlacement aPlacement) {
+    protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
         Context context = getContext();
         aPlacement.width = WidgetPlacement.dpDimension(context, R.dimen.tray_width);
         aPlacement.height = WidgetPlacement.dpDimension(context, R.dimen.tray_height);

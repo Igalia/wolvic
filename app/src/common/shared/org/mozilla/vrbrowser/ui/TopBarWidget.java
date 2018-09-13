@@ -62,7 +62,7 @@ public class TopBarWidget extends UIWidget implements SessionStore.SessionChange
     }
 
     @Override
-    void initializeWidgetPlacement(WidgetPlacement aPlacement) {
+    protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
         Context context = getContext();
         aPlacement.width = WidgetPlacement.dpDimension(context, R.dimen.top_bar_width);
         aPlacement.height = WidgetPlacement.dpDimension(context, R.dimen.top_bar_height);

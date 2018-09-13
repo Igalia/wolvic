@@ -269,7 +269,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     @Override
-    void initializeWidgetPlacement(WidgetPlacement aPlacement) {
+    protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
         aPlacement.width = WidgetPlacement.dpDimension(getContext(), R.dimen.navigation_bar_width);
         aPlacement.worldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.browser_world_width);
         aPlacement.height = WidgetPlacement.dpDimension(getContext(), R.dimen.navigation_bar_height);

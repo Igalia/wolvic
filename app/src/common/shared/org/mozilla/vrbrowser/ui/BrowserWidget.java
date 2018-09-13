@@ -20,9 +20,14 @@ import org.mozilla.geckoview.GeckoDisplay;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.*;
+import org.mozilla.vrbrowser.ui.prompts.ChoicePromptWidget;
 
-public class BrowserWidget extends View implements Widget, SessionStore.SessionChangeListener {
+import java.util.ArrayList;
+
+public class BrowserWidget extends View implements Widget, SessionStore.SessionChangeListener, GeckoSession.PromptDelegate {
+
     private static final String LOGTAG = "VRB";
+
     private int mSessionId;
     private GeckoDisplay mDisplay;
     private Surface mSurface;
@@ -33,12 +38,14 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
     private WidgetPlacement mWidgetPlacement;
     private WidgetManagerDelegate mWidgetManager;
     private PointF mLastWorldSize;
+    private ChoicePromptWidget mChoicePrompt;
 
     public BrowserWidget(Context aContext, int aSessionId) {
         super(aContext);
         mSessionId = aSessionId;
         mWidgetManager = (WidgetManagerDelegate) aContext;
         SessionStore.get().addSessionChangeListener(this);
+        SessionStore.get().addPromptListener(this);
         setFocusableInTouchMode(true);
         GeckoSession session = SessionStore.get().getSession(mSessionId);
         if (session != null) {
@@ -300,5 +307,62 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
 
     protected  PointF getLastWorldSize() {
         return mLastWorldSize;
+    }
+
+    @Override
+    public void onAlert(GeckoSession session, String title, String msg, AlertCallback callback) {
+
+    }
+
+    @Override
+    public void onButtonPrompt(GeckoSession session, String title, String msg, String[] btnMsg, ButtonCallback callback) {
+
+    }
+
+    @Override
+    public void onTextPrompt(GeckoSession session, String title, String msg, String value, TextCallback callback) {
+
+    }
+
+    @Override
+    public void onAuthPrompt(GeckoSession session, String title, String msg, AuthOptions options, AuthCallback callback) {
+
+    }
+
+    @Override
+    public void onChoicePrompt(GeckoSession session, String title, String msg, int type, final Choice[] choices, final ChoiceCallback callback) {
+        if (mChoicePrompt == null) {
+            mChoicePrompt = new ChoicePromptWidget(getContext());
+            mChoicePrompt.mWidgetPlacement.parentHandle = getHandle();
+        }
+
+        mChoicePrompt.setTitle(title);
+        mChoicePrompt.setMessage(msg);
+        mChoicePrompt.setChoices(choices);
+        mChoicePrompt.setMenuType(type);
+        mChoicePrompt.setDelegate(new ChoicePromptWidget.ChoicePromptDelegate() {
+            @Override
+            public void onDismissed(String[] ids) {
+                callback.confirm(ids);
+                mChoicePrompt.hide();
+            }
+        });
+
+        mChoicePrompt.show();
+    }
+
+    @Override
+    public void onColorPrompt(GeckoSession session, String title, String value, TextCallback callback) {
+
+    }
+
+    @Override
+    public void onDateTimePrompt(GeckoSession session, String title, int type, String value, String min, String max, TextCallback callback) {
+
+    }
+
+    @Override
+    public void onFilePrompt(GeckoSession session, String title, int type, String[] mimeTypes, FileCallback callback) {
+
     }
 }

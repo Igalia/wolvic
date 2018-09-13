@@ -93,7 +93,7 @@ public class PermissionWidget extends UIWidget {
     }
 
     @Override
-    void initializeWidgetPlacement(WidgetPlacement aPlacement) {
+    protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
         Context context = getContext();
         aPlacement.width = WidgetPlacement.dpDimension(context, R.dimen.permission_width);
         aPlacement.height = WidgetPlacement.dpDimension(context, R.dimen.permission_height);

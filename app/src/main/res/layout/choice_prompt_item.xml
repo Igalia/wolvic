@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content" android:orientation="horizontal"
+              android:gravity="center_vertical" android:id="@+id/choiceItemLayoutId"
+              android:background="@color/void_color">
+    <RadioButton android:id="@+id/radioOption"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:background="@android:color/transparent"
+                 android:button="@drawable/prompt_item_check_color"
+                 android:layout_margin="10dp"
+                 android:checked="false"
+                 android:clickable="false"
+                 android:focusable="false"/>
+    <TextView android:id="@+id/optionLabel"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:background="@android:color/transparent"
+                 android:button="@drawable/radio"
+                 android:fontFamily="sans-serif"
+                 android:textSize="24sp"
+                 android:textColor="@drawable/prompt_item_text_color"
+                 android:text=""
+                 android:layout_margin="10dp"
+                 android:clickable="false"
+                 android:focusable="false"/>
+</LinearLayout>
