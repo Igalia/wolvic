@@ -87,8 +87,8 @@ typedef std::shared_ptr<ResizeHandle> ResizeHandlePtr;
 
 struct ResizeHandle {
   enum class ResizeMode {
-    Horizontal,
     Vertical,
+    Horizontal,
     Both
   };
 
@@ -174,6 +174,7 @@ struct WidgetResizer::State {
   vrb::Vector resizeStartMax;
   vrb::Vector defaultMin;
   vrb::Vector defaultMax;
+  vrb::Vector pointerOffset;
   bool resizing;
   vrb::TogglePtr root;
   std::vector<ResizeHandlePtr> resizeHandles;
@@ -206,12 +207,12 @@ struct WidgetResizer::State {
 
     CreateResizeHandle(vrb::Vector(0.0f, 1.0f, 0.0f), ResizeHandle::ResizeMode::Both, {leftTop, topLeft});
     CreateResizeHandle(vrb::Vector(1.0f, 1.0f, 0.0f), ResizeHandle::ResizeMode::Both, {rightTop, topRight});
-    CreateResizeHandle(vrb::Vector(0.0f, 0.0f, 0.0f), ResizeHandle::ResizeMode::Both, {leftBottom, bottomLeft});
-    CreateResizeHandle(vrb::Vector(1.0f, 0.0f, 0.0f), ResizeHandle::ResizeMode::Both, {rightBottom, bottomRight}, 1.0f);
-    CreateResizeHandle(vrb::Vector(0.5f, 1.0f, 0.0f), ResizeHandle::ResizeMode::Vertical, {topLeft, topRight});
-    CreateResizeHandle(vrb::Vector(0.5f, 0.0f, 0.0f), ResizeHandle::ResizeMode::Vertical, {bottomLeft, bottomRight});
-    CreateResizeHandle(vrb::Vector(0.0f, 0.5f, 0.0f), ResizeHandle::ResizeMode::Horizontal, {leftTop, leftBottom});
-    CreateResizeHandle(vrb::Vector(1.0f, 0.5f, 0.0f), ResizeHandle::ResizeMode::Horizontal, {rightTop, rightBottom});
+    //CreateResizeHandle(vrb::Vector(0.0f, 0.0f, 0.0f), ResizeHandle::ResizeMode::Both, {leftBottom, bottomLeft});
+    //CreateResizeHandle(vrb::Vector(1.0f, 0.0f, 0.0f), ResizeHandle::ResizeMode::Both, {rightBottom, bottomRight}, 1.0f);
+    CreateResizeHandle(vrb::Vector(0.5f, 1.0f, 0.0f), ResizeHandle::ResizeMode::Horizontal, {topLeft, topRight});
+    //CreateResizeHandle(vrb::Vector(0.5f, 0.0f, 0.0f), ResizeHandle::ResizeMode::Horizontal, {bottomLeft, bottomRight});
+    CreateResizeHandle(vrb::Vector(0.0f, 0.5f, 0.0f), ResizeHandle::ResizeMode::Vertical, {leftTop, leftBottom});
+    CreateResizeHandle(vrb::Vector(1.0f, 0.5f, 0.0f), ResizeHandle::ResizeMode::Vertical, {rightTop, rightBottom});
 
     Layout();
   }
@@ -253,8 +254,8 @@ struct WidgetResizer::State {
     const float height = WorldHeight();
 
     for (ResizeBarPtr& bar: resizeBars) {
-      float targetWidth = bar->scale.x() > 0.0f ? bar->scale.x() * fabsf(width) : kBarSize;
-      float targetHeight = bar->scale.y() > 0.0f ? bar->scale.y() * fabs(height) : kBarSize;
+      float targetWidth = bar->scale.x() > 0.0f ? (bar->scale.x() * fabsf(width)) + kBarSize : kBarSize;
+      float targetHeight = bar->scale.y() > 0.0f ? (bar->scale.y() * fabs(height)) + kBarSize : kBarSize;
       vrb::Matrix matrix = vrb::Matrix::Position(vrb::Vector(min.x() + width * bar->center.x(), min.y() + height * bar->center.y(), 0.005f));
       matrix.ScaleInPlace(vrb::Vector(targetWidth / kBarSize, targetHeight / kBarSize, 1.0f));
       bar->transform->SetTransform(matrix);
@@ -282,19 +283,19 @@ struct WidgetResizer::State {
       return;
     }
 
+    const vrb::Vector point = aPoint - pointerOffset;
     float originalWidth = fabsf(resizeStartMax.x() - resizeStartMin.x());
     float originalHeight = fabsf(resizeStartMax.y() - resizeStartMin.y());
     float originalAspect = originalWidth / originalHeight;
-    vrb::Vector originalCenter = vrb::Vector(0.0, originalHeight * 0.5f, 0.0f);
 
-    float width = fabsf(aPoint.x()) * 2.0f;
-    float height = fabsf(aPoint.y()) * 2.0f;
+    float width = fabsf(point.x()) * 2.0f;
+    float height = fabsf(point.y() - min.y());
 
     // Calculate resize based on resize mode
     bool keepAspect = false;
-    if (activeHandle->resizeMode == ResizeHandle::ResizeMode::Horizontal) {
+    if (activeHandle->resizeMode == ResizeHandle::ResizeMode::Vertical) {
       height = originalHeight;
-    } else if (activeHandle->resizeMode == ResizeHandle::ResizeMode::Vertical) {
+    } else if (activeHandle->resizeMode == ResizeHandle::ResizeMode::Horizontal) {
       width = originalWidth;
     } else {
       width = fmaxf(width, height * originalAspect);
@@ -376,6 +377,8 @@ WidgetResizer::HandleResizeGestures(const vrb::Vector& aPoint, bool aPressed, bo
       m.resizeStartMin = m.min;
       m.resizeStartMax = m.max;
       m.activeHandle->SetResizeState(ResizeState::Active);
+      vrb::Vector center = m.activeHandle->transform->GetTransform().GetTranslation();
+      m.pointerOffset = aPoint - center;
     }
   } else if (!aPressed && m.wasPressed) {
     // Handle resize handle unclick

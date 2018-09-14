@@ -46,6 +46,7 @@ public:
   void StartWidgetResize(int32_t aHandle);
   void FinishWidgetResize(int32_t aHandle);
   void UpdateVisibleWidgets();
+  void LayoutWidget(int32_t aHandle);
   void FadeOut();
   void FadeIn();
   void ExitImmersive();

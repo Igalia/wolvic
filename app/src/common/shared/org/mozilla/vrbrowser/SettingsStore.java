@@ -45,6 +45,8 @@ public class SettingsStore {
     public final static int MAX_WINDOW_HEIGHT_DEFAULT = 450;
     public final static int POINTER_COLOR_DEFAULT_DEFAULT = Color.parseColor("#FFFFFF");
     public final static String ENV_DEFAULT = "cave";
+    public final static float BROWSER_WORLD_WIDTH_DEFAULT = 4.0f;
+    public final static float BROWSER_WORLD_HEIGHT_DEFAULT = 2.25f;
 
     // Enable telemetry by default (opt-out).
     private final static boolean enableCrashReportingByDefault = false;
@@ -242,6 +244,27 @@ public class SettingsStore {
     public void setEnvironment(String aEnv) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putString(mContext.getString(R.string.settings_key_env), aEnv);
+    }
+
+    public float getBrowserWorldWidth() {
+        return mPrefs.getFloat(
+                mContext.getString(R.string.settings_key_browser_world_width), BROWSER_WORLD_WIDTH_DEFAULT);
+    }
+
+    public void setBrowserWorldWidth(float aBrowserWorldWidth) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putFloat(mContext.getString(R.string.settings_key_browser_world_width), aBrowserWorldWidth);
+        editor.commit();
+    }
+
+    public float getBrowserWorldHeight() {
+        return mPrefs.getFloat(
+                mContext.getString(R.string.settings_key_browser_world_height), BROWSER_WORLD_HEIGHT_DEFAULT);
+    }
+
+    public void setBrowserWorldHeight(float aBrowserWorldHeight) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putFloat(mContext.getString(R.string.settings_key_browser_world_height), aBrowserWorldHeight);
         editor.commit();
     }
 

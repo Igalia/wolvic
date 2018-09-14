@@ -373,7 +373,8 @@ Widget::HoverExitResize() {
   }
 }
 
-void Widget::SetPointerColor(const vrb::Color& aColor) {
+void
+Widget::SetPointerColor(const vrb::Color& aColor) {
   vrb::GeometryPtr geometry = std::dynamic_pointer_cast<vrb::Geometry>(m.pointerGeometry);
   geometry->GetRenderState()->SetMaterial(aColor, aColor, vrb::Color(0.0f, 0.0f, 0.0f), 0.0f);
 }

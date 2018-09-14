@@ -6,7 +6,6 @@
 package org.mozilla.vrbrowser.ui;
 
 import android.content.Context;
-import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.util.Log;
@@ -22,7 +21,6 @@ import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.*;
 import org.mozilla.vrbrowser.ui.prompts.ChoicePromptWidget;
 
-import java.util.ArrayList;
 
 public class BrowserWidget extends View implements Widget, SessionStore.SessionChangeListener, GeckoSession.PromptDelegate {
 
@@ -37,7 +35,6 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
     private int mHandle;
     private WidgetPlacement mWidgetPlacement;
     private WidgetManagerDelegate mWidgetManager;
-    private PointF mLastWorldSize;
     private ChoicePromptWidget mChoicePrompt;
 
     public BrowserWidget(Context aContext, int aSessionId) {
@@ -54,6 +51,9 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
         mHandle = ((WidgetManagerDelegate)aContext).newWidgetHandle();
         mWidgetPlacement = new WidgetPlacement(aContext);
         initializeWidgetPlacement(mWidgetPlacement);
+
+        handleResizeEvent(SettingsStore.getInstance(getContext()).getBrowserWorldWidth(),
+                SettingsStore.getInstance(getContext()).getBrowserWorldHeight());
     }
 
     private void initializeWidgetPlacement(WidgetPlacement aPlacement) {
@@ -66,7 +66,7 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
         aPlacement.translationY = WidgetPlacement.unitFromMeters(context, R.dimen.browser_world_y);
         aPlacement.translationZ = WidgetPlacement.unitFromMeters(context, R.dimen.browser_world_z);
         aPlacement.anchorX = 0.5f;
-        aPlacement.anchorY = 0.5f;
+        aPlacement.anchorY = 0.0f;
     }
 
     public void pauseCompositor() {
@@ -88,6 +88,18 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
         mDisplay.surfaceChanged(mSurface, mWidth, mHeight);
     }
 
+    public void setBrowserSize(float windowWidth, float windowHeight, float multiplier) {
+        float worldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.browser_world_width);
+        float aspect = windowWidth / windowHeight;
+        float worldHeight = worldWidth / aspect;
+        float area = worldWidth * worldHeight * multiplier;
+
+        float targetWidth = (float) Math.sqrt(area * aspect);
+        float targetHeight = (float) Math.sqrt(area / aspect);
+
+        handleResizeEvent(targetWidth, targetHeight);
+    }
+
     @Override
     public void setSurfaceTexture(SurfaceTexture aTexture, final int aWidth, final int aHeight) {
         GeckoSession session = SessionStore.get().getSession(mSessionId);
@@ -105,6 +117,8 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
 
     @Override
     public void resizeSurfaceTexture(final int aWidth, final int aHeight) {
+        mWidth = aWidth;
+        mHeight = aHeight;
         mSurfaceTexture.setDefaultBufferSize(aWidth, aHeight);
         mDisplay.surfaceChanged(mSurface, aWidth, aHeight);
     }
@@ -142,22 +156,19 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
 
     @Override
     public void handleResizeEvent(float aWorldWidth, float aWorldHeight) {
-        int defaultWidth = WidgetPlacement.pixelDimension(getContext(), R.dimen.browser_width_pixels);
-        int defaultHeight = WidgetPlacement.pixelDimension(getContext(), R.dimen.browser_height_pixels);
-        float defaultAspect = (float) defaultWidth / (float) defaultHeight;
-        float worldAspect = aWorldWidth / aWorldHeight;
+        float worldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.browser_world_width);
+        int defaultWidth = SettingsStore.getInstance(getContext()).getWindowWidth();
+        int defaultHeight = SettingsStore.getInstance(getContext()).getWindowHeight();
 
-        if (worldAspect > defaultAspect) {
-            mWidgetPlacement.height = (int) Math.ceil(defaultWidth / worldAspect);
-            mWidgetPlacement.width = defaultWidth;
-        } else {
-            mWidgetPlacement.width = (int) Math.ceil(defaultHeight * worldAspect);
-            mWidgetPlacement.height = defaultHeight;
-        }
+        float aspect = (float)defaultWidth / (float)defaultHeight;
+        float worldHeight = worldWidth / aspect;
+        mWidgetPlacement.width = (int)((aWorldWidth * defaultWidth) / worldWidth);
+        mWidgetPlacement.height = (int)((aWorldHeight * defaultHeight) /worldHeight);
         mWidgetPlacement.worldWidth = aWorldWidth;
         mWidgetManager.updateWidget(this);
 
-        mLastWorldSize = new PointF(aWorldWidth, aWorldHeight);
+        SettingsStore.getInstance(getContext()).setBrowserWorldWidth(aWorldWidth);
+        SettingsStore.getInstance(getContext()).setBrowserWorldHeight(aWorldHeight);
     }
 
     @Override
@@ -303,10 +314,6 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
 
     private void setPrivateBrowsingEnabled(boolean isEnabled) {
         // TODO: Fade in/out the browser window. Waiting for https://github.com/MozillaReality/FirefoxReality/issues/77
-    }
-
-    protected  PointF getLastWorldSize() {
-        return mLastWorldSize;
     }
 
     @Override

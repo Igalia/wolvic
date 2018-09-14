@@ -50,11 +50,11 @@
                 android:layout_marginStart="10dp" />
 
             <org.mozilla.vrbrowser.ui.UIButton
-                android:id="@+id/focusEnterButton"
+                android:id="@+id/resizeEnterButton"
                 style="?attr/navigationBarButtonStyle"
                 android:layout_weight="1"
                 android:layout_marginStart="10dp"
-                android:src="@drawable/ic_icon_focus_mode" />
+                android:src="@drawable/ic_icon_focus_mode_resize" />
         </LinearLayout>
 
         <LinearLayout
@@ -66,19 +66,6 @@
             android:padding="0dp"
             android:orientation="horizontal"
             android:visibility="gone">
-
-            <org.mozilla.vrbrowser.ui.UIButton
-                android:id="@+id/resizeEnterButton"
-                style="?attr/navigationBarButtonStyle"
-                android:layout_marginStart="10dp"
-                android:padding="5dp"
-                android:src="@drawable/ic_icon_focus_mode_resize" />
-
-            <org.mozilla.vrbrowser.ui.UIButton
-                android:id="@+id/focusExitButton"
-                style="?attr/navigationBarButtonStyle"
-                android:layout_marginStart="10dp"
-                android:src="@drawable/ic_icon_focus_mode_exit" />
         </LinearLayout>
 
         <LinearLayout
@@ -86,7 +73,7 @@
             android:id="@+id/resizeModeContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="end"
+            android:gravity="center_horizontal"
             android:padding="0dp"
             android:orientation="horizontal"
             android:visibility="gone">
@@ -95,24 +82,32 @@
                 android:id="@+id/resizePreset3"
                 style="?attr/navigationBarTextButtonStyle"
                 android:layout_marginStart="10dp"
+                android:padding="5dp"
+                android:textSize="12sp"
                 android:text="3x" />
 
             <org.mozilla.vrbrowser.ui.UITextButton
                 android:id="@+id/resizePreset2"
                 style="?attr/navigationBarTextButtonStyle"
                 android:layout_marginStart="10dp"
+                android:padding="5dp"
+                android:textSize="12sp"
                 android:text="2x" />
 
             <org.mozilla.vrbrowser.ui.UITextButton
                 android:id="@+id/resizePreset1"
                 style="?attr/navigationBarTextButtonStyle"
                 android:layout_marginStart="10dp"
+                android:padding="5dp"
+                android:textSize="12sp"
                 android:text="1x" />
 
             <org.mozilla.vrbrowser.ui.UITextButton
                 android:id="@+id/resizePreset0"
                 style="?attr/navigationBarTextButtonStyle"
                 android:layout_marginStart="10dp"
+                android:padding="5dp"
+                android:textSize="12sp"
                 android:text="0.5x" />
 
             <org.mozilla.vrbrowser.ui.UIButton

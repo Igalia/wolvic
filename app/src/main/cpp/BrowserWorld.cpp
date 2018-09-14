@@ -279,10 +279,17 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
                            controller.buttonState & ControllerDelegate::BUTTON_TOUCHPAD;
       bool aResized = false, aResizeEnded = false;
       hitWidget->HandleResize(hitPoint, pressed, aResized, aResizeEnded);
+
       resizingWidget = hitWidget;
       if (aResized) {
         aRelayoutWidgets = true;
+
+        std::shared_ptr<BrowserWorld> world = self.lock();
+        if (world) {
+          world->LayoutWidget(hitWidget->GetHandle());
+        }
       }
+
       if (aResizeEnded) {
         float width, height;
         hitWidget->GetWorldSize(width, height);
@@ -704,16 +711,6 @@ BrowserWorld::UpdateWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement
   widget->SetSurfaceTextureSize((int32_t)(ceilf(aPlacement->width * aPlacement->density)),
                                 (int32_t)(ceilf(aPlacement->height * aPlacement->density)));
 
-  WidgetPtr parent = m.GetWidget(aPlacement->parentHandle);
-
-  int32_t parentWidth = 0, parentHeight = 0;
-  float parentWorldWith = 0.0f, parentWorldHeight = 0.0f;
-
-  if (parent) {
-    parent->GetSurfaceTextureSize(parentWidth, parentHeight);
-    parent->GetWorldSize(parentWorldWith, parentWorldHeight);
-  }
-
   float worldWidth = 0.0f, worldHeight = 0.0f;
   widget->GetWorldSize(worldWidth, worldHeight);
 
@@ -724,31 +721,9 @@ BrowserWorld::UpdateWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement
 
   if (newWorldWidth != worldWidth || oldWidth != aPlacement->width || oldHeight != aPlacement->height) {
     widget->SetWorldWidth(newWorldWidth);
-    widget->GetWorldSize(worldWidth, worldHeight);
   }
 
-  vrb::Matrix transform = vrb::Matrix::Identity();
-  if (aPlacement->rotationAxis.Magnitude() > std::numeric_limits<float>::epsilon()) {
-    transform = vrb::Matrix::Rotation(aPlacement->rotationAxis, aPlacement->rotation);
-  }
-
-  vrb::Vector translation = vrb::Vector(aPlacement->translation.x() * kWorldDPIRatio,
-                                        aPlacement->translation.y() * kWorldDPIRatio,
-                                        aPlacement->translation.z() * kWorldDPIRatio);
-  // Widget anchor point
-  translation -= vrb::Vector((aPlacement->anchor.x() - 0.5f) * worldWidth,
-                             (aPlacement->anchor.y() - 0.5f) * worldHeight,
-                             0.0f);
-  // Parent anchor point
-  if (parent) {
-    translation += vrb::Vector(
-        parentWorldWith * aPlacement->parentAnchor.x() - parentWorldWith * 0.5f,
-        parentWorldHeight * aPlacement->parentAnchor.y() - parentWorldHeight * 0.5f,
-        0.0f);
-  }
-
-  transform.TranslateInPlace(translation);
-  widget->SetTransform(parent ? parent->GetTransform().PostMultiply(transform) : transform);
+  LayoutWidget(aHandle);
 }
 
 void
@@ -792,6 +767,49 @@ BrowserWorld::UpdateVisibleWidgets() {
       UpdateWidget(widget->GetHandle(), widget->GetPlacement());
     }
   }
+}
+
+void
+BrowserWorld::LayoutWidget(int32_t aHandle) {
+  WidgetPtr widget = m.GetWidget(aHandle);
+  WidgetPlacementPtr aPlacement = widget->GetPlacement();
+
+  WidgetPtr parent = m.GetWidget(aPlacement->parentHandle);
+
+  int32_t parentWidth = 0, parentHeight = 0;
+  float parentWorldWith = 0.0f, parentWorldHeight = 0.0f;
+
+  if (parent) {
+    parent->GetSurfaceTextureSize(parentWidth, parentHeight);
+    parent->GetWorldSize(parentWorldWith, parentWorldHeight);
+  }
+
+  float worldWidth = 0.0f, worldHeight = 0.0f;
+  widget->GetWorldSize(worldWidth, worldHeight);
+
+  vrb::Matrix transform = vrb::Matrix::Identity();
+  if (aPlacement->rotationAxis.Magnitude() > std::numeric_limits<float>::epsilon()) {
+    transform = vrb::Matrix::Rotation(aPlacement->rotationAxis, aPlacement->rotation);
+  }
+
+  vrb::Vector translation = vrb::Vector(aPlacement->translation.x() * kWorldDPIRatio,
+                                        aPlacement->translation.y() * kWorldDPIRatio,
+                                        aPlacement->translation.z() * kWorldDPIRatio);
+
+  // Widget anchor point
+  translation -= vrb::Vector((aPlacement->anchor.x() - 0.5f) * worldWidth,
+                             (aPlacement->anchor.y() - 0.5f) * worldHeight,
+                             0.0f);
+  // Parent anchor point
+  if (parent) {
+    translation += vrb::Vector(
+      parentWorldWith * aPlacement->parentAnchor.x() - parentWorldWith * 0.5f,
+      parentWorldHeight * aPlacement->parentAnchor.y() - parentWorldHeight * 0.5f,
+      0.0f);
+  }
+
+  transform.TranslateInPlace(translation);
+  widget->SetTransform(parent ? parent->GetTransform().PostMultiply(transform) : transform);
 }
 
 void

@@ -3,7 +3,7 @@
     <dimen name="browser_width_pixels">800px</dimen>
     <dimen name="browser_height_pixels">450px</dimen>
     <item name="browser_world_width" format="float" type="dimen">4.0</item>
-    <item name="browser_world_y" format="float" type="dimen">1.6</item>
+    <item name="browser_world_y" format="float" type="dimen">0.2</item>
     <item name="browser_world_z" format="float" type="dimen">-4.2</item>
 
     <!-- Navigation bar -->
@@ -58,7 +58,7 @@
     <!-- Top Bar -->
     <dimen name="top_bar_width">40dp</dimen>
     <dimen name="top_bar_height">40dp</dimen>
-    <item name="top_bar_world_y" format="float" type="dimen">0.15</item>
+    <item name="top_bar_world_y" format="float" type="dimen">0.20</item>
 
     <!-- Tray -->
     <item name="tray_world_y" format="float" type="dimen">-0.25</item>
