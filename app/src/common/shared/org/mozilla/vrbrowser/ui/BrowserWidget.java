@@ -111,7 +111,9 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
         mSurfaceTexture = aTexture;
         aTexture.setDefaultBufferSize(aWidth, aHeight);
         mSurface = new Surface(aTexture);
-        mDisplay = session.acquireDisplay();
+        if (mDisplay == null) {
+            mDisplay = session.acquireDisplay();
+        }
         mDisplay.surfaceChanged(mSurface, aWidth, aHeight);
     }
 
