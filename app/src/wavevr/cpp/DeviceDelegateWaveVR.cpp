@@ -311,6 +311,7 @@ DeviceDelegateWaveVR::ProcessEvents() {
       case WVR_EventType_Quit: {
         VRB_DEBUG("WVR_EventType_Quit");
         m.isRunning = false;
+        return;
       }
         break;
       case WVR_EventType_SystemInteractionModeChanged: {
