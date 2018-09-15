@@ -244,6 +244,7 @@ public class SettingsStore {
     public void setEnvironment(String aEnv) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putString(mContext.getString(R.string.settings_key_env), aEnv);
+        editor.commit();
     }
 
     public float getBrowserWorldWidth() {
