@@ -113,6 +113,8 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
         mSurface = new Surface(aTexture);
         if (mDisplay == null) {
             mDisplay = session.acquireDisplay();
+        } else {
+            Log.e(LOGTAG, "GeckoDisplay was not null in BrowserWidget.setSurfaceTexture()");
         }
         mDisplay.surfaceChanged(mSurface, aWidth, aHeight);
     }
@@ -180,6 +182,11 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
         if (session == null) {
             return;
         }
+        if (mDisplay != null) {
+            mDisplay.surfaceDestroyed();
+            session.releaseDisplay(mDisplay);
+            mDisplay = null;
+        }
         session.getTextInput().setView(null);
     }
 
@@ -219,6 +226,7 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
             oldSession.getTextInput().setView(null);
             mDisplay.surfaceDestroyed();
             oldSession.releaseDisplay(mDisplay);
+            mDisplay = null;
         }
 
         mSessionId = aId;
