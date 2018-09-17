@@ -241,6 +241,8 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
        mWidgetPlacement.visible = false;
        mWidgetManager.updateWidget(this);
 
+       mWidgetManager.popBackHandler(mBackHandler);
+
        mIsCapsLock = false;
        mIsLongPress = false;
        handleShift(false);
