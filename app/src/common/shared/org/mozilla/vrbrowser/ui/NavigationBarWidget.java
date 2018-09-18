@@ -323,7 +323,12 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mIsResizing = false;
         mWidgetManager.finishWidgetResize(mBrowserWidget);
         AnimationHelper.fadeIn(mNavigationContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
-        AnimationHelper.fadeOut(mResizeModeContainer, 0, null);
+        AnimationHelper.fadeOut(mResizeModeContainer, 0, new Runnable() {
+            @Override
+            public void run() {
+                onWidgetUpdate(mBrowserWidget);
+            }
+        });
         mWidgetManager.popBackHandler(mResizeBackHandler);
     }
 
@@ -497,7 +502,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         float targetWidth = aWidget.getPlacement().worldWidth;
         float defaultWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.browser_world_width);
         targetWidth = Math.max(defaultWidth, targetWidth);
-        // targetWidth = Math.min((targetWidth, defaultWidth * 2.0f);
+        targetWidth = Math.min(targetWidth, defaultWidth * 1.5f);
 
         float ratio = targetWidth / defaultWidth;
         mWidgetPlacement.worldWidth = targetWidth;
