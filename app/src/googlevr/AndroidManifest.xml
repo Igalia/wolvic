@@ -13,12 +13,7 @@
     <application>
         <activity android:name=".VRBrowserActivity"
             android:screenOrientation="landscape"
-            android:enableVrMode="@string/gvr_vr_mode_component"
-            android:resizeableActivity="false"
-            android:launchMode="singleInstance"
-            android:windowSoftInputMode="stateAlwaysHidden"
-            android:configChanges="orientation|screenSize|keyboard|keyboardHidden|navigation"
-            tools:node="replace">
+            android:enableVrMode="@string/gvr_vr_mode_component">
             <meta-data android:name="com.google.android.vr.icon"
                 android:resource="@drawable/ffgvr_foreground" />
             <meta-data android:name="com.google.android.vr.icon_background"
@@ -27,7 +22,6 @@
             <!-- Intent filter that enables this app to be launched from the Daydream Home menu. -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="com.google.intent.category.DAYDREAM"/>
             </intent-filter>
             <intent-filter>

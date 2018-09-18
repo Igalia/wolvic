@@ -18,23 +18,13 @@
         <activity
             android:name=".VRBrowserActivity"
             android:launchMode="singleInstance"
-            android:configChanges="orientation|screenSize|keyboard|keyboardHidden|navigation"
+            android:configChanges="density|keyboardHidden|navigation|orientation|screenSize|uiMode"
             android:windowSoftInputMode="stateAlwaysHidden"
             >
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER"/>
-                <category android:name="android.intent.category.APP_BROWSER" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.INFO" />
-            </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <category android:name="android.intent.category.LAUNCHER" />
                 <data android:scheme="http" />
                 <data android:scheme="https" />
             </intent-filter>
