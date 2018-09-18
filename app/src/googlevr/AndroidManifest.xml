@@ -7,9 +7,8 @@
     <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true" />
     <uses-feature android:name="android.hardware.vr.high_performance" android:required="true" />
     <uses-feature android:name="android.software.vr.mode" android:required="true" />
-    <uses-feature android:name="android.hardware.vr.headtracking"
-        android:version="1"
-        android:required="false" />
+    <uses-feature android:name="android.hardware.vr.headtracking" android:version="1" android:required="false" />
+    <uses-feature android:name="android.hardware.touchscreen" android:required="false" tools:node="replace" />
     <application>
         <activity android:name=".VRBrowserActivity"
             android:screenOrientation="landscape"
