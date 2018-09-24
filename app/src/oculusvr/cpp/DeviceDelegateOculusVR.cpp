@@ -272,8 +272,10 @@ struct DeviceDelegateOculusVR::State {
     const bool triggerPressed = (controllerState.Buttons & ovrButton_A) != 0;
     const bool trackpadPressed = (controllerState.Buttons & ovrButton_Enter) != 0;
     const bool trackpadTouched = (bool) controllerState.TrackpadStatus;
+    const bool backPressed = (controllerState.Buttons & ovrButton_Back) != 0;
     controller->SetButtonState(0, ControllerDelegate::BUTTON_TRIGGER, 1, triggerPressed, triggerPressed);
     controller->SetButtonState(0, ControllerDelegate::BUTTON_TOUCHPAD, 0, trackpadPressed, trackpadTouched);
+    controller->SetButtonState(0, ControllerDelegate::BUTTON_APP, -1, backPressed, backPressed);
 
     const float trackpadX = controllerState.TrackpadPosition.x / (float)controllerCapabilities.TrackpadMaxX;
     const float trackpadY = controllerState.TrackpadPosition.y / (float)controllerCapabilities.TrackpadMaxY;
@@ -541,7 +543,7 @@ DeviceDelegateOculusVR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
     vrapi_SetPerfThread(m.ovr, VRAPI_PERF_THREAD_TYPE_RENDERER, gettid());
   }
 
-  //vrapi_SetRemoteEmulation(m.ovr, false);
+  vrapi_SetRemoteEmulation(m.ovr, false);
 }
 
 void
