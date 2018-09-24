@@ -7,6 +7,7 @@ package org.mozilla.vrbrowser;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -16,6 +17,8 @@ import android.view.inputmethod.ExtractedTextRequest;
 import org.mozilla.gecko.GeckoAppShell;
 import org.mozilla.gecko.GeckoProfile;
 import org.mozilla.geckoview.*;
+import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
+import org.mozilla.vrbrowser.utils.UrlUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -45,6 +48,8 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     private LinkedList<SessionChangeListener> mSessionChangeListeners;
     private LinkedList<GeckoSession.TextInputDelegate> mTextInputListeners;
     private LinkedList<GeckoSession.PromptDelegate> mPromptListeners;
+    private final long MIN_LOAD_TIME = 40;
+    private long startLoadTime = 0;
 
     public interface SessionChangeListener {
         void onNewSession(GeckoSession aSession, int aId);
@@ -154,6 +159,10 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
 
     public void dumpAllState(Integer sessionId) {
         dumpAllState(getSession(sessionId));
+    }
+
+    private boolean isLocalizedContent(@Nullable String url) {
+        return url != null && (url.startsWith("about:") || url.startsWith("data:"));
     }
 
     private void dumpAllState(GeckoSession aSession) {
@@ -823,6 +832,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             return;
         }
         state.mIsLoading = true;
+        startLoadTime = SystemClock.elapsedRealtime();
         for (GeckoSession.ProgressDelegate listener: mProgressListeners) {
             listener.onPageStart(aSession, aUri);
         }
@@ -837,6 +847,11 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         }
 
         state.mIsLoading = false;
+        long elapsedLoad = SystemClock.elapsedRealtime() - startLoadTime;
+        if (elapsedLoad > MIN_LOAD_TIME && !isLocalizedContent(state.mUri)) {
+            Log.i(LOGTAG, "Sent load to histogram");
+            TelemetryWrapper.addLoadToHistogram(state.mUri, elapsedLoad);
+        }
         for (GeckoSession.ProgressDelegate listener: mProgressListeners) {
             listener.onPageStop(aSession, b);
         }
