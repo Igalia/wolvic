@@ -39,13 +39,15 @@ def main(name, argv):
 
    # Sign APKs
    for apk in glob.glob(build_output_path + "/*/*/*-aligned.apk"):
-      print "Signing", apk
+      target = apk.replace('unsigned', 'signed')
       if not release:
-         apk = apk.replace('release', 'staging')
+         target = target.replace('release', 'staging')
+      print "Signing", apk
+      print "Target ", target
       print subprocess.check_output([
            "curl",
             "-F", "input=@" + apk,
-            "-o", apk.replace('unsigned', 'signed'),
+            "-o", target,
             "-H", "Authorization: " + token,
             sign_url])
 
