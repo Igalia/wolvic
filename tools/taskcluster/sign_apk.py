@@ -39,9 +39,9 @@ def main(name, argv):
 
    # Sign APKs
    for apk in glob.glob(build_output_path + "/*/*/*-aligned.apk"):
-      target = apk.replace('unsigned', 'signed')
+      target = apk.replace('-unsigned-', '-signed-')
       if not release:
-         target = target.replace('release', 'staging')
+         target = target.replace('-release-', '-staging-')
       print "Signing", apk
       print "Target ", target
       print subprocess.check_output([
