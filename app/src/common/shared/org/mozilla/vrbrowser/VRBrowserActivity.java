@@ -19,7 +19,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
-import com.mozilla.speechlibrary.MozillaSpeechService;
 import org.mozilla.gecko.GeckoVRManager;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.audio.VRAudioTheme;
@@ -438,6 +437,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             return;
         }
         mIsPresentingImmersive = true;
+        TelemetryWrapper.startImmersive();
         PauseCompositorRunnable runnable = new PauseCompositorRunnable();
 
         synchronized (this) {
@@ -459,6 +459,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             return;
         }
         mIsPresentingImmersive = false;
+        TelemetryWrapper.uploadImmersiveToHistogram();
         Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(new Runnable() {
             @Override
