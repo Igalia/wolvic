@@ -26,8 +26,10 @@ import org.mozilla.vrbrowser.SessionStore;
 import org.mozilla.vrbrowser.search.SearchEngine;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.regex.Pattern;
 
 public class NavigationURLBar extends FrameLayout {
@@ -120,6 +122,12 @@ public class NavigationURLBar extends FrameLayout {
 
         int index = -1;
         if (aURL != null) {
+            try {
+                aURL = URLDecoder.decode(aURL, "UTF-8");
+
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
             if (aURL.startsWith("jar:"))
                 return;
             else if (aURL.startsWith("resource:") || SessionStore.get().isHomeUri(aURL))

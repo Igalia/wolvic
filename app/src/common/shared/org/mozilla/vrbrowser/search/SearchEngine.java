@@ -7,6 +7,9 @@ import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.SessionStore;
 import org.mozilla.vrbrowser.SettingsStore;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 public class SearchEngine implements GeolocationTask.GeolocationTaskDelegate {
 
     private static final String LOGTAG = "VRB";
@@ -87,6 +90,12 @@ public class SearchEngine implements GeolocationTask.GeolocationTaskDelegate {
     }
 
     public String getSearchURL(String aQuery) {
+        try {
+            aQuery = URLEncoder.encode(aQuery, "UTF-8");
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         return mEngine.getSearchQuery(mContext, aQuery);
     }
     public String getURLResource() {
