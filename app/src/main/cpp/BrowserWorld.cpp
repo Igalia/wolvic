@@ -136,8 +136,8 @@ struct BrowserWorld::State {
   CreationContextPtr create;
   ModelLoaderAndroidPtr loader;
   GroupPtr rootOpaqueParent;
-  GroupPtr rootOpaque;
-  GroupPtr rootTransparent;
+  TransformPtr rootOpaque;
+  TransformPtr rootTransparent;
   GroupPtr rootController;
   LightPtr light;
   ControllerContainerPtr controllers;
@@ -167,8 +167,8 @@ struct BrowserWorld::State {
     context = RenderContext::Create();
     create = context->GetRenderThreadCreationContext();
     loader = ModelLoaderAndroid::Create(context);
-    rootOpaque = Group::Create(create);
-    rootTransparent = Group::Create(create);
+    rootOpaque = Transform::Create(create);
+    rootTransparent = Transform::Create(create);
     rootController = Group::Create(create);
     light = Light::Create(create);
     rootOpaqueParent = Group::Create(create);
@@ -861,6 +861,9 @@ BrowserWorld::DrawWorld() {
     return DistanceToNode(a, headPosition) < DistanceToNode(b, headPosition);
   });
   m.device->StartFrame();
+
+  m.rootOpaque->SetTransform(m.device->GetReorientTransform());
+  m.rootTransparent->SetTransform(m.device->GetReorientTransform());
 
   m.device->BindEye(device::Eye::Left);
   m.drawList->Reset();

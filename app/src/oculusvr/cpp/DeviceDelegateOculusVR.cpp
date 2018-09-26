@@ -4,6 +4,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "DeviceDelegateOculusVR.h"
+#include "DeviceUtils.h"
 #include "ElbowModel.h"
 #include "BrowserEGLContext.h"
 
@@ -117,6 +118,8 @@ struct DeviceDelegateOculusVR::State {
   ElbowModel::HandEnum hand = ElbowModel::HandEnum::Right;
   ControllerDelegatePtr controller;
   ImmersiveDisplayPtr immersiveDisplay;
+  int reorientCount = -1;
+  vrb::Matrix reorientMatrix = vrb::Matrix::Identity();
 
 
   void UpdatePerspective() {
@@ -162,6 +165,8 @@ struct DeviceDelegateOculusVR::State {
       eyeSwapChains[i] = OculusEyeSwapChain::create();
     }
     UpdatePerspective();
+
+    reorientCount = vrapi_GetSystemStatusInt(&java, VRAPI_SYS_STATUS_RECENTER_COUNT);
 
     // Send the remote back button java events to the apps
     vrapi_SetPropertyInt(&java, VRAPI_BLOCK_REMOTE_BUTTONS_WHEN_NOT_EMULATING_HMT, 0);
@@ -269,6 +274,7 @@ struct DeviceDelegateOculusVR::State {
     controllerState.Header.ControllerType = ovrControllerType_TrackedRemote;
     vrapi_GetCurrentInputState(ovr, controllerID, &controllerState.Header);
 
+    reorientCount = controllerState.RecenterCount;
     const bool triggerPressed = (controllerState.Buttons & ovrButton_A) != 0;
     const bool trackpadPressed = (controllerState.Buttons & ovrButton_Enter) != 0;
     const bool trackpadTouched = (bool) controllerState.TrackpadStatus;
@@ -315,6 +321,9 @@ DeviceDelegateOculusVR::SetRenderMode(const device::RenderMode aMode) {
   for (int i = 0; i < VRAPI_EYE_COUNT; ++i) {
     m.eyeSwapChains[i]->Init(render, m.renderMode, m.renderWidth, m.renderHeight);
   }
+
+  // Reset reorient when exiting or entering immersive
+  m.reorientMatrix = vrb::Matrix::Identity();
 }
 
 device::RenderMode
@@ -350,6 +359,11 @@ DeviceDelegateOculusVR::GetCamera(const device::Eye aWhich) {
 const vrb::Matrix&
 DeviceDelegateOculusVR::GetHeadTransform() const {
   return m.cameras[0]->GetHeadTransform();
+}
+
+const vrb::Matrix&
+DeviceDelegateOculusVR::GetReorientTransform() const {
+  return m.reorientMatrix;
 }
 
 void
@@ -416,7 +430,6 @@ DeviceDelegateOculusVR::StartFrame() {
   ovrMatrix4f matrix = vrapi_GetTransformFromPose(&m.predictedTracking.HeadPose.Pose);
   vrb::Matrix head = vrb::Matrix::FromRowMajor(matrix.M[0]);
 
-
   static const vrb::Vector kAverageHeight(0.0f, 1.7f, 0.0f);
   if (m.renderMode == device::RenderMode::StandAlone) {
     head.TranslateInPlace(kAverageHeight);
@@ -435,8 +448,13 @@ DeviceDelegateOculusVR::StartFrame() {
     m.immersiveDisplay->SetCapabilityFlags(caps);
   }
 
-
+  int lastReorientCount = m.reorientCount;
   m.UpdateControllers(head);
+  bool reoriented = lastReorientCount != m.reorientCount && lastReorientCount > 0 && m.reorientCount > 0;
+  if (reoriented && m.renderMode == device::RenderMode::StandAlone) {
+    m.reorientMatrix = DeviceUtils::CalculateReorientationMatrix(head, kAverageHeight);
+  }
+
   VRB_GL_CHECK(glClearColor(m.clearColor.Red(), m.clearColor.Green(), m.clearColor.Blue(), m.clearColor.Alpha()));
 }
 
@@ -543,6 +561,8 @@ DeviceDelegateOculusVR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
     vrapi_SetPerfThread(m.ovr, VRAPI_PERF_THREAD_TYPE_RENDERER, gettid());
   }
 
+  // Reset reorientation after Enter VR
+  m.reorientMatrix = vrb::Matrix::Identity();
   vrapi_SetRemoteEmulation(m.ovr, false);
 }
 

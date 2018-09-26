@@ -36,6 +36,7 @@ struct DeviceDelegateNoAPI::State {
   bool clicked;
   float width, height;
   float near, far;
+  vrb::Matrix reorientMatrix;
   State()
       : renderMode(device::RenderMode::StandAlone)
       , heading(0.0f)
@@ -46,6 +47,7 @@ struct DeviceDelegateNoAPI::State {
       , height(100.0f)
       , near(0.1f)
       , far(1000.0f)
+      , reorientMatrix(vrb::Matrix::Identity())
   {
   }
 
@@ -120,6 +122,11 @@ DeviceDelegateNoAPI::GetCamera(const device::Eye) {
 const vrb::Matrix&
 DeviceDelegateNoAPI::GetHeadTransform() const {
   return m.camera->GetTransform();
+}
+
+const vrb::Matrix&
+DeviceDelegateNoAPI::GetReorientTransform() const {
+  return m.reorientMatrix;
 }
 
 void

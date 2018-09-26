@@ -22,6 +22,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/BrowserWorld.cpp
              src/main/cpp/Controller.cpp
              src/main/cpp/ControllerContainer.cpp
+             src/main/cpp/DeviceUtils.cpp
              src/main/cpp/ElbowModel.cpp
              src/main/cpp/FadeBlitter.cpp
              src/main/cpp/GestureDelegate.cpp

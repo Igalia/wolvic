@@ -4,6 +4,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "DeviceDelegateGoogleVR.h"
+#include "DeviceUtils.h"
 #include "ElbowModel.h"
 #include "GestureDelegate.h"
 
@@ -86,6 +87,8 @@ struct DeviceDelegateGoogleVR::State {
   std::array<Controller, kMaxControllerCount> controllers;
   ImmersiveDisplayPtr immersiveDisplay;
   bool lastSubmitDiscarded;
+  vrb::Matrix reorientMatrix;
+  bool recentered;
 
   State()
       : gvr(nullptr)
@@ -102,10 +105,12 @@ struct DeviceDelegateGoogleVR::State {
       , far(100.f)
       , sixDofHead(false)
       , lastSubmitDiscarded(false)
+      , recentered(false)
   {
     frameBufferSize = {0,0};
     maxRenderSize = {0,0};
     gestures = GestureDelegate::Create();
+    reorientMatrix = vrb::Matrix::Identity();
   }
 
   gvr_context* GetContext() { return gvr; }
@@ -155,6 +160,7 @@ struct DeviceDelegateGoogleVR::State {
   SetRenderMode(const device::RenderMode aMode) {
     if (aMode != renderMode) {
       renderMode = aMode;
+      reorientMatrix = vrb::Matrix::Identity();
       CreateSwapChain();
     }
   }
@@ -275,6 +281,9 @@ struct DeviceDelegateGoogleVR::State {
         controllerDelegate->SetEnabled(index, true);
         controllerDelegate->SetVisible(index, true);
       }
+
+      recentered = recentered || gvr_controller_state_get_recentered(controllerState);
+
       gvr_quatf ori = gvr_controller_state_get_orientation(controllerState);
       vrb::Quaternion quat(ori.qx, ori.qy, ori.qz, ori.qw);
       controller.transform = vrb::Matrix::Rotation(vrb::Quaternion(ori.qx, ori.qy, ori.qz, ori.qw));
@@ -404,6 +413,11 @@ DeviceDelegateGoogleVR::GetHeadTransform() const {
   return m.cameras[0]->GetHeadTransform();
 }
 
+const vrb::Matrix&
+DeviceDelegateGoogleVR::GetReorientTransform() const {
+  return m.reorientMatrix;
+}
+
 void
 DeviceDelegateGoogleVR::SetClearColor(const vrb::Color& aColor) {
   m.clearColor = aColor;
@@ -460,9 +474,13 @@ DeviceDelegateGoogleVR::StartFrame() {
   m.headMatrix = vrb::Matrix::FromRowMajor(m.gvrHeadMatrix.m);
   m.headMatrix = m.headMatrix.Inverse();
   if (m.renderMode == device::RenderMode::StandAlone) {
+    if (m.recentered) {
+      m.reorientMatrix = DeviceUtils::CalculateReorientationMatrix(m.headMatrix, kAverageHeight);
+    }
     m.headMatrix.TranslateInPlace(kAverageHeight);
   }
   m.UpdateCameras();
+  m.recentered = false;
 
   if (!m.lastSubmitDiscarded) {
     m.frame = GVR_CHECK(gvr_swap_chain_acquire_frame(m.swapChain));
@@ -555,6 +573,7 @@ DeviceDelegateGoogleVR::Resume() {
     VRB_LOG("Resume GVR controller");
     GVR_CHECK(gvr_controller_resume(m.controllerContext));
   }
+  m.reorientMatrix = vrb::Matrix::Identity();
 }
 
 DeviceDelegateGoogleVR::DeviceDelegateGoogleVR(State& aState) : m(aState) {}

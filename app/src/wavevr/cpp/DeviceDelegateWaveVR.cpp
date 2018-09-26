@@ -4,6 +4,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "DeviceDelegateWaveVR.h"
+#include "DeviceUtils.h"
 #include "ElbowModel.h"
 #include "GestureDelegate.h"
 
@@ -67,6 +68,9 @@ struct DeviceDelegateWaveVR::State {
   std::array<Controller, kMaxControllerCount> controllers;
   ImmersiveDisplayPtr immersiveDisplay;
   bool lastSubmitDiscarded;
+  bool recentered;
+  vrb::Matrix reorientMatrix;
+  bool ignoreNextRecenter;
   State()
       : isRunning(true)
       , near(0.1f)
@@ -79,6 +83,8 @@ struct DeviceDelegateWaveVR::State {
       , renderWidth(0)
       , renderHeight(0)
       , lastSubmitDiscarded(false)
+      , recentered(false)
+      , ignoreNextRecenter(false)
   {
     memset((void*)devicePairs, 0, sizeof(WVR_DevicePosePair_t) * WVR_DEVICE_COUNT_LEVEL_1);
     gestures = GestureDelegate::Create();
@@ -90,6 +96,7 @@ struct DeviceDelegateWaveVR::State {
         controllers[index].type = WVR_DeviceType_Controller_Left;
       }
     }
+    reorientMatrix = vrb::Matrix::Identity();
   }
 
 
@@ -223,6 +230,7 @@ DeviceDelegateWaveVR::SetRenderMode(const device::RenderMode aMode) {
     return;
   }
   m.renderMode = aMode;
+  m.reorientMatrix = vrb::Matrix::Identity();
 }
 
 device::RenderMode
@@ -260,6 +268,11 @@ DeviceDelegateWaveVR::GetCamera(const device::Eye aWhich) {
 const vrb::Matrix&
 DeviceDelegateWaveVR::GetHeadTransform() const {
   return m.cameras[0]->GetHeadTransform();
+}
+
+const vrb::Matrix&
+DeviceDelegateWaveVR::GetReorientTransform() const {
+  return m.reorientMatrix;
 }
 
 void
@@ -345,10 +358,13 @@ DeviceDelegateWaveVR::ProcessEvents() {
         break;
       case WVR_EventType_DeviceSuspend: {
         VRB_DEBUG("WVR_EventType_DeviceSuspend");
+        m.reorientMatrix = vrb::Matrix::Identity();
+        m.ignoreNextRecenter = true;
       }
         break;
       case WVR_EventType_DeviceResume: {
         VRB_DEBUG("WVR_EventType_DeviceResume");
+        m.reorientMatrix = vrb::Matrix::Identity();
       }
         break;
       case WVR_EventType_DeviceRoleChanged: {
@@ -381,6 +397,9 @@ DeviceDelegateWaveVR::ProcessEvents() {
         break;
       case WVR_EventType_RecenterSuccess3DoF: {
         VRB_DEBUG("WVR_EventType_RecenterSuccess_3DoF");
+        WVR_InAppRecenter(WVR_RecenterType_YawAndPosition);
+        m.recentered = !m.ignoreNextRecenter;
+        m.ignoreNextRecenter = false;
       }
         break;
       case WVR_EventType_RecenterFail3DoF: {
@@ -443,6 +462,9 @@ DeviceDelegateWaveVR::StartFrame() {
   if (m.devicePairs[WVR_DEVICE_HMD].pose.isValidPose) {
     hmd = vrb::Matrix::FromRowMajor(m.devicePairs[WVR_DEVICE_HMD].pose.poseMatrix.m);
     if (m.renderMode == device::RenderMode::StandAlone) {
+      if (m.recentered) {
+        m.reorientMatrix = DeviceUtils::CalculateReorientationMatrix(hmd, kAverageHeight);
+      }
       hmd.TranslateInPlace(kAverageHeight);
     }
     m.cameras[device::EyeIndex(device::Eye::Left)]->SetHeadTransform(hmd);
@@ -450,6 +472,7 @@ DeviceDelegateWaveVR::StartFrame() {
   } else {
     VRB_DEBUG("Invalid pose returned");
   }
+  m.recentered = false;
   if (!m.delegate) {
     return;
   }

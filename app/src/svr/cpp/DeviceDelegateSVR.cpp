@@ -118,6 +118,7 @@ struct DeviceDelegateSVR::State {
   bool controllerCreated = false;
   ControllerDelegatePtr controller;
   ImmersiveDisplayPtr immersiveDisplay;
+  vrb::Matrix reorientMatrix = vrb::Matrix::Identity();
 
   void UpdatePerspective(const svrDeviceInfo& aInfo) {
     const float fovx = aInfo.targetFovXRad * 0.5f;
@@ -356,6 +357,11 @@ DeviceDelegateSVR::GetCamera(const device::Eye aWhich) {
 const vrb::Matrix&
 DeviceDelegateSVR::GetHeadTransform() const {
   return m.cameras[0]->GetHeadTransform();
+}
+
+const vrb::Matrix&
+DeviceDelegateSVR::GetReorientTransform() const {
+  return m.reorientMatrix;
 }
 
 void
