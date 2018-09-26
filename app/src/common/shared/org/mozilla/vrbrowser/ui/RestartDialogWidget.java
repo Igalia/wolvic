@@ -13,6 +13,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.VRBrowserActivity;
 import org.mozilla.vrbrowser.WidgetPlacement;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 
@@ -87,11 +88,9 @@ public class RestartDialogWidget extends UIWidget {
     }
 
     private void handleRestartApp() {
-        Intent i = getContext().getApplicationContext().getPackageManager()
-                .getLaunchIntentForPackage(getContext().getApplicationContext().getPackageName());
+        Intent i = new Intent(getContext(), VRBrowserActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        getContext().startActivity(i);
 
         PendingIntent mPendingIntent = PendingIntent.getActivity(getContext(), 0, i,
                 PendingIntent.FLAG_CANCEL_CURRENT);
