@@ -73,6 +73,7 @@ tasks:
           && git config advice.detachedHead false
           && git rebase origin/master
           && git submodule update
+          && pushd gvr-android-sdk && ./gradlew --no-daemon extractNDK && popd
           && . tools/taskcluster/get_third_party.sh
           && cp tools/gradle/taskcluster.properties ./user.properties
           && ./gradlew --no-daemon clean assembleGooglevr assembleNoapi assembleWavevr assembleSvr assembleOculusvr
@@ -121,6 +122,7 @@ tasks:
           && git config advice.detachedHead false
           && git checkout {{ event.version }}
           && git submodule update
+          && pushd gvr-android-sdk && ./gradlew --no-daemon extractNDK && popd
           && . tools/taskcluster/get_third_party.sh
           && cp tools/gradle/taskcluster.properties ./user.properties
           && ./gradlew --no-daemon clean assembleGooglevr assembleNoapi assembleWavevr assembleSvr assembleOculusvr
