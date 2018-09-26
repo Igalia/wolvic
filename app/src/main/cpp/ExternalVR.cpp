@@ -165,7 +165,7 @@ struct ExternalVR::State {
     memcpy(&browser, &data.browserState, sizeof(mozilla::gfx::VRBrowserState));
 
 
-    if (!wasPresenting && IsPresenting()) {
+    if ((!wasPresenting && IsPresenting()) || browser.navigationTransitionActive) {
       firstPresentingFrame = true;
     }
     if (wasPresenting && !IsPresenting()) {
