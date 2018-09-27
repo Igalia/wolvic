@@ -42,6 +42,10 @@
     <string name="developer_options_save">Save</string>
     <string name="developer_options_display_dpi">Display DPI:</string>
     <string name="developer_options_max_window_size">Max. Window Size:</string>
+    <string name="developer_options_msaa">MSAA</string>
+    <string name="developer_options_msaa_disabled">Disabled</string>
+    <string name="developer_options_msaa_2">2x</string>
+    <string name="developer_options_msaa_4">4x</string>
     <string name="developer_options_ua_desktop">Desktop</string>
     <string name="developer_options_ua_mobile">Mobile</string>
     <string name="developer_options_ua_vr">VR</string>

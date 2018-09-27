@@ -583,6 +583,10 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             out.write("pref(\"webgl.enable-surface-texture\", true);\n".getBytes());
             out.write("pref(\"apz.allow_double_tap_zooming\", false);\n".getBytes());
             out.write("pref(\"dom.webcomponents.customelements.enabled\", false);\n".getBytes());
+            int mssaLevel = SettingsStore.getInstance(aContext).getMSAALevel();
+            if (mssaLevel > 1) {
+                out.write(("pref(\"gl.msaa-level\"," + mssaLevel + ");\n").getBytes());
+            }
         } catch (FileNotFoundException e) {
             Log.e(LOGTAG, "Unable to create file: '" + prefFileName + "' got exception: " + e.toString());
         } catch (IOException e) {

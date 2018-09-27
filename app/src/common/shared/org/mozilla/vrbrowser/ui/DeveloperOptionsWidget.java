@@ -44,6 +44,10 @@ public class DeveloperOptionsWidget extends UIWidget {
     private RadioButton mDesktopRadio;
     private RadioButton mRadioMobile;
     private RadioButton mVrRadio;
+    private RadioGroup mMSAARadio;
+    private RadioButton mMSAARadioDisabled;
+    private RadioButton mMSAARadio2;
+    private RadioButton mMSAARadio4;
     private UIButton mBackButton;
     private RadioGroup mEventsRadio;
     private RadioButton mTouchRadio;
@@ -168,6 +172,18 @@ public class DeveloperOptionsWidget extends UIWidget {
         mVrRadio.setSoundEffectsEnabled(false);
         mUaModeRadio.setOnCheckedChangeListener(mUaModeListener);
         setUaMode(uaMode, false);
+
+        int mssaLevel = SettingsStore.getInstance(getContext()).getMSAALevel();
+        mMSAARadio = findViewById(R.id.radioMSAAMode);
+        mMSAARadio.setSoundEffectsEnabled(false);
+        mMSAARadioDisabled = findViewById(R.id.radioMSAADisabled);
+        mMSAARadioDisabled.setSoundEffectsEnabled(false);
+        mMSAARadio2 = findViewById(R.id.radioMSAA2);
+        mMSAARadio2.setSoundEffectsEnabled(false);
+        mMSAARadio4 = findViewById(R.id.radioMSAA4);
+        mMSAARadio4.setSoundEffectsEnabled(false);
+        mUaModeRadio.setOnCheckedChangeListener(mUaModeListener);
+        setMSAAMode(mssaLevel, false);
 
         InputMode inputMode = InputMode.values()[SettingsStore.getInstance(getContext()).getInputMode()];
         mEventsRadio = findViewById(R.id.radioEvents);
@@ -381,6 +397,17 @@ public class DeveloperOptionsWidget extends UIWidget {
             }
 
             setUaMode(getUaModeFromRadio(checkedId), true);
+        }
+    };
+
+    private RadioGroup.OnCheckedChangeListener mMSSAChangeListener = new RadioGroup.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
+
+            setMSAAMode(getMSSAModeFromRadio(checkedId), true);
         }
     };
 
@@ -623,6 +650,24 @@ public class DeveloperOptionsWidget extends UIWidget {
         return uaMode;
     }
 
+    private int getMSSAModeFromRadio(int checkedId) {
+        int level = 0;
+        switch (checkedId) {
+            case R.id.radioMSAADisabled:
+                level = 0;
+                break;
+            case  R.id.radioMSAA4:
+                level = 4;
+                break;
+            default:
+                level = 2;
+                break;
+        }
+
+        return level;
+    }
+
+
     private void setUaMode(UaMode uaMode, boolean doApply) {
         mUaModeRadio.setOnCheckedChangeListener(null);
 
@@ -648,6 +693,34 @@ public class DeveloperOptionsWidget extends UIWidget {
 
         if (doApply) {
             SessionStore.get().setUaMode(uaMode.ordinal());
+        }
+    }
+
+    private void setMSAAMode(int level, boolean doApply) {
+        mMSAARadio.setOnCheckedChangeListener(null);
+
+        if (level > 2) {
+            mMSAARadioDisabled.setChecked(false);
+            mMSAARadio2.setChecked(false);
+            mMSAARadio4.setChecked(true);
+
+        } else if (level > 1) {
+            mMSAARadioDisabled.setChecked(false);
+            mMSAARadio2.setChecked(true);
+            mMSAARadio4.setChecked(false);
+
+        } else {
+            mMSAARadioDisabled.setChecked(true);
+            mMSAARadio2.setChecked(false);
+            mMSAARadio4.setChecked(false);
+        }
+
+        mMSAARadio.setOnCheckedChangeListener(mMSSAChangeListener);
+
+
+        if (doApply) {
+            SettingsStore.getInstance(getContext()).setMSAALevel(level);
+            showRestartDialog();
         }
     }
 
