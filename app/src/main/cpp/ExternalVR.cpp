@@ -6,7 +6,6 @@
 #include "ExternalVR.h"
 #include "VRBrowser.h"
 
-#include "vrb/ConcreteClass.h"
 #include "vrb/Matrix.h"
 #include "vrb/Quaternion.h"
 #include "vrb/Vector.h"
@@ -121,6 +120,7 @@ private:
 namespace crow {
 
 struct ExternalVR::State {
+  static ExternalVR::State * sState;
   mozilla::gfx::VRExternalShmem data;
   mozilla::gfx::VRSystemState system;
   mozilla::gfx::VRBrowserState browser;
@@ -132,16 +132,25 @@ struct ExternalVR::State {
   bool waitingForExit;
 
   State() : deviceCapabilities(0) {
+    pthread_mutex_init(&data.systemMutex, nullptr);
+    pthread_mutex_init(&data.browserMutex, nullptr);
+    pthread_cond_init(&data.systemCond, nullptr);
+    pthread_cond_init(&data.browserCond, nullptr);
+  }
+
+  ~State() {
+    pthread_mutex_destroy(&(data.systemMutex));
+    pthread_mutex_destroy(&(data.browserMutex));
+    pthread_cond_destroy(&(data.systemCond));
+    pthread_cond_destroy(&(data.browserCond));
+  }
+
+  void Reset() {
     memset(&data, 0, sizeof(mozilla::gfx::VRExternalShmem));
     memset(&system, 0, sizeof(mozilla::gfx::VRSystemState));
     memset(&browser, 0, sizeof(mozilla::gfx::VRBrowserState));
     data.version = mozilla::gfx::kVRExternalVersion;
     data.size = sizeof(mozilla::gfx::VRExternalShmem);
-    pthread_mutex_init(&data.systemMutex, nullptr);
-    pthread_mutex_init(&data.browserMutex, nullptr);
-    pthread_cond_init(&data.systemCond, nullptr);
-    pthread_cond_init(&data.browserCond, nullptr);
-
     system.displayState.mIsConnected = true;
     system.displayState.mIsMounted = true;
     const vrb::Matrix identity = vrb::Matrix::Identity();
@@ -153,11 +162,12 @@ struct ExternalVR::State {
     waitingForExit = false;
   }
 
-  ~State() {
-    pthread_mutex_destroy(&(data.systemMutex));
-    pthread_mutex_destroy(&(data.browserMutex));
-    pthread_cond_destroy(&(data.systemCond));
-    pthread_cond_destroy(&(data.browserCond));
+  static ExternalVR::State& Instance() {
+    if (!sState) {
+      sState = new State();
+    }
+
+    return *sState;
   }
 
   void PullBrowserStateWhileLocked() {
@@ -179,9 +189,12 @@ struct ExternalVR::State {
   }
 };
 
+ExternalVR::State * ExternalVR::State::sState = nullptr;
+
 ExternalVRPtr
 ExternalVR::Create() {
-  return std::make_shared<vrb::ConcreteClass<ExternalVR, ExternalVR::State> >();
+  ExternalVRPtr result(new ExternalVR());
+  return result;
 }
 
 mozilla::gfx::VRExternalShmem*
@@ -420,7 +433,8 @@ ExternalVR::StopPresenting() {
   m.waitingForExit = true;
 }
 
-ExternalVR::ExternalVR(State& aState) : m(aState) {
+ExternalVR::ExternalVR(): m(State::Instance()) {
+  m.Reset();
   PushSystemState();
 }
 
