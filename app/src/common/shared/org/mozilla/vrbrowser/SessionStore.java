@@ -7,7 +7,6 @@ package org.mozilla.vrbrowser;
 
 import android.content.Context;
 import android.graphics.Rect;
-import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -18,7 +17,6 @@ import org.mozilla.gecko.GeckoAppShell;
 import org.mozilla.gecko.GeckoProfile;
 import org.mozilla.geckoview.*;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
-import org.mozilla.vrbrowser.utils.UrlUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -48,8 +46,6 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     private LinkedList<SessionChangeListener> mSessionChangeListeners;
     private LinkedList<GeckoSession.TextInputDelegate> mTextInputListeners;
     private LinkedList<GeckoSession.PromptDelegate> mPromptListeners;
-    private final long MIN_LOAD_TIME = 40;
-    private long startLoadTime = 0;
 
     public interface SessionChangeListener {
         void onNewSession(GeckoSession aSession, int aId);
@@ -836,7 +832,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             return;
         }
         state.mIsLoading = true;
-        startLoadTime = SystemClock.elapsedRealtime();
+        TelemetryWrapper.startPageLoadTime();
         for (GeckoSession.ProgressDelegate listener: mProgressListeners) {
             listener.onPageStart(aSession, aUri);
         }
@@ -851,10 +847,8 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         }
 
         state.mIsLoading = false;
-        long elapsedLoad = SystemClock.elapsedRealtime() - startLoadTime;
-        if (elapsedLoad > MIN_LOAD_TIME && !isLocalizedContent(state.mUri)) {
-            Log.i(LOGTAG, "Sent load to histogram");
-            TelemetryWrapper.addLoadToHistogram(state.mUri, elapsedLoad);
+        if (!isLocalizedContent(state.mUri)) {
+            TelemetryWrapper.uploadPageLoadToHistogram(state.mUri);
         }
         for (GeckoSession.ProgressDelegate listener: mProgressListeners) {
             listener.onPageStop(aSession, b);

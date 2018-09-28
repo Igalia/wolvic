@@ -3,6 +3,7 @@ package org.mozilla.vrbrowser.telemetry;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.StrictMode;
+import android.os.SystemClock;
 import android.support.annotation.UiThread;
 import android.util.Log;
 
@@ -31,13 +32,19 @@ import static java.lang.Math.toIntExact;
 public class TelemetryWrapper {
     private final static String APP_NAME = "FirefoxReality";
     private final static String LOGTAG = "VRB";
-    private final static int BUCKET_SIZE_MS = 100;
+    private final static int MIN_LOAD_TIME = 40;
+    private final static int LOADING_BUCKET_SIZE_MS = 100;
+    private final static int MIN_IMMERSIVE_TIME = 1000;
+    private final static int IMMERSIVE_BUCKET_SIZE_MS = 10000;
     private final static int HISTOGRAM_MIN_INDEX = 0;
     private final static int HISTOGRAM_SIZE = 200;
 
     private static HashSet<String> domainMap = new HashSet<String>();
-    private static int[] histogram = new int[HISTOGRAM_SIZE];
+    private static int[] loadingTimeHistogram = new int[HISTOGRAM_SIZE];
+    private static int[] immersiveHistogram = new int[HISTOGRAM_SIZE];
     private static int numUri = 0;
+    private static long startLoadPageTime = 0;
+    private static long startImmersiveTime = 0;
 
     private class Category {
         private static final String ACTION = "action";
@@ -52,6 +59,7 @@ public class TelemetryWrapper {
         private static final String TYPE_QUERY = "type_query";
         // TODO: Support "select_query" after providing search suggestion.
         private static final String VOICE_QUERY = "voice_query";
+        private static final String IMMERSIVE_MODE = "immersive_mode";
     }
 
     private class Object {
@@ -106,14 +114,27 @@ public class TelemetryWrapper {
 
     @UiThread
     public static void stop() {
-        TelemetryEvent histogramEvent = TelemetryEvent.create(Category.HISTOGRAM, Method.FOREGROUND, Object.BROWSER);
-        for (int bucketIndex = 0; bucketIndex < histogram.length; ++bucketIndex) {
-            histogramEvent.extra(Integer.toString(bucketIndex * BUCKET_SIZE_MS),  Integer.toString(histogram[bucketIndex]));
+        // Upload loading time histogram
+        TelemetryEvent loadingHistogramEvent = TelemetryEvent.create(Category.HISTOGRAM, Method.FOREGROUND, Object.BROWSER);
+        for (int bucketIndex = 0; bucketIndex < loadingTimeHistogram.length; ++bucketIndex) {
+            loadingHistogramEvent.extra(Integer.toString(bucketIndex * LOADING_BUCKET_SIZE_MS),
+                                        Integer.toString(loadingTimeHistogram[bucketIndex]));
         }
-        histogramEvent.queue();
+        loadingHistogramEvent.queue();
 
-        // Clear histogram array after queueing it
-        histogram = new int[HISTOGRAM_SIZE];
+        // Clear loading histogram array after queueing it
+        loadingTimeHistogram = new int[HISTOGRAM_SIZE];
+
+        // Upload immersive time histogram
+        TelemetryEvent immersiveHistogramEvent = TelemetryEvent.create(Category.HISTOGRAM, Method.IMMERSIVE_MODE, Object.BROWSER);
+        for (int bucketIndex = 0; bucketIndex < immersiveHistogram.length; ++bucketIndex) {
+            immersiveHistogramEvent.extra(Integer.toString(bucketIndex * IMMERSIVE_BUCKET_SIZE_MS),
+                                          Integer.toString(immersiveHistogram[bucketIndex]));
+        }
+        immersiveHistogramEvent.queue();
+
+        // Clear loading histogram array after queueing it
+        immersiveHistogram = new int[HISTOGRAM_SIZE];
 
         // We only upload the domain and URI counts to the probes without including
         // users' URI info.
@@ -176,7 +197,16 @@ public class TelemetryWrapper {
     }
 
     @UiThread
-    public static void addLoadToHistogram(String uri, Long newLoadTime) {
+    public static void startPageLoadTime() {
+        startLoadPageTime = SystemClock.elapsedRealtime();
+    }
+
+    @UiThread
+    public static void uploadPageLoadToHistogram(String uri) {
+        if (startLoadPageTime == 0) {
+            return;
+        }
+
         URI uriLink = URI.create(uri);
         if (uriLink.getHost() == null) {
             return;
@@ -184,19 +214,52 @@ public class TelemetryWrapper {
 
         domainMap.add(UrlUtils.stripCommonSubdomains(uriLink.getHost()));
         numUri++;
-        int histogramLoadIndex = toIntExact(newLoadTime / BUCKET_SIZE_MS);
+
+        long elapsedLoad = SystemClock.elapsedRealtime() - startLoadPageTime;
+        if (elapsedLoad < MIN_LOAD_TIME) {
+            return;
+        }
+
+        int histogramLoadIndex = toIntExact(elapsedLoad / LOADING_BUCKET_SIZE_MS);
+        Log.i(LOGTAG, "Sent load to histogram");
 
         if (histogramLoadIndex > (HISTOGRAM_SIZE - 2)) {
             histogramLoadIndex = HISTOGRAM_SIZE - 1;
+            Log.e(LOGTAG, "the loading histogram size is overflow.");
         } else if (histogramLoadIndex < HISTOGRAM_MIN_INDEX) {
             histogramLoadIndex = HISTOGRAM_MIN_INDEX;
         }
 
-        if (histogramLoadIndex >= histogram.length) {
-            Log.e(LOGTAG, "the histogram size is overflow.");
-            histogramLoadIndex = histogram.length - 1;
+        loadingTimeHistogram[histogramLoadIndex]++;
+    }
+
+    @UiThread
+    public static void startImmersive() {
+        startImmersiveTime = SystemClock.elapsedRealtime();
+    }
+
+    @UiThread
+    public static void uploadImmersiveToHistogram() {
+        if (startImmersiveTime == 0) {
+            return;
         }
-        histogram[histogramLoadIndex]++;
+
+        long elapsedImmersive = SystemClock.elapsedRealtime() - startImmersiveTime;
+        if (elapsedImmersive < MIN_IMMERSIVE_TIME) {
+            return;
+        }
+
+        int histogramImmersiveIndex = toIntExact(elapsedImmersive / IMMERSIVE_BUCKET_SIZE_MS);
+        Log.i(LOGTAG, "Send immersive time spent to histogram.");
+
+        if (histogramImmersiveIndex > (HISTOGRAM_SIZE - 2)) {
+            histogramImmersiveIndex = HISTOGRAM_SIZE - 1;
+            Log.e(LOGTAG, "the immersive histogram size is overflow.");
+        } else if (histogramImmersiveIndex < HISTOGRAM_MIN_INDEX) {
+            histogramImmersiveIndex = HISTOGRAM_MIN_INDEX;
+        }
+
+        immersiveHistogram[histogramImmersiveIndex]++;
     }
 }
 
