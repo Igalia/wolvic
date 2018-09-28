@@ -69,6 +69,7 @@ static const int GestureSwipeRight = 1;
 
 static const float kScrollFactor = 20.0f; // Just picked what fell right.
 static const float kWorldDPIRatio = 2.0f/720.0f;
+static const double kHoverRate = 1.0 / 10.0;
 
 #if SPACE_THEME == 1
   static const std::string CubemapDay = "cubemap/space";
@@ -235,6 +236,20 @@ OutOfDeadZone(Controller& aController, const float aX, const float aY) {
   return !aController.inDeadZone;
 }
 
+static bool
+ThrottleHoverEvent(Controller& aController, const double aTimestamp, const bool aIsPressed, const bool aWasPressed) {
+  if (aIsPressed || aWasPressed) {
+    return false;
+  }
+
+  if ((aTimestamp - aController.lastHoverEvent) < kHoverRate) {
+    return true;
+  }
+
+  aController.lastHoverEvent = aTimestamp;
+  return false;
+}
+
 void
 BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
   std::vector<Widget*> active;
@@ -310,12 +325,14 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
       }
       const bool moved = pressed ? OutOfDeadZone(controller, theX, theY)
           : (controller.pointerX != theX) || (controller.pointerY != theY);
+      const bool throttled = ThrottleHoverEvent(controller, context->GetTimestamp(), pressed, wasPressed);
 
-      if (moved || (controller.widget != handle) || (pressed != wasPressed)) {
+      if ((!throttled && moved) || (controller.widget != handle) || (pressed != wasPressed)) {
         controller.widget = handle;
         controller.pointerX = theX;
         controller.pointerY = theY;
-        VRBrowser::HandleMotionEvent(handle, controller.index, jboolean(pressed), controller.pointerX, controller.pointerY);
+        VRBrowser::HandleMotionEvent(handle, controller.index, jboolean(pressed),
+                                     controller.pointerX, controller.pointerY);
       }
       if ((controller.scrollDeltaX != 0.0f) || controller.scrollDeltaY != 0.0f) {
         VRBrowser::HandleScrollEvent(controller.widget, controller.index,
