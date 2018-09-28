@@ -18,7 +18,7 @@ if (userPropertiesFile.exists()) {
         println(prop.key + " = " + prop.value)
         gradle.ext.set(prop.key, prop.value)
     }
-    if (gradle.hasProperty('geckoViewLocal')) {
+    if (gradle.hasProperty('geckoViewLocalArm') || gradle.hasProperty('geckoViewLocalX86')) {
         println("Using local build of geckoview")
         include ':geckoview-local'
         project(':geckoview-local').projectDir = new File('geckoview-local')
