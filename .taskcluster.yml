@@ -22,7 +22,7 @@ tasks:
           - pull_request.synchronize
           - pull_request.reopened
     payload:
-      maxRunTime: 3600
+      maxRunTime: 7200
       deadline: "{{ '2 hours' | $fromNow }}"
       image: 'mozillamixedreality/firefoxreality'
       command:
@@ -59,7 +59,7 @@ tasks:
       - "secrets:get:project/firefoxreality/staging-signing-token"
       - "secrets:get:project/firefoxreality/symbols-token"
     payload:
-      maxRunTime: 5000
+      maxRunTime: 7200
       deadline: "{{ '2 hours' | $fromNow }}"
       image: 'mozillamixedreality/firefoxreality'
       features:
@@ -108,7 +108,7 @@ tasks:
       - "secrets:get:project/firefoxreality/release-signing-token"
       - "secrets:get:project/firefoxreality/symbols-token"
     payload:
-      maxRunTime: 5000
+      maxRunTime: 7200
       deadline: "{{ '2 hours' | $fromNow }}"
       image: 'mozillamixedreality/firefoxreality'
       features:
@@ -132,7 +132,7 @@ tasks:
         'public':
           type: 'directory'
           path: '/opt/FirefoxReality/builds/'
-          expires: "{{ '1 week' | $fromNow }}"
+          expires: "{{ '1 year' | $fromNow }}"
     metadata:
       name: Firefox Reality for Android - Release Build ({{ event.version }})
       description: Building Firefox Reality for Android (via Gradle) - triggered by release
