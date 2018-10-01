@@ -7,7 +7,7 @@
     <Row>
         <Key android:codes="113" android:keyLabel="q" android:keyEdgeFlags="left" android:popupKeyboard="@xml/keyboard_popup" android:popupCharacters="ʠɋq̃" android:horizontalGap="0dp" />
         <Key android:codes="119" android:keyLabel="w" android:popupCharacters="wẃẁŵẅ" android:popupKeyboard="@xml/keyboard_popup" />
-        <Key android:codes="101" android:keyLabel="e" android:popupCharacters="eĕḝȇêé" android:popupKeyboard="@xml/keyboard_popup" />
+        <Key android:codes="101" android:keyLabel="e" android:popupCharacters="eĕḝȇêéę" android:popupKeyboard="@xml/keyboard_popup" />
         <Key android:codes="114" android:keyLabel="r" android:popupCharacters="rŕɍřŗṙ" android:popupKeyboard="@xml/keyboard_popup" />
         <Key android:codes="116" android:keyLabel="t" android:popupCharacters="tťṫţṭțṱṯ" android:popupKeyboard="@xml/keyboard_popup" />
         <Key android:codes="121" android:keyLabel="y" android:popupCharacters="yýỳŷÿỹ" android:popupKeyboard="@xml/keyboard_popup" />
@@ -19,7 +19,7 @@
     </Row>
 
     <Row>
-        <Key android:codes="97" android:keyLabel="a" android:popupCharacters="aáăäâ" android:popupKeyboard="@xml/keyboard_popup" android:keyEdgeFlags="left" android:horizontalGap="@dimen/keyboard_left_margin" />
+        <Key android:codes="97" android:keyLabel="a" android:popupCharacters="aáăäâą" android:popupKeyboard="@xml/keyboard_popup" android:keyEdgeFlags="left" android:horizontalGap="@dimen/keyboard_left_margin" />
         <Key android:codes="115" android:keyLabel="s" android:popupCharacters="sśṥŝšṧṡş" android:popupKeyboard="@xml/keyboard_popup" />
         <Key android:codes="100" android:keyLabel="d" android:popupCharacters="dđɗḋḍḑḓ" android:popupKeyboard="@xml/keyboard_popup"/>
         <Key android:codes="102" android:keyLabel="f" android:popupCharacters="fƒḟ" android:popupKeyboard="@xml/keyboard_popup" />
