@@ -80,7 +80,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             workaroundGeckoSigAction();
         }
         mUiThread = Thread.currentThread();
-        SessionStore.get().setContext(this);
+
+        Bundle extras = getIntent() != null ? getIntent().getExtras() : null;
+        SessionStore.get().setContext(this, extras);
 
         mLastGesture = NoGesture;
         super.onCreate(savedInstanceState);
@@ -229,7 +231,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     void loadFromIntent(final Intent intent) {
-        final Uri uri = intent.getData();
+        Uri uri = intent.getData();
+        if (uri == null && intent.getExtras() != null && intent.getExtras().containsKey("url")) {
+            uri = Uri.parse(intent.getExtras().getString("url"));
+        }
         if (SessionStore.get().getCurrentSession() == null) {
             String url = (uri != null ? uri.toString() : null);
             int id = SessionStore.get().createSession();

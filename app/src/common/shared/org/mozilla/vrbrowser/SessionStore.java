@@ -7,6 +7,7 @@ package org.mozilla.vrbrowser;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -125,10 +126,10 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         }
     }
 
-    public void setContext(Context aContext) {
+    public void setContext(Context aContext, Bundle aExtras) {
         if (mRuntime == null) {
             // FIXME: Once GeckoView has a prefs API
-            vrPrefsWorkAround(aContext);
+            vrPrefsWorkAround(aContext, aExtras);
             GeckoRuntimeSettings.Builder runtimeSettingsBuilder = new GeckoRuntimeSettings.Builder();
 //            runtimeSettingsBuilder.javaCrashReportingEnabled(SettingsStore.getInstance(aContext).isCrashReportingEnabled());
 //            runtimeSettingsBuilder.nativeCrashReportingEnabled(SettingsStore.getInstance(aContext).isCrashReportingEnabled());
@@ -569,7 +570,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         }
     }
 
-    private void vrPrefsWorkAround(Context aContext) {
+    private void vrPrefsWorkAround(Context aContext, Bundle aExtras) {
         File path = GeckoProfile.initFromArgs(aContext, null).getDir();
         String prefFileName = path.getAbsolutePath() + File.separator + "user.js";
         Log.i(LOGTAG, "Creating file: " + prefFileName);
@@ -583,10 +584,19 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             if (mssaLevel > 1) {
                 out.write(("pref(\"gl.msaa-level\"," + mssaLevel + ");\n").getBytes());
             }
+            addOptionalPref(out, "dom.vr.require-gesture", aExtras);
+            addOptionalPref(out, "privacy.reduceTimerPrecision", aExtras);
         } catch (FileNotFoundException e) {
             Log.e(LOGTAG, "Unable to create file: '" + prefFileName + "' got exception: " + e.toString());
         } catch (IOException e) {
             Log.e(LOGTAG, "Unable to write file: '" + prefFileName + "' got exception: " + e.toString());
+        }
+    }
+
+    private void addOptionalPref(FileOutputStream out, String aKey, Bundle aExtras) throws IOException {
+        if (aExtras != null && aExtras.containsKey(aKey)) {
+            boolean value = aExtras.getBoolean(aKey);
+            out.write(String.format("pref(\"%s\", %s);\n", aKey, value ? "true" : "false").getBytes());
         }
     }
 
