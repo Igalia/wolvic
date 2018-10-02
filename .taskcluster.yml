@@ -23,7 +23,6 @@ tasks:
           - pull_request.reopened
     payload:
       maxRunTime: 7200
-      deadline: "{{ '2 hours' | $fromNow }}"
       image: 'mozillamixedreality/firefoxreality'
       command:
         - /bin/bash
@@ -60,7 +59,6 @@ tasks:
       - "secrets:get:project/firefoxreality/symbols-token"
     payload:
       maxRunTime: 7200
-      deadline: "{{ '2 hours' | $fromNow }}"
       image: 'mozillamixedreality/firefoxreality'
       features:
         taskclusterProxy: true
@@ -109,7 +107,6 @@ tasks:
       - "secrets:get:project/firefoxreality/symbols-token"
     payload:
       maxRunTime: 7200
-      deadline: "{{ '2 hours' | $fromNow }}"
       image: 'mozillamixedreality/firefoxreality'
       features:
         taskclusterProxy: true
