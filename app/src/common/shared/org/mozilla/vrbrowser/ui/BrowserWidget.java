@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import org.mozilla.geckoview.GeckoDisplay;
+import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.*;
@@ -178,6 +179,7 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
     @Override
     public void releaseWidget() {
         SessionStore.get().removeSessionChangeListener(this);
+        SessionStore.get().removePromptListener(this);
         GeckoSession session = SessionStore.get().getSession(mSessionId);
         if (session == null) {
             return;
@@ -381,5 +383,10 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
     @Override
     public void onFilePrompt(GeckoSession session, String title, int type, String[] mimeTypes, FileCallback callback) {
 
+    }
+
+    @Override
+    public GeckoResult<Boolean> onPopupRequest(final GeckoSession session, final String targetUri) {
+        return GeckoResult.fromValue(true);
     }
 }

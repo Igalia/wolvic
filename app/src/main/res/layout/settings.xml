@@ -93,7 +93,7 @@
                             android:paddingTop="20dp"
                             android:paddingBottom="5dp"
                             android:text="@string/settings_crash_reporting"
-                            android:textColor="@color/rhino"
+                            android:textColor="@color/white"
                             android:textSize="@dimen/settings_font_size"/>
 
                     <Switch
@@ -105,7 +105,7 @@
                             android:textOn=""
                             android:track="@drawable/switch_track"
                             android:thumb="@drawable/switch_thumb"
-                            android:enabled="false"/>
+                            android:enabled="true"/>
 
                     <TextView
                             android:id="@+id/crash_reporting_switch_text"
@@ -117,7 +117,7 @@
                             android:gravity="center"
                             android:paddingTop="5dp"
                             android:text="OFF"
-                            android:textColor="@color/rhino"
+                            android:textColor="@color/white"
                             android:textSize="@dimen/settings_font_size"/>
                 </LinearLayout>
 

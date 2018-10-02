@@ -201,10 +201,6 @@ public class SettingsWidget extends UIWidget {
 
     private void onSettingsCrashReportingChange(boolean isEnabled) {
         SettingsStore.getInstance(getContext()).setCrashReportingEnabled(isEnabled);
-
-        showRestartDialog();
-
-        hide();
     }
 
     private void onSettingsTelemetryChange(boolean isEnabled) {

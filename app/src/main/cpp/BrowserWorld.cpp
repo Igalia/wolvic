@@ -1179,6 +1179,11 @@ JNI_METHOD(void, workaroundGeckoSigAction)
   } else {
     VRB_ERROR("Failed to set MOZ_DISABLE_SIG_HANDLER");
   }
+  if (putenv(strdup("MOZ_DISABLE_EXCEPTION_HANDLER_SIGILL=1")) == 0) {
+    VRB_DEBUG("Successfully set MOZ_DISABLE_EXCEPTION_HANDLER_SIGILL");
+  } else {
+    VRB_ERROR("Failed to set MOZ_DISABLE_EXCEPTION_HANDLER_SIGILL");
+  }
 }
 
 JNI_METHOD(void, updateEnvironmentNative)

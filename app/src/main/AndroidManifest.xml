@@ -7,6 +7,11 @@
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
+    <permission android:name="org.mozilla.vrbrowser.CRASH_RECEIVER_PERMISSION"
+                android:protectionLevel="signature">
+    </permission>
+    <uses-permission android:name="org.mozilla.vrbrowser.CRASH_RECEIVER_PERMISSION"/>
+
     <application
         android:name=".VRBrowserApplication"
         android:allowBackup="true"
@@ -28,5 +33,11 @@
                 <data android:scheme="https" />
             </intent-filter>
         </activity>
+        <service
+            android:name=".CrashReporterService"
+            android:exported="false"
+            android:process=":crash"
+            android:permission="android.permission.BIND_JOB_SERVICE">
+        </service>
     </application>
 </manifest>

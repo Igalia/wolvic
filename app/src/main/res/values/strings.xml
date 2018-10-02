@@ -70,4 +70,11 @@
     <string name="search_placeholder">Search the Web or enter address</string>
     <string name="cancel_button">Cancel</string>
     <string name="ok_button">Ok</string>
+    <string name="crash_dialog_header">We had an issue and crashed</string>
+    <string name="crash_dialog_message">Please help Mozilla improve Firefox Reality by sending your crash data</string>
+    <string name="crash_dialog_send_data">Always send data without asking</string>
+    <string name="learn_more_button">Learn More</string>
+    <string name="dont_sent_button">Don’t Send</string>
+    <string name="send_data_button">Send Data</string>
+    <string name="crash_app_name">FirefoxReality</string>
 </resources>

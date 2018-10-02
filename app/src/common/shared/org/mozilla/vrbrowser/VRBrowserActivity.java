@@ -5,7 +5,10 @@
 
 package org.mozilla.vrbrowser;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.SurfaceTexture;
 import android.net.Uri;
 import android.opengl.GLES11Ext;
@@ -20,17 +23,32 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import org.mozilla.gecko.GeckoVRManager;
+import org.mozilla.gecko.util.ThreadUtils;
+import org.mozilla.geckoview.CrashReporter;
+import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.audio.VRAudioTheme;
 import org.mozilla.vrbrowser.search.SearchEngine;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.ui.*;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 
 public class VRBrowserActivity extends PlatformActivity implements WidgetManagerDelegate {
+
+    private BroadcastReceiver mCrashReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction().equals(CrashReporterService.CRASH_ACTION)) {
+                Intent crashIntent = intent.getParcelableExtra(CrashReporterService.DATA_TAG);
+                handleCrashIntent(crashIntent);
+            }
+        }
+    };
 
     class SwipeRunnable implements Runnable {
         boolean mCanceled = false;
@@ -65,6 +83,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     BrowserWidget mBrowserWidget;
     KeyboardWidget mKeyboard;
     NavigationBarWidget mNavigationBar;
+    CrashDialogWidget mCrashDialog;
     TopBarWidget mTopBar;
     TrayWidget mTray;
     PermissionDelegate mPermissionDelegate;
@@ -76,13 +95,18 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if (BuildConfig.FLAVOR == "oculusvr") {
+        if (BuildConfig.FLAVOR_platform == "oculusvr") {
             workaroundGeckoSigAction();
         }
         mUiThread = Thread.currentThread();
 
         Bundle extras = getIntent() != null ? getIntent().getExtras() : null;
         SessionStore.get().setContext(this, extras);
+
+        // Create broadcast receiver for getting crash messages from crash process
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(CrashReporterService.CRASH_ACTION);
+        registerReceiver(mCrashReceiver, intentFilter, getString(R.string.app_permission_name), null);
 
         mLastGesture = NoGesture;
         super.onCreate(savedInstanceState);
@@ -199,6 +223,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     protected void onDestroy() {
+        // Unregister the crash service broadcast receiver
+        unregisterReceiver(mCrashReceiver);
+
         for (Widget widget: mWidgets.values()) {
             widget.releaseWidget();
         }
@@ -227,14 +254,21 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             if (intent.getData() != null) {
                 loadFromIntent(intent);
             }
+        } else if (GeckoRuntime.ACTION_CRASHED.equals(intent.getAction())) {
+            handleCrashIntent(intent);
         }
     }
 
     void loadFromIntent(final Intent intent) {
+        if (GeckoRuntime.ACTION_CRASHED.equals(intent.getAction())) {
+            handleCrashIntent(intent);
+        }
+
         Uri uri = intent.getData();
         if (uri == null && intent.getExtras() != null && intent.getExtras().containsKey("url")) {
             uri = Uri.parse(intent.getExtras().getString("url"));
         }
+
         if (SessionStore.get().getCurrentSession() == null) {
             String url = (uri != null ? uri.toString() : null);
             int id = SessionStore.get().createSession();
@@ -245,6 +279,50 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             Log.d(LOGTAG, "Loading URI from intent: " + uri.toString());
             SessionStore.get().loadUri(uri.toString());
         }
+    }
+
+    private void handleCrashIntent(final Intent intent) {
+        Log.e(LOGTAG, "======> Got crashed intent");
+        Log.d(LOGTAG, "======> Dump File: " +
+                intent.getStringExtra(GeckoRuntime.EXTRA_MINIDUMP_PATH));
+        Log.d(LOGTAG, "======> Extras File: " +
+                intent.getStringExtra(GeckoRuntime.EXTRA_EXTRAS_PATH));
+        Log.d(LOGTAG, "======> Dump Success: " +
+                intent.getBooleanExtra(GeckoRuntime.EXTRA_MINIDUMP_SUCCESS, false));
+        Log.d(LOGTAG, "======> Fatal: " +
+                intent.getBooleanExtra(GeckoRuntime.EXTRA_CRASH_FATAL, false));
+
+        boolean isCrashReportingEnabled = SettingsStore.getInstance(this).isCrashReportingEnabled();
+        if (isCrashReportingEnabled) {
+            sendCrashData(intent);
+
+        } else {
+            if (mCrashDialog == null) {
+                mCrashDialog = new CrashDialogWidget(this);
+                mCrashDialog.setCrashDialogDelegate(new CrashDialogWidget.CrashDialogDelegate() {
+                    @Override
+                    public void onSendData() {
+                        sendCrashData(intent);
+                    }
+                });
+            }
+
+            mCrashDialog.show();
+        }
+    }
+
+    private void sendCrashData(final Intent intent) {
+        ThreadUtils.postToBackgroundThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    CrashReporter.sendCrashReport(VRBrowserActivity.this, intent, getString(R.string.crash_app_name));
+
+                } catch (IOException | URISyntaxException e) {
+                    Log.e(LOGTAG, "Failed to send crash report: " + e.toString());
+                }
+            }
+        });
     }
 
     @Override
