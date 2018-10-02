@@ -207,6 +207,9 @@ public class TelemetryWrapper {
             return;
         }
 
+        if (uri == null)
+            return;
+
         URI uriLink = URI.create(uri);
         if (uriLink.getHost() == null) {
             return;
