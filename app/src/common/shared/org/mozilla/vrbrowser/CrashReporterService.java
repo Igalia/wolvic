@@ -8,6 +8,7 @@ import android.os.Process;
 import android.support.annotation.NonNull;
 import android.support.v4.app.JobIntentService;
 import android.util.Log;
+
 import org.mozilla.geckoview.GeckoRuntime;
 
 public class CrashReporterService extends JobIntentService {
@@ -32,50 +33,50 @@ public class CrashReporterService extends JobIntentService {
 
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
-        boolean fatal = false;
-        if (GeckoRuntime.ACTION_CRASHED.equals(intent.getAction())) {
-            fatal = intent.getBooleanExtra(GeckoRuntime.EXTRA_CRASH_FATAL, false);
-        }
+        String action = intent.getAction();
+        if (GeckoRuntime.ACTION_CRASHED.equals(action)) {
+            boolean fatal = intent.getBooleanExtra(GeckoRuntime.EXTRA_CRASH_FATAL, false);
 
-        if (fatal) {
-            Log.d(LOGTAG, "======> PARENT CRASH " + intent);
-            final int pid = Process.myPid();
-            final ActivityManager activityManager = (ActivityManager) this.getSystemService(Context.ACTIVITY_SERVICE);
-            if (activityManager == null) {
-                return;
-            }
+            if (fatal) {
+                Log.d(LOGTAG, "======> NATIVE CRASH PARENT" + intent);
+                final int pid = Process.myPid();
+                final ActivityManager activityManager = (ActivityManager) this.getSystemService(Context.ACTIVITY_SERVICE);
+                if (activityManager == null) {
+                    return;
+                }
 
-            do {
-                boolean otherProcessesFound = false;
-                for (final ActivityManager.RunningAppProcessInfo info : activityManager.getRunningAppProcesses()) {
-                    if (pid != info.pid) {
-                        otherProcessesFound = true;
-                        Log.e(LOGTAG, "======> Found PID " + info.pid);
+                do {
+                    boolean otherProcessesFound = false;
+                    for (final ActivityManager.RunningAppProcessInfo info : activityManager.getRunningAppProcesses()) {
+                        if (pid != info.pid) {
+                            otherProcessesFound = true;
+                            Log.e(LOGTAG, "======> Found PID " + info.pid);
+                            break;
+                        }
+                    }
+
+                    if (!otherProcessesFound) {
+                        intent.setClass(CrashReporterService.this, VRBrowserActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
                         break;
+
+                    } else {
+                        try {
+                            Thread.sleep(PID_CHECK_INTERVAL);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
-                }
 
-                if (!otherProcessesFound) {
-                    intent.setClass(CrashReporterService.this, VRBrowserActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                    break;
+                } while (true);
 
-                } else {
-                    try {
-                        Thread.sleep(PID_CHECK_INTERVAL);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-            } while (true);
-
-        } else {
-            Log.d(LOGTAG, "======> CONTENT CRASH " + intent);
-            Intent broadcastIntent = new Intent(CRASH_ACTION);
-            broadcastIntent.putExtra(DATA_TAG, intent);
-            sendBroadcast(broadcastIntent, getString(R.string.app_permission_name));
+            } else {
+                Log.d(LOGTAG, "======> NATIVE CRASH CONTENT" + intent);
+                Intent broadcastIntent = new Intent(CRASH_ACTION);
+                broadcastIntent.putExtra(DATA_TAG, intent);
+                sendBroadcast(broadcastIntent, getString(R.string.app_permission_name));
+            }
         }
 
         Log.d(LOGTAG, "======> Crash reporter job finished");

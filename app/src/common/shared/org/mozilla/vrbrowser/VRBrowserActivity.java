@@ -95,6 +95,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Set a global exception handler as soon as possible
+        GlobalExceptionHandler.register();
+
         if (BuildConfig.FLAVOR_platform == "oculusvr") {
             workaroundGeckoSigAction();
         }
