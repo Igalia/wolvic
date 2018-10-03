@@ -136,25 +136,25 @@ public class NavigationURLBar extends FrameLayout {
                 aURL = "";
             else
                 index = aURL.indexOf("://");
-        }
-        mURL.setText(aURL);
-        if (index > 0) {
-            SpannableString spannable = new SpannableString(aURL);
-            ForegroundColorSpan color1 = new ForegroundColorSpan(mURLProtocolColor);
-            ForegroundColorSpan color2 = new ForegroundColorSpan(mURLWebsiteColor);
-            spannable.setSpan(color1, 0, index + 3, 0);
-            spannable.setSpan(color2, index + 3, aURL.length(), 0);
-            mURL.setText(spannable);
-        } else {
-            mURL.setText(aURL);
+
+            // Update the URL bar only if the URL is different than the current one and
+            // the URL bar is not focused to avoid override user input
+            if (!mURL.getText().toString().equalsIgnoreCase(aURL) && !mURL.isFocused()) {
+                mURL.setText(aURL);
+                if (index > 0) {
+                    SpannableString spannable = new SpannableString(aURL);
+                    ForegroundColorSpan color1 = new ForegroundColorSpan(mURLProtocolColor);
+                    ForegroundColorSpan color2 = new ForegroundColorSpan(mURLWebsiteColor);
+                    spannable.setSpan(color1, 0, index + 3, 0);
+                    spannable.setSpan(color2, index + 3, aURL.length(), 0);
+                    mURL.setText(spannable);
+
+                } else {
+                    mURL.setText(aURL);
+                }
+            }
         }
 
-        mURL.addTextChangedListener(mURLTextWatcher);
-    }
-
-    public void setURLText(String aText) {
-        mURL.removeTextChangedListener(mURLTextWatcher);
-        mURL.setText(aText);
         mURL.addTextChangedListener(mURLTextWatcher);
     }
 
