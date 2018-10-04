@@ -33,6 +33,7 @@ tasks:
           && git config advice.detachedHead false
           && git checkout {{event.head.sha}}
           && git submodule update
+          && pushd gvr-android-sdk && ./gradlew --no-daemon --console=plain extractNDK && popd
           && ./gradlew --no-daemon --console=plain clean assembleGooglevr assembleNoapi
     metadata:
       name: Firefox Reality for Android - Build - Pull Request
@@ -71,7 +72,7 @@ tasks:
           && git config advice.detachedHead false
           && git rebase origin/master
           && git submodule update
-          && pushd gvr-android-sdk && ./gradlew --no-daemon extractNDK && popd
+          && pushd gvr-android-sdk && ./gradlew --no-daemon --console=plain extractNDK && popd
           && . tools/taskcluster/get_third_party.sh
           && cp tools/gradle/taskcluster.properties ./user.properties
           && ./gradlew --no-daemon --console=plain clean assembleGooglevr assembleNoapi assembleWavevr assembleSvr assembleOculusvr
@@ -119,7 +120,7 @@ tasks:
           && git config advice.detachedHead false
           && git checkout {{ event.version }}
           && git submodule update
-          && pushd gvr-android-sdk && ./gradlew --no-daemon extractNDK && popd
+          && pushd gvr-android-sdk && ./gradlew --no-daemon --console=plain extractNDK && popd
           && . tools/taskcluster/get_third_party.sh
           && cp tools/gradle/taskcluster.properties ./user.properties
           && ./gradlew --no-daemon --console=plain clean assembleGooglevr assembleNoapi assembleWavevr assembleSvr assembleOculusvr
