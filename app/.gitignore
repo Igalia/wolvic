@@ -1,7 +1,7 @@
 /build
-/googlevr
-/googlevrFlat
-/oculusvr
-/noapi
-/svr
-/wavevr
+/googlevr*
+/googlevrFlat*
+/oculusvr*
+/noapi*
+/svr*
+/wavevr*

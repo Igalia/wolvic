@@ -3,6 +3,8 @@
 buildscript {
     // Gecko pinned version
     ext.geckoNightly = [
+            // GeckoView versions can be found here:
+            // https://maven.mozilla.org/?prefix=maven2/org/mozilla/geckoview/
             version: '64.0.20181004100221'
     ]
 

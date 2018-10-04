@@ -33,7 +33,7 @@ tasks:
           && git config advice.detachedHead false
           && git checkout {{event.head.sha}}
           && git submodule update
-          && ./gradlew --no-daemon clean assembleGooglevr assembleNoapi
+          && ./gradlew --no-daemon --console=plain clean assembleGooglevr assembleNoapi
     metadata:
       name: Firefox Reality for Android - Build - Pull Request
       description: Building Firefox Reality for Android (via Gradle) - triggered by a pull request.
@@ -74,7 +74,7 @@ tasks:
           && pushd gvr-android-sdk && ./gradlew --no-daemon extractNDK && popd
           && . tools/taskcluster/get_third_party.sh
           && cp tools/gradle/taskcluster.properties ./user.properties
-          && ./gradlew --no-daemon clean assembleGooglevr assembleNoapi assembleWavevr assembleSvr assembleOculusvr
+          && ./gradlew --no-daemon --console=plain clean assembleGooglevr assembleNoapi assembleWavevr assembleSvr assembleOculusvr
           && . tools/taskcluster/sign.sh staging-signing-token
           && . tools/taskcluster/upload_symbols.sh
       artifacts:
@@ -122,7 +122,7 @@ tasks:
           && pushd gvr-android-sdk && ./gradlew --no-daemon extractNDK && popd
           && . tools/taskcluster/get_third_party.sh
           && cp tools/gradle/taskcluster.properties ./user.properties
-          && ./gradlew --no-daemon clean assembleGooglevr assembleNoapi assembleWavevr assembleSvr assembleOculusvr
+          && ./gradlew --no-daemon --console=plain clean assembleGooglevr assembleNoapi assembleWavevr assembleSvr assembleOculusvr
           && . tools/taskcluster/sign.sh release-signing-token -r
           && . tools/taskcluster/upload_symbols.sh
       artifacts:
