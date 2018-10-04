@@ -3,7 +3,7 @@
 buildscript {
     // Gecko pinned version
     ext.geckoNightly = [
-            version: '64.0.20181002100235'
+            version: '64.0.20181004100221'
     ]
 
     repositories {
