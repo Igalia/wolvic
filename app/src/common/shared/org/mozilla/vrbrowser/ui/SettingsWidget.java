@@ -268,16 +268,16 @@ public class SettingsWidget extends UIWidget {
      * For local debug builds we use a fixed versionCode to not mess with the caching mechanism of the build
      * system. The fixed local build number is 1.
      *
-     * @param aVersionCode
+     * @param aVersionCode Application version code minus the leading architecture digit.
      * @return String The converted date in the format yyyy-MM-dd
      */
-    private String versionCodeToDate(int aVersionCode) {
+    private String versionCodeToDate(final int aVersionCode) {
         String versionCode = Integer.toString(aVersionCode);
 
         String formatted;
         try {
-            int year = Integer.parseInt(versionCode.substring(1, 2)) + 2016;
-            int dayOfYear = Integer.parseInt(versionCode.substring(2, 5));
+            int year = Integer.parseInt(versionCode.substring(0, 1)) + 2016;
+            int dayOfYear = Integer.parseInt(versionCode.substring(1, 4));
 
             GregorianCalendar cal = (GregorianCalendar)GregorianCalendar.getInstance();
             cal.set(Calendar.YEAR, year);
