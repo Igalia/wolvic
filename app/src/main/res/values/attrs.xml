@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SettingsButton">
+        <attr name="settingsButtonIcon" format="integer" />
+        <attr name="settingsButtonText" format="string" />
+        <attr name="settingsSecondaryText" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="UIButton">
+        <attr name="tintColorList" format="reference|color" />
+        <attr name="privateModeTintColorList" format="reference|color" />
+        <attr name="privateModeBackground" format="integer" />
+    </declare-styleable>
+
+    <declare-styleable name="UITextButton">
+        <attr name="textTintColorList" format="reference|color" />
+    </declare-styleable>
+
+    <attr name="description" format="string" />
+
+    <declare-styleable name="SwitchSetting">
+        <attr name="description" />
+    </declare-styleable>
+
+    <declare-styleable name="RadioGroupSetting">
+        <attr name="description" />
+        <attr name="options" format="reference" />
+        <attr name="values" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="EditSetting">
+        <attr name="description" />
+        <attr name="by" />
+    </declare-styleable>
+
+    <declare-styleable name="ButtonSetting">
+        <attr name="description" />
+        <attr name="buttonText" format="string" />
+    </declare-styleable>
+</resources>

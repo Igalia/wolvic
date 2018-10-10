@@ -6,80 +6,48 @@
 package org.mozilla.vrbrowser.ui;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.util.AttributeSet;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.widget.*;
+import android.widget.CompoundButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
+
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.SessionStore;
 import org.mozilla.vrbrowser.SettingsStore;
 import org.mozilla.vrbrowser.WidgetPlacement;
 import org.mozilla.vrbrowser.audio.AudioEngine;
+import org.mozilla.vrbrowser.ui.settings.ButtonSetting;
+import org.mozilla.vrbrowser.ui.settings.DoubleEditSetting;
+import org.mozilla.vrbrowser.ui.settings.SingleEditSetting;
+import org.mozilla.vrbrowser.ui.settings.RadioGroupSetting;
+import org.mozilla.vrbrowser.ui.settings.SwitchSetting;
 
 public class DeveloperOptionsWidget extends UIWidget {
 
     private static final String LOGTAG = "VRB";
 
-    private static final int COLOR_LAVANDER = Color.parseColor("#C27FFCFF");
-
-    public enum InputMode {
-        MOUSE,
-        TOUCH
-    }
-
-    public enum UaMode {
-        MOBILE,
-        DESKTOP,
-        VR
-    }
-
     private AudioEngine mAudio;
-    private Switch mRemoteDebuggingSwitch;
-    private Switch mConsoleLogsSwitch;
-    private Switch mEnvOverrideSwitch;
-    private Switch mMultiprocessSwitch;
-    private RadioGroup mUaModeRadio;
-    private RadioButton mDesktopRadio;
-    private RadioButton mRadioMobile;
-    private RadioButton mVrRadio;
-    private RadioGroup mMSAARadio;
-    private RadioButton mMSAARadioDisabled;
-    private RadioButton mMSAARadio2;
-    private RadioButton mMSAARadio4;
     private UIButton mBackButton;
-    private RadioGroup mEventsRadio;
-    private RadioButton mTouchRadio;
-    private RadioButton mMouseRadio;
-    private RadioGroup mEnvsRadio;
-    private RadioButton mMeadowRadio;
-    private RadioButton mCaveRadio;
-    private RadioButton mVoidRadio;
-    private RadioGroup mPointerColorRadio;
-    private RadioButton mColorWhiteRadio;
-    private RadioButton mColorPurpleRadio;
-    private TextView mDensityButton;
-    private TextView mDensityText;
-    private DeveloperOptionsEditText mDensityEdit;
-    private TextView mWindowSizeButton;
-    private TextView mWindowWidthText;
-    private TextView mWindowHeightText;
-    private DeveloperOptionsEditText mWindowWidthEdit;
-    private DeveloperOptionsEditText mWindowHeightEdit;
-    private TextView mDpiButton;
-    private TextView mDpiText;
-    private DeveloperOptionsEditText mDpiEdit;
-    private TextView mMaxWindowSizeButton;
-    private TextView mMaxWindowWidthText;
-    private DeveloperOptionsEditText mMaxWindowWidthEdit;
-    private TextView mMaxWindowHeightText;
-    private DeveloperOptionsEditText mMaxWindowHeightEdit;
-    private TextView mResetButton;
-    private TextView mRemoteDebuggingSwitchText;
-    private TextView mConsoleLogsSwitchText;
-    private TextView mEnvOverrideSwitchText;
-    private TextView mMultiprocessSwitchText;
+
+    private SwitchSetting mRemoteDebuggingSwitch;
+    private SwitchSetting mConsoleLogsSwitch;
+    private SwitchSetting mEnvOverrideSwitch;
+    private SwitchSetting mMultiprocessSwitch;
+
+    private RadioGroupSetting mEnvironmentsRadio;
+    private RadioGroupSetting mPointerColorRadio;
+    private RadioGroupSetting mUaModeRadio;
+    private RadioGroupSetting mMSAARadio;
+    private RadioGroupSetting mEventsRadio;
+
+    private SingleEditSetting mDensityEdit;
+    private SingleEditSetting mDpiEdit;
+    private DoubleEditSetting mWindowSizeEdit;
+    private DoubleEditSetting mMaxWindowSizeEdit;
+
+    private ButtonSetting mResetButton;
+
     private int mRestartDialogHandle = -1;
 
     public DeveloperOptionsWidget(Context aContext) {
@@ -114,207 +82,76 @@ public class DeveloperOptionsWidget extends UIWidget {
             }
         });
 
-
-        mRemoteDebuggingSwitchText = findViewById(R.id.developer_options_remote_debugging_switch_text);
-        mRemoteDebuggingSwitch = findViewById(R.id.developer_options_remote_debugging_switch);
+        mRemoteDebuggingSwitch = findViewById(R.id.remote_debugging_switch);
         mRemoteDebuggingSwitch.setOnCheckedChangeListener(mRemoteDebuggingListener);
-        mRemoteDebuggingSwitch.setSoundEffectsEnabled(false);
         setRemoteDebugging(SettingsStore.getInstance(getContext()).isRemoteDebuggingEnabled(), false);
 
-        mConsoleLogsSwitchText = findViewById(R.id.developer_options_show_console_switch_text);
-        mConsoleLogsSwitch = findViewById(R.id.developer_options_show_console_switch);
+        mConsoleLogsSwitch = findViewById(R.id.show_console_switch);
         mConsoleLogsSwitch.setOnCheckedChangeListener(mConsoleLogsListener);
-        mConsoleLogsSwitch.setSoundEffectsEnabled(false);
         setConsoleLogs(SettingsStore.getInstance(getContext()).isConsoleLogsEnabled(), false);
 
-        mEnvOverrideSwitchText = findViewById(R.id.developer_options_env_override_switch_text);
-        mEnvOverrideSwitch = findViewById(R.id.developer_options_env_override_switch);
+        mEnvOverrideSwitch = findViewById(R.id.env_override_switch);
         mEnvOverrideSwitch.setOnCheckedChangeListener(mEnvOverrideListener);
-        mEnvOverrideSwitch.setSoundEffectsEnabled(false);
         setEnvOverride(SettingsStore.getInstance(getContext()).isEnvironmentOverrideEnabled());
 
-        String env = SettingsStore.getInstance(getContext()).getEnvironment();
-        mEnvsRadio = findViewById(R.id.radioEnv);
-        mEnvsRadio.setSoundEffectsEnabled(false);
-        mMeadowRadio = findViewById(R.id.radioMeadow);
-        mMeadowRadio.setSoundEffectsEnabled(false);
-        mCaveRadio = findViewById(R.id.radioCave);
-        mCaveRadio.setSoundEffectsEnabled(false);
-        mVoidRadio = findViewById(R.id.radioVoid);
-        mVoidRadio.setSoundEffectsEnabled(false);
-        mEnvsRadio.setOnCheckedChangeListener(mEnvsListener);
-        setEnv(env, false);
-
-        int pointerColor = SettingsStore.getInstance(getContext()).getPointerColor();
-        mPointerColorRadio = findViewById(R.id.radioPointerColor);
-        mPointerColorRadio.setSoundEffectsEnabled(false);
-        mColorWhiteRadio = findViewById(R.id.radioColorWhite);
-        mColorWhiteRadio.setSoundEffectsEnabled(false);
-        mColorPurpleRadio = findViewById(R.id.radioColorPurple);
-        mColorPurpleRadio.setSoundEffectsEnabled(false);
-        mPointerColorRadio.setOnCheckedChangeListener(mPointerColorListener);
-        setPointerColor(pointerColor, false);
-
-        mMultiprocessSwitchText = findViewById(R.id.developer_options_multiprocess_switch_text);
-        mMultiprocessSwitch = findViewById(R.id.developer_options_multiprocess_switch);
+        mMultiprocessSwitch = findViewById(R.id.multiprocess_switch);
         mMultiprocessSwitch.setOnCheckedChangeListener(mMultiprocessListener);
-        mMultiprocessSwitch.setSoundEffectsEnabled(false);
         setMultiprocess(SettingsStore.getInstance(getContext()).isMultiprocessEnabled(), false);
 
-        UaMode uaMode = UaMode.values()[SettingsStore.getInstance(getContext()).getUaMode()];
-        mUaModeRadio = findViewById(R.id.radioUaMode);
-        mUaModeRadio.setSoundEffectsEnabled(false);
-        mDesktopRadio = findViewById(R.id.radioDesktop);
-        mDesktopRadio.setSoundEffectsEnabled(false);
-        mRadioMobile = findViewById(R.id.radioMobile);
-        mRadioMobile.setSoundEffectsEnabled(false);
-        mVrRadio = findViewById(R.id.radioVr);
-        mVrRadio.setSoundEffectsEnabled(false);
+        String env = SettingsStore.getInstance(getContext()).getEnvironment();
+        mEnvironmentsRadio = findViewById(R.id.environment_radio);
+        mEnvironmentsRadio.setOnCheckedChangeListener(mEnvsListener);
+        setEnv(mEnvironmentsRadio.getIdForValue(env), false);
+
+        int color = SettingsStore.getInstance(getContext()).getPointerColor();
+        mPointerColorRadio = findViewById(R.id.pointer_radio);
+        mPointerColorRadio.setOnCheckedChangeListener(mPointerColorListener);
+        setPointerColor(mPointerColorRadio.getIdForValue(color), false);
+
+        int uaMode = SettingsStore.getInstance(getContext()).getUaMode();
+        mUaModeRadio = findViewById(R.id.ua_radio);
         mUaModeRadio.setOnCheckedChangeListener(mUaModeListener);
-        setUaMode(uaMode, false);
+        setUaMode(mUaModeRadio.getIdForValue(uaMode), false);
 
-        int mssaLevel = SettingsStore.getInstance(getContext()).getMSAALevel();
-        mMSAARadio = findViewById(R.id.radioMSAAMode);
-        mMSAARadio.setSoundEffectsEnabled(false);
-        mMSAARadioDisabled = findViewById(R.id.radioMSAADisabled);
-        mMSAARadioDisabled.setSoundEffectsEnabled(false);
-        mMSAARadio2 = findViewById(R.id.radioMSAA2);
-        mMSAARadio2.setSoundEffectsEnabled(false);
-        mMSAARadio4 = findViewById(R.id.radioMSAA4);
-        mMSAARadio4.setSoundEffectsEnabled(false);
-        mUaModeRadio.setOnCheckedChangeListener(mUaModeListener);
-        setMSAAMode(mssaLevel, false);
+        int msaaLevel = SettingsStore.getInstance(getContext()).getMSAALevel();
+        mMSAARadio = findViewById(R.id.msaa_radio);
+        mMSAARadio.setOnCheckedChangeListener(mMSSAChangeListener);
+        setMSAAMode(mMSAARadio.getIdForValue(msaaLevel), false);
 
-        InputMode inputMode = InputMode.values()[SettingsStore.getInstance(getContext()).getInputMode()];
-        mEventsRadio = findViewById(R.id.radioEvents);
-        mEventsRadio.setSoundEffectsEnabled(false);
-        mTouchRadio = findViewById(R.id.radioTouch);
-        mTouchRadio.setSoundEffectsEnabled(false);
-        mMouseRadio = findViewById(R.id.radioMouse);
-        mMouseRadio.setSoundEffectsEnabled(false);
-        mEventsRadio.setOnCheckedChangeListener(mInputModeListener);
-        setInputMode(inputMode);
+        int inputMode = SettingsStore.getInstance(getContext()).getInputMode();
+        mEventsRadio = findViewById(R.id.events_radio);
+        mEventsRadio.setOnCheckedChangeListener(mMSSAChangeListener);
+        setInputMode(mEventsRadio.getIdForValue(inputMode), false);
 
-        mDensityText = findViewById(R.id.densityText);
-        mDensityText.setText(Float.toString(SettingsStore.getInstance(getContext()).getDisplayDensity()));
-        mDensityEdit = findViewById(R.id.densityEdit);
-        mDensityEdit.setText(Float.toString(SettingsStore.getInstance(getContext()).getDisplayDensity()));
-        mDensityEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    mDensityButton.callOnClick();
-                    return true;
-                }
-
-                return false;
-            }
-        });
-        mDensityButton = findViewById(R.id.densityEditButton);
-        mDensityButton.setSoundEffectsEnabled(false);
-        mDensityButton.setOnClickListener(mDensityListener);
+        mDensityEdit = findViewById(R.id.density_edit);
+        mDensityEdit.setFirstText(Float.toString(SettingsStore.getInstance(getContext()).getDisplayDensity()));
+        mDensityEdit.setOnClickListener(mDensityListener);
         setDisplayDensity(SettingsStore.getInstance(getContext()).getDisplayDensity());
 
-        mWindowWidthText = findViewById(R.id.windowSizeWidthText);
-        mWindowWidthText.setText(Integer.toString(SettingsStore.getInstance(getContext()).getWindowWidth()));
-        mWindowWidthEdit = findViewById(R.id.windowSizeWidthEdit);
-        mWindowWidthEdit.setText(Integer.toString(SettingsStore.getInstance(getContext()).getWindowWidth()));
-        mWindowWidthEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    mWindowSizeButton.callOnClick();
-                    return true;
-                }
+        mDpiEdit = findViewById(R.id.dpi_edit);
+        mDpiEdit.setFirstText(Integer.toString(SettingsStore.getInstance(getContext()).getDisplayDpi()));
+        mDpiEdit.setOnClickListener(mDpiListener);
+        setDisplayDpi(SettingsStore.getInstance(getContext()).getDisplayDpi());
 
-                return false;
-            }
-        });
-        mWindowHeightText = findViewById(R.id.windowSizeHeightText);
-        mWindowHeightText.setText(Integer.toString(SettingsStore.getInstance(getContext()).getWindowHeight()));
-        mWindowHeightEdit = findViewById(R.id.windowSizeHeightEdit);
-        mWindowHeightEdit.setText(Integer.toString(SettingsStore.getInstance(getContext()).getWindowHeight()));
-        mWindowHeightEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    mWindowSizeButton.callOnClick();
-                    return true;
-                }
-
-                return false;
-            }
-        });
-        mWindowSizeButton = findViewById(R.id.windowSizeEditButton);
-        mWindowSizeButton.setSoundEffectsEnabled(false);
-        mWindowSizeButton.setOnClickListener(mWindowSizeListener);
+        mWindowSizeEdit = findViewById(R.id.windowSize_edit);
+        mWindowSizeEdit.setFirstText(Integer.toString(SettingsStore.getInstance(getContext()).getWindowWidth()));
+        mWindowSizeEdit.setSecondText(Integer.toString(SettingsStore.getInstance(getContext()).getWindowHeight()));
+        mWindowSizeEdit.setOnClickListener(mWindowSizeListener);
         setWindowSize(
                 SettingsStore.getInstance(getContext()).getWindowWidth(),
                 SettingsStore.getInstance(getContext()).getWindowHeight(),
-                false
-        );
+                false);
 
-        mDpiText = findViewById(R.id.dpiText);
-        mDpiText.setText(Integer.toString(SettingsStore.getInstance(getContext()).getDisplayDpi()));
-        mDpiEdit = findViewById(R.id.dpiEdit);
-        mDpiEdit.setText(Integer.toString(SettingsStore.getInstance(getContext()).getDisplayDpi()));
-        mDpiEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    mDpiButton.callOnClick();
-                    return true;
-                }
-
-                return false;
-            }
-        });
-        mDpiButton = findViewById(R.id.dpiEditButton);
-        mDpiButton.setSoundEffectsEnabled(false);
-        mDpiButton.setOnClickListener(mDpiListener);
-        setDisplayDpi(SettingsStore.getInstance(getContext()).getDisplayDpi());
-
-        mMaxWindowWidthText = findViewById(R.id.maxWindowSizeWidthText);
-        mMaxWindowWidthText.setText(Integer.toString(SettingsStore.getInstance(getContext()).getMaxWindowWidth()));
-        mMaxWindowWidthEdit = findViewById(R.id.maxWindowSizeWidthEdit);
-        mMaxWindowWidthEdit.setText(Integer.toString(SettingsStore.getInstance(getContext()).getMaxWindowWidth()));
-        mMaxWindowWidthEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    mMaxWindowSizeButton.callOnClick();
-                    return true;
-                }
-
-                return false;
-            }
-        });
-        mMaxWindowHeightText = findViewById(R.id.maxWindowSizeHeightText);
-        mMaxWindowHeightText.setText(Integer.toString(SettingsStore.getInstance(getContext()).getMaxWindowHeight()));
-        mMaxWindowHeightEdit = findViewById(R.id.maxWindowSizeHeightEdit);
-        mMaxWindowHeightEdit.setText(Integer.toString(SettingsStore.getInstance(getContext()).getMaxWindowHeight()));
-        mMaxWindowHeightEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    mMaxWindowSizeButton.callOnClick();
-                    return true;
-                }
-
-                return false;
-            }
-        });
-        mMaxWindowSizeButton = findViewById(R.id.maxWindowSizeEditButton);
-        mMaxWindowSizeButton.setSoundEffectsEnabled(false);
-        mMaxWindowSizeButton.setOnClickListener(mMaxWindowSizeListener);
+        mMaxWindowSizeEdit = findViewById(R.id.maxWindowSize_edit);
+        mMaxWindowSizeEdit.setFirstText(Integer.toString(SettingsStore.getInstance(getContext()).getMaxWindowWidth()));
+        mMaxWindowSizeEdit.setSecondText(Integer.toString(SettingsStore.getInstance(getContext()).getMaxWindowHeight()));
+        mMaxWindowSizeEdit.setOnClickListener(mMaxWindowSizeListener);
         setMaxWindowSize(
                 SettingsStore.getInstance(getContext()).getMaxWindowWidth(),
                 SettingsStore.getInstance(getContext()).getMaxWindowHeight(),
-                false
-        );
+                false);
 
-        mResetButton= findViewById(R.id.resetButton);
-        mResetButton.setSoundEffectsEnabled(false);
+        mResetButton = findViewById(R.id.resetButton);
         mResetButton.setOnClickListener(mResetListener);
     }
 
@@ -343,127 +180,84 @@ public class DeveloperOptionsWidget extends UIWidget {
         widget.show();
     }
 
-    private CompoundButton.OnCheckedChangeListener mRemoteDebuggingListener = new CompoundButton.OnCheckedChangeListener() {
+    private SwitchSetting.OnCheckedChangeListener mRemoteDebuggingListener = new SwitchSetting.OnCheckedChangeListener() {
         @Override
-        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-            if (mAudio != null) {
-                mAudio.playSound(AudioEngine.Sound.CLICK);
-            }
-
-            setRemoteDebugging(b, true);
+        public void onCheckedChanged(CompoundButton compoundButton, boolean value, boolean doApply) {
+            setRemoteDebugging(value, doApply);
         }
     };
 
-    private CompoundButton.OnCheckedChangeListener mConsoleLogsListener = new CompoundButton.OnCheckedChangeListener() {
+    private SwitchSetting.OnCheckedChangeListener mConsoleLogsListener = new SwitchSetting.OnCheckedChangeListener() {
         @Override
-        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-            if (mAudio != null) {
-                mAudio.playSound(AudioEngine.Sound.CLICK);
-            }
-
-            setConsoleLogs(b, true);
+        public void onCheckedChanged(CompoundButton compoundButton, boolean value, boolean doApply) {
+            setConsoleLogs(value, doApply);
         }
     };
 
-    private CompoundButton.OnCheckedChangeListener mEnvOverrideListener = new CompoundButton.OnCheckedChangeListener() {
+    private SwitchSetting.OnCheckedChangeListener mEnvOverrideListener = new SwitchSetting.OnCheckedChangeListener() {
         @Override
-        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-            if (mAudio != null) {
-                mAudio.playSound(AudioEngine.Sound.CLICK);
-            }
-
-            setEnvOverride(b);
-
-            showRestartDialog();
+        public void onCheckedChanged(CompoundButton compoundButton, boolean value, boolean doApply) {
+            setEnvOverride(value);
         }
     };
 
-    private CompoundButton.OnCheckedChangeListener mMultiprocessListener = new CompoundButton.OnCheckedChangeListener() {
+    private SwitchSetting.OnCheckedChangeListener mMultiprocessListener = new SwitchSetting.OnCheckedChangeListener() {
         @Override
-        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-            if (mAudio != null) {
-                mAudio.playSound(AudioEngine.Sound.CLICK);
-            }
-
-            setMultiprocess(b, true);
+        public void onCheckedChanged(CompoundButton compoundButton, boolean value, boolean doApply) {
+            setMultiprocess(value, doApply);
         }
     };
 
-    private RadioGroup.OnCheckedChangeListener mUaModeListener = new RadioGroup.OnCheckedChangeListener() {
+    private RadioGroupSetting.OnCheckedChangeListener mUaModeListener = new RadioGroupSetting.OnCheckedChangeListener() {
         @Override
-        public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
-            if (mAudio != null) {
-                mAudio.playSound(AudioEngine.Sound.CLICK);
-            }
-
-            setUaMode(getUaModeFromRadio(checkedId), true);
+        public void onCheckedChanged(RadioGroup radioGroup, int checkedId, boolean doApply) {
+            setUaMode(checkedId, true);
         }
     };
 
-    private RadioGroup.OnCheckedChangeListener mMSSAChangeListener = new RadioGroup.OnCheckedChangeListener() {
+    private RadioGroupSetting.OnCheckedChangeListener mMSSAChangeListener = new RadioGroupSetting.OnCheckedChangeListener() {
         @Override
-        public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
-            if (mAudio != null) {
-                mAudio.playSound(AudioEngine.Sound.CLICK);
-            }
-
-            setMSAAMode(getMSSAModeFromRadio(checkedId), true);
+        public void onCheckedChanged(RadioGroup radioGroup, int checkedId, boolean doApply) {
+            setMSAAMode(checkedId, true);
         }
     };
 
-    private RadioGroup.OnCheckedChangeListener mInputModeListener = new RadioGroup.OnCheckedChangeListener() {
+    private RadioGroupSetting.OnCheckedChangeListener mInputModeListener = new RadioGroupSetting.OnCheckedChangeListener() {
         @Override
-        public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
-            if (mAudio != null) {
-                mAudio.playSound(AudioEngine.Sound.CLICK);
-            }
-
-            setInputMode(getInputModeFromRadio(checkedId));
+        public void onCheckedChanged(RadioGroup radioGroup, int checkedId, boolean doApply) {
+            setInputMode(checkedId, doApply);
         }
     };
 
-    private RadioGroup.OnCheckedChangeListener mEnvsListener = new RadioGroup.OnCheckedChangeListener() {
+    private RadioGroupSetting.OnCheckedChangeListener mEnvsListener = new RadioGroupSetting.OnCheckedChangeListener() {
         @Override
-        public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
-            if (mAudio != null) {
-                mAudio.playSound(AudioEngine.Sound.CLICK);
-            }
-
-            setEnv(getEnvFromRadio(checkedId), true);
+        public void onCheckedChanged(RadioGroup radioGroup, int checkedId, boolean doApply) {
+            setEnv(checkedId, doApply);
         }
     };
 
-    private RadioGroup.OnCheckedChangeListener mPointerColorListener = new RadioGroup.OnCheckedChangeListener() {
+    private RadioGroupSetting.OnCheckedChangeListener mPointerColorListener = new RadioGroupSetting.OnCheckedChangeListener() {
         @Override
-        public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
-            if (mAudio != null) {
-                mAudio.playSound(AudioEngine.Sound.CLICK);
-            }
-
-            setPointerColor(getPointerColorFromRadio(checkedId), true);
+        public void onCheckedChanged(RadioGroup radioGroup, int checkedId, boolean doApply) {
+            setPointerColor(checkedId, doApply);
         }
     };
 
     private OnClickListener mDensityListener = new OnClickListener() {
         @Override
         public void onClick(View view) {
-            if (mAudio != null) {
-                mAudio.playSound(AudioEngine.Sound.CLICK);
-            }
-
-            if (mDensityEdit.getVisibility() == View.VISIBLE) {
-                mDensityText.setVisibility(View.VISIBLE);
-                mDensityEdit.setVisibility(View.GONE);
-                mDensityButton.setText(R.string.developer_options_edit);
-
-            } else {
-                mDensityText.setVisibility(View.GONE);
-                mDensityEdit.setVisibility(View.VISIBLE);
-                mDensityButton.setText(R.string.developer_options_save);
-            }
-
-            float newDensity = Float.parseFloat(mDensityEdit.getText().toString());
+            float newDensity = Float.parseFloat(mDensityEdit.getFirstText());
             if (setDisplayDensity(newDensity)) {
+                showRestartDialog();
+            }
+        }
+    };
+
+    private OnClickListener mDpiListener = new OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            int newDpi = Integer.parseInt(mDpiEdit.getFirstText());
+            if (setDisplayDpi(newDpi)) {
                 showRestartDialog();
             }
         }
@@ -472,80 +266,17 @@ public class DeveloperOptionsWidget extends UIWidget {
     private OnClickListener mWindowSizeListener = new OnClickListener() {
         @Override
         public void onClick(View view) {
-            if (mAudio != null) {
-                mAudio.playSound(AudioEngine.Sound.CLICK);
-            }
-
-            if (mWindowWidthEdit.getVisibility() == View.VISIBLE) {
-                mWindowWidthText.setVisibility(View.VISIBLE);
-                mWindowHeightText.setVisibility(View.VISIBLE);
-                mWindowWidthEdit.setVisibility(View.GONE);
-                mWindowHeightEdit.setVisibility(View.GONE);
-                mWindowSizeButton.setText(R.string.developer_options_edit);
-
-            } else {
-                mWindowWidthText.setVisibility(View.GONE);
-                mWindowHeightText.setVisibility(View.GONE);
-                mWindowWidthEdit.setVisibility(View.VISIBLE);
-                mWindowHeightEdit.setVisibility(View.VISIBLE);
-                mWindowSizeButton.setText(R.string.developer_options_save);
-            }
-
-            int newWindowWidth = Integer.parseInt(mWindowWidthEdit.getText().toString());
-            int newWindowHeight = Integer.parseInt(mWindowHeightEdit.getText().toString());
+            int newWindowWidth = Integer.parseInt(mWindowSizeEdit.getFirstText());
+            int newWindowHeight = Integer.parseInt(mWindowSizeEdit.getSecondText());
             setWindowSize(newWindowWidth, newWindowHeight, true);
-        }
-    };
-
-    private OnClickListener mDpiListener = new OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if (mAudio != null) {
-                mAudio.playSound(AudioEngine.Sound.CLICK);
-            }
-
-            if (mDpiEdit.getVisibility() == View.VISIBLE) {
-                mDpiText.setVisibility(View.VISIBLE);
-                mDpiEdit.setVisibility(View.GONE);
-                mDpiButton.setText(R.string.developer_options_edit);
-
-            } else {
-                mDpiText.setVisibility(View.GONE);
-                mDpiEdit.setVisibility(View.VISIBLE);
-                mDpiButton.setText(R.string.developer_options_save);
-            }
-
-            int newDpi = Integer.parseInt(mDpiEdit.getText().toString());
-            if (setDisplayDpi(newDpi)) {
-                showRestartDialog();
-            }
         }
     };
 
     private OnClickListener mMaxWindowSizeListener = new OnClickListener() {
         @Override
         public void onClick(View view) {
-            if (mAudio != null) {
-                mAudio.playSound(AudioEngine.Sound.CLICK);
-            }
-
-            if (mMaxWindowWidthEdit.getVisibility() == View.VISIBLE) {
-                mMaxWindowWidthText.setVisibility(View.VISIBLE);
-                mMaxWindowHeightText.setVisibility(View.VISIBLE);
-                mMaxWindowWidthEdit.setVisibility(View.GONE);
-                mMaxWindowHeightEdit.setVisibility(View.GONE);
-                mMaxWindowSizeButton.setText(R.string.developer_options_edit);
-
-            } else {
-                mMaxWindowWidthText.setVisibility(View.GONE);
-                mMaxWindowHeightText.setVisibility(View.GONE);
-                mMaxWindowWidthEdit.setVisibility(View.VISIBLE);
-                mMaxWindowHeightEdit.setVisibility(View.VISIBLE);
-                mMaxWindowSizeButton.setText(R.string.developer_options_save);
-            }
-
-            int newMaxWindowWidth = Integer.parseInt(mMaxWindowWidthEdit.getText().toString());
-            int newMaxWindowHeight = Integer.parseInt(mMaxWindowHeightEdit.getText().toString());
+            int newMaxWindowWidth = Integer.parseInt(mMaxWindowSizeEdit.getFirstText());
+            int newMaxWindowHeight = Integer.parseInt(mMaxWindowSizeEdit.getSecondText());
             setMaxWindowSize(newMaxWindowWidth, newMaxWindowHeight, true);
         }
     };
@@ -553,10 +284,7 @@ public class DeveloperOptionsWidget extends UIWidget {
     private OnClickListener mResetListener = new OnClickListener() {
         @Override
         public void onClick(View view) {
-            if (mAudio != null) {
-                mAudio.playSound(AudioEngine.Sound.CLICK);
-            }
-
+            // Switches
             boolean restart = false;
             if (mRemoteDebuggingSwitch.isChecked() != SettingsStore.REMOTE_DEBUGGING_DEFAULT) {
                 setRemoteDebugging(SettingsStore.REMOTE_DEBUGGING_DEFAULT, true);
@@ -564,22 +292,26 @@ public class DeveloperOptionsWidget extends UIWidget {
             }
 
             setConsoleLogs(SettingsStore.CONSOLE_LOGS_DEFAULT, true);
+            setMultiprocess(SettingsStore.MULTIPROCESS_DEFAULT, true);
 
             if (mEnvOverrideSwitch.isChecked() != SettingsStore.ENV_OVERRIDE_DEFAULT) {
                 setEnvOverride(SettingsStore.ENV_OVERRIDE_DEFAULT);
                 restart = true;
             }
 
-            if (!getEnvFromRadio(mEnvsRadio.getCheckedRadioButtonId()).equals(SettingsStore.ENV_DEFAULT)) {
-                setEnv(SettingsStore.ENV_DEFAULT, true);
+            if (!mEnvironmentsRadio.getValueForId(mEnvironmentsRadio.getCheckedRadioButtonId()).equals(SettingsStore.ENV_DEFAULT)) {
+                setEnv(mEnvironmentsRadio.getIdForValue(SettingsStore.ENV_DEFAULT), true);
             }
 
-            setMultiprocess(SettingsStore.MULTIPROCESS_DEFAULT, true);
-            setUaMode(SettingsStore.UA_MODE_DEFAULT, true);
-            setInputMode(SettingsStore.INPUT_MODE_DEFAULT);
+            // Radios
+            setUaMode(mUaModeRadio.getIdForValue(SettingsStore.UA_MODE_DEFAULT), true);
+            setMSAAMode(mMSAARadio.getIdForValue(SettingsStore.MSAA_DEFAULT_LEVEL), true);
+            setInputMode(mEventsRadio.getIdForValue(SettingsStore.INPUT_MODE_DEFAULT), false);
+
+            // Edits
             restart = restart | setDisplayDensity(SettingsStore.DISPLAY_DENSITY_DEFAULT);
-            setWindowSize(SettingsStore.WINDOW_WIDTH_DEFAULT, SettingsStore.WINDOW_HEIGHT_DEFAULT, true);
             restart = restart | setDisplayDpi(SettingsStore.DISPLAY_DPI_DEFAULT);
+            setWindowSize(SettingsStore.WINDOW_WIDTH_DEFAULT, SettingsStore.WINDOW_HEIGHT_DEFAULT, true);
             setMaxWindowSize(SettingsStore.MAX_WINDOW_WIDTH_DEFAULT, SettingsStore.MAX_WINDOW_HEIGHT_DEFAULT, true);
 
             if (restart)
@@ -589,11 +321,11 @@ public class DeveloperOptionsWidget extends UIWidget {
 
     private void setRemoteDebugging(boolean value, boolean doApply) {
         mRemoteDebuggingSwitch.setOnCheckedChangeListener(null);
-        mRemoteDebuggingSwitch.setChecked(value);
+        mRemoteDebuggingSwitch.setValue(value, doApply);
         mRemoteDebuggingSwitch.setOnCheckedChangeListener(mRemoteDebuggingListener);
-        mRemoteDebuggingSwitchText.setText(value ? getContext().getString(R.string.on) : getContext().getString(R.string.off));
 
         SettingsStore.getInstance(getContext()).setRemoteDebuggingEnabled(value);
+
         if (doApply) {
             SessionStore.get().setRemoteDebugging(value);
         }
@@ -601,9 +333,8 @@ public class DeveloperOptionsWidget extends UIWidget {
 
     private void setConsoleLogs(boolean value, boolean doApply) {
         mConsoleLogsSwitch.setOnCheckedChangeListener(null);
-        mConsoleLogsSwitch.setChecked(value);
+        mConsoleLogsSwitch.setValue(value, doApply);
         mConsoleLogsSwitch.setOnCheckedChangeListener(mConsoleLogsListener);
-        mConsoleLogsSwitchText.setText(value ? getContext().getString(R.string.on) : getContext().getString(R.string.off));
 
         SettingsStore.getInstance(getContext()).setConsoleLogsEnabled(value);
 
@@ -614,18 +345,16 @@ public class DeveloperOptionsWidget extends UIWidget {
 
     private void setEnvOverride(boolean value) {
         mEnvOverrideSwitch.setOnCheckedChangeListener(null);
-        mEnvOverrideSwitch.setChecked(value);
+        mEnvOverrideSwitch.setValue(value, false);
         mEnvOverrideSwitch.setOnCheckedChangeListener(mEnvOverrideListener);
-        mEnvOverrideSwitchText.setText(value ? getContext().getString(R.string.on) : getContext().getString(R.string.off));
 
         SettingsStore.getInstance(getContext()).setEnvironmentOverrideEnabled(value);
     }
 
     private void setMultiprocess(boolean value, boolean doApply) {
         mMultiprocessSwitch.setOnCheckedChangeListener(null);
-        mMultiprocessSwitch.setChecked(value);
+        mMultiprocessSwitch.setValue(value, false);
         mMultiprocessSwitch.setOnCheckedChangeListener(mMultiprocessListener);
-        mMultiprocessSwitchText.setText(value ? getContext().getString(R.string.on) : getContext().getString(R.string.off));
 
         SettingsStore.getInstance(getContext()).setMultiprocessEnabled(value);
 
@@ -634,237 +363,103 @@ public class DeveloperOptionsWidget extends UIWidget {
         }
     }
 
-    private UaMode getUaModeFromRadio(int checkedId) {
-        UaMode uaMode;
-        switch (checkedId) {
-            case R.id.radioDesktop:
-                uaMode = UaMode.DESKTOP;
-                break;
-            case  R.id.radioMobile:
-                uaMode = UaMode.MOBILE;
-                break;
-            default:
-                uaMode = UaMode.VR;
-        }
-
-        return uaMode;
-    }
-
-    private int getMSSAModeFromRadio(int checkedId) {
-        int level = 0;
-        switch (checkedId) {
-            case R.id.radioMSAADisabled:
-                level = 0;
-                break;
-            case  R.id.radioMSAA4:
-                level = 4;
-                break;
-            default:
-                level = 2;
-                break;
-        }
-
-        return level;
-    }
-
-
-    private void setUaMode(UaMode uaMode, boolean doApply) {
+    private void setUaMode(int checkId, boolean doApply) {
         mUaModeRadio.setOnCheckedChangeListener(null);
-
-        if (uaMode == UaMode.DESKTOP) {
-            mDesktopRadio.setChecked(true);
-            mRadioMobile.setChecked(false);
-            mVrRadio.setChecked(false);
-
-        } else if (uaMode == UaMode.MOBILE) {
-            mDesktopRadio.setChecked(false);
-            mRadioMobile.setChecked(true);
-            mVrRadio.setChecked(false);
-
-        } else if (uaMode == UaMode.VR) {
-            mDesktopRadio.setChecked(false);
-            mRadioMobile.setChecked(false);
-            mVrRadio.setChecked(true);
-        }
-
+        mUaModeRadio.setChecked(checkId, doApply);
         mUaModeRadio.setOnCheckedChangeListener(mUaModeListener);
 
-        SettingsStore.getInstance(getContext()).setUaMode(uaMode.ordinal());
+        SettingsStore.getInstance(getContext()).setUaMode(checkId);
 
         if (doApply) {
-            SessionStore.get().setUaMode(uaMode.ordinal());
+            SessionStore.get().setUaMode((Integer)mUaModeRadio.getValueForId(checkId));
         }
     }
 
-    private void setMSAAMode(int level, boolean doApply) {
+    private void setMSAAMode(int checkedId, boolean doApply) {
         mMSAARadio.setOnCheckedChangeListener(null);
-
-        if (level > 2) {
-            mMSAARadioDisabled.setChecked(false);
-            mMSAARadio2.setChecked(false);
-            mMSAARadio4.setChecked(true);
-
-        } else if (level > 1) {
-            mMSAARadioDisabled.setChecked(false);
-            mMSAARadio2.setChecked(true);
-            mMSAARadio4.setChecked(false);
-
-        } else {
-            mMSAARadioDisabled.setChecked(true);
-            mMSAARadio2.setChecked(false);
-            mMSAARadio4.setChecked(false);
-        }
-
+        mMSAARadio.setChecked(checkedId, doApply);
         mMSAARadio.setOnCheckedChangeListener(mMSSAChangeListener);
 
-
         if (doApply) {
-            SettingsStore.getInstance(getContext()).setMSAALevel(level);
+            SettingsStore.getInstance(getContext()).setMSAALevel((Integer)mMSAARadio.getValueForId(checkedId));
             showRestartDialog();
         }
     }
 
-    private String getEnvFromRadio(int checkedId) {
-        String env;
-        switch (checkedId) {
-            case R.id.radioMeadow:
-                env = "meadow";
-                break;
-            case  R.id.radioCave:
-                env = "cave";
-                break;
-            case  R.id.radioVoid:
-                env = "void";
-                break;
-            default:
-                env = "meadow";
-        }
+    private void setEnv(int checkedId, boolean doApply) {
+        mEnvironmentsRadio.setOnCheckedChangeListener(null);
+        mEnvironmentsRadio.setChecked(checkedId, doApply);
+        mEnvironmentsRadio.setOnCheckedChangeListener(mEnvsListener);
 
-        return env;
-    }
-
-    private void setEnv(String env, boolean doApply) {
-        mEnvsRadio.setOnCheckedChangeListener(null);
-
-        if (env.equalsIgnoreCase("meadow")) {
-            mCaveRadio.setChecked(false);
-            mMeadowRadio.setChecked(true);
-            mVoidRadio.setChecked(false);
-
-        } else if (env.equalsIgnoreCase("cave")) {
-            mCaveRadio.setChecked(true);
-            mMeadowRadio.setChecked(false);
-            mVoidRadio.setChecked(false);
-
-        } else if (env.equalsIgnoreCase("void")) {
-            mCaveRadio.setChecked(false);
-            mMeadowRadio.setChecked(false);
-            mVoidRadio.setChecked(true);
-        }
-
-        mEnvsRadio.setOnCheckedChangeListener(mEnvsListener);
-
-        SettingsStore.getInstance(getContext()).setEnvironment(env);
+        SettingsStore.getInstance(getContext()).setEnvironment((String) mEnvironmentsRadio.getValueForId(checkedId));
 
         if (doApply) {
             mWidgetManager.updateEnvironment();
         }
     }
 
-    private int getPointerColorFromRadio(int checkedId) {
-        int color;
-        switch (checkedId) {
-            case R.id.radioColorWhite:
-                color = SettingsStore.POINTER_COLOR_DEFAULT_DEFAULT;
-                break;
-            case  R.id.radioColorPurple:
-                color = COLOR_LAVANDER;
-                break;
-            default:
-                color = SettingsStore.POINTER_COLOR_DEFAULT_DEFAULT;
-        }
-
-        return color;
-    }
-
-    private void setPointerColor(int color, boolean doApply) {
+    private void setPointerColor(int checkedId, boolean doApply) {
         mPointerColorRadio.setOnCheckedChangeListener(null);
-
-        if (color == SettingsStore.POINTER_COLOR_DEFAULT_DEFAULT) {
-            mColorPurpleRadio.setChecked(false);
-            mColorWhiteRadio.setChecked(true);
-
-        } else if (color == COLOR_LAVANDER) {
-            mColorPurpleRadio.setChecked(true);
-            mColorWhiteRadio.setChecked(false);
-        }
-
+        mPointerColorRadio.setChecked(checkedId, doApply);
         mPointerColorRadio.setOnCheckedChangeListener(mPointerColorListener);
 
-        SettingsStore.getInstance(getContext()).setPointerColor(color);
+        SettingsStore.getInstance(getContext()).setPointerColor((int)mPointerColorRadio.getValueForId(checkedId));
 
         if (doApply) {
             mWidgetManager.updatePointerColor();
         }
     }
 
-    private InputMode getInputModeFromRadio(int checkedId) {
-        InputMode mode;
-        switch (checkedId) {
-            case R.id.radioMouse:
-                mode = InputMode.MOUSE;
-                break;
-            default:
-                mode = InputMode.TOUCH;
-        }
+    private void setInputMode(int checkedId, boolean doApply) {
+        mEventsRadio.setOnCheckedChangeListener(null);
+        mEventsRadio.setChecked(checkedId, doApply);
+        mEventsRadio.setOnCheckedChangeListener(mInputModeListener);
 
-        return mode;
-    }
-
-    private void setInputMode(InputMode mode) {
-        mUaModeRadio.setOnCheckedChangeListener(null);
-
-        if (mode == InputMode.MOUSE) {
-            mTouchRadio.setChecked(false);
-            mMouseRadio.setChecked(true);
-
-        } else if (mode == InputMode.TOUCH) {
-            mTouchRadio.setChecked(true);
-            mMouseRadio.setChecked(false);
-        }
-
-        mUaModeRadio.setOnCheckedChangeListener(mUaModeListener);
-
-        SettingsStore.getInstance(getContext()).setInputMode(mode.ordinal());
+        SettingsStore.getInstance(getContext()).setInputMode((Integer)mEventsRadio.getValueForId(checkedId));
         // TODO: Wire it up
     }
 
     private boolean setDisplayDensity(float newDensity) {
-        boolean updated = false;
-
-        float prevDensity = Float.parseFloat(mDensityText.getText().toString());
+        mDensityEdit.setOnClickListener((SingleEditSetting.OnClickListener)null);
+        boolean restart = false;
+        float prevDensity = SettingsStore.getInstance(getContext()).getDisplayDensity();
         if (newDensity <= 0) {
             newDensity = prevDensity;
 
         } else if (prevDensity != newDensity) {
             SettingsStore.getInstance(getContext()).setDisplayDensity(newDensity);
-            updated = true;
+            restart = true;
         }
+        mDensityEdit.setFirstText(Float.toString(newDensity));
+        mDensityEdit.setOnClickListener(mDensityListener);
 
-        String newDensityStr = Float.toString(newDensity);
-        mDensityText.setText(newDensityStr);
-        mDensityEdit.setText(newDensityStr);
+        return restart;
+    }
 
-        return updated;
+    private boolean setDisplayDpi(int newDpi) {
+        mDpiEdit.setOnClickListener((SingleEditSetting.OnClickListener)null);
+        boolean restart = false;
+        int prevDensity = SettingsStore.getInstance(getContext()).getDisplayDpi();
+        if (newDpi <= 0) {
+            newDpi = prevDensity;
+
+        } else if (prevDensity != newDpi) {
+            SettingsStore.getInstance(getContext()).setDisplayDpi(newDpi);
+            restart = true;
+        }
+        mDpiEdit.setFirstText(Integer.toString(newDpi));
+        mDpiEdit.setOnClickListener(mDpiListener);
+
+        return restart;
     }
 
     private void setWindowSize(int newWindowWidth, int newWindowHeight, boolean doApply) {
-        int prevWindowWidth = Integer.parseInt(mWindowWidthText.getText().toString());
+        int prevWindowWidth = SettingsStore.getInstance(getContext()).getWindowWidth();
         if (newWindowWidth <= 0) {
             newWindowWidth = prevWindowWidth;
         }
 
-        int prevWindowHeight = Integer.parseInt(mWindowHeightText.getText().toString());
+        int prevWindowHeight = SettingsStore.getInstance(getContext()).getWindowHeight();
         if (newWindowHeight <= 0) {
             newWindowHeight = prevWindowHeight;
         }
@@ -889,40 +484,18 @@ public class DeveloperOptionsWidget extends UIWidget {
         }
 
         String newWindowWidthStr = Integer.toString(newWindowWidth);
-        mWindowWidthEdit.setText(newWindowWidthStr);
-        mWindowWidthText.setText(newWindowWidthStr);
+        mWindowSizeEdit.setFirstText(newWindowWidthStr);
         String newWindowHeightStr = Integer.toString(newWindowHeight);
-        mWindowHeightEdit.setText(newWindowHeightStr);
-        mWindowHeightText.setText(newWindowHeightStr);
-    }
-
-    private boolean setDisplayDpi(int newDpi) {
-        boolean updated = false;
-
-        int prevDpi = Integer.parseInt(mDpiText.getText().toString());
-        if (newDpi <= 0) {
-            newDpi = prevDpi;
-
-        } else if (prevDpi != newDpi) {
-            SettingsStore.getInstance(getContext()).setDisplayDpi(newDpi);
-            showRestartDialog();
-            updated = true;
-        }
-
-        String newDpiStr = Integer.toString(newDpi);
-        mDpiText.setText(newDpiStr);
-        mDpiEdit.setText(newDpiStr);
-
-        return updated;
+        mWindowSizeEdit.setSecondText(newWindowHeightStr);
     }
 
     private void setMaxWindowSize(int newMaxWindowWidth, int newMaxWindowHeight, boolean doApply) {
-        int prevMaxWindowWidth = Integer.parseInt(mMaxWindowWidthText.getText().toString());
+        int prevMaxWindowWidth = SettingsStore.getInstance(getContext()).getMaxWindowWidth();
         if (newMaxWindowWidth <= 0) {
             newMaxWindowWidth = prevMaxWindowWidth;
         }
 
-        int prevMaxWindowHeight = Integer.parseInt(mMaxWindowHeightText.getText().toString());
+        int prevMaxWindowHeight = SettingsStore.getInstance(getContext()).getMaxWindowHeight();
         if (newMaxWindowHeight <= 0) {
             newMaxWindowHeight = prevMaxWindowHeight;
         }
@@ -948,11 +521,9 @@ public class DeveloperOptionsWidget extends UIWidget {
         }
 
         String newMaxWindowWidthStr = Integer.toString(newMaxWindowWidth);
-        mMaxWindowWidthEdit.setText(newMaxWindowWidthStr);
-        mMaxWindowWidthText.setText(newMaxWindowWidthStr);
+        mMaxWindowSizeEdit.setFirstText(newMaxWindowWidthStr);
         String newMaxWindowHeightStr = Integer.toString(newMaxWindowHeight);
-        mMaxWindowHeightEdit.setText(newMaxWindowHeightStr);
-        mMaxWindowHeightText.setText(newMaxWindowHeightStr);
+        mMaxWindowSizeEdit.setSecondText(newMaxWindowHeightStr);
     }
 
 }

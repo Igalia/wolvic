@@ -29,6 +29,7 @@
     <string name="position_tag" translatable="false">position</string>
     <string name="crash_dialog_learn_more_url" translatable="false">https://support.mozilla.org/kb/crash-reporting-firefox-reality</string>
     <string name="app_permission_name">org.mozilla.vrbrowser.CRASH_RECEIVER_PERMISSION</string>
+    <string name="developer_options_by">x</string>
 
     <!-- SEARCH ENGINES -->
     <string name="geolocation_api_url" translatable="false">https://location.services.mozilla.com/v1/country</string>
@@ -46,4 +47,29 @@
     <string name="search_yandex_by" translatable="false">https://yandex.by/search</string>
     <string name="search_yandex_tr" translatable="false">https://yandex.com.tr/search</string>
     <string name="search_yandex_kz" translatable="false">https://yandex.kz/search</string>
+
+    <!-- Settings -->
+    <string-array name="developer_options_environments" translatable="false">
+        <item>@string/developer_options_env_void</item>
+        <item>@string/developer_options_env_cave</item>
+        <item>@string/developer_options_env_meadow</item>
+    </string-array>
+    <string-array name="developer_options_pointer_color_options" translatable="false">
+        <item>@string/developer_options_pointer_white</item>
+        <item>@string/developer_options_pointer_purple</item>
+    </string-array>
+    <string-array name="developer_options_ua_options" translatable="false">
+        <item>@string/developer_options_ua_mobile</item>
+        <item>@string/developer_options_ua_desktop</item>
+        <item>@string/developer_options_ua_vr</item>
+    </string-array>
+    <string-array name="developer_options_msaa_options" translatable="false">
+        <item>@string/developer_options_msaa_disabled</item>
+        <item>@string/developer_options_msaa_2</item>
+        <item>@string/developer_options_msaa_4</item>
+    </string-array>
+    <string-array name="developer_options_events_options" translatable="false">
+        <item>@string/developer_options_mouse</item>
+        <item>@string/developer_options_touch</item>
+    </string-array>
 </resources>

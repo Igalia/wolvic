@@ -1,5 +1,4 @@
 <resources>
-    <!-- Theme attributes -->
     <declare-styleable name="AppTheme">
         <attr name="dialogButtonStyle" format="reference" />
         <attr name="settingsButtonStyle" format="reference" />
@@ -16,24 +15,19 @@
         <attr name="scrollbarStyle" format="color" />
         <attr name="developerOptionsEditTextStyle" format="reference" />
         <attr name="developerOptionsEditButtonStyle" format="reference" />
+        <attr name="radioButtonStyle" format="reference" />
     </declare-styleable>
 
-    <!-- Button attributes -->
-    <declare-styleable name="SettingsButton">
-        <attr name="settingsButtonIcon" format="integer" />
-        <attr name="settingsButtonText" format="string" />
-        <attr name="settingsSecondaryText" format="string" />
-    </declare-styleable>
-
-    <declare-styleable name="UIButton">
-        <attr name="tintColorList" format="reference|color" />
-        <attr name="privateModeTintColorList" format="reference|color" />
-        <attr name="privateModeBackground" format="integer" />
-    </declare-styleable>
-
-    <declare-styleable name="UITextButton">
-        <attr name="textTintColorList" format="reference|color" />
-    </declare-styleable>
+    <style name="radioButtonTheme">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:button">@drawable/radio</item>
+        <item name="android:checked">true</item>
+        <item name="android:paddingStart">10dp</item>
+        <item name="android:paddingEnd">10dp</item>
+        <item name="android:inputType">textCapSentences</item>
+    </style>
 
     <style name="navigationBarTheme">
         <item name="android:background">@null</item>
@@ -168,6 +162,7 @@
         <item name="scrollbarStyle">@style/scrollbarTheme</item>
         <item name="developerOptionsEditTextStyle">@style/Widget.EditText.DeveloperOptions</item>
         <item name="developerOptionsEditButtonStyle">@style/Widget.TextView.DeveloperOptionsEditButton</item>
+        <item name="radioButtonStyle">@style/radioButtonTheme</item>
     </style>
 
 </resources>

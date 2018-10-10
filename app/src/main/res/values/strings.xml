@@ -35,7 +35,6 @@
     <string name="developer_options_events">Input Events</string>
     <string name="developer_options_display_density">Display Density:</string>
     <string name="developer_options_window_size">Window Size:</string>
-    <string name="developer_options_window_size_by">by</string>
     <string name="developer_options_mouse">Mouse</string>
     <string name="developer_options_touch">Touch</string>
     <string name="developer_options_edit">Edit</string>
@@ -51,7 +50,7 @@
     <string name="developer_options_ua_vr">VR</string>
     <string name="developer_options_reset">Reset Developer Settings</string>
     <string name="developer_options_reset_button">Reset</string>
-    <string name="developer_options_env">Environment</string>
+    <string name="developer_options_environments">Environment</string>
     <string name="developer_options_env_meadow">Meadow</string>
     <string name="developer_options_env_cave">Cave</string>
     <string name="developer_options_env_void">Void</string>
