@@ -12,10 +12,13 @@ import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.SessionStore;
+import org.mozilla.vrbrowser.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.WidgetPlacement;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 
-public class TrayWidget extends UIWidget implements SessionStore.SessionChangeListener {
+public class TrayWidget extends UIWidget implements SessionStore.SessionChangeListener,
+        WidgetManagerDelegate.FocusChangeListener {
+
     private static final String LOGTAG = "VRB";
 
     private UIButton mHelpButton;
@@ -43,10 +46,13 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
     private void initialize(Context aContext) {
         inflate(aContext, R.layout.tray, this);
 
+        mWidgetManager.addFocusChangeListener(this);
+
         mHelpButton = findViewById(R.id.helpButton);
         mHelpButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                requestFocusFromTouch();
                 if (mAudio != null) {
                     mAudio.playSound(AudioEngine.Sound.CLICK);
                 }
@@ -59,6 +65,7 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
         mPrivateButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                requestFocusFromTouch();
                 if (mAudio != null) {
                     mAudio.playSound(AudioEngine.Sound.CLICK);
                 }
@@ -71,6 +78,9 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
         mSettingsButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (!isChildVisible(mSettingsDialogHandle))
+                    requestFocusFromTouch();
+
                 if (mAudio != null) {
                     mAudio.playSound(AudioEngine.Sound.CLICK);
                 }
@@ -105,6 +115,7 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
 
     @Override
     public void releaseWidget() {
+        mWidgetManager.removeFocusChangeListener(this);
         SessionStore.get().removeSessionChangeListener(this);
 
         super.releaseWidget();
@@ -151,15 +162,6 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
         widget.toggle();
     }
 
-    public boolean isSettingsDialogOpened() {
-        UIWidget widget = getChild(mSettingsDialogHandle);
-        if (widget != null) {
-            return widget.isOpened();
-        }
-
-        return false;
-    }
-
     @Override
     public void show() {
         if (!mWidgetPlacement.visible) {
@@ -176,6 +178,11 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
         }
     }
 
+
+    public boolean isSettingsDialogOpened() {
+        return isChildVisible(mSettingsDialogHandle);
+    }
+
     private void onHelpButtonClicked() {
         GeckoSession session = SessionStore.get().getCurrentSession();
         if (session == null) {
@@ -186,4 +193,15 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
         SessionStore.get().loadUri(getContext().getString(R.string.help_url));
     }
 
+
+    // WindowManagerDelegate.FocusChangeListener
+    @Override
+    public void onGlobalFocusChanged(View oldFocus, View newFocus) {
+        if (isSettingsDialogOpened()) {
+            UIWidget child = getChild(mSettingsDialogHandle);
+            if (child != null) {
+                child.toggle();
+            }
+        }
+    }
 }

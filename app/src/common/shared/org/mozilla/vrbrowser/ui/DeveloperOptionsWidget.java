@@ -332,6 +332,8 @@ public class DeveloperOptionsWidget extends UIWidget {
     }
 
     private void showRestartDialog() {
+        hide();
+
         UIWidget widget = getChild(mRestartDialogHandle);
         if (widget == null) {
             widget = createChild(RestartDialogWidget.class, false);
@@ -339,8 +341,6 @@ public class DeveloperOptionsWidget extends UIWidget {
         }
 
         widget.show();
-
-        hide();
     }
 
     private CompoundButton.OnCheckedChangeListener mRemoteDebuggingListener = new CompoundButton.OnCheckedChangeListener() {

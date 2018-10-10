@@ -24,12 +24,14 @@ import java.lang.reflect.Constructor;
 import java.util.HashMap;
 
 public abstract class UIWidget extends FrameLayout implements Widget {
-    UISurfaceTextureRenderer mRenderer;
-    SurfaceTexture mTexture;
+
+    private static final String LOGTAG = "VRB";
+
+    private UISurfaceTextureRenderer mRenderer;
+    private SurfaceTexture mTexture;
     protected int mHandle;
     protected WidgetPlacement mWidgetPlacement;
     protected WidgetManagerDelegate mWidgetManager;
-    static final String LOGTAG = "VRB";
     protected int mInitialWidth;
     protected int mInitialHeight;
     protected Runnable mBackHandler;
@@ -204,7 +206,7 @@ public abstract class UIWidget extends FrameLayout implements Widget {
     }
 
     public void toggle() {
-        if (mWidgetPlacement.visible) {
+        if (isVisible()) {
             hide();
 
         } else {
@@ -218,23 +220,43 @@ public abstract class UIWidget extends FrameLayout implements Widget {
             mWidgetManager.addWidget(this);
             mWidgetManager.pushBackHandler(mBackHandler);
         }
+
+        setFocusableInTouchMode(true);
+        requestFocusFromTouch();
     }
 
     public void hide() {
+        for (UIWidget child : mChildren.values()) {
+            if (child.isVisible()) {
+                child.hide();
+            }
+        }
+
         if (mWidgetPlacement.visible) {
             mWidgetPlacement.visible = false;
             mWidgetManager.removeWidget(this);
             mWidgetManager.popBackHandler(mBackHandler);
         }
+
+        clearFocus();
     }
 
-    public boolean isOpened() {
+    public boolean isVisible() {
         for (UIWidget child : mChildren.values()) {
-            if (child.mWidgetPlacement.visible)
+            if (child.isVisible())
                 return true;
         }
 
         return mWidgetPlacement.visible;
+    }
+
+    public boolean isChildVisible(int aHandle) {
+        UIWidget widget = getChild(aHandle);
+        if (widget != null) {
+            return widget.isVisible();
+        }
+
+        return false;
     }
 
     protected <T extends UIWidget> T createChild(@NonNull Class<T> aChildClassName) {
@@ -281,8 +303,7 @@ public abstract class UIWidget extends FrameLayout implements Widget {
 
     protected void removeAllChildren() {
         for (UIWidget child : mChildren.values()) {
-            child.hide();
-            child.releaseWidget();
+            removeChild(child.mHandle);
         }
         mChildren.clear();
     }

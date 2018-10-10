@@ -288,10 +288,12 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
       resizingWidget.reset();
     }
 
+    const bool pressed = controller.buttonState & ControllerDelegate::BUTTON_TRIGGER ||
+                         controller.buttonState & ControllerDelegate::BUTTON_TOUCHPAD;
+    const bool wasPressed = controller.lastButtonState & ControllerDelegate::BUTTON_TRIGGER ||
+                              controller.lastButtonState & ControllerDelegate::BUTTON_TOUCHPAD;
     if (hitWidget && hitWidget->IsResizing()) {
       active.push_back(hitWidget.get());
-      const bool pressed = controller.buttonState & ControllerDelegate::BUTTON_TRIGGER ||
-                           controller.buttonState & ControllerDelegate::BUTTON_TOUCHPAD;
       bool aResized = false, aResizeEnded = false;
       hitWidget->HandleResize(hitPoint, pressed, aResized, aResizeEnded);
 
@@ -316,10 +318,6 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
       float theX = 0.0f, theY = 0.0f;
       hitWidget->ConvertToWidgetCoordinates(hitPoint, theX, theY);
       const uint32_t handle = hitWidget->GetHandle();
-      const bool pressed = controller.buttonState & ControllerDelegate::BUTTON_TRIGGER ||
-                           controller.buttonState & ControllerDelegate::BUTTON_TOUCHPAD;
-      const bool wasPressed = controller.lastButtonState & ControllerDelegate::BUTTON_TRIGGER ||
-                              controller.lastButtonState & ControllerDelegate::BUTTON_TOUCHPAD;
       if (!pressed && wasPressed) {
         controller.inDeadZone = true;
       }
@@ -358,9 +356,11 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
         }
       }
     } else if (controller.widget) {
-      VRBrowser::HandleMotionEvent(0, controller.index, JNI_FALSE, 0.0f, 0.0f);
+      VRBrowser::HandleMotionEvent(0, controller.index, pressed, 0.0f, 0.0f);
       controller.widget = 0;
 
+    } else {
+      VRBrowser::HandleMotionEvent(0, controller.index, pressed, 0.0f, 0.0f);
     }
     controller.lastButtonState = controller.buttonState;
   }

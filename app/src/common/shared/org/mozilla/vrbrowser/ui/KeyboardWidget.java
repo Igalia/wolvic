@@ -27,11 +27,14 @@ import android.widget.RelativeLayout;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.SessionStore;
+import org.mozilla.vrbrowser.Widget;
+import org.mozilla.vrbrowser.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.WidgetPlacement;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 
 
-public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKeyboardActionListener, GeckoSession.TextInputDelegate {
+public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKeyboardActionListener,
+        GeckoSession.TextInputDelegate, WidgetManagerDelegate.FocusChangeListener {
 
     private static final String LOGTAG = "VRB";
 
@@ -79,6 +82,8 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
     private void initialize(Context aContext) {
         inflate(aContext, R.layout.keyboard, this);
+
+        mWidgetManager.addFocusChangeListener(this);
 
         mKeyboardview = findViewById(R.id.keyboard);
         mPopupKeyboardview = findViewById(R.id.popupKeyboard);
@@ -177,6 +182,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
     @Override
     public void releaseWidget() {
+        mWidgetManager.removeFocusChangeListener(this);
         SessionStore.get().removeTextInputListener(this);
         mBrowserWidget = null;
         super.releaseWidget();
@@ -598,5 +604,12 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     @Override
     public void notifyAutoFill(GeckoSession session, int notification, int virtualId) {
 
+    }
+
+    // FocusChangeListener
+
+    @Override
+    public void onGlobalFocusChanged(View oldFocus, View newFocus) {
+        updateFocusedView(newFocus);
     }
 }

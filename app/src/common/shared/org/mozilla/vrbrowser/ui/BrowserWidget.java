@@ -44,7 +44,7 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
         mWidgetManager = (WidgetManagerDelegate) aContext;
         SessionStore.get().addSessionChangeListener(this);
         SessionStore.get().addPromptListener(this);
-        setFocusableInTouchMode(true);
+        setFocusable(true);
         GeckoSession session = SessionStore.get().getSession(mSessionId);
         if (session != null) {
             session.getTextInput().setView(this);
@@ -140,8 +140,9 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
 
     @Override
     public void handleTouchEvent(MotionEvent aEvent) {
-        if (aEvent.getActionMasked() == MotionEvent.ACTION_DOWN) {
+        if (aEvent.getActionMasked() == MotionEvent.ACTION_UP) {
             requestFocus();
+            requestFocusFromTouch();
         }
         GeckoSession session = SessionStore.get().getSession(mSessionId);
         if (session == null) {

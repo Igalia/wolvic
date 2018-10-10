@@ -11,6 +11,7 @@ import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.support.v7.widget.AppCompatImageButton;
+import android.view.View;
 
 import org.mozilla.vrbrowser.R;
 
@@ -88,4 +89,5 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
             }
         }
     }
+
 }

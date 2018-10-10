@@ -40,7 +40,6 @@ public class SettingsButton extends LinearLayout {
         inflate(aContext, R.layout.settings_btn, this);
 
         setClickable(true);
-        setFocusable(true);
 
         mIcon = findViewById(R.id.settings_button_icon);
         if (mIcon != null)

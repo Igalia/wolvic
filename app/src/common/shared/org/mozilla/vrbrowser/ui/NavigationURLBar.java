@@ -108,7 +108,6 @@ public class NavigationURLBar extends FrameLayout {
         mURLWebsiteColor = typedValue.data;
 
         // Prevent the URL TextEdit to get focus when user touches something outside of it
-        setFocusable(true);
         setFocusableInTouchMode(true);
         setClickable(true);
     }

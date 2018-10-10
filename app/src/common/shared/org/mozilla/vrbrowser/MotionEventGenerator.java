@@ -16,6 +16,7 @@ class MotionEventGenerator {
     static class Device {
         int mDevice;
         Widget mPreviousWidget = null;
+        Widget mTouchStartWidget = null;
         boolean mWasPressed;
         long mDownTime;
         MotionEvent.PointerProperties mProperties[];
@@ -78,18 +79,19 @@ class MotionEventGenerator {
                 device.mCoords[0].pressure = 0.0f;
             }
         }
-        if ((device.mPreviousWidget != null) && (device.mPreviousWidget != aWidget)) {
+        if (!aPressed && (device.mPreviousWidget != null) && (device.mPreviousWidget != aWidget)) {
             if (device.mWasPressed) {
                 generateEvent(device.mPreviousWidget, device, MotionEvent.ACTION_CANCEL, false);
                 device.mWasPressed = false;
             }
             generateEvent(device.mPreviousWidget, device, MotionEvent.ACTION_HOVER_EXIT, true);
+            device.mPreviousWidget = null;
         }
         if (aWidget == null) {
             device.mPreviousWidget = null;
             return;
         }
-        if (aWidget != device.mPreviousWidget) {
+        if (aWidget != device.mPreviousWidget && !aPressed) {
             generateEvent(aWidget, device, MotionEvent.ACTION_HOVER_ENTER, true);
         }
         if (aPressed && !device.mWasPressed) {
@@ -97,9 +99,10 @@ class MotionEventGenerator {
             device.mWasPressed = true;
             generateEvent(aWidget, device, MotionEvent.ACTION_HOVER_EXIT, true);
             generateEvent(aWidget, device, MotionEvent.ACTION_DOWN, false);
+            device.mTouchStartWidget = aWidget;
         } else if (!aPressed && device.mWasPressed) {
             device.mWasPressed = false;
-            generateEvent(aWidget, device, MotionEvent.ACTION_UP, false);
+            generateEvent(device.mTouchStartWidget, device, MotionEvent.ACTION_UP, false);
             generateEvent(aWidget, device, MotionEvent.ACTION_HOVER_ENTER, true);
         } else if (moving && aPressed) {
             generateEvent(aWidget, device, MotionEvent.ACTION_MOVE, false);

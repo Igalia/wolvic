@@ -1,24 +1,28 @@
 package org.mozilla.vrbrowser;
 
-import android.support.annotation.Nullable;
+import android.support.annotation.NonNull;
+import android.view.View;
 
 public interface WidgetManagerDelegate {
-    interface Listener {
+    interface UpdateListener {
         void onWidgetUpdate(Widget aWidget);
     }
     interface PermissionListener {
         void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults);
     }
+    interface FocusChangeListener {
+        void onGlobalFocusChanged(View oldFocus, View newFocus);
+    }
     int newWidgetHandle();
-    void addWidget(Widget aWidget);
-    void updateWidget(Widget aWidget);
-    void removeWidget(Widget aWidget);
-    void startWidgetResize(Widget aWidget);
-    void finishWidgetResize(Widget aWidget);
-    void addListener(WidgetManagerDelegate.Listener aListener);
-    void removeListener(WidgetManagerDelegate.Listener aListener);
-    void pushBackHandler(Runnable aRunnable);
-    void popBackHandler(Runnable aRunnable);
+    void addWidget(@NonNull Widget aWidget);
+    void updateWidget(@NonNull Widget aWidget);
+    void removeWidget(@NonNull Widget aWidget);
+    void startWidgetResize(@NonNull Widget aWidget);
+    void finishWidgetResize(@NonNull Widget aWidget);
+    void addUpdateListener(@NonNull UpdateListener aUpdateListener);
+    void removeUpdateListener(@NonNull UpdateListener aUpdateListener);
+    void pushBackHandler(@NonNull Runnable aRunnable);
+    void popBackHandler(@NonNull Runnable aRunnable);
     void fadeOutWorld();
     void fadeInWorld();
     void setTrayVisible(boolean visible);
@@ -26,6 +30,8 @@ public interface WidgetManagerDelegate {
     void keyboardDismissed();
     void updateEnvironment();
     void updatePointerColor();
-    void addPermissionListener(PermissionListener aListener);
-    void removePermissionListener(PermissionListener aListener);
+    void addPermissionListener(@NonNull PermissionListener aListener);
+    void removePermissionListener(@NonNull PermissionListener aListener);
+    void addFocusChangeListener(@NonNull FocusChangeListener aListener);
+    void removeFocusChangeListener(@NonNull FocusChangeListener aListener);
 }

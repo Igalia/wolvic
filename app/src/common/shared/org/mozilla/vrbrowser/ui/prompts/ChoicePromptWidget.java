@@ -4,19 +4,23 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
-import org.mozilla.geckoview.GeckoResult;
-import org.mozilla.geckoview.GeckoSession;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.TextView;
+
 import org.mozilla.geckoview.GeckoSession.PromptDelegate.Choice;
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.SessionStore;
+import org.mozilla.vrbrowser.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.WidgetPlacement;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.ui.UIWidget;
@@ -24,7 +28,7 @@ import org.mozilla.vrbrowser.ui.UIWidget;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class ChoicePromptWidget extends UIWidget implements GeckoSession.NavigationDelegate {
+public class ChoicePromptWidget extends UIWidget implements WidgetManagerDelegate.FocusChangeListener {
 
     private static final int DIALOG_CLOSE_DELAY = 250;
 
@@ -61,9 +65,9 @@ public class ChoicePromptWidget extends UIWidget implements GeckoSession.Navigat
     private void initialize(Context aContext) {
         inflate(aContext, R.layout.choice_prompt, this);
 
-        mAudio = AudioEngine.fromContext(aContext);
+        mWidgetManager.addFocusChangeListener(this);
 
-        SessionStore.get().addNavigationListener(this);
+        mAudio = AudioEngine.fromContext(aContext);
 
         mList = findViewById(R.id.choiceslist);
         mList.setSoundEffectsEnabled(false);
@@ -161,9 +165,9 @@ public class ChoicePromptWidget extends UIWidget implements GeckoSession.Navigat
 
     @Override
     public void releaseWidget() {
-        super.releaseWidget();
+        mWidgetManager.removeFocusChangeListener(this);
 
-        SessionStore.get().removeNavigationListener(this);
+        super.releaseWidget();
     }
 
     @Override
@@ -394,47 +398,14 @@ public class ChoicePromptWidget extends UIWidget implements GeckoSession.Navigat
 
     }
 
-    // NavigationDelegate
-
+    // WidgetManagerDelegate.FocusChangeListener
     @Override
-    public void onLocationChange(GeckoSession session, String url) {
-        if (mPromptDelegate != null) {
-            mPromptDelegate.onDismissed(getDefaultChoices(mListItems));
+    public void onGlobalFocusChanged(View oldFocus, View newFocus) {
+        if (oldFocus == this) {
+            if (mPromptDelegate != null) {
+                mPromptDelegate.onDismissed(getDefaultChoices(mListItems));
+            }
         }
-    }
-
-    @Override
-    public void onCanGoBack(GeckoSession session, boolean canGoBack) {
-
-    }
-
-    @Override
-    public void onCanGoForward(GeckoSession session, boolean canGoForward) {
-
-    }
-
-    @Nullable
-    @Override
-    public GeckoResult<Boolean> onLoadRequest(@NonNull GeckoSession session, @NonNull String uri, int target, int flags) {
-        if (mPromptDelegate != null) {
-            mPromptDelegate.onDismissed(getDefaultChoices(mListItems));
-        }
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public GeckoResult<GeckoSession> onNewSession(@NonNull GeckoSession session, @NonNull String uri) {
-        if (mPromptDelegate != null) {
-            mPromptDelegate.onDismissed(getDefaultChoices(mListItems));
-        }
-
-        return null;
-    }
-
-    @Override
-    public GeckoResult<String> onLoadError(GeckoSession session, String uri, int category, int error) {
-        return null;
     }
 
 }

@@ -23,18 +23,20 @@ import android.widget.TextView;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.Widget;
+import org.mozilla.vrbrowser.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.WidgetPlacement;
 
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class PermissionWidget extends UIWidget {
+public class PermissionWidget extends UIWidget implements WidgetManagerDelegate.FocusChangeListener {
+
     private static final String LOGTAG = "VRB";
+
     private TextView mPermissionMessage;
     private ImageView mPermissionIcon;
     private GeckoSession.PermissionDelegate.Callback mPermissionCallback;
-    private Runnable mBackHandler;
 
     public enum PermissionType {
         Camera,
@@ -61,6 +63,9 @@ public class PermissionWidget extends UIWidget {
 
     private void initialize(Context aContext) {
         inflate(aContext, R.layout.permission, this);
+
+        mWidgetManager.addFocusChangeListener(this);
+
         mPermissionIcon = findViewById(R.id.permissionIcon);
         mPermissionMessage = findViewById(R.id.permissionText);
 
@@ -81,15 +86,13 @@ public class PermissionWidget extends UIWidget {
                 handlePermissionResult(true);
             }
         });
+    }
 
-        mBackHandler = new Runnable() {
-            @Override
-            public void run() {
-                mWidgetPlacement.visible = false;
-                mWidgetManager.updateWidget(PermissionWidget.this);
-                mWidgetManager.popBackHandler(mBackHandler);
-            }
-        };
+    @Override
+    public void releaseWidget() {
+        mWidgetManager.removeFocusChangeListener(this);
+
+        super.releaseWidget();
     }
 
     @Override
@@ -147,9 +150,7 @@ public class PermissionWidget extends UIWidget {
         mPermissionMessage.setText(str);
         mPermissionIcon.setImageResource(iconId);
 
-        mWidgetPlacement.visible = true;
-        mWidgetManager.updateWidget(this);
-        mWidgetManager.pushBackHandler(mBackHandler);
+        show();
     }
 
     String getRequesterName(String aUri) {
@@ -164,9 +165,6 @@ public class PermissionWidget extends UIWidget {
     }
 
     private void handlePermissionResult(boolean aGranted) {
-        mWidgetPlacement.visible = false;
-        mWidgetManager.updateWidget(this);
-        mWidgetManager.popBackHandler(mBackHandler);
         if (mPermissionCallback == null) {
             return;
         }
@@ -176,5 +174,15 @@ public class PermissionWidget extends UIWidget {
             mPermissionCallback.reject();
         }
         mPermissionCallback = null;
+
+        hide();
+    }
+
+    // WidgetManagerDelegate.FocusChangeListener
+    @Override
+    public void onGlobalFocusChanged(View oldFocus, View newFocus) {
+        if (oldFocus == this) {
+            hide();
+        }
     }
 }

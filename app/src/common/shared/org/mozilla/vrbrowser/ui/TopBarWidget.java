@@ -18,7 +18,7 @@ import org.mozilla.vrbrowser.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.WidgetPlacement;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 
-public class TopBarWidget extends UIWidget implements SessionStore.SessionChangeListener, WidgetManagerDelegate.Listener {
+public class TopBarWidget extends UIWidget implements SessionStore.SessionChangeListener, WidgetManagerDelegate.UpdateListener {
     private static final String LOGTAG = "VRB";
 
     private UIButton mCloseButton;
@@ -47,6 +47,7 @@ public class TopBarWidget extends UIWidget implements SessionStore.SessionChange
         mCloseButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                requestFocusFromTouch();
                 if (mAudio != null) {
                     mAudio.playSound(AudioEngine.Sound.CLICK);
                 }
@@ -58,7 +59,7 @@ public class TopBarWidget extends UIWidget implements SessionStore.SessionChange
         mAudio = AudioEngine.fromContext(aContext);
 
         SessionStore.get().addSessionChangeListener(this);
-        mWidgetManager.addListener(this);
+        mWidgetManager.addUpdateListener(this);
     }
 
     @Override
@@ -79,7 +80,7 @@ public class TopBarWidget extends UIWidget implements SessionStore.SessionChange
     @Override
     public void releaseWidget() {
         SessionStore.get().removeSessionChangeListener(this);
-        mWidgetManager.removeListener(this);
+        mWidgetManager.removeUpdateListener(this);
 
         super.releaseWidget();
     }
@@ -119,7 +120,7 @@ public class TopBarWidget extends UIWidget implements SessionStore.SessionChange
             mWidgetManager.removeWidget(this);
     }
 
-    // WidgetManagerDelegate.Listener
+    // WidgetManagerDelegate.UpdateListener
     @Override
     public void onWidgetUpdate(Widget aWidget) {
         if (aWidget != mBrowserWidget) {

@@ -28,7 +28,8 @@ import org.mozilla.vrbrowser.WidgetPlacement;
 
 import static org.mozilla.gecko.GeckoAppShell.getApplicationContext;
 
-public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate.PermissionListener, Application.ActivityLifecycleCallbacks {
+public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate.PermissionListener,
+        Application.ActivityLifecycleCallbacks, WidgetManagerDelegate.FocusChangeListener {
 
     private static final String LOGTAG = "VRB";
     private static final int VOICESEARCH_AUDIO_REQUEST_CODE = 7455;
@@ -77,6 +78,7 @@ public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate
     private void initialize(Context aContext) {
         inflate(aContext, R.layout.voice_search_dialog, this);
 
+        mWidgetManager.addFocusChangeListener(this);
         mWidgetManager.addPermissionListener(this);
 
         mMozillaSpeechService = MozillaSpeechService.getInstance();
@@ -102,7 +104,7 @@ public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate
         mSearchingAnimation.setRepeatCount(Animation.INFINITE);
         mVoiceSearchSearching = findViewById(R.id.voiceSearchSearching);
 
-        mCloseButton = createChild(CloseButtonWidget.class, true);
+        mCloseButton = createChild(CloseButtonWidget.class);
         mCloseButton.setDelegate(new CloseButtonWidget.CloseButtonDelegate() {
             @Override
             public void OnClick() {
@@ -119,6 +121,7 @@ public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate
 
     @Override
     public void releaseWidget() {
+        mWidgetManager.removeFocusChangeListener(this);
         mWidgetManager.removePermissionListener(this);
         mMozillaSpeechService.removeListener(mVoiceSearchListener);
         ((Application)getApplicationContext()).unregisterActivityLifecycleCallbacks(this);
@@ -350,6 +353,14 @@ public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate
     @Override
     public void onActivityDestroyed(Activity activity) {
 
+    }
+
+    // WidgetManagerDelegate.FocusChangeListener
+    @Override
+    public void onGlobalFocusChanged(View oldFocus, View newFocus) {
+        if (oldFocus == this) {
+            hide();
+        }
     }
 
 }

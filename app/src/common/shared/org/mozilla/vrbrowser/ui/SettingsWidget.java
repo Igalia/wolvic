@@ -29,6 +29,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 public class SettingsWidget extends UIWidget {
+
     private static final String LOGTAG = "VRB";
 
     private AudioEngine mAudio;
@@ -187,6 +188,11 @@ public class SettingsWidget extends UIWidget {
     }
 
     @Override
+    public void releaseWidget() {
+        super.releaseWidget();
+    }
+
+    @Override
     protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
         aPlacement.visible = false;
         aPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.settings_width);
@@ -252,8 +258,6 @@ public class SettingsWidget extends UIWidget {
 
     private void onDeveloperOptionsClick() {
         showDeveloperOptionsDialog();
-
-        hide();
     }
 
     /**
@@ -306,6 +310,8 @@ public class SettingsWidget extends UIWidget {
     }
 
     private void showDeveloperOptionsDialog() {
+        hide();
+
         UIWidget widget = getChild(mDeveloperOptionsDialogHandle);
         if (widget == null) {
             widget = createChild(DeveloperOptionsWidget.class, false);
@@ -313,20 +319,13 @@ public class SettingsWidget extends UIWidget {
         }
 
         widget.show();
-
-        hide();
     }
 
     @Override
     public void toggle() {
-        for (UIWidget child : mChildren.values()) {
-            if (child.getPlacement().visible)
-                return;
-        }
-
         super.toggle();
 
-        if (!mWidgetPlacement.visible)
+        if (!isVisible())
             mWidgetManager.fadeInWorld();
         else
             mWidgetManager.fadeOutWorld();
@@ -338,4 +337,5 @@ public class SettingsWidget extends UIWidget {
 
         mWidgetManager.fadeInWorld();
     }
+
 }
