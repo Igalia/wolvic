@@ -85,6 +85,7 @@ public class NavigationURLBar extends FrameLayout {
         mURL.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
+                view.requestFocusFromTouch();
                 if (gd.onTouchEvent(motionEvent)) {
                     return true;
                 }
@@ -93,6 +94,7 @@ public class NavigationURLBar extends FrameLayout {
         });
         mURL.addTextChangedListener(mURLTextWatcher);
         mMicrophoneButton = findViewById(R.id.microphoneButton);
+        mMicrophoneButton.setTag(R.string.view_id_tag, R.id.microphoneButton);
         mMicrophoneButton.setOnClickListener(mMicrophoneListener);
         mURLLeftContainer = findViewById(R.id.urlLeftContainer);
         mInsecureIcon = findViewById(R.id.insecureIcon);
@@ -108,7 +110,7 @@ public class NavigationURLBar extends FrameLayout {
         mURLWebsiteColor = typedValue.data;
 
         // Prevent the URL TextEdit to get focus when user touches something outside of it
-        setFocusableInTouchMode(true);
+        setFocusable(true);
         setClickable(true);
     }
 
@@ -260,6 +262,7 @@ public class NavigationURLBar extends FrameLayout {
     private OnClickListener mMicrophoneListener = new OnClickListener() {
         @Override
         public void onClick(View view) {
+            view.requestFocusFromTouch();
             if (mDelegate != null)
                 mDelegate.OnVoiceSearchClicked();
 
@@ -270,6 +273,7 @@ public class NavigationURLBar extends FrameLayout {
     private OnClickListener mClearListener = new OnClickListener() {
         @Override
         public void onClick(View view) {
+            view.requestFocusFromTouch();
             mURL.getText().clear();
         }
     };

@@ -9,6 +9,7 @@ import android.graphics.drawable.ClipDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.v4.app.ActivityCompat;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -262,8 +263,6 @@ public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate
     public void hide() {
         super.hide();
 
-        mCloseButton.hide();
-
         mMozillaSpeechService.removeListener(mVoiceSearchListener);
         stopVoiceSearch();
     }
@@ -358,7 +357,15 @@ public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate
     // WidgetManagerDelegate.FocusChangeListener
     @Override
     public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-        if (oldFocus == this) {
+        boolean shouldHide = true;
+        if (newFocus != null) {
+            @IdRes Integer view_id = (Integer) newFocus.getTag(R.string.view_id_tag);
+            if (view_id != null && view_id == R.id.microphoneButton) {
+                shouldHide = false;
+            }
+        }
+
+        if (isVisible() && shouldHide) {
             hide();
         }
     }

@@ -78,7 +78,7 @@
     <dimen name="voice_search_width">385dp</dimen>
     <dimen name="voice_search_height">250dp</dimen>
     <dimen name="voice_search_padding">40dp</dimen>
-    <item name="voice_search_world_z" format="float" type="dimen">0.04</item>
+    <item name="voice_search_world_z" format="float" type="dimen">0.042</item>
 
     <!-- Voice search input -->
     <dimen name="voice_search_input_width">305dp</dimen>

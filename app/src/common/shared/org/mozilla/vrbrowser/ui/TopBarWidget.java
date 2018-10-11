@@ -47,7 +47,7 @@ public class TopBarWidget extends UIWidget implements SessionStore.SessionChange
         mCloseButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                requestFocusFromTouch();
+                view.requestFocusFromTouch();
                 if (mAudio != null) {
                     mAudio.playSound(AudioEngine.Sound.CLICK);
                 }
