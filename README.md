@@ -14,9 +14,9 @@ You can find us on Twitter [@MozillaReality](https://twitter.com/mozillareality)
 git clone git@github.com:MozillaReality/FirefoxReality.git
 ```
 
-*Clone the third_party repo*
+*Clone the third-party repo.*
 
-If you're developing for the Oculus, Snapdragon VR, or VIVE, you need to clone the repo with third party SDK files. 
+If you're developing for the Oculus, Snapdragon VR, or VIVE, you need to clone the repo with third-party SDK files. 
 
 ```bash
 git clone git@github.com:MozillaReality/FirefoxReality-android-third-party.git third_party
