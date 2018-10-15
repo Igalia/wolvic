@@ -16,11 +16,18 @@ git clone git@github.com:MozillaReality/FirefoxReality.git
 
 *Clone the third_party repo*
 
-If you're developing for the Oculus, Snapdragon VR, or VIVE, you need to clone the repo with third party SDK files.
+If you're developing for the Oculus, Snapdragon VR, or VIVE, you need to clone the repo with third party SDK files. 
 
 ```bash
 git clone git@github.com:MozillaReality/FirefoxReality-android-third-party.git third_party
 ```
+
+This repo is only available to Mozilla employees. If you have access to the relevant SDK but not this repo, you can manually place them here:
+
+ - `third_party/ovr_mobile/` for Oculus (should contain a `VrApi` folder)
+ - `third_party/svr/` for Snapdragon (should contain a `libs` folder, among other things)
+ - `third_party/wavesdk/` for Vive (should contain a `build` folder, among other things)
+
 
 *Fetch Git submodules.*
 
