@@ -14,6 +14,21 @@ You can find us on Twitter [@MozillaReality](https://twitter.com/mozillareality)
 git clone git@github.com:MozillaReality/FirefoxReality.git
 ```
 
+*Clone the third-party repo.*
+
+If you're developing for the Oculus, Snapdragon VR, or VIVE, you need to clone the repo with third-party SDK files. 
+
+```bash
+git clone git@github.com:MozillaReality/FirefoxReality-android-third-party.git third_party
+```
+
+This repo is only available to Mozilla employees. If you have access to the relevant SDK but not this repo, you can manually place them here:
+
+ - `third_party/ovr_mobile/` for Oculus (should contain a `VrApi` folder)
+ - `third_party/svr/` for Snapdragon (should contain a `libs` folder, among other things)
+ - `third_party/wavesdk/` for Vive (should contain a `build` folder, among other things)
+
+
 *Fetch Git submodules.*
 
 You may need to set up [two-factor authentication](https://blog.github.com/2013-09-03-two-factor-authentication/#how-does-it-work-for-command-line-git) for the command line.
@@ -45,7 +60,7 @@ The command line version of `gradlew` requires [JDK 8 from Oracle](http://www.or
 
 If you get an error extracting the NDK, you might need to copy the `local.properties file` from the top-level project directory into the `gvr-android-sdk` directory. If this file doesn't exist at the top-level directory either, open the top-level directory in Android Studio, and it should be created.
 
-*Open the project with [Android Studio](https://developer.android.com/studio/index.html)* then build and run it. Depending on what you already have installed in Android Studio, the build may fail and then may prompt you to install dependencies. Just keep doing as it suggests.
+*Open the project with [Android Studio](https://developer.android.com/studio/index.html)* then build and run it. Depending on what you already have installed in Android Studio, the build may fail and then may prompt you to install dependencies. Just keep doing as it suggests. To select the device to build for, go to `Tool Windows > Build Variants` and select a build variant corresponding to your device.
 
 If you run the APK on an Android device outside of Daydream or Gear VR, it will run in flat mode. To run in VR, put the device into a headset, and run the app from the VR launcher.
 
