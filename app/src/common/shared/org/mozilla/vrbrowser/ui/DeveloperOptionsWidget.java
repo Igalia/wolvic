@@ -10,7 +10,6 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.SessionStore;
@@ -78,7 +77,7 @@ public class DeveloperOptionsWidget extends UIWidget {
                     mAudio.playSound(AudioEngine.Sound.CLICK);
                 }
 
-                onBackButton();
+                onDismiss();
             }
         });
 
@@ -175,9 +174,19 @@ public class DeveloperOptionsWidget extends UIWidget {
         if (widget == null) {
             widget = createChild(RestartDialogWidget.class, false);
             mRestartDialogHandle = widget.getHandle();
+            widget.setDelegate(new Delegate() {
+                @Override
+                public void onDismiss() {
+                    onRestartDialogDismissed();
+                }
+            });
         }
 
         widget.show();
+    }
+
+    private void onRestartDialogDismissed() {
+       show();
     }
 
     private SwitchSetting.OnCheckedChangeListener mRemoteDebuggingListener = new SwitchSetting.OnCheckedChangeListener() {
@@ -198,6 +207,7 @@ public class DeveloperOptionsWidget extends UIWidget {
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean value, boolean doApply) {
             setEnvOverride(value);
+            showRestartDialog();
         }
     };
 

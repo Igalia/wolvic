@@ -67,7 +67,7 @@ public class RestartDialogWidget extends UIWidget {
                     mAudio.playSound(AudioEngine.Sound.CLICK);
                 }
 
-                onBackButton();
+                onDismiss();
             }
         });
 

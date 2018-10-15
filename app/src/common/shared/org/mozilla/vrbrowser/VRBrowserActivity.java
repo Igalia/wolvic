@@ -17,21 +17,31 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Keep;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
+
 import org.mozilla.gecko.GeckoVRManager;
 import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.geckoview.CrashReporter;
 import org.mozilla.geckoview.GeckoRuntime;
+import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.audio.VRAudioTheme;
 import org.mozilla.vrbrowser.search.SearchEngine;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
-import org.mozilla.vrbrowser.ui.*;
+import org.mozilla.vrbrowser.ui.BrowserWidget;
+import org.mozilla.vrbrowser.ui.CrashDialogWidget;
+import org.mozilla.vrbrowser.ui.KeyboardWidget;
+import org.mozilla.vrbrowser.ui.NavigationBarWidget;
+import org.mozilla.vrbrowser.ui.OffscreenDisplay;
+import org.mozilla.vrbrowser.ui.RootWidget;
+import org.mozilla.vrbrowser.ui.TopBarWidget;
+import org.mozilla.vrbrowser.ui.TrayWidget;
+import org.mozilla.vrbrowser.ui.UIWidget;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -95,6 +105,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     LinkedList<Runnable> mBackHandlers;
     private boolean mIsPresentingImmersive = false;
     private Thread mUiThread;
+    private boolean isDimmed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +125,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         intentFilter.addAction(CrashReporterService.CRASH_ACTION);
         registerReceiver(mCrashReceiver, intentFilter, getString(R.string.app_permission_name), null);
 
+        isDimmed = false;
         mLastGesture = NoGesture;
         super.onCreate(savedInstanceState);
 
@@ -785,9 +797,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public void fadeOutWorld() {
-        if (SessionStore.get().isCurrentSessionPrivate() ^
+        if (!isDimmed && (SessionStore.get().isCurrentSessionPrivate() ^
                 mNavigationBar.isInFocusMode() ^
-                mTray.isSettingsDialogOpened()) {
+                mTray.isSettingsDialogOpened() ^
+                mPermissionDelegate.isPermissionDialogVisible() ^
+                (mCrashDialog != null && mCrashDialog.isVisible()))) {
+            isDimmed = true;
             queueRunnable(new Runnable() {
                 @Override
                 public void run() {
@@ -799,9 +814,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public void fadeInWorld() {
-        if ((!SessionStore.get().isCurrentSessionPrivate() &&
+        if (isDimmed && (!SessionStore.get().isCurrentSessionPrivate() &&
                 !mNavigationBar.isInFocusMode() &&
-                !mTray.isSettingsDialogOpened())) {
+                !mTray.isSettingsDialogOpened() &&
+                !mPermissionDelegate.isPermissionDialogVisible() &&
+                !(mCrashDialog != null && mCrashDialog.isVisible()))) {
+            isDimmed = false;
             queueRunnable(new Runnable() {
                 @Override
                 public void run() {
@@ -849,6 +867,20 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 updatePointerColorNative();
             }
         });
+    }
+
+    @Override
+    public boolean isPermissionGranted(@NonNull String permission) {
+        return mPermissionDelegate.isPermissionGranted(permission);
+    }
+
+    @Override
+    public void requestPermission(@NonNull String uri, @NonNull String permission, GeckoSession.PermissionDelegate.Callback aCallback) {
+        mPermissionDelegate.onAppPermissionRequest(
+                SessionStore.get().getCurrentSession(),
+                uri,
+                permission,
+                aCallback);
     }
 
     @Override

@@ -27,6 +27,10 @@ public abstract class UIWidget extends FrameLayout implements Widget {
 
     private static final String LOGTAG = "VRB";
 
+    public interface Delegate {
+        void onDismiss();
+    }
+
     private UISurfaceTextureRenderer mRenderer;
     private SurfaceTexture mTexture;
     protected int mHandle;
@@ -36,11 +40,7 @@ public abstract class UIWidget extends FrameLayout implements Widget {
     protected int mInitialHeight;
     protected Runnable mBackHandler;
     protected HashMap<Integer, UIWidget> mChildren;
-    protected UIWidgetDelegate mDelegate;
-
-    public interface UIWidgetDelegate {
-        void onWidgetClosed(int aHandle);
-    }
+    protected Delegate mDelegate;
 
     public UIWidget(Context aContext) {
         super(aContext);
@@ -69,10 +69,11 @@ public abstract class UIWidget extends FrameLayout implements Widget {
         mBackHandler = new Runnable() {
             @Override
             public void run() {
-                onBackButton();
+                onDismiss();
             }
         };
     }
+
 
     protected abstract void initializeWidgetPlacement(WidgetPlacement aPlacement);
 
@@ -201,7 +202,7 @@ public abstract class UIWidget extends FrameLayout implements Widget {
         return parent;
     }
 
-    public void setDelegate(UIWidgetDelegate aDelegate) {
+    public void setDelegate(Delegate aDelegate) {
         mDelegate = aDelegate;
     }
 
@@ -250,15 +251,6 @@ public abstract class UIWidget extends FrameLayout implements Widget {
         return mWidgetPlacement.visible;
     }
 
-    public boolean isChildVisible(int aHandle) {
-        UIWidget widget = getChild(aHandle);
-        if (widget != null) {
-            return widget.isVisible();
-        }
-
-        return false;
-    }
-
     protected <T extends UIWidget> T createChild(@NonNull Class<T> aChildClassName) {
         return createChild(aChildClassName, true);
     }
@@ -267,15 +259,9 @@ public abstract class UIWidget extends FrameLayout implements Widget {
         try {
             Constructor<?> constructor = aChildClassName.getConstructor(new Class[] { Context.class });
             UIWidget child = (UIWidget) constructor.newInstance(new Object[] { getContext() });
-            if (inheritPlacement)
+            if (inheritPlacement) {
                 child.getPlacement().parentHandle = getHandle();
-            child.setDelegate(new UIWidgetDelegate() {
-
-                @Override
-                public void onWidgetClosed(int aHandle) {
-                    onChildClosed(aHandle);
-                }
-            });
+            }
             mChildren.put(child.mHandle, child);
 
             return aChildClassName.cast(child);
@@ -292,29 +278,12 @@ public abstract class UIWidget extends FrameLayout implements Widget {
         return (T) mChildren.get(aChildId);
     }
 
-    protected void removeChild(int aChildId) {
-        UIWidget child = mChildren.get(aChildId);
-        if (child != null) {
-            child.hide();
-            mChildren.remove(aChildId);
-            child.releaseWidget();
-        }
-    }
 
-    protected void removeAllChildren() {
-        for (UIWidget child : mChildren.values()) {
-            removeChild(child.mHandle);
-        }
-        mChildren.clear();
-    }
-
-    protected void onChildClosed(int aHandle) {
-        show();
-    }
-
-    protected void onBackButton() {
+    protected void onDismiss() {
         hide();
-        if (mDelegate != null)
-            mDelegate.onWidgetClosed(getHandle());
+
+        if (mDelegate != null) {
+            mDelegate.onDismiss();
+        }
     }
 }

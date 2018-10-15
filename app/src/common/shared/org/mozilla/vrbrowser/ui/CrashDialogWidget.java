@@ -15,10 +15,11 @@ import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.SessionStore;
 import org.mozilla.vrbrowser.SettingsStore;
+import org.mozilla.vrbrowser.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.WidgetPlacement;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 
-public class CrashDialogWidget extends UIWidget {
+public class CrashDialogWidget extends UIWidget implements WidgetManagerDelegate.FocusChangeListener {
     private static final String LOGTAG = "VRB";
 
     public interface CrashDialogDelegate {
@@ -50,6 +51,8 @@ public class CrashDialogWidget extends UIWidget {
     private void initialize(Context aContext) {
         inflate(aContext, R.layout.crash_dialog, this);
 
+        mWidgetManager.addFocusChangeListener(this);
+
         mLearnMoreButton = findViewById(R.id.learnMoreButton);
         mDontSendButton = findViewById(R.id.dontSendButton);
         mSendDataButton = findViewById(R.id.sendDataButton);
@@ -69,7 +72,7 @@ public class CrashDialogWidget extends UIWidget {
 
                 SessionStore.get().loadUri(getContext().getString(R.string.crash_dialog_learn_more_url));
 
-                hide();
+                onDismiss();
             }
         });
         mDontSendButton.setOnClickListener(new OnClickListener() {
@@ -79,7 +82,7 @@ public class CrashDialogWidget extends UIWidget {
                     mAudio.playSound(AudioEngine.Sound.CLICK);
                 }
 
-                hide();
+                onDismiss();
             }
         });
         mSendDataButton.setOnClickListener(new OnClickListener() {
@@ -89,13 +92,13 @@ public class CrashDialogWidget extends UIWidget {
                     mAudio.playSound(AudioEngine.Sound.CLICK);
                 }
 
+                hide();
+
                 if(mCrashDialogDelegate != null) {
                     mCrashDialogDelegate.onSendData();
                 }
 
                 SettingsStore.getInstance(getContext()).setCrashReportingEnabled(mSendDataCheckBox.isChecked());
-
-                hide();
             }
         });
 
@@ -114,6 +117,13 @@ public class CrashDialogWidget extends UIWidget {
     }
 
     @Override
+    public void releaseWidget() {
+        mWidgetManager.removeFocusChangeListener(this);
+
+        super.releaseWidget();
+    }
+
+    @Override
     protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
         aPlacement.visible = false;
         aPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.crash_dialog_width);
@@ -127,13 +137,28 @@ public class CrashDialogWidget extends UIWidget {
     }
 
     @Override
-    protected void onBackButton() {
-        hide();
-        if (mDelegate != null)
-            mDelegate.onWidgetClosed(getHandle());
+    public void show() {
+        super.show();
+
+        mWidgetManager.fadeOutWorld();
+    }
+
+    @Override
+    public void hide() {
+        super.hide();
+
+        mWidgetManager.fadeInWorld();
     }
 
     public void setCrashDialogDelegate(CrashDialogDelegate aDelegate) {
         mCrashDialogDelegate = aDelegate;
+    }
+
+    // WidgetManagerDelegate.FocusChangeListener
+    @Override
+    public void onGlobalFocusChanged(View oldFocus, View newFocus) {
+        if (oldFocus == this && isVisible()) {
+            onDismiss();
+        }
     }
 }

@@ -43,7 +43,8 @@ public class PermissionWidget extends UIWidget implements WidgetManagerDelegate.
         Microphone,
         CameraAndMicrophone,
         Location,
-        Notification
+        Notification,
+        ReadExternalStorage
     }
 
     public PermissionWidget(Context aContext) {
@@ -108,6 +109,20 @@ public class PermissionWidget extends UIWidget implements WidgetManagerDelegate.
         aPlacement.anchorY = 0.5f;
     }
 
+    @Override
+    public void show() {
+        super.show();
+
+        mWidgetManager.fadeOutWorld();
+    }
+
+    @Override
+    public void hide() {
+        super.hide();
+
+        mWidgetManager.fadeInWorld();
+    }
+
     public void showPrompt(String aUri, PermissionType aType, GeckoSession.PermissionDelegate.Callback aCallback) {
         int messageId;
         int iconId;
@@ -130,6 +145,10 @@ public class PermissionWidget extends UIWidget implements WidgetManagerDelegate.
                 break;
             case Notification:
                 messageId = R.string.permission_notification;
+                iconId = R.drawable.ic_icon_dialog_notification;
+                break;
+            case ReadExternalStorage:
+                messageId = R.string.permission_read_external_storage;
                 iconId = R.drawable.ic_icon_dialog_notification;
                 break;
             default:
@@ -175,14 +194,14 @@ public class PermissionWidget extends UIWidget implements WidgetManagerDelegate.
         }
         mPermissionCallback = null;
 
-        hide();
+        onDismiss();
     }
 
     // WidgetManagerDelegate.FocusChangeListener
     @Override
     public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-        if (oldFocus == this) {
-            hide();
+        if (oldFocus == this && isVisible()) {
+            onDismiss();
         }
     }
 }

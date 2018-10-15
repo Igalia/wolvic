@@ -15,6 +15,8 @@
     <string name="permission_location">Will you allow %1$s to access your location?</string>
     <!-- Parameter will be replaced with the app name -->
     <string name="permission_notification">Will you allow %1$s to send notifications?</string>
+    <!-- Parameter will be replaced with the app name -->
+    <string name="permission_read_external_storage">Will you allow %1$s to read your external storage?</string>
     <string name="speak_now">Speak now</string>
     <string name="settings_version">version %1$s</string>
     <string name="settings_crash_reporting">Crash Reporting</string>

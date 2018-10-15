@@ -6,6 +6,7 @@
 package org.mozilla.vrbrowser.ui;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -404,12 +405,45 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     @Override
-    public GeckoResult<Boolean> onLoadRequest(GeckoSession aSession, String aUri, int target, int flags) {
+    public GeckoResult<Boolean> onLoadRequest(GeckoSession aSession, final String aUri, int target, int flags) {
         if (mURLBar != null) {
             Log.d(LOGTAG, "Got onLoadUri");
             mURLBar.setURL(aUri);
         }
-        return null;
+
+        final GeckoResult<Boolean> result = new GeckoResult<>();
+        if (aUri != null) {
+            Uri uri = Uri.parse(aUri);
+            if (uri.getScheme().equals("file")) {
+                if (!mWidgetManager.isPermissionGranted(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                    mWidgetManager.requestPermission(
+                            aUri,
+                            android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                            new GeckoSession.PermissionDelegate.Callback() {
+                                @Override
+                                public void grant() {
+                                    result.complete(false);
+                                }
+
+                                @Override
+                                public void reject() {
+                                    result.complete(false);
+                                }
+                            });
+
+                } else {
+                    result.complete(false);
+                }
+
+            } else {
+                result.complete(false);
+            }
+
+        } else {
+            result.complete(false);
+        }
+
+        return result;
     }
 
     // Progress Listener

@@ -14,16 +14,30 @@ import android.util.Log;
 import android.view.inputmethod.CursorAnchorInfo;
 import android.view.inputmethod.ExtractedText;
 import android.view.inputmethod.ExtractedTextRequest;
+
 import org.mozilla.gecko.GeckoAppShell;
 import org.mozilla.gecko.GeckoProfile;
-import org.mozilla.geckoview.*;
+import org.mozilla.geckoview.GeckoResult;
+import org.mozilla.geckoview.GeckoRuntime;
+import org.mozilla.geckoview.GeckoRuntimeSettings;
+import org.mozilla.geckoview.GeckoSession;
+import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
+import org.mozilla.vrbrowser.utils.ValueHolder;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSession.ProgressDelegate,
         GeckoSession.ContentDelegate, GeckoSession.TextInputDelegate, GeckoSession.TrackingProtectionDelegate,
@@ -787,14 +801,31 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
                                        @NonNull String aUri,
                                        @TargetWindow int target,
                                        @LoadRequestFlags int flags) {
-        GeckoResult<Boolean> result = new GeckoResult<>();
 
+        final GeckoResult<Boolean> result = new GeckoResult<>();
         if (aUri.equalsIgnoreCase(PRIVATE_BROWSING_URI)) {
             switchPrivateMode();
             result.complete(true);
 
         } else {
-            result.complete(false);
+            final ValueHolder<Integer> count = new ValueHolder(new Integer(0));
+            final ValueHolder<Boolean> listenersResult = new ValueHolder(new Boolean(false));
+            for (GeckoSession.NavigationDelegate listener: mNavigationListeners) {
+                GeckoResult<Boolean> listenerResult = listener.onLoadRequest(aSession, aUri, target, flags);
+                listenerResult.then(new GeckoResult.OnValueListener<Boolean, Object>() {
+                    @Nullable
+                    @Override
+                    public GeckoResult<Object> onValue(@Nullable Boolean value) {
+                        listenersResult.setValue(listenersResult.getValue().booleanValue() | value);
+                        if (count.getValue() == mNavigationListeners.size() - 1) {
+                            result.complete(listenersResult.getValue());
+                        }
+                        count.setValue(count.getValue().intValue() + 1);
+
+                        return null;
+                    }
+                });
+            }
         }
 
         return result;

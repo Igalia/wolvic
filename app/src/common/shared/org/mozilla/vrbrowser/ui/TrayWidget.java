@@ -8,16 +8,15 @@ package org.mozilla.vrbrowser.ui;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
+
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.SessionStore;
-import org.mozilla.vrbrowser.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.WidgetPlacement;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 
-public class TrayWidget extends UIWidget implements SessionStore.SessionChangeListener,
-        WidgetManagerDelegate.FocusChangeListener {
+public class TrayWidget extends UIWidget implements SessionStore.SessionChangeListener {
 
     private static final String LOGTAG = "VRB";
 
@@ -46,18 +45,17 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
     private void initialize(Context aContext) {
         inflate(aContext, R.layout.tray, this);
 
-        mWidgetManager.addFocusChangeListener(this);
-
         mHelpButton = findViewById(R.id.helpButton);
         mHelpButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                view.requestFocusFromTouch();
                 if (mAudio != null) {
                     mAudio.playSound(AudioEngine.Sound.CLICK);
                 }
 
                 onHelpButtonClicked();
+
+                view.requestFocusFromTouch();
             }
         });
 
@@ -65,12 +63,13 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
         mPrivateButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                view.requestFocusFromTouch();
                 if (mAudio != null) {
                     mAudio.playSound(AudioEngine.Sound.CLICK);
                 }
 
                 SessionStore.get().switchPrivateMode();
+
+                view.requestFocusFromTouch();
             }
         });
 
@@ -78,14 +77,14 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
         mSettingsButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!isChildVisible(mSettingsDialogHandle))
-                    view.requestFocusFromTouch();
-
                 if (mAudio != null) {
                     mAudio.playSound(AudioEngine.Sound.CLICK);
                 }
 
-                showSettingsDialog();
+                toggleSettingsDialog();
+
+                if (isSettingsDialogOpened())
+                    view.requestFocusFromTouch();
             }
         });
 
@@ -115,7 +114,6 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
 
     @Override
     public void releaseWidget() {
-        mWidgetManager.removeFocusChangeListener(this);
         SessionStore.get().removeSessionChangeListener(this);
 
         super.releaseWidget();
@@ -152,14 +150,31 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
         mIsLastSessionPrivate = isPrivateMode;
     }
 
-    private void showSettingsDialog() {
+    private void toggleSettingsDialog() {
         UIWidget widget = getChild(mSettingsDialogHandle);
         if (widget == null) {
             widget = createChild(SettingsWidget.class, false);
             mSettingsDialogHandle = widget.getHandle();
+            widget.setDelegate(new Delegate() {
+                @Override
+                public void onDismiss() {
+                    onSettingsDialogDismissed();
+                }
+            });
         }
 
-        widget.toggle();
+        if (widget.isVisible()) {
+            widget.hide();
+            mWidgetManager.fadeInWorld();
+
+        } else {
+            widget.show();
+            mWidgetManager.fadeOutWorld();
+        }
+    }
+
+    private void onSettingsDialogDismissed() {
+        mWidgetManager.fadeInWorld();
     }
 
     @Override
@@ -180,7 +195,11 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
 
 
     public boolean isSettingsDialogOpened() {
-        return isChildVisible(mSettingsDialogHandle);
+        UIWidget widget = getChild(mSettingsDialogHandle);
+        if (widget != null) {
+            return widget.isVisible();
+        }
+        return false;
     }
 
     private void onHelpButtonClicked() {
@@ -193,15 +212,4 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
         SessionStore.get().loadUri(getContext().getString(R.string.help_url));
     }
 
-
-    // WindowManagerDelegate.FocusChangeListener
-    @Override
-    public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-        if (isSettingsDialogOpened()) {
-            UIWidget child = getChild(mSettingsDialogHandle);
-            if (child != null) {
-                child.toggle();
-            }
-        }
-    }
 }

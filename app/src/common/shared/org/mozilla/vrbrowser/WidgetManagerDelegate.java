@@ -3,6 +3,8 @@ package org.mozilla.vrbrowser;
 import android.support.annotation.NonNull;
 import android.view.View;
 
+import org.mozilla.geckoview.GeckoSession;
+
 public interface WidgetManagerDelegate {
     interface UpdateListener {
         void onWidgetUpdate(Widget aWidget);
@@ -30,8 +32,10 @@ public interface WidgetManagerDelegate {
     void keyboardDismissed();
     void updateEnvironment();
     void updatePointerColor();
-    void addPermissionListener(@NonNull PermissionListener aListener);
-    void removePermissionListener(@NonNull PermissionListener aListener);
     void addFocusChangeListener(@NonNull FocusChangeListener aListener);
     void removeFocusChangeListener(@NonNull FocusChangeListener aListener);
+    void addPermissionListener(PermissionListener aListener);
+    void removePermissionListener(PermissionListener aListener);
+    boolean isPermissionGranted(@NonNull String permission);
+    void requestPermission(@NonNull String uri, @NonNull String permission, GeckoSession.PermissionDelegate.Callback aCallback);
 }

@@ -27,7 +27,6 @@ import android.widget.RelativeLayout;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.SessionStore;
-import org.mozilla.vrbrowser.Widget;
 import org.mozilla.vrbrowser.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.WidgetPlacement;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
@@ -173,7 +172,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mBackHandler = new Runnable() {
             @Override
             public void run() {
-                onBackButton();
+                onDismiss();
             }
         };
 
@@ -257,7 +256,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
        mPopupKeyboardLayer.setVisibility(View.GONE);
     }
 
-    protected void onBackButton() {
+    protected void onDismiss() {
         dismiss();
     }
 

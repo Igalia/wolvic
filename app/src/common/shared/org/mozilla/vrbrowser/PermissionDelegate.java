@@ -1,8 +1,10 @@
 package org.mozilla.vrbrowser;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.mozilla.geckoview.GeckoSession;
@@ -54,7 +56,7 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
         }
     }
 
-    private void handleContentPermission(final String aUri, final PermissionWidget.PermissionType aType, final Callback aCallback) {
+    public void handlePermission(final String aUri, final PermissionWidget.PermissionType aType, final Callback aCallback) {
         if (mPermissionWidget == null) {
             mPermissionWidget = new PermissionWidget(mContext);
             mPermissionWidget.getPlacement().parentHandle = mParentWidgetHandle;
@@ -122,7 +124,7 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
             return;
         }
 
-        handleContentPermission(aUri, type, callback);
+        handlePermission(aUri, type, callback);
     }
 
     @Override
@@ -155,6 +157,55 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
             }
         };
 
-        handleContentPermission(aUri, type, callback);
+        handlePermission(aUri, type, callback);
+    }
+
+    public boolean isPermissionGranted(@NonNull String permission) {
+        return mContext.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    // Handle app permissions that Gecko doesn't handle itself yet
+    public void onAppPermissionRequest(final GeckoSession aSession, String aUri, final String permission, final Callback callback) {
+        Log.d(LOGTAG, "onAppPermissionRequest: " + aUri);
+
+        // If the permission is already granted we just grant
+        if (mContext.checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
+
+            // Check if we support a rationale for that permission
+            PermissionWidget.PermissionType type = null;
+            if (permission.equals(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                type = PermissionWidget.PermissionType.ReadExternalStorage;
+            }
+
+            if (type != null) {
+                // Show rationale
+                handlePermission(mContext.getString(R.string.app_name), type, new Callback() {
+                    @Override
+                    public void grant() {
+                        onAndroidPermissionsRequest(aSession, new String[]{permission}, callback);
+                    }
+
+                    @Override
+                    public void reject() {
+                        if (callback != null) {
+                            callback.reject();
+                        }
+                    }
+                });
+
+            } else {
+                // Let Android handle the permission request
+                onAndroidPermissionsRequest(aSession, new String[]{permission}, callback);
+            }
+
+        } else {
+            if (callback != null) {
+                callback.grant();
+            }
+        }
+    }
+
+    public boolean isPermissionDialogVisible() {
+        return mPermissionWidget != null && mPermissionWidget.isVisible();
     }
 }

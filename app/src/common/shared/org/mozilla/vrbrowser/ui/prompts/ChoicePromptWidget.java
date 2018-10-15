@@ -171,7 +171,7 @@ public class ChoicePromptWidget extends UIWidget implements WidgetManagerDelegat
     }
 
     @Override
-    protected void onBackButton() {
+    protected void onDismiss() {
         hide();
 
         if (mPromptDelegate != null) {
@@ -401,7 +401,7 @@ public class ChoicePromptWidget extends UIWidget implements WidgetManagerDelegat
     // WidgetManagerDelegate.FocusChangeListener
     @Override
     public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-        if (oldFocus == this) {
+        if (oldFocus == this && isVisible()) {
             if (mPromptDelegate != null) {
                 mPromptDelegate.onDismissed(getDefaultChoices(mListItems));
             }

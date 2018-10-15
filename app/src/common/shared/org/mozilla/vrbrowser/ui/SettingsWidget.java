@@ -28,12 +28,11 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-public class SettingsWidget extends UIWidget {
+public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.FocusChangeListener {
 
     private static final String LOGTAG = "VRB";
 
     private AudioEngine mAudio;
-    private int mRestartDialogHandle = -1;
     private int mDeveloperOptionsDialogHandle = -1;
     private TextView mBuildText;
 
@@ -77,6 +76,8 @@ public class SettingsWidget extends UIWidget {
     private void initialize(Context aContext) {
         inflate(aContext, R.layout.settings, this);
 
+        mWidgetManager.addFocusChangeListener(this);
+
         ImageButton cancelButton = findViewById(R.id.settingsCancelButton);
 
         cancelButton.setOnClickListener(new OnClickListener() {
@@ -86,7 +87,7 @@ public class SettingsWidget extends UIWidget {
                     mAudio.playSound(AudioEngine.Sound.CLICK);
                 }
 
-                onBackButton();
+                onDismiss();
             }
         });
 
@@ -189,6 +190,8 @@ public class SettingsWidget extends UIWidget {
 
     @Override
     public void releaseWidget() {
+        mWidgetManager.removeFocusChangeListener(this);
+
         super.releaseWidget();
     }
 
@@ -297,18 +300,6 @@ public class SettingsWidget extends UIWidget {
         return formatted;
     }
 
-    private void showRestartDialog() {
-        UIWidget widget = getChild(mRestartDialogHandle);
-        if (widget == null) {
-            widget = createChild(RestartDialogWidget.class, false);
-            mRestartDialogHandle = widget.getHandle();
-        }
-
-        widget.show();
-
-        hide();
-    }
-
     private void showDeveloperOptionsDialog() {
         hide();
 
@@ -316,26 +307,37 @@ public class SettingsWidget extends UIWidget {
         if (widget == null) {
             widget = createChild(DeveloperOptionsWidget.class, false);
             mDeveloperOptionsDialogHandle = widget.getHandle();
+            widget.setDelegate(new Delegate() {
+                @Override
+                public void onDismiss() {
+                    onDeveloperOptionsDialogDismissed();
+                }
+            });
         }
 
         widget.show();
     }
 
-    @Override
-    public void toggle() {
-        super.toggle();
-
-        if (!isVisible())
-            mWidgetManager.fadeInWorld();
-        else
-            mWidgetManager.fadeOutWorld();
+    private void onDeveloperOptionsDialogDismissed() {
+        show();
+        mWidgetManager.fadeInWorld();
     }
 
+    // WindowManagerDelegate.FocusChangeListener
     @Override
-    protected void onBackButton() {
-        super.onBackButton();
+    public void onGlobalFocusChanged(View oldFocus, View newFocus) {
+        boolean dismiss = false;
+        UIWidget widget = getChild(mDeveloperOptionsDialogHandle);
+        if (widget != null && oldFocus == widget && widget.isVisible()) {
+            dismiss = true;
 
-        mWidgetManager.fadeInWorld();
+        } else if (oldFocus == this && isVisible()) {
+            dismiss = true;
+        }
+
+        if (dismiss) {
+            onDismiss();
+        }
     }
 
 }
