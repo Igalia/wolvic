@@ -47,6 +47,10 @@ android {
         }
     }
 
+    lintOptions {
+        disable "LogUsage"
+    }
+
     packagingOptions {
         pickFirst '/lib/*/libgvr.so'
     }
