@@ -20,10 +20,10 @@ import android.widget.TextView;
 
 import org.mozilla.geckoview.GeckoSession.PromptDelegate.Choice;
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.WidgetManagerDelegate;
-import org.mozilla.vrbrowser.WidgetPlacement;
+import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
+import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.audio.AudioEngine;
-import org.mozilla.vrbrowser.ui.UIWidget;
+import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 
 import java.util.ArrayList;
 import java.util.Arrays;

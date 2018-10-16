@@ -6,8 +6,7 @@
                                                  android:layout_height="@dimen/voice_search_height"
                                                  android:background="@drawable/voice_search_background"
                                                  android:layout_centerHorizontal="true"
-                                                 android:padding="@dimen/voice_search_padding"
-                                                 android:id="@+id/constraintLayout">
+                                                 android:padding="@dimen/voice_search_padding">
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

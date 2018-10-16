@@ -43,7 +43,7 @@
 
     </RelativeLayout>
 
-    <org.mozilla.vrbrowser.ui.UIButton
+    <org.mozilla.vrbrowser.ui.views.UIButton
         android:id="@+id/microphoneButton"
         style="?attr/urlBarIconStyle"
         android:layout_gravity="center_vertical|end"

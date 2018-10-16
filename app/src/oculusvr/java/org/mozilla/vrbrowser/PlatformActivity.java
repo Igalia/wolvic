@@ -17,7 +17,7 @@ import android.view.WindowManager;
 public class PlatformActivity extends NativeActivity {
     static String LOGTAG = "VRB";
 
-    static boolean filterPermission(final String aPermission) {
+    public static boolean filterPermission(final String aPermission) {
         return false;
     }
 

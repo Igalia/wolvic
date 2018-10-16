@@ -47,7 +47,7 @@
             android:orientation="horizontal"
             android:gravity="center">
 
-            <org.mozilla.vrbrowser.ui.UIButton
+            <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/permissionCancelButton"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
@@ -58,7 +58,7 @@
                 android:background="@drawable/main_button"
                 />
 
-            <org.mozilla.vrbrowser.ui.UIButton
+            <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/permissionAllowButton"
                 android:layout_width="40dp"
                 android:layout_height="40dp"

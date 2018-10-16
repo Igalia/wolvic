@@ -23,7 +23,7 @@ import javax.microedition.khronos.opengles.GL10;
 public class PlatformActivity extends Activity {
     static String LOGTAG = "VRB";
 
-    static boolean filterPermission(final String aPermission) {
+    public static boolean filterPermission(final String aPermission) {
         return false;
     }
 

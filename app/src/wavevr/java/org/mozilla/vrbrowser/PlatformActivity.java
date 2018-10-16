@@ -14,7 +14,7 @@ import android.os.Bundle;
 public class PlatformActivity extends VRActivity {
     static final String LOGTAG = "VRB";
 
-    static boolean filterPermission(final String aPermission) {
+    public static boolean filterPermission(final String aPermission) {
         if (aPermission.equals(Manifest.permission.CAMERA)) {
             return true;
         }

@@ -5,7 +5,7 @@
         android:layout_height="match_parent"
         android:gravity="center">
 
-        <org.mozilla.vrbrowser.ui.UIButton
+        <org.mozilla.vrbrowser.ui.views.UIButton
             android:id="@+id/closeButton"
             style="?attr/navigationBarButtonStyle"
             android:padding="5dp"

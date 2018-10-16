@@ -21,7 +21,7 @@ public class PlatformActivity extends Activity {
     static String LOGTAG = "VRB";
     static final float ROTATION = 0.098174770424681f;
 
-    static boolean filterPermission(final String aPermission) {
+    public static boolean filterPermission(final String aPermission) {
         return false;
     }
 

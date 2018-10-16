@@ -20,7 +20,7 @@ public class PlatformActivity extends NativeActivity {
     static String LOGTAG = "VRBrowser";
     private OdgHardwareExt mOdgHardware;
 
-    static boolean filterPermission(final String aPermission) {
+    public static boolean filterPermission(final String aPermission) {
         return false;
     }
 

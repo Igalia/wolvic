@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-        <org.mozilla.vrbrowser.ui.NavigationBarWidget
+        <org.mozilla.vrbrowser.ui.widgets.NavigationBarWidget
             android:id="@+id/browserHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

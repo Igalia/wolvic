@@ -35,7 +35,7 @@
             </intent-filter>
         </activity>
         <service
-            android:name=".CrashReporterService"
+            android:name=".crashreporting.CrashReporterService"
             android:exported="false"
             android:process=":crash"
             android:permission="android.permission.BIND_JOB_SERVICE">

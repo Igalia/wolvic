@@ -1,7 +1,6 @@
 <resources>
     <!-- Browser window -->
     <dimen name="browser_width_pixels">800px</dimen>
-    <dimen name="browser_height_pixels">450px</dimen>
     <item name="browser_world_width" format="float" type="dimen">4.0</item>
     <item name="browser_world_y" format="float" type="dimen">0.2</item>
     <item name="browser_world_z" format="float" type="dimen">-4.2</item>
@@ -19,7 +18,6 @@
     <dimen name="keyboard_height">246dp</dimen>
     <dimen name="keyboard_horizontal_gap">4dp</dimen>
     <dimen name="keyboard_vertical_gap">4dp</dimen>
-    <item name="keyboard_distance_from_browser" format="float" type="dimen">2.0</item>
     <dimen name="keyboard_key_width">38dp</dimen>
     <dimen name="keyboard_key_height">38dp</dimen>
     <dimen name="keyboard_key_rounded_corner">18dp</dimen>
@@ -68,11 +66,8 @@
     <dimen name="tray_height">40dp</dimen>
 
     <!-- Developer Options Panel -->
-    <item name="developer_options_world_y" format="float" type="dimen">1.6</item>
-    <item name="developer_options_world_z" format="float" type="dimen">-1.8</item>
     <dimen name="developer_options_width">470dp</dimen>
     <dimen name="developer_options_height">380dp</dimen>
-    <dimen name="developer_options_font_size">11sp</dimen>
 
     <!-- Voice search panel -->
     <dimen name="voice_search_width">385dp</dimen>

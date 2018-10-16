@@ -12,35 +12,35 @@
             android:padding="0dp"
             android:orientation="horizontal">
 
-            <org.mozilla.vrbrowser.ui.UIButton
+            <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/backButton"
                 style="?attr/navigationBarButtonStyle"
                 android:layout_weight="1"
                 android:tint="@color/midnight"
                 android:src="@drawable/ic_icon_back" />
 
-            <org.mozilla.vrbrowser.ui.UIButton
+            <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/forwardButton"
                 style="?attr/navigationBarButtonStyle"
                 android:layout_weight="1"
                 android:layout_marginStart="10dp"
                 android:src="@drawable/ic_icon_forward" />
 
-            <org.mozilla.vrbrowser.ui.UIButton
+            <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/reloadButton"
                 style="?attr/navigationBarButtonStyle"
                 android:layout_weight="1"
                 android:layout_marginStart="10dp"
                 android:src="@drawable/ic_icon_reload" />
 
-            <org.mozilla.vrbrowser.ui.UIButton
+            <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/homeButton"
                 style="?attr/navigationBarButtonStyle"
                 android:layout_weight="1"
                 android:layout_marginStart="10dp"
                 android:src="@drawable/ic_icon_home" />
 
-            <org.mozilla.vrbrowser.ui.NavigationURLBar
+            <org.mozilla.vrbrowser.ui.views.NavigationURLBar
                 android:id="@+id/urlBar"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
@@ -49,7 +49,7 @@
                 android:layout_weight="100"
                 android:layout_marginStart="10dp" />
 
-            <org.mozilla.vrbrowser.ui.UIButton
+            <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/resizeEnterButton"
                 style="?attr/navigationBarButtonStyle"
                 android:layout_weight="1"
@@ -78,7 +78,7 @@
             android:orientation="horizontal"
             android:visibility="gone">
 
-            <org.mozilla.vrbrowser.ui.UITextButton
+            <org.mozilla.vrbrowser.ui.views.UITextButton
                 android:id="@+id/resizePreset3"
                 style="?attr/navigationBarTextButtonStyle"
                 android:layout_marginStart="10dp"
@@ -86,7 +86,7 @@
                 android:textSize="12sp"
                 android:text="3x" />
 
-            <org.mozilla.vrbrowser.ui.UITextButton
+            <org.mozilla.vrbrowser.ui.views.UITextButton
                 android:id="@+id/resizePreset2"
                 style="?attr/navigationBarTextButtonStyle"
                 android:layout_marginStart="10dp"
@@ -94,7 +94,7 @@
                 android:textSize="12sp"
                 android:text="2x" />
 
-            <org.mozilla.vrbrowser.ui.UITextButton
+            <org.mozilla.vrbrowser.ui.views.UITextButton
                 android:id="@+id/resizePreset1"
                 style="?attr/navigationBarTextButtonStyle"
                 android:layout_marginStart="10dp"
@@ -102,7 +102,7 @@
                 android:textSize="12sp"
                 android:text="1x" />
 
-            <org.mozilla.vrbrowser.ui.UITextButton
+            <org.mozilla.vrbrowser.ui.views.UITextButton
                 android:id="@+id/resizePreset0"
                 style="?attr/navigationBarTextButtonStyle"
                 android:layout_marginStart="10dp"
@@ -110,7 +110,7 @@
                 android:textSize="12sp"
                 android:text="0.5x" />
 
-            <org.mozilla.vrbrowser.ui.UIButton
+            <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/resizeExitButton"
                 style="?attr/navigationBarButtonStyle"
                 android:layout_marginStart="10dp"

@@ -1,9 +1,5 @@
 <resources>
     <string name="app_name">Firefox Reality</string>
-    <string name="new_tab">New tab</string>
-    <string name="menu_enter_private_browsing">Enter Private Browsing</string>
-    <string name="menu_exit_private_browsing">Exit Private Browsing</string>
-    <string name="menu_focus_mode">Focus Mode</string>
     <string name="keyboard_enter_label">ENTER</string>
     <!-- Parameter will be replaced with the app name -->
     <string name="permission_camera">Will you allow %1$s to use your camera?</string>

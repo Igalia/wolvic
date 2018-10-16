@@ -2,14 +2,11 @@
 <resources>
     <color name="ic_launcher_background">#25003E</color>
     <color name="black">#000000</color>
-    <color name="twilight">#0b1926</color>
     <color name="midnight">#19212A</color>
     <color name="steel">#434c58</color>
     <color name="ocean">#314259</color>
     <color name="dusk">#556f8e</color>
     <color name="sky">#75eff9</color>
-    <color name="dawn">#c5cadc</color>
-    <color name="concrete">#9ea3ab</color>
     <color name="silver">#e3e4e5</color>
     <color name="white">#ffffff</color>
     <color name="fire">#ee513f</color>
@@ -24,5 +21,4 @@
     <color name="blackberry">#25003e</color>
     <color name="iron">#5d5d5d</color>
     <color name="rhino">#8c898a</color>
-    <color name="driftwood">#f4f4f4</color>
 </resources>

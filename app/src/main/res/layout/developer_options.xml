@@ -13,7 +13,7 @@
         android:paddingEnd="30dp"
         android:paddingBottom="20dp">
 
-        <org.mozilla.vrbrowser.ui.UIButton
+        <org.mozilla.vrbrowser.ui.views.UIButton
             android:id="@+id/backButton"
             style="?attr/navigationBarButtonStyle"
             android:layout_width="40dp"

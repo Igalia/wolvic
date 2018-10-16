@@ -57,7 +57,7 @@
             android:background="@drawable/rectangle_button_background"
             android:clickable="true"
             />
-        <org.mozilla.vrbrowser.ui.UIButton
+        <org.mozilla.vrbrowser.ui.views.UIButton
             android:id="@+id/crashCancelButton"
             style="?attr/navigationBarButtonStyle"
             android:layout_height="40dp"
