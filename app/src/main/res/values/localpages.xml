@@ -209,7 +209,7 @@
      ]]></string>
 
     <!-- Private Browsing -->
-    <string name="private_browsing_title">Deceptive site issue</string>
+    <string name="private_browsing_title">Private Browsing</string>
     <string name="private_browsing_body"><![CDATA[
 <h1>Private Browsing</h1>
 
