@@ -81,6 +81,7 @@ public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate
         mWidgetManager.addPermissionListener(this);
 
         mMozillaSpeechService = MozillaSpeechService.getInstance();
+        mMozillaSpeechService.setProductTag("fxr");
 
         mVoiceSearchText1 = findViewById(R.id.voiceSearchText1);
         mVoiceSearchText2 = findViewById(R.id.voiceSearchText2);
@@ -209,6 +210,7 @@ public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate
             ActivityCompat.requestPermissions((Activity)getContext(), new String[]{Manifest.permission.RECORD_AUDIO},
                     VOICESEARCH_AUDIO_REQUEST_CODE);
         } else {
+            mMozillaSpeechService.setLanguage("en-us");
             mMozillaSpeechService.start(getApplicationContext());
             mIsSpeechRecognitionRunning = true;
         }

@@ -232,7 +232,7 @@ dependencies {
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.google.vr:sdk-audio:1.170.0'
     implementation "org.mozilla.components:service-telemetry:0.26.0"
-    implementation "com.github.mozilla:mozillaspeechlibrary:1.0.4"
+    implementation "com.github.mozilla:mozillaspeechlibrary:1.0.6"
 }
 
 if (findProject(':servo')) {
