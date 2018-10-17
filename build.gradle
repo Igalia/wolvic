@@ -26,6 +26,9 @@ allprojects {
         maven {
             url 'https://maven.mozilla.org/maven2'
         }
+        maven {
+            url 'https://download.servo.org/nightly/maven'
+        }
         jcenter()
     }
 }

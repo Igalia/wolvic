@@ -23,6 +23,10 @@ if (userPropertiesFile.exists()) {
         include ':geckoview-local'
         project(':geckoview-local').projectDir = new File('geckoview-local')
     }
+    if (gradle.hasProperty('enableServo')) {
+        println("Including :servo")
+        include ':servo'
+    }
 } else {
     println("FILE DOESN'T EXIST")
 }

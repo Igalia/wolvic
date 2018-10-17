@@ -59,6 +59,12 @@
                     android:layout_height="60dp"
                     app:description="@string/developer_options_multiprocess" />
 
+                <org.mozilla.vrbrowser.ui.settings.SwitchSetting
+                    android:id="@+id/servo_switch"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    app:description="@string/developer_options_servo" />
+
                 <org.mozilla.vrbrowser.ui.settings.RadioGroupSetting
                     android:id="@+id/environment_radio"
                     android:layout_width="match_parent"

@@ -22,6 +22,8 @@ import org.mozilla.vrbrowser.ui.settings.SingleEditSetting;
 import org.mozilla.vrbrowser.ui.settings.RadioGroupSetting;
 import org.mozilla.vrbrowser.ui.settings.SwitchSetting;
 
+import static org.mozilla.vrbrowser.utils.ServoUtils.isServoAvailable;
+
 public class DeveloperOptionsWidget extends UIWidget {
 
     private static final String LOGTAG = "VRB";
@@ -33,6 +35,7 @@ public class DeveloperOptionsWidget extends UIWidget {
     private SwitchSetting mConsoleLogsSwitch;
     private SwitchSetting mEnvOverrideSwitch;
     private SwitchSetting mMultiprocessSwitch;
+    private SwitchSetting mServoSwitch;
 
     private RadioGroupSetting mEnvironmentsRadio;
     private RadioGroupSetting mPointerColorRadio;
@@ -96,6 +99,14 @@ public class DeveloperOptionsWidget extends UIWidget {
         mMultiprocessSwitch = findViewById(R.id.multiprocess_switch);
         mMultiprocessSwitch.setOnCheckedChangeListener(mMultiprocessListener);
         setMultiprocess(SettingsStore.getInstance(getContext()).isMultiprocessEnabled(), false);
+
+        mServoSwitch = findViewById(R.id.servo_switch);
+        if (!isServoAvailable()) {
+            mServoSwitch.setVisibility(View.GONE);
+        } else {
+            mServoSwitch.setOnCheckedChangeListener(mServoListener);
+            setServo(SettingsStore.getInstance(getContext()).isServoEnabled(), false);
+        }
 
         String env = SettingsStore.getInstance(getContext()).getEnvironment();
         mEnvironmentsRadio = findViewById(R.id.environment_radio);
@@ -218,6 +229,14 @@ public class DeveloperOptionsWidget extends UIWidget {
         }
     };
 
+    private SwitchSetting.OnCheckedChangeListener mServoListener = new SwitchSetting.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton compoundButton, boolean b, boolean doApply) {
+            setServo(b, true);
+        }
+    };
+
+
     private RadioGroupSetting.OnCheckedChangeListener mUaModeListener = new RadioGroupSetting.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(RadioGroup radioGroup, int checkedId, boolean doApply) {
@@ -303,6 +322,7 @@ public class DeveloperOptionsWidget extends UIWidget {
 
             setConsoleLogs(SettingsStore.CONSOLE_LOGS_DEFAULT, true);
             setMultiprocess(SettingsStore.MULTIPROCESS_DEFAULT, true);
+            setServo(SettingsStore.SERVO_DEFAULT, true);
 
             if (mEnvOverrideSwitch.isChecked() != SettingsStore.ENV_OVERRIDE_DEFAULT) {
                 setEnvOverride(SettingsStore.ENV_OVERRIDE_DEFAULT);
@@ -370,6 +390,18 @@ public class DeveloperOptionsWidget extends UIWidget {
 
         if (doApply) {
             SessionStore.get().setMultiprocess(value);
+        }
+    }
+
+    private void setServo(boolean value, boolean doApply) {
+        mServoSwitch.setOnCheckedChangeListener(null);
+        mServoSwitch.setValue(value, false);
+        mServoSwitch.setOnCheckedChangeListener(mServoListener);
+
+        SettingsStore.getInstance(getContext()).setServoEnabled(value);
+
+        if (doApply) {
+            SessionStore.get().setServo(value);
         }
     }
 

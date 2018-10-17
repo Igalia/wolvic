@@ -1,0 +1,52 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 27
+    defaultConfig {
+        minSdkVersion 24
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+}
+
+if (findProject(':geckoview-local')) {
+    dependencies {
+        compileOnly project(':geckoview-local')
+    }
+} else {
+    dependencies {
+        compileOnly "org.mozilla.geckoview:geckoview-nightly-armeabi-v7a:${rootProject.ext.geckoNightly['version']}"
+    }
+}
+
+if (gradle.hasProperty('servoViewLocal')) {
+    def aar = new File(gradle.servoViewLocal)
+    if (aar.exists()) {
+        dependencies {
+          implementation files(aar)
+        }
+    } else {
+        throw new GradleException('Failed to find ServoView AAR at: ' + gradle.servoViewLocal)
+    }
+} else {
+    dependencies {
+        // To see what the latest servoview version is go here:
+        // https://download.servo.org/nightly/maven/org/mozilla/servoview/servoview-armv7/maven-metadata.xml
+        implementation 'org.mozilla.servoview:servoview-armv7:0.0.1.20181015.5327758'
+    }
+}

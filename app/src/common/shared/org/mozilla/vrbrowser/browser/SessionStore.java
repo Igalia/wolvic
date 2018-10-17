@@ -43,6 +43,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import static org.mozilla.vrbrowser.utils.ServoUtils.*;
+
 public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSession.ProgressDelegate,
         GeckoSession.ContentDelegate, GeckoSession.TextInputDelegate, GeckoSession.TrackingProtectionDelegate,
         GeckoSession.PromptDelegate {
@@ -78,6 +80,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         boolean trackingProtection = true;
         boolean suspendMediaWhenInactive = true;
         int userAgentMode = SettingsStore.getInstance(mContext).getUaMode();
+        boolean servo = false;
     }
 
     class State {
@@ -307,7 +310,17 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     int createSession(SessionSettings aSettings) {
         State state = new State();
         state.mSettings = aSettings;
-        state.mSession = new GeckoSession();
+
+        if (aSettings.servo) {
+            if (isServoAvailable()) {
+                state.mSession = createServoSession(mContext);
+            } else {
+                Log.e(LOGTAG, "Attempt to create a ServoSession. Servo hasn't been enable at build time. Using a GeckoSession instead.");
+                state.mSession = new GeckoSession();
+            }
+        } else {
+            state.mSession = new GeckoSession();
+        }
 
         int result = state.mSession.hashCode();
         mSessions.put(result, state);
@@ -555,6 +568,20 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         mCurrentSession.loadUri(aUri);
     }
 
+    public void toggleServo() {
+        if (mCurrentSession == null) {
+            return;
+        }
+
+        boolean was_servo = isInstanceOfServoSession(mCurrentSession);
+        String uri = getCurrentUri();
+        SessionStore.SessionSettings settings = new SessionStore.SessionSettings();
+        settings.servo = !was_servo;
+        int id = createSession(settings);
+        setCurrentSession(id);
+        loadUri(uri);
+    }
+
     public boolean isInFullScreen() {
         if (mCurrentSession == null) {
             return false;
@@ -712,6 +739,15 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
 
     public void setMaxWindowSize(int width, int height) {
         GeckoAppShell.setScreenSizeOverride(new Rect(0, 0, width, height));
+    }
+
+    public void setServo(final boolean enabled) {
+      if (!enabled && mCurrentSession != null && isInstanceOfServoSession(mCurrentSession)) {
+        String uri = getCurrentUri();
+        int id = createSession();
+        setCurrentSession(id);
+        loadUri(uri);
+      }
     }
 
     public void setMultiprocess(final boolean enabled) {

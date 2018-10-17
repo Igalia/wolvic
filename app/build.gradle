@@ -35,6 +35,10 @@ android {
     } else {
         project.archivesBaseName = "FirefoxReality"
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
     buildTypes {
         release {
             minifyEnabled true
@@ -229,6 +233,13 @@ dependencies {
     implementation 'com.google.vr:sdk-audio:1.170.0'
     implementation "org.mozilla.components:service-telemetry:0.26.0"
     implementation "com.github.mozilla:mozillaspeechlibrary:1.0.4"
+}
+
+if (findProject(':servo')) {
+    dependencies {
+      oculusvrImplementation project(':servo')
+      googlevrImplementation project(':servo')
+    }
 }
 
 if (findProject(':wavesdk')) {

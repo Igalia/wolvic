@@ -11,6 +11,7 @@ import org.mozilla.telemetry.TelemetryHolder;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 
+import static org.mozilla.vrbrowser.utils.ServoUtils.isServoAvailable;
 
 public class SettingsStore {
 
@@ -35,6 +36,7 @@ public class SettingsStore {
     public final static boolean CONSOLE_LOGS_DEFAULT = false;
     public final static boolean ENV_OVERRIDE_DEFAULT = false;
     public final static boolean MULTIPROCESS_DEFAULT = false;
+    public final static boolean SERVO_DEFAULT = false;
     public final static int UA_MODE_DEFAULT = 0;
     public final static int INPUT_MODE_DEFAULT = 1;
     public final static float DISPLAY_DENSITY_DEFAULT = 1.0f;
@@ -145,6 +147,16 @@ public class SettingsStore {
     public void setMultiprocessEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_multiprocess), isEnabled);
+        editor.commit();
+    }
+
+    public boolean isServoEnabled() {
+        return isServoAvailable() && mPrefs.getBoolean(mContext.getString(R.string.settings_key_servo), SERVO_DEFAULT);
+    }
+
+    public void setServoEnabled(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_servo), isEnabled);
         editor.commit();
     }
 

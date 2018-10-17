@@ -29,6 +29,7 @@
     <string name="developer_options_show_console">Redirect Console to Logcat</string>
     <string name="developer_options_env_override">Enable Environment Override</string>
     <string name="developer_options_multiprocess">Enable Multiprocess</string>
+    <string name="developer_options_servo">Enable Servo</string>
     <string name="developer_options_ua_mode">User Agent Mode</string>
     <string name="developer_options_events">Input Events</string>
     <string name="developer_options_display_density">Display Density:</string>
