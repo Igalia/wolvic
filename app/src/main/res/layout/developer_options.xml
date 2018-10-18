@@ -97,14 +97,6 @@
                     app:options="@array/developer_options_msaa_options"
                     app:values="@array/developer_options_ua_mode_values"/>
 
-                <org.mozilla.vrbrowser.ui.settings.RadioGroupSetting
-                    android:id="@+id/events_radio"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    app:description="@string/developer_options_events"
-                    app:options="@array/developer_options_events_options"
-                    app:values="@array/developer_options_events_values"/>
-
                 <org.mozilla.vrbrowser.ui.settings.SingleEditSetting
                     android:id="@+id/density_edit"
                     android:layout_width="match_parent"

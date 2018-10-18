@@ -10,24 +10,24 @@
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/voice_search_start_2"
+            android:text="@string/voice_search_try_again"
             android:textColor="@color/white"
             android:typeface="sans"
             android:id="@+id/voiceSearchText2"
             app:layout_constraintStart_toStartOf="@+id/voiceSearchText1"
-            tools:text="@string/voice_search_start_2" app:layout_constraintTop_toBottomOf="@+id/voiceSearchText1"
-            android:textSize="24sp" android:textAlignment="viewStart"/>
+            tools:text="@string/voice_search_try_again" app:layout_constraintTop_toBottomOf="@+id/voiceSearchText1"
+            android:textSize="22sp" android:textAlignment="viewStart"/>
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/voice_search_start_1"
+            android:text="@string/voice_search_start"
             android:textColor="@color/white"
-            android:textSize="24sp"
+            android:textSize="22sp"
             android:typeface="sans"
             android:id="@+id/voiceSearchText1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="@string/voice_search_start_1" android:textAlignment="viewStart"/>
+            tools:text="@string/voice_search_start" android:textAlignment="viewStart"/>
     <TextView
             android:text="@string/voice_search_example"
             android:textColor="@color/rhino"

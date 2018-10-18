@@ -14,8 +14,4 @@
         <item>1</item>
         <item>2</item>
     </integer-array>
-    <integer-array name="developer_options_events_values">
-        <item>0</item>
-        <item>1</item>
-    </integer-array>
 </resources>

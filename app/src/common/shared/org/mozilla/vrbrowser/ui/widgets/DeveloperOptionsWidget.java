@@ -41,7 +41,6 @@ public class DeveloperOptionsWidget extends UIWidget {
     private RadioGroupSetting mPointerColorRadio;
     private RadioGroupSetting mUaModeRadio;
     private RadioGroupSetting mMSAARadio;
-    private RadioGroupSetting mEventsRadio;
 
     private SingleEditSetting mDensityEdit;
     private SingleEditSetting mDpiEdit;
@@ -127,11 +126,6 @@ public class DeveloperOptionsWidget extends UIWidget {
         mMSAARadio = findViewById(R.id.msaa_radio);
         mMSAARadio.setOnCheckedChangeListener(mMSSAChangeListener);
         setMSAAMode(mMSAARadio.getIdForValue(msaaLevel), false);
-
-        int inputMode = SettingsStore.getInstance(getContext()).getInputMode();
-        mEventsRadio = findViewById(R.id.events_radio);
-        mEventsRadio.setOnCheckedChangeListener(mMSSAChangeListener);
-        setInputMode(mEventsRadio.getIdForValue(inputMode), false);
 
         mDensityEdit = findViewById(R.id.density_edit);
         mDensityEdit.setFirstText(Float.toString(SettingsStore.getInstance(getContext()).getDisplayDensity()));
@@ -251,13 +245,6 @@ public class DeveloperOptionsWidget extends UIWidget {
         }
     };
 
-    private RadioGroupSetting.OnCheckedChangeListener mInputModeListener = new RadioGroupSetting.OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(RadioGroup radioGroup, int checkedId, boolean doApply) {
-            setInputMode(checkedId, doApply);
-        }
-    };
-
     private RadioGroupSetting.OnCheckedChangeListener mEnvsListener = new RadioGroupSetting.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(RadioGroup radioGroup, int checkedId, boolean doApply) {
@@ -336,7 +323,6 @@ public class DeveloperOptionsWidget extends UIWidget {
             // Radios
             setUaMode(mUaModeRadio.getIdForValue(SettingsStore.UA_MODE_DEFAULT), true);
             setMSAAMode(mMSAARadio.getIdForValue(SettingsStore.MSAA_DEFAULT_LEVEL), true);
-            setInputMode(mEventsRadio.getIdForValue(SettingsStore.INPUT_MODE_DEFAULT), false);
 
             // Edits
             restart = restart | setDisplayDensity(SettingsStore.DISPLAY_DENSITY_DEFAULT);
@@ -450,15 +436,6 @@ public class DeveloperOptionsWidget extends UIWidget {
         if (doApply) {
             mWidgetManager.updatePointerColor();
         }
-    }
-
-    private void setInputMode(int checkedId, boolean doApply) {
-        mEventsRadio.setOnCheckedChangeListener(null);
-        mEventsRadio.setChecked(checkedId, doApply);
-        mEventsRadio.setOnCheckedChangeListener(mInputModeListener);
-
-        SettingsStore.getInstance(getContext()).setInputMode((Integer)mEventsRadio.getValueForId(checkedId));
-        // TODO: Wire it up
     }
 
     private boolean setDisplayDensity(float newDensity) {

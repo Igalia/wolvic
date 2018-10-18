@@ -20,6 +20,7 @@ public class SettingsButton extends LinearLayout {
     private TextView mText;
     private TextView mSecondaryText;
     private String mButtonText;
+    private float mButtonTextSize;
     private String mSecondaryButtonText;
     private Drawable mButtonIcon;
 
@@ -31,6 +32,7 @@ public class SettingsButton extends LinearLayout {
         super(context, attrs, defStyleAttr);
         TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.SettingsButton, defStyleAttr, 0);
         mButtonText = attributes.getString(R.styleable.SettingsButton_settingsButtonText);
+        mButtonTextSize = attributes.getDimension(R.styleable.SettingsButton_settingsButtonTextSize, 0.0f);
         mButtonIcon = attributes.getDrawable(R.styleable.SettingsButton_settingsButtonIcon);
         mSecondaryButtonText = attributes.getString(R.styleable.SettingsButton_settingsSecondaryText);
         initialize(context);
@@ -46,8 +48,12 @@ public class SettingsButton extends LinearLayout {
             mIcon.setImageDrawable(mButtonIcon);
 
         mText = findViewById(R.id.settings_button_text);
-        if (mText != null)
+        if (mText != null) {
             mText.setText(mButtonText);
+            if (mButtonTextSize > 0) {
+                mText.getLayoutParams().width = (int) mButtonTextSize;
+            }
+        }
 
         mSecondaryText = findViewById(R.id.settings_secondary_text);
         if (mSecondaryText != null)

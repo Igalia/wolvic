@@ -14,16 +14,15 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.CursorAnchorInfo;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.ExtractedText;
 import android.view.inputmethod.ExtractedTextRequest;
 import android.view.inputmethod.InputConnection;
 import android.widget.ImageButton;
-
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.SessionStore;
@@ -46,7 +45,6 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private CustomKeyboard mKeyboardQuerty;
     private CustomKeyboard mKeyboardSymbols1;
     private CustomKeyboard mKeyboardSymbols2;
-    private ViewGroup mVoiceInput;
     private Drawable mShiftOnIcon;
     private Drawable mShiftOffIcon;
     private Drawable mCapsLockOnIcon;
@@ -87,7 +85,6 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
         mKeyboardview = findViewById(R.id.keyboard);
         mPopupKeyboardview = findViewById(R.id.popupKeyboard);
-        mVoiceInput = findViewById(R.id.keyboard_microphone);
         mPopupKeyboardLayer = findViewById(R.id.popupKeyboardLayer);
 
         mKeyboardQuerty = new CustomKeyboard(aContext.getApplicationContext(), R.xml.keyboard_qwerty);
@@ -144,15 +141,6 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             }
         });
 
-        mKeyboardIcon = findViewById(R.id.keyboard_icon);
-        mKeyboardIcon.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mKeyboardview.setVisibility(View.VISIBLE);
-                mVoiceInput.setVisibility(View.GONE);
-            }
-        });
-
         mKeyboardPopupLeftMargin = getResources().getDimensionPixelSize(R.dimen.keyboard_popup_left_margin);
         mKeyboardPopupTopMargin  = getResources().getDimensionPixelSize(R.dimen.keyboard_key_pressed_padding) * 2;
 
@@ -168,7 +156,6 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mKeyboardview.setVisibility(View.VISIBLE);
         mPopupKeyboardview.setVisibility(View.GONE);
         mPopupKeyboardLayer.setVisibility(View.GONE);
-        mVoiceInput.setVisibility(View.GONE);
 
         mBackHandler = new Runnable() {
             @Override
@@ -534,7 +521,6 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
     private void handleVoiceInput() {
         mKeyboardview.setVisibility(View.GONE);
-        mVoiceInput.setVisibility(View.VISIBLE);
         TelemetryWrapper.voiceInputEvent();
     }
 

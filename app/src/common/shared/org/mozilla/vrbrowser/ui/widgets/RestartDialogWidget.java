@@ -10,18 +10,17 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.TextView;
+
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserActivity;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 
 public class RestartDialogWidget extends UIWidget {
+
     private static final String LOGTAG = "VRB";
 
-    private TextView mAcceptButton;
-    private UIButton mCancelButton;
     private AudioEngine mAudio;
 
     public RestartDialogWidget(Context aContext) {
@@ -42,34 +41,25 @@ public class RestartDialogWidget extends UIWidget {
     private void initialize(Context aContext) {
         inflate(aContext, R.layout.restart_dialog, this);
 
-        mAcceptButton = findViewById(R.id.crashAcceptButton);
-        mCancelButton = findViewById(R.id.crashCancelButton);
+        TextView acceptButton = findViewById(R.id.crashAcceptButton);
+        UIButton cancelButton = findViewById(R.id.crashCancelButton);
+        TextView restartText = findViewById(R.id.restartText);
 
-        mAcceptButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mAudio != null) {
-                    mAudio.playSound(AudioEngine.Sound.CLICK);
-                }
-
-                getHandler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        handleRestartApp();
-                    }
-                }, 500);
+        acceptButton.setOnClickListener(view -> {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
             }
-        });
-        mCancelButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mAudio != null) {
-                    mAudio.playSound(AudioEngine.Sound.CLICK);
-                }
 
-                onDismiss();
-            }
+            getHandler().postDelayed(() -> handleRestartApp(), 500);
         });
+        cancelButton.setOnClickListener(view -> {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
+
+            onDismiss();
+        });
+        restartText.setText(getContext().getString(R.string.restart_dialog_text, getContext().getString(R.string.app_name)));
 
         mAudio = AudioEngine.fromContext(aContext);
     }

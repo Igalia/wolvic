@@ -47,17 +47,6 @@
                     android:shadowRadius="0.0"
                     android:verticalCorrection="0dp"
                     android:visibility="gone"/>
-
-            <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:visibility="gone"
-                    android:id="@+id/keyboard_microphone">
-                <include layout="@layout/keyboard_microphone"
-                         android:layout_width="match_parent"
-                         android:layout_height="match_parent"/>
-            </LinearLayout>
-
         </RelativeLayout>
         </LinearLayout>
         <org.mozilla.vrbrowser.ui.views.UIButton

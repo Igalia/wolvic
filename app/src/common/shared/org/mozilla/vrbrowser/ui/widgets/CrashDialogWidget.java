@@ -10,14 +10,16 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
+import android.widget.TextView;
+
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.SessionStore;
 import org.mozilla.vrbrowser.browser.SettingsStore;
-import org.mozilla.vrbrowser.audio.AudioEngine;
 
 public class CrashDialogWidget extends UIWidget implements WidgetManagerDelegate.FocusChangeListener {
+
     private static final String LOGTAG = "VRB";
 
     public interface CrashDialogDelegate {
@@ -25,11 +27,12 @@ public class CrashDialogWidget extends UIWidget implements WidgetManagerDelegate
     }
 
     private Button mLearnMoreButton;
-    private Button mDontSendButton;
+    private Button mDoNotSendButton;
     private Button mSendDataButton;
     private CheckBox mSendDataCheckBox;
     private AudioEngine mAudio;
     private CrashDialogDelegate mCrashDialogDelegate;
+    private TextView mCrashMessage;
 
     public CrashDialogWidget(Context aContext) {
         super(aContext);
@@ -52,64 +55,57 @@ public class CrashDialogWidget extends UIWidget implements WidgetManagerDelegate
         mWidgetManager.addFocusChangeListener(this);
 
         mLearnMoreButton = findViewById(R.id.learnMoreButton);
-        mDontSendButton = findViewById(R.id.dontSendButton);
+        mDoNotSendButton = findViewById(R.id.dontSendButton);
         mSendDataButton = findViewById(R.id.sendDataButton);
-
-        mLearnMoreButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mAudio != null) {
-                    mAudio.playSound(AudioEngine.Sound.CLICK);
-                }
-
-                GeckoSession session = SessionStore.get().getCurrentSession();
-                if (session == null) {
-                    int sessionId = SessionStore.get().createSession();
-                    SessionStore.get().setCurrentSession(sessionId);
-                }
-
-                SessionStore.get().loadUri(getContext().getString(R.string.crash_dialog_learn_more_url));
-
-                onDismiss();
-            }
-        });
-        mDontSendButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mAudio != null) {
-                    mAudio.playSound(AudioEngine.Sound.CLICK);
-                }
-
-                onDismiss();
-            }
-        });
-        mSendDataButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mAudio != null) {
-                    mAudio.playSound(AudioEngine.Sound.CLICK);
-                }
-
-                hide();
-
-                if(mCrashDialogDelegate != null) {
-                    mCrashDialogDelegate.onSendData();
-                }
-
-                SettingsStore.getInstance(getContext()).setCrashReportingEnabled(mSendDataCheckBox.isChecked());
-            }
-        });
-
         mSendDataCheckBox = findViewById(R.id.crashSendDataCheckbox);
+        mCrashMessage = findViewById(R.id.crashMessage);
+
+        mLearnMoreButton.setOnClickListener(view -> {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
+
+            GeckoSession session = SessionStore.get().getCurrentSession();
+            if (session == null) {
+                int sessionId = SessionStore.get().createSession();
+                SessionStore.get().setCurrentSession(sessionId);
+            }
+
+            SessionStore.get().loadUri(getContext().getString(R.string.crash_dialog_learn_more_url));
+
+            onDismiss();
+        });
+
+        mDoNotSendButton.setOnClickListener(view -> {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
+
+            onDismiss();
+        });
+
+        mSendDataButton.setOnClickListener(view -> {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
+
+            hide();
+
+            if(mCrashDialogDelegate != null) {
+                mCrashDialogDelegate.onSendData();
+            }
+
+            SettingsStore.getInstance(getContext()).setCrashReportingEnabled(mSendDataCheckBox.isChecked());
+        });
+
         mSendDataCheckBox.setChecked(SettingsStore.getInstance(getContext()).isCrashReportingEnabled());
-        mSendDataCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (mAudio != null) {
-                    mAudio.playSound(AudioEngine.Sound.CLICK);
-                }
+        mSendDataCheckBox.setOnCheckedChangeListener((compoundButton, b) -> {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
             }
         });
+
+        mCrashMessage.setText(getContext().getString(R.string.crash_dialog_message, getContext().getString(R.string.app_name)));
 
         mAudio = AudioEngine.fromContext(aContext);
     }

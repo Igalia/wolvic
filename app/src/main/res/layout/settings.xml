@@ -71,8 +71,8 @@
                         android:id="@+id/developerOptionsButton"
                         style="?attr/settingsButtonStyle"
                         app:settingsButtonIcon="@drawable/ic_settings_developeroptions"
-                        app:settingsButtonText="@string/settings_developer"
-                        app:settingsSecondaryText="@string/settings_options"
+                        app:settingsButtonText="@string/settings_developer_options"
+                        app:settingsButtonTextSize="52dp"
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="30dp"/>
 
@@ -169,7 +169,6 @@
                         style="?attr/settingsButtonStyle"
                         app:settingsButtonIcon="@drawable/ic_settings_privacypolicy"
                         app:settingsButtonText="@string/settings_privacy"
-                        app:settingsSecondaryText=""
                         android:layout_alignRight="@id/center"
                         android:layout_marginRight="5dp"
                         android:layout_marginTop="-25dp"

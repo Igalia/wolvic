@@ -39,7 +39,7 @@ public class ButtonSetting extends LinearLayout {
         mAudio = AudioEngine.fromContext(aContext);
 
         TextView description = findViewById(R.id.setting_description);
-        description.setText(mButtonText);
+        description.setText(mDescription);
 
         mButton = findViewById(R.id.button);
         mButton.setText(mButtonText);

@@ -268,10 +268,9 @@ public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate
     }
 
     private void setStartListeningState() {
-        mVoiceSearchText1.setText(R.string.voice_search_start_1);
+        mVoiceSearchText1.setText(R.string.voice_search_start);
         mVoiceSearchText1.setVisibility(View.VISIBLE);
-        mVoiceSearchText2.setText(R.string.voice_search_start_2);
-        mVoiceSearchText2.setVisibility(View.VISIBLE);
+        mVoiceSearchText2.setVisibility(View.GONE);
         mVoiceSearchText3.setVisibility(View.VISIBLE);
         mVoiceSearchInput.setVisibility(View.VISIBLE);
         mVoiceSearchSearching.clearAnimation();
@@ -281,7 +280,7 @@ public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate
     private void setDecodingState() {
         mVoiceSearchText1.setText(R.string.voice_search_decoding);
         mVoiceSearchText1.setVisibility(View.VISIBLE);
-        mVoiceSearchText2.setVisibility(View.INVISIBLE);
+        mVoiceSearchText2.setVisibility(View.GONE);
         mVoiceSearchText3.setVisibility(View.INVISIBLE);
         mVoiceSearchInput.setVisibility(View.INVISIBLE);
         mVoiceSearchSearching.startAnimation(mSearchingAnimation);
@@ -303,9 +302,9 @@ public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate
     }
 
     private void setPermissionNotGranted() {
-        mVoiceSearchText1.setText(R.string.voice_search_permission_1);
+        mVoiceSearchText1.setText(R.string.voice_search_permission_after_decline);
         mVoiceSearchText1.setVisibility(View.VISIBLE);
-        mVoiceSearchText2.setVisibility(View.INVISIBLE);
+        mVoiceSearchText2.setVisibility(View.GONE);
         mVoiceSearchText3.setVisibility(View.INVISIBLE);
         mVoiceSearchInput.setVisibility(View.INVISIBLE);
         mVoiceSearchSearching.clearAnimation();

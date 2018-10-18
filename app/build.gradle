@@ -29,6 +29,7 @@ android {
             }
         }
     }
+
     if (gradle.hasProperty('taskclusterBuild')) {
         project.archivesBaseName = "FirefoxReality-$defaultConfig.versionName-$generatedVersionCode"
         defaultConfig.versionCode = generatedVersionCode
