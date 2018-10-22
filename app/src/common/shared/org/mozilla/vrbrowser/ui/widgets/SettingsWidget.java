@@ -14,12 +14,13 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.TextView;
+
 import org.mozilla.geckoview.GeckoSession;
-import org.mozilla.vrbrowser.*;
+import org.mozilla.vrbrowser.BuildConfig;
+import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.SessionStore;
 import org.mozilla.vrbrowser.browser.SettingsStore;
@@ -83,43 +84,34 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
 
         ImageButton cancelButton = findViewById(R.id.settingsCancelButton);
 
-        cancelButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mAudio != null) {
-                    mAudio.playSound(AudioEngine.Sound.CLICK);
-                }
-
-                onDismiss();
+        cancelButton.setOnClickListener(v -> {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
             }
+
+            onDismiss();
         });
 
         SettingsButton privacyButton = findViewById(R.id.privacyButton);
-        privacyButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mAudio != null) {
-                    mAudio.playSound(AudioEngine.Sound.CLICK);
-                }
-
-                onSettingsPrivacyClick();
+        privacyButton.setOnClickListener(view -> {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
             }
+
+            onSettingsPrivacyClick();
         });
 
         final TextView crashReportingSwitchText  = findViewById(R.id.crash_reporting_switch_text);
         Switch crashReportingSwitch  = findViewById(R.id.crash_reporting_switch);
         crashReportingSwitch.setChecked(SettingsStore.getInstance(getContext()).isCrashReportingEnabled());
         crashReportingSwitchText.setText(crashReportingSwitch.isChecked() ? getContext().getString(R.string.on) : getContext().getString(R.string.off));
-        crashReportingSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (mAudio != null) {
-                    mAudio.playSound(AudioEngine.Sound.CLICK);
-                }
-
-                crashReportingSwitchText.setText(b ? getContext().getString(R.string.on) : getContext().getString(R.string.off));
-                onSettingsCrashReportingChange(b);
+        crashReportingSwitch.setOnCheckedChangeListener((compoundButton, b) -> {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
             }
+
+            crashReportingSwitchText.setText(b ? getContext().getString(R.string.on) : getContext().getString(R.string.off));
+            onSettingsCrashReportingChange(b);
         });
         crashReportingSwitch.setSoundEffectsEnabled(false);
 
@@ -127,16 +119,13 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
         Switch telemetrySwitch  = findViewById(R.id.telemetry_switch);
         telemetrySwitch.setChecked(SettingsStore.getInstance(getContext()).isTelemetryEnabled());
         crashTelemetrySwitchText.setText(telemetrySwitch.isChecked() ? getContext().getString(R.string.on) : getContext().getString(R.string.off));
-        telemetrySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (mAudio != null) {
-                    mAudio.playSound(AudioEngine.Sound.CLICK);
-                }
-
-                crashTelemetrySwitchText.setText(b ? getContext().getString(R.string.on) : getContext().getString(R.string.off));
-                onSettingsTelemetryChange(b);
+        telemetrySwitch.setOnCheckedChangeListener((compoundButton, b) -> {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
             }
+
+            crashTelemetrySwitchText.setText(b ? getContext().getString(R.string.on) : getContext().getString(R.string.off));
+            onSettingsTelemetryChange(b);
         });
         telemetrySwitch.setSoundEffectsEnabled(false);
 
@@ -154,38 +143,29 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
 
         ViewGroup versionLayout = findViewById(R.id.versionLayout);
         final GestureDetector gd = new GestureDetector(getContext(), new VersionGestureListener());
-        versionLayout.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (gd.onTouchEvent(motionEvent)) {
-                    return true;
-                }
-                return view.onTouchEvent(motionEvent);
+        versionLayout.setOnTouchListener((view, motionEvent) -> {
+            if (gd.onTouchEvent(motionEvent)) {
+                return true;
             }
+            return view.onTouchEvent(motionEvent);
         });
 
         SettingsButton reportButton = findViewById(R.id.reportButton);
-        reportButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mAudio != null) {
-                    mAudio.playSound(AudioEngine.Sound.CLICK);
-                }
-
-                onSettingsReportClick();
+        reportButton.setOnClickListener(view -> {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
             }
+
+            onSettingsReportClick();
         });
 
         SettingsButton developerOptionsButton = findViewById(R.id.developerOptionsButton);
-        developerOptionsButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mAudio != null) {
-                    mAudio.playSound(AudioEngine.Sound.CLICK);
-                }
-
-                onDeveloperOptionsClick();
+        developerOptionsButton.setOnClickListener(view -> {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
             }
+
+            onDeveloperOptionsClick();
         });
 
         mAudio = AudioEngine.fromContext(aContext);
@@ -230,6 +210,7 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
         SessionStore.get().loadUri(getContext().getString(R.string.private_policy_url));
 
         hide();
+        mWidgetManager.fadeInWorld();
     }
 
     private void onSettingsReportClick() {
@@ -260,6 +241,7 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
         SessionStore.get().loadUri(getContext().getString(R.string.private_report_url, url));
 
         hide();
+        mWidgetManager.fadeInWorld();
     }
 
     private void onDeveloperOptionsClick() {
@@ -310,12 +292,7 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
         if (widget == null) {
             widget = createChild(DeveloperOptionsWidget.class, false);
             mDeveloperOptionsDialogHandle = widget.getHandle();
-            widget.setDelegate(new Delegate() {
-                @Override
-                public void onDismiss() {
-                    onDeveloperOptionsDialogDismissed();
-                }
-            });
+            widget.setDelegate(() -> onDeveloperOptionsDialogDismissed());
         }
 
         widget.show();
