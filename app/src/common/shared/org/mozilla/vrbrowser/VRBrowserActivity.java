@@ -21,7 +21,6 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 
 import org.mozilla.gecko.GeckoVRManager;
@@ -39,11 +38,11 @@ import org.mozilla.vrbrowser.crashreporting.GlobalExceptionHandler;
 import org.mozilla.vrbrowser.input.MotionEventGenerator;
 import org.mozilla.vrbrowser.search.SearchEngine;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
+import org.mozilla.vrbrowser.ui.OffscreenDisplay;
 import org.mozilla.vrbrowser.ui.widgets.BrowserWidget;
 import org.mozilla.vrbrowser.ui.widgets.CrashDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.KeyboardWidget;
 import org.mozilla.vrbrowser.ui.widgets.NavigationBarWidget;
-import org.mozilla.vrbrowser.ui.OffscreenDisplay;
 import org.mozilla.vrbrowser.ui.widgets.RootWidget;
 import org.mozilla.vrbrowser.ui.widgets.TopBarWidget;
 import org.mozilla.vrbrowser.ui.widgets.TrayWidget;
@@ -144,47 +143,26 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         mWidgets = new HashMap<>();
         mWidgetContainer = new FrameLayout(this);
-        mWidgetContainer.getViewTreeObserver().addOnGlobalFocusChangeListener(new ViewTreeObserver.OnGlobalFocusChangeListener() {
-            @Override
-            public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-                Log.d(LOGTAG, "======> OnGlobalFocusChangeListener: old(" + oldFocus + ") new(" + newFocus + ")");
-                for (FocusChangeListener listener: mFocusChangeListeners) {
-                    listener.onGlobalFocusChanged(oldFocus, newFocus);
-                }
+        mWidgetContainer.getViewTreeObserver().addOnGlobalFocusChangeListener((oldFocus, newFocus) -> {
+            Log.d(LOGTAG, "======> OnGlobalFocusChangeListener: old(" + oldFocus + ") new(" + newFocus + ")");
+            for (FocusChangeListener listener: mFocusChangeListeners) {
+                listener.onGlobalFocusChanged(oldFocus, newFocus);
             }
         });
 
         mPermissionDelegate = new PermissionDelegate(this, this);
 
         mAudioEngine = new AudioEngine(this, new VRAudioTheme());
-        mAudioEngine.preloadAsync(new Runnable() {
-            @Override
-            public void run() {
-                Log.i(LOGTAG, "AudioEngine sounds preloaded!");
-                // mAudioEngine.playSound(AudioEngine.Sound.AMBIENT, true);
-            }
+        mAudioEngine.preloadAsync(() -> {
+            Log.i(LOGTAG, "AudioEngine sounds preloaded!");
+            // mAudioEngine.playSound(AudioEngine.Sound.AMBIENT, true);
         });
-        mAudioUpdateRunnable = new Runnable() {
-            @Override
-            public void run() {
-                mAudioEngine.update();
-            }
-        };
+        mAudioUpdateRunnable = () -> mAudioEngine.update();
 
         loadFromIntent(getIntent());
-        queueRunnable(new Runnable() {
-            @Override
-            public void run() {
-                createOffscreenDisplay();
-            }
-        });
+        queueRunnable(() -> createOffscreenDisplay());
         final String tempPath = getCacheDir().getAbsolutePath();
-        queueRunnable(new Runnable() {
-            @Override
-            public void run() {
-                setTemporaryFilePath(tempPath);
-            }
-        });
+        queueRunnable(() -> setTemporaryFilePath(tempPath));
         initializeWorld();
 
         SearchEngine.get(this).update();
@@ -330,12 +308,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         } else {
             if (mCrashDialog == null) {
                 mCrashDialog = new CrashDialogWidget(this);
-                mCrashDialog.setCrashDialogDelegate(new CrashDialogWidget.CrashDialogDelegate() {
-                    @Override
-                    public void onSendData() {
-                        sendCrashData(intent);
-                    }
-                });
+                mCrashDialog.setCrashDialogDelegate(() -> sendCrashData(intent));
             }
 
             mCrashDialog.show();
@@ -343,15 +316,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     private void sendCrashData(final Intent intent) {
-        ThreadUtils.postToBackgroundThread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    CrashReporter.sendCrashReport(VRBrowserActivity.this, intent, getString(R.string.crash_app_name));
+        ThreadUtils.postToBackgroundThread(() -> {
+            try {
+                CrashReporter.sendCrashReport(VRBrowserActivity.this, intent, getString(R.string.crash_app_name));
 
-                } catch (IOException | URISyntaxException e) {
-                    Log.e(LOGTAG, "Failed to send crash report: " + e.toString());
-                }
+            } catch (IOException | URISyntaxException e) {
+                Log.e(LOGTAG, "Failed to send crash report: " + e.toString());
             }
         });
     }
@@ -359,12 +329,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Override
     public void onBackPressed() {
         if (mIsPresentingImmersive) {
-            queueRunnable(new Runnable() {
-                @Override
-                public void run() {
-                    exitImmersiveNative();
-                }
-            });
+            queueRunnable(() -> exitImmersiveNative());
             return;
         }
         if (mBackHandlers.size() > 0) {
@@ -408,33 +373,31 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Keep
     @SuppressWarnings("unused")
     void dispatchCreateWidget(final int aHandle, final SurfaceTexture aTexture, final int aWidth, final int aHeight) {
-        runOnUiThread(new Runnable() {
-            public void run() {
-                final Widget widget = mWidgets.get(aHandle);
-                if (widget == null) {
-                    Log.e(LOGTAG, "Widget " + aHandle + " not found");
-                    return;
-                }
-                if (aTexture == null) {
-                    Log.d(LOGTAG, "Widget: " + aHandle + " (" + aWidth + "x" + aHeight + ") received a null surface texture.");
-                } else {
-                    aTexture.setOnFrameAvailableListener(new SurfaceTexture.OnFrameAvailableListener() {
-                        @Override
-                        public void onFrameAvailable(SurfaceTexture surfaceTexture) {
-                            surfaceTexture.setOnFrameAvailableListener(null);
-                            if (!widget.getFirstDraw()) {
-                                widget.setFirstDraw(true);
-                                updateWidget(widget);
-                            }
+        runOnUiThread(() -> {
+            final Widget widget = mWidgets.get(aHandle);
+            if (widget == null) {
+                Log.e(LOGTAG, "Widget " + aHandle + " not found");
+                return;
+            }
+            if (aTexture == null) {
+                Log.d(LOGTAG, "Widget: " + aHandle + " (" + aWidth + "x" + aHeight + ") received a null surface texture.");
+            } else {
+                aTexture.setOnFrameAvailableListener(new SurfaceTexture.OnFrameAvailableListener() {
+                    @Override
+                    public void onFrameAvailable(SurfaceTexture surfaceTexture) {
+                        surfaceTexture.setOnFrameAvailableListener(null);
+                        if (!widget.getFirstDraw()) {
+                            widget.setFirstDraw(true);
+                            updateWidget(widget);
                         }
+                    }
 
-                    }, mHandler);
-                }
-                widget.setSurfaceTexture(aTexture, aWidth, aHeight);
-                // Add widget to a virtual display for invalidation
-                if (((View)widget).getParent() == null) {
-                    mWidgetContainer.addView((View) widget, new FrameLayout.LayoutParams(aWidth, aHeight));
-                }
+                }, mHandler);
+            }
+            widget.setSurfaceTexture(aTexture, aWidth, aHeight);
+            // Add widget to a virtual display for invalidation
+            if (((View)widget).getParent() == null) {
+                mWidgetContainer.addView((View) widget, new FrameLayout.LayoutParams(aWidth, aHeight));
             }
         });
     }
@@ -442,16 +405,13 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Keep
     @SuppressWarnings("unused")
     void handleMotionEvent(final int aHandle, final int aDevice, final boolean aPressed, final float aX, final float aY) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Widget widget = mWidgets.get(aHandle);
-                if (widget == null) {
-                    MotionEventGenerator.dispatch(mRootWidget, aDevice, aPressed, aX, aY);
+        runOnUiThread(() -> {
+            Widget widget = mWidgets.get(aHandle);
+            if (widget == null) {
+                MotionEventGenerator.dispatch(mRootWidget, aDevice, aPressed, aX, aY);
 
-                } else {
-                    MotionEventGenerator.dispatch(widget, aDevice, aPressed, aX, aY);
-                }
+            } else {
+                MotionEventGenerator.dispatch(widget, aDevice, aPressed, aX, aY);
             }
         });
     }
@@ -459,15 +419,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Keep
     @SuppressWarnings("unused")
     void handleScrollEvent(final int aHandle, final int aDevice, final float aX, final float aY) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Widget widget = mWidgets.get(aHandle);
-                if (widget != null) {
-                    MotionEventGenerator.dispatchScroll(widget, aDevice, aX, aY);
-                } else {
-                    Log.e(LOGTAG, "Failed to find widget for scroll event: " + aHandle);
-                }
+        runOnUiThread(() -> {
+            Widget widget = mWidgets.get(aHandle);
+            if (widget != null) {
+                MotionEventGenerator.dispatchScroll(widget, aDevice, aX, aY);
+            } else {
+                Log.e(LOGTAG, "Failed to find widget for scroll event: " + aHandle);
             }
         });
     }
@@ -475,31 +432,28 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Keep
     @SuppressWarnings("unused")
     void handleGesture(final int aType) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                boolean consumed = false;
-                if ((aType == GestureSwipeLeft) && (mLastGesture == GestureSwipeLeft)) {
-                    Log.d(LOGTAG, "Go back!");
-                    SessionStore.get().goBack();
-                    consumed = true;
-                } else if ((aType == GestureSwipeRight) && (mLastGesture == GestureSwipeRight)) {
-                    Log.d(LOGTAG, "Go forward!");
-                    SessionStore.get().goForward();
-                    consumed = true;
-                }
-                if (mLastRunnable != null) {
-                    mLastRunnable.mCanceled = true;
-                    mLastRunnable = null;
-                }
-                if (consumed) {
-                    mLastGesture = NoGesture;
+        runOnUiThread(() -> {
+            boolean consumed = false;
+            if ((aType == GestureSwipeLeft) && (mLastGesture == GestureSwipeLeft)) {
+                Log.d(LOGTAG, "Go back!");
+                SessionStore.get().goBack();
+                consumed = true;
+            } else if ((aType == GestureSwipeRight) && (mLastGesture == GestureSwipeRight)) {
+                Log.d(LOGTAG, "Go forward!");
+                SessionStore.get().goForward();
+                consumed = true;
+            }
+            if (mLastRunnable != null) {
+                mLastRunnable.mCanceled = true;
+                mLastRunnable = null;
+            }
+            if (consumed) {
+                mLastGesture = NoGesture;
 
-                } else {
-                    mLastGesture = aType;
-                    mLastRunnable = new SwipeRunnable();
-                    mHandler.postDelayed(mLastRunnable, SwipeDelay);
-                }
+            } else {
+                mLastGesture = aType;
+                mLastRunnable = new SwipeRunnable();
+                mHandler.postDelayed(mLastRunnable, SwipeDelay);
             }
         });
     }
@@ -507,12 +461,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @SuppressWarnings({"UnusedDeclaration"})
     @Keep
     void handleBack() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK));
-                dispatchKeyEvent(new KeyEvent (KeyEvent.ACTION_UP, KeyEvent.KEYCODE_BACK));
-            }
+        runOnUiThread(() -> {
+            dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK));
+            dispatchKeyEvent(new KeyEvent (KeyEvent.ACTION_UP, KeyEvent.KEYCODE_BACK));
         });
     }
 
@@ -529,15 +480,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Keep
     @SuppressWarnings("unused")
     void handleResize(final int aHandle, final float aWorldWidth, final float aWorldHeight) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Widget widget = mWidgets.get(aHandle);
-                if (widget != null) {
-                    widget.handleResizeEvent(aWorldWidth, aWorldHeight);
-                } else {
-                    Log.e(LOGTAG, "Failed to find widget for resize: " + aHandle);
-                }
+        runOnUiThread(() -> {
+            Widget widget = mWidgets.get(aHandle);
+            if (widget != null) {
+                widget.handleResizeEvent(aWorldWidth, aWorldHeight);
+            } else {
+                Log.e(LOGTAG, "Failed to find widget for resize: " + aHandle);
             }
         });
     }
@@ -595,13 +543,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mIsPresentingImmersive = false;
         TelemetryWrapper.uploadImmersiveToHistogram();
         Handler handler = new Handler(Looper.getMainLooper());
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (mBrowserWidget != null) {
-                    mBrowserWidget.resumeCompositor();
-                    Log.d(LOGTAG, "Compositor Resumed");
-                }
+        handler.postDelayed(() -> {
+            if (mBrowserWidget != null) {
+                mBrowserWidget.resumeCompositor();
+                Log.d(LOGTAG, "Compositor Resumed");
             }
         }, 20);
     }
@@ -645,12 +590,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         }
 
         final SurfaceTexture texture = new SurfaceTexture(ids[0]);
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mOffscreenDisplay = new OffscreenDisplay(VRBrowserActivity.this, texture, 16, 16);
-                mOffscreenDisplay.setContentView(mWidgetContainer);
-            }
+        runOnUiThread(() -> {
+            mOffscreenDisplay = new OffscreenDisplay(VRBrowserActivity.this, texture, 16, 16);
+            mOffscreenDisplay.setContentView(mWidgetContainer);
         });
     }
 
@@ -665,12 +607,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             mWidgets.put(widget.getHandle(), widget);
             ((View)widget).setVisibility(widget.getPlacement().visible ? View.VISIBLE : View.GONE);
         }
-        queueRunnable(new Runnable() {
-            @Override
-            public void run() {
-                for (Widget widget: aWidgets) {
-                    addWidgetNative(widget.getHandle(), widget.getPlacement());
-                }
+        queueRunnable(() -> {
+            for (Widget widget: aWidgets) {
+                addWidgetNative(widget.getHandle(), widget.getPlacement());
             }
         });
     }
@@ -680,22 +619,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     public void addWidget(final Widget aWidget) {
         mWidgets.put(aWidget.getHandle(), aWidget);
         ((View)aWidget).setVisibility(aWidget.getPlacement().visible ? View.VISIBLE : View.GONE);
-        queueRunnable(new Runnable() {
-            @Override
-            public void run() {
-                addWidgetNative(aWidget.getHandle(), aWidget.getPlacement());
-            }
-        });
+        queueRunnable(() -> addWidgetNative(aWidget.getHandle(), aWidget.getPlacement()));
     }
 
     @Override
     public void updateWidget(final Widget aWidget) {
-        queueRunnable(new Runnable() {
-            @Override
-            public void run() {
-                updateWidgetNative(aWidget.getHandle(), aWidget.getPlacement());
-            }
-        });
+        queueRunnable(() -> updateWidgetNative(aWidget.getHandle(), aWidget.getPlacement()));
 
         final int textureWidth = aWidget.getPlacement().textureWidth();
         final int textureHeight = aWidget.getPlacement().textureHeight();
@@ -729,32 +658,17 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mWidgets.remove(aWidget.getHandle());
         mWidgetContainer.removeView((View) aWidget);
         aWidget.setFirstDraw(false);
-        queueRunnable(new Runnable() {
-            @Override
-            public void run() {
-                removeWidgetNative(aWidget.getHandle());
-            }
-        });
+        queueRunnable(() -> removeWidgetNative(aWidget.getHandle()));
     }
 
     @Override
     public void startWidgetResize(final Widget aWidget) {
-        queueRunnable(new Runnable() {
-            @Override
-            public void run() {
-                startWidgetResizeNative(aWidget.getHandle());
-            }
-        });
+        queueRunnable(() -> startWidgetResizeNative(aWidget.getHandle()));
     }
 
     @Override
     public void finishWidgetResize(final Widget aWidget) {
-        queueRunnable(new Runnable() {
-            @Override
-            public void run() {
-                finishWidgetResizeNative(aWidget.getHandle());
-            }
-        });
+        queueRunnable(() -> finishWidgetResizeNative(aWidget.getHandle()));
     }
 
     @Override
@@ -806,34 +720,24 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Override
     public void fadeOutWorld() {
         if (!isDimmed && (SessionStore.get().isCurrentSessionPrivate() ^
-                mNavigationBar.isInFocusMode() ^
-                mTray.isSettingsDialogOpened() ^
-                mPermissionDelegate.isPermissionDialogVisible() ^
+                (mNavigationBar != null && mNavigationBar.isInFocusMode()) ^
+                (mTray != null && mTray.isSettingsDialogOpened()) ^
+                (mPermissionDelegate != null && mPermissionDelegate.isPermissionDialogVisible()) ^
                 (mCrashDialog != null && mCrashDialog.isVisible()))) {
             isDimmed = true;
-            queueRunnable(new Runnable() {
-                @Override
-                public void run() {
-                    fadeOutWorldNative();
-                }
-            });
+            queueRunnable(() -> fadeOutWorldNative());
         }
     }
 
     @Override
     public void fadeInWorld() {
         if (isDimmed && (!SessionStore.get().isCurrentSessionPrivate() &&
-                !mNavigationBar.isInFocusMode() &&
-                !mTray.isSettingsDialogOpened() &&
-                !mPermissionDelegate.isPermissionDialogVisible() &&
-                !(mCrashDialog != null && mCrashDialog.isVisible()))) {
+                (mNavigationBar!= null && !mNavigationBar.isInFocusMode()) &&
+                (mTray != null && !mTray.isSettingsDialogOpened()) &&
+                (mPermissionDelegate != null && !mPermissionDelegate.isPermissionDialogVisible()) &&
+                (mCrashDialog != null && !mCrashDialog.isVisible()))) {
             isDimmed = false;
-            queueRunnable(new Runnable() {
-                @Override
-                public void run() {
-                    fadeInWorldNative();
-                }
-            });
+            queueRunnable(() -> fadeInWorldNative());
         }
     }
 
@@ -859,22 +763,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public void updateEnvironment() {
-        queueRunnable(new Runnable() {
-            @Override
-            public void run() {
-                updateEnvironmentNative();
-            }
-        });
+        queueRunnable(() -> updateEnvironmentNative());
     }
 
     @Override
     public void updatePointerColor() {
-        queueRunnable(new Runnable() {
-            @Override
-            public void run() {
-                updatePointerColorNative();
-            }
-        });
+        queueRunnable(() -> updatePointerColorNative());
     }
 
     @Override
