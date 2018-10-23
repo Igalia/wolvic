@@ -10,12 +10,14 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import org.mozilla.geckoview.AllowOrDeny;
 import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoSessionSettings;
@@ -444,42 +446,38 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     @Override
-    public GeckoResult<Boolean> onLoadRequest(GeckoSession aSession, final String aUri, int target, int flags) {
+    public @Nullable GeckoResult<AllowOrDeny> onLoadRequest(GeckoSession aSession, @NonNull LoadRequest aRequest) {
         if (mURLBar != null) {
             Log.d(LOGTAG, "Got onLoadUri");
-            mURLBar.setURL(aUri);
+            mURLBar.setURL(aRequest.uri);
         }
 
-        final GeckoResult<Boolean> result = new GeckoResult<>();
-        if (aUri != null) {
-            Uri uri = Uri.parse(aUri);
-            if (uri.getScheme().equals("file")) {
-                if (!mWidgetManager.isPermissionGranted(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                    mWidgetManager.requestPermission(
-                            aUri,
-                            android.Manifest.permission.READ_EXTERNAL_STORAGE,
-                            new GeckoSession.PermissionDelegate.Callback() {
-                                @Override
-                                public void grant() {
-                                    result.complete(false);
-                                }
+        final GeckoResult<AllowOrDeny> result = new GeckoResult<>();
 
-                                @Override
-                                public void reject() {
-                                    result.complete(false);
-                                }
-                            });
+        Uri uri = Uri.parse(aRequest.uri);
+        if (uri.getScheme().equals("file")) {
+            if (!mWidgetManager.isPermissionGranted(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                mWidgetManager.requestPermission(
+                        aRequest.uri,
+                        android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                        new GeckoSession.PermissionDelegate.Callback() {
+                            @Override
+                            public void grant() {
+                                result.complete(AllowOrDeny.ALLOW);
+                            }
 
-                } else {
-                    result.complete(false);
-                }
+                            @Override
+                            public void reject() {
+                                result.complete(AllowOrDeny.DENY);
+                            }
+                        });
 
             } else {
-                result.complete(false);
+                result.complete(AllowOrDeny.DENY);
             }
 
         } else {
-            result.complete(false);
+            result.complete(AllowOrDeny.ALLOW);
         }
 
         return result;

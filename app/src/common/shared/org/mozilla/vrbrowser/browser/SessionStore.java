@@ -17,6 +17,7 @@ import android.view.inputmethod.ExtractedTextRequest;
 
 import org.mozilla.gecko.GeckoAppShell;
 import org.mozilla.gecko.GeckoProfile;
+import org.mozilla.geckoview.AllowOrDeny;
 import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoRuntimeSettings;
@@ -42,6 +43,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.mozilla.vrbrowser.utils.ServoUtils.*;
 
@@ -836,31 +839,28 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         }
     }
 
-    @Nullable
-    public GeckoResult<Boolean> onLoadRequest(@NonNull GeckoSession aSession,
-                                       @NonNull String aUri,
-                                       @TargetWindow int target,
-                                       @LoadRequestFlags int flags) {
-
-        final GeckoResult<Boolean> result = new GeckoResult<>();
-        if (aUri.equalsIgnoreCase(PRIVATE_BROWSING_URI)) {
+    @Override
+    public @Nullable GeckoResult<AllowOrDeny> onLoadRequest(@NonNull GeckoSession aSession, @NonNull LoadRequest aRequest) {
+        final GeckoResult<AllowOrDeny> result = new GeckoResult<>();
+        if (PRIVATE_BROWSING_URI.equalsIgnoreCase(aRequest.uri)) {
             switchPrivateMode();
-            result.complete(true);
+            result.complete(AllowOrDeny.ALLOW);
 
         } else {
-            final ValueHolder<Integer> count = new ValueHolder(new Integer(0));
-            final ValueHolder<Boolean> listenersResult = new ValueHolder(new Boolean(false));
+            AtomicInteger count = new AtomicInteger(0);
+            AtomicBoolean allowed = new AtomicBoolean(false);
             for (GeckoSession.NavigationDelegate listener: mNavigationListeners) {
-                GeckoResult<Boolean> listenerResult = listener.onLoadRequest(aSession, aUri, target, flags);
-                listenerResult.then(new GeckoResult.OnValueListener<Boolean, Object>() {
+                GeckoResult<AllowOrDeny> listenerResult = listener.onLoadRequest(aSession, aRequest);
+                listenerResult.then(new GeckoResult.OnValueListener<AllowOrDeny, Object>() {
                     @Nullable
                     @Override
-                    public GeckoResult<Object> onValue(@Nullable Boolean value) {
-                        listenersResult.setValue(listenersResult.getValue().booleanValue() | value);
-                        if (count.getValue() == mNavigationListeners.size() - 1) {
-                            result.complete(listenersResult.getValue());
+                    public GeckoResult<Object> onValue(@Nullable AllowOrDeny value) {
+                        if (AllowOrDeny.ALLOW.equals(value)) {
+                            allowed.set(true);
                         }
-                        count.setValue(count.getValue().intValue() + 1);
+                        if (count.getAndIncrement() == mNavigationListeners.size() - 1) {
+                            result.complete(allowed.get() ? AllowOrDeny.ALLOW : AllowOrDeny.DENY);
+                        }
 
                         return null;
                     }
@@ -1183,7 +1183,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     }
 
     @Override
-    public GeckoResult<Boolean> onPopupRequest(final GeckoSession session, final String targetUri) {
-        return GeckoResult.fromValue(false);
+    public GeckoResult<AllowOrDeny> onPopupRequest(final GeckoSession session, final String targetUri) {
+        return GeckoResult.fromValue(AllowOrDeny.DENY);
     }
 }

@@ -15,6 +15,8 @@ import android.view.Surface;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
+
+import org.mozilla.geckoview.AllowOrDeny;
 import org.mozilla.geckoview.GeckoDisplay;
 import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoSession;
@@ -389,7 +391,7 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
     }
 
     @Override
-    public GeckoResult<Boolean> onPopupRequest(final GeckoSession session, final String targetUri) {
-        return GeckoResult.fromValue(true);
+    public GeckoResult<AllowOrDeny> onPopupRequest(final GeckoSession session, final String targetUri) {
+        return GeckoResult.fromValue(AllowOrDeny.ALLOW);
     }
 }
