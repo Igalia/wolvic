@@ -1044,8 +1044,8 @@ BrowserWorld::LoadSkybox(const vrb::TransformPtr transform, const std::string &b
 
     RenderStatePtr state = RenderState::Create(aContext);
     TextureCubeMapPtr cubemap = vrb::TextureCubeMap::Create(aContext);
-    cubemap->SetTextureParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    cubemap->SetTextureParameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    cubemap->SetTextureParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    cubemap->SetTextureParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     cubemap->SetTextureParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     cubemap->SetTextureParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     cubemap->SetTextureParameter(GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
