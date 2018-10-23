@@ -62,10 +62,6 @@ struct OculusEyeSwapChain {
 
       vrb::FBO::Attributes attributes;
       if (aMode == device::RenderMode::Immersive) {
-        // Temp fix so loading model renders correctly.
-        // Should be set back to false once swapchain regeneration is delayed until
-        // first immersive frame arrives.
-        // attributes.depth = false;
         attributes.depth = true;
         attributes.samples = 0;
       } else {
