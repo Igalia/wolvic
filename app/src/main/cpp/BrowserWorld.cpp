@@ -359,7 +359,7 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
       VRBrowser::HandleMotionEvent(0, controller.index, pressed, 0.0f, 0.0f);
       controller.widget = 0;
 
-    } else {
+    } else if (wasPressed != pressed) {
       VRBrowser::HandleMotionEvent(0, controller.index, pressed, 0.0f, 0.0f);
     }
     controller.lastButtonState = controller.buttonState;

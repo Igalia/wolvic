@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 public class RootWidget extends UIWidget {
+    private Runnable mOnClickCallback;
 
     public RootWidget(Context aContext) {
         super(aContext);
@@ -23,19 +24,24 @@ public class RootWidget extends UIWidget {
 
     @Override
     protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
-
+        aPlacement.width = 8;
+        aPlacement.height = 8;
     }
 
     private void initialize(Context aContext) {
         setFocusable(true);
         setSoundEffectsEnabled(false);
 
-        setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                requestFocus();
-                requestFocusFromTouch();
+        setOnClickListener(v -> {
+            requestFocus();
+            requestFocusFromTouch();
+            if (mOnClickCallback != null) {
+                mOnClickCallback.run();
             }
         });
+    }
+
+    public void setClickCallback(Runnable aRunnable) {
+        mOnClickCallback = aRunnable;
     }
 }

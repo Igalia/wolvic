@@ -15,6 +15,10 @@ public interface WidgetManagerDelegate {
     interface FocusChangeListener {
         void onGlobalFocusChanged(View oldFocus, View newFocus);
     }
+    interface WorldClickListener {
+        // Indicates that the user has clicked on the world, outside of any UI widgets
+        void onWorldClick();
+    }
     int newWidgetHandle();
     void addWidget(@NonNull Widget aWidget);
     void updateWidget(@NonNull Widget aWidget);
@@ -36,6 +40,8 @@ public interface WidgetManagerDelegate {
     void removeFocusChangeListener(@NonNull FocusChangeListener aListener);
     void addPermissionListener(PermissionListener aListener);
     void removePermissionListener(PermissionListener aListener);
+    void addWorldClickListener(WorldClickListener aListener);
+    void removeWorldClickListener(WorldClickListener aListener);
     boolean isPermissionGranted(@NonNull String permission);
     void requestPermission(@NonNull String uri, @NonNull String permission, GeckoSession.PermissionDelegate.Callback aCallback);
 }

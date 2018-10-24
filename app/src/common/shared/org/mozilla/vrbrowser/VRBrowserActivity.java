@@ -109,6 +109,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     LinkedList<UpdateListener> mWidgetUpdateListeners;
     LinkedList<PermissionListener> mPermissionListeners;
     LinkedList<FocusChangeListener> mFocusChangeListeners;
+    LinkedList<WorldClickListener> mWorldClickListeners;
     LinkedList<Runnable> mBackHandlers;
     private boolean mIsPresentingImmersive = false;
     private Thread mUiThread;
@@ -139,6 +140,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mWidgetUpdateListeners = new LinkedList<>();
         mPermissionListeners = new LinkedList<>();
         mFocusChangeListeners = new LinkedList<>();
+        mWorldClickListeners = new LinkedList<>();
         mBackHandlers = new LinkedList<>();
 
         mWidgets = new HashMap<>();
@@ -192,6 +194,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         // Empty widget just for handling focus on empty space
         mRootWidget = new RootWidget(this);
+        mRootWidget.setClickCallback(() -> {
+            for (WorldClickListener listener: mWorldClickListeners) {
+                listener.onWorldClick();
+            }
+        });
 
         // Create Tray
         mTray = new TrayWidget(this);
@@ -705,6 +712,19 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Override
     public void removeFocusChangeListener(FocusChangeListener aListener) {
         mFocusChangeListeners.remove(aListener);
+    }
+
+
+    @Override
+    public void addWorldClickListener(WorldClickListener aListener) {
+        if (!mWorldClickListeners.contains(aListener)) {
+            mWorldClickListeners.add(aListener);
+        }
+    }
+
+    @Override
+    public void removeWorldClickListener(WorldClickListener aListener) {
+        mWorldClickListeners.remove(aListener);
     }
 
     @Override
