@@ -455,31 +455,26 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         final GeckoResult<AllowOrDeny> result = new GeckoResult<>();
 
         Uri uri = Uri.parse(aRequest.uri);
-        if (uri.getScheme().equals("file")) {
-            if (!mWidgetManager.isPermissionGranted(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                mWidgetManager.requestPermission(
-                        aRequest.uri,
-                        android.Manifest.permission.READ_EXTERNAL_STORAGE,
-                        new GeckoSession.PermissionDelegate.Callback() {
-                            @Override
-                            public void grant() {
-                                result.complete(AllowOrDeny.ALLOW);
-                            }
+        if ("file".equalsIgnoreCase(uri.getScheme())
+                && !mWidgetManager.isPermissionGranted(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            mWidgetManager.requestPermission(
+                    aRequest.uri,
+                    android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                    new GeckoSession.PermissionDelegate.Callback() {
+                        @Override
+                        public void grant() {
+                            result.complete(AllowOrDeny.ALLOW);
+                        }
 
-                            @Override
-                            public void reject() {
-                                result.complete(AllowOrDeny.DENY);
-                            }
-                        });
-
-            } else {
-                result.complete(AllowOrDeny.DENY);
-            }
-
-        } else {
-            result.complete(AllowOrDeny.ALLOW);
+                        @Override
+                        public void reject() {
+                            result.complete(AllowOrDeny.DENY);
+                        }
+                    });
+            return result;
         }
 
+        result.complete(AllowOrDeny.ALLOW);
         return result;
     }
 
