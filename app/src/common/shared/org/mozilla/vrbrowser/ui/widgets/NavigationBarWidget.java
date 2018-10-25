@@ -317,7 +317,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         });
         AnimationHelper.fadeOut(mNavigationContainer, 0, null);
 
-        mWidgetManager.fadeOutWorld();
+        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
         mWidgetManager.setTrayVisible(false);
     }
 
@@ -340,7 +340,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
         AnimationHelper.fadeIn(mNavigationContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
         AnimationHelper.fadeOut(mFocusModeContainer, 0, null);
-        mWidgetManager.fadeInWorld();
+        mWidgetManager.popWorldBrightness(this);
 
         if (SessionStore.get().isInFullScreen()) {
             SessionStore.get().exitFullScreen();

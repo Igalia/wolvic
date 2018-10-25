@@ -830,15 +830,9 @@ BrowserWorld::LayoutWidget(int32_t aHandle) {
 }
 
 void
-BrowserWorld::FadeOut() {
+BrowserWorld::SetBrightness(const float aBrightness) {
   ASSERT_ON_RENDER_THREAD();
-  m.fadeBlitter->FadeOut();
-}
-
-void
-BrowserWorld::FadeIn() {
-  ASSERT_ON_RENDER_THREAD();
-  m.fadeBlitter->FadeIn();
+  m.fadeBlitter->SetBrightness(aBrightness);
 }
 
 void
@@ -998,7 +992,9 @@ BrowserWorld::DrawSplashAnimation() {
   m.device->EndFrame();
   if (animationFinished) {
     m.splashAnimation = nullptr;
-    FadeIn();
+    if (m.fadeBlitter) {
+      m.fadeBlitter->FadeIn();
+    }
   }
 }
 
@@ -1181,14 +1177,9 @@ JNI_METHOD(void, finishWidgetResizeNative)
   crow::BrowserWorld::Instance().FinishWidgetResize(aHandle);
 }
 
-JNI_METHOD(void, fadeOutWorldNative)
-(JNIEnv*, jobject) {
-  crow::BrowserWorld::Instance().FadeOut();
-}
-
-JNI_METHOD(void, fadeInWorldNative)
-(JNIEnv*, jobject) {
-  crow::BrowserWorld::Instance().FadeIn();
+JNI_METHOD(void, setWorldBrightnessNative)
+(JNIEnv*, jobject, jfloat aBrightness) {
+  crow::BrowserWorld::Instance().SetBrightness(aBrightness);
 }
 
 JNI_METHOD(void, setTemporaryFilePath)

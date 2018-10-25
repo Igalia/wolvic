@@ -103,14 +103,14 @@ public class PermissionWidget extends UIWidget implements WidgetManagerDelegate.
     public void show() {
         super.show();
 
-        mWidgetManager.fadeOutWorld();
+        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
     }
 
     @Override
     public void hide() {
         super.hide();
 
-        mWidgetManager.fadeInWorld();
+        mWidgetManager.popWorldBrightness(this);
     }
 
     public void showPrompt(String aUri, PermissionType aType, GeckoSession.PermissionDelegate.Callback aCallback) {

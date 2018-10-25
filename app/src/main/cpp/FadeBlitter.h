@@ -21,8 +21,8 @@ public:
   static FadeBlitterPtr Create(vrb::CreationContextPtr& aContext);
   void Draw();
   bool IsVisible() const;
+  void SetBrightness(const float aBrightness);
   void FadeIn();
-  void FadeOut();
 protected:
   struct State;
   FadeBlitter(State& aState, vrb::CreationContextPtr& aContext);

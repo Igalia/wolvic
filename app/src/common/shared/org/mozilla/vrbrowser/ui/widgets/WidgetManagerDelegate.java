@@ -19,6 +19,8 @@ public interface WidgetManagerDelegate {
         // Indicates that the user has clicked on the world, outside of any UI widgets
         void onWorldClick();
     }
+    float DEFAULT_DIM_BRIGHTNESS = 0.25f;
+
     int newWidgetHandle();
     void addWidget(@NonNull Widget aWidget);
     void updateWidget(@NonNull Widget aWidget);
@@ -29,8 +31,9 @@ public interface WidgetManagerDelegate {
     void removeUpdateListener(@NonNull UpdateListener aUpdateListener);
     void pushBackHandler(@NonNull Runnable aRunnable);
     void popBackHandler(@NonNull Runnable aRunnable);
-    void fadeOutWorld();
-    void fadeInWorld();
+    void pushWorldBrightness(Object aKey, float aBrightness);
+    void setWorldBrightness(Object aKey, float aBrightness);
+    void popWorldBrightness(Object aKey);
     void setTrayVisible(boolean visible);
     void setBrowserSize(float targetWidth, float targetHeight);
     void keyboardDismissed();

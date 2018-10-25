@@ -210,7 +210,6 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
         SessionStore.get().loadUri(getContext().getString(R.string.private_policy_url));
 
         hide();
-        mWidgetManager.fadeInWorld();
     }
 
     private void onSettingsReportClick() {
@@ -241,7 +240,6 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
         SessionStore.get().loadUri(getContext().getString(R.string.private_report_url, url));
 
         hide();
-        mWidgetManager.fadeInWorld();
     }
 
     private void onDeveloperOptionsClick() {
@@ -286,8 +284,8 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
     }
 
     private void showDeveloperOptionsDialog() {
+        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
         hide();
-
         UIWidget widget = getChild(mDeveloperOptionsDialogHandle);
         if (widget == null) {
             widget = createChild(DeveloperOptionsWidget.class, false);
@@ -299,8 +297,8 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
     }
 
     private void onDeveloperOptionsDialogDismissed() {
+        mWidgetManager.popWorldBrightness(this);
         show();
-        mWidgetManager.fadeInWorld();
     }
 
     // WindowManagerDelegate.FocusChangeListener
@@ -318,6 +316,20 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
         if (dismiss) {
             onDismiss();
         }
+    }
+
+    @Override
+    public void show() {
+        super.show();
+
+        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
+    }
+
+    @Override
+    public void hide() {
+        super.hide();
+
+        mWidgetManager.popWorldBrightness(this);
     }
 
 }

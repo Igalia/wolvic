@@ -138,11 +138,11 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
         if (isPrivateMode != mIsLastSessionPrivate) {
             mPrivateButton.setPrivateMode(isPrivateMode);
             if (isPrivateMode) {
-                mWidgetManager.fadeOutWorld();
+                mWidgetManager.setWorldBrightness(null, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
                 mPrivateButton.setImageResource(R.drawable.ic_tray_private_on);
 
             } else {
-                mWidgetManager.fadeInWorld();
+                mWidgetManager.setWorldBrightness(null,1.0f);
                 mPrivateButton.setImageResource(R.drawable.ic_tray_private);
             }
         }
@@ -155,26 +155,13 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
         if (widget == null) {
             widget = createChild(SettingsWidget.class, false);
             mSettingsDialogHandle = widget.getHandle();
-            widget.setDelegate(new Delegate() {
-                @Override
-                public void onDismiss() {
-                    onSettingsDialogDismissed();
-                }
-            });
         }
 
         if (widget.isVisible()) {
             widget.hide();
-            mWidgetManager.fadeInWorld();
-
         } else {
             widget.show();
-            mWidgetManager.fadeOutWorld();
         }
-    }
-
-    private void onSettingsDialogDismissed() {
-        mWidgetManager.fadeInWorld();
     }
 
     @Override

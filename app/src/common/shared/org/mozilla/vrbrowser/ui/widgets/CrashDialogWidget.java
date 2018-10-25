@@ -134,14 +134,14 @@ public class CrashDialogWidget extends UIWidget implements WidgetManagerDelegate
     public void show() {
         super.show();
 
-        mWidgetManager.fadeOutWorld();
+        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
     }
 
     @Override
     public void hide() {
         super.hide();
 
-        mWidgetManager.fadeInWorld();
+        mWidgetManager.popWorldBrightness(this);
     }
 
     public void setCrashDialogDelegate(CrashDialogDelegate aDelegate) {

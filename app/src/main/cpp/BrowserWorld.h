@@ -49,8 +49,7 @@ public:
   void FinishWidgetResize(int32_t aHandle);
   void UpdateVisibleWidgets();
   void LayoutWidget(int32_t aHandle);
-  void FadeOut();
-  void FadeIn();
+  void SetBrightness(const float aBrightness);
   void ExitImmersive();
   JNIEnv* GetJNIEnv() const;
 protected:

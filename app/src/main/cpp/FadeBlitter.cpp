@@ -56,6 +56,7 @@ struct FadeBlitter::State : public vrb::ResourceGL::State {
   float animationStartAlpha;
   float animationEndAlpha;
   int animations;
+  float currentBrightness;
   State()
       : vertexShader(0)
       , fragmentShader(0)
@@ -66,6 +67,7 @@ struct FadeBlitter::State : public vrb::ResourceGL::State {
       , animationStartAlpha(0.0f)
       , animationEndAlpha(0.0f)
       , animations(-1)
+      , currentBrightness(1.0f)
   {}
 };
 
@@ -106,17 +108,17 @@ FadeBlitter::IsVisible() const {
   return m.animations >= 0 ||  m.fadeColor.Alpha() > 0.0f;
 }
 
-void
-FadeBlitter::FadeIn() {
-  m.animationStartAlpha = kFadeAlpha;
-  m.animationEndAlpha = 0.0f;
+
+void FadeBlitter::SetBrightness(const float aBrightness) {
+  m.currentBrightness = aBrightness;
+  m.animationStartAlpha = m.fadeColor.Alpha();
+  m.animationEndAlpha = 1.0f - aBrightness;
   m.animations = kAnimationLength;
 }
 
-void
-FadeBlitter::FadeOut() {
-  m.animationStartAlpha = 0.0f;
-  m.animationEndAlpha = kFadeAlpha;
+void FadeBlitter::FadeIn() {
+  m.animationStartAlpha = kFadeAlpha;
+  m.animationEndAlpha = 1.0f - m.currentBrightness;
   m.animations = kAnimationLength;
 }
 

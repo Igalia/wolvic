@@ -544,5 +544,4 @@ public class DeveloperOptionsWidget extends UIWidget {
         String newMaxWindowHeightStr = Integer.toString(newMaxWindowHeight);
         mMaxWindowSizeEdit.setSecondText(newMaxWindowHeightStr);
     }
-
 }

@@ -19,6 +19,7 @@ import android.os.Looper;
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -46,12 +47,14 @@ import org.mozilla.vrbrowser.ui.widgets.NavigationBarWidget;
 import org.mozilla.vrbrowser.ui.widgets.RootWidget;
 import org.mozilla.vrbrowser.ui.widgets.TopBarWidget;
 import org.mozilla.vrbrowser.ui.widgets.TrayWidget;
+import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.Widget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -113,7 +116,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     LinkedList<Runnable> mBackHandlers;
     private boolean mIsPresentingImmersive = false;
     private Thread mUiThread;
-    private boolean isDimmed;
+    private LinkedList<Pair<Object, Float>> mBrightnessQueue;
+    private Pair<Object, Float> mCurrentBrightness;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,7 +137,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         intentFilter.addAction(CrashReporterService.CRASH_ACTION);
         registerReceiver(mCrashReceiver, intentFilter, getString(R.string.app_permission_name), null);
 
-        isDimmed = false;
         mLastGesture = NoGesture;
         super.onCreate(savedInstanceState);
 
@@ -142,6 +145,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mFocusChangeListeners = new LinkedList<>();
         mWorldClickListeners = new LinkedList<>();
         mBackHandlers = new LinkedList<>();
+        mBrightnessQueue = new LinkedList<>();
+        mCurrentBrightness = Pair.create(null, 1.0f);
 
         mWidgets = new HashMap<>();
         mWidgetContainer = new FrameLayout(this);
@@ -738,26 +743,50 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
-    public void fadeOutWorld() {
-        if (!isDimmed && (SessionStore.get().isCurrentSessionPrivate() ^
-                (mNavigationBar != null && mNavigationBar.isInFocusMode()) ^
-                (mTray != null && mTray.isSettingsDialogOpened()) ^
-                (mPermissionDelegate != null && mPermissionDelegate.isPermissionDialogVisible()) ^
-                (mCrashDialog != null && mCrashDialog.isVisible()))) {
-            isDimmed = true;
-            queueRunnable(() -> fadeOutWorldNative());
+    public void pushWorldBrightness(Object aKey, float aBrightness) {
+        if (mCurrentBrightness.second != aBrightness) {
+            queueRunnable(() -> setWorldBrightnessNative(aBrightness));
+        }
+        mBrightnessQueue.add(mCurrentBrightness);
+        mCurrentBrightness = Pair.create(aKey, aBrightness);
+    }
+
+    @Override
+    public void setWorldBrightness(Object aKey, final float aBrightness) {
+        if (mCurrentBrightness.first == aKey) {
+            if (mCurrentBrightness.second != aBrightness) {
+                mCurrentBrightness = Pair.create(aKey, aBrightness);
+                queueRunnable(() -> setWorldBrightnessNative(aBrightness));
+            }
+        } else {
+            for (int i = mBrightnessQueue.size() - 1; i >= 0; --i) {
+                if (mBrightnessQueue.get(i).first == aKey) {
+                    mBrightnessQueue.set(i, Pair.create(aKey, aBrightness));
+                    break;
+                }
+            }
         }
     }
 
     @Override
-    public void fadeInWorld() {
-        if (isDimmed && (!SessionStore.get().isCurrentSessionPrivate() &&
-                (mNavigationBar!= null && !mNavigationBar.isInFocusMode()) &&
-                (mTray != null && !mTray.isSettingsDialogOpened()) &&
-                (mPermissionDelegate != null && !mPermissionDelegate.isPermissionDialogVisible()) &&
-                (mCrashDialog != null && !mCrashDialog.isVisible()))) {
-            isDimmed = false;
-            queueRunnable(() -> fadeInWorldNative());
+    public void popWorldBrightness(Object aKey) {
+        if (mBrightnessQueue.size() == 0) {
+            return;
+        }
+        if (mCurrentBrightness.first == aKey) {
+            float brightness = mCurrentBrightness.second;
+            mCurrentBrightness = mBrightnessQueue.removeLast();
+            if (mCurrentBrightness.second != brightness) {
+                queueRunnable(() -> setWorldBrightnessNative(mCurrentBrightness.second));
+            }
+
+            return;
+        }
+        for (int i = mBrightnessQueue.size() - 1; i >= 0; --i) {
+            if (mBrightnessQueue.get(i).first == aKey) {
+                mBrightnessQueue.remove(i);
+                break;
+            }
         }
     }
 
@@ -819,8 +848,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private native void removeWidgetNative(int aHandle);
     private native void startWidgetResizeNative(int aHandle);
     private native void finishWidgetResizeNative(int aHandle);
-    private native void fadeOutWorldNative();
-    private native void fadeInWorldNative();
+    private native void setWorldBrightnessNative(float aBrigthness);
     private native void setTemporaryFilePath(String aPath);
     private native void exitImmersiveNative();
     private native void workaroundGeckoSigAction();
