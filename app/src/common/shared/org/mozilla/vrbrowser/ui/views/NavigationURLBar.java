@@ -135,6 +135,10 @@ public class NavigationURLBar extends FrameLayout {
                 aURL = "";
             else if (aURL.startsWith("data:") && SessionStore.get().isCurrentSessionPrivate())
                 aURL = "";
+            else if (aURL.startsWith("javascript:") &&
+                    aURL.contains(SessionStore.get().getHomeUri()) &&
+                    SessionStore.get().getPreviousUri().equals(SessionStore.get().getHomeUri()))
+                aURL = "";
             else
                 index = aURL.indexOf("://");
 

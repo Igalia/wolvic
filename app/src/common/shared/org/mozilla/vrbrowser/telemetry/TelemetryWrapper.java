@@ -210,30 +210,35 @@ public class TelemetryWrapper {
         if (uri == null)
             return;
 
-        URI uriLink = URI.create(uri);
-        if (uriLink.getHost() == null) {
-            return;
+        try {
+            URI uriLink = URI.create(uri);
+            if (uriLink.getHost() == null) {
+                return;
+            }
+
+            domainMap.add(UrlUtils.stripCommonSubdomains(uriLink.getHost()));
+            numUri++;
+
+            long elapsedLoad = SystemClock.elapsedRealtime() - startLoadPageTime;
+            if (elapsedLoad < MIN_LOAD_TIME) {
+                return;
+            }
+
+            int histogramLoadIndex = toIntExact(elapsedLoad / LOADING_BUCKET_SIZE_MS);
+            Log.d(LOGTAG, "Sent load to histogram");
+
+            if (histogramLoadIndex > (HISTOGRAM_SIZE - 2)) {
+                histogramLoadIndex = HISTOGRAM_SIZE - 1;
+                Log.e(LOGTAG, "the loading histogram size is overflow.");
+            } else if (histogramLoadIndex < HISTOGRAM_MIN_INDEX) {
+                histogramLoadIndex = HISTOGRAM_MIN_INDEX;
+            }
+
+            loadingTimeHistogram[histogramLoadIndex]++;
+
+        } catch (IllegalArgumentException e) {
+            Log.e(LOGTAG, "Invalid URL", e);
         }
-
-        domainMap.add(UrlUtils.stripCommonSubdomains(uriLink.getHost()));
-        numUri++;
-
-        long elapsedLoad = SystemClock.elapsedRealtime() - startLoadPageTime;
-        if (elapsedLoad < MIN_LOAD_TIME) {
-            return;
-        }
-
-        int histogramLoadIndex = toIntExact(elapsedLoad / LOADING_BUCKET_SIZE_MS);
-        Log.i(LOGTAG, "Sent load to histogram");
-
-        if (histogramLoadIndex > (HISTOGRAM_SIZE - 2)) {
-            histogramLoadIndex = HISTOGRAM_SIZE - 1;
-            Log.e(LOGTAG, "the loading histogram size is overflow.");
-        } else if (histogramLoadIndex < HISTOGRAM_MIN_INDEX) {
-            histogramLoadIndex = HISTOGRAM_MIN_INDEX;
-        }
-
-        loadingTimeHistogram[histogramLoadIndex]++;
     }
 
     @UiThread
