@@ -328,13 +328,13 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             session.setPromptDelegate(null);
             session.setPermissionDelegate(null);
             session.setTrackingProtectionDelegate(null);
-            session.close();
             mSessions.remove(aSessionId);
             for (SessionChangeListener listener: mSessionChangeListeners) {
                 listener.onRemoveSession(session, aSessionId);
             }
             session.setActive(false);
             session.stop();
+            session.close();
         }
     }
 
