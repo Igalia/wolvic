@@ -17,6 +17,9 @@
 
 namespace crow {
 
+class Quad;
+typedef std::shared_ptr<Quad> QuadPtr;
+
 class Widget;
 typedef std::shared_ptr<Widget> WidgetPtr;
 
@@ -44,6 +47,7 @@ public:
   void TogglePointer(const bool aEnabled);
   bool IsVisible() const;
   vrb::NodePtr GetRoot() const;
+  QuadPtr GetQuad() const;
   vrb::TransformPtr GetTransformNode() const;
   vrb::NodePtr GetPointerGeometry() const;
   void SetPointerGeometry(vrb::NodePtr& aNode);

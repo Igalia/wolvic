@@ -871,11 +871,21 @@ BrowserWorld::DrawWorld() {
   m.externalVR->SetCompositorEnabled(true);
   m.device->SetRenderMode(device::RenderMode::StandAlone);
   vrb::Vector headPosition = m.device->GetHeadTransform().GetTranslation();
+  vrb::Vector headDirection = m.device->GetHeadTransform().MultiplyDirection(vrb::Vector(0.0f, 0.0f, -1.0f));
   if (m.skybox) {
     m.skybox->SetTransform(vrb::Matrix::Translation(headPosition));
   }
   m.rootTransparent->SortNodes([=](const NodePtr& a, const NodePtr& b) {
-    return DistanceToNode(a, headPosition) < DistanceToNode(b, headPosition);
+    const float kMaxFloat = 9999999.0f;
+    float da = DistanceToPlane(GetWidgetFromNode(a), headPosition, headDirection);
+    float db = DistanceToPlane(GetWidgetFromNode(b), headPosition, headDirection);
+    if (da < 0.0f) {
+      da = std::numeric_limits<float>::max();
+    }
+    if (db < 0.0f) {
+      db = std::numeric_limits<float>::max();
+    }
+    return da < db;
   });
   m.device->StartFrame();
 
@@ -1107,6 +1117,28 @@ BrowserWorld::DistanceToNode(const vrb::NodePtr& aTargetNode, const vrb::Vector&
   });
 
   return result;
+}
+
+WidgetPtr
+BrowserWorld::GetWidgetFromNode(const vrb::NodePtr& aNode) const {
+  for (const auto & widget: m.widgets) {
+    if (widget->GetRoot() == aNode) {
+      return widget;
+    }
+  }
+  return nullptr;
+}
+
+float
+BrowserWorld::DistanceToPlane(const WidgetPtr& aWidget, const vrb::Vector& aPosition, const vrb::Vector& aDirection) const {
+  if (!aWidget) {
+    return -1.0f;
+  }
+  vrb::Vector result;
+  bool inside = false;
+  float distance = -1.0f;
+  aWidget->GetQuad()->TestIntersection(aPosition, aDirection, result, false, inside, distance);
+  return distance;
 }
 
 } // namespace crow

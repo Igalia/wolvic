@@ -288,6 +288,11 @@ Widget::GetRoot() const {
   return m.root;
 }
 
+QuadPtr
+Widget::GetQuad() const {
+  return m.quad;
+}
+
 vrb::TransformPtr
 Widget::GetTransformNode() const {
   return m.transform;
