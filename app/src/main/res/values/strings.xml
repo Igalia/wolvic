@@ -166,6 +166,8 @@
     <string name="cancel_button">Cancel</string>
     <!-- This string labels a button that are used to approve an action. -->
     <string name="ok_button">OK</string>
+    <!-- This string labels a button to go back to the previous menu or exits the current mode -->
+    <string name="back_button">Back</string>
     <!-- This string is displayed in a dialog after an application crash. -->
     <string name="crash_dialog_heading">We had an issue and crashed</string>
     <!-- This string explains why Mozilla would like the user to allow the crash data to be uploaded.
@@ -181,4 +183,42 @@
     <string name="do_not_sent_button">Do Not Send</string>
     <!-- This string labels a button that when clicked allows the crash data to be sent to Mozilla. -->
     <string name="send_data_button">Send Data</string>
+    <!-- This string labels a button to open the Brightness mode selector-->
+    <string name="brightness_mode_tooltip">Brightness</string>
+    <!-- This string is displayed when selecting a background brightness mode -->
+    <string name="brightness_mode_normal">Normal</string>
+    <!-- This string is displayed when selecting a background brightness mode -->
+    <string name="brightness_mode_dark">Dark</string>
+    <!-- This string is displayed when selecting a background brightness mode -->
+    <string name="brightness_mode_void">Void</string>
+    <!-- This string labels a button to open the Video projection mode selector-->
+    <string name="video_mode_tooltip">Video Projection</string>
+    <!-- This string is displayed when selecting a video playback mode -->
+    <string name="video_mode_3d_side">3D Side by Side</string>
+    <!-- This string is displayed when selecting a video playback mode -->
+    <string name="video_mode_360">360</string>
+    <!-- This string is displayed when selecting a video playback mode -->
+    <string name="video_mode_360_stereo">360 Stereo</string>
+    <!-- This string is displayed when selecting a video playback mode -->
+    <string name="video_mode_180">180</string>
+    <!-- This string is displayed when selecting a video playback mode -->
+    <string name="video_mode_180_left_right">Stereo 180 (Left/Right)</string>
+    <!-- This string is displayed when selecting a video playback mode -->
+    <string name="video_mode_180_top_bottom">Stereo 180 (Top/Bottom)</string>
+    <!-- This string is displayed when selecting a video playback mode -->
+    <string name="video_mode_2d">2D</string>
+    <!-- This string is displayed as a tooltip in the video controls UI -->
+    <string name="video_controls_play">Play</string>
+    <!-- This string is displayed as a tooltip in the video controls UI -->
+    <string name="video_controls_pause">Pause</string>
+    <!-- This string is displayed as a tooltip in the video controls UI -->
+    <string name="video_controls_mute">Mute</string>
+    <!-- This string is displayed as a tooltip in the video controls UI -->
+    <string name="video_controls_unmute">Unmute</string>
+    <!-- This string is displayed as a tooltip in the video controls UI -->
+    <string name="video_controls_volume">Volume</string>
+    <!-- This string is displayed as a tooltip in the video controls UI. E.g Seek +10 seconds -->
+    <string name="video_controls_seek_forward">Seek +%1$ seconds</string>
+    <!-- This string is displayed as a tooltip in the video controls UI. E.g Seek -10 seconds -->
+    <string name="video_controls_seek_backward">Seek -%1$ seconds</string>
 </resources>
