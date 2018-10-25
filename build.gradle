@@ -8,6 +8,11 @@ buildscript {
             version: '65.0.20181023100123'
     ]
 
+    // Android components version
+    ext.androidComponents = [
+            version: '0.27.0'
+    ]
+
     repositories {
         google()
         jcenter()

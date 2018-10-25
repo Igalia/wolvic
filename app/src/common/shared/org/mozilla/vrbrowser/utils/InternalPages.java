@@ -2,6 +2,7 @@ package org.mozilla.vrbrowser.utils;
 
 import android.content.Context;
 import android.util.Base64;
+
 import org.mozilla.geckoview.GeckoSession.NavigationDelegate;
 import org.mozilla.geckoview.GeckoSession.NavigationDelegate.LoadError;
 import org.mozilla.geckoview.GeckoSession.NavigationDelegate.LoadErrorCategory;
@@ -10,185 +11,118 @@ import org.mozilla.vrbrowser.R;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+
+import mozilla.components.browser.errorpages.ErrorPages;
+import mozilla.components.browser.errorpages.ErrorType;
 
 public class InternalPages {
 
-    public static class LocalizedResources {
-        public int titleRes;
-        public int messageRes;
-
-        LocalizedResources(int error, int description) {
-            titleRes = error;
-            messageRes = description;
-        }
-
-        public static LocalizedResources create(int error, int description) {
-            return new LocalizedResources(error, description);
-        }
-    }
-
-    private static LocalizedResources fromGeckoErrorToLocalizedResources(@LoadErrorCategory int category, @LoadError int error) {
+    private static ErrorType fromGeckoErrorToErrorType(@LoadErrorCategory int category, @LoadError int error) {
         switch(category) {
             case NavigationDelegate.ERROR_CATEGORY_UNKNOWN: {
-                return LocalizedResources.create(
-                        R.string.error_generic_title,
-                        R.string.error_generic_message);
+                return ErrorType.UNKNOWN;
             }
             case NavigationDelegate.ERROR_CATEGORY_SECURITY: {
                 switch (error) {
                     case NavigationDelegate.ERROR_SECURITY_SSL: {
-                        return LocalizedResources.create(
-                                R.string.error_security_ssl_title,
-                                R.string.error_security_ssl_message);
+                        return ErrorType.ERROR_SECURITY_SSL;
                     }
                     case NavigationDelegate.ERROR_SECURITY_BAD_CERT: {
-                        return LocalizedResources.create(
-                                R.string.error_security_bad_cert_title,
-                                R.string.error_security_bad_cert_message);
+                        return ErrorType.ERROR_SECURITY_BAD_CERT;
                     }
                 }
             }
             case NavigationDelegate.ERROR_CATEGORY_NETWORK: {
                 switch (error) {
                     case NavigationDelegate.ERROR_NET_INTERRUPT: {
-                        return LocalizedResources.create(
-                                R.string.error_net_interrupt_title,
-                                R.string.error_net_interrupt_message);
+                        return ErrorType.ERROR_NET_INTERRUPT;
                     }
                     case NavigationDelegate.ERROR_NET_TIMEOUT: {
-                        return LocalizedResources.create(
-                                R.string.error_net_timeout_title,
-                                R.string.error_net_timeout_message);
+                        return ErrorType.ERROR_NET_TIMEOUT;
                     }
                     case NavigationDelegate.ERROR_CONNECTION_REFUSED: {
-                        return LocalizedResources.create(
-                                R.string.error_connection_failure_title,
-                                R.string.error_connection_failure_message);
+                        return ErrorType.ERROR_CONNECTION_REFUSED;
                     }
                     case NavigationDelegate.ERROR_UNKNOWN_SOCKET_TYPE: {
-                        return LocalizedResources.create(
-                                R.string.error_unknown_socket_type_title,
-                                R.string.error_unknown_socket_type_message);
+                        return ErrorType.ERROR_UNKNOWN_SOCKET_TYPE;
                     }
                     case NavigationDelegate.ERROR_REDIRECT_LOOP: {
-                        return LocalizedResources.create(
-                                R.string.error_redirect_loop_title,
-                                R.string.error_redirect_loop_message);
+                        return ErrorType.ERROR_REDIRECT_LOOP;
                     }
                     case NavigationDelegate.ERROR_OFFLINE: {
-                        return LocalizedResources.create(
-                                R.string.error_offline_title,
-                                R.string.error_offline_message);
+                        return ErrorType.ERROR_OFFLINE;
                     }
                     case NavigationDelegate.ERROR_PORT_BLOCKED: {
-                        return LocalizedResources.create(
-                                R.string.error_port_blocked_title,
-                                R.string.error_port_blocked_message);
+                        return ErrorType.ERROR_PORT_BLOCKED;
                     }
                     case NavigationDelegate.ERROR_NET_RESET: {
-                        return LocalizedResources.create(
-                                R.string.error_net_reset_title,
-                                R.string.error_net_reset_message);
+                        return ErrorType.ERROR_NET_RESET;
                     }
                 }
             }
             case NavigationDelegate.ERROR_CATEGORY_CONTENT: {
                 switch (error) {
                     case NavigationDelegate.ERROR_UNSAFE_CONTENT_TYPE: {
-                        return LocalizedResources.create(
-                                R.string.error_unsafe_content_type_title,
-                                R.string.error_unsafe_content_type_message);
+                        return ErrorType.ERROR_UNSAFE_CONTENT_TYPE;
                     }
                     case NavigationDelegate.ERROR_CORRUPTED_CONTENT: {
-                        return LocalizedResources.create(
-                                R.string.error_corrupted_content_title,
-                                R.string.error_corrupted_content_message);
+                        return ErrorType.ERROR_CORRUPTED_CONTENT;
                     }
                     case NavigationDelegate.ERROR_CONTENT_CRASHED: {
-                        return LocalizedResources.create(
-                                R.string.error_content_crashed_title,
-                                R.string.error_content_crashed_message);
+                        return ErrorType.ERROR_CONTENT_CRASHED;
                     }
                     case NavigationDelegate.ERROR_INVALID_CONTENT_ENCODING: {
-                        return LocalizedResources.create(
-                                R.string.error_invalid_content_encoding_title,
-                                R.string.error_invalid_content_encoding_message);
+                        return ErrorType.ERROR_INVALID_CONTENT_ENCODING;
                     }
                 }
             }
             case NavigationDelegate.ERROR_CATEGORY_URI: {
                 switch (error) {
                     case NavigationDelegate.ERROR_UNKNOWN_HOST: {
-                        return LocalizedResources.create(
-                                R.string.error_unknown_host_title,
-                                R.string.error_unknown_host_message);
+                        return ErrorType.ERROR_UNKNOWN_HOST;
                     }
                     case NavigationDelegate.ERROR_MALFORMED_URI: {
-                        return LocalizedResources.create(
-                                R.string.error_malformed_uri_title,
-                                R.string.error_malformed_uri_message);
+                        return ErrorType.ERROR_MALFORMED_URI;
                     }
                     case NavigationDelegate.ERROR_UNKNOWN_PROTOCOL: {
-                        return LocalizedResources.create(
-                                R.string.error_unknown_protocol_title,
-                                R.string.error_unknown_protocol_message);
+                        return ErrorType.ERROR_UNKNOWN_PROTOCOL;
                     }
                     case NavigationDelegate.ERROR_FILE_NOT_FOUND: {
-                        return LocalizedResources.create(
-                                R.string.error_file_not_found_title,
-                                R.string.error_file_not_found_message);
+                        return ErrorType.ERROR_FILE_NOT_FOUND;
                     }
                     case NavigationDelegate.ERROR_FILE_ACCESS_DENIED: {
-                        return LocalizedResources.create(
-                                R.string.error_file_access_denied_title,
-                                R.string.error_file_access_denied_message);
+                        return ErrorType.ERROR_FILE_ACCESS_DENIED;
                     }
                 }
             }
             case NavigationDelegate.ERROR_CATEGORY_PROXY: {
                 switch (error) {
                     case NavigationDelegate.ERROR_PROXY_CONNECTION_REFUSED: {
-                        return LocalizedResources.create(
-                                R.string.error_proxy_connection_refused_title,
-                                R.string.error_proxy_connection_refused_message);
+                        return ErrorType.ERROR_CONNECTION_REFUSED;
                     }
                     case NavigationDelegate.ERROR_UNKNOWN_PROXY_HOST: {
-                        return LocalizedResources.create(
-                                R.string.error_unknown_proxy_host_title,
-                                R.string.error_unknown_proxy_host_message);
+                        return ErrorType.ERROR_UNKNOWN_PROXY_HOST;
                     }
                 }
             }
             case NavigationDelegate.ERROR_CATEGORY_SAFEBROWSING: {
                 switch (error) {
                     case NavigationDelegate.ERROR_SAFEBROWSING_MALWARE_URI: {
-                        return LocalizedResources.create(
-                                R.string.error_safe_browsing_malware_uri_title,
-                                R.string.error_safe_browsing_malware_uri_message);
+                        return ErrorType.ERROR_SAFEBROWSING_MALWARE_URI;
                     }
                     case NavigationDelegate.ERROR_SAFEBROWSING_UNWANTED_URI: {
-                        return LocalizedResources.create(
-                                R.string.error_safe_browsing_unwanted_uri_title,
-                                R.string.error_safe_browsing_unwanted_uri_message);
+                        return ErrorType.ERROR_SAFEBROWSING_UNWANTED_URI;
                     }
                     case NavigationDelegate.ERROR_SAFEBROWSING_HARMFUL_URI: {
-                        return LocalizedResources.create(
-                                R.string.error_safe_harmful_uri_title,
-                                R.string.error_safe_harmful_uri_message);
+                        return ErrorType.ERROR_SAFEBROWSING_HARMFUL_URI;
                     }
                     case NavigationDelegate.ERROR_SAFEBROWSING_PHISHING_URI: {
-                        return LocalizedResources.create(
-                                R.string.error_safe_phishing_uri_title,
-                                R.string.error_safe_phishing_uri_message);
+                        return ErrorType.ERROR_SAFEBROWSING_PHISHING_URI;
                     }
                 }
             }
             default: {
-                return LocalizedResources.create(
-                        R.string.error_generic_title,
-                        R.string.error_generic_message);
+                return ErrorType.UNKNOWN;
             }
         }
     }
@@ -208,21 +142,16 @@ public class InternalPages {
     }
 
     public static String createErrorPage(Context context,
-                        String uri,
-                        PageResources resources,
-                        @LoadErrorCategory int errorCategory,
-                        @LoadError int errorType) {
-        LocalizedResources localizedData = fromGeckoErrorToLocalizedResources(errorCategory, errorType);
-
-        String html = readRawResourceString(context, resources.html);
-        String css = readRawResourceString(context, resources.css);
-
-        html = html
-                .replace("%pageTitle%", context.getString(R.string.errorpage_title))
-                .replace("%button%", context.getString(R.string.errorpage_refresh))
-                .replace("%messageShort%", context.getString(localizedData.titleRes))
-                .replace("%messageLong%", context.getString(localizedData.messageRes, uri))
-                .replace("%css%", css);
+                                         String uri,
+                                         @LoadErrorCategory int errorCategory,
+                                         @LoadError int errorType) {
+        // TODO: browser-error pages component needs to accept a uri parameter
+        String html = ErrorPages.INSTANCE.createErrorPage(
+                context,
+                fromGeckoErrorToErrorType(errorCategory, errorType),
+                uri,
+                R.raw.error_pages,
+                R.raw.error_style);
 
         return "data:text/html;base64," + Base64.encodeToString(html.getBytes(), Base64.DEFAULT);
     }
@@ -232,9 +161,10 @@ public class InternalPages {
         String html = readRawResourceString(context, resources.html);
         String css = readRawResourceString(context, resources.css);
 
+        String pageBody = context.getString(R.string.private_browsing_body, context.getString(R.string.app_name));
         html = html
                 .replace("%pageTitle%", context.getString(R.string.private_browsing_title))
-                .replace("%pageBody%", context.getString(R.string.private_browsing_body))
+                .replace("%pageBody%", pageBody)
                 .replace("%css%", css)
                 .replace("%privateBrowsingSupportUrl%", context.getString(R.string.private_browsing_support_url));
 

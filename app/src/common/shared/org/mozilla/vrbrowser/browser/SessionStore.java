@@ -131,35 +131,6 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         mTextInputListeners.clear();
     }
 
-    private InternalPages.PageResources errorPageResourcesForCategory(@LoadErrorCategory int category) {
-        switch (category) {
-            case GeckoSession.NavigationDelegate.ERROR_CATEGORY_UNKNOWN: {
-                return InternalPages.PageResources.create(R.raw.error_pages, R.raw.error_style);
-            }
-            case GeckoSession.NavigationDelegate.ERROR_CATEGORY_SECURITY: {
-                return InternalPages.PageResources.create(R.raw.error_pages, R.raw.error_style);
-            }
-            case GeckoSession.NavigationDelegate.ERROR_CATEGORY_NETWORK: {
-                return InternalPages.PageResources.create(R.raw.error_pages, R.raw.error_style);
-            }
-            case GeckoSession.NavigationDelegate.ERROR_CATEGORY_CONTENT: {
-                return InternalPages.PageResources.create(R.raw.error_pages, R.raw.error_style);
-            }
-            case GeckoSession.NavigationDelegate.ERROR_CATEGORY_URI: {
-                return InternalPages.PageResources.create(R.raw.error_pages, R.raw.error_style);
-            }
-            case GeckoSession.NavigationDelegate.ERROR_CATEGORY_PROXY: {
-                return InternalPages.PageResources.create(R.raw.error_pages, R.raw.error_style);
-            }
-            case GeckoSession.NavigationDelegate.ERROR_CATEGORY_SAFEBROWSING: {
-                return InternalPages.PageResources.create(R.raw.error_pages, R.raw.error_style);
-            }
-            default: {
-                return InternalPages.PageResources.create(R.raw.error_pages, R.raw.error_style);
-            }
-        }
-    }
-
     public void setContext(Context aContext, Bundle aExtras) {
         if (mRuntime == null) {
             // FIXME: Once GeckoView has a prefs API
@@ -916,11 +887,10 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     }
 
     @Override
-    public GeckoResult<String> onLoadError(GeckoSession session, String uri, int category, int error) {
+    public GeckoResult<String> onLoadError(GeckoSession session, String uri, @LoadErrorCategory int category, @LoadError int error) {
         Log.d(LOGTAG, "SessionStore onLoadError: " + uri);
 
-        InternalPages.PageResources pageResources = errorPageResourcesForCategory(category);
-        return GeckoResult.fromValue(InternalPages.createErrorPage(mContext, uri, pageResources, category, error));
+        return GeckoResult.fromValue(InternalPages.createErrorPage(mContext, uri, category, error));
     }
 
     // Progress Listener
