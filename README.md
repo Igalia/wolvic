@@ -6,9 +6,15 @@ You can find us on Twitter [@MozillaReality](https://twitter.com/mozillareality)
 
 [![Task Status](https://github.taskcluster.net/v1/repository/MozillaReality/FirefoxReality/master/badge.svg)](https://github.taskcluster.net/v1/repository/MozillaReality/FirefoxReality/master/latest) [Build results](https://github.taskcluster.net/v1/repository/MozillaReality/FirefoxReality/master/latest)
 
+## Bleeding-edge developer APKs
+
+1. Load [this TaskCluster URL](https://github.taskcluster.net/v1/repository/MozillaReality/FirefoxReality/master/latest).
+2. Click the `Firefox Reality for Android - Build - Master update →` link.
+3. Click the `Run Artifacts` tab, and click to download the APK for your platform of choice.
+
 ## Setup instructions
 
-*Make sure you are using Android NDK r17b*
+*Make sure you are using Android NDK r17b.*
 
 *Clone FirefoxReality.*
 
@@ -66,7 +72,7 @@ If you get an error extracting the NDK, you might need to copy the `local.proper
 
 If you run the APK on an Android device outside of Daydream or Gear VR, it will run in flat mode. To run in VR, put the device into a headset, and run the app from the VR launcher.
 
-*If you want to build FirefoxReality for WaveVR SDK*
+*If you want to build FirefoxReality for WaveVR SDK:*
 
 Download the [VIVE Wave SDK](https://developer.vive.com/resources/knowledgebase/wave-sdk/) from the [VIVE Developer Resources](https://vivedeveloper.com/), and unzip it. Then, from the top-level project directory, run:
 
@@ -99,4 +105,3 @@ geckoViewLocalX86=/path/to/your/build/geckoview-nightly-x86-64.0.20180924100359.
 ## Experimental Servo support
 
 To compile with Servo support, create a file called `user.properties` in the top-level project directory and add `enableServo=1`. Then to enable Servo in Firefox Reality, go the Developer Options panel in the Settings, and toggle the Servo option. Then a new button will be added to the navigation bar. Clicking that button will reload the current page with Servo.
-
