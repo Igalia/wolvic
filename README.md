@@ -92,7 +92,8 @@ geckoViewLocalX86=/path/to/your/build/geckoview-nightly-x86-64.0.20180924100359.
 - When using the native debugger you can ignore the first SIGSEGV: address access protected stop in GV thread. It's not a crash; you can click *Resume* to continue debugging.
 - On some platforms such as Oculus Go the native debugger stops on each input event. You can set this LLDB post-attach command in Android Studio to fix the problem: `pro hand -p true -s false SIGILL`
 - You can use `adb shell am start -a android.intent.action.VIEW -d "https://aframe.io" org.mozilla.vrbrowser/org.mozilla.vrbrowser.VRBrowserActivity` to load a URL from the command line
-- You can use `adb shell setprop debug.oculus.enableVideoCapture 1`to record videos on the Oculus Go. Remember to disable it when your video is ready.
+- You can use `adb shell setprop debug.oculus.enableVideoCapture 1` to record videos on the Oculus Go. Remember to disable it when your video is ready.
+- You can set `disableCrashRestart=true` in the gradle `user.properties` to disable app relaunch on crash.
 
 
 ## Experimental Servo support

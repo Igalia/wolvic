@@ -10,6 +10,13 @@ def getGitHash = { ->
     return stdout.toString().trim()
 }
 
+def getCrashRestartDisabled = { ->
+    if (gradle.hasProperty("disableCrashRestart")) {
+        return gradle.disableCrashRestart
+    }
+    return "false"
+}
+
 android {
     compileSdkVersion 27
     defaultConfig {
@@ -19,6 +26,7 @@ android {
         versionCode 1
         versionName "1.1"
         buildConfigField "String", "GIT_HASH", "\"${getGitHash()}\""
+        buildConfigField "Boolean", "DISABLE_CRASH_RESTART", getCrashRestartDisabled()
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {

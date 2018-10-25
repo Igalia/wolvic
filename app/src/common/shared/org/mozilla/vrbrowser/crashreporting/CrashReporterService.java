@@ -10,6 +10,7 @@ import android.support.v4.app.JobIntentService;
 import android.util.Log;
 
 import org.mozilla.geckoview.GeckoRuntime;
+import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserActivity;
 
@@ -39,7 +40,8 @@ public class CrashReporterService extends JobIntentService {
         if (GeckoRuntime.ACTION_CRASHED.equals(action)) {
             boolean fatal = intent.getBooleanExtra(GeckoRuntime.EXTRA_CRASH_FATAL, false);
 
-            if (fatal) {
+
+            if (fatal && !BuildConfig.DISABLE_CRASH_RESTART) {
                 Log.d(LOGTAG, "======> NATIVE CRASH PARENT" + intent);
                 final int pid = Process.myPid();
                 final ActivityManager activityManager = (ActivityManager) this.getSystemService(Context.ACTIVITY_SERVICE);
