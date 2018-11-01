@@ -24,7 +24,7 @@ git clone git@github.com:MozillaReality/FirefoxReality.git
 
 *Clone the third-party repo.*
 
-If you're developing for the Oculus, Snapdragon VR, or VIVE, you need to clone the repo with third-party SDK files. 
+If you're developing for the Oculus, Snapdragon VR, or VIVE, you need to clone the repo with third-party SDK files.
 
 ```bash
 git clone git@github.com:MozillaReality/FirefoxReality-android-third-party.git third_party
@@ -92,6 +92,26 @@ Create a file called `user.properties` in the top-level project directory. Add a
 geckoViewLocalArm=/path/to/your/build/geckoview-nightly-armeabi-v7a-64.0.20180924100359.aar
 geckoViewLocalX86=/path/to/your/build/geckoview-nightly-x86-64.0.20180924100359.aar
 ```
+
+## Development troubleshooting
+
+### `Device supports , but APK only supports armeabi-v7a[...]`
+
+Enable usb debugging on the device.
+
+### `Could not get unknown property 'geckoViewLocal' for build 'FirefoxReality'[...]`
+
+```bash
+./mach build
+./mach package
+./mach android archive-geckoview
+find $objdir -name *.aar
+echo "geckoViewLocalArm=$objdir/gradle/build/mobile/android/geckoview/outputs/aar/geckoview-official-withGeckoBinaries-noMinApi-release.aar" > $FirefoxReality/user.properties
+```
+
+### Firefox > Web Developer > WebIDE > Performance gets stuck with greyed out "stop and show profile"
+
+Restart FxR and close and re-open the WebIDE page.
 
 ## Debugging tips
 
