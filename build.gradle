@@ -5,7 +5,7 @@ buildscript {
     ext.geckoNightly = [
             // GeckoView versions can be found here:
             // https://maven.mozilla.org/?prefix=maven2/org/mozilla/geckoview/
-            version: '65.0.20181023100123'
+            version: '65.0.20181101134442'
     ]
 
     // Android components version

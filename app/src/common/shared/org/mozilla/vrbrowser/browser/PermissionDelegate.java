@@ -10,7 +10,6 @@ import android.util.Log;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.PlatformActivity;
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.browser.SessionStore;
 import org.mozilla.vrbrowser.ui.widgets.PermissionWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 
@@ -111,8 +110,8 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
     }
 
     @Override
-    public void onContentPermissionRequest(GeckoSession aSession, String aUri, int aType, String access, Callback callback) {
-        Log.d(LOGTAG, "onContentPermissionRequest: " + aUri + " " + aType + " " + access);
+    public void onContentPermissionRequest(GeckoSession aSession, String aUri, int aType, Callback callback) {
+        Log.d(LOGTAG, "onContentPermissionRequest: " + aUri + " " + aType);
         PermissionWidget.PermissionType type;
         if (aType == PERMISSION_DESKTOP_NOTIFICATION) {
             type = PermissionWidget.PermissionType.Notification;
