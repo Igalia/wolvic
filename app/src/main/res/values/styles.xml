@@ -2,7 +2,6 @@
     <declare-styleable name="AppTheme">
         <attr name="dialogButtonStyle" format="reference" />
         <attr name="settingsButtonStyle" format="reference" />
-        <attr name="tabStyle" format="reference" />
         <attr name="navigationBarStyle" format="reference" />
         <attr name="uiButtonStyle" format="reference" />
         <attr name="navigationBarButtonStyle" format="reference" />
@@ -13,9 +12,6 @@
         <attr name="urlProtocolColor" format="color" />
         <attr name="urlWebsiteColor" format="color" />
         <attr name="scrollbarStyle" format="color" />
-        <attr name="developerOptionsEditTextStyle" format="reference" />
-        <attr name="developerOptionsEditButtonStyle" format="reference" />
-        <attr name="radioButtonStyle" format="reference" />
     </declare-styleable>
 
     <style name="radioButtonTheme">
@@ -59,42 +55,11 @@
         <item name="android:layout_width">121dp</item>
         <item name="android:layout_height">136dp</item>
         <item name="android:background">@drawable/ic_menu_settings_honeycomb_fill</item>
-        <item name="android:foreground">@drawable/ic_menu_settings_honeycomb_outline_2pt</item>
         <item name="android:scaleType">fitCenter</item>
         <item name="android:gravity">center</item>
         <item name="android:backgroundTint">@drawable/settings_button_color</item>
         <item name="android:icon">@drawable/ic_settings_privacypolicy</item>
         <item name="android:text"></item>
-    </style>
-
-    <style name="Widget.EditText.DeveloperOptions" parent="android:style/Widget.EditText">
-        <item name="android:width">80dp</item>
-        <item name="android:height">30dp</item>
-        <item name="android:textSize">20sp</item>
-        <item name="android:background">@drawable/edittext_background</item>
-        <item name="android:textColor">@drawable/edittext_textcolor</item>
-        <item name="android:textColorHighlight">@color/ocean</item>
-        <item name="android:padding">5dp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:imeActionId">1</item>
-        <item name="android:imeOptions">actionDone</item>
-        <item name="android:selectAllOnFocus">true</item>
-    </style>
-
-    <style name="Widget.TextView.DeveloperOptionsEditButton" parent="android:style/Widget.TextView">
-        <item name="android:layout_width">50dp</item>
-        <item name="android:layout_height">25dp</item>
-        <item name="android:layout_gravity">center</item>
-        <item name="android:gravity">center</item>
-        <item name="android:text">@string/developer_options_edit</item>
-        <item name="android:textColor">@drawable/main_button_icon_color</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:typeface">sans</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:background">@drawable/rectangle_button_background</item>
-        <item name="android:clickable">true</item>
-        <item name="android:layout_centerVertical">true</item>
-        <item name="android:layout_alignParentRight">true</item>
     </style>
 
     <style name="navigationBarTextButtonTheme">
@@ -108,22 +73,6 @@
         <item name="textTintColorList">@drawable/main_button_icon_color</item>
     </style>
 
-    <style name="dialogButtonTheme">
-        <item name="android:background">@drawable/dialog_background</item>
-        <item name="android:padding">5dp</item>
-        <item name="android:layout_gravity">center_vertical</item>
-        <item name="android:layout_width">40dp</item>
-        <item name="android:layout_height">40dp</item>
-        <item name="android:scaleType">fitCenter</item>
-        <item name="tintColorList">@drawable/navigation_button_color</item>
-    </style>
-
-    <style name="tabTheme">
-        <item name="android:layout_width">155dp</item>
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:layout_weight">1</item>
-    </style>
-
     <style name="urlBarIconTheme">
         <item name="android:background">@drawable/url_button</item>
         <item name="tintColorList">@drawable/url_button_icon_color</item>
@@ -133,24 +82,105 @@
         <item name="android:scaleType">fitCenter</item>
     </style>
 
-    <style name="scrollbarTheme">
+    <style name="scrollbar">
         <item name="android:scrollbarAlwaysDrawVerticalTrack">true</item>
         <item name="android:scrollbarStyle">outsideInset</item>
         <item name="android:scrollbars">vertical</item>
         <item name="android:fadeScrollbars">false</item>
-        <item name="android:scrollbarThumbVertical">@drawable/scrollbar</item>
+        <item name="android:scrollbarThumbVertical">@drawable/scrollbar_thumb</item>
         <item name="android:fastScrollEnabled">true</item>
         <item name="android:fastScrollAlwaysVisible">true</item>
     </style>
 
-    <style name="AppTheme" parent="@android:style/Theme.Black.NoTitleBar.Fullscreen">
+    <style name="settingsEdit">
+        <item name="android:layout_width">80dp</item>
+        <item name="android:layout_height">30dp</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:background">@drawable/edittext_background</item>
+        <item name="android:textColor">@drawable/edittext_textcolor</item>
+        <item name="android:textColorHighlight">@color/ocean</item>
+        <item name="android:padding">5dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:imeActionId">1</item>
+        <item name="android:imeOptions">actionDone</item>
+        <item name="android:selectAllOnFocus">true</item>
+        <item name="android:layout_marginEnd">5dp</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="settingsButton">
+        <item name="android:layout_width">50dp</item>
+        <item name="android:layout_height">25dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:gravity">center</item>
+        <item name="android:text">@string/developer_options_edit</item>
+        <item name="android:textColor">@drawable/main_button_icon_color</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:typeface">sans</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:background">@drawable/rectangle_button_background</item>
+        <item name="android:clickable">true</item>
+    </style>
+
+    <style name="settingsSwitch">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:switchMinWidth">0dp</item>
+        <item name="android:textOff">""</item>
+        <item name="android:textOn">""</item>
+        <item name="android:thumb">@drawable/switch_thumb</item>
+        <item name="android:track">@drawable/switch_track</item>
+    </style>
+
+    <style name="settingsSwitchText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/text_smaller_size</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+
+    <style name="settingsValue">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/sky</item>
+        <item name="android:textSize">20dip</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_marginEnd">5dp</item>
+    </style>
+
+    <style name="settingsDescription">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/fog</item>
+        <item name="android:textSize">@dimen/text_medium_size</item>
+        <item name="android:layout_marginEnd">5dp</item>
+    </style>
+
+    <style name="dialogButtonRegular">
+        <item name="android:layout_width">100dp</item>
+        <item name="android:layout_height">35dp</item>
+        <item name="android:background">@drawable/dialog_regular_button_background</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:textSize">14dip</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@drawable/dialog_button_text_color</item>
+    </style>
+
+    <style name="dialogButtonHighlighted" parent="dialogButtonRegular">
+        <item name="android:background">@drawable/dialog_highlighted_button_background</item>
+    </style>
+
+    <style name="FxR.Dark" parent="@android:style/Theme.Black.NoTitleBar.Fullscreen">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="dialogButtonStyle">@style/dialogButtonTheme</item>
         <item name="settingsButtonStyle">@style/settingsButtonTheme</item>
-        <item name="tabStyle">@style/tabTheme</item>
         <item name="navigationBarStyle">@style/navigationBarTheme</item>
         <item name="navigationBarButtonStyle">@style/navigationBarButtonTheme</item>
         <item name="trayButtonStyle">@style/trayButtonTheme</item>
@@ -159,10 +189,9 @@
         <item name="urlBarIconStyle">@style/urlBarIconTheme</item>
         <item name="urlProtocolColor">@color/fog_url_protocol</item>
         <item name="urlWebsiteColor">@color/fog</item>
-        <item name="scrollbarStyle">@style/scrollbarTheme</item>
-        <item name="developerOptionsEditTextStyle">@style/Widget.EditText.DeveloperOptions</item>
-        <item name="developerOptionsEditButtonStyle">@style/Widget.TextView.DeveloperOptionsEditButton</item>
+        <item name="scrollbarStyle">@style/scrollbar</item>
         <item name="radioButtonStyle">@style/radioButtonTheme</item>
+        <item name="android:textCursorDrawable">@drawable/cursor_drawable</item>
     </style>
 
 </resources>

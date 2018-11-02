@@ -93,6 +93,9 @@ public class NavigationURLBar extends FrameLayout {
             }
         });
         mURL.addTextChangedListener(mURLTextWatcher);
+        mURL.setFocusable(true);
+        mURL.setFocusableInTouchMode(true);
+
         mMicrophoneButton = findViewById(R.id.microphoneButton);
         mMicrophoneButton.setTag(R.string.view_id_tag, R.id.microphoneButton);
         mMicrophoneButton.setOnClickListener(mMicrophoneListener);

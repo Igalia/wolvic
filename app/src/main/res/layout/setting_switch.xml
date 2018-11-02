@@ -10,7 +10,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
-            android:background="@color/fog" />
+            android:background="@color/iron" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -19,12 +19,10 @@
 
             <TextView
                 android:id="@+id/setting_description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/settingsDescription"
                 android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
                 android:layout_toStartOf="@id/switch_layout"
-                android:textColor="@color/fog"
-                android:textSize="14sp"
                 tools:text="Switch Setting Description" />
 
             <LinearLayout
@@ -32,29 +30,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
                 android:gravity="center"
                 android:orientation="vertical">
 
                 <Switch
                     android:id="@+id/settings_switch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:switchMinWidth="0dp"
-                    android:textOff=""
-                    android:textOn=""
-                    android:thumb="@drawable/switch_thumb"
-                    android:track="@drawable/switch_track" />
+                    style="@style/settingsSwitch" />
 
                 <TextView
                     android:id="@+id/settings_switch_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-light"
-                    android:gravity="center"
-                    android:paddingTop="5dp"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/settings_font_size"
-                    android:textStyle="bold"
+                    style="@style/settingsSwitchText"
                     tools:text="OFF" />
             </LinearLayout>
         </RelativeLayout>

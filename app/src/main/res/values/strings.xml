@@ -56,7 +56,10 @@
     <string name="restart_dialog_text">You must restart %1$s in order to complete changes. Would you like to do that now?</string>
     <!-- This string is used to label the button the user presses to restart the
          application in the restart dialog. -->
-    <string name="restart_dialog_button">Restart Now</string>
+    <string name="restart_now_dialog_button">Restart Now</string>
+    <!-- This string is used to label the button the user presses to restart the
+     postpone the app restart. -->
+    <string name="restart_later_dialog_button">Restart Later</string>
     <!-- This string labels an ON/OFF switch in the developer options
          dialog and is used to toggle remote debugging of Web content in the application. -->
     <string name="developer_options_remote_debugging">Enable Remote Debugging</string>
@@ -221,4 +224,8 @@
     <string name="video_controls_seek_forward">Seek +%1$ seconds</string>
     <!-- This string is displayed as a tooltip in the video controls UI. E.g Seek -10 seconds -->
     <string name="video_controls_seek_backward">Seek -%1$ seconds</string>
+    <!-- This string is displayed in the permission dialog button for granting the permission -->
+    <string name="permission_allow">Allow</string>
+    <!-- This string is displayed in the permission dialog button for reject the permission -->
+    <string name="permission_reject">Don\'t Allow</string>
 </resources>

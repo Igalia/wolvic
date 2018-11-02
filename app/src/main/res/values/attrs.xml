@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="SettingsButton">
-        <attr name="settingsButtonIcon" format="integer" />
-        <attr name="settingsButtonText" format="string" />
-        <attr name="settingsButtonTextSize" format="dimension" />
-        <attr name="settingsSecondaryText" format="string" />
+    <declare-styleable name="HoneycombButton">
+        <attr name="honeycombButtonIcon" format="integer" />
+        <attr name="honeycombButtonText" format="string" />
+        <attr name="honeycombButtonTextSize" format="dimension" />
+        <attr name="honeycombSecondaryText" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="HoneycombSwitch">
+        <attr name="honeycombSwitchText" format="string" />
+        <attr name="honeycombSwitchTextSize" format="dimension" />
     </declare-styleable>
 
     <declare-styleable name="UIButton">

@@ -1,201 +1,151 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
-    <FrameLayout
-            android:layout_width="@dimen/settings_width"
-            android:layout_height="@dimen/settings_height">
-        <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/settings_background"
-                android:alpha="0.9"/>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:id="@+id/versionLayout"
+        android:layout_width="@dimen/settings_width"
+        android:layout_height="@dimen/settings_height"
+        android:background="@drawable/settings_background"
+        android:orientation="vertical">
+
         <LinearLayout
-                android:id="@+id/versionLayout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-            <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/ff_logo_settings"
+                android:layout_width="126dp"
+                android:layout_height="84dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center"
+                android:layout_marginTop="40dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ff_logo_settings" />
+
+            <TextView
+                android:id="@+id/versionText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/ff_logo_settings"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:fontFamily="sans-serif-light"
+                android:gravity="center"
+                android:text="@string/settings_version"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_smaller_size" />
+
+            <TextView
+                android:id="@+id/buildText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/versionText"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center"
+                android:layout_marginTop="0dp"
+                android:fontFamily="sans-serif-light"
+                android:gravity="center"
+                android:text="@string/settings_version_developer"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_smaller_size" />
+        </LinearLayout>
+
+        <ScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scrollbars="none">
+
+            <HorizontalScrollView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:fadingEdgeLength="100dp"
+                android:requiresFadingEdge="horizontal"
+                android:scrollbars="none">
+
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_gravity="center_horizontal">
-                <ImageView
-                        android:id="@+id/ff_logo_settings"
-                        android:layout_width="126dp"
-                        android:layout_height="84dp"
-                        android:layout_alignParentTop="true"
-                        android:layout_centerHorizontal="true"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="40dp"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/ff_logo_settings"/>
+                    android:orientation="horizontal">
 
-                <TextView
-                        android:id="@+id/versionText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:text="@string/settings_version"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/settings_font_size"
-                        android:fontFamily="sans-serif-light"
-                        android:layout_below="@id/ff_logo_settings"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="5dp"/>
-                <TextView
-                        android:id="@+id/buildText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:text="@string/settings_version_developer"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/settings_font_size"
-                        android:fontFamily="sans-serif-light"
-                        android:layout_below="@id/versionText"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="0dp"/>
-            </LinearLayout>
-            <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/settings_button_height">
-                <Space android:id="@+id/center"
-                       android:layout_width="0dp"
-                       android:layout_height="0dp"
-                       android:layout_centerHorizontal="true"
-                       android:visibility="invisible"/>
+                    <RelativeLayout
+                        android:layout_width="@dimen/settings_width"
+                        android:layout_height="wrap_content">
 
-                <org.mozilla.vrbrowser.ui.views.SettingsButton
-                        android:id="@+id/developerOptionsButton"
-                        style="?attr/settingsButtonStyle"
-                        app:settingsButtonIcon="@drawable/ic_settings_developeroptions"
-                        app:settingsButtonText="@string/settings_developer_options"
-                        app:settingsButtonTextSize="52dp"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="30dp"/>
+                        <Space
+                            android:id="@+id/center"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_centerHorizontal="true"
+                            android:visibility="invisible" />
 
-                <LinearLayout
-                        style="?attr/settingsButtonStyle"
-                        android:layout_marginRight="10dp"
-                        android:layout_marginTop="30dp"
-                        android:layout_toLeftOf="@id/developerOptionsButton">
+                        <org.mozilla.vrbrowser.ui.views.HoneycombButton
+                            android:id="@+id/developerOptionsButton"
+                            style="?attr/settingsButtonStyle"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginTop="30dp"
+                            app:honeycombButtonIcon="@drawable/ic_settings_developeroptions"
+                            app:honeycombButtonText="@string/settings_developer_options"
+                            app:honeycombButtonTextSize="52dp" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:clickable="true"
-                            android:fontFamily="sans-serif-light"
-                            android:gravity="center"
-                            android:paddingTop="20dp"
-                            android:paddingBottom="5dp"
-                            android:text="@string/settings_crash_reporting"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/settings_font_size"/>
+                        <org.mozilla.vrbrowser.ui.views.HoneycombSwitch
+                            android:id="@+id/crashReportingSwitch"
+                            style="?attr/settingsButtonStyle"
+                            android:layout_marginTop="30dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_toLeftOf="@id/developerOptionsButton"
+                            app:honeycombSwitchText="@string/settings_crash_reporting"
+                            app:honeycombSwitchTextSize="72dp" />
 
-                    <Switch
-                            android:id="@+id/crash_reporting_switch"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:switchMinWidth="0dp"
-                            android:textOff=""
-                            android:textOn=""
-                            android:track="@drawable/switch_track"
-                            android:thumb="@drawable/switch_thumb"
-                            android:enabled="true"/>
-
-                    <TextView
-                            android:id="@+id/crash_reporting_switch_text"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:clickable="true"
-                            android:fontFamily="sans-serif-light"
-                            android:gravity="center"
-                            android:paddingTop="5dp"
-                            android:text="OFF"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/settings_font_size"/>
-                </LinearLayout>
-
-                <LinearLayout
-                        style="?attr/settingsButtonStyle"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginTop="30dp"
-                        android:layout_toRightOf="@id/developerOptionsButton">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:clickable="true"
-                            android:fontFamily="sans-serif-light"
-                            android:gravity="center"
-                            android:paddingTop="20dp"
-                            android:paddingBottom="5dp"
-                            android:text="@string/settings_telemetry"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/settings_font_size"/>
-
-                    <Switch
+                        <org.mozilla.vrbrowser.ui.views.HoneycombSwitch
                             android:id="@+id/telemetry_switch"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:switchMinWidth="0dp"
-                            android:textOff=""
-                            android:textOn=""
-                            android:track="@drawable/switch_track"
-                            android:thumb="@drawable/switch_thumb"/>
+                            style="?attr/settingsButtonStyle"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginTop="30dp"
+                            android:layout_toRightOf="@id/developerOptionsButton"
+                            app:honeycombSwitchText="@string/settings_telemetry"
+                            app:honeycombSwitchTextSize="52dp" />
 
-                    <TextView
-                            android:id="@+id/telemetry_switch_text"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:clickable="true"
-                            android:fontFamily="sans-serif-light"
-                            android:gravity="center"
-                            android:paddingTop="5dp"
-                            android:text="OFF"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/settings_font_size"/>
+                        <org.mozilla.vrbrowser.ui.views.HoneycombButton
+                            android:id="@+id/privacyButton"
+                            style="?attr/settingsButtonStyle"
+                            android:layout_below="@id/developerOptionsButton"
+                            android:layout_alignRight="@id/center"
+                            android:layout_marginTop="-25dp"
+                            android:layout_marginRight="5dp"
+                            app:honeycombButtonIcon="@drawable/ic_settings_privacypolicy"
+                            app:honeycombButtonText="@string/settings_privacy" />
+
+                        <org.mozilla.vrbrowser.ui.views.HoneycombButton
+                            android:id="@+id/reportButton"
+                            style="?attr/settingsButtonStyle"
+                            android:layout_below="@id/developerOptionsButton"
+                            android:layout_alignLeft="@id/center"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginTop="-25dp"
+                            app:honeycombButtonIcon="@drawable/ic_settings_reportissue"
+                            app:honeycombButtonText="@string/settings_report_issue"
+                            app:honeycombSecondaryText="@string/bug_report_url" />
+                    </RelativeLayout>
                 </LinearLayout>
+            </HorizontalScrollView>
+        </ScrollView>
 
-
-                <org.mozilla.vrbrowser.ui.views.SettingsButton
-                        android:id="@+id/privacyButton"
-                        style="?attr/settingsButtonStyle"
-                        app:settingsButtonIcon="@drawable/ic_settings_privacypolicy"
-                        app:settingsButtonText="@string/settings_privacy"
-                        android:layout_alignRight="@id/center"
-                        android:layout_marginRight="5dp"
-                        android:layout_marginTop="-25dp"
-                        android:layout_below="@id/developerOptionsButton"/>
-
-                <org.mozilla.vrbrowser.ui.views.SettingsButton
-                        android:id="@+id/reportButton"
-                        style="?attr/settingsButtonStyle"
-                        app:settingsButtonIcon="@drawable/ic_settings_reportissue"
-                        app:settingsButtonText="@string/settings_report_issue"
-                        app:settingsSecondaryText="@string/bug_report_url"
-                        android:layout_alignLeft="@id/center"
-                        android:layout_marginLeft="5dp"
-                        android:layout_marginTop="-25dp"
-                        android:layout_below="@id/developerOptionsButton"/>
-
-                <org.mozilla.vrbrowser.ui.views.UIButton
-                        android:id="@+id/settingsCancelButton"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:background="@drawable/main_button"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/ic_icon_dialog_cancel"
-                        app:tintColorList="@drawable/main_button_icon_color"
-                        android:layout_alignParentBottom="true"
-                        android:layout_centerHorizontal="true"/>
-            </RelativeLayout>
-        </LinearLayout>
-    </FrameLayout>
+        <org.mozilla.vrbrowser.ui.views.UIButton
+            android:id="@+id/settingsCancelButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/main_button"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_icon_dialog_cancel"
+            app:tintColorList="@drawable/main_button_icon_color" />
+    </LinearLayout>
 </merge>

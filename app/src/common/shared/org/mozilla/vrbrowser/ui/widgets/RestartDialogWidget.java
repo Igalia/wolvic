@@ -10,12 +10,12 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.util.AttributeSet;
+import android.widget.Button;
 import android.widget.TextView;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserActivity;
 import org.mozilla.vrbrowser.audio.AudioEngine;
-import org.mozilla.vrbrowser.ui.views.UIButton;
 
 public class RestartDialogWidget extends UIWidget {
 
@@ -41,8 +41,8 @@ public class RestartDialogWidget extends UIWidget {
     private void initialize(Context aContext) {
         inflate(aContext, R.layout.restart_dialog, this);
 
-        TextView acceptButton = findViewById(R.id.crashAcceptButton);
-        UIButton cancelButton = findViewById(R.id.crashCancelButton);
+        Button acceptButton = findViewById(R.id.restartNowButton);
+        Button cancelButton = findViewById(R.id.restartLaterButton);
         TextView restartText = findViewById(R.id.restartText);
 
         acceptButton.setOnClickListener(view -> {

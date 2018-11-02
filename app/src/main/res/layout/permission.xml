@@ -1,76 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="@dimen/permission_width"
+        android:layout_height="@dimen/permission_height"
+        android:background="@drawable/dialog_background"
+        android:paddingStart="@dimen/permission_padding_sides"
+        android:paddingTop="@dimen/permission_padding_top"
+        android:paddingEnd="@dimen/permission_padding_sides"
+        android:paddingBottom="@dimen/permission_padding_bottom">
+
+        <ImageButton
+            android:id="@+id/permissionIcon"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:background="@null"
+            android:elevation="0dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_icon_dialog_camera"
+            android:tint="@color/fog" />
+
+        <TextView
+            android:id="@+id/permissionText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/buttonsLayout"
+            android:layout_below="@+id/permissionIcon"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:text="@string/permission_camera_and_microphone"
+            android:textColor="@color/fog"
+            android:textSize="@dimen/text_big_size" />
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="100"
-            android:orientation="vertical"
-            android:padding="20dp"
-            android:background="@drawable/permission_background">
+            android:id="@+id/buttonsLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal">
 
-            <ImageButton
-                android:id="@+id/permissionIcon"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="100"
-                android:tint="@color/fog"
-                android:layout_gravity="center"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_icon_dialog_camera"
-                android:background="@null"
-                />
-
-            <TextView
-                android:id="@+id/permissionText"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="100"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:textSize="17sp"
-                android:textColor="@color/fog"
-                android:autoSizeTextType="uniform"
-                android:text="@string/permission_camera_and_microphone"
-                />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginTop="15dp"
-            android:orientation="horizontal"
-            android:gravity="center">
-
-            <org.mozilla.vrbrowser.ui.views.UIButton
+            <Button
                 android:id="@+id/permissionCancelButton"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                app:tintColorList="@drawable/main_button_icon_color"
-                android:padding="10dp"
-                android:src="@drawable/ic_icon_dialog_cancel"
+                android:layout_width="100dp"
+                android:layout_height="35dp"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/dialog_regular_button_background"
+                android:fontFamily="sans-serif"
                 android:scaleType="fitCenter"
-                android:background="@drawable/main_button"
-                />
+                android:text="@string/permission_reject"
+                android:textColor="@drawable/dialog_button_text_color"
+                android:textStyle="bold" />
 
-            <org.mozilla.vrbrowser.ui.views.UIButton
+            <Button
                 android:id="@+id/permissionAllowButton"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginLeft="20dp"
-                app:tintColorList="@drawable/main_button_icon_color"
-                android:padding="10dp"
-                android:src="@drawable/ic_icon_dialog_accept"
+                android:layout_width="100dp"
+                android:layout_height="35dp"
+                android:background="@drawable/dialog_highlighted_button_background"
+                android:fontFamily="sans-serif"
                 android:scaleType="fitCenter"
-                android:background="@drawable/main_button"
-                />
-
+                android:text="@string/permission_allow"
+                android:textColor="@drawable/dialog_button_text_color"
+                android:textStyle="bold" />
         </LinearLayout>
-
-    </LinearLayout>
+    </RelativeLayout>
 </merge>

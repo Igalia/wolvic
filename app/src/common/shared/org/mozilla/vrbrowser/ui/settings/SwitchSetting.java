@@ -69,7 +69,9 @@ public class SwitchSetting extends LinearLayout {
         mSwitch.setOnCheckedChangeListener(null);
         mSwitch.setChecked(value);
         mSwitch.setOnCheckedChangeListener(mInternalSwitchListener);
-        mSwitchText.setText(value ? getContext().getString(R.string.on) : getContext().getString(R.string.off));
+        mSwitchText.setText(value ?
+                getContext().getString(R.string.on).toUpperCase() :
+                getContext().getString(R.string.off).toUpperCase());
 
         if (mSwitchListener != null && doApply) {
             mSwitchListener.onCheckedChanged(mSwitch, value, doApply);

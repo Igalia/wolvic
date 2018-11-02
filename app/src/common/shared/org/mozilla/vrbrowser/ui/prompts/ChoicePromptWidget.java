@@ -160,7 +160,7 @@ public class ChoicePromptWidget extends UIWidget implements WidgetManagerDelegat
         aPlacement.parentAnchorY = 0.5f;
         aPlacement.anchorX = 0.5f;
         aPlacement.anchorY = 0.5f;
-        aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.choice_prompt_world_z);
+        aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.browser_children_z_distance);
     }
 
     @Override

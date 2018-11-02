@@ -20,10 +20,14 @@ import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.mozilla.speechlibrary.ISpeechRecognitionListener;
 import com.mozilla.speechlibrary.MozillaSpeechService;
 import com.mozilla.speechlibrary.STTResult;
+
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.audio.AudioEngine;
+import org.mozilla.vrbrowser.ui.views.UIButton;
 
 import static org.mozilla.gecko.GeckoAppShell.getApplicationContext;
 
@@ -55,9 +59,9 @@ public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate
     private TextView mVoiceSearchText2;
     private TextView mVoiceSearchText3;
     private RotateAnimation mSearchingAnimation;
-    private CloseButtonWidget mCloseButton;
     private boolean mIsSpeechRecognitionRunning = false;
     private boolean mWasSpeechRecognitionRunning = false;
+    private AudioEngine mAudio;
 
     public VoiceSearchWidget(Context aContext) {
         super(aContext);
@@ -76,6 +80,8 @@ public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate
 
     private void initialize(Context aContext) {
         inflate(aContext, R.layout.voice_search_dialog, this);
+
+        mAudio = AudioEngine.fromContext(aContext);
 
         mWidgetManager.addFocusChangeListener(this);
         mWidgetManager.addPermissionListener(this);
@@ -104,12 +110,13 @@ public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate
         mSearchingAnimation.setRepeatCount(Animation.INFINITE);
         mVoiceSearchSearching = findViewById(R.id.voiceSearchSearching);
 
-        mCloseButton = createChild(CloseButtonWidget.class);
-        mCloseButton.setDelegate(new CloseButtonWidget.CloseButtonDelegate() {
-            @Override
-            public void OnClick() {
-                hide();
+        UIButton backButton = findViewById(R.id.backButton);
+        backButton.setOnClickListener(view -> {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
             }
+
+            onDismiss();
         });
 
         ((Application)getApplicationContext()).registerActivityLifecycleCallbacks(this);
@@ -252,8 +259,6 @@ public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate
         super.show();
 
         setStartListeningState();
-
-        mCloseButton.show();
 
         mMozillaSpeechService.addListener(mVoiceSearchListener);
         startVoiceSearch();

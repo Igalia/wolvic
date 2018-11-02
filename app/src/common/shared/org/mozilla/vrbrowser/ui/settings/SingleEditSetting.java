@@ -46,8 +46,8 @@ public class SingleEditSetting extends LinearLayout {
         mDescriptionView = findViewById(R.id.setting_description);
         mDescriptionView.setText(mDescription);
 
-        mText1 = findViewById(R.id.text1);
-        mEdit1 = findViewById(R.id.edit1);
+        mText1 = findViewById(R.id.textValue1);
+        mEdit1 = findViewById(R.id.editValue1);
         mEdit1.setSoundEffectsEnabled(false);
 
         mEdit1.setOnEditorActionListener(mInternalEditorActionListener);

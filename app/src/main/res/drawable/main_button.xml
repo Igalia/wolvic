@@ -3,13 +3,11 @@
     <item android:state_enabled="false">
         <shape android:shape="oval">
             <solid android:color="@color/asphalt" />
-            <stroke android:color="@color/fog" android:width="2dp" />
         </shape>
     </item>
     <item android:state_pressed="true">
         <shape android:shape="oval">
             <solid android:color="@color/void_color" />
-            <stroke android:color="@color/fog" android:width="2dp" />
         </shape>
     </item>
     <item android:state_hovered="true" android:state_pressed="false">
@@ -20,7 +18,6 @@
     <item android:state_hovered="false" android:state_pressed="false">
         <shape android:shape="oval">
             <solid android:color="@color/asphalt" />
-            <stroke android:color="@color/fog" android:width="2dp" />
         </shape>
     </item>
 </selector>

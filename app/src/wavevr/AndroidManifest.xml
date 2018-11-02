@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="org.mozilla.vrbrowser">
-    <application  tools:replace="android:theme" android:theme="@style/AppTheme" tools:remove="android:roundIcon">
+    <application  tools:replace="android:theme" android:theme="@style/FxR.Dark" tools:remove="android:roundIcon">
         <activity android:name=".VRBrowserActivity"
                   android:screenOrientation="landscape">
             <intent-filter>

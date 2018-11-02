@@ -9,7 +9,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
-            android:background="@color/fog" />
+            android:background="@color/iron" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -19,75 +19,58 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/setting_description"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
+                    style="@style/settingsDescription"
                     android:text="@string/developer_options_window_size"
-                    android:textColor="@color/fog"
-                    android:textSize="14sp"
-                    tools:text="Edit Setting Description"/>
+                    tools:text="Setting Description" />
 
                 <TextView
-                    android:id="@+id/text1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
+                    android:id="@+id/textValue1"
+                    style="@style/settingsValue"
                     android:inputType="number"
-                    android:textColor="@color/sky"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
                     android:visibility="visible"
-                    tools:text="Text 1"/>
+                    tools:text="Value" />
 
                 <org.mozilla.vrbrowser.ui.views.DeveloperOptionsEditText
-                    android:id="@+id/edit1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
+                    android:id="@+id/editValue1"
+                    style="@style/settingsEdit"
                     android:inputType="number"
                     android:maxLength="4"
                     android:visibility="gone"
-                    tools:text="Edit 1" />
+                    tools:text="Value" />
 
                 <TextView
-                    android:id="@+id/setting_by"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    android:textColor="@color/fog"
-                    android:textSize="14sp"
-                    tools:text="By" />
+                    android:id="@+id/settingBy"
+                    style="@style/settingsDescription"
+                    tools:text="x" />
 
                 <TextView
-                    android:id="@+id/text2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:id="@+id/textValue2"
+                    style="@style/settingsValue"
                     android:inputType="number"
-                    android:textColor="@color/sky"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
                     android:visibility="visible"
-                    tools:text="Text 2" />
+                    tools:text="Value" />
 
                 <org.mozilla.vrbrowser.ui.views.DeveloperOptionsEditText
-                    android:id="@+id/edit2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:id="@+id/editValue2"
+                    style="@style/settingsEdit"
                     android:inputType="number"
                     android:maxLength="4"
                     android:visibility="gone"
-                    tools:text="Edit 2" />
+                    tools:text="Value" />
             </LinearLayout>
 
             <TextView
                 android:id="@+id/settingButton"
-                style="?attr/developerOptionsEditButtonStyle" />
+                style="@style/settingsButton"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true" />
         </RelativeLayout>
 
     </LinearLayout>

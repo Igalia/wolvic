@@ -12,8 +12,11 @@
         android:hint="@string/search_placeholder"
         android:background="@drawable/url_background"
         android:textColor="@color/fog"
-        android:textColorHighlight="@color/dusk"
-        android:selectAllOnFocus="true" />
+        android:textColorHighlight="@color/azure"
+        android:selectAllOnFocus="true"
+        android:requiresFadingEdge="horizontal"
+        android:fadingEdgeLength="40dp"
+        android:ellipsize="none"/>
 
     <RelativeLayout
         android:id="@+id/urlLeftContainer"

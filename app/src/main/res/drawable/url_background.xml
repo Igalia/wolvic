@@ -1,36 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-<item android:state_enabled="false">
-    <shape xmlns:android="http://schemas.android.com/apk/res/android"
-           android:shape="rectangle">
-        <corners android:radius="20dp" />
-        <solid android:color="@color/asphalt"/>
-        <stroke android:color="@color/fog" android:width="2dp" />
-    </shape>
-</item>
-<item android:state_pressed="true">
-    <shape xmlns:android="http://schemas.android.com/apk/res/android"
-           android:shape="rectangle">
-        <corners android:radius="20dp" />
-        <solid android:color="@color/void_color"/>
-        <stroke android:color="@color/dusk" android:width="2dp" />
-    </shape>
-</item>
-<item android:state_hovered="true" android:state_pressed="false">
-    <shape xmlns:android="http://schemas.android.com/apk/res/android"
-           android:shape="rectangle">
-        <corners android:radius="20dp" />
-        <solid android:color="@color/asphalt"/>
-        <stroke android:color="@color/dusk" android:width="2dp" />
-    </shape>
-</item>
-<item android:state_hovered="false" android:state_pressed="false">
-    <shape xmlns:android="http://schemas.android.com/apk/res/android"
-           android:shape="rectangle">
-        <corners android:radius="20dp" />
-        <solid android:color="@color/asphalt"/>
-        <stroke android:color="@color/fog" android:width="2dp" />
-    </shape>
-</item>
+    <item android:state_enabled="false">
+        <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+            <corners android:radius="20dp" />
+            <solid android:color="@color/asphalt" />
+        </shape>
+    </item>
+    <item android:state_focused="true">
+        <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+            <corners android:radius="20dp" />
+            <solid android:color="@color/void_color" />
+            <stroke android:width="2dp" android:color="@color/azure" />
+        </shape>
+    </item>
+    <item android:state_hovered="true" android:state_pressed="false">
+        <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+            <corners android:radius="20dp" />
+            <solid android:color="@color/asphalt" />
+            <stroke android:width="2dp" android:color="@color/azure" />
+        </shape>
+    </item>
+    <item android:state_hovered="false" android:state_pressed="false">
+        <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+            <corners android:radius="20dp" />
+            <solid android:color="@color/asphalt" />
+        </shape>
+    </item>
 </selector>
 

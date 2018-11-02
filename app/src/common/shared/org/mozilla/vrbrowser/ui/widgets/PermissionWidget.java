@@ -11,7 +11,7 @@ import android.text.SpannableStringBuilder;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageButton;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -60,23 +60,11 @@ public class PermissionWidget extends UIWidget implements WidgetManagerDelegate.
         mPermissionIcon = findViewById(R.id.permissionIcon);
         mPermissionMessage = findViewById(R.id.permissionText);
 
-        ImageButton cancelButton = findViewById(R.id.permissionCancelButton);
+        Button cancelButton = findViewById(R.id.permissionCancelButton);
+        cancelButton.setOnClickListener(v -> handlePermissionResult(false));
 
-        cancelButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                handlePermissionResult(false);
-            }
-        });
-
-        ImageButton allowButton = findViewById(R.id.permissionAllowButton);
-
-        allowButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                handlePermissionResult(true);
-            }
-        });
+        Button allowButton = findViewById(R.id.permissionAllowButton);
+        allowButton.setOnClickListener(v -> handlePermissionResult(true));
     }
 
     @Override
@@ -92,7 +80,7 @@ public class PermissionWidget extends UIWidget implements WidgetManagerDelegate.
         aPlacement.width = WidgetPlacement.dpDimension(context, R.dimen.permission_width);
         aPlacement.height = WidgetPlacement.dpDimension(context, R.dimen.permission_height);
         aPlacement.worldWidth = WidgetPlacement.floatDimension(context, R.dimen.permission_world_width);
-        aPlacement.translationZ = WidgetPlacement.unitFromMeters(context, R.dimen.permission_distance_from_browser);
+        aPlacement.translationZ = WidgetPlacement.unitFromMeters(context, R.dimen.browser_children_z_distance);
         aPlacement.parentAnchorX = 0.5f;
         aPlacement.parentAnchorY = 0.5f;
         aPlacement.anchorX = 0.5f;
@@ -139,7 +127,7 @@ public class PermissionWidget extends UIWidget implements WidgetManagerDelegate.
                 break;
             case ReadExternalStorage:
                 messageId = R.string.permission_read_external_storage;
-                iconId = R.drawable.ic_icon_dialog_notification;
+                iconId = R.drawable.ic_icon_storage;
                 break;
             default:
                 Log.e(LOGTAG, "Unimplemented permission type: " + aType);
@@ -188,6 +176,7 @@ public class PermissionWidget extends UIWidget implements WidgetManagerDelegate.
     }
 
     // WidgetManagerDelegate.FocusChangeListener
+
     @Override
     public void onGlobalFocusChanged(View oldFocus, View newFocus) {
         if (oldFocus == this && isVisible()) {

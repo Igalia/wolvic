@@ -10,17 +10,18 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
 
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.SessionStore;
 import org.mozilla.vrbrowser.browser.SettingsStore;
-import org.mozilla.vrbrowser.audio.AudioEngine;
-import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.settings.ButtonSetting;
 import org.mozilla.vrbrowser.ui.settings.DoubleEditSetting;
-import org.mozilla.vrbrowser.ui.settings.SingleEditSetting;
 import org.mozilla.vrbrowser.ui.settings.RadioGroupSetting;
+import org.mozilla.vrbrowser.ui.settings.SingleEditSetting;
 import org.mozilla.vrbrowser.ui.settings.SwitchSetting;
+import org.mozilla.vrbrowser.ui.views.UIButton;
 
 import static org.mozilla.vrbrowser.utils.ServoUtils.isServoAvailable;
 
@@ -50,6 +51,7 @@ public class DeveloperOptionsWidget extends UIWidget {
     private ButtonSetting mResetButton;
 
     private int mRestartDialogHandle = -1;
+    private ScrollView mScrollbar;
 
     public DeveloperOptionsWidget(Context aContext) {
         super(aContext);
@@ -157,6 +159,8 @@ public class DeveloperOptionsWidget extends UIWidget {
 
         mResetButton = findViewById(R.id.resetButton);
         mResetButton.setOnClickListener(mResetListener);
+
+        mScrollbar = findViewById(R.id.scrollbar);
     }
 
     @Override
@@ -170,6 +174,13 @@ public class DeveloperOptionsWidget extends UIWidget {
         aPlacement.anchorY = 0.5f;
         aPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.restart_dialog_world_y);
         aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.restart_dialog_world_z);
+    }
+
+    @Override
+    public void show() {
+        super.show();
+
+        mScrollbar.scrollTo(0, 0);
     }
 
     private void showRestartDialog() {

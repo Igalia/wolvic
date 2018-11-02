@@ -6,6 +6,8 @@
     <color name="steel">#434c58</color>
     <color name="ocean">#314259</color>
     <color name="dusk">#556f8e</color>
+    <color name="azure">#518fe1</color>
+    <color name="concrete">#9ea3ab</color>
     <color name="sky">#75eff9</color>
     <color name="silver">#e3e4e5</color>
     <color name="white">#ffffff</color>
@@ -21,4 +23,5 @@
     <color name="blackberry">#25003e</color>
     <color name="iron">#5d5d5d</color>
     <color name="rhino">#8c898a</color>
+    <color name="geranium">#d73e5a</color>
 </resources>

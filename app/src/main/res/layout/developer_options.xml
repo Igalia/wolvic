@@ -6,7 +6,7 @@
         android:id="@+id/versionLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/developer_options_background"
+        android:background="@drawable/dialog_background"
         android:orientation="vertical"
         android:paddingStart="30dp"
         android:paddingTop="20dp"
@@ -25,7 +25,8 @@
             android:tint="@color/midnight" />
 
         <ScrollView
-            style="?attr/scrollbarStyle"
+            android:id="@+id/scrollbar"
+            style="@style/scrollbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 

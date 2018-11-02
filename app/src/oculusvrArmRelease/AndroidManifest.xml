@@ -19,7 +19,7 @@
             android:launchMode="singleTask"
             android:screenOrientation="landscape"
             android:excludeFromRecents="true"
-            android:theme="@style/AppTheme"
+            android:theme="@style/FxR.Dark"
             android:configChanges="density|keyboard|keyboardHidden|navigation|orientation|screenLayout|screenSize|uiMode"
             android:windowSoftInputMode="stateAlwaysHidden"
             android:resizeableActivity="false"

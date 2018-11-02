@@ -1,55 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                 xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                 xmlns:tools="http://schemas.android.com/tools"
-                                                 android:layout_width="@dimen/voice_search_width"
-                                                 android:layout_height="@dimen/voice_search_height"
-                                                 android:background="@drawable/voice_search_background"
-                                                 android:layout_centerHorizontal="true"
-                                                 android:padding="@dimen/voice_search_padding">
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/voice_search_width"
+    android:layout_height="@dimen/voice_search_height"
+    android:layout_centerHorizontal="true"
+    android:background="@drawable/dialog_background"
+    android:paddingStart="@dimen/voice_search_padding_sides"
+    android:paddingTop="@dimen/voice_search_padding_top"
+    android:paddingEnd="@dimen/voice_search_padding_sides"
+    android:paddingBottom="@dimen/voice_search_padding_bottom">
+
+    <org.mozilla.vrbrowser.ui.views.UIButton
+        android:id="@+id/backButton"
+        style="?attr/navigationBarButtonStyle"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/ic_icon_back"
+        android:tint="@color/midnight"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/voice_search_try_again"
-            android:textColor="@color/white"
-            android:typeface="sans"
-            android:id="@+id/voiceSearchText2"
-            app:layout_constraintStart_toStartOf="@+id/voiceSearchText1"
-            tools:text="@string/voice_search_try_again" app:layout_constraintTop_toBottomOf="@+id/voiceSearchText1"
-            android:textSize="22sp" android:textAlignment="viewStart"/>
+        android:id="@+id/voiceSearchText2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/voice_search_try_again"
+        android:textAlignment="viewStart"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:typeface="sans"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@+id/voiceSearchText1"
+        app:layout_constraintTop_toBottomOf="@+id/voiceSearchText1"
+        tools:text="@string/voice_search_try_again" />
+
     <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/voice_search_start"
-            android:textColor="@color/white"
-            android:textSize="22sp"
-            android:typeface="sans"
-            android:id="@+id/voiceSearchText1"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="@string/voice_search_start" android:textAlignment="viewStart"/>
+        android:id="@+id/voiceSearchText1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/voice_search_start"
+        android:textAlignment="viewStart"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:typeface="sans"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/backButton"
+        tools:text="@string/voice_search_start" />
+
     <TextView
-            android:text="@string/voice_search_example"
-            android:textColor="@color/rhino"
-            android:textSize="12sp"
-            android:typeface="sans"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/voiceSearchText3" app:layout_constraintStart_toStartOf="@+id/voiceSearchText2"
-            app:layout_constraintTop_toBottomOf="@+id/voiceSearchText2"
-            tools:text="@string/voice_search_example" android:layout_marginTop="5dp" android:textAlignment="viewStart"/>
+        android:id="@+id/voiceSearchText3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="@string/voice_search_example"
+        android:textAlignment="viewStart"
+        android:textColor="@color/rhino"
+        android:textSize="12sp"
+        android:typeface="sans"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/voiceSearchText2"
+        tools:text="@string/voice_search_example" />
+
     <ImageView
-            android:layout_width="@dimen/voice_search_input_width"
-            android:layout_height="@dimen/voice_search_input_height"
-            android:id="@+id/voiceSearchInput"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginTop="20dp" app:layout_constraintTop_toBottomOf="@+id/voiceSearchText3"/>
+        android:id="@+id/voiceSearchInput"
+        android:layout_width="@dimen/voice_search_input_width"
+        android:layout_height="@dimen/voice_search_input_height"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_voice_search_volume_input_black"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:src="@drawable/ic_voice_search_volume_input_black" />
+
     <ImageView
-            android:layout_height="100dp" android:src="@drawable/ic_voice_search_searching"
-            android:id="@+id/voiceSearchSearching"
-            app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="70dp" app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" android:layout_width="100dp"/>
+        android:id="@+id/voiceSearchSearching"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/ic_voice_search_searching"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:src="@drawable/ic_voice_search_searching" />
 </android.support.constraint.ConstraintLayout>

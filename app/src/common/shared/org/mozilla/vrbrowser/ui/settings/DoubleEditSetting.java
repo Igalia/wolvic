@@ -30,12 +30,12 @@ public class DoubleEditSetting extends SingleEditSetting {
     }
 
     private void initialize(Context aContext) {
-        TextView by = findViewById(R.id.setting_by);
+        TextView by = findViewById(R.id.settingBy);
         by.setText(mBy);
         by.setVisibility(View.VISIBLE);
 
-        mText2 = findViewById(R.id.text2);
-        mEdit2 = findViewById(R.id.edit2);
+        mText2 = findViewById(R.id.textValue2);
+        mEdit2 = findViewById(R.id.editValue2);
         mEdit2.setSoundEffectsEnabled(false);
 
         mEdit2.setOnEditorActionListener(mInternalEditorActionListener);

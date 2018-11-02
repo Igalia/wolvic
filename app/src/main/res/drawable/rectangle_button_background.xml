@@ -4,14 +4,12 @@
         <shape android:shape="rectangle">
             <corners android:radius="5dp" />
             <solid android:color="@color/asphalt" />
-            <stroke android:color="@color/fog" android:width="1dp" />
         </shape>
     </item>
     <item android:state_pressed="true">
         <shape android:shape="rectangle">
             <corners android:radius="5dp" />
             <solid android:color="@color/void_color" />
-            <stroke android:color="@color/fog" android:width="1dp" />
         </shape>
     </item>
     <item android:state_hovered="true" android:state_pressed="false">
@@ -23,8 +21,7 @@
     <item android:state_hovered="false" android:state_pressed="false">
         <shape android:shape="rectangle">
             <corners android:radius="5dp" />
-            <solid android:color="@color/asphalt" />
-            <stroke android:color="@color/fog" android:width="1dp" />
+            <solid android:color="@color/iron" />
         </shape>
     </item>
 </selector>

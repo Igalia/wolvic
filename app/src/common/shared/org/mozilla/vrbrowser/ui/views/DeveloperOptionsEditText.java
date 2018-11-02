@@ -9,12 +9,10 @@ import org.mozilla.vrbrowser.R;
 
 public class DeveloperOptionsEditText extends android.support.v7.widget.AppCompatEditText {
 
-    public DeveloperOptionsEditText(Context context) {
-        this(context, null);
-    }
-
     public DeveloperOptionsEditText(Context context, AttributeSet attrs) {
-        this(context, attrs, R.attr.developerOptionsEditTextStyle);
+        super(context, attrs);
+
+        initialize();
     }
 
     public DeveloperOptionsEditText(Context context, AttributeSet attrs, int defStyleAttr) {

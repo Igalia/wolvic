@@ -15,7 +15,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import org.mozilla.geckoview.GeckoSession;
@@ -24,7 +23,8 @@ import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.SessionStore;
 import org.mozilla.vrbrowser.browser.SettingsStore;
-import org.mozilla.vrbrowser.ui.views.SettingsButton;
+import org.mozilla.vrbrowser.ui.views.HoneycombButton;
+import org.mozilla.vrbrowser.ui.views.HoneycombSwitch;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -92,7 +92,7 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
             onDismiss();
         });
 
-        SettingsButton privacyButton = findViewById(R.id.privacyButton);
+        HoneycombButton privacyButton = findViewById(R.id.privacyButton);
         privacyButton.setOnClickListener(view -> {
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
@@ -101,33 +101,23 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
             onSettingsPrivacyClick();
         });
 
-        final TextView crashReportingSwitchText  = findViewById(R.id.crash_reporting_switch_text);
-        Switch crashReportingSwitch  = findViewById(R.id.crash_reporting_switch);
-        crashReportingSwitch.setChecked(SettingsStore.getInstance(getContext()).isCrashReportingEnabled());
-        crashReportingSwitchText.setText(crashReportingSwitch.isChecked() ? getContext().getString(R.string.on) : getContext().getString(R.string.off));
-        crashReportingSwitch.setOnCheckedChangeListener((compoundButton, b) -> {
+        HoneycombSwitch crashSwitch = findViewById(R.id.crashReportingSwitch);
+        crashSwitch.setOnCheckedChangeListener((compoundButton, b) -> {
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
 
-            crashReportingSwitchText.setText(b ? getContext().getString(R.string.on) : getContext().getString(R.string.off));
             onSettingsCrashReportingChange(b);
         });
-        crashReportingSwitch.setSoundEffectsEnabled(false);
 
-        final TextView crashTelemetrySwitchText  = findViewById(R.id.telemetry_switch_text);
-        Switch telemetrySwitch  = findViewById(R.id.telemetry_switch);
-        telemetrySwitch.setChecked(SettingsStore.getInstance(getContext()).isTelemetryEnabled());
-        crashTelemetrySwitchText.setText(telemetrySwitch.isChecked() ? getContext().getString(R.string.on) : getContext().getString(R.string.off));
+        HoneycombSwitch telemetrySwitch = findViewById(R.id.telemetry_switch);
         telemetrySwitch.setOnCheckedChangeListener((compoundButton, b) -> {
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
 
-            crashTelemetrySwitchText.setText(b ? getContext().getString(R.string.on) : getContext().getString(R.string.off));
             onSettingsTelemetryChange(b);
         });
-        telemetrySwitch.setSoundEffectsEnabled(false);
 
         TextView versionText = findViewById(R.id.versionText);
         try {
@@ -150,7 +140,7 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
             return view.onTouchEvent(motionEvent);
         });
 
-        SettingsButton reportButton = findViewById(R.id.reportButton);
+        HoneycombButton reportButton = findViewById(R.id.reportButton);
         reportButton.setOnClickListener(view -> {
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
@@ -159,7 +149,7 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
             onSettingsReportClick();
         });
 
-        SettingsButton developerOptionsButton = findViewById(R.id.developerOptionsButton);
+        HoneycombButton developerOptionsButton = findViewById(R.id.developerOptionsButton);
         developerOptionsButton.setOnClickListener(view -> {
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
