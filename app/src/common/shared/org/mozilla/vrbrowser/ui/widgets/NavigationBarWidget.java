@@ -21,6 +21,7 @@ import org.mozilla.geckoview.AllowOrDeny;
 import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoSessionSettings;
+import org.mozilla.geckoview.WebRequestError;
 import org.mozilla.vrbrowser.*;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.SessionStore;
@@ -405,7 +406,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     @Override
-    public GeckoResult<String> onLoadError(GeckoSession session, String uri, int category, int error) {
+    public GeckoResult<String> onLoadError(GeckoSession session, String uri, WebRequestError error) {
         return null;
     }
 

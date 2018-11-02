@@ -23,6 +23,7 @@ import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoRuntimeSettings;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoSessionSettings;
+import org.mozilla.geckoview.WebRequestError;
 import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.crashreporting.CrashReporterService;
@@ -887,10 +888,10 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     }
 
     @Override
-    public GeckoResult<String> onLoadError(GeckoSession session, String uri, @LoadErrorCategory int category, @LoadError int error) {
+    public GeckoResult<String> onLoadError(GeckoSession session, String uri,  WebRequestError error) {
         Log.d(LOGTAG, "SessionStore onLoadError: " + uri);
 
-        return GeckoResult.fromValue(InternalPages.createErrorPage(mContext, uri, category, error));
+        return GeckoResult.fromValue(InternalPages.createErrorPage(mContext, uri, error.category, error.code));
     }
 
     // Progress Listener
