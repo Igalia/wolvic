@@ -10,7 +10,7 @@
     <string name="settings_key_environment_override" translatable="false">settings_environment_override</string>
     <string name="settings_key_multiprocess" translatable="false">settings_environment_multiprocess</string>
     <string name="settings_key_servo">settings_environment_servo</string>
-    <string name="settings_key_desktop_version" translatable="false">settings_desktop_version</string>
+    <string name="settings_key_user_agent_version" translatable="false">settings_user_agent_version</string>
     <string name="settings_key_input_mode" translatable="false">settings_touch_mode</string>
     <string name="settings_key_display_density" translatable="false">settings_display_density</string>
     <string name="settings_key_window_width" translatable="false">settings_window_width</string>

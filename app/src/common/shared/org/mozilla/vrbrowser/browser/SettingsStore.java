@@ -7,6 +7,7 @@ import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 
+import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.telemetry.TelemetryHolder;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
@@ -37,7 +38,7 @@ public class SettingsStore {
     public final static boolean ENV_OVERRIDE_DEFAULT = false;
     public final static boolean MULTIPROCESS_DEFAULT = false;
     public final static boolean SERVO_DEFAULT = false;
-    public final static int UA_MODE_DEFAULT = 0;
+    public final static int UA_MODE_DEFAULT = GeckoSessionSettings.USER_AGENT_MODE_VR;
     public final static int INPUT_MODE_DEFAULT = 1;
     public final static float DISPLAY_DENSITY_DEFAULT = 1.0f;
     public final static int WINDOW_WIDTH_DEFAULT = 800;
@@ -162,12 +163,12 @@ public class SettingsStore {
 
     public int getUaMode() {
         return mPrefs.getInt(
-                mContext.getString(R.string.settings_key_desktop_version), UA_MODE_DEFAULT);
+                mContext.getString(R.string.settings_key_user_agent_version), UA_MODE_DEFAULT);
     }
 
     public void setUaMode(int mode) {
         SharedPreferences.Editor editor = mPrefs.edit();
-        editor.putInt(mContext.getString(R.string.settings_key_desktop_version), mode);
+        editor.putInt(mContext.getString(R.string.settings_key_user_agent_version), mode);
         editor.commit();
     }
 
