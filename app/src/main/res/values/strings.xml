@@ -224,6 +224,9 @@
     <string name="video_controls_seek_forward">Seek +%1$ seconds</string>
     <!-- This string is displayed as a tooltip in the video controls UI. E.g Seek -10 seconds -->
     <string name="video_controls_seek_backward">Seek -%1$ seconds</string>
+    <!-- This string is displayed in the video control seekbar when the media is not seekable
+        (e.g. a live stream video). Prefer a short text because it affects the width of the seek bar -->
+    <string name="video_controls_live">LIVE</string>
     <!-- This string is displayed in the permission dialog button for granting the permission -->
     <string name="permission_allow">Allow</string>
     <!-- This string is displayed in the permission dialog button for reject the permission -->
