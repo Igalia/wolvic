@@ -617,7 +617,9 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             out.write("pref(\"dom.vr.external.enabled\", true);\n".getBytes());
             out.write("pref(\"webgl.enable-surface-texture\", true);\n".getBytes());
             out.write("pref(\"apz.allow_double_tap_zooming\", false);\n".getBytes());
-            out.write("pref(\"dom.webcomponents.customelements.enabled\", false);\n".getBytes());
+            out.write("pref(\"dom.webcomponents.customelements.enabled\", true);\n".getBytes());
+            // Uncomment this to enable WebRender. WARNING NOT READY FOR USAGE.
+            // out.write("pref(\"gfx.webrender.all\", true);\n".getBytes());
             int mssaLevel = SettingsStore.getInstance(aContext).getMSAALevel();
             if (mssaLevel > 1) {
                 out.write(("pref(\"gl.msaa-level\"," + mssaLevel + ");\n").getBytes());
