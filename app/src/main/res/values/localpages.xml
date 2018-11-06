@@ -6,19 +6,14 @@
     <!-- Private Browsing -->
     <string name="private_browsing_title">Private Browsing</string>
     <string name="private_browsing_body"><![CDATA[
-<h1>Private Browsing</h1>
-
 <p>When you browse in a Private Window, %1$s <strong>does not save</strong>:</p>
-
 <ul class="two-column">
-    <li>visited pages</li>
-    <li>searches</li>
-    <li>cookies</li>
-    <li>temporary files</li>
+  <li>visited pages</li>
+  <li>searches</li>
+  <li>cookies</li>
+  <li>temporary files</li>
 </ul>
-
-<p>Private Browsing <strong>doesn&rsquo;t make you anonymous</strong> on the Internet. Your employer or Internet service provider can still know what page you visit.</p>
-
+<p>Private Browsing <strong>doesn’t make you anonymous</strong> on the Internet. Your employer or Internet service provider can still know what page you visit.</p>
 <p class="about-info">Learn more about <a id="learnMore">Private Browsing</a>.</p>
      ]]></string>
 
