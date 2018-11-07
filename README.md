@@ -72,6 +72,8 @@ If you get an error extracting the NDK, you might need to copy the `local.proper
 
 If you run the APK on an Android device outside of Daydream or Gear VR, it will run in flat mode. To run in VR, put the device into a headset, and run the app from the VR launcher.
 
+The APK isn't published in the play store for clip-in devices yet because of performance issues and bugs. It is currently only available for standalone Daydream headsets. https://github.com/MozillaReality/FirefoxReality/issues/598
+
 *If you want to build FirefoxReality for WaveVR SDK:*
 
 Download the [VIVE Wave SDK](https://developer.vive.com/resources/knowledgebase/wave-sdk/) from the [VIVE Developer Resources](https://vivedeveloper.com/), and unzip it. Then, from the top-level project directory, run:
