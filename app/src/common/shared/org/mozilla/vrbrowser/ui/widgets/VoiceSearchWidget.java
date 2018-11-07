@@ -88,6 +88,8 @@ public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate
 
         mMozillaSpeechService = MozillaSpeechService.getInstance();
         mMozillaSpeechService.setProductTag("fxr");
+        mMozillaSpeechService.storeSamples(false);
+        mMozillaSpeechService.storeTranscriptions(false);
 
         mVoiceSearchText1 = findViewById(R.id.voiceSearchText1);
         mVoiceSearchText2 = findViewById(R.id.voiceSearchText2);
