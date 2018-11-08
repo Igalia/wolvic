@@ -1,234 +1,493 @@
 <resources>
-    <!-- This string is used on the virtual keyboard to label the enter key. -->
+    <!-- IMPORTANT NOTE: If this file is updated anyhow, the STRs wiki must be updated accordingly:
+    https://github.com/MozillaReality/FirefoxReality/wiki/L10n -->
+
+    <!-- This string is used on the virtual keyboard to label the 'Enter' key (stylized in uppercase letters as 'ENTER'). -->
     <string name="keyboard_enter_label">ENTER</string>
+
+    <!-- This string is displayed in the button that means the user accepts the
+         permission requested for in the permission dialog box. -->
+    <string name="permission_allow">Allow</string>
+
+    <!-- This string is displayed in the button that means the user rejects the
+         permission requested for in the permission dialog box. -->
+    <string name="permission_reject">Don’t Allow</string>
+
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's camera.
-         '%1$s' will be replaced at runtime with the app name. -->
+         '%1$s' will be replaced at runtime with the website's domain name. -->
     <string name="permission_camera">Will you allow %1$s to use your camera?</string>
+
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's microphone.
-         '%1$s' will be replaced at runtime with the app name. -->
+         '%1$s' will be replaced at runtime with the website's domain name. -->
     <string name="permission_microphone">Will you allow %1$s to use your microphone?</string>
+
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's camera and microphone.
-         '%1$s' will be replaced at runtime with the app name. -->
+         '%1$s' will be replaced at runtime with the website's domain name. -->
     <string name="permission_camera_and_microphone">Will you allow %1$s to use your camera and microphone?</string>
+
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's geographic location.
-         '%1$s' will be replaced at runtime with the app name. -->
+         '%1$s' will be replaced at runtime with the website's domain name. -->
     <string name="permission_location">Will you allow %1$s to access your location?</string>
+
     <!-- This string will be displayed in a dialog box presented to the user
-         when the application needs to request permission to send system notifications.
-         '%1$s' will be replaced at runtime with the app name. -->
+         when the application needs to request permission to send browser-level
+         push notifications from a particular website (i.e., same origin).
+         '%1$s' will be replaced at runtime with the website's domain name. -->
     <string name="permission_notification">Will you allow %1$s to send notifications?</string>
-    <!-- This string will be displayed in a dialog box presented to the user
-         when the application needs to request permission to access the device's external storage such as the
-         sdcard. '%1$s' will be replaced at runtime with the app name. -->
+
+    <!-- This string will be displayed in a dialog box presented to the user when the application
+         needs to request permission to access the device's external storage such as the
+         sdcard. '%1$s' will be replaced at runtime with the website's domain name. -->
     <string name="permission_read_external_storage">Will you allow %1$s to read your external storage?</string>
-    <!-- This string is displayed in the settings dialog box and how
+
+    <!-- This string will be displayed in a dialog box presented to the user when the application
+         needs to request permission to access the device's external storage such as the
+         sdcard. '%1$s' will be replaced at runtime with the website's domain name. -->
+    <string name="permission_persistent_storage">Will you allow %1$s to store data in persistent storage?</string>
+
+    <!-- This string is displayed in the Settings dialog box and how
          the user can know which version of the application they are currently running.
          '%1$s' will be replaced at runtime with the application version number. -->
     <string name="settings_version">version %1$s</string>
-    <!-- This string is displayed in the settings dialog and is used to label an
-         ON/OFF switch which toggles whether an application crash is reported without first
+
+    <!-- This string is displayed in the Settings dialog box and is used to label an
+         On/Off switch which toggles whether an application crash is reported without first
          prompting the user. -->
     <string name="settings_crash_reporting">Crash Reporting</string>
-    <!-- This string is displayed in the settings dialog and is used to label an ON/OFF
-         switch which toggles whether telemetry is reported back to Mozilla. -->
+
+    <!-- This string is displayed in the Settings dialog box and is used to label an
+         On/Off switch which toggles whether browser-level Telemetry is reported back to Mozilla. -->
     <string name="settings_telemetry">Telemetry</string>
-    <!-- This string is used to label a button that when pressed loads a Web page the
-         describes Mozilla's privacy policy. -->
+
+    <!-- This string is used to label a button that, when pressed, loads a website that
+         describes Mozilla's Privacy Policy. -->
     <string name="settings_privacy">Privacy Policy</string>
-    <!-- This string is used to label a button that when pressed loads a Web page
+
+    <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
+         opens a dialog box that contains settings that an application or Web developer might want to change. -->
+    <string name="settings_developer_options">Developer Options</string>
+
+    <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
+         opens a dialog box that contains language-related settings. -->
+    <string name="settings_language">Language</string>
+
+    <!-- This string is used to label a text label for selecting the language in the 'Language' dialog window
+         (accessible from the browser's Settings' dialog window). Below this string appears a list of locales for
+         the user to choose as their preferred reading languages for website content. Each locale,
+         as `language-tag` strings, is then included in the browser's `Accept-Language` HTTP request
+         header that is sent to websites, as well as the JavaScript property, `navigator.language`. -->
+    <string name="settings_language_choose_language_webpage_content">Choose your preferred language for displaying pages</string>
+
+    <!-- This string is used to label a text label for selecting the language in the 'Language' dialog window
+         (accessible from the browser's Settings' dialog window). Below this string appears a list of locales for
+         the user to choose as their preferred language for the browser's speech-to-text 'Voice Search' system.
+         Based on the user's selection, the printed language is mapped to its ISO 639-1 code
+         (e.g., `Español` is mapped to `es`) when configured in the 'Voice Search' system. -->
+    <string name="settings_language_choose_language_voice_search">Choose your preferred language for voice search</string>
+
+    <!-- This string is used to label a radio button in the 'Settings' Language dialog that, when pressed,
+         changes the app and the language of the speech-recognition-based search to 'English (US)'. -->
+    <string name="settings_language_english">English (US)</string>
+
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+         changes the app and the language of the speech-recognition-based search to 'Chinese (Traditional/Zhuyin)'. -->
+    <string name="settings_language_traditional_chinese">Chinese (Traditional/Zhuyin)</string>
+
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+         changes the app and the language of the speech-recognition-based search to 'Chinese (Simplified/Pinyin)'. -->
+    <string name="settings_language_simplified_chinese">Chinese (Simplified/Pinyin)</string>
+
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+         changes the app and the language of the speech-recognition-based search to 'Japanese'. -->
+    <string name="settings_language_japanese">Japanese</string>
+
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+         changes the app and the language of the speech-recognition-based search to 'French'. -->
+    <string name="settings_language_french">French</string>
+
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+         changes the app and the language of the speech-recognition-based search to 'German'. -->
+    <string name="settings_language_german">German</string>
+
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+         changes the app and the language of the speech-recognition-based search to 'Spanish'. -->
+    <string name="settings_language_spanish">Spanish</string>
+
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+         changes the app and the language of the speech-recognition-based search to 'Korean'. -->
+    <string name="settings_language_korean">Korean</string>
+
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+         changes the app and the language of the speech-recognition-based search to 'Italian'. -->
+    <string name="settings_language_italian">Italian</string>
+
+    <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
+        opens a dialog box that contains display-related settings: window size, pixel density, etc. -->
+    <string name="settings_display">Display</string>
+
+    <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
+         opens a dialog box that contains controller-related options: pointer color and scroll direction. -->
+    <string name="settings_controller_options">Controller Options</string>
+
+    <!-- This string is displayed in the 'Settings' dialog window and, is used to label an,
+         On/Off switch that enables/disables the speech-data reporting. -->
+    <string name="settings_report_speech_data">Report Speech Data</string>
+
+    <!-- This string is used to label a button that, when pressed, loads a website
          that allows the user file an issue or problem they may have encountered while using the
          application or while visiting a site. -->
-    <string name="settings_report_issue">Report an issue</string>
-    <!-- This string is used in place of 'settings_version' for developer builds. -->
+    <string name="settings_report_issue">Report an Issue</string>
+
+    <!-- This string is used in place of the 'settings_version' string (e.g., `version 1.1`) when the user is running
+         a developer-build version of the app. -->
     <string name="settings_version_developer">Developer Build</string>
-    <!-- This string is used to label a button in the settings dialog that when pressed
-         opens a dialog box that contains setting an application or Web developer might want to change. -->
-    <string name="settings_developer_options">Developer Options</string>
+
     <!-- This string is the title of a dialog box shown to the user when a settings
          change requires the application to restart. -->
     <string name="restart_dialog_restart">Restart Required</string>
+
     <!-- This string is the text displayed in the restart dialog box explaining why the
-         restart is required. '%1$s' will be replaced at runtime with the app name. -->
+         restart is required. '%1$s' will be replaced at runtime with the app's name. -->
     <string name="restart_dialog_text">You must restart %1$s in order to complete changes. Would you like to do that now?</string>
+
     <!-- This string is used to label the button the user presses to restart the
          application in the restart dialog. -->
     <string name="restart_now_dialog_button">Restart Now</string>
-    <!-- This string is used to label the button the user presses to restart the
-     postpone the app restart. -->
+
+    <!-- This string is used to label the button the user presses in order to skip the application
+         from being restarted. -->
     <string name="restart_later_dialog_button">Restart Later</string>
-    <!-- This string labels an ON/OFF switch in the developer options
-         dialog and is used to toggle remote debugging of Web content in the application. -->
+
+    <!-- This string labels an On/Off switch in the 'Developer Options' dialog
+         and is used to toggle remote debugging of website content in the application. -->
     <string name="developer_options_remote_debugging">Enable Remote Debugging</string>
-    <!-- This string labels an ON/OFF switch in the developer options dialog
-         and is used to toggle redirecting Javascript console output to the Android logcat. -->
+
+    <!-- This string labels an On/Off switch in the 'Developer Options' dialog
+         and is used to toggle redirecting JavaScript Console output to the Android Logcat (i.e., `adb logcat`). -->
     <string name="developer_options_show_console">Redirect Console to Logcat</string>
-    <!-- This string labels an ON/OFF switch in the developer options dialog
-         and is used to toggle loading externally generated environments and overriding the ones built in. -->
+
+    <!-- This string labels an On/Off switch in the developer options dialog
+         and is used to customize background environments of the app. -->
     <string name="developer_options_env_override">Enable Environment Override</string>
-    <!-- This string labels an ON/OFF switch in the developer options dialog
-         and is used to toggle running content in a separate process.
-         Multiprocessing:
-         the running of two or more programs or sequences of instructions simultaneously
-         by a computer with more than one central processor. -->
+
+    <!-- This string labels an On/Off switch in the developer options dialog and is used to toggle
+         running content in a separate process.
+         Multiprocessing: the running of two or more programs or sequences of instructions
+         simultaneously by a computer with more than one central processor.
+         A dialog should appear with a field labeled with the text, 'Enable Multiprocess'. -->
     <string name="developer_options_multiprocess">Enable Multiprocess</string>
-    <!-- The string an ON/OFF switch in the developer options dialog and is used to toggle enabling servo. -->
+
+    <!-- The string labels an On/Off switch in the developer options dialog and is used to toggle enabling Servo. -->
     <string name="developer_options_servo">Enable Servo</string>
-    <!-- This string is used to label a numerical entry field where the user
-         may enter a new value to use for the display density. -->
+
+    <!-- This string is used to label a numerical-entry field where the user may set a new value to
+         use for the display density. -->
     <string name="developer_options_display_density">Display Density:</string>
-    <!-- This string is used to label two integer entry fields where the default height and width of
+
+    <!-- This string is used to label two integer-entry fields where the default width and height of
          the browser window may be set. -->
     <string name="developer_options_window_size">Window Size:</string>
-    <!-- This string is used to label buttons to enable editing of text fields in the developer
-         options dialog. Pressing this button switches the fields to edit boxes so their values
-         may be changed. -->
+
+    <!-- This string is used to label buttons to enable editing of text fields in the
+         'Developer Options' dialog. Pressing this button switches the text to
+         editable-text fields so their values may be changed. -->
     <string name="developer_options_edit">Edit</string>
-    <!-- This string is used to label the 'Edit' button once it has been clicked by the user. It
-         indicates that when the button is clicked, the user's edits will be saved. -->
+
+    <!-- This string is used to label the 'Edit' button once it has been pressed by the user. It
+         indicates that, when the button is pressed, the user's edits will be saved. -->
     <string name="developer_options_save">Save</string>
+
     <!-- This string is used to label a numerical entry field where the user may enter a new value
-         for the virtual displays dots per inch (DPI). -->
+         for the virtual displays Dots Per Inch (DPI). -->
     <string name="developer_options_display_dpi">Display DPI:</string>
+
     <!-- This string is used to label two integer entry fields that will allow the user to adjust
          the maximum window size in the X and Y dimensions. -->
     <string name="developer_options_max_window_size">Max. Window Size:</string>
-    <!-- This string is used to label radio buttons for setting multi-sample anti-aliasing (MSAA) in
-         VR immersive mode. -->
+
+    <!-- This string is used to label radio buttons for setting Multi-Sample Anti-Aliasing (MSAA) in
+         VR Immersive Mode. -->
     <string name="developer_options_msaa">MSAA</string>
-    <!-- This string is used to label the MSAA radio button that disables MSAA in immersive mode. -->
+
+    <!-- This string is used to label the MSAA radio button that disables MSAA in Immersive Mode. -->
     <string name="developer_options_msaa_disabled">Disabled</string>
-    <!-- This string is used to label the MSAA radio button that enables two times MSAA in immersive mode. -->
+
+    <!-- This string is used to label the MSAA radio button that enables two times MSAA in Immersive Mode. -->
     <string name="developer_options_msaa_2">2x</string>
-    <!-- This string is used to label the MSAA radio button that enables four times MSAA in immersive mode. -->
+
+    <!-- This string is used to label the MSAA radio button that enables two times MSAA in Immersive Mode. -->
     <string name="developer_options_msaa_4">4x</string>
-    <!-- This string is used to label a set of radio buttons that allow the user to
-     change the user-agent (UA) string of the browser. -->
+
+    <!-- This string is used to label a set of radio buttons that allow the user to change the
+         User-Agent (UA) string of the browser. -->
     <string name="developer_options_ua_mode">User-Agent Mode</string>
-    <!-- This string is used to label the desktop user-agent radio button of the 'User-Agent Mode'
-         settings option. -->
+
+    <!-- This string is used to label the 'Desktop' radio button of the 'User-Agent Mode' settings option. -->
     <string name="developer_options_ua_desktop">Desktop</string>
-    <!-- This string is used to label the mobile user-agent radio button of the 'User-Agent Mode'
-         settings option. -->
+
+    <!-- This string is used to label the 'Mobile' radio button of the 'User-Agent Mode' settings option. -->
     <string name="developer_options_ua_mobile">Mobile</string>
-    <!-- This string is used to label the virtual reality (VR) user-agent radio button of the
-         'User-Agent Mode' settings option. -->
+
+    <!-- This string is used to label the 'VR' radio button of the 'User-Agent Mode' settings option. -->
     <string name="developer_options_ua_vr">VR</string>
+
     <!-- This string describes what the 'Reset' button in the developer options does which is
          restore all the developer settings to their default value. -->
     <string name="developer_options_reset">Reset Developer Settings</string>
-    <!-- This string labels the 'Reset' button that restores the default developer settings values.  -->
+
+    <!-- This string labels the 'Reset' button that restores the default developer settings values. -->
     <string name="developer_options_reset_button">Reset</string>
-    <!-- This string describes the radio buttons used to select the environment seen while not in
-         immersive mode. -->
+
+    <!-- This string describes the radio buttons used to select the user's background environment
+         (seen while not in Immersive Mode). -->
     <string name="developer_options_environments">Environment</string>
-    <!-- This string labels the radio button that selects the 'Meadow' environment. -->
-    <string name="developer_options_env_meadow">Meadow</string>
+
+    <!-- This string labels the radio button that selects the 'Void' environment.
+         The 'Void' environment is an empty space that surrounds the user in empty, black space. -->
+    <string name="developer_options_env_void">Void</string>
+
     <!-- This string labels the radio button that selects the 'Cave' environment. -->
     <string name="developer_options_env_cave">Cave</string>
-    <!-- This string labels the radio button that selects the 'Void' environment. The void
-         environment is an empty space that surrounds the user in empty, black space. -->
-    <string name="developer_options_env_void">Void</string>
+
+    <!-- This string labels the radio button that selects the 'Meadow' environment. -->
+    <string name="developer_options_env_meadow">Meadow</string>
+
     <!-- This string describes the radio buttons used to select the pointer color. -->
     <string name="developer_options_pointer_color">Pointer Color</string>
+
+    <!-- This string labels the radio button that sets the pointer color to purple. -->
+    <string name="developer_options_pointer_purple">Purple</string>
+
     <!-- This string labels the radio button that sets the pointer color to white. -->
     <string name="developer_options_pointer_white">White</string>
-    <!-- This string labels the radio button that sets the pointer color to purple.  -->
-    <string name="developer_options_pointer_purple">Purple</string>
-    <!-- This string is displayed below the ON/OFF switch to indicated the switches current
-         state as 'ON'.  -->
+
+    <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'On'. -->
     <string name="on">On</string>
-    <!-- This string is displayed below the ON/OFF switch to indicated the switches current
-         state as 'OFF'.  -->
+
+    <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'Off'. -->
     <string name="off">Off</string>
-    <!-- This string is displayed in the voice search dialog box that is show to the user when they press the
-         button used to initiate voice search. -->
+
+    <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
+         button used to initiate Voice Search. -->
     <string name="voice_search_start">What would you like to search on the Web?</string>
-    <!-- This string is displayed in the voice search dialog box and gives examples of phrases they
-         might use in a voice search. -->
-    <string name="voice_search_example">Example: Please say, \"360 videos, weather, news…\"</string>
-    <!-- This string is displayed in a dialog box show to the user while the voice search is being
+
+    <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
+         button used to initiate Voice Search. -->
+    <string name="voice_search_example">Example: Please say, “360 videos, weather, news…”</string>
+
+    <!-- This string is displayed in a dialog box show to the user while the Voice Search is being
          performed. It indicates that the search query is running and they should wait for the result. -->
     <string name="voice_search_decoding">Searching…</string>
-    <!-- This string is displayed in a dialog box when the phrase the user spoke for the voice search
-         was not understood by the system. -->
+
+    <!-- This string is displayed in a dialog box show to the user while the Voice Search is being
+         performed. It indicates that the search query is running and they should wait for the result. -->
     <string name="voice_search_error">Sorry! I could not understand.</string>
-    <!-- This string is displayed in a dialog box after a failed voice search and is prompting the
-         user to try the voice search again. -->
+
+    <!-- This string is displayed in a dialog box after a failed Voice Search and the system is prompting the
+         user to try the Voice Search again. -->
     <string name="voice_search_try_again">Please try again.</string>
+
     <!-- This string is displayed in a dialog after the user has declined permission to use the
-         devices microphone. It explains why voice search is not working. -->
-    <string name="voice_search_permission_after_decline">Please allow microphone access to use the voice search.</string>
+         device's microphone. It explains why Voice Search is not working. -->
+    <string name="voice_search_permission_after_decline">Please allow microphone access to use the Voice Search.</string>
+
     <!-- This string is displayed in the URL bar when it is empty. It informs the user that they
          may use the URL bar to search the Web or enter a Web address. -->
     <string name="search_placeholder">Search the Web or enter address</string>
-    <!-- This string labels a button used to cancel an action. -->
+
+    <!-- This string labels a button that is used to cancel an action.
+         This appears in such contexts as dialog boxes, `<select>` menus, etc. -->
     <string name="cancel_button">Cancel</string>
-    <!-- This string labels a button that are used to approve an action. -->
+
+    <!-- This string labels a button that is used to approve an action.
+         This appears in such contexts as dialog boxes, `<select>` menus, etc. -->
     <string name="ok_button">OK</string>
-    <!-- This string labels a button to go back to the previous menu or exits the current mode -->
+
+    <!-- This string labels a button that is used to approve an action. -->
     <string name="back_button">Back</string>
+
     <!-- This string is displayed in a dialog after an application crash. -->
     <string name="crash_dialog_heading">We had an issue and crashed</string>
+
     <!-- This string explains why Mozilla would like the user to allow the crash data to be uploaded.
-         '%1$s' will be replaced at runtime with the app name. -->
+         '%1$s' will be replaced at runtime with the app's domain name. -->
     <string name="crash_dialog_message">Please help Mozilla improve %1$s by sending your crash data.</string>
+
     <!-- This string labels a checkbox in the crash dialog box. When checked, the user will no longer
          be prompted for permission to upload crash data after an application crash. -->
     <string name="crash_dialog_send_data">Always send data without asking</string>
-    <!-- This string labels a button that when clicked allows the user to learn more about the
+
+    <!-- This string labels a button that, when pressed, allows the user to learn more about the
          currently open dialog. -->
     <string name="learn_more_button">Learn More</string>
-    <!-- This string labels a button that when clicked prevents crash data from being sent to Mozilla. -->
+
+    <!-- This string labels a button that, when pressed, prevents browser-level crash data from being sent to Mozilla. -->
     <string name="do_not_sent_button">Do Not Send</string>
-    <!-- This string labels a button that when clicked allows the crash data to be sent to Mozilla. -->
+
+    <!-- This string labels a button that, when pressed, allows the crash data to be sent to Mozilla. -->
     <string name="send_data_button">Send Data</string>
-    <!-- This string labels a button to open the Brightness mode selector-->
+
+    <!-- This string appears in the tooltip for the button to change the 'Brightness'
+         (i.e., the brightness level of the background environment), in particular when playing a video. -->
     <string name="brightness_mode_tooltip">Brightness</string>
-    <!-- This string is displayed when selecting a background brightness mode -->
+
+    <!-- This string labels the radio option that selects the 'Normal' background in the 'Brightness' mode. -->
     <string name="brightness_mode_normal">Normal</string>
-    <!-- This string is displayed when selecting a background brightness mode -->
+
+    <!-- This string labels the radio option that selects the 'Dark' background in the 'Brightness' mode. -->
     <string name="brightness_mode_dark">Dark</string>
-    <!-- This string is displayed when selecting a background brightness mode -->
+
+    <!-- This string labels the radio option that selects the 'Void' background in the 'Brightness' mode. -->
     <string name="brightness_mode_void">Void</string>
-    <!-- This string labels a button to open the Video projection mode selector-->
+
+    <!-- This string labels a button to open the Video Projection selector. -->
     <string name="video_mode_tooltip">Video Projection</string>
-    <!-- This string is displayed when selecting a video playback mode -->
+
+    <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_3d_side">3D Side by Side</string>
-    <!-- This string is displayed when selecting a video playback mode -->
+
+    <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_360">360</string>
-    <!-- This string is displayed when selecting a video playback mode -->
+
+    <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_360_stereo">360 Stereo</string>
-    <!-- This string is displayed when selecting a video playback mode -->
+
+    <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_180">180</string>
-    <!-- This string is displayed when selecting a video playback mode -->
-    <string name="video_mode_180_left_right">Stereo 180 (Left/Right)</string>
-    <!-- This string is displayed when selecting a video playback mode -->
-    <string name="video_mode_180_top_bottom">Stereo 180 (Top/Bottom)</string>
-    <!-- This string is displayed when selecting a video playback mode -->
+
+    <!-- This string is displayed when selecting a video playback mode. -->
+    <string name="video_mode_180_left_right">Stereo 180 Left to Right</string>
+
+    <!-- This string is displayed when selecting a video playback mode. -->
+    <string name="video_mode_180_top_bottom">Stereo 180 Top to Bottom</string>
+
+    <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_2d">2D</string>
-    <!-- This string is displayed as a tooltip in the video controls UI -->
+
+    <!-- This string is displayed in a tooltip in the video controls UI. -->
     <string name="video_controls_play">Play</string>
-    <!-- This string is displayed as a tooltip in the video controls UI -->
+
+    <!-- This string is displayed in a tooltip in the video controls UI. -->
     <string name="video_controls_pause">Pause</string>
-    <!-- This string is displayed as a tooltip in the video controls UI -->
+
+    <!-- This string is displayed in a tooltip in the video controls UI. -->
     <string name="video_controls_mute">Mute</string>
-    <!-- This string is displayed as a tooltip in the video controls UI -->
+
+    <!-- This string is displayed in a tooltip in the video controls UI. -->
     <string name="video_controls_unmute">Unmute</string>
-    <!-- This string is displayed as a tooltip in the video controls UI -->
+
+    <!-- This string is displayed in a tooltip below the video controls UI. -->
     <string name="video_controls_volume">Volume</string>
-    <!-- This string is displayed as a tooltip in the video controls UI. E.g Seek +10 seconds -->
+
+    <!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek +30 seconds'). -->
     <string name="video_controls_seek_forward">Seek +%1$ seconds</string>
-    <!-- This string is displayed as a tooltip in the video controls UI. E.g Seek -10 seconds -->
+
+    <!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek -15 seconds'). -->
     <string name="video_controls_seek_backward">Seek -%1$ seconds</string>
+
     <!-- This string is displayed in the video control seekbar when the media is not seekable
-        (e.g. a live stream video). Prefer a short text because it affects the width of the seek bar -->
+         (e.g., a live video stream). Prefer a short text because it affects the width of the seek bar. -->
     <string name="video_controls_live">LIVE</string>
-    <!-- This string is displayed in the permission dialog button for granting the permission -->
-    <string name="permission_allow">Allow</string>
-    <!-- This string is displayed in the permission dialog button for reject the permission -->
-    <string name="permission_reject">Don\'t Allow</string>
+
+    <!-- This string is displayed as the title of the Bookmarks List, which contains the user's bookmarked websites. -->
+    <string name="bookmarks_title">Bookmarks</string>
+
+    <!-- This string is displayed in a tooltip that appears when a user hovers
+         over an icon representing 'Remove Bookmark' for an individual bookmark
+         item listed in the Bookmarks List. -->
+    <string name="bookmarks_remove">Remove Bookmark</string>
+
+    <!-- This string is displayed in a tooltip that appears when a user hovers
+         over an icon representing 'Edit This Bookmark' for an individual bookmark
+         item listed in the Bookmarks List. -->
+    <string name="bookmarks_edit">Edit This Bookmark</string>
+
+    <!-- This string is displayed as placeholder text in the search field in the Bookmarks List. -->
+    <string name="bookmarks_search">Search Bookmarks</string>
+
+    <!-- This string is displayed in a tooltip in the bookmark button in the URL bar. -->
+    <string name="bookmarks_bookmark">Bookmark This Page</string>
+
+    <!-- This string is displayed in the Bookmarks List for as the header of the most recently
+         bookmarked items. -->
+    <string name="bookmarks_recent">Recently Bookmarked</string>
+
+    <!-- This string is displayed in the Bookmarks List as a tooltip of the button for showing
+         all the bookmarks. -->
+    <string name="bookmarks_show_all">Show All Bookmarks</string>
+
+    <!-- This string labels the Reset button that restores the default display settings values. -->
+    <string name="display_options_reset">Reset Display Settings</string>
+
+    <!-- This string labels the Reset button that restores the default voice search language settings values. -->
+    <string name="language_options_reset">Reset Voice Search Language Settings</string>
+
+    <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the 'Name' of the bookmarked website. -->
+    <string name="col_name">Name</string>
+
+    <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the 'Tags' of the bookmarked website. -->
+    <string name="col_tags">Tags</string>
+
+    <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the 'Location' (or 'URL' or 'Address') of the bookmarked website. -->
+    <string name="col_url">Location</string>
+
+    <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the date of when the bookmarked website was most recently visited. -->
+    <string name="col_most_recent_visit">Most Recent Visit</string>
+
+    <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the date of when the website was bookmarked. -->
+    <string name="col_date_added">Added</string>
+
+    <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the date of when the bookmarked website was last edited. -->
+    <string name="col_date_last_modified">Last Modified</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Back' button in the browser's navigation bar.
+         'Back' refers to going back one page in 'History'. -->
+    <string name="back_tooltip">Back</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Forward' button in the browser's navigation bar.
+         'Forward' refers to going back one page in 'History'. -->
+    <string name="forward_tooltip">Forward</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Refresh' button in the browser's navigation bar.
+         'Refresh' refers to reloading the current page. -->
+    <string name="refresh_tooltip">Refresh</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Home' button in the browser's navigation bar.
+         'Home' refers to the browser's start page (e.g., the Firefox Reality Home Page). -->
+    <string name="home_tooltip">Home</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Voice Search' (microphone) button in the
+         browser's navigation bar. 'Voice Search' refers to the browser's system for searching the Web using
+         speech-to-text recognition. -->
+    <string name="voice_search_tooltip">Voice Search</string>
+
+    <!-- This string is for the tooltip that when clicking the 'Info' (ⓘ) icon visible next to the current website's
+         URL in the URL bar. The button it labels, when pressed, shows information about the site. -->
+    <string name="site_info_tooltip">Show site info.</string>
+
+    <!-- This string is for the tooltip that appears when the user is not in the browser's Private Browsing mode
+         and hovers over the 'Private Browsing' icon in the browser's tray menu. -->
+    <string name="private_browsing_enter_tooltip">Enter Private Browsing</string>
+
+    <!-- This string is for the tooltip that appears when the user is in the browser's Private Browsing mode
+         and hovers over the 'Private Browsing' icon in the browser's tray menu. -->
+    <string name="private_browsing_exit_tooltip">Exit Private Browsing</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmarks' icon in the
+         browser's navigation bar. The button it labels, when pressed, opens a list view of the user's saved
+         Bookmarks. -->
+    <string name="bookmarks_tooltip">Bookmarks</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the down-arrow icon that appears in the
+         URL bar upon hover. The icon it labels, when pressed, expands a list of recently visited websites in the
+         user's History. -->
+    <string name="show_history_tooltip">Show history</string>
+
+    <!-- This string is displayed in any button used for removing all the items in the current context. -->
+    <string name="remove_all">Remove All</string>
+
 </resources>

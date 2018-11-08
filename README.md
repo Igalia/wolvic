@@ -12,6 +12,11 @@ You can find us on Twitter [@MozillaReality](https://twitter.com/mozillareality)
 2. Click the `Firefox Reality for Android - Build - Master update →` link.
 3. Click the `Run Artifacts` tab, and click to download the APK for your platform of choice.
 
+## L10n
+
+Whenever a new string is added to a localizable strings file (strings.xml ,localpages.xml, ...) a string description must be provided as a comment above the new string. Also the project STRs wiki page must be updated with a key description, steps to reproduce and the expected results.
+The L10n wiki page can be found [here](https://github.com/MozillaReality/FirefoxReality/wiki/L10n).
+
 ## Setup instructions
 
 *Make sure you are using Android NDK r17b.*
