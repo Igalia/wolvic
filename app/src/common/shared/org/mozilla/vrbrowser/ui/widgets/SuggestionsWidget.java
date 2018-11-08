@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 
@@ -74,7 +75,7 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                SuggestionsWidget.super.hide();
+                ThreadUtils.postToUiThread(() -> SuggestionsWidget.super.hide());
             }
 
             @Override
