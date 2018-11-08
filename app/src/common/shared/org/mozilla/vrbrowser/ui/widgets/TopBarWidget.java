@@ -66,7 +66,7 @@ public class TopBarWidget extends UIWidget implements SessionStore.SessionChange
         aPlacement.width = WidgetPlacement.dpDimension(context, R.dimen.top_bar_width);
         aPlacement.height = WidgetPlacement.dpDimension(context, R.dimen.top_bar_height);
         // FIXME: Something wrong with the DPI ratio? Revert to top_bar_world_width when fixed
-        aPlacement.worldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.browser_world_width) * 40/720;
+        aPlacement.worldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.browser_world_width) * aPlacement.width/getWorldWidth();
         aPlacement.translationY = WidgetPlacement.unitFromMeters(context, R.dimen.top_bar_world_y);
         aPlacement.anchorX = 0.5f;
         aPlacement.anchorY = 0.5f;

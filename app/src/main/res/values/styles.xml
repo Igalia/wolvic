@@ -192,6 +192,17 @@
         <item name="scrollbarStyle">@style/scrollbar</item>
         <item name="radioButtonStyle">@style/radioButtonTheme</item>
         <item name="android:textCursorDrawable">@drawable/cursor_drawable</item>
+
+        <!-- Draggable scrollbar -->
+        <item name="android:fastScrollEnabled">true</item>
+        <item name="android:fastScrollAlwaysVisible">true</item>
+        <item name="android:scrollbarSize">15dp</item>
+        <item name="android:fastScrollThumbDrawable">@drawable/fast_scroll_thumb</item>
+        <item name="android:fastScrollStyle">@style/Widget.FastScroll</item>
+        <item name="android:fastScrollOverlayPosition">atThumb</item>
+        <item name="android:smoothScrollbar">true</item>
     </style>
+
+    <style name="Widget.FastScroll" parent="android:Widget.Material.FastScroll"/>
 
 </resources>

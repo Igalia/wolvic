@@ -1,22 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
-    <EditText
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <mozilla.components.ui.autocomplete.InlineAutocompleteEditText
         android:id="@+id/urlEditText"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="0dp"
+        android:gravity="center_vertical"
+        android:background="@drawable/url_background"
+        android:ems="10"
+        android:hint="@string/search_placeholder"
+        android:inputType="textUri"
         android:paddingStart="20dp"
         android:paddingEnd="40dp"
-        android:ems="10"
-        android:inputType="textUri"
-        android:hint="@string/search_placeholder"
-        android:background="@drawable/url_background"
+        android:selectAllOnFocus="true"
         android:textColor="@color/fog"
         android:textColorHighlight="@color/azure"
-        android:selectAllOnFocus="true"
         android:requiresFadingEdge="horizontal"
         android:fadingEdgeLength="40dp"
-        android:ellipsize="none"/>
+        android:ellipsize="none"
+        android:textSize="16dip"
+        app:autocompleteBackgroundColor="@color/azure"/>
 
     <RelativeLayout
         android:id="@+id/urlLeftContainer"

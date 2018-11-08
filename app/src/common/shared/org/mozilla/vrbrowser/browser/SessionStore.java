@@ -6,8 +6,10 @@
 package org.mozilla.vrbrowser.browser;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -27,9 +29,9 @@ import org.mozilla.geckoview.WebRequestError;
 import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.crashreporting.CrashReporterService;
+import org.mozilla.vrbrowser.geolocation.GeolocationData;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.utils.InternalPages;
-import org.mozilla.vrbrowser.utils.ValueHolder;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -47,11 +49,13 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.mozilla.vrbrowser.utils.ServoUtils.*;
+import static org.mozilla.vrbrowser.utils.ServoUtils.createServoSession;
+import static org.mozilla.vrbrowser.utils.ServoUtils.isInstanceOfServoSession;
+import static org.mozilla.vrbrowser.utils.ServoUtils.isServoAvailable;
 
 public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSession.ProgressDelegate,
         GeckoSession.ContentDelegate, GeckoSession.TextInputDelegate, GeckoSession.TrackingProtectionDelegate,
-        GeckoSession.PromptDelegate {
+        GeckoSession.PromptDelegate, SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static SessionStore mInstance;
     private static final String LOGTAG = "VRB";
@@ -110,8 +114,15 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     private int mPreviousSessionId = SessionStore.NO_SESSION_ID;
     private String mRegion;
     private Context mContext;
+    private SharedPreferences mPrefs;
 
     private SessionStore() {
+        mSessions = new LinkedHashMap<>();
+        mSessionsStack = new ArrayDeque<>();
+        mPrivateSessionsStack = new ArrayDeque<>();
+    }
+
+    public void registerListeners() {
         mNavigationListeners = new LinkedList<>();
         mProgressListeners = new LinkedList<>();
         mContentListeners = new LinkedList<>();
@@ -119,17 +130,21 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         mTextInputListeners = new LinkedList<>();
         mPromptListeners = new LinkedList<>();
 
-        mSessions = new LinkedHashMap<>();
-        mSessionsStack = new ArrayDeque<>();
-        mPrivateSessionsStack = new ArrayDeque<>();
+        if (mPrefs != null) {
+            mPrefs.registerOnSharedPreferenceChangeListener(this);
+        }
     }
 
-    public void clearListeners() {
+    public void unregisterListeners() {
         mNavigationListeners.clear();
         mProgressListeners.clear();
         mContentListeners.clear();
         mSessionChangeListeners.clear();
         mTextInputListeners.clear();
+
+        if (mPrefs != null) {
+            mPrefs.unregisterOnSharedPreferenceChangeListener(this);
+        }
     }
 
     public void setContext(Context aContext, Bundle aExtras) {
@@ -157,6 +172,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         }
 
         mContext = aContext;
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
     }
 
     public void dumpAllState(Integer sessionId) {
@@ -441,7 +457,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         Log.d(LOGTAG, "SessionStore setRegion: " + aRegion);
         mRegion = aRegion != null ? aRegion.toLowerCase() : "worldwide";
 
-        // There is a region update and the home is already loaded
+        // There is a region initialize and the home is already loaded
         if (mCurrentSession != null && isHomeUri(getCurrentUri())) {
             mCurrentSession.loadUri("javascript:window.location.replace('" + getHomeUri() + "');");
         }
@@ -1172,5 +1188,17 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     @Override
     public GeckoResult<AllowOrDeny> onPopupRequest(final GeckoSession session, final String targetUri) {
         return GeckoResult.fromValue(AllowOrDeny.DENY);
+    }
+
+    // SharedPreferences.OnSharedPreferenceChangeListener
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (mContext != null) {
+            if (key == mContext.getString(R.string.settings_key_geolocation_data)) {
+                GeolocationData data = GeolocationData.parse(sharedPreferences.getString(key, null));
+                setRegion(data.getCountryCode());
+            }
+        }
     }
 }

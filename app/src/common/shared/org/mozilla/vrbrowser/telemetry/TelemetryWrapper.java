@@ -21,7 +21,7 @@ import org.mozilla.telemetry.storage.FileTelemetryStorage;
 import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.SettingsStore;
-import org.mozilla.vrbrowser.search.SearchEngine;
+import org.mozilla.vrbrowser.search.SearchEngineWrapper;
 import org.mozilla.vrbrowser.utils.UrlUtils;
 
 import java.net.URI;
@@ -178,7 +178,7 @@ public class TelemetryWrapper {
     }
 
     private static String getDefaultSearchEngineIdentifierForTelemetry(Context aContext) {
-        return SearchEngine.get(aContext).getURLResource();
+        return SearchEngineWrapper.get(aContext).getResourceURL();
     }
 
     private static void searchEnterEvent() {

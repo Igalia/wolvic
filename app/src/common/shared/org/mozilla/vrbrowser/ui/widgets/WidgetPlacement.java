@@ -6,6 +6,8 @@
 package org.mozilla.vrbrowser.ui.widgets;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
 
 public class WidgetPlacement {
@@ -94,6 +96,17 @@ public class WidgetPlacement {
 
     public static float unitFromMeters(Context aContext, int aDimensionId) {
         return unitFromMeters(floatDimension(aContext, aDimensionId));
+    }
+
+    public static float convertDpToPixel(Context aContext, float dp){
+        Resources resources = aContext.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        float px = dp * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+        return px;
+    }
+
+    public static float convertPixelsToDp(Context aContext, float px){
+        return px / ((float) aContext.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT);
     }
 
 }

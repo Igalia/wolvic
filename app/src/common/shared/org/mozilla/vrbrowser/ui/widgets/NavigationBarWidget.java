@@ -26,11 +26,13 @@ import org.mozilla.vrbrowser.*;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.SessionStore;
 import org.mozilla.vrbrowser.browser.SettingsStore;
+import org.mozilla.vrbrowser.search.SearchEngineWrapper;
 import org.mozilla.vrbrowser.utils.AnimationHelper;
 import org.mozilla.vrbrowser.ui.views.CustomUIButton;
 import org.mozilla.vrbrowser.ui.views.NavigationURLBar;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.views.UITextButton;
+import org.mozilla.vrbrowser.utils.UrlUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,7 +41,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         GeckoSession.ProgressDelegate, GeckoSession.ContentDelegate,
         WidgetManagerDelegate.UpdateListener, SessionStore.SessionChangeListener,
         NavigationURLBar.NavigationURLBarDelegate, VoiceSearchWidget.VoiceSearchDelegate,
-        SharedPreferences.OnSharedPreferenceChangeListener {
+        SharedPreferences.OnSharedPreferenceChangeListener, SuggestionsWidget.URLBarPopupDelegate {
 
     private static final String LOGTAG = "VRB";
 
@@ -69,6 +71,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private VoiceSearchWidget mVoiceSearchWidget;
     private Context mAppContext;
     private SharedPreferences mPrefs;
+    private SuggestionsWidget mPopup;
+    private SearchEngineWrapper mSearchEngineWrapper;
 
     public NavigationBarWidget(Context aContext) {
         super(aContext);
@@ -256,6 +260,11 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
         mVoiceSearchWidget = createChild(VoiceSearchWidget.class, false);
         mVoiceSearchWidget.setDelegate(this);
+
+        mPopup = createChild(SuggestionsWidget.class);
+        mPopup.setURLBarPopupDelegate(this);
+
+        mSearchEngineWrapper = SearchEngineWrapper.get(getContext());
 
         SessionStore.get().addSessionChangeListener(this);
 
@@ -608,6 +617,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         }
     }
 
+    // NavigationURLBarDelegate
+
     @Override
     public void OnVoiceSearchClicked() {
         if (mVoiceSearchWidget.getPlacement().visible) {
@@ -617,6 +628,80 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             mVoiceSearchWidget.show();
         }
     }
+
+    @Override
+    public void OnShowSearchPopup() {
+        if (mPopup != null) {
+            final String text = mURLBar.getText().trim();
+            final String originalText = mURLBar.getOriginalText().trim();
+            if (originalText.length() > 0) {
+                mSearchEngineWrapper.getSuggestions(
+                        originalText,
+                        (suggestions) -> {
+                            ArrayList<SuggestionsWidget.SuggestionItem> items = new ArrayList<>();
+
+                            if (!text.equals(originalText)) {
+                                // Completion from browser-domains
+                                items.add(SuggestionsWidget.SuggestionItem.create(
+                                        text,
+                                        getSearchURLOrDomain(text),
+                                        null,
+                                        SuggestionsWidget.SuggestionItem.Type.COMPLETION
+                                ));
+                            }
+
+                            // Original text
+                            items.add(SuggestionsWidget.SuggestionItem.create(
+                                    originalText,
+                                    getSearchURLOrDomain(originalText),
+                                    null,
+                                    SuggestionsWidget.SuggestionItem.Type.SUGGESTION
+                            ));
+
+                            // Suggestions
+                            for (String suggestion : suggestions) {
+                                String url = mSearchEngineWrapper.getSearchURL(suggestion);
+                                items.add(SuggestionsWidget.SuggestionItem.create(
+                                        suggestion,
+                                        url,
+                                        null,
+                                        SuggestionsWidget.SuggestionItem.Type.SUGGESTION
+                                ));
+                            }
+                            mPopup.setItems(items);
+                            mPopup.setHighlightedText(originalText);
+
+                            if (!mPopup.isVisible()) {
+                                mPopup.getPlacement().width = (int) (WidgetPlacement.convertPixelsToDp(getContext(), mURLBar.getWidth()));
+                                mPopup.updatePlacement();
+                                mPopup.show();
+                            }
+                        }
+                );
+
+            } else {
+                mPopup.hide();
+            }
+        }
+    }
+
+    @Override
+    public void OnHideSearchPopup() {
+        if (mPopup != null && mPopup.isVisible()) {
+            mPopup.hide();
+        }
+    }
+
+    private String getSearchURLOrDomain(String text) {
+        if (UrlUtils.isDomain(text)) {
+            return text;
+
+        } else {
+            return mSearchEngineWrapper.getSearchURL(text);
+        }
+    }
+
+    // VoiceSearch Delegate
 
     @Override
     public void OnVoiceSearchResult(String transcription, float confidance) {
@@ -638,5 +723,17 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         if (key == mAppContext.getString(R.string.settings_key_servo)) {
             updateServoButton();
         }
+    }
+
+    // URLBarPopupWidgetDelegate
+
+    @Override
+    public void OnItemClicked(SuggestionsWidget.SuggestionItem item) {
+        mURLBar.handleURLEdit(item.url);
+    }
+
+    @Override
+    public void OnItemDeleted(SuggestionsWidget.SuggestionItem item) {
+
     }
 }

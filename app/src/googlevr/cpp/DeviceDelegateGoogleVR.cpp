@@ -346,7 +346,7 @@ struct DeviceDelegateGoogleVR::State {
           // Handle the start of a sequence of scroll gestures.
           break;
         case GVR_GESTURE_SCROLL_UPDATE:
-          // Handle an update in a sequence of scroll gestures.
+          // Handle an initialize in a sequence of scroll gestures.
           break;
         case GVR_GESTURE_SCROLL_END:
           // Handle the end of a sequence of scroll gestures.

@@ -143,7 +143,7 @@ enum class VRDisplayCapabilityFlags : uint16_t {
    * primary display. If presenting VR content will obscure
    * other content on the device, this should be un-set. When
    * un-set, the application should not attempt to mirror VR content
-   * or update non-VR UI because that content will not be visible.
+   * or initialize non-VR UI because that content will not be visible.
    */
       Cap_External = 1 << 4,
   /**

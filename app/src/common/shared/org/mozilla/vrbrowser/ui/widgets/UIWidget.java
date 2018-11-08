@@ -17,6 +17,8 @@ import android.view.View;
 import android.view.ViewParent;
 import android.widget.FrameLayout;
 
+import org.mozilla.vrbrowser.R;
+
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 
@@ -30,6 +32,7 @@ public abstract class UIWidget extends FrameLayout implements Widget {
 
     private UISurfaceTextureRenderer mRenderer;
     private SurfaceTexture mTexture;
+    private float mWorldWidth;
     protected int mHandle;
     protected WidgetPlacement mWidgetPlacement;
     protected WidgetManagerDelegate mWidgetManager;
@@ -61,6 +64,7 @@ public abstract class UIWidget extends FrameLayout implements Widget {
         initializeWidgetPlacement(mWidgetPlacement);
         mInitialWidth = mWidgetPlacement.width;
         mInitialHeight = mWidgetPlacement.height;
+        mWorldWidth = WidgetPlacement.pixelDimension(getContext(), R.dimen.world_width);
 
         mChildren = new HashMap<>();
         mBackHandler = new Runnable() {
@@ -213,14 +217,20 @@ public abstract class UIWidget extends FrameLayout implements Widget {
     }
 
     public void show() {
+        show(true);
+    }
+
+    public void show(boolean focus) {
         if (!mWidgetPlacement.visible) {
             mWidgetPlacement.visible = true;
             mWidgetManager.addWidget(this);
             mWidgetManager.pushBackHandler(mBackHandler);
         }
 
-        setFocusableInTouchMode(true);
-        requestFocusFromTouch();
+        if (focus) {
+            setFocusableInTouchMode(true);
+            requestFocusFromTouch();
+        }
     }
 
     public void hide() {
@@ -282,5 +292,9 @@ public abstract class UIWidget extends FrameLayout implements Widget {
         if (mDelegate != null) {
             mDelegate.onDismiss();
         }
+    }
+
+    protected float getWorldWidth() {
+        return mWorldWidth;
     }
 }

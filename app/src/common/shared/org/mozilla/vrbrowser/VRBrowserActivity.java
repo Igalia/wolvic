@@ -36,8 +36,9 @@ import org.mozilla.vrbrowser.browser.SessionStore;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.crashreporting.CrashReporterService;
 import org.mozilla.vrbrowser.crashreporting.GlobalExceptionHandler;
+import org.mozilla.vrbrowser.geolocation.GeolocationWrapper;
 import org.mozilla.vrbrowser.input.MotionEventGenerator;
-import org.mozilla.vrbrowser.search.SearchEngine;
+import org.mozilla.vrbrowser.search.SearchEngineWrapper;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.ui.OffscreenDisplay;
 import org.mozilla.vrbrowser.ui.widgets.BrowserWidget;
@@ -116,6 +117,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private Thread mUiThread;
     private LinkedList<Pair<Object, Float>> mBrightnessQueue;
     private Pair<Object, Float> mCurrentBrightness;
+    private SearchEngineWrapper mSearchEngineWrapper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,6 +131,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         Bundle extras = getIntent() != null ? getIntent().getExtras() : null;
         SessionStore.get().setContext(this, extras);
+        SessionStore.get().registerListeners();
 
         // Create broadcast receiver for getting crash messages from crash process
         IntentFilter intentFilter = new IntentFilter();
@@ -170,7 +173,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         queueRunnable(() -> setTemporaryFilePath(tempPath));
         initializeWorld();
 
-        SearchEngine.get(this).update();
+        // Setup the search engine
+        mSearchEngineWrapper = SearchEngineWrapper.get(this);
+        mSearchEngineWrapper.registerForUpdates();
+
+        GeolocationWrapper.update(this);
     }
 
     protected void initializeWorld() {
@@ -244,6 +251,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     protected void onDestroy() {
         // Unregister the crash service broadcast receiver
         unregisterReceiver(mCrashReceiver);
+        mSearchEngineWrapper.unregisterForUpdates();
 
         for (Widget widget: mWidgets.values()) {
             widget.releaseWidget();
@@ -259,7 +267,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             mPermissionDelegate.release();
         }
 
-        SessionStore.get().clearListeners();
+        SessionStore.get().unregisterListeners();
         super.onDestroy();
     }
 
@@ -483,7 +491,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mAudioEngine.setPose(qx, qy, qz, qw, px, py, pz);
 
         // https://developers.google.com/vr/reference/android/com/google/vr/sdk/audio/GvrAudioEngine.html#resume()
-        // The update method must be called from the main thread at a regular rate.
+        // The initialize method must be called from the main thread at a regular rate.
         runOnUiThread(mAudioUpdateRunnable);
     }
 

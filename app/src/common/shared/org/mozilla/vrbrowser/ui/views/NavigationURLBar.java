@@ -14,17 +14,21 @@ import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.GestureDetector;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
-import android.widget.*;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.SessionStore;
-import org.mozilla.vrbrowser.search.SearchEngine;
+import org.mozilla.vrbrowser.search.SearchEngineWrapper;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
+import org.mozilla.vrbrowser.utils.UrlUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -32,9 +36,13 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.util.regex.Pattern;
 
+import kotlin.Unit;
+import mozilla.components.browser.domains.DomainAutoCompleteProvider;
+import mozilla.components.ui.autocomplete.InlineAutocompleteEditText;
+
 public class NavigationURLBar extends FrameLayout {
 
-    private EditText mURL;
+    private InlineAutocompleteEditText mURL;
     private ImageButton mMicrophoneButton;
     private ImageView mInsecureIcon;
     private ImageView mLoadingView;
@@ -45,11 +53,25 @@ public class NavigationURLBar extends FrameLayout {
     private int mDefaultURLLeftPadding = 0;
     private int mURLProtocolColor;
     private int mURLWebsiteColor;
-    private Pattern mURLPattern;
     private NavigationURLBarDelegate mDelegate;
+    private DomainAutoCompleteProvider mAutocompleteProvider;
+
+    private Unit domainAutocompleteFilter(String text, InlineAutocompleteEditText view) {
+        if (view != null) {
+            DomainAutoCompleteProvider.Result result = mAutocompleteProvider.autocomplete(text);
+            view.applyAutocompleteResult(new InlineAutocompleteEditText.AutocompleteResult(
+                    result.getText(),
+                    result.getSource(),
+                    result.getSize(),
+                    null));
+        }
+        return Unit.INSTANCE;
+    }
 
     public interface NavigationURLBarDelegate {
         void OnVoiceSearchClicked();
+        void OnShowSearchPopup();
+        void OnHideSearchPopup();
     }
 
     public NavigationURLBar(Context context, AttributeSet attrs) {
@@ -59,40 +81,41 @@ public class NavigationURLBar extends FrameLayout {
 
     private void initialize(Context aContext) {
         inflate(aContext, R.layout.navigation_url, this);
-        mURLPattern = Pattern.compile("[\\d\\w][.][\\d\\w]");
+
+        // Use Domain autocomplete provider from components
+        mAutocompleteProvider = new DomainAutoCompleteProvider();
+        mAutocompleteProvider.initialize(aContext, true, true, true);
+
         mURL = findViewById(R.id.urlEditText);
         mURL.setShowSoftInputOnFocus(false);
-        mURL.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView aTextView, int actionId, KeyEvent event) {
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                handleURLEdit(aTextView.getText().toString());
-                return true;
-            }
-            return false;
-            }
+        mURL.setOnEditorActionListener((aTextView, actionId, event) -> {
+        if (actionId == EditorInfo.IME_ACTION_DONE) {
+            handleURLEdit(aTextView.getText().toString());
+            return true;
+        }
+        return false;
         });
-        mURL.setOnFocusChangeListener(new OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                showVoiceSearch(!b || (mURL.getText().length() == 0));
 
-                mURL.setSelection(mURL.getText().length(), 0);
-            }
+        mURL.setOnFocusChangeListener((view, focused) -> {
+            showVoiceSearch(!focused || (mURL.getText().length() == 0));
+
+            mURL.setSelection(mURL.getText().length(), 0);
         });
+
         final GestureDetector gd = new GestureDetector(getContext(), new UrlGestureListener());
         gd.setOnDoubleTapListener(mUrlDoubleTapListener);
-        mURL.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                view.requestFocusFromTouch();
-                if (gd.onTouchEvent(motionEvent)) {
-                    return true;
-                }
-                return view.onTouchEvent(motionEvent);
+        mURL.setOnTouchListener((view, motionEvent) -> {
+            view.requestFocusFromTouch();
+            if (gd.onTouchEvent(motionEvent)) {
+                return true;
             }
+            return view.onTouchEvent(motionEvent);
         });
         mURL.addTextChangedListener(mURLTextWatcher);
+
+        // Set a filter to provide domain autocomplete results
+        mURL.setOnFilterListener(this::domainAutocompleteFilter);
+
         mURL.setFocusable(true);
         mURL.setFocusableInTouchMode(true);
 
@@ -166,6 +189,14 @@ public class NavigationURLBar extends FrameLayout {
         mURL.addTextChangedListener(mURLTextWatcher);
     }
 
+    public String getText() {
+        return mURL.getText().toString();
+    }
+
+    public String getOriginalText() {
+        return mURL.getOriginalText();
+    }
+
     public void setIsInsecure(boolean aIsInsecure) {
         if (mIsInsecure != aIsInsecure) {
             mIsInsecure = aIsInsecure;
@@ -221,7 +252,7 @@ public class NavigationURLBar extends FrameLayout {
             String urlText = text;
             // Detect when the protocol is missing from the URL.
             // Look for a separated '.' in the text with no white spaces.
-            if (!hasProtocol && !urlText.contains(" ") && mURLPattern.matcher(urlText).find()) {
+            if (!hasProtocol && !urlText.contains(" ") && UrlUtils.isDomain(urlText)) {
                 urlText = "https://" + urlText;
                 hasProtocol = true;
             }
@@ -240,7 +271,7 @@ public class NavigationURLBar extends FrameLayout {
         } else if (text.startsWith("about:") || text.startsWith("resource://")) {
             url = text;
         } else {
-            url = SearchEngine.get(getContext()).getSearchURL(text);
+            url = SearchEngineWrapper.get(getContext()).getSearchURL(text);
 
             // Doing search in the URL bar, so sending "aIsURL: false" to telemetry.
             TelemetryWrapper.urlBarEvent(false);
@@ -248,6 +279,10 @@ public class NavigationURLBar extends FrameLayout {
 
         if (SessionStore.get().getCurrentUri() != url) {
             SessionStore.get().loadUri(url);
+
+            if (mDelegate != null) {
+                mDelegate.OnHideSearchPopup();
+            }
         }
 
         showVoiceSearch(text.isEmpty());
@@ -303,7 +338,9 @@ public class NavigationURLBar extends FrameLayout {
 
         @Override
         public void afterTextChanged(Editable editable) {
-
+            if (mDelegate != null) {
+                mDelegate.OnShowSearchPopup();
+            }
         }
     };
 
