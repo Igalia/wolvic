@@ -17,6 +17,8 @@
 #include "Widget.h"
 #include "WidgetPlacement.h"
 #include "VRBrowser.h"
+#include "Quad.h"
+#include "VRVideo.h"
 #include "vrb/CameraSimple.h"
 #include "vrb/Color.h"
 #include "vrb/ConcreteClass.h"
@@ -43,7 +45,6 @@
 #include "vrb/Transform.h"
 #include "vrb/VertexArray.h"
 #include "vrb/Vector.h"
-#include "Quad.h"
 
 #include <array>
 #include <functional>
@@ -154,14 +155,14 @@ struct BrowserWorld::State {
   ExternalVRPtr externalVR;
   ExternalBlitterPtr blitter;
   bool windowsInitialized;
-  TransformPtr skybox;
+  TogglePtr skybox;
   FadeBlitterPtr fadeBlitter;
   uint32_t loaderDelay;
   bool exitImmersiveRequested;
   WidgetPtr resizingWidget;
   LoadingAnimationPtr loadingAnimation;
   SplashAnimationPtr splashAnimation;
-  int colorIndex;
+  VRVideoPtr vrVideo;
 
   State() : paused(true), glInitialized(false), modelsLoaded(false), env(nullptr), nearClip(0.1f),
             farClip(300.0f), activity(nullptr), windowsInitialized(false), exitImmersiveRequested(false), loaderDelay(0) {
@@ -185,7 +186,6 @@ struct BrowserWorld::State {
     fadeBlitter = FadeBlitter::Create(create);
     loadingAnimation = LoadingAnimation::Create(create);
     splashAnimation = SplashAnimation::Create(create);
-    colorIndex = 0;
   }
 
   void CheckBackButton();
@@ -841,6 +841,50 @@ BrowserWorld::ExitImmersive() {
   m.exitImmersiveRequested = true;
 }
 
+void
+BrowserWorld::ShowVRVideo(const int aWindowHandle, const int aVideoProjection) {
+  WidgetPtr widget = m.GetWidget(aWindowHandle);
+  if (!widget) {
+    VRB_ERROR("Can't find Widget for VRVideo with handle: %d", aWindowHandle);
+    return;
+  }
+
+  auto projection = static_cast<VRVideo::VRVideoProjection>(aVideoProjection);
+  m.vrVideo = VRVideo::Create(m.create, widget, projection);
+  if (m.skybox && projection != VRVideo::VRVideoProjection::VIDEO_PROJECTION_3D_SIDE_BY_SIDE) {
+    m.skybox->ToggleAll(false);
+  }
+  if (m.fadeBlitter && projection != VRVideo::VRVideoProjection::VIDEO_PROJECTION_3D_SIDE_BY_SIDE) {
+    m.fadeBlitter->SetVisible(false);
+  }
+}
+
+void
+BrowserWorld::HideVRVideo() {
+  m.vrVideo = nullptr;
+  if (m.skybox) {
+    m.skybox->ToggleAll(true);
+  }
+  if (m.fadeBlitter) {
+    m.fadeBlitter->SetVisible(true);
+  }
+}
+
+void
+BrowserWorld::SetControllersVisible(const bool aVisible) {
+  m.controllers->SetVisible(aVisible);
+}
+
+void
+BrowserWorld::ResetUIYaw() {
+  vrb::Matrix head = m.device->GetHeadTransform();
+  vrb::Vector vector = head.MultiplyDirection(vrb::Vector(1.0f, 0.0f, 0.0f));
+  const float yaw = atan2(vector.z(), vector.x());
+
+  vrb::Matrix matrix = vrb::Matrix::Rotation(vrb::Vector(0.0f, 1.0f, 0.0f), -yaw);
+  m.device->SetReorientTransform(matrix);
+}
+
 JNIEnv*
 BrowserWorld::GetJNIEnv() const {
   ASSERT_ON_RENDER_THREAD(nullptr);
@@ -867,7 +911,8 @@ BrowserWorld::DrawWorld() {
   vrb::Vector headPosition = m.device->GetHeadTransform().GetTranslation();
   vrb::Vector headDirection = m.device->GetHeadTransform().MultiplyDirection(vrb::Vector(0.0f, 0.0f, -1.0f));
   if (m.skybox) {
-    m.skybox->SetTransform(vrb::Matrix::Translation(headPosition));
+    vrb::TransformPtr t = std::dynamic_pointer_cast<Transform>(m.skybox->GetNode(0));
+    t->SetTransform(vrb::Matrix::Translation(headPosition));
   }
   m.rootTransparent->SortNodes([=](const NodePtr& a, const NodePtr& b) {
     const float kMaxFloat = 9999999.0f;
@@ -893,6 +938,12 @@ BrowserWorld::DrawWorld() {
   if (m.fadeBlitter && m.fadeBlitter->IsVisible()) {
     m.fadeBlitter->Draw();
   }
+  if (m.vrVideo) {
+    m.vrVideo->SelectEye(device::Eye::Left);
+    m.drawList->Reset();
+    m.vrVideo->GetRoot()->Cull(*m.cullVisitor, *m.drawList);
+    m.drawList->Draw(*m.leftCamera);
+  }
   m.drawList->Reset();
   m.rootController->Cull(*m.cullVisitor, *m.drawList);
   m.drawList->Draw(*m.leftCamera);
@@ -909,6 +960,12 @@ BrowserWorld::DrawWorld() {
   m.drawList->Draw(*m.rightCamera);
   if (m.fadeBlitter && m.fadeBlitter->IsVisible()) {
     m.fadeBlitter->Draw();
+  }
+  if (m.vrVideo) {
+    m.vrVideo->SelectEye(device::Eye::Right);
+    m.drawList->Reset();
+    m.vrVideo->GetRoot()->Cull(*m.cullVisitor, *m.drawList);
+    m.drawList->Draw(*m.leftCamera);
   }
   m.drawList->Reset();
   m.rootController->Cull(*m.cullVisitor, *m.drawList);
@@ -998,13 +1055,15 @@ BrowserWorld::DrawSplashAnimation() {
   }
 }
 
-vrb::TransformPtr
+vrb::TogglePtr
 BrowserWorld::CreateSkyBox(const std::string& basePath) {
   ASSERT_ON_RENDER_THREAD(nullptr);
+  vrb::TogglePtr toggle = vrb::Toggle::Create(m.create);
   vrb::TransformPtr transform = vrb::Transform::Create(m.create);
   transform->SetTransform(Matrix::Position(vrb::Vector(0.0f, 0.0f, 0.0f)));
   LoadSkybox(transform, basePath);
-  return transform;
+  toggle->AddNode(transform);
+  return toggle;
 }
 
 void
@@ -1218,5 +1277,26 @@ JNI_METHOD(void, updatePointerColorNative)
 (JNIEnv* aEnv, jobject) {
   crow::BrowserWorld::Instance().UpdatePointerColor();
 }
+
+JNI_METHOD(void, showVRVideoNative)
+(JNIEnv* aEnv, jobject, jint aWindowHandle, jint aVideoProjection) {
+  crow::BrowserWorld::Instance().ShowVRVideo(aWindowHandle, aVideoProjection);
+}
+
+JNI_METHOD(void, hideVRVideoNative)
+(JNIEnv* aEnv, jobject) {
+  crow::BrowserWorld::Instance().HideVRVideo();
+}
+
+JNI_METHOD(void, setControllersVisibleNative)
+(JNIEnv* aEnv, jobject, jboolean aVisible) {
+  crow::BrowserWorld::Instance().SetControllersVisible(aVisible);
+}
+
+JNI_METHOD(void, resetUIYawNative)
+(JNIEnv* aEnv, jobject) {
+  crow::BrowserWorld::Instance().ResetUIYaw();
+}
+
 
 } // extern "C"

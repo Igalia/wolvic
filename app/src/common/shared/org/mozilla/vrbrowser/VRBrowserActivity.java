@@ -48,6 +48,7 @@ import org.mozilla.vrbrowser.ui.widgets.NavigationBarWidget;
 import org.mozilla.vrbrowser.ui.widgets.RootWidget;
 import org.mozilla.vrbrowser.ui.widgets.TopBarWidget;
 import org.mozilla.vrbrowser.ui.widgets.TrayWidget;
+import org.mozilla.vrbrowser.ui.widgets.VideoProjectionMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.Widget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
@@ -807,6 +808,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
+    public void setControllersVisible(final boolean aVisible) {
+        queueRunnable(() -> setControllersVisibleNative(aVisible));
+    }
+
+    @Override
     public void setBrowserSize(float targetWidth, float targetHeight) {
         mBrowserWidget.setBrowserSize(targetWidth, targetHeight, 1.0f);
     }
@@ -849,6 +855,21 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         }
     }
 
+    @Override
+    public void showVRVideo(final int aWindowHandle, final @VideoProjectionMenuWidget.VideoProjectionFlags int aVideoProjection) {
+        queueRunnable(() -> showVRVideoNative(aWindowHandle, aVideoProjection));
+    }
+
+    @Override
+    public void hideVRVideo() {
+        queueRunnable(this::hideVRVideoNative);
+    }
+
+    @Override
+    public void resetUIYaw() {
+        queueRunnable(this::resetUIYawNative);
+    }
+
     private native void addWidgetNative(int aHandle, WidgetPlacement aPlacement);
     private native void updateWidgetNative(int aHandle, WidgetPlacement aPlacement);
     private native void removeWidgetNative(int aHandle);
@@ -860,4 +881,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private native void workaroundGeckoSigAction();
     private native void updateEnvironmentNative();
     private native void updatePointerColorNative();
+    private native void showVRVideoNative(int aWindowHandler, int aVideoProjection);
+    private native void hideVRVideoNative();
+    private native void resetUIYawNative();
+    private native void setControllersVisibleNative(boolean aVisible);
 }

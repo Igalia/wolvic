@@ -19,4 +19,6 @@ public interface Widget {
     void releaseWidget();
     void setFirstDraw(boolean aIsFirstDraw);
     boolean getFirstDraw();
+    boolean isVisible();
+    void setVisible(boolean aVisible);
 }

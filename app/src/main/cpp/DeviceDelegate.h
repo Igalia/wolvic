@@ -45,6 +45,7 @@ public:
   virtual vrb::CameraPtr GetCamera(const device::Eye aWhich) = 0;
   virtual const vrb::Matrix& GetHeadTransform() const = 0;
   virtual const vrb::Matrix& GetReorientTransform() const = 0;
+  virtual void SetReorientTransform(const vrb::Matrix& aMatrix) = 0;
   virtual void SetClearColor(const vrb::Color& aColor) = 0;
   virtual void SetClipPlanes(const float aNear, const float aFar) = 0;
   virtual void SetControllerDelegate(ControllerDelegatePtr& aController) = 0;

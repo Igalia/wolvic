@@ -130,6 +130,11 @@ DeviceDelegateNoAPI::GetReorientTransform() const {
 }
 
 void
+DeviceDelegateNoAPI::SetReorientTransform(const vrb::Matrix& aMatrix) {
+  m.reorientMatrix = aMatrix;
+}
+
+void
 DeviceDelegateNoAPI::SetClearColor(const vrb::Color& aColor) {
   m.clearColor = aColor;
 }

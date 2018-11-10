@@ -41,6 +41,8 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
     private WidgetPlacement mWidgetPlacement;
     private WidgetManagerDelegate mWidgetManager;
     private ChoicePromptWidget mChoicePrompt;
+    private int mWidthBackup;
+    private int mHeightBackup;
 
     public BrowserWidget(Context aContext, int aSessionId) {
         super(aContext);
@@ -63,7 +65,6 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
 
     private void initializeWidgetPlacement(WidgetPlacement aPlacement) {
         Context context = getContext();
-        aPlacement.worldWidth =  WidgetPlacement.floatDimension(context, R.dimen.browser_world_width);
         aPlacement.width = SettingsStore.getInstance(getContext()).getWindowWidth();
         aPlacement.height = SettingsStore.getInstance(getContext()).getWindowHeight();
         aPlacement.density = 1.0f;
@@ -91,6 +92,30 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
         }
 
         mDisplay.surfaceChanged(mSurface, mWidth, mHeight);
+    }
+
+    public void enableVRVideoMode(int aVideoWidth, int aVideoHeight) {
+        mWidthBackup = mWidth;
+        mHeightBackup = mHeight;
+        if (aVideoWidth == mWidth && aVideoHeight == mHeight) {
+            return;
+        }
+        mWidgetPlacement.width = aVideoWidth;
+        mWidgetPlacement.height = aVideoHeight;
+        resizeSurfaceTexture(aVideoWidth, aVideoHeight);
+        Log.e(LOGTAG, "onMetadataChange resize browser " + aVideoWidth + " " + aVideoHeight);
+    }
+
+    public void disableVRVideoMode() {
+        if (mWidthBackup == 0 || mHeightBackup == 0) {
+            return;
+        }
+        if (mWidthBackup == mWidth && mHeightBackup == mHeight) {
+            return;
+        }
+        mWidgetPlacement.width = mWidthBackup;
+        mWidgetPlacement.height = mHeightBackup;
+        resizeSurfaceTexture(mWidthBackup, mWidthBackup);
     }
 
     public void setBrowserSize(float windowWidth, float windowHeight, float multiplier) {
@@ -206,6 +231,23 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
     @Override
     public boolean getFirstDraw() {
         return mWidgetPlacement.firstDraw;
+    }
+
+    @Override
+    public boolean isVisible() {
+        return mWidgetPlacement.visible;
+    }
+
+    @Override
+    public void setVisible(boolean aVisible) {
+        if (mWidgetPlacement.visible == aVisible) {
+            return;
+        }
+        mWidgetPlacement.visible = aVisible;
+        mWidgetManager.updateWidget(this);
+        if (!aVisible) {
+            clearFocus();
+        }
     }
 
     // SessionStore.GeckoSessionChange

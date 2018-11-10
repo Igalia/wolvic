@@ -52,6 +52,25 @@
     <dimen name="settings_height">500dp</dimen>
     <dimen name="settings_button_height">320dp</dimen>
 
+    <!-- Common values for menu style widgets -->
+    <dimen name="menu_item_height">88dp</dimen>
+    <dimen name="menu_corner_radius">14dp</dimen>
+
+    <!-- Video Projection Menu -->
+    <dimen name="video_projection_menu_width">330dp</dimen>
+    <dimen name="video_projection_menu_translation_y">7dp</dimen>
+
+    <!-- Brightness Menu -->
+    <dimen name="brightness_menu_width">150dp</dimen>
+
+    <!-- Media Controls Widget -->
+    <dimen name="media_controls_container_width">324dp</dimen>
+    <dimen name="media_controls_container_height">100dp</dimen>
+    <dimen name="media_controls_panel_width">284dp</dimen>
+    <dimen name="media_controls_panel_height">85dp</dimen>
+    <dimen name="media_controls_rounded_corners">15dp</dimen>
+    <dimen name="media_controls_world_z" format="float" type="dimen">2.5</dimen>
+
     <!-- Restart Dialog -->
     <item name="restart_dialog_world_y" format="float" type="dimen">1.6</item>
     <item name="restart_dialog_world_z" format="float" type="dimen">-1.8</item>

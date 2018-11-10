@@ -249,6 +249,7 @@ public abstract class UIWidget extends FrameLayout implements Widget {
         clearFocus();
     }
 
+    @Override
     public boolean isVisible() {
         for (UIWidget child : mChildren.values()) {
             if (child.isVisible())
@@ -256,6 +257,18 @@ public abstract class UIWidget extends FrameLayout implements Widget {
         }
 
         return mWidgetPlacement.visible;
+    }
+
+    @Override
+    public void setVisible(boolean aVisible) {
+        if (mWidgetPlacement.visible == aVisible) {
+            return;
+        }
+        mWidgetPlacement.visible = aVisible;
+        mWidgetManager.updateWidget(this);
+        if (!aVisible) {
+            clearFocus();
+        }
     }
 
     protected <T extends UIWidget> T createChild(@NonNull Class<T> aChildClassName) {

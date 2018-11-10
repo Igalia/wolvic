@@ -51,6 +51,10 @@ public:
   void LayoutWidget(int32_t aHandle);
   void SetBrightness(const float aBrightness);
   void ExitImmersive();
+  void ShowVRVideo(const int aWindowHandle, const int aVideoProjection);
+  void HideVRVideo();
+  void SetControllersVisible(const bool aVisible);
+  void ResetUIYaw();
   JNIEnv* GetJNIEnv() const;
 protected:
   struct State;
@@ -61,7 +65,7 @@ protected:
   void DrawImmersive();
   void DrawLoadingAnimation();
   void DrawSplashAnimation();
-  vrb::TransformPtr CreateSkyBox(const std::string& basePath);
+  vrb::TogglePtr CreateSkyBox(const std::string& basePath);
   void LoadSkybox(const vrb::TransformPtr transform, const std::string& basePath);
   void CreateFloor();
   float DistanceToNode(const vrb::NodePtr& aNode, const vrb::Vector& aPosition) const;

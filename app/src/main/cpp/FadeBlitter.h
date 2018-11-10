@@ -23,6 +23,7 @@ public:
   bool IsVisible() const;
   void SetBrightness(const float aBrightness);
   void FadeIn();
+  void SetVisible(const bool aVisible);
 protected:
   struct State;
   FadeBlitter(State& aState, vrb::CreationContextPtr& aContext);

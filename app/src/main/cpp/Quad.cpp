@@ -145,6 +145,12 @@ Quad::Create(vrb::CreationContextPtr aContext, const float aWorldWidth, const fl
 
 vrb::GeometryPtr
 Quad::CreateGeometry(vrb::CreationContextPtr aContext, const vrb::Vector &aMin, const vrb::Vector &aMax) {
+  device::EyeRect rect(0.0f, 0.0f, 1.0f, 1.0f);
+  return Quad::CreateGeometry(aContext, aMin, aMax, rect);
+}
+
+vrb::GeometryPtr
+Quad::CreateGeometry(vrb::CreationContextPtr aContext, const vrb::Vector &aMin, const vrb::Vector &aMax, const device::EyeRect& aRect) {
   vrb::VertexArrayPtr array = vrb::VertexArray::Create(aContext);
   const vrb::Vector bottomRight(aMax.x(), aMin.y(), aMin.z());
   array->AppendVertex(aMin); // Bottom left
@@ -152,10 +158,10 @@ Quad::CreateGeometry(vrb::CreationContextPtr aContext, const vrb::Vector &aMin, 
   array->AppendVertex(aMax); // Top right
   array->AppendVertex(vrb::Vector(aMin.x(), aMax.y(), aMax.z())); // Top left
 
-  array->AppendUV(vrb::Vector(0.0f, 1.0f, 0.0f));
-  array->AppendUV(vrb::Vector(1.0f, 1.0f, 0.0f));
-  array->AppendUV(vrb::Vector(1.0f, 0.0f, 0.0f));
-  array->AppendUV(vrb::Vector(0.0f, 0.0f, 0.0f));
+  array->AppendUV(vrb::Vector(aRect.mX, aRect.mY + aRect.mHeight, 0.0f));
+  array->AppendUV(vrb::Vector(aRect.mX + aRect.mWidth, aRect.mY + aRect.mHeight, 0.0f));
+  array->AppendUV(vrb::Vector(aRect.mX + aRect.mWidth, aRect.mY, 0.0f));
+  array->AppendUV(vrb::Vector(aRect.mX, aRect.mY, 0.0f));
 
   vrb::Vector normal = (bottomRight - aMin).Cross(aMax - aMin).Normalize();
   array->AppendNormal(normal);

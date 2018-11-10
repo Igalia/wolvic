@@ -45,6 +45,7 @@ public:
   void EndTouch(const int32_t aControllerIndex) override;
   void SetScrolledDelta(const int32_t aControllerIndex, const float aScrollDeltaX, const float aScrollDeltaY) override;
   void SetPointerColor(const vrb::Color& color) const;
+  void SetVisible(const bool aVisible);
 protected:
   struct State;
   ControllerContainer(State& aState, vrb::CreationContextPtr& aContext);

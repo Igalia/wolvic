@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="@dimen/media_controls_panel_width"
+        android:layout_height="@dimen/media_controls_panel_height"
+        android:layout_gravity="left"
+        android:orientation="vertical"
+        android:background="@drawable/media_controls_background"
+        android:layout_marginTop="15dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="0dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp">
+
+        <org.mozilla.vrbrowser.ui.views.MediaSeekBar
+            android:id="@+id/mediaControlSeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:gravity="center_vertical">
+        </org.mozilla.vrbrowser.ui.views.MediaSeekBar>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:orientation="horizontal"
+            android:layout_marginTop="1dp">
+            <org.mozilla.vrbrowser.ui.views.UIButton
+                android:id="@+id/mediaBackButton"
+                style="?attr/mediaControlsButtonStyle"
+                android:layout_weight="1"
+                android:tint="@color/midnight"
+                android:src="@drawable/ic_icon_back" />
+
+            <org.mozilla.vrbrowser.ui.views.UIButton
+                android:id="@+id/mediaSeekBackwardButton"
+                style="?attr/mediaControlsButtonStyle"
+                android:layout_weight="1"
+                android:src="@drawable/ic_icon_media_seek_backward" />
+
+            <org.mozilla.vrbrowser.ui.views.UIButton
+                android:id="@+id/mediaPlayButton"
+                style="?attr/mediaControlsButtonStyle"
+                android:layout_weight="1"
+                android:src="@drawable/ic_icon_media_play" />
+
+            <org.mozilla.vrbrowser.ui.views.UIButton
+                android:id="@+id/mediaSeekForwardButton"
+                style="?attr/mediaControlsButtonStyle"
+                android:layout_weight="1"
+                android:src="@drawable/ic_icon_meda_seek_forward" />
+
+            <org.mozilla.vrbrowser.ui.views.UIButton
+                android:id="@+id/mediaProjectionButton"
+                style="?attr/mediaControlsButtonStyle"
+                android:layout_weight="1"
+                android:src="@drawable/ic_icon_vr_projection" />
+
+            <org.mozilla.vrbrowser.ui.views.UIButton
+                android:id="@+id/mediaVolumeButton"
+                style="?attr/mediaControlsButtonStyle"
+                android:layout_weight="1"
+                android:src="@drawable/ic_icon_media_volume" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <org.mozilla.vrbrowser.ui.views.VolumeControl
+        android:id="@+id/volumeControl"
+        android:layout_width="20dp"
+        android:layout_height="@dimen/media_controls_panel_height"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="10dp"
+        android:layout_gravity="right"
+        android:visibility="invisible"
+        android:background="@drawable/media_controls_background">
+
+    </org.mozilla.vrbrowser.ui.views.VolumeControl>
+
+    <TextView
+        android:id="@+id/mediaControlSeekLabel"
+        android:visibility="gone"
+        android:minWidth="45dp"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:layout_gravity="top"
+        android:layout_marginTop="2dp"
+        android:layout_marginLeft="40dp"
+        android:background="@drawable/media_seekbar_label_background"
+        android:textColor="@color/white"
+        android:fontFamily="Open Sans"
+        android:textStyle="normal"
+        android:textSize="11dp"
+        android:textAlignment="center"
+        android:paddingStart="2dp"
+        android:paddingEnd="2dp"
+        android:paddingTop="3dp"
+        />
+</merge>

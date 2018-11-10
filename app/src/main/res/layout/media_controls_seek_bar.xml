@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/mediaIconLive"
+        android:layout_width="3dp"
+        android:layout_height="3dp"
+        android:visibility="gone"
+        android:gravity="center_vertical"
+        android:src="@drawable/media_seekbar_thumb"
+        android:layout_marginRight="2dp"
+        />
+    <TextView
+        android:id="@+id/mediaSeekLeftLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="0dp"
+        android:paddingEnd="2dp"
+        android:gravity="center_vertical"
+        android:fontFamily="Open Sans"
+        android:textSize="8dp" />
+
+    <SeekBar
+        android:id="@+id/mediaSeekBar"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_gravity="center_vertical"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:max="1000"
+        android:progress="0"
+        android:background="@null"
+        android:shape="oval"
+        android:splitTrack="false"
+        android:layout_weight="99"
+        android:progressDrawable="@drawable/media_seekbar_background"
+        android:secondaryProgress="0"
+        android:thumbOffset="4dp"
+        android:thumb="@drawable/media_seekbar_thumb" />
+
+    <TextView
+        android:id="@+id/mediaSeekRightLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="2dp"
+        android:paddingEnd="0dp"
+        android:gravity="center_vertical"
+        android:fontFamily="Open Sans"
+        android:textSize="8dp"
+        android:textAlignment="center"/>
+
+
+</merge>

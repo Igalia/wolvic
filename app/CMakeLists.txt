@@ -35,6 +35,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/JNIUtil.cpp
              src/main/cpp/SplashAnimation.cpp
              src/main/cpp/VRBrowser.cpp
+             src/main/cpp/VRVideo.cpp
              src/main/cpp/Widget.cpp
              src/main/cpp/WidgetPlacement.cpp
              src/main/cpp/WidgetResizer.cpp

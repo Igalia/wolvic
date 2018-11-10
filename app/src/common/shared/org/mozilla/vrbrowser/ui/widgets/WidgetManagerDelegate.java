@@ -35,10 +35,14 @@ public interface WidgetManagerDelegate {
     void setWorldBrightness(Object aKey, float aBrightness);
     void popWorldBrightness(Object aKey);
     void setTrayVisible(boolean visible);
+    void setControllersVisible(boolean visible);
     void setBrowserSize(float targetWidth, float targetHeight);
     void keyboardDismissed();
     void updateEnvironment();
     void updatePointerColor();
+    void showVRVideo(int aWindowHandle, @VideoProjectionMenuWidget.VideoProjectionFlags int aVideoProjection);
+    void hideVRVideo();
+    void resetUIYaw();
     void addFocusChangeListener(@NonNull FocusChangeListener aListener);
     void removeFocusChangeListener(@NonNull FocusChangeListener aListener);
     void addPermissionListener(PermissionListener aListener);

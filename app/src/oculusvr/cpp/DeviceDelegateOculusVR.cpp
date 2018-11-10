@@ -363,6 +363,11 @@ DeviceDelegateOculusVR::GetReorientTransform() const {
 }
 
 void
+DeviceDelegateOculusVR::SetReorientTransform(const vrb::Matrix& aMatrix) {
+  m.reorientMatrix = aMatrix;
+}
+
+void
 DeviceDelegateOculusVR::SetClearColor(const vrb::Color& aColor) {
   m.clearColor = aColor;
 }

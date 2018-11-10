@@ -419,6 +419,11 @@ DeviceDelegateGoogleVR::GetReorientTransform() const {
 }
 
 void
+DeviceDelegateGoogleVR::SetReorientTransform(const vrb::Matrix& aMatrix) {
+  m.reorientMatrix = aMatrix;
+}
+
+void
 DeviceDelegateGoogleVR::SetClearColor(const vrb::Color& aColor) {
   m.clearColor = aColor;
 }

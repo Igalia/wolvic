@@ -20,6 +20,7 @@ import android.view.inputmethod.ExtractedTextRequest;
 import org.mozilla.gecko.GeckoAppShell;
 import org.mozilla.gecko.GeckoProfile;
 import org.mozilla.geckoview.AllowOrDeny;
+import org.mozilla.geckoview.MediaElement;
 import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoRuntimeSettings;
@@ -55,7 +56,7 @@ import static org.mozilla.vrbrowser.utils.ServoUtils.isServoAvailable;
 
 public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSession.ProgressDelegate,
         GeckoSession.ContentDelegate, GeckoSession.TextInputDelegate, GeckoSession.TrackingProtectionDelegate,
-        GeckoSession.PromptDelegate, SharedPreferences.OnSharedPreferenceChangeListener {
+        GeckoSession.PromptDelegate, GeckoSession.MediaDelegate, SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static SessionStore mInstance;
     private static final String LOGTAG = "VRB";
@@ -103,6 +104,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         boolean mFullScreen;
         GeckoSession mSession;
         SessionSettings mSettings;
+        ArrayList<Media> mMediaElements = new ArrayList<>();
     }
 
     private GeckoRuntime mRuntime;
@@ -328,6 +330,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         state.mSession.getTextInput().setDelegate(this);
         state.mSession.setPermissionDelegate(mPermissionDelegate);
         state.mSession.setTrackingProtectionDelegate(this);
+        state.mSession.setMediaDelegate(this);
         for (SessionChangeListener listener: mSessionChangeListeners) {
             listener.onNewSession(state.mSession, result);
         }
@@ -345,6 +348,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             session.setPromptDelegate(null);
             session.setPermissionDelegate(null);
             session.setTrackingProtectionDelegate(null);
+            session.setMediaDelegate(null);
             mSessions.remove(aSessionId);
             for (SessionChangeListener listener: mSessionChangeListeners) {
                 listener.onRemoveSession(session, aSessionId);
@@ -495,6 +499,26 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
                 return result;
             }
             result = state.mPreviousUri;
+        }
+        return result;
+    }
+
+    public Media getFullScreenVideo() {
+        Media result = null;
+        if (mCurrentSession != null) {
+            State state = mSessions.get(mCurrentSession.hashCode());
+            if (state == null) {
+                return result;
+            }
+            if (state.mMediaElements.size() > 0) {
+                return state.mMediaElements.get(state.mMediaElements.size() - 1);
+            }
+            for (Media media: state.mMediaElements) {
+                if (media.isFullscreen()) {
+                    result = media;
+                    break;
+                }
+            }
         }
         return result;
     }
@@ -1190,8 +1214,33 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         return GeckoResult.fromValue(AllowOrDeny.DENY);
     }
 
-    // SharedPreferences.OnSharedPreferenceChangeListener
+    // MediaDelegate
+    @Override
+    public void onMediaAdd(GeckoSession session, MediaElement element) {
+        SessionStore.State state = mSessions.get(getSessionId(session));
+        if (state == null) {
+            return;
+        }
+        Media media = new Media(element);
+        state.mMediaElements.add(media);
+    }
 
+    @Override
+    public void onMediaRemove(GeckoSession session, MediaElement element) {
+        SessionStore.State state = mSessions.get(getSessionId(session));
+        if (state == null) {
+            return;
+        }
+        for (int i = 0; i < state.mMediaElements.size(); ++i) {
+            Media media = state.mMediaElements.get(i);
+            if (media.getMediaElement() == element) {
+                media.unload();
+                return;
+            }
+        }
+    }
+
+    // SharedPreferences.OnSharedPreferenceChangeListener
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (mContext != null) {

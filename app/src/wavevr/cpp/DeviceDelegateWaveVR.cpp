@@ -276,6 +276,11 @@ DeviceDelegateWaveVR::GetReorientTransform() const {
 }
 
 void
+DeviceDelegateWaveVR::SetReorientTransform(const vrb::Matrix& aMatrix) {
+  m.reorientMatrix = aMatrix;
+}
+
+void
 DeviceDelegateWaveVR::SetClearColor(const vrb::Color& aColor) {
   m.clearColor = aColor;
 }

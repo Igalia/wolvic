@@ -33,6 +33,7 @@ public:
   uint32_t GetHandle() const;
   void ResetFirstDraw();
   const std::string& GetSurfaceTextureName() const;
+  const vrb::TextureSurfacePtr GetSurfaceTexture() const;
   void GetSurfaceTextureSize(int32_t& aWidth, int32_t& aHeight) const;
   void SetSurfaceTextureSize(int32_t aWidth, int32_t aHeight);
   void GetWidgetMinAndMax(vrb::Vector& aMin, vrb::Vector& aMax) const;

@@ -184,6 +184,11 @@ Widget::GetSurfaceTextureName() const {
   return m.name;
 }
 
+const vrb::TextureSurfacePtr
+Widget::GetSurfaceTexture() const {
+  return m.surface;
+}
+
 void
 Widget::GetSurfaceTextureSize(int32_t& aWidth, int32_t& aHeight) const {
   m.quad->GetTextureSize(aWidth, aHeight);

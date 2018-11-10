@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/media_controls_background">
+
+    <SeekBar
+        android:id="@+id/volumeSeekBar"
+        android:layout_width="74dp"
+        android:layout_height="10dp"
+        android:layout_marginLeft="1dp"
+        android:rotation="270"
+        android:transformPivotX="36dp"
+        android:transformPivotY="5dp"
+        android:layout_gravity="center"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
+        android:paddingLeft="3dp"
+        android:paddingRight="3dp"
+        android:max="1000"
+        android:progress="0"
+        android:background="@null"
+        android:shape="oval"
+        android:splitTrack="false"
+        android:progressDrawable="@drawable/volume_seekbar_background"
+        android:secondaryProgress="0"
+        android:thumbOffset="1dp"
+        android:thumb="@drawable/media_seekbar_thumb" />
+</merge>

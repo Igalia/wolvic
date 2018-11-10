@@ -28,10 +28,12 @@ struct ControllerContainer::State {
   TogglePtr root;
   std::vector<GroupPtr> models;
   GeometryPtr pointerModel;
+  bool visible;
 
   void Initialize(vrb::CreationContextPtr& aContext) {
     context = aContext;
     root = Toggle::Create(aContext);
+    visible = true;
   }
 
   bool Contains(const int32_t aControllerIndex) {
@@ -204,7 +206,7 @@ ControllerContainer::SetVisible(const int32_t aControllerIndex, const bool aVisi
     return;
   }
   Controller& controller = m.list[aControllerIndex];
-  if (controller.transform) {
+  if (controller.transform && m.visible) {
     m.root->ToggleChild(*controller.transform, aVisible);
   }
 }
@@ -320,6 +322,23 @@ void ControllerContainer::SetPointerColor(const vrb::Color& aColor) const {
       GeometryPtr geometry = std::dynamic_pointer_cast<vrb::Geometry>(controller.transform->GetNode(1));
       geometry->GetRenderState()->SetMaterial(aColor, aColor, vrb::Color(0.0f, 0.0f, 0.0f), 0.0f);
     }
+  }
+}
+
+void
+ControllerContainer::SetVisible(const bool aVisible) {
+  if (m.visible == aVisible) {
+    return;
+  }
+  m.visible = aVisible;
+  if (aVisible) {
+    for (int i = 0; i < m.list.size(); ++i) {
+      if (m.list[i].enabled) {
+        m.root->ToggleChild(*m.list[i].transform, true);
+      }
+    }
+  } else {
+    m.root->ToggleAll(false);
   }
 }
 

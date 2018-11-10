@@ -5,6 +5,10 @@
         <attr name="navigationBarStyle" format="reference" />
         <attr name="uiButtonStyle" format="reference" />
         <attr name="navigationBarButtonStyle" format="reference" />
+        <attr name="fullScreenButtonStyle" format="reference" />
+        <attr name="fullScreenFirstButtonStyle" format="reference" />
+        <attr name="fullScreenLastButtonStyle" format="reference" />
+        <attr name="mediaControlsButtonStyle" format="reference" />
         <attr name="trayButtonStyle" format="reference" />
         <attr name="navigationBarTextButtonStyle" format="reference" />
         <attr name="urlBarIconStyle" format="reference" />
@@ -42,6 +46,28 @@
 
     <style name="navigationBarButtonTheme" parent="uiButtonTheme">
         <item name="android:background">@drawable/main_button</item>
+        <item name="privateModeBackground">@drawable/main_button_private</item>
+    </style>
+
+    <style name="fullScreenButtonTheme" parent="uiButtonTheme">
+        <item name="android:background">@drawable/fullscreen_button</item>
+        <item name="privateModeBackground">@drawable/main_button_private</item>
+    </style>
+
+    <style name="fullScreenFirstButtonTheme" parent="uiButtonTheme">
+        <item name="android:background">@drawable/fullscreen_button_first</item>
+        <item name="privateModeBackground">@drawable/main_button_private</item>
+    </style>
+
+    <style name="fullScreenLastButtonTheme" parent="uiButtonTheme">
+        <item name="android:background">@drawable/fullscreen_button_last</item>
+        <item name="privateModeBackground">@drawable/main_button_private</item>
+    </style>
+
+    <style name="mediaControlsButtonTheme" parent="uiButtonTheme">
+        <item name="android:background">@drawable/media_button</item>
+        <item name="android:layout_width">44dp</item>
+        <item name="android:layout_height">44dp</item>
         <item name="privateModeBackground">@drawable/main_button_private</item>
     </style>
 
@@ -183,6 +209,10 @@
         <item name="settingsButtonStyle">@style/settingsButtonTheme</item>
         <item name="navigationBarStyle">@style/navigationBarTheme</item>
         <item name="navigationBarButtonStyle">@style/navigationBarButtonTheme</item>
+        <item name="fullScreenButtonStyle">@style/fullScreenButtonTheme</item>
+        <item name="fullScreenFirstButtonStyle">@style/fullScreenFirstButtonTheme</item>
+        <item name="fullScreenLastButtonStyle">@style/fullScreenLastButtonTheme</item>
+        <item name="mediaControlsButtonStyle">@style/mediaControlsButtonTheme</item>
         <item name="trayButtonStyle">@style/trayButtonTheme</item>
         <item name="uiButtonStyle">@style/uiButtonTheme</item>
         <item name="navigationBarTextButtonStyle">@style/navigationBarTextButtonTheme</item>
