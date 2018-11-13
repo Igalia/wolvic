@@ -660,9 +660,9 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             out.write("pref(\"dom.webcomponents.customelements.enabled\", true);\n".getBytes());
             // Uncomment this to enable WebRender. WARNING NOT READY FOR USAGE.
             // out.write("pref(\"gfx.webrender.all\", true);\n".getBytes());
-            int mssaLevel = SettingsStore.getInstance(aContext).getMSAALevel();
-            if (mssaLevel > 1) {
-                out.write(("pref(\"gl.msaa-level\"," + mssaLevel + ");\n").getBytes());
+            int msaaLevel = SettingsStore.getInstance(aContext).getMSAALevel();
+            if (msaaLevel > 1) {
+                out.write(("pref(\"gl.msaa-level\"," + msaaLevel + ");\n").getBytes());
             }
             addOptionalPref(out, "dom.vr.require-gesture", aExtras);
             addOptionalPref(out, "privacy.reduceTimerPrecision", aExtras);
