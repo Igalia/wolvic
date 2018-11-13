@@ -365,6 +365,11 @@ DeviceDelegateSVR::GetReorientTransform() const {
 }
 
 void
+DeviceDelegateSVR::SetReorientTransform(const vrb::Matrix& aMatrix) {
+  m.reorientMatrix = aMatrix;
+}
+
+void
 DeviceDelegateSVR::SetClearColor(const vrb::Color& aColor) {
   m.clearColor = aColor;
 }
