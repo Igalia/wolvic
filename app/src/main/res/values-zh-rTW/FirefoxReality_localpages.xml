@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+<resources>
+    <!-- IMPORTANT NOTE: If this file is updated anyhow, the STRs wiki must be updated accordingly:
+    https://github.com/MozillaReality/FirefoxReality/wiki/L10n -->
+	
+	<!-- This string is used as the title of the Private Browsing page that is opened when the
+    Private Browsing Mode button from the tray is clicked. -->
+    <string name="private_browsing_title">隱私瀏覽</string>
+    <!-- This string is used as the body of the Private Browsing page that is opened when the
+    Private Browsing Mode button from the tray is clicked. -->
+    <string name="private_browsing_body"><![CDATA[
+<p>當您透過隱私視窗瀏覽時，%1$s<strong>並不會儲存</ strong>：</p>
+<ul class =“two-column”>
+	<li>曾到訪的頁面</li>
+	<li>搜尋內容</li>
+	<li>Cookies </li>
+	<li>暫存檔案</li>
+</ul>
+<p>隱私瀏覽<strong>並不會讓您在互聯網上完全匿蹤</strong>。您的雇主或互聯網服務供應商依然會知道您曾到訪過哪些頁面。</p>
+<p class =“about-info”>進一步瞭解<a id="learnMore">隱私瀏覽</a>。</p>
+     ]]></string>
+
+</resources>
