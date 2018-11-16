@@ -164,8 +164,6 @@ struct DeviceDelegateOculusVR::State {
 
     reorientCount = vrapi_GetSystemStatusInt(&java, VRAPI_SYS_STATUS_RECENTER_COUNT);
 
-    // Send the remote back button java events to the apps
-    vrapi_SetPropertyInt(&java, VRAPI_BLOCK_REMOTE_BUTTONS_WHEN_NOT_EMULATING_HMT, 0);
     // This needs to be set to 0 so that the volume buttons work. I'm not sure why since the
     // docs in the header indicate that setting this to false (0) means you have to
     // handle the gamepad events yourself.
