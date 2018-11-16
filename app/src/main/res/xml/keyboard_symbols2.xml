@@ -48,7 +48,7 @@
     <Row>
         <Key android:codes="-2" android:keyLabel="ABC" android:keyEdgeFlags="left" android:horizontalGap="@dimen/keyboard_left_margin"/>
         <Key android:codes="32" android:keyLabel=" " android:keyWidth="@dimen/keyboard_key_space_width" android:isRepeatable="true"/>
-        <Key android:codes="44" android:keyLabel="\@"/>
+        <Key android:codes="64" android:keyLabel="\@"/>
         <Key android:codes="-12" android:keyLabel=".com" android:keyEdgeFlags="right"/>
     </Row>
 </Keyboard>
