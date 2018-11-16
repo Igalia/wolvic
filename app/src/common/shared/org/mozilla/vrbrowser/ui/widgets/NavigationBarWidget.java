@@ -600,11 +600,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     @Override
     public @Nullable GeckoResult<AllowOrDeny> onLoadRequest(GeckoSession aSession, @NonNull LoadRequest aRequest) {
-        if (mURLBar != null) {
-            Log.d(LOGTAG, "Got onLoadUri");
-            mURLBar.setURL(aRequest.uri);
-        }
-
         final GeckoResult<AllowOrDeny> result = new GeckoResult<>();
 
         Uri uri = Uri.parse(aRequest.uri);

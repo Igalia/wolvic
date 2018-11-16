@@ -491,18 +491,6 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         return result;
     }
 
-    public String getPreviousUri() {
-        String result = "";
-        if (mCurrentSession != null) {
-            State state = mSessions.get(mCurrentSession.hashCode());
-            if (state == null) {
-                return result;
-            }
-            result = state.mPreviousUri;
-        }
-        return result;
-    }
-
     public Media getFullScreenVideo() {
         Media result = null;
         if (mCurrentSession != null) {
