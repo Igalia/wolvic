@@ -89,11 +89,11 @@ public class NavigationURLBar extends FrameLayout {
         mURL = findViewById(R.id.urlEditText);
         mURL.setShowSoftInputOnFocus(false);
         mURL.setOnEditorActionListener((aTextView, actionId, event) -> {
-        if (actionId == EditorInfo.IME_ACTION_DONE) {
-            handleURLEdit(aTextView.getText().toString());
-            return true;
-        }
-        return false;
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                handleURLEdit(aTextView.getText().toString());
+                return true;
+            }
+            return false;
         });
 
         mURL.setOnFocusChangeListener((view, focused) -> {
@@ -105,7 +105,6 @@ public class NavigationURLBar extends FrameLayout {
         final GestureDetector gd = new GestureDetector(getContext(), new UrlGestureListener());
         gd.setOnDoubleTapListener(mUrlDoubleTapListener);
         mURL.setOnTouchListener((view, motionEvent) -> {
-            view.requestFocusFromTouch();
             if (gd.onTouchEvent(motionEvent)) {
                 return true;
             }
@@ -345,11 +344,6 @@ public class NavigationURLBar extends FrameLayout {
         @Override
         public boolean onDoubleTap(MotionEvent event) {
             return true;
-        }
-
-        @Override
-        public boolean onDown(MotionEvent e) {
-            return false;
         }
     }
 
