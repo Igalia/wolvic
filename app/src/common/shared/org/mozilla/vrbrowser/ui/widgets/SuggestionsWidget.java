@@ -75,7 +75,7 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                ThreadUtils.postToUiThread(() -> SuggestionsWidget.super.hide());
+                ThreadUtils.postToUiThread(() -> SuggestionsWidget.super.hide(KEEP_WIDGET));
             }
 
             @Override
@@ -119,14 +119,8 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
     }
 
     @Override
-    public void hide() {
+    public void hide(@HideFlags int aHideFlags) {
         mList.startAnimation(mScaleDownAnimation);
-    }
-
-    @Override
-        public void handleResizeEvent(float aWorldWidth, float aWorldHeight) {
-        mWidgetPlacement.worldWidth = aWorldWidth * (mWidgetPlacement.width/getWorldWidth());
-        mWidgetManager.updateWidget(this);
     }
 
     // FocusChangeListener
@@ -152,16 +146,16 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
         mList.setAdapter(mAdapter);
     }
 
-    public void updatePlacement() {
+    public void updatePlacement(int aWidth) {
+        mWidgetPlacement.width = aWidth;
         float worldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.browser_world_width);
         float aspect = mWidgetPlacement.width / mWidgetPlacement.height;
         float worldHeight = worldWidth / aspect;
         float area = worldWidth * worldHeight;
 
         float targetWidth = (float) Math.sqrt(area * aspect);
-        float targetHeight = (float) Math.sqrt(area / aspect);
 
-        handleResizeEvent(targetWidth, targetHeight);
+        mWidgetPlacement.worldWidth = targetWidth * (mWidgetPlacement.width/getWorldWidth());
     }
 
     public static class SuggestionItem {
@@ -312,7 +306,7 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
 
-            hide();
+            hide(KEEP_WIDGET);
 
             requestFocus();
             requestFocusFromTouch();

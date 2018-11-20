@@ -12,6 +12,8 @@ namespace {
 
 static const char* kDispatchCreateWidgetName = "dispatchCreateWidget";
 static const char* kDispatchCreateWidgetSignature = "(ILandroid/graphics/SurfaceTexture;II)V";
+static const char* kDispatchCreateWidgetLayerName = "dispatchCreateWidgetLayer";
+static const char* kDispatchCreateWidgetLayerSignature = "(ILandroid/view/Surface;II)V";
 static const char* kHandleMotionEventName = "handleMotionEvent";
 static const char* kHandleMotionEventSignature = "(IIZFF)V";
 static const char* kHandleScrollEventName = "handleScrollEvent";
@@ -38,10 +40,13 @@ static const char* kGetActiveEnvironment = "getActiveEnvironment";
 static const char* kGetActiveEnvironmentSignature = "()Ljava/lang/String;";
 static const char* kGetPointerColor = "getPointerColor";
 static const char* kGetPointerColorSignature = "()I";
+static const char* kAreLayersEnabled = "areLayersEnabled";
+static const char* kAreLayersEnabledSignature = "()Z";
 
 static JNIEnv* sEnv;
 static jobject sActivity;
 static jmethodID sDispatchCreateWidget;
+static jmethodID sDispatchCreateWidgetLayer;
 static jmethodID sHandleMotionEvent;
 static jmethodID sHandleScrollEvent;
 static jmethodID sHandleAudioPose;
@@ -55,6 +60,7 @@ static jmethodID sGetStorageAbsolutePath;
 static jmethodID sIsOverrideEnvPathEnabled;
 static jmethodID sGetActiveEnvironment;
 static jmethodID sGetPointerColor;
+static jmethodID sAreLayersEnabled;
 }
 
 namespace crow {
@@ -75,6 +81,7 @@ VRBrowser::InitializeJava(JNIEnv* aEnv, jobject aActivity) {
   }
 
   sDispatchCreateWidget = FindJNIMethodID(sEnv, browserClass, kDispatchCreateWidgetName, kDispatchCreateWidgetSignature);
+  sDispatchCreateWidgetLayer = FindJNIMethodID(sEnv, browserClass, kDispatchCreateWidgetLayerName, kDispatchCreateWidgetLayerSignature);
   sHandleMotionEvent = FindJNIMethodID(sEnv, browserClass, kHandleMotionEventName, kHandleMotionEventSignature);
   sHandleScrollEvent = FindJNIMethodID(sEnv, browserClass, kHandleScrollEventName, kHandleScrollEventSignature);
   sHandleAudioPose = FindJNIMethodID(sEnv, browserClass, kHandleAudioPoseName, kHandleAudioPoseSignature);
@@ -88,6 +95,7 @@ VRBrowser::InitializeJava(JNIEnv* aEnv, jobject aActivity) {
   sIsOverrideEnvPathEnabled = FindJNIMethodID(sEnv, browserClass, kIsOverrideEnvPathEnabledName, kIsOverrideEnvPathEnabledSignature);
   sGetActiveEnvironment = FindJNIMethodID(sEnv, browserClass, kGetActiveEnvironment, kGetActiveEnvironmentSignature);
   sGetPointerColor = FindJNIMethodID(sEnv, browserClass, kGetPointerColor, kGetPointerColorSignature);
+  sAreLayersEnabled = FindJNIMethodID(sEnv, browserClass, kAreLayersEnabled, kAreLayersEnabledSignature);
 }
 
 void
@@ -101,6 +109,7 @@ VRBrowser::ShutdownJava() {
   }
 
   sDispatchCreateWidget = nullptr;
+  sDispatchCreateWidgetLayer = nullptr;
   sHandleMotionEvent = nullptr;
   sHandleScrollEvent = nullptr;
   sHandleAudioPose = nullptr;
@@ -119,6 +128,15 @@ VRBrowser::DispatchCreateWidget(jint aWidgetHandle, jobject aSurface, jint aWidt
   sEnv->CallVoidMethod(sActivity, sDispatchCreateWidget, aWidgetHandle, aSurface, aWidth, aHeight);
   CheckJNIException(sEnv, __FUNCTION__);
 }
+
+
+void
+VRBrowser::DispatchCreateWidgetLayer(jint aWidgetHandle, jobject aSurface, jint aWidth, jint aHeight) {
+  if (!ValidateMethodID(sEnv, sActivity, sDispatchCreateWidgetLayer, __FUNCTION__)) { return; }
+  sEnv->CallVoidMethod(sActivity, sDispatchCreateWidgetLayer, aWidgetHandle, aSurface, aWidth, aHeight);
+  CheckJNIException(sEnv, __FUNCTION__);
+}
+
 
 void
 VRBrowser::HandleMotionEvent(jint aWidgetHandle, jint aController, jboolean aPressed, jfloat aX, jfloat aY) {
@@ -235,6 +253,15 @@ VRBrowser::GetPointerColor() {
   CheckJNIException(sEnv, __FUNCTION__);
 
   return (int32_t )jHexColor;
+}
+
+bool
+VRBrowser::AreLayersEnabled() {
+  if (!ValidateMethodID(sEnv, sActivity, sAreLayersEnabled, __FUNCTION__)) { return false; }
+  jboolean enabled = sEnv->CallBooleanMethod(sActivity, sAreLayersEnabled);
+  CheckJNIException(sEnv, __FUNCTION__);
+
+  return enabled;
 }
 
 } // namespace crow

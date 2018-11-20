@@ -164,6 +164,9 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             runtimeSettingsBuilder.displayDpiOverride(SettingsStore.getInstance(aContext).getDisplayDpi());
             runtimeSettingsBuilder.screenSizeOverride(SettingsStore.getInstance(aContext).getMaxWindowWidth(),
                     SettingsStore.getInstance(aContext).getMaxWindowHeight());
+            if (SettingsStore.getInstance(aContext).getLayersEnabled()) {
+                runtimeSettingsBuilder.useMaxScreenDepth(true);
+            }
 
             if (BuildConfig.DEBUG) {
                 runtimeSettingsBuilder.arguments(new String[] { "-purgecaches" });
@@ -498,23 +501,22 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     }
 
     public Media getFullScreenVideo() {
-        Media result = null;
         if (mCurrentSession != null) {
             State state = mSessions.get(mCurrentSession.hashCode());
             if (state == null) {
-                return result;
+                return null;
+            }
+            for (Media media: state.mMediaElements) {
+                if (media.isFullscreen()) {
+                    return media;
+                }
             }
             if (state.mMediaElements.size() > 0) {
                 return state.mMediaElements.get(state.mMediaElements.size() - 1);
             }
-            for (Media media: state.mMediaElements) {
-                if (media.isFullscreen()) {
-                    result = media;
-                    break;
-                }
-            }
         }
-        return result;
+
+        return null;
     }
 
     public boolean isInputActive(int aSessionId) {

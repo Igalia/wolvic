@@ -21,6 +21,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
+import android.view.Surface;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -48,6 +49,7 @@ import org.mozilla.vrbrowser.ui.widgets.NavigationBarWidget;
 import org.mozilla.vrbrowser.ui.widgets.RootWidget;
 import org.mozilla.vrbrowser.ui.widgets.TopBarWidget;
 import org.mozilla.vrbrowser.ui.widgets.TrayWidget;
+import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.VideoProjectionMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.Widget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
@@ -423,12 +425,45 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Keep
     @SuppressWarnings("unused")
+    void dispatchCreateWidgetLayer(final int aHandle, final Surface aSurface, final int aWidth, final int aHeight) {
+        runOnUiThread(() -> {
+            final Widget widget = mWidgets.get(aHandle);
+            if (widget == null) {
+                Log.e(LOGTAG, "Widget " + aHandle + " not found");
+                return;
+            }
+
+            Runnable aFirstDrawCallback = null;
+            if (aSurface != null && !widget.getFirstDraw()) {
+                aFirstDrawCallback = () -> {
+                    widget.setFirstDraw(true);
+                    updateWidget(widget);
+                };
+            }
+
+            widget.setSurface(aSurface, aWidth, aHeight, aFirstDrawCallback);
+
+            View view = (View) widget;
+            // Add widget to a virtual display for invalidation
+            if (aSurface != null && view.getParent() == null) {
+                mWidgetContainer.addView(view, new FrameLayout.LayoutParams(aWidth, aHeight));
+            } else if (aSurface == null && view.getParent() != null) {
+                mWidgetContainer.removeView(view);
+            }
+            view.postInvalidate();
+        });
+    }
+
+    @Keep
+    @SuppressWarnings("unused")
     void handleMotionEvent(final int aHandle, final int aDevice, final boolean aPressed, final float aX, final float aY) {
         runOnUiThread(() -> {
             Widget widget = mWidgets.get(aHandle);
             if (widget == null) {
                 MotionEventGenerator.dispatch(mRootWidget, aDevice, aPressed, aX, aY);
-
+            } else if (widget == mBrowserWidget && mBrowserWidget.getBorderWidth() > 0) {
+                final int border = mBrowserWidget.getBorderWidth();
+                MotionEventGenerator.dispatch(widget, aDevice, aPressed, aX - border, aY - border);
             } else {
                 MotionEventGenerator.dispatch(widget, aDevice, aPressed, aX, aY);
             }
@@ -584,6 +619,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Keep
     @SuppressWarnings("unused")
+    public boolean areLayersEnabled() {
+        return SettingsStore.getInstance(this).getLayersEnabled();
+    }
+
+    @Keep
+    @SuppressWarnings("unused")
     public String getActiveEnvironment() {
         return SettingsStore.getInstance(this).getEnvironment();
     }
@@ -657,7 +698,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             params.width = textureWidth;
             params.height = textureHeight;
             ((View)aWidget).setLayoutParams(params);
-            aWidget.resizeSurfaceTexture(textureWidth, textureHeight);
+            aWidget.resizeSurface(textureWidth, textureHeight);
         }
 
         boolean visible = aWidget.getPlacement().visible;
@@ -803,7 +844,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             mTray.show();
 
         } else {
-            mTray.hide();
+            mTray.hide(UIWidget.KEEP_WIDGET);
         }
     }
 

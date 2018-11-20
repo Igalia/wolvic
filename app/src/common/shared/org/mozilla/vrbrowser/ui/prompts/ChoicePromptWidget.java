@@ -172,7 +172,7 @@ public class ChoicePromptWidget extends UIWidget implements WidgetManagerDelegat
 
     @Override
     protected void onDismiss() {
-        hide();
+        hide(REMOVE_WIDGET);
 
         if (mPromptDelegate != null) {
             mPromptDelegate.onDismissed(getDefaultChoices(mListItems));

@@ -9,10 +9,12 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.Surface;
 import android.view.View;
 import android.view.ViewParent;
 import android.widget.FrameLayout;
@@ -41,6 +43,7 @@ public abstract class UIWidget extends FrameLayout implements Widget {
     protected Runnable mBackHandler;
     protected HashMap<Integer, UIWidget> mChildren;
     protected Delegate mDelegate;
+    private Runnable mFirstDrawCallback;
 
     public UIWidget(Context aContext) {
         super(aContext);
@@ -65,6 +68,11 @@ public abstract class UIWidget extends FrameLayout implements Widget {
         mInitialWidth = mWidgetPlacement.width;
         mInitialHeight = mWidgetPlacement.height;
         mWorldWidth = WidgetPlacement.pixelDimension(getContext(), R.dimen.world_width);
+        // Transparent border useful for TimeWarp Layers and better aliasing.
+        int padding_dp = 1;  // 1 dps
+        final float scale = getResources().getDisplayMetrics().density;
+        int padding_px = (int) (padding_dp * scale + 0.5f);
+        this.setPadding(padding_px, padding_px, padding_px, padding_px);
 
         mChildren = new HashMap<>();
         mBackHandler = new Runnable() {
@@ -87,6 +95,7 @@ public abstract class UIWidget extends FrameLayout implements Widget {
         mTexture = aTexture;
         if (mRenderer != null) {
             mRenderer.release();
+            mRenderer = null;
         }
         if (aTexture != null) {
             mRenderer = new UISurfaceTextureRenderer(aTexture, aWidth, aHeight);
@@ -95,7 +104,20 @@ public abstract class UIWidget extends FrameLayout implements Widget {
     }
 
     @Override
-    public void resizeSurfaceTexture(final int aWidth, final int aHeight) {
+    public void setSurface(Surface aSurface, final int aWidth, final int aHeight, Runnable aFirstDrawCallback) {
+        mFirstDrawCallback = aFirstDrawCallback;
+        if (mRenderer != null) {
+            mRenderer.release();
+            mRenderer = null;
+        }
+        if (aSurface != null) {
+            mRenderer = new UISurfaceTextureRenderer(aSurface, aWidth, aHeight);
+        }
+        setWillNotDraw(mRenderer == null);
+    }
+
+    @Override
+    public void resizeSurface(final int aWidth, final int aHeight) {
         if (mRenderer != null){
             mRenderer.resize(aWidth, aHeight);
         }
@@ -180,6 +202,10 @@ public abstract class UIWidget extends FrameLayout implements Widget {
             super.draw(textureCanvas);
         }
         mRenderer.drawEnd();
+        if (mFirstDrawCallback != null) {
+            mFirstDrawCallback.run();
+            mFirstDrawCallback = null;
+        }
     }
 
     @Override
@@ -209,7 +235,7 @@ public abstract class UIWidget extends FrameLayout implements Widget {
 
     public void toggle() {
         if (isVisible()) {
-            hide();
+            hide(REMOVE_WIDGET);
 
         } else {
             show();
@@ -233,16 +259,23 @@ public abstract class UIWidget extends FrameLayout implements Widget {
         }
     }
 
-    public void hide() {
+    @IntDef(value = { REMOVE_WIDGET, KEEP_WIDGET })
+    public @interface HideFlags {}
+    public static final int REMOVE_WIDGET = 0;
+    public static final int KEEP_WIDGET = 1;
+
+    public void hide(@HideFlags int aHideFlags) {
         for (UIWidget child : mChildren.values()) {
             if (child.isVisible()) {
-                child.hide();
+                child.hide(aHideFlags);
             }
         }
 
         if (mWidgetPlacement.visible) {
             mWidgetPlacement.visible = false;
-            mWidgetManager.removeWidget(this);
+            if (aHideFlags == REMOVE_WIDGET) {
+                mWidgetManager.removeWidget(this);
+            }
             mWidgetManager.popBackHandler(mBackHandler);
         }
 
@@ -300,7 +333,7 @@ public abstract class UIWidget extends FrameLayout implements Widget {
 
 
     protected void onDismiss() {
-        hide();
+        hide(REMOVE_WIDGET);
 
         if (mDelegate != null) {
             mDelegate.onDismiss();

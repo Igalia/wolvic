@@ -7,10 +7,12 @@ package org.mozilla.vrbrowser.ui.widgets;
 
 import android.graphics.SurfaceTexture;
 import android.view.MotionEvent;
+import android.view.Surface;
 
 public interface Widget {
     void setSurfaceTexture(SurfaceTexture aTexture, final int aWidth, final int aHeight);
-    void resizeSurfaceTexture(final int aWidth, final int aHeight);
+    void setSurface(Surface aSurface, final int aWidth, final int aHeight, Runnable aFirstDrawCallback);
+    void resizeSurface(final int aWidth, final int aHeight);
     int getHandle();
     WidgetPlacement getPlacement();
     void handleTouchEvent(MotionEvent aEvent);

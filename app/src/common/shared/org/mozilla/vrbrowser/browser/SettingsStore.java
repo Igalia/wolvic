@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.telemetry.TelemetryHolder;
+import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 
@@ -303,6 +304,13 @@ public class SettingsStore {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putInt(mContext.getString(R.string.settings_key_msaa), level);
         editor.commit();
+    }
+
+    public boolean getLayersEnabled() {
+        if (BuildConfig.FLAVOR_platform.equalsIgnoreCase("oculusvr")) {
+            return true;
+        }
+        return false;
     }
 
 }

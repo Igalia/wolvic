@@ -38,6 +38,7 @@ public class WidgetPlacement {
     public boolean opaque = false;
     public boolean showPointer = true;
     public boolean firstDraw = false;
+    public boolean layer = true;
 
     public WidgetPlacement clone() {
         WidgetPlacement w = new WidgetPlacement();

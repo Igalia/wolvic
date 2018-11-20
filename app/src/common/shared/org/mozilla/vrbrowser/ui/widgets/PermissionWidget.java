@@ -95,8 +95,8 @@ public class PermissionWidget extends UIWidget implements WidgetManagerDelegate.
     }
 
     @Override
-    public void hide() {
-        super.hide();
+    public void hide(@HideFlags int aHideFlag) {
+        super.hide(aHideFlag);
 
         mWidgetManager.popWorldBrightness(this);
     }

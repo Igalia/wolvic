@@ -17,7 +17,8 @@ namespace crow {
 namespace VRBrowser {
 void InitializeJava(JNIEnv* aEnv, jobject aActivity);
 void ShutdownJava();
-void DispatchCreateWidget(jint aWidgetHandle, jobject aSurface, jint aWidth, jint aHeight);
+void DispatchCreateWidget(jint aWidgetHandle, jobject aSurfaceTexture, jint aWidth, jint aHeight);
+void DispatchCreateWidgetLayer(jint aWidgetHandle, jobject aSurface, jint aWidth, jint aHeight);
 void HandleMotionEvent(jint aWidgetHandle, jint aController, jboolean aPressed, jfloat aX, jfloat aY);
 void HandleScrollEvent(jint aWidgetHandle, jint aController, jfloat aX, jfloat aY);
 void HandleAudioPose(jfloat qx, jfloat qy, jfloat qz, jfloat qw, jfloat px, jfloat py, jfloat pz);
@@ -31,6 +32,7 @@ std::string GetStorageAbsolutePath(const std::string& aRelativePath);
 bool isOverrideEnvPathEnabled();
 std::string GetActiveEnvironment();
 int32_t GetPointerColor();
+bool AreLayersEnabled();
 } // namespace VRBrowser;
 
 } // namespace crow

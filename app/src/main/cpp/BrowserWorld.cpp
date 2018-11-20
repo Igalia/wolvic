@@ -6,19 +6,21 @@
 #include "BrowserWorld.h"
 #include "Controller.h"
 #include "ControllerContainer.h"
-#include "FadeBlitter.h"
+#include "FadeAnimation.h"
 #include "Device.h"
 #include "DeviceDelegate.h"
 #include "ExternalBlitter.h"
 #include "ExternalVR.h"
 #include "GeckoSurfaceTexture.h"
 #include "LoadingAnimation.h"
+#include "Skybox.h"
 #include "SplashAnimation.h"
 #include "Widget.h"
 #include "WidgetPlacement.h"
-#include "VRBrowser.h"
 #include "Quad.h"
+#include "VRBrowser.h"
 #include "VRVideo.h"
+#include "VRLayer.h"
 #include "vrb/CameraSimple.h"
 #include "vrb/Color.h"
 #include "vrb/ConcreteClass.h"
@@ -155,8 +157,8 @@ struct BrowserWorld::State {
   ExternalVRPtr externalVR;
   ExternalBlitterPtr blitter;
   bool windowsInitialized;
-  TogglePtr skybox;
-  FadeBlitterPtr fadeBlitter;
+  SkyboxPtr skybox;
+  FadeAnimationPtr fadeAnimation;
   uint32_t loaderDelay;
   bool exitImmersiveRequested;
   WidgetPtr resizingWidget;
@@ -183,7 +185,7 @@ struct BrowserWorld::State {
     controllers = ControllerContainer::Create(create);
     externalVR = ExternalVR::Create();
     blitter = ExternalBlitter::Create(create);
-    fadeBlitter = FadeBlitter::Create(create);
+    fadeAnimation = FadeAnimation::Create(create);
     loadingAnimation = LoadingAnimation::Create(create);
     splashAnimation = SplashAnimation::Create(create);
   }
@@ -429,7 +431,7 @@ BrowserWorld::RegisterDeviceDelegate(DeviceDelegatePtr aDelegate) {
   m.device = aDelegate;
   if (m.device) {
     m.device->RegisterImmersiveDisplay(m.externalVR);
-    m.device->SetClearColor(vrb::Color(0.0f, 0.0f, 0.0f));
+    m.device->SetClearColor(vrb::Color(0.0f, 0.0f, 0.0f, 0.0f));
     m.leftCamera = m.device->GetCamera(device::Eye::Left);
     m.rightCamera = m.device->GetCamera(device::Eye::Right);
     ControllerDelegatePtr delegate = m.controllers;
@@ -507,11 +509,15 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
       }
     }
 #if !defined(SNAPDRAGONVR)
-    m.skybox = CreateSkyBox(skyboxPath.c_str());
-    m.rootOpaqueParent->AddNode(m.skybox);
+    CreateSkyBox(skyboxPath.c_str());
     // Don't load the env model, we are going for skyboxes in v1.0
 //    CreateFloor();
 #endif
+    m.fadeAnimation->SetFadeChangeCallback([=](const vrb::Color& aTintColor) {
+      if (m.skybox) {
+        m.skybox->SetTintColor(aTintColor);
+      }
+    });
     m.modelsLoaded = true;
   }
 }
@@ -531,7 +537,7 @@ BrowserWorld::InitializeGL() {
         return;
       }
       if (m.splashAnimation) {
-        m.splashAnimation->Load();
+        m.splashAnimation->Load(m.context, m.device);
       }
       // delay the m.loader->InitializeGL() call to fix some issues with Daydream activities
       m.loaderDelay = 3;
@@ -641,9 +647,7 @@ BrowserWorld::UpdateEnvironment() {
   ASSERT_ON_RENDER_THREAD();
   std::string env = VRBrowser::GetActiveEnvironment();
   VRB_LOG("Setting environment: %s", env.c_str());
-  m.rootOpaqueParent->RemoveNode(*m.skybox);
-  m.skybox = CreateSkyBox(env.c_str());
-  m.rootOpaqueParent->AddNode(m.skybox);
+  CreateSkyBox(env.c_str());
 }
 
 void
@@ -686,11 +690,22 @@ BrowserWorld::AddWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement) {
     worldWidth = aPlacement->width * kWorldDPIRatio;
   }
 
-  WidgetPtr widget = Widget::Create(m.context,
-                                    aHandle,
-                                    (int32_t)(ceilf(aPlacement->width * aPlacement->density)),
-                                    (int32_t)(ceilf(aPlacement->height * aPlacement->density)),
-                                    worldWidth);
+  int32_t textureWidth = (int32_t)(ceilf(aPlacement->width * aPlacement->density));
+  int32_t textureHeight = (int32_t)(ceilf(aPlacement->height * aPlacement->density));
+
+  WidgetPtr widget;
+  VRLayerQuadPtr layer;
+  if (aPlacement->layer) {
+    layer = m.device->CreateLayerQuad(textureWidth, textureHeight,
+                                      VRLayerQuad::SurfaceType::AndroidSurface);
+  }
+
+  if (layer) {
+    widget = Widget::Create(m.context, aHandle, layer, worldWidth);
+  } else {
+    widget = Widget::Create(m.context, aHandle, textureWidth, textureHeight, worldWidth);
+  }
+
   if (aPlacement->opaque) {
     m.rootOpaque->AddNode(widget->GetRoot());
   } else {
@@ -753,6 +768,9 @@ BrowserWorld::RemoveWidget(int32_t aHandle) {
     auto it = std::find(m.widgets.begin(), m.widgets.end(), widget);
     if (it != m.widgets.end()) {
       m.widgets.erase(it);
+    }
+    if (widget->GetLayer()) {
+      m.device->DeleteLayer(widget->GetLayer());
     }
   }
 }
@@ -832,7 +850,7 @@ BrowserWorld::LayoutWidget(int32_t aHandle) {
 void
 BrowserWorld::SetBrightness(const float aBrightness) {
   ASSERT_ON_RENDER_THREAD();
-  m.fadeBlitter->SetBrightness(aBrightness);
+  m.fadeAnimation->SetBrightness(aBrightness);
 }
 
 void
@@ -850,23 +868,26 @@ BrowserWorld::ShowVRVideo(const int aWindowHandle, const int aVideoProjection) {
   }
 
   auto projection = static_cast<VRVideo::VRVideoProjection>(aVideoProjection);
-  m.vrVideo = VRVideo::Create(m.create, widget, projection);
+  m.vrVideo = VRVideo::Create(m.create, widget, projection, m.device);
   if (m.skybox && projection != VRVideo::VRVideoProjection::VIDEO_PROJECTION_3D_SIDE_BY_SIDE) {
-    m.skybox->ToggleAll(false);
+    m.skybox->SetVisible(false);
   }
-  if (m.fadeBlitter && projection != VRVideo::VRVideoProjection::VIDEO_PROJECTION_3D_SIDE_BY_SIDE) {
-    m.fadeBlitter->SetVisible(false);
+  if (m.fadeAnimation && projection != VRVideo::VRVideoProjection::VIDEO_PROJECTION_3D_SIDE_BY_SIDE) {
+    m.fadeAnimation->SetVisible(false);
   }
 }
 
 void
 BrowserWorld::HideVRVideo() {
+  if (m.vrVideo) {
+    m.vrVideo->Exit();
+  }
   m.vrVideo = nullptr;
   if (m.skybox) {
-    m.skybox->ToggleAll(true);
+    m.skybox->SetVisible(true);
   }
-  if (m.fadeBlitter) {
-    m.fadeBlitter->SetVisible(true);
+  if (m.fadeAnimation) {
+    m.fadeAnimation->SetVisible(true);
   }
 }
 
@@ -908,14 +929,15 @@ void
 BrowserWorld::DrawWorld() {
   m.externalVR->SetCompositorEnabled(true);
   m.device->SetRenderMode(device::RenderMode::StandAlone);
+  if (m.fadeAnimation) {
+    m.fadeAnimation->UpdateAnimation();
+  }
   vrb::Vector headPosition = m.device->GetHeadTransform().GetTranslation();
   vrb::Vector headDirection = m.device->GetHeadTransform().MultiplyDirection(vrb::Vector(0.0f, 0.0f, -1.0f));
   if (m.skybox) {
-    vrb::TransformPtr t = std::dynamic_pointer_cast<Transform>(m.skybox->GetNode(0));
-    t->SetTransform(vrb::Matrix::Translation(headPosition));
+    m.skybox->SetTransform(vrb::Matrix::Translation(headPosition));
   }
   m.rootTransparent->SortNodes([=](const NodePtr& a, const NodePtr& b) {
-    const float kMaxFloat = 9999999.0f;
     float da = DistanceToPlane(GetWidgetFromNode(a), headPosition, headDirection);
     float db = DistanceToPlane(GetWidgetFromNode(b), headPosition, headDirection);
     if (da < 0.0f) {
@@ -927,7 +949,6 @@ BrowserWorld::DrawWorld() {
     return da < db;
   });
   m.device->StartFrame();
-
   m.rootOpaque->SetTransform(m.device->GetReorientTransform());
   m.rootTransparent->SetTransform(m.device->GetReorientTransform());
 
@@ -935,9 +956,6 @@ BrowserWorld::DrawWorld() {
   m.drawList->Reset();
   m.rootOpaqueParent->Cull(*m.cullVisitor, *m.drawList);
   m.drawList->Draw(*m.leftCamera);
-  if (m.fadeBlitter && m.fadeBlitter->IsVisible()) {
-    m.fadeBlitter->Draw();
-  }
   if (m.vrVideo) {
     m.vrVideo->SelectEye(device::Eye::Left);
     m.drawList->Reset();
@@ -958,9 +976,6 @@ BrowserWorld::DrawWorld() {
   m.drawList->Reset();
   m.rootOpaqueParent->Cull(*m.cullVisitor, *m.drawList);
   m.drawList->Draw(*m.rightCamera);
-  if (m.fadeBlitter && m.fadeBlitter->IsVisible()) {
-    m.fadeBlitter->Draw();
-  }
   if (m.vrVideo) {
     m.vrVideo->SelectEye(device::Eye::Right);
     m.drawList->Reset();
@@ -1048,87 +1063,33 @@ BrowserWorld::DrawSplashAnimation() {
 #endif // !defined(VRBROWSER_NO_VR_API)
   m.device->EndFrame();
   if (animationFinished) {
+    if (m.splashAnimation && m.splashAnimation->GetLayer()) {
+      m.device->DeleteLayer(m.splashAnimation->GetLayer());
+    }
     m.splashAnimation = nullptr;
-    if (m.fadeBlitter) {
-      m.fadeBlitter->FadeIn();
+    if (m.fadeAnimation) {
+      m.fadeAnimation->FadeIn();
     }
   }
 }
 
-vrb::TogglePtr
-BrowserWorld::CreateSkyBox(const std::string& basePath) {
-  ASSERT_ON_RENDER_THREAD(nullptr);
-  vrb::TogglePtr toggle = vrb::Toggle::Create(m.create);
-  vrb::TransformPtr transform = vrb::Transform::Create(m.create);
-  transform->SetTransform(Matrix::Position(vrb::Vector(0.0f, 0.0f, 0.0f)));
-  LoadSkybox(transform, basePath);
-  toggle->AddNode(transform);
-  return toggle;
-}
-
 void
-BrowserWorld::LoadSkybox(const vrb::TransformPtr transform, const std::string &basePath) {
-  LoadTask task = [basePath](CreationContextPtr &aContext) -> GroupPtr {
-    std::array<GLfloat, 24> cubeVertices{
-      -1.0f, 1.0f, 1.0f, // 0
-      -1.0f, -1.0f, 1.0f, // 1
-      1.0f, -1.0f, 1.0f, // 2
-      1.0f, 1.0f, 1.0f, // 3
-      -1.0f, 1.0f, -1.0f, // 4
-      -1.0f, -1.0f, -1.0f, // 5
-      1.0f, -1.0f, -1.0f, // 6
-      1.0f, 1.0f, -1.0f, // 7
-    };
-
-    std::array<GLushort, 24> cubeIndices{
-      0, 1, 2, 3,
-      3, 2, 6, 7,
-      7, 6, 5, 4,
-      4, 5, 1, 0,
-      0, 3, 7, 4,
-      1, 5, 6, 2
-    };
-
-    VertexArrayPtr array = VertexArray::Create(aContext);
-    const float kLength = 140.0f;
-    for (int i = 0; i < cubeVertices.size(); i += 3) {
-      array->AppendVertex(Vector(-kLength * cubeVertices[i], -kLength * cubeVertices[i + 1],
-                                 -kLength * cubeVertices[i + 2]));
-      array->AppendUV(Vector(-kLength * cubeVertices[i], -kLength * cubeVertices[i + 1],
-                             -kLength * cubeVertices[i + 2]));
-    }
-
-    vrb::GeometryPtr geometry = vrb::Geometry::Create(aContext);
-    geometry->SetVertexArray(array);
-
-    for (int i = 0; i < cubeIndices.size(); i += 4) {
-      std::vector<int> indices = {cubeIndices[i] + 1, cubeIndices[i + 1] + 1,
-                                  cubeIndices[i + 2] + 1, cubeIndices[i + 3] + 1};
-      geometry->AddFace(indices, indices, {});
-    }
-
-    RenderStatePtr state = RenderState::Create(aContext);
-    TextureCubeMapPtr cubemap = vrb::TextureCubeMap::Create(aContext);
-    cubemap->SetTextureParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    cubemap->SetTextureParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    cubemap->SetTextureParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    cubemap->SetTextureParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    cubemap->SetTextureParameter(GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-    state->SetTexture(cubemap);
-
-    auto path = [&](const std::string &name) { return basePath + "/" + name + ".jpg"; };
-    vrb::TextureCubeMap::Load(aContext, cubemap, path("posx"), path("negx"), path("posy"),
-                              path("negy"), path("posz"), path("negz"));
-
-    state->SetMaterial(Color(1.0f, 1.0f, 1.0f), Color(1.0f, 1.0f, 1.0f), Color(0.0f, 0.0f, 0.0f),
-                       0.0f);
-    geometry->SetRenderState(state);
-    vrb::GroupPtr group = vrb::Transform::Create(aContext);
-    group->AddNode(geometry);
-    return group;
-  };
-
-  m.loader->RunLoadTask(transform, task);
+BrowserWorld::CreateSkyBox(const std::string& basePath) {
+  ASSERT_ON_RENDER_THREAD();
+  const bool empty = basePath == "cubemap/void";
+  if (m.skybox && empty) {
+    m.skybox->SetVisible(false);
+    return;
+  } else if (m.skybox) {
+    m.skybox->SetVisible(true);
+    m.skybox->Load(m.loader, basePath);
+    return;
+  } else if (!empty) {
+    VRLayerCubePtr layer = m.device->CreateLayerCube(1024, 1024);
+    m.skybox = Skybox::Create(m.create, layer);
+    m.rootOpaqueParent->AddNode(m.skybox->GetRoot());
+    m.skybox->Load(m.loader, basePath);
+  }
 }
 
 void

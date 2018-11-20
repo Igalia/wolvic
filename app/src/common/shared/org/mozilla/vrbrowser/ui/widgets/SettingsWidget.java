@@ -199,7 +199,7 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
 
         SessionStore.get().loadUri(getContext().getString(R.string.private_policy_url));
 
-        hide();
+        hide(REMOVE_WIDGET);
     }
 
     private void onSettingsReportClick() {
@@ -229,7 +229,7 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
         }
         SessionStore.get().loadUri(getContext().getString(R.string.private_report_url, url));
 
-        hide();
+        hide(REMOVE_WIDGET);
     }
 
     private void onDeveloperOptionsClick() {
@@ -275,7 +275,7 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
 
     private void showDeveloperOptionsDialog() {
         mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
-        hide();
+        hide(REMOVE_WIDGET);
         UIWidget widget = getChild(mDeveloperOptionsDialogHandle);
         if (widget == null) {
             widget = createChild(DeveloperOptionsWidget.class, false);
@@ -316,8 +316,8 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
     }
 
     @Override
-    public void hide() {
-        super.hide();
+    public void hide(@HideFlags int aHideFlags) {
+        super.hide(aHideFlags);
 
         mWidgetManager.popWorldBrightness(this);
     }

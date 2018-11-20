@@ -4,6 +4,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "Quad.h"
+#include "VRLayer.h"
+#include "VRLayerNode.h"
 #include "vrb/ConcreteClass.h"
 
 #include "vrb/Color.h"
@@ -22,6 +24,8 @@ namespace crow {
 
 struct Quad::State {
   vrb::CreationContextWeak context;
+  VRLayerQuadPtr layer;
+  VRLayerNodePtr layerNode;
   int32_t textureWidth;
   int32_t textureHeight;
   vrb::TogglePtr root;
@@ -44,9 +48,17 @@ struct Quad::State {
 
   void Initialize() {
     vrb::CreationContextPtr create = context.lock();
-    geometry = Quad::CreateGeometry(create, worldMin, worldMax);
     transform = vrb::Transform::Create(create);
-    transform->AddNode(geometry);
+    if (layer) {
+      textureWidth = layer->GetWidth();
+      textureHeight = layer->GetHeight();
+      layer->SetWorldSize(GetWorldWidth(), GetWorldHeight());
+      layerNode = VRLayerNode::Create(create, layer);
+      transform->AddNode(layerNode);
+    } else {
+      geometry = Quad::CreateGeometry(create, worldMin, worldMax);
+      transform->AddNode(geometry);
+    }
     root = vrb::Toggle::Create(create);
     root->AddNode(transform);
     if (scaleMode != ScaleMode::Fill) {
@@ -66,7 +78,6 @@ struct Quad::State {
     if (textureWidth == 0|| textureHeight == 0) {
       return;
     }
-    vrb::VertexArrayPtr array = geometry->GetVertexArray();
 
     vrb::Vector min = worldMin;
     vrb::Vector max = worldMax;
@@ -74,7 +85,6 @@ struct Quad::State {
     const float worldHeight = GetWorldHeight();
     const float textureAspect = (float) textureWidth / (float) textureHeight;
     const float worldAspect = worldWidth / worldHeight;
-
 
     if (scaleMode == ScaleMode::AspectFit) {
       const float newWidth = worldAspect > textureAspect ? worldHeight * textureAspect : worldWidth;
@@ -97,19 +107,30 @@ struct Quad::State {
         u0 = 0.5f - ul;
       }
 
-      array->SetUV(0, vrb::Vector(u0, v0 + vl, 0.0f));
-      array->SetUV(1, vrb::Vector(u0 + ul, v0 + vl, 0.0f));
-      array->SetUV(2, vrb::Vector(u0 + ul, v0, 0.0f));
-      array->SetUV(3, vrb::Vector(u0, v0, 0.0f));
+      if (layer) {
+        device::EyeRect textureRect(u0, v0, u0 + ul, v0 + vl);
+        layer->SetTextureRect(device::Eye::Left, textureRect);
+        layer->SetTextureRect(device::Eye::Right, textureRect);
+      } else {
+        vrb::VertexArrayPtr array = geometry->GetVertexArray();
+        array->SetUV(0, vrb::Vector(u0, v0 + vl, 0.0f));
+        array->SetUV(1, vrb::Vector(u0 + ul, v0 + vl, 0.0f));
+        array->SetUV(2, vrb::Vector(u0 + ul, v0, 0.0f));
+        array->SetUV(3, vrb::Vector(u0, v0, 0.0f));
+      }
     }
 
-    const vrb::Vector bottomRight(max.x(), min.y(), min.z());
-    array->SetVertex(0, min); // Bottom left
-    array->SetVertex(1, bottomRight); // Bottom right
-    array->SetVertex(2, max); // Top right
-    array->SetVertex(3, vrb::Vector(min.x(), max.y(), max.z())); // Top left
-
-    geometry->UpdateBuffers();
+    if (layer) {
+      layer->SetWorldSize(max.x() - min.x(), max.y() - min.y());
+    } else {
+      const vrb::Vector bottomRight(max.x(), min.y(), min.z());
+      vrb::VertexArrayPtr array = geometry->GetVertexArray();
+      array->SetVertex(0, min); // Bottom left
+      array->SetVertex(1, bottomRight); // Bottom right
+      array->SetVertex(2, max); // Top right
+      array->SetVertex(3, vrb::Vector(min.x(), max.y(), max.z())); // Top left
+      geometry->UpdateBuffers();
+    }
   }
 
   void LayoutBackground() {
@@ -126,19 +147,21 @@ struct Quad::State {
 };
 
 QuadPtr
-Quad::Create(vrb::CreationContextPtr aContext, const vrb::Vector& aMin, const vrb::Vector& aMax) {
+Quad::Create(vrb::CreationContextPtr aContext, const vrb::Vector& aMin, const vrb::Vector& aMax, const VRLayerQuadPtr& aLayer) {
   QuadPtr result = std::make_shared<vrb::ConcreteClass<Quad, Quad::State> >(aContext);
   result->m.worldMin = aMin;
   result->m.worldMax = aMax;
+  result->m.layer = aLayer;
   result->m.Initialize();
   return result;
 }
 
 QuadPtr
-Quad::Create(vrb::CreationContextPtr aContext, const float aWorldWidth, const float aWorldHeight) {
+Quad::Create(vrb::CreationContextPtr aContext, const float aWorldWidth, const float aWorldHeight, const VRLayerQuadPtr& aLayer) {
   QuadPtr result = std::make_shared<vrb::ConcreteClass<Quad, Quad::State> >(aContext);
   result->m.worldMin = vrb::Vector(-aWorldWidth * 0.5f, -aWorldHeight * 0.5f, 0.0f);
   result->m.worldMax = vrb::Vector(aWorldWidth * 0.5f, aWorldHeight * 0.5f, 0.0f);
+  result->m.layer = aLayer;
   result->m.Initialize();
   return result;
 }
@@ -236,6 +259,18 @@ Quad::SetBackgroundColor(const vrb::Color& aColor) {
   if (m.backgroundColor == aColor || (aColor.Alpha() == 0.0f && m.backgroundColor.Alpha() == 0.0f)) {
     return;
   }
+  if (m.layer) {
+    /*
+     * We disable the background when using layers because there is a difficult to fix glitch.
+     * We can create 2 nodes to simulate the background color on the sides of the ScaleToFit mode.
+     * It works while resizing, but at the end, when the actual GV surface is really changed
+     * there is some SurfaceTexture update delay that causes a glitch. Background color becomes
+     * transparent or the background color is shown on top of the GV quad surface.
+     * This glitch doesn't happen with normal scenegraph code because the background color is shown
+     * on the back of the Quad surface. But with Layers we can't do that.
+     */
+    return;
+  }
   m.backgroundColor = aColor;
   if (!m.backgroundGeometry) {
     vrb::CreationContextPtr create = m.context.lock();
@@ -252,18 +287,17 @@ Quad::SetBackgroundColor(const vrb::Color& aColor) {
 
 void
 Quad::GetTextureSize(int32_t& aWidth, int32_t& aHeight) const {
-  if (aWidth == m.textureWidth && aHeight == m.textureHeight) {
-    return;
-  }
   aWidth = m.textureWidth;
   aHeight = m.textureHeight;
-  m.UpdateVertexArray();
 }
 
 void
 Quad::SetTextureSize(int32_t aWidth, int32_t aHeight) {
   m.textureWidth = aWidth;
   m.textureHeight = aHeight;
+  if (m.layer) {
+    m.layer->Resize(aWidth, aHeight);
+  }
 }
 
 void
@@ -313,13 +347,27 @@ Quad::SetWorldSize(const vrb::Vector& aMin, const vrb::Vector& aMax) const {
   m.worldMin = aMin;
   m.worldMax = aMax;
 
+  if (m.layer) {
+    m.layer->SetWorldSize(GetWorldWidth(), GetWorldHeight());
+  }
+
   m.UpdateVertexArray();
   m.LayoutBackground();
 }
 
+void
+Quad::SetTintColor(const vrb::Color& aColor) {
+  if (m.layer) {
+    m.layer->SetTintColor(aColor);
+  } else if (m.geometry && m.geometry->GetRenderState()) {
+    m.geometry->GetRenderState()->SetTintColor(aColor);
+  }
+}
+
 vrb::Vector
 Quad::GetNormal() const {
-  return m.geometry->GetVertexArray()->GetNormal(0);
+  const vrb::Vector bottomRight(m.worldMax.x(), m.worldMin.y(), m.worldMin.z());
+  return (bottomRight - m.worldMin).Cross(m.worldMax - m.worldMin).Normalize();
 }
 
 vrb::NodePtr

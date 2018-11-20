@@ -38,6 +38,11 @@ struct EyeRect {
     mHeight = aRect.mHeight;
     return* this;
   }
+
+  bool IsDefault() const {
+    return mX == 0.0f && mY == 0.0f && mWidth == 1.0f && mHeight == 1.0f;
+  }
+
 };
 
 } // namespace device

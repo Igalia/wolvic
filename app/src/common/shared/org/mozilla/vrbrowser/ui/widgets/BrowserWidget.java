@@ -43,11 +43,13 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
     private ChoicePromptWidget mChoicePrompt;
     private int mWidthBackup;
     private int mHeightBackup;
+    private int mBorderWidth;
 
     public BrowserWidget(Context aContext, int aSessionId) {
         super(aContext);
         mSessionId = aSessionId;
         mWidgetManager = (WidgetManagerDelegate) aContext;
+        mBorderWidth = SettingsStore.getInstance(aContext).getLayersEnabled() ? 1 : 0;
         SessionStore.get().addSessionChangeListener(this);
         SessionStore.get().addPromptListener(this);
         setFocusable(true);
@@ -65,14 +67,15 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
 
     private void initializeWidgetPlacement(WidgetPlacement aPlacement) {
         Context context = getContext();
-        aPlacement.width = SettingsStore.getInstance(getContext()).getWindowWidth();
-        aPlacement.height = SettingsStore.getInstance(getContext()).getWindowHeight();
+        aPlacement.width = SettingsStore.getInstance(getContext()).getWindowWidth() + mBorderWidth * 2;
+        aPlacement.height = SettingsStore.getInstance(getContext()).getWindowHeight() + mBorderWidth * 2;
         aPlacement.density = 1.0f;
         aPlacement.translationX = 0.0f;
         aPlacement.translationY = WidgetPlacement.unitFromMeters(context, R.dimen.browser_world_y);
         aPlacement.translationZ = WidgetPlacement.unitFromMeters(context, R.dimen.browser_world_z);
         aPlacement.anchorX = 0.5f;
         aPlacement.anchorY = 0.0f;
+        aPlacement.visible = true;
     }
 
     public void pauseCompositor() {
@@ -91,18 +94,22 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
             return;
         }
 
-        mDisplay.surfaceChanged(mSurface, mWidth, mHeight);
+        callSurfaceChanged();
     }
 
-    public void enableVRVideoMode(int aVideoWidth, int aVideoHeight) {
+    public void enableVRVideoMode(int aVideoWidth, int aVideoHeight, boolean aResetBorder) {
         mWidthBackup = mWidth;
         mHeightBackup = mHeight;
-        if (aVideoWidth == mWidth && aVideoHeight == mHeight) {
+        boolean borderChanged = aResetBorder && mBorderWidth > 0;
+        if (aVideoWidth == mWidth && aVideoHeight == mHeight && !borderChanged) {
             return;
         }
-        mWidgetPlacement.width = aVideoWidth;
-        mWidgetPlacement.height = aVideoHeight;
-        resizeSurfaceTexture(aVideoWidth, aVideoHeight);
+        if (aResetBorder) {
+            mBorderWidth = 0;
+        }
+        mWidgetPlacement.width = aVideoWidth + mBorderWidth * 2;
+        mWidgetPlacement.height = aVideoHeight + mBorderWidth * 2;
+        resizeSurface(aVideoWidth, aVideoHeight);
         Log.e(LOGTAG, "onMetadataChange resize browser " + aVideoWidth + " " + aVideoHeight);
     }
 
@@ -110,12 +117,14 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
         if (mWidthBackup == 0 || mHeightBackup == 0) {
             return;
         }
-        if (mWidthBackup == mWidth && mHeightBackup == mHeight) {
+        int border = SettingsStore.getInstance(getContext()).getLayersEnabled() ? 1 : 0;
+        if (mWidthBackup == mWidth && mHeightBackup == mHeight && border == mBorderWidth) {
             return;
         }
+        mBorderWidth = border;
         mWidgetPlacement.width = mWidthBackup;
         mWidgetPlacement.height = mHeightBackup;
-        resizeSurfaceTexture(mWidthBackup, mWidthBackup);
+        resizeSurface(mWidthBackup, mWidthBackup);
     }
 
     public void setBrowserSize(float windowWidth, float windowHeight, float multiplier) {
@@ -128,6 +137,18 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
         float targetHeight = (float) Math.sqrt(area / aspect);
 
         handleResizeEvent(targetWidth, targetHeight);
+    }
+
+    public int getBorderWidth() {
+        return mBorderWidth;
+    }
+
+    public int getTextureWidth() {
+        return mWidth;
+    }
+
+    public int getTextureHeight() {
+        return mHeight;
     }
 
     @Override
@@ -146,15 +167,45 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
         } else {
             Log.e(LOGTAG, "GeckoDisplay was not null in BrowserWidget.setSurfaceTexture()");
         }
-        mDisplay.surfaceChanged(mSurface, aWidth, aHeight);
+        callSurfaceChanged();
     }
 
     @Override
-    public void resizeSurfaceTexture(final int aWidth, final int aHeight) {
+    public void setSurface(Surface aSurface, final int aWidth, final int aHeight, Runnable aFirstDrawCallback) {
+        GeckoSession session = SessionStore.get().getSession(mSessionId);
+        if (session == null) {
+            return;
+        }
         mWidth = aWidth;
         mHeight = aHeight;
-        mSurfaceTexture.setDefaultBufferSize(aWidth, aHeight);
-        mDisplay.surfaceChanged(mSurface, aWidth, aHeight);
+        mSurface = aSurface;
+        if (mDisplay == null) {
+            mDisplay = session.acquireDisplay();
+        } else {
+            Log.e(LOGTAG, "GeckoDisplay was not null in BrowserWidget.setSurfaceTexture()");
+        }
+        if (mSurface != null) {
+            callSurfaceChanged();
+        } else {
+            mDisplay.surfaceDestroyed();
+        }
+        if (aFirstDrawCallback != null) {
+            aFirstDrawCallback.run();
+        }
+    }
+
+    private void callSurfaceChanged() {
+        mDisplay.surfaceChanged(mSurface, mBorderWidth, mBorderWidth, mWidth - mBorderWidth * 2, mHeight - mBorderWidth * 2);
+    }
+
+    @Override
+    public void resizeSurface(final int aWidth, final int aHeight) {
+        mWidth = aWidth;
+        mHeight = aHeight;
+        if (mSurfaceTexture != null) {
+            mSurfaceTexture.setDefaultBufferSize(aWidth, aHeight);
+        }
+        callSurfaceChanged();
     }
 
     @Override
@@ -197,8 +248,8 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
 
         float aspect = (float)defaultWidth / (float)defaultHeight;
         float worldHeight = worldWidth / aspect;
-        mWidgetPlacement.width = (int)((aWorldWidth * defaultWidth) / worldWidth);
-        mWidgetPlacement.height = (int)((aWorldHeight * defaultHeight) /worldHeight);
+        mWidgetPlacement.width = (int)((aWorldWidth * defaultWidth) / worldWidth) + mBorderWidth * 2;
+        mWidgetPlacement.height = (int)((aWorldHeight * defaultHeight) /worldHeight) + mBorderWidth * 2;
         mWidgetPlacement.worldWidth = aWorldWidth;
         mWidgetManager.updateWidget(this);
 
@@ -281,7 +332,7 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
         mSessionId = aId;
         mDisplay = aSession.acquireDisplay();
         Log.d(LOGTAG, "surfaceChanged: " + aId);
-        mDisplay.surfaceChanged(mSurface, mWidth, mHeight);
+        callSurfaceChanged();
         aSession.getTextInput().setView(this);
 
         boolean isPrivateMode  = aSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
@@ -410,7 +461,7 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
             @Override
             public void onDismissed(String[] ids) {
                 callback.confirm(ids);
-                mChoicePrompt.hide();
+                mChoicePrompt.hide(UIWidget.REMOVE_WIDGET);
             }
         });
 

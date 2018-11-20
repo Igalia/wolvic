@@ -17,6 +17,10 @@
 
 namespace crow {
 
+
+class VRLayerQuad;
+typedef std::shared_ptr<VRLayerQuad> VRLayerQuadPtr;
+
 class Quad;
 typedef std::shared_ptr<Quad> QuadPtr;
 
@@ -27,8 +31,8 @@ public:
     AspectFit,
     AspectFill,
   };
-  static QuadPtr Create(vrb::CreationContextPtr aContext, const vrb::Vector& aMin, const vrb::Vector& aMax);
-  static QuadPtr Create(vrb::CreationContextPtr aContext, const float aWorldWidth, const float aWorldHeight);
+  static QuadPtr Create(vrb::CreationContextPtr aContext, const vrb::Vector& aMin, const vrb::Vector& aMax, const VRLayerQuadPtr& aLayer = nullptr);
+  static QuadPtr Create(vrb::CreationContextPtr aContext, const float aWorldWidth, const float aWorldHeight, const VRLayerQuadPtr& aLayer = nullptr);
   static vrb::GeometryPtr CreateGeometry(vrb::CreationContextPtr aContext, const vrb::Vector& aMin, const vrb::Vector& aMax);
   static vrb::GeometryPtr CreateGeometry(vrb::CreationContextPtr aContext, const float aWorldWidth, const float aWorldHeight);
   static vrb::GeometryPtr CreateGeometry(vrb::CreationContextPtr aContext, const vrb::Vector& aMin, const vrb::Vector& aMax, const device::EyeRect& aRect);
@@ -46,6 +50,7 @@ public:
   void GetWorldSize(float& aWidth, float& aHeight) const;
   void SetWorldSize(const float aWidth, const float aHeight) const;
   void SetWorldSize(const vrb::Vector& aMin, const vrb::Vector& aMax) const;
+  void SetTintColor(const vrb::Color& aColor);
   vrb::Vector GetNormal() const;
   vrb::NodePtr GetRoot() const;
   vrb::TransformPtr GetTransformNode() const;

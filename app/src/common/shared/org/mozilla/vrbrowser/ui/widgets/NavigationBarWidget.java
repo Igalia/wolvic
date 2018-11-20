@@ -7,6 +7,7 @@ package org.mozilla.vrbrowser.ui.widgets;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Canvas;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -331,9 +332,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mVoiceSearchWidget = createChild(VoiceSearchWidget.class, false);
         mVoiceSearchWidget.setDelegate(this);
 
-        mPopup = createChild(SuggestionsWidget.class);
-        mPopup.setURLBarPopupDelegate(this);
-
         mSearchEngineWrapper = SearchEngineWrapper.get(getContext());
 
         SessionStore.get().addSessionChangeListener(this);
@@ -367,6 +365,11 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         aPlacement.parentAnchorY = 0.0f;
         aPlacement.translationY = -35;
         aPlacement.opaque = false;
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
     }
 
     public void setBrowserWidget(BrowserWidget aWidget) {
@@ -485,7 +488,9 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
         this.setVisible(false);
         if (fullscreenMedia != null && fullscreenMedia.getWidth() > 0 && fullscreenMedia.getHeight() > 0) {
-            mBrowserWidget.enableVRVideoMode(fullscreenMedia.getWidth(), fullscreenMedia.getHeight());
+            boolean resetBorder = aProjection == VideoProjectionMenuWidget.VIDEO_PROJECTION_360 ||
+                                  aProjection == VideoProjectionMenuWidget.VIDEO_PROJECTION_360_STEREO;
+            mBrowserWidget.enableVRVideoMode(fullscreenMedia.getWidth(), fullscreenMedia.getHeight(), resetBorder);
         }
         mBrowserWidget.setVisible(false);
 
@@ -763,73 +768,76 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     @Override
     public void OnVoiceSearchClicked() {
         if (mVoiceSearchWidget.isVisible()) {
-            mVoiceSearchWidget.hide();
+            mVoiceSearchWidget.hide(REMOVE_WIDGET);
 
         } else {
             mVoiceSearchWidget.show();
         }
     }
 
+
     @Override
     public void OnShowSearchPopup() {
-        if (mPopup != null) {
-            final String text = mURLBar.getText().trim();
-            final String originalText = mURLBar.getOriginalText().trim();
-            if (originalText.length() > 0) {
-                mSearchEngineWrapper.getSuggestions(
-                        originalText,
-                        (suggestions) -> {
-                            ArrayList<SuggestionsWidget.SuggestionItem> items = new ArrayList<>();
-
-                            if (!text.equals(originalText)) {
-                                // Completion from browser-domains
-                                items.add(SuggestionsWidget.SuggestionItem.create(
-                                        text,
-                                        getSearchURLOrDomain(text),
-                                        null,
-                                        SuggestionsWidget.SuggestionItem.Type.COMPLETION
-                                ));
-                            }
-
-                            // Original text
-                            items.add(SuggestionsWidget.SuggestionItem.create(
-                                    originalText,
-                                    getSearchURLOrDomain(originalText),
-                                    null,
-                                    SuggestionsWidget.SuggestionItem.Type.SUGGESTION
-                            ));
-
-                            // Suggestions
-                            for (String suggestion : suggestions) {
-                                String url = mSearchEngineWrapper.getSearchURL(suggestion);
-                                items.add(SuggestionsWidget.SuggestionItem.create(
-                                        suggestion,
-                                        url,
-                                        null,
-                                        SuggestionsWidget.SuggestionItem.Type.SUGGESTION
-                                ));
-                            }
-                            mPopup.setItems(items);
-                            mPopup.setHighlightedText(originalText);
-
-                            if (!mPopup.isVisible()) {
-                                mPopup.getPlacement().width = (int) (WidgetPlacement.convertPixelsToDp(getContext(), mURLBar.getWidth()));
-                                mPopup.updatePlacement();
-                                mPopup.show();
-                            }
-                        }
-                );
-
-            } else {
-                mPopup.hide();
-            }
+        if (mPopup == null) {
+            mPopup = createChild(SuggestionsWidget.class);
+            mPopup.setURLBarPopupDelegate(this);
         }
+
+        final String text = mURLBar.getText().trim();
+        final String originalText = mURLBar.getOriginalText().trim();
+        if (originalText.length() <= 0) {
+            mPopup.setVisible(false);
+            return;
+        }
+
+        mSearchEngineWrapper.getSuggestions(
+                originalText,
+                (suggestions) -> {
+                    ArrayList<SuggestionsWidget.SuggestionItem> items = new ArrayList<>();
+
+                    if (!text.equals(originalText)) {
+                        // Completion from browser-domains
+                        items.add(SuggestionsWidget.SuggestionItem.create(
+                                text,
+                                getSearchURLOrDomain(text),
+                                null,
+                                SuggestionsWidget.SuggestionItem.Type.COMPLETION
+                        ));
+                    }
+
+                    // Original text
+                    items.add(SuggestionsWidget.SuggestionItem.create(
+                            originalText,
+                            getSearchURLOrDomain(originalText),
+                            null,
+                            SuggestionsWidget.SuggestionItem.Type.SUGGESTION
+                    ));
+
+                    // Suggestions
+                    for (String suggestion : suggestions) {
+                        String url = mSearchEngineWrapper.getSearchURL(suggestion);
+                        items.add(SuggestionsWidget.SuggestionItem.create(
+                                suggestion,
+                                url,
+                                null,
+                                SuggestionsWidget.SuggestionItem.Type.SUGGESTION
+                        ));
+                    }
+                    mPopup.setItems(items);
+                    mPopup.setHighlightedText(originalText);
+
+                    if (!mPopup.isVisible()) {
+                        mPopup.updatePlacement((int)WidgetPlacement.convertPixelsToDp(getContext(), mURLBar.getWidth()));
+                        mPopup.show();
+                    }
+                }
+        );
     }
 
     @Override
     public void OnHideSearchPopup() {
-        if (mPopup != null && mPopup.isVisible()) {
-            mPopup.hide();
+        if (mPopup != null) {
+            mPopup.setVisible(false);
         }
     }
 

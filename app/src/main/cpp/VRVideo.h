@@ -17,6 +17,9 @@
 
 namespace crow {
 
+class DeviceDelegate;
+typedef std::shared_ptr<DeviceDelegate> DeviceDelegatePtr;
+
 class VRVideo;
 typedef std::shared_ptr<VRVideo> VRVideoPtr;
 
@@ -34,9 +37,13 @@ public:
     VIDEO_PROJECTION_180_STEREO_LEFT_RIGHT = 4,
     VIDEO_PROJECTION_180_STEREO_TOP_BOTTOM = 5,
   };
-  static VRVideoPtr Create(vrb::CreationContextPtr aContext, const WidgetPtr& aWindow, const VRVideoProjection aProjection);
+  static VRVideoPtr Create(vrb::CreationContextPtr aContext,
+                           const WidgetPtr& aWindow,
+                           const VRVideoProjection aProjection,
+                           const DeviceDelegatePtr& aDevice);
   void SelectEye(device::Eye aEye);
   vrb::NodePtr GetRoot() const;
+  void Exit();
 
   struct State;
   VRVideo(State& aState, vrb::CreationContextPtr& aContext);

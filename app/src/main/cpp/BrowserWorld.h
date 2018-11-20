@@ -65,8 +65,7 @@ protected:
   void DrawImmersive();
   void DrawLoadingAnimation();
   void DrawSplashAnimation();
-  vrb::TogglePtr CreateSkyBox(const std::string& basePath);
-  void LoadSkybox(const vrb::TransformPtr transform, const std::string& basePath);
+  void CreateSkyBox(const std::string& basePath);
   void CreateFloor();
   float DistanceToNode(const vrb::NodePtr& aNode, const vrb::Vector& aPosition) const;
   WidgetPtr GetWidgetFromNode(const vrb::NodePtr& aNode) const;

@@ -16,15 +16,22 @@
 
 namespace crow {
 
+class DeviceDelegate;
+typedef std::shared_ptr<DeviceDelegate> DeviceDelegatePtr;
+
 class SplashAnimation;
 typedef std::shared_ptr<SplashAnimation> SplashAnimationPtr;
+
+class VRLayerQuad;
+typedef std::shared_ptr<VRLayerQuad> VRLayerQuadPtr;
 
 class SplashAnimation {
 public:
   static SplashAnimationPtr Create(vrb::CreationContextPtr aContext);
-  void Load();
+  void Load(vrb::RenderContextPtr& aContext, const DeviceDelegatePtr& aDeviceDelegate);
   bool Update(const vrb::Matrix& aHeadTransform);
   vrb::NodePtr GetRoot() const;
+  VRLayerQuadPtr GetLayer() const;
 
   struct State;
   SplashAnimation(State& aState, vrb::CreationContextPtr& aContext);

@@ -4,13 +4,19 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "SplashAnimation.h"
+#include "DeviceDelegate.h"
+#include "VRLayer.h"
+#include "VRLayerNode.h"
 #include "vrb/ConcreteClass.h"
 #include "vrb/Color.h"
 #include "vrb/CreationContext.h"
+#include "vrb/GLError.h"
+#include "vrb/FBO.h"
 #include "vrb/Geometry.h"
 #include "vrb/Matrix.h"
 #include "vrb/ModelLoaderAndroid.h"
 #include "vrb/RenderState.h"
+#include "vrb/RenderContext.h"
 #include "vrb/TextureGL.h"
 #include "vrb/Toggle.h"
 #include "vrb/Transform.h"
@@ -24,9 +30,10 @@ namespace crow {
 
 struct SplashAnimation::State {
   vrb::CreationContextWeak context;
-  vrb::TextureGLPtr texture;
   vrb::TogglePtr root;
+  vrb::FBOPtr read;
   QuadPtr logo;
+  VRLayerQuadPtr layer;
   timespec start;
   float time;
   bool firstDraw;
@@ -49,11 +56,27 @@ struct SplashAnimation::State {
     clock_gettime(CLOCK_MONOTONIC, &spec);
     time = (float)(spec.tv_sec - start.tv_sec) + (float)(spec.tv_nsec - start.tv_nsec) / 1e09f;
   }
+
+  void HandleLayerInitialized(const vrb::TextureGLPtr& aTexture) {
+    if (!read || !read->IsValid()) {
+      return;
+    }
+
+    read->Bind(GL_READ_FRAMEBUFFER);
+    layer->Bind(GL_DRAW_FRAMEBUFFER);
+    VRB_GL_CHECK(glClearColor(1.0, 0.0f, 0.0f, 1.0f));
+    VRB_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
+    VRB_GL_CHECK(glBlitFramebuffer(0, 0, aTexture->GetWidth(), aTexture->GetHeight(),
+                                   0, 0, aTexture->GetWidth(), aTexture->GetHeight(),
+                                   GL_COLOR_BUFFER_BIT, GL_LINEAR));
+    layer->Unbind();
+    read->Unbind();
+  }
 };
 
 
 void
-SplashAnimation::Load() {
+SplashAnimation::Load(vrb::RenderContextPtr& aContext, const DeviceDelegatePtr& aDeviceDelegate) {
   if (m.logo) {
     return;
   }
@@ -63,8 +86,27 @@ SplashAnimation::Load() {
   texture->SetTextureParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   const float w = 0.75f;
   const float aspect = (float)texture->GetWidth() / (float)texture->GetHeight();
-  m.logo = Quad::Create(create, w, w / aspect);
-  m.logo->SetTexture(texture, texture->GetWidth(), texture->GetHeight());
+  m.layer = aDeviceDelegate->CreateLayerQuad(texture->GetWidth(), texture->GetHeight(), VRLayerQuad::SurfaceType::FBO);
+  if (m.layer) {
+    texture->Bind();
+    m.read = vrb::FBO::Create(aContext);
+    vrb::FBO::Attributes attributes;
+    attributes.depth = false;
+    attributes.samples = 0;
+    m.read->SetTextureHandle(texture->GetHandle(), texture->GetWidth(), texture->GetHeight(), attributes);
+    if (!m.read->IsValid()) {
+      VRB_WARN("Splash FBO is not valid");
+    }
+    m.layer->SetInitializeDelegate([=](const VRLayer& aLayer){
+      if (aLayer.IsInitialized()) {
+        m.HandleLayerInitialized(texture);
+      }
+    });
+  }
+  m.logo = Quad::Create(create, w, w / aspect, m.layer);
+  if (!m.layer) {
+    m.logo->SetTexture(texture, texture->GetWidth(), texture->GetHeight());
+  }
   m.root->AddNode(m.logo->GetRoot());
 }
 
@@ -82,7 +124,7 @@ SplashAnimation::Update(const vrb::Matrix& aHeadTransform) {
   m.UpdateTime();
   if (m.time >= SPLASH_SECONDS && m.time <= (SPLASH_SECONDS + FADE_OUT_TIME)) {
     float t = 1.0f - (m.time - SPLASH_SECONDS) / FADE_OUT_TIME;
-    m.logo->GetGeometry()->GetRenderState()->SetTintColor(vrb::Color(t, t, t, 1.0f));
+    m.logo->SetTintColor(vrb::Color(t, t, t, 1.0f));
   }
   return m.time >= SPLASH_SECONDS + FADE_OUT_TIME;
 }
@@ -90,6 +132,11 @@ SplashAnimation::Update(const vrb::Matrix& aHeadTransform) {
 vrb::NodePtr
 SplashAnimation::GetRoot() const {
   return m.root;
+}
+
+VRLayerQuadPtr
+SplashAnimation::GetLayer() const {
+  return m.layer;
 }
 
 SplashAnimationPtr

@@ -5,6 +5,8 @@
 
 #include "Widget.h"
 #include "Quad.h"
+#include "VRLayer.h"
+#include "VRBrowser.h"
 #include "WidgetPlacement.h"
 #include "WidgetResizer.h"
 #include "vrb/ConcreteClass.h"
@@ -31,6 +33,7 @@ struct Widget::State {
   std::string name;
   uint32_t handle;
   QuadPtr quad;
+  VRLayerQuadPtr layer;
   vrb::TogglePtr root;
   vrb::TransformPtr transform;
   vrb::TextureSurfacePtr surface;
@@ -93,18 +96,29 @@ struct Widget::State {
     return geometry;
   }
 
-  void Initialize(const int aHandle, const vrb::Vector& aWindowMin, const vrb::Vector& aWindowMax, const int32_t aTextureWidth, const int32_t aTextureHeight) {
+  void Initialize(const int aHandle, const vrb::Vector& aWindowMin, const vrb::Vector& aWindowMax,
+                  const int32_t aTextureWidth, const int32_t aTextureHeight, const VRLayerQuadPtr& aLayer) {
     handle = aHandle;
     name = "crow::Widget-" + std::to_string(handle);
     vrb::RenderContextPtr render = context.lock();
     if (!render) {
       return;
     }
-    surface = vrb::TextureSurface::Create(render, name);
+    layer = aLayer;
+    if (layer) {
+      layer->SetInitializeDelegate([=](const VRLayer& aLayer) {
+        const VRLayerQuad& layerQuad = static_cast<const VRLayerQuad&>(aLayer);
+        VRBrowser::DispatchCreateWidgetLayer((jint)aHandle, layerQuad.GetSurface(), layerQuad.GetWidth(), layerQuad.GetHeight());
+      });
+    } else {
+      surface = vrb::TextureSurface::Create(render, name);
+    }
     vrb::CreationContextPtr create = render->GetRenderThreadCreationContext();
-    quad = Quad::Create(create, aWindowMin, aWindowMax);
-    quad->SetTexture(surface, aTextureWidth, aTextureHeight);
-    quad->SetMaterial(vrb::Color(0.4f, 0.4f, 0.4f), vrb::Color(1.0f, 1.0f, 1.0f), vrb::Color(0.0f, 0.0f, 0.0f), 0.0f);
+    quad = Quad::Create(create, aWindowMin, aWindowMax, layer);
+    if (surface) {
+      quad->SetTexture(surface, aTextureWidth, aTextureHeight);
+      quad->SetMaterial(vrb::Color(0.4f, 0.4f, 0.4f), vrb::Color(1.0f, 1.0f, 1.0f), vrb::Color(0.0f, 0.0f, 0.0f), 0.0f);
+    }
 
     transform = vrb::Transform::Create(create);
     pointerToggle = vrb::Toggle::Create(create);
@@ -135,7 +149,12 @@ struct Widget::State {
     pointer->AddNode(pointerScale);
     pointerGeometry = geometry;
     pointerToggle->AddNode(pointer);
-    root->ToggleAll(false);
+    if (layer) {
+      toggleState = true;
+      root->ToggleAll(true);
+    } else {
+      root->ToggleAll(false);
+    }
   }
 
   bool FirstDraw() {
@@ -153,14 +172,25 @@ Widget::Create(vrb::RenderContextPtr& aContext, const int aHandle, const int32_t
   const float worldHeight = aWorldWidth / aspect;
   vrb::Vector windowMin(-aWorldWidth * 0.5f, -worldHeight * 0.5f, 0.0f);
   vrb::Vector windowMax(aWorldWidth *0.5f, worldHeight * 0.5f, 0.0f);
-  result->m.Initialize(aHandle, windowMin, windowMax, aWidth, aHeight);
+  result->m.Initialize(aHandle, windowMin, windowMax, aWidth, aHeight, nullptr);
+  return result;
+}
+
+WidgetPtr
+Widget::Create(vrb::RenderContextPtr& aContext, const int aHandle, const VRLayerQuadPtr& aLayer, float aWorldWidth) {
+  WidgetPtr result = std::make_shared<vrb::ConcreteClass<Widget, Widget::State> >(aContext);
+  const float aspect = (float)aLayer->GetWidth() / (float)aLayer->GetHeight();
+  const float worldHeight = aWorldWidth / aspect;
+  vrb::Vector windowMin(-aWorldWidth * 0.5f, -worldHeight * 0.5f, 0.0f);
+  vrb::Vector windowMax(aWorldWidth *0.5f, worldHeight * 0.5f, 0.0f);
+  result->m.Initialize(aHandle, windowMin, windowMax, aLayer->GetWidth(), aLayer->GetHeight(), aLayer);
   return result;
 }
 
 WidgetPtr
 Widget::Create(vrb::RenderContextPtr& aContext, const int aHandle, const int32_t aWidth, const int32_t aHeight, const vrb::Vector& aMin, const vrb::Vector& aMax) {
   WidgetPtr result = std::make_shared<vrb::ConcreteClass<Widget, Widget::State> >(aContext);
-  result->m.Initialize(aHandle, aMin, aMax, aWidth, aHeight);
+  result->m.Initialize(aHandle, aMin, aMax, aWidth, aHeight, nullptr);
   return result;
 }
 
@@ -272,9 +302,7 @@ Widget::SetTransform(const vrb::Matrix& aTransform) {
 void
 Widget::ToggleWidget(const bool aEnabled) {
   m.toggleState = aEnabled;
-  if (m.FirstDraw()) {
-    m.root->ToggleAll(aEnabled);
-  }
+  m.root->ToggleAll(aEnabled && m.FirstDraw());
 }
 
 void
@@ -296,6 +324,11 @@ Widget::GetRoot() const {
 QuadPtr
 Widget::GetQuad() const {
   return m.quad;
+}
+
+const VRLayerQuadPtr&
+Widget::GetLayer() const {
+  return m.layer;
 }
 
 vrb::TransformPtr

@@ -20,6 +20,9 @@ namespace crow {
 class Quad;
 typedef std::shared_ptr<Quad> QuadPtr;
 
+class VRLayerQuad;
+typedef std::shared_ptr<VRLayerQuad> VRLayerQuadPtr;
+
 class Widget;
 typedef std::shared_ptr<Widget> WidgetPtr;
 
@@ -29,6 +32,7 @@ typedef std::shared_ptr<WidgetPlacement> WidgetPlacementPtr;
 class Widget {
 public:
   static WidgetPtr Create(vrb::RenderContextPtr& aContext, const int aHandle, const int32_t aWidth, const int32_t aHeight, float aWorldWidth);
+  static WidgetPtr Create(vrb::RenderContextPtr& aContext, const int aHandle, const VRLayerQuadPtr& aLayer, float aWorldWidth);
   static WidgetPtr Create(vrb::RenderContextPtr& aContext, const int aHandle, const int32_t aWidth, const int32_t aHeight, const vrb::Vector& aMin, const vrb::Vector& aMax);
   uint32_t GetHandle() const;
   void ResetFirstDraw();
@@ -49,6 +53,7 @@ public:
   bool IsVisible() const;
   vrb::NodePtr GetRoot() const;
   QuadPtr GetQuad() const;
+  const VRLayerQuadPtr& GetLayer() const;
   vrb::TransformPtr GetTransformNode() const;
   vrb::NodePtr GetPointerGeometry() const;
   void SetPointerGeometry(vrb::NodePtr& aNode);

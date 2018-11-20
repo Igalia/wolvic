@@ -22,6 +22,7 @@
 
 #include <android/looper.h>
 #include <unistd.h>
+#include "VRBrowser.h"
 
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
@@ -202,6 +203,7 @@ android_main(android_app *aAppState) {
   // Create Browser context
   sAppContext = std::make_shared<AppContext>();
   sAppContext->mQueue = vrb::RunnableQueue::Create(aAppState->activity->vm);
+  crow::VRBrowser::InitializeJava(jniEnv, aAppState->activity->clazz);
 
   // Create device delegate
   sAppContext->mDevice = PlatformDeviceDelegate::Create(BrowserWorld::Instance().GetRenderContext(),

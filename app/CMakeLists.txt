@@ -24,8 +24,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/ControllerContainer.cpp
              src/main/cpp/DeviceUtils.cpp
              src/main/cpp/ElbowModel.cpp
-             src/main/cpp/FadeBlitter.cpp
-             src/main/cpp/GestureDelegate.cpp
+             src/main/cpp/FadeAnimation.cpp
              src/main/cpp/Quad.cpp
              src/main/cpp/ExternalBlitter.cpp
              src/main/cpp/ExternalVR.cpp
@@ -33,9 +32,12 @@ add_library( # Sets the name of the library.
              src/main/cpp/GestureDelegate.cpp
              src/main/cpp/LoadingAnimation.cpp
              src/main/cpp/JNIUtil.cpp
+             src/main/cpp/Skybox.cpp
              src/main/cpp/SplashAnimation.cpp
              src/main/cpp/VRBrowser.cpp
              src/main/cpp/VRVideo.cpp
+             src/main/cpp/VRLayer.cpp
+             src/main/cpp/VRLayerNode.cpp
              src/main/cpp/Widget.cpp
              src/main/cpp/WidgetPlacement.cpp
              src/main/cpp/WidgetResizer.cpp

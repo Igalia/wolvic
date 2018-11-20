@@ -313,19 +313,14 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
 
     @Override
     public void onPlaybackRateChange(MediaElement mediaElement, double rate) {
-
     }
 
     @Override
     public void onFullscreenChange(MediaElement mediaElement, boolean fullscreen) {
-        if (!fullscreen) {
-            hide();
-        }
     }
 
     @Override
     public void onError(MediaElement mediaElement, int code) {
-
     }
 
 }
