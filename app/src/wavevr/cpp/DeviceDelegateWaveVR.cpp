@@ -192,8 +192,8 @@ struct DeviceDelegateWaveVR::State {
       const bool menuPressed = WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Menu);
 
       delegate->SetButtonCount(index, 2); // For immersive mode
-      delegate->SetButtonState(index, ControllerDelegate::BUTTON_TRIGGER, 0, bumperPressed, bumperPressed);
-      delegate->SetButtonState(index, ControllerDelegate::BUTTON_TOUCHPAD, 1, touchpadPressed, touchpadTouched);
+      delegate->SetButtonState(index, ControllerDelegate::BUTTON_TOUCHPAD, 0, touchpadPressed, touchpadTouched);
+      delegate->SetButtonState(index, ControllerDelegate::BUTTON_TRIGGER, 1, bumperPressed, bumperPressed);
       delegate->SetButtonState(index, ControllerDelegate::BUTTON_APP, -1, menuPressed, menuPressed);
 
       const int32_t kNumAxes = 2;
