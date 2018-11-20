@@ -695,7 +695,7 @@ BrowserWorld::AddWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement) {
 
   WidgetPtr widget;
   VRLayerQuadPtr layer;
-  if (aPlacement->layer) {
+  if (aPlacement->layer && m.device) {
     layer = m.device->CreateLayerQuad(textureWidth, textureHeight,
                                       VRLayerQuad::SurfaceType::AndroidSurface);
   }
