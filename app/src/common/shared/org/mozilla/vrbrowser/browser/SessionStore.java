@@ -5,6 +5,7 @@
 
 package org.mozilla.vrbrowser.browser;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
@@ -76,6 +77,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     private LinkedList<SessionChangeListener> mSessionChangeListeners;
     private LinkedList<GeckoSession.TextInputDelegate> mTextInputListeners;
     private LinkedList<GeckoSession.PromptDelegate> mPromptListeners;
+    private UserAgentOverride mUserAgentOverride;
 
     public interface SessionChangeListener {
         void onNewSession(GeckoSession aSession, int aId);
@@ -175,6 +177,10 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
 
         mContext = aContext;
         mPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+        if (mUserAgentOverride == null) {
+            mUserAgentOverride = new UserAgentOverride();
+            mUserAgentOverride.loadOverridesFromAssets((Activity)aContext, aContext.getString(R.string.user_agent_override_file));
+        }
     }
 
     public void dumpAllState(Integer sessionId) {
@@ -858,6 +864,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     @Override
     public @Nullable GeckoResult<AllowOrDeny> onLoadRequest(@NonNull GeckoSession aSession, @NonNull LoadRequest aRequest) {
         final GeckoResult<AllowOrDeny> result = new GeckoResult<>();
+        aSession.getSettings().setString(GeckoSessionSettings.USER_AGENT_OVERRIDE, mUserAgentOverride.lookupOverride(aRequest.uri));
         if (PRIVATE_BROWSING_URI.equalsIgnoreCase(aRequest.uri)) {
             switchPrivateMode();
             result.complete(AllowOrDeny.ALLOW);
