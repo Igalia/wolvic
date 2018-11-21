@@ -275,6 +275,9 @@ public abstract class UIWidget extends FrameLayout implements Widget {
             mWidgetPlacement.visible = false;
             if (aHideFlags == REMOVE_WIDGET) {
                 mWidgetManager.removeWidget(this);
+
+            } else {
+                mWidgetManager.updateWidget(this);
             }
             mWidgetManager.popBackHandler(mBackHandler);
         }

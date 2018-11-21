@@ -786,7 +786,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         final String text = mURLBar.getText().trim();
         final String originalText = mURLBar.getOriginalText().trim();
         if (originalText.length() <= 0) {
-            mPopup.setVisible(false);
+            mPopup.hide(UIWidget.KEEP_WIDGET);
             return;
         }
 
@@ -837,7 +837,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     @Override
     public void OnHideSearchPopup() {
         if (mPopup != null) {
-            mPopup.setVisible(false);
+            mPopup.hide(UIWidget.KEEP_WIDGET);
         }
     }
 
