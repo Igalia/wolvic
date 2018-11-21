@@ -43,6 +43,7 @@ Controller::operator=(const Controller& aController) {
   scrollDeltaX = aController.scrollDeltaX;
   scrollDeltaY = aController.scrollDeltaY;
   transform = aController.transform;
+  pointer = aController.pointer;
   transformMatrix = aController.transformMatrix;
   immersiveName = aController.immersiveName;
   immersivePressedState = aController.immersivePressedState;
@@ -68,9 +69,8 @@ Controller::Reset() {
   touchX = touchY = 0.0f;
   lastTouchX = lastTouchY = 0.0f;
   scrollDeltaX = scrollDeltaY = 0.0f;
-  if (transform) {
-    transform = nullptr;
-  }
+  transform = nullptr;
+  pointer = nullptr;
   transformMatrix = Matrix::Identity();
   immersiveName.clear();
   immersivePressedState = 0;

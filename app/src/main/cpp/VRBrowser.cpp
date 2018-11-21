@@ -32,6 +32,8 @@ static const char* kPauseCompositorName = "pauseGeckoViewCompositor";
 static const char* kPauseCompositorSignature = "()V";
 static const char* kResumeCompositorName = "resumeGeckoViewCompositor";
 static const char* kResumeCompositorSignature = "()V";
+static const char* kRenderPointerLayerName = "renderPointerLayer";
+static const char* kRenderPointerLayerSignature = "(Landroid/view/Surface;)V";
 static const char* kGetStorageAbsolutePathName = "getStorageAbsolutePath";
 static const char* kGetStorageAbsolutePathSignature = "()Ljava/lang/String;";
 static const char* kIsOverrideEnvPathEnabledName = "isOverrideEnvPathEnabled";
@@ -56,6 +58,7 @@ static jmethodID sHandleBack;
 static jmethodID sRegisterExternalContext;
 static jmethodID sPauseCompositor;
 static jmethodID sResumeCompositor;
+static jmethodID sRenderPointerLayer;
 static jmethodID sGetStorageAbsolutePath;
 static jmethodID sIsOverrideEnvPathEnabled;
 static jmethodID sGetActiveEnvironment;
@@ -91,6 +94,7 @@ VRBrowser::InitializeJava(JNIEnv* aEnv, jobject aActivity) {
   sRegisterExternalContext = FindJNIMethodID(sEnv, browserClass, kRegisterExternalContextName, kRegisterExternalContextSignature);
   sPauseCompositor = FindJNIMethodID(sEnv, browserClass, kPauseCompositorName, kPauseCompositorSignature);
   sResumeCompositor = FindJNIMethodID(sEnv, browserClass, kResumeCompositorName, kResumeCompositorSignature);
+  sRenderPointerLayer = FindJNIMethodID(sEnv, browserClass, kRenderPointerLayerName, kRenderPointerLayerSignature);
   sGetStorageAbsolutePath = FindJNIMethodID(sEnv, browserClass, kGetStorageAbsolutePathName, kGetStorageAbsolutePathSignature);
   sIsOverrideEnvPathEnabled = FindJNIMethodID(sEnv, browserClass, kIsOverrideEnvPathEnabledName, kIsOverrideEnvPathEnabledSignature);
   sGetActiveEnvironment = FindJNIMethodID(sEnv, browserClass, kGetActiveEnvironment, kGetActiveEnvironmentSignature);
@@ -119,6 +123,7 @@ VRBrowser::ShutdownJava() {
   sRegisterExternalContext = nullptr;
   sPauseCompositor = nullptr;
   sResumeCompositor = nullptr;
+  sRenderPointerLayer = nullptr;
   sEnv = nullptr;
 }
 
@@ -198,6 +203,13 @@ void
 VRBrowser::ResumeCompositor() {
   if (!ValidateMethodID(sEnv, sActivity, sResumeCompositor, __FUNCTION__)) { return; }
   sEnv->CallVoidMethod(sActivity, sResumeCompositor);
+  CheckJNIException(sEnv, __FUNCTION__);
+}
+
+void
+VRBrowser::RenderPointerLayer(jobject aSurface) {
+  if (!ValidateMethodID(sEnv, sActivity, sRenderPointerLayer, __FUNCTION__)) { return; }
+  sEnv->CallVoidMethod(sActivity, sRenderPointerLayer, aSurface);
   CheckJNIException(sEnv, __FUNCTION__);
 }
 

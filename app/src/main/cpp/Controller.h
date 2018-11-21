@@ -12,6 +12,9 @@
 
 namespace crow {
 
+class Pointer;
+typedef std::shared_ptr<Pointer> PointerPtr;
+
 static const int kControllerMaxButtonCount = 4;
 static const int kControllerMaxAxes = 6;
 
@@ -32,6 +35,7 @@ struct Controller {
   float scrollDeltaX;
   float scrollDeltaY;
   vrb::TransformPtr transform;
+  PointerPtr pointer;
   vrb::Matrix transformMatrix;
   std::string immersiveName;
   uint64_t immersivePressedState;

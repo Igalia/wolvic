@@ -67,9 +67,7 @@ protected:
   void DrawSplashAnimation();
   void CreateSkyBox(const std::string& basePath);
   void CreateFloor();
-  float DistanceToNode(const vrb::NodePtr& aNode, const vrb::Vector& aPosition) const;
-  WidgetPtr GetWidgetFromNode(const vrb::NodePtr& aNode) const;
-  float DistanceToPlane(const WidgetPtr& aNode, const vrb::Vector& aPosition, const vrb::Vector& aDirection) const;
+  float DistanceToPlane(const vrb::NodePtr& aNode, const vrb::Vector& aPosition, const vrb::Vector& aDirection) const;
 private:
   State& m;
   BrowserWorld() = delete;

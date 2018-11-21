@@ -28,6 +28,7 @@ void HandleBack();
 void RegisterExternalContext(jlong aContext);
 void PauseCompositor();
 void ResumeCompositor();
+void RenderPointerLayer(jobject aSurface);
 std::string GetStorageAbsolutePath(const std::string& aRelativePath);
 bool isOverrideEnvPathEnabled();
 std::string GetActiveEnvironment();

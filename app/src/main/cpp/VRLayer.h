@@ -40,6 +40,7 @@ public:
   int32_t GetPriority() const;
   const vrb::Color& GetTintColor() const;
   const device::EyeRect& GetTextureRect(device::Eye aEye) const;
+  bool GetDrawInFront() const;
 
   bool ShouldDrawBefore(const VRLayer& aLayer);
   void SetInitialized(bool aInitialized);
@@ -52,6 +53,7 @@ public:
   void SetTintColor(const vrb::Color& aTintColor);
   void SetTextureRect(device::Eye aEye, const device::EyeRect& aTextureRect);
   void SetInitializeDelegate(const InitializeDelegate& aDelegate);
+  void SetDrawInFront(bool aDrawInFront);
 protected:
   struct State;
   VRLayer(State& aState, LayerType aLayerType);

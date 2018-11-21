@@ -24,10 +24,10 @@ typedef std::shared_ptr<ControllerContainer> ControllerContainerPtr;
 class ControllerContainer : public crow::ControllerDelegate  {
 public:
   enum class HandEnum { Left, Right };
-  static ControllerContainerPtr Create(vrb::CreationContextPtr& aContext);
+  static ControllerContainerPtr Create(vrb::CreationContextPtr& aContext, const vrb::GroupPtr& aPointerContainer);
   vrb::TogglePtr GetRoot() const;
   void LoadControllerModel(const int32_t aModelIndex, const vrb::ModelLoaderAndroidPtr& aLoader, const std::string& aFileName);
-  void InitializePointer();
+  void InitializeBeam();
   void Reset();
   std::vector<Controller>& GetControllers();
   const std::vector<Controller>& GetControllers() const;

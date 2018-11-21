@@ -9,6 +9,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.graphics.SurfaceTexture;
 import android.net.Uri;
 import android.opengl.GLES11Ext;
@@ -603,6 +607,34 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 Log.d(LOGTAG, "Compositor Resumed");
             }
         }, 20);
+    }
+
+    @Keep
+    @SuppressWarnings("unused")
+    void renderPointerLayer(final Surface aSurface) {
+        runOnUiThread(() -> {
+            try {
+                Canvas canvas = aSurface.lockHardwareCanvas();
+                canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+                Paint paint = new Paint();
+                paint.setAntiAlias(true);
+                paint.setDither(true);
+                paint.setColor(Color.WHITE);
+                paint.setStyle(Paint.Style.FILL);
+                final float x = canvas.getWidth() * 0.5f;
+                final float y = canvas.getHeight() * 0.5f;
+                final float radius = canvas.getWidth() * 0.4f;
+                canvas.drawCircle(x, y, radius, paint);
+                paint.setColor(Color.BLACK);
+                paint.setStrokeWidth(4);
+                paint.setStyle(Paint.Style.STROKE);
+                canvas.drawCircle(x, y, radius, paint);
+                aSurface.unlockCanvasAndPost(canvas);
+            }
+            catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
     }
 
     @Keep

@@ -144,6 +144,10 @@ public:
     return swapChain && layer->IsDrawRequested();
   }
 
+  bool GetDrawInFront() const {
+    return layer->GetDrawInFront();
+  }
+
   void ClearRequestDraw() const {
     layer->ClearRequestDraw();
   }
@@ -897,8 +901,9 @@ DeviceDelegateOculusVR::EndFrame(const bool aDiscard) {
     return a->layer->ShouldDrawBefore(*b->layer);
   });
 
+  // Draw back layers
   for (const OculusLayerQuadPtr& layer: m.uiLayers) {
-    if (layer->IsDrawRequested() && layerCount < ovrMaxLayerCount) {
+    if (!layer->GetDrawInFront() && layer->IsDrawRequested() && layerCount < ovrMaxLayerCount) {
       layer->Update(m.predictedTracking);
       layers[layerCount++] = layer->Header();
       layer->ClearRequestDraw();
@@ -919,8 +924,17 @@ DeviceDelegateOculusVR::EndFrame(const bool aDiscard) {
     projection.Textures[i].TexCoordsFromTanAngles = ovrMatrix4f_TanAngleMatrixFromProjection(
         &m.predictedTracking.Eye[i].ProjectionMatrix);
   }
-
   layers[layerCount++] = &projection.Header;
+
+  // Draw front layers
+  for (const OculusLayerQuadPtr& layer: m.uiLayers) {
+    if (layer->GetDrawInFront() && layer->IsDrawRequested() && layerCount < ovrMaxLayerCount) {
+      layer->Update(m.predictedTracking);
+      layers[layerCount++] = layer->Header();
+      layer->ClearRequestDraw();
+    }
+  }
+
 
   // Submit all layers to TimeWarp
   ovrSubmitFrameDescription2 frameDesc = {};

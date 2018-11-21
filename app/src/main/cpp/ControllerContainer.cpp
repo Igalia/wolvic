@@ -5,6 +5,7 @@
 
 #include "ControllerContainer.h"
 #include "Controller.h"
+#include "Pointer.h"
 
 #include "vrb/ConcreteClass.h"
 #include "vrb/Color.h"
@@ -26,8 +27,9 @@ struct ControllerContainer::State {
   std::vector<Controller> list;
   CreationContextWeak context;
   TogglePtr root;
+  GroupPtr pointerContainer;
   std::vector<GroupPtr> models;
-  GeometryPtr pointerModel;
+  GeometryPtr beamModel;
   bool visible;
 
   void Initialize(vrb::CreationContextPtr& aContext) {
@@ -52,8 +54,10 @@ struct ControllerContainer::State {
 };
 
 ControllerContainerPtr
-ControllerContainer::Create(vrb::CreationContextPtr& aContext) {
-  return std::make_shared<vrb::ConcreteClass<ControllerContainer, ControllerContainer::State> >(aContext);
+ControllerContainer::Create(vrb::CreationContextPtr& aContext, const vrb::GroupPtr& aPointerContainer) {
+  auto result = std::make_shared<vrb::ConcreteClass<ControllerContainer, ControllerContainer::State> >(aContext);
+  result->m.pointerContainer = aPointerContainer;
+  return result;
 }
 
 
@@ -70,8 +74,8 @@ ControllerContainer::LoadControllerModel(const int32_t aModelIndex, const ModelL
 }
 
 void
-ControllerContainer::InitializePointer() {
-  if (m.pointerModel) {
+ControllerContainer::InitializeBeam() {
+  if (m.beamModel) {
     return;
   }
   CreationContextPtr create = m.context.lock();
@@ -125,10 +129,10 @@ ControllerContainer::InitializePointer() {
   index.push_back(5);
   geometry->AddFace(index, uvIndex, index);
 
-  m.pointerModel = std::move(geometry);
+  m.beamModel = std::move(geometry);
   for (Controller& controller: m.list) {
     if (controller.transform) {
-      controller.transform->AddNode(m.pointerModel);
+      controller.transform->AddNode(m.beamModel);
     }
   }
 }
@@ -138,6 +142,9 @@ ControllerContainer::Reset() {
   for (Controller& controller: m.list) {
     if (controller.transform) {
       controller.transform->RemoveFromParents();
+    }
+    if (controller.pointer) {
+      controller.pointer->GetRoot()->RemoveFromParents();
     }
     controller.Reset();
   }
@@ -167,14 +174,18 @@ ControllerContainer::CreateController(const int32_t aControllerIndex, const int3
     m.SetUpModelsGroup(aModelIndex);
     CreationContextPtr create = m.context.lock();
     controller.transform = Transform::Create(create);
+    controller.pointer = Pointer::Create(create);
     if ((m.models.size() >= aModelIndex) && m.models[aModelIndex]) {
       controller.transform->AddNode(m.models[aModelIndex]);
-      if (m.pointerModel) {
-        controller.transform->AddNode(m.pointerModel);
+      if (m.beamModel) {
+        controller.transform->AddNode(m.beamModel);
       }
       if (m.root) {
         m.root->AddNode(controller.transform);
         m.root->ToggleChild(*controller.transform, false);
+      }
+      if (m.pointerContainer) {
+        m.pointerContainer->AddNode(controller.pointer->GetRoot());
       }
     } else {
       VRB_ERROR("Failed to add controller model");
@@ -208,6 +219,9 @@ ControllerContainer::SetVisible(const int32_t aControllerIndex, const bool aVisi
   Controller& controller = m.list[aControllerIndex];
   if (controller.transform && m.visible) {
     m.root->ToggleChild(*controller.transform, aVisible);
+  }
+  if (controller.pointer && !aVisible) {
+    controller.pointer->SetVisible(false);
   }
 }
 
@@ -321,6 +335,9 @@ void ControllerContainer::SetPointerColor(const vrb::Color& aColor) const {
     if (controller.transform) {
       GeometryPtr geometry = std::dynamic_pointer_cast<vrb::Geometry>(controller.transform->GetNode(1));
       geometry->GetRenderState()->SetMaterial(aColor, aColor, vrb::Color(0.0f, 0.0f, 0.0f), 0.0f);
+    }
+    if (controller.pointer) {
+      controller.pointer->SetPointerColor(aColor);
     }
   }
 }

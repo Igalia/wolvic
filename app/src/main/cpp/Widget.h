@@ -49,14 +49,11 @@ public:
   const vrb::Matrix GetTransform() const;
   void SetTransform(const vrb::Matrix& aTransform);
   void ToggleWidget(const bool aEnabled);
-  void TogglePointer(const bool aEnabled);
   bool IsVisible() const;
   vrb::NodePtr GetRoot() const;
   QuadPtr GetQuad() const;
   const VRLayerQuadPtr& GetLayer() const;
   vrb::TransformPtr GetTransformNode() const;
-  vrb::NodePtr GetPointerGeometry() const;
-  void SetPointerGeometry(vrb::NodePtr& aNode);
   const WidgetPlacementPtr& GetPlacement() const;
   void SetPlacement(const WidgetPlacementPtr& aPlacement);
   void StartResize();
@@ -64,7 +61,6 @@ public:
   bool IsResizing() const;
   void HandleResize(const vrb::Vector& aPoint, bool aPressed, bool& aResized, bool &aResizeEnded);
   void HoverExitResize();
-  void SetPointerColor(const vrb::Color& aColor);
 protected:
   struct State;
   Widget(State& aState, vrb::RenderContextPtr& aContext);

@@ -23,9 +23,6 @@
 #include "vrb/Vector.h"
 #include "vrb/VertexArray.h"
 
-#define POINTER_COLOR_OUTER vrb::Color(0.239f, 0.239f, 0.239f)
-#define POINTER_COLOR_INNER vrb::Color(1.0f, 1.0f, 1.0f)
-
 namespace crow {
 
 struct Widget::State {
@@ -37,10 +34,6 @@ struct Widget::State {
   vrb::TogglePtr root;
   vrb::TransformPtr transform;
   vrb::TextureSurfacePtr surface;
-  vrb::TogglePtr pointerToggle;
-  vrb::TransformPtr pointer;
-  vrb::TransformPtr pointerScale;
-  vrb::NodePtr pointerGeometry;
   WidgetPlacementPtr placement;
   WidgetResizerPtr resizer;
   bool resizing;
@@ -51,50 +44,6 @@ struct Widget::State {
       , resizing(false)
       , toggleState(false)
   {}
-
-  vrb::GeometryPtr createCircle(const int resolution, const float radius, const float scale, const float offset) {
-    vrb::RenderContextPtr render = context.lock();
-    if (!render) {
-      return nullptr;
-    }
-
-    vrb::CreationContextPtr create = render->GetRenderThreadCreationContext();
-    vrb::GeometryPtr geometry = vrb::Geometry::Create(create);
-    vrb::VertexArrayPtr array = vrb::VertexArray::Create(create);
-    geometry->SetVertexArray(array);
-
-    array->AppendNormal(vrb::Vector(0.0f, 0.0f, 1.0f));
-
-    for (int i = 0; i <= resolution; i++) {
-      std::vector<int> normalIndex;
-      normalIndex.push_back(0);
-      normalIndex.push_back(0);
-      normalIndex.push_back(0);
-
-      std::vector<int> index;
-
-      array->AppendVertex(vrb::Vector(0.0f, 0.0f, offset));
-      index.push_back(i*3 + 1);
-
-      array->AppendVertex(vrb::Vector(
-        (radius * cos(i * M_PI * 2 / resolution)) * scale,
-        (radius * sin(i * M_PI * 2 / resolution)) * scale,
-        offset));
-      index.push_back(i*3 + 2);
-
-      array->AppendVertex(vrb::Vector(
-        (radius * cos((i + 1) * M_PI * 2 / resolution)) * scale,
-        (radius * sin((i + 1) * M_PI * 2 / resolution)) * scale,
-        offset));
-      index.push_back(i*3 + 3);
-
-      std::vector<int> uvIndex;
-
-      geometry->AddFace(index, uvIndex, normalIndex);
-    }
-
-    return geometry;
-  }
 
   void Initialize(const int aHandle, const vrb::Vector& aWindowMin, const vrb::Vector& aWindowMax,
                   const int32_t aTextureWidth, const int32_t aTextureHeight, const VRLayerQuadPtr& aLayer) {
@@ -121,34 +70,10 @@ struct Widget::State {
     }
 
     transform = vrb::Transform::Create(create);
-    pointerToggle = vrb::Toggle::Create(create);
-    transform->AddNode(pointerToggle);
     transform->AddNode(quad->GetRoot());
     root = vrb::Toggle::Create(create);
     root->AddNode(transform);
 
-    const float kOffset = 0.01f;
-    const float kScale = 0.02f;
-    const int kResolution = 24;
-    const float radius = 0.25f;
-
-    vrb::GeometryPtr geometry = createCircle(kResolution, radius, kScale, kOffset);
-    vrb::GeometryPtr geometryOuter = createCircle(kResolution, radius + 0.08f, kScale, kOffset);
-
-    vrb::RenderStatePtr state = vrb::RenderState::Create(create);
-    state->SetMaterial(POINTER_COLOR_INNER, POINTER_COLOR_INNER, vrb::Color(0.0f, 0.0f, 0.0f), 0.0f);
-    geometry->SetRenderState(state);
-    vrb::RenderStatePtr stateOuter = vrb::RenderState::Create(create);
-    stateOuter->SetMaterial(POINTER_COLOR_OUTER, POINTER_COLOR_OUTER, vrb::Color(0.0f, 0.0f, 0.0f), 0.0f);
-    geometryOuter->SetRenderState(stateOuter);
-    pointerScale = vrb::Transform::Create(create);
-    pointerScale->SetTransform(vrb::Matrix::Identity());
-    pointerScale->AddNode(geometry);
-    pointerScale->AddNode(geometryOuter);
-    pointer = vrb::Transform::Create(create);
-    pointer->AddNode(pointerScale);
-    pointerGeometry = geometry;
-    pointerToggle->AddNode(pointer);
     if (layer) {
       toggleState = true;
       root->ToggleAll(true);
@@ -267,10 +192,6 @@ Widget::TestControllerIntersection(const vrb::Vector& aStartPoint, const vrb::Ve
     aIsInWidget = m.resizer->TestIntersection(aResult);
   }
 
-  if (result && m.pointer) {
-    m.pointer->SetTransform(vrb::Matrix::Translation(vrb::Vector(aResult.x(), aResult.y(), 0.0f)));
-  }
-
   return result;
 }
 
@@ -292,10 +213,6 @@ Widget::GetTransform() const {
 
 void
 Widget::SetTransform(const vrb::Matrix& aTransform) {
-  vrb::Vector point;
-  point = aTransform.MultiplyPosition(point);
-  const float scale = fabsf(point.z());
-  m.pointerScale->SetTransform(vrb::Matrix::Identity().ScaleInPlace(vrb::Vector(scale, scale, scale)));
   m.transform->SetTransform(aTransform);
 }
 
@@ -303,11 +220,6 @@ void
 Widget::ToggleWidget(const bool aEnabled) {
   m.toggleState = aEnabled;
   m.root->ToggleAll(aEnabled && m.FirstDraw());
-}
-
-void
-Widget::TogglePointer(const bool aEnabled) {
-  m.pointerToggle->ToggleAll(aEnabled);
 }
 
 bool
@@ -334,23 +246,6 @@ Widget::GetLayer() const {
 vrb::TransformPtr
 Widget::GetTransformNode() const {
   return m.transform;
-}
-
-vrb::NodePtr
-Widget::GetPointerGeometry() const {
-  return m.pointerGeometry;
-}
-
-void
-Widget::SetPointerGeometry(vrb::NodePtr& aNode) {
-  if (!aNode) {
-    return;
-  }
-  if (m.pointerGeometry) {
-    m.pointer->RemoveNode(*m.pointerGeometry);
-  }
-  m.pointerGeometry = aNode;
-  m.pointer->AddNode(aNode);
 }
 
 const WidgetPlacementPtr&
@@ -414,12 +309,6 @@ Widget::HoverExitResize() {
   if (m.resizing) {
     m.resizer->HoverExitResize();
   }
-}
-
-void
-Widget::SetPointerColor(const vrb::Color& aColor) {
-  vrb::GeometryPtr geometry = std::dynamic_pointer_cast<vrb::Geometry>(m.pointerGeometry);
-  geometry->GetRenderState()->SetMaterial(aColor, aColor, vrb::Color(0.0f, 0.0f, 0.0f), 0.0f);
 }
 
 Widget::Widget(State& aState, vrb::RenderContextPtr& aContext) : m(aState) {

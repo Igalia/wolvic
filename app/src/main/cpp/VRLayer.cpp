@@ -17,6 +17,7 @@ struct VRLayer::State {
   int32_t priority;
   uint64_t drawIndex;
   bool drawRequested;
+  bool drawInFront;
   VRLayer::LayerType layerType;
   vrb::Matrix modelTransform[2];
   vrb::Matrix modelView[2];
@@ -29,6 +30,7 @@ struct VRLayer::State {
       priority(0),
       drawIndex(0),
       drawRequested(false),
+      drawInFront(false),
       currentEye(device::Eye::Left),
       tintColor(1.0f, 1.0f, 1.0f, 1.0f)
   {
@@ -84,6 +86,11 @@ VRLayer::GetTintColor() const {
 const device::EyeRect&
 VRLayer::GetTextureRect(crow::device::Eye aEye) const {
   return m.textureRect[device::EyeIndex(aEye)];
+}
+
+bool
+VRLayer::GetDrawInFront() const {
+  return m.drawInFront;
 }
 
 bool
@@ -167,7 +174,11 @@ VRLayer::SetInitializeDelegate(const VRLayer::InitializeDelegate& aDelegate) {
   if (m.initialized && m.initDelegate) {
     m.initDelegate(*this);
   }
+}
 
+void
+VRLayer::SetDrawInFront(bool aDrawInFront) {
+  m.drawInFront = aDrawInFront;
 }
 
 // Layer Quad

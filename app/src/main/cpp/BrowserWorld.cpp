@@ -15,6 +15,7 @@
 #include "LoadingAnimation.h"
 #include "Skybox.h"
 #include "SplashAnimation.h"
+#include "Pointer.h"
 #include "Widget.h"
 #include "WidgetPlacement.h"
 #include "Quad.h"
@@ -182,7 +183,7 @@ struct BrowserWorld::State {
     rootController->AddLight(light);
     cullVisitor = CullVisitor::Create(create);
     drawList = DrawableList::Create(create);
-    controllers = ControllerContainer::Create(create);
+    controllers = ControllerContainer::Create(create, rootTransparent);
     externalVR = ExternalVR::Create();
     blitter = ExternalBlitter::Create(create);
     fadeAnimation = FadeAnimation::Create(create);
@@ -254,13 +255,12 @@ ThrottleHoverEvent(Controller& aController, const double aTimestamp, const bool 
 
 void
 BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
-  std::vector<Widget*> active;
-  for (const WidgetPtr& widget: widgets) {
-    widget->TogglePointer(false);
-  }
   for (Controller& controller: controllers->GetControllers()) {
     if (!controller.enabled || (controller.index < 0)) {
       continue;
+    }
+    if (controller.pointer && !controller.pointer->IsLoaded()) {
+      controller.pointer->Load(device);
     }
 
     if (!(controller.lastButtonState & ControllerDelegate::BUTTON_APP) && (controller.buttonState & ControllerDelegate::BUTTON_APP)) {
@@ -290,12 +290,20 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
       resizingWidget.reset();
     }
 
+    if (controller.pointer) {
+      controller.pointer->SetVisible(hitWidget.get() != nullptr);
+      controller.pointer->SetHitWidget(hitWidget);
+      if (hitWidget) {
+        vrb::Matrix translate = vrb::Matrix::Translation(vrb::Vector(hitPoint.x(), hitPoint.y(), 0.001f));
+        controller.pointer->SetTransform(hitWidget->GetTransform().PostMultiply(translate));
+      }
+    }
+
     const bool pressed = controller.buttonState & ControllerDelegate::BUTTON_TRIGGER ||
                          controller.buttonState & ControllerDelegate::BUTTON_TOUCHPAD;
     const bool wasPressed = controller.lastButtonState & ControllerDelegate::BUTTON_TRIGGER ||
                               controller.lastButtonState & ControllerDelegate::BUTTON_TOUCHPAD;
     if (hitWidget && hitWidget->IsResizing()) {
-      active.push_back(hitWidget.get());
       bool aResized = false, aResizeEnded = false;
       hitWidget->HandleResize(hitPoint, pressed, aResized, aResizeEnded);
 
@@ -316,7 +324,6 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
       }
     }
     else if (hitWidget) {
-      active.push_back(hitWidget.get());
       float theX = 0.0f, theY = 0.0f;
       hitWidget->ConvertToWidgetCoordinates(hitPoint, theX, theY);
       const uint32_t handle = hitWidget->GetHandle();
@@ -366,10 +373,6 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
     }
     controller.lastButtonState = controller.buttonState;
   }
-  for (Widget* widget: active) {
-    widget->TogglePointer(true);
-  }
-  active.clear();
   if (gestures) {
     const int32_t gestureCount = gestures->GetGestureCount();
     for (int32_t count = 0; count < gestureCount; count++) {
@@ -497,7 +500,7 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
         m.controllers->LoadControllerModel(index, m.loader, fileName);
       }
     }
-    m.controllers->InitializePointer();
+    m.controllers->InitializeBeam();
     m.controllers->SetPointerColor(vrb::Color(VRBrowser::GetPointerColor()));
     m.loadingAnimation->LoadModels(m.loader);
     m.rootController->AddNode(m.controllers->GetRoot());
@@ -656,9 +659,6 @@ BrowserWorld::UpdatePointerColor() {
   int32_t color = VRBrowser::GetPointerColor();
   VRB_LOG("Setting pointer color to: %d:", color);
 
-  for (const WidgetPtr& widget: m.widgets) {
-    widget->SetPointerColor(vrb::Color(color));
-  }
   if (m.controllers)
     m.controllers->SetPointerColor(vrb::Color(color));
 }
@@ -714,12 +714,6 @@ BrowserWorld::AddWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement) {
 
   m.widgets.push_back(widget);
   UpdateWidget(widget->GetHandle(), aPlacement);
-
-  if (!aPlacement->showPointer) {
-    vrb::NodePtr emptyNode = vrb::Group::Create(m.create);
-    widget->SetPointerGeometry(emptyNode);
-  }
-  widget->SetPointerColor(vrb::Color(VRBrowser::GetPointerColor()));
 }
 
 void
@@ -941,8 +935,8 @@ BrowserWorld::DrawWorld() {
     m.skybox->SetTransform(vrb::Matrix::Translation(headPosition));
   }
   m.rootTransparent->SortNodes([=](const NodePtr& a, const NodePtr& b) {
-    float da = DistanceToPlane(GetWidgetFromNode(a), headPosition, headDirection);
-    float db = DistanceToPlane(GetWidgetFromNode(b), headPosition, headDirection);
+    float da = DistanceToPlane(a, headPosition, headDirection);
+    float db = DistanceToPlane(b, headPosition, headDirection);
     if (da < 0.0f) {
       da = std::numeric_limits<float>::max();
     }
@@ -1122,41 +1116,35 @@ BrowserWorld::CreateFloor() {
 }
 
 float
-BrowserWorld::DistanceToNode(const vrb::NodePtr& aTargetNode, const vrb::Vector& aPosition) const {
-  ASSERT_ON_RENDER_THREAD(0.0f);
-  float result = -1;
-  Node::Traverse(aTargetNode, [&](const NodePtr &aNode, const GroupPtr &aTraversingFrom) {
-    vrb::TransformPtr transform = std::dynamic_pointer_cast<vrb::Transform>(aNode);
-    if (transform) {
-      vrb::Vector targetPos = transform->GetTransform().GetTranslation();
-      result = (targetPos - aPosition).Magnitude();
-      return true;
-    }
-    return false;
-  });
-
-  return result;
-}
-
-WidgetPtr
-BrowserWorld::GetWidgetFromNode(const vrb::NodePtr& aNode) const {
+BrowserWorld::DistanceToPlane(const vrb::NodePtr& aNode, const vrb::Vector& aPosition, const vrb::Vector& aDirection) const {
+  WidgetPtr target;
+  bool pointer = false;
   for (const auto & widget: m.widgets) {
     if (widget->GetRoot() == aNode) {
-      return widget;
+      target = widget;
+      break;
     }
   }
-  return nullptr;
-}
+  if (!target) {
+    for (Controller& controller: m.controllers->GetControllers()) {
+      if (controller.pointer && controller.pointer->GetRoot() == aNode) {
+        target = controller.pointer->GetHitWidget();
+        pointer = true;
+        break;
+      }
+    }
+  }
 
-float
-BrowserWorld::DistanceToPlane(const WidgetPtr& aWidget, const vrb::Vector& aPosition, const vrb::Vector& aDirection) const {
-  if (!aWidget) {
+  if (!target) {
     return -1.0f;
   }
   vrb::Vector result;
   bool inside = false;
   float distance = -1.0f;
-  aWidget->GetQuad()->TestIntersection(aPosition, aDirection, result, false, inside, distance);
+  target->GetQuad()->TestIntersection(aPosition, aDirection, result, false, inside, distance);
+  if (pointer) {
+    distance-= 0.001f;
+  }
   return distance;
 }
 
