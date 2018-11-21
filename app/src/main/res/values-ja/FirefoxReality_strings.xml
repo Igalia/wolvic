@@ -16,48 +16,48 @@
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's camera.
          '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_camera">%1$s にあなたのカメラの使用を許可しますか？</string>
+    <string name="permission_camera">%1$s にカメラの使用を許可しますか？</string>
 
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's microphone.
          '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_microphone">%1$s にあなたのマイクの使用を許可しますか？</string>
+    <string name="permission_microphone">%1$s にマイクの使用を許可しますか？</string>
 
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's camera and microphone.
          '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_camera_and_microphone">%1$s にあなたのカメラとマイクの使用を許可しますか？</string>
+    <string name="permission_camera_and_microphone">%1$s にカメラとマイクの使用を許可しますか？</string>
 
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's geographic location.
          '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_location">%1$s にあなたの位置情報へのアクセスを許可しますか？</string>
+    <string name="permission_location">%1$s に位置情報へのアクセスを許可しますか？</string>
 
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to send browser-level
          push notifications from a particular website (i.e., same origin).
          '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_notification">に通知の送信を許可して受信しますか？</string>
+    <string name="permission_notification">%1$s に通知の送信を許可して受信しますか？</string>
 
     <!-- This string will be displayed in a dialog box presented to the user when the application
          needs to request permission to access the device's external storage such as the
          sdcard. '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_read_external_storage">%1$s にあなたの外部ストレージの読み込みを許可しますか？</string>
+    <string name="permission_read_external_storage">%1$s に外部ストレージの読み込みを許可しますか？</string>
 
     <!-- This string will be displayed in a dialog box presented to the user when the application
          needs to request permission to access the device's external storage such as the
          sdcard. '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_persistent_storage">%1$s に永続ストレージにデータを格納することを許可しますか？</string>
+    <string name="permission_persistent_storage">%1$s に永続ストレージへのデータの格納を許可しますか？</string>
 
     <!-- This string is displayed in the Settings dialog box and how
          the user can know which version of the application they are currently running.
          '%1$s' will be replaced at runtime with the application version number. -->
-    <string name="settings_version">%1$s バージョン</string>
+    <string name="settings_version">バージョン %1$s</string>
 
     <!-- This string is displayed in the Settings dialog box and is used to label an
          On/Off switch which toggles whether an application crash is reported without first
          prompting the user. -->
-    <string name="settings_crash_reporting">クラッシュレポート</string>
+    <string name="settings_crash_reporting">クラッシュレポートの送信</string>
 
     <!-- This string is displayed in the Settings dialog box and is used to label an
          On/Off switch which toggles whether browser-level Telemetry is reported back to Mozilla. -->
@@ -65,7 +65,7 @@
 
     <!-- This string is used to label a button that, when pressed, loads a website that
          describes Mozilla's Privacy Policy. -->
-    <string name="settings_privacy">プライバシーポリシー</string>
+    <string name="settings_privacy">個人情報保護方針</string>
 
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains settings that an application or Web developer might want to change. -->
@@ -131,7 +131,7 @@
 
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains controller-related options: pointer color and scroll direction. -->
-    <string name="settings_controller_options">コントローラのオプション</string>
+    <string name="settings_controller_options">コントローラーオプション</string>
 
     <!-- This string is displayed in the 'Settings' dialog window and, is used to label an,
          On/Off switch that enables/disables the speech-data reporting. -->
@@ -152,7 +152,7 @@
 
     <!-- This string is the text displayed in the restart dialog box explaining why the
          restart is required. '%1$s' will be replaced at runtime with the app's name. -->
-    <string name="restart_dialog_text">変更を反映するには %1$s を再起動する必要があります。今すぐ実行しますか？</string>
+    <string name="restart_dialog_text">変更を反映するには %1$s を再起動する必要があります。今すぐ再起動しますか？</string>
 
     <!-- This string is used to label the button the user presses to restart the
          application in the restart dialog. -->
@@ -168,7 +168,7 @@
 
     <!-- This string labels an On/Off switch in the 'Developer Options' dialog
          and is used to toggle redirecting JavaScript Console output to the Android Logcat (i.e., `adb logcat`). -->
-    <string name="developer_options_show_console">コンソールを Logcat にリダイレクト</string>
+    <string name="developer_options_show_console">コンソール出力を Logcat に転送</string>
 
     <!-- This string labels an On/Off switch in the developer options dialog
          and is used to customize background environments of the app. -->
@@ -182,7 +182,7 @@
     <string name="developer_options_multiprocess">マルチプロセスを有効化</string>
 
     <!-- The string labels an On/Off switch in the developer options dialog and is used to toggle enabling Servo. -->
-    <string name="developer_options_servo">サーボを有効化</string>
+    <string name="developer_options_servo">Servo を有効化</string>
 
     <!-- This string is used to label a numerical-entry field where the user may set a new value to
          use for the display density. -->
@@ -217,10 +217,10 @@
     <string name="developer_options_msaa_disabled">無効化</string>
 
     <!-- This string is used to label the MSAA radio button that enables two times MSAA in Immersive Mode. -->
-    <string name="developer_options_msaa_2">2x</string>
+    <string name="developer_options_msaa_2">2 倍</string>
 
     <!-- This string is used to label the MSAA radio button that enables two times MSAA in Immersive Mode. -->
-    <string name="developer_options_msaa_4">4x</string>
+    <string name="developer_options_msaa_4">4 倍</string>
 
     <!-- This string is used to label a set of radio buttons that allow the user to change the
          User-Agent (UA) string of the browser. -->
@@ -248,7 +248,7 @@
 
     <!-- This string labels the radio button that selects the 'Void' environment.
          The 'Void' environment is an empty space that surrounds the user in empty, black space. -->
-    <string name="developer_options_env_void">なし</string>
+    <string name="developer_options_env_void">空虚</string>
 
     <!-- This string labels the radio button that selects the 'Cave' environment. -->
     <string name="developer_options_env_cave">洞窟</string>
@@ -257,7 +257,7 @@
     <string name="developer_options_env_meadow">草原</string>
 
     <!-- This string describes the radio buttons used to select the pointer color. -->
-    <string name="developer_options_pointer_color">ポインターカラー</string>
+    <string name="developer_options_pointer_color">ポインターの色</string>
 
     <!-- This string labels the radio button that sets the pointer color to purple. -->
     <string name="developer_options_pointer_purple">紫</string>
@@ -273,11 +273,11 @@
 
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
-    <string name="voice_search_start">検索したいものを入力してください。</string>
+    <string name="voice_search_start">何を検索しますか？</string>
 
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
-    <string name="voice_search_example">例:"360 ビデオ、天気、ニュース…"</string>
+    <string name="voice_search_example">例: "360 ビデオ、天気、ニュース…" と言ってください</string>
 
     <!-- This string is displayed in a dialog box show to the user while the Voice Search is being
          performed. It indicates that the search query is running and they should wait for the result. -->
@@ -289,7 +289,7 @@
 
     <!-- This string is displayed in a dialog box after a failed Voice Search and the system is prompting the
          user to try the Voice Search again. -->
-    <string name="voice_search_try_again">もう一度入力してください。</string>
+    <string name="voice_search_try_again">もう一度試してください。</string>
 
     <!-- This string is displayed in a dialog after the user has declined permission to use the
          device's microphone. It explains why Voice Search is not working. -->
@@ -297,7 +297,7 @@
 
     <!-- This string is displayed in the URL bar when it is empty. It informs the user that they
          may use the URL bar to search the Web or enter a Web address. -->
-    <string name="search_placeholder">ウェブを検索またはアドレスを入力</string>
+    <string name="search_placeholder">検索語またはアドレスを入力してください</string>
 
     <!-- This string labels a button that is used to cancel an action.
          This appears in such contexts as dialog boxes, `<select>` menus, etc. -->
@@ -315,7 +315,7 @@
 
     <!-- This string explains why Mozilla would like the user to allow the crash data to be uploaded.
          '%1$s' will be replaced at runtime with the app's domain name. -->
-    <string name="crash_dialog_message">%1$s の改善に向けた参考とさせていただきますので、クラッシュデータを送信してください。</string>
+    <string name="crash_dialog_message">%1$s の改善を助けるため、Mozilla にクラッシュデータを送信してください。</string>
 
     <!-- This string labels a checkbox in the crash dialog box. When checked, the user will no longer
          be prompted for permission to upload crash data after an application crash. -->
@@ -323,13 +323,13 @@
 
     <!-- This string labels a button that, when pressed, allows the user to learn more about the
          currently open dialog. -->
-    <string name="learn_more_button">詳細を確認</string>
+    <string name="learn_more_button">詳細情報</string>
 
     <!-- This string labels a button that, when pressed, prevents browser-level crash data from being sent to Mozilla. -->
     <string name="do_not_sent_button">送信しない</string>
 
     <!-- This string labels a button that, when pressed, allows the crash data to be sent to Mozilla. -->
-    <string name="send_data_button">データを送信</string>
+    <string name="send_data_button">データを送信する</string>
 
     <!-- This string appears in the tooltip for the button to change the 'Brightness'
          (i.e., the brightness level of the background environment), in particular when playing a video. -->
@@ -384,10 +384,10 @@
     <string name="video_controls_volume">音量</string>
 
     <!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek +30 seconds'). -->
-    <string name="video_controls_seek_forward">+%1$ 秒シーク</string>
+    <string name="video_controls_seek_forward">%1$ 秒早送り</string>
 
     <!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek -15 seconds'). -->
-    <string name="video_controls_seek_backward">-%1$ 秒シーク</string>
+    <string name="video_controls_seek_backward">%1$ 秒巻き戻し</string>
 
     <!-- This string is displayed in the video control seekbar when the media is not seekable
          (e.g., a live video stream). Prefer a short text because it affects the width of the seek bar. -->
@@ -421,10 +421,10 @@
     <string name="bookmarks_show_all">すべてのブックマークを表示</string>
 
     <!-- This string labels the Reset button that restores the default display settings values. -->
-    <string name="display_options_reset">表示設定のリセット</string>
+    <string name="display_options_reset">表示設定をリセット</string>
 
     <!-- This string labels the Reset button that restores the default voice search language settings values. -->
-    <string name="language_options_reset">音声検索の言語設定のリセット</string>
+    <string name="language_options_reset">音声検索の言語設定をリセット</string>
 
     <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the 'Name' of the bookmarked website. -->
     <string name="col_name">サイト名</string>
@@ -450,7 +450,7 @@
 
     <!-- This string is for the tooltip that appears upon hovering the 'Forward' button in the browser's navigation bar.
          'Forward' refers to going back one page in 'History'. -->
-    <string name="forward_tooltip">転送</string>
+    <string name="forward_tooltip">進む</string>
 
     <!-- This string is for the tooltip that appears upon hovering the 'Refresh' button in the browser's navigation bar.
          'Refresh' refers to reloading the current page. -->
@@ -471,7 +471,7 @@
 
     <!-- This string is for the tooltip that appears when the user is not in the browser's Private Browsing mode
          and hovers over the 'Private Browsing' icon in the browser's tray menu. -->
-    <string name="private_browsing_enter_tooltip">プライベートブラウジングを入力</string>
+    <string name="private_browsing_enter_tooltip">プライベートブラウジングを開始</string>
 
     <!-- This string is for the tooltip that appears when the user is in the browser's Private Browsing mode
          and hovers over the 'Private Browsing' icon in the browser's tray menu. -->
