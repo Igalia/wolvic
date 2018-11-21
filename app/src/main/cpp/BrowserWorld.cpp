@@ -867,6 +867,9 @@ BrowserWorld::ShowVRVideo(const int aWindowHandle, const int aVideoProjection) {
     return;
   }
 
+  if (m.vrVideo) {
+    m.vrVideo->Exit();
+  }
   auto projection = static_cast<VRVideo::VRVideoProjection>(aVideoProjection);
   m.vrVideo = VRVideo::Create(m.create, widget, projection, m.device);
   if (m.skybox && projection != VRVideo::VRVideoProjection::VIDEO_PROJECTION_3D_SIDE_BY_SIDE) {
