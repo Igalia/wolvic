@@ -35,11 +35,20 @@ public class DoubleEditSetting extends SingleEditSetting {
         by.setVisibility(View.VISIBLE);
 
         mText2 = findViewById(R.id.textValue2);
+        mText2.setSoundEffectsEnabled(false);
+        mText2.setOnClickListener(mText2ClickListener);
+
         mEdit2 = findViewById(R.id.editValue2);
         mEdit2.setSoundEffectsEnabled(false);
+        mEdit2.setOnTouchListener((v, event) -> updateTouchTextSelection(v));
+        mEdit2.setOnFocusChangeListener((v, hasFocus) -> updateFocusTextSelection(v, hasFocus));
+        mEdit2.addTextChangedListener(new TextColorTextWatcher(mEdit2));
+        mEdit2.setOnClickListener(v -> mEdit2.selectAll());
 
         mEdit2.setOnEditorActionListener(mInternalEditorActionListener);
     }
+
+    private OnClickListener mText2ClickListener = v -> mButton.performClick();
 
     protected void onClickListener(View v) {
         mText2.setVisibility(mEdit1.getVisibility());

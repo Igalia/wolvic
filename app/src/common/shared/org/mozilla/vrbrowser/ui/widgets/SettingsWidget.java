@@ -296,7 +296,7 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
     public void onGlobalFocusChanged(View oldFocus, View newFocus) {
         boolean dismiss = false;
         UIWidget widget = getChild(mDeveloperOptionsDialogHandle);
-        if (widget != null && oldFocus == widget && widget.isVisible()) {
+        if (widget != null && oldFocus == widget && !widget.isChild(newFocus) && widget.isVisible()) {
             dismiss = true;
 
         } else if (oldFocus == this && isVisible()) {

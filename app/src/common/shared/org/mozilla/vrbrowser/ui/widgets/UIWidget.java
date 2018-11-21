@@ -298,6 +298,9 @@ public abstract class UIWidget extends FrameLayout implements Widget {
         return (T) mChildren.get(aChildId);
     }
 
+    protected boolean isChild(View aView) {
+        return findViewById(aView.getId()) != null;
+    }
 
     protected void onDismiss() {
         hide();
