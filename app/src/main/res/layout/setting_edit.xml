@@ -37,7 +37,7 @@
                     android:visibility="visible"
                     tools:text="Value" />
 
-                <org.mozilla.vrbrowser.ui.views.DeveloperOptionsEditText
+                <EditText
                     android:id="@+id/editValue1"
                     style="@style/settingsEdit"
                     android:inputType="number"
@@ -57,7 +57,7 @@
                     android:visibility="visible"
                     tools:text="Value" />
 
-                <org.mozilla.vrbrowser.ui.views.DeveloperOptionsEditText
+                <EditText
                     android:id="@+id/editValue2"
                     style="@style/settingsEdit"
                     android:inputType="number"

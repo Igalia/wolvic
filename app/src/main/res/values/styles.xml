@@ -124,11 +124,15 @@
         <item name="android:textSize">20sp</item>
         <item name="android:background">@drawable/edittext_background</item>
         <item name="android:textColor">@drawable/edittext_textcolor</item>
+        <item name="android:editTextColor">@drawable/edittext_textcolor</item>
         <item name="android:textColorHighlight">@color/ocean</item>
         <item name="android:padding">5dp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:imeActionId">1</item>
         <item name="android:imeOptions">actionDone</item>
+        <item name="android:focusable">true</item>
+        <item name="android:focusableInTouchMode">true</item>
+        <item name="android:singleLine">true</item>
         <item name="android:selectAllOnFocus">true</item>
         <item name="android:layout_marginEnd">5dp</item>
         <item name="android:gravity">center_vertical</item>
