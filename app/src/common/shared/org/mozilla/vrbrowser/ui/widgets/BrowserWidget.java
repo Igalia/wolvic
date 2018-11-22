@@ -29,7 +29,8 @@ import org.mozilla.vrbrowser.ui.prompts.ChoicePromptWidget;
 
 
 public class BrowserWidget extends UIWidget implements SessionStore.SessionChangeListener,
-        GeckoSession.PromptDelegate, WidgetManagerDelegate.UpdateListener, BookmarkListener {
+        GeckoSession.ContentDelegate, GeckoSession.PromptDelegate, WidgetManagerDelegate.UpdateListener,
+        BookmarkListener {
 
     private static final String LOGTAG = "VRB";
 
@@ -47,6 +48,7 @@ public class BrowserWidget extends UIWidget implements SessionStore.SessionChang
     private int mBorderWidth;
     private BookmarksWidget mBookmarksWidget;
     private float mMultiplier;
+    Runnable mFirstDrawCallback;
 
     public BrowserWidget(Context aContext, int aSessionId) {
         super(aContext);
@@ -55,6 +57,7 @@ public class BrowserWidget extends UIWidget implements SessionStore.SessionChang
         mBorderWidth = SettingsStore.getInstance(aContext).getLayersEnabled() ? 1 : 0;
         SessionStore.get().addSessionChangeListener(this);
         SessionStore.get().addPromptListener(this);
+        SessionStore.get().addContentListener(this);
         mWidgetManager.addUpdateListener(this);
         setFocusable(true);
         GeckoSession session = SessionStore.get().getSession(mSessionId);
@@ -222,6 +225,7 @@ public class BrowserWidget extends UIWidget implements SessionStore.SessionChang
         mWidth = aWidth;
         mHeight = aHeight;
         mSurface = aSurface;
+        mFirstDrawCallback = aFirstDrawCallback;
         if (mDisplay == null) {
             mDisplay = session.acquireDisplay();
         } else {
@@ -231,9 +235,6 @@ public class BrowserWidget extends UIWidget implements SessionStore.SessionChang
             callSurfaceChanged();
         } else {
             mDisplay.surfaceDestroyed();
-        }
-        if (aFirstDrawCallback != null) {
-            aFirstDrawCallback.run();
         }
     }
 
@@ -304,6 +305,7 @@ public class BrowserWidget extends UIWidget implements SessionStore.SessionChang
     public void releaseWidget() {
         SessionStore.get().removeSessionChangeListener(this);
         SessionStore.get().removePromptListener(this);
+        SessionStore.get().removeContentListener(this);
         mWidgetManager.removeUpdateListener(this);
         GeckoSession session = SessionStore.get().getSession(mSessionId);
         if (session == null) {
@@ -562,5 +564,49 @@ public class BrowserWidget extends UIWidget implements SessionStore.SessionChang
         mWidgetPlacement.width = aWidget.getPlacement().width;
         mWidgetPlacement.height = aWidget.getPlacement().height;
         mWidgetManager.updateWidget(this);
+    }
+
+    // GeckoSession.ContentDelegate
+    @Override
+    public void onTitleChange(GeckoSession session, String title) {
+
+    }
+
+    @Override
+    public void onFocusRequest(GeckoSession session) {
+
+    }
+
+    @Override
+    public void onCloseRequest(GeckoSession session) {
+
+    }
+
+    @Override
+    public void onFullScreen(GeckoSession session, boolean fullScreen) {
+
+    }
+
+    @Override
+    public void onContextMenu(GeckoSession session, int screenX, int screenY, String uri, int elementType, String elementSrc) {
+
+    }
+
+    @Override
+    public void onExternalResponse(GeckoSession session, GeckoSession.WebResponseInfo response) {
+
+    }
+
+    @Override
+    public void onCrash(GeckoSession session) {
+
+    }
+
+    @Override
+    public void onFirstComposite(GeckoSession session) {
+        if (mFirstDrawCallback != null) {
+            mFirstDrawCallback.run();
+            mFirstDrawCallback = null;
+        }
     }
 }

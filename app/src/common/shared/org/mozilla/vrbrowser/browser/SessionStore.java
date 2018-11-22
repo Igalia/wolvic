@@ -1122,6 +1122,15 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         removeSession(crashedSessionId);
     }
 
+    @Override
+    public void onFirstComposite(GeckoSession aSession) {
+        if (mCurrentSession == aSession) {
+            for (GeckoSession.ContentDelegate listener : mContentListeners) {
+                listener.onFirstComposite(aSession);
+            }
+        }
+    }
+
     // TextInput Delegate
 
     @Override
