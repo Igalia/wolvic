@@ -196,7 +196,7 @@ public:
     }
 
     ovrLayer = vrapi_DefaultLayerProjection2();
-    ovrLayer.Header.SrcBlend = VRAPI_FRAME_LAYER_BLEND_SRC_ALPHA;
+    ovrLayer.Header.SrcBlend = VRAPI_FRAME_LAYER_BLEND_ONE;
     ovrLayer.Header.DstBlend = VRAPI_FRAME_LAYER_BLEND_ONE_MINUS_SRC_ALPHA;
 
     if (layer->GetSurfaceType() == VRLayerQuad::SurfaceType::AndroidSurface) {
@@ -913,7 +913,7 @@ DeviceDelegateOculusVR::EndFrame(const bool aDiscard) {
   // Add main eye buffer layer
   ovrLayerProjection2 projection = vrapi_DefaultLayerProjection2();
   projection.HeadPose = m.predictedTracking.HeadPose;
-  projection.Header.SrcBlend = VRAPI_FRAME_LAYER_BLEND_SRC_ALPHA;
+  projection.Header.SrcBlend = VRAPI_FRAME_LAYER_BLEND_ONE;
   projection.Header.DstBlend = VRAPI_FRAME_LAYER_BLEND_ONE_MINUS_SRC_ALPHA;
   for (int i = 0; i < VRAPI_FRAME_LAYER_EYE_MAX; ++i) {
     const auto &eyeSwapChain = m.eyeSwapChains[i];
