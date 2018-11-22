@@ -219,6 +219,7 @@ public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate
             ActivityCompat.requestPermissions((Activity)getContext(), new String[]{Manifest.permission.RECORD_AUDIO},
                     VOICESEARCH_AUDIO_REQUEST_CODE);
         } else {
+            mMozillaSpeechService.addListener(mVoiceSearchListener);
             mMozillaSpeechService.setLanguage("en-us");
             mMozillaSpeechService.start(getApplicationContext());
             mIsSpeechRecognitionRunning = true;
@@ -227,6 +228,7 @@ public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate
 
     public void stopVoiceSearch() {
         try {
+            mMozillaSpeechService.removeListener(mVoiceSearchListener);
             mMozillaSpeechService.cancel();
             mIsSpeechRecognitionRunning = false;
 
@@ -248,9 +250,10 @@ public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate
             }
 
             if (granted) {
-                startVoiceSearch();
+                show();
 
             } else {
+                super.show();
                 setPermissionNotGranted();
             }
         }
@@ -262,7 +265,6 @@ public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate
 
         setStartListeningState();
 
-        mMozillaSpeechService.addListener(mVoiceSearchListener);
         startVoiceSearch();
     }
 
@@ -270,7 +272,6 @@ public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate
     public void hide(@HideFlags int aHideFlags) {
         super.hide(aHideFlags);
 
-        mMozillaSpeechService.removeListener(mVoiceSearchListener);
         stopVoiceSearch();
     }
 
@@ -363,15 +364,7 @@ public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate
     // WidgetManagerDelegate.FocusChangeListener
     @Override
     public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-        boolean shouldHide = true;
-        if (newFocus != null) {
-            @IdRes Integer view_id = (Integer) newFocus.getTag(R.string.view_id_tag);
-            if (view_id != null && view_id == R.id.microphoneButton) {
-                shouldHide = false;
-            }
-        }
-
-        if (isVisible() && shouldHide) {
+        if (isVisible()) {
             hide(REMOVE_WIDGET);
         }
     }
