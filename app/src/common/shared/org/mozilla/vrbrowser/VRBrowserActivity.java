@@ -448,7 +448,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Keep
     @SuppressWarnings("unused")
-    void dispatchCreateWidgetLayer(final int aHandle, final Surface aSurface, final int aWidth, final int aHeight) {
+    void dispatchCreateWidgetLayer(final int aHandle, final Surface aSurface, final int aWidth, final int aHeight, final long aNativeCallback) {
         runOnUiThread(() -> {
             final Widget widget = mWidgets.get(aHandle);
             if (widget == null) {
@@ -456,13 +456,16 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 return;
             }
 
-            Runnable aFirstDrawCallback = null;
-            if (aSurface != null && !widget.getFirstDraw()) {
-                aFirstDrawCallback = () -> {
+            Runnable aFirstDrawCallback = () -> {
+                if (aNativeCallback != 0) {
+                    queueRunnable(() -> runCallbackNative(aNativeCallback));
+                }
+                if (aSurface != null && !widget.getFirstDraw()) {
                     widget.setFirstDraw(true);
                     updateWidget(widget);
-                };
-            }
+                }
+            };
+
 
             widget.setSurface(aSurface, aWidth, aHeight, aFirstDrawCallback);
 
@@ -630,7 +633,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Keep
     @SuppressWarnings("unused")
-    void renderPointerLayer(final Surface aSurface) {
+    void renderPointerLayer(final Surface aSurface, final long aNativeCallback) {
         runOnUiThread(() -> {
             try {
                 Canvas canvas = aSurface.lockHardwareCanvas();
@@ -652,6 +655,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             }
             catch (Exception ex) {
                 ex.printStackTrace();
+            }
+            if (aNativeCallback != 0) {
+                queueRunnable(() -> runCallbackNative(aNativeCallback));
             }
         });
     }
@@ -977,4 +983,5 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private native void hideVRVideoNative();
     private native void resetUIYawNative();
     private native void setControllersVisibleNative(boolean aVisible);
+    private native void runCallbackNative(long aCallback);
 }

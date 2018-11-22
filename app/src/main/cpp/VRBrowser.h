@@ -11,6 +11,7 @@
 #include <memory>
 #include <string>
 #include <jni.h>
+#include <functional>
 
 namespace crow {
 
@@ -18,7 +19,7 @@ namespace VRBrowser {
 void InitializeJava(JNIEnv* aEnv, jobject aActivity);
 void ShutdownJava();
 void DispatchCreateWidget(jint aWidgetHandle, jobject aSurfaceTexture, jint aWidth, jint aHeight);
-void DispatchCreateWidgetLayer(jint aWidgetHandle, jobject aSurface, jint aWidth, jint aHeight);
+void DispatchCreateWidgetLayer(jint aWidgetHandle, jobject aSurface, jint aWidth, jint aHeight, const std::function<void()>& aFirstCompositeCallback);
 void HandleMotionEvent(jint aWidgetHandle, jint aController, jboolean aPressed, jfloat aX, jfloat aY);
 void HandleScrollEvent(jint aWidgetHandle, jint aController, jfloat aX, jfloat aY);
 void HandleAudioPose(jfloat qx, jfloat qy, jfloat qz, jfloat qw, jfloat px, jfloat py, jfloat pz);
@@ -28,7 +29,7 @@ void HandleBack();
 void RegisterExternalContext(jlong aContext);
 void PauseCompositor();
 void ResumeCompositor();
-void RenderPointerLayer(jobject aSurface);
+void RenderPointerLayer(jobject aSurface, const std::function<void()>& aFirstCompositeCallback);
 std::string GetStorageAbsolutePath(const std::string& aRelativePath);
 bool isOverrideEnvPathEnabled();
 std::string GetActiveEnvironment();

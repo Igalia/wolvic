@@ -127,10 +127,10 @@ Pointer::Load(const DeviceDelegatePtr& aDevice) {
     m.layer = layer;
     const float size = kOuterRadius *  2.0f;
     layer->SetWorldSize(size, size);
-    layer->SetInitializeDelegate([](const VRLayer& aLayer) {
+    layer->SetSurfaceChangedDelegate([](const VRLayer& aLayer, VRLayer::SurfaceChange aChange, const std::function<void()>& aCallback) {
        const VRLayerQuad& quad = static_cast<const VRLayerQuad&>(aLayer);
-       if (quad.IsInitialized()) {
-         VRBrowser::RenderPointerLayer(quad.GetSurface());
+       if (aChange == VRLayer::SurfaceChange::Create) {
+         VRBrowser::RenderPointerLayer(quad.GetSurface(), aCallback);
        }
     });
     vrb::CreationContextPtr create = m.context.lock();

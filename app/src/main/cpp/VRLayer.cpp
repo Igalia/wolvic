@@ -24,7 +24,8 @@ struct VRLayer::State {
   device::Eye currentEye;
   vrb::Color tintColor;
   device::EyeRect textureRect[2];
-  InitializeDelegate initDelegate;
+  SurfaceChangedDelegate surfaceChangedDelegate;
+  std::function<void()> pendingEvent;
   State():
       initialized(false),
       priority(0),
@@ -112,13 +113,7 @@ VRLayer::ShouldDrawBefore(const VRLayer& aLayer) {
 
 void
 VRLayer::SetInitialized(bool aInitialized) {
-  if (m.initialized != aInitialized) {
-    m.initialized = aInitialized;
-    if (m.initDelegate) {
-      m.initDelegate(*this);
-    }
-  }
-
+  m.initialized = aInitialized;
 }
 
 void
@@ -169,16 +164,27 @@ VRLayer::SetTextureRect(device::Eye aEye, const crow::device::EyeRect &aTextureR
 }
 
 void
-VRLayer::SetInitializeDelegate(const VRLayer::InitializeDelegate& aDelegate) {
-  m.initDelegate = aDelegate;
-  if (m.initialized && m.initDelegate) {
-    m.initDelegate(*this);
+VRLayer::SetSurfaceChangedDelegate(const crow::VRLayer::SurfaceChangedDelegate &aDelegate){
+  m.surfaceChangedDelegate = aDelegate;
+  if (m.pendingEvent && m.surfaceChangedDelegate) {
+    m.pendingEvent();
+    m.pendingEvent = nullptr;
   }
 }
 
 void
 VRLayer::SetDrawInFront(bool aDrawInFront) {
   m.drawInFront = aDrawInFront;
+}
+
+void VRLayer::NotifySurfaceChanged(SurfaceChange aChange, const std::function<void()>& aFirstCompositeCallback) {
+  if (m.surfaceChangedDelegate) {
+    m.surfaceChangedDelegate(*this, aChange, aFirstCompositeCallback);
+  } else {
+    m.pendingEvent = [=](){
+      NotifySurfaceChanged(aChange, aFirstCompositeCallback);
+    };
+  }
 }
 
 // Layer Quad

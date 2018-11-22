@@ -59,9 +59,12 @@ struct Skybox::State {
     transform = vrb::Transform::Create(create);
     if (layer) {
       root->AddNode(VRLayerNode::Create(create, layer));
-      layer->SetInitializeDelegate([=](const VRLayer& aLayer) {
+      layer->SetSurfaceChangedDelegate([=](const VRLayer& aLayer, VRLayer::SurfaceChange aChange, const std::function<void()>& aCallback) {
         this->layerTextureHandle = layer->GetTextureHandle();
         LoadLayer();
+        if (aCallback) {
+          aCallback();
+        }
       });
     } else {
       root->AddNode(transform);

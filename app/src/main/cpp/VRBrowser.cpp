@@ -13,7 +13,7 @@ namespace {
 static const char* kDispatchCreateWidgetName = "dispatchCreateWidget";
 static const char* kDispatchCreateWidgetSignature = "(ILandroid/graphics/SurfaceTexture;II)V";
 static const char* kDispatchCreateWidgetLayerName = "dispatchCreateWidgetLayer";
-static const char* kDispatchCreateWidgetLayerSignature = "(ILandroid/view/Surface;II)V";
+static const char* kDispatchCreateWidgetLayerSignature = "(ILandroid/view/Surface;IIJ)V";
 static const char* kHandleMotionEventName = "handleMotionEvent";
 static const char* kHandleMotionEventSignature = "(IIZFF)V";
 static const char* kHandleScrollEventName = "handleScrollEvent";
@@ -33,7 +33,7 @@ static const char* kPauseCompositorSignature = "()V";
 static const char* kResumeCompositorName = "resumeGeckoViewCompositor";
 static const char* kResumeCompositorSignature = "()V";
 static const char* kRenderPointerLayerName = "renderPointerLayer";
-static const char* kRenderPointerLayerSignature = "(Landroid/view/Surface;)V";
+static const char* kRenderPointerLayerSignature = "(Landroid/view/Surface;J)V";
 static const char* kGetStorageAbsolutePathName = "getStorageAbsolutePath";
 static const char* kGetStorageAbsolutePathSignature = "()Ljava/lang/String;";
 static const char* kIsOverrideEnvPathEnabledName = "isOverrideEnvPathEnabled";
@@ -136,9 +136,13 @@ VRBrowser::DispatchCreateWidget(jint aWidgetHandle, jobject aSurface, jint aWidt
 
 
 void
-VRBrowser::DispatchCreateWidgetLayer(jint aWidgetHandle, jobject aSurface, jint aWidth, jint aHeight) {
+VRBrowser::DispatchCreateWidgetLayer(jint aWidgetHandle, jobject aSurface, jint aWidth, jint aHeight, const std::function<void()>& aFirstCompositeCallback) {
   if (!ValidateMethodID(sEnv, sActivity, sDispatchCreateWidgetLayer, __FUNCTION__)) { return; }
-  sEnv->CallVoidMethod(sActivity, sDispatchCreateWidgetLayer, aWidgetHandle, aSurface, aWidth, aHeight);
+  jlong callback = 0;
+  if (aFirstCompositeCallback) {
+    callback = reinterpret_cast<jlong>(new std::function<void()>(aFirstCompositeCallback));
+  }
+  sEnv->CallVoidMethod(sActivity, sDispatchCreateWidgetLayer, aWidgetHandle, aSurface, aWidth, aHeight, callback);
   CheckJNIException(sEnv, __FUNCTION__);
 }
 
@@ -207,9 +211,13 @@ VRBrowser::ResumeCompositor() {
 }
 
 void
-VRBrowser::RenderPointerLayer(jobject aSurface) {
+VRBrowser::RenderPointerLayer(jobject aSurface, const std::function<void()>& aFirstCompositeCallback) {
   if (!ValidateMethodID(sEnv, sActivity, sRenderPointerLayer, __FUNCTION__)) { return; }
-  sEnv->CallVoidMethod(sActivity, sRenderPointerLayer, aSurface);
+  jlong callback = 0;
+  if (aFirstCompositeCallback) {
+    callback = reinterpret_cast<jlong>(new std::function<void()>(aFirstCompositeCallback));
+  }
+  sEnv->CallVoidMethod(sActivity, sRenderPointerLayer, aSurface, callback);
   CheckJNIException(sEnv, __FUNCTION__);
 }
 

@@ -10,7 +10,6 @@
 #include "VRLayer.h"
 
 #include <android_native_app_glue.h>
-#include <android/native_window_jni.h>
 #include <EGL/egl.h>
 #include "vrb/CameraEye.h"
 #include "vrb/Color.h"
@@ -119,11 +118,15 @@ template <class T, class U>
 class OculusLayer {
 public:
   ovrTextureSwapChain * swapChain = nullptr;
+  bool composited = false;
   T layer;
   U ovrLayer;
 
   void Init() {
     layer->SetInitialized(true);
+    layer->NotifySurfaceChanged(VRLayer::SurfaceChange::Create, [=]() {
+      composited = true;
+    });
   }
 
   virtual void Update(const ovrTracking2& aTracking) {
@@ -141,7 +144,7 @@ public:
   }
 
   bool IsDrawRequested() const {
-    return swapChain && layer->IsDrawRequested();
+    return swapChain && composited && layer->IsDrawRequested();
   }
 
   bool GetDrawInFront() const {
@@ -167,6 +170,8 @@ public:
       swapChain = nullptr;
     }
     layer->SetInitialized(false);
+    composited = false;
+    layer->NotifySurfaceChanged(VRLayer::SurfaceChange::Destroy, nullptr);
   }
 
   virtual ~OculusLayer() {
@@ -180,9 +185,10 @@ typedef std::shared_ptr<OculusLayerQuad> OculusLayerQuadPtr;
 
 class OculusLayerQuad: public OculusLayer<VRLayerQuadPtr, ovrLayerProjection2> {
 public:
-  ANativeWindow * nativeWindow = nullptr;
   jobject surface = nullptr;
   vrb::FBOPtr fbo;
+  vrb::RenderContextWeak contextWeak;
+  JNIEnv * jniEnv = nullptr;
 
   static OculusLayerQuadPtr Create(const VRLayerQuadPtr& aLayer) {
     auto result = std::make_shared<OculusLayerQuad>();
@@ -195,40 +201,14 @@ public:
       return;
     }
 
+    jniEnv = aEnv;
+    contextWeak = aContext;
+
     ovrLayer = vrapi_DefaultLayerProjection2();
     ovrLayer.Header.SrcBlend = VRAPI_FRAME_LAYER_BLEND_ONE;
     ovrLayer.Header.DstBlend = VRAPI_FRAME_LAYER_BLEND_ONE_MINUS_SRC_ALPHA;
 
-    if (layer->GetSurfaceType() == VRLayerQuad::SurfaceType::AndroidSurface) {
-      swapChain = vrapi_CreateAndroidSurfaceSwapChain(layer->GetWidth(), layer->GetHeight());
-      surface = vrapi_GetTextureSwapChainAndroidSurface(swapChain);
-      surface = aEnv->NewGlobalRef(surface);
-      nativeWindow = ANativeWindow_fromSurface(aEnv, surface);
-      layer->SetSurface(surface);
-    } else {
-      swapChain = vrapi_CreateTextureSwapChain(VRAPI_TEXTURE_TYPE_2D, VRAPI_TEXTURE_FORMAT_8888,
-                                               layer->GetWidth(), layer->GetHeight(), 1, false);
-      fbo = vrb::FBO::Create(aContext);
-      GLuint texture = vrapi_GetTextureSwapChainHandle(swapChain, 0);
-      VRB_GL_CHECK(glBindTexture(GL_TEXTURE_2D, texture));
-      VRB_GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-      VRB_GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-      VRB_GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-      VRB_GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-      vrb::FBO::Attributes attributes;
-      attributes.depth = false;
-      attributes.samples = 0;
-      VRB_GL_CHECK(fbo->SetTextureHandle(texture, layer->GetWidth(), layer->GetHeight(), attributes));
-      if (fbo->IsValid()) {
-        fbo->Bind();
-        VRB_GL_CHECK(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
-        VRB_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
-        fbo->Unbind();
-      } else {
-        VRB_WARN("FAILED to make valid FBO for OculusLayerQuad");
-      }
-    }
-
+    InitSwapChain(swapChain, surface, fbo);
     layer->SetResizeDelegate([=]{
       Resize();
     });
@@ -278,14 +258,67 @@ public:
   }
 
   void Resize() {
-    if (nativeWindow && swapChain) {
-      ANativeWindow_setBuffersGeometry(nativeWindow, layer->GetWidth(), layer->GetHeight(), 0 /* Format unchanged */);
+    if (!swapChain) {
+      return;
     }
+    // Delay the destruction of the current swapChain until the new one is composited.
+    // This is required to prevent a black flicker when resizing.
+    ovrTextureSwapChain * newSwapChain = nullptr;
+    jobject newSurface = nullptr;
+    vrb::FBOPtr newFBO;
+    InitSwapChain(newSwapChain, newSurface, newFBO);
+    layer->SetSurface(newSurface);
+    layer->NotifySurfaceChanged(VRLayer::SurfaceChange::Create, [=]() {
+      if (swapChain) {
+        vrapi_DestroyTextureSwapChain(swapChain);
+      }
+      if (surface) {
+        jniEnv->DeleteGlobalRef(surface);
+      }
+      swapChain = newSwapChain;
+      surface = newSurface;
+      fbo = newFBO;
+      composited = true;
+    });
   }
 
   const ovrLayerHeader2 * Header() const override {
     return &ovrLayer.Header;
   }
+
+private:
+  void InitSwapChain(ovrTextureSwapChain*& swapChainOut, jobject & surfaceOut, vrb::FBOPtr fboOut) {
+    if (layer->GetSurfaceType() == VRLayerQuad::SurfaceType::AndroidSurface) {
+      swapChainOut = vrapi_CreateAndroidSurfaceSwapChain(layer->GetWidth(), layer->GetHeight());
+      surfaceOut = vrapi_GetTextureSwapChainAndroidSurface(swapChainOut);
+      surfaceOut = jniEnv->NewGlobalRef(surfaceOut);
+      layer->SetSurface(surface);
+    } else {
+      swapChainOut = vrapi_CreateTextureSwapChain(VRAPI_TEXTURE_TYPE_2D, VRAPI_TEXTURE_FORMAT_8888,
+                                               layer->GetWidth(), layer->GetHeight(), 1, false);
+      vrb::RenderContextPtr ctx = contextWeak.lock();
+      fboOut = vrb::FBO::Create(ctx);
+      GLuint texture = vrapi_GetTextureSwapChainHandle(swapChainOut, 0);
+      VRB_GL_CHECK(glBindTexture(GL_TEXTURE_2D, texture));
+      VRB_GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+      VRB_GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+      VRB_GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+      VRB_GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+      vrb::FBO::Attributes attributes;
+      attributes.depth = false;
+      attributes.samples = 0;
+      VRB_GL_CHECK(fboOut->SetTextureHandle(texture, layer->GetWidth(), layer->GetHeight(), attributes));
+      if (fboOut->IsValid()) {
+        fboOut->Bind();
+        VRB_GL_CHECK(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
+        VRB_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
+        fboOut->Unbind();
+      } else {
+        VRB_WARN("FAILED to make valid FBO for OculusLayerQuad");
+      }
+    }
+  }
+
 };
 
 class OculusLayerCube;

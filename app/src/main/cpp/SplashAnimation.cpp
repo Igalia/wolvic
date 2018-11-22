@@ -97,9 +97,12 @@ SplashAnimation::Load(vrb::RenderContextPtr& aContext, const DeviceDelegatePtr& 
     if (!m.read->IsValid()) {
       VRB_WARN("Splash FBO is not valid");
     }
-    m.layer->SetInitializeDelegate([=](const VRLayer& aLayer){
-      if (aLayer.IsInitialized()) {
+    m.layer->SetSurfaceChangedDelegate([=](const VRLayer& aLayer, VRLayer::SurfaceChange aChange, const std::function<void()>& aCallback){
+      if (aChange == VRLayer::SurfaceChange::Create) {
         m.HandleLayerInitialized(texture);
+      }
+      if (aCallback) {
+        aCallback();
       }
     });
   }

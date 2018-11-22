@@ -55,9 +55,9 @@ struct Widget::State {
     }
     layer = aLayer;
     if (layer) {
-      layer->SetInitializeDelegate([=](const VRLayer& aLayer) {
+      layer->SetSurfaceChangedDelegate([=](const VRLayer& aLayer, VRLayer::SurfaceChange aChange, const std::function<void()>& aCallback) {
         const VRLayerQuad& layerQuad = static_cast<const VRLayerQuad&>(aLayer);
-        VRBrowser::DispatchCreateWidgetLayer((jint)aHandle, layerQuad.GetSurface(), layerQuad.GetWidth(), layerQuad.GetHeight());
+        VRBrowser::DispatchCreateWidgetLayer((jint)aHandle, layerQuad.GetSurface(), layerQuad.GetWidth(), layerQuad.GetHeight(), aCallback);
       });
     } else {
       surface = vrb::TextureSurface::Create(render, name);

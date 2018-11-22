@@ -1250,5 +1250,14 @@ JNI_METHOD(void, resetUIYawNative)
   crow::BrowserWorld::Instance().ResetUIYaw();
 }
 
+JNI_METHOD(void, runCallbackNative)
+(JNIEnv* aEnv, jobject, jlong aCallback) {
+  if (aCallback) {
+    auto func = reinterpret_cast<std::function<void()> *>((uintptr_t)aCallback);
+    (*func)();
+    delete func;
+  }
+}
+
 
 } // extern "C"

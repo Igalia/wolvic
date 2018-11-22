@@ -29,7 +29,13 @@ public:
     EQUIRECTANGULAR
   };
 
-  typedef std::function<void(const VRLayer& aLayer)> InitializeDelegate;
+  enum class SurfaceChange {
+    Create,
+    Destroy
+  };
+  typedef std::function<void(const VRLayer& aLayer,
+                             SurfaceChange aChange,
+                             const std::function<void()>& aFirstCompositeCallback)> SurfaceChangedDelegate;
 
   VRLayer::LayerType GetLayerType() const;
   bool IsInitialized() const;
@@ -52,8 +58,9 @@ public:
   void SetPriority(int32_t aPriority);
   void SetTintColor(const vrb::Color& aTintColor);
   void SetTextureRect(device::Eye aEye, const device::EyeRect& aTextureRect);
-  void SetInitializeDelegate(const InitializeDelegate& aDelegate);
+  void SetSurfaceChangedDelegate(const SurfaceChangedDelegate& aDelegate);
   void SetDrawInFront(bool aDrawInFront);
+  void NotifySurfaceChanged(SurfaceChange aChange, const std::function<void()>& aFirstCompositeCallback);
 protected:
   struct State;
   VRLayer(State& aState, LayerType aLayerType);
@@ -116,7 +123,6 @@ public:
   int32_t GetHeight() const;
   GLuint GetTextureHandle() const;
   bool IsLoaded() const;
-
 
   void SetTextureHandle(uint32_t aTextureHandle);
   void SetLoaded(bool aReady);
