@@ -10,8 +10,6 @@ import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.net.Uri;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -38,11 +36,15 @@ import org.mozilla.vrbrowser.utils.UrlUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 public class NavigationBarWidget extends UIWidget implements GeckoSession.NavigationDelegate,
         GeckoSession.ProgressDelegate, GeckoSession.ContentDelegate, WidgetManagerDelegate.WorldClickListener,
         WidgetManagerDelegate.UpdateListener, SessionStore.SessionChangeListener,
         NavigationURLBar.NavigationURLBarDelegate, VoiceSearchWidget.VoiceSearchDelegate,
-        SharedPreferences.OnSharedPreferenceChangeListener, SuggestionsWidget.URLBarPopupDelegate {
+        SharedPreferences.OnSharedPreferenceChangeListener, SuggestionsWidget.URLBarPopupDelegate,
+        BookmarkListener, TrayListener {
 
     private static final String LOGTAG = "VRB";
 
@@ -82,8 +84,9 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private SearchEngineWrapper mSearchEngineWrapper;
     private VideoProjectionMenuWidget mProjectionMenu;
     private WidgetPlacement mProjectionMenuPlacement;
-    private BrightnessMenuWidget mBrigthnessWidget;
+    private BrightnessMenuWidget mBrightnessWidget;
     private MediaControlsWidget mMediaControlsWidget;
+    private BookmarksWidget mBookmarksWidget;
 
     public NavigationBarWidget(Context aContext) {
         super(aContext);
@@ -103,6 +106,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private void initialize(Context aContext) {
         mAppContext = aContext.getApplicationContext();
         inflate(aContext, R.layout.navigation_bar, this);
+
         mAudio = AudioEngine.fromContext(aContext);
         mBackButton = findViewById(R.id.backButton);
         mForwardButton = findViewById(R.id.forwardButton);
@@ -124,66 +128,51 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mFullScreenBackHandler = this::exitFullScreenMode;
         mVRVideoBackHandler = this::exitVRVideo;
 
-        mBackButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                v.requestFocusFromTouch();
-                if (SessionStore.get().canGoBack())
-                    SessionStore.get().goBack();
-                else if (SessionStore.get().canUnstackSession())
-                    SessionStore.get().unstackSession();
+        mBackButton.setOnClickListener(v -> {
+            v.requestFocusFromTouch();
+            if (SessionStore.get().canGoBack())
+                SessionStore.get().goBack();
+            else if (SessionStore.get().canUnstackSession())
+                SessionStore.get().unstackSession();
 
-                if (mAudio != null) {
-                    mAudio.playSound(AudioEngine.Sound.BACK);
-                }
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.BACK);
             }
         });
 
-        mForwardButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                v.requestFocusFromTouch();
-                SessionStore.get().goForward();
-                if (mAudio != null) {
-                    mAudio.playSound(AudioEngine.Sound.CLICK);
-                }
+        mForwardButton.setOnClickListener(v -> {
+            v.requestFocusFromTouch();
+            SessionStore.get().goForward();
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
             }
         });
 
-        mReloadButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                v.requestFocusFromTouch();
-                if (mIsLoading) {
-                    SessionStore.get().stop();
-                } else {
-                    SessionStore.get().reload();
-                }
-                if (mAudio != null) {
-                    mAudio.playSound(AudioEngine.Sound.CLICK);
-                }
+        mReloadButton.setOnClickListener(v -> {
+            v.requestFocusFromTouch();
+            if (mIsLoading) {
+                SessionStore.get().stop();
+            } else {
+                SessionStore.get().reload();
+            }
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
             }
         });
 
-        mHomeButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                v.requestFocusFromTouch();
-                SessionStore.get().loadUri(SessionStore.get().getHomeUri());
-                if (mAudio != null) {
-                    mAudio.playSound(AudioEngine.Sound.CLICK);
-                }
+        mHomeButton.setOnClickListener(v -> {
+            v.requestFocusFromTouch();
+            SessionStore.get().loadUri(SessionStore.get().getHomeUri());
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
             }
         });
 
-        mServoButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                v.requestFocusFromTouch();
-                SessionStore.get().toggleServo();
-                if (mAudio != null) {
-                    mAudio.playSound(AudioEngine.Sound.CLICK);
-                }
+        mServoButton.setOnClickListener(v -> {
+            v.requestFocusFromTouch();
+            SessionStore.get().toggleServo();
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
             }
         });
 
@@ -194,125 +183,95 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mPreset2 = findViewById(R.id.resizePreset2);
         mPreset3 = findViewById(R.id.resizePreset3);
 
-        mResizeEnterButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                view.requestFocusFromTouch();
-                enterResizeMode();
-                if (mAudio != null) {
-                    mAudio.playSound(AudioEngine.Sound.CLICK);
-                }
+        mResizeEnterButton.setOnClickListener(view -> {
+            view.requestFocusFromTouch();
+            enterResizeMode();
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
             }
         });
 
-        mResizeExitButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                view.requestFocusFromTouch();
-                exitResizeMode(true);
-                if (mAudio != null) {
-                    mAudio.playSound(AudioEngine.Sound.CLICK);
-                }
+        mResizeExitButton.setOnClickListener(view -> {
+            view.requestFocusFromTouch();
+            exitResizeMode(true);
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
             }
         });
 
-        mFullScreenResizeButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                view.requestFocusFromTouch();
-                enterResizeMode();
-                if (mAudio != null) {
-                    mAudio.playSound(AudioEngine.Sound.CLICK);
-                }
+        mFullScreenResizeButton.setOnClickListener(view -> {
+            view.requestFocusFromTouch();
+            enterResizeMode();
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
             }
         });
 
-        mFullScreenExitButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                view.requestFocusFromTouch();
-                exitFullScreenMode();
-                if (mAudio != null) {
-                    mAudio.playSound(AudioEngine.Sound.CLICK);
-                }
+        mFullScreenExitButton.setOnClickListener(view -> {
+            view.requestFocusFromTouch();
+            exitFullScreenMode();
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
             }
         });
 
-        mProjectionButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                view.requestFocusFromTouch();
-                if (mAudio != null) {
-                    mAudio.playSound(AudioEngine.Sound.CLICK);
-                }
+        mProjectionButton.setOnClickListener(view -> {
+            view.requestFocusFromTouch();
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
 
-                boolean wasVisible = mProjectionMenu.isVisible();
-                closeFloatingMenus();
-                if (!wasVisible) {
-                    mProjectionMenu.setVisible(true);
-                }
+            boolean wasVisible = mProjectionMenu.isVisible();
+            closeFloatingMenus();
+            if (!wasVisible) {
+                mProjectionMenu.setVisible(true);
             }
         });
 
-        mBrightnessButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                view.requestFocusFromTouch();
-                if (mAudio != null) {
-                    mAudio.playSound(AudioEngine.Sound.CLICK);
-                }
-                boolean wasVisible = mBrigthnessWidget.isVisible();
-                closeFloatingMenus();
-                if (!wasVisible) {
-                    float anchor = 0.5f + (float)mBrightnessButton.getMeasuredWidth() / (float)NavigationBarWidget.this.getMeasuredWidth();
-                    mBrigthnessWidget.getPlacement().parentAnchorX = anchor;
-                    mBrigthnessWidget.setVisible(true);
-                }
+        mBrightnessButton.setOnClickListener(view -> {
+            view.requestFocusFromTouch();
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
+            boolean wasVisible = mBrightnessWidget.isVisible();
+            closeFloatingMenus();
+            if (!wasVisible) {
+                float anchor = 0.5f + (float)mBrightnessButton.getMeasuredWidth() / (float)NavigationBarWidget.this.getMeasuredWidth();
+                mBrightnessWidget.getPlacement().parentAnchorX = anchor;
+                mBrightnessWidget.setVisible(true);
             }
         });
 
 
-        mPreset0.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                view.requestFocusFromTouch();
-                setResizePreset(0.5f);
-                if (mAudio != null) {
-                    mAudio.playSound(AudioEngine.Sound.CLICK);
-                }
+        mPreset0.setOnClickListener(view -> {
+            view.requestFocusFromTouch();
+            setResizePreset(0.5f);
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
             }
         });
 
-        mPreset1.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                view.requestFocusFromTouch();
-                setResizePreset(1.0f);
-                if (mAudio != null) {
-                    mAudio.playSound(AudioEngine.Sound.CLICK);
-                }
+        mPreset1.setOnClickListener(view -> {
+            view.requestFocusFromTouch();
+            setResizePreset(1.0f);
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
             }
         });
 
-        mPreset2.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                view.requestFocusFromTouch();
-                setResizePreset(2.0f);
-                if (mAudio != null) {
-                    mAudio.playSound(AudioEngine.Sound.CLICK);
-                }
+        mPreset2.setOnClickListener(view -> {
+            view.requestFocusFromTouch();
+            setResizePreset(2.0f);
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
             }
         });
 
-        mPreset3.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                view.requestFocusFromTouch();
-                setResizePreset(3.0f);
-                if (mAudio != null) {
-                    mAudio.playSound(AudioEngine.Sound.CLICK);
-                }
+        mPreset3.setOnClickListener(view -> {
+            view.requestFocusFromTouch();
+            setResizePreset(3.0f);
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
             }
         });
 
@@ -351,13 +310,14 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         SessionStore.get().removeContentListener(this);
         SessionStore.get().removeSessionChangeListener(this);
         mBrowserWidget = null;
+        mBookmarksWidget = null;
         super.releaseWidget();
     }
 
     @Override
     protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
         aPlacement.width = WidgetPlacement.dpDimension(getContext(), R.dimen.navigation_bar_width);
-        aPlacement.worldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.browser_world_width);
+        aPlacement.worldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width);
         aPlacement.height = WidgetPlacement.dpDimension(getContext(), R.dimen.navigation_bar_height);
         aPlacement.anchorX = 0.5f;
         aPlacement.anchorY = 1.0f;
@@ -377,6 +337,10 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             mWidgetPlacement.parentHandle = aWidget.getHandle();
         }
         mBrowserWidget = aWidget;
+    }
+
+    public void setBookmarksWidget(BookmarksWidget aWidget) {
+        mBookmarksWidget = aWidget;
     }
 
     private void enterFullScreenMode() {
@@ -408,13 +372,13 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
                 }
             });
         }
-        if (mBrigthnessWidget == null) {
-            mBrigthnessWidget = new BrightnessMenuWidget(getContext());
-            mBrigthnessWidget.setParentWidget(this);
-            mWidgetManager.addWidget(mBrigthnessWidget);
+        if (mBrightnessWidget == null) {
+            mBrightnessWidget = new BrightnessMenuWidget(getContext());
+            mBrightnessWidget.setParentWidget(this);
+            mWidgetManager.addWidget(mBrightnessWidget);
         }
         closeFloatingMenus();
-        mWidgetManager.pushWorldBrightness(mBrigthnessWidget, mBrigthnessWidget.getSelectedBrightness());
+        mWidgetManager.pushWorldBrightness(mBrightnessWidget, mBrightnessWidget.getSelectedBrightness());
     }
 
     private void exitFullScreenMode() {
@@ -435,7 +399,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
         mWidgetManager.setTrayVisible(true);
         closeFloatingMenus();
-        mWidgetManager.popWorldBrightness(mBrigthnessWidget);
+        mWidgetManager.popWorldBrightness(mBrightnessWidget);
     }
 
     private void enterResizeMode() {
@@ -443,7 +407,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             return;
         }
         mIsResizing = true;
-        mWidgetManager.startWidgetResize(mBrowserWidget);
+        startWidgetResize();
         AnimationHelper.fadeIn(mResizeModeContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
         if (mIsInFullScreenMode) {
             AnimationHelper.fadeOut(mFullScreenModeContainer, 0, null);
@@ -459,18 +423,13 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             return;
         }
         mIsResizing = false;
-        mWidgetManager.finishWidgetResize(mBrowserWidget);
+        finishWidgetResize();
         if (mIsInFullScreenMode) {
             AnimationHelper.fadeIn(mFullScreenModeContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
         } else {
             AnimationHelper.fadeIn(mNavigationContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
         }
-        AnimationHelper.fadeOut(mResizeModeContainer, 0, new Runnable() {
-            @Override
-            public void run() {
-                onWidgetUpdate(mBrowserWidget);
-            }
-        });
+        AnimationHelper.fadeOut(mResizeModeContainer, 0, () -> updateWidget());
         mWidgetManager.popBackHandler(mResizeBackHandler);
         closeFloatingMenus();
     }
@@ -530,10 +489,18 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     private void setResizePreset(float aResizeMode) {
-        mBrowserWidget.setBrowserSize(
-                SettingsStore.getInstance(getContext()).getWindowWidth(),
-                SettingsStore.getInstance(getContext()).getWindowHeight(),
-                aResizeMode);
+        if (mBrowserWidget.isVisible()) {
+            mBrowserWidget.setSize(
+                    SettingsStore.getInstance(getContext()).getWindowWidth(),
+                    SettingsStore.getInstance(getContext()).getWindowHeight(),
+                    aResizeMode);
+
+        } else if (mBookmarksWidget.isVisible()) {
+            mBookmarksWidget.setSize(
+                    SettingsStore.getInstance(getContext()).getWindowWidth(),
+                    SettingsStore.getInstance(getContext()).getWindowHeight(),
+                    aResizeMode);
+        }
     }
 
     public void showVoiceSearch() {
@@ -552,8 +519,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         if (mProjectionMenu != null) {
             mProjectionMenu.setVisible(false);
         }
-        if (mBrigthnessWidget != null) {
-            mBrigthnessWidget.setVisible(false);
+        if (mBrightnessWidget != null) {
+            mBrightnessWidget.setVisible(false);
         }
     }
 
@@ -726,13 +693,13 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     // WidgetManagerDelegate.UpdateListener
     @Override
     public void onWidgetUpdate(Widget aWidget) {
-        if (aWidget != mBrowserWidget || mIsResizing) {
+        if ((aWidget != mBrowserWidget && aWidget != mBookmarksWidget) || mIsResizing) {
             return;
         }
 
         // Browser window may have been resized, adjust the navigation bar
         float targetWidth = aWidget.getPlacement().worldWidth;
-        float defaultWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.browser_world_width);
+        float defaultWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width);
         targetWidth = Math.max(defaultWidth, targetWidth);
         targetWidth = Math.min(targetWidth, defaultWidth * 1.5f);
 
@@ -835,7 +802,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     @Override
-    public void OnHideSearchPopup() {
+    public void onHideSearchPopup() {
         if (mPopup != null) {
             mPopup.hide(UIWidget.KEEP_WIDGET);
         }
@@ -897,6 +864,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     // URLBarPopupWidgetDelegate
+
     @Override
     public void OnItemClicked(SuggestionsWidget.SuggestionItem item) {
         mURLBar.handleURLEdit(item.url);
@@ -905,5 +873,65 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     @Override
     public void OnItemDeleted(SuggestionsWidget.SuggestionItem item) {
 
+    }
+
+    // BookmarkListener
+
+    @Override
+    public void onBookmarksShown() {
+        mURLBar.setBookmarks(true);
+        mURLBar.setURL("");
+        mURLBar.setHint(R.string.about_bookmarks);
+        mURLBar.setIsBookmarkMode(true);
+    }
+
+    @Override
+    public void onBookmarksHidden() {
+        mURLBar.setIsBookmarkMode(false);
+        mURLBar.setBookmarks(false);
+        mURLBar.setURL(SessionStore.get().getCurrentUri());
+        mURLBar.setHint(R.string.search_placeholder);
+    }
+
+    // TrayListener
+
+    @Override
+    public void onBookmarksClicked() {
+        if (mIsResizing) {
+            exitResizeMode(false);
+
+        } else if (mIsInFullScreenMode) {
+            exitFullScreenMode();
+
+        } else if (mIsInVRVideo) {
+            exitVRVideo();
+        }
+    }
+
+    private void finishWidgetResize() {
+        if (mBrowserWidget.isVisible()) {
+            mWidgetManager.finishWidgetResize(mBrowserWidget);
+
+        } else if (mBookmarksWidget.isVisible()) {
+            mWidgetManager.finishWidgetResize(mBookmarksWidget);
+        }
+    }
+
+    private void startWidgetResize() {
+        if (mBrowserWidget.isVisible()) {
+            mWidgetManager.startWidgetResize(mBrowserWidget);
+
+        } else if (mBookmarksWidget.isVisible()) {
+            mWidgetManager.startWidgetResize(mBookmarksWidget);
+        }
+    }
+
+    private void updateWidget() {
+        if (mBrowserWidget.isVisible()) {
+            onWidgetUpdate(mBrowserWidget);
+
+        } else if (mBookmarksWidget.isVisible()) {
+            onWidgetUpdate(mBookmarksWidget);
+        }
     }
 }

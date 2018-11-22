@@ -1,9 +1,10 @@
 package org.mozilla.vrbrowser.crashreporting;
 
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.mozilla.gecko.CrashHandler;
+
+import androidx.annotation.NonNull;
 
 public class GlobalExceptionHandler {
 

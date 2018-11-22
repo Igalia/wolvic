@@ -1,34 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-       xmlns:app="http://schemas.android.com/apk/res-auto">
-    <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center">
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <LinearLayout
-        android:orientation="horizontal"
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center">
+
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-        <org.mozilla.vrbrowser.ui.views.UIButton
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/helpButton"
-                style="?attr/trayButtonStyle"
-                app:privateModeBackground="@drawable/tray_button_background"
-                android:src="@drawable/ic_icon_tray_help_v2"
-                android:rotation="-15" android:translationX="5dp" android:translationY="0dp"
-                android:translationZ="0dp"/>
-        <org.mozilla.vrbrowser.ui.views.UIButton
+                style="@style/trayButtonStartTheme"
+                android:src="@drawable/ic_icon_tray_help_v2"/>
+
+            <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/privateButton"
-                style="?attr/trayButtonStyle"
-                android:src="@drawable/ic_tray_private"
-                android:layout_marginBottom="5dp"/>
-        <org.mozilla.vrbrowser.ui.views.UIButton
+                style="@style/trayButtonMiddleTheme"
+                android:src="@drawable/ic_tray_private"/>
+
+            <org.mozilla.vrbrowser.ui.views.UIButton
+                android:id="@+id/bookmarksButton"
+                style="@style/trayButtonMiddleTheme"
+                android:src="@drawable/ic_icon_bookmarks" />
+
+            <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/settingsButton"
-                style="?attr/trayButtonStyle"
-                app:privateModeBackground="@drawable/tray_button_background"
-                android:src="@drawable/ic_tray_settings"
-                android:rotation="15" android:translationX="-5dp"/>
-    </LinearLayout>
+                style="@style/trayButtonEndTheme"
+                android:src="@drawable/ic_tray_settings" />
+        </LinearLayout>
 
     </RelativeLayout>
 </merge>

@@ -1,12 +1,13 @@
 package org.mozilla.vrbrowser.ui.widgets;
 
 import android.content.Context;
-import android.support.annotation.IntDef;
-import android.support.annotation.Nullable;
 
 import org.mozilla.vrbrowser.R;
 
 import java.util.ArrayList;
+
+import androidx.annotation.IntDef;
+import androidx.annotation.Nullable;
 
 public class VideoProjectionMenuWidget extends MenuWidget {
 

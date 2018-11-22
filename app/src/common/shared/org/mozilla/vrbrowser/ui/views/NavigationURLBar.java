@@ -14,6 +14,7 @@ import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.GestureDetector;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -25,17 +26,26 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.VRBrowserApplication;
+import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.SessionStore;
+import org.mozilla.vrbrowser.databinding.NavigationUrlBinding;
+import org.mozilla.vrbrowser.db.entity.BookmarkEntity;
+import org.mozilla.vrbrowser.model.Bookmark;
 import org.mozilla.vrbrowser.search.SearchEngineWrapper;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
+import org.mozilla.vrbrowser.ui.callbacks.NavigationBarCallback;
 import org.mozilla.vrbrowser.utils.UrlUtils;
+import org.mozilla.vrbrowser.viewmodel.BookmarkViewModel;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.util.regex.Pattern;
 
+import androidx.annotation.StringRes;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Observer;
 import kotlin.Unit;
 import mozilla.components.browser.domains.DomainAutoCompleteProvider;
 import mozilla.components.ui.autocomplete.InlineAutocompleteEditText;
@@ -55,6 +65,12 @@ public class NavigationURLBar extends FrameLayout {
     private int mURLWebsiteColor;
     private NavigationURLBarDelegate mDelegate;
     private DomainAutoCompleteProvider mAutocompleteProvider;
+    private ImageButton mBookmarkButton;
+    private VRBrowserApplication mApplication;
+    private NavigationUrlBinding mBinding;
+    private BookmarkViewModel mBookmarkModel;
+    private AudioEngine mAudio;
+    private boolean mIsBookmarkMode;
 
     private Unit domainAutocompleteFilter(String text, InlineAutocompleteEditText view) {
         if (view != null) {
@@ -71,7 +87,7 @@ public class NavigationURLBar extends FrameLayout {
     public interface NavigationURLBarDelegate {
         void OnVoiceSearchClicked();
         void OnShowSearchPopup();
-        void OnHideSearchPopup();
+        void onHideSearchPopup();
     }
 
     public NavigationURLBar(Context context, AttributeSet attrs) {
@@ -80,7 +96,13 @@ public class NavigationURLBar extends FrameLayout {
     }
 
     private void initialize(Context aContext) {
-        inflate(aContext, R.layout.navigation_url, this);
+        mApplication = (VRBrowserApplication)getContext().getApplicationContext();
+
+        mAudio = AudioEngine.fromContext(aContext);
+
+        // Inflate this data binding layout
+        LayoutInflater inflater = LayoutInflater.from(aContext);
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.navigation_url, this, true);
 
         // Use Domain autocomplete provider from components
         mAutocompleteProvider = new DomainAutoCompleteProvider();
@@ -134,6 +156,13 @@ public class NavigationURLBar extends FrameLayout {
         theme.resolveAttribute(R.attr.urlWebsiteColor, typedValue, true);
         mURLWebsiteColor = typedValue.data;
 
+        // Bookmarks
+        mBookmarkButton = findViewById(R.id.bookmarkButton);
+        mBookmarkButton.setSoundEffectsEnabled(false);
+
+        setURL("");
+        mIsBookmarkMode = false;
+
         // Prevent the URL TextEdit to get focus when user touches something outside of it
         setFocusable(true);
         setClickable(true);
@@ -143,7 +172,51 @@ public class NavigationURLBar extends FrameLayout {
         mDelegate = delegate;
     }
 
+    public void setIsBookmarkMode(boolean isBookmarkMode) {
+        mIsBookmarkMode = isBookmarkMode;
+        syncViews();
+    }
+
+    private final NavigationBarCallback mNavigationBarCallback = new NavigationBarCallback() {
+        @Override
+        public void onBookmarkClick(Bookmark bookmark) {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
+
+            if (bookmark == null) {
+                BookmarkEntity bookmarkEntity = new BookmarkEntity(
+                        SessionStore.get().getCurrentTitle(),
+                        SessionStore.get().getCurrentUri(),
+                        System.currentTimeMillis());
+                mApplication.getRepository().insertBookmark(bookmarkEntity);
+
+            } else {
+                mApplication.getRepository().deleteBookmarkByUrl(bookmark.getUrl());
+            }
+        }
+    };
+
+    private Observer<BookmarkEntity> mBookmarkObserver = bookmarkEntity -> mBookmarkModel.setBookmark(bookmarkEntity);
+
+    public void setHint(@StringRes int aHint) {
+        mURL.setHint(aHint);
+    }
+
     public void setURL(String aURL) {
+        if (mIsBookmarkMode) {
+            return;
+        }
+
+        // Setup model view for this URL
+        if (mBookmarkModel != null) {
+            mBookmarkModel.getObservableBookmark().removeObserver(mBookmarkObserver);
+        }
+        mBookmarkModel = new BookmarkViewModel(mApplication, mApplication.getRepository(), aURL);
+        mBinding.setBookmarkViewModel(mBookmarkModel);
+        mBinding.setCallback(mNavigationBarCallback);
+        mBookmarkModel.getObservableBookmark().observeForever(mBookmarkObserver);
+
         mURL.removeTextChangedListener(mURLTextWatcher);
 
         int index = -1;
@@ -211,19 +284,47 @@ public class NavigationURLBar extends FrameLayout {
         }
     }
 
+    public void setBookmarks(boolean enabled) {
+        if (enabled) {
+            mMicrophoneButton.setVisibility(GONE);
+            mBookmarkButton.setVisibility(GONE);
+
+        } else {
+            mMicrophoneButton.setVisibility(VISIBLE);
+            mBookmarkButton.setVisibility(VISIBLE);
+        }
+    }
+
     public void showVoiceSearch(boolean enabled) {
         if (enabled) {
             mMicrophoneButton.setImageResource(R.drawable.ic_icon_microphone);
+            mMicrophoneButton.setBackgroundResource(R.drawable.url_button);
+            mMicrophoneButton.getLayoutParams().width = (int)getContext().getResources().getDimension(R.dimen.url_bar_item_width);
             mMicrophoneButton.setOnClickListener(mMicrophoneListener);
+
+            if (mIsBookmarkMode) {
+                mMicrophoneButton.setVisibility(GONE);
+
+            } else {
+                mBookmarkButton.setVisibility(VISIBLE);
+            }
 
         } else if (mURL.hasFocus()){
             mMicrophoneButton.setImageResource(R.drawable.ic_icon_clear);
+            mMicrophoneButton.setBackgroundResource(R.drawable.url_button_end);
+            mMicrophoneButton.getLayoutParams().width = (int)getContext().getResources().getDimension(R.dimen.url_bar_last_item_width);
             mMicrophoneButton.setOnClickListener(mClearListener);
+
+            if (mIsBookmarkMode) {
+                mMicrophoneButton.setVisibility(VISIBLE);
+            }
+
+            mBookmarkButton.setVisibility(GONE);
         }
     }
 
     private void syncViews() {
-        boolean showContainer = mIsInsecure || mIsLoading;
+        boolean showContainer = (mIsInsecure || mIsLoading) && !mIsBookmarkMode;
         int leftPadding = mDefaultURLLeftPadding;
         if (showContainer) {
             mURLLeftContainer.setVisibility(View.VISIBLE);
@@ -276,7 +377,7 @@ public class NavigationURLBar extends FrameLayout {
             SessionStore.get().loadUri(url);
 
             if (mDelegate != null) {
-                mDelegate.OnHideSearchPopup();
+                mDelegate.onHideSearchPopup();
             }
         }
 
@@ -296,23 +397,25 @@ public class NavigationURLBar extends FrameLayout {
         mURL.setEnabled(clickable);
     }
 
-    private OnClickListener mMicrophoneListener = new OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            view.requestFocusFromTouch();
-            if (mDelegate != null)
-                mDelegate.OnVoiceSearchClicked();
-
-            TelemetryWrapper.voiceInputEvent();
+    private OnClickListener mMicrophoneListener = view -> {
+        if (mAudio != null) {
+            mAudio.playSound(AudioEngine.Sound.CLICK);
         }
+
+        view.requestFocusFromTouch();
+        if (mDelegate != null)
+            mDelegate.OnVoiceSearchClicked();
+
+        TelemetryWrapper.voiceInputEvent();
     };
 
-    private OnClickListener mClearListener = new OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            view.requestFocusFromTouch();
-            mURL.getText().clear();
+    private OnClickListener mClearListener = view -> {
+        if (mAudio != null) {
+            mAudio.playSound(AudioEngine.Sound.CLICK);
         }
+
+        view.requestFocusFromTouch();
+        mURL.getText().clear();
     };
 
     private TextWatcher mURLTextWatcher = new TextWatcher() {

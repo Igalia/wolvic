@@ -5,14 +5,15 @@
 
 package org.mozilla.vrbrowser.ui.widgets;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.Surface;
-import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 
@@ -21,20 +22,20 @@ import org.mozilla.geckoview.GeckoDisplay;
 import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoSessionSettings;
-import org.mozilla.vrbrowser.*;
+import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.SessionStore;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.ui.prompts.ChoicePromptWidget;
 
 
-public class BrowserWidget extends View implements Widget, SessionStore.SessionChangeListener, GeckoSession.PromptDelegate {
+public class BrowserWidget extends UIWidget implements SessionStore.SessionChangeListener,
+        GeckoSession.PromptDelegate, WidgetManagerDelegate.UpdateListener, BookmarkListener {
 
     private static final String LOGTAG = "VRB";
 
     private int mSessionId;
     private GeckoDisplay mDisplay;
     private Surface mSurface;
-    private SurfaceTexture mSurfaceTexture;
     private int mWidth;
     private int mHeight;
     private int mHandle;
@@ -44,6 +45,8 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
     private int mWidthBackup;
     private int mHeightBackup;
     private int mBorderWidth;
+    private BookmarksWidget mBookmarksWidget;
+    private float mMultiplier;
 
     public BrowserWidget(Context aContext, int aSessionId) {
         super(aContext);
@@ -52,6 +55,7 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
         mBorderWidth = SettingsStore.getInstance(aContext).getLayersEnabled() ? 1 : 0;
         SessionStore.get().addSessionChangeListener(this);
         SessionStore.get().addPromptListener(this);
+        mWidgetManager.addUpdateListener(this);
         setFocusable(true);
         GeckoSession session = SessionStore.get().getSession(mSessionId);
         if (session != null) {
@@ -61,21 +65,53 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
         mWidgetPlacement = new WidgetPlacement(aContext);
         initializeWidgetPlacement(mWidgetPlacement);
 
+        mMultiplier = 1.0f;
+
         handleResizeEvent(SettingsStore.getInstance(getContext()).getBrowserWorldWidth(),
                 SettingsStore.getInstance(getContext()).getBrowserWorldHeight());
     }
 
-    private void initializeWidgetPlacement(WidgetPlacement aPlacement) {
+    @Override
+    protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
         Context context = getContext();
         aPlacement.width = SettingsStore.getInstance(getContext()).getWindowWidth() + mBorderWidth * 2;
         aPlacement.height = SettingsStore.getInstance(getContext()).getWindowHeight() + mBorderWidth * 2;
         aPlacement.density = 1.0f;
         aPlacement.translationX = 0.0f;
-        aPlacement.translationY = WidgetPlacement.unitFromMeters(context, R.dimen.browser_world_y);
-        aPlacement.translationZ = WidgetPlacement.unitFromMeters(context, R.dimen.browser_world_z);
+        aPlacement.translationY = WidgetPlacement.unitFromMeters(context, R.dimen.window_world_y);
+        aPlacement.translationZ = WidgetPlacement.unitFromMeters(context, R.dimen.window_world_z);
         aPlacement.anchorX = 0.5f;
         aPlacement.anchorY = 0.0f;
         aPlacement.visible = true;
+    }
+
+    @Override
+    public void show(boolean focus) {
+        if (!mWidgetPlacement.visible) {
+            mWidgetPlacement.visible = true;
+        }
+
+        mWidgetManager.updateWidget(this);
+
+        if (focus) {
+            setFocusableInTouchMode(true);
+            requestFocusFromTouch();
+        }
+    }
+
+    @Override
+    public void hide(@HideFlags int aHideFlag) {
+        if (mWidgetPlacement.visible) {
+            mWidgetPlacement.visible = false;
+        }
+
+        mWidgetManager.updateWidget(this);
+
+        clearFocus();
+    }
+
+    public void setBookmarksWidget(BookmarksWidget aWidget) {
+        mBookmarksWidget = aWidget;
     }
 
     public void pauseCompositor() {
@@ -127,8 +163,11 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
         resizeSurface(mWidthBackup, mWidthBackup);
     }
 
-    public void setBrowserSize(float windowWidth, float windowHeight, float multiplier) {
-        float worldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.browser_world_width);
+    @Override
+    public void setSize(float windowWidth, float windowHeight, float multiplier) {
+        mMultiplier = multiplier;
+
+        float worldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width);
         float aspect = windowWidth / windowHeight;
         float worldHeight = worldWidth / aspect;
         float area = worldWidth * worldHeight * multiplier;
@@ -157,9 +196,13 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
         if (session == null) {
             return;
         }
+        if (aTexture == null) {
+            setWillNotDraw(true);
+            return;
+        }
         mWidth = aWidth;
         mHeight = aHeight;
-        mSurfaceTexture = aTexture;
+        mTexture = aTexture;
         aTexture.setDefaultBufferSize(aWidth, aHeight);
         mSurface = new Surface(aTexture);
         if (mDisplay == null) {
@@ -202,8 +245,8 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
     public void resizeSurface(final int aWidth, final int aHeight) {
         mWidth = aWidth;
         mHeight = aHeight;
-        if (mSurfaceTexture != null) {
-            mSurfaceTexture.setDefaultBufferSize(aWidth, aHeight);
+        if (mTexture != null) {
+            mTexture.setDefaultBufferSize(aWidth, aHeight);
         }
         callSurfaceChanged();
     }
@@ -242,7 +285,7 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
 
     @Override
     public void handleResizeEvent(float aWorldWidth, float aWorldHeight) {
-        float worldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.browser_world_width);
+        float worldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width);
         int defaultWidth = SettingsStore.getInstance(getContext()).getWindowWidth();
         int defaultHeight = SettingsStore.getInstance(getContext()).getWindowHeight();
 
@@ -261,6 +304,7 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
     public void releaseWidget() {
         SessionStore.get().removeSessionChangeListener(this);
         SessionStore.get().removePromptListener(this);
+        mWidgetManager.removeUpdateListener(this);
         GeckoSession session = SessionStore.get().getSession(mSessionId);
         if (session == null) {
             return;
@@ -299,6 +343,13 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
         if (!aVisible) {
             clearFocus();
         }
+    }
+
+    @SuppressLint("MissingSuperCall")
+    @Override
+    public void draw(Canvas aCanvas) {
+        // Nothing to do
+
     }
 
     // SessionStore.GeckoSessionChange
@@ -457,12 +508,9 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
         mChoicePrompt.setMessage(msg);
         mChoicePrompt.setChoices(choices);
         mChoicePrompt.setMenuType(type);
-        mChoicePrompt.setDelegate(new ChoicePromptWidget.ChoicePromptDelegate() {
-            @Override
-            public void onDismissed(String[] ids) {
-                callback.confirm(ids);
-                mChoicePrompt.hide(UIWidget.REMOVE_WIDGET);
-            }
+        mChoicePrompt.setDelegate(ids -> {
+            callback.confirm(ids);
+            mChoicePrompt.hide(UIWidget.REMOVE_WIDGET);
         });
 
         mChoicePrompt.show();
@@ -486,5 +534,33 @@ public class BrowserWidget extends View implements Widget, SessionStore.SessionC
     @Override
     public GeckoResult<AllowOrDeny> onPopupRequest(final GeckoSession session, final String targetUri) {
         return GeckoResult.fromValue(AllowOrDeny.ALLOW);
+    }
+
+    // BookmarkListener
+
+    @Override
+    public void onBookmarksShown() {
+        pauseCompositor();
+        hide(UIWidget.REMOVE_WIDGET);
+    }
+
+    @Override
+    public void onBookmarksHidden() {
+        resumeCompositor();
+        show();
+    }
+
+    // UpdateListener
+
+    @Override
+    public void onWidgetUpdate(Widget aWidget) {
+        if (aWidget != mBookmarksWidget || !mBookmarksWidget.isVisible()) {
+            return;
+        }
+
+        mWidgetPlacement.worldWidth = aWidget.getPlacement().worldWidth;
+        mWidgetPlacement.width = aWidget.getPlacement().width;
+        mWidgetPlacement.height = aWidget.getPlacement().height;
+        mWidgetManager.updateWidget(this);
     }
 }

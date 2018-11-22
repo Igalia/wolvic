@@ -7,7 +7,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 
 import org.jetbrains.annotations.Contract;
 import org.mozilla.vrbrowser.R;
@@ -24,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
 import kotlin.coroutines.experimental.Continuation;
 import mozilla.components.browser.search.SearchEngine;
 import mozilla.components.browser.search.SearchEngineManager;
@@ -181,13 +181,7 @@ public class SearchEngineWrapper implements SharedPreferences.OnSharedPreference
 
         // A name can be used if the user get's to choose among the available engines
         mSearchEngine = mSearchEngineManager.getDefaultSearchEngine(aContext, userPref);
-        mSuggestionsClient = new SearchSuggestionClient(mSearchEngine, this::domainAutocompleteFilter);
-    }
-
-    @NonNull
-    @Contract(pure = true)
-    private Object domainAutocompleteFilter(String aQuery, Continuation<? super String> aContinuation) {
-        return "[\"firefox\",[\"firefox\",\"firefox for mac\",\"firefox quantum\",\"firefox update\",\"firefox esr\",\"firefox focus\",\"firefox addons\",\"firefox extensions\",\"firefox nightly\",\"firefox clear cache\"]]";
+        mSuggestionsClient = new SearchSuggestionClient(mSearchEngine, (s, continuation) -> null);
     }
 
     private String getEngine(String aCountryCode) {

@@ -5,15 +5,15 @@ import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
+
+import androidx.annotation.Nullable;
 
 public class HoneycombButton extends LinearLayout {
 

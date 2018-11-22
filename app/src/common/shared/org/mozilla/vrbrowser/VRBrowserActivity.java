@@ -20,8 +20,6 @@ import android.opengl.GLES20;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.Keep;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
@@ -46,12 +44,15 @@ import org.mozilla.vrbrowser.input.MotionEventGenerator;
 import org.mozilla.vrbrowser.search.SearchEngineWrapper;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.ui.OffscreenDisplay;
+import org.mozilla.vrbrowser.ui.widgets.BookmarkListener;
+import org.mozilla.vrbrowser.ui.widgets.BookmarksWidget;
 import org.mozilla.vrbrowser.ui.widgets.BrowserWidget;
 import org.mozilla.vrbrowser.ui.widgets.CrashDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.KeyboardWidget;
 import org.mozilla.vrbrowser.ui.widgets.NavigationBarWidget;
 import org.mozilla.vrbrowser.ui.widgets.RootWidget;
 import org.mozilla.vrbrowser.ui.widgets.TopBarWidget;
+import org.mozilla.vrbrowser.ui.widgets.TrayListener;
 import org.mozilla.vrbrowser.ui.widgets.TrayWidget;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.VideoProjectionMenuWidget;
@@ -64,6 +65,9 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
+
+import androidx.annotation.Keep;
+import androidx.annotation.NonNull;
 
 public class VRBrowserActivity extends PlatformActivity implements WidgetManagerDelegate {
 
@@ -114,6 +118,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     CrashDialogWidget mCrashDialog;
     TopBarWidget mTopBar;
     TrayWidget mTray;
+    BookmarksWidget mBookmarksWidget;
     PermissionDelegate mPermissionDelegate;
     LinkedList<UpdateListener> mWidgetUpdateListeners;
     LinkedList<PermissionListener> mPermissionListeners;
@@ -197,9 +202,15 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mBrowserWidget = new BrowserWidget(this, currentSession);
         mPermissionDelegate.setParentWidgetHandle(mBrowserWidget.getHandle());
 
+        // Bookmarks panel
+        mBookmarksWidget = new BookmarksWidget(this);
+        mBookmarksWidget.setBrowserWidget(mBrowserWidget);
+        mBrowserWidget.setBookmarksWidget(mBookmarksWidget);
+
         // Create Browser navigation widget
         mNavigationBar = new NavigationBarWidget(this);
         mNavigationBar.setBrowserWidget(mBrowserWidget);
+        mNavigationBar.setBookmarksWidget(mBookmarksWidget);
 
         // Create keyboard widget
         mKeyboard = new KeyboardWidget(this);
@@ -220,7 +231,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         // Create Tray
         mTray = new TrayWidget(this);
 
-        addWidgets(Arrays.<Widget>asList(mRootWidget, mBrowserWidget, mNavigationBar, mKeyboard, mTray));
+        // Add widget listeners
+        mTray.addListeners(new TrayListener[]{mBookmarksWidget, mNavigationBar});
+        mBookmarksWidget.addListeners(new BookmarkListener[]{mBrowserWidget, mNavigationBar, mTray});
+
+        addWidgets(Arrays.asList(mRootWidget, mBrowserWidget, mNavigationBar, mKeyboard, mTray, mBookmarksWidget));
     }
 
     @Override
@@ -273,6 +288,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         if (mPermissionDelegate != null) {
             mPermissionDelegate.release();
         }
+
+        // Remove all widget listeners
+        mTray.removeAllListeners();
+        mBookmarksWidget.removeAllListeners();
 
         SessionStore.get().unregisterListeners();
         super.onDestroy();
@@ -887,7 +906,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public void setBrowserSize(float targetWidth, float targetHeight) {
-        mBrowserWidget.setBrowserSize(targetWidth, targetHeight, 1.0f);
+        mBrowserWidget.setSize(targetWidth, targetHeight, 1.0f);
     }
 
     @Override

@@ -3,7 +3,6 @@ package org.mozilla.vrbrowser.ui.prompts;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -27,6 +26,8 @@ import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import androidx.annotation.NonNull;
 
 public class ChoicePromptWidget extends UIWidget implements WidgetManagerDelegate.FocusChangeListener {
 

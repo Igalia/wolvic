@@ -9,9 +9,7 @@
         <attr name="fullScreenFirstButtonStyle" format="reference" />
         <attr name="fullScreenLastButtonStyle" format="reference" />
         <attr name="mediaControlsButtonStyle" format="reference" />
-        <attr name="trayButtonStyle" format="reference" />
         <attr name="navigationBarTextButtonStyle" format="reference" />
-        <attr name="urlBarIconStyle" format="reference" />
         <attr name="navigationBarButtonTint" format="reference" />
         <attr name="urlProtocolColor" format="color" />
         <attr name="urlWebsiteColor" format="color" />
@@ -35,13 +33,14 @@
     </style>
 
     <style name="uiButtonTheme">
-        <item name="android:padding">10dp</item>
+        <item name="android:padding">@dimen/tray_icon_padding_max</item>
         <item name="android:layout_gravity">center_vertical</item>
         <item name="android:layout_width">40dp</item>
         <item name="android:layout_height">40dp</item>
         <item name="android:scaleType">fitCenter</item>
         <item name="tintColorList">@drawable/main_button_icon_color</item>
         <item name="privateModeTintColorList">@drawable/main_button_icon_color_private</item>
+        <item name="activeModeTintColorList">@drawable/main_button_icon_color_active</item>
     </style>
 
     <style name="navigationBarButtonTheme" parent="uiButtonTheme">
@@ -71,9 +70,22 @@
         <item name="privateModeBackground">@drawable/main_button_private</item>
     </style>
 
-    <style name="trayButtonTheme" parent="uiButtonTheme">
-        <item name="android:background">@drawable/tray_button_background</item>
-        <item name="privateModeBackground">@drawable/tray_button_background_private</item>
+    <style name="trayButtonStartTheme" parent="uiButtonTheme">
+        <item name="android:background">@drawable/tray_background_unchecked_start</item>
+        <item name="privateModeBackground">@drawable/tray_background_start_private</item>
+        <item name="activeModeBackground">@drawable/tray_background_checked_start</item>
+    </style>
+
+    <style name="trayButtonMiddleTheme" parent="uiButtonTheme">
+        <item name="android:background">@drawable/tray_background_unchecked_middle</item>
+        <item name="privateModeBackground">@drawable/tray_background_middle_private</item>
+        <item name="activeModeBackground">@drawable/tray_background_checked_middle</item>
+    </style>
+
+    <style name="trayButtonEndTheme" parent="uiButtonTheme">
+        <item name="android:background">@drawable/tray_background_unckecked_end</item>
+        <item name="privateModeBackground">@drawable/tray_background_end_private</item>
+        <item name="activeModeBackground">@drawable/tray_background_ckecked_end</item>
     </style>
 
     <style name="settingsButtonTheme">
@@ -102,10 +114,17 @@
     <style name="urlBarIconTheme">
         <item name="android:background">@drawable/url_button</item>
         <item name="tintColorList">@drawable/url_button_icon_color</item>
-        <item name="android:padding">10dp</item>
-        <item name="android:layout_width">40dp</item>
-        <item name="android:layout_height">40dp</item>
-        <item name="android:scaleType">fitCenter</item>
+        <item name="android:layout_width">@dimen/url_bar_item_width</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:scaleType">centerInside</item>
+    </style>
+
+    <style name="urlBarIconThemeEnd">
+        <item name="android:background">@drawable/url_button_end</item>
+        <item name="tintColorList">@drawable/url_button_icon_color</item>
+        <item name="android:layout_width">@dimen/url_bar_last_item_width</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:scaleType">centerInside</item>
     </style>
 
     <style name="scrollbar">
@@ -217,10 +236,8 @@
         <item name="fullScreenFirstButtonStyle">@style/fullScreenFirstButtonTheme</item>
         <item name="fullScreenLastButtonStyle">@style/fullScreenLastButtonTheme</item>
         <item name="mediaControlsButtonStyle">@style/mediaControlsButtonTheme</item>
-        <item name="trayButtonStyle">@style/trayButtonTheme</item>
         <item name="uiButtonStyle">@style/uiButtonTheme</item>
         <item name="navigationBarTextButtonStyle">@style/navigationBarTextButtonTheme</item>
-        <item name="urlBarIconStyle">@style/urlBarIconTheme</item>
         <item name="urlProtocolColor">@color/fog_url_protocol</item>
         <item name="urlWebsiteColor">@color/fog</item>
         <item name="scrollbarStyle">@style/scrollbar</item>

@@ -5,14 +5,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Process;
-import android.support.annotation.NonNull;
-import android.support.v4.app.JobIntentService;
 import android.util.Log;
 
 import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserActivity;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.JobIntentService;
 
 public class CrashReporterService extends JobIntentService {
 

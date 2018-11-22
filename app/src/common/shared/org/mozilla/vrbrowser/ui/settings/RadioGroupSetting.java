@@ -2,7 +2,6 @@ package org.mozilla.vrbrowser.ui.settings;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.annotation.IdRes;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.ContextThemeWrapper;
@@ -13,6 +12,8 @@ import android.widget.TextView;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
+
+import androidx.annotation.IdRes;
 
 public class RadioGroupSetting extends LinearLayout {
 

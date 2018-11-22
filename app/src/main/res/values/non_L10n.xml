@@ -35,6 +35,7 @@
     <string name="developer_options_by" translatable="false">x</string>
     <string name="crash_app_name" translatable="false">FirefoxReality</string>
     <string name="user_agent_override_file" translatable="false">userAgentOverride.json</string>
+    <string name="about_bookmarks" translatable="false">about:bookmarks</string>
 
     <!-- SEARCH ENGINES -->
     <string name="geolocation_api_url" translatable="false">https://location.services.mozilla.com/v1/country</string>

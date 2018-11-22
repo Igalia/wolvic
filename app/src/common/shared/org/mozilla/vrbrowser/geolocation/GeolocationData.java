@@ -1,10 +1,11 @@
 package org.mozilla.vrbrowser.geolocation;
 
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import androidx.annotation.NonNull;
 
 /**
  * Class representing a Geolocation success response (HTTP 200)

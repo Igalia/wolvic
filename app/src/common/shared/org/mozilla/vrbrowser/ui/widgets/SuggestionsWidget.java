@@ -2,7 +2,6 @@ package org.mozilla.vrbrowser.ui.widgets;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.support.annotation.NonNull;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
@@ -25,6 +24,8 @@ import org.mozilla.vrbrowser.audio.AudioEngine;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
 
 public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate.FocusChangeListener {
 
@@ -75,7 +76,7 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                ThreadUtils.postToUiThread(() -> SuggestionsWidget.super.hide(KEEP_WIDGET));
+                ThreadUtils.postToUiThread(() -> SuggestionsWidget.super.hide(REMOVE_WIDGET));
             }
 
             @Override
@@ -148,7 +149,7 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
 
     public void updatePlacement(int aWidth) {
         mWidgetPlacement.width = aWidth;
-        float worldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.browser_world_width);
+        float worldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width);
         float aspect = mWidgetPlacement.width / mWidgetPlacement.height;
         float worldHeight = worldWidth / aspect;
         float area = worldWidth * worldHeight;

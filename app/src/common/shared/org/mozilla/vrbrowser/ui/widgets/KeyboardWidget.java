@@ -9,7 +9,6 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.inputmethodservice.Keyboard;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -26,10 +25,12 @@ import android.widget.RelativeLayout;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.SessionStore;
-import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.input.CustomKeyboard;
+import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.ui.views.CustomKeyboardView;
 import org.mozilla.vrbrowser.ui.views.UIButton;
+
+import androidx.annotation.NonNull;
 
 
 public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKeyboardActionListener,
@@ -49,7 +50,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private Drawable mShiftOffIcon;
     private Drawable mCapsLockOnIcon;
     private View mFocusedView;
-    private BrowserWidget mBrowserWidget;
+    private UIWidget mBrowserWidget;
     private InputConnection mInputConnection;
     private EditorInfo mEditorInfo = new EditorInfo();
 
@@ -192,7 +193,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         aPlacement.visible = false;
     }
 
-    public void setBrowserWidget(BrowserWidget aWidget) {
+    public void setBrowserWidget(UIWidget aWidget) {
         mBrowserWidget = aWidget;
         if (mBrowserWidget != null) {
             mWidgetPlacement.parentHandle = mBrowserWidget.getHandle();

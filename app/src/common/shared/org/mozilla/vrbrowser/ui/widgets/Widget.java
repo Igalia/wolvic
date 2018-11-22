@@ -23,4 +23,5 @@ public interface Widget {
     boolean getFirstDraw();
     boolean isVisible();
     void setVisible(boolean aVisible);
+    void setSize(float windowWidth, float windowHeight, float multiplier);
 }

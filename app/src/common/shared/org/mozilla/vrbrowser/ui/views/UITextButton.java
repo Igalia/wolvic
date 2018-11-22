@@ -8,10 +8,11 @@ package org.mozilla.vrbrowser.ui.views;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
-import android.support.v7.widget.AppCompatButton;
 import android.util.AttributeSet;
 
 import org.mozilla.vrbrowser.R;
+
+import androidx.appcompat.widget.AppCompatButton;
 
 public class UITextButton extends AppCompatButton implements CustomUIButton {
     private ColorStateList mTintColorList;

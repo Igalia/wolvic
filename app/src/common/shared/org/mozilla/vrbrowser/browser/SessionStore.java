@@ -11,8 +11,6 @@ import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.inputmethod.CursorAnchorInfo;
 import android.view.inputmethod.ExtractedText;
@@ -50,6 +48,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import static org.mozilla.vrbrowser.utils.ServoUtils.createServoSession;
 import static org.mozilla.vrbrowser.utils.ServoUtils.isInstanceOfServoSession;
@@ -308,8 +309,18 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     }
 
     public int createSession() {
-        return createSession(new SessionSettings());
+        return createSession(false);
     }
+
+    public int createSession(boolean isPrivate) {
+        SessionStore.SessionSettings settings = new SessionStore.SessionSettings();
+        if (isPrivate) {
+            settings.privateMode = true;
+        }
+
+        return createSession(settings);
+    }
+
     int createSession(SessionSettings aSettings) {
         State state = new State();
         state.mSettings = aSettings;
@@ -496,6 +507,30 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
                 return result;
             }
             result = state.mUri;
+        }
+        return result;
+    }
+
+    public String getPreviousUri() {
+        String result = "";
+        if (mCurrentSession != null) {
+            State state = mSessions.get(mCurrentSession.hashCode());
+            if (state == null) {
+                return result;
+            }
+            result = state.mPreviousUri;
+        }
+        return result;
+    }
+
+    public String getCurrentTitle() {
+        String result = "";
+        if (mCurrentSession != null) {
+            State state = mSessions.get(mCurrentSession.hashCode());
+            if (state == null) {
+                return result;
+            }
+            result = state.mTitle;
         }
         return result;
     }
@@ -748,6 +783,21 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         return prevSessionId != null;
     }
 
+    public void stackSession(int sessionId) {
+        pushSession(getCurrentSessionId());
+        setCurrentSession(sessionId);
+
+        mCurrentSession = null;
+        State state = mSessions.get(sessionId);
+        if (state != null) {
+            mCurrentSession = state.mSession;
+            for (SessionChangeListener listener : mSessionChangeListeners) {
+                listener.onCurrentSessionChange(mCurrentSession, sessionId);
+            }
+        }
+        dumpAllState(mCurrentSession);
+    }
+
     public void unstackSession() {
         Integer prevSessionId = popSession();
         if (prevSessionId != null) {
@@ -815,6 +865,8 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         }
     }
 
+    // NavigationDelegate
+
     @Override
     public void onLocationChange(GeckoSession aSession, String aUri) {
         Log.d(LOGTAG, "SessionStore onLocationChange: " + aUri);
@@ -827,8 +879,10 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         state.mPreviousUri = state.mUri;
         state.mUri = aUri;
 
-        for (GeckoSession.NavigationDelegate listener: mNavigationListeners) {
-            listener.onLocationChange(aSession, aUri);
+        if (mCurrentSession == aSession) {
+            for (GeckoSession.NavigationDelegate listener : mNavigationListeners) {
+                listener.onLocationChange(aSession, aUri);
+            }
         }
 
         // The homepage finishes loading after the region has been updated
@@ -845,8 +899,11 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             return;
         }
         state.mCanGoBack = aCanGoBack;
-        for (GeckoSession.NavigationDelegate listener: mNavigationListeners) {
-            listener.onCanGoBack(aSession, aCanGoBack);
+
+        if (mCurrentSession == aSession) {
+            for (GeckoSession.NavigationDelegate listener : mNavigationListeners) {
+                listener.onCanGoBack(aSession, aCanGoBack);
+            }
         }
     }
 
@@ -858,8 +915,11 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             return;
         }
         state.mCanGoForward = aCanGoForward;
-        for (GeckoSession.NavigationDelegate listener: mNavigationListeners) {
-            listener.onCanGoForward(aSession, aCanGoForward);
+
+        if (mCurrentSession == aSession) {
+            for (GeckoSession.NavigationDelegate listener : mNavigationListeners) {
+                listener.onCanGoForward(aSession, aCanGoForward);
+            }
         }
     }
 
@@ -876,19 +936,15 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             AtomicBoolean allowed = new AtomicBoolean(false);
             for (GeckoSession.NavigationDelegate listener: mNavigationListeners) {
                 GeckoResult<AllowOrDeny> listenerResult = listener.onLoadRequest(aSession, aRequest);
-                listenerResult.then(new GeckoResult.OnValueListener<AllowOrDeny, Object>() {
-                    @Nullable
-                    @Override
-                    public GeckoResult<Object> onValue(@Nullable AllowOrDeny value) {
-                        if (AllowOrDeny.ALLOW.equals(value)) {
-                            allowed.set(true);
-                        }
-                        if (count.getAndIncrement() == mNavigationListeners.size() - 1) {
-                            result.complete(allowed.get() ? AllowOrDeny.ALLOW : AllowOrDeny.DENY);
-                        }
-
-                        return null;
+                listenerResult.then(value -> {
+                    if (AllowOrDeny.ALLOW.equals(value)) {
+                        allowed.set(true);
                     }
+                    if (count.getAndIncrement() == mNavigationListeners.size() - 1) {
+                        result.complete(allowed.get() ? AllowOrDeny.ALLOW : AllowOrDeny.DENY);
+                    }
+
+                    return null;
                 });
             }
         }
@@ -917,8 +973,11 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         State state = mSessions.get(sessionId);
         if (state != null) {
             mCurrentSession = state.mSession;
-            for (SessionChangeListener listener : mSessionChangeListeners) {
-                listener.onCurrentSessionChange(mCurrentSession, sessionId);
+
+            if (mCurrentSession == aSession) {
+                for (SessionChangeListener listener : mSessionChangeListeners) {
+                    listener.onCurrentSessionChange(mCurrentSession, sessionId);
+                }
             }
         }
         dumpAllState(mCurrentSession);
@@ -934,6 +993,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     }
 
     // Progress Listener
+
     @Override
     public void onPageStart(GeckoSession aSession, String aUri) {
         Log.d(LOGTAG, "SessionStore onPageStart");
@@ -943,8 +1003,11 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         }
         state.mIsLoading = true;
         TelemetryWrapper.startPageLoadTime();
-        for (GeckoSession.ProgressDelegate listener: mProgressListeners) {
-            listener.onPageStart(aSession, aUri);
+
+        if (mCurrentSession == aSession) {
+            for (GeckoSession.ProgressDelegate listener : mProgressListeners) {
+                listener.onPageStart(aSession, aUri);
+            }
         }
     }
 
@@ -960,8 +1023,11 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         if (!isLocalizedContent(state.mUri)) {
             TelemetryWrapper.uploadPageLoadToHistogram(state.mUri);
         }
-        for (GeckoSession.ProgressDelegate listener: mProgressListeners) {
-            listener.onPageStop(aSession, b);
+
+        if (mCurrentSession == aSession) {
+            for (GeckoSession.ProgressDelegate listener : mProgressListeners) {
+                listener.onPageStop(aSession, b);
+            }
         }
     }
 
@@ -979,12 +1045,16 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         }
 
         state.mSecurityInformation = aInformation;
-        for (GeckoSession.ProgressDelegate listener: mProgressListeners) {
-            listener.onSecurityChange(aSession, aInformation);
+
+        if (mCurrentSession == aSession) {
+            for (GeckoSession.ProgressDelegate listener : mProgressListeners) {
+                listener.onSecurityChange(aSession, aInformation);
+            }
         }
     }
 
     // Content Delegate
+
     @Override
     public void onTitleChange(GeckoSession aSession, String aTitle) {
         Log.d(LOGTAG, "SessionStore onTitleChange");
@@ -994,8 +1064,11 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         }
 
         state.mTitle = aTitle;
-        for (GeckoSession.ContentDelegate listener: mContentListeners) {
-            listener.onTitleChange(aSession, aTitle);
+
+        if (mCurrentSession == aSession) {
+            for (GeckoSession.ContentDelegate listener : mContentListeners) {
+                listener.onTitleChange(aSession, aTitle);
+            }
         }
     }
 
@@ -1020,8 +1093,11 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             return;
         }
         state.mFullScreen = aFullScreen;
-        for (GeckoSession.ContentDelegate listener: mContentListeners) {
-            listener.onFullScreen(aSession, aFullScreen);
+
+        if (mCurrentSession == aSession) {
+            for (GeckoSession.ContentDelegate listener : mContentListeners) {
+                listener.onFullScreen(aSession, aFullScreen);
+            }
         }
     }
 
@@ -1134,6 +1210,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     }
 
     // PromptDelegate
+
     @Override
     public void onAlert(GeckoSession session, String title, String msg, AlertCallback callback) {
         if (session == mCurrentSession) {
@@ -1212,6 +1289,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     }
 
     // MediaDelegate
+
     @Override
     public void onMediaAdd(GeckoSession session, MediaElement element) {
         SessionStore.State state = mSessions.get(getSessionId(session));
@@ -1238,6 +1316,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     }
 
     // SharedPreferences.OnSharedPreferenceChangeListener
+
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (mContext != null) {

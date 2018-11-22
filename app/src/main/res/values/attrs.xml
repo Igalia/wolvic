@@ -15,7 +15,9 @@
     <declare-styleable name="UIButton">
         <attr name="tintColorList" format="reference|color" />
         <attr name="privateModeTintColorList" format="reference|color" />
+        <attr name="activeModeTintColorList" format="reference|color" />
         <attr name="privateModeBackground" format="integer" />
+        <attr name="activeModeBackground" format="integer" />
     </declare-styleable>
 
     <declare-styleable name="UITextButton">

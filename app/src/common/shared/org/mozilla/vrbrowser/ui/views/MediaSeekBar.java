@@ -2,7 +2,6 @@ package org.mozilla.vrbrowser.ui.views;
 
 import android.content.Context;
 import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -12,6 +11,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import org.mozilla.vrbrowser.R;
+
+import androidx.annotation.Nullable;
 
 public class MediaSeekBar extends LinearLayout implements SeekBar.OnSeekBarChangeListener {
     private SeekBar mSeekBar;

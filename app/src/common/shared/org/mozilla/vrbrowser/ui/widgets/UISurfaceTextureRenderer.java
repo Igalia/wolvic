@@ -10,8 +10,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.SurfaceTexture;
-import android.opengl.GLES11Ext;
-import android.opengl.GLES20;
 import android.view.Surface;
 
 class UISurfaceTextureRenderer {

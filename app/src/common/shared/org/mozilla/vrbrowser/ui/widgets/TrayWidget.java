@@ -5,27 +5,39 @@
 
 package org.mozilla.vrbrowser.ui.widgets;
 
+import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.browser.SessionStore;
 import org.mozilla.vrbrowser.audio.AudioEngine;
+import org.mozilla.vrbrowser.browser.SessionStore;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 
-public class TrayWidget extends UIWidget implements SessionStore.SessionChangeListener {
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-    private static final String LOGTAG = "VRB";
+public class TrayWidget extends UIWidget implements SessionStore.SessionChangeListener, BookmarkListener {
+
+    private static final int ICON_ANIMATION_DURATION = 200;
 
     private UIButton mHelpButton;
     private UIButton mSettingsButton;
     private UIButton mPrivateButton;
+    private UIButton mBookmarksButton;
     private AudioEngine mAudio;
     private int mSettingsDialogHandle = -1;
     private boolean mIsLastSessionPrivate;
+    private List<TrayListener> mTrayListeners;
+    private int mMinPadding;
+    private int mMaxPadding;
 
     public TrayWidget(Context aContext) {
         super(aContext);
@@ -45,47 +57,54 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
     private void initialize(Context aContext) {
         inflate(aContext, R.layout.tray, this);
 
+        mTrayListeners = new ArrayList<>();
+
+        mMinPadding = WidgetPlacement.pixelDimension(getContext(), R.dimen.tray_icon_padding_min);
+        mMaxPadding = WidgetPlacement.pixelDimension(getContext(), R.dimen.tray_icon_padding_max);
+
         mHelpButton = findViewById(R.id.helpButton);
-        mHelpButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mAudio != null) {
-                    mAudio.playSound(AudioEngine.Sound.CLICK);
-                }
-
-                onHelpButtonClicked();
-
-                view.requestFocusFromTouch();
+        mHelpButton.setOnHoverListener(mButtonScaleHoverListener);
+        mHelpButton.setOnClickListener(view -> {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
             }
+
+            onHelpButtonClicked();
+            view.requestFocusFromTouch();
         });
 
         mPrivateButton = findViewById(R.id.privateButton);
-        mPrivateButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mAudio != null) {
-                    mAudio.playSound(AudioEngine.Sound.CLICK);
-                }
-
-                SessionStore.get().switchPrivateMode();
-
-                view.requestFocusFromTouch();
+        mPrivateButton.setOnHoverListener(mButtonScaleHoverListener);
+        mPrivateButton.setOnClickListener(view -> {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
             }
+
+            SessionStore.get().switchPrivateMode();
+            view.requestFocusFromTouch();
         });
 
         mSettingsButton = findViewById(R.id.settingsButton);
-        mSettingsButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mAudio != null) {
-                    mAudio.playSound(AudioEngine.Sound.CLICK);
-                }
-
-                toggleSettingsDialog();
-
-                if (isSettingsDialogOpened())
-                    view.requestFocusFromTouch();
+        mSettingsButton.setOnHoverListener(mButtonScaleHoverListener);
+        mSettingsButton.setOnClickListener(view -> {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
             }
+
+            toggleSettingsDialog();
+            if (isDialogOpened(mSettingsDialogHandle))
+                view.requestFocusFromTouch();
+        });
+
+        mBookmarksButton = findViewById(R.id.bookmarksButton);
+        mBookmarksButton.setOnHoverListener(mButtonScaleHoverListener);
+        mBookmarksButton.setOnClickListener(view -> {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
+
+            view.requestFocusFromTouch();
+            notifyBookmarksClicked();
         });
 
         mAudio = AudioEngine.fromContext(aContext);
@@ -93,6 +112,71 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
         mIsLastSessionPrivate = false;
 
         SessionStore.get().addSessionChangeListener(this);
+    }
+
+    private OnHoverListener mButtonScaleHoverListener = (view, motionEvent) -> {
+        int ev = motionEvent.getActionMasked();
+        switch (ev) {
+            case MotionEvent.ACTION_HOVER_ENTER:
+                animateViewPadding(view, mMaxPadding, mMinPadding, ICON_ANIMATION_DURATION);
+                return false;
+
+            case MotionEvent.ACTION_HOVER_EXIT:
+                animateViewPadding(view, mMinPadding, mMaxPadding, ICON_ANIMATION_DURATION);
+                return false;
+        }
+
+        return false;
+    };
+
+    private void animateViewPadding(View view, int paddingStart, int paddingEnd, int duration) {
+        UIButton button = (UIButton)view;
+        if (!button.isActive() && !button.isPrivate()) {
+            ValueAnimator animation = ValueAnimator.ofInt(paddingStart, paddingEnd);
+            animation.setDuration(duration);
+            animation.setInterpolator(new AccelerateDecelerateInterpolator());
+            animation.addUpdateListener(valueAnimator -> {
+                int newPadding = Integer.parseInt(valueAnimator.getAnimatedValue().toString());
+                view.setPadding(newPadding, newPadding, newPadding, newPadding);
+            });
+            animation.addListener(new Animator.AnimatorListener() {
+
+                @Override
+                public void onAnimationStart(Animator animator) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animator) {
+                    UIButton button = (UIButton)view;
+                    if(button.isActive() || button.isPrivate()) {
+                        view.setPadding(mMinPadding, mMinPadding, mMinPadding, mMinPadding);
+                    }
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animator) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animator) {
+
+                }
+            });
+            animation.start();
+        }
+    }
+
+    public void addListeners(TrayListener... listeners) {
+        mTrayListeners.addAll(Arrays.asList(listeners));
+    }
+
+    public void removeAllListeners() {
+        mTrayListeners.clear();
+    }
+
+    private void notifyBookmarksClicked() {
+        mTrayListeners.forEach(trayListener -> trayListener.onBookmarksClicked());
     }
 
     @Override
@@ -108,7 +192,8 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
         aPlacement.parentAnchorX = 0.5f;
         aPlacement.parentAnchorY = 0.5f;
         aPlacement.rotationAxisX = 1.0f;
-        aPlacement.rotation = -45.0f;
+        aPlacement.rotation = (float)Math.toRadians(-45);
+        aPlacement.opaque = false;
     }
 
     @Override
@@ -183,9 +268,8 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
         }
     }
 
-
-    public boolean isSettingsDialogOpened() {
-        UIWidget widget = getChild(mSettingsDialogHandle);
+    public boolean isDialogOpened(int aHandle) {
+        UIWidget widget = getChild(aHandle);
         if (widget != null) {
             return widget.isVisible();
         }
@@ -200,6 +284,18 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
         }
 
         SessionStore.get().loadUri(getContext().getString(R.string.help_url));
+    }
+
+    // BookmarkListener
+
+    @Override
+    public void onBookmarksShown() {
+        mBookmarksButton.setActiveMode(true);
+    }
+
+    @Override
+    public void onBookmarksHidden() {
+        mBookmarksButton.setActiveMode(false);
     }
 
 }

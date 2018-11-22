@@ -3,7 +3,6 @@ package org.mozilla.vrbrowser.ui.settings;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
-import android.support.annotation.StringRes;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
@@ -16,6 +15,8 @@ import android.widget.TextView;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
+
+import androidx.annotation.StringRes;
 
 public class SingleEditSetting extends LinearLayout {
 

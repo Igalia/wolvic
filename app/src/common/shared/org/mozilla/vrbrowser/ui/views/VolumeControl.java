@@ -1,14 +1,13 @@
 package org.mozilla.vrbrowser.ui.views;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.SeekBar;
-import android.widget.TextView;
 
 import org.mozilla.vrbrowser.R;
+
+import androidx.annotation.Nullable;
 
 public class VolumeControl extends FrameLayout implements SeekBar.OnSeekBarChangeListener {
     private SeekBar mSeekBar;

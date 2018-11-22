@@ -9,8 +9,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
-import android.support.annotation.IntDef;
-import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -24,6 +22,9 @@ import org.mozilla.vrbrowser.R;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 
+import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
+
 public abstract class UIWidget extends FrameLayout implements Widget {
 
     private static final String LOGTAG = "VRB";
@@ -32,9 +33,9 @@ public abstract class UIWidget extends FrameLayout implements Widget {
         void onDismiss();
     }
 
-    private UISurfaceTextureRenderer mRenderer;
-    private SurfaceTexture mTexture;
-    private float mWorldWidth;
+    protected UISurfaceTextureRenderer mRenderer;
+    protected SurfaceTexture mTexture;
+    protected float mWorldWidth;
     protected int mHandle;
     protected WidgetPlacement mWidgetPlacement;
     protected WidgetManagerDelegate mWidgetManager;
@@ -75,14 +76,13 @@ public abstract class UIWidget extends FrameLayout implements Widget {
         this.setPadding(padding_px, padding_px, padding_px, padding_px);
 
         mChildren = new HashMap<>();
-        mBackHandler = new Runnable() {
-            @Override
-            public void run() {
-                onDismiss();
-            }
-        };
+        mBackHandler = () -> onDismiss();
     }
 
+    @Override
+    public void setSize(float windowWidth, float windowHeight, float multiplier) {
+        // To be implemented by inheriting widgets
+    }
 
     protected abstract void initializeWidgetPlacement(WidgetPlacement aPlacement);
 

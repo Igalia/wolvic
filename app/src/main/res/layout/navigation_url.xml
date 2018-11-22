@@ -1,60 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <mozilla.components.ui.autocomplete.InlineAutocompleteEditText
-        android:id="@+id/urlEditText"
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="bookmarkViewModel"
+            type="org.mozilla.vrbrowser.viewmodel.BookmarkViewModel" />
+
+        <variable
+            name="callback"
+            type="org.mozilla.vrbrowser.ui.callbacks.NavigationBarCallback" />
+    </data>
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginStart="0dp"
-        android:gravity="center_vertical"
-        android:background="@drawable/url_background"
-        android:ems="10"
-        android:hint="@string/search_placeholder"
-        android:inputType="textUri"
-        android:paddingStart="20dp"
-        android:paddingEnd="40dp"
-        android:selectAllOnFocus="true"
-        android:textColor="@color/fog"
-        android:textColorHighlight="@color/azure"
-        android:requiresFadingEdge="horizontal"
-        android:fadingEdgeLength="40dp"
-        android:ellipsize="none"
-        android:textSize="16dip"
-        app:autocompleteBackgroundColor="@color/azure"/>
-
-    <RelativeLayout
-        android:id="@+id/urlLeftContainer"
-        android:visibility="gone"
-        android:background="@null"
-        android:layout_width="50dp"
         android:layout_height="match_parent">
-        <ImageView
-            android:id="@+id/loadingView"
-            android:visibility="gone"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_gravity="center_vertical"
-            android:src="@drawable/loading_shape"
-            android:layout_centerInParent="true"
-            />
 
-        <ImageView
-            android:id="@+id/insecureIcon"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:padding="5dp"
-            android:visibility="gone"
-            android:src="@drawable/icon_lock_insecure_network"
-            android:layout_centerInParent="true"
-            />
+        <mozilla.components.ui.autocomplete.InlineAutocompleteEditText
+            android:id="@+id/urlEditText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/url_background"
+            android:ellipsize="none"
+            android:ems="10"
+            android:fadingEdgeLength="20dp"
+            android:gravity="center_vertical"
+            android:hint="@string/search_placeholder"
+            android:imeOptions="actionDone"
+            android:inputType="textUri"
+            android:paddingStart="20dp"
+            android:paddingEnd="80dp"
+            android:requiresFadingEdge="horizontal"
+            android:selectAllOnFocus="true"
+            android:textColor="@color/fog"
+            android:textColorHighlight="@color/azure"
+            android:textSize="16dip"
+            app:autocompleteBackgroundColor="@color/azure" />
 
-    </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/urlLeftContainer"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:visibility="gone">
 
-    <org.mozilla.vrbrowser.ui.views.UIButton
-        android:id="@+id/microphoneButton"
-        style="?attr/urlBarIconStyle"
-        android:layout_gravity="center_vertical|end"
-        android:tint="@color/fog"
-        android:src="@drawable/ic_icon_microphone" />
-</merge>
+            <ImageView
+                android:id="@+id/loadingView"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/loading_shape"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/insecureIcon"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_centerInParent="true"
+                android:padding="5dp"
+                android:src="@drawable/icon_lock_insecure_network"
+                android:visibility="gone" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/buttonsLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical|end"
+            android:orientation="horizontal">
+
+            <org.mozilla.vrbrowser.ui.views.UIButton
+                android:id="@+id/microphoneButton"
+                style="@style/urlBarIconTheme"
+                android:src="@drawable/ic_icon_microphone"
+                android:tint="@color/fog" />
+
+            <org.mozilla.vrbrowser.ui.views.UIButton
+                android:id="@+id/bookmarkButton"
+                style="@style/urlBarIconThemeEnd"
+                android:onClick="@{() ->  callback.onBookmarkClick(bookmarkViewModel.bookmark)}"
+                android:src="@{bookmarkViewModel.bookmark == null ? @drawable/ic_icon_bookmark : @drawable/ic_icon_bookmark_active}"
+                android:tint="@color/fog" />
+        </LinearLayout>
+    </FrameLayout>
+</layout>

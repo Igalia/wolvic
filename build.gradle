@@ -1,22 +1,8 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    // Gecko pinned version
-    ext.geckoNightly = [
-            // GeckoView versions can be found here:
-            // https://maven.mozilla.org/?prefix=maven2/org/mozilla/geckoview/
-            version: '65.0.20181119100115'
-    ]
-
-    // Android components version
-    ext.androidComponents = [
-            version: '0.28.0'
-    ]
-
-    repositories {
-        google()
-        jcenter()
-    }
+    apply from: 'versions.gradle'
+    addRepos(repositories)
     dependencies {
         classpath 'com.android.tools.build:gradle:3.2.1'
 
@@ -26,16 +12,7 @@ buildscript {
 }
 
 allprojects {
-    repositories {
-        google()
-        maven {
-            url 'https://maven.mozilla.org/maven2'
-        }
-        maven {
-            url 'https://download.servo.org/nightly/maven'
-        }
-        jcenter()
-    }
+    addRepos(repositories)
 }
 
 task clean(type: Delete) {

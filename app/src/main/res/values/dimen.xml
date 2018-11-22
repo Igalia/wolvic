@@ -4,14 +4,16 @@
 
     <!-- Browser window -->
     <dimen name="browser_width_pixels">800px</dimen>
-    <item name="browser_world_width" format="float" type="dimen">4.0</item>
-    <item name="browser_world_y" format="float" type="dimen">0.2</item>
-    <item name="browser_world_z" format="float" type="dimen">-4.2</item>
+    <item name="window_world_width" format="float" type="dimen">4.0</item>
+    <item name="window_world_y" format="float" type="dimen">0.2</item>
+    <item name="window_world_z" format="float" type="dimen">-4.2</item>
     <item name="browser_children_z_distance" format="float" type="dimen">1.5</item>
 
     <!-- Navigation bar -->
     <dimen name="navigation_bar_width">720dp</dimen>
-    <dimen name="navigation_bar_height">45dp</dimen>
+    <dimen name="navigation_bar_height">44dp</dimen>
+    <dimen name="url_bar_item_width">24dp</dimen>
+    <dimen name="url_bar_last_item_width">44dp</dimen>
 
     <!-- Keyboard -->
     <item name="keyboard_world_width" format="float" type="dimen">2.4</item>
@@ -83,10 +85,10 @@
     <item name="top_bar_world_y" format="float" type="dimen">0.20</item>
 
     <!-- Tray -->
-    <item name="tray_world_y" format="float" type="dimen">-0.25</item>
-    <item name="tray_world_z" format="float" type="dimen">-3.5</item>
-    <item name="tray_world_width" format="float" type="dimen">1.0</item>
-    <dimen name="tray_width">120dp</dimen>
+    <item name="tray_world_y" format="float" type="dimen">0.1</item>
+    <item name="tray_world_z" format="float" type="dimen">-2.5</item>
+    <item name="tray_world_width" format="float" type="dimen">1.2</item>
+    <dimen name="tray_width">165dp</dimen>
     <dimen name="tray_height">40dp</dimen>
 
     <!-- Developer Options Panel -->
@@ -125,17 +127,24 @@
     <dimen name="dialog_padding_sides">30dp</dimen>
 
     <!-- Text sizes -->
-    <dimen name="text_biggest_size">24dip</dimen>
-    <dimen name="text_bigger_size">22dip</dimen>
-    <dimen name="text_big_size">18dip</dimen>
-    <dimen name="text_medium_size">14dip</dimen>
-    <dimen name="text_small_size">12dip</dimen>
-    <dimen name="text_smaller_size">10dip</dimen>
+    <dimen name="text_biggest_size">24sp</dimen>
+    <dimen name="text_bigger_size">22sp</dimen>
+    <dimen name="text_big_size">18sp</dimen>
+    <dimen name="text_medium_size">14sp</dimen>
+    <dimen name="text_small_size">12sp</dimen>
+    <dimen name="text_smaller_size">10sp</dimen>
 
     <!-- Popup Window -->
-    <item name="url_bar_popup_world_width" format="float" type="dimen">4.0</item>
+    <item name="url_bar_popup_world_width" format="float" type="dimen">4</item>
     <dimen name="url_bar_popup_height">250dp</dimen>
-    <item name="url_bar_popup_world_x" format="float" type="dimen">1.3</item>
+    <item name="url_bar_popup_world_x" format="float" type="dimen">1.25</item>
     <item name="url_bar_popup_world_y" format="float" type="dimen">0.15</item>
     <item name="url_bar_popup_world_z" format="float" type="dimen">0.2</item>
+
+    <dimen name="tray_icon_padding_max">10dp</dimen>
+    <dimen name="tray_icon_padding_min">8dp</dimen>
+
+    <!-- Bookmarks -->
+    <dimen name="bookmark_row_height">64dp</dimen>
+    <item name="bookmarks_world_z" format="float" type="dimen">-4.19</item>
 </resources>

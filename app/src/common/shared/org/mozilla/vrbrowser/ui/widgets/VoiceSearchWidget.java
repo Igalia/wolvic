@@ -9,8 +9,6 @@ import android.graphics.drawable.ClipDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
-import android.support.annotation.IdRes;
-import android.support.v4.app.ActivityCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
@@ -28,6 +26,9 @@ import com.mozilla.speechlibrary.STTResult;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.ui.views.UIButton;
+
+import androidx.annotation.IdRes;
+import androidx.core.app.ActivityCompat;
 
 import static org.mozilla.gecko.GeckoAppShell.getApplicationContext;
 

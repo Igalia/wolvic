@@ -9,16 +9,29 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
-import android.support.v7.widget.AppCompatImageButton;
 import android.util.AttributeSet;
 
 import org.mozilla.vrbrowser.R;
 
+import androidx.annotation.IdRes;
+import androidx.appcompat.widget.AppCompatImageButton;
+
 public class UIButton extends AppCompatImageButton implements CustomUIButton {
+
+    private enum State {
+        NORMAL,
+        PRIVATE,
+        ACTIVE
+    }
+
     private ColorStateList mTintColorList;
     private Drawable mPrivateModeBackground;
+    private Drawable mActiveModeBackground;
     private Drawable mBackground;
-    private ColorStateList mPrivateModeTintColorList;
+    private @IdRes int mTintColorListRes;
+    private @IdRes int mPrivateModeTintColorListRes;
+    private @IdRes int mActiveModeTintColorListRes;
+    private State mState;
 
     public UIButton(Context context, AttributeSet attrs) {
         this(context, attrs, R.attr.imageButtonStyle);
@@ -28,10 +41,9 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
         super(context, attrs, defStyleAttr);
 
         TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.UIButton, defStyleAttr, 0);
-        mTintColorList = attributes.getColorStateList(R.styleable.UIButton_tintColorList);
-        if (mTintColorList != null) {
-            int color = mTintColorList.getColorForState(getDrawableState(), 0);
-            setColorFilter(color);
+        mTintColorListRes = attributes.getResourceId(R.styleable.UIButton_tintColorList, 0);
+        if (mTintColorListRes != 0) {
+            setTintColorList(mTintColorListRes);
         }
         attributes.recycle();
 
@@ -40,10 +52,20 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
         attributes.recycle();
 
         attributes = context.obtainStyledAttributes(attrs, R.styleable.UIButton, defStyleAttr, 0);
-        mPrivateModeTintColorList = attributes.getColorStateList(R.styleable.UIButton_privateModeTintColorList);
+        mActiveModeBackground = attributes.getDrawable(R.styleable.UIButton_activeModeBackground);
+        attributes.recycle();
+
+        attributes = context.obtainStyledAttributes(attrs, R.styleable.UIButton, defStyleAttr, 0);
+        mPrivateModeTintColorListRes = attributes.getResourceId(R.styleable.UIButton_privateModeTintColorList, 0);
+        attributes.recycle();
+
+        attributes = context.obtainStyledAttributes(attrs, R.styleable.UIButton, defStyleAttr, 0);
+        mActiveModeTintColorListRes = attributes.getResourceId(R.styleable.UIButton_activeModeTintColorList, 0);
         attributes.recycle();
 
         mBackground = getBackground();
+
+        mState = State.NORMAL;
 
         setSoundEffectsEnabled(false);
     }
@@ -68,24 +90,60 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
     }
 
     @Override
-    public void setPrivateMode(boolean isEnabled) {
-        if (isEnabled) {
-            if (mPrivateModeBackground != null)
-                setBackground(mPrivateModeBackground);
-
-            if (mPrivateModeTintColorList != null) {
-                int color = mPrivateModeTintColorList.getColorForState(getDrawableState(), 0);
-                setColorFilter(color);
-            }
+    public void setPrivateMode(boolean isPrivateMode) {
+        if (isPrivateMode) {
+            setPrivate();
+            mState = State.PRIVATE;
 
         } else {
-            if (mBackground != null)
-                setBackground(mBackground);
+            setNormal();
+            mState = State.NORMAL;
+        }
+    }
 
-            if(mTintColorList != null) {
-                int color = mTintColorList.getColorForState(getDrawableState(), 0);
-                setColorFilter(color);
-            }
+    public void setActiveMode(boolean isActive) {
+        if (isActive) {
+            setActive();
+            mState = State.ACTIVE;
+
+        } else {
+            setNormal();
+            mState = State.NORMAL;
+        }
+    }
+
+    public boolean isActive() {
+        return mState == State.ACTIVE;
+    }
+
+    public boolean isPrivate() {
+        return mState == State.PRIVATE;
+    }
+
+    private void setPrivate() {
+        if (mPrivateModeBackground != null)
+            setBackground(mPrivateModeBackground);
+
+        if (mPrivateModeTintColorListRes != 0) {
+            setTintColorList(mPrivateModeTintColorListRes);
+        }
+    }
+
+    private void setNormal() {
+        if (mBackground != null)
+            setBackground(mBackground);
+
+        if(mTintColorListRes != 0) {
+            setTintColorList(mTintColorListRes);
+        }
+    }
+
+    private void setActive() {
+        if (mActiveModeBackground != null)
+            setBackground(mActiveModeBackground);
+
+        if (mActiveModeTintColorListRes != 0) {
+            setTintColorList(mActiveModeTintColorListRes);
         }
     }
 

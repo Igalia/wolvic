@@ -1,9 +1,10 @@
 package org.mozilla.vrbrowser.ui.widgets;
 
-import android.support.annotation.NonNull;
 import android.view.View;
 
 import org.mozilla.geckoview.GeckoSession;
+
+import androidx.annotation.NonNull;
 
 public interface WidgetManagerDelegate {
     interface UpdateListener {

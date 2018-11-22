@@ -7,21 +7,19 @@ package org.mozilla.vrbrowser.ui.widgets;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
 
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.browser.SessionStore;
 import org.mozilla.vrbrowser.audio.AudioEngine;
+import org.mozilla.vrbrowser.browser.SessionStore;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 
 public class TopBarWidget extends UIWidget implements SessionStore.SessionChangeListener, WidgetManagerDelegate.UpdateListener {
-    private static final String LOGTAG = "VRB";
 
     private UIButton mCloseButton;
     private AudioEngine mAudio;
-    private BrowserWidget mBrowserWidget;
+    private UIWidget mBrowserWidget;
 
     public TopBarWidget(Context aContext) {
         super(aContext);
@@ -42,16 +40,13 @@ public class TopBarWidget extends UIWidget implements SessionStore.SessionChange
         inflate(aContext, R.layout.top_bar, this);
 
         mCloseButton = findViewById(R.id.closeButton);
-        mCloseButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                view.requestFocusFromTouch();
-                if (mAudio != null) {
-                    mAudio.playSound(AudioEngine.Sound.CLICK);
-                }
-
-                SessionStore.get().exitPrivateMode();
+        mCloseButton.setOnClickListener(view -> {
+            view.requestFocusFromTouch();
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
             }
+
+            SessionStore.get().exitPrivateMode();
         });
 
         mAudio = AudioEngine.fromContext(aContext);
@@ -66,7 +61,7 @@ public class TopBarWidget extends UIWidget implements SessionStore.SessionChange
         aPlacement.width = WidgetPlacement.dpDimension(context, R.dimen.top_bar_width);
         aPlacement.height = WidgetPlacement.dpDimension(context, R.dimen.top_bar_height);
         // FIXME: Something wrong with the DPI ratio? Revert to top_bar_world_width when fixed
-        aPlacement.worldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.browser_world_width) * aPlacement.width/getWorldWidth();
+        aPlacement.worldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width) * aPlacement.width/getWorldWidth();
         aPlacement.translationY = WidgetPlacement.unitFromMeters(context, R.dimen.top_bar_world_y);
         aPlacement.anchorX = 0.5f;
         aPlacement.anchorY = 0.5f;
@@ -83,7 +78,7 @@ public class TopBarWidget extends UIWidget implements SessionStore.SessionChange
         super.releaseWidget();
     }
 
-    public void setBrowserWidget(BrowserWidget aWidget) {
+    public void setBrowserWidget(UIWidget aWidget) {
         if (aWidget != null) {
             mWidgetPlacement.parentHandle = aWidget.getHandle();
         }
@@ -128,7 +123,7 @@ public class TopBarWidget extends UIWidget implements SessionStore.SessionChange
         // Browser window may have been resized, adjust the navigation bar
         float targetWidth = aWidget.getPlacement().worldWidth;
         // FIXME: Something wrong with the DPI ratio? Revert to top_bar_world_width when fixed
-        float defaultWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.browser_world_width)  * 40/720;
+        float defaultWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width)  * 40/720;
         targetWidth = Math.max(defaultWidth, targetWidth);
 
         float ratio = targetWidth / defaultWidth;

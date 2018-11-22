@@ -2,7 +2,6 @@ package org.mozilla.vrbrowser.ui.views;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
@@ -10,7 +9,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.audio.AudioEngine;
+
+import androidx.annotation.Nullable;
 
 public class HoneycombSwitch extends LinearLayout {
 

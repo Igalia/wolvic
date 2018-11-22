@@ -5,13 +5,14 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.telemetry.TelemetryHolder;
 import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
+
+import androidx.annotation.NonNull;
 
 import static org.mozilla.vrbrowser.utils.ServoUtils.isServoAvailable;
 

@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.mozilla.geckoview.GeckoSession;
@@ -15,6 +14,8 @@ import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import androidx.annotation.NonNull;
 
 public class PermissionDelegate implements GeckoSession.PermissionDelegate, WidgetManagerDelegate.PermissionListener {
 

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.os.StrictMode;
 import android.os.SystemClock;
-import android.support.annotation.UiThread;
 import android.util.Log;
 
 import org.mozilla.telemetry.Telemetry;
@@ -26,6 +25,9 @@ import org.mozilla.vrbrowser.utils.UrlUtils;
 
 import java.net.URI;
 import java.util.HashSet;
+
+import androidx.annotation.UiThread;
+
 import static java.lang.Math.toIntExact;
 
 
