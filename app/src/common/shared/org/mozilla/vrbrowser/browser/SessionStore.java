@@ -68,6 +68,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         }
         return mInstance;
     }
+    // You can test a local file using: "resource://android/assets/webvr/index.html"
     private static final String HOME_WITHOUT_REGION_ORIGIN = "https://webxr.today/";
     public static final String PRIVATE_BROWSING_URI = "about:privatebrowsing";
     public static final int NO_SESSION_ID = -1;
