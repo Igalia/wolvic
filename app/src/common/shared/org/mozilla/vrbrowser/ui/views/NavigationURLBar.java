@@ -258,11 +258,16 @@ public class NavigationURLBar extends FrameLayout {
     }
 
     public String getText() {
-        return mURL.getText().toString();
+        return mURL.getNonAutocompleteText();
     }
 
     public String getOriginalText() {
-        return mURL.getOriginalText();
+        try {
+            return mURL.getOriginalText();
+
+        } catch (IndexOutOfBoundsException e) {
+            return mURL.getNonAutocompleteText();
+        }
     }
 
     public void setIsInsecure(boolean aIsInsecure) {
