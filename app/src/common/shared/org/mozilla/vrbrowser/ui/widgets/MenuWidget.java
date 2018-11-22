@@ -44,6 +44,8 @@ public abstract class MenuWidget extends UIWidget {
         mAdapter = new MenuAdapter(aContext, aItems);
         mListView.setAdapter(mAdapter);
         mListView.setSoundEffectsEnabled(false);
+        mListView.setVerticalScrollBarEnabled(false);
+        mListView.setFastScrollAlwaysVisible(false);
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

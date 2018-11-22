@@ -43,6 +43,7 @@ public abstract class UIWidget extends FrameLayout implements Widget {
     protected Runnable mBackHandler;
     protected HashMap<Integer, UIWidget> mChildren;
     protected Delegate mDelegate;
+    protected int mBorderWidth = 1;
     private Runnable mFirstDrawCallback;
 
     public UIWidget(Context aContext) {
@@ -69,9 +70,8 @@ public abstract class UIWidget extends FrameLayout implements Widget {
         mInitialHeight = mWidgetPlacement.height;
         mWorldWidth = WidgetPlacement.pixelDimension(getContext(), R.dimen.world_width);
         // Transparent border useful for TimeWarp Layers and better aliasing.
-        int padding_dp = 1;  // 1 dps
         final float scale = getResources().getDisplayMetrics().density;
-        int padding_px = (int) (padding_dp * scale + 0.5f);
+        int padding_px = (int) (mBorderWidth * scale + 0.5f);
         this.setPadding(padding_px, padding_px, padding_px, padding_px);
 
         mChildren = new HashMap<>();

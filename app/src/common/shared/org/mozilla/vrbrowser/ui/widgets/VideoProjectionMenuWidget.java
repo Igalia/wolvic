@@ -104,6 +104,7 @@ public class VideoProjectionMenuWidget extends MenuWidget {
         super.updateMenuItems(mItems);
 
         mWidgetPlacement.height = mItems.size() * WidgetPlacement.dpDimension(getContext(), R.dimen.menu_item_height);
+        mWidgetPlacement.height += mBorderWidth * 2;
     }
 
     private void handleClick(@VideoProjectionFlags int aVideoProjection) {

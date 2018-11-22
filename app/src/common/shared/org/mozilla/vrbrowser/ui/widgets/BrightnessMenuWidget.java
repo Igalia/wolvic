@@ -49,6 +49,7 @@ public class BrightnessMenuWidget extends MenuWidget {
         super.setSelectedItem(1);
 
         mWidgetPlacement.height = mItems.size() * WidgetPlacement.dpDimension(getContext(), R.dimen.menu_item_height);
+        mWidgetPlacement.height += mBorderWidth * 2;
     }
 
     public float getSelectedBrightness() {
