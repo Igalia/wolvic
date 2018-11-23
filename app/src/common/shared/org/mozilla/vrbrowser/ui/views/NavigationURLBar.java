@@ -258,7 +258,7 @@ public class NavigationURLBar extends FrameLayout {
     }
 
     public String getText() {
-        return mURL.getNonAutocompleteText();
+        return mURL.getText().toString();
     }
 
     public String getOriginalText() {
