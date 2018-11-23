@@ -239,6 +239,8 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         }
         if (isLoading) {
             aListener.onPageStart(aSession, uri);
+        } else {
+            aListener.onPageStop(aSession, true);
         }
 
         if (securityInfo != null) {
