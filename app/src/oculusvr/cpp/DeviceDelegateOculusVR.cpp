@@ -143,7 +143,7 @@ public:
     layer->SetCurrentEye(aEye);
   }
 
-  bool IsDrawRequested() const {
+  virtual bool IsDrawRequested() const {
     return swapChain && composited && layer->IsDrawRequested();
   }
 
@@ -385,7 +385,7 @@ class OculusLayerEquirect: public OculusLayer<VRLayerEquirectPtr, ovrLayerEquire
 public:
   std::weak_ptr<OculusLayerQuad> sourceLayer;
 
-  static OculusLayerEquirectPtr Create(const VRLayerEquirectPtr& aLayer, const OculusLayerQuadPtr& aSourceLayer = nullptr) {
+  static OculusLayerEquirectPtr Create(const VRLayerEquirectPtr& aLayer, const OculusLayerQuadPtr& aSourceLayer) {
     auto result = std::make_shared<OculusLayerEquirect>();
     result->layer = aLayer;
     result->sourceLayer = aSourceLayer;
@@ -416,7 +416,16 @@ public:
     OculusLayer::Destroy();
   }
 
+  bool IsDrawRequested() const override {
+    OculusLayerQuadPtr source = sourceLayer.lock();
+    return source && source->swapChain && source->composited && layer->IsDrawRequested();
+  }
+
   void Update(const ovrTracking2& aTracking) override {
+    OculusLayerQuadPtr source = sourceLayer.lock();
+    if (source) {
+      swapChain = source->swapChain;
+    }
     OculusLayer::Update(aTracking);
 
     vrb::Quaternion q(layer->GetModelTransform(device::Eye::Left));
@@ -550,7 +559,7 @@ struct DeviceDelegateOculusVR::State {
   }
 
   void GetStandaloneRenderSize(uint32_t& aWidth, uint32_t& aHeight) {
-    const float scale = layersEnabled ? 1.0 : 1.5f;
+    const float scale = layersEnabled ? 1.0f : 1.5f;
     aWidth = scale * (uint32_t)(vrapi_GetSystemPropertyInt(&java, VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_WIDTH));
     aHeight = scale * (uint32_t)(vrapi_GetSystemPropertyInt(&java, VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_HEIGHT));
   }
