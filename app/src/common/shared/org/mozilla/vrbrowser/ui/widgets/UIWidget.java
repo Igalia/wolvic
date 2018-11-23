@@ -66,10 +66,10 @@ public abstract class UIWidget extends FrameLayout implements Widget {
         mWidgetManager = (WidgetManagerDelegate) getContext();
         mWidgetPlacement = new WidgetPlacement(getContext());
         mHandle = mWidgetManager.newWidgetHandle();
+        mWorldWidth = WidgetPlacement.pixelDimension(getContext(), R.dimen.world_width);
         initializeWidgetPlacement(mWidgetPlacement);
         mInitialWidth = mWidgetPlacement.width;
         mInitialHeight = mWidgetPlacement.height;
-        mWorldWidth = WidgetPlacement.pixelDimension(getContext(), R.dimen.world_width);
         // Transparent border useful for TimeWarp Layers and better aliasing.
         final float scale = getResources().getDisplayMetrics().density;
         int padding_px = (int) (mBorderWidth * scale + 0.5f);

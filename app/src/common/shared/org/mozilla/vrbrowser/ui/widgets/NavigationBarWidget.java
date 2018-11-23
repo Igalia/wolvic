@@ -729,6 +729,13 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         for (CustomUIButton button : mButtons) {
             button.setPrivateMode(isPrivateMode);
         }
+        boolean isFullScreen = SessionStore.get().isInFullScreen(aSession);
+        if (isFullScreen && !mIsInFullScreenMode) {
+            enterFullScreenMode();
+        } else if (!isFullScreen && mIsInFullScreenMode) {
+            exitVRVideo();
+            exitFullScreenMode();
+        }
     }
 
     // NavigationURLBarDelegate

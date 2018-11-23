@@ -657,6 +657,19 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         return false;
     }
 
+    public boolean isInFullScreen(GeckoSession aSession) {
+        Integer sessionId = getSessionId(aSession);
+        if (sessionId == null) {
+            return false;
+        }
+        State state = mSessions.get(sessionId);
+        if (state != null) {
+            return state.mFullScreen;
+        }
+
+        return false;
+    }
+
     public void exitFullScreen() {
         if (mCurrentSession == null) {
             return;

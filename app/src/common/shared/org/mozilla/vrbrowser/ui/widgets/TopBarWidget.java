@@ -45,7 +45,6 @@ public class TopBarWidget extends UIWidget implements SessionStore.SessionChange
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
-
             SessionStore.get().exitPrivateMode();
         });
 
@@ -60,7 +59,6 @@ public class TopBarWidget extends UIWidget implements SessionStore.SessionChange
         Context context = getContext();
         aPlacement.width = WidgetPlacement.dpDimension(context, R.dimen.top_bar_width);
         aPlacement.height = WidgetPlacement.dpDimension(context, R.dimen.top_bar_height);
-        // FIXME: Something wrong with the DPI ratio? Revert to top_bar_world_width when fixed
         aPlacement.worldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width) * aPlacement.width/getWorldWidth();
         aPlacement.translationY = WidgetPlacement.unitFromMeters(context, R.dimen.top_bar_world_y);
         aPlacement.anchorX = 0.5f;
@@ -104,6 +102,7 @@ public class TopBarWidget extends UIWidget implements SessionStore.SessionChange
         mCloseButton.setPrivateMode(isPrivateMode);
     }
 
+    @Override
     public void setVisible(boolean isVisible) {
         getPlacement().visible = isVisible;
 
@@ -116,19 +115,8 @@ public class TopBarWidget extends UIWidget implements SessionStore.SessionChange
     // WidgetManagerDelegate.UpdateListener
     @Override
     public void onWidgetUpdate(Widget aWidget) {
-        if (aWidget != mBrowserWidget) {
-            return;
+        if (aWidget == mBrowserWidget && isVisible()) {
+            mWidgetManager.updateWidget(this);
         }
-
-        // Browser window may have been resized, adjust the navigation bar
-        float targetWidth = aWidget.getPlacement().worldWidth;
-        // FIXME: Something wrong with the DPI ratio? Revert to top_bar_world_width when fixed
-        float defaultWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width)  * 40/720;
-        targetWidth = Math.max(defaultWidth, targetWidth);
-
-        float ratio = targetWidth / defaultWidth;
-        mWidgetPlacement.worldWidth = targetWidth;
-        mWidgetPlacement.width = (int) (WidgetPlacement.dpDimension(getContext(), R.dimen.top_bar_width) * ratio);
-        mWidgetManager.updateWidget(this);
     }
 }
