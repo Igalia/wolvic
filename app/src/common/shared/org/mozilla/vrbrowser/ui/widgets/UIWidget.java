@@ -80,7 +80,7 @@ public abstract class UIWidget extends FrameLayout implements Widget {
     }
 
     @Override
-    public void setSize(float windowWidth, float windowHeight, float multiplier) {
+    public void resizeByMultiplier(float aspect, float multiplier) {
         // To be implemented by inheriting widgets
     }
 

@@ -912,7 +912,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public void setBrowserSize(float targetWidth, float targetHeight) {
-        mBrowserWidget.setSize(targetWidth, targetHeight, 1.0f);
+        mBrowserWidget.resizeByMultiplier(targetWidth / targetHeight, 1.0f);
     }
 
     @Override

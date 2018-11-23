@@ -19,6 +19,7 @@ public class Media implements MediaElement.Delegate {
     private boolean mIsUnloaded = false;
     private org.mozilla.geckoview.MediaElement mMedia;
     private MediaElement.Delegate mDelegate;
+    private ResizeDelegate mResizeDelegate;
 
     public Media(@NonNull MediaElement aMediaElement) {
         mMedia = aMediaElement;
@@ -113,6 +114,14 @@ public class Media implements MediaElement.Delegate {
         return mMetaData != null ? (int)mMetaData.height : 0;
     }
 
+    public interface ResizeDelegate {
+        void onResize(int width, int height);
+    }
+
+    public void setResizeDelegate(ResizeDelegate aResizeDelegate) {
+        mResizeDelegate = aResizeDelegate;
+    }
+
     // Media Element delegate
     @Override
     public void onPlaybackStateChange(MediaElement mediaElement, int playbackState) {
@@ -138,9 +147,19 @@ public class Media implements MediaElement.Delegate {
 
     @Override
     public void onMetadataChange(MediaElement mediaElement, MediaElement.Metadata metaData) {
+        final int oldWidth = getWidth();
+        final int oldHeight = getHeight();
         mMetaData = metaData;
         if (mDelegate != null) {
             mDelegate.onMetadataChange(mediaElement, metaData);
+        }
+
+        if (mResizeDelegate!= null && metaData != null) {
+            final int w = getWidth();
+            final int h = getHeight();
+            if (w > 0 && h > 0 && w != oldWidth || h != oldHeight) {
+                mResizeDelegate.onResize(w, h);
+            }
         }
     }
 

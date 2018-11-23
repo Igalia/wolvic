@@ -167,11 +167,10 @@ public class BrowserWidget extends UIWidget implements SessionStore.SessionChang
     }
 
     @Override
-    public void setSize(float windowWidth, float windowHeight, float multiplier) {
+    public void resizeByMultiplier(float aspect, float multiplier) {
         mMultiplier = multiplier;
 
         float worldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width);
-        float aspect = windowWidth / windowHeight;
         float worldHeight = worldWidth / aspect;
         float area = worldWidth * worldHeight * multiplier;
 

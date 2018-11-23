@@ -47,8 +47,8 @@ public class SettingsStore {
     public final static int WINDOW_WIDTH_DEFAULT = 800;
     public final static int WINDOW_HEIGHT_DEFAULT = 450;
     public final static int DISPLAY_DPI_DEFAULT = 96;
-    public final static int MAX_WINDOW_WIDTH_DEFAULT = 800;
-    public final static int MAX_WINDOW_HEIGHT_DEFAULT = 450;
+    public final static int MAX_WINDOW_WIDTH_DEFAULT = 1200;
+    public final static int MAX_WINDOW_HEIGHT_DEFAULT = 1200;
     public final static int POINTER_COLOR_DEFAULT_DEFAULT = Color.parseColor("#FFFFFF");
     public final static String ENV_DEFAULT = "cave";
     public final static float BROWSER_WORLD_WIDTH_DEFAULT = 4.0f;
@@ -218,6 +218,10 @@ public class SettingsStore {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putInt(mContext.getString(R.string.settings_key_window_height), aWindowHeight);
         editor.commit();
+    }
+
+    public float getWindowAspect() {
+        return (float)getWindowWidth() / (float)getWindowHeight();
     }
 
     public int getDisplayDpi() {

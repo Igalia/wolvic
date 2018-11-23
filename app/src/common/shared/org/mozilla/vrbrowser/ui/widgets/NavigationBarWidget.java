@@ -64,6 +64,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private boolean mIsInFullScreenMode;
     private boolean mIsResizing;
     private boolean mIsInVRVideo;
+    private WidgetPlacement mSizeBeforeFullScreen;
     private Runnable mResizeBackHandler;
     private Runnable mFullScreenBackHandler;
     private Runnable mVRVideoBackHandler;
@@ -88,6 +89,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private BrightnessMenuWidget mBrightnessWidget;
     private MediaControlsWidget mMediaControlsWidget;
     private BookmarksWidget mBookmarksWidget;
+    private Media mFullScreenMedia;
 
     public NavigationBarWidget(Context aContext) {
         super(aContext);
@@ -122,6 +124,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mBrightnessButton = findViewById(R.id.brightnessButton);
         mFullScreenResizeButton = findViewById(R.id.fullScreenResizeEnterButton);
         mProjectionButton = findViewById(R.id.projectionButton);
+        mSizeBeforeFullScreen = new WidgetPlacement(aContext);
 
 
         mResizeBackHandler = () -> exitResizeMode(true);
@@ -344,10 +347,29 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mBookmarksWidget = aWidget;
     }
 
+    private void setFullScreenSize() {
+        SettingsStore settings = SettingsStore.getInstance(getContext());
+        mSizeBeforeFullScreen.copyFrom(mBrowserWidget.getPlacement());
+        final float oldWidth = settings.getBrowserWorldWidth();
+        final float oldHeight = settings.getBrowserWorldHeight();
+        // Set browser fullscreen size
+        float aspect = SettingsStore.getInstance(getContext()).getWindowAspect();
+        Media media = SessionStore.get().getFullScreenVideo();
+        if (media != null && media.getWidth() > 0 && media.getHeight() > 0) {
+            aspect = (float)media.getWidth() / (float)media.getHeight();
+        }
+        mBrowserWidget.resizeByMultiplier(aspect,1.75f);
+        // Save the old values on settings to prevent the fullscreen size being used on a app restart
+        SettingsStore.getInstance(getContext()).setBrowserWorldWidth(oldWidth);
+        SettingsStore.getInstance(getContext()).setBrowserWorldHeight(oldHeight);
+    }
+
     private void enterFullScreenMode() {
         if (mIsInFullScreenMode) {
             return;
         }
+
+        setFullScreenSize();
         mWidgetManager.pushBackHandler(mFullScreenBackHandler);
         mIsInFullScreenMode = true;
         AnimationHelper.fadeIn(mFullScreenModeContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
@@ -386,6 +408,10 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         if (!mIsInFullScreenMode) {
             return;
         }
+
+        mBrowserWidget.getPlacement().copyFrom(mSizeBeforeFullScreen);
+        mWidgetManager.updateWidget(mBrowserWidget);
+
         mIsInFullScreenMode = false;
         mWidgetManager.popBackHandler(mFullScreenBackHandler);
 
@@ -444,13 +470,17 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         // Backup the placement because the same widget is reused in FullScreen & MediaControl menus
         mProjectionMenuPlacement.copyFrom(mProjectionMenu.getPlacement());
 
-        Media fullscreenMedia = SessionStore.get().getFullScreenVideo();
+        mFullScreenMedia = SessionStore.get().getFullScreenVideo();
 
         this.setVisible(false);
-        if (fullscreenMedia != null && fullscreenMedia.getWidth() > 0 && fullscreenMedia.getHeight() > 0) {
+        if (mFullScreenMedia != null && mFullScreenMedia.getWidth() > 0 && mFullScreenMedia.getHeight() > 0) {
             boolean resetBorder = aProjection == VideoProjectionMenuWidget.VIDEO_PROJECTION_360 ||
                                   aProjection == VideoProjectionMenuWidget.VIDEO_PROJECTION_360_STEREO;
-            mBrowserWidget.enableVRVideoMode(fullscreenMedia.getWidth(), fullscreenMedia.getHeight(), resetBorder);
+            mBrowserWidget.enableVRVideoMode(mFullScreenMedia.getWidth(), mFullScreenMedia.getHeight(), resetBorder);
+            // Handle video resize while in VR video playback
+            mFullScreenMedia.setResizeDelegate((width, height) -> {
+                mBrowserWidget.resizeSurface(width, height);
+            });
         }
         mBrowserWidget.setVisible(false);
 
@@ -467,7 +497,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             mMediaControlsWidget.setBackHandler(this::exitVRVideo);
         }
         mMediaControlsWidget.setProjectionMenuWidget(mProjectionMenu);
-        mMediaControlsWidget.setMedia(fullscreenMedia);
+        mMediaControlsWidget.setMedia(mFullScreenMedia);
         mWidgetManager.updateWidget(mMediaControlsWidget);
         mWidgetManager.showVRVideo(mBrowserWidget.getHandle(), aProjection);
     }
@@ -475,6 +505,9 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private void exitVRVideo() {
         if (!mIsInVRVideo) {
             return;
+        }
+        if (mFullScreenMedia != null) {
+            mFullScreenMedia.setResizeDelegate(null);
         }
         mIsInVRVideo = false;
         mWidgetManager.popBackHandler(mVRVideoBackHandler);
@@ -489,18 +522,13 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mMediaControlsWidget.setVisible(false);
     }
 
-    private void setResizePreset(float aResizeMode) {
+    private void setResizePreset(float aMultiplier) {
+        final float aspect = SettingsStore.getInstance(getContext()).getWindowAspect();
         if (mBrowserWidget.isVisible()) {
-            mBrowserWidget.setSize(
-                    SettingsStore.getInstance(getContext()).getWindowWidth(),
-                    SettingsStore.getInstance(getContext()).getWindowHeight(),
-                    aResizeMode);
+            mBrowserWidget.resizeByMultiplier(aspect, aMultiplier);
 
         } else if (mBookmarksWidget.isVisible()) {
-            mBookmarksWidget.setSize(
-                    SettingsStore.getInstance(getContext()).getWindowWidth(),
-                    SettingsStore.getInstance(getContext()).getWindowHeight(),
-                    aResizeMode);
+            mBookmarksWidget.resizeByMultiplier(aspect, aMultiplier);
         }
     }
 
