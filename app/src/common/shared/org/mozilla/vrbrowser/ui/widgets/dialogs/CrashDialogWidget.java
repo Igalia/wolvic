@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.vrbrowser.ui.widgets;
+package org.mozilla.vrbrowser.ui.widgets.dialogs;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -17,6 +17,9 @@ import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.SessionStore;
 import org.mozilla.vrbrowser.browser.SettingsStore;
+import org.mozilla.vrbrowser.ui.widgets.UIWidget;
+import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
+import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 
 public class CrashDialogWidget extends UIWidget implements WidgetManagerDelegate.FocusChangeListener {
 

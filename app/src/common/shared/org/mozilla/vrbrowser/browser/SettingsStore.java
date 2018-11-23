@@ -11,6 +11,7 @@ import org.mozilla.telemetry.TelemetryHolder;
 import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
+import org.mozilla.vrbrowser.utils.LocaleUtils;
 
 import androidx.annotation.NonNull;
 
@@ -307,11 +308,27 @@ public class SettingsStore {
         editor.commit();
     }
 
+
     public boolean getLayersEnabled() {
         if (BuildConfig.FLAVOR_platform.equalsIgnoreCase("oculusvr")) {
             return true;
         }
         return false;
+    }
+
+    public String getVoiceSearchLanguage() {
+        String language = mPrefs.getString(
+                mContext.getString(R.string.settings_key_voice_search_language), null);
+        if (language == null) {
+            return LocaleUtils.getDefaultVoiceSearchLanguage(mContext);
+        }
+        return language;
+    }
+
+    public void setVoiceSearchLanguage(String language) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putString(mContext.getString(R.string.settings_key_voice_search_language), language);
+        editor.commit();
     }
 
 }

@@ -25,7 +25,7 @@ import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.SessionStore;
 import org.mozilla.vrbrowser.browser.SettingsStore;
-import org.mozilla.vrbrowser.ui.prompts.ChoicePromptWidget;
+import org.mozilla.vrbrowser.ui.widgets.prompts.ChoicePromptWidget;
 
 
 public class BrowserWidget extends UIWidget implements SessionStore.SessionChangeListener,

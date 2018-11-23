@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.vrbrowser.ui.widgets;
+package org.mozilla.vrbrowser.ui.widgets.dialogs;
 
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -25,6 +25,12 @@ import org.mozilla.vrbrowser.browser.SessionStore;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.ui.views.HoneycombButton;
 import org.mozilla.vrbrowser.ui.views.HoneycombSwitch;
+import org.mozilla.vrbrowser.ui.widgets.UIWidget;
+import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
+import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
+import org.mozilla.vrbrowser.ui.widgets.options.DeveloperOptionsWidget;
+import org.mozilla.vrbrowser.ui.widgets.options.DisplayOptionsWidget;
+import org.mozilla.vrbrowser.ui.widgets.options.VoiceSearchLanguageOptionsWidget;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -38,6 +44,9 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
 
     private AudioEngine mAudio;
     private int mDeveloperOptionsDialogHandle = -1;
+    private int mLanguageOptionsDialogHandle = -1;
+    private int mDisplayOptionsDialogHandle = -1;
+    private int mCurrentlyOpenedDialogHandle = -1;
     private TextView mBuildText;
 
     class VersionGestureListener extends GestureDetector.SimpleOnGestureListener {
@@ -92,6 +101,15 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
             onDismiss();
         });
 
+        HoneycombButton languageButton = findViewById(R.id.languageButton);
+        languageButton.setOnClickListener(view -> {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
+
+            onLanguageOptionsClick();
+        });
+
         HoneycombButton privacyButton = findViewById(R.id.privacyButton);
         privacyButton.setOnClickListener(view -> {
             if (mAudio != null) {
@@ -119,6 +137,15 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
             onSettingsTelemetryChange(b);
         });
 
+        HoneycombButton displayButton = findViewById(R.id.displayButton);
+        displayButton.setOnClickListener(view -> {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
+
+            onDisplayOptionsClick();
+        });
+
         TextView versionText = findViewById(R.id.versionText);
         try {
             PackageInfo pInfo = getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), 0);
@@ -131,7 +158,7 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
         mBuildText = findViewById(R.id.buildText);
         mBuildText.setText(versionCodeToDate(BuildConfig.VERSION_CODE));
 
-        ViewGroup versionLayout = findViewById(R.id.versionLayout);
+        ViewGroup versionLayout = findViewById(R.id.optionsLayout);
         final GestureDetector gd = new GestureDetector(getContext(), new VersionGestureListener());
         versionLayout.setOnTouchListener((view, motionEvent) -> {
             if (gd.onTouchEvent(motionEvent)) {
@@ -236,6 +263,14 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
         showDeveloperOptionsDialog();
     }
 
+    private void onLanguageOptionsClick() {
+        showLanguageOptionsDialog();
+    }
+
+    private void onDisplayOptionsClick() {
+        showDisplayOptionsDialog();
+    }
+
     /**
      * The version code is composed like: yDDDHHmm
      *  * y   = Double digit year, with 16 substracted: 2017 -> 17 -> 1
@@ -280,13 +315,45 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
         if (widget == null) {
             widget = createChild(DeveloperOptionsWidget.class, false);
             mDeveloperOptionsDialogHandle = widget.getHandle();
-            widget.setDelegate(() -> onDeveloperOptionsDialogDismissed());
+            widget.setDelegate(() -> onOptionsDialogDismissed());
         }
 
         widget.show();
+
+        mCurrentlyOpenedDialogHandle = mDeveloperOptionsDialogHandle;
     }
 
-    private void onDeveloperOptionsDialogDismissed() {
+    private void showLanguageOptionsDialog() {
+        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
+        hide(UIWidget.REMOVE_WIDGET);
+        UIWidget widget = getChild(mLanguageOptionsDialogHandle);
+        if (widget == null) {
+            widget = createChild(VoiceSearchLanguageOptionsWidget.class, false);
+            mLanguageOptionsDialogHandle = widget.getHandle();
+            widget.setDelegate(() -> onOptionsDialogDismissed());
+        }
+
+        widget.show();
+
+        mCurrentlyOpenedDialogHandle = mLanguageOptionsDialogHandle;
+    }
+
+    private void showDisplayOptionsDialog() {
+        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
+        hide(UIWidget.REMOVE_WIDGET);
+        UIWidget widget = getChild(mDisplayOptionsDialogHandle);
+        if (widget == null) {
+            widget = createChild(DisplayOptionsWidget.class, false);
+            mDisplayOptionsDialogHandle = widget.getHandle();
+            widget.setDelegate(() -> onOptionsDialogDismissed());
+        }
+
+        widget.show();
+
+        mCurrentlyOpenedDialogHandle = mDisplayOptionsDialogHandle;
+    }
+
+    private void onOptionsDialogDismissed() {
         mWidgetManager.popWorldBrightness(this);
         show();
     }
@@ -295,8 +362,8 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
     @Override
     public void onGlobalFocusChanged(View oldFocus, View newFocus) {
         boolean dismiss = false;
-        UIWidget widget = getChild(mDeveloperOptionsDialogHandle);
-        if (widget != null && oldFocus == widget && !widget.isChild(newFocus) && widget.isVisible()) {
+        UIWidget widget = getChild(mCurrentlyOpenedDialogHandle);
+        if (widget != null && oldFocus == widget && widget.isVisible()) {
             dismiss = true;
 
         } else if (oldFocus == this && isVisible()) {

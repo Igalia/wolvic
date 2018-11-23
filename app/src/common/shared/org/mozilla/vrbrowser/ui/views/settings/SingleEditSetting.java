@@ -1,4 +1,4 @@
-package org.mozilla.vrbrowser.ui.settings;
+package org.mozilla.vrbrowser.ui.views.settings;
 
 import android.content.Context;
 import android.content.res.ColorStateList;

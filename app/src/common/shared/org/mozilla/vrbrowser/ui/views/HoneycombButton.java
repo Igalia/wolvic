@@ -10,8 +10,8 @@ import android.view.MotionEvent;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.audio.AudioEngine;
 
 import androidx.annotation.Nullable;
 
@@ -24,10 +24,9 @@ public class HoneycombButton extends LinearLayout {
     private float mButtonTextSize;
     private String mSecondaryButtonText;
     private Drawable mButtonIcon;
-    private AudioEngine mAudio;
 
     public HoneycombButton(Context context, @Nullable AttributeSet attrs) {
-        this(context, attrs, R.style.settingsButtonTheme);
+        this(context, attrs, R.style.honeycombButtonTheme);
     }
 
     public HoneycombButton(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -42,8 +41,6 @@ public class HoneycombButton extends LinearLayout {
 
     private void initialize(Context aContext) {
         inflate(aContext, R.layout.honeycomb_button, this);
-
-        mAudio = AudioEngine.fromContext(aContext);
 
         setClickable(true);
 

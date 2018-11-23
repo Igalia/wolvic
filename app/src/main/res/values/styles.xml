@@ -1,7 +1,7 @@
 <resources>
     <declare-styleable name="AppTheme">
         <attr name="dialogButtonStyle" format="reference" />
-        <attr name="settingsButtonStyle" format="reference" />
+        <attr name="honeycombButtonStyle" format="reference" />
         <attr name="navigationBarStyle" format="reference" />
         <attr name="uiButtonStyle" format="reference" />
         <attr name="navigationBarButtonStyle" format="reference" />
@@ -25,6 +25,8 @@
         <item name="android:paddingStart">10dp</item>
         <item name="android:paddingEnd">10dp</item>
         <item name="android:inputType">textCapSentences</item>
+        <item name="android:textSize">@dimen/text_medium_size</item>
+        <item name="android:textColor">@color/fog</item>
     </style>
 
     <style name="navigationBarTheme">
@@ -88,7 +90,7 @@
         <item name="activeModeBackground">@drawable/tray_background_ckecked_end</item>
     </style>
 
-    <style name="settingsButtonTheme">
+    <style name="honeycombButtonTheme">
         <item name="android:orientation">vertical</item>
         <item name="android:layout_width">121dp</item>
         <item name="android:layout_height">136dp</item>
@@ -229,7 +231,7 @@
         <item name="android:windowActionBar">false</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="settingsButtonStyle">@style/settingsButtonTheme</item>
+        <item name="honeycombButtonStyle">@style/honeycombButtonTheme</item>
         <item name="navigationBarStyle">@style/navigationBarTheme</item>
         <item name="navigationBarButtonStyle">@style/navigationBarButtonTheme</item>
         <item name="fullScreenButtonStyle">@style/fullScreenButtonTheme</item>

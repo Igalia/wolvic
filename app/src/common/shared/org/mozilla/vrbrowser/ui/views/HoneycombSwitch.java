@@ -26,7 +26,7 @@ public class HoneycombSwitch extends LinearLayout {
     private OnCheckedChangeListener mSwitchListener;
 
     public HoneycombSwitch(Context context, @Nullable AttributeSet attrs) {
-        this(context, attrs, R.style.settingsButtonTheme);
+        this(context, attrs, R.style.honeycombButtonTheme);
     }
 
     public HoneycombSwitch(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {

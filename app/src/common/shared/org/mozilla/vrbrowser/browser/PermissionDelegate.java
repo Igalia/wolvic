@@ -9,7 +9,7 @@ import android.util.Log;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.PlatformActivity;
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.ui.widgets.PermissionWidget;
+import org.mozilla.vrbrowser.ui.widgets.dialogs.PermissionWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 
 import java.util.ArrayList;

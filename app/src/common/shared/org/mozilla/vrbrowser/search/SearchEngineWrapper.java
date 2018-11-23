@@ -97,22 +97,10 @@ public class SearchEngineWrapper implements SharedPreferences.OnSharedPreference
     }
 
     public String getSearchURL(String aQuery) {
-        try {
-            aQuery = URLEncoder.encode(aQuery, "UTF-8");
-
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
         return mSearchEngine.buildSearchUrl(aQuery);
     }
 
     public String getSuggestionURL(String aQuery) {
-        try {
-            aQuery = URLEncoder.encode(aQuery, "UTF-8");
-
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
         return mSearchEngine.buildSuggestionsURL(aQuery);
     }
 

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <RelativeLayout
+        android:id="@+id/optionsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/dialog_background"
+        android:paddingStart="30dp"
+        android:paddingTop="20dp"
+        android:paddingEnd="30dp"
+        android:paddingBottom="20dp">
+
+        <org.mozilla.vrbrowser.ui.views.UIButton
+            android:id="@+id/backButton"
+            style="?attr/navigationBarButtonStyle"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="10dp"
+            android:src="@drawable/ic_icon_back"
+            android:tint="@color/midnight" />
+
+        <ScrollView
+            android:id="@+id/scrollbar"
+            style="@style/scrollbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/resetButton"
+            android:layout_below="@+id/backButton">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:orientation="vertical">
+
+                <org.mozilla.vrbrowser.ui.views.settings.RadioGroupSetting
+                    android:id="@+id/ua_radio"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    app:description="@string/developer_options_ua_mode"
+                    app:options="@array/developer_options_ua_modes"
+                    app:values="@array/developer_options_ua_mode_values" />
+
+                <org.mozilla.vrbrowser.ui.views.settings.RadioGroupSetting
+                    android:id="@+id/msaa_radio"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    app:description="@string/developer_options_msaa"
+                    app:options="@array/developer_options_msaa"
+                    app:values="@array/developer_options_ua_mode_values" />
+
+                <org.mozilla.vrbrowser.ui.views.settings.SingleEditSetting
+                    android:id="@+id/density_edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    app:description="@string/developer_options_display_density" />
+
+                <org.mozilla.vrbrowser.ui.views.settings.SingleEditSetting
+                    android:id="@+id/dpi_edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    app:description="@string/developer_options_display_dpi" />
+
+                <org.mozilla.vrbrowser.ui.views.settings.DoubleEditSetting
+                    android:id="@+id/windowSize_edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    app:by="@string/developer_options_by"
+                    app:description="@string/developer_options_window_size" />
+
+                <org.mozilla.vrbrowser.ui.views.settings.DoubleEditSetting
+                    android:id="@+id/maxWindowSize_edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    app:by="@string/developer_options_by"
+                    app:description="@string/developer_options_max_window_size" />
+            </LinearLayout>
+        </ScrollView>
+
+        <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+            android:id="@+id/resetButton"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_alignParentBottom="true"
+            app:buttonText="@string/developer_options_reset_button"
+            app:description="@string/display_options_reset" />
+    </RelativeLayout>
+</merge>

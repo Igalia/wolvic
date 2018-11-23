@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <RelativeLayout
+        android:id="@+id/optionsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/dialog_background"
+        android:paddingStart="30dp"
+        android:paddingTop="20dp"
+        android:paddingEnd="30dp"
+        android:paddingBottom="20dp">
+
+        <org.mozilla.vrbrowser.ui.views.UIButton
+            android:id="@+id/backButton"
+            style="?attr/navigationBarButtonStyle"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="10dp"
+            android:src="@drawable/ic_icon_back"
+            android:tint="@color/midnight" />
+
+        <ScrollView
+            android:id="@+id/scrollbar"
+            style="@style/scrollbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/resetButton"
+            android:layout_below="@+id/backButton">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:orientation="vertical">
+
+                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                    android:id="@+id/remote_debugging_switch"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    app:description="@string/developer_options_remote_debugging" />
+
+                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                    android:id="@+id/show_console_switch"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    app:description="@string/developer_options_show_console" />
+
+                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                    android:id="@+id/env_override_switch"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    app:description="@string/developer_options_env_override" />
+
+                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                    android:id="@+id/multiprocess_switch"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    app:description="@string/developer_options_multiprocess" />
+
+                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                    android:id="@+id/servo_switch"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    app:description="@string/developer_options_servo" />
+
+                <org.mozilla.vrbrowser.ui.views.settings.RadioGroupSetting
+                    android:id="@+id/environment_radio"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    app:description="@string/developer_options_environments"
+                    app:options="@array/developer_options_environments"
+                    app:values="@array/developer_options_environments_values" />
+
+                <org.mozilla.vrbrowser.ui.views.settings.RadioGroupSetting
+                    android:id="@+id/pointer_radio"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    app:description="@string/developer_options_pointer_color"
+                    app:options="@array/developer_options_pointer_colors"
+                    app:values="@array/developer_options_pointer_colors_values" />
+            </LinearLayout>
+        </ScrollView>
+
+        <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+            android:id="@+id/resetButton"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_alignParentBottom="true"
+            app:buttonText="@string/developer_options_reset_button"
+            app:description="@string/developer_options_reset" />
+    </RelativeLayout>
+</merge>

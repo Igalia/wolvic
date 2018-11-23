@@ -1,4 +1,4 @@
-package org.mozilla.vrbrowser.ui.prompts;
+package org.mozilla.vrbrowser.ui.widgets.prompts;
 
 import android.content.Context;
 import android.graphics.Typeface;

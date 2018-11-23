@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
-        android:id="@+id/versionLayout"
+        android:id="@+id/optionsLayout"
         android:layout_width="@dimen/settings_width"
         android:layout_height="@dimen/settings_height"
         android:background="@drawable/settings_background"
@@ -58,6 +58,11 @@
         <ScrollView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="20dp"
             android:scrollbars="none">
 
             <HorizontalScrollView
@@ -68,71 +73,79 @@
                 android:requiresFadingEdge="horizontal"
                 android:scrollbars="none">
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:layout_height="wrap_content">
 
-                    <RelativeLayout
-                        android:layout_width="@dimen/settings_width"
-                        android:layout_height="wrap_content">
-
-                        <Space
-                            android:id="@+id/center"
-                            android:layout_width="0dp"
-                            android:layout_height="0dp"
-                            android:layout_centerHorizontal="true"
-                            android:visibility="invisible" />
+                    <LinearLayout
+                        android:id="@+id/first_row"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
 
                         <org.mozilla.vrbrowser.ui.views.HoneycombButton
-                            android:id="@+id/developerOptionsButton"
-                            style="?attr/settingsButtonStyle"
-                            android:layout_centerHorizontal="true"
-                            android:layout_marginTop="30dp"
-                            app:honeycombButtonIcon="@drawable/ic_settings_developeroptions"
-                            app:honeycombButtonText="@string/settings_developer_options"
+                            android:id="@+id/displayButton"
+                            style="?attr/honeycombButtonStyle"
+                            android:layout_marginRight="10dp"
+                            app:honeycombButtonIcon="@drawable/ic_settings_display"
+                            app:honeycombButtonText="@string/settings_display"
                             app:honeycombButtonTextSize="52dp" />
+
+                        <org.mozilla.vrbrowser.ui.views.HoneycombButton
+                            android:id="@+id/languageButton"
+                            style="?attr/honeycombButtonStyle"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginRight="10dp"
+                            app:honeycombButtonIcon="@drawable/ic_settings_language"
+                            app:honeycombButtonText="@string/settings_language" />
 
                         <org.mozilla.vrbrowser.ui.views.HoneycombSwitch
                             android:id="@+id/crashReportingSwitch"
-                            style="?attr/settingsButtonStyle"
-                            android:layout_marginTop="30dp"
+                            style="?attr/honeycombButtonStyle"
                             android:layout_marginRight="10dp"
-                            android:layout_toLeftOf="@id/developerOptionsButton"
                             app:honeycombSwitchText="@string/settings_crash_reporting"
                             app:honeycombSwitchTextSize="72dp" />
 
                         <org.mozilla.vrbrowser.ui.views.HoneycombSwitch
                             android:id="@+id/telemetry_switch"
-                            style="?attr/settingsButtonStyle"
-                            android:layout_marginLeft="10dp"
-                            android:layout_marginTop="30dp"
-                            android:layout_toRightOf="@id/developerOptionsButton"
-                            app:honeycombSwitchText="@string/settings_telemetry"
-                            app:honeycombSwitchTextSize="52dp" />
+                            style="?attr/honeycombButtonStyle"
+                            app:honeycombSwitchText="@string/settings_telemetry" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/second_row"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/first_row"
+                        android:layout_marginStart="66dp"
+                        android:layout_marginTop="-23dp"
+                        android:orientation="horizontal">
 
                         <org.mozilla.vrbrowser.ui.views.HoneycombButton
                             android:id="@+id/privacyButton"
-                            style="?attr/settingsButtonStyle"
-                            android:layout_below="@id/developerOptionsButton"
-                            android:layout_alignRight="@id/center"
-                            android:layout_marginTop="-25dp"
-                            android:layout_marginRight="5dp"
+                            style="?attr/honeycombButtonStyle"
+                            android:layout_marginRight="10dp"
                             app:honeycombButtonIcon="@drawable/ic_settings_privacypolicy"
-                            app:honeycombButtonText="@string/settings_privacy" />
+                            app:honeycombButtonText="@string/settings_privacy"
+                            app:honeycombButtonTextSize="52dp" />
+
+                        <org.mozilla.vrbrowser.ui.views.HoneycombButton
+                            android:id="@+id/developerOptionsButton"
+                            style="?attr/honeycombButtonStyle"
+                            android:layout_marginRight="10dp"
+                            app:honeycombButtonIcon="@drawable/ic_settings_developeroptions"
+                            app:honeycombButtonText="@string/settings_developer_options"
+                            app:honeycombButtonTextSize="52dp" />
 
                         <org.mozilla.vrbrowser.ui.views.HoneycombButton
                             android:id="@+id/reportButton"
-                            style="?attr/settingsButtonStyle"
-                            android:layout_below="@id/developerOptionsButton"
-                            android:layout_alignLeft="@id/center"
-                            android:layout_marginLeft="5dp"
-                            android:layout_marginTop="-25dp"
+                            style="?attr/honeycombButtonStyle"
                             app:honeycombButtonIcon="@drawable/ic_settings_reportissue"
                             app:honeycombButtonText="@string/settings_report_issue"
                             app:honeycombSecondaryText="@string/bug_report_url" />
-                    </RelativeLayout>
-                </LinearLayout>
+                    </LinearLayout>
+                </RelativeLayout>
             </HorizontalScrollView>
         </ScrollView>
 

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Environments Options -->
+    <string-array name="developer_options_environments" translatable="false">
+        <item>@string/developer_options_env_void</item>
+        <item>@string/developer_options_env_cave</item>
+        <item>@string/developer_options_env_meadow</item>
+    </string-array>
+
+    <string-array name="developer_options_environments_values" translatable="false">
+        <item>void</item>
+        <item>cave</item>
+        <item>meadow</item>
+    </string-array>
+
+    <!-- Pointer Options -->
+    <string-array name="developer_options_pointer_colors" translatable="false">
+        <item>@string/developer_options_pointer_white</item>
+        <item>@string/developer_options_pointer_purple</item>
+    </string-array>
+
+    <integer-array name="developer_options_pointer_colors_values" translatable="false">
+        <item>0xFFFFFFFF</item>
+        <item>0xC27FFCFF</item>
+    </integer-array>
+
+    <!-- Environments Options -->
+    <string-array name="developer_options_ua_modes" translatable="false">
+        <item>@string/developer_options_ua_mobile</item>
+        <item>@string/developer_options_ua_desktop</item>
+        <item>@string/developer_options_ua_vr</item>
+    </string-array>
+
+    <integer-array name="developer_options_ua_mode_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </integer-array>
+
+    <!-- MSAA Options -->
+    <string-array name="developer_options_msaa" translatable="false">
+        <item>@string/developer_options_msaa_disabled</item>
+        <item>@string/developer_options_msaa_2</item>
+        <item>@string/developer_options_msaa_4</item>
+    </string-array>
+
+    <!-- Language Options -->
+    <string-array name="developer_options_voice_search_languages" translatable="false">
+        <item>@string/language_en_US</item>
+        <item>@string/language_cmn_Hant_TW</item>
+        <item>@string/language_cmn_Hans_CN</item>
+        <item>@string/language_ja_JP</item>
+        <item>@string/language_fr_FR</item>
+        <item>@string/language_de_DE</item>
+        <item>@string/language_es_ES</item>
+        <item>@string/language_ko_KR</item>
+        <item>@string/language_it_IT</item>
+    </string-array>
+
+    <string-array name="developer_options_voice_search_languages_values" translatable="false">
+        <item>en-US</item>
+        <item>cmn-Hant-TW</item>
+        <item>cmn-Hans-CN</item>
+        <item>ja-JP</item>
+        <item>fr-FR</item>
+        <item>de-DE</item>
+        <item>es-ES</item>
+        <item>ko-KR</item>
+        <item>it-IT</item>
+    </string-array>
+</resources>

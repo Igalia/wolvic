@@ -1,4 +1,4 @@
-package org.mozilla.vrbrowser.ui.settings;
+package org.mozilla.vrbrowser.ui.views.settings;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -14,6 +14,7 @@ import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 
 import androidx.annotation.IdRes;
+import androidx.annotation.LayoutRes;
 
 public class RadioGroupSetting extends LinearLayout {
 
@@ -25,9 +26,10 @@ public class RadioGroupSetting extends LinearLayout {
     private String mDecription;
     private CharSequence[] mOptions;
     private Object[] mValues;
-    private RadioGroup mRadioGroup;
+    protected RadioGroup mRadioGroup;
     private TextView mRadioDescription;
     private OnCheckedChangeListener mRadioGroupListener;
+    private @LayoutRes int mLayout;
 
     public RadioGroupSetting(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -39,6 +41,7 @@ public class RadioGroupSetting extends LinearLayout {
         TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.RadioGroupSetting, defStyleAttr, 0);
         mDecription = attributes.getString(R.styleable.RadioGroupSetting_description);
         mOptions = attributes.getTextArray(R.styleable.RadioGroupSetting_options);
+        mLayout = attributes.getResourceId(R.styleable.RadioGroupSetting_layout, R.layout.setting_radio_group);
         int id = attributes.getResourceId(R.styleable.RadioGroupSetting_values, 0);
         TypedArray array = context.getResources().obtainTypedArray(id);
         if (array.getType(0) == TypedValue.TYPE_STRING) {
@@ -54,16 +57,18 @@ public class RadioGroupSetting extends LinearLayout {
         }
         attributes.recycle();
 
-        initialize(context);
+        initialize(context, mLayout);
     }
 
-    private void initialize(Context aContext) {
-        inflate(aContext, R.layout.setting_radio_group, this);
+    protected void initialize(Context aContext, @LayoutRes int layout) {
+        inflate(aContext, layout, this);
 
         mAudio = AudioEngine.fromContext(aContext);
 
         mRadioDescription = findViewById(R.id.setting_description);
-        mRadioDescription.setText(mDecription);
+        if (mRadioDescription != null) {
+            mRadioDescription.setText(mDecription);
+        }
 
         mRadioGroup = findViewById(R.id.radio_group);
         mRadioGroup.setSoundEffectsEnabled(false);
@@ -124,7 +129,7 @@ public class RadioGroupSetting extends LinearLayout {
             }
         }
 
-        return -1;
+        return 0;
     }
 
     public int getCheckedRadioButtonId() {
