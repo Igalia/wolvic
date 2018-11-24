@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -946,8 +947,14 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         if (PRIVATE_BROWSING_URI.equalsIgnoreCase(aRequest.uri)) {
             switchPrivateMode();
             result.complete(AllowOrDeny.ALLOW);
-
         } else {
+            String override = checkYoutubeOverride(aRequest.uri);
+            if (override != null) {
+                aSession.loadUri(override);
+                result.complete(AllowOrDeny.DENY);
+                return result;
+            }
+
             AtomicInteger count = new AtomicInteger(0);
             AtomicBoolean allowed = new AtomicBoolean(false);
             for (GeckoSession.NavigationDelegate listener: mNavigationListeners) {
@@ -966,6 +973,29 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         }
 
         return result;
+    }
+
+    /*
+     * Polymer makes youtube very slow. Disable it via URL parameter.
+     */
+    private String checkYoutubeOverride(String aUri) {
+        try {
+            Uri uri = Uri.parse(aUri);
+            if (!uri.getHost().toLowerCase().contains("www.youtube.")) {
+                return null;
+            }
+            String query = uri.getQueryParameter("disable_polymer");
+            if (query != null) {
+                return null;
+            }
+            String result = aUri;
+            result += aUri.contains("?") ? "&" : "?";
+            result += "disable_polymer=1";
+            return result;
+        }
+        catch (Exception ex) {
+            return null;
+        }
     }
 
     @Override
