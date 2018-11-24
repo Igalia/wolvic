@@ -77,6 +77,8 @@ If you get an error extracting the NDK, you might need to copy the `local.proper
 
 If you run the APK on an Android device outside of Daydream or Gear VR, it will run in flat mode. To run in VR, put the device into a headset, and run the app from the VR launcher.
 
+Unfortunately, for mobile-clip-in VR viewers, the APK isn't yet published in the Google Play Store because of [known performance issues and bugs](https://github.com/MozillaReality/FirefoxReality/issues/598). The APK currently available is for only standalone Daydream headsets.
+
 *If you want to build FirefoxReality for WaveVR SDK:*
 
 Download the [VIVE Wave SDK](https://developer.vive.com/resources/knowledgebase/wave-sdk/) from the [VIVE Developer Resources](https://vivedeveloper.com/), and unzip it. Then, from the top-level project directory, run:
@@ -125,7 +127,6 @@ Restart FxR and close and re-open the WebIDE page.
 - You can use `adb shell am start -a android.intent.action.VIEW -d "https://aframe.io" org.mozilla.vrbrowser/org.mozilla.vrbrowser.VRBrowserActivity` to load a URL from the command line
 - You can use `adb shell setprop debug.oculus.enableVideoCapture 1` to record videos on the Oculus Go. Remember to disable it when your video is ready.
 - You can set `disableCrashRestart=true` in the gradle `user.properties` to disable app relaunch on crash.
-
 
 ## Experimental Servo support
 
