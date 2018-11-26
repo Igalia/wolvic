@@ -374,6 +374,8 @@ public class BrowserWidget extends UIWidget implements SessionStore.SessionChang
 
         mSessionId = aId;
         mDisplay = aSession.acquireDisplay();
+        Log.d(LOGTAG, "surfaceChanged: " + aId);
+        callSurfaceChanged();
         aSession.getTextInput().setView(this);
 
         boolean isPrivateMode  = aSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
