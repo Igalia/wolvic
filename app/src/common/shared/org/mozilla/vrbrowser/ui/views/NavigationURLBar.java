@@ -419,7 +419,6 @@ public class NavigationURLBar extends FrameLayout {
             mAudio.playSound(AudioEngine.Sound.CLICK);
         }
 
-        view.requestFocusFromTouch();
         mURL.getText().clear();
     };
 
