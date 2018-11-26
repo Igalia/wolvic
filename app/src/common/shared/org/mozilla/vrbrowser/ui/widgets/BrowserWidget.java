@@ -49,6 +49,7 @@ public class BrowserWidget extends UIWidget implements SessionStore.SessionChang
     private BookmarksWidget mBookmarksWidget;
     private float mMultiplier;
     Runnable mFirstDrawCallback;
+    private boolean mIsInVRVideoMode;
 
     public BrowserWidget(Context aContext, int aSessionId) {
         super(aContext);
@@ -137,8 +138,11 @@ public class BrowserWidget extends UIWidget implements SessionStore.SessionChang
     }
 
     public void enableVRVideoMode(int aVideoWidth, int aVideoHeight, boolean aResetBorder) {
-        mWidthBackup = mWidth;
-        mHeightBackup = mHeight;
+        if (!mIsInVRVideoMode) {
+            mWidthBackup = mWidth;
+            mHeightBackup = mHeight;
+            mIsInVRVideoMode = true;
+        }
         boolean borderChanged = aResetBorder && mBorderWidth > 0;
         if (aVideoWidth == mWidth && aVideoHeight == mHeight && !borderChanged) {
             return;
@@ -148,14 +152,14 @@ public class BrowserWidget extends UIWidget implements SessionStore.SessionChang
         }
         mWidgetPlacement.width = aVideoWidth + mBorderWidth * 2;
         mWidgetPlacement.height = aVideoHeight + mBorderWidth * 2;
-        resizeSurface(aVideoWidth, aVideoHeight);
-        Log.e(LOGTAG, "onMetadataChange resize browser " + aVideoWidth + " " + aVideoHeight);
+        mWidgetManager.updateWidget(this);
     }
 
     public void disableVRVideoMode() {
-        if (mWidthBackup == 0 || mHeightBackup == 0) {
+        if (!mIsInVRVideoMode || mWidthBackup == 0 || mHeightBackup == 0) {
             return;
         }
+        mIsInVRVideoMode = false;
         int border = SettingsStore.getInstance(getContext()).getLayersEnabled() ? 1 : 0;
         if (mWidthBackup == mWidth && mHeightBackup == mHeight && border == mBorderWidth) {
             return;
@@ -163,7 +167,7 @@ public class BrowserWidget extends UIWidget implements SessionStore.SessionChang
         mBorderWidth = border;
         mWidgetPlacement.width = mWidthBackup;
         mWidgetPlacement.height = mHeightBackup;
-        resizeSurface(mWidthBackup, mWidthBackup);
+        mWidgetManager.updateWidget(this);
     }
 
     @Override
@@ -247,8 +251,8 @@ public class BrowserWidget extends UIWidget implements SessionStore.SessionChang
         mHeight = aHeight;
         if (mTexture != null) {
             mTexture.setDefaultBufferSize(aWidth, aHeight);
+            callSurfaceChanged();
         }
-        callSurfaceChanged();
     }
 
     @Override
@@ -383,8 +387,6 @@ public class BrowserWidget extends UIWidget implements SessionStore.SessionChang
 
         mSessionId = aId;
         mDisplay = aSession.acquireDisplay();
-        Log.d(LOGTAG, "surfaceChanged: " + aId);
-        callSurfaceChanged();
         aSession.getTextInput().setView(this);
 
         boolean isPrivateMode  = aSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);

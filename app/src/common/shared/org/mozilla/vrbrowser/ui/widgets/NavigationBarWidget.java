@@ -474,12 +474,12 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
         this.setVisible(false);
         if (mFullScreenMedia != null && mFullScreenMedia.getWidth() > 0 && mFullScreenMedia.getHeight() > 0) {
-            boolean resetBorder = aProjection == VideoProjectionMenuWidget.VIDEO_PROJECTION_360 ||
-                                  aProjection == VideoProjectionMenuWidget.VIDEO_PROJECTION_360_STEREO;
+            final boolean resetBorder = aProjection == VideoProjectionMenuWidget.VIDEO_PROJECTION_360 ||
+                                        aProjection == VideoProjectionMenuWidget.VIDEO_PROJECTION_360_STEREO;
             mBrowserWidget.enableVRVideoMode(mFullScreenMedia.getWidth(), mFullScreenMedia.getHeight(), resetBorder);
             // Handle video resize while in VR video playback
             mFullScreenMedia.setResizeDelegate((width, height) -> {
-                mBrowserWidget.resizeSurface(width, height);
+                mBrowserWidget.enableVRVideoMode(width, height, resetBorder);
             });
         }
         mBrowserWidget.setVisible(false);
