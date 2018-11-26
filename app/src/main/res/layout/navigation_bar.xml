@@ -105,39 +105,34 @@
 
             <org.mozilla.vrbrowser.ui.views.UITextButton
                 android:id="@+id/resizePreset3"
-                style="?attr/navigationBarTextButtonStyle"
-                android:background="@drawable/fullscreen_button_first"
+                style="@style/navigationBarTextButtonStartTheme"
                 android:textSize="14sp"
                 android:text="3x" />
 
             <org.mozilla.vrbrowser.ui.views.UITextButton
                 android:id="@+id/resizePreset2"
-                style="?attr/navigationBarTextButtonStyle"
-                android:background="@drawable/fullscreen_button"
+                style="@style/navigationBarTextButtonMiddleTheme"
                 android:padding="5dp"
                 android:textSize="14sp"
                 android:text="2x" />
 
             <org.mozilla.vrbrowser.ui.views.UITextButton
                 android:id="@+id/resizePreset1"
-                style="?attr/navigationBarTextButtonStyle"
-                android:background="@drawable/fullscreen_button"
+                style="@style/navigationBarTextButtonMiddleTheme"
                 android:padding="5dp"
                 android:textSize="14sp"
                 android:text="1x" />
 
             <org.mozilla.vrbrowser.ui.views.UITextButton
                 android:id="@+id/resizePreset0"
-                style="?attr/navigationBarTextButtonStyle"
-                android:background="@drawable/fullscreen_button"
+                style="@style/navigationBarTextButtonMiddleTheme"
                 android:padding="5dp"
                 android:textSize="14sp"
                 android:text="0.5x" />
 
             <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/resizeExitButton"
-                style="?attr/fullScreenButtonStyle"
-                android:background="@drawable/fullscreen_button_last"
+                style="@style/navigationBarTextButtonEndTheme"
                 android:src="@drawable/ic_icon_focus_mode_resize_done" />
         </LinearLayout>
     </RelativeLayout>

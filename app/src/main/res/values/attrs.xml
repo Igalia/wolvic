@@ -20,10 +20,6 @@
         <attr name="activeModeBackground" format="integer" />
     </declare-styleable>
 
-    <declare-styleable name="UITextButton">
-        <attr name="textTintColorList" format="reference|color" />
-    </declare-styleable>
-
     <attr name="description" format="string" />
 
     <declare-styleable name="SwitchSetting">
