@@ -54,6 +54,7 @@ public class SettingsStore {
     public final static float BROWSER_WORLD_WIDTH_DEFAULT = 4.0f;
     public final static float BROWSER_WORLD_HEIGHT_DEFAULT = 2.25f;
     public final static int MSAA_DEFAULT_LEVEL = 1;
+    public final static boolean AUDIO_ENABLED = false;
 
     // Enable telemetry by default (opt-out).
     private final static boolean enableCrashReportingByDefault = false;
@@ -318,6 +319,16 @@ public class SettingsStore {
             return true;
         }
         return false;
+    }
+
+    public boolean isAudioEnabled() {
+        return mPrefs.getBoolean(mContext.getString(R.string.settings_key_audio), AUDIO_ENABLED);
+    }
+
+    public void setAudioEnabled(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_audio), isEnabled);
+        editor.commit();
     }
 
     public String getVoiceSearchLanguage() {

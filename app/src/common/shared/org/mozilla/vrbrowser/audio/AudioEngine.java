@@ -19,6 +19,7 @@ public class AudioEngine {
     private ConcurrentHashMap<Sound, Integer> mSourceIds;
     private float mMasterVolume = 1.0f;
     private static ConcurrentHashMap<Context, AudioEngine> mEngines = new ConcurrentHashMap<>();
+    private boolean mEnabled;
     private static final String LOGTAG = "VRB";
 
     public enum SoundType {
@@ -61,9 +62,14 @@ public class AudioEngine {
         mEngine = new GvrAudioEngine(aContext, GvrAudioEngine.RenderingMode.BINAURAL_HIGH_QUALITY);
         mSourceIds = new ConcurrentHashMap<>();
         mEngines.put(aContext, this);
+        mEnabled = true;
     }
 
-    public void preload() {
+    public void setEnabled(boolean enabled) {
+        mEnabled = enabled;
+    }
+
+    private void preload() {
         for (Sound sound: Sound.values()) {
             if (sound.getType() == SoundType.FIELD) {
                 // Ambisonic soundfields do *not* need to be preloaded
@@ -84,16 +90,18 @@ public class AudioEngine {
 
     // Perform preloading in a separate thread in order to avoid blocking the main thread
     public void preloadAsync(final Runnable aCallback) {
-        Thread thread = new Thread(new Runnable(){
-            @Override
-            public void run(){
-                preload();
-                if (aCallback != null) {
-                    ((Activity)mContext).runOnUiThread(aCallback);
+        if (mEnabled) {
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    preload();
+                    if (aCallback != null) {
+                        ((Activity) mContext).runOnUiThread(aCallback);
+                    }
                 }
-            }
-        });
-        thread.start();
+            });
+            thread.start();
+        }
     }
 
     public void release() {
@@ -125,10 +133,12 @@ public class AudioEngine {
     }
 
     public void playSound(Sound aSound) {
-        playSound(aSound, false);
+        if (mEnabled) {
+            playSound(aSound, false);
+        }
     }
 
-    public void playSound(Sound aSound, boolean aLoopEnabled) {
+    private void playSound(Sound aSound, boolean aLoopEnabled) {
         String path = mTheme.getPath(aSound);
         if (path == null || path.length() == 0) {
             return;
@@ -140,22 +150,24 @@ public class AudioEngine {
         }
     }
 
-    public void playSound(int aSourceId, boolean aLoopEnabled) {
+    private void playSound(int aSourceId, boolean aLoopEnabled) {
         mEngine.playSound(aSourceId, aLoopEnabled);
     }
 
     public void pauseSound(Sound aSound) {
-        Integer sourceId = findSourceId(aSound);
-        if (sourceId != null) {
-            pauseSound(sourceId);
+        if (mEnabled) {
+            Integer sourceId = findSourceId(aSound);
+            if (sourceId != null) {
+                pauseSound(sourceId);
+            }
         }
     }
 
-    public void pauseSound(int aSourceId) {
+    private void pauseSound(int aSourceId) {
         mEngine.pauseSound(aSourceId);
     }
 
-    public void resumeSound(Sound aSound) {
+    private void resumeSound(Sound aSound) {
         Integer sourceId = findSourceId(aSound);
         if (sourceId != null) {
             resumeSound(sourceId);
@@ -163,10 +175,12 @@ public class AudioEngine {
     }
 
     public void resumeSound(int aSourceId) {
-        mEngine.stopSound(aSourceId);
+        if (mEnabled) {
+            mEngine.stopSound(aSourceId);
+        }
     }
 
-    public void setSoundPosition(Sound aSound, float x, float y, float z) {
+    private void setSoundPosition(Sound aSound, float x, float y, float z) {
         if (aSound.getType() != SoundType.OBJECT) {
             Log.e(LOGTAG, "Sound position can only be set for SoundType.Object!");
             return;
@@ -178,10 +192,12 @@ public class AudioEngine {
     }
 
     public void setSoundPosition(int aSoundObjectId, float x, float y, float z) {
-        mEngine.setSoundObjectPosition(aSoundObjectId, x, y, z);
+        if (mEnabled) {
+            mEngine.setSoundObjectPosition(aSoundObjectId, x, y, z);
+        }
     }
 
-    public void setSoundVolume(Sound aSound, float aVolume) {
+    private void setSoundVolume(Sound aSound, float aVolume) {
         Integer sourceId = findSourceId(aSound);
         if (sourceId != null) {
             setSoundVolume(sourceId, aVolume);
@@ -189,15 +205,17 @@ public class AudioEngine {
     }
 
     public void setSoundVolume(int aSourceId, float aVolume) {
-        mEngine.setSoundVolume(aSourceId, aVolume * mMasterVolume);
+        if (mEnabled) {
+            mEngine.setSoundVolume(aSourceId, aVolume * mMasterVolume);
+        }
     }
 
-    public void setMasterVolume(float aMasterVolume) {
+    private void setMasterVolume(float aMasterVolume) {
         mMasterVolume = aMasterVolume;
     }
 
 
-    public int createSound(SoundType aType, String path) {
+    private int createSound(SoundType aType, String path) {
         mEngine.preloadSoundFile(path);
         int sourceId = GvrAudioEngine.INVALID_ID;
         switch (aType) {
@@ -213,11 +231,11 @@ public class AudioEngine {
         return sourceId;
     }
 
-    public void preloadFile(String path) {
+    private void preloadFile(String path) {
         mEngine.preloadSoundFile(path);
     }
 
-    public void unloadFile(String path) {
+    private void unloadFile(String path) {
         mEngine.unloadSoundFile(path);
     }
 
