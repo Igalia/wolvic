@@ -178,6 +178,9 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
         });
 
         this.setOnHoverListener((v, event) -> {
+            if (mMedia == null) {
+                return false;
+            }
             if (event.getAction() == MotionEvent.ACTION_HOVER_MOVE || event.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
                 float threshold = (float)MediaControlsWidget.this.getMeasuredWidth() * 0.65f;
                 boolean isVisible = mVolumeControl.getVisibility() == View.VISIBLE;
@@ -236,13 +239,20 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
     }
 
     public void setMedia(Media aMedia) {
-        if (mMedia == aMedia) {
+        if (mMedia != null && mMedia == aMedia) {
             return;
         }
         if (mMedia != null) {
             mMedia.setDelegate(null);
         }
         mMedia = aMedia;
+        boolean enabled = mMedia != null;
+        mMediaPlayButton.setEnabled(enabled);
+        mMediaVolumeButton.setEnabled(enabled);
+        mMediaSeekForwardButton.setEnabled(enabled);
+        mMediaSeekBackButton.setEnabled(enabled);
+        mSeekBar.setEnabled(enabled);
+
         if (mMedia == null) {
             return;
         }

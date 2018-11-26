@@ -148,6 +148,14 @@ public class MediaSeekBar extends LinearLayout implements SeekBar.OnSeekBarChang
         mLiveIcon.setVisibility(aSeekable ? View.GONE : View.VISIBLE);
     }
 
+    public void setEnabled(boolean aEnabled) {
+        setSeekable(aEnabled && mSeekable);
+        if (!aEnabled) {
+            mLeftText.setText("");
+            mLiveIcon.setVisibility(View.GONE);
+        }
+    }
+
     public void setBuffered(double aBuffered) {
         mBuffered = aBuffered;
         if (mSeekable) {
