@@ -268,6 +268,10 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
         mMedia.setDelegate(this);
     }
 
+    public void setProjectionSelectorEnabled(boolean aEnabled) {
+        mMediaProjectionButton.setEnabled(aEnabled);
+    }
+
     // Media Element delegate
     @Override
     public void onPlaybackStateChange(MediaElement mediaElement, int playbackState) {

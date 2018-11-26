@@ -36,6 +36,7 @@ import org.mozilla.vrbrowser.utils.UrlUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -90,6 +91,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private MediaControlsWidget mMediaControlsWidget;
     private BookmarksWidget mBookmarksWidget;
     private Media mFullScreenMedia;
+    private @VideoProjectionMenuWidget.VideoProjectionFlags Integer mAutoSelectedProjection;
 
     public NavigationBarWidget(Context aContext) {
         super(aContext);
@@ -225,8 +227,13 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
 
+            if (mAutoSelectedProjection != null) {
+                enterVRVideo(mAutoSelectedProjection);
+                return;
+            }
             boolean wasVisible = mProjectionMenu.isVisible();
             closeFloatingMenus();
+
             if (!wasVisible) {
                 mProjectionMenu.setVisible(true);
             }
@@ -498,6 +505,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         }
         mMediaControlsWidget.setProjectionMenuWidget(mProjectionMenu);
         mMediaControlsWidget.setMedia(mFullScreenMedia);
+        mMediaControlsWidget.setProjectionSelectorEnabled(mAutoSelectedProjection == null);
         mWidgetManager.updateWidget(mMediaControlsWidget);
         mWidgetManager.showVRVideo(mBrowserWidget.getHandle(), aProjection);
     }
@@ -691,7 +699,11 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             if (mIsResizing) {
                 exitResizeMode(false);
             }
-
+            AtomicBoolean autoEnter = new AtomicBoolean(false);
+            mAutoSelectedProjection = VideoProjectionMenuWidget.getAutomaticProjection(SessionStore.get().getUriFromSession(session), autoEnter);
+            if (mAutoSelectedProjection != null && autoEnter.get()) {
+                getHandler().postDelayed(() -> enterVRVideo(mAutoSelectedProjection), 300);
+            }
         } else {
             if (mIsInVRVideo) {
                 exitVRVideo();
