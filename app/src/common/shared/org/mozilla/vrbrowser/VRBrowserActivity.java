@@ -47,7 +47,6 @@ import org.mozilla.vrbrowser.ui.OffscreenDisplay;
 import org.mozilla.vrbrowser.ui.widgets.BookmarkListener;
 import org.mozilla.vrbrowser.ui.widgets.BookmarksWidget;
 import org.mozilla.vrbrowser.ui.widgets.BrowserWidget;
-import org.mozilla.vrbrowser.ui.widgets.dialogs.CrashDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.KeyboardWidget;
 import org.mozilla.vrbrowser.ui.widgets.NavigationBarWidget;
 import org.mozilla.vrbrowser.ui.widgets.RootWidget;
@@ -59,9 +58,11 @@ import org.mozilla.vrbrowser.ui.widgets.VideoProjectionMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.Widget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
+import org.mozilla.vrbrowser.ui.widgets.dialogs.CrashDialogWidget;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -130,6 +131,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private LinkedList<Pair<Object, Float>> mBrightnessQueue;
     private Pair<Object, Float> mCurrentBrightness;
     private SearchEngineWrapper mSearchEngineWrapper;
+    private ArrayList<Widget> mResizableWidgets;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,6 +162,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mBackHandlers = new LinkedList<>();
         mBrightnessQueue = new LinkedList<>();
         mCurrentBrightness = Pair.create(null, 1.0f);
+
+        mResizableWidgets = new ArrayList<>();
 
         mWidgets = new HashMap<>();
         mWidgetContainer = new FrameLayout(this);
@@ -205,8 +209,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         // Bookmarks panel
         mBookmarksWidget = new BookmarksWidget(this);
-        mBookmarksWidget.setBrowserWidget(mBrowserWidget);
-        mBrowserWidget.setBookmarksWidget(mBookmarksWidget);
 
         // Create Browser navigation widget
         mNavigationBar = new NavigationBarWidget(this);
@@ -233,8 +235,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mTray = new TrayWidget(this);
 
         // Add widget listeners
-        mTray.addListeners(new TrayListener[]{mBookmarksWidget, mNavigationBar});
+        mTray.addListeners(new TrayListener[]{mNavigationBar, mBookmarksWidget});
         mBookmarksWidget.addListeners(new BookmarkListener[]{mBrowserWidget, mNavigationBar, mTray});
+
+        mResizableWidgets.addAll(Arrays.asList(mBrowserWidget, mBookmarksWidget));
 
         addWidgets(Arrays.asList(mRootWidget, mBrowserWidget, mNavigationBar, mKeyboard, mTray, mBookmarksWidget));
     }
@@ -562,12 +566,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @SuppressWarnings("unused")
     void handleResize(final int aHandle, final float aWorldWidth, final float aWorldHeight) {
         runOnUiThread(() -> {
-            Widget widget = mWidgets.get(aHandle);
-            if (widget != null) {
-                widget.handleResizeEvent(aWorldWidth, aWorldHeight);
-            } else {
-                Log.e(LOGTAG, "Failed to find widget for resize: " + aHandle);
-            }
+            mResizableWidgets.forEach(widget -> widget.handleResizeEvent(aWorldWidth, aWorldHeight));
         });
     }
 
@@ -912,8 +911,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
-    public void setBrowserSize(float targetWidth, float targetHeight) {
-        mBrowserWidget.resizeByMultiplier(targetWidth / targetHeight, 1.0f);
+    public void setWindowSize(float targetWidth, float targetHeight) {
+            mBrowserWidget.resizeByMultiplier(targetWidth / targetHeight, 1.0f);
     }
 
     @Override

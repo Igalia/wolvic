@@ -37,7 +37,7 @@ public interface WidgetManagerDelegate {
     void popWorldBrightness(Object aKey);
     void setTrayVisible(boolean visible);
     void setControllersVisible(boolean visible);
-    void setBrowserSize(float targetWidth, float targetHeight);
+    void setWindowSize(float targetWidth, float targetHeight);
     void keyboardDismissed();
     void updateEnvironment();
     void updatePointerColor();

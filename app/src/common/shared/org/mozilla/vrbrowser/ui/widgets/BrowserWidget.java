@@ -29,8 +29,7 @@ import org.mozilla.vrbrowser.ui.widgets.prompts.ChoicePromptWidget;
 
 
 public class BrowserWidget extends UIWidget implements SessionStore.SessionChangeListener,
-        GeckoSession.ContentDelegate, GeckoSession.PromptDelegate, WidgetManagerDelegate.UpdateListener,
-        BookmarkListener {
+        GeckoSession.ContentDelegate, GeckoSession.PromptDelegate, BookmarkListener {
 
     private static final String LOGTAG = "VRB";
 
@@ -46,8 +45,6 @@ public class BrowserWidget extends UIWidget implements SessionStore.SessionChang
     private int mWidthBackup;
     private int mHeightBackup;
     private int mBorderWidth;
-    private BookmarksWidget mBookmarksWidget;
-    private float mMultiplier;
     Runnable mFirstDrawCallback;
     private boolean mIsInVRVideoMode;
 
@@ -59,7 +56,6 @@ public class BrowserWidget extends UIWidget implements SessionStore.SessionChang
         SessionStore.get().addSessionChangeListener(this);
         SessionStore.get().addPromptListener(this);
         SessionStore.get().addContentListener(this);
-        mWidgetManager.addUpdateListener(this);
         setFocusable(true);
         GeckoSession session = SessionStore.get().getSession(mSessionId);
         if (session != null) {
@@ -68,8 +64,6 @@ public class BrowserWidget extends UIWidget implements SessionStore.SessionChang
         mHandle = ((WidgetManagerDelegate)aContext).newWidgetHandle();
         mWidgetPlacement = new WidgetPlacement(aContext);
         initializeWidgetPlacement(mWidgetPlacement);
-
-        mMultiplier = 1.0f;
 
         handleResizeEvent(SettingsStore.getInstance(getContext()).getBrowserWorldWidth(),
                 SettingsStore.getInstance(getContext()).getBrowserWorldHeight());
@@ -112,10 +106,6 @@ public class BrowserWidget extends UIWidget implements SessionStore.SessionChang
         mWidgetManager.updateWidget(this);
 
         clearFocus();
-    }
-
-    public void setBookmarksWidget(BookmarksWidget aWidget) {
-        mBookmarksWidget = aWidget;
     }
 
     public void pauseCompositor() {
@@ -172,8 +162,6 @@ public class BrowserWidget extends UIWidget implements SessionStore.SessionChang
 
     @Override
     public void resizeByMultiplier(float aspect, float multiplier) {
-        mMultiplier = multiplier;
-
         float worldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width);
         float worldHeight = worldWidth / aspect;
         float area = worldWidth * worldHeight * multiplier;
@@ -309,7 +297,6 @@ public class BrowserWidget extends UIWidget implements SessionStore.SessionChang
         SessionStore.get().removeSessionChangeListener(this);
         SessionStore.get().removePromptListener(this);
         SessionStore.get().removeContentListener(this);
-        mWidgetManager.removeUpdateListener(this);
         GeckoSession session = SessionStore.get().getSession(mSessionId);
         if (session == null) {
             return;
@@ -551,20 +538,6 @@ public class BrowserWidget extends UIWidget implements SessionStore.SessionChang
     public void onBookmarksHidden() {
         resumeCompositor();
         show();
-    }
-
-    // UpdateListener
-
-    @Override
-    public void onWidgetUpdate(Widget aWidget) {
-        if (aWidget != mBookmarksWidget || !mBookmarksWidget.isVisible()) {
-            return;
-        }
-
-        mWidgetPlacement.worldWidth = aWidget.getPlacement().worldWidth;
-        mWidgetPlacement.width = aWidget.getPlacement().width;
-        mWidgetPlacement.height = aWidget.getPlacement().height;
-        mWidgetManager.updateWidget(this);
     }
 
     // GeckoSession.ContentDelegate

@@ -524,12 +524,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     private void setResizePreset(float aMultiplier) {
         final float aspect = SettingsStore.getInstance(getContext()).getWindowAspect();
-        if (mBrowserWidget.isVisible()) {
-            mBrowserWidget.resizeByMultiplier(aspect, aMultiplier);
-
-        } else if (mBookmarksWidget.isVisible()) {
-            mBookmarksWidget.resizeByMultiplier(aspect, aMultiplier);
-        }
+        mBrowserWidget.resizeByMultiplier(aspect, aMultiplier);
+        mBookmarksWidget.resizeByMultiplier(aspect, aMultiplier);
     }
 
     public void showVoiceSearch() {

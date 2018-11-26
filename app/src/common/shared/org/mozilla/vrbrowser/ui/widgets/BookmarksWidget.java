@@ -41,14 +41,13 @@ import static org.mozilla.gecko.GeckoAppShell.getApplicationContext;
 
 
 public class BookmarksWidget extends UIWidget implements Application.ActivityLifecycleCallbacks,
-        WidgetManagerDelegate.UpdateListener, TrayListener, GeckoSession.NavigationDelegate {
+        TrayListener, GeckoSession.NavigationDelegate {
 
     private static final String ABOUT_BLANK = "about:blank";
 
     private BookmarksBinding mBinding;
     private BookmarkAdapter mBookmarkAdapter;
     private BookmarkListViewModel mBookmarkListModel;
-    private Widget mBrowserWidget;
     private List<BookmarkListener> mBookmarkListeners;
     private AudioEngine mAudio;
     private int mSessionId;
@@ -75,7 +74,6 @@ public class BookmarksWidget extends UIWidget implements Application.ActivityLif
         mAudio = AudioEngine.fromContext(aContext);
 
         ((Application)getApplicationContext()).registerActivityLifecycleCallbacks(this);
-        mWidgetManager.addUpdateListener(this);
         SessionStore.get().addNavigationListener(this);
 
         LayoutInflater inflater = LayoutInflater.from(aContext);
@@ -88,6 +86,9 @@ public class BookmarksWidget extends UIWidget implements Application.ActivityLif
 
         mBookmarkListModel = new BookmarkListViewModel(((Application)getApplicationContext()));
         subscribeUi(mBookmarkListModel.getBookmarks());
+
+        handleResizeEvent(SettingsStore.getInstance(getContext()).getBrowserWorldWidth(),
+                SettingsStore.getInstance(getContext()).getBrowserWorldHeight());
     }
 
     @Override
@@ -100,13 +101,6 @@ public class BookmarksWidget extends UIWidget implements Application.ActivityLif
         float targetHeight = (float) Math.sqrt(area / aspect);
 
         handleResizeEvent(targetWidth, targetHeight);
-    }
-
-    @Override
-    public void handleResizeEvent(float aWorldWidth, float aWorldHeight) {
-        super.handleResizeEvent(aWorldWidth, aWorldHeight);
-
-        mBrowserWidget.handleResizeEvent(aWorldWidth, aWorldHeight);
     }
 
     public void addListeners(BookmarkListener... listeners) {
@@ -128,8 +122,9 @@ public class BookmarksWidget extends UIWidget implements Application.ActivityLif
     @Override
     public void releaseWidget() {
         ((Application)getApplicationContext()).unregisterActivityLifecycleCallbacks(this);
-        mWidgetManager.removeUpdateListener(this);
         SessionStore.get().removeNavigationListener(this);
+
+        unstackSession();
 
         super.releaseWidget();
     }
@@ -200,10 +195,6 @@ public class BookmarksWidget extends UIWidget implements Application.ActivityLif
         }
     };
 
-    public void setBrowserWidget(Widget widget) {
-        mBrowserWidget = widget;
-    }
-
     @Override
     public void show() {
         super.show();
@@ -241,6 +232,10 @@ public class BookmarksWidget extends UIWidget implements Application.ActivityLif
     protected void onDismiss() {
         super.onDismiss();
 
+        unstackSession();
+    }
+
+    private void unstackSession() {
         if (SessionStore.get().getCurrentSessionId() == mSessionId) {
             if (SessionStore.get().canGoBack()) {
                 SessionStore.get().goBack();
@@ -286,20 +281,6 @@ public class BookmarksWidget extends UIWidget implements Application.ActivityLif
     @Override
     public void onActivityDestroyed(Activity activity) {
 
-    }
-
-    // UpdateListener
-
-    @Override
-    public void onWidgetUpdate(Widget aWidget) {
-        if (aWidget != mBrowserWidget || !mBrowserWidget.isVisible()) {
-            return;
-        }
-
-        mWidgetPlacement.worldWidth = aWidget.getPlacement().worldWidth;
-        mWidgetPlacement.width = aWidget.getPlacement().width;
-        mWidgetPlacement.height = aWidget.getPlacement().height;
-        mWidgetManager.updateWidget(this);
     }
 
     // TrayListener

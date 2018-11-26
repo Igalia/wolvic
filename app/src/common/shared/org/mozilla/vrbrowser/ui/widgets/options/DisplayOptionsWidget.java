@@ -298,7 +298,7 @@ public class DisplayOptionsWidget extends UIWidget implements
             SettingsStore.getInstance(getContext()).setWindowHeight(newWindowHeight);
 
             if (doApply) {
-                mWidgetManager.setBrowserSize(newWindowWidth, newWindowHeight);
+                mWidgetManager.setWindowSize(newWindowWidth, newWindowHeight);
             }
         }
 
