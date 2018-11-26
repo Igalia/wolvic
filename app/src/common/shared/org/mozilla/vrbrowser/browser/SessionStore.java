@@ -1365,6 +1365,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             Media media = state.mMediaElements.get(i);
             if (media.getMediaElement() == element) {
                 media.unload();
+                state.mMediaElements.remove(i);
                 return;
             }
         }
