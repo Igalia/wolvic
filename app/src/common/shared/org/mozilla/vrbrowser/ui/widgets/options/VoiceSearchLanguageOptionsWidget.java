@@ -7,6 +7,7 @@ package org.mozilla.vrbrowser.ui.widgets.options;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.ScrollView;
 
 import org.mozilla.vrbrowser.R;
@@ -16,10 +17,13 @@ import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.views.settings.ButtonSetting;
 import org.mozilla.vrbrowser.ui.views.settings.RadioGroupSetting;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
+import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
 
-public class VoiceSearchLanguageOptionsWidget extends UIWidget {
+public class VoiceSearchLanguageOptionsWidget extends UIWidget implements
+        WidgetManagerDelegate.WorldClickListener,
+        WidgetManagerDelegate.FocusChangeListener {
 
     private AudioEngine mAudio;
     private UIButton mBackButton;
@@ -49,6 +53,9 @@ public class VoiceSearchLanguageOptionsWidget extends UIWidget {
         inflate(aContext, R.layout.options_language, this);
 
         mAudio = AudioEngine.fromContext(aContext);
+
+        mWidgetManager.addFocusChangeListener(this);
+        mWidgetManager.addWorldClickListener(this);
 
         mBackButton = findViewById(R.id.backButton);
         mBackButton.setOnClickListener(view -> {
@@ -84,6 +91,14 @@ public class VoiceSearchLanguageOptionsWidget extends UIWidget {
     }
 
     @Override
+    public void releaseWidget() {
+        mWidgetManager.removeFocusChangeListener(this);
+        mWidgetManager.removeWorldClickListener(this);
+
+        super.releaseWidget();
+    }
+
+    @Override
     public void show() {
         super.show();
 
@@ -107,6 +122,24 @@ public class VoiceSearchLanguageOptionsWidget extends UIWidget {
         mLanguage.setOnCheckedChangeListener(mLanguageListener);
 
         SettingsStore.getInstance(getContext()).setVoiceSearchLanguage(mLanguage.getValueForId(checkedId).toString());
+    }
+
+    // WindowManagerDelegate.FocusChangeListener
+
+    @Override
+    public void onGlobalFocusChanged(View oldFocus, View newFocus) {
+        if (oldFocus == this && isVisible() && findViewById(newFocus.getId()) == null) {
+            onDismiss();
+        }
+    }
+
+    // WorldClickListener
+
+    @Override
+    public void onWorldClick() {
+        if (isVisible()) {
+            onDismiss();
+        }
     }
 
 }

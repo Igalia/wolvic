@@ -176,7 +176,7 @@
     </style>
 
     <style name="settingsButton">
-        <item name="android:layout_width">50dp</item>
+        <item name="android:layout_width">@dimen/developer_options_button_width</item>
         <item name="android:layout_height">25dp</item>
         <item name="android:layout_gravity">center</item>
         <item name="android:gravity">center</item>
@@ -224,12 +224,11 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/fog</item>
         <item name="android:textSize">@dimen/text_medium_size</item>
-        <item name="android:layout_marginEnd">5dp</item>
     </style>
 
     <style name="dialogButtonRegular">
-        <item name="android:layout_width">100dp</item>
-        <item name="android:layout_height">35dp</item>
+        <item name="android:layout_width">@dimen/dialog_button_width</item>
+        <item name="android:layout_height">36dp</item>
         <item name="android:background">@drawable/dialog_regular_button_background</item>
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:scaleType">fitCenter</item>
@@ -238,7 +237,15 @@
         <item name="android:textColor">@drawable/dialog_button_text_color</item>
     </style>
 
+    <style name="dialogButtonWide" parent="dialogButtonRegular">
+        <item name="android:layout_width">@dimen/dialog_button_wide_width</item>
+    </style>
+
     <style name="dialogButtonHighlighted" parent="dialogButtonRegular">
+        <item name="android:background">@drawable/dialog_highlighted_button_background</item>
+    </style>
+
+    <style name="dialogButtonWideHighlighted" parent="dialogButtonWide">
         <item name="android:background">@drawable/dialog_highlighted_button_background</item>
     </style>
 
@@ -270,6 +277,7 @@
         <item name="android:fastScrollStyle">@style/Widget.FastScroll</item>
         <item name="android:fastScrollOverlayPosition">atThumb</item>
         <item name="android:smoothScrollbar">true</item>
+        <item name="android:overScrollMode">ifContentScrolls</item>
     </style>
 
     <style name="Widget.FastScroll" parent="android:Widget.Material.FastScroll"/>

@@ -361,16 +361,7 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
     // WindowManagerDelegate.FocusChangeListener
     @Override
     public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-        boolean dismiss = false;
-        UIWidget widget = getChild(mCurrentlyOpenedDialogHandle);
-        if (widget != null && oldFocus == widget && widget.isVisible()) {
-            dismiss = true;
-
-        } else if (oldFocus == this && isVisible()) {
-            dismiss = true;
-        }
-
-        if (dismiss) {
+        if (oldFocus == this && isVisible()) {
             onDismiss();
         }
     }

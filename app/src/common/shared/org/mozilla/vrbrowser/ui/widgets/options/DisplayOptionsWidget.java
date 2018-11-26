@@ -7,6 +7,7 @@ package org.mozilla.vrbrowser.ui.widgets.options;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.ScrollView;
 
 import org.mozilla.vrbrowser.R;
@@ -18,11 +19,14 @@ import org.mozilla.vrbrowser.ui.views.settings.ButtonSetting;
 import org.mozilla.vrbrowser.ui.views.settings.DoubleEditSetting;
 import org.mozilla.vrbrowser.ui.views.settings.RadioGroupSetting;
 import org.mozilla.vrbrowser.ui.views.settings.SingleEditSetting;
+import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.RestartDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 
-public class DisplayOptionsWidget extends UIWidget {
+public class DisplayOptionsWidget extends UIWidget implements
+        WidgetManagerDelegate.WorldClickListener,
+        WidgetManagerDelegate.FocusChangeListener {
 
     private AudioEngine mAudio;
     private UIButton mBackButton;
@@ -60,8 +64,11 @@ public class DisplayOptionsWidget extends UIWidget {
 
         mAudio = AudioEngine.fromContext(aContext);
 
+        mWidgetManager.addFocusChangeListener(this);
+        mWidgetManager.addWorldClickListener(this);
+
         mBackButton = findViewById(R.id.backButton);
-        mBackButton.setOnClickListener((OnClickListener) view -> {
+        mBackButton.setOnClickListener(view -> {
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
@@ -124,6 +131,14 @@ public class DisplayOptionsWidget extends UIWidget {
         aPlacement.anchorY = 0.5f;
         aPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.restart_dialog_world_y);
         aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.restart_dialog_world_z);
+    }
+
+    @Override
+    public void releaseWidget() {
+        mWidgetManager.removeFocusChangeListener(this);
+        mWidgetManager.removeWorldClickListener(this);
+
+        super.releaseWidget();
     }
 
     @Override
@@ -328,5 +343,23 @@ public class DisplayOptionsWidget extends UIWidget {
         mMaxWindowSizeEdit.setFirstText(newMaxWindowWidthStr);
         String newMaxWindowHeightStr = Integer.toString(newMaxWindowHeight);
         mMaxWindowSizeEdit.setSecondText(newMaxWindowHeightStr);
+    }
+
+    // WindowManagerDelegate.FocusChangeListener
+
+    @Override
+    public void onGlobalFocusChanged(View oldFocus, View newFocus) {
+        if (oldFocus == this && isVisible() && findViewById(newFocus.getId()) == null) {
+            onDismiss();
+        }
+    }
+
+    // WorldClickListener
+
+    @Override
+    public void onWorldClick() {
+        if (isVisible()) {
+            onDismiss();
+        }
     }
 }

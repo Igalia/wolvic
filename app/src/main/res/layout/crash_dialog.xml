@@ -72,21 +72,21 @@
 
         <Button
             android:id="@+id/learnMoreButton"
-            style="@style/dialogButtonRegular"
+            style="@style/dialogButtonWide"
             android:layout_marginEnd="@dimen/dialog_button_margin_end"
             android:text="@string/learn_more_button"
             tools:text="@string/learn_more_button" />
 
         <Button
             android:id="@+id/dontSendButton"
-            style="@style/dialogButtonRegular"
+            style="@style/dialogButtonWide"
             android:layout_marginEnd="@dimen/dialog_button_margin_end"
             android:text="@string/do_not_sent_button"
             tools:text="@string/do_not_sent_button" />
 
         <Button
             android:id="@+id/sendDataButton"
-            style="@style/dialogButtonHighlighted"
+            style="@style/dialogButtonWideHighlighted"
             android:text="@string/send_data_button"
             tools:text="@string/send_data_button" />
     </LinearLayout>

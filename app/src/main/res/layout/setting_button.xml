@@ -3,7 +3,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="@dimen/developer_options_row_width"
         android:orientation="vertical">
 
         <RelativeLayout
@@ -16,6 +16,8 @@
                 style="@style/settingsDescription"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
+                android:layout_marginEnd="10dp"
+                android:layout_toStartOf="@+id/button"
                 android:gravity="center_vertical"
                 tools:text="Edit Setting Description" />
 

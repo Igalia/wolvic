@@ -18,13 +18,16 @@ import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.views.settings.ButtonSetting;
 import org.mozilla.vrbrowser.ui.views.settings.RadioGroupSetting;
 import org.mozilla.vrbrowser.ui.views.settings.SwitchSetting;
+import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.RestartDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 
 import static org.mozilla.vrbrowser.utils.ServoUtils.isServoAvailable;
 
-public class DeveloperOptionsWidget extends UIWidget {
+public class DeveloperOptionsWidget extends UIWidget implements
+        WidgetManagerDelegate.WorldClickListener,
+        WidgetManagerDelegate.FocusChangeListener {
 
     private AudioEngine mAudio;
     private UIButton mBackButton;
@@ -63,8 +66,11 @@ public class DeveloperOptionsWidget extends UIWidget {
 
         mAudio = AudioEngine.fromContext(aContext);
 
+        mWidgetManager.addFocusChangeListener(this);
+        mWidgetManager.addWorldClickListener(this);
+
         mBackButton = findViewById(R.id.backButton);
-        mBackButton.setOnClickListener((OnClickListener) view -> {
+        mBackButton.setOnClickListener(view -> {
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
@@ -123,6 +129,14 @@ public class DeveloperOptionsWidget extends UIWidget {
         aPlacement.anchorY = 0.5f;
         aPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.restart_dialog_world_y);
         aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.restart_dialog_world_z);
+    }
+
+    @Override
+    public void releaseWidget() {
+        mWidgetManager.removeFocusChangeListener(this);
+        mWidgetManager.removeWorldClickListener(this);
+
+        super.releaseWidget();
     }
 
     @Override
@@ -279,6 +293,24 @@ public class DeveloperOptionsWidget extends UIWidget {
 
         if (doApply) {
             mWidgetManager.updatePointerColor();
+        }
+    }
+
+    // WindowManagerDelegate.FocusChangeListener
+
+    @Override
+    public void onGlobalFocusChanged(View oldFocus, View newFocus) {
+        if (oldFocus == this && isVisible() && findViewById(newFocus.getId()) == null) {
+            onDismiss();
+        }
+    }
+
+    // WorldClickListener
+
+    @Override
+    public void onWorldClick() {
+        if (isVisible()) {
+            onDismiss();
         }
     }
 

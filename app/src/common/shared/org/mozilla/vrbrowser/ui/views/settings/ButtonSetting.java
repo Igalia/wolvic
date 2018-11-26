@@ -46,12 +46,7 @@ public class ButtonSetting extends LinearLayout {
         mButton.setOnClickListener(mInternalClickListener);
     }
 
-    private View.OnClickListener mInternalClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            onClickListener(v);
-        }
-    };
+    private View.OnClickListener mInternalClickListener = v -> onClickListener(v);
 
     protected void onClickListener(View v) {
         if (mAudio != null) {

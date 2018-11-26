@@ -140,7 +140,7 @@ public class SingleEditSetting extends LinearLayout {
         }
 
         editText.requestFocusFromTouch();
-
+        
         return false;
     }
 

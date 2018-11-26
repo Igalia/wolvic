@@ -53,6 +53,7 @@
     <dimen name="settings_width">580dp</dimen>
     <dimen name="settings_height">520dp</dimen>
     <dimen name="settings_button_height">320dp</dimen>
+    <dimen name="settings_button_text_width">100dp</dimen>
 
     <!-- Common values for menu style widgets -->
     <dimen name="menu_item_height">88dp</dimen>
@@ -76,7 +77,7 @@
     <!-- Restart Dialog -->
     <item name="restart_dialog_world_y" format="float" type="dimen">1.6</item>
     <item name="restart_dialog_world_z" format="float" type="dimen">-1.8</item>
-    <dimen name="restart_dialog_width">380dp</dimen>
+    <dimen name="restart_dialog_width">420dp</dimen>
     <dimen name="restart_dialog_height">280dp</dimen>
 
     <!-- Top Bar -->
@@ -92,12 +93,14 @@
     <dimen name="tray_height">40dp</dimen>
 
     <!-- Developer Options Panel -->
-    <dimen name="developer_options_width">470dp</dimen>
-    <dimen name="developer_options_height">380dp</dimen>
+    <dimen name="developer_options_width">585dp</dimen>
+    <dimen name="developer_options_height">385dp</dimen>
+    <dimen name="developer_options_button_width">120dp</dimen>
+    <dimen name="developer_options_row_width">40dp</dimen>
 
     <!-- Voice search panel -->
-    <dimen name="voice_search_width">400dp</dimen>
-    <dimen name="voice_search_height">275dp</dimen>
+    <dimen name="voice_search_width">460dp</dimen>
+    <dimen name="voice_search_height">280dp</dimen>
     <dimen name="voice_search_padding_top">20dp</dimen>
     <dimen name="voice_search_padding_bottom">25dp</dimen>
     <dimen name="voice_search_padding_sides">30dp</dimen>
@@ -112,13 +115,14 @@
     <dimen name="choice_prompt_height">380dp</dimen>
 
     <!-- Crash Dialog prompt -->
-    <dimen name="crash_dialog_width">450dp</dimen>
+    <dimen name="crash_dialog_width">640dp</dimen>
     <dimen name="crash_dialog_height">350dp</dimen>
-    <item name="crash_dialog_world_y" format="float" type="dimen">1.5</item>
+    <item name="crash_dialog_world_y" format="float" type="dimen">1.2</item>
     <item name="crash_dialog_world_z" format="float" type="dimen">-1.8</item>
 
     <!-- Dialog buttons -->
-    <dimen name="dialog_button_width">100dp</dimen>
+    <dimen name="dialog_button_width">156dp</dimen>
+    <dimen name="dialog_button_wide_width">175dp</dimen>
     <dimen name="dialog_button_height">35dp</dimen>
     <dimen name="dialog_button_margin_end">20dp</dimen>
     <dimen name="dialog_button_text_size">14dip</dimen>

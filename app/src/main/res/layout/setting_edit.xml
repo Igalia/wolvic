@@ -3,13 +3,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="@dimen/developer_options_row_width"
         android:orientation="vertical">
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:background="@color/iron" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -28,6 +23,7 @@
                     android:id="@+id/setting_description"
                     style="@style/settingsDescription"
                     android:text="@string/developer_options_window_size"
+                    android:layout_marginEnd="5dp"
                     tools:text="Setting Description" />
 
                 <TextView
@@ -48,6 +44,7 @@
                 <TextView
                     android:id="@+id/settingBy"
                     style="@style/settingsDescription"
+                    android:layout_marginEnd="5dp"
                     tools:text="x" />
 
                 <TextView

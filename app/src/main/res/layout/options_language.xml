@@ -9,9 +9,9 @@
         android:layout_height="match_parent"
         android:background="@drawable/dialog_background"
         android:paddingStart="30dp"
-        android:paddingTop="20dp"
+        android:paddingTop="10dp"
         android:paddingEnd="30dp"
-        android:paddingBottom="20dp">
+        android:paddingBottom="10dp">
 
         <org.mozilla.vrbrowser.ui.views.UIButton
             android:id="@+id/backButton"
@@ -25,11 +25,19 @@
             android:src="@drawable/ic_icon_back"
             android:tint="@color/midnight" />
 
+        <View
+            android:id="@+id/separatorTop"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_below="@+id/voice_search_language_title"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@color/iron" />
+
         <TextView
             android:id="@+id/voice_search_language_title"
             style="@style/settingsDescription"
             android:layout_below="@+id/backButton"
-            android:layout_marginBottom="10dp"
             android:gravity="center_vertical"
             android:text="@string/settings_language_choose_language_voice_search"
             tools:text="@string/settings_language_choose_language_voice_search" />
@@ -39,8 +47,8 @@
             style="@style/scrollbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/resetButton"
-            android:layout_below="@+id/voice_search_language_title">
+            android:layout_above="@+id/separatorBottom"
+            android:layout_below="@+id/separatorTop">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -59,10 +67,19 @@
             </LinearLayout>
         </ScrollView>
 
+        <View
+            android:id="@+id/separatorBottom"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_above="@+id/resetButton"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@color/iron" />
+
         <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
             android:id="@+id/resetButton"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             app:buttonText="@string/developer_options_reset_button"
             app:description="@string/language_options_reset" />
