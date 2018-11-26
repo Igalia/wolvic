@@ -706,6 +706,8 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             out.write("pref(\"webgl.enable-surface-texture\", true);\n".getBytes());
             out.write("pref(\"apz.allow_double_tap_zooming\", false);\n".getBytes());
             out.write("pref(\"dom.webcomponents.customelements.enabled\", true);\n".getBytes());
+            // Prevent autozoom when giving a form field focus.
+            out.write("pref(\"formhelper.autozoom\", false);\n".getBytes());
             // Uncomment this to enable WebRender. WARNING NOT READY FOR USAGE.
             // out.write("pref(\"gfx.webrender.all\", true);\n".getBytes());
             int msaa = SettingsStore.getInstance(aContext).getMSAALevel();
