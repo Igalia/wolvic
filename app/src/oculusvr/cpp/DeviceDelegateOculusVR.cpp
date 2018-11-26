@@ -287,7 +287,7 @@ public:
   }
 
 private:
-  void InitSwapChain(ovrTextureSwapChain*& swapChainOut, jobject & surfaceOut, vrb::FBOPtr fboOut) {
+  void InitSwapChain(ovrTextureSwapChain*& swapChainOut, jobject & surfaceOut, vrb::FBOPtr& fboOut) {
     if (layer->GetSurfaceType() == VRLayerQuad::SurfaceType::AndroidSurface) {
       swapChainOut = vrapi_CreateAndroidSurfaceSwapChain(layer->GetWidth(), layer->GetHeight());
       surfaceOut = vrapi_GetTextureSwapChainAndroidSurface(swapChainOut);
