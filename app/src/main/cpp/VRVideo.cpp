@@ -118,13 +118,12 @@ struct VRVideo::State {
   }
 
   vrb::TogglePtr createSphereProjection(bool half, device::EyeRect aUVRect) {
-    const int kCols = 30;
-    const int kRows = 30;
-    const float kRadius = 20.0f;
+    const int kCols = 70;
+    const int kRows = 70;
+    const float kRadius = 10.0f;
 
     vrb::CreationContextPtr create = context.lock();
     vrb::VertexArrayPtr array = vrb::VertexArray::Create(create);
-    
 
     for (float row = 0; row <= kRows; row+= 1.0f) {
       const float alpha = row * (float)M_PI / kRows;
@@ -158,6 +157,7 @@ struct VRVideo::State {
 
     vrb::RenderStatePtr state = vrb::RenderState::Create(create);
     state->SetLightsEnabled(false);
+    state->SetFragmentPrecision(GL_HIGH_FLOAT);
     vrb::TexturePtr texture = std::dynamic_pointer_cast<vrb::Texture>(window->GetSurfaceTexture());
     state->SetTexture(texture);
     vrb::GeometryPtr geometry = vrb::Geometry::Create(create);
