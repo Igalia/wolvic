@@ -1023,7 +1023,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         if (state != null) {
             mCurrentSession = state.mSession;
 
-            if (mCurrentSession == aSession) {
+            if (mCurrentSession != aSession) {
                 for (SessionChangeListener listener : mSessionChangeListeners) {
                     listener.onCurrentSessionChange(mCurrentSession, sessionId);
                 }
