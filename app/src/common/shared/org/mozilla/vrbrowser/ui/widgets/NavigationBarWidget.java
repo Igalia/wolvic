@@ -355,10 +355,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     private void setFullScreenSize() {
-        SettingsStore settings = SettingsStore.getInstance(getContext());
         mSizeBeforeFullScreen.copyFrom(mBrowserWidget.getPlacement());
-        final float oldWidth = settings.getBrowserWorldWidth();
-        final float oldHeight = settings.getBrowserWorldHeight();
         // Set browser fullscreen size
         float aspect = SettingsStore.getInstance(getContext()).getWindowAspect();
         Media media = SessionStore.get().getFullScreenVideo();
@@ -366,9 +363,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             aspect = (float)media.getWidth() / (float)media.getHeight();
         }
         mBrowserWidget.resizeByMultiplier(aspect,1.75f);
-        // Save the old values on settings to prevent the fullscreen size being used on a app restart
-        SettingsStore.getInstance(getContext()).setBrowserWorldWidth(oldWidth);
-        SettingsStore.getInstance(getContext()).setBrowserWorldHeight(oldHeight);
     }
 
     private void enterFullScreenMode() {
@@ -376,6 +370,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             return;
         }
 
+        mBrowserWidget.setSaveResizeChanges(false);
         setFullScreenSize();
         mWidgetManager.pushBackHandler(mFullScreenBackHandler);
         mIsInFullScreenMode = true;
@@ -426,6 +421,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
         mBrowserWidget.getPlacement().copyFrom(mSizeBeforeFullScreen);
         mWidgetManager.updateWidget(mBrowserWidget);
+        mBrowserWidget.setSaveResizeChanges(true);
 
         mIsInFullScreenMode = false;
         mWidgetManager.popBackHandler(mFullScreenBackHandler);

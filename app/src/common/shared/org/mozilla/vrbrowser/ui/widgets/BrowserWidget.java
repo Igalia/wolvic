@@ -47,6 +47,7 @@ public class BrowserWidget extends UIWidget implements SessionStore.SessionChang
     private int mBorderWidth;
     Runnable mFirstDrawCallback;
     private boolean mIsInVRVideoMode;
+    private boolean mSaveResizeChanges;
 
     public BrowserWidget(Context aContext, int aSessionId) {
         super(aContext);
@@ -67,6 +68,7 @@ public class BrowserWidget extends UIWidget implements SessionStore.SessionChang
 
         handleResizeEvent(SettingsStore.getInstance(getContext()).getBrowserWorldWidth(),
                 SettingsStore.getInstance(getContext()).getBrowserWorldHeight());
+        mSaveResizeChanges = true;
     }
 
     @Override
@@ -184,6 +186,10 @@ public class BrowserWidget extends UIWidget implements SessionStore.SessionChang
         return mHeight;
     }
 
+    public void setSaveResizeChanges(boolean aSave) {
+        mSaveResizeChanges = aSave;
+    }
+
     @Override
     public void setSurfaceTexture(SurfaceTexture aTexture, final int aWidth, final int aHeight) {
         GeckoSession session = SessionStore.get().getSession(mSessionId);
@@ -288,8 +294,10 @@ public class BrowserWidget extends UIWidget implements SessionStore.SessionChang
         mWidgetPlacement.worldWidth = aWorldWidth;
         mWidgetManager.updateWidget(this);
 
-        SettingsStore.getInstance(getContext()).setBrowserWorldWidth(aWorldWidth);
-        SettingsStore.getInstance(getContext()).setBrowserWorldHeight(aWorldHeight);
+        if (mSaveResizeChanges) {
+            SettingsStore.getInstance(getContext()).setBrowserWorldWidth(aWorldWidth);
+            SettingsStore.getInstance(getContext()).setBrowserWorldHeight(aWorldHeight);
+        }
     }
 
     @Override
