@@ -272,7 +272,7 @@ Widget::StartResize() {
     }
     vrb::CreationContextPtr create = render->GetRenderThreadCreationContext();
     m.resizer = WidgetResizer::Create(create, m.quad->GetWorldMin(), m.quad->GetWorldMax());
-    m.transform->InsertNode(m.resizer->GetRoot(), 1);
+    m.transform->InsertNode(m.resizer->GetRoot(), 0);
   }
   m.resizing = true;
   m.resizer->ToggleVisible(true);
