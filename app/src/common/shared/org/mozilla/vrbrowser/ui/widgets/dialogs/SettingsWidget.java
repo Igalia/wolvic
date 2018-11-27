@@ -120,6 +120,7 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
         });
 
         HoneycombSwitch crashSwitch = findViewById(R.id.crashReportingSwitch);
+        crashSwitch.setChecked(SettingsStore.getInstance(getContext()).isCrashReportingEnabled());
         crashSwitch.setOnCheckedChangeListener((compoundButton, b) -> {
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
@@ -129,6 +130,7 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
         });
 
         HoneycombSwitch telemetrySwitch = findViewById(R.id.telemetry_switch);
+        telemetrySwitch.setChecked(SettingsStore.getInstance(getContext()).isTelemetryEnabled());
         telemetrySwitch.setOnCheckedChangeListener((compoundButton, b) -> {
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);

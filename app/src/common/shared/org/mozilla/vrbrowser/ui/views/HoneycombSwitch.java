@@ -55,6 +55,10 @@ public class HoneycombSwitch extends LinearLayout {
         mStateText = findViewById(R.id.honeycombSwitchStateText);
     }
 
+    public void setChecked(boolean aChecked) {
+        mSwitch.setChecked(aChecked);
+    }
+
     private CompoundButton.OnCheckedChangeListener mInternalSwitchListener = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
