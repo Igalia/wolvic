@@ -416,6 +416,14 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             return;
         }
 
+        // We need to add a delay for the exitFullScreen() call to solve some viewport scaling issues,
+        // See https://github.com/MozillaReality/FirefoxReality/issues/833 for more info.
+        getHandler().postDelayed(() -> {
+            if (SessionStore.get().isInFullScreen()) {
+                SessionStore.get().exitFullScreen();
+            }
+        }, 50);
+
         mBrowserWidget.getPlacement().copyFrom(mSizeBeforeFullScreen);
         mWidgetManager.updateWidget(mBrowserWidget);
 
@@ -426,10 +434,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
         mWidgetManager.popWorldBrightness(this);
         AnimationHelper.fadeOut(mFullScreenModeContainer, 0, null);
-
-        if (SessionStore.get().isInFullScreen()) {
-            SessionStore.get().exitFullScreen();
-        }
 
         mWidgetManager.setTrayVisible(true);
         closeFloatingMenus();
