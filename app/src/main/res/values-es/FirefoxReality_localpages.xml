@@ -5,7 +5,7 @@
 <resources>
 	<!-- IMPORTANT NOTE: If this file is updated anyhow, the STRs wiki must be updated accordingly:
     https://github.com/MozillaReality/FirefoxReality/wiki/L10n -->
-	
+
 	<!-- This string is used as the title of the Private Browsing page that is opened when the
     Private Browsing Mode button from the tray is clicked. -->
 	<string name="private_browsing_title">Navegación privada</string>
