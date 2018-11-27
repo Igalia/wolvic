@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -42,8 +43,17 @@ public class UserAgentOverride {
     }
 
     public String lookupOverride(final String aUri) {
+        if (aUri == null) {
+            return null;
+        }
         Log.d(LOGTAG, "lookupOverride for: " + aUri);
-        URI uri = URI.create(aUri);
+        URI uri;
+        try {
+            uri = new URI(aUri);
+        } catch (URISyntaxException e) {
+            Log.d(LOGTAG, "Error parsing URL: " + aUri + " " + e.getMessage());
+            return null;
+        }
         String fullDomain = uri.getHost();
         if (fullDomain == null) {
             return null;
