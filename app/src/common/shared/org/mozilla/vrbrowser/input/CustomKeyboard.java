@@ -222,9 +222,8 @@ public class CustomKeyboard extends Keyboard {
             Field mField = getField(getClass().getSuperclass(), "mShiftKeyIndices");
             mField.setAccessible(true);
             return (int[])mField.get(this);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            return new int[]{-1, -1};
+        } catch (Exception e) {
+            return new int[]{super.getShiftKeyIndex()};
         }
     }
 

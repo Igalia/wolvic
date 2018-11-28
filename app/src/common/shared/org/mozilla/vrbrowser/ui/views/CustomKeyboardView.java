@@ -705,7 +705,8 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
             mKeyboardChanged = false;
         }
         final Canvas canvas = mCanvas;
-        canvas.clipRect(mDirtyRect, Op.REPLACE);
+        mCanvas.save();
+        canvas.clipRect(mDirtyRect);
 
         if (mKeyboard == null) return;
 
@@ -853,6 +854,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
             canvas.drawCircle((mStartX + mLastX) / 2, (mStartY + mLastY) / 2, 2, paint);
         }
 
+        mCanvas.restore();
         mDrawPending = false;
         mDirtyRect.setEmpty();
     }
