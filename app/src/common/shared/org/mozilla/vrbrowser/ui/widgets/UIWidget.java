@@ -18,6 +18,7 @@ import android.view.ViewParent;
 import android.widget.FrameLayout;
 
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.browser.SettingsStore;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
@@ -44,7 +45,7 @@ public abstract class UIWidget extends FrameLayout implements Widget {
     protected Runnable mBackHandler;
     protected HashMap<Integer, UIWidget> mChildren;
     protected Delegate mDelegate;
-    protected int mBorderWidth = 1;
+    protected int mBorderWidth;
     private Runnable mFirstDrawCallback;
 
     public UIWidget(Context aContext) {
@@ -63,6 +64,7 @@ public abstract class UIWidget extends FrameLayout implements Widget {
     }
 
     private void initialize() {
+        mBorderWidth = SettingsStore.getInstance(getContext()).getTransparentBorderWidth();
         mWidgetManager = (WidgetManagerDelegate) getContext();
         mWidgetPlacement = new WidgetPlacement(getContext());
         mHandle = mWidgetManager.newWidgetHandle();

@@ -167,7 +167,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             runtimeSettingsBuilder.displayDpiOverride(SettingsStore.getInstance(aContext).getDisplayDpi());
             runtimeSettingsBuilder.screenSizeOverride(SettingsStore.getInstance(aContext).getMaxWindowWidth(),
                     SettingsStore.getInstance(aContext).getMaxWindowHeight());
-            if (SettingsStore.getInstance(aContext).getLayersEnabled()) {
+            if (SettingsStore.getInstance(aContext).getTransparentBorderWidth() > 0) {
                 runtimeSettingsBuilder.useMaxScreenDepth(true);
             }
 

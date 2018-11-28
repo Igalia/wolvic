@@ -53,7 +53,7 @@ public class BrowserWidget extends UIWidget implements SessionStore.SessionChang
         super(aContext);
         mSessionId = aSessionId;
         mWidgetManager = (WidgetManagerDelegate) aContext;
-        mBorderWidth = SettingsStore.getInstance(aContext).getLayersEnabled() ? 1 : 0;
+        mBorderWidth = SettingsStore.getInstance(aContext).getTransparentBorderWidth();
         SessionStore.get().addSessionChangeListener(this);
         SessionStore.get().addPromptListener(this);
         SessionStore.get().addContentListener(this);
@@ -152,7 +152,7 @@ public class BrowserWidget extends UIWidget implements SessionStore.SessionChang
             return;
         }
         mIsInVRVideoMode = false;
-        int border = SettingsStore.getInstance(getContext()).getLayersEnabled() ? 1 : 0;
+        int border = SettingsStore.getInstance(getContext()).getTransparentBorderWidth();
         if (mWidthBackup == mWidth && mHeightBackup == mHeight && border == mBorderWidth) {
             return;
         }

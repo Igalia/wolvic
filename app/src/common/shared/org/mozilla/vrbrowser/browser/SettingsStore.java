@@ -321,6 +321,10 @@ public class SettingsStore {
         return false;
     }
 
+    public int getTransparentBorderWidth() {
+        return 1;
+    }
+
     public boolean isAudioEnabled() {
         return mPrefs.getBoolean(mContext.getString(R.string.settings_key_audio), AUDIO_ENABLED);
     }
