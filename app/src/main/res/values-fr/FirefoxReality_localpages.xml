@@ -4,9 +4,9 @@
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 <resources>
     <!-- IMPORTANT NOTE: If this file is updated anyhow, the STRs wiki must be updated accordingly:
-    https://github.com/MozillaReality/FirefoxReality/wiki/L10n --> 
+    https://github.com/MozillaReality/FirefoxReality/wiki/L10n -->
 
-	<!-- This string is used as the title of the Private Browsing page that is opened when the
+    <!-- This string is used as the title of the Private Browsing page that is opened when the
     Private Browsing Mode button from the tray is clicked. -->
     <string name="private_browsing_title">Navigation privée</string>
     <!-- This string is used as the body of the Private Browsing page that is opened when the
