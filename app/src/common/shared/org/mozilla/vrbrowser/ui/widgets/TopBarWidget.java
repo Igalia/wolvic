@@ -9,7 +9,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 
 import org.mozilla.geckoview.GeckoSession;
-import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.SessionStore;
@@ -52,6 +51,8 @@ public class TopBarWidget extends UIWidget implements SessionStore.SessionChange
 
         SessionStore.get().addSessionChangeListener(this);
         mWidgetManager.addUpdateListener(this);
+
+        handleSessionState();
     }
 
     @Override
@@ -97,9 +98,7 @@ public class TopBarWidget extends UIWidget implements SessionStore.SessionChange
 
     @Override
     public void onCurrentSessionChange(GeckoSession aSession, int aId) {
-        boolean isPrivateMode  = aSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
-        setVisible(isPrivateMode);
-        mCloseButton.setPrivateMode(isPrivateMode);
+        handleSessionState();
     }
 
     @Override
@@ -110,6 +109,12 @@ public class TopBarWidget extends UIWidget implements SessionStore.SessionChange
             mWidgetManager.addWidget(this);
         else
             mWidgetManager.removeWidget(this);
+    }
+
+    private void handleSessionState() {
+        boolean isPrivateMode  = SessionStore.get().isCurrentSessionPrivate();
+        setVisible(isPrivateMode);
+        mCloseButton.setPrivateMode(isPrivateMode);
     }
 
     // WidgetManagerDelegate.UpdateListener

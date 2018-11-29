@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
 import org.mozilla.geckoview.GeckoSession;
-import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.SessionStore;
@@ -113,6 +112,8 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
         mIsLastSessionPrivate = false;
 
         SessionStore.get().addSessionChangeListener(this);
+
+        handleSessionState();
     }
 
     private OnHoverListener mButtonScaleHoverListener = (view, motionEvent) -> {
@@ -218,16 +219,20 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
 
     @Override
     public void onCurrentSessionChange(GeckoSession aSession, int aId) {
-        boolean isPrivateMode  = aSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
+        handleSessionState();
+    }
+
+    private void handleSessionState() {
+        boolean isPrivateMode  = SessionStore.get().isCurrentSessionPrivate();
 
         if (isPrivateMode != mIsLastSessionPrivate) {
             mPrivateButton.setPrivateMode(isPrivateMode);
             if (isPrivateMode) {
-                mWidgetManager.setWorldBrightness(null, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
+                mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
                 mPrivateButton.setImageResource(R.drawable.ic_tray_private_on);
 
             } else {
-                mWidgetManager.setWorldBrightness(null,1.0f);
+                mWidgetManager.popWorldBrightness(this);
                 mPrivateButton.setImageResource(R.drawable.ic_tray_private);
             }
         }
