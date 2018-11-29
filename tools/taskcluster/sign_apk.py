@@ -32,14 +32,9 @@ def main(name, argv):
 
    build_output_path = './app/build/outputs/apk'
 
-   # Run zipalign
-   for apk in glob.glob(build_output_path + "/*/*/*-unsigned.apk"):
-      split = os.path.splitext(apk)
-      print subprocess.check_output(["zipalign", "-f", "-v", "-p", "4", apk, split[0] + "-aligned" + split[1]])
-
    # Sign APKs
    for apk in glob.glob(build_output_path + "/*/*/*-aligned.apk"):
-      target = apk.replace('-unsigned-', '-signed-')
+      target = apk.replace('-unsigned', '-signed')
       if not release:
          target = target.replace('-release-', '-staging-')
       print "Signing", apk
@@ -50,6 +45,11 @@ def main(name, argv):
             "-o", target,
             "-H", "Authorization: " + token,
             sign_url])
+
+   # Run zipalign
+   for apk in glob.glob(build_output_path + "/*/*/*-signed.apk"):
+      split = os.path.splitext(apk)
+      print subprocess.check_output(["zipalign", "-f", "-v", "-p", "4", apk, split[0] + "-aligned" + split[1]])
 
    # Create folder for saving build artifacts
    artifacts_path = './builds'
