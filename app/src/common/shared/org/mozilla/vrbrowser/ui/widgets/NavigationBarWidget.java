@@ -18,7 +18,6 @@ import android.view.ViewGroup;
 import org.mozilla.geckoview.AllowOrDeny;
 import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoSession;
-import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.geckoview.WebRequestError;
 import org.mozilla.vrbrowser.*;
 import org.mozilla.vrbrowser.audio.AudioEngine;
@@ -309,6 +308,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mPrefs = PreferenceManager.getDefaultSharedPreferences(mAppContext);
         mPrefs.registerOnSharedPreferenceChangeListener(this);
         updateServoButton();
+
+        handleSessionState();
     }
 
     @Override
@@ -557,6 +558,15 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         }
     }
 
+    private void handleSessionState() {
+        boolean isPrivateMode  = SessionStore.get().isCurrentSessionPrivate();
+
+        mURLBar.setPrivateMode(isPrivateMode);
+        for (CustomUIButton button : mButtons) {
+            button.setPrivateMode(isPrivateMode);
+        }
+    }
+
     @Override
     public GeckoResult<GeckoSession> onNewSession(@NonNull GeckoSession aSession, @NonNull String aUri) {
         return null;
@@ -759,12 +769,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     @Override
     public void onCurrentSessionChange(GeckoSession aSession, int aId) {
-        boolean isPrivateMode  = aSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
-        mURLBar.setPrivateMode(isPrivateMode);
+        handleSessionState();
 
-        for (CustomUIButton button : mButtons) {
-            button.setPrivateMode(isPrivateMode);
-        }
         boolean isFullScreen = SessionStore.get().isInFullScreen(aSession);
         if (isFullScreen && !mIsInFullScreenMode) {
             enterFullScreenMode();
