@@ -25,7 +25,8 @@ def main(name, argv):
          print name + '-t <token file name> -r'
          sys.exit()
       elif opt in ("-t"):
-         token = arg
+         with open(arg, 'r') as tokenfile:
+            token = tokenfile.read().rstrip()
       elif opt in ('-r'):
          sign_url = 'https://autograph-edge.prod.mozaws.net/sign'
          release = True
@@ -33,7 +34,7 @@ def main(name, argv):
    build_output_path = './app/build/outputs/apk'
 
    # Sign APKs
-   for apk in glob.glob(build_output_path + "/*/*/*-aligned.apk"):
+   for apk in glob.glob(build_output_path + "/*/*/*-unsigned.apk"):
       target = apk.replace('-unsigned', '-signed')
       if not release:
          target = target.replace('-release-', '-staging-')
