@@ -723,7 +723,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     @Override
-    public void onContextMenu(GeckoSession session, int screenX, int screenY, String uri, int elementType, String elementSrc) {
+    public void onContextMenu(GeckoSession session, int screenX, int screenY, ContextElement element) {
 
     }
 
@@ -734,6 +734,11 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     @Override
     public void onCrash(GeckoSession session) {
+
+    }
+
+    @Override
+    public void onFirstComposite(GeckoSession session) {
 
     }
 

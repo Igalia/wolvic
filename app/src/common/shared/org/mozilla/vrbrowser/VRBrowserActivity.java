@@ -30,6 +30,7 @@ import android.widget.FrameLayout;
 import org.mozilla.gecko.GeckoVRManager;
 import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.geckoview.CrashReporter;
+import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.audio.AudioEngine;
@@ -367,8 +368,16 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private void sendCrashData(final Intent intent) {
         ThreadUtils.postToBackgroundThread(() -> {
             try {
-                CrashReporter.sendCrashReport(VRBrowserActivity.this, intent, getString(R.string.crash_app_name));
+                GeckoResult<String> result = CrashReporter.sendCrashReport(VRBrowserActivity.this, intent, getString(R.string.crash_app_name));
 
+                result.then(crashID -> {
+                    Log.e(LOGTAG, "Submitted crash report id: " + crashID);
+                    Log.e(LOGTAG, "Report available at: https://crash-stats.mozilla.com/report/index/" + crashID);
+                    return null;
+                }, (GeckoResult.OnExceptionListener<Void>) ex -> {
+                    Log.e(LOGTAG, "Failed to submit crash report: " + ex.getMessage());
+                    return null;
+                });
             } catch (IOException | URISyntaxException e) {
                 Log.e(LOGTAG, "Failed to send crash report: " + e.toString());
             }
