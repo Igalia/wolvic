@@ -234,6 +234,8 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
             }
             mMozillaSpeechService.storeSamples(storeData);
             mMozillaSpeechService.storeTranscriptions(storeData);
+            mMozillaSpeechService.setModelPath(getContext().getExternalFilesDir("models").getAbsolutePath());
+            mMozillaSpeechService.useDeepSpeech(true);
             mMozillaSpeechService.start(getContext().getApplicationContext());
             mIsSpeechRecognitionRunning = true;
         }
