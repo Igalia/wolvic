@@ -1,0 +1,23 @@
+
+basepath = "."
+
+locales = [
+"de",
+"es",
+"fr",
+"it",
+"ja",
+"ko",
+"zh-CN",
+"zh-TW",
+]
+
+[env]
+
+[[paths]]
+  reference = "app/src/main/res/values/strings.xml"
+  l10n = "app/src/main/res/values-{android_locale}/strings.xml"
+  
+  [[paths]]
+    reference = "app/src/main/res/values/localpages_strings.xml"
+    l10n = "app/src/main/res/values-{android_locale}/localpages_strings.xml"

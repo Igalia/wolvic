@@ -47,7 +47,7 @@
 	<!-- This string will be displayed in a dialog box presented to the user when the application
          needs to request permission to access the device's external storage such as the
          sdcard. '%1$s' will be replaced at runtime with the website's domain name. -->
-	<string name="permission_persistent_storage">%S가 영구 저장 장치에 데이터를 저장하도록 허용하겠습니까?</string>
+	<string name="permission_persistent_storage">%1$s가 영구 저장 장치에 데이터를 저장하도록 허용하겠습니까?</string>
 	
 	<!-- This string is displayed in the Settings dialog box and how
          the user can know which version of the application they are currently running.
