@@ -326,9 +326,10 @@ typedef std::shared_ptr<OculusLayerCube> OculusLayerCubePtr;
 
 class OculusLayerCube: public OculusLayer<VRLayerCubePtr, ovrLayerCube2> {
 public:
-  static OculusLayerCubePtr Create(const VRLayerCubePtr& aLayer) {
+  static OculusLayerCubePtr Create(const VRLayerCubePtr& aLayer, GLint aInternalFormat) {
     auto result = std::make_shared<OculusLayerCube>();
     result->layer = aLayer;
+    result->glFormat = aInternalFormat;
     return result;
   }
 
@@ -341,7 +342,7 @@ public:
     ovrLayer.Offset.x = 0.0f;
     ovrLayer.Offset.y = 0.0f;
     ovrLayer.Offset.z = 0.0f;
-    swapChain = vrapi_CreateTextureSwapChain(VRAPI_TEXTURE_TYPE_CUBE, VRAPI_TEXTURE_FORMAT_8888, layer->GetWidth(), layer->GetHeight(), 1, false);
+    swapChain = vrapi_CreateTextureSwapChain3(VRAPI_TEXTURE_TYPE_CUBE, glFormat, layer->GetWidth(), layer->GetHeight(), 1, 1);
     layer->SetTextureHandle(vrapi_GetTextureSwapChainHandle(swapChain, 0));
     OculusLayer::Init();
   }
@@ -375,6 +376,8 @@ public:
   const ovrLayerHeader2 * Header() const override {
     return &ovrLayer.Header;
   }
+protected:
+  GLint glFormat;
 };
 
 
@@ -1059,7 +1062,7 @@ DeviceDelegateOculusVR::CreateLayerQuad(int32_t aWidth, int32_t aHeight,
 }
 
 VRLayerCubePtr
-DeviceDelegateOculusVR::CreateLayerCube(int32_t aWidth, int32_t aHeight) {
+DeviceDelegateOculusVR::CreateLayerCube(int32_t aWidth, int32_t aHeight, GLint aInternalFormat) {
   if (!m.layersEnabled) {
     return nullptr;
   }
@@ -1067,7 +1070,7 @@ DeviceDelegateOculusVR::CreateLayerCube(int32_t aWidth, int32_t aHeight) {
     m.cubeLayer->Destroy();
   }
   VRLayerCubePtr layer = VRLayerCube::Create(aWidth, aHeight);
-  m.cubeLayer = OculusLayerCube::Create(layer);
+  m.cubeLayer = OculusLayerCube::Create(layer, aInternalFormat);
   if (m.ovr) {
     m.cubeLayer->Init();
   }

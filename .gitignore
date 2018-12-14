@@ -66,3 +66,6 @@ oculussig_*
 third_party
 
 user.properties*
+
+# Node modules
+node_modules

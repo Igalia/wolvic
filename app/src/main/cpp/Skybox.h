@@ -20,7 +20,7 @@ typedef std::shared_ptr<VRLayerCube> VRLayerCubePtr;
 class Skybox {
 public:
   static SkyboxPtr Create(vrb::CreationContextPtr aContext, const VRLayerCubePtr& aLayer = nullptr);
-  void Load(const vrb::ModelLoaderAndroidPtr& aLoader, const std::string &basePath);
+  void Load(const vrb::ModelLoaderAndroidPtr& aLoader, const std::string& aBasePath, const std::string& aExtension);
   void SetVisible(bool aVisible);
   void SetTransform(const vrb::Matrix& aTransform);
   void SetTintColor(const vrb::Color& aTintColor);

@@ -505,14 +505,16 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
     m.loadingAnimation->LoadModels(m.loader);
     m.rootController->AddNode(m.controllers->GetRoot());
     std::string skyboxPath = VRBrowser::GetActiveEnvironment();
+    std::string extension;
     if (VRBrowser::isOverrideEnvPathEnabled()) {
       std::string storagePath = VRBrowser::GetStorageAbsolutePath(INJECT_SKYBOX_PATH);
       if (std::ifstream(storagePath)) {
         skyboxPath = storagePath;
+        extension = ".jpg";
       }
     }
 #if !defined(SNAPDRAGONVR)
-    CreateSkyBox(skyboxPath.c_str());
+    CreateSkyBox(skyboxPath.c_str(), extension);
     // Don't load the env model, we are going for skyboxes in v1.0
 //    CreateFloor();
 #endif
@@ -650,7 +652,7 @@ BrowserWorld::UpdateEnvironment() {
   ASSERT_ON_RENDER_THREAD();
   std::string env = VRBrowser::GetActiveEnvironment();
   VRB_LOG("Setting environment: %s", env.c_str());
-  CreateSkyBox(env.c_str());
+  CreateSkyBox(env.c_str(), "");
 }
 
 void
@@ -1071,21 +1073,23 @@ BrowserWorld::DrawSplashAnimation() {
 }
 
 void
-BrowserWorld::CreateSkyBox(const std::string& basePath) {
+BrowserWorld::CreateSkyBox(const std::string& aBasePath, const std::string& aExtension) {
   ASSERT_ON_RENDER_THREAD();
-  const bool empty = basePath == "cubemap/void";
+  const bool empty = aBasePath == "cubemap/void";
+  const std::string extension = aExtension.empty() ? ".ktx" : aExtension;
   if (m.skybox && empty) {
     m.skybox->SetVisible(false);
     return;
   } else if (m.skybox) {
     m.skybox->SetVisible(true);
-    m.skybox->Load(m.loader, basePath);
+    m.skybox->Load(m.loader, aBasePath, extension);
     return;
   } else if (!empty) {
-    VRLayerCubePtr layer = m.device->CreateLayerCube(1024, 1024);
+    GLenum glFormat = extension == ".ktx" ? GL_COMPRESSED_RGB8_ETC2 : GL_RGB8;
+    VRLayerCubePtr layer = m.device->CreateLayerCube(1024, 1024, glFormat);
     m.skybox = Skybox::Create(m.create, layer);
     m.rootOpaqueParent->AddNode(m.skybox->GetRoot());
-    m.skybox->Load(m.loader, basePath);
+    m.skybox->Load(m.loader, aBasePath, extension);
   }
 }
 

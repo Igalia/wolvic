@@ -43,7 +43,7 @@ public:
   void EndFrame(const bool aDiscard) override;
   VRLayerQuadPtr CreateLayerQuad(int32_t aWidth, int32_t aHeight,
                                  VRLayerQuad::SurfaceType aSurfaceType) override;
-  VRLayerCubePtr CreateLayerCube(int32_t aWidth, int32_t aHeight) override;
+  VRLayerCubePtr CreateLayerCube(int32_t aWidth, int32_t aHeight, GLint aInternalFormat) override;
   VRLayerEquirectPtr CreateLayerEquirect(const VRLayerQuadPtr &aSource) override;
   void DeleteLayer(const VRLayerPtr& aLayer) override;
   // Custom methods for NativeActivity render loop based devices.

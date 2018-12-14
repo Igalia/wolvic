@@ -25,7 +25,8 @@ using namespace vrb;
 
 namespace crow {
 
-static TextureCubeMapPtr LoadTextureCube(vrb::CreationContextPtr& aContext, const std::string& aBasePath, GLuint targetTexture = 0) {
+static TextureCubeMapPtr LoadTextureCube(vrb::CreationContextPtr& aContext, const std::string& aBasePath,
+                                         const std::string& aExtension, GLuint targetTexture = 0) {
   TextureCubeMapPtr cubemap = vrb::TextureCubeMap::Create(aContext, targetTexture);
   cubemap->SetTextureParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   cubemap->SetTextureParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -33,7 +34,7 @@ static TextureCubeMapPtr LoadTextureCube(vrb::CreationContextPtr& aContext, cons
   cubemap->SetTextureParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
   cubemap->SetTextureParameter(GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-  auto path = [&](const std::string &name) { return aBasePath + "/" + name + ".jpg"; };
+  auto path = [&](const std::string &name) { return aBasePath + "/" + name + aExtension; };
   vrb::TextureCubeMap::Load(aContext, cubemap, path("posx"), path("negx"), path("posy"),
                             path("negy"), path("posz"), path("negz"));
   return cubemap;
@@ -48,6 +49,7 @@ struct Skybox::State {
   vrb::GeometryPtr geometry;
   vrb::ModelLoaderAndroidPtr loader;
   std::string basePath;
+  std::string extension;
   TextureCubeMapPtr texture;
   State():
       layerTextureHandle(0)
@@ -116,7 +118,7 @@ struct Skybox::State {
       }
 
 
-      texture = LoadTextureCube(aContext, basePath);
+      texture = LoadTextureCube(aContext, basePath, extension);
       vrb::RenderStatePtr state = geometry->GetRenderState();
       state->SetTexture(texture);
       state->SetMaterial(Color(1.0f, 1.0f, 1.0f), Color(1.0f, 1.0f, 1.0f), Color(0.0f, 0.0f, 0.0f),
@@ -135,19 +137,20 @@ struct Skybox::State {
       return;
     }
     vrb::CreationContextPtr create = context.lock();
-    texture = LoadTextureCube(create, basePath, layerTextureHandle);
+    texture = LoadTextureCube(create, basePath, extension, layerTextureHandle);
     texture->Bind();
     layer->SetLoaded(true);
   }
 };
 
 void
-Skybox::Load(const vrb::ModelLoaderAndroidPtr& aLoader, const std::string& aBasePath) {
+Skybox::Load(const vrb::ModelLoaderAndroidPtr& aLoader, const std::string& aBasePath, const std::string& aExtension) {
   if (m.basePath == aBasePath) {
     return;
   }
   m.loader = aLoader;
   m.basePath = aBasePath;
+  m.extension = aExtension;
   if (m.layer) {
     m.LoadLayer();
   } else {

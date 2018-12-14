@@ -65,7 +65,7 @@ public:
   virtual VRLayerQuadPtr CreateLayerQuad(int32_t aWidth,
                                          int32_t aHeight,
                                          VRLayerQuad::SurfaceType aSurfaceType) { return nullptr; }
-  virtual VRLayerCubePtr CreateLayerCube(int32_t aWidth, int32_t aHeight) { return nullptr; }
+  virtual VRLayerCubePtr CreateLayerCube(int32_t aWidth, int32_t aHeight, GLint aInternalFormat) { return nullptr; }
   virtual VRLayerEquirectPtr CreateLayerEquirect(const VRLayerQuadPtr &aSource) { return nullptr; }
   virtual void DeleteLayer(const VRLayerPtr& aLayer) {};
 protected:
