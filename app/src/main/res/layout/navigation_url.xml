@@ -17,7 +17,9 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:descendantFocusability="beforeDescendants"
+        android:focusableInTouchMode="true">
 
         <mozilla.components.ui.autocomplete.InlineAutocompleteEditText
             android:id="@+id/urlEditText"
