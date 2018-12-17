@@ -490,4 +490,22 @@
 	<!-- This string is displayed in any button used for removing all the items in the current context. -->
 	<string name="remove_all">Alle löschen</string>
 
+	<!-- This string is used as the title of the Private Browsing page that is opened when the
+		 Private Browsing Mode button from the tray is clicked. -->
+	<string name="private_browsing_title">Privater Modus</string>
+
+	<!-- This string is used as the body of the Private Browsing page that is opened when the
+    	 Private Browsing Mode button from the tray is clicked. -->
+	<string name="private_browsing_body"><![CDATA[
+<p>Wenn Sie in einem privaten Fenster surfen, wird %1$s <strong>Folgendes nicht speichern</strong>:</p>
+<ul class="two-column">
+	<li>Besuchte Seiten</li>
+	<li>Suchanfragen</li>
+	<li>Cookies</li>
+	<li>Temporäre Dateien</li>
+</ul>
+<p>Der Private Modus <strong>bedeutet nicht</strong>, dass Sie beim Surfen im Internet anonym bleiben. Ihr Arbeitgeber oder Internetanbieter kann immer noch feststellen, welche Seiten Sie besuchen.</p>
+<p class="about-info">Weitere Informationen über den <a id="learnMore">privaten Modus</a>.</p>
+   ]]></string>
+
 </resources>

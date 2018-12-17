@@ -490,4 +490,22 @@
 	<!-- This string is displayed in any button used for removing all the items in the current context. -->
 	<string name="remove_all">모두 삭제</string>
 
+	<!-- This string is used as the title of the Private Browsing page that is opened when the
+    	 Private Browsing Mode button from the tray is clicked. -->
+	<string name="private_browsing_title">프라이빗 브라우징</string>
+
+	<!-- This string is used as the body of the Private Browsing page that is opened when the
+    	 Private Browsing Mode button from the tray is clicked. -->
+	<string name="private_browsing_body"><![CDATA[
+<p>프라이빗 창으로 브라우징할 경우, %1$s은(는) <strong>다음을 저장하지 않습니다</strong>:</p>
+<ul class="two-column">
+	<li>방문한 웹페이지</li>
+	<li>검색</li>
+	<li>쿠키</li>
+	<li>임시 파일</li>
+</ul>
+<p>프라이빗 브라우징<strong>이 인터넷 상에서 귀하를 완전히 감추어주는 것은 아닙니다</strong>. 귀하의 고용주 또는 인터넷 서비스 제공자는 귀하가 방문하는 웹페이지를 알 수 있습니다.</p>
+<p class="about-info">프라이빗 브라우징에 대해 자세히 알아보십시오<a id="learnMore"></a>.</p>
+     ]]></string>
+
 </resources>
