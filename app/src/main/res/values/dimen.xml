@@ -150,5 +150,4 @@
 
     <!-- Bookmarks -->
     <dimen name="bookmark_row_height">64dp</dimen>
-    <item name="bookmarks_world_z" format="float" type="dimen">-4.19</item>
 </resources>

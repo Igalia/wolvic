@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.vrbrowser.ui.widgets;
+package org.mozilla.vrbrowser.ui.views;
 
 import android.app.Activity;
 import android.app.Application;
@@ -11,6 +11,8 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.FrameLayout;
 
 import org.mozilla.geckoview.AllowOrDeny;
 import org.mozilla.geckoview.GeckoResult;
@@ -19,12 +21,12 @@ import org.mozilla.geckoview.WebRequestError;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.SessionStore;
-import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.databinding.BookmarksBinding;
 import org.mozilla.vrbrowser.db.entity.BookmarkEntity;
 import org.mozilla.vrbrowser.model.Bookmark;
-import org.mozilla.vrbrowser.ui.callbacks.BookmarkClickCallback;
 import org.mozilla.vrbrowser.ui.adapters.BookmarkAdapter;
+import org.mozilla.vrbrowser.ui.callbacks.BookmarkClickCallback;
+import org.mozilla.vrbrowser.ui.widgets.BookmarkListener;
 import org.mozilla.vrbrowser.viewmodel.BookmarkListViewModel;
 
 import java.util.ArrayList;
@@ -39,9 +41,8 @@ import androidx.lifecycle.Observer;
 
 import static org.mozilla.gecko.GeckoAppShell.getApplicationContext;
 
-
-public class BookmarksWidget extends UIWidget implements Application.ActivityLifecycleCallbacks,
-        TrayListener, GeckoSession.NavigationDelegate {
+public class BookmarksView extends FrameLayout implements Application.ActivityLifecycleCallbacks,
+        GeckoSession.NavigationDelegate {
 
     private static final String ABOUT_BLANK = "about:blank";
 
@@ -50,20 +51,18 @@ public class BookmarksWidget extends UIWidget implements Application.ActivityLif
     private BookmarkListViewModel mBookmarkListModel;
     private List<BookmarkListener> mBookmarkListeners;
     private AudioEngine mAudio;
-    private int mSessionId;
-    private int mPreviousSessionId;
 
-    public BookmarksWidget(Context aContext) {
+    public BookmarksView(Context aContext) {
         super(aContext);
         initialize(aContext);
     }
 
-    public BookmarksWidget(Context aContext, AttributeSet aAttrs) {
+    public BookmarksView(Context aContext, AttributeSet aAttrs) {
         super(aContext, aAttrs);
         initialize(aContext);
     }
 
-    public BookmarksWidget(Context aContext, AttributeSet aAttrs, int aDefStyle) {
+    public BookmarksView(Context aContext, AttributeSet aAttrs, int aDefStyle) {
         super(aContext, aAttrs, aDefStyle);
         initialize(aContext);
     }
@@ -87,20 +86,7 @@ public class BookmarksWidget extends UIWidget implements Application.ActivityLif
         mBookmarkListModel = new BookmarkListViewModel(((Application)getApplicationContext()));
         subscribeUi(mBookmarkListModel.getBookmarks());
 
-        handleResizeEvent(SettingsStore.getInstance(getContext()).getBrowserWorldWidth(),
-                SettingsStore.getInstance(getContext()).getBrowserWorldHeight());
-    }
-
-    @Override
-    public void resizeByMultiplier(float aspect, float multiplier) {
-        float worldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width);
-        float worldHeight = worldWidth / aspect;
-        float area = worldWidth * worldHeight * multiplier;
-
-        float targetWidth = (float) Math.sqrt(area * aspect);
-        float targetHeight = (float) Math.sqrt(area / aspect);
-
-        handleResizeEvent(targetWidth, targetHeight);
+        setVisibility(GONE);
     }
 
     public void addListeners(BookmarkListener... listeners) {
@@ -119,16 +105,6 @@ public class BookmarksWidget extends UIWidget implements Application.ActivityLif
         mBookmarkListeners.forEach(bookmarkListener -> bookmarkListener.onBookmarksHidden());
     }
 
-    @Override
-    public void releaseWidget() {
-        ((Application)getApplicationContext()).unregisterActivityLifecycleCallbacks(this);
-        SessionStore.get().removeNavigationListener(this);
-
-        unstackSession();
-
-        super.releaseWidget();
-    }
-
     private final BookmarkClickCallback mBookmarkClickCallback = new BookmarkClickCallback() {
         @Override
         public void onClick(Bookmark bookmark) {
@@ -136,7 +112,7 @@ public class BookmarksWidget extends UIWidget implements Application.ActivityLif
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
 
-            loadAndHide(bookmark.getUrl());
+            SessionStore.get().loadUri(bookmark.getUrl());
         }
 
         @Override
@@ -148,19 +124,6 @@ public class BookmarksWidget extends UIWidget implements Application.ActivityLif
             mBookmarkListModel.deleteBookmark(bookmark);
         }
     };
-
-    @Override
-    protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
-        Context context = getContext();
-        aPlacement.visible = false;
-        aPlacement.worldWidth =  WidgetPlacement.floatDimension(context, R.dimen.window_world_width);
-        aPlacement.width = SettingsStore.getInstance(getContext()).getWindowWidth();
-        aPlacement.height = SettingsStore.getInstance(getContext()).getWindowHeight();
-        aPlacement.anchorX = 0.5f;
-        aPlacement.anchorY = 0.0f;
-        aPlacement.translationY = WidgetPlacement.unitFromMeters(context, R.dimen.window_world_y);
-        aPlacement.translationZ = WidgetPlacement.unitFromMeters(context, R.dimen.bookmarks_world_z);
-    }
 
     private void subscribeUi(LiveData<List<BookmarkEntity>> liveData) {
         // Update the list when the data changes
@@ -196,53 +159,14 @@ public class BookmarksWidget extends UIWidget implements Application.ActivityLif
     };
 
     @Override
-    public void show() {
-        super.show();
+    public void setVisibility(int visibility) {
+        super.setVisibility(visibility);
 
-        mPreviousSessionId = SessionStore.get().getCurrentSessionId();
-        if (SessionStore.get().isCurrentSessionPrivate()) {
-            mSessionId = SessionStore.get().createSession(true);
+        if (visibility == VISIBLE) {
+            notifyBookmarksShown();
 
         } else {
-            mSessionId = SessionStore.get().createSession();
-        }
-        SessionStore.get().stackSession(mSessionId);
-
-        notifyBookmarksShown();
-
-        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
-    }
-
-    public void loadAndHide(String aURL) {
-        SessionStore.get().loadUri(aURL);
-
-        hide(UIWidget.REMOVE_WIDGET);
-    }
-
-    @Override
-    public void hide(@HideFlags int aHideFlags) {
-        super.hide(aHideFlags);
-
-        notifyBookmarksHidden();
-
-        mWidgetManager.popWorldBrightness(this);
-    }
-
-    @Override
-    protected void onDismiss() {
-        super.onDismiss();
-
-        unstackSession();
-    }
-
-    private void unstackSession() {
-        if (SessionStore.get().getCurrentSessionId() == mSessionId) {
-            if (SessionStore.get().canGoBack()) {
-                SessionStore.get().goBack();
-
-            } else if (SessionStore.get().canUnstackSession()) {
-                SessionStore.get().unstackSession();
-            }
+            notifyBookmarksHidden();
         }
     }
 
@@ -283,29 +207,14 @@ public class BookmarksWidget extends UIWidget implements Application.ActivityLif
 
     }
 
-    // TrayListener
-
-    @Override
-    public void onBookmarksClicked() {
-        if (isVisible()) {
-            onDismiss();
-            super.hide(UIWidget.REMOVE_WIDGET);
-
-        } else {
-            show();
-        }
-    }
-
     // NavigationDelegate
 
     @Override
     public void onLocationChange(GeckoSession session, String url) {
-        int sessionId = SessionStore.get().getSessionId(session);
-        if ((mWidgetPlacement.visible &&
+        if (getVisibility() == View.VISIBLE &&
                 url != null &&
-                !url.equals(ABOUT_BLANK)) ||
-                sessionId == mPreviousSessionId) {
-            hide(UIWidget.REMOVE_WIDGET);
+                !url.equals(ABOUT_BLANK)) {
+            notifyBookmarksHidden();
         }
     }
 

@@ -80,8 +80,10 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
 
-            SessionStore.get().switchPrivateMode();
+            notifyPrivateBrowsingClicked();
             view.requestFocusFromTouch();
+
+            SessionStore.get().switchPrivateMode();
         });
 
         mSettingsButton = findViewById(R.id.settingsButton);
@@ -103,8 +105,8 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
 
-            view.requestFocusFromTouch();
             notifyBookmarksClicked();
+            view.requestFocusFromTouch();
         });
 
         mAudio = AudioEngine.fromContext(aContext);
@@ -179,6 +181,10 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
 
     private void notifyBookmarksClicked() {
         mTrayListeners.forEach(trayListener -> trayListener.onBookmarksClicked());
+    }
+
+    private void notifyPrivateBrowsingClicked() {
+        mTrayListeners.forEach(trayListener -> trayListener.onPrivateBrowsingClicked());
     }
 
     @Override

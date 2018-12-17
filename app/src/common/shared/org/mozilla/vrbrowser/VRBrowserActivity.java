@@ -46,8 +46,7 @@ import org.mozilla.vrbrowser.search.SearchEngineWrapper;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.ui.OffscreenDisplay;
 import org.mozilla.vrbrowser.ui.widgets.BookmarkListener;
-import org.mozilla.vrbrowser.ui.widgets.BookmarksWidget;
-import org.mozilla.vrbrowser.ui.widgets.BrowserWidget;
+import org.mozilla.vrbrowser.ui.views.BookmarksView;
 import org.mozilla.vrbrowser.ui.widgets.KeyboardWidget;
 import org.mozilla.vrbrowser.ui.widgets.NavigationBarWidget;
 import org.mozilla.vrbrowser.ui.widgets.RootWidget;
@@ -59,11 +58,11 @@ import org.mozilla.vrbrowser.ui.widgets.VideoProjectionMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.Widget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
+import org.mozilla.vrbrowser.ui.widgets.WindowWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.CrashDialogWidget;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -113,14 +112,14 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     SwipeRunnable mLastRunnable;
     Handler mHandler = new Handler();
     Runnable mAudioUpdateRunnable;
-    BrowserWidget mBrowserWidget;
+    WindowWidget mWindowWidget;
     RootWidget mRootWidget;
     KeyboardWidget mKeyboard;
     NavigationBarWidget mNavigationBar;
     CrashDialogWidget mCrashDialog;
     TopBarWidget mTopBar;
     TrayWidget mTray;
-    BookmarksWidget mBookmarksWidget;
+    BookmarksView mBookmarksView;
     PermissionDelegate mPermissionDelegate;
     LinkedList<UpdateListener> mWidgetUpdateListeners;
     LinkedList<PermissionListener> mPermissionListeners;
@@ -132,7 +131,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private LinkedList<Pair<Object, Float>> mBrightnessQueue;
     private Pair<Object, Float> mCurrentBrightness;
     private SearchEngineWrapper mSearchEngineWrapper;
-    private ArrayList<Widget> mResizableWidgets;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,8 +161,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mBackHandlers = new LinkedList<>();
         mBrightnessQueue = new LinkedList<>();
         mCurrentBrightness = Pair.create(null, 1.0f);
-
-        mResizableWidgets = new ArrayList<>();
 
         mWidgets = new HashMap<>();
         mWidgetContainer = new FrameLayout(this);
@@ -199,30 +195,30 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     protected void initializeWorld() {
+        // Bookmarks panel
+        mBookmarksView = new BookmarksView(this);
+
         // Create browser widget
         if (SessionStore.get().getCurrentSession() == null) {
             int id = SessionStore.get().createSession();
             SessionStore.get().setCurrentSession(id);
         }
         int currentSession = SessionStore.get().getCurrentSessionId();
-        mBrowserWidget = new BrowserWidget(this, currentSession);
-        mPermissionDelegate.setParentWidgetHandle(mBrowserWidget.getHandle());
-
-        // Bookmarks panel
-        mBookmarksWidget = new BookmarksWidget(this);
+        mWindowWidget = new WindowWidget(this, currentSession);
+        mWindowWidget.setBookmarksView(mBookmarksView);
+        mPermissionDelegate.setParentWidgetHandle(mWindowWidget.getHandle());
 
         // Create Browser navigation widget
         mNavigationBar = new NavigationBarWidget(this);
-        mNavigationBar.setBrowserWidget(mBrowserWidget);
-        mNavigationBar.setBookmarksWidget(mBookmarksWidget);
+        mNavigationBar.setBrowserWidget(mWindowWidget);
 
         // Create keyboard widget
         mKeyboard = new KeyboardWidget(this);
-        mKeyboard.setBrowserWidget(mBrowserWidget);
+        mKeyboard.setBrowserWidget(mWindowWidget);
 
         // Create the top bar
         mTopBar = new TopBarWidget(this);
-        mTopBar.setBrowserWidget(mBrowserWidget);
+        mTopBar.setBrowserWidget(mWindowWidget);
 
         // Empty widget just for handling focus on empty space
         mRootWidget = new RootWidget(this);
@@ -236,12 +232,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mTray = new TrayWidget(this);
 
         // Add widget listeners
-        mTray.addListeners(new TrayListener[]{mNavigationBar, mBookmarksWidget});
-        mBookmarksWidget.addListeners(new BookmarkListener[]{mBrowserWidget, mNavigationBar, mTray});
+        mTray.addListeners(new TrayListener[]{mWindowWidget, mNavigationBar});
+        mBookmarksView.addListeners(new BookmarkListener[]{mWindowWidget, mNavigationBar, mTray});
 
-        mResizableWidgets.addAll(Arrays.asList(mBrowserWidget, mBookmarksWidget));
-
-        addWidgets(Arrays.asList(mRootWidget, mBrowserWidget, mNavigationBar, mKeyboard, mTray, mBookmarksWidget));
+        addWidgets(Arrays.asList(mRootWidget, mWindowWidget, mNavigationBar, mKeyboard, mTray));
     }
 
     @Override
@@ -297,7 +291,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         // Remove all widget listeners
         mTray.removeAllListeners();
-        mBookmarksWidget.removeAllListeners();
+        mBookmarksView.removeAllListeners();
 
         SessionStore.get().unregisterListeners();
         super.onDestroy();
@@ -501,8 +495,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             Widget widget = mWidgets.get(aHandle);
             if (widget == null) {
                 MotionEventGenerator.dispatch(mRootWidget, aDevice, aPressed, aX, aY);
-            } else if (widget == mBrowserWidget && mBrowserWidget.getBorderWidth() > 0) {
-                final int border = mBrowserWidget.getBorderWidth();
+            } else if (widget == mWindowWidget && mWindowWidget.getBorderWidth() > 0) {
+                final int border = mWindowWidget.getBorderWidth();
                 MotionEventGenerator.dispatch(widget, aDevice, aPressed, aX - border, aY - border);
             } else {
                 MotionEventGenerator.dispatch(widget, aDevice, aPressed, aX, aY);
@@ -575,7 +569,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @SuppressWarnings("unused")
     void handleResize(final int aHandle, final float aWorldWidth, final float aWorldHeight) {
         runOnUiThread(() -> {
-            mResizableWidgets.forEach(widget -> widget.handleResizeEvent(aWorldWidth, aWorldHeight));
+            mWindowWidget.handleResizeEvent(aWorldWidth, aWorldHeight);
         });
     }
 
@@ -590,9 +584,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         @Override
         public void run() {
             synchronized (VRBrowserActivity.this) {
-                if (mBrowserWidget != null) {
+                if (mWindowWidget != null) {
                     Log.d(LOGTAG, "About to pause Compositor");
-                    mBrowserWidget.pauseCompositor();
+                    mWindowWidget.pauseCompositor();
                     Log.d(LOGTAG, "Compositor Paused");
                 }
                 done = true;
@@ -633,8 +627,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         TelemetryWrapper.uploadImmersiveToHistogram();
         Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(() -> {
-            if (mBrowserWidget != null) {
-                mBrowserWidget.resumeCompositor();
+            if (mWindowWidget != null) {
+                mWindowWidget.resumeCompositor();
                 Log.d(LOGTAG, "Compositor Resumed");
             }
         }, 20);
@@ -921,7 +915,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public void setWindowSize(float targetWidth, float targetHeight) {
-            mBrowserWidget.resizeByMultiplier(targetWidth / targetHeight, 1.0f);
+            mWindowWidget.resizeByMultiplier(targetWidth / targetHeight, 1.0f);
     }
 
     @Override

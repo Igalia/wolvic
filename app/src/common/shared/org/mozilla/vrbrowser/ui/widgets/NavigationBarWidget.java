@@ -19,18 +19,18 @@ import org.mozilla.geckoview.AllowOrDeny;
 import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.WebRequestError;
-import org.mozilla.vrbrowser.*;
+import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.Media;
 import org.mozilla.vrbrowser.browser.SessionStore;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.search.SearchEngineWrapper;
-import org.mozilla.vrbrowser.ui.widgets.dialogs.VoiceSearchWidget;
-import org.mozilla.vrbrowser.utils.AnimationHelper;
 import org.mozilla.vrbrowser.ui.views.CustomUIButton;
 import org.mozilla.vrbrowser.ui.views.NavigationURLBar;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.views.UITextButton;
+import org.mozilla.vrbrowser.ui.widgets.dialogs.VoiceSearchWidget;
+import org.mozilla.vrbrowser.utils.AnimationHelper;
 import org.mozilla.vrbrowser.utils.UrlUtils;
 
 import java.util.ArrayList;
@@ -59,7 +59,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private ViewGroup mNavigationContainer;
     private ViewGroup mFullScreenModeContainer;
     private ViewGroup mResizeModeContainer;
-    private BrowserWidget mBrowserWidget;
+    private WindowWidget mWindowWidget;
     private boolean mIsLoading;
     private boolean mIsInFullScreenMode;
     private boolean mIsResizing;
@@ -88,7 +88,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private WidgetPlacement mProjectionMenuPlacement;
     private BrightnessMenuWidget mBrightnessWidget;
     private MediaControlsWidget mMediaControlsWidget;
-    private BookmarksWidget mBookmarksWidget;
     private Media mFullScreenMedia;
     private @VideoProjectionMenuWidget.VideoProjectionFlags Integer mAutoSelectedProjection;
 
@@ -321,8 +320,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         SessionStore.get().removeProgressListener(this);
         SessionStore.get().removeContentListener(this);
         SessionStore.get().removeSessionChangeListener(this);
-        mBrowserWidget = null;
-        mBookmarksWidget = null;
+        mWindowWidget = null;
         super.releaseWidget();
     }
 
@@ -344,26 +342,22 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         super.onDraw(canvas);
     }
 
-    public void setBrowserWidget(BrowserWidget aWidget) {
+    public void setBrowserWidget(WindowWidget aWidget) {
         if (aWidget != null) {
             mWidgetPlacement.parentHandle = aWidget.getHandle();
         }
-        mBrowserWidget = aWidget;
-    }
-
-    public void setBookmarksWidget(BookmarksWidget aWidget) {
-        mBookmarksWidget = aWidget;
+        mWindowWidget = aWidget;
     }
 
     private void setFullScreenSize() {
-        mSizeBeforeFullScreen.copyFrom(mBrowserWidget.getPlacement());
+        mSizeBeforeFullScreen.copyFrom(mWindowWidget.getPlacement());
         // Set browser fullscreen size
         float aspect = SettingsStore.getInstance(getContext()).getWindowAspect();
         Media media = SessionStore.get().getFullScreenVideo();
         if (media != null && media.getWidth() > 0 && media.getHeight() > 0) {
             aspect = (float)media.getWidth() / (float)media.getHeight();
         }
-        mBrowserWidget.resizeByMultiplier(aspect,1.75f);
+        mWindowWidget.resizeByMultiplier(aspect,1.75f);
     }
 
     private void enterFullScreenMode() {
@@ -371,7 +365,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             return;
         }
 
-        mBrowserWidget.setSaveResizeChanges(false);
+        mWindowWidget.setSaveResizeChanges(false);
         setFullScreenSize();
         mWidgetManager.pushBackHandler(mFullScreenBackHandler);
         mIsInFullScreenMode = true;
@@ -391,7 +385,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             mProjectionMenu.setDelegate((projection )-> {
                 if (mIsInVRVideo) {
                     // Reproject while reproducing VRVideo
-                    mWidgetManager.showVRVideo(mBrowserWidget.getHandle(), projection);
+                    mWidgetManager.showVRVideo(mWindowWidget.getHandle(), projection);
                     closeFloatingMenus();
                 } else {
                     enterVRVideo(projection);
@@ -420,9 +414,9 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             }
         }, 50);
 
-        mBrowserWidget.getPlacement().copyFrom(mSizeBeforeFullScreen);
-        mWidgetManager.updateWidget(mBrowserWidget);
-        mBrowserWidget.setSaveResizeChanges(true);
+        mWindowWidget.getPlacement().copyFrom(mSizeBeforeFullScreen);
+        mWidgetManager.updateWidget(mWindowWidget);
+        mWindowWidget.setSaveResizeChanges(true);
 
         mIsInFullScreenMode = false;
         mWidgetManager.popBackHandler(mFullScreenBackHandler);
@@ -484,13 +478,13 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         if (mFullScreenMedia != null && mFullScreenMedia.getWidth() > 0 && mFullScreenMedia.getHeight() > 0) {
             final boolean resetBorder = aProjection == VideoProjectionMenuWidget.VIDEO_PROJECTION_360 ||
                                         aProjection == VideoProjectionMenuWidget.VIDEO_PROJECTION_360_STEREO;
-            mBrowserWidget.enableVRVideoMode(mFullScreenMedia.getWidth(), mFullScreenMedia.getHeight(), resetBorder);
+            mWindowWidget.enableVRVideoMode(mFullScreenMedia.getWidth(), mFullScreenMedia.getHeight(), resetBorder);
             // Handle video resize while in VR video playback
             mFullScreenMedia.setResizeDelegate((width, height) -> {
-                mBrowserWidget.enableVRVideoMode(width, height, resetBorder);
+                mWindowWidget.enableVRVideoMode(width, height, resetBorder);
             });
         }
-        mBrowserWidget.setVisible(false);
+        mWindowWidget.setVisible(false);
 
         closeFloatingMenus();
         if (mProjectionMenu.getSelectedProjection() != VideoProjectionMenuWidget.VIDEO_PROJECTION_3D_SIDE_BY_SIDE) {
@@ -499,7 +493,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
         if (mMediaControlsWidget == null) {
             mMediaControlsWidget = new MediaControlsWidget(getContext());
-            mMediaControlsWidget.setParentWidget(mBrowserWidget.getHandle());
+            mMediaControlsWidget.setParentWidget(mWindowWidget.getHandle());
             mMediaControlsWidget.getPlacement().visible = false;
             mWidgetManager.addWidget(mMediaControlsWidget);
             mMediaControlsWidget.setBackHandler(this::exitVRVideo);
@@ -508,7 +502,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mMediaControlsWidget.setMedia(mFullScreenMedia);
         mMediaControlsWidget.setProjectionSelectorEnabled(mAutoSelectedProjection == null);
         mWidgetManager.updateWidget(mMediaControlsWidget);
-        mWidgetManager.showVRVideo(mBrowserWidget.getHandle(), aProjection);
+        mWidgetManager.showVRVideo(mWindowWidget.getHandle(), aProjection);
     }
 
     private void exitVRVideo() {
@@ -526,15 +520,14 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mWidgetManager.setControllersVisible(true);
 
         this.setVisible(true);
-        mBrowserWidget.disableVRVideoMode();
-        mBrowserWidget.setVisible(true);
+        mWindowWidget.disableVRVideoMode();
+        mWindowWidget.setVisible(true);
         mMediaControlsWidget.setVisible(false);
     }
 
     private void setResizePreset(float aMultiplier) {
         final float aspect = SettingsStore.getInstance(getContext()).getWindowAspect();
-        mBrowserWidget.resizeByMultiplier(aspect, aMultiplier);
-        mBookmarksWidget.resizeByMultiplier(aspect, aMultiplier);
+        mWindowWidget.resizeByMultiplier(aspect, aMultiplier);
     }
 
     public void showVoiceSearch() {
@@ -745,7 +738,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     // WidgetManagerDelegate.UpdateListener
     @Override
     public void onWidgetUpdate(Widget aWidget) {
-        if ((aWidget != mBrowserWidget && aWidget != mBookmarksWidget) || mIsResizing) {
+        if (aWidget != mWindowWidget || mIsResizing) {
             return;
         }
 
@@ -963,30 +956,20 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         }
     }
 
-    private void finishWidgetResize() {
-        if (mBrowserWidget.isVisible()) {
-            mWidgetManager.finishWidgetResize(mBrowserWidget);
+    @Override
+    public void onPrivateBrowsingClicked() {
 
-        } else if (mBookmarksWidget.isVisible()) {
-            mWidgetManager.finishWidgetResize(mBookmarksWidget);
-        }
+    }
+
+    private void finishWidgetResize() {
+        mWidgetManager.finishWidgetResize(mWindowWidget);
     }
 
     private void startWidgetResize() {
-        if (mBrowserWidget.isVisible()) {
-            mWidgetManager.startWidgetResize(mBrowserWidget);
-
-        } else if (mBookmarksWidget.isVisible()) {
-            mWidgetManager.startWidgetResize(mBookmarksWidget);
-        }
+        mWidgetManager.startWidgetResize(mWindowWidget);
     }
 
     private void updateWidget() {
-        if (mBrowserWidget.isVisible()) {
-            onWidgetUpdate(mBrowserWidget);
-
-        } else if (mBookmarksWidget.isVisible()) {
-            onWidgetUpdate(mBookmarksWidget);
-        }
+        onWidgetUpdate(mWindowWidget);
     }
 }
