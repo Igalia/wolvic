@@ -64,7 +64,7 @@ struct SplashAnimation::State {
 
     read->Bind(GL_READ_FRAMEBUFFER);
     layer->Bind(GL_DRAW_FRAMEBUFFER);
-    VRB_GL_CHECK(glClearColor(1.0, 0.0f, 0.0f, 1.0f));
+    VRB_GL_CHECK(glClearColor(0.0, 0.0f, 0.0f, 0.0f));
     VRB_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
     VRB_GL_CHECK(glBlitFramebuffer(0, 0, aTexture->GetWidth(), aTexture->GetHeight(),
                                    0, 0, aTexture->GetWidth(), aTexture->GetHeight(),
