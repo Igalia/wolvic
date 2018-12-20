@@ -646,9 +646,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         if (mReloadButton != null) {
             mReloadButton.setImageResource(R.drawable.ic_icon_exit);
         }
-        if (mIsInFullScreenMode && !mIsResizing) {
-            AnimationHelper.fadeIn(mURLBar, 0, null);
-        }
     }
 
     @Override
@@ -657,9 +654,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mURLBar.setIsLoading(false);
         if (mReloadButton != null) {
             mReloadButton.setImageResource(R.drawable.ic_icon_reload);
-        }
-        if (mIsInFullScreenMode) {
-            AnimationHelper.fadeOut(mURLBar, 0, null);
         }
     }
 
