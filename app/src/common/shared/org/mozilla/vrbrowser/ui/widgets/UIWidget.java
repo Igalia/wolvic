@@ -82,6 +82,14 @@ public abstract class UIWidget extends FrameLayout implements Widget {
     }
 
     @Override
+    public void onPause() {
+    }
+
+    @Override
+    public void onResume() {
+    }
+
+    @Override
     public void resizeByMultiplier(float aspect, float multiplier) {
         // To be implemented by inheriting widgets
     }

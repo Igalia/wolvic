@@ -166,6 +166,20 @@ public class NavigationURLBar extends FrameLayout {
         // Prevent the URL TextEdit to get focus when user touches something outside of it
         setFocusable(true);
         setClickable(true);
+        syncViews();
+    }
+
+    public void onPause() {
+        if (mIsLoading) {
+            mLoadingView.clearAnimation();
+        }
+    }
+
+    public void onResume() {
+        if (mIsLoading) {
+            mLoadingView.startAnimation(mLoadingAnimation);
+        }
+
     }
 
     public void setDelegate(NavigationURLBarDelegate delegate) {
@@ -340,6 +354,8 @@ public class NavigationURLBar extends FrameLayout {
         }
         else {
             mURLLeftContainer.setVisibility(View.GONE);
+            mLoadingView.setVisibility(View.GONE);
+            mInsecureIcon.setVisibility(View.GONE);
         }
 
         mURL.setPadding(leftPadding, mURL.getPaddingTop(), mURL.getPaddingRight(), mURL.getPaddingBottom());

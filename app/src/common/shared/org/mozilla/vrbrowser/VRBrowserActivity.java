@@ -259,6 +259,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         }
         mAudioEngine.pauseEngine();
         SessionStore.get().setActive(false);
+        for (Widget widget: mWidgets.values()) {
+            widget.onPause();
+        }
         super.onPause();
     }
 
@@ -266,6 +269,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     protected void onResume() {
         SessionStore.get().setActive(true);
         mAudioEngine.resumeEngine();
+        for (Widget widget: mWidgets.values()) {
+            widget.onResume();
+        }
         super.onResume();
     }
 

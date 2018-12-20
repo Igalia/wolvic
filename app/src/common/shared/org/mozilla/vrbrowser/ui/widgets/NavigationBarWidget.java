@@ -312,6 +312,18 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        mURLBar.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mURLBar.onResume();
+    }
+
+    @Override
     public void releaseWidget() {
         mWidgetManager.removeUpdateListener(this);
         mWidgetManager.removeWorldClickListener(this);
