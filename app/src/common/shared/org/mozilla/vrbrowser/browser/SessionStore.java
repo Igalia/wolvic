@@ -945,10 +945,17 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         }
     }
 
+    public boolean mFirstOnLoadRequest = true;
+
     @Override
     public @Nullable GeckoResult<AllowOrDeny> onLoadRequest(@NonNull GeckoSession aSession, @NonNull LoadRequest aRequest) {
         final GeckoResult<AllowOrDeny> result = new GeckoResult<>();
-        aSession.getSettings().setString(GeckoSessionSettings.USER_AGENT_OVERRIDE, mUserAgentOverride.lookupOverride(aRequest.uri));
+        Log.d(LOGTAG, "onLoadRequest: " + aRequest.uri);
+        if (mFirstOnLoadRequest && (aSession == mCurrentSession)) {
+            Log.d(LOGTAG, "Testing for UA override");
+            aSession.getSettings().setString(GeckoSessionSettings.USER_AGENT_OVERRIDE, mUserAgentOverride.lookupOverride(aRequest.uri));
+            mFirstOnLoadRequest = false;
+        }
         if (PRIVATE_BROWSING_URI.equalsIgnoreCase(aRequest.uri)) {
             switchPrivateMode();
             result.complete(AllowOrDeny.ALLOW);
@@ -1076,6 +1083,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         }
 
         if (mCurrentSession == aSession) {
+            mFirstOnLoadRequest = true;
             for (GeckoSession.ProgressDelegate listener : mProgressListeners) {
                 listener.onPageStop(aSession, b);
             }
