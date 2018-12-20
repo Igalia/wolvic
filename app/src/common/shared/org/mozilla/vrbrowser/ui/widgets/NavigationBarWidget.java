@@ -444,6 +444,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             AnimationHelper.fadeOut(mNavigationContainer, 0, null);
         }
         mWidgetManager.pushBackHandler(mResizeBackHandler);
+        mWidgetManager.setTrayVisible(false);
         closeFloatingMenus();
     }
 
@@ -460,6 +461,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         }
         AnimationHelper.fadeOut(mResizeModeContainer, 0, () -> updateWidget());
         mWidgetManager.popBackHandler(mResizeBackHandler);
+        mWidgetManager.setTrayVisible(!mIsInFullScreenMode);
         closeFloatingMenus();
     }
 
