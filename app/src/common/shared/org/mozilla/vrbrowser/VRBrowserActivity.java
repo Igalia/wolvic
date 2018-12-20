@@ -322,6 +322,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             uri = Uri.parse(intent.getExtras().getString("url"));
         }
 
+        Bundle extras = intent.getExtras();
+        if (extras != null && extras.containsKey("homepage")) {
+            Uri homepageUri = Uri.parse(extras.getString("homepage"));
+            SettingsStore.getInstance(this).setHomepage(homepageUri.toString());
+        }
+
         if (SessionStore.get().getCurrentSession() == null) {
             String url = (uri != null ? uri.toString() : null);
             int id = SessionStore.get().createSession();

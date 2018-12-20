@@ -46,7 +46,6 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
     private int mDeveloperOptionsDialogHandle = -1;
     private int mLanguageOptionsDialogHandle = -1;
     private int mDisplayOptionsDialogHandle = -1;
-    private int mCurrentlyOpenedDialogHandle = -1;
     private TextView mBuildText;
 
     class VersionGestureListener extends GestureDetector.SimpleOnGestureListener {
@@ -321,8 +320,6 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
         }
 
         widget.show();
-
-        mCurrentlyOpenedDialogHandle = mDeveloperOptionsDialogHandle;
     }
 
     private void showLanguageOptionsDialog() {
@@ -336,8 +333,6 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
         }
 
         widget.show();
-
-        mCurrentlyOpenedDialogHandle = mLanguageOptionsDialogHandle;
     }
 
     private void showDisplayOptionsDialog() {
@@ -351,8 +346,6 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
         }
 
         widget.show();
-
-        mCurrentlyOpenedDialogHandle = mDisplayOptionsDialogHandle;
     }
 
     private void onOptionsDialogDismissed() {

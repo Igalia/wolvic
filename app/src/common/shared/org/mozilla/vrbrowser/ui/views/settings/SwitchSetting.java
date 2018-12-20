@@ -61,6 +61,7 @@ public class SwitchSetting extends LinearLayout {
             }
 
             setValue(b, true);
+            mSwitch.requestFocus();
         }
     };
 

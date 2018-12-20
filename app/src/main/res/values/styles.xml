@@ -156,12 +156,11 @@
     </style>
 
     <style name="settingsEdit">
-        <item name="android:layout_width">80dp</item>
-        <item name="android:layout_height">30dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">20sp</item>
         <item name="android:background">@drawable/edittext_background</item>
         <item name="android:textColor">@drawable/edittext_textcolor</item>
-        <item name="android:editTextColor">@drawable/edittext_textcolor</item>
         <item name="android:textColorHighlight">@color/ocean</item>
         <item name="android:padding">5dp</item>
         <item name="android:textStyle">bold</item>
@@ -170,9 +169,10 @@
         <item name="android:focusable">true</item>
         <item name="android:focusableInTouchMode">true</item>
         <item name="android:singleLine">true</item>
-        <item name="android:selectAllOnFocus">true</item>
         <item name="android:layout_marginEnd">5dp</item>
         <item name="android:gravity">center_vertical</item>
+        <item name="android:textCursorDrawable">@drawable/settings_edit_cursor</item>
+        <item name="android:selectAllOnFocus">true</item>
     </style>
 
     <style name="settingsButton">

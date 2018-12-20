@@ -17,11 +17,12 @@ import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.views.settings.ButtonSetting;
 import org.mozilla.vrbrowser.ui.views.settings.RadioGroupSetting;
+import org.mozilla.vrbrowser.ui.views.settings.SingleEditSetting;
 import org.mozilla.vrbrowser.ui.views.settings.SwitchSetting;
-import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
-import org.mozilla.vrbrowser.ui.widgets.dialogs.RestartDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
+import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
+import org.mozilla.vrbrowser.ui.widgets.dialogs.RestartDialogWidget;
 
 import static org.mozilla.vrbrowser.utils.ServoUtils.isServoAvailable;
 
@@ -40,6 +41,9 @@ public class DeveloperOptionsWidget extends UIWidget implements
 
     private RadioGroupSetting mEnvironmentsRadio;
     private RadioGroupSetting mPointerColorRadio;
+
+    private SingleEditSetting mHomepageEdit;
+    private String mDefaultHomepageUrl;
 
     private ButtonSetting mResetButton;
 
@@ -66,17 +70,26 @@ public class DeveloperOptionsWidget extends UIWidget implements
 
         mAudio = AudioEngine.fromContext(aContext);
 
-        mWidgetManager.addFocusChangeListener(this);
-        mWidgetManager.addWorldClickListener(this);
-
         mBackButton = findViewById(R.id.backButton);
         mBackButton.setOnClickListener(view -> {
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
 
-            onDismiss();
+            hide(REMOVE_WIDGET);
+            if (mDelegate != null) {
+                mDelegate.onDismiss();
+            }
         });
+
+        mDefaultHomepageUrl = getContext().getString(R.string.homepage_url);
+
+        mHomepageEdit = findViewById(R.id.homepage_edit);
+        mHomepageEdit.setHint1(getContext().getString(R.string.homepage_hint));
+        mHomepageEdit.setDefaultFirstValue(mDefaultHomepageUrl);
+        mHomepageEdit.setFirstText(SettingsStore.getInstance(getContext()).getHomepage());
+        mHomepageEdit.setOnClickListener(mHomepageListener);
+        setHomepage(SettingsStore.getInstance(getContext()).getHomepage());
 
         mRemoteDebuggingSwitch = findViewById(R.id.remote_debugging_switch);
         mRemoteDebuggingSwitch.setOnCheckedChangeListener(mRemoteDebuggingListener);
@@ -132,18 +145,32 @@ public class DeveloperOptionsWidget extends UIWidget implements
     }
 
     @Override
-    public void releaseWidget() {
-        mWidgetManager.removeFocusChangeListener(this);
-        mWidgetManager.removeWorldClickListener(this);
-
-        super.releaseWidget();
-    }
-
-    @Override
     public void show() {
         super.show();
 
+        mWidgetManager.addWorldClickListener(this);
+        mWidgetManager.addFocusChangeListener(this);
         mScrollbar.scrollTo(0, 0);
+    }
+
+    @Override
+    public void hide(@HideFlags int aHideFlags) {
+        super.hide(aHideFlags);
+
+        mHomepageEdit.cancel();
+
+        mWidgetManager.removeWorldClickListener(this);
+        mWidgetManager.removeFocusChangeListener(this);
+    }
+
+    @Override
+    protected void onDismiss() {
+        if (mHomepageEdit.isEditing()) {
+            mHomepageEdit.cancel();
+
+        } else {
+            super.onDismiss();
+        }
     }
 
     private void showRestartDialog() {
@@ -162,6 +189,15 @@ public class DeveloperOptionsWidget extends UIWidget implements
     private void onRestartDialogDismissed() {
        show();
     }
+
+    private OnClickListener mHomepageListener = (view) -> {
+        if (!mHomepageEdit.getFirstText().isEmpty()) {
+            setHomepage(mHomepageEdit.getFirstText());
+
+        } else {
+            setHomepage(mDefaultHomepageUrl);
+        }
+    };
 
     private SwitchSetting.OnCheckedChangeListener mRemoteDebuggingListener = (compoundButton, value, doApply) -> {
         setRemoteDebugging(value, doApply);
@@ -199,9 +235,16 @@ public class DeveloperOptionsWidget extends UIWidget implements
             restart = true;
         }
 
-        setConsoleLogs(SettingsStore.CONSOLE_LOGS_DEFAULT, true);
-        setMultiprocess(SettingsStore.MULTIPROCESS_DEFAULT, true);
-        setServo(SettingsStore.SERVO_DEFAULT, true);
+        if (mConsoleLogsSwitch.isChecked() != SettingsStore.CONSOLE_LOGS_DEFAULT) {
+            setConsoleLogs(SettingsStore.CONSOLE_LOGS_DEFAULT, true);
+        }
+        if (mMultiprocessSwitch.isChecked() != SettingsStore.MULTIPROCESS_DEFAULT) {
+            setMultiprocess(SettingsStore.MULTIPROCESS_DEFAULT, true);
+        }
+        if (mServoSwitch.isChecked() != SettingsStore.SERVO_DEFAULT) {
+            setServo(SettingsStore.SERVO_DEFAULT, true);
+        }
+        setHomepage(mDefaultHomepageUrl);
 
         if (mEnvOverrideSwitch.isChecked() != SettingsStore.ENV_OVERRIDE_DEFAULT) {
             setEnvOverride(SettingsStore.ENV_OVERRIDE_DEFAULT);
@@ -215,6 +258,13 @@ public class DeveloperOptionsWidget extends UIWidget implements
         if (restart)
             showRestartDialog();
     };
+
+    private void setHomepage(String newHomepage) {
+        mHomepageEdit.setOnClickListener(null);
+        mHomepageEdit.setFirstText(newHomepage);
+        SettingsStore.getInstance(getContext()).setHomepage(newHomepage);
+        mHomepageEdit.setOnClickListener(mHomepageListener);
+    }
 
     private void setRemoteDebugging(boolean value, boolean doApply) {
         mRemoteDebuggingSwitch.setOnCheckedChangeListener(null);
@@ -300,6 +350,12 @@ public class DeveloperOptionsWidget extends UIWidget implements
 
     @Override
     public void onGlobalFocusChanged(View oldFocus, View newFocus) {
+        if (oldFocus != null) {
+            if (mHomepageEdit.contains(oldFocus) && mHomepageEdit.isEditing()) {
+                mHomepageEdit.cancel();
+            }
+        }
+
         if (oldFocus == this && isVisible() && findViewById(newFocus.getId()) == null) {
             onDismiss();
         }

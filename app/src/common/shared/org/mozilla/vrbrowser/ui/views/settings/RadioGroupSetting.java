@@ -2,6 +2,7 @@ package org.mozilla.vrbrowser.ui.views.settings;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.text.InputType;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.ContextThemeWrapper;
@@ -75,6 +76,7 @@ public class RadioGroupSetting extends LinearLayout {
 
         for (int i=0; i<mOptions.length; i++) {
             RadioButton button = new RadioButton(new ContextThemeWrapper(getContext(), R.style.radioButtonTheme), null, 0);
+            button.setInputType(InputType.TYPE_NULL);
             button.setClickable(true);
             button.setId(i);
             button.setText(mOptions[i]);
@@ -93,6 +95,7 @@ public class RadioGroupSetting extends LinearLayout {
             }
 
             setChecked(checkedId, true);
+            compoundButton.requestFocus();
         }
     };
 

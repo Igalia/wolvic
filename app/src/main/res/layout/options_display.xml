@@ -65,27 +65,43 @@
                     android:id="@+id/density_edit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:description="@string/developer_options_display_density" />
+                    app:description="@string/developer_options_display_density"
+                    app:highlightedTextColor="@color/fog"
+                    android:maxLength="4"
+                    android:inputType="numberDecimal"
+                    android:width="75dp" />
 
                 <org.mozilla.vrbrowser.ui.views.settings.SingleEditSetting
                     android:id="@+id/dpi_edit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:description="@string/developer_options_display_dpi" />
+                    app:description="@string/developer_options_display_dpi"
+                    app:highlightedTextColor="@color/fog"
+                    android:maxLength="4"
+                    android:inputType="number"
+                    android:width="75dp" />
 
                 <org.mozilla.vrbrowser.ui.views.settings.DoubleEditSetting
                     android:id="@+id/windowSize_edit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:by="@string/developer_options_by"
-                    app:description="@string/developer_options_window_size" />
+                    app:description="@string/developer_options_window_size"
+                    app:highlightedTextColor="@color/fog"
+                    android:maxLength="4"
+                    android:inputType="number"
+                    android:width="75dp" />
 
                 <org.mozilla.vrbrowser.ui.views.settings.DoubleEditSetting
                     android:id="@+id/maxWindowSize_edit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:by="@string/developer_options_by"
-                    app:description="@string/developer_options_max_window_size" />
+                    app:description="@string/developer_options_max_window_size"
+                    app:highlightedTextColor="@color/fog"
+                    android:maxLength="4"
+                    android:inputType="number"
+                    android:width="75dp" />
             </LinearLayout>
         </ScrollView>
 

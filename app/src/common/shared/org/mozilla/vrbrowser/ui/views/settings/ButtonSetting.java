@@ -56,6 +56,8 @@ public class ButtonSetting extends LinearLayout {
         if (mListener != null) {
             mListener.onClick(v);
         }
+
+        v.requestFocus();
     }
 
     public void setOnClickListener(OnClickListener aListener) {

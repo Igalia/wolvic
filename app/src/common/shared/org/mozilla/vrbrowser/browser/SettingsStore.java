@@ -187,6 +187,17 @@ public class SettingsStore {
         editor.commit();
     }
 
+    public String getHomepage() {
+        return mPrefs.getString(
+                mContext.getString(R.string.settings_key_homepage),
+                mContext.getString(R.string.homepage_url));
+    }
+
+    public void setHomepage(String aHomepage) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putString(mContext.getString(R.string.settings_key_homepage), aHomepage);
+        editor.commit();
+    }
 
     public float getDisplayDensity() {
         return mPrefs.getFloat(

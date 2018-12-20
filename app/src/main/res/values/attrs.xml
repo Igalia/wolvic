@@ -36,6 +36,10 @@
     <declare-styleable name="EditSetting">
         <attr name="description" />
         <attr name="by" />
+        <attr name="highlightedTextColor" />
+        <attr name="android:width" />
+        <attr name="android:maxLength" />
+        <attr name="android:inputType" />
     </declare-styleable>
 
     <declare-styleable name="ButtonSetting">

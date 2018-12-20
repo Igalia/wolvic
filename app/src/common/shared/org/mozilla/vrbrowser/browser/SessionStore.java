@@ -70,7 +70,6 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         return mInstance;
     }
     // You can test a local file using: "resource://android/assets/webvr/index.html"
-    private static final String HOME_WITHOUT_REGION_ORIGIN = "https://webxr.today/";
     public static final String PRIVATE_BROWSING_URI = "about:privatebrowsing";
     public static final int NO_SESSION_ID = -1;
 
@@ -342,6 +341,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
 
         int result = state.mSession.hashCode();
         mSessions.put(result, state);
+
         state.mSession.getSettings().setBoolean(GeckoSessionSettings.USE_MULTIPROCESS, aSettings.multiprocess);
         state.mSession.getSettings().setBoolean(GeckoSessionSettings.USE_PRIVATE_MODE, aSettings.privateMode);
         state.mSession.getSettings().setBoolean(GeckoSessionSettings.USE_TRACKING_PROTECTION, aSettings.trackingProtection);
@@ -492,15 +492,17 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     }
 
     public String getHomeUri() {
-        String result = SessionStore.HOME_WITHOUT_REGION_ORIGIN;
-        if (mRegion != null) {
-            result = SessionStore.HOME_WITHOUT_REGION_ORIGIN + "?region=" + mRegion;
+        String homepage = SettingsStore.getInstance(mContext).getHomepage();
+        if (homepage.equals(mContext.getString(R.string.homepage_url)) && mRegion != null) {
+            homepage = homepage + "?region=" + mRegion;
         }
-        return result;
+        return homepage;
     }
 
     public Boolean isHomeUri(String aUri) {
-        return aUri != null && aUri.toLowerCase().startsWith(SessionStore.HOME_WITHOUT_REGION_ORIGIN);
+        return aUri != null && aUri.toLowerCase().startsWith(
+          SettingsStore.getInstance(mContext).getHomepage()
+        );
     }
 
     public String getCurrentUri() {
@@ -906,7 +908,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         }
 
         // The homepage finishes loading after the region has been updated
-        if (mRegion != null && aUri.equalsIgnoreCase(SessionStore.HOME_WITHOUT_REGION_ORIGIN)) {
+        if (mRegion != null && aUri.equalsIgnoreCase(SettingsStore.getInstance(mContext).getHomepage())) {
             aSession.loadUri("javascript:window.location.replace('" + getHomeUri() + "');");
         }
     }

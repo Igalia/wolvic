@@ -265,6 +265,10 @@
     <!-- This string labels the radio button that sets the pointer color to white. -->
     <string name="developer_options_pointer_white">White</string>
 
+    <!-- This string is used to label a text entry field where the user may enter a new value
+         for the home page. -->
+    <string name="developer_options_homepage">Homepage</string>
+
     <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'On'. -->
     <string name="on">On</string>
 
@@ -507,4 +511,7 @@
 <p>Private Browsing <strong>doesn’t make you anonymous</strong> on the Internet. Your employer or Internet service provider can still know what page you visit.</p>
 <p class="about-info">Learn more about <a id="learnMore">Private Browsing</a>.</p>
      ]]></string>
+
+    <!-- This string is displayed in any button used for removing all the items in the current context. -->
+    <string name="homepage_hint">Firefox Home (Default)</string>
 </resources>

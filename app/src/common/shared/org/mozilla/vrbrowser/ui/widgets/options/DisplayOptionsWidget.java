@@ -64,16 +64,16 @@ public class DisplayOptionsWidget extends UIWidget implements
 
         mAudio = AudioEngine.fromContext(aContext);
 
-        mWidgetManager.addFocusChangeListener(this);
-        mWidgetManager.addWorldClickListener(this);
-
         mBackButton = findViewById(R.id.backButton);
         mBackButton.setOnClickListener(view -> {
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
 
-            onDismiss();
+            hide(REMOVE_WIDGET);
+            if (mDelegate != null) {
+                mDelegate.onDismiss();
+            }
         });
 
         int uaMode = SettingsStore.getInstance(getContext()).getUaMode();
@@ -87,16 +87,24 @@ public class DisplayOptionsWidget extends UIWidget implements
         setMSAAMode(mMSAARadio.getIdForValue(msaaLevel), false);
 
         mDensityEdit = findViewById(R.id.density_edit);
+        mDensityEdit.setHint1(String.valueOf(SettingsStore.DISPLAY_DENSITY_DEFAULT));
+        mDensityEdit.setDefaultFirstValue(String.valueOf(SettingsStore.DISPLAY_DENSITY_DEFAULT));
         mDensityEdit.setFirstText(Float.toString(SettingsStore.getInstance(getContext()).getDisplayDensity()));
         mDensityEdit.setOnClickListener(mDensityListener);
         setDisplayDensity(SettingsStore.getInstance(getContext()).getDisplayDensity());
 
         mDpiEdit = findViewById(R.id.dpi_edit);
+        mDpiEdit.setHint1(String.valueOf(SettingsStore.DISPLAY_DPI_DEFAULT));
+        mDpiEdit.setDefaultFirstValue(String.valueOf(SettingsStore.DISPLAY_DPI_DEFAULT));
         mDpiEdit.setFirstText(Integer.toString(SettingsStore.getInstance(getContext()).getDisplayDpi()));
         mDpiEdit.setOnClickListener(mDpiListener);
         setDisplayDpi(SettingsStore.getInstance(getContext()).getDisplayDpi());
 
         mWindowSizeEdit = findViewById(R.id.windowSize_edit);
+        mWindowSizeEdit.setHint1(String.valueOf(SettingsStore.WINDOW_WIDTH_DEFAULT));
+        mWindowSizeEdit.setHint2(String.valueOf(SettingsStore.WINDOW_HEIGHT_DEFAULT));
+        mWindowSizeEdit.setDefaultFirstValue(String.valueOf(SettingsStore.WINDOW_WIDTH_DEFAULT));
+        mWindowSizeEdit.setDefaultFirstValue(String.valueOf(SettingsStore.WINDOW_HEIGHT_DEFAULT));
         mWindowSizeEdit.setFirstText(Integer.toString(SettingsStore.getInstance(getContext()).getWindowWidth()));
         mWindowSizeEdit.setSecondText(Integer.toString(SettingsStore.getInstance(getContext()).getWindowHeight()));
         mWindowSizeEdit.setOnClickListener(mWindowSizeListener);
@@ -106,6 +114,10 @@ public class DisplayOptionsWidget extends UIWidget implements
                 false);
 
         mMaxWindowSizeEdit = findViewById(R.id.maxWindowSize_edit);
+        mMaxWindowSizeEdit.setHint1(String.valueOf(SettingsStore.MAX_WINDOW_WIDTH_DEFAULT));
+        mMaxWindowSizeEdit.setHint2(String.valueOf(SettingsStore.MAX_WINDOW_HEIGHT_DEFAULT));
+        mMaxWindowSizeEdit.setDefaultFirstValue(String.valueOf(SettingsStore.MAX_WINDOW_WIDTH_DEFAULT));
+        mMaxWindowSizeEdit.setDefaultFirstValue(String.valueOf(SettingsStore.MAX_WINDOW_HEIGHT_DEFAULT));
         mMaxWindowSizeEdit.setFirstText(Integer.toString(SettingsStore.getInstance(getContext()).getMaxWindowWidth()));
         mMaxWindowSizeEdit.setSecondText(Integer.toString(SettingsStore.getInstance(getContext()).getMaxWindowHeight()));
         mMaxWindowSizeEdit.setOnClickListener(mMaxWindowSizeListener);
@@ -134,18 +146,54 @@ public class DisplayOptionsWidget extends UIWidget implements
     }
 
     @Override
-    public void releaseWidget() {
-        mWidgetManager.removeFocusChangeListener(this);
-        mWidgetManager.removeWorldClickListener(this);
-
-        super.releaseWidget();
-    }
-
-    @Override
     public void show() {
         super.show();
 
+        mWidgetManager.addWorldClickListener(this);
+        mWidgetManager.addFocusChangeListener(this);
         mScrollbar.scrollTo(0, 0);
+    }
+
+    @Override
+    public void hide(@HideFlags int aHideFlags) {
+        super.hide(aHideFlags);
+
+        mDensityEdit.cancel();
+        mDpiEdit.cancel();
+        mWindowSizeEdit.cancel();
+        mMaxWindowSizeEdit.cancel();
+
+        mWidgetManager.removeWorldClickListener(this);
+        mWidgetManager.removeFocusChangeListener(this);
+    }
+
+    @Override
+    protected void onDismiss() {
+        boolean dismiss = true;
+
+        if (mDensityEdit.isEditing()) {
+            dismiss = false;
+            mDensityEdit.cancel();
+        }
+
+        if (mDpiEdit.isEditing()) {
+            dismiss = false;
+            mDpiEdit.cancel();
+        }
+
+        if (mWindowSizeEdit.isEditing()) {
+            dismiss = false;
+            mWindowSizeEdit.cancel();
+        }
+
+        if (mMaxWindowSizeEdit.isEditing()) {
+            dismiss = false;
+            mMaxWindowSizeEdit.cancel();
+        }
+
+        if (dismiss) {
+            super.onDismiss();
+        }
     }
 
     private void showRestartDialog() {
@@ -175,41 +223,76 @@ public class DisplayOptionsWidget extends UIWidget implements
     };
 
     private OnClickListener mDensityListener = (view) -> {
-        float newDensity = Float.parseFloat(mDensityEdit.getFirstText());
-        if (setDisplayDensity(newDensity)) {
-            showRestartDialog();
+        try {
+            float newDensity = Float.parseFloat(mDensityEdit.getFirstText());
+            if (setDisplayDensity(newDensity)) {
+                showRestartDialog();
+            }
+
+        } catch (NumberFormatException e) {
+            if (setDisplayDensity(SettingsStore.DISPLAY_DENSITY_DEFAULT)) {
+                showRestartDialog();
+            }
         }
     };
 
     private OnClickListener mDpiListener = (view) -> {
-        int newDpi = Integer.parseInt(mDpiEdit.getFirstText());
-        if (setDisplayDpi(newDpi)) {
-            showRestartDialog();
+        try {
+            int newDpi = Integer.parseInt(mDpiEdit.getFirstText());
+            if (setDisplayDpi(newDpi)) {
+                showRestartDialog();
+            }
+
+        } catch (NumberFormatException e) {
+            if (setDisplayDpi(SettingsStore.DISPLAY_DPI_DEFAULT)) {
+                showRestartDialog();
+            }
         }
     };
 
     private OnClickListener mWindowSizeListener = (view) -> {
-        int newWindowWidth = Integer.parseInt(mWindowSizeEdit.getFirstText());
-        int newWindowHeight = Integer.parseInt(mWindowSizeEdit.getSecondText());
-        setWindowSize(newWindowWidth, newWindowHeight, true);
+        try {
+            int newWindowWidth = Integer.parseInt(mWindowSizeEdit.getFirstText());
+            int newWindowHeight = Integer.parseInt(mWindowSizeEdit.getSecondText());
+            setWindowSize(newWindowWidth, newWindowHeight, true);
+
+        } catch (NumberFormatException e) {
+            setWindowSize(SettingsStore.WINDOW_WIDTH_DEFAULT, SettingsStore.WINDOW_HEIGHT_DEFAULT, true);
+        }
     };
 
     private OnClickListener mMaxWindowSizeListener = (view) -> {
-        int newMaxWindowWidth = Integer.parseInt(mMaxWindowSizeEdit.getFirstText());
-        int newMaxWindowHeight = Integer.parseInt(mMaxWindowSizeEdit.getSecondText());
-        setMaxWindowSize(newMaxWindowWidth, newMaxWindowHeight, true);
+        try {
+            int newMaxWindowWidth = Integer.parseInt(mMaxWindowSizeEdit.getFirstText());
+            int newMaxWindowHeight = Integer.parseInt(mMaxWindowSizeEdit.getSecondText());
+            setMaxWindowSize(newMaxWindowWidth, newMaxWindowHeight, true);
+
+        } catch (NumberFormatException e) {
+            setMaxWindowSize(SettingsStore.MAX_WINDOW_WIDTH_DEFAULT, SettingsStore.MAX_WINDOW_HEIGHT_DEFAULT, true);
+        }
     };
 
     private OnClickListener mResetListener = (view) -> {
         boolean restart = false;
 
-        setUaMode(mUaModeRadio.getIdForValue(SettingsStore.UA_MODE_DEFAULT), true);
-        setMSAAMode(mMSAARadio.getIdForValue(SettingsStore.MSAA_DEFAULT_LEVEL), true);
+        if (!mUaModeRadio.getValueForId(mUaModeRadio.getCheckedRadioButtonId()).equals(SettingsStore.UA_MODE_DEFAULT)) {
+            setUaMode(mUaModeRadio.getIdForValue(SettingsStore.UA_MODE_DEFAULT), true);
+        }
+        if (!mMSAARadio.getValueForId(mMSAARadio.getCheckedRadioButtonId()).equals(SettingsStore.MSAA_DEFAULT_LEVEL)) {
+            setMSAAMode(mMSAARadio.getIdForValue(SettingsStore.MSAA_DEFAULT_LEVEL), true);
+        }
 
         restart = restart | setDisplayDensity(SettingsStore.DISPLAY_DENSITY_DEFAULT);
         restart = restart | setDisplayDpi(SettingsStore.DISPLAY_DPI_DEFAULT);
-        setWindowSize(SettingsStore.WINDOW_WIDTH_DEFAULT, SettingsStore.WINDOW_HEIGHT_DEFAULT, true);
-        setMaxWindowSize(SettingsStore.MAX_WINDOW_WIDTH_DEFAULT, SettingsStore.MAX_WINDOW_HEIGHT_DEFAULT, true);
+
+        if (Integer.parseInt(mWindowSizeEdit.getFirstText()) != SettingsStore.WINDOW_WIDTH_DEFAULT ||
+                Integer.parseInt(mWindowSizeEdit.getSecondText()) != SettingsStore.WINDOW_HEIGHT_DEFAULT) {
+            setWindowSize(SettingsStore.WINDOW_WIDTH_DEFAULT, SettingsStore.WINDOW_HEIGHT_DEFAULT, true);
+        }
+        if (Integer.parseInt(mMaxWindowSizeEdit.getFirstText()) != SettingsStore.MAX_WINDOW_WIDTH_DEFAULT ||
+                Integer.parseInt(mMaxWindowSizeEdit.getSecondText()) != SettingsStore.MAX_WINDOW_HEIGHT_DEFAULT) {
+            setMaxWindowSize(SettingsStore.MAX_WINDOW_WIDTH_DEFAULT, SettingsStore.MAX_WINDOW_HEIGHT_DEFAULT, true);
+        }
 
         if (restart)
             showRestartDialog();
@@ -349,6 +432,25 @@ public class DisplayOptionsWidget extends UIWidget implements
 
     @Override
     public void onGlobalFocusChanged(View oldFocus, View newFocus) {
+        if (oldFocus != null) {
+            if (mDensityEdit.contains(oldFocus) && mDensityEdit.isEditing()) {
+                mDensityEdit.cancel();
+            }
+            if (mDpiEdit.contains(oldFocus) && mDpiEdit.isEditing()) {
+                mDpiEdit.cancel();
+            }
+            if (mWindowSizeEdit.contains(oldFocus) &&
+                    (newFocus != null && !mWindowSizeEdit.contains(newFocus)) &&
+                    mWindowSizeEdit.isEditing()) {
+                mWindowSizeEdit.cancel();
+            }
+            if (mMaxWindowSizeEdit.contains(oldFocus) &&
+                    (newFocus != null && !mMaxWindowSizeEdit.contains(newFocus)) &&
+                    mMaxWindowSizeEdit.isEditing()) {
+                mMaxWindowSizeEdit.cancel();
+            }
+        }
+
         if (oldFocus == this && isVisible() && findViewById(newFocus.getId()) == null) {
             onDismiss();
         }

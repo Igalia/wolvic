@@ -2,9 +2,10 @@ package org.mozilla.vrbrowser.ui.views.settings;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.text.InputFilter;
+import android.text.InputType;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import org.mozilla.vrbrowser.R;
@@ -13,7 +14,8 @@ public class DoubleEditSetting extends SingleEditSetting {
 
     private String mBy;
     private TextView mText2;
-    private EditText mEdit2;
+    private SettingsEditText mEdit2;
+    private String mDefaultSecondValue;
 
     public DoubleEditSetting(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -39,11 +41,26 @@ public class DoubleEditSetting extends SingleEditSetting {
         mText2.setOnClickListener(mText2ClickListener);
 
         mEdit2 = findViewById(R.id.editValue2);
+        mEdit2.setHighlightedTextColor(mHighlightedTextColor);
+        mEdit2.setHighlightedTextColor(mHighlightedTextColor);
+        mEdit2.setOnClickListener(view -> {
+            if (mEdit2.getText().toString().equals(mEdit2.getHint())) {
+                mEdit2.requestFocus();
+                mEdit2.selectAll();
+            }
+        });
         mEdit2.setSoundEffectsEnabled(false);
-        mEdit2.setOnTouchListener((v, event) -> updateTouchTextSelection(v));
-        mEdit2.setOnFocusChangeListener((v, hasFocus) -> updateFocusTextSelection(v, hasFocus));
-        mEdit2.addTextChangedListener(new TextColorTextWatcher(mEdit2));
-        mEdit2.setOnClickListener(v -> mEdit2.selectAll());
+        if (mMaxLength != 0) {
+            mEdit2.setFilters(new InputFilter[]{
+                    new InputFilter.LengthFilter(mMaxLength)
+            });
+        }
+        if (mInputType != InputType.TYPE_NULL) {
+            mEdit2.setInputType(mInputType);
+        }
+        if (mWidth > 0) {
+            mEdit2.setWidth((int)mWidth);
+        }
 
         mEdit2.setOnEditorActionListener(mInternalEditorActionListener);
     }
@@ -51,19 +68,45 @@ public class DoubleEditSetting extends SingleEditSetting {
     private OnClickListener mText2ClickListener = v -> mButton.performClick();
 
     protected void onClickListener(View v) {
-        mText2.setVisibility(mEdit1.getVisibility());
-        mEdit2.setVisibility(mEdit1.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+        mText2.setVisibility(mEdit2.getVisibility());
+        mEdit2.setVisibility(mEdit2.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
 
         super.onClickListener(v);
     }
 
+    public void setDefaultSecondValue(String value) {
+        mDefaultSecondValue = value;
+    }
+
     public String getSecondText() {
-        return mEdit2.getText().toString();
+        return mEdit2.getText().equals(mEdit2.getHint()) ? mDefaultSecondValue : mEdit2.getText().toString();
     }
 
     public void setSecondText(String text) {
-        mText2.setText(text);
-        mEdit2.setText(text);
+        if (text.equals(mDefaultSecondValue)) {
+            mText2.setText(mEdit2.getHint());
+            mEdit2.setText(mEdit2.getHint());
+
+        } else {
+            mText2.setText(text);
+            mEdit2.setText(text);
+        }
+    }
+
+    public void setHint2(String hint) {
+        mEdit2.setHint(hint);
+    }
+
+    @Override
+    public void cancel() {
+        super.cancel();
+
+        mText2.setVisibility(VISIBLE);
+        mEdit2.setVisibility(View.GONE);
+
+        if (mEdit2.length() == 0) {
+            setSecondText(mDefaultSecondValue != null ? mDefaultSecondValue : mText2.getText().toString());
+        }
     }
 
 }

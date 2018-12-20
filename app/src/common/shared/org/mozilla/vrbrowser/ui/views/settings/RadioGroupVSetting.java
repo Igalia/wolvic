@@ -1,6 +1,7 @@
 package org.mozilla.vrbrowser.ui.views.settings;
 
 import android.content.Context;
+import android.text.InputType;
 import android.util.AttributeSet;
 import android.widget.RadioButton;
 
@@ -22,6 +23,7 @@ public class RadioGroupVSetting extends RadioGroupSetting {
 
         for (int i=0; i<mRadioGroup.getChildCount(); i++) {
             RadioButton button = (RadioButton)mRadioGroup.getChildAt(i);
+            button.setInputType(InputType.TYPE_NULL);
             LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
             params.topMargin = 20;
             params.bottomMargin = 20;
