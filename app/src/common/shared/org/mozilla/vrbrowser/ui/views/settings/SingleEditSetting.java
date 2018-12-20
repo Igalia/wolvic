@@ -126,7 +126,7 @@ public class SingleEditSetting extends LinearLayout {
     }
 
     public String getFirstText() {
-        return mEdit1.getText().equals(mEdit1.getHint()) ? mDefaultFirstValue : mEdit1.getText().toString();
+        return mEdit1.getText().toString().equals(mEdit1.getHint()) ? mDefaultFirstValue : mEdit1.getText().toString();
     }
 
     public void setFirstText(String text) {

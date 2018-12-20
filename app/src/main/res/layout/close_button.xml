@@ -5,7 +5,7 @@
               android:layout_height="match_parent"
               android:orientation="horizontal">
 <org.mozilla.vrbrowser.ui.views.UIButton
-        android:id="@+id/closeButton"
+        android:id="@+id/negativeButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:tintColorList="@drawable/dialog_close_button_icon_color"

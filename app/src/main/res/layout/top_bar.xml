@@ -6,7 +6,7 @@
         android:gravity="center">
 
         <org.mozilla.vrbrowser.ui.views.UIButton
-            android:id="@+id/closeButton"
+            android:id="@+id/negativeButton"
             style="?attr/navigationBarButtonStyle"
             android:padding="5dp"
             android:src="@drawable/ic_icon_dialog_cancel" />

@@ -2,12 +2,15 @@ package org.mozilla.vrbrowser.ui.views.settings;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.EditText;
+
+import org.mozilla.vrbrowser.R;
 
 import androidx.annotation.Nullable;
 
@@ -18,17 +21,19 @@ public class SettingsEditText extends EditText {
     private int mHighlightedTextColor = 0;
 
     public SettingsEditText(Context context) {
-        super(context);
-        initialize();
+        this(context, null);
     }
 
     public SettingsEditText(Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
-        initialize();
+        this(context, attrs, 0);
     }
 
     public SettingsEditText(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+
+        TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.EditSetting, defStyleAttr, 0);
+        mHighlightedTextColor = attributes.getColor(R.styleable.EditSetting_highlightedTextColor, 0);
+
         initialize();
     }
 

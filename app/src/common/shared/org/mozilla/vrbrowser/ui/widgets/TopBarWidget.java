@@ -38,7 +38,7 @@ public class TopBarWidget extends UIWidget implements SessionStore.SessionChange
     private void initialize(Context aContext) {
         inflate(aContext, R.layout.top_bar, this);
 
-        mCloseButton = findViewById(R.id.closeButton);
+        mCloseButton = findViewById(R.id.negativeButton);
         mCloseButton.setOnClickListener(view -> {
             view.requestFocusFromTouch();
             if (mAudio != null) {

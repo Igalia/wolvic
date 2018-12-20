@@ -26,7 +26,10 @@ import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.SessionStore;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.ui.views.BookmarksView;
+import org.mozilla.vrbrowser.ui.widgets.prompts.AlertPromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.ChoicePromptWidget;
+import org.mozilla.vrbrowser.ui.widgets.prompts.ConfirmPromptWidget;
+import org.mozilla.vrbrowser.ui.widgets.prompts.TextPromptWidget;
 
 
 public class WindowWidget extends UIWidget implements SessionStore.SessionChangeListener,
@@ -43,6 +46,9 @@ public class WindowWidget extends UIWidget implements SessionStore.SessionChange
     private WidgetPlacement mWidgetPlacement;
     private WidgetManagerDelegate mWidgetManager;
     private ChoicePromptWidget mChoicePrompt;
+    private AlertPromptWidget mAlertPrompt;
+    private ConfirmPromptWidget mConfirmPrompt;
+    private TextPromptWidget mTextPrompt;
     private int mWidthBackup;
     private int mHeightBackup;
     private int mBorderWidth;
@@ -548,19 +554,38 @@ public class WindowWidget extends UIWidget implements SessionStore.SessionChange
         // TODO: Fade in/out the browser window. Waiting for https://github.com/MozillaReality/FirefoxReality/issues/77
     }
 
+    // PromptDelegate
+
     @Override
     public void onAlert(GeckoSession session, String title, String msg, AlertCallback callback) {
-
+        mAlertPrompt = new AlertPromptWidget(getContext());
+        mAlertPrompt.mWidgetPlacement.parentHandle = getHandle();
+        mAlertPrompt.setTitle(title);
+        mAlertPrompt.setMessage(msg);
+        mAlertPrompt.setDelegate(callback);
+        mAlertPrompt.show();
     }
 
     @Override
     public void onButtonPrompt(GeckoSession session, String title, String msg, String[] btnMsg, ButtonCallback callback) {
-
+        mConfirmPrompt = new ConfirmPromptWidget(getContext());
+        mConfirmPrompt.mWidgetPlacement.parentHandle = getHandle();
+        mConfirmPrompt.setTitle(title);
+        mConfirmPrompt.setMessage(msg);
+        mConfirmPrompt.setButtons(btnMsg);
+        mConfirmPrompt.setDelegate(callback);
+        mConfirmPrompt.show();
     }
 
     @Override
     public void onTextPrompt(GeckoSession session, String title, String msg, String value, TextCallback callback) {
-
+        mTextPrompt = new TextPromptWidget(getContext());
+        mTextPrompt.mWidgetPlacement.parentHandle = getHandle();
+        mTextPrompt.setTitle(title);
+        mTextPrompt.setMessage(msg);
+        mTextPrompt.setDefaultText(value);
+        mTextPrompt.setDelegate(callback);
+        mTextPrompt.show();
     }
 
     @Override
@@ -570,20 +595,13 @@ public class WindowWidget extends UIWidget implements SessionStore.SessionChange
 
     @Override
     public void onChoicePrompt(GeckoSession session, String title, String msg, int type, final Choice[] choices, final ChoiceCallback callback) {
-        if (mChoicePrompt == null) {
-            mChoicePrompt = new ChoicePromptWidget(getContext());
-            mChoicePrompt.mWidgetPlacement.parentHandle = getHandle();
-        }
-
+        mChoicePrompt = new ChoicePromptWidget(getContext());
+        mChoicePrompt.mWidgetPlacement.parentHandle = getHandle();
         mChoicePrompt.setTitle(title);
         mChoicePrompt.setMessage(msg);
         mChoicePrompt.setChoices(choices);
         mChoicePrompt.setMenuType(type);
-        mChoicePrompt.setDelegate(ids -> {
-            callback.confirm(ids);
-            mChoicePrompt.hide(UIWidget.REMOVE_WIDGET);
-        });
-
+        mChoicePrompt.setDelegate(callback);
         mChoicePrompt.show();
     }
 

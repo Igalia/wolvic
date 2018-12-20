@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -17,34 +16,26 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoSession.PromptDelegate.Choice;
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
-import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.audio.AudioEngine;
-import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import androidx.annotation.NonNull;
 
-public class ChoicePromptWidget extends UIWidget implements WidgetManagerDelegate.FocusChangeListener {
+public class ChoicePromptWidget extends PromptWidget {
 
     private static final int DIALOG_CLOSE_DELAY = 250;
-
-    public interface ChoicePromptDelegate {
-        void onDismissed(String[] text);
-    }
 
     private AudioEngine mAudio;
     private ListView mList;
     private Button mCloseButton;
     private Button mOkButton;
-    private TextView mPromptTitle;
-    private TextView mPromptMessage;
     private ChoiceWrapper[] mListItems;
-    private ChoicePromptDelegate mPromptDelegate;
+    private GeckoSession.PromptDelegate.ChoiceCallback mCallback;
     private ChoiceAdapter mAdapter;
     private final Handler handler = new Handler();
 
@@ -63,120 +54,96 @@ public class ChoicePromptWidget extends UIWidget implements WidgetManagerDelegat
         initialize(aContext);
     }
 
-    private void initialize(Context aContext) {
-        inflate(aContext, R.layout.choice_prompt, this);
+    @Override
+    protected void initialize(Context aContext) {
+        super.initialize(aContext);
+
+        inflate(aContext, R.layout.prompt_choice, this);
 
         mWidgetManager.addFocusChangeListener(this);
 
         mAudio = AudioEngine.fromContext(aContext);
 
+        mLayout = findViewById(R.id.layout);
+
         mList = findViewById(R.id.choiceslist);
         mList.setSoundEffectsEnabled(false);
-        mList.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
-            public void onItemClick(AdapterView<?> parent, View view, final int position, long id)
-            {
-                if (mAudio != null) {
-                    mAudio.playSound(AudioEngine.Sound.CLICK);
-                }
-
-                mAdapter.notifyDataSetChanged();
-
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        ChoiceWrapper selectedItem = mListItems[position];
-                        if (mList.getChoiceMode() == ListView.CHOICE_MODE_SINGLE) {
-                            if (mPromptDelegate != null) {
-                                mPromptDelegate.onDismissed(new String[]{selectedItem.getChoice().id});
-                            }
-                        }
-                    }
-                }, DIALOG_CLOSE_DELAY);
+        mList.setOnItemClickListener((parent, view, position, id) -> {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
             }
+
+            mAdapter.notifyDataSetChanged();
+
+            handler.postDelayed(() -> {
+                ChoiceWrapper selectedItem = mListItems[position];
+                if (mList.getChoiceMode() == ListView.CHOICE_MODE_SINGLE) {
+                    if (mCallback != null) {
+                        mCallback.confirm(new String[]{selectedItem.getChoice().id});
+                        hide(REMOVE_WIDGET);
+                    }
+                }
+            }, DIALOG_CLOSE_DELAY);
         });
 
-        mPromptTitle = findViewById(R.id.promptTitle);
-        mPromptMessage = findViewById(R.id.promptMessage);
+        mTitle = findViewById(R.id.promptTitle);
+        mMessage = findViewById(R.id.promptMessage);
 
-        mCloseButton = findViewById(R.id.closeButton);
+        mCloseButton = findViewById(R.id.negativeButton);
         mCloseButton.setSoundEffectsEnabled(false);
-        mCloseButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mAudio != null) {
-                    mAudio.playSound(AudioEngine.Sound.CLICK);
-                }
+        mCloseButton.setOnClickListener(view -> {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
 
-                switch (mList.getChoiceMode()) {
-                    case ListView.CHOICE_MODE_SINGLE:
-                    case ListView.CHOICE_MODE_MULTIPLE: {
-                        if (mPromptDelegate != null) {
-                            mPromptDelegate.onDismissed(getDefaultChoices(mListItems));
-                        }
+            switch (mList.getChoiceMode()) {
+                case ListView.CHOICE_MODE_SINGLE:
+                case ListView.CHOICE_MODE_MULTIPLE: {
+                    if (mCallback != null) {
+                       onDismiss();
                     }
-                    break;
                 }
+                break;
             }
         });
 
-        mOkButton = findViewById(R.id.okButton);
+        mOkButton = findViewById(R.id.positiveButton);
         mOkButton.setSoundEffectsEnabled(false);
-        mOkButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mAudio != null) {
-                    mAudio.playSound(AudioEngine.Sound.CLICK);
-                }
-
-                switch (mList.getChoiceMode()) {
-                    case ListView.CHOICE_MODE_SINGLE:
-                    case ListView.CHOICE_MODE_MULTIPLE: {
-                        if (mPromptDelegate != null) {
-                            int len = mList.getCount();
-                            SparseBooleanArray selected = mList.getCheckedItemPositions();
-                            ArrayList<String> selectedChoices = new ArrayList<>();
-                            for (int i = 0; i < len; i++) {
-                                if (selected.get(i)) {
-                                    selectedChoices.add(mListItems[i].getChoice().id);
-                                }
-                            }
-                            mPromptDelegate.onDismissed(selectedChoices.toArray(new String[selectedChoices.size()]));
-                        }
-                    }
-                    break;
-                }
+        mOkButton.setOnClickListener(view -> {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
             }
+
+            switch (mList.getChoiceMode()) {
+                case ListView.CHOICE_MODE_SINGLE:
+                case ListView.CHOICE_MODE_MULTIPLE: {
+                    if (mCallback != null) {
+                        int len = mList.getCount();
+                        SparseBooleanArray selected = mList.getCheckedItemPositions();
+                        ArrayList<String> selectedChoices = new ArrayList<>();
+                        for (int i = 0; i < len; i++) {
+                            if (selected.get(i)) {
+                                selectedChoices.add(mListItems[i].getChoice().id);
+                            }
+                        }
+                        mCallback.confirm(selectedChoices.toArray(new String[selectedChoices.size()]));
+                    }
+                }
+                break;
+            }
+
+            hide(REMOVE_WIDGET);
         });
 
         mListItems = new ChoiceWrapper[]{};
     }
 
     @Override
-    protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
-        aPlacement.visible = false;
-        aPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.choice_prompt_width);
-        aPlacement.height = WidgetPlacement.dpDimension(getContext(), R.dimen.choice_prompt_height);
-        aPlacement.parentAnchorX = 0.5f;
-        aPlacement.parentAnchorY = 0.5f;
-        aPlacement.anchorX = 0.5f;
-        aPlacement.anchorY = 0.5f;
-        aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.browser_children_z_distance);
-    }
-
-    @Override
-    public void releaseWidget() {
-        mWidgetManager.removeFocusChangeListener(this);
-
-        super.releaseWidget();
-    }
-
-    @Override
     protected void onDismiss() {
         hide(REMOVE_WIDGET);
 
-        if (mPromptDelegate != null) {
-            mPromptDelegate.onDismissed(getDefaultChoices(mListItems));
+        if (mCallback != null) {
+            mCallback.dismiss();
         }
     }
 
@@ -190,32 +157,14 @@ public class ChoicePromptWidget extends UIWidget implements WidgetManagerDelegat
         mAdapter.notifyDataSetChanged();
     }
 
-    public void setDelegate(ChoicePromptDelegate delegate) {
-        mPromptDelegate = delegate;
+    public void setDelegate(GeckoSession.PromptDelegate.ChoiceCallback delegate) {
+        mCallback = delegate;
     }
 
     public void setChoices(Choice[] choices) {
         mListItems = getWrappedChoices(choices);
-        mAdapter = new ChoiceAdapter(getContext(), R.layout.choice_prompt_item, mListItems);
+        mAdapter = new ChoiceAdapter(getContext(), R.layout.prompt_choice_item, mListItems);
         mList.setAdapter(mAdapter);
-    }
-
-    public void setTitle(String title) {
-        if (title == null || title.isEmpty()) {
-            mPromptTitle.setVisibility(View.GONE);
-
-        } else {
-            mPromptTitle.setText(title);
-        }
-    }
-
-    public void setMessage(String message) {
-        if (message == null || message.isEmpty()) {
-            mPromptMessage.setVisibility(View.GONE);
-
-        } else {
-            mPromptMessage.setText(message);
-        }
     }
 
     public void setMenuType(int type) {
@@ -253,18 +202,6 @@ public class ChoicePromptWidget extends UIWidget implements WidgetManagerDelegat
         }
 
         return flattenedChoicesList.toArray(new ChoiceWrapper[flattenedChoicesList.size()]);
-    }
-
-    @NonNull
-    private static String[] getDefaultChoices(ChoiceWrapper[] aChoices) {
-        ArrayList<String> defaultChoices = new ArrayList<>();
-        for (int i = 0; i < aChoices.length; i++) {
-            if (aChoices[i].getChoice().selected) {
-                defaultChoices.add(aChoices[i].getChoice().id);
-            }
-        }
-
-        return defaultChoices.toArray(new String[defaultChoices.size()]);
     }
 
     static class ChoiceWrapper {
@@ -323,7 +260,7 @@ public class ChoicePromptWidget extends UIWidget implements WidgetManagerDelegat
 
             ChoiceViewHolder choiceViewHolder;
             if(listItem == null) {
-                listItem = mInflater.inflate(R.layout.choice_prompt_item, parent, false);
+                listItem = mInflater.inflate(R.layout.prompt_choice_item, parent, false);
 
                 choiceViewHolder = new ChoiceViewHolder();
 
@@ -367,46 +304,33 @@ public class ChoicePromptWidget extends UIWidget implements WidgetManagerDelegat
             return listItem;
         }
 
-        private OnHoverListener mHoverListener = new OnHoverListener() {
-            @Override
-            public boolean onHover(View view, MotionEvent motionEvent) {
-                int position = (int)view.getTag(R.string.position_tag);
-                if (!isEnabled(position))
-                    return false;
-
-                TextView label = view.findViewById(R.id.optionLabel);
-                RadioButton check = view.findViewById(R.id.radioOption);
-                int ev = motionEvent.getActionMasked();
-                switch (ev) {
-                    case MotionEvent.ACTION_HOVER_ENTER:
-                        view.setHovered(true);
-                        label.setHovered(true);
-                        check.setHovered(true);
-                        view.setBackgroundResource(R.drawable.prompt_item_selected);
-                        return true;
-
-                    case MotionEvent.ACTION_HOVER_EXIT:
-                        view.setHovered(false);
-                        label.setHovered(false);
-                        check.setHovered(false);
-                        view.setBackgroundColor(getContext().getColor(R.color.void_color));
-                        return true;
-                }
-
+        private OnHoverListener mHoverListener = (view, motionEvent) -> {
+            int position = (int)view.getTag(R.string.position_tag);
+            if (!isEnabled(position))
                 return false;
+
+            TextView label = view.findViewById(R.id.optionLabel);
+            RadioButton check = view.findViewById(R.id.radioOption);
+            int ev = motionEvent.getActionMasked();
+            switch (ev) {
+                case MotionEvent.ACTION_HOVER_ENTER:
+                    view.setHovered(true);
+                    label.setHovered(true);
+                    check.setHovered(true);
+                    view.setBackgroundResource(R.drawable.prompt_item_selected);
+                    return true;
+
+                case MotionEvent.ACTION_HOVER_EXIT:
+                    view.setHovered(false);
+                    label.setHovered(false);
+                    check.setHovered(false);
+                    view.setBackgroundColor(getContext().getColor(R.color.void_color));
+                    return true;
             }
+
+            return false;
         };
 
-    }
-
-    // WidgetManagerDelegate.FocusChangeListener
-    @Override
-    public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-        if (oldFocus == this && isVisible()) {
-            if (mPromptDelegate != null) {
-                mPromptDelegate.onDismissed(getDefaultChoices(mListItems));
-            }
-        }
     }
 
 }

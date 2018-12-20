@@ -36,7 +36,7 @@
     <dimen name="keyboard_key_hovered_padding">0.8dp</dimen>
     <dimen name="keyboard_key_pressed_padding">1dp</dimen>
 
-    <!-- Permission Prompt -->
+    <!-- Permission PromptWidget -->
     <item name="permission_world_width" format="float" type="dimen">1.6</item>
     <dimen name="permission_width">320dp</dimen>
     <dimen name="permission_height">260dp</dimen>
@@ -110,9 +110,9 @@
     <dimen name="voice_search_input_width">305dp</dimen>
     <dimen name="voice_search_input_height">65dp</dimen>
 
-    <!-- Choice prompt -->
-    <dimen name="choice_prompt_width">340dp</dimen>
-    <dimen name="choice_prompt_height">380dp</dimen>
+    <!-- Prompts -->
+    <dimen name="prompt_height">800dp</dimen>
+    <dimen name="prompt_content_max_height">450dp</dimen>
 
     <!-- Crash Dialog prompt -->
     <dimen name="crash_dialog_width">640dp</dimen>
