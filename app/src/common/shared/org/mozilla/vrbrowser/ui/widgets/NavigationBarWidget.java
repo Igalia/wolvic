@@ -64,6 +64,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private boolean mIsInFullScreenMode;
     private boolean mIsResizing;
     private boolean mIsInVRVideo;
+    private boolean mAutoEnteredVRVideo;
     private WidgetPlacement mSizeBeforeFullScreen;
     private Runnable mResizeBackHandler;
     private Runnable mFullScreenBackHandler;
@@ -130,7 +131,15 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mResizeBackHandler = () -> exitResizeMode(true);
 
         mFullScreenBackHandler = this::exitFullScreenMode;
-        mVRVideoBackHandler = this::exitVRVideo;
+        mVRVideoBackHandler = new Runnable() {
+            @Override
+            public void run() {
+                exitVRVideo();
+                if (mAutoEnteredVRVideo) {
+                    exitFullScreenMode();
+                }
+            }
+        };
 
         mBackButton.setOnClickListener(v -> {
             v.requestFocusFromTouch();
@@ -713,7 +722,10 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             AtomicBoolean autoEnter = new AtomicBoolean(false);
             mAutoSelectedProjection = VideoProjectionMenuWidget.getAutomaticProjection(SessionStore.get().getUriFromSession(session), autoEnter);
             if (mAutoSelectedProjection != null && autoEnter.get()) {
-                getHandler().postDelayed(() -> enterVRVideo(mAutoSelectedProjection), 300);
+                mAutoEnteredVRVideo = true;
+                postDelayed(() -> enterVRVideo(mAutoSelectedProjection), 300);
+            } else {
+                mAutoEnteredVRVideo = false;
             }
         } else {
             if (mIsInVRVideo) {
