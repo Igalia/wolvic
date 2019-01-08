@@ -52,7 +52,7 @@ public class RestartDialogWidget extends UIWidget {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
 
-            getHandler().postDelayed(() -> handleRestartApp(), 500);
+            postDelayed(() -> handleRestartApp(), 500);
         });
         cancelButton.setOnClickListener(view -> {
             if (mAudio != null) {

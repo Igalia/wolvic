@@ -75,7 +75,7 @@ public class ChoicePromptWidget extends PromptWidget {
 
             mAdapter.notifyDataSetChanged();
 
-            handler.postDelayed(() -> {
+            postDelayed(() -> {
                 ChoiceWrapper selectedItem = mListItems[position];
                 if (mList.getChoiceMode() == ListView.CHOICE_MODE_SINGLE) {
                     if (mCallback != null) {
