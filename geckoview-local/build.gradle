@@ -32,7 +32,7 @@ def addArtifact(path) {
     if (aar.exists()) {
         artifacts.add('default', aar)
     } else {
-        throw new GradleException('Failed to find GeckoView AAR at: ' + gradle.geckoViewLocal)
+        throw new GradleException('Failed to find GeckoView AAR at: ' + path)
     }
 }
 
