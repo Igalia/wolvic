@@ -55,8 +55,8 @@
     <!-- SEARCH ENGINES -->
     <string name="geolocation_api_url" translatable="false">https://location.services.mozilla.com/v1/country</string>
     <!-- Google -->
-    <string name="search_google_params" translatable="false">q=%1$s&amp;ie=utf-8&amp;oe=utf-8&amp;keyword=firefox-b-ab&amp;searchbar=firefox-b</string>
-    <string name="search_google_us_params" translatable="false">q=%1$s&amp;ie=utf-8&amp;oe=utf-8&amp;keyword=firefox-b-1-ab&amp;searchbar=firefox-b-1</string>
+    <string name="search_google_params" translatable="false">q=%1$s&amp;client=firefox-b-o</string>
+    <string name="search_google_us_params" translatable="false">q=%1$s&amp;client=firefox-b-1-o</string>
     <string name="search_google" translatable="false">https://www.google.com/search</string>
     <string name="search_google_us" translatable="false">https://www.google.com/search</string>
     <!-- Baidu -->
