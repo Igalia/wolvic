@@ -144,10 +144,17 @@ public class WindowWidget extends UIWidget implements SessionStore.SessionChange
         mView.setVisibility(VISIBLE);
         addView(mView);
         mWidgetPlacement.density =  getContext().getResources().getDisplayMetrics().density;
+        if (mTexture != null && mSurface != null && mRenderer == null) {
+            // Create the UI Renderer for the current surface.
+            // Surface must be released when switching back to WebView surface or the browser
+            // will not render it correctly. See release code in unsetView().
+            mRenderer = new UISurfaceTextureRenderer(mSurface, mWidgetPlacement.textureWidth(), mWidgetPlacement.textureHeight());
+        }
         mWidgetManager.updateWidget(this);
-        postInvalidate();
         mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
         mWidgetManager.pushBackHandler(mBackHandler);
+        setWillNotDraw(false);
+        postInvalidate();
     }
 
     public void unsetView(View view) {
@@ -155,7 +162,16 @@ public class WindowWidget extends UIWidget implements SessionStore.SessionChange
             mView = null;
             removeView(view);
             view.setVisibility(GONE);
-            resumeCompositor();
+            setWillNotDraw(true);
+            if (mTexture != null) {
+                // Surface must be recreated here when not using layers.
+                // When using layers the new Surface is received via the setSurface() method.
+                if (mRenderer != null) {
+                    mRenderer.release();
+                    mRenderer = null;
+                }
+                mSurface = new Surface(mTexture);
+            }
             mWidgetPlacement.density = 1.0f;
             mWidgetManager.updateWidget(this);
             mWidgetManager.popWorldBrightness(this);
@@ -231,14 +247,6 @@ public class WindowWidget extends UIWidget implements SessionStore.SessionChange
         return mBorderWidth;
     }
 
-    public int getTextureWidth() {
-        return mWidth;
-    }
-
-    public int getTextureHeight() {
-        return mHeight;
-    }
-
     public void setSaveResizeChanges(boolean aSave) {
         mSaveResizeChanges = aSave;
     }
@@ -312,6 +320,9 @@ public class WindowWidget extends UIWidget implements SessionStore.SessionChange
         mHeight = aHeight;
         if (mTexture != null) {
             mTexture.setDefaultBufferSize(aWidth, aHeight);
+        }
+
+        if (mSurface != null && mView == null) {
             callSurfaceChanged();
         }
     }
@@ -642,9 +653,8 @@ public class WindowWidget extends UIWidget implements SessionStore.SessionChange
     @Override
     public void onBookmarksClicked() {
         if (mBookmarksView.getVisibility() == View.VISIBLE) {
-            SessionStore.get().unstackSession();
-
             unsetView(mBookmarksView);
+            SessionStore.get().unstackSession();
 
         } else {
             int sessionId;
