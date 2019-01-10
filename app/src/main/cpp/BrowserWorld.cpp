@@ -510,7 +510,13 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
       std::string storagePath = VRBrowser::GetStorageAbsolutePath(INJECT_SKYBOX_PATH);
       if (std::ifstream(storagePath)) {
         skyboxPath = storagePath;
-        extension = ".jpg";
+        extension = Skybox::ValidateCustomSkyboxAndFindFileExtension(storagePath);
+        if (!extension.empty()) {
+          skyboxPath = storagePath;
+          VRB_DEBUG("Found custom skybox file extension: %s", extension.c_str());
+        } else {
+          VRB_ERROR("Failed to find custom skybox files.");
+        }
       }
     }
 #if !defined(SNAPDRAGONVR)

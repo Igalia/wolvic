@@ -20,10 +20,25 @@
 #include "vrb/VertexArray.h"
 
 #include <array>
+#include <list>
+#include <sys/stat.h>
 
 using namespace vrb;
 
 namespace crow {
+
+static const std::string sPosx = "posx";
+static const std::string sNegx = "negx";
+static const std::string sPosy = "posy";
+static const std::string sNegy = "negy";
+static const std::string sPosz = "posz";
+static const std::string sNegz = "negz";
+static const std::list<std::string> sBaseNameList = std::list<std::string>({
+    sPosx, sNegx, sPosy, sNegy, sPosz, sNegz
+});
+static const std::list<std::string> sFileExt = std::list<std::string>({
+    ".ktx", ".jpg", ".png"
+});
 
 static TextureCubeMapPtr LoadTextureCube(vrb::CreationContextPtr& aContext, const std::string& aBasePath,
                                          const std::string& aExtension, GLuint targetTexture = 0) {
@@ -35,8 +50,8 @@ static TextureCubeMapPtr LoadTextureCube(vrb::CreationContextPtr& aContext, cons
   cubemap->SetTextureParameter(GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
   auto path = [&](const std::string &name) { return aBasePath + "/" + name + aExtension; };
-  vrb::TextureCubeMap::Load(aContext, cubemap, path("posx"), path("negx"), path("posy"),
-                            path("negy"), path("posz"), path("negz"));
+  vrb::TextureCubeMap::Load(aContext, cubemap, path(sPosx), path(sNegx), path(sPosy),
+                            path(sNegy), path(sPosz), path(sNegz));
   return cubemap;
 }
 
@@ -185,6 +200,33 @@ Skybox::GetRoot() const {
   return m.root;
 }
 
+static bool
+FileDoesNotExist (const std::string& aName) {
+  struct stat buffer;
+  return (stat(aName.c_str(), &buffer) != 0);
+}
+
+std::string
+Skybox::ValidateCustomSkyboxAndFindFileExtension(const std::string& aBasePath) {
+  for (const std::string& ext: sFileExt) {
+     int32_t fileCount = 0;
+     for (const std::string& baseName: sBaseNameList) {
+       const std::string file = aBasePath + "/" + baseName + ext;
+       if (FileDoesNotExist(file)) {
+         if (fileCount > 0) {
+           VRB_ERROR("Custom skybox file missing: %s", file.c_str());
+         }
+         break;
+       }
+       fileCount++;
+     }
+     if (fileCount == sBaseNameList.size()) {
+       return ext;
+     }
+  }
+
+  return std::string();
+}
 
 SkyboxPtr
 Skybox::Create(vrb::CreationContextPtr aContext, const VRLayerCubePtr& aLayer) {
