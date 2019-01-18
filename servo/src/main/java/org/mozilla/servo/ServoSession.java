@@ -33,7 +33,7 @@ public class ServoSession extends GeckoSession {
         mActivity = (Activity) aContext;
     }
 
-    public void onSurfaceReady(Surface surface, int width, int height) {
+    public void onSurfaceReady(Surface surface, int left, int top, int width, int height) {
         Log.d(LOGTAG, "onSurfaceReady()");
         if (mServo == null) {
             mWidth = width;
@@ -49,6 +49,7 @@ public class ServoSession extends GeckoSession {
     }
 
     public void onSurfaceDestroyed() {
+      Log.d(LOGTAG, "onSurfaceDestroyed");
       // FIXME: Pause compositor.
       // See: https://github.com/servo/servo/issues/21860
     }
@@ -113,8 +114,7 @@ public class ServoSession extends GeckoSession {
     @Override
     public void close() {
         Log.d(LOGTAG, "close()");
-        // FIXME: mServo.stopLoop();
-        // See: https://github.com/servo/servo/issues/21834
+        mServo.shutdown();
         mServo = null;
         mIsOpen = false;
         mUrl = "about:blank";

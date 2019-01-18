@@ -118,6 +118,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     private Deque<Integer> mPrivateSessionsStack;
     private GeckoSession.PermissionDelegate mPermissionDelegate;
     private int mPreviousSessionId = SessionStore.NO_SESSION_ID;
+    private int mPreviousGeckoSessionId = SessionStore.NO_SESSION_ID;
     private String mRegion;
     private Context mContext;
     private SharedPreferences mPrefs;
@@ -638,13 +639,25 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             return;
         }
 
-        boolean was_servo = isInstanceOfServoSession(mCurrentSession);
-        String uri = getCurrentUri();
-        SessionStore.SessionSettings settings = new SessionStore.SessionSettings();
-        settings.servo = !was_servo;
-        int id = createSession(settings);
-        setCurrentSession(id);
-        loadUri(uri);
+        Log.v("servo", "toggleServo");
+
+        if (!isInstanceOfServoSession(mCurrentSession)) {
+            if (mPreviousGeckoSessionId == SessionStore.NO_SESSION_ID) {
+                mPreviousGeckoSessionId = getCurrentSessionId();
+                String uri = getCurrentUri();
+                SessionStore.SessionSettings settings = new SessionStore.SessionSettings();
+                settings.servo = true;
+                int id = createSession(settings);
+                setCurrentSession(id);
+                loadUri(uri);
+            } else {
+                Log.e(LOGTAG, "Multiple Servo sessions not supported yet.");
+            }
+        } else {
+            removeSession(getCurrentSessionId());
+            setCurrentSession(mPreviousGeckoSessionId);
+            mPreviousGeckoSessionId = SessionStore.NO_SESSION_ID;
+        }
     }
 
     public boolean isInFullScreen() {

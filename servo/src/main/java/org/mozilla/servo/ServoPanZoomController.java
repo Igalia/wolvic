@@ -5,7 +5,7 @@ import android.util.Pair;
 import android.view.InputDevice;
 import android.view.MotionEvent;
 
-import org.mozilla.gecko.gfx.PanZoomController;
+import org.mozilla.geckoview.PanZoomController;
 
 import java.util.ArrayList;
 

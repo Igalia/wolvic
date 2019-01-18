@@ -30,7 +30,7 @@ if (findProject(':geckoview-local')) {
     }
 } else {
     dependencies {
-        compileOnly "org.mozilla.geckoview:geckoview-nightly-armeabi-v7a:${rootProject.ext.geckoNightly['version']}"
+        compileOnly deps.gecko_view.nightly_armv7a
     }
 }
 
@@ -47,6 +47,6 @@ if (gradle.hasProperty('servoViewLocal')) {
     dependencies {
         // To see what the latest servoview version is go here:
         // https://download.servo.org/nightly/maven/org/mozilla/servoview/servoview-armv7/maven-metadata.xml
-        implementation 'org.mozilla.servoview:servoview-armv7:0.0.1.20181015.5327758'
+        implementation 'org.mozilla.servoview:servoview-armv7:0.0.1.20190116.96ad67'
     }
 }

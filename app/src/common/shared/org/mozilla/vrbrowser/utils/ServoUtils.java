@@ -6,14 +6,17 @@ import android.util.Log;
 import org.mozilla.geckoview.GeckoSession;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 
 public class ServoUtils {
-    private static final String CLASSNAME = "org.mozilla.servo.ServoSession";
+    private static final String SESSION_CLASSNAME = "org.mozilla.servo.ServoSession";
+    private static final String WHITELIST_CLASSNAME = "org.mozilla.servo.ServoWhiteList";
     private static final String LOGTAG = "ServoUtils";
+    private static Object mServoWhiteList = null;
 
     public static boolean isServoAvailable() {
         try {
-            Class.forName(CLASSNAME);
+            Class.forName(SESSION_CLASSNAME);
             return true;
         } catch (ClassNotFoundException e) {
             return false;
@@ -22,7 +25,7 @@ public class ServoUtils {
 
     public static boolean isInstanceOfServoSession(Object obj) {
         try {
-            return Class.forName(CLASSNAME).isInstance(obj);
+            return Class.forName(SESSION_CLASSNAME).isInstance(obj);
         } catch (ClassNotFoundException e) {
             return false;
         }
@@ -30,12 +33,31 @@ public class ServoUtils {
 
     public static GeckoSession createServoSession(Context context) {
         try {
-            Class servoClass = Class.forName(CLASSNAME);
-            Constructor<?> constructor = servoClass.getConstructor(Context.class);
+            Class clazz = Class.forName(SESSION_CLASSNAME);
+            Constructor<?> constructor = clazz.getConstructor(Context.class);
             return (GeckoSession) constructor.newInstance(context);
         } catch (Exception e) {
             Log.e(LOGTAG, "Can't load or instanciate ServoSession: " + e);
             return null;
+        }
+    }
+
+    public static boolean isUrlInServoWhiteList(Context context, String url) {
+        if (isServoAvailable()) {
+            try {
+                Class clazz = Class.forName(WHITELIST_CLASSNAME);
+                if (mServoWhiteList == null) {
+                    Constructor<?> constructor = clazz.getConstructor(Context.class);
+                    mServoWhiteList = constructor.newInstance(context);
+                }
+                Method isAllowed = clazz.getMethod("isAllowed", String.class);
+                return (boolean) isAllowed.invoke(mServoWhiteList, url);
+            } catch (Exception e) {
+                Log.e(LOGTAG, "Failed to call ServoWhiteList::isAllowed: " + e);
+                return false;
+            }
+        } else {
+            return false;
         }
     }
 }

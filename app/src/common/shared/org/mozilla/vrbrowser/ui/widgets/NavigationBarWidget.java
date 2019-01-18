@@ -32,6 +32,7 @@ import org.mozilla.vrbrowser.ui.views.UITextButton;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.VoiceSearchWidget;
 import org.mozilla.vrbrowser.utils.AnimationHelper;
 import org.mozilla.vrbrowser.utils.UrlUtils;
+import org.mozilla.vrbrowser.utils.ServoUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -558,8 +559,22 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     public void updateServoButton() {
-        if (SettingsStore.getInstance(mAppContext).isServoEnabled()) {
+        // We show the Servo button if:
+        // 1. the current session is using Servo. No matter what, we need the toggle button to go back to Gecko.
+        // 2. Or, if the pref is enabled and the current url is white listed.
+        boolean show = false;
+        boolean isServoSession = false;
+        GeckoSession currentSession = SessionStore.get().getCurrentSession();
+        if (currentSession != null) {
+            String currentUri = SessionStore.get().getCurrentUri();
+            boolean isPrefEnabled = SettingsStore.getInstance(mAppContext).isServoEnabled();
+            boolean isUrlWhiteListed = ServoUtils.isUrlInServoWhiteList(mAppContext, currentUri);
+            isServoSession = ServoUtils.isInstanceOfServoSession(currentSession);
+            show = isServoSession || (isPrefEnabled && isUrlWhiteListed);
+        }
+        if (show) {
             mServoButton.setVisibility(View.VISIBLE);
+            mServoButton.setImageResource(isServoSession ? R.drawable.ic_icon_gecko : R.drawable.ic_icon_servo);
         } else {
             mServoButton.setVisibility(View.GONE);
         }
@@ -605,6 +620,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             mURLBar.setURL(url);
             mReloadButton.setEnabled(true);
         }
+        updateServoButton();
     }
 
     @Override

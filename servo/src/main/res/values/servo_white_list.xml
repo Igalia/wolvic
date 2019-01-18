@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="servo_white_list">
+        <!--
+        Matches:
+            https://servo.org
+            https://download.servo.org
+            https://download.servo.org
+            https://servo.org/
+            https://servo.org/ddd
+        Doesn't match:
+            https://.servo.org/ddd
+            https://servo.orgd
+            http://servo.org
+        -->
+        <item>https:\/\/(.+\.)?servo\.org(\/.*)?$</item>
+        <!-- All examples hosted under threejs.org/examples/ -->
+        <item>https:\/\/threejs\.org\/examples\/.*</item>
+    </string-array>
+</resources>
