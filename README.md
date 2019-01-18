@@ -105,6 +105,14 @@ geckoViewLocalArm=/path/to/your/build/geckoview-nightly-armeabi-v7a-64.0.2018092
 geckoViewLocalX86=/path/to/your/build/geckoview-nightly-x86-64.0.20180924100359.aar
 ```
 
+## Install debug and release builds on device simultaneously
+
+You can enable a debug applicationID sufix to install both debug and release builds simultaneously. You just need to add this property to your `user.properties` file:
+
+```ini
+simultaneousDebugRelease=true
+```
+
 ## Compress assets
 
 ETC2 compression is used to improve performance and memory usage. Raw assets are placed in the `uncompressed_assets` folder. You can generate the compressed textures using the compressor utility in `tools/compressor`. You need to set up [etc2comp](https://github.com/google/etc2comp) and make it available on your PATH before running the script. Run this command to generate the compressed assets:

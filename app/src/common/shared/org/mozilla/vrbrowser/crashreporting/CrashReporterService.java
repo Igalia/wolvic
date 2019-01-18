@@ -19,7 +19,7 @@ public class CrashReporterService extends JobIntentService {
 
     private static final String LOGTAG = "VRB";
 
-    public static final String CRASH_ACTION = "org.mozilla.vrbrowser.CRASH_ACTION";
+    public static final String CRASH_ACTION = BuildConfig.APPLICATION_ID + ".CRASH_ACTION";
     public static final String DATA_TAG = "intent";
 
     private static final int PID_CHECK_INTERVAL = 100;
