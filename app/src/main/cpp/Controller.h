@@ -7,6 +7,7 @@
 #define VRBROWSER_CONTROLLER_H
 
 #include "ControllerDelegate.h"
+#include "Device.h"
 #include "vrb/Forward.h"
 #include "vrb/Matrix.h"
 
@@ -15,7 +16,7 @@ namespace crow {
 class Pointer;
 typedef std::shared_ptr<Pointer> PointerPtr;
 
-static const int kControllerMaxButtonCount = 4;
+static const int kControllerMaxButtonCount = 6;
 static const int kControllerMaxAxes = 6;
 
 struct Controller {
@@ -47,6 +48,7 @@ struct Controller {
   bool leftHanded;
   bool inDeadZone;
   double lastHoverEvent;
+  device::CapabilityFlags deviceCapabilities;
 
   Controller();
   Controller(const Controller& aController);

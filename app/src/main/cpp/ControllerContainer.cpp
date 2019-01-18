@@ -3,6 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+#include <assert.h>
 #include "ControllerContainer.h"
 #include "Controller.h"
 #include "Pointer.h"
@@ -60,12 +61,10 @@ ControllerContainer::Create(vrb::CreationContextPtr& aContext, const vrb::GroupP
   return result;
 }
 
-
 TogglePtr
 ControllerContainer::GetRoot() const {
   return m.root;
 }
-
 
 void
 ControllerContainer::LoadControllerModel(const int32_t aModelIndex, const ModelLoaderAndroidPtr& aLoader, const std::string& aFileName) {
@@ -161,6 +160,10 @@ ControllerContainer::GetControllers() const {
 }
 
 // crow::ControllerDelegate interface
+uint32_t
+ControllerContainer::GetControllerCount() {
+  return m.list.size();
+}
 
 void
 ControllerContainer::CreateController(const int32_t aControllerIndex, const int32_t aModelIndex, const std::string& aImmersiveName) {
@@ -198,6 +201,15 @@ ControllerContainer::DestroyController(const int32_t aControllerIndex) {
   if (m.Contains(aControllerIndex)) {
     m.list[aControllerIndex].Reset();
   }
+}
+
+void
+ControllerContainer::SetCapabilityFlags(const int32_t aControllerIndex, const device::CapabilityFlags aFlags) {
+  if (!m.Contains(aControllerIndex)) {
+    return;
+  }
+
+  m.list[aControllerIndex].deviceCapabilities = aFlags;
 }
 
 void
@@ -247,6 +259,9 @@ ControllerContainer::SetButtonCount(const int32_t aControllerIndex, const uint32
 
 void
 ControllerContainer::SetButtonState(const int32_t aControllerIndex, const Button aWhichButton, const int32_t aImmersiveIndex, const bool aPressed, const bool aTouched, const float aImmersiveTrigger) {
+  assert(kControllerMaxButtonCount > aImmersiveIndex
+         && "Button index must < kControllerMaxButtonCount.");
+
   if (!m.Contains(aControllerIndex)) {
     return;
   }
@@ -282,6 +297,9 @@ ControllerContainer::SetButtonState(const int32_t aControllerIndex, const Button
 
 void
 ControllerContainer::SetAxes(const int32_t aControllerIndex, const float* aData, const uint32_t aLength) {
+  assert(kControllerMaxAxes >= aLength
+         && "Axis length must <= kControllerMaxAxes.");
+
   if (!m.Contains(aControllerIndex)) {
     return;
   }

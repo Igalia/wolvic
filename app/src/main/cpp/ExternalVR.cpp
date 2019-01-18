@@ -314,6 +314,25 @@ ExternalVR::IsPresenting() const {
   return m.IsPresenting();
 }
 
+uint16_t
+ExternalVR::GetControllerCapabilityFlags(device::CapabilityFlags aFlags) {
+  uint16_t result = 0;
+  if (device::Position & aFlags) {
+    result |= static_cast<uint16_t>(mozilla::gfx::ControllerCapabilityFlags::Cap_Position);
+  }
+  if (device::Orientation & aFlags) {
+    result |= static_cast<uint16_t>(mozilla::gfx::ControllerCapabilityFlags::Cap_Orientation);
+  }
+  if (device::AngularAcceleration & aFlags) {
+    result |= static_cast<uint16_t>(mozilla::gfx::ControllerCapabilityFlags::Cap_AngularAcceleration);
+  }
+  if (device::LinearAcceleration & aFlags) {
+    result |= static_cast<uint16_t>(mozilla::gfx::ControllerCapabilityFlags::Cap_LinearAcceleration);
+  }
+
+  return result;
+}
+
 ExternalVR::VRState
 ExternalVR::GetVRState() const {
   if (!IsPresenting()) {
@@ -367,11 +386,22 @@ ExternalVR::PushFramePoses(const vrb::Matrix& aHeadTransform, const std::vector<
     }
     immersiveController.hand = controller.leftHanded ? mozilla::gfx::ControllerHand::Left : mozilla::gfx::ControllerHand::Right;
 
-    immersiveController.flags = mozilla::gfx::ControllerCapabilityFlags::Cap_Orientation;
-    immersiveController.isOrientationValid = true;
-    vrb::Quaternion quaternion(controller.transformMatrix);
-    quaternion = quaternion.Inverse();
-    memcpy(&(immersiveController.pose.orientation), quaternion.Data(), sizeof(immersiveController.pose.orientation));
+    const uint16_t flags = GetControllerCapabilityFlags(controller.deviceCapabilities);
+    immersiveController.flags = static_cast<mozilla::gfx::ControllerCapabilityFlags>(flags);
+
+    if (flags & static_cast<uint16_t>(mozilla::gfx::ControllerCapabilityFlags::Cap_Orientation)) {
+      immersiveController.isOrientationValid = true;
+
+      vrb::Quaternion quaternion(controller.transformMatrix);
+      quaternion = quaternion.Inverse();
+      memcpy(&(immersiveController.pose.orientation), quaternion.Data(), sizeof(immersiveController.pose.orientation));
+    }
+    if (flags & static_cast<uint16_t>(mozilla::gfx::ControllerCapabilityFlags::Cap_Position)) {
+      immersiveController.isPositionValid = true;
+
+      vrb::Vector position(controller.transformMatrix.GetTranslation());
+      memcpy(&(immersiveController.pose.position), position.Data(), sizeof(immersiveController.pose.position));
+    }
   }
 
   PushSystemState();

@@ -56,6 +56,8 @@ protected:
   struct State;
   ExternalVR();
 private:
+  uint16_t GetControllerCapabilityFlags(device::CapabilityFlags aFlags);
+
   State& m;
   VRB_NO_DEFAULTS(ExternalVR)
 };

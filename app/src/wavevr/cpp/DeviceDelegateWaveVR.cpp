@@ -184,6 +184,7 @@ struct DeviceDelegateWaveVR::State {
         controller.enabled = true;
         delegate->SetEnabled(index, true);
         delegate->SetVisible(index, true);
+        delegate->SetCapabilityFlags(index, device::Orientation);
       }
 
       const bool bumperPressed = WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Digital_Trigger);

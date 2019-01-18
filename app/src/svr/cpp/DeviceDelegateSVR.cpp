@@ -279,6 +279,7 @@ struct DeviceDelegateSVR::State {
       }
       controller->SetEnabled(kControllerId, true);
       controller->SetVisible(kControllerId, true);
+      controller->SetCapabilityFlags(kControllerId, device::Orientation);
       usingHeadTrackingInput = false;
     }
     const svrQuaternion& rotation = controllerState.rotation;

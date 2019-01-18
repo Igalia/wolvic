@@ -280,6 +280,7 @@ struct DeviceDelegateGoogleVR::State {
         controller.enabled = true;
         controllerDelegate->SetEnabled(index, true);
         controllerDelegate->SetVisible(index, true);
+        controllerDelegate->SetCapabilityFlags(index, device::Orientation);
       }
 
       recentered = recentered || gvr_controller_state_get_recentered(controllerState);
