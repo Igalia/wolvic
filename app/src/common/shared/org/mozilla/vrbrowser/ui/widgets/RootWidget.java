@@ -26,6 +26,7 @@ public class RootWidget extends UIWidget {
     protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
         aPlacement.width = 8;
         aPlacement.height = 8;
+        aPlacement.cylinder = false;
     }
 
     private void initialize(Context aContext) {

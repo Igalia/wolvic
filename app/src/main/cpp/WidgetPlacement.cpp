@@ -53,6 +53,7 @@ WidgetPlacement::FromJava(JNIEnv* aEnv, jobject& aObject) {
   GET_BOOLEAN_FIELD(showPointer);
   GET_BOOLEAN_FIELD(firstDraw);
   GET_BOOLEAN_FIELD(layer);
+  GET_BOOLEAN_FIELD(cylinder);
 
   return result;
 }

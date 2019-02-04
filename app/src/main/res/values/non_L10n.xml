@@ -25,6 +25,7 @@
     <string name="settings_key_msaa" translatable="false">settings_gfx_msaa</string>
     <string name="settings_key_audio" translatable="false">settings_audio</string>
     <string name="settings_key_voice_search_language" translatable="false">settings_voice_search_language</string>
+    <string name="settings_key_cylinder_density" translatable="false">settings_cylinder_density</string>
     <string name="private_browsing_support_url" translatable="false">https://support.mozilla.org/kb/private-mode-firefox-reality</string>
     <string name="settings_key_browser_world_width" translatable="false">settings_browser_world_width</string>
     <string name="settings_key_browser_world_height" translatable="false">settings_browser_world_height</string>

@@ -39,6 +39,7 @@ public class WidgetPlacement {
     public boolean showPointer = true;
     public boolean firstDraw = false;
     public boolean layer = true;
+    public boolean cylinder = true;
 
     public WidgetPlacement clone() {
         WidgetPlacement w = new WidgetPlacement();
@@ -67,6 +68,8 @@ public class WidgetPlacement {
         this.opaque = w.opaque;
         this.showPointer = w.showPointer;
         this.firstDraw = w.firstDraw;
+        this.layer = w.layer;
+        this.cylinder = w.cylinder;
     }
 
     public int textureWidth() {

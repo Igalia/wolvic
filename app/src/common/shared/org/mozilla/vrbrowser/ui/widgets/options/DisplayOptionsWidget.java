@@ -8,6 +8,7 @@ package org.mozilla.vrbrowser.ui.widgets.options;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.ScrollView;
 
 import org.mozilla.vrbrowser.R;
@@ -19,6 +20,7 @@ import org.mozilla.vrbrowser.ui.views.settings.ButtonSetting;
 import org.mozilla.vrbrowser.ui.views.settings.DoubleEditSetting;
 import org.mozilla.vrbrowser.ui.views.settings.RadioGroupSetting;
 import org.mozilla.vrbrowser.ui.views.settings.SingleEditSetting;
+import org.mozilla.vrbrowser.ui.views.settings.SwitchSetting;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.RestartDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
@@ -31,6 +33,7 @@ public class DisplayOptionsWidget extends UIWidget implements
     private AudioEngine mAudio;
     private UIButton mBackButton;
 
+    private SwitchSetting mCurvedDisplaySwitch;
     private RadioGroupSetting mUaModeRadio;
     private RadioGroupSetting mMSAARadio;
 
@@ -74,6 +77,13 @@ public class DisplayOptionsWidget extends UIWidget implements
             if (mDelegate != null) {
                 mDelegate.onDismiss();
             }
+        });
+
+        mCurvedDisplaySwitch = findViewById(R.id.curved_display_switch);
+        mCurvedDisplaySwitch.setChecked(SettingsStore.getInstance(getContext()).getCylinderDensity() > 0.0f);
+        mCurvedDisplaySwitch.setOnCheckedChangeListener((compoundButton, enabled, apply) -> {
+            SettingsStore.getInstance(getContext()).setCylinderDensity(enabled ? SettingsStore.CYLINDER_DENSITY_ENABLED_DEFAULT : 0.0f);
+            showRestartDialog();
         });
 
         int uaMode = SettingsStore.getInstance(getContext()).getUaMode();

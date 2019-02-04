@@ -163,6 +163,10 @@
     <string name="restart_later_dialog_button">Restart Later</string>
 
     <!-- This string labels an On/Off switch in the 'Developer Options' dialog
+     and is used to enable or disable curved display. -->
+    <string name="developer_options_curved_display">Enable Curved Display</string>
+
+    <!-- This string labels an On/Off switch in the 'Developer Options' dialog
          and is used to toggle remote debugging of website content in the application. -->
     <string name="developer_options_remote_debugging">Enable Remote Debugging</string>
 

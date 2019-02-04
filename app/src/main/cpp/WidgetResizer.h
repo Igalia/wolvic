@@ -16,12 +16,13 @@
 
 namespace crow {
 
+class Widget;
 class WidgetResizer;
 typedef std::shared_ptr<WidgetResizer> WidgetResizerPtr;
 
 class WidgetResizer {
 public:
-  static WidgetResizerPtr Create(vrb::CreationContextPtr& aContext, const vrb::Vector& aMin, const vrb::Vector& aMax);
+  static WidgetResizerPtr Create(vrb::CreationContextPtr& aContext, Widget * aWidget);
   vrb::NodePtr GetRoot() const;
   void SetSize(const vrb::Vector& aMin, const vrb::Vector& aMax);
   void ToggleVisible(bool aVisible);

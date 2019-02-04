@@ -380,20 +380,21 @@ Quad::GetTransformNode() const {
   return m.transform;
 }
 
-vrb::GeometryPtr
-Quad::GetGeometry() const {
-  return m.geometry;
+VRLayerQuadPtr
+Quad::GetLayer() const {
+  return m.layer;
 }
 
 static const float kEpsilon = 0.00000001f;
 
 bool
-Quad::TestIntersection(const vrb::Vector& aStartPoint, const vrb::Vector& aDirection, vrb::Vector& aResult, bool aClamp, bool& aIsInside, float& aDistance) const {
+Quad::TestIntersection(const vrb::Vector& aStartPoint, const vrb::Vector& aDirection, vrb::Vector& aResult, vrb::Vector& aNormal, bool aClamp, bool& aIsInside, float& aDistance) const {
   aDistance = -1.0f;
   if (!m.root->IsEnabled(*m.transform)) {
     return false;
   }
-  vrb::Matrix modelView = m.transform->GetWorldTransform().AfineInverse();
+  vrb::Matrix worldTransform = m.transform->GetWorldTransform();
+  vrb::Matrix modelView = worldTransform.AfineInverse();
   vrb::Vector point = modelView.MultiplyPosition(aStartPoint);
   vrb::Vector direction = modelView.MultiplyDirection(aDirection);
   vrb::Vector normal = GetNormal();
@@ -420,8 +421,6 @@ Quad::TestIntersection(const vrb::Vector& aStartPoint, const vrb::Vector& aDirec
 
   aResult = result;
 
-  aDistance = (aResult - point).Magnitude();
-
   // Clamp to keep pointer in quad.
   if (aClamp) {
     if (result.x() > m.worldMax.x()) { result.x() = m.worldMax.x(); }
@@ -431,12 +430,16 @@ Quad::TestIntersection(const vrb::Vector& aStartPoint, const vrb::Vector& aDirec
     else if (result.y() < m.worldMin.y()) { result.y() = m.worldMin.y(); }
   }
 
+  aResult = worldTransform.MultiplyPosition(result);
+  aNormal = worldTransform.MultiplyDirection(normal);
+  aDistance = (aResult - aStartPoint).Magnitude();
+
   return true;
 }
 
 void
 Quad::ConvertToQuadCoordinates(const vrb::Vector& point, float& aX, float& aY, bool aClamp) const {
-  vrb::Vector value = point;
+  vrb::Vector value = m.transform->GetWorldTransform().AfineInverse().MultiplyPosition(point);
   // Clamp value to quad bounds.
   if (aClamp) {
     if (value.x() > m.worldMax.x()) { value.x() = m.worldMax.x(); }

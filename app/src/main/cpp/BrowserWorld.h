@@ -55,6 +55,7 @@ public:
   void HideVRVideo();
   void SetControllersVisible(const bool aVisible);
   void ResetUIYaw();
+  void SetCylinderDensity(const float aDensity);
   JNIEnv* GetJNIEnv() const;
 protected:
   struct State;

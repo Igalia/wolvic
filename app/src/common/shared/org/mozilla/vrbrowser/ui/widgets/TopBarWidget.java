@@ -61,9 +61,9 @@ public class TopBarWidget extends UIWidget implements SessionStore.SessionChange
         aPlacement.width = WidgetPlacement.dpDimension(context, R.dimen.top_bar_width);
         aPlacement.height = WidgetPlacement.dpDimension(context, R.dimen.top_bar_height);
         aPlacement.worldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width) * aPlacement.width/getWorldWidth();
-        aPlacement.translationY = WidgetPlacement.unitFromMeters(context, R.dimen.top_bar_world_y);
+        //aPlacement.translationY = WidgetPlacement.unitFromMeters(context, R.dimen.top_bar_world_y);
         aPlacement.anchorX = 0.5f;
-        aPlacement.anchorY = 0.5f;
+        aPlacement.anchorY = 0.0f;
         aPlacement.parentAnchorX = 0.5f;
         aPlacement.parentAnchorY = 1.0f;
         aPlacement.opaque = false;

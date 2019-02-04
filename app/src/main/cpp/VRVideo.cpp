@@ -49,7 +49,7 @@ struct VRVideo::State {
     window = aWindow;
     projection = aProjection;
     root = vrb::Toggle::Create(create);
-    VRLayerQuadPtr windowLayer = aWindow->GetLayer();
+    VRLayerSurfacePtr windowLayer = aWindow->GetLayer();
     if (windowLayer) {
       layerTextureBackup[0] = windowLayer->GetTextureRect(device::Eye::Left);
       layerTextureBackup[1] = windowLayer->GetTextureRect(device::Eye::Right);
@@ -286,7 +286,7 @@ struct VRVideo::State {
 
   vrb::TogglePtr createQuadProjectionLayer(device::Eye aEye, const device::EyeRect& aUVRect) {
     vrb::CreationContextPtr create = context.lock();
-    VRLayerQuadPtr windowLayer = window->GetLayer();
+    VRLayerSurfacePtr windowLayer = window->GetLayer();
     windowLayer->SetTextureRect(aEye, aUVRect);
     layer = windowLayer;
 
@@ -345,7 +345,7 @@ VRVideo::GetRoot() const {
 
 void
 VRVideo::Exit() {
-  VRLayerQuadPtr windowLayer = m.window->GetLayer();
+  VRLayerSurfacePtr windowLayer = m.window->GetLayer();
   if (windowLayer) {
     windowLayer->SetTextureRect(device::Eye::Left, m.layerTextureBackup[0]);
     windowLayer->SetTextureRect(device::Eye::Right, m.layerTextureBackup[1]);

@@ -185,6 +185,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         queueRunnable(() -> createOffscreenDisplay());
         final String tempPath = getCacheDir().getAbsolutePath();
         queueRunnable(() -> setTemporaryFilePath(tempPath));
+        setCylinderDensity(SettingsStore.getInstance(this).getCylinderDensity());
         initializeWorld();
 
         // Setup the search engine
@@ -983,6 +984,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         queueRunnable(this::resetUIYawNative);
     }
 
+    public void setCylinderDensity(final float aDensity) {
+        queueRunnable(() -> setCylinderDensityNative(aDensity));
+    }
+
     private native void addWidgetNative(int aHandle, WidgetPlacement aPlacement);
     private native void updateWidgetNative(int aHandle, WidgetPlacement aPlacement);
     private native void removeWidgetNative(int aHandle);
@@ -999,4 +1004,5 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private native void resetUIYawNative();
     private native void setControllersVisibleNative(boolean aVisible);
     private native void runCallbackNative(long aCallback);
+    private native void setCylinderDensityNative(float aDensity);
 }
