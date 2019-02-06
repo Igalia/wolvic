@@ -20,6 +20,7 @@ public class ServoSession extends GeckoSession {
     private int mWidth;
     private int mHeight;
     private ServoDisplay mDisplay;
+    private Surface mSurface;
     private ServoPanZoomController mPanZoomController;
     private boolean mIsOpen = false;
     private String mUrl = "about:blank";
@@ -33,18 +34,26 @@ public class ServoSession extends GeckoSession {
         mActivity = (Activity) aContext;
     }
 
-    public void onSurfaceReady(Surface surface, int left, int top, int width, int height) {
-        Log.d(LOGTAG, "onSurfaceReady()");
+    public void onSurfaceChanged(Surface surface, int left, int top, int width, int height) {
         if (mServo == null) {
             mWidth = width;
             mHeight = height;
+            mSurface = surface;
             mServo = new ServoSurface(surface, width, height);
             mServo.setClient(new ServoCallbacks());
             mServo.setActivity(mActivity);
             mServo.runLoop();
+        }
 
-        } else {
-            Log.w(LOGTAG, "onSurfaceReady called twice");
+        if (mSurface != surface) {
+            mSurface = surface;
+            mServo.onSurfaceChanged(surface);
+        }
+
+        if (mWidth != width || mHeight != height) {
+          mWidth = width;
+          mHeight = height;
+          mServo.onSurfaceResized(width, height);
         }
     }
 

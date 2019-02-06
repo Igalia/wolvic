@@ -20,6 +20,7 @@ import android.view.inputmethod.ExtractedTextRequest;
 import org.mozilla.gecko.GeckoAppShell;
 import org.mozilla.gecko.GeckoProfile;
 import org.mozilla.geckoview.AllowOrDeny;
+import org.mozilla.geckoview.ContentBlocking;
 import org.mozilla.geckoview.MediaElement;
 import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoRuntime;
@@ -57,8 +58,8 @@ import static org.mozilla.vrbrowser.utils.ServoUtils.createServoSession;
 import static org.mozilla.vrbrowser.utils.ServoUtils.isInstanceOfServoSession;
 import static org.mozilla.vrbrowser.utils.ServoUtils.isServoAvailable;
 
-public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSession.ProgressDelegate,
-        GeckoSession.ContentDelegate, GeckoSession.TextInputDelegate, GeckoSession.TrackingProtectionDelegate,
+public class SessionStore implements ContentBlocking.Delegate, GeckoSession.NavigationDelegate,
+        GeckoSession.ProgressDelegate, GeckoSession.ContentDelegate, GeckoSession.TextInputDelegate, 
         GeckoSession.PromptDelegate, GeckoSession.MediaDelegate, SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static SessionStore mInstance;
@@ -160,7 +161,9 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             vrPrefsWorkAround(aContext, aExtras);
             GeckoRuntimeSettings.Builder runtimeSettingsBuilder = new GeckoRuntimeSettings.Builder();
             runtimeSettingsBuilder.crashHandler(CrashReporterService.class);
-            runtimeSettingsBuilder.trackingProtectionCategories(GeckoSession.TrackingProtectionDelegate.CATEGORY_AD | GeckoSession.TrackingProtectionDelegate.CATEGORY_SOCIAL | GeckoSession.TrackingProtectionDelegate.CATEGORY_ANALYTIC);
+            runtimeSettingsBuilder.contentBlocking((new ContentBlocking.Settings.Builder())
+                .categories(ContentBlocking.AT_AD | ContentBlocking.AT_SOCIAL | ContentBlocking.AT_ANALYTIC)
+                .build());
             runtimeSettingsBuilder.consoleOutput(SettingsStore.getInstance(aContext).isConsoleLogsEnabled());
             runtimeSettingsBuilder.displayDensityOverride(SettingsStore.getInstance(aContext).getDisplayDensity());
             runtimeSettingsBuilder.remoteDebuggingEnabled(SettingsStore.getInstance(aContext).isRemoteDebuggingEnabled());
@@ -329,32 +332,35 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         State state = new State();
         state.mSettings = aSettings;
 
+        GeckoSessionSettings geckoSettings = new GeckoSessionSettings.Builder()
+            .useMultiprocess(aSettings.multiprocess)
+            .usePrivateMode(aSettings.privateMode)
+            .useTrackingProtection(aSettings.trackingProtection)
+            .build();
+
         if (aSettings.servo) {
             if (isServoAvailable()) {
                 state.mSession = createServoSession(mContext);
             } else {
                 Log.e(LOGTAG, "Attempt to create a ServoSession. Servo hasn't been enable at build time. Using a GeckoSession instead.");
-                state.mSession = new GeckoSession();
+                state.mSession = new GeckoSession(geckoSettings);
             }
         } else {
-            state.mSession = new GeckoSession();
+            state.mSession = new GeckoSession(geckoSettings);
         }
 
         int result = state.mSession.hashCode();
         mSessions.put(result, state);
 
-        state.mSession.getSettings().setBoolean(GeckoSessionSettings.USE_MULTIPROCESS, aSettings.multiprocess);
-        state.mSession.getSettings().setBoolean(GeckoSessionSettings.USE_PRIVATE_MODE, aSettings.privateMode);
-        state.mSession.getSettings().setBoolean(GeckoSessionSettings.USE_TRACKING_PROTECTION, aSettings.trackingProtection);
-        state.mSession.getSettings().setBoolean(GeckoSessionSettings.SUSPEND_MEDIA_WHEN_INACTIVE, aSettings.suspendMediaWhenInactive);
-        state.mSession.getSettings().setInt(GeckoSessionSettings.USER_AGENT_MODE, aSettings.userAgentMode);
+        state.mSession.getSettings().setSuspendMediaWhenInactive(aSettings.suspendMediaWhenInactive);
+        state.mSession.getSettings().setUserAgentMode(aSettings.userAgentMode);
         state.mSession.setNavigationDelegate(this);
         state.mSession.setProgressDelegate(this);
         state.mSession.setPromptDelegate(this);
         state.mSession.setContentDelegate(this);
         state.mSession.getTextInput().setDelegate(this);
         state.mSession.setPermissionDelegate(mPermissionDelegate);
-        state.mSession.setTrackingProtectionDelegate(this);
+        state.mSession.setContentBlockingDelegate(this);
         state.mSession.setMediaDelegate(this);
         for (SessionChangeListener listener: mSessionChangeListeners) {
             listener.onNewSession(state.mSession, result);
@@ -372,7 +378,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
             session.getTextInput().setDelegate(null);
             session.setPromptDelegate(null);
             session.setPermissionDelegate(null);
-            session.setTrackingProtectionDelegate(null);
+            session.setContentBlockingDelegate(null);
             session.setMediaDelegate(null);
             mSessions.remove(aSessionId);
             for (SessionChangeListener listener: mSessionChangeListeners) {
@@ -385,7 +391,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     }
 
     private void pushSession(int aSessionId) {
-        boolean isPrivateMode  = mCurrentSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
+        boolean isPrivateMode  = mCurrentSession.getSettings().getUsePrivateMode();
         if (isPrivateMode)
             mPrivateSessionsStack.push(aSessionId);
         else
@@ -393,7 +399,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     }
 
     private Integer popSession() {
-        boolean isPrivateMode  = mCurrentSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
+        boolean isPrivateMode  = mCurrentSession.getSettings().getUsePrivateMode();
         if (isPrivateMode)
             return mPrivateSessionsStack.pop();
         else
@@ -401,7 +407,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     }
 
     private Integer peekSession() {
-        boolean isPrivateMode  = mCurrentSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
+      boolean isPrivateMode  = mCurrentSession.getSettings().getUsePrivateMode();
         if (isPrivateMode)
             return mPrivateSessionsStack.peek();
         else
@@ -446,7 +452,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         ArrayList<Integer> result = new ArrayList<>();
         for (Integer sessionId : mSessions.keySet()) {
             GeckoSession session = getSession(sessionId);
-            if (session != null && session.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE) == aUsingPrivateMode) {
+            if (session != null && session.getSettings().getUsePrivateMode() == aUsingPrivateMode) {
                 result.add(sessionId);
             }
         }
@@ -750,7 +756,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         if (mCurrentSession == null)
             return;
 
-        boolean isPrivateMode = mCurrentSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
+        boolean isPrivateMode = mCurrentSession.getSettings().getUsePrivateMode();
         if (!isPrivateMode) {
             if (mPreviousSessionId == SessionStore.NO_SESSION_ID) {
                 mPreviousSessionId = getCurrentSessionId();
@@ -778,7 +784,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
 
     public void setUaMode(int mode) {
         if (mCurrentSession != null) {
-            mCurrentSession.getSettings().setInt(GeckoSessionSettings.USER_AGENT_MODE, mode);
+            mCurrentSession.getSettings().setUserAgentMode(mode);
             mCurrentSession.reload();
         }
     }
@@ -787,7 +793,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         if (mCurrentSession == null)
             return;
 
-        boolean isPrivateMode  = mCurrentSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
+        boolean isPrivateMode  = mCurrentSession.getSettings().getUsePrivateMode();
         if (isPrivateMode) {
             int privateSessionId = getCurrentSessionId();
             setCurrentSession(mPreviousSessionId);
@@ -807,7 +813,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
 
     public boolean isCurrentSessionPrivate() {
         if (mCurrentSession != null)
-            return mCurrentSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
+            return mCurrentSession.getSettings().getUsePrivateMode();
 
         return false;
     }
@@ -873,9 +879,10 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
                         mCurrentSession.close();
 
                         int oldSessionId = getCurrentSessionId();
-                        int sessionId = createSession();
+                        SessionStore.SessionSettings settings = new SessionStore.SessionSettings();
+                        settings.multiprocess = enabled;
+                        int sessionId = createSession(settings);
                         GeckoSession session = getSession(sessionId);
-                        session.getSettings().setBoolean(GeckoSessionSettings.USE_MULTIPROCESS, enabled);
                         session.restoreState(value);
                         setCurrentSession(sessionId);
                         removeSession(oldSessionId);
@@ -966,7 +973,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         Log.d(LOGTAG, "onLoadRequest: " + aRequest.uri);
         if (mFirstOnLoadRequest && (aSession == mCurrentSession)) {
             Log.d(LOGTAG, "Testing for UA override");
-            aSession.getSettings().setString(GeckoSessionSettings.USER_AGENT_OVERRIDE, mUserAgentOverride.lookupOverride(aRequest.uri));
+            aSession.getSettings().setUserAgentOverride(mUserAgentOverride.lookupOverride(aRequest.uri));
             mFirstOnLoadRequest = false;
         }
         if (PRIVATE_BROWSING_URI.equalsIgnoreCase(aRequest.uri)) {
@@ -1030,7 +1037,7 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
         pushSession(getCurrentSessionId());
 
         int sessionId;
-        boolean isPreviousPrivateMode = mCurrentSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
+        boolean isPreviousPrivateMode = mCurrentSession.getSettings().getUsePrivateMode();
         if (isPreviousPrivateMode) {
             SessionStore.SessionSettings settings = new SessionStore.SessionSettings();
             settings.privateMode = true;
@@ -1272,21 +1279,21 @@ public class SessionStore implements GeckoSession.NavigationDelegate, GeckoSessi
     }
 
     @Override
-    public void onTrackerBlocked(GeckoSession session, String uri, int categories) {
-        if ((categories & GeckoSession.TrackingProtectionDelegate.CATEGORY_AD) != 0) {
-          Log.i(LOGTAG, "Blocking Ad: " + uri);
+    public void onContentBlocked(final GeckoSession session, final ContentBlocking.BlockEvent event) {
+        if ((event.categories & ContentBlocking.AT_AD) != 0) {
+          Log.i(LOGTAG, "Blocking Ad: " + event.uri);
         }
 
-        if ((categories & GeckoSession.TrackingProtectionDelegate.CATEGORY_ANALYTIC) != 0) {
-            Log.i(LOGTAG, "Blocking Analytic: " + uri);
+        if ((event.categories & ContentBlocking.AT_ANALYTIC) != 0) {
+            Log.i(LOGTAG, "Blocking Analytic: " + event.uri);
         }
 
-        if ((categories & GeckoSession.TrackingProtectionDelegate.CATEGORY_CONTENT) != 0) {
-            Log.i(LOGTAG, "Blocking Content: " + uri);
+        if ((event.categories & ContentBlocking.AT_CONTENT) != 0) {
+            Log.i(LOGTAG, "Blocking Content: " + event.uri);
         }
 
-        if ((categories & GeckoSession.TrackingProtectionDelegate.CATEGORY_SOCIAL) != 0) {
-            Log.i(LOGTAG, "Blocking Social: " + uri);
+        if ((event.categories & ContentBlocking.AT_SOCIAL) != 0) {
+            Log.i(LOGTAG, "Blocking Social: " + event.uri);
         }
     }
 

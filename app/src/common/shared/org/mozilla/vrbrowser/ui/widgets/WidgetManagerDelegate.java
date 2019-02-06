@@ -38,6 +38,7 @@ public interface WidgetManagerDelegate {
     void setTrayVisible(boolean visible);
     void setControllersVisible(boolean visible);
     void setWindowSize(float targetWidth, float targetHeight);
+    void setIsServoSession(boolean aIsServo);
     void keyboardDismissed();
     void updateEnvironment();
     void updatePointerColor();

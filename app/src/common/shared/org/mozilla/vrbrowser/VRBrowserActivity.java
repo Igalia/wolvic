@@ -864,6 +864,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
+    public void setIsServoSession(boolean aIsServo) {
+      queueRunnable(() -> setIsServo(aIsServo));
+    }
+
+    @Override
     public void pushWorldBrightness(Object aKey, float aBrightness) {
         if (mCurrentBrightness.second != aBrightness) {
             queueRunnable(() -> setWorldBrightnessNative(aBrightness));
@@ -1005,4 +1010,5 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private native void setControllersVisibleNative(boolean aVisible);
     private native void runCallbackNative(long aCallback);
     private native void setCylinderDensityNative(float aDensity);
+    private native void setIsServo(boolean aIsServo);
 }

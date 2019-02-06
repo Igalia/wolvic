@@ -56,6 +56,7 @@ public:
   void SetControllersVisible(const bool aVisible);
   void ResetUIYaw();
   void SetCylinderDensity(const float aDensity);
+  void SetIsServo(const bool aIsServo);
   JNIEnv* GetJNIEnv() const;
 protected:
   struct State;

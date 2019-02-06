@@ -29,6 +29,10 @@ public:
     LinkTraversal,
     Rendering
   };
+  enum class VRBrowserType {
+    Gecko,
+    Servo
+  };
   static ExternalVRPtr Create();
   mozilla::gfx::VRExternalShmem* GetSharedData();
   // DeviceDisplay interface
@@ -51,6 +55,7 @@ public:
   bool WaitFrameResult();
   void GetFrameResult(int32_t& aSurfaceHandle, device::EyeRect& aLeftEye, device::EyeRect& aRightEye) const;
   void StopPresenting();
+  void SetSourceBrowser(VRBrowserType aBrowser);
   ~ExternalVR();
 protected:
   struct State;

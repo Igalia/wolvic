@@ -16,12 +16,12 @@ public class ServoDisplay extends GeckoDisplay {
 
     @Override
     public void surfaceChanged(final Surface surface, final int width, final int height) {
-        mServoSession.onSurfaceReady(surface, 0, 0, width, height);
+        surfaceChanged(surface, 0, 0, width, height);
     }
 
     @Override
     public void surfaceChanged(final Surface surface, int left, int top, int width, int height) {
-        mServoSession.onSurfaceReady(surface, left, top, width, height);
+        mServoSession.onSurfaceChanged(surface, left, top, width, height);
     }
 
 

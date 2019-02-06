@@ -31,6 +31,7 @@ import org.mozilla.vrbrowser.ui.widgets.prompts.ChoicePromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.ConfirmPromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.TextPromptWidget;
 
+import static org.mozilla.vrbrowser.utils.ServoUtils.isInstanceOfServoSession;
 
 public class WindowWidget extends UIWidget implements SessionStore.SessionChangeListener,
         GeckoSession.ContentDelegate, GeckoSession.PromptDelegate, TrayListener, BookmarkListener {
@@ -469,13 +470,15 @@ public class WindowWidget extends UIWidget implements SessionStore.SessionChange
             mDisplay = null;
         }
 
+        mWidgetManager.setIsServoSession(isInstanceOfServoSession(aSession));
+
         mSessionId = aId;
         mDisplay = aSession.acquireDisplay();
         Log.d(LOGTAG, "surfaceChanged: " + aId);
         callSurfaceChanged();
         aSession.getTextInput().setView(this);
 
-        boolean isPrivateMode  = aSession.getSettings().getBoolean(GeckoSessionSettings.USE_PRIVATE_MODE);
+        boolean isPrivateMode  = aSession.getSettings().getUsePrivateMode();
         if (isPrivateMode)
             setPrivateBrowsingEnabled(true);
         else
