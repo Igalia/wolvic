@@ -86,6 +86,11 @@ target_sources(
     PUBLIC
     src/oculusvr/cpp/DeviceDelegateOculusVR.cpp
     )
+add_custom_command(TARGET native-lib POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_SOURCE_DIR}/../third_party/ovr_mobile/VrApi/Libs/Android/${ANDROID_ABI}/Release/libvrapi.so
+        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libvrapi.so
+        )
 endif()
 
 if(SNAPDRAGONVR)
@@ -112,7 +117,7 @@ find_library( # Sets the name of the path variable.
 
 add_library(oculusvr-lib SHARED IMPORTED)
 set_target_properties(oculusvr-lib PROPERTIES IMPORTED_LOCATION
-                      ${CMAKE_SOURCE_DIR}/../third_party/ovr_mobile/VrApi/Libs/${ANDROID_ABI}/libvrapi.so)
+                      ${CMAKE_SOURCE_DIR}/../third_party/ovr_mobile/VrApi/Libs/Android/${ANDROID_ABI}/Release/libvrapi.so)
 
 add_library(googlevr-lib SHARED IMPORTED)
 set_target_properties(googlevr-lib PROPERTIES IMPORTED_LOCATION
