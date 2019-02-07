@@ -64,8 +64,9 @@ oculussig_*
 
 # Third Party SDKs
 third_party
-
+gvr-android-sdk
 user.properties*
 
 # Node modules
 node_modules
+

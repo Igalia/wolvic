@@ -32,8 +32,9 @@ tasks:
           git fetch {{ event.head.repo.url }} {{ event.head.repo.branch }}
           && git config advice.detachedHead false
           && git checkout {{event.head.sha}}
+          && git clone https://github.com/MozillaReality/FirefoxReality-gvr-android-sdk.git gvr-android-sdk
           && git submodule update
-          && ./gradlew --no-daemon --console=plain clean assembleNoapi
+          && ./gradlew --no-daemon --console=plain clean assembleNoapi assembleGooglevr
     metadata:
       name: Firefox Reality for Android - Build - Pull Request
       description: Building Firefox Reality for Android (via Gradle) - triggered by a pull request.
@@ -70,10 +71,11 @@ tasks:
           git fetch origin
           && git config advice.detachedHead false
           && git rebase origin/master
+          && git clone https://github.com/MozillaReality/FirefoxReality-gvr-android-sdk.git gvr-android-sdk
           && git submodule update
           && . tools/taskcluster/get_third_party.sh
           && cp tools/gradle/taskcluster.properties ./user.properties
-          && ./gradlew --no-daemon --console=plain clean assembleNoapi assembleWavevr assembleSvr assembleOculusvr
+          && ./gradlew --no-daemon --console=plain clean assembleNoapi assembleGooglevr assembleWavevr assembleSvr assembleOculusvr
           && . tools/taskcluster/sign.sh staging-signing-token
           && . tools/taskcluster/upload_symbols.sh
       artifacts:
@@ -117,10 +119,11 @@ tasks:
           git fetch origin
           && git config advice.detachedHead false
           && git checkout {{ event.version }}
+          && git clone https://github.com/MozillaReality/FirefoxReality-gvr-android-sdk.git gvr-android-sdk
           && git submodule update
           && . tools/taskcluster/get_third_party.sh
           && cp tools/gradle/taskcluster.properties ./user.properties
-          && ./gradlew --no-daemon --console=plain clean assembleNoapi assembleWavevr assembleSvr assembleOculusvr
+          && ./gradlew --no-daemon --console=plain clean assembleNoapi assembleGooglevr assembleWavevr assembleSvr assembleOculusvr
           && . tools/taskcluster/sign.sh release-signing-token -r
           && . tools/taskcluster/upload_symbols.sh
       artifacts:
