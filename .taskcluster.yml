@@ -33,8 +33,7 @@ tasks:
           && git config advice.detachedHead false
           && git checkout {{event.head.sha}}
           && git submodule update
-          && pushd gvr-android-sdk && ./gradlew --no-daemon --console=plain extractNDK && popd
-          && ./gradlew --no-daemon --console=plain clean assembleGooglevr assembleNoapi
+          && ./gradlew --no-daemon --console=plain clean assembleNoapi
     metadata:
       name: Firefox Reality for Android - Build - Pull Request
       description: Building Firefox Reality for Android (via Gradle) - triggered by a pull request.
