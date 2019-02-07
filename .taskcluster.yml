@@ -32,7 +32,7 @@ tasks:
           git fetch {{ event.head.repo.url }} {{ event.head.repo.branch }}
           && git config advice.detachedHead false
           && git checkout {{event.head.sha}}
-          && git clone https://github.com/MozillaReality/FirefoxReality-gvr-android-sdk.git gvr-android-sdk
+          && rm -rf gvr-android-sdk && git clone https://github.com/MozillaReality/FirefoxReality-gvr-android-sdk.git gvr-android-sdk
           && git submodule update
           && ./gradlew --no-daemon --console=plain clean assembleNoapi assembleGooglevr
     metadata:
@@ -71,7 +71,7 @@ tasks:
           git fetch origin
           && git config advice.detachedHead false
           && git rebase origin/master
-          && git clone https://github.com/MozillaReality/FirefoxReality-gvr-android-sdk.git gvr-android-sdk
+          && rm -rf gvr-android-sdk && git clone https://github.com/MozillaReality/FirefoxReality-gvr-android-sdk.git gvr-android-sdk
           && git submodule update
           && . tools/taskcluster/get_third_party.sh
           && cp tools/gradle/taskcluster.properties ./user.properties
@@ -119,7 +119,7 @@ tasks:
           git fetch origin
           && git config advice.detachedHead false
           && git checkout {{ event.version }}
-          && git clone https://github.com/MozillaReality/FirefoxReality-gvr-android-sdk.git gvr-android-sdk
+          && rm -rf gvr-android-sdk && git clone https://github.com/MozillaReality/FirefoxReality-gvr-android-sdk.git gvr-android-sdk
           && git submodule update
           && . tools/taskcluster/get_third_party.sh
           && cp tools/gradle/taskcluster.properties ./user.properties
