@@ -51,7 +51,7 @@ public:
   void SetCompositorEnabled(bool aEnabled);
   bool IsPresenting() const;
   VRState GetVRState() const;
-  void PushFramePoses(const vrb::Matrix& aHeadTransform, const std::vector<Controller>& aControllers);
+  void PushFramePoses(const vrb::Matrix& aHeadTransform, const std::vector<Controller>& aControllers, const double aTimestamp);
   bool WaitFrameResult();
   void GetFrameResult(int32_t& aSurfaceHandle, device::EyeRect& aLeftEye, device::EyeRect& aRightEye) const;
   void StopPresenting();
