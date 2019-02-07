@@ -44,6 +44,10 @@ tasks:
 #
 # Triggered whenever something is pushed/merged to the master branch.
 ###############################################################################
+# This line is used to extract GVR ndk. restore once
+#   https://github.com/googlevr/gvr-android-sdk/issues/599
+# is fixed:
+#          && pushd gvr-android-sdk && ./gradlew --no-daemon --console=plain extractNDK && popd
   - provisionerId: '{{ taskcluster.docker.provisionerId }}'
     workerType: '{{ taskcluster.docker.workerType }}'
     extra:
@@ -71,7 +75,6 @@ tasks:
           && git config advice.detachedHead false
           && git rebase origin/master
           && git submodule update
-          && pushd gvr-android-sdk && ./gradlew --no-daemon --console=plain extractNDK && popd
           && . tools/taskcluster/get_third_party.sh
           && cp tools/gradle/taskcluster.properties ./user.properties
           && ./gradlew --no-daemon --console=plain clean assembleNoapi assembleWavevr assembleSvr assembleOculusvr
