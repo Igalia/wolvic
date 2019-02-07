@@ -43,10 +43,12 @@ ENV PATH ${PATH}:${ANDROID_SDK_HOME}/tools/bin:${ANDROID_SDK_HOME}/platform-tool
 
 RUN echo y | sdkmanager "build-tools;26.0.0"
 RUN echo y | sdkmanager "build-tools;27.0.3"
+RUN echo y | sdkmanager "build-tools;28.0.3"
 RUN echo y | sdkmanager "ndk-bundle"
-RUN echo y | sdkmanager "cmake;3.6.4111459"
+RUN echo y | sdkmanager "cmake;3.10.2.4988404"
 RUN echo y | sdkmanager "platforms;android-26"
 RUN echo y | sdkmanager "platforms;android-27"
+RUN echo y | sdkmanager "platforms;android-28"
 
 WORKDIR /opt
 
@@ -57,8 +59,7 @@ RUN git clone https://github.com/MozillaReality/FirefoxReality.git
 WORKDIR /opt/FirefoxReality
 RUN git submodule init
 RUN git submodule update
-RUN cd gvr-android-sdk && ./gradlew --no-daemon extractNDK
-RUN ./gradlew --no-daemon assembleGooglevr assembleNoapi
+RUN ./gradlew --no-daemon assembleNoapi
 RUN ./gradlew --no-daemon clean
 
 # -- Cleanup ----------------------------------------------------------------------------
