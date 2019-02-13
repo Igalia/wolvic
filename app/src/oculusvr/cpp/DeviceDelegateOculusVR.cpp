@@ -659,6 +659,7 @@ struct DeviceDelegateOculusVR::State {
     initialized = true;
     deviceType = (ovrDeviceType)vrapi_GetSystemPropertyInt(&java, VRAPI_SYS_PROP_DEVICE_TYPE);
     SetRenderSize(device::RenderMode::StandAlone);
+    OptimizeCPUs();
 
     for (int i = 0; i < VRAPI_EYE_COUNT; ++i) {
       cameras[i] = vrb::CameraEye::Create(localContext->GetRenderThreadCreationContext());
@@ -675,6 +676,20 @@ struct DeviceDelegateOculusVR::State {
     vrapi_SetPropertyInt(&java, VRAPI_EAT_NATIVE_GAMEPAD_EVENTS, 0);
     // Reorient the headset after controller recenter.
     vrapi_SetPropertyInt(&java, VRAPI_REORIENT_HMD_ON_CONTROLLER_RECENTER, 1);
+  }
+
+  void OptimizeCPUs() {
+    if (deviceType >= VRAPI_DEVICE_TYPE_OCULUSGO_START && deviceType <= VRAPI_DEVICE_TYPE_OCULUSGO_END) {
+      // Restrict Firefox Reality to run on only the two big / fast CPU cores on Oculus Go
+      // 1) CPU_SET calls correctly for individual processors
+      // 2) 2 & 3 are the "big" cores (Checked with adb shell cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq)
+      // 3) Sched_setaffinity's first argument (tid) is 0 for "all" cores set on the cpu mask
+      cpu_set_t cpus;
+      CPU_ZERO(&cpus);
+      CPU_SET(2, &cpus);
+      CPU_SET(3, &cpus);
+      sched_setaffinity(0, sizeof(cpus), &cpus);
+    }
   }
 
   void UpdateTrackingMode() {

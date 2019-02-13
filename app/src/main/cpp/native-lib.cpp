@@ -20,6 +20,8 @@
 #include "DeviceDelegateSVR.h"
 #endif
 
+#include <sched.h>
+
 #include <android/looper.h>
 #include <unistd.h>
 #include "VRBrowser.h"
@@ -191,7 +193,6 @@ extern "C" {
 
 void
 android_main(android_app *aAppState) {
-
   if (!ALooper_forThread()) {
     ALooper_prepare(0);
   }
