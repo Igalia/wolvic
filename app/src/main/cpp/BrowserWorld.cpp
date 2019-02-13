@@ -1312,7 +1312,7 @@ JNI_METHOD(void, runCallbackNative)
 }
 
 JNI_METHOD(void, setIsServo)
-(JNIEnv* aEnv, jboolean aIsServo) {
+(JNIEnv* aEnv, jobject, jboolean aIsServo) {
   crow::BrowserWorld::Instance().SetIsServo(aIsServo);
 }
 
