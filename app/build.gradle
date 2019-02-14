@@ -164,6 +164,13 @@ android {
             }
         }
 
+        arm64 {
+            dimension "abi"
+            ndk {
+                abiFilters "arm64-v8a"
+            }
+        }
+
         x86 {
             dimension "abi"
             ndk {
@@ -176,14 +183,22 @@ android {
         def needed = variant.name in [
                 'googlevrArmDebug',
                 'googlevrArmRelease',
+                'googlevrArm64Debug',
+                'googlevrArm64Release',
                 'oculusvrArmDebug',
                 'oculusvrArmRelease',
+                'oculusvrArm64Debug',
+                'oculusvrArm64Release',
                 'svrArmDebug',
                 'svrArmRelease',
+                'svrArm64Debug',
+                'svrArm64Release',
                 'wavevrArmDebug',
                 'wavevrArmRelease',
                 'noapiArmDebug',
                 'noapiArmRelease',
+                'noapiArm64Debug',
+                'noapiArm64Release',
                 'noapiX86Debug',
                 'noapiX86Release'
         ]
@@ -221,6 +236,15 @@ android {
         oculusvrArmRelease {
             manifest.srcFile getUseDebugSigningOnRelease() ? "src/oculusvrArmDebug/AndroidManifest.xml"
                                                            :  manifest.srcFile
+        }
+
+        oculusvrArm64Debug {
+            manifest.srcFile "src/oculusvrArmDebug/AndroidManifest.xml"
+        }
+
+        oculusvrArm64Release {
+            manifest.srcFile getUseDebugSigningOnRelease() ? "src/oculusvrArmDebug/AndroidManifest.xml"
+                                                           : "src/oculusvrArmRelease/AndroidManifest.xml"
         }
 
         svr {
@@ -309,6 +333,7 @@ if (findProject(':geckoview-local')) {
         // To see what the latest geckoview-nightly version is go here:
         // https://maven.mozilla.org/?prefix=maven2/org/mozilla/geckoview/geckoview-nightly-armeabi-v7a/
         armImplementation deps.gecko_view.nightly_armv7a
+        arm64Implementation deps.gecko_view.nightly_arm64
         x86Implementation deps.gecko_view.nightly_x86
     }
 }
