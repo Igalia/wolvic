@@ -105,13 +105,22 @@ geckoViewLocalArm=/path/to/your/build/geckoview-nightly-armeabi-v7a-64.0.2018092
 geckoViewLocalX86=/path/to/your/build/geckoview-nightly-x86-64.0.20180924100359.aar
 ```
 
-## Install debug and release builds on device simultaneously
+## Install dev and production builds on device simultaneously
 
-You can enable a debug applicationID sufix to install both debug and release builds simultaneously. You just need to add this property to your `user.properties` file:
+You can enable a dev applicationID sufix to install both dev and production builds simultaneously. You just need to add this property to your `user.properties` file:
 
 ```ini
-simultaneousDebugRelease=true
+simultaneousDevProduction=true
 ```
+## Locally generate Android release builds
+
+Local release builds can be useful to measure performance or debug issues only happening in release builds. Insead of dealing with release keys you can make the testing easier just adding this property to your `user.properties` file:
+
+```ini
+useDebugSigningOnRelease=true
+```
+
+Note: the release APKs generated with a debug keystore can't be used for production.
 
 ## Compress assets
 

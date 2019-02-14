@@ -17,11 +17,18 @@ def getCrashRestartDisabled = { ->
     return "false"
 }
 
-def getDebugApplicationIdSufix = { ->
-    if (gradle.hasProperty("simultaneousDebugRelease")) {
-        return gradle.simultaneousDebugRelease == "true" ? ".dev" : ""
+def getDevApplicationIdSufix = { ->
+    if (gradle.hasProperty("simultaneousDevProduction")) {
+        return gradle.simultaneousDevProduction == "true" ? ".dev" : ""
     }
     return ""
+}
+
+def getUseDebugSigningOnRelease = { ->
+    if (gradle.hasProperty("useDebugSigningOnRelease")) {
+        return gradle.useDebugSigningOnRelease == "true"
+    }
+    return false
 }
 
 android {
@@ -67,9 +74,10 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig getUseDebugSigningOnRelease() ? debug.signingConfig : release.signingConfig
         }
         debug {
-            applicationIdSuffix getDebugApplicationIdSufix()
+            applicationIdSuffix getDevApplicationIdSufix()
             pseudoLocalesEnabled true
         }
     }
@@ -192,6 +200,12 @@ android {
             ]
         }
 
+        release {
+            manifest.srcFile getUseDebugSigningOnRelease() ? "src/debug/AndroidManifest.xml"
+                                                           : manifest.srcFile
+
+        }
+
         googlevr {
             java.srcDirs = [
                     'src/googlevr/java'
@@ -202,6 +216,11 @@ android {
             java.srcDirs = [
                     'src/oculusvr/java'
             ]
+        }
+
+        oculusvrArmRelease {
+            manifest.srcFile getUseDebugSigningOnRelease() ? "src/oculusvrArmDebug/AndroidManifest.xml"
+                                                           :  manifest.srcFile
         }
 
         svr {
