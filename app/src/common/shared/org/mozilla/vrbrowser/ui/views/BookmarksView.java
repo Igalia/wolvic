@@ -39,8 +39,6 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 
-import static org.mozilla.gecko.GeckoAppShell.getApplicationContext;
-
 public class BookmarksView extends FrameLayout implements Application.ActivityLifecycleCallbacks,
         GeckoSession.NavigationDelegate {
 
@@ -72,7 +70,7 @@ public class BookmarksView extends FrameLayout implements Application.ActivityLi
 
         mAudio = AudioEngine.fromContext(aContext);
 
-        ((Application)getApplicationContext()).registerActivityLifecycleCallbacks(this);
+        ((Application)getContext().getApplicationContext()).registerActivityLifecycleCallbacks(this);
         SessionStore.get().addNavigationListener(this);
 
         LayoutInflater inflater = LayoutInflater.from(aContext);
@@ -83,7 +81,7 @@ public class BookmarksView extends FrameLayout implements Application.ActivityLi
         mBookmarkAdapter = new BookmarkAdapter(mBookmarkClickCallback, aContext);
         mBinding.bookmarksList.setAdapter(mBookmarkAdapter);
 
-        mBookmarkListModel = new BookmarkListViewModel(((Application)getApplicationContext()));
+        mBookmarkListModel = new BookmarkListViewModel(((Application)getContext().getApplicationContext()));
         subscribeUi(mBookmarkListModel.getBookmarks());
 
         setVisibility(GONE);

@@ -8,7 +8,6 @@ package org.mozilla.vrbrowser.browser;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -17,7 +16,6 @@ import android.view.inputmethod.CursorAnchorInfo;
 import android.view.inputmethod.ExtractedText;
 import android.view.inputmethod.ExtractedTextRequest;
 
-import org.mozilla.gecko.GeckoAppShell;
 import org.mozilla.gecko.GeckoProfile;
 import org.mozilla.geckoview.AllowOrDeny;
 import org.mozilla.geckoview.ContentBlocking;
@@ -855,7 +853,14 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     }
 
     public void setMaxWindowSize(int width, int height) {
-        GeckoAppShell.setScreenSizeOverride(new Rect(0, 0, width, height));
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putInt(
+                mContext.getString(R.string.settings_key_max_window_height),
+                height);
+        editor.putInt(
+                mContext.getString(R.string.settings_key_max_window_width),
+                width);
+        editor.commit();
     }
 
     public void setServo(final boolean enabled) {

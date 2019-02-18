@@ -429,6 +429,7 @@ public class DisplayOptionsWidget extends UIWidget implements
 
             if (doApply) {
                 SessionStore.get().setMaxWindowSize(newMaxWindowWidth, newMaxWindowHeight);
+                showRestartDialog();
             }
         }
 
