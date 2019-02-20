@@ -6,6 +6,7 @@ import android.graphics.Rect;
 import android.util.Log;
 import android.view.Surface;
 
+import org.mozilla.gecko.GeckoVRManager;
 import org.mozilla.geckoview.GeckoDisplay;
 import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoSession;
@@ -42,6 +43,7 @@ public class ServoSession extends GeckoSession {
             mServo = new ServoSurface(surface, width, height);
             mServo.setClient(new ServoCallbacks());
             mServo.setActivity(mActivity);
+            mServo.setVRExternalContext(GeckoVRManager.getExternalContext());
             mServo.runLoop();
         }
 
