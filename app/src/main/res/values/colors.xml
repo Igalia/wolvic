@@ -24,4 +24,6 @@
     <color name="iron">#5d5d5d</color>
     <color name="rhino">#8c898a</color>
     <color name="geranium">#d73e5a</color>
+    <color name="text_shadow">#8F000000</color>
+    <color name="text_shadow_light">#7FFFFFFF</color>
 </resources>

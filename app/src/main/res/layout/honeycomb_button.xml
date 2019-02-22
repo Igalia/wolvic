@@ -36,6 +36,7 @@
             android:fontFamily="sans-serif-light"
             android:gravity="center"
             android:text="Secondary text"
+            android:textStyle="bold"
             android:textSize="@dimen/text_smaller_size" />
     </LinearLayout>
 </merge>

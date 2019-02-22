@@ -345,7 +345,7 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
                 return false;
 
             View favicon = view.findViewById(R.id.favicon);
-            View title = view.findViewById(R.id.title);
+            TextView title = view.findViewById(R.id.title);
             View url = view.findViewById(R.id.url);
             View delete = view.findViewById(R.id.delete);
             int ev = motionEvent.getActionMasked();
@@ -354,6 +354,7 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
                     view.setHovered(true);
                     favicon.setHovered(true);
                     title.setHovered(true);
+                    title.setShadowLayer(title.getShadowRadius(), title.getShadowDx(), title.getShadowDy(), getContext().getColor(R.color.text_shadow_light));
                     url.setHovered(true);
                     delete.setHovered(true);
                     return true;
@@ -362,6 +363,7 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
                     view.setHovered(false);
                     favicon.setHovered(false);
                     title.setHovered(false);
+                    title.setShadowLayer(title.getShadowRadius(), title.getShadowDx(), title.getShadowDy(), getContext().getColor(R.color.text_shadow));
                     url.setHovered(false);
                     delete.setHovered(false);
                     return true;

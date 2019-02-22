@@ -16,6 +16,21 @@
         <attr name="scrollbarStyle" format="color" />
     </declare-styleable>
 
+
+    <style name="ShadowTextViewStyle" parent="android:Widget.TextView">
+        <item name="android:shadowColor">@color/text_shadow</item>
+        <item name="android:shadowDx">2</item>
+        <item name="android:shadowDy">2</item>
+        <item name="android:shadowRadius">7</item>
+    </style>
+
+    <style name="ShadowLightTextViewStyle" parent="android:Widget.TextView">
+        <item name="android:shadowColor">@color/text_shadow_light</item>
+        <item name="android:shadowDx">2</item>
+        <item name="android:shadowDy">2</item>
+        <item name="android:shadowRadius">4</item>
+    </style>
+
     <style name="radioButtonTheme">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -278,6 +293,9 @@
         <item name="android:fastScrollOverlayPosition">atThumb</item>
         <item name="android:smoothScrollbar">true</item>
         <item name="android:overScrollMode">ifContentScrolls</item>
+
+        <!-- TextView Style -->
+        <item name="android:textViewStyle">@style/ShadowTextViewStyle</item>
     </style>
 
     <style name="Widget.FastScroll" parent="android:Widget.Material.FastScroll"/>

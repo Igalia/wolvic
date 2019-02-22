@@ -7,6 +7,7 @@
 package org.mozilla.vrbrowser.ui.widgets;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -158,11 +159,13 @@ public abstract class MenuWidget extends UIWidget {
                 case MotionEvent.ACTION_HOVER_ENTER:
                     view.setHovered(true);
                     label.setHovered(true);
+                    label.setShadowLayer(label.getShadowRadius(), label.getShadowDx(), label.getShadowDy(), getContext().getColor(R.color.text_shadow_light));
                     image.setHovered(true);
                     return true;
 
                 case MotionEvent.ACTION_HOVER_EXIT:
                     view.setHovered(false);
+                    label.setShadowLayer(label.getShadowRadius(), label.getShadowDx(), label.getShadowDy(), getContext().getColor(R.color.text_shadow));
                     label.setHovered(false);
                     image.setHovered(false);
                     return true;

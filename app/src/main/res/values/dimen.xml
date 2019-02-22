@@ -136,7 +136,7 @@
     <dimen name="text_big_size">18sp</dimen>
     <dimen name="text_medium_size">14sp</dimen>
     <dimen name="text_small_size">12sp</dimen>
-    <dimen name="text_smaller_size">10sp</dimen>
+    <dimen name="text_smaller_size">11sp</dimen>
 
     <!-- Popup Window -->
     <item name="url_bar_popup_world_width" format="float" type="dimen">4</item>
