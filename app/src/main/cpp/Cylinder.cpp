@@ -37,6 +37,9 @@ struct Cylinder::State {
   float theta;
   float textureScaleX;
   float textureScaleY;
+  float border;
+  vrb::Color borderColor;
+  vrb::Color solidColor;
 
   State()
       : textureWidth(0)
@@ -46,6 +49,7 @@ struct Cylinder::State {
       , theta((float)M_PI)
       , textureScaleX(1.0f)
       , textureScaleY(1.0f)
+      , border(0.0f)
   {}
 
   void Initialize() {
@@ -77,8 +81,28 @@ struct Cylinder::State {
     vrb::GeometryPtr geometry = vrb::Geometry::Create(create);
     vrb::VertexArrayPtr array = vrb::VertexArray::Create(create);
 
-    for (int y = 0; y <= kHeightSegments; ++y) {
-      const float v = (float) y / (float) kHeightSegments;
+    const int ySegments = kHeightSegments + (border > 0.0f ? 2 : 0);
+
+    for (int y = 0; y <= ySegments; ++y) {
+      float offset = 0.0f;
+      float v = (float) y / (float) kHeightSegments;
+      vrb::Color vertexColor = solidColor;
+
+      if (border > 0) {
+        if (y == 0) {
+          v = 0.0f;
+          offset = border;
+          vertexColor = borderColor;
+        } else if (y == ySegments) {
+          v = 1.0f;
+          offset = -border;
+          vertexColor = borderColor;
+        } else {
+          v = (float) (y - 1) / (float) kHeightSegments;
+        }
+      }
+
+
       for (int x = 0; x <= kRadialSegments; ++x) {
         const float u = (float) x / (float) kRadialSegments;
 
@@ -91,7 +115,7 @@ struct Cylinder::State {
         vrb::Vector normal;
 
         vertex.x() = aRadius * cosTheta;
-        vertex.y() = -v * aHeight + aHeight * 0.5f;
+        vertex.y() = -v * aHeight + aHeight * 0.5f + offset;
         vertex.z() = -aRadius * sinTheta;
 
         uv.x() = u;
@@ -105,6 +129,9 @@ struct Cylinder::State {
         array->AppendVertex(vertex);
         array->AppendUV(uv);
         array->AppendNormal(vertex.Normalize());
+        if (border > 0.0f) {
+          array->AppendColor(vertexColor);
+        }
       }
     }
     geometry->SetVertexArray(array);
@@ -112,7 +139,7 @@ struct Cylinder::State {
     std::vector<int> indices;
 
     for (int x = 0; x < kRadialSegments; ++x) {
-      for (int y = 0; y < kHeightSegments; ++y) {
+      for (int y = 0; y < ySegments; ++y) {
         const int a = 1 + y * (kRadialSegments + 1) + x;
         const int b = 1 + (y + 1) * (kRadialSegments + 1) + x;
         const int c = 1 + (y + 1) * (kRadialSegments + 1) + x + 1;
@@ -131,6 +158,7 @@ struct Cylinder::State {
 
     vrb::RenderStatePtr state = vrb::RenderState::Create(create);
     state->SetLightsEnabled(false);
+    state->SetVertexColorEnabled(border > 0.0f);
     state->SetFragmentPrecision(GL_HIGH_FLOAT);
     state->SetUVTransformEnabled(true);
     geometry->SetRenderState(state);
@@ -155,7 +183,7 @@ struct Cylinder::State {
       if (segments % 2 != 0) {
         segments++;
       }
-      const int32_t indicesPerSegment = 6;
+      const int32_t indicesPerSegment = border > 0.0f ? 18 : 6;
       const int32_t start = (kRadialSegments - segments) / 2;
       geometry->SetRenderRange(start * indicesPerSegment, segments * indicesPerSegment);
     }
@@ -168,6 +196,18 @@ Cylinder::Create(vrb::CreationContextPtr aContext, const float aRadius, const fl
   result->m.radius = aRadius;
   result->m.height = aHeight;
   result->m.layer = aLayer;
+  result->m.Initialize();
+  return result;
+}
+
+CylinderPtr
+Cylinder::Create(vrb::CreationContextPtr aContext, const float aRadius, const float aHeight, const vrb::Color& aSolidColor, const float aBorder, const vrb::Color& aBorderColor) {
+  CylinderPtr result = std::make_shared<vrb::ConcreteClass<Cylinder, Cylinder::State> >(aContext);
+  result->m.radius = aRadius;
+  result->m.height = aHeight;
+  result->m.solidColor = aSolidColor;
+  result->m.border = aBorder;
+  result->m.borderColor = aBorderColor;
   result->m.Initialize();
   return result;
 }
