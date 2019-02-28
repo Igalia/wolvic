@@ -17,6 +17,8 @@ import android.view.WindowManager;
 import com.google.vr.ndk.base.AndroidCompat;
 import com.google.vr.ndk.base.GvrLayout;
 
+import java.util.ArrayList;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
@@ -30,6 +32,8 @@ public class PlatformActivity extends Activity {
     private GvrLayout mLayout;
     private GLSurfaceView mView;
     private static final String FLAT_ACTIVITY_CLASSNAME = "org.mozilla.vrbrowser.BrowserActivity";
+    private ArrayList<Runnable> mPendingEvents;
+    private boolean mSurfaceCreated = false;
 
     private final Runnable activityDestroyedRunnable = new Runnable() {
         @Override
@@ -63,6 +67,7 @@ public class PlatformActivity extends Activity {
         Log.e(LOGTAG, "PlatformActivity onCreate");
         super.onCreate(savedInstanceState);
 
+        mPendingEvents = new ArrayList<>();
         AndroidCompat.setVrModeEnabled(this, true);
 
         // Keep the screen on
@@ -85,6 +90,8 @@ public class PlatformActivity extends Activity {
                     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
                         Log.e(LOGTAG, "In onSurfaceCreated");
                         activityCreated(getAssets(), mLayout.getGvrApi().getNativeGvrContext());
+                        mSurfaceCreated = true;
+                        notifyPendingEvents();
                     }
 
                     @Override
@@ -122,7 +129,7 @@ public class PlatformActivity extends Activity {
     protected void onPause() {
         Log.e(LOGTAG, "PlatformActivity onPause");
         synchronized (activityPausedRunnable) {
-            mView.queueEvent(activityPausedRunnable);
+            queueRunnable(activityPausedRunnable);
             try {
                 activityPausedRunnable.wait();
             } catch(InterruptedException e) {
@@ -140,7 +147,7 @@ public class PlatformActivity extends Activity {
         super.onResume();
         mLayout.onResume();
         mView.onResume();
-        mView.queueEvent(activityResumedRunnable);
+        queueRunnable(activityResumedRunnable);
         setImmersiveSticky();
     }
 
@@ -149,7 +156,7 @@ public class PlatformActivity extends Activity {
         Log.e(LOGTAG, "PlatformActivity onDestroy");
         super.onDestroy();
         synchronized (activityDestroyedRunnable) {
-            mView.queueEvent(activityDestroyedRunnable);
+            queueRunnable(activityDestroyedRunnable);
             try {
                 activityDestroyedRunnable.wait();
             } catch(InterruptedException e) {
@@ -170,8 +177,27 @@ public class PlatformActivity extends Activity {
                                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 
+
     void queueRunnable(Runnable aRunnable) {
-        mView.queueEvent(aRunnable);
+        if (mSurfaceCreated) {
+            mView.queueEvent(aRunnable);
+        } else {
+            synchronized (mPendingEvents) {
+                mPendingEvents.add(aRunnable);
+            }
+            if (mSurfaceCreated) {
+                notifyPendingEvents();
+            }
+        }
+    }
+
+    private void notifyPendingEvents() {
+        synchronized (mPendingEvents) {
+            for (Runnable runnable: mPendingEvents) {
+                mView.queueEvent(runnable);
+            }
+            mPendingEvents.clear();
+        }
     }
 
     private native void activityCreated(Object aAssetManager, final long aContext);

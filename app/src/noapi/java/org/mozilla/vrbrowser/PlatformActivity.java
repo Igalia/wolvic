@@ -14,6 +14,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 
+import java.util.ArrayList;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
@@ -26,6 +28,8 @@ public class PlatformActivity extends Activity {
     }
 
     private GLSurfaceView mView;
+    private ArrayList<Runnable> mPendingEvents;
+    private boolean mSurfaceCreated = false;
 
     private final Runnable activityDestroyedRunnable = new Runnable() {
         @Override
@@ -60,6 +64,7 @@ public class PlatformActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.noapi_layout);
+        mPendingEvents = new ArrayList<>();
         mView = findViewById(R.id.gl_view);
         mView.setEGLContextClientVersion(3);
         mView.setEGLConfigChooser(8, 8, 8, 0, 16, 0);
@@ -71,6 +76,8 @@ public class PlatformActivity extends Activity {
                     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
                         Log.e(LOGTAG, "In onSurfaceCreated");
                         activityCreated(getAssets());
+                        mSurfaceCreated = true;
+                        notifyPendingEvents();
                     }
 
                     @Override
@@ -112,12 +119,7 @@ public class PlatformActivity extends Activity {
 
         final float xx = aEvent.getX(0);
         final float yy = aEvent.getY(0);
-        mView.queueEvent(new Runnable() {
-            @Override
-            public void run() {
-                touchEvent(isDown, xx, yy);
-            }
-        });
+        queueRunnable(() -> touchEvent(isDown, xx, yy));
         return true;
     }
 
@@ -136,12 +138,7 @@ public class PlatformActivity extends Activity {
 
         final float xx = aEvent.getX(0);
         final float yy = aEvent.getY(0);
-        mView.queueEvent(new Runnable() {
-            @Override
-            public void run() {
-                touchEvent(false, xx, yy);
-            }
-        });
+        queueRunnable(() -> touchEvent(false, xx, yy));
         return true;
     }
 
@@ -149,7 +146,7 @@ public class PlatformActivity extends Activity {
     protected void onPause() {
         Log.e(LOGTAG, "PlatformActivity onPause");
         synchronized (activityPausedRunnable) {
-            mView.queueEvent(activityPausedRunnable);
+            queueRunnable(activityPausedRunnable);
             try {
                 activityPausedRunnable.wait();
             } catch(InterruptedException e) {
@@ -165,7 +162,7 @@ public class PlatformActivity extends Activity {
         Log.e(LOGTAG, "PlatformActivity onResume");
         super.onResume();
         mView.onResume();
-        mView.queueEvent(activityResumedRunnable);
+        queueRunnable(activityResumedRunnable);
         // setImmersiveSticky();
     }
 
@@ -174,7 +171,7 @@ public class PlatformActivity extends Activity {
         Log.e(LOGTAG, "PlatformActivity onDestroy");
         super.onDestroy();
         synchronized (activityDestroyedRunnable) {
-            mView.queueEvent(activityDestroyedRunnable);
+            queueRunnable(activityDestroyedRunnable);
             try {
                 activityDestroyedRunnable.wait();
             } catch(InterruptedException e) {
@@ -196,7 +193,25 @@ public class PlatformActivity extends Activity {
 //    }
 
     void queueRunnable(Runnable aRunnable) {
-        mView.queueEvent(aRunnable);
+        if (mSurfaceCreated) {
+            mView.queueEvent(aRunnable);
+        } else {
+            synchronized (mPendingEvents) {
+                mPendingEvents.add(aRunnable);
+            }
+            if (mSurfaceCreated) {
+                notifyPendingEvents();
+            }
+        }
+    }
+
+    private void notifyPendingEvents() {
+        synchronized (mPendingEvents) {
+            for (Runnable runnable: mPendingEvents) {
+                mView.queueEvent(runnable);
+            }
+            mPendingEvents.clear();
+        }
     }
 
     private void setupUI() {
@@ -261,21 +276,11 @@ public class PlatformActivity extends Activity {
     }
 
     private void dispatchMoveAxis(final float aX, final float aY, final float aZ) {
-        mView.queueEvent(new Runnable() {
-            @Override
-            public void run() {
-                moveAxis(aX, aY, aZ);
-            }
-        });
+        queueRunnable(() -> moveAxis(aX, aY, aZ));
     }
 
     private void dispatchRotateHeading(final float aHeading) {
-        mView.queueEvent(new Runnable() {
-            @Override
-            public void run() {
-                rotateHeading(aHeading);
-            }
-        });
+        queueRunnable(() -> rotateHeading(aHeading));
     }
 
     private native void activityCreated(Object aAssetManager);
