@@ -22,7 +22,7 @@ tasks:
           - pull_request.synchronize
           - pull_request.reopened
     payload:
-      maxRunTime: 7200
+      maxRunTime: 10800
       image: 'mozillamixedreality/firefoxreality'
       command:
         - /bin/bash
@@ -59,7 +59,7 @@ tasks:
       - "secrets:get:project/firefoxreality/staging-signing-token"
       - "secrets:get:project/firefoxreality/symbols-token"
     payload:
-      maxRunTime: 7200
+      maxRunTime: 10800
       image: 'mozillamixedreality/firefoxreality'
       features:
         taskclusterProxy: true
@@ -107,7 +107,7 @@ tasks:
       - "secrets:get:project/firefoxreality/release-signing-token"
       - "secrets:get:project/firefoxreality/symbols-token"
     payload:
-      maxRunTime: 7200
+      maxRunTime: 10800
       image: 'mozillamixedreality/firefoxreality'
       features:
         taskclusterProxy: true
