@@ -334,6 +334,14 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             Uri homepageUri = Uri.parse(extras.getString("homepage"));
             SettingsStore.getInstance(this).setHomepage(homepageUri.toString());
         }
+        if (extras != null && extras.containsKey("e10s")) {
+            boolean wasEnabled = SettingsStore.getInstance(this).isMultiprocessEnabled();
+            boolean enabled = extras.getBoolean("e10s", wasEnabled);
+            if (wasEnabled != enabled) {
+                SettingsStore.getInstance(this).setMultiprocessEnabled(enabled);
+                SessionStore.get().setMultiprocess(enabled);
+            }
+        }
 
         if (SessionStore.get().getCurrentSession() == null) {
             String url = (uri != null ? uri.toString() : null);
