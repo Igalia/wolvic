@@ -38,6 +38,7 @@ public:
   float GetCylinderRadius() const;
   float GetCylinderHeight() const;
   float GetCylinderTheta() const;
+  vrb::RenderStatePtr GetRenderState() const;
   void SetCylinderTheta(const float aAngleLength);
   void SetTintColor(const vrb::Color& aColor);
   vrb::NodePtr GetRoot() const;

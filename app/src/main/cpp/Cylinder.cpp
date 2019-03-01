@@ -281,6 +281,15 @@ Cylinder::GetCylinderTheta() const {
   return m.theta;
 }
 
+vrb::RenderStatePtr
+Cylinder::GetRenderState() const {
+  if (m.geometry) {
+    return m.geometry->GetRenderState();
+  }
+
+  return nullptr;
+}
+
 void
 Cylinder::SetCylinderTheta(const float aAngleLength) {
   m.theta = aAngleLength;

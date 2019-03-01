@@ -15,6 +15,7 @@
 #include "vrb/Geometry.h"
 #include "vrb/RenderState.h"
 #include "vrb/SurfaceTextureFactory.h"
+#include "vrb/TextureGL.h"
 #include "vrb/TextureSurface.h"
 #include "vrb/Toggle.h"
 #include "vrb/Transform.h"
@@ -22,6 +23,23 @@
 #include "vrb/VertexArray.h"
 
 namespace crow {
+
+static const char* sCylinderFragmentShader = R"SHADER(
+precision highp float;
+
+uniform sampler2D u_texture0;
+varying vec4 v_color;
+varying vec2 v_uv;
+
+void main() {
+  vec4 color = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+  if ((v_uv.x < 0.0f) || (v_uv.x > 1.0f)) {
+    color.a = 0.0f;
+  }
+  gl_FragColor = color * v_color;
+}
+
+)SHADER";
 
 struct ResizeBar;
 
@@ -74,6 +92,12 @@ struct ResizeBar {
     if (aMode == ResizeBar::Mode::Cylinder) {
       result->cylinder = Cylinder::Create(aContext, 1.0f, kBarSize, vrb::Color(1.0f, 1.0f, 1.0f, 1.0f), kBorder, vrb::Color(1.0f, 1.0f, 1.0f, 0.0f));
       result->cylinder->SetLightsEnabled(false);
+      if (aScale.x() == 1.0f) {
+        // Fix sticking out border at the bottom of the resize bar (No handles to hide it...)
+        vrb::TextureGLPtr defaultTexture = aContext->GetDefaultTexture();
+        result->cylinder->SetTexture(defaultTexture, defaultTexture->GetWidth(), defaultTexture->GetHeight());
+        result->cylinder->GetRenderState()->SetCustomFragmentShader(sCylinderFragmentShader);
+      }
       result->transform->AddNode(result->cylinder->GetRoot());
     } else {
       result->geometry = CreateGeometry(aContext, -max, max, aBorder);
