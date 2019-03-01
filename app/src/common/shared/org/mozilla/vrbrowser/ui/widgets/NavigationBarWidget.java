@@ -964,7 +964,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     @Override
     public void onBookmarksShown() {
-        mURLBar.setBookmarks(true);
         mURLBar.setURL("");
         mURLBar.setHint(R.string.about_bookmarks);
         mURLBar.setIsBookmarkMode(true);
@@ -973,7 +972,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     @Override
     public void onBookmarksHidden() {
         mURLBar.setIsBookmarkMode(false);
-        mURLBar.setBookmarks(false);
         mURLBar.setURL(SessionStore.get().getCurrentUri());
         mURLBar.setHint(R.string.search_placeholder);
     }

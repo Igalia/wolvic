@@ -17,6 +17,7 @@ import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
@@ -71,6 +72,7 @@ public class NavigationURLBar extends FrameLayout {
     private BookmarkViewModel mBookmarkModel;
     private AudioEngine mAudio;
     private boolean mIsBookmarkMode;
+    private boolean mBookmarkEnabled = true;
 
     private Unit domainAutocompleteFilter(String text, InlineAutocompleteEditText view) {
         if (view != null) {
@@ -187,8 +189,31 @@ public class NavigationURLBar extends FrameLayout {
     }
 
     public void setIsBookmarkMode(boolean isBookmarkMode) {
+        if (mIsBookmarkMode == isBookmarkMode) {
+            return;
+        }
         mIsBookmarkMode = isBookmarkMode;
+        if (isBookmarkMode) {
+            mMicrophoneButton.setVisibility(GONE);
+            mBookmarkButton.setVisibility(GONE);
+        } else {
+            mMicrophoneButton.setVisibility(VISIBLE);
+            if (mBookmarkEnabled) {
+                mBookmarkButton.setVisibility(VISIBLE);
+            }
+        }
         syncViews();
+    }
+
+    private void setBookmarkEnabled(boolean aEnabled) {
+        if (mBookmarkEnabled != aEnabled) {
+            mBookmarkEnabled = aEnabled;
+            mBookmarkButton.setVisibility(aEnabled ? View.VISIBLE : View.GONE);
+            ViewGroup.LayoutParams params = mMicrophoneButton.getLayoutParams();
+            params.width = (int) getResources().getDimension(aEnabled ? R.dimen.url_bar_item_width : R.dimen.url_bar_last_item_width);
+            mMicrophoneButton.setLayoutParams(params);
+            mMicrophoneButton.setBackgroundResource(aEnabled ? R.drawable.url_button : R.drawable.url_button_end);
+        }
     }
 
     private final NavigationBarCallback mNavigationBarCallback = new NavigationBarCallback() {
@@ -266,6 +291,7 @@ public class NavigationURLBar extends FrameLayout {
                     mURL.setText(aURL);
                 }
             }
+            setBookmarkEnabled(aURL.length() > 0 && !aURL.startsWith("about://"));
         }
 
         mURL.addTextChangedListener(mURLTextWatcher);
@@ -303,28 +329,18 @@ public class NavigationURLBar extends FrameLayout {
         }
     }
 
-    public void setBookmarks(boolean enabled) {
-        if (enabled) {
-            mMicrophoneButton.setVisibility(GONE);
-            mBookmarkButton.setVisibility(GONE);
-
-        } else {
-            mMicrophoneButton.setVisibility(VISIBLE);
-            mBookmarkButton.setVisibility(VISIBLE);
-        }
-    }
-
     public void showVoiceSearch(boolean enabled) {
         if (enabled) {
+            if (mBookmarkEnabled) {
+                mMicrophoneButton.setBackgroundResource(R.drawable.url_button);
+                mMicrophoneButton.getLayoutParams().width = (int)getContext().getResources().getDimension(R.dimen.url_bar_item_width);
+            }
             mMicrophoneButton.setImageResource(R.drawable.ic_icon_microphone);
-            mMicrophoneButton.setBackgroundResource(R.drawable.url_button);
-            mMicrophoneButton.getLayoutParams().width = (int)getContext().getResources().getDimension(R.dimen.url_bar_item_width);
             mMicrophoneButton.setOnClickListener(mMicrophoneListener);
 
             if (mIsBookmarkMode) {
                 mMicrophoneButton.setVisibility(GONE);
-
-            } else {
+            } else if (mBookmarkEnabled) {
                 mBookmarkButton.setVisibility(VISIBLE);
             }
 
