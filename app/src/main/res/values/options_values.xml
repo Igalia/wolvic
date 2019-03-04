@@ -13,6 +13,12 @@
         <item>meadow</item>
     </string-array>
 
+    <array name="developer_options_environments_images" translatable="false">
+        <item>@color/black</item>
+        <item>@drawable/environment_cave</item>
+        <item>@drawable/environment_meadow</item>
+    </array>
+
     <!-- Pointer Options -->
     <string-array name="developer_options_pointer_colors" translatable="false">
         <item>@string/developer_options_pointer_white</item>
@@ -22,6 +28,16 @@
     <integer-array name="developer_options_pointer_colors_values" translatable="false">
         <item>0xFFFFFFFF</item>
         <item>0xC27FFCFF</item>
+    </integer-array>
+
+    <string-array name="developer_options_pointer_scroll_directions" translatable="false">
+        <item>@string/developer_options_scroll_direction_natural</item>
+        <item>@string/developer_options_scroll_direction_reversed</item>
+    </string-array>
+
+    <integer-array name="developer_options_pointer_scroll_direction_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
     </integer-array>
 
     <!-- Environments Options -->

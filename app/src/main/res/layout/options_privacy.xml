@@ -45,38 +45,57 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <org.mozilla.vrbrowser.ui.views.settings.SingleEditSetting
-                    android:id="@+id/homepage_edit"
+                <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                    android:id="@+id/showPrivacyButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:description="@string/developer_options_homepage"
-                    app:highlightedTextColor="@color/fog"
-                    android:inputType="textWebEmailAddress"
-                    android:width="300dp" />
+                    app:buttonText="@string/developer_options_show"
+                    app:description="@string/settings_privacy_policy" />
 
                 <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
-                    android:id="@+id/remote_debugging_switch"
+                    android:id="@+id/trackingProtectionButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:description="@string/developer_options_remote_debugging" />
+                    app:description="@string/security_options_tracking_protection" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
-                    android:id="@+id/show_console_switch"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:description="@string/developer_options_show_console" />
+                <TextView
+                    android:id="@+id/setting_description"
+                    style="@style/settingsDescription"
+                    android:height="40dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/security_options_permissions_title" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
-                    android:id="@+id/multiprocess_switch"
+                <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                    android:id="@+id/cameraPermissionButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:description="@string/developer_options_multiprocess" />
+                    android:layout_marginStart="40dp"
+                    app:buttonText="@string/permission_enable"
+                    app:description="@string/security_options_permission_camera" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
-                    android:id="@+id/servo_switch"
+                <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                    android:id="@+id/microphonePermissionButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:description="@string/developer_options_servo" />
+                    android:layout_marginStart="40dp"
+                    app:buttonText="@string/permission_enable"
+                    app:description="@string/security_options_permission_microphone" />
+
+                <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                    android:id="@+id/locationPermissionButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="40dp"
+                    app:buttonText="@string/permission_enable"
+                    app:description="@string/security_options_permission_location" />
+
+                <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                    android:id="@+id/storagePermissionButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="40dp"
+                    app:buttonText="@string/permission_enable"
+                    app:description="@string/security_options_permission_storage" />
 
             </LinearLayout>
         </ScrollView>
@@ -96,6 +115,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             app:buttonText="@string/developer_options_reset_button"
-            app:description="@string/developer_options_reset" />
+            app:description="@string/privacy_options_reset" />
     </RelativeLayout>
 </merge>

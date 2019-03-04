@@ -2,6 +2,7 @@ package org.mozilla.vrbrowser.ui.views.settings;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -17,6 +18,8 @@ public class ButtonSetting extends LinearLayout {
     private String mButtonText;
     private TextView mButton;
     private OnClickListener mListener;
+    private Drawable mButtonBackground;
+    private Drawable mButtonForeground;
 
     public ButtonSetting(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -44,6 +47,8 @@ public class ButtonSetting extends LinearLayout {
         mButton = findViewById(R.id.button);
         mButton.setText(mButtonText);
         mButton.setOnClickListener(mInternalClickListener);
+        mButtonBackground = mButton.getBackground();
+        mButtonForeground = mButton.getForeground();
     }
 
     private View.OnClickListener mInternalClickListener = v -> onClickListener(v);
@@ -62,6 +67,25 @@ public class ButtonSetting extends LinearLayout {
 
     public void setOnClickListener(OnClickListener aListener) {
         mListener = aListener;
+    }
+
+    public void setShowAsLabel(boolean aShowAsLabel) {
+        if (aShowAsLabel) {
+            mButton.setBackground(null);
+            mButton.setForeground(null);
+            mButton.setTextColor(getContext().getColor(R.color.fog));
+        } else {
+            mButton.setBackground(mButtonBackground);
+            mButton.setForeground(mButtonForeground);
+        }
+    }
+
+    public void setButtonText(String aText) {
+        mButton.setText(aText);
+    }
+
+    public String getDescription() {
+        return mDescription;
     }
 
 }

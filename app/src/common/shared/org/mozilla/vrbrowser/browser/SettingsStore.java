@@ -40,6 +40,7 @@ public class SettingsStore {
     public final static boolean CONSOLE_LOGS_DEFAULT = false;
     public final static boolean ENV_OVERRIDE_DEFAULT = false;
     public final static boolean MULTIPROCESS_DEFAULT = false;
+    public final static boolean TRACKING_DEFAULT = true;
     public final static boolean SERVO_DEFAULT = false;
     public final static int UA_MODE_DEFAULT = GeckoSessionSettings.USER_AGENT_MODE_VR;
     public final static int INPUT_MODE_DEFAULT = 1;
@@ -50,6 +51,7 @@ public class SettingsStore {
     public final static int MAX_WINDOW_WIDTH_DEFAULT = 1200;
     public final static int MAX_WINDOW_HEIGHT_DEFAULT = 1200;
     public final static int POINTER_COLOR_DEFAULT_DEFAULT = Color.parseColor("#FFFFFF");
+    public final static int SCROLL_DIRECTION_DEFAULT = 0;
     public final static String ENV_DEFAULT = "cave";
     public final static float BROWSER_WORLD_WIDTH_DEFAULT = 4.0f;
     public final static float BROWSER_WORLD_HEIGHT_DEFAULT = 2.25f;
@@ -60,6 +62,8 @@ public class SettingsStore {
     // Enable telemetry by default (opt-out).
     private final static boolean enableCrashReportingByDefault = false;
     private final static boolean enableTelemetryByDefault = true;
+
+    private int mCachedScrollDirection = -1;
 
     public SettingsStore(Context aContext) {
         mContext = aContext;
@@ -134,6 +138,17 @@ public class SettingsStore {
         editor.commit();
     }
 
+    public boolean isTrackingProtectionEnabled() {
+        return mPrefs.getBoolean(
+                mContext.getString(R.string.settings_key_tracking_protection), TRACKING_DEFAULT);
+    }
+
+    public void setTrackingProtectionEnabled(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_tracking_protection), isEnabled);
+        editor.commit();
+    }
+
     public boolean isEnvironmentOverrideEnabled() {
         return mPrefs.getBoolean(
                 mContext.getString(R.string.settings_key_environment_override), ENV_OVERRIDE_DEFAULT);
@@ -144,6 +159,7 @@ public class SettingsStore {
         editor.putBoolean(mContext.getString(R.string.settings_key_environment_override), isEnabled);
         editor.commit();
     }
+
 
     public boolean isMultiprocessEnabled() {
         return mPrefs.getBoolean(
@@ -313,6 +329,21 @@ public class SettingsStore {
         editor.putInt(mContext.getString(R.string.settings_key_pointer_color), color);
         editor.commit();
     }
+
+    public int getScrollDirection() {
+        if (mCachedScrollDirection < 0) {
+            mCachedScrollDirection = mPrefs.getInt(mContext.getString(R.string.settings_key_scroll_direction), SCROLL_DIRECTION_DEFAULT);
+        }
+        return mCachedScrollDirection;
+    }
+
+    public void setScrollDirection(int aScrollDirection) {
+        mCachedScrollDirection = aScrollDirection;
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putInt(mContext.getString(R.string.settings_key_scroll_direction), aScrollDirection);
+        editor.commit();
+    }
+
 
     public int getMSAALevel() {
         return mPrefs.getInt(

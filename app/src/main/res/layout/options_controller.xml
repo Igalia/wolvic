@@ -45,38 +45,21 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <org.mozilla.vrbrowser.ui.views.settings.SingleEditSetting
-                    android:id="@+id/homepage_edit"
+                <org.mozilla.vrbrowser.ui.views.settings.RadioGroupSetting
+                    android:id="@+id/pointer_color_radio"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:description="@string/developer_options_homepage"
-                    app:highlightedTextColor="@color/fog"
-                    android:inputType="textWebEmailAddress"
-                    android:width="300dp" />
+                    app:description="@string/developer_options_pointer_color"
+                    app:options="@array/developer_options_pointer_colors"
+                    app:values="@array/developer_options_pointer_colors_values" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
-                    android:id="@+id/remote_debugging_switch"
+                <org.mozilla.vrbrowser.ui.views.settings.RadioGroupSetting
+                    android:id="@+id/scroll_direction_radio"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:description="@string/developer_options_remote_debugging" />
-
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
-                    android:id="@+id/show_console_switch"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:description="@string/developer_options_show_console" />
-
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
-                    android:id="@+id/multiprocess_switch"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:description="@string/developer_options_multiprocess" />
-
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
-                    android:id="@+id/servo_switch"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:description="@string/developer_options_servo" />
+                    app:description="@string/developer_options_scroll_direction"
+                    app:options="@array/developer_options_pointer_scroll_directions"
+                    app:values="@array/developer_options_pointer_scroll_direction_values" />
 
             </LinearLayout>
         </ScrollView>
@@ -96,6 +79,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             app:buttonText="@string/developer_options_reset_button"
-            app:description="@string/developer_options_reset" />
+            app:description="@string/controller_options_reset" />
     </RelativeLayout>
 </merge>

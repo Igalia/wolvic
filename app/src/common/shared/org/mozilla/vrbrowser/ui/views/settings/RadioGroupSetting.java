@@ -58,10 +58,10 @@ public class RadioGroupSetting extends LinearLayout {
         }
         attributes.recycle();
 
-        initialize(context, mLayout);
+        initialize(context, attrs, defStyleAttr, mLayout);
     }
 
-    protected void initialize(Context aContext, @LayoutRes int layout) {
+    protected void initialize(Context aContext, AttributeSet attrs, int defStyleAttr, @LayoutRes int layout) {
         inflate(aContext, layout, this);
 
         mAudio = AudioEngine.fromContext(aContext);

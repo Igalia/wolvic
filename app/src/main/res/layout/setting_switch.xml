@@ -12,13 +12,24 @@
             android:layout_height="match_parent"
             android:gravity="center_vertical">
 
-            <TextView
-                android:id="@+id/setting_description"
-                style="@style/settingsDescription"
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:layout_toStartOf="@id/switch_layout"
-                tools:text="Switch Setting Description" />
+                android:gravity="left|center">
+                <TextView
+                    android:id="@+id/setting_description"
+                    style="@style/settingsDescription"
+                    tools:text="Switch Setting Description" />
+
+                <org.mozilla.vrbrowser.ui.views.UIButton
+                    android:id="@+id/settings_help_button"
+                    android:visibility="gone"
+                    style="@style/settingsHelpButton" />
+            </LinearLayout>
+
 
             <LinearLayout
                 android:id="@+id/switch_layout"

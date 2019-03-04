@@ -53,5 +53,5 @@ public interface WidgetManagerDelegate {
     void addWorldClickListener(WorldClickListener aListener);
     void removeWorldClickListener(WorldClickListener aListener);
     boolean isPermissionGranted(@NonNull String permission);
-    void requestPermission(@NonNull String uri, @NonNull String permission, GeckoSession.PermissionDelegate.Callback aCallback);
+    void requestPermission(String uri, @NonNull String permission, GeckoSession.PermissionDelegate.Callback aCallback);
 }

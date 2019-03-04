@@ -49,11 +49,12 @@
 
     <!-- Settings Dialog -->
     <item name="settings_world_y" format="float" type="dimen">1.6</item>
-    <item name="settings_world_z" format="float" type="dimen">-1.8</item>
-    <dimen name="settings_width">580dp</dimen>
+    <item name="settings_world_z" format="float" type="dimen">-2.0</item>
+    <dimen name="settings_width">730dp</dimen>
     <dimen name="settings_height">520dp</dimen>
     <dimen name="settings_button_height">320dp</dimen>
     <dimen name="settings_button_text_width">100dp</dimen>
+    <dimen name="settings_main_button_text_width">125dp</dimen>
 
     <!-- Common values for menu style widgets -->
     <dimen name="menu_item_height">88dp</dimen>

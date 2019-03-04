@@ -1,9 +1,12 @@
 package org.mozilla.vrbrowser.ui.views.settings;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.text.InputType;
 import android.util.AttributeSet;
 import android.widget.RadioButton;
+
+import org.mozilla.vrbrowser.R;
 
 import androidx.annotation.LayoutRes;
 
@@ -18,15 +21,18 @@ public class RadioGroupVSetting extends RadioGroupSetting {
     }
 
     @Override
-    protected void initialize(Context aContext, @LayoutRes int layout) {
-        super.initialize(aContext, layout);
+    protected void initialize(Context aContext, AttributeSet attrs, int defStyleAttr, @LayoutRes int layout) {
+        super.initialize(aContext, attrs, defStyleAttr, layout);
+
+        TypedArray attributes = aContext.obtainStyledAttributes(attrs, R.styleable.RadioGroupSetting, defStyleAttr, 0);
+        int margin = attributes.getInteger(R.styleable.RadioGroupSetting_itemMargin, 20);
 
         for (int i=0; i<mRadioGroup.getChildCount(); i++) {
             RadioButton button = (RadioButton)mRadioGroup.getChildAt(i);
             button.setInputType(InputType.TYPE_NULL);
             LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-            params.topMargin = 20;
-            params.bottomMargin = 20;
+            params.topMargin = margin;
+            params.bottomMargin = margin;
             button.setLayoutParams(params);
         }
     }
