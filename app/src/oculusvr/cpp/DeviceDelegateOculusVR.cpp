@@ -225,14 +225,13 @@ public:
   OculusLayer::BindDelegate bindDelegate;
 
   void Init(JNIEnv * aEnv, vrb::RenderContextPtr& aContext) override {
-    if (this->swapChain) {
-      return;
-    }
-
     this->jniEnv = aEnv;
     this->contextWeak = aContext;
     this->ovrLayer.Header.SrcBlend = VRAPI_FRAME_LAYER_BLEND_ONE;
     this->ovrLayer.Header.DstBlend = VRAPI_FRAME_LAYER_BLEND_ONE_MINUS_SRC_ALPHA;
+    if (this->swapChain) {
+      return;
+    }
 
     InitSwapChain(this->swapChain, this->surface, this->fbo);
     this->layer->SetResizeDelegate([=]{
@@ -285,6 +284,19 @@ public:
     });
   }
 
+protected:
+  void TakeSurface(const OculusLayerPtr& aSource) {
+    this->swapChain = aSource->GetSwapChain();
+    VRLayerSurfacePtr sourceLayer = std::dynamic_pointer_cast<VRLayerSurface>(aSource->GetLayer());
+    if (sourceLayer) {
+      this->surface = sourceLayer->GetSurface();
+    }
+    this->composited = aSource->IsComposited();
+    this->layer->SetInitialized(aSource->GetLayer()->IsInitialized());
+    this->layer->SetResizeDelegate([=]{
+      Resize();
+    });
+  }
 private:
   void InitSwapChain(ovrTextureSwapChain*& swapChainOut, jobject & surfaceOut, vrb::FBOPtr& fboOut) {
     if (this->layer->GetSurfaceType() == VRLayerQuad::SurfaceType::AndroidSurface) {
@@ -325,9 +337,12 @@ typedef std::shared_ptr<OculusLayerQuad> OculusLayerQuadPtr;
 
 class OculusLayerQuad: public OculusLayerSurface<VRLayerQuadPtr, ovrLayerProjection2> {
 public:
-  static OculusLayerQuadPtr Create(const VRLayerQuadPtr& aLayer) {
+  static OculusLayerQuadPtr Create(const VRLayerQuadPtr& aLayer, const OculusLayerPtr& aSource = nullptr) {
     auto result = std::make_shared<OculusLayerQuad>();
     result->layer = aLayer;
+    if (aSource) {
+      result->TakeSurface(aSource);
+    }
     return result;
   }
 
@@ -374,9 +389,12 @@ typedef std::shared_ptr<OculusLayerCylinder> OculusLayerCylinderPtr;
 
 class OculusLayerCylinder: public OculusLayerSurface<VRLayerCylinderPtr, ovrLayerCylinder2> {
 public:
-  static OculusLayerCylinderPtr Create(const VRLayerCylinderPtr& aLayer) {
+  static OculusLayerCylinderPtr Create(const VRLayerCylinderPtr& aLayer, const OculusLayerPtr& aSource = nullptr) {
     auto result = std::make_shared<OculusLayerCylinder>();
     result->layer = aLayer;
+    if (aSource) {
+      result->TakeSurface(aSource);
+    }
     return result;
   }
 
@@ -1227,6 +1245,28 @@ DeviceDelegateOculusVR::CreateLayerQuad(int32_t aWidth, int32_t aHeight,
   return layer;
 }
 
+VRLayerQuadPtr
+DeviceDelegateOculusVR::CreateLayerQuad(const VRLayerSurfacePtr& aMoveLayer) {
+  if (!m.layersEnabled) {
+    return nullptr;
+  }
+
+  VRLayerQuadPtr layer = VRLayerQuad::Create(aMoveLayer->GetWidth(), aMoveLayer->GetHeight(), aMoveLayer->GetSurfaceType());
+  OculusLayerQuadPtr oculusLayer;
+
+  for (int i = 0; i < m.uiLayers.size(); ++i) {
+    if (m.uiLayers[i]->GetLayer() == aMoveLayer) {
+      oculusLayer = OculusLayerQuad::Create(layer, m.uiLayers[i]);
+      m.uiLayers.erase(m.uiLayers.begin() + i);
+      break;
+    }
+  }
+  if (oculusLayer) {
+    m.AddUILayer(oculusLayer, aMoveLayer->GetSurfaceType());
+  }
+  return layer;
+}
+
 VRLayerCylinderPtr
 DeviceDelegateOculusVR::CreateLayerCylinder(int32_t aWidth, int32_t aHeight,
                                             VRLayerSurface::SurfaceType aSurfaceType) {
@@ -1236,6 +1276,28 @@ DeviceDelegateOculusVR::CreateLayerCylinder(int32_t aWidth, int32_t aHeight,
   VRLayerCylinderPtr layer = VRLayerCylinder::Create(aWidth, aHeight, aSurfaceType);
   OculusLayerCylinderPtr oculusLayer = OculusLayerCylinder::Create(layer);
   m.AddUILayer(oculusLayer, aSurfaceType);
+  return layer;
+}
+
+VRLayerCylinderPtr
+DeviceDelegateOculusVR::CreateLayerCylinder(const VRLayerSurfacePtr& aMoveLayer) {
+  if (!m.layersEnabled) {
+    return nullptr;
+  }
+
+  VRLayerCylinderPtr layer = VRLayerCylinder::Create(aMoveLayer->GetWidth(), aMoveLayer->GetHeight(), aMoveLayer->GetSurfaceType());
+  OculusLayerCylinderPtr oculusLayer;
+
+  for (int i = 0; i < m.uiLayers.size(); ++i) {
+    if (m.uiLayers[i]->GetLayer() == aMoveLayer) {
+      oculusLayer = OculusLayerCylinder::Create(layer, m.uiLayers[i]);
+      m.uiLayers.erase(m.uiLayers.begin() + i);
+      break;
+    }
+  }
+  if (oculusLayer) {
+    m.AddUILayer(oculusLayer, aMoveLayer->GetSurfaceType());
+  }
   return layer;
 }
 

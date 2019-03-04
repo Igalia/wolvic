@@ -933,7 +933,21 @@ void
 BrowserWorld::SetCylinderDensity(const float aDensity) {
   m.cylinderDensity = aDensity;
   for (WidgetPtr& widget: m.widgets) {
-    widget->SetCylinderDensity(aDensity);
+    const bool useCylinder = m.cylinderDensity > 0 && widget->GetPlacement()->cylinder;
+    if (useCylinder && widget->GetCylinder()) {
+      widget->SetCylinderDensity(aDensity);
+    } else if (useCylinder && !widget->GetCylinder()) {
+      VRLayerCylinderPtr layer = m.device->CreateLayerCylinder(widget->GetLayer());
+      CylinderPtr cylinder = Cylinder::Create(m.create, layer);
+      widget->SetCylinder(cylinder);
+      widget->SetCylinderDensity(aDensity);
+    } else if (widget->GetCylinder()) {
+      float w = 0, h = 0;
+      widget->GetWorldSize(w, h);
+      VRLayerQuadPtr layer = m.device->CreateLayerQuad(widget->GetLayer());
+      QuadPtr quad = Quad::Create(m.create, w, h, layer);
+      widget->SetQuad(quad);
+    }
   }
 }
 

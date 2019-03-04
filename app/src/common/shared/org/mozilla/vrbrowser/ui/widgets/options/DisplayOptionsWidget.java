@@ -82,8 +82,9 @@ public class DisplayOptionsWidget extends UIWidget implements
         mCurvedDisplaySwitch = findViewById(R.id.curved_display_switch);
         mCurvedDisplaySwitch.setChecked(SettingsStore.getInstance(getContext()).getCylinderDensity() > 0.0f);
         mCurvedDisplaySwitch.setOnCheckedChangeListener((compoundButton, enabled, apply) -> {
-            SettingsStore.getInstance(getContext()).setCylinderDensity(enabled ? SettingsStore.CYLINDER_DENSITY_ENABLED_DEFAULT : 0.0f);
-            showRestartDialog();
+            float density = enabled ? SettingsStore.CYLINDER_DENSITY_ENABLED_DEFAULT : 0.0f;
+            SettingsStore.getInstance(getContext()).setCylinderDensity(density);
+            mWidgetManager.setCylinderDensity(density);
         });
 
         int uaMode = SettingsStore.getInstance(getContext()).getUaMode();

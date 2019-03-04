@@ -45,6 +45,7 @@ public interface WidgetManagerDelegate {
     void showVRVideo(int aWindowHandle, @VideoProjectionMenuWidget.VideoProjectionFlags int aVideoProjection);
     void hideVRVideo();
     void resetUIYaw();
+    void setCylinderDensity(float aDensity);
     void addFocusChangeListener(@NonNull FocusChangeListener aListener);
     void removeFocusChangeListener(@NonNull FocusChangeListener aListener);
     void addPermissionListener(PermissionListener aListener);

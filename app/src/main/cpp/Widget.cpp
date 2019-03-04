@@ -62,23 +62,7 @@ struct Widget::State {
     quad = aQuad;
     cylinder = aCylinder;
 
-    VRLayerPtr layer = GetLayer();
-
-    if (layer) {
-      layer->SetSurfaceChangedDelegate([=](const VRLayer& aLayer, VRLayer::SurfaceChange aChange, const std::function<void()>& aCallback) {
-        const VRLayerQuad& layerQuad = static_cast<const VRLayerQuad&>(aLayer);
-        VRBrowser::DispatchCreateWidgetLayer((jint)aHandle, layerQuad.GetSurface(), layerQuad.GetWidth(), layerQuad.GetHeight(), aCallback);
-      });
-    } else {
-      surface = vrb::TextureSurface::Create(render, name);
-      if (quad) {
-        quad->SetTexture(surface, aTextureWidth, aTextureHeight);
-        quad->SetMaterial(vrb::Color(0.4f, 0.4f, 0.4f), vrb::Color(1.0f, 1.0f, 1.0f), vrb::Color(0.0f, 0.0f, 0.0f), 0.0f);
-      } else if (cylinder) {
-        cylinder->SetTexture(surface, aTextureWidth, aTextureHeight);
-        cylinder->SetMaterial(vrb::Color(0.4f, 0.4f, 0.4f), vrb::Color(1.0f, 1.0f, 1.0f), vrb::Color(0.0f, 0.0f, 0.0f), 0.0f);
-      }
-    }
+    UpdateSurface(aTextureWidth, aTextureHeight);
 
     vrb::CreationContextPtr create = render->GetRenderThreadCreationContext();
     transform = vrb::Transform::Create(create);
@@ -90,11 +74,33 @@ struct Widget::State {
       transform->AddNode(cylinder->GetRoot());
     }
 
-    if (layer) {
+    if (GetLayer()) {
       toggleState = true;
       root->ToggleAll(true);
     } else {
       root->ToggleAll(false);
+    }
+  }
+
+  void UpdateSurface(const int32_t aTextureWidth, const int32_t aTextureHeight) {
+    VRLayerPtr layer = GetLayer();
+    if (layer) {
+      layer->SetSurfaceChangedDelegate([=](const VRLayer& aLayer, VRLayer::SurfaceChange aChange, const std::function<void()>& aCallback) {
+        const VRLayerQuad& layerQuad = static_cast<const VRLayerQuad&>(aLayer);
+        VRBrowser::DispatchCreateWidgetLayer((jint)handle, layerQuad.GetSurface(), layerQuad.GetWidth(), layerQuad.GetHeight(), aCallback);
+      });
+    } else {
+      if (!surface) {
+        vrb::RenderContextPtr render = context.lock();
+        surface = vrb::TextureSurface::Create(render, name);
+      }
+      if (quad) {
+        quad->SetTexture(surface, aTextureWidth, aTextureHeight);
+        quad->SetMaterial(vrb::Color(0.4f, 0.4f, 0.4f), vrb::Color(1.0f, 1.0f, 1.0f), vrb::Color(0.0f, 0.0f, 0.0f), 0.0f);
+      } else if (cylinder) {
+        cylinder->SetTexture(surface, aTextureWidth, aTextureHeight);
+        cylinder->SetMaterial(vrb::Color(0.4f, 0.4f, 0.4f), vrb::Color(1.0f, 1.0f, 1.0f), vrb::Color(0.0f, 0.0f, 0.0f), 0.0f);
+      }
     }
   }
 
@@ -148,6 +154,13 @@ struct Widget::State {
       cylinder->SetTransform(transform);
     } else {
       cylinder->SetTransform(translation.PostMultiply(scaleMatrix));
+    }
+  }
+
+  void RemoveResizer() {
+    if (resizer) {
+      resizer->GetRoot()->RemoveFromParents();
+      resizer = nullptr;
     }
   }
 };
@@ -324,6 +337,44 @@ Widget::GetQuad() const {
 CylinderPtr
 Widget::GetCylinder() const {
   return m.cylinder;
+}
+
+void
+Widget::SetQuad(const QuadPtr& aQuad) const {
+  int32_t textureWidth, textureHeight;
+  GetSurfaceTextureSize(textureWidth, textureHeight);
+  if (m.cylinder) {
+    m.cylinder->GetRoot()->RemoveFromParents();
+    m.cylinder = nullptr;
+  }
+  if (m.quad) {
+    m.quad->GetRoot()->RemoveFromParents();
+  }
+
+  m.quad = aQuad;
+  m.transform->AddNode(aQuad->GetRoot());
+
+  m.RemoveResizer();
+  m.UpdateSurface(textureWidth, textureHeight);
+}
+
+void
+Widget::SetCylinder(const CylinderPtr& aCylinder) const {
+  int32_t textureWidth, textureHeight;
+  GetSurfaceTextureSize(textureWidth, textureHeight);
+  if (m.quad) {
+    m.quad->GetRoot()->RemoveFromParents();
+    m.quad = nullptr;
+  }
+  if (m.cylinder) {
+    m.cylinder->GetRoot()->RemoveFromParents();
+  }
+
+  m.cylinder = aCylinder;
+  m.transform->AddNode(aCylinder->GetRoot());
+
+  m.RemoveResizer();
+  m.UpdateSurface(textureWidth, textureHeight);
 }
 
 VRLayerSurfacePtr

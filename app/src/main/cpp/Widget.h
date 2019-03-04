@@ -58,6 +58,8 @@ public:
   vrb::NodePtr GetRoot() const;
   QuadPtr GetQuad() const;
   CylinderPtr GetCylinder() const;
+  void SetQuad(const QuadPtr& aQuad) const;
+  void SetCylinder(const CylinderPtr& aCylinder) const;
   VRLayerSurfacePtr GetLayer() const;
   vrb::TransformPtr GetTransformNode() const;
   const WidgetPlacementPtr& GetPlacement() const;

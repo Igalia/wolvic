@@ -64,8 +64,10 @@ public:
   virtual void EndFrame(bool aDiscard = false) = 0;
   virtual VRLayerQuadPtr CreateLayerQuad(int32_t aWidth, int32_t aHeight,
                                          VRLayerSurface::SurfaceType aSurfaceType) { return nullptr; }
+  virtual VRLayerQuadPtr CreateLayerQuad(const VRLayerSurfacePtr& aMoveLayer) { return nullptr; }
   virtual VRLayerCylinderPtr CreateLayerCylinder(int32_t aWidth, int32_t aHeight,
                                                 VRLayerSurface::SurfaceType aSurfaceType) { return nullptr; }
+  virtual VRLayerCylinderPtr CreateLayerCylinder(const VRLayerSurfacePtr& aMoveLayer) { return nullptr; }
   virtual VRLayerCubePtr CreateLayerCube(int32_t aWidth, int32_t aHeight, GLint aInternalFormat) { return nullptr; }
   virtual VRLayerEquirectPtr CreateLayerEquirect(const VRLayerPtr &aSource) { return nullptr; }
   virtual void DeleteLayer(const VRLayerPtr& aLayer) {};
