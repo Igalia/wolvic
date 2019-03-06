@@ -27,6 +27,7 @@ import org.mozilla.vrbrowser.browser.SessionStore;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.ui.views.BookmarksView;
 import org.mozilla.vrbrowser.ui.widgets.prompts.AlertPromptWidget;
+import org.mozilla.vrbrowser.ui.widgets.prompts.AuthPromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.ChoicePromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.ConfirmPromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.TextPromptWidget;
@@ -50,6 +51,7 @@ public class WindowWidget extends UIWidget implements SessionStore.SessionChange
     private AlertPromptWidget mAlertPrompt;
     private ConfirmPromptWidget mConfirmPrompt;
     private TextPromptWidget mTextPrompt;
+    private AuthPromptWidget mAuthPrompt;
     private int mWidthBackup;
     private int mHeightBackup;
     private int mBorderWidth;
@@ -605,7 +607,12 @@ public class WindowWidget extends UIWidget implements SessionStore.SessionChange
 
     @Override
     public void onAuthPrompt(GeckoSession session, String title, String msg, AuthOptions options, AuthCallback callback) {
-
+        mAuthPrompt = new AuthPromptWidget(getContext());
+        mAuthPrompt.mWidgetPlacement.parentHandle = getHandle();
+        mAuthPrompt.setTitle(title);
+        mAuthPrompt.setMessage(msg);
+        mAuthPrompt.setAuthOptions(options, callback);
+        mAuthPrompt.show();
     }
 
     @Override
