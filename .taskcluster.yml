@@ -23,7 +23,7 @@ tasks:
           - pull_request.reopened
     payload:
       maxRunTime: 10800
-      image: 'mozillamixedreality/firefoxreality'
+      image: 'mozillamixedreality/firefoxreality:190306'
       command:
         - /bin/bash
         - '--login'
@@ -60,7 +60,7 @@ tasks:
       - "secrets:get:project/firefoxreality/symbols-token"
     payload:
       maxRunTime: 10800
-      image: 'mozillamixedreality/firefoxreality'
+      image: 'mozillamixedreality/firefoxreality:190306'
       features:
         taskclusterProxy: true
       command:
@@ -108,7 +108,7 @@ tasks:
       - "secrets:get:project/firefoxreality/symbols-token"
     payload:
       maxRunTime: 10800
-      image: 'mozillamixedreality/firefoxreality'
+      image: 'mozillamixedreality/firefoxreality:190306'
       features:
         taskclusterProxy: true
       command:

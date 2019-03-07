@@ -41,13 +41,9 @@ ENV ANDROID_SDK_HOME /opt
 ENV ANDROID_HOME /opt
 ENV PATH ${PATH}:${ANDROID_SDK_HOME}/tools/bin:${ANDROID_SDK_HOME}/platform-tools:/opt/tools:${ANDROID_SDK_HOME}/build-tools/27.0.3
 
-RUN echo y | sdkmanager "build-tools;26.0.0"
-RUN echo y | sdkmanager "build-tools;27.0.3"
 RUN echo y | sdkmanager "build-tools;28.0.3"
 RUN echo y | sdkmanager "ndk-bundle"
 RUN echo y | sdkmanager "cmake;3.10.2.4988404"
-RUN echo y | sdkmanager "platforms;android-26"
-RUN echo y | sdkmanager "platforms;android-27"
 RUN echo y | sdkmanager "platforms;android-28"
 
 WORKDIR /opt
