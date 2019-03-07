@@ -669,6 +669,17 @@ struct DeviceDelegateOculusVR::State {
     vrapi_SetPropertyInt(&java, VRAPI_REORIENT_HMD_ON_CONTROLLER_RECENTER, 1);
   }
 
+  void UpdateTrackingMode() {
+    if (!ovr) {
+      return;
+    }
+    if (renderMode == device::RenderMode::StandAlone && Is6DOF()) {
+      vrapi_SetTrackingSpace(ovr, VRAPI_TRACKING_SPACE_LOCAL_FLOOR);
+    } else {
+      vrapi_SetTrackingSpace(ovr, VRAPI_TRACKING_SPACE_LOCAL);
+    }
+  }
+
   void AddUILayer(const OculusLayerPtr& aLayer, VRLayerSurface::SurfaceType aSurfaceType) {
     if (ovr) {
       vrb::RenderContextPtr ctx = context.lock();
@@ -696,6 +707,10 @@ struct DeviceDelegateOculusVR::State {
     const float scale = layersEnabled ? 1.0f : 1.5f;
     aWidth = scale * (uint32_t)(vrapi_GetSystemPropertyInt(&java, VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_WIDTH));
     aHeight = scale * (uint32_t)(vrapi_GetSystemPropertyInt(&java, VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_HEIGHT));
+  }
+
+  bool Is6DOF() const {
+    return deviceType >= VRAPI_DEVICE_TYPE_OCULUSQUEST_START && deviceType <= VRAPI_DEVICE_TYPE_OCULUSQUEST_END;
   }
 
   void SetRenderSize(device::RenderMode aRenderMode) {
@@ -757,8 +772,7 @@ struct DeviceDelegateOculusVR::State {
 
         // We need to call CreateController() to update the model index to avoid some cases that
         // the controller index is changed.
-        if (deviceType >= VRAPI_DEVICE_TYPE_OCULUSQUEST_START &&
-            deviceType <= VRAPI_DEVICE_TYPE_OCULUSQUEST_END) {
+        if (Is6DOF()) {
           std::string controllerID;
           if (state[count].hand == ElbowModel::HandEnum::Left) {
             controllerID = "Oculus Touch (Left)";
@@ -807,11 +821,6 @@ struct DeviceDelegateOculusVR::State {
 
       if (state[i].controllerCapabilities.ControllerCapabilities & ovrControllerCaps_HasPositionTracking) {
         auto & position = tracking.HeadPose.Pose.Position;
-        if (renderMode == device::RenderMode::StandAlone) {
-          position.x += kAverageHeight.x();
-          position.y += kAverageHeight.y();
-          position.z += kAverageHeight.z();
-        }
         state[i].controllerTransform.TranslateInPlace(vrb::Vector(position.x, position.y, position.z));
         flags |= device::Position;
       } else {
@@ -830,8 +839,7 @@ struct DeviceDelegateOculusVR::State {
       bool trackpadPressed = false, trackpadTouched = false;
       float axes[kNumAxes];
       float trackpadX, trackpadY = 0.0f;
-      if (deviceType >= VRAPI_DEVICE_TYPE_OCULUSQUEST_START &&
-          deviceType <= VRAPI_DEVICE_TYPE_OCULUSQUEST_END) {
+      if (Is6DOF()) {
         triggerPressed = (state[i].controllerState.Buttons & ovrButton_Trigger) != 0;
         triggerTouched = (state[i].controllerState.Touches & ovrTouch_IndexTrigger) != 0;
         trackpadPressed = (state[i].controllerState.Buttons & ovrButton_Joystick) != 0;
@@ -950,6 +958,8 @@ DeviceDelegateOculusVR::SetRenderMode(const device::RenderMode aMode) {
     m.eyeSwapChains[i]->Init(render, m.renderMode, m.renderWidth, m.renderHeight);
   }
 
+  m.UpdateTrackingMode();
+
   // Reset reorient when exiting or entering immersive
   m.reorientMatrix = vrb::Matrix::Identity();
 }
@@ -1022,8 +1032,7 @@ DeviceDelegateOculusVR::ReleaseControllerDelegate() {
 
 int32_t
 DeviceDelegateOculusVR::GetControllerModelCount() const {
-  if (m.deviceType >= VRAPI_DEVICE_TYPE_OCULUSQUEST_START &&
-      m.deviceType <= VRAPI_DEVICE_TYPE_OCULUSQUEST_END) {
+  if (m.Is6DOF()) {
     return 2;
   } else {
     return 1;
@@ -1034,8 +1043,7 @@ const std::string
 DeviceDelegateOculusVR::GetControllerModelName(const int32_t aModelIndex) const {
   static std::string name = "";
 
-  if (m.deviceType >= VRAPI_DEVICE_TYPE_OCULUSQUEST_START &&
-      m.deviceType <= VRAPI_DEVICE_TYPE_OCULUSQUEST_END) {
+  if (m.Is6DOF()) {
     switch (aModelIndex) {
       case 0:
         name = "vr_controller_oculusquest_left.obj";
@@ -1083,7 +1091,7 @@ DeviceDelegateOculusVR::StartFrame() {
   ovrMatrix4f matrix = vrapi_GetTransformFromPose(&m.predictedTracking.HeadPose.Pose);
   vrb::Matrix head = vrb::Matrix::FromRowMajor(matrix.M[0]);
 
-  if (m.renderMode == device::RenderMode::StandAlone) {
+  if (m.renderMode == device::RenderMode::StandAlone && !m.Is6DOF()) {
     head.TranslateInPlace(kAverageHeight);
   }
 
@@ -1104,7 +1112,11 @@ DeviceDelegateOculusVR::StartFrame() {
   m.UpdateControllers(head);
   bool reoriented = lastReorientCount != m.reorientCount && lastReorientCount > 0 && m.reorientCount > 0;
   if (reoriented && m.renderMode == device::RenderMode::StandAlone) {
-    m.reorientMatrix = DeviceUtils::CalculateReorientationMatrix(head, kAverageHeight);
+    vrb::Vector height = kAverageHeight;
+    if (m.Is6DOF()) {
+      height.y() = m.predictedTracking.HeadPose.Pose.Position.y;
+    }
+    m.reorientMatrix = DeviceUtils::CalculateReorientationMatrix(head, height);
   }
 
   VRB_GL_CHECK(glClearColor(m.clearColor.Red(), m.clearColor.Green(), m.clearColor.Blue(), m.clearColor.Alpha()));
@@ -1392,6 +1404,7 @@ DeviceDelegateOculusVR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
     vrapi_SetClockLevels(m.ovr, 4, 4);
     vrapi_SetPerfThread(m.ovr, VRAPI_PERF_THREAD_TYPE_MAIN, gettid());
     vrapi_SetPerfThread(m.ovr, VRAPI_PERF_THREAD_TYPE_RENDERER, gettid());
+    m.UpdateTrackingMode();
   }
 
   // Reset reorientation after Enter VR
