@@ -115,7 +115,7 @@ public class DisplayOptionsWidget extends UIWidget implements
         mWindowSizeEdit.setHint1(String.valueOf(SettingsStore.WINDOW_WIDTH_DEFAULT));
         mWindowSizeEdit.setHint2(String.valueOf(SettingsStore.WINDOW_HEIGHT_DEFAULT));
         mWindowSizeEdit.setDefaultFirstValue(String.valueOf(SettingsStore.WINDOW_WIDTH_DEFAULT));
-        mWindowSizeEdit.setDefaultFirstValue(String.valueOf(SettingsStore.WINDOW_HEIGHT_DEFAULT));
+        mWindowSizeEdit.setDefaultSecondValue(String.valueOf(SettingsStore.WINDOW_HEIGHT_DEFAULT));
         mWindowSizeEdit.setFirstText(Integer.toString(SettingsStore.getInstance(getContext()).getWindowWidth()));
         mWindowSizeEdit.setSecondText(Integer.toString(SettingsStore.getInstance(getContext()).getWindowHeight()));
         mWindowSizeEdit.setOnClickListener(mWindowSizeListener);
@@ -128,7 +128,7 @@ public class DisplayOptionsWidget extends UIWidget implements
         mMaxWindowSizeEdit.setHint1(String.valueOf(SettingsStore.MAX_WINDOW_WIDTH_DEFAULT));
         mMaxWindowSizeEdit.setHint2(String.valueOf(SettingsStore.MAX_WINDOW_HEIGHT_DEFAULT));
         mMaxWindowSizeEdit.setDefaultFirstValue(String.valueOf(SettingsStore.MAX_WINDOW_WIDTH_DEFAULT));
-        mMaxWindowSizeEdit.setDefaultFirstValue(String.valueOf(SettingsStore.MAX_WINDOW_HEIGHT_DEFAULT));
+        mMaxWindowSizeEdit.setDefaultSecondValue(String.valueOf(SettingsStore.MAX_WINDOW_HEIGHT_DEFAULT));
         mMaxWindowSizeEdit.setFirstText(Integer.toString(SettingsStore.getInstance(getContext()).getMaxWindowWidth()));
         mMaxWindowSizeEdit.setSecondText(Integer.toString(SettingsStore.getInstance(getContext()).getMaxWindowHeight()));
         mMaxWindowSizeEdit.setOnClickListener(mMaxWindowSizeListener);
