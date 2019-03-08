@@ -44,7 +44,7 @@ struct ControllerContainer::State {
   }
 
   void SetUpModelsGroup(const int32_t aModelIndex) {
-    if (models.size() >= aModelIndex) {
+    if (aModelIndex >= models.size()) {
       models.resize((size_t)(aModelIndex + 1));
     }
     if (!models[aModelIndex]) {
