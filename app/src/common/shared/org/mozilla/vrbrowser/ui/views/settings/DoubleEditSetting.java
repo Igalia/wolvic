@@ -79,7 +79,11 @@ public class DoubleEditSetting extends SingleEditSetting {
     }
 
     public String getSecondText() {
-        return mEdit2.getText().toString().equals(mEdit2.getHint()) ? mDefaultSecondValue : mEdit2.getText().toString();
+        if (mDefaultSecondValue != null) {
+            return mEdit2.getText().toString().equals(mEdit2.getHint()) ? mDefaultSecondValue : mEdit2.getText().toString();
+        } else {
+            return mEdit2.getText().toString();
+        }
     }
 
     public void setSecondText(String text) {
