@@ -580,7 +580,13 @@ struct DeviceDelegateOculusVR::State {
     vrb::Matrix controllerTransform = vrb::Matrix::Identity();
     ovrInputStateTrackedRemote controllerState = {};
     ElbowModel::HandEnum hand = ElbowModel::HandEnum::Right;
+
+    bool Is6DOF() const {
+      return (controllerCapabilities.ControllerCapabilities & ovrControllerCaps_HasPositionTracking) &&
+             (controllerCapabilities.ControllerCapabilities & ovrControllerCaps_HasOrientationTracking);
+    }
   };
+
   vrb::RenderContextWeak context;
   android_app* app = nullptr;
   bool initialized = false;
@@ -709,8 +715,14 @@ struct DeviceDelegateOculusVR::State {
     aHeight = scale * (uint32_t)(vrapi_GetSystemPropertyInt(&java, VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_HEIGHT));
   }
 
-  bool Is6DOF() const {
+  bool IsOculusQuest() const {
     return deviceType >= VRAPI_DEVICE_TYPE_OCULUSQUEST_START && deviceType <= VRAPI_DEVICE_TYPE_OCULUSQUEST_END;
+  }
+
+  bool Is6DOF() const {
+    // ovrInputHeadsetCapabilities is unavailable in Oculus mobile SDK,
+    // the current workaround is checking if it is Quest.
+    return IsOculusQuest();
   }
 
   void SetRenderSize(device::RenderMode aRenderMode) {
@@ -747,15 +759,14 @@ struct DeviceDelegateOculusVR::State {
       ovrInputCapabilityHeader capsHeader = {};
       if (vrapi_EnumerateInputDevices(ovr, index++, &capsHeader) < 0) {
         // No more input devices to enumerate
-        controller->SetEnabled(index-1, false);
+        controller->SetEnabled(index - 1, false);
         break;
       }
 
-      if (state.size() <= count) {
-        state.push_back(ControllerState());
-      }
-
       if (capsHeader.Type == ovrControllerType_TrackedRemote) {
+        if (state.size() <= count) {
+          state.push_back(ControllerState());
+        }
         // We are only interested in the remote controller input device
         state[count].controllerCapabilities.Header = capsHeader;
         ovrResult result = vrapi_GetInputDeviceCapabilities(ovr, &state[count].controllerCapabilities.Header);
@@ -772,7 +783,7 @@ struct DeviceDelegateOculusVR::State {
 
         // We need to call CreateController() to update the model index to avoid some cases that
         // the controller index is changed.
-        if (Is6DOF()) {
+        if (state[count].controllerCapabilities.ControllerCapabilities & ovrControllerCaps_ModelOculusTouch) {
           std::string controllerID;
           if (state[count].hand == ElbowModel::HandEnum::Left) {
             controllerID = "Oculus Touch (Left)";
@@ -839,7 +850,7 @@ struct DeviceDelegateOculusVR::State {
       bool trackpadPressed = false, trackpadTouched = false;
       float axes[kNumAxes];
       float trackpadX, trackpadY = 0.0f;
-      if (Is6DOF()) {
+      if (state[i].Is6DOF()) {
         triggerPressed = (state[i].controllerState.Buttons & ovrButton_Trigger) != 0;
         triggerTouched = (state[i].controllerState.Touches & ovrTouch_IndexTrigger) != 0;
         trackpadPressed = (state[i].controllerState.Buttons & ovrButton_Joystick) != 0;
@@ -1032,7 +1043,7 @@ DeviceDelegateOculusVR::ReleaseControllerDelegate() {
 
 int32_t
 DeviceDelegateOculusVR::GetControllerModelCount() const {
-  if (m.Is6DOF()) {
+  if (m.IsOculusQuest()) {
     return 2;
   } else {
     return 1;
@@ -1043,7 +1054,7 @@ const std::string
 DeviceDelegateOculusVR::GetControllerModelName(const int32_t aModelIndex) const {
   static std::string name = "";
 
-  if (m.Is6DOF()) {
+  if (m.IsOculusQuest()) {
     switch (aModelIndex) {
       case 0:
         name = "vr_controller_oculusquest_left.obj";
