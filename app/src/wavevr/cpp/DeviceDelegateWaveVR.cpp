@@ -187,7 +187,8 @@ struct DeviceDelegateWaveVR::State {
         delegate->SetCapabilityFlags(index, device::Orientation);
       }
 
-      const bool bumperPressed = WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Digital_Trigger);
+      const bool bumperPressed = WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Digital_Trigger)
+                                || WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Trigger);
       const bool touchpadPressed = WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Touchpad);
       const bool touchpadTouched = WVR_GetInputTouchState(controller.type, WVR_InputId_Alias1_Touchpad);
       const bool menuPressed = WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Menu);
@@ -395,6 +396,9 @@ DeviceDelegateWaveVR::ProcessEvents() {
         break;
       case WVR_EventType_RecenterSuccess: {
         VRB_DEBUG("WVR_EventType_RecenterSuccess");
+        WVR_InAppRecenter(WVR_RecenterType_YawAndPosition);
+        m.recentered = !m.ignoreNextRecenter;
+        m.ignoreNextRecenter = false;
       }
         break;
       case WVR_EventType_RecenterFail: {
@@ -497,7 +501,7 @@ DeviceDelegateWaveVR::StartFrame() {
       continue;
     }
     vrb::Matrix controllerTransform = vrb::Matrix::FromRowMajor(pose.poseMatrix.m);
-    if (m.elbow) {
+    if (m.elbow && !pose.is6DoFPose) {
       ElbowModel::HandEnum hand = ElbowModel::HandEnum::Right;
       if (m.devicePairs[id].type == WVR_DeviceType_Controller_Left) {
         hand = ElbowModel::HandEnum::Left;
