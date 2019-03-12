@@ -36,7 +36,7 @@ def main(name, argv):
          decode = True
    if data_name == '':
       data_name = os.path.basename(secret_path)
-   secrets = taskcluster.Secrets({'baseUrl': 'http://taskcluster/secrets/v1'})
+   secrets = taskcluster.Secrets({'rootUrl': os.environ['TASKCLUSTER_PROXY_URL']})
    data = secrets.get(secret_path)
    data = data['secret'][data_name]
    if decode:
