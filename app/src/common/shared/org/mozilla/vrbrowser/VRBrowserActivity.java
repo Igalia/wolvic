@@ -27,12 +27,12 @@ import android.view.Surface;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import org.mozilla.gecko.GeckoVRManager;
 import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.geckoview.CrashReporter;
 import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoSession;
+import org.mozilla.geckoview.GeckoVRManager;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.audio.VRAudioTheme;
 import org.mozilla.vrbrowser.browser.PermissionDelegate;

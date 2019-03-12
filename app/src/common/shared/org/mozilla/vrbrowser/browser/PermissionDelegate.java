@@ -118,10 +118,6 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
             type = PermissionWidget.PermissionType.Notification;
         } else if (aType == PERMISSION_GEOLOCATION) {
             type = PermissionWidget.PermissionType.Location;
-        } else if (aType == PERMISSION_AUTOPLAY_MEDIA) {
-            Log.d(LOGTAG, "Auto accepting PERMISSION_AUTOPLAY_MEDIA");
-            callback.grant();
-            return;
         } else {
             Log.e(LOGTAG, "onContentPermissionRequest unknown permission: " + aType);
             callback.reject();
