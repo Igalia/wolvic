@@ -107,19 +107,12 @@ public class PlatformActivity extends Activity {
 
         mLayout.setAsyncReprojectionEnabled(true);
         mLayout.setPresentationView(mView);
-
-        try {
-            final Class flatActivityClass = Class.forName(FLAT_ACTIVITY_CLASSNAME);
-            mLayout.getUiLayout().setCloseButtonListener(new Runnable() {
-                @Override
-                public void run() {
-                    startActivity(new Intent(PlatformActivity.this, flatActivityClass));
-                }
-            });
-        }
-        catch (ClassNotFoundException e) {
-            Log.e(LOGTAG,"Class not found: " + e.toString());
-        }
+        mLayout.getUiLayout().setCloseButtonListener(new Runnable() {
+            @Override
+            public void run() {
+                finish();
+            }
+        });
 
         setImmersiveSticky();
         setContentView(mLayout);
@@ -198,6 +191,13 @@ public class PlatformActivity extends Activity {
             }
             mPendingEvents.clear();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Discard back button presses that would otherwise exit the app,
+        // as the UI standard on this platform is to require the use of
+        // the Daydream button to exit application.
     }
 
     private native void activityCreated(Object aAssetManager, final long aContext);

@@ -37,6 +37,13 @@ public class PlatformActivity extends VRActivity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        // Discard back button presses that would otherwise exit the app,
+        // as the UI standard on this platform is to require the use of
+        // the system menu to exit applications.
+    }
+
     protected native void queueRunnable(Runnable aRunnable);
     protected native void initializeJava(AssetManager aAssets);
 }
