@@ -37,11 +37,12 @@ RUN cd /opt && wget -q https://dl.google.com/android/repository/sdk-tools-linux-
 RUN cd /opt && unzip android-sdk.zip
 RUN cd /opt && rm -f android-sdk.zip
 
+ENV ANDROID_BUILD_TOOLS_VERSION "28.0.3"
 ENV ANDROID_SDK_HOME /opt
 ENV ANDROID_HOME /opt
-ENV PATH ${PATH}:${ANDROID_SDK_HOME}/tools/bin:${ANDROID_SDK_HOME}/platform-tools:/opt/tools:${ANDROID_SDK_HOME}/build-tools/27.0.3
+ENV PATH ${PATH}:${ANDROID_SDK_HOME}/tools/bin:${ANDROID_SDK_HOME}/platform-tools:/opt/tools:${ANDROID_SDK_HOME}/build-tools/${ANDROID_BUILD_TOOLS_VERSION}
 
-RUN echo y | sdkmanager "build-tools;28.0.3"
+RUN echo y | sdkmanager "build-tools;${ANDROID_BUILD_TOOLS_VERSION}"
 RUN echo y | sdkmanager "ndk-bundle"
 RUN echo y | sdkmanager "cmake;3.10.2.4988404"
 RUN echo y | sdkmanager "platforms;android-28"
