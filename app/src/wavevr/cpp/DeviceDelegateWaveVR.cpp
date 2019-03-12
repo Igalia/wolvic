@@ -426,6 +426,7 @@ DeviceDelegateWaveVR::ProcessEvents() {
         break;
       case WVR_EventType_TouchUntapped: {
         VRB_DEBUG("WVR_EventType_TouchUntapped");
+        break;
       }
       case WVR_EventType_LeftToRightSwipe: {
         VRB_DEBUG("WVR_EventType_LeftToRightSwipe");
