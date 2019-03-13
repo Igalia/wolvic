@@ -725,6 +725,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
             out.write("pref(\"webgl.enable-surface-texture\", true);\n".getBytes());
             out.write("pref(\"apz.allow_double_tap_zooming\", false);\n".getBytes());
             out.write("pref(\"dom.webcomponents.customelements.enabled\", true);\n".getBytes());
+            out.write("pref(\"javascript.options.ion\", true);\n".getBytes());
             // Prevent autozoom when giving a form field focus.
             out.write("pref(\"formhelper.autozoom\", false);\n".getBytes());
             // Uncomment this to enable WebRender. WARNING NOT READY FOR USAGE.
