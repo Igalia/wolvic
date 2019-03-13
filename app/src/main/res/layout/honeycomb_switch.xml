@@ -8,7 +8,7 @@
         android:layout_gravity="center"
         android:layout_marginStart="5dp"
         android:layout_marginEnd="5dp"
-        android:fontFamily="sans-serif-light"
+        android:fontFamily="sans-serif"
         android:gravity="center"
         android:paddingBottom="5dp"
         android:textColor="@color/white"

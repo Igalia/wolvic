@@ -62,6 +62,10 @@ public class AlertPromptWidget extends PromptWidget {
         if (mCallback != null) {
             mCallback.dismiss();
         }
+
+        if (mDelegate != null) {
+            mDelegate.onDismiss();
+        }
     }
 
     public void setDelegate(GeckoSession.PromptDelegate.AlertCallback delegate) {

@@ -16,7 +16,7 @@
                 style="@style/settingsDescription"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:layout_toStartOf="@id/environment_radio"
+                android:layout_toStartOf="@id/environmentRadio"
                 tools:text="Radio Setting Description" />
 
             <RadioGroup

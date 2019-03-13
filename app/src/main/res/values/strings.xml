@@ -13,6 +13,12 @@
          permission requested for in the permission dialog box. -->
     <string name="permission_reject">Don’t Allow</string>
 
+    <!-- This string is displayed in the button that means the user wants to enable/grant a permission. -->
+    <string name="permission_enable">Enable</string>
+
+    <!-- This string is displayed in a label that means the permission has already been granted -->
+    <string name="permission_enabled">Enabled</string>
+
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's camera.
          '%1$s' will be replaced at runtime with the website's domain name. -->
@@ -63,9 +69,13 @@
          On/Off switch which toggles whether browser-level Telemetry is reported back to Mozilla. -->
     <string name="settings_telemetry">Telemetry</string>
 
+    <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
+         opens a dialog box that contains privacy and security related settings. -->
+    <string name="settings_privacy_security">Privacy &amp; Security</string>
+
     <!-- This string is used to label a button that, when pressed, loads a website that
          describes Mozilla's Privacy Policy. -->
-    <string name="settings_privacy">Privacy Policy</string>
+    <string name="settings_privacy_policy">Privacy Policy</string>
 
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains settings that an application or Web developer might want to change. -->
@@ -205,6 +215,11 @@
          indicates that, when the button is pressed, the user's edits will be saved. -->
     <string name="developer_options_save">Save</string>
 
+    <!-- This string is used to label the 'Show' button in Settings. It
+     indicates that, when the button is pressed opens a dialog box that contains more information.
+     For example it's used to open a URL with the privacy policy. -->
+    <string name="developer_options_show">Show</string>
+
     <!-- This string is used to label a numerical entry field where the user may enter a new value
          for the virtual displays Dots Per Inch (DPI). -->
     <string name="developer_options_display_dpi">Display DPI:</string>
@@ -239,6 +254,16 @@
     <!-- This string is used to label the 'VR' radio button of the 'User-Agent Mode' settings option. -->
     <string name="developer_options_ua_vr">VR</string>
 
+    <!-- This string is used to label a set of radio buttons that allow the user to change the
+     scroll direction of the remote controller. -->
+    <string name="developer_options_scroll_direction">Scroll Direction</string>
+
+    <!-- This string is used to label the 'Natural' radio button of the 'Scroll Direction' settings option. -->
+    <string name="developer_options_scroll_direction_natural">Natural</string>
+
+    <!-- This string is used to label the 'Reversed' radio button of the 'Scroll Direction' settings option. -->
+    <string name="developer_options_scroll_direction_reversed">Reversed</string>
+
     <!-- This string describes what the 'Reset' button in the developer options does which is
          restore all the developer settings to their default value. -->
     <string name="developer_options_reset">Reset Developer Settings</string>
@@ -272,6 +297,24 @@
     <!-- This string is used to label a text entry field where the user may enter a new value
          for the home page. -->
     <string name="developer_options_homepage">Homepage</string>
+
+    <!-- This string labels an On/Off switch in the Privacy and Security settings dialog
+     and is used to enable or disable tracking protection. -->
+    <string name="security_options_tracking_protection">Tracking Protection</string>
+
+    <string name="security_options_permissions_title">Permissions (Allow Firefox to access)</string>
+
+    <string name="security_options_permissions_reject_message">This permission can only be disabled in system permissions</string>
+
+    <string name="security_options_permission_camera">Camera</string>
+
+    <string name="security_options_permission_microphone">Microphone</string>
+
+    <string name="security_options_permission_location">Location</string>
+
+    <string name="security_options_permission_notifications">Notifications</string>
+
+    <string name="security_options_permission_storage">Read External Storage</string>
 
     <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'On'. -->
     <string name="on">On</string>
@@ -430,6 +473,15 @@
 
     <!-- This string labels the Reset button that restores the default display settings values. -->
     <string name="display_options_reset">Reset Display Settings</string>
+
+    <!-- This string labels the Reset button that restores the default privacy and security settings values. -->
+    <string name="privacy_options_reset">Reset Privacy &amp; Security Settings</string>
+
+    <!-- This string labels the Reset button that restores the default controller settings values. -->
+    <string name="controller_options_reset">Reset Controller Settings</string>
+
+    <!-- This string labels the Reset button that restores the default environment settings values. -->
+    <string name="environment_options_reset">Reset Environment Settings</string>
 
     <!-- This string labels the Reset button that restores the default voice search language settings values. -->
     <string name="language_options_reset">Reset Voice Search Language Settings</string>

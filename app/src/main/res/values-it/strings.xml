@@ -65,7 +65,7 @@
 	
 	<!-- This string is used to label a button that, when pressed, loads a website that
          describes Mozilla's Privacy Policy. -->
-	<string name="settings_privacy">Informativa sulla privacy</string>
+	<string name="settings_privacy_policy">Informativa sulla privacy</string>
 	
 	<!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains settings that an application or Web developer might want to change. -->

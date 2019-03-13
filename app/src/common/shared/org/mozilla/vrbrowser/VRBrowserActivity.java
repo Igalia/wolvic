@@ -131,6 +131,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private LinkedList<Pair<Object, Float>> mBrightnessQueue;
     private Pair<Object, Float> mCurrentBrightness;
     private SearchEngineWrapper mSearchEngineWrapper;
+    private SettingsStore mSettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,6 +181,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             // mAudioEngine.playSound(AudioEngine.Sound.AMBIENT, true);
         });
         mAudioUpdateRunnable = () -> mAudioEngine.update();
+
+        mSettings = SettingsStore.getInstance(this);
 
         loadFromIntent(getIntent());
         queueRunnable(() -> createOffscreenDisplay());
@@ -531,7 +534,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         runOnUiThread(() -> {
             Widget widget = mWidgets.get(aHandle);
             if (widget != null) {
-                MotionEventGenerator.dispatchScroll(widget, aDevice, aX, aY);
+                float scrollDirection = mSettings.getScrollDirection() == 0 ? 1.0f : -1.0f;
+                MotionEventGenerator.dispatchScroll(widget, aDevice, aX * scrollDirection, aY * scrollDirection);
             } else {
                 Log.e(LOGTAG, "Failed to find widget for scroll event: " + aHandle);
             }
@@ -965,12 +969,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
-    public void requestPermission(@NonNull String uri, @NonNull String permission, GeckoSession.PermissionDelegate.Callback aCallback) {
-        mPermissionDelegate.onAppPermissionRequest(
-                SessionStore.get().getCurrentSession(),
-                uri,
-                permission,
-                aCallback);
+    public void requestPermission(String uri, @NonNull String permission, GeckoSession.PermissionDelegate.Callback aCallback) {
+        if (uri != null && !uri.isEmpty()) {
+            mPermissionDelegate.onAppPermissionRequest(SessionStore.get().getCurrentSession(), uri, permission, aCallback);
+        } else {
+            mPermissionDelegate.onAndroidPermissionsRequest(SessionStore.get().getCurrentSession(), new String[]{permission}, aCallback);
+        }
     }
 
     @Override

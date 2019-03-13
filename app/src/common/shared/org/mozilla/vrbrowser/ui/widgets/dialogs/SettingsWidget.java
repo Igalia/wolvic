@@ -28,8 +28,10 @@ import org.mozilla.vrbrowser.ui.views.HoneycombSwitch;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
+import org.mozilla.vrbrowser.ui.widgets.options.ControllerOptionsWidget;
 import org.mozilla.vrbrowser.ui.widgets.options.DeveloperOptionsWidget;
 import org.mozilla.vrbrowser.ui.widgets.options.DisplayOptionsWidget;
+import org.mozilla.vrbrowser.ui.widgets.options.PrivacyOptionsWidget;
 import org.mozilla.vrbrowser.ui.widgets.options.VoiceSearchLanguageOptionsWidget;
 
 import java.io.UnsupportedEncodingException;
@@ -46,6 +48,9 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
     private int mDeveloperOptionsDialogHandle = -1;
     private int mLanguageOptionsDialogHandle = -1;
     private int mDisplayOptionsDialogHandle = -1;
+    private int mControllerOptionsDialogHandle = -1;
+    private int mPrivacyOptionsDialogHandle = -1;
+    private int mEnvironmentOptionsDialogHandle = -1;
     private TextView mBuildText;
 
     class VersionGestureListener extends GestureDetector.SimpleOnGestureListener {
@@ -147,6 +152,15 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
             onDisplayOptionsClick();
         });
 
+        HoneycombButton environmentButton = findViewById(R.id.environmentButton);
+        environmentButton.setOnClickListener(view -> {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
+
+            showEnvironmentOptionsDialog();
+        });
+
         TextView versionText = findViewById(R.id.versionText);
         try {
             PackageInfo pInfo = getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), 0);
@@ -186,6 +200,15 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
             onDeveloperOptionsClick();
         });
 
+        HoneycombButton controllerOptionsButton = findViewById(R.id.controllerOptionsButton);
+        controllerOptionsButton.setOnClickListener(view -> {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
+
+            showControllerOptionsDialog();
+        });
+
         mAudio = AudioEngine.fromContext(aContext);
     }
 
@@ -219,15 +242,16 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
     }
 
     private void onSettingsPrivacyClick() {
-        GeckoSession session = SessionStore.get().getCurrentSession();
-        if (session == null) {
-            int sessionId = SessionStore.get().createSession();
-            SessionStore.get().setCurrentSession(sessionId);
+        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
+        hide(REMOVE_WIDGET);
+        UIWidget widget = getChild(mPrivacyOptionsDialogHandle);
+        if (widget == null) {
+            widget = createChild(PrivacyOptionsWidget.class, false);
+            mPrivacyOptionsDialogHandle = widget.getHandle();
+            widget.setDelegate(() -> onOptionsDialogDismissed());
         }
 
-        SessionStore.get().loadUri(getContext().getString(R.string.private_policy_url));
-
-        hide(REMOVE_WIDGET);
+        widget.show();
     }
 
     private void onSettingsReportClick() {
@@ -322,6 +346,19 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
         widget.show();
     }
 
+    private void showControllerOptionsDialog() {
+        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
+        hide(REMOVE_WIDGET);
+        UIWidget widget = getChild(mControllerOptionsDialogHandle);
+        if (widget == null) {
+            widget = createChild(ControllerOptionsWidget.class, false);
+            mControllerOptionsDialogHandle = widget.getHandle();
+            widget.setDelegate(() -> onOptionsDialogDismissed());
+        }
+
+        widget.show();
+    }
+
     private void showLanguageOptionsDialog() {
         mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
         hide(UIWidget.REMOVE_WIDGET);
@@ -342,6 +379,19 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
         if (widget == null) {
             widget = createChild(DisplayOptionsWidget.class, false);
             mDisplayOptionsDialogHandle = widget.getHandle();
+            widget.setDelegate(() -> onOptionsDialogDismissed());
+        }
+
+        widget.show();
+    }
+
+    private void showEnvironmentOptionsDialog() {
+        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
+        hide(UIWidget.REMOVE_WIDGET);
+        UIWidget widget = getChild(mEnvironmentOptionsDialogHandle);
+        if (widget == null) {
+            widget = createChild(EnvironmentOptionsWidget.class, false);
+            mEnvironmentOptionsDialogHandle = widget.getHandle();
             widget.setDelegate(() -> onOptionsDialogDismissed());
         }
 

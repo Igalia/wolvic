@@ -28,8 +28,10 @@
 
     <declare-styleable name="RadioGroupSetting">
         <attr name="description" />
+        <attr name="itemMargin" />
         <attr name="options" format="reference" />
         <attr name="values" format="reference" />
+        <attr name="images" format="reference" />
         <attr name="layout" format="reference" />
     </declare-styleable>
 

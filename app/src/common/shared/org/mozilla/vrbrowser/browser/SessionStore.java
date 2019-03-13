@@ -89,7 +89,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     class SessionSettings {
         boolean multiprocess = SettingsStore.getInstance(mContext).isMultiprocessEnabled();
         boolean privateMode = false;
-        boolean trackingProtection = true;
+        boolean trackingProtection = SettingsStore.getInstance(mContext).isTrackingProtectionEnabled();
         boolean suspendMediaWhenInactive = true;
         int userAgentMode = SettingsStore.getInstance(mContext).getUaMode();
         boolean servo = false;
@@ -872,7 +872,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
       }
     }
 
-    public void setMultiprocess(final boolean enabled) {
+    private void recreateSession(SessionStore.SessionSettings aSettings) {
         if (mCurrentSession != null) {
             final GeckoResult<GeckoSession.SessionState> state = mCurrentSession.saveState();
             state.then(new GeckoResult.OnValueListener<GeckoSession.SessionState, Object>() {
@@ -884,9 +884,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
                         mCurrentSession.close();
 
                         int oldSessionId = getCurrentSessionId();
-                        SessionStore.SessionSettings settings = new SessionStore.SessionSettings();
-                        settings.multiprocess = enabled;
-                        int sessionId = createSession(settings);
+                        int sessionId = createSession(aSettings);
                         GeckoSession session = getSession(sessionId);
                         session.restoreState(value);
                         setCurrentSession(sessionId);
@@ -903,6 +901,29 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
                     return null;
                 }
             });
+        }
+    }
+
+    private State getCurrentState() {
+        if (mCurrentSession != null) {
+            return mSessions.get(mCurrentSession.hashCode());
+        }
+        return null;
+    }
+
+    public void setMultiprocess(final boolean aEnabled) {
+        State state = getCurrentState();
+        if (state != null && state.mSettings.multiprocess != aEnabled) {
+            state.mSettings.multiprocess = aEnabled;
+            recreateSession(state.mSettings);
+        }
+    }
+
+    public void setTrackingProtection(final boolean aEnabled) {
+        State state = getCurrentState();
+        if (state != null && state.mSettings.trackingProtection != aEnabled) {
+            state.mSettings.trackingProtection = aEnabled;
+            recreateSession(state.mSettings);
         }
     }
 

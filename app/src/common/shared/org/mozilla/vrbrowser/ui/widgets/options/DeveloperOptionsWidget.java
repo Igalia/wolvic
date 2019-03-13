@@ -35,12 +35,8 @@ public class DeveloperOptionsWidget extends UIWidget implements
 
     private SwitchSetting mRemoteDebuggingSwitch;
     private SwitchSetting mConsoleLogsSwitch;
-    private SwitchSetting mEnvOverrideSwitch;
     private SwitchSetting mMultiprocessSwitch;
     private SwitchSetting mServoSwitch;
-
-    private RadioGroupSetting mEnvironmentsRadio;
-    private RadioGroupSetting mPointerColorRadio;
 
     private SingleEditSetting mHomepageEdit;
     private String mDefaultHomepageUrl;
@@ -99,10 +95,6 @@ public class DeveloperOptionsWidget extends UIWidget implements
         mConsoleLogsSwitch.setOnCheckedChangeListener(mConsoleLogsListener);
         setConsoleLogs(SettingsStore.getInstance(getContext()).isConsoleLogsEnabled(), false);
 
-        mEnvOverrideSwitch = findViewById(R.id.env_override_switch);
-        mEnvOverrideSwitch.setOnCheckedChangeListener(mEnvOverrideListener);
-        setEnvOverride(SettingsStore.getInstance(getContext()).isEnvironmentOverrideEnabled());
-
         mMultiprocessSwitch = findViewById(R.id.multiprocess_switch);
         mMultiprocessSwitch.setOnCheckedChangeListener(mMultiprocessListener);
         setMultiprocess(SettingsStore.getInstance(getContext()).isMultiprocessEnabled(), false);
@@ -114,16 +106,6 @@ public class DeveloperOptionsWidget extends UIWidget implements
             mServoSwitch.setOnCheckedChangeListener(mServoListener);
             setServo(SettingsStore.getInstance(getContext()).isServoEnabled(), false);
         }
-
-        String env = SettingsStore.getInstance(getContext()).getEnvironment();
-        mEnvironmentsRadio = findViewById(R.id.environment_radio);
-        mEnvironmentsRadio.setOnCheckedChangeListener(mEnvsListener);
-        setEnv(mEnvironmentsRadio.getIdForValue(env), false);
-
-        int color = SettingsStore.getInstance(getContext()).getPointerColor();
-        mPointerColorRadio = findViewById(R.id.pointer_radio);
-        mPointerColorRadio.setOnCheckedChangeListener(mPointerColorListener);
-        setPointerColor(mPointerColorRadio.getIdForValue(color), false);
 
         mResetButton = findViewById(R.id.resetButton);
         mResetButton.setOnClickListener(mResetListener);
@@ -207,25 +189,12 @@ public class DeveloperOptionsWidget extends UIWidget implements
         setConsoleLogs(value, doApply);
     };
 
-    private SwitchSetting.OnCheckedChangeListener mEnvOverrideListener = (compoundButton, value, doApply) -> {
-        setEnvOverride(value);
-        showRestartDialog();
-    };
-
     private SwitchSetting.OnCheckedChangeListener mMultiprocessListener = (compoundButton, value, doApply) -> {
         setMultiprocess(value, doApply);
     };
 
     private SwitchSetting.OnCheckedChangeListener mServoListener = (compoundButton, b, doApply) -> {
         setServo(b, true);
-    };
-
-    private RadioGroupSetting.OnCheckedChangeListener mEnvsListener = (radioGroup, checkedId, doApply) -> {
-        setEnv(checkedId, doApply);
-    };
-
-    private RadioGroupSetting.OnCheckedChangeListener mPointerColorListener = (radioGroup, checkedId, doApply) -> {
-        setPointerColor(checkedId, doApply);
     };
 
     private OnClickListener mResetListener = (view) -> {
@@ -245,15 +214,6 @@ public class DeveloperOptionsWidget extends UIWidget implements
             setServo(SettingsStore.SERVO_DEFAULT, true);
         }
         setHomepage(mDefaultHomepageUrl);
-
-        if (mEnvOverrideSwitch.isChecked() != SettingsStore.ENV_OVERRIDE_DEFAULT) {
-            setEnvOverride(SettingsStore.ENV_OVERRIDE_DEFAULT);
-            restart = true;
-        }
-
-        if (!mEnvironmentsRadio.getValueForId(mEnvironmentsRadio.getCheckedRadioButtonId()).equals(SettingsStore.ENV_DEFAULT)) {
-            setEnv(mEnvironmentsRadio.getIdForValue(SettingsStore.ENV_DEFAULT), true);
-        }
 
         if (restart)
             showRestartDialog();
@@ -290,14 +250,6 @@ public class DeveloperOptionsWidget extends UIWidget implements
         }
     }
 
-    private void setEnvOverride(boolean value) {
-        mEnvOverrideSwitch.setOnCheckedChangeListener(null);
-        mEnvOverrideSwitch.setValue(value, false);
-        mEnvOverrideSwitch.setOnCheckedChangeListener(mEnvOverrideListener);
-
-        SettingsStore.getInstance(getContext()).setEnvironmentOverrideEnabled(value);
-    }
-
     private void setMultiprocess(boolean value, boolean doApply) {
         mMultiprocessSwitch.setOnCheckedChangeListener(null);
         mMultiprocessSwitch.setValue(value, false);
@@ -319,30 +271,6 @@ public class DeveloperOptionsWidget extends UIWidget implements
 
         if (doApply) {
             SessionStore.get().setServo(value);
-        }
-    }
-
-    private void setEnv(int checkedId, boolean doApply) {
-        mEnvironmentsRadio.setOnCheckedChangeListener(null);
-        mEnvironmentsRadio.setChecked(checkedId, doApply);
-        mEnvironmentsRadio.setOnCheckedChangeListener(mEnvsListener);
-
-        SettingsStore.getInstance(getContext()).setEnvironment((String) mEnvironmentsRadio.getValueForId(checkedId));
-
-        if (doApply) {
-            mWidgetManager.updateEnvironment();
-        }
-    }
-
-    private void setPointerColor(int checkedId, boolean doApply) {
-        mPointerColorRadio.setOnCheckedChangeListener(null);
-        mPointerColorRadio.setChecked(checkedId, doApply);
-        mPointerColorRadio.setOnCheckedChangeListener(mPointerColorListener);
-
-        SettingsStore.getInstance(getContext()).setPointerColor((int)mPointerColorRadio.getValueForId(checkedId));
-
-        if (doApply) {
-            mWidgetManager.updatePointerColor();
         }
     }
 

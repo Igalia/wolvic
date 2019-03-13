@@ -214,6 +214,17 @@
         <item name="android:track">@drawable/switch_track</item>
     </style>
 
+    <style name="settingsHelpButton">
+        <item name="android:layout_width">20dp</item>
+        <item name="android:layout_height">20dp</item>
+        <item name="android:src">@drawable/ic_icon_tray_help_v2</item>
+        <item name="android:background">@drawable/setting_help_button_background</item>
+        <item name="tintColorList">@drawable/main_button_icon_color</item>
+        <item name="android:padding">3dp</item>
+        <item name="android:layout_marginStart">5dp</item>
+        <item name="android:layout_marginEnd">5dp</item>
+    </style>
+
     <style name="settingsSwitchText">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -221,7 +232,7 @@
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">@dimen/text_smaller_size</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:fontFamily">sans-serif</item>
     </style>
 
     <style name="settingsValue">
