@@ -93,6 +93,16 @@ public class PromptWidget extends UIWidget implements WidgetManagerDelegate.Focu
         }
     }
 
+    public void show(boolean focus) {
+        super.show(focus);
+        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
+    }
+
+    public void hide(@HideFlags int aHideFlags) {
+        super.hide(aHideFlags);
+        mWidgetManager.popWorldBrightness(this);
+    }
+
     // WidgetManagerDelegate.FocusChangeListener
     @Override
     public void onGlobalFocusChanged(View oldFocus, View newFocus) {

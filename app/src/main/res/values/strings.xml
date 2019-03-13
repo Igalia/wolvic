@@ -570,4 +570,13 @@
 
     <!-- This string is displayed in any button used for removing all the items in the current context. -->
     <string name="homepage_hint">Firefox Home (Default)</string>
+
+    <!-- This string is displayed in the title of an authentication prompt, which requests a username and a password. -->
+    <string name="authentication_required">Authentication Required</string>
+    <!-- This string is displayed as the label of a username input in an authentication prompt. -->
+    <string name="authentication_username">Username:</string>
+    <!-- This string is displayed as the label of a password input in an authentication prompt. -->
+    <string name="authentication_password">Password:</string>
+    <!-- This string is displayed as the label of a switch of an authentication prompt in order to show or hide the text in a password field. -->
+    <string name="authentication_show_password">Show password:</string>
 </resources>
