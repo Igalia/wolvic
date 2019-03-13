@@ -75,7 +75,7 @@ tasks:
           && git submodule update
           && . tools/taskcluster/get_third_party.sh
           && cp tools/gradle/taskcluster.properties ./user.properties
-          && ./gradlew --no-daemon --console=plain clean assembleNoapi assembleGooglevr assembleWavevr assembleOculusvr
+          && ./gradlew --no-daemon --console=plain clean assembleNoapi assembleGooglevr assembleWavevr assembleSvr assembleOculusvr
           && . tools/taskcluster/sign.sh staging-signing-token
           && . tools/taskcluster/upload_symbols.sh
       artifacts:
@@ -123,7 +123,7 @@ tasks:
           && git submodule update
           && . tools/taskcluster/get_third_party.sh
           && cp tools/gradle/taskcluster.properties ./user.properties
-          && ./gradlew --no-daemon --console=plain clean assembleNoapi assembleGooglevr assembleWavevr assembleOculusvr
+          && ./gradlew --no-daemon --console=plain clean assembleNoapi assembleGooglevr assembleWavevr assembleSvr assembleOculusvr
           && . tools/taskcluster/sign.sh release-signing-token -r
           && . tools/taskcluster/upload_symbols.sh
       artifacts:
