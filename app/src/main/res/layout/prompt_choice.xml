@@ -2,108 +2,100 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:background="@drawable/prompt_background"
+    android:orientation="vertical">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout"
+    <TextView
+        android:id="@+id/promptTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/prompt_background">
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:gravity="center_horizontal"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Title" />
 
-        <TextView
-            android:id="@+id/promptTitle"
+    <TextView
+        android:id="@+id/promptMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:ellipsize="end"
+        android:gravity="top|start"
+        android:scrollbars="vertical"
+        android:singleLine="true"
+        android:textAlignment="viewStart"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/promptTitle"
+        tools:text="Message" />
+
+    <org.mozilla.vrbrowser.ui.views.CustomListView
+        android:id="@+id/choiceslist"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="100"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:divider="@android:color/transparent"
+        android:smoothScrollbar="true"
+        android:overScrollMode="never"
+        android:dividerHeight="4dp" />
+
+    <LinearLayout
+        android:id="@+id/buttonsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
+
+        <Space
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="20dp"
-            android:gravity="center_horizontal"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Title" />
+            android:layout_height="0dp"
+            android:layout_weight="100" />
 
-        <TextView
-            android:id="@+id/promptMessage"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="20dp"
-            android:ellipsize="end"
-            android:gravity="top|start"
-            android:scrollbars="vertical"
-            android:singleLine="true"
-            android:textAlignment="viewStart"
-            android:textSize="18sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/promptTitle"
-            tools:text="Message" />
-
-        <LinearLayout
-            android:id="@+id/listContainer"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:maxHeight="@dimen/prompt_content_max_height"
-            app:layout_constraintBottom_toTopOf="@+id/buttonsLayout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/promptMessage">
-
-            <ListView
-                android:id="@+id/choiceslist"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="20dp"
-                android:divider="@android:color/transparent"
-                android:dividerHeight="4dp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/buttonsLayout"
+        <Button
+            android:id="@+id/negativeButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginBottom="10dp"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/listContainer">
+            android:background="@drawable/prompt_button_background"
+            android:fontFamily="sans-serif"
+            android:padding="10dp"
+            android:scaleType="fitCenter"
+            android:text="@string/cancel_button"
+            android:textAllCaps="true"
+            android:textColor="@drawable/prompt_button_text_color"
+            android:textSize="10pt"
+            android:textStyle="bold"
+            android:layout_weight="1"/>
 
-            <Button
-                android:id="@+id/negativeButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/prompt_button_background"
-                android:fontFamily="sans-serif"
-                android:padding="10dp"
-                android:scaleType="fitCenter"
-                android:text="@string/cancel_button"
-                android:textAllCaps="true"
-                android:textColor="@drawable/prompt_button_text_color"
-                android:textSize="10pt"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/positiveButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/prompt_button_background"
-                android:fontFamily="sans-serif"
-                android:padding="10dp"
-                android:scaleType="fitCenter"
-                android:text="@string/ok_button"
-                android:textAllCaps="true"
-                android:textColor="@drawable/prompt_button_text_color"
-                android:textSize="10pt"
-                android:textStyle="bold" />
-        </LinearLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <Button
+            android:id="@+id/positiveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/prompt_button_background"
+            android:fontFamily="sans-serif"
+            android:padding="10dp"
+            android:scaleType="fitCenter"
+            android:text="@string/ok_button"
+            android:textAllCaps="true"
+            android:textColor="@drawable/prompt_button_text_color"
+            android:textSize="10pt"
+            android:textStyle="bold"
+            android:layout_weight="1"/>
+    </LinearLayout>
 </LinearLayout>
