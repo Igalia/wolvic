@@ -201,16 +201,19 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         }
     }
 
+    private void resetKeyboardLayout() {
+        ((CustomKeyboard)mKeyboardview.getKeyboard()).setImeOptions(mEditorInfo.imeOptions);
+        if ((mEditorInfo.inputType & EditorInfo.TYPE_CLASS_NUMBER) == EditorInfo.TYPE_CLASS_NUMBER)
+            mKeyboardview.setKeyboard(mKeyboardSymbols1);
+        else
+            mKeyboardview.setKeyboard(mKeyboardQuerty);
+    }
+
     public void updateFocusedView(View aFocusedView) {
         mFocusedView = aFocusedView;
         if (aFocusedView != null && aFocusedView.onCheckIsTextEditor()) {
             mInputConnection = aFocusedView.onCreateInputConnection(mEditorInfo);
-            ((CustomKeyboard)mKeyboardview.getKeyboard()).setImeOptions(mEditorInfo.imeOptions);
-            if ((mEditorInfo.inputType & EditorInfo.TYPE_CLASS_NUMBER) == EditorInfo.TYPE_CLASS_NUMBER)
-                mKeyboardview.setKeyboard(mKeyboardSymbols1);
-            else
-                mKeyboardview.setKeyboard(mKeyboardQuerty);
-
+            resetKeyboardLayout();
         } else {
             mInputConnection = null;
         }
@@ -544,7 +547,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
     @Override
     public void restartInput(@NonNull GeckoSession session, int reason) {
-
+        resetKeyboardLayout();
     }
 
     @Override
