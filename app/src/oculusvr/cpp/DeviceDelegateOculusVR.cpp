@@ -869,8 +869,9 @@ struct DeviceDelegateOculusVR::State {
           const bool xTouched = (state[i].controllerState.Touches & ovrTouch_X) != 0;
           const bool yPressed = (state[i].controllerState.Buttons & ovrButton_Y) != 0;
           const bool yTouched = (state[i].controllerState.Touches & ovrTouch_Y) != 0;
+          const bool menuPressed = (state[i].controllerState.Buttons & ovrButton_Enter) != 0;
 
-          controller->SetButtonState(i, ControllerDelegate::BUTTON_APP, -1, yPressed, yTouched);
+          controller->SetButtonState(i, ControllerDelegate::BUTTON_APP, -1, menuPressed, menuPressed);
           controller->SetButtonState(i, ControllerDelegate::BUTTON_OTHERS, 3, xPressed, xTouched);
           controller->SetButtonState(i, ControllerDelegate::BUTTON_OTHERS, 4, yPressed, yTouched);
         } else if (state[i].hand == ElbowModel::HandEnum::Right) {
@@ -879,7 +880,6 @@ struct DeviceDelegateOculusVR::State {
           const bool bPressed = (state[i].controllerState.Buttons & ovrButton_B) != 0;
           const bool bTouched = (state[i].controllerState.Touches & ovrTouch_B) != 0;
 
-          controller->SetButtonState(i, ControllerDelegate::BUTTON_APP, -1, bPressed, bTouched);
           controller->SetButtonState(i, ControllerDelegate::BUTTON_OTHERS, 3, aPressed, aTouched);
           controller->SetButtonState(i, ControllerDelegate::BUTTON_OTHERS, 4, bPressed, bTouched);
         } else {
