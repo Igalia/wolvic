@@ -280,6 +280,9 @@
     <string name="developer_options_env_void">Void</string>
 
     <!-- This string labels the radio button that selects the 'Cave' environment. -->
+    <string name="developer_options_env_island">Island</string>
+
+    <!-- This string labels the radio button that selects the 'Cave' environment. -->
     <string name="developer_options_env_cave">Cave</string>
 
     <!-- This string labels the radio button that selects the 'Meadow' environment. -->

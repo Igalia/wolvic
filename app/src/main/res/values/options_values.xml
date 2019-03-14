@@ -3,18 +3,21 @@
     <!-- Environments Options -->
     <string-array name="developer_options_environments" translatable="false">
         <item>@string/developer_options_env_void</item>
+        <item>@string/developer_options_env_island</item>
         <item>@string/developer_options_env_cave</item>
         <item>@string/developer_options_env_meadow</item>
     </string-array>
 
     <string-array name="developer_options_environments_values" translatable="false">
         <item>void</item>
+        <item>island</item>
         <item>cave</item>
         <item>meadow</item>
     </string-array>
 
     <array name="developer_options_environments_images" translatable="false">
         <item>@color/black</item>
+        <item>@drawable/environment_island</item>
         <item>@drawable/environment_cave</item>
         <item>@drawable/environment_meadow</item>
     </array>
