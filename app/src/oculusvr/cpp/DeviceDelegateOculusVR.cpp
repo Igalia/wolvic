@@ -794,7 +794,7 @@ struct DeviceDelegateOculusVR::State {
           controller->SetButtonCount(count, 6);
         } else {
           // Oculus Go only has one kind of controller model.
-          controller->CreateController(count, 0, "Gear VR Controller");
+          controller->CreateController(count, 0, "Oculus Go Controller");
           controller->SetButtonCount(count, 2);
         }
 
