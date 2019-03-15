@@ -120,6 +120,10 @@ public class VideoProjectionMenuWidget extends MenuWidget {
         return mSelectedProjection;
     }
 
+    public void setSelectedProjection(@VideoProjectionFlags int aProjection) {
+        mSelectedProjection = aProjection;
+    }
+
     public static @VideoProjectionFlags Integer getAutomaticProjection(String aURL, AtomicBoolean autoEnter) {
         if (aURL == null) {
             return null;

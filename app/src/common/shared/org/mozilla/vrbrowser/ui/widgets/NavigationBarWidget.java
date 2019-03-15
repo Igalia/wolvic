@@ -494,6 +494,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         }
         mIsInVRVideo = true;
         mWidgetManager.pushBackHandler(mVRVideoBackHandler);
+        mProjectionMenu.setSelectedProjection(aProjection);
         // Backup the placement because the same widget is reused in FullScreen & MediaControl menus
         mProjectionMenuPlacement.copyFrom(mProjectionMenu.getPlacement());
 
@@ -512,7 +513,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mWindowWidget.setVisible(false);
 
         closeFloatingMenus();
-        if (mProjectionMenu.getSelectedProjection() != VideoProjectionMenuWidget.VIDEO_PROJECTION_3D_SIDE_BY_SIDE) {
+        if (aProjection != VideoProjectionMenuWidget.VIDEO_PROJECTION_3D_SIDE_BY_SIDE) {
             mWidgetManager.setControllersVisible(false);
         }
 
