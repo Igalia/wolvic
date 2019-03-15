@@ -41,9 +41,10 @@ public class MotionEventGenerator {
 
     private static SparseArray<Device> devices = new SparseArray<>();
 
+
     private static void generateEvent(Widget aWidget, Device aDevice, int aAction, boolean aGeneric) {
         MotionEvent event = MotionEvent.obtain(
-                /*mDownTime*/ aDevice.mDownTime,
+                /*mDownTime*/ 0, // aDevice.mDownTime,
                 /*eventTime*/ SystemClock.uptimeMillis(),
                 /*action*/ aAction,
                 /*pointerCount*/ 1,
@@ -53,7 +54,7 @@ public class MotionEventGenerator {
                 /*buttonState*/ 0,
                 /*xPrecision*/ 0,
                 /*yPrecision*/ 0,
-                /*deviceId*/ aDevice.mDevice,
+                /*deviceId*/ 0, // aDevice.mDevice,
                 /*edgeFlags*/ 0,
                 /*source*/ InputDevice.SOURCE_TOUCHSCREEN,
                 /*flags*/ 0);
