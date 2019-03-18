@@ -66,8 +66,10 @@ struct Skybox::State {
   std::string basePath;
   std::string extension;
   TextureCubeMapPtr texture;
+  vrb::Color tintColor;
   State():
-      layerTextureHandle(0)
+      layerTextureHandle(0),
+      tintColor(1.0f, 1.0f, 1.0f, 1.0f)
   {}
 
   void Initialize() {
@@ -119,22 +121,18 @@ struct Skybox::State {
                                -kLength * cubeVertices[i + 2]));
       }
 
-      if (!geometry) {
-        geometry = vrb::Geometry::Create(aContext);
-        geometry->SetVertexArray(array);
+      geometry = vrb::Geometry::Create(aContext);
+      geometry->SetVertexArray(array);
 
-        for (int i = 0; i < cubeIndices.size(); i += 4) {
-          std::vector<int> indices = {cubeIndices[i] + 1, cubeIndices[i + 1] + 1,
-                                      cubeIndices[i + 2] + 1, cubeIndices[i + 3] + 1};
-          geometry->AddFace(indices, indices, {});
-        }
-        RenderStatePtr state = RenderState::Create(aContext);
-        geometry->SetRenderState(state);
+      for (int i = 0; i < cubeIndices.size(); i += 4) {
+        std::vector<int> indices = {cubeIndices[i] + 1, cubeIndices[i + 1] + 1,
+                                    cubeIndices[i + 2] + 1, cubeIndices[i + 3] + 1};
+        geometry->AddFace(indices, indices, {});
       }
-
+      RenderStatePtr state = RenderState::Create(aContext);
+      geometry->SetRenderState(state);
 
       texture = LoadTextureCube(aContext, basePath, extension);
-      vrb::RenderStatePtr state = geometry->GetRenderState();
       state->SetTexture(texture);
       state->SetMaterial(Color(1.0f, 1.0f, 1.0f), Color(1.0f, 1.0f, 1.0f), Color(0.0f, 0.0f, 0.0f),
                          0.0f);
@@ -144,7 +142,17 @@ struct Skybox::State {
       return group;
     };
 
-    loader->RunLoadTask(transform, task);
+    vrb::GeometryPtr oldGeometry = geometry;
+    LoadFinishedCallback loadedCallback = [=](GroupPtr&) {
+      if (geometry) {
+        geometry->GetRenderState()->SetTintColor(tintColor);
+      }
+      if (oldGeometry) {
+        oldGeometry->RemoveFromParents();
+      }
+    };
+
+    loader->RunLoadTask(transform, task, loadedCallback);
   }
 
   void LoadLayer() {
@@ -187,6 +195,7 @@ Skybox::SetTransform(const vrb::Matrix& aTransform) {
 
 void
 Skybox::SetTintColor(const vrb::Color &aTintColor) {
+  m.tintColor = aTintColor;
   if (m.layer) {
     m.layer->SetTintColor(aTintColor);
   } else if (m.geometry) {
