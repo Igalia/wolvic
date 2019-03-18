@@ -25,6 +25,7 @@ The L10n wiki page can be found [here](https://github.com/MozillaReality/Firefox
 
 ```bash
 git clone git@github.com:MozillaReality/FirefoxReality.git
+cd FirefoxReality
 ```
 
 *Clone the third-party repo.*
