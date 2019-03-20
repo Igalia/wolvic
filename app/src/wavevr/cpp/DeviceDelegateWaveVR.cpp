@@ -174,7 +174,7 @@ struct DeviceDelegateWaveVR::State {
 
     for (int index = 0; index < kMaxControllerCount; index++) {
       Controller& controller = controllers[index];
-      if(!WVR_IsDeviceConnected(controller.type)) {
+      if (WVR_IsInputFocusCapturedBySystem() || !WVR_IsDeviceConnected(controller.type)) {
         if (controller.enabled) {
           delegate->SetEnabled(index, false);
           controller.enabled = false;
