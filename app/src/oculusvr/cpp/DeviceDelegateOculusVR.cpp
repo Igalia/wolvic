@@ -988,7 +988,11 @@ DeviceDelegateOculusVR::RegisterImmersiveDisplay(ImmersiveDisplayPtr aDisplay) {
     return;
   }
 
-  m.immersiveDisplay->SetDeviceName("Oculus");
+  if (m.IsOculusQuest()) {
+    m.immersiveDisplay->SetDeviceName("Oculus Quest");
+  } else {
+    m.immersiveDisplay->SetDeviceName("Oculus Go");
+  }
   uint32_t width, height;
   m.GetImmersiveRenderSize(width, height);
   m.immersiveDisplay->SetEyeResolution(width, height);
