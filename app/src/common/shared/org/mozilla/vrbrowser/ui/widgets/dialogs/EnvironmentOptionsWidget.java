@@ -119,6 +119,14 @@ public class EnvironmentOptionsWidget extends UIWidget implements
         super.show();
 
         mScrollbar.scrollTo(0, 0);
+        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_NO_DIM_BRIGHTNESS);
+    }
+
+    @Override
+    public void hide(@HideFlags int aHideFlags) {
+        super.hide(aHideFlags);
+
+        mWidgetManager.popWorldBrightness(this);
     }
 
     private void setEnvOverride(boolean value) {
@@ -197,5 +205,4 @@ public class EnvironmentOptionsWidget extends UIWidget implements
             onDismiss();
         }
     }
-
 }

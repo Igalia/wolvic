@@ -21,6 +21,7 @@ public interface WidgetManagerDelegate {
         void onWorldClick();
     }
     float DEFAULT_DIM_BRIGHTNESS = 0.25f;
+    float DEFAULT_NO_DIM_BRIGHTNESS = 1.0f;
 
     int newWidgetHandle();
     void addWidget(@NonNull Widget aWidget);
