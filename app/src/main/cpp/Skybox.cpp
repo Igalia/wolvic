@@ -181,6 +181,32 @@ Skybox::Load(const vrb::ModelLoaderAndroidPtr& aLoader, const std::string& aBase
   }
 }
 
+VRLayerCubePtr
+Skybox::GetLayer() const {
+  return m.layer;
+}
+
+void
+Skybox::SetLayer(const VRLayerCubePtr& aLayer) {
+  m.basePath = "";
+  m.layerTextureHandle = 0;
+  if (m.root->GetNodeCount() > 0) {
+    vrb::NodePtr layerNode = m.root->GetNode(0);
+    m.root->RemoveNode(*layerNode);
+  }
+  m.layer = aLayer;
+  m.layer->SetTintColor(m.tintColor);
+  vrb::CreationContextPtr create = m.context.lock();
+  m.root->AddNode(VRLayerNode::Create(create, m.layer));
+  m.layer->SetSurfaceChangedDelegate([=](const VRLayer& aLayer, VRLayer::SurfaceChange aChange, const std::function<void()>& aCallback) {
+    m.layerTextureHandle = m.layer->GetTextureHandle();
+    m.LoadLayer();
+    if (aCallback) {
+      aCallback();
+    }
+  });
+}
+
 void
 Skybox::SetVisible(bool aVisible) {
   m.root->ToggleAll(aVisible);

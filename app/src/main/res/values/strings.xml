@@ -155,7 +155,7 @@
     <!-- This string is used in place of the 'settings_version' string (e.g., `version 1.1`) when the user is running
          a developer-build version of the app. -->
     <string name="settings_version_developer">Developer Build</string>
-    
+
     <!-- This string is the title of a dialog box shown to the user when a settings
          change requires the application to restart. -->
     <string name="restart_dialog_restart">Restart Required</string>
@@ -279,14 +279,20 @@
          The 'Void' environment is an empty space that surrounds the user in empty, black space. -->
     <string name="developer_options_env_void">Void</string>
 
-    <!-- This string labels the radio button that selects the 'Cave' environment. -->
-    <string name="developer_options_env_island">Island</string>
+    <!-- This string labels the radio button that selects the 'Offworld' environment. -->
+    <string name="developer_options_env_offworld">Offworld</string>
 
-    <!-- This string labels the radio button that selects the 'Cave' environment. -->
-    <string name="developer_options_env_cave">Cave</string>
+    <!-- This string labels the radio button that selects the 'Underwater' environment. -->
+    <string name="developer_options_env_underwater">Underwater</string>
+
+    <!-- This string labels the radio button that selects the 'Winter' environment. -->
+    <string name="developer_options_env_winter">Winter</string>
 
     <!-- This string labels the radio button that selects the 'Meadow' environment. -->
     <string name="developer_options_env_meadow">Meadow</string>
+
+    <!-- This string labels the radio button that selects the 'Cave' environment. -->
+    <string name="developer_options_env_cave">Cave</string>
 
     <!-- This string describes the radio buttons used to select the pointer color. -->
     <string name="developer_options_pointer_color">Pointer Color</string>

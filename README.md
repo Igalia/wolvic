@@ -128,8 +128,9 @@ Note: the release APKs generated with a debug keystore can't be used for product
 ETC2 compression is used to improve performance and memory usage. Raw assets are placed in the `uncompressed_assets` folder. You can generate the compressed textures using the compressor utility in `tools/compressor`. You need to set up [etc2comp](https://github.com/google/etc2comp) and make it available on your PATH before running the script. Run this command to generate the compressed assets:
 
 ```bash
+cd tools/compressor
 npm install
-gulp compress
+npm run compress
 ```
 
 ## Development troubleshooting

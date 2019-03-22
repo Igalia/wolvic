@@ -52,7 +52,7 @@ public class SettingsStore {
     public final static int MAX_WINDOW_HEIGHT_DEFAULT = 1200;
     public final static int POINTER_COLOR_DEFAULT_DEFAULT = Color.parseColor("#FFFFFF");
     public final static int SCROLL_DIRECTION_DEFAULT = 0;
-    public final static String ENV_DEFAULT = "cave";
+    public final static String ENV_DEFAULT = "offworld";
     public final static float BROWSER_WORLD_WIDTH_DEFAULT = 4.0f;
     public final static float BROWSER_WORLD_HEIGHT_DEFAULT = 2.25f;
     public final static int MSAA_DEFAULT_LEVEL = 1;
@@ -287,8 +287,12 @@ public class SettingsStore {
     }
 
     public String getEnvironment() {
-        return mPrefs.getString(
-                mContext.getString(R.string.settings_key_env), ENV_DEFAULT);
+        String env = mPrefs.getString(mContext.getString(R.string.settings_key_env), ENV_DEFAULT);
+        // Remove when the meadow is ready
+        if (env.equalsIgnoreCase("meadow")) {
+            env = ENV_DEFAULT;
+        }
+        return env;
     }
 
     public void setEnvironment(String aEnv) {

@@ -1128,16 +1128,26 @@ BrowserWorld::CreateSkyBox(const std::string& aBasePath, const std::string& aExt
   ASSERT_ON_RENDER_THREAD();
   const bool empty = aBasePath == "cubemap/void";
   const std::string extension = aExtension.empty() ? ".ktx" : aExtension;
+  const GLenum glFormat = extension == ".ktx" ? GL_COMPRESSED_RGB8_ETC2 : GL_RGB8;
+  float size = 1024;
+  if (aBasePath == "cubemap/underwater" || aBasePath == "cubemap/winter") {
+    size = 1000;
+  }
   if (m.skybox && empty) {
     m.skybox->SetVisible(false);
     return;
   } else if (m.skybox) {
     m.skybox->SetVisible(true);
+    if (m.skybox->GetLayer() && m.skybox->GetLayer()->GetWidth() != size) {
+      VRLayerCubePtr oldLayer = m.skybox->GetLayer();
+      VRLayerCubePtr newLayer = m.device->CreateLayerCube(size, size, glFormat);
+      m.skybox->SetLayer(newLayer);
+      m.device->DeleteLayer(oldLayer);
+    }
     m.skybox->Load(m.loader, aBasePath, extension);
     return;
   } else if (!empty) {
-    GLenum glFormat = extension == ".ktx" ? GL_COMPRESSED_RGB8_ETC2 : GL_RGB8;
-    VRLayerCubePtr layer = m.device->CreateLayerCube(1024, 1024, glFormat);
+    VRLayerCubePtr layer = m.device->CreateLayerCube(size, size, glFormat);
     m.skybox = Skybox::Create(m.create, layer);
     m.rootOpaqueParent->AddNode(m.skybox->GetRoot());
     m.skybox->Load(m.loader, aBasePath, extension);
