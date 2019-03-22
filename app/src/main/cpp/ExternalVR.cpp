@@ -256,6 +256,9 @@ ExternalVR::SetCapabilityFlags(const device::CapabilityFlags aFlags) {
   if (device::MountDetection & aFlags) {
     result |= static_cast<uint16_t>(mozilla::gfx::VRDisplayCapabilityFlags::Cap_MountDetection);
   }
+  if (device::PositionEmulated & aFlags) {
+    result |= static_cast<uint16_t>(mozilla::gfx::VRDisplayCapabilityFlags::Cap_PositionEmulated);
+  }
   m.deviceCapabilities = aFlags;
   m.system.displayState.capabilityFlags = static_cast<mozilla::gfx::VRDisplayCapabilityFlags>(result);
   m.system.sensorState.flags = m.system.displayState.capabilityFlags;
@@ -290,6 +293,11 @@ void
 ExternalVR::SetEyeResolution(const int32_t aWidth, const int32_t aHeight) {
   m.system.displayState.eyeResolution.width = aWidth;
   m.system.displayState.eyeResolution.height = aHeight;
+}
+
+void
+ExternalVR::SetSittingToStandingTransform(const vrb::Matrix& aTransform) {
+  memcpy(&(m.system.displayState.sittingToStandingTransform), aTransform.Data(), sizeof(m.system.displayState.sittingToStandingTransform));
 }
 
 void

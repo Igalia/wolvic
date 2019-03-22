@@ -30,6 +30,7 @@
 
 namespace crow {
 
+static const vrb::Vector kAverageHeight(0.0f, 1.7f, 0.0f);
 static const int32_t kMaxControllerCount = 2;
 
 struct Controller {
@@ -249,8 +250,17 @@ DeviceDelegateWaveVR::RegisterImmersiveDisplay(ImmersiveDisplayPtr aDisplay) {
   }
 
   m.immersiveDisplay->SetDeviceName("Wave");
-  m.immersiveDisplay->SetCapabilityFlags(device::Position | device::Orientation | device::Present);
+  device::CapabilityFlags flags = device::Orientation | device::Present | device::StageParameters;
+
+  if (WVR_GetDegreeOfFreedom(WVR_DeviceType_HMD) == WVR_NumDoF_6DoF) {
+    flags |= device::Position;
+  } else {
+    flags |= device::PositionEmulated;
+  }
+
+  m.immersiveDisplay->SetCapabilityFlags(flags);
   m.immersiveDisplay->SetEyeResolution(m.renderWidth, m.renderHeight);
+  m.immersiveDisplay->SetSittingToStandingTransform(vrb::Matrix::Translation(kAverageHeight));
   m.immersiveDisplay->CompleteEnumeration();
   m.InitializeCameras();
 }
@@ -462,7 +472,6 @@ DeviceDelegateWaveVR::ProcessEvents() {
 void
 DeviceDelegateWaveVR::StartFrame() {
   VRB_GL_CHECK(glClearColor(m.clearColor.Red(), m.clearColor.Green(), m.clearColor.Blue(), m.clearColor.Alpha()));
-  static const vrb::Vector kAverageHeight(0.0f, 1.7f, 0.0f);
   if (!m.lastSubmitDiscarded) {
     m.leftFBOIndex = WVR_GetAvailableTextureIndex(m.leftTextureQueue);
     m.rightFBOIndex = WVR_GetAvailableTextureIndex(m.rightTextureQueue);

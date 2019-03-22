@@ -572,6 +572,8 @@ public:
 };
 
 const vrb::Vector kAverageHeight(0.0f, 1.7f, 0.0f);
+// Height used to match Oculus default in WebVR
+const vrb::Vector kAverageOculusHeight(0.0f, 1.65f, 0.0f);
 
 struct DeviceDelegateOculusVR::State {
   struct ControllerState {
@@ -996,6 +998,7 @@ DeviceDelegateOculusVR::RegisterImmersiveDisplay(ImmersiveDisplayPtr aDisplay) {
   uint32_t width, height;
   m.GetImmersiveRenderSize(width, height);
   m.immersiveDisplay->SetEyeResolution(width, height);
+  m.immersiveDisplay->SetSittingToStandingTransform(vrb::Matrix::Translation(kAverageOculusHeight));
   m.immersiveDisplay->CompleteEnumeration();
 
   m.UpdatePerspective();
@@ -1116,9 +1119,11 @@ DeviceDelegateOculusVR::StartFrame() {
   if (m.immersiveDisplay) {
     m.immersiveDisplay->SetEyeOffset(device::Eye::Left, -ipd * 0.5f, 0.f, 0.f);
     m.immersiveDisplay->SetEyeOffset(device::Eye::Right, ipd * 0.5f, 0.f, 0.f);
-    device::CapabilityFlags caps = device::Orientation | device::Present;
+    device::CapabilityFlags caps = device::Orientation | device::Present | device::StageParameters;
     if (m.predictedTracking.Status & VRAPI_TRACKING_STATUS_POSITION_TRACKED) {
       caps |= device::Position;
+    } else {
+      caps |= device::PositionEmulated;
     }
     m.immersiveDisplay->SetCapabilityFlags(caps);
   }

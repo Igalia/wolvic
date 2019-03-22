@@ -16,6 +16,7 @@ const CapabilityFlags AngularAcceleration = 1 << 5;
 const CapabilityFlags LinearAcceleration = 1 << 6;
 const CapabilityFlags StageParameters = 1 << 7;
 const CapabilityFlags MountDetection = 1 << 8;
+const CapabilityFlags PositionEmulated = 1 << 9;
 enum class Eye { Left, Right };
 enum class RenderMode { StandAlone, Immersive };
 const int32_t EyeCount = 2;

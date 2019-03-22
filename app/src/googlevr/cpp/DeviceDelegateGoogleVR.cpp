@@ -27,6 +27,7 @@
 
 namespace {
 
+static const vrb::Vector kAverageHeight(0.0f, 1.7f, 0.0f);
 static const int32_t kMaxControllerCount = 2;
 
 struct Controller {
@@ -391,7 +392,8 @@ DeviceDelegateGoogleVR::RegisterImmersiveDisplay(ImmersiveDisplayPtr aDisplay) {
   }
 
   m.immersiveDisplay->SetDeviceName("Daydream");
-  m.immersiveDisplay->SetCapabilityFlags(device::Position | device::Orientation | device::Present);
+  m.immersiveDisplay->SetCapabilityFlags(device::Position | device::Orientation | device::Present | device::StageParameters);
+  m.immersiveDisplay->SetSittingToStandingTransform(vrb::Matrix::Translation(kAverageHeight));
   gvr_sizei size = m.GetImmersiveModeSize();
   m.immersiveDisplay->SetEyeResolution(size.width / 2, size.height);
   m.immersiveDisplay->CompleteEnumeration();
@@ -469,7 +471,6 @@ DeviceDelegateGoogleVR::ProcessEvents() {
 
 void
 DeviceDelegateGoogleVR::StartFrame() {
-  static const vrb::Vector kAverageHeight(0.0f, 1.7f, 0.0f);
   gvr_clock_time_point when = GVR_CHECK(gvr_get_time_point_now());
   // 50ms into the future is what GVR docs recommends using for head rotation prediction.
   when.monotonic_system_time_nanos += 50000000;
