@@ -11,10 +11,10 @@
 
     <string-array name="developer_options_environments_values" translatable="false">
         <item>void</item>
+        <item>cave</item>
         <item>offworld</item>
         <item>underwater</item>
         <item>winter</item>
-        <item>cave</item>
     </string-array>
 
     <array name="developer_options_environments_images" translatable="false">
