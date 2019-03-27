@@ -153,4 +153,8 @@
 
     <!-- Bookmarks -->
     <dimen name="bookmark_row_height">64dp</dimen>
+
+    <!-- Blur -->
+    <dimen name="blur_radius">2dp</dimen>
+    <dimen name="blur_radius_half">1dp</dimen>
 </resources>

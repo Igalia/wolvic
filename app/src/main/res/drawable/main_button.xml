@@ -2,21 +2,25 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_enabled="false">
         <shape android:shape="oval">
+            <stroke android:color="@color/asphalt_blur" android:width="@dimen/blur_radius" />
             <solid android:color="@color/asphalt" />
         </shape>
     </item>
     <item android:state_pressed="true">
         <shape android:shape="oval">
+            <stroke android:color="@color/void_color_blur" android:width="@dimen/blur_radius" />
             <solid android:color="@color/void_color" />
         </shape>
     </item>
     <item android:state_hovered="true" android:state_pressed="false">
         <shape android:shape="oval">
+            <stroke android:color="@color/fog_blur" android:width="@dimen/blur_radius" />
             <solid android:color="@color/fog" />
         </shape>
     </item>
     <item android:state_hovered="false" android:state_pressed="false">
         <shape android:shape="oval">
+            <stroke android:color="@color/asphalt_blur" android:width="@dimen/blur_radius" />
             <solid android:color="@color/asphalt" />
         </shape>
     </item>

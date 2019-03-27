@@ -4,12 +4,7 @@
        android:padding="10dp"
        android:shape="rectangle" >
 
+    <corners android:radius="5dp" />
+    <stroke android:color="@color/fog_blur" android:width="@dimen/blur_radius" />
     <solid android:color="@color/fog" />
-
-    <corners
-            android:bottomLeftRadius="5dp"
-            android:bottomRightRadius="5dp"
-            android:topLeftRadius="5dp"
-            android:topRightRadius="5dp" />
-
 </shape>
