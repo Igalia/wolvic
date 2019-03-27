@@ -19,12 +19,13 @@ import android.view.inputmethod.ExtractedTextRequest;
 import org.mozilla.gecko.GeckoProfile;
 import org.mozilla.geckoview.AllowOrDeny;
 import org.mozilla.geckoview.ContentBlocking;
-import org.mozilla.geckoview.MediaElement;
 import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoRuntimeSettings;
 import org.mozilla.geckoview.GeckoSession;
+import org.mozilla.geckoview.GeckoSession.SessionState;
 import org.mozilla.geckoview.GeckoSessionSettings;
+import org.mozilla.geckoview.MediaElement;
 import org.mozilla.geckoview.WebRequestError;
 import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.R;
@@ -108,6 +109,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
         GeckoSession mSession;
         SessionSettings mSettings;
         ArrayList<Media> mMediaElements = new ArrayList<>();
+        SessionState mSessionState;
     }
 
     private GeckoRuntime mRuntime;
@@ -881,33 +883,21 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
 
     private void recreateSession(SessionStore.SessionSettings aSettings) {
         if (mCurrentSession != null) {
-            final GeckoResult<GeckoSession.SessionState> state = mCurrentSession.saveState();
-            state.then(new GeckoResult.OnValueListener<GeckoSession.SessionState, Object>() {
-                @Nullable
-                @Override
-                public GeckoResult<Object> onValue(@Nullable GeckoSession.SessionState value) throws Throwable {
-                    if (value != null) {
-                        mCurrentSession.stop();
-                        mCurrentSession.close();
+            State state = mSessions.get(mCurrentSession.hashCode());
+            if (state == null) {
+                return;
+            }
+            mCurrentSession.stop();
+            mCurrentSession.close();
 
-                        int oldSessionId = getCurrentSessionId();
-                        int sessionId = createSession(aSettings);
-                        GeckoSession session = getSession(sessionId);
-                        session.restoreState(value);
-                        setCurrentSession(sessionId);
-                        removeSession(oldSessionId);
-                    }
-
-                    return null;
-                }
-            }, new GeckoResult.OnExceptionListener<Object>() {
-                @Nullable
-                @Override
-                public GeckoResult<Object> onException(@NonNull Throwable exception) throws Throwable {
-                    Log.e(LOGTAG, "State saving exception while setting multiprocess mode: " + exception.getLocalizedMessage());
-                    return null;
-                }
-            });
+            int oldSessionId = getCurrentSessionId();
+            int sessionId = createSession(aSettings);
+            GeckoSession session = getSession(sessionId);
+            if (state.mSessionState != null) {
+                session.restoreState(state.mSessionState);
+            }
+            setCurrentSession(sessionId);
+            removeSession(oldSessionId);
         }
     }
 
@@ -943,7 +933,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     // NavigationDelegate
 
     @Override
-    public void onLocationChange(GeckoSession aSession, String aUri) {
+    public void onLocationChange(@NonNull GeckoSession aSession, String aUri) {
         Log.d(LOGTAG, "SessionStore onLocationChange: " + aUri);
         State state = mSessions.get(aSession.hashCode());
         if (state == null) {
@@ -967,7 +957,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     }
 
     @Override
-    public void onCanGoBack(GeckoSession aSession, boolean aCanGoBack) {
+    public void onCanGoBack(@NonNull GeckoSession aSession, boolean aCanGoBack) {
         Log.d(LOGTAG, "SessionStore onCanGoBack: " + (aCanGoBack ? "true" : "false"));
         State state = mSessions.get(aSession.hashCode());
         if (state == null) {
@@ -983,7 +973,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     }
 
     @Override
-    public void onCanGoForward(GeckoSession aSession, boolean aCanGoForward) {
+    public void onCanGoForward(@NonNull GeckoSession aSession, boolean aCanGoForward) {
         Log.d(LOGTAG, "SessionStore onCanGoForward: " + (aCanGoForward ? "true" : "false"));
         State state = mSessions.get(aSession.hashCode());
         if (state == null) {
@@ -998,7 +988,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
         }
     }
 
-    public boolean mFirstOnLoadRequest = true;
+    private boolean mFirstOnLoadRequest = true;
 
     @Override
     public @Nullable GeckoResult<AllowOrDeny> onLoadRequest(@NonNull GeckoSession aSession, @NonNull LoadRequest aRequest) {
@@ -1097,7 +1087,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     }
 
     @Override
-    public GeckoResult<String> onLoadError(GeckoSession session, String uri,  WebRequestError error) {
+    public GeckoResult<String> onLoadError(@NonNull GeckoSession session, String uri,  @NonNull WebRequestError error) {
         Log.d(LOGTAG, "SessionStore onLoadError: " + uri);
 
         return GeckoResult.fromValue(InternalPages.createErrorPage(mContext, uri, error.category, error.code));
@@ -1106,7 +1096,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     // Progress Listener
 
     @Override
-    public void onPageStart(GeckoSession aSession, String aUri) {
+    public void onPageStart(@NonNull GeckoSession aSession, @NonNull String aUri) {
         Log.d(LOGTAG, "SessionStore onPageStart");
         State state = mSessions.get(aSession.hashCode());
         if (state == null) {
@@ -1123,7 +1113,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     }
 
     @Override
-    public void onPageStop(GeckoSession aSession, boolean b) {
+    public void onPageStop(@NonNull GeckoSession aSession, boolean b) {
         Log.d(LOGTAG, "SessionStore onPageStop");
         State state = mSessions.get(aSession.hashCode());
         if (state == null) {
@@ -1144,12 +1134,12 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     }
 
     @Override
-    public void onProgressChange(GeckoSession session, int progress) {
+    public void onProgressChange(@NonNull GeckoSession session, int progress) {
 
     }
 
     @Override
-    public void onSecurityChange(GeckoSession aSession, SecurityInformation aInformation) {
+    public void onSecurityChange(@NonNull GeckoSession aSession, @NonNull SecurityInformation aInformation) {
         Log.d(LOGTAG, "SessionStore onPageStop");
         State state = mSessions.get(aSession.hashCode());
         if (state == null) {
@@ -1165,10 +1155,19 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
         }
     }
 
+    @Override
+    public void onSessionStateChange(@NonNull GeckoSession aSession,
+                                     @NonNull SessionState aSessionState) {
+        State state = mSessions.get(aSession.hashCode());
+        if (state != null) {
+            state.mSessionState = aSessionState;
+        }
+    }
+
     // Content Delegate
 
     @Override
-    public void onTitleChange(GeckoSession aSession, String aTitle) {
+    public void onTitleChange(@NonNull GeckoSession aSession, String aTitle) {
         Log.d(LOGTAG, "SessionStore onTitleChange");
         State state = mSessions.get(aSession.hashCode());
         if (state == null) {
@@ -1185,12 +1184,12 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     }
 
     @Override
-    public void onFocusRequest(GeckoSession aSession) {
+    public void onFocusRequest(@NonNull GeckoSession aSession) {
         Log.d(LOGTAG, "SessionStore onFocusRequest");
     }
 
     @Override
-    public void onCloseRequest(GeckoSession aSession) {
+    public void onCloseRequest(@NonNull GeckoSession aSession) {
         int sessionId = getSessionId(aSession);
         if (getCurrentSessionId() == sessionId) {
             unstackSession();
@@ -1198,7 +1197,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     }
 
     @Override
-    public void onFullScreen(GeckoSession aSession, boolean aFullScreen) {
+    public void onFullScreen(@NonNull GeckoSession aSession, boolean aFullScreen) {
         Log.d(LOGTAG, "SessionStore onFullScreen");
         State state = mSessions.get(aSession.hashCode());
         if (state == null) {
@@ -1214,17 +1213,17 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     }
 
     @Override
-    public void onContextMenu(GeckoSession aSession, int i, int i1, ContextElement element) {
+    public void onContextMenu(@NonNull GeckoSession aSession, int i, int i1, @NonNull ContextElement element) {
 
     }
 
     @Override
-    public void onExternalResponse(GeckoSession session, GeckoSession.WebResponseInfo response) {
+    public void onExternalResponse(@NonNull GeckoSession session, @NonNull GeckoSession.WebResponseInfo response) {
 
     }
 
     @Override
-    public void onCrash(GeckoSession session) {
+    public void onCrash(@NonNull GeckoSession session) {
         Log.e(LOGTAG,"Child crashed. Creating new session");
         int crashedSessionId = SessionStore.get().getCurrentSessionId();
         int newSessionId = createSession();
@@ -1234,7 +1233,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     }
 
     @Override
-    public void onFirstComposite(GeckoSession aSession) {
+    public void onFirstComposite(@NonNull GeckoSession aSession) {
         if (mCurrentSession == aSession) {
             for (GeckoSession.ContentDelegate listener : mContentListeners) {
                 listener.onFirstComposite(aSession);
@@ -1307,12 +1306,12 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     }
 
     @Override
-    public void notifyAutoFill(GeckoSession session, int notification, int virtualId) {
+    public void notifyAutoFill(@NonNull GeckoSession session, int notification, int virtualId) {
 
     }
 
     @Override
-    public void onContentBlocked(final GeckoSession session, final ContentBlocking.BlockEvent event) {
+    public void onContentBlocked(@NonNull final GeckoSession session, @NonNull final ContentBlocking.BlockEvent event) {
         if ((event.categories & ContentBlocking.AT_AD) != 0) {
           Log.i(LOGTAG, "Blocking Ad: " + event.uri);
         }
@@ -1333,7 +1332,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     // PromptDelegate
 
     @Override
-    public void onAlert(GeckoSession session, String title, String msg, AlertCallback callback) {
+    public void onAlert(@NonNull GeckoSession session, String title, String msg, @NonNull AlertCallback callback) {
         if (session == mCurrentSession) {
             for (GeckoSession.PromptDelegate listener : mPromptListeners) {
                 listener.onAlert(session, title, msg, callback);
@@ -1342,7 +1341,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     }
 
     @Override
-    public void onButtonPrompt(GeckoSession session, String title, String msg, String[] btnMsg, ButtonCallback callback) {
+    public void onButtonPrompt(@NonNull GeckoSession session, String title, String msg, String[] btnMsg, @NonNull ButtonCallback callback) {
         if (session == mCurrentSession) {
             for (GeckoSession.PromptDelegate listener : mPromptListeners) {
                 listener.onButtonPrompt(session, title, msg, btnMsg, callback);
@@ -1351,7 +1350,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     }
 
     @Override
-    public void onTextPrompt(GeckoSession session, String title, String msg, String value, TextCallback callback) {
+    public void onTextPrompt(@NonNull GeckoSession session, String title, String msg, String value, @NonNull TextCallback callback) {
         if (session == mCurrentSession) {
             for (GeckoSession.PromptDelegate listener : mPromptListeners) {
                 listener.onTextPrompt(session, title, msg, value, callback);
@@ -1360,7 +1359,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     }
 
     @Override
-    public void onAuthPrompt(GeckoSession session, String title, String msg, AuthOptions options, AuthCallback callback) {
+    public void onAuthPrompt(@NonNull GeckoSession session, String title, String msg, @NonNull AuthOptions options, @NonNull AuthCallback callback) {
         if (session == mCurrentSession) {
             for (GeckoSession.PromptDelegate listener : mPromptListeners) {
                 listener.onAuthPrompt(session, title, msg, options, callback);
@@ -1369,7 +1368,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     }
 
     @Override
-    public void onChoicePrompt(GeckoSession session, String title, String msg, int type, Choice[] choices, ChoiceCallback callback) {
+    public void onChoicePrompt(@NonNull GeckoSession session, String title, String msg, int type, @NonNull Choice[] choices, @NonNull ChoiceCallback callback) {
         if (session == mCurrentSession) {
             for (GeckoSession.PromptDelegate listener : mPromptListeners) {
                 listener.onChoicePrompt(session, title, msg, type, choices, callback);
@@ -1378,7 +1377,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     }
 
     @Override
-    public void onColorPrompt(GeckoSession session, String title, String value, TextCallback callback) {
+    public void onColorPrompt(@NonNull GeckoSession session, String title, String value, @NonNull TextCallback callback) {
         if (session == mCurrentSession) {
             for (GeckoSession.PromptDelegate listener : mPromptListeners) {
                 listener.onColorPrompt(session, title, value, callback);
@@ -1387,7 +1386,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     }
 
     @Override
-    public void onDateTimePrompt(GeckoSession session, String title, int type, String value, String min, String max, TextCallback callback) {
+    public void onDateTimePrompt(@NonNull GeckoSession session, String title, int type, String value, String min, String max, @NonNull TextCallback callback) {
         if (session == mCurrentSession) {
             for (GeckoSession.PromptDelegate listener : mPromptListeners) {
                 listener.onDateTimePrompt(session, title, type, value, min, max, callback);
@@ -1396,7 +1395,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     }
 
     @Override
-    public void onFilePrompt(GeckoSession session, String title, int type, String[] mimeTypes, FileCallback callback) {
+    public void onFilePrompt(@NonNull GeckoSession session, String title, int type, String[] mimeTypes, @NonNull FileCallback callback) {
         if (session == mCurrentSession) {
             for (GeckoSession.PromptDelegate listener : mPromptListeners) {
                 listener.onFilePrompt(session, title, type, mimeTypes, callback);
@@ -1405,14 +1404,14 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     }
 
     @Override
-    public GeckoResult<AllowOrDeny> onPopupRequest(final GeckoSession session, final String targetUri) {
+    public GeckoResult<AllowOrDeny> onPopupRequest(@NonNull final GeckoSession session, final String targetUri) {
         return GeckoResult.fromValue(AllowOrDeny.DENY);
     }
 
     // MediaDelegate
 
     @Override
-    public void onMediaAdd(GeckoSession session, MediaElement element) {
+    public void onMediaAdd(@NonNull GeckoSession session, @NonNull MediaElement element) {
         SessionStore.State state = mSessions.get(getSessionId(session));
         if (state == null) {
             return;
@@ -1422,7 +1421,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     }
 
     @Override
-    public void onMediaRemove(GeckoSession session, MediaElement element) {
+    public void onMediaRemove(@NonNull GeckoSession session, @NonNull MediaElement element) {
         SessionStore.State state = mSessions.get(getSessionId(session));
         if (state == null) {
             return;
@@ -1442,7 +1441,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (mContext != null) {
-            if (key == mContext.getString(R.string.settings_key_geolocation_data)) {
+            if (key.equals(mContext.getString(R.string.settings_key_geolocation_data))) {
                 GeolocationData data = GeolocationData.parse(sharedPreferences.getString(key, null));
                 setRegion(data.getCountryCode());
             }
