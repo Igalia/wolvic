@@ -26,6 +26,7 @@ import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoSession.SessionState;
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.geckoview.MediaElement;
+import org.mozilla.geckoview.WebExtension;
 import org.mozilla.geckoview.WebRequestError;
 import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.R;
@@ -72,6 +73,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     // You can test a local file using: "resource://android/assets/webvr/index.html"
     public static final String PRIVATE_BROWSING_URI = "about:privatebrowsing";
     public static final int NO_SESSION_ID = -1;
+    private static final String[] WEB_EXTENSIONS = new String[] {"youtube_webcompat"};
 
     private LinkedList<GeckoSession.NavigationDelegate> mNavigationListeners;
     private LinkedList<GeckoSession.ProgressDelegate> mProgressListeners;
@@ -179,6 +181,10 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
             }
 
             mRuntime = GeckoRuntime.create(aContext, runtimeSettingsBuilder.build());
+            for (String extension: WEB_EXTENSIONS) {
+                String path = "resource://android/assets/web_extensions/" + extension + "/";
+                mRuntime.registerWebExtension(new WebExtension(path));
+            }
 
         } else {
             mRuntime.attachTo(aContext);

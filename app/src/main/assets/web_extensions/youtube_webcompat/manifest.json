@@ -1,0 +1,14 @@
+{
+  "manifest_version": 2,
+  "name": "YoutubeWebCompat",
+  "version": "1.0",
+  "description": "Youtube web compat fixes for Firefox Reality",
+  "content_scripts": [
+    {
+      "matches": ["*://*.youtube.com/*"],
+      "css": ["main.css"],
+      "js": ["main.js"],
+      "run_at": "document_end"
+    }
+  ]
+}
