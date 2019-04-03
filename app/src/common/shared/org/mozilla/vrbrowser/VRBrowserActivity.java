@@ -176,7 +176,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         mPermissionDelegate = new PermissionDelegate(this, this);
 
-        mAudioEngine = new AudioEngine(this, new VRAudioTheme());
+        mAudioEngine = new AudioEngine(this, null);
         mAudioEngine.setEnabled(SettingsStore.getInstance(this).isAudioEnabled());
         mAudioEngine.preloadAsync(() -> {
             Log.i(LOGTAG, "AudioEngine sounds preloaded!");
