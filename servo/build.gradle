@@ -47,6 +47,6 @@ if (gradle.hasProperty('servoViewLocal')) {
     dependencies {
         // To see what the latest servoview version is go here:
         // https://download.servo.org/nightly/maven/org/mozilla/servoview/servoview-armv7/maven-metadata.xml
-        implementation 'org.mozilla.servoview:servoview-armv7:0.0.1.20190220.cc8a9fa'
+        implementation 'org.mozilla.servoview:servoview-armv7:0.0.1.20190401.31c0261'
     }
 }

@@ -6,10 +6,10 @@ import android.graphics.Rect;
 import android.util.Log;
 import android.view.Surface;
 
-import org.mozilla.gecko.GeckoVRManager;
 import org.mozilla.geckoview.GeckoDisplay;
 import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoSession;
+import org.mozilla.geckoview.GeckoVRManager;
 import org.mozilla.servoview.Servo;
 import org.mozilla.servoview.ServoSurface;
 
@@ -25,13 +25,17 @@ public class ServoSession extends GeckoSession {
     private ServoPanZoomController mPanZoomController;
     private boolean mIsOpen = false;
     private String mUrl = "about:blank";
+    private int mPadding;
+    private long mVRContext;
 
     private ProgressDelegate mProgressDelegate;
     private NavigationDelegate mNavigationDelegate;
     private ContentDelegate mContentDelegate;
 
-    public ServoSession(Context aContext) {
+    public ServoSession(Context aContext, long aVRContext, boolean aLayersEnabled) {
         Log.d(LOGTAG, "ServoSession()");
+        mPadding = aLayersEnabled ? 1 : 0;
+        mVRContext = aVRContext;
         mActivity = (Activity) aContext;
     }
 
@@ -40,10 +44,10 @@ public class ServoSession extends GeckoSession {
             mWidth = width;
             mHeight = height;
             mSurface = surface;
-            mServo = new ServoSurface(surface, width, height);
+            mServo = new ServoSurface(surface, width, height, mPadding);
             mServo.setClient(new ServoCallbacks());
             mServo.setActivity(mActivity);
-            mServo.setVRExternalContext(GeckoVRManager.getExternalContext());
+            mServo.setVRExternalContext(mVRContext);
             mServo.runLoop();
         }
 

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.util.Log;
 
 import org.mozilla.geckoview.GeckoSession;
+import org.mozilla.vrbrowser.browser.SettingsStore;
+import org.mozilla.vrbrowser.VRBrowserActivity;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -13,6 +15,7 @@ public class ServoUtils {
     private static final String WHITELIST_CLASSNAME = "org.mozilla.servo.ServoWhiteList";
     private static final String LOGTAG = "ServoUtils";
     private static Object mServoWhiteList = null;
+    private static long mVRContext;
 
     public static boolean isServoAvailable() {
         try {
@@ -21,6 +24,10 @@ public class ServoUtils {
         } catch (ClassNotFoundException e) {
             return false;
         }
+    }
+
+    public static void setExternalContext(long aContext) {
+      mVRContext = aContext;
     }
 
     public static boolean isInstanceOfServoSession(Object obj) {
@@ -32,10 +39,11 @@ public class ServoUtils {
     }
 
     public static GeckoSession createServoSession(Context context) {
+        boolean layersEnabled = SettingsStore.getInstance(context).getLayersEnabled();
         try {
             Class clazz = Class.forName(SESSION_CLASSNAME);
-            Constructor<?> constructor = clazz.getConstructor(Context.class);
-            return (GeckoSession) constructor.newInstance(context);
+            Constructor<?> constructor = clazz.getConstructor(Context.class, long.class, boolean.class);
+            return (GeckoSession) constructor.newInstance(context, mVRContext, layersEnabled);
         } catch (Exception e) {
             Log.e(LOGTAG, "Can't load or instanciate ServoSession: " + e);
             return null;

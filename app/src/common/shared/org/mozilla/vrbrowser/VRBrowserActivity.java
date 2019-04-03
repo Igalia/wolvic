@@ -60,6 +60,7 @@ import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.ui.widgets.WindowWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.CrashDialogWidget;
+import org.mozilla.vrbrowser.utils.ServoUtils;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -121,6 +122,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     TrayWidget mTray;
     BookmarksView mBookmarksView;
     PermissionDelegate mPermissionDelegate;
+    long mExternalContext;
     LinkedList<UpdateListener> mWidgetUpdateListeners;
     LinkedList<PermissionListener> mPermissionListeners;
     LinkedList<FocusChangeListener> mFocusChangeListeners;
@@ -601,6 +603,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Keep
     @SuppressWarnings("unused")
     void registerExternalContext(long aContext) {
+        ServoUtils.setExternalContext(aContext);
         GeckoVRManager.setExternalContext(aContext);
     }
 
