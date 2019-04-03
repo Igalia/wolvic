@@ -45,6 +45,7 @@
 #include "vrb/TextureCache.h"
 #include "vrb/TextureSurface.h"
 #include "vrb/TextureCubeMap.h"
+#include "vrb/ThreadUtils.h"
 #include "vrb/Toggle.h"
 #include "vrb/Transform.h"
 #include "vrb/VertexArray.h"
@@ -88,7 +89,7 @@ typedef std::shared_ptr<SurfaceObserver> SurfaceObserverPtr;
 class SurfaceObserver : public SurfaceTextureObserver {
 public:
   SurfaceObserver(crow::BrowserWorldWeakPtr& aWorld);
-  ~SurfaceObserver();
+  ~SurfaceObserver() override;
   void SurfaceTextureCreated(const std::string& aName, GLuint aHandle, jobject aSurfaceTexture) override;
   void SurfaceTextureHandleUpdated(const std::string aName, GLuint aHandle) override;
   void SurfaceTextureDestroyed(const std::string& aName) override;
@@ -538,6 +539,7 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
     });
     m.modelsLoaded = true;
   }
+  SetThreadName("VRB Render");
 }
 
 void
