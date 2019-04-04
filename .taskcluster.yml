@@ -82,7 +82,7 @@ tasks:
         'public':
           type: 'directory'
           path: '/opt/FirefoxReality/builds/'
-          expires: "{{ '1 week' | $fromNow }}"
+          expires: "{{ '1 month' | $fromNow }}"
     metadata:
       name: Firefox Reality for Android - Build - Master update
       description: Building Firefox Reality for Android (via Gradle) - triggered by update to master
