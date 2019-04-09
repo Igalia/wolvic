@@ -96,6 +96,7 @@ public class WindowWidget extends UIWidget implements SessionStore.SessionChange
         aPlacement.anchorY = 0.0f;
         aPlacement.visible = true;
         aPlacement.cylinder = true;
+        aPlacement.textureScale = 1.0f;
     }
 
     @Override

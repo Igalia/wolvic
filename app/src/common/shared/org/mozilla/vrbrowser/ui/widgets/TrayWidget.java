@@ -203,6 +203,7 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
         aPlacement.rotation = (float)Math.toRadians(-45);
         aPlacement.opaque = false;
         aPlacement.cylinder = false;
+        aPlacement.textureScale = 1.0f;
     }
 
     @Override

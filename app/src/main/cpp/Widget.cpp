@@ -130,8 +130,8 @@ struct Widget::State {
     cylinder->GetTextureSize(textureWidth, textureHeight);
 
     const float radius = cylinder->GetCylinderRadius();
-    const float surfaceWidth = (float)textureWidth / placement->density;
-    const float surfaceHeight = (float)textureHeight / placement->density;
+    const float surfaceWidth = (float)textureWidth / placement->density * placement->textureScale;
+    const float surfaceHeight = (float)textureHeight / placement->density * placement->textureScale;
     // Cylinder density measures the pixels for a 360 cylinder
     // Oculus recommends 4680px density, which is 13 pixels per degree.
     const float theta = (float)M_PI * surfaceWidth / (cylinderDensity * 0.5f);

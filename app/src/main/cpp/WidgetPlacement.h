@@ -32,6 +32,10 @@ struct WidgetPlacement {
   bool firstDraw;
   bool layer;
   bool cylinder;
+  float textureScale;
+
+  int32_t GetTextureWidth() const;
+  int32_t GetTextureHeight() const;
 
   static WidgetPlacementPtr FromJava(JNIEnv* aEnv, jobject& aObject);
 private:

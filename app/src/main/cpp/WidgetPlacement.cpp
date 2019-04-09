@@ -54,8 +54,19 @@ WidgetPlacement::FromJava(JNIEnv* aEnv, jobject& aObject) {
   GET_BOOLEAN_FIELD(firstDraw);
   GET_BOOLEAN_FIELD(layer);
   GET_BOOLEAN_FIELD(cylinder);
+  GET_FLOAT_FIELD(textureScale, "textureScale");
 
   return result;
+}
+
+int32_t
+WidgetPlacement::GetTextureWidth() const{
+  return (int32_t)ceilf(width * density * textureScale);
+}
+
+int32_t
+WidgetPlacement::GetTextureHeight() const {
+  return (int32_t)ceilf(height * density * textureScale);
 }
 
 }
