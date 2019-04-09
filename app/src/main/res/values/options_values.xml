@@ -66,6 +66,21 @@
         <item>@string/developer_options_msaa_4</item>
     </string-array>
 
+    <!-- Foveated Levels -->
+    <string-array name="developer_options_foveated_options" translatable="false">
+        <item>@string/developer_options_foveated_disabled</item>
+        <item>@string/developer_options_foveated_1</item>
+        <item>@string/developer_options_foveated_2</item>
+        <item>@string/developer_options_foveated_3</item>
+    </string-array>
+
+    <integer-array name="developer_options_foveated_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </integer-array>
+
     <!-- Language Options -->
     <string-array name="developer_options_voice_search_languages" translatable="false">
         <item>@string/language_en_US</item>

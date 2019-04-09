@@ -9,12 +9,15 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.RadioGroup;
 import android.widget.ScrollView;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.SessionStore;
 import org.mozilla.vrbrowser.browser.SettingsStore;
+import org.mozilla.vrbrowser.BuildConfig;
+import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.views.settings.ButtonSetting;
 import org.mozilla.vrbrowser.ui.views.settings.DoubleEditSetting;
@@ -36,6 +39,8 @@ public class DisplayOptionsWidget extends UIWidget implements
     private SwitchSetting mCurvedDisplaySwitch;
     private RadioGroupSetting mUaModeRadio;
     private RadioGroupSetting mMSAARadio;
+    private RadioGroupSetting mFoveatedAppRadio;
+    private RadioGroupSetting mFoveatedWebVRRadio;
 
     private SingleEditSetting mDensityEdit;
     private SingleEditSetting mDpiEdit;
@@ -96,6 +101,21 @@ public class DisplayOptionsWidget extends UIWidget implements
         mMSAARadio = findViewById(R.id.msaa_radio);
         mMSAARadio.setOnCheckedChangeListener(mMSSAChangeListener);
         setMSAAMode(mMSAARadio.getIdForValue(msaaLevel), false);
+
+        mFoveatedAppRadio = findViewById(R.id.foveated_app_radio);
+        mFoveatedWebVRRadio = findViewById(R.id.foveated_webvr_radio);
+        if (BuildConfig.FLAVOR_platform == "oculusvr") {
+            mFoveatedAppRadio.setVisibility(View.VISIBLE);
+            // Uncomment this when Foveated Rendering for WebVR makes more sense
+            //mFoveatedWebVRRadio.setVisibility(View.VISIBLE);
+            int level = SettingsStore.getInstance(getContext()).getFoveatedLevelApp();
+            setFoveatedLevel(mFoveatedAppRadio, mFoveatedAppRadio.getIdForValue(level), false);
+            mFoveatedAppRadio.setOnCheckedChangeListener((compoundButton, checkedId, apply) -> setFoveatedLevel(mFoveatedAppRadio, checkedId, apply));
+
+            level = SettingsStore.getInstance(getContext()).getFoveatedLevelWebVR();
+            setFoveatedLevel(mFoveatedWebVRRadio, mFoveatedWebVRRadio.getIdForValue(level), false);
+            mFoveatedWebVRRadio.setOnCheckedChangeListener((compoundButton, checkedId, apply) -> setFoveatedLevel(mFoveatedWebVRRadio, checkedId, apply));
+        }
 
         mDensityEdit = findViewById(R.id.density_edit);
         mDensityEdit.setHint1(String.valueOf(SettingsStore.DISPLAY_DENSITY_DEFAULT));
@@ -224,7 +244,6 @@ public class DisplayOptionsWidget extends UIWidget implements
        show();
     }
 
-
     private RadioGroupSetting.OnCheckedChangeListener mUaModeListener = (radioGroup, checkedId, doApply) -> {
         setUaMode(checkedId, true);
     };
@@ -292,6 +311,14 @@ public class DisplayOptionsWidget extends UIWidget implements
         if (!mMSAARadio.getValueForId(mMSAARadio.getCheckedRadioButtonId()).equals(SettingsStore.MSAA_DEFAULT_LEVEL)) {
             setMSAAMode(mMSAARadio.getIdForValue(SettingsStore.MSAA_DEFAULT_LEVEL), true);
         }
+        if (BuildConfig.FLAVOR_platform == "oculusvr") {
+            if (!mFoveatedAppRadio.getValueForId(mFoveatedAppRadio.getCheckedRadioButtonId()).equals(SettingsStore.FOVEATED_APP_DEFAULT_LEVEL)) {
+                setFoveatedLevel(mFoveatedAppRadio, mFoveatedAppRadio.getIdForValue(SettingsStore.FOVEATED_APP_DEFAULT_LEVEL), true);
+            }
+            if (!mFoveatedWebVRRadio.getValueForId(mFoveatedWebVRRadio.getCheckedRadioButtonId()).equals(SettingsStore.FOVEATED_WEBVR_DEFAULT_LEVEL)) {
+                setFoveatedLevel(mFoveatedWebVRRadio, mFoveatedWebVRRadio.getIdForValue(SettingsStore.FOVEATED_WEBVR_DEFAULT_LEVEL), true);
+            }
+        }
 
         restart = restart | setDisplayDensity(SettingsStore.DISPLAY_DENSITY_DEFAULT);
         restart = restart | setDisplayDpi(SettingsStore.DISPLAY_DPI_DEFAULT);
@@ -329,6 +356,25 @@ public class DisplayOptionsWidget extends UIWidget implements
         if (doApply) {
             SettingsStore.getInstance(getContext()).setMSAALevel((Integer)mMSAARadio.getValueForId(checkedId));
             showRestartDialog();
+        }
+    }
+
+    private void setFoveatedLevel(RadioGroupSetting aSetting, int checkedId, boolean doApply) {
+        RadioGroupSetting.OnCheckedChangeListener listener = aSetting.getOnCheckdChangeListener();
+        aSetting.setOnCheckedChangeListener(null);
+        aSetting.setChecked(checkedId, doApply);
+        aSetting.setOnCheckedChangeListener(listener);
+
+        int level = (Integer)aSetting.getValueForId(checkedId);
+
+        if (aSetting == mFoveatedAppRadio) {
+            SettingsStore.getInstance(getContext()).setFoveatedLevelApp(level);
+        } else {
+            SettingsStore.getInstance(getContext()).setFoveatedLevelWebVR(level);
+        }
+
+        if (doApply) {
+            mWidgetManager.updateFoveatedLevel();
         }
     }
 

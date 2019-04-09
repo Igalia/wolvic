@@ -609,6 +609,8 @@ struct DeviceDelegateOculusVR::State {
   ovrTracking2 predictedTracking = {};
   uint32_t renderWidth = 0;
   uint32_t renderHeight = 0;
+  int32_t standaloneFoveatedLevel = 0;
+  int32_t immersiveFoveatedLevel = 0;
   vrb::Color clearColor;
   float near = 0.1f;
   float far = 100.f;
@@ -685,6 +687,17 @@ struct DeviceDelegateOculusVR::State {
       vrapi_SetTrackingSpace(ovr, VRAPI_TRACKING_SPACE_LOCAL_FLOOR);
     } else {
       vrapi_SetTrackingSpace(ovr, VRAPI_TRACKING_SPACE_LOCAL);
+    }
+  }
+
+  void UpdateFoveatedLevel() {
+    if (!ovr) {
+      return;
+    }
+    if (renderMode == device::RenderMode::StandAlone) {
+      vrapi_SetPropertyInt(&java, VRAPI_FOVEATION_LEVEL, standaloneFoveatedLevel);
+    } else {
+      vrapi_SetPropertyInt(&java, VRAPI_FOVEATION_LEVEL, immersiveFoveatedLevel);
     }
   }
 
@@ -972,6 +985,7 @@ DeviceDelegateOculusVR::SetRenderMode(const device::RenderMode aMode) {
   }
 
   m.UpdateTrackingMode();
+  m.UpdateFoveatedLevel();
 
   // Reset reorient when exiting or entering immersive
   m.reorientMatrix = vrb::Matrix::Identity();
@@ -1046,6 +1060,13 @@ DeviceDelegateOculusVR::SetControllerDelegate(ControllerDelegatePtr& aController
 void
 DeviceDelegateOculusVR::ReleaseControllerDelegate() {
   m.controller = nullptr;
+}
+
+void
+DeviceDelegateOculusVR::SetFoveatedLevel(const int32_t aAppLevel, const int32_t aWebVRLevel) {
+  m.standaloneFoveatedLevel = aAppLevel;
+  m.immersiveFoveatedLevel = aWebVRLevel;
+  m.UpdateFoveatedLevel();
 }
 
 int32_t
@@ -1425,6 +1446,7 @@ DeviceDelegateOculusVR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
     vrapi_SetPerfThread(m.ovr, VRAPI_PERF_THREAD_TYPE_MAIN, gettid());
     vrapi_SetPerfThread(m.ovr, VRAPI_PERF_THREAD_TYPE_RENDERER, gettid());
     m.UpdateTrackingMode();
+    m.UpdateFoveatedLevel();
   }
 
   // Reset reorientation after Enter VR

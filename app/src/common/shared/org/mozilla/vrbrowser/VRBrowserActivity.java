@@ -191,6 +191,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         final String tempPath = getCacheDir().getAbsolutePath();
         queueRunnable(() -> setTemporaryFilePath(tempPath));
         setCylinderDensity(SettingsStore.getInstance(this).getCylinderDensity());
+        updateFoveatedLevel();
         initializeWorld();
 
         // Setup the search engine
@@ -962,6 +963,13 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
+    public void updateFoveatedLevel() {
+        final int appLevel = SettingsStore.getInstance(this).getFoveatedLevelApp();
+        final int webVRLevel = SettingsStore.getInstance(this).getFoveatedLevelWebVR();
+        queueRunnable(() -> updateFoveatedLevelNative(appLevel, webVRLevel));
+    }
+
+    @Override
     public void updatePointerColor() {
         queueRunnable(() -> updatePointerColorNative());
     }
@@ -1029,4 +1037,5 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private native void runCallbackNative(long aCallback);
     private native void setCylinderDensityNative(float aDensity);
     private native void setIsServo(boolean aIsServo);
+    private native void updateFoveatedLevelNative(int appLevel, int webVRLevel);
 }

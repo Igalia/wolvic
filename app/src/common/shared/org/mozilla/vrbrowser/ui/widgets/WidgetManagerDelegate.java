@@ -42,6 +42,7 @@ public interface WidgetManagerDelegate {
     void setIsServoSession(boolean aIsServo);
     void keyboardDismissed();
     void updateEnvironment();
+    void updateFoveatedLevel();
     void updatePointerColor();
     void showVRVideo(int aWindowHandle, @VideoProjectionMenuWidget.VideoProjectionFlags int aVideoProjection);
     void hideVRVideo();

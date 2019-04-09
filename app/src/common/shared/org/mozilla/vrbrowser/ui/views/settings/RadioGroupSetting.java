@@ -121,6 +121,10 @@ public class RadioGroupSetting extends LinearLayout {
         mRadioGroupListener = aListener;
     }
 
+    public OnCheckedChangeListener getOnCheckdChangeListener() {
+        return mRadioGroupListener;
+    }
+
     public Object getValueForId(@IdRes int checkId) {
         return mValues[checkId];
     }

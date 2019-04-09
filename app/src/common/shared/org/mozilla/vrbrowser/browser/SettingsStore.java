@@ -58,6 +58,8 @@ public class SettingsStore {
     public final static int MSAA_DEFAULT_LEVEL = 1;
     public final static boolean AUDIO_ENABLED = false;
     public final static float CYLINDER_DENSITY_ENABLED_DEFAULT = 4680.0f;
+    public final static int FOVEATED_APP_DEFAULT_LEVEL = 1;
+    public final static int FOVEATED_WEBVR_DEFAULT_LEVEL = 0;
 
     // Enable telemetry by default (opt-out).
     private final static boolean enableCrashReportingByDefault = false;
@@ -360,7 +362,6 @@ public class SettingsStore {
         editor.commit();
     }
 
-
     public boolean getLayersEnabled() {
         if (BuildConfig.FLAVOR_platform.equalsIgnoreCase("oculusvr")) {
             return true;
@@ -404,6 +405,28 @@ public class SettingsStore {
     public void setCylinderDensity(float aDensity) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putFloat(mContext.getString(R.string.settings_key_cylinder_density), aDensity);
+    }
+
+    public int getFoveatedLevelApp() {
+        return mPrefs.getInt(
+                mContext.getString(R.string.settings_key_foveated_app), FOVEATED_APP_DEFAULT_LEVEL);
+    }
+
+    public int getFoveatedLevelWebVR() {
+        return mPrefs.getInt(
+                mContext.getString(R.string.settings_key_foveated_webvr), FOVEATED_WEBVR_DEFAULT_LEVEL);
+    }
+
+    public void setFoveatedLevelApp(int level) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putInt(mContext.getString(R.string.settings_key_foveated_app), level);
+        editor.commit();
+    }
+
+    public void setFoveatedLevelWebVR(int level) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putInt(mContext.getString(R.string.settings_key_foveated_webvr), level);
         editor.commit();
     }
 }
+
