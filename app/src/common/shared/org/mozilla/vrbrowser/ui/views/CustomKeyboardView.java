@@ -788,7 +788,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
             }
 
             if (label != null) {
-                float descent = paint.descent();
+                float descent;
 
                 // For characters, use large font. For labels like "Done", use small font.
                 if (label.length() > 1 && key.codes.length < 2) {
@@ -799,6 +799,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
                 } else {
                     paint.setTextSize(mKeyTextSize);
                     paint.setTypeface(Typeface.DEFAULT);
+                    descent = paint.descent();
                 }
                 if (!stateHovered && !statePressed) {
                     paint.setColor(mKeyTextColor);
