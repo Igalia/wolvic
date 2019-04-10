@@ -38,6 +38,7 @@ public:
   void SetFoveatedLevel(const int32_t aAppLevel, const int32_t aWebVRLevel) override;
   int32_t GetControllerModelCount() const override;
   const std::string GetControllerModelName(const int32_t aModelIndex) const override;
+  void SetCPULevel(const device::CPULevel aLevel) override;
   void ProcessEvents() override;
   void StartFrame() override;
   void BindEye(const device::Eye aWhich) override;

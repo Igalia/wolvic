@@ -19,6 +19,7 @@ const CapabilityFlags MountDetection = 1 << 8;
 const CapabilityFlags PositionEmulated = 1 << 9;
 enum class Eye { Left, Right };
 enum class RenderMode { StandAlone, Immersive };
+enum class CPULevel { Normal = 0, High };
 const int32_t EyeCount = 2;
 inline int32_t EyeIndex(const Eye aEye) { return aEye == Eye::Left ? 0 : 1; }
 

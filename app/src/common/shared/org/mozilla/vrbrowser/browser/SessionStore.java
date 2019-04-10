@@ -81,12 +81,17 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     private LinkedList<SessionChangeListener> mSessionChangeListeners;
     private LinkedList<GeckoSession.TextInputDelegate> mTextInputListeners;
     private LinkedList<GeckoSession.PromptDelegate> mPromptListeners;
+    private LinkedList<VideoAvailabilityListener> mVideoAvailabilityListeners;
     private UserAgentOverride mUserAgentOverride;
 
     public interface SessionChangeListener {
         void onNewSession(GeckoSession aSession, int aId);
         void onRemoveSession(GeckoSession aSession, int aId);
         void onCurrentSessionChange(GeckoSession aSession, int aId);
+    }
+
+    public interface VideoAvailabilityListener {
+        void onVideoAvailabilityChanged(boolean aVideosAvailable);
     }
 
     class SessionSettings {
@@ -139,6 +144,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
         mSessionChangeListeners = new LinkedList<>();
         mTextInputListeners = new LinkedList<>();
         mPromptListeners = new LinkedList<>();
+        mVideoAvailabilityListeners = new LinkedList<>();
 
         if (mPrefs != null) {
             mPrefs.registerOnSharedPreferenceChangeListener(this);
@@ -151,6 +157,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
         mContentListeners.clear();
         mSessionChangeListeners.clear();
         mTextInputListeners.clear();
+        mVideoAvailabilityListeners.clear();
 
         if (mPrefs != null) {
             mPrefs.unregisterOnSharedPreferenceChangeListener(this);
@@ -319,6 +326,14 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
 
     public void removePromptListener(GeckoSession.PromptDelegate aListener) {
         mPromptListeners.remove(aListener);
+    }
+
+    public void addVideoAvailabilityListener(VideoAvailabilityListener aListener) {
+        mVideoAvailabilityListeners.add(aListener);
+    }
+
+    public void removeVideoAvailabilityListener(VideoAvailabilityListener aListener) {
+        mVideoAvailabilityListeners.remove(aListener);
     }
 
     public int createSession() {
@@ -1424,6 +1439,12 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
         }
         Media media = new Media(element);
         state.mMediaElements.add(media);
+
+        if (state.mMediaElements.size() == 1) {
+            for (VideoAvailabilityListener listener: mVideoAvailabilityListeners) {
+                listener.onVideoAvailabilityChanged(true);
+            }
+        }
     }
 
     @Override
@@ -1437,6 +1458,11 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
             if (media.getMediaElement() == element) {
                 media.unload();
                 state.mMediaElements.remove(i);
+                if (state.mMediaElements.size() == 0) {
+                    for (VideoAvailabilityListener listener: mVideoAvailabilityListeners) {
+                        listener.onVideoAvailabilityChanged(false);
+                    }
+                }
                 return;
             }
         }

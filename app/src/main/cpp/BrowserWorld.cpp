@@ -959,6 +959,11 @@ BrowserWorld::SetCylinderDensity(const float aDensity) {
 }
 
 void
+BrowserWorld::SetCPULevel(const device::CPULevel aLevel) {
+  m.device->SetCPULevel(aLevel);
+}
+
+void
 BrowserWorld::SetIsServo(const bool aIsServo) {
   m.externalVR->SetSourceBrowser(aIsServo ? ExternalVR::VRBrowserType::Servo : ExternalVR::VRBrowserType::Gecko);
 }
@@ -1345,6 +1350,11 @@ JNI_METHOD(void, runCallbackNative)
     (*func)();
     delete func;
   }
+}
+
+JNI_METHOD(void, setCPULevelNative)
+(JNIEnv* aEnv, jobject, int aCPULevel) {
+  crow::BrowserWorld::Instance().SetCPULevel(static_cast<crow::device::CPULevel>(aCPULevel));
 }
 
 JNI_METHOD(void, setIsServo)

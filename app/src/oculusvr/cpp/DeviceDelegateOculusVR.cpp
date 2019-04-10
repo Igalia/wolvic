@@ -620,6 +620,7 @@ struct DeviceDelegateOculusVR::State {
   ImmersiveDisplayPtr immersiveDisplay;
   int reorientCount = -1;
   vrb::Matrix reorientMatrix = vrb::Matrix::Identity();
+  device::CPULevel minCPULevel = device::CPULevel::Normal;
 
 
   void UpdatePerspective() {
@@ -701,6 +702,18 @@ struct DeviceDelegateOculusVR::State {
     }
   }
 
+  void UpdateClockLevels() {
+    if (!ovr) {
+      return;
+    }
+
+    if (renderMode == device::RenderMode::StandAlone && minCPULevel == device::CPULevel::Normal) {
+      vrapi_SetClockLevels(ovr, 2, 2);
+    } else {
+      vrapi_SetClockLevels(ovr, 4, 4);
+    }
+  }
+
   void AddUILayer(const OculusLayerPtr& aLayer, VRLayerSurface::SurfaceType aSurfaceType) {
     if (ovr) {
       vrb::RenderContextPtr ctx = context.lock();
@@ -732,6 +745,10 @@ struct DeviceDelegateOculusVR::State {
 
   bool IsOculusQuest() const {
     return deviceType >= VRAPI_DEVICE_TYPE_OCULUSQUEST_START && deviceType <= VRAPI_DEVICE_TYPE_OCULUSQUEST_END;
+  }
+
+  bool IsOculusGo() const {
+    return deviceType >= VRAPI_DEVICE_TYPE_OCULUSGO_START && deviceType <= VRAPI_DEVICE_TYPE_OCULUSGO_END;
   }
 
   bool Is6DOF() const {
@@ -986,6 +1003,7 @@ DeviceDelegateOculusVR::SetRenderMode(const device::RenderMode aMode) {
 
   m.UpdateTrackingMode();
   m.UpdateFoveatedLevel();
+  m.UpdateClockLevels();
 
   // Reset reorient when exiting or entering immersive
   m.reorientMatrix = vrb::Matrix::Identity();
@@ -1101,6 +1119,13 @@ DeviceDelegateOculusVR::GetControllerModelName(const int32_t aModelIndex) const 
 
   return name;
 }
+
+
+void
+DeviceDelegateOculusVR::SetCPULevel(const device::CPULevel aLevel) {
+  m.minCPULevel = aLevel;
+  m.UpdateClockLevels();
+};
 
 void
 DeviceDelegateOculusVR::ProcessEvents() {
@@ -1442,9 +1467,9 @@ DeviceDelegateOculusVR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
   if (!m.ovr) {
     VRB_LOG("Entering VR mode failed");
   } else {
-    vrapi_SetClockLevels(m.ovr, 4, 4);
     vrapi_SetPerfThread(m.ovr, VRAPI_PERF_THREAD_TYPE_MAIN, gettid());
     vrapi_SetPerfThread(m.ovr, VRAPI_PERF_THREAD_TYPE_RENDERER, gettid());
+    m.UpdateClockLevels();
     m.UpdateTrackingMode();
     m.UpdateFoveatedLevel();
   }
