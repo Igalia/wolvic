@@ -1,14 +1,22 @@
 {
   "manifest_version": 2,
-  "name": "YoutubeWebCompat",
+  "name": "FirefoxRealityYouTubeWebCompat",
   "version": "1.0",
-  "description": "Youtube web compat fixes for Firefox Reality",
+  "description": "YouTube web-site compatability fixes for Firefox Reality.",
   "content_scripts": [
     {
-      "matches": ["*://*.youtube.com/*"],
-      "css": ["main.css"],
-      "js": ["main.js"],
-      "run_at": "document_end"
+      "matches": [
+        "*://*.youtube.com/*",
+        "*://*.youtube-nocookie.com/*"
+      ],
+      "css": [
+        "main.css"
+      ],
+      "js": [
+        "main.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": true
     }
   ]
 }

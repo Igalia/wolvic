@@ -59,7 +59,7 @@ import static org.mozilla.vrbrowser.utils.ServoUtils.isInstanceOfServoSession;
 import static org.mozilla.vrbrowser.utils.ServoUtils.isServoAvailable;
 
 public class SessionStore implements ContentBlocking.Delegate, GeckoSession.NavigationDelegate,
-        GeckoSession.ProgressDelegate, GeckoSession.ContentDelegate, GeckoSession.TextInputDelegate, 
+        GeckoSession.ProgressDelegate, GeckoSession.ContentDelegate, GeckoSession.TextInputDelegate,
         GeckoSession.PromptDelegate, GeckoSession.MediaDelegate, SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static SessionStore mInstance;
@@ -1057,7 +1057,9 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     private String checkYoutubeOverride(String aUri) {
         try {
             Uri uri = Uri.parse(aUri);
-            if (!uri.getHost().toLowerCase().contains("www.youtube.")) {
+            String hostLower = uri.getHost().toLowerCase();
+            if (!hostLower.endsWith(".youtube.com") &&
+                !hostLower.endsWith(".youtube-nocookie.com")) {
                 return null;
             }
             String query = uri.getQueryParameter("disable_polymer");
