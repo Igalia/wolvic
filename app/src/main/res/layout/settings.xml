@@ -10,9 +10,12 @@
         android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/settingsMasthead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:clickable="true"
+            android:contextClickable="false"
             android:orientation="vertical">
 
             <ImageView
@@ -23,17 +26,19 @@
                 android:layout_centerHorizontal="true"
                 android:layout_gravity="center"
                 android:layout_marginTop="40dp"
+                android:layout_marginRight="40dp"
+                android:layout_marginLeft="40dp"
+                android:clickable="false"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ff_logo_settings" />
 
             <TextView
                 android:id="@+id/versionText"
-                android:layout_width="wrap_content"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/ff_logo_settings"
-                android:layout_centerHorizontal="true"
-                android:layout_gravity="center"
                 android:layout_marginTop="5dp"
+                android:clickable="false"
                 android:fontFamily="sans-serif"
                 android:gravity="center"
                 android:text="@string/settings_version"
@@ -42,12 +47,11 @@
 
             <TextView
                 android:id="@+id/buildText"
-                android:layout_width="wrap_content"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/versionText"
-                android:layout_centerHorizontal="true"
-                android:layout_gravity="center"
-                android:layout_marginTop="0dp"
+                android:layout_marginBottom="15dp"
+                android:clickable="false"
                 android:fontFamily="sans-serif"
                 android:gravity="center"
                 android:text="@string/settings_version_developer"
@@ -60,7 +64,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="5dp"
             android:layout_marginEnd="20dp"
             android:layout_marginBottom="20dp"
             android:scrollbars="none">

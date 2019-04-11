@@ -58,21 +58,14 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
         private boolean mIsHash;
 
         @Override
-        public boolean onDoubleTap(MotionEvent event) {
-            if (mIsHash)
-                mBuildText.setText(versionCodeToDate(BuildConfig.VERSION_CODE));
-            else
-                mBuildText.setText(BuildConfig.GIT_HASH);
+        public boolean onDown (MotionEvent e) {
+            mBuildText.setText(mIsHash ? versionCodeToDate(BuildConfig.VERSION_CODE) : BuildConfig.GIT_HASH);
 
             mIsHash = !mIsHash;
 
             return true;
         }
 
-        @Override
-        public boolean onDown(MotionEvent e) {
-            return true;
-        }
     }
 
     public SettingsWidget(Context aContext) {
@@ -173,13 +166,13 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
         mBuildText = findViewById(R.id.buildText);
         mBuildText.setText(versionCodeToDate(BuildConfig.VERSION_CODE));
 
-        ViewGroup versionLayout = findViewById(R.id.optionsLayout);
+        ViewGroup settingsMasthead = findViewById(R.id.settingsMasthead);
         final GestureDetector gd = new GestureDetector(getContext(), new VersionGestureListener());
-        versionLayout.setOnTouchListener((view, motionEvent) -> {
+        settingsMasthead.setOnTouchListener((view, motionEvent) -> {
             if (gd.onTouchEvent(motionEvent)) {
                 return true;
             }
-            return view.onTouchEvent(motionEvent);
+            return view.performClick();
         });
 
         HoneycombButton reportButton = findViewById(R.id.reportButton);
