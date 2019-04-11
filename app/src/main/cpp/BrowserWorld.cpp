@@ -1141,10 +1141,7 @@ BrowserWorld::CreateSkyBox(const std::string& aBasePath, const std::string& aExt
   const bool empty = aBasePath == "cubemap/void";
   const std::string extension = aExtension.empty() ? ".ktx" : aExtension;
   const GLenum glFormat = extension == ".ktx" ? GL_COMPRESSED_RGB8_ETC2 : GL_RGB8;
-  float size = 1024;
-  if (aBasePath == "cubemap/underwater" || aBasePath == "cubemap/winter") {
-    size = 1000;
-  }
+  const float size = 1024;
   if (m.skybox && empty) {
     m.skybox->SetVisible(false);
     return;

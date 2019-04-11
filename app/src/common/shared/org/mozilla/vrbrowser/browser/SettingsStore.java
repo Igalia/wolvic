@@ -289,12 +289,7 @@ public class SettingsStore {
     }
 
     public String getEnvironment() {
-        String env = mPrefs.getString(mContext.getString(R.string.settings_key_env), ENV_DEFAULT);
-        // Remove when the meadow is ready
-        if (env.equalsIgnoreCase("meadow")) {
-            env = ENV_DEFAULT;
-        }
-        return env;
+        return mPrefs.getString(mContext.getString(R.string.settings_key_env), ENV_DEFAULT);
     }
 
     public void setEnvironment(String aEnv) {
