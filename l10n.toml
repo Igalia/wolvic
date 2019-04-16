@@ -2,14 +2,20 @@
 basepath = "."
 
 locales = [
-"de",
-"es",
-"fr",
-"it",
-"ja",
-"ko",
-"zh-CN",
-"zh-TW",
+  "de",
+  "es",
+  "fr",
+  "it",
+  "ja",
+  "ko",
+  "zh-CN",
+  "zh-TW",
+]
+
+# Expose the following branches to localization
+# Changes to this list should be announced to the l10n team ahead of time.
+branches = [
+    "master",
 ]
 
 [env]
