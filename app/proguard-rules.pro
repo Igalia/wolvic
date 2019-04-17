@@ -40,3 +40,5 @@
 -keep class **
 -keepclassmembers class *{*;}
 -keepattributes *
+
+-printconfiguration "build/outputs/mapping/configuration.txt"
