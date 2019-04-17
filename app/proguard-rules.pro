@@ -30,6 +30,23 @@
     public static int d(...);
 }
 
+
+# --------------------------------------------------------------------
+# REMOVE android speech dependency from GV
+# --------------------------------------------------------------------
+-assumenosideeffects class org.mozilla.gecko.SpeechSynthesisService {
+    private static void initSynthInternal();
+    private static void stopInternal();
+    private static void speakInternal(java.lang.String, java.lang.String, float, float, float, java.lang.String, java.util.concurrent.atomic.AtomicBoolean);
+    private static void setUtteranceListener();
+    private static void stopInternal();
+}
+
+-assumenosideeffects class org.mozilla.gecko.util.InputOptionsUtils {
+    public static boolean supportsVoiceRecognizer(android.content.Context, java.lang.String);
+    public static android.content.Intent createVoiceRecognizerIntent(java.lang.String);
+}
+
 -dontwarn **
 -target 1.7
 -dontusemixedcaseclassnames
@@ -37,8 +54,7 @@
 -dontpreverify
 -verbose
 -optimizations !code/simplification/arithmetic,!code/allocation/variable
--keep class **
--keepclassmembers class *{*;}
 -keepattributes *
-
+-keep class !org.mozilla.gecko.Speech* { *; }
+-keepclassmembers class !org.mozilla.gecko.Speech*, ** { *; }
 -printconfiguration "build/outputs/mapping/configuration.txt"
