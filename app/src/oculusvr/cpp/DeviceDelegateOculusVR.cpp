@@ -911,7 +911,9 @@ struct DeviceDelegateOculusVR::State {
           const bool aTouched = (state[i].controllerState.Touches & ovrTouch_A) != 0;
           const bool bPressed = (state[i].controllerState.Buttons & ovrButton_B) != 0;
           const bool bTouched = (state[i].controllerState.Touches & ovrTouch_B) != 0;
+          const bool menuPressed = (state[i].controllerState.Buttons & ovrButton_Enter) != 0;
 
+          controller->SetButtonState(i, ControllerDelegate::BUTTON_APP, -1, menuPressed, menuPressed);
           controller->SetButtonState(i, ControllerDelegate::BUTTON_OTHERS, 3, aPressed, aTouched);
           controller->SetButtonState(i, ControllerDelegate::BUTTON_OTHERS, 4, bPressed, bTouched);
         } else {
