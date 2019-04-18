@@ -81,7 +81,7 @@ public class DeveloperOptionsWidget extends UIWidget implements
         mDefaultHomepageUrl = getContext().getString(R.string.homepage_url);
 
         mHomepageEdit = findViewById(R.id.homepage_edit);
-        mHomepageEdit.setHint1(getContext().getString(R.string.homepage_hint));
+        mHomepageEdit.setHint1(getContext().getString(R.string.homepage_hint, getContext().getString(R.string.app_name)));
         mHomepageEdit.setDefaultFirstValue(mDefaultHomepageUrl);
         mHomepageEdit.setFirstText(SettingsStore.getInstance(getContext()).getHomepage());
         mHomepageEdit.setOnClickListener(mHomepageListener);

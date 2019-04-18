@@ -10,6 +10,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Pair;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
@@ -92,6 +93,9 @@ public class PrivacyOptionsWidget extends UIWidget implements WidgetManagerDeleg
             SettingsStore.getInstance(getContext()).setTrackingProtectionEnabled(enabled);
             SessionStore.get().setTrackingProtection(enabled);
         });
+
+        TextView permissionsTitleText = findViewById(R.id.permissionsTitle);
+        permissionsTitleText.setText(getContext().getString(R.string.security_options_permissions_title, getContext().getString(R.string.app_name)));
 
         mPermissionButtons = new ArrayList<>();
         mPermissionButtons.add(Pair.create(findViewById(R.id.cameraPermissionButton), Manifest.permission.CAMERA));

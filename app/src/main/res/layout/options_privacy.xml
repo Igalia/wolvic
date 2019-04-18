@@ -59,7 +59,7 @@
                     app:description="@string/security_options_tracking_protection" />
 
                 <TextView
-                    android:id="@+id/setting_description"
+                    android:id="@+id/permissionsTitle"
                     style="@style/settingsDescription"
                     android:height="40dp"
                     android:gravity="center_vertical"

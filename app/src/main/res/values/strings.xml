@@ -255,10 +255,11 @@
     <string name="developer_options_ua_vr">VR</string>
 
     <!-- This string is used to label radio buttons for setting fixed-foveated-rendering (FFR) level.
+     The term "foveation" derives from "fovea", the area of higher-resolution vision in the human retina.
      Higher values of this option result in larger parts of the peripheral vision being rendered
      at lower resolutions than the content in the center of the view.  These higher values reduce
-     quality to increase performance.  The Oculus implementation of fixed-foveated-rendering is
-     described in more detail here:
+     quality to increase performance.
+     The Oculus implementation of fixed-foveated-rendering is described in more detail here:
      https://developer.oculus.com/blog/optimizing-oculus-go-for-performance/-->
     <string name="developer_options_foveated_app">Foveation Level (App)</string>
     <!-- This string is used to label radio buttons for setting foveated level for WebVR immersive experiences -->
@@ -271,17 +272,19 @@
     <string name="developer_options_foveated_2">2</string>
     <!-- This string is used to label the Foveated radio button that enables high-level fixed-foveated-rendering. -->
     <string name="developer_options_foveated_3">3</string>
-    <!-- This string is used to label a set of radio buttons that allow the user to
-     change the user-agent (UA) string of the browser. -->
 
     <!-- This string is used to label a set of radio buttons that allow the user to change the
      scroll direction of the remote controller. -->
     <string name="developer_options_scroll_direction">Scroll Direction</string>
 
-    <!-- This string is used to label the 'Natural' radio button of the 'Scroll Direction' settings option. -->
+    <!-- This string is used to label the 'Natural' radio button of the 'Scroll Direction' settings option.
+         "Natural" refers to the motion of scrolled material being congruent with respect to direction of
+         motion of user input. -->
     <string name="developer_options_scroll_direction_natural">Natural</string>
 
-    <!-- This string is used to label the 'Reversed' radio button of the 'Scroll Direction' settings option. -->
+    <!-- This string is used to label the 'Reversed' radio button of the 'Scroll Direction' settings option.
+         "Reversed" refers to the motion of scrolled material being reversed with respect to direction of
+         motion of user input. -->
     <string name="developer_options_scroll_direction_reversed">Reversed</string>
 
     <!-- This string describes what the 'Reset' button in the developer options does which is
@@ -299,19 +302,25 @@
          The 'Void' environment is an empty space that surrounds the user in empty, black space. -->
     <string name="developer_options_env_void">Void</string>
 
-    <!-- This string labels the radio button that selects the 'Offworld' environment. -->
+    <!-- This string labels the radio button that selects the 'Offworld' environment,
+         a sci-fi themed desert-like environment. The offworld references sci-fi fictional
+         representations of colonies on other non-Earth planets. -->
     <string name="developer_options_env_offworld">Offworld</string>
 
-    <!-- This string labels the radio button that selects the 'Underwater' environment. -->
+    <!-- This string labels the radio button that selects the 'Underwater' environment,
+         a brightly lit submarine themed environment. -->
     <string name="developer_options_env_underwater">Underwater</string>
 
-    <!-- This string labels the radio button that selects the 'Winter' environment. -->
+    <!-- This string labels the radio button that selects the 'Winter' environment,
+         a snow-covered outdoor winter mountain scene. -->
     <string name="developer_options_env_winter">Winter</string>
 
-    <!-- This string labels the radio button that selects the 'Meadow' environment. -->
+    <!-- This string labels the radio button that selects the 'Meadow' environment,
+         a sunlit grassy meadow filled with tiny flowers and surrounded by mountains. -->
     <string name="developer_options_env_meadow">Meadow</string>
 
-    <!-- This string labels the radio button that selects the 'Cave' environment. -->
+    <!-- This string labels the radio button that selects the 'Cave' environment,
+         a dimly-lit subterranean environment with fairytale structures set amongst mushrooms. -->
     <string name="developer_options_env_cave">Cave</string>
 
     <!-- This string describes the radio buttons used to select the pointer color. -->
@@ -331,18 +340,35 @@
      and is used to enable or disable tracking protection. -->
     <string name="security_options_tracking_protection">Tracking Protection</string>
 
-    <string name="security_options_permissions_title">Permissions (Allow Firefox to access)</string>
+    <!-- This string is a label above the group of buttons that indicates that the buttons below
+         relate to Android system permissions granted to the app.
+         '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="security_options_permissions_title">Permissions (Allow %1$s to access)</string>
 
+    <!-- This string is displayed in an alert box if the user attempts to disable an enabled
+         permission and informs the user that the app cannot disable the given permission, that
+         function being reserved by the system permissions app. -->
     <string name="security_options_permissions_reject_message">This permission can only be disabled in system permissions</string>
 
+    <!-- This string labels the button that displays or enables application access to the device's
+         camera, if a camera is present. -->
     <string name="security_options_permission_camera">Camera</string>
 
+    <!-- This string labels the button that displays or enables application access to the device's
+         microphone, if a microphone is present. -->
     <string name="security_options_permission_microphone">Microphone</string>
 
+    <!-- This string labels the button that displays or enables application access to the device's
+         geographic location, if the device supports determination of geographic location. -->
     <string name="security_options_permission_location">Location</string>
 
+    <!-- This string labels the button that displays or enables the application to post system-wide
+         notifications. -->
     <string name="security_options_permission_notifications">Notifications</string>
 
+    <!-- This string labels the button that displays or enables application access to the device's
+         "external" storage. Note that on modern systems, "external" is still used in the name
+         of this storage even though the storage may not reside on external removable media. -->
     <string name="security_options_permission_storage">Read External Storage</string>
 
     <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'On'. -->
@@ -584,7 +610,8 @@
     <string name="private_browsing_title">Private Browsing</string>
 
     <!-- This string is used as the body of the Private Browsing page that is opened when the
-         Private Browsing Mode button from the tray is clicked. -->
+         Private Browsing Mode button from the tray is clicked.
+         '%1$s' will be replaced at runtime with the app's name. -->
     <string name="private_browsing_body"><![CDATA[
 <p>When you browse in a Private Window, %1$s <strong>does not save</strong>:</p>
 <ul class="two-column">
@@ -597,8 +624,9 @@
 <p class="about-info">Learn more about <a id="learnMore">Private Browsing</a>.</p>
      ]]></string>
 
-    <!-- This string is displayed in any button used for removing all the items in the current context. -->
-    <string name="homepage_hint">Firefox Home (Default)</string>
+    <!-- This string is displayed in any button used for removing all the items in the current context.
+         '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="homepage_hint">%1$s Home (Default)</string>
 
     <!-- This string is displayed in the title of an authentication prompt, which requests a username and a password. -->
     <string name="authentication_required">Authentication Required</string>
