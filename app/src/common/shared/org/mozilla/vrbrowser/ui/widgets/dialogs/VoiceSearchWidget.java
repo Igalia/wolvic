@@ -26,6 +26,7 @@ import com.mozilla.speechlibrary.STTResult;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.SettingsStore;
+import org.mozilla.vrbrowser.input.DeviceType;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
@@ -295,7 +296,9 @@ public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate
         mVoiceSearchText2.setVisibility(View.GONE);
         mVoiceSearchText3.setVisibility(View.INVISIBLE);
         mVoiceSearchInput.setVisibility(View.INVISIBLE);
-        mVoiceSearchSearching.startAnimation(mSearchingAnimation);
+        if (DeviceType.getType() != DeviceType.OculusQuest) {
+            mVoiceSearchSearching.startAnimation(mSearchingAnimation);
+        }
         mVoiceSearchSearching.setVisibility(View.VISIBLE);
     }
 
