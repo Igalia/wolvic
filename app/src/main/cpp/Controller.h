@@ -38,6 +38,7 @@ struct Controller {
   vrb::TransformPtr transform;
   PointerPtr pointer;
   vrb::Matrix transformMatrix;
+  vrb::Matrix beamTransformMatrix;
   std::string immersiveName;
   uint64_t immersivePressedState;
   uint64_t immersiveTouchedState;

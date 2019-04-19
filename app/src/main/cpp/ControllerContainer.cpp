@@ -3,7 +3,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#include <assert.h>
 #include "ControllerContainer.h"
 #include "Controller.h"
 #include "Pointer.h"
@@ -167,6 +166,11 @@ ControllerContainer::GetControllerCount() {
 
 void
 ControllerContainer::CreateController(const int32_t aControllerIndex, const int32_t aModelIndex, const std::string& aImmersiveName) {
+  CreateController(aControllerIndex, aModelIndex, aImmersiveName, vrb::Matrix::Identity());
+}
+
+void
+ControllerContainer::CreateController(const int32_t aControllerIndex, const int32_t aModelIndex, const std::string& aImmersiveName, const vrb::Matrix& aBeamTransform) {
   if ((size_t)aControllerIndex >= m.list.size()) {
     m.list.resize((size_t)aControllerIndex + 1);
   }
@@ -181,7 +185,14 @@ ControllerContainer::CreateController(const int32_t aControllerIndex, const int3
     if ((m.models.size() >= aModelIndex) && m.models[aModelIndex]) {
       controller.transform->AddNode(m.models[aModelIndex]);
       if (m.beamModel) {
-        controller.transform->AddNode(m.beamModel);
+        if (aBeamTransform.IsIdentity()) {
+          controller.transform->AddNode(m.beamModel);
+        } else {
+          vrb::TransformPtr beamTransform = Transform::Create(create);
+          beamTransform->SetTransform(aBeamTransform);
+          beamTransform->AddNode(m.beamModel);
+          controller.transform->AddNode(beamTransform);
+        }
       }
       if (m.root) {
         m.root->AddNode(controller.transform);

@@ -817,12 +817,15 @@ struct DeviceDelegateOculusVR::State {
         // the controller index is changed.
         if (state[count].controllerCapabilities.ControllerCapabilities & ovrControllerCaps_ModelOculusTouch) {
           std::string controllerID;
+          vrb::Matrix beamTransform(vrb::Matrix::Identity());
           if (state[count].hand == ElbowModel::HandEnum::Left) {
+            beamTransform.TranslateInPlace(vrb::Vector(-0.011f, -0.007f, 0.0f));
             controllerID = "Oculus Touch (Left)";
           } else {
+            beamTransform.TranslateInPlace(vrb::Vector(0.011f, -0.007f, 0.0f));
             controllerID = "Oculus Touch (Right)";
           }
-          controller->CreateController(count, int32_t(state[count].hand), controllerID);
+          controller->CreateController(count, int32_t(state[count].hand), controllerID, beamTransform);
           controller->SetButtonCount(count, 6);
         } else {
           // Oculus Go only has one kind of controller model.

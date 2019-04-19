@@ -1,7 +1,7 @@
 # Blender MTL File: 'None'
 # Material Count: 1
 
-newmtl controllerMTL.001
+newmtl controllerMTL
 Ns 96.078431
 Ka 1.000000 1.000000 1.000000
 Kd 1.000000 1.000000 1.000000

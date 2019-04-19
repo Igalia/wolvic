@@ -45,6 +45,7 @@ Controller::operator=(const Controller& aController) {
   transform = aController.transform;
   pointer = aController.pointer;
   transformMatrix = aController.transformMatrix;
+  beamTransformMatrix = aController.beamTransformMatrix;
   immersiveName = aController.immersiveName;
   immersivePressedState = aController.immersivePressedState;
   immersiveTouchedState = aController.immersiveTouchedState;
@@ -72,6 +73,7 @@ Controller::Reset() {
   transform = nullptr;
   pointer = nullptr;
   transformMatrix = Matrix::Identity();
+  beamTransformMatrix = Matrix::Identity();
   immersiveName.clear();
   immersivePressedState = 0;
   immersiveTouchedState = 0;

@@ -34,6 +34,7 @@ public:
   // crow::ControllerDelegate interface
   uint32_t GetControllerCount() override;
   void CreateController(const int32_t aControllerIndex, const int32_t aModelIndex, const std::string& aImmersiveName) override;
+  void CreateController(const int32_t aControllerIndex, const int32_t aModelIndex, const std::string& aImmersiveName, const vrb::Matrix& aBeamTransform) override;
   void DestroyController(const int32_t aControllerIndex) override;
   void SetCapabilityFlags(const int32_t aControllerIndex, const device::CapabilityFlags aFlags) override;
   void SetEnabled(const int32_t aControllerIndex, const bool aEnabled) override;
