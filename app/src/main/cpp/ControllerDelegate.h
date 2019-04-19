@@ -21,10 +21,14 @@ typedef std::shared_ptr<ControllerDelegate> ControllerDelegatePtr;
 class ControllerDelegate {
 public:
   enum Button {
-    BUTTON_TRIGGER   = 1 << 0,
-    BUTTON_TOUCHPAD  = 1 << 1,
-    BUTTON_APP       = 1 << 2,
-    BUTTON_OTHERS    = 1 << 3,  // Other buttons only for the immersive mode.
+    BUTTON_TRIGGER   = 1u << 0u,
+    BUTTON_TOUCHPAD  = 1u << 1u,
+    BUTTON_APP       = 1u << 2u,
+    BUTTON_A         = 1u << 3u,
+    BUTTON_B         = 1u << 4u,
+    BUTTON_X         = 1u << 5u,
+    BUTTON_Y         = 1u << 6u,
+    BUTTON_OTHERS    = 1u << 7u,  // Other buttons only for the immersive mode.
   };
 
   virtual void CreateController(const int32_t aControllerIndex, const int32_t aModelIndex, const std::string& aImmersiveName) = 0;

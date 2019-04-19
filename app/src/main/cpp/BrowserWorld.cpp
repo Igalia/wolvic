@@ -196,6 +196,8 @@ struct BrowserWorld::State {
 
   void CheckBackButton();
   bool CheckExitImmersive();
+  void EnsureControllerFocused();
+  void ChangeControllerFocus(const Controller& aController);
   void UpdateControllers(bool& aRelayoutWidgets);
   WidgetPtr GetWidget(int32_t aHandle) const;
   WidgetPtr FindWidget(const std::function<bool(const WidgetPtr&)>& aCondition) const;
@@ -257,7 +259,38 @@ ThrottleHoverEvent(Controller& aController, const double aTimestamp, const bool 
 }
 
 void
+BrowserWorld::State::EnsureControllerFocused() {
+  Controller* first = nullptr;
+  bool focused = false;
+  for (Controller& controller: controllers->GetControllers()) {
+    focused = controller.focused;
+    if (focused) {
+      break;
+    } else if (!first) {
+      first = &controller;
+    }
+  }
+  if (!focused && first) {
+    ChangeControllerFocus(*first);
+  }
+}
+
+void
+BrowserWorld::State::ChangeControllerFocus(const Controller& aController) {
+  for (Controller& controller: controllers->GetControllers()) {
+    controller.focused = (&controller == &aController);
+    if (controller.pointer) {
+      controller.pointer->SetVisible(controller.focused);
+    }
+    if (controller.beamToggle) {
+      controller.beamToggle->ToggleAll(controller.focused);
+    }
+  }
+}
+
+void
 BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
+  EnsureControllerFocused();
   for (Controller& controller: controllers->GetControllers()) {
     if (!controller.enabled || (controller.index < 0)) {
       continue;
@@ -268,6 +301,20 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
 
     if (!(controller.lastButtonState & ControllerDelegate::BUTTON_APP) && (controller.buttonState & ControllerDelegate::BUTTON_APP)) {
       VRBrowser::HandleBack();
+    }
+
+    if (!controller.focused) {
+      const bool focusRequested =
+          ((controller.buttonState & ControllerDelegate::BUTTON_TRIGGER) && (controller.lastButtonState & ControllerDelegate::BUTTON_TRIGGER) == 0) ||
+              ((controller.buttonState & ControllerDelegate::BUTTON_A) && (controller.lastButtonState & ControllerDelegate::BUTTON_A) == 0) ||
+              ((controller.buttonState & ControllerDelegate::BUTTON_B) && (controller.lastButtonState & ControllerDelegate::BUTTON_B) == 0) ||
+              ((controller.buttonState & ControllerDelegate::BUTTON_X) && (controller.lastButtonState & ControllerDelegate::BUTTON_X) == 0) ||
+              ((controller.buttonState & ControllerDelegate::BUTTON_Y) && (controller.lastButtonState & ControllerDelegate::BUTTON_Y) == 0);
+      if (focusRequested) {
+        ChangeControllerFocus(controller);
+      }
+      controller.lastButtonState = controller.buttonState;
+      continue;
     }
 
     vrb::Vector start = controller.transformMatrix.MultiplyPosition(vrb::Vector());

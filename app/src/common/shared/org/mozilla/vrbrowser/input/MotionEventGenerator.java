@@ -44,7 +44,7 @@ public class MotionEventGenerator {
 
     private static void generateEvent(Widget aWidget, Device aDevice, int aAction, boolean aGeneric) {
         MotionEvent event = MotionEvent.obtain(
-                /*mDownTime*/ 0, // aDevice.mDownTime,
+                /*mDownTime*/ aDevice.mDownTime,
                 /*eventTime*/ SystemClock.uptimeMillis(),
                 /*action*/ aAction,
                 /*pointerCount*/ 1,

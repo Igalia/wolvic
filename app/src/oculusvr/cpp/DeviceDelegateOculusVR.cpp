@@ -907,8 +907,8 @@ struct DeviceDelegateOculusVR::State {
           const bool menuPressed = (state[i].controllerState.Buttons & ovrButton_Enter) != 0;
 
           controller->SetButtonState(i, ControllerDelegate::BUTTON_APP, -1, menuPressed, menuPressed);
-          controller->SetButtonState(i, ControllerDelegate::BUTTON_OTHERS, 3, xPressed, xTouched);
-          controller->SetButtonState(i, ControllerDelegate::BUTTON_OTHERS, 4, yPressed, yTouched);
+          controller->SetButtonState(i, ControllerDelegate::BUTTON_X, 3, xPressed, xTouched);
+          controller->SetButtonState(i, ControllerDelegate::BUTTON_Y, 4, yPressed, yTouched);
         } else if (state[i].hand == ElbowModel::HandEnum::Right) {
           const bool aPressed = (state[i].controllerState.Buttons & ovrButton_A) != 0;
           const bool aTouched = (state[i].controllerState.Touches & ovrTouch_A) != 0;
@@ -917,8 +917,8 @@ struct DeviceDelegateOculusVR::State {
           const bool menuPressed = (state[i].controllerState.Buttons & ovrButton_Enter) != 0;
 
           controller->SetButtonState(i, ControllerDelegate::BUTTON_APP, -1, menuPressed, menuPressed);
-          controller->SetButtonState(i, ControllerDelegate::BUTTON_OTHERS, 3, aPressed, aTouched);
-          controller->SetButtonState(i, ControllerDelegate::BUTTON_OTHERS, 4, bPressed, bTouched);
+          controller->SetButtonState(i, ControllerDelegate::BUTTON_A, 3, aPressed, aTouched);
+          controller->SetButtonState(i, ControllerDelegate::BUTTON_B, 4, bPressed, bTouched);
         } else {
           VRB_WARN("Undefined hand type in DeviceDelegateOculusVR.");
         }

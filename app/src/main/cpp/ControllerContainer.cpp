@@ -185,14 +185,17 @@ ControllerContainer::CreateController(const int32_t aControllerIndex, const int3
     if ((m.models.size() >= aModelIndex) && m.models[aModelIndex]) {
       controller.transform->AddNode(m.models[aModelIndex]);
       if (m.beamModel) {
+        controller.beamToggle = vrb::Toggle::Create(create);
         if (aBeamTransform.IsIdentity()) {
-          controller.transform->AddNode(m.beamModel);
+          controller.beamToggle->AddNode(m.beamModel);
         } else {
           vrb::TransformPtr beamTransform = Transform::Create(create);
           beamTransform->SetTransform(aBeamTransform);
           beamTransform->AddNode(m.beamModel);
-          controller.transform->AddNode(beamTransform);
+          controller.beamToggle->AddNode(beamTransform);
         }
+        controller.transform->AddNode(controller.beamToggle);
+        controller.beamToggle->ToggleAll(false);
       }
       if (m.root) {
         m.root->AddNode(controller.transform);

@@ -22,11 +22,12 @@ static const int kControllerMaxAxes = 6;
 struct Controller {
   int32_t index;
   bool enabled;
+  bool focused;
   uint32_t widget;
   float pointerX;
   float pointerY;
-  int32_t buttonState;
-  int32_t lastButtonState;
+  uint32_t buttonState;
+  uint32_t lastButtonState;
   bool touched;
   bool wasTouched;
   float touchX;
@@ -36,6 +37,7 @@ struct Controller {
   float scrollDeltaX;
   float scrollDeltaY;
   vrb::TransformPtr transform;
+  vrb::TogglePtr beamToggle;
   PointerPtr pointer;
   vrb::Matrix transformMatrix;
   vrb::Matrix beamTransformMatrix;

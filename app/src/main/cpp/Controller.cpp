@@ -29,6 +29,7 @@ Controller&
 Controller::operator=(const Controller& aController) {
   index = aController.index;
   enabled = aController.enabled;
+  focused = aController.focused;
   widget = aController.widget;
   pointerX = aController.pointerX;
   pointerY = aController.pointerY;
@@ -43,6 +44,7 @@ Controller::operator=(const Controller& aController) {
   scrollDeltaX = aController.scrollDeltaX;
   scrollDeltaY = aController.scrollDeltaY;
   transform = aController.transform;
+  beamToggle = aController.beamToggle;
   pointer = aController.pointer;
   transformMatrix = aController.transformMatrix;
   beamTransformMatrix = aController.beamTransformMatrix;
@@ -63,6 +65,7 @@ void
 Controller::Reset() {
   index = -1;
   enabled = false;
+  focused = false;
   widget = 0;
   pointerX = pointerY = 0.0f;
   buttonState = lastButtonState = 0;
@@ -71,6 +74,7 @@ Controller::Reset() {
   lastTouchX = lastTouchY = 0.0f;
   scrollDeltaX = scrollDeltaY = 0.0f;
   transform = nullptr;
+  beamToggle = nullptr;
   pointer = nullptr;
   transformMatrix = Matrix::Identity();
   beamTransformMatrix = Matrix::Identity();
