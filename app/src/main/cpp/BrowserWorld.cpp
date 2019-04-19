@@ -546,6 +546,7 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
   GeckoSurfaceTexture::InitializeJava(m.env, m.activity);
   m.loader->InitializeJava(aEnv, aActivity, aAssetManager);
   VRBrowser::RegisterExternalContext((jlong)m.externalVR->GetSharedData());
+  VRBrowser::SetDeviceType(m.device->GetDeviceType());
 
   if (!m.modelsLoaded) {
     const int32_t modelCount = m.device->GetControllerModelCount();

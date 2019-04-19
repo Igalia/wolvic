@@ -23,6 +23,7 @@ class DeviceDelegateOculusVR : public DeviceDelegate {
 public:
   static DeviceDelegateOculusVRPtr Create(vrb::RenderContextPtr& aContext, android_app* aApp);
   // DeviceDelegate interface
+  device::DeviceType GetDeviceType() override;
   void SetRenderMode(const device::RenderMode aMode) override;
   device::RenderMode GetRenderMode() override;
   void RegisterImmersiveDisplay(ImmersiveDisplayPtr aDisplay) override;

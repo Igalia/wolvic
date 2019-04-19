@@ -44,8 +44,11 @@ static const char* kGetPointerColor = "getPointerColor";
 static const char* kGetPointerColorSignature = "()I";
 static const char* kAreLayersEnabled = "areLayersEnabled";
 static const char* kAreLayersEnabledSignature = "()Z";
+static const char* kSetDeviceType = "setDeviceType";
+static const char* kSetDeviceTypeSignature = "(I)V";
 
 static JNIEnv* sEnv;
+static jclass sBrowserClass;
 static jobject sActivity;
 static jmethodID sDispatchCreateWidget;
 static jmethodID sDispatchCreateWidgetLayer;
@@ -64,6 +67,7 @@ static jmethodID sIsOverrideEnvPathEnabled;
 static jmethodID sGetActiveEnvironment;
 static jmethodID sGetPointerColor;
 static jmethodID sAreLayersEnabled;
+static jmethodID sSetDeviceType;
 }
 
 namespace crow {
@@ -78,28 +82,29 @@ VRBrowser::InitializeJava(JNIEnv* aEnv, jobject aActivity) {
     return;
   }
   sActivity = sEnv->NewGlobalRef(aActivity);
-  jclass browserClass = sEnv->GetObjectClass(sActivity);
-  if (!browserClass) {
+  sBrowserClass = sEnv->GetObjectClass(sActivity);
+  if (!sBrowserClass) {
     return;
   }
 
-  sDispatchCreateWidget = FindJNIMethodID(sEnv, browserClass, kDispatchCreateWidgetName, kDispatchCreateWidgetSignature);
-  sDispatchCreateWidgetLayer = FindJNIMethodID(sEnv, browserClass, kDispatchCreateWidgetLayerName, kDispatchCreateWidgetLayerSignature);
-  sHandleMotionEvent = FindJNIMethodID(sEnv, browserClass, kHandleMotionEventName, kHandleMotionEventSignature);
-  sHandleScrollEvent = FindJNIMethodID(sEnv, browserClass, kHandleScrollEventName, kHandleScrollEventSignature);
-  sHandleAudioPose = FindJNIMethodID(sEnv, browserClass, kHandleAudioPoseName, kHandleAudioPoseSignature);
-  sHandleGesture = FindJNIMethodID(sEnv, browserClass, kHandleGestureName, kHandleGestureSignature);
-  sHandleResize = FindJNIMethodID(sEnv, browserClass, kHandleResizeName, kHandleResizeSignature);
-  sHandleBack = FindJNIMethodID(sEnv, browserClass, kHandleBackEventName, kHandleBackEventSignature);
-  sRegisterExternalContext = FindJNIMethodID(sEnv, browserClass, kRegisterExternalContextName, kRegisterExternalContextSignature);
-  sPauseCompositor = FindJNIMethodID(sEnv, browserClass, kPauseCompositorName, kPauseCompositorSignature);
-  sResumeCompositor = FindJNIMethodID(sEnv, browserClass, kResumeCompositorName, kResumeCompositorSignature);
-  sRenderPointerLayer = FindJNIMethodID(sEnv, browserClass, kRenderPointerLayerName, kRenderPointerLayerSignature);
-  sGetStorageAbsolutePath = FindJNIMethodID(sEnv, browserClass, kGetStorageAbsolutePathName, kGetStorageAbsolutePathSignature);
-  sIsOverrideEnvPathEnabled = FindJNIMethodID(sEnv, browserClass, kIsOverrideEnvPathEnabledName, kIsOverrideEnvPathEnabledSignature);
-  sGetActiveEnvironment = FindJNIMethodID(sEnv, browserClass, kGetActiveEnvironment, kGetActiveEnvironmentSignature);
-  sGetPointerColor = FindJNIMethodID(sEnv, browserClass, kGetPointerColor, kGetPointerColorSignature);
-  sAreLayersEnabled = FindJNIMethodID(sEnv, browserClass, kAreLayersEnabled, kAreLayersEnabledSignature);
+  sDispatchCreateWidget = FindJNIMethodID(sEnv, sBrowserClass, kDispatchCreateWidgetName, kDispatchCreateWidgetSignature);
+  sDispatchCreateWidgetLayer = FindJNIMethodID(sEnv, sBrowserClass, kDispatchCreateWidgetLayerName, kDispatchCreateWidgetLayerSignature);
+  sHandleMotionEvent = FindJNIMethodID(sEnv, sBrowserClass, kHandleMotionEventName, kHandleMotionEventSignature);
+  sHandleScrollEvent = FindJNIMethodID(sEnv, sBrowserClass, kHandleScrollEventName, kHandleScrollEventSignature);
+  sHandleAudioPose = FindJNIMethodID(sEnv, sBrowserClass, kHandleAudioPoseName, kHandleAudioPoseSignature);
+  sHandleGesture = FindJNIMethodID(sEnv, sBrowserClass, kHandleGestureName, kHandleGestureSignature);
+  sHandleResize = FindJNIMethodID(sEnv, sBrowserClass, kHandleResizeName, kHandleResizeSignature);
+  sHandleBack = FindJNIMethodID(sEnv, sBrowserClass, kHandleBackEventName, kHandleBackEventSignature);
+  sRegisterExternalContext = FindJNIMethodID(sEnv, sBrowserClass, kRegisterExternalContextName, kRegisterExternalContextSignature);
+  sPauseCompositor = FindJNIMethodID(sEnv, sBrowserClass, kPauseCompositorName, kPauseCompositorSignature);
+  sResumeCompositor = FindJNIMethodID(sEnv, sBrowserClass, kResumeCompositorName, kResumeCompositorSignature);
+  sRenderPointerLayer = FindJNIMethodID(sEnv, sBrowserClass, kRenderPointerLayerName, kRenderPointerLayerSignature);
+  sGetStorageAbsolutePath = FindJNIMethodID(sEnv, sBrowserClass, kGetStorageAbsolutePathName, kGetStorageAbsolutePathSignature);
+  sIsOverrideEnvPathEnabled = FindJNIMethodID(sEnv, sBrowserClass, kIsOverrideEnvPathEnabledName, kIsOverrideEnvPathEnabledSignature);
+  sGetActiveEnvironment = FindJNIMethodID(sEnv, sBrowserClass, kGetActiveEnvironment, kGetActiveEnvironmentSignature);
+  sGetPointerColor = FindJNIMethodID(sEnv, sBrowserClass, kGetPointerColor, kGetPointerColorSignature);
+  sAreLayersEnabled = FindJNIMethodID(sEnv, sBrowserClass, kAreLayersEnabled, kAreLayersEnabledSignature);
+  sSetDeviceType = FindJNIMethodID(sEnv, sBrowserClass, kSetDeviceType, kSetDeviceTypeSignature);
 }
 
 void
@@ -111,6 +116,8 @@ VRBrowser::ShutdownJava() {
     sEnv->DeleteGlobalRef(sActivity);
     sActivity = nullptr;
   }
+
+  sBrowserClass = nullptr;
 
   sDispatchCreateWidget = nullptr;
   sDispatchCreateWidgetLayer = nullptr;
@@ -124,6 +131,12 @@ VRBrowser::ShutdownJava() {
   sPauseCompositor = nullptr;
   sResumeCompositor = nullptr;
   sRenderPointerLayer = nullptr;
+  sGetStorageAbsolutePath = nullptr;
+  sIsOverrideEnvPathEnabled = nullptr;
+  sGetActiveEnvironment = nullptr;
+  sGetPointerColor = nullptr;
+  sAreLayersEnabled = nullptr;
+  sSetDeviceType = nullptr;
   sEnv = nullptr;
 }
 
@@ -282,6 +295,13 @@ VRBrowser::AreLayersEnabled() {
   CheckJNIException(sEnv, __FUNCTION__);
 
   return enabled;
+}
+
+void
+VRBrowser::SetDeviceType(const jint aType) {
+  if (!ValidateMethodID(sEnv, sActivity, sSetDeviceType, __FUNCTION__)) { return; }
+  sEnv->CallVoidMethod(sActivity, sSetDeviceType, aType);
+  CheckJNIException(sEnv, __FUNCTION__);
 }
 
 } // namespace crow

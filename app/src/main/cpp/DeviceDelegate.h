@@ -45,6 +45,7 @@ public:
 
 class DeviceDelegate {
 public:
+  virtual device::DeviceType GetDeviceType() { return device::UnknownType; }
   virtual void SetRenderMode(const device::RenderMode aMode) = 0;
   virtual device::RenderMode GetRenderMode() = 0;
   virtual void RegisterImmersiveDisplay(ImmersiveDisplayPtr aDisplay) = 0;

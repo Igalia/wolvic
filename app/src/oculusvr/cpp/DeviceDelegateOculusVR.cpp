@@ -595,7 +595,6 @@ struct DeviceDelegateOculusVR::State {
   bool layersEnabled = true;
   ovrJava java = {};
   ovrMobile* ovr = nullptr;
-  ovrDeviceType deviceType;
   OculusEyeSwapChainPtr eyeSwapChains[VRAPI_EYE_COUNT];
   OculusLayerCubePtr cubeLayer;
   OculusLayerEquirectPtr equirectLayer;
@@ -621,6 +620,7 @@ struct DeviceDelegateOculusVR::State {
   int reorientCount = -1;
   vrb::Matrix reorientMatrix = vrb::Matrix::Identity();
   device::CPULevel minCPULevel = device::CPULevel::Normal;
+  device::DeviceType deviceType = device::UnknownType;
 
 
   void UpdatePerspective() {
@@ -660,7 +660,6 @@ struct DeviceDelegateOculusVR::State {
       return;
     }
     initialized = true;
-    deviceType = (ovrDeviceType)vrapi_GetSystemPropertyInt(&java, VRAPI_SYS_PROP_DEVICE_TYPE);
     SetRenderSize(device::RenderMode::StandAlone);
 
     for (int i = 0; i < VRAPI_EYE_COUNT; ++i) {
@@ -678,6 +677,17 @@ struct DeviceDelegateOculusVR::State {
     vrapi_SetPropertyInt(&java, VRAPI_EAT_NATIVE_GAMEPAD_EVENTS, 0);
     // Reorient the headset after controller recenter.
     vrapi_SetPropertyInt(&java, VRAPI_REORIENT_HMD_ON_CONTROLLER_RECENTER, 1);
+
+    const int type = vrapi_GetSystemPropertyInt(&java, VRAPI_SYS_PROP_DEVICE_TYPE);
+    if ((type >= VRAPI_DEVICE_TYPE_OCULUSGO_START ) && (type <= VRAPI_DEVICE_TYPE_OCULUSGO_END)) {
+      VRB_DEBUG("Detected Oculus Go");
+      deviceType = device::OculusGo;
+    } else if ((type >= VRAPI_DEVICE_TYPE_OCULUSQUEST_START) && (type <= VRAPI_DEVICE_TYPE_OCULUSQUEST_END)) {
+      VRB_DEBUG("Detected Oculus Quest");
+      deviceType = device::OculusQuest;
+    } else {
+      VRB_DEBUG("Detected Unknown Oculus device");
+    }
   }
 
   void UpdateTrackingMode() {
@@ -744,11 +754,11 @@ struct DeviceDelegateOculusVR::State {
   }
 
   bool IsOculusQuest() const {
-    return deviceType >= VRAPI_DEVICE_TYPE_OCULUSQUEST_START && deviceType <= VRAPI_DEVICE_TYPE_OCULUSQUEST_END;
+    return deviceType == device::OculusQuest;
   }
 
   bool IsOculusGo() const {
-    return deviceType >= VRAPI_DEVICE_TYPE_OCULUSGO_START && deviceType <= VRAPI_DEVICE_TYPE_OCULUSGO_END;
+    return deviceType == device::OculusGo;
   }
 
   bool Is6DOF() const {
@@ -992,6 +1002,11 @@ DeviceDelegateOculusVR::Create(vrb::RenderContextPtr& aContext, android_app *aAp
   result->m.app = aApp;
   result->m.Initialize();
   return result;
+}
+
+device::DeviceType
+DeviceDelegateOculusVR::GetDeviceType() {
+  return m.deviceType;
 }
 
 void

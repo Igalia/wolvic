@@ -41,6 +41,7 @@ import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.crashreporting.CrashReporterService;
 import org.mozilla.vrbrowser.crashreporting.GlobalExceptionHandler;
 import org.mozilla.vrbrowser.geolocation.GeolocationWrapper;
+import org.mozilla.vrbrowser.input.DeviceType;
 import org.mozilla.vrbrowser.input.MotionEventGenerator;
 import org.mozilla.vrbrowser.search.SearchEngineWrapper;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
@@ -732,6 +733,13 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @SuppressWarnings("unused")
     public int getPointerColor() {
         return SettingsStore.getInstance(this).getPointerColor();
+    }
+
+    @Keep
+    @SuppressWarnings("unused")
+    private void setDeviceType(int aType) {
+
+        runOnUiThread(() -> DeviceType.setType(aType));
     }
 
     void createOffscreenDisplay() {

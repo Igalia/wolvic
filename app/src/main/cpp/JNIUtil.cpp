@@ -48,6 +48,23 @@ ValidateMethodID(JNIEnv* aEnv, jobject aObject, jmethodID aMethod, const char* a
   return true;
 }
 
+bool
+ValidateStaticMethodID(JNIEnv* aEnv, jclass aClass, jmethodID aMethod, const char* aName) {
+  if (!aEnv) {
+    VRB_ERROR("JNI::%s failed. Java not initialized.", aName);
+    return false;
+  }
+  if (!aMethod) {
+    VRB_ERROR("JNI::%s failed. Java method is null", aName);
+    return false;
+  }
+  if (!aClass) {
+    VRB_ERROR("JNI::%s failed. Java class is null", aName);
+    return false;
+  }
+  return true;
+}
+
 void
 CheckJNIException(JNIEnv* aEnv, const char* aName) {
   if (!aEnv) {

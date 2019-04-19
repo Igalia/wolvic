@@ -22,7 +22,11 @@ enum class RenderMode { StandAlone, Immersive };
 enum class CPULevel { Normal = 0, High };
 const int32_t EyeCount = 2;
 inline int32_t EyeIndex(const Eye aEye) { return aEye == Eye::Left ? 0 : 1; }
-
+// The type values need to match those defined in DeviceType.java
+typedef int32_t DeviceType;
+const DeviceType UnknownType = 0;
+const DeviceType OculusGo = 1;
+const DeviceType OculusQuest = 2;
 struct EyeRect {
   float mX, mY;
   float mWidth, mHeight;

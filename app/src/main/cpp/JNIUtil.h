@@ -12,6 +12,7 @@ namespace crow {
 
 jmethodID FindJNIMethodID(JNIEnv* aEnv, jclass aClass, const char* aName, const char* aSignature, const bool aIsStatic = false);
 bool ValidateMethodID(JNIEnv* aEnv, jobject aObject, jmethodID aMethod, const char* aName);
+bool ValidateStaticMethodID(JNIEnv* aEnv, jclass aClass, jmethodID aMethod, const char* aName);
 void CheckJNIException(JNIEnv* aEnv, const char* aName);
 
 } // namespace crow

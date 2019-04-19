@@ -35,6 +35,7 @@ bool isOverrideEnvPathEnabled();
 std::string GetActiveEnvironment();
 int32_t GetPointerColor();
 bool AreLayersEnabled();
+void SetDeviceType(const jint aType);
 } // namespace VRBrowser;
 
 } // namespace crow
