@@ -45,6 +45,7 @@ Controller::operator=(const Controller& aController) {
   scrollDeltaY = aController.scrollDeltaY;
   transform = aController.transform;
   beamToggle = aController.beamToggle;
+  beamParent = aController.beamParent;
   pointer = aController.pointer;
   transformMatrix = aController.transformMatrix;
   beamTransformMatrix = aController.beamTransformMatrix;
@@ -75,6 +76,7 @@ Controller::Reset() {
   scrollDeltaX = scrollDeltaY = 0.0f;
   transform = nullptr;
   beamToggle = nullptr;
+  beamParent = nullptr;
   pointer = nullptr;
   transformMatrix = Matrix::Identity();
   beamTransformMatrix = Matrix::Identity();

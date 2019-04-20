@@ -187,11 +187,13 @@ ControllerContainer::CreateController(const int32_t aControllerIndex, const int3
       if (m.beamModel) {
         controller.beamToggle = vrb::Toggle::Create(create);
         if (aBeamTransform.IsIdentity()) {
+          controller.beamParent = controller.beamParent;
           controller.beamToggle->AddNode(m.beamModel);
         } else {
           vrb::TransformPtr beamTransform = Transform::Create(create);
           beamTransform->SetTransform(aBeamTransform);
           beamTransform->AddNode(m.beamModel);
+          controller.beamParent = beamTransform;
           controller.beamToggle->AddNode(beamTransform);
         }
         controller.transform->AddNode(controller.beamToggle);
@@ -364,9 +366,11 @@ ControllerContainer::SetScrolledDelta(const int32_t aControllerIndex, const floa
 
 void ControllerContainer::SetPointerColor(const vrb::Color& aColor) const {
   for (Controller& controller: m.list) {
-    if (controller.transform) {
-      GeometryPtr geometry = std::dynamic_pointer_cast<vrb::Geometry>(controller.transform->GetNode(1));
-      geometry->GetRenderState()->SetMaterial(aColor, aColor, vrb::Color(0.0f, 0.0f, 0.0f), 0.0f);
+    if (controller.beamParent) {
+      GeometryPtr geometry = std::dynamic_pointer_cast<vrb::Geometry>(controller.beamParent->GetNode(0));
+      if (geometry) {
+        geometry->GetRenderState()->SetMaterial(aColor, aColor, vrb::Color(0.0f, 0.0f, 0.0f), 0.0f);
+      }
     }
     if (controller.pointer) {
       controller.pointer->SetPointerColor(aColor);
