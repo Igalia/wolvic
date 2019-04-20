@@ -187,7 +187,7 @@ ControllerContainer::CreateController(const int32_t aControllerIndex, const int3
       if (m.beamModel) {
         controller.beamToggle = vrb::Toggle::Create(create);
         if (aBeamTransform.IsIdentity()) {
-          controller.beamParent = controller.beamParent;
+          controller.beamParent = controller.beamToggle;
           controller.beamToggle->AddNode(m.beamModel);
         } else {
           vrb::TransformPtr beamTransform = Transform::Create(create);
