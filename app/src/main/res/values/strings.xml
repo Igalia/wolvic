@@ -489,11 +489,13 @@
     <!-- This string is displayed in a tooltip below the video controls UI. -->
     <string name="video_controls_volume">Volume</string>
 
-    <!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek +30 seconds'). -->
-    <string name="video_controls_seek_forward">Seek +%1$ seconds</string>
+    <!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek +30 seconds').
+    '%1$s' will be replaced at runtime with a duration in seconds (e.g., '30'). -->
+    <string name="video_controls_seek_forward">Seek +%1$s seconds</string>
 
-    <!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek -15 seconds'). -->
-    <string name="video_controls_seek_backward">Seek -%1$ seconds</string>
+    <!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek -15 seconds').
+    '%1$s' will be replaced at runtime with a duration in seconds (e.g., '15'). -->
+    <string name="video_controls_seek_backward">Seek -%1$s seconds</string>
 
     <!-- This string is displayed in the video control seekbar when the media is not seekable
          (e.g., a live video stream). Prefer a short text because it affects the width of the seek bar. -->
