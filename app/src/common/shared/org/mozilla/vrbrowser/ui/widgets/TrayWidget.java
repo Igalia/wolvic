@@ -241,11 +241,11 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
             mPrivateButton.setPrivateMode(isPrivateMode);
             if (isPrivateMode) {
                 mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
-                mPrivateButton.setImageResource(R.drawable.ic_tray_private_on);
+                mPrivateButton.setImageResource(R.drawable.ic_icon_private_browsing_on);
 
             } else {
                 mWidgetManager.popWorldBrightness(this);
-                mPrivateButton.setImageResource(R.drawable.ic_tray_private);
+                mPrivateButton.setImageResource(R.drawable.ic_icon_private_browsing);
             }
         }
 

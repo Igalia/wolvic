@@ -61,7 +61,7 @@
                 style="?attr/navigationBarButtonStyle"
                 android:layout_weight="1"
                 android:layout_marginStart="10dp"
-                android:src="@drawable/ic_icon_focus_mode_resize" />
+                android:src="@drawable/ic_icon_resize" />
         </LinearLayout>
 
         <LinearLayout
@@ -81,7 +81,7 @@
             <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/fullScreenResizeEnterButton"
                 style="?attr/fullScreenButtonStyle"
-                android:src="@drawable/ic_icon_focus_mode_resize" />
+                android:src="@drawable/ic_icon_resize" />
             <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/projectionButton"
                 style="?attr/fullScreenButtonStyle"
@@ -133,7 +133,7 @@
             <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/resizeExitButton"
                 style="@style/navigationBarTextButtonEndTheme"
-                android:src="@drawable/ic_icon_focus_mode_resize_done" />
+                android:src="@drawable/ic_icon_resize_done" />
         </LinearLayout>
     </RelativeLayout>
 </merge>

@@ -107,9 +107,9 @@
 
     <style name="honeycombButtonTheme">
         <item name="android:orientation">vertical</item>
-        <item name="android:layout_width">121dp</item>
+        <item name="android:layout_width">136dp</item>
         <item name="android:layout_height">136dp</item>
-        <item name="android:background">@drawable/ic_menu_settings_honeycomb_fill</item>
+        <item name="android:background">@drawable/ic_settings_honeycomb_fill</item>
         <item name="android:scaleType">fitCenter</item>
         <item name="android:gravity">center</item>
         <item name="android:backgroundTint">@drawable/settings_button_color</item>

@@ -6,9 +6,9 @@
   <path
       android:pathData="M209,15a195,195 0,1 0,2 0z"
       android:strokeWidth="26"
-      android:strokeColor="#FFFFFF"/>
+      android:strokeColor="@color/white"/>
   <path
-      android:pathData="m210,15v390m195,-195H15M59,90a260,260 0,0 0,302 0m0,240a260,260 0,0 0,-302 0M195,20a250,250 0,0 0,0 382m30,0a250,250 0,0 0,0 -382"
+      android:pathData="M210,15v390m195,-195H15M59,90a260,260 0,0 0,302 0m0,240a260,260 0,0 0,-302 0M195,20a250,250 0,0 0,0 382m30,0a250,250 0,0 0,0 -382"
       android:strokeWidth="18"
-      android:strokeColor="#FFFFFF"/>
+      android:strokeColor="@color/white"/>
 </vector>

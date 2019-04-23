@@ -72,7 +72,7 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
         mMediaSeekLabel = findViewById(R.id.mediaControlSeekLabel);
         mPlayIcon = aContext.getDrawable(R.drawable.ic_icon_media_play);
         mPauseIcon = aContext.getDrawable(R.drawable.ic_icon_media_pause);
-        mMutedIcon = aContext.getDrawable(R.drawable.ic_icon_meda_volume_muted);
+        mMutedIcon = aContext.getDrawable(R.drawable.ic_icon_media_volume_muted);
         mVolumeIcon = aContext.getDrawable(R.drawable.ic_icon_media_volume);
         mOffsetViewBounds = new Rect();
 

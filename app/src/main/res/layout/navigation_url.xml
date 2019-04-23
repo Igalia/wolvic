@@ -64,7 +64,7 @@
                 android:layout_height="30dp"
                 android:layout_centerInParent="true"
                 android:padding="5dp"
-                android:src="@drawable/icon_lock_insecure_network"
+                android:src="@drawable/ic_icon_security_state_insecure"
                 android:visibility="gone" />
 
         </RelativeLayout>

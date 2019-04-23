@@ -35,7 +35,7 @@
                 android:id="@+id/mediaSeekBackwardButton"
                 style="?attr/mediaControlsButtonStyle"
                 android:layout_weight="1"
-                android:src="@drawable/ic_icon_media_seek_backward" />
+                android:src="@drawable/ic_icon_media_seek_backward_10" />
 
             <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/mediaPlayButton"
@@ -47,7 +47,7 @@
                 android:id="@+id/mediaSeekForwardButton"
                 style="?attr/mediaControlsButtonStyle"
                 android:layout_weight="1"
-                android:src="@drawable/ic_icon_meda_seek_forward" />
+                android:src="@drawable/ic_icon_media_seek_forward_30" />
 
             <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/mediaProjectionButton"
