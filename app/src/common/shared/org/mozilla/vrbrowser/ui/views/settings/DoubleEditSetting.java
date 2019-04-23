@@ -37,7 +37,6 @@ public class DoubleEditSetting extends SingleEditSetting {
         by.setVisibility(View.VISIBLE);
 
         mText2 = findViewById(R.id.textValue2);
-        mText2.setSoundEffectsEnabled(false);
         mText2.setOnClickListener(mText2ClickListener);
 
         mEdit2 = findViewById(R.id.editValue2);
@@ -49,7 +48,6 @@ public class DoubleEditSetting extends SingleEditSetting {
                 mEdit2.selectAll();
             }
         });
-        mEdit2.setSoundEffectsEnabled(false);
         if (mMaxLength != 0) {
             mEdit2.setFilters(new InputFilter[]{
                     new InputFilter.LengthFilter(mMaxLength)

@@ -70,7 +70,6 @@ public class ChoicePromptWidget extends PromptWidget {
         mLayout = findViewById(R.id.layout);
 
         mList = findViewById(R.id.choiceslist);
-        mList.setSoundEffectsEnabled(false);
         mList.setOnItemClickListener((parent, view, position, id) -> {
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
@@ -93,7 +92,6 @@ public class ChoicePromptWidget extends PromptWidget {
         mMessage = findViewById(R.id.promptMessage);
 
         mCloseButton = findViewById(R.id.negativeButton);
-        mCloseButton.setSoundEffectsEnabled(false);
         mCloseButton.setOnClickListener(view -> {
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
@@ -111,7 +109,6 @@ public class ChoicePromptWidget extends PromptWidget {
         });
 
         mOkButton = findViewById(R.id.positiveButton);
-        mOkButton.setSoundEffectsEnabled(false);
         mOkButton.setOnClickListener(view -> {
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);

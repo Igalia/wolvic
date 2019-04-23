@@ -66,8 +66,6 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
         mBackground = getBackground();
 
         mState = State.NORMAL;
-
-        setSoundEffectsEnabled(false);
     }
 
     public void setTintColorList(int aColorListId) {

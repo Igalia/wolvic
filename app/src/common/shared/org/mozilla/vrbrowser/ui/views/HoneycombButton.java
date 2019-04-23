@@ -61,8 +61,6 @@ public class HoneycombButton extends LinearLayout {
             mSecondaryText.setText(mSecondaryButtonText);
 
         setOnHoverListener((view, motionEvent) -> false);
-
-        setSoundEffectsEnabled(false);
     }
 
     @Override

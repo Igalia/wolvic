@@ -42,7 +42,6 @@ public class HoneycombSwitch extends LinearLayout {
 
         mSwitch = findViewById(R.id.honeycombSwitchButton);
         mSwitch.setOnCheckedChangeListener(mInternalSwitchListener);
-        mSwitch.setSoundEffectsEnabled(false);
 
         mText = findViewById(R.id.honeycombSwitchText);
         if (mText != null) {

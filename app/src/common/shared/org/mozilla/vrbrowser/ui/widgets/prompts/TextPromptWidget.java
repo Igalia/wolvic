@@ -49,7 +49,6 @@ public class TextPromptWidget extends PromptWidget {
         mPromptText = findViewById(R.id.promptText);
 
         mOkButton = findViewById(R.id.positiveButton);
-        mOkButton.setSoundEffectsEnabled(false);
         mOkButton.setOnClickListener(view -> {
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
@@ -63,7 +62,6 @@ public class TextPromptWidget extends PromptWidget {
         });
 
         mCancelButton = findViewById(R.id.negativeButton);
-        mCancelButton.setSoundEffectsEnabled(false);
         mCancelButton.setOnClickListener(view -> {
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);

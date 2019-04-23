@@ -55,7 +55,6 @@ public class SwitchSetting extends LinearLayout {
 
         mSwitch = findViewById(R.id.settings_switch);
         mSwitch.setOnCheckedChangeListener(mInternalSwitchListener);
-        mSwitch.setSoundEffectsEnabled(false);
 
         mSwitchText = findViewById(R.id.settings_switch_text);
         mHelpButton = findViewById(R.id.settings_help_button);

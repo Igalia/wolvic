@@ -45,7 +45,6 @@ public class AlertPromptWidget extends PromptWidget {
         mMessage.setMovementMethod(new ScrollingMovementMethod());
 
         mOkButton = findViewById(R.id.positiveButton);
-        mOkButton.setSoundEffectsEnabled(false);
         mOkButton.setOnClickListener(view -> {
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);

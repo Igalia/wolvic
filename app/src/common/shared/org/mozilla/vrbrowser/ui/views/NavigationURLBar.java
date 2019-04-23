@@ -160,7 +160,6 @@ public class NavigationURLBar extends FrameLayout {
 
         // Bookmarks
         mBookmarkButton = findViewById(R.id.bookmarkButton);
-        mBookmarkButton.setSoundEffectsEnabled(false);
 
         setURL("");
         mIsBookmarkMode = false;

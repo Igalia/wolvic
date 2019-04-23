@@ -31,7 +31,6 @@ public class RootWidget extends UIWidget {
 
     private void initialize(Context aContext) {
         setFocusable(true);
-        setSoundEffectsEnabled(false);
 
         setOnClickListener(v -> {
             requestFocus();

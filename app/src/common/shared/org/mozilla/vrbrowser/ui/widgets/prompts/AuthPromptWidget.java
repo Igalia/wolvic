@@ -63,7 +63,6 @@ public class AuthPromptWidget extends PromptWidget {
         mPasswordTextLabel = findViewById(R.id.authPasswordLabel);
 
         mOkButton = findViewById(R.id.positiveButton);
-        mOkButton.setSoundEffectsEnabled(false);
         mOkButton.setOnClickListener(view -> {
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
@@ -77,7 +76,6 @@ public class AuthPromptWidget extends PromptWidget {
         });
 
         mCancelButton = findViewById(R.id.negativeButton);
-        mCancelButton.setSoundEffectsEnabled(false);
         mCancelButton.setOnClickListener(view -> {
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);

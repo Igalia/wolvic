@@ -72,7 +72,6 @@ public class RadioGroupSetting extends LinearLayout {
         }
 
         mRadioGroup = findViewById(R.id.radio_group);
-        mRadioGroup.setSoundEffectsEnabled(false);
 
         for (int i=0; i<mOptions.length; i++) {
             RadioButton button = new RadioButton(new ContextThemeWrapper(getContext(), R.style.radioButtonTheme), null, 0);
@@ -80,7 +79,6 @@ public class RadioGroupSetting extends LinearLayout {
             button.setClickable(true);
             button.setId(i);
             button.setText(mOptions[i]);
-            button.setSoundEffectsEnabled(false);
             mRadioGroup.addView(button);
         }
 

@@ -57,7 +57,6 @@ public class SingleEditSetting extends LinearLayout {
         mDescriptionView.setText(mDescription);
 
         mText1 = findViewById(R.id.textValue1);
-        mText1.setSoundEffectsEnabled(false);
         mText1.setOnClickListener(mText1ClickListener);
 
         mEdit1 = findViewById(R.id.editValue1);
@@ -69,7 +68,6 @@ public class SingleEditSetting extends LinearLayout {
                 mEdit1.selectAll();
             }
         });
-        mEdit1.setSoundEffectsEnabled(false);
         if (mMaxLength != 0) {
             mEdit1.setFilters(new InputFilter[]{
                     new InputFilter.LengthFilter(mMaxLength)
@@ -83,7 +81,6 @@ public class SingleEditSetting extends LinearLayout {
         }
 
         mButton = findViewById(R.id.settingButton);
-        mButton.setSoundEffectsEnabled(false);
         mButton.setOnClickListener(mInternalClickListener);
     }
 

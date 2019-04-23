@@ -66,8 +66,6 @@ public class UITextButton extends AppCompatButton implements CustomUIButton {
         mBackground = getBackground();
 
         mState = State.NORMAL;
-
-        setSoundEffectsEnabled(false);
     }
 
     private void setTintColorList(int aColorListId) {

@@ -64,7 +64,6 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
         mWidgetManager.addFocusChangeListener(this);
 
         mList = findViewById(R.id.list);
-        mList.setSoundEffectsEnabled(false);
 
         mScaleUpAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.popup_scaleup);
         mScaleDownAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.popup_scaledown);
@@ -216,13 +215,11 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
                 itemViewHolder.layout = listItem.findViewById(R.id.layout);
                 itemViewHolder.layout.setTag(R.string.position_tag, position);
                 itemViewHolder.layout.setOnClickListener(mRowListener);
-                itemViewHolder.layout.setSoundEffectsEnabled(false);
                 itemViewHolder.favicon = listItem.findViewById(R.id.favicon);
                 itemViewHolder.title = listItem.findViewById(R.id.title);
                 itemViewHolder.url = listItem.findViewById(R.id.url);
                 itemViewHolder.delete = listItem.findViewById(R.id.delete);
                 itemViewHolder.delete.setTag(R.string.position_tag, position);
-                itemViewHolder.delete.setSoundEffectsEnabled(false);
                 itemViewHolder.delete.setOnClickListener(mDeleteButtonListener);
                 itemViewHolder.divider = listItem.findViewById(R.id.divider);
 

@@ -101,7 +101,6 @@ public class ImageRadioGroupSetting extends LinearLayout {
             mImage = findViewById(R.id.radioItemImage);
             mRadioButton = findViewById(R.id.radioItemButton);
             mRadioButton.setInputType(InputType.TYPE_NULL);
-            mRadioButton.setSoundEffectsEnabled(false);
         }
 
         public void setValues(int aItemId, String aText, Drawable aImage) {

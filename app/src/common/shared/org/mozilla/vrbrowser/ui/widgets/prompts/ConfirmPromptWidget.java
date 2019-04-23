@@ -54,17 +54,14 @@ public class ConfirmPromptWidget extends PromptWidget {
         mButtons = new Button[3];
 
         mButtons[POSITIVE] = findViewById(R.id.positiveButton);
-        mButtons[POSITIVE].setSoundEffectsEnabled(false);
         mButtons[POSITIVE].setOnClickListener(mButtonClickListener);
         mButtons[POSITIVE].setVisibility(GONE);
 
         mButtons[NEUTRAL] = findViewById(R.id.neutralButton);
-        mButtons[NEUTRAL].setSoundEffectsEnabled(false);
         mButtons[NEUTRAL].setOnClickListener(mButtonClickListener);
         mButtons[NEUTRAL].setVisibility(GONE);
 
         mButtons[NEGATIVE] = findViewById(R.id.negativeButton);
-        mButtons[NEGATIVE].setSoundEffectsEnabled(false);
         mButtons[NEGATIVE].setOnClickListener(mButtonClickListener);
         mButtons[NEGATIVE].setVisibility(GONE);
     }

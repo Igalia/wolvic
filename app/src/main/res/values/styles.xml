@@ -280,6 +280,7 @@
         <item name="android:windowActionBar">false</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
+        <item name="android:soundEffectsEnabled">false</item>
         <item name="honeycombButtonStyle">@style/honeycombButtonTheme</item>
         <item name="navigationBarStyle">@style/navigationBarTheme</item>
         <item name="navigationBarButtonStyle">@style/navigationBarButtonTheme</item>

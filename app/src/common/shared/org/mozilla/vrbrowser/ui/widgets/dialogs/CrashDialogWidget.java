@@ -78,7 +78,6 @@ public class CrashDialogWidget extends UIWidget implements WidgetManagerDelegate
 
             onDismiss();
         });
-        mLearnMoreButton.setSoundEffectsEnabled(false);
 
         mDoNotSendButton.setOnClickListener(view -> {
             if (mAudio != null) {
@@ -87,7 +86,6 @@ public class CrashDialogWidget extends UIWidget implements WidgetManagerDelegate
 
             onDismiss();
         });
-        mDoNotSendButton.setSoundEffectsEnabled(false);
 
         mSendDataButton.setOnClickListener(view -> {
             if (mAudio != null) {
@@ -102,7 +100,6 @@ public class CrashDialogWidget extends UIWidget implements WidgetManagerDelegate
 
             SettingsStore.getInstance(getContext()).setCrashReportingEnabled(mSendDataCheckBox.isChecked());
         });
-        mSendDataButton.setSoundEffectsEnabled(false);
 
         mSendDataCheckBox.setChecked(SettingsStore.getInstance(getContext()).isCrashReportingEnabled());
         mSendDataCheckBox.setOnCheckedChangeListener((compoundButton, b) -> {
@@ -110,7 +107,6 @@ public class CrashDialogWidget extends UIWidget implements WidgetManagerDelegate
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
         });
-        mSendDataCheckBox.setSoundEffectsEnabled(false);
 
         mCrashMessage.setText(getContext().getString(R.string.crash_dialog_message, getContext().getString(R.string.app_name)));
 
