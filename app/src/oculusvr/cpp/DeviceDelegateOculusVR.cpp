@@ -618,6 +618,8 @@ struct DeviceDelegateOculusVR::State {
   ControllerDelegatePtr controller;
   ImmersiveDisplayPtr immersiveDisplay;
   int reorientCount = -1;
+  bool headHeightOffsetSet = false;
+  vrb::Vector headHeightOffset;
   vrb::Matrix reorientMatrix = vrb::Matrix::Identity();
   device::CPULevel minCPULevel = device::CPULevel::Normal;
   device::DeviceType deviceType = device::UnknownType;
@@ -877,7 +879,11 @@ struct DeviceDelegateOculusVR::State {
 
       if (state[i].controllerCapabilities.ControllerCapabilities & ovrControllerCaps_HasPositionTracking) {
         auto & position = tracking.HeadPose.Pose.Position;
-        state[i].controllerTransform.TranslateInPlace(vrb::Vector(position.x, position.y, position.z));
+        vrb::Vector headPos(position.x, position.y, position.z);
+        if (renderMode == device::RenderMode::StandAlone) {
+          headPos += headHeightOffset;
+        }
+        state[i].controllerTransform.TranslateInPlace(headPos);
         flags |= device::Position;
       } else {
         state[i].controllerTransform = elbow->GetTransform(state[i].hand, head, state[i].controllerTransform);
@@ -1175,8 +1181,18 @@ DeviceDelegateOculusVR::StartFrame() {
   ovrMatrix4f matrix = vrapi_GetTransformFromPose(&m.predictedTracking.HeadPose.Pose);
   vrb::Matrix head = vrb::Matrix::FromRowMajor(matrix.M[0]);
 
-  if (m.renderMode == device::RenderMode::StandAlone && !m.Is6DOF()) {
-    head.TranslateInPlace(kAverageHeight);
+
+
+  if (m.renderMode == device::RenderMode::StandAlone) {
+    if (!m.Is6DOF()) {
+      head.TranslateInPlace(kAverageHeight);
+    } else {
+      if (!m.headHeightOffsetSet) {
+        m.headHeightOffset = vrb::Vector(kAverageHeight.x(), kAverageHeight.y() - m.predictedTracking.HeadPose.Pose.Position.y, kAverageHeight.z());
+        m.headHeightOffsetSet = true;
+      }
+      head.TranslateInPlace(m.headHeightOffset);
+    }
   }
 
   m.cameras[VRAPI_EYE_LEFT]->SetHeadTransform(head);
@@ -1201,6 +1217,7 @@ DeviceDelegateOculusVR::StartFrame() {
     vrb::Vector height = kAverageHeight;
     if (m.Is6DOF()) {
       height.y() = m.predictedTracking.HeadPose.Pose.Position.y;
+      m.headHeightOffset = vrb::Vector(kAverageHeight.x(), kAverageHeight.y() - m.predictedTracking.HeadPose.Pose.Position.y, kAverageHeight.z());
     }
     m.reorientMatrix = DeviceUtils::CalculateReorientationMatrix(head, height);
   }
