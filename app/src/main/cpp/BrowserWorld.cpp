@@ -288,6 +288,21 @@ BrowserWorld::State::ChangeControllerFocus(const Controller& aController) {
   }
 }
 
+static inline float
+ScaleScrollDelta(const float aValue, const double aStartTime, const double aCurrentTime) {
+  const float kMaxDelta = 2.0f; // in seconds
+  const float kMinScale = 0.15f;
+  float result = 0.0f;
+  const double deltaTime = aCurrentTime - aStartTime;
+  float scale = float(deltaTime / kMaxDelta);
+  if (deltaTime > kMaxDelta) {
+    scale = 1.0f;
+  } else if (scale < kMinScale) {
+    scale = kMinScale;
+  }
+  return aValue * scale;
+}
+
 void
 BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
   EnsureControllerFocused();
@@ -397,10 +412,17 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
                                      controller.pointerX, controller.pointerY);
       }
       if ((controller.scrollDeltaX != 0.0f) || controller.scrollDeltaY != 0.0f) {
+        if (controller.scrollStart < 0.0) {
+          controller.scrollStart = context->GetTimestamp();
+        }
+        const double ctime = context->GetTimestamp();
         VRBrowser::HandleScrollEvent(controller.widget, controller.index,
-                            controller.scrollDeltaX, controller.scrollDeltaY);
+                            ScaleScrollDelta(controller.scrollDeltaX, controller.scrollStart, ctime),
+                            ScaleScrollDelta(controller.scrollDeltaY, controller.scrollStart, ctime));
         controller.scrollDeltaX = 0.0f;
         controller.scrollDeltaY = 0.0f;
+      } else {
+        controller.scrollStart = -1.0;
       }
       if (!pressed) {
         if (controller.touched) {

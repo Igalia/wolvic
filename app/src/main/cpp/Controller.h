@@ -34,6 +34,7 @@ struct Controller {
   float touchY;
   float lastTouchX;
   float lastTouchY;
+  double scrollStart;
   float scrollDeltaX;
   float scrollDeltaY;
   vrb::TransformPtr transform;

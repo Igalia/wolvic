@@ -41,6 +41,7 @@ Controller::operator=(const Controller& aController) {
   touchY= aController.touchY;
   lastTouchX = aController.lastTouchX;
   lastTouchY = aController.lastTouchY;
+  scrollStart = aController.scrollStart;
   scrollDeltaX = aController.scrollDeltaX;
   scrollDeltaY = aController.scrollDeltaY;
   transform = aController.transform;
@@ -73,6 +74,7 @@ Controller::Reset() {
   touched = wasTouched = false;
   touchX = touchY = 0.0f;
   lastTouchX = lastTouchY = 0.0f;
+  scrollStart = -1.0;
   scrollDeltaX = scrollDeltaY = 0.0f;
   transform = nullptr;
   beamToggle = nullptr;
