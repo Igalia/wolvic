@@ -280,7 +280,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
     // Common
-    implementation deps.google_vr.sdk_audio
+    // implementation deps.google_vr.sdk_audio
     implementation deps.room.runtime
     annotationProcessor deps.room.compiler
     implementation deps.lifecycle.runtime
