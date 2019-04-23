@@ -1518,24 +1518,25 @@ DeviceDelegateOculusVR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
 
 void
 DeviceDelegateOculusVR::LeaveVR() {
-  m.currentFBO = nullptr;
-  m.previousFBO = nullptr;
-  if (m.ovr) {
-    vrapi_LeaveVrMode(m.ovr);
-    m.ovr = nullptr;
-  }
-
-  for (int i = 0; i < VRAPI_EYE_COUNT; ++i) {
-    m.eyeSwapChains[i]->Destroy();
-  }
   for (OculusLayerPtr& layer: m.uiLayers) {
     layer->Destroy();
+  }
+  for (int i = 0; i < VRAPI_EYE_COUNT; ++i) {
+    m.eyeSwapChains[i]->Destroy();
   }
   if (m.cubeLayer) {
     m.cubeLayer->Destroy();
   }
   if (m.equirectLayer) {
     m.equirectLayer->Destroy();
+  }
+
+  m.currentFBO = nullptr;
+  m.previousFBO = nullptr;
+
+  if (m.ovr) {
+    vrapi_LeaveVrMode(m.ovr);
+    m.ovr = nullptr;
   }
 }
 
