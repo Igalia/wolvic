@@ -14,6 +14,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.SurfaceTexture;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
@@ -34,7 +35,6 @@ import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoVRManager;
 import org.mozilla.vrbrowser.audio.AudioEngine;
-import org.mozilla.vrbrowser.audio.VRAudioTheme;
 import org.mozilla.vrbrowser.browser.PermissionDelegate;
 import org.mozilla.vrbrowser.browser.SessionStore;
 import org.mozilla.vrbrowser.browser.SettingsStore;
@@ -68,6 +68,7 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.function.Consumer;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.Keep;
@@ -136,6 +137,22 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private Pair<Object, Float> mCurrentBrightness;
     private SearchEngineWrapper mSearchEngineWrapper;
     private SettingsStore mSettings;
+    private AudioManager mAudioManager;
+
+    private boolean callOnAudioManager(Consumer<AudioManager> fn) {
+        if (mAudioManager == null) {
+            mAudioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+        }
+        if (mAudioManager != null) {
+            try {
+                fn.accept(mAudioManager);
+                return true;
+            } catch (Exception e) {
+                Log.e(LOGTAG, "Caught exception calling AudioManager: " + e.toString());
+            }
+        }
+        return false;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -431,6 +448,31 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         } else{
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (BuildConfig.FLAVOR_platform == "oculusvr") {
+            int action = event.getAction();
+            if (action != KeyEvent.ACTION_DOWN) {
+                return super.dispatchKeyEvent(event);
+            }
+            int keyCode = event.getKeyCode();
+            boolean result;
+            switch (keyCode) {
+                case KeyEvent.KEYCODE_VOLUME_UP:
+                    result = callOnAudioManager((AudioManager aManager) -> aManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI));
+                    break;
+                case KeyEvent.KEYCODE_VOLUME_DOWN:
+                    result = callOnAudioManager((AudioManager aManager) -> aManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, AudioManager.FLAG_SHOW_UI));
+                    break;
+                default:
+                    return super.dispatchKeyEvent(event);
+            }
+            return result || super.dispatchKeyEvent(event);
+
+        }
+        return super.dispatchKeyEvent(event);
     }
 
     private void exitImmersiveSync() {
