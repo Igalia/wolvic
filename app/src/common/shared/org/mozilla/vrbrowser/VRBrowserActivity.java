@@ -61,6 +61,7 @@ import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.ui.widgets.WindowWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.CrashDialogWidget;
+import org.mozilla.vrbrowser.utils.ConnectivityReceiver;
 import org.mozilla.vrbrowser.utils.ServoUtils;
 
 import java.io.IOException;
@@ -137,6 +138,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private Pair<Object, Float> mCurrentBrightness;
     private SearchEngineWrapper mSearchEngineWrapper;
     private SettingsStore mSettings;
+    private ConnectivityReceiver mConnectivityReceiver;
+    private boolean mConnectionAvailable = true;
     private AudioManager mAudioManager;
 
     private boolean callOnAudioManager(Consumer<AudioManager> fn) {
@@ -194,6 +197,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             }
         });
 
+
         mPermissionDelegate = new PermissionDelegate(this, this);
 
         mAudioEngine = new AudioEngine(this, null);
@@ -219,6 +223,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mSearchEngineWrapper.registerForUpdates();
 
         GeolocationWrapper.update(this);
+
+        mConnectivityReceiver = new ConnectivityReceiver();
+
     }
 
     protected void initializeWorld() {
@@ -289,6 +296,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         for (Widget widget: mWidgets.values()) {
             widget.onPause();
         }
+        mConnectivityReceiver.unregister(this);
+        // Reset so the dialog will show again on resume.
+        mConnectionAvailable = true;
         super.onPause();
     }
 
@@ -299,6 +309,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         for (Widget widget: mWidgets.values()) {
             widget.onResume();
         }
+        handleConnectivityChange();
+        mConnectivityReceiver.register(this, () -> runOnUiThread(() -> handleConnectivityChange()));
         super.onResume();
     }
 
@@ -380,6 +392,14 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             Log.d(LOGTAG, "Loading URI from intent: " + uri.toString());
             SessionStore.get().loadUri(uri.toString());
         }
+    }
+
+    private void handleConnectivityChange() {
+        boolean connected = ConnectivityReceiver.isNetworkAvailable(this);
+        if (connected != mConnectionAvailable && mWindowWidget != null) {
+            mWindowWidget.setNoInternetToastVisible(!connected);
+        }
+        mConnectionAvailable = connected;
     }
 
     private void handleCrashIntent(final Intent intent) {

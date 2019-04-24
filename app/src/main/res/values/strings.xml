@@ -638,4 +638,11 @@
     <string name="authentication_password">Password:</string>
     <!-- This string is displayed as the label of a switch of an authentication prompt in order to show or hide the text in a password field. -->
     <string name="authentication_show_password">Show password:</string>
+
+
+    <!-- This string is displayed in the title of the notification message shown when the device loses internet connection. -->
+    <string name="no_internet_title">Internet Connection Lost</string>
+    <!-- This string is displayed in the message of the notification message shown when the device loses internet connection. -->
+    <string name="no_internet_message">Check your device configuration to fix the problem.</string>
+
 </resources>

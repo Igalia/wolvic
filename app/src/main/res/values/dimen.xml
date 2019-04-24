@@ -86,6 +86,11 @@
     <dimen name="top_bar_height">40dp</dimen>
     <item name="top_bar_world_y" format="float" type="dimen">0.20</item>
 
+    <!-- No Internet toast -->
+    <dimen name="no_internet_width">400dp</dimen>
+    <dimen name="no_internet_height">200dp</dimen>
+    <dimen name="no_internet_z_distance" format="float" type="dimen">2.5</dimen>
+
     <!-- Tray -->
     <item name="tray_world_y" format="float" type="dimen">0.1</item>
     <item name="tray_world_z" format="float" type="dimen">-2.5</item>

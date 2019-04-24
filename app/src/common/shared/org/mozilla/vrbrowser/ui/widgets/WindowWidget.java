@@ -52,6 +52,7 @@ public class WindowWidget extends UIWidget implements SessionStore.SessionChange
     private ConfirmPromptWidget mConfirmPrompt;
     private TextPromptWidget mTextPrompt;
     private AuthPromptWidget mAuthPrompt;
+    private NoInternetWidget mNoInternetToast;
     private int mWidthBackup;
     private int mHeightBackup;
     private int mBorderWidth;
@@ -570,6 +571,18 @@ public class WindowWidget extends UIWidget implements SessionStore.SessionChange
 
     private void setPrivateBrowsingEnabled(boolean isEnabled) {
         // TODO: Fade in/out the browser window. Waiting for https://github.com/MozillaReality/FirefoxReality/issues/77
+    }
+
+    public void setNoInternetToastVisible(boolean aVisible) {
+        if (mNoInternetToast == null) {
+            mNoInternetToast = new NoInternetWidget(getContext());
+            mNoInternetToast.mWidgetPlacement.parentHandle = getHandle();
+        }
+        if (aVisible && !mNoInternetToast.isVisible()) {
+            mNoInternetToast.show();
+        } else if (!aVisible && mNoInternetToast.isVisible()) {
+            mNoInternetToast.hide(REMOVE_WIDGET);
+        }
     }
 
     // PromptDelegate
