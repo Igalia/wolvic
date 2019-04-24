@@ -120,8 +120,20 @@ public class TopBarWidget extends UIWidget implements SessionStore.SessionChange
     // WidgetManagerDelegate.UpdateListener
     @Override
     public void onWidgetUpdate(Widget aWidget) {
-        if (aWidget == mBrowserWidget && isVisible()) {
-            mWidgetManager.updateWidget(this);
+        if (aWidget != mBrowserWidget) {
+            return;
+        }
+
+        if (mBrowserWidget.isVisible()) {
+            boolean isVisible = isVisible();
+            boolean mustBeVisible = SessionStore.get().isCurrentSessionPrivate();
+            if (mustBeVisible && !isVisible) {
+                setVisible(true);
+            } else if (isVisible) {
+                mWidgetManager.updateWidget(this);
+            }
+        } else {
+            setVisible(false);
         }
     }
 }
