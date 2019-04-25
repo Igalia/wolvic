@@ -491,10 +491,10 @@
     <string name="video_controls_volume">Lautstärke</string>
 
     <!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek +30 seconds'). -->
-    <string name="video_controls_seek_forward">Suchen: +%1$ Sekunden</string>
+    <string name="video_controls_seek_forward">Suchen: +%1$s Sekunden</string>
 
     <!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek -15 seconds'). -->
-    <string name="video_controls_seek_backward">Suchen: -%1$ Sekunden</string>
+    <string name="video_controls_seek_backward">Suchen: -%1$s Sekunden</string>
 
     <!-- This string is displayed in the video control seekbar when the media is not seekable
          (e.g., a live video stream). Prefer a short text because it affects the width of the seek bar. -->

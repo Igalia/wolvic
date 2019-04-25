@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- IMPORTANT NOTE: If this file is updated anyhow, the STRs wiki must be updated accordingly:
     https://github.com/MozillaReality/FirefoxReality/wiki/L10n -->
@@ -250,11 +251,13 @@
          The 'Void' environment is an empty space that surrounds the user in empty, black space. -->
     <string name="developer_options_env_void">空虚</string>
 
-    <!-- This string labels the radio button that selects the 'Cave' environment. -->
-    <string name="developer_options_env_cave">洞窟</string>
-
-    <!-- This string labels the radio button that selects the 'Meadow' environment. -->
+    <!-- This string labels the radio button that selects the 'Meadow' environment,
+         a sunlit grassy meadow filled with tiny flowers and surrounded by mountains. -->
     <string name="developer_options_env_meadow">草原</string>
+
+    <!-- This string labels the radio button that selects the 'Cave' environment,
+         a dimly-lit subterranean environment with fairytale structures set amongst mushrooms. -->
+    <string name="developer_options_env_cave">洞窟</string>
 
     <!-- This string describes the radio buttons used to select the pointer color. -->
     <string name="developer_options_pointer_color">ポインターの色</string>
@@ -277,7 +280,7 @@
 
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
-    <string name="voice_search_example">例: "360 ビデオ、天気、ニュース…" と言ってください</string>
+    <string name="voice_search_example">例: &quot;360 ビデオ、天気、ニュース…&quot; と言ってください</string>
 
     <!-- This string is displayed in a dialog box show to the user while the Voice Search is being
          performed. It indicates that the search query is running and they should wait for the result. -->
@@ -384,10 +387,10 @@
     <string name="video_controls_volume">音量</string>
 
     <!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek +30 seconds'). -->
-    <string name="video_controls_seek_forward">%1$ 秒早送り</string>
+    <string name="video_controls_seek_forward">%1$s 秒早送り</string>
 
     <!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek -15 seconds'). -->
-    <string name="video_controls_seek_backward">%1$ 秒巻き戻し</string>
+    <string name="video_controls_seek_backward">%1$s 秒巻き戻し</string>
 
     <!-- This string is displayed in the video control seekbar when the media is not seekable
          (e.g., a live video stream). Prefer a short text because it affects the width of the seek bar. -->
@@ -493,8 +496,10 @@
     <!-- This string is used as the title of the Private Browsing page that is opened when the
          Private Browsing Mode button from the tray is clicked. -->
     <string name="private_browsing_title">プライベートブラウジング</string>
+
     <!-- This string is used as the body of the Private Browsing page that is opened when the
-         Private Browsing Mode button from the tray is clicked. -->
+         Private Browsing Mode button from the tray is clicked.
+         '%1$s' will be replaced at runtime with the app's name. -->
     <string name="private_browsing_body"><![CDATA[
 <p>%1$sプライベートウィンドウでは以下を<strong>保存しません</strong>:</p>
 <ul class="two-column">
@@ -507,4 +512,4 @@
 <p class="about-info"><a id="learnMore">プライベートブラウジングの詳細</a>。</p>
      ]]></string>
 
-</resources>
+    </resources>
