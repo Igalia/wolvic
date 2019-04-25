@@ -453,11 +453,19 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
         }
       }
     } else if (controller.widget) {
-      VRBrowser::HandleMotionEvent(0, controller.index, pressed, 0.0f, 0.0f);
+      VRBrowser::HandleMotionEvent(0, controller.index, (jboolean) pressed, 0.0f, 0.0f);
       controller.widget = 0;
 
     } else if (wasPressed != pressed) {
-      VRBrowser::HandleMotionEvent(0, controller.index, pressed, 0.0f, 0.0f);
+      VRBrowser::HandleMotionEvent(0, controller.index, (jboolean) pressed, 0.0f, 0.0f);
+    } else if (vrVideo != nullptr) {
+      const bool togglePressed = controller.buttonState & ControllerDelegate::BUTTON_X ||
+                                 controller.buttonState & ControllerDelegate::BUTTON_A;
+      const bool toggleWasPressed = controller.lastButtonState & ControllerDelegate::BUTTON_X ||
+                                    controller.lastButtonState & ControllerDelegate::BUTTON_A;
+      if (togglePressed != toggleWasPressed) {
+        VRBrowser::HandleMotionEvent(0, controller.index, (jboolean) togglePressed, 0.0f, 0.0f);
+      }
     }
     controller.lastButtonState = controller.buttonState;
   }
