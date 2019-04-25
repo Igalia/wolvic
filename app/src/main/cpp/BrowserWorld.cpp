@@ -260,18 +260,29 @@ ThrottleHoverEvent(Controller& aController, const double aTimestamp, const bool 
 
 void
 BrowserWorld::State::EnsureControllerFocused() {
+  Controller* right = nullptr;
   Controller* first = nullptr;
   bool focused = false;
   for (Controller& controller: controllers->GetControllers()) {
     focused = controller.focused;
     if (focused) {
       break;
-    } else if (!first) {
+    }
+
+    if (!controller.leftHanded) {
+      right = &controller;
+    }
+
+    if (!first) {
       first = &controller;
     }
   }
-  if (!focused && first) {
-    ChangeControllerFocus(*first);
+  if (!focused) {
+    if (right) {
+      ChangeControllerFocus(*right);
+    } else if (first) {
+      ChangeControllerFocus(*first);
+    }
   }
 }
 
