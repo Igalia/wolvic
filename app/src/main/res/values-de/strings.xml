@@ -490,10 +490,12 @@
     <!-- This string is displayed in a tooltip below the video controls UI. -->
     <string name="video_controls_volume">Lautstärke</string>
 
-    <!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek +30 seconds'). -->
+    <!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek +30 seconds').
+    '%1$s' will be replaced at runtime with a duration in seconds (e.g., '30'). -->
     <string name="video_controls_seek_forward">Suchen: +%1$s Sekunden</string>
 
-    <!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek -15 seconds'). -->
+    <!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek -15 seconds').
+    '%1$s' will be replaced at runtime with a duration in seconds (e.g., '15'). -->
     <string name="video_controls_seek_backward">Suchen: -%1$s Sekunden</string>
 
     <!-- This string is displayed in the video control seekbar when the media is not seekable
@@ -637,4 +639,11 @@
     <string name="authentication_password">Passwort:</string>
     <!-- This string is displayed as the label of a switch of an authentication prompt in order to show or hide the text in a password field. -->
     <string name="authentication_show_password">Passwort anzeigen:</string>
+
+
+    <!-- This string is displayed in the title of the notification message shown when the device loses internet connection. -->
+    <string name="no_internet_title">Internetverbindung verloren</string>
+    <!-- This string is displayed in the message of the notification message shown when the device loses internet connection. -->
+    <string name="no_internet_message">Überprüfen Sie Ihre Gerätekonfiguration, um das Problem zu beheben.</string>
+
 </resources>
