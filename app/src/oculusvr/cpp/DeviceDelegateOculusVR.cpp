@@ -577,16 +577,22 @@ const vrb::Vector kAverageOculusHeight(0.0f, 1.65f, 0.0f);
 
 struct DeviceDelegateOculusVR::State {
   struct ControllerState {
-    ovrDeviceID controllerID = ovrDeviceIdType_Invalid;
-    ovrInputTrackedRemoteCapabilities controllerCapabilities;
-    vrb::Matrix controllerTransform = vrb::Matrix::Identity();
-    ovrInputStateTrackedRemote controllerState = {};
-    ElbowModel::HandEnum hand = ElbowModel::HandEnum::Right;
+    const int32_t index;
+    const ElbowModel::HandEnum hand;
+    bool enabled = false;
+    ovrDeviceID deviceId = ovrDeviceIdType_Invalid;
+    ovrInputTrackedRemoteCapabilities capabilities = {};
+    vrb::Matrix transform = vrb::Matrix::Identity();
+    ovrInputStateTrackedRemote inputState = {};
 
     bool Is6DOF() const {
-      return (controllerCapabilities.ControllerCapabilities & ovrControllerCaps_HasPositionTracking) &&
-             (controllerCapabilities.ControllerCapabilities & ovrControllerCaps_HasOrientationTracking);
+      return (capabilities.ControllerCapabilities & ovrControllerCaps_HasPositionTracking) &&
+             (capabilities.ControllerCapabilities & ovrControllerCaps_HasOrientationTracking);
     }
+    ControllerState(const int32_t aIndex, const ElbowModel::HandEnum aHand) : index(aIndex), hand(aHand) {}
+    ControllerState(const ControllerState& controllerStateList) = default;
+    ControllerState() = delete;
+    ControllerState& operator=(const ControllerState&) = delete;
   };
 
   vrb::RenderContextWeak context;
@@ -613,7 +619,7 @@ struct DeviceDelegateOculusVR::State {
   vrb::Color clearColor;
   float near = 0.1f;
   float far = 100.f;
-  std::vector<ControllerState> state;
+  std::vector<ControllerState> controllerStateList;
   crow::ElbowModelPtr elbow;
   ControllerDelegatePtr controller;
   ImmersiveDisplayPtr immersiveDisplay;
@@ -751,8 +757,8 @@ struct DeviceDelegateOculusVR::State {
 
   void GetStandaloneRenderSize(uint32_t& aWidth, uint32_t& aHeight) {
     const float scale = layersEnabled ? 1.0f : 1.5f;
-    aWidth = scale * (uint32_t)(vrapi_GetSystemPropertyInt(&java, VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_WIDTH));
-    aHeight = scale * (uint32_t)(vrapi_GetSystemPropertyInt(&java, VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_HEIGHT));
+    aWidth = (uint32_t)(scale * vrapi_GetSystemPropertyInt(&java, VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_WIDTH));
+    aHeight = (uint32_t)(scale * vrapi_GetSystemPropertyInt(&java, VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_HEIGHT));
   }
 
   bool IsOculusQuest() const {
@@ -782,7 +788,7 @@ struct DeviceDelegateOculusVR::State {
     if (initialized) {
       vrapi_Shutdown();
       initialized = false;
-      state.clear();
+      controllerStateList.clear();
     }
 
     // Release activity reference
@@ -792,192 +798,208 @@ struct DeviceDelegateOculusVR::State {
     }
   }
 
-  void UpdateControllerID() {
+  int32_t FindControllerIndex(const ElbowModel::HandEnum aHand) {
+    int32_t found = -1;
+    for (ControllerState& controller: controllerStateList) {
+      if (controller.hand == aHand) {
+        found = controller.index;
+      }
+    }
+
+    if (found < 0) {
+      found = (int32_t)controllerStateList.size();
+      controllerStateList.emplace_back(ControllerState(found, aHand));
+    }
+    return found;
+  }
+
+  void UpdateDeviceId() {
     if (!controller || !ovr) {
       return;
     }
 
-    int index = 0;
-    int count = 0;
-    while (true) {
-      ovrInputCapabilityHeader capsHeader = {};
-      if (vrapi_EnumerateInputDevices(ovr, index++, &capsHeader) < 0) {
-        // No more input devices to enumerate
-        controller->SetEnabled(index - 1, false);
-        break;
-      }
+    for (ControllerState& controllerState: controllerStateList) {
+      controllerState.enabled = false;
+    }
 
+    uint32_t count = 0;
+    ovrInputCapabilityHeader capsHeader = {};
+    while (vrapi_EnumerateInputDevices(ovr, count++, &capsHeader) >= 0) {
+      // We are only interested in the remote controller input device
       if (capsHeader.Type == ovrControllerType_TrackedRemote) {
-        if (state.size() <= count) {
-          state.push_back(ControllerState());
-        }
-        // We are only interested in the remote controller input device
-        state[count].controllerCapabilities.Header = capsHeader;
-        ovrResult result = vrapi_GetInputDeviceCapabilities(ovr, &state[count].controllerCapabilities.Header);
+        ovrInputTrackedRemoteCapabilities caps = {};
+        caps.Header = capsHeader;
+        ovrResult result = vrapi_GetInputDeviceCapabilities(ovr, &caps.Header);
         if (result != ovrSuccess) {
           VRB_LOG("vrapi_GetInputDeviceCapabilities failed with error: %d", result);
           continue;
         }
-        state[count].controllerID = capsHeader.DeviceID;
-        if (state[count].controllerCapabilities.ControllerCapabilities & ovrControllerCaps_LeftHand) {
-          state[count].hand = ElbowModel::HandEnum::Left;
-        } else {
-          state[count].hand = ElbowModel::HandEnum::Right;
+        const int32_t index = FindControllerIndex(caps.ControllerCapabilities & ovrControllerCaps_LeftHand ? ElbowModel::HandEnum::Left : ElbowModel::HandEnum::Right);
+        if ((index < 0) || index >= (controllerStateList.size())) {
+          continue;
         }
+        ControllerState& controllerState = controllerStateList[index];
+        if ((controllerState.deviceId != ovrDeviceIdType_Invalid) &&
+            (controllerState.deviceId != capsHeader.DeviceID)) {
+          VRB_DEBUG("%s handed controller DeviceID has changed from %u to %u",
+                    (controllerState.hand == ElbowModel::HandEnum::Left ? "Left" : "Right"),
+                    controllerState.deviceId, capsHeader.DeviceID);
+        }
+        controllerState.deviceId = capsHeader.DeviceID;
+        controllerState.capabilities = caps;
+        controllerState.enabled = true;
 
-        // We need to call CreateController() to update the model index to avoid some cases that
-        // the controller index is changed.
-        if (state[count].controllerCapabilities.ControllerCapabilities & ovrControllerCaps_ModelOculusTouch) {
-          std::string controllerID;
+        if (controllerState.capabilities.ControllerCapabilities & ovrControllerCaps_ModelOculusTouch) {
+          std::string controllerName;
           vrb::Matrix beamTransform(vrb::Matrix::Identity());
-          if (state[count].hand == ElbowModel::HandEnum::Left) {
+          if (controllerState.hand == ElbowModel::HandEnum::Left) {
             beamTransform.TranslateInPlace(vrb::Vector(-0.011f, -0.007f, 0.0f));
-            controllerID = "Oculus Touch (Left)";
+            controllerName = "Oculus Touch (Left)";
           } else {
             beamTransform.TranslateInPlace(vrb::Vector(0.011f, -0.007f, 0.0f));
-            controllerID = "Oculus Touch (Right)";
+            controllerName = "Oculus Touch (Right)";
           }
-          controller->CreateController(count, int32_t(state[count].hand), controllerID, beamTransform);
-          controller->SetButtonCount(count, 6);
+          controller->CreateController(controllerState.index, int32_t(controllerState.hand), controllerName, beamTransform);
+          controller->SetButtonCount(controllerState.index, 6);
         } else {
           // Oculus Go only has one kind of controller model.
-          controller->CreateController(count, 0, "Oculus Go Controller");
-          controller->SetButtonCount(count, 2);
+          controller->CreateController(controllerState.index, 0, "Oculus Go Controller");
+          controller->SetButtonCount(controllerState.index, 2);
         }
-
-        controller->SetLeftHanded(count, state[count].hand == ElbowModel::HandEnum::Left);
-        controller->SetEnabled(count, true);
-        controller->SetVisible(count, true);
-        ++count;
       }
+    }
+    for (ControllerState& controllerState: controllerStateList) {
+      controller->SetLeftHanded(controllerState.index, controllerState.hand == ElbowModel::HandEnum::Left);
+      controller->SetEnabled(controllerState.index, controllerState.enabled);
+      controller->SetVisible(controllerState.index, controllerState.enabled);
     }
   }
 
   void UpdateControllers(const vrb::Matrix & head) {
-    UpdateControllerID();
+    UpdateDeviceId();
     if (!controller) {
       return;
     }
 
-    for (uint32_t i = 0; i < state.size(); ++i) {
-      if (state[i].controllerID == ovrDeviceIdType_Invalid) {
+    for (ControllerState& controllerState: controllerStateList) {
+      if (controllerState.deviceId == ovrDeviceIdType_Invalid) {
         return;
       }
       ovrTracking tracking = {};
-      if (vrapi_GetInputTrackingState(ovr, state[i].controllerID, 0, &tracking) != ovrSuccess) {
-        VRB_LOG("Failed to read controller tracking state");
+      if (vrapi_GetInputTrackingState(ovr, controllerState.deviceId, 0, &tracking) != ovrSuccess) {
+        VRB_LOG("Failed to read controller tracking controllerStateList");
         return;
       }
 
       device::CapabilityFlags flags = 0;
-      if (state[i].controllerCapabilities.ControllerCapabilities & ovrControllerCaps_HasOrientationTracking) {
+      if (controllerState.capabilities.ControllerCapabilities & ovrControllerCaps_HasOrientationTracking) {
         auto &orientation = tracking.HeadPose.Pose.Orientation;
         vrb::Quaternion quat(orientation.x, orientation.y, orientation.z, orientation.w);
-        state[i].controllerTransform = vrb::Matrix::Rotation(quat);
+        controllerState.transform = vrb::Matrix::Rotation(quat);
         flags |= device::Orientation;
       }
 
-      if (state[i].controllerCapabilities.ControllerCapabilities & ovrControllerCaps_HasPositionTracking) {
+      if (controllerState.capabilities.ControllerCapabilities & ovrControllerCaps_HasPositionTracking) {
         auto & position = tracking.HeadPose.Pose.Position;
         vrb::Vector headPos(position.x, position.y, position.z);
         if (renderMode == device::RenderMode::StandAlone) {
           headPos += headHeightOffset;
         }
-        state[i].controllerTransform.TranslateInPlace(headPos);
+        controllerState.transform.TranslateInPlace(headPos);
         flags |= device::Position;
       } else {
-        state[i].controllerTransform = elbow->GetTransform(state[i].hand, head, state[i].controllerTransform);
+        controllerState.transform = elbow->GetTransform(controllerState.hand, head, controllerState.transform);
       }
 
-      controller->SetCapabilityFlags(i, flags);
-      controller->SetTransform(i, state[i].controllerTransform);
+      controller->SetCapabilityFlags(controllerState.index, flags);
+      controller->SetTransform(controllerState.index, controllerState.transform);
 
-      state[i].controllerState.Header.ControllerType = ovrControllerType_TrackedRemote;
-      vrapi_GetCurrentInputState(ovr, state[i].controllerID, &state[i].controllerState.Header);
+      controllerState.inputState.Header.ControllerType = ovrControllerType_TrackedRemote;
+      vrapi_GetCurrentInputState(ovr, controllerState.deviceId, &controllerState.inputState.Header);
 
-      reorientCount = state[i].controllerState.RecenterCount;
+      reorientCount = controllerState.inputState.RecenterCount;
       const int32_t kNumAxes = 2;
       bool triggerPressed = false, triggerTouched = false;
       bool trackpadPressed = false, trackpadTouched = false;
       float axes[kNumAxes];
-      float trackpadX, trackpadY = 0.0f;
-      if (state[i].Is6DOF()) {
-        triggerPressed = (state[i].controllerState.Buttons & ovrButton_Trigger) != 0;
-        triggerTouched = (state[i].controllerState.Touches & ovrTouch_IndexTrigger) != 0;
-        trackpadPressed = (state[i].controllerState.Buttons & ovrButton_Joystick) != 0;
-        trackpadTouched = (state[i].controllerState.Touches & ovrTouch_Joystick) != 0;
-        trackpadX = state[i].controllerState.Joystick.x;
-        trackpadY = state[i].controllerState.Joystick.y;
+      float trackpadX = 0.0f, trackpadY = 0.0f;
+      if (controllerState.Is6DOF()) {
+        triggerPressed = (controllerState.inputState.Buttons & ovrButton_Trigger) != 0;
+        triggerTouched = (controllerState.inputState.Touches & ovrTouch_IndexTrigger) != 0;
+        trackpadPressed = (controllerState.inputState.Buttons & ovrButton_Joystick) != 0;
+        trackpadTouched = (controllerState.inputState.Touches & ovrTouch_Joystick) != 0;
+        trackpadX = controllerState.inputState.Joystick.x;
+        trackpadY = controllerState.inputState.Joystick.y;
         axes[0] = trackpadX;
         axes[1] = -trackpadY; // We did y axis intentionally inverted in FF desktop as well.
-        controller->SetScrolledDelta(i, trackpadX, trackpadY);
+        controller->SetScrolledDelta(controllerState.index, trackpadX, trackpadY);
 
-        const bool gripPressed = (state[i].controllerState.Buttons & ovrButton_GripTrigger) != 0;
-        controller->SetButtonState(i, ControllerDelegate::BUTTON_OTHERS, 2, gripPressed, gripPressed,
-                                   state[i].controllerState.GripTrigger);
-        if (state[i].hand == ElbowModel::HandEnum::Left) {
-          const bool xPressed = (state[i].controllerState.Buttons & ovrButton_X) != 0;
-          const bool xTouched = (state[i].controllerState.Touches & ovrTouch_X) != 0;
-          const bool yPressed = (state[i].controllerState.Buttons & ovrButton_Y) != 0;
-          const bool yTouched = (state[i].controllerState.Touches & ovrTouch_Y) != 0;
-          const bool menuPressed = (state[i].controllerState.Buttons & ovrButton_Enter) != 0;
+        const bool gripPressed = (controllerState.inputState.Buttons & ovrButton_GripTrigger) != 0;
+        controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_OTHERS, 2, gripPressed, gripPressed,
+                                   controllerState.inputState.GripTrigger);
+        if (controllerState.hand == ElbowModel::HandEnum::Left) {
+          const bool xPressed = (controllerState.inputState.Buttons & ovrButton_X) != 0;
+          const bool xTouched = (controllerState.inputState.Touches & ovrTouch_X) != 0;
+          const bool yPressed = (controllerState.inputState.Buttons & ovrButton_Y) != 0;
+          const bool yTouched = (controllerState.inputState.Touches & ovrTouch_Y) != 0;
+          const bool menuPressed = (controllerState.inputState.Buttons & ovrButton_Enter) != 0;
 
 
-          controller->SetButtonState(i, ControllerDelegate::BUTTON_X, 3, xPressed, xTouched);
-          controller->SetButtonState(i, ControllerDelegate::BUTTON_Y, 4, yPressed, yTouched);
+          controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_X, 3, xPressed, xTouched);
+          controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_Y, 4, yPressed, yTouched);
 
           if (renderMode != device::RenderMode::Immersive) {
-            controller->SetButtonState(i, ControllerDelegate::BUTTON_APP, -1, yPressed, yTouched);
+            controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_APP, -1, yPressed, yTouched);
           } else {
-            controller->SetButtonState(i, ControllerDelegate::BUTTON_APP, -1, menuPressed, menuPressed);
+            controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_APP, -1, menuPressed, menuPressed);
           }
-        } else if (state[i].hand == ElbowModel::HandEnum::Right) {
-          const bool aPressed = (state[i].controllerState.Buttons & ovrButton_A) != 0;
-          const bool aTouched = (state[i].controllerState.Touches & ovrTouch_A) != 0;
-          const bool bPressed = (state[i].controllerState.Buttons & ovrButton_B) != 0;
-          const bool bTouched = (state[i].controllerState.Touches & ovrTouch_B) != 0;
+        } else if (controllerState.hand == ElbowModel::HandEnum::Right) {
+          const bool aPressed = (controllerState.inputState.Buttons & ovrButton_A) != 0;
+          const bool aTouched = (controllerState.inputState.Touches & ovrTouch_A) != 0;
+          const bool bPressed = (controllerState.inputState.Buttons & ovrButton_B) != 0;
+          const bool bTouched = (controllerState.inputState.Touches & ovrTouch_B) != 0;
 
-          controller->SetButtonState(i, ControllerDelegate::BUTTON_A, 3, aPressed, aTouched);
-          controller->SetButtonState(i, ControllerDelegate::BUTTON_Y, 4, bPressed, bTouched);
+          controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_A, 3, aPressed, aTouched);
+          controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_Y, 4, bPressed, bTouched);
 
           if (renderMode != device::RenderMode::Immersive) {
-            controller->SetButtonState(i, ControllerDelegate::BUTTON_APP, -1, bPressed, bTouched);
+            controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_APP, -1, bPressed, bTouched);
           }
         } else {
           VRB_WARN("Undefined hand type in DeviceDelegateOculusVR.");
         }
 
-        const bool thumbRest = (state[i].controllerState.Touches & ovrTouch_ThumbUp) != 0;
-        controller->SetButtonState(i, ControllerDelegate::BUTTON_OTHERS, 5, thumbRest, thumbRest);
+        const bool thumbRest = (controllerState.inputState.Touches & ovrTouch_ThumbUp) != 0;
+        controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_OTHERS, 5, thumbRest, thumbRest);
       } else {
-        triggerPressed = (state[i].controllerState.Buttons & ovrButton_A) != 0;
+        triggerPressed = (controllerState.inputState.Buttons & ovrButton_A) != 0;
         triggerTouched = triggerPressed;
-        trackpadPressed = (state[i].controllerState.Buttons & ovrButton_Enter) != 0;
-        trackpadTouched = (bool)state[i].controllerState.TrackpadStatus;
+        trackpadPressed = (controllerState.inputState.Buttons & ovrButton_Enter) != 0;
+        trackpadTouched = (bool)controllerState.inputState.TrackpadStatus;
 
         // For Oculus Go, by setting vrapi_SetPropertyInt(&java, VRAPI_EAT_NATIVE_GAMEPAD_EVENTS, 0);
         // The app will receive onBackPressed when the back button is pressed on the controller.
         // So there is no need to check for it here. Leaving code commented out for reference
         // in the case that the back button stops working again due to Oculus Mobile API change.
-        // const bool backPressed = (controllerState.Buttons & ovrButton_Back) != 0;
+        // const bool backPressed = (inputState.Buttons & ovrButton_Back) != 0;
         // controller->SetButtonState(0, ControllerDelegate::BUTTON_APP, -1, backPressed, backPressed);
-        trackpadX = state[i].controllerState.TrackpadPosition.x / (float)state[i].controllerCapabilities.TrackpadMaxX;
-        trackpadY = state[i].controllerState.TrackpadPosition.y / (float)state[i].controllerCapabilities.TrackpadMaxY;
+        trackpadX = controllerState.inputState.TrackpadPosition.x / (float)controllerState.capabilities.TrackpadMaxX;
+        trackpadY = controllerState.inputState.TrackpadPosition.y / (float)controllerState.capabilities.TrackpadMaxY;
 
         if (trackpadTouched && !trackpadPressed) {
-          controller->SetTouchPosition(i, trackpadX, trackpadY);
+          controller->SetTouchPosition(controllerState.index, trackpadX, trackpadY);
         } else {
-          controller->SetTouchPosition(i, trackpadX, trackpadY);
-          controller->EndTouch(i);
+          controller->SetTouchPosition(controllerState.index, trackpadX, trackpadY);
+          controller->EndTouch(controllerState.index);
         }
         axes[0] = trackpadTouched ? trackpadX * 2.0f - 1.0f : 0.0f;
         axes[1] = trackpadTouched ? trackpadY * 2.0f - 1.0f : 0.0f;
       }
-      controller->SetButtonState(i, ControllerDelegate::BUTTON_TRIGGER, 1, triggerPressed, triggerTouched,
-                                 state[i].controllerState.IndexTrigger);
-      controller->SetButtonState(i, ControllerDelegate::BUTTON_TOUCHPAD, 0, trackpadPressed, trackpadTouched);
+      controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_TRIGGER, 1, triggerPressed, triggerTouched,
+                                 controllerState.inputState.IndexTrigger);
+      controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_TOUCHPAD, 0, trackpadPressed, trackpadTouched);
 
-      controller->SetAxes(i, axes, kNumAxes);
+      controller->SetAxes(controllerState.index, axes, kNumAxes);
     }
   }
 
