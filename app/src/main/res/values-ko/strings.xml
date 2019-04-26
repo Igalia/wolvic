@@ -1,502 +1,619 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<!-- IMPORTANT NOTE: If this file is updated anyhow, the STRs wiki must be updated accordingly:
+    <!-- IMPORTANT NOTE: If this file is updated anyhow, the STRs wiki must be updated accordingly:
     https://github.com/MozillaReality/FirefoxReality/wiki/L10n -->
-	
-	<!-- This string is used on the virtual keyboard to label the 'Enter' key (stylized in uppercase letters as 'ENTER'). -->
-	<string name="keyboard_enter_label">엔터</string>
-	
-	<!-- This string is displayed in the button that means the user accepts the
+
+    <!-- This string is used on the virtual keyboard to label the 'Enter' key (stylized in uppercase letters as 'ENTER'). -->
+    <string name="keyboard_enter_label">엔터</string>
+
+    <!-- This string is displayed in the button that means the user accepts the
          permission requested for in the permission dialog box. -->
-	<string name="permission_allow">혀용</string>
-	
-	<!-- This string is displayed in the button that means the user rejects the
+    <string name="permission_allow">혀용</string>
+
+    <!-- This string is displayed in the button that means the user rejects the
          permission requested for in the permission dialog box. -->
-	<string name="permission_reject">허용하지 않음</string>
-	
-	<!-- This string will be displayed in a dialog box presented to the user
+    <string name="permission_reject">허용하지 않음</string>
+
+    <!-- This string is displayed in the button that means the user wants to enable/grant a permission. -->
+    <string name="permission_enable">활성화</string>
+
+    <!-- This string is displayed in a label that means the permission has already been granted -->
+    <string name="permission_enabled">활성화됨</string>
+
+    <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's camera.
          '%1$s' will be replaced at runtime with the website's domain name. -->
-	<string name="permission_camera">%1$s이(가) 귀하의 카메라를 사용하도록 허용하겠습니까?</string>
-	
-	<!-- This string will be displayed in a dialog box presented to the user
+    <string name="permission_camera">%1$s이(가) 귀하의 카메라를 사용하도록 허용하겠습니까?</string>
+
+    <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's microphone.
          '%1$s' will be replaced at runtime with the website's domain name. -->
-	<string name="permission_microphone">%1$s이(가) 귀하의 마이크를 사용하도록 허용하겠습니까?</string>
-	
-	<!-- This string will be displayed in a dialog box presented to the user
+    <string name="permission_microphone">%1$s이(가) 귀하의 마이크를 사용하도록 허용하겠습니까?</string>
+
+    <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's camera and microphone.
          '%1$s' will be replaced at runtime with the website's domain name. -->
-	<string name="permission_camera_and_microphone">%1$s이(가) 귀하의 카메라 및 마이크를 사용하도록 허용하겠습니까?</string>
-	
-	<!-- This string will be displayed in a dialog box presented to the user
+    <string name="permission_camera_and_microphone">%1$s이(가) 귀하의 카메라 및 마이크를 사용하도록 허용하겠습니까?</string>
+
+    <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's geographic location.
          '%1$s' will be replaced at runtime with the website's domain name. -->
-	<string name="permission_location">%1$s이(가) 귀하의 위치에 접근하도록 허용하겠습니까?</string>
-	
-	<!-- This string will be displayed in a dialog box presented to the user
+    <string name="permission_location">%1$s이(가) 귀하의 위치에 접근하도록 허용하겠습니까?</string>
+
+    <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to send browser-level
          push notifications from a particular website (i.e., same origin).
          '%1$s' will be replaced at runtime with the website's domain name. -->
-	<string name="permission_notification">%1$s이(가) 알림을 보내도록 허용하겠습니까?</string>
-	
-	<!-- This string will be displayed in a dialog box presented to the user when the application
+    <string name="permission_notification">%1$s이(가) 알림을 보내도록 허용하겠습니까?</string>
+
+    <!-- This string will be displayed in a dialog box presented to the user when the application
          needs to request permission to access the device's external storage such as the
          sdcard. '%1$s' will be replaced at runtime with the website's domain name. -->
-	<string name="permission_read_external_storage">%1$s이(가) 귀하의 외부 저장 장치를 읽도록 허용하겠습니까?</string>
-	
-	<!-- This string will be displayed in a dialog box presented to the user when the application
+    <string name="permission_read_external_storage">%1$s이(가) 귀하의 외부 저장 장치를 읽도록 허용하겠습니까?</string>
+
+    <!-- This string will be displayed in a dialog box presented to the user when the application
          needs to request permission to access the device's external storage such as the
          sdcard. '%1$s' will be replaced at runtime with the website's domain name. -->
-	<string name="permission_persistent_storage">%1$s가 영구 저장 장치에 데이터를 저장하도록 허용하겠습니까?</string>
-	
-	<!-- This string is displayed in the Settings dialog box and how
+    <string name="permission_persistent_storage">%1$s가 영구 저장 장치에 데이터를 저장하도록 허용하겠습니까?</string>
+
+    <!-- This string is displayed in the Settings dialog box and how
          the user can know which version of the application they are currently running.
          '%1$s' will be replaced at runtime with the application version number. -->
-	<string name="settings_version">버전 %1$s</string>
-	
-	<!-- This string is displayed in the Settings dialog box and is used to label an
+    <string name="settings_version">버전 %1$s</string>
+
+    <!-- This string is displayed in the Settings dialog box and is used to label an
          On/Off switch which toggles whether an application crash is reported without first
          prompting the user. -->
-	<string name="settings_crash_reporting">오류 보고</string>
-	
-	<!-- This string is displayed in the Settings dialog box and is used to label an
+    <string name="settings_crash_reporting">오류 보고</string>
+
+    <!-- This string is displayed in the Settings dialog box and is used to label an
          On/Off switch which toggles whether browser-level Telemetry is reported back to Mozilla. -->
-	<string name="settings_telemetry">원격 측정</string>
-	
-	<!-- This string is used to label a button that, when pressed, loads a website that
+    <string name="settings_telemetry">원격 측정</string>
+
+    <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
+         opens a dialog box that contains privacy and security related settings. -->
+    <string name="settings_privacy_security">개인 정보 및 보안</string>
+
+    <!-- This string is used to label a button that, when pressed, loads a website that
          describes Mozilla's Privacy Policy. -->
-	<string name="settings_privacy_policy">개인정보보호정책</string>
-	
-	<!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
+    <string name="settings_privacy_policy">개인정보보호정책</string>
+
+    <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains settings that an application or Web developer might want to change. -->
-	<string name="settings_developer_options">개발자 옵션</string>
-	
-	<!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
+    <string name="settings_developer_options">개발자 옵션</string>
+
+    <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains language-related settings. -->
-	<string name="settings_language">언어</string>
-	
-	<!-- This string is used to label a text label for selecting the language in the 'Language' dialog window
+    <string name="settings_language">언어</string>
+
+    <!-- This string is used to label a text label for selecting the language in the 'Language' dialog window
          (accessible from the browser's Settings' dialog window). Below this string appears a list of locales for
          the user to choose as their preferred reading languages for website content. Each locale,
          as `language-tag` strings, is then included in the browser's `Accept-Language` HTTP request
          header that is sent to websites, as well as the JavaScript property, `navigator.language`. -->
-	<string name="settings_language_choose_language_webpage_content">웹페이지 표시를 위한 귀하의 선호 언어를 선택하십시오</string>
-	
-	<!-- This string is used to label a text label for selecting the language in the 'Language' dialog window
+    <string name="settings_language_choose_language_webpage_content">웹페이지 표시를 위한 귀하의 선호 언어를 선택하십시오</string>
+
+    <!-- This string is used to label a text label for selecting the language in the 'Language' dialog window
          (accessible from the browser's Settings' dialog window). Below this string appears a list of locales for
          the user to choose as their preferred language for the browser's speech-to-text 'Voice Search' system.
          Based on the user's selection, the printed language is mapped to its ISO 639-1 code
          (e.g., `Español` is mapped to `es`) when configured in the 'Voice Search' system. -->
-	<string name="settings_language_choose_language_voice_search">음성 검색을 위한 귀하의 선호 언어를 선택하십시오</string>
-	
-	<!-- This string is used to label a radio button in the 'Settings' Language dialog that, when pressed,
+    <string name="settings_language_choose_language_voice_search">음성 검색을 위한 귀하의 선호 언어를 선택하십시오</string>
+
+    <!-- This string is used to label a radio button in the 'Settings' Language dialog that, when pressed,
          changes the app and the language of the speech-recognition-based search to 'English (US)'. -->
-	<string name="settings_language_english">영어(미국)</string>
-	
-	<!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+    <string name="settings_language_english">영어(미국)</string>
+
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
          changes the app and the language of the speech-recognition-based search to 'Chinese (Traditional/Zhuyin)'. -->
-	<string name="settings_language_traditional_chinese">중국어(번체)</string>
-	
-	<!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+    <string name="settings_language_traditional_chinese">중국어(번체)</string>
+
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
          changes the app and the language of the speech-recognition-based search to 'Chinese (Simplified/Pinyin)'. -->
-	<string name="settings_language_simplified_chinese">중국어(간체)</string>
-	
-	<!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+    <string name="settings_language_simplified_chinese">중국어(간체)</string>
+
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
          changes the app and the language of the speech-recognition-based search to 'Japanese'. -->
-	<string name="settings_language_japanese">일본어</string>
-	
-	<!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+    <string name="settings_language_japanese">일본어</string>
+
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
          changes the app and the language of the speech-recognition-based search to 'French'. -->
-	<string name="settings_language_french">프랑스어</string>
-	
-	<!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+    <string name="settings_language_french">프랑스어</string>
+
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
          changes the app and the language of the speech-recognition-based search to 'German'. -->
-	<string name="settings_language_german">독일어</string>
-	
-	<!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+    <string name="settings_language_german">독일어</string>
+
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
          changes the app and the language of the speech-recognition-based search to 'Spanish'. -->
-	<string name="settings_language_spanish">스페인어</string>
-	
-	<!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+    <string name="settings_language_spanish">스페인어</string>
+
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
          changes the app and the language of the speech-recognition-based search to 'Korean'. -->
-	<string name="settings_language_korean">한국어</string>
-	
-	<!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+    <string name="settings_language_korean">한국어</string>
+
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
          changes the app and the language of the speech-recognition-based search to 'Italian'. -->
-	<string name="settings_language_italian">이탈리아어</string>
-	
-	<!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
+    <string name="settings_language_italian">이탈리아어</string>
+
+    <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
         opens a dialog box that contains display-related settings: window size, pixel density, etc. -->
-	<string name="settings_display">디스플레이</string>
-	
-	<!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
+    <string name="settings_display">디스플레이</string>
+
+    <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains controller-related options: pointer color and scroll direction. -->
-	<string name="settings_controller_options">조절기 옵션</string>
-	
-	<!-- This string is displayed in the 'Settings' dialog window and, is used to label an,
+    <string name="settings_controller_options">조절기 옵션</string>
+
+    <!-- This string is displayed in the 'Settings' dialog window and, is used to label an,
          On/Off switch that enables/disables the speech-data reporting. -->
-	<string name="settings_report_speech_data">음성 데이터 보고</string>
-	
-	<!-- This string is used to label a button that, when pressed, loads a website
+    <string name="settings_report_speech_data">음성 데이터 보고</string>
+
+    <!-- This string is used to label a button that, when pressed, loads a website
          that allows the user file an issue or problem they may have encountered while using the
          application or while visiting a site. -->
-	<string name="settings_report_issue">문제 보고</string>
-	
-	<!-- This string is used in place of the 'settings_version' string (e.g., `version 1.1`) when the user is running
+    <string name="settings_report_issue">문제 보고</string>
+
+    <!-- This string is used in place of the 'settings_version' string (e.g., `version 1.1`) when the user is running
          a developer-build version of the app. -->
-	<string name="settings_version_developer">개발자 빌드</string>
-	
-	<!-- This string is the title of a dialog box shown to the user when a settings
+    <string name="settings_version_developer">개발자 빌드</string>
+
+    <!-- This string is the title of a dialog box shown to the user when a settings
          change requires the application to restart. -->
-	<string name="restart_dialog_restart">재시작 필요</string>
-	
-	<!-- This string is the text displayed in the restart dialog box explaining why the
+    <string name="restart_dialog_restart">재시작 필요</string>
+
+    <!-- This string is the text displayed in the restart dialog box explaining why the
          restart is required. '%1$s' will be replaced at runtime with the app's name. -->
-	<string name="restart_dialog_text">완전한 변경이 이루어지려면 %1$s을(를) 재시작해야 합니다. 지금 재시작하겠습니까?</string>
-	
-	<!-- This string is used to label the button the user presses to restart the
+    <string name="restart_dialog_text">완전한 변경이 이루어지려면 %1$s을(를) 재시작해야 합니다. 지금 재시작하겠습니까?</string>
+
+    <!-- This string is used to label the button the user presses to restart the
          application in the restart dialog. -->
-	<string name="restart_now_dialog_button">지금 재시작</string>
-	
-	<!-- This string is used to label the button the user presses in order to skip the application
+    <string name="restart_now_dialog_button">지금 재시작</string>
+
+    <!-- This string is used to label the button the user presses in order to skip the application
          from being restarted. -->
-	<string name="restart_later_dialog_button">나중에 재시작</string>
-	
-	<!-- This string labels an On/Off switch in the 'Developer Options' dialog
+    <string name="restart_later_dialog_button">나중에 재시작</string>
+
+    <!-- This string labels an On/Off switch in the 'Developer Options' dialog
+     and is used to enable or disable curved display. -->
+    <string name="developer_options_curved_display">곡면 디스플레이 활성화</string>
+
+    <!-- This string labels an On/Off switch in the 'Developer Options' dialog
          and is used to toggle remote debugging of website content in the application. -->
-	<string name="developer_options_remote_debugging">원격 디버깅 활성화</string>
-	
-	<!-- This string labels an On/Off switch in the 'Developer Options' dialog
+    <string name="developer_options_remote_debugging">원격 디버깅 활성화</string>
+
+    <!-- This string labels an On/Off switch in the 'Developer Options' dialog
          and is used to toggle redirecting JavaScript Console output to the Android Logcat (i.e., `adb logcat`). -->
-	<string name="developer_options_show_console">콘솔을 로그캣으로 리다이렉트하기</string>
-	
-	<!-- This string labels an On/Off switch in the developer options dialog
+    <string name="developer_options_show_console">콘솔을 로그캣으로 리다이렉트하기</string>
+
+    <!-- This string labels an On/Off switch in the developer options dialog
          and is used to customize background environments of the app. -->
-	<string name="developer_options_env_override">환경 오버라이드 활성화</string>
-	
-	<!-- This string labels an On/Off switch in the developer options dialog and is used to toggle
+    <string name="developer_options_env_override">환경 오버라이드 활성화</string>
+
+    <!-- This string labels an On/Off switch in the developer options dialog and is used to toggle
          running content in a separate process.
          Multiprocessing: the running of two or more programs or sequences of instructions
          simultaneously by a computer with more than one central processor.
          A dialog should appear with a field labeled with the text, 'Enable Multiprocess'. -->
-	<string name="developer_options_multiprocess">멀티 프로세스 활성화</string>
-	
-	<!-- The string labels an On/Off switch in the developer options dialog and is used to toggle enabling Servo. -->
-	<string name="developer_options_servo">서보 활성화</string>
-	
-	<!-- This string is used to label a numerical-entry field where the user may set a new value to
+    <string name="developer_options_multiprocess">멀티 프로세스 활성화</string>
+
+    <!-- The string labels an On/Off switch in the developer options dialog and is used to toggle enabling Servo. -->
+    <string name="developer_options_servo">서보 활성화</string>
+
+    <!-- This string is used to label a numerical-entry field where the user may set a new value to
          use for the display density. -->
-	<string name="developer_options_display_density">디스플레이 밀도</string>
-	
-	<!-- This string is used to label two integer-entry fields where the default width and height of
+    <string name="developer_options_display_density">디스플레이 밀도</string>
+
+    <!-- This string is used to label two integer-entry fields where the default width and height of
          the browser window may be set. -->
-	<string name="developer_options_window_size">창 크기:</string>
-	
-	<!-- This string is used to label buttons to enable editing of text fields in the
+    <string name="developer_options_window_size">창 크기:</string>
+
+    <!-- This string is used to label buttons to enable editing of text fields in the
          'Developer Options' dialog. Pressing this button switches the text to
          editable-text fields so their values may be changed. -->
-	<string name="developer_options_edit">수정</string>
-	
-	<!-- This string is used to label the 'Edit' button once it has been pressed by the user. It
+    <string name="developer_options_edit">수정</string>
+
+    <!-- This string is used to label the 'Edit' button once it has been pressed by the user. It
          indicates that, when the button is pressed, the user's edits will be saved. -->
-	<string name="developer_options_save">저장</string>
-	
-	<!-- This string is used to label a numerical entry field where the user may enter a new value
+    <string name="developer_options_save">저장</string>
+
+    <!-- This string is used to label the 'Show' button in Settings. It
+     indicates that, when the button is pressed opens a dialog box that contains more information.
+     For example it's used to open a URL with the privacy policy. -->
+    <string name="developer_options_show">보기</string>
+
+    <!-- This string is used to label a numerical entry field where the user may enter a new value
          for the virtual displays Dots Per Inch (DPI). -->
-	<string name="developer_options_display_dpi">디스플레이 DPI:</string>
-	
-	<!-- This string is used to label two integer entry fields that will allow the user to adjust
+    <string name="developer_options_display_dpi">디스플레이 DPI:</string>
+
+    <!-- This string is used to label two integer entry fields that will allow the user to adjust
          the maximum window size in the X and Y dimensions. -->
-	<string name="developer_options_max_window_size">최대 창 크기:</string>
-	
-	<!-- This string is used to label radio buttons for setting Multi-Sample Anti-Aliasing (MSAA) in
+    <string name="developer_options_max_window_size">최대 창 크기:</string>
+
+    <!-- This string is used to label radio buttons for setting Multi-Sample Anti-Aliasing (MSAA) in
          VR Immersive Mode. -->
-	<string name="developer_options_msaa">MSAA</string>
-	
-	<!-- This string is used to label the MSAA radio button that disables MSAA in Immersive Mode. -->
-	<string name="developer_options_msaa_disabled">비활성화됨</string>
-	
-	<!-- This string is used to label the MSAA radio button that enables two times MSAA in Immersive Mode. -->
-	<string name="developer_options_msaa_2">2x</string>
-	
-	<!-- This string is used to label the MSAA radio button that enables two times MSAA in Immersive Mode. -->
-	<string name="developer_options_msaa_4">4x</string>
-	
-	<!-- This string is used to label a set of radio buttons that allow the user to change the
+    <string name="developer_options_msaa">MSAA</string>
+
+    <!-- This string is used to label the MSAA radio button that disables MSAA in Immersive Mode. -->
+    <string name="developer_options_msaa_disabled">비활성화됨</string>
+
+    <!-- This string is used to label the MSAA radio button that enables two times MSAA in Immersive Mode. -->
+    <string name="developer_options_msaa_2">2x</string>
+
+    <!-- This string is used to label the MSAA radio button that enables two times MSAA in Immersive Mode. -->
+    <string name="developer_options_msaa_4">4x</string>
+
+    <!-- This string is used to label a set of radio buttons that allow the user to change the
          User-Agent (UA) string of the browser. -->
-	<string name="developer_options_ua_mode">사용자 에이전트 모드</string>
-	
-	<!-- This string is used to label the 'Desktop' radio button of the 'User-Agent Mode' settings option. -->
-	<string name="developer_options_ua_desktop">바탕화면</string>
-	
-	<!-- This string is used to label the 'Mobile' radio button of the 'User-Agent Mode' settings option. -->
-	<string name="developer_options_ua_mobile">휴대폰</string>
-	
-	<!-- This string is used to label the 'VR' radio button of the 'User-Agent Mode' settings option. -->
-	<string name="developer_options_ua_vr">VR</string>
-	
-	<!-- This string describes what the 'Reset' button in the developer options does which is
+    <string name="developer_options_ua_mode">사용자 에이전트 모드</string>
+
+    <!-- This string is used to label the 'Desktop' radio button of the 'User-Agent Mode' settings option. -->
+    <string name="developer_options_ua_desktop">바탕화면</string>
+
+    <!-- This string is used to label the 'Mobile' radio button of the 'User-Agent Mode' settings option. -->
+    <string name="developer_options_ua_mobile">휴대폰</string>
+
+    <!-- This string is used to label the 'VR' radio button of the 'User-Agent Mode' settings option. -->
+    <string name="developer_options_ua_vr">VR</string>
+
+    <!-- This string is used to label radio buttons for setting fixed-foveated-rendering (FFR) level.
+     The term "foveation" derives from "fovea", the area of higher-resolution vision in the human retina.
+     Higher values of this option result in larger parts of the peripheral vision being rendered
+     at lower resolutions than the content in the center of the view.  These higher values reduce
+     quality to increase performance.
+     The Oculus implementation of fixed-foveated-rendering is described in more detail here:
+     https://developer.oculus.com/blog/optimizing-oculus-go-for-performance/-->
+    <string name="developer_options_foveated_app">Foveation Level (앱)</string>
+    <!-- This string is used to label radio buttons for setting foveated level for WebVR immersive experiences -->
+    <string name="developer_options_foveated_webvr">Foveation Level (WebVR)</string>
+    <!-- This string is used to label the Foveated radio button that disables fixed-foveated-rendering in immersive mode. -->
+    <string name="developer_options_foveated_disabled">비활성화됨</string>
+    <!-- This string is used to label the Foveated radio button that enables low-level fixed-foveated-rendering. -->
+    <string name="developer_options_foveated_1">1</string>
+    <!-- This string is used to label the Foveated radio button that enables medium-level fixed-foveated-rendering. -->
+    <string name="developer_options_foveated_2">2</string>
+    <!-- This string is used to label the Foveated radio button that enables high-level fixed-foveated-rendering. -->
+    <string name="developer_options_foveated_3">3</string>
+
+    <!-- This string is used to label a set of radio buttons that allow the user to change the
+     scroll direction of the remote controller. -->
+    <string name="developer_options_scroll_direction">스크롤 방향</string>
+
+    <!-- This string is used to label the 'Natural' radio button of the 'Scroll Direction' settings option.
+         "Natural" refers to the motion of scrolled material being congruent with respect to direction of
+         motion of user input. -->
+    <string name="developer_options_scroll_direction_natural">자연스럽게</string>
+
+    <!-- This string is used to label the 'Reversed' radio button of the 'Scroll Direction' settings option.
+         "Reversed" refers to the motion of scrolled material being reversed with respect to direction of
+         motion of user input. -->
+    <string name="developer_options_scroll_direction_reversed">반대로</string>
+
+    <!-- This string describes what the 'Reset' button in the developer options does which is
          restore all the developer settings to their default value. -->
-	<string name="developer_options_reset">개발자 설정 초기화</string>
-	
-	<!-- This string labels the 'Reset' button that restores the default developer settings values. -->
-	<string name="developer_options_reset_button">초기화</string>
-	
-	<!-- This string describes the radio buttons used to select the user's background environment
+    <string name="developer_options_reset">개발자 설정 초기화</string>
+
+    <!-- This string labels the 'Reset' button that restores the default developer settings values. -->
+    <string name="developer_options_reset_button">초기화</string>
+
+    <!-- This string describes the radio buttons used to select the user's background environment
          (seen while not in Immersive Mode). -->
-	<string name="developer_options_environments">환경</string>
-	
-	<!-- This string labels the radio button that selects the 'Void' environment.
+    <string name="developer_options_environments">환경</string>
+
+    <!-- This string labels the radio button that selects the 'Void' environment.
          The 'Void' environment is an empty space that surrounds the user in empty, black space. -->
-	<string name="developer_options_env_void">무</string>
-	
-	<!-- This string labels the radio button that selects the 'Cave' environment. -->
-	<string name="developer_options_env_cave">동굴</string>
-	
-	<!-- This string labels the radio button that selects the 'Meadow' environment. -->
-	<string name="developer_options_env_meadow">초원</string>
-	
-	<!-- This string describes the radio buttons used to select the pointer color. -->
-	<string name="developer_options_pointer_color">포인터 색상</string>
-	
-	<!-- This string labels the radio button that sets the pointer color to purple. -->
-	<string name="developer_options_pointer_purple">보라색</string>
-	
-	<!-- This string labels the radio button that sets the pointer color to white. -->
-	<string name="developer_options_pointer_white">흰색</string>
-	
-	<!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'On'. -->
-	<string name="on">켜기</string>
-	
-	<!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'Off'. -->
-	<string name="off">끄기</string>
-	
-	<!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
+    <string name="developer_options_env_void">무</string>
+
+    <!-- This string labels the radio button that selects the 'Offworld' environment,
+         a sci-fi themed desert-like environment. The offworld references sci-fi fictional
+         representations of colonies on other non-Earth planets. -->
+    <string name="developer_options_env_offworld">지구 밖</string>
+
+    <!-- This string labels the radio button that selects the 'Underwater' environment,
+         a brightly lit submarine themed environment. -->
+    <string name="developer_options_env_underwater">물속</string>
+
+    <!-- This string labels the radio button that selects the 'Winter' environment,
+         a snow-covered outdoor winter mountain scene. -->
+    <string name="developer_options_env_winter">겨울</string>
+
+    <!-- This string labels the radio button that selects the 'Meadow' environment,
+         a sunlit grassy meadow filled with tiny flowers and surrounded by mountains. -->
+    <string name="developer_options_env_meadow">초원</string>
+
+    <!-- This string labels the radio button that selects the 'Cave' environment,
+         a dimly-lit subterranean environment with fairytale structures set amongst mushrooms. -->
+    <string name="developer_options_env_cave">동굴</string>
+
+    <!-- This string describes the radio buttons used to select the pointer color. -->
+    <string name="developer_options_pointer_color">포인터 색상</string>
+
+    <!-- This string labels the radio button that sets the pointer color to purple. -->
+    <string name="developer_options_pointer_purple">보라색</string>
+
+    <!-- This string labels the radio button that sets the pointer color to white. -->
+    <string name="developer_options_pointer_white">흰색</string>
+
+    <!-- This string is used to label a text entry field where the user may enter a new value
+         for the home page. -->
+    <string name="developer_options_homepage">홈페이지</string>
+
+    <!-- This string labels an On/Off switch in the Privacy and Security settings dialog
+     and is used to enable or disable tracking protection. -->
+    <string name="security_options_tracking_protection">추적 방지</string>
+
+    <!-- This string is a label above the group of buttons that indicates that the buttons below
+         relate to Android system permissions granted to the app.
+         '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="security_options_permissions_title">권한(%1$s 접근 허용)</string>
+
+    <!-- This string is displayed in an alert box if the user attempts to disable an enabled
+         permission and informs the user that the app cannot disable the given permission, that
+         function being reserved by the system permissions app. -->
+    <string name="security_options_permissions_reject_message">이 권한은 시스템 권한에서만 비활성화할 수 있습니다</string>
+
+    <!-- This string labels the button that displays or enables application access to the device's
+         camera, if a camera is present. -->
+    <string name="security_options_permission_camera">카메라</string>
+
+    <!-- This string labels the button that displays or enables application access to the device's
+         microphone, if a microphone is present. -->
+    <string name="security_options_permission_microphone">마이크</string>
+
+    <!-- This string labels the button that displays or enables application access to the device's
+         geographic location, if the device supports determination of geographic location. -->
+    <string name="security_options_permission_location">위치</string>
+
+    <!-- This string labels the button that displays or enables the application to post system-wide
+         notifications. -->
+    <string name="security_options_permission_notifications">알림</string>
+
+    <!-- This string labels the button that displays or enables application access to the device's
+         "external" storage. Note that on modern systems, "external" is still used in the name
+         of this storage even though the storage may not reside on external removable media. -->
+    <string name="security_options_permission_storage">외부 저장소 읽기</string>
+
+    <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'On'. -->
+    <string name="on">켜기</string>
+
+    <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'Off'. -->
+    <string name="off">끄기</string>
+
+    <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
-	<string name="voice_search_start">웹에서 무엇을 검색하고 싶습니까?</string>
-	
-	<!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
+    <string name="voice_search_start">웹에서 무엇을 검색하고 싶습니까?</string>
+
+    <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
-	<string name="voice_search_example">예: "360 videos, weather, news…"라고 말하십시오</string>
-	
-	<!-- This string is displayed in a dialog box show to the user while the Voice Search is being
+    <string name="voice_search_example">예: &quot;360 videos, weather, news…&quot;라고 말하십시오</string>
+
+    <!-- This string is displayed in a dialog box show to the user while the Voice Search is being
          performed. It indicates that the search query is running and they should wait for the result. -->
-	<string name="voice_search_decoding">검색 중…</string>
-	
-	<!-- This string is displayed in a dialog box show to the user while the Voice Search is being
+    <string name="voice_search_decoding">검색 중…</string>
+
+    <!-- This string is displayed in a dialog box show to the user while the Voice Search is being
          performed. It indicates that the search query is running and they should wait for the result. -->
-	<string name="voice_search_error">죄송합니다! 못 알아들었습니다.</string>
-	
-	<!-- This string is displayed in a dialog box after a failed Voice Search and the system is prompting the
+    <string name="voice_search_error">죄송합니다! 못 알아들었습니다.</string>
+
+    <!-- This string is displayed in a dialog box after a failed Voice Search and the system is prompting the
          user to try the Voice Search again. -->
-	<string name="voice_search_try_again">다시 말해보십시오.</string>
-	
-	<!-- This string is displayed in a dialog after the user has declined permission to use the
+    <string name="voice_search_try_again">다시 말해보십시오.</string>
+
+    <!-- This string is displayed in a dialog after the user has declined permission to use the
          device's microphone. It explains why Voice Search is not working. -->
-	<string name="voice_search_permission_after_decline">음성 검색을 사용하려면 마이크 접근을 허용하십시오.</string>
-	
-	<!-- This string is displayed in the URL bar when it is empty. It informs the user that they
+    <string name="voice_search_permission_after_decline">음성 검색을 사용하려면 마이크 접근을 허용하십시오.</string>
+
+    <!-- This string is displayed in the URL bar when it is empty. It informs the user that they
          may use the URL bar to search the Web or enter a Web address. -->
-	<string name="search_placeholder">웹을 검색하거나 주소를 입력하십시오</string>
-	
-	<!-- This string labels a button that is used to cancel an action.
+    <string name="search_placeholder">웹을 검색하거나 주소를 입력하십시오</string>
+
+    <!-- This string labels a button that is used to cancel an action.
          This appears in such contexts as dialog boxes, `<select>` menus, etc. -->
-	<string name="cancel_button">취소</string>
-	
-	<!-- This string labels a button that is used to approve an action.
+    <string name="cancel_button">취소</string>
+
+    <!-- This string labels a button that is used to approve an action.
          This appears in such contexts as dialog boxes, `<select>` menus, etc. -->
-	<string name="ok_button">확인</string>
-	
-	<!-- This string labels a button that is used to approve an action. -->
-	<string name="back_button">뒤로</string>
-	
-	<!-- This string is displayed in a dialog after an application crash. -->
-	<string name="crash_dialog_heading">문제가 생겨 오류가 발생했습니다</string>
-	
-	<!-- This string explains why Mozilla would like the user to allow the crash data to be uploaded.
+    <string name="ok_button">확인</string>
+
+    <!-- This string labels a button that is used to approve an action. -->
+    <string name="back_button">뒤로</string>
+
+    <!-- This string is displayed in a dialog after an application crash. -->
+    <string name="crash_dialog_heading">문제가 생겨 오류가 발생했습니다</string>
+
+    <!-- This string explains why Mozilla would like the user to allow the crash data to be uploaded.
          '%1$s' will be replaced at runtime with the app's domain name. -->
-	<string name="crash_dialog_message">귀하의 오류 데이터를 전송하면 Mozilla가 %1$s을(를) 개선하는 데 유용합니다.</string>
-	
-	<!-- This string labels a checkbox in the crash dialog box. When checked, the user will no longer
+    <string name="crash_dialog_message">귀하의 오류 데이터를 전송하면 Mozilla가 %1$s을(를) 개선하는 데 유용합니다.</string>
+
+    <!-- This string labels a checkbox in the crash dialog box. When checked, the user will no longer
          be prompted for permission to upload crash data after an application crash. -->
-	<string name="crash_dialog_send_data">항상 묻지 않고 전송하기</string>
-	
-	<!-- This string labels a button that, when pressed, allows the user to learn more about the
+    <string name="crash_dialog_send_data">항상 묻지 않고 전송하기</string>
+
+    <!-- This string labels a button that, when pressed, allows the user to learn more about the
          currently open dialog. -->
-	<string name="learn_more_button">자세히 알아보기</string>
-	
-	<!-- This string labels a button that, when pressed, prevents browser-level crash data from being sent to Mozilla. -->
-	<string name="do_not_sent_button">전송하지 마시오</string>
-	
-	<!-- This string labels a button that, when pressed, allows the crash data to be sent to Mozilla. -->
-	<string name="send_data_button">데이터 전송</string>
-	
-	<!-- This string appears in the tooltip for the button to change the 'Brightness'
+    <string name="learn_more_button">자세히 알아보기</string>
+
+    <!-- This string labels a button that, when pressed, prevents browser-level crash data from being sent to Mozilla. -->
+    <string name="do_not_sent_button">전송하지 마시오</string>
+
+    <!-- This string labels a button that, when pressed, allows the crash data to be sent to Mozilla. -->
+    <string name="send_data_button">데이터 전송</string>
+
+    <!-- This string appears in the tooltip for the button to change the 'Brightness'
          (i.e., the brightness level of the background environment), in particular when playing a video. -->
-	<string name="brightness_mode_tooltip">밝기</string>
-	
-	<!-- This string labels the radio option that selects the 'Normal' background in the 'Brightness' mode. -->
-	<string name="brightness_mode_normal">보통</string>
-	
-	<!-- This string labels the radio option that selects the 'Dark' background in the 'Brightness' mode. -->
-	<string name="brightness_mode_dark">어둡게</string>
-	
-	<!-- This string labels the radio option that selects the 'Void' background in the 'Brightness' mode. -->
-	<string name="brightness_mode_void">무</string>
-	
-	<!-- This string labels a button to open the Video Projection selector. -->
-	<string name="video_mode_tooltip">비디오 상영</string>
-	
-	<!-- This string is displayed when selecting a video playback mode. -->
-	<string name="video_mode_3d_side">3D 나란히</string>
-	
-	<!-- This string is displayed when selecting a video playback mode. -->
-	<string name="video_mode_360">360</string>
-	
-	<!-- This string is displayed when selecting a video playback mode. -->
-	<string name="video_mode_360_stereo">360 스테레오</string>
-	
-	<!-- This string is displayed when selecting a video playback mode. -->
-	<string name="video_mode_180">180</string>
-	
-	<!-- This string is displayed when selecting a video playback mode. -->
-	<string name="video_mode_180_left_right">스테레오 180 좌우</string>
-	
-	<!-- This string is displayed when selecting a video playback mode. -->
-	<string name="video_mode_180_top_bottom">스테레오 180 상하</string>
-	
-	<!-- This string is displayed when selecting a video playback mode. -->
-	<string name="video_mode_2d">2D</string>
-	
-	<!-- This string is displayed in a tooltip in the video controls UI. -->
-	<string name="video_controls_play">재생</string>
-	
-	<!-- This string is displayed in a tooltip in the video controls UI. -->
-	<string name="video_controls_pause">일시 정지</string>
-	
-	<!-- This string is displayed in a tooltip in the video controls UI. -->
-	<string name="video_controls_mute">음소거</string>
-	
-	<!-- This string is displayed in a tooltip in the video controls UI. -->
-	<string name="video_controls_unmute">음소거 해제</string>
-	
-	<!-- This string is displayed in a tooltip below the video controls UI. -->
-	<string name="video_controls_volume">음량</string>
-	
-	<!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek +30 seconds'). -->
-	<string name="video_controls_seek_forward">+%1$초 검색</string>
-	
-	<!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek -15 seconds'). -->
-	<string name="video_controls_seek_backward">-%1$초 검색</string>
-	
-	<!-- This string is displayed in the video control seekbar when the media is not seekable
+    <string name="brightness_mode_tooltip">밝기</string>
+
+    <!-- This string labels the radio option that selects the 'Normal' background in the 'Brightness' mode. -->
+    <string name="brightness_mode_normal">보통</string>
+
+    <!-- This string labels the radio option that selects the 'Dark' background in the 'Brightness' mode. -->
+    <string name="brightness_mode_dark">어둡게</string>
+
+    <!-- This string labels the radio option that selects the 'Void' background in the 'Brightness' mode. -->
+    <string name="brightness_mode_void">무</string>
+
+    <!-- This string labels a button to open the Video Projection selector. -->
+    <string name="video_mode_tooltip">비디오 상영</string>
+
+    <!-- This string is displayed when selecting a video playback mode. -->
+    <string name="video_mode_3d_side">3D 나란히</string>
+
+    <!-- This string is displayed when selecting a video playback mode. -->
+    <string name="video_mode_360">360</string>
+
+    <!-- This string is displayed when selecting a video playback mode. -->
+    <string name="video_mode_360_stereo">360 스테레오</string>
+
+    <!-- This string is displayed when selecting a video playback mode. -->
+    <string name="video_mode_180">180</string>
+
+    <!-- This string is displayed when selecting a video playback mode. -->
+    <string name="video_mode_180_left_right">스테레오 180 좌우</string>
+
+    <!-- This string is displayed when selecting a video playback mode. -->
+    <string name="video_mode_180_top_bottom">스테레오 180 상하</string>
+
+    <!-- This string is displayed when selecting a video playback mode. -->
+    <string name="video_mode_2d">2D</string>
+
+    <!-- This string is displayed in a tooltip in the video controls UI. -->
+    <string name="video_controls_play">재생</string>
+
+    <!-- This string is displayed in a tooltip in the video controls UI. -->
+    <string name="video_controls_pause">일시 정지</string>
+
+    <!-- This string is displayed in a tooltip in the video controls UI. -->
+    <string name="video_controls_mute">음소거</string>
+
+    <!-- This string is displayed in a tooltip in the video controls UI. -->
+    <string name="video_controls_unmute">음소거 해제</string>
+
+    <!-- This string is displayed in a tooltip below the video controls UI. -->
+    <string name="video_controls_volume">음량</string>
+
+    <!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek +30 seconds'). -->
+    <string name="video_controls_seek_forward">+%1$s초 검색</string>
+
+    <!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek -15 seconds'). -->
+    <string name="video_controls_seek_backward">-%1$s초 검색</string>
+
+    <!-- This string is displayed in the video control seekbar when the media is not seekable
          (e.g., a live video stream). Prefer a short text because it affects the width of the seek bar. -->
-	<string name="video_controls_live">라이브</string>
-	
-	<!-- This string is displayed as the title of the Bookmarks List, which contains the user's bookmarked websites. -->
-	<string name="bookmarks_title">북마크</string>
-	
-	<!-- This string is displayed in a tooltip that appears when a user hovers
+    <string name="video_controls_live">라이브</string>
+
+    <!-- This string is displayed as the title of the Bookmarks List, which contains the user's bookmarked websites. -->
+    <string name="bookmarks_title">북마크</string>
+
+    <!-- This string is displayed in a tooltip that appears when a user hovers
          over an icon representing 'Remove Bookmark' for an individual bookmark
          item listed in the Bookmarks List. -->
-	<string name="bookmarks_remove">북마크 삭제</string>
-	
-	<!-- This string is displayed in a tooltip that appears when a user hovers
+    <string name="bookmarks_remove">북마크 삭제</string>
+
+    <!-- This string is displayed in a tooltip that appears when a user hovers
          over an icon representing 'Edit This Bookmark' for an individual bookmark
          item listed in the Bookmarks List. -->
-	<string name="bookmarks_edit">이 북마크 수정하기</string>
-	
-	<!-- This string is displayed as placeholder text in the search field in the Bookmarks List. -->
-	<string name="bookmarks_search">북마크 검색</string>
-	
-	<!-- This string is displayed in a tooltip in the bookmark button in the URL bar. -->
-	<string name="bookmarks_bookmark">이 페이지 북마크하기</string>
-	
-	<!-- This string is displayed in the Bookmarks List for as the header of the most recently
+    <string name="bookmarks_edit">이 북마크 수정하기</string>
+
+    <!-- This string is displayed as placeholder text in the search field in the Bookmarks List. -->
+    <string name="bookmarks_search">북마크 검색</string>
+
+    <!-- This string is displayed in a tooltip in the bookmark button in the URL bar. -->
+    <string name="bookmarks_bookmark">이 페이지 북마크하기</string>
+
+    <!-- This string is displayed in the Bookmarks List for as the header of the most recently
          bookmarked items. -->
-	<string name="bookmarks_recent">최근 북마크 페이지</string>
-	
-	<!-- This string is displayed in the Bookmarks List as a tooltip of the button for showing
+    <string name="bookmarks_recent">최근 북마크 페이지</string>
+
+    <!-- This string is displayed in the Bookmarks List as a tooltip of the button for showing
          all the bookmarks. -->
-	<string name="bookmarks_show_all">모든 북마크 보기</string>
-	
-	<!-- This string labels the Reset button that restores the default display settings values. -->
-	<string name="display_options_reset">디스플레이 설정 초기화</string>
-	
-	<!-- This string labels the Reset button that restores the default voice search language settings values. -->
-	<string name="language_options_reset">음성 검색 언어 설정 초기화</string>
-	
-	<!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the 'Name' of the bookmarked website. -->
-	<string name="col_name">이름</string>
-	
-	<!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the 'Tags' of the bookmarked website. -->
-	<string name="col_tags">태그</string>
-	
-	<!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the 'Location' (or 'URL' or 'Address') of the bookmarked website. -->
-	<string name="col_url">위치</string>
-	
-	<!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the date of when the bookmarked website was most recently visited. -->
-	<string name="col_most_recent_visit">최근 방문</string>
-	
-	<!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the date of when the website was bookmarked. -->
-	<string name="col_date_added">추가</string>
-	
-	<!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the date of when the bookmarked website was last edited. -->
-	<string name="col_date_last_modified">최종 수정</string>
-	
-	<!-- This string is for the tooltip that appears upon hovering the 'Back' button in the browser's navigation bar.
+    <string name="bookmarks_show_all">모든 북마크 보기</string>
+
+    <!-- This string labels the Reset button that restores the default display settings values. -->
+    <string name="display_options_reset">디스플레이 설정 초기화</string>
+
+    <!-- This string labels the Reset button that restores the default privacy and security settings values. -->
+    <string name="privacy_options_reset">개인 정보 및 보안 설정 초기화</string>
+
+    <!-- This string labels the Reset button that restores the default controller settings values. -->
+    <string name="controller_options_reset">제어 설정 초기화</string>
+
+    <!-- This string labels the Reset button that restores the default environment settings values. -->
+    <string name="environment_options_reset">환경 설정 초기화</string>
+
+    <!-- This string labels the Reset button that restores the default voice search language settings values. -->
+    <string name="language_options_reset">음성 검색 언어 설정 초기화</string>
+
+    <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the 'Name' of the bookmarked website. -->
+    <string name="col_name">이름</string>
+
+    <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the 'Tags' of the bookmarked website. -->
+    <string name="col_tags">태그</string>
+
+    <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the 'Location' (or 'URL' or 'Address') of the bookmarked website. -->
+    <string name="col_url">위치</string>
+
+    <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the date of when the bookmarked website was most recently visited. -->
+    <string name="col_most_recent_visit">최근 방문</string>
+
+    <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the date of when the website was bookmarked. -->
+    <string name="col_date_added">추가</string>
+
+    <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the date of when the bookmarked website was last edited. -->
+    <string name="col_date_last_modified">최종 수정</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Back' button in the browser's navigation bar.
          'Back' refers to going back one page in 'History'. -->
-	<string name="back_tooltip">뒤로</string>
-	
-	<!-- This string is for the tooltip that appears upon hovering the 'Forward' button in the browser's navigation bar.
+    <string name="back_tooltip">뒤로</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Forward' button in the browser's navigation bar.
          'Forward' refers to going back one page in 'History'. -->
-	<string name="forward_tooltip">앞으로</string>
-	
-	<!-- This string is for the tooltip that appears upon hovering the 'Refresh' button in the browser's navigation bar.
+    <string name="forward_tooltip">앞으로</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Refresh' button in the browser's navigation bar.
          'Refresh' refers to reloading the current page. -->
-	<string name="refresh_tooltip">새로 고침</string>
-	
-	<!-- This string is for the tooltip that appears upon hovering the 'Home' button in the browser's navigation bar.
+    <string name="refresh_tooltip">새로 고침</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Home' button in the browser's navigation bar.
          'Home' refers to the browser's start page (e.g., the Firefox Reality Home Page). -->
-	<string name="home_tooltip">홈</string>
-	
-	<!-- This string is for the tooltip that appears upon hovering the 'Voice Search' (microphone) button in the
+    <string name="home_tooltip">홈</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Voice Search' (microphone) button in the
          browser's navigation bar. 'Voice Search' refers to the browser's system for searching the Web using
          speech-to-text recognition. -->
-	<string name="voice_search_tooltip">음성 검색</string>
-	
-	<!-- This string is for the tooltip that when clicking the 'Info' (ⓘ) icon visible next to the current website's
+    <string name="voice_search_tooltip">음성 검색</string>
+
+    <!-- This string is for the tooltip that when clicking the 'Info' (ⓘ) icon visible next to the current website's
          URL in the URL bar. The button it labels, when pressed, shows information about the site. -->
-	<string name="site_info_tooltip">사이트 정보 보기</string>
-	
-	<!-- This string is for the tooltip that appears when the user is not in the browser's Private Browsing mode
+    <string name="site_info_tooltip">사이트 정보 보기</string>
+
+    <!-- This string is for the tooltip that appears when the user is not in the browser's Private Browsing mode
          and hovers over the 'Private Browsing' icon in the browser's tray menu. -->
-	<string name="private_browsing_enter_tooltip">프라이빗 브라우징 시작</string>
-	
-	<!-- This string is for the tooltip that appears when the user is in the browser's Private Browsing mode
+    <string name="private_browsing_enter_tooltip">프라이빗 브라우징 시작</string>
+
+    <!-- This string is for the tooltip that appears when the user is in the browser's Private Browsing mode
          and hovers over the 'Private Browsing' icon in the browser's tray menu. -->
-	<string name="private_browsing_exit_tooltip">프라이빗 브라우징 종료</string>
-	
-	<!-- This string is for the tooltip that appears when the user hovers over the 'Bookmarks' icon in the
+    <string name="private_browsing_exit_tooltip">프라이빗 브라우징 종료</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmarks' icon in the
          browser's navigation bar. The button it labels, when pressed, opens a list view of the user's saved
          Bookmarks. -->
-	<string name="bookmarks_tooltip">북마크</string>
-	
-	<!-- This string is for the tooltip that appears when the user hovers over the down-arrow icon that appears in the
+    <string name="bookmarks_tooltip">북마크</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the down-arrow icon that appears in the
          URL bar upon hover. The icon it labels, when pressed, expands a list of recently visited websites in the
          user's History. -->
-	<string name="show_history_tooltip">방문 기록 보기</string>
-	
-	<!-- This string is displayed in any button used for removing all the items in the current context. -->
-	<string name="remove_all">모두 삭제</string>
+    <string name="show_history_tooltip">방문 기록 보기</string>
 
-	<!-- This string is used as the title of the Private Browsing page that is opened when the
-    	 Private Browsing Mode button from the tray is clicked. -->
-	<string name="private_browsing_title">프라이빗 브라우징</string>
+    <!-- This string is displayed in any button used for removing all the items in the current context. -->
+    <string name="remove_all">모두 삭제</string>
 
-	<!-- This string is used as the body of the Private Browsing page that is opened when the
-    	 Private Browsing Mode button from the tray is clicked. -->
-	<string name="private_browsing_body"><![CDATA[
+    <!-- This string is used as the title of the Private Browsing page that is opened when the
+         Private Browsing Mode button from the tray is clicked. -->
+    <string name="private_browsing_title">프라이빗 브라우징</string>
+
+    <!-- This string is used as the body of the Private Browsing page that is opened when the
+         Private Browsing Mode button from the tray is clicked.
+         '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="private_browsing_body"><![CDATA[
 <p>프라이빗 창으로 브라우징할 경우, %1$s은(는) <strong>다음을 저장하지 않습니다</strong>:</p>
 <ul class="two-column">
 	<li>방문한 웹페이지</li>
@@ -508,4 +625,16 @@
 <p class="about-info">프라이빗 브라우징에 대해 자세히 알아보십시오<a id="learnMore"></a>.</p>
      ]]></string>
 
+    <!-- This string is displayed in any button used for removing all the items in the current context.
+         '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="homepage_hint">%1$s 홈(기본)</string>
+
+    <!-- This string is displayed in the title of an authentication prompt, which requests a username and a password. -->
+    <string name="authentication_required">인증 필요</string>
+    <!-- This string is displayed as the label of a username input in an authentication prompt. -->
+    <string name="authentication_username">사용자명:</string>
+    <!-- This string is displayed as the label of a password input in an authentication prompt. -->
+    <string name="authentication_password">암호:</string>
+    <!-- This string is displayed as the label of a switch of an authentication prompt in order to show or hide the text in a password field. -->
+    <string name="authentication_show_password">암호 보이기:</string>
 </resources>
