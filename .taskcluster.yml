@@ -10,7 +10,7 @@ tasks:
 #
 # Triggered whenever a pull request is opened or updated.
 #
-# - Build the app (all flavors)
+# - Builds NoAPI and GoogleVR flavors
 ###############################################################################
   - provisionerId: '{{ taskcluster.docker.provisionerId }}'
     workerType: '{{ taskcluster.docker.workerType }}'
@@ -44,6 +44,9 @@ tasks:
 # Task: Master builds
 #
 # Triggered whenever something is pushed/merged to the master branch.
+# Produces APKs signed with the staging key. These APKs are for
+# testing only and should not be uploaded to App Stores.
+#
 ###############################################################################
   - provisionerId: '{{ taskcluster.docker.provisionerId }}'
     workerType: '{{ taskcluster.docker.workerType }}'
@@ -91,13 +94,11 @@ tasks:
 ###############################################################################
 # Task: Release builds
 #
-# Triggered when a new tag or release is published (in any branch)
+# Triggered when a new release is tagged. Produces signed release APKs.
 #
-# - Build (unsigned) release versions of the app with release translations and
-#   adjust token.
+# NOTE: {{ event.version }} is the string used to tag the release.
+#
 ###############################################################################
-#          && ./gradlew --no-daemon --console=plain clean assembleOculusvrArmRelease
-#          && ./gradlew --no-daemon --console=plain clean assembleNoapi assembleGooglevr assembleWavevr assembleSvr assembleOculusvr
   - provisionerId: '{{ taskcluster.docker.provisionerId }}'
     workerType: '{{ taskcluster.docker.workerType }}'
     extra:
@@ -125,7 +126,7 @@ tasks:
           && git submodule update
           && . tools/taskcluster/get_third_party.sh
           && cp tools/gradle/taskcluster.properties ./user.properties
-          && ./gradlew --no-daemon --console=plain clean assembleOculusvrArmRelease
+          && ./gradlew --no-daemon --console=plain clean `python tools/taskcluster/build_targets.py {{ event.version }}`
           && . tools/taskcluster/sign.sh release-signing-token -r
           && . tools/taskcluster/upload_symbols.sh
       artifacts:
