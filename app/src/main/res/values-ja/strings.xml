@@ -14,6 +14,12 @@
          permission requested for in the permission dialog box. -->
     <string name="permission_reject">許可しない</string>
 
+    <!-- This string is displayed in the button that means the user wants to enable/grant a permission. -->
+    <string name="permission_enable">有効化</string>
+
+    <!-- This string is displayed in a label that means the permission has already been granted -->
+    <string name="permission_enabled">有効</string>
+
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's camera.
          '%1$s' will be replaced at runtime with the website's domain name. -->
@@ -63,6 +69,10 @@
     <!-- This string is displayed in the Settings dialog box and is used to label an
          On/Off switch which toggles whether browser-level Telemetry is reported back to Mozilla. -->
     <string name="settings_telemetry">パフォーマンス情報の送信</string>
+
+    <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
+         opens a dialog box that contains privacy and security related settings. -->
+    <string name="settings_privacy_security">プライバシーとセキュリティ</string>
 
     <!-- This string is used to label a button that, when pressed, loads a website that
          describes Mozilla's Privacy Policy. -->
@@ -164,6 +174,10 @@
     <string name="restart_later_dialog_button">後で再起動</string>
 
     <!-- This string labels an On/Off switch in the 'Developer Options' dialog
+     and is used to enable or disable curved display. -->
+    <string name="developer_options_curved_display">曲面ディスプレイを有効化</string>
+
+    <!-- This string labels an On/Off switch in the 'Developer Options' dialog
          and is used to toggle remote debugging of website content in the application. -->
     <string name="developer_options_remote_debugging">リモートデバッガーを有効化</string>
 
@@ -202,6 +216,11 @@
          indicates that, when the button is pressed, the user's edits will be saved. -->
     <string name="developer_options_save">保存</string>
 
+    <!-- This string is used to label the 'Show' button in Settings. It
+     indicates that, when the button is pressed opens a dialog box that contains more information.
+     For example it's used to open a URL with the privacy policy. -->
+    <string name="developer_options_show">表示</string>
+
     <!-- This string is used to label a numerical entry field where the user may enter a new value
          for the virtual displays Dots Per Inch (DPI). -->
     <string name="developer_options_display_dpi">ディスプレイの DPI:</string>
@@ -236,6 +255,39 @@
     <!-- This string is used to label the 'VR' radio button of the 'User-Agent Mode' settings option. -->
     <string name="developer_options_ua_vr">VR</string>
 
+    <!-- This string is used to label radio buttons for setting fixed-foveated-rendering (FFR) level.
+     The term "foveation" derives from "fovea", the area of higher-resolution vision in the human retina.
+     Higher values of this option result in larger parts of the peripheral vision being rendered
+     at lower resolutions than the content in the center of the view.  These higher values reduce
+     quality to increase performance.
+     The Oculus implementation of fixed-foveated-rendering is described in more detail here:
+     https://developer.oculus.com/blog/optimizing-oculus-go-for-performance/-->
+    <string name="developer_options_foveated_app">陥凹レベル (アプリ)</string>
+    <!-- This string is used to label radio buttons for setting foveated level for WebVR immersive experiences -->
+    <string name="developer_options_foveated_webvr">陥凹レベル (WebVR)</string>
+    <!-- This string is used to label the Foveated radio button that disables fixed-foveated-rendering in immersive mode. -->
+    <string name="developer_options_foveated_disabled">無効</string>
+    <!-- This string is used to label the Foveated radio button that enables low-level fixed-foveated-rendering. -->
+    <string name="developer_options_foveated_1">1</string>
+    <!-- This string is used to label the Foveated radio button that enables medium-level fixed-foveated-rendering. -->
+    <string name="developer_options_foveated_2">2</string>
+    <!-- This string is used to label the Foveated radio button that enables high-level fixed-foveated-rendering. -->
+    <string name="developer_options_foveated_3">3</string>
+
+    <!-- This string is used to label a set of radio buttons that allow the user to change the
+     scroll direction of the remote controller. -->
+    <string name="developer_options_scroll_direction">スクロール方向</string>
+
+    <!-- This string is used to label the 'Natural' radio button of the 'Scroll Direction' settings option.
+         "Natural" refers to the motion of scrolled material being congruent with respect to direction of
+         motion of user input. -->
+    <string name="developer_options_scroll_direction_natural">ナチュラル</string>
+
+    <!-- This string is used to label the 'Reversed' radio button of the 'Scroll Direction' settings option.
+         "Reversed" refers to the motion of scrolled material being reversed with respect to direction of
+         motion of user input. -->
+    <string name="developer_options_scroll_direction_reversed">反転</string>
+
     <!-- This string describes what the 'Reset' button in the developer options does which is
          restore all the developer settings to their default value. -->
     <string name="developer_options_reset">開発者設定をリセット</string>
@@ -250,6 +302,19 @@
     <!-- This string labels the radio button that selects the 'Void' environment.
          The 'Void' environment is an empty space that surrounds the user in empty, black space. -->
     <string name="developer_options_env_void">空虚</string>
+
+    <!-- This string labels the radio button that selects the 'Offworld' environment,
+         a sci-fi themed desert-like environment. The offworld references sci-fi fictional
+         representations of colonies on other non-Earth planets. -->
+    <string name="developer_options_env_offworld">異世界</string>
+
+    <!-- This string labels the radio button that selects the 'Underwater' environment,
+         a brightly lit submarine themed environment. -->
+    <string name="developer_options_env_underwater">水中</string>
+
+    <!-- This string labels the radio button that selects the 'Winter' environment,
+         a snow-covered outdoor winter mountain scene. -->
+    <string name="developer_options_env_winter">冬景色</string>
 
     <!-- This string labels the radio button that selects the 'Meadow' environment,
          a sunlit grassy meadow filled with tiny flowers and surrounded by mountains. -->
@@ -267,6 +332,45 @@
 
     <!-- This string labels the radio button that sets the pointer color to white. -->
     <string name="developer_options_pointer_white">白</string>
+
+    <!-- This string is used to label a text entry field where the user may enter a new value
+         for the home page. -->
+    <string name="developer_options_homepage">ホームページ</string>
+
+    <!-- This string labels an On/Off switch in the Privacy and Security settings dialog
+     and is used to enable or disable tracking protection. -->
+    <string name="security_options_tracking_protection">トラッキング防止</string>
+
+    <!-- This string is a label above the group of buttons that indicates that the buttons below
+         relate to Android system permissions granted to the app.
+         '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="security_options_permissions_title">許可設定 (%1$s にアクセスを許可)</string>
+
+    <!-- This string is displayed in an alert box if the user attempts to disable an enabled
+         permission and informs the user that the app cannot disable the given permission, that
+         function being reserved by the system permissions app. -->
+    <string name="security_options_permissions_reject_message">この許可設定はシステムの許可設定でのみ無効化できます</string>
+
+    <!-- This string labels the button that displays or enables application access to the device's
+         camera, if a camera is present. -->
+    <string name="security_options_permission_camera">カメラ</string>
+
+    <!-- This string labels the button that displays or enables application access to the device's
+         microphone, if a microphone is present. -->
+    <string name="security_options_permission_microphone">マイク</string>
+
+    <!-- This string labels the button that displays or enables application access to the device's
+         geographic location, if the device supports determination of geographic location. -->
+    <string name="security_options_permission_location">位置情報</string>
+
+    <!-- This string labels the button that displays or enables the application to post system-wide
+         notifications. -->
+    <string name="security_options_permission_notifications">通知</string>
+
+    <!-- This string labels the button that displays or enables application access to the device's
+         "external" storage. Note that on modern systems, "external" is still used in the name
+         of this storage even though the storage may not reside on external removable media. -->
+    <string name="security_options_permission_storage">外部ストレージの読み取り</string>
 
     <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'On'. -->
     <string name="on">オン</string>
@@ -386,10 +490,12 @@
     <!-- This string is displayed in a tooltip below the video controls UI. -->
     <string name="video_controls_volume">音量</string>
 
-    <!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek +30 seconds'). -->
+    <!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek +30 seconds').
+    '%1$s' will be replaced at runtime with a duration in seconds (e.g., '30'). -->
     <string name="video_controls_seek_forward">%1$s 秒早送り</string>
 
-    <!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek -15 seconds'). -->
+    <!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek -15 seconds').
+    '%1$s' will be replaced at runtime with a duration in seconds (e.g., '15'). -->
     <string name="video_controls_seek_backward">%1$s 秒巻き戻し</string>
 
     <!-- This string is displayed in the video control seekbar when the media is not seekable
@@ -425,6 +531,15 @@
 
     <!-- This string labels the Reset button that restores the default display settings values. -->
     <string name="display_options_reset">表示設定をリセット</string>
+
+    <!-- This string labels the Reset button that restores the default privacy and security settings values. -->
+    <string name="privacy_options_reset">プライバシーとセキュリティの設定をリセット</string>
+
+    <!-- This string labels the Reset button that restores the default controller settings values. -->
+    <string name="controller_options_reset">コントローラーの設定をリセット</string>
+
+    <!-- This string labels the Reset button that restores the default environment settings values. -->
+    <string name="environment_options_reset">環境設定をリセット</string>
 
     <!-- This string labels the Reset button that restores the default voice search language settings values. -->
     <string name="language_options_reset">音声検索の言語設定をリセット</string>
@@ -512,4 +627,23 @@
 <p class="about-info"><a id="learnMore">プライベートブラウジングの詳細</a>。</p>
      ]]></string>
 
-    </resources>
+    <!-- This string is displayed in any button used for removing all the items in the current context.
+         '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="homepage_hint">%1$s ホーム (既定)</string>
+
+    <!-- This string is displayed in the title of an authentication prompt, which requests a username and a password. -->
+    <string name="authentication_required">認証が必要です</string>
+    <!-- This string is displayed as the label of a username input in an authentication prompt. -->
+    <string name="authentication_username">ユーザー名:</string>
+    <!-- This string is displayed as the label of a password input in an authentication prompt. -->
+    <string name="authentication_password">パスワード:</string>
+    <!-- This string is displayed as the label of a switch of an authentication prompt in order to show or hide the text in a password field. -->
+    <string name="authentication_show_password">パスワードを表示:</string>
+
+
+    <!-- This string is displayed in the title of the notification message shown when the device loses internet connection. -->
+    <string name="no_internet_title">インターネットの接続が失われました</string>
+    <!-- This string is displayed in the message of the notification message shown when the device loses internet connection. -->
+    <string name="no_internet_message">問題を解決するため端末の設定を確認してください。</string>
+
+</resources>

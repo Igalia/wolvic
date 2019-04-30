@@ -8,233 +8,234 @@
 
     <!-- This string is displayed in the button that means the user accepts the
          permission requested for in the permission dialog box. -->
-    <string name="permission_allow">Permitir</string>
+    <string name="permission_allow">Разрешить</string>
 
     <!-- This string is displayed in the button that means the user rejects the
          permission requested for in the permission dialog box. -->
-    <string name="permission_reject">No permitir</string>
+    <string name="permission_reject">Не разрешать</string>
 
     <!-- This string is displayed in the button that means the user wants to enable/grant a permission. -->
-    <string name="permission_enable">Habilitar</string>
+    <string name="permission_enable">Включить</string>
 
     <!-- This string is displayed in a label that means the permission has already been granted -->
-    <string name="permission_enabled">Habilitado</string>
+    <string name="permission_enabled">Включено</string>
 
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's camera.
          '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_camera">¿Quieres permitir que %1$s use la cámara?</string>
+    <string name="permission_camera">Вы разрешаете %1$s использовать вашу камеру?</string>
 
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's microphone.
          '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_microphone">¿Quieres permitir que %1$s use el micrófono?</string>
+    <string name="permission_microphone">Вы разрешаете %1$s использовать ваш микрофон?</string>
 
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's camera and microphone.
          '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_camera_and_microphone">¿Quieres permitir que %1$s use la cámara y el micrófono?</string>
+    <string name="permission_camera_and_microphone">Вы разрешаете %1$s использовать вашу камеру и микрофон?</string>
+
 
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's geographic location.
          '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_location">¿Quieres permitir que %1$s acceda a tu ubicación?</string>
+    <string name="permission_location">Вы разрешаете %1$s доступ к своему местоположению?</string>
 
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to send browser-level
          push notifications from a particular website (i.e., same origin).
          '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_notification">¿Quieres permitir que %1$s te envíe notificaciones?</string>
+    <string name="permission_notification">Вы разрешаете %1$s отправлять уведомления?</string>
 
     <!-- This string will be displayed in a dialog box presented to the user when the application
          needs to request permission to access the device's external storage such as the
          sdcard. '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_read_external_storage">¿Quieres permitir que %1$s lea tu memoria externa?</string>
+    <string name="permission_read_external_storage">Вы разрешаете %1$s читать ваше внешнее хранилище?</string>
 
     <!-- This string will be displayed in a dialog box presented to the user when the application
          needs to request permission to access the device's external storage such as the
          sdcard. '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_persistent_storage">¿Quieres permitir que %1$s almacene datos de forma permanente?</string>
+    <string name="permission_persistent_storage">Вы разрешаете %1$s хранить данные в постоянном хранилище?</string>
 
     <!-- This string is displayed in the Settings dialog box and how
          the user can know which version of the application they are currently running.
          '%1$s' will be replaced at runtime with the application version number. -->
-    <string name="settings_version">versión %1$s</string>
+    <string name="settings_version">версия %1$s</string>
 
     <!-- This string is displayed in the Settings dialog box and is used to label an
          On/Off switch which toggles whether an application crash is reported without first
          prompting the user. -->
-    <string name="settings_crash_reporting">Informe de fallos</string>
+    <string name="settings_crash_reporting">Сообщения о падениях</string>
 
     <!-- This string is displayed in the Settings dialog box and is used to label an
          On/Off switch which toggles whether browser-level Telemetry is reported back to Mozilla. -->
-    <string name="settings_telemetry">Telemetry</string>
+    <string name="settings_telemetry">Телеметрия</string>
 
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains privacy and security related settings. -->
-    <string name="settings_privacy_security">Privacidad &amp; Seguridad</string>
+    <string name="settings_privacy_security">Приватность и защита</string>
 
     <!-- This string is used to label a button that, when pressed, loads a website that
          describes Mozilla's Privacy Policy. -->
-    <string name="settings_privacy_policy">Política de privacidad</string>
+    <string name="settings_privacy_policy">Политика приватности</string>
 
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains settings that an application or Web developer might want to change. -->
-    <string name="settings_developer_options">Opciones de desarrollador</string>
+    <string name="settings_developer_options">Настройки разработчика</string>
 
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains language-related settings. -->
-    <string name="settings_language">Idioma</string>
+    <string name="settings_language">Язык</string>
 
     <!-- This string is used to label a text label for selecting the language in the 'Language' dialog window
          (accessible from the browser's Settings' dialog window). Below this string appears a list of locales for
          the user to choose as their preferred reading languages for website content. Each locale,
          as `language-tag` strings, is then included in the browser's `Accept-Language` HTTP request
          header that is sent to websites, as well as the JavaScript property, `navigator.language`. -->
-    <string name="settings_language_choose_language_webpage_content">Elige el idioma en el que quieras que se muestren las páginas</string>
+    <string name="settings_language_choose_language_webpage_content">Выберите язык, предпочитаемый вами для отображения веб-страниц</string>
 
     <!-- This string is used to label a text label for selecting the language in the 'Language' dialog window
          (accessible from the browser's Settings' dialog window). Below this string appears a list of locales for
          the user to choose as their preferred language for the browser's speech-to-text 'Voice Search' system.
          Based on the user's selection, the printed language is mapped to its ISO 639-1 code
          (e.g., `Español` is mapped to `es`) when configured in the 'Voice Search' system. -->
-    <string name="settings_language_choose_language_voice_search">Elige el idioma en el que quieras para las búsquedas por voz</string>
+    <string name="settings_language_choose_language_voice_search">Выберите язык, предпочитаемый вами для голосового поиска</string>
 
     <!-- This string is used to label a radio button in the 'Settings' Language dialog that, when pressed,
          changes the app and the language of the speech-recognition-based search to 'English (US)'. -->
-    <string name="settings_language_english">Inglés (US)</string>
+    <string name="settings_language_english">Английский (США)</string>
 
     <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
          changes the app and the language of the speech-recognition-based search to 'Chinese (Traditional/Zhuyin)'. -->
-    <string name="settings_language_traditional_chinese">Chino (tradicional/Zhuyin)</string>
+    <string name="settings_language_traditional_chinese">Китайский (Традиционный/Чжуинь)</string>
 
     <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
          changes the app and the language of the speech-recognition-based search to 'Chinese (Simplified/Pinyin)'. -->
-    <string name="settings_language_simplified_chinese">Chino (simplificado/Pinyin)</string>
+    <string name="settings_language_simplified_chinese">Китайский (Упрощённый/Пиньинь)</string>
 
     <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
          changes the app and the language of the speech-recognition-based search to 'Japanese'. -->
-    <string name="settings_language_japanese">Japonés</string>
+    <string name="settings_language_japanese">Японский</string>
 
     <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
          changes the app and the language of the speech-recognition-based search to 'French'. -->
-    <string name="settings_language_french">Francés</string>
+    <string name="settings_language_french">Французский</string>
 
     <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
          changes the app and the language of the speech-recognition-based search to 'German'. -->
-    <string name="settings_language_german">Alemán</string>
+    <string name="settings_language_german">Немецкий</string>
 
     <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
          changes the app and the language of the speech-recognition-based search to 'Spanish'. -->
-    <string name="settings_language_spanish">Español</string>
+    <string name="settings_language_spanish">Испанский</string>
 
     <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
          changes the app and the language of the speech-recognition-based search to 'Korean'. -->
-    <string name="settings_language_korean">Coreano</string>
+    <string name="settings_language_korean">Корейский</string>
 
     <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
          changes the app and the language of the speech-recognition-based search to 'Italian'. -->
-    <string name="settings_language_italian">Italiano</string>
+    <string name="settings_language_italian">Итальянский</string>
 
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
         opens a dialog box that contains display-related settings: window size, pixel density, etc. -->
-    <string name="settings_display">Mostrar</string>
+    <string name="settings_display">Экран</string>
 
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains controller-related options: pointer color and scroll direction. -->
-    <string name="settings_controller_options">Opciones del controlador</string>
+    <string name="settings_controller_options">Настройки контроллера</string>
 
     <!-- This string is displayed in the 'Settings' dialog window and, is used to label an,
          On/Off switch that enables/disables the speech-data reporting. -->
-    <string name="settings_report_speech_data">Informar sobre datos de voz</string>
+    <string name="settings_report_speech_data">Отправлять голосовые данные</string>
 
     <!-- This string is used to label a button that, when pressed, loads a website
          that allows the user file an issue or problem they may have encountered while using the
          application or while visiting a site. -->
-    <string name="settings_report_issue">Informar de un problema</string>
+    <string name="settings_report_issue">Сообщить о проблеме</string>
 
     <!-- This string is used in place of the 'settings_version' string (e.g., `version 1.1`) when the user is running
          a developer-build version of the app. -->
-    <string name="settings_version_developer">Compilación del desarrollador</string>
+    <string name="settings_version_developer">Сборка для разработчиков</string>
 
     <!-- This string is the title of a dialog box shown to the user when a settings
          change requires the application to restart. -->
-    <string name="restart_dialog_restart">Se requiere reiniciar</string>
+    <string name="restart_dialog_restart">Требуется перезапуск</string>
 
     <!-- This string is the text displayed in the restart dialog box explaining why the
          restart is required. '%1$s' will be replaced at runtime with the app's name. -->
-    <string name="restart_dialog_text">Tienes que reiniciar %1$s para que surtan efecto los cambios. ¿Quieres reiniciar ahora?</string>
+    <string name="restart_dialog_text">Вы должны перезапустить %1$s, чтобы применить изменения. Вы хотите сделать это сейчас?</string>
 
     <!-- This string is used to label the button the user presses to restart the
          application in the restart dialog. -->
-    <string name="restart_now_dialog_button">Reiniciar ahora</string>
+    <string name="restart_now_dialog_button">Перезапустить сейчас</string>
 
     <!-- This string is used to label the button the user presses in order to skip the application
          from being restarted. -->
-    <string name="restart_later_dialog_button">Más tarde</string>
+    <string name="restart_later_dialog_button">Перезапустить позже</string>
 
     <!-- This string labels an On/Off switch in the 'Developer Options' dialog
      and is used to enable or disable curved display. -->
-    <string name="developer_options_curved_display">Habilitar pantalla curva</string>
+    <string name="developer_options_curved_display">Включить режим изогнутого экрана</string>
 
     <!-- This string labels an On/Off switch in the 'Developer Options' dialog
          and is used to toggle remote debugging of website content in the application. -->
-    <string name="developer_options_remote_debugging">Activar depuración remota</string>
+    <string name="developer_options_remote_debugging">Включить удалённую отладку</string>
 
     <!-- This string labels an On/Off switch in the 'Developer Options' dialog
          and is used to toggle redirecting JavaScript Console output to the Android Logcat (i.e., `adb logcat`). -->
-    <string name="developer_options_show_console">Redirigir consola a Logcat</string>
+    <string name="developer_options_show_console">Перенаправить консоль в Logcat</string>
 
     <!-- This string labels an On/Off switch in the developer options dialog
          and is used to customize background environments of the app. -->
-    <string name="developer_options_env_override">Habilitar la invalidación del entorno</string>
+    <string name="developer_options_env_override">Включить переопределение среды</string>
 
     <!-- This string labels an On/Off switch in the developer options dialog and is used to toggle
          running content in a separate process.
          Multiprocessing: the running of two or more programs or sequences of instructions
          simultaneously by a computer with more than one central processor.
          A dialog should appear with a field labeled with the text, 'Enable Multiprocess'. -->
-    <string name="developer_options_multiprocess">Habilitar multiproceso</string>
+    <string name="developer_options_multiprocess">Включить мультипроцессность</string>
 
     <!-- The string labels an On/Off switch in the developer options dialog and is used to toggle enabling Servo. -->
-    <string name="developer_options_servo">Habilitar Servo</string>
+    <string name="developer_options_servo">Включить Servo</string>
 
     <!-- This string is used to label a numerical-entry field where the user may set a new value to
          use for the display density. -->
-    <string name="developer_options_display_density">Densidad de la pantalla:</string>
+    <string name="developer_options_display_density">Плотность пикселей экрана:</string>
 
     <!-- This string is used to label two integer-entry fields where the default width and height of
          the browser window may be set. -->
-    <string name="developer_options_window_size">Tamaño de la ventana:</string>
+    <string name="developer_options_window_size">Размер окна:</string>
 
     <!-- This string is used to label buttons to enable editing of text fields in the
          'Developer Options' dialog. Pressing this button switches the text to
          editable-text fields so their values may be changed. -->
-    <string name="developer_options_edit">Editar</string>
+    <string name="developer_options_edit">Изменить</string>
 
     <!-- This string is used to label the 'Edit' button once it has been pressed by the user. It
          indicates that, when the button is pressed, the user's edits will be saved. -->
-    <string name="developer_options_save">Guardar</string>
+    <string name="developer_options_save">Сохранить</string>
 
     <!-- This string is used to label the 'Show' button in Settings. It
      indicates that, when the button is pressed opens a dialog box that contains more information.
      For example it's used to open a URL with the privacy policy. -->
-    <string name="developer_options_show">Mostrar</string>
+    <string name="developer_options_show">Показать</string>
 
     <!-- This string is used to label a numerical entry field where the user may enter a new value
          for the virtual displays Dots Per Inch (DPI). -->
-    <string name="developer_options_display_dpi">Mostrar DPI:</string>
+    <string name="developer_options_display_dpi">DPI экрана:</string>
 
     <!-- This string is used to label two integer entry fields that will allow the user to adjust
          the maximum window size in the X and Y dimensions. -->
-    <string name="developer_options_max_window_size">Tamaño máx. de la ventana:</string>
+    <string name="developer_options_max_window_size">Максимальный размер окна:</string>
 
     <!-- This string is used to label radio buttons for setting Multi-Sample Anti-Aliasing (MSAA) in
          VR Immersive Mode. -->
     <string name="developer_options_msaa">MSAA</string>
 
     <!-- This string is used to label the MSAA radio button that disables MSAA in Immersive Mode. -->
-    <string name="developer_options_msaa_disabled">Deshabilitado</string>
+    <string name="developer_options_msaa_disabled">Отключено</string>
 
     <!-- This string is used to label the MSAA radio button that enables two times MSAA in Immersive Mode. -->
     <string name="developer_options_msaa_2">2x</string>
@@ -244,16 +245,16 @@
 
     <!-- This string is used to label a set of radio buttons that allow the user to change the
          User-Agent (UA) string of the browser. -->
-    <string name="developer_options_ua_mode">Modo de agente de usuario</string>
+    <string name="developer_options_ua_mode">User-Agent</string>
 
     <!-- This string is used to label the 'Desktop' radio button of the 'User-Agent Mode' settings option. -->
-    <string name="developer_options_ua_desktop">Escritorio</string>
+    <string name="developer_options_ua_desktop">Компьютер</string>
 
     <!-- This string is used to label the 'Mobile' radio button of the 'User-Agent Mode' settings option. -->
-    <string name="developer_options_ua_mobile">Móvil</string>
+    <string name="developer_options_ua_mobile">Мобильный</string>
 
     <!-- This string is used to label the 'VR' radio button of the 'User-Agent Mode' settings option. -->
-    <string name="developer_options_ua_vr">VR</string>
+    <string name="developer_options_ua_vr">VR-шлем</string>
 
     <!-- This string is used to label radio buttons for setting fixed-foveated-rendering (FFR) level.
      The term "foveation" derives from "fovea", the area of higher-resolution vision in the human retina.
@@ -262,11 +263,11 @@
      quality to increase performance.
      The Oculus implementation of fixed-foveated-rendering is described in more detail here:
      https://developer.oculus.com/blog/optimizing-oculus-go-for-performance/-->
-    <string name="developer_options_foveated_app">Nivel de foveación (App)</string>
+    <string name="developer_options_foveated_app">Уровень фовеации (Приложение)</string>
     <!-- This string is used to label radio buttons for setting foveated level for WebVR immersive experiences -->
-    <string name="developer_options_foveated_webvr">Nivel de foveación (WebVR)</string>
+    <string name="developer_options_foveated_webvr">Уровень фовеации (WebVR)</string>
     <!-- This string is used to label the Foveated radio button that disables fixed-foveated-rendering in immersive mode. -->
-    <string name="developer_options_foveated_disabled">Deshabilitado</string>
+    <string name="developer_options_foveated_disabled">Отключено</string>
     <!-- This string is used to label the Foveated radio button that enables low-level fixed-foveated-rendering. -->
     <string name="developer_options_foveated_1">1</string>
     <!-- This string is used to label the Foveated radio button that enables medium-level fixed-foveated-rendering. -->
@@ -276,374 +277,374 @@
 
     <!-- This string is used to label a set of radio buttons that allow the user to change the
      scroll direction of the remote controller. -->
-    <string name="developer_options_scroll_direction">Dirección de desplazamiento</string>
+    <string name="developer_options_scroll_direction">Направление прокрутки</string>
 
     <!-- This string is used to label the 'Natural' radio button of the 'Scroll Direction' settings option.
          "Natural" refers to the motion of scrolled material being congruent with respect to direction of
          motion of user input. -->
-    <string name="developer_options_scroll_direction_natural">Natural</string>
+    <string name="developer_options_scroll_direction_natural">Обычное</string>
 
     <!-- This string is used to label the 'Reversed' radio button of the 'Scroll Direction' settings option.
          "Reversed" refers to the motion of scrolled material being reversed with respect to direction of
          motion of user input. -->
-    <string name="developer_options_scroll_direction_reversed">Inversa</string>
+    <string name="developer_options_scroll_direction_reversed">Обратное</string>
 
     <!-- This string describes what the 'Reset' button in the developer options does which is
          restore all the developer settings to their default value. -->
-    <string name="developer_options_reset">Restablecer los ajustes del desarrollador</string>
+    <string name="developer_options_reset">Сбросить настройки разработчика</string>
 
     <!-- This string labels the 'Reset' button that restores the default developer settings values. -->
-    <string name="developer_options_reset_button">Restablecer</string>
+    <string name="developer_options_reset_button">Сбросить</string>
 
     <!-- This string describes the radio buttons used to select the user's background environment
          (seen while not in Immersive Mode). -->
-    <string name="developer_options_environments">Entorno</string>
+    <string name="developer_options_environments">Среда</string>
 
     <!-- This string labels the radio button that selects the 'Void' environment.
          The 'Void' environment is an empty space that surrounds the user in empty, black space. -->
-    <string name="developer_options_env_void">Nulo</string>
+    <string name="developer_options_env_void">Пустота</string>
 
     <!-- This string labels the radio button that selects the 'Offworld' environment,
          a sci-fi themed desert-like environment. The offworld references sci-fi fictional
          representations of colonies on other non-Earth planets. -->
-    <string name="developer_options_env_offworld">Extraterrestre</string>
+    <string name="developer_options_env_offworld">Внеземная</string>
 
     <!-- This string labels the radio button that selects the 'Underwater' environment,
          a brightly lit submarine themed environment. -->
-    <string name="developer_options_env_underwater">Submarino</string>
+    <string name="developer_options_env_underwater">Под водой</string>
 
     <!-- This string labels the radio button that selects the 'Winter' environment,
          a snow-covered outdoor winter mountain scene. -->
-    <string name="developer_options_env_winter">Invierno</string>
+    <string name="developer_options_env_winter">Зима</string>
 
     <!-- This string labels the radio button that selects the 'Meadow' environment,
          a sunlit grassy meadow filled with tiny flowers and surrounded by mountains. -->
-    <string name="developer_options_env_meadow">Prado</string>
+    <string name="developer_options_env_meadow">Луг</string>
 
     <!-- This string labels the radio button that selects the 'Cave' environment,
          a dimly-lit subterranean environment with fairytale structures set amongst mushrooms. -->
-    <string name="developer_options_env_cave">Caverna</string>
+    <string name="developer_options_env_cave">Пещера</string>
 
     <!-- This string describes the radio buttons used to select the pointer color. -->
-    <string name="developer_options_pointer_color">Color del puntero</string>
+    <string name="developer_options_pointer_color">Цвет указателя</string>
 
     <!-- This string labels the radio button that sets the pointer color to purple. -->
-    <string name="developer_options_pointer_purple">Morado</string>
+    <string name="developer_options_pointer_purple">Фиолетовый</string>
 
     <!-- This string labels the radio button that sets the pointer color to white. -->
-    <string name="developer_options_pointer_white">Blanco</string>
+    <string name="developer_options_pointer_white">Белый</string>
 
     <!-- This string is used to label a text entry field where the user may enter a new value
          for the home page. -->
-    <string name="developer_options_homepage">Página de inicio</string>
+    <string name="developer_options_homepage">Домашняя страница</string>
 
     <!-- This string labels an On/Off switch in the Privacy and Security settings dialog
      and is used to enable or disable tracking protection. -->
-    <string name="security_options_tracking_protection">Protección contra rastreo</string>
+    <string name="security_options_tracking_protection">Защита от отслеживания</string>
 
     <!-- This string is a label above the group of buttons that indicates that the buttons below
          relate to Android system permissions granted to the app.
          '%1$s' will be replaced at runtime with the app's name. -->
-    <string name="security_options_permissions_title">Permisos (permitir acceso a %1$s)</string>
+    <string name="security_options_permissions_title">Разрешения (Разрешить %1$s доступ)</string>
 
     <!-- This string is displayed in an alert box if the user attempts to disable an enabled
          permission and informs the user that the app cannot disable the given permission, that
          function being reserved by the system permissions app. -->
-    <string name="security_options_permissions_reject_message">Solo se puede deshabilitar este permiso en los permisos del sistema</string>
+    <string name="security_options_permissions_reject_message">Это разрешение можно отключить только в системных разрешениях</string>
 
     <!-- This string labels the button that displays or enables application access to the device's
          camera, if a camera is present. -->
-    <string name="security_options_permission_camera">Cámara</string>
+    <string name="security_options_permission_camera">Камера</string>
 
     <!-- This string labels the button that displays or enables application access to the device's
          microphone, if a microphone is present. -->
-    <string name="security_options_permission_microphone">Micrófono</string>
+    <string name="security_options_permission_microphone">Микрофон</string>
 
     <!-- This string labels the button that displays or enables application access to the device's
          geographic location, if the device supports determination of geographic location. -->
-    <string name="security_options_permission_location">Ubicación</string>
+    <string name="security_options_permission_location">Местоположение</string>
 
     <!-- This string labels the button that displays or enables the application to post system-wide
          notifications. -->
-    <string name="security_options_permission_notifications">Notificaciones</string>
+    <string name="security_options_permission_notifications">Уведомления</string>
 
     <!-- This string labels the button that displays or enables application access to the device's
          "external" storage. Note that on modern systems, "external" is still used in the name
          of this storage even though the storage may not reside on external removable media. -->
-    <string name="security_options_permission_storage">Leer almacenamiento externo</string>
+    <string name="security_options_permission_storage">Чтение внешнего хранилища</string>
 
     <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'On'. -->
-    <string name="on">Activado</string>
+    <string name="on">Включено</string>
 
     <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'Off'. -->
-    <string name="off">Desactivado</string>
+    <string name="off">Отключено</string>
 
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
-    <string name="voice_search_start">¿Qué te gustaría buscar en la Web?</string>
+    <string name="voice_search_start">Что бы вы хотели найти в Интернете?</string>
 
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
-    <string name="voice_search_example">Ejemplo: Di &quot;vídeos de 360, clima, noticias...&quot;</string>
+    <string name="voice_search_example">Например: Пожалуйста, скажите, «360 видео, погода, новости…»</string>
 
     <!-- This string is displayed in a dialog box show to the user while the Voice Search is being
          performed. It indicates that the search query is running and they should wait for the result. -->
-    <string name="voice_search_decoding">Buscando…</string>
+    <string name="voice_search_decoding">Поиск…</string>
 
     <!-- This string is displayed in a dialog box show to the user while the Voice Search is being
          performed. It indicates that the search query is running and they should wait for the result. -->
-    <string name="voice_search_error">Lo siento, no te he entendido.</string>
+    <string name="voice_search_error">Извините, мы не смогли понять.</string>
 
     <!-- This string is displayed in a dialog box after a failed Voice Search and the system is prompting the
          user to try the Voice Search again. -->
-    <string name="voice_search_try_again">Vuelve a intentarlo.</string>
+    <string name="voice_search_try_again">Пожалуйста, попробуйте снова.</string>
 
     <!-- This string is displayed in a dialog after the user has declined permission to use the
          device's microphone. It explains why Voice Search is not working. -->
-    <string name="voice_search_permission_after_decline">Permita el acceso al micrófono para usar la búsqueda por voz.</string>
+    <string name="voice_search_permission_after_decline">Пожалуйста, разрешите доступ к микрофону, чтобы использовать голосовой поиск.</string>
 
     <!-- This string is displayed in the URL bar when it is empty. It informs the user that they
          may use the URL bar to search the Web or enter a Web address. -->
-    <string name="search_placeholder">Busca en la Web o escribe la dirección</string>
+    <string name="search_placeholder">Найдите в Интернете или введите адрес</string>
 
     <!-- This string labels a button that is used to cancel an action.
          This appears in such contexts as dialog boxes, `<select>` menus, etc. -->
-    <string name="cancel_button">Cancelar</string>
+    <string name="cancel_button">Отмена</string>
 
     <!-- This string labels a button that is used to approve an action.
          This appears in such contexts as dialog boxes, `<select>` menus, etc. -->
-    <string name="ok_button">Vale</string>
+    <string name="ok_button">ОК</string>
 
     <!-- This string labels a button that is used to approve an action. -->
-    <string name="back_button">Atrás</string>
+    <string name="back_button">Назад</string>
 
     <!-- This string is displayed in a dialog after an application crash. -->
-    <string name="crash_dialog_heading">Hubo un problema y se cerró</string>
+    <string name="crash_dialog_heading">У нас возникла проблема и мы упали</string>
 
     <!-- This string explains why Mozilla would like the user to allow the crash data to be uploaded.
          '%1$s' will be replaced at runtime with the app's domain name. -->
-    <string name="crash_dialog_message">Ayuda a Mozilla a mejorar %1$s enviando tu informe de fallos.</string>
+    <string name="crash_dialog_message">Пожалуйста, помогите Mozilla улучшить %1$s, отправив сообщение о падении.</string>
 
     <!-- This string labels a checkbox in the crash dialog box. When checked, the user will no longer
          be prompted for permission to upload crash data after an application crash. -->
-    <string name="crash_dialog_send_data">Enviar siempre la información sin preguntar</string>
+    <string name="crash_dialog_send_data">Всегда отправлять данные, не спрашивая</string>
 
     <!-- This string labels a button that, when pressed, allows the user to learn more about the
          currently open dialog. -->
-    <string name="learn_more_button">Saber más</string>
+    <string name="learn_more_button">Подробнее</string>
 
     <!-- This string labels a button that, when pressed, prevents browser-level crash data from being sent to Mozilla. -->
-    <string name="do_not_sent_button">No enviar</string>
+    <string name="do_not_sent_button">Не отправлять</string>
 
     <!-- This string labels a button that, when pressed, allows the crash data to be sent to Mozilla. -->
-    <string name="send_data_button">Enviar información</string>
+    <string name="send_data_button">Отправить данные</string>
 
     <!-- This string appears in the tooltip for the button to change the 'Brightness'
          (i.e., the brightness level of the background environment), in particular when playing a video. -->
-    <string name="brightness_mode_tooltip">Brillo</string>
+    <string name="brightness_mode_tooltip">Яркость</string>
 
     <!-- This string labels the radio option that selects the 'Normal' background in the 'Brightness' mode. -->
-    <string name="brightness_mode_normal">Normal</string>
+    <string name="brightness_mode_normal">Обычный</string>
 
     <!-- This string labels the radio option that selects the 'Dark' background in the 'Brightness' mode. -->
-    <string name="brightness_mode_dark">Oscuro</string>
+    <string name="brightness_mode_dark">Тёмный</string>
 
     <!-- This string labels the radio option that selects the 'Void' background in the 'Brightness' mode. -->
-    <string name="brightness_mode_void">Nulo</string>
+    <string name="brightness_mode_void">Пустой</string>
 
     <!-- This string labels a button to open the Video Projection selector. -->
-    <string name="video_mode_tooltip">Proyección de vídeo</string>
+    <string name="video_mode_tooltip">Видеопроекция</string>
 
     <!-- This string is displayed when selecting a video playback mode. -->
-    <string name="video_mode_3d_side">3D en paralelo</string>
+    <string name="video_mode_3d_side">3D Горизонтальная стереопара</string>
 
     <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_360">360</string>
 
     <!-- This string is displayed when selecting a video playback mode. -->
-    <string name="video_mode_360_stereo">Estéreo 360</string>
+    <string name="video_mode_360_stereo">Стерео 360</string>
 
     <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_180">180</string>
 
     <!-- This string is displayed when selecting a video playback mode. -->
-    <string name="video_mode_180_left_right">Estéreo 180 de izquierda a derecha</string>
+    <string name="video_mode_180_left_right">Стерео 180 слева направо</string>
 
     <!-- This string is displayed when selecting a video playback mode. -->
-    <string name="video_mode_180_top_bottom">Estéreo 180 de arriba a abajo</string>
+    <string name="video_mode_180_top_bottom">Стерео 180 сверху вниз</string>
 
     <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_2d">2D</string>
 
     <!-- This string is displayed in a tooltip in the video controls UI. -->
-    <string name="video_controls_play">Reproducir</string>
+    <string name="video_controls_play">Воспроизвести</string>
 
     <!-- This string is displayed in a tooltip in the video controls UI. -->
-    <string name="video_controls_pause">Pausar</string>
+    <string name="video_controls_pause">Приостановить</string>
 
     <!-- This string is displayed in a tooltip in the video controls UI. -->
-    <string name="video_controls_mute">Silenciar</string>
+    <string name="video_controls_mute">Убрать звук</string>
 
     <!-- This string is displayed in a tooltip in the video controls UI. -->
-    <string name="video_controls_unmute">Sonido</string>
+    <string name="video_controls_unmute">Восстановить звук</string>
 
     <!-- This string is displayed in a tooltip below the video controls UI. -->
-    <string name="video_controls_volume">Volumen</string>
+    <string name="video_controls_volume">Громкость</string>
 
     <!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek +30 seconds').
     '%1$s' will be replaced at runtime with a duration in seconds (e.g., '30'). -->
-    <string name="video_controls_seek_forward">Buscar +%1$s segundos</string>
+    <string name="video_controls_seek_forward">Перемотать +%1$s секунд</string>
 
     <!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek -15 seconds').
     '%1$s' will be replaced at runtime with a duration in seconds (e.g., '15'). -->
-    <string name="video_controls_seek_backward">Buscar -%1$s segundos</string>
+    <string name="video_controls_seek_backward">Перемотать -%1$s секунд</string>
 
     <!-- This string is displayed in the video control seekbar when the media is not seekable
          (e.g., a live video stream). Prefer a short text because it affects the width of the seek bar. -->
-    <string name="video_controls_live">EN VIVO</string>
+    <string name="video_controls_live">LIVE</string>
 
     <!-- This string is displayed as the title of the Bookmarks List, which contains the user's bookmarked websites. -->
-    <string name="bookmarks_title">Marcadores</string>
+    <string name="bookmarks_title">Закладки</string>
 
     <!-- This string is displayed in a tooltip that appears when a user hovers
          over an icon representing 'Remove Bookmark' for an individual bookmark
          item listed in the Bookmarks List. -->
-    <string name="bookmarks_remove">Eliminar marcador</string>
+    <string name="bookmarks_remove">Удалить закладку</string>
 
     <!-- This string is displayed in a tooltip that appears when a user hovers
          over an icon representing 'Edit This Bookmark' for an individual bookmark
          item listed in the Bookmarks List. -->
-    <string name="bookmarks_edit">Editar este marcador</string>
+    <string name="bookmarks_edit">Изменить эту закладку</string>
 
     <!-- This string is displayed as placeholder text in the search field in the Bookmarks List. -->
-    <string name="bookmarks_search">Buscar marcadores</string>
+    <string name="bookmarks_search">Поиск закладок</string>
 
     <!-- This string is displayed in a tooltip in the bookmark button in the URL bar. -->
-    <string name="bookmarks_bookmark">Agregar esta página a marcadores</string>
+    <string name="bookmarks_bookmark">Добавить страницу в закладки</string>
 
     <!-- This string is displayed in the Bookmarks List for as the header of the most recently
          bookmarked items. -->
-    <string name="bookmarks_recent">Agregados recientemente a marcadores</string>
+    <string name="bookmarks_recent">Недавние закладки</string>
 
     <!-- This string is displayed in the Bookmarks List as a tooltip of the button for showing
          all the bookmarks. -->
-    <string name="bookmarks_show_all">Mostrar todos los marcadores</string>
+    <string name="bookmarks_show_all">Все закладки</string>
 
     <!-- This string labels the Reset button that restores the default display settings values. -->
-    <string name="display_options_reset">Restablecer los ajustes de visualización</string>
+    <string name="display_options_reset">Сбросить настройки отображения</string>
 
     <!-- This string labels the Reset button that restores the default privacy and security settings values. -->
-    <string name="privacy_options_reset">Restablecer los ajustes de Privacidad &amp; Seguridad</string>
+    <string name="privacy_options_reset">Сбросить настройки приватности и защиты</string>
 
     <!-- This string labels the Reset button that restores the default controller settings values. -->
-    <string name="controller_options_reset">Restablecer ajustes del controlador</string>
+    <string name="controller_options_reset">Сбросить настройки контроллера</string>
 
     <!-- This string labels the Reset button that restores the default environment settings values. -->
-    <string name="environment_options_reset">Restablecer la configuración del entorno</string>
+    <string name="environment_options_reset">Сбросить настройки среды</string>
 
     <!-- This string labels the Reset button that restores the default voice search language settings values. -->
-    <string name="language_options_reset">Restablecer los ajustes de idioma para la búsqueda por voz</string>
+    <string name="language_options_reset">Сбросить языковые настройки голосового поиска</string>
 
     <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the 'Name' of the bookmarked website. -->
-    <string name="col_name">Nombre</string>
+    <string name="col_name">Имя</string>
 
     <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the 'Tags' of the bookmarked website. -->
-    <string name="col_tags">Etiquetas</string>
+    <string name="col_tags">Метки</string>
+
 
     <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the 'Location' (or 'URL' or 'Address') of the bookmarked website. -->
-    <string name="col_url">Ubicación</string>
+    <string name="col_url">Адрес</string>
 
     <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the date of when the bookmarked website was most recently visited. -->
-    <string name="col_most_recent_visit">Visitas más recientes</string>
+    <string name="col_most_recent_visit">Последнее посещение</string>
 
     <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the date of when the website was bookmarked. -->
-    <string name="col_date_added">Agregados</string>
+    <string name="col_date_added">Добавлена</string>
 
     <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the date of when the bookmarked website was last edited. -->
-    <string name="col_date_last_modified">Últimas modificaciones</string>
+    <string name="col_date_last_modified">Последнее изменение</string>
 
     <!-- This string is for the tooltip that appears upon hovering the 'Back' button in the browser's navigation bar.
          'Back' refers to going back one page in 'History'. -->
-    <string name="back_tooltip">Atrás</string>
+    <string name="back_tooltip">Назад</string>
 
     <!-- This string is for the tooltip that appears upon hovering the 'Forward' button in the browser's navigation bar.
          'Forward' refers to going back one page in 'History'. -->
-    <string name="forward_tooltip">Siguiente</string>
+    <string name="forward_tooltip">Вперёд</string>
 
     <!-- This string is for the tooltip that appears upon hovering the 'Refresh' button in the browser's navigation bar.
          'Refresh' refers to reloading the current page. -->
-    <string name="refresh_tooltip">Reiniciar</string>
+    <string name="refresh_tooltip">Обновить</string>
 
     <!-- This string is for the tooltip that appears upon hovering the 'Home' button in the browser's navigation bar.
          'Home' refers to the browser's start page (e.g., the Firefox Reality Home Page). -->
-    <string name="home_tooltip">Inicio</string>
+    <string name="home_tooltip">Домой</string>
 
     <!-- This string is for the tooltip that appears upon hovering the 'Voice Search' (microphone) button in the
          browser's navigation bar. 'Voice Search' refers to the browser's system for searching the Web using
          speech-to-text recognition. -->
-    <string name="voice_search_tooltip">Búsqueda por voz</string>
+    <string name="voice_search_tooltip">Голосовой поиск</string>
 
     <!-- This string is for the tooltip that when clicking the 'Info' (ⓘ) icon visible next to the current website's
          URL in the URL bar. The button it labels, when pressed, shows information about the site. -->
-    <string name="site_info_tooltip">Mostrar información del sitio.</string>
+    <string name="site_info_tooltip">Показать информацию о сайте.</string>
 
     <!-- This string is for the tooltip that appears when the user is not in the browser's Private Browsing mode
          and hovers over the 'Private Browsing' icon in the browser's tray menu. -->
-    <string name="private_browsing_enter_tooltip">Iniciar navegación privada</string>
+    <string name="private_browsing_enter_tooltip">Войти в Приватный просмотр</string>
 
     <!-- This string is for the tooltip that appears when the user is in the browser's Private Browsing mode
          and hovers over the 'Private Browsing' icon in the browser's tray menu. -->
-    <string name="private_browsing_exit_tooltip">Salir de la navegación privada</string>
+    <string name="private_browsing_exit_tooltip">Выйти из Приватного просмотра</string>
 
     <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmarks' icon in the
          browser's navigation bar. The button it labels, when pressed, opens a list view of the user's saved
          Bookmarks. -->
-    <string name="bookmarks_tooltip">Marcadores</string>
+    <string name="bookmarks_tooltip">Закладки</string>
 
     <!-- This string is for the tooltip that appears when the user hovers over the down-arrow icon that appears in the
          URL bar upon hover. The icon it labels, when pressed, expands a list of recently visited websites in the
          user's History. -->
-    <string name="show_history_tooltip">Mostrar historial</string>
+    <string name="show_history_tooltip">Показать историю</string>
 
     <!-- This string is displayed in any button used for removing all the items in the current context. -->
-    <string name="remove_all">Eliminar todos</string>
+    <string name="remove_all">Удалить всё</string>
 
     <!-- This string is used as the title of the Private Browsing page that is opened when the
          Private Browsing Mode button from the tray is clicked. -->
-    <string name="private_browsing_title">Navegación privada</string>
+    <string name="private_browsing_title">Приватный просмотр</string>
 
     <!-- This string is used as the body of the Private Browsing page that is opened when the
          Private Browsing Mode button from the tray is clicked.
          '%1$s' will be replaced at runtime with the app's name. -->
-    <string name="private_browsing_body"><![CDATA[
-<p>Cuando navegas en una ventana privada, %1$s <strong>no se guardan</strong>:</p>
+    <string name="private_browsing_body"><![CDATA[<p>Когда вы находитесь в приватном окне, %1$s <strong>не сохраняет</strong>:</p>
 <ul class="two-column">
-	<li>las páginas visitadas</li>
-	<li>las búsquedas</li>
-	<li>las cookies</li>
-	<li>los archivos temporales</li>
+  <li>адреса посещённых страниц</li>
+  <li>историю поиска</li>
+  <li>куки</li>
+  <li>временные файлы</li>
 </ul>
-<p>La navegación privada <strong>no te hace anónimo</strong> en Internet. Tu responsable o proveedor de acceso a Internet pueden saber qué páginas has visitado.</p>
-<p class="about-info">Más información sobre la <a id="learnMore">navegación privada</a>.</p>
-    ]]></string>
+<p>Приватный просмотр <strong>не делает вас анонимными</strong> в Интернете. Ваш работодатель или Интернет-провайдер всё ещё могут знать, какие страницы вы посещаете.</p>
+<p class="about-info">Узнать больше о <a id="learnMore">Приватном просмотре</a>.</p>
+     ]]></string>
 
     <!-- This string is displayed in any button used for removing all the items in the current context.
          '%1$s' will be replaced at runtime with the app's name. -->
-    <string name="homepage_hint">Inicio de %1$s (predeterminado)</string>
+    <string name="homepage_hint">Домашняя страница %1$s (По умолчанию)</string>
 
     <!-- This string is displayed in the title of an authentication prompt, which requests a username and a password. -->
-    <string name="authentication_required">Se requiere autenticación</string>
+    <string name="authentication_required">Требуется аутентификация</string>
     <!-- This string is displayed as the label of a username input in an authentication prompt. -->
-    <string name="authentication_username">Nombre de usuario:</string>
+    <string name="authentication_username">Имя пользователя:</string>
     <!-- This string is displayed as the label of a password input in an authentication prompt. -->
-    <string name="authentication_password">Contraseña:</string>
+    <string name="authentication_password">Пароль:</string>
     <!-- This string is displayed as the label of a switch of an authentication prompt in order to show or hide the text in a password field. -->
-    <string name="authentication_show_password">Mostrar contraseña:</string>
+    <string name="authentication_show_password">Показать пароль:</string>
 
 
     <!-- This string is displayed in the title of the notification message shown when the device loses internet connection. -->
-    <string name="no_internet_title">Se perdió la conexión a Internet</string>
+    <string name="no_internet_title">Соединение с Интернетом потеряно</string>
     <!-- This string is displayed in the message of the notification message shown when the device loses internet connection. -->
-    <string name="no_internet_message">Comprobar la configuración del dispositivo para solucionar el problema.</string>
+    <string name="no_internet_message">Проверьте настройки устройства, чтобы устранить эту проблему.</string>
 
 </resources>

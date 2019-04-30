@@ -255,6 +255,16 @@
     <!-- This string is used to label the 'VR' radio button of the 'User-Agent Mode' settings option. -->
     <string name="developer_options_ua_vr">VR</string>
 
+    <!-- This string is used to label radio buttons for setting fixed-foveated-rendering (FFR) level.
+     The term "foveation" derives from "fovea", the area of higher-resolution vision in the human retina.
+     Higher values of this option result in larger parts of the peripheral vision being rendered
+     at lower resolutions than the content in the center of the view.  These higher values reduce
+     quality to increase performance.
+     The Oculus implementation of fixed-foveated-rendering is described in more detail here:
+     https://developer.oculus.com/blog/optimizing-oculus-go-for-performance/-->
+    <string name="developer_options_foveated_app">Nivel de foveación (App)</string>
+    <!-- This string is used to label radio buttons for setting foveated level for WebVR immersive experiences -->
+    <string name="developer_options_foveated_webvr">Nivel de foveación (WebVR)</string>
     <!-- This string is used to label the Foveated radio button that disables fixed-foveated-rendering in immersive mode. -->
     <string name="developer_options_foveated_disabled">Deshabilitado</string>
     <!-- This string is used to label the Foveated radio button that enables low-level fixed-foveated-rendering. -->
@@ -292,6 +302,11 @@
     <!-- This string labels the radio button that selects the 'Void' environment.
          The 'Void' environment is an empty space that surrounds the user in empty, black space. -->
     <string name="developer_options_env_void">Nulo</string>
+
+    <!-- This string labels the radio button that selects the 'Offworld' environment,
+         a sci-fi themed desert-like environment. The offworld references sci-fi fictional
+         representations of colonies on other non-Earth planets. -->
+    <string name="developer_options_env_offworld">Extraterrestre</string>
 
     <!-- This string labels the radio button that selects the 'Underwater' environment,
          a brightly lit submarine themed environment. -->
