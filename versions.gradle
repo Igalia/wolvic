@@ -38,6 +38,7 @@ versions.atsl_rules = "1.1.0-alpha4"
 versions.espresso = "3.1.0-alpha4"
 versions.android_gradle_plugin = "3.2.0"
 versions.kotlin = "1.2.71"
+versions.snakeyaml = "1.24"
 def deps = [:]
 
 def gecko_view = [:]
@@ -107,6 +108,8 @@ deps.constraint_layout = "androidx.constraintlayout:constraintlayout:$versions.c
 deps.junit = "junit:junit:$versions.junit"
 
 deps.android_gradle_plugin = "com.android.tools.build:gradle:$versions.android_gradle_plugin"
+
+deps.snakeyaml = "org.yaml:snakeyaml:$versions.snakeyaml:android"
 
 ext.deps = deps
 

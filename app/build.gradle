@@ -289,6 +289,7 @@ dependencies {
     implementation deps.support.app_compat
     implementation deps.support.annotations
     implementation deps.constraint_layout
+    implementation deps.snakeyaml
 
     // Android Components
     implementation deps.mozilla_speech
