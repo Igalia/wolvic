@@ -348,7 +348,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
 
         resetMultiTap();
 
-        mForegroundColor = context.getColor(R.color.fog);
+        mForegroundColor = context.getColor(R.color.asphalt);
         mSelectedForegroundColor = context.getColor(R.color.fog);
     }
 
@@ -787,6 +787,13 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
                 statePadding = mKeyboardPressedPadding;
             }
 
+            int targetColor = mKeyTextColor;
+            if (stateHovered) {
+                targetColor = mForegroundColor;
+            } else if (statePressed) {
+                targetColor = mSelectedForegroundColor;
+            }
+
             if (label != null) {
                 float descent;
 
@@ -794,22 +801,14 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
                 if (label.length() > 1 && key.codes.length < 2) {
                     paint.setTextSize(mLabelTextSize);
                     paint.setTypeface(Typeface.DEFAULT_BOLD);
-                    descent = 0.0f;
+                    descent = mLabelTextSize * 0.1f;
 
                 } else {
                     paint.setTextSize(mKeyTextSize);
                     paint.setTypeface(Typeface.DEFAULT);
                     descent = paint.descent();
                 }
-                if (!stateHovered && !statePressed) {
-                    paint.setColor(mKeyTextColor);
-
-                } else if (stateHovered) {
-                    paint.setColor(mForegroundColor);
-
-                } else if (statePressed) {
-                    paint.setColor(mSelectedForegroundColor);
-                }
+                paint.setColor(targetColor);
 
                 // Draw a drop shadow for the text
                 paint.setShadowLayer(mShadowRadius, 0, 0, mShadowColor);
@@ -830,7 +829,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
                 final float drawableY = (key.height - padding.top - padding.bottom - key.icon.getIntrinsicHeight()) / 2
                         + padding.top + statePadding;
                 canvas.translate(drawableX, drawableY);
-                key.icon.setColorFilter(key.pressed ? mSelectedForegroundColor : mForegroundColor, PorterDuff.Mode.MULTIPLY);
+                key.icon.setColorFilter(targetColor, PorterDuff.Mode.MULTIPLY);
                 key.icon.setBounds(0, 0, key.icon.getIntrinsicWidth(), key.icon.getIntrinsicHeight());
                 key.icon.draw(canvas);
                 canvas.translate(-drawableX, -drawableY);

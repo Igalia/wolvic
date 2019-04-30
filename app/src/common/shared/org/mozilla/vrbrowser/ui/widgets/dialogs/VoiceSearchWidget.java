@@ -155,6 +155,12 @@ public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate
         aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.restart_dialog_world_z);
     }
 
+    public void setPlacementForKeyboard(int aHandle) {
+        mWidgetPlacement.parentHandle = aHandle;
+        mWidgetPlacement.translationY = 0;
+        mWidgetPlacement.translationZ = 0;
+    }
+
     private ISpeechRecognitionListener mVoiceSearchListener = new ISpeechRecognitionListener() {
 
         public void onSpeechStatusChanged(final MozillaSpeechService.SpeechState aState, final Object aPayload){
@@ -265,8 +271,8 @@ public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate
     }
 
     @Override
-    public void show() {
-        super.show();
+    public void show(boolean aFocus) {
+        super.show(aFocus);
 
         setStartListeningState();
 

@@ -38,7 +38,7 @@
                 </shape>
             </item>
             <item>
-                <shape android:shape="rectangle" android:tint="@color/asphalt">
+                <shape android:shape="rectangle" android:tint="@color/void_color">
                     <corners android:radius="@dimen/keyboard_key_rounded_corner"/>
                 </shape>
             </item>
@@ -82,7 +82,7 @@
                 </shape>
             </item>
             <item>
-                <shape android:shape="rectangle" android:tint="@color/asphalt">
+                <shape android:shape="rectangle" android:tint="@color/void_color">
                     <corners android:radius="@dimen/keyboard_key_rounded_corner"/>
                 </shape>
             </item>

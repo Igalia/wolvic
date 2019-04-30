@@ -33,7 +33,7 @@
                 </shape>
             </item>
             <item>
-                <shape android:shape="rectangle" android:tint="@color/asphalt"/>
+                <shape android:shape="rectangle" android:tint="@color/void_color"/>
             </item>
         </layer-list>
     </item>
@@ -70,7 +70,7 @@
                 </shape>
             </item>
             <item>
-                <shape android:shape="rectangle" android:tint="@color/asphalt"/>
+                <shape android:shape="rectangle" android:tint="@color/void_color"/>
             </item>
         </layer-list>
     </item>
