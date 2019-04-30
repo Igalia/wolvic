@@ -1,4 +1,4 @@
-(function () {
+(() => {
   // If missing, inject a `<meta name="viewport">` tag to trigger YouTube's mobile layout.
   window.addEventListener('load', () => {
     let viewport = document.head.querySelector('meta[name="viewport"]');
@@ -10,31 +10,21 @@
     }
   });
 
-  const LOGTAG = '[firefoxreality:webcompat]'
-  const qs = new URLSearchParams(window.location.search);
+  const LOGTAG = '[firefoxreality:webcompat:youtube]';
   let retryTimeout = null;
-
-  function getTruthyQS (key) {
-    if (!qs || !qs.has(key)) {
-      return false;
-    }
-    const valueLower = (qs.get('key') || '').trim().toLowerCase();
-    return valueLower === '' || valueLower === '1' || valueLower === 'true' || valueLower === 'yes' || valueLower === 'on';
-  }
+  const qs = new URLSearchParams(window.location.search);
 
   const prefs = {
     hd: false,
     quality: 1440,
-    log: qs.get('mozDebug') ? getTruthyQS('mozDebug') : true,
-    retryAttempts: parseInt(qs.get('retryAttempts') || qs.get('retryattempts') || '10', 10),
-    retryTimeout: parseInt(qs.get('retryTimeout') || qs.get('retrytimeout') || '500', 10)
+    log: qs.get('debug') !== '0' && qs.get('mozdebug') !== '0' && qs.get('mozDebug') !== '0',
+    retryAttempts: 10,
+    retryTimeout: 500
   };
 
-  const printLog = String(prefs.log) === 'true';
-
-  const log = (...args) => printLog && console.log(LOGTAG, ...args);
-  const logError = (...args) => printLog && console.error(LOGTAG, ...args);
-  const logWarn = (...args) => printLog && console.warn(LOGTAG, ...args);
+  const log = (...args) => prefs.log && console.log(LOGTAG, ...args);
+  const logError = (...args) => prefs.log && console.error(LOGTAG, ...args);
+  const logWarn = (...args) => prefs.log && console.warn(LOGTAG, ...args);
 
   const ytImprover = window.ytImprover = (state, attempts) => {
     if (ytImprover.completed) {
@@ -178,7 +168,7 @@
   };
 
   if (window.location.pathname.startsWith('/watch')) {
-    const onYouTubePlayerReady = window.onYouTubePlayerReady = evt => {
+    window.onYouTubePlayerReady = evt => {
       log('`onYouTubePlayerReady` called');
       window.ytImprover(1);
       evt.addEventListener('onStateChange', 'ytImprover');
