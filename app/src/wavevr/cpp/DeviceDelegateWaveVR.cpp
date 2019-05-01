@@ -40,6 +40,7 @@ struct Controller {
   bool touched;
   Controller()
       : index(-1)
+      , type(WVR_DeviceType_Controller_Right)
       , enabled(false)
       , touched(false)
   {}
@@ -83,6 +84,7 @@ struct DeviceDelegateWaveVR::State {
       , rightTextureQueue(nullptr)
       , renderWidth(0)
       , renderHeight(0)
+      , devicePairs {}
       , lastSubmitDiscarded(false)
       , recentered(false)
       , ignoreNextRecenter(false)
@@ -311,6 +313,7 @@ DeviceDelegateWaveVR::SetControllerDelegate(ControllerDelegatePtr& aController) 
   }
   for (int32_t index = 0; index < kMaxControllerCount; index++) {
     m.delegate->CreateController(index, 0, "HTC Vive Focus Controller");
+    m.delegate->SetLeftHanded(index, m.controllers[index].type == WVR_DeviceType_Controller_Left);
   }
 }
 

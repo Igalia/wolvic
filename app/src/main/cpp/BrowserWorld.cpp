@@ -269,11 +269,11 @@ BrowserWorld::State::EnsureControllerFocused() {
       break;
     }
 
-    if (!controller.leftHanded) {
+    if (!controller.leftHanded && controller.enabled) {
       right = &controller;
     }
 
-    if (!first) {
+    if (!first && controller.enabled) {
       first = &controller;
     }
   }
@@ -303,7 +303,6 @@ static inline float
 ScaleScrollDelta(const float aValue, const double aStartTime, const double aCurrentTime) {
   const float kMaxDelta = 2.0f; // in seconds
   const float kMinScale = 0.15f;
-  float result = 0.0f;
   const double deltaTime = aCurrentTime - aStartTime;
   float scale = float(deltaTime / kMaxDelta);
   if (deltaTime > kMaxDelta) {

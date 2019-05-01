@@ -129,8 +129,8 @@ ControllerContainer::InitializeBeam() {
 
   m.beamModel = std::move(geometry);
   for (Controller& controller: m.list) {
-    if (controller.transform) {
-      controller.transform->AddNode(m.beamModel);
+    if (controller.beamParent) {
+      controller.beamParent->AddNode(m.beamModel);
     }
   }
 }
@@ -184,20 +184,19 @@ ControllerContainer::CreateController(const int32_t aControllerIndex, const int3
     controller.pointer = Pointer::Create(create);
     if ((m.models.size() >= aModelIndex) && m.models[aModelIndex]) {
       controller.transform->AddNode(m.models[aModelIndex]);
-      if (m.beamModel) {
-        controller.beamToggle = vrb::Toggle::Create(create);
-        if (aBeamTransform.IsIdentity()) {
-          controller.beamParent = controller.beamToggle;
-          controller.beamToggle->AddNode(m.beamModel);
-        } else {
-          vrb::TransformPtr beamTransform = Transform::Create(create);
-          beamTransform->SetTransform(aBeamTransform);
-          beamTransform->AddNode(m.beamModel);
-          controller.beamParent = beamTransform;
-          controller.beamToggle->AddNode(beamTransform);
-        }
-        controller.transform->AddNode(controller.beamToggle);
-        controller.beamToggle->ToggleAll(false);
+      controller.beamToggle = vrb::Toggle::Create(create);
+      if (aBeamTransform.IsIdentity()) {
+        controller.beamParent = controller.beamToggle;
+      } else {
+        vrb::TransformPtr beamTransform = Transform::Create(create);
+        beamTransform->SetTransform(aBeamTransform);
+        controller.beamParent = beamTransform;
+        controller.beamToggle->AddNode(beamTransform);
+      }
+      controller.transform->AddNode(controller.beamToggle);
+      controller.beamToggle->ToggleAll(false);
+      if (m.beamModel && controller.beamParent) {
+        controller.beamParent->AddNode(m.beamModel);
       }
       if (m.root) {
         m.root->AddNode(controller.transform);
@@ -235,6 +234,7 @@ ControllerContainer::SetEnabled(const int32_t aControllerIndex, const bool aEnab
   }
   m.list[aControllerIndex].enabled = aEnabled;
   if (!aEnabled) {
+    m.list[aControllerIndex].focused = false;
     SetVisible(aControllerIndex, false);
   }
 }
