@@ -180,7 +180,7 @@ public class ChinesePinyinKeyboard extends BaseKeyboard {
 
     @Override
     public String getKeyboardTitle() {
-        return mContext.getString(R.string.settings_language_simplified_chinese);
+        return StringUtils.getStringByLocale(mContext, R.string.settings_language_simplified_chinese, getLocale());
     }
 
     @Override

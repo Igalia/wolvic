@@ -21,4 +21,8 @@ public class StringUtils {
     public static String removeSpaces(@NonNull String aText) {
         return aText.replaceAll("\\s", "");
     }
+
+    public static boolean isEmpty(String aString) {
+        return aString == null || aString.length() == 0;
+    }
 }

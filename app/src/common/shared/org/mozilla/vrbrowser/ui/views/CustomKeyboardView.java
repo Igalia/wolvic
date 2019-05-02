@@ -672,6 +672,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
             }
             if (mResizeMethod != null) {
                 try {
+                    mResizeMethod.setAccessible(true);
                     mResizeMethod.invoke(mKeyboard, w, h);
                 }
                 catch (Exception ex) {

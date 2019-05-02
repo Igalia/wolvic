@@ -12,8 +12,11 @@ import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
+import org.mozilla.vrbrowser.utils.StringUtils;
 
 import androidx.annotation.NonNull;
+
+import java.util.Locale;
 
 import static org.mozilla.vrbrowser.utils.ServoUtils.isServoAvailable;
 
@@ -422,6 +425,20 @@ public class SettingsStore {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putInt(mContext.getString(R.string.settings_key_foveated_webvr), level);
         editor.commit();
+    }
+
+    public void setSelectedKeyboard(Locale aLocale) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putString(mContext.getString(R.string.settings_key_keyboard_locale), aLocale.toLanguageTag());
+        editor.commit();
+    }
+
+    public Locale getKeyboardLocale() {
+        String value = mPrefs.getString(mContext.getString(R.string.settings_key_keyboard_locale), null);
+        if (StringUtils.isEmpty(value)) {
+            return null;
+        }
+        return Locale.forLanguageTag(value);
     }
 }
 

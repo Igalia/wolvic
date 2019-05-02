@@ -4,6 +4,7 @@ import android.content.Context;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.input.CustomKeyboard;
+import org.mozilla.vrbrowser.utils.StringUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -34,7 +35,7 @@ public class EnglishKeyboard extends BaseKeyboard {
 
     @Override
     public String getKeyboardTitle() {
-        return mContext.getString(R.string.settings_language_english);
+        return StringUtils.getStringByLocale(mContext, R.string.settings_language_english, getLocale());
     }
 
     @Override

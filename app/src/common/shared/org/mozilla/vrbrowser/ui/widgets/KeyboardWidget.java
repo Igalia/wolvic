@@ -10,6 +10,7 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.inputmethodservice.Keyboard;
 import android.os.Handler;
+import android.os.LocaleList;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
@@ -29,20 +30,24 @@ import android.widget.TextView;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.SessionStore;
+import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.input.CustomKeyboard;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.ui.keyboards.KeyboardInterface;
 import org.mozilla.vrbrowser.ui.views.AutoCompletionView;
 import org.mozilla.vrbrowser.ui.views.CustomKeyboardView;
+import org.mozilla.vrbrowser.ui.views.LanguageSelectorView;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.VoiceSearchWidget;
 import org.mozilla.vrbrowser.ui.keyboards.ChinesePinyinKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.EnglishKeyboard;
 import org.mozilla.vrbrowser.utils.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 
 public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKeyboardActionListener, AutoCompletionView.Delegate,
@@ -69,6 +74,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private EditorInfo mEditorInfo = new EditorInfo();
     private VoiceSearchWidget mVoiceSearchWidget;
     private AutoCompletionView mAutoCompletionView;
+    private LanguageSelectorView mLanguageSelectorView;
 
     private int mKeyWidth;
     private int mKeyboardPopupTopMargin;
@@ -107,11 +113,13 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mKeyboardNumericView = findViewById(R.id.keyboardNumeric);
         mPopupKeyboardview = findViewById(R.id.popupKeyboard);
         mPopupKeyboardLayer = findViewById(R.id.popupKeyboardLayer);
+        mLanguageSelectorView = findViewById(R.id.langSelectorView);
+        mLanguageSelectorView.setDelegate(aItem -> handleLanguageChange((KeyboardInterface) aItem.tag));
 
         mKeyboards = new ArrayList<>();
         mKeyboards.add(new EnglishKeyboard(aContext));
         mKeyboards.add(new ChinesePinyinKeyboard(aContext));
-        mCurrentKeyboard = mKeyboards.get(0);
+        setDefaultKeyboard();
 
         mKeyboardSymbols = new CustomKeyboard(aContext.getApplicationContext(), R.xml.keyboard_symbols);
         mKeyboardNumeric = new CustomKeyboard(aContext.getApplicationContext(), R.xml.keyboard_numeric);
@@ -130,11 +138,6 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mPopupKeyboardview.setKeyboardPressedPadding(0);
 
         mKeyboardNumericView.setPreviewEnabled(false);
-
-        setOnClickListener(view -> {
-            mPopupKeyboardview.setVisibility(View.GONE);
-            mPopupKeyboardLayer.setVisibility(View.GONE);
-        });
 
         int[] featuredKeys = {
             ' ', Keyboard.KEYCODE_DELETE, Keyboard.KEYCODE_DONE, Keyboard.KEYCODE_CANCEL, Keyboard.KEYCODE_MODE_CHANGE,
@@ -158,10 +161,8 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mKeyWidth = getResources().getDimensionPixelSize(R.dimen.keyboard_key_width);
         mKeyboardPopupTopMargin  = getResources().getDimensionPixelSize(R.dimen.keyboard_key_pressed_padding) * 2;
 
-        mPopupKeyboardLayer.setOnClickListener(view -> {
-            mPopupKeyboardview.setVisibility(View.GONE);
-            mPopupKeyboardLayer.setVisibility(View.GONE);
-        });
+        setOnClickListener(view -> hideOverlays());
+        mPopupKeyboardLayer.setOnClickListener(view -> hideOverlays());
 
         mKeyboardView.setVisibility(View.VISIBLE);
         mKeyboardNumericView.setKeyboard(mKeyboardNumeric);
@@ -247,9 +248,10 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                 final InputConnection input = mInputConnection;
                 postInputCommand(() -> {
                     displayComposingText("");
-                    mInputConnection.finishComposingText();
+                    input.finishComposingText();
                 });
             }
+            hideOverlays();
             mInputConnection = null;
         }
 
@@ -282,9 +284,13 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
        mIsCapsLock = false;
        mIsLongPress = false;
        handleShift(false);
+       hideOverlays();
+    }
 
-       mPopupKeyboardview.setVisibility(View.GONE);
-       mPopupKeyboardLayer.setVisibility(View.GONE);
+    private void hideOverlays() {
+        mPopupKeyboardview.setVisibility(View.GONE);
+        mPopupKeyboardLayer.setVisibility(View.GONE);
+        mLanguageSelectorView.setVisibility(View.GONE);
     }
 
     protected void onDismiss() {
@@ -393,7 +399,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                 handleVoiceInput();
                 break;
             case CustomKeyboard.KEYCODE_LANGUAGE_CHANGE:
-                handleChangeLanguage();
+                handleGlobeClick();
                 break;
             case ' ':
                 handleSpace();
@@ -448,6 +454,46 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     public void swipeUp() {
 
     }
+
+    private void setDefaultKeyboard() {
+        mCurrentKeyboard = getKeyboardForLocale(SettingsStore.getInstance(getContext()).getKeyboardLocale());
+        if (mCurrentKeyboard != null) {
+            return;
+        }
+
+        // If the user has not selected any keyboard, find the best match from system locales.
+        LocaleList localeList = getResources().getConfiguration().getLocales();
+        String[] supportedLocales = new String[mKeyboards.size()];
+        for (int i = 0; i < mKeyboards.size(); ++i) {
+            supportedLocales[i] = mKeyboards.get(i).getLocale().toLanguageTag();
+        }
+        Locale bestMatch = localeList.getFirstMatch(supportedLocales);
+        mCurrentKeyboard = getKeyboardForLocale(bestMatch);
+        if (mCurrentKeyboard == null) {
+            // Fall back to english.
+            mCurrentKeyboard = getKeyboardForLocale(Locale.ENGLISH);
+        }
+    }
+
+    private KeyboardInterface getKeyboardForLocale(@Nullable Locale aLocale) {
+        if (aLocale == null) {
+            return null;
+        }
+        // Check perfect locale mach
+        for (KeyboardInterface keyboard: mKeyboards) {
+            if (keyboard.getLocale().equals(aLocale)) {
+                return  keyboard;
+            }
+        }
+        // Fall back to language check
+        for (KeyboardInterface keyboard: mKeyboards) {
+            if (keyboard.getLocale().getLanguage().equalsIgnoreCase(aLocale.getLanguage())) {
+                return keyboard;
+            }
+        }
+        return null;
+    }
+
 
     private void handleShift(boolean isShifted) {
         CustomKeyboard keyboard = (CustomKeyboard) mKeyboardView.getKeyboard();
@@ -508,14 +554,23 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
     }
 
-    private void handleChangeLanguage() {
-        int index = mKeyboards.indexOf(mCurrentKeyboard);
-        if (index < 0) {
-            index = 0;
+    private void handleGlobeClick() {
+        if (mLanguageSelectorView.getItems() == null || mLanguageSelectorView.getItems().size() == 0) {
+            ArrayList<LanguageSelectorView.Item> items = new ArrayList<>();
+            for (KeyboardInterface keyboard: mKeyboards) {
+                items.add(new LanguageSelectorView.Item(keyboard.getKeyboardTitle().toUpperCase(), keyboard));
+            }
+            mLanguageSelectorView.setItems(items);
         }
-        index = (index + 1) % mKeyboards.size();
-        mCurrentKeyboard = mKeyboards.get(index);
+        mLanguageSelectorView.setVisibility(View.VISIBLE);
+        mPopupKeyboardLayer.setVisibility(View.VISIBLE);
+    }
+
+    private void handleLanguageChange(KeyboardInterface aKeyboard) {
+        mCurrentKeyboard = aKeyboard;
+        SettingsStore.getInstance(getContext()).setSelectedKeyboard(aKeyboard.getLocale());
         mKeyboardView.setKeyboard(mCurrentKeyboard.getAlphabeticKeyboard());
+        hideOverlays();
         updateCandidates();
     }
 
