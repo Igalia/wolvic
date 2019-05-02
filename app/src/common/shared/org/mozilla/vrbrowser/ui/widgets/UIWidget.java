@@ -127,15 +127,10 @@ public abstract class UIWidget extends FrameLayout implements Widget {
     }
 
     @Override
-    public void resizeSurface(final int aWidth, final int aHeight) {
+    public void resizeSurface(final int aSurfaceWidth, final int aSurfaceHeight) {
         if (mRenderer != null){
-            mRenderer.resize(aWidth, aHeight);
+            mRenderer.resize(aSurfaceWidth, aSurfaceHeight);
         }
-
-        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) getLayoutParams();
-        params.width = aWidth;
-        params.height = aHeight;
-        setLayoutParams(params);
     }
 
     @Override

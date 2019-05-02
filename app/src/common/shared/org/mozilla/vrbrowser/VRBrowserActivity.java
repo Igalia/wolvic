@@ -543,8 +543,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             // Add widget to a virtual display for invalidation
             View view = (View) widget;
             if (view.getParent() == null) {
-                float scale = widget.getPlacement().textureScale;
-                mWidgetContainer.addView(view, new FrameLayout.LayoutParams((int) Math.ceil(aWidth / scale), (int) Math.ceil(aHeight / scale)));
+                mWidgetContainer.addView(view, new FrameLayout.LayoutParams(widget.getPlacement().viewWidth(), widget.getPlacement().viewHeight()));
             }
         });
     }
@@ -863,15 +862,17 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         final int textureWidth = aWidget.getPlacement().textureWidth();
         final int textureHeight = aWidget.getPlacement().textureHeight();
+        final int viewWidth = aWidget.getPlacement().viewWidth();
+        final int viewHeight = aWidget.getPlacement().viewHeight();
 
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)((View)aWidget).getLayoutParams();
         if (params == null) {
             // Widget not added yet
             return;
         }
-        if (params.width != textureWidth || params.height != textureHeight) {
-            params.width = textureWidth;
-            params.height = textureHeight;
+        if (params.width != viewWidth || params.height != viewHeight) {
+            params.width = viewWidth;
+            params.height = viewHeight;
             ((View)aWidget).setLayoutParams(params);
             aWidget.resizeSurface(textureWidth, textureHeight);
         }

@@ -75,10 +75,18 @@ public class WidgetPlacement {
     }
 
     public int textureWidth() {
-        return (int) Math.ceil(width * density);
+        return (int) Math.ceil(width * density * textureScale);
     }
 
     public int textureHeight() {
+        return (int) Math.ceil(height * density * textureScale);
+    }
+
+    public int viewWidth() {
+        return (int) Math.ceil(width * density);
+    }
+
+    public int viewHeight() {
         return (int) Math.ceil(height * density);
     }
 
