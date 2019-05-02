@@ -6,16 +6,20 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.mozilla.vrbrowser.input.DeviceType;
 import org.mozilla.vrbrowser.R;
 
 import androidx.annotation.Nullable;
 
 public class HoneycombButton extends LinearLayout {
+
+    private static final String LOGTAG = "VRB";
 
     private ImageView mIcon;
     private TextView mText;
@@ -35,6 +39,39 @@ public class HoneycombButton extends LinearLayout {
         mButtonText = attributes.getString(R.styleable.HoneycombButton_honeycombButtonText);
         mButtonTextSize = attributes.getDimension(R.styleable.HoneycombButton_honeycombButtonTextSize, 0.0f);
         mButtonIcon = attributes.getDrawable(R.styleable.HoneycombButton_honeycombButtonIcon);
+
+        String iconIdStr = attributes.getString(R.styleable.HoneycombButton_honeycombButtonIcon);
+        int deviceTypeId = DeviceType.getType();
+        switch (deviceTypeId) {
+          case DeviceType.OculusGo:
+            if (attributes.hasValue(R.styleable.HoneycombButton_honeycombButtonIconOculus3dof)) {
+              Log.d(LOGTAG, "Using Oculus 3DoF icon for '" + iconIdStr + "' honeycomb icon");
+              try {
+                mButtonIcon = attributes.getDrawable(R.styleable.HoneycombButton_honeycombButtonIconOculus3dof);
+              } catch (Exception ex) {
+                Log.d(LOGTAG, "Could not use Oculus 3DoF icon for '" + iconIdStr + "' honeycomb icon: " + ex.getMessage());
+              }
+            }
+            break;
+          case DeviceType.OculusQuest:
+            if (attributes.hasValue(R.styleable.HoneycombButton_honeycombButtonIconOculus6dof)) {
+              Log.d(LOGTAG, "Using Oculus 6DoF icon for '" + iconIdStr + "' honeycomb icon");
+              try {
+                mButtonIcon = attributes.getDrawable(R.styleable.HoneycombButton_honeycombButtonIconOculus6dof);
+              } catch (Exception ex) {
+                Log.d(LOGTAG, "Could not use Oculus 6DoF icon for '" + iconIdStr + "' honeycomb icon: " + ex.getMessage());
+              }
+            }
+            break;
+          default:
+            if (attributes.hasValue(R.styleable.HoneycombButton_honeycombButtonIconOculus3dof) ||
+                attributes.hasValue(R.styleable.HoneycombButton_honeycombButtonIconOculus6dof)) {
+              Log.d(LOGTAG, "Using generic icon for '" + iconIdStr + "' honeycomb icon");
+            }
+            mButtonIcon = attributes.getDrawable(R.styleable.HoneycombButton_honeycombButtonIcon);
+            break;
+        }
+
         mSecondaryButtonText = attributes.getString(R.styleable.HoneycombButton_honeycombSecondaryText);
         initialize(context);
     }

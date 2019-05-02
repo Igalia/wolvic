@@ -16,7 +16,8 @@
             android:layout_gravity="center_horizontal"
             android:clickable="true"
             android:contextClickable="false"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:focusable="true">
 
             <ImageView
                 android:id="@+id/ff_logo_settings"
@@ -156,27 +157,10 @@
                         <org.mozilla.vrbrowser.ui.views.HoneycombButton
                             android:id="@+id/controllerOptionsButton"
                             style="?attr/honeycombButtonStyle"
-                            android:layout_marginRight="10dp"
-                            android:visibility="gone"
+                            android:layout_marginEnd="10dp"
                             app:honeycombButtonIcon="@drawable/ic_settings_controlleroptions"
-                            app:honeycombButtonText="@string/settings_controller_options"
-                            app:honeycombButtonTextSize="@dimen/settings_main_button_text_width" />
-
-                        <org.mozilla.vrbrowser.ui.views.HoneycombButton
-                            android:id="@+id/controllerOptionsButtonOculus3dof"
-                            style="?attr/honeycombButtonStyle"
-                            android:layout_marginRight="10dp"
-                            android:visibility="gone"
-                            app:honeycombButtonIcon="@drawable/ic_settings_controlleroptions_oculusvr_3dof"
-                            app:honeycombButtonText="@string/settings_controller_options"
-                            app:honeycombButtonTextSize="@dimen/settings_main_button_text_width" />
-
-                        <org.mozilla.vrbrowser.ui.views.HoneycombButton
-                            android:id="@+id/controllerOptionsButtonOculus6dof"
-                            style="?attr/honeycombButtonStyle"
-                            android:layout_marginRight="10dp"
-                            android:visibility="gone"
-                            app:honeycombButtonIcon="@drawable/ic_settings_controlleroptions_oculusvr_6dof"
+                            app:honeycombButtonIconOculus3dof="@drawable/ic_settings_controlleroptions_oculusvr_3dof"
+                            app:honeycombButtonIconOculus6dof="@drawable/ic_settings_controlleroptions_oculusvr_6dof"
                             app:honeycombButtonText="@string/settings_controller_options"
                             app:honeycombButtonTextSize="@dimen/settings_main_button_text_width" />
 

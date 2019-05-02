@@ -2,6 +2,8 @@
 <resources>
     <declare-styleable name="HoneycombButton">
         <attr name="honeycombButtonIcon" format="integer" />
+        <attr name="honeycombButtonIconOculus3dof" format="integer" />
+        <attr name="honeycombButtonIconOculus6dof" format="integer" />
         <attr name="honeycombButtonText" format="string" />
         <attr name="honeycombButtonTextSize" format="dimension" />
         <attr name="honeycombSecondaryText" format="string" />

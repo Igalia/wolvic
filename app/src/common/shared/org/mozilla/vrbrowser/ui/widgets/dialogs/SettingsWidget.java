@@ -23,7 +23,6 @@ import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.SessionStore;
 import org.mozilla.vrbrowser.browser.SettingsStore;
-import org.mozilla.vrbrowser.input.DeviceType;
 import org.mozilla.vrbrowser.ui.views.HoneycombButton;
 import org.mozilla.vrbrowser.ui.views.HoneycombSwitch;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
@@ -195,25 +194,6 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
         });
 
         HoneycombButton controllerOptionsButton = findViewById(R.id.controllerOptionsButton);
-        int deviceTypeId = DeviceType.getType();
-        switch (deviceTypeId) {
-          case DeviceType.OculusGo:
-            Log.d(LOGTAG, "Using Oculus 3DoF icon for Controller Options");
-            controllerOptionsButton.setVisibility(View.GONE);
-            controllerOptionsButton = findViewById(R.id.controllerOptionsButtonOculus3dof);
-            controllerOptionsButton.setVisibility(View.VISIBLE);
-            break;
-          case DeviceType.OculusQuest:
-            Log.d(LOGTAG, "Using Oculus 6DoF icon for Controller Options");
-            controllerOptionsButton.setVisibility(View.GONE);
-            controllerOptionsButton = findViewById(R.id.controllerOptionsButtonOculus6dof);
-            controllerOptionsButton.setVisibility(View.VISIBLE);
-            break;
-          default:
-            Log.d(LOGTAG, "Using default icon for Controller Options");
-            controllerOptionsButton.setVisibility(View.VISIBLE);
-            break;
-        }
         controllerOptionsButton.setOnClickListener(view -> {
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
