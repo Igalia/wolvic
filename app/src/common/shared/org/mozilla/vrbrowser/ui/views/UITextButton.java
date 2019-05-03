@@ -33,6 +33,10 @@ public class UITextButton extends AppCompatButton implements CustomUIButton {
     private @IdRes int mActiveModeTintColorListRes;
     private State mState;
 
+    public UITextButton(Context context) {
+        this(context, null);
+    }
+
     public UITextButton(Context context, AttributeSet attrs) {
         this(context, attrs, R.attr.imageButtonStyle);
     }
@@ -68,7 +72,7 @@ public class UITextButton extends AppCompatButton implements CustomUIButton {
         mState = State.NORMAL;
     }
 
-    private void setTintColorList(int aColorListId) {
+    public void setTintColorList(int aColorListId) {
         mTintColorList = getContext().getResources().getColorStateList(
                 aColorListId,
                 getContext().getTheme());

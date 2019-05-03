@@ -58,6 +58,10 @@
     <string name="language_ko_KR" translatable="false">한국어</string>
     <string name="language_it_IT" translatable="false">Italiano</string>
 
+    <string name="pinyin_spacebar_selection" translatable="false">选定</string>
+    <string name="pinyin_spacebar_space" translatable="false">空格</string>
+    <string name="pinyin_enter_completion" translatable="false">确认</string>
+
     <!-- SEARCH ENGINES -->
     <string name="geolocation_api_url" translatable="false">https://location.services.mozilla.com/v1/country</string>
     <!-- Google -->

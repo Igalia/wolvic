@@ -21,7 +21,7 @@
     <item name="keyboard_z_distance_from_browser" format="float" type="dimen">2.0</item>
     <item name="keyboard_world_rotation" format="float" type="dimen">-35.0</item>
     <dimen name="keyboard_width">672dp</dimen>
-    <dimen name="keyboard_height">216dp</dimen>
+    <dimen name="keyboard_height">190dp</dimen>
     <dimen name="keyboard_alphabetic_width">516dp</dimen>
     <dimen name="keyboard_numeric_width">156dp</dimen>
     <dimen name="keyboard_horizontal_gap">4dp</dimen>
@@ -38,7 +38,7 @@
     <dimen name="keyboard_key_longtext_size">12dp</dimen>
     <dimen name="keyboard_key_hovered_padding">0dp</dimen>
     <dimen name="keyboard_key_pressed_padding">0dp</dimen>
-
+    <dimen name="keyboard_autocompletion_padding">3dp</dimen>
     <!-- Permission PromptWidget -->
     <item name="permission_world_width" format="float" type="dimen">1.6</item>
     <dimen name="permission_width">320dp</dimen>
@@ -93,6 +93,12 @@
     <dimen name="no_internet_width">400dp</dimen>
     <dimen name="no_internet_height">200dp</dimen>
     <dimen name="no_internet_z_distance" format="float" type="dimen">2.5</dimen>
+
+    <!-- Autocompletion Widget -->
+    <dimen name="autocompletion_widget_default_width">40dp</dimen>
+    <dimen name="autocompletion_widget_line_height">40dp</dimen>
+    <dimen name="autocompletion_widget_extended_height">160dp</dimen>
+    <dimen name="autocompletion_widget_margin">35dp</dimen>
 
     <!-- Tray -->
     <item name="tray_world_y" format="float" type="dimen">0.1</item>

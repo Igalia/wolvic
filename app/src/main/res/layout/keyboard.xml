@@ -6,8 +6,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
+            android:id="@+id/keyboardContainer"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="@dimen/keyboard_height"
             android:orientation="horizontal">
             <RelativeLayout
                 android:layout_width="@dimen/keyboard_alphabetic_width"
@@ -65,6 +66,14 @@
                 android:verticalCorrection="0dp"/>
 
         </LinearLayout>
+
+        <org.mozilla.vrbrowser.ui.views.AutoCompletionView
+            android:id="@+id/autoCompletionView"
+            android:layout_width="@dimen/keyboard_alphabetic_width"
+            android:layout_height="@dimen/autocompletion_widget_line_height"
+            android:visibility="gone">
+
+        </org.mozilla.vrbrowser.ui.views.AutoCompletionView>
 
         <org.mozilla.vrbrowser.ui.views.UIButton
             android:id="@+id/keyboardCloseButton"

@@ -108,6 +108,10 @@ public class WidgetPlacement {
         return aMeters / WORLD_DPI_RATIO;
     }
 
+    public static float dpToMeters(int aDensityPixels) {
+        return aDensityPixels * WORLD_DPI_RATIO;
+    }
+
     public static float unitFromMeters(Context aContext, int aDimensionId) {
         return unitFromMeters(floatDimension(aContext, aDimensionId));
     }

@@ -170,7 +170,7 @@ public class CustomKeyboard extends Keyboard {
     @Override
     protected Key createKeyFromXml(Resources res, Row parent, int x, int y, XmlResourceParser parser) {
         Key key = super.createKeyFromXml(res, parent, x, y, parser);
-        if (key.codes[0] == KeyEvent.KEYCODE_ENTER) {
+        if (key.codes[0] == KeyEvent.KEYCODE_ENTER || key.codes[0] == Keyboard.KEYCODE_DONE) {
             mEnterKey = key;
         } else if (key.codes[0] == ' ') {
             mSpaceKey = key;
@@ -193,28 +193,22 @@ public class CustomKeyboard extends Keyboard {
         return new int[0];
     }
 
-    public void setImeOptions(int options) {
-        if (mEnterKey == null) {
-            return;
+    public boolean setEnterKeyLabel(String aText) {
+        if (mEnterKey != null) {
+            boolean changed = !aText.equalsIgnoreCase(mEnterKey.label.toString());
+            mEnterKey.label = aText;
+            return changed;
         }
+        return false;
+    }
 
-        switch (options & (EditorInfo.IME_MASK_ACTION | EditorInfo.IME_FLAG_NO_ENTER_ACTION)) {
-            case EditorInfo.IME_ACTION_GO:
-                mEnterKey.label = "GO";
-                break;
-            case EditorInfo.IME_ACTION_NEXT:
-                mEnterKey.label = "NEXT";
-                break;
-            case EditorInfo.IME_ACTION_SEARCH:
-                mEnterKey.label = "SEARCH";
-                break;
-            case EditorInfo.IME_ACTION_SEND:
-                mEnterKey.label = "SEND";
-                break;
-            default:
-                mEnterKey.label = "ENTER";
-                break;
+    public boolean setSpaceKeyLabel(String aText) {
+        if (mSpaceKey != null) {
+            boolean changed = !aText.equalsIgnoreCase(mSpaceKey.label.toString());
+            mSpaceKey.label = aText;
+            return changed;
         }
+        return false;
     }
 
     public int[] getShiftKeyIndices() {
