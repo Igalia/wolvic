@@ -50,6 +50,16 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
+  WVR_InputAttribute inputIdAndTypes[] = {
+      {WVR_InputId_Alias1_Menu, WVR_InputType_Button, WVR_AnalogType_None},
+      {WVR_InputId_Alias1_Touchpad, WVR_InputType_Button | WVR_InputType_Touch | WVR_InputType_Analog, WVR_AnalogType_2D},
+      {WVR_InputId_Alias1_Trigger, WVR_InputType_Button , WVR_AnalogType_None},
+      {WVR_InputId_Alias1_Digital_Trigger, WVR_InputType_Button , WVR_AnalogType_None}
+  };
+  WVR_SetInputRequest(WVR_DeviceType_HMD, inputIdAndTypes, sizeof(inputIdAndTypes) / sizeof(*inputIdAndTypes));
+  WVR_SetInputRequest(WVR_DeviceType_Controller_Right, inputIdAndTypes, sizeof(inputIdAndTypes) / sizeof(*inputIdAndTypes));
+  WVR_SetInputRequest(WVR_DeviceType_Controller_Left, inputIdAndTypes, sizeof(inputIdAndTypes) / sizeof(*inputIdAndTypes));
+
   // Must initialize render runtime before all OpenGL code.
   WVR_RenderInitParams_t param;
   param = { WVR_GraphicsApiType_OpenGL, WVR_RenderConfig_Timewarp_Asynchronous };
