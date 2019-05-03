@@ -45,7 +45,7 @@ This repo is only available to Mozilla employees. If you have access to the rele
 The [repo in `third_party`](https://github.com/MozillaReality/FirefoxReality-android-third-party) can be updated like so:
 
 ```bash
-pushd third_party && git fetch && git rebase origin/master && git checkout origin/master && popd
+pushd third_party && git fetch && git checkout master && git rebase origin/master && popd
 ```
 
 *Fetch Git submodules.*
