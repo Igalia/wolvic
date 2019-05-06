@@ -155,8 +155,8 @@ Restart FxR and close and re-open the WebIDE page.
 
 ### **`Tool Windows > Build Variants`** list is empty
 
-1. If you're not on the latest version, update Android Studio from **Android Studio > Check for Updates…`.
-2. Run **File > Sync Project with Gradle Files`.
+1. If you're not on the latest version, update Android Studio from **`Android Studio > Check for Updates…`**.
+2. Run **`File > Sync Project with Gradle Files`**.
 
 ## Debugging tips
 
