@@ -137,7 +137,7 @@ npm run compress
 
 ### `Device supports , but APK only supports armeabi-v7a[...]`
 
-Enable usb debugging on the device.
+Enable [USB Remote Debugging](https://github.com/MozillaReality/FirefoxReality/wiki/Developer-Info#remote-debugging) on the device.
 
 ### `Could not get unknown property 'geckoViewLocal' for build 'FirefoxReality'[...]`
 
@@ -149,9 +149,14 @@ find $objdir -name *.aar
 echo "geckoViewLocalArm=$objdir/gradle/build/mobile/android/geckoview/outputs/aar/geckoview-official-withGeckoBinaries-noMinApi-release.aar" > $FirefoxReality/user.properties
 ```
 
-### Firefox > Web Developer > WebIDE > Performance gets stuck with greyed out "stop and show profile"
+### **`Firefox > Web Developer > WebIDE > Performance`** gets stuck with greyed out "stop and show profile"
 
 Restart FxR and close and re-open the WebIDE page.
+
+### **`Tool Windows > Build Variants`** list is empty
+
+1. If you're not on the latest version, update Android Studio from **Android Studio > Check for Updates…`.
+2. Run **File > Sync Project with Gradle Files`.
 
 ## Debugging tips
 
@@ -159,7 +164,8 @@ Restart FxR and close and re-open the WebIDE page.
 - On some platforms such as Oculus Go the native debugger stops on each input event. You can set this LLDB post-attach command in Android Studio to fix the problem: `pro hand -p true -s false SIGILL`
 - You can use `adb shell am start -a android.intent.action.VIEW -d "https://aframe.io" org.mozilla.vrbrowser/org.mozilla.vrbrowser.VRBrowserActivity` to load a URL from the command line
 - You can use `adb shell am start -a android.intent.action.VIEW  -n org.mozilla.vrbrowser/org.mozilla.vrbrowser.VRBrowserActivity -e homepage "https://example.com"` to override the homepage
-- You can use `adb shell setprop debug.oculus.enableVideoCapture 1` to record videos on the Oculus Go. Remember to disable it when your video is ready.
+- You can use `adb shell setprop debug.oculus.enableVideoCapture 1` to record a video on the Oculus Go. Remember to run `adb shell setprop debug.oculus.enableVideoCapture 0` to stop recording the video.
+    - You can also record videos on the Oculus Go by exiting to the system library, and from the Oculus tray menu (toggle with the Oculus button on the controller): **`Sharing > Record Video`**
 - You can set `disableCrashRestart=true` in the gradle `user.properties` to disable app relaunch on crash.
 
 ## Experimental Servo support
