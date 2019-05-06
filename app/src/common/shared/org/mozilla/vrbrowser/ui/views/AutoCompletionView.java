@@ -32,13 +32,14 @@ public class AutoCompletionView extends FrameLayout {
     private int mLineHeight;
     private UIButton mExtendButton;
     private int mExtendedHeight;
-    private final int kMaxItemsPerLine = 12;
+    private final int kMaxItemsPerLine = 15;
     private ArrayList<Words> mExtraItems = new ArrayList<>();
     private boolean mIsExtended;
     private Delegate mDelegate;
 
     public interface Delegate {
         void onAutoCompletionItemClick(Words aItem);
+        void onAutoCompletionExtendedChanged();
     }
 
     public AutoCompletionView(Context aContext) {
@@ -71,8 +72,7 @@ public class AutoCompletionView extends FrameLayout {
                 enterExtend();
             }
         });
-        mKeyWidth = WidgetPlacement.pixelDimension(getContext(), R.dimen.keyboard_key_width);
-        mKeyHeight = WidgetPlacement.pixelDimension(getContext(), R.dimen.keyboard_key_height);
+        mKeyWidth = mKeyHeight = WidgetPlacement.pixelDimension(getContext(), R.dimen.autocompletion_widget_button_size);
         mLineHeight = WidgetPlacement.pixelDimension(getContext(), R.dimen.autocompletion_widget_line_height);
         mExtendedHeight = mLineHeight * 6;
         setFocusable(false);
@@ -90,7 +90,6 @@ public class AutoCompletionView extends FrameLayout {
         UITextButton key = new UITextButton(getContext());
         key.setTintColorList(R.drawable.main_button_icon_color);
         key.setBackground(getContext().getDrawable(R.drawable.keyboard_key_background));
-        //key.setBackgroundColor(Color.RED);
         if (aHandler != null) {
             key.setOnClickListener(aHandler);
         }
@@ -137,6 +136,10 @@ public class AutoCompletionView extends FrameLayout {
         mExtendButton.setVisibility(n >= kMaxItemsPerLine ? View.VISIBLE : View.GONE);
     }
 
+    public boolean isExtended() {
+        return mIsExtended;
+    }
+
     private OnClickListener clickHandler = v -> {
         UITextButton button = (UITextButton) v;
         if (mIsExtended) {
@@ -178,6 +181,9 @@ public class AutoCompletionView extends FrameLayout {
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) getLayoutParams();
         params.height = mExtendedHeight;
         setLayoutParams(params);
+        if (mDelegate != null) {
+            mDelegate.onAutoCompletionExtendedChanged();
+        }
     }
 
     private void exitExtend() {
@@ -190,5 +196,8 @@ public class AutoCompletionView extends FrameLayout {
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) getLayoutParams();
         params.height = WidgetPlacement.pixelDimension(getContext(), R.dimen.autocompletion_widget_line_height);
         setLayoutParams(params);
+        if (mDelegate != null) {
+            mDelegate.onAutoCompletionExtendedChanged();
+        }
     }
 }

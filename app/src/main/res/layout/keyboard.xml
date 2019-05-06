@@ -9,6 +9,7 @@
             android:id="@+id/keyboardContainer"
             android:layout_width="match_parent"
             android:layout_height="@dimen/keyboard_height"
+            android:layout_marginTop="37dp"
             android:orientation="horizontal">
             <RelativeLayout
                 android:layout_width="@dimen/keyboard_alphabetic_width"
@@ -16,7 +17,7 @@
 
                 <org.mozilla.vrbrowser.ui.views.CustomKeyboardView
                     android:id="@+id/keyboard"
-                    android:padding="20dp"
+                    android:padding="15dp"
                     android:background="@drawable/keyboard_background"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -31,11 +32,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:layout_margin="20dp"
+                    android:layout_margin="15dp"
                     android:background="@color/asphalt"
                     android:alpha="0.5"
                     android:visibility="visible"/>
-
 
                 <org.mozilla.vrbrowser.ui.views.CustomKeyboardView
                     android:id="@+id/popupKeyboard"
@@ -58,7 +58,7 @@
                 android:id="@+id/keyboardNumeric"
                 android:layout_width="@dimen/keyboard_numeric_width"
                 android:layout_height="match_parent"
-                android:padding="20dp"
+                android:padding="15dp"
                 android:background="@drawable/keyboard_background"
                 android:keyBackground="@drawable/keyboard_key_background"
                 android:shadowColor="@android:color/transparent"
@@ -69,22 +69,21 @@
 
         <org.mozilla.vrbrowser.ui.views.AutoCompletionView
             android:id="@+id/autoCompletionView"
-            android:layout_width="@dimen/keyboard_alphabetic_width"
+            android:layout_width="match_parent"
             android:layout_height="@dimen/autocompletion_widget_line_height"
+            android:layout_marginStart="38dp"
             android:visibility="gone">
 
         </org.mozilla.vrbrowser.ui.views.AutoCompletionView>
 
         <org.mozilla.vrbrowser.ui.views.UIButton
             android:id="@+id/keyboardCloseButton"
-            android:visibility="gone"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="@dimen/autocompletion_widget_line_height"
+            android:layout_height="@dimen/autocompletion_widget_line_height"
             app:tintColorList="@drawable/url_button_icon_color"
             android:padding="10dp"
             android:src="@drawable/ic_icon_exit"
             android:scaleType="fitCenter"
-            android:layout_marginLeft="240dp"
             android:background="@drawable/keyboard_key_background"/>
 
     </RelativeLayout>

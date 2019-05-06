@@ -68,7 +68,6 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private InputConnection mInputConnection;
     private EditorInfo mEditorInfo = new EditorInfo();
     private VoiceSearchWidget mVoiceSearchWidget;
-    private LinearLayout mKeyboardContainer;
     private AutoCompletionView mAutoCompletionView;
 
     private int mKeyWidth;
@@ -108,7 +107,6 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mKeyboardNumericView = findViewById(R.id.keyboardNumeric);
         mPopupKeyboardview = findViewById(R.id.popupKeyboard);
         mPopupKeyboardLayer = findViewById(R.id.popupKeyboardLayer);
-        mKeyboardContainer = findViewById(R.id.keyboardContainer);
 
         mKeyboards = new ArrayList<>();
         mKeyboards.add(new EnglishKeyboard(aContext));
@@ -622,13 +620,14 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     }
 
     private void updateCandidates() {
-        setAutoCompletionVisible(mCurrentKeyboard.supportsAutoCompletion());
-        if (mInputConnection == null) {
+        if (mInputConnection == null || !mCurrentKeyboard.supportsAutoCompletion()) {
+            setAutoCompletionVisible(false);
             return;
         }
 
         if (mCurrentKeyboard.usesComposingText()) {
             final KeyboardInterface.CandidatesResult candidates = mCurrentKeyboard.getCandidates(mComposingText);
+            setAutoCompletionVisible(candidates != null && candidates.words.size() > 0);
             mAutoCompletionView.setItems(candidates != null ? candidates.words : null);
             if (candidates != null && candidates.action == KeyboardInterface.CandidatesResult.Action.AUTO_COMPOSE) {
                 onAutoCompletionItemClick(candidates.words.get(0));
@@ -646,6 +645,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             String fullText = mInputConnection.getExtractedText(new ExtractedTextRequest(),0).text.toString();
             String beforeText = mInputConnection.getTextBeforeCursor(fullText.length(),0).toString();
             final KeyboardInterface.CandidatesResult candidates = mCurrentKeyboard.getCandidates(beforeText);
+            setAutoCompletionVisible(candidates != null && candidates.words.size() > 0);
             mAutoCompletionView.setItems(candidates != null ? candidates.words : null);
         }
 
@@ -666,14 +666,6 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
     private void setAutoCompletionVisible(boolean aVisible) {
         mAutoCompletionView.setVisibility(aVisible ? View.VISIBLE : View.GONE);
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mKeyboardContainer.getLayoutParams();
-        if (aVisible) {
-            params.topMargin = WidgetPlacement.pixelDimension(getContext(), R.dimen.autocompletion_widget_line_height);
-            params.topMargin += WidgetPlacement.pixelDimension(getContext(), R.dimen.keyboard_autocompletion_padding);
-        } else {
-            params.topMargin = 0;
-        }
-        mKeyboardContainer.setLayoutParams(params);
     }
 
     // Must be called in the input thread, see postInputCommand.
@@ -803,6 +795,11 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         } else {
             handleText(aItem.value);
         }
+    }
+
+    @Override
+    public void onAutoCompletionExtendedChanged() {
+        mKeyboardView.setVisibility(mAutoCompletionView.isExtended() ? View.INVISIBLE : View.VISIBLE);
     }
 
     // TextWatcher
