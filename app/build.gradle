@@ -324,6 +324,7 @@ if (findProject(':servo')) {
 if (findProject(':wavesdk')) {
     dependencies {
         wavevrImplementation project(':wavesdk')
+        wavevrImplementation deps.kotlin.stdlib
     }
 }
 
