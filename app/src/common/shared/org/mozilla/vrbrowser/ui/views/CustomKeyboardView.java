@@ -1364,8 +1364,8 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
                 showPreview(NOT_A_KEY);
                 Arrays.fill(mKeyIndices, NOT_A_KEY);
                 // If we're not on a repeating key (which sends on a DOWN event)
-                if (mRepeatKeyIndex == NOT_A_KEY && !mMiniKeyboardOnScreen && !mAbortKey && mDownKey == keyIndex) {
-                    detectAndSendKey(mCurrentKey, touchX, touchY, eventTime);
+                if (mRepeatKeyIndex == NOT_A_KEY && !mMiniKeyboardOnScreen && !mAbortKey) {
+                    detectAndSendKey(mDownKey, touchX, touchY, eventTime);
                 }
                 invalidateKey(keyIndex);
                 mRepeatKeyIndex = NOT_A_KEY;
