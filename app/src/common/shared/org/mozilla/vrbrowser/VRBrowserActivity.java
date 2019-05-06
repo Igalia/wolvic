@@ -1021,12 +1021,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public void setTrayVisible(boolean visible) {
-        if (visible) {
-            mTray.show();
-
-        } else {
-            mTray.hide(UIWidget.KEEP_WIDGET);
-        }
+        mTray.setTrayVisible(visible);
     }
 
     @Override

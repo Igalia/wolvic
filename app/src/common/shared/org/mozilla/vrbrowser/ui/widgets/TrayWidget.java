@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class TrayWidget extends UIWidget implements SessionStore.SessionChangeListener, BookmarkListener {
+public class TrayWidget extends UIWidget implements SessionStore.SessionChangeListener, BookmarkListener, WidgetManagerDelegate.UpdateListener {
 
     private static final int ICON_ANIMATION_DURATION = 200;
 
@@ -38,6 +38,8 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
     private List<TrayListener> mTrayListeners;
     private int mMinPadding;
     private int mMaxPadding;
+    private boolean mKeyboardVisible;
+    private boolean mTrayVisible = true;
 
     public TrayWidget(Context aContext) {
         super(aContext);
@@ -116,6 +118,7 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
         SessionStore.get().addSessionChangeListener(this);
 
         handleSessionState();
+        mWidgetManager.addUpdateListener(this);
     }
 
     private OnHoverListener mButtonScaleHoverListener = (view, motionEvent) -> {
@@ -209,6 +212,7 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
     @Override
     public void releaseWidget() {
         SessionStore.get().removeSessionChangeListener(this);
+        mWidgetManager.removeUpdateListener(this);
 
         super.releaseWidget();
     }
@@ -262,6 +266,21 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
         }
     }
 
+    public void setTrayVisible(boolean aVisible) {
+        if (mTrayVisible != aVisible) {
+            mTrayVisible = aVisible;
+            updateVisibility();
+        }
+    }
+
+    private void updateVisibility() {
+        if (mTrayVisible && !mKeyboardVisible) {
+            this.show();
+        } else {
+            this.hide(UIWidget.KEEP_WIDGET);
+        }
+    }
+
     @Override
     public void show() {
         if (!mWidgetPlacement.visible) {
@@ -310,6 +329,20 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
     @Override
     public void onBookmarksHidden() {
         mBookmarksButton.setActiveMode(false);
+    }
+
+    // WidgetManagerDelegate.UpdateListener
+    @Override
+    public void onWidgetUpdate(Widget aWidget) {
+        if (!aWidget.getClass().equals(KeyboardWidget.class)) {
+            return;
+        }
+
+        boolean keyboardVisible = aWidget.isVisible();
+        if (mKeyboardVisible != keyboardVisible) {
+            mKeyboardVisible = keyboardVisible;
+            updateVisibility();
+        }
     }
 
 }
