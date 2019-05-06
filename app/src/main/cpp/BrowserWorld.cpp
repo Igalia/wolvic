@@ -342,8 +342,8 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
       continue;
     }
 
-    vrb::Vector start = controller.transformMatrix.MultiplyPosition(vrb::Vector());
-    vrb::Vector direction = controller.transformMatrix.MultiplyDirection(vrb::Vector(0.0f, 0.0f, -1.0f));
+    vrb::Vector start = controller.transformMatrix.MultiplyPosition(controller.beamTransformMatrix.MultiplyPosition(vrb::Vector()));
+    vrb::Vector direction = controller.transformMatrix.MultiplyDirection(controller.beamTransformMatrix.MultiplyDirection(vrb::Vector(0.0f, 0.0f, -1.0f)));
     WidgetPtr hitWidget;
     float hitDistance = farClip;
     vrb::Vector hitPoint;

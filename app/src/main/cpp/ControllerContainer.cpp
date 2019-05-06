@@ -177,6 +177,7 @@ ControllerContainer::CreateController(const int32_t aControllerIndex, const int3
   Controller& controller = m.list[aControllerIndex];
   controller.index = aControllerIndex;
   controller.immersiveName = aImmersiveName;
+  controller.beamTransformMatrix = aBeamTransform;
   if (!controller.transform && (aModelIndex >= 0)) {
     m.SetUpModelsGroup(aModelIndex);
     CreationContextPtr create = m.context.lock();

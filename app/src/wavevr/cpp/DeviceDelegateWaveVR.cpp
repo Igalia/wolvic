@@ -32,17 +32,23 @@ namespace crow {
 
 static const vrb::Vector kAverageHeight(0.0f, 1.7f, 0.0f);
 static const int32_t kMaxControllerCount = 2;
+static const int32_t kRecenterDelay = 72;
 
 struct Controller {
   int32_t index;
   WVR_DeviceType type;
   bool enabled;
   bool touched;
+  bool is6DoF;
+  int32_t gripPressedCount;
   Controller()
       : index(-1)
       , type(WVR_DeviceType_Controller_Right)
       , enabled(false)
       , touched(false)
+      , is6DoF(false)
+      , gripPressedCount(0)
+
   {}
 };
 
@@ -73,6 +79,7 @@ struct DeviceDelegateWaveVR::State {
   bool recentered;
   vrb::Matrix reorientMatrix;
   bool ignoreNextRecenter;
+  int32_t sixDoFControllerCount;
   State()
       : isRunning(true)
       , near(0.1f)
@@ -88,6 +95,7 @@ struct DeviceDelegateWaveVR::State {
       , lastSubmitDiscarded(false)
       , recentered(false)
       , ignoreNextRecenter(false)
+      , sixDoFControllerCount(0)
   {
     memset((void*)devicePairs, 0, sizeof(WVR_DevicePosePair_t) * WVR_DEVICE_COUNT_LEVEL_1);
     gestures = GestureDelegate::Create();
@@ -97,6 +105,10 @@ struct DeviceDelegateWaveVR::State {
         controllers[index].type = WVR_DeviceType_Controller_Right;
       } else {
         controllers[index].type = WVR_DeviceType_Controller_Left;
+      }
+      controllers[index].is6DoF = WVR_GetDegreeOfFreedom(controllers[index].type) == WVR_NumDoF_6DoF;
+      if (controllers[index].is6DoF) {
+        sixDoFControllerCount++;
       }
     }
     reorientMatrix = vrb::Matrix::Identity();
@@ -184,10 +196,15 @@ struct DeviceDelegateWaveVR::State {
         }
         continue;
       } else if (!controller.enabled) {
+        device::CapabilityFlags flags = device::Orientation;
+        if (controller.is6DoF) {
+          flags |= device::Position;
+        }
         controller.enabled = true;
         delegate->SetEnabled(index, true);
         delegate->SetVisible(index, true);
-        delegate->SetCapabilityFlags(index, device::Orientation);
+
+        delegate->SetCapabilityFlags(index, flags);
       }
 
       const bool bumperPressed = WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Digital_Trigger)
@@ -196,10 +213,31 @@ struct DeviceDelegateWaveVR::State {
       const bool touchpadTouched = WVR_GetInputTouchState(controller.type, WVR_InputId_Alias1_Touchpad);
       const bool menuPressed = WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Menu);
 
-      delegate->SetButtonCount(index, 2); // For immersive mode
+
+      delegate->SetButtonCount(index, controller.is6DoF ? 3 : 2); // For immersive mode
       delegate->SetButtonState(index, ControllerDelegate::BUTTON_TOUCHPAD, 0, touchpadPressed, touchpadTouched);
       delegate->SetButtonState(index, ControllerDelegate::BUTTON_TRIGGER, 1, bumperPressed, bumperPressed);
+      if (controller.is6DoF) {
+        const bool gripPressed = WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Grip);
+        if (renderMode == device::RenderMode::StandAlone) {
+          if (gripPressed && (controller.gripPressedCount >= 0)) {
+            controller.gripPressedCount++;
+          } else if (!gripPressed){
+            controller.gripPressedCount = 0;
+          }
+          if (controller.gripPressedCount > kRecenterDelay) {
+            WVR_InAppRecenter(WVR_RecenterType_YawAndPosition);
+            recentered = true;
+            controller.gripPressedCount = -1;
+          }
+        } else {
+          delegate->SetButtonState(index, ControllerDelegate::BUTTON_OTHERS, 2, gripPressed,
+                                   gripPressed);
+          controller.gripPressedCount = 0;
+        }
+      }
       delegate->SetButtonState(index, ControllerDelegate::BUTTON_APP, -1, menuPressed, menuPressed);
+
 
       const int32_t kNumAxes = 2;
       float immersiveAxes[kNumAxes] = { 0.0f, 0.0f };
@@ -312,7 +350,13 @@ DeviceDelegateWaveVR::SetControllerDelegate(ControllerDelegatePtr& aController) 
     return;
   }
   for (int32_t index = 0; index < kMaxControllerCount; index++) {
-    m.delegate->CreateController(index, 0, "HTC Vive Focus Controller");
+    const bool is6DoF = m.controllers[index].is6DoF;
+    vrb::Matrix transform(vrb::Matrix::Identity());
+    if (is6DoF) {
+      transform = vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), -vrb::PI_FLOAT / 8.0f);
+      transform.TranslateInPlace(vrb::Vector(0.0f, -0.01f, 0.0f));
+    }
+    m.delegate->CreateController(index, 0, is6DoF ? "HTC Vive Focus Plus Controller" : "HTC Vive Focus Controller", transform);
     m.delegate->SetLeftHanded(index, m.controllers[index].type == WVR_DeviceType_Controller_Left);
   }
 }
@@ -329,9 +373,14 @@ DeviceDelegateWaveVR::GetControllerModelCount() const {
 
 const std::string
 DeviceDelegateWaveVR::GetControllerModelName(const int32_t aModelIndex) const {
-  // FIXME: Need Focus based controller
-  static const std::string name("vr_controller_focus.obj");
-  return aModelIndex == 0 ? name : "";
+  if (aModelIndex == 0) {
+    if (m.sixDoFControllerCount == 0) {
+      return "vr_controller_focus.obj";
+    }
+    return "vr_controller_focus_plus.obj";
+  }
+
+  return "";
 }
 
 void
@@ -519,7 +568,7 @@ DeviceDelegateWaveVR::StartFrame() {
         hand = ElbowModel::HandEnum::Left;
       }
       controllerTransform = m.elbow->GetTransform(hand, hmd, controllerTransform);
-    } else {
+    } else if (m.renderMode == device::RenderMode::StandAlone){
       controllerTransform.TranslateInPlace(kAverageHeight);
     }
     m.delegate->SetTransform(controller.index, controllerTransform);
