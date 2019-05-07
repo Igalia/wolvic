@@ -17,7 +17,7 @@
         android:paddingStart="0dp"
         android:paddingEnd="2dp"
         android:gravity="center_vertical"
-        android:fontFamily="Open Sans"
+        android:fontFamily="sans-serif"
         android:textSize="8dp" />
 
     <SeekBar
@@ -47,7 +47,7 @@
         android:paddingStart="2dp"
         android:paddingEnd="0dp"
         android:gravity="center_vertical"
-        android:fontFamily="Open Sans"
+        android:fontFamily="sans-serif"
         android:textSize="8dp"
         android:textAlignment="center"/>
 

@@ -86,7 +86,7 @@
         android:layout_marginLeft="40dp"
         android:background="@drawable/media_seekbar_label_background"
         android:textColor="@color/white"
-        android:fontFamily="Open Sans"
+        android:fontFamily="sans-serif"
         android:textStyle="normal"
         android:textSize="11dp"
         android:textAlignment="center"
