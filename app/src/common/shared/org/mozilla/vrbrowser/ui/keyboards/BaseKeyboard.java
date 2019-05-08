@@ -7,6 +7,7 @@ import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.utils.StringUtils;
 
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 public abstract class BaseKeyboard implements KeyboardInterface {
     protected Context mContext;
@@ -29,5 +30,15 @@ public abstract class BaseKeyboard implements KeyboardInterface {
             default:
                 return StringUtils.getStringByLocale(mContext, R.string.keyboard_enter_label, locale);
         }
+    }
+
+    @Override
+    public String getComposingText(String aComposing, String aCode) {
+        return aComposing.replaceFirst(Pattern.quote(aCode), "");
+    }
+
+    @Override
+    public String getModeChangeKeyText() {
+        return mContext.getString(R.string.keyboard_mode_change);
     }
 }

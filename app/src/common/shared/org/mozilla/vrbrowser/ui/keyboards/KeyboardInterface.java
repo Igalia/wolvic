@@ -32,8 +32,10 @@ public interface KeyboardInterface {
     default @Nullable CandidatesResult getCandidates(String aComposingText) { return null; }
     default boolean supportsAutoCompletion() { return false; }
     default boolean usesComposingText() { return false; }
+    String getComposingText(String aComposing, String aCode);
     String getKeyboardTitle();
     Locale getLocale();
     default String getSpaceKeyText(String aComposingText) { return ""; }
     String getEnterKeyText(int aIMEOptions, String aComposingText);
+    String getModeChangeKeyText();
 }

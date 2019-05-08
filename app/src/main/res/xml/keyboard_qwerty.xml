@@ -49,7 +49,7 @@
     </Row>
 
     <Row>
-        <Key android:codes="-2" android:keyLabel="%&amp;=" android:keyEdgeFlags="left"/>
+        <Key android:codes="-2" android:keyLabel="@string/keyboard_symbol" android:keyEdgeFlags="left"/>
         <Key android:codes="-12" android:keyIcon="@drawable/ic_icon_keyboard_globe" />
         <Key android:codes="32" android:keyLabel="" android:keyWidth="@dimen/keyboard_key_space_width" android:isRepeatable="true"/>
         <Key android:codes="44" android:keyLabel=","/>

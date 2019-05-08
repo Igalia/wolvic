@@ -48,6 +48,8 @@
     <string name="user_agent_override_file" translatable="false">userAgentOverride.json</string>
     <string name="about_bookmarks" translatable="false">about:bookmarks</string>
     <string name="voice_app_id" translatable="false">fxr</string>
+    <string name="keyboard_mode_change" translatable="false">ABC</string>
+    <string name="keyboard_symbol" translatable="false">%&amp;=</string>
 
     <string name="language_en_US" translatable="false">English (US)</string>
     <string name="language_cmn_Hant_TW" translatable="false">繁體中文</string>
@@ -62,6 +64,11 @@
     <string name="pinyin_spacebar_selection" translatable="false">选定</string>
     <string name="pinyin_spacebar_space" translatable="false">空格</string>
     <string name="pinyin_enter_completion" translatable="false">确认</string>
+
+    <string name="zhuyin_spacebar_selection" translatable="false">一聲</string>
+    <string name="zhuyin_spacebar_space" translatable="false">空格</string>
+    <string name="zhuyin_enter_completion" translatable="false">選定</string>
+    <string name="zhuyin_keyboard_mode_change" translatable="false">ㄅㄆㄇ</string>
 
     <!-- SEARCH ENGINES -->
     <string name="geolocation_api_url" translatable="false">https://location.services.mozilla.com/v1/country</string>

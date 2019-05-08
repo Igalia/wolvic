@@ -20,6 +20,7 @@ public class CustomKeyboard extends Keyboard {
 
     private Key mEnterKey;
     private Key mSpaceKey;
+    private Key mModeChangeKey;
     private int mMaxColums;
 
     public static final int KEYCODE_SYMBOLS_CHANGE = -10;
@@ -174,6 +175,8 @@ public class CustomKeyboard extends Keyboard {
             mEnterKey = key;
         } else if (key.codes[0] == ' ') {
             mSpaceKey = key;
+        } else if (key.codes[0] == Keyboard.KEYCODE_MODE_CHANGE) {
+            mModeChangeKey = key;
         }
 
         return key;
@@ -206,6 +209,15 @@ public class CustomKeyboard extends Keyboard {
         if (mSpaceKey != null) {
             boolean changed = !aText.equalsIgnoreCase(mSpaceKey.label.toString());
             mSpaceKey.label = aText;
+            return changed;
+        }
+        return false;
+    }
+
+    public boolean setModeChangeKeyLabel(String aText) {
+        if (mModeChangeKey != null) {
+            boolean changed = !aText.equalsIgnoreCase(mModeChangeKey.label.toString());
+            mModeChangeKey.label = aText;
             return changed;
         }
         return false;
