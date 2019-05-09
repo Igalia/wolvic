@@ -252,15 +252,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                 ((TextView)mFocusedView).addTextChangedListener(this);
             }
         } else {
-            if (mComposingText.length() > 0 && mInputConnection != null) {
-                mComposingText = "";
-                // Clear composited text when the keyboard is dismissed
-                final InputConnection input = mInputConnection;
-                postInputCommand(() -> {
-                    displayComposingText("");
-                    input.finishComposingText();
-                });
-            }
+            cleanComposingText();
             hideOverlays();
             mInputConnection = null;
         }
@@ -504,6 +496,17 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         return null;
     }
 
+    private void cleanComposingText() {
+        if (mComposingText.length() > 0 && mInputConnection != null) {
+            mComposingText = "";
+            // Clear composited text when the keyboard is dismissed
+            final InputConnection input = mInputConnection;
+            postInputCommand(() -> {
+                displayComposingText("");
+                input.finishComposingText();
+            });
+        }
+    }
 
     private void handleShift(boolean isShifted) {
         CustomKeyboard keyboard = (CustomKeyboard) mKeyboardView.getKeyboard();
@@ -577,6 +580,8 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     }
 
     private void handleLanguageChange(KeyboardInterface aKeyboard) {
+        cleanComposingText();
+
         mCurrentKeyboard = aKeyboard;
         SettingsStore.getInstance(getContext()).setSelectedKeyboard(aKeyboard.getLocale());
         mKeyboardView.setKeyboard(mCurrentKeyboard.getAlphabeticKeyboard());
