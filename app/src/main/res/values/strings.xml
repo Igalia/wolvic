@@ -35,6 +35,9 @@
     -->
     <string name="keyboard_done_label">DONE</string>
 
+    <!-- This string is used on the virtual keyboard to label the 'space' key-->
+    <string name="keyboard_space_label">space</string>
+
     <!-- This string is displayed in the button that means the user accepts the
          permission requested for in the permission dialog box. -->
     <string name="permission_allow">Allow</string>
