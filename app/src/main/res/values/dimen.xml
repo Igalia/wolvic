@@ -103,6 +103,7 @@
     <dimen name="no_internet_z_distance" format="float" type="dimen">2.5</dimen>
 
     <!-- Autocompletion Widget -->
+    <dimen name="autocompletion_widget_line_width">530dp</dimen>
     <dimen name="autocompletion_widget_line_height">36dp</dimen>
     <dimen name="autocompletion_widget_extended_height">160dp</dimen>
     <dimen name="autocompletion_widget_margin">4dp</dimen>

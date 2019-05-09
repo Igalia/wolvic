@@ -29,10 +29,10 @@ public class AutoCompletionView extends FrameLayout {
     private View mSeparator;
     private int mKeyWidth;
     private int mKeyHeight;
+    private int mLineWidth;
     private int mLineHeight;
     private UIButton mExtendButton;
     private int mExtendedHeight;
-    private final int kMaxItemsPerLine = 15;
     private ArrayList<Words> mExtraItems = new ArrayList<>();
     private boolean mIsExtended;
     private Delegate mDelegate;
@@ -73,6 +73,7 @@ public class AutoCompletionView extends FrameLayout {
             }
         });
         mKeyWidth = mKeyHeight = WidgetPlacement.pixelDimension(getContext(), R.dimen.autocompletion_widget_button_size);
+        mLineWidth = WidgetPlacement.pixelDimension(getContext(), R.dimen.autocompletion_widget_line_width);
         mLineHeight = WidgetPlacement.pixelDimension(getContext(), R.dimen.autocompletion_widget_line_height);
         mExtendedHeight = mLineHeight * 6;
         setFocusable(false);
@@ -124,16 +125,22 @@ public class AutoCompletionView extends FrameLayout {
         }
 
         int n = 0;
+        int currentWidth = 0;
+
         for (Words item : aItems) {
-            if (n < kMaxItemsPerLine) {
-                mFirstLine.addView(createButton(item, clickHandler));
+            UITextButton textBtn = createButton(item, clickHandler);
+            textBtn.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
+            currentWidth += textBtn.getMeasuredWidth();
+
+            if (currentWidth < mLineWidth) {
+                mFirstLine.addView(textBtn);
             } else {
                 mExtraItems.add(item);
             }
             n++;
         }
 
-        mExtendButton.setVisibility(n >= kMaxItemsPerLine ? View.VISIBLE : View.GONE);
+        mExtendButton.setVisibility(currentWidth >= mLineWidth ? View.VISIBLE : View.GONE);
     }
 
     public boolean isExtended() {
@@ -152,14 +159,22 @@ public class AutoCompletionView extends FrameLayout {
 
     private void layoutExtendedItems() {
         int index = 0;
+        int currentWidth = 0;
         LinearLayout current = createRow();
+
         for (Words item: mExtraItems) {
-            current.addView(createButton(item, clickHandler));
-            index++;
-            if (index > kMaxItemsPerLine) {
+            UITextButton textBtn = createButton(item, clickHandler);
+            textBtn.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
+            currentWidth += textBtn.getMeasuredWidth();
+
+            if (currentWidth < mLineWidth) {
+                current.addView(textBtn);
+                index++;
+            } else {
                 mExtendContent.addView(current);
                 current = createRow();
                 index = 0;
+                currentWidth = 0;
             }
         }
         if (index > 0) {
