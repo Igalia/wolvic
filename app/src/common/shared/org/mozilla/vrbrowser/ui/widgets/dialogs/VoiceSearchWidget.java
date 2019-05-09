@@ -125,6 +125,7 @@ public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate
             onDismiss();
         });
 
+        mMozillaSpeechService.addListener(mVoiceSearchListener);
         ((Application)aContext.getApplicationContext()).registerActivityLifecycleCallbacks(this);
     }
 
@@ -164,60 +165,60 @@ public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate
     private ISpeechRecognitionListener mVoiceSearchListener = new ISpeechRecognitionListener() {
 
         public void onSpeechStatusChanged(final MozillaSpeechService.SpeechState aState, final Object aPayload){
-            ((Activity)getContext()).runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    switch (aState) {
-                        case DECODING:
-                            // Handle when the speech object changes to decoding state
-                            Log.d(LOGTAG, "===> DECODING");
-                            setDecodingState();
-                            break;
-                        case MIC_ACTIVITY:
-                            // Captures the activity from the microphone
-                            Log.d(LOGTAG, "===> MIC_ACTIVITY");
-                            double db = (double)aPayload * -1; // the higher the value, quieter the user/environment is
-                            db = db == Double.POSITIVE_INFINITY ? MAX_DB : db;
-                            int level = (int)(MAX_CLIPPING - (((db - MIN_DB) / (MAX_DB - MIN_DB)) * MAX_CLIPPING));
-                            Log.d(LOGTAG, "===> db:      " + db);
-                            Log.d(LOGTAG, "===> level    " + level);
-                            mVoiceInputClipDrawable.setLevel(level);
-                            break;
-                        case STT_RESULT:
-                            // When the api finished processing and returned a hypothesis
-                            Log.d(LOGTAG, "===> STT_RESULT");
-                            String transcription = ((STTResult)aPayload).mTranscription;
-                            float confidence = ((STTResult)aPayload).mConfidence;
-                            if (mDelegate != null)
-                                mDelegate.OnVoiceSearchResult(transcription, confidence);
-                            hide(REMOVE_WIDGET);
-                            break;
-                        case START_LISTEN:
-                            // Handle when the api successfully opened the microphone and started listening
-                            Log.d(LOGTAG, "===> START_LISTEN");
-                            break;
-                        case NO_VOICE:
-                            // Handle when the api didn't detect any voice
-                            Log.d(LOGTAG, "===> NO_VOICE");
-                            setResultState();
-                            break;
-                        case CANCELED:
-                            // Handle when a cancelation was fully executed
-                            Log.d(LOGTAG, "===> CANCELED");
-                            setResultState();
-                            if (mDelegate != null)
-                                mDelegate.OnVoiceSearchCanceled();
-                            break;
-                        case ERROR:
-                            Log.d(LOGTAG, "===> ERROR: " + aPayload.toString());
-                            setResultState();
-                            // Handle when any error occurred
-                            if (mDelegate != null)
-                                mDelegate.OnVoiceSearchError();
-                            break;
-                        default:
-                            break;
-                    }
+            if (!mIsSpeechRecognitionRunning) {
+                return;
+            }
+            ((Activity)getContext()).runOnUiThread(() -> {
+                switch (aState) {
+                    case DECODING:
+                        // Handle when the speech object changes to decoding state
+                        Log.d(LOGTAG, "===> DECODING");
+                        setDecodingState();
+                        break;
+                    case MIC_ACTIVITY:
+                        // Captures the activity from the microphone
+                        Log.d(LOGTAG, "===> MIC_ACTIVITY");
+                        double db = (double)aPayload * -1; // the higher the value, quieter the user/environment is
+                        db = db == Double.POSITIVE_INFINITY ? MAX_DB : db;
+                        int level = (int)(MAX_CLIPPING - (((db - MIN_DB) / (MAX_DB - MIN_DB)) * MAX_CLIPPING));
+                        Log.d(LOGTAG, "===> db:      " + db);
+                        Log.d(LOGTAG, "===> level    " + level);
+                        mVoiceInputClipDrawable.setLevel(level);
+                        break;
+                    case STT_RESULT:
+                        // When the api finished processing and returned a hypothesis
+                        Log.d(LOGTAG, "===> STT_RESULT");
+                        String transcription = ((STTResult)aPayload).mTranscription;
+                        float confidence = ((STTResult)aPayload).mConfidence;
+                        if (mDelegate != null)
+                            mDelegate.OnVoiceSearchResult(transcription, confidence);
+                        hide(REMOVE_WIDGET);
+                        break;
+                    case START_LISTEN:
+                        // Handle when the api successfully opened the microphone and started listening
+                        Log.d(LOGTAG, "===> START_LISTEN");
+                        break;
+                    case NO_VOICE:
+                        // Handle when the api didn't detect any voice
+                        Log.d(LOGTAG, "===> NO_VOICE");
+                        setResultState();
+                        break;
+                    case CANCELED:
+                        // Handle when a cancelation was fully executed
+                        Log.d(LOGTAG, "===> CANCELED");
+                        setResultState();
+                        if (mDelegate != null)
+                            mDelegate.OnVoiceSearchCanceled();
+                        break;
+                    case ERROR:
+                        Log.d(LOGTAG, "===> ERROR: " + aPayload.toString());
+                        setResultState();
+                        // Handle when any error occurred
+                        if (mDelegate != null)
+                            mDelegate.OnVoiceSearchError();
+                        break;
+                    default:
+                        break;
                 }
             });
         }
@@ -231,7 +232,6 @@ public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate
         } else {
             String language = SettingsStore.getInstance(getContext()).getVoiceSearchLanguage();
             mMozillaSpeechService.setLanguage(language);
-            mMozillaSpeechService.addListener(mVoiceSearchListener);
             mMozillaSpeechService.start(getContext().getApplicationContext());
             mIsSpeechRecognitionRunning = true;
         }
@@ -239,7 +239,6 @@ public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate
 
     public void stopVoiceSearch() {
         try {
-            mMozillaSpeechService.removeListener(mVoiceSearchListener);
             mMozillaSpeechService.cancel();
             mIsSpeechRecognitionRunning = false;
 
@@ -345,7 +344,6 @@ public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate
     @Override
     public void onActivityResumed(Activity activity) {
         if (mWasSpeechRecognitionRunning) {
-            mMozillaSpeechService.addListener(mVoiceSearchListener);
             startVoiceSearch();
         }
     }
@@ -354,7 +352,6 @@ public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate
     public void onActivityPaused(Activity activity) {
         mWasSpeechRecognitionRunning = mIsSpeechRecognitionRunning;
         if (mIsSpeechRecognitionRunning) {
-            mMozillaSpeechService.removeListener(mVoiceSearchListener);
             stopVoiceSearch();
         }
     }

@@ -181,11 +181,6 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
         mBackHandler = () -> onDismiss();
 
-        mVoiceSearchWidget = createChild(VoiceSearchWidget.class, false);
-        mVoiceSearchWidget.setPlacementForKeyboard(this.getHandle());
-        mVoiceSearchWidget.setDelegate(this); // VoiceSearchDelegate
-        mVoiceSearchWidget.setDelegate(() -> exitVoiceInputMode()); // DismissDelegate
-
         mAutoCompletionView = findViewById(R.id.autoCompletionView);
         mAutoCompletionView.setExtendedHeight((int)(mWidgetPlacement.height * mWidgetPlacement.density));
         mAutoCompletionView.setDelegate(this);
@@ -664,6 +659,12 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         if (mIsInVoiceInput) {
             return;
         }
+        if (mVoiceSearchWidget == null) {
+            mVoiceSearchWidget = createChild(VoiceSearchWidget.class, false);
+            mVoiceSearchWidget.setPlacementForKeyboard(this.getHandle());
+            mVoiceSearchWidget.setDelegate(this); // VoiceSearchDelegate
+            mVoiceSearchWidget.setDelegate(() -> exitVoiceInputMode()); // DismissDelegate
+        }
         mIsInVoiceInput = true;
         TelemetryWrapper.voiceInputEvent();
         mVoiceSearchWidget.show(false);
@@ -839,7 +840,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     }
 
     private void exitVoiceInputMode() {
-        if (mIsInVoiceInput) {
+        if (mIsInVoiceInput && mVoiceSearchWidget != null) {
             mVoiceSearchWidget.hide(REMOVE_WIDGET);
             mWidgetPlacement.visible = true;
             mWidgetManager.updateWidget(this);
