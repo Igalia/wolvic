@@ -17,7 +17,7 @@
         <Key android:codes="0x311E" android:keyLabel="ㄞ"/>
         <Key android:codes="0x3122" android:keyLabel="ㄢ"/>
         <Key android:codes="0x3126" android:keyLabel="ㄦ"/>
-        <Key android:codes="-5" android:keyIcon="@drawable/ic_icon_keyboard_backspace" android:isRepeatable="true" android:keyWidth="@dimen/keyboard_key_zhuyin_space_width" android:horizontalGap="@dimen/keyboard_key_zhuyin_backspace_margin"/>
+        <Key android:codes="-5" android:keyIcon="@drawable/ic_icon_keyboard_backspace" android:isRepeatable="true" android:keyWidth="@dimen/keyboard_key_zhuyin_space_width"/>
     </Row>
     <Row>
         <Key android:codes="0x3106" android:keyLabel="ㄆ" android:horizontalGap="@dimen/keyboard_left_margin"/>
@@ -30,7 +30,7 @@
         <Key android:codes="0x311B" android:keyLabel="ㄛ"/>
         <Key android:codes="0x311F" android:keyLabel="ㄟ"/>
         <Key android:codes="0x3123" android:keyLabel="ㄣ"/>
-        <Key android:codes="-4" android:keyLabel="@string/keyboard_enter_label" android:keyWidth="@dimen/keyboard_key_zhuyin_space_width" android:horizontalGap="@dimen/keyboard_left_margin_2x" />
+        <Key android:codes="-4" android:keyLabel="@string/keyboard_enter_label" android:keyWidth="@dimen/keyboard_key_zhuyin_space_width" android:horizontalGap="@dimen/keyboard_key_zhuyin_enter_margin" />
     </Row>
 
     <Row>
@@ -44,7 +44,7 @@
         <Key android:codes="0x311C" android:keyLabel="ㄜ"/>
         <Key android:codes="0x3120" android:keyLabel="ㄠ"/>
         <Key android:codes="0x3124" android:keyLabel="ㄤ"/>
-        <Key android:codes="32" android:keyLabel="" android:keyWidth="@dimen/keyboard_key_zhuyin_space_width" android:keyHeight="@dimen/keyboard_key_zhuyin_space_height" android:isRepeatable="true" android:horizontalGap="@dimen/keyboard_left_margin"/>
+        <Key android:codes="32" android:keyLabel="" android:keyWidth="@dimen/keyboard_key_zhuyin_space_width" android:keyHeight="@dimen/keyboard_key_zhuyin_space_height" android:isRepeatable="true" android:horizontalGap="@dimen/keyboard_key_zhuyin_space_margin"/>
     </Row>
 
     <Row>

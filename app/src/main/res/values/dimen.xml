@@ -33,10 +33,10 @@
     <dimen name="keyboard_key_space_width">186dp</dimen>
     <dimen name="keyboard_key_zhuyin_space_width">50dp</dimen>
     <dimen name="keyboard_key_zhuyin_space_height">36dp</dimen>
-    <dimen name="keyboard_key_zhuyin_backspace_margin">16dp</dimen>
+    <dimen name="keyboard_key_zhuyin_space_margin">8dp</dimen>
+    <dimen name="keyboard_key_zhuyin_enter_margin">28dp</dimen>
     <dimen name="keyboard_key_backspace_width">50dp</dimen>
     <dimen name="keyboard_key_enter_width">72dp</dimen>
-    <dimen name="keyboard_key_enter_margin">4dp</dimen>
     <dimen name="keyboard_left_margin">20dp</dimen>
     <dimen name="keyboard_left_margin_2x">40dp</dimen>
     <dimen name="keyboard_key_text_size">14dp</dimen>
