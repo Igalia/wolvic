@@ -45,8 +45,12 @@ struct Pointer::State {
   vrb::GeometryPtr geometry;
   WidgetPtr hitWidget;
 
-  State()
-  {}
+  State() = default;
+  ~State() {
+    if (root) {
+      root->RemoveFromParents();
+    }
+  }
 
   void Initialize() {
     vrb::CreationContextPtr create = context.lock();

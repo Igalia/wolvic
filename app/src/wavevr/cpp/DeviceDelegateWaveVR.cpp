@@ -34,25 +34,30 @@ static const vrb::Vector kAverageHeight(0.0f, 1.7f, 0.0f);
 static const int32_t kMaxControllerCount = 2;
 static const int32_t kRecenterDelay = 72;
 
-struct Controller {
-  int32_t index;
-  WVR_DeviceType type;
-  bool enabled;
-  bool touched;
-  bool is6DoF;
-  int32_t gripPressedCount;
-  Controller()
-      : index(-1)
-      , type(WVR_DeviceType_Controller_Right)
-      , enabled(false)
-      , touched(false)
-      , is6DoF(false)
-      , gripPressedCount(0)
-
-  {}
-};
-
 struct DeviceDelegateWaveVR::State {
+  struct Controller {
+    int32_t index;
+    WVR_DeviceType type;
+    bool created;
+    bool enabled;
+    bool touched;
+    bool is6DoF;
+    int32_t gripPressedCount;
+    vrb::Matrix transform;
+    ElbowModel::HandEnum hand;
+    Controller()
+        : index(-1)
+          , type(WVR_DeviceType_Controller_Right)
+          , created(false)
+          , enabled(false)
+          , touched(false)
+          , is6DoF(false)
+          , gripPressedCount(0)
+          , transform(vrb::Matrix::Identity())
+          , hand(ElbowModel::HandEnum::Right)
+    {}
+  };
+
   vrb::RenderContextWeak context;
   bool isRunning;
   vrb::Color clearColor;
@@ -80,6 +85,7 @@ struct DeviceDelegateWaveVR::State {
   vrb::Matrix reorientMatrix;
   bool ignoreNextRecenter;
   int32_t sixDoFControllerCount;
+  bool handsCalculated;
   State()
       : isRunning(true)
       , near(0.1f)
@@ -92,10 +98,12 @@ struct DeviceDelegateWaveVR::State {
       , renderWidth(0)
       , renderHeight(0)
       , devicePairs {}
+      , controllers {}
       , lastSubmitDiscarded(false)
       , recentered(false)
       , ignoreNextRecenter(false)
       , sixDoFControllerCount(0)
+      , handsCalculated(false)
   {
     memset((void*)devicePairs, 0, sizeof(WVR_DevicePosePair_t) * WVR_DEVICE_COUNT_LEVEL_1);
     gestures = GestureDelegate::Create();
@@ -103,8 +111,10 @@ struct DeviceDelegateWaveVR::State {
       controllers[index].index = index;
       if (index == 0) {
         controllers[index].type = WVR_DeviceType_Controller_Right;
+        controllers[index].hand = ElbowModel::HandEnum::Right;
       } else {
         controllers[index].type = WVR_DeviceType_Controller_Left;
+        controllers[index].hand = ElbowModel::HandEnum::Left;
       }
       controllers[index].is6DoF = WVR_GetDegreeOfFreedom(controllers[index].type) == WVR_NumDoF_6DoF;
       if (controllers[index].is6DoF) {
@@ -113,7 +123,6 @@ struct DeviceDelegateWaveVR::State {
     }
     reorientMatrix = vrb::Matrix::Identity();
   }
-
 
   void FillFBOQueue(void* aTextureQueue, std::vector<vrb::FBOPtr>& aFBOQueue) {
     vrb::FBO::Attributes attributes;
@@ -182,16 +191,46 @@ struct DeviceDelegateWaveVR::State {
 
   }
 
+  void CreateController(Controller& aController) {
+    if (!delegate) {
+      VRB_ERROR("Failed to create controller. No ControllerDelegate has been set.");
+      return;
+    }
+    vrb::Matrix transform(vrb::Matrix::Identity());
+    if (aController.is6DoF) {
+      transform = vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), -vrb::PI_FLOAT / 8.0f);
+      transform.TranslateInPlace(vrb::Vector(0.0f, -0.01f, 0.0f));
+    }
+    delegate->CreateController(aController.index, aController.is6DoF ? 1 : 0, aController.is6DoF ? "HTC Vive Focus Plus Controller" : "HTC Vive Focus Controller", transform);
+    delegate->SetLeftHanded(aController.index, aController.hand == ElbowModel::HandEnum::Left);
+    aController.created = true;
+    aController.enabled = false;
+  }
+
   void UpdateControllers() {
     if (!delegate) {
       return;
     }
 
-    for (int index = 0; index < kMaxControllerCount; index++) {
-      Controller& controller = controllers[index];
+    for (Controller& controller: controllers) {
+      const bool is6DoF = WVR_GetDegreeOfFreedom(controller.type) == WVR_NumDoF_6DoF;
+      if (controller.is6DoF != is6DoF) {
+        controller.is6DoF = is6DoF;
+        if (is6DoF) {
+          sixDoFControllerCount++;
+        } else {
+          sixDoFControllerCount--;
+        }
+        controller.created = false;
+      }
+
+      if (!controller.created) {
+        VRB_LOG("Creating controller from UpdateControllers");
+        CreateController(controller);
+      }
       if (WVR_IsInputFocusCapturedBySystem() || !WVR_IsDeviceConnected(controller.type)) {
         if (controller.enabled) {
-          delegate->SetEnabled(index, false);
+          delegate->SetEnabled(controller.index, false);
           controller.enabled = false;
         }
         continue;
@@ -201,10 +240,9 @@ struct DeviceDelegateWaveVR::State {
           flags |= device::Position;
         }
         controller.enabled = true;
-        delegate->SetEnabled(index, true);
-        delegate->SetVisible(index, true);
-
-        delegate->SetCapabilityFlags(index, flags);
+        delegate->SetEnabled(controller.index, true);
+        delegate->SetVisible(controller.index, true);
+        delegate->SetCapabilityFlags(controller.index, flags);
       }
 
       const bool bumperPressed = WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Digital_Trigger)
@@ -213,48 +251,46 @@ struct DeviceDelegateWaveVR::State {
       const bool touchpadTouched = WVR_GetInputTouchState(controller.type, WVR_InputId_Alias1_Touchpad);
       const bool menuPressed = WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Menu);
 
-
-      delegate->SetButtonCount(index, controller.is6DoF ? 3 : 2); // For immersive mode
-      delegate->SetButtonState(index, ControllerDelegate::BUTTON_TOUCHPAD, 0, touchpadPressed, touchpadTouched);
-      delegate->SetButtonState(index, ControllerDelegate::BUTTON_TRIGGER, 1, bumperPressed, bumperPressed);
+      delegate->SetButtonCount(controller.index, controller.is6DoF ? 3 : 2); // For immersive mode
+      delegate->SetButtonState(controller.index, ControllerDelegate::BUTTON_TOUCHPAD, 0, touchpadPressed, touchpadTouched);
+      delegate->SetButtonState(controller.index, ControllerDelegate::BUTTON_TRIGGER, 1, bumperPressed, bumperPressed);
       if (controller.is6DoF) {
         const bool gripPressed = WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Grip);
         if (renderMode == device::RenderMode::StandAlone) {
           if (gripPressed && (controller.gripPressedCount >= 0)) {
             controller.gripPressedCount++;
-          } else if (!gripPressed){
+          } else if (!gripPressed) {
             controller.gripPressedCount = 0;
           }
           if (controller.gripPressedCount > kRecenterDelay) {
             WVR_InAppRecenter(WVR_RecenterType_YawAndPosition);
             recentered = true;
+            handsCalculated = false;
             controller.gripPressedCount = -1;
           }
         } else {
-          delegate->SetButtonState(index, ControllerDelegate::BUTTON_OTHERS, 2, gripPressed,
+          delegate->SetButtonState(controller.index, ControllerDelegate::BUTTON_OTHERS, 2, gripPressed,
                                    gripPressed);
           controller.gripPressedCount = 0;
         }
       }
-      delegate->SetButtonState(index, ControllerDelegate::BUTTON_APP, -1, menuPressed, menuPressed);
 
+      delegate->SetButtonState(controller.index, ControllerDelegate::BUTTON_APP, -1, menuPressed, menuPressed);
 
       const int32_t kNumAxes = 2;
       float immersiveAxes[kNumAxes] = { 0.0f, 0.0f };
 
       if (touchpadTouched) {
         WVR_Axis_t axis = WVR_GetInputAnalogAxis(controller.type, WVR_InputId_Alias1_Touchpad);
-        delegate->SetTouchPosition(index, axis.x, -axis.y);
+        delegate->SetTouchPosition(controller.index, axis.x, -axis.y);
         immersiveAxes[0] = axis.x;
         immersiveAxes[1] = -axis.y;
-        controllers[index].touched = true;
-      } else if (controllers[index].touched) {
-        controllers[index].touched = false;
-        delegate->EndTouch(index);
+        controller.touched = true;
+      } else if (controller.touched) {
+        controller.touched = false;
+        delegate->EndTouch(controller.index);
       }
-
-      delegate->SetAxes(index, immersiveAxes, kNumAxes);
-
+      delegate->SetAxes(controller.index, immersiveAxes, kNumAxes);
     }
   }
 };
@@ -349,15 +385,9 @@ DeviceDelegateWaveVR::SetControllerDelegate(ControllerDelegatePtr& aController) 
   if (!m.delegate) {
     return;
   }
-  for (int32_t index = 0; index < kMaxControllerCount; index++) {
-    const bool is6DoF = m.controllers[index].is6DoF;
-    vrb::Matrix transform(vrb::Matrix::Identity());
-    if (is6DoF) {
-      transform = vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), -vrb::PI_FLOAT / 8.0f);
-      transform.TranslateInPlace(vrb::Vector(0.0f, -0.01f, 0.0f));
-    }
-    m.delegate->CreateController(index, 0, is6DoF ? "HTC Vive Focus Plus Controller" : "HTC Vive Focus Controller", transform);
-    m.delegate->SetLeftHanded(index, m.controllers[index].type == WVR_DeviceType_Controller_Left);
+  for (State::Controller& controller: m.controllers) {
+    VRB_LOG("Creating controller from SetControllerDelegate");
+    m.CreateController(controller);
   }
 }
 
@@ -368,20 +398,25 @@ DeviceDelegateWaveVR::ReleaseControllerDelegate() {
 
 int32_t
 DeviceDelegateWaveVR::GetControllerModelCount() const {
-  return 1;
+  return 2;
 }
 
 const std::string
 DeviceDelegateWaveVR::GetControllerModelName(const int32_t aModelIndex) const {
   if (aModelIndex == 0) {
-    if (m.sixDoFControllerCount == 0) {
-      return "vr_controller_focus.obj";
-    }
+    return "vr_controller_focus.obj";
+  } else if (aModelIndex == 1) {
     return "vr_controller_focus_plus.obj";
   }
-
   return "";
 }
+
+// #define VRB_WAVE_EVENT_LOG_ENABLED 1
+#if defined(VRB_WAVE_EVENT_LOG_ENABLED)
+#  define VRB_WAVE_EVENT_LOG(x) VRB_DEBUG(x)
+#else
+#  define VRB_WAVE_EVENT_LOG(x)
+#endif // VRB_WAVE_EVENT_DEBUG
 
 void
 DeviceDelegateWaveVR::ProcessEvents() {
@@ -391,134 +426,149 @@ DeviceDelegateWaveVR::ProcessEvents() {
     WVR_EventType type = event.common.type;
     switch (type) {
       case WVR_EventType_Quit: {
-        VRB_DEBUG("WVR_EventType_Quit");
+        VRB_WAVE_EVENT_LOG("WVR_EventType_Quit");
         m.isRunning = false;
         return;
       }
-        break;
       case WVR_EventType_SystemInteractionModeChanged: {
-        VRB_DEBUG("WVR_EventType_SystemInteractionModeChanged");
+        VRB_WAVE_EVENT_LOG("WVR_EventType_SystemInteractionModeChanged");
       }
         break;
       case WVR_EventType_SystemGazeTriggerTypeChanged: {
-        VRB_DEBUG("WVR_EventType_SystemGazeTriggerTypeChanged");
+        VRB_WAVE_EVENT_LOG("WVR_EventType_SystemGazeTriggerTypeChanged");
       }
         break;
       case WVR_EventType_TrackingModeChanged: {
-        VRB_DEBUG("WVR_EventType_TrackingModeChanged");
+        VRB_WAVE_EVENT_LOG("WVR_EventType_TrackingModeChanged");
       }
         break;
       case WVR_EventType_DeviceConnected: {
-        VRB_DEBUG("WVR_EventType_DeviceConnected");
+        VRB_WAVE_EVENT_LOG("WVR_EventType_DeviceConnected");
       }
         break;
       case WVR_EventType_DeviceDisconnected: {
-        VRB_DEBUG("WVR_EventType_DeviceDisconnected");
+        VRB_WAVE_EVENT_LOG("WVR_EventType_DeviceDisconnected");
       }
         break;
       case WVR_EventType_DeviceStatusUpdate: {
-        VRB_DEBUG("WVR_EventType_DeviceStatusUpdate");
+        VRB_WAVE_EVENT_LOG("WVR_EventType_DeviceStatusUpdate");
       }
         break;
       case WVR_EventType_IpdChanged: {
-        VRB_DEBUG("WVR_EventType_IpdChanged");
+        VRB_WAVE_EVENT_LOG("WVR_EventType_IpdChanged");
         m.InitializeCameras();
       }
         break;
       case WVR_EventType_DeviceSuspend: {
-        VRB_DEBUG("WVR_EventType_DeviceSuspend");
+        VRB_WAVE_EVENT_LOG("WVR_EventType_DeviceSuspend");
         m.reorientMatrix = vrb::Matrix::Identity();
         m.ignoreNextRecenter = true;
       }
         break;
       case WVR_EventType_DeviceResume: {
-        VRB_DEBUG("WVR_EventType_DeviceResume");
+        VRB_WAVE_EVENT_LOG("WVR_EventType_DeviceResume");
         m.reorientMatrix = vrb::Matrix::Identity();
       }
         break;
       case WVR_EventType_DeviceRoleChanged: {
-        VRB_DEBUG("WVR_EventType_DeviceRoleChanged");
+        VRB_WAVE_EVENT_LOG("WVR_EventType_DeviceRoleChanged");
       }
         break;
       case WVR_EventType_BatteryStatusUpdate: {
-        VRB_DEBUG("WVR_EventType_BatteryStatusUpdate");
+        VRB_WAVE_EVENT_LOG("WVR_EventType_BatteryStatusUpdate");
       }
         break;
       case WVR_EventType_ChargeStatusUpdate: {
-        VRB_DEBUG("WVR_EventType_ChargeStatusUpdate");
+        VRB_WAVE_EVENT_LOG("WVR_EventType_ChargeStatusUpdate");
       }
         break;
       case WVR_EventType_DeviceErrorStatusUpdate: {
-        VRB_DEBUG("WVR_EventType_DeviceErrorStatusUpdate");
+        VRB_WAVE_EVENT_LOG("WVR_EventType_DeviceErrorStatusUpdate");
       }
         break;
       case WVR_EventType_BatteryTemperatureStatusUpdate: {
-        VRB_DEBUG("WVR_EventType_BatteryTemperatureStatusUpdate");
+        VRB_WAVE_EVENT_LOG("WVR_EventType_BatteryTemperatureStatusUpdate");
       }
         break;
       case WVR_EventType_RecenterSuccess: {
-        VRB_DEBUG("WVR_EventType_RecenterSuccess");
+        VRB_WAVE_EVENT_LOG("WVR_EventType_RecenterSuccess");
         WVR_InAppRecenter(WVR_RecenterType_YawAndPosition);
         m.recentered = !m.ignoreNextRecenter;
         m.ignoreNextRecenter = false;
       }
         break;
       case WVR_EventType_RecenterFail: {
-        VRB_DEBUG("WVR_EventType_RecenterFail");
+        VRB_WAVE_EVENT_LOG("WVR_EventType_RecenterFail");
       }
         break;
       case WVR_EventType_RecenterSuccess3DoF: {
-        VRB_DEBUG("WVR_EventType_RecenterSuccess_3DoF");
+        VRB_WAVE_EVENT_LOG("WVR_EventType_RecenterSuccess_3DoF");
         WVR_InAppRecenter(WVR_RecenterType_YawAndPosition);
         m.recentered = !m.ignoreNextRecenter;
         m.ignoreNextRecenter = false;
       }
         break;
       case WVR_EventType_RecenterFail3DoF: {
-        VRB_DEBUG("WVR_EventType_RecenterFail_3DoF");
+        VRB_WAVE_EVENT_LOG("WVR_EventType_RecenterFail_3DoF");
       }
         break;
       case WVR_EventType_ButtonPressed: {
-        VRB_DEBUG("WVR_EventType_ButtonPressed");
+        VRB_WAVE_EVENT_LOG("WVR_EventType_ButtonPressed");
       }
         break;
       case WVR_EventType_ButtonUnpressed: {
-        VRB_DEBUG("WVR_EventType_ButtonUnpressed");
+        VRB_WAVE_EVENT_LOG("WVR_EventType_ButtonUnpressed");
       }
         break;
       case WVR_EventType_TouchTapped: {
-        VRB_DEBUG("WVR_EventType_TouchTapped");
+        VRB_WAVE_EVENT_LOG("WVR_EventType_TouchTapped");
       }
         break;
       case WVR_EventType_TouchUntapped: {
-        VRB_DEBUG("WVR_EventType_TouchUntapped");
+        VRB_WAVE_EVENT_LOG("WVR_EventType_TouchUntapped");
         break;
       }
       case WVR_EventType_LeftToRightSwipe: {
-        VRB_DEBUG("WVR_EventType_LeftToRightSwipe");
+        VRB_WAVE_EVENT_LOG("WVR_EventType_LeftToRightSwipe");
         m.gestures->AddGesture(GestureType::SwipeRight);
       }
         break;
       case WVR_EventType_RightToLeftSwipe: {
-        VRB_DEBUG("WVR_EventType_RightToLeftSwipe");
+        VRB_WAVE_EVENT_LOG("WVR_EventType_RightToLeftSwipe");
         m.gestures->AddGesture(GestureType::SwipeLeft);
       }
         break;
       case WVR_EventType_DownToUpSwipe: {
-        VRB_DEBUG("WVR_EventType_DownToUpSwipe");
+        VRB_WAVE_EVENT_LOG("WVR_EventType_DownToUpSwipe");
       }
         break;
       case WVR_EventType_UpToDownSwipe: {
-        VRB_DEBUG("WVR_EventType_UpToDownSwipe");
+        VRB_WAVE_EVENT_LOG("WVR_EventType_UpToDownSwipe");
       }
         break;
       default: {
-        VRB_DEBUG("Unknown WVR_EventType");
+        VRB_WAVE_EVENT_LOG("Unknown WVR_EventType");
       }
         break;
     }
   }
   m.UpdateControllers();
+}
+
+static inline vrb::Vector
+GetDirection(const vrb::Vector& location, const vrb::Vector& head) {
+  vrb::Vector result = location - head;
+  result.y() = 0.0f;
+  result = result.Normalize();
+  return result;
+}
+
+static inline const char*
+HandToString(ElbowModel::HandEnum hand) {
+  if (hand == ElbowModel::HandEnum::Right) {
+    return "Right";
+  }
+  return "Left";
 }
 
 void
@@ -541,9 +591,8 @@ DeviceDelegateWaveVR::StartFrame() {
     }
     m.cameras[device::EyeIndex(device::Eye::Left)]->SetHeadTransform(hmd);
     m.cameras[device::EyeIndex(device::Eye::Right)]->SetHeadTransform(hmd);
-  } else {
-    VRB_DEBUG("Invalid pose returned");
   }
+
   m.recentered = false;
   if (!m.delegate) {
     return;
@@ -553,7 +602,7 @@ DeviceDelegateWaveVR::StartFrame() {
         (m.devicePairs[id].type != WVR_DeviceType_Controller_Left)) {
       continue;
     }
-    Controller& controller = m.devicePairs[id].type == m.controllers[0].type ? m.controllers[0] : m.controllers[1];
+    State::Controller& controller = m.devicePairs[id].type == m.controllers[0].type ? m.controllers[0] : m.controllers[1];
     if (!controller.enabled) {
       continue;
     }
@@ -561,17 +610,51 @@ DeviceDelegateWaveVR::StartFrame() {
     if (!pose.isValidPose) {
       continue;
     }
-    vrb::Matrix controllerTransform = vrb::Matrix::FromRowMajor(pose.poseMatrix.m);
+    controller.transform = vrb::Matrix::FromRowMajor(pose.poseMatrix.m);
     if (m.elbow && !pose.is6DoFPose) {
       ElbowModel::HandEnum hand = ElbowModel::HandEnum::Right;
       if (m.devicePairs[id].type == WVR_DeviceType_Controller_Left) {
         hand = ElbowModel::HandEnum::Left;
       }
-      controllerTransform = m.elbow->GetTransform(hand, hmd, controllerTransform);
-    } else if (m.renderMode == device::RenderMode::StandAlone){
-      controllerTransform.TranslateInPlace(kAverageHeight);
+      controller.transform = m.elbow->GetTransform(hand, hmd, controller.transform);
+    } else if (m.renderMode == device::RenderMode::StandAlone) {
+      controller.transform.TranslateInPlace(kAverageHeight);
     }
-    m.delegate->SetTransform(controller.index, controllerTransform);
+    m.delegate->SetTransform(controller.index, controller.transform);
+  }
+
+  if ((m.sixDoFControllerCount > 1) && !m.handsCalculated && m.delegate) {
+    State::Controller& first = m.controllers[0];
+    State::Controller& second = m.controllers[1];
+    const vrb::Vector firstPosition = first.transform.GetTranslation();
+    const vrb::Vector secondPosition = second.transform.GetTranslation();
+    if ((firstPosition - secondPosition).Magnitude() > FLT_EPSILON) {
+      const vrb::Vector headPosition = hmd.GetTranslation();
+      const vrb::Vector firstDirection = GetDirection(firstPosition, headPosition);
+      const vrb::Vector secondDirection = GetDirection(secondPosition, headPosition);
+      const vrb::Vector cross = firstDirection.Cross(secondDirection);
+      if (cross.Magnitude() > FLT_EPSILON) {
+        ElbowModel::HandEnum firstHand = ElbowModel::HandEnum::Right;
+        ElbowModel::HandEnum secondHand = ElbowModel::HandEnum::Left;
+        if (cross.y() < 0.0f) {
+          firstHand = ElbowModel::HandEnum::Left;
+          secondHand = ElbowModel::HandEnum::Right;
+        }
+        if (first.hand != firstHand) {
+          VRB_DEBUG("Controller reported as \"%s\" but is actually \"%s\"", HandToString(first.hand),
+                    HandToString(firstHand));
+          m.delegate->SetLeftHanded(first.index, firstHand == ElbowModel::HandEnum::Left);
+          first.hand = firstHand;
+        }
+        if (second.hand != secondHand) {
+          VRB_DEBUG("Controller reported as \"%s\" but is actually \"%s\"", HandToString(second.hand),
+                    HandToString(secondHand));
+          m.delegate->SetLeftHanded(second.index, secondHand == ElbowModel::HandEnum::Left);
+          second.hand = secondHand;
+        }
+        m.handsCalculated = true;
+      }
+    }
   }
 }
 

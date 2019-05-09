@@ -30,7 +30,7 @@ struct ControllerContainer::State {
   GroupPtr pointerContainer;
   std::vector<GroupPtr> models;
   GeometryPtr beamModel;
-  bool visible;
+  bool visible = false;
 
   void Initialize(vrb::CreationContextPtr& aContext) {
     context = aContext;
@@ -138,12 +138,7 @@ ControllerContainer::InitializeBeam() {
 void
 ControllerContainer::Reset() {
   for (Controller& controller: m.list) {
-    if (controller.transform) {
-      controller.transform->RemoveFromParents();
-    }
-    if (controller.pointer) {
-      controller.pointer->GetRoot()->RemoveFromParents();
-    }
+    controller.DetachRoot();
     controller.Reset();
   }
 }
@@ -161,7 +156,7 @@ ControllerContainer::GetControllers() const {
 // crow::ControllerDelegate interface
 uint32_t
 ControllerContainer::GetControllerCount() {
-  return m.list.size();
+  return (uint32_t)m.list.size();
 }
 
 void
@@ -175,46 +170,50 @@ ControllerContainer::CreateController(const int32_t aControllerIndex, const int3
     m.list.resize((size_t)aControllerIndex + 1);
   }
   Controller& controller = m.list[aControllerIndex];
+  controller.DetachRoot();
+  controller.Reset();
   controller.index = aControllerIndex;
   controller.immersiveName = aImmersiveName;
   controller.beamTransformMatrix = aBeamTransform;
-  if (!controller.transform && (aModelIndex >= 0)) {
-    m.SetUpModelsGroup(aModelIndex);
-    CreationContextPtr create = m.context.lock();
-    controller.transform = Transform::Create(create);
-    controller.pointer = Pointer::Create(create);
-    if ((m.models.size() >= aModelIndex) && m.models[aModelIndex]) {
-      controller.transform->AddNode(m.models[aModelIndex]);
-      controller.beamToggle = vrb::Toggle::Create(create);
-      if (aBeamTransform.IsIdentity()) {
-        controller.beamParent = controller.beamToggle;
-      } else {
-        vrb::TransformPtr beamTransform = Transform::Create(create);
-        beamTransform->SetTransform(aBeamTransform);
-        controller.beamParent = beamTransform;
-        controller.beamToggle->AddNode(beamTransform);
-      }
-      controller.transform->AddNode(controller.beamToggle);
-      controller.beamToggle->ToggleAll(false);
-      if (m.beamModel && controller.beamParent) {
-        controller.beamParent->AddNode(m.beamModel);
-      }
-      if (m.root) {
-        m.root->AddNode(controller.transform);
-        m.root->ToggleChild(*controller.transform, false);
-      }
-      if (m.pointerContainer) {
-        m.pointerContainer->AddNode(controller.pointer->GetRoot());
-      }
+  if (aModelIndex < 0) {
+    return;
+  }
+  m.SetUpModelsGroup(aModelIndex);
+  CreationContextPtr create = m.context.lock();
+  controller.transform = Transform::Create(create);
+  controller.pointer = Pointer::Create(create);
+  if ((m.models.size() >= aModelIndex) && m.models[aModelIndex]) {
+    controller.transform->AddNode(m.models[aModelIndex]);
+    controller.beamToggle = vrb::Toggle::Create(create);
+    if (aBeamTransform.IsIdentity()) {
+      controller.beamParent = controller.beamToggle;
     } else {
-      VRB_ERROR("Failed to add controller model");
+      vrb::TransformPtr beamTransform = Transform::Create(create);
+      beamTransform->SetTransform(aBeamTransform);
+      controller.beamParent = beamTransform;
+      controller.beamToggle->AddNode(beamTransform);
     }
+    controller.transform->AddNode(controller.beamToggle);
+    controller.beamToggle->ToggleAll(false);
+    if (m.beamModel && controller.beamParent) {
+      controller.beamParent->AddNode(m.beamModel);
+    }
+    if (m.root) {
+      m.root->AddNode(controller.transform);
+      m.root->ToggleChild(*controller.transform, false);
+    }
+    if (m.pointerContainer) {
+      m.pointerContainer->AddNode(controller.pointer->GetRoot());
+    }
+  } else {
+    VRB_ERROR("Failed to add controller model");
   }
 }
 
 void
 ControllerContainer::DestroyController(const int32_t aControllerIndex) {
   if (m.Contains(aControllerIndex)) {
+    m.list[aControllerIndex].DetachRoot();
     m.list[aControllerIndex].Reset();
   }
 }

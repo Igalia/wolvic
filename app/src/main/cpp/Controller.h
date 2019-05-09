@@ -62,6 +62,7 @@ struct Controller {
   Controller& operator=(const Controller& aController);
 
   void Reset();
+  void DetachRoot();
 };
 
 } // namespace crow

@@ -580,6 +580,7 @@ struct DeviceDelegateOculusVR::State {
     const int32_t index;
     const ElbowModel::HandEnum hand;
     bool enabled = false;
+    bool created = false;
     ovrDeviceID deviceId = ovrDeviceIdType_Invalid;
     ovrInputTrackedRemoteCapabilities capabilities = {};
     vrb::Matrix transform = vrb::Matrix::Identity();
@@ -849,22 +850,27 @@ struct DeviceDelegateOculusVR::State {
         controllerState.capabilities = caps;
         controllerState.enabled = true;
 
-        if (controllerState.capabilities.ControllerCapabilities & ovrControllerCaps_ModelOculusTouch) {
-          std::string controllerName;
-          vrb::Matrix beamTransform(vrb::Matrix::Identity());
-          if (controllerState.hand == ElbowModel::HandEnum::Left) {
-            beamTransform.TranslateInPlace(vrb::Vector(-0.011f, -0.007f, 0.0f));
-            controllerName = "Oculus Touch (Left)";
+        if (!controllerState.created) {
+          if (controllerState.capabilities.ControllerCapabilities &
+              ovrControllerCaps_ModelOculusTouch) {
+            std::string controllerName;
+            vrb::Matrix beamTransform(vrb::Matrix::Identity());
+            if (controllerState.hand == ElbowModel::HandEnum::Left) {
+              beamTransform.TranslateInPlace(vrb::Vector(-0.011f, -0.007f, 0.0f));
+              controllerName = "Oculus Touch (Left)";
+            } else {
+              beamTransform.TranslateInPlace(vrb::Vector(0.011f, -0.007f, 0.0f));
+              controllerName = "Oculus Touch (Right)";
+            }
+            controller->CreateController(controllerState.index, int32_t(controllerState.hand),
+                                         controllerName, beamTransform);
+            controller->SetButtonCount(controllerState.index, 6);
           } else {
-            beamTransform.TranslateInPlace(vrb::Vector(0.011f, -0.007f, 0.0f));
-            controllerName = "Oculus Touch (Right)";
+            // Oculus Go only has one kind of controller model.
+            controller->CreateController(controllerState.index, 0, "Oculus Go Controller");
+            controller->SetButtonCount(controllerState.index, 2);
           }
-          controller->CreateController(controllerState.index, int32_t(controllerState.hand), controllerName, beamTransform);
-          controller->SetButtonCount(controllerState.index, 6);
-        } else {
-          // Oculus Go only has one kind of controller model.
-          controller->CreateController(controllerState.index, 0, "Oculus Go Controller");
-          controller->SetButtonCount(controllerState.index, 2);
+          controllerState.created = true;
         }
       }
     }

@@ -94,4 +94,11 @@ Controller::Reset() {
   lastHoverEvent = 0.0;
 }
 
+void
+Controller::DetachRoot() {
+  if (transform) {
+    transform->RemoveFromParents();
+  }
+}
+
 } // namespace crow
