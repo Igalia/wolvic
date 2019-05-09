@@ -6,8 +6,7 @@ import android.util.Base64;
 import org.mozilla.vrbrowser.R;
 
 import org.mozilla.geckoview.WebRequestError;
-import org.mozilla.geckoview.WebRequestError.ErrorCategory;
-import org.mozilla.geckoview.WebRequestError.Error;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -17,7 +16,7 @@ import mozilla.components.browser.errorpages.ErrorType;
 
 public class InternalPages {
 
-    private static ErrorType fromGeckoErrorToErrorType(@ErrorCategory int category, @Error int error) {
+    private static ErrorType fromGeckoErrorToErrorType(int category, int error) {
         switch(category) {
             case WebRequestError.ERROR_CATEGORY_UNKNOWN: {
                 return ErrorType.UNKNOWN;
@@ -143,8 +142,8 @@ public class InternalPages {
 
     public static String createErrorPage(Context context,
                                          String uri,
-                                         @ErrorCategory int errorCategory,
-                                         @Error int errorType) {
+                                         int errorCategory,
+                                         int errorType) {
         // TODO: browser-error pages component needs to accept a uri parameter
         String html = ErrorPages.INSTANCE.createErrorPage(
                 context,
