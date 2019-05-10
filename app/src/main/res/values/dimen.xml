@@ -22,6 +22,7 @@
     <item name="keyboard_world_rotation" format="float" type="dimen">-35.0</item>
     <dimen name="keyboard_height">188dp</dimen>
     <dimen name="keyboard_alphabetic_width">526dp</dimen>
+    <dimen name="keyboard_alphabetic_width_german">564dp</dimen>
     <dimen name="keyboard_numeric_width">144dp</dimen>
     <dimen name="keyboard_zhuyin_height">250dp</dimen>
     <dimen name="keyboard_horizontal_gap">4dp</dimen>
@@ -30,6 +31,7 @@
     <dimen name="keyboard_key_height">36dp</dimen>
     <dimen name="keyboard_key_rounded_corner">18dp</dimen>
     <dimen name="keyboard_key_space_width">186dp</dimen>
+    <dimen name="keyboard_key_german_space_width">198dp</dimen>
     <dimen name="keyboard_key_zhuyin_space_width">50dp</dimen>
     <dimen name="keyboard_key_zhuyin_space_height">36dp</dimen>
     <dimen name="keyboard_key_zhuyin_space_margin">8dp</dimen>
@@ -42,7 +44,7 @@
     <dimen name="keyboard_key_longtext_size">12dp</dimen>
     <dimen name="keyboard_key_hovered_padding">0dp</dimen>
     <dimen name="keyboard_key_pressed_padding">0dp</dimen>
-    <dimen name="keyboard_autocompletion_padding">4dp</dimen>
+    <dimen name="keyboard_layout_padding">4dp</dimen>
     <!-- Permission PromptWidget -->
     <item name="permission_world_width" format="float" type="dimen">1.6</item>
     <dimen name="permission_width">320dp</dimen>

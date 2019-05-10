@@ -49,7 +49,6 @@ import org.mozilla.vrbrowser.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.regex.Pattern;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -68,7 +67,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private CustomKeyboardView mPopupKeyboardview;
     private ArrayList<KeyboardInterface> mKeyboards;
     private KeyboardInterface mCurrentKeyboard;
-    private CustomKeyboard mKeyboardSymbols;
+    private CustomKeyboard mDefaultKeyboardSymbols;
     private CustomKeyboard mKeyboardNumeric;
     private Drawable mShiftOnIcon;
     private Drawable mShiftOffIcon;
@@ -135,7 +134,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mKeyboards.add(new ChinesePinyinKeyboard(aContext));
         mKeyboards.add(new ChineseZhuyinKeyboard(aContext));
 
-        mKeyboardSymbols = new CustomKeyboard(aContext.getApplicationContext(), R.xml.keyboard_symbols);
+        mDefaultKeyboardSymbols = new CustomKeyboard(aContext.getApplicationContext(), R.xml.keyboard_symbols);
         mKeyboardNumeric = new CustomKeyboard(aContext.getApplicationContext(), R.xml.keyboard_numeric);
         setDefaultKeyboard();
 
@@ -209,7 +208,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         aPlacement.width = getKeyboardWidth(WidgetPlacement.dpDimension(context, R.dimen.keyboard_alphabetic_width));
         aPlacement.height = WidgetPlacement.dpDimension(context, R.dimen.keyboard_height);
         aPlacement.height += WidgetPlacement.dpDimension(context, R.dimen.autocompletion_widget_line_height);
-        aPlacement.height += WidgetPlacement.dpDimension(context, R.dimen.keyboard_autocompletion_padding);
+        aPlacement.height += WidgetPlacement.dpDimension(context, R.dimen.keyboard_layout_padding);
         aPlacement.parentAnchorX = 0.5f;
         aPlacement.parentAnchorY = 0.0f;
         aPlacement.anchorX = 0.5f;
@@ -225,12 +224,11 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
     private int getKeyboardWidth(float aAlphabeticWidth) {
         float width = aAlphabeticWidth;
-        width += WidgetPlacement.dpDimension(getContext(), R.dimen.keyboard_autocompletion_padding);
+        width += WidgetPlacement.dpDimension(getContext(), R.dimen.keyboard_layout_padding) * 2;
         width += WidgetPlacement.dpDimension(getContext(), R.dimen.keyboard_numeric_width);
-        Log.e("VRB", "Mangu " + width);
+        width += WidgetPlacement.dpDimension(getContext(), R.dimen.keyboard_key_width); // Close button
         return (int) width;
     }
-
 
     public void setBrowserWidget(UIWidget aWidget) {
         mBrowserWidget = aWidget;
@@ -241,7 +239,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
     private void resetKeyboardLayout() {
         if ((mEditorInfo.inputType & EditorInfo.TYPE_CLASS_NUMBER) == EditorInfo.TYPE_CLASS_NUMBER) {
-            mKeyboardView.setKeyboard(mKeyboardSymbols);
+            mKeyboardView.setKeyboard(getSymbolsKeyboard());
         } else {
             mKeyboardView.setKeyboard(mCurrentKeyboard.getAlphabeticKeyboard());
         }
@@ -344,6 +342,12 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                     rightAligned = true;
                     maxCharsPerLine = MAX_CHARS_PER_LINE_LONG;
                 }
+                default: {
+                    float totalWidth = WidgetPlacement.convertPixelsToDp(getContext(), mCurrentKeyboard.getAlphabeticKeyboardWidth());
+                    rightAligned = (float)popupKey.x > totalWidth * 0.5f;
+                    maxCharsPerLine = MAX_CHARS_PER_LINE_LONG;
+                }
+
             }
 
             if (rightAligned) {
@@ -506,6 +510,11 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         return null;
     }
 
+    private CustomKeyboard getSymbolsKeyboard() {
+        CustomKeyboard custom = mCurrentKeyboard.getSymbolsKeyboard();
+        return  custom != null ? custom : mDefaultKeyboardSymbols;
+    }
+
     private void cleanComposingText() {
         if (mComposingText.length() > 0 && mInputConnection != null) {
             mComposingText = "";
@@ -646,7 +655,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private void handleModeChange() {
         Keyboard current = mKeyboardView.getKeyboard();
         Keyboard alphabetic = mCurrentKeyboard.getAlphabeticKeyboard();
-        mKeyboardView.setKeyboard(current == alphabetic ? mKeyboardSymbols : alphabetic);
+        mKeyboardView.setKeyboard(current == alphabetic ? getSymbolsKeyboard() : alphabetic);
         mKeyboardView.setLayoutParams(mKeyboardView.getLayoutParams());
     }
 
@@ -757,9 +766,10 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         String modeChangeText = mCurrentKeyboard.getModeChangeKeyText();
         boolean changed = mCurrentKeyboard.getAlphabeticKeyboard().setSpaceKeyLabel(spaceText);
         changed |= mCurrentKeyboard.getAlphabeticKeyboard().setEnterKeyLabel(enterText);
-        changed |= mKeyboardSymbols.setModeChangeKeyLabel(modeChangeText);
-        mKeyboardSymbols.setSpaceKeyLabel(spaceText);
-        mKeyboardSymbols.setEnterKeyLabel(enterText);
+        CustomKeyboard symbolsKeyboard = getSymbolsKeyboard();
+        changed |= symbolsKeyboard.setModeChangeKeyLabel(modeChangeText);
+        symbolsKeyboard.setSpaceKeyLabel(spaceText);
+        symbolsKeyboard.setEnterKeyLabel(enterText);
         if (changed) {
             mKeyboardView.invalidateAllKeys();
         }

@@ -30,6 +30,7 @@ public interface KeyboardInterface {
     }
     @NonNull CustomKeyboard getAlphabeticKeyboard();
     float getAlphabeticKeyboardWidth();
+    default @Nullable CustomKeyboard getSymbolsKeyboard() { return null; }
     default @Nullable CandidatesResult getCandidates(String aComposingText) { return null; }
     default boolean supportsAutoCompletion() { return false; }
     default boolean usesComposingText() { return false; }

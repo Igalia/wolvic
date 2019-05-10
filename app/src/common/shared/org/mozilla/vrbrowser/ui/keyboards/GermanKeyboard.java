@@ -14,6 +14,7 @@ import java.util.Locale;
 
 public class GermanKeyboard extends BaseKeyboard {
     private CustomKeyboard mKeyboard;
+    private CustomKeyboard mSymbolsKeyboard;
 
     public GermanKeyboard(Context aContext) {
         super(aContext);
@@ -27,7 +28,21 @@ public class GermanKeyboard extends BaseKeyboard {
         }
         return mKeyboard;
     }
-    
+
+    @Nullable
+    @Override
+    public CustomKeyboard getSymbolsKeyboard() {
+        if (mSymbolsKeyboard == null) {
+            mSymbolsKeyboard = new CustomKeyboard(mContext.getApplicationContext(), R.xml.keyboard_symbols_german);
+        }
+        return mSymbolsKeyboard;
+    }
+
+    @Override
+    public float getAlphabeticKeyboardWidth() {
+        return WidgetPlacement.dpDimension(mContext, R.dimen.keyboard_alphabetic_width_german);
+    }
+
     @Nullable
     @Override
     public CandidatesResult getCandidates(String aText) {

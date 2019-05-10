@@ -10,6 +10,17 @@
             android:layout_height="@dimen/keyboard_height"
             android:layout_marginTop="37dp"
             android:orientation="horizontal">
+            <org.mozilla.vrbrowser.ui.views.UIButton
+                android:id="@+id/keyboardCloseButton"
+                android:layout_width="@dimen/keyboard_key_width"
+                android:layout_height="@dimen/keyboard_key_width"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="@dimen/keyboard_layout_padding"
+                app:tintColorList="@drawable/url_button_icon_color"
+                android:padding="10dp"
+                android:src="@drawable/ic_icon_exit"
+                android:scaleType="fitCenter"
+                android:background="@drawable/keyboard_key_background"/>
             <RelativeLayout
                 android:id="@+id/keyboardContainer"
                 android:layout_width="@dimen/keyboard_alphabetic_width"
@@ -87,17 +98,6 @@
             android:visibility="gone">
 
         </org.mozilla.vrbrowser.ui.views.AutoCompletionView>
-
-        <org.mozilla.vrbrowser.ui.views.UIButton
-            android:id="@+id/keyboardCloseButton"
-            android:layout_width="@dimen/autocompletion_widget_line_height"
-            android:layout_height="@dimen/autocompletion_widget_line_height"
-            app:tintColorList="@drawable/url_button_icon_color"
-            android:padding="10dp"
-            android:src="@drawable/ic_icon_exit"
-            android:scaleType="fitCenter"
-            android:background="@drawable/keyboard_key_background"/>
-
     </RelativeLayout>
 
 

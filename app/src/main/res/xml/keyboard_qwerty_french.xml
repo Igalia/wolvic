@@ -29,7 +29,7 @@
         <Key android:codes="106" android:keyLabel="j" android:popupCharacters="@string/keyboard_popup_j" android:popupKeyboard="@xml/keyboard_popup"/>
         <Key android:codes="107" android:keyLabel="k" android:popupCharacters="@string/keyboard_popup_k" android:popupKeyboard="@xml/keyboard_popup"/>
         <Key android:codes="108" android:keyLabel="l" android:popupCharacters="@string/keyboard_popup_l" android:popupKeyboard="@xml/keyboard_popup" />
-        <Key android:codes="58" android:keyLabel=":"/>
+        <Key android:codes="109" android:keyLabel="m" android:popupCharacters="@string/keyboard_popup_m" android:popupKeyboard="@xml/keyboard_popup" />
         <Key android:codes="-4" android:keyLabel="@string/keyboard_enter_label" android:keyWidth="@dimen/keyboard_key_enter_width"  />
     </Row>
 
@@ -41,7 +41,7 @@
         <Key android:codes="118" android:keyLabel="v" android:popupCharacters="@string/keyboard_popup_v" android:popupKeyboard="@xml/keyboard_popup" />
         <Key android:codes="98" android:keyLabel="b"  android:popupCharacters="@string/keyboard_popup_b" android:popupKeyboard="@xml/keyboard_popup" />
         <Key android:codes="110" android:keyLabel="n" android:popupCharacters="@string/keyboard_popup_n" android:popupKeyboard="@xml/keyboard_popup" />
-        <Key android:codes="109" android:keyLabel="m" android:popupCharacters="@string/keyboard_popup_m" android:popupKeyboard="@xml/keyboard_popup" />
+        <Key android:codes="58" android:keyLabel=":"/>
         <Key android:codes="45" android:keyLabel="-" />
         <Key android:codes="43" android:keyLabel="+" />
         <Key android:codes="47" android:keyLabel="/" />
