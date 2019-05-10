@@ -29,6 +29,7 @@ public interface KeyboardInterface {
         public String composing;
     }
     @NonNull CustomKeyboard getAlphabeticKeyboard();
+    float getAlphabeticKeyboardWidth();
     default @Nullable CandidatesResult getCandidates(String aComposingText) { return null; }
     default boolean supportsAutoCompletion() { return false; }
     default boolean usesComposingText() { return false; }

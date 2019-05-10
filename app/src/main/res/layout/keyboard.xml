@@ -6,12 +6,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
-            android:id="@+id/keyboardContainer"
             android:layout_width="match_parent"
             android:layout_height="@dimen/keyboard_height"
             android:layout_marginTop="37dp"
             android:orientation="horizontal">
             <RelativeLayout
+                android:id="@+id/keyboardContainer"
                 android:layout_width="@dimen/keyboard_alphabetic_width"
                 android:layout_height="match_parent">
 

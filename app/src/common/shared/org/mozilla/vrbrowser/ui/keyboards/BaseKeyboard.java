@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.inputmethod.EditorInfo;
 
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.utils.StringUtils;
 
 import java.util.Locale;
@@ -40,5 +41,9 @@ public abstract class BaseKeyboard implements KeyboardInterface {
     @Override
     public String getModeChangeKeyText() {
         return mContext.getString(R.string.keyboard_mode_change);
+    }
+
+    public float getAlphabeticKeyboardWidth() {
+        return WidgetPlacement.dpDimension(mContext, R.dimen.keyboard_alphabetic_width);
     }
 }

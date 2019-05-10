@@ -166,6 +166,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             workaroundGeckoSigAction();
         }
         mUiThread = Thread.currentThread();
+        mUiThread.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread t, Throwable e) {
+                e.printStackTrace();
+            }
+        });
 
         Bundle extras = getIntent() != null ? getIntent().getExtras() : null;
         SessionStore.get().setContext(this, extras);

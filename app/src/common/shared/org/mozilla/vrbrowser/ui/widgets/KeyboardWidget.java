@@ -16,6 +16,7 @@ import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.CursorAnchorInfo;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.ExtractedText;
@@ -23,7 +24,6 @@ import android.view.inputmethod.ExtractedTextRequest;
 import android.view.inputmethod.InputConnection;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -74,6 +74,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private Drawable mShiftOffIcon;
     private Drawable mCapsLockOnIcon;
     private View mFocusedView;
+    private RelativeLayout mKeyboardContainer;
     private UIWidget mBrowserWidget;
     private InputConnection mInputConnection;
     private EditorInfo mEditorInfo = new EditorInfo();
@@ -119,7 +120,11 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mPopupKeyboardview = findViewById(R.id.popupKeyboard);
         mPopupKeyboardLayer = findViewById(R.id.popupKeyboardLayer);
         mLanguageSelectorView = findViewById(R.id.langSelectorView);
+        mKeyboardContainer = findViewById(R.id.keyboardContainer);
         mLanguageSelectorView.setDelegate(aItem -> handleLanguageChange((KeyboardInterface) aItem.tag));
+        mAutoCompletionView = findViewById(R.id.autoCompletionView);
+        mAutoCompletionView.setExtendedHeight((int)(mWidgetPlacement.height * mWidgetPlacement.density));
+        mAutoCompletionView.setDelegate(this);
 
         mKeyboards = new ArrayList<>();
         mKeyboards.add(new EnglishKeyboard(aContext));
@@ -129,10 +134,10 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mKeyboards.add(new SpanishKeyboard(aContext));
         mKeyboards.add(new ChinesePinyinKeyboard(aContext));
         mKeyboards.add(new ChineseZhuyinKeyboard(aContext));
-        setDefaultKeyboard();
 
         mKeyboardSymbols = new CustomKeyboard(aContext.getApplicationContext(), R.xml.keyboard_symbols);
         mKeyboardNumeric = new CustomKeyboard(aContext.getApplicationContext(), R.xml.keyboard_numeric);
+        setDefaultKeyboard();
 
         mKeyboardView.setPreviewEnabled(false);
         mKeyboardView.setKeyboard(mCurrentKeyboard.getAlphabeticKeyboard());
@@ -201,7 +206,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     @Override
     protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
         Context context = getContext();
-        aPlacement.width = WidgetPlacement.dpDimension(context, R.dimen.keyboard_width);
+        aPlacement.width = getKeyboardWidth(WidgetPlacement.dpDimension(context, R.dimen.keyboard_alphabetic_width));
         aPlacement.height = WidgetPlacement.dpDimension(context, R.dimen.keyboard_height);
         aPlacement.height += WidgetPlacement.dpDimension(context, R.dimen.autocompletion_widget_line_height);
         aPlacement.height += WidgetPlacement.dpDimension(context, R.dimen.keyboard_autocompletion_padding);
@@ -216,6 +221,14 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         aPlacement.worldWidth = WidgetPlacement.floatDimension(context, R.dimen.keyboard_world_width);
         aPlacement.visible = false;
         aPlacement.cylinder = true;
+    }
+
+    private int getKeyboardWidth(float aAlphabeticWidth) {
+        float width = aAlphabeticWidth;
+        width += WidgetPlacement.dpDimension(getContext(), R.dimen.keyboard_autocompletion_padding);
+        width += WidgetPlacement.dpDimension(getContext(), R.dimen.keyboard_numeric_width);
+        Log.e("VRB", "Mangu " + width);
+        return (int) width;
     }
 
 
@@ -453,8 +466,9 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     }
 
     private void setDefaultKeyboard() {
-        mCurrentKeyboard = getKeyboardForLocale(SettingsStore.getInstance(getContext()).getKeyboardLocale());
-        if (mCurrentKeyboard != null) {
+        KeyboardInterface keyboard = getKeyboardForLocale(SettingsStore.getInstance(getContext()).getKeyboardLocale());
+        if (keyboard != null) {
+            handleLanguageChange(keyboard);
             return;
         }
 
@@ -465,11 +479,12 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             supportedLocales[i] = mKeyboards.get(i).getLocale().toLanguageTag();
         }
         Locale bestMatch = localeList.getFirstMatch(supportedLocales);
-        mCurrentKeyboard = getKeyboardForLocale(bestMatch);
-        if (mCurrentKeyboard == null) {
+        keyboard = getKeyboardForLocale(bestMatch);
+        if (keyboard == null) {
             // Fall back to english.
-            mCurrentKeyboard = getKeyboardForLocale(Locale.ENGLISH);
+            keyboard = getKeyboardForLocale(Locale.ENGLISH);
         }
+        handleLanguageChange(keyboard);
     }
 
     private KeyboardInterface getKeyboardForLocale(@Nullable Locale aLocale) {
@@ -559,7 +574,6 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                 connection.commitText("", 1);
             }
         });
-
     }
 
     private void handleGlobeClick() {
@@ -578,6 +592,18 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         cleanComposingText();
 
         mCurrentKeyboard = aKeyboard;
+        final int width = getKeyboardWidth(mCurrentKeyboard.getAlphabeticKeyboardWidth());
+        if (width != mWidgetPlacement.width) {
+            mWidgetPlacement.width = width;
+            float defaultWorldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.keyboard_world_width);
+            int defaultKeyboardWidth = getKeyboardWidth(mKeyboards.get(0).getAlphabeticKeyboardWidth());
+            mWidgetPlacement.worldWidth = defaultWorldWidth * ((float) width / (float) defaultKeyboardWidth);
+            mWidgetManager.updateWidget(this);
+            ViewGroup.LayoutParams params = mKeyboardContainer.getLayoutParams();
+            params.width = WidgetPlacement.convertDpToPixel(getContext(), mCurrentKeyboard.getAlphabeticKeyboardWidth());
+            mKeyboardContainer.setLayoutParams(params);
+        }
+
         SettingsStore.getInstance(getContext()).setSelectedKeyboard(aKeyboard.getLocale());
         mKeyboardView.setKeyboard(mCurrentKeyboard.getAlphabeticKeyboard());
         hideOverlays();
@@ -621,6 +647,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         Keyboard current = mKeyboardView.getKeyboard();
         Keyboard alphabetic = mCurrentKeyboard.getAlphabeticKeyboard();
         mKeyboardView.setKeyboard(current == alphabetic ? mKeyboardSymbols : alphabetic);
+        mKeyboardView.setLayoutParams(mKeyboardView.getLayoutParams());
     }
 
     private void handleKey(int primaryCode, int[] keyCodes) {

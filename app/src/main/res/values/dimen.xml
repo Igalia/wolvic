@@ -20,7 +20,6 @@
     <item name="keyboard_y_distance_from_browser" format="float" type="dimen">-0.18</item>
     <item name="keyboard_z_distance_from_browser" format="float" type="dimen">2.0</item>
     <item name="keyboard_world_rotation" format="float" type="dimen">-35.0</item>
-    <dimen name="keyboard_width">674dp</dimen>
     <dimen name="keyboard_height">188dp</dimen>
     <dimen name="keyboard_alphabetic_width">526dp</dimen>
     <dimen name="keyboard_numeric_width">144dp</dimen>

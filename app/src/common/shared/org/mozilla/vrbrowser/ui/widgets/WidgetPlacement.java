@@ -116,11 +116,10 @@ public class WidgetPlacement {
         return unitFromMeters(floatDimension(aContext, aDimensionId));
     }
 
-    public static float convertDpToPixel(Context aContext, float dp){
+    public static int convertDpToPixel(Context aContext, float dp){
         Resources resources = aContext.getResources();
         DisplayMetrics metrics = resources.getDisplayMetrics();
-        float px = dp * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
-        return px;
+        return (int) Math.ceil(dp * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT));
     }
 
     public static float convertPixelsToDp(Context aContext, float px){
