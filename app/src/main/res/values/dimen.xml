@@ -66,7 +66,8 @@
     <dimen name="settings_main_button_text_width">125dp</dimen>
 
     <!-- Lang Selector -->
-    <dimen name="lang_selector_item_width">120dp</dimen>
+    <dimen name="lang_selector_first_col_item_width">100dp</dimen>
+    <dimen name="lang_selector_second_col_item_width">130dp</dimen>
 
     <!-- Common values for menu style widgets -->
     <dimen name="menu_item_height">88dp</dimen>

@@ -180,8 +180,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
         mKeyboardView.setVisibility(View.VISIBLE);
         mKeyboardNumericView.setKeyboard(mKeyboardNumeric);
-        mPopupKeyboardview.setVisibility(View.GONE);
-        mPopupKeyboardLayer.setVisibility(View.GONE);
+        hideOverlays();
 
         mBackHandler = () -> onDismiss();
 
@@ -424,8 +423,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                 }
 
                 if (!hasPopup) {
-                    mPopupKeyboardview.setVisibility(View.GONE);
-                    mPopupKeyboardLayer.setVisibility(View.GONE);
+                    hideOverlays();
                 }
                 break;
         }
@@ -440,8 +438,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
     @Override
     public void onNoKey() {
-        mPopupKeyboardview.setVisibility(View.GONE);
-        mPopupKeyboardLayer.setVisibility(View.GONE);
+       hideOverlays();
     }
 
     @Override
@@ -593,6 +590,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             }
             mLanguageSelectorView.setItems(items);
         }
+        mLanguageSelectorView.setSelectedItem(mCurrentKeyboard);
         mLanguageSelectorView.setVisibility(View.VISIBLE);
         mPopupKeyboardLayer.setVisibility(View.VISIBLE);
     }

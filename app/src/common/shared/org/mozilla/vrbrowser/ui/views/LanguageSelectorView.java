@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -32,7 +33,9 @@ public class LanguageSelectorView extends FrameLayout {
     private GridLayout mLangRowContainer;
     private Delegate mDelegate;
     private List<Item> mItems;
-    private int mItemWidth;
+    private List<UITextButton> mButtons = new ArrayList<>();
+    private int mFirstColItemWidth;
+    private int mSecondColItemWidth;
     private static final int kMaxItemsPerColumn = 4;
 
     public LanguageSelectorView(@NonNull Context context) {
@@ -53,7 +56,8 @@ public class LanguageSelectorView extends FrameLayout {
     private void initialize() {
         inflate(getContext(), R.layout.language_selection, this);
         mLangRowContainer = findViewById(R.id.langRowContainer);
-        mItemWidth = WidgetPlacement.pixelDimension(getContext(), R.dimen.lang_selector_item_width);
+        mFirstColItemWidth = WidgetPlacement.pixelDimension(getContext(), R.dimen.lang_selector_first_col_item_width);
+        mSecondColItemWidth = WidgetPlacement.pixelDimension(getContext(), R.dimen.lang_selector_second_col_item_width);
     }
 
     public void setDelegate(Delegate aDelegate) {
@@ -63,15 +67,27 @@ public class LanguageSelectorView extends FrameLayout {
     public void setItems(List<Item> aItems) {
         mItems = aItems;
         mLangRowContainer.removeAllViews();
+        mButtons.clear();
         int columns = (aItems.size() / kMaxItemsPerColumn) + 1;
         int rows = aItems.size() < kMaxItemsPerColumn ? aItems.size() : kMaxItemsPerColumn;
         mLangRowContainer.setColumnCount(columns);
         mLangRowContainer.setRowCount(rows);
 
+        int index = 0;
         for (Item item: aItems) {
             GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-            params.width = mItemWidth;
-            mLangRowContainer.addView(createLangButton(item), params);
+            params.width = index < kMaxItemsPerColumn ? mFirstColItemWidth : mSecondColItemWidth;
+            UITextButton button = createLangButton(item);
+            mLangRowContainer.addView(button, params);
+            mButtons.add(button);
+            ++index;
+        }
+    }
+
+    public void setSelectedItem(Object aTag) {
+        for (UITextButton button: mButtons) {
+            Item item = (Item) button.getTag();
+            button.setSelected(item.tag == aTag);
         }
     }
 
