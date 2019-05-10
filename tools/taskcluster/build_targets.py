@@ -6,7 +6,7 @@
 This script configures which APKs are built using the options passed in
 from the taskcluster {{ event.version }}.
 
-{{ event.version }} should be in the form: <tag name>:[all,release,debug]-<platform name>:[arm,arm64,x86]
+{{ event.version }} should be in the form: <tag name>:[all,release,debug]+<platform name>:[arm,arm64,x86]
 Some examples of {{ event.version }} and the resultant output from this script.
 
 This is the default behaviour with no options. Only the Release build of each
@@ -15,7 +15,7 @@ $ python build_targets.py 1.1.4a
 assembleWavevrArmRelease assembleNoapiArmRelease assembleNoapiArm64Release assembleNoapiX86Release assembleSvrArmRelease assembleSvrArm64Release assembleOculusvrArmRelease assembleOculusvrArm64Release assembleGooglevrArmRelease assembleGooglevrArm64Release
 
 Specifies only build the Arm64 version of the OculusVR platform:
-$ python build_targets.py 1.1.4b-oculusvr:arm64
+$ python build_targets.py 1.1.4b+oculusvr:arm64
 assembleOculusvrArm64Release
 
 Specifies all build types including Release and Debug:
@@ -23,11 +23,11 @@ $ python build_targets.py 1.1.4c:all
 assembleWavevrArm assembleNoapiArm assembleNoapiArm64 assembleNoapiX86 assembleSvrArm assembleSvrArm64 assembleOculusvrArm assembleOculusvrArm64 assembleGooglevrArm assembleGooglevrArm64
 
 Specifies Release builds of Arm64 OculusVR, Arm WaveVR, and x86 NoAPI:
-$ python build_targets.py 1.1.4d-oculusvr:arm64-wavevr:arm-noapi:x86
+$ python build_targets.py 1.1.4d+oculusvr:arm64+wavevr:arm+noapi:x86
 assembleOculusvrArm64Release assembleWavevrArmRelease assembleNoapiX86Release
 
 Specifies Release and Debug builds of Arm64 OculusVR, Arm WaveVR, and x86 NoAPI:
-$ python build_targets.py 1.1.4e:all-oculusvr:arm64-wavevr:arm-noapi:x86
+$ python build_targets.py 1.1.4e:all+oculusvr:arm64+wavevr:arm+noapi:x86
 assembleOculusvrArm64 assembleWavevrArm assembleNoapiX86
 """
 import sys
@@ -65,7 +65,7 @@ def findArch(mode):
 def main(name, argv):
    targets = ['tag']
    if len(argv) > 0:
-      targets = argv[0].split('-')
+      targets = argv[0].split('+')
    mode = findMode(targets[0])
    size = len(targets)
    if size == 1:
