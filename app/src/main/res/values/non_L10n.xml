@@ -70,6 +70,35 @@
     <string name="zhuyin_enter_completion" translatable="false">選定</string>
     <string name="zhuyin_keyboard_mode_change" translatable="false">ㄅㄆㄇ</string>
 
+    <!-- Keyboard -->
+    <string name="keyboard_popup_a" translatable="false">aáàäãåâąæā</string>
+    <string name="keyboard_popup_b" translatable="false">bƀḃḅḇ</string>
+    <string name="keyboard_popup_c" translatable="false">cçćčĉċ</string>
+    <string name="keyboard_popup_d" translatable="false">dđɗḋḍḑḓ</string>
+    <string name="keyboard_popup_e" translatable="false">eéèëêęẽėē</string>
+    <string name="keyboard_popup_f" translatable="false">fƒḟ</string>
+    <string name="keyboard_popup_g" translatable="false">gǵǥĝǧğģ</string>
+    <string name="keyboard_popup_h" translatable="false">hĥȟħḩⱨẖ</string>
+    <string name="keyboard_popup_i" translatable="false">iíïìîįī</string>
+    <string name="keyboard_popup_j" translatable="false">jĵɈɉj̇̃</string>
+    <string name="keyboard_popup_k" translatable="false">kƙꝁḱǩḳķ</string>
+    <string name="keyboard_popup_l" translatable="false">lĺłľḹl̃ļ</string>
+    <string name="keyboard_popup_m" translatable="false">mḿṁṃm̃</string>
+    <string name="keyboard_popup_n" translatable="false">nńñňǹṅṇṉ</string>
+    <string name="keyboard_popup_o" translatable="false">oóºòöôõøœō</string>
+    <string name="keyboard_popup_p" translatable="false">pṕṗᵽ</string>
+    <string name="keyboard_popup_q" translatable="false">ʠɋq̃</string>
+    <string name="keyboard_popup_r" translatable="false">rŕɍřŗṙ</string>
+    <string name="keyboard_popup_s" translatable="false">sśṥŝšṧṡş</string>
+    <string name="keyboard_popup_t" translatable="false">tťṫţṭțṱṯ</string>
+    <string name="keyboard_popup_u" translatable="false">uúüùûū</string>
+    <string name="keyboard_popup_v" translatable="false">vṽṿ</string>
+    <string name="keyboard_popup_w" translatable="false">wẃẁŵẅ</string>
+    <string name="keyboard_popup_x" translatable="false">xẍẋ</string>
+    <string name="keyboard_popup_y" translatable="false">yýỳŷÿỹ</string>
+    <string name="keyboard_popup_z" translatable="false">zźẑžżẓ</string>
+
+
     <!-- SEARCH ENGINES -->
     <string name="geolocation_api_url" translatable="false">https://location.services.mozilla.com/v1/country</string>
     <!-- Google -->

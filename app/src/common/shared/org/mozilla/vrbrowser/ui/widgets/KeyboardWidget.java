@@ -60,7 +60,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
     private static final String LOGTAG = "VRB";
 
-    private static int MAX_CHARS_PER_LINE_LONG = 9;
+    private static int MAX_CHARS_PER_LINE_LONG = 10;
     private static int MAX_CHARS_PER_LINE_SHORT = 7;
 
     private CustomKeyboardView mKeyboardView;
