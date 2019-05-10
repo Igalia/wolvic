@@ -68,8 +68,17 @@
                     android:layout_marginBottom="20dp"
                     android:layout_marginStart="20dp"
                     android:visibility="gone">
-
                 </org.mozilla.vrbrowser.ui.views.LanguageSelectorView>
+
+                <org.mozilla.vrbrowser.ui.views.ResizeToolView
+                    android:id="@+id/resizeView"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginStart="20dp"
+                    android:visibility="gone" />
             </RelativeLayout>
 
             <Space

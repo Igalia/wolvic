@@ -42,6 +42,7 @@ import org.mozilla.vrbrowser.ui.keyboards.SpanishKeyboard;
 import org.mozilla.vrbrowser.ui.views.AutoCompletionView;
 import org.mozilla.vrbrowser.ui.views.CustomKeyboardView;
 import org.mozilla.vrbrowser.ui.views.LanguageSelectorView;
+import org.mozilla.vrbrowser.ui.views.ResizeToolView;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.VoiceSearchWidget;
 import org.mozilla.vrbrowser.ui.keyboards.ChinesePinyinKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.EnglishKeyboard;
@@ -80,6 +81,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private VoiceSearchWidget mVoiceSearchWidget;
     private AutoCompletionView mAutoCompletionView;
     private LanguageSelectorView mLanguageSelectorView;
+    private ResizeToolView mResizeToolView;
 
     private int mKeyWidth;
     private int mKeyboardPopupTopMargin;
@@ -124,6 +126,8 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mAutoCompletionView = findViewById(R.id.autoCompletionView);
         mAutoCompletionView.setExtendedHeight((int)(mWidgetPlacement.height * mWidgetPlacement.density));
         mAutoCompletionView.setDelegate(this);
+        mResizeToolView = findViewById(R.id.resizeView);
+        mResizeToolView.setTargetWidget(this, mWidgetManager);
 
         mKeyboards = new ArrayList<>();
         mKeyboards.add(new EnglishKeyboard(aContext));
@@ -298,6 +302,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mPopupKeyboardview.setVisibility(View.GONE);
         mPopupKeyboardLayer.setVisibility(View.GONE);
         mLanguageSelectorView.setVisibility(View.GONE);
+        mResizeToolView.setVisibility(View.GONE);
     }
 
     protected void onDismiss() {
@@ -418,6 +423,11 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                 handleSpace();
                 break;
             default:
+                if (primaryCode == 64) {
+                    mResizeToolView.setVisibility(View.VISIBLE);
+                    mPopupKeyboardLayer.setVisibility(View.VISIBLE);
+                    return;
+                }
                 if (!mIsLongPress) {
                     handleKey(primaryCode, keyCodes);
                 }

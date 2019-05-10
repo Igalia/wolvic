@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="@drawable/lang_selector_background"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:paddingStart="20dp"
+        android:paddingEnd="0dp"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/editX"
+            android:layout_width="95dp"
+            android:layout_height="25dp"
+            android:textColor="@color/black"
+            android:text="x: 0.5m"/>
+
+        <Button
+            android:id="@+id/btnXMinus"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:text="-"/>
+        <Button
+            android:id="@+id/btnXPlus"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:text="+"/>
+
+    </LinearLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:paddingStart="20dp"
+        android:paddingEnd="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/editY"
+            android:layout_width="95dp"
+            android:layout_height="25dp"
+            android:textColor="@color/black"
+            android:text="y: 0.5m"/>
+
+        <Button
+            android:id="@+id/btnYMinus"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:text="-"/>
+        <Button
+            android:id="@+id/btnYPlus"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:text="+"/>
+
+    </LinearLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:paddingStart="20dp"
+        android:paddingEnd="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/editZ"
+            android:layout_width="95dp"
+            android:layout_height="25dp"
+            android:textColor="@color/black"
+            android:text="z: 0.5m"/>
+
+        <Button
+            android:id="@+id/btnZMinus"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:text="-"/>
+        <Button
+            android:id="@+id/btnZPlus"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:text="+"/>
+
+    </LinearLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:paddingStart="20dp"
+        android:paddingEnd="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/editW"
+            android:layout_width="95dp"
+            android:layout_height="25dp"
+            android:textColor="@color/black"
+            android:text="width: 0.5m"/>
+
+        <Button
+            android:id="@+id/btnWMinus"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:text="-"/>
+        <Button
+            android:id="@+id/btnWPlus"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:text="+"/>
+
+    </LinearLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:paddingStart="20dp"
+        android:paddingEnd="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/editA"
+            android:layout_width="95dp"
+            android:layout_height="25dp"
+            android:textColor="@color/black"
+            android:text="angle: 35"/>
+
+        <Button
+            android:id="@+id/btnAMinus"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:text="-"/>
+        <Button
+            android:id="@+id/btnAPlus"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:text="+"/>
+
+    </LinearLayout>
+
+</LinearLayout>

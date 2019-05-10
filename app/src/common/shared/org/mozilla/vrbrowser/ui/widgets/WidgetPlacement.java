@@ -11,7 +11,7 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 
 public class WidgetPlacement {
-    static final float WORLD_DPI_RATIO = 2.0f/720.0f;
+    public static final float WORLD_DPI_RATIO = 2.0f/720.0f;
 
     private WidgetPlacement() {}
     public WidgetPlacement(Context aContext) {
