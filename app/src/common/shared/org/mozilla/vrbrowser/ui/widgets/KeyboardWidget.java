@@ -24,6 +24,7 @@ import android.view.inputmethod.ExtractedTextRequest;
 import android.view.inputmethod.InputConnection;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -73,6 +74,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private Drawable mShiftOffIcon;
     private Drawable mCapsLockOnIcon;
     private View mFocusedView;
+    private LinearLayout mKeyboardLayout;
     private RelativeLayout mKeyboardContainer;
     private UIWidget mBrowserWidget;
     private InputConnection mInputConnection;
@@ -119,6 +121,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mPopupKeyboardview = findViewById(R.id.popupKeyboard);
         mPopupKeyboardLayer = findViewById(R.id.popupKeyboardLayer);
         mLanguageSelectorView = findViewById(R.id.langSelectorView);
+        mKeyboardLayout = findViewById(R.id.keyboardLayout);
         mKeyboardContainer = findViewById(R.id.keyboardContainer);
         mLanguageSelectorView.setDelegate(aItem -> handleLanguageChange((KeyboardInterface) aItem.tag));
         mAutoCompletionView = findViewById(R.id.autoCompletionView);
@@ -208,12 +211,11 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         aPlacement.height = WidgetPlacement.dpDimension(context, R.dimen.keyboard_height);
         aPlacement.height += WidgetPlacement.dpDimension(context, R.dimen.autocompletion_widget_line_height);
         aPlacement.height += WidgetPlacement.dpDimension(context, R.dimen.keyboard_layout_padding);
-        aPlacement.parentAnchorX = 0.5f;
-        aPlacement.parentAnchorY = 0.0f;
         aPlacement.anchorX = 0.5f;
-        aPlacement.anchorY = 0.5f;
-        aPlacement.translationZ = WidgetPlacement.unitFromMeters(context, R.dimen.keyboard_z_distance_from_browser);
-        aPlacement.translationY = WidgetPlacement.unitFromMeters(context, R.dimen.keyboard_y_distance_from_browser);
+        aPlacement.anchorY = 0.0f;
+        aPlacement.translationX = WidgetPlacement.unitFromMeters(context, R.dimen.keyboard_x);
+        aPlacement.translationY = WidgetPlacement.unitFromMeters(context, R.dimen.keyboard_y);
+        aPlacement.translationZ = WidgetPlacement.unitFromMeters(context, R.dimen.keyboard_z);
         aPlacement.rotationAxisX = 1.0f;
         aPlacement.rotation = (float)Math.toRadians(WidgetPlacement.floatDimension(context, R.dimen.keyboard_world_rotation));
         aPlacement.worldWidth = WidgetPlacement.floatDimension(context, R.dimen.keyboard_world_width);
@@ -231,9 +233,6 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
     public void setBrowserWidget(UIWidget aWidget) {
         mBrowserWidget = aWidget;
-        if (mBrowserWidget != null) {
-            mWidgetPlacement.parentHandle = mBrowserWidget.getHandle();
-        }
     }
 
     private void resetKeyboardLayout() {
@@ -342,7 +341,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                     maxCharsPerLine = MAX_CHARS_PER_LINE_LONG;
                 }
                 default: {
-                    float totalWidth = WidgetPlacement.convertPixelsToDp(getContext(), mCurrentKeyboard.getAlphabeticKeyboardWidth());
+                    float totalWidth = WidgetPlacement.convertDpToPixel(getContext(), mCurrentKeyboard.getAlphabeticKeyboardWidth());
                     rightAligned = (float)popupKey.x > totalWidth * 0.5f;
                     maxCharsPerLine = MAX_CHARS_PER_LINE_LONG;
                 }
@@ -610,6 +609,10 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             params.width = WidgetPlacement.convertDpToPixel(getContext(), mCurrentKeyboard.getAlphabeticKeyboardWidth());
             mKeyboardContainer.setLayoutParams(params);
         }
+
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)mKeyboardLayout.getLayoutParams();
+        params.topMargin = mCurrentKeyboard.supportsAutoCompletion() ? WidgetPlacement.pixelDimension(getContext(), R.dimen.keyboard_margin_top_without_autocompletion) : 0;
+        mKeyboardLayout.setLayoutParams(params);
 
         SettingsStore.getInstance(getContext()).setSelectedKeyboard(aKeyboard.getLocale());
         mKeyboardView.setKeyboard(mCurrentKeyboard.getAlphabeticKeyboard());

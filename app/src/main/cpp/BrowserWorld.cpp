@@ -935,24 +935,30 @@ BrowserWorld::LayoutWidget(int32_t aHandle) {
   widget->GetWorldSize(worldWidth, worldHeight);
 
   vrb::Matrix transform = vrb::Matrix::Identity();
-  if (aPlacement->rotationAxis.Magnitude() > std::numeric_limits<float>::epsilon()) {
-    transform = vrb::Matrix::Rotation(aPlacement->rotationAxis, aPlacement->rotation);
-  }
 
   vrb::Vector translation = vrb::Vector(aPlacement->translation.x() * kWorldDPIRatio,
                                         aPlacement->translation.y() * kWorldDPIRatio,
                                         aPlacement->translation.z() * kWorldDPIRatio);
 
+  const float anchorX = (aPlacement->anchor.x() - 0.5f) * worldWidth;
+  const float anchorY = (aPlacement->anchor.y() - 0.5f) * worldHeight;
+
+  if (aPlacement->rotationAxis.Magnitude() > std::numeric_limits<float>::epsilon()) {
+    transform = vrb::Matrix::Rotation(aPlacement->rotationAxis, aPlacement->rotation);
+    // Rotate from anchor point
+    transform.PreMultiplyInPlace(vrb::Matrix::Translation(vrb::Vector(anchorX, anchorY, 0.0f)));
+    transform.PostMultiplyInPlace(vrb::Matrix::Translation(vrb::Vector(-anchorX, -anchorY, 0.0f)));
+  }
+
   // Widget anchor point
-  translation -= vrb::Vector((aPlacement->anchor.x() - 0.5f) * worldWidth,
-                             (aPlacement->anchor.y() - 0.5f) * worldHeight,
-                             0.0f);
+  translation -= vrb::Vector(anchorX, anchorY, 0.0f);
+
   // Parent anchor point
   if (parent) {
     translation += vrb::Vector(
-      parentWorldWith * aPlacement->parentAnchor.x() - parentWorldWith * 0.5f,
-      parentWorldHeight * aPlacement->parentAnchor.y() - parentWorldHeight * 0.5f,
-      0.0f);
+        parentWorldWith * aPlacement->parentAnchor.x() - parentWorldWith * 0.5f,
+        parentWorldHeight * aPlacement->parentAnchor.y() - parentWorldHeight * 0.5f,
+        0.0f);
   }
 
   transform.TranslateInPlace(translation);

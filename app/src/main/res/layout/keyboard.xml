@@ -6,9 +6,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
+            android:id="@+id/keyboardLayout"
             android:layout_width="match_parent"
             android:layout_height="@dimen/keyboard_height"
-            android:layout_marginTop="37dp"
+            android:layout_marginTop="0dp"
             android:orientation="horizontal">
             <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/keyboardCloseButton"
