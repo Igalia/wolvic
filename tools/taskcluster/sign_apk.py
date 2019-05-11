@@ -13,7 +13,7 @@ import sys
 
 def main(name, argv):
    token = ''
-   sign_url = 'https://autograph-edge.stage.mozaws.net/sign'
+   sign_url = 'https://edge.stage.autograph.services.mozaws.net/sign'
    release = False
    try:
       opts, args = getopt.getopt(argv,"ht:r")
@@ -28,7 +28,7 @@ def main(name, argv):
          with open(arg, 'r') as tokenfile:
             token = tokenfile.read().rstrip()
       elif opt in ('-r'):
-         sign_url = 'https://autograph-edge.prod.mozaws.net/sign'
+         sign_url = 'https://edge.prod.autograph.services.mozaws.net/sign'
          release = True
 
    build_output_path = './app/build/outputs/apk'
