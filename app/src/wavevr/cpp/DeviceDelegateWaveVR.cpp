@@ -282,7 +282,8 @@ struct DeviceDelegateWaveVR::State {
 
       if (touchpadTouched) {
         WVR_Axis_t axis = WVR_GetInputAnalogAxis(controller.type, WVR_InputId_Alias1_Touchpad);
-        delegate->SetTouchPosition(controller.index, axis.x, -axis.y);
+        // We are matching touch pad range from {-1, 1} to the Oculus {0, 1}.
+        delegate->SetTouchPosition(controller.index, (axis.x + 1) * 0.5, (-axis.y + 1) * 0.5);
         immersiveAxes[0] = axis.x;
         immersiveAxes[1] = -axis.y;
         controller.touched = true;
