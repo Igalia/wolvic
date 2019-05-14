@@ -274,6 +274,13 @@ android {
 configurations {
     armImplementation
     x86Implementation
+    all*.exclude group: 'androidx.appcompat', module: 'appcompat'
+}
+
+repositories {
+    flatDir {
+        dirs 'aars'
+    }
 }
 
 dependencies {
@@ -286,7 +293,9 @@ dependencies {
     implementation deps.lifecycle.runtime
     implementation deps.lifecycle.extensions
     implementation deps.support.cardview
-    implementation deps.support.app_compat
+    //implementation deps.support.app_compat
+    implementation(name:'appcompat', ext:'aar')
+    implementation deps.support.vector_drawable
     implementation deps.support.annotations
     implementation deps.constraint_layout
 
