@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -83,7 +84,7 @@
     <GridLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:columnCount="1"
+        android:columnCount="2"
         android:rowCount="2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -92,17 +93,25 @@
             android:id="@+id/up_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_column="0"
             android:layout_row="0"
+            android:layout_column="1"
             android:src="@drawable/ic_keyboard_arrow_up_black_24px" />
 
         <ImageButton
             android:id="@+id/down_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_column="0"
             android:layout_row="1"
+            android:layout_column="1"
             android:src="@drawable/ic_keyboard_arrow_down_black_24px" />
+
+        <Button
+            android:id="@+id/back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_row="1"
+            android:layout_column="0"
+            android:text="@string/back_button" />
 
     </GridLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -113,7 +113,6 @@ public class PlatformActivity extends Activity {
             return false;
         }
 
-
         Log.e(LOGTAG, "real onTouchEvent: " + aEvent.toString());
         final boolean isDown = down;
 
@@ -163,7 +162,7 @@ public class PlatformActivity extends Activity {
         super.onResume();
         mView.onResume();
         queueRunnable(activityResumedRunnable);
-        // setImmersiveSticky();
+        setImmersiveSticky();
     }
 
     @Override
@@ -180,17 +179,17 @@ public class PlatformActivity extends Activity {
         }
     }
 
-//    void setImmersiveSticky() {
-//        getWindow()
-//                .getDecorView()
-//                .setSystemUiVisibility(
-//                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//                                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-//                                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-//                                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-//                                | View.SYSTEM_UI_FLAG_FULLSCREEN
-//                                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-//    }
+    void setImmersiveSticky() {
+        getWindow()
+                .getDecorView()
+                .setSystemUiVisibility(
+                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+    }
 
     void queueRunnable(Runnable aRunnable) {
         if (mSurfaceCreated) {
@@ -215,64 +214,16 @@ public class PlatformActivity extends Activity {
     }
 
     private void setupUI() {
-        findViewById(R.id.up_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dispatchMoveAxis(0, 1, 0);
-            }
-        });
-       findViewById(R.id.down_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dispatchMoveAxis(0, -1, 0);
-            }
-        });
-        findViewById(R.id.forward_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dispatchMoveAxis(0, 0, -1);
-            }
-        });
-        findViewById(R.id.backward_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dispatchMoveAxis(0, 0, 1);
-            }
-        });
-        findViewById(R.id.left_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dispatchMoveAxis(-1, 0, 0);
-            }
-        });
-
-        findViewById(R.id.right_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dispatchMoveAxis(1, 0, 0);
-            }
-        });
-
-        findViewById(R.id.home_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dispatchMoveAxis(0,0,0);
-            }
-        });
-
-        findViewById(R.id.right_turn_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dispatchRotateHeading(-ROTATION);
-            }
-        });
-
-        findViewById(R.id.left_turn_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dispatchRotateHeading(ROTATION);
-            }
-        });
+        findViewById(R.id.up_button).setOnClickListener((View view) -> dispatchMoveAxis(0, 1, 0));
+        findViewById(R.id.down_button).setOnClickListener((View view) -> dispatchMoveAxis(0, -1, 0));
+        findViewById(R.id.forward_button).setOnClickListener((View view) -> dispatchMoveAxis(0, 0, -1));
+        findViewById(R.id.backward_button).setOnClickListener((View view) -> dispatchMoveAxis(0, 0, 1));
+        findViewById(R.id.left_button).setOnClickListener((View view) -> dispatchMoveAxis(-1, 0, 0));
+        findViewById(R.id.right_button).setOnClickListener((View view) -> dispatchMoveAxis(1, 0, 0));
+        findViewById(R.id.home_button).setOnClickListener((View view) -> dispatchMoveAxis(0,0,0));
+        findViewById(R.id.right_turn_button).setOnClickListener((View view) -> dispatchRotateHeading(-ROTATION));
+        findViewById(R.id.left_turn_button).setOnClickListener((View view) -> dispatchRotateHeading(ROTATION));
+        findViewById(R.id.back_button).setOnClickListener((View view) -> onBackPressed());
     }
 
     private void dispatchMoveAxis(final float aX, final float aY, final float aZ) {
