@@ -60,8 +60,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
     private static final String LOGTAG = "VRB";
 
-    private static int MAX_CHARS_PER_LINE_LONG = 10;
-    private static int MAX_CHARS_PER_LINE_SHORT = 7;
+    private static int MAX_CHARS_PER_POPUP_LINE = 10;
 
     private CustomKeyboardView mKeyboardView;
     private CustomKeyboardView mKeyboardNumericView;
@@ -315,44 +314,17 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                     RelativeLayout.LayoutParams.WRAP_CONTENT,
                     RelativeLayout.LayoutParams.WRAP_CONTENT);
 
-            boolean rightAligned = false;
-            int maxCharsPerLine = MAX_CHARS_PER_LINE_LONG;
+            float totalWidth = WidgetPlacement.convertDpToPixel(getContext(), mCurrentKeyboard.getAlphabeticKeyboardWidth());
+            totalWidth -= mKeyboardView.getPaddingLeft() + mKeyboardView.getPaddingRight();
+            float keyX = popupKey.x + WidgetPlacement.convertDpToPixel(getContext(), mKeyWidth * 0.5f);
+            boolean rightAligned = keyX >= totalWidth * 0.5f;
             StringBuilder popupCharacters = new StringBuilder(popupKey.popupCharacters);
-            switch (popupKey.codes[0]) {
-                case 110: {
-                    rightAligned = true;
-                    maxCharsPerLine = MAX_CHARS_PER_LINE_SHORT;
-                }
-                break;
-                case 33:
-                case 63:
-                case 98:
-                case 104:
-                case 105:
-                case 106:
-                case 107:
-                case 108:
-                case 109:
-                case 111:
-                case 112:
-                case 117:
-                case 187:{
-                    rightAligned = true;
-                    maxCharsPerLine = MAX_CHARS_PER_LINE_LONG;
-                }
-                default: {
-                    float totalWidth = WidgetPlacement.convertDpToPixel(getContext(), mCurrentKeyboard.getAlphabeticKeyboardWidth());
-                    rightAligned = (float)popupKey.x > totalWidth * 0.5f;
-                    maxCharsPerLine = MAX_CHARS_PER_LINE_LONG;
-                }
-
-            }
 
             if (rightAligned) {
                 params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
                 params.rightMargin = mKeyboardView.getWidth() - popupKey.x - mKeyWidth - mKeyboardNumericView.getPaddingRight();
-                if (popupCharacters.length() > maxCharsPerLine) {
-                    popupCharacters.insert(maxCharsPerLine - 1, popupCharacters.charAt(0));
+                if (popupCharacters.length() > MAX_CHARS_PER_POPUP_LINE) {
+                    popupCharacters.insert(MAX_CHARS_PER_POPUP_LINE - 1, popupCharacters.charAt(0));
                     popupCharacters.replace(0,1, String.valueOf(popupCharacters.charAt(popupCharacters.length()-1)));
                     popupCharacters.deleteCharAt(popupCharacters.length()-1);
                 } else {
@@ -364,7 +336,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             params.topMargin = popupKey.y + mKeyboardPopupTopMargin + mKeyboardView.getPaddingTop();
 
             CustomKeyboard popupKeyboard = new CustomKeyboard(getContext(), popupKey.popupResId,
-                    popupCharacters, maxCharsPerLine, 0, getContext().getResources().getDimensionPixelSize(R.dimen.keyboard_vertical_gap));
+                    popupCharacters, MAX_CHARS_PER_POPUP_LINE, 0, getContext().getResources().getDimensionPixelSize(R.dimen.keyboard_vertical_gap));
             mPopupKeyboardview.setKeyboard(popupKeyboard);
             mPopupKeyboardview.setLayoutParams(params);
             mPopupKeyboardview.setShifted(mIsCapsLock);
