@@ -240,6 +240,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         } else {
             mKeyboardView.setKeyboard(mCurrentKeyboard.getAlphabeticKeyboard());
         }
+        handleShift(false);
         updateCandidates();
     }
 
@@ -507,7 +508,6 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                     if (mIsCapsLock) {
                         key.icon = mCapsLockOnIcon;
                         key.pressed = true;
-
                     } else {
                         key.icon = shifted ? mShiftOnIcon : mShiftOffIcon;
                         key.pressed = false;
@@ -588,6 +588,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
         SettingsStore.getInstance(getContext()).setSelectedKeyboard(aKeyboard.getLocale());
         mKeyboardView.setKeyboard(mCurrentKeyboard.getAlphabeticKeyboard());
+        handleShift(false);
         hideOverlays();
         updateCandidates();
     }
