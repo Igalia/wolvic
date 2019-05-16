@@ -3,11 +3,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.vrbrowser.ui.widgets.options;
+package org.mozilla.vrbrowser.ui.widgets.settings;
 
 import android.Manifest;
 import android.content.Context;
-import android.util.AttributeSet;
 import android.util.Pair;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -20,36 +19,21 @@ import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.views.settings.ButtonSetting;
 import org.mozilla.vrbrowser.ui.views.settings.SwitchSetting;
-import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
-import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
-import org.mozilla.vrbrowser.ui.widgets.prompts.AlertPromptWidget;
 
 import java.util.ArrayList;
 
-public class PrivacyOptionsWidget extends UIWidget implements WidgetManagerDelegate.WorldClickListener {
+class PrivacyOptionsView extends SettingsView {
     private AudioEngine mAudio;
     private UIButton mBackButton;
-
     private SwitchSetting mTrackingSetting;
     private ButtonSetting mResetButton;
     private ArrayList<Pair<ButtonSetting, String>> mPermissionButtons;
     private int mAlertDialogHandle;
-
     private ScrollView mScrollbar;
 
-    public PrivacyOptionsWidget(Context aContext) {
-        super(aContext);
-        initialize(aContext);
-    }
-
-    public PrivacyOptionsWidget(Context aContext, AttributeSet aAttrs) {
-        super(aContext, aAttrs);
-        initialize(aContext);
-    }
-
-    public PrivacyOptionsWidget(Context aContext, AttributeSet aAttrs, int aDefStyle) {
-        super(aContext, aAttrs, aDefStyle);
+    public PrivacyOptionsView(Context aContext, WidgetManagerDelegate aWidgetManager) {
+        super(aContext, aWidgetManager);
         initialize(aContext);
     }
 
@@ -62,11 +46,7 @@ public class PrivacyOptionsWidget extends UIWidget implements WidgetManagerDeleg
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
-
-            hide(REMOVE_WIDGET);
-            if (mDelegate != null) {
-                mDelegate.onDismiss();
-            }
+            onDismiss();
         });
 
         mScrollbar = findViewById(R.id.scrollbar);
@@ -83,8 +63,7 @@ public class PrivacyOptionsWidget extends UIWidget implements WidgetManagerDeleg
             }
 
             SessionStore.get().loadUri(getContext().getString(R.string.private_policy_url));
-
-            hide(REMOVE_WIDGET);
+            exitWholeSettings();
         });
 
         mTrackingSetting = findViewById(R.id.trackingProtectionButton);
@@ -119,31 +98,14 @@ public class PrivacyOptionsWidget extends UIWidget implements WidgetManagerDeleg
     }
 
     @Override
-    protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
-        aPlacement.visible = false;
-        aPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.developer_options_width);
-        aPlacement.height = WidgetPlacement.dpDimension(getContext(), R.dimen.developer_options_height);
-        aPlacement.parentAnchorX = 0.5f;
-        aPlacement.parentAnchorY = 0.5f;
-        aPlacement.anchorX = 0.5f;
-        aPlacement.anchorY = 0.5f;
-        aPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.restart_dialog_world_y);
-        aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.restart_dialog_world_z);
-    }
-
-    @Override
-    public void show() {
-        super.show();
-
-        mWidgetManager.addWorldClickListener(this);
+    public void onShown() {
+        super.onShown();
         mScrollbar.scrollTo(0, 0);
     }
 
     @Override
-    public void hide(@HideFlags int aHideFlags) {
-        super.hide(aHideFlags);
-
-        mWidgetManager.removeWorldClickListener(this);
+    public void onHidden() {
+        super.onHidden();
     }
 
     private void togglePermission(ButtonSetting aButton, String aPermission) {
@@ -167,35 +129,6 @@ public class PrivacyOptionsWidget extends UIWidget implements WidgetManagerDeleg
     private void resetOptions() {
         if (mTrackingSetting.isChecked() != SettingsStore.TRACKING_DEFAULT) {
             mTrackingSetting.setChecked(SettingsStore.TRACKING_DEFAULT);
-        }
-    }
-
-    private void showAlert(String aTitle, String aMessage) {
-        hide(UIWidget.KEEP_WIDGET);
-
-        AlertPromptWidget widget = getChild(mAlertDialogHandle);
-        if (widget == null) {
-            widget = createChild(AlertPromptWidget.class, false);
-            mAlertDialogHandle = widget.getHandle();
-            widget.setDelegate(() -> onAlertDismissed());
-        }
-        widget.getPlacement().translationZ = 0;
-        widget.getPlacement().parentHandle = mHandle;
-        widget.setTitle(aTitle);
-        widget.setMessage(aMessage);
-
-        widget.show();
-    }
-
-    private void onAlertDismissed() {
-        show();
-    }
-
-    // WorldClickListener
-    @Override
-    public void onWorldClick() {
-        if (isVisible()) {
-            onDismiss();
         }
     }
 }

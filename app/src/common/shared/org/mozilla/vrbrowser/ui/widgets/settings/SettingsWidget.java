@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.vrbrowser.ui.widgets.dialogs;
+package org.mozilla.vrbrowser.ui.widgets.settings;
 
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -14,7 +14,9 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.mozilla.geckoview.GeckoSession;
@@ -28,11 +30,8 @@ import org.mozilla.vrbrowser.ui.views.HoneycombSwitch;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
-import org.mozilla.vrbrowser.ui.widgets.options.ControllerOptionsWidget;
-import org.mozilla.vrbrowser.ui.widgets.options.DeveloperOptionsWidget;
-import org.mozilla.vrbrowser.ui.widgets.options.DisplayOptionsWidget;
-import org.mozilla.vrbrowser.ui.widgets.options.PrivacyOptionsWidget;
-import org.mozilla.vrbrowser.ui.widgets.options.VoiceSearchLanguageOptionsWidget;
+import org.mozilla.vrbrowser.ui.widgets.dialogs.RestartDialogWidget;
+import org.mozilla.vrbrowser.ui.widgets.prompts.AlertPromptWidget;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -40,18 +39,16 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.FocusChangeListener {
-
+public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.FocusChangeListener, WidgetManagerDelegate.WorldClickListener, SettingsView.Delegate {
     private static final String LOGTAG = "VRB";
-
     private AudioEngine mAudio;
-    private int mDeveloperOptionsDialogHandle = -1;
-    private int mLanguageOptionsDialogHandle = -1;
-    private int mDisplayOptionsDialogHandle = -1;
-    private int mControllerOptionsDialogHandle = -1;
-    private int mPrivacyOptionsDialogHandle = -1;
-    private int mEnvironmentOptionsDialogHandle = -1;
+    private SettingsView mCurrentView;
     private TextView mBuildText;
+    private LinearLayout mMainLayout;
+    private int mViewMarginH;
+    private int mViewMarginV;
+    private int mRestartDialogHandle = -1;
+    private int mAlertDialogHandle = -1;
 
     class VersionGestureListener extends GestureDetector.SimpleOnGestureListener {
 
@@ -65,7 +62,6 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
 
             return true;
         }
-
     }
 
     public SettingsWidget(Context aContext) {
@@ -87,6 +83,8 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
         inflate(aContext, R.layout.settings, this);
 
         mWidgetManager.addFocusChangeListener(this);
+        mWidgetManager.addWorldClickListener(this);
+        mMainLayout = findViewById(R.id.optionsLayout);
 
         ImageButton cancelButton = findViewById(R.id.settingsCancelButton);
 
@@ -203,10 +201,16 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
         });
 
         mAudio = AudioEngine.fromContext(aContext);
+
+        mViewMarginH = mWidgetPlacement.width - WidgetPlacement.dpDimension(getContext(), R.dimen.developer_options_width);
+        mViewMarginH = WidgetPlacement.convertDpToPixel(getContext(), mViewMarginH);
+        mViewMarginV = mWidgetPlacement.height - WidgetPlacement.dpDimension(getContext(), R.dimen.developer_options_height);
+        mViewMarginV = WidgetPlacement.convertDpToPixel(getContext(), mViewMarginV);
     }
 
     @Override
     public void releaseWidget() {
+        mWidgetManager.removeWorldClickListener(this);
         mWidgetManager.removeFocusChangeListener(this);
 
         super.releaseWidget();
@@ -235,16 +239,7 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
     }
 
     private void onSettingsPrivacyClick() {
-        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
-        hide(REMOVE_WIDGET);
-        UIWidget widget = getChild(mPrivacyOptionsDialogHandle);
-        if (widget == null) {
-            widget = createChild(PrivacyOptionsWidget.class, false);
-            mPrivacyOptionsDialogHandle = widget.getHandle();
-            widget.setDelegate(() -> onOptionsDialogDismissed());
-        }
-
-        widget.show();
+        showView(new PrivacyOptionsView(getContext(), mWidgetManager));
     }
 
     private void onSettingsReportClick() {
@@ -326,80 +321,51 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
         return formatted;
     }
 
-    private void showDeveloperOptionsDialog() {
-        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
-        hide(REMOVE_WIDGET);
-        UIWidget widget = getChild(mDeveloperOptionsDialogHandle);
-        if (widget == null) {
-            widget = createChild(DeveloperOptionsWidget.class, false);
-            mDeveloperOptionsDialogHandle = widget.getHandle();
-            widget.setDelegate(() -> onOptionsDialogDismissed());
+    private void showView(SettingsView aView) {
+        if (mCurrentView != null) {
+            mCurrentView.onHidden();
+            this.removeView(mCurrentView);
         }
+        mCurrentView = aView;
+        if (mCurrentView != null) {
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            params.leftMargin = params.rightMargin = mViewMarginH / 2;
+            params.topMargin = params.bottomMargin = mViewMarginH / 2;
+            this.addView(mCurrentView, params);
+            mCurrentView.setDelegate(this);
+            mCurrentView.onShown();
+            mMainLayout.setVisibility(View.GONE);
+        } else {
+            mMainLayout.setVisibility(View.VISIBLE);
+        }
+    }
 
-        widget.show();
+    private void showDeveloperOptionsDialog() {
+        showView(new DeveloperOptionsView(getContext(), mWidgetManager));
     }
 
     private void showControllerOptionsDialog() {
-        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
-        hide(REMOVE_WIDGET);
-        UIWidget widget = getChild(mControllerOptionsDialogHandle);
-        if (widget == null) {
-            widget = createChild(ControllerOptionsWidget.class, false);
-            mControllerOptionsDialogHandle = widget.getHandle();
-            widget.setDelegate(() -> onOptionsDialogDismissed());
-        }
-
-        widget.show();
+        showView(new ControllerOptionsView(getContext(), mWidgetManager));
     }
 
     private void showLanguageOptionsDialog() {
-        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
-        hide(UIWidget.REMOVE_WIDGET);
-        UIWidget widget = getChild(mLanguageOptionsDialogHandle);
-        if (widget == null) {
-            widget = createChild(VoiceSearchLanguageOptionsWidget.class, false);
-            mLanguageOptionsDialogHandle = widget.getHandle();
-            widget.setDelegate(() -> onOptionsDialogDismissed());
-        }
-
-        widget.show();
+        showView(new VoiceSearchLanguageOptionsView(getContext(), mWidgetManager));
     }
 
     private void showDisplayOptionsDialog() {
-        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
-        hide(UIWidget.REMOVE_WIDGET);
-        UIWidget widget = getChild(mDisplayOptionsDialogHandle);
-        if (widget == null) {
-            widget = createChild(DisplayOptionsWidget.class, false);
-            mDisplayOptionsDialogHandle = widget.getHandle();
-            widget.setDelegate(() -> onOptionsDialogDismissed());
-        }
-
-        widget.show();
+        showView(new DisplayOptionsView(getContext(), mWidgetManager));
     }
 
     private void showEnvironmentOptionsDialog() {
-        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
-        hide(UIWidget.REMOVE_WIDGET);
-        UIWidget widget = getChild(mEnvironmentOptionsDialogHandle);
-        if (widget == null) {
-            widget = createChild(EnvironmentOptionsWidget.class, false);
-            mEnvironmentOptionsDialogHandle = widget.getHandle();
-            widget.setDelegate(() -> onOptionsDialogDismissed());
-        }
-
-        widget.show();
-    }
-
-    private void onOptionsDialogDismissed() {
-        mWidgetManager.popWorldBrightness(this);
-        show();
+        showView(new EnvironmentOptionsView(getContext(), mWidgetManager));
     }
 
     // WindowManagerDelegate.FocusChangeListener
     @Override
     public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-        if (oldFocus == this && isVisible()) {
+        if (mCurrentView != null) {
+            mCurrentView.onGlobalFocusChanged(oldFocus, newFocus);
+        } else if (oldFocus == this && isVisible()) {
             onDismiss();
         }
     }
@@ -418,4 +384,57 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
         mWidgetManager.popWorldBrightness(this);
     }
 
+    // WidgetManagerDelegate.WorldClickListener
+    @Override
+    public void onWorldClick() {
+        onDismiss();
+    }
+
+    // SettingsView.Delegate
+    @Override
+    public void onDismiss() {
+        if (mCurrentView != null) {
+            showView(null);
+        } else {
+            super.onDismiss();
+        }
+    }
+
+    @Override
+    public void exitWholeSettings() {
+        showView(null);
+        hide(UIWidget.REMOVE_WIDGET);
+    }
+
+    @Override
+    public void showRestartDialog() {
+        hide(UIWidget.REMOVE_WIDGET);
+
+        UIWidget widget = getChild(mRestartDialogHandle);
+        if (widget == null) {
+            widget = createChild(RestartDialogWidget.class, false);
+            mRestartDialogHandle = widget.getHandle();
+            widget.setDelegate(this::show);
+        }
+
+        widget.show();
+    }
+
+    @Override
+    public void showAlert(String aTitle, String aMessage) {
+        hide(UIWidget.KEEP_WIDGET);
+
+        AlertPromptWidget widget = getChild(mAlertDialogHandle);
+        if (widget == null) {
+            widget = createChild(AlertPromptWidget.class, false);
+            mAlertDialogHandle = widget.getHandle();
+            widget.setDelegate(this::show);
+        }
+        widget.getPlacement().translationZ = 0;
+        widget.getPlacement().parentHandle = mHandle;
+        widget.setTitle(aTitle);
+        widget.setMessage(aMessage);
+
+        widget.show();
+    }
 }
