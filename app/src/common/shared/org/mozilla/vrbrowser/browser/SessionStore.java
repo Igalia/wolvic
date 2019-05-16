@@ -1015,66 +1015,91 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     @Override
     public @Nullable GeckoResult<AllowOrDeny> onLoadRequest(@NonNull GeckoSession aSession, @NonNull LoadRequest aRequest) {
         final GeckoResult<AllowOrDeny> result = new GeckoResult<>();
-        Log.d(LOGTAG, "onLoadRequest: " + aRequest.uri);
+
+        String uri = aRequest.uri;
+
+        Log.d(LOGTAG, "onLoadRequest: " + uri);
+
+        String uriOverride = checkYoutubeOverride(uri);
+        if (uriOverride != null) {
+            mFirstOnLoadRequest = true;
+            aSession.loadUri(uriOverride);
+            result.complete(AllowOrDeny.DENY);
+            return result;
+        }
+
         if (mFirstOnLoadRequest && (aSession == mCurrentSession)) {
             Log.d(LOGTAG, "Testing for UA override");
-            aSession.getSettings().setUserAgentOverride(mUserAgentOverride.lookupOverride(aRequest.uri));
+            aSession.getSettings().setUserAgentOverride(mUserAgentOverride.lookupOverride(uri));
             mFirstOnLoadRequest = false;
         }
-        if (PRIVATE_BROWSING_URI.equalsIgnoreCase(aRequest.uri)) {
+
+        if (PRIVATE_BROWSING_URI.equalsIgnoreCase(uri)) {
             switchPrivateMode();
             result.complete(AllowOrDeny.ALLOW);
-        } else {
-            String override = checkYoutubeOverride(aRequest.uri);
-            if (override != null) {
-                aSession.loadUri(override);
-                result.complete(AllowOrDeny.DENY);
-                return result;
-            }
+            return result;
+        }
 
-            AtomicInteger count = new AtomicInteger(0);
-            AtomicBoolean allowed = new AtomicBoolean(false);
-            for (GeckoSession.NavigationDelegate listener: mNavigationListeners) {
-                GeckoResult<AllowOrDeny> listenerResult = listener.onLoadRequest(aSession, aRequest);
-                listenerResult.then(value -> {
-                    if (AllowOrDeny.ALLOW.equals(value)) {
-                        allowed.set(true);
-                    }
-                    if (count.getAndIncrement() == mNavigationListeners.size() - 1) {
-                        result.complete(allowed.get() ? AllowOrDeny.ALLOW : AllowOrDeny.DENY);
-                    }
+        AtomicInteger count = new AtomicInteger(0);
+        AtomicBoolean allowed = new AtomicBoolean(false);
+        for (GeckoSession.NavigationDelegate listener: mNavigationListeners) {
+            GeckoResult<AllowOrDeny> listenerResult = listener.onLoadRequest(aSession, aRequest);
+            listenerResult.then(value -> {
+                if (AllowOrDeny.ALLOW.equals(value)) {
+                    allowed.set(true);
+                }
+                if (count.getAndIncrement() == mNavigationListeners.size() - 1) {
+                    result.complete(allowed.get() ? AllowOrDeny.ALLOW : AllowOrDeny.DENY);
+                }
 
-                    return null;
-                });
-            }
+                return null;
+            });
         }
 
         return result;
     }
 
-    /*
-     * Polymer makes youtube very slow. Disable it via URL parameter.
+    /**
+     * 1. Disable YouTube's Polymer layout (which makes YouTube very slow in non-Chrome browsers)
+     *    via a query-string parameter in the URL.
+     * 2. Rewrite YouTube URLs from `m.youtube.com` -> `youtube.com` (to avoid serving YouTube's
+     *    video pages intended for mobile phones, as linked from Google search results).
      */
     private String checkYoutubeOverride(String aUri) {
         try {
             Uri uri = Uri.parse(aUri);
             String hostLower = uri.getHost().toLowerCase();
-            if (!hostLower.endsWith(".youtube.com") &&
-                !hostLower.endsWith(".youtube-nocookie.com")) {
+            if (!hostLower.endsWith(".youtube.com") && !hostLower.endsWith(".youtube-nocookie.com")) {
                 return null;
             }
-            String query = uri.getQueryParameter("disable_polymer");
-            if (query != null) {
+
+            Uri.Builder uriBuilder = uri.buildUpon();
+            Boolean updateUri = false;
+
+            if (!uri.getScheme().equalsIgnoreCase("https")) {
+                uriBuilder.scheme("https");
+                updateUri = true;
+            }
+            if (hostLower.startsWith("m.")) {
+                uriBuilder.authority(hostLower.replaceFirst("m.", "www."));
+                updateUri = true;
+            }
+            String queryDisablePolymer = uri.getQueryParameter("disable_polymer");
+            if (queryDisablePolymer == null) {
+                uriBuilder.appendQueryParameter("disable_polymer", "1");
+                updateUri = true;
+            }
+
+            if (!updateUri) {
                 return null;
             }
-            String result = aUri;
-            result += aUri.contains("?") ? "&" : "?";
-            result += "disable_polymer=1";
-            return result;
+
+            return uriBuilder.build().toString();
+        } catch (Exception ex) {
+            Log.e(LOGTAG, "Unable to construct transformed URL: " + ex.toString());
         }
-        catch (Exception ex) {
-            return null;
-        }
+
+        return null;
     }
 
     @Override
