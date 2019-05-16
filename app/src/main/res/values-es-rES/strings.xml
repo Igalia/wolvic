@@ -6,6 +6,39 @@
     <!-- This string is used on the virtual keyboard to label the 'Enter' key (stylized in uppercase letters as 'ENTER'). -->
     <string name="keyboard_enter_label">ENTER</string>
 
+    <!-- This string is used on the virtual keyboard to label the 'Enter' key with a "Go" IME action.
+         The action key performs a "go" operation to take the user to the target of the text they typed.
+         Typically used, for example, when entering a URL. (stylized in uppercase letters as 'GO')
+    -->
+    <string name="keyboard_go_label">IR</string>
+
+    <!-- This string is used on the virtual keyboard to label the 'Enter' key with a "Search" IME action.
+         The action key performs a "search" operation, taking the user to the results of searching for the text
+         they have typed. (stylized in uppercase letters as 'SEARCH')
+    -->
+    <string name="keyboard_search_label">BUSCAR</string>
+
+    <!-- This string is used on the virtual keyboard to label the 'Enter' key with a "Send" IME action.
+         The action key performs a "send" operation, delivering the text to its target. This is typically used
+         when composing a message in IM or SMS where sending is immediate. (stylized in uppercase letters as 'SEND')
+    -->
+    <string name="keyboard_send_label">ENVIAR</string>
+
+    <!-- This string is used on the virtual keyboard to label the 'Enter' key with a "Next" IME action.
+         The action key performs a "next" operation, taking the user to the next field that will accept text.
+         (stylized in uppercase letters as 'NEXT')
+    -->
+    <string name="keyboard_next_label">SIGUIENTE</string>
+
+    <!-- This string is used on the virtual keyboard to label the 'Enter' key with a "Done" IME action.
+     The action key performs a "done" operation, typically meaning there is nothing more to input and the
+     IME will be closed. (stylized in uppercase letters as 'DONE')
+    -->
+    <string name="keyboard_done_label">HECHO</string>
+
+    <!-- This string is used on the virtual keyboard to label the 'space' key-->
+    <string name="keyboard_space_label">espacio</string>
+
     <!-- This string is displayed in the button that means the user accepts the
          permission requested for in the permission dialog box. -->
     <string name="permission_allow">Permitir</string>
@@ -138,7 +171,7 @@
 
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
         opens a dialog box that contains display-related settings: window size, pixel density, etc. -->
-    <string name="settings_display">Mostrar</string>
+    <string name="settings_display">Visualización</string>
 
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains controller-related options: pointer color and scroll direction. -->
@@ -187,7 +220,7 @@
 
     <!-- This string labels an On/Off switch in the developer options dialog
          and is used to customize background environments of the app. -->
-    <string name="developer_options_env_override">Habilitar la invalidación del entorno</string>
+    <string name="developer_options_env_override">Habilitar la sobrescritura del entorno</string>
 
     <!-- This string labels an On/Off switch in the developer options dialog and is used to toggle
          running content in a separate process.
