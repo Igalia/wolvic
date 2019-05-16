@@ -1,31 +1,35 @@
-(function () {
-  // If missing, inject a `<meta name="viewport">` tag to trigger YouTube's mobile layout.
-  window.addEventListener('load', () => {
-    let viewport = document.head.querySelector('meta[name="viewport"]');
-    if (!viewport) {
-      viewport = document.createElement('meta');
-      viewport.name = 'viewport';
-      viewport.content = 'width=device-width, initial-scale=1';
-      document.head.appendChild(viewport);
-    }
+const CUSTOM_USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12) AppleWebKit/602.1.21 (KHTML, like Gecko) Version/9.2 Safari/602.1.21';
+const LOGTAG = '[firefoxreality:webcompat:youtube]';
+const YT_SELECTORS = {
+  disclaimer: '.yt-alert-message, yt-alert-message',
+  moviePlayer: '#movie_player'
+};
+const YT_PATHS = {
+  watch: '/watch'
+};
+
+try {
+  // Note: À la Oculus Browser, we intentionally use this particular `User-Agent` string
+  // for YouTube to force the most optimal, high-resolution layout available for playback in a mobile VR browser.
+  Object.defineProperty(navigator, 'userAgent', {
+    get: () => CUSTOM_USER_AGENT
   });
 
-  const LOGTAG = '[firefoxreality:webcompat]'
-  const qs = new URLSearchParams(window.location.search);
-  let retryTimeout = null;
-
-  function getTruthyQS (key) {
-    if (!qs || !qs.has(key)) {
-      return false;
-    }
-    const valueLower = (qs.get('key') || '').trim().toLowerCase();
-    return valueLower === '' || valueLower === '1' || valueLower === 'true' || valueLower === 'yes' || valueLower === 'on';
+  // If missing, inject a `<meta name="viewport">` tag to trigger YouTube's mobile layout.
+  let viewportEl = document.querySelector('meta[name="viewport"]');
+  if (!viewportEl) {
+    document.documentElement.insertAdjacentHTML('afterbegin',
+      `<meta name="viewport" content="width=device-width, initial-scale=1" data-fxr-injected>`);
   }
+
+  let is360 = null;
+  let qs = new URLSearchParams(window.location.search);
+  let retryTimeout = null;
 
   const prefs = {
     hd: false,
     quality: 1440,
-    log: qs.get('mozDebug') ? getTruthyQS('mozDebug') : true,
+    log: qs.get('mozDebug') !== '0' && qs.get('mozdebug') !== '0' && qs.get('debug') !== '0',
     retryAttempts: parseInt(qs.get('retryAttempts') || qs.get('retryattempts') || '10', 10),
     retryTimeout: parseInt(qs.get('retryTimeout') || qs.get('retrytimeout') || '500', 10)
   };
@@ -36,7 +40,86 @@
   const logError = (...args) => printLog && console.error(LOGTAG, ...args);
   const logWarn = (...args) => printLog && console.warn(LOGTAG, ...args);
 
+  const onNavigate = (delayTime = 500) => setTimeout(() => {
+    ytImprover360();
+
+    ytImprover.completed = false;
+    ytImprover(1);
+  }, delayTime);
+
+  window.addEventListener('load', () => {
+    viewportEl = document.querySelector('meta[name="viewport"]:not([data-fxr-injected])');
+    if (viewportEl) {
+      viewportEl.parentNode.removeChild(viewportEl);
+    }
+
+    onNavigate(0);
+  });
+
+  window.addEventListener('pushstate', onNavigate);
+
+  window.addEventListener('popstate', onNavigate);
+
+  window.addEventListener('click', evt => {
+    if (!window.location.pathname.startsWith(YT_PATHS.watch)) {
+      return;
+    }
+    if (is360 && evt.target.closest(YT_SELECTORS.moviePlayer) && !evt.target.closest('.ytp-chrome-bottom')) {
+      const playerEl = document.querySelector(YT_SELECTORS.moviePlayer);
+      if (!playerEl) {
+        return;
+      }
+      playerEl.requestFullscreen();
+    }
+  });
+
+  function ytImprover360 () {
+    if (!window.location.pathname.startsWith(YT_PATHS.watch)) {
+      is360 = false;
+      return;
+    }
+
+    const disclaimerEl = document.querySelector(YT_SELECTORS.disclaimer);
+    is360 = disclaimerEl ? disclaimerEl.textContent.includes('360') : false;
+
+    if (!is360) {
+      return;
+    }
+
+    qs = new URLSearchParams(window.location.search);
+
+    const currentProjection = (qs.get('mozVideoProjection') || '').toLowerCase();
+    qs.delete('mozVideoProjection');
+    switch (currentProjection) {
+      case '360':
+        qs.set('mozVideoProjection', '360');
+        break;
+      case '360_auto':
+      default:
+        qs.set('mozVideoProjection', '360_auto');
+        break;
+    }
+
+    const newUrl = getNewUrl(qs);
+    if (newUrl && window.location.pathname + window.location.search !== newUrl) {
+      window.history.replaceState({}, document.title, newUrl);
+      return newUrl;
+    }
+  }
+
+  function getNewUrl (qs) {
+    let newUrl = `${window.location.pathname}`;
+    if (qs) {
+      newUrl = `${newUrl}?${qs}`;
+    }
+    return newUrl;
+  }
+
   const ytImprover = window.ytImprover = (state, attempts) => {
+    if (!window.location.pathname.startsWith(YT_PATHS.watch)) {
+      ytImprover.completed = true;
+      return;
+    }
     if (ytImprover.completed) {
       return;
     }
@@ -49,7 +132,7 @@
       return;
     }
 
-    let player = document.getElementById('movie_player');
+    let player = document.querySelector(YT_SELECTORS.moviePlayer);
     let reason = 'unknown';
     if (state !== 1) {
       reason = 'invalid state';
@@ -177,21 +260,20 @@
     log(`Changed quality from "${currentQuality}" to "${newBestQuality}"`);
   };
 
-  if (window.location.pathname.startsWith('/watch')) {
-    const onYouTubePlayerReady = window.onYouTubePlayerReady = evt => {
-      log('`onYouTubePlayerReady` called');
-      window.ytImprover(1);
-      evt.addEventListener('onStateChange', 'ytImprover');
-    };
+  window.onYouTubePlayerReady = evt => {
+    log('`onYouTubePlayerReady` called');
+    window.ytImprover(1);
+    evt.addEventListener('onStateChange', 'ytImprover');
+    ytImprover360();
+  };
 
-    window.addEventListener('spfready', () => {
-      log('`spfready` event fired');
-      if (typeof window.ytplayer === 'object' && window.ytplayer.config) {
-        log('`window.ytplayer.config.args.jsapicallback` set');
-        window.ytplayer.config.args.jsapicallback = 'onYouTubePlayerReady';
-      }
-    });
-
-    ytImprover(1);
-  }
-})();
+  window.addEventListener('spfready', () => {
+    log('`spfready` event fired');
+    if (typeof window.ytplayer === 'object' && window.ytplayer.config) {
+      log('`window.ytplayer.config.args.jsapicallback` set');
+      window.ytplayer.config.args.jsapicallback = 'onYouTubePlayerReady';
+    }
+  });
+} catch (err) {
+  console.error(LOGTAG, 'Encountered error:', err);
+}

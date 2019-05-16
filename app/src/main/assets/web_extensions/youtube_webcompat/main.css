@@ -1,6 +1,6 @@
 /* To hide harmless warnings. */
 .alert-with-button-renderer, .ytm-alert-with-button-renderer, ytm-alert-with-button-renderer,
-.ytp-ad-module, ytp-ad-module
+.ytp-ad-module, ytp-ad-module,
 .ytp-generic-popup, ytp-generic-popup {
   display: none;
 }
