@@ -30,10 +30,7 @@ public class AlertPromptWidget extends PromptWidget {
         initialize(aContext);
     }
 
-    @Override
     protected void initialize(Context aContext) {
-        super.initialize(aContext);
-
         inflate(aContext, R.layout.prompt_alert, this);
 
         mAudio = AudioEngine.fromContext(aContext);

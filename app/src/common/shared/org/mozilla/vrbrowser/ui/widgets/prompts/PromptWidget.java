@@ -11,8 +11,9 @@ import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
+import org.mozilla.vrbrowser.ui.widgets.dialogs.UIDialog;
 
-public class PromptWidget extends UIWidget implements WidgetManagerDelegate.FocusChangeListener {
+public class PromptWidget extends UIDialog {
 
     protected TextView mTitle;
     protected TextView mMessage;
@@ -29,10 +30,6 @@ public class PromptWidget extends UIWidget implements WidgetManagerDelegate.Focu
 
     public PromptWidget(Context aContext, AttributeSet aAttrs, int aDefStyle) {
         super(aContext, aAttrs, aDefStyle);
-    }
-
-    protected void initialize(Context aContext) {
-        mWidgetManager.addFocusChangeListener(this);
     }
 
     public void setTitle(String title) {
@@ -66,12 +63,6 @@ public class PromptWidget extends UIWidget implements WidgetManagerDelegate.Focu
         aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.browser_children_z_distance);
     }
 
-    @Override
-    public void releaseWidget() {
-        mWidgetManager.removeFocusChangeListener(this);
-
-        super.releaseWidget();
-    }
 
     @Override
     public void show() {

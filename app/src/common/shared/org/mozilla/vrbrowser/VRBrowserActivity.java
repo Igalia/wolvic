@@ -141,6 +141,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private ConnectivityReceiver mConnectivityReceiver;
     private boolean mConnectionAvailable = true;
     private AudioManager mAudioManager;
+    private Widget mActiveDialog;
 
     private boolean callOnAudioManager(Consumer<AudioManager> fn) {
         if (mAudioManager == null) {
@@ -588,6 +589,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     void handleMotionEvent(final int aHandle, final int aDevice, final boolean aPressed, final float aX, final float aY) {
         runOnUiThread(() -> {
             Widget widget = mWidgets.get(aHandle);
+            if (!isWidgetInputEnabled(widget)) {
+                widget = null; // Fallback to mRootWidget in order to allow world clicks to dismiss UI.
+            }
             float scale = widget != null ? widget.getPlacement().textureScale : 1.0f;
             final float x = aX / scale;
             final float y = aY / scale;
@@ -608,6 +612,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     void handleScrollEvent(final int aHandle, final int aDevice, final float aX, final float aY) {
         runOnUiThread(() -> {
             Widget widget = mWidgets.get(aHandle);
+            if (!isWidgetInputEnabled(widget)) {
+                return;
+            }
             if (widget != null) {
                 float scrollDirection = mSettings.getScrollDirection() == 0 ? 1.0f : -1.0f;
                 MotionEventGenerator.dispatchScroll(widget, aDevice, aX * scrollDirection, aY * scrollDirection);
@@ -842,6 +849,22 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         });
     }
 
+    private void updateActiveDialog(final Widget aWidget) {
+        if (!aWidget.isDialog()) {
+            return;
+        }
+
+        if (aWidget.isVisible()) {
+            mActiveDialog = aWidget;
+        } else if (aWidget == mActiveDialog && !aWidget.isVisible()) {
+            mActiveDialog = null;
+        }
+    }
+
+    private boolean isWidgetInputEnabled(Widget aWidget) {
+        return mActiveDialog == null || aWidget == null || mActiveDialog == aWidget || aWidget instanceof KeyboardWidget;
+    }
+
     // VideoAvailabilityListener
     @Override
     public void onVideoAvailabilityChanged(boolean aVideosAvailable) {
@@ -850,10 +873,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     // WidgetManagerDelegate
     @Override
-    public void addWidget(final Widget aWidget) {
+    public void addWidget(Widget aWidget) {
         mWidgets.put(aWidget.getHandle(), aWidget);
         ((View)aWidget).setVisibility(aWidget.getPlacement().visible ? View.VISIBLE : View.GONE);
         queueRunnable(() -> addWidgetNative(aWidget.getHandle(), aWidget.getPlacement()));
+        updateActiveDialog(aWidget);
     }
 
     @Override
@@ -886,7 +910,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         for (UpdateListener listener: mWidgetUpdateListeners) {
             listener.onWidgetUpdate(aWidget);
         }
-
+        updateActiveDialog(aWidget);
     }
 
     @Override
@@ -895,6 +919,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mWidgetContainer.removeView((View) aWidget);
         aWidget.setFirstDraw(false);
         queueRunnable(() -> removeWidgetNative(aWidget.getHandle()));
+        if (aWidget == mActiveDialog) {
+            mActiveDialog = null;
+        }
     }
 
     @Override

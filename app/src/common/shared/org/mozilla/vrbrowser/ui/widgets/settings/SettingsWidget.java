@@ -31,6 +31,7 @@ import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.RestartDialogWidget;
+import org.mozilla.vrbrowser.ui.widgets.dialogs.UIDialog;
 import org.mozilla.vrbrowser.ui.widgets.prompts.AlertPromptWidget;
 
 import java.io.UnsupportedEncodingException;
@@ -39,7 +40,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.FocusChangeListener, WidgetManagerDelegate.WorldClickListener, SettingsView.Delegate {
+public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.WorldClickListener, SettingsView.Delegate {
     private static final String LOGTAG = "VRB";
     private AudioEngine mAudio;
     private SettingsView mCurrentView;
@@ -82,7 +83,6 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
     private void initialize(Context aContext) {
         inflate(aContext, R.layout.settings, this);
 
-        mWidgetManager.addFocusChangeListener(this);
         mWidgetManager.addWorldClickListener(this);
         mMainLayout = findViewById(R.id.optionsLayout);
 
@@ -211,7 +211,6 @@ public class SettingsWidget extends UIWidget implements WidgetManagerDelegate.Fo
     @Override
     public void releaseWidget() {
         mWidgetManager.removeWorldClickListener(this);
-        mWidgetManager.removeFocusChangeListener(this);
 
         super.releaseWidget();
     }

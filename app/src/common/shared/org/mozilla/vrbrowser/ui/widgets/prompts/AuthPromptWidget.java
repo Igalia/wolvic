@@ -42,10 +42,7 @@ public class AuthPromptWidget extends PromptWidget {
         initialize(aContext);
     }
 
-    @Override
     protected void initialize(Context aContext) {
-        super.initialize(aContext);
-
         inflate(aContext, R.layout.prompt_auth, this);
 
         mAudio = AudioEngine.fromContext(aContext);

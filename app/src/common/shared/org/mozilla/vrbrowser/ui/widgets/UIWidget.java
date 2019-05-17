@@ -183,6 +183,11 @@ public abstract class UIWidget extends FrameLayout implements Widget {
     }
 
     @Override
+    public boolean isDialog() {
+        return false;
+    }
+
+    @Override
     public void setFirstDraw(final boolean aIsFirstDraw) {
         mWidgetPlacement.firstDraw = aIsFirstDraw;
     }

@@ -23,7 +23,7 @@ import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 
 import java.net.URI;
 
-public class PermissionWidget extends UIWidget implements WidgetManagerDelegate.FocusChangeListener {
+public class PermissionWidget extends UIDialog implements WidgetManagerDelegate.FocusChangeListener {
 
     private static final String LOGTAG = "VRB";
 
@@ -58,8 +58,6 @@ public class PermissionWidget extends UIWidget implements WidgetManagerDelegate.
     private void initialize(Context aContext) {
         inflate(aContext, R.layout.permission, this);
 
-        mWidgetManager.addFocusChangeListener(this);
-
         mPermissionIcon = findViewById(R.id.permissionIcon);
         mPermissionMessage = findViewById(R.id.permissionText);
 
@@ -68,13 +66,6 @@ public class PermissionWidget extends UIWidget implements WidgetManagerDelegate.
 
         Button allowButton = findViewById(R.id.permissionAllowButton);
         allowButton.setOnClickListener(v -> handlePermissionResult(true));
-    }
-
-    @Override
-    public void releaseWidget() {
-        mWidgetManager.removeFocusChangeListener(this);
-
-        super.releaseWidget();
     }
 
     @Override
@@ -176,14 +167,5 @@ public class PermissionWidget extends UIWidget implements WidgetManagerDelegate.
         mPermissionCallback = null;
 
         onDismiss();
-    }
-
-    // WidgetManagerDelegate.FocusChangeListener
-
-    @Override
-    public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-        if (oldFocus == this && isVisible()) {
-            onDismiss();
-        }
     }
 }

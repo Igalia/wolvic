@@ -21,7 +21,7 @@ import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 
-public class CrashDialogWidget extends UIWidget implements WidgetManagerDelegate.FocusChangeListener {
+public class CrashDialogWidget extends UIDialog {
 
     private static final String LOGTAG = "VRB";
 
@@ -149,13 +149,5 @@ public class CrashDialogWidget extends UIWidget implements WidgetManagerDelegate
 
     public void setCrashDialogDelegate(CrashDialogDelegate aDelegate) {
         mCrashDialogDelegate = aDelegate;
-    }
-
-    // WidgetManagerDelegate.FocusChangeListener
-    @Override
-    public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-        if (oldFocus == this && isVisible()) {
-            onDismiss();
-        }
     }
 }
