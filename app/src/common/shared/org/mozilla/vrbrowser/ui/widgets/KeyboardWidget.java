@@ -275,6 +275,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         }
 
         updateCandidates();
+        updateSpecialKeyLabels();
     }
 
     public void dismiss() {

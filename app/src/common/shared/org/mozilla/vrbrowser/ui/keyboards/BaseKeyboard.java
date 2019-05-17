@@ -34,6 +34,11 @@ public abstract class BaseKeyboard implements KeyboardInterface {
     }
 
     @Override
+    public String getSpaceKeyText(String aComposingText) {
+        return StringUtils.getStringByLocale(mContext, R.string.keyboard_space_label, getLocale()).toUpperCase();
+    }
+
+    @Override
     public String getComposingText(String aComposing, String aCode) {
         return aComposing.replaceFirst(Pattern.quote(aCode), "");
     }
