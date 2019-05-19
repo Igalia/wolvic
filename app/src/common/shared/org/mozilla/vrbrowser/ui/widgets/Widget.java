@@ -24,6 +24,7 @@ public interface Widget {
     void setFirstDraw(boolean aIsFirstDraw);
     boolean getFirstDraw();
     boolean isVisible();
+    boolean isDialog();
     void setVisible(boolean aVisible);
     void resizeByMultiplier(float aspect, float multiplier);
 }

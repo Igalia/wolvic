@@ -24,7 +24,7 @@ ext.deps = [:]
 def versions = [:]
 // GeckoView versions can be found here:
 // https://maven.mozilla.org/?prefix=maven2/org/mozilla/geckoview/
-versions.gecko_view = "68.0.20190509033505"
+versions.gecko_view = "68.0.20190517162900"
 versions.android_components = "0.31.0"
 versions.mozilla_speech = "1.0.6"
 versions.google_vr = "1.190.0"
@@ -70,6 +70,7 @@ support.cardview = "androidx.cardview:cardview:$versions.support"
 support.design = "com.google.android.material:material:$versions.support"
 support.v4 = "androidx.legacy:legacy-support-v4:$versions.support"
 support.core_utils = "androidx.legacy:legacy-support-core-utils:$versions.support"
+support.vector_drawable = "androidx.vectordrawable:vectordrawable:$versions.support"
 deps.support = support
 
 def room = [:]

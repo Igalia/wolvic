@@ -35,10 +35,7 @@ public class ConfirmPromptWidget extends PromptWidget {
         initialize(aContext);
     }
 
-    @Override
     protected void initialize(Context aContext) {
-        super.initialize(aContext);
-
         inflate(aContext, R.layout.prompt_confirm, this);
 
         mWidgetManager.addFocusChangeListener(this);

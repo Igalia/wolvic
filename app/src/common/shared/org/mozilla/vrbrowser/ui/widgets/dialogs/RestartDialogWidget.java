@@ -19,7 +19,7 @@ import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 
-public class RestartDialogWidget extends UIWidget {
+public class RestartDialogWidget extends UIDialog {
 
     private static final String LOGTAG = "VRB";
 

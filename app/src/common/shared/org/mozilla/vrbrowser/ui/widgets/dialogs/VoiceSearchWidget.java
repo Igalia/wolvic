@@ -35,8 +35,8 @@ import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import androidx.annotation.IdRes;
 import androidx.core.app.ActivityCompat;
 
-public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate.PermissionListener,
-        Application.ActivityLifecycleCallbacks, WidgetManagerDelegate.FocusChangeListener {
+public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate.PermissionListener,
+        Application.ActivityLifecycleCallbacks {
 
     private static final String LOGTAG = "VRB";
     private static final int VOICESEARCH_AUDIO_REQUEST_CODE = 7455;
@@ -87,7 +87,6 @@ public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate
 
         mAudio = AudioEngine.fromContext(aContext);
 
-        mWidgetManager.addFocusChangeListener(this);
         mWidgetManager.addPermissionListener(this);
 
         mMozillaSpeechService = MozillaSpeechService.getInstance();
@@ -135,7 +134,6 @@ public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate
 
     @Override
     public void releaseWidget() {
-        mWidgetManager.removeFocusChangeListener(this);
         mWidgetManager.removePermissionListener(this);
         mMozillaSpeechService.removeListener(mVoiceSearchListener);
         ((Application)getContext().getApplicationContext()).unregisterActivityLifecycleCallbacks(this);
@@ -370,13 +368,4 @@ public class VoiceSearchWidget extends UIWidget implements WidgetManagerDelegate
     public void onActivityDestroyed(Activity activity) {
 
     }
-
-    // WidgetManagerDelegate.FocusChangeListener
-    @Override
-    public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-        if (isVisible()) {
-            hide(REMOVE_WIDGET);
-        }
-    }
-
 }

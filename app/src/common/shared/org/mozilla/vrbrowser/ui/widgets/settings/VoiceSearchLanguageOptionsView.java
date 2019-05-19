@@ -3,10 +3,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.vrbrowser.ui.widgets.options;
+package org.mozilla.vrbrowser.ui.widgets.settings;
 
 import android.content.Context;
-import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ScrollView;
 
@@ -16,36 +15,18 @@ import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.views.settings.ButtonSetting;
 import org.mozilla.vrbrowser.ui.views.settings.RadioGroupSetting;
-import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
-import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
 
-public class VoiceSearchLanguageOptionsWidget extends UIWidget implements
-        WidgetManagerDelegate.WorldClickListener,
-        WidgetManagerDelegate.FocusChangeListener {
-
+class VoiceSearchLanguageOptionsView extends SettingsView {
     private AudioEngine mAudio;
     private UIButton mBackButton;
-
     private RadioGroupSetting mLanguage;
-
     private ButtonSetting mResetButton;
-
     private ScrollView mScrollbar;
 
-    public VoiceSearchLanguageOptionsWidget(Context aContext) {
-        super(aContext);
-        initialize(aContext);
-    }
-
-    public VoiceSearchLanguageOptionsWidget(Context aContext, AttributeSet aAttrs) {
-        super(aContext, aAttrs);
-        initialize(aContext);
-    }
-
-    public VoiceSearchLanguageOptionsWidget(Context aContext, AttributeSet aAttrs, int aDefStyle) {
-        super(aContext, aAttrs, aDefStyle);
+    public VoiceSearchLanguageOptionsView(Context aContext, WidgetManagerDelegate aWidgetManager) {
+        super(aContext, aWidgetManager);
         initialize(aContext);
     }
 
@@ -54,8 +35,6 @@ public class VoiceSearchLanguageOptionsWidget extends UIWidget implements
 
         mAudio = AudioEngine.fromContext(aContext);
 
-        mWidgetManager.addFocusChangeListener(this);
-        mWidgetManager.addWorldClickListener(this);
 
         mBackButton = findViewById(R.id.backButton);
         mBackButton.setOnClickListener(view -> {
@@ -78,30 +57,8 @@ public class VoiceSearchLanguageOptionsWidget extends UIWidget implements
     }
 
     @Override
-    protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
-        aPlacement.visible = false;
-        aPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.developer_options_width);
-        aPlacement.height = WidgetPlacement.dpDimension(getContext(), R.dimen.developer_options_height);
-        aPlacement.parentAnchorX = 0.5f;
-        aPlacement.parentAnchorY = 0.5f;
-        aPlacement.anchorX = 0.5f;
-        aPlacement.anchorY = 0.5f;
-        aPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.restart_dialog_world_y);
-        aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.restart_dialog_world_z);
-    }
-
-    @Override
-    public void releaseWidget() {
-        mWidgetManager.removeFocusChangeListener(this);
-        mWidgetManager.removeWorldClickListener(this);
-
-        super.releaseWidget();
-    }
-
-    @Override
-    public void show() {
-        super.show();
-
+    public void onShown() {
+        super.onShown();
         mScrollbar.scrollTo(0, 0);
     }
 
@@ -123,23 +80,4 @@ public class VoiceSearchLanguageOptionsWidget extends UIWidget implements
 
         SettingsStore.getInstance(getContext()).setVoiceSearchLanguage(mLanguage.getValueForId(checkedId).toString());
     }
-
-    // WindowManagerDelegate.FocusChangeListener
-
-    @Override
-    public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-        if (oldFocus == this && isVisible() && findViewById(newFocus.getId()) == null) {
-            onDismiss();
-        }
-    }
-
-    // WorldClickListener
-
-    @Override
-    public void onWorldClick() {
-        if (isVisible()) {
-            onDismiss();
-        }
-    }
-
 }

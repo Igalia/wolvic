@@ -113,7 +113,8 @@ public class NavigationURLBar extends FrameLayout {
         mURL = findViewById(R.id.urlEditText);
         mURL.setShowSoftInputOnFocus(false);
         mURL.setOnEditorActionListener((aTextView, actionId, event) -> {
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
+            if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_SEARCH
+                    || actionId == EditorInfo.IME_ACTION_GO || actionId == EditorInfo.IME_ACTION_SEND) {
                 handleURLEdit(aTextView.getText().toString());
                 return true;
             }

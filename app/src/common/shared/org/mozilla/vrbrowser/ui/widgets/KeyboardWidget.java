@@ -60,12 +60,11 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
     private static final String LOGTAG = "VRB";
 
-    private static int MAX_CHARS_PER_LINE_LONG = 10;
-    private static int MAX_CHARS_PER_LINE_SHORT = 7;
+    private static int MAX_CHARS_PER_POPUP_LINE = 10;
 
     private CustomKeyboardView mKeyboardView;
     private CustomKeyboardView mKeyboardNumericView;
-    private CustomKeyboardView mPopupKeyboardview;
+    private CustomKeyboardView mPopupKeyboardView;
     private ArrayList<KeyboardInterface> mKeyboards;
     private KeyboardInterface mCurrentKeyboard;
     private CustomKeyboard mDefaultKeyboardSymbols;
@@ -118,7 +117,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
         mKeyboardView = findViewById(R.id.keyboard);
         mKeyboardNumericView = findViewById(R.id.keyboardNumeric);
-        mPopupKeyboardview = findViewById(R.id.popupKeyboard);
+        mPopupKeyboardView = findViewById(R.id.popupKeyboard);
         mPopupKeyboardLayer = findViewById(R.id.popupKeyboardLayer);
         mLanguageSelectorView = findViewById(R.id.langSelectorView);
         mKeyboardLayout = findViewById(R.id.keyboardLayout);
@@ -143,16 +142,16 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
         mKeyboardView.setPreviewEnabled(false);
         mKeyboardView.setKeyboard(mCurrentKeyboard.getAlphabeticKeyboard());
-        mPopupKeyboardview.setPreviewEnabled(false);
-        mPopupKeyboardview.setKeyBackground(getContext().getDrawable(R.drawable.keyboard_popupkey_background));
-        mPopupKeyboardview.setKeyCapStartBackground(getContext().getDrawable(R.drawable.keyboard_popupkey_capstart_background));
-        mPopupKeyboardview.setKeyCapEndBackground(getContext().getDrawable(R.drawable.keyboard_popupkey_capend_background));
-        mPopupKeyboardview.setKeySingleStartBackground(getContext().getDrawable(R.drawable.keyboard_popupkey_single_background));
-        mPopupKeyboardview.setKeyTextColor(getContext().getColor(R.color.asphalt));
-        mPopupKeyboardview.setSelectedForegroundColor(getContext().getColor(R.color.fog));
-        mPopupKeyboardview.setForegroundColor(getContext().getColor(R.color.fog));
-        mPopupKeyboardview.setKeyboardHoveredPadding(0);
-        mPopupKeyboardview.setKeyboardPressedPadding(0);
+        mPopupKeyboardView.setPreviewEnabled(false);
+        mPopupKeyboardView.setKeyBackground(getContext().getDrawable(R.drawable.keyboard_popupkey_background));
+        mPopupKeyboardView.setKeyCapStartBackground(getContext().getDrawable(R.drawable.keyboard_popupkey_capstart_background));
+        mPopupKeyboardView.setKeyCapEndBackground(getContext().getDrawable(R.drawable.keyboard_popupkey_capend_background));
+        mPopupKeyboardView.setKeySingleStartBackground(getContext().getDrawable(R.drawable.keyboard_popupkey_single_background));
+        mPopupKeyboardView.setKeyTextColor(getContext().getColor(R.color.asphalt));
+        mPopupKeyboardView.setSelectedForegroundColor(getContext().getColor(R.color.fog));
+        mPopupKeyboardView.setForegroundColor(getContext().getColor(R.color.fog));
+        mPopupKeyboardView.setKeyboardHoveredPadding(0);
+        mPopupKeyboardView.setKeyboardPressedPadding(0);
 
         mKeyboardNumericView.setPreviewEnabled(false);
 
@@ -163,10 +162,10 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mKeyboardView.setFeaturedKeyBackground(R.drawable.keyboard_featured_key_background, featuredKeys);
 
         mKeyboardView.setOnKeyListener((view, i, keyEvent) -> false);
-        mPopupKeyboardview.setOnKeyListener((view, i, keyEvent) -> false);
+        mPopupKeyboardView.setOnKeyListener((view, i, keyEvent) -> false);
         mKeyboardNumericView.setOnKeyListener((view, i, keyEvent) -> false);
         mKeyboardView.setOnKeyboardActionListener(this);
-        mPopupKeyboardview.setOnKeyboardActionListener(this);
+        mPopupKeyboardView.setOnKeyboardActionListener(this);
         mKeyboardNumericView.setOnKeyboardActionListener(this);
 
         mShiftOnIcon = getResources().getDrawable(R.drawable.ic_icon_keyboard_shift_on, getContext().getTheme());
@@ -241,6 +240,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         } else {
             mKeyboardView.setKeyboard(mCurrentKeyboard.getAlphabeticKeyboard());
         }
+        handleShift(false);
         updateCandidates();
     }
 
@@ -275,6 +275,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         }
 
         updateCandidates();
+        updateSpecialKeyLabels();
     }
 
     public void dismiss() {
@@ -294,7 +295,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     }
 
     private void hideOverlays() {
-        mPopupKeyboardview.setVisibility(View.GONE);
+        mPopupKeyboardView.setVisibility(View.GONE);
         mPopupKeyboardLayer.setVisibility(View.GONE);
         mLanguageSelectorView.setVisibility(View.GONE);
     }
@@ -315,44 +316,17 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                     RelativeLayout.LayoutParams.WRAP_CONTENT,
                     RelativeLayout.LayoutParams.WRAP_CONTENT);
 
-            boolean rightAligned = false;
-            int maxCharsPerLine = MAX_CHARS_PER_LINE_LONG;
+            float totalWidth = WidgetPlacement.convertDpToPixel(getContext(), mCurrentKeyboard.getAlphabeticKeyboardWidth());
+            totalWidth -= mKeyboardView.getPaddingLeft() + mKeyboardView.getPaddingRight();
+            float keyX = popupKey.x + WidgetPlacement.convertDpToPixel(getContext(), mKeyWidth * 0.5f);
+            boolean rightAligned = keyX >= totalWidth * 0.5f;
             StringBuilder popupCharacters = new StringBuilder(popupKey.popupCharacters);
-            switch (popupKey.codes[0]) {
-                case 110: {
-                    rightAligned = true;
-                    maxCharsPerLine = MAX_CHARS_PER_LINE_SHORT;
-                }
-                break;
-                case 33:
-                case 63:
-                case 98:
-                case 104:
-                case 105:
-                case 106:
-                case 107:
-                case 108:
-                case 109:
-                case 111:
-                case 112:
-                case 117:
-                case 187:{
-                    rightAligned = true;
-                    maxCharsPerLine = MAX_CHARS_PER_LINE_LONG;
-                }
-                default: {
-                    float totalWidth = WidgetPlacement.convertDpToPixel(getContext(), mCurrentKeyboard.getAlphabeticKeyboardWidth());
-                    rightAligned = (float)popupKey.x > totalWidth * 0.5f;
-                    maxCharsPerLine = MAX_CHARS_PER_LINE_LONG;
-                }
-
-            }
 
             if (rightAligned) {
                 params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
                 params.rightMargin = mKeyboardView.getWidth() - popupKey.x - mKeyWidth - mKeyboardNumericView.getPaddingRight();
-                if (popupCharacters.length() > maxCharsPerLine) {
-                    popupCharacters.insert(maxCharsPerLine - 1, popupCharacters.charAt(0));
+                if (popupCharacters.length() > MAX_CHARS_PER_POPUP_LINE) {
+                    popupCharacters.insert(MAX_CHARS_PER_POPUP_LINE - 1, popupCharacters.charAt(0));
                     popupCharacters.replace(0,1, String.valueOf(popupCharacters.charAt(popupCharacters.length()-1)));
                     popupCharacters.deleteCharAt(popupCharacters.length()-1);
                 } else {
@@ -364,11 +338,11 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             params.topMargin = popupKey.y + mKeyboardPopupTopMargin + mKeyboardView.getPaddingTop();
 
             CustomKeyboard popupKeyboard = new CustomKeyboard(getContext(), popupKey.popupResId,
-                    popupCharacters, maxCharsPerLine, 0, getContext().getResources().getDimensionPixelSize(R.dimen.keyboard_vertical_gap));
-            mPopupKeyboardview.setKeyboard(popupKeyboard);
-            mPopupKeyboardview.setLayoutParams(params);
-            mPopupKeyboardview.setShifted(mIsCapsLock);
-            mPopupKeyboardview.setVisibility(View.VISIBLE);
+                    popupCharacters, MAX_CHARS_PER_POPUP_LINE, 0, getContext().getResources().getDimensionPixelSize(R.dimen.keyboard_vertical_gap));
+            mPopupKeyboardView.setKeyboard(popupKeyboard);
+            mPopupKeyboardView.setLayoutParams(params);
+            mPopupKeyboardView.setShifted(mIsCapsLock || mKeyboardView.isShifted());
+            mPopupKeyboardView.setVisibility(View.VISIBLE);
             mPopupKeyboardLayer.setVisibility(View.VISIBLE);
 
             mIsLongPress = true;
@@ -427,7 +401,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                 break;
         }
 
-        if (!mIsCapsLock && primaryCode != CustomKeyboard.KEYCODE_SHIFT) {
+        if (!mIsCapsLock && primaryCode != CustomKeyboard.KEYCODE_SHIFT && mPopupKeyboardView.getVisibility() != View.VISIBLE) {
             handleShift(false);
         }
 
@@ -535,7 +509,6 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                     if (mIsCapsLock) {
                         key.icon = mCapsLockOnIcon;
                         key.pressed = true;
-
                     } else {
                         key.icon = shifted ? mShiftOnIcon : mShiftOffIcon;
                         key.pressed = false;
@@ -616,6 +589,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
         SettingsStore.getInstance(getContext()).setSelectedKeyboard(aKeyboard.getLocale());
         mKeyboardView.setKeyboard(mCurrentKeyboard.getAlphabeticKeyboard());
+        handleShift(false);
         hideOverlays();
         updateCandidates();
     }

@@ -37,7 +37,7 @@ public interface KeyboardInterface {
     String getComposingText(String aComposing, String aCode);
     String getKeyboardTitle();
     Locale getLocale();
-    default String getSpaceKeyText(String aComposingText) { return ""; }
+    String getSpaceKeyText(String aComposingText);
     String getEnterKeyText(int aIMEOptions, String aComposingText);
     String getModeChangeKeyText();
 }

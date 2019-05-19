@@ -18,7 +18,7 @@ import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.SessionStore;
 import org.mozilla.vrbrowser.ui.views.UIButton;
-import org.mozilla.vrbrowser.ui.widgets.dialogs.SettingsWidget;
+import org.mozilla.vrbrowser.ui.widgets.settings.SettingsWidget;
 
 import java.util.ArrayList;
 import java.util.Arrays;

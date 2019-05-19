@@ -57,10 +57,7 @@ public class ChoicePromptWidget extends PromptWidget {
         initialize(aContext);
     }
 
-    @Override
     protected void initialize(Context aContext) {
-        super.initialize(aContext);
-
         inflate(aContext, R.layout.prompt_choice, this);
 
         mWidgetManager.addFocusChangeListener(this);

@@ -3,10 +3,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.vrbrowser.ui.widgets.dialogs;
+package org.mozilla.vrbrowser.ui.widgets.settings;
 
 import android.content.Context;
-import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ScrollView;
 
@@ -17,40 +16,19 @@ import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.views.settings.ButtonSetting;
 import org.mozilla.vrbrowser.ui.views.settings.ImageRadioGroupSetting;
-import org.mozilla.vrbrowser.ui.views.settings.RadioGroupSetting;
 import org.mozilla.vrbrowser.ui.views.settings.SwitchSetting;
-import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
-import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
-import org.mozilla.vrbrowser.utils.LocaleUtils;
 
-public class EnvironmentOptionsWidget extends UIWidget implements
-        WidgetManagerDelegate.WorldClickListener,
-        WidgetManagerDelegate.FocusChangeListener {
-
+class EnvironmentOptionsView extends SettingsView {
     private AudioEngine mAudio;
     private UIButton mBackButton;
-
     private SwitchSetting mEnvOverrideSwitch;
     private ImageRadioGroupSetting mEnvironmentsRadio;
-    private int mRestartDialogHandle = -1;
-
     private ButtonSetting mResetButton;
-
     private ScrollView mScrollbar;
 
-    public EnvironmentOptionsWidget(Context aContext) {
-        super(aContext);
-        initialize(aContext);
-    }
-
-    public EnvironmentOptionsWidget(Context aContext, AttributeSet aAttrs) {
-        super(aContext, aAttrs);
-        initialize(aContext);
-    }
-
-    public EnvironmentOptionsWidget(Context aContext, AttributeSet aAttrs, int aDefStyle) {
-        super(aContext, aAttrs, aDefStyle);
+    public EnvironmentOptionsView(Context aContext, WidgetManagerDelegate aWidgetManager) {
+        super(aContext, aWidgetManager);
         initialize(aContext);
     }
 
@@ -58,9 +36,6 @@ public class EnvironmentOptionsWidget extends UIWidget implements
         inflate(aContext, R.layout.options_environment, this);
 
         mAudio = AudioEngine.fromContext(aContext);
-
-        mWidgetManager.addFocusChangeListener(this);
-        mWidgetManager.addWorldClickListener(this);
 
         mBackButton = findViewById(R.id.backButton);
         mBackButton.setOnClickListener(view -> {
@@ -84,7 +59,7 @@ public class EnvironmentOptionsWidget extends UIWidget implements
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
             SessionStore.get().loadUri(getContext().getString(R.string.environment_override_help_url));
-            hide(REMOVE_WIDGET);
+            exitWholeSettings();
         });
 
         mResetButton = findViewById(R.id.resetButton);
@@ -94,38 +69,15 @@ public class EnvironmentOptionsWidget extends UIWidget implements
     }
 
     @Override
-    protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
-        aPlacement.visible = false;
-        aPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.developer_options_width);
-        aPlacement.height = WidgetPlacement.dpDimension(getContext(), R.dimen.developer_options_height);
-        aPlacement.parentAnchorX = 0.5f;
-        aPlacement.parentAnchorY = 0.5f;
-        aPlacement.anchorX = 0.5f;
-        aPlacement.anchorY = 0.5f;
-        aPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.restart_dialog_world_y);
-        aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.restart_dialog_world_z);
-    }
-
-    @Override
-    public void releaseWidget() {
-        mWidgetManager.removeFocusChangeListener(this);
-        mWidgetManager.removeWorldClickListener(this);
-
-        super.releaseWidget();
-    }
-
-    @Override
-    public void show() {
-        super.show();
+    public void onShown() {
+        super.onShown();
 
         mScrollbar.scrollTo(0, 0);
         mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_NO_DIM_BRIGHTNESS);
     }
 
     @Override
-    public void hide(@HideFlags int aHideFlags) {
-        super.hide(aHideFlags);
-
+    public void onHidden() {
         mWidgetManager.popWorldBrightness(this);
     }
 
@@ -173,36 +125,4 @@ public class EnvironmentOptionsWidget extends UIWidget implements
         }
     }
 
-    private void showRestartDialog() {
-        hide(UIWidget.REMOVE_WIDGET);
-
-        UIWidget widget = getChild(mRestartDialogHandle);
-        if (widget == null) {
-            widget = createChild(RestartDialogWidget.class, false);
-            mRestartDialogHandle = widget.getHandle();
-            widget.setDelegate(() -> onRestartDialogDismissed());
-        }
-
-        widget.show();
-    }
-
-    private void onRestartDialogDismissed() {
-        show();
-    }
-
-    // WindowManagerDelegate.FocusChangeListener
-    @Override
-    public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-        if (oldFocus == this && isVisible() && findViewById(newFocus.getId()) == null) {
-            onDismiss();
-        }
-    }
-
-    // WorldClickListener
-    @Override
-    public void onWorldClick() {
-        if (isVisible()) {
-            onDismiss();
-        }
-    }
 }

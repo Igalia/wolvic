@@ -3,10 +3,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.vrbrowser.ui.widgets.options;
+package org.mozilla.vrbrowser.ui.widgets.settings;
 
 import android.content.Context;
-import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ScrollView;
 
@@ -16,48 +15,26 @@ import org.mozilla.vrbrowser.browser.SessionStore;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.views.settings.ButtonSetting;
-import org.mozilla.vrbrowser.ui.views.settings.RadioGroupSetting;
 import org.mozilla.vrbrowser.ui.views.settings.SingleEditSetting;
 import org.mozilla.vrbrowser.ui.views.settings.SwitchSetting;
-import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
-import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
-import org.mozilla.vrbrowser.ui.widgets.dialogs.RestartDialogWidget;
 
 import static org.mozilla.vrbrowser.utils.ServoUtils.isServoAvailable;
 
-public class DeveloperOptionsWidget extends UIWidget implements
-        WidgetManagerDelegate.WorldClickListener,
-        WidgetManagerDelegate.FocusChangeListener {
-
+class DeveloperOptionsView extends SettingsView {
     private AudioEngine mAudio;
     private UIButton mBackButton;
-
     private SwitchSetting mRemoteDebuggingSwitch;
     private SwitchSetting mConsoleLogsSwitch;
     private SwitchSetting mMultiprocessSwitch;
     private SwitchSetting mServoSwitch;
-
     private SingleEditSetting mHomepageEdit;
     private String mDefaultHomepageUrl;
-
     private ButtonSetting mResetButton;
-
-    private int mRestartDialogHandle = -1;
     private ScrollView mScrollbar;
 
-    public DeveloperOptionsWidget(Context aContext) {
-        super(aContext);
-        initialize(aContext);
-    }
-
-    public DeveloperOptionsWidget(Context aContext, AttributeSet aAttrs) {
-        super(aContext, aAttrs);
-        initialize(aContext);
-    }
-
-    public DeveloperOptionsWidget(Context aContext, AttributeSet aAttrs, int aDefStyle) {
-        super(aContext, aAttrs, aDefStyle);
+    public DeveloperOptionsView(Context aContext, WidgetManagerDelegate aWidgetManager) {
+        super(aContext, aWidgetManager);
         initialize(aContext);
     }
 
@@ -72,10 +49,7 @@ public class DeveloperOptionsWidget extends UIWidget implements
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
 
-            hide(REMOVE_WIDGET);
-            if (mDelegate != null) {
-                mDelegate.onDismiss();
-            }
+            onDismiss();
         });
 
         mDefaultHomepageUrl = getContext().getString(R.string.homepage_url);
@@ -114,35 +88,15 @@ public class DeveloperOptionsWidget extends UIWidget implements
     }
 
     @Override
-    protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
-        aPlacement.visible = false;
-        aPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.developer_options_width);
-        aPlacement.height = WidgetPlacement.dpDimension(getContext(), R.dimen.developer_options_height);
-        aPlacement.parentAnchorX = 0.5f;
-        aPlacement.parentAnchorY = 0.5f;
-        aPlacement.anchorX = 0.5f;
-        aPlacement.anchorY = 0.5f;
-        aPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.restart_dialog_world_y);
-        aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.restart_dialog_world_z);
-    }
-
-    @Override
-    public void show() {
-        super.show();
-
-        mWidgetManager.addWorldClickListener(this);
-        mWidgetManager.addFocusChangeListener(this);
+    public void onShown() {
+        super.onShown();
         mScrollbar.scrollTo(0, 0);
     }
 
     @Override
-    public void hide(@HideFlags int aHideFlags) {
-        super.hide(aHideFlags);
-
+    public void onHidden() {
+        super.onHidden();
         mHomepageEdit.cancel();
-
-        mWidgetManager.removeWorldClickListener(this);
-        mWidgetManager.removeFocusChangeListener(this);
     }
 
     @Override
@@ -153,23 +107,6 @@ public class DeveloperOptionsWidget extends UIWidget implements
         } else {
             super.onDismiss();
         }
-    }
-
-    private void showRestartDialog() {
-        hide(UIWidget.REMOVE_WIDGET);
-
-        UIWidget widget = getChild(mRestartDialogHandle);
-        if (widget == null) {
-            widget = createChild(RestartDialogWidget.class, false);
-            mRestartDialogHandle = widget.getHandle();
-            widget.setDelegate(() -> onRestartDialogDismissed());
-        }
-
-        widget.show();
-    }
-
-    private void onRestartDialogDismissed() {
-       show();
     }
 
     private OnClickListener mHomepageListener = (view) -> {
@@ -215,8 +152,9 @@ public class DeveloperOptionsWidget extends UIWidget implements
         }
         setHomepage(mDefaultHomepageUrl);
 
-        if (restart)
+        if (restart && mDelegate != null) {
             showRestartDialog();
+        }
     };
 
     private void setHomepage(String newHomepage) {
@@ -274,27 +212,12 @@ public class DeveloperOptionsWidget extends UIWidget implements
         }
     }
 
-    // WindowManagerDelegate.FocusChangeListener
-
     @Override
     public void onGlobalFocusChanged(View oldFocus, View newFocus) {
         if (oldFocus != null) {
             if (mHomepageEdit.contains(oldFocus) && mHomepageEdit.isEditing()) {
                 mHomepageEdit.cancel();
             }
-        }
-
-        if (oldFocus == this && isVisible() && findViewById(newFocus.getId()) == null) {
-            onDismiss();
-        }
-    }
-
-    // WorldClickListener
-
-    @Override
-    public void onWorldClick() {
-        if (isVisible()) {
-            onDismiss();
         }
     }
 
