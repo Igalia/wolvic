@@ -6,6 +6,39 @@
     <!-- This string is used on the virtual keyboard to label the 'Enter' key (stylized in uppercase letters as 'ENTER'). -->
     <string name="keyboard_enter_label">ENTER</string>
 
+    <!-- This string is used on the virtual keyboard to label the 'Enter' key with a "Go" IME action.
+         The action key performs a "go" operation to take the user to the target of the text they typed.
+         Typically used, for example, when entering a URL. (stylized in uppercase letters as 'GO')
+    -->
+    <string name="keyboard_go_label">ПЕРЕЙТИ</string>
+
+    <!-- This string is used on the virtual keyboard to label the 'Enter' key with a "Search" IME action.
+         The action key performs a "search" operation, taking the user to the results of searching for the text
+         they have typed. (stylized in uppercase letters as 'SEARCH')
+    -->
+    <string name="keyboard_search_label">ПОИСК</string>
+
+    <!-- This string is used on the virtual keyboard to label the 'Enter' key with a "Send" IME action.
+         The action key performs a "send" operation, delivering the text to its target. This is typically used
+         when composing a message in IM or SMS where sending is immediate. (stylized in uppercase letters as 'SEND')
+    -->
+    <string name="keyboard_send_label">ОТПРАВИТЬ</string>
+
+    <!-- This string is used on the virtual keyboard to label the 'Enter' key with a "Next" IME action.
+         The action key performs a "next" operation, taking the user to the next field that will accept text.
+         (stylized in uppercase letters as 'NEXT')
+    -->
+    <string name="keyboard_next_label">ДАЛЕЕ</string>
+
+    <!-- This string is used on the virtual keyboard to label the 'Enter' key with a "Done" IME action.
+     The action key performs a "done" operation, typically meaning there is nothing more to input and the
+     IME will be closed. (stylized in uppercase letters as 'DONE')
+    -->
+    <string name="keyboard_done_label">ГОТОВО</string>
+
+    <!-- This string is used on the virtual keyboard to label the 'space' key-->
+    <string name="keyboard_space_label">пробел</string>
+
     <!-- This string is displayed in the button that means the user accepts the
          permission requested for in the permission dialog box. -->
     <string name="permission_allow">Разрешить</string>
