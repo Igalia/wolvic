@@ -733,6 +733,17 @@ struct DeviceDelegateOculusVR::State {
     }
   }
 
+  void UpdateDisplayRefreshRate() {
+    if (!ovr || !IsOculusGo()) {
+      return;
+    }
+    if (renderMode == device::RenderMode::StandAlone) {
+      vrapi_SetDisplayRefreshRate(ovr, 72.0f);
+    } else {
+      vrapi_SetDisplayRefreshRate(ovr, 60.0f);
+    }
+  }
+
   void AddUILayer(const OculusLayerPtr& aLayer, VRLayerSurface::SurfaceType aSurfaceType) {
     if (ovr) {
       vrb::RenderContextPtr ctx = context.lock();
@@ -1065,6 +1076,7 @@ DeviceDelegateOculusVR::SetRenderMode(const device::RenderMode aMode) {
 
   m.UpdateTrackingMode();
   m.UpdateFoveatedLevel();
+  m.UpdateDisplayRefreshRate();
   m.UpdateClockLevels();
 
   // Reset reorient when exiting or entering immersive
@@ -1542,6 +1554,7 @@ DeviceDelegateOculusVR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
   } else {
     vrapi_SetPerfThread(m.ovr, VRAPI_PERF_THREAD_TYPE_MAIN, gettid());
     vrapi_SetPerfThread(m.ovr, VRAPI_PERF_THREAD_TYPE_RENDERER, gettid());
+    m.UpdateDisplayRefreshRate();
     m.UpdateClockLevels();
     m.UpdateTrackingMode();
     m.UpdateFoveatedLevel();
