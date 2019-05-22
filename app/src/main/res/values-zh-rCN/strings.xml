@@ -196,7 +196,7 @@
 
     <!-- This string is the text displayed in the restart dialog box explaining why the
          restart is required. '%1$s' will be replaced at runtime with the app's name. -->
-    <string name="restart_dialog_text">您必须重开％1$s才能完成更改。您希望立即重开吗？</string>
+    <string name="restart_dialog_text">您必须重开 %1$s 才能完成更改。您希望立即重开吗？</string>
 
     <!-- This string is used to label the button the user presses to restart the
          application in the restart dialog. -->
@@ -455,7 +455,7 @@
 
     <!-- This string explains why Mozilla would like the user to allow the crash data to be uploaded.
          '%1$s' will be replaced at runtime with the app's domain name. -->
-    <string name="crash_dialog_message">请发送您的崩溃数据，以帮助Mozilla改进％1$s。</string>
+    <string name="crash_dialog_message">请发送您的崩溃数据，以帮助 Mozilla 改进 %1$s。</string>
 
     <!-- This string labels a checkbox in the crash dialog box. When checked, the user will no longer
          be prompted for permission to upload crash data after an application crash. -->
