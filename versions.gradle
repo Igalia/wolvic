@@ -25,7 +25,7 @@ def versions = [:]
 // GeckoView versions can be found here:
 // https://maven.mozilla.org/?prefix=maven2/org/mozilla/geckoview/
 versions.gecko_view = "68.0.20190517162900"
-versions.android_components = "0.31.0"
+versions.android_components = "0.52.0"
 versions.mozilla_speech = "1.0.6"
 versions.google_vr = "1.190.0"
 versions.room = "2.1.0-alpha02"
@@ -36,8 +36,9 @@ versions.junit = "4.12"
 versions.atsl_runner = "1.1.0-alpha4"
 versions.atsl_rules = "1.1.0-alpha4"
 versions.espresso = "3.1.0-alpha4"
-versions.android_gradle_plugin = "3.2.0"
-versions.kotlin = "1.2.71"
+versions.android_gradle_plugin = "3.4.1"
+versions.kotlin = "1.3.31"
+versions.kotlin_coroutines = "1.2.1"
 versions.snakeyaml = "1.24"
 def deps = [:]
 
@@ -53,6 +54,8 @@ android_components.browser_errorpages = "org.mozilla.components:browser-errorpag
 android_components.browser_search = "org.mozilla.components:browser-search:$versions.android_components"
 android_components.browser_domains = "org.mozilla.components:browser-domains:$versions.android_components"
 android_components.ui_autocomplete = "org.mozilla.components:ui-autocomplete:$versions.android_components"
+android_components.concept_fetch = "org.mozilla.components:concept-fetch:$versions.android_components"
+android_components.lib_fetch = "org.mozilla.components:lib-fetch-httpurlconnection:$versions.android_components"
 deps.android_components = android_components
 
 deps.mozilla_speech = "com.github.mozilla:mozillaspeechlibrary:$versions.mozilla_speech"
@@ -106,6 +109,7 @@ kotlin.stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$versions.kotlin"
 kotlin.test = "org.jetbrains.kotlin:kotlin-test-junit:$versions.kotlin"
 kotlin.plugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
 kotlin.allopen = "org.jetbrains.kotlin:kotlin-allopen:$versions.kotlin"
+kotlin.coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$versions.kotlin_coroutines"
 deps.kotlin = kotlin
 
 deps.constraint_layout = "androidx.constraintlayout:constraintlayout:$versions.constraint_layout"

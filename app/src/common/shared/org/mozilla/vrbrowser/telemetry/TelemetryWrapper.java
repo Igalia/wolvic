@@ -6,12 +6,13 @@ import android.os.StrictMode;
 import android.os.SystemClock;
 import android.util.Log;
 
+import mozilla.components.lib.fetch.httpurlconnection.HttpURLConnectionClient;
 import org.mozilla.telemetry.Telemetry;
 import org.mozilla.telemetry.TelemetryHolder;
 import org.mozilla.telemetry.config.TelemetryConfiguration;
 import org.mozilla.telemetry.event.TelemetryEvent;
 import org.mozilla.telemetry.measurement.SearchesMeasurement;
-import org.mozilla.telemetry.net.HttpURLConnectionTelemetryClient;
+import org.mozilla.telemetry.net.TelemetryClient;
 import org.mozilla.telemetry.ping.TelemetryCorePingBuilder;
 import org.mozilla.telemetry.ping.TelemetryMobileEventPingBuilder;
 import org.mozilla.telemetry.schedule.jobscheduler.JobSchedulerTelemetryScheduler;
@@ -97,7 +98,7 @@ public class TelemetryWrapper {
             
             final JSONPingSerializer serializer = new JSONPingSerializer();
             final FileTelemetryStorage storage = new FileTelemetryStorage(configuration, serializer);
-            final HttpURLConnectionTelemetryClient client = new HttpURLConnectionTelemetryClient();
+            final TelemetryClient client = new TelemetryClient(new HttpURLConnectionClient());
             final JobSchedulerTelemetryScheduler scheduler = new JobSchedulerTelemetryScheduler();
 
             TelemetryHolder.set(new Telemetry(configuration, storage, client, scheduler)

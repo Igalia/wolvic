@@ -8,14 +8,11 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 
-import org.jetbrains.annotations.Contract;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.geolocation.GeolocationData;
 import org.mozilla.vrbrowser.search.suggestions.SuggestionsClient;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,7 +21,8 @@ import java.util.List;
 import java.util.Map;
 
 import androidx.annotation.NonNull;
-import kotlin.coroutines.experimental.Continuation;
+
+import kotlinx.coroutines.Dispatchers;
 import mozilla.components.browser.search.SearchEngine;
 import mozilla.components.browser.search.SearchEngineManager;
 import mozilla.components.browser.search.provider.AssetsSearchEngineProvider;
@@ -100,7 +98,7 @@ public class SearchEngineWrapper implements SharedPreferences.OnSharedPreference
         return mSearchEngine.buildSearchUrl(aQuery);
     }
 
-    public String getSuggestionURL(String aQuery) {
+    private String getSuggestionURL(String aQuery) {
         return mSearchEngine.buildSuggestionsURL(aQuery);
     }
 
@@ -160,7 +158,7 @@ public class SearchEngineWrapper implements SharedPreferences.OnSharedPreference
                 engineFilterList,
                 Collections.emptyList());
 
-        mSearchEngineManager = new SearchEngineManager(Arrays.asList(engineProvider));
+        mSearchEngineManager = new SearchEngineManager(Arrays.asList(engineProvider), Dispatchers.getDefault());
 
         // If we don't get any result we use the default configuration.
         if (mSearchEngineManager.getSearchEngines(aContext).size() == 0) {

@@ -48,7 +48,8 @@ import androidx.annotation.StringRes;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import kotlin.Unit;
-import mozilla.components.browser.domains.DomainAutoCompleteProvider;
+import mozilla.components.browser.domains.autocomplete.DomainAutocompleteResult;
+import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider;
 import mozilla.components.ui.autocomplete.InlineAutocompleteEditText;
 
 public class NavigationURLBar extends FrameLayout {
@@ -65,7 +66,7 @@ public class NavigationURLBar extends FrameLayout {
     private int mURLProtocolColor;
     private int mURLWebsiteColor;
     private NavigationURLBarDelegate mDelegate;
-    private DomainAutoCompleteProvider mAutocompleteProvider;
+    private ShippedDomainsProvider mAutocompleteProvider;
     private ImageButton mBookmarkButton;
     private VRBrowserApplication mApplication;
     private NavigationUrlBinding mBinding;
@@ -74,14 +75,18 @@ public class NavigationURLBar extends FrameLayout {
     private boolean mIsBookmarkMode;
     private boolean mBookmarkEnabled = true;
 
-    private Unit domainAutocompleteFilter(String text, InlineAutocompleteEditText view) {
-        if (view != null) {
-            DomainAutoCompleteProvider.Result result = mAutocompleteProvider.autocomplete(text);
-            view.applyAutocompleteResult(new InlineAutocompleteEditText.AutocompleteResult(
-                    result.getText(),
-                    result.getSource(),
-                    result.getSize(),
-                    null));
+    private Unit domainAutocompleteFilter(String text) {
+        if (mURL != null) {
+            DomainAutocompleteResult result = mAutocompleteProvider.getAutocompleteSuggestion(text);
+            if (result != null) {
+                mURL.applyAutocompleteResult(new InlineAutocompleteEditText.AutocompleteResult(
+                        result.getText(),
+                        result.getSource(),
+                        result.getTotalItems(),
+                        null));
+            } else {
+                mURL.noAutocompleteResult();
+            }
         }
         return Unit.INSTANCE;
     }
@@ -107,8 +112,8 @@ public class NavigationURLBar extends FrameLayout {
         mBinding = DataBindingUtil.inflate(inflater, R.layout.navigation_url, this, true);
 
         // Use Domain autocomplete provider from components
-        mAutocompleteProvider = new DomainAutoCompleteProvider();
-        mAutocompleteProvider.initialize(aContext, true, true, true);
+        mAutocompleteProvider = new ShippedDomainsProvider();
+        mAutocompleteProvider.initialize(aContext);
 
         mURL = findViewById(R.id.urlEditText);
         mURL.setShowSoftInputOnFocus(false);

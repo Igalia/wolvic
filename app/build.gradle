@@ -306,6 +306,12 @@ dependencies {
     implementation deps.android_components.browser_search
     implementation deps.android_components.browser_domains
     implementation deps.android_components.ui_autocomplete
+    implementation deps.android_components.concept_fetch
+    implementation deps.android_components.lib_fetch
+
+    // Kotlin dependency
+    implementation deps.kotlin.stdlib
+    implementation deps.kotlin.coroutines
 
     // SQLite helper to handle DBs from assets
     implementation deps.sqlite.sqlite
@@ -333,7 +339,6 @@ if (findProject(':servo')) {
 if (findProject(':wavesdk')) {
     dependencies {
         wavevrImplementation project(':wavesdk')
-        wavevrImplementation deps.kotlin.stdlib
     }
 }
 
