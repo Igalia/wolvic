@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.mozilla.vrbrowser">
     <uses-feature android:glEsVersion="0x00030001"/>
+    <uses-feature android:name="android.hardware.vr.headtracking" android:version="1" android:required="true" />
     <application>
         <meta-data android:name="com.samsung.android.vr.application.mode" android:value="vr_only"/>
         <activity android:name=".VRBrowserActivity" android:screenOrientation="landscape">
