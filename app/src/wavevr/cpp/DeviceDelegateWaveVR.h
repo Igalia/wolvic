@@ -25,6 +25,7 @@ public:
   void SetReorientTransform(const vrb::Matrix& aMatrix) override;
   void SetClearColor(const vrb::Color& aColor) override;
   void SetClipPlanes(const float aNear, const float aFar) override;
+  void SetFoveatedLevel(const int32_t aAppLevel, const int32_t aWebVRLevel) override;
   void SetControllerDelegate(ControllerDelegatePtr& aController) override;
   void ReleaseControllerDelegate() override;
   int32_t GetControllerModelCount() const override;

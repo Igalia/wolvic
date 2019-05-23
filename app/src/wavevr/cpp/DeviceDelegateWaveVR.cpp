@@ -63,6 +63,7 @@ struct DeviceDelegateWaveVR::State {
   vrb::Color clearColor;
   float near;
   float far;
+  float foveatedFov;
   void* leftTextureQueue;
   void* rightTextureQueue;
   device::RenderMode renderMode;
@@ -74,6 +75,8 @@ struct DeviceDelegateWaveVR::State {
   vrb::CameraEyePtr cameras[2];
   uint32_t renderWidth;
   uint32_t renderHeight;
+  uint32_t standaloneFoveatedLevel;
+
   WVR_DevicePosePair_t devicePairs[WVR_DEVICE_COUNT_LEVEL_1];
   ElbowModelPtr elbow;
   ControllerDelegatePtr delegate;
@@ -90,6 +93,7 @@ struct DeviceDelegateWaveVR::State {
       : isRunning(true)
       , near(0.1f)
       , far(100.f)
+      , foveatedFov(0.0f)
       , renderMode(device::RenderMode::StandAlone)
       , leftFBOIndex(0)
       , rightFBOIndex(0)
@@ -97,6 +101,7 @@ struct DeviceDelegateWaveVR::State {
       , rightTextureQueue(nullptr)
       , renderWidth(0)
       , renderHeight(0)
+      , standaloneFoveatedLevel(0)
       , devicePairs {}
       , controllers {}
       , lastSubmitDiscarded(false)
@@ -152,6 +157,8 @@ struct DeviceDelegateWaveVR::State {
       const float fovTop = atan(top);
       const float fovBottom = -atan(bottom);
 
+      // We wanna use 1/3 fovX degree as the foveated fov.
+      foveatedFov = (fovLeft + fovRight) * 180.0f / (float)M_PI / 3.0f;
       vrb::Matrix projection = vrb::Matrix::PerspectiveMatrix(fovLeft, fovRight, fovTop, fovBottom, near, far);
       cameras[device::EyeIndex(deviceEye)]->SetPerspective(projection);
 
@@ -189,6 +196,36 @@ struct DeviceDelegateWaveVR::State {
 
   void Shutdown() {
 
+  }
+
+  void UpdateFoveatedLevel() {
+    if (!WVR_IsRenderFoveationSupport()) {
+      VRB_LOG("This Wave device doesn't support Foveation Render.");
+      return;
+    }
+
+    if (!leftFBOIndex || !rightFBOIndex) {
+      return;
+    }
+
+    if (standaloneFoveatedLevel == 0) {
+      // This is not working, we have to restart the app to reset.
+      WVR_RenderFoveation(false);
+    } else {
+      WVR_RenderFoveation(true);
+      // Mapping foveated level (1~3) to WVR_PeripheralQuality (high~low).
+      WVR_PeripheralQuality peripheralQuality =
+              static_cast<WVR_PeripheralQuality>(WVR_PeripheralQuality_High-(standaloneFoveatedLevel - 1));
+
+      WVR_RenderFoveationParams_t foveated;
+      foveated.focalX = foveated.focalY = 0.0f;
+      foveated.fovealFov = foveatedFov;
+      foveated.periQuality = peripheralQuality;
+      WVR_TextureParams_t eyeTexture = WVR_GetTexture(leftTextureQueue, leftFBOIndex);
+      WVR_PreRenderEye(WVR_Eye_Left, &eyeTexture, &foveated);
+      eyeTexture = WVR_GetTexture(rightTextureQueue, rightFBOIndex);
+      WVR_PreRenderEye(WVR_Eye_Right, &eyeTexture, &foveated);
+    }
   }
 
   void CreateController(Controller& aController) {
@@ -373,11 +410,17 @@ void
 DeviceDelegateWaveVR::SetClearColor(const vrb::Color& aColor) {
   m.clearColor = aColor;
 }
+
 void
 DeviceDelegateWaveVR::SetClipPlanes(const float aNear, const float aFar) {
   m.near = aNear;
   m.far = aFar;
   m.InitializeCameras();
+}
+
+void
+DeviceDelegateWaveVR::SetFoveatedLevel(const int32_t aAppLevel, const int32_t aWebVRLevel) {
+  m.standaloneFoveatedLevel = aAppLevel;
 }
 
 void
@@ -578,6 +621,7 @@ DeviceDelegateWaveVR::StartFrame() {
   if (!m.lastSubmitDiscarded) {
     m.leftFBOIndex = WVR_GetAvailableTextureIndex(m.leftTextureQueue);
     m.rightFBOIndex = WVR_GetAvailableTextureIndex(m.rightTextureQueue);
+    m.UpdateFoveatedLevel();
   }
   // Update cameras
   WVR_GetSyncPose(WVR_PoseOriginModel_OriginOnHead, m.devicePairs, WVR_DEVICE_COUNT_LEVEL_1);

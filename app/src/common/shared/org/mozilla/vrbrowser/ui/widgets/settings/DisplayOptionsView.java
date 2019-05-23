@@ -73,10 +73,11 @@ class DisplayOptionsView extends SettingsView {
 
         mFoveatedAppRadio = findViewById(R.id.foveated_app_radio);
         mFoveatedWebVRRadio = findViewById(R.id.foveated_webvr_radio);
-        if (BuildConfig.FLAVOR_platform == "oculusvr") {
+        if (BuildConfig.FLAVOR_platform == "oculusvr" ||
+            BuildConfig.FLAVOR_platform == "wavevr") {
             mFoveatedAppRadio.setVisibility(View.VISIBLE);
             // Uncomment this when Foveated Rendering for WebVR makes more sense
-            //mFoveatedWebVRRadio.setVisibility(View.VISIBLE);
+            // mFoveatedWebVRRadio.setVisibility(View.VISIBLE);
             int level = SettingsStore.getInstance(getContext()).getFoveatedLevelApp();
             setFoveatedLevel(mFoveatedAppRadio, mFoveatedAppRadio.getIdForValue(level), false);
             mFoveatedAppRadio.setOnCheckedChangeListener((compoundButton, checkedId, apply) -> setFoveatedLevel(mFoveatedAppRadio, checkedId, apply));
@@ -244,7 +245,8 @@ class DisplayOptionsView extends SettingsView {
         if (!mMSAARadio.getValueForId(mMSAARadio.getCheckedRadioButtonId()).equals(SettingsStore.MSAA_DEFAULT_LEVEL)) {
             setMSAAMode(mMSAARadio.getIdForValue(SettingsStore.MSAA_DEFAULT_LEVEL), true);
         }
-        if (BuildConfig.FLAVOR_platform == "oculusvr") {
+        if (BuildConfig.FLAVOR_platform == "oculusvr" ||
+            BuildConfig.FLAVOR_platform == "wavevr") {
             if (!mFoveatedAppRadio.getValueForId(mFoveatedAppRadio.getCheckedRadioButtonId()).equals(SettingsStore.FOVEATED_APP_DEFAULT_LEVEL)) {
                 setFoveatedLevel(mFoveatedAppRadio, mFoveatedAppRadio.getIdForValue(SettingsStore.FOVEATED_APP_DEFAULT_LEVEL), true);
             }
@@ -308,6 +310,10 @@ class DisplayOptionsView extends SettingsView {
 
         if (doApply) {
             mWidgetManager.updateFoveatedLevel();
+            // "WaveVR WVR_RenderFoveation(false) doesn't work properly, we need to restart."
+            if (level == 0 && BuildConfig.FLAVOR_platform == "wavevr") {
+                showRestartDialog();
+            }
         }
     }
 
