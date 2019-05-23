@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -28,8 +29,11 @@ public class PlatformActivity extends Activity {
     }
 
     private GLSurfaceView mView;
+    private TextView mFrameRate;
     private ArrayList<Runnable> mPendingEvents;
     private boolean mSurfaceCreated = false;
+    private int mFrameCount;
+    private long mLastFrameTime = System.currentTimeMillis();
 
     private final Runnable activityDestroyedRunnable = new Runnable() {
         @Override
@@ -65,6 +69,7 @@ public class PlatformActivity extends Activity {
 
         setContentView(R.layout.noapi_layout);
         mPendingEvents = new ArrayList<>();
+        mFrameRate = findViewById(R.id.frame_rate_text);
         mView = findViewById(R.id.gl_view);
         mView.setEGLContextClientVersion(3);
         mView.setEGLConfigChooser(8, 8, 8, 0, 16, 0);
@@ -88,6 +93,14 @@ public class PlatformActivity extends Activity {
 
                     @Override
                     public void onDrawFrame(GL10 gl) {
+                        mFrameCount++;
+                        long ctime = System.currentTimeMillis();
+                        if ((ctime - mLastFrameTime) >= 1000) {
+                            final int value =  Math.round(mFrameCount / ((ctime - mLastFrameTime) / 1000.0f));
+                            mLastFrameTime = ctime;
+                            mFrameCount = 0;
+                            runOnUiThread(() -> mFrameRate.setText(String.valueOf(value)));
+                        }
                         drawGL();
                     }
                 });
@@ -102,7 +115,7 @@ public class PlatformActivity extends Activity {
         }
 
         int action = aEvent.getAction();
-        boolean down = false;
+        boolean down;
         if (action == MotionEvent.ACTION_DOWN) {
             down = true;
         } else if (action == MotionEvent.ACTION_UP) {
@@ -213,16 +226,19 @@ public class PlatformActivity extends Activity {
         }
     }
 
+    private float mScale = 0.3f;
     private void setupUI() {
-        findViewById(R.id.up_button).setOnClickListener((View view) -> dispatchMoveAxis(0, 1, 0));
-        findViewById(R.id.down_button).setOnClickListener((View view) -> dispatchMoveAxis(0, -1, 0));
-        findViewById(R.id.forward_button).setOnClickListener((View view) -> dispatchMoveAxis(0, 0, -1));
-        findViewById(R.id.backward_button).setOnClickListener((View view) -> dispatchMoveAxis(0, 0, 1));
-        findViewById(R.id.left_button).setOnClickListener((View view) -> dispatchMoveAxis(-1, 0, 0));
-        findViewById(R.id.right_button).setOnClickListener((View view) -> dispatchMoveAxis(1, 0, 0));
+        findViewById(R.id.up_button).setOnClickListener((View view) -> dispatchMoveAxis(0, mScale, 0));
+        findViewById(R.id.down_button).setOnClickListener((View view) -> dispatchMoveAxis(0, -mScale, 0));
+        findViewById(R.id.forward_button).setOnClickListener((View view) -> dispatchMoveAxis(0, 0, -mScale));
+        findViewById(R.id.backward_button).setOnClickListener((View view) -> dispatchMoveAxis(0, 0, mScale));
+        findViewById(R.id.left_button).setOnClickListener((View view) -> dispatchMoveAxis(-mScale, 0, 0));
+        findViewById(R.id.right_button).setOnClickListener((View view) -> dispatchMoveAxis(mScale, 0, 0));
         findViewById(R.id.home_button).setOnClickListener((View view) -> dispatchMoveAxis(0,0,0));
-        findViewById(R.id.right_turn_button).setOnClickListener((View view) -> dispatchRotateHeading(-ROTATION));
-        findViewById(R.id.left_turn_button).setOnClickListener((View view) -> dispatchRotateHeading(ROTATION));
+        findViewById(R.id.right_turn_button).setOnClickListener((View view) -> dispatchRotateHeading(-ROTATION * mScale));
+        findViewById(R.id.left_turn_button).setOnClickListener((View view) -> dispatchRotateHeading(ROTATION * mScale));
+        findViewById(R.id.pitch_up_button).setOnClickListener((View view) -> dispatchRotatePitch(ROTATION * mScale));
+        findViewById(R.id.pitch_down_button).setOnClickListener((View view) -> dispatchRotatePitch(-ROTATION * mScale));
         findViewById(R.id.back_button).setOnClickListener((View view) -> onBackPressed());
     }
 
@@ -234,6 +250,10 @@ public class PlatformActivity extends Activity {
         queueRunnable(() -> rotateHeading(aHeading));
     }
 
+    private void dispatchRotatePitch(final float aPitch) {
+        queueRunnable(() -> rotatePitch(aPitch));
+    }
+
     private native void activityCreated(Object aAssetManager);
     private native void updateViewport(int width, int height);
     private native void activityPaused();
@@ -242,5 +262,6 @@ public class PlatformActivity extends Activity {
     private native void drawGL();
     private native void moveAxis(float aX, float aY, float aZ);
     private native void rotateHeading(float aHeading);
+    private native void rotatePitch(float aPitch);
     private native void touchEvent(boolean aDown, float aX, float aY);
 }

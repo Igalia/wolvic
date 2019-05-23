@@ -21,7 +21,7 @@
 namespace crow {
 
 static const int32_t kControllerIndex = 0;
-static vrb::Vector sHomePosition(0.0f, 1.7f, 0.0f);
+static vrb::Vector sHomePosition(0.0f, 1.55f, 3.0f);
 
 struct DeviceDelegateNoAPI::State {
   vrb::RenderContextWeak context;
@@ -31,7 +31,9 @@ struct DeviceDelegateNoAPI::State {
   vrb::CameraSimplePtr camera;
   vrb::Color clearColor;
   float heading;
+  float pitch;
   vrb::Matrix headingMatrix;
+  vrb::Matrix pitchMatrix;
   vrb::Vector position;
   bool clicked;
   float width, height;
@@ -40,7 +42,9 @@ struct DeviceDelegateNoAPI::State {
   State()
       : renderMode(device::RenderMode::StandAlone)
       , heading(0.0f)
+      , pitch(0.0f)
       , headingMatrix(vrb::Matrix::Identity())
+      , pitchMatrix(vrb::Matrix::Identity())
       , position(sHomePosition)
       , clicked(false)
       , width(100.0f)
@@ -156,7 +160,7 @@ DeviceDelegateNoAPI::SetControllerDelegate(ControllerDelegatePtr& aController) {
 
 void
 DeviceDelegateNoAPI::ReleaseControllerDelegate() {
-    m.controller = nullptr;
+  m.controller = nullptr;
 }
 
 int32_t
@@ -172,7 +176,7 @@ DeviceDelegateNoAPI::GetControllerModelName(const int32_t) const {
 
 void
 DeviceDelegateNoAPI::ProcessEvents() {
-  m.camera->SetTransform(m.headingMatrix.Translate(m.position));
+  m.camera->SetTransform(m.headingMatrix.PostMultiply(m.pitchMatrix).Translate(m.position));
 }
 
 void
@@ -225,25 +229,33 @@ DeviceDelegateNoAPI::MoveAxis(const float aX, const float aY, const float aZ) {
   if (!aX && !aY && !aZ) {
     m.position = sHomePosition;
     m.heading = 0.0f;
+    m.pitch = 0.0f;
     m.headingMatrix = vrb::Matrix::Identity();
+    m.pitchMatrix = vrb::Matrix::Identity();
     return;
   }
+  VRB_LOG("pos: %s heading: %f pitch: %f", m.position.ToString().c_str(), m.heading, m.pitch);
   m.position += m.headingMatrix.MultiplyDirection(vrb::Vector(aX, aY, aZ));
 }
 
-static const vrb::Vector sUp(0.0f, 1.0f, 0.0f);
 
 void
 DeviceDelegateNoAPI::RotateHeading(const float aHeading) {
+  static const vrb::Vector sUp(0.0f, 1.0f, 0.0f);
   m.heading += aHeading;
   m.headingMatrix = vrb::Matrix::Rotation(sUp, m.heading);
 }
 
-
-static const vrb::Vector sForward(0.0f, 0.0f, -1.0f);
+void
+DeviceDelegateNoAPI::RotatePitch(const float aPitch) {
+  static const vrb::Vector sLeft(1.0f, 0.0f, 0.0f);
+  m.pitch += aPitch;
+  m.pitchMatrix = vrb::Matrix::Rotation(sLeft, m.pitch);
+}
 
 void
 DeviceDelegateNoAPI::TouchEvent(const bool aDown, const float aX, const float aY) {
+  static const vrb::Vector sForward(0.0f, 0.0f, -1.0f);
   if (!m.controller) {
     return;
   }

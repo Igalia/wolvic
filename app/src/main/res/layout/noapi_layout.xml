@@ -26,17 +26,17 @@
             android:id="@+id/forward_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_column="1"
             android:layout_row="0"
-            android:src="@drawable/ic_keyboard_arrow_up_black_24px" />
+            android:layout_column="1"
+            android:src="@drawable/ic_baseline_arrow_drop_up_24px" />
 
         <ImageButton
             android:id="@+id/left_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_column="0"
             android:layout_row="1"
-            android:src="@drawable/ic_keyboard_arrow_left_black_24px" />
+            android:layout_column="0"
+            android:src="@drawable/ic_baseline_arrow_left_24px" />
 
 
         <ImageButton
@@ -51,17 +51,17 @@
             android:id="@+id/right_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_column="2"
             android:layout_row="1"
-            android:src="@drawable/ic_keyboard_arrow_right_black_24px" />
+            android:layout_column="2"
+            android:src="@drawable/ic_baseline_arrow_right_24px" />
 
         <ImageButton
             android:id="@+id/backward_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_column="1"
             android:layout_row="2"
-            android:src="@drawable/ic_keyboard_arrow_down_black_24px" />
+            android:layout_column="1"
+            android:src="@drawable/ic_baseline_arrow_drop_down_24px" />
 
         <ImageButton
             android:id="@+id/left_turn_button"
@@ -78,6 +78,22 @@
             android:layout_column="2"
             android:layout_row="2"
             android:src="@drawable/ic_rotate_right_black_24px" />
+
+        <ImageButton
+            android:id="@+id/pitch_up_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:src="@drawable/ic_baseline_add_24px" />
+
+        <ImageButton
+            android:id="@+id/pitch_down_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_row="0"
+            android:layout_column="2"
+            android:src="@drawable/ic_baseline_remove_24px" />
 
     </GridLayout>
 
@@ -114,4 +130,13 @@
             android:text="@string/back_button" />
 
     </GridLayout>
+
+    <TextView
+        android:id="@+id/frame_rate_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#000000"
+        app:layout_constraintStart_toStartOf="@+id/gl_view"
+        app:layout_constraintTop_toTopOf="@+id/gl_view" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -44,6 +44,7 @@ public:
   void Resume();
   void MoveAxis(const float aX, const float aY, const float aZ);
   void RotateHeading(const float aHeading);
+  void RotatePitch(const float aPitch);
   void TouchEvent(const bool aDown, const float aX, const float aY);
 protected:
   struct State;

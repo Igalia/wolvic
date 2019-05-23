@@ -82,6 +82,11 @@ JNI_METHOD(void, rotateHeading)
   sDevice->RotateHeading(aHeading);
 }
 
+JNI_METHOD(void, rotatePitch)
+(JNIEnv*, jobject, jfloat aPitch) {
+  sDevice->RotatePitch(aPitch);
+}
+
 JNI_METHOD(void, touchEvent)
 (JNIEnv*, jobject, jboolean aDown, jfloat aX, jfloat aY) {
   sDevice->TouchEvent(aDown, aX, aY);
