@@ -228,7 +228,7 @@ struct DeviceDelegateWaveVR::State {
         VRB_LOG("Creating controller from UpdateControllers");
         CreateController(controller);
       }
-      if (WVR_IsInputFocusCapturedBySystem() || !WVR_IsDeviceConnected(controller.type)) {
+      if (!WVR_IsDeviceConnected(controller.type)) {
         if (controller.enabled) {
           delegate->SetEnabled(controller.index, false);
           controller.enabled = false;
@@ -244,6 +244,8 @@ struct DeviceDelegateWaveVR::State {
         delegate->SetVisible(controller.index, true);
         delegate->SetCapabilityFlags(controller.index, flags);
       }
+
+      delegate->SetVisible(controller.index, !WVR_IsInputFocusCapturedBySystem());
 
       const bool bumperPressed = WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Digital_Trigger)
                                 || WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Trigger);
