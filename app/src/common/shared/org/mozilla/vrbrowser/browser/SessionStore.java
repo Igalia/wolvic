@@ -746,6 +746,8 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
             out.write("pref(\"dom.vr.enabled\", true);\n".getBytes());
             out.write("pref(\"dom.vr.external.enabled\", true);\n".getBytes());
             out.write("pref(\"webgl.enable-surface-texture\", true);\n".getBytes());
+            // Enable MultiView draft extension
+            out.write("pref(\"webgl.enable-draft-extensions\", true);\n".getBytes());
             out.write("pref(\"apz.allow_double_tap_zooming\", false);\n".getBytes());
             out.write("pref(\"dom.webcomponents.customelements.enabled\", true);\n".getBytes());
             out.write("pref(\"javascript.options.ion\", true);\n".getBytes());
