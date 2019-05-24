@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import androidx.annotation.Keep;
+
 public class PlatformActivity extends Activity {
     static String LOGTAG = "VRB";
     static final float ROTATION = 0.098174770424681f;
@@ -240,6 +242,29 @@ public class PlatformActivity extends Activity {
         findViewById(R.id.pitch_up_button).setOnClickListener((View view) -> dispatchRotatePitch(ROTATION * mScale));
         findViewById(R.id.pitch_down_button).setOnClickListener((View view) -> dispatchRotatePitch(-ROTATION * mScale));
         findViewById(R.id.back_button).setOnClickListener((View view) -> onBackPressed());
+        findViewById(R.id.click_button).setOnTouchListener((View view, MotionEvent event) -> {
+            switch(event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    view.performClick();
+                    buttonClicked(true);
+                    break;
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    buttonClicked(false);
+                    break;
+            }
+            return false;
+        });
+    }
+
+    private void updateUI(final int aMode) {
+        if (aMode == 0) {
+            Log.e(LOGTAG, "Got render mode of Stand Alone");
+            findViewById(R.id.click_button).setVisibility(View.GONE);
+        } else {
+            Log.e(LOGTAG, "Got render mode of Immersive");
+            findViewById(R.id.click_button).setVisibility(View.VISIBLE);
+        }
     }
 
     private void dispatchMoveAxis(final float aX, final float aY, final float aZ) {
@@ -254,6 +279,15 @@ public class PlatformActivity extends Activity {
         queueRunnable(() -> rotatePitch(aPitch));
     }
 
+    private void buttonClicked(final boolean aPressed) {
+        queueRunnable(() -> controllerButtonPressed(aPressed));
+    }
+
+    @Keep
+    private void setRenderMode(final int aMode) {
+        runOnUiThread(() -> updateUI(aMode));
+    }
+
     private native void activityCreated(Object aAssetManager);
     private native void updateViewport(int width, int height);
     private native void activityPaused();
@@ -264,4 +298,5 @@ public class PlatformActivity extends Activity {
     private native void rotateHeading(float aHeading);
     private native void rotatePitch(float aPitch);
     private native void touchEvent(boolean aDown, float aX, float aY);
+    private native void controllerButtonPressed(boolean aDown);
 }

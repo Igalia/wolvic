@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.mozilla.vrbrowser">
     <application>
         <activity android:name=".VRBrowserActivity"
-            android:screenOrientation="sensor">
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

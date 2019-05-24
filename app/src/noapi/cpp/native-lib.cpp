@@ -45,6 +45,7 @@ JNI_METHOD(void, activityCreated)
     sDevice = crow::DeviceDelegateNoAPI::Create(BrowserWorld::Instance().GetRenderContext());
   }
   sDevice->Resume();
+  sDevice->InitializeJava(aEnv, aActivity);
   BrowserWorld::Instance().RegisterDeviceDelegate(sDevice);
   BrowserWorld::Instance().InitializeJava(aEnv, aActivity, aAssetManager);
   BrowserWorld::Instance().InitializeGL();
@@ -63,8 +64,11 @@ JNI_METHOD(void, activityDestroyed)
 (JNIEnv*, jobject) {
   BrowserWorld::Instance().ShutdownJava();
   BrowserWorld::Instance().RegisterDeviceDelegate(nullptr);
-  BrowserWorld::Instance().Destroy();
-  sDevice = nullptr;
+  BrowserWorld::Destroy();
+  if (sDevice) {
+    sDevice->ShutdownJava();
+    sDevice = nullptr;
+  }
 }
 
 JNI_METHOD(void, drawGL)
@@ -90,6 +94,11 @@ JNI_METHOD(void, rotatePitch)
 JNI_METHOD(void, touchEvent)
 (JNIEnv*, jobject, jboolean aDown, jfloat aX, jfloat aY) {
   sDevice->TouchEvent(aDown, aX, aY);
+}
+
+JNI_METHOD(void, controllerButtonPressed)
+(JNIEnv*, jobject, jboolean aDown) {
+  sDevice->ControllerButtonPressed(aDown);
 }
 
 jint JNI_OnLoad(JavaVM*, void*) {

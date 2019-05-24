@@ -9,6 +9,8 @@
 #include "vrb/Forward.h"
 #include "vrb/MacroUtils.h"
 #include "DeviceDelegate.h"
+
+#include <jni.h>
 #include <memory>
 
 namespace crow {
@@ -39,6 +41,8 @@ public:
   void BindEye(const device::Eye) override;
   void EndFrame(const bool aDiscard) override;
   // DeviceDelegateNoAPI interface
+  void InitializeJava(JNIEnv* aEnv, jobject aActivity);
+  void ShutdownJava();
   void SetViewport(const int aWidth, const int aHeight);
   void Pause();
   void Resume();
@@ -46,6 +50,7 @@ public:
   void RotateHeading(const float aHeading);
   void RotatePitch(const float aPitch);
   void TouchEvent(const bool aDown, const float aX, const float aY);
+  void ControllerButtonPressed(const bool aDown);
 protected:
   struct State;
   DeviceDelegateNoAPI(State& aState);
