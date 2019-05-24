@@ -1010,8 +1010,6 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
         }
     }
 
-    private boolean mFirstOnLoadRequest = true;
-
     @Override
     public @Nullable GeckoResult<AllowOrDeny> onLoadRequest(@NonNull GeckoSession aSession, @NonNull LoadRequest aRequest) {
         final GeckoResult<AllowOrDeny> result = new GeckoResult<>();
@@ -1022,16 +1020,14 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
 
         String uriOverride = checkYoutubeOverride(uri);
         if (uriOverride != null) {
-            mFirstOnLoadRequest = true;
             aSession.loadUri(uriOverride);
             result.complete(AllowOrDeny.DENY);
             return result;
         }
 
-        if (mFirstOnLoadRequest && (aSession == mCurrentSession)) {
+        if (aSession == mCurrentSession) {
             Log.d(LOGTAG, "Testing for UA override");
             aSession.getSettings().setUserAgentOverride(mUserAgentOverride.lookupOverride(uri));
-            mFirstOnLoadRequest = false;
         }
 
         if (PRIVATE_BROWSING_URI.equalsIgnoreCase(uri)) {
@@ -1175,7 +1171,6 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
         }
 
         if (mCurrentSession == aSession) {
-            mFirstOnLoadRequest = true;
             for (GeckoSession.ProgressDelegate listener : mProgressListeners) {
                 listener.onPageStop(aSession, b);
             }
