@@ -15,7 +15,7 @@
 #include <map>
 
 namespace {
-static const char* sVertexShader = R"SHADER(
+const char* sVertexShader = R"SHADER(
 attribute vec4 a_position;
 attribute vec2 a_uv;
 varying vec2 v_uv;
@@ -25,7 +25,7 @@ void main(void) {
 }
 )SHADER";
 
-static const char* sFragmentShader = R"SHADER(
+const char* sFragmentShader = R"SHADER(
 #extension GL_OES_EGL_image_external : require
 precision mediump float;
 
@@ -38,7 +38,7 @@ void main() {
 }
 )SHADER";
 
-static const GLfloat sVerticies[] = {
+const GLfloat sVerticies[] = {
     -1.0f, 1.0f, 0.0f,
     -1.0f, -1.0f, 0.0f,
     1.0f, 1.0f, 0.0f,

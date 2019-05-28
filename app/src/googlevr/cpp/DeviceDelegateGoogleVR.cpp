@@ -27,8 +27,8 @@
 
 namespace {
 
-static const vrb::Vector kAverageHeight(0.0f, 1.7f, 0.0f);
-static const int32_t kMaxControllerCount = 2;
+const vrb::Vector kAverageHeight(0.0f, 1.7f, 0.0f);
+const int32_t kMaxControllerCount = 2;
 
 struct Controller {
   vrb::Matrix transform;

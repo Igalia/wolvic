@@ -70,12 +70,12 @@ using namespace vrb;
 
 namespace {
 
-static const int GestureSwipeLeft = 0;
-static const int GestureSwipeRight = 1;
+const int GestureSwipeLeft = 0;
+const int GestureSwipeRight = 1;
 
-static const float kScrollFactor = 20.0f; // Just picked what fell right.
-static const float kWorldDPIRatio = 2.0f/720.0f;
-static const double kHoverRate = 1.0 / 10.0;
+const float kScrollFactor = 20.0f; // Just picked what fell right.
+const float kWorldDPIRatio = 2.0f/720.0f;
+const double kHoverRate = 1.0 / 10.0;
 
 #if SPACE_THEME == 1
   static const std::string CubemapDay = "cubemap/space";
