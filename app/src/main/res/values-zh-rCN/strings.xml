@@ -56,43 +56,43 @@
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's camera.
          '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_camera">您是否要允许%1$s使用您的摄像头？</string>
+    <string name="permission_camera">您是否要允许 %1$s 使用您的摄像头？</string>
 
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's microphone.
          '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_microphone">您是否要允许%1$s使用您的麦克风？</string>
+    <string name="permission_microphone">您是否要允许 %1$s 使用您的麦克风？</string>
 
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's camera and microphone.
          '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_camera_and_microphone">您是否要允许%1$s使用您的摄像头和麦克风？</string>
+    <string name="permission_camera_and_microphone">您是否要允许 %1$s 使用您的摄像头和麦克风？</string>
 
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's geographic location.
          '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_location">您是否要允许%1$s获取您的位置？</string>
+    <string name="permission_location">您是否要允许 %1$s 获取您的位置？</string>
 
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to send browser-level
          push notifications from a particular website (i.e., same origin).
          '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_notification">您是否要允许%1$s向您发送通知？</string>
+    <string name="permission_notification">您是否要允许 %1$s 向您发送通知？</string>
 
     <!-- This string will be displayed in a dialog box presented to the user when the application
          needs to request permission to access the device's external storage such as the
          sdcard. '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_read_external_storage">您是否要允许%1$s读取您的外部存储？</string>
+    <string name="permission_read_external_storage">您是否要允许 %1$s 读取您的外部存储？</string>
 
     <!-- This string will be displayed in a dialog box presented to the user when the application
          needs to request permission to access the device's external storage such as the
          sdcard. '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_persistent_storage">您是否要允许%1$s在持久存储中存储数据？</string>
+    <string name="permission_persistent_storage">您是否要允许 %1$s 在持久存储中存储数据？</string>
 
     <!-- This string is displayed in the Settings dialog box and how
          the user can know which version of the application they are currently running.
          '%1$s' will be replaced at runtime with the application version number. -->
-    <string name="settings_version">版本%1$s</string>
+    <string name="settings_version">版本 %1$s</string>
 
     <!-- This string is displayed in the Settings dialog box and is used to label an
          On/Off switch which toggles whether an application crash is reported without first
@@ -188,7 +188,7 @@
 
     <!-- This string is used in place of the 'settings_version' string (e.g., `version 1.1`) when the user is running
          a developer-build version of the app. -->
-    <string name="settings_version_developer">开发者构建</string>
+    <string name="settings_version_developer">开发者版本</string>
 
     <!-- This string is the title of a dialog box shown to the user when a settings
          change requires the application to restart. -->
@@ -216,7 +216,7 @@
 
     <!-- This string labels an On/Off switch in the 'Developer Options' dialog
          and is used to toggle redirecting JavaScript Console output to the Android Logcat (i.e., `adb logcat`). -->
-    <string name="developer_options_show_console">将控制台重定向到Logcat</string>
+    <string name="developer_options_show_console">将控制台重定向至 Logcat</string>
 
     <!-- This string labels an On/Off switch in the developer options dialog
          and is used to customize background environments of the app. -->
@@ -230,7 +230,7 @@
     <string name="developer_options_multiprocess">启用多进程</string>
 
     <!-- The string labels an On/Off switch in the developer options dialog and is used to toggle enabling Servo. -->
-    <string name="developer_options_servo">启用伺服</string>
+    <string name="developer_options_servo">启用 Servo</string>
 
     <!-- This string is used to label a numerical-entry field where the user may set a new value to
          use for the display density. -->
@@ -256,7 +256,7 @@
 
     <!-- This string is used to label a numerical entry field where the user may enter a new value
          for the virtual displays Dots Per Inch (DPI). -->
-    <string name="developer_options_display_dpi">显示DPI：</string>
+    <string name="developer_options_display_dpi">显示密度（DPI）：</string>
 
     <!-- This string is used to label two integer entry fields that will allow the user to adjust
          the maximum window size in the X and Y dimensions. -->
@@ -264,7 +264,7 @@
 
     <!-- This string is used to label radio buttons for setting Multi-Sample Anti-Aliasing (MSAA) in
          VR Immersive Mode. -->
-    <string name="developer_options_msaa">MSAA</string>
+    <string name="developer_options_msaa">多重采样抗锯齿（MSAA）</string>
 
     <!-- This string is used to label the MSAA radio button that disables MSAA in Immersive Mode. -->
     <string name="developer_options_msaa_disabled">已禁用</string>
@@ -417,7 +417,7 @@
 
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
-    <string name="voice_search_example">例如：请说“360视频、天气、新闻…”</string>
+    <string name="voice_search_example">例如：请说“360° 视频、天气、新闻…”</string>
 
     <!-- This string is displayed in a dialog box show to the user while the Voice Search is being
          performed. It indicates that the search query is running and they should wait for the result. -->
@@ -425,7 +425,7 @@
 
     <!-- This string is displayed in a dialog box show to the user while the Voice Search is being
          performed. It indicates that the search query is running and they should wait for the result. -->
-    <string name="voice_search_error">抱歉!我没有听懂。</string>
+    <string name="voice_search_error">抱歉！我没有听懂。</string>
 
     <!-- This string is displayed in a dialog box after a failed Voice Search and the system is prompting the
          user to try the Voice Search again. -->
@@ -488,22 +488,22 @@
     <string name="video_mode_tooltip">视频投影</string>
 
     <!-- This string is displayed when selecting a video playback mode. -->
-    <string name="video_mode_3d_side">3D并排</string>
+    <string name="video_mode_3d_side">3D 并排</string>
 
     <!-- This string is displayed when selecting a video playback mode. -->
-    <string name="video_mode_360">360</string>
+    <string name="video_mode_360">360°</string>
 
     <!-- This string is displayed when selecting a video playback mode. -->
-    <string name="video_mode_360_stereo">360立体声</string>
+    <string name="video_mode_360_stereo">360° 立体</string>
 
     <!-- This string is displayed when selecting a video playback mode. -->
-    <string name="video_mode_180">180</string>
+    <string name="video_mode_180">180°</string>
 
     <!-- This string is displayed when selecting a video playback mode. -->
-    <string name="video_mode_180_left_right">立体声180（左到右）</string>
+    <string name="video_mode_180_left_right">180° 立体（左到右）</string>
 
     <!-- This string is displayed when selecting a video playback mode. -->
-    <string name="video_mode_180_top_bottom">立体声180（上到下）</string>
+    <string name="video_mode_180_top_bottom">180° 立体（上到下）</string>
 
     <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_2d">2D</string>
@@ -518,22 +518,22 @@
     <string name="video_controls_mute">静音</string>
 
     <!-- This string is displayed in a tooltip in the video controls UI. -->
-    <string name="video_controls_unmute">恢复声音</string>
+    <string name="video_controls_unmute">取消静音</string>
 
     <!-- This string is displayed in a tooltip below the video controls UI. -->
     <string name="video_controls_volume">音量</string>
 
     <!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek +30 seconds').
     '%1$s' will be replaced at runtime with a duration in seconds (e.g., '30'). -->
-    <string name="video_controls_seek_forward">寻求+%1$s秒</string>
+    <string name="video_controls_seek_forward">快进 %1$s 秒</string>
 
     <!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek -15 seconds').
     '%1$s' will be replaced at runtime with a duration in seconds (e.g., '15'). -->
-    <string name="video_controls_seek_backward">寻求-%1$s秒</string>
+    <string name="video_controls_seek_backward">后退 %1$s 秒</string>
 
     <!-- This string is displayed in the video control seekbar when the media is not seekable
          (e.g., a live video stream). Prefer a short text because it affects the width of the seek bar. -->
-    <string name="video_controls_live">LIVE</string>
+    <string name="video_controls_live">直播</string>
 
     <!-- This string is displayed as the title of the Bookmarks List, which contains the user's bookmarked websites. -->
     <string name="bookmarks_title">书签</string>
@@ -653,7 +653,7 @@
 <ul class="two-column">
 	<li>访问过的页面</li>
 	<li>搜索记录</li>
-	<li>cookie</li>
+	<li>Cookie</li>
 	<li>临时文件</li>
 </ul>
 <p>隐私浏览<strong>不会使您</strong>在互联网上匿名。您的雇主和电信运营商仍然可以知道您访问了什么页面。</p>
