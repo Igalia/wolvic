@@ -180,10 +180,12 @@ DeviceDelegateNoAPI::SetClipPlanes(const float aNear, const float aFar) {
 void
 DeviceDelegateNoAPI::SetControllerDelegate(ControllerDelegatePtr& aController) {
   m.controller = aController;
-  m.controller->CreateController(kControllerIndex, -1, "Firefox Reality Virtual Controller");
+  m.controller->CreateController(kControllerIndex, -1, "Oculus Touch (Right)"); // "Firefox Reality Virtual Controller");
   m.controller->SetEnabled(kControllerIndex, true);
   m.controller->SetCapabilityFlags(kControllerIndex, device::Orientation | device::Position);
-  m.controller->SetButtonCount(kControllerIndex, 1);
+  m.controller->SetButtonCount(kControllerIndex, 5);
+  static const float data[2] = {0.0f, 0.0f};
+  m.controller->SetAxes(kControllerIndex, data, 2);
 }
 
 void
@@ -382,7 +384,7 @@ DeviceDelegateNoAPI::ControllerButtonPressed(const bool aDown) {
     return;
   }
 
-  m.controller->SetButtonState(kControllerIndex, ControllerDelegate::BUTTON_TOUCHPAD, 0, aDown, aDown);
+  m.controller->SetButtonState(kControllerIndex, ControllerDelegate::BUTTON_TOUCHPAD, 1, aDown, aDown);
 }
 
 DeviceDelegateNoAPI::DeviceDelegateNoAPI(State& aState) : m(aState) {}
