@@ -27,17 +27,14 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.audio.AudioEngine;
+import org.mozilla.vrbrowser.browser.BookmarksStore;
 import org.mozilla.vrbrowser.browser.SessionStore;
-import org.mozilla.vrbrowser.databinding.NavigationUrlBinding;
-import org.mozilla.vrbrowser.db.entity.BookmarkEntity;
-import org.mozilla.vrbrowser.model.Bookmark;
 import org.mozilla.vrbrowser.search.SearchEngineWrapper;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
-import org.mozilla.vrbrowser.ui.callbacks.NavigationBarCallback;
+import org.mozilla.vrbrowser.utils.StringUtils;
+import org.mozilla.vrbrowser.utils.UIThreadExecutor;
 import org.mozilla.vrbrowser.utils.UrlUtils;
-import org.mozilla.vrbrowser.viewmodel.BookmarkViewModel;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -45,15 +42,12 @@ import java.net.URL;
 import java.net.URLDecoder;
 
 import androidx.annotation.StringRes;
-import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.Observer;
 import kotlin.Unit;
 import mozilla.components.browser.domains.autocomplete.DomainAutocompleteResult;
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider;
 import mozilla.components.ui.autocomplete.InlineAutocompleteEditText;
 
 public class NavigationURLBar extends FrameLayout {
-
     private InlineAutocompleteEditText mURL;
     private ImageButton mMicrophoneButton;
     private ImageView mInsecureIcon;
@@ -68,12 +62,10 @@ public class NavigationURLBar extends FrameLayout {
     private NavigationURLBarDelegate mDelegate;
     private ShippedDomainsProvider mAutocompleteProvider;
     private ImageButton mBookmarkButton;
-    private VRBrowserApplication mApplication;
-    private NavigationUrlBinding mBinding;
-    private BookmarkViewModel mBookmarkModel;
     private AudioEngine mAudio;
     private boolean mIsBookmarkMode;
     private boolean mBookmarkEnabled = true;
+    private UIThreadExecutor mUIThreadExecutor = new UIThreadExecutor();
 
     private Unit domainAutocompleteFilter(String text) {
         if (mURL != null) {
@@ -103,13 +95,11 @@ public class NavigationURLBar extends FrameLayout {
     }
 
     private void initialize(Context aContext) {
-        mApplication = (VRBrowserApplication)getContext().getApplicationContext();
-
         mAudio = AudioEngine.fromContext(aContext);
 
         // Inflate this data binding layout
         LayoutInflater inflater = LayoutInflater.from(aContext);
-        mBinding = DataBindingUtil.inflate(inflater, R.layout.navigation_url, this, true);
+        inflate(aContext, R.layout.navigation_url, this);
 
         // Use Domain autocomplete provider from components
         mAutocompleteProvider = new ShippedDomainsProvider();
@@ -166,6 +156,7 @@ public class NavigationURLBar extends FrameLayout {
 
         // Bookmarks
         mBookmarkButton = findViewById(R.id.bookmarkButton);
+        mBookmarkButton.setOnClickListener(v -> handleBookmarkClick());
 
         setURL("");
         mIsBookmarkMode = false;
@@ -221,27 +212,36 @@ public class NavigationURLBar extends FrameLayout {
         }
     }
 
-    private final NavigationBarCallback mNavigationBarCallback = new NavigationBarCallback() {
-        @Override
-        public void onBookmarkClick(Bookmark bookmark) {
-            if (mAudio != null) {
-                mAudio.playSound(AudioEngine.Sound.CLICK);
-            }
-
-            if (bookmark == null) {
-                BookmarkEntity bookmarkEntity = new BookmarkEntity(
-                        SessionStore.get().getCurrentTitle(),
-                        SessionStore.get().getCurrentUri(),
-                        System.currentTimeMillis());
-                mApplication.getRepository().insertBookmark(bookmarkEntity);
-
-            } else {
-                mApplication.getRepository().deleteBookmarkByUrl(bookmark.getUrl());
-            }
+    private void handleBookmarkClick() {
+        if (mAudio != null) {
+            mAudio.playSound(AudioEngine.Sound.CLICK);
         }
-    };
 
-    private Observer<BookmarkEntity> mBookmarkObserver = bookmarkEntity -> mBookmarkModel.setBookmark(bookmarkEntity);
+        String url = SessionStore.get().getCurrentUri();
+        if (StringUtils.isEmpty(url)) {
+            return;
+        }
+        BookmarksStore bookmarkStore = SessionStore.get().getBookmarkStore();
+        bookmarkStore.isBookmarked(url).thenAcceptAsync(bookmarked -> {
+            if (!bookmarked) {
+                bookmarkStore.addBookmark(url, SessionStore.get().getCurrentTitle());
+                setBookmarked(true);
+            } else {
+                // Delete
+                bookmarkStore.deleteBookmarkByURL(url);
+                setBookmarked(false);
+            }
+        }, mUIThreadExecutor);
+
+    }
+
+    private void setBookmarked(boolean aValue) {
+        if (aValue) {
+            mBookmarkButton.setImageDrawable(getContext().getDrawable(R.drawable.ic_icon_bookmark_active));
+        } else {
+            mBookmarkButton.setImageDrawable(getContext().getDrawable(R.drawable.ic_icon_bookmark));
+        }
+    }
 
     public void setHint(@StringRes int aHint) {
         mURL.setHint(aHint);
@@ -252,16 +252,12 @@ public class NavigationURLBar extends FrameLayout {
             return;
         }
 
-        // Setup model view for this URL
-        if (mBookmarkModel != null) {
-            mBookmarkModel.getObservableBookmark().removeObserver(mBookmarkObserver);
-        }
-        mBookmarkModel = new BookmarkViewModel(mApplication, mApplication.getRepository(), aURL);
-        mBinding.setBookmarkViewModel(mBookmarkModel);
-        mBinding.setCallback(mNavigationBarCallback);
-        mBookmarkModel.getObservableBookmark().observeForever(mBookmarkObserver);
-
         mURL.removeTextChangedListener(mURLTextWatcher);
+        if (StringUtils.isEmpty(aURL)) {
+            setBookmarked(false);
+        } else {
+           SessionStore.get().getBookmarkStore().isBookmarked(aURL).thenAcceptAsync(this::setBookmarked, mUIThreadExecutor);
+        }
 
         int index = -1;
         if (aURL != null) {

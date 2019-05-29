@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply from: "$project.rootDir/tools/gradle/versionCode.gradle"
+apply plugin: 'kotlin-android'
 
 def getGitHash = { ->
     def stdout = new ByteArrayOutputStream()
@@ -304,6 +305,7 @@ dependencies {
     implementation deps.android_components.telemetry
     implementation deps.android_components.browser_errorpages
     implementation deps.android_components.browser_search
+    implementation deps.android_components.browser_storage
     implementation deps.android_components.browser_domains
     implementation deps.android_components.ui_autocomplete
     implementation deps.android_components.concept_fetch
@@ -312,6 +314,7 @@ dependencies {
     // Kotlin dependency
     implementation deps.kotlin.stdlib
     implementation deps.kotlin.coroutines
+    implementation deps.kotlin.coroutines_jdk8
 
     // SQLite helper to handle DBs from assets
     implementation deps.sqlite.sqlite

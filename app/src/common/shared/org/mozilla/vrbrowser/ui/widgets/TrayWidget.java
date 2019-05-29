@@ -178,7 +178,7 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
         mTrayListeners.addAll(Arrays.asList(listeners));
     }
 
-    public void removeAllListeners() {
+    public void onDestroy() {
         mTrayListeners.clear();
     }
 

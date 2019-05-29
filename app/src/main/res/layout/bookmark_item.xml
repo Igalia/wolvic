@@ -6,7 +6,7 @@
 
         <variable
             name="bookmark"
-            type="org.mozilla.vrbrowser.model.Bookmark" />
+            type="mozilla.components.concept.storage.BookmarkNode" />
 
         <variable
             name="callback"

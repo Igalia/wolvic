@@ -1,20 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <data>
-
-        <import type="android.view.View" />
-
-        <variable
-            name="bookmarkViewModel"
-            type="org.mozilla.vrbrowser.viewmodel.BookmarkViewModel" />
-
-        <variable
-            name="callback"
-            type="org.mozilla.vrbrowser.ui.callbacks.NavigationBarCallback" />
-    </data>
-
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -85,8 +71,7 @@
             <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/bookmarkButton"
                 style="@style/urlBarIconThemeEnd"
-                android:onClick="@{() ->  callback.onBookmarkClick(bookmarkViewModel.bookmark)}"
-                android:src="@{bookmarkViewModel.bookmark == null ? @drawable/ic_icon_bookmark : @drawable/ic_icon_bookmark_active}"
+                android:src="@drawable/ic_icon_bookmark"
                 android:tint="@color/fog" />
         </LinearLayout>
     </FrameLayout>

@@ -12,23 +12,25 @@ import android.widget.ImageView;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.databinding.BookmarkItemBinding;
-import org.mozilla.vrbrowser.model.Bookmark;
 import org.mozilla.vrbrowser.ui.callbacks.BookmarkClickCallback;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 
 import java.util.List;
 import java.util.Objects;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import mozilla.components.concept.storage.BookmarkNode;
+
 public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.BookmarkViewHolder> {
 
     private static final int ICON_ANIMATION_DURATION = 200;
 
-    private List<? extends Bookmark> mBookmarkList;
+    private List<? extends BookmarkNode> mBookmarkList;
 
     private int mMinPadding;
     private int mMaxPadding;
@@ -50,7 +52,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
         setHasStableIds(true);
     }
 
-    public void setBookmarkList(final List<? extends Bookmark> bookmarkList) {
+    public void setBookmarkList(final List<? extends BookmarkNode> bookmarkList) {
         if (mBookmarkList == null) {
             mBookmarkList = bookmarkList;
             notifyItemRangeInserted(0, bookmarkList.size());
@@ -69,18 +71,16 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
 
                 @Override
                 public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-                    return mBookmarkList.get(oldItemPosition).getId() ==
-                            bookmarkList.get(newItemPosition).getId();
+                    return mBookmarkList.get(oldItemPosition).getGuid().equals(bookmarkList.get(newItemPosition).getGuid());
                 }
 
                 @Override
                 public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-                    Bookmark newBookmark = bookmarkList.get(newItemPosition);
-                    Bookmark oldBookmark = mBookmarkList.get(oldItemPosition);
-                    return newBookmark.getId() == oldBookmark.getId()
+                    BookmarkNode newBookmark = bookmarkList.get(newItemPosition);
+                    BookmarkNode oldBookmark = mBookmarkList.get(oldItemPosition);
+                    return newBookmark.getGuid().equals(oldBookmark.getGuid())
                             && Objects.equals(newBookmark.getTitle(), oldBookmark.getTitle())
-                            && Objects.equals(newBookmark.getUrl(), oldBookmark.getUrl())
-                            && newBookmark.getAdded() == oldBookmark.getAdded();
+                            && Objects.equals(newBookmark.getUrl(), oldBookmark.getUrl());
                 }
             });
 
@@ -89,8 +89,20 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
         }
     }
 
+    public void removeItem(BookmarkNode aBookmark) {
+        int position = mBookmarkList.indexOf(aBookmark);
+        if (position >= 0) {
+            mBookmarkList.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
+
+    public int itemCount() {
+        return mBookmarkList != null ? mBookmarkList.size() : 0;
+    }
+
     @Override
-    public BookmarkViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public BookmarkViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         BookmarkItemBinding binding = DataBindingUtil
                 .inflate(LayoutInflater.from(parent.getContext()), R.layout.bookmark_item,
                         parent, false);
@@ -112,7 +124,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
     }
 
     @Override
-    public void onBindViewHolder(BookmarkViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull BookmarkViewHolder holder, int position) {
         holder.binding.setBookmark(mBookmarkList.get(position));
         holder.binding.executePendingBindings();
     }
@@ -124,14 +136,15 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
 
     @Override
     public long getItemId(int position) {
-        return mBookmarkList.get(position).getId();
+        BookmarkNode bookmark = mBookmarkList.get(position);
+        return  bookmark.getPosition() != null ? bookmark.getPosition() : RecyclerView.NO_ID;
     }
 
     static class BookmarkViewHolder extends RecyclerView.ViewHolder {
 
         final BookmarkItemBinding binding;
 
-        public BookmarkViewHolder(BookmarkItemBinding binding) {
+        BookmarkViewHolder(BookmarkItemBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }

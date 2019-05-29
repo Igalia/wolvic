@@ -52,6 +52,7 @@ def android_components = [:]
 android_components.telemetry = "org.mozilla.components:service-telemetry:$versions.android_components"
 android_components.browser_errorpages = "org.mozilla.components:browser-errorpages:$versions.android_components"
 android_components.browser_search = "org.mozilla.components:browser-search:$versions.android_components"
+android_components.browser_storage = "org.mozilla.components:browser-storage-sync:$versions.android_components"
 android_components.browser_domains = "org.mozilla.components:browser-domains:$versions.android_components"
 android_components.ui_autocomplete = "org.mozilla.components:ui-autocomplete:$versions.android_components"
 android_components.concept_fetch = "org.mozilla.components:concept-fetch:$versions.android_components"
@@ -110,6 +111,7 @@ kotlin.test = "org.jetbrains.kotlin:kotlin-test-junit:$versions.kotlin"
 kotlin.plugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
 kotlin.allopen = "org.jetbrains.kotlin:kotlin-allopen:$versions.kotlin"
 kotlin.coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$versions.kotlin_coroutines"
+kotlin.coroutines_jdk8 = "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$versions.kotlin_coroutines"
 deps.kotlin = kotlin
 
 deps.constraint_layout = "androidx.constraintlayout:constraintlayout:$versions.constraint_layout"

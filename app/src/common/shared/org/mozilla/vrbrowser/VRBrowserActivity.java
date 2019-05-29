@@ -54,7 +54,6 @@ import org.mozilla.vrbrowser.ui.widgets.RootWidget;
 import org.mozilla.vrbrowser.ui.widgets.TopBarWidget;
 import org.mozilla.vrbrowser.ui.widgets.TrayListener;
 import org.mozilla.vrbrowser.ui.widgets.TrayWidget;
-import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.VideoProjectionMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.Widget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
@@ -172,6 +171,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         SessionStore.get().setContext(this, extras);
         SessionStore.get().registerListeners();
         SessionStore.get().addVideoAvailabilityListener(this);
+        ((VRBrowserApplication)getApplication()).getRepository().migrateOldBookmarks();
 
         // Create broadcast receiver for getting crash messages from crash process
         IntentFilter intentFilter = new IntentFilter();
@@ -336,8 +336,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         }
 
         // Remove all widget listeners
-        mTray.removeAllListeners();
-        mBookmarksView.removeAllListeners();
+        mTray.onDestroy();
+        mBookmarksView.onDestroy();
         SessionStore.get().removeVideoAvailabilityListener(this);
 
         SessionStore.get().unregisterListeners();

@@ -5,10 +5,7 @@
 
 package org.mozilla.vrbrowser.ui.views;
 
-import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
-import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,14 +17,13 @@ import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.WebRequestError;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
+import org.mozilla.vrbrowser.browser.BookmarksStore;
 import org.mozilla.vrbrowser.browser.SessionStore;
 import org.mozilla.vrbrowser.databinding.BookmarksBinding;
-import org.mozilla.vrbrowser.db.entity.BookmarkEntity;
-import org.mozilla.vrbrowser.model.Bookmark;
 import org.mozilla.vrbrowser.ui.adapters.BookmarkAdapter;
 import org.mozilla.vrbrowser.ui.callbacks.BookmarkClickCallback;
 import org.mozilla.vrbrowser.ui.widgets.BookmarkListener;
-import org.mozilla.vrbrowser.viewmodel.BookmarkListViewModel;
+import org.mozilla.vrbrowser.utils.UIThreadExecutor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,19 +32,18 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 
-public class BookmarksView extends FrameLayout implements Application.ActivityLifecycleCallbacks,
-        GeckoSession.NavigationDelegate {
+import mozilla.components.concept.storage.BookmarkNode;
+
+public class BookmarksView extends FrameLayout implements GeckoSession.NavigationDelegate, BookmarksStore.BookmarkListener {
 
     private static final String ABOUT_BLANK = "about:blank";
 
     private BookmarksBinding mBinding;
     private BookmarkAdapter mBookmarkAdapter;
-    private BookmarkListViewModel mBookmarkListModel;
     private List<BookmarkListener> mBookmarkListeners;
     private AudioEngine mAudio;
+    private boolean mIgnoreNextListener;
 
     public BookmarksView(Context aContext) {
         super(aContext);
@@ -69,20 +64,17 @@ public class BookmarksView extends FrameLayout implements Application.ActivityLi
         mBookmarkListeners = new ArrayList<>();
 
         mAudio = AudioEngine.fromContext(aContext);
-
-        ((Application)getContext().getApplicationContext()).registerActivityLifecycleCallbacks(this);
         SessionStore.get().addNavigationListener(this);
-
         LayoutInflater inflater = LayoutInflater.from(aContext);
 
         // Inflate this data binding layout
         mBinding = DataBindingUtil.inflate(inflater, R.layout.bookmarks, this, true);
-
         mBookmarkAdapter = new BookmarkAdapter(mBookmarkClickCallback, aContext);
         mBinding.bookmarksList.setAdapter(mBookmarkAdapter);
-
-        mBookmarkListModel = new BookmarkListViewModel(((Application)getContext().getApplicationContext()));
-        subscribeUi(mBookmarkListModel.getBookmarks());
+        mBinding.setIsLoading(true);
+        mBinding.executePendingBindings();
+        syncBookmarks();
+        SessionStore.get().getBookmarkStore().addListener(this);
 
         setVisibility(GONE);
     }
@@ -91,21 +83,22 @@ public class BookmarksView extends FrameLayout implements Application.ActivityLi
         mBookmarkListeners.addAll(Arrays.asList(listeners));
     }
 
-    public void removeAllListeners() {
+    public void onDestroy() {
         mBookmarkListeners.clear();
+        SessionStore.get().getBookmarkStore().removeListener(this);
     }
 
     private void notifyBookmarksShown() {
-        mBookmarkListeners.forEach(bookmarkListener -> bookmarkListener.onBookmarksShown());
+        mBookmarkListeners.forEach(BookmarkListener::onBookmarksShown);
     }
 
     private void notifyBookmarksHidden() {
-        mBookmarkListeners.forEach(bookmarkListener -> bookmarkListener.onBookmarksHidden());
+        mBookmarkListeners.forEach(BookmarkListener::onBookmarksHidden);
     }
 
     private final BookmarkClickCallback mBookmarkClickCallback = new BookmarkClickCallback() {
         @Override
-        public void onClick(Bookmark bookmark) {
+        public void onClick(BookmarkNode bookmark) {
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
@@ -114,47 +107,39 @@ public class BookmarksView extends FrameLayout implements Application.ActivityLi
         }
 
         @Override
-        public void onDelete(Bookmark bookmark) {
+        public void onDelete(BookmarkNode bookmark) {
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
 
-            mBookmarkListModel.deleteBookmark(bookmark);
-        }
-    };
-
-    private void subscribeUi(LiveData<List<BookmarkEntity>> liveData) {
-        // Update the list when the data changes
-        liveData.observeForever(mBookmarkListObserver);
-    }
-
-    private void unsubscribeUi(LiveData<List<BookmarkEntity>> liveData) {
-        // Update the list when the data changes
-        liveData.removeObserver(mBookmarkListObserver);
-    }
-
-    private Observer<List<BookmarkEntity>> mBookmarkListObserver = new Observer<List<BookmarkEntity>>() {
-
-        @Override
-        public void onChanged(List<BookmarkEntity> bookmarkEntities) {
-            if (bookmarkEntities != null) {
-                if (bookmarkEntities.size() == 0) {
-                    mBinding.setIsEmpty(true);
-                    mBinding.setIsLoading(false);
-
-                } else {
-                    mBinding.setIsEmpty(false);
-                    mBinding.setIsLoading(false);
-                    mBookmarkAdapter.setBookmarkList(bookmarkEntities);
-                }
-
-            } else {
-                mBinding.setIsLoading(true);
+            mIgnoreNextListener = true;
+            SessionStore.get().getBookmarkStore().deleteBookmarkById(bookmark.getGuid());
+            mBookmarkAdapter.removeItem(bookmark);
+            if (mBookmarkAdapter.itemCount() == 0) {
+                mBinding.setIsEmpty(true);
+                mBinding.setIsLoading(false);
+                mBinding.executePendingBindings();
             }
-            
-            mBinding.executePendingBindings();
         }
     };
+
+
+    private void syncBookmarks() {
+        SessionStore.get().getBookmarkStore().getBookmarks().thenAcceptAsync(this::showBookmarks, new UIThreadExecutor());
+    }
+
+    private void showBookmarks(List<BookmarkNode> aBookmarks) {
+        if (aBookmarks == null || aBookmarks.size() == 0) {
+            mBinding.setIsEmpty(true);
+            mBinding.setIsLoading(false);
+
+        } else {
+            mBinding.setIsEmpty(false);
+            mBinding.setIsLoading(false);
+            mBookmarkAdapter.setBookmarkList(aBookmarks);
+        }
+        mBinding.executePendingBindings();
+    }
 
     @Override
     public void setVisibility(int visibility) {
@@ -166,43 +151,6 @@ public class BookmarksView extends FrameLayout implements Application.ActivityLi
         } else {
             notifyBookmarksHidden();
         }
-    }
-
-    // ActivityLifecycleCallbacks
-
-    @Override
-    public void onActivityCreated(Activity activity, Bundle bundle) {
-
-    }
-
-    @Override
-    public void onActivityStarted(Activity activity) {
-        subscribeUi(mBookmarkListModel.getBookmarks());
-    }
-
-    @Override
-    public void onActivityResumed(Activity activity) {
-
-    }
-
-    @Override
-    public void onActivityPaused(Activity activity) {
-
-    }
-
-    @Override
-    public void onActivityStopped(Activity activity) {
-        unsubscribeUi(mBookmarkListModel.getBookmarks());
-    }
-
-    @Override
-    public void onActivitySaveInstanceState(Activity activity, Bundle bundle) {
-
-    }
-
-    @Override
-    public void onActivityDestroyed(Activity activity) {
-
     }
 
     // NavigationDelegate
@@ -241,5 +189,15 @@ public class BookmarksView extends FrameLayout implements Application.ActivityLi
     @Override
     public GeckoResult<String> onLoadError(GeckoSession session, String uri, WebRequestError error) {
         return null;
+    }
+
+    // BookmarksStore.BookmarkListener
+    @Override
+    public void onBookmarksUpdated() {
+        if (mIgnoreNextListener) {
+            mIgnoreNextListener = false;
+            return;
+        }
+        syncBookmarks();
     }
 }

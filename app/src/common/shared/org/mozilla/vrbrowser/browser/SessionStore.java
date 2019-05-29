@@ -130,6 +130,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     private String mRegion;
     private Context mContext;
     private SharedPreferences mPrefs;
+    private BookmarksStore mBookmarksStore;
 
     private SessionStore() {
         mSessions = new LinkedHashMap<>();
@@ -161,6 +162,10 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
 
         if (mPrefs != null) {
             mPrefs.unregisterOnSharedPreferenceChangeListener(this);
+        }
+
+        if (mBookmarksStore != null) {
+            mBookmarksStore.removeAllListeners();
         }
     }
 
@@ -199,10 +204,15 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
 
         mContext = aContext;
         mPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+        mBookmarksStore = new BookmarksStore(mContext);
         if (mUserAgentOverride == null) {
             mUserAgentOverride = new UserAgentOverride();
             mUserAgentOverride.loadOverridesFromAssets((Activity)aContext, aContext.getString(R.string.user_agent_override_file));
         }
+    }
+
+    public BookmarksStore getBookmarkStore() {
+        return mBookmarksStore;
     }
 
     public void dumpAllState(Integer sessionId) {
