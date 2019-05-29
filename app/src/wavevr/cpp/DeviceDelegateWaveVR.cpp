@@ -348,6 +348,11 @@ DeviceDelegateWaveVR::SetRenderMode(const device::RenderMode aMode) {
   if (aMode == m.renderMode) {
     return;
   }
+  // To make sure assigning correct hands before entering immersive mode.
+  if (aMode == device::RenderMode::Immersive) {
+    m.handsCalculated = false;
+  }
+
   m.renderMode = aMode;
   m.reorientMatrix = vrb::Matrix::Identity();
 }
