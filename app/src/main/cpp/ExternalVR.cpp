@@ -376,7 +376,9 @@ ExternalVR::GetVRState() const {
 
 void
 ExternalVR::PushFramePoses(const vrb::Matrix& aHeadTransform, const std::vector<Controller>& aControllers, const double aTimestamp) {
-  const vrb::Matrix inverseHeadTransform = aHeadTransform.Inverse();
+  vrb::Matrix head = aHeadTransform;
+  head.TranslateInPlace(vrb::Vector(0.0f, -1.7f, 0.0f));
+  const vrb::Matrix inverseHeadTransform = head.Inverse();
   vrb::Quaternion quaternion(inverseHeadTransform);
   vrb::Vector translation = aHeadTransform.GetTranslation();
   memcpy(&(m.system.sensorState.pose.orientation), quaternion.Data(),

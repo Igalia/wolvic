@@ -722,7 +722,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         }
         mIsPresentingImmersive = true;
         TelemetryWrapper.startImmersive();
-        PauseCompositorRunnable runnable = new PauseCompositorRunnable();
+        /*PauseCompositorRunnable runnable = new PauseCompositorRunnable();
 
         synchronized (this) {
             runOnUiThread(runnable);
@@ -733,7 +733,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                     Log.e(LOGTAG, "Waiting for compositor pause interrupted");
                 }
             }
-        }
+        }*/
     }
 
     @Keep
@@ -744,13 +744,13 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         }
         mIsPresentingImmersive = false;
         TelemetryWrapper.uploadImmersiveToHistogram();
-        Handler handler = new Handler(Looper.getMainLooper());
+        /*Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(() -> {
             if (mWindowWidget != null) {
                 mWindowWidget.resumeCompositor();
                 Log.d(LOGTAG, "Compositor Resumed");
             }
-        }, 20);
+        }, 20);*/
     }
 
     @Keep

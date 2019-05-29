@@ -717,6 +717,11 @@ BrowserWorld::Draw() {
   else if (m.externalVR->IsPresenting()) {
     m.CheckBackButton();
     DrawImmersive();
+    bool relayoutWidgets = false;
+    m.UpdateControllers(relayoutWidgets);
+    if (relayoutWidgets) {
+      UpdateVisibleWidgets();
+    }
   } else {
     bool relayoutWidgets = false;
     m.UpdateControllers(relayoutWidgets);
@@ -1080,6 +1085,7 @@ BrowserWorld::DrawWorld() {
   vrb::Vector headPosition = m.device->GetHeadTransform().GetTranslation();
   vrb::Vector headDirection = m.device->GetHeadTransform().MultiplyDirection(vrb::Vector(0.0f, 0.0f, -1.0f));
   if (m.skybox) {
+    m.skybox->SetVisible(true);
     m.skybox->SetTransform(vrb::Matrix::Translation(headPosition));
   }
   m.rootTransparent->SortNodes([=](const NodePtr& a, const NodePtr& b) {
@@ -1146,8 +1152,32 @@ BrowserWorld::DrawImmersive() {
   m.device->SetRenderMode(device::RenderMode::Immersive);
 
   m.device->StartFrame();
+
   VRB_GL_CHECK(glDepthMask(GL_FALSE));
   m.externalVR->PushFramePoses(m.device->GetHeadTransform(), m.controllers->GetControllers(), m.context->GetTimestamp());
+
+  vrb::Vector headPosition = m.device->GetHeadTransform().GetTranslation();
+  vrb::Vector headDirection = m.device->GetHeadTransform().MultiplyDirection(vrb::Vector(0.0f, 0.0f, -1.0f));
+  if (m.skybox) {
+    m.skybox->SetVisible(false);
+    m.skybox->SetTransform(vrb::Matrix::Translation(headPosition));
+  }
+  m.rootTransparent->SortNodes([=](const NodePtr& a, const NodePtr& b) {
+    float da = DistanceToPlane(a, headPosition, headDirection);
+    float db = DistanceToPlane(b, headPosition, headDirection);
+    if (da < 0.0f) {
+      da = std::numeric_limits<float>::max();
+    }
+    if (db < 0.0f) {
+      db = std::numeric_limits<float>::max();
+    }
+    return da < db;
+  });
+
+  m.rootOpaque->SetTransform(m.device->GetReorientTransform());
+  m.rootTransparent->SetTransform(m.device->GetReorientTransform());
+
+
   int32_t surfaceHandle = 0;
   device::EyeRect leftEye, rightEye;
   bool aDiscardFrame = !m.externalVR->WaitFrameResult();
@@ -1158,9 +1188,33 @@ BrowserWorld::DrawImmersive() {
       m.blitter->StartFrame(surfaceHandle, leftEye, rightEye);
       m.device->BindEye(device::Eye::Left);
       m.blitter->Draw(device::Eye::Left);
+      glClear(GL_DEPTH_BUFFER_BIT);
+      m.drawList->Reset();
+      m.rootOpaqueParent->Cull(*m.cullVisitor, *m.drawList);
+      m.drawList->Draw(*m.leftCamera);
+      m.drawList->Reset();
+      m.rootController->Cull(*m.cullVisitor, *m.drawList);
+      m.drawList->Draw(*m.leftCamera);
+      VRB_GL_CHECK(glDepthMask(GL_FALSE));
+      m.drawList->Reset();
+      m.rootTransparent->Cull(*m.cullVisitor, *m.drawList);
+      m.drawList->Draw(*m.leftCamera);
+      VRB_GL_CHECK(glDepthMask(GL_TRUE));
 #if !defined(VRBROWSER_NO_VR_API)
       m.device->BindEye(device::Eye::Right);
       m.blitter->Draw(device::Eye::Right);
+      glClear(GL_DEPTH_BUFFER_BIT);
+      m.drawList->Reset();
+      m.rootOpaqueParent->Cull(*m.cullVisitor, *m.drawList);
+      m.drawList->Draw(*m.rightCamera);
+      m.drawList->Reset();
+      m.rootController->Cull(*m.cullVisitor, *m.drawList);
+      m.drawList->Draw(*m.rightCamera);
+      VRB_GL_CHECK(glDepthMask(GL_FALSE));
+      m.drawList->Reset();
+      m.rootTransparent->Cull(*m.cullVisitor, *m.drawList);
+      m.drawList->Draw(*m.rightCamera);
+      VRB_GL_CHECK(glDepthMask(GL_TRUE));
 #endif // !defined(VRBROWSER_NO_VR_API)
     }
     m.device->EndFrame(aDiscardFrame);

@@ -530,6 +530,9 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     }
 
     public String getHomeUri() {
+        if (true) {
+            return "resource://android/assets/www/samples/04-simple-mirroring.html";
+        }
         String homepage = SettingsStore.getInstance(mContext).getHomepage();
         if (homepage.equals(mContext.getString(R.string.homepage_url)) && mRegion != null) {
             homepage = homepage + "?region=" + mRegion;

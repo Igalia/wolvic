@@ -1231,7 +1231,7 @@ DeviceDelegateOculusVR::StartFrame() {
 
 
 
-  if (m.renderMode == device::RenderMode::StandAlone) {
+  // if (m.renderMode == device::RenderMode::StandAlone) {
     if (!m.Is6DOF()) {
       head.TranslateInPlace(kAverageHeight);
     } else {
@@ -1241,7 +1241,7 @@ DeviceDelegateOculusVR::StartFrame() {
       }
       head.TranslateInPlace(m.headHeightOffset);
     }
-  }
+  // }
 
   m.cameras[VRAPI_EYE_LEFT]->SetHeadTransform(head);
   m.cameras[VRAPI_EYE_RIGHT]->SetHeadTransform(head);
@@ -1261,7 +1261,7 @@ DeviceDelegateOculusVR::StartFrame() {
   int lastReorientCount = m.reorientCount;
   m.UpdateControllers(head);
   bool reoriented = lastReorientCount != m.reorientCount && lastReorientCount > 0 && m.reorientCount > 0;
-  if (reoriented && m.renderMode == device::RenderMode::StandAlone) {
+  if (reoriented) { //} && m.renderMode == device::RenderMode::StandAlone) {
     vrb::Vector height = kAverageHeight;
     if (m.Is6DOF()) {
       height.y() = m.predictedTracking.HeadPose.Pose.Position.y;
@@ -1343,11 +1343,13 @@ DeviceDelegateOculusVR::EndFrame(const bool aDiscard) {
   });
 
   // Draw back layers
-  for (const OculusLayerPtr& layer: m.uiLayers) {
-    if (!layer->GetDrawInFront() && layer->IsDrawRequested() && layerCount < ovrMaxLayerCount) {
-      layer->Update(m.predictedTracking);
-      layers[layerCount++] = layer->Header();
-      layer->ClearRequestDraw();
+  if (m.renderMode == device::RenderMode::StandAlone) {
+    for (const OculusLayerPtr& layer: m.uiLayers) {
+      if (!layer->GetDrawInFront() && layer->IsDrawRequested() && layerCount < ovrMaxLayerCount) {
+        layer->Update(m.predictedTracking);
+        layers[layerCount++] = layer->Header();
+        layer->ClearRequestDraw();
+      }
     }
   }
 
@@ -1369,6 +1371,18 @@ DeviceDelegateOculusVR::EndFrame(const bool aDiscard) {
     projection.Textures[i].TexCoordsFromTanAngles = ovrMatrix4f_TanAngleMatrixFromProjection(&projectionMatrix);
   }
   layers[layerCount++] = &projection.Header;
+
+  // Back layers hack
+  if (m.renderMode == device::RenderMode::Immersive) {
+    for (const OculusLayerPtr& layer: m.uiLayers) {
+      if (!layer->GetDrawInFront() && layer->IsDrawRequested() && layerCount < ovrMaxLayerCount) {
+        layer->Update(m.predictedTracking);
+        layers[layerCount++] = layer->Header();
+        layer->ClearRequestDraw();
+      }
+    }
+  }
+
 
   // Draw front layers
   for (const OculusLayerPtr& layer: m.uiLayers) {
