@@ -31,7 +31,7 @@ public:
 protected:
   struct State;
   GestureDelegate(State& aState);
-  ~GestureDelegate();
+  ~GestureDelegate() = default;
 private:
   State& m;
   GestureDelegate() = delete;

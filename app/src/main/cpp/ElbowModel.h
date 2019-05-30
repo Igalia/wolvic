@@ -23,7 +23,7 @@ public:
 protected:
   struct State;
   ElbowModel(State& aState);
-  ~ElbowModel();
+  ~ElbowModel() = default;
 private:
   State& m;
   ElbowModel() = delete;

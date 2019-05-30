@@ -73,7 +73,7 @@ public:
 protected:
   struct State;
   Widget(State& aState, vrb::RenderContextPtr& aContext);
-  ~Widget();
+  ~Widget() = default;
 private:
   State& m;
   Widget() = delete;

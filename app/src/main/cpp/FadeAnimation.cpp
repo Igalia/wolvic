@@ -99,6 +99,4 @@ FadeAnimation::FadeAnimation(State& aState, vrb::CreationContextPtr& aContext)
     : m(aState)
 {}
 
-FadeAnimation::~FadeAnimation() {}
-
 } // namespace crow

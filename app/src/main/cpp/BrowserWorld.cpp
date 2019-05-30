@@ -62,9 +62,7 @@
   }
 
 
-#define INJECT_ENVIRONMENT_PATH "environment/environment.obj"
 #define INJECT_SKYBOX_PATH "skybox"
-#define SPACE_THEME 0
 
 using namespace vrb;
 
@@ -77,19 +75,13 @@ const float kScrollFactor = 20.0f; // Just picked what fell right.
 const float kWorldDPIRatio = 2.0f/720.0f;
 const double kHoverRate = 1.0 / 10.0;
 
-#if SPACE_THEME == 1
-  static const std::string CubemapDay = "cubemap/space";
-#else
-  static const std::string CubemapDay = "cubemap/day";
-#endif
-
 class SurfaceObserver;
 typedef std::shared_ptr<SurfaceObserver> SurfaceObserverPtr;
 
 class SurfaceObserver : public SurfaceTextureObserver {
 public:
-  SurfaceObserver(crow::BrowserWorldWeakPtr& aWorld);
-  ~SurfaceObserver() override;
+  explicit SurfaceObserver(crow::BrowserWorldWeakPtr& aWorld);
+  ~SurfaceObserver() override = default;
   void SurfaceTextureCreated(const std::string& aName, GLuint aHandle, jobject aSurfaceTexture) override;
   void SurfaceTextureHandleUpdated(const std::string aName, GLuint aHandle) override;
   void SurfaceTextureDestroyed(const std::string& aName) override;
@@ -100,7 +92,6 @@ protected:
 };
 
 SurfaceObserver::SurfaceObserver(crow::BrowserWorldWeakPtr& aWorld) : mWorld(aWorld) {}
-SurfaceObserver::~SurfaceObserver() {}
 
 void
 SurfaceObserver::SurfaceTextureCreated(const std::string& aName, GLuint, jobject aSurfaceTexture) {
@@ -304,7 +295,7 @@ ScaleScrollDelta(const float aValue, const double aStartTime, const double aCurr
   const float kMaxDelta = 2.0f; // in seconds
   const float kMinScale = 0.15f;
   const double deltaTime = aCurrentTime - aStartTime;
-  float scale = float(deltaTime / kMaxDelta);
+  auto scale = float(deltaTime / kMaxDelta);
   if (deltaTime > kMaxDelta) {
     scale = 1.0f;
   } else if (scale < kMinScale) {
@@ -526,7 +517,7 @@ void
 BrowserWorld::RegisterDeviceDelegate(DeviceDelegatePtr aDelegate) {
   ASSERT_ON_RENDER_THREAD();
   DeviceDelegatePtr previousDevice = std::move(m.device);
-  m.device = aDelegate;
+  m.device = std::move(aDelegate);
   if (m.device) {
     m.device->RegisterImmersiveDisplay(m.externalVR);
     m.device->SetClearColor(vrb::Color(0.0f, 0.0f, 0.0f, 0.0f));
@@ -616,7 +607,7 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
       }
     }
 #if !defined(SNAPDRAGONVR)
-    CreateSkyBox(skyboxPath.c_str(), extension);
+    CreateSkyBox(skyboxPath, extension);
     // Don't load the env model, we are going for skyboxes in v1.0
 //    CreateFloor();
 #endif
@@ -755,7 +746,7 @@ BrowserWorld::UpdateEnvironment() {
   ASSERT_ON_RENDER_THREAD();
   std::string env = VRBrowser::GetActiveEnvironment();
   VRB_LOG("Setting environment: %s", env.c_str());
-  CreateSkyBox(env.c_str(), "");
+  CreateSkyBox(env, "");
 }
 
 void
@@ -811,7 +802,7 @@ BrowserWorld::AddWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement) {
   if (aPlacement->cylinder && m.cylinderDensity > 0) {
     VRLayerCylinderPtr layer = m.device->CreateLayerCylinder(textureWidth, textureHeight, VRLayerQuad::SurfaceType::AndroidSurface);
     CylinderPtr cylinder = Cylinder::Create(m.create, layer);
-    widget = Widget::Create(m.context, aHandle, textureWidth, textureHeight, worldWidth, worldHeight, cylinder);
+    widget = Widget::Create(m.context, aHandle, textureWidth, textureHeight, (int32_t)worldWidth, (int32_t)worldHeight, cylinder);
   }
 
   if (!widget) {
@@ -1079,8 +1070,6 @@ BrowserWorld::Create() {
 
 BrowserWorld::BrowserWorld(State& aState) : m(aState) {}
 
-BrowserWorld::~BrowserWorld() {}
-
 void
 BrowserWorld::DrawWorld() {
   m.externalVR->SetCompositorEnabled(true);
@@ -1235,7 +1224,7 @@ BrowserWorld::CreateSkyBox(const std::string& aBasePath, const std::string& aExt
   const bool empty = aBasePath == "cubemap/void";
   const std::string extension = aExtension.empty() ? ".ktx" : aExtension;
   const GLenum glFormat = extension == ".ktx" ? GL_COMPRESSED_RGB8_ETC2 : GL_RGB8;
-  const float size = 1024;
+  const int32_t size = 1024;
   if (m.skybox && empty) {
     m.skybox->SetVisible(false);
     return;
@@ -1255,32 +1244,6 @@ BrowserWorld::CreateSkyBox(const std::string& aBasePath, const std::string& aExt
     m.rootOpaqueParent->AddNode(m.skybox->GetRoot());
     m.skybox->Load(m.loader, aBasePath, extension);
   }
-}
-
-void
-BrowserWorld::CreateFloor() {
-  ASSERT_ON_RENDER_THREAD();
-  vrb::TransformPtr model = Transform::Create(m.create);
-#if SPACE_THEME == 1
-  std::string environmentPath = "FirefoxPlatform2_low.obj";
-#else
-  std::string environmentPath = "meadow_v4.obj";
-#endif
-  if (VRBrowser::isOverrideEnvPathEnabled()) {
-    std::string injectPath = VRBrowser::GetStorageAbsolutePath(INJECT_ENVIRONMENT_PATH);
-    if (std::ifstream(injectPath)) {
-      environmentPath = injectPath;
-    }
-  }
-  m.loader->LoadModel(environmentPath, model);
-  m.rootOpaque->AddNode(model);
-  vrb::Matrix transform = vrb::Matrix::Identity();
-#if SPACE_THEME == 1
-  transform.ScaleInPlace(Vector(40.0, 40.0, 40.0));
-  transform.TranslateInPlace(Vector(0.0, -2.5f, 1.0));
-  transform.PostMultiplyInPlace(vrb::Matrix::Rotation(Vector(1.0, 0.0, 0.0), float(M_PI * 0.5)));
-#endif
-  model->SetTransform(transform);
 }
 
 float
@@ -1368,14 +1331,14 @@ JNI_METHOD(void, setWorldBrightnessNative)
 
 JNI_METHOD(void, setTemporaryFilePath)
 (JNIEnv* aEnv, jobject, jstring aPath) {
-  const char *nativeString = aEnv->GetStringUTFChars(aPath, 0);
+  const char *nativeString = aEnv->GetStringUTFChars(aPath, nullptr);
   std::string path = nativeString;
   aEnv->ReleaseStringUTFChars(aPath, nativeString);
   crow::BrowserWorld::Instance().SetTemporaryFilePath(path);
 }
 
 JNI_METHOD(void, exitImmersiveNative)
-(JNIEnv* aEnv, jobject) {
+(JNIEnv*, jobject) {
   crow::BrowserWorld::Instance().ExitImmersive();
 }
 
@@ -1394,48 +1357,48 @@ JNI_METHOD(void, workaroundGeckoSigAction)
 }
 
 JNI_METHOD(void, updateEnvironmentNative)
-(JNIEnv* aEnv, jobject) {
+(JNIEnv*, jobject) {
   crow::BrowserWorld::Instance().UpdateEnvironment();
 }
 
 JNI_METHOD(void, updateFoveatedLevelNative)
-(JNIEnv *aEnv, jobject, jint aAppLevel, jint aWebVRLevel) {
+(JNIEnv*, jobject, jint aAppLevel, jint aWebVRLevel) {
   crow::BrowserWorld::Instance().UpdateFoveatedLevel(aAppLevel, aWebVRLevel);
 }
 
 JNI_METHOD(void, updatePointerColorNative)
-(JNIEnv* aEnv, jobject) {
+(JNIEnv*, jobject) {
   crow::BrowserWorld::Instance().UpdatePointerColor();
 }
 
 JNI_METHOD(void, showVRVideoNative)
-(JNIEnv* aEnv, jobject, jint aWindowHandle, jint aVideoProjection) {
+(JNIEnv*, jobject, jint aWindowHandle, jint aVideoProjection) {
   crow::BrowserWorld::Instance().ShowVRVideo(aWindowHandle, aVideoProjection);
 }
 
 JNI_METHOD(void, hideVRVideoNative)
-(JNIEnv* aEnv, jobject) {
+(JNIEnv*, jobject) {
   crow::BrowserWorld::Instance().HideVRVideo();
 }
 
 JNI_METHOD(void, setControllersVisibleNative)
-(JNIEnv* aEnv, jobject, jboolean aVisible) {
+(JNIEnv*, jobject, jboolean aVisible) {
   crow::BrowserWorld::Instance().SetControllersVisible(aVisible);
 }
 
 JNI_METHOD(void, resetUIYawNative)
-(JNIEnv* aEnv, jobject) {
+(JNIEnv*, jobject) {
   crow::BrowserWorld::Instance().ResetUIYaw();
 }
 
 JNI_METHOD(void, setCylinderDensityNative)
-(JNIEnv* aEnv, jobject, jfloat aDensity) {
+(JNIEnv*, jobject, jfloat aDensity) {
   crow::BrowserWorld::Instance().SetCylinderDensity(aDensity);
 }
 
 
 JNI_METHOD(void, runCallbackNative)
-(JNIEnv* aEnv, jobject, jlong aCallback) {
+(JNIEnv*, jobject, jlong aCallback) {
   if (aCallback) {
     auto func = reinterpret_cast<std::function<void()> *>((uintptr_t)aCallback);
     (*func)();
@@ -1444,12 +1407,12 @@ JNI_METHOD(void, runCallbackNative)
 }
 
 JNI_METHOD(void, setCPULevelNative)
-(JNIEnv* aEnv, jobject, int aCPULevel) {
+(JNIEnv*, jobject, int aCPULevel) {
   crow::BrowserWorld::Instance().SetCPULevel(static_cast<crow::device::CPULevel>(aCPULevel));
 }
 
 JNI_METHOD(void, setIsServo)
-(JNIEnv* aEnv, jobject, jboolean aIsServo) {
+(JNIEnv*, jobject, jboolean aIsServo) {
   crow::BrowserWorld::Instance().SetIsServo(aIsServo);
 }
 

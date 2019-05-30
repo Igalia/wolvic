@@ -57,10 +57,10 @@ public:
   void GetFrameResult(int32_t& aSurfaceHandle, device::EyeRect& aLeftEye, device::EyeRect& aRightEye) const;
   void StopPresenting();
   void SetSourceBrowser(VRBrowserType aBrowser);
-  ~ExternalVR();
+  ExternalVR();
+  ~ExternalVR() = default;
 protected:
   struct State;
-  ExternalVR();
 private:
   uint16_t GetControllerCapabilityFlags(device::CapabilityFlags aFlags);
 

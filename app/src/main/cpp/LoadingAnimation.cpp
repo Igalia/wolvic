@@ -84,6 +84,4 @@ LoadingAnimation::LoadingAnimation(State& aState, vrb::CreationContextPtr& aCont
   m.Initialize();
 }
 
-LoadingAnimation::~LoadingAnimation() {}
-
 } // namespace crow

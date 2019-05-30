@@ -35,6 +35,7 @@ const float kOffset = 0.01f;
 const int kResolution = 24;
 const float kInnerRadius = 0.005f;
 const float kOuterRadius = 0.0066f;
+const float kPi32 = float(M_PI);
 
 struct Pointer::State {
   vrb::CreationContextWeak context;
@@ -83,14 +84,14 @@ struct Pointer::State {
       index.push_back(i*3 + 1);
 
       array->AppendVertex(vrb::Vector(
-          radius * cos(i * M_PI * 2 / resolution),
-          radius * sin(i * M_PI * 2 / resolution),
+          radius * cosf(i * kPi32 * 2 / resolution),
+          radius * sinf(i * kPi32 * 2 / resolution),
           offset));
       index.push_back(i*3 + 2);
 
       array->AppendVertex(vrb::Vector(
-          radius * cos((i + 1) * M_PI * 2 / resolution),
-          radius * sin((i + 1) * M_PI * 2 / resolution),
+          radius * cosf((i + 1) * kPi32 * 2 / resolution),
+          radius * sinf((i + 1) * kPi32 * 2 / resolution),
           offset));
       index.push_back(i*3 + 3);
 
@@ -132,7 +133,7 @@ Pointer::Load(const DeviceDelegatePtr& aDevice) {
     const float size = kOuterRadius *  2.0f;
     layer->SetWorldSize(size, size);
     layer->SetSurfaceChangedDelegate([](const VRLayer& aLayer, VRLayer::SurfaceChange aChange, const std::function<void()>& aCallback) {
-       const VRLayerQuad& quad = static_cast<const VRLayerQuad&>(aLayer);
+       auto& quad = static_cast<const VRLayerQuad&>(aLayer);
        if (aChange == VRLayer::SurfaceChange::Create) {
          VRBrowser::RenderPointerLayer(quad.GetSurface(), aCallback);
        }
@@ -197,7 +198,5 @@ Pointer::Create(vrb::CreationContextPtr aContext) {
 Pointer::Pointer(State& aState, vrb::CreationContextPtr& aContext) : m(aState) {
   m.context = aContext;
 }
-
-Pointer::~Pointer() {}
 
 } // namespace crow

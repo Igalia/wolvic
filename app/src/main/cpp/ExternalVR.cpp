@@ -20,18 +20,19 @@ const int SecondsToNanosecondsI32 = int(1e9);
 const int MicrosecondsToNanoseconds = 1000;
 
 class Lock {
-  pthread_mutex_t& mMutex;
+  pthread_mutex_t* mMutex;
   bool mLocked;
 public:
-  Lock(pthread_mutex_t& aMutex) : mMutex(aMutex), mLocked(false) {
-    if (pthread_mutex_lock(&mMutex) == 0) {
+  Lock() = delete;
+  explicit Lock(pthread_mutex_t* aMutex) : mMutex(aMutex), mLocked(false) {
+    if (pthread_mutex_lock(mMutex) == 0) {
       mLocked = true;
     }
   }
 
   ~Lock() {
     if (mLocked) {
-      pthread_mutex_unlock(&mMutex);
+      pthread_mutex_unlock(mMutex);
     }
   }
 
@@ -40,17 +41,17 @@ public:
   }
 
 private:
-  Lock() = delete;
   VRB_NO_DEFAULTS(Lock)
   VRB_NO_NEW_DELETE
 };
 
 class Wait {
-  pthread_mutex_t& mMutex;
-  pthread_cond_t& mCond;
+  pthread_mutex_t* mMutex;
+  pthread_cond_t* mCond;
   bool mLocked;
 public:
-  Wait(pthread_mutex_t& aMutex, pthread_cond_t& aCond)
+  Wait() = delete;
+  Wait(pthread_mutex_t* aMutex, pthread_cond_t* aCond)
       : mMutex(aMutex)
       , mCond(aCond)
       , mLocked(false)
@@ -58,35 +59,31 @@ public:
 
   ~Wait() {
     if (mLocked) {
-      pthread_mutex_unlock(&mMutex);
+      pthread_mutex_unlock(mMutex);
     }
   }
 
   bool DoWait(const float aWait) {
-    if (mLocked || pthread_mutex_lock(&mMutex) == 0) {
+    if (mLocked || pthread_mutex_lock(mMutex) == 0) {
       mLocked = true;
       if (aWait == 0.0f) {
-        return pthread_cond_wait(&mCond, &mMutex) == 0;
+        return pthread_cond_wait(mCond, mMutex) == 0;
       } else {
         float sec = 0;
         float nsec = modff(aWait, &sec);
-        struct timeval tv;
-        struct timespec ts;
-        gettimeofday(&tv, NULL);
+        struct timeval tv = {};
+        struct timespec ts = {};
+        gettimeofday(&tv, nullptr);
         ts.tv_sec = tv.tv_sec + int(sec);
         ts.tv_nsec = (tv.tv_usec * MicrosecondsToNanoseconds) + int(SecondsToNanoseconds * nsec);
         if (ts.tv_nsec >= SecondsToNanosecondsI32) {
           ts.tv_nsec -= SecondsToNanosecondsI32;
           ts.tv_sec++;
         }
-        return pthread_cond_timedwait(&mCond, &mMutex, &ts) == 0;
+        return pthread_cond_timedwait(mCond, mMutex, &ts) == 0;
       }
     }
     return false;
-  }
-
-  bool DoWait() {
-    return DoWait(0.0f);
   }
 
   bool IsLocked() {
@@ -98,19 +95,18 @@ public:
       return;
     }
 
-    if (pthread_mutex_lock(&mMutex) == 0) {
+    if (pthread_mutex_lock(mMutex) == 0) {
       mLocked = true;
     }
   }
   void Unlock() {
     if (mLocked) {
       mLocked = false;
-      pthread_mutex_unlock(&mMutex);
+      pthread_mutex_unlock(mMutex);
     }
   }
 
 private:
-  Wait() = delete;
   VRB_NO_DEFAULTS(Wait)
   VRB_NO_NEW_DELETE
 };
@@ -120,21 +116,21 @@ private:
 namespace crow {
 
 struct ExternalVR::State {
-  static ExternalVR::State * sState;
-  pthread_mutex_t* browserMutex;
-  pthread_cond_t* browserCond;
-  mozilla::gfx::VRBrowserState* sourceBrowserState;
-  mozilla::gfx::VRExternalShmem data;
-  mozilla::gfx::VRSystemState system;
-  mozilla::gfx::VRBrowserState browser;
-  device::CapabilityFlags deviceCapabilities;
+  static ExternalVR::State* sState;
+  pthread_mutex_t* browserMutex = nullptr;
+  pthread_cond_t* browserCond = nullptr;
+  mozilla::gfx::VRBrowserState* sourceBrowserState = nullptr;
+  mozilla::gfx::VRExternalShmem data = {};
+  mozilla::gfx::VRSystemState system = {};
+  mozilla::gfx::VRBrowserState browser = {};
+  // device::CapabilityFlags deviceCapabilities = 0;
   vrb::Vector eyeOffsets[device::EyeCount];
-  uint64_t lastFrameId;
-  bool firstPresentingFrame;
-  bool compositorEnabled;
-  bool waitingForExit;
+  uint64_t lastFrameId = 0;
+  bool firstPresentingFrame = false;
+  bool compositorEnabled = false;
+  bool waitingForExit = false;
 
-  State() : deviceCapabilities(0) {
+  State() {
     pthread_mutex_init(&data.systemMutex, nullptr);
     pthread_mutex_init(&data.geckoMutex, nullptr);
     pthread_mutex_init(&data.servoMutex, nullptr);
@@ -213,8 +209,7 @@ ExternalVR::State * ExternalVR::State::sState = nullptr;
 
 ExternalVRPtr
 ExternalVR::Create() {
-  ExternalVRPtr result(new ExternalVR());
-  return result;
+  return std::make_shared<ExternalVR>();
 }
 
 mozilla::gfx::VRExternalShmem*
@@ -259,7 +254,7 @@ ExternalVR::SetCapabilityFlags(const device::CapabilityFlags aFlags) {
   if (device::PositionEmulated & aFlags) {
     result |= static_cast<uint16_t>(mozilla::gfx::VRDisplayCapabilityFlags::Cap_PositionEmulated);
   }
-  m.deviceCapabilities = aFlags;
+  //m.deviceCapabilities = aFlags;
   m.system.displayState.capabilityFlags = static_cast<mozilla::gfx::VRDisplayCapabilityFlags>(result);
   m.system.sensorState.flags = m.system.displayState.capabilityFlags;
 }
@@ -302,7 +297,7 @@ ExternalVR::SetSittingToStandingTransform(const vrb::Matrix& aTransform) {
 
 void
 ExternalVR::PushSystemState() {
-  Lock lock(m.data.systemMutex);
+  Lock lock(&(m.data.systemMutex));
   if (lock.IsLocked()) {
     memcpy(&(m.data.state), &(m.system), sizeof(mozilla::gfx::VRSystemState));
     pthread_cond_signal(&m.data.systemCond);
@@ -311,7 +306,7 @@ ExternalVR::PushSystemState() {
 
 void
 ExternalVR::PullBrowserState() {
-  Lock lock(*m.browserMutex);
+  Lock lock(m.browserMutex);
   if (lock.IsLocked()) {
    m.PullBrowserStateWhileLocked();
   }
@@ -444,7 +439,7 @@ ExternalVR::PushFramePoses(const vrb::Matrix& aHeadTransform, const std::vector<
 
 bool
 ExternalVR::WaitFrameResult() {
-  Wait wait(*m.browserMutex, *m.browserCond);
+  Wait wait(m.browserMutex, m.browserCond);
   wait.Lock();
   // browserMutex is locked in wait.lock().
   m.PullBrowserStateWhileLocked();
@@ -502,7 +497,5 @@ ExternalVR::ExternalVR(): m(State::Instance()) {
   m.Reset();
   PushSystemState();
 }
-
-ExternalVR::~ExternalVR() {}
 
 }

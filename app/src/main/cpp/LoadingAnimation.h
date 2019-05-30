@@ -25,10 +25,10 @@ public:
   void LoadModels(const vrb::ModelLoaderAndroidPtr& aLoader);
   void Update();
   vrb::NodePtr GetRoot() const;
-
+protected:
   struct State;
   LoadingAnimation(State& aState, vrb::CreationContextPtr& aContext);
-  ~LoadingAnimation();
+  ~LoadingAnimation() = default;
 private:
   State& m;
   LoadingAnimation() = delete;

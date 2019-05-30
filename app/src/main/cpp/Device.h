@@ -8,15 +8,15 @@
 
 namespace crow {
 namespace device {
-typedef uint16_t CapabilityFlags;
-const CapabilityFlags Position = 1 << 1;
-const CapabilityFlags Orientation = 1 << 2;
-const CapabilityFlags Present = 1 << 3;
-const CapabilityFlags AngularAcceleration = 1 << 5;
-const CapabilityFlags LinearAcceleration = 1 << 6;
-const CapabilityFlags StageParameters = 1 << 7;
-const CapabilityFlags MountDetection = 1 << 8;
-const CapabilityFlags PositionEmulated = 1 << 9;
+typedef uint32_t CapabilityFlags;
+const CapabilityFlags Position = 1u << 1u;
+const CapabilityFlags Orientation = 1u << 2u;
+const CapabilityFlags Present = 1u << 3u;
+const CapabilityFlags AngularAcceleration = 1u << 5u;
+const CapabilityFlags LinearAcceleration = 1u << 6u;
+const CapabilityFlags StageParameters = 1u << 7u;
+const CapabilityFlags MountDetection = 1u << 8u;
+const CapabilityFlags PositionEmulated = 1u << 9u;
 enum class Eye { Left, Right };
 enum class RenderMode { StandAlone, Immersive };
 enum class CPULevel { Normal = 0, High };

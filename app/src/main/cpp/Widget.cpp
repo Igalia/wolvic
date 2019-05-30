@@ -52,7 +52,7 @@ struct Widget::State {
 
   void Initialize(const int aHandle, const int32_t aTextureWidth, const int32_t aTextureHeight,
                   const QuadPtr& aQuad, const CylinderPtr& aCylinder) {
-    handle = aHandle;
+    handle = (uint32_t)aHandle;
     name = "crow::Widget-" + std::to_string(handle);
     vrb::RenderContextPtr render = context.lock();
     if (!render) {
@@ -477,7 +477,5 @@ Widget::SetCylinderDensity(const float aDensity) {
 Widget::Widget(State& aState, vrb::RenderContextPtr& aContext) : m(aState) {
   m.context = aContext;
 }
-
-Widget::~Widget() {}
 
 } // namespace crow

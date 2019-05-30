@@ -276,6 +276,4 @@ Skybox::Skybox(State& aState, vrb::CreationContextPtr& aContext) : m(aState) {
   m.context = aContext;
 }
 
-Skybox::~Skybox() {}
-
 } // namespace crow

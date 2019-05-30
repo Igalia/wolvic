@@ -13,36 +13,36 @@
 
 namespace {
 
-static vrb::ClassLoaderAndroidPtr sClassLoader;
-static JNIEnv* sEnv;
-static jobject sActivity;
-static jclass sGeckoSurfaceTextureClass;
-static jmethodID sLookup;
-static jmethodID sAttachToGLContext;
-static jmethodID sIsAttachedToGLContext;
-static jmethodID sDetachFromGLContext;
-static jmethodID sUpdateTexImage;
-static jmethodID sReleaseTexImage;
-static jmethodID sIncrementUse;
-static jmethodID sDecrementUse;
+vrb::ClassLoaderAndroidPtr sClassLoader;
+JNIEnv* sEnv;
+jobject sActivity;
+jclass sGeckoSurfaceTextureClass;
+jmethodID sLookup;
+jmethodID sAttachToGLContext;
+jmethodID sIsAttachedToGLContext;
+jmethodID sDetachFromGLContext;
+jmethodID sUpdateTexImage;
+jmethodID sReleaseTexImage;
+jmethodID sIncrementUse;
+jmethodID sDecrementUse;
 
-static const char* kClassName = "org/mozilla/gecko/gfx/GeckoSurfaceTexture";
-static const char* kLookupName = "lookup";
-static const char* kLookupSignature = "(I)Lorg/mozilla/gecko/gfx/GeckoSurfaceTexture;";
-static const char* kAttachToGLContextName = "attachToGLContext";
-static const char* kAttachToGLContextSignature = "(JI)V";
-static const char* kIsAttachedToGLContextName = "isAttachedToGLContext";
-static const char* kIsAttachedToGLContextSignature = "(J)Z";
-static const char* kDetachFromGLContextName = "detachFromGLContext";
-static const char* kDetachFromGLContextSignature = "()V";
-static const char* kUpdateTexImageName = "updateTexImage";
-static const char* kUpdateTexImageSignature= "()V";
-static const char* kReleaseTexImageName = "releaseTexImage";
-static const char* kReleaseTexImageSignature = "()V";
-static const char* kIncrementUseName = "incrementUse";
-static const char* kIncrementUseSignature = "()V";
-static const char* kDecrementUseName = "decrementUse";
-static const char* kDecrementUseSignature = "()V";
+const char* kClassName = "org/mozilla/gecko/gfx/GeckoSurfaceTexture";
+const char* kLookupName = "lookup";
+const char* kLookupSignature = "(I)Lorg/mozilla/gecko/gfx/GeckoSurfaceTexture;";
+const char* kAttachToGLContextName = "attachToGLContext";
+const char* kAttachToGLContextSignature = "(JI)V";
+const char* kIsAttachedToGLContextName = "isAttachedToGLContext";
+const char* kIsAttachedToGLContextSignature = "(J)Z";
+const char* kDetachFromGLContextName = "detachFromGLContext";
+const char* kDetachFromGLContextSignature = "()V";
+const char* kUpdateTexImageName = "updateTexImage";
+const char* kUpdateTexImageSignature= "()V";
+const char* kReleaseTexImageName = "releaseTexImage";
+const char* kReleaseTexImageSignature = "()V";
+const char* kIncrementUseName = "incrementUse";
+const char* kIncrementUseSignature = "()V";
+const char* kDecrementUseName = "decrementUse";
+const char* kDecrementUseSignature = "()V";
 
 }
 
@@ -54,7 +54,7 @@ struct GeckoSurfaceTexture::State {
   State()
       : surface(nullptr), texture(0)
   {}
-  ~State() {}
+  ~State() = default;
   void Shutdown() {
     if (surface && sEnv) {
       sEnv->DeleteGlobalRef(surface);

@@ -28,10 +28,10 @@ public:
   void SetTransform(const vrb::Matrix& aTransform);
   void SetTintColor(const vrb::Color& aTintColor);
   vrb::NodePtr GetRoot() const;
-
+protected:
   struct State;
   Skybox(State& aState, vrb::CreationContextPtr& aContext);
-  ~Skybox();
+  ~Skybox() = default;
 private:
   State& m;
   Skybox() = delete;

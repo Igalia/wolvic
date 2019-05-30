@@ -699,6 +699,4 @@ WidgetResizer::WidgetResizer(State& aState, vrb::CreationContextPtr& aContext) :
   m.context = aContext;
 }
 
-WidgetResizer::~WidgetResizer() {}
-
 } // namespace crow

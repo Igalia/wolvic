@@ -169,7 +169,7 @@ Quad::Create(vrb::CreationContextPtr aContext, const float aWorldWidth, const fl
 vrb::GeometryPtr
 Quad::CreateGeometry(vrb::CreationContextPtr aContext, const vrb::Vector &aMin, const vrb::Vector &aMax) {
   device::EyeRect rect(0.0f, 0.0f, 1.0f, 1.0f);
-  return Quad::CreateGeometry(aContext, aMin, aMax, rect);
+  return Quad::CreateGeometry(std::move(aContext), aMin, aMax, rect);
 }
 
 vrb::GeometryPtr
@@ -227,7 +227,7 @@ Quad::CreateGeometry(vrb::CreationContextPtr aContext, const vrb::Vector &aMin, 
 vrb::GeometryPtr
 Quad::CreateGeometry(vrb::CreationContextPtr aContext, const float aWorldWidth, const float aWorldHeight) {
   vrb::Vector max(aWorldWidth * 0.5f, aWorldHeight * 0.5f, 0.0f);
-  return Quad::CreateGeometry(aContext, -max, max);
+  return Quad::CreateGeometry(std::move(aContext), -max, max);
 }
 
 void
@@ -456,7 +456,5 @@ Quad::ConvertToQuadCoordinates(const vrb::Vector& point, float& aX, float& aY, b
 Quad::Quad(State& aState, vrb::CreationContextPtr& aContext) : m(aState) {
   m.context = aContext;
 }
-
-Quad::~Quad() {}
 
 } // namespace crow

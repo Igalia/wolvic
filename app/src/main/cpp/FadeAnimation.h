@@ -32,7 +32,7 @@ public:
 protected:
   struct State;
   FadeAnimation(State& aState, vrb::CreationContextPtr& aContext);
-  ~FadeAnimation();
+  ~FadeAnimation() = default;
 private:
   State& m;
   FadeAnimation() = delete;

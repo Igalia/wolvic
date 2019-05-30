@@ -32,10 +32,10 @@ public:
 
   vrb::NodePtr GetRoot() const;
   const WidgetPtr& GetHitWidget() const;
-
+protected:
   struct State;
   Pointer(State& aState, vrb::CreationContextPtr& aContext);
-  ~Pointer();
+  ~Pointer() = default;
 private:
   State& m;
   Pointer() = delete;

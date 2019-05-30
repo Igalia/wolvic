@@ -57,10 +57,10 @@ public:
   VRLayerQuadPtr GetLayer() const;
   bool TestIntersection(const vrb::Vector& aStartPoint, const vrb::Vector& aDirection, vrb::Vector& aResult, vrb::Vector& aNormal, bool aClamp, bool& aIsInside, float& aDistance) const;
   void ConvertToQuadCoordinates(const vrb::Vector& point, float& aX, float& aY, bool aClamp) const;
-
+protected:
   struct State;
   Quad(State& aState, vrb::CreationContextPtr& aContext);
-  ~Quad();
+  ~Quad() = default;
 private:
   State& m;
   Quad() = delete;

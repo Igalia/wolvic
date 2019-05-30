@@ -29,7 +29,7 @@ public:
 protected:
   struct State;
   ExternalBlitter(State& aState, vrb::CreationContextPtr& aContext);
-  ~ExternalBlitter();
+  ~ExternalBlitter() = default;
   void InitializeGL() override;
   void ShutdownGL() override;
 private:

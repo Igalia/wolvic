@@ -177,8 +177,6 @@ ExternalBlitter::ExternalBlitter(State& aState, vrb::CreationContextPtr& aContex
     , m(aState)
 {}
 
-ExternalBlitter::~ExternalBlitter() {}
-
 void
 ExternalBlitter::InitializeGL() {
   m.vertexShader = vrb::LoadShader(GL_VERTEX_SHADER, sVertexShader);

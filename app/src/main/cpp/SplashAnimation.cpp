@@ -153,6 +153,4 @@ SplashAnimation::SplashAnimation(State& aState, vrb::CreationContextPtr& aContex
   m.Initialize();
 }
 
-SplashAnimation::~SplashAnimation() {}
-
 } // namespace crow

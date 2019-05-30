@@ -64,13 +64,12 @@ protected:
   struct State;
   static BrowserWorldPtr Create();
   BrowserWorld(State& aState);
-  ~BrowserWorld();
+  ~BrowserWorld() = default;
   void DrawWorld();
   void DrawImmersive();
   void DrawLoadingAnimation();
   void DrawSplashAnimation();
   void CreateSkyBox(const std::string& aBasePath, const std::string& aExtension);
-  void CreateFloor();
   float DistanceToPlane(const vrb::NodePtr& aNode, const vrb::Vector& aPosition, const vrb::Vector& aDirection) const;
 private:
   State& m;

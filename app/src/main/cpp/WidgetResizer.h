@@ -34,7 +34,7 @@ public:
 protected:
   struct State;
   WidgetResizer(State& aState, vrb::CreationContextPtr& aContext);
-  ~WidgetResizer();
+  ~WidgetResizer() = default;
 private:
   State& m;
   WidgetResizer() = delete;

@@ -39,7 +39,7 @@ struct WidgetPlacement {
 
   static WidgetPlacementPtr FromJava(JNIEnv* aEnv, jobject& aObject);
 private:
-  WidgetPlacement() {};
+  WidgetPlacement() = default;
   VRB_NO_DEFAULTS(WidgetPlacement)
 };
 

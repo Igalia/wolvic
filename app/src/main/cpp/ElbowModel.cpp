@@ -36,6 +36,5 @@ ElbowModel::GetTransform(const HandEnum aHand, const vrb::Matrix& aHeadTransform
 }
 
 ElbowModel::ElbowModel(State& aState) : m(aState) {}
-ElbowModel::~ElbowModel() {}
 
 } // namespace crow

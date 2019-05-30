@@ -32,10 +32,10 @@ public:
   bool Update(const vrb::Matrix& aHeadTransform);
   vrb::NodePtr GetRoot() const;
   VRLayerQuadPtr GetLayer() const;
-
+protected:
   struct State;
   SplashAnimation(State& aState, vrb::CreationContextPtr& aContext);
-  ~SplashAnimation();
+  ~SplashAnimation() = default;
 private:
   State& m;
   SplashAnimation() = delete;

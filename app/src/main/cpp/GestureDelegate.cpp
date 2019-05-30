@@ -12,13 +12,10 @@ namespace crow {
 
 struct GestureRecord {
   GestureType type;
-  GestureRecord(const GestureType aType) : type(aType) {}
-  GestureRecord(const GestureRecord& aRecord) : type(aRecord.type) {}
+  explicit GestureRecord(const GestureType aType) : type(aType) {}
+  GestureRecord(const GestureRecord& aRecord) = default;
   //GestureRecord(GestureRecord&& aRecord) : type(aRecord.type) {}
-  GestureRecord& operator=(const GestureRecord& aRecord) {
-    type = aRecord.type;
-    return *this;
-  }
+  GestureRecord& operator=(const GestureRecord& aRecord) = default;
 };
 
 struct GestureDelegate::State {
@@ -40,7 +37,7 @@ GestureDelegate::AddGesture(const GestureType aType) {
   if (aType == GestureType::NoGesture) {
     return -1;
   }
-  m.gestures.push_back(GestureRecord(aType));
+  m.gestures.emplace_back(GestureRecord(aType));
   return m.gestures.size() - 1;
 }
 
@@ -58,6 +55,5 @@ GestureDelegate::GetGestureType(const int32_t aWhich) const {
 }
 
 GestureDelegate::GestureDelegate(State& aState) : m(aState) {}
-GestureDelegate::~GestureDelegate() {}
 
 }

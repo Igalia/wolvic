@@ -44,10 +44,10 @@ public:
   void SelectEye(device::Eye aEye);
   vrb::NodePtr GetRoot() const;
   void Exit();
-
+protected:
   struct State;
   VRVideo(State& aState, vrb::CreationContextPtr& aContext);
-  ~VRVideo();
+  ~VRVideo() = default;
 private:
   State& m;
   VRVideo() = delete;

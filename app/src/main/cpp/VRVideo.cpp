@@ -373,6 +373,4 @@ VRVideo::VRVideo(State& aState, vrb::CreationContextPtr& aContext) : m(aState) {
   m.context = aContext;
 }
 
-VRVideo::~VRVideo() {}
-
 } // namespace crow

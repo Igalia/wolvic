@@ -33,7 +33,10 @@ jmethodID sSetRenderMode;
 namespace crow {
 
 static const int32_t kControllerIndex = 0;
-static vrb::Vector sHomePosition(0.0f, 1.55f, 3.0f);
+static const vrb::Vector& GetHomePosition() {
+  static vrb::Vector homePosition(0.0f, 1.55f, 3.0f);
+  return homePosition;
+}
 
 struct DeviceDelegateNoAPI::State {
   vrb::RenderContextWeak context;
@@ -58,7 +61,7 @@ struct DeviceDelegateNoAPI::State {
       , pitch(0.0f)
       , headingMatrix(vrb::Matrix::Identity())
       , pitchMatrix(vrb::Matrix::Identity())
-      , position(sHomePosition)
+      , position(GetHomePosition())
       , clicked(false)
       , glWidth(0)
       , glHeight(0)
@@ -75,7 +78,7 @@ struct DeviceDelegateNoAPI::State {
     }
     vrb::CreationContextPtr create = render->GetRenderThreadCreationContext();
     camera = vrb::CameraSimple::Create(create);
-    camera->SetTransform(vrb::Matrix::Translation(sHomePosition));
+    camera->SetTransform(vrb::Matrix::Translation(GetHomePosition()));
   }
 
   void Shutdown() {
@@ -200,7 +203,7 @@ DeviceDelegateNoAPI::GetControllerModelCount() const {
 
 const std::string
 DeviceDelegateNoAPI::GetControllerModelName(const int32_t) const {
-  static const std::string name("");
+  static const std::string name;
   return name;
 }
 
@@ -296,11 +299,11 @@ DeviceDelegateNoAPI::Resume() {
 
 void
 DeviceDelegateNoAPI::MoveAxis(const float aX, const float aY, const float aZ) {
-  if (!aX && !aY && !aZ) {
+  if (VRB_IS_ZERO(aX) && VRB_IS_ZERO(aY) && VRB_IS_ZERO(aZ)) {
     if (m.renderMode == device::RenderMode::Immersive) {
       m.position = vrb::Vector();
     } else {
-      m.position = sHomePosition;
+      m.position = GetHomePosition();;
     }
     m.heading = 0.0f;
     m.pitch = 0.0f;
@@ -311,7 +314,6 @@ DeviceDelegateNoAPI::MoveAxis(const float aX, const float aY, const float aZ) {
   VRB_LOG("pos: %s heading: %f pitch: %f", m.position.ToString().c_str(), m.heading, m.pitch);
   m.position += m.headingMatrix.MultiplyDirection(vrb::Vector(aX, aY, aZ));
 }
-
 
 void
 DeviceDelegateNoAPI::RotateHeading(const float aHeading) {
