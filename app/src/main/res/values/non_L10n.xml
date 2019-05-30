@@ -31,6 +31,7 @@
     <string name="settings_key_foveated_app" translatable="false">settings_foveated_app</string>
     <string name="settings_key_foveated_webvr" translatable="false">settings_foveated_webvr</string>
     <string name="settings_key_keyboard_locale" translatable="false">settings_key_keyboard_locale</string>
+    <string name="settings_key_latest_crash_restart_time" translatable="false">settings_key_latest_crash_restart_time</string>
     <string name="private_browsing_support_url" translatable="false">https://support.mozilla.org/kb/private-mode-firefox-reality</string>
     <string name="settings_key_browser_world_width" translatable="false">settings_browser_world_width</string>
     <string name="settings_key_browser_world_height" translatable="false">settings_browser_world_height</string>

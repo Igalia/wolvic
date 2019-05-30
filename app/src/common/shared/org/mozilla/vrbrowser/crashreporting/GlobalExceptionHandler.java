@@ -1,5 +1,6 @@
 package org.mozilla.vrbrowser.crashreporting;
 
+import android.content.Context;
 import android.util.Log;
 
 import org.mozilla.gecko.CrashHandler;
@@ -13,10 +14,10 @@ public class GlobalExceptionHandler {
     private static GlobalExceptionHandler mInstance;
 
     public static synchronized @NonNull
-    GlobalExceptionHandler register() {
+    GlobalExceptionHandler register(Context aContext) {
         if (mInstance == null) {
             mInstance = new GlobalExceptionHandler();
-            mInstance.mCrashHandler = new CrashHandler(CrashReporterService.class);
+            mInstance.mCrashHandler = new CrashHandler(aContext, CrashReporterService.class);
             Log.d(LOGTAG, "======> GlobalExceptionHandler registered");
         }
 

@@ -5,12 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Process;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserActivity;
+import org.mozilla.vrbrowser.browser.SettingsStore;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.JobIntentService;
@@ -24,6 +26,9 @@ public class CrashReporterService extends JobIntentService {
 
     private static final int PID_CHECK_INTERVAL = 100;
     private static final int JOB_ID = 1000;
+    // Threshold used to fix Infinite restart loop on startup crashes.
+    // See https://github.com/MozillaReality/FirefoxReality/issues/651
+    public static final long MIN_RESTART_INTERVAL_MS = 3000;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -41,9 +46,14 @@ public class CrashReporterService extends JobIntentService {
         if (GeckoRuntime.ACTION_CRASHED.equals(action)) {
             boolean fatal = intent.getBooleanExtra(GeckoRuntime.EXTRA_CRASH_FATAL, false);
 
+            long lastRestartTime = SettingsStore.getInstance(getBaseContext()).getLatestCrashRestartTime();
+            boolean cancelRestart = lastRestartTime > 0 && (System.currentTimeMillis() - lastRestartTime) < MIN_RESTART_INTERVAL_MS;
+            if (cancelRestart || BuildConfig.DISABLE_CRASH_RESTART) {
+                return;
+            }
 
-            if (fatal && !BuildConfig.DISABLE_CRASH_RESTART) {
-                Log.d(LOGTAG, "======> NATIVE CRASH PARENT" + intent);
+            if (fatal) {
+                Log.d(LOGTAG, "======> NATIVE CRASH PARENT " + intent);
                 final int pid = Process.myPid();
                 final ActivityManager activityManager = (ActivityManager) this.getSystemService(Context.ACTIVITY_SERVICE);
                 if (activityManager == null) {
@@ -61,6 +71,7 @@ public class CrashReporterService extends JobIntentService {
                     }
 
                     if (!otherProcessesFound) {
+                        SettingsStore.getInstance(getBaseContext()).setLatestCrashRestartTime(System.currentTimeMillis());
                         intent.setClass(CrashReporterService.this, VRBrowserActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);

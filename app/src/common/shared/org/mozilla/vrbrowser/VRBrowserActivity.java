@@ -159,8 +159,16 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Fix for infinite restart on startup crashes.
+        long lastRestartTime = SettingsStore.getInstance(getBaseContext()).getLatestCrashRestartTime();
+        boolean cancelRestart = lastRestartTime > 0 && (System.currentTimeMillis() - lastRestartTime) < CrashReporterService.MIN_RESTART_INTERVAL_MS;
+        if (cancelRestart) {
+            finish();
+            return;
+        }
+
         // Set a global exception handler as soon as possible
-        GlobalExceptionHandler.register();
+        GlobalExceptionHandler.register(this.getApplicationContext());
 
         if (BuildConfig.FLAVOR_platform == "oculusvr") {
             workaroundGeckoSigAction();

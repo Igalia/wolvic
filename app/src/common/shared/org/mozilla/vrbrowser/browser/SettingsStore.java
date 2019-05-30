@@ -440,5 +440,15 @@ public class SettingsStore {
         }
         return Locale.forLanguageTag(value);
     }
+
+    public long getLatestCrashRestartTime() {
+        return mPrefs.getLong(mContext.getString(R.string.settings_key_latest_crash_restart_time), -1);
+    }
+
+    public void setLatestCrashRestartTime(long aTimeStamp) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putLong(mContext.getString(R.string.settings_key_latest_crash_restart_time), aTimeStamp);
+        editor.commit();
+    }
 }
 
