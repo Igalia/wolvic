@@ -258,12 +258,17 @@ class DisplayOptionsView extends SettingsView {
         restart = restart | setDisplayDensity(SettingsStore.DISPLAY_DENSITY_DEFAULT);
         restart = restart | setDisplayDpi(SettingsStore.DISPLAY_DPI_DEFAULT);
 
-        if (Integer.parseInt(mWindowSizeEdit.getFirstText()) != SettingsStore.WINDOW_WIDTH_DEFAULT ||
-                Integer.parseInt(mWindowSizeEdit.getSecondText()) != SettingsStore.WINDOW_HEIGHT_DEFAULT) {
+        try {
+            if (Integer.parseInt(mWindowSizeEdit.getFirstText()) != SettingsStore.WINDOW_WIDTH_DEFAULT ||
+                    Integer.parseInt(mWindowSizeEdit.getSecondText()) != SettingsStore.WINDOW_HEIGHT_DEFAULT) {
+                setWindowSize(SettingsStore.WINDOW_WIDTH_DEFAULT, SettingsStore.WINDOW_HEIGHT_DEFAULT, true);
+            }
+            if (Integer.parseInt(mMaxWindowSizeEdit.getFirstText()) != SettingsStore.MAX_WINDOW_WIDTH_DEFAULT ||
+                    Integer.parseInt(mMaxWindowSizeEdit.getSecondText()) != SettingsStore.MAX_WINDOW_HEIGHT_DEFAULT) {
+                setMaxWindowSize(SettingsStore.MAX_WINDOW_WIDTH_DEFAULT, SettingsStore.MAX_WINDOW_HEIGHT_DEFAULT, true);
+            }
+        } catch (NumberFormatException ex) {
             setWindowSize(SettingsStore.WINDOW_WIDTH_DEFAULT, SettingsStore.WINDOW_HEIGHT_DEFAULT, true);
-        }
-        if (Integer.parseInt(mMaxWindowSizeEdit.getFirstText()) != SettingsStore.MAX_WINDOW_WIDTH_DEFAULT ||
-                Integer.parseInt(mMaxWindowSizeEdit.getSecondText()) != SettingsStore.MAX_WINDOW_HEIGHT_DEFAULT) {
             setMaxWindowSize(SettingsStore.MAX_WINDOW_WIDTH_DEFAULT, SettingsStore.MAX_WINDOW_HEIGHT_DEFAULT, true);
         }
 

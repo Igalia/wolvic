@@ -3,6 +3,7 @@ package org.mozilla.vrbrowser.ui.adapters;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -27,7 +28,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import mozilla.components.concept.storage.BookmarkNode;
 
 public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.BookmarkViewHolder> {
-
+    static final String LOGTAG = "VRB";
     private static final int ICON_ANIMATION_DURATION = 200;
 
     private List<? extends BookmarkNode> mBookmarkList;
@@ -183,8 +184,12 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
         animation.setDuration(duration);
         animation.setInterpolator(new AccelerateDecelerateInterpolator());
         animation.addUpdateListener(valueAnimator -> {
-            int newPadding = Integer.parseInt(valueAnimator.getAnimatedValue().toString());
-            view.setPadding(newPadding, newPadding, newPadding, newPadding);
+            try {
+                int newPadding = Integer.parseInt(valueAnimator.getAnimatedValue().toString());
+                view.setPadding(newPadding, newPadding, newPadding, newPadding);
+            } catch (NumberFormatException ex) {
+                Log.e(LOGTAG, "Error parsing BookmarkAdapter animation value: " + valueAnimator.getAnimatedValue().toString());
+            }
         });
         animation.addListener(new Animator.AnimatorListener() {
             @Override

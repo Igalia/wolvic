@@ -9,6 +9,7 @@ import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -25,7 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class TrayWidget extends UIWidget implements SessionStore.SessionChangeListener, BookmarkListener, WidgetManagerDelegate.UpdateListener {
-
+    static final String LOGTAG = "VRB";
     private static final int ICON_ANIMATION_DURATION = 200;
 
     private UIButton mHelpButton;
@@ -143,8 +144,13 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
             animation.setDuration(duration);
             animation.setInterpolator(new AccelerateDecelerateInterpolator());
             animation.addUpdateListener(valueAnimator -> {
-                int newPadding = Integer.parseInt(valueAnimator.getAnimatedValue().toString());
-                view.setPadding(newPadding, newPadding, newPadding, newPadding);
+                try {
+                    int newPadding = Integer.parseInt(valueAnimator.getAnimatedValue().toString());
+                    view.setPadding(newPadding, newPadding, newPadding, newPadding);
+                }
+                catch (NumberFormatException ex) {
+                    Log.e(LOGTAG, "Error parsing tray animation value: " + valueAnimator.getAnimatedValue().toString());
+                }
             });
             animation.addListener(new Animator.AnimatorListener() {
 
