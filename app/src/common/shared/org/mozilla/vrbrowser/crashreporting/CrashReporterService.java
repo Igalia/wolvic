@@ -28,7 +28,7 @@ public class CrashReporterService extends JobIntentService {
     private static final int JOB_ID = 1000;
     // Threshold used to fix Infinite restart loop on startup crashes.
     // See https://github.com/MozillaReality/FirefoxReality/issues/651
-    public static final long MIN_RESTART_INTERVAL_MS = 3000;
+    public static final long MAX_RESTART_COUNT = 2;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -46,9 +46,10 @@ public class CrashReporterService extends JobIntentService {
         if (GeckoRuntime.ACTION_CRASHED.equals(action)) {
             boolean fatal = intent.getBooleanExtra(GeckoRuntime.EXTRA_CRASH_FATAL, false);
 
-            long lastRestartTime = SettingsStore.getInstance(getBaseContext()).getLatestCrashRestartTime();
-            boolean cancelRestart = lastRestartTime > 0 && (System.currentTimeMillis() - lastRestartTime) < MIN_RESTART_INTERVAL_MS;
+            long count = SettingsStore.getInstance(getBaseContext()).getCrashRestartCount();
+            boolean cancelRestart = count > MAX_RESTART_COUNT;
             if (cancelRestart || BuildConfig.DISABLE_CRASH_RESTART) {
+                Log.e(LOGTAG, "CANCEL CRASH HANDLER");
                 return;
             }
 
@@ -71,7 +72,6 @@ public class CrashReporterService extends JobIntentService {
                     }
 
                     if (!otherProcessesFound) {
-                        SettingsStore.getInstance(getBaseContext()).setLatestCrashRestartTime(System.currentTimeMillis());
                         intent.setClass(CrashReporterService.this, VRBrowserActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);

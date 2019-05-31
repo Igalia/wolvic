@@ -105,6 +105,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     static final int GestureSwipeLeft = 0;
     static final int GestureSwipeRight = 1;
     static final int SwipeDelay = 1000; // milliseconds
+    static final long RESET_CRASH_COUNT_DELAY = 5000;
 
     static final String LOGTAG = "VRB";
     HashMap<Integer, Widget> mWidgets;
@@ -160,13 +161,16 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // Fix for infinite restart on startup crashes.
-        long lastRestartTime = SettingsStore.getInstance(getBaseContext()).getLatestCrashRestartTime();
-        boolean cancelRestart = lastRestartTime > 0 && (System.currentTimeMillis() - lastRestartTime) < CrashReporterService.MIN_RESTART_INTERVAL_MS;
+        long count = SettingsStore.getInstance(getBaseContext()).getCrashRestartCount();
+        boolean cancelRestart = count > CrashReporterService.MAX_RESTART_COUNT;
         if (cancelRestart) {
+            super.onCreate(savedInstanceState);
+            Log.e(LOGTAG, "Cancel Restart");
             finish();
             return;
         }
-
+        SettingsStore.getInstance(getBaseContext()).incrementCrashRestartCount();
+        mHandler.postDelayed(() -> SettingsStore.getInstance(getBaseContext()).resetCrashRestartCount(), RESET_CRASH_COUNT_DELAY);
         // Set a global exception handler as soon as possible
         GlobalExceptionHandler.register(this.getApplicationContext());
 
@@ -234,7 +238,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         GeolocationWrapper.update(this);
 
         mConnectivityReceiver = new ConnectivityReceiver();
-
     }
 
     protected void initializeWorld() {

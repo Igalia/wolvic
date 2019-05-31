@@ -63,6 +63,7 @@ public class SettingsStore {
     public final static float CYLINDER_DENSITY_ENABLED_DEFAULT = 4680.0f;
     public final static int FOVEATED_APP_DEFAULT_LEVEL = 1;
     public final static int FOVEATED_WEBVR_DEFAULT_LEVEL = 0;
+    private final static long CRASH_RESTART_DELTA = 2000;
 
     // Enable telemetry by default (opt-out).
     private final static boolean enableCrashReportingByDefault = false;
@@ -441,13 +442,33 @@ public class SettingsStore {
         return Locale.forLanguageTag(value);
     }
 
-    public long getLatestCrashRestartTime() {
-        return mPrefs.getLong(mContext.getString(R.string.settings_key_latest_crash_restart_time), -1);
+    public synchronized long getCrashRestartCount() {
+        long count = mPrefs.getLong(mContext.getString(R.string.settings_key_crash_restart_count), 0);
+        if (count > 0) {
+            final long timestamp = mPrefs.getLong(mContext.getString(R.string.settings_key_crash_restart_count_timestamp), -1);
+            if (System.currentTimeMillis() - timestamp > CRASH_RESTART_DELTA) {
+                count = 0;
+                SharedPreferences.Editor editor = mPrefs.edit();
+                editor.putLong(mContext.getString(R.string.settings_key_crash_restart_count), count);
+                editor.putLong(mContext.getString(R.string.settings_key_crash_restart_count_timestamp), -1);
+                editor.commit();
+            }
+        }
+        return count;
     }
 
-    public void setLatestCrashRestartTime(long aTimeStamp) {
+    public synchronized void incrementCrashRestartCount() {
         SharedPreferences.Editor editor = mPrefs.edit();
-        editor.putLong(mContext.getString(R.string.settings_key_latest_crash_restart_time), aTimeStamp);
+        long count = mPrefs.getLong(mContext.getString(R.string.settings_key_crash_restart_count), 0);
+        count++;
+        editor.putLong(mContext.getString(R.string.settings_key_crash_restart_count), count);
+        editor.putLong(mContext.getString(R.string.settings_key_crash_restart_count_timestamp), System.currentTimeMillis());
+        editor.commit();
+    }
+
+    public synchronized void resetCrashRestartCount() {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putLong(mContext.getString(R.string.settings_key_crash_restart_count), 0);
         editor.commit();
     }
 }
