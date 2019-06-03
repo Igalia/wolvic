@@ -489,10 +489,8 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         if (mComposingText.length() > 0 && mInputConnection != null) {
             mComposingText = "";
             // Clear composited text when the keyboard is dismissed
-            final InputConnection input = mInputConnection;
             postInputCommand(() -> {
-                displayComposingText("");
-                input.finishComposingText();
+                displayComposingText("", ComposingAction.FINISH);
             });
         }
     }
@@ -606,11 +604,10 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
     private void handleDone() {
         if (mComposingDisplayText.length() > 0) {
-            // Finish current compositing
+            // Finish current composing
             mComposingText = "";
             postInputCommand(() -> {
-                displayComposingText(StringUtils.removeSpaces(mComposingDisplayText));
-                mInputConnection.finishComposingText();
+                displayComposingText(StringUtils.removeSpaces(mComposingDisplayText), ComposingAction.FINISH);
                 postUICommand(this::updateCandidates);
             });
             return;
@@ -715,13 +712,12 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             if (candidates != null && candidates.action == KeyboardInterface.CandidatesResult.Action.AUTO_COMPOSE) {
                 onAutoCompletionItemClick(candidates.words.get(0));
             } else if (candidates != null) {
-                postInputCommand(() -> displayComposingText(candidates.composing));
+                postInputCommand(() -> displayComposingText(candidates.composing, ComposingAction.DO_NOT_FINISH));
             } else {
                 mComposingText = "";
 
                 postInputCommand(() -> {
-                    displayComposingText("");
-                    mInputConnection.finishComposingText();
+                    displayComposingText("", ComposingAction.FINISH);
                 });
             }
         } else {
@@ -755,7 +751,14 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     }
 
     // Must be called in the input thread, see postInputCommand.
-    private void displayComposingText(String aText) {
+    enum ComposingAction {
+        FINISH,
+        DO_NOT_FINISH
+    }
+    private void displayComposingText(String aText, ComposingAction aAction) {
+        if (mInputConnection == null) {
+            return;
+        }
         boolean succeeded = mInputConnection.setComposingText(aText, 1);
         if (!succeeded) {
             // Fix for InlineAutocompleteEditText failed setComposingText() calls
@@ -768,6 +771,9 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             mInputConnection.setComposingText(aText, 1);
         }
         mComposingDisplayText = aText;
+        if (aAction == ComposingAction.FINISH) {
+            mInputConnection.finishComposingText();
+        }
     }
 
     // GeckoSession.TextInputDelegate
@@ -872,8 +878,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             mComposingText = mCurrentKeyboard.getComposingText(mComposingText, code).trim();
 
             postInputCommand(() -> {
-                displayComposingText(aItem.value);
-                mInputConnection.finishComposingText();
+                displayComposingText(aItem.value, ComposingAction.FINISH);
                 postUICommand(KeyboardWidget.this::updateCandidates);
             });
 
