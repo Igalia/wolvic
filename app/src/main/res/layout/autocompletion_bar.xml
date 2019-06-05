@@ -10,8 +10,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/autocompletion_widget_line_height"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
         android:layout_gravity="center_vertical"
         android:orientation="horizontal">
         <ScrollView
@@ -22,22 +20,34 @@
             <LinearLayout
                 android:id="@+id/autoCompletionFirstLine"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/autocompletion_widget_line_height"
                 android:layout_gravity="center_vertical"
                 android:orientation="horizontal">
             </LinearLayout>
         </ScrollView>
+        <View
+            android:id="@+id/extendButtonSeparator"
+            android:layout_width="0.5dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="1dp"
+            android:background="@color/iron"
+            android:visibility="gone"/>
         <org.mozilla.vrbrowser.ui.views.UIButton
             android:id="@+id/extendButton"
-            android:layout_width="50dp"
-            android:layout_height="27dp"
+            android:layout_width="@dimen/autocompletion_widget_extend_button_width"
+            android:layout_height="match_parent"
             android:scaleType="fitCenter"
             android:layout_gravity="center_vertical"
-            android:padding="5dp"
-            android:layout_marginStart="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="1dp"
+            android:paddingStart="@dimen/autocompletion_widget_item_padding"
+            android:paddingEnd="@dimen/autocompletion_widget_item_padding"
             android:src="@drawable/ic_arrow_down"
             android:visibility="gone"
-            android:background="@drawable/keyboard_featured_key_background"/>
+            android:background="@drawable/autocompletion_item_background_last"/>
     </LinearLayout>
     <View
         android:id="@+id/autoCompletionSeparator"
@@ -49,10 +59,10 @@
     <ScrollView
         android:id="@+id/autoCompletionScroll"
         android:layout_width="match_parent"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
         android:paddingTop="12dp"
         android:paddingBottom="12dp"
+        android:paddingStart="1dp"
+        android:paddingEnd="5dp"
         android:layout_height="0dp"
         android:layout_weight="100"
         android:visibility="gone">

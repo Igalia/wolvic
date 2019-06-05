@@ -12,6 +12,7 @@ import org.mozilla.vrbrowser.input.CustomKeyboard;
 import org.mozilla.vrbrowser.utils.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +28,9 @@ public class ChinesePinyinKeyboard extends BaseKeyboard {
     private DBHelper mDB;
     private HashMap<String, KeyMap> mKeymaps = new HashMap<>();
     private HashMap<String, KeyMap> mExtraKeymaps = new HashMap<>();
+    private List<Character> mAutocompleteEndings = Arrays.asList(
+            ' ', '，', '。','!','?','ー'
+    );
 
     public ChinesePinyinKeyboard(Context aContext) {
         super(aContext);
@@ -36,7 +40,7 @@ public class ChinesePinyinKeyboard extends BaseKeyboard {
     @Override
     public CustomKeyboard getAlphabeticKeyboard() {
         if (mKeyboard == null) {
-            mKeyboard = new CustomKeyboard(mContext.getApplicationContext(), R.xml.keyboard_qwerty);
+            mKeyboard = new CustomKeyboard(mContext.getApplicationContext(), R.xml.keyboard_qwerty_pinyin);
             loadDatabase();
         }
         return mKeyboard;
@@ -45,12 +49,13 @@ public class ChinesePinyinKeyboard extends BaseKeyboard {
     @Nullable
     @Override
     public CandidatesResult getCandidates(String aComposingText) {
-        if (aComposingText == null) {
+        if (StringUtils.isEmpty(aComposingText)) {
             return null;
         }
 
-        // Autocomplete when space is clicked
-        boolean endsWithSpace = aComposingText.endsWith(" ");
+        // Autocomplete when special characters are clicked
+        char lastChar = aComposingText.charAt(aComposingText.length() - 1);
+        boolean autocomponse = mAutocompleteEndings.indexOf(lastChar) >= 0;
 
         aComposingText = aComposingText.replaceAll("\\s","");
         if (aComposingText.isEmpty()) {
@@ -107,7 +112,7 @@ public class ChinesePinyinKeyboard extends BaseKeyboard {
 
         CandidatesResult result = new CandidatesResult();
         result.words = words;
-        result.action = endsWithSpace ? CandidatesResult.Action.AUTO_COMPOSE : CandidatesResult.Action.SHOW_CANDIDATES;
+        result.action = autocomponse ? CandidatesResult.Action.AUTO_COMPOSE : CandidatesResult.Action.SHOW_CANDIDATES;
         result.composing = aComposingText;
         if (result.words.size() > 0) {
             String codeWithoutSpaces = StringUtils.removeSpaces(result.words.get(0).code);
