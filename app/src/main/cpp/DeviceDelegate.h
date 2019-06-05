@@ -49,6 +49,7 @@ public:
   virtual void SetRenderMode(const device::RenderMode aMode) = 0;
   virtual device::RenderMode GetRenderMode() = 0;
   virtual void RegisterImmersiveDisplay(ImmersiveDisplayPtr aDisplay) = 0;
+  virtual void SetImmersiveSize(const uint32_t aEyeWidth, const uint32_t aEyeHeight) {};
   virtual GestureDelegateConstPtr GetGestureDelegate() = 0;
   virtual vrb::CameraPtr GetCamera(const device::Eye aWhich) = 0;
   virtual const vrb::Matrix& GetHeadTransform() const = 0;

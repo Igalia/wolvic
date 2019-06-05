@@ -27,6 +27,7 @@ public:
   void SetRenderMode(const device::RenderMode aMode) override;
   device::RenderMode GetRenderMode() override;
   void RegisterImmersiveDisplay(ImmersiveDisplayPtr aDisplay) override;
+  void SetImmersiveSize(const uint32_t aEyeWidth, const uint32_t aEyeHeight) override;
   GestureDelegateConstPtr GetGestureDelegate() override { return nullptr; }
   vrb::CameraPtr GetCamera(const device::Eye aWhich) override;
   const vrb::Matrix& GetHeadTransform() const override;

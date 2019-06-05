@@ -34,7 +34,7 @@ enum class GamepadCapabilityFlags : uint16_t;
 #endif  //  MOZILLA_INTERNAL_API
 namespace gfx {
 
-static const int32_t kVRExternalVersion = 7;
+static const int32_t kVRExternalVersion = 8;
 
 // We assign VR presentations to groups with a bitmask.
 // Currently, we will only display either content or chrome.
@@ -161,13 +161,14 @@ enum class VRDisplayCapabilityFlags : uint16_t {
       Cap_MountDetection = 1 << 8,
   /**
    * Cap_PositionEmulated is set if the VRDisplay is capable of setting a
-   * neck model in position even if still doesn't support 6DOF tracking.
+   * emulated position (e.g. neck model) even if still doesn't support 6DOF
+   * tracking.
    */
       Cap_PositionEmulated = 1 << 9,
   /**
    * Cap_All used for validity checking during IPC serialization
    */
-      Cap_All = (1 << 9) - 1
+      Cap_All = (1 << 10) - 1
 };
 
 #ifdef MOZILLA_INTERNAL_API
@@ -345,6 +346,7 @@ struct VRLayer_Stereo_Immersive {
   uint64_t inputFrameId;
   VRLayerEyeRect leftEyeRect;
   VRLayerEyeRect rightEyeRect;
+  IntSize_POD textureSize;
 };
 
 struct VRLayerState {

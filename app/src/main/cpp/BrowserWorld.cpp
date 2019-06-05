@@ -1148,13 +1148,16 @@ BrowserWorld::DrawImmersive() {
   m.device->StartFrame();
   VRB_GL_CHECK(glDepthMask(GL_FALSE));
   m.externalVR->PushFramePoses(m.device->GetHeadTransform(), m.controllers->GetControllers(), m.context->GetTimestamp());
-  int32_t surfaceHandle = 0;
+  int32_t surfaceHandle, textureWidth, textureHeight = 0;
   device::EyeRect leftEye, rightEye;
   bool aDiscardFrame = !m.externalVR->WaitFrameResult();
-  m.externalVR->GetFrameResult(surfaceHandle, leftEye, rightEye);
+  m.externalVR->GetFrameResult(surfaceHandle, textureWidth, textureHeight, leftEye, rightEye);
   ExternalVR::VRState state = m.externalVR->GetVRState();
   if (state == ExternalVR::VRState::Rendering) {
     if (!aDiscardFrame) {
+      if (textureWidth > 0 && textureHeight > 0) {
+        m.device->SetImmersiveSize((uint32_t) textureWidth/2, (uint32_t) textureHeight);
+      }
       m.blitter->StartFrame(surfaceHandle, leftEye, rightEye);
       m.device->BindEye(device::Eye::Left);
       m.blitter->Draw(device::Eye::Left);

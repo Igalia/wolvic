@@ -187,15 +187,34 @@ struct DeviceDelegateWaveVR::State {
       VRB_ERROR("Please check Wave server configuration");
       return;
     }
+    InitializeTextureQueues();
+    elbow = ElbowModel::Create();
+  }
+
+  void InitializeTextureQueues() {
+    ReleaseTextureQueues();
+    VRB_LOG("Create texture queues: %dx%d", renderWidth, renderHeight);
     leftTextureQueue = WVR_ObtainTextureQueue(WVR_TextureTarget_2D, WVR_TextureFormat_RGBA, WVR_TextureType_UnsignedByte, renderWidth, renderHeight, 0);
     FillFBOQueue(leftTextureQueue, leftFBOQueue);
     rightTextureQueue = WVR_ObtainTextureQueue(WVR_TextureTarget_2D, WVR_TextureFormat_RGBA, WVR_TextureType_UnsignedByte, renderWidth, renderHeight, 0);
     FillFBOQueue(rightTextureQueue, rightFBOQueue);
-    elbow = ElbowModel::Create();
+  }
+
+  void ReleaseTextureQueues() {
+    if (leftTextureQueue) {
+      WVR_ReleaseTextureQueue(leftTextureQueue);
+      leftTextureQueue = nullptr;
+    }
+    leftFBOQueue.clear();
+    if (rightTextureQueue) {
+      WVR_ReleaseTextureQueue(rightTextureQueue);
+      rightTextureQueue = nullptr;
+    }
+    rightFBOQueue.clear();
   }
 
   void Shutdown() {
-
+    ReleaseTextureQueues();
   }
 
   void UpdateFoveatedLevel() {
@@ -355,6 +374,14 @@ DeviceDelegateWaveVR::SetRenderMode(const device::RenderMode aMode) {
 
   m.renderMode = aMode;
   m.reorientMatrix = vrb::Matrix::Identity();
+
+  uint32_t recommendedWidth, recommendedHeight;
+  WVR_GetRenderTargetSize(&recommendedWidth, &recommendedHeight);
+  if (recommendedWidth != m.renderWidth || recommendedHeight != m.renderHeight) {
+    m.renderWidth = recommendedWidth;
+    m.renderHeight = recommendedHeight;
+    m.InitializeTextureQueues();
+  }
 }
 
 device::RenderMode
@@ -386,6 +413,22 @@ DeviceDelegateWaveVR::RegisterImmersiveDisplay(ImmersiveDisplayPtr aDisplay) {
   m.InitializeCameras();
 }
 
+void
+DeviceDelegateWaveVR::SetImmersiveSize(const uint32_t aEyeWidth, const uint32_t aEyeHeight) {
+  uint32_t recommendedWidth, recommendedHeight;
+  WVR_GetRenderTargetSize(&recommendedWidth, &recommendedHeight);
+
+  uint32_t targetWidth = m.renderWidth;
+  uint32_t targetHeight = m.renderHeight;
+
+  DeviceUtils::GetTargetImmersiveSize(aEyeWidth, aEyeHeight, recommendedWidth, recommendedHeight, targetWidth, targetHeight);
+
+  if (targetWidth != m.renderWidth || targetHeight != m.renderHeight) {
+    m.renderWidth = targetWidth;
+    m.renderHeight = targetHeight;
+    m.InitializeTextureQueues();
+  }
+}
 
 GestureDelegateConstPtr
 DeviceDelegateWaveVR::GetGestureDelegate() {

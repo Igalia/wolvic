@@ -54,7 +54,11 @@ public:
   VRState GetVRState() const;
   void PushFramePoses(const vrb::Matrix& aHeadTransform, const std::vector<Controller>& aControllers, const double aTimestamp);
   bool WaitFrameResult();
-  void GetFrameResult(int32_t& aSurfaceHandle, device::EyeRect& aLeftEye, device::EyeRect& aRightEye) const;
+  void GetFrameResult(int32_t& aSurfaceHandle,
+                      int32_t& aTextureWidth,
+                      int32_t& aTextureHeight,
+                      device::EyeRect& aLeftEye,
+                      device::EyeRect& aRightEye) const;
   void StopPresenting();
   void SetSourceBrowser(VRBrowserType aBrowser);
   ExternalVR();

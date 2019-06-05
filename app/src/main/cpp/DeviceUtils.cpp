@@ -48,6 +48,18 @@ DeviceUtils::CalculateReorientationMatrix(const vrb::Matrix& aHeadTransform, con
 
 }
 
+void DeviceUtils::GetTargetImmersiveSize(const uint32_t aRequestedWidth,
+                                         const uint32_t aRequestedHeight,
+                                         const uint32_t aRecommendedWidth,
+                                         const uint32_t aRecommendedHeight,
+                                         const uint32_t aMaxWidth, const uint32_t aMaxHeight,
+                                         uint32_t& aTargetWidth, uint32_t& aTargetHeight) {
+  const uint32_t minWidth = aRecommendedWidth / 2;
+  const uint32_t minHeight = aRecommendedHeight / 2;
+  aTargetWidth = (uint32_t) fmaxf(fminf(aRequestedWidth, aMaxWidth), minWidth);
+  aTargetHeight = (uint32_t) fmaxf(fminf(aRequestedHeight, aMaxHeight), minHeight);
+}
+
 
 }
 
