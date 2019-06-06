@@ -1,0 +1,22 @@
+{
+  "manifest_version": 2,
+  "name": "Firefox Reality Vimeo.com WebCompat Enhancements",
+  "version": "1.0",
+  "description": "Fixes web-site compatibility quirks for Vimeo.com when using Firefox Reality.",
+  "content_scripts": [
+    {
+      "matches": [
+        "https://vimeo.com/*",
+        "https://player.vimeo.com/video/*"
+      ],
+      "css": [
+        "main.css"
+      ],
+      "js": [
+        "main.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": false
+    }
+  ]
+}

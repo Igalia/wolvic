@@ -73,7 +73,10 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     // You can test a local file using: "resource://android/assets/webvr/index.html"
     public static final String PRIVATE_BROWSING_URI = "about:privatebrowsing";
     public static final int NO_SESSION_ID = -1;
-    private static final String[] WEB_EXTENSIONS = new String[] {"youtube_webcompat"};
+    private static final String[] WEB_EXTENSIONS = new String[] {
+      "webcompat_vimeo",
+      "webcompat_youtube"
+    };
 
     private LinkedList<GeckoSession.NavigationDelegate> mNavigationListeners;
     private LinkedList<GeckoSession.ProgressDelegate> mProgressListeners;

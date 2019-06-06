@@ -40,12 +40,19 @@ try {
   const logError = (...args) => printLog && console.error(LOGTAG, ...args);
   const logWarn = (...args) => printLog && console.warn(LOGTAG, ...args);
 
+  let auto360 = true;
+
   const onNavigate = (delayTime = 500) => setTimeout(() => {
-    ytImprover360();
+    ytImprover360(auto360);
 
     ytImprover.completed = false;
     ytImprover(1);
   }, delayTime);
+
+  window.addEventListener('fullscreenchange', () => {
+    auto360 = !!document.fullscreenElement;
+    ytImprover360(auto360);
+  });
 
   window.addEventListener('load', () => {
     viewportEl = document.querySelector('meta[name="viewport"]:not([data-fxr-injected])');
@@ -73,7 +80,7 @@ try {
     }
   });
 
-  function ytImprover360 () {
+  function ytImprover360 (auto) {
     if (!window.location.pathname.startsWith(YT_PATHS.watch)) {
       is360 = false;
       return;
@@ -96,7 +103,7 @@ try {
         break;
       case '360_auto':
       default:
-        qs.set('mozVideoProjection', '360_auto');
+        qs.set('mozVideoProjection', auto ? '360_auto' : '360');
         break;
     }
 
@@ -264,7 +271,7 @@ try {
     log('`onYouTubePlayerReady` called');
     window.ytImprover(1);
     evt.addEventListener('onStateChange', 'ytImprover');
-    ytImprover360();
+    ytImprover360(true);
   };
 
   window.addEventListener('spfready', () => {
