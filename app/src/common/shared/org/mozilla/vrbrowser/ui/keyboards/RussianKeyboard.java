@@ -12,19 +12,21 @@ import org.mozilla.vrbrowser.utils.StringUtils;
 
 import java.util.Locale;
 
-public class GermanKeyboard extends BaseKeyboard {
+public class RussianKeyboard extends BaseKeyboard {
     private CustomKeyboard mKeyboard;
     private CustomKeyboard mSymbolsKeyboard;
+    private Locale mLocale;
 
-    public GermanKeyboard(Context aContext) {
+    public RussianKeyboard(Context aContext) {
         super(aContext);
+        mLocale = new Locale("ru", "RU");
     }
 
     @NonNull
     @Override
     public CustomKeyboard getAlphabeticKeyboard() {
         if (mKeyboard == null) {
-            mKeyboard = new CustomKeyboard(mContext.getApplicationContext(), R.xml.keyboard_qwerty_german);
+            mKeyboard = new CustomKeyboard(mContext.getApplicationContext(), R.xml.keyboard_qwerty_russian);
         }
         return mKeyboard;
     }
@@ -33,7 +35,7 @@ public class GermanKeyboard extends BaseKeyboard {
     @Override
     public CustomKeyboard getSymbolsKeyboard() {
         if (mSymbolsKeyboard == null) {
-            mSymbolsKeyboard = new CustomKeyboard(mContext.getApplicationContext(), R.xml.keyboard_symbols_german);
+            mSymbolsKeyboard = new CustomKeyboard(mContext.getApplicationContext(), R.xml.keyboard_symbols_russian);
         }
         return mSymbolsKeyboard;
     }
@@ -51,11 +53,11 @@ public class GermanKeyboard extends BaseKeyboard {
 
     @Override
     public String getKeyboardTitle() {
-        return StringUtils.getStringByLocale(mContext, R.string.settings_language_german, getLocale());
+        return StringUtils.getStringByLocale(mContext, R.string.settings_language_italian, getLocale());
     }
 
     @Override
     public Locale getLocale() {
-        return Locale.GERMAN;
+        return mLocale;
     }
 }

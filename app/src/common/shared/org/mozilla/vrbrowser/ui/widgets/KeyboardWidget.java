@@ -39,6 +39,7 @@ import org.mozilla.vrbrowser.ui.keyboards.FrenchKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.GermanKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.ChineseZhuyinKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.KeyboardInterface;
+import org.mozilla.vrbrowser.ui.keyboards.RussianKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.SpanishKeyboard;
 import org.mozilla.vrbrowser.ui.views.AutoCompletionView;
 import org.mozilla.vrbrowser.ui.views.CustomKeyboardView;
@@ -133,6 +134,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mKeyboards.add(new FrenchKeyboard(aContext));
         mKeyboards.add(new GermanKeyboard(aContext));
         mKeyboards.add(new SpanishKeyboard(aContext));
+        mKeyboards.add(new RussianKeyboard(aContext));
         mKeyboards.add(new ChinesePinyinKeyboard(aContext));
         mKeyboards.add(new ChineseZhuyinKeyboard(aContext));
 
