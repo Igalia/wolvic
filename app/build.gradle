@@ -126,7 +126,22 @@ android {
                     arguments "-DVR_SDK_LIB=oculusvr-lib", "-DOCULUSVR=ON"
                 }
             }
+            manifestPlaceholders = [ headtrackingRequired:"true" ]
         }
+
+        oculusvr3dof {
+            dimension "platform"
+            externalNativeBuild {
+                cmake {
+                    cppFlags " -I" + file("${project.rootDir}/third_party/ovr_mobile/VrApi/Include").absolutePath +
+                            " -I" + file("${project.rootDir}/app/src/oculusvr/cpp").absolutePath +
+                            " -DOCULUSVR"
+                    arguments "-DVR_SDK_LIB=oculusvr-lib", "-DOCULUSVR=ON"
+                }
+            }
+            manifestPlaceholders = [ headtrackingRequired:"false" ]
+        }
+
         svr {
             dimension "platform"
             externalNativeBuild {
@@ -190,6 +205,10 @@ android {
                 'oculusvrArmRelease',
                 'oculusvrArm64Debug',
                 'oculusvrArm64Release',
+                'oculusvr3dofArmDebug',
+                'oculusvr3dofArmRelease',
+                'oculusvr3dofArm64Debug',
+                'oculusvr3dofArm64Release',
                 'svrArmDebug',
                 'svrArmRelease',
                 'svrArm64Debug',
@@ -234,6 +253,15 @@ android {
             ]
         }
 
+        oculusvr3dof {
+            java.srcDirs = [
+                    'src/oculusvr/java'
+            ]
+            assets.srcDirs = [
+                    'src/oculusvr/assets'
+            ]
+        }
+
         oculusvrArmRelease {
             manifest.srcFile getUseDebugSigningOnRelease() ? "src/oculusvrArmDebug/AndroidManifest.xml"
                                                            :  manifest.srcFile
@@ -246,6 +274,24 @@ android {
         oculusvrArm64Release {
             manifest.srcFile getUseDebugSigningOnRelease() ? "src/oculusvrArmDebug/AndroidManifest.xml"
                                                            : "src/oculusvrArmRelease/AndroidManifest.xml"
+        }
+
+        oculusvr3dofArmDebug {
+            manifest.srcFile "src/oculusvrArmDebug/AndroidManifest.xml"
+        }
+
+        oculusvr3dofArm64Debug {
+            manifest.srcFile "src/oculusvrArmDebug/AndroidManifest.xml"
+        }
+
+        oculusvr3dofArmRelease {
+            manifest.srcFile getUseDebugSigningOnRelease() ? "src/oculusvrArmDebug/AndroidManifest.xml"
+                    : "src/oculusvrArmRelease/AndroidManifest.xml"
+        }
+
+        oculusvr3dofArm64Release {
+            manifest.srcFile getUseDebugSigningOnRelease() ? "src/oculusvrArmDebug/AndroidManifest.xml"
+                    : "src/oculusvrArmRelease/AndroidManifest.xml"
         }
 
         svr {
