@@ -750,9 +750,9 @@ BrowserWorld::UpdateEnvironment() {
 }
 
 void
-BrowserWorld::UpdateFoveatedLevel(const int aAppLevel, const int aWebVRLevel) {
+BrowserWorld::UpdateFoveatedLevel(const int aAppLevel) {
   ASSERT_ON_RENDER_THREAD();
-  m.device->SetFoveatedLevel(aAppLevel, aWebVRLevel);
+  m.device->SetFoveatedLevel(aAppLevel);
 }
 
 void
@@ -1365,8 +1365,8 @@ JNI_METHOD(void, updateEnvironmentNative)
 }
 
 JNI_METHOD(void, updateFoveatedLevelNative)
-(JNIEnv*, jobject, jint aAppLevel, jint aWebVRLevel) {
-  crow::BrowserWorld::Instance().UpdateFoveatedLevel(aAppLevel, aWebVRLevel);
+(JNIEnv*, jobject, jint aAppLevel) {
+  crow::BrowserWorld::Instance().UpdateFoveatedLevel(aAppLevel);
 }
 
 JNI_METHOD(void, updatePointerColorNative)

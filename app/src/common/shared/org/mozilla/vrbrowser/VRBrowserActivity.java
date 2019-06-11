@@ -1085,8 +1085,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Override
     public void updateFoveatedLevel() {
         final int appLevel = SettingsStore.getInstance(this).getFoveatedLevelApp();
-        final int webVRLevel = SettingsStore.getInstance(this).getFoveatedLevelWebVR();
-        queueRunnable(() -> updateFoveatedLevelNative(appLevel, webVRLevel));
+        queueRunnable(() -> updateFoveatedLevelNative(appLevel));
     }
 
     @Override
@@ -1158,7 +1157,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private native void setCylinderDensityNative(float aDensity);
     private native void setCPULevelNative(@CPULevelFlags int aCPULevel);
     private native void setIsServo(boolean aIsServo);
-    private native void updateFoveatedLevelNative(int appLevel, int webVRLevel);
+    private native void updateFoveatedLevelNative(int appLevel);
 
     @IntDef(value = { CPU_LEVEL_NORMAL, CPU_LEVEL_HIGH})
     private @interface CPULevelFlags {}

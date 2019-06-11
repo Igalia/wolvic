@@ -616,7 +616,6 @@ struct DeviceDelegateOculusVR::State {
   uint32_t renderWidth = 0;
   uint32_t renderHeight = 0;
   int32_t standaloneFoveatedLevel = 0;
-  int32_t immersiveFoveatedLevel = 0;
   vrb::Color clearColor;
   float near = 0.1f;
   float far = 100.f;
@@ -714,11 +713,7 @@ struct DeviceDelegateOculusVR::State {
     if (!ovr) {
       return;
     }
-    if (renderMode == device::RenderMode::StandAlone) {
-      vrapi_SetPropertyInt(&java, VRAPI_FOVEATION_LEVEL, standaloneFoveatedLevel);
-    } else {
-      vrapi_SetPropertyInt(&java, VRAPI_FOVEATION_LEVEL, immersiveFoveatedLevel);
-    }
+    vrapi_SetPropertyInt(&java, VRAPI_FOVEATION_LEVEL, standaloneFoveatedLevel);
   }
 
   void UpdateClockLevels() {
@@ -1175,9 +1170,8 @@ DeviceDelegateOculusVR::ReleaseControllerDelegate() {
 }
 
 void
-DeviceDelegateOculusVR::SetFoveatedLevel(const int32_t aAppLevel, const int32_t aWebVRLevel) {
+DeviceDelegateOculusVR::SetFoveatedLevel(const int32_t aAppLevel) {
   m.standaloneFoveatedLevel = aAppLevel;
-  m.immersiveFoveatedLevel = aWebVRLevel;
   m.UpdateFoveatedLevel();
 }
 

@@ -469,7 +469,7 @@ DeviceDelegateWaveVR::SetClipPlanes(const float aNear, const float aFar) {
 }
 
 void
-DeviceDelegateWaveVR::SetFoveatedLevel(const int32_t aAppLevel, const int32_t aWebVRLevel) {
+DeviceDelegateWaveVR::SetFoveatedLevel(const int32_t aAppLevel) {
   m.standaloneFoveatedLevel = aAppLevel;
 }
 
