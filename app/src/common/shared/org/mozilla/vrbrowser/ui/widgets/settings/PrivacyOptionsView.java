@@ -27,6 +27,7 @@ class PrivacyOptionsView extends SettingsView {
     private AudioEngine mAudio;
     private UIButton mBackButton;
     private SwitchSetting mTrackingSetting;
+    private SwitchSetting mAutoplaySetting;
     private ButtonSetting mResetButton;
     private ArrayList<Pair<ButtonSetting, String>> mPermissionButtons;
     private int mAlertDialogHandle;
@@ -71,6 +72,12 @@ class PrivacyOptionsView extends SettingsView {
         mTrackingSetting.setOnCheckedChangeListener((compoundButton, enabled, apply) -> {
             SettingsStore.getInstance(getContext()).setTrackingProtectionEnabled(enabled);
             SessionStore.get().setTrackingProtection(enabled);
+        });
+
+        mAutoplaySetting = findViewById(R.id.autoplaySwitch);
+        mAutoplaySetting.setChecked(SessionStore.get().getAutoplayEnabled());
+        mAutoplaySetting.setOnCheckedChangeListener((compoundButton, enabled, apply) -> {
+            SessionStore.get().setAutoplayEnabled(enabled);
         });
 
         TextView permissionsTitleText = findViewById(R.id.permissionsTitle);

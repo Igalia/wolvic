@@ -967,6 +967,24 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
         }
     }
 
+    public void setAutoplayEnabled(final boolean enabled) {
+        if (mRuntime != null) {
+            mRuntime.getSettings().setAutoplayDefault(enabled ?
+                    GeckoRuntimeSettings.AUTOPLAY_DEFAULT_ALLOWED :
+                    GeckoRuntimeSettings.AUTOPLAY_DEFAULT_BLOCKED);
+        }
+    }
+
+    public boolean getAutoplayEnabled() {
+        if (mRuntime != null) {
+            return mRuntime.getSettings().getAutoplayDefault() == GeckoRuntimeSettings.AUTOPLAY_DEFAULT_ALLOWED ?
+                    true :
+                    false;
+        }
+
+        return false;
+    }
+
     // NavigationDelegate
 
     @Override

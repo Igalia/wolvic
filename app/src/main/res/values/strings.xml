@@ -377,6 +377,10 @@
      and is used to enable or disable tracking protection. -->
     <string name="security_options_tracking_protection">Tracking Protection</string>
 
+    <!-- This string labels an On/Off switch in the Privacy and Security settings dialog
+     and is used to enable or disable media autoplay. -->
+    <string name="security_options_autoplay">Autoplay Media</string>
+
     <!-- This string is a label above the group of buttons that indicates that the buttons below
          relate to Android system permissions granted to the app.
          '%1$s' will be replaced at runtime with the app's name. -->

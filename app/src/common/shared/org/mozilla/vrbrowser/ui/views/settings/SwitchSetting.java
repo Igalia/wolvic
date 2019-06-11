@@ -94,6 +94,7 @@ public class SwitchSetting extends LinearLayout {
 
     public void setChecked(boolean value) {
         mSwitch.setChecked(value);
+        updateSwitchText();
     }
 
 
