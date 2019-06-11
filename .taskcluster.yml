@@ -80,7 +80,7 @@ tasks:
           && git submodule update
           && . tools/taskcluster/get_third_party.sh
           && cp tools/gradle/taskcluster.properties ./user.properties
-          && ./gradlew --no-daemon --console=plain clean assembleNoapi assembleGooglevr assembleWavevr assembleSvr assembleOculusvr
+          && ./gradlew --no-daemon --console=plain clean `python tools/taskcluster/build_targets.py =all`
           && python tools/taskcluster/fetch_secret.py -s project/firefoxreality/staging-signing-token -o token -n token
           && python tools/taskcluster/sign_apk.py -t token
           && python tools/taskcluster/archive_debug_apk.py
