@@ -29,8 +29,8 @@ public abstract class UIDialog extends UIWidget implements WidgetManagerDelegate
 
     @Override
     public void releaseWidget() {
-        super.releaseWidget();
         mWidgetManager.removeFocusChangeListener(this);
+        super.releaseWidget();
     }
 
     @Override
