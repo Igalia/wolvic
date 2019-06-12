@@ -25,4 +25,24 @@ public class StringUtils {
     public static boolean isEmpty(String aString) {
         return aString == null || aString.length() == 0;
     }
+
+    public static boolean isEmpty(CharSequence aSequence) {
+        return aSequence == null || aSequence.length() == 0;
+    }
+
+
+    public static String getLastCharacter(String aText) {
+        if (!isEmpty(aText)) {
+            return aText.substring(aText.length() - 1);
+        }
+
+        return "";
+    }
+
+    public static String removeLastCharacter(String aText) {
+        if (!isEmpty(aText)) {
+            return aText.substring(0, aText.length() - 1);
+        }
+        return "";
+    }
 }

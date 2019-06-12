@@ -32,8 +32,11 @@ public interface KeyboardInterface {
     float getAlphabeticKeyboardWidth();
     default @Nullable CustomKeyboard getSymbolsKeyboard() { return null; }
     default @Nullable CandidatesResult getCandidates(String aComposingText) { return null; }
+    default @Nullable String overrideAddText(String aTextBeforeCursor, String aNextText) { return null; }
+    default @Nullable String overrideBackspace(String aTextBeforeCursor) { return null; }
     default boolean supportsAutoCompletion() { return false; }
     default boolean usesComposingText() { return false; }
+    default boolean usesTextOverride() { return false; }
     String getComposingText(String aComposing, String aCode);
     String getKeyboardTitle();
     Locale getLocale();

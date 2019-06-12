@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Keyboard xmlns:android="http://schemas.android.com/apk/res/android"
+    android:horizontalGap="@dimen/keyboard_horizontal_gap"
+    android:verticalGap="@dimen/keyboard_vertical_gap"
+    android:keyWidth="@dimen/keyboard_key_width"
+    android:keyHeight="@dimen/keyboard_key_height">
+    <Row>
+        <Key android:keyLabel="ㅂ" android:popupCharacters="ㅂㅃ" android:popupKeyboard="@xml/keyboard_popup" android:keyEdgeFlags="left"  />
+        <Key android:keyLabel="ㅈ" android:popupCharacters="ㅈㅉ" android:popupKeyboard="@xml/keyboard_popup" />
+        <Key android:keyLabel="ㄷ" android:popupCharacters="ㄷㄸ" android:popupKeyboard="@xml/keyboard_popup" />
+        <Key android:keyLabel="ᄀ" android:popupCharacters="ᄀㄲ" android:popupKeyboard="@xml/keyboard_popup" />
+        <Key android:keyLabel="ㅅ" android:popupCharacters="ㅅㅆ" android:popupKeyboard="@xml/keyboard_popup" />
+        <Key android:keyLabel="ᅭ" />
+        <Key android:keyLabel="ᅧ" />
+        <Key android:keyLabel="ᅣ" />
+        <Key android:keyLabel="ᅢ" android:popupCharacters="ᅢᅤ" android:popupKeyboard="@xml/keyboard_popup" />
+        <Key android:keyLabel="ᅦ" android:popupCharacters="ᅦᅨ" android:popupKeyboard="@xml/keyboard_popup" />
+        <Key android:codes="95" android:keyLabel="_"/>
+        <Key android:codes="-5" android:keyIcon="@drawable/ic_icon_keyboard_backspace" android:isRepeatable="true" android:keyWidth="@dimen/keyboard_key_backspace_width" />
+    </Row>
+
+    <Row>
+        <Key android:keyLabel="ㅁ" android:keyEdgeFlags="left" android:horizontalGap="@dimen/keyboard_left_margin" />
+        <Key android:keyLabel="ㄴ" />
+        <Key android:keyLabel="ㅇ" />
+        <Key android:keyLabel="ㄹ" />
+        <Key android:keyLabel="ㅎ" />
+        <Key android:keyLabel="ᅩ" />
+        <Key android:keyLabel="ᅥ" />
+        <Key android:keyLabel="ᅡ" />
+        <Key android:keyLabel="ᅵ" />
+        <Key android:codes="58" android:keyLabel=":"/>
+        <Key android:codes="-4" android:keyLabel="@string/keyboard_enter_label" android:keyWidth="@dimen/keyboard_key_enter_width"  />
+    </Row>
+
+    <Row>
+        <Key android:codes="-1" android:keyIcon="@drawable/ic_icon_keyboard_shift_off" android:keyEdgeFlags="left"/>
+        <Key android:keyLabel="ㅋ" />
+        <Key android:keyLabel="ㅌ" />
+        <Key android:keyLabel="ㅊ" />
+        <Key android:keyLabel="ㅍ" />
+        <Key android:keyLabel="ᅲ" />
+        <Key android:keyLabel="ᅮ" />
+        <Key android:keyLabel="ᅳ" />
+        <Key android:codes="45" android:keyLabel="-" />
+        <Key android:codes="43" android:keyLabel="+" />
+        <Key android:codes="47" android:keyLabel="/" />
+        <Key android:codes="-1" android:keyIcon="@drawable/ic_icon_keyboard_shift_off" />
+    </Row>
+
+    <Row>
+        <Key android:codes="-2" android:keyLabel="@string/keyboard_symbol" android:keyEdgeFlags="left"/>
+        <Key android:codes="-12" android:keyIcon="@drawable/ic_icon_keyboard_globe" />
+        <Key android:codes="32" android:keyLabel="" android:keyWidth="@dimen/keyboard_key_space_width" android:isRepeatable="true"/>
+        <Key android:codes="44" android:keyLabel=","/>
+        <Key android:codes="46" android:keyLabel="."/>
+        <Key android:codes="33" android:keyLabel="!" android:popupCharacters="!¡" android:popupKeyboard="@xml/keyboard_popup" />
+        <Key android:codes="63" android:keyLabel="\?" android:popupCharacters="\?¿" android:popupKeyboard="@xml/keyboard_popup" />
+        <Key android:codes="64" android:keyLabel="\@"/>
+    </Row>
+</Keyboard>

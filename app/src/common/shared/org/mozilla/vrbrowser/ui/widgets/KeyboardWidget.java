@@ -40,6 +40,7 @@ import org.mozilla.vrbrowser.ui.keyboards.GermanKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.ChineseZhuyinKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.KeyboardInterface;
 import org.mozilla.vrbrowser.ui.keyboards.RussianKeyboard;
+import org.mozilla.vrbrowser.ui.keyboards.KoreanKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.SpanishKeyboard;
 import org.mozilla.vrbrowser.ui.views.AutoCompletionView;
 import org.mozilla.vrbrowser.ui.views.CustomKeyboardView;
@@ -137,6 +138,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mKeyboards.add(new RussianKeyboard(aContext));
         mKeyboards.add(new ChinesePinyinKeyboard(aContext));
         mKeyboards.add(new ChineseZhuyinKeyboard(aContext));
+        mKeyboards.add(new KoreanKeyboard(aContext));
 
         mDefaultKeyboardSymbols = new CustomKeyboard(aContext.getApplicationContext(), R.xml.keyboard_symbols);
         mKeyboardNumeric = new CustomKeyboard(aContext.getApplicationContext(), R.xml.keyboard_numeric);
@@ -533,23 +535,33 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             updateCandidates();
             return;
         }
+
         postInputCommand(() -> {
-            CharSequence selectedText = mInputConnection.getSelectedText(0);
-            if (selectedText == null || selectedText.length() == 0) {
-                if (isLongPress) {
-                    CharSequence currentText = connection.getExtractedText(new ExtractedTextRequest(), 0).text;
-                    CharSequence beforeCursorText = connection.getTextBeforeCursor(currentText.length(), 0);
-                    CharSequence afterCursorText = connection.getTextAfterCursor(currentText.length(), 0);
-                    connection.deleteSurroundingText(beforeCursorText.length(), afterCursorText.length());
-
-                } else {
-                    // No selected text to delete. Remove the character before the cursor.
-                    connection.deleteSurroundingText(1, 0);
-                }
-
-            } else {
+            CharSequence selectedText = connection.getSelectedText(0);
+            if (selectedText != null && selectedText.length() > 0) {
                 // Delete the selected text
                 connection.commitText("", 1);
+                return;
+            }
+
+            if (isLongPress) {
+                CharSequence currentText = connection.getExtractedText(new ExtractedTextRequest(), 0).text;
+                CharSequence beforeCursorText = connection.getTextBeforeCursor(currentText.length(), 0);
+                CharSequence afterCursorText = connection.getTextAfterCursor(currentText.length(), 0);
+                connection.deleteSurroundingText(beforeCursorText.length(), afterCursorText.length());
+            } else {
+                if (mCurrentKeyboard.usesTextOverride()) {
+                    String beforeText = getTextBeforeCursor(connection);
+                    String newBeforeText = mCurrentKeyboard.overrideBackspace(beforeText);
+                    if (newBeforeText != null) {
+                        // Replace whole before text
+                        connection.deleteSurroundingText(beforeText.length(), 0);
+                        connection.commitText(newBeforeText, 1);
+                        return;
+                    }
+                }
+                // Remove the character before the cursor.
+                connection.deleteSurroundingText(1, 0);
             }
         });
     }
@@ -658,6 +670,19 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                 mComposingText = "";
             }
             mComposingText += aText;
+        } else if (mCurrentKeyboard.usesTextOverride()) {
+            String beforeText = getTextBeforeCursor(mInputConnection);
+            final String newBeforeText = mCurrentKeyboard.overrideAddText(beforeText, aText);
+            final InputConnection connection = mInputConnection;
+            postInputCommand(() -> {
+                if (newBeforeText != null) {
+                    connection.deleteSurroundingText(beforeText.length(), 0);
+                    connection.commitText(newBeforeText, 1);
+                } else {
+                    connection.commitText(aText, 1);
+                }
+            });
+
         } else {
             final InputConnection connection = mInputConnection;
             postInputCommand(() -> connection.commitText(aText, 1));
@@ -680,6 +705,15 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mVoiceSearchWidget.show(false);
         mWidgetPlacement.visible = false;
         mWidgetManager.updateWidget(this);
+    }
+
+    private String getTextBeforeCursor(InputConnection aConnection) {
+        if (aConnection == null) {
+            return "";
+        }
+
+        String fullText = aConnection.getExtractedText(new ExtractedTextRequest(),0).text.toString();
+        return aConnection.getTextBeforeCursor(fullText.length(),0).toString();
     }
 
     private void postInputCommand(Runnable aRunnable) {
