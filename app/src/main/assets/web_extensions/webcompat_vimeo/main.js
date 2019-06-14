@@ -79,6 +79,7 @@ try {
     logDebug(`Navigation type "${window.performance.navigation.type}"`);
     logDebug(`Event "${evt.type}" fired`);
     updateCurrentQsInUrl();
+    selectBetterQuality();
   });
 
   window.addEventListener('fullscreenchange', evt => {
@@ -133,6 +134,105 @@ try {
       modified: true,
       url
     };
+  }
+
+  function simulateTouch(item) {
+    try {
+      fakeTouch(item, "touchstart");
+      fakeTouch(item, "touchend");
+    }
+    catch (err) {
+      item.click();
+    }
+  }
+
+  function fakeTouch(element, eventType) {
+    var rect = element.getBoundingClientRect();
+    const touchObj = new Touch({
+      identifier: Date.now(),
+      target: element,
+      pageX: rect.x + 10 + window.pageXOffset,
+      pageY: rect.y + 10 + window.pageYOffset,
+      clientX: rect.x + 10,
+      clientY: rect.y + 10,
+      radiusX: 2.0,
+      radiusY: 2.0,
+      rotationAngle: 5,
+      force: 0.5,
+    });
+
+    const touchEvent = new TouchEvent(eventType, {
+      cancelable: true,
+      bubbles: true,
+      touches: [touchObj],
+      targetTouches: [],
+      changedTouches: [touchObj],
+      shiftKey: true,
+    });
+
+    element.dispatchEvent(touchEvent);
+  }
+
+
+  function selectBetterQuality(attemptCount) {
+    attemptCount = attemptCount || 0;
+    log("Attempt to select quality");
+    // Preferred qualities
+    // TODO: add 4K on powerfull enough devices only
+    const preferred = [
+      '2K', '1080p', '720p'
+    ]
+
+    var btnSettings = document.querySelector(".vp-prefs");
+
+    if (btnSettings && btnSettings.getAttribute("aria-expanded") !== "true") {
+      // Focus page to settings button
+      btnSettings.focus();
+      // Show quality selector
+      simulateTouch(btnSettings.wrappedJSObject);
+      // Hide quality panel so there are no glitches
+      let qualityPanel = document.querySelector(".vp-panel--quality");
+      if (qualityPanel) {
+        qualityPanel.style.display = "none";
+      }
+    }
+
+    let items = document.querySelectorAll(".vp-panel-item");
+
+    if (items.length === 0) {
+        if (attemptCount > 20) {
+          log("Max attempts to select quality exceeded. Cancel operation.");
+          return;
+        }
+        // Retry after some delay
+        setTimeout(selectBetterQuality.bind(null, attemptCount + 1, btnSettings), 50);
+        return;
+    }
+    items = Array.from(items);
+    log("Found " + items.length + " quality items");
+    for (quality of preferred) {
+      let item = items.find(el => el.textContent && el.textContent.indexOf(quality) >= 0);
+      if (item) {
+          log("Select quality: " + item.textContent);
+          simulateTouch(item);
+          if (btnSettings && btnSettings.getAttribute("aria-expanded") === "true") {
+            // Hide quality selector, some delay required
+            let qualityPanel = document.querySelector(".vp-panel--quality");
+            setTimeout(function() {
+              simulateTouch(btnSettings.wrappedJSObject);
+              setTimeout(function() {
+                // Make quality panel visible after some delay so there are not animation glitches.
+                if (qualityPanel) {
+                  qualityPanel.style.display = "";
+                }
+              }, 200);
+            }, 200);
+          }
+          return;
+      }
+    }
+
+    log("No suitable quality found");
   }
 
   function updateCurrentQsInUrl (url) {
