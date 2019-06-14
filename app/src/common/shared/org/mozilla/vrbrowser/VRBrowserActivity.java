@@ -26,6 +26,7 @@ import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.Surface;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 
 import org.mozilla.gecko.util.ThreadUtils;
@@ -158,6 +159,16 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         return false;
     }
 
+    private ViewTreeObserver.OnGlobalFocusChangeListener globalFocusListener = new ViewTreeObserver.OnGlobalFocusChangeListener() {
+        @Override
+        public void onGlobalFocusChanged(View oldFocus, View newFocus) {
+            Log.d(LOGTAG, "======> OnGlobalFocusChangeListener: old(" + oldFocus + ") new(" + newFocus + ")");
+            for (FocusChangeListener listener: mFocusChangeListeners) {
+                listener.onGlobalFocusChanged(oldFocus, newFocus);
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // Fix for infinite restart on startup crashes.
@@ -203,13 +214,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         mWidgets = new HashMap<>();
         mWidgetContainer = new FrameLayout(this);
-        mWidgetContainer.getViewTreeObserver().addOnGlobalFocusChangeListener((oldFocus, newFocus) -> {
-            Log.d(LOGTAG, "======> OnGlobalFocusChangeListener: old(" + oldFocus + ") new(" + newFocus + ")");
-            for (FocusChangeListener listener: mFocusChangeListeners) {
-                listener.onGlobalFocusChanged(oldFocus, newFocus);
-            }
-        });
-
 
         mPermissionDelegate = new PermissionDelegate(this, this);
 
@@ -314,11 +318,13 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         if (mOffscreenDisplay != null) {
             mOffscreenDisplay.onPause();
         }
+        mWidgetContainer.getViewTreeObserver().removeOnGlobalFocusChangeListener(globalFocusListener);
         super.onPause();
     }
 
     @Override
     protected void onResume() {
+        mWidgetContainer.getViewTreeObserver().addOnGlobalFocusChangeListener(globalFocusListener);
         if (mOffscreenDisplay != null) {
             mOffscreenDisplay.onResume();
         }
