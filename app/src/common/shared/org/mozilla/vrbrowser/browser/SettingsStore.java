@@ -61,7 +61,7 @@ public class SettingsStore {
     public final static int MSAA_DEFAULT_LEVEL = 1;
     public final static boolean AUDIO_ENABLED = false;
     public final static float CYLINDER_DENSITY_ENABLED_DEFAULT = 4680.0f;
-    public final static int FOVEATED_APP_DEFAULT_LEVEL = 1;
+    public final static int FOVEATED_APP_DEFAULT_LEVEL = 0;
     public final static int FOVEATED_WEBVR_DEFAULT_LEVEL = 0;
     private final static long CRASH_RESTART_DELTA = 2000;
 

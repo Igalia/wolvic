@@ -28,7 +28,7 @@
     <string name="settings_key_audio" translatable="false">settings_audio</string>
     <string name="settings_key_voice_search_language" translatable="false">settings_voice_search_language</string>
     <string name="settings_key_cylinder_density" translatable="false">settings_cylinder_density</string>
-    <string name="settings_key_foveated_app" translatable="false">settings_foveated_app</string>
+    <string name="settings_key_foveated_app" translatable="false">settings_foveated_in_app</string>
     <string name="settings_key_foveated_webvr" translatable="false">settings_foveated_webvr</string>
     <string name="settings_key_keyboard_locale" translatable="false">settings_key_keyboard_locale</string>
     <string name="settings_key_crash_restart_count" translatable="false">settings_key_crash_restart_count</string>
