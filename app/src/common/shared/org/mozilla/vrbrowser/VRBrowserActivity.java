@@ -311,11 +311,17 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mConnectivityReceiver.unregister(this);
         // Reset so the dialog will show again on resume.
         mConnectionAvailable = true;
+        if (mOffscreenDisplay != null) {
+            mOffscreenDisplay.onPause();
+        }
         super.onPause();
     }
 
     @Override
     protected void onResume() {
+        if (mOffscreenDisplay != null) {
+            mOffscreenDisplay.onResume();
+        }
         SessionStore.get().setActive(true);
         mAudioEngine.resumeEngine();
         for (Widget widget: mWidgets.values()) {

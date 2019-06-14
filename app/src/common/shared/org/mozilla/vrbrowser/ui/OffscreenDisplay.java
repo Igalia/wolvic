@@ -7,56 +7,47 @@ package org.mozilla.vrbrowser.ui;
 
 import android.app.Presentation;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.SurfaceTexture;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Display;
-import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.View;
-import android.util.Log;
+import android.view.ViewGroup;
 
 public class OffscreenDisplay {
     final String LOGTAG = "VRB";
     private Context mContext;
+    private int mWidth;
+    private int mHeight;
     private VirtualDisplay mVirtualDisplay;
     private SurfaceTexture mTexture;
     private Surface mSurface;
     private OffscreenPresentation mPresentation;
+    private View mContentView;
 
     private DisplayMetrics mDefaultMetrics;
 
     public OffscreenDisplay(Context aContext, SurfaceTexture aTexture, int aWidth, int aHeight) {
         mContext = aContext;
+        mWidth = aWidth;
+        mHeight = aHeight;
         aTexture.setDefaultBufferSize(aWidth, aHeight);
         mTexture = aTexture;
         mSurface = new Surface(aTexture);
 
-        DisplayManager manager = (DisplayManager) aContext.getSystemService(Context.DISPLAY_SERVICE);
-        Display defaultDisplay = manager.getDisplay(Display.DEFAULT_DISPLAY);
-
         mDefaultMetrics = new DisplayMetrics();
-        defaultDisplay.getMetrics(mDefaultMetrics);
 
-        int flags = DisplayManager.VIRTUAL_DISPLAY_FLAG_OWN_CONTENT_ONLY |
-                    DisplayManager.VIRTUAL_DISPLAY_FLAG_PRESENTATION |
-                    DisplayManager.VIRTUAL_DISPLAY_FLAG_PUBLIC;
-
-        mVirtualDisplay = manager.createVirtualDisplay("OffscreenViews", aWidth, aHeight,
-                                                       mDefaultMetrics.densityDpi, mSurface, flags);
-        mPresentation = new OffscreenPresentation(mContext, mVirtualDisplay.getDisplay());
-        mPresentation.show();
+        onResume();
     }
 
     public void setContentView(View aView) {
-        if (mPresentation == null) {
-            throw new IllegalStateException("No presentation!");
+        mContentView = aView;
+        if (mPresentation != null) {
+            mPresentation.setContentView(aView);
         }
-
-        mPresentation.setContentView(aView);
     }
 
     public void resize(int aWidth, int aHeight) {
@@ -67,7 +58,7 @@ public class OffscreenDisplay {
         mVirtualDisplay.resize(aWidth, aHeight, mDefaultMetrics.densityDpi);
     }
 
-    public void release() {
+    public void onPause() {
         if (mPresentation != null) {
             mPresentation.dismiss();
             mPresentation = null;
@@ -77,6 +68,38 @@ public class OffscreenDisplay {
             mVirtualDisplay.release();
             mVirtualDisplay = null;
         }
+
+
+        if (mContentView != null && mContentView.getParent() != null) {
+            ((ViewGroup)mContentView.getParent()).removeView(mContentView);
+        }
+    }
+
+    public void onResume() {
+        if (mVirtualDisplay == null) {
+            DisplayManager manager = (DisplayManager) mContext.getSystemService(Context.DISPLAY_SERVICE);
+            Display defaultDisplay = manager.getDisplay(Display.DEFAULT_DISPLAY);
+
+            int flags = DisplayManager.VIRTUAL_DISPLAY_FLAG_OWN_CONTENT_ONLY |
+                    DisplayManager.VIRTUAL_DISPLAY_FLAG_PRESENTATION |
+                    DisplayManager.VIRTUAL_DISPLAY_FLAG_PUBLIC;
+            defaultDisplay.getMetrics(mDefaultMetrics);
+
+            mVirtualDisplay = manager.createVirtualDisplay("OffscreenViews", mWidth, mHeight,
+                    mDefaultMetrics.densityDpi, mSurface, flags);
+        }
+
+        if (mPresentation == null) {
+            mPresentation = new OffscreenPresentation(mContext, mVirtualDisplay.getDisplay());
+            mPresentation.show();
+            if (mContentView != null) {
+                mPresentation.setContentView(mContentView);
+            }
+        }
+    }
+
+    public void release() {
+        onPause();
 
         if (mSurface != null) {
             mSurface.release();
