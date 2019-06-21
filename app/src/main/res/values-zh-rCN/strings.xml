@@ -169,6 +169,10 @@
          changes the app and the language of the speech-recognition-based search to 'Italian'. -->
     <string name="settings_language_italian">意大利语</string>
 
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+     changes the app and the language of the speech-recognition-based search to 'Italian'. -->
+    <string name="settings_language_russian">俄语</string>
+
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
         opens a dialog box that contains display-related settings: window size, pixel density, etc. -->
     <string name="settings_display">显示</string>
@@ -648,15 +652,14 @@
     <!-- This string is used as the body of the Private Browsing page that is opened when the
          Private Browsing Mode button from the tray is clicked.
          '%1$s' will be replaced at runtime with the app's name. -->
-    <string name="private_browsing_body"><![CDATA[
-<p>当您在隐私浏览窗口中浏览时，%1$s <strong>不会保存</strong>：</p>
+    <string name="private_browsing_body"><![CDATA[<p>当您在隐私窗口中上网时，%1$s <strong>不会保存</strong>：</p>
 <ul class="two-column">
-	<li>访问过的页面</li>
-	<li>搜索记录</li>
-	<li>Cookie</li>
-	<li>临时文件</li>
+  <li>访问过的页面记录</li>
+  <li>搜索记录</li>
+  <li>Cookie</li>
+  <li>临时文件</li>
 </ul>
-<p>隐私浏览<strong>不会使您</strong>在互联网上匿名。您的雇主和电信运营商仍然可以知道您访问了什么页面。</p>
+<p>隐私浏览<strong>无法让您</strong>在互联网上匿名。您的雇主和电信运营商仍然可以知道您访问了什么页面。</p>
 <p class="about-info">详细了解<a id="learnMore">隐私浏览</a>。</p>
      ]]></string>
 
