@@ -62,25 +62,26 @@
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:orientation="horizontal">
+
                     <TextView
                         android:id="@+id/authUsernameLabel"
-                        android:layout_width="110dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="3"
                         android:gravity="top|end"
                         android:maxHeight="@dimen/prompt_content_max_height"
                         android:scrollbars="vertical"
+                        android:text="@string/authentication_username"
                         android:textAlignment="viewEnd"
-                        android:textSize="18sp"
-                        android:text="@string/authentication_username" />
+                        android:textSize="18sp" />
 
                     <org.mozilla.vrbrowser.ui.views.settings.SettingsEditText
                         android:id="@+id/authUsername"
                         style="@style/settingsEdit"
                         android:layout_width="match_parent"
-                        android:layout_weight="100"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
+                        android:layout_weight="1"
                         app:highlightedTextColor="@color/fog" />
                 </LinearLayout>
 
@@ -89,24 +90,26 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
+
                     <TextView
                         android:id="@+id/authPasswordLabel"
-                        android:layout_width="110dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_weight="3"
                         android:gravity="top|end"
                         android:maxHeight="@dimen/prompt_content_max_height"
                         android:scrollbars="vertical"
+                        android:text="@string/authentication_password"
                         android:textAlignment="viewEnd"
-                        android:textSize="18sp"
-                        android:text="@string/authentication_password" />
+                        android:textSize="18sp" />
 
                     <org.mozilla.vrbrowser.ui.views.settings.SettingsEditText
                         android:id="@+id/authPassword"
                         style="@style/settingsEdit"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="100"
                         android:layout_marginStart="5dp"
+                        android:layout_weight="1"
                         android:inputType="textPassword"
                         app:highlightedTextColor="@color/fog" />
 
