@@ -755,6 +755,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             return;
         }
         mIsPresentingImmersive = false;
+        // Show the window in front of you when you exit immersive mode.
+        resetUIYaw();
+
         TelemetryWrapper.uploadImmersiveToHistogram();
         Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(() -> {
