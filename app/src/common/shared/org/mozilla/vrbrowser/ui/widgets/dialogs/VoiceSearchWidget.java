@@ -261,7 +261,7 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
                 show();
 
             } else {
-                super.show();
+                super.show(true);
                 setPermissionNotGranted();
             }
         }
