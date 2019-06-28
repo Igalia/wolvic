@@ -26,6 +26,7 @@ public class CustomKeyboard extends Keyboard {
     public static final int KEYCODE_SYMBOLS_CHANGE = -10;
     public static final int KEYCODE_VOICE_INPUT = -11;
     public static final int KEYCODE_LANGUAGE_CHANGE = -12;
+    public static final int KEYCODE_EMOJI = -13;
 
     public CustomKeyboard(Context context, int xmlLayoutResId) {
         super(context, xmlLayoutResId, 0);

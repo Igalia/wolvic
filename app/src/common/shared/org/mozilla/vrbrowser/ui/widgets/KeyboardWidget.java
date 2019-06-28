@@ -38,6 +38,7 @@ import org.mozilla.vrbrowser.ui.keyboards.ItalianKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.FrenchKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.GermanKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.ChineseZhuyinKeyboard;
+import org.mozilla.vrbrowser.ui.keyboards.JapaneseKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.KeyboardInterface;
 import org.mozilla.vrbrowser.ui.keyboards.RussianKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.KoreanKeyboard;
@@ -139,6 +140,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mKeyboards.add(new ChinesePinyinKeyboard(aContext));
         mKeyboards.add(new ChineseZhuyinKeyboard(aContext));
         mKeyboards.add(new KoreanKeyboard(aContext));
+        mKeyboards.add(new JapaneseKeyboard(aContext));
 
         mDefaultKeyboardSymbols = new CustomKeyboard(aContext.getApplicationContext(), R.xml.keyboard_symbols);
         mKeyboardNumeric = new CustomKeyboard(aContext.getApplicationContext(), R.xml.keyboard_numeric);
@@ -278,6 +280,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             mWidgetManager.updateWidget(this);
         }
 
+        mCurrentKeyboard.clear();
         updateCandidates();
         updateSpecialKeyLabels();
     }
@@ -390,6 +393,9 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                 break;
             case CustomKeyboard.KEYCODE_LANGUAGE_CHANGE:
                 handleGlobeClick();
+                break;
+            case CustomKeyboard.KEYCODE_EMOJI:
+                handleEmojiInput();
                 break;
             case ' ':
                 handleSpace();
@@ -577,6 +583,12 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mLanguageSelectorView.setSelectedItem(mCurrentKeyboard);
         mLanguageSelectorView.setVisibility(View.VISIBLE);
         mPopupKeyboardLayer.setVisibility(View.VISIBLE);
+    }
+
+    private void handleEmojiInput() {
+        final KeyboardInterface.CandidatesResult candidates = mCurrentKeyboard.getEmojiCandidates(mComposingText);
+        setAutoCompletionVisible(candidates != null && candidates.words.size() > 0);
+        mAutoCompletionView.setItems(candidates != null ? candidates.words : null);
     }
 
     private void handleLanguageChange(KeyboardInterface aKeyboard) {
@@ -949,6 +961,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         if (!mInternalDeleteHint && mCurrentKeyboard.usesComposingText() && mComposingText.length() > 0 && mTextBefore.length() > 0 && aEditable.toString().length() == 0) {
             // Text has been cleared externally (e.g. URLBar text clear button)
             mComposingText = "";
+            mCurrentKeyboard.clear();
             updateCandidates();
         }
         mInternalDeleteHint = false;

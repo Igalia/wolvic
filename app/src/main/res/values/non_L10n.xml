@@ -72,6 +72,11 @@
     <string name="zhuyin_enter_completion" translatable="false">選定</string>
     <string name="zhuyin_keyboard_mode_change" translatable="false">ㄅㄆㄇ</string>
 
+    <string name="japanese_spacebar_selection" translatable="false">次変換</string>
+    <string name="japanese_spacebar_space" translatable="false">空白</string>
+    <string name="japanese_enter_completion" translatable="false">確定</string>
+    <string name="japanese_keyboard_mode_change" translatable="false">かな</string>
+
     <!-- Keyboard -->
     <string name="keyboard_popup_a" translatable="false">aáàäãåâąæā</string>
     <string name="keyboard_popup_b" translatable="false">bƀḃḅḇ</string>
