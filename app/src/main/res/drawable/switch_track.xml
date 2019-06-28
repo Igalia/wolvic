@@ -22,7 +22,7 @@
 
         </layer-list>
     </item>
-    <item android:state_checked="true">
+    <item android:state_checked="true" android:state_hovered="false">
         <layer-list>
             <item>
                 <shape
@@ -44,7 +44,29 @@
 
         </layer-list>
     </item>
-    <item android:state_checked="false">
+    <item android:state_checked="true" android:state_hovered="true">
+        <layer-list>
+            <item>
+                <shape
+                    android:dither="true"
+                    android:shape="rectangle"
+                    android:useLevel="false"
+                    android:visible="true">
+                    <gradient
+                        android:angle="270"
+                        android:endColor="@color/forest"
+                        android:startColor="@color/forest"/>
+                    <corners
+                        android:radius="16dp"/>
+                    <size
+                        android:width="20dp"
+                        android:height="20dp" />
+                </shape>
+            </item>
+
+        </layer-list>
+    </item>
+    <item android:state_checked="false" android:state_hovered="false">
         <layer-list>
             <item>
                 <shape
@@ -56,6 +78,28 @@
                         android:angle="270"
                         android:endColor="@color/dessert"
                         android:startColor="@color/dessert"/>
+                    <corners
+                        android:radius="16dp"/>
+                    <size
+                        android:width="20dp"
+                        android:height="20dp" />
+                </shape>
+            </item>
+
+        </layer-list>
+    </item>
+    <item android:state_checked="false" android:state_hovered="true">
+        <layer-list>
+            <item>
+                <shape
+                    android:dither="true"
+                    android:shape="rectangle"
+                    android:useLevel="false"
+                    android:visible="true">
+                    <gradient
+                        android:angle="270"
+                        android:endColor="@color/tomato"
+                        android:startColor="@color/tomato"/>
                     <corners
                         android:radius="16dp"/>
                     <size

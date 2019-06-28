@@ -20,7 +20,7 @@
             <RadioButton
                 android:id="@+id/radioItemButton"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 style="@style/radioButtonTheme"
                 android:layout_marginLeft="20dp"
                 tools:text="Item"
