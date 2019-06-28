@@ -836,6 +836,21 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         runOnUiThread(() -> DeviceType.setType(aType));
     }
 
+    @Keep
+    @SuppressWarnings("unused")
+    private void haltActivity(final int aReason) {
+        runOnUiThread(() -> {
+            if (mConnectionAvailable && mWindowWidget != null) {
+                mWindowWidget.showAlert(getString(R.string.not_entitled_title), getString(R.string.not_entitled_message, getString(R.string.app_name)), new GeckoSession.PromptDelegate.AlertCallback() {
+                    @Override
+                    public void dismiss() {
+                        VRBrowserActivity.this.finish();
+                    }
+                });
+            }
+        });
+    }
+
     void createOffscreenDisplay() {
         int[] ids = new int[1];
         GLES20.glGenTextures(1, ids, 0);

@@ -46,6 +46,8 @@ const char* kAreLayersEnabled = "areLayersEnabled";
 const char* kAreLayersEnabledSignature = "()Z";
 const char* kSetDeviceType = "setDeviceType";
 const char* kSetDeviceTypeSignature = "(I)V";
+const char* kHaltActivity = "haltActivity";
+const char* kHaltActivitySignature = "(I)V";
 
 JNIEnv* sEnv;
 jclass sBrowserClass;
@@ -68,6 +70,7 @@ jmethodID sGetActiveEnvironment;
 jmethodID sGetPointerColor;
 jmethodID sAreLayersEnabled;
 jmethodID sSetDeviceType;
+jmethodID sHaltActivity;
 }
 
 namespace crow {
@@ -105,6 +108,7 @@ VRBrowser::InitializeJava(JNIEnv* aEnv, jobject aActivity) {
   sGetPointerColor = FindJNIMethodID(sEnv, sBrowserClass, kGetPointerColor, kGetPointerColorSignature);
   sAreLayersEnabled = FindJNIMethodID(sEnv, sBrowserClass, kAreLayersEnabled, kAreLayersEnabledSignature);
   sSetDeviceType = FindJNIMethodID(sEnv, sBrowserClass, kSetDeviceType, kSetDeviceTypeSignature);
+  sHaltActivity = FindJNIMethodID(sEnv, sBrowserClass, kHaltActivity, kHaltActivitySignature);
 }
 
 void
@@ -137,6 +141,7 @@ VRBrowser::ShutdownJava() {
   sGetPointerColor = nullptr;
   sAreLayersEnabled = nullptr;
   sSetDeviceType = nullptr;
+  sHaltActivity = nullptr;
   sEnv = nullptr;
 }
 
@@ -303,5 +308,13 @@ VRBrowser::SetDeviceType(const jint aType) {
   sEnv->CallVoidMethod(sActivity, sSetDeviceType, aType);
   CheckJNIException(sEnv, __FUNCTION__);
 }
+
+void
+VRBrowser::HaltActivity(const jint aReason) {
+  if (!ValidateMethodID(sEnv, sActivity, sHaltActivity, __FUNCTION__)) { return; }
+  sEnv->CallVoidMethod(sActivity, sHaltActivity, aReason);
+  CheckJNIException(sEnv, __FUNCTION__);
+}
+
 
 } // namespace crow

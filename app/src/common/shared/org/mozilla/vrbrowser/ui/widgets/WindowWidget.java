@@ -32,6 +32,8 @@ import org.mozilla.vrbrowser.ui.widgets.prompts.ChoicePromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.ConfirmPromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.TextPromptWidget;
 
+import androidx.annotation.NonNull;
+
 import static org.mozilla.vrbrowser.utils.ServoUtils.isInstanceOfServoSession;
 
 public class WindowWidget extends UIWidget implements SessionStore.SessionChangeListener,
@@ -583,6 +585,15 @@ public class WindowWidget extends UIWidget implements SessionStore.SessionChange
         } else if (!aVisible && mNoInternetToast.isVisible()) {
             mNoInternetToast.hide(REMOVE_WIDGET);
         }
+    }
+
+    public void showAlert(String title, @NonNull String msg, @NonNull AlertCallback callback) {
+        mAlertPrompt = new AlertPromptWidget(getContext());
+        mAlertPrompt.mWidgetPlacement.parentHandle = getHandle();
+        mAlertPrompt.setTitle(title);
+        mAlertPrompt.setMessage(msg);
+        mAlertPrompt.setDelegate(callback);
+        mAlertPrompt.show();
     }
 
     // PromptDelegate

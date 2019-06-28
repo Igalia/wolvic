@@ -34,7 +34,8 @@ import sys
 
 platforms = {
    'oculusvr': ['arm', 'arm64'],
-   'oculusvr3dof': ['arm', 'arm64'],
+   'oculusvrStore': ['arm', 'arm64'],
+   'oculusvr3dofStore': ['arm', 'arm64'],
    'wavevr': ['arm'],
    'googlevr': ['arm', 'arm64'],
    'noapi': ['arm', 'arm64', 'x86'],

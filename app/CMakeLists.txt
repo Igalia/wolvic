@@ -91,6 +91,11 @@ add_custom_command(TARGET native-lib POST_BUILD
         ${CMAKE_SOURCE_DIR}/../third_party/ovr_mobile/VrApi/Libs/Android/${ANDROID_ABI}/Release/libvrapi.so
         ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libvrapi.so
         )
+add_custom_command(TARGET native-lib POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_SOURCE_DIR}/../third_party/OVRPlatformSDK/Android/libs/${ANDROID_ABI}/libovrplatformloader.so
+        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libovrplatformloader.so
+        )
 endif()
 
 if(SNAPDRAGONVR)
@@ -117,7 +122,11 @@ find_library( # Sets the name of the path variable.
 
 add_library(oculusvr-lib SHARED IMPORTED)
 set_target_properties(oculusvr-lib PROPERTIES IMPORTED_LOCATION
-                      ${CMAKE_SOURCE_DIR}/../third_party/ovr_mobile/VrApi/Libs/Android/${ANDROID_ABI}/Release/libvrapi.so)
+                      ${CMAKE_SOURCE_DIR}/../third_party/ovr_mobile/VrApi/Libs/Android/${ANDROID_ABI}/Release/libvrapi.so )
+
+add_library(ovrplatform-lib SHARED IMPORTED)
+set_target_properties(ovrplatform-lib PROPERTIES IMPORTED_LOCATION
+                      ${CMAKE_SOURCE_DIR}/../third_party/OVRPlatformSDK/Android/libs/${ANDROID_ABI}/libovrplatformloader.so )
 
 add_library(googlevr-lib SHARED IMPORTED)
 set_target_properties(googlevr-lib PROPERTIES IMPORTED_LOCATION
@@ -142,6 +151,7 @@ target_link_libraries( # Specifies the target library.
 
                        # Link VR_SDK_LIB exported from gradle flavors
                        ${VR_SDK_LIB}
+                       ${VR_SDK_EXTRA_LIB}
 
                        # Links the target library to the log library
                        # included in the NDK.

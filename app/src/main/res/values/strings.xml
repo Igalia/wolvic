@@ -689,10 +689,14 @@
     <!-- This string is displayed in the message of the notification message shown when the device loses internet connection. -->
     <string name="no_internet_message">Check your device configuration to fix the problem.</string>
 
-
     <!-- This string is displayed in the message of the notification message shown when the user tries to open a new window and
       it has already opened the maximum number of allowed windows. %1$s expands to a integer value that represent the maximum windows
       that can be opened (initially 3) -->
     <string name="max_windows_message">You cannot have more than %1$s windows open at a time. Please close one before opening another.</string>
 
+    <!-- This string is displayed in the title of the alert dialog shown when the user does not have permission to run the application on the device. -->
+    <string name="not_entitled_title">Unable To Run</string>
+    <!-- This string is displayed in the message body of the alert dialog shown when the user does not have permission to run the application on the device.
+         '%1$s' will be replace at runtime with the app's name. -->
+    <string name="not_entitled_message">%1$s does not have permission to run on this device and will now exit.</string>
 </resources>
