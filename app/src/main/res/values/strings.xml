@@ -635,6 +635,9 @@
          and hovers over the 'Private Browsing' icon in the browser's tray menu. -->
     <string name="private_browsing_exit_tooltip">Exit Private Browsing</string>
 
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the target url in a new window. -->
+    <string name="context_menu_open_new_window">Open in a new window.</string>
+
     <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmarks' icon in the
          browser's navigation bar. The button it labels, when pressed, opens a list view of the user's saved
          Bookmarks. -->
@@ -685,5 +688,11 @@
     <string name="no_internet_title">Internet Connection Lost</string>
     <!-- This string is displayed in the message of the notification message shown when the device loses internet connection. -->
     <string name="no_internet_message">Check your device configuration to fix the problem.</string>
+
+
+    <!-- This string is displayed in the message of the notification message shown when the user tries to open a new window and
+      it has already opened the maximum number of allowed windows. %1$s expands to a integer value that represent the maximum windows
+      that can be opened (initially 3) -->
+    <string name="max_windows_message">You cannot have more than %1$s windows open at a time. Please close one before opening another.</string>
 
 </resources>
