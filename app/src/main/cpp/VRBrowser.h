@@ -36,6 +36,7 @@ std::string GetActiveEnvironment();
 int32_t GetPointerColor();
 bool AreLayersEnabled();
 void SetDeviceType(const jint aType);
+void HaltActivity(const jint aReason);
 } // namespace VRBrowser;
 
 } // namespace crow
