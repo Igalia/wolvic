@@ -8,10 +8,12 @@ package org.mozilla.vrbrowser.ui.widgets.settings;
 import android.Manifest;
 import android.content.Context;
 import android.util.Pair;
+import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import org.mozilla.geckoview.GeckoSession;
+import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.SessionStore;
@@ -88,6 +90,9 @@ class PrivacyOptionsView extends SettingsView {
         mPermissionButtons.add(Pair.create(findViewById(R.id.microphonePermissionButton), Manifest.permission.RECORD_AUDIO));
         mPermissionButtons.add(Pair.create(findViewById(R.id.locationPermissionButton), Manifest.permission.ACCESS_FINE_LOCATION));
         mPermissionButtons.add(Pair.create(findViewById(R.id.storagePermissionButton), Manifest.permission.READ_EXTERNAL_STORAGE));
+
+        if (BuildConfig.FLAVOR_platform == "oculusvr3dof" || BuildConfig.FLAVOR_platform == "oculusvr")
+            findViewById(R.id.cameraPermissionButton).setVisibility(View.GONE);
 
         for (Pair<ButtonSetting, String> button: mPermissionButtons) {
             if (mWidgetManager.isPermissionGranted(button.second)) {

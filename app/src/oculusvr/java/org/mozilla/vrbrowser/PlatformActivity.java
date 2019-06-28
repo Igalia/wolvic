@@ -6,11 +6,9 @@
 package org.mozilla.vrbrowser;
 
 import android.app.NativeActivity;
+import android.Manifest;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.InputDevice;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -18,6 +16,9 @@ public class PlatformActivity extends NativeActivity {
     static String LOGTAG = "VRB";
 
     public static boolean filterPermission(final String aPermission) {
+        if (aPermission.equals(Manifest.permission.CAMERA)) {
+            return true;
+        }
         return false;
     }
 

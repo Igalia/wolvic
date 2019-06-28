@@ -5,6 +5,7 @@
     android:installLocation="auto">
     <uses-feature android:glEsVersion="0x00030001"/>
     <uses-feature android:name="android.hardware.vr.headtracking" android:version="1" android:required="${headtrackingRequired}" />
+    <uses-permission android:name="android.permission.CAMERA" tools:node="remove"/>
     <application
         android:name=".VRBrowserApplication"
         android:allowBackup="true"
