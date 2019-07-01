@@ -39,8 +39,8 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
     private AudioEngine mAudio;
 
     public interface URLBarPopupDelegate {
-        void OnItemClicked(SuggestionItem item);
-        void OnItemDeleted(SuggestionItem item);
+        default void OnItemClicked(SuggestionItem item) {};
+        default void OnItemDeleted(SuggestionItem item) {};
     }
 
     public SuggestionsWidget(Context aContext) {

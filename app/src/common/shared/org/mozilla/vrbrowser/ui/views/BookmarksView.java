@@ -18,7 +18,8 @@ import org.mozilla.geckoview.WebRequestError;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.BookmarksStore;
-import org.mozilla.vrbrowser.browser.SessionStore;
+import org.mozilla.vrbrowser.browser.engine.SessionManager;
+import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.databinding.BookmarksBinding;
 import org.mozilla.vrbrowser.ui.adapters.BookmarkAdapter;
 import org.mozilla.vrbrowser.ui.callbacks.BookmarkClickCallback;
@@ -64,7 +65,7 @@ public class BookmarksView extends FrameLayout implements GeckoSession.Navigatio
         mBookmarkListeners = new ArrayList<>();
 
         mAudio = AudioEngine.fromContext(aContext);
-        SessionStore.get().addNavigationListener(this);
+
         LayoutInflater inflater = LayoutInflater.from(aContext);
 
         // Inflate this data binding layout
@@ -74,7 +75,7 @@ public class BookmarksView extends FrameLayout implements GeckoSession.Navigatio
         mBinding.setIsLoading(true);
         mBinding.executePendingBindings();
         syncBookmarks();
-        SessionStore.get().getBookmarkStore().addListener(this);
+        SessionManager.get().getBookmarkStore().addListener(this);
 
         setVisibility(GONE);
     }
@@ -83,9 +84,13 @@ public class BookmarksView extends FrameLayout implements GeckoSession.Navigatio
         mBookmarkListeners.addAll(Arrays.asList(listeners));
     }
 
+    public void removeListeners(BookmarkListener... listeners) {
+        mBookmarkListeners.removeAll(Arrays.asList(listeners));
+    }
+
     public void onDestroy() {
         mBookmarkListeners.clear();
-        SessionStore.get().getBookmarkStore().removeListener(this);
+        SessionManager.get().getBookmarkStore().removeListener(this);
     }
 
     private void notifyBookmarksShown() {
@@ -103,7 +108,8 @@ public class BookmarksView extends FrameLayout implements GeckoSession.Navigatio
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
 
-            SessionStore.get().loadUri(bookmark.getUrl());
+            SessionStore sessionStore = SessionManager.get().getActiveStore();
+            sessionStore.loadUri(bookmark.getUrl());
         }
 
         @Override
@@ -113,7 +119,7 @@ public class BookmarksView extends FrameLayout implements GeckoSession.Navigatio
             }
 
             mIgnoreNextListener = true;
-            SessionStore.get().getBookmarkStore().deleteBookmarkById(bookmark.getGuid());
+            SessionManager.get().getBookmarkStore().deleteBookmarkById(bookmark.getGuid());
             mBookmarkAdapter.removeItem(bookmark);
             if (mBookmarkAdapter.itemCount() == 0) {
                 mBinding.setIsEmpty(true);
@@ -125,7 +131,7 @@ public class BookmarksView extends FrameLayout implements GeckoSession.Navigatio
 
 
     private void syncBookmarks() {
-        SessionStore.get().getBookmarkStore().getBookmarks().thenAcceptAsync(this::showBookmarks, new UIThreadExecutor());
+        SessionManager.get().getBookmarkStore().getBookmarks().thenAcceptAsync(this::showBookmarks, new UIThreadExecutor());
     }
 
     private void showBookmarks(List<BookmarkNode> aBookmarks) {
@@ -145,10 +151,15 @@ public class BookmarksView extends FrameLayout implements GeckoSession.Navigatio
     public void setVisibility(int visibility) {
         super.setVisibility(visibility);
 
+        SessionStore sessionStore = SessionManager.get().getActiveStore();
         if (visibility == VISIBLE) {
+            if (sessionStore != null)
+                sessionStore.addNavigationListener(this);
             notifyBookmarksShown();
 
         } else {
+            if (sessionStore != null)
+                sessionStore.removeNavigationListener(this);
             notifyBookmarksHidden();
         }
     }

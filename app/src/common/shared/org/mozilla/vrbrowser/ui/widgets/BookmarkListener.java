@@ -1,6 +1,6 @@
 package org.mozilla.vrbrowser.ui.widgets;
 
 public interface BookmarkListener {
-    void onBookmarksShown();
-    void onBookmarksHidden();
+    default void onBookmarksShown() {};
+    default void onBookmarksHidden() {};
 }

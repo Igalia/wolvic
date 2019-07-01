@@ -6,16 +6,17 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.PlatformActivity;
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.ui.widgets.dialogs.PermissionWidget;
+import org.mozilla.vrbrowser.browser.engine.SessionManager;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
+import org.mozilla.vrbrowser.ui.widgets.dialogs.PermissionWidget;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import androidx.annotation.NonNull;
 
 public class PermissionDelegate implements GeckoSession.PermissionDelegate, WidgetManagerDelegate.PermissionListener {
 
@@ -32,7 +33,7 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
         mContext = aContext;
         mWidgetManager = aWidgetManager;
         mWidgetManager.addPermissionListener(this);
-        SessionStore.get().setPermissionDelegate(this);
+        SessionManager.get().setPermissionDelegate(this);
     }
 
     public void setParentWidgetHandle(int aHandle) {
@@ -72,7 +73,7 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
 
     public void release() {
         mWidgetManager.removePermissionListener(this);
-        SessionStore.get().setPermissionDelegate(null);
+        SessionManager.get().setPermissionDelegate(null);
         mCallback = null;
         mContext = null;
         mWidgetManager = null;

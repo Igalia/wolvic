@@ -7,17 +7,15 @@ package org.mozilla.vrbrowser.ui.widgets.dialogs;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
-import org.mozilla.vrbrowser.browser.SessionStore;
+import org.mozilla.vrbrowser.browser.engine.SessionManager;
+import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.browser.SettingsStore;
-import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 
@@ -68,13 +66,7 @@ public class CrashDialogWidget extends UIDialog {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
 
-            GeckoSession session = SessionStore.get().getCurrentSession();
-            if (session == null) {
-                int sessionId = SessionStore.get().createSession();
-                SessionStore.get().setCurrentSession(sessionId);
-            }
-
-            SessionStore.get().loadUri(getContext().getString(R.string.crash_dialog_learn_more_url));
+            SessionManager.get().getActiveStore().newSessionWithUrl(getContext().getString(R.string.crash_dialog_learn_more_url));
 
             onDismiss();
         });

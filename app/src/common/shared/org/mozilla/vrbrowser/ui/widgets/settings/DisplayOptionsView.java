@@ -11,7 +11,8 @@ import android.widget.ScrollView;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
-import org.mozilla.vrbrowser.browser.SessionStore;
+import org.mozilla.vrbrowser.browser.engine.SessionManager;
+import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.ui.views.UIButton;
@@ -284,7 +285,7 @@ class DisplayOptionsView extends SettingsView {
         SettingsStore.getInstance(getContext()).setUaMode(checkId);
 
         if (doApply) {
-            SessionStore.get().setUaMode((Integer)mUaModeRadio.getValueForId(checkId));
+            SessionManager.get().getActiveStore().setUaMode((Integer)mUaModeRadio.getValueForId(checkId));
         }
     }
 
@@ -419,7 +420,8 @@ class DisplayOptionsView extends SettingsView {
             SettingsStore.getInstance(getContext()).setMaxWindowHeight(newMaxWindowHeight);
 
             if (doApply) {
-                SessionStore.get().setMaxWindowSize(newMaxWindowWidth, newMaxWindowHeight);
+                SettingsStore.getInstance(getContext()).setMaxWindowWidth(newMaxWindowWidth);
+                SettingsStore.getInstance(getContext()).setMaxWindowHeight(newMaxWindowHeight);
                 showRestartDialog();
             }
         }

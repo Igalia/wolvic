@@ -11,14 +11,17 @@ import android.util.AttributeSet;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
-import org.mozilla.vrbrowser.browser.SessionStore;
+import org.mozilla.vrbrowser.browser.SessionChangeListener;
+import org.mozilla.vrbrowser.browser.engine.SessionManager;
+import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 
-public class TopBarWidget extends UIWidget implements SessionStore.SessionChangeListener, WidgetManagerDelegate.UpdateListener {
+public class TopBarWidget extends UIWidget implements SessionChangeListener, WidgetManagerDelegate.UpdateListener {
 
     private UIButton mCloseButton;
     private AudioEngine mAudio;
     private UIWidget mBrowserWidget;
+    private SessionStore mSessionStore;
 
     public TopBarWidget(Context aContext) {
         super(aContext);
@@ -44,15 +47,12 @@ public class TopBarWidget extends UIWidget implements SessionStore.SessionChange
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
-            SessionStore.get().exitPrivateMode();
+            mSessionStore.exitPrivateMode();
         });
 
         mAudio = AudioEngine.fromContext(aContext);
 
-        SessionStore.get().addSessionChangeListener(this);
         mWidgetManager.addUpdateListener(this);
-
-        handleSessionState();
     }
 
     @Override
@@ -71,10 +71,31 @@ public class TopBarWidget extends UIWidget implements SessionStore.SessionChange
 
     @Override
     public void releaseWidget() {
-        SessionStore.get().removeSessionChangeListener(this);
+        if (mSessionStore != null) {
+            mSessionStore.removeSessionChangeListener(this);
+        }
+
         mWidgetManager.removeUpdateListener(this);
 
         super.releaseWidget();
+    }
+
+    @Override
+    public void detachFromWindow(WindowWidget window) {
+        if (mSessionStore != null) {
+            mSessionStore.removeSessionChangeListener(this);
+        }
+    }
+
+    @Override
+    public void attachToWindow(WindowWidget window) {
+        setBrowserWidget(window);
+
+        mSessionStore = window.getSessionStore();
+        if (mSessionStore != null) {
+            mSessionStore.addSessionChangeListener(this);
+            handleSessionState();
+        }
     }
 
     public void setBrowserWidget(UIWidget aWidget) {
@@ -85,16 +106,6 @@ public class TopBarWidget extends UIWidget implements SessionStore.SessionChange
     }
 
     // SessionStore.SessionChangeListener
-
-    @Override
-    public void onNewSession(GeckoSession aSession, int aId) {
-
-    }
-
-    @Override
-    public void onRemoveSession(GeckoSession aSession, int aId) {
-
-    }
 
     @Override
     public void onCurrentSessionChange(GeckoSession aSession, int aId) {
@@ -112,12 +123,15 @@ public class TopBarWidget extends UIWidget implements SessionStore.SessionChange
     }
 
     private void handleSessionState() {
-        boolean isPrivateMode  = SessionStore.get().isCurrentSessionPrivate();
-        setVisible(isPrivateMode);
-        mCloseButton.setPrivateMode(isPrivateMode);
+        if (mSessionStore != null) {
+            boolean isPrivateMode = mSessionStore.isPrivateMode();
+            setVisible(isPrivateMode);
+            mCloseButton.setPrivateMode(isPrivateMode);
+        }
     }
 
     // WidgetManagerDelegate.UpdateListener
+
     @Override
     public void onWidgetUpdate(Widget aWidget) {
         if (aWidget != mBrowserWidget) {
@@ -126,7 +140,7 @@ public class TopBarWidget extends UIWidget implements SessionStore.SessionChange
 
         if (mBrowserWidget.isVisible()) {
             boolean isVisible = isVisible();
-            boolean mustBeVisible = SessionStore.get().isCurrentSessionPrivate();
+            boolean mustBeVisible = mSessionStore.isPrivateMode();
             if (mustBeVisible && !isVisible) {
                 setVisible(true);
             } else if (isVisible) {
@@ -136,4 +150,5 @@ public class TopBarWidget extends UIWidget implements SessionStore.SessionChange
             setVisible(false);
         }
     }
+
 }

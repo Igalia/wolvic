@@ -6,12 +6,12 @@
 package org.mozilla.vrbrowser.ui.widgets.settings;
 
 import android.content.Context;
-import android.view.View;
 import android.widget.ScrollView;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
-import org.mozilla.vrbrowser.browser.SessionStore;
+import org.mozilla.vrbrowser.browser.engine.SessionManager;
+import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.views.settings.ButtonSetting;
@@ -58,7 +58,7 @@ class EnvironmentOptionsView extends SettingsView {
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
-            SessionStore.get().loadUri(getContext().getString(R.string.environment_override_help_url));
+            SessionManager.get().getActiveStore().loadUri(getContext().getString(R.string.environment_override_help_url));
             exitWholeSettings();
         });
 

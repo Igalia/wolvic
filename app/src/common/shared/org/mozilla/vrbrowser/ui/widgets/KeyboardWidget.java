@@ -17,9 +17,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.CursorAnchorInfo;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.ExtractedText;
 import android.view.inputmethod.ExtractedTextRequest;
 import android.view.inputmethod.InputConnection;
 import android.widget.ImageButton;
@@ -30,7 +28,8 @@ import android.widget.TextView;
 
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.browser.SessionStore;
+import org.mozilla.vrbrowser.browser.engine.SessionManager;
+import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.input.CustomKeyboard;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
@@ -96,6 +95,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private String mComposingText = "";
     private String mComposingDisplayText = "";
     private boolean mInternalDeleteHint = false;
+    private SessionStore mSessionStore;
 
     public KeyboardWidget(Context aContext) {
         super(aContext);
@@ -196,14 +196,15 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mAutoCompletionView.setExtendedHeight((int)(mWidgetPlacement.height * mWidgetPlacement.density));
         mAutoCompletionView.setDelegate(this);
 
-        SessionStore.get().addTextInputListener(this);
         updateCandidates();
     }
 
     @Override
     public void releaseWidget() {
+        if (mSessionStore != null) {
+            mSessionStore.removeTextInputListener(this);
+        }
         mWidgetManager.removeFocusChangeListener(this);
-        SessionStore.get().removeTextInputListener(this);
         mAutoCompletionView.setDelegate(null);
         mBrowserWidget = null;
         super.releaseWidget();
@@ -226,6 +227,23 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         aPlacement.worldWidth = WidgetPlacement.floatDimension(context, R.dimen.keyboard_world_width);
         aPlacement.visible = false;
         aPlacement.cylinder = true;
+    }
+
+    @Override
+    public void detachFromWindow(WindowWidget window) {
+        if (mSessionStore != null) {
+            mSessionStore.removeTextInputListener(this);
+        }
+    }
+
+    @Override
+    public void attachToWindow(WindowWidget window) {
+        setBrowserWidget(window);
+
+        mSessionStore = window.getSessionStore();
+        if (mSessionStore != null) {
+            mSessionStore.addTextInputListener(this);
+        }
     }
 
     private int getKeyboardWidth(float aAlphabeticWidth) {
@@ -861,21 +879,6 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                 connection.setSelection(selStart, selEnd);
             }
         });
-    }
-
-    @Override
-    public void updateExtractedText(@NonNull GeckoSession session, @NonNull ExtractedTextRequest request, @NonNull ExtractedText text) {
-
-    }
-
-    @Override
-    public void updateCursorAnchorInfo(@NonNull GeckoSession session, @NonNull CursorAnchorInfo info) {
-
-    }
-
-    @Override
-    public void notifyAutoFill(GeckoSession session, int notification, int virtualId) {
-
     }
 
     // FocusChangeListener

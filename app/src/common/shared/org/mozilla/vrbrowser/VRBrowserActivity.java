@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -29,6 +30,9 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 
+import androidx.annotation.Keep;
+import androidx.annotation.NonNull;
+
 import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.geckoview.CrashReporter;
 import org.mozilla.geckoview.GeckoResult;
@@ -37,8 +41,9 @@ import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoVRManager;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.PermissionDelegate;
-import org.mozilla.vrbrowser.browser.SessionStore;
 import org.mozilla.vrbrowser.browser.SettingsStore;
+import org.mozilla.vrbrowser.browser.engine.SessionManager;
+import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.crashreporting.CrashReporterService;
 import org.mozilla.vrbrowser.crashreporting.GlobalExceptionHandler;
 import org.mozilla.vrbrowser.geolocation.GeolocationWrapper;
@@ -47,8 +52,8 @@ import org.mozilla.vrbrowser.input.MotionEventGenerator;
 import org.mozilla.vrbrowser.search.SearchEngineWrapper;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.ui.OffscreenDisplay;
-import org.mozilla.vrbrowser.ui.widgets.BookmarkListener;
 import org.mozilla.vrbrowser.ui.views.BookmarksView;
+import org.mozilla.vrbrowser.ui.widgets.BookmarkListener;
 import org.mozilla.vrbrowser.ui.widgets.KeyboardWidget;
 import org.mozilla.vrbrowser.ui.widgets.NavigationBarWidget;
 import org.mozilla.vrbrowser.ui.widgets.RootWidget;
@@ -66,16 +71,13 @@ import org.mozilla.vrbrowser.utils.ServoUtils;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.function.Consumer;
 
-import androidx.annotation.IntDef;
-import androidx.annotation.Keep;
-import androidx.annotation.NonNull;
-
-public class VRBrowserActivity extends PlatformActivity implements WidgetManagerDelegate, SessionStore.VideoAvailabilityListener {
+public class VRBrowserActivity extends PlatformActivity implements WidgetManagerDelegate {
 
     private BroadcastReceiver mCrashReceiver = new BroadcastReceiver() {
         @Override
@@ -107,6 +109,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     static final int GestureSwipeRight = 1;
     static final int SwipeDelay = 1000; // milliseconds
     static final long RESET_CRASH_COUNT_DELAY = 5000;
+    static final int MAX_WINDOWS = 3;
 
     static final String LOGTAG = "VRB";
     HashMap<Integer, Widget> mWidgets;
@@ -118,7 +121,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     SwipeRunnable mLastRunnable;
     Handler mHandler = new Handler();
     Runnable mAudioUpdateRunnable;
-    WindowWidget mWindowWidget;
     RootWidget mRootWidget;
     KeyboardWidget mKeyboard;
     NavigationBarWidget mNavigationBar;
@@ -127,7 +129,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     TrayWidget mTray;
     BookmarksView mBookmarksView;
     PermissionDelegate mPermissionDelegate;
-    long mExternalContext;
     LinkedList<UpdateListener> mWidgetUpdateListeners;
     LinkedList<PermissionListener> mPermissionListeners;
     LinkedList<FocusChangeListener> mFocusChangeListeners;
@@ -143,6 +144,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private boolean mConnectionAvailable = true;
     private AudioManager mAudioManager;
     private Widget mActiveDialog;
+
+    WindowWidget mWindowWidget;
+    ArrayList<WindowWidget> mWindows;
+    private int mActiveWindowId;
+
 
     private boolean callOnAudioManager(Consumer<AudioManager> fn) {
         if (mAudioManager == null) {
@@ -191,9 +197,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mUiThread = Thread.currentThread();
 
         Bundle extras = getIntent() != null ? getIntent().getExtras() : null;
-        SessionStore.get().setContext(this, extras);
-        SessionStore.get().registerListeners();
-        SessionStore.get().addVideoAvailabilityListener(this);
+        SessionManager.get().setContext(this, extras);
+        SessionManager.get().initializeBookmarkStore(this);
         ((VRBrowserApplication)getApplication()).getRepository().migrateOldBookmarks();
 
         // Create broadcast receiver for getting crash messages from crash process
@@ -212,6 +217,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mBrightnessQueue = new LinkedList<>();
         mCurrentBrightness = Pair.create(null, 1.0f);
 
+        mWindows = new ArrayList<>();
+
         mWidgets = new HashMap<>();
         mWidgetContainer = new FrameLayout(this);
 
@@ -227,13 +234,15 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         mSettings = SettingsStore.getInstance(this);
 
-        loadFromIntent(getIntent());
         queueRunnable(() -> createOffscreenDisplay());
         final String tempPath = getCacheDir().getAbsolutePath();
         queueRunnable(() -> setTemporaryFilePath(tempPath));
         setCylinderDensity(SettingsStore.getInstance(this).getCylinderDensity());
         updateFoveatedLevel();
-        initializeWorld();
+
+        initializeWidgets();
+
+        loadFromIntent(getIntent());
 
         // Setup the search engine
         mSearchEngineWrapper = SearchEngineWrapper.get(this);
@@ -244,48 +253,31 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mConnectivityReceiver = new ConnectivityReceiver();
     }
 
-    protected void initializeWorld() {
+    protected void initializeWidgets() {
         // Bookmarks panel
         mBookmarksView = new BookmarksView(this);
 
-        // Create browser widget
-        if (SessionStore.get().getCurrentSession() == null) {
-            int id = SessionStore.get().createSession();
-            SessionStore.get().setCurrentSession(id);
-        }
-        int currentSession = SessionStore.get().getCurrentSessionId();
-        mWindowWidget = new WindowWidget(this, currentSession);
-        mWindowWidget.setBookmarksView(mBookmarksView);
-        mPermissionDelegate.setParentWidgetHandle(mWindowWidget.getHandle());
-
-        // Create Browser navigation widget
-        mNavigationBar = new NavigationBarWidget(this);
-        mNavigationBar.setBrowserWidget(mWindowWidget);
-
-        // Create keyboard widget
+        // Create Widgets
+        mTray = new TrayWidget(this);
         mKeyboard = new KeyboardWidget(this);
-        mKeyboard.setBrowserWidget(mWindowWidget);
-
-        // Create the top bar
         mTopBar = new TopBarWidget(this);
-        mTopBar.setBrowserWidget(mWindowWidget);
-
-        // Empty widget just for handling focus on empty space
+        mNavigationBar = new NavigationBarWidget(this);
         mRootWidget = new RootWidget(this);
         mRootWidget.setClickCallback(() -> {
             for (WorldClickListener listener: mWorldClickListeners) {
                 listener.onWorldClick();
             }
+
+            createWindow();
         });
 
-        // Create Tray
-        mTray = new TrayWidget(this);
-
         // Add widget listeners
-        mTray.addListeners(new TrayListener[]{mWindowWidget, mNavigationBar});
-        mBookmarksView.addListeners(new BookmarkListener[]{mWindowWidget, mNavigationBar, mTray});
+        mTray.addListeners(new TrayListener[]{mNavigationBar});
+        mBookmarksView.addListeners(new BookmarkListener[]{mNavigationBar, mTray});
 
-        addWidgets(Arrays.asList(mRootWidget, mWindowWidget, mNavigationBar, mKeyboard, mTray));
+        addWidgets(Arrays.asList(mRootWidget, mNavigationBar, mKeyboard, mTray));
+
+        createWindow();
     }
 
     @Override
@@ -308,7 +300,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             exitImmersiveSync();
         }
         mAudioEngine.pauseEngine();
-        SessionStore.get().setActive(false);
+
+        SessionManager.get().onPause();
+
         for (Widget widget: mWidgets.values()) {
             widget.onPause();
         }
@@ -328,7 +322,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         if (mOffscreenDisplay != null) {
             mOffscreenDisplay.onResume();
         }
-        SessionStore.get().setActive(true);
+
+        SessionManager.get().onResume();
+
         mAudioEngine.resumeEngine();
         for (Widget widget: mWidgets.values()) {
             widget.onResume();
@@ -361,9 +357,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         // Remove all widget listeners
         mTray.onDestroy();
         mBookmarksView.onDestroy();
-        SessionStore.get().removeVideoAvailabilityListener(this);
 
-        SessionStore.get().unregisterListeners();
+        mWindows.clear();
+        SessionManager.get().onDestroy();
+
         super.onDestroy();
     }
 
@@ -382,6 +379,59 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         }
     }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        SessionManager.get().onConfigurationChanged(newConfig);
+
+        super.onConfigurationChanged(newConfig);
+    }
+
+    public void createWindow() {
+        // Remove previous Window
+        if (mWindowWidget != null) {
+            mBookmarksView.removeListeners(new BookmarkListener[]{mWindowWidget});
+
+            // Detach widgets from the previous Window
+            mTray.detachFromWindow(mWindowWidget);
+            mNavigationBar.detachFromWindow(mWindowWidget);
+            mTopBar.detachFromWindow(mWindowWidget);
+            mKeyboard.detachFromWindow(mWindowWidget);
+            mTray.detachFromWindow(mWindowWidget);
+
+            // Hide previous window
+            removeWidget(mWindowWidget);
+        }
+
+        if (mWindows.size() == MAX_WINDOWS) {
+            // Show the next window
+            mActiveWindowId = (mActiveWindowId == MAX_WINDOWS-1) ? 0 : ++mActiveWindowId;
+            mWindowWidget = mWindows.get(mActiveWindowId);
+            mWindowWidget.setActiveWindow();
+
+        } else {
+            // Add new window and set it as the active one
+            int newWindowId = mWindows.size();
+            mWindowWidget = new WindowWidget(this, newWindowId);
+            mWindowWidget.setBookmarksView(mBookmarksView);
+            mWindowWidget.setActiveWindow();
+            mWindowWidget.getSessionStore().loadUri(SettingsStore.getInstance(this).getHomepage());
+            mWindows.add(mWindowWidget);
+        }
+
+        // Show the new Window
+        addWidget(mWindowWidget);
+
+        // Attach current active window to widgets
+        mPermissionDelegate.setParentWidgetHandle(mWindowWidget.getHandle());
+        mBookmarksView.addListeners(new BookmarkListener[]{mWindowWidget});
+
+        // Attach widgets to the current active window
+        mNavigationBar.attachToWindow(mWindowWidget);
+        mTopBar.attachToWindow(mWindowWidget);
+        mKeyboard.attachToWindow(mWindowWidget);
+        mTray.attachToWindow(mWindowWidget);
+    }
+
     void loadFromIntent(final Intent intent) {
         if (GeckoRuntime.ACTION_CRASHED.equals(intent.getAction())) {
             handleCrashIntent(intent);
@@ -391,6 +441,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         if (uri == null && intent.getExtras() != null && intent.getExtras().containsKey("url")) {
             uri = Uri.parse(intent.getExtras().getString("url"));
         }
+
+        SessionStore activeStore = SessionManager.get().getActiveStore();
 
         Bundle extras = intent.getExtras();
         if (extras != null && extras.containsKey("homepage")) {
@@ -402,19 +454,21 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             boolean enabled = extras.getBoolean("e10s", wasEnabled);
             if (wasEnabled != enabled) {
                 SettingsStore.getInstance(this).setMultiprocessEnabled(enabled);
-                SessionStore.get().setMultiprocess(enabled);
+                if (activeStore != null)
+                    activeStore.setMultiprocess(enabled);
             }
         }
 
-        if (SessionStore.get().getCurrentSession() == null) {
-            String url = (uri != null ? uri.toString() : null);
-            int id = SessionStore.get().createSession();
-            SessionStore.get().setCurrentSession(id);
-            SessionStore.get().loadUri(url);
-            Log.d(LOGTAG, "Creating session and loading URI from intent: " + url);
-        } else if (uri != null) {
-            Log.d(LOGTAG, "Loading URI from intent: " + uri.toString());
-            SessionStore.get().loadUri(uri.toString());
+        if (activeStore != null) {
+            if (activeStore.getCurrentSession() == null) {
+                String url = (uri != null ? uri.toString() : null);
+                activeStore.newSessionWithUrl(url);
+                Log.d(LOGTAG, "Creating session and loading URI from intent: " + url);
+
+            } else if (uri != null) {
+                Log.d(LOGTAG, "Loading URI from intent: " + uri.toString());
+                activeStore.loadUri(uri.toString());
+            }
         }
     }
 
@@ -426,7 +480,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mConnectionAvailable = connected;
     }
 
-    private void handleCrashIntent(final Intent intent) {
+    private void handleCrashIntent(@NonNull final Intent intent) {
         Log.e(LOGTAG, "======> Got crashed intent");
         Log.d(LOGTAG, "======> Dump File: " +
                 intent.getStringExtra(GeckoRuntime.EXTRA_MINIDUMP_PATH));
@@ -480,14 +534,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             mBackHandlers.getLast().run();
             return;
         }
-        if (SessionStore.get().canGoBack()) {
-            SessionStore.get().goBack();
+        SessionStore activeStore = SessionManager.get().getActiveStore();
+        if (activeStore.canGoBack()) {
+            activeStore.goBack();
 
-        } else if (SessionStore.get().canUnstackSession()){
-            SessionStore.get().unstackSession();
-
-        } else if (SessionStore.get().isCurrentSessionPrivate()) {
-            SessionStore.get().exitPrivateMode();
+        } else if (activeStore.isPrivateMode()) {
+            activeStore.exitPrivateMode();
 
         } else{
             super.onBackPressed();
@@ -654,11 +706,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             boolean consumed = false;
             if ((aType == GestureSwipeLeft) && (mLastGesture == GestureSwipeLeft)) {
                 Log.d(LOGTAG, "Go back!");
-                SessionStore.get().goBack();
+                SessionManager.get().getActiveStore().goBack();
+
                 consumed = true;
             } else if ((aType == GestureSwipeRight) && (mLastGesture == GestureSwipeRight)) {
                 Log.d(LOGTAG, "Go forward!");
-                SessionStore.get().goForward();
+                SessionManager.get().getActiveStore().goForward();
                 consumed = true;
             }
             if (mLastRunnable != null) {
@@ -891,12 +944,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         return mActiveDialog == null || aWidget == null || mActiveDialog == aWidget || aWidget instanceof KeyboardWidget;
     }
 
-    // VideoAvailabilityListener
-    @Override
-    public void onVideoAvailabilityChanged(boolean aVideosAvailable) {
-        queueRunnable(() -> setCPULevelNative(aVideosAvailable ? CPU_LEVEL_HIGH : CPU_LEVEL_NORMAL));
-    }
-
     // WidgetManagerDelegate
     @Override
     public void addWidget(Widget aWidget) {
@@ -1115,10 +1162,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public void requestPermission(String uri, @NonNull String permission, GeckoSession.PermissionDelegate.Callback aCallback) {
+        SessionStore activeStore = SessionManager.get().getActiveStore();
         if (uri != null && !uri.isEmpty()) {
-            mPermissionDelegate.onAppPermissionRequest(SessionStore.get().getCurrentSession(), uri, permission, aCallback);
+            mPermissionDelegate.onAppPermissionRequest(activeStore.getCurrentSession(), uri, permission, aCallback);
         } else {
-            mPermissionDelegate.onAndroidPermissionsRequest(SessionStore.get().getCurrentSession(), new String[]{permission}, aCallback);
+            mPermissionDelegate.onAndroidPermissionsRequest(activeStore.getCurrentSession(), new String[]{permission}, aCallback);
         }
     }
 
@@ -1153,6 +1201,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         queueRunnable(() -> setCylinderDensityNative(aDensity));
     }
 
+    @Override
+    public void setCPULevel(int aCPULevel) {
+        queueRunnable(() -> setCPULevelNative(aCPULevel));
+    }
+
     private native void addWidgetNative(int aHandle, WidgetPlacement aPlacement);
     private native void updateWidgetNative(int aHandle, WidgetPlacement aPlacement);
     private native void removeWidgetNative(int aHandle);
@@ -1174,8 +1227,4 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private native void setIsServo(boolean aIsServo);
     private native void updateFoveatedLevelNative(int appLevel);
 
-    @IntDef(value = { CPU_LEVEL_NORMAL, CPU_LEVEL_HIGH})
-    private @interface CPULevelFlags {}
-    private static final int CPU_LEVEL_NORMAL = 0;
-    private static final int CPU_LEVEL_HIGH = 1;
 }

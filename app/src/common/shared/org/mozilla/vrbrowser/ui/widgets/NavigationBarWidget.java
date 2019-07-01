@@ -18,11 +18,12 @@ import android.view.ViewGroup;
 import org.mozilla.geckoview.AllowOrDeny;
 import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoSession;
-import org.mozilla.geckoview.WebRequestError;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.Media;
-import org.mozilla.vrbrowser.browser.SessionStore;
+import org.mozilla.vrbrowser.browser.SessionChangeListener;
+import org.mozilla.vrbrowser.browser.engine.SessionManager;
+import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.search.SearchEngineWrapper;
 import org.mozilla.vrbrowser.ui.views.CustomUIButton;
@@ -43,7 +44,7 @@ import androidx.annotation.Nullable;
 
 public class NavigationBarWidget extends UIWidget implements GeckoSession.NavigationDelegate,
         GeckoSession.ProgressDelegate, GeckoSession.ContentDelegate, WidgetManagerDelegate.WorldClickListener,
-        WidgetManagerDelegate.UpdateListener, SessionStore.SessionChangeListener,
+        WidgetManagerDelegate.UpdateListener, SessionChangeListener,
         NavigationURLBar.NavigationURLBarDelegate, VoiceSearchWidget.VoiceSearchDelegate,
         SharedPreferences.OnSharedPreferenceChangeListener, SuggestionsWidget.URLBarPopupDelegate,
         BookmarkListener, TrayListener {
@@ -92,6 +93,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private MediaControlsWidget mMediaControlsWidget;
     private Media mFullScreenMedia;
     private @VideoProjectionMenuWidget.VideoProjectionFlags Integer mAutoSelectedProjection;
+    private SessionStore mSessionStore;
 
     public NavigationBarWidget(Context aContext) {
         super(aContext);
@@ -108,7 +110,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         initialize(aContext);
     }
 
-    private void initialize(Context aContext) {
+    private void initialize(@NonNull Context aContext) {
         mAppContext = aContext.getApplicationContext();
         inflate(aContext, R.layout.navigation_bar, this);
 
@@ -132,22 +134,18 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mResizeBackHandler = () -> exitResizeMode(true);
 
         mFullScreenBackHandler = this::exitFullScreenMode;
-        mVRVideoBackHandler = new Runnable() {
-            @Override
-            public void run() {
-                exitVRVideo();
-                if (mAutoEnteredVRVideo) {
-                    exitFullScreenMode();
-                }
+        mVRVideoBackHandler = () -> {
+            exitVRVideo();
+            if (mAutoEnteredVRVideo) {
+                exitFullScreenMode();
             }
         };
 
         mBackButton.setOnClickListener(v -> {
             v.requestFocusFromTouch();
-            if (SessionStore.get().canGoBack())
-                SessionStore.get().goBack();
-            else if (SessionStore.get().canUnstackSession())
-                SessionStore.get().unstackSession();
+
+            if (mSessionStore.canGoBack())
+                mSessionStore.goBack();
 
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.BACK);
@@ -156,7 +154,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
         mForwardButton.setOnClickListener(v -> {
             v.requestFocusFromTouch();
-            SessionStore.get().goForward();
+            mSessionStore.goForward();
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
@@ -165,9 +163,9 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mReloadButton.setOnClickListener(v -> {
             v.requestFocusFromTouch();
             if (mIsLoading) {
-                SessionStore.get().stop();
+                mSessionStore.stop();
             } else {
-                SessionStore.get().reload();
+                mSessionStore.reload();
             }
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
@@ -176,7 +174,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
         mHomeButton.setOnClickListener(v -> {
             v.requestFocusFromTouch();
-            SessionStore.get().loadUri(SessionStore.get().getHomeUri());
+            mSessionStore.loadUri(mSessionStore.getHomeUri());
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
@@ -184,7 +182,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
         mServoButton.setOnClickListener(v -> {
             v.requestFocusFromTouch();
-            SessionStore.get().toggleServo();
+            mSessionStore.toggleServo();
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
@@ -301,9 +299,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
         mURLBar.setDelegate(this);
 
-        SessionStore.get().addNavigationListener(this);
-        SessionStore.get().addProgressListener(this);
-        SessionStore.get().addContentListener(this);
         mWidgetManager.addUpdateListener(this);
         mWidgetManager.addWorldClickListener(this);
 
@@ -312,13 +307,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
         mSearchEngineWrapper = SearchEngineWrapper.get(getContext());
 
-        SessionStore.get().addSessionChangeListener(this);
-
         mPrefs = PreferenceManager.getDefaultSharedPreferences(mAppContext);
         mPrefs.registerOnSharedPreferenceChangeListener(this);
-        updateServoButton();
-
-        handleSessionState();
     }
 
     @Override
@@ -338,10 +328,14 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mWidgetManager.removeUpdateListener(this);
         mWidgetManager.removeWorldClickListener(this);
         mPrefs.unregisterOnSharedPreferenceChangeListener(this);
-        SessionStore.get().removeNavigationListener(this);
-        SessionStore.get().removeProgressListener(this);
-        SessionStore.get().removeContentListener(this);
-        SessionStore.get().removeSessionChangeListener(this);
+
+        if (mSessionStore != null) {
+            mSessionStore.removeNavigationListener(this);
+            mSessionStore.removeProgressListener(this);
+            mSessionStore.removeContentListener(this);
+            mSessionStore.removeSessionChangeListener(this);
+        }
+
         mWindowWidget = null;
         super.releaseWidget();
     }
@@ -361,6 +355,32 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     @Override
+    public void detachFromWindow(WindowWidget window) {
+        if (mSessionStore != null) {
+            mSessionStore.removeSessionChangeListener(this);
+            mSessionStore.removeNavigationListener(this);
+            mSessionStore.removeProgressListener(this);
+            mSessionStore.removeContentListener(this);
+        }
+    }
+
+    @Override
+    public void attachToWindow(WindowWidget window) {
+        setBrowserWidget(window);
+
+        mSessionStore = window.getSessionStore();
+        if (mSessionStore != null) {
+            mSessionStore.addSessionChangeListener(this);
+            mSessionStore.addNavigationListener(this);
+            mSessionStore.addProgressListener(this);
+            mSessionStore.addContentListener(this);
+            mURLBar.setSessionStore(mSessionStore);
+            updateServoButton();
+            handleSessionState();
+        }
+    }
+
+    @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
     }
@@ -376,7 +396,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mSizeBeforeFullScreen.copyFrom(mWindowWidget.getPlacement());
         // Set browser fullscreen size
         float aspect = SettingsStore.getInstance(getContext()).getWindowAspect();
-        Media media = SessionStore.get().getFullScreenVideo();
+        Media media = mSessionStore.getFullScreenVideo();
         if (media != null && media.getWidth() > 0 && media.getHeight() > 0) {
             aspect = (float)media.getWidth() / (float)media.getHeight();
         }
@@ -432,8 +452,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         // We need to add a delay for the exitFullScreen() call to solve some viewport scaling issues,
         // See https://github.com/MozillaReality/FirefoxReality/issues/833 for more info.
         postDelayed(() -> {
-            if (SessionStore.get().isInFullScreen()) {
-                SessionStore.get().exitFullScreen();
+            if (mSessionStore.isInFullScreen()) {
+                mSessionStore.exitFullScreen();
             }
         }, 50);
 
@@ -498,7 +518,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         // Backup the placement because the same widget is reused in FullScreen & MediaControl menus
         mProjectionMenuPlacement.copyFrom(mProjectionMenu.getPlacement());
 
-        mFullScreenMedia = SessionStore.get().getFullScreenVideo();
+        mFullScreenMedia = mSessionStore.getFullScreenVideo();
 
         this.setVisible(false);
         if (mFullScreenMedia != null && mFullScreenMedia.getWidth() > 0 && mFullScreenMedia.getHeight() > 0) {
@@ -566,19 +586,21 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         // 2. Or, if the pref is enabled and the current url is white listed.
         boolean show = false;
         boolean isServoSession = false;
-        GeckoSession currentSession = SessionStore.get().getCurrentSession();
-        if (currentSession != null) {
-            String currentUri = SessionStore.get().getCurrentUri();
-            boolean isPrefEnabled = SettingsStore.getInstance(mAppContext).isServoEnabled();
-            boolean isUrlWhiteListed = ServoUtils.isUrlInServoWhiteList(mAppContext, currentUri);
-            isServoSession = ServoUtils.isInstanceOfServoSession(currentSession);
-            show = isServoSession || (isPrefEnabled && isUrlWhiteListed);
-        }
-        if (show) {
-            mServoButton.setVisibility(View.VISIBLE);
-            mServoButton.setImageResource(isServoSession ? R.drawable.ic_icon_gecko : R.drawable.ic_icon_servo);
-        } else {
-            mServoButton.setVisibility(View.GONE);
+        if (mSessionStore != null){
+            GeckoSession currentSession = mSessionStore.getCurrentSession();
+            if (currentSession != null) {
+                String currentUri = mSessionStore.getCurrentUri();
+                boolean isPrefEnabled = SettingsStore.getInstance(mAppContext).isServoEnabled();
+                boolean isUrlWhiteListed = ServoUtils.isUrlInServoWhiteList(mAppContext, currentUri);
+                isServoSession = ServoUtils.isInstanceOfServoSession(currentSession);
+                show = isServoSession || (isPrefEnabled && isUrlWhiteListed);
+            }
+            if (show) {
+                mServoButton.setVisibility(View.VISIBLE);
+                mServoButton.setImageResource(isServoSession ? R.drawable.ic_icon_gecko : R.drawable.ic_icon_servo);
+            } else {
+                mServoButton.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -592,27 +614,21 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     private void handleSessionState() {
-        boolean isPrivateMode  = SessionStore.get().isCurrentSessionPrivate();
+        if (mSessionStore != null) {
+            boolean isPrivateMode = mSessionStore.isPrivateMode();
 
-        mURLBar.setPrivateMode(isPrivateMode);
-        for (CustomUIButton button : mButtons) {
-            button.setPrivateMode(isPrivateMode);
+            mURLBar.setPrivateMode(isPrivateMode);
+            for (CustomUIButton button : mButtons) {
+                button.setPrivateMode(isPrivateMode);
+            }
         }
     }
 
-    @Override
-    public GeckoResult<GeckoSession> onNewSession(@NonNull GeckoSession aSession, @NonNull String aUri) {
-        return null;
-    }
-
-    @Override
-    public GeckoResult<String> onLoadError(GeckoSession session, String uri, WebRequestError error) {
-        return null;
-    }
-
     public void release() {
-        SessionStore.get().removeNavigationListener(this);
-        SessionStore.get().removeProgressListener(this);
+        if (mSessionStore != null) {
+            mSessionStore.removeNavigationListener(this);
+            mSessionStore.removeProgressListener(this);
+        }
     }
 
     @Override
@@ -628,7 +644,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     @Override
     public void onCanGoBack(GeckoSession aSession, boolean canGoBack) {
         if (mBackButton != null) {
-            boolean enableBackButton = SessionStore.get().canUnstackSession() | canGoBack;
+            boolean enableBackButton = mSessionStore.canGoBack();
 
             Log.d(LOGTAG, "Got onCanGoBack: " + (enableBackButton ? "true" : "false"));
             mBackButton.setEnabled(enableBackButton);
@@ -699,11 +715,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     @Override
-    public void onProgressChange(GeckoSession session, int progress) {
-
-    }
-
-    @Override
     public void onSecurityChange(GeckoSession geckoSession, SecurityInformation securityInformation) {
         if (mURLBar != null) {
             boolean isSecure = securityInformation.isSecure;
@@ -712,21 +723,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     // Content delegate
-
-    @Override
-    public void onTitleChange(GeckoSession session, String title) {
-
-    }
-
-    @Override
-    public void onFocusRequest(GeckoSession session) {
-
-    }
-
-    @Override
-    public void onCloseRequest(GeckoSession session) {
-
-    }
 
     @Override
     public void onFullScreen(GeckoSession session, boolean aFullScreen) {
@@ -738,7 +734,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
                 exitResizeMode(false);
             }
             AtomicBoolean autoEnter = new AtomicBoolean(false);
-            mAutoSelectedProjection = VideoProjectionMenuWidget.getAutomaticProjection(SessionStore.get().getUriFromSession(session), autoEnter);
+            mAutoSelectedProjection = VideoProjectionMenuWidget.getAutomaticProjection(mSessionStore.getUriFromSession(session), autoEnter);
             if (mAutoSelectedProjection != null && autoEnter.get()) {
                 mAutoEnteredVRVideo = true;
                 postDelayed(() -> enterVRVideo(mAutoSelectedProjection), 300);
@@ -751,26 +747,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             }
             exitFullScreenMode();
         }
-    }
-
-    @Override
-    public void onContextMenu(GeckoSession session, int screenX, int screenY, ContextElement element) {
-
-    }
-
-    @Override
-    public void onExternalResponse(GeckoSession session, GeckoSession.WebResponseInfo response) {
-
-    }
-
-    @Override
-    public void onCrash(GeckoSession session) {
-
-    }
-
-    @Override
-    public void onFirstComposite(GeckoSession session) {
-
     }
 
     // WidgetManagerDelegate.UpdateListener
@@ -793,21 +769,12 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     // SessionStore.SessionChangeListener
-    @Override
-    public void onNewSession(GeckoSession aSession, int aId) {
-
-    }
-
-    @Override
-    public void onRemoveSession(GeckoSession aSession, int aId) {
-
-    }
 
     @Override
     public void onCurrentSessionChange(GeckoSession aSession, int aId) {
         handleSessionState();
 
-        boolean isFullScreen = SessionStore.get().isInFullScreen(aSession);
+        boolean isFullScreen = mSessionStore.isInFullScreen(aSession);
         if (isFullScreen && !mIsInFullScreenMode) {
             enterFullScreenMode();
         } else if (!isFullScreen && mIsInFullScreenMode) {
@@ -911,16 +878,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     @Override
-    public void OnVoiceSearchCanceled() {
-        // Nothing to do yet
-    }
-
-    @Override
-    public void OnVoiceSearchError() {
-        // Nothing to do yet
-    }
-
-    @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key == mAppContext.getString(R.string.settings_key_servo)) {
             updateServoButton();
@@ -956,11 +913,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mURLBar.handleURLEdit(item.url);
     }
 
-    @Override
-    public void OnItemDeleted(SuggestionsWidget.SuggestionItem item) {
-
-    }
-
     // BookmarkListener
 
     @Override
@@ -973,7 +925,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     @Override
     public void onBookmarksHidden() {
         mURLBar.setIsBookmarkMode(false);
-        mURLBar.setURL(SessionStore.get().getCurrentUri());
+        mURLBar.setURL(mSessionStore.getCurrentUri());
         mURLBar.setHint(R.string.search_placeholder);
     }
 
@@ -1008,4 +960,5 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private void updateWidget() {
         onWidgetUpdate(mWindowWidget);
     }
+
 }

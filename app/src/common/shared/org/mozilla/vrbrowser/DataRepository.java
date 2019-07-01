@@ -1,8 +1,7 @@
 package org.mozilla.vrbrowser;
 
-import android.content.Context;
-
-import org.mozilla.vrbrowser.browser.SessionStore;
+import org.mozilla.vrbrowser.browser.engine.SessionManager;
+import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.db.AppDatabase;
 import org.mozilla.vrbrowser.db.entity.BookmarkEntity;
 import org.mozilla.vrbrowser.model.Bookmark;
@@ -77,7 +76,7 @@ public class DataRepository implements LifecycleOwner {
                 return;
             }
             for (BookmarkEntity oldBookmark: oldBookmarks) {
-                SessionStore.get().getBookmarkStore().addBookmark(oldBookmark.getUrl(), oldBookmark.getTitle());
+                SessionManager.get().getBookmarkStore().addBookmark(oldBookmark.getUrl(), oldBookmark.getTitle());
             }
             mExecutors.diskIO().execute(() -> mDatabase.bookmarkDao().deleteAll());
         });
