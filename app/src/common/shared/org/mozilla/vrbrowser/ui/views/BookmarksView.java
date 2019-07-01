@@ -24,6 +24,7 @@ import org.mozilla.vrbrowser.databinding.BookmarksBinding;
 import org.mozilla.vrbrowser.ui.adapters.BookmarkAdapter;
 import org.mozilla.vrbrowser.ui.callbacks.BookmarkClickCallback;
 import org.mozilla.vrbrowser.ui.widgets.BookmarkListener;
+import org.mozilla.vrbrowser.ui.widgets.WindowWidget;
 import org.mozilla.vrbrowser.utils.UIThreadExecutor;
 
 import java.util.ArrayList;
@@ -36,15 +37,14 @@ import androidx.databinding.DataBindingUtil;
 
 import mozilla.components.concept.storage.BookmarkNode;
 
-public class BookmarksView extends FrameLayout implements GeckoSession.NavigationDelegate, BookmarksStore.BookmarkListener {
-
-    private static final String ABOUT_BLANK = "about:blank";
+public class BookmarksView extends FrameLayout implements BookmarksStore.BookmarkListener {
 
     private BookmarksBinding mBinding;
     private BookmarkAdapter mBookmarkAdapter;
     private List<BookmarkListener> mBookmarkListeners;
     private AudioEngine mAudio;
     private boolean mIgnoreNextListener;
+    private WindowWidget mAttachedWindow;
 
     public BookmarksView(Context aContext) {
         super(aContext);
@@ -88,17 +88,38 @@ public class BookmarksView extends FrameLayout implements GeckoSession.Navigatio
         mBookmarkListeners.removeAll(Arrays.asList(listeners));
     }
 
+    public void detachFromWindow() {
+        if (mAttachedWindow != null) {
+            mAttachedWindow.unsetView(this);
+            notifyBookmarksHidden(mAttachedWindow);
+            mAttachedWindow = null;
+        }
+    }
+
+    public void attachToWindow(@NonNull WindowWidget aWindow) {
+        if (mAttachedWindow == aWindow) {
+            return;
+        }
+        mAttachedWindow = aWindow;
+        mAttachedWindow.setView(this);
+        notifyBookmarksShown(mAttachedWindow);
+    }
+
+    public WindowWidget getAttachedWindow() {
+        return mAttachedWindow;
+    }
+
     public void onDestroy() {
         mBookmarkListeners.clear();
         SessionManager.get().getBookmarkStore().removeListener(this);
     }
 
-    private void notifyBookmarksShown() {
-        mBookmarkListeners.forEach(BookmarkListener::onBookmarksShown);
+    private void notifyBookmarksShown(WindowWidget aWindow) {
+        mBookmarkListeners.forEach(listener -> listener.onBookmarksShown(aWindow));
     }
 
-    private void notifyBookmarksHidden() {
-        mBookmarkListeners.forEach(BookmarkListener::onBookmarksHidden);
+    private void notifyBookmarksHidden(WindowWidget aWindow) {
+        mBookmarkListeners.forEach(listener -> listener.onBookmarksHidden(aWindow));
     }
 
     private final BookmarkClickCallback mBookmarkClickCallback = new BookmarkClickCallback() {
@@ -145,61 +166,6 @@ public class BookmarksView extends FrameLayout implements GeckoSession.Navigatio
             mBookmarkAdapter.setBookmarkList(aBookmarks);
         }
         mBinding.executePendingBindings();
-    }
-
-    @Override
-    public void setVisibility(int visibility) {
-        super.setVisibility(visibility);
-
-        SessionStore sessionStore = SessionManager.get().getActiveStore();
-        if (visibility == VISIBLE) {
-            if (sessionStore != null)
-                sessionStore.addNavigationListener(this);
-            notifyBookmarksShown();
-
-        } else {
-            if (sessionStore != null)
-                sessionStore.removeNavigationListener(this);
-            notifyBookmarksHidden();
-        }
-    }
-
-    // NavigationDelegate
-
-    @Override
-    public void onLocationChange(GeckoSession session, String url) {
-        if (getVisibility() == View.VISIBLE &&
-                url != null &&
-                !url.equals(ABOUT_BLANK)) {
-            notifyBookmarksHidden();
-        }
-    }
-
-    @Override
-    public void onCanGoBack(GeckoSession session, boolean canGoBack) {
-
-    }
-
-    @Override
-    public void onCanGoForward(GeckoSession session, boolean canGoForward) {
-
-    }
-
-    @Nullable
-    @Override
-    public GeckoResult<AllowOrDeny> onLoadRequest(@NonNull GeckoSession session, @NonNull LoadRequest request) {
-        return GeckoResult.ALLOW;
-    }
-
-    @Nullable
-    @Override
-    public GeckoResult<GeckoSession> onNewSession(@NonNull GeckoSession session, @NonNull String uri) {
-        return null;
-    }
-
-    @Override
-    public GeckoResult<String> onLoadError(GeckoSession session, String uri, WebRequestError error) {
-        return null;
     }
 
     // BookmarksStore.BookmarkListener

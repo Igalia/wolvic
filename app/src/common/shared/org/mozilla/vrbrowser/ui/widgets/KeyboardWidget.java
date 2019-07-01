@@ -28,7 +28,6 @@ import android.widget.TextView;
 
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.browser.engine.SessionManager;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.input.CustomKeyboard;
@@ -77,7 +76,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private View mFocusedView;
     private LinearLayout mKeyboardLayout;
     private RelativeLayout mKeyboardContainer;
-    private UIWidget mBrowserWidget;
+    private UIWidget mAttachedWindow;
     private InputConnection mInputConnection;
     private EditorInfo mEditorInfo = new EditorInfo();
     private VoiceSearchWidget mVoiceSearchWidget;
@@ -201,12 +200,10 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
     @Override
     public void releaseWidget() {
-        if (mSessionStore != null) {
-            mSessionStore.removeTextInputListener(this);
-        }
+        detachFromWindow();
         mWidgetManager.removeFocusChangeListener(this);
         mAutoCompletionView.setDelegate(null);
-        mBrowserWidget = null;
+        mAttachedWindow = null;
         super.releaseWidget();
     }
 
@@ -230,17 +227,21 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     }
 
     @Override
-    public void detachFromWindow(WindowWidget window) {
+    public void detachFromWindow() {
         if (mSessionStore != null) {
             mSessionStore.removeTextInputListener(this);
+            mSessionStore = null;
         }
     }
 
     @Override
-    public void attachToWindow(WindowWidget window) {
-        setBrowserWidget(window);
+    public void attachToWindow(@NonNull WindowWidget aWindow) {
+        if (mAttachedWindow == aWindow) {
+            return;
+        }
+        mAttachedWindow = aWindow;
 
-        mSessionStore = window.getSessionStore();
+        mSessionStore = aWindow.getSessionStore();
         if (mSessionStore != null) {
             mSessionStore.addTextInputListener(this);
         }
@@ -252,10 +253,6 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         width += WidgetPlacement.dpDimension(getContext(), R.dimen.keyboard_numeric_width);
         width += WidgetPlacement.dpDimension(getContext(), R.dimen.keyboard_key_width); // Close button
         return (int) width;
-    }
-
-    public void setBrowserWidget(UIWidget aWidget) {
-        mBrowserWidget = aWidget;
     }
 
     private void resetKeyboardLayout() {
@@ -305,7 +302,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
     public void dismiss() {
         exitVoiceInputMode();
-       if (mFocusedView != null && mFocusedView != mBrowserWidget) {
+       if (mFocusedView != null && mFocusedView != mAttachedWindow) {
            mFocusedView.clearFocus();
        }
        mWidgetPlacement.visible = false;
@@ -851,21 +848,21 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
     @Override
     public void showSoftInput(@NonNull GeckoSession session) {
-        if (mFocusedView != mBrowserWidget || getVisibility() != View.VISIBLE) {
-            updateFocusedView(mBrowserWidget);
+        if (mFocusedView != mAttachedWindow || getVisibility() != View.VISIBLE) {
+            updateFocusedView(mAttachedWindow);
         }
     }
 
     @Override
     public void hideSoftInput(@NonNull GeckoSession session) {
-        if (mFocusedView == mBrowserWidget && getVisibility() == View.VISIBLE) {
+        if (mFocusedView == mAttachedWindow && getVisibility() == View.VISIBLE) {
             dismiss();
         }
     }
 
     @Override
     public void updateSelection(@NonNull GeckoSession session, final int selStart, final int selEnd, final int compositionStart, final int compositionEnd) {
-        if (mFocusedView != mBrowserWidget || mInputConnection == null) {
+        if (mFocusedView != mAttachedWindow || mInputConnection == null) {
             return;
         }
 

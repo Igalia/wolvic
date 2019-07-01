@@ -207,6 +207,10 @@ public class NavigationURLBar extends FrameLayout {
         syncViews();
     }
 
+    public boolean isInBookmarkMode() {
+        return mIsBookmarkMode;
+    }
+
     private void setBookmarkEnabled(boolean aEnabled) {
         if (mBookmarkEnabled != aEnabled) {
             mBookmarkEnabled = aEnabled;

@@ -72,7 +72,6 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     private GeckoSession mCurrentSession;
     private HashMap<Integer, SessionState> mSessions;
     private Deque<Integer> mSessionsStack;
-    private Deque<Integer> mPrivateSessionsStack;
     private GeckoSession.PermissionDelegate mPermissionDelegate;
     private int mPreviousSessionId = NO_SESSION;
     private int mPreviousGeckoSessionId = NO_SESSION;
@@ -80,12 +79,13 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     private Context mContext;
     private SharedPreferences mPrefs;
     private GeckoRuntime mRuntime;
+    private boolean mUsePrivateMode;
 
-    protected SessionStore(Context context, GeckoRuntime runtime) {
+    protected SessionStore(Context context, GeckoRuntime runtime, boolean usePrivateMode) {
         mRuntime = runtime;
         mSessions = new LinkedHashMap<>();
         mSessionsStack = new ArrayDeque<>();
-        mPrivateSessionsStack = new ArrayDeque<>();
+        mUsePrivateMode = usePrivateMode;
 
         mContext = context;
         mPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
@@ -126,7 +126,6 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     protected void shutdown() {
         mSessions.clear();
         mSessionsStack.clear();
-        mPrivateSessionsStack.clear();
 
         mCurrentSession = null;
         mPreviousSessionId = NO_SESSION;
@@ -263,12 +262,9 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
         mVideoAvailabilityListeners.remove(aListener);
     }
 
-    private int createSession() {
-        return createSession(false);
-    }
 
-    private int createSession(boolean isPrivate) {
-        SessionSettings settings = new SessionSettings.Builder(isPrivate)
+    private int createSession() {
+        SessionSettings settings = new SessionSettings.Builder()
                 .withDefaultSettings(mContext)
                 .build();
 
@@ -281,7 +277,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
 
         GeckoSessionSettings geckoSettings = new GeckoSessionSettings.Builder()
             .useMultiprocess(aSettings.isMultiprocessEnabled())
-            .usePrivateMode(aSettings.isPrivateEnabled())
+            .usePrivateMode(mUsePrivateMode)
             .useTrackingProtection(aSettings.isTrackingProtectionEnabled())
             .build();
 
@@ -358,52 +354,28 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     }
 
     private void pushSession(int aSessionId) {
-        if (mCurrentSession != null) {
-            boolean isPrivateMode = mCurrentSession.getSettings().getUsePrivateMode();
-            if (isPrivateMode)
-                mPrivateSessionsStack.push(aSessionId);
-            else
-                mSessionsStack.push(aSessionId);
-        }
+        mSessionsStack.push(aSessionId);
     }
 
     private Integer popSession() {
-        Integer sessionId = new Integer(NO_SESSION);
-        if (mCurrentSession != null) {
-            boolean isPrivateMode = mCurrentSession.getSettings().getUsePrivateMode();
-            try {
-                if (isPrivateMode)
-                    sessionId = mPrivateSessionsStack.pop();
-                else
-                    sessionId = mSessionsStack.pop();
+        Integer sessionId;
+        try {
+            sessionId = mSessionsStack.pop();
 
-            } catch (NoSuchElementException e) {
-                sessionId = new Integer(NO_SESSION);
-            }
+        } catch (NoSuchElementException e) {
+            sessionId = new Integer(NO_SESSION);
         }
 
         return sessionId;
     }
 
     private Integer peekSession() {
-        Integer sessionId = new Integer(NO_SESSION);
-        if (mCurrentSession != null) {
-            boolean isPrivateMode = mCurrentSession.getSettings().getUsePrivateMode();
-            if (isPrivateMode) {
-                sessionId = mPrivateSessionsStack.peek();
-
-            } else {
-                sessionId = mSessionsStack.peek();
-            }
-
-            sessionId = sessionId == null ? NO_SESSION : sessionId;
-        }
-
-        return sessionId;
+        Integer sessionId = mSessionsStack.peek();
+        return sessionId == null ? NO_SESSION : sessionId;
     }
 
     public void newSession() {
-        SessionSettings settings = new SessionSettings.Builder(isPrivateMode()).build();
+        SessionSettings settings = new SessionSettings.Builder().build();
         int id = createSession(settings);
         stackSession(id);
     }
@@ -651,7 +623,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
             if (mPreviousGeckoSessionId == SessionStore.NO_SESSION) {
                 mPreviousGeckoSessionId = getCurrentSessionId();
                 String uri = getCurrentUri();
-                SessionSettings settings = new SessionSettings.Builder(isPrivateMode())
+                SessionSettings settings = new SessionSettings.Builder()
                         .withDefaultSettings(mContext)
                         .withServo(true)
                         .build();
@@ -710,59 +682,6 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
             return NO_SESSION;
         }
         return mCurrentSession.hashCode();
-    }
-
-    public void enterPrivateMode() {
-        if (mCurrentSession == null)
-            return;
-
-        boolean isPrivateMode = mCurrentSession.getSettings().getUsePrivateMode();
-        if (!isPrivateMode) {
-            if (mPreviousSessionId == SessionStore.NO_SESSION) {
-                mPreviousSessionId = getCurrentSessionId();
-
-                SessionSettings settings = new SessionSettings.Builder(true)
-                        .withDefaultSettings(mContext)
-                        .build();
-                int id = createSession(settings);
-                setCurrentSession(id);
-
-                InternalPages.PageResources pageResources = InternalPages.PageResources.create(R.raw.private_mode, R.raw.private_style);
-                getCurrentSession().loadData(InternalPages.createAboutPage(mContext, pageResources), "text/html");
-
-            } else {
-                int sessionId = getCurrentSessionId();
-                setCurrentSession(mPreviousSessionId);
-                mPreviousSessionId = sessionId;
-            }
-
-        } else {
-            int sessionId = getCurrentSessionId();
-            setCurrentSession(mPreviousSessionId);
-            mPreviousSessionId = sessionId;
-        }
-    }
-
-    public void exitPrivateMode() {
-        if (mCurrentSession == null)
-            return;
-
-        boolean isPrivateMode  = mCurrentSession.getSettings().getUsePrivateMode();
-        if (isPrivateMode) {
-            int privateSessionId = getCurrentSessionId();
-            setCurrentSession(mPreviousSessionId);
-            mPreviousSessionId = SessionStore.NO_SESSION;
-
-            // Remove current private_mode session
-            removeSession(privateSessionId);
-
-            // Remove all the stacked private_mode sessions
-            for (Iterator<Integer> it = mPrivateSessionsStack.iterator(); it.hasNext();) {
-                int sessionId = it.next();
-                removeSession(sessionId);
-            }
-            mPrivateSessionsStack.clear();
-        }
     }
 
     public boolean isPrivateMode() {
@@ -886,7 +805,6 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
         }
 
         if (PRIVATE_BROWSING_URI.equalsIgnoreCase(uri)) {
-            enterPrivateMode();
             return GeckoResult.DENY;
         }
 
@@ -922,7 +840,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
 
         int sessionId;
         boolean isPreviousPrivateMode = mCurrentSession.getSettings().getUsePrivateMode();
-        SessionSettings settings = new SessionSettings.Builder(isPreviousPrivateMode)
+        SessionSettings settings = new SessionSettings.Builder()
                 .withDefaultSettings(mContext)
                 .build();
         sessionId = createSession(settings);

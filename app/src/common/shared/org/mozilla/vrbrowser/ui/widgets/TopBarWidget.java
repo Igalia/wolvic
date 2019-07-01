@@ -8,20 +8,26 @@ package org.mozilla.vrbrowser.ui.widgets;
 import android.content.Context;
 import android.util.AttributeSet;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.SessionChangeListener;
-import org.mozilla.vrbrowser.browser.engine.SessionManager;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 
 public class TopBarWidget extends UIWidget implements SessionChangeListener, WidgetManagerDelegate.UpdateListener {
 
     private UIButton mCloseButton;
+    private UIButton mMoveLeftButton;
+    private UIButton mMoveRightButton;
     private AudioEngine mAudio;
-    private UIWidget mBrowserWidget;
+    private WindowWidget mAttachedWindow;
     private SessionStore mSessionStore;
+    private TopBarWidget.Delegate mDelegate;
+    private boolean mVisible;
 
     public TopBarWidget(Context aContext) {
         super(aContext);
@@ -38,17 +44,49 @@ public class TopBarWidget extends UIWidget implements SessionChangeListener, Wid
         initialize(aContext);
     }
 
+    public interface Delegate {
+        void onCloseClicked(TopBarWidget aWidget);
+        void onMoveLeftClicked(TopBarWidget aWidget);
+        void onMoveRightClicked(TopBarWidget aWidget);
+    }
+
     private void initialize(Context aContext) {
         inflate(aContext, R.layout.top_bar, this);
 
-        mCloseButton = findViewById(R.id.negativeButton);
+        mCloseButton = findViewById(R.id.closeWindowButton);
         mCloseButton.setOnClickListener(view -> {
             view.requestFocusFromTouch();
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
-            mSessionStore.exitPrivateMode();
+            if (mDelegate != null) {
+                mDelegate.onCloseClicked(TopBarWidget.this);
+            }
         });
+
+        mMoveLeftButton = findViewById(R.id.moveWindowLeftButton);
+        mMoveLeftButton.setOnClickListener(view -> {
+            view.requestFocusFromTouch();
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
+            if (mDelegate != null) {
+                mDelegate.onMoveLeftClicked(TopBarWidget.this);
+            }
+        });
+
+        mMoveRightButton = findViewById(R.id.moveWindowRightButton);
+        mMoveRightButton.setOnClickListener(view -> {
+            view.requestFocusFromTouch();
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
+            if (mDelegate != null) {
+                mDelegate.onMoveRightClicked(TopBarWidget.this);
+            }
+        });
+
+
 
         mAudio = AudioEngine.fromContext(aContext);
 
@@ -61,7 +99,7 @@ public class TopBarWidget extends UIWidget implements SessionChangeListener, Wid
         aPlacement.width = WidgetPlacement.dpDimension(context, R.dimen.top_bar_width);
         aPlacement.height = WidgetPlacement.dpDimension(context, R.dimen.top_bar_height);
         aPlacement.worldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width) * aPlacement.width/getWorldWidth();
-        //aPlacement.translationY = WidgetPlacement.unitFromMeters(context, R.dimen.top_bar_world_y);
+        aPlacement.translationY = WidgetPlacement.dpDimension(context, R.dimen.top_bar_window_margin);
         aPlacement.anchorX = 0.5f;
         aPlacement.anchorY = 0.0f;
         aPlacement.parentAnchorX = 0.5f;
@@ -81,28 +119,33 @@ public class TopBarWidget extends UIWidget implements SessionChangeListener, Wid
     }
 
     @Override
-    public void detachFromWindow(WindowWidget window) {
-        if (mSessionStore != null) {
-            mSessionStore.removeSessionChangeListener(this);
-        }
+    public void detachFromWindow() {
+        mAttachedWindow = null;
     }
 
     @Override
-    public void attachToWindow(WindowWidget window) {
-        setBrowserWidget(window);
-
-        mSessionStore = window.getSessionStore();
-        if (mSessionStore != null) {
-            mSessionStore.addSessionChangeListener(this);
-            handleSessionState();
+    public void attachToWindow(@NonNull WindowWidget aWindow) {
+        if (mAttachedWindow == aWindow) {
+            return;
         }
+        mWidgetPlacement.parentHandle = aWindow.getHandle();
+        mAttachedWindow = aWindow;
+
+        setPrivateMode(aWindow.getSessionStore().isPrivateMode());
+
     }
 
-    public void setBrowserWidget(UIWidget aWidget) {
-        if (aWidget != null) {
-            mWidgetPlacement.parentHandle = aWidget.getHandle();
-        }
-        mBrowserWidget = aWidget;
+    public @Nullable WindowWidget getAttachedWindow() {
+        return mAttachedWindow;
+    }
+
+    private void setPrivateMode(boolean aPrivateMode) {
+        mCloseButton.setPrivateMode(aPrivateMode);
+        mMoveLeftButton.setPrivateMode(aPrivateMode);
+        mMoveRightButton.setPrivateMode(aPrivateMode);
+        mCloseButton.setBackground(getContext().getDrawable(aPrivateMode ? R.drawable.fullscreen_button_private : R.drawable.fullscreen_button));
+        mMoveLeftButton.setBackground(getContext().getDrawable(aPrivateMode ? R.drawable.fullscreen_button_private_first : R.drawable.fullscreen_button_first));
+        mMoveRightButton.setBackground(getContext().getDrawable(aPrivateMode ? R.drawable.fullscreen_button_private_last : R.drawable.fullscreen_button_last));
     }
 
     // SessionStore.SessionChangeListener
@@ -113,41 +156,42 @@ public class TopBarWidget extends UIWidget implements SessionChangeListener, Wid
     }
 
     @Override
-    public void setVisible(boolean isVisible) {
-        getPlacement().visible = isVisible;
+    public void setVisible(boolean aIsVisible) {
+        if (mVisible == aIsVisible) {
+            return;
+        }
+        mVisible = aIsVisible;
+        getPlacement().visible = aIsVisible;
 
-        if (isVisible)
+        if (aIsVisible) {
             mWidgetManager.addWidget(this);
-        else
+        }
+        else {
             mWidgetManager.removeWidget(this);
+        }
+    }
+
+    public void setDelegate(TopBarWidget.Delegate aDelegate) {
+        mDelegate = aDelegate;
+    }
+
+    public void setMoveLeftButtonEnabled(boolean aEnabled) {
+        mMoveLeftButton.setEnabled(aEnabled);
+    }
+
+    public void setMoveRightButtonEnabled(boolean aEnabled) {
+        mMoveRightButton.setEnabled(aEnabled);
     }
 
     private void handleSessionState() {
-        if (mSessionStore != null) {
-            boolean isPrivateMode = mSessionStore.isPrivateMode();
-            setVisible(isPrivateMode);
-            mCloseButton.setPrivateMode(isPrivateMode);
-        }
     }
 
     // WidgetManagerDelegate.UpdateListener
 
     @Override
     public void onWidgetUpdate(Widget aWidget) {
-        if (aWidget != mBrowserWidget) {
+        if (aWidget != mAttachedWindow) {
             return;
-        }
-
-        if (mBrowserWidget.isVisible()) {
-            boolean isVisible = isVisible();
-            boolean mustBeVisible = mSessionStore.isPrivateMode();
-            if (mustBeVisible && !isVisible) {
-                setVisible(true);
-            } else if (isVisible) {
-                mWidgetManager.updateWidget(this);
-            }
-        } else {
-            setVisible(false);
         }
     }
 

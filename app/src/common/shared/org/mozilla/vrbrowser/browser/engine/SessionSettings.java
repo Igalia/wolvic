@@ -8,7 +8,6 @@ import org.mozilla.vrbrowser.browser.SettingsStore;
 
 class SessionSettings {
 
-    private boolean isPrivateEnabled;
     private boolean isMultiprocessEnabled;
     private boolean isTrackingProtectionEnabled;
     private boolean isSuspendMediaWhenInactiveEnabled;
@@ -16,16 +15,11 @@ class SessionSettings {
     private boolean isServoEnabled;
 
     private SessionSettings(@NotNull Builder builder) {
-        this.isPrivateEnabled = builder.isPrivateEnabled;
         this.isMultiprocessEnabled = builder.isMltiprocessEnabled;
         this.isTrackingProtectionEnabled = builder.isTrackingProtectionEnabled;
         this.isSuspendMediaWhenInactiveEnabled = builder.isSuspendMediaWhenInactiveEnabled;
         this.userAgentMode = builder.userAgentMode;
         this.isServoEnabled = builder.isServoEnabled;
-    }
-
-    public boolean isPrivateEnabled() {
-        return isPrivateEnabled;
     }
 
     public boolean isMultiprocessEnabled() {
@@ -60,21 +54,16 @@ class SessionSettings {
         return isServoEnabled;
     }
 
-    public void setPrivateEnabled(boolean isPrivateEnabled) {
-        this.isPrivateEnabled = isPrivateEnabled;
-    }
 
     public static class Builder {
 
-        private boolean isPrivateEnabled;
         private boolean isMltiprocessEnabled;
         private boolean isTrackingProtectionEnabled;
         private boolean isSuspendMediaWhenInactiveEnabled;
         private int userAgentMode;
         private boolean isServoEnabled;
 
-        public Builder(boolean isPrivateEnabled) {
-            this.isPrivateEnabled = isPrivateEnabled;
+        public Builder() {
         }
 
         public Builder withMultiprocess(boolean isMultiprocessEnabled){
@@ -103,7 +92,7 @@ class SessionSettings {
         }
 
         public Builder withDefaultSettings(Context context) {
-            return new SessionSettings.Builder(isPrivateEnabled)
+            return new SessionSettings.Builder()
                     .withMultiprocess(SettingsStore.getInstance(context).isMultiprocessEnabled())
                     .withTrackingProteccion(SettingsStore.getInstance(context).isTrackingProtectionEnabled())
                     .withSuspendMediaWhenInactive(true)

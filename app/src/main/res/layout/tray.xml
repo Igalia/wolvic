@@ -21,6 +21,11 @@
                 android:src="@drawable/ic_icon_private_browsing"/>
 
             <org.mozilla.vrbrowser.ui.views.UIButton
+                android:id="@+id/addwindowButton"
+                style="@style/trayButtonMiddleTheme"
+                android:src="@drawable/ic_icon_tray_add_window"/>
+
+            <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/bookmarksButton"
                 style="@style/trayButtonMiddleTheme"
                 android:src="@drawable/ic_icon_bookmarks"/>

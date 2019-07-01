@@ -317,6 +317,11 @@ public abstract class UIWidget extends FrameLayout implements Widget {
         }
     }
 
+    @Override
+    public int getBorderWidth() {
+        return 0;
+    }
+
     protected <T extends UIWidget> T createChild(@NonNull Class<T> aChildClassName) {
         return createChild(aChildClassName, true);
     }
