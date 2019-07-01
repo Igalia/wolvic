@@ -162,6 +162,32 @@ public class SessionManager implements GeckoSession.PermissionDelegate {
         }
     }
 
+    // Session Settings
+
+    public void setServo(final boolean enabled) {
+        for (Map.Entry<Integer, SessionStore> entry : mSessionStores.entrySet()) {
+            entry.getValue().setServo(enabled);
+        }
+    }
+
+    public void setUaMode(final int mode) {
+        for (Map.Entry<Integer, SessionStore> entry : mSessionStores.entrySet()) {
+            entry.getValue().setUaMode(mode);
+        }
+    }
+
+    public void setMultiprocess(final boolean aEnabled) {
+        for (Map.Entry<Integer, SessionStore> entry : mSessionStores.entrySet()) {
+            entry.getValue().setMultiprocess(aEnabled);
+        }
+    }
+
+    public void setTrackingProtection(final boolean aEnabled) {
+        for (Map.Entry<Integer, SessionStore> entry : mSessionStores.entrySet()) {
+            entry.getValue().setTrackingProtection(aEnabled);
+        }
+    }
+
     // Runtime Settings
 
     public void setConsoleOutputEnabled(boolean enabled) {

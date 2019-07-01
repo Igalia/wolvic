@@ -59,10 +59,6 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     // You can test a local file using: "resource://android/assets/webvr/index.html"
     public static final String PRIVATE_BROWSING_URI = "about:privatebrowsing";
     public static final int NO_SESSION = -1;
-    private static final String[] WEB_EXTENSIONS = new String[] {
-      "webcompat_vimeo",
-      "webcompat_youtube"
-    };
 
     private LinkedList<GeckoSession.NavigationDelegate> mNavigationListeners;
     private LinkedList<GeckoSession.ProgressDelegate> mProgressListeners;
@@ -776,7 +772,9 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
         return false;
     }
 
-    public void setServo(final boolean enabled) {
+    // Session Settings
+
+    protected void setServo(final boolean enabled) {
         if (!enabled && mCurrentSession != null && isInstanceOfServoSession(mCurrentSession)) {
             String uri = getCurrentUri();
             int id = createSession();
@@ -785,16 +783,14 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
         }
     }
 
-    // Session Settings
-
-    public void setUaMode(int mode) {
+    protected void setUaMode(int mode) {
         if (mCurrentSession != null) {
             mCurrentSession.getSettings().setUserAgentMode(mode);
             mCurrentSession.reload();
         }
     }
 
-    public void setMultiprocess(final boolean aEnabled) {
+    protected void setMultiprocess(final boolean aEnabled) {
         if (mCurrentSession != null) {
             SessionState state = mSessions.get(mCurrentSession.hashCode());
             if (state != null && state.mSettings.isMultiprocessEnabled() != aEnabled) {
@@ -804,7 +800,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
         }
     }
 
-    public void setTrackingProtection(final boolean aEnabled) {
+    protected void setTrackingProtection(final boolean aEnabled) {
         if (mCurrentSession != null) {
             SessionState state = mSessions.get(mCurrentSession.hashCode());
             if (state != null && state.mSettings.isTrackingProtectionEnabled() != aEnabled) {

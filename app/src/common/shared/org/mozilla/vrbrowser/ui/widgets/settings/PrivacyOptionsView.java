@@ -68,7 +68,7 @@ class PrivacyOptionsView extends SettingsView {
         mTrackingSetting.setChecked(SettingsStore.getInstance(getContext()).isTrackingProtectionEnabled());
         mTrackingSetting.setOnCheckedChangeListener((compoundButton, enabled, apply) -> {
             SettingsStore.getInstance(getContext()).setTrackingProtectionEnabled(enabled);
-            SessionManager.get().getActiveStore().setTrackingProtection(enabled);
+            SessionManager.get().setTrackingProtection(enabled);
         });
 
         mAutoplaySetting = findViewById(R.id.autoplaySwitch);

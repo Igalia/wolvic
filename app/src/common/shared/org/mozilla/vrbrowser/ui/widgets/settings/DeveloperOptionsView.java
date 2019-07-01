@@ -197,7 +197,7 @@ class DeveloperOptionsView extends SettingsView {
         SettingsStore.getInstance(getContext()).setMultiprocessEnabled(value);
 
         if (doApply) {
-            SessionManager.get().getActiveStore().setMultiprocess(value);
+            SessionManager.get().setMultiprocess(value);
         }
     }
 
@@ -209,7 +209,7 @@ class DeveloperOptionsView extends SettingsView {
         SettingsStore.getInstance(getContext()).setServoEnabled(value);
 
         if (doApply) {
-            SessionManager.get().getActiveStore().setServo(value);
+            SessionManager.get().setServo(value);
         }
     }
 
