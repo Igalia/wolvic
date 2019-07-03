@@ -10,8 +10,8 @@ You can find us on Twitter [@MozillaReality](https://twitter.com/mozillareality)
 
 **[Download](https://fxr.glitch.me/)** [bleeding-edge](https://github.com/MozillaReality/FirefoxReality/commits/master) developer (_debug_) APKs for Firefox Reality:
 
-- [Oculus Go (`oculusvr`)](https://fxr.glitch.me/oculusvr)
-- [HTC VIVE Focus & Pico G2 (`wavevr`)](https://fxr.glitch.me/wavevr)
+- [Oculus Go & Quest (`oculusvr`)](https://fxr.glitch.me/oculusvr)
+- [HTC VIVE Focus & Pico devices (`wavevr`)](https://fxr.glitch.me/wavevr)
 - [Lenovo Mirage with Google Daydream (`googlevr`)](https://fxr.glitch.me/googlevr)
 - [Snapdragon VR (`svr`)](https://fxr.glitch.me/svr)
 - [No API / Android Emulator for PC (`noapi`)](https://fxr.glitch.me/noapi)
@@ -22,14 +22,13 @@ You can find us on Twitter [@MozillaReality](https://twitter.com/mozillareality)
 2. Click the `Firefox Reality for Android - Build - Master update →` link.
 3. Click the `Run Artifacts` tab, and click to download the APK for your platform of choice.
 
-## L10n
+## Locale support
 
-Whenever a new string is added to a localizable strings file (strings.xml, localpages.xml, …) a string description must be provided as a comment above the new string. Also the project STRs wiki page must be updated with a key description, steps to reproduce and the expected results.
-The L10n wiki page can be found [here](https://github.com/MozillaReality/FirefoxReality/wiki/L10n).
+Firefox Reality supports Chinese (China), Chinese (Taiwan), English, French, German, Italian, Japanese, Russian, and Spanish for user interface, voice search, and text entry. Localization is provided by Mozilla's amazing community of volunteer localizers.
+
+For more info on localization, how it works in the Firefox Reality project, and how to correctly edit localizable text in the application, please see the [localization wiki page](https://github.com/MozillaReality/FirefoxReality/wiki/Localization).
 
 ## Setup instructions
-
-*Make sure you are using Android NDK r17b.*
 
 *Clone FirefoxReality.*
 
@@ -71,10 +70,10 @@ You can build for different devices:
 - **`oculusvr`**: Samsung Gear VR & Oculus Go
 - **`svr`**: Qualcomm & ODG glasses
 - **`wavevr`**: VIVE Focus
-
-These devices are for only testing:
-
 - **`googlevr`**: Google Daydream
+
+For testing on a non-VR device:
+
 - **`noapi`**: Runs on standard Android phones without a headset
 
 Building for Oculus Mobile, SVR, and WaveVR requires access to their respective SDKs which are not included in this repo.
