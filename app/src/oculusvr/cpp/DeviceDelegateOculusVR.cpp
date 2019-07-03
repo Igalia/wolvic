@@ -605,7 +605,7 @@ struct DeviceDelegateOculusVR::State {
   vrb::RenderContextWeak context;
   android_app* app = nullptr;
   bool initialized = false;
-  bool platformSDKInitialized = false;
+  bool applicationEntitled = false;
   bool layersEnabled = true;
   ovrJava java = {};
   ovrMobile* ovr = nullptr;
@@ -710,16 +710,21 @@ struct DeviceDelegateOculusVR::State {
       VRB_DEBUG("Detected Unknown Oculus device");
     }
 
-    ovrRequest result = ovr_PlatformInitializeAndroidAsynchronous(appId, java.ActivityObject, java.Env);
+    if (!ovr_IsPlatformInitialized()) {
+      ovrRequest result = ovr_PlatformInitializeAndroidAsynchronous(appId, java.ActivityObject,
+                                                                    java.Env);
 
-    if (invalidRequestID == result) {
-      // Initialization failed which means either the oculus service isn’t on the machine or they’ve hacked their DLL.
-      VRB_LOG("ovr_PlatformInitializeAndroidAsynchronous failed: %d", (int32_t)result);
+      if (invalidRequestID == result) {
+        // Initialization failed which means either the oculus service isn’t on the machine or they’ve hacked their DLL.
+        VRB_LOG("ovr_PlatformInitializeAndroidAsynchronous failed: %d", (int32_t) result);
 #if STORE_BUILD == 1
-      VRBrowser::HaltActivity(0);
+        VRBrowser::HaltActivity(0);
 #endif
-    } else {
-      VRB_LOG("ovr_PlatformInitializeAndroidAsynchronous succeeded");
+      } else {
+        VRB_LOG("ovr_PlatformInitializeAndroidAsynchronous succeeded");
+        ovr_Entitlement_GetIsViewerEntitled();
+      }
+    } else if (!applicationEntitled) {
       ovr_Entitlement_GetIsViewerEntitled();
     }
   }
@@ -1243,7 +1248,7 @@ DeviceDelegateOculusVR::SetCPULevel(const device::CPULevel aLevel) {
 
 void
 DeviceDelegateOculusVR::ProcessEvents() {
-  if (m.platformSDKInitialized) {
+  if (m.applicationEntitled) {
     return;
   }
 
@@ -1264,15 +1269,18 @@ DeviceDelegateOculusVR::ProcessEvents() {
       }
         break;
       case ovrMessage_Entitlement_GetIsViewerEntitled:
-        m.platformSDKInitialized = true;
         if (ovr_Message_IsError(message)) {
           VRB_LOG("User is not entitled");
 #if STORE_BUILD == 1
           VRBrowser::HaltActivity(0);
+#else
+          // No need to process events anymore.
+          m.applicationEntitled = true;
 #endif
         }
         else {
           VRB_LOG("User is entitled");
+          m.applicationEntitled = true;
         }
         break;
       default:
