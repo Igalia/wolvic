@@ -254,8 +254,7 @@ struct DeviceDelegateWaveVR::State {
     }
     vrb::Matrix transform(vrb::Matrix::Identity());
     if (aController.is6DoF) {
-      transform = vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), -vrb::PI_FLOAT / 5.0f);
-      transform.TranslateInPlace(vrb::Vector(0.0f, -0.03f, -0.05f));
+      transform.TranslateInPlace(vrb::Vector(0.0f, 0.01f, -0.05f));
     }
     delegate->CreateController(aController.index, aController.is6DoF ? 1 : 0, aController.is6DoF ? "HTC Vive Focus Plus Controller" : "HTC Vive Focus Controller", transform);
     delegate->SetLeftHanded(aController.index, aController.hand == ElbowModel::HandEnum::Left);
