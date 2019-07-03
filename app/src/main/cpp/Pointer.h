@@ -27,6 +27,7 @@ public:
   bool IsLoaded() const;
   void SetVisible(bool aVisible);
   void SetTransform(const vrb::Matrix& aTransform);
+  void SetScale(const vrb::Vector& aHitPoint, const vrb::Matrix& aHeadTransform);
   void SetPointerColor(const vrb::Color& aColor);
   void SetHitWidget(const WidgetPtr& aWidget);
 

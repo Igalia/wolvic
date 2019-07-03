@@ -367,6 +367,7 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
         vrb::Matrix localRotation = vrb::Matrix::Rotation(hitNormal);
         vrb::Matrix reorient = device->GetReorientTransform();
         controller.pointer->SetTransform(reorient.AfineInverse().PostMultiply(translation).PostMultiply(localRotation));
+        controller.pointer->SetScale(hitPoint, device->GetHeadTransform());
       }
     }
 

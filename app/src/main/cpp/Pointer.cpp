@@ -153,9 +153,11 @@ Pointer::SetVisible(bool aVisible) {
 void
 Pointer::SetTransform(const vrb::Matrix& aTransform) {
   m.transform->SetTransform(aTransform);
-  vrb::Vector point;
-  point = aTransform.MultiplyPosition(point);
-  const float scale = fabsf(point.z());
+}
+
+void
+Pointer::SetScale(const vrb::Vector& aHitPoint, const vrb::Matrix& aHeadTransform) {
+  const float scale = (aHitPoint - aHeadTransform.MultiplyPosition(vrb::Vector(0.0f, 0.0f, 0.0f))).Magnitude();
   m.pointerScale->SetTransform(vrb::Matrix::Identity().ScaleInPlace(vrb::Vector(scale, scale, scale)));
 }
 
