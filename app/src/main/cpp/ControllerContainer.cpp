@@ -31,11 +31,13 @@ struct ControllerContainer::State {
   std::vector<GroupPtr> models;
   GeometryPtr beamModel;
   bool visible = false;
+  vrb::Color pointerColor;
 
   void Initialize(vrb::CreationContextPtr& aContext) {
     context = aContext;
     root = Toggle::Create(aContext);
     visible = true;
+    pointerColor = vrb::Color(1.0f, 1.0f, 1.0f, 1.0f);
   }
 
   bool Contains(const int32_t aControllerIndex) {
@@ -49,6 +51,18 @@ struct ControllerContainer::State {
     if (!models[aModelIndex]) {
       CreationContextPtr create = context.lock();
       models[aModelIndex] = std::move(Group::Create(create));
+    }
+  }
+
+  void updatePointerColor(Controller& aController) {
+    if (aController.beamParent) {
+      GeometryPtr geometry = std::dynamic_pointer_cast<vrb::Geometry>(aController.beamParent->GetNode(0));
+      if (geometry) {
+        geometry->GetRenderState()->SetMaterial(pointerColor, pointerColor, vrb::Color(0.0f, 0.0f, 0.0f), 0.0f);
+      }
+    }
+    if (aController.pointer) {
+      aController.pointer->SetPointerColor(pointerColor);
     }
   }
 };
@@ -205,6 +219,7 @@ ControllerContainer::CreateController(const int32_t aControllerIndex, const int3
     if (m.pointerContainer) {
       m.pointerContainer->AddNode(controller.pointer->GetRoot());
     }
+    m.updatePointerColor(controller);
   } else {
     VRB_ERROR("Failed to add controller model");
   }
@@ -365,16 +380,9 @@ ControllerContainer::SetScrolledDelta(const int32_t aControllerIndex, const floa
 }
 
 void ControllerContainer::SetPointerColor(const vrb::Color& aColor) const {
+  m.pointerColor = aColor;
   for (Controller& controller: m.list) {
-    if (controller.beamParent) {
-      GeometryPtr geometry = std::dynamic_pointer_cast<vrb::Geometry>(controller.beamParent->GetNode(0));
-      if (geometry) {
-        geometry->GetRenderState()->SetMaterial(aColor, aColor, vrb::Color(0.0f, 0.0f, 0.0f), 0.0f);
-      }
-    }
-    if (controller.pointer) {
-      controller.pointer->SetPointerColor(aColor);
-    }
+    m.updatePointerColor(controller);
   }
 }
 
