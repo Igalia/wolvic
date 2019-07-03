@@ -28,7 +28,7 @@
          The action key performs a "next" operation, taking the user to the next field that will accept text.
          (stylized in uppercase letters as 'NEXT')
     -->
-    <string name="keyboard_next_label">下一步</string>
+    <string name="keyboard_next_label">下一个</string>
 
     <!-- This string is used on the virtual keyboard to label the 'Enter' key with a "Done" IME action.
      The action key performs a "done" operation, typically meaning there is nothing more to input and the
@@ -87,7 +87,7 @@
     <!-- This string will be displayed in a dialog box presented to the user when the application
          needs to request permission to access the device's external storage such as the
          sdcard. '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_persistent_storage">您是否要允许 %1$s 在持久存储中存储数据？</string>
+    <string name="permission_persistent_storage">您是否要允许 %1$s 持久存储数据？</string>
 
     <!-- This string is displayed in the Settings dialog box and how
          the user can know which version of the application they are currently running.
@@ -124,14 +124,14 @@
          the user to choose as their preferred reading languages for website content. Each locale,
          as `language-tag` strings, is then included in the browser's `Accept-Language` HTTP request
          header that is sent to websites, as well as the JavaScript property, `navigator.language`. -->
-    <string name="settings_language_choose_language_webpage_content">选择您想要优先使用哪种语言显示页面</string>
+    <string name="settings_language_choose_language_webpage_content">选择优先使用哪种语言显示页面</string>
 
     <!-- This string is used to label a text label for selecting the language in the 'Language' dialog window
          (accessible from the browser's Settings' dialog window). Below this string appears a list of locales for
          the user to choose as their preferred language for the browser's speech-to-text 'Voice Search' system.
          Based on the user's selection, the printed language is mapped to its ISO 639-1 code
          (e.g., `Español` is mapped to `es`) when configured in the 'Voice Search' system. -->
-    <string name="settings_language_choose_language_voice_search">选择您想要优先使用哪种语言进行语音搜索</string>
+    <string name="settings_language_choose_language_voice_search">选择优先使用哪种语言进行语音搜索</string>
 
     <!-- This string is used to label a radio button in the 'Settings' Language dialog that, when pressed,
          changes the app and the language of the speech-recognition-based search to 'English (US)'. -->
@@ -170,7 +170,7 @@
     <string name="settings_language_italian">意大利语</string>
 
     <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
-     changes the app and the language of the speech-recognition-based search to 'Italian'. -->
+     changes the app and the language of the speech-recognition-based search to 'Russian'. -->
     <string name="settings_language_russian">俄语</string>
 
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
@@ -220,7 +220,7 @@
 
     <!-- This string labels an On/Off switch in the 'Developer Options' dialog
          and is used to toggle redirecting JavaScript Console output to the Android Logcat (i.e., `adb logcat`). -->
-    <string name="developer_options_show_console">将控制台重定向至 Logcat</string>
+    <string name="developer_options_show_console">将控制台日志并入 Logcat</string>
 
     <!-- This string labels an On/Off switch in the developer options dialog
          and is used to customize background environments of the app. -->
@@ -260,7 +260,7 @@
 
     <!-- This string is used to label a numerical entry field where the user may enter a new value
          for the virtual displays Dots Per Inch (DPI). -->
-    <string name="developer_options_display_dpi">显示密度（DPI）：</string>
+    <string name="developer_options_display_dpi">显示像素密度（DPI）：</string>
 
     <!-- This string is used to label two integer entry fields that will allow the user to adjust
          the maximum window size in the X and Y dimensions. -->
@@ -378,6 +378,10 @@
      and is used to enable or disable tracking protection. -->
     <string name="security_options_tracking_protection">跟踪保护</string>
 
+    <!-- This string labels an On/Off switch in the Privacy and Security settings dialog
+     and is used to enable or disable media autoplay. -->
+    <string name="security_options_autoplay">自动播放媒体</string>
+
     <!-- This string is a label above the group of buttons that indicates that the buttons below
          relate to Android system permissions granted to the app.
          '%1$s' will be replaced at runtime with the app's name. -->
@@ -417,7 +421,7 @@
 
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
-    <string name="voice_search_start">您希望在网络上搜索什么？</string>
+    <string name="voice_search_start">您想搜点什么？</string>
 
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
@@ -459,7 +463,7 @@
 
     <!-- This string explains why Mozilla would like the user to allow the crash data to be uploaded.
          '%1$s' will be replaced at runtime with the app's domain name. -->
-    <string name="crash_dialog_message">请发送您的崩溃数据，以帮助 Mozilla 改进 %1$s。</string>
+    <string name="crash_dialog_message">希望您发送崩溃数据，以帮助 Mozilla 改进 %1$s。</string>
 
     <!-- This string labels a checkbox in the crash dialog box. When checked, the user will no longer
          be prompted for permission to upload crash data after an application crash. -->
@@ -556,7 +560,7 @@
     <string name="bookmarks_search">在书签中搜索</string>
 
     <!-- This string is displayed in a tooltip in the bookmark button in the URL bar. -->
-    <string name="bookmarks_bookmark">将此页面加为书签</string>
+    <string name="bookmarks_bookmark">为此页添加书签</string>
 
     <!-- This string is displayed in the Bookmarks List for as the header of the most recently
          bookmarked items. -->
@@ -680,6 +684,6 @@
     <!-- This string is displayed in the title of the notification message shown when the device loses internet connection. -->
     <string name="no_internet_title">网络连接已断开</string>
     <!-- This string is displayed in the message of the notification message shown when the device loses internet connection. -->
-    <string name="no_internet_message">检查设备配置以解决问题。</string>
+    <string name="no_internet_message">检查设备配置来修正问题。</string>
 
 </resources>

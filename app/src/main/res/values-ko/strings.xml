@@ -170,7 +170,7 @@
     <string name="settings_language_italian">이탈리아어</string>
 
     <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
-     changes the app and the language of the speech-recognition-based search to 'Italian'. -->
+     changes the app and the language of the speech-recognition-based search to 'Russian'. -->
     <string name="settings_language_russian">러시아어</string>
 
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
@@ -377,6 +377,10 @@
     <!-- This string labels an On/Off switch in the Privacy and Security settings dialog
      and is used to enable or disable tracking protection. -->
     <string name="security_options_tracking_protection">추적 방지</string>
+
+    <!-- This string labels an On/Off switch in the Privacy and Security settings dialog
+     and is used to enable or disable media autoplay. -->
+    <string name="security_options_autoplay">미디어 자동재생</string>
 
     <!-- This string is a label above the group of buttons that indicates that the buttons below
          relate to Android system permissions granted to the app.
