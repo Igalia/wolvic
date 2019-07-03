@@ -1290,8 +1290,12 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     }
 
     @Override
-    public void onContextMenu(@NonNull GeckoSession aSession, int i, int i1, @NonNull ContextElement element) {
-
+    public void onContextMenu(@NonNull GeckoSession session, int screenX, int screenY, @NonNull ContextElement element) {
+        if (mCurrentSession == session) {
+            for (GeckoSession.ContentDelegate listener : mContentListeners) {
+                listener.onContextMenu(session, screenX, screenY, element);
+            }
+        }
     }
 
     @Override

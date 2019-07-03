@@ -10,6 +10,8 @@ import android.content.res.Resources;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 
+import org.mozilla.vrbrowser.browser.SettingsStore;
+
 public class WidgetPlacement {
     static final float WORLD_DPI_RATIO = 2.0f/720.0f;
 
@@ -124,6 +126,10 @@ public class WidgetPlacement {
 
     public static float convertPixelsToDp(Context aContext, float px){
         return px / ((float) aContext.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+    }
+
+    public static float worldToWindowRatio(){
+        return (SettingsStore.BROWSER_WORLD_WIDTH_DEFAULT/SettingsStore.WINDOW_WIDTH_DEFAULT)/ WORLD_DPI_RATIO;
     }
 
 }
