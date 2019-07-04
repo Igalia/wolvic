@@ -55,7 +55,7 @@ struct ControllerContainer::State {
   }
 
   void updatePointerColor(Controller& aController) {
-    if (aController.beamParent) {
+    if (aController.beamParent && aController.beamParent->GetNodeCount() > 0) {
       GeometryPtr geometry = std::dynamic_pointer_cast<vrb::Geometry>(aController.beamParent->GetNode(0));
       if (geometry) {
         geometry->GetRenderState()->SetMaterial(pointerColor, pointerColor, vrb::Color(0.0f, 0.0f, 0.0f), 0.0f);

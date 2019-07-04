@@ -45,6 +45,7 @@ struct Pointer::State {
   vrb::TransformPtr pointerScale;
   vrb::GeometryPtr geometry;
   WidgetPtr hitWidget;
+  vrb::Color pointerColor;
 
   State() = default;
   ~State() {
@@ -62,6 +63,7 @@ struct Pointer::State {
     transform->AddNode(pointerScale);
     root->AddNode(transform);
     root->ToggleAll(false);
+    pointerColor = POINTER_COLOR_INNER;
   }
 
   vrb::GeometryPtr createCircle(const int resolution, const float radius, const float offset) {
@@ -109,7 +111,7 @@ struct Pointer::State {
     vrb::GeometryPtr geometryOuter = createCircle(kResolution, kOuterRadius, kOffset);
 
     vrb::RenderStatePtr state = vrb::RenderState::Create(create);
-    state->SetMaterial(POINTER_COLOR_INNER, POINTER_COLOR_INNER, vrb::Color(0.0f, 0.0f, 0.0f), 0.0f);
+    state->SetMaterial(pointerColor, pointerColor, vrb::Color(0.0f, 0.0f, 0.0f), 0.0f);
     geometry->SetRenderState(state);
     vrb::RenderStatePtr stateOuter = vrb::RenderState::Create(create);
     stateOuter->SetMaterial(POINTER_COLOR_OUTER, POINTER_COLOR_OUTER, vrb::Color(0.0f, 0.0f, 0.0f), 0.0f);
@@ -130,6 +132,7 @@ Pointer::Load(const DeviceDelegatePtr& aDevice) {
   VRLayerQuadPtr layer = aDevice->CreateLayerQuad(36, 36, VRLayerQuad::SurfaceType::AndroidSurface);
   if (layer) {
     m.layer = layer;
+    m.layer->SetTintColor(m.pointerColor);
     const float size = kOuterRadius *  2.0f;
     layer->SetWorldSize(size, size);
     layer->SetSurfaceChangedDelegate([](const VRLayer& aLayer, VRLayer::SurfaceChange aChange, const std::function<void()>& aCallback) {
@@ -163,6 +166,7 @@ Pointer::SetScale(const vrb::Vector& aHitPoint, const vrb::Matrix& aHeadTransfor
 
 void
 Pointer::SetPointerColor(const vrb::Color& aColor) {
+  m.pointerColor = aColor;
   if (m.layer) {
     m.layer->SetTintColor(aColor);
   } if (m.geometry) {
