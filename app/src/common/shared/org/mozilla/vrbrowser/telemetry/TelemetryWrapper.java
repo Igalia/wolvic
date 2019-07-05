@@ -15,6 +15,8 @@ import org.mozilla.telemetry.measurement.SearchesMeasurement;
 import org.mozilla.telemetry.net.TelemetryClient;
 import org.mozilla.telemetry.ping.TelemetryCorePingBuilder;
 import org.mozilla.telemetry.ping.TelemetryMobileEventPingBuilder;
+import org.mozilla.telemetry.schedule.TelemetryScheduler;
+import org.mozilla.telemetry.schedule.jobscheduler.JobSchedulerTelemetryScheduler;
 import org.mozilla.telemetry.serialize.JSONPingSerializer;
 import org.mozilla.telemetry.storage.FileTelemetryStorage;
 import org.mozilla.vrbrowser.BuildConfig;
@@ -97,8 +99,13 @@ public class TelemetryWrapper {
             
             final JSONPingSerializer serializer = new JSONPingSerializer();
             final FileTelemetryStorage storage = new FileTelemetryStorage(configuration, serializer);
+            TelemetryScheduler scheduler;
+            if (BuildConfig.FLAVOR_platform.equals("oculusvr") || BuildConfig.FLAVOR_platform.equals("oculusvrStore")) {
+                scheduler = new FxRTelemetryScheduler();
+            } else {
+                scheduler = new JobSchedulerTelemetryScheduler();
+            }
             final TelemetryClient client = new TelemetryClient(new HttpURLConnectionClient());
-            final FxRTelemetryScheduler scheduler = new FxRTelemetryScheduler();
 
             TelemetryHolder.set(new Telemetry(configuration, storage, client, scheduler)
                     .addPingBuilder(new TelemetryCorePingBuilder(configuration))

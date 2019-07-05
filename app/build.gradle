@@ -127,7 +127,7 @@ android {
                     arguments "-DVR_SDK_LIB=oculusvr-lib", "-DVR_SDK_EXTRA_LIB=ovrplatform-lib", "-DOCULUSVR=ON"
                 }
             }
-            manifestPlaceholders = [ headtrackingRequired:"false" ]
+            manifestPlaceholders = [ headtrackingRequired:"false", permissionToRemove:"android.permission.RECEIVE_BOOT_COMPLETED" ]
         }
 
         oculusvrStore {
@@ -141,7 +141,7 @@ android {
                     arguments "-DVR_SDK_LIB=oculusvr-lib", "-DVR_SDK_EXTRA_LIB=ovrplatform-lib", "-DOCULUSVR=ON"
                 }
             }
-            manifestPlaceholders = [ headtrackingRequired:"true" ]
+            manifestPlaceholders = [ headtrackingRequired:"true", permissionToRemove:"android.permission.RECEIVE_BOOT_COMPLETED" ]
         }
 
         oculusvr3dofStore {
@@ -155,7 +155,7 @@ android {
                     arguments "-DVR_SDK_LIB=oculusvr-lib", "-DVR_SDK_EXTRA_LIB=ovrplatform-lib", "-DOCULUSVR=ON"
                 }
             }
-            manifestPlaceholders = [ headtrackingRequired:"false" ]
+            manifestPlaceholders = [ headtrackingRequired:"false", permissionToRemove:"android.permission.CAMERA" ]
         }
 
         svr {

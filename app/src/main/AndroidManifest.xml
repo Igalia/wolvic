@@ -10,7 +10,6 @@
     <uses-permission android:name="${applicationId}.CRASH_RECEIVER_PERMISSION"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" tools:node="remove"/>
 
     <permission android:name="${applicationId}.CRASH_RECEIVER_PERMISSION"
                 android:protectionLevel="signature"/>
