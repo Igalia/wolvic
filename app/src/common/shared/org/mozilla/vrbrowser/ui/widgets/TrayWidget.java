@@ -268,7 +268,7 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
         if (widget.isVisible()) {
             widget.hide(REMOVE_WIDGET);
         } else {
-            widget.show();
+            widget.show(REQUEST_FOCUS);
         }
     }
 
@@ -281,14 +281,14 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
 
     private void updateVisibility() {
         if (mTrayVisible && !mKeyboardVisible) {
-            this.show();
+            this.show(REQUEST_FOCUS);
         } else {
             this.hide(UIWidget.KEEP_WIDGET);
         }
     }
 
     @Override
-    public void show() {
+    public void show(@ShowFlags int aShowFlags) {
         if (!mWidgetPlacement.visible) {
             mWidgetPlacement.visible = true;
             mWidgetManager.addWidget(this);

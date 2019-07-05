@@ -103,16 +103,19 @@ public class WindowWidget extends UIWidget implements SessionStore.SessionChange
     }
 
     @Override
-    public void show(boolean focus) {
+    public void show(@ShowFlags int aShowFlags) {
         if (!mWidgetPlacement.visible) {
             mWidgetPlacement.visible = true;
         }
 
         mWidgetManager.updateWidget(this);
 
-        if (focus) {
-            setFocusableInTouchMode(true);
+        setFocusableInTouchMode(false);
+        if (aShowFlags == REQUEST_FOCUS) {
             requestFocusFromTouch();
+
+        } else {
+            clearFocus();
         }
     }
 
@@ -581,7 +584,7 @@ public class WindowWidget extends UIWidget implements SessionStore.SessionChange
             mNoInternetToast.mWidgetPlacement.parentHandle = getHandle();
         }
         if (aVisible && !mNoInternetToast.isVisible()) {
-            mNoInternetToast.show();
+            mNoInternetToast.show(REQUEST_FOCUS);
         } else if (!aVisible && mNoInternetToast.isVisible()) {
             mNoInternetToast.hide(REMOVE_WIDGET);
         }
@@ -593,7 +596,7 @@ public class WindowWidget extends UIWidget implements SessionStore.SessionChange
         mAlertPrompt.setTitle(title);
         mAlertPrompt.setMessage(msg);
         mAlertPrompt.setDelegate(callback);
-        mAlertPrompt.show();
+        mAlertPrompt.show(REQUEST_FOCUS);
     }
 
     // PromptDelegate
@@ -605,7 +608,7 @@ public class WindowWidget extends UIWidget implements SessionStore.SessionChange
         mAlertPrompt.setTitle(title);
         mAlertPrompt.setMessage(msg);
         mAlertPrompt.setDelegate(callback);
-        mAlertPrompt.show();
+        mAlertPrompt.show(REQUEST_FOCUS);
     }
 
     @Override
@@ -616,7 +619,7 @@ public class WindowWidget extends UIWidget implements SessionStore.SessionChange
         mConfirmPrompt.setMessage(msg);
         mConfirmPrompt.setButtons(btnMsg);
         mConfirmPrompt.setDelegate(callback);
-        mConfirmPrompt.show();
+        mConfirmPrompt.show(REQUEST_FOCUS);
     }
 
     @Override
@@ -627,7 +630,7 @@ public class WindowWidget extends UIWidget implements SessionStore.SessionChange
         mTextPrompt.setMessage(msg);
         mTextPrompt.setDefaultText(value);
         mTextPrompt.setDelegate(callback);
-        mTextPrompt.show();
+        mTextPrompt.show(REQUEST_FOCUS);
     }
 
     @Override
@@ -637,7 +640,7 @@ public class WindowWidget extends UIWidget implements SessionStore.SessionChange
         mAuthPrompt.setTitle(title);
         mAuthPrompt.setMessage(msg);
         mAuthPrompt.setAuthOptions(options, callback);
-        mAuthPrompt.show();
+        mAuthPrompt.show(REQUEST_FOCUS);
     }
 
     @Override
@@ -649,7 +652,7 @@ public class WindowWidget extends UIWidget implements SessionStore.SessionChange
         mChoicePrompt.setChoices(choices);
         mChoicePrompt.setMenuType(type);
         mChoicePrompt.setDelegate(callback);
-        mChoicePrompt.show();
+        mChoicePrompt.show(REQUEST_FOCUS);
     }
 
     @Override

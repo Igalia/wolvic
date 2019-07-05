@@ -248,24 +248,28 @@ public abstract class UIWidget extends FrameLayout implements Widget {
             hide(REMOVE_WIDGET);
 
         } else {
-            show();
+            show(REQUEST_FOCUS);
         }
     }
 
-    public void show() {
-        show(true);
-    }
+    @IntDef(value = { REQUEST_FOCUS, CLEAR_FOCUS })
+    public @interface ShowFlags {}
+    public static final int REQUEST_FOCUS = 0;
+    public static final int CLEAR_FOCUS = 1;
 
-    public void show(boolean focus) {
+    public void show(@ShowFlags int aShowFlags) {
         if (!mWidgetPlacement.visible) {
             mWidgetPlacement.visible = true;
             mWidgetManager.addWidget(this);
             mWidgetManager.pushBackHandler(mBackHandler);
         }
 
-        if (focus) {
-            setFocusableInTouchMode(true);
+        setFocusableInTouchMode(false);
+        if (aShowFlags == REQUEST_FOCUS) {
             requestFocusFromTouch();
+
+        } else {
+            clearFocus();
         }
     }
 

@@ -55,6 +55,7 @@ import org.mozilla.vrbrowser.ui.widgets.RootWidget;
 import org.mozilla.vrbrowser.ui.widgets.TopBarWidget;
 import org.mozilla.vrbrowser.ui.widgets.TrayListener;
 import org.mozilla.vrbrowser.ui.widgets.TrayWidget;
+import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.VideoProjectionMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.Widget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
@@ -447,7 +448,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 mCrashDialog.setCrashDialogDelegate(() -> sendCrashData(intent));
             }
 
-            mCrashDialog.show();
+            mCrashDialog.show(UIWidget.REQUEST_FOCUS);
         }
     }
 

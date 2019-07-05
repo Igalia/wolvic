@@ -145,8 +145,8 @@ public class ChoicePromptWidget extends PromptWidget {
     }
 
     @Override
-    public void show() {
-        show(true);
+    public void show(@ShowFlags int aShowFlags) {
+        show(aShowFlags);
         for (int i = 0; i < mListItems.length; i++) {
             mList.setItemChecked(i, mListItems[i].mChoice.selected);
         }

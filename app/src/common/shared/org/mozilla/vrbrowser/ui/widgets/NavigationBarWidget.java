@@ -824,7 +824,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             mVoiceSearchWidget.hide(REMOVE_WIDGET);
 
         } else {
-            mVoiceSearchWidget.show();
+            mVoiceSearchWidget.show(REQUEST_FOCUS);
         }
     }
 
@@ -881,7 +881,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
                     if (!mPopup.isVisible()) {
                         mPopup.updatePlacement((int)WidgetPlacement.convertPixelsToDp(getContext(), mURLBar.getWidth()));
-                        mPopup.show();
+                        mPopup.show(CLEAR_FOCUS);
                     }
                 }
         );

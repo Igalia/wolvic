@@ -258,18 +258,18 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
             }
 
             if (granted) {
-                show();
+                show(REQUEST_FOCUS);
 
             } else {
-                super.show(true);
+                super.show(REQUEST_FOCUS);
                 setPermissionNotGranted();
             }
         }
     }
 
     @Override
-    public void show(boolean aFocus) {
-        super.show(aFocus);
+    public void show(@ShowFlags int aShowFlags) {
+        super.show(aShowFlags);
 
         setStartListeningState();
 

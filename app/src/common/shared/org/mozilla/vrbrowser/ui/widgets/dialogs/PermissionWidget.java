@@ -82,8 +82,8 @@ public class PermissionWidget extends UIDialog implements WidgetManagerDelegate.
     }
 
     @Override
-    public void show() {
-        super.show();
+    public void show(@ShowFlags int aShowFlags) {
+        super.show(aShowFlags);
 
         mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
     }
@@ -141,7 +141,7 @@ public class PermissionWidget extends UIDialog implements WidgetManagerDelegate.
         mPermissionMessage.setText(str);
         mPermissionIcon.setImageResource(iconId);
 
-        show();
+        show(REQUEST_FOCUS);
     }
 
     String getRequesterName(String aUri) {
