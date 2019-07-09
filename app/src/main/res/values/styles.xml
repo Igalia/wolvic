@@ -11,9 +11,11 @@
         <attr name="mediaControlsButtonStyle" format="reference" />
         <attr name="navigationBarTextButtonStyle" format="reference" />
         <attr name="navigationBarButtonTint" format="reference" />
+        <attr name="separatorStyle" format="reference" />
         <attr name="urlProtocolColor" format="color" />
         <attr name="urlWebsiteColor" format="color" />
         <attr name="scrollbarStyle" format="color" />
+
     </declare-styleable>
 
 
@@ -47,6 +49,11 @@
     <style name="navigationBarTheme">
         <item name="android:background">@null</item>
         <item name="android:padding">0dp</item>
+    </style>
+
+    <style name="separatorTheme">
+        <item name="android:background">@drawable/separator_background</item>
+        <item name="android:layout_height">1.5dp</item>
     </style>
 
     <style name="uiButtonTheme">
@@ -289,6 +296,7 @@
         <item name="fullScreenFirstButtonStyle">@style/fullScreenFirstButtonTheme</item>
         <item name="fullScreenLastButtonStyle">@style/fullScreenLastButtonTheme</item>
         <item name="mediaControlsButtonStyle">@style/mediaControlsButtonTheme</item>
+        <item name="separatorStyle">@style/separatorTheme</item>
         <item name="uiButtonStyle">@style/uiButtonTheme</item>
         <item name="navigationBarTextButtonStyle">@style/navigationBarTextButtonTheme</item>
         <item name="urlProtocolColor">@color/fog_url_protocol</item>

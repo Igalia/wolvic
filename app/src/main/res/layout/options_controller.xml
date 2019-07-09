@@ -26,11 +26,10 @@
 
         <View
             android:id="@+id/separatorTop"
+            style="?attr/separatorStyle"
             android:layout_width="match_parent"
-            android:layout_height="0.5dp"
             android:layout_below="@+id/backButton"
-            android:layout_marginBottom="10dp"
-            android:background="@color/iron" />
+            android:layout_marginBottom="10dp" />
 
         <ScrollView
             android:id="@+id/scrollbar"
@@ -66,12 +65,11 @@
 
         <View
             android:id="@+id/separatorBottom"
+            style="?attr/separatorStyle"
             android:layout_width="match_parent"
-            android:layout_height="0.5dp"
             android:layout_above="@+id/resetButton"
             android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:background="@color/iron" />
+            android:layout_marginBottom="10dp" />
 
         <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
             android:id="@+id/resetButton"
