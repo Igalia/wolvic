@@ -120,6 +120,12 @@ public class TelemetryWrapper {
     public static void start() {
         TelemetryHolder.get().recordSessionStart();
         TelemetryEvent.create(Category.ACTION, Method.FOREGROUND, Object.APP).queue();
+        // Call Telemetry.scheduleUpload() early.
+        // See https://github.com/MozillaReality/FirefoxReality/issues/1353
+        TelemetryHolder.get()
+                .queuePing(TelemetryCorePingBuilder.TYPE)
+                .queuePing(TelemetryMobileEventPingBuilder.TYPE)
+                .scheduleUpload();
     }
 
     @UiThread
