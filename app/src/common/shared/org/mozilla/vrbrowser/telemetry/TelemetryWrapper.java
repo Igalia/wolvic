@@ -118,53 +118,21 @@ public class TelemetryWrapper {
 
     @UiThread
     public static void start() {
-        TelemetryHolder.get().recordSessionStart();
-        TelemetryEvent.create(Category.ACTION, Method.FOREGROUND, Object.APP).queue();
+        queueHistogram();
         // Call Telemetry.scheduleUpload() early.
         // See https://github.com/MozillaReality/FirefoxReality/issues/1353
         TelemetryHolder.get()
                 .queuePing(TelemetryCorePingBuilder.TYPE)
                 .queuePing(TelemetryMobileEventPingBuilder.TYPE)
                 .scheduleUpload();
+
+        TelemetryHolder.get().recordSessionStart();
+        TelemetryEvent.create(Category.ACTION, Method.FOREGROUND, Object.APP).queue();
     }
 
     @UiThread
     public static void stop() {
-        // Upload loading time histogram
-        TelemetryEvent loadingHistogramEvent = TelemetryEvent.create(Category.HISTOGRAM, Method.FOREGROUND, Object.BROWSER);
-        for (int bucketIndex = 0; bucketIndex < loadingTimeHistogram.length; ++bucketIndex) {
-            loadingHistogramEvent.extra(Integer.toString(bucketIndex * LOADING_BUCKET_SIZE_MS),
-                                        Integer.toString(loadingTimeHistogram[bucketIndex]));
-        }
-        loadingHistogramEvent.queue();
-
-        // Clear loading histogram array after queueing it
-        loadingTimeHistogram = new int[HISTOGRAM_SIZE];
-
-        // Upload immersive time histogram
-        TelemetryEvent immersiveHistogramEvent = TelemetryEvent.create(Category.HISTOGRAM, Method.IMMERSIVE_MODE, Object.BROWSER);
-        for (int bucketIndex = 0; bucketIndex < immersiveHistogram.length; ++bucketIndex) {
-            immersiveHistogramEvent.extra(Integer.toString(bucketIndex * IMMERSIVE_BUCKET_SIZE_MS),
-                                          Integer.toString(immersiveHistogram[bucketIndex]));
-        }
-        immersiveHistogramEvent.queue();
-
-        // Clear loading histogram array after queueing it
-        immersiveHistogram = new int[HISTOGRAM_SIZE];
-
-        // We only upload the domain and URI counts to the probes without including
-        // users' URI info.
-        TelemetryEvent.create(Category.ACTION, Method.OPEN, Object.BROWSER).extra(
-                Extra.UNIQUE_DOMAINS_COUNT,
-                Integer.toString(domainMap.size())
-        ).queue();
-        domainMap.clear();
-
-        TelemetryEvent.create(Category.ACTION, Method.OPEN, Object.BROWSER).extra(
-                Extra.TOTAL_URI_COUNT,
-                Integer.toString(numUri)
-        ).queue();
-        numUri = 0;
+        queueHistogram();
 
         TelemetryEvent.create(Category.ACTION, Method.BACKGROUND, Object.APP).queue();
         TelemetryHolder.get().recordSessionEnd();
@@ -195,6 +163,45 @@ public class TelemetryWrapper {
 
     private static String getDefaultSearchEngineIdentifierForTelemetry(Context aContext) {
         return SearchEngineWrapper.get(aContext).getResourceURL();
+    }
+
+    private static void queueHistogram() {
+        // Upload loading time histogram
+        TelemetryEvent loadingHistogramEvent = TelemetryEvent.create(Category.HISTOGRAM, Method.FOREGROUND, Object.BROWSER);
+        for (int bucketIndex = 0; bucketIndex < loadingTimeHistogram.length; ++bucketIndex) {
+            loadingHistogramEvent.extra(Integer.toString(bucketIndex * LOADING_BUCKET_SIZE_MS),
+                    Integer.toString(loadingTimeHistogram[bucketIndex]));
+        }
+        loadingHistogramEvent.queue();
+
+        // Clear loading histogram array after queueing it
+        loadingTimeHistogram = new int[HISTOGRAM_SIZE];
+
+        // Upload immersive time histogram
+        TelemetryEvent immersiveHistogramEvent = TelemetryEvent.create(Category.HISTOGRAM, Method.IMMERSIVE_MODE, Object.BROWSER);
+        for (int bucketIndex = 0; bucketIndex < immersiveHistogram.length; ++bucketIndex) {
+            immersiveHistogramEvent.extra(Integer.toString(bucketIndex * IMMERSIVE_BUCKET_SIZE_MS),
+                    Integer.toString(immersiveHistogram[bucketIndex]));
+        }
+        immersiveHistogramEvent.queue();
+
+        // Clear loading histogram array after queueing it
+        immersiveHistogram = new int[HISTOGRAM_SIZE];
+
+        // We only upload the domain and URI counts to the probes without including
+        // users' URI info.
+        TelemetryEvent.create(Category.ACTION, Method.OPEN, Object.BROWSER).extra(
+                Extra.UNIQUE_DOMAINS_COUNT,
+                Integer.toString(domainMap.size())
+        ).queue();
+        domainMap.clear();
+
+        TelemetryEvent.create(Category.ACTION, Method.OPEN, Object.BROWSER).extra(
+                Extra.TOTAL_URI_COUNT,
+                Integer.toString(numUri)
+        ).queue();
+        numUri = 0;
+
     }
 
     private static void searchEnterEvent() {
