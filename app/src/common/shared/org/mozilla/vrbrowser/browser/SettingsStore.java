@@ -404,6 +404,7 @@ public class SettingsStore {
     public void setCylinderDensity(float aDensity) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putFloat(mContext.getString(R.string.settings_key_cylinder_density), aDensity);
+        editor.commit();
     }
 
     public int getFoveatedLevelApp() {
