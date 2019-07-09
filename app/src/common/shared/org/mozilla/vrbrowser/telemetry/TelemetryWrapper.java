@@ -91,7 +91,7 @@ public class TelemetryWrapper {
             final boolean telemetryEnabled = SettingsStore.getInstance(aContext).isTelemetryEnabled();
             final TelemetryConfiguration configuration = new TelemetryConfiguration(aContext)
                     .setServerEndpoint("https://incoming.telemetry.mozilla.org")
-                    .setAppName(APP_NAME + "_" + BuildConfig.FLAVOR_platform)
+                    .setAppName(APP_NAME + "_" + (DeviceType.isOculusBuild() ? "oculusvr" : BuildConfig.FLAVOR_platform))
                     .setUpdateChannel(BuildConfig.BUILD_TYPE)
                     .setPreferencesImportantForTelemetry(resources.getString(R.string.settings_key_locale))
                     .setCollectionEnabled(telemetryEnabled)
