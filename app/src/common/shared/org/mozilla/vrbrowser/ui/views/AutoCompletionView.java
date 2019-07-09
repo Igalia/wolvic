@@ -38,6 +38,7 @@ public class AutoCompletionView extends FrameLayout {
     private ArrayList<Words> mExtraItems = new ArrayList<>();
     private boolean mIsExtended;
     private Delegate mDelegate;
+    private List<Words> mItems;
 
     public interface Delegate {
         void onAutoCompletionItemClick(Words aItem);
@@ -77,7 +78,7 @@ public class AutoCompletionView extends FrameLayout {
         });
         mMinKeyWidth = WidgetPlacement.pixelDimension(getContext(), R.dimen.autocompletion_widget_min_item_width);
         mKeyHeight = WidgetPlacement.pixelDimension(getContext(), R.dimen.autocompletion_widget_item_height);
-        mLineWidth = WidgetPlacement.pixelDimension(getContext(), R.dimen.autocompletion_widget_line_width);
+        mLineWidth = getMeasuredWidth();
         mLineHeight = WidgetPlacement.pixelDimension(getContext(), R.dimen.autocompletion_widget_line_height);
         mItemPadding = WidgetPlacement.pixelDimension(getContext(), R.dimen.autocompletion_widget_item_padding);
         mExtendedHeight = mLineHeight * 6;
@@ -119,11 +120,34 @@ public class AutoCompletionView extends FrameLayout {
         return row;
     }
 
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        int width = getMeasuredWidth();
+        if (mLineWidth != width && width > 0) {
+            mLineWidth = width;
+            layoutItems();
+            if (mIsExtended) {
+                layoutExtendedItems();
+            }
+        }
+    }
+
     public void setItems(List<Words> aItems) {
+        mItems = aItems;
+        if (mLineWidth == 0) {
+            mLineWidth = getMeasuredWidth();
+        }
+        if (mLineWidth > 0) {
+            layoutItems();
+        }
+    }
+
+    private void layoutItems() {
         mFirstLine.removeAllViews();
         mExtraItems.clear();
         mExtendContent.removeAllViews();
-        if (aItems == null || aItems.size() == 0) {
+        if (mItems == null || mItems.size() == 0) {
             exitExtend();
             mExtendButton.setVisibility(View.GONE);
             mExtendButtonSeparator.setVisibility(View.GONE);
@@ -134,7 +158,7 @@ public class AutoCompletionView extends FrameLayout {
         int currentWidth = 0;
         int extendButtonWidth =  mExtendButton.getWidth();
 
-        for (Words item : aItems) {
+        for (Words item : mItems) {
             UITextButton textBtn = createButton(item, clickHandler);
             if (n == 0) {
                 textBtn.setBackground(getContext().getDrawable(R.drawable.autocompletion_item_background_first));
