@@ -11,6 +11,7 @@ import org.mozilla.telemetry.TelemetryHolder;
 import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
+import org.mozilla.vrbrowser.utils.DeviceType;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
 import org.mozilla.vrbrowser.utils.StringUtils;
 
@@ -362,7 +363,7 @@ public class SettingsStore {
     }
 
     public boolean getLayersEnabled() {
-        if (BuildConfig.FLAVOR_platform.equalsIgnoreCase("oculusvr")) {
+        if (DeviceType.isOculusBuild()) {
             return true;
         }
         return false;

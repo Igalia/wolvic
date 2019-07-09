@@ -1,6 +1,8 @@
-package org.mozilla.vrbrowser.input;
+package org.mozilla.vrbrowser.utils;
 
 import android.util.Log;
+
+import org.mozilla.vrbrowser.BuildConfig;
 
 public class DeviceType {
     // These values need to match those in Device.h
@@ -20,5 +22,17 @@ public class DeviceType {
     }
     public static int getType() {
         return mType;
+    }
+
+    public static boolean isOculusBuild() {
+        return BuildConfig.FLAVOR_platform.toLowerCase().contains("oculusvr");
+    }
+
+    public static boolean isOculus6DOFBuild() {
+        return BuildConfig.FLAVOR_platform.equalsIgnoreCase("oculusvr") || BuildConfig.FLAVOR_platform.equalsIgnoreCase("oculusvrStore");
+    }
+
+    public static boolean isWaveBuild() {
+        return BuildConfig.FLAVOR_platform.toLowerCase().contains("wavevr");
     }
 }

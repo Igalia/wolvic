@@ -22,6 +22,7 @@ import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.views.settings.ButtonSetting;
 import org.mozilla.vrbrowser.ui.views.settings.SwitchSetting;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
+import org.mozilla.vrbrowser.utils.DeviceType;
 
 import java.util.ArrayList;
 
@@ -91,8 +92,9 @@ class PrivacyOptionsView extends SettingsView {
         mPermissionButtons.add(Pair.create(findViewById(R.id.locationPermissionButton), Manifest.permission.ACCESS_FINE_LOCATION));
         mPermissionButtons.add(Pair.create(findViewById(R.id.storagePermissionButton), Manifest.permission.READ_EXTERNAL_STORAGE));
 
-        if (BuildConfig.FLAVOR_platform == "oculusvr3dof" || BuildConfig.FLAVOR_platform == "oculusvr")
+        if (DeviceType.isOculusBuild()) {
             findViewById(R.id.cameraPermissionButton).setVisibility(View.GONE);
+        }
 
         for (Pair<ButtonSetting, String> button: mPermissionButtons) {
             if (mWidgetManager.isPermissionGranted(button.second)) {

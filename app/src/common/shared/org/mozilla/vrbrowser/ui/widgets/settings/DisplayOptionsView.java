@@ -21,6 +21,7 @@ import org.mozilla.vrbrowser.ui.views.settings.RadioGroupSetting;
 import org.mozilla.vrbrowser.ui.views.settings.SingleEditSetting;
 import org.mozilla.vrbrowser.ui.views.settings.SwitchSetting;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
+import org.mozilla.vrbrowser.utils.DeviceType;
 
 class DisplayOptionsView extends SettingsView {
     private AudioEngine mAudio;
@@ -245,8 +246,7 @@ class DisplayOptionsView extends SettingsView {
         if (!mMSAARadio.getValueForId(mMSAARadio.getCheckedRadioButtonId()).equals(SettingsStore.MSAA_DEFAULT_LEVEL)) {
             setMSAAMode(mMSAARadio.getIdForValue(SettingsStore.MSAA_DEFAULT_LEVEL), true);
         }
-        if (BuildConfig.FLAVOR_platform == "oculusvr" ||
-            BuildConfig.FLAVOR_platform == "wavevr") {
+        if (DeviceType.isOculusBuild() || DeviceType.isWaveBuild()) {
             if (!mFoveatedAppRadio.getValueForId(mFoveatedAppRadio.getCheckedRadioButtonId()).equals(SettingsStore.FOVEATED_APP_DEFAULT_LEVEL)) {
                 setFoveatedLevel(mFoveatedAppRadio, mFoveatedAppRadio.getIdForValue(SettingsStore.FOVEATED_APP_DEFAULT_LEVEL), true);
             }

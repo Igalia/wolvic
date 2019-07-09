@@ -26,13 +26,11 @@ import com.mozilla.speechlibrary.STTResult;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.SettingsStore;
-import org.mozilla.vrbrowser.input.DeviceType;
+import org.mozilla.vrbrowser.utils.DeviceType;
 import org.mozilla.vrbrowser.ui.views.UIButton;
-import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 
-import androidx.annotation.IdRes;
 import androidx.core.app.ActivityCompat;
 
 public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate.PermissionListener,

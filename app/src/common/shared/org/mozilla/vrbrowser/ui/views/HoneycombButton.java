@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import org.mozilla.vrbrowser.input.DeviceType;
+import org.mozilla.vrbrowser.utils.DeviceType;
 import org.mozilla.vrbrowser.R;
 
 import androidx.annotation.Nullable;

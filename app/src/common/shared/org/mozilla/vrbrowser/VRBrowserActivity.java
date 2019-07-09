@@ -42,7 +42,7 @@ import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.crashreporting.CrashReporterService;
 import org.mozilla.vrbrowser.crashreporting.GlobalExceptionHandler;
 import org.mozilla.vrbrowser.geolocation.GeolocationWrapper;
-import org.mozilla.vrbrowser.input.DeviceType;
+import org.mozilla.vrbrowser.utils.DeviceType;
 import org.mozilla.vrbrowser.input.MotionEventGenerator;
 import org.mozilla.vrbrowser.search.SearchEngineWrapper;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
@@ -186,7 +186,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         // Set a global exception handler as soon as possible
         GlobalExceptionHandler.register(this.getApplicationContext());
 
-        if (BuildConfig.FLAVOR_platform == "oculusvr") {
+        if (DeviceType.isOculusBuild()) {
             workaroundGeckoSigAction();
         }
         mUiThread = Thread.currentThread();
@@ -497,7 +497,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        if (BuildConfig.FLAVOR_platform == "oculusvr") {
+        if (DeviceType.isOculusBuild()) {
             int action = event.getAction();
             if (action != KeyEvent.ACTION_DOWN) {
                 return super.dispatchKeyEvent(event);

@@ -23,6 +23,7 @@ import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.search.SearchEngineWrapper;
+import org.mozilla.vrbrowser.utils.DeviceType;
 import org.mozilla.vrbrowser.utils.UrlUtils;
 
 import java.net.URI;
@@ -100,7 +101,7 @@ public class TelemetryWrapper {
             final JSONPingSerializer serializer = new JSONPingSerializer();
             final FileTelemetryStorage storage = new FileTelemetryStorage(configuration, serializer);
             TelemetryScheduler scheduler;
-            if (BuildConfig.FLAVOR_platform.equals("oculusvr") || BuildConfig.FLAVOR_platform.equals("oculusvrStore")) {
+            if (DeviceType.isOculus6DOFBuild()) {
                 scheduler = new FxRTelemetryScheduler();
             } else {
                 scheduler = new JobSchedulerTelemetryScheduler();
