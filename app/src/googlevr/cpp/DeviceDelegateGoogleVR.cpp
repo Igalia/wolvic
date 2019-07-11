@@ -589,6 +589,10 @@ DeviceDelegateGoogleVR::Pause() {
     VRB_LOG("Pause GVR tracking");
     GVR_CHECK(gvr_pause_tracking(m.gvr));
   }
+
+  for (Controller& controller: m.controllers) {
+    controller.enabled = false;
+  }
 }
 
 void
