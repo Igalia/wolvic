@@ -56,4 +56,5 @@ public interface WidgetManagerDelegate {
     void removeWorldClickListener(WorldClickListener aListener);
     boolean isPermissionGranted(@NonNull String permission);
     void requestPermission(String uri, @NonNull String permission, GeckoSession.PermissionDelegate.Callback aCallback);
+    void exitImmersiveMode();
 }

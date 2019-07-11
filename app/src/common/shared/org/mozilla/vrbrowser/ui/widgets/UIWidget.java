@@ -258,6 +258,8 @@ public abstract class UIWidget extends FrameLayout implements Widget {
     public static final int CLEAR_FOCUS = 1;
 
     public void show(@ShowFlags int aShowFlags) {
+        mWidgetManager.exitImmersiveMode();
+
         if (!mWidgetPlacement.visible) {
             mWidgetPlacement.visible = true;
             mWidgetManager.addWidget(this);

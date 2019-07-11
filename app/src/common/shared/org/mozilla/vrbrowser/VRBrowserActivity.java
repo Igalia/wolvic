@@ -1169,6 +1169,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         queueRunnable(() -> setCylinderDensityNative(aDensity));
     }
 
+    @Override
+    public void exitImmersiveMode() {
+        if (mIsPresentingImmersive)
+            queueRunnable(() -> exitImmersiveNative());
+    }
+
     private native void addWidgetNative(int aHandle, WidgetPlacement aPlacement);
     private native void updateWidgetNative(int aHandle, WidgetPlacement aPlacement);
     private native void removeWidgetNative(int aHandle);
