@@ -68,7 +68,9 @@ public class PromptWidget extends UIDialog {
     public void show(@ShowFlags int aShowFlags) {
         mLayout.measure(View.MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
                         View.MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-        mWidgetPlacement.height = (int)(mLayout.getMeasuredHeight()/mWidgetPlacement.density);
+        mWidgetPlacement.height = (getMinHeight() == 0) ?
+                (int)(mLayout.getMeasuredHeight()/mWidgetPlacement.density) :
+                getMinHeight();
         super.show(aShowFlags);
 
         mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
@@ -97,6 +99,10 @@ public class PromptWidget extends UIDialog {
         if (oldFocus == this && isVisible() && findViewById(newFocus.getId()) == null) {
             onDismiss();
         }
+    }
+
+    public int getMinHeight() {
+        return 0;
     }
 
 }

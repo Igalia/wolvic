@@ -145,6 +145,7 @@
     <dimen name="prompt_content_max_height">450dp</dimen>
     <dimen name="prompt_choice_min_height">300dp</dimen>
     <dimen name="prompt_choice_max_height">520dp</dimen>
+    <dimen name="prompt_min_height">400dp</dimen>
 
     <!-- Crash Dialog prompt -->
     <dimen name="crash_dialog_width">640dp</dimen>
