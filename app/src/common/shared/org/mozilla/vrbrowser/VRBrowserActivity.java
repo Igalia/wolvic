@@ -67,6 +67,7 @@ import org.mozilla.vrbrowser.utils.ServoUtils;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -800,6 +801,54 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         });
     }
 
+
+    private ArrayList<SurfaceTexture> mTestSFContainer = new ArrayList<>();
+    private ArrayList<Surface> mTestSContainer = new ArrayList<>();
+    @Keep
+    @SuppressWarnings("unused")
+    void surfaceTextureTest(final int aTextureId, final int w, final  int h) {
+        GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, aTextureId);
+
+        GLES20.glTexParameterf(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
+        GLES20.glTexParameterf(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+        GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
+        GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+        int error = GLES20.glGetError();
+        if (error != GLES20.GL_NO_ERROR) {
+            Log.e(LOGTAG, "makelele OpenGL Error creating Initializing SufaceTexture: " + error);
+        }
+
+        final SurfaceTexture texture = new SurfaceTexture(aTextureId);
+        texture.setDefaultBufferSize(w, h);
+        mTestSFContainer.add(texture);
+        runOnUiThread(() -> {
+            try {
+                Surface surface = new Surface(texture);
+                mTestSContainer.add(surface);
+
+                Canvas canvas = surface.lockHardwareCanvas();
+                canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+                Paint paint = new Paint();
+                paint.setAntiAlias(true);
+                paint.setDither(true);
+                if (mTestSContainer.size() <= 3) {
+                    paint.setColor(Color.YELLOW);
+                } else {
+                    paint.setColor(Color.GREEN);
+                }
+                paint.setStyle(Paint.Style.FILL);
+                canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), paint);
+                surface.unlockCanvasAndPost(canvas);
+                Log.e("VRB", "makelele render " + canvas.getWidth() + "x" + canvas.getHeight());
+
+            }
+            catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+    }
+
+
     @Keep
     @SuppressWarnings("unused")
     String getStorageAbsolutePath() {
@@ -840,7 +889,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Keep
     @SuppressWarnings("unused")
     private void haltActivity(final int aReason) {
-        runOnUiThread(() -> {
+        for (SurfaceTexture texture: mTestSFContainer) {
+            texture.updateTexImage();
+        }
+        /*runOnUiThread(() -> {
             if (mConnectionAvailable && mWindowWidget != null) {
                 mWindowWidget.showAlert(getString(R.string.not_entitled_title), getString(R.string.not_entitled_message, getString(R.string.app_name)), new GeckoSession.PromptDelegate.AlertCallback() {
                     @Override
@@ -849,7 +901,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                     }
                 });
             }
-        });
+        });*/
     }
 
     void createOffscreenDisplay() {

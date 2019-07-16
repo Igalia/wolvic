@@ -7,6 +7,7 @@
 #include "DeviceUtils.h"
 #include "ElbowModel.h"
 #include "GestureDelegate.h"
+#include "VRBrowser.h"
 
 #include "vrb/CameraEye.h"
 #include "vrb/Color.h"
@@ -66,9 +67,13 @@ struct DeviceDelegateWaveVR::State {
   float foveatedFov;
   void* leftTextureQueue;
   void* rightTextureQueue;
+  void* leftExternal = nullptr;
+  void* rightExternal = nullptr;
   device::RenderMode renderMode;
   int32_t leftFBOIndex;
   int32_t rightFBOIndex;
+  int32_t leftExternalIndex = 0;
+  int32_t rightExternalIndex = 0;
   vrb::FBOPtr currentFBO;
   std::vector<vrb::FBOPtr> leftFBOQueue;
   std::vector<vrb::FBOPtr> rightFBOQueue;
@@ -89,6 +94,7 @@ struct DeviceDelegateWaveVR::State {
   bool ignoreNextRecenter;
   int32_t sixDoFControllerCount;
   bool handsCalculated;
+  bool eyesBound = false;
   State()
       : isRunning(true)
       , near(0.1f)
@@ -191,6 +197,13 @@ struct DeviceDelegateWaveVR::State {
     elbow = ElbowModel::Create();
   }
 
+  void InitializeExternal() {
+    leftExternal = WVR_ObtainTextureQueue(WVR_TextureTarget_2D_EXTERNAL, WVR_TextureFormat_RGBA, WVR_TextureType_UnsignedByte, renderWidth, renderHeight, 0);
+    FillExternal(leftExternal);
+    rightExternal = WVR_ObtainTextureQueue(WVR_TextureTarget_2D_EXTERNAL, WVR_TextureFormat_RGBA, WVR_TextureType_UnsignedByte, renderWidth, renderHeight, 0);
+    FillExternal(rightExternal);
+  }
+
   void InitializeTextureQueues() {
     ReleaseTextureQueues();
     VRB_LOG("Create texture queues: %dx%d", renderWidth, renderHeight);
@@ -198,6 +211,18 @@ struct DeviceDelegateWaveVR::State {
     FillFBOQueue(leftTextureQueue, leftFBOQueue);
     rightTextureQueue = WVR_ObtainTextureQueue(WVR_TextureTarget_2D, WVR_TextureFormat_RGBA, WVR_TextureType_UnsignedByte, renderWidth, renderHeight, 0);
     FillFBOQueue(rightTextureQueue, rightFBOQueue);
+  }
+
+  void FillExternal(void* aTextureQueue) {
+    VRB_ERROR("makelele FillExternal start");
+    for (int ix = 0; ix < WVR_GetTextureQueueLength(aTextureQueue); ix++) {
+      VRB_ERROR("makelele FillExternal iteration %d", ix);
+      GLuint texId = (GLuint)WVR_GetTexture(aTextureQueue, ix).id;
+      VRBrowser::SurfaceTextureTest(texId, renderWidth, renderHeight);
+      VRB_ERROR("makelele FillExternal texture %d", texId);
+    }
+
+    VRB_ERROR("makelele FillExternal end");
   }
 
   void ReleaseTextureQueues() {
@@ -386,6 +411,11 @@ DeviceDelegateWaveVR::SetRenderMode(const device::RenderMode aMode) {
 device::RenderMode
 DeviceDelegateWaveVR::GetRenderMode() {
   return m.renderMode;
+}
+
+void
+DeviceDelegateWaveVR::InitializeExternal() {
+  m.InitializeExternal();
 }
 
 void
@@ -666,10 +696,15 @@ HandToString(ElbowModel::HandEnum hand) {
 
 void
 DeviceDelegateWaveVR::StartFrame() {
+  m.eyesBound = false;
   VRB_GL_CHECK(glClearColor(m.clearColor.Red(), m.clearColor.Green(), m.clearColor.Blue(), m.clearColor.Alpha()));
   if (!m.lastSubmitDiscarded) {
     m.leftFBOIndex = WVR_GetAvailableTextureIndex(m.leftTextureQueue);
     m.rightFBOIndex = WVR_GetAvailableTextureIndex(m.rightTextureQueue);
+    if (m.leftExternal != nullptr) {
+      m.leftExternalIndex = WVR_GetAvailableTextureIndex(m.leftExternal);
+      m.rightExternalIndex = WVR_GetAvailableTextureIndex(m.rightExternal);
+    }
     m.UpdateFoveatedLevel();
   }
   // Update cameras
@@ -754,6 +789,7 @@ DeviceDelegateWaveVR::StartFrame() {
 
 void
 DeviceDelegateWaveVR::BindEye(const device::Eye aWhich) {
+  m.eyesBound = true;
   if (m.currentFBO) {
     m.currentFBO->Unbind();
   }
@@ -784,6 +820,30 @@ DeviceDelegateWaveVR::EndFrame(const bool aDiscard) {
   if (aDiscard) {
     return;
   }
+
+  if (m.leftExternal != nullptr) {
+    VRBrowser::HaltActivity(0);
+
+    //VRB_ERROR("makelele draw: %d and %d", m.leftExternalIndex, m.rightExternalIndex);
+
+    // External texture test
+    // Left eye
+    WVR_TextureParams_t leftEyeTexture = WVR_GetTexture(m.leftExternal, m.leftExternalIndex);
+    WVR_SubmitError result = WVR_SubmitFrame(WVR_Eye_Left, &leftEyeTexture);
+    if (result != WVR_SubmitError_None) {
+      VRB_ERROR("makelele Failed to submit left eye frame");
+    }
+
+    // Right eye
+    WVR_TextureParams_t rightEyeTexture = WVR_GetTexture(m.rightExternal, m.rightExternalIndex);
+    result = WVR_SubmitFrame(WVR_Eye_Right, &rightEyeTexture);
+    if (result != WVR_SubmitError_None) {
+      VRB_ERROR("makelele Failed to submit right eye frame");
+    }
+
+    return;
+  }
+
   // Left eye
   WVR_TextureParams_t leftEyeTexture = WVR_GetTexture(m.leftTextureQueue, m.leftFBOIndex);
   WVR_SubmitError result = WVR_SubmitFrame(WVR_Eye_Left, &leftEyeTexture);

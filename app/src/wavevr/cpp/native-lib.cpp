@@ -100,6 +100,7 @@ JNI_METHOD(void, initializeJava)
 (JNIEnv* aEnv, jobject aActivity, jobject aAssets) {
   sJavaInitialized = true;
   BrowserWorld::Instance().InitializeJava(aEnv, aActivity, aAssets);
+  sDevice->InitializeExternal();
 }
 
 jint JNI_OnLoad(JavaVM* aVm, void*) {

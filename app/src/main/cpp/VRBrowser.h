@@ -37,6 +37,7 @@ int32_t GetPointerColor();
 bool AreLayersEnabled();
 void SetDeviceType(const jint aType);
 void HaltActivity(const jint aReason);
+void SurfaceTextureTest(const jint aTextureId, const jint w, const jint h);
 } // namespace VRBrowser;
 
 } // namespace crow

@@ -37,6 +37,7 @@ public:
   void EndFrame(const bool aDiscard) override;
   // DeviceDelegateWaveVR interface
   bool IsRunning();
+  void InitializeExternal();
 protected:
   struct State;
   DeviceDelegateWaveVR(State& aState);
