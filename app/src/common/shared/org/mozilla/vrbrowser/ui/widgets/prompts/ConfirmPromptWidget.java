@@ -96,7 +96,7 @@ public class ConfirmPromptWidget extends PromptWidget {
         // Returning 0 should be Ok but is in fact Cancel.
         if (btnMsg[POSITIVE] != null) {
             mButtons[POSITIVE].setText(btnMsg[POSITIVE]);
-            mButtons[POSITIVE].setTag(NEGATIVE);
+            mButtons[POSITIVE].setTag(POSITIVE);
             mButtons[POSITIVE].setVisibility(VISIBLE);
         }
         if (btnMsg[NEUTRAL] != null) {
@@ -106,7 +106,7 @@ public class ConfirmPromptWidget extends PromptWidget {
         }
         if (btnMsg[NEGATIVE] != null) {
             mButtons[NEGATIVE].setText(btnMsg[NEGATIVE]);
-            mButtons[NEGATIVE].setTag(POSITIVE);
+            mButtons[NEGATIVE].setTag(NEGATIVE);
             mButtons[NEGATIVE].setVisibility(VISIBLE);
         }
     }

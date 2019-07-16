@@ -575,7 +575,6 @@ public class WindowWidget extends UIWidget implements SessionStore.SessionChange
     }
 
     private void setPrivateBrowsingEnabled(boolean isEnabled) {
-        // TODO: Fade in/out the browser window. Waiting for https://github.com/MozillaReality/FirefoxReality/issues/77
     }
 
     public void setNoInternetToastVisible(boolean aVisible) {
