@@ -99,9 +99,17 @@ try {
     qs.delete('mozVideoProjection');
     switch (currentProjection) {
       case '360':
-        qs.set('mozVideoProjection', '360');
-        break;
       case '360_auto':
+      case '360s':
+      case '360s_auto':
+      case '180':
+      case '180_auto':
+      case '180lr':
+      case '180lr_auto':
+      case '180tb':
+      case '180tb_auto':
+        qs.set('mozVideoProjection', currentProjection);
+        break;
       default:
         qs.set('mozVideoProjection', auto ? '360_auto' : '360');
         break;

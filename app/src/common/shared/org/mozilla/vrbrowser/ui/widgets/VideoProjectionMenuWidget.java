@@ -145,16 +145,16 @@ public class VideoProjectionMenuWidget extends MenuWidget {
 
         autoEnter.set(projection.endsWith("_auto"));
 
-        if (projection.startsWith("360")) {
-            return VIDEO_PROJECTION_360;
-        } else if (projection.startsWith("360s")) {
+        if (projection.startsWith("360s")) {
             return VIDEO_PROJECTION_360_STEREO;
-        } else if (projection.startsWith("180")) {
-            return VIDEO_PROJECTION_180;
+        } else if (projection.startsWith("360")) {
+            return VIDEO_PROJECTION_360;
         } else if (projection.startsWith("180lr")) {
             return VIDEO_PROJECTION_180_STEREO_LEFT_RIGHT;
         } else if (projection.startsWith("180tb")) {
             return VIDEO_PROJECTION_180_STEREO_TOP_BOTTOM;
+        } else if (projection.startsWith("180")) {
+            return VIDEO_PROJECTION_180;
         } else if (projection.startsWith("3d")) {
             return VIDEO_PROJECTION_3D_SIDE_BY_SIDE;
         }
