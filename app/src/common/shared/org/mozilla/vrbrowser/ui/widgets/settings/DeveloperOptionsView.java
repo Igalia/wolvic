@@ -27,6 +27,7 @@ class DeveloperOptionsView extends SettingsView {
     private SwitchSetting mRemoteDebuggingSwitch;
     private SwitchSetting mConsoleLogsSwitch;
     private SwitchSetting mMultiprocessSwitch;
+    private SwitchSetting mPerformanceSwitch;
     private SwitchSetting mServoSwitch;
     private SingleEditSetting mHomepageEdit;
     private String mDefaultHomepageUrl;
@@ -72,6 +73,10 @@ class DeveloperOptionsView extends SettingsView {
         mMultiprocessSwitch = findViewById(R.id.multiprocess_switch);
         mMultiprocessSwitch.setOnCheckedChangeListener(mMultiprocessListener);
         setMultiprocess(SettingsStore.getInstance(getContext()).isMultiprocessEnabled(), false);
+
+        mPerformanceSwitch = findViewById(R.id.performance_monitor_switch);
+        mPerformanceSwitch.setOnCheckedChangeListener(mPerformanceListener);
+        setPerformance(SettingsStore.getInstance(getContext()).isPerformanceMonitorEnabled(), false);
 
         mServoSwitch = findViewById(R.id.servo_switch);
         if (!isServoAvailable()) {
@@ -128,6 +133,10 @@ class DeveloperOptionsView extends SettingsView {
 
     private SwitchSetting.OnCheckedChangeListener mMultiprocessListener = (compoundButton, value, doApply) -> {
         setMultiprocess(value, doApply);
+    };
+
+    private SwitchSetting.OnCheckedChangeListener mPerformanceListener = (compoundButton, value, doApply) -> {
+        setPerformance(value, doApply);
     };
 
     private SwitchSetting.OnCheckedChangeListener mServoListener = (compoundButton, b, doApply) -> {
@@ -198,6 +207,14 @@ class DeveloperOptionsView extends SettingsView {
         if (doApply) {
             SessionStore.get().setMultiprocess(value);
         }
+    }
+
+    private void setPerformance(boolean value, boolean doApply) {
+        mPerformanceSwitch.setOnCheckedChangeListener(null);
+        mPerformanceSwitch.setValue(value, false);
+        mPerformanceSwitch.setOnCheckedChangeListener(mPerformanceListener);
+
+        SettingsStore.getInstance(getContext()).setPerformanceMonitorEnabled(value);
     }
 
     private void setServo(boolean value, boolean doApply) {

@@ -48,29 +48,32 @@ const char* kSetDeviceType = "setDeviceType";
 const char* kSetDeviceTypeSignature = "(I)V";
 const char* kHaltActivity = "haltActivity";
 const char* kHaltActivitySignature = "(I)V";
+const char* kHandlePoorPerformance = "handlePoorPerformance";
+const char* kHandlePoorPerformanceSignature = "()V";
 
-JNIEnv* sEnv;
-jclass sBrowserClass;
-jobject sActivity;
-jmethodID sDispatchCreateWidget;
-jmethodID sDispatchCreateWidgetLayer;
-jmethodID sHandleMotionEvent;
-jmethodID sHandleScrollEvent;
-jmethodID sHandleAudioPose;
-jmethodID sHandleGesture;
-jmethodID sHandleResize;
-jmethodID sHandleBack;
-jmethodID sRegisterExternalContext;
-jmethodID sPauseCompositor;
-jmethodID sResumeCompositor;
-jmethodID sRenderPointerLayer;
-jmethodID sGetStorageAbsolutePath;
-jmethodID sIsOverrideEnvPathEnabled;
-jmethodID sGetActiveEnvironment;
-jmethodID sGetPointerColor;
-jmethodID sAreLayersEnabled;
-jmethodID sSetDeviceType;
-jmethodID sHaltActivity;
+JNIEnv* sEnv = nullptr;
+jclass sBrowserClass = nullptr;
+jobject sActivity = nullptr;
+jmethodID sDispatchCreateWidget = nullptr;
+jmethodID sDispatchCreateWidgetLayer = nullptr;
+jmethodID sHandleMotionEvent = nullptr;
+jmethodID sHandleScrollEvent = nullptr;
+jmethodID sHandleAudioPose = nullptr;
+jmethodID sHandleGesture = nullptr;
+jmethodID sHandleResize = nullptr;
+jmethodID sHandleBack = nullptr;
+jmethodID sRegisterExternalContext = nullptr;
+jmethodID sPauseCompositor = nullptr;
+jmethodID sResumeCompositor = nullptr;
+jmethodID sRenderPointerLayer = nullptr;
+jmethodID sGetStorageAbsolutePath = nullptr;
+jmethodID sIsOverrideEnvPathEnabled = nullptr;
+jmethodID sGetActiveEnvironment = nullptr;
+jmethodID sGetPointerColor = nullptr;
+jmethodID sAreLayersEnabled = nullptr;
+jmethodID sSetDeviceType = nullptr;
+jmethodID sHaltActivity = nullptr;
+jmethodID sHandlePoorPerformance = nullptr;
 }
 
 namespace crow {
@@ -109,6 +112,7 @@ VRBrowser::InitializeJava(JNIEnv* aEnv, jobject aActivity) {
   sAreLayersEnabled = FindJNIMethodID(sEnv, sBrowserClass, kAreLayersEnabled, kAreLayersEnabledSignature);
   sSetDeviceType = FindJNIMethodID(sEnv, sBrowserClass, kSetDeviceType, kSetDeviceTypeSignature);
   sHaltActivity = FindJNIMethodID(sEnv, sBrowserClass, kHaltActivity, kHaltActivitySignature);
+  sHandlePoorPerformance = FindJNIMethodID(sEnv, sBrowserClass, kHandlePoorPerformance, kHandlePoorPerformanceSignature);
 }
 
 void
@@ -316,5 +320,11 @@ VRBrowser::HaltActivity(const jint aReason) {
   CheckJNIException(sEnv, __FUNCTION__);
 }
 
+void
+VRBrowser::HandlePoorPerformance() {
+  if (!ValidateMethodID(sEnv, sActivity, sHandlePoorPerformance, __FUNCTION__)) { return; }
+  sEnv->CallVoidMethod(sActivity, sHandlePoorPerformance);
+  CheckJNIException(sEnv, __FUNCTION__);
+}
 
 } // namespace crow

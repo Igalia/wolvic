@@ -44,6 +44,7 @@ public class SettingsStore {
     public final static boolean CONSOLE_LOGS_DEFAULT = false;
     public final static boolean ENV_OVERRIDE_DEFAULT = false;
     public final static boolean MULTIPROCESS_DEFAULT = false;
+    public final static boolean PERFORMANCE_MONITOR_DEFAULT = true;
     public final static boolean TRACKING_DEFAULT = true;
     public final static boolean SERVO_DEFAULT = false;
     public final static int UA_MODE_DEFAULT = GeckoSessionSettings.USER_AGENT_MODE_VR;
@@ -176,6 +177,16 @@ public class SettingsStore {
     public void setMultiprocessEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_multiprocess), isEnabled);
+        editor.commit();
+    }
+
+    public boolean isPerformanceMonitorEnabled() {
+        return mPrefs.getBoolean(mContext.getString(R.string.settings_key_performance_monitor), PERFORMANCE_MONITOR_DEFAULT);
+    }
+
+    public void setPerformanceMonitorEnabled(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_performance_monitor), isEnabled);
         editor.commit();
     }
 

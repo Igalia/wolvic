@@ -69,7 +69,9 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import androidx.annotation.IntDef;
@@ -144,6 +146,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private boolean mConnectionAvailable = true;
     private AudioManager mAudioManager;
     private Widget mActiveDialog;
+    private Set<String> mPoorPerformanceWhiteList;
 
     private boolean callOnAudioManager(Consumer<AudioManager> fn) {
         if (mAudioManager == null) {
@@ -243,6 +246,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         GeolocationWrapper.update(this);
 
         mConnectivityReceiver = new ConnectivityReceiver();
+        mPoorPerformanceWhiteList = new HashSet<>();
     }
 
     protected void initializeWorld() {
@@ -849,6 +853,38 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                     }
                 });
             }
+        });
+    }
+
+    @Keep
+    @SuppressWarnings("unused")
+    private void handlePoorPerformance() {
+        runOnUiThread(() -> {
+            if (!mSettings.isPerformanceMonitorEnabled()) {
+                return;
+            }
+            // Don't block poorly performing immersive pages.
+            if (mIsPresentingImmersive) {
+                return;
+            }
+            if (mWindowWidget == null) {
+                return;
+            }
+            final String originalUrl = SessionStore.get().getCurrentUri();
+            if (mPoorPerformanceWhiteList.contains(originalUrl)) {
+                return;
+            }
+            SessionStore.get().loadUri("about:blank");
+            final String[] buttons = {getString(R.string.ok_button), null, getString(R.string.performance_unblock_page)};
+            mWindowWidget.showButtonPrompt(getString(R.string.performance_title), getString(R.string.performance_message), buttons, new GeckoSession.PromptDelegate.ButtonCallback() {
+                @Override
+                public void confirm(int button) {
+                    if (button == 0) {
+                        mPoorPerformanceWhiteList.add(originalUrl);
+                        SessionStore.get().loadUri(originalUrl);
+                    }
+                }
+            });
         });
     }
 

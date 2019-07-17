@@ -232,6 +232,12 @@
          A dialog should appear with a field labeled with the text, 'Enable Multiprocess'. -->
     <string name="developer_options_multiprocess">Enable Multiprocess</string>
 
+    <!-- This string labels and On/Off switch in the developer options dialog and is used to toggle
+         the performance monitor. The Performance monitor is used to detect pages that cause the
+         browser to run below a target framerate and pauses the page to restore performance.
+    -->
+    <string name="developer_options_performance_monitor">Enable Performance Monitor</string>
+
     <!-- The string labels an On/Off switch in the developer options dialog and is used to toggle enabling Servo. -->
     <string name="developer_options_servo">Enable Servo</string>
 
@@ -699,4 +705,11 @@
     <!-- This string is displayed in the message body of the alert dialog shown when the user does not have permission to run the application on the device.
          '%1$s' will be replace at runtime with the app's name. -->
     <string name="not_entitled_message">%1$s does not have permission to run on this device and will now exit.</string>
+
+    <!-- This string is displayed in a button that when pressed allows a user to view a page that has been blocked from being displayed.-->
+    <string name="performance_unblock_page">Unblock Page</string>
+    <!-- This string is displayed as the title of a dialog displayed when poor web page performance has been detected. -->
+    <string name="performance_title">Poor Performance Detected</string>
+    <!-- This string is displayed as the message body of a dialog displayed when poor web page performance has been detected and the page has been unloaded to restore performance. -->
+    <string name="performance_message">The current web page is affecting performance and has been suspended. Reducing the window size can help improve a web page with poor performance.</string>
 </resources>

@@ -39,6 +39,7 @@
 #include "vrb/ModelLoaderAndroid.h"
 #include "vrb/NodeFactoryObj.h"
 #include "vrb/ParserObj.h"
+#include "vrb/PerformanceMonitor.h"
 #include "vrb/RenderContext.h"
 #include "vrb/RenderState.h"
 #include "vrb/SurfaceTextureFactory.h"
@@ -118,6 +119,25 @@ SurfaceObserver::SurfaceTextureCreationError(const std::string& aName, const std
   
 }
 
+class PerformanceObserver;
+typedef std::shared_ptr<PerformanceObserver> PerformanceObserverPtr;
+
+class PerformanceObserver : public PerformanceMonitorObserver {
+public:
+  void PoorPerformanceDetected(const double& aTargetFrameRate, const double& aAverageFrameRate) override;
+  void PerformanceRestored(const double& aTargetFrameRate, const double& aAverageFrameRate) override;
+};
+
+void
+PerformanceObserver::PoorPerformanceDetected(const double& aTargetFrameRate, const double& aAverageFrameRate)  {
+  crow::VRBrowser::HandlePoorPerformance();
+}
+
+void
+PerformanceObserver::PerformanceRestored(const double& aTargetFrameRate, const double& aAverageFrameRate)  {
+
+}
+
 } // namespace
 
 namespace crow {
@@ -160,6 +180,7 @@ struct BrowserWorld::State {
   LoadingAnimationPtr loadingAnimation;
   SplashAnimationPtr splashAnimation;
   VRVideoPtr vrVideo;
+  PerformanceMonitorPtr monitor;
 
   State() : paused(true), glInitialized(false), modelsLoaded(false), env(nullptr), cylinderDensity(0.0f), nearClip(0.1f),
             farClip(300.0f), activity(nullptr), windowsInitialized(false), exitImmersiveRequested(false), loaderDelay(0) {
@@ -183,6 +204,8 @@ struct BrowserWorld::State {
     fadeAnimation = FadeAnimation::Create(create);
     loadingAnimation = LoadingAnimation::Create(create);
     splashAnimation = SplashAnimation::Create(create);
+    monitor = PerformanceMonitor::Create(create);
+    monitor->AddPerformanceMonitorObserver(std::make_shared<PerformanceObserver>());
   }
 
   void CheckBackButton();
@@ -540,12 +563,14 @@ void
 BrowserWorld::Pause() {
   ASSERT_ON_RENDER_THREAD();
   m.paused = true;
+  m.monitor->Pause();
 }
 
 void
 BrowserWorld::Resume() {
   ASSERT_ON_RENDER_THREAD();
   m.paused = false;
+  m.monitor->Resume();
 }
 
 bool

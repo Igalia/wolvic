@@ -598,6 +598,16 @@ public class WindowWidget extends UIWidget implements SessionStore.SessionChange
         mAlertPrompt.show(REQUEST_FOCUS);
     }
 
+    public void showButtonPrompt(String title, @NonNull String msg, @NonNull String[] btnMsg, @NonNull ButtonCallback callback) {
+        mConfirmPrompt = new ConfirmPromptWidget(getContext());
+        mConfirmPrompt.mWidgetPlacement.parentHandle = getHandle();
+        mConfirmPrompt.setTitle(title);
+        mConfirmPrompt.setMessage(msg);
+        mConfirmPrompt.setButtons(btnMsg);
+        mConfirmPrompt.setDelegate(callback);
+        mConfirmPrompt.show(REQUEST_FOCUS);
+    }
+
     // PromptDelegate
 
     @Override

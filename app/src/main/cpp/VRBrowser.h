@@ -37,6 +37,7 @@ int32_t GetPointerColor();
 bool AreLayersEnabled();
 void SetDeviceType(const jint aType);
 void HaltActivity(const jint aReason);
+void HandlePoorPerformance();
 } // namespace VRBrowser;
 
 } // namespace crow
