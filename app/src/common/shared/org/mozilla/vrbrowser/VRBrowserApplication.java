@@ -7,18 +7,21 @@ package org.mozilla.vrbrowser;
 
 import android.app.Application;
 
+import org.mozilla.vrbrowser.browser.Places;
 import org.mozilla.vrbrowser.db.AppDatabase;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 
 public class VRBrowserApplication extends Application {
 
     private AppExecutors mAppExecutors;
+    private Places mPlaces;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
         mAppExecutors = new AppExecutors();
+        mPlaces = new Places(this);
 
         TelemetryWrapper.init(this);
     }
@@ -29,5 +32,9 @@ public class VRBrowserApplication extends Application {
 
     public DataRepository getRepository() {
         return DataRepository.getInstance(getDatabase(), mAppExecutors);
+    }
+
+    public Places getPlaces() {
+        return mPlaces;
     }
 }
