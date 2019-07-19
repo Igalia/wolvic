@@ -121,6 +121,7 @@
     <item name="tray_world_width" format="float" type="dimen">1.2</item>
     <dimen name="tray_width">165dp</dimen>
     <dimen name="tray_height">40dp</dimen>
+    <item name="tray_tooltip_density" format="float" type="dimen">4.0</item>
 
     <!-- Developer Options Panel -->
     <dimen name="developer_options_width">585dp</dimen>
@@ -164,6 +165,7 @@
     <dimen name="dialog_padding_sides">30dp</dimen>
 
     <!-- Text sizes -->
+    <dimen name="text_huge_size">28sp</dimen>
     <dimen name="text_biggest_size">24sp</dimen>
     <dimen name="text_bigger_size">22sp</dimen>
     <dimen name="text_big_size">18sp</dimen>
@@ -187,4 +189,8 @@
     <!-- Blur -->
     <dimen name="blur_radius">2dp</dimen>
     <dimen name="blur_radius_half">1dp</dimen>
+
+    <!-- Tooltip -->
+    <item name="tooltip_z_distance" format="float" type="dimen">0.02</item>
+    <item name="tooltip_delay" format="integer" type="integer">1000</item>
 </resources>

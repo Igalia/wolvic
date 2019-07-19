@@ -20,9 +20,18 @@
         <attr name="activeModeTintColorList" format="reference|color" />
         <attr name="privateModeBackground" format="integer" />
         <attr name="activeModeBackground" format="integer" />
+        <attr name="tooltipDelay" />
+        <attr name="tooltipPosition" />
+        <attr name="tooltipDensity" />
     </declare-styleable>
 
     <attr name="description" format="string" />
+    <attr name="tooltipDelay" format="integer" />
+    <attr name="tooltipPosition" format="enum">
+        <enum name="top" value="0"/>
+        <enum name="bottom" value="1"/>
+    </attr>
+    <attr name="tooltipDensity" format="dimension" />
 
     <declare-styleable name="SwitchSetting">
         <attr name="description" />

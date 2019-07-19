@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -18,16 +19,25 @@
             <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/privateButton"
                 style="@style/trayButtonMiddleTheme"
+                android:tooltipText="@string/private_browsing_enter_tooltip"
+                app:tooltipDensity="@dimen/tray_tooltip_density"
+                app:tooltipPosition="top"
                 android:src="@drawable/ic_icon_private_browsing"/>
 
             <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/bookmarksButton"
                 style="@style/trayButtonMiddleTheme"
+                android:tooltipText="@string/open_bookmarks_tooltip"
+                app:tooltipDensity="@dimen/tray_tooltip_density"
+                app:tooltipPosition="top"
                 android:src="@drawable/ic_icon_bookmarks"/>
 
             <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/settingsButton"
                 style="@style/trayButtonEndTheme"
+                android:tooltipText="@string/settings_tooltip"
+                app:tooltipDensity="@dimen/tray_tooltip_density"
+                app:tooltipPosition="top"
                 android:src="@drawable/ic_icon_settings"/>
         </LinearLayout>
 

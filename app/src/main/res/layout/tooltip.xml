@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <FrameLayout
+        android:id="@+id/layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="15dp"
+        android:layout_gravity="center"
+        android:background="@drawable/tooltip_background">
+
+        <TextView
+            android:id="@+id/tooltipText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textSize="@dimen/text_huge_size"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textColor="@color/smoke"
+            android:shadowColor="@color/asphalt_blur"
+            android:shadowDx="2.0"
+            android:shadowDy="2.0"
+            android:shadowRadius="0.5"
+            tools:text="Text" />
+    </FrameLayout>
+</merge>

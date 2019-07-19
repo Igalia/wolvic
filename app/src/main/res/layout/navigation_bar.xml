@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
@@ -17,6 +18,7 @@
                 style="?attr/navigationBarButtonStyle"
                 android:layout_weight="1"
                 android:tint="@color/midnight"
+                android:tooltipText="@string/back_tooltip"
                 android:src="@drawable/ic_icon_back" />
 
             <org.mozilla.vrbrowser.ui.views.UIButton
@@ -24,6 +26,7 @@
                 style="?attr/navigationBarButtonStyle"
                 android:layout_weight="1"
                 android:layout_marginStart="10dp"
+                android:tooltipText="@string/forward_tooltip"
                 android:src="@drawable/ic_icon_forward" />
 
             <org.mozilla.vrbrowser.ui.views.UIButton
@@ -31,6 +34,7 @@
                 style="?attr/navigationBarButtonStyle"
                 android:layout_weight="1"
                 android:layout_marginStart="10dp"
+                android:tooltipText="@string/refresh_tooltip"
                 android:src="@drawable/ic_icon_reload" />
 
             <org.mozilla.vrbrowser.ui.views.UIButton
@@ -38,6 +42,7 @@
                 style="?attr/navigationBarButtonStyle"
                 android:layout_weight="1"
                 android:layout_marginStart="10dp"
+                android:tooltipText="@string/home_tooltip"
                 android:src="@drawable/ic_icon_home" />
 
             <org.mozilla.vrbrowser.ui.views.NavigationURLBar
@@ -54,6 +59,7 @@
                 style="?attr/navigationBarButtonStyle"
                 android:layout_weight="1"
                 android:layout_marginStart="10dp"
+                android:tooltipText="@string/servo_tooltip"
                 android:src="@drawable/ic_icon_servo" />
 
             <org.mozilla.vrbrowser.ui.views.UIButton
@@ -61,6 +67,7 @@
                 style="?attr/navigationBarButtonStyle"
                 android:layout_weight="1"
                 android:layout_marginStart="10dp"
+                android:tooltipText="@string/resize_tooltip"
                 android:src="@drawable/ic_icon_resize" />
         </LinearLayout>
 
@@ -85,6 +92,7 @@
             <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/projectionButton"
                 style="?attr/fullScreenButtonStyle"
+                android:tooltipText="@string/video_mode_tooltip"
                 android:src="@drawable/ic_icon_vr_projection" />
             <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/brightnessButton"

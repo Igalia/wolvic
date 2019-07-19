@@ -629,9 +629,21 @@
          speech-to-text recognition. -->
     <string name="voice_search_tooltip">Voice Search</string>
 
+    <!-- This string is for the tooltip that appears upon hovering the 'User Agent' button in the
+         browser's navigation bar. The button it labels, when pressed, change the currently used user agent. -->
+    <string name="user_agent_tooltip">User Agent</string>
+
     <!-- This string is for the tooltip that when clicking the 'Info' (ⓘ) icon visible next to the current website's
          URL in the URL bar. The button it labels, when pressed, shows information about the site. -->
     <string name="site_info_tooltip">Show site info.</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Servo' button in the browser's navigation bar.
+         'Servo' refers to the Servo engine. -->
+    <string name="servo_tooltip">Use Servo</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Resize' button in the browser's navigation bar.
+         'Resize' refers to the button used to resize the browset window. -->
+    <string name="resize_tooltip">Resize</string>
 
     <!-- This string is for the tooltip that appears when the user is not in the browser's Private Browsing mode
          and hovers over the 'Private Browsing' icon in the browser's tray menu. -->
@@ -644,10 +656,31 @@
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the target url in a new window. -->
     <string name="context_menu_open_new_window">Open in a new window.</string>
 
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmark' icon in the
+         browser's navigation bar. The button it labels, when pressed, bookmarks the currently open web site. -->
+    <string name="bookmark_tooltip">Bookmark this page</string>
+
     <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmarks' icon in the
-         browser's navigation bar. The button it labels, when pressed, opens a list view of the user's saved
+         tray. The button it labels, when pressed, opens a list view of the user's saved
          Bookmarks. -->
     <string name="bookmarks_tooltip">Bookmarks</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmarks' icon in the
+         tray and the Bookmarks view is closed. The button it labels, when pressed, opens a list view of the user's saved
+         Bookmarks. -->
+    <string name="open_bookmarks_tooltip">Open Bookmarks</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmarks' icon in the
+         tray and the Bookmarks view is closed. The button it labels, when pressed, closes the Bookmarks view. -->
+    <string name="close_bookmarks_tooltip">Close Bookmarks</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Settings' icon in the
+         tray. The button it labels, when pressed, opens the Settings panel. -->
+    <string name="settings_tooltip">Settings</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'New Window' icon in the
+         tray. The button it labels, when pressed, opens a new browser window. -->
+    <string name="new_window_tooltip">Open a New Window</string>
 
     <!-- This string is for the tooltip that appears when the user hovers over the down-arrow icon that appears in the
          URL bar upon hover. The icon it labels, when pressed, expands a list of recently visited websites in the

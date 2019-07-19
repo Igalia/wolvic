@@ -10,6 +10,8 @@ import android.content.res.Resources;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 
+import androidx.annotation.NonNull;
+
 public class WidgetPlacement {
     static final float WORLD_DPI_RATIO = 2.0f/720.0f;
 
@@ -124,6 +126,11 @@ public class WidgetPlacement {
 
     public static float convertPixelsToDp(Context aContext, float px){
         return px / ((float) aContext.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+    }
+
+    public static float worldToWidgetRatio(@NonNull UIWidget widget) {
+        float widgetWorldWidth = widget.mWidgetPlacement.worldWidth;
+        return ((widgetWorldWidth/widget.mWidgetPlacement.width)/WORLD_DPI_RATIO);
     }
 
 }

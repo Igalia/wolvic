@@ -5,16 +5,22 @@
 
 package org.mozilla.vrbrowser.ui.views;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.util.AttributeSet;
-
-import org.mozilla.vrbrowser.R;
+import android.view.MotionEvent;
 
 import androidx.annotation.IdRes;
 import androidx.appcompat.widget.AppCompatImageButton;
+
+import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.ui.widgets.TooltipWidget;
+import org.mozilla.vrbrowser.ui.widgets.UIWidget;
+import org.mozilla.vrbrowser.utils.ViewUtils;
 
 public class UIButton extends AppCompatImageButton implements CustomUIButton {
 
@@ -31,7 +37,12 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
     private @IdRes int mTintColorListRes;
     private @IdRes int mPrivateModeTintColorListRes;
     private @IdRes int mActiveModeTintColorListRes;
+    private TooltipWidget mTooltipView;
+    private String mTooltipText;
     private State mState;
+    private int mTooltipDelay;
+    private float mTooltipDensity;
+    private ViewUtils.TooltipPosition mTooltipPosition;
 
     public UIButton(Context context, AttributeSet attrs) {
         this(context, attrs, R.attr.imageButtonStyle);
@@ -45,27 +56,53 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
         if (mTintColorListRes != 0) {
             setTintColorList(mTintColorListRes);
         }
-        attributes.recycle();
-
-        attributes = context.obtainStyledAttributes(attrs, R.styleable.UIButton, defStyleAttr, 0);
         mPrivateModeBackground = attributes.getDrawable(R.styleable.UIButton_privateModeBackground);
-        attributes.recycle();
-
-        attributes = context.obtainStyledAttributes(attrs, R.styleable.UIButton, defStyleAttr, 0);
         mActiveModeBackground = attributes.getDrawable(R.styleable.UIButton_activeModeBackground);
-        attributes.recycle();
-
-        attributes = context.obtainStyledAttributes(attrs, R.styleable.UIButton, defStyleAttr, 0);
         mPrivateModeTintColorListRes = attributes.getResourceId(R.styleable.UIButton_privateModeTintColorList, 0);
-        attributes.recycle();
-
-        attributes = context.obtainStyledAttributes(attrs, R.styleable.UIButton, defStyleAttr, 0);
         mActiveModeTintColorListRes = attributes.getResourceId(R.styleable.UIButton_activeModeTintColorList, 0);
+        mTooltipDelay = attributes.getInt(R.styleable.UIButton_tooltipDelay, getResources().getInteger(R.integer.tooltip_delay));
+        mTooltipPosition = ViewUtils.TooltipPosition.fromId(attributes.getInt(R.styleable.UIButton_tooltipPosition, ViewUtils.TooltipPosition.BOTTOM.ordinal()));
+        mTooltipDensity = attributes.getFloat(R.styleable.UIButton_tooltipDensity, getContext().getResources().getDisplayMetrics().density);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            TypedArray arr = context.obtainStyledAttributes(attrs, new int [] {android.R.attr.tooltipText});
+            mTooltipText = arr.getString(0);
+        }
         attributes.recycle();
 
         mBackground = getBackground();
 
         mState = State.NORMAL;
+    }
+
+    @TargetApi(Build.VERSION_CODES.O)
+    public String getTooltip() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+            return mTooltipText;
+        else
+            return getTooltipText().toString();
+    }
+
+    @TargetApi(Build.VERSION_CODES.O)
+    public void setTooltip(String text) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+            mTooltipText = text;
+        else
+            setTooltipText(text);
+    }
+
+    @Override
+    public boolean onHoverEvent(MotionEvent event) {
+        if (getTooltip() != null) {
+            if (event.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
+                getHandler().postDelayed(mShowTooltipRunnable, mTooltipDelay);
+
+            } else if (event.getAction() == MotionEvent.ACTION_HOVER_EXIT) {
+                getHandler().removeCallbacks(mShowTooltipRunnable);
+                getHandler().post(mHideTooltipRunnable);
+            }
+        }
+
+        return super.onHoverEvent(event);
     }
 
     public void setTintColorList(int aColorListId) {
@@ -143,5 +180,27 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
             setTintColorList(mActiveModeTintColorListRes);
         }
     }
+
+    private Runnable mShowTooltipRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (mTooltipView != null && mTooltipView.isVisible())
+                return;
+
+            mTooltipView = new TooltipWidget(getContext());
+            mTooltipView.setText(getTooltip());
+            mTooltipView.setLayoutParams(UIButton.this, mTooltipPosition, mTooltipDensity);
+            mTooltipView.show(UIWidget.CLEAR_FOCUS);
+        }
+    };
+
+    private Runnable mHideTooltipRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (mTooltipView != null) {
+                mTooltipView.hide(UIWidget.REMOVE_WIDGET);
+            }
+        }
+    };
 
 }

@@ -66,12 +66,14 @@
                 android:id="@+id/microphoneButton"
                 style="@style/urlBarIconTheme"
                 android:src="@drawable/ic_icon_microphone"
+                android:tooltipText="@string/voice_search_tooltip"
                 android:tint="@color/fog" />
 
             <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/bookmarkButton"
                 style="@style/urlBarIconThemeEnd"
                 android:src="@drawable/ic_icon_bookmark"
+                android:tooltipText="@string/bookmark_tooltip"
                 android:tint="@color/fog" />
         </LinearLayout>
     </FrameLayout>

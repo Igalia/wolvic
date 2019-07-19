@@ -248,10 +248,12 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
             if (isPrivateMode) {
                 mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
                 mPrivateButton.setImageResource(R.drawable.ic_icon_private_browsing_on);
+                mPrivateButton.setTooltip(getResources().getString(R.string.private_browsing_exit_tooltip));
 
             } else {
                 mWidgetManager.popWorldBrightness(this);
                 mPrivateButton.setImageResource(R.drawable.ic_icon_private_browsing);
+                mPrivateButton.setTooltip(getResources().getString(R.string.private_browsing_enter_tooltip));
             }
         }
 
@@ -329,11 +331,13 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
 
     @Override
     public void onBookmarksShown() {
+        mBookmarksButton.setTooltip(getResources().getString(R.string.close_bookmarks_tooltip));
         mBookmarksButton.setActiveMode(true);
     }
 
     @Override
     public void onBookmarksHidden() {
+        mBookmarksButton.setTooltip(getResources().getString(R.string.open_bookmarks_tooltip));
         mBookmarksButton.setActiveMode(false);
     }
 
