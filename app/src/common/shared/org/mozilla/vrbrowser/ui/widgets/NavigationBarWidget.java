@@ -66,7 +66,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private boolean mIsResizing;
     private boolean mIsInVRVideo;
     private boolean mAutoEnteredVRVideo;
-    private WidgetPlacement mSizeBeforeFullScreen;
+    private WidgetPlacement mPlacementBeforeResize;
     private Runnable mResizeBackHandler;
     private Runnable mFullScreenBackHandler;
     private Runnable mVRVideoBackHandler;
@@ -126,10 +126,10 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mBrightnessButton = findViewById(R.id.brightnessButton);
         mFullScreenResizeButton = findViewById(R.id.fullScreenResizeEnterButton);
         mProjectionButton = findViewById(R.id.projectionButton);
-        mSizeBeforeFullScreen = new WidgetPlacement(aContext);
+        mPlacementBeforeResize = new WidgetPlacement(aContext);
 
 
-        mResizeBackHandler = () -> exitResizeMode(true);
+        mResizeBackHandler = () -> exitResizeMode(ResizeAction.RESTORE_SIZE);
 
         mFullScreenBackHandler = this::exitFullScreenMode;
         mVRVideoBackHandler = new Runnable() {
@@ -207,7 +207,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
         mResizeExitButton.setOnClickListener(view -> {
             view.requestFocusFromTouch();
-            exitResizeMode(true);
+            exitResizeMode(ResizeAction.KEEP_SIZE);
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
@@ -373,7 +373,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     private void setFullScreenSize() {
-        mSizeBeforeFullScreen.copyFrom(mWindowWidget.getPlacement());
+        mPlacementBeforeResize.copyFrom(mWindowWidget.getPlacement());
         // Set browser fullscreen size
         float aspect = SettingsStore.getInstance(getContext()).getWindowAspect();
         Media media = SessionStore.get().getFullScreenVideo();
@@ -437,7 +437,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             }
         }, 50);
 
-        mWindowWidget.getPlacement().copyFrom(mSizeBeforeFullScreen);
+        mWindowWidget.getPlacement().copyFrom(mPlacementBeforeResize);
         mWidgetManager.updateWidget(mWindowWidget);
         mWindowWidget.setSaveResizeChanges(true);
 
@@ -459,6 +459,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             return;
         }
         mIsResizing = true;
+        mPlacementBeforeResize.copyFrom(mWindowWidget.getPlacement());
         startWidgetResize();
         AnimationHelper.fadeIn(mResizeModeContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
         if (mIsInFullScreenMode) {
@@ -471,9 +472,19 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         closeFloatingMenus();
     }
 
-    private void exitResizeMode(boolean aCommitChanges) {
+
+    enum ResizeAction {
+        KEEP_SIZE,
+        RESTORE_SIZE
+    }
+
+    private void exitResizeMode(ResizeAction aResizeAction) {
         if (!mIsResizing) {
             return;
+        }
+        if (aResizeAction == ResizeAction.RESTORE_SIZE) {
+            mWindowWidget.getPlacement().copyFrom(mPlacementBeforeResize);
+            mWidgetManager.updateWidget(mWindowWidget);
         }
         mIsResizing = false;
         finishWidgetResize();
@@ -735,7 +746,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
                 enterFullScreenMode();
             }
             if (mIsResizing) {
-                exitResizeMode(false);
+                exitResizeMode(ResizeAction.KEEP_SIZE);
             }
             AtomicBoolean autoEnter = new AtomicBoolean(false);
             mAutoSelectedProjection = VideoProjectionMenuWidget.getAutomaticProjection(SessionStore.get().getUriFromSession(session), autoEnter);
@@ -982,7 +993,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     @Override
     public void onBookmarksClicked() {
         if (mIsResizing) {
-            exitResizeMode(false);
+            exitResizeMode(ResizeAction.RESTORE_SIZE);
 
         } else if (mIsInFullScreenMode) {
             exitFullScreenMode();
