@@ -65,11 +65,15 @@ public class PromptWidget extends UIDialog {
 
 
     @Override
-    public void show() {
+    public void show(@ShowFlags int aShowFlags) {
         mLayout.measure(View.MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
                         View.MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-        mWidgetPlacement.height = (int)(mLayout.getMeasuredHeight()/mWidgetPlacement.density);
-        super.show();
+        mWidgetPlacement.height = (getMinHeight() == 0) ?
+                (int)(mLayout.getMeasuredHeight()/mWidgetPlacement.density) :
+                getMinHeight();
+        super.show(aShowFlags);
+
+        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
 
         ViewTreeObserver viewTreeObserver = mLayout.getViewTreeObserver();
         if (viewTreeObserver.isAlive()) {
@@ -84,11 +88,6 @@ public class PromptWidget extends UIDialog {
         }
     }
 
-    public void show(boolean focus) {
-        super.show(focus);
-        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
-    }
-
     public void hide(@HideFlags int aHideFlags) {
         super.hide(aHideFlags);
         mWidgetManager.popWorldBrightness(this);
@@ -100,6 +99,10 @@ public class PromptWidget extends UIDialog {
         if (oldFocus == this && isVisible() && findViewById(newFocus.getId()) == null) {
             onDismiss();
         }
+    }
+
+    public int getMinHeight() {
+        return 0;
     }
 
 }

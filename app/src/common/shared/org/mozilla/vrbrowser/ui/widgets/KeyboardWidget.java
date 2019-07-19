@@ -714,7 +714,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         }
         mIsInVoiceInput = true;
         TelemetryWrapper.voiceInputEvent();
-        mVoiceSearchWidget.show(false);
+        mVoiceSearchWidget.show(CLEAR_FOCUS);
         mWidgetPlacement.visible = false;
         mWidgetManager.updateWidget(this);
     }

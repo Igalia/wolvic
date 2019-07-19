@@ -370,8 +370,8 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
     }
 
     @Override
-    public void show() {
-        super.show();
+    public void show(@ShowFlags int aShowFlags) {
+        super.show(aShowFlags);
 
         mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
     }
@@ -413,10 +413,10 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
         if (widget == null) {
             widget = createChild(RestartDialogWidget.class, false);
             mRestartDialogHandle = widget.getHandle();
-            widget.setDelegate(this::show);
+            widget.setDelegate(() -> show(REQUEST_FOCUS));
         }
 
-        widget.show();
+        widget.show(REQUEST_FOCUS);
     }
 
     @Override
@@ -427,13 +427,13 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
         if (widget == null) {
             widget = createChild(AlertPromptWidget.class, false);
             mAlertDialogHandle = widget.getHandle();
-            widget.setDelegate(this::show);
+            widget.setDelegate(() -> show(REQUEST_FOCUS));
         }
         widget.getPlacement().translationZ = 0;
         widget.getPlacement().parentHandle = mHandle;
         widget.setTitle(aTitle);
         widget.setMessage(aMessage);
 
-        widget.show();
+        widget.show(REQUEST_FOCUS);
     }
 }
