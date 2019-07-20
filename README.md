@@ -6,15 +6,9 @@ You can find us on Twitter [@MozillaReality](https://twitter.com/mozillareality)
 
 [![Task Status](https://github.taskcluster.net/v1/repository/MozillaReality/FirefoxReality/master/badge.svg)](https://github.taskcluster.net/v1/repository/MozillaReality/FirefoxReality/master/latest) [Build results](https://github.taskcluster.net/v1/repository/MozillaReality/FirefoxReality/master/latest)
 
-## Download developer APKs (debug builds)
+## Download developer APKs
 
-**[Download](https://fxr.glitch.me/)** [bleeding-edge](https://github.com/MozillaReality/FirefoxReality/commits/master) developer (_debug_) APKs for Firefox Reality:
-
-- [Oculus Go & Quest (`oculusvr`)](https://fxr.glitch.me/oculusvr)
-- [HTC VIVE Focus & Pico devices (`wavevr`)](https://fxr.glitch.me/wavevr)
-- [Lenovo Mirage with Google Daydream (`googlevr`)](https://fxr.glitch.me/googlevr)
-- [Snapdragon VR (`svr`)](https://fxr.glitch.me/svr)
-- [No API / Android Emulator for PC (`noapi`)](https://fxr.glitch.me/noapi)
+**[Download](https://github.taskcluster.net/v1/repository/MozillaReality/FirefoxReality/master/latest)** [bleeding-edge](https://github.com/MozillaReality/FirefoxReality/commits/master) developer APKs for Firefox Reality.
 
 ### Advanced
 
