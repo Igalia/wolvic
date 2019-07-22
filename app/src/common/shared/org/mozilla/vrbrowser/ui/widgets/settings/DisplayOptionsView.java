@@ -74,8 +74,7 @@ class DisplayOptionsView extends SettingsView {
 
         mFoveatedAppRadio = findViewById(R.id.foveated_app_radio);
         mFoveatedWebVRRadio = findViewById(R.id.foveated_webvr_radio);
-        if (BuildConfig.FLAVOR_platform == "oculusvr" ||
-            BuildConfig.FLAVOR_platform == "wavevr") {
+        if (DeviceType.isOculusBuild() || DeviceType.isWaveBuild()) {
             mFoveatedAppRadio.setVisibility(View.VISIBLE);
             // Uncomment this when Foveated Rendering for WebVR makes more sense
             // mFoveatedWebVRRadio.setVisibility(View.VISIBLE);
@@ -316,7 +315,7 @@ class DisplayOptionsView extends SettingsView {
         if (doApply) {
             mWidgetManager.updateFoveatedLevel();
             // "WaveVR WVR_RenderFoveation(false) doesn't work properly, we need to restart."
-            if (level == 0 && BuildConfig.FLAVOR_platform == "wavevr") {
+            if (level == 0 && DeviceType.isWaveBuild()) {
                 showRestartDialog();
             }
         }

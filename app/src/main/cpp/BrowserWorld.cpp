@@ -1436,7 +1436,7 @@ JNI_METHOD(void, runCallbackNative)
 }
 
 JNI_METHOD(void, setCPULevelNative)
-(JNIEnv*, jobject, int aCPULevel) {
+(JNIEnv*, jobject, jint aCPULevel) {
   crow::BrowserWorld::Instance().SetCPULevel(static_cast<crow::device::CPULevel>(aCPULevel));
 }
 
