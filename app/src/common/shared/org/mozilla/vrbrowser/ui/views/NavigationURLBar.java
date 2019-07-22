@@ -45,6 +45,7 @@ import androidx.annotation.StringRes;
 import kotlin.Unit;
 import mozilla.components.browser.domains.autocomplete.DomainAutocompleteResult;
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider;
+import mozilla.components.concept.storage.VisitType;
 import mozilla.components.ui.autocomplete.InlineAutocompleteEditText;
 
 public class NavigationURLBar extends FrameLayout {
@@ -412,6 +413,7 @@ public class NavigationURLBar extends FrameLayout {
         }
 
         if (SessionStore.get().getCurrentUri() != url) {
+            SessionStore.get().getHistoryStore().addHistory(url, VisitType.TYPED);
             SessionStore.get().loadUri(url);
 
             if (mDelegate != null) {

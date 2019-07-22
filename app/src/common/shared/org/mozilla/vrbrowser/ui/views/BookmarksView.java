@@ -34,6 +34,7 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 
 import mozilla.components.concept.storage.BookmarkNode;
+import mozilla.components.concept.storage.VisitType;
 
 public class BookmarksView extends FrameLayout implements GeckoSession.NavigationDelegate, BookmarksStore.BookmarkListener {
 
@@ -103,6 +104,7 @@ public class BookmarksView extends FrameLayout implements GeckoSession.Navigatio
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
 
+            SessionStore.get().getHistoryStore().addHistory(bookmark.getUrl(), VisitType.BOOKMARK);
             SessionStore.get().loadUri(bookmark.getUrl());
         }
 

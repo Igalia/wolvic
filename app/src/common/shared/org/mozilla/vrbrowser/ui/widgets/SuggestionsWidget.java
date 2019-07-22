@@ -18,6 +18,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
@@ -25,13 +27,10 @@ import org.mozilla.vrbrowser.audio.AudioEngine;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-
 public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate.FocusChangeListener {
 
     private ListView mList;
     private SuggestionsAdapter mAdapter;
-    private List<SuggestionItem> mListItems;
     private Animation mScaleUpAnimation;
     private Animation mScaleDownAnimation;
     private URLBarPopupDelegate mURLBarDelegate;
@@ -84,7 +83,8 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
             }
         });
 
-        mListItems = new ArrayList<>();
+        mAdapter = new SuggestionsAdapter(getContext(), R.layout.list_popup_window_item, new ArrayList<>());
+        mList.setAdapter(mAdapter);
 
         mAudio = AudioEngine.fromContext(aContext);
 
@@ -140,10 +140,10 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
         mHighlightedText = text;
     }
 
-    public void setItems(List<SuggestionItem> items) {
-        mListItems = items;
-        mAdapter = new SuggestionsAdapter(getContext(), R.layout.list_popup_window_item, mListItems);
-        mList.setAdapter(mAdapter);
+    public void updateItems(List<SuggestionItem> items) {
+        mAdapter.clear();
+        mAdapter.addAll(items);
+        mAdapter.notifyDataSetChanged();
     }
 
     public void updatePlacement(int aWidth) {
@@ -161,21 +161,20 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
     public static class SuggestionItem {
 
         public enum Type {
+            COMPLETION,
             BOOKMARK,
-            FAVORITE,
             HISTORY,
-            SUGGESTION,
-            COMPLETION
+            SUGGESTION
         }
 
         public String faviconURL;
-        public String text;
+        public String title;
         public String url;
         public Type type = Type.SUGGESTION;
 
-        public static SuggestionItem create(@NonNull String text, String url, String faviconURL, Type type) {
+        public static SuggestionItem create(@NonNull String title, String url, String faviconURL, Type type) {
             SuggestionItem item = new SuggestionItem();
-            item.text = text;
+            item.title = title;
             item.url = url;
             item.faviconURL = faviconURL;
             item.type = type;
@@ -195,12 +194,8 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
             View divider;
         }
 
-        private LayoutInflater mInflater;
-
         public SuggestionsAdapter(@NonNull Context context, int resource, @NonNull List<SuggestionItem> objects) {
             super(context, resource, objects);
-
-            mInflater = LayoutInflater.from(getContext());
         }
 
         public View getView(int position, View convertView, ViewGroup parent) {
@@ -208,7 +203,7 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
 
             ItemViewHolder itemViewHolder;
             if(listItem == null) {
-                listItem = mInflater.inflate(R.layout.list_popup_window_item, parent, false);
+                listItem = LayoutInflater.from(getContext()).inflate(R.layout.list_popup_window_item, parent, false);
 
                 itemViewHolder = new ItemViewHolder();
 
@@ -237,17 +232,7 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
             SuggestionItem selectedItem = getItem(position);
 
             // Make search substring as bold
-            final SpannableStringBuilder sb = new SpannableStringBuilder(selectedItem.text);
-            final StyleSpan bold = new StyleSpan(Typeface.BOLD);
-            final StyleSpan normal = new StyleSpan(Typeface.NORMAL);
-            int start = selectedItem.text.indexOf(mHighlightedText);
-            if (start >= 0) {
-                int end = start + mHighlightedText.length();
-                sb.setSpan(normal, 0, start, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-                sb.setSpan(bold, start, end, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-                sb.setSpan(normal, end, selectedItem.text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-            }
-            itemViewHolder.title.setText(sb);
+            itemViewHolder.title.setText(createHighlightedText(selectedItem.title));
 
             // Set the URL text
             if (selectedItem.url == null) {
@@ -255,7 +240,7 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
 
             } else {
                 itemViewHolder.url.setVisibility(VISIBLE);
-                itemViewHolder.url.setText(selectedItem.url);
+                itemViewHolder.url.setText(createHighlightedText(selectedItem.url));
             }
 
             // Set the description
@@ -268,18 +253,22 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
             }
 
             // Type related
-            if (selectedItem.type == SuggestionItem.Type.SUGGESTION) {
-                itemViewHolder.delete.setVisibility(GONE);
-                itemViewHolder.divider.setVisibility(GONE);
-                itemViewHolder.favicon.setVisibility(VISIBLE);
+            if (selectedItem.type == SuggestionItem.Type.SUGGESTION)
                 itemViewHolder.favicon.setImageResource(R.drawable.ic_icon_search);
-
-            } else  if (selectedItem.type == SuggestionItem.Type.COMPLETION) {
-                itemViewHolder.delete.setVisibility(GONE);
-                itemViewHolder.divider.setVisibility(VISIBLE);
-                itemViewHolder.favicon.setVisibility(VISIBLE);
+            else  if (selectedItem.type == SuggestionItem.Type.COMPLETION)
                 itemViewHolder.favicon.setImageResource(R.drawable.ic_icon_browser);
-            }
+            else  if (selectedItem.type == SuggestionItem.Type.HISTORY)
+                itemViewHolder.favicon.setImageResource(R.drawable.ic_icon_history);
+            else  if (selectedItem.type == SuggestionItem.Type.BOOKMARK)
+                itemViewHolder.favicon.setImageResource(R.drawable.ic_icon_bookmark_active);
+
+            itemViewHolder.delete.setVisibility(GONE);
+            itemViewHolder.favicon.setVisibility(VISIBLE);
+
+            if (position == 0)
+                itemViewHolder.divider.setVisibility(VISIBLE);
+            else
+                itemViewHolder.divider.setVisibility(GONE);
 
             return listItem;
         }
@@ -368,5 +357,20 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
 
             return false;
         };
+    }
+
+    private SpannableStringBuilder createHighlightedText(@NonNull String text) {
+        final SpannableStringBuilder sb = new SpannableStringBuilder(text);
+        final StyleSpan bold = new StyleSpan(Typeface.BOLD);
+        final StyleSpan normal = new StyleSpan(Typeface.NORMAL);
+        int start = text.toLowerCase().indexOf(mHighlightedText.toLowerCase());
+        if (start >= 0) {
+            int end = start + mHighlightedText.length();
+            sb.setSpan(normal, 0, start, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+            sb.setSpan(bold, start, end, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+            sb.setSpan(normal, end, text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+        }
+
+        return sb;
     }
 }

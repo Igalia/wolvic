@@ -54,6 +54,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import mozilla.components.concept.storage.VisitType;
+
 import static org.mozilla.vrbrowser.utils.ServoUtils.createServoSession;
 import static org.mozilla.vrbrowser.utils.ServoUtils.isInstanceOfServoSession;
 import static org.mozilla.vrbrowser.utils.ServoUtils.isServoAvailable;
@@ -134,6 +136,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     private Context mContext;
     private SharedPreferences mPrefs;
     private BookmarksStore mBookmarksStore;
+    private HistoryStore mHistoryStore;
 
     private SessionStore() {
         mSessions = new LinkedHashMap<>();
@@ -169,6 +172,9 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
 
         if (mBookmarksStore != null) {
             mBookmarksStore.removeAllListeners();
+        }
+        if (mHistoryStore!= null) {
+            mHistoryStore.removeAllListeners();
         }
     }
 
@@ -208,6 +214,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
         mContext = aContext;
         mPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         mBookmarksStore = new BookmarksStore(mContext);
+        mHistoryStore = new HistoryStore(mContext);
         if (mUserAgentOverride == null) {
             mUserAgentOverride = new UserAgentOverride();
             mUserAgentOverride.loadOverridesFromAssets((Activity)aContext, aContext.getString(R.string.user_agent_override_file));
@@ -216,6 +223,10 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
 
     public BookmarksStore getBookmarkStore() {
         return mBookmarksStore;
+    }
+
+    public HistoryStore getHistoryStore() {
+        return mHistoryStore;
     }
 
     public void dumpAllState(Integer sessionId) {
@@ -1045,6 +1056,11 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
 
     @Override
     public @Nullable GeckoResult<AllowOrDeny> onLoadRequest(@NonNull GeckoSession aSession, @NonNull LoadRequest aRequest) {
+        if (aRequest.isRedirect)
+            mHistoryStore.addHistory(aRequest.uri, VisitType.EMBED);
+        else if (aRequest.triggerUri != null)
+            mHistoryStore.addHistory(aRequest.uri, VisitType.LINK);
+
         final GeckoResult<AllowOrDeny> result = new GeckoResult<>();
 
         String uri = aRequest.uri;

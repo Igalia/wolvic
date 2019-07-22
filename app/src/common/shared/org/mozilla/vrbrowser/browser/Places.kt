@@ -7,10 +7,12 @@ package org.mozilla.vrbrowser.browser
 
 import android.content.Context
 import mozilla.components.browser.storage.sync.PlacesBookmarksStorage
+import mozilla.components.browser.storage.sync.PlacesHistoryStorage
 
 /**
  * Entry point for interacting with places-backed storage layers.
  */
 class Places(context: Context) {
     val bookmarks by lazy { PlacesBookmarksStorage(context) }
+    val history by lazy { PlacesHistoryStorage(context) }
 }

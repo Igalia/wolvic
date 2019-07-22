@@ -6,7 +6,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Handler;
 import android.preference.PreferenceManager;
+
+import androidx.annotation.NonNull;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.SettingsStore;
@@ -19,8 +22,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import androidx.annotation.NonNull;
+import java.util.concurrent.CompletableFuture;
 
 import kotlinx.coroutines.Dispatchers;
 import mozilla.components.browser.search.SearchEngine;
@@ -102,13 +104,14 @@ public class SearchEngineWrapper implements SharedPreferences.OnSharedPreference
         return mSearchEngine.buildSuggestionsURL(aQuery);
     }
 
-    public void getSuggestions(String aQuery, SuggestionsDelegate delegate) {
+    public CompletableFuture<List<String>> getSuggestions(String aQuery) {
+        CompletableFuture<List<String>> future = new CompletableFuture<>();
         // TODO: Use mSuggestionsClient.getSuggestions when fixed in browser-search.
         String query = getSuggestionURL(aQuery);
-        SuggestionsClient.getSuggestions(mSearchEngine, query, result -> {
-            delegate.OnSuggestions(result);
-            return null;
-        });
+        new Handler(mContext.getMainLooper()).post(() ->
+                SuggestionsClient.getSuggestions(mSearchEngine, query).thenAcceptAsync((result) -> future.complete(result)));
+
+        return future;
     }
 
     public String getResourceURL() {

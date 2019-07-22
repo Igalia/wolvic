@@ -19,8 +19,8 @@
 
         <ImageView
             android:id="@+id/favicon"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_gravity="center_vertical"
@@ -81,11 +81,11 @@
     <LinearLayout
         android:id="@+id/divider"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="2dp"
         android:layout_below="@+id/texts"
         android:layout_marginStart="15dp"
         android:layout_marginTop="2dp"
         android:layout_marginEnd="35dp"
-        android:background="@color/iron"
+        android:background="@drawable/separator_background"
         android:orientation="horizontal" />
 </LinearLayout>

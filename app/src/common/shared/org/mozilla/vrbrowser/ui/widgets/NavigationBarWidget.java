@@ -15,6 +15,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import org.mozilla.geckoview.AllowOrDeny;
 import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoSession;
@@ -24,22 +27,21 @@ import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.Media;
 import org.mozilla.vrbrowser.browser.SessionStore;
 import org.mozilla.vrbrowser.browser.SettingsStore;
-import org.mozilla.vrbrowser.search.SearchEngineWrapper;
+import org.mozilla.vrbrowser.search.suggestions.SuggestionsProvider;
 import org.mozilla.vrbrowser.ui.views.CustomUIButton;
 import org.mozilla.vrbrowser.ui.views.NavigationURLBar;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.views.UITextButton;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.VoiceSearchWidget;
 import org.mozilla.vrbrowser.utils.AnimationHelper;
-import org.mozilla.vrbrowser.utils.UrlUtils;
 import org.mozilla.vrbrowser.utils.ServoUtils;
+import org.mozilla.vrbrowser.utils.UIThreadExecutor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import mozilla.components.concept.storage.VisitType;
 
 public class NavigationBarWidget extends UIWidget implements GeckoSession.NavigationDelegate,
         GeckoSession.ProgressDelegate, GeckoSession.ContentDelegate, WidgetManagerDelegate.WorldClickListener,
@@ -85,7 +87,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private Context mAppContext;
     private SharedPreferences mPrefs;
     private SuggestionsWidget mPopup;
-    private SearchEngineWrapper mSearchEngineWrapper;
+    private SuggestionsProvider mSuggestionsProvider;
     private VideoProjectionMenuWidget mProjectionMenu;
     private WidgetPlacement mProjectionMenuPlacement;
     private BrightnessMenuWidget mBrightnessWidget;
@@ -164,6 +166,9 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
         mReloadButton.setOnClickListener(v -> {
             v.requestFocusFromTouch();
+            SessionStore.get().getHistoryStore().addHistory(
+                    SessionStore.get().getCurrentUri(),
+                    VisitType.RELOAD);
             if (mIsLoading) {
                 SessionStore.get().stop();
             } else {
@@ -310,7 +315,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mVoiceSearchWidget = createChild(VoiceSearchWidget.class, false);
         mVoiceSearchWidget.setDelegate(this);
 
-        mSearchEngineWrapper = SearchEngineWrapper.get(getContext());
+        mSuggestionsProvider = new SuggestionsProvider(getContext());
 
         SessionStore.get().addSessionChangeListener(this);
 
@@ -854,63 +859,25 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             return;
         }
 
-        mSearchEngineWrapper.getSuggestions(
-                originalText,
-                (suggestions) -> {
-                    ArrayList<SuggestionsWidget.SuggestionItem> items = new ArrayList<>();
-
-                    if (!text.equals(originalText)) {
-                        // Completion from browser-domains
-                        items.add(SuggestionsWidget.SuggestionItem.create(
-                                text,
-                                getSearchURLOrDomain(text),
-                                null,
-                                SuggestionsWidget.SuggestionItem.Type.COMPLETION
-                        ));
-                    }
-
-                    // Original text
-                    items.add(SuggestionsWidget.SuggestionItem.create(
-                            originalText,
-                            getSearchURLOrDomain(originalText),
-                            null,
-                            SuggestionsWidget.SuggestionItem.Type.SUGGESTION
-                    ));
-
-                    // Suggestions
-                    for (String suggestion : suggestions) {
-                        String url = mSearchEngineWrapper.getSearchURL(suggestion);
-                        items.add(SuggestionsWidget.SuggestionItem.create(
-                                suggestion,
-                                url,
-                                null,
-                                SuggestionsWidget.SuggestionItem.Type.SUGGESTION
-                        ));
-                    }
-                    mPopup.setItems(items);
+        mSuggestionsProvider.setText(text);
+        mSuggestionsProvider.setFilterText(originalText);
+        mSuggestionsProvider.getSuggestions()
+                .whenCompleteAsync((items, ex) -> {
+                    mPopup.updateItems(items);
                     mPopup.setHighlightedText(originalText);
 
                     if (!mPopup.isVisible()) {
                         mPopup.updatePlacement((int)WidgetPlacement.convertPixelsToDp(getContext(), mURLBar.getWidth()));
                         mPopup.show(CLEAR_FOCUS);
                     }
-                }
-        );
+
+                }, new UIThreadExecutor());
     }
 
     @Override
     public void onHideSearchPopup() {
         if (mPopup != null) {
             mPopup.hide(UIWidget.KEEP_WIDGET);
-        }
-    }
-
-    private String getSearchURLOrDomain(String text) {
-        if (UrlUtils.isDomain(text)) {
-            return text;
-
-        } else {
-            return mSearchEngineWrapper.getSearchURL(text);
         }
     }
 
