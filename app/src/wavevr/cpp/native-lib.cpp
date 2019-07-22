@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
 
   // Must initialize render runtime before all OpenGL code.
   WVR_RenderInitParams_t param;
-  param = { WVR_GraphicsApiType_OpenGL, WVR_RenderConfig_Timewarp_Asynchronous };
+  param = { WVR_GraphicsApiType_OpenGL, WVR_RenderConfig_Default };
 
   WVR_RenderError pError = WVR_RenderInit(&param);
   if (pError != WVR_RenderError_None) {

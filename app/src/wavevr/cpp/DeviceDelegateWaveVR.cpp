@@ -135,7 +135,8 @@ struct DeviceDelegateWaveVR::State {
     vrb::RenderContextPtr render = context.lock();
     for (int ix = 0; ix < WVR_GetTextureQueueLength(aTextureQueue); ix++) {
       vrb::FBOPtr fbo = vrb::FBO::Create(render);
-      fbo->SetTextureHandle((GLuint)WVR_GetTexture(aTextureQueue, ix).id, renderWidth, renderHeight, attributes);
+      uintptr_t handle = (uintptr_t)WVR_GetTexture(aTextureQueue, ix).id;
+      fbo->SetTextureHandle((GLuint)handle, renderWidth, renderHeight, attributes);
       if (fbo->IsValid()) {
         aFBOQueue.push_back(fbo);
       } else {

@@ -170,6 +170,7 @@ android {
             }
         }
         wavevr {
+            minSdkVersion build_versions.min_sdk_wave
             dimension "platform"
             externalNativeBuild {
                 cmake {
@@ -235,6 +236,8 @@ android {
                 'svrArm64Release',
                 'wavevrArmDebug',
                 'wavevrArmRelease',
+                'wavevrArm64Debug',
+                'wavevrArm64Release',
                 'noapiArmDebug',
                 'noapiArmRelease',
                 'noapiArm64Debug',
