@@ -379,13 +379,19 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     private void setFullScreenSize() {
         mPlacementBeforeResize.copyFrom(mWindowWidget.getPlacement());
+        final float minScale = WidgetPlacement.floatDimension(getContext(), R.dimen.window_fullscreen_min_scale);
         // Set browser fullscreen size
         float aspect = SettingsStore.getInstance(getContext()).getWindowAspect();
         Media media = SessionStore.get().getFullScreenVideo();
         if (media != null && media.getWidth() > 0 && media.getHeight() > 0) {
             aspect = (float)media.getWidth() / (float)media.getHeight();
         }
-        mWindowWidget.resizeByMultiplier(aspect,1.75f);
+        float scale = mWindowWidget.getCurrentScale();
+        // Enforce min fullscreen size.
+        // If current window area is larger only resize if the aspect changes (e.g. media).
+        if (scale < minScale || aspect != mWindowWidget.getCurrentAspect()) {
+            mWindowWidget.resizeByMultiplier(aspect, Math.max(scale, minScale));
+        }
     }
 
     private void enterFullScreenMode() {

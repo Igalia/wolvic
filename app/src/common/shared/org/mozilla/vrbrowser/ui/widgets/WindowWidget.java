@@ -254,6 +254,20 @@ public class WindowWidget extends UIWidget implements SessionStore.SessionChange
         handleResizeEvent(targetWidth, targetHeight);
     }
 
+    public float getCurrentScale() {
+        float currentAspect = getCurrentAspect();
+        float currentWorldHeight = mWidgetPlacement.worldWidth / currentAspect;
+        float currentArea = mWidgetPlacement.worldWidth * currentWorldHeight;
+        float defaultWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width);
+        float defaultHeight = defaultWidth / SettingsStore.getInstance(getContext()).getWindowAspect();
+        float defaultArea = defaultWidth * defaultHeight;
+        return currentArea / defaultArea;
+    }
+
+    public float getCurrentAspect() {
+        return (float) mWidgetPlacement.width / (float) mWidgetPlacement.height;
+    }
+
     public int getBorderWidth() {
         return mBorderWidth;
     }

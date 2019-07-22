@@ -8,6 +8,7 @@
     <item name="window_world_y" format="float" type="dimen">0.2</item>
     <item name="window_world_z" format="float" type="dimen">-4.2</item>
     <item name="browser_children_z_distance" format="float" type="dimen">1.5</item>
+    <item name="window_fullscreen_min_scale" format="float" type="dimen">1.75</item>
 
     <!-- Navigation bar -->
     <dimen name="navigation_bar_width">720dp</dimen>
