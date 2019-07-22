@@ -50,11 +50,9 @@ struct DeviceDelegateNoAPI::State {
   vrb::Matrix headingMatrix;
   vrb::Matrix pitchMatrix;
   vrb::Vector position;
-  vrb::Vector cachedStandalonePosition;
   bool clicked;
   GLsizei glWidth, glHeight;
   float near, far;
-  vrb::Matrix reorientMatrix;
   State()
       : renderMode(device::RenderMode::StandAlone)
       , heading(0.0f)
@@ -67,7 +65,6 @@ struct DeviceDelegateNoAPI::State {
       , glHeight(0)
       , near(0.1f)
       , far(1000.0f)
-      , reorientMatrix(vrb::Matrix::Identity())
   {
   }
 
@@ -115,17 +112,17 @@ DeviceDelegateNoAPI::SetRenderMode(const device::RenderMode aMode) {
   if (aMode == m.renderMode) {
     return;
   }
+  m.renderMode = aMode;
   if (ValidateMethodID(sEnv, sActivity, sSetRenderMode, __FUNCTION__)) {
     sEnv->CallVoidMethod(sActivity, sSetRenderMode, (aMode == device::RenderMode::Immersive ? 1 : 0));
     CheckJNIException(sEnv, __FUNCTION__);
   }
   if (aMode != device::RenderMode::StandAlone) {
-    m.cachedStandalonePosition = m.position;
     m.position = vrb::Vector();
   } else {
-    m.position = m.cachedStandalonePosition;
+    // recenter when leaving immersive mode.
+    MoveAxis(0.0f, 0.0f, 0.0f);
   }
-  m.renderMode = aMode;
 }
 
 device::RenderMode
@@ -159,12 +156,13 @@ DeviceDelegateNoAPI::GetHeadTransform() const {
 
 const vrb::Matrix&
 DeviceDelegateNoAPI::GetReorientTransform() const {
-  return m.reorientMatrix;
+  static vrb::Matrix identity(vrb::Matrix::Identity());
+  return identity;
 }
 
 void
 DeviceDelegateNoAPI::SetReorientTransform(const vrb::Matrix& aMatrix) {
-  m.reorientMatrix = aMatrix;
+  // Ignore reorient transform
 }
 
 void
@@ -303,7 +301,7 @@ DeviceDelegateNoAPI::MoveAxis(const float aX, const float aY, const float aZ) {
     if (m.renderMode == device::RenderMode::Immersive) {
       m.position = vrb::Vector();
     } else {
-      m.position = GetHomePosition();;
+      m.position = GetHomePosition();
     }
     m.heading = 0.0f;
     m.pitch = 0.0f;
