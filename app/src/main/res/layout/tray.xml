@@ -12,16 +12,11 @@
             android:orientation="horizontal">
 
             <org.mozilla.vrbrowser.ui.views.UIButton
-                android:id="@+id/helpButton"
-                style="@style/trayButtonStartTheme"
-                android:src="@drawable/ic_icon_tray_help_v2"/>
-
-            <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/privateButton"
-                style="@style/trayButtonMiddleTheme"
-                android:tooltipText="@string/private_browsing_enter_tooltip"
-                app:tooltipDensity="@dimen/tray_tooltip_density"
+                style="@style/trayButtonStartTheme"
                 app:tooltipPosition="top"
+                app:tooltipDensity="@dimen/tray_tooltip_density"
+                android:tooltipText="@string/private_browsing_enter_tooltip"
                 android:src="@drawable/ic_icon_private_browsing"/>
 
             <org.mozilla.vrbrowser.ui.views.UIButton

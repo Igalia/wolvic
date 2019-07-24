@@ -52,16 +52,17 @@
                     app:description="@string/settings_privacy_policy" />
 
                 <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
-                    android:id="@+id/trackingProtectionButton"
+                    android:id="@+id/drmContentPlaybackSwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:description="@string/security_options_drm_content" />
+
+                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                    android:id="@+id/trackingProtectionSwitch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:description="@string/security_options_tracking_protection" />
-
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
-                    android:id="@+id/autoplaySwitch"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:description="@string/security_options_autoplay" />
 
                 <TextView
                     android:id="@+id/permissionsTitle"
@@ -70,37 +71,85 @@
                     android:gravity="center_vertical"
                     android:text="@string/security_options_permissions_title" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
-                    android:id="@+id/cameraPermissionButton"
+                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                    android:id="@+id/cameraPermissionSwitch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="40dp"
-                    app:buttonText="@string/permission_enable"
+                    app:on_text="@string/permission_allow"
+                    app:off_text="@string/permission_reject"
                     app:description="@string/security_options_permission_camera" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
-                    android:id="@+id/microphonePermissionButton"
+                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                    android:id="@+id/microphonePermissionSwitch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="40dp"
-                    app:buttonText="@string/permission_enable"
+                    app:on_text="@string/permission_allow"
+                    app:off_text="@string/permission_reject"
                     app:description="@string/security_options_permission_microphone" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
-                    android:id="@+id/locationPermissionButton"
+                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                    android:id="@+id/locationPermissionSwitch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="40dp"
-                    app:buttonText="@string/permission_enable"
+                    app:on_text="@string/permission_allow"
+                    app:off_text="@string/permission_reject"
                     app:description="@string/security_options_permission_location" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
-                    android:id="@+id/storagePermissionButton"
+                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                    android:id="@+id/notificationsPermissionSwitch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="40dp"
-                    app:buttonText="@string/permission_enable"
+                    android:visibility="gone"
+                    app:on_text="@string/permission_allow"
+                    app:off_text="@string/permission_reject"
+                    app:description="@string/security_options_permission_notifications" />
+
+                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                    android:id="@+id/storagePermissionSwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="40dp"
+                    app:on_text="@string/permission_allow"
+                    app:off_text="@string/permission_reject"
                     app:description="@string/security_options_permission_storage" />
+
+                <TextView
+                    android:id="@+id/dataCollectionTitle"
+                    style="@style/settingsDescription"
+                    android:height="40dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/security_options_speech_data_title" />
+
+                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                    android:id="@+id/speechDataSwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="40dp"
+                    app:on_text="@string/permission_allow"
+                    app:off_text="@string/permission_reject"
+                    app:description="@string/security_options_speech_data" />
+
+                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                    android:id="@+id/telemetryDataSwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="40dp"
+                    app:on_text="@string/permission_allow"
+                    app:off_text="@string/permission_reject"
+                    app:description="@string/security_options_telemetry_data" />
+
+                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                    android:id="@+id/crashReportsDataSwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="40dp"
+                    app:on_text="@string/permission_allow"
+                    app:off_text="@string/permission_reject"
+                    app:description="@string/security_options_crash_reports_data" />
 
             </LinearLayout>
         </ScrollView>

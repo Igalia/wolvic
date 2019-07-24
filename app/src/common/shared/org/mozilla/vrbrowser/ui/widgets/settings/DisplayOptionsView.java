@@ -6,14 +6,14 @@
 package org.mozilla.vrbrowser.ui.widgets.settings;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.view.View;
-import android.widget.ScrollView;
 
+import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.SessionStore;
 import org.mozilla.vrbrowser.browser.SettingsStore;
-import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.views.settings.ButtonSetting;
 import org.mozilla.vrbrowser.ui.views.settings.DoubleEditSetting;
@@ -21,6 +21,7 @@ import org.mozilla.vrbrowser.ui.views.settings.RadioGroupSetting;
 import org.mozilla.vrbrowser.ui.views.settings.SingleEditSetting;
 import org.mozilla.vrbrowser.ui.views.settings.SwitchSetting;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
+import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.utils.DeviceType;
 
 class DisplayOptionsView extends SettingsView {
@@ -29,6 +30,8 @@ class DisplayOptionsView extends SettingsView {
     private SwitchSetting mCurvedDisplaySwitch;
     private RadioGroupSetting mUaModeRadio;
     private RadioGroupSetting mMSAARadio;
+    private SwitchSetting mAutoplaySetting;
+    private SingleEditSetting mHomepageEdit;
     private RadioGroupSetting mFoveatedAppRadio;
     private RadioGroupSetting mFoveatedWebVRRadio;
     private SingleEditSetting mDensityEdit;
@@ -36,13 +39,12 @@ class DisplayOptionsView extends SettingsView {
     private DoubleEditSetting mWindowSizeEdit;
     private DoubleEditSetting mMaxWindowSizeEdit;
     private ButtonSetting mResetButton;
-    private ScrollView mScrollbar;
+    private String mDefaultHomepageUrl;
 
     public DisplayOptionsView(Context aContext, WidgetManagerDelegate aWidgetManager) {
         super(aContext, aWidgetManager);
         initialize(aContext);
     }
-
 
     private void initialize(Context aContext) {
         inflate(aContext, R.layout.options_display, this);
@@ -71,6 +73,19 @@ class DisplayOptionsView extends SettingsView {
         mMSAARadio = findViewById(R.id.msaa_radio);
         mMSAARadio.setOnCheckedChangeListener(mMSSAChangeListener);
         setMSAAMode(mMSAARadio.getIdForValue(msaaLevel), false);
+
+        mAutoplaySetting = findViewById(R.id.autoplaySwitch);
+        mAutoplaySetting.setOnCheckedChangeListener(mAutoplayListener);
+        setAutoplay(SessionStore.get().getAutoplayEnabled(), false);
+
+        mDefaultHomepageUrl = getContext().getString(R.string.homepage_url);
+
+        mHomepageEdit = findViewById(R.id.homepage_edit);
+        mHomepageEdit.setHint1(getContext().getString(R.string.homepage_hint, getContext().getString(R.string.app_name)));
+        mHomepageEdit.setDefaultFirstValue(mDefaultHomepageUrl);
+        mHomepageEdit.setFirstText(SettingsStore.getInstance(getContext()).getHomepage());
+        mHomepageEdit.setOnClickListener(mHomepageListener);
+        setHomepage(SettingsStore.getInstance(getContext()).getHomepage());
 
         mFoveatedAppRadio = findViewById(R.id.foveated_app_radio);
         mFoveatedWebVRRadio = findViewById(R.id.foveated_webvr_radio);
@@ -134,49 +149,50 @@ class DisplayOptionsView extends SettingsView {
     }
 
     @Override
-    public void onShown() {
-        super.onShown();
-        mScrollbar.scrollTo(0, 0);
-    }
-
-    @Override
     public void onHidden() {
-        super.onHidden();
-        mDensityEdit.cancel();
-        mDpiEdit.cancel();
-        mWindowSizeEdit.cancel();
-        mMaxWindowSizeEdit.cancel();
+        if (!isEditing()) {
+            super.onHidden();
+        }
     }
 
     @Override
     protected void onDismiss() {
-        boolean dismiss = true;
-
-        if (mDensityEdit.isEditing()) {
-            dismiss = false;
-            mDensityEdit.cancel();
-        }
-
-        if (mDpiEdit.isEditing()) {
-            dismiss = false;
-            mDpiEdit.cancel();
-        }
-
-        if (mWindowSizeEdit.isEditing()) {
-            dismiss = false;
-            mWindowSizeEdit.cancel();
-        }
-
-        if (mMaxWindowSizeEdit.isEditing()) {
-            dismiss = false;
-            mMaxWindowSizeEdit.cancel();
-        }
-
-        if (dismiss) {
+        if (!isEditing()) {
             super.onDismiss();
         }
     }
 
+    @Override
+    public boolean isEditing() {
+        boolean editing = false;
+
+        if (mDensityEdit.isEditing()) {
+            editing = true;
+            mDensityEdit.cancel();
+        }
+
+        if (mDpiEdit.isEditing()) {
+            editing = true;
+            mDpiEdit.cancel();
+        }
+
+        if (mWindowSizeEdit.isEditing()) {
+            editing = true;
+            mWindowSizeEdit.cancel();
+        }
+
+        if (mMaxWindowSizeEdit.isEditing()) {
+            editing = true;
+            mMaxWindowSizeEdit.cancel();
+        }
+
+        if (mHomepageEdit.isEditing()) {
+            editing = true;
+            mHomepageEdit.cancel();
+        }
+
+        return editing;
+    }
 
     private RadioGroupSetting.OnCheckedChangeListener mUaModeListener = (radioGroup, checkedId, doApply) -> {
         setUaMode(checkedId, true);
@@ -184,6 +200,19 @@ class DisplayOptionsView extends SettingsView {
 
     private RadioGroupSetting.OnCheckedChangeListener mMSSAChangeListener = (radioGroup, checkedId, doApply) -> {
         setMSAAMode(checkedId, true);
+    };
+
+    private SwitchSetting.OnCheckedChangeListener mAutoplayListener = (compoundButton, enabled, apply) -> {
+        setAutoplay(enabled, true);
+    };
+
+    private OnClickListener mHomepageListener = (view) -> {
+        if (!mHomepageEdit.getFirstText().isEmpty()) {
+            setHomepage(mHomepageEdit.getFirstText());
+
+        } else {
+            setHomepage(mDefaultHomepageUrl);
+        }
     };
 
     private OnClickListener mDensityListener = (view) -> {
@@ -271,9 +300,29 @@ class DisplayOptionsView extends SettingsView {
             setMaxWindowSize(SettingsStore.MAX_WINDOW_WIDTH_DEFAULT, SettingsStore.MAX_WINDOW_HEIGHT_DEFAULT, true);
         }
 
+        setHomepage(mDefaultHomepageUrl);
+        setAutoplay(SettingsStore.AUTOPLAY_ENABLED, true);
+
         if (restart)
             showRestartDialog();
     };
+
+    private void setAutoplay(boolean value, boolean doApply) {
+        mAutoplaySetting.setOnCheckedChangeListener(null);
+        mAutoplaySetting.setValue(value, false);
+        mAutoplaySetting.setOnCheckedChangeListener(mAutoplayListener);
+
+        if (doApply) {
+            SessionStore.get().setAutoplayEnabled(value);
+        }
+    }
+
+    private void setHomepage(String newHomepage) {
+        mHomepageEdit.setOnClickListener(null);
+        mHomepageEdit.setFirstText(newHomepage);
+        SettingsStore.getInstance(getContext()).setHomepage(newHomepage);
+        mHomepageEdit.setOnClickListener(mHomepageListener);
+    }
 
     private void setUaMode(int checkId, boolean doApply) {
         mUaModeRadio.setOnCheckedChangeListener(null);
@@ -448,7 +497,16 @@ class DisplayOptionsView extends SettingsView {
                     mMaxWindowSizeEdit.isEditing()) {
                 mMaxWindowSizeEdit.cancel();
             }
+            if (mHomepageEdit.contains(oldFocus) && mHomepageEdit.isEditing()) {
+                mHomepageEdit.cancel();
+            }
         }
+    }
+
+    @Override
+    public Point getDimensions() {
+        return new Point( WidgetPlacement.dpDimension(getContext(), R.dimen.display_options_width),
+                WidgetPlacement.dpDimension(getContext(), R.dimen.display_options_height));
     }
 
 }

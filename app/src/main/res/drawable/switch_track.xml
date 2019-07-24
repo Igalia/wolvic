@@ -54,8 +54,8 @@
                     android:visible="true">
                     <gradient
                         android:angle="270"
-                        android:endColor="@color/forest"
-                        android:startColor="@color/forest"/>
+                        android:endColor="@color/jade"
+                        android:startColor="@color/jade"/>
                     <corners
                         android:radius="16dp"/>
                     <size
@@ -98,8 +98,8 @@
                     android:visible="true">
                     <gradient
                         android:angle="270"
-                        android:endColor="@color/tomato"
-                        android:startColor="@color/tomato"/>
+                        android:endColor="@color/garnet"
+                        android:startColor="@color/garnet"/>
                     <corners
                         android:radius="16dp"/>
                     <size

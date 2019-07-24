@@ -25,7 +25,6 @@ class EnvironmentOptionsView extends SettingsView {
     private SwitchSetting mEnvOverrideSwitch;
     private ImageRadioGroupSetting mEnvironmentsRadio;
     private ButtonSetting mResetButton;
-    private ScrollView mScrollbar;
 
     public EnvironmentOptionsView(Context aContext, WidgetManagerDelegate aWidgetManager) {
         super(aContext, aWidgetManager);
@@ -66,14 +65,6 @@ class EnvironmentOptionsView extends SettingsView {
         mResetButton.setOnClickListener(mResetListener);
 
         mScrollbar = findViewById(R.id.scrollbar);
-    }
-
-    @Override
-    public void onShown() {
-        super.onShown();
-
-        mScrollbar.scrollTo(0, 0);
-        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_NO_DIM_BRIGHTNESS);
     }
 
     @Override

@@ -13,7 +13,9 @@
     <string name="settings_key_multiprocess" translatable="false">settings_environment_multiprocess</string>
     <string name="settings_key_performance_monitor" translatable="false">settings_performance_monitor</string>
     <string name="settings_key_servo" translatable="false">settings_environment_servo</string>
+    <string name="settings_key_drm_playback" translatable="false">settings_key_drm_playback</string>
     <string name="settings_key_tracking_protection" translatable="false">settings_tracking_protection</string>
+    <string name="settings_key_speech_data_collection" translatable="false">settings_key_speech_data_collection</string>
     <string name="settings_key_user_agent_version" translatable="false">settings_user_agent_version</string>
     <string name="settings_key_input_mode" translatable="false">settings_touch_mode</string>
     <string name="settings_key_display_density" translatable="false">settings_display_density</string>
@@ -37,6 +39,7 @@
     <string name="private_browsing_support_url" translatable="false">https://support.mozilla.org/kb/private-mode-firefox-reality</string>
     <string name="settings_key_browser_world_width" translatable="false">settings_browser_world_width</string>
     <string name="settings_key_browser_world_height" translatable="false">settings_browser_world_height</string>
+    <string name="settings_key_notifications" translatable="false">settings_key_notifications</string>
     <string name="environment_override_help_url" translatable="false">https://github.com/MozillaReality/FirefoxReality/wiki/Environments</string>
     <string name="private_policy_url" translatable="false">https://www.mozilla.org/privacy/firefox/</string>
     <string name="private_report_url" translatable="false">https://mixedreality.mozilla.org/fxr/report?src=browser-fxr&amp;label=browser-firefox-reality&amp;url=%1$s</string>

@@ -29,7 +29,6 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
     static final String LOGTAG = "VRB";
     private static final int ICON_ANIMATION_DURATION = 200;
 
-    private UIButton mHelpButton;
     private UIButton mSettingsButton;
     private UIButton mPrivateButton;
     private UIButton mBookmarksButton;
@@ -64,17 +63,6 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
 
         mMinPadding = WidgetPlacement.pixelDimension(getContext(), R.dimen.tray_icon_padding_min);
         mMaxPadding = WidgetPlacement.pixelDimension(getContext(), R.dimen.tray_icon_padding_max);
-
-        mHelpButton = findViewById(R.id.helpButton);
-        mHelpButton.setOnHoverListener(mButtonScaleHoverListener);
-        mHelpButton.setOnClickListener(view -> {
-            if (mAudio != null) {
-                mAudio.playSound(AudioEngine.Sound.CLICK);
-            }
-
-            onHelpButtonClicked();
-            view.requestFocusFromTouch();
-        });
 
         mPrivateButton = findViewById(R.id.privateButton);
         mPrivateButton.setOnHoverListener(mButtonScaleHoverListener);
@@ -315,16 +303,6 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
             return widget.isVisible();
         }
         return false;
-    }
-
-    private void onHelpButtonClicked() {
-        GeckoSession session = SessionStore.get().getCurrentSession();
-        if (session == null) {
-            int sessionId = SessionStore.get().createSession();
-            SessionStore.get().setCurrentSession(sessionId);
-        }
-
-        SessionStore.get().loadUri(getContext().getString(R.string.help_url));
     }
 
     // BookmarkListener

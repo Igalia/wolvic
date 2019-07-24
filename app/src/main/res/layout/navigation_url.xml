@@ -14,18 +14,18 @@
             android:background="@drawable/url_background"
             android:ellipsize="none"
             android:ems="10"
-            android:fadingEdgeLength="20dp"
+            android:fadingEdgeLength="30dp"
             android:gravity="center_vertical"
             android:hint="@string/search_placeholder"
             android:imeOptions="actionGo"
             android:inputType="textUri"
             android:paddingStart="20dp"
-            android:paddingEnd="80dp"
+            android:paddingEnd="100dp"
             android:requiresFadingEdge="horizontal"
             android:selectAllOnFocus="true"
             android:textColor="@color/fog"
             android:textColorHighlight="@color/azure"
-            android:textSize="16dip"
+            android:textSize="16sp"
             app:autocompleteBackgroundColor="@color/azure" />
 
         <RelativeLayout
@@ -42,7 +42,8 @@
                 android:layout_centerInParent="true"
                 android:layout_gravity="center_vertical"
                 android:src="@drawable/loading_shape"
-                android:visibility="gone" />
+                android:visibility="gone"
+                android:contentDescription="Loading animation"/>
 
             <ImageView
                 android:id="@+id/insecureIcon"
@@ -51,7 +52,8 @@
                 android:layout_centerInParent="true"
                 android:padding="5dp"
                 android:src="@drawable/ic_icon_security_state_insecure"
-                android:visibility="gone" />
+                android:visibility="gone"
+                android:contentDescription="SSL icon"/>
 
         </RelativeLayout>
 
@@ -67,6 +69,13 @@
                 style="@style/urlBarIconTheme"
                 android:src="@drawable/ic_icon_microphone"
                 android:tooltipText="@string/voice_search_tooltip"
+                android:tint="@color/fog" />
+
+            <org.mozilla.vrbrowser.ui.views.UIButton
+                android:id="@+id/uaModeButton"
+                style="@style/urlBarIconTheme"
+                android:src="@drawable/ic_icon_ua_default"
+                android:tooltipText="@string/user_agent_tooltip"
                 android:tint="@color/fog" />
 
             <org.mozilla.vrbrowser.ui.views.UIButton

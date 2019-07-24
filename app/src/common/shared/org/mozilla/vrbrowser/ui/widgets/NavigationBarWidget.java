@@ -134,13 +134,10 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mResizeBackHandler = () -> exitResizeMode(ResizeAction.RESTORE_SIZE);
 
         mFullScreenBackHandler = this::exitFullScreenMode;
-        mVRVideoBackHandler = new Runnable() {
-            @Override
-            public void run() {
-                exitVRVideo();
-                if (mAutoEnteredVRVideo) {
-                    exitFullScreenMode();
-                }
+        mVRVideoBackHandler = () -> {
+            exitVRVideo();
+            if (mAutoEnteredVRVideo) {
+                exitFullScreenMode();
             }
         };
 
@@ -908,6 +905,9 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key == mAppContext.getString(R.string.settings_key_servo)) {
             updateServoButton();
+
+        } else if (key == mAppContext.getString(R.string.settings_key_user_agent_version)) {
+            mURLBar.setUAMode(SettingsStore.getInstance(getContext()).getUaMode());
         }
     }
 

@@ -13,8 +13,8 @@
     <!-- Navigation bar -->
     <dimen name="navigation_bar_width">720dp</dimen>
     <dimen name="navigation_bar_height">44dp</dimen>
-    <dimen name="url_bar_item_width">24dp</dimen>
-    <dimen name="url_bar_last_item_width">44dp</dimen>
+    <dimen name="url_bar_item_width">28dp</dimen>
+    <dimen name="url_bar_last_item_width">36dp</dimen>
 
     <!-- Keyboard -->
     <item name="keyboard_world_width" format="float" type="dimen">3.25</item>
@@ -62,8 +62,8 @@
     <!-- Settings Dialog -->
     <item name="settings_world_y" format="float" type="dimen">1.6</item>
     <item name="settings_world_z" format="float" type="dimen">-2.0</item>
-    <dimen name="settings_width">730dp</dimen>
-    <dimen name="settings_height">520dp</dimen>
+    <dimen name="settings_width">770dp</dimen>
+    <dimen name="settings_height">490dp</dimen>
     <dimen name="settings_button_height">320dp</dimen>
     <dimen name="settings_button_text_width">100dp</dimen>
     <dimen name="settings_main_button_text_width">125dp</dimen>
@@ -194,4 +194,20 @@
     <!-- Tooltip -->
     <item name="tooltip_z_distance" format="float" type="dimen">0.02</item>
     <item name="tooltip_delay" format="integer" type="integer">1000</item>
+
+    <!-- Dialog buttons -->
+    <dimen name="report_issue_width">145dp</dimen>
+    <dimen name="report_issue_height">65dp</dimen>
+
+    <!-- Privacy settings -->
+    <dimen name="privacy_options_width">585dp</dimen>
+    <dimen name="privacy_options_height">490dp</dimen>
+
+    <!-- Privacy settings -->
+    <dimen name="language_options_width">585dp</dimen>
+    <dimen name="language_options_height">490dp</dimen>
+
+    <!-- Display settings -->
+    <dimen name="display_options_width">585dp</dimen>
+    <dimen name="display_options_height">420dp</dimen>
 </resources>

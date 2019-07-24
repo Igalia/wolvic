@@ -66,6 +66,21 @@
                     app:options="@array/developer_options_msaa"
                     app:values="@array/developer_options_ua_mode_values" />
 
+                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                    android:id="@+id/autoplaySwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:description="@string/security_options_autoplay" />
+
+                <org.mozilla.vrbrowser.ui.views.settings.SingleEditSetting
+                    android:id="@+id/homepage_edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:description="@string/developer_options_homepage"
+                    app:highlightedTextColor="@color/fog"
+                    android:inputType="textWebEmailAddress"
+                    android:width="300dp" />
+
                 <org.mozilla.vrbrowser.ui.views.settings.RadioGroupSetting
                     android:id="@+id/foveated_app_radio"
                     android:layout_width="match_parent"

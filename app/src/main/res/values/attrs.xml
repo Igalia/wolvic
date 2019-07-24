@@ -35,6 +35,8 @@
 
     <declare-styleable name="SwitchSetting">
         <attr name="description" />
+        <attr name="on_text" format="string" />
+        <attr name="off_text" format="string" />
     </declare-styleable>
 
     <declare-styleable name="RadioGroupSetting">

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <RelativeLayout
         android:id="@+id/optionsLayout"
@@ -44,18 +45,36 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <org.mozilla.vrbrowser.ui.views.settings.RadioGroupSetting
+                <TextView
+                    style="@style/settingsDescription"
+                    android:layout_below="@+id/backButton"
+                    android:gravity="center_vertical"
+                    android:text="@string/developer_options_pointer_color"
+                    tools:text="@string/developer_options_pointer_color" />
+
+                <org.mozilla.vrbrowser.ui.views.settings.RadioGroupVSetting
                     android:id="@+id/pointer_color_radio"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:paddingLeft="50dp"
+                    app:layout="@layout/setting_radio_group_v"
                     app:description="@string/developer_options_pointer_color"
                     app:options="@array/developer_options_pointer_colors"
                     app:values="@array/developer_options_pointer_colors_values" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.RadioGroupSetting
+                <TextView
+                    style="@style/settingsDescription"
+                    android:layout_below="@+id/backButton"
+                    android:gravity="center_vertical"
+                    android:text="@string/developer_options_scroll_direction"
+                    tools:text="@string/developer_options_scroll_direction" />
+
+                <org.mozilla.vrbrowser.ui.views.settings.RadioGroupVSetting
                     android:id="@+id/scroll_direction_radio"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:paddingLeft="50dp"
+                    app:layout="@layout/setting_radio_group_v"
                     app:description="@string/developer_options_scroll_direction"
                     app:options="@array/developer_options_pointer_scroll_directions"
                     app:values="@array/developer_options_pointer_scroll_direction_values" />

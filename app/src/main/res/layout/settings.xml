@@ -2,42 +2,108 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/optionsLayout"
         android:layout_width="@dimen/settings_width"
         android:layout_height="@dimen/settings_height"
         android:background="@drawable/settings_background"
         android:orientation="vertical">
 
+        <ImageButton
+            android:id="@+id/backButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="50dp"
+            android:src="@drawable/ic_icon_back"
+            android:drawableTint="@color/fog_void_tint"
+            android:tint="@color/fog_void_tint"
+            android:background="@drawable/media_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/reportIssueLayout"
+            android:layout_width="@dimen/report_issue_width"
+            android:layout_height="@dimen/report_issue_height"
+            android:layout_marginTop="54dp"
+            android:layout_marginEnd="42dp"
+            android:background="@drawable/panel_background"
+            android:backgroundTint="@color/void_fog_tint"
+            android:descendantFocusability="afterDescendants"
+            android:gravity="center"
+            android:focusable="true"
+            android:clickable="true"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/settings_button_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:layout_marginEnd="5dp"
+                android:gravity="center"
+                android:scaleType="fitXY"
+                android:duplicateParentState="true"
+                android:tint="@color/fog_void_tint"
+                android:src="@drawable/ic_settings_reportissue" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:descendantFocusability="afterDescendants"
+                android:duplicateParentState="true"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:duplicateParentState="true"
+                    android:text="@string/settings_report_issue"
+                    android:textColor="@color/fog_void_tint"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:duplicateParentState="true"
+                    android:text="@string/bug_report_url"
+                    android:textColor="@color/fog_void_tint"/>
+            </LinearLayout>
+        </LinearLayout>
+
         <LinearLayout
             android:id="@+id/settingsMasthead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:layout_marginTop="23dp"
             android:clickable="true"
             android:contextClickable="false"
+            android:focusable="true"
             android:orientation="vertical"
-            android:focusable="true">
+            android:contentDescription="Firefox logo"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
                 android:id="@+id/ff_logo_settings"
-                android:layout_width="126dp"
+                android:layout_width="130dp"
                 android:layout_height="84dp"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
                 android:layout_gravity="center"
-                android:layout_marginTop="40dp"
-                android:layout_marginRight="40dp"
-                android:layout_marginLeft="40dp"
                 android:clickable="false"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ff_logo_settings" />
 
             <TextView
                 android:id="@+id/versionText"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/ff_logo_settings"
                 android:layout_marginTop="5dp"
                 android:clickable="false"
                 android:fontFamily="sans-serif"
@@ -48,10 +114,8 @@
 
             <TextView
                 android:id="@+id/buildText"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/versionText"
-                android:layout_marginBottom="15dp"
                 android:clickable="false"
                 android:fontFamily="sans-serif"
                 android:gravity="center"
@@ -61,19 +125,21 @@
         </LinearLayout>
 
         <ScrollView
+            android:id="@+id/scrollView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginBottom="20dp"
-            android:scrollbars="none">
+            android:layout_marginStart="108dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="108dp"
+            android:scrollbars="none"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/settingsMasthead">
 
             <HorizontalScrollView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
                 android:fadingEdgeLength="100dp"
                 android:requiresFadingEdge="horizontal"
                 android:scrollbars="none">
@@ -91,15 +157,22 @@
                         <org.mozilla.vrbrowser.ui.views.HoneycombButton
                             android:id="@+id/languageButton"
                             style="?attr/honeycombButtonStyle"
-                            android:layout_centerHorizontal="true"
                             app:honeycombButtonIcon="@drawable/ic_settings_language"
                             app:honeycombButtonText="@string/settings_language"
                             app:honeycombButtonTextSize="@dimen/settings_main_button_text_width" />
 
-                        <org.mozilla.vrbrowser.ui.views.HoneycombSwitch
-                            android:id="@+id/crashReportingSwitch"
+                        <org.mozilla.vrbrowser.ui.views.HoneycombButton
+                            android:id="@+id/displayButton"
                             style="?attr/honeycombButtonStyle"
-                            app:honeycombSwitchText="@string/settings_crash_reporting"
+                            app:honeycombButtonIcon="@drawable/ic_settings_display"
+                            app:honeycombButtonText="@string/settings_display"
+                            app:honeycombButtonTextSize="@dimen/settings_main_button_text_width" />
+
+                        <org.mozilla.vrbrowser.ui.views.HoneycombButton
+                            android:id="@+id/privacyButton"
+                            style="?attr/honeycombButtonStyle"
+                            app:honeycombButtonIcon="@drawable/ic_settings_privacypolicy"
+                            app:honeycombButtonText="@string/settings_privacy_security"
                             app:honeycombSwitchTextSize="@dimen/settings_main_button_text_width" />
 
                         <org.mozilla.vrbrowser.ui.views.HoneycombButton
@@ -108,19 +181,6 @@
                             app:honeycombButtonIcon="@drawable/ic_settings_developeroptions"
                             app:honeycombButtonText="@string/settings_developer_options"
                             app:honeycombSwitchTextSize="@dimen/settings_main_button_text_width" />
-
-                        <org.mozilla.vrbrowser.ui.views.HoneycombSwitch
-                            android:id="@+id/telemetry_switch"
-                            style="?attr/honeycombButtonStyle"
-                            app:honeycombSwitchText="@string/settings_telemetry"
-                            app:honeycombSwitchTextSize="@dimen/settings_main_button_text_width" />
-
-                        <org.mozilla.vrbrowser.ui.views.HoneycombButton
-                            android:id="@+id/environmentButton"
-                            style="?attr/honeycombButtonStyle"
-                            app:honeycombButtonIcon="@drawable/ic_settings_environment"
-                            app:honeycombButtonText="@string/developer_options_environments"
-                            app:honeycombButtonTextSize="@dimen/settings_main_button_text_width" />
 
                     </LinearLayout>
 
@@ -134,17 +194,10 @@
                         android:orientation="horizontal">
 
                         <org.mozilla.vrbrowser.ui.views.HoneycombButton
-                            android:id="@+id/privacyButton"
+                            android:id="@+id/environmentButton"
                             style="?attr/honeycombButtonStyle"
-                            app:honeycombButtonIcon="@drawable/ic_settings_privacypolicy"
-                            app:honeycombButtonText="@string/settings_privacy_security"
-                            app:honeycombSwitchTextSize="@dimen/settings_main_button_text_width" />
-
-                        <org.mozilla.vrbrowser.ui.views.HoneycombButton
-                            android:id="@+id/displayButton"
-                            style="?attr/honeycombButtonStyle"
-                            app:honeycombButtonIcon="@drawable/ic_settings_display"
-                            app:honeycombButtonText="@string/settings_display"
+                            app:honeycombButtonIcon="@drawable/ic_settings_environment"
+                            app:honeycombButtonText="@string/developer_options_environments"
                             app:honeycombButtonTextSize="@dimen/settings_main_button_text_width" />
 
                         <org.mozilla.vrbrowser.ui.views.HoneycombButton
@@ -157,27 +210,14 @@
                             app:honeycombButtonTextSize="@dimen/settings_main_button_text_width" />
 
                         <org.mozilla.vrbrowser.ui.views.HoneycombButton
-                            android:id="@+id/reportButton"
+                            android:id="@+id/helpButton"
                             style="?attr/honeycombButtonStyle"
-                            app:honeycombButtonIcon="@drawable/ic_settings_reportissue"
-                            app:honeycombButtonText="@string/settings_report_issue"
-                            app:honeycombSecondaryText="@string/bug_report_url"
+                            app:honeycombButtonIcon="@drawable/ic_settings_help"
+                            app:honeycombButtonText="@string/settings_help"
                             app:honeycombSwitchTextSize="@dimen/settings_main_button_text_width" />
                     </LinearLayout>
                 </RelativeLayout>
             </HorizontalScrollView>
         </ScrollView>
-
-        <org.mozilla.vrbrowser.ui.views.UIButton
-            android:id="@+id/settingsCancelButton"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center_horizontal"
-            android:background="@drawable/main_button"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_icon_dialog_cancel"
-            app:tintColorList="@drawable/main_button_icon_color" />
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </merge>

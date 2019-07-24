@@ -9,9 +9,12 @@ import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.ui.views.UIButton;
+import org.mozilla.vrbrowser.utils.ViewUtils;
 
 public class SwitchSetting extends LinearLayout {
 
@@ -38,6 +41,10 @@ public class SwitchSetting extends LinearLayout {
 
         TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.SwitchSetting, defStyleAttr, 0);
         mText = attributes.getString(R.styleable.SwitchSetting_description);
+        int onResId = attributes.getResourceId(R.styleable.SwitchSetting_on_text, R.string.on);
+        mOnText = getResources().getString(onResId);
+        int offResId = attributes.getResourceId(R.styleable.SwitchSetting_off_text, R.string.off);
+        mOffText = getResources().getString(offResId);
         attributes.recycle();
 
         initialize(context);
@@ -47,8 +54,6 @@ public class SwitchSetting extends LinearLayout {
         inflate(aContext, R.layout.setting_switch, this);
 
         mAudio = AudioEngine.fromContext(aContext);
-        mOnText = aContext.getString(R.string.on);
-        mOffText = aContext.getString(R.string.off);
 
         mSwitchDescription = findViewById(R.id.setting_description);
         mSwitchDescription.setText(mText);
@@ -72,8 +77,11 @@ public class SwitchSetting extends LinearLayout {
         }
     };
 
-    public void setValue(boolean value, boolean doApply) {
+    public void setLinkClickListner(@NonNull ViewUtils.LinkClickableSpan listener) {
+        ViewUtils.setTextViewHTML(mSwitchDescription, mText, (widget, url) -> listener.onClick(widget, url));
+    }
 
+    public void setValue(boolean value, boolean doApply) {
         mSwitch.setOnCheckedChangeListener(null);
         mSwitch.setChecked(value);
         mSwitch.setOnCheckedChangeListener(mInternalSwitchListener);
@@ -97,23 +105,12 @@ public class SwitchSetting extends LinearLayout {
         updateSwitchText();
     }
 
-
     public String getDescription() {
         return mSwitchDescription.getText().toString();
     }
 
     private void updateSwitchText() {
         mSwitchText.setText(mSwitch.isChecked() ? mOnText : mOffText);
-    }
-
-    public void setOnText(String aText) {
-        mOnText = aText;
-        updateSwitchText();
-    }
-
-    public void setOffText(String aText) {
-        mOffText = aText;
-        updateSwitchText();
     }
 
     public void setHelpDelegate(Runnable aDelegate) {

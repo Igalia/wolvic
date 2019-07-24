@@ -89,8 +89,9 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
 
         mMozillaSpeechService = MozillaSpeechService.getInstance();
         mMozillaSpeechService.setProductTag(getContext().getString(R.string.voice_app_id));
-        mMozillaSpeechService.storeSamples(false);
-        mMozillaSpeechService.storeTranscriptions(false);
+        boolean storeData = SettingsStore.getInstance(aContext).isSpeechDataCollectionEnabled();
+        mMozillaSpeechService.storeSamples(storeData);
+        mMozillaSpeechService.storeTranscriptions(storeData);
 
         mVoiceSearchText1 = findViewById(R.id.voiceSearchText1);
         mVoiceSearchText2 = findViewById(R.id.voiceSearchText2);

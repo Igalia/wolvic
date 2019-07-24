@@ -22,7 +22,6 @@ class ControllerOptionsView extends SettingsView {
     private RadioGroupSetting mPointerColorRadio;
     private RadioGroupSetting mScrollDirectionRadio;
     private ButtonSetting mResetButton;
-    private ScrollView mScrollbar;
 
     public ControllerOptionsView(Context aContext, WidgetManagerDelegate aWidgetManager) {
         super(aContext, aWidgetManager);
@@ -55,12 +54,6 @@ class ControllerOptionsView extends SettingsView {
 
         mResetButton = findViewById(R.id.resetButton);
         mResetButton.setOnClickListener(v -> resetOptions());
-    }
-
-    @Override
-    public void onShown() {
-        super.onShown();
-        mScrollbar.scrollTo(0, 0);
     }
 
     private void resetOptions() {

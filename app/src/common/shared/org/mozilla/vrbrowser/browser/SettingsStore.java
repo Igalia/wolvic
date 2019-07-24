@@ -45,7 +45,10 @@ public class SettingsStore {
     public final static boolean ENV_OVERRIDE_DEFAULT = false;
     public final static boolean MULTIPROCESS_DEFAULT = false;
     public final static boolean PERFORMANCE_MONITOR_DEFAULT = true;
+    public final static boolean DRM_PLAYBACK_DEFAULT = false;
     public final static boolean TRACKING_DEFAULT = true;
+    public final static boolean NOTIFICATIONS_DEFAULT = true;
+    public final static boolean SPEECH_DATA_COLLECTION_DEFAULT = false;
     public final static boolean SERVO_DEFAULT = false;
     public final static int UA_MODE_DEFAULT = GeckoSessionSettings.USER_AGENT_MODE_VR;
     public final static int INPUT_MODE_DEFAULT = 1;
@@ -66,6 +69,7 @@ public class SettingsStore {
     public final static int FOVEATED_APP_DEFAULT_LEVEL = 0;
     public final static int FOVEATED_WEBVR_DEFAULT_LEVEL = 0;
     private final static long CRASH_RESTART_DELTA = 2000;
+    public final static boolean AUTOPLAY_ENABLED = false;
 
     // Enable telemetry by default (opt-out).
     private final static boolean enableCrashReportingByDefault = false;
@@ -143,6 +147,17 @@ public class SettingsStore {
     public void setConsoleLogsEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_console_logs), isEnabled);
+        editor.commit();
+    }
+
+    public boolean isDrmContentPlaybackEnabled() {
+        return mPrefs.getBoolean(
+                mContext.getString(R.string.settings_key_drm_playback), DRM_PLAYBACK_DEFAULT);
+    }
+
+    public void setDrmContentPlaybackEnabled(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_drm_playback), isEnabled);
         editor.commit();
     }
 
@@ -482,6 +497,28 @@ public class SettingsStore {
     public synchronized void resetCrashRestartCount() {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putLong(mContext.getString(R.string.settings_key_crash_restart_count), 0);
+        editor.commit();
+    }
+
+    public boolean isSpeechDataCollectionEnabled() {
+        return mPrefs.getBoolean(
+                mContext.getString(R.string.settings_key_speech_data_collection), SPEECH_DATA_COLLECTION_DEFAULT);
+    }
+
+    public void setSpeechDataCollectionEnabled(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_speech_data_collection), isEnabled);
+        editor.commit();
+    }
+
+    public boolean isNotificationsEnabled() {
+        return mPrefs.getBoolean(
+                mContext.getString(R.string.settings_key_notifications), NOTIFICATIONS_DEFAULT);
+    }
+
+    public void setNotificationsEnabled(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_notifications), isEnabled);
         editor.commit();
     }
 }
