@@ -79,7 +79,7 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
             return mTooltipText;
         else
-            return getTooltipText().toString();
+            return getTooltipText() == null ? null : getTooltipText().toString();
     }
 
     @TargetApi(Build.VERSION_CODES.O)
