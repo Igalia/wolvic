@@ -239,9 +239,9 @@ public class NavigationURLBar extends FrameLayout {
 
     private void setBookmarked(boolean aValue) {
         if (aValue) {
-            mBookmarkButton.setImageDrawable(getContext().getDrawable(R.drawable.ic_icon_bookmark_active));
+            mBookmarkButton.setImageDrawable(getContext().getDrawable(R.drawable.ic_icon_bookmarked_active));
         } else {
-            mBookmarkButton.setImageDrawable(getContext().getDrawable(R.drawable.ic_icon_bookmark));
+            mBookmarkButton.setImageDrawable(getContext().getDrawable(R.drawable.ic_icon_bookmarked));
         }
     }
 

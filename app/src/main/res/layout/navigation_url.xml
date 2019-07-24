@@ -81,7 +81,7 @@
             <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/bookmarkButton"
                 style="@style/urlBarIconThemeEnd"
-                android:src="@drawable/ic_icon_bookmark"
+                android:src="@drawable/ic_icon_bookmarked"
                 android:tooltipText="@string/bookmark_tooltip"
                 android:tint="@color/fog" />
         </LinearLayout>

@@ -256,11 +256,11 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
             if (selectedItem.type == SuggestionItem.Type.SUGGESTION)
                 itemViewHolder.favicon.setImageResource(R.drawable.ic_icon_search);
             else  if (selectedItem.type == SuggestionItem.Type.COMPLETION)
-                itemViewHolder.favicon.setImageResource(R.drawable.ic_icon_browser);
+                itemViewHolder.favicon.setImageResource(R.drawable.ic_icon_globe);
             else  if (selectedItem.type == SuggestionItem.Type.HISTORY)
                 itemViewHolder.favicon.setImageResource(R.drawable.ic_icon_history);
             else  if (selectedItem.type == SuggestionItem.Type.BOOKMARK)
-                itemViewHolder.favicon.setImageResource(R.drawable.ic_icon_bookmark_active);
+                itemViewHolder.favicon.setImageResource(R.drawable.ic_icon_bookmark);
 
             itemViewHolder.delete.setVisibility(GONE);
             itemViewHolder.favicon.setVisibility(VISIBLE);
