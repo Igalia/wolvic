@@ -116,7 +116,7 @@ try {
     }
 
     const newUrl = getNewUrl(qs);
-    if (newUrl && window.location.pathname + window.location.search !== newUrl) {
+    if (newUrl && (window.location.pathname + window.location.search) !== newUrl) {
       window.history.replaceState({}, document.title, newUrl);
       return newUrl;
     }
@@ -289,6 +289,16 @@ try {
       window.ytplayer.config.args.jsapicallback = 'onYouTubePlayerReady';
     }
   });
+
+  window.addEventListener("beforeunload", function (e) {
+    // Make sure that the disable_polymer parameter is kept. Youtube processes the parameter but removes it from the URL.
+    // See https://github.com/MozillaReality/FirefoxReality/issues/1426
+    let qs = new URLSearchParams(window.location.search);
+    qs.set('disable_polymer', '1');
+    let url = getNewUrl(qs);
+    window.history.replaceState({}, document.title, url);
+  });
+
 } catch (err) {
   console.error(LOGTAG, 'Encountered error:', err);
 }
