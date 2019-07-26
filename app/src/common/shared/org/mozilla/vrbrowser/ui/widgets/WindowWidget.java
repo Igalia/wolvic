@@ -406,10 +406,8 @@ public class WindowWidget extends UIWidget implements SessionStore.SessionChange
         mWidgetPlacement.height = (int) ((aWorldHeight * defaultHeight) / worldHeight) + mBorderWidth * 2;
         mWidgetPlacement.worldWidth = aWorldWidth;
         mWidgetManager.updateWidget(this);
-
         if (mSaveResizeChanges) {
-            SettingsStore.getInstance(getContext()).setBrowserWorldWidth(aWorldWidth);
-            SettingsStore.getInstance(getContext()).setBrowserWorldHeight(aWorldHeight);
+            saveCurrentSize();
         }
     }
 
@@ -601,6 +599,12 @@ public class WindowWidget extends UIWidget implements SessionStore.SessionChange
         } else if (!aVisible && mNoInternetToast.isVisible()) {
             mNoInternetToast.hide(REMOVE_WIDGET);
         }
+    }
+
+    public void saveCurrentSize() {
+        final float aspect = (float)mWidgetPlacement.width / (float)mWidgetPlacement.height;
+        SettingsStore.getInstance(getContext()).setBrowserWorldWidth(mWidgetPlacement.worldWidth);
+        SettingsStore.getInstance(getContext()).setBrowserWorldHeight(mWidgetPlacement.worldWidth / aspect);
     }
 
     public void showAlert(String title, @NonNull String msg, @NonNull AlertCallback callback) {
