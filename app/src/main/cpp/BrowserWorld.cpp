@@ -206,6 +206,9 @@ struct BrowserWorld::State {
     splashAnimation = SplashAnimation::Create(create);
     monitor = PerformanceMonitor::Create(create);
     monitor->AddPerformanceMonitorObserver(std::make_shared<PerformanceObserver>());
+#if defined(WAVEVR)
+    monitor->SetPerformanceDelta(15.0);
+#endif
   }
 
   void CheckBackButton();

@@ -174,7 +174,8 @@ android {
             dimension "platform"
             externalNativeBuild {
                 cmake {
-                    cppFlags " -I" + file("${project.rootDir}/third_party/wavesdk/build/wvr_client/include").absolutePath
+                    cppFlags " -I" + file("${project.rootDir}/third_party/wavesdk/build/wvr_client/include").absolutePath +
+                            " -DWAVEVR"
                     arguments "-DVR_SDK_LIB=wavevr-lib", "-DWAVEVR=ON"
                 }
             }

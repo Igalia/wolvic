@@ -884,7 +884,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             mWindowWidget.showButtonPrompt(getString(R.string.performance_title), getString(R.string.performance_message), buttons, new GeckoSession.PromptDelegate.ButtonCallback() {
                 @Override
                 public void confirm(int button) {
-                    if (button == 0) {
+                    if (button == GeckoSession.PromptDelegate.BUTTON_TYPE_NEGATIVE) {
                         mPoorPerformanceWhiteList.add(originalUrl);
                         SessionStore.get().loadUri(originalUrl);
                     }
