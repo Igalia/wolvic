@@ -338,7 +338,10 @@ Cylinder::TestIntersection(const vrb::Vector& aStartPoint, const vrb::Vector& aD
   vrb::Matrix modelView = worldTransform.AfineInverse();
   vrb::Vector start = modelView.MultiplyPosition(aStartPoint);
   vrb::Vector direction = modelView.MultiplyDirection(aDirection);
-  start = start - direction * 1000.0f;
+  if (vrb::Vector(start.x(), 0.0f, start.z()).Magnitude() <= m.radius) {
+    // Ensure that start of the ray is outside of the cylinder
+    start = start - direction * m.radius * 3.0f;
+  }
 
   const float radius = this->GetCylinderRadius();
 
