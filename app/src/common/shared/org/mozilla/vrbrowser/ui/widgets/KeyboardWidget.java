@@ -15,6 +15,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.CursorAnchorInfo;
@@ -88,6 +89,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private int mKeyWidth;
     private int mKeyboardPopupTopMargin;
     private ImageButton mCloseKeyboardButton;
+    private ImageButton mKeyboardMoveButton;
     private boolean mIsLongPress;
     private boolean mIsMultiTap;
     private boolean mIsCapsLock;
@@ -96,6 +98,43 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private String mComposingText = "";
     private String mComposingDisplayText = "";
     private boolean mInternalDeleteHint = false;
+
+    private class MoveTouchListener implements OnTouchListener {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_POINTER_DOWN:
+                case MotionEvent.ACTION_DOWN:
+                    v.setPressed(true);
+                    mWidgetManager.startWidgetMove(KeyboardWidget.this, WidgetManagerDelegate.WIDGET_MOVE_BEHAVIOUR_KEYBOARD);
+                    break;
+                case MotionEvent.ACTION_POINTER_UP:
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    v.setPressed(false);
+                    mWidgetManager.finishWidgetMove();
+                    break;
+                default:
+                    return false;
+
+            }
+            return true;
+        }
+    }
+
+    private class MoveHoverListener implements OnHoverListener {
+        @Override
+        public boolean onHover(View v, MotionEvent event) {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_HOVER_ENTER:
+                    v.setHovered(true);
+                    break;
+                case MotionEvent.ACTION_HOVER_EXIT:
+                    v.setHovered(false);
+            }
+            return false;
+        }
+    }
 
     public KeyboardWidget(Context aContext) {
         super(aContext);
@@ -179,7 +218,9 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mCapsLockOnIcon = getResources().getDrawable(R.drawable.ic_icon_keyboard_caps, getContext().getTheme());
         mCloseKeyboardButton = findViewById(R.id.keyboardCloseButton);
         mCloseKeyboardButton.setOnClickListener(v -> dismiss());
-
+        mKeyboardMoveButton = findViewById(R.id.keyboardMoveButton);
+        mKeyboardMoveButton.setOnTouchListener(new MoveTouchListener());
+        mKeyboardMoveButton.setOnHoverListener(new MoveHoverListener());
         mKeyWidth = getResources().getDimensionPixelSize(R.dimen.keyboard_key_width);
         mKeyboardPopupTopMargin  = getResources().getDimensionPixelSize(R.dimen.keyboard_key_pressed_padding) * 2;
 

@@ -715,6 +715,17 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Keep
     @SuppressWarnings("unused")
+    void handleMoveEnd(final int aHandle, final float aDeltaX, final float aDeltaY, final float aDeltaZ, final float aRotation) {
+        runOnUiThread(() -> {
+            Widget widget = mWidgets.get(aHandle);
+            if (widget != null) {
+                widget.handleMoveEvent(aDeltaX, aDeltaY, aDeltaZ, aRotation);
+            }
+        });
+    }
+
+    @Keep
+    @SuppressWarnings("unused")
     void registerExternalContext(long aContext) {
         ServoUtils.setExternalContext(aContext);
         GeckoVRManager.setExternalContext(aContext);
@@ -1018,6 +1029,16 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
+    public void startWidgetMove(final Widget aWidget, @WidgetMoveBehaviourFlags int aMoveBehaviour) {
+        queueRunnable(() -> startWidgetMoveNative(aWidget.getHandle(), aMoveBehaviour));
+    }
+
+    @Override
+    public void finishWidgetMove() {
+        queueRunnable(() -> finishWidgetMoveNative());
+    }
+
+    @Override
     public void addUpdateListener(UpdateListener aUpdateListener) {
         if (!mWidgetUpdateListeners.contains(aUpdateListener)) {
             mWidgetUpdateListeners.add(aUpdateListener);
@@ -1215,6 +1236,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private native void removeWidgetNative(int aHandle);
     private native void startWidgetResizeNative(int aHandle);
     private native void finishWidgetResizeNative(int aHandle);
+    private native void startWidgetMoveNative(int aHandle, int aMoveBehaviour);
+    private native void finishWidgetMoveNative();
     private native void setWorldBrightnessNative(float aBrigthness);
     private native void setTemporaryFilePath(String aPath);
     private native void exitImmersiveNative();

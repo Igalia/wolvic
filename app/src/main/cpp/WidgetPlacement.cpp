@@ -7,6 +7,8 @@
 
 namespace crow {
 
+const float WidgetPlacement::kWorldDPIRatio = 2.0f/720.0f;
+
 WidgetPlacementPtr
 WidgetPlacement::FromJava(JNIEnv* aEnv, jobject& aObject) {
   if (!aObject || !aEnv) {
@@ -57,6 +59,11 @@ WidgetPlacement::FromJava(JNIEnv* aEnv, jobject& aObject) {
   GET_FLOAT_FIELD(textureScale, "textureScale");
 
   return result;
+}
+
+WidgetPlacementPtr
+WidgetPlacement::Create(const WidgetPlacement& aPlacement) {
+  return WidgetPlacementPtr(new WidgetPlacement(aPlacement));
 }
 
 int32_t

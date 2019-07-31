@@ -41,6 +41,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/VRLayer.cpp
              src/main/cpp/VRLayerNode.cpp
              src/main/cpp/Widget.cpp
+             src/main/cpp/WidgetMover.cpp
              src/main/cpp/WidgetPlacement.cpp
              src/main/cpp/WidgetResizer.cpp
            )

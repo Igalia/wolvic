@@ -17,6 +17,7 @@
 #include "SplashAnimation.h"
 #include "Pointer.h"
 #include "Widget.h"
+#include "WidgetMover.h"
 #include "WidgetPlacement.h"
 #include "Cylinder.h"
 #include "Quad.h"
@@ -73,7 +74,6 @@ const int GestureSwipeLeft = 0;
 const int GestureSwipeRight = 1;
 
 const float kScrollFactor = 20.0f; // Just picked what fell right.
-const float kWorldDPIRatio = 2.0f/720.0f;
 const double kHoverRate = 1.0 / 10.0;
 
 class SurfaceObserver;
@@ -181,6 +181,7 @@ struct BrowserWorld::State {
   SplashAnimationPtr splashAnimation;
   VRVideoPtr vrVideo;
   PerformanceMonitorPtr monitor;
+  WidgetMoverPtr movingWidget;
 
   State() : paused(true), glInitialized(false), modelsLoaded(false), env(nullptr), cylinderDensity(0.0f), nearClip(0.1f),
             farClip(300.0f), activity(nullptr), windowsInitialized(false), exitImmersiveRequested(false), loaderDelay(0) {
@@ -361,6 +362,7 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
 
     vrb::Vector start = controller.transformMatrix.MultiplyPosition(controller.beamTransformMatrix.MultiplyPosition(vrb::Vector()));
     vrb::Vector direction = controller.transformMatrix.MultiplyDirection(controller.beamTransformMatrix.MultiplyDirection(vrb::Vector(0.0f, 0.0f, -1.0f)));
+
     WidgetPtr hitWidget;
     float hitDistance = farClip;
     vrb::Vector hitPoint;
@@ -370,7 +372,8 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
       vrb::Vector normal;
       float distance = 0.0f;
       bool isInWidget = false;
-      if (widget->TestControllerIntersection(start, direction, result, normal, isInWidget, distance)) {
+      const bool clamp = !widget->IsResizing();
+      if (widget->TestControllerIntersection(start, direction, result, normal, clamp, isInWidget, distance)) {
         if (isInWidget && (distance < hitDistance)) {
           hitWidget = widget;
           hitDistance = distance;
@@ -401,7 +404,18 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
                          controller.buttonState & ControllerDelegate::BUTTON_TOUCHPAD;
     const bool wasPressed = controller.lastButtonState & ControllerDelegate::BUTTON_TRIGGER ||
                               controller.lastButtonState & ControllerDelegate::BUTTON_TOUCHPAD;
-    if (hitWidget && hitWidget->IsResizing()) {
+
+    if (movingWidget && movingWidget->IsMoving(controller.index)) {
+      if (!pressed && wasPressed) {
+        movingWidget->EndMoving();
+      } else {
+        WidgetPlacementPtr updatedPlacement = movingWidget->HandleMove(start, direction);
+        if (updatedPlacement) {
+          movingWidget->GetWidget()->SetPlacement(updatedPlacement);
+          aRelayoutWidgets = true;
+        }
+      }
+    } else if (hitWidget && hitWidget->IsResizing()) {
       bool aResized = false, aResizeEnded = false;
       hitWidget->HandleResize(hitPoint, pressed, aResized, aResizeEnded);
 
@@ -428,6 +442,7 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
       if (!pressed && wasPressed) {
         controller.inDeadZone = true;
       }
+      controller.pointerWorldPoint = hitPoint;
       const bool moved = pressed ? OutOfDeadZone(controller, theX, theY)
           : (controller.pointerX != theX) || (controller.pointerY != theY);
       const bool throttled = ThrottleHoverEvent(controller, context->GetTimestamp(), pressed, wasPressed);
@@ -818,7 +833,7 @@ BrowserWorld::AddWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement) {
   }
   float worldWidth = aPlacement->worldWidth;
   if (worldWidth <= 0.0f) {
-    worldWidth = aPlacement->width * kWorldDPIRatio;
+    worldWidth = aPlacement->width * WidgetPlacement::kWorldDPIRatio;
   }
 
   const int32_t textureWidth = aPlacement->GetTextureWidth();
@@ -880,7 +895,7 @@ BrowserWorld::UpdateWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement
 
   float newWorldWidth = aPlacement->worldWidth;
   if (newWorldWidth <= 0.0f) {
-    newWorldWidth = aPlacement->width * kWorldDPIRatio;
+    newWorldWidth = aPlacement->width * WidgetPlacement::kWorldDPIRatio;
   }
 
   if (newWorldWidth != worldWidth || oldWidth != aPlacement->width || oldHeight != aPlacement->height) {
@@ -927,6 +942,51 @@ BrowserWorld::FinishWidgetResize(int32_t aHandle) {
 }
 
 void
+BrowserWorld::StartWidgetMove(int32_t aHandle, int32_t aMoveBehavour) {
+  ASSERT_ON_RENDER_THREAD();
+  WidgetPtr widget = m.GetWidget(aHandle);
+  if (!widget) {
+    return;
+  }
+
+  vrb::Vector initialPoint;
+  vrb::Vector anchorPoint;
+  int controllerIndex = -1;
+
+  for (Controller& controller: m.controllers->GetControllers()) {
+    if (!controller.enabled || (controller.index < 0)) {
+      continue;
+    }
+
+    if (controller.pointer && controller.pointer->GetHitWidget() == widget) {
+      controllerIndex = controller.index;
+      initialPoint = controller.pointerWorldPoint;
+      int32_t w, h;
+      widget->GetSurfaceTextureSize(w, h);
+      anchorPoint.x() = controller.pointerX / (float)w;
+      anchorPoint.y() = controller.pointerY / (float)h;
+      break;
+    }
+  }
+
+  if (controllerIndex < 0) {
+    return;
+  }
+  
+  m.movingWidget = WidgetMover::Create();
+  m.movingWidget->StartMoving(widget, aMoveBehavour, controllerIndex, initialPoint, anchorPoint);
+}
+
+void
+BrowserWorld::FinishWidgetMove() {
+  ASSERT_ON_RENDER_THREAD();
+  if (m.movingWidget) {
+    m.movingWidget->EndMoving();
+  }
+  m.movingWidget = nullptr;
+}
+
+void
 BrowserWorld::UpdateVisibleWidgets() {
   ASSERT_ON_RENDER_THREAD();
   for (const WidgetPtr& widget: m.widgets) {
@@ -956,9 +1016,9 @@ BrowserWorld::LayoutWidget(int32_t aHandle) {
 
   vrb::Matrix transform = vrb::Matrix::Identity();
 
-  vrb::Vector translation = vrb::Vector(aPlacement->translation.x() * kWorldDPIRatio,
-                                        aPlacement->translation.y() * kWorldDPIRatio,
-                                        aPlacement->translation.z() * kWorldDPIRatio);
+  vrb::Vector translation = vrb::Vector(aPlacement->translation.x() * WidgetPlacement::kWorldDPIRatio,
+                                        aPlacement->translation.y() * WidgetPlacement::kWorldDPIRatio,
+                                        aPlacement->translation.z() * WidgetPlacement::kWorldDPIRatio);
 
   const float anchorX = (aPlacement->anchor.x() - 0.5f) * worldWidth;
   const float anchorY = (aPlacement->anchor.y() - 0.5f) * worldHeight;
@@ -1354,6 +1414,16 @@ JNI_METHOD(void, startWidgetResizeNative)
 JNI_METHOD(void, finishWidgetResizeNative)
 (JNIEnv*, jobject, jint aHandle) {
   crow::BrowserWorld::Instance().FinishWidgetResize(aHandle);
+}
+
+JNI_METHOD(void, startWidgetMoveNative)
+(JNIEnv*, jobject, jint aHandle, jint aMoveBehaviour) {
+  crow::BrowserWorld::Instance().StartWidgetMove(aHandle, aMoveBehaviour);
+}
+
+JNI_METHOD(void, finishWidgetMoveNative)
+(JNIEnv*, jobject) {
+  crow::BrowserWorld::Instance().FinishWidgetMove();
 }
 
 JNI_METHOD(void, setWorldBrightnessNative)

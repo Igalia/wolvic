@@ -48,6 +48,8 @@ public:
   void RemoveWidget(int32_t aHandle);
   void StartWidgetResize(int32_t aHandle);
   void FinishWidgetResize(int32_t aHandle);
+  void StartWidgetMove(int32_t aHandle, const int32_t aMoveBehavour);
+  void FinishWidgetMove();
   void UpdateVisibleWidgets();
   void LayoutWidget(int32_t aHandle);
   void SetBrightness(const float aBrightness);

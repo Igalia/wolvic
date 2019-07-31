@@ -4,6 +4,7 @@ import android.view.View;
 
 import org.mozilla.geckoview.GeckoSession;
 
+import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 
 public interface WidgetManagerDelegate {
@@ -23,12 +24,19 @@ public interface WidgetManagerDelegate {
     float DEFAULT_DIM_BRIGHTNESS = 0.25f;
     float DEFAULT_NO_DIM_BRIGHTNESS = 1.0f;
 
+    @IntDef(value = { WIDGET_MOVE_BEHAVIOUR_GENERAL, WIDGET_MOVE_BEHAVIOUR_KEYBOARD})
+    public @interface WidgetMoveBehaviourFlags {}
+    public static final int WIDGET_MOVE_BEHAVIOUR_GENERAL = 0;
+    public static final int WIDGET_MOVE_BEHAVIOUR_KEYBOARD = 1;
+
     int newWidgetHandle();
     void addWidget(@NonNull Widget aWidget);
     void updateWidget(@NonNull Widget aWidget);
     void removeWidget(@NonNull Widget aWidget);
     void startWidgetResize(@NonNull Widget aWidget);
     void finishWidgetResize(@NonNull Widget aWidget);
+    void startWidgetMove(@NonNull Widget aWidget, @WidgetMoveBehaviourFlags int aMoveBehaviour);
+    void finishWidgetMove();
     void addUpdateListener(@NonNull UpdateListener aUpdateListener);
     void removeUpdateListener(@NonNull UpdateListener aUpdateListener);
     void pushBackHandler(@NonNull Runnable aRunnable);

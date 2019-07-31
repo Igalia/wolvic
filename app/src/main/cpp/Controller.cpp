@@ -33,6 +33,7 @@ Controller::operator=(const Controller& aController) {
   widget = aController.widget;
   pointerX = aController.pointerX;
   pointerY = aController.pointerY;
+  pointerWorldPoint = aController.pointerWorldPoint;
   buttonState = aController.buttonState;
   lastButtonState = aController.lastButtonState;
   touched = aController.touched;
@@ -70,6 +71,7 @@ Controller::Reset() {
   focused = false;
   widget = 0;
   pointerX = pointerY = 0.0f;
+  pointerWorldPoint = vrb::Vector(0.0f, 0.0f, 0.0f);
   buttonState = lastButtonState = 0;
   touched = wasTouched = false;
   touchX = touchY = 0.0f;

@@ -11,17 +11,35 @@
             android:layout_height="@dimen/keyboard_height"
             android:layout_marginTop="0dp"
             android:orientation="horizontal">
-            <org.mozilla.vrbrowser.ui.views.UIButton
-                android:id="@+id/keyboardCloseButton"
-                android:layout_width="@dimen/keyboard_key_width"
-                android:layout_height="@dimen/keyboard_key_width"
-                android:layout_marginStart="0dp"
-                android:layout_marginEnd="@dimen/keyboard_layout_padding"
-                app:tintColorList="@drawable/url_button_icon_color"
-                android:padding="10dp"
-                android:src="@drawable/ic_icon_exit"
-                android:scaleType="fitCenter"
-                android:background="@drawable/keyboard_key_background"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <org.mozilla.vrbrowser.ui.views.UIButton
+                    android:id="@+id/keyboardCloseButton"
+                    android:layout_width="@dimen/keyboard_key_width"
+                    android:layout_height="@dimen/keyboard_key_width"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginEnd="@dimen/keyboard_layout_padding"
+                    app:tintColorList="@drawable/url_button_icon_color"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_icon_exit"
+                    android:scaleType="fitCenter"
+                    android:background="@drawable/keyboard_key_background"/>
+                <org.mozilla.vrbrowser.ui.views.UIButton
+                    android:id="@+id/keyboardMoveButton"
+                    android:layout_width="@dimen/keyboard_key_width"
+                    android:layout_height="@dimen/keyboard_key_width"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginEnd="@dimen/keyboard_layout_padding"
+                    android:layout_marginTop="4dp"
+                    app:tintColorList="@drawable/url_button_icon_color"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_icon_move"
+                    android:scaleType="fitCenter"
+                    android:background="@drawable/keyboard_key_background"/>
+            </LinearLayout>
+
             <RelativeLayout
                 android:id="@+id/keyboardContainer"
                 android:layout_width="@dimen/keyboard_alphabetic_width"

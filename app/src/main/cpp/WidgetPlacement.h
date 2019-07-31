@@ -37,10 +37,13 @@ struct WidgetPlacement {
   int32_t GetTextureWidth() const;
   int32_t GetTextureHeight() const;
 
+  static const float kWorldDPIRatio;
   static WidgetPlacementPtr FromJava(JNIEnv* aEnv, jobject& aObject);
+  static WidgetPlacementPtr Create(const WidgetPlacement& aPlacement);
 private:
   WidgetPlacement() = default;
-  VRB_NO_DEFAULTS(WidgetPlacement)
+  WidgetPlacement(const WidgetPlacement&) = default;
+  WidgetPlacement& operator=(const WidgetPlacement&) = default;
 };
 
 }

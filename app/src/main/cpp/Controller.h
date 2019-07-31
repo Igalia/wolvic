@@ -26,6 +26,7 @@ struct Controller {
   uint32_t widget;
   float pointerX;
   float pointerY;
+  vrb::Vector pointerWorldPoint;
   uint32_t buttonState;
   uint32_t lastButtonState;
   bool touched;

@@ -48,9 +48,11 @@ public:
   void GetWidgetMinAndMax(vrb::Vector& aMin, vrb::Vector& aMax) const;
   void SetWorldWidth(float aWorldWidth) const;
   void GetWorldSize(float& aWidth, float& aHeight) const;
-  bool TestControllerIntersection(const vrb::Vector& aStartPoint, const vrb::Vector& aDirection, vrb::Vector& aResult, vrb::Vector& aNormal, bool& aIsInWidget, float& aDistance) const;
+  bool TestControllerIntersection(const vrb::Vector& aStartPoint, const vrb::Vector& aDirection, vrb::Vector& aResult, vrb::Vector& aNormal,
+                                  const bool aClamp, bool& aIsInWidget, float& aDistance) const;
   void ConvertToWidgetCoordinates(const vrb::Vector& aPoint, float& aX, float& aY) const;
-  void ConvertToWorldCoordinates(const vrb::Vector& aPoint, vrb::Vector& aResult) const;
+  vrb::Vector ConvertToWorldCoordinates(const vrb::Vector& aLocalPoint) const;
+  vrb::Vector ConvertToWorldCoordinates(const float aWidgetX, const float aWidgetY) const;
   const vrb::Matrix GetTransform() const;
   void SetTransform(const vrb::Matrix& aTransform);
   void ToggleWidget(const bool aEnabled);

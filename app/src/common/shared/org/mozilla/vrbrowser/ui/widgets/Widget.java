@@ -20,6 +20,7 @@ public interface Widget {
     void handleTouchEvent(MotionEvent aEvent);
     void handleHoverEvent(MotionEvent aEvent);
     void handleResizeEvent(float aWorldWidth, float aWorldHeight);
+    void handleMoveEvent(float aDeltaX, float aDeltaY, float aDeltaZ, float aRotation);
     void releaseWidget();
     void setFirstDraw(boolean aIsFirstDraw);
     boolean getFirstDraw();

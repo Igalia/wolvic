@@ -173,6 +173,14 @@ public abstract class UIWidget extends FrameLayout implements Widget {
     }
 
     @Override
+    public void handleMoveEvent(float aDeltaX, float aDeltaY, float aDeltaZ, float aRotation) {
+        mWidgetPlacement.translationX += aDeltaX;
+        mWidgetPlacement.translationY += aDeltaY;
+        mWidgetPlacement.translationZ += aDeltaZ;
+        mWidgetPlacement.rotation = aRotation;
+    }
+
+    @Override
     public void releaseWidget() {
         if (mRenderer != null) {
             mRenderer.release();

@@ -24,6 +24,8 @@ const char* kHandleGestureName = "handleGesture";
 const char* kHandleGestureSignature = "(I)V";
 const char* kHandleResizeName = "handleResize";
 const char* kHandleResizeSignature = "(IFF)V";
+const char* kHandleMoveEndName = "handleMoveEnd";
+const char* kHandleMoveEndSignature = "(IFFFF)V";
 const char* kHandleBackEventName = "handleBack";
 const char* kHandleBackEventSignature = "()V";
 const char* kRegisterExternalContextName = "registerExternalContext";
@@ -61,6 +63,7 @@ jmethodID sHandleScrollEvent = nullptr;
 jmethodID sHandleAudioPose = nullptr;
 jmethodID sHandleGesture = nullptr;
 jmethodID sHandleResize = nullptr;
+jmethodID sHandleMoveEnd = nullptr;
 jmethodID sHandleBack = nullptr;
 jmethodID sRegisterExternalContext = nullptr;
 jmethodID sPauseCompositor = nullptr;
@@ -100,6 +103,7 @@ VRBrowser::InitializeJava(JNIEnv* aEnv, jobject aActivity) {
   sHandleAudioPose = FindJNIMethodID(sEnv, sBrowserClass, kHandleAudioPoseName, kHandleAudioPoseSignature);
   sHandleGesture = FindJNIMethodID(sEnv, sBrowserClass, kHandleGestureName, kHandleGestureSignature);
   sHandleResize = FindJNIMethodID(sEnv, sBrowserClass, kHandleResizeName, kHandleResizeSignature);
+  sHandleMoveEnd = FindJNIMethodID(sEnv, sBrowserClass, kHandleMoveEndName, kHandleMoveEndSignature);
   sHandleBack = FindJNIMethodID(sEnv, sBrowserClass, kHandleBackEventName, kHandleBackEventSignature);
   sRegisterExternalContext = FindJNIMethodID(sEnv, sBrowserClass, kRegisterExternalContextName, kRegisterExternalContextSignature);
   sPauseCompositor = FindJNIMethodID(sEnv, sBrowserClass, kPauseCompositorName, kPauseCompositorSignature);
@@ -134,6 +138,7 @@ VRBrowser::ShutdownJava() {
   sHandleAudioPose = nullptr;
   sHandleGesture = nullptr;
   sHandleResize = nullptr;
+  sHandleMoveEnd = nullptr;
   sHandleBack = nullptr;
   sRegisterExternalContext = nullptr;
   sPauseCompositor = nullptr;
@@ -201,6 +206,13 @@ void
 VRBrowser::HandleResize(jint aWidgetHandle, jfloat aWorldWidth, jfloat aWorldHeight) {
   if (!ValidateMethodID(sEnv, sActivity, sHandleResize, __FUNCTION__)) { return; }
   sEnv->CallVoidMethod(sActivity, sHandleResize, aWidgetHandle, aWorldWidth, aWorldHeight);
+  CheckJNIException(sEnv, __FUNCTION__);
+}
+
+void
+VRBrowser::HandleMoveEnd(jint aWidgetHandle, jfloat aX, jfloat aY, jfloat aZ, jfloat aRotation) {
+  if (!ValidateMethodID(sEnv, sActivity, sHandleMoveEnd, __FUNCTION__)) { return; }
+  sEnv->CallVoidMethod(sActivity, sHandleMoveEnd, aWidgetHandle, aX, aY, aZ, aRotation);
   CheckJNIException(sEnv, __FUNCTION__);
 }
 
