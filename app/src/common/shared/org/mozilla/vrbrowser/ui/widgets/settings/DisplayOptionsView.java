@@ -9,7 +9,6 @@ import android.content.Context;
 import android.graphics.Point;
 import android.view.View;
 
-import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.SessionStore;
@@ -57,12 +56,8 @@ class DisplayOptionsView extends SettingsView {
         });
 
         mCurvedDisplaySwitch = findViewById(R.id.curved_display_switch);
-        mCurvedDisplaySwitch.setChecked(SettingsStore.getInstance(getContext()).getCylinderDensity() > 0.0f);
-        mCurvedDisplaySwitch.setOnCheckedChangeListener((compoundButton, enabled, apply) -> {
-            float density = enabled ? SettingsStore.CYLINDER_DENSITY_ENABLED_DEFAULT : 0.0f;
-            SettingsStore.getInstance(getContext()).setCylinderDensity(density);
-            mWidgetManager.setCylinderDensity(density);
-        });
+        mCurvedDisplaySwitch.setOnCheckedChangeListener(mCurvedDisplayListener);
+        setCurvedDisplay(SettingsStore.getInstance(getContext()).getCylinderDensity() > 0.0f, false);
 
         int uaMode = SettingsStore.getInstance(getContext()).getUaMode();
         mUaModeRadio = findViewById(R.id.ua_radio);
@@ -265,6 +260,9 @@ class DisplayOptionsView extends SettingsView {
         }
     };
 
+    private SwitchSetting.OnCheckedChangeListener mCurvedDisplayListener = (compoundButton, enabled, apply) ->
+            setCurvedDisplay(enabled, true);
+
     private OnClickListener mResetListener = (view) -> {
         boolean restart = false;
 
@@ -302,10 +300,23 @@ class DisplayOptionsView extends SettingsView {
 
         setHomepage(mDefaultHomepageUrl);
         setAutoplay(SettingsStore.AUTOPLAY_ENABLED, true);
+        setCurvedDisplay(false, true);
 
         if (restart)
             showRestartDialog();
     };
+
+    private void setCurvedDisplay(boolean value, boolean doApply) {
+        mCurvedDisplaySwitch.setOnCheckedChangeListener(null);
+        mCurvedDisplaySwitch.setValue(value, false);
+        mCurvedDisplaySwitch.setOnCheckedChangeListener(mCurvedDisplayListener);
+
+        if (doApply) {
+            float density = value ? SettingsStore.CYLINDER_DENSITY_ENABLED_DEFAULT : 0.0f;
+            SettingsStore.getInstance(getContext()).setCylinderDensity(density);
+            mWidgetManager.setCylinderDensity(density);
+        }
+    }
 
     private void setAutoplay(boolean value, boolean doApply) {
         mAutoplaySetting.setOnCheckedChangeListener(null);
