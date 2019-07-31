@@ -34,6 +34,7 @@
 
         <ScrollView
             android:id="@+id/scrollbar"
+            style="@style/scrollbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingRight="15dp"
