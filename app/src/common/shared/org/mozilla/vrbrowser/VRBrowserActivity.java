@@ -603,8 +603,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             View view = (View) widget;
             // Add widget to a virtual display for invalidation
             if (aSurface != null && view.getParent() == null) {
-                float scale = widget.getPlacement().textureScale;
-                mWidgetContainer.addView(view, new FrameLayout.LayoutParams((int) Math.ceil(aWidth / scale), (int) Math.ceil(aHeight / scale)));
+                mWidgetContainer.addView(view, new FrameLayout.LayoutParams(widget.getPlacement().viewWidth(), widget.getPlacement().viewHeight()));
             } else if (aSurface == null && view.getParent() != null) {
                 mWidgetContainer.removeView(view);
             }
