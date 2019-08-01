@@ -88,6 +88,9 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
             mTooltipText = text;
         else
             setTooltipText(text);
+
+        if (mTooltipView != null && mTooltipView.isVisible())
+            mTooltipView.setText(text);
     }
 
     @Override

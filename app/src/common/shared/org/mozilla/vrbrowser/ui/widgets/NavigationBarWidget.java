@@ -706,6 +706,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mURLBar.setIsLoading(true);
         if (mReloadButton != null) {
             mReloadButton.setImageResource(R.drawable.ic_icon_exit);
+            mReloadButton.setTooltip(getResources().getString(R.string.stop_tooltip));
         }
     }
 
@@ -715,6 +716,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mURLBar.setIsLoading(false);
         if (mReloadButton != null) {
             mReloadButton.setImageResource(R.drawable.ic_icon_reload);
+            mReloadButton.setTooltip(getResources().getString(R.string.refresh_tooltip));
         }
     }
 
