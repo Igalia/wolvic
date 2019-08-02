@@ -18,7 +18,7 @@ def getCrashRestartDisabled = { ->
     return "false"
 }
 
-def getDevApplicationIdSufix = { ->
+def getDevApplicationIdSuffix = { ->
     if (gradle.hasProperty("simultaneousDevProduction")) {
         return gradle.simultaneousDevProduction == "true" ? ".dev" : ""
     }
@@ -78,7 +78,7 @@ android {
             signingConfig getUseDebugSigningOnRelease() ? debug.signingConfig : release.signingConfig
         }
         debug {
-            applicationIdSuffix getDevApplicationIdSufix()
+            applicationIdSuffix getDevApplicationIdSuffix()
             pseudoLocalesEnabled true
         }
     }
@@ -169,6 +169,7 @@ android {
                 }
             }
         }
+
         wavevr {
             minSdkVersion build_versions.min_sdk_wave
             dimension "platform"
@@ -179,7 +180,21 @@ android {
                     arguments "-DVR_SDK_LIB=wavevr-lib", "-DWAVEVR=ON"
                 }
             }
+            applicationIdSuffix ".wavevr"
         }
+
+        wavevrStore {
+            minSdkVersion build_versions.min_sdk_wave
+            dimension "platform"
+            externalNativeBuild {
+                cmake {
+                    cppFlags " -I" + file("${project.rootDir}/third_party/wavesdk/build/wvr_client/include").absolutePath +
+                            " -DWAVEVR"
+                    arguments "-DVR_SDK_LIB=wavevr-lib", "-DWAVEVR=ON"
+                }
+            }
+        }
+
         noapi {
             dimension "platform"
             externalNativeBuild {
@@ -205,10 +220,10 @@ android {
             }
         }
 
-        x86 {
+        x86_64 {
             dimension "abi"
             ndk {
-                abiFilters "x86"
+                abiFilters "x86_64"
             }
         }
     }
@@ -239,12 +254,16 @@ android {
                 'wavevrArmRelease',
                 'wavevrArm64Debug',
                 'wavevrArm64Release',
+                'wavevrStoreArmDebug',
+                'wavevrStoreArmRelease',
+                'wavevrStoreArm64Debug',
+                'wavevrStoreArm64Release',
                 'noapiArmDebug',
                 'noapiArmRelease',
                 'noapiArm64Debug',
                 'noapiArm64Release',
-                'noapiX86Debug',
-                'noapiX86Release'
+                'noapiX86_64Debug',
+                'noapiX86_64Release'
         ]
         variant.setIgnore(!needed)
     }
@@ -361,6 +380,18 @@ android {
             ]
             jniLibs.srcDirs = ["${project.rootDir}/third_party/wavesdk/build/wvr_client/jni"]
         }
+
+        wavevrStore {
+            java.srcDirs = [
+                    'src/wavevr/java'
+            ]
+            res.srcDirs = [
+                    'src/wavevr/res'
+            ]
+            jniLibs.srcDirs = ["${project.rootDir}/third_party/wavesdk/build/wvr_client/jni"]
+            manifest.srcFile "src/wavevr/AndroidManifest.xml"
+        }
+
         noapi {
             java.srcDirs = [
                     'src/noapi/java'
@@ -440,6 +471,7 @@ if (findProject(':servo')) {
 if (findProject(':wavesdk')) {
     dependencies {
         wavevrImplementation project(':wavesdk')
+        wavevrStoreImplementation project(':wavesdk')
     }
 }
 
@@ -454,7 +486,7 @@ if (findProject(':geckoview-local')) {
         // https://maven.mozilla.org/?prefix=maven2/org/mozilla/geckoview/geckoview-nightly-armeabi-v7a/
         armImplementation deps.gecko_view.nightly_armv7a
         arm64Implementation deps.gecko_view.nightly_arm64
-        x86Implementation deps.gecko_view.nightly_x86
+        x86_64Implementation deps.gecko_view.nightly_x86_64
     }
 }
 
@@ -477,8 +509,7 @@ android.applicationVariants.all { variant ->
         // compatibility mode.
         def multiplier = 100000000
 
-        // Currently only support arm7
-        if (variant.flavorName.contains("X86")) {
+        if (variant.flavorName.contains("x86_64")) {
             versionCode = versionCode + (3 * multiplier)
         } else if (variant.flavorName.contains("Aarch64")) {
             versionCode = versionCode + (2 * multiplier)
