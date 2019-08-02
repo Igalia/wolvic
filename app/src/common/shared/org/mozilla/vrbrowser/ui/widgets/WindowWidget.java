@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 
+import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.geckoview.AllowOrDeny;
 import org.mozilla.geckoview.GeckoDisplay;
 import org.mozilla.geckoview.GeckoResult;
@@ -782,7 +783,9 @@ public class WindowWidget extends UIWidget implements SessionStore.SessionChange
     @Override
     public void onFirstComposite(GeckoSession session) {
         if (mFirstDrawCallback != null) {
-            mFirstDrawCallback.run();
+            // Post this call because running it synchronously can cause a deadlock if the runnable
+            // resizes the widget and calls surfaceChanged. See https://github.com/MozillaReality/FirefoxReality/issues/1459.
+            ThreadUtils.postToUiThread(mFirstDrawCallback);
             mFirstDrawCallback = null;
         }
     }
