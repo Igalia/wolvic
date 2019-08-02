@@ -63,6 +63,7 @@ import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.ui.widgets.WindowWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.CrashDialogWidget;
 import org.mozilla.vrbrowser.utils.ConnectivityReceiver;
+import org.mozilla.vrbrowser.utils.LocaleUtils;
 import org.mozilla.vrbrowser.utils.ServoUtils;
 
 import java.io.IOException;
@@ -174,6 +175,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     };
 
     @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleUtils.setLocale(base));
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         // Fix for infinite restart on startup crashes.
         long count = SettingsStore.getInstance(getBaseContext()).getCrashRestartCount();
@@ -188,6 +194,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mHandler.postDelayed(() -> SettingsStore.getInstance(getBaseContext()).resetCrashRestartCount(), RESET_CRASH_COUNT_DELAY);
         // Set a global exception handler as soon as possible
         GlobalExceptionHandler.register(this.getApplicationContext());
+
+        LocaleUtils.init(this);
 
         if (DeviceType.isOculusBuild()) {
             workaroundGeckoSigAction();

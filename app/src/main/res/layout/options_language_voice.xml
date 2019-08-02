@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/merge">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/optionsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/dialog_background"
+        android:paddingStart="30dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="30dp"
+        android:paddingBottom="10dp">
+
+        <org.mozilla.vrbrowser.ui.widgets.settings.SettingsHeader
+            android:id="@+id/header_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="35dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:title="@string/settings_language_choose_language_voice_search_title"
+            app:description="@string/settings_language_choose_language_voice_search_description" />
+
+        <ScrollView
+            android:id="@+id/scrollbar"
+            style="@style/scrollbar"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/footer_layout"
+            app:layout_constraintTop_toBottomOf="@+id/header_layout"
+            tools:layout_editor_absoluteX="30dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:orientation="vertical">
+
+                <org.mozilla.vrbrowser.ui.views.settings.RadioGroupVSetting
+                    android:id="@+id/languageRadio"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout="@layout/setting_radio_group_v"
+                    app:options="@array/developer_options_voice_search_languages"
+                    app:values="@array/developer_options_voice_search_languages_values" />
+
+            </LinearLayout>
+        </ScrollView>
+
+        <org.mozilla.vrbrowser.ui.widgets.settings.SettingsFooter
+            android:id="@+id/footer_layout"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/scrollbar"
+            app:description="@string/language_options_reset" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</merge>

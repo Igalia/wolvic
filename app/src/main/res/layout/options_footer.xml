@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable name="description" type="java.lang.String"/>
+        <variable
+            name="resetClickListener"
+            type="android.view.View.OnClickListener" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center">
+
+        <View
+            android:id="@+id/separatorBottom"
+            style="?attr/separatorStyle"
+            android:layout_width="match_parent"
+            android:layout_alignParentTop="true" />
+
+        <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+            android:id="@+id/resetButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            app:buttonText="@string/developer_options_reset_button"
+            app:description="@{description}"
+            android:onClick="@{(view) ->  resetClickListener.onClick(view)}" />
+    </RelativeLayout>
+</layout>

@@ -77,7 +77,7 @@ public class SwitchSetting extends LinearLayout {
         }
     };
 
-    public void setLinkClickListner(@NonNull ViewUtils.LinkClickableSpan listener) {
+    public void setLinkClickListener(@NonNull ViewUtils.LinkClickableSpan listener) {
         ViewUtils.setTextViewHTML(mSwitchDescription, mText, (widget, url) -> listener.onClick(widget, url));
     }
 

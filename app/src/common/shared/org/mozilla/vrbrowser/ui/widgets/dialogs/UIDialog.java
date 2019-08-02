@@ -45,4 +45,5 @@ public abstract class UIDialog extends UIWidget implements WidgetManagerDelegate
             onDismiss();
         }
     }
+
 }

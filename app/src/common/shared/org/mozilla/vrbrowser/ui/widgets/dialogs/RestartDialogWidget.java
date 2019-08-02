@@ -5,19 +5,16 @@
 
 package org.mozilla.vrbrowser.ui.widgets.dialogs;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.util.AttributeSet;
 import android.widget.Button;
 import android.widget.TextView;
 
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.VRBrowserActivity;
 import org.mozilla.vrbrowser.audio.AudioEngine;
-import org.mozilla.vrbrowser.ui.widgets.UIWidget;
+import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
+import org.mozilla.vrbrowser.utils.SystemUtils;
 
 public class RestartDialogWidget extends UIDialog {
 
@@ -52,7 +49,7 @@ public class RestartDialogWidget extends UIDialog {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
 
-            postDelayed(() -> handleRestartApp(), 500);
+            postDelayed(() -> SystemUtils.scheduleRestart(getContext(), 100), 500);
         });
         cancelButton.setOnClickListener(view -> {
             if (mAudio != null) {
@@ -79,16 +76,17 @@ public class RestartDialogWidget extends UIDialog {
         aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.restart_dialog_world_z);
     }
 
-    private void handleRestartApp() {
-        Intent i = new Intent(getContext(), VRBrowserActivity.class);
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    @Override
+    public void show(int aShowFlags) {
+        super.show(aShowFlags);
 
-        PendingIntent mPendingIntent = PendingIntent.getActivity(getContext(), 0, i,
-                PendingIntent.FLAG_CANCEL_CURRENT);
-        AlarmManager mgr = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
-        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
+    }
 
-        System.exit(0);
+    @Override
+    public void hide(int aHideFlags) {
+        super.hide(aHideFlags);
+
+        mWidgetManager.popWorldBrightness(this);
     }
 }

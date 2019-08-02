@@ -30,6 +30,7 @@ import org.mozilla.vrbrowser.utils.DeviceType;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
+import org.mozilla.vrbrowser.utils.LocaleUtils;
 
 import androidx.core.app.ActivityCompat;
 
@@ -227,8 +228,8 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
             ActivityCompat.requestPermissions((Activity)getContext(), new String[]{Manifest.permission.RECORD_AUDIO},
                     VOICESEARCH_AUDIO_REQUEST_CODE);
         } else {
-            String language = SettingsStore.getInstance(getContext()).getVoiceSearchLanguage();
-            mMozillaSpeechService.setLanguage(language);
+            String locale = LocaleUtils.getVoiceSearchLocale(getContext());
+            mMozillaSpeechService.setLanguage(LocaleUtils.mapToMozillaSpeechLocales(locale));
             mMozillaSpeechService.start(getContext().getApplicationContext());
             mIsSpeechRecognitionRunning = true;
         }

@@ -1,6 +1,9 @@
 package org.mozilla.vrbrowser.utils;
 
+import android.os.Build;
+import android.text.Html;
 import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.URLSpan;
@@ -33,7 +36,7 @@ public class ViewUtils {
         strBuilder.removeSpan(span);
     }
 
-    public static void setTextViewHTML(@NonNull TextView text, @NonNull String html, @NonNull LinkClickableSpan listener)
+    public static void setTextViewHTML(@NonNull TextView text, @NonNull String html, LinkClickableSpan listener)
     {
         CharSequence sequence = HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_LEGACY);
         SpannableStringBuilder strBuilder = new SpannableStringBuilder(sequence);
@@ -74,6 +77,14 @@ public class ViewUtils {
 
         } else {
             return null;
+        }
+    }
+
+    public static Spanned getSpannedText(String text) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return Html.fromHtml(text, Html.FROM_HTML_MODE_COMPACT);
+        } else {
+            return Html.fromHtml(text);
         }
     }
 

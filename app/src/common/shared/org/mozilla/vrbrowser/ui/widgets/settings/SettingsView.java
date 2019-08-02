@@ -23,6 +23,7 @@ abstract class SettingsView extends FrameLayout {
         void exitWholeSettings();
         void showRestartDialog();
         void showAlert(String aTitle, String aMessage);
+        void showView(SettingsView view);
     }
 
     public SettingsView(@NonNull Context context, WidgetManagerDelegate aWidgetManager) {
@@ -83,5 +84,9 @@ abstract class SettingsView extends FrameLayout {
     public Point getDimensions() {
         return new Point( WidgetPlacement.dpDimension(getContext(), R.dimen.developer_options_width),
                 WidgetPlacement.dpDimension(getContext(), R.dimen.developer_options_height));
+    }
+
+    protected boolean reset() {
+        return false;
     }
 }

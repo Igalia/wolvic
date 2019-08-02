@@ -99,12 +99,39 @@
 
     <string-array name="developer_options_voice_search_languages_values" translatable="false">
         <item>en-US</item>
-        <item>cmn-Hant-TW</item>
-        <item>cmn-Hans-CN</item>
+        <item>zh-Hant-TW</item>
+        <item>zh-Hans-CN</item>
         <item>ja-JP</item>
         <item>fr-FR</item>
         <item>de-DE</item>
         <item>es-ES</item>
+        <item>ko-KR</item>
+        <item>it-IT</item>
+    </string-array>
+
+    <!-- Language Options -->
+    <string-array name="developer_options_display_languages" translatable="false">
+        <item>@string/language_en_US</item>
+        <item>@string/language_cmn_Hant_TW</item>
+        <item>@string/language_cmn_Hans_CN</item>
+        <item>@string/language_ja_JP</item>
+        <item>@string/language_fr_FR</item>
+        <item>@string/language_de_DE</item>
+        <item>@string/language_es_ES</item>
+        <item>@string/language_es</item>
+        <item>@string/language_ko_KR</item>
+        <item>@string/language_it_IT</item>
+    </string-array>
+
+    <string-array name="developer_options_display_languages_values" translatable="false">
+        <item>en-US</item>
+        <item>zh-Hant-TW</item>
+        <item>zh-Hans-CN</item>
+        <item>ja-JP</item>
+        <item>fr-FR</item>
+        <item>de-DE</item>
+        <item>es-ES</item>
+        <item>es</item>
         <item>ko-KR</item>
         <item>it-IT</item>
     </string-array>

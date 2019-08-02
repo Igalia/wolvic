@@ -295,7 +295,7 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
         return formatted;
     }
 
-    private void showView(SettingsView aView) {
+    public void showView(SettingsView aView) {
         if (mCurrentView != null) {
             mCurrentView.onHidden();
             this.removeView(mCurrentView);
@@ -329,7 +329,9 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
     }
 
     private void showLanguageOptionsDialog() {
-        showView(new VoiceSearchLanguageOptionsView(getContext(), mWidgetManager));
+        LanguageOptionsView view = new LanguageOptionsView(getContext(), mWidgetManager);
+        view.setDelegate(this);
+        showView(view);
     }
 
     private void showDisplayOptionsDialog() {
@@ -374,8 +376,12 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
     @Override
     public void onDismiss() {
         if (mCurrentView != null) {
-            if (!mCurrentView.isEditing())
-                showView(null);
+            if (!mCurrentView.isEditing()) {
+                if (isLanguagesSubView(mCurrentView))
+                    showLanguageOptionsDialog();
+                else
+                    showView(null);
+            }
         } else {
             super.onDismiss();
         }
@@ -417,5 +423,15 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
         widget.setMessage(aMessage);
 
         widget.show(REQUEST_FOCUS);
+    }
+
+    private boolean isLanguagesSubView(View view) {
+        if (view instanceof DisplayLanguageOptionsView ||
+                view instanceof ContentLanguageOptionsView ||
+                view instanceof  VoiceSearchLanguageOptionsView) {
+            return true;
+        }
+
+        return false;
     }
 }

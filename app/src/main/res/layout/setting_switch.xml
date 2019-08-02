@@ -21,7 +21,7 @@
                 android:gravity="left|center">
                 <TextView
                     android:id="@+id/setting_description"
-                    style="@style/settingsDescription"
+                    style="@style/settingsText"
                     tools:text="Switch Setting Description" />
 
                 <org.mozilla.vrbrowser.ui.views.UIButton

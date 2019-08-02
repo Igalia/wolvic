@@ -3,6 +3,7 @@ package org.mozilla.vrbrowser.ui.views.settings;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
+import android.text.Spanned;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -17,6 +18,7 @@ public class ButtonSetting extends LinearLayout {
     private String mDescription;
     private String mButtonText;
     private TextView mButton;
+    private TextView mDescriptionView;
     private OnClickListener mListener;
     private Drawable mButtonBackground;
     private Drawable mButtonForeground;
@@ -41,8 +43,8 @@ public class ButtonSetting extends LinearLayout {
 
         mAudio = AudioEngine.fromContext(aContext);
 
-        TextView description = findViewById(R.id.setting_description);
-        description.setText(mDescription);
+        mDescriptionView = findViewById(R.id.setting_description);
+        mDescriptionView.setText(mDescription);
 
         mButton = findViewById(R.id.button);
         mButton.setText(mButtonText);
@@ -82,6 +84,14 @@ public class ButtonSetting extends LinearLayout {
 
     public void setButtonText(String aText) {
         mButton.setText(aText);
+    }
+
+    public void setDescription(String description) {
+        mDescriptionView.setText(description);
+    }
+
+    public void setDescription(Spanned description) {
+        mDescriptionView.setText(description);
     }
 
     public String getDescription() {

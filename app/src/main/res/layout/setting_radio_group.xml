@@ -13,7 +13,7 @@
 
             <TextView
                 android:id="@+id/setting_description"
-                style="@style/settingsDescription"
+                style="@style/settingsText"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 tools:text="Radio Setting Description" />

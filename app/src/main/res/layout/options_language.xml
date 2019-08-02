@@ -1,9 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <RelativeLayout
+    <data>
+        <variable
+            name="voiceSearchClickListener"
+            type="android.view.View.OnClickListener" />
+        <variable
+            name="contentClickListener"
+            type="android.view.View.OnClickListener" />
+        <variable
+            name="displayClickListener"
+            type="android.view.View.OnClickListener" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/optionsLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -13,73 +24,60 @@
         android:paddingEnd="30dp"
         android:paddingBottom="10dp">
 
-        <org.mozilla.vrbrowser.ui.views.UIButton
-            android:id="@+id/backButton"
-            style="?attr/navigationBarButtonStyle"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_centerVertical="true"
-            android:layout_marginBottom="10dp"
-            android:src="@drawable/ic_icon_back"
-            android:tint="@color/midnight" />
-
-        <View
-            android:id="@+id/separatorTop"
-            style="?attr/separatorStyle"
-            android:layout_width="match_parent"
-            android:layout_below="@+id/voice_search_language_title"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp" />
-
-        <TextView
-            android:id="@+id/voice_search_language_title"
-            style="@style/settingsDescription"
-            android:layout_below="@+id/backButton"
-            android:gravity="center_vertical"
-            android:text="@string/settings_language_choose_language_voice_search"
-            tools:text="@string/settings_language_choose_language_voice_search" />
-
-        <ScrollView
-            android:id="@+id/scrollbar"
-            style="@style/scrollbar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/separatorBottom"
-            android:layout_below="@+id/separatorTop">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="20dp"
-                android:orientation="vertical">
-
-                <org.mozilla.vrbrowser.ui.views.settings.RadioGroupVSetting
-                    android:id="@+id/languageRadio"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout="@layout/setting_radio_group_v"
-                    app:options="@array/developer_options_voice_search_languages"
-                    app:values="@array/developer_options_voice_search_languages_values" />
-
-            </LinearLayout>
-        </ScrollView>
-
-        <View
-            android:id="@+id/separatorBottom"
-            style="?attr/separatorStyle"
-            android:layout_width="match_parent"
-            android:layout_above="@+id/resetButton"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp" />
-
-        <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
-            android:id="@+id/resetButton"
+        <org.mozilla.vrbrowser.ui.widgets.settings.SettingsHeader
+            android:id="@+id/header_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="35dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:title="@string/settings_language_settings"
+            app:helpVisibility="gone"/>
+
+        <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+            android:id="@+id/voiceSearchLanguageButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="35dp"
+            android:paddingTop="10dp"
             android:layout_alignParentBottom="true"
-            app:buttonText="@string/developer_options_reset_button"
-            app:description="@string/language_options_reset" />
-    </RelativeLayout>
-</merge>
+            app:layout_constraintTop_toBottomOf="@id/header_layout"
+            app:buttonText="@string/settings_button_edit"
+            app:description="@string/language_options_voice_search_language"
+            android:onClick="@{(view) -> voiceSearchClickListener.onClick(view)}" />
+
+        <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+            android:id="@+id/contentLanguageButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="35dp"
+            android:layout_alignParentBottom="true"
+            app:layout_constraintTop_toBottomOf="@id/voiceSearchLanguageButton"
+            app:buttonText="@string/settings_button_edit"
+            app:description="@string/language_options_content_language"
+            android:onClick="@{(view) -> contentClickListener.onClick(view)}" />
+
+        <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+            android:id="@+id/displayLanguageButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="35dp"
+            android:layout_alignParentBottom="true"
+            app:layout_constraintTop_toBottomOf="@id/contentLanguageButton"
+            app:buttonText="@string/settings_button_edit"
+            app:description="@string/language_options_display_language"
+            android:onClick="@{(view) -> displayClickListener.onClick(view)}" />
+
+        <org.mozilla.vrbrowser.ui.widgets.settings.SettingsFooter
+            android:id="@+id/footer_layout"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginEnd="35dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:description="@string/all_language_options_reset" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

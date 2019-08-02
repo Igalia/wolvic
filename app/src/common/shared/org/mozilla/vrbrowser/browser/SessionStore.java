@@ -1000,6 +1000,12 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
         return false;
     }
 
+    public void setLocales(List<String> locales) {
+        if (mRuntime != null) {
+            mRuntime.getSettings().setLocales(locales.stream().toArray(String[]::new));
+        }
+    }
+
     // NavigationDelegate
 
     @Override

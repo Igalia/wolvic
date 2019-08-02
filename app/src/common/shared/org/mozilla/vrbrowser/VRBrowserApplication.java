@@ -6,10 +6,13 @@
 package org.mozilla.vrbrowser;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.res.Configuration;
 
 import org.mozilla.vrbrowser.browser.Places;
 import org.mozilla.vrbrowser.db.AppDatabase;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
+import org.mozilla.vrbrowser.utils.LocaleUtils;
 
 public class VRBrowserApplication extends Application {
 
@@ -24,6 +27,18 @@ public class VRBrowserApplication extends Application {
         mPlaces = new Places(this);
 
         TelemetryWrapper.init(this);
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        LocaleUtils.saveSystemLocale();
+        super.attachBaseContext(LocaleUtils.setLocale(base));
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        LocaleUtils.setLocale(this);
     }
 
     public AppDatabase getDatabase() {

@@ -25,6 +25,7 @@
         <attr name="tooltipDensity" />
     </declare-styleable>
 
+    <attr name="title" format="string" />
     <attr name="description" format="string" />
     <attr name="tooltipDelay" format="integer" />
     <attr name="tooltipPosition" format="enum">
@@ -61,4 +62,18 @@
         <attr name="description" />
         <attr name="buttonText" format="string" />
     </declare-styleable>
+
+    <declare-styleable name="SettingsHeader">
+        <attr name="title" />
+        <attr name="description" />
+        <attr name="helpVisibility" format="enum" >
+            <enum name="visible" value="0"/>
+            <enum name="gone" value="8"/>
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="SettingsFooter">
+        <attr name="description" />
+    </declare-styleable>
+
 </resources>

@@ -171,7 +171,7 @@
 
     <style name="scrollbar">
         <item name="android:scrollbarAlwaysDrawVerticalTrack">true</item>
-        <item name="android:scrollbarStyle">outsideInset</item>
+        <item name="android:scrollbarStyle">insideInset</item>
         <item name="android:scrollbars">vertical</item>
         <item name="android:fadeScrollbars">false</item>
         <item name="android:scrollbarThumbVertical">@drawable/scrollbar_thumb</item>
@@ -234,13 +234,48 @@
         <item name="android:layout_marginEnd">5dp</item>
     </style>
 
+    <style name="settingsHeaderText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/fog</item>
+        <item name="android:textSize">@dimen/settings_header_text_size</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="settingsDescriptionText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/rhino</item>
+        <item name="android:textSize">@dimen/settings_description_text_size</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="settingsText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/fog</item>
+        <item name="android:textSize">@dimen/settings_text_size</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
     <style name="settingsSwitchText">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">center</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">@dimen/text_smaller_size</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/fog</item>
+        <item name="android:textSize">@dimen/text_medium_size</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="settingsButtonDescriptionText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/fog</item>
+        <item name="android:textSize">@dimen/text_medium_size</item>
         <item name="android:fontFamily">sans-serif</item>
     </style>
 

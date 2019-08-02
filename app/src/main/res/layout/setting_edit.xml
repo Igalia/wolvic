@@ -23,7 +23,7 @@
 
                 <TextView
                     android:id="@+id/setting_description"
-                    style="@style/settingsDescription"
+                    style="@style/settingsText"
                     android:layout_marginEnd="5dp"
                     android:text="@string/developer_options_window_size"
                     tools:text="Setting Description" />
@@ -43,7 +43,7 @@
 
                 <TextView
                     android:id="@+id/settingBy"
-                    style="@style/settingsDescription"
+                    style="@style/settingsText"
                     android:layout_marginEnd="5dp"
                     tools:text="x" />
 

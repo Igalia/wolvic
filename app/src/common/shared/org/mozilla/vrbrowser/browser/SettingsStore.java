@@ -6,6 +6,8 @@ import android.graphics.Color;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.telemetry.TelemetryHolder;
 import org.mozilla.vrbrowser.R;
@@ -16,6 +18,8 @@ import org.mozilla.vrbrowser.utils.StringUtils;
 
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import static org.mozilla.vrbrowser.utils.ServoUtils.isServoAvailable;
@@ -408,18 +412,60 @@ public class SettingsStore {
         editor.commit();
     }
 
-    public String getVoiceSearchLanguage() {
+    public String getVoiceSearchLocale() {
         String language = mPrefs.getString(
                 mContext.getString(R.string.settings_key_voice_search_language), null);
         if (language == null) {
-            return LocaleUtils.getDefaultVoiceSearchLanguage(mContext);
+            return LocaleUtils.getDefaultVoiceSearchLocale(mContext);
         }
         return language;
     }
 
-    public void setVoiceSearchLanguage(String language) {
+    public void setVoiceSearchLocale(String language) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putString(mContext.getString(R.string.settings_key_voice_search_language), language);
+        editor.commit();
+    }
+
+    public String getDisplayLocale() {
+        String language = mPrefs.getString(
+                mContext.getString(R.string.settings_key_display_language), null);
+        if (language == null) {
+            return LocaleUtils.getDefaultDisplayLocale(mContext);
+        }
+        return language;
+    }
+
+    public void setDisplayLocale(String language) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putString(mContext.getString(R.string.settings_key_display_language), language);
+        editor.commit();
+    }
+
+    public ArrayList<String> getContentLocales() {
+        ArrayList<String> result = new ArrayList<>();
+
+        String json = mPrefs.getString(
+                mContext.getString(R.string.settings_key_content_languages),
+                new JSONArray().toString());
+
+        try {
+            JSONArray jsonArray = new JSONArray(json);
+            for (int i=0; i<jsonArray.length(); i++) {
+                result.add(jsonArray.getString(i));
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    public void setContentLocales(List<String> languages) {
+        JSONArray json = new JSONArray(languages);
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putString(mContext.getString(R.string.settings_key_content_languages), json.toString());
         editor.commit();
     }
 

@@ -83,7 +83,7 @@ class PrivacyOptionsView extends SettingsView {
             SettingsStore.getInstance(getContext()).setDrmContentPlaybackEnabled(enabled);
             // TODO Enable/Disable DRM content playback
         });
-        mDrmContentPlaybackSwitch.setLinkClickListner((widget, url) -> {
+        mDrmContentPlaybackSwitch.setLinkClickListener((widget, url) -> {
             SessionStore.get().loadUri(url);
             exitWholeSettings();
         });

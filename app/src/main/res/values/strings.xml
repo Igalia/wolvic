@@ -119,6 +119,11 @@
     <string name="settings_language">Language</string>
 
     <!-- This string is used to label a text label for selecting the language in the 'Language' dialog window
+         (accessible from the browser's Settings' dialog window). Below this string appears
+         the different options for language settings. -->
+    <string name="settings_language_settings">Language Settings</string>
+
+    <!-- This string is used to label a text label for selecting the language in the 'Language' dialog window
          (accessible from the browser's Settings' dialog window). Below this string appears a list of locales for
          the user to choose as their preferred reading languages for website content. Each locale,
          as `language-tag` strings, is then included in the browser's `Accept-Language` HTTP request
@@ -131,6 +136,40 @@
          Based on the user's selection, the printed language is mapped to its ISO 639-1 code
          (e.g., `Español` is mapped to `es`) when configured in the 'Voice Search' system. -->
     <string name="settings_language_choose_language_voice_search">Choose your preferred language for voice search</string>
+
+    <!-- This string is used to label a text label that appears in the header of 'Language Settings' ->
+         'Firefox Display Language' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of locales for the user to choose as their preferred display
+         language for the application UI. -->
+    <string name="settings_language_choose_language_display_title">Firefox Display Language</string>
+
+    <!-- This string is used to label a text label that appears in the header description of 'Language Settings' ->
+         'Firefox Display Language' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of locales for the user to choose as their preferred display
+         language for the application UI. -->
+    <string name="settings_language_choose_language_display_description">Choose the language used to display menus, messages, and notifications.</string>
+
+    <!-- This string is used to label a text label that appears in the header of 'Language Settings' ->
+         'Voice Search Language' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of locales for the user to choose as their preferred voice search
+         language. -->
+    <string name="settings_language_choose_language_voice_search_title">Voice Search Language</string>
+
+    <!-- This string is used to label a text label that appears in the header description of 'Language Settings' ->
+         'Voice Search Language' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of locales for the user to choose as their preferred voice search
+         language. -->
+    <string name="settings_language_choose_language_voice_search_description">Choose your preferred language for voice search.</string>
+
+    <!-- This string is used to label a text label that appears in the header of 'Language Settings' ->
+         'Preferred Language for Displaying Websites' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of locales for the user to choose as their preferred languages for web content. -->
+    <string name="settings_language_choose_language_content_title">Preferred Website Languages</string>
+
+    <!-- This string is used to label a text label that appears in the header description of 'Language Settings' ->
+         'Preferred Language for Displaying Websites' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of locales for the user to choose as their preferred languages for web content. -->
+    <string name="settings_language_choose_language_content_description">Web pages are sometimes offered in more than one language. Choose the languages you want to dispaly in order of preference to the left side.</string>
 
     <!-- This string is used to label a radio button in the 'Settings' Language dialog that, when pressed,
          changes the app and the language of the speech-recognition-based search to 'English (US)'. -->
@@ -340,6 +379,9 @@
 
     <!-- This string labels the 'Reset' button that restores the default developer settings values. -->
     <string name="developer_options_reset_button">Reset</string>
+
+    <!-- This string is used to label buttons to enable editing of other options. -->
+    <string name="settings_button_edit">Edit</string>
 
     <!-- This string describes the radio buttons used to select the user's background environment
          (seen while not in Immersive Mode). -->
@@ -616,6 +658,30 @@
     <!-- This string labels the Reset button that restores the default voice search language settings values. -->
     <string name="language_options_reset">Reset Voice Search Language Settings</string>
 
+    <!-- This string labels the Reset button that restores the default display language settings values. -->
+    <string name="display_language_options_reset">Reset Display Language</string>
+
+    <!-- This string labels the Reset button that restores the default content language settings values. -->
+    <string name="content_language_options_reset">Reset Preferred Website Language</string>
+
+    <!-- This string labels the Reset button that restores all language settings values. -->
+    <string name="all_language_options_reset">Reset All Language Settings</string>
+
+    <!-- This string labels the description in the Voice Search Language button in the main language setting dialog. -->
+    <string name="language_options_voice_search_language">Voice Search Language: <![CDATA[<br>&emsp;&emsp;<b>%1$s</b>]]></string>
+
+    <!-- This string labels the description in the Content Language button in the main language setting dialog. -->
+    <string name="language_options_content_language">Preferred Language for Displaying Websites: <![CDATA[<br>&emsp;&emsp;<b>%1$s</b>]]></string>
+
+    <!-- This string labels the description in the Display Language button in the main language setting dialog. -->
+    <string name="language_options_display_language">Display Language for App: <![CDATA[<br>&emsp;&emsp;<b>%1$s</b>]]></string>
+
+    <!-- This string labels the description in the Content Language header for preferred languages list. -->
+    <string name="language_options_preferred_languages">Preferred Language(s)</string>
+
+    <!-- This string labels the description in the Content Language header for available languages list. -->
+    <string name="language_options_available_languages">Available Languages</string>
+
     <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the 'Name' of the bookmarked website. -->
     <string name="col_name">Name</string>
 
@@ -779,4 +845,7 @@
     <string name="performance_title">Poor Performance Detected</string>
     <!-- This string is displayed as the message body of a dialog displayed when poor web page performance has been detected and the page has been unloaded to restore performance. -->
     <string name="performance_message">The current web page is affecting performance and has been suspended. Reducing the window size can help improve a web page with poor performance.</string>
+
+    <!-- This string is displayed anywhere where we need to display the "Default" string by itself. -->
+    <string name="tag_default">Default</string>
 </resources>
