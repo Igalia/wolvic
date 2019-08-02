@@ -201,8 +201,6 @@ android_main(android_app *aAppState) {
   (*aAppState->activity->vm).AttachCurrentThread(&jniEnv, NULL);
 
   // Create Browser context
-  sAppContext = std::make_shared<AppContext>();
-  sAppContext->mQueue = vrb::RunnableQueue::Create(aAppState->activity->vm);
   crow::VRBrowser::InitializeJava(jniEnv, aAppState->activity->clazz);
 
   // Create device delegate
@@ -265,6 +263,8 @@ JNI_METHOD(void, queueRunnable)
 (JNIEnv *aEnv, jobject, jobject aRunnable) {
   if (sAppContext) {
     sAppContext->mQueue->AddRunnable(aEnv, aRunnable);
+  } else {
+    VRB_ERROR("Failed to queue Runnable from UI thread. Render thread AppContext has not been initialized.")
   }
 }
 
@@ -275,5 +275,16 @@ JNI_METHOD(jboolean, platformExit)
   }
   return (jboolean) false;
 }
+
+jint JNI_OnLoad(JavaVM* aVm, void*) {
+  sAppContext = std::make_shared<AppContext>();
+  sAppContext->mQueue = vrb::RunnableQueue::Create(aVm);
+  return JNI_VERSION_1_6;
+}
+
+void JNI_OnUnload(JavaVM* vm, void* reserved) {
+  sAppContext = nullptr;
+}
+
 
 } // extern "C"
