@@ -94,7 +94,7 @@ android {
     }
 
     lintOptions {
-        disable "LogUsage", "ExtraTranslation"
+        disable "ExtraTranslation"
     }
 
     packagingOptions {
@@ -428,6 +428,7 @@ dependencies {
     implementation deps.support.vector_drawable
     implementation deps.support.annotations
     implementation deps.constraint_layout
+    implementation deps.gson
 
     // Android Components
     implementation deps.mozilla_speech

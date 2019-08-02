@@ -51,7 +51,7 @@ class HistoryStore constructor(val context: Context) {
     }
 
     fun isInHistory(aURL: String): CompletableFuture<Boolean> = GlobalScope.future {
-        storage.getVisited(listOf(aURL)).size != 0
+        storage.getVisited(listOf(aURL)).isNotEmpty()
     }
 
     private fun notifyListeners() {

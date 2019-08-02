@@ -219,6 +219,7 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
         aPlacement.anchorY = 0.5f;
         aPlacement.parentAnchorX = 0.5f;
         aPlacement.parentAnchorY = 0.5f;
+        aPlacement.cylinderMapRadius = 0.0f; // Do not map X when this widget uses cylindrical layout.
     }
 
     public void setParentWidget(int aHandle) {

@@ -7,14 +7,10 @@ package org.mozilla.vrbrowser.ui.widgets;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.Button;
 
-import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
-import org.mozilla.vrbrowser.browser.SessionStore;
-import org.mozilla.vrbrowser.ui.views.UIButton;
 
 public class NoInternetWidget extends UIWidget {
 

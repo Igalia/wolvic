@@ -37,6 +37,7 @@ struct Widget::State {
   float cylinderDensity;
   vrb::TogglePtr root;
   vrb::TransformPtr transform;
+  vrb::TransformPtr transformContainer; // Used for cylinder rotations
   vrb::TextureSurfacePtr surface;
   WidgetPlacementPtr placement;
   WidgetResizerPtr resizer;
@@ -66,8 +67,10 @@ struct Widget::State {
 
     vrb::CreationContextPtr create = render->GetRenderThreadCreationContext();
     transform = vrb::Transform::Create(create);
+    transformContainer = vrb::Transform::Create(create);
     root = vrb::Toggle::Create(create);
-    root->AddNode(transform);
+    root->AddNode(transformContainer);
+    transformContainer->AddNode(transform);
     if (quad) {
       transform->AddNode(quad->GetRoot());
     } else {
@@ -126,34 +129,37 @@ struct Widget::State {
   void UpdateCylinderMatrix() {
     float w = WorldWidth();
     float h = WorldHeight();
-    int32_t textureWidth, textureHeight;
-    cylinder->GetTextureSize(textureWidth, textureHeight);
 
     const float radius = cylinder->GetCylinderRadius();
-    const float surfaceWidth = (float)textureWidth / (placement->density * placement->textureScale);
-    const float surfaceHeight = (float)textureHeight / (placement->density * placement->textureScale);
+    // Compute the arc length and height of the curved surface.
+    const float surfaceWidth = w * Cylinder::kWorldDensityRatio;
+    const float surfaceHeight = h * Cylinder::kWorldDensityRatio;
     // Cylinder density measures the pixels for a 360 cylinder
     // Oculus recommends 4680px density, which is 13 pixels per degree.
     const float theta = (float)M_PI * surfaceWidth / (cylinderDensity * 0.5f);
     cylinder->SetCylinderTheta(theta);
+    // Compute the height scale of the cylinder such that the world width and height of a 1px element remain square.
     const float heightScale = surfaceHeight * (float)M_PI / cylinderDensity;
+    // Scale the cylinder so that widget height matches cylinder height.
     const float scale = h / (cylinder->GetCylinderHeight() * heightScale);
     vrb::Matrix scaleMatrix = vrb::Matrix::Identity();
     scaleMatrix.ScaleInPlace(vrb::Vector(radius * scale, radius * scale * heightScale, radius * scale));
+    // Translate the z of the cylinder to make the back of the curved surface the z position anchor point.
     vrb::Matrix translation = vrb::Matrix::Translation(vrb::Vector(0.0f, 0.0f, radius * scale));
-
-    const float x = transform->GetWorldTransform().GetTranslation().x();
-    if (x != 0.0f) {
+    cylinder->SetTransform(translation.PostMultiply(scaleMatrix));
+    const float x = transform->GetTransform().GetTranslation().x();
+    if (x != 0.0f && placement->cylinderMapRadius > 0) {
       // Automatically adjust correct yaw angle & position for the cylinders not centered on the X axis
       const float r = radius * scale;
       const float perimeter = 2.0f * r * (float)M_PI;
-      const float angle = 0.5f * (float)M_PI - x / perimeter * 2.0f * (float)M_PI;
-      vrb::Matrix rotation = vrb::Matrix::Rotation(vrb::Vector(-cosf(angle), 0.0f, sinf(angle)));
-      vrb::Matrix transform = translation.PostMultiply(scaleMatrix).PostMultiply(rotation);
-      transform.PreMultiplyInPlace(vrb::Matrix::Translation(vrb::Vector(-x, 0.0f, 0.0f)));
-      cylinder->SetTransform(transform);
+      float angle = 0.5f * (float)M_PI - x / perimeter * 2.0f * (float)M_PI;
+      float delta = placement->cylinderMapRadius - radius * scale;
+      vrb::Matrix transform = vrb::Matrix::Rotation(vrb::Vector(-cosf(angle), 0.0f, sinf(angle)));
+      transform.PreMultiplyInPlace(vrb::Matrix::Translation(vrb::Vector(0.0f, 0.0f, -delta)));
+      transform.PostMultiplyInPlace(vrb::Matrix::Translation(vrb::Vector(-x, 0.0f, delta)));
+      transformContainer->SetTransform(transform);
     } else {
-      cylinder->SetTransform(translation.PostMultiply(scaleMatrix));
+      transformContainer->SetTransform(vrb::Matrix::Identity());
     }
   }
 
@@ -266,7 +272,7 @@ bool
 Widget::TestControllerIntersection(const vrb::Vector& aStartPoint, const vrb::Vector& aDirection, vrb::Vector& aResult, vrb::Vector& aNormal,
                                    const bool aClamp, bool& aIsInWidget, float& aDistance) const {
   aDistance = -1.0f;
-  if (!m.root->IsEnabled(*m.transform)) {
+  if (!m.root->IsEnabled(*m.transformContainer)) {
     return false;
   }
 
@@ -353,6 +359,7 @@ Widget::SetQuad(const QuadPtr& aQuad) const {
 
   m.quad = aQuad;
   m.transform->AddNode(aQuad->GetRoot());
+  m.transformContainer->SetTransform(vrb::Matrix::Identity());
 
   m.RemoveResizer();
   m.UpdateSurface(textureWidth, textureHeight);
@@ -404,7 +411,7 @@ Widget::SetPlacement(const WidgetPlacementPtr& aPlacement) {
 }
 
 void
-Widget::StartResize() {
+Widget::StartResize(const vrb::Vector& aMaxSize) {
   vrb::Vector worldMin, worldMax;
   GetWidgetMinAndMax(worldMin, worldMax);
   if (m.resizer) {
@@ -418,6 +425,7 @@ Widget::StartResize() {
     m.resizer = WidgetResizer::Create(create, this);
     m.transform->InsertNode(m.resizer->GetRoot(), 0);
   }
+  m.resizer->SetMaxSize(aMaxSize);
   m.resizing = true;
   m.resizer->ToggleVisible(true);
   if (m.quad) {
@@ -444,13 +452,18 @@ Widget::IsResizing() const {
   return m.resizing;
 }
 
+bool
+Widget::IsResizingActive() const {
+  return m.resizing && m.resizer->IsActive();
+}
+
 void
 Widget::HandleResize(const vrb::Vector& aPoint, bool aPressed, bool& aResized, bool &aResizeEnded) {
   m.resizer->HandleResizeGestures(aPoint, aPressed, aResized, aResizeEnded);
   if (aResized || aResizeEnded) {
 
-    m.min = m.resizer->GetCurrentMin();
-    m.max = m.resizer->GetCurrentMax();
+    m.min = m.resizer->GetResizeMin();
+    m.max = m.resizer->GetResizeMax();
     if (m.quad) {
       m.quad->SetWorldSize(m.min, m.max);
     } else if (m.cylinder) {
@@ -472,6 +485,11 @@ Widget::SetCylinderDensity(const float aDensity) {
   if (m.cylinder) {
     m.UpdateCylinderMatrix();
   }
+}
+
+float
+Widget::GetCylinderDensity() const {
+  return m.cylinderDensity;
 }
 
 Widget::Widget(State& aState, vrb::RenderContextPtr& aContext) : m(aState) {

@@ -9,8 +9,7 @@ import android.content.Context;
 import android.graphics.Point;
 
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.browser.SessionStore;
-import org.mozilla.vrbrowser.browser.SettingsStore;
+import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.ui.views.settings.RadioGroupSetting;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
@@ -34,7 +33,7 @@ class VoiceSearchLanguageOptionsView extends SettingsView {
             mDelegate.showView(new LanguageOptionsView(getContext(), mWidgetManager));
         });
         header.setHelpClickListener(view -> {
-            SessionStore.get().loadUri(getResources().getString(R.string.sumo_language_voice_url));
+            SessionStore.get().getActiveStore().loadUri(getResources().getString(R.string.sumo_language_voice_url));
             mDelegate.exitWholeSettings();
         });
 

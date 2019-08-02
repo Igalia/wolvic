@@ -14,8 +14,8 @@ import androidx.databinding.DataBindingUtil;
 
 import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.browser.SessionStore;
 import org.mozilla.vrbrowser.browser.SettingsStore;
+import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.databinding.OptionsLanguageContentBinding;
 import org.mozilla.vrbrowser.ui.adapters.Language;
 import org.mozilla.vrbrowser.ui.adapters.LanguagesAdapter;
@@ -57,7 +57,7 @@ class ContentLanguageOptionsView extends SettingsView {
             mDelegate.showView(new LanguageOptionsView(getContext(), mWidgetManager));
         });
         mBinding.headerLayout.setHelpClickListener(view -> {
-            SessionStore.get().loadUri(getResources().getString(R.string.sumo_language_content_url));
+            SessionStore.get().getActiveStore().loadUri(getResources().getString(R.string.sumo_language_content_url));
             mDelegate.exitWholeSettings();
         });
 

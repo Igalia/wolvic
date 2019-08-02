@@ -18,9 +18,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.CursorAnchorInfo;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.ExtractedText;
 import android.view.inputmethod.ExtractedTextRequest;
 import android.view.inputmethod.InputConnection;
 import android.widget.ImageButton;
@@ -31,7 +29,7 @@ import android.widget.TextView;
 
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.browser.SessionStore;
+import org.mozilla.vrbrowser.browser.engine.SessionStack;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.input.CustomKeyboard;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
@@ -79,7 +77,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private View mFocusedView;
     private LinearLayout mKeyboardLayout;
     private RelativeLayout mKeyboardContainer;
-    private UIWidget mBrowserWidget;
+    private UIWidget mAttachedWindow;
     private InputConnection mInputConnection;
     private EditorInfo mEditorInfo = new EditorInfo();
     private VoiceSearchWidget mVoiceSearchWidget;
@@ -98,6 +96,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private String mComposingText = "";
     private String mComposingDisplayText = "";
     private boolean mInternalDeleteHint = false;
+    private SessionStack mSessionStack;
 
     private class MoveTouchListener implements OnTouchListener {
         @Override
@@ -237,16 +236,15 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mAutoCompletionView.setExtendedHeight((int)(mWidgetPlacement.height * mWidgetPlacement.density));
         mAutoCompletionView.setDelegate(this);
 
-        SessionStore.get().addTextInputListener(this);
         updateCandidates();
     }
 
     @Override
     public void releaseWidget() {
+        detachFromWindow();
         mWidgetManager.removeFocusChangeListener(this);
-        SessionStore.get().removeTextInputListener(this);
         mAutoCompletionView.setDelegate(null);
-        mBrowserWidget = null;
+        mAttachedWindow = null;
         super.releaseWidget();
     }
 
@@ -259,14 +257,37 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         aPlacement.height += WidgetPlacement.dpDimension(context, R.dimen.keyboard_layout_padding);
         aPlacement.anchorX = 0.5f;
         aPlacement.anchorY = 0.0f;
+        aPlacement.parentAnchorY = 0.0f;
         aPlacement.translationX = WidgetPlacement.unitFromMeters(context, R.dimen.keyboard_x);
-        aPlacement.translationY = WidgetPlacement.unitFromMeters(context, R.dimen.keyboard_y);
-        aPlacement.translationZ = WidgetPlacement.unitFromMeters(context, R.dimen.keyboard_z);
+        aPlacement.translationY = WidgetPlacement.unitFromMeters(context, R.dimen.keyboard_y) - WidgetPlacement.unitFromMeters(context, R.dimen.window_world_y);
+        aPlacement.translationZ = WidgetPlacement.unitFromMeters(context, R.dimen.keyboard_z) - WidgetPlacement.unitFromMeters(context, R.dimen.window_world_z);
         aPlacement.rotationAxisX = 1.0f;
         aPlacement.rotation = (float)Math.toRadians(WidgetPlacement.floatDimension(context, R.dimen.keyboard_world_rotation));
         aPlacement.worldWidth = WidgetPlacement.floatDimension(context, R.dimen.keyboard_world_width);
         aPlacement.visible = false;
         aPlacement.cylinder = true;
+    }
+
+    @Override
+    public void detachFromWindow() {
+        if (mSessionStack != null) {
+            mSessionStack.removeTextInputListener(this);
+            mSessionStack = null;
+        }
+    }
+
+    @Override
+    public void attachToWindow(@NonNull WindowWidget aWindow) {
+        if (mAttachedWindow == aWindow) {
+            return;
+        }
+        mAttachedWindow = aWindow;
+        mWidgetPlacement.parentHandle = aWindow.getHandle();
+
+        mSessionStack = aWindow.getSessionStack();
+        if (mSessionStack != null) {
+            mSessionStack.addTextInputListener(this);
+        }
     }
 
     private int getKeyboardWidth(float aAlphabeticWidth) {
@@ -275,10 +296,6 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         width += WidgetPlacement.dpDimension(getContext(), R.dimen.keyboard_numeric_width);
         width += WidgetPlacement.dpDimension(getContext(), R.dimen.keyboard_key_width); // Close button
         return (int) width;
-    }
-
-    public void setBrowserWidget(UIWidget aWidget) {
-        mBrowserWidget = aWidget;
     }
 
     private void resetKeyboardLayout() {
@@ -328,7 +345,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
     public void dismiss() {
         exitVoiceInputMode();
-       if (mFocusedView != null && mFocusedView != mBrowserWidget) {
+       if (mFocusedView != null && mFocusedView != mAttachedWindow) {
            mFocusedView.clearFocus();
        }
        mWidgetPlacement.visible = false;
@@ -874,21 +891,21 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
     @Override
     public void showSoftInput(@NonNull GeckoSession session) {
-        if (mFocusedView != mBrowserWidget || getVisibility() != View.VISIBLE) {
-            updateFocusedView(mBrowserWidget);
+        if (mFocusedView != mAttachedWindow || getVisibility() != View.VISIBLE) {
+            updateFocusedView(mAttachedWindow);
         }
     }
 
     @Override
     public void hideSoftInput(@NonNull GeckoSession session) {
-        if (mFocusedView == mBrowserWidget && getVisibility() == View.VISIBLE) {
+        if (mFocusedView == mAttachedWindow && getVisibility() == View.VISIBLE) {
             dismiss();
         }
     }
 
     @Override
     public void updateSelection(@NonNull GeckoSession session, final int selStart, final int selEnd, final int compositionStart, final int compositionEnd) {
-        if (mFocusedView != mBrowserWidget || mInputConnection == null) {
+        if (mFocusedView != mAttachedWindow || mInputConnection == null) {
             return;
         }
 
@@ -902,21 +919,6 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                 connection.setSelection(selStart, selEnd);
             }
         });
-    }
-
-    @Override
-    public void updateExtractedText(@NonNull GeckoSession session, @NonNull ExtractedTextRequest request, @NonNull ExtractedText text) {
-
-    }
-
-    @Override
-    public void updateCursorAnchorInfo(@NonNull GeckoSession session, @NonNull CursorAnchorInfo info) {
-
-    }
-
-    @Override
-    public void notifyAutoFill(GeckoSession session, int notification, int virtualId) {
-
     }
 
     // FocusChangeListener

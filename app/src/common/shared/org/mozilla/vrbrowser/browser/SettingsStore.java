@@ -64,8 +64,6 @@ public class SettingsStore {
     public final static int POINTER_COLOR_DEFAULT_DEFAULT = Color.parseColor("#FFFFFF");
     public final static int SCROLL_DIRECTION_DEFAULT = 0;
     public final static String ENV_DEFAULT = "offworld";
-    public final static float BROWSER_WORLD_WIDTH_DEFAULT = 4.0f;
-    public final static float BROWSER_WORLD_HEIGHT_DEFAULT = 2.25f;
     public final static int MSAA_DEFAULT_LEVEL = 1;
     public final static boolean AUDIO_ENABLED = false;
     public final static float CYLINDER_DENSITY_ENABLED_DEFAULT = 4680.0f;
@@ -329,28 +327,6 @@ public class SettingsStore {
     public void setEnvironment(String aEnv) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putString(mContext.getString(R.string.settings_key_env), aEnv);
-        editor.commit();
-    }
-
-    public float getBrowserWorldWidth() {
-        return mPrefs.getFloat(
-                mContext.getString(R.string.settings_key_browser_world_width), BROWSER_WORLD_WIDTH_DEFAULT);
-    }
-
-    public void setBrowserWorldWidth(float aBrowserWorldWidth) {
-        SharedPreferences.Editor editor = mPrefs.edit();
-        editor.putFloat(mContext.getString(R.string.settings_key_browser_world_width), aBrowserWorldWidth);
-        editor.commit();
-    }
-
-    public float getBrowserWorldHeight() {
-        return mPrefs.getFloat(
-                mContext.getString(R.string.settings_key_browser_world_height), BROWSER_WORLD_HEIGHT_DEFAULT);
-    }
-
-    public void setBrowserWorldHeight(float aBrowserWorldHeight) {
-        SharedPreferences.Editor editor = mPrefs.edit();
-        editor.putFloat(mContext.getString(R.string.settings_key_browser_world_height), aBrowserWorldHeight);
         editor.commit();
     }
 

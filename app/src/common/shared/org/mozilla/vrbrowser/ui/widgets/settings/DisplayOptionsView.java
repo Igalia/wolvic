@@ -11,8 +11,8 @@ import android.view.View;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
-import org.mozilla.vrbrowser.browser.SessionStore;
 import org.mozilla.vrbrowser.browser.SettingsStore;
+import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.views.settings.ButtonSetting;
 import org.mozilla.vrbrowser.ui.views.settings.DoubleEditSetting;
@@ -478,7 +478,8 @@ class DisplayOptionsView extends SettingsView {
             SettingsStore.getInstance(getContext()).setMaxWindowHeight(newMaxWindowHeight);
 
             if (doApply) {
-                SessionStore.get().setMaxWindowSize(newMaxWindowWidth, newMaxWindowHeight);
+                SettingsStore.getInstance(getContext()).setMaxWindowWidth(newMaxWindowWidth);
+                SettingsStore.getInstance(getContext()).setMaxWindowHeight(newMaxWindowHeight);
                 showRestartDialog();
             }
         }

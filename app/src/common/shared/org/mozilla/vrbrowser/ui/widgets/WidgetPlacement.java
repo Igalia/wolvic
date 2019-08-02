@@ -12,12 +12,17 @@ import android.util.TypedValue;
 
 import androidx.annotation.NonNull;
 
+import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.browser.SettingsStore;
+
 public class WidgetPlacement {
     static final float WORLD_DPI_RATIO = 2.0f/720.0f;
 
     private WidgetPlacement() {}
     public WidgetPlacement(Context aContext) {
         density = aContext.getResources().getDisplayMetrics().density;
+        // Default value
+        cylinderMapRadius = Math.abs(WidgetPlacement.floatDimension(aContext, R.dimen.window_world_z));
     }
 
     public float density;
@@ -41,8 +46,16 @@ public class WidgetPlacement {
     public boolean showPointer = true;
     public boolean firstDraw = false;
     public boolean layer = true;
-    public boolean cylinder = true;
     public float textureScale = 0.7f;
+    // Widget will be curved if enabled.
+    public boolean cylinder = true;
+    /*
+     * Flat surface placements are automatically mapped to curved coordinates.
+     * If a radius is set it's used for the automatic mapping of the yaw & angle when the
+     * cylinder is not centered on the X axis.
+     * See Widget::UpdateCylinderMatrix for more info.
+     */
+    public float cylinderMapRadius;
 
     public WidgetPlacement clone() {
         WidgetPlacement w = new WidgetPlacement();
@@ -72,8 +85,9 @@ public class WidgetPlacement {
         this.showPointer = w.showPointer;
         this.firstDraw = w.firstDraw;
         this.layer = w.layer;
-        this.cylinder = w.cylinder;
         this.textureScale = w.textureScale;
+        this.cylinder = w.cylinder;
+        this.cylinderMapRadius = w.cylinderMapRadius;
     }
 
     public int textureWidth() {
@@ -131,6 +145,10 @@ public class WidgetPlacement {
     public static float worldToWidgetRatio(@NonNull UIWidget widget) {
         float widgetWorldWidth = widget.mWidgetPlacement.worldWidth;
         return ((widgetWorldWidth/widget.mWidgetPlacement.width)/WORLD_DPI_RATIO);
+    }
+
+    public static float worldToWindowRatio(Context aContext){
+        return (WidgetPlacement.floatDimension(aContext, R.dimen.window_world_width) / SettingsStore.WINDOW_WIDTH_DEFAULT)/ WORLD_DPI_RATIO;
     }
 
 }

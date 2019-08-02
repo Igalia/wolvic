@@ -7,8 +7,10 @@
 #include "Widget.h"
 #include "WidgetPlacement.h"
 #include "VRBrowser.h"
+#include "Cylinder.h"
 #include "vrb/ConcreteClass.h"
 #include "vrb/Matrix.h"
+#include "vrb/Transform.h"
 
 namespace crow {
 
@@ -37,18 +39,29 @@ struct WidgetMover::State {
       , endRotation(0)
   {}
 
+  vrb::Vector ProjectPoint(const vrb::Vector& aWorldPoint) const {
+    if (widget->GetCylinder()) {
+      vrb::Vector min, max;
+      widget->GetWidgetMinAndMax(min, max);
+      vrb::Vector point =  widget->GetCylinder()->ProjectPointToQuad(aWorldPoint, 0.5f, widget->GetCylinderDensity(), min, max);
+      return widget->GetTransformNode()->GetWorldTransform().MultiplyPosition(point);
+    } else {
+      return aWorldPoint;
+    }
+  }
 
   WidgetPlacementPtr& HandleKeyboardMove(const vrb::Vector& aDelta) {
     float x = initialPlacement->translation.x() * WidgetPlacement::kWorldDPIRatio;
     float y = initialPlacement->translation.y() * WidgetPlacement::kWorldDPIRatio;
+    const float windowZ = -4.2f; // Must match window_world_z in dimen.xml
     const float maxX = 4.0f; // Relative to 0.5f anchor point.
     const float minX = -maxX;
-    const float maxY = 2.0f;  // Relative to 0.0f anchor point.
-    const float minY = -1.1f; // Relative to 0.0f anchor point.
+    const float maxY = 1.8f;  // Relative to 0.0f anchor point.
+    const float minY = -1.3f; // Relative to 0.0f anchor point.
     const float maxAngle = -35.0f * (float)M_PI / 180.0f;
     const float angleStartY = 0.8f;
-    const float minZ = -2.5f;
-    const float maxZ = -3.2f;
+    const float minZ = -2.5f - windowZ;
+    const float maxZ = -3.2f - windowZ;
     const float thresholdZ = 1.45f;
     x += aDelta.x();
     y += aDelta.y();
@@ -108,8 +121,14 @@ WidgetMover::HandleMove(const vrb::Vector& aStart, const vrb::Vector& aDirection
   if (hitDistance < 0) {
     return nullptr;
   };
+  hitPoint = m.ProjectPoint(hitPoint);
 
-  const vrb::Vector delta = hitPoint - m.initialPoint;
+  vrb::Vector delta = hitPoint - m.initialPoint;
+  delta.y() = hitPoint.y() - m.initialPoint.y();
+  delta.x() = vrb::Vector(hitPoint.x() - m.initialPoint.x(), 0.0f, hitPoint.z() - m.initialPoint.z()).Magnitude();
+  if (hitPoint.x() < m.initialPoint.x()) {
+    delta.x() *= -1.0f;
+  }
 
   if (m.moveBehaviour == WidgetMoveBehaviour::KEYBOARD) {
     return m.HandleKeyboardMove(delta);
@@ -131,7 +150,7 @@ WidgetMover::StartMoving(const WidgetPtr& aWidget, const int32_t aMoveBehaviour,
   m.widget = aWidget;
   m.attachedController = aControllerIndex;
   m.initialTransform = aWidget->GetTransform();
-  m.initialPoint = aHitPoint;
+  m.initialPoint = m.ProjectPoint(aHitPoint);
   m.anchorPoint = aAnchorPoint;
   m.initialPlacement = aWidget->GetPlacement();
   m.movePlacement = WidgetPlacement::Create(*m.initialPlacement);

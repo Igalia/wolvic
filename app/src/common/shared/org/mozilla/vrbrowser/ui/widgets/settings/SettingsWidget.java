@@ -20,11 +20,11 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
-import org.mozilla.vrbrowser.browser.SessionStore;
+import org.mozilla.vrbrowser.browser.engine.SessionStore;
+import org.mozilla.vrbrowser.browser.engine.SessionStack;
 import org.mozilla.vrbrowser.ui.views.HoneycombButton;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
@@ -96,7 +96,7 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
 
         LinearLayout reportIssue = findViewById(R.id.reportIssueLayout);
         reportIssue.setOnClickListener(v -> {
-            SessionStore.get().loadUri(getContext().getString(R.string.bug_report_url));
+            SessionStore.get().getActiveStore().loadUri(getContext().getString(R.string.bug_report_url));
             onDismiss();
         });
 
@@ -217,13 +217,8 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
     }
 
     private void onSettingsReportClick() {
-        String url = SessionStore.get().getCurrentUri();
-
-        GeckoSession session = SessionStore.get().getCurrentSession();
-        if (session == null) {
-            int sessionId = SessionStore.get().createSession();
-            SessionStore.get().setCurrentSession(sessionId);
-        }
+        SessionStack sessionStack = SessionStore.get().getActiveStore();
+        String url = sessionStack.getCurrentUri();
 
         try {
             if (url == null) {
@@ -231,9 +226,9 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
                 url = "";
             } else if (url.startsWith("jar:") || url.startsWith("resource:") || url.startsWith("about:")) {
                 url = "";
-            } else if (SessionStore.get().isHomeUri(url)) {
+            } else if (sessionStack.isHomeUri(url)) {
                 // Use the original URL (without any hash).
-                url = SessionStore.get().getHomeUri();
+                url = sessionStack.getHomeUri();
             }
 
             url = URLEncoder.encode(url, "UTF-8");
@@ -241,7 +236,8 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
         } catch (UnsupportedEncodingException e) {
             Log.e(LOGTAG, "Cannot encode URL");
         }
-        SessionStore.get().loadUri(getContext().getString(R.string.private_report_url, url));
+
+        sessionStack.newSessionWithUrl(getContext().getString(R.string.private_report_url, url));
 
         hide(REMOVE_WIDGET);
     }

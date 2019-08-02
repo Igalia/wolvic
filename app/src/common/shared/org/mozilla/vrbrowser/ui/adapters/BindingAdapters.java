@@ -4,13 +4,14 @@ import android.graphics.Typeface;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.databinding.BindingAdapter;
 
 
 public class BindingAdapters {
 
     @BindingAdapter("visibleGone")
-    public static void showHide(View view, boolean show) {
+    public static void showHide(@NonNull View view, boolean show) {
         view.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 

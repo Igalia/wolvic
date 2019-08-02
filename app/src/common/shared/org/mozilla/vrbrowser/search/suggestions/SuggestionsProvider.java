@@ -4,7 +4,7 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-import org.mozilla.vrbrowser.browser.SessionStore;
+import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.search.SearchEngineWrapper;
 import org.mozilla.vrbrowser.ui.widgets.SuggestionsWidget.SuggestionItem;
 import org.mozilla.vrbrowser.ui.widgets.SuggestionsWidget.SuggestionItem.Type;

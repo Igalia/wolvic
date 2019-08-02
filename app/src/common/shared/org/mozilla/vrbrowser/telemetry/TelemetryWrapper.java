@@ -27,16 +27,20 @@ import org.mozilla.vrbrowser.utils.DeviceType;
 import org.mozilla.vrbrowser.utils.UrlUtils;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.UiThread;
 
 import static java.lang.Math.toIntExact;
+import static org.mozilla.vrbrowser.ui.widgets.Windows.*;
 
 
 public class TelemetryWrapper {
     private final static String APP_NAME = "FirefoxReality";
-    private final static String LOGTAG = "VRB";
+    private final static String LOGTAG = TelemetryWrapper.class.getSimpleName();
     private final static int MIN_LOAD_TIME = 40;
     private final static int LOADING_BUCKET_SIZE_MS = 100;
     private final static int MIN_IMMERSIVE_TIME = 1000;
@@ -50,6 +54,23 @@ public class TelemetryWrapper {
     private static int numUri = 0;
     private static long startLoadPageTime = 0;
     private static long startImmersiveTime = 0;
+    private static long sessionStartTime = 0;
+
+    // Multi-window events
+    private final static int MULTI_WINDOW_BIN_SIZE_MS = 10000;
+    private static HashMap<Integer, Long> windowLifetime = new HashMap<>();
+    private static int windowsMovesCount = 0;
+    private static int windowsResizesCount = 0;
+    private static long[] activePlacementStartTime = new long[MAX_WINDOWS];
+    private static long[] activePlacementTime = new long[MAX_WINDOWS];
+    private static long[] openWindowsStartTime = new long[MAX_WINDOWS];
+    private static long[] openPrivateWindowsStartTime = new long[MAX_WINDOWS];
+    private static long[] openWindowsTime = new long[MAX_WINDOWS];
+    private static long[] openPrivateWindowsTime = new long[MAX_WINDOWS];
+    private static int[] openWindows = new int[MAX_WINDOWS];
+    private static int[] openPrivateWindows = new int[MAX_WINDOWS];
+    private static TelemetryHistogram windowsLifetimeHistogram =
+            new TelemetryHistogram(HISTOGRAM_SIZE, MULTI_WINDOW_BIN_SIZE_MS, 0);
 
     private class Category {
         private static final String ACTION = "action";
@@ -65,6 +86,27 @@ public class TelemetryWrapper {
         // TODO: Support "select_query" after providing search suggestion.
         private static final String VOICE_QUERY = "voice_query";
         private static final String IMMERSIVE_MODE = "immersive_mode";
+
+        // How many max-windows dialogs happen / what percentage
+        private static final String MAX_WINDOWS_DIALOG = "max_windows_dialog";
+        // New Window tray button use
+        private static final String NEW_WINDOW_BUTTON = "tray_new_window";
+        // Long press to bring the context menu event
+        private static final String LONG_PRESS_CONTEXT_MENU = "context_menu";
+        // How long is a window open for / window life
+        private static final String WINDOW_LIFETIME = "window_lifetime";
+        // Frequency of window moves
+        private static final String WINDOWS_MOVES_FREQ = "windows_move_freq";
+        // Frequency of window resizes
+        private static final String WINDOWS_RESIZE_FREQ = "windows_resize_freq";
+        // When a session is multi-window, what percentage of time is each position the active window
+        private static final String PLACEMENTS_ACTIVE_TIME_PCT = "placements_active_time_pct";
+        // When a session is multi-window, what percentage of time are one, two or three windows open
+        private static final String OPEN_WINDOWS_TIME_PCT = "open_windows_time_pct";
+        // Curved windows setting - how many users use it / what percentage
+        private static final String CURVED_MODE_ACTIVE = "curved_mode_active";
+        // Average of how many windows are open at a time, per session
+        private static final String WINDOWS_OPEN_W_MEAN = "windows_open_w_mean";
     }
 
     private class Object {
@@ -72,11 +114,23 @@ public class TelemetryWrapper {
         private static final String BROWSER = "browser";
         private static final String SEARCH_BAR = "search_bar";
         private static final String VOICE_INPUT = "voice_input";
+        private static final String WINDOW = "window";
+        private static final String TRAY = "tray";
     }
 
     private class Extra {
         private static final String TOTAL_URI_COUNT = "total_uri_count";
         private static final String UNIQUE_DOMAINS_COUNT = "unique_domains_count";
+        private static final String WINDOW_MOVES_FREQ = "windows_moves_freq";
+        private static final String WINDOW_RESIZE_FREQ = "windows_resize_freq";
+        private static final String LEFT_WINDOW_ACTIVE_TIME_PCT = "left_window_active_time_pct";
+        private static final String FRONT_WINDOW_ACTIVE_TIME_PCT = "front_window_active_time_pct";
+        private static final String RIGHT_WINDOW_ACTIVE_TIME_PCT = "right_window_active_time_pct";
+        private static final String ONE_OPEN_WINDOWS_TIME_PCT = "one_windows_open_time_pct";
+        private static final String TWO_OPEN_WINDOWS_TIME_PCT = "two_windows_open_time_pct";
+        private static final String THREE_OPEN_WINDOWS_TIME_PCT = "three_windows_open_time_pct";
+        private static final String WINDOWS_OPEN_W_MEAN = "window_open_w_mean";
+        private static final String WINDOWS_PRIVATE_OPEN_W_MEAN = "window_open_private_w_mean";
     }
 
     // We should call this at the application initial stage. Instead,
@@ -97,7 +151,7 @@ public class TelemetryWrapper {
                     .setCollectionEnabled(telemetryEnabled)
                     .setUploadEnabled(telemetryEnabled)
                     .setBuildId(String.valueOf(BuildConfig.VERSION_CODE));
-            
+
             final JSONPingSerializer serializer = new JSONPingSerializer();
             final FileTelemetryStorage storage = new FileTelemetryStorage(configuration, serializer);
             TelemetryScheduler scheduler;
@@ -114,11 +168,12 @@ public class TelemetryWrapper {
         } finally {
             StrictMode.setThreadPolicy(threadPolicy);
         }
+
+        sessionStartTime = SystemClock.elapsedRealtime();
     }
 
     @UiThread
     public static void start() {
-        queueHistogram();
         // Call Telemetry.scheduleUpload() early.
         // See https://github.com/MozillaReality/FirefoxReality/issues/1353
         TelemetryHolder.get()
@@ -133,6 +188,7 @@ public class TelemetryWrapper {
     @UiThread
     public static void stop() {
         queueHistogram();
+        queueMultiWindowEvents();
 
         TelemetryEvent.create(Category.ACTION, Method.BACKGROUND, Object.APP).queue();
         TelemetryHolder.get().recordSessionEnd();
@@ -292,5 +348,302 @@ public class TelemetryWrapper {
 
         immersiveHistogram[histogramImmersiveIndex]++;
     }
-}
 
+    /**
+     * Helper method for queuing histograms. This will transform the raw histogram into
+     * a Telemetry historam event and queue it for future delivery.
+     * @param histogram The histogram to be queued
+     * @param method The TelemetryEvent method String
+     * @param object The TelemetryEvent object String
+     */
+    private static void queueHistogram(@NonNull TelemetryHistogram histogram, @NonNull String method, @NonNull String object) {
+        TelemetryEvent event = TelemetryEvent.create(Category.HISTOGRAM, method, object);
+        int[] hist = histogram.getHistogram();
+        for (int bucketIndex = 0; bucketIndex < hist.length; ++bucketIndex) {
+            event.extra(
+                    Integer.toString(bucketIndex * histogram.getBinSize()),
+                    Integer.toString(hist[bucketIndex]));
+            Log.d(LOGTAG, "\tHistogram bucket: [" +
+                    "" + bucketIndex * histogram.getBinSize() +
+                    ", " + hist[bucketIndex] + "]");
+        }
+        event.queue();
+    }
+
+    // Multi-window related events
+
+    public static void queueMultiWindowEvents() {
+        // Queue windows lifetime histogram
+        queueWindowsLifetimeHistogram();
+
+        // Queue Windows moves freq during the session
+        queueWindowsMovesCountEvent();
+
+        // Queue Windows resizes freq during the session
+        queueWindowsResizesCountEvent();
+
+        // Queue Windows active time pct
+        queueActiveWindowPctEvent();
+
+        // Queue Windows active time pct
+        queueOpenWindowsAvgEvent();
+
+        // Queue open Windows time pct
+        queueOpenWindowsPctEvent();
+    }
+
+    public static void trayNewWindowEvent() {
+        TelemetryEvent event = TelemetryEvent.create(Category.ACTION, Method.NEW_WINDOW_BUTTON, Object.TRAY);
+        event.queue();
+
+        Log.d(LOGTAG, "[Queue] Tray New Window Click");
+    }
+
+    public static void maxWindowsDialogEvent() {
+        TelemetryEvent event = TelemetryEvent.create(Category.ACTION, Method.MAX_WINDOWS_DIALOG, Object.WINDOW);
+        event.queue();
+
+        Log.d(LOGTAG, "[Queue] Max Windows dialog");
+    }
+
+    public static void longPressContextMenuEvent() {
+        TelemetryEvent event = TelemetryEvent.create(Category.ACTION, Method.LONG_PRESS_CONTEXT_MENU, Object.WINDOW);
+        event.queue();
+
+        Log.d(LOGTAG, "[Queue] Context Menu Long Press");
+    }
+
+    public static void openWindowEvent(int windowId) {
+        windowLifetime.put(windowId, SystemClock.elapsedRealtime());
+    }
+
+    public static void closeWindowEvent(int windowId) {
+        windowsLifetimeHistogram.addData(SystemClock.elapsedRealtime() - windowLifetime.get(windowId));
+        windowLifetime.remove(windowId);
+    }
+
+    public static void windowsMoveEvent() {
+        windowsMovesCount++;
+
+        Log.d(LOGTAG, "Windows moves: " + windowsMovesCount);
+    }
+
+    public static void windowsResizeEvent() {
+        windowsResizesCount++;
+
+        Log.d(LOGTAG, "Windows resizes: " + windowsResizesCount);
+    }
+
+    public static void activePlacementEvent(int from, boolean active) {
+        if (active) {
+            activePlacementStartTime[from] = SystemClock.elapsedRealtime();
+        } else {
+            if (activePlacementStartTime[from] != 0) {
+                activePlacementTime[from] += SystemClock.elapsedRealtime() - activePlacementStartTime[from];
+                activePlacementStartTime[from] = 0;
+            }
+        }
+
+        Log.d(LOGTAG, "Placements times:");
+        Log.d(LOGTAG, "\tFRONT: " + activePlacementTime[WindowPlacement.FRONT.getValue()]);
+        Log.d(LOGTAG, "\tLEFT: " + activePlacementTime[WindowPlacement.LEFT.getValue()]);
+        Log.d(LOGTAG, "\tRIGHT: " + activePlacementTime[WindowPlacement.RIGHT.getValue()]);
+    }
+
+    public static void openWindowsEvent(int from, int to, boolean isPrivate) {
+        if (isPrivate) {
+            openPrivateWindows[to-1]++;
+
+            if (from > 0) {
+                openPrivateWindowsTime[from-1] += SystemClock.elapsedRealtime() - openPrivateWindowsStartTime[from-1];
+                openPrivateWindowsStartTime[from-1] = 0;
+            }
+            openPrivateWindowsStartTime[to-1] = SystemClock.elapsedRealtime();
+
+            Log.d(LOGTAG, "Placements times (private):");
+            Log.d(LOGTAG, "\tONE: " + openPrivateWindowsTime[WindowPlacement.FRONT.getValue()]);
+            Log.d(LOGTAG, "\tTWO: " + openPrivateWindowsTime[WindowPlacement.LEFT.getValue()]);
+            Log.d(LOGTAG, "\tTHREE: " + openPrivateWindowsTime[WindowPlacement.RIGHT.getValue()]);
+
+            Log.d(LOGTAG, "Open Windows Count (private):");
+            Log.d(LOGTAG, "\tFRONT: " + openPrivateWindows[WindowPlacement.FRONT.getValue()]);
+            Log.d(LOGTAG, "\tLEFT: " + openPrivateWindows[WindowPlacement.LEFT.getValue()]);
+            Log.d(LOGTAG, "\tRIGHT: " + openPrivateWindows[WindowPlacement.RIGHT.getValue()]);
+
+        } else {
+            openWindows[to-1]++;
+
+            if (from > 0) {
+                openWindowsTime[from-1] += SystemClock.elapsedRealtime() - openWindowsStartTime[from-1];
+                openWindowsStartTime[from-1] = 0;
+            }
+            openWindowsStartTime[to-1] = SystemClock.elapsedRealtime();
+
+            Log.d(LOGTAG, "Placements times:");
+            Log.d(LOGTAG, "\tONE: " + openWindowsTime[WindowPlacement.FRONT.getValue()]);
+            Log.d(LOGTAG, "\tTWO: " + openWindowsTime[WindowPlacement.LEFT.getValue()]);
+            Log.d(LOGTAG, "\tTHREE: " + openWindowsTime[WindowPlacement.RIGHT.getValue()]);
+
+            Log.d(LOGTAG, "Open Private Windows Count:");
+            Log.d(LOGTAG, "\tFRONT: " + openWindows[WindowPlacement.FRONT.getValue()]);
+            Log.d(LOGTAG, "\tLEFT: " + openWindows[WindowPlacement.LEFT.getValue()]);
+            Log.d(LOGTAG, "\tRIGHT: " + openWindows[WindowPlacement.RIGHT.getValue()]);
+        }
+    }
+
+    public static void queueCurvedModeActiveEvent() {
+        TelemetryEvent event = TelemetryEvent.create(Category.ACTION, Method.CURVED_MODE_ACTIVE, Object.WINDOW);
+        event.queue();
+
+        Log.d(LOGTAG, "[Queue] Curved mode active");
+    }
+
+    private static void queueWindowsLifetimeHistogram() {
+        for (Map.Entry<Integer, Long> entry : windowLifetime.entrySet()) {
+            windowsLifetimeHistogram.addData(SystemClock.elapsedRealtime() - entry.getValue());
+        }
+
+        Log.d(LOGTAG, "[Queue] Windows Lifetime Histogram:");
+        queueHistogram(windowsLifetimeHistogram, Method.WINDOW_LIFETIME, Object.WINDOW);
+        windowsLifetimeHistogram = new TelemetryHistogram(HISTOGRAM_SIZE, MULTI_WINDOW_BIN_SIZE_MS, 0);
+
+        for(Map.Entry<Integer, Long> entry : windowLifetime.entrySet()) {
+            windowLifetime.put(entry.getKey(), SystemClock.elapsedRealtime());
+        }
+    }
+
+    private static void queueWindowsMovesCountEvent() {
+        float movesFreqPerSession = (float)windowsMovesCount / ((SystemClock.elapsedRealtime() - sessionStartTime)/1000);
+        TelemetryEvent event = TelemetryEvent.create(Category.ACTION, Method.WINDOWS_MOVES_FREQ, Object.WINDOW);
+        event.extra(Extra.WINDOW_MOVES_FREQ, String.valueOf(movesFreqPerSession));
+        event.queue();
+
+        Log.d(LOGTAG, "[Queue] Windows Moves Freq: " + movesFreqPerSession);
+
+        windowsMovesCount = 0;
+    }
+
+    private static void queueWindowsResizesCountEvent() {
+        float resizesFreqPerSession = (float)windowsResizesCount / ((SystemClock.elapsedRealtime() - sessionStartTime)/1000);
+        TelemetryEvent event = TelemetryEvent.create(Category.ACTION, Method.WINDOWS_RESIZE_FREQ, Object.WINDOW);
+        event.extra(Extra.WINDOW_RESIZE_FREQ, String.valueOf(resizesFreqPerSession));
+        event.queue();
+
+        Log.d(LOGTAG, "[Queue] Windows Resizes Freq: " + resizesFreqPerSession);
+
+        windowsResizesCount = 0;
+    }
+
+    private static void queueActiveWindowPctEvent() {
+        for (int index = 0; index< MAX_WINDOWS; index++) {
+            if (activePlacementStartTime[index] != 0) {
+                activePlacementTime[index] += SystemClock.elapsedRealtime() - activePlacementStartTime[index];
+                activePlacementStartTime[index] = SystemClock.elapsedRealtime();
+            }
+        }
+
+        long totalTime = 0;
+        for (long time : activePlacementTime)
+            totalTime += time;
+
+        if (totalTime == 0)
+            return;
+
+        float[] pcts = new float[MAX_WINDOWS];
+        for (int index = 0; index< MAX_WINDOWS; index++)
+            pcts[index] = (activePlacementTime[index]*100.0f)/totalTime;
+
+        TelemetryEvent event = TelemetryEvent.create(Category.ACTION, Method.PLACEMENTS_ACTIVE_TIME_PCT, Object.WINDOW);
+        event.extra(Extra.LEFT_WINDOW_ACTIVE_TIME_PCT, String.valueOf(pcts[WindowPlacement.LEFT.getValue()]));
+        event.extra(Extra.FRONT_WINDOW_ACTIVE_TIME_PCT, String.valueOf(pcts[WindowPlacement.FRONT.getValue()]));
+        event.extra(Extra.RIGHT_WINDOW_ACTIVE_TIME_PCT, String.valueOf(pcts[WindowPlacement.RIGHT.getValue()]));
+        event.queue();
+
+        Log.d(LOGTAG, "[Queue] Placements Active time Pct:");
+        Log.d(LOGTAG, "\tFRONT: " + pcts[WindowPlacement.FRONT.getValue()]);
+        Log.d(LOGTAG, "\tLEFT: " + pcts[WindowPlacement.LEFT.getValue()]);
+        Log.d(LOGTAG, "\tRIGHT: " + pcts[WindowPlacement.RIGHT.getValue()]);
+
+        for (int index = 0; index< MAX_WINDOWS; index++) {
+            activePlacementTime[index] = 0;
+        }
+    }
+
+    private static void queueOpenWindowsAvgEvent() {
+        float weight = 0;
+        float weightSum = 0;
+        for(int i=0; i < MAX_WINDOWS; i++){
+            weight += openWindows[i];
+            weightSum += (i+1) * openWindows[i];
+        }
+        float regularWM = weightSum > 0 ? weightSum/weight : 0;
+
+        weight = 0;
+        weightSum = 0;
+        for(int i=0; i < MAX_WINDOWS; i++){
+            weight += openPrivateWindows[i];
+            weightSum += (i+1) * openPrivateWindows[i];
+        }
+        float privateWM = weightSum > 0 ? weightSum/weight : 0;
+
+        TelemetryEvent event = TelemetryEvent.create(Category.ACTION, Method.WINDOWS_OPEN_W_MEAN, Object.WINDOW);
+        event.extra(Extra.WINDOWS_OPEN_W_MEAN, String.valueOf(regularWM));
+        event.extra(Extra.WINDOWS_PRIVATE_OPEN_W_MEAN, String.valueOf(privateWM));
+        event.queue();
+
+        Log.d(LOGTAG, "[Queue] Open Windows Number Weighted Mean:");
+        Log.d(LOGTAG, "\tRegular: " + regularWM);
+        Log.d(LOGTAG, "\tPrivate: " + privateWM);
+
+        for (int index = 0; index< MAX_WINDOWS; index++) {
+            if (openWindows[index] != 0)
+                openWindows[index] = 1;
+            if (openPrivateWindows[index] != 0)
+                openPrivateWindows[index] = 1;
+        }
+    }
+
+    private static void queueOpenWindowsPctEvent() {
+        for (int index = 0; index< MAX_WINDOWS; index++) {
+            if (openWindowsStartTime[index] != 0) {
+                openWindowsTime[index] += SystemClock.elapsedRealtime() - openWindowsStartTime[index];
+                openWindowsStartTime[index] = SystemClock.elapsedRealtime();
+            }
+
+            if (openPrivateWindowsStartTime[index] != 0) {
+                openPrivateWindowsTime[index] += SystemClock.elapsedRealtime() - openPrivateWindowsStartTime[index];
+                openPrivateWindowsStartTime[index] = SystemClock.elapsedRealtime();
+            }
+        }
+
+        long totalTime = 0;
+        for (long time : openWindowsTime)
+            totalTime += time;
+        for (long time : openPrivateWindowsTime)
+            totalTime += time;
+
+        if (totalTime == 0)
+            return;
+
+        float[] pcts = new float[MAX_WINDOWS];
+        for (int index = 0; index< MAX_WINDOWS; index++)
+            pcts[index] = ((openWindowsTime[index]+openPrivateWindowsTime[index])*100.0f)/totalTime;
+
+        TelemetryEvent event = TelemetryEvent.create(Category.ACTION, Method.OPEN_WINDOWS_TIME_PCT, Object.WINDOW);
+        event.extra(Extra.ONE_OPEN_WINDOWS_TIME_PCT, String.valueOf(pcts[WindowPlacement.LEFT.getValue()]));
+        event.extra(Extra.TWO_OPEN_WINDOWS_TIME_PCT, String.valueOf(pcts[WindowPlacement.FRONT.getValue()]));
+        event.extra(Extra.THREE_OPEN_WINDOWS_TIME_PCT, String.valueOf(pcts[WindowPlacement.RIGHT.getValue()]));
+        event.queue();
+
+        Log.d(LOGTAG, "[Queue] Open Windows time Pct:");
+        Log.d(LOGTAG, "\tONE: " + pcts[WindowPlacement.FRONT.getValue()]);
+        Log.d(LOGTAG, "\tTWO: " + pcts[WindowPlacement.LEFT.getValue()]);
+        Log.d(LOGTAG, "\tTHREE: " + pcts[WindowPlacement.RIGHT.getValue()]);
+
+        for (int index = 0; index< MAX_WINDOWS; index++) {
+            openWindowsTime[index] = 0;
+            openPrivateWindowsTime[index] = 0;
+        }
+    }
+
+}

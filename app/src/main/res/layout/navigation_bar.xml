@@ -125,6 +125,13 @@
                 android:text="2x" />
 
             <org.mozilla.vrbrowser.ui.views.UITextButton
+                android:id="@+id/resizePreset15"
+                style="@style/navigationBarTextButtonMiddleTheme"
+                android:padding="5dp"
+                android:textSize="14sp"
+                android:text="1.5x" />
+
+            <org.mozilla.vrbrowser.ui.views.UITextButton
                 android:id="@+id/resizePreset1"
                 style="@style/navigationBarTextButtonMiddleTheme"
                 android:padding="5dp"

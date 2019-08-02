@@ -3,148 +3,89 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.vrbrowser.browser;
+package org.mozilla.vrbrowser.browser.engine;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.Uri;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.inputmethod.CursorAnchorInfo;
 import android.view.inputmethod.ExtractedText;
 import android.view.inputmethod.ExtractedTextRequest;
 
-import org.mozilla.gecko.GeckoProfile;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import org.mozilla.geckoview.AllowOrDeny;
 import org.mozilla.geckoview.ContentBlocking;
 import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoRuntime;
-import org.mozilla.geckoview.GeckoRuntimeSettings;
 import org.mozilla.geckoview.GeckoSession;
-import org.mozilla.geckoview.GeckoSession.SessionState;
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.geckoview.MediaElement;
-import org.mozilla.geckoview.WebExtension;
 import org.mozilla.geckoview.WebRequestError;
-import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.crashreporting.CrashReporterService;
+import org.mozilla.vrbrowser.browser.Media;
+import org.mozilla.vrbrowser.browser.SessionChangeListener;
+import org.mozilla.vrbrowser.browser.SettingsStore;
+import org.mozilla.vrbrowser.browser.UserAgentOverride;
+import org.mozilla.vrbrowser.browser.VideoAvailabilityListener;
 import org.mozilla.vrbrowser.geolocation.GeolocationData;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.utils.InternalPages;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import mozilla.components.concept.storage.VisitType;
 
 import static org.mozilla.vrbrowser.utils.ServoUtils.createServoSession;
 import static org.mozilla.vrbrowser.utils.ServoUtils.isInstanceOfServoSession;
 import static org.mozilla.vrbrowser.utils.ServoUtils.isServoAvailable;
 
-public class SessionStore implements ContentBlocking.Delegate, GeckoSession.NavigationDelegate,
+public class SessionStack implements ContentBlocking.Delegate, GeckoSession.NavigationDelegate,
         GeckoSession.ProgressDelegate, GeckoSession.ContentDelegate, GeckoSession.TextInputDelegate,
         GeckoSession.PromptDelegate, GeckoSession.MediaDelegate, SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private static SessionStore mInstance;
     private static final String LOGTAG = "VRB";
-    public static SessionStore get() {
-        if (mInstance == null) {
-            mInstance = new SessionStore();
-        }
-        return mInstance;
-    }
+
     // You can test a local file using: "resource://android/assets/webvr/index.html"
     public static final String PRIVATE_BROWSING_URI = "about:privatebrowsing";
-    public static final int NO_SESSION_ID = -1;
-    private static final String[] WEB_EXTENSIONS = new String[] {
-      "webcompat_vimeo",
-      "webcompat_youtube"
-    };
+    public static final int NO_SESSION = -1;
 
-    private LinkedList<GeckoSession.NavigationDelegate> mNavigationListeners;
-    private LinkedList<GeckoSession.ProgressDelegate> mProgressListeners;
-    private LinkedList<GeckoSession.ContentDelegate> mContentListeners;
-    private LinkedList<SessionChangeListener> mSessionChangeListeners;
-    private LinkedList<GeckoSession.TextInputDelegate> mTextInputListeners;
-    private LinkedList<GeckoSession.PromptDelegate> mPromptListeners;
-    private LinkedList<VideoAvailabilityListener> mVideoAvailabilityListeners;
-    private UserAgentOverride mUserAgentOverride;
+    private transient LinkedList<GeckoSession.NavigationDelegate> mNavigationListeners;
+    private transient LinkedList<GeckoSession.ProgressDelegate> mProgressListeners;
+    private transient LinkedList<GeckoSession.ContentDelegate> mContentListeners;
+    private transient LinkedList<SessionChangeListener> mSessionChangeListeners;
+    private transient LinkedList<GeckoSession.TextInputDelegate> mTextInputListeners;
+    private transient LinkedList<GeckoSession.PromptDelegate> mPromptListeners;
+    private transient LinkedList<VideoAvailabilityListener> mVideoAvailabilityListeners;
+    private transient UserAgentOverride mUserAgentOverride;
 
-    public interface SessionChangeListener {
-        void onNewSession(GeckoSession aSession, int aId);
-        void onRemoveSession(GeckoSession aSession, int aId);
-        void onCurrentSessionChange(GeckoSession aSession, int aId);
-    }
-
-    public interface VideoAvailabilityListener {
-        void onVideoAvailabilityChanged(boolean aVideosAvailable);
-    }
-
-    class SessionSettings {
-        boolean multiprocess = SettingsStore.getInstance(mContext).isMultiprocessEnabled();
-        boolean privateMode = false;
-        boolean trackingProtection = SettingsStore.getInstance(mContext).isTrackingProtectionEnabled();
-        boolean suspendMediaWhenInactive = true;
-        int userAgentMode = SettingsStore.getInstance(mContext).getUaMode();
-        boolean servo = false;
-    }
-
-    class State {
-        boolean mCanGoBack;
-        boolean mCanGoForward;
-        boolean mIsLoading;
-        boolean mIsInputActive;
-        GeckoSession.ProgressDelegate.SecurityInformation mSecurityInformation;
-        String mUri;
-        String mPreviousUri;
-        String mTitle;
-        boolean mFullScreen;
-        GeckoSession mSession;
-        SessionSettings mSettings;
-        ArrayList<Media> mMediaElements = new ArrayList<>();
-        SessionState mSessionState;
-    }
-
-    private GeckoRuntime mRuntime;
-    private GeckoSession mCurrentSession;
-    private HashMap<Integer, State> mSessions;
+    private transient GeckoSession mCurrentSession;
+    private HashMap<Integer, SessionState> mSessions;
     private Deque<Integer> mSessionsStack;
-    private Deque<Integer> mPrivateSessionsStack;
-    private GeckoSession.PermissionDelegate mPermissionDelegate;
-    private int mPreviousSessionId = SessionStore.NO_SESSION_ID;
-    private int mPreviousGeckoSessionId = SessionStore.NO_SESSION_ID;
+    private transient GeckoSession.PermissionDelegate mPermissionDelegate;
+    private int mPreviousGeckoSessionId = NO_SESSION;
     private String mRegion;
-    private Context mContext;
-    private SharedPreferences mPrefs;
-    private BookmarksStore mBookmarksStore;
-    private HistoryStore mHistoryStore;
+    private transient Context mContext;
+    private transient SharedPreferences mPrefs;
+    private transient GeckoRuntime mRuntime;
+    private boolean mUsePrivateMode;
 
-    private SessionStore() {
+    protected SessionStack(Context context, GeckoRuntime runtime, boolean usePrivateMode) {
+        mRuntime = runtime;
         mSessions = new LinkedHashMap<>();
         mSessionsStack = new ArrayDeque<>();
-        mPrivateSessionsStack = new ArrayDeque<>();
-    }
+        mUsePrivateMode = usePrivateMode;
 
-    public void registerListeners() {
         mNavigationListeners = new LinkedList<>();
         mProgressListeners = new LinkedList<>();
         mContentListeners = new LinkedList<>();
@@ -156,9 +97,24 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
         if (mPrefs != null) {
             mPrefs.registerOnSharedPreferenceChangeListener(this);
         }
+
+        mContext = context;
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+
+        if (mUserAgentOverride == null) {
+            mUserAgentOverride = new UserAgentOverride();
+            mUserAgentOverride.loadOverridesFromAssets((Activity)mContext, mContext.getString(R.string.user_agent_override_file));
+        }
     }
 
-    public void unregisterListeners() {
+    protected void shutdown() {
+        for (Map.Entry<Integer, SessionState> session : mSessions.entrySet()) {
+            session.getValue().mSession.close();
+        }
+
+        mSessions.clear();
+        mSessionsStack.clear();
+
         mNavigationListeners.clear();
         mProgressListeners.clear();
         mContentListeners.clear();
@@ -170,71 +126,8 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
             mPrefs.unregisterOnSharedPreferenceChangeListener(this);
         }
 
-        if (mBookmarksStore != null) {
-            mBookmarksStore.removeAllListeners();
-        }
-        if (mHistoryStore!= null) {
-            mHistoryStore.removeAllListeners();
-        }
-    }
-
-    public void setContext(Context aContext, Bundle aExtras) {
-        if (mRuntime == null) {
-            // FIXME: Once GeckoView has a prefs API
-            vrPrefsWorkAround(aContext, aExtras);
-            GeckoRuntimeSettings.Builder runtimeSettingsBuilder = new GeckoRuntimeSettings.Builder();
-            runtimeSettingsBuilder.crashHandler(CrashReporterService.class);
-            runtimeSettingsBuilder.contentBlocking((new ContentBlocking.Settings.Builder())
-                .categories(ContentBlocking.AT_AD | ContentBlocking.AT_SOCIAL | ContentBlocking.AT_ANALYTIC)
-                .build());
-            runtimeSettingsBuilder.consoleOutput(SettingsStore.getInstance(aContext).isConsoleLogsEnabled());
-            runtimeSettingsBuilder.displayDensityOverride(SettingsStore.getInstance(aContext).getDisplayDensity());
-            runtimeSettingsBuilder.remoteDebuggingEnabled(SettingsStore.getInstance(aContext).isRemoteDebuggingEnabled());
-            runtimeSettingsBuilder.displayDpiOverride(SettingsStore.getInstance(aContext).getDisplayDpi());
-            runtimeSettingsBuilder.screenSizeOverride(SettingsStore.getInstance(aContext).getMaxWindowWidth(),
-                    SettingsStore.getInstance(aContext).getMaxWindowHeight());
-            if (SettingsStore.getInstance(aContext).getTransparentBorderWidth() > 0) {
-                runtimeSettingsBuilder.useMaxScreenDepth(true);
-            }
-
-            if (BuildConfig.DEBUG) {
-                runtimeSettingsBuilder.arguments(new String[] { "-purgecaches" });
-            }
-
-            mRuntime = GeckoRuntime.create(aContext, runtimeSettingsBuilder.build());
-            for (String extension: WEB_EXTENSIONS) {
-                String path = "resource://android/assets/web_extensions/" + extension + "/";
-                mRuntime.registerWebExtension(new WebExtension(path));
-            }
-
-        } else {
-            mRuntime.attachTo(aContext);
-        }
-
-        mContext = aContext;
-        mPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
-        mBookmarksStore = new BookmarksStore(mContext);
-        mHistoryStore = new HistoryStore(mContext);
-        if (mUserAgentOverride == null) {
-            mUserAgentOverride = new UserAgentOverride();
-            mUserAgentOverride.loadOverridesFromAssets((Activity)aContext, aContext.getString(R.string.user_agent_override_file));
-        }
-    }
-
-    public BookmarksStore getBookmarkStore() {
-        return mBookmarksStore;
-    }
-
-    public HistoryStore getHistoryStore() {
-        return mHistoryStore;
-    }
-
-    public void dumpAllState(Integer sessionId) {
-        dumpAllState(getSession(sessionId));
-    }
-
-    private boolean isLocalizedContent(@Nullable String url) {
-        return url != null && (url.startsWith("about:") || url.startsWith("data:"));
+        mCurrentSession = null;
+        mPreviousGeckoSessionId = NO_SESSION;
     }
 
     private void dumpAllState(GeckoSession aSession) {
@@ -254,7 +147,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
         boolean canGoBack = false;
         String uri = "";
         if (aSession != null) {
-            State state = mSessions.get(aSession.hashCode());
+            SessionState state = mSessions.get(aSession.hashCode());
             if (state != null) {
                 canGoBack = state.mCanGoBack;
                 canGoForward = state.mCanGoForward;
@@ -271,7 +164,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
         GeckoSession.ProgressDelegate.SecurityInformation securityInfo = null;
         String uri = "";
         if (aSession != null) {
-            State state = mSessions.get(aSession.hashCode());
+            SessionState state = mSessions.get(aSession.hashCode());
             if (state != null) {
                 isLoading = state.mIsLoading;
                 securityInfo = state.mSecurityInformation;
@@ -289,16 +182,23 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
         }
     }
 
-    public void dumpState(GeckoSession aSession, GeckoSession.ContentDelegate aListener) {
+    private void dumpState(GeckoSession aSession, GeckoSession.ContentDelegate aListener) {
         String title = "";
         if (aSession != null) {
-            State state = mSessions.get(aSession.hashCode());
+            SessionState state = mSessions.get(aSession.hashCode());
             if (state != null) {
                 title = state.mTitle;
             }
         }
 
         aListener.onTitleChange(aSession, title);
+    }
+
+    public void setPermissionDelegate(GeckoSession.PermissionDelegate aDelegate) {
+        mPermissionDelegate = aDelegate;
+        for (HashMap.Entry<Integer, SessionState> entry : mSessions.entrySet()) {
+            entry.getValue().mSession.setPermissionDelegate(aDelegate);
+        }
     }
 
     public void addNavigationListener(GeckoSession.NavigationDelegate aListener) {
@@ -360,30 +260,87 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
         mVideoAvailabilityListeners.remove(aListener);
     }
 
-    public int createSession() {
-        return createSession(false);
+    public void restore(SessionStack store, int currentSessionId) {
+        mSessions.clear();
+        mSessionsStack.clear();
+
+        mPreviousGeckoSessionId = store.mPreviousGeckoSessionId;
+        mRegion = store.mRegion;
+        mUsePrivateMode = store.mUsePrivateMode;
+
+        HashMap<Integer, Integer> oldNewSessionId = new HashMap<>();
+        for (Map.Entry<Integer, SessionState> entry : store.mSessions.entrySet()) {
+            SessionState state = entry.getValue();
+
+            GeckoSessionSettings geckoSettings = new GeckoSessionSettings.Builder()
+                    .useMultiprocess(state.mSettings.isMultiprocessEnabled())
+                    .usePrivateMode(mUsePrivateMode)
+                    .userAgentMode(state.mSettings.getUserAgentMode())
+                    .suspendMediaWhenInactive(state.mSettings.isSuspendMediaWhenInactiveEnabled())
+                    .useTrackingProtection(state.mSettings.isTrackingProtectionEnabled())
+                    .build();
+
+            if (state.mSettings.isServoEnabled()) {
+                if (isServoAvailable()) {
+                    state.mSession = createServoSession(mContext);
+                } else {
+                    Log.e(LOGTAG, "Attempt to create a ServoSession. Servo hasn't been enable at build time. Using a GeckoSession instead.");
+                    state.mSession = new GeckoSession(geckoSettings);
+                }
+            } else {
+                state.mSession = new GeckoSession(geckoSettings);
+            }
+
+            state.mSession.restoreState(state.mSessionState);
+
+            int newSessionId = state.mSession.hashCode();
+            oldNewSessionId.put(entry.getKey(), newSessionId);
+
+            state.mSession.setNavigationDelegate(this);
+            state.mSession.setProgressDelegate(this);
+            state.mSession.setPromptDelegate(this);
+            state.mSession.setContentDelegate(this);
+            state.mSession.getTextInput().setDelegate(this);
+            state.mSession.setPermissionDelegate(mPermissionDelegate);
+            state.mSession.setContentBlockingDelegate(this);
+            state.mSession.setMediaDelegate(this);
+            for (SessionChangeListener listener: mSessionChangeListeners) {
+                listener.onNewSession(state.mSession, newSessionId);
+            }
+
+            mSessions.put(newSessionId, state);
+
+            if (entry.getKey() == currentSessionId) {
+                setCurrentSession(newSessionId);
+            }
+        }
+
+        for (Iterator<Integer> it = store.mSessionsStack.descendingIterator(); it.hasNext();) {
+            int oldSessionId = it.next();
+            int newSessionId = oldNewSessionId.get(oldSessionId);
+            mSessionsStack.push(newSessionId);
+        }
     }
 
-    public int createSession(boolean isPrivate) {
-        SessionStore.SessionSettings settings = new SessionStore.SessionSettings();
-        if (isPrivate) {
-            settings.privateMode = true;
-        }
+    private int createSession() {
+        SessionSettings settings = new SessionSettings.Builder()
+                .withDefaultSettings(mContext)
+                .build();
 
         return createSession(settings);
     }
 
-    int createSession(SessionSettings aSettings) {
-        State state = new State();
+    private int createSession(@NonNull SessionSettings aSettings) {
+        SessionState state = new SessionState();
         state.mSettings = aSettings;
 
         GeckoSessionSettings geckoSettings = new GeckoSessionSettings.Builder()
-            .useMultiprocess(aSettings.multiprocess)
-            .usePrivateMode(aSettings.privateMode)
-            .useTrackingProtection(aSettings.trackingProtection)
+            .useMultiprocess(aSettings.isMultiprocessEnabled())
+            .usePrivateMode(mUsePrivateMode)
+            .useTrackingProtection(aSettings.isTrackingProtectionEnabled())
             .build();
 
-        if (aSettings.servo) {
+        if (aSettings.isServoEnabled()) {
             if (isServoAvailable()) {
                 state.mSession = createServoSession(mContext);
             } else {
@@ -397,8 +354,8 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
         int result = state.mSession.hashCode();
         mSessions.put(result, state);
 
-        state.mSession.getSettings().setSuspendMediaWhenInactive(aSettings.suspendMediaWhenInactive);
-        state.mSession.getSettings().setUserAgentMode(aSettings.userAgentMode);
+        state.mSession.getSettings().setSuspendMediaWhenInactive(aSettings.isSuspendMediaWhenInactiveEnabled());
+        state.mSession.getSettings().setUserAgentMode(aSettings.getUserAgentMode());
         state.mSession.setNavigationDelegate(this);
         state.mSession.setProgressDelegate(this);
         state.mSession.setPromptDelegate(this);
@@ -414,7 +371,27 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
         return result;
     }
 
-    public void removeSession(int aSessionId) {
+    private void recreateSession(SessionSettings aSettings) {
+        if (mCurrentSession != null) {
+            SessionState state = mSessions.get(mCurrentSession.hashCode());
+            if (state == null) {
+                return;
+            }
+            mCurrentSession.stop();
+            mCurrentSession.close();
+
+            int oldSessionId = getCurrentSessionId();
+            int sessionId = createSession(aSettings);
+            GeckoSession session = getSession(sessionId);
+            if (state.mSessionState != null) {
+                session.restoreState(state.mSessionState);
+            }
+            setCurrentSession(sessionId);
+            removeSession(oldSessionId);
+        }
+    }
+
+    private void removeSession(int aSessionId) {
         GeckoSession session = getSession(aSessionId);
         if (session != null) {
             session.setContentDelegate(null);
@@ -436,52 +413,90 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     }
 
     private void pushSession(int aSessionId) {
-        boolean isPrivateMode  = mCurrentSession.getSettings().getUsePrivateMode();
-        if (isPrivateMode)
-            mPrivateSessionsStack.push(aSessionId);
-        else
-            mSessionsStack.push(aSessionId);
+        mSessionsStack.push(aSessionId);
     }
 
     private Integer popSession() {
-        boolean isPrivateMode  = mCurrentSession.getSettings().getUsePrivateMode();
-        if (isPrivateMode)
-            return mPrivateSessionsStack.pop();
-        else
-            return mSessionsStack.pop();
+        Integer sessionId;
+        try {
+            sessionId = mSessionsStack.pop();
+
+        } catch (NoSuchElementException e) {
+            sessionId = new Integer(NO_SESSION);
+        }
+
+        return sessionId;
     }
 
     private Integer peekSession() {
-      boolean isPrivateMode  = mCurrentSession.getSettings().getUsePrivateMode();
-        if (isPrivateMode)
-            return mPrivateSessionsStack.peek();
-        else
-            return mSessionsStack.peek();
+        Integer sessionId = mSessionsStack.peek();
+        return sessionId == null ? NO_SESSION : sessionId;
+    }
+
+    public void newSession() {
+        SessionSettings settings = new SessionSettings.Builder().build();
+        int id = createSession(settings);
+        stackSession(id);
+    }
+
+    public void newSessionWithUrl(String url) {
+        newSession();
+        loadUri(url);
+    }
+
+    private void stackSession(int sessionId) {
+        int currentSessionId = getCurrentSessionId();
+        if (currentSessionId != NO_SESSION)
+            pushSession(currentSessionId);
+        setCurrentSession(sessionId);
+
+        mCurrentSession = null;
+        SessionState state = mSessions.get(sessionId);
+        if (state != null) {
+            mCurrentSession = state.mSession;
+            for (SessionChangeListener listener : mSessionChangeListeners) {
+                listener.onCurrentSessionChange(mCurrentSession, sessionId);
+            }
+        }
+        dumpAllState(mCurrentSession);
+    }
+
+    private void unstackSession() {
+        Integer prevSessionId = popSession();
+        if (prevSessionId != NO_SESSION) {
+            int currentSession = getCurrentSessionId();
+            setCurrentSession(prevSessionId);
+            removeSession(currentSession);
+        }
     }
 
     public GeckoSession getSession(int aId) {
-        State result = mSessions.get(aId);
-        if (result == null) {
+        SessionState state = mSessions.get(aId);
+        if (state == null) {
             return null;
         }
-        return result.mSession;
+        return state.mSession;
     }
 
-    public Integer getSessionId(GeckoSession aSession) {
-        for (Map.Entry<Integer, State> entry : mSessions.entrySet()) {
+    public boolean containsSession(GeckoSession aSession) {
+        return getSessionId(aSession) != NO_SESSION;
+    }
+
+    private Integer getSessionId(GeckoSession aSession) {
+        for (Map.Entry<Integer, SessionState> entry : mSessions.entrySet()) {
             if (entry.getValue().mSession == aSession) {
                 return  entry.getKey();
             }
         }
-        return null;
+        return NO_SESSION;
     }
 
     public String getUriFromSession(GeckoSession aSession) {
         Integer sessionId = getSessionId(aSession);
-        if (sessionId == null) {
+        if (sessionId == NO_SESSION) {
             return "";
         }
-        State state = mSessions.get(sessionId);
+        SessionState state = mSessions.get(sessionId);
         if (state != null) {
             return state.mUri;
         }
@@ -489,27 +504,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
         return "";
     }
 
-    public List<Integer> getSessions() {
-        return new ArrayList<>(mSessions.keySet());
-    }
-
-    public List<Integer> getSessionsByPrivateMode(boolean aUsingPrivateMode) {
-        ArrayList<Integer> result = new ArrayList<>();
-        for (Integer sessionId : mSessions.keySet()) {
-            GeckoSession session = getSession(sessionId);
-            if (session != null && session.getSettings().getUsePrivateMode() == aUsingPrivateMode) {
-                result.add(sessionId);
-            }
-        }
-        return result;
-    }
-
     public void setCurrentSession(int aId) {
-        if (mRuntime == null) {
-            Log.e(LOGTAG, "SessionStore failed to set current session, GeckoRuntime is null");
-            return;
-        }
-
         Log.d(LOGTAG, "Creating session: " + aId);
 
         if (mCurrentSession != null) {
@@ -517,7 +512,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
         }
 
         mCurrentSession = null;
-        State state = mSessions.get(aId);
+        SessionState state = mSessions.get(aId);
         if (state != null) {
             mCurrentSession = state.mSession;
             if (!mCurrentSession.isOpen()) {
@@ -534,7 +529,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     }
 
     public void setRegion(String aRegion) {
-        Log.d(LOGTAG, "SessionStore setRegion: " + aRegion);
+        Log.d(LOGTAG, "SessionStack setRegion: " + aRegion);
         mRegion = aRegion != null ? aRegion.toLowerCase() : "worldwide";
 
         // There is a region initialize and the home is already loaded
@@ -560,7 +555,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     public String getCurrentUri() {
         String result = "";
         if (mCurrentSession != null) {
-            State state = mSessions.get(mCurrentSession.hashCode());
+            SessionState state = mSessions.get(mCurrentSession.hashCode());
             if (state == null) {
                 return result;
             }
@@ -569,22 +564,10 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
         return result;
     }
 
-    public String getPreviousUri() {
-        String result = "";
-        if (mCurrentSession != null) {
-            State state = mSessions.get(mCurrentSession.hashCode());
-            if (state == null) {
-                return result;
-            }
-            result = state.mPreviousUri;
-        }
-        return result;
-    }
-
     public String getCurrentTitle() {
         String result = "";
         if (mCurrentSession != null) {
-            State state = mSessions.get(mCurrentSession.hashCode());
+            SessionState state = mSessions.get(mCurrentSession.hashCode());
             if (state == null) {
                 return result;
             }
@@ -595,7 +578,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
 
     public Media getFullScreenVideo() {
         if (mCurrentSession != null) {
-            State state = mSessions.get(mCurrentSession.hashCode());
+            SessionState state = mSessions.get(mCurrentSession.hashCode());
             if (state == null) {
                 return null;
             }
@@ -613,7 +596,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     }
 
     public boolean isInputActive(int aSessionId) {
-        SessionStore.State state = mSessions.get(aSessionId);
+        SessionState state = mSessions.get(aSessionId);
         if (state != null) {
             return state.mIsInputActive;
         }
@@ -625,12 +608,14 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
             return false;
         }
 
-        State state = mSessions.get(mCurrentSession.hashCode());
+        Integer prevSessionId = peekSession();
+        SessionState state = mSessions.get(mCurrentSession.hashCode());
+        boolean canGoBack = false;
         if (state != null) {
-            return state.mCanGoBack;
+            canGoBack = state.mCanGoBack;
         }
 
-        return false;
+        return canGoBack || prevSessionId != NO_SESSION;
     }
 
     public void goBack() {
@@ -639,8 +624,15 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
         }
         if (isInFullScreen()) {
             exitFullScreen();
+
         } else {
-            mCurrentSession.goBack();
+            SessionState state = mSessions.get(getCurrentSessionId());
+            if (state.mCanGoBack) {
+                getCurrentSession().goBack();
+
+            } else {
+                unstackSession();
+            }
         }
     }
 
@@ -693,11 +685,13 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
         Log.v("servo", "toggleServo");
 
         if (!isInstanceOfServoSession(mCurrentSession)) {
-            if (mPreviousGeckoSessionId == SessionStore.NO_SESSION_ID) {
+            if (mPreviousGeckoSessionId == SessionStack.NO_SESSION) {
                 mPreviousGeckoSessionId = getCurrentSessionId();
                 String uri = getCurrentUri();
-                SessionStore.SessionSettings settings = new SessionStore.SessionSettings();
-                settings.servo = true;
+                SessionSettings settings = new SessionSettings.Builder()
+                        .withDefaultSettings(mContext)
+                        .withServo(true)
+                        .build();
                 int id = createSession(settings);
                 setCurrentSession(id);
                 loadUri(uri);
@@ -707,7 +701,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
         } else {
             removeSession(getCurrentSessionId());
             setCurrentSession(mPreviousGeckoSessionId);
-            mPreviousGeckoSessionId = SessionStore.NO_SESSION_ID;
+            mPreviousGeckoSessionId = SessionStack.NO_SESSION;
         }
     }
 
@@ -716,7 +710,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
             return false;
         }
 
-        State state = mSessions.get(mCurrentSession.hashCode());
+        SessionState state = mSessions.get(mCurrentSession.hashCode());
         if (state != null) {
             return state.mFullScreen;
         }
@@ -726,10 +720,10 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
 
     public boolean isInFullScreen(GeckoSession aSession) {
         Integer sessionId = getSessionId(aSession);
-        if (sessionId == null) {
+        if (sessionId == NO_SESSION) {
             return false;
         }
-        State state = mSessions.get(sessionId);
+        SessionState state = mSessions.get(sessionId);
         if (state != null) {
             return state.mFullScreen;
         }
@@ -750,259 +744,65 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
 
     public int getCurrentSessionId() {
         if (mCurrentSession == null) {
-            return NO_SESSION_ID;
+            return NO_SESSION;
         }
         return mCurrentSession.hashCode();
     }
 
-    public void setPermissionDelegate(GeckoSession.PermissionDelegate aDelegate) {
-        mPermissionDelegate = aDelegate;
-        for (HashMap.Entry<Integer, State> entry : mSessions.entrySet()) {
-            entry.getValue().mSession.setPermissionDelegate(aDelegate);
-        }
-    }
-
-    private void vrPrefsWorkAround(Context aContext, Bundle aExtras) {
-        File path = GeckoProfile.initFromArgs(aContext, null).getDir();
-        String prefFileName = path.getAbsolutePath() + File.separator + "user.js";
-        Log.i(LOGTAG, "Creating file: " + prefFileName);
-        try (FileOutputStream out = new FileOutputStream(prefFileName)) {
-            out.write("pref(\"dom.vr.enabled\", true);\n".getBytes());
-            out.write("pref(\"dom.vr.external.enabled\", true);\n".getBytes());
-            out.write("pref(\"webgl.enable-surface-texture\", true);\n".getBytes());
-            // Enable MultiView draft extension
-            out.write("pref(\"webgl.enable-draft-extensions\", true);\n".getBytes());
-            out.write("pref(\"apz.allow_double_tap_zooming\", false);\n".getBytes());
-            out.write("pref(\"dom.webcomponents.customelements.enabled\", true);\n".getBytes());
-            out.write("pref(\"javascript.options.ion\", true);\n".getBytes());
-            out.write("pref(\"media.webspeech.synth.enabled\", false);\n".getBytes());
-            // Prevent autozoom when giving a form field focus.
-            out.write("pref(\"formhelper.autozoom\", false);\n".getBytes());
-            // Uncomment this to enable WebRender. WARNING NOT READY FOR USAGE.
-            // out.write("pref(\"gfx.webrender.all\", true);\n".getBytes());
-            int msaa = SettingsStore.getInstance(aContext).getMSAALevel();
-            if (msaa > 0) {
-                int msaaLevel = msaa == 2 ? 4 : 2;
-                out.write(("pref(\"gl.msaa-level\"," + msaaLevel + ");\n").getBytes());
-            }
-            addOptionalPref(out, "dom.vr.require-gesture", aExtras);
-            addOptionalPref(out, "privacy.reduceTimerPrecision", aExtras);
-            if (aExtras != null && aExtras.getBoolean("media.autoplay.enabled", false)) {
-                // Enable playing audios without gesture (used for gfx automated testing)
-                out.write("pref(\"media.autoplay.enabled.user-gestures-needed\", false);\n".getBytes());
-                out.write("pref(\"media.autoplay.enabled.ask-permission\", false);\n".getBytes());
-                out.write("pref(\"media.autoplay.default\", 0);\n".getBytes());
-            }
-        } catch (FileNotFoundException e) {
-            Log.e(LOGTAG, "Unable to create file: '" + prefFileName + "' got exception: " + e.toString());
-        } catch (IOException e) {
-            Log.e(LOGTAG, "Unable to write file: '" + prefFileName + "' got exception: " + e.toString());
-        }
-    }
-
-    private void addOptionalPref(FileOutputStream out, String aKey, Bundle aExtras) throws IOException {
-        if (aExtras != null && aExtras.containsKey(aKey)) {
-            boolean value = aExtras.getBoolean(aKey);
-            out.write(String.format("pref(\"%s\", %s);\n", aKey, value ? "true" : "false").getBytes());
-        }
-    }
-
-    public void switchPrivateMode() {
-        if (mCurrentSession == null)
-            return;
-
-        boolean isPrivateMode = mCurrentSession.getSettings().getUsePrivateMode();
-        if (!isPrivateMode) {
-            if (mPreviousSessionId == SessionStore.NO_SESSION_ID) {
-                mPreviousSessionId = getCurrentSessionId();
-
-                SessionStore.SessionSettings settings = new SessionStore.SessionSettings();
-                settings.privateMode = true;
-                int id = createSession(settings);
-                setCurrentSession(id);
-
-                InternalPages.PageResources pageResources = InternalPages.PageResources.create(R.raw.private_mode, R.raw.private_style);
-                getCurrentSession().loadData(InternalPages.createAboutPage(mContext, pageResources), "text/html");
-
-            } else {
-                int sessionId = getCurrentSessionId();
-                setCurrentSession(mPreviousSessionId);
-                mPreviousSessionId = sessionId;
-            }
-
-        } else {
-            int sessionId = getCurrentSessionId();
-            setCurrentSession(mPreviousSessionId);
-            mPreviousSessionId = sessionId;
-        }
-    }
-
-    public int getUaMode() {
-         return mCurrentSession.getSettings().getUserAgentMode();
-    }
-
-    public void setUaMode(int mode) {
-        if (mCurrentSession != null) {
-            mCurrentSession.getSettings().setUserAgentMode(mode);
-            mCurrentSession.reload();
-        }
-    }
-
-    public void exitPrivateMode() {
-        if (mCurrentSession == null)
-            return;
-
-        boolean isPrivateMode  = mCurrentSession.getSettings().getUsePrivateMode();
-        if (isPrivateMode) {
-            int privateSessionId = getCurrentSessionId();
-            setCurrentSession(mPreviousSessionId);
-            mPreviousSessionId = SessionStore.NO_SESSION_ID;
-
-            // Remove current private_mode session
-            removeSession(privateSessionId);
-
-            // Remove all the stacked private_mode sessions
-            for (Iterator<Integer> it = mPrivateSessionsStack.iterator(); it.hasNext();) {
-                int sessionId = it.next();
-                removeSession(sessionId);
-            }
-            mPrivateSessionsStack.clear();
-        }
-    }
-
-    public boolean isCurrentSessionPrivate() {
+    public boolean isPrivateMode() {
         if (mCurrentSession != null)
             return mCurrentSession.getSettings().getUsePrivateMode();
 
         return false;
     }
 
-    public boolean canUnstackSession() {
-        Integer prevSessionId = peekSession();
+    // Session Settings
 
-        return prevSessionId != null;
-    }
-
-    public void stackSession(int sessionId) {
-        pushSession(getCurrentSessionId());
-        setCurrentSession(sessionId);
-
-        mCurrentSession = null;
-        State state = mSessions.get(sessionId);
+    protected void setServo(final boolean enabled) {
+        SessionState state = mSessions.get(mCurrentSession.hashCode());
         if (state != null) {
-            mCurrentSession = state.mSession;
-            for (SessionChangeListener listener : mSessionChangeListeners) {
-                listener.onCurrentSessionChange(mCurrentSession, sessionId);
-            }
+            state.mSettings.setServoEnabled(enabled);
         }
-        dumpAllState(mCurrentSession);
-    }
-
-    public void unstackSession() {
-        Integer prevSessionId = popSession();
-        if (prevSessionId != null) {
-            int currentSession = getCurrentSessionId();
-            setCurrentSession(prevSessionId);
-            removeSession(currentSession);
+        if (!enabled && mCurrentSession != null && isInstanceOfServoSession(mCurrentSession)) {
+            String uri = getCurrentUri();
+            int id = createSession();
+            setCurrentSession(id);
+            loadUri(uri);
         }
     }
 
-    public void setConsoleOutputEnabled(boolean enabled) {
-        if (mRuntime != null) {
-            mRuntime.getSettings().setConsoleOutputEnabled(enabled);
-        }
+    public int getUaMode() {
+        return mCurrentSession.getSettings().getUserAgentMode();
     }
 
-    public void setMaxWindowSize(int width, int height) {
-        SharedPreferences.Editor editor = mPrefs.edit();
-        editor.putInt(
-                mContext.getString(R.string.settings_key_max_window_height),
-                height);
-        editor.putInt(
-                mContext.getString(R.string.settings_key_max_window_width),
-                width);
-        editor.commit();
-    }
-
-    public void setServo(final boolean enabled) {
-      if (!enabled && mCurrentSession != null && isInstanceOfServoSession(mCurrentSession)) {
-        String uri = getCurrentUri();
-        int id = createSession();
-        setCurrentSession(id);
-        loadUri(uri);
-      }
-    }
-
-    private void recreateSession(SessionStore.SessionSettings aSettings) {
+    public void setUaMode(int mode) {
         if (mCurrentSession != null) {
-            State state = mSessions.get(mCurrentSession.hashCode());
-            if (state == null) {
-                return;
+            SessionState state = mSessions.get(mCurrentSession.hashCode());
+            if (state != null && state.mSettings.getUserAgentMode() != mode) {
+                state.mSettings.setUserAgentMode(mode);
+                mCurrentSession.getSettings().setUserAgentMode(mode);
+                mCurrentSession.reload();
             }
-            mCurrentSession.stop();
-            mCurrentSession.close();
-
-            int oldSessionId = getCurrentSessionId();
-            int sessionId = createSession(aSettings);
-            GeckoSession session = getSession(sessionId);
-            if (state.mSessionState != null) {
-                session.restoreState(state.mSessionState);
-            }
-            setCurrentSession(sessionId);
-            removeSession(oldSessionId);
         }
     }
 
-    private State getCurrentState() {
+    protected void setMultiprocess(final boolean aEnabled) {
         if (mCurrentSession != null) {
-            return mSessions.get(mCurrentSession.hashCode());
-        }
-        return null;
-    }
-
-    public void setMultiprocess(final boolean aEnabled) {
-        State state = getCurrentState();
-        if (state != null && state.mSettings.multiprocess != aEnabled) {
-            state.mSettings.multiprocess = aEnabled;
-            recreateSession(state.mSettings);
+            SessionState state = mSessions.get(mCurrentSession.hashCode());
+            if (state != null && state.mSettings.isMultiprocessEnabled() != aEnabled) {
+                state.mSettings.setMultiprocessEnabled(aEnabled);
+                recreateSession(state.mSettings);
+            }
         }
     }
 
-    public void setTrackingProtection(final boolean aEnabled) {
-        State state = getCurrentState();
-        if (state != null && state.mSettings.trackingProtection != aEnabled) {
-            state.mSettings.trackingProtection = aEnabled;
-            recreateSession(state.mSettings);
-        }
-    }
-
-    public void setRemoteDebugging(final boolean enabled) {
-        if (mRuntime != null) {
-            mRuntime.getSettings().setRemoteDebuggingEnabled(enabled);
-        }
-    }
-
-    public void setAutoplayEnabled(final boolean enabled) {
-        if (mRuntime != null) {
-            mRuntime.getSettings().setAutoplayDefault(enabled ?
-                    GeckoRuntimeSettings.AUTOPLAY_DEFAULT_ALLOWED :
-                    GeckoRuntimeSettings.AUTOPLAY_DEFAULT_BLOCKED);
-        }
-    }
-
-    public boolean getAutoplayEnabled() {
-        if (mRuntime != null) {
-            return mRuntime.getSettings().getAutoplayDefault() == GeckoRuntimeSettings.AUTOPLAY_DEFAULT_ALLOWED ?
-                    true :
-                    false;
-        }
-
-        return false;
-    }
-
-    public void setLocales(List<String> locales) {
-        if (mRuntime != null) {
-            mRuntime.getSettings().setLocales(locales.stream().toArray(String[]::new));
+    protected void setTrackingProtection(final boolean aEnabled) {
+        if (mCurrentSession != null) {
+            SessionState state = mSessions.get(mCurrentSession.hashCode());
+            if (state != null && state.mSettings.isTrackingProtectionEnabled() != aEnabled) {
+                state.mSettings.setTrackingProtectionEnabled(aEnabled);
+                recreateSession(state.mSettings);
+            }
         }
     }
 
@@ -1010,8 +810,8 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
 
     @Override
     public void onLocationChange(@NonNull GeckoSession aSession, String aUri) {
-        Log.d(LOGTAG, "SessionStore onLocationChange: " + aUri);
-        State state = mSessions.get(aSession.hashCode());
+        Log.d(LOGTAG, "SessionStack onLocationChange: " + aUri);
+        SessionState state = mSessions.get(aSession.hashCode());
         if (state == null) {
             Log.e(LOGTAG, "Unknown session!");
             return;
@@ -1034,8 +834,8 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
 
     @Override
     public void onCanGoBack(@NonNull GeckoSession aSession, boolean aCanGoBack) {
-        Log.d(LOGTAG, "SessionStore onCanGoBack: " + (aCanGoBack ? "true" : "false"));
-        State state = mSessions.get(aSession.hashCode());
+        Log.d(LOGTAG, "SessionStack onCanGoBack: " + (aCanGoBack ? "true" : "false"));
+        SessionState state = mSessions.get(aSession.hashCode());
         if (state == null) {
             return;
         }
@@ -1050,8 +850,8 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
 
     @Override
     public void onCanGoForward(@NonNull GeckoSession aSession, boolean aCanGoForward) {
-        Log.d(LOGTAG, "SessionStore onCanGoForward: " + (aCanGoForward ? "true" : "false"));
-        State state = mSessions.get(aSession.hashCode());
+        Log.d(LOGTAG, "SessionStack onCanGoForward: " + (aCanGoForward ? "true" : "false"));
+        SessionState state = mSessions.get(aSession.hashCode());
         if (state == null) {
             return;
         }
@@ -1066,22 +866,14 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
 
     @Override
     public @Nullable GeckoResult<AllowOrDeny> onLoadRequest(@NonNull GeckoSession aSession, @NonNull LoadRequest aRequest) {
-        if (aRequest.isRedirect)
-            mHistoryStore.addHistory(aRequest.uri, VisitType.EMBED);
-        else if (aRequest.triggerUri != null)
-            mHistoryStore.addHistory(aRequest.uri, VisitType.LINK);
-
-        final GeckoResult<AllowOrDeny> result = new GeckoResult<>();
-
         String uri = aRequest.uri;
 
         Log.d(LOGTAG, "onLoadRequest: " + uri);
 
-        String uriOverride = checkYoutubeOverride(uri);
+        String uriOverride = SessionUtils.checkYoutubeOverride(uri);
         if (uriOverride != null) {
             aSession.loadUri(uriOverride);
-            result.complete(AllowOrDeny.DENY);
-            return result;
+            return GeckoResult.DENY;
         }
 
         if (aSession == mCurrentSession) {
@@ -1090,11 +882,14 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
         }
 
         if (PRIVATE_BROWSING_URI.equalsIgnoreCase(uri)) {
-            switchPrivateMode();
-            result.complete(AllowOrDeny.ALLOW);
-            return result;
+            return GeckoResult.DENY;
         }
 
+        if (mNavigationListeners.size() == 0) {
+            return GeckoResult.ALLOW;
+        }
+
+        final GeckoResult<AllowOrDeny> result = new GeckoResult<>();
         AtomicInteger count = new AtomicInteger(0);
         AtomicBoolean allowed = new AtomicBoolean(false);
         for (GeckoSession.NavigationDelegate listener: mNavigationListeners) {
@@ -1114,74 +909,21 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
         return result;
     }
 
-    /**
-     * 1. Disable YouTube's Polymer layout (which makes YouTube very slow in non-Chrome browsers)
-     *    via a query-string parameter in the URL.
-     * 2. Rewrite YouTube URLs from `m.youtube.com` -> `youtube.com` (to avoid serving YouTube's
-     *    video pages intended for mobile phones, as linked from Google search results).
-     */
-    private String checkYoutubeOverride(String aUri) {
-        try {
-            Uri uri = Uri.parse(aUri);
-            if (uri.getHost() == null) {
-                return null;
-            }
-            String hostLower = uri.getHost().toLowerCase();
-            if (!hostLower.endsWith(".youtube.com") && !hostLower.endsWith(".youtube-nocookie.com")) {
-                return null;
-            }
-
-            Uri.Builder uriBuilder = uri.buildUpon();
-            boolean updateUri = false;
-
-            if (uri.getScheme() == null) {
-                return null;
-            }
-            if (!uri.getScheme().equalsIgnoreCase("https")) {
-                uriBuilder.scheme("https");
-                updateUri = true;
-            }
-            if (hostLower.startsWith("m.")) {
-                uriBuilder.authority(hostLower.replaceFirst("m.", "www."));
-                updateUri = true;
-            }
-            String queryDisablePolymer = uri.getQueryParameter("disable_polymer");
-            if (queryDisablePolymer == null) {
-                uriBuilder.appendQueryParameter("disable_polymer", "1");
-                updateUri = true;
-            }
-
-            if (!updateUri) {
-                return null;
-            }
-
-            return uriBuilder.build().toString();
-        } catch (Exception ex) {
-            Log.e(LOGTAG, "Unable to construct transformed URL: " + ex.toString());
-        }
-
-        return null;
-    }
-
     @Override
     public GeckoResult<GeckoSession> onNewSession(@NonNull GeckoSession aSession, @NonNull String aUri) {
-        Log.d(LOGTAG, "SessionStore onNewSession: " + aUri);
+        Log.d(LOGTAG, "SessionStack onNewSession: " + aUri);
 
         pushSession(getCurrentSessionId());
 
         int sessionId;
         boolean isPreviousPrivateMode = mCurrentSession.getSettings().getUsePrivateMode();
-        if (isPreviousPrivateMode) {
-            SessionStore.SessionSettings settings = new SessionStore.SessionSettings();
-            settings.privateMode = true;
-            sessionId = createSession(settings);
-
-        } else {
-            sessionId = createSession();
-        }
+        SessionSettings settings = new SessionSettings.Builder()
+                .withDefaultSettings(mContext)
+                .build();
+        sessionId = createSession(settings);
 
         mCurrentSession = null;
-        State state = mSessions.get(sessionId);
+        SessionState state = mSessions.get(sessionId);
         if (state != null) {
             mCurrentSession = state.mSession;
 
@@ -1198,7 +940,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
 
     @Override
     public GeckoResult<String> onLoadError(@NonNull GeckoSession session, String uri,  @NonNull WebRequestError error) {
-        Log.d(LOGTAG, "SessionStore onLoadError: " + uri);
+        Log.d(LOGTAG, "SessionStack onLoadError: " + uri);
 
         return GeckoResult.fromValue(InternalPages.createErrorPage(mContext, uri, error.category, error.code));
     }
@@ -1207,8 +949,8 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
 
     @Override
     public void onPageStart(@NonNull GeckoSession aSession, @NonNull String aUri) {
-        Log.d(LOGTAG, "SessionStore onPageStart");
-        State state = mSessions.get(aSession.hashCode());
+        Log.d(LOGTAG, "SessionStack onPageStart");
+        SessionState state = mSessions.get(aSession.hashCode());
         if (state == null) {
             return;
         }
@@ -1224,14 +966,14 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
 
     @Override
     public void onPageStop(@NonNull GeckoSession aSession, boolean b) {
-        Log.d(LOGTAG, "SessionStore onPageStop");
-        State state = mSessions.get(aSession.hashCode());
+        Log.d(LOGTAG, "SessionStack onPageStop");
+        SessionState state = mSessions.get(aSession.hashCode());
         if (state == null) {
             return;
         }
 
         state.mIsLoading = false;
-        if (!isLocalizedContent(state.mUri)) {
+        if (!SessionUtils.isLocalizedContent(state.mUri)) {
             TelemetryWrapper.uploadPageLoadToHistogram(state.mUri);
         }
 
@@ -1243,14 +985,9 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     }
 
     @Override
-    public void onProgressChange(@NonNull GeckoSession session, int progress) {
-
-    }
-
-    @Override
     public void onSecurityChange(@NonNull GeckoSession aSession, @NonNull SecurityInformation aInformation) {
-        Log.d(LOGTAG, "SessionStore onPageStop");
-        State state = mSessions.get(aSession.hashCode());
+        Log.d(LOGTAG, "SessionStack onPageStop");
+        SessionState state = mSessions.get(aSession.hashCode());
         if (state == null) {
             return;
         }
@@ -1266,8 +1003,8 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
 
     @Override
     public void onSessionStateChange(@NonNull GeckoSession aSession,
-                                     @NonNull SessionState aSessionState) {
-        State state = mSessions.get(aSession.hashCode());
+                                     @NonNull GeckoSession.SessionState aSessionState) {
+        SessionState state = mSessions.get(aSession.hashCode());
         if (state != null) {
             state.mSessionState = aSessionState;
         }
@@ -1277,8 +1014,8 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
 
     @Override
     public void onTitleChange(@NonNull GeckoSession aSession, String aTitle) {
-        Log.d(LOGTAG, "SessionStore onTitleChange");
-        State state = mSessions.get(aSession.hashCode());
+        Log.d(LOGTAG, "SessionStack onTitleChange");
+        SessionState state = mSessions.get(aSession.hashCode());
         if (state == null) {
             return;
         }
@@ -1293,11 +1030,6 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     }
 
     @Override
-    public void onFocusRequest(@NonNull GeckoSession aSession) {
-        Log.d(LOGTAG, "SessionStore onFocusRequest");
-    }
-
-    @Override
     public void onCloseRequest(@NonNull GeckoSession aSession) {
         int sessionId = getSessionId(aSession);
         if (getCurrentSessionId() == sessionId) {
@@ -1307,8 +1039,8 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
 
     @Override
     public void onFullScreen(@NonNull GeckoSession aSession, boolean aFullScreen) {
-        Log.d(LOGTAG, "SessionStore onFullScreen");
-        State state = mSessions.get(aSession.hashCode());
+        Log.d(LOGTAG, "SessionStack onFullScreen");
+        SessionState state = mSessions.get(aSession.hashCode());
         if (state == null) {
             return;
         }
@@ -1322,19 +1054,18 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
     }
 
     @Override
-    public void onContextMenu(@NonNull GeckoSession aSession, int i, int i1, @NonNull ContextElement element) {
-
-    }
-
-    @Override
-    public void onExternalResponse(@NonNull GeckoSession session, @NonNull GeckoSession.WebResponseInfo response) {
-
+    public void onContextMenu(@NonNull GeckoSession session, int screenX, int screenY, @NonNull ContextElement element) {
+        if (mCurrentSession == session) {
+            for (GeckoSession.ContentDelegate listener : mContentListeners) {
+                listener.onContextMenu(session, screenX, screenY, element);
+            }
+        }
     }
 
     @Override
     public void onCrash(@NonNull GeckoSession session) {
         Log.e(LOGTAG,"Child crashed. Creating new session");
-        int crashedSessionId = SessionStore.get().getCurrentSessionId();
+        int crashedSessionId = getCurrentSessionId();
         int newSessionId = createSession();
         setCurrentSession(newSessionId);
         loadUri(getHomeUri());
@@ -1363,7 +1094,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
 
     @Override
     public void showSoftInput(@NonNull GeckoSession aSession) {
-        SessionStore.State state = mSessions.get(getSessionId(aSession));
+        SessionState state = mSessions.get(getSessionId(aSession));
         if (state != null) {
             state.mIsInputActive = true;
         }
@@ -1376,7 +1107,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
 
     @Override
     public void hideSoftInput(@NonNull GeckoSession aSession) {
-        SessionStore.State state = mSessions.get(getSessionId(aSession));
+        SessionState state = mSessions.get(getSessionId(aSession));
         if (state != null) {
             state.mIsInputActive = false;
         }
@@ -1412,11 +1143,6 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
                 listener.updateCursorAnchorInfo(aSession, info);
             }
         }
-    }
-
-    @Override
-    public void notifyAutoFill(@NonNull GeckoSession session, int notification, int virtualId) {
-
     }
 
     @Override
@@ -1521,7 +1247,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
 
     @Override
     public void onMediaAdd(@NonNull GeckoSession session, @NonNull MediaElement element) {
-        SessionStore.State state = mSessions.get(getSessionId(session));
+        SessionState state = mSessions.get(getSessionId(session));
         if (state == null) {
             return;
         }
@@ -1537,7 +1263,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
 
     @Override
     public void onMediaRemove(@NonNull GeckoSession session, @NonNull MediaElement element) {
-        SessionStore.State state = mSessions.get(getSessionId(session));
+        SessionState state = mSessions.get(getSessionId(session));
         if (state == null) {
             return;
         }

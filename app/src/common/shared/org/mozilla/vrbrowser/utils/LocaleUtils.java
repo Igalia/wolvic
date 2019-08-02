@@ -9,8 +9,8 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.browser.SessionStore;
 import org.mozilla.vrbrowser.browser.SettingsStore;
+import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.ui.adapters.Language;
 
 import java.util.ArrayList;

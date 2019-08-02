@@ -1,15 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
-    <RelativeLayout
+    <LinearLayout
+        style="?attr/navigationBarStyle"
+        android:id="@+id/fullScreenModeContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center">
-
+        android:gravity="center_horizontal"
+        android:padding="0dp"
+        android:orientation="horizontal">
         <org.mozilla.vrbrowser.ui.views.UIButton
-            android:id="@+id/negativeButton"
-            style="?attr/navigationBarButtonStyle"
-            android:padding="5dp"
-            android:src="@drawable/ic_icon_dialog_cancel" />
-
-    </RelativeLayout>
+            android:id="@+id/moveWindowLeftButton"
+            style="?attr/fullScreenButtonStyle"
+            android:background="@drawable/fullscreen_button_first"
+            android:src="@drawable/ic_icon_window_left" />
+        <org.mozilla.vrbrowser.ui.views.UIButton
+            android:id="@+id/closeWindowButton"
+            style="?attr/fullScreenButtonStyle"
+            android:src="@drawable/ic_icon_window_exit" />
+        <org.mozilla.vrbrowser.ui.views.UIButton
+            android:id="@+id/moveWindowRightButton"
+            android:background="@drawable/fullscreen_button_last"
+            style="?attr/fullScreenButtonStyle"
+            android:src="@drawable/ic_icon_window_right" />
+    </LinearLayout>
 </merge>

@@ -7,6 +7,8 @@
     <item name="window_world_width" format="float" type="dimen">4.0</item>
     <item name="window_world_y" format="float" type="dimen">0.2</item>
     <item name="window_world_z" format="float" type="dimen">-4.2</item>
+    <item name="multi_window_angle" format="float" type="dimen">60.0</item>
+    <dimen name="multi_window_padding">10dp</dimen>
     <item name="browser_children_z_distance" format="float" type="dimen">1.5</item>
     <item name="window_fullscreen_min_scale" format="float" type="dimen">1.75</item>
 
@@ -98,9 +100,9 @@
     <dimen name="restart_dialog_height">280dp</dimen>
 
     <!-- Top Bar -->
-    <dimen name="top_bar_width">40dp</dimen>
+    <dimen name="top_bar_width">132dp</dimen>
     <dimen name="top_bar_height">40dp</dimen>
-    <item name="top_bar_world_y" format="float" type="dimen">0.20</item>
+    <dimen name="top_bar_window_margin">20dp</dimen>
 
     <!-- No Internet toast -->
     <dimen name="no_internet_width">400dp</dimen>
@@ -120,7 +122,7 @@
     <item name="tray_world_y" format="float" type="dimen">0.1</item>
     <item name="tray_world_z" format="float" type="dimen">-2.5</item>
     <item name="tray_world_width" format="float" type="dimen">1.2</item>
-    <dimen name="tray_width">165dp</dimen>
+    <dimen name="tray_width">206dp</dimen>
     <dimen name="tray_height">40dp</dimen>
     <item name="tray_tooltip_density" format="float" type="dimen">4.0</item>
 
@@ -170,6 +172,7 @@
     <dimen name="text_biggest_size">24sp</dimen>
     <dimen name="text_bigger_size">22sp</dimen>
     <dimen name="text_big_size">18sp</dimen>
+    <dimen name="text_medium_big_size">16sp</dimen>
     <dimen name="text_medium_size">14sp</dimen>
     <dimen name="text_small_size">12sp</dimen>
     <dimen name="text_smaller_size">11sp</dimen>
@@ -198,9 +201,18 @@
     <dimen name="language_row_height">22dp</dimen>
     <dimen name="language_row_icon_size">20dp</dimen>
 
+    <!-- Context Menu -->
+    <dimen name="context_menu_row_width">360dp</dimen>
+    <dimen name="context_menu_row_height">72dp</dimen>
+    <item name="context_menu_z_distance" format="float" type="dimen">0.05</item>
+
     <!-- Blur -->
     <dimen name="blur_radius">2dp</dimen>
     <dimen name="blur_radius_half">1dp</dimen>
+
+    <!-- Max windows prompt -->
+    <dimen name="max_windows_prompt_width">320dp</dimen>
+    <dimen name="max_windows_prompt_height">260dp</dimen>
 
     <!-- Tooltip -->
     <item name="tooltip_z_distance" format="float" type="dimen">0.02</item>

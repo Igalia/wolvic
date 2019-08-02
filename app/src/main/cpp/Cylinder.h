@@ -29,6 +29,7 @@ public:
   static CylinderPtr Create(vrb::CreationContextPtr aContext, const float aRadius, const float aHeight, const VRLayerCylinderPtr& aLayer = nullptr);
   static CylinderPtr Create(vrb::CreationContextPtr aContext, const float aRadius, const float aHeight, const vrb::Color& aSolidColor, const float kBorder, const vrb::Color& aBorderColor);
   static CylinderPtr Create(vrb::CreationContextPtr aContext, const VRLayerCylinderPtr& aLayer = nullptr);
+  static float kWorldDensityRatio;
   void GetTextureSize(int32_t& aWidth, int32_t& aHeight) const;
   void SetTextureSize(int32_t aWidth, int32_t aHeight);
   void SetTexture(const vrb::TexturePtr& aTexture, int32_t aWidth, int32_t aHeight);
@@ -49,6 +50,8 @@ public:
   void ConvertToQuadCoordinates(const vrb::Vector& point, float& aX, float& aY, bool aClamp) const;
   void ConvertFromQuadCoordinates(const float aX, const float aY, vrb::Vector& aWorldPoint, vrb::Vector& aNormal);
   float DistanceToBackPlane(const vrb::Vector& aStartPoint, const vrb::Vector& aDirection) const;
+  float GetCylinderAngle(const vrb::Vector& aLocalPoint) const;
+  vrb::Vector ProjectPointToQuad(const vrb::Vector& aWorldPoint, const float aAnchorX, const float aDensity, const vrb::Vector& aMin, const vrb::Vector& aMax) const;
 protected:
   struct State;
   Cylinder(State& aState, vrb::CreationContextPtr& aContext);

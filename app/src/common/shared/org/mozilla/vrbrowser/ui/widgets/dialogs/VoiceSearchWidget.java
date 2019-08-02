@@ -46,9 +46,9 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
     private static int MIN_DB = 50;
 
     public interface VoiceSearchDelegate {
-        void OnVoiceSearchResult(String transcription, float confidance);
-        void OnVoiceSearchCanceled();
-        void OnVoiceSearchError();
+        default void OnVoiceSearchResult(String transcription, float confidance) {};
+        default void OnVoiceSearchCanceled() {};
+        default void OnVoiceSearchError() {};
     }
 
     private MozillaSpeechService mMozillaSpeechService;

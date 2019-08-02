@@ -14,10 +14,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
+import androidx.annotation.NonNull;
+
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
-import org.mozilla.vrbrowser.browser.SessionStore;
+import org.mozilla.vrbrowser.browser.SessionChangeListener;
+import org.mozilla.vrbrowser.browser.engine.SessionStack;
+import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.widgets.settings.SettingsWidget;
 
@@ -25,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class TrayWidget extends UIWidget implements SessionStore.SessionChangeListener, BookmarkListener, WidgetManagerDelegate.UpdateListener {
+public class TrayWidget extends UIWidget implements SessionChangeListener, BookmarkListener, WidgetManagerDelegate.UpdateListener {
     static final String LOGTAG = "VRB";
     private static final int ICON_ANIMATION_DURATION = 200;
 
@@ -40,6 +44,8 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
     private int mMaxPadding;
     private boolean mKeyboardVisible;
     private boolean mTrayVisible = true;
+    private SessionStack mSessionStack;
+    private WindowWidget mAttachedWindow;
 
     public TrayWidget(Context aContext) {
         super(aContext);
@@ -73,8 +79,6 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
 
             notifyPrivateBrowsingClicked();
             view.requestFocusFromTouch();
-
-            SessionStore.get().switchPrivateMode();
         });
 
         mSettingsButton = findViewById(R.id.settingsButton);
@@ -100,13 +104,24 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
             view.requestFocusFromTouch();
         });
 
+        UIButton addWindowButton = findViewById(R.id.addwindowButton);
+        addWindowButton.setOnHoverListener(mButtonScaleHoverListener);
+        addWindowButton.setOnClickListener(view -> {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
+
+            view.requestFocusFromTouch();
+
+            TelemetryWrapper.trayNewWindowEvent();
+
+            notifyAddWindowClicked();
+        });
+
         mAudio = AudioEngine.fromContext(aContext);
 
         mIsLastSessionPrivate = false;
 
-        SessionStore.get().addSessionChangeListener(this);
-
-        handleSessionState();
         mWidgetManager.addUpdateListener(this);
     }
 
@@ -172,16 +187,24 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
         mTrayListeners.addAll(Arrays.asList(listeners));
     }
 
+    public void removeListeners(TrayListener... listeners) {
+        mTrayListeners.removeAll(Arrays.asList(listeners));
+    }
+
     public void onDestroy() {
         mTrayListeners.clear();
     }
 
     private void notifyBookmarksClicked() {
-        mTrayListeners.forEach(trayListener -> trayListener.onBookmarksClicked());
+        mTrayListeners.forEach(TrayListener::onBookmarksClicked);
     }
 
     private void notifyPrivateBrowsingClicked() {
-        mTrayListeners.forEach(trayListener -> trayListener.onPrivateBrowsingClicked());
+        mTrayListeners.forEach(TrayListener::onPrivateBrowsingClicked);
+    }
+
+    private void notifyAddWindowClicked() {
+        mTrayListeners.forEach(TrayListener::onAddWindowClicked);
     }
 
     @Override
@@ -205,23 +228,68 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
 
     @Override
     public void releaseWidget() {
-        SessionStore.get().removeSessionChangeListener(this);
+        if (mSessionStack != null) {
+            mSessionStack.removeSessionChangeListener(this);
+        }
+
         mWidgetManager.removeUpdateListener(this);
 
         super.releaseWidget();
     }
 
-    // SessionStore.SessionChangeListener
-
     @Override
-    public void onNewSession(GeckoSession aSession, int aId) {
-
+    public void show(@ShowFlags int aShowFlags) {
+        if (!mWidgetPlacement.visible) {
+            mWidgetPlacement.visible = true;
+            mWidgetManager.addWidget(this);
+        }
     }
 
     @Override
-    public void onRemoveSession(GeckoSession aSession, int aId) {
-
+    public void hide(@HideFlags int aHideFlags) {
+        if (mWidgetPlacement.visible) {
+            mWidgetPlacement.visible = false;
+            if (aHideFlags == REMOVE_WIDGET) {
+                mWidgetManager.removeWidget(this);
+            } else {
+                mWidgetManager.updateWidget(this);
+            }
+        }
     }
+
+    @Override
+    public void detachFromWindow() {
+        if (mSessionStack != null) {
+            mSessionStack.removeSessionChangeListener(this);
+            mSessionStack = null;
+        }
+        if (mAttachedWindow != null)
+            mAttachedWindow.removeBookmarksListener(this);
+    }
+
+    @Override
+    public void attachToWindow(@NonNull WindowWidget aWindow) {
+        if (mAttachedWindow == aWindow) {
+            return;
+        }
+        detachFromWindow();
+
+        mAttachedWindow = aWindow;
+        mAttachedWindow.addBookmarksListener(this);
+
+        mSessionStack = aWindow.getSessionStack();
+        if (mSessionStack != null) {
+            mSessionStack.addSessionChangeListener(this);
+            handleSessionState();
+        }
+
+        if (mAttachedWindow.isBookmarksVisible())
+            onBookmarksShown(aWindow);
+        else
+            onBookmarksHidden(aWindow);
+    }
+
+    // SessionStack.SessionChangeListener
 
     @Override
     public void onCurrentSessionChange(GeckoSession aSession, int aId) {
@@ -229,23 +297,25 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
     }
 
     private void handleSessionState() {
-        boolean isPrivateMode  = SessionStore.get().isCurrentSessionPrivate();
+        if (mSessionStack != null) {
+            boolean isPrivateMode = mSessionStack.isPrivateMode();
 
-        if (isPrivateMode != mIsLastSessionPrivate) {
-            mPrivateButton.setPrivateMode(isPrivateMode);
-            if (isPrivateMode) {
-                mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
-                mPrivateButton.setImageResource(R.drawable.ic_icon_private_browsing_on);
+            if (isPrivateMode != mIsLastSessionPrivate) {
+                mPrivateButton.setPrivateMode(isPrivateMode);
+                if (isPrivateMode) {
+                    mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
+                    mPrivateButton.setImageResource(R.drawable.ic_icon_tray_private_browsing_on_v2);
                 mPrivateButton.setTooltip(getResources().getString(R.string.private_browsing_exit_tooltip));
 
-            } else {
-                mWidgetManager.popWorldBrightness(this);
-                mPrivateButton.setImageResource(R.drawable.ic_icon_private_browsing);
+                } else {
+                    mWidgetManager.popWorldBrightness(this);
+                    mPrivateButton.setImageResource(R.drawable.ic_icon_tray_private_browsing_v2);
+                }
                 mPrivateButton.setTooltip(getResources().getString(R.string.private_browsing_enter_tooltip));
             }
-        }
 
-        mIsLastSessionPrivate = isPrivateMode;
+            mIsLastSessionPrivate = isPrivateMode;
+        }
     }
 
     private void toggleSettingsDialog() {
@@ -277,26 +347,6 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
         }
     }
 
-    @Override
-    public void show(@ShowFlags int aShowFlags) {
-        if (!mWidgetPlacement.visible) {
-            mWidgetPlacement.visible = true;
-            mWidgetManager.addWidget(this);
-        }
-    }
-
-    @Override
-    public void hide(@HideFlags int aHideFlags) {
-        if (mWidgetPlacement.visible) {
-            mWidgetPlacement.visible = false;
-            if (aHideFlags == REMOVE_WIDGET) {
-                mWidgetManager.removeWidget(this);
-            } else {
-                mWidgetManager.updateWidget(this);
-            }
-        }
-    }
-
     public boolean isDialogOpened(int aHandle) {
         UIWidget widget = getChild(aHandle);
         if (widget != null) {
@@ -308,13 +358,13 @@ public class TrayWidget extends UIWidget implements SessionStore.SessionChangeLi
     // BookmarkListener
 
     @Override
-    public void onBookmarksShown() {
+    public void onBookmarksShown(WindowWidget aWindow) {
         mBookmarksButton.setTooltip(getResources().getString(R.string.close_bookmarks_tooltip));
         mBookmarksButton.setActiveMode(true);
     }
 
     @Override
-    public void onBookmarksHidden() {
+    public void onBookmarksHidden(WindowWidget aWindow) {
         mBookmarksButton.setTooltip(getResources().getString(R.string.open_bookmarks_tooltip));
         mBookmarksButton.setActiveMode(false);
     }

@@ -8,6 +8,7 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.URLSpan;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.TextView;
 
@@ -86,6 +87,16 @@ public class ViewUtils {
         } else {
             return Html.fromHtml(text);
         }
+    }
+
+    public static boolean isChildrenOf(@NonNull View parent, @NonNull View view) {
+        if (parent == null || view == null)
+            return false;
+
+        if (!(parent instanceof ViewGroup))
+            return false;
+
+        return parent.findViewById(view.getId()) != null;
     }
 
 }
