@@ -198,7 +198,8 @@ android_main(android_app *aAppState) {
 
   // Attach JNI thread
   JNIEnv *jniEnv;
-  (*aAppState->activity->vm).AttachCurrentThread(&jniEnv, NULL);
+  (*aAppState->activity->vm).AttachCurrentThread(&jniEnv, nullptr);
+  sAppContext->mQueue->InitializeJava(jniEnv);
 
   // Create Browser context
   crow::VRBrowser::InitializeJava(jniEnv, aAppState->activity->clazz);
@@ -228,7 +229,7 @@ android_main(android_app *aAppState) {
     // Loop until all events are read
     // If the activity is paused use a blocking call to read events.
     while (ALooper_pollAll(BrowserWorld::Instance().IsPaused() ? -1 : 0,
-                           NULL,
+                           nullptr,
                            &events,
                            (void **) &pSource) >= 0) {
       // Process event.
@@ -236,14 +237,18 @@ android_main(android_app *aAppState) {
         pSource->process(aAppState, pSource);
       }
 
+
+
       // Check if we are exiting.
       if (aAppState->destroyRequested != 0) {
         sAppContext->mEgl->MakeCurrent();
+        sAppContext->mQueue->ProcessRunnables();
         BrowserWorld::Instance().ShutdownGL();
         BrowserWorld::Instance().ShutdownJava();
         BrowserWorld::Destroy();
         sAppContext->mEgl->Destroy();
-        sAppContext.reset();
+        sAppContext->mEgl.reset();
+        sAppContext->mDevice.reset();
         aAppState->activity->vm->DetachCurrentThread();
         return;
       }
