@@ -6,22 +6,19 @@
 package org.mozilla.vrbrowser.ui.widgets.settings;
 
 import android.content.Context;
-import android.widget.ScrollView;
+import android.view.LayoutInflater;
+
+import androidx.databinding.DataBindingUtil;
 
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.SettingsStore;
-import org.mozilla.vrbrowser.ui.views.UIButton;
-import org.mozilla.vrbrowser.ui.views.settings.ButtonSetting;
+import org.mozilla.vrbrowser.databinding.OptionsControllerBinding;
 import org.mozilla.vrbrowser.ui.views.settings.RadioGroupSetting;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 
 class ControllerOptionsView extends SettingsView {
-    private AudioEngine mAudio;
-    private UIButton mBackButton;
-    private RadioGroupSetting mPointerColorRadio;
-    private RadioGroupSetting mScrollDirectionRadio;
-    private ButtonSetting mResetButton;
+
+    private OptionsControllerBinding mBinding;
 
     public ControllerOptionsView(Context aContext, WidgetManagerDelegate aWidgetManager) {
         super(aContext, aWidgetManager);
@@ -29,60 +26,55 @@ class ControllerOptionsView extends SettingsView {
     }
 
     private void initialize(Context aContext) {
-        inflate(aContext, R.layout.options_controller, this);
-        mAudio = AudioEngine.fromContext(aContext);
+        LayoutInflater inflater = LayoutInflater.from(aContext);
 
-        mBackButton = findViewById(R.id.backButton);
-        mBackButton.setOnClickListener(view -> {
-            if (mAudio != null) {
-                mAudio.playSound(AudioEngine.Sound.CLICK);
-            }
-            onDismiss();
-        });
+        // Inflate this data binding layout
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.options_controller, this, true);
 
-        mScrollbar = findViewById(R.id.scrollbar);
+        mScrollbar = mBinding.scrollbar;
+
+        // Header
+        mBinding.headerLayout.setBackClickListener(view -> onDismiss());
+
+        // Footer
+        mBinding.footerLayout.setResetClickListener(v -> resetOptions());
 
         int color = SettingsStore.getInstance(getContext()).getPointerColor();
-        mPointerColorRadio = findViewById(R.id.pointer_color_radio);
-        mPointerColorRadio.setOnCheckedChangeListener(mPointerColorListener);
-        setPointerColor(mPointerColorRadio.getIdForValue(color), false);
+        mBinding.pointerColorRadio.setOnCheckedChangeListener(mPointerColorListener);
+        setPointerColor(mBinding.pointerColorRadio.getIdForValue(color), false);
 
         int scrollDirection = SettingsStore.getInstance(getContext()).getScrollDirection();
-        mScrollDirectionRadio = findViewById(R.id.scroll_direction_radio);
-        mScrollDirectionRadio.setOnCheckedChangeListener(mScrollDirectionListener);
-        setScrollDirection(mScrollDirectionRadio.getIdForValue(scrollDirection), false);
-
-        mResetButton = findViewById(R.id.resetButton);
-        mResetButton.setOnClickListener(v -> resetOptions());
+        mBinding.scrollDirectionRadio.setOnCheckedChangeListener(mScrollDirectionListener);
+        setScrollDirection(mBinding.scrollDirectionRadio.getIdForValue(scrollDirection), false);
     }
 
     private void resetOptions() {
-        if (!mPointerColorRadio.getValueForId(mPointerColorRadio.getCheckedRadioButtonId()).equals(SettingsStore.POINTER_COLOR_DEFAULT_DEFAULT)) {
-            setPointerColor(mPointerColorRadio.getIdForValue(SettingsStore.POINTER_COLOR_DEFAULT_DEFAULT), true);
+        if (!mBinding.pointerColorRadio.getValueForId(mBinding.pointerColorRadio.getCheckedRadioButtonId()).equals(SettingsStore.POINTER_COLOR_DEFAULT_DEFAULT)) {
+            setPointerColor(mBinding.pointerColorRadio.getIdForValue(SettingsStore.POINTER_COLOR_DEFAULT_DEFAULT), true);
         }
-        if (!mScrollDirectionRadio.getValueForId(mScrollDirectionRadio.getCheckedRadioButtonId()).equals(SettingsStore.SCROLL_DIRECTION_DEFAULT)) {
-            setScrollDirection(mScrollDirectionRadio.getIdForValue(SettingsStore.SCROLL_DIRECTION_DEFAULT), true);
+        if (!mBinding.scrollDirectionRadio.getValueForId(mBinding.scrollDirectionRadio.getCheckedRadioButtonId()).equals(SettingsStore.SCROLL_DIRECTION_DEFAULT)) {
+            setScrollDirection(mBinding.scrollDirectionRadio.getIdForValue(SettingsStore.SCROLL_DIRECTION_DEFAULT), true);
         }
     }
 
     private void setPointerColor(int checkedId, boolean doApply) {
-        mPointerColorRadio.setOnCheckedChangeListener(null);
-        mPointerColorRadio.setChecked(checkedId, doApply);
-        mPointerColorRadio.setOnCheckedChangeListener(mPointerColorListener);
+        mBinding.pointerColorRadio.setOnCheckedChangeListener(null);
+        mBinding.pointerColorRadio.setChecked(checkedId, doApply);
+        mBinding.pointerColorRadio.setOnCheckedChangeListener(mPointerColorListener);
 
         if (doApply) {
-            SettingsStore.getInstance(getContext()).setPointerColor((int)mPointerColorRadio.getValueForId(checkedId));
+            SettingsStore.getInstance(getContext()).setPointerColor((int)mBinding.pointerColorRadio.getValueForId(checkedId));
             mWidgetManager.updatePointerColor();
         }
     }
 
     private void setScrollDirection(int checkedId, boolean doApply) {
-        mScrollDirectionRadio.setOnCheckedChangeListener(null);
-        mScrollDirectionRadio.setChecked(checkedId, doApply);
-        mScrollDirectionRadio.setOnCheckedChangeListener(mScrollDirectionListener);
+        mBinding.scrollDirectionRadio.setOnCheckedChangeListener(null);
+        mBinding.scrollDirectionRadio.setChecked(checkedId, doApply);
+        mBinding.scrollDirectionRadio.setOnCheckedChangeListener(mScrollDirectionListener);
 
         if (doApply) {
-            SettingsStore.getInstance(getContext()).setScrollDirection((int)mScrollDirectionRadio.getValueForId(checkedId));
+            SettingsStore.getInstance(getContext()).setScrollDirection((int)mBinding.scrollDirectionRadio.getValueForId(checkedId));
         }
     }
 

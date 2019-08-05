@@ -26,6 +26,7 @@
                 style="@style/settingsButton"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
+                android:focusable="true"
                 tools:text="Button" />
         </RelativeLayout>
     </LinearLayout>

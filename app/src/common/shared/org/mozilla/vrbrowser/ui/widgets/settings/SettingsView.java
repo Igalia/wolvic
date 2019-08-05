@@ -9,7 +9,6 @@ import android.widget.ScrollView;
 import androidx.annotation.NonNull;
 
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 
@@ -65,7 +64,7 @@ abstract class SettingsView extends FrameLayout {
 
     public void onShown() {
         if (mScrollbar != null)
-            mScrollbar.scrollTo(0, 0);
+            mScrollbar.fullScroll(ScrollView.FOCUS_UP);
 
         setFocusableInTouchMode(true);
         requestFocusFromTouch();
@@ -79,7 +78,7 @@ abstract class SettingsView extends FrameLayout {
         return false;
     }
 
-    public void onGlobalFocusChanged(View oldFocus, View newFocus) {}
+    protected void onGlobalFocusChanged(View oldFocus, View newFocus) {}
 
     public Point getDimensions() {
         return new Point( WidgetPlacement.dpDimension(getContext(), R.dimen.developer_options_width),

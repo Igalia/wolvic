@@ -3,12 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <variable
             name="voiceSearchClickListener"
             type="android.view.View.OnClickListener" />
+
         <variable
             name="contentClickListener"
             type="android.view.View.OnClickListener" />
+
         <variable
             name="displayClickListener"
             type="android.view.View.OnClickListener" />
@@ -28,56 +31,64 @@
             android:id="@+id/header_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="35dp"
+            app:helpVisibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:title="@string/settings_language_settings"
-            app:helpVisibility="gone"/>
+            app:title="@string/settings_language_settings" />
 
-        <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
-            android:id="@+id/voiceSearchLanguageButton"
+        <ScrollView
+            android:id="@+id/scrollbar"
+            style="@style/scrollbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="35dp"
-            android:paddingTop="10dp"
-            android:layout_alignParentBottom="true"
-            app:layout_constraintTop_toBottomOf="@id/header_layout"
-            app:buttonText="@string/settings_button_edit"
-            app:description="@string/language_options_voice_search_language"
-            android:onClick="@{(view) -> voiceSearchClickListener.onClick(view)}" />
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintBottom_toTopOf="@id/footer_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/header_layout">
 
-        <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
-            android:id="@+id/contentLanguageButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="35dp"
-            android:layout_alignParentBottom="true"
-            app:layout_constraintTop_toBottomOf="@id/voiceSearchLanguageButton"
-            app:buttonText="@string/settings_button_edit"
-            app:description="@string/language_options_content_language"
-            android:onClick="@{(view) -> contentClickListener.onClick(view)}" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-        <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
-            android:id="@+id/displayLanguageButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="35dp"
-            android:layout_alignParentBottom="true"
-            app:layout_constraintTop_toBottomOf="@id/contentLanguageButton"
-            app:buttonText="@string/settings_button_edit"
-            app:description="@string/language_options_display_language"
-            android:onClick="@{(view) -> displayClickListener.onClick(view)}" />
+                <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                    android:id="@+id/voiceSearchLanguageButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="@{(view) -> voiceSearchClickListener.onClick(view)}"
+                    app:buttonText="@string/settings_button_edit"
+                    app:description="@string/language_options_voice_search_language" />
+
+                <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                    android:id="@+id/contentLanguageButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="@{(view) -> contentClickListener.onClick(view)}"
+                    app:buttonText="@string/settings_button_edit"
+                    app:description="@string/language_options_content_language" />
+
+                <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                    android:id="@+id/displayLanguageButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="@{(view) -> displayClickListener.onClick(view)}"
+                    app:buttonText="@string/settings_button_edit"
+                    app:description="@string/language_options_display_language" />
+            </LinearLayout>
+
+        </ScrollView>
 
         <org.mozilla.vrbrowser.ui.widgets.settings.SettingsFooter
             android:id="@+id/footer_layout"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:layout_marginEnd="35dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:description="@string/all_language_options_reset"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:description="@string/all_language_options_reset" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

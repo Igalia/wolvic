@@ -7,37 +7,24 @@ package org.mozilla.vrbrowser.ui.widgets.settings;
 
 import android.content.Context;
 import android.graphics.Point;
+import android.view.LayoutInflater;
 import android.view.View;
 
+import androidx.databinding.DataBindingUtil;
+
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
-import org.mozilla.vrbrowser.ui.views.UIButton;
-import org.mozilla.vrbrowser.ui.views.settings.ButtonSetting;
-import org.mozilla.vrbrowser.ui.views.settings.DoubleEditSetting;
+import org.mozilla.vrbrowser.databinding.OptionsDisplayBinding;
 import org.mozilla.vrbrowser.ui.views.settings.RadioGroupSetting;
-import org.mozilla.vrbrowser.ui.views.settings.SingleEditSetting;
 import org.mozilla.vrbrowser.ui.views.settings.SwitchSetting;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.utils.DeviceType;
 
 class DisplayOptionsView extends SettingsView {
-    private AudioEngine mAudio;
-    private UIButton mBackButton;
-    private SwitchSetting mCurvedDisplaySwitch;
-    private RadioGroupSetting mUaModeRadio;
-    private RadioGroupSetting mMSAARadio;
-    private SwitchSetting mAutoplaySetting;
-    private SingleEditSetting mHomepageEdit;
-    private RadioGroupSetting mFoveatedAppRadio;
-    private RadioGroupSetting mFoveatedWebVRRadio;
-    private SingleEditSetting mDensityEdit;
-    private SingleEditSetting mDpiEdit;
-    private DoubleEditSetting mWindowSizeEdit;
-    private DoubleEditSetting mMaxWindowSizeEdit;
-    private ButtonSetting mResetButton;
+
+    private OptionsDisplayBinding mBinding;
     private String mDefaultHomepageUrl;
 
     public DisplayOptionsView(Context aContext, WidgetManagerDelegate aWidgetManager) {
@@ -46,101 +33,90 @@ class DisplayOptionsView extends SettingsView {
     }
 
     private void initialize(Context aContext) {
-        inflate(aContext, R.layout.options_display, this);
+        LayoutInflater inflater = LayoutInflater.from(aContext);
 
-        mAudio = AudioEngine.fromContext(aContext);
+        // Inflate this data binding layout
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.options_display, this, true);
 
-        mBackButton = findViewById(R.id.backButton);
-        mBackButton.setOnClickListener(view -> {
-            onDismiss();
-        });
+        mScrollbar = mBinding.scrollbar;
 
-        mCurvedDisplaySwitch = findViewById(R.id.curved_display_switch);
-        mCurvedDisplaySwitch.setOnCheckedChangeListener(mCurvedDisplayListener);
+        // Header
+        mBinding.headerLayout.setBackClickListener(view -> onDismiss());
+
+        // Footer
+        mBinding.footerLayout.setResetClickListener(mResetListener);
+
+        // Options
+        mBinding.curvedDisplaySwitch.setOnCheckedChangeListener(mCurvedDisplayListener);
         setCurvedDisplay(SettingsStore.getInstance(getContext()).getCylinderDensity() > 0.0f, false);
 
         int uaMode = SettingsStore.getInstance(getContext()).getUaMode();
-        mUaModeRadio = findViewById(R.id.ua_radio);
-        mUaModeRadio.setOnCheckedChangeListener(mUaModeListener);
-        setUaMode(mUaModeRadio.getIdForValue(uaMode), false);
+        mBinding.uaRadio.setOnCheckedChangeListener(mUaModeListener);
+        setUaMode(mBinding.uaRadio.getIdForValue(uaMode), false);
 
         int msaaLevel = SettingsStore.getInstance(getContext()).getMSAALevel();
-        mMSAARadio = findViewById(R.id.msaa_radio);
-        mMSAARadio.setOnCheckedChangeListener(mMSSAChangeListener);
-        setMSAAMode(mMSAARadio.getIdForValue(msaaLevel), false);
+        mBinding.msaaRadio.setOnCheckedChangeListener(mMSSAChangeListener);
+        setMSAAMode(mBinding.msaaRadio.getIdForValue(msaaLevel), false);
 
-        mAutoplaySetting = findViewById(R.id.autoplaySwitch);
-        mAutoplaySetting.setOnCheckedChangeListener(mAutoplayListener);
+        mBinding.autoplaySwitch.setOnCheckedChangeListener(mAutoplayListener);
         setAutoplay(SessionStore.get().getAutoplayEnabled(), false);
 
         mDefaultHomepageUrl = getContext().getString(R.string.homepage_url);
 
-        mHomepageEdit = findViewById(R.id.homepage_edit);
-        mHomepageEdit.setHint1(getContext().getString(R.string.homepage_hint, getContext().getString(R.string.app_name)));
-        mHomepageEdit.setDefaultFirstValue(mDefaultHomepageUrl);
-        mHomepageEdit.setFirstText(SettingsStore.getInstance(getContext()).getHomepage());
-        mHomepageEdit.setOnClickListener(mHomepageListener);
+        mBinding.homepageEdit.setHint1(getContext().getString(R.string.homepage_hint, getContext().getString(R.string.app_name)));
+        mBinding.homepageEdit.setDefaultFirstValue(mDefaultHomepageUrl);
+        mBinding.homepageEdit.setFirstText(SettingsStore.getInstance(getContext()).getHomepage());
+        mBinding.homepageEdit.setOnClickListener(mHomepageListener);
         setHomepage(SettingsStore.getInstance(getContext()).getHomepage());
 
-        mFoveatedAppRadio = findViewById(R.id.foveated_app_radio);
-        mFoveatedWebVRRadio = findViewById(R.id.foveated_webvr_radio);
         if (DeviceType.isOculusBuild() || DeviceType.isWaveBuild()) {
-            mFoveatedAppRadio.setVisibility(View.VISIBLE);
+            mBinding.foveatedAppRadio.setVisibility(View.VISIBLE);
             // Uncomment this when Foveated Rendering for WebVR makes more sense
             // mFoveatedWebVRRadio.setVisibility(View.VISIBLE);
             int level = SettingsStore.getInstance(getContext()).getFoveatedLevelApp();
-            setFoveatedLevel(mFoveatedAppRadio, mFoveatedAppRadio.getIdForValue(level), false);
-            mFoveatedAppRadio.setOnCheckedChangeListener((compoundButton, checkedId, apply) -> setFoveatedLevel(mFoveatedAppRadio, checkedId, apply));
+            setFoveatedLevel(mBinding.foveatedAppRadio, mBinding.foveatedAppRadio.getIdForValue(level), false);
+            mBinding.foveatedAppRadio.setOnCheckedChangeListener((compoundButton, checkedId, apply) -> setFoveatedLevel(mBinding.foveatedAppRadio, checkedId, apply));
 
             level = SettingsStore.getInstance(getContext()).getFoveatedLevelWebVR();
-            setFoveatedLevel(mFoveatedWebVRRadio, mFoveatedWebVRRadio.getIdForValue(level), false);
-            mFoveatedWebVRRadio.setOnCheckedChangeListener((compoundButton, checkedId, apply) -> setFoveatedLevel(mFoveatedWebVRRadio, checkedId, apply));
+            setFoveatedLevel(mBinding.foveatedWebvrRadio, mBinding.foveatedWebvrRadio.getIdForValue(level), false);
+            mBinding.foveatedWebvrRadio.setOnCheckedChangeListener((compoundButton, checkedId, apply) -> setFoveatedLevel(mBinding.foveatedWebvrRadio, checkedId, apply));
         }
 
-        mDensityEdit = findViewById(R.id.density_edit);
-        mDensityEdit.setHint1(String.valueOf(SettingsStore.DISPLAY_DENSITY_DEFAULT));
-        mDensityEdit.setDefaultFirstValue(String.valueOf(SettingsStore.DISPLAY_DENSITY_DEFAULT));
-        mDensityEdit.setFirstText(Float.toString(SettingsStore.getInstance(getContext()).getDisplayDensity()));
-        mDensityEdit.setOnClickListener(mDensityListener);
+        mBinding.densityEdit.setHint1(String.valueOf(SettingsStore.DISPLAY_DENSITY_DEFAULT));
+        mBinding.densityEdit.setDefaultFirstValue(String.valueOf(SettingsStore.DISPLAY_DENSITY_DEFAULT));
+        mBinding.densityEdit.setFirstText(Float.toString(SettingsStore.getInstance(getContext()).getDisplayDensity()));
+        mBinding.densityEdit.setOnClickListener(mDensityListener);
         setDisplayDensity(SettingsStore.getInstance(getContext()).getDisplayDensity());
 
-        mDpiEdit = findViewById(R.id.dpi_edit);
-        mDpiEdit.setHint1(String.valueOf(SettingsStore.DISPLAY_DPI_DEFAULT));
-        mDpiEdit.setDefaultFirstValue(String.valueOf(SettingsStore.DISPLAY_DPI_DEFAULT));
-        mDpiEdit.setFirstText(Integer.toString(SettingsStore.getInstance(getContext()).getDisplayDpi()));
-        mDpiEdit.setOnClickListener(mDpiListener);
+        mBinding.dpiEdit.setHint1(String.valueOf(SettingsStore.DISPLAY_DPI_DEFAULT));
+        mBinding.dpiEdit.setDefaultFirstValue(String.valueOf(SettingsStore.DISPLAY_DPI_DEFAULT));
+        mBinding.dpiEdit.setFirstText(Integer.toString(SettingsStore.getInstance(getContext()).getDisplayDpi()));
+        mBinding.dpiEdit.setOnClickListener(mDpiListener);
         setDisplayDpi(SettingsStore.getInstance(getContext()).getDisplayDpi());
 
-        mWindowSizeEdit = findViewById(R.id.windowSize_edit);
-        mWindowSizeEdit.setHint1(String.valueOf(SettingsStore.WINDOW_WIDTH_DEFAULT));
-        mWindowSizeEdit.setHint2(String.valueOf(SettingsStore.WINDOW_HEIGHT_DEFAULT));
-        mWindowSizeEdit.setDefaultFirstValue(String.valueOf(SettingsStore.WINDOW_WIDTH_DEFAULT));
-        mWindowSizeEdit.setDefaultSecondValue(String.valueOf(SettingsStore.WINDOW_HEIGHT_DEFAULT));
-        mWindowSizeEdit.setFirstText(Integer.toString(SettingsStore.getInstance(getContext()).getWindowWidth()));
-        mWindowSizeEdit.setSecondText(Integer.toString(SettingsStore.getInstance(getContext()).getWindowHeight()));
-        mWindowSizeEdit.setOnClickListener(mWindowSizeListener);
+        mBinding.windowSizeEdit.setHint1(String.valueOf(SettingsStore.WINDOW_WIDTH_DEFAULT));
+        mBinding.windowSizeEdit.setHint2(String.valueOf(SettingsStore.WINDOW_HEIGHT_DEFAULT));
+        mBinding.windowSizeEdit.setDefaultFirstValue(String.valueOf(SettingsStore.WINDOW_WIDTH_DEFAULT));
+        mBinding.windowSizeEdit.setDefaultSecondValue(String.valueOf(SettingsStore.WINDOW_HEIGHT_DEFAULT));
+        mBinding.windowSizeEdit.setFirstText(Integer.toString(SettingsStore.getInstance(getContext()).getWindowWidth()));
+        mBinding.windowSizeEdit.setSecondText(Integer.toString(SettingsStore.getInstance(getContext()).getWindowHeight()));
+        mBinding.windowSizeEdit.setOnClickListener(mWindowSizeListener);
         setWindowSize(
                 SettingsStore.getInstance(getContext()).getWindowWidth(),
                 SettingsStore.getInstance(getContext()).getWindowHeight(),
                 false);
 
-        mMaxWindowSizeEdit = findViewById(R.id.maxWindowSize_edit);
-        mMaxWindowSizeEdit.setHint1(String.valueOf(SettingsStore.MAX_WINDOW_WIDTH_DEFAULT));
-        mMaxWindowSizeEdit.setHint2(String.valueOf(SettingsStore.MAX_WINDOW_HEIGHT_DEFAULT));
-        mMaxWindowSizeEdit.setDefaultFirstValue(String.valueOf(SettingsStore.MAX_WINDOW_WIDTH_DEFAULT));
-        mMaxWindowSizeEdit.setDefaultSecondValue(String.valueOf(SettingsStore.MAX_WINDOW_HEIGHT_DEFAULT));
-        mMaxWindowSizeEdit.setFirstText(Integer.toString(SettingsStore.getInstance(getContext()).getMaxWindowWidth()));
-        mMaxWindowSizeEdit.setSecondText(Integer.toString(SettingsStore.getInstance(getContext()).getMaxWindowHeight()));
-        mMaxWindowSizeEdit.setOnClickListener(mMaxWindowSizeListener);
+        mBinding.maxWindowSizeEdit.setHint1(String.valueOf(SettingsStore.MAX_WINDOW_WIDTH_DEFAULT));
+        mBinding.maxWindowSizeEdit.setHint2(String.valueOf(SettingsStore.MAX_WINDOW_HEIGHT_DEFAULT));
+        mBinding.maxWindowSizeEdit.setDefaultFirstValue(String.valueOf(SettingsStore.MAX_WINDOW_WIDTH_DEFAULT));
+        mBinding.maxWindowSizeEdit.setDefaultSecondValue(String.valueOf(SettingsStore.MAX_WINDOW_HEIGHT_DEFAULT));
+        mBinding.maxWindowSizeEdit.setFirstText(Integer.toString(SettingsStore.getInstance(getContext()).getMaxWindowWidth()));
+        mBinding.maxWindowSizeEdit.setSecondText(Integer.toString(SettingsStore.getInstance(getContext()).getMaxWindowHeight()));
+        mBinding.maxWindowSizeEdit.setOnClickListener(mMaxWindowSizeListener);
         setMaxWindowSize(
                 SettingsStore.getInstance(getContext()).getMaxWindowWidth(),
                 SettingsStore.getInstance(getContext()).getMaxWindowHeight(),
                 false);
-
-        mResetButton = findViewById(R.id.resetButton);
-        mResetButton.setOnClickListener(mResetListener);
-
-        mScrollbar = findViewById(R.id.scrollbar);
     }
 
     @Override
@@ -161,29 +137,29 @@ class DisplayOptionsView extends SettingsView {
     public boolean isEditing() {
         boolean editing = false;
 
-        if (mDensityEdit.isEditing()) {
+        if (mBinding.densityEdit.isEditing()) {
             editing = true;
-            mDensityEdit.cancel();
+            mBinding.densityEdit.cancel();
         }
 
-        if (mDpiEdit.isEditing()) {
+        if (mBinding.dpiEdit.isEditing()) {
             editing = true;
-            mDpiEdit.cancel();
+            mBinding.dpiEdit.cancel();
         }
 
-        if (mWindowSizeEdit.isEditing()) {
+        if (mBinding.windowSizeEdit.isEditing()) {
             editing = true;
-            mWindowSizeEdit.cancel();
+            mBinding.windowSizeEdit.cancel();
         }
 
-        if (mMaxWindowSizeEdit.isEditing()) {
+        if (mBinding.maxWindowSizeEdit.isEditing()) {
             editing = true;
-            mMaxWindowSizeEdit.cancel();
+            mBinding.maxWindowSizeEdit.cancel();
         }
 
-        if (mHomepageEdit.isEditing()) {
+        if (mBinding.homepageEdit.isEditing()) {
             editing = true;
-            mHomepageEdit.cancel();
+            mBinding.homepageEdit.cancel();
         }
 
         return editing;
@@ -202,8 +178,8 @@ class DisplayOptionsView extends SettingsView {
     };
 
     private OnClickListener mHomepageListener = (view) -> {
-        if (!mHomepageEdit.getFirstText().isEmpty()) {
-            setHomepage(mHomepageEdit.getFirstText());
+        if (!mBinding.homepageEdit.getFirstText().isEmpty()) {
+            setHomepage(mBinding.homepageEdit.getFirstText());
 
         } else {
             setHomepage(mDefaultHomepageUrl);
@@ -212,7 +188,7 @@ class DisplayOptionsView extends SettingsView {
 
     private OnClickListener mDensityListener = (view) -> {
         try {
-            float newDensity = Float.parseFloat(mDensityEdit.getFirstText());
+            float newDensity = Float.parseFloat(mBinding.densityEdit.getFirstText());
             if (setDisplayDensity(newDensity)) {
                 showRestartDialog();
             }
@@ -226,7 +202,7 @@ class DisplayOptionsView extends SettingsView {
 
     private OnClickListener mDpiListener = (view) -> {
         try {
-            int newDpi = Integer.parseInt(mDpiEdit.getFirstText());
+            int newDpi = Integer.parseInt(mBinding.dpiEdit.getFirstText());
             if (setDisplayDpi(newDpi)) {
                 showRestartDialog();
             }
@@ -240,8 +216,8 @@ class DisplayOptionsView extends SettingsView {
 
     private OnClickListener mWindowSizeListener = (view) -> {
         try {
-            int newWindowWidth = Integer.parseInt(mWindowSizeEdit.getFirstText());
-            int newWindowHeight = Integer.parseInt(mWindowSizeEdit.getSecondText());
+            int newWindowWidth = Integer.parseInt(mBinding.windowSizeEdit.getFirstText());
+            int newWindowHeight = Integer.parseInt(mBinding.windowSizeEdit.getSecondText());
             setWindowSize(newWindowWidth, newWindowHeight, true);
 
         } catch (NumberFormatException e) {
@@ -251,8 +227,8 @@ class DisplayOptionsView extends SettingsView {
 
     private OnClickListener mMaxWindowSizeListener = (view) -> {
         try {
-            int newMaxWindowWidth = Integer.parseInt(mMaxWindowSizeEdit.getFirstText());
-            int newMaxWindowHeight = Integer.parseInt(mMaxWindowSizeEdit.getSecondText());
+            int newMaxWindowWidth = Integer.parseInt(mBinding.maxWindowSizeEdit.getFirstText());
+            int newMaxWindowHeight = Integer.parseInt(mBinding.maxWindowSizeEdit.getSecondText());
             setMaxWindowSize(newMaxWindowWidth, newMaxWindowHeight, true);
 
         } catch (NumberFormatException e) {
@@ -266,18 +242,18 @@ class DisplayOptionsView extends SettingsView {
     private OnClickListener mResetListener = (view) -> {
         boolean restart = false;
 
-        if (!mUaModeRadio.getValueForId(mUaModeRadio.getCheckedRadioButtonId()).equals(SettingsStore.UA_MODE_DEFAULT)) {
-            setUaMode(mUaModeRadio.getIdForValue(SettingsStore.UA_MODE_DEFAULT), true);
+        if (!mBinding.uaRadio.getValueForId(mBinding.uaRadio.getCheckedRadioButtonId()).equals(SettingsStore.UA_MODE_DEFAULT)) {
+            setUaMode(mBinding.uaRadio.getIdForValue(SettingsStore.UA_MODE_DEFAULT), true);
         }
-        if (!mMSAARadio.getValueForId(mMSAARadio.getCheckedRadioButtonId()).equals(SettingsStore.MSAA_DEFAULT_LEVEL)) {
-            setMSAAMode(mMSAARadio.getIdForValue(SettingsStore.MSAA_DEFAULT_LEVEL), true);
+        if (!mBinding.msaaRadio.getValueForId(mBinding.msaaRadio.getCheckedRadioButtonId()).equals(SettingsStore.MSAA_DEFAULT_LEVEL)) {
+            setMSAAMode(mBinding.msaaRadio.getIdForValue(SettingsStore.MSAA_DEFAULT_LEVEL), true);
         }
         if (DeviceType.isOculusBuild() || DeviceType.isWaveBuild()) {
-            if (!mFoveatedAppRadio.getValueForId(mFoveatedAppRadio.getCheckedRadioButtonId()).equals(SettingsStore.FOVEATED_APP_DEFAULT_LEVEL)) {
-                setFoveatedLevel(mFoveatedAppRadio, mFoveatedAppRadio.getIdForValue(SettingsStore.FOVEATED_APP_DEFAULT_LEVEL), true);
+            if (!mBinding.foveatedAppRadio.getValueForId(mBinding.foveatedAppRadio.getCheckedRadioButtonId()).equals(SettingsStore.FOVEATED_APP_DEFAULT_LEVEL)) {
+                setFoveatedLevel(mBinding.foveatedAppRadio, mBinding.foveatedAppRadio.getIdForValue(SettingsStore.FOVEATED_APP_DEFAULT_LEVEL), true);
             }
-            if (!mFoveatedWebVRRadio.getValueForId(mFoveatedWebVRRadio.getCheckedRadioButtonId()).equals(SettingsStore.FOVEATED_WEBVR_DEFAULT_LEVEL)) {
-                setFoveatedLevel(mFoveatedWebVRRadio, mFoveatedWebVRRadio.getIdForValue(SettingsStore.FOVEATED_WEBVR_DEFAULT_LEVEL), true);
+            if (!mBinding.foveatedWebvrRadio.getValueForId(mBinding.foveatedWebvrRadio.getCheckedRadioButtonId()).equals(SettingsStore.FOVEATED_WEBVR_DEFAULT_LEVEL)) {
+                setFoveatedLevel(mBinding.foveatedWebvrRadio, mBinding.foveatedWebvrRadio.getIdForValue(SettingsStore.FOVEATED_WEBVR_DEFAULT_LEVEL), true);
             }
         }
 
@@ -285,12 +261,12 @@ class DisplayOptionsView extends SettingsView {
         restart = restart | setDisplayDpi(SettingsStore.DISPLAY_DPI_DEFAULT);
 
         try {
-            if (Integer.parseInt(mWindowSizeEdit.getFirstText()) != SettingsStore.WINDOW_WIDTH_DEFAULT ||
-                    Integer.parseInt(mWindowSizeEdit.getSecondText()) != SettingsStore.WINDOW_HEIGHT_DEFAULT) {
+            if (Integer.parseInt(mBinding.windowSizeEdit.getFirstText()) != SettingsStore.WINDOW_WIDTH_DEFAULT ||
+                    Integer.parseInt(mBinding.windowSizeEdit.getSecondText()) != SettingsStore.WINDOW_HEIGHT_DEFAULT) {
                 setWindowSize(SettingsStore.WINDOW_WIDTH_DEFAULT, SettingsStore.WINDOW_HEIGHT_DEFAULT, true);
             }
-            if (Integer.parseInt(mMaxWindowSizeEdit.getFirstText()) != SettingsStore.MAX_WINDOW_WIDTH_DEFAULT ||
-                    Integer.parseInt(mMaxWindowSizeEdit.getSecondText()) != SettingsStore.MAX_WINDOW_HEIGHT_DEFAULT) {
+            if (Integer.parseInt(mBinding.maxWindowSizeEdit.getFirstText()) != SettingsStore.MAX_WINDOW_WIDTH_DEFAULT ||
+                    Integer.parseInt(mBinding.maxWindowSizeEdit.getSecondText()) != SettingsStore.MAX_WINDOW_HEIGHT_DEFAULT) {
                 setMaxWindowSize(SettingsStore.MAX_WINDOW_WIDTH_DEFAULT, SettingsStore.MAX_WINDOW_HEIGHT_DEFAULT, true);
             }
         } catch (NumberFormatException ex) {
@@ -307,9 +283,9 @@ class DisplayOptionsView extends SettingsView {
     };
 
     private void setCurvedDisplay(boolean value, boolean doApply) {
-        mCurvedDisplaySwitch.setOnCheckedChangeListener(null);
-        mCurvedDisplaySwitch.setValue(value, false);
-        mCurvedDisplaySwitch.setOnCheckedChangeListener(mCurvedDisplayListener);
+        mBinding.curvedDisplaySwitch.setOnCheckedChangeListener(null);
+        mBinding.curvedDisplaySwitch.setValue(value, false);
+        mBinding.curvedDisplaySwitch.setOnCheckedChangeListener(mCurvedDisplayListener);
 
         if (doApply) {
             float density = value ? SettingsStore.CYLINDER_DENSITY_ENABLED_DEFAULT : 0.0f;
@@ -319,9 +295,9 @@ class DisplayOptionsView extends SettingsView {
     }
 
     private void setAutoplay(boolean value, boolean doApply) {
-        mAutoplaySetting.setOnCheckedChangeListener(null);
-        mAutoplaySetting.setValue(value, false);
-        mAutoplaySetting.setOnCheckedChangeListener(mAutoplayListener);
+        mBinding.autoplaySwitch.setOnCheckedChangeListener(null);
+        mBinding.autoplaySwitch.setValue(value, false);
+        mBinding.autoplaySwitch.setOnCheckedChangeListener(mAutoplayListener);
 
         if (doApply) {
             SessionStore.get().setAutoplayEnabled(value);
@@ -329,31 +305,31 @@ class DisplayOptionsView extends SettingsView {
     }
 
     private void setHomepage(String newHomepage) {
-        mHomepageEdit.setOnClickListener(null);
-        mHomepageEdit.setFirstText(newHomepage);
+        mBinding.homepageEdit.setOnClickListener(null);
+        mBinding.homepageEdit.setFirstText(newHomepage);
         SettingsStore.getInstance(getContext()).setHomepage(newHomepage);
-        mHomepageEdit.setOnClickListener(mHomepageListener);
+        mBinding.homepageEdit.setOnClickListener(mHomepageListener);
     }
 
     private void setUaMode(int checkId, boolean doApply) {
-        mUaModeRadio.setOnCheckedChangeListener(null);
-        mUaModeRadio.setChecked(checkId, doApply);
-        mUaModeRadio.setOnCheckedChangeListener(mUaModeListener);
+        mBinding.uaRadio.setOnCheckedChangeListener(null);
+        mBinding.uaRadio.setChecked(checkId, doApply);
+        mBinding.uaRadio.setOnCheckedChangeListener(mUaModeListener);
 
         SettingsStore.getInstance(getContext()).setUaMode(checkId);
 
         if (doApply) {
-            SessionStore.get().setUaMode((Integer)mUaModeRadio.getValueForId(checkId));
+            SessionStore.get().setUaMode((Integer)mBinding.uaRadio.getValueForId(checkId));
         }
     }
 
     private void setMSAAMode(int checkedId, boolean doApply) {
-        mMSAARadio.setOnCheckedChangeListener(null);
-        mMSAARadio.setChecked(checkedId, doApply);
-        mMSAARadio.setOnCheckedChangeListener(mMSSAChangeListener);
+        mBinding.msaaRadio.setOnCheckedChangeListener(null);
+        mBinding.msaaRadio.setChecked(checkedId, doApply);
+        mBinding.msaaRadio.setOnCheckedChangeListener(mMSSAChangeListener);
 
         if (doApply) {
-            SettingsStore.getInstance(getContext()).setMSAALevel((Integer)mMSAARadio.getValueForId(checkedId));
+            SettingsStore.getInstance(getContext()).setMSAALevel((Integer)mBinding.msaaRadio.getValueForId(checkedId));
             showRestartDialog();
         }
     }
@@ -366,7 +342,7 @@ class DisplayOptionsView extends SettingsView {
 
         int level = (Integer)aSetting.getValueForId(checkedId);
 
-        if (aSetting == mFoveatedAppRadio) {
+        if (aSetting == mBinding.foveatedAppRadio) {
             SettingsStore.getInstance(getContext()).setFoveatedLevelApp(level);
         } else {
             SettingsStore.getInstance(getContext()).setFoveatedLevelWebVR(level);
@@ -382,7 +358,7 @@ class DisplayOptionsView extends SettingsView {
     }
 
     private boolean setDisplayDensity(float newDensity) {
-        mDensityEdit.setOnClickListener(null);
+        mBinding.densityEdit.setOnClickListener(null);
         boolean restart = false;
         float prevDensity = SettingsStore.getInstance(getContext()).getDisplayDensity();
         if (newDensity <= 0) {
@@ -392,14 +368,14 @@ class DisplayOptionsView extends SettingsView {
             SettingsStore.getInstance(getContext()).setDisplayDensity(newDensity);
             restart = true;
         }
-        mDensityEdit.setFirstText(Float.toString(newDensity));
-        mDensityEdit.setOnClickListener(mDensityListener);
+        mBinding.densityEdit.setFirstText(Float.toString(newDensity));
+        mBinding.densityEdit.setOnClickListener(mDensityListener);
 
         return restart;
     }
 
     private boolean setDisplayDpi(int newDpi) {
-        mDpiEdit.setOnClickListener(null);
+        mBinding.dpiEdit.setOnClickListener(null);
         boolean restart = false;
         int prevDensity = SettingsStore.getInstance(getContext()).getDisplayDpi();
         if (newDpi <= 0) {
@@ -409,8 +385,8 @@ class DisplayOptionsView extends SettingsView {
             SettingsStore.getInstance(getContext()).setDisplayDpi(newDpi);
             restart = true;
         }
-        mDpiEdit.setFirstText(Integer.toString(newDpi));
-        mDpiEdit.setOnClickListener(mDpiListener);
+        mBinding.dpiEdit.setFirstText(Integer.toString(newDpi));
+        mBinding.dpiEdit.setOnClickListener(mDpiListener);
 
         return restart;
     }
@@ -446,9 +422,9 @@ class DisplayOptionsView extends SettingsView {
         }
 
         String newWindowWidthStr = Integer.toString(newWindowWidth);
-        mWindowSizeEdit.setFirstText(newWindowWidthStr);
+        mBinding.windowSizeEdit.setFirstText(newWindowWidthStr);
         String newWindowHeightStr = Integer.toString(newWindowHeight);
-        mWindowSizeEdit.setSecondText(newWindowHeightStr);
+        mBinding.windowSizeEdit.setSecondText(newWindowHeightStr);
     }
 
     private void setMaxWindowSize(int newMaxWindowWidth, int newMaxWindowHeight, boolean doApply) {
@@ -485,32 +461,32 @@ class DisplayOptionsView extends SettingsView {
         }
 
         String newMaxWindowWidthStr = Integer.toString(newMaxWindowWidth);
-        mMaxWindowSizeEdit.setFirstText(newMaxWindowWidthStr);
+        mBinding.maxWindowSizeEdit.setFirstText(newMaxWindowWidthStr);
         String newMaxWindowHeightStr = Integer.toString(newMaxWindowHeight);
-        mMaxWindowSizeEdit.setSecondText(newMaxWindowHeightStr);
+        mBinding.maxWindowSizeEdit.setSecondText(newMaxWindowHeightStr);
     }
 
     @Override
     public void onGlobalFocusChanged(View oldFocus, View newFocus) {
         if (oldFocus != null) {
-            if (mDensityEdit.contains(oldFocus) && mDensityEdit.isEditing()) {
-                mDensityEdit.cancel();
+            if (mBinding.densityEdit.contains(oldFocus) && mBinding.densityEdit.isEditing()) {
+                mBinding.densityEdit.cancel();
             }
-            if (mDpiEdit.contains(oldFocus) && mDpiEdit.isEditing()) {
-                mDpiEdit.cancel();
+            if (mBinding.dpiEdit.contains(oldFocus) && mBinding.dpiEdit.isEditing()) {
+                mBinding.dpiEdit.cancel();
             }
-            if (mWindowSizeEdit.contains(oldFocus) &&
-                    (newFocus != null && !mWindowSizeEdit.contains(newFocus)) &&
-                    mWindowSizeEdit.isEditing()) {
-                mWindowSizeEdit.cancel();
+            if (mBinding.windowSizeEdit.contains(oldFocus) &&
+                    (newFocus != null && !mBinding.windowSizeEdit.contains(newFocus)) &&
+                    mBinding.windowSizeEdit.isEditing()) {
+                mBinding.windowSizeEdit.cancel();
             }
-            if (mMaxWindowSizeEdit.contains(oldFocus) &&
-                    (newFocus != null && !mMaxWindowSizeEdit.contains(newFocus)) &&
-                    mMaxWindowSizeEdit.isEditing()) {
-                mMaxWindowSizeEdit.cancel();
+            if (mBinding.maxWindowSizeEdit.contains(oldFocus) &&
+                    (newFocus != null && !mBinding.maxWindowSizeEdit.contains(newFocus)) &&
+                    mBinding.maxWindowSizeEdit.isEditing()) {
+                mBinding.maxWindowSizeEdit.cancel();
             }
-            if (mHomepageEdit.contains(oldFocus) && mHomepageEdit.isEditing()) {
-                mHomepageEdit.cancel();
+            if (mBinding.homepageEdit.contains(oldFocus) && mBinding.homepageEdit.isEditing()) {
+                mBinding.homepageEdit.cancel();
             }
         }
     }

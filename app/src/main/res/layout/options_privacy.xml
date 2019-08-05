@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <RelativeLayout
-        android:id="@+id/optionsLayout"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/dialog_background"
@@ -12,32 +11,28 @@
         android:paddingEnd="30dp"
         android:paddingBottom="10dp">
 
-        <org.mozilla.vrbrowser.ui.views.UIButton
-            android:id="@+id/backButton"
-            style="?attr/navigationBarButtonStyle"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_centerVertical="true"
-            android:layout_marginBottom="10dp"
-            android:src="@drawable/ic_icon_back"
-            android:tint="@color/midnight" />
-
-        <View
-            android:id="@+id/separatorTop"
-            style="?attr/separatorStyle"
+        <org.mozilla.vrbrowser.ui.widgets.settings.SettingsHeader
+            android:id="@+id/header_layout"
             android:layout_width="match_parent"
-            android:layout_below="@+id/backButton"
-            android:layout_marginBottom="10dp" />
+            android:layout_height="wrap_content"
+            app:helpVisibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:title="@string/settings_privacy_security" />
 
         <ScrollView
             android:id="@+id/scrollbar"
-            android:scrollbars="none"
+            style="@style/scrollbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/separatorBottom"
-            android:layout_below="@+id/separatorTop">
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:paddingEnd="30dp"
+            app:layout_constraintBottom_toTopOf="@id/footer_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/header_layout">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -154,20 +149,13 @@
             </LinearLayout>
         </ScrollView>
 
-        <View
-            android:id="@+id/separatorBottom"
-            style="?attr/separatorStyle"
+        <org.mozilla.vrbrowser.ui.widgets.settings.SettingsFooter
+            android:id="@+id/footer_layout"
             android:layout_width="match_parent"
-            android:layout_above="@+id/resetButton"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp" />
-
-        <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
-            android:id="@+id/resetButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            app:buttonText="@string/developer_options_reset_button"
-            app:description="@string/privacy_options_reset" />
-    </RelativeLayout>
-</merge>
+            android:layout_height="60dp"
+            app:description="@string/display_options_reset"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
