@@ -50,7 +50,9 @@
 # --------------------------------------------------------------------
 # Keep classes from FxR
 # --------------------------------------------------------------------
--keep class org.mozilla.vrbrowser.ui.widgets.WidgetPlacement {*;}
+-keep class org.mozilla.vrbrowser.ui.widgets.WidgetPlacement {*;} # Keep class used in JNI.
+-keep class org.mozilla.vrbrowser.ui.widgets.Windows$** {*;} # Keep state clases used by gson.
+-keep class org.mozilla.browser.engine.SessionStore** {*;} # Keep state clases used by gson.
 
 # --------------------------------------------------------------------
 # Keep classes from HTC SDK
