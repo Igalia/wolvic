@@ -291,7 +291,9 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
                 state.mSession = new GeckoSession(geckoSettings);
             }
 
-            state.mSession.restoreState(state.mSessionState);
+            if (state.mSessionState != null) {
+                state.mSession.restoreState(state.mSessionState);
+            }
 
             int newSessionId = state.mSession.hashCode();
             oldNewSessionId.put(entry.getKey(), newSessionId);
