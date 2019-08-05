@@ -73,6 +73,7 @@ public class CrashReporterService extends JobIntentService {
 
                     if (!otherProcessesFound) {
                         intent.setClass(CrashReporterService.this, VRBrowserActivity.class);
+                        intent.setPackage(BuildConfig.APPLICATION_ID);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                         break;
