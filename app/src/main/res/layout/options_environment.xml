@@ -29,7 +29,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:paddingEnd="30dp"
-            app:layout_constraintBottom_toTopOf="@id/footer_layout"
+            app:layout_constraintBottom_toTopOf="@id/envOverrideSwitch"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/header_layout">
@@ -48,21 +48,22 @@
                     app:values="@array/developer_options_environments_values"
                     app:images="@array/developer_options_environments_images"/>
 
-
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
-                    android:id="@+id/envOverrideSwitch"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:description="@string/developer_options_env_override" />
-
             </LinearLayout>
         </ScrollView>
+
+        <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+            android:id="@+id/envOverrideSwitch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/scrollbar"
+            app:layout_constraintBottom_toTopOf="@id/footer_layout"
+            app:description="@string/developer_options_env_override" />
 
         <org.mozilla.vrbrowser.ui.widgets.settings.SettingsFooter
             android:id="@+id/footer_layout"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            app:description="@string/display_options_reset"
+            app:description="@string/environment_options_reset"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

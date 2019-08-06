@@ -177,6 +177,9 @@
         <item name="android:scrollbarThumbVertical">@drawable/scrollbar_thumb</item>
         <item name="android:fastScrollEnabled">true</item>
         <item name="android:fastScrollAlwaysVisible">true</item>
+        <item name="android:fadingEdge">vertical</item>
+        <item name="android:fadingEdgeLength">60dp</item>
+        <item name="android:requiresFadingEdge">vertical</item>
     </style>
 
     <style name="settingsEdit">

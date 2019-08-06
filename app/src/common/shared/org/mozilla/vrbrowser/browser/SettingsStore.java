@@ -73,8 +73,8 @@ public class SettingsStore {
     public final static boolean AUTOPLAY_ENABLED = false;
 
     // Enable telemetry by default (opt-out).
-    private final static boolean enableCrashReportingByDefault = false;
-    private final static boolean enableTelemetryByDefault = true;
+    public final static boolean CRASH_REPORTING_DEFAULT = false;
+    public final static boolean TELEMETRY_DEFAULT = true;
 
     private int mCachedScrollDirection = -1;
 
@@ -84,7 +84,7 @@ public class SettingsStore {
     }
 
     public boolean isCrashReportingEnabled() {
-        return mPrefs.getBoolean(mContext.getString(R.string.settings_key_crash), enableCrashReportingByDefault);
+        return mPrefs.getBoolean(mContext.getString(R.string.settings_key_crash), CRASH_REPORTING_DEFAULT);
     }
 
     public void setCrashReportingEnabled(boolean isEnabled) {
@@ -98,7 +98,7 @@ public class SettingsStore {
         final StrictMode.ThreadPolicy threadPolicy = StrictMode.allowThreadDiskReads();
         try {
             return mPrefs.getBoolean(
-                    mContext.getString(R.string.settings_key_telemetry), enableTelemetryByDefault);
+                    mContext.getString(R.string.settings_key_telemetry), TELEMETRY_DEFAULT);
         } finally {
             StrictMode.setThreadPolicy(threadPolicy);
         }

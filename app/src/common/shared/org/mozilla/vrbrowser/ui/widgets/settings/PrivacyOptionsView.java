@@ -62,22 +62,6 @@ class PrivacyOptionsView extends SettingsView {
             exitWholeSettings();
         });
 
-        mBinding.drmContentPlaybackSwitch.setChecked(SettingsStore.getInstance(getContext()).isDrmContentPlaybackEnabled());
-        mBinding.drmContentPlaybackSwitch.setOnCheckedChangeListener((compoundButton, enabled, apply) -> {
-            SettingsStore.getInstance(getContext()).setDrmContentPlaybackEnabled(enabled);
-            // TODO Enable/Disable DRM content playback
-        });
-        mBinding.drmContentPlaybackSwitch.setLinkClickListener((widget, url) -> {
-            SessionStore.get().getActiveStore().loadUri(url);
-            exitWholeSettings();
-        });
-
-        mBinding.trackingProtectionSwitch.setChecked(SettingsStore.getInstance(getContext()).isTrackingProtectionEnabled());
-        mBinding.trackingProtectionSwitch.setOnCheckedChangeListener((compoundButton, enabled, apply) -> {
-            SettingsStore.getInstance(getContext()).setTrackingProtectionEnabled(enabled);
-            SessionStore.get().setTrackingProtection(enabled);
-        });
-
         TextView permissionsTitleText = findViewById(R.id.permissionsTitle);
         permissionsTitleText.setText(getContext().getString(R.string.security_options_permissions_title, getContext().getString(R.string.app_name)));
 
@@ -97,22 +81,27 @@ class PrivacyOptionsView extends SettingsView {
                     togglePermission(button.first, button.second));
         }
 
-        mBinding.notificationsPermissionSwitch.setChecked(SettingsStore.getInstance(getContext()).isNotificationsEnabled());
-        mBinding.notificationsPermissionSwitch.setOnCheckedChangeListener((compoundButton, enabled, apply) -> {
-            SettingsStore.getInstance(getContext()).setNotificationsEnabled(enabled);
+        mBinding.drmContentPlaybackSwitch.setOnCheckedChangeListener(mDrmContentListener);
+        mBinding.drmContentPlaybackSwitch.setLinkClickListener((widget, url) -> {
+            SessionStore.get().getActiveStore().loadUri(url);
+            exitWholeSettings();
         });
+        setDrmContent(SettingsStore.getInstance(getContext()).isDrmContentPlaybackEnabled(), false);
 
-        mBinding.speechDataSwitch.setChecked(SettingsStore.getInstance(getContext()).isSpeechDataCollectionEnabled());
-        mBinding.speechDataSwitch.setOnCheckedChangeListener((compoundButton, enabled, apply) ->
-                SettingsStore.getInstance(getContext()).setSpeechDataCollectionEnabled(enabled));
+        mBinding.trackingProtectionSwitch.setOnCheckedChangeListener(mTrackingProtectionListener);
+        setTrackingProtection(SettingsStore.getInstance(getContext()).isTrackingProtectionEnabled(), false);
 
-        mBinding.telemetryDataSwitch.setChecked(SettingsStore.getInstance(getContext()).isTelemetryEnabled());
-        mBinding.telemetryDataSwitch.setOnCheckedChangeListener((compoundButton, enabled, apply) ->
-                SettingsStore.getInstance(getContext()).setTelemetryEnabled(enabled));
+        mBinding.notificationsPermissionSwitch.setOnCheckedChangeListener(mNotificationsListener);
+        setNotifications(SettingsStore.getInstance(getContext()).isNotificationsEnabled(), false);
 
-        mBinding.crashReportsDataSwitch.setChecked(SettingsStore.getInstance(getContext()).isCrashReportingEnabled());
-        mBinding.crashReportsDataSwitch.setOnCheckedChangeListener((compoundButton, enabled, apply) ->
-                SettingsStore.getInstance(getContext()).setCrashReportingEnabled(enabled));
+        mBinding.speechDataSwitch.setOnCheckedChangeListener(mSpeechDataListener);
+        setSpeechData(SettingsStore.getInstance(getContext()).isSpeechDataCollectionEnabled(), false);
+
+        mBinding.telemetryDataSwitch.setOnCheckedChangeListener(mTelemetryListener);
+        setTelemetry(SettingsStore.getInstance(getContext()).isTelemetryEnabled(), false);
+
+        mBinding.crashReportsDataSwitch.setOnCheckedChangeListener(mCrashReportsListener);
+        setCrashReports(SettingsStore.getInstance(getContext()).isCrashReportingEnabled(), false);
     }
 
     private void togglePermission(SwitchSetting aButton, String aPermission) {
@@ -134,9 +123,115 @@ class PrivacyOptionsView extends SettingsView {
         }
     }
 
+    private SwitchSetting.OnCheckedChangeListener mDrmContentListener = (compoundButton, value, doApply) -> {
+        setDrmContent(value, doApply);
+    };
+
+    private SwitchSetting.OnCheckedChangeListener mTrackingProtectionListener = (compoundButton, value, doApply) -> {
+        setTrackingProtection(value, doApply);
+    };
+
+    private SwitchSetting.OnCheckedChangeListener mNotificationsListener = (compoundButton, value, doApply) -> {
+        setNotifications(value, doApply);
+    };
+
+    private SwitchSetting.OnCheckedChangeListener mSpeechDataListener = (compoundButton, value, doApply) -> {
+        setSpeechData(value, doApply);
+    };
+
+    private SwitchSetting.OnCheckedChangeListener mTelemetryListener = (compoundButton, value, doApply) -> {
+        setTelemetry(value, doApply);
+    };
+
+    private SwitchSetting.OnCheckedChangeListener mCrashReportsListener = (compoundButton, value, doApply) -> {
+        setCrashReports(value, doApply);
+    };
+
     private void resetOptions() {
+        if (mBinding.drmContentPlaybackSwitch.isChecked() != SettingsStore.DRM_PLAYBACK_DEFAULT) {
+            setDrmContent(SettingsStore.DRM_PLAYBACK_DEFAULT, true);
+        }
+
         if (mBinding.trackingProtectionSwitch.isChecked() != SettingsStore.TRACKING_DEFAULT) {
-            mBinding.trackingProtectionSwitch.setChecked(SettingsStore.TRACKING_DEFAULT);
+            setTrackingProtection(SettingsStore.TRACKING_DEFAULT, true);
+        }
+
+        if (mBinding.notificationsPermissionSwitch.isChecked() != SettingsStore.NOTIFICATIONS_DEFAULT) {
+            setNotifications(SettingsStore.NOTIFICATIONS_DEFAULT, true);
+        }
+
+        if (mBinding.speechDataSwitch.isChecked() != SettingsStore.SPEECH_DATA_COLLECTION_DEFAULT) {
+            setSpeechData(SettingsStore.SPEECH_DATA_COLLECTION_DEFAULT, true);
+        }
+
+        if (mBinding.telemetryDataSwitch.isChecked() != SettingsStore.TELEMETRY_DEFAULT) {
+            setTelemetry(SettingsStore.TELEMETRY_DEFAULT, true);
+        }
+
+        if (mBinding.crashReportsDataSwitch.isChecked() != SettingsStore.CRASH_REPORTING_DEFAULT) {
+            setCrashReports(SettingsStore.CRASH_REPORTING_DEFAULT, true);
+        }
+    }
+
+    private void setDrmContent(boolean value, boolean doApply) {
+        mBinding.drmContentPlaybackSwitch.setOnCheckedChangeListener(null);
+        mBinding.drmContentPlaybackSwitch.setValue(value, false);
+        mBinding.drmContentPlaybackSwitch.setOnCheckedChangeListener(mDrmContentListener);
+
+        if (doApply) {
+            SettingsStore.getInstance(getContext()).setDrmContentPlaybackEnabled(value);
+            // TODO Enable/Disable DRM content playback
+        }
+    }
+
+    private void setTrackingProtection(boolean value, boolean doApply) {
+        mBinding.trackingProtectionSwitch.setOnCheckedChangeListener(null);
+        mBinding.trackingProtectionSwitch.setValue(value, false);
+        mBinding.trackingProtectionSwitch.setOnCheckedChangeListener(mTrackingProtectionListener);
+
+        if (doApply) {
+            SettingsStore.getInstance(getContext()).setTrackingProtectionEnabled(value);
+            SessionStore.get().setTrackingProtection(value);
+        }
+    }
+
+    private void setNotifications(boolean value, boolean doApply) {
+        mBinding.notificationsPermissionSwitch.setOnCheckedChangeListener(null);
+        mBinding.notificationsPermissionSwitch.setValue(value, false);
+        mBinding.notificationsPermissionSwitch.setOnCheckedChangeListener(mNotificationsListener);
+
+        if (doApply) {
+            SettingsStore.getInstance(getContext()).setNotificationsEnabled(value);
+        }
+    }
+
+    private void setSpeechData(boolean value, boolean doApply) {
+        mBinding.speechDataSwitch.setOnCheckedChangeListener(null);
+        mBinding.speechDataSwitch.setValue(value, false);
+        mBinding.speechDataSwitch.setOnCheckedChangeListener(mSpeechDataListener);
+
+        if (doApply) {
+            SettingsStore.getInstance(getContext()).setSpeechDataCollectionEnabled(value);
+        }
+    }
+
+    private void setTelemetry(boolean value, boolean doApply) {
+        mBinding.telemetryDataSwitch.setOnCheckedChangeListener(null);
+        mBinding.telemetryDataSwitch.setValue(value, false);
+        mBinding.telemetryDataSwitch.setOnCheckedChangeListener(mTelemetryListener);
+
+        if (doApply) {
+            SettingsStore.getInstance(getContext()).setTelemetryEnabled(value);
+        }
+    }
+
+    private void setCrashReports(boolean value, boolean doApply) {
+        mBinding.crashReportsDataSwitch.setOnCheckedChangeListener(null);
+        mBinding.crashReportsDataSwitch.setValue(value, false);
+        mBinding.crashReportsDataSwitch.setOnCheckedChangeListener(mCrashReportsListener);
+
+        if (doApply) {
+            SettingsStore.getInstance(getContext()).setCrashReportingEnabled(value);
         }
     }
 

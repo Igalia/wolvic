@@ -152,7 +152,9 @@ class DeveloperOptionsView extends SettingsView {
         mBinding.performanceMonitorSwitch.setValue(value, false);
         mBinding.performanceMonitorSwitch.setOnCheckedChangeListener(mPerformanceListener);
 
-        SettingsStore.getInstance(getContext()).setPerformanceMonitorEnabled(value);
+        if (doApply) {
+            SettingsStore.getInstance(getContext()).setPerformanceMonitorEnabled(value);
+        }
     }
 
     private void setServo(boolean value, boolean doApply) {
