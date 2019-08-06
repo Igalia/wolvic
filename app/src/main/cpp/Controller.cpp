@@ -96,6 +96,14 @@ Controller::Reset() {
   lastHoverEvent = 0.0;
 }
 
+vrb::Vector Controller::StartPoint() const {
+  return transformMatrix.MultiplyPosition(beamTransformMatrix.MultiplyPosition(vrb::Vector()));
+}
+
+vrb::Vector Controller::Direction() const {
+  return transformMatrix.MultiplyDirection(beamTransformMatrix.MultiplyDirection(vrb::Vector(0.0f, 0.0f, -1.0f)));
+}
+
 void
 Controller::DetachRoot() {
   if (transform) {

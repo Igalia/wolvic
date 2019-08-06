@@ -360,8 +360,8 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
       continue;
     }
 
-    vrb::Vector start = controller.transformMatrix.MultiplyPosition(controller.beamTransformMatrix.MultiplyPosition(vrb::Vector()));
-    vrb::Vector direction = controller.transformMatrix.MultiplyDirection(controller.beamTransformMatrix.MultiplyDirection(vrb::Vector(0.0f, 0.0f, -1.0f)));
+    const vrb::Vector start = controller.StartPoint();
+    const vrb::Vector direction = controller.Direction();
 
     WidgetPtr hitWidget;
     float hitDistance = farClip;
@@ -373,11 +373,15 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
         // Don't interact with other widgets when resizing gesture is active.
         continue;
       }
+      if (movingWidget && movingWidget->GetWidget() != widget) {
+        // Don't interact with other widgets when moving gesture is active.
+        continue;
+      }
       vrb::Vector result;
       vrb::Vector normal;
       float distance = 0.0f;
       bool isInWidget = false;
-      const bool clamp = !widget->IsResizing();
+      const bool clamp = !widget->IsResizing() && !movingWidget;
       if (widget->TestControllerIntersection(start, direction, result, normal, clamp, isInWidget, distance)) {
         if (isInWidget && (distance < hitDistance)) {
           hitWidget = widget;
@@ -954,8 +958,9 @@ BrowserWorld::StartWidgetMove(int32_t aHandle, int32_t aMoveBehavour) {
     return;
   }
 
-  vrb::Vector initialPoint;
   vrb::Vector anchorPoint;
+  vrb::Vector start;
+  vrb::Vector direction;
   int controllerIndex = -1;
 
   for (Controller& controller: m.controllers->GetControllers()) {
@@ -965,7 +970,8 @@ BrowserWorld::StartWidgetMove(int32_t aHandle, int32_t aMoveBehavour) {
 
     if (controller.pointer && controller.pointer->GetHitWidget() == widget) {
       controllerIndex = controller.index;
-      initialPoint = controller.pointerWorldPoint;
+      start = controller.StartPoint();
+      direction = controller.Direction();
       int32_t w, h;
       widget->GetSurfaceTextureSize(w, h);
       anchorPoint.x() = controller.pointerX / (float)w;
@@ -979,7 +985,11 @@ BrowserWorld::StartWidgetMove(int32_t aHandle, int32_t aMoveBehavour) {
   }
   
   m.movingWidget = WidgetMover::Create();
-  m.movingWidget->StartMoving(widget, aMoveBehavour, controllerIndex, initialPoint, anchorPoint);
+  WidgetPtr parent;
+  if (widget->GetPlacement()->parentHandle) {
+    parent = m.GetWidget(widget->GetPlacement()->parentHandle);
+  }
+  m.movingWidget->StartMoving(widget, parent, aMoveBehavour, controllerIndex, start, direction, anchorPoint);
 }
 
 void

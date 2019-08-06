@@ -56,6 +56,9 @@ struct Controller {
   double lastHoverEvent;
   device::CapabilityFlags deviceCapabilities;
 
+  vrb::Vector StartPoint() const;
+  vrb::Vector Direction() const;
+
   Controller();
   Controller(const Controller& aController);
   ~Controller();

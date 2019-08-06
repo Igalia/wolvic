@@ -22,6 +22,7 @@ enum class WidgetMoveBehaviour {
 
 struct WidgetMover::State {
   WidgetPtr widget;
+  WidgetPtr parentWidget;
   int attachedController;
   vrb::Vector initialPoint;
   vrb::Vector anchorPoint;
@@ -39,15 +40,39 @@ struct WidgetMover::State {
       , endRotation(0)
   {}
 
-  vrb::Vector ProjectPoint(const vrb::Vector& aWorldPoint) const {
-    if (widget->GetCylinder()) {
+
+  vrb::Vector ProjectPoint(const WidgetPtr& aWidget, const vrb::Vector& aWorldPoint) const {
+    if (aWidget->GetCylinder()) {
+      // For a cylinder project the point to the virtual quad.
       vrb::Vector min, max;
-      widget->GetWidgetMinAndMax(min, max);
-      vrb::Vector point =  widget->GetCylinder()->ProjectPointToQuad(aWorldPoint, 0.5f, widget->GetCylinderDensity(), min, max);
-      return widget->GetTransformNode()->GetWorldTransform().MultiplyPosition(point);
+      aWidget->GetWidgetMinAndMax(min, max);
+      vrb::Vector point =  aWidget->GetCylinder()->ProjectPointToQuad(aWorldPoint, 0.5f, aWidget->GetCylinderDensity(), min, max);
+      return aWidget->GetTransformNode()->GetWorldTransform().MultiplyPosition(point);
     } else {
       return aWorldPoint;
     }
+  }
+
+  vrb::Vector GetMovePoint(const vrb::Vector& aStart, const vrb::Vector& aDirection) const {
+    float hitDistance = -1;
+    vrb::Vector hitPoint;
+    vrb::Vector hitNormal;
+    bool isInWidget = false;
+    widget->TestControllerIntersection(aStart, aDirection, hitPoint, hitNormal, false, isInWidget, hitDistance);
+
+    vrb::Vector result = ProjectPoint(widget, hitPoint);
+
+    if (parentWidget && moveBehaviour == WidgetMoveBehaviour::KEYBOARD && widget->GetCylinder()) {
+      // For Cylindrical keyboard move we want to use the x translation from the parent widget (the window)
+      parentWidget->TestControllerIntersection(aStart, aDirection, hitPoint, hitNormal, false, isInWidget, hitDistance);
+      if (hitDistance >= 0) {
+        vrb::Vector point = ProjectPoint(parentWidget, hitPoint);
+        result.x() = point.x();
+        result.z() = point.z();
+      }
+    }
+
+    return result;
   }
 
   WidgetPlacementPtr& HandleKeyboardMove(const vrb::Vector& aDelta) {
@@ -85,7 +110,7 @@ struct WidgetMover::State {
       angle = t * maxAngle;
     }
 
-    float t = 0.0f;
+    float t;
     if (y > 1.45f) {
       t = 1.0f;
     } else {
@@ -121,7 +146,7 @@ WidgetMover::HandleMove(const vrb::Vector& aStart, const vrb::Vector& aDirection
   if (hitDistance < 0) {
     return nullptr;
   };
-  hitPoint = m.ProjectPoint(hitPoint);
+  hitPoint = m.GetMovePoint(aStart, aDirection);
 
   vrb::Vector delta = hitPoint - m.initialPoint;
   delta.y() = hitPoint.y() - m.initialPoint.y();
@@ -145,16 +170,17 @@ WidgetMover::HandleMove(const vrb::Vector& aStart, const vrb::Vector& aDirection
 }
 
 void
-WidgetMover::StartMoving(const WidgetPtr& aWidget, const int32_t aMoveBehaviour, const int32_t aControllerIndex,
-                         const vrb::Vector& aHitPoint, const vrb::Vector& aAnchorPoint) {
+WidgetMover::StartMoving(const WidgetPtr& aWidget, const WidgetPtr& aParentWidget, const int32_t aMoveBehaviour, const int32_t aControllerIndex,
+                         const vrb::Vector& aStart, const vrb::Vector& aDirection, const vrb::Vector& aAnchorPoint) {
   m.widget = aWidget;
+  m.parentWidget = aParentWidget;
   m.attachedController = aControllerIndex;
   m.initialTransform = aWidget->GetTransform();
-  m.initialPoint = m.ProjectPoint(aHitPoint);
   m.anchorPoint = aAnchorPoint;
   m.initialPlacement = aWidget->GetPlacement();
   m.movePlacement = WidgetPlacement::Create(*m.initialPlacement);
   m.moveBehaviour = (WidgetMoveBehaviour) aMoveBehaviour;
+  m.initialPoint = m.GetMovePoint(aStart, aDirection);
 }
 
 void
@@ -164,6 +190,7 @@ WidgetMover::EndMoving() {
     VRBrowser::HandleMoveEnd(m.widget->GetHandle(), m.endDelta.x(), m.endDelta.y(), m.endDelta.z(), m.endRotation);
   }
   m.widget = nullptr;
+  m.parentWidget = nullptr;
 }
 
 WidgetPtr

@@ -510,7 +510,6 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSessio
         WidgetPlacement placement = aWindow.getPlacement();
         aWindow.setWindowPlacement(aPosition);
         boolean curved = SettingsStore.getInstance(mContext).getCylinderDensity() > 0;
-        Log.e("VRB", "mortimer curved: " + curved);
         switch (aPosition) {
             case FRONT:
                 placement.anchorX = 0.5f;
