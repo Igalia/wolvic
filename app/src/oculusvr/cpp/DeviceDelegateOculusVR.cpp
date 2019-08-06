@@ -631,8 +631,6 @@ struct DeviceDelegateOculusVR::State {
   ControllerDelegatePtr controller;
   ImmersiveDisplayPtr immersiveDisplay;
   int reorientCount = -1;
-  bool headHeightOffsetSet = false;
-  vrb::Vector headHeightOffset;
   vrb::Matrix reorientMatrix = vrb::Matrix::Identity();
   device::CPULevel minCPULevel = device::CPULevel::Normal;
   device::DeviceType deviceType = device::UnknownType;
@@ -730,12 +728,7 @@ struct DeviceDelegateOculusVR::State {
   }
 
   void UpdateTrackingMode() {
-    if (!ovr) {
-      return;
-    }
-    if (renderMode == device::RenderMode::StandAlone && Is6DOF()) {
-      vrapi_SetTrackingSpace(ovr, VRAPI_TRACKING_SPACE_LOCAL_FLOOR);
-    } else {
+    if (ovr) {
       vrapi_SetTrackingSpace(ovr, VRAPI_TRACKING_SPACE_LOCAL);
     }
   }
@@ -946,7 +939,7 @@ struct DeviceDelegateOculusVR::State {
         auto & position = tracking.HeadPose.Pose.Position;
         vrb::Vector headPos(position.x, position.y, position.z);
         if (renderMode == device::RenderMode::StandAlone) {
-          headPos += headHeightOffset;
+          headPos += kAverageHeight;
         }
         controllerState.transform.TranslateInPlace(headPos);
         flags |= device::Position;
@@ -1315,15 +1308,7 @@ DeviceDelegateOculusVR::StartFrame() {
 
 
   if (m.renderMode == device::RenderMode::StandAlone) {
-    if (!m.Is6DOF()) {
-      head.TranslateInPlace(kAverageHeight);
-    } else {
-      if (!m.headHeightOffsetSet) {
-        m.headHeightOffset = vrb::Vector(kAverageHeight.x(), kAverageHeight.y() - m.predictedTracking.HeadPose.Pose.Position.y, kAverageHeight.z());
-        m.headHeightOffsetSet = true;
-      }
-      head.TranslateInPlace(m.headHeightOffset);
-    }
+    head.TranslateInPlace(kAverageHeight);
   }
 
   m.cameras[VRAPI_EYE_LEFT]->SetHeadTransform(head);
@@ -1345,12 +1330,7 @@ DeviceDelegateOculusVR::StartFrame() {
   m.UpdateControllers(head);
   bool reoriented = lastReorientCount != m.reorientCount && lastReorientCount > 0 && m.reorientCount > 0;
   if (reoriented && m.renderMode == device::RenderMode::StandAlone) {
-    vrb::Vector height = kAverageHeight;
-    if (m.Is6DOF()) {
-      height.y() = m.predictedTracking.HeadPose.Pose.Position.y;
-      m.headHeightOffset = vrb::Vector(kAverageHeight.x(), kAverageHeight.y() - m.predictedTracking.HeadPose.Pose.Position.y, kAverageHeight.z());
-    }
-    m.reorientMatrix = DeviceUtils::CalculateReorientationMatrix(head, height);
+    m.reorientMatrix = DeviceUtils::CalculateReorientationMatrix(head, kAverageHeight);
   }
 
   VRB_GL_CHECK(glClearColor(m.clearColor.Red(), m.clearColor.Green(), m.clearColor.Blue(), m.clearColor.Alpha()));
