@@ -52,6 +52,7 @@ public class SettingsStore {
     public final static boolean TRACKING_DEFAULT = true;
     public final static boolean NOTIFICATIONS_DEFAULT = true;
     public final static boolean SPEECH_DATA_COLLECTION_DEFAULT = false;
+    public final static boolean SPEECH_DATA_COLLECTION_REVIEWED_DEFAULT = false;
     public final static boolean SERVO_DEFAULT = false;
     public final static int UA_MODE_DEFAULT = GeckoSessionSettings.USER_AGENT_MODE_VR;
     public final static int INPUT_MODE_DEFAULT = 1;
@@ -540,6 +541,17 @@ public class SettingsStore {
     public void setNotificationsEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_notifications), isEnabled);
+        editor.commit();
+    }
+
+    public boolean isSpeechDataCollectionReviewed() {
+        return mPrefs.getBoolean(
+                mContext.getString(R.string.settings_key_speech_data_collection_reviewed), SPEECH_DATA_COLLECTION_REVIEWED_DEFAULT);
+    }
+
+    public void setSpeechDataCollectionReviewed(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_speech_data_collection_reviewed), isEnabled);
         editor.commit();
     }
 }

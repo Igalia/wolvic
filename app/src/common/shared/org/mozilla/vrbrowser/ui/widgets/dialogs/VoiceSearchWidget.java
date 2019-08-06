@@ -23,15 +23,18 @@ import com.mozilla.speechlibrary.ISpeechRecognitionListener;
 import com.mozilla.speechlibrary.MozillaSpeechService;
 import com.mozilla.speechlibrary.STTResult;
 
+import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.SettingsStore;
+import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.utils.DeviceType;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
 public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate.PermissionListener,
@@ -90,9 +93,6 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
 
         mMozillaSpeechService = MozillaSpeechService.getInstance();
         mMozillaSpeechService.setProductTag(getContext().getString(R.string.voice_app_id));
-        boolean storeData = SettingsStore.getInstance(aContext).isSpeechDataCollectionEnabled();
-        mMozillaSpeechService.storeSamples(storeData);
-        mMozillaSpeechService.storeTranscriptions(storeData);
 
         mVoiceSearchText1 = findViewById(R.id.voiceSearchText1);
         mVoiceSearchText2 = findViewById(R.id.voiceSearchText2);
@@ -150,8 +150,7 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
         aPlacement.parentAnchorY = 0.5f;
         aPlacement.anchorX = 0.5f;
         aPlacement.anchorY = 0.5f;
-        aPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.restart_dialog_world_y);
-        aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.restart_dialog_world_z);
+        aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.voice_search_world_z);
     }
 
     public void setPlacementForKeyboard(int aHandle) {
@@ -230,6 +229,11 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
         } else {
             String locale = LocaleUtils.getVoiceSearchLocale(getContext());
             mMozillaSpeechService.setLanguage(LocaleUtils.mapToMozillaSpeechLocales(locale));
+            boolean storeData = SettingsStore.getInstance(getContext()).isSpeechDataCollectionEnabled();
+            if (SessionStore.get().getActiveStore().isPrivateMode())
+                storeData = false;
+            mMozillaSpeechService.storeSamples(storeData);
+            mMozillaSpeechService.storeTranscriptions(storeData);
             mMozillaSpeechService.start(getContext().getApplicationContext());
             mIsSpeechRecognitionRunning = true;
         }
@@ -269,11 +273,37 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
 
     @Override
     public void show(@ShowFlags int aShowFlags) {
-        super.show(aShowFlags);
+        if (SettingsStore.getInstance(getContext()).isSpeechDataCollectionReviewed()) {
+            super.show(aShowFlags);
 
-        setStartListeningState();
+            setStartListeningState();
 
-        startVoiceSearch();
+            startVoiceSearch();
+
+        } else {
+            mWidgetManager.getFocusedWindow().showAppDialog(
+                    R.string.voice_samples_collect_dialog_title,
+                    R.string.voice_samples_collect_dialog_description,
+                    new int[]{
+                            R.string.voice_samples_collect_dialog_do_not_allow,
+                            R.string.voice_samples_collect_dialog_allow},
+                    new AppDialogWidget.Delegate() {
+                        @Override
+                        public void onButtonClicked(int index) {
+                            SettingsStore.getInstance(getContext()).setSpeechDataCollectionReviewed(true);
+                            if (index == AppDialogWidget.RIGHT) {
+                                SettingsStore.getInstance(getContext()).setSpeechDataCollectionEnabled(true);
+                            }
+                            ThreadUtils.postToUiThread(() -> show(aShowFlags));
+                        }
+
+                        @Override
+                        public void onMessageLinkClicked(@NonNull String url) {
+                            mWidgetManager.getFocusedWindow().getSessionStack().loadUri(getResources().getString(R.string.private_policy_url));
+                            onDismiss();
+                        }
+                    });
+        }
     }
 
     @Override

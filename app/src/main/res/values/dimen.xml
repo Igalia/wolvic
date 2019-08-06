@@ -138,7 +138,7 @@
     <dimen name="voice_search_padding_top">20dp</dimen>
     <dimen name="voice_search_padding_bottom">25dp</dimen>
     <dimen name="voice_search_padding_sides">30dp</dimen>
-    <item name="voice_search_world_z" format="float" type="dimen">0.042</item>
+    <item name="voice_search_world_z" format="float" type="dimen">2</item>
 
     <!-- Voice search input -->
     <dimen name="voice_search_input_width">305dp</dimen>
@@ -233,4 +233,8 @@
     <!-- Display settings -->
     <dimen name="display_options_width">585dp</dimen>
     <dimen name="display_options_height">420dp</dimen>
+
+    <!-- App Dialog -->
+    <dimen name="app_dialog_width">420dp</dimen>
+    <item name="app_dialog_z_distance" format="float" type="dimen">2</item>
 </resources>

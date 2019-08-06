@@ -574,7 +574,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         this.setVisible(false);
         if (mFullScreenMedia != null && mFullScreenMedia.getWidth() > 0 && mFullScreenMedia.getHeight() > 0) {
             final boolean resetBorder = aProjection == VideoProjectionMenuWidget.VIDEO_PROJECTION_360 ||
-                                        aProjection == VideoProjectionMenuWidget.VIDEO_PROJECTION_360_STEREO;
+                    aProjection == VideoProjectionMenuWidget.VIDEO_PROJECTION_360_STEREO;
             mAttachedWindow.enableVRVideoMode(mFullScreenMedia.getWidth(), mFullScreenMedia.getHeight(), resetBorder);
             // Handle video resize while in VR video playback
             mFullScreenMedia.setResizeDelegate((width, height) -> {
@@ -844,6 +844,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             mVoiceSearchWidget.hide(REMOVE_WIDGET);
 
         } else {
+            mVoiceSearchWidget.getPlacement().parentHandle = mAttachedWindow.getHandle();
             mVoiceSearchWidget.show(REQUEST_FOCUS);
         }
     }

@@ -22,6 +22,7 @@ import android.view.inputmethod.InputConnection;
 import org.mozilla.gecko.util.ThreadUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 
 import org.mozilla.geckoview.AllowOrDeny;
 import org.mozilla.geckoview.GeckoDisplay;
@@ -35,6 +36,7 @@ import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.browser.engine.SessionStack;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.ui.views.BookmarksView;
+import org.mozilla.vrbrowser.ui.widgets.dialogs.AppDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.ContextMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.MaxWindowsWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.AlertPromptWidget;
@@ -72,6 +74,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private TextPromptWidget mTextPrompt;
     private AuthPromptWidget mAuthPrompt;
     private NoInternetWidget mNoInternetToast;
+    private AppDialogWidget mAppDialog;
     private ContextMenuWidget mContextMenu;
     private int mWidthBackup;
     private int mHeightBackup;
@@ -726,6 +729,26 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mConfirmPrompt.setButtons(btnMsg);
         mConfirmPrompt.setDelegate(callback);
         mConfirmPrompt.show(REQUEST_FOCUS);
+    }
+
+    public void showAppDialog(@NonNull @StringRes int title, @NonNull @StringRes int  description, @NonNull  @StringRes int [] btnMsg, @NonNull AppDialogWidget.Delegate callback) {
+        mAppDialog = new AppDialogWidget(getContext());
+        mAppDialog.mWidgetPlacement.parentHandle = getHandle();
+        mAppDialog.setTitle(title);
+        mAppDialog.setMessage(description);
+        mAppDialog.setButtons(btnMsg);
+        mAppDialog.setDelegate(callback);
+        mAppDialog.show(REQUEST_FOCUS);
+    }
+
+    public void showAppDialog(@NonNull String title, @NonNull String description, @NonNull String[] btnMsg, @NonNull AppDialogWidget.Delegate callback) {
+        mAppDialog = new AppDialogWidget(getContext());
+        mAppDialog.mWidgetPlacement.parentHandle = getHandle();
+        mAppDialog.setTitle(title);
+        mAppDialog.setMessage(description);
+        mAppDialog.setButtons(btnMsg);
+        mAppDialog.setDelegate(callback);
+        mAppDialog.show(REQUEST_FOCUS);
     }
 
     public void showMaxWindowsDialog(int maxDialogs) {

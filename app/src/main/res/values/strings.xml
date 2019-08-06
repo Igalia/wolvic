@@ -851,4 +851,20 @@
 
     <!-- This string is displayed anywhere where we need to display the "Default" string by itself. -->
     <string name="tag_default">Default</string>
+
+    <!-- This string is displayed in the title of the Voice Search samples collect dialog. That dialog is shown the first time
+         a user tries to use the voice search. -->
+    <string name="voice_samples_collect_dialog_title">Allow Firefox to Collect Voice Samples?</string>
+
+    <!-- This string is displayed in the description of the Voice Search samples collect dialog. That dialog is shown the first time
+         a user tries to use the voice search. -->
+    <string name="voice_samples_collect_dialog_description">Please help Mozilla improve Firefox Reality. In order to improve our voice recognition services, we need to collect samples for research. Don’t worry, your data is protected and will always be anonymous. You can change your decision in SETTINGS. You can use Voice Search feature no matter what your decision is. &lt;a href="privacy">Learn More&lt;/a></string>
+
+    <!-- This string is displayed in the button of the Voice Search samples collect dialog.
+         When clicked the user opts out from the voice data collection. -->
+    <string name="voice_samples_collect_dialog_allow">Allow</string>
+
+    <!-- This string is displayed in the button of the Voice Search samples collect dialog.
+         When clicked the user opts in for the voice data collection. -->
+    <string name="voice_samples_collect_dialog_do_not_allow">Don’t Allow</string>
 </resources>
