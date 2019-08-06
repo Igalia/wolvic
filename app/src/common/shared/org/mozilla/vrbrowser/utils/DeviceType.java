@@ -35,4 +35,8 @@ public class DeviceType {
     public static boolean isWaveBuild() {
         return BuildConfig.FLAVOR_platform.toLowerCase().contains("wavevr");
     }
+
+    public static boolean isGoogleVR() {
+        return BuildConfig.FLAVOR_platform.toLowerCase().contains("googlevr");
+    }
 }
