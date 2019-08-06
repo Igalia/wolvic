@@ -193,13 +193,6 @@ public class PlatformActivity extends Activity {
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        // Discard back button presses that would otherwise exit the app,
-        // as the UI standard on this platform is to require the use of
-        // the Daydream button to exit application.
-    }
-
     private native void activityCreated(Object aAssetManager, final long aContext);
     private native void activityPaused();
     private native void activityResumed();
