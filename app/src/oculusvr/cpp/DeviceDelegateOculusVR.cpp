@@ -1536,7 +1536,7 @@ DeviceDelegateOculusVR::CreateLayerCube(int32_t aWidth, int32_t aHeight, GLint a
   if (m.cubeLayer) {
     m.cubeLayer->Destroy();
   }
-  VRLayerCubePtr layer = VRLayerCube::Create(aWidth, aHeight);
+  VRLayerCubePtr layer = VRLayerCube::Create(aWidth, aHeight, aInternalFormat);
   m.cubeLayer = OculusLayerCube::Create(layer, aInternalFormat);
   if (m.ovr) {
     vrb::RenderContextPtr context = m.context.lock();

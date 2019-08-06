@@ -644,23 +644,8 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
     m.controllers->SetPointerColor(vrb::Color(VRBrowser::GetPointerColor()));
     m.loadingAnimation->LoadModels(m.loader);
     m.rootController->AddNode(m.controllers->GetRoot());
-    std::string skyboxPath = VRBrowser::GetActiveEnvironment();
-    std::string extension;
-    if (VRBrowser::isOverrideEnvPathEnabled()) {
-      std::string storagePath = VRBrowser::GetStorageAbsolutePath(INJECT_SKYBOX_PATH);
-      if (std::ifstream(storagePath)) {
-        skyboxPath = storagePath;
-        extension = Skybox::ValidateCustomSkyboxAndFindFileExtension(storagePath);
-        if (!extension.empty()) {
-          skyboxPath = storagePath;
-          VRB_DEBUG("Found custom skybox file extension: %s", extension.c_str());
-        } else {
-          VRB_ERROR("Failed to find custom skybox files.");
-        }
-      }
-    }
 #if !defined(SNAPDRAGONVR)
-    CreateSkyBox(skyboxPath, extension);
+    UpdateEnvironment();
     // Don't load the env model, we are going for skyboxes in v1.0
 //    CreateFloor();
 #endif
@@ -797,9 +782,24 @@ BrowserWorld::SetTemporaryFilePath(const std::string& aPath) {
 void
 BrowserWorld::UpdateEnvironment() {
   ASSERT_ON_RENDER_THREAD();
-  std::string env = VRBrowser::GetActiveEnvironment();
-  VRB_LOG("Setting environment: %s", env.c_str());
-  CreateSkyBox(env, "");
+  std::string skyboxPath = VRBrowser::GetActiveEnvironment();
+  std::string extension;
+  if (VRBrowser::isOverrideEnvPathEnabled()) {
+    std::string storagePath = VRBrowser::GetStorageAbsolutePath(INJECT_SKYBOX_PATH);
+    if (std::ifstream(storagePath)) {
+      skyboxPath = storagePath;
+      extension = Skybox::ValidateCustomSkyboxAndFindFileExtension(storagePath);
+      if (!extension.empty()) {
+        skyboxPath = storagePath;
+        VRB_DEBUG("Found custom skybox file extension: %s", extension.c_str());
+      } else {
+        VRB_ERROR("Failed to find custom skybox files.");
+      }
+    }
+  }
+
+  VRB_LOG("Setting environment: %s", skyboxPath.c_str());
+  CreateSkyBox(skyboxPath, extension);
 }
 
 void
@@ -1330,14 +1330,14 @@ BrowserWorld::CreateSkyBox(const std::string& aBasePath, const std::string& aExt
   ASSERT_ON_RENDER_THREAD();
   const bool empty = aBasePath == "cubemap/void";
   const std::string extension = aExtension.empty() ? ".ktx" : aExtension;
-  const GLenum glFormat = extension == ".ktx" ? GL_COMPRESSED_RGB8_ETC2 : GL_RGB8;
+  const GLenum glFormat = extension == ".ktx" ? GL_COMPRESSED_RGB8_ETC2 : GL_RGBA8;
   const int32_t size = 1024;
   if (m.skybox && empty) {
     m.skybox->SetVisible(false);
     return;
   } else if (m.skybox) {
     m.skybox->SetVisible(true);
-    if (m.skybox->GetLayer() && m.skybox->GetLayer()->GetWidth() != size) {
+    if (m.skybox->GetLayer() && (m.skybox->GetLayer()->GetWidth() != size || m.skybox->GetLayer()->GetFormat() != glFormat)) {
       VRLayerCubePtr oldLayer = m.skybox->GetLayer();
       VRLayerCubePtr newLayer = m.device->CreateLayerCube(size, size, glFormat);
       m.skybox->SetLayer(newLayer);

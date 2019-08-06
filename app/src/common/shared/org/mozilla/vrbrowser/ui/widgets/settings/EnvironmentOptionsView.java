@@ -66,26 +66,28 @@ class EnvironmentOptionsView extends SettingsView {
         mBinding.envOverrideSwitch.setOnCheckedChangeListener(mEnvOverrideListener);
 
         SettingsStore.getInstance(getContext()).setEnvironmentOverrideEnabled(value);
+        mWidgetManager.updateEnvironment();
     }
 
     private OnClickListener mResetListener = (view) -> {
-        boolean restart = false;
+        boolean updated = false;
         if (mBinding.envOverrideSwitch.isChecked() != SettingsStore.ENV_OVERRIDE_DEFAULT) {
             setEnvOverride(SettingsStore.ENV_OVERRIDE_DEFAULT);
-            restart = true;
+            updated = true;
         }
 
         if (!mEnvironmentsRadio.getValueForId(mEnvironmentsRadio.getCheckedRadioButtonId()).equals(SettingsStore.ENV_DEFAULT)) {
             setEnv(mEnvironmentsRadio.getIdForValue(SettingsStore.ENV_DEFAULT), true);
+            updated = true;
         }
 
-        if (restart)
-            showRestartDialog();
+        if (updated) {
+            mWidgetManager.updateEnvironment();
+        }
     };
 
     private SwitchSetting.OnCheckedChangeListener mEnvOverrideListener = (compoundButton, value, doApply) -> {
         setEnvOverride(value);
-        showRestartDialog();
     };
 
     private ImageRadioGroupSetting.OnCheckedChangeListener mEnvsListener = (checkedId, doApply) -> {

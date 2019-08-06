@@ -150,12 +150,13 @@ typedef std::shared_ptr<VRLayerCube> VRLayerCubePtr;
 
 class VRLayerCube: public VRLayer {
 public:
-  static VRLayerCubePtr Create(const int32_t aWidth, const int32_t aHeight);
+  static VRLayerCubePtr Create(const int32_t aWidth, const int32_t aHeight, const GLuint aGLFormat);
 
   int32_t GetWidth() const;
   int32_t GetHeight() const;
   GLuint GetTextureHandle() const;
   bool IsLoaded() const;
+  GLuint GetFormat() const;
 
   void SetTextureHandle(uint32_t aTextureHandle);
   void SetLoaded(bool aReady);

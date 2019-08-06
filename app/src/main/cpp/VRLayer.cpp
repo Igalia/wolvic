@@ -372,19 +372,22 @@ struct VRLayerCube::State: public VRLayer::State {
   int32_t height;
   bool loaded;
   uint32_t textureHandle;
+  GLuint  glFormat;
   State():
       width(0),
       height(0),
       loaded(false),
-      textureHandle(0)
+      textureHandle(0),
+      glFormat(GL_RGBA8)
   {}
 };
 
 VRLayerCubePtr
-VRLayerCube::Create(const int32_t aWidth, const int32_t aHeight) {
+VRLayerCube::Create(const int32_t aWidth, const int32_t aHeight, const GLuint aGLFormat) {
   auto result = std::make_shared<vrb::ConcreteClass<VRLayerCube, VRLayerCube::State>>();
   result->m.width = aWidth;
   result->m.height = aHeight;
+  result->m.glFormat = aGLFormat;
   return result;
 }
 
@@ -411,6 +414,11 @@ VRLayerCube::GetTextureHandle() const {
 void
 VRLayerCube::SetTextureHandle(uint32_t aTextureHandle){
   m.textureHandle = aTextureHandle;
+}
+
+GLuint
+VRLayerCube::GetFormat() const {
+  return m.glFormat;
 }
 
 void
