@@ -1232,10 +1232,10 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
     }
 
     @Override
-    public void onFilePrompt(@NonNull GeckoSession session, String title, int type, String[] mimeTypes, @NonNull FileCallback callback) {
+    public void onFilePrompt(@NonNull GeckoSession session, String title, int type, String[] mimeTypes, int capture, @NonNull FileCallback callback) {
         if (session == mCurrentSession) {
             for (GeckoSession.PromptDelegate listener : mPromptListeners) {
-                listener.onFilePrompt(session, title, type, mimeTypes, callback);
+                listener.onFilePrompt(session, title, type, mimeTypes, capture, callback);
             }
         }
     }

@@ -464,8 +464,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 intent.getStringExtra(GeckoRuntime.EXTRA_MINIDUMP_PATH));
         Log.d(LOGTAG, "======> Extras File: " +
                 intent.getStringExtra(GeckoRuntime.EXTRA_EXTRAS_PATH));
-        Log.d(LOGTAG, "======> Dump Success: " +
-                intent.getBooleanExtra(GeckoRuntime.EXTRA_MINIDUMP_SUCCESS, false));
         Log.d(LOGTAG, "======> Fatal: " +
                 intent.getBooleanExtra(GeckoRuntime.EXTRA_CRASH_FATAL, false));
 
