@@ -651,8 +651,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 WindowWidget window = (WindowWidget) widget;
                 boolean focused = mWindows.getFocusedWindow() == window;
                 if (!focused && aPressed) {
-                    // Do not send hover events to not focused windows.
+                    // Focus the window when pressed
                     mWindows.focusWindow(window);
+                    // Discard first click.
+                    return;
                 } else if (!focused) {
                     // Do not send hover events to not focused windows.
                     widget = null;
