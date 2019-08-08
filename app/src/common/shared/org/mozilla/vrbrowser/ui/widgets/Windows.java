@@ -65,6 +65,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSessio
     public static final int MAX_WINDOWS = 3;
     private WindowWidget mFullscreenWindow;
     private WindowPlacement mPrevWindowPlacement;
+    private boolean mCurvedMode = false;
 
     public enum WindowPlacement{
         FRONT(0),
@@ -196,6 +197,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSessio
         updateMaxWindowScales();
         mWidgetManager.addWidget(newWindow);
         focusWindow(newWindow);
+        updateCurvedMode();
         updateViews();
         return newWindow;
     }
@@ -212,6 +214,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSessio
         newWindow.getPlacement().worldWidth = aState.worldWidth;
         newWindow.setRestored(true);
         placeWindow(newWindow, aState.placement);
+        updateCurvedMode();
 
         mWidgetManager.addWidget(newWindow);
         return newWindow;
@@ -354,6 +357,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSessio
             return;
         }
         mPrivateMode = true;
+        updateCurvedMode();
         for (WindowWidget window: mRegularWindows) {
             setWindowVisible(window, false);
         }
@@ -377,6 +381,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSessio
             return;
         }
         mPrivateMode = false;
+        updateCurvedMode();
         for (WindowWidget window: mRegularWindows) {
             setWindowVisible(window, true);
         }
@@ -494,6 +499,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSessio
         aWindow.getSessionStack().removeContentListener(this);
         aWindow.close();
         updateMaxWindowScales();
+        updateCurvedMode();
 
         if (aWindow.getSessionStack().isPrivateMode())
             TelemetryWrapper.openWindowsEvent(mPrivateWindows.size()+1, mPrivateWindows.size(), true);
@@ -509,7 +515,6 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSessio
     private void placeWindow(@NonNull WindowWidget aWindow, WindowPlacement aPosition) {
         WidgetPlacement placement = aWindow.getPlacement();
         aWindow.setWindowPlacement(aPosition);
-        boolean curved = SettingsStore.getInstance(mContext).getCylinderDensity() > 0;
         switch (aPosition) {
             case FRONT:
                 placement.anchorX = 0.5f;
@@ -529,7 +534,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSessio
                 placement.parentAnchorY = 0.0f;
                 placement.rotationAxisX = 0;
                 placement.rotationAxisZ = 0;
-                if (curved) {
+                if (mCurvedMode) {
                     placement.rotationAxisY = 0;
                     placement.rotation = 0;
                 } else {
@@ -547,7 +552,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSessio
                 placement.parentAnchorY = 0.0f;
                 placement.rotationAxisX = 0;
                 placement.rotationAxisZ = 0;
-                if (curved) {
+                if (mCurvedMode) {
                     placement.rotationAxisY = 0;
                     placement.rotation = 0;
                 } else {
@@ -558,6 +563,19 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSessio
                 placement.translationX = WidgetPlacement.dpDimension(mContext, R.dimen.multi_window_padding);
                 placement.translationY = 0.0f;
                 placement.translationZ = 0.0f;
+        }
+    }
+
+    public void updateCurvedMode() {
+        float density = SettingsStore.getInstance(mContext).getCylinderDensity();
+        boolean curved = getCurrentWindows().size() > 1 ||  density > 0;
+        if (curved != mCurvedMode) {
+            mCurvedMode = curved;
+            for (WindowWidget window: getCurrentWindows()) {
+                placeWindow(window, window.getWindowPlacement());
+            }
+            updateViews();
+            mWidgetManager.setCylinderDensity(curved ? SettingsStore.CYLINDER_DENSITY_ENABLED_DEFAULT : density);
         }
     }
 
@@ -619,12 +637,6 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSessio
         return window;
     }
 
-    public void onCurvedModeChanged() {
-        for (WindowWidget window: getCurrentWindows()) {
-            placeWindow(window, window.getWindowPlacement());
-        }
-        updateViews();
-    }
 
     // Tray Listener
     @Override

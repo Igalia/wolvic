@@ -237,7 +237,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         queueRunnable(() -> createOffscreenDisplay());
         final String tempPath = getCacheDir().getAbsolutePath();
         queueRunnable(() -> setTemporaryFilePath(tempPath));
-        setCylinderDensity(SettingsStore.getInstance(this).getCylinderDensity());
         updateFoveatedLevel();
 
         initializeWidgets();
@@ -1270,7 +1269,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     public void setCylinderDensity(final float aDensity) {
         queueRunnable(() -> setCylinderDensityNative(aDensity));
         if (mWindows != null) {
-            mWindows.onCurvedModeChanged();
+            mWindows.updateCurvedMode();
         }
     }
 
