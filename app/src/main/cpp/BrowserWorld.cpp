@@ -1181,20 +1181,13 @@ BrowserWorld::DrawWorld() {
   if (m.fadeAnimation) {
     m.fadeAnimation->UpdateAnimation();
   }
-  vrb::Vector headPosition = m.device->GetHeadTransform().GetTranslation();
-  vrb::Vector headDirection = m.device->GetHeadTransform().MultiplyDirection(vrb::Vector(0.0f, 0.0f, -1.0f));
+  const vrb::Vector headPosition = m.device->GetHeadTransform().GetTranslation();
   if (m.skybox) {
     m.skybox->SetTransform(vrb::Matrix::Translation(headPosition));
   }
   m.rootTransparent->SortNodes([=](const NodePtr& a, const NodePtr& b) {
-    float da = DistanceToPlane(a, headPosition, headDirection);
-    float db = DistanceToPlane(b, headPosition, headDirection);
-    if (da < 0.0f) {
-      da = std::numeric_limits<float>::max();
-    }
-    if (db < 0.0f) {
-      db = std::numeric_limits<float>::max();
-    }
+    float da = ComputeNormalizedZ(a);
+    float db = ComputeNormalizedZ(b);
     return da < db;
   });
   m.device->StartFrame();
@@ -1354,7 +1347,7 @@ BrowserWorld::CreateSkyBox(const std::string& aBasePath, const std::string& aExt
 }
 
 float
-BrowserWorld::DistanceToPlane(const vrb::NodePtr& aNode, const vrb::Vector& aPosition, const vrb::Vector& aDirection) const {
+BrowserWorld::ComputeNormalizedZ(const vrb::NodePtr& aNode) const {
   WidgetPtr target;
   bool pointer = false;
   for (const auto & widget: m.widgets) {
@@ -1374,21 +1367,34 @@ BrowserWorld::DistanceToPlane(const vrb::NodePtr& aNode, const vrb::Vector& aPos
   }
 
   if (!target) {
-    return -1.0f;
+    return 1.0f;
   }
-  vrb::Vector result;
+
+  const vrb::Vector headPosition = m.device->GetHeadTransform().GetTranslation();
+  const vrb::Vector headDirection = m.device->GetHeadTransform().MultiplyDirection(vrb::Vector(0.0f, 0.0f, -1.0f));
+
+  vrb::Vector hitPoint;
   vrb::Vector normal;
   bool inside = false;
-  float distance = -1.0f;
+  float distance;
   if (target->GetQuad()) {
-    target->GetQuad()->TestIntersection(aPosition, aDirection, result, normal, false, inside, distance);
+    target->GetQuad()->TestIntersection(headPosition, headDirection, hitPoint, normal, true, inside, distance);
   } else if (target->GetCylinder()) {
-    distance = target->GetCylinder()->DistanceToBackPlane(aPosition, aDirection);
+    target->GetCylinder()->TestIntersection(headPosition, headDirection, hitPoint, normal, true, inside, distance);
   }
+
+  const vrb::Matrix& projection = m.device->GetCamera(device::Eye::Left)->GetPerspective();
+  const vrb::Matrix& view = m.device->GetCamera(device::Eye::Left)->GetView();
+  vrb::Matrix viewProjection = projection.PostMultiply(view);
+
+  vrb::Vector ndc = viewProjection.MultiplyPosition(hitPoint);
+
+  float z = ndc.z();
+
   if (pointer) {
-    distance-= 0.001f;
+    z-= 0.001f;
   }
-  return distance;
+  return z;
 }
 
 } // namespace crow

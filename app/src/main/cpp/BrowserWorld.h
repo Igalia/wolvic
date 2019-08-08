@@ -72,7 +72,7 @@ protected:
   void DrawLoadingAnimation();
   void DrawSplashAnimation();
   void CreateSkyBox(const std::string& aBasePath, const std::string& aExtension);
-  float DistanceToPlane(const vrb::NodePtr& aNode, const vrb::Vector& aPosition, const vrb::Vector& aDirection) const;
+  float ComputeNormalizedZ(const vrb::NodePtr& aNode) const;
 private:
   State& m;
   BrowserWorld() = delete;
