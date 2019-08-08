@@ -124,6 +124,14 @@ struct OculusEyeSwapChain {
 class OculusLayer;
 typedef std::shared_ptr<OculusLayer> OculusLayerPtr;
 
+struct SurfaceChangedTarget {
+  OculusLayer * layer;
+  SurfaceChangedTarget(OculusLayer * aLayer): layer(aLayer) {};
+};
+
+typedef std::shared_ptr<SurfaceChangedTarget> SurfaceChangedTargetPtr;
+typedef std::weak_ptr<SurfaceChangedTarget> SurfaceChangedTargetWeakPtr;
+
 class OculusLayer {
 public:
   virtual void Init(JNIEnv * aEnv, vrb::RenderContextPtr& aContext) = 0;
@@ -135,10 +143,13 @@ public:
   virtual bool GetDrawInFront() const = 0;
   virtual void ClearRequestDraw() = 0;
   virtual bool IsComposited() const = 0;
+  virtual void SetComposited(bool aValue) = 0;
   virtual VRLayerPtr GetLayer() const = 0;
   virtual void Destroy() = 0;
   typedef std::function<void(const vrb::FBOPtr&, GLenum aTarget, bool aBound)> BindDelegate;
   virtual void SetBindDelegate(const BindDelegate& aDelegate) = 0;
+  virtual jobject GetSurface() const = 0;
+  virtual SurfaceChangedTargetPtr GetSurfaceChangedTarget() const = 0;
   virtual ~OculusLayer() {}
 };
 
@@ -147,13 +158,19 @@ class OculusLayerBase: public OculusLayer {
 public:
   ovrTextureSwapChain * swapChain = nullptr;
   bool composited = false;
+  SurfaceChangedTargetPtr surfaceChangedTarget;
   T layer;
   U ovrLayer;
 
   void Init(JNIEnv * aEnv, vrb::RenderContextPtr& aContext) override {
     layer->SetInitialized(true);
+    surfaceChangedTarget = std::make_shared<SurfaceChangedTarget>(this);
+    SurfaceChangedTargetWeakPtr weakTarget = surfaceChangedTarget;
     layer->NotifySurfaceChanged(VRLayer::SurfaceChange::Create, [=]() {
-      composited = true;
+      SurfaceChangedTargetPtr target = weakTarget.lock();
+      if (target) {
+        target->layer->SetComposited(true);
+      }
     });
   }
 
@@ -193,6 +210,10 @@ public:
     return composited;
   }
 
+  void SetComposited(bool aValue) override  {
+    composited = aValue;
+  }
+
   VRLayerPtr GetLayer() const override  {
     return layer;
   }
@@ -216,6 +237,14 @@ public:
   }
 
   void SetBindDelegate(const BindDelegate& aDelegate) override {}
+
+  jobject GetSurface() const override {
+    return nullptr;
+  }
+
+  SurfaceChangedTargetPtr GetSurfaceChangedTarget() const override {
+    return surfaceChangedTarget;
+  }
 
   virtual ~OculusLayerBase() {}
 };
@@ -290,12 +319,18 @@ public:
     });
   }
 
+  virtual jobject GetSurface() const override {
+    return surface;
+  }
+
 protected:
   void TakeSurface(const OculusLayerPtr& aSource) {
     this->swapChain = aSource->GetSwapChain();
-    VRLayerSurfacePtr sourceLayer = std::dynamic_pointer_cast<VRLayerSurface>(aSource->GetLayer());
-    if (sourceLayer) {
-      this->surface = sourceLayer->GetSurface();
+    this->surface = aSource->GetSurface();
+    this->surfaceChangedTarget = aSource->GetSurfaceChangedTarget();
+    if (this->surfaceChangedTarget) {
+      // Indicate that the first composite notification should be notified to this layer.
+      this->surfaceChangedTarget->layer = this;
     }
     this->composited = aSource->IsComposited();
     this->layer->SetInitialized(aSource->GetLayer()->IsInitialized());
