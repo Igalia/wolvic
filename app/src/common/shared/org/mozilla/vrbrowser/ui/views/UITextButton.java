@@ -102,6 +102,16 @@ public class UITextButton extends AppCompatButton implements CustomUIButton {
         }
     }
 
+    public void updateBackground(Drawable aRegularBackground, Drawable aPrivateBackground) {
+        mBackground = aRegularBackground;
+        mPrivateModeBackground = aPrivateBackground;
+        if (mState == State.PRIVATE) {
+            setBackground(mPrivateModeBackground);
+        } else {
+            setBackground(mBackground);
+        }
+    }
+
     public void setActiveMode(boolean isActive) {
         if (isActive) {
             setActive();

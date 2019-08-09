@@ -524,9 +524,30 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         if (mAttachedWindow != null) {
             maxScale = mAttachedWindow.getMaxWindowScale();
         }
-        mPreset3.setEnabled(maxScale >= 3.0f);
-        mPreset2.setEnabled(maxScale >= 2.0f);
+
+        mPreset3.setVisibility(maxScale >= 3.0f ? View.VISIBLE : View.GONE);
+        mPreset2.setVisibility(maxScale >= 2.0f ? View.VISIBLE : View.GONE);
         mPreset15.setVisibility(maxScale == 1.5f ? View.VISIBLE: View.GONE);
+
+        // Update visible presets
+        UITextButton[] presets = { mPreset3, mPreset2, mPreset15, mPreset1};
+        boolean fistVisible = true;
+        for (UITextButton preset: presets) {
+            if (fistVisible) {
+                if (preset.getVisibility() != View.VISIBLE) {
+                    continue;
+                }
+                fistVisible = false;
+                preset.updateBackground(getContext().getDrawable(R.drawable.fullscreen_button_first),
+                        getContext().getDrawable(R.drawable.fullscreen_button_private_first));
+            } else {
+                preset.updateBackground(getContext().getDrawable(R.drawable.fullscreen_button),
+                        getContext().getDrawable(R.drawable.fullscreen_button_private));
+            }
+        }
+
+        // Update preset styles
+
     }
 
 
