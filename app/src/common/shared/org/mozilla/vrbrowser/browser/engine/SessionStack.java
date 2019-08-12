@@ -436,7 +436,7 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
     }
 
     public void newSession() {
-        SessionSettings settings = new SessionSettings.Builder().build();
+        SessionSettings settings = new SessionSettings.Builder().withDefaultSettings(mContext).build();
         int id = createSession(settings);
         stackSession(id);
     }
