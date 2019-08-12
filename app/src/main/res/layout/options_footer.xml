@@ -11,7 +11,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="center">
 
         <View
@@ -24,7 +24,8 @@
             android:id="@+id/resetButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             app:buttonText="@string/developer_options_reset_button"
             app:description="@{description}"
             android:onClick="@{(view) ->  resetClickListener.onClick(view)}" />

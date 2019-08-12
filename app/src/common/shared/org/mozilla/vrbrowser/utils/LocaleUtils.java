@@ -48,22 +48,30 @@ public class LocaleUtils {
         return Locale.getDefault().toLanguageTag();
     }
 
-    public static HashMap<String, Language> getAllLanguages() {
+    private static HashMap<String, Language> getAllLanguages() {
         if (mLanguagesCache != null)
             return mLanguagesCache;
 
+        String currentLocale = getCurrentLocale();
         Locale[] locales = Locale.getAvailableLocales();
         mLanguagesCache = new HashMap<>();
         for(Locale temp : locales) {
             String languageId = temp.toLanguageTag();
             String displayName = temp.getDisplayName().substring(0, 1).toUpperCase() + temp.getDisplayName().substring(1);
-            if (languageId.equals(getCurrentLocale()))
-                displayName = "(Default) " + displayName;
-            Log.d("Locale", " [" + languageId +  "]");
-            mLanguagesCache.put(languageId, new Language(languageId, displayName + " [" + languageId + "]"));
+            Language locale = new Language(languageId, displayName + " [" + languageId + "]");
+            if (languageId.equals(currentLocale))
+                locale.setDefault(true);
+            mLanguagesCache.put(languageId, locale);
         }
 
         return mLanguagesCache;
+    }
+
+    public static void resetLanguages() {
+        String currentLocale = getCurrentLocale();
+        mLanguagesCache.values().stream().forEach((language) -> {
+            language.setPreferred(language.getId().equals(currentLocale));
+        });
     }
 
     public static Language getCurrentLocaleLanguage() {
@@ -83,8 +91,11 @@ public class LocaleUtils {
         HashMap<String, Language> languages = getAllLanguages();
         List<String> savedLanguages = SettingsStore.getInstance(aContext).getContentLocales();
         List<Language> preferredLanguages = new ArrayList<>();
-        for (String language : savedLanguages)
-            preferredLanguages.add(languages.get(language));
+        for (String language : savedLanguages) {
+            Language lang = languages.get(language);
+            lang.setPreferred(true);
+            preferredLanguages.add(lang);
+        }
 
         if (!savedLanguages.stream().anyMatch(str -> str.trim().equals(getCurrentLocale())))
             preferredLanguages.add(getCurrentLocaleLanguage());
@@ -92,13 +103,9 @@ public class LocaleUtils {
         return preferredLanguages;
     }
 
-    public static List<Language> getAvailableLanguages(@NonNull Context aContext) {
+    public static List<Language> getAvailableLanguages() {
         HashMap<String, Language> languages = getAllLanguages();
-        List<String> savedLanguages = SettingsStore.getInstance(aContext).getContentLocales();
         List<Language> availableLanguages = languages.values().stream()
-                .filter((language) ->
-                        !(language.getId().equals(getCurrentLocale()) ||
-                        savedLanguages.stream().anyMatch(str -> str.trim().equals(language.getId()))))
                 .sorted((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()))
                 .collect(Collectors.toList());
 

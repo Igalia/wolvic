@@ -41,13 +41,12 @@ class ContentLanguageOptionsView extends SettingsView {
         LayoutInflater inflater = LayoutInflater.from(aContext);
 
         // Preferred languages adapter
-        mPreferredAdapter = new LanguagesAdapter(mLanguageItemCallback);
-        mPreferredAdapter.setPreferred(LocaleUtils.getCurrentLocaleLanguage());
+        mPreferredAdapter = new LanguagesAdapter(mLanguageItemCallback, true);
         mPreferredAdapter.setLanguageList(LocaleUtils.getPreferredLanguages(getContext()));
 
         // Available languages adapter
-        mAvailableAdapter = new LanguagesAdapter(mLanguageItemCallback);
-        mAvailableAdapter.setLanguageList(LocaleUtils.getAvailableLanguages(getContext()));
+        mAvailableAdapter = new LanguagesAdapter(mLanguageItemCallback, false);
+        mAvailableAdapter.setLanguageList(LocaleUtils.getAvailableLanguages());
 
         // Inflate this data binding layout
         mBinding = DataBindingUtil.inflate(inflater, R.layout.options_language_content, this, true);
@@ -84,9 +83,17 @@ class ContentLanguageOptionsView extends SettingsView {
     private LanguageItemCallback mLanguageItemCallback = new LanguageItemCallback() {
 
         @Override
-        public void onClick(View view, Language language) {
-            mPreferredAdapter.onCLick(language);
-            mAvailableAdapter.onCLick(language);
+        public void onAdd(View view, Language language) {
+            mPreferredAdapter.onAdd(language);
+            mAvailableAdapter.onAdd(language);
+
+            saveCurrentLanguages();
+        }
+
+        @Override
+        public void onRemove(View view, Language language) {
+            mPreferredAdapter.onRemove(language);
+            mAvailableAdapter.onRemove(language);
 
             saveCurrentLanguages();
         }
@@ -116,7 +123,7 @@ class ContentLanguageOptionsView extends SettingsView {
     private void refreshLanguages() {
         ThreadUtils.postToUiThread(() -> {
             mPreferredAdapter.setLanguageList(LocaleUtils.getPreferredLanguages(getContext()));
-            mAvailableAdapter.setLanguageList(LocaleUtils.getAvailableLanguages(getContext()));
+            mAvailableAdapter.setLanguageList(LocaleUtils.getAvailableLanguages());
         });
     }
 
@@ -124,6 +131,7 @@ class ContentLanguageOptionsView extends SettingsView {
     protected boolean reset() {
         SettingsStore.getInstance(getContext()).setContentLocales(Arrays.asList(LocaleUtils.getSystemLocale()));
         SessionStore.get().setLocales(Arrays.asList(LocaleUtils.getSystemLocale()));
+        LocaleUtils.resetLanguages();
         refreshLanguages();
 
         return false;

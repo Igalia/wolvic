@@ -1,8 +1,10 @@
 package org.mozilla.vrbrowser.ui.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
@@ -10,13 +12,14 @@ import android.view.animation.AnimationUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
-import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.databinding.LanguageItemBinding;
 import org.mozilla.vrbrowser.ui.callbacks.LanguageItemCallback;
+import org.mozilla.vrbrowser.utils.ViewUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,56 +27,34 @@ import java.util.List;
 public class LanguagesAdapter extends RecyclerView.Adapter<LanguagesAdapter.LanguageViewHolder> {
 
     private List<Language> mLanguagesList;
-    private Language mDefaultLanguage;
     private boolean mIsPreferred;
 
     @Nullable
     private final LanguageItemCallback mLanguageItemCallback;
 
-    public LanguagesAdapter(@Nullable LanguageItemCallback clickCallback) {
+    public LanguagesAdapter(@Nullable LanguageItemCallback clickCallback, boolean isPreferred) {
         mLanguageItemCallback = clickCallback;
+        mIsPreferred = isPreferred;
 
         setHasStableIds(true);
     }
 
     public void setLanguageList(final List<Language> languagesList) {
-        if (mLanguagesList == null) {
-            mLanguagesList = languagesList;
-            notifyItemRangeInserted(0, languagesList.size());
-
-        } else {
-            DiffUtil.DiffResult result = DiffUtil.calculateDiff(new DiffUtil.Callback() {
-                @Override
-                public int getOldListSize() {
-                    return mLanguagesList.size();
-                }
-
-                @Override
-                public int getNewListSize() {
-                    return languagesList.size();
-                }
-
-                @Override
-                public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-                    return mLanguagesList.get(oldItemPosition).getId().equals(languagesList.get(newItemPosition).getId());
-                }
-
-                @Override
-                public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-                    Language newBookmark = languagesList.get(newItemPosition);
-                    Language oldBookmark = mLanguagesList.get(oldItemPosition);
-                    return newBookmark.getId().equals(oldBookmark.getId());
-                }
-            });
-
-            mLanguagesList = languagesList;
-            result.dispatchUpdatesTo(this);
-        }
+        // Ideally we would use the DiffTools here as we do in the Bookmarks adapter but as we are
+        // using elements from the shared local languages list from LocaleUtils and get get the
+        // preferred and available Language items from the global list, the diff is always void.
+        // We save some memory though.
+        mLanguagesList = languagesList;
+        notifyItemRangeInserted(0, languagesList.size());
+        notifyDataSetChanged();
     }
 
     public void addItem(Language language) {
         mLanguagesList.add(0, language);
-        notifyDataSetChanged();
+        notifyItemInserted(mLanguagesList.indexOf(language));
+        // This shouldn't be necessary but for some reason the last list item is not refreshed
+        // if we don't do a full refresh. Might be another RecyclerView bug.
+        ThreadUtils.postToUiThread(() -> notifyDataSetChanged());
     }
 
     public void addItemAlphabetical(Language language) {
@@ -85,14 +66,14 @@ public class LanguagesAdapter extends RecyclerView.Adapter<LanguagesAdapter.Lang
         }
 
         mLanguagesList.add(index, language);
-        notifyDataSetChanged();
+        notifyItemInserted(index);
     }
 
     public void removeItem(Language language) {
         int position = mLanguagesList.indexOf(language);
         if (position >= 0) {
             mLanguagesList.remove(position);
-            notifyDataSetChanged();
+            notifyItemRemoved(position);
         }
     }
 
@@ -101,7 +82,7 @@ public class LanguagesAdapter extends RecyclerView.Adapter<LanguagesAdapter.Lang
         if (position > 0) {
             Collections.swap(mLanguagesList, position, position - 1);
             view.startAnimation(AnimationUtils.loadAnimation(view.getContext(), R.anim.button_click_scale));
-            notifyDataSetChanged();
+            notifyItemRangeChanged(position - 1, 2);
         }
     }
 
@@ -110,25 +91,30 @@ public class LanguagesAdapter extends RecyclerView.Adapter<LanguagesAdapter.Lang
         if (position < mLanguagesList.size()-1) {
             Collections.swap(mLanguagesList, position, position + 1);
             view.startAnimation(AnimationUtils.loadAnimation(view.getContext(), R.anim.button_click_scale));
-            notifyDataSetChanged();
+            notifyItemRangeChanged(position, 2);
         }
     }
 
-    public void onCLick(Language language) {
-        if (mLanguagesList.indexOf(language) < 0) {
-            if (mIsPreferred)
-                addItem(language);
-            else
-                addItemAlphabetical(language);
+    public void onAdd(Language language) {
+        if (mIsPreferred) {
+            addItem(language);
 
         } else {
-            removeItem(language);
+            language.setPreferred(true);
         }
+
+        notifyDataSetChanged();
     }
 
-    public void setPreferred(Language language) {
-        mIsPreferred = true;
-        mDefaultLanguage = language;
+    public void onRemove(Language language) {
+        if (mIsPreferred) {
+            removeItem(language);
+
+        } else {
+            language.setPreferred(false);
+        }
+
+        notifyDataSetChanged();
     }
 
     public List<Language> getItems() {
@@ -140,19 +126,45 @@ public class LanguagesAdapter extends RecyclerView.Adapter<LanguagesAdapter.Lang
         LanguageItemBinding binding = DataBindingUtil
                 .inflate(LayoutInflater.from(parent.getContext()), R.layout.language_item,
                         parent, false);
-        binding.setCallback(mLanguageItemCallback);
         binding.setIsPreferred(mIsPreferred);
 
         return new LanguageViewHolder(binding);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onBindViewHolder(@NonNull LanguageViewHolder holder, int position) {
         Language language = mLanguagesList.get(position);
         holder.binding.setLanguage(language);
         holder.binding.setIsFirst(position == 0);
         holder.binding.setIsLast(position == mLanguagesList.size()-1);
-        holder.binding.setIsDefault(mIsPreferred ? language.equals(mDefaultLanguage) : false);
+        // We can't use duplicateParentState to change the state drawables of child views if they
+        // handling click events as when they get focus they stop propagating their own state changes
+        // so we use duplicateParentState but we handle the events here for add/remove/moveup/movedown.
+        holder.binding.layout.setOnTouchListener((v, event) -> {
+            if (event.getActionMasked() == MotionEvent.ACTION_UP) {
+                if (holder.binding.up.getVisibility() == View.VISIBLE &&
+                        ViewUtils.isInsideView(holder.binding.up, (int)event.getRawX(), (int)event.getRawY())) {
+                    mLanguageItemCallback.onMoveUp(holder.binding.up, language);
+
+                } else if (holder.binding.down.getVisibility() == View.VISIBLE &&
+                    ViewUtils.isInsideView(holder.binding.down, (int)event.getRawX(), (int)event.getRawY())) {
+                    mLanguageItemCallback.onMoveDown(holder.binding.down, language);
+
+                } else if (holder.binding.add.getVisibility() == View.VISIBLE &&
+                        ViewUtils.isInsideView(holder.binding.add, (int)event.getRawX(), (int)event.getRawY())) {
+                    if (!language.isDefault() && !language.isPreferred())
+                        mLanguageItemCallback.onAdd(holder.binding.add, language);
+
+                } else if (holder.binding.delete.getVisibility() == View.VISIBLE &&
+                        ViewUtils.isInsideView(holder.binding.delete, (int)event.getRawX(), (int)event.getRawY())) {
+                    if (!language.isDefault() && language.isPreferred())
+                        mLanguageItemCallback.onRemove(holder.binding.delete, language);
+                }
+
+            }
+            return false;
+        });
         holder.binding.executePendingBindings();
     }
 

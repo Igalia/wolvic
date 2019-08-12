@@ -15,6 +15,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.core.text.HtmlCompat;
 
+import org.jetbrains.annotations.NotNull;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 
 public class ViewUtils {
@@ -97,6 +98,20 @@ public class ViewUtils {
             return false;
 
         return parent.findViewById(view.getId()) != null;
+    }
+
+    public static boolean isInsideView(@NotNull View view, int rx, int ry) {
+        int[] location = new int[2];
+        view.getLocationOnScreen(location);
+        int x = location[0];
+        int y = location[1];
+        int w = view.getWidth();
+        int h = view.getHeight();
+
+        if (rx < x || rx > x + w || ry < y || ry > y + h) {
+            return false;
+        }
+        return true;
     }
 
 }

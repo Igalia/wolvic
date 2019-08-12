@@ -8,9 +8,7 @@
         android:layout_height="match_parent"
         android:background="@drawable/dialog_background"
         android:paddingStart="30dp"
-        android:paddingTop="10dp"
-        android:paddingEnd="30dp"
-        android:paddingBottom="10dp">
+        android:paddingEnd="30dp">
 
         <org.mozilla.vrbrowser.ui.widgets.settings.SettingsHeader
             android:id="@+id/header_layout"
@@ -46,7 +44,6 @@
                     style="@style/settingsText"
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginEnd="10dp"
                     android:layout_toStartOf="@+id/button"
                     android:gravity="center_vertical"
                     android:text="@string/language_options_preferred_languages"
@@ -54,6 +51,7 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/preferred_list"
                     style="@style/scrollbar"
+                    android:paddingEnd="15dp"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:contentDescription="@string/app_name"
@@ -64,6 +62,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:paddingStart="5dp"
                 android:orientation="vertical">
                 <TextView
                     android:layout_width="match_parent"
@@ -72,7 +71,6 @@
                     style="@style/settingsText"
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginEnd="10dp"
                     android:layout_toStartOf="@+id/button"
                     android:gravity="center_vertical"
                     android:text="@string/language_options_available_languages"
@@ -80,6 +78,7 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/available_list"
                     style="@style/scrollbar"
+                    android:paddingEnd="15dp"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:contentDescription="@string/app_name"
@@ -90,7 +89,7 @@
         <org.mozilla.vrbrowser.ui.widgets.settings.SettingsFooter
             android:id="@+id/footer_layout"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
             app:description="@string/display_language_options_reset"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

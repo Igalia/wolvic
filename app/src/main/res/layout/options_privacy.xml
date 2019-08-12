@@ -7,9 +7,7 @@
         android:layout_height="match_parent"
         android:background="@drawable/dialog_background"
         android:paddingStart="30dp"
-        android:paddingTop="10dp"
-        android:paddingEnd="30dp"
-        android:paddingBottom="10dp">
+        android:paddingEnd="30dp">
 
         <org.mozilla.vrbrowser.ui.widgets.settings.SettingsHeader
             android:id="@+id/header_layout"
@@ -152,7 +150,7 @@
         <org.mozilla.vrbrowser.ui.widgets.settings.SettingsFooter
             android:id="@+id/footer_layout"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
             app:description="@string/privacy_options_reset"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

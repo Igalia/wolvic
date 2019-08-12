@@ -200,6 +200,7 @@
     <!-- Language -->
     <dimen name="language_row_height">22dp</dimen>
     <dimen name="language_row_icon_size">20dp</dimen>
+    <dimen name="language_row_fade_size">120dp</dimen>
 
     <!-- Context Menu -->
     <dimen name="context_menu_row_width">360dp</dimen>
