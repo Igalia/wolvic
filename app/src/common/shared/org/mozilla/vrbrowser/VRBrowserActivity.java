@@ -48,6 +48,8 @@ import org.mozilla.vrbrowser.browser.engine.SessionStack;
 import org.mozilla.vrbrowser.crashreporting.CrashReporterService;
 import org.mozilla.vrbrowser.crashreporting.GlobalExceptionHandler;
 import org.mozilla.vrbrowser.geolocation.GeolocationWrapper;
+import org.mozilla.vrbrowser.ui.widgets.prompts.AlertPromptWidget;
+import org.mozilla.vrbrowser.ui.widgets.prompts.ConfirmPromptWidget;
 import org.mozilla.vrbrowser.utils.DeviceType;
 import org.mozilla.vrbrowser.input.MotionEventGenerator;
 import org.mozilla.vrbrowser.search.SearchEngineWrapper;
@@ -900,12 +902,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private void haltActivity(final int aReason) {
         runOnUiThread(() -> {
             if (mConnectionAvailable && mWindows.getFocusedWindow() != null) {
-                mWindows.getFocusedWindow().showAlert(getString(R.string.not_entitled_title), getString(R.string.not_entitled_message, getString(R.string.app_name)), new GeckoSession.PromptDelegate.AlertCallback() {
-                    @Override
-                    public void dismiss() {
-                        VRBrowserActivity.this.finish();
-                    }
-                });
+                mWindows.getFocusedWindow().showAlert(
+                        getString(R.string.not_entitled_title),
+                        getString(R.string.not_entitled_message, getString(R.string.app_name)),
+                        () -> VRBrowserActivity.this.finish());
             }
         });
     }
@@ -930,14 +930,19 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 return;
             }
             window.getSessionStack().loadUri("about:blank");
-            final String[] buttons = {getString(R.string.ok_button), null, getString(R.string.performance_unblock_page)};
-            window.showButtonPrompt(getString(R.string.performance_title), getString(R.string.performance_message), buttons, new GeckoSession.PromptDelegate.ButtonCallback() {
+            final String[] buttons = {getString(R.string.ok_button), getString(R.string.performance_unblock_page)};
+            window.showButtonPrompt(getString(R.string.performance_title), getString(R.string.performance_message), buttons, new ConfirmPromptWidget.ConfirmPromptDelegate() {
                 @Override
-                public void confirm(int button) {
-                    if (button == GeckoSession.PromptDelegate.BUTTON_TYPE_NEGATIVE) {
+                public void confirm(int index) {
+                    if (index == GeckoSession.PromptDelegate.ButtonPrompt.Type.NEGATIVE) {
                         mPoorPerformanceWhiteList.add(originalUrl);
                         window.getSessionStack().loadUri(originalUrl);
                     }
+                }
+
+                @Override
+                public void dismiss() {
+
                 }
             });
         });

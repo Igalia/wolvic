@@ -5,18 +5,20 @@ import android.text.method.ScrollingMovementMethod;
 import android.util.AttributeSet;
 import android.widget.Button;
 
-import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.ui.views.settings.SettingsEditText;
 
 public class TextPromptWidget extends PromptWidget {
 
+    public interface TextPromptDelegate extends PromptDelegate {
+        void confirm(String message);
+    }
+
     private AudioEngine mAudio;
     private SettingsEditText mPromptText;
     private Button mOkButton;
     private Button mCancelButton;
-    private GeckoSession.PromptDelegate.TextCallback mCallback;
 
     public TextPromptWidget(Context aContext) {
         super(aContext);
@@ -51,8 +53,8 @@ public class TextPromptWidget extends PromptWidget {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
 
-            if (mCallback != null) {
-                mCallback.confirm(mPromptText.getText().toString());
+            if (mPromptDelegate != null && mPromptDelegate instanceof TextPromptDelegate) {
+                ((TextPromptDelegate)mPromptDelegate).confirm(mPromptText.getText().toString());
             }
 
             hide(REMOVE_WIDGET);
@@ -66,19 +68,6 @@ public class TextPromptWidget extends PromptWidget {
 
             onDismiss();
         });
-    }
-
-    @Override
-    protected void onDismiss() {
-        hide(REMOVE_WIDGET);
-
-        if (mCallback != null) {
-            mCallback.dismiss();
-        }
-    }
-
-    public void setDelegate(GeckoSession.PromptDelegate.TextCallback delegate) {
-        mCallback = delegate;
     }
 
     public void setDefaultText(String text) {

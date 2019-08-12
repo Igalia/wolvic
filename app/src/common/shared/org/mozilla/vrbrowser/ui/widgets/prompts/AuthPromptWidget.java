@@ -7,8 +7,6 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import org.mozilla.geckoview.GeckoSession;
@@ -18,14 +16,17 @@ import org.mozilla.vrbrowser.ui.views.settings.SettingsEditText;
 
 public class AuthPromptWidget extends PromptWidget {
 
+    public interface AuthPromptDelegate extends PromptDelegate {
+        void confirm(String password);
+        void confirm(String username, String password);
+    }
+
     private AudioEngine mAudio;
     private SettingsEditText mUsernameText;
     private SettingsEditText mPasswordText;
     private TextView mUsernameTextLabel;
-    private TextView mPasswordTextLabel;
     private Button mOkButton;
     private Button mCancelButton;
-    private GeckoSession.PromptDelegate.AuthCallback mCallback;
 
     public AuthPromptWidget(Context aContext) {
         super(aContext);
@@ -57,7 +58,6 @@ public class AuthPromptWidget extends PromptWidget {
         mUsernameTextLabel = findViewById(R.id.authUsernameLabel);
         mPasswordText = findViewById(R.id.authPassword);
         mPasswordText.setShowSoftInputOnFocus(false);
-        mPasswordTextLabel = findViewById(R.id.authPasswordLabel);
 
         mOkButton = findViewById(R.id.positiveButton);
         mOkButton.setOnClickListener(view -> {
@@ -65,8 +65,11 @@ public class AuthPromptWidget extends PromptWidget {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
 
-            if (mCallback != null) {
-                mCallback.confirm(mUsernameText.getText().toString(), mPasswordText.getText().toString());
+            if (mPromptDelegate != null && mPromptDelegate instanceof  AuthPromptDelegate) {
+                if (mUsernameText.getVisibility() == VISIBLE)
+                    ((AuthPromptDelegate)mPromptDelegate).confirm(mUsernameText.getText().toString(), mPasswordText.getText().toString());
+                else
+                    ((AuthPromptDelegate)mPromptDelegate).confirm(mPasswordText.getText().toString());
             }
 
             hide(REMOVE_WIDGET);
@@ -91,28 +94,18 @@ public class AuthPromptWidget extends PromptWidget {
         });
     }
 
-    @Override
-    protected void onDismiss() {
-        hide(REMOVE_WIDGET);
-
-        if (mCallback != null) {
-            mCallback.dismiss();
-        }
-    }
-
-    public void setAuthOptions(GeckoSession.PromptDelegate.AuthOptions aOptions, GeckoSession.PromptDelegate.AuthCallback aCallback) {
+    public void setAuthOptions(GeckoSession.PromptDelegate.AuthPrompt.AuthOptions aOptions) {
         if (aOptions.username != null) {
             mUsernameText.setText(aOptions.username);
         }
         if (aOptions.password != null) {
             mPasswordText.setText(aOptions.password);
         }
-        if ((aOptions.flags & GeckoSession.PromptDelegate.AuthOptions.AUTH_FLAG_ONLY_PASSWORD) != 0) {
+        if ((aOptions.flags & GeckoSession.PromptDelegate.AuthPrompt.AuthOptions.Flags.ONLY_PASSWORD) != 0) {
             // Hide the username input if basic auth dialog only requests a password.
             mUsernameText.setVisibility(View.GONE);
             mUsernameTextLabel.setVisibility(View.GONE);
         }
-        mCallback = aCallback;
     }
 
     @Override

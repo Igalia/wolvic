@@ -65,7 +65,6 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
     private transient LinkedList<GeckoSession.ContentDelegate> mContentListeners;
     private transient LinkedList<SessionChangeListener> mSessionChangeListeners;
     private transient LinkedList<GeckoSession.TextInputDelegate> mTextInputListeners;
-    private transient LinkedList<GeckoSession.PromptDelegate> mPromptListeners;
     private transient LinkedList<VideoAvailabilityListener> mVideoAvailabilityListeners;
     private transient UserAgentOverride mUserAgentOverride;
 
@@ -73,6 +72,7 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
     private HashMap<Integer, SessionState> mSessions;
     private Deque<Integer> mSessionsStack;
     private transient GeckoSession.PermissionDelegate mPermissionDelegate;
+    private transient GeckoSession.PromptDelegate mPromptDelegate;
     private int mPreviousGeckoSessionId = NO_SESSION;
     private String mRegion;
     private transient Context mContext;
@@ -91,7 +91,6 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
         mContentListeners = new LinkedList<>();
         mSessionChangeListeners = new LinkedList<>();
         mTextInputListeners = new LinkedList<>();
-        mPromptListeners = new LinkedList<>();
         mVideoAvailabilityListeners = new LinkedList<>();
 
         if (mPrefs != null) {
@@ -201,6 +200,13 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
         }
     }
 
+    public void setPromptDelegate(GeckoSession.PromptDelegate aDelegate) {
+        mPromptDelegate = aDelegate;
+        for (HashMap.Entry<Integer, SessionState> entry : mSessions.entrySet()) {
+            entry.getValue().mSession.setPromptDelegate(aDelegate);
+        }
+    }
+
     public void addNavigationListener(GeckoSession.NavigationDelegate aListener) {
         mNavigationListeners.add(aListener);
         dumpState(mCurrentSession, aListener);
@@ -242,14 +248,6 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
 
     public void removeTextInputListener(GeckoSession.TextInputDelegate aListener) {
         mTextInputListeners.remove(aListener);
-    }
-
-    public void addPromptListener(GeckoSession.PromptDelegate aListener) {
-        mPromptListeners.add(aListener);
-    }
-
-    public void removePromptListener(GeckoSession.PromptDelegate aListener) {
-        mPromptListeners.remove(aListener);
     }
 
     public void addVideoAvailabilityListener(VideoAvailabilityListener aListener) {
@@ -300,10 +298,10 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
 
             state.mSession.setNavigationDelegate(this);
             state.mSession.setProgressDelegate(this);
-            state.mSession.setPromptDelegate(this);
             state.mSession.setContentDelegate(this);
             state.mSession.getTextInput().setDelegate(this);
             state.mSession.setPermissionDelegate(mPermissionDelegate);
+            state.mSession.setPromptDelegate(mPromptDelegate);
             state.mSession.setContentBlockingDelegate(this);
             state.mSession.setMediaDelegate(this);
             for (SessionChangeListener listener: mSessionChangeListeners) {
@@ -360,10 +358,10 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
         state.mSession.getSettings().setUserAgentMode(aSettings.getUserAgentMode());
         state.mSession.setNavigationDelegate(this);
         state.mSession.setProgressDelegate(this);
-        state.mSession.setPromptDelegate(this);
         state.mSession.setContentDelegate(this);
         state.mSession.getTextInput().setDelegate(this);
         state.mSession.setPermissionDelegate(mPermissionDelegate);
+        state.mSession.setPromptDelegate(mPromptDelegate);
         state.mSession.setContentBlockingDelegate(this);
         state.mSession.setMediaDelegate(this);
         for (SessionChangeListener listener: mSessionChangeListeners) {
@@ -1149,100 +1147,95 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
 
     @Override
     public void onContentBlocked(@NonNull final GeckoSession session, @NonNull final ContentBlocking.BlockEvent event) {
-        if ((event.categories & ContentBlocking.AT_AD) != 0) {
+        if ((event.getAntiTrackingCategory() & ContentBlocking.AntiTracking.AD) != 0) {
           Log.i(LOGTAG, "Blocking Ad: " + event.uri);
         }
 
-        if ((event.categories & ContentBlocking.AT_ANALYTIC) != 0) {
+        if ((event.getAntiTrackingCategory() & ContentBlocking.AntiTracking.ANALYTIC) != 0) {
             Log.i(LOGTAG, "Blocking Analytic: " + event.uri);
         }
 
-        if ((event.categories & ContentBlocking.AT_CONTENT) != 0) {
+        if ((event.getAntiTrackingCategory() & ContentBlocking.AntiTracking.CONTENT) != 0) {
             Log.i(LOGTAG, "Blocking Content: " + event.uri);
         }
 
-        if ((event.categories & ContentBlocking.AT_SOCIAL) != 0) {
+        if ((event.getAntiTrackingCategory() & ContentBlocking.AntiTracking.SOCIAL) != 0) {
             Log.i(LOGTAG, "Blocking Social: " + event.uri);
         }
     }
 
     // PromptDelegate
 
+    @Nullable
     @Override
-    public void onAlert(@NonNull GeckoSession session, String title, String msg, @NonNull AlertCallback callback) {
-        if (session == mCurrentSession) {
-            for (GeckoSession.PromptDelegate listener : mPromptListeners) {
-                listener.onAlert(session, title, msg, callback);
-            }
-        }
+    public GeckoResult<PromptResponse> onAlertPrompt(@NonNull GeckoSession geckoSession, @NonNull AlertPrompt alertPrompt) {
+        if (mPromptDelegate != null)
+            return mPromptDelegate.onAlertPrompt(geckoSession, alertPrompt);
+
+        return GeckoResult.fromValue(alertPrompt.dismiss());
     }
 
+    @Nullable
     @Override
-    public void onButtonPrompt(@NonNull GeckoSession session, String title, String msg, String[] btnMsg, @NonNull ButtonCallback callback) {
-        if (session == mCurrentSession) {
-            for (GeckoSession.PromptDelegate listener : mPromptListeners) {
-                listener.onButtonPrompt(session, title, msg, btnMsg, callback);
-            }
-        }
+    public GeckoResult<PromptResponse> onButtonPrompt(@NonNull GeckoSession geckoSession, @NonNull ButtonPrompt buttonPrompt) {
+        if (mPromptDelegate != null)
+            return mPromptDelegate.onButtonPrompt(geckoSession, buttonPrompt);
+
+        return GeckoResult.fromValue(buttonPrompt.dismiss());
     }
 
+    @Nullable
     @Override
-    public void onTextPrompt(@NonNull GeckoSession session, String title, String msg, String value, @NonNull TextCallback callback) {
-        if (session == mCurrentSession) {
-            for (GeckoSession.PromptDelegate listener : mPromptListeners) {
-                listener.onTextPrompt(session, title, msg, value, callback);
-            }
-        }
+    public GeckoResult<PromptResponse> onTextPrompt(@NonNull GeckoSession geckoSession, @NonNull TextPrompt textPrompt) {
+        if (mPromptDelegate != null)
+            return mPromptDelegate.onTextPrompt(geckoSession, textPrompt);
+
+        return GeckoResult.fromValue(textPrompt.dismiss());
     }
 
+    @Nullable
     @Override
-    public void onAuthPrompt(@NonNull GeckoSession session, String title, String msg, @NonNull AuthOptions options, @NonNull AuthCallback callback) {
-        if (session == mCurrentSession) {
-            for (GeckoSession.PromptDelegate listener : mPromptListeners) {
-                listener.onAuthPrompt(session, title, msg, options, callback);
-            }
-        }
+    public GeckoResult<PromptResponse> onAuthPrompt(@NonNull GeckoSession geckoSession, @NonNull AuthPrompt authPrompt) {
+        if (mPromptDelegate != null)
+            return mPromptDelegate.onAuthPrompt(geckoSession, authPrompt);
+
+        return GeckoResult.fromValue(authPrompt.dismiss());
     }
 
+    @Nullable
     @Override
-    public void onChoicePrompt(@NonNull GeckoSession session, String title, String msg, int type, @NonNull Choice[] choices, @NonNull ChoiceCallback callback) {
-        if (session == mCurrentSession) {
-            for (GeckoSession.PromptDelegate listener : mPromptListeners) {
-                listener.onChoicePrompt(session, title, msg, type, choices, callback);
-            }
-        }
+    public GeckoResult<PromptResponse> onChoicePrompt(@NonNull GeckoSession geckoSession, @NonNull ChoicePrompt choicePrompt) {
+        if (mPromptDelegate != null)
+            return mPromptDelegate.onChoicePrompt(geckoSession, choicePrompt);
+
+        return GeckoResult.fromValue(choicePrompt.dismiss());
     }
 
+    @Nullable
     @Override
-    public void onColorPrompt(@NonNull GeckoSession session, String title, String value, @NonNull TextCallback callback) {
-        if (session == mCurrentSession) {
-            for (GeckoSession.PromptDelegate listener : mPromptListeners) {
-                listener.onColorPrompt(session, title, value, callback);
-            }
-        }
+    public GeckoResult<PromptResponse> onColorPrompt(@NonNull GeckoSession geckoSession, @NonNull ColorPrompt colorPrompt) {
+        if (mPromptDelegate != null)
+            return mPromptDelegate.onColorPrompt(geckoSession, colorPrompt);
+
+        return GeckoResult.fromValue(colorPrompt.dismiss());
     }
 
+    @Nullable
     @Override
-    public void onDateTimePrompt(@NonNull GeckoSession session, String title, int type, String value, String min, String max, @NonNull TextCallback callback) {
-        if (session == mCurrentSession) {
-            for (GeckoSession.PromptDelegate listener : mPromptListeners) {
-                listener.onDateTimePrompt(session, title, type, value, min, max, callback);
-            }
-        }
+    public GeckoResult<PromptResponse> onDateTimePrompt(@NonNull GeckoSession geckoSession, @NonNull DateTimePrompt dateTimePrompt) {
+        if (mPromptDelegate != null)
+            return mPromptDelegate.onDateTimePrompt(geckoSession, dateTimePrompt);
+
+        return GeckoResult.fromValue(dateTimePrompt.dismiss());
     }
 
+    @Nullable
     @Override
-    public void onFilePrompt(@NonNull GeckoSession session, String title, int type, String[] mimeTypes, int capture, @NonNull FileCallback callback) {
-        if (session == mCurrentSession) {
-            for (GeckoSession.PromptDelegate listener : mPromptListeners) {
-                listener.onFilePrompt(session, title, type, mimeTypes, capture, callback);
-            }
-        }
-    }
+    public GeckoResult<PromptResponse> onFilePrompt(@NonNull GeckoSession geckoSession, @NonNull FilePrompt filePrompt) {
+        if (mPromptDelegate != null)
+            return mPromptDelegate.onFilePrompt(geckoSession, filePrompt);
 
-    @Override
-    public GeckoResult<AllowOrDeny> onPopupRequest(@NonNull final GeckoSession session, final String targetUri) {
-        return GeckoResult.fromValue(AllowOrDeny.DENY);
+        return GeckoResult.fromValue(filePrompt.dismiss());
     }
 
     // MediaDelegate

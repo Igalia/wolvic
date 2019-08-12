@@ -6,19 +6,20 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
 
-import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 
 public class ConfirmPromptWidget extends PromptWidget {
 
+    public interface ConfirmPromptDelegate extends PromptDelegate {
+        void confirm(int index);
+    }
+
     private static final int POSITIVE = 0;
-    private static final int NEUTRAL = 1;
-    private static final int NEGATIVE = 2;
+    private static final int NEGATIVE = 1;
 
     private AudioEngine mAudio;
     private Button[] mButtons;
-    private GeckoSession.PromptDelegate.ButtonCallback mCallback;
 
     public ConfirmPromptWidget(Context aContext) {
         super(aContext);
@@ -48,15 +49,11 @@ public class ConfirmPromptWidget extends PromptWidget {
         mMessage = findViewById(R.id.confirmMessage);
         mMessage.setMovementMethod(new ScrollingMovementMethod());
 
-        mButtons = new Button[3];
+        mButtons = new Button[2];
 
         mButtons[POSITIVE] = findViewById(R.id.positiveButton);
         mButtons[POSITIVE].setOnClickListener(mButtonClickListener);
         mButtons[POSITIVE].setVisibility(GONE);
-
-        mButtons[NEUTRAL] = findViewById(R.id.neutralButton);
-        mButtons[NEUTRAL].setOnClickListener(mButtonClickListener);
-        mButtons[NEUTRAL].setVisibility(GONE);
 
         mButtons[NEGATIVE] = findViewById(R.id.negativeButton);
         mButtons[NEGATIVE].setOnClickListener(mButtonClickListener);
@@ -70,39 +67,19 @@ public class ConfirmPromptWidget extends PromptWidget {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
 
-            if (mCallback != null) {
-                mCallback.confirm((int)view.getTag());
+            if (mPromptDelegate != null && mPromptDelegate instanceof ConfirmPromptDelegate) {
+                ((ConfirmPromptDelegate)mPromptDelegate).confirm((int)view.getTag());
             }
 
             hide(REMOVE_WIDGET);
         }
     };
 
-    @Override
-    protected void onDismiss() {
-        hide(REMOVE_WIDGET);
-
-        if (mCallback != null) {
-            mCallback.dismiss();
-        }
-    }
-
-    public void setDelegate(GeckoSession.PromptDelegate.ButtonCallback delegate) {
-        mCallback = delegate;
-    }
-
     public void setButtons(String[] btnMsg) {
-        // NOTE: For some reason Gecko handles positive and negative internally reversed.
-        // Returning 0 should be Ok but is in fact Cancel.
         if (btnMsg[POSITIVE] != null) {
             mButtons[POSITIVE].setText(btnMsg[POSITIVE]);
             mButtons[POSITIVE].setTag(POSITIVE);
             mButtons[POSITIVE].setVisibility(VISIBLE);
-        }
-        if (btnMsg[NEUTRAL] != null) {
-            mButtons[NEUTRAL].setText(btnMsg[NEUTRAL]);
-            mButtons[NEUTRAL].setTag(NEUTRAL);
-            mButtons[NEUTRAL].setVisibility(VISIBLE);
         }
         if (btnMsg[NEGATIVE] != null) {
             mButtons[NEGATIVE].setText(btnMsg[NEGATIVE]);

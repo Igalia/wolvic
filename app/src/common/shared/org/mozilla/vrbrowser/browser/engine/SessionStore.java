@@ -63,8 +63,8 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
 
             GeckoRuntimeSettings.Builder runtimeSettingsBuilder = new GeckoRuntimeSettings.Builder();
             runtimeSettingsBuilder.crashHandler(CrashReporterService.class);
-            runtimeSettingsBuilder.contentBlocking((new ContentBlocking.Settings.Builder())
-                    .categories(ContentBlocking.AT_AD | ContentBlocking.AT_SOCIAL | ContentBlocking.AT_ANALYTIC)
+            runtimeSettingsBuilder.contentBlocking((new ContentBlocking.Settings.Builder()
+                    .antiTracking(ContentBlocking.AntiTracking.AD | ContentBlocking.AntiTracking.SOCIAL| ContentBlocking.AntiTracking.ANALYTIC))
                     .build());
             runtimeSettingsBuilder.consoleOutput(SettingsStore.getInstance(context).isConsoleLogsEnabled());
             runtimeSettingsBuilder.displayDensityOverride(SettingsStore.getInstance(context).getDisplayDensity());

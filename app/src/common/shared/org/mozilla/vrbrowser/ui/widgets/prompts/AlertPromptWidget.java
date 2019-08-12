@@ -5,7 +5,6 @@ import android.text.method.ScrollingMovementMethod;
 import android.util.AttributeSet;
 import android.widget.Button;
 
-import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 
@@ -13,7 +12,6 @@ public class AlertPromptWidget extends PromptWidget {
 
     private AudioEngine mAudio;
     private Button mOkButton;
-    private GeckoSession.PromptDelegate.AlertCallback mCallback;
 
     public AlertPromptWidget(Context aContext) {
         super(aContext);
@@ -49,23 +47,6 @@ public class AlertPromptWidget extends PromptWidget {
 
             onDismiss();
         });
-    }
-
-    @Override
-    protected void onDismiss() {
-        hide(REMOVE_WIDGET);
-
-        if (mCallback != null) {
-            mCallback.dismiss();
-        }
-
-        if (mDelegate != null) {
-            mDelegate.onDismiss();
-        }
-    }
-
-    public void setDelegate(GeckoSession.PromptDelegate.AlertCallback delegate) {
-        mCallback = delegate;
     }
 
 }

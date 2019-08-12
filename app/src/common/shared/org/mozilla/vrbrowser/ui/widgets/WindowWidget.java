@@ -43,6 +43,7 @@ import org.mozilla.vrbrowser.ui.widgets.prompts.AlertPromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.AuthPromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.ChoicePromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.ConfirmPromptWidget;
+import org.mozilla.vrbrowser.ui.widgets.prompts.PromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.TextPromptWidget;
 import org.mozilla.vrbrowser.utils.InternalPages;
 
@@ -99,8 +100,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         mWindowId = windowId;
         mSessionStack = SessionStore.get().createSessionStack(mWindowId, privateMode);
+        mSessionStack.setPromptDelegate(this);
         mSessionStack.addSessionChangeListener(this);
-        mSessionStack.addPromptListener(this);
         mSessionStack.addContentListener(this);
         mSessionStack.addVideoAvailabilityListener(this);
         mSessionStack.addNavigationListener(this);
@@ -530,8 +531,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     @Override
     public void releaseWidget() {
+        mSessionStack.setPromptDelegate(null);
         mSessionStack.removeSessionChangeListener(this);
-        mSessionStack.removePromptListener(this);
         mSessionStack.removeContentListener(this);
         mSessionStack.removeVideoAvailabilityListener(this);
         mSessionStack.removeNavigationListener(this);
@@ -712,22 +713,22 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
     }
 
-    public void showAlert(String title, @NonNull String msg, @NonNull AlertCallback callback) {
+    public void showAlert(String title, @NonNull String msg, @NonNull PromptWidget.PromptDelegate callback) {
         mAlertPrompt = new AlertPromptWidget(getContext());
         mAlertPrompt.mWidgetPlacement.parentHandle = getHandle();
         mAlertPrompt.setTitle(title);
         mAlertPrompt.setMessage(msg);
-        mAlertPrompt.setDelegate(callback);
+        mAlertPrompt.setPromptDelegate(callback);
         mAlertPrompt.show(REQUEST_FOCUS);
     }
 
-    public void showButtonPrompt(String title, @NonNull String msg, @NonNull String[] btnMsg, @NonNull ButtonCallback callback) {
+    public void showButtonPrompt(String title, @NonNull String msg, @NonNull String[] btnMsg, @NonNull ConfirmPromptWidget.ConfirmPromptDelegate callback) {
         mConfirmPrompt = new ConfirmPromptWidget(getContext());
         mConfirmPrompt.mWidgetPlacement.parentHandle = getHandle();
         mConfirmPrompt.setTitle(title);
         mConfirmPrompt.setMessage(msg);
         mConfirmPrompt.setButtons(btnMsg);
-        mConfirmPrompt.setDelegate(callback);
+        mConfirmPrompt.setPromptDelegate(callback);
         mConfirmPrompt.show(REQUEST_FOCUS);
     }
 
@@ -797,63 +798,132 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     // PromptDelegate
 
+    @Nullable
     @Override
-    public void onAlert(GeckoSession session, String title, String msg, AlertCallback callback) {
+    public GeckoResult<PromptResponse> onAlertPrompt(@NonNull GeckoSession geckoSession, @NonNull AlertPrompt alertPrompt) {
+        final GeckoResult<PromptResponse> result = new GeckoResult<>();
+
         mAlertPrompt = new AlertPromptWidget(getContext());
         mAlertPrompt.mWidgetPlacement.parentHandle = getHandle();
-        mAlertPrompt.setTitle(title);
-        mAlertPrompt.setMessage(msg);
-        mAlertPrompt.setDelegate(callback);
+        mAlertPrompt.setTitle(alertPrompt.title);
+        mAlertPrompt.setMessage(alertPrompt.message);
+        mAlertPrompt.setPromptDelegate(() -> result.complete(alertPrompt.dismiss()));
         mAlertPrompt.show(REQUEST_FOCUS);
+
+        return result;
     }
 
+    @Nullable
     @Override
-    public void onButtonPrompt(GeckoSession session, String title, String msg, String[] btnMsg, ButtonCallback callback) {
+    public GeckoResult<PromptResponse> onButtonPrompt(@NonNull GeckoSession geckoSession, @NonNull ButtonPrompt buttonPrompt) {
+        final GeckoResult<PromptResponse> result = new GeckoResult<>();
+
         mConfirmPrompt = new ConfirmPromptWidget(getContext());
         mConfirmPrompt.mWidgetPlacement.parentHandle = getHandle();
-        mConfirmPrompt.setTitle(title);
-        mConfirmPrompt.setMessage(msg);
-        mConfirmPrompt.setButtons(btnMsg);
-        mConfirmPrompt.setDelegate(callback);
+        mConfirmPrompt.setTitle(buttonPrompt.title);
+        mConfirmPrompt.setMessage(buttonPrompt.message);
+        mConfirmPrompt.setButtons(new String[] {
+                getResources().getText(R.string.ok_button).toString(),
+                getResources().getText(R.string.cancel_button).toString()
+        });
+        mConfirmPrompt.setPromptDelegate(new ConfirmPromptWidget.ConfirmPromptDelegate() {
+            @Override
+            public void confirm(int index) {
+                result.complete(buttonPrompt.confirm(index));
+            }
+
+            @Override
+            public void dismiss() {
+                result.complete(buttonPrompt.dismiss());
+            }
+        });
         mConfirmPrompt.show(REQUEST_FOCUS);
+
+        return result;
     }
 
+    @Nullable
     @Override
-    public void onTextPrompt(GeckoSession session, String title, String msg, String value, TextCallback callback) {
+    public GeckoResult<PromptResponse> onTextPrompt(@NonNull GeckoSession geckoSession, @NonNull TextPrompt textPrompt) {
+        final GeckoResult<PromptResponse> result = new GeckoResult<>();
+
         mTextPrompt = new TextPromptWidget(getContext());
         mTextPrompt.mWidgetPlacement.parentHandle = getHandle();
-        mTextPrompt.setTitle(title);
-        mTextPrompt.setMessage(msg);
-        mTextPrompt.setDefaultText(value);
-        mTextPrompt.setDelegate(callback);
+        mTextPrompt.setTitle(textPrompt.title);
+        mTextPrompt.setMessage(textPrompt.message);
+        mTextPrompt.setDefaultText(textPrompt.defaultValue);
+        mTextPrompt.setPromptDelegate(new TextPromptWidget.TextPromptDelegate() {
+            @Override
+            public void confirm(String message) {
+                result.complete(textPrompt.confirm(message));
+            }
+
+            @Override
+            public void dismiss() {
+                result.complete(textPrompt.dismiss());
+            }
+        });
         mTextPrompt.show(REQUEST_FOCUS);
+
+        return result;
     }
 
+    @Nullable
     @Override
-    public void onAuthPrompt(GeckoSession session, String title, String msg, AuthOptions options, AuthCallback callback) {
+    public GeckoResult<PromptResponse> onAuthPrompt(@NonNull GeckoSession geckoSession, @NonNull AuthPrompt authPrompt) {
+        final GeckoResult<PromptResponse> result = new GeckoResult<>();
+
         mAuthPrompt = new AuthPromptWidget(getContext());
         mAuthPrompt.mWidgetPlacement.parentHandle = getHandle();
-        mAuthPrompt.setTitle(title);
-        mAuthPrompt.setMessage(msg);
-        mAuthPrompt.setAuthOptions(options, callback);
+        mAuthPrompt.setTitle(authPrompt.title);
+        mAuthPrompt.setMessage(authPrompt.message);
+        mAuthPrompt.setAuthOptions(authPrompt.authOptions);
+        mAuthPrompt.setPromptDelegate(new AuthPromptWidget.AuthPromptDelegate() {
+            @Override
+            public void dismiss() {
+                result.complete(authPrompt.dismiss());
+            }
+
+            @Override
+            public void confirm(String password) {
+                result.complete(authPrompt.confirm(password));
+            }
+
+            @Override
+            public void confirm(String username, String password) {
+                result.complete(authPrompt.confirm(username, password));
+            }
+        });
         mAuthPrompt.show(REQUEST_FOCUS);
+
+        return result;
     }
 
+    @Nullable
     @Override
-    public void onChoicePrompt(GeckoSession session, String title, String msg, int type, final Choice[] choices, final ChoiceCallback callback) {
+    public GeckoResult<PromptResponse> onChoicePrompt(@NonNull GeckoSession geckoSession, @NonNull ChoicePrompt choicePrompt) {
+        final GeckoResult<PromptResponse> result = new GeckoResult<>();
+
         mChoicePrompt = new ChoicePromptWidget(getContext());
         mChoicePrompt.mWidgetPlacement.parentHandle = getHandle();
-        mChoicePrompt.setTitle(title);
-        mChoicePrompt.setMessage(msg);
-        mChoicePrompt.setChoices(choices);
-        mChoicePrompt.setMenuType(type);
-        mChoicePrompt.setDelegate(callback);
-        mChoicePrompt.show(REQUEST_FOCUS);
-    }
+        mChoicePrompt.setTitle(choicePrompt.title);
+        mChoicePrompt.setMessage(choicePrompt.message);
+        mChoicePrompt.setChoices(choicePrompt.choices);
+        mChoicePrompt.setMenuType(choicePrompt.type);
+        mChoicePrompt.setPromptDelegate(new ChoicePromptWidget.ChoicePromptDelegate() {
+            @Override
+            public void confirm(String[] choices) {
+                result.complete(choicePrompt.confirm(choices));
+            }
 
-    @Override
-    public GeckoResult<AllowOrDeny> onPopupRequest(final GeckoSession session, final String targetUri) {
-        return GeckoResult.fromValue(AllowOrDeny.ALLOW);
+            @Override
+            public void dismiss() {
+
+            }
+        });
+        mChoicePrompt.show(REQUEST_FOCUS);
+
+        return result;
     }
 
     // GeckoSession.ContentDelegate

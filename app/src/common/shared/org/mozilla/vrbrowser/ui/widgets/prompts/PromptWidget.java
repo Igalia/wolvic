@@ -7,18 +7,24 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.UIDialog;
 
 public class PromptWidget extends UIDialog {
 
+    public interface PromptDelegate {
+        void dismiss();
+    }
+
     protected TextView mTitle;
     protected TextView mMessage;
     protected ViewGroup mLayout;
     private int mMaxHeight;
+    protected PromptDelegate mPromptDelegate;
 
     public PromptWidget(Context aContext) {
         super(aContext);
@@ -30,6 +36,10 @@ public class PromptWidget extends UIDialog {
 
     public PromptWidget(Context aContext, AttributeSet aAttrs, int aDefStyle) {
         super(aContext, aAttrs, aDefStyle);
+    }
+
+    public void setPromptDelegate(@NonNull PromptDelegate delegate) {
+        mPromptDelegate = delegate;
     }
 
     public void setTitle(String title) {
@@ -91,6 +101,19 @@ public class PromptWidget extends UIDialog {
     public void hide(@HideFlags int aHideFlags) {
         super.hide(aHideFlags);
         mWidgetManager.popWorldBrightness(this);
+    }
+
+    @Override
+    protected void onDismiss() {
+        hide(REMOVE_WIDGET);
+
+        if (mPromptDelegate != null) {
+            mPromptDelegate.dismiss();
+        }
+
+        if (mDelegate != null) {
+            mDelegate.onDismiss();
+        }
     }
 
     // WidgetManagerDelegate.FocusChangeListener

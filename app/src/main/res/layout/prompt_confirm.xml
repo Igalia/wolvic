@@ -71,20 +71,6 @@
                 android:textStyle="bold" />
 
             <Button
-                android:id="@+id/neutralButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/prompt_button_background"
-                android:fontFamily="sans-serif"
-                android:padding="10dp"
-                android:scaleType="fitCenter"
-                android:text="@string/ok_button"
-                android:textAllCaps="true"
-                android:textColor="@drawable/prompt_button_text_color"
-                android:textSize="10pt"
-                android:textStyle="bold" />
-
-            <Button
                 android:id="@+id/positiveButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
