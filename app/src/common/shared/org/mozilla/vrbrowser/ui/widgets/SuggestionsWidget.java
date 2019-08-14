@@ -202,7 +202,7 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
             View listItem = convertView;
 
             ItemViewHolder itemViewHolder;
-            if(listItem == null) {
+            if (listItem == null) {
                 listItem = LayoutInflater.from(getContext()).inflate(R.layout.list_popup_window_item, parent, false);
 
                 itemViewHolder = new ItemViewHolder();
@@ -253,22 +253,24 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
             }
 
             // Type related
-            if (selectedItem.type == SuggestionItem.Type.SUGGESTION)
+            if (selectedItem.type == SuggestionItem.Type.SUGGESTION) {
                 itemViewHolder.favicon.setImageResource(R.drawable.ic_icon_search);
-            else  if (selectedItem.type == SuggestionItem.Type.COMPLETION)
+            } else if (selectedItem.type == SuggestionItem.Type.COMPLETION) {
                 itemViewHolder.favicon.setImageResource(R.drawable.ic_icon_globe);
-            else  if (selectedItem.type == SuggestionItem.Type.HISTORY)
+            } else if(selectedItem.type ==SuggestionItem.Type.HISTORY) {
                 itemViewHolder.favicon.setImageResource(R.drawable.ic_icon_history);
-            else  if (selectedItem.type == SuggestionItem.Type.BOOKMARK)
+            } else if (selectedItem.type == SuggestionItem.Type.BOOKMARK) {
                 itemViewHolder.favicon.setImageResource(R.drawable.ic_icon_bookmark);
+            }
 
             itemViewHolder.delete.setVisibility(GONE);
             itemViewHolder.favicon.setVisibility(VISIBLE);
 
-            if (position == 0)
+            if (position == 0) {
                 itemViewHolder.divider.setVisibility(VISIBLE);
-            else
+            } else {
                 itemViewHolder.divider.setVisibility(GONE);
+            }
 
             return listItem;
         }
@@ -307,8 +309,9 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
 
         private OnTouchListener mTouchListener = (view, event) -> {
             int position = (int)view.getTag(R.string.position_tag);
-            if (!isEnabled(position))
+            if (!isEnabled(position)) {
                 return false;
+            }
 
             int ev = event.getActionMasked();
             switch (ev) {
@@ -327,8 +330,9 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
 
         private OnHoverListener mHoverListener = (view, motionEvent) -> {
             int position = (int)view.getTag(R.string.position_tag);
-            if (!isEnabled(position))
+            if (!isEnabled(position)) {
                 return false;
+            }
 
             View favicon = view.findViewById(R.id.favicon);
             TextView title = view.findViewById(R.id.title);

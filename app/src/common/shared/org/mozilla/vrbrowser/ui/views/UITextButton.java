@@ -131,8 +131,9 @@ public class UITextButton extends AppCompatButton implements CustomUIButton {
 
     private void setPrivate() {
         mState = State.PRIVATE;
-        if (mPrivateModeBackground != null)
+        if (mPrivateModeBackground != null) {
             setBackground(mPrivateModeBackground);
+        }
 
         if (mPrivateModeTintColorListRes != 0) {
             setTintColorList(mPrivateModeTintColorListRes);
@@ -141,8 +142,9 @@ public class UITextButton extends AppCompatButton implements CustomUIButton {
 
     private void setNormal() {
         mState = State.NORMAL;
-        if (mBackground != null)
+        if (mBackground != null) {
             setBackground(mBackground);
+        }
 
         if(mTintColorListRes != 0) {
             setTintColorList(mTintColorListRes);
@@ -151,8 +153,9 @@ public class UITextButton extends AppCompatButton implements CustomUIButton {
 
     private void setActive() {
         mState = State.ACTIVE;
-        if (mActiveModeBackground != null)
+        if (mActiveModeBackground != null) {
             setBackground(mActiveModeBackground);
+        }
 
         if (mActiveModeTintColorListRes != 0) {
             setTintColorList(mActiveModeTintColorListRes);

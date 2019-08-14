@@ -66,8 +66,7 @@ public class VolumeControl extends FrameLayout implements SeekBar.OnSeekBarChang
         mMuted = aMuted;
         if (mMuted && !mTouching) {
             mSeekBar.setProgress(0);
-        }
-        else if (!mMuted) {
+        } else if (!mMuted) {
             updateProgress();
         }
     }

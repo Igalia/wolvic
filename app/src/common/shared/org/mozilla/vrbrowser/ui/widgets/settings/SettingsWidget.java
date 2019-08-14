@@ -373,10 +373,11 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
     public void onDismiss() {
         if (mCurrentView != null) {
             if (!mCurrentView.isEditing()) {
-                if (isLanguagesSubView(mCurrentView))
+                if (isLanguagesSubView(mCurrentView)) {
                     showLanguageOptionsDialog();
-                else
+                } else {
                     showView(null);
+                }
             }
         } else {
             super.onDismiss();

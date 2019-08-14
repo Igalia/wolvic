@@ -299,8 +299,9 @@ public class ChoicePromptWidget extends PromptWidget {
 
         private OnHoverListener mHoverListener = (view, motionEvent) -> {
             int position = (int)view.getTag(R.string.position_tag);
-            if (!isEnabled(position))
+            if (!isEnabled(position)) {
                 return false;
+            }
 
             TextView label = view.findViewById(R.id.optionLabel);
             RadioButton check = view.findViewById(R.id.radioOption);

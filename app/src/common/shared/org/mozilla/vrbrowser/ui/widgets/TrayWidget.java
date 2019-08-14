@@ -89,8 +89,9 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Bookm
             }
 
             toggleSettingsDialog();
-            if (isDialogOpened(mSettingsDialogHandle))
+            if (isDialogOpened(mSettingsDialogHandle)) {
                 view.requestFocusFromTouch();
+            }
         });
 
         mBookmarksButton = findViewById(R.id.bookmarksButton);
@@ -263,8 +264,9 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Bookm
             mSessionStack.removeSessionChangeListener(this);
             mSessionStack = null;
         }
-        if (mAttachedWindow != null)
+        if (mAttachedWindow != null) {
             mAttachedWindow.removeBookmarksListener(this);
+        }
     }
 
     @Override
@@ -283,10 +285,11 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Bookm
             handleSessionState();
         }
 
-        if (mAttachedWindow.isBookmarksVisible())
+        if (mAttachedWindow.isBookmarksVisible()) {
             onBookmarksShown(aWindow);
-        else
+        } else {
             onBookmarksHidden(aWindow);
+        }
     }
 
     // SessionStack.SessionChangeListener

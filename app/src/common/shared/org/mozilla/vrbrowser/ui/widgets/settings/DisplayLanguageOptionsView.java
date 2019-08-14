@@ -71,8 +71,9 @@ class DisplayLanguageOptionsView extends SettingsView {
         String currentLocale = LocaleUtils.getCurrentLocale();
         String locale = mBinding.languageRadio.getValueForId(mBinding.languageRadio.getCheckedRadioButtonId()).toString();
 
-        if (!locale.equalsIgnoreCase(currentLocale))
+        if (!locale.equalsIgnoreCase(currentLocale)) {
             setLanguage(checkedId, true);
+        }
     };
 
     private OnClickListener mResetListener = (view) -> {
@@ -88,8 +89,9 @@ class DisplayLanguageOptionsView extends SettingsView {
             String language = mBinding.languageRadio.getValueForId(checkedId).toString();
             LocaleUtils.setDisplayLocale(getContext(), language);
 
-            if (mDelegate != null)
+            if (mDelegate != null) {
                 mDelegate.showRestartDialog();
+            }
         }
     }
 

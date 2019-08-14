@@ -747,25 +747,22 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
             boolean stateHovered = false;
             boolean statePressed = false;
             for (int state : drawableState) {
-                if (state == android.R.attr.state_hovered)
+                if (state == android.R.attr.state_hovered) {
                     stateHovered = true;
-                else if (state == android.R.attr.state_pressed)
+                } else if (state == android.R.attr.state_pressed) {
                     statePressed = true;
+                }
             }
             Drawable keyBackground = mKeyBackground;
             int columns = ((CustomKeyboard)mKeyboard).getMaxColums();
             if (mFeaturedKeyBackground != null && mFeaturedKeyCodes.contains(key.codes[0])) {
                 keyBackground = mFeaturedKeyBackground;
-
             } else if ((i == columns && i == keyCount - 1) && mKeySingleBackground != null) {
                 keyBackground = mKeySingleBackground;
-
             } else if ((i == 0 || i == columns) && mKeyCapStartBackground != null) {
                 keyBackground = mKeyCapStartBackground;
-
             } else if ((i == keyCount  - 1 || i == columns - 1)&& mKeyCapEndBackground != null) {
                 keyBackground = mKeyCapEndBackground;
-
             }
             keyBackground.setState(drawableState);
 
@@ -938,8 +935,9 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
                     }
                     code = key.codes[mTapCount];
 
-                    if (mKeyboardActionListener != null)
+                    if (mKeyboardActionListener != null) {
                         mKeyboardActionListener.onMultiTap(key);
+                    }
                 }
                 if (mKeyboardActionListener != null) {
                     mKeyboardActionListener.onKey(code, codes, hasPopup);
@@ -1218,8 +1216,9 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
         if (event.getAction() != MotionEvent.ACTION_HOVER_EXIT) {
             int touchX = (int) event.getX() - getPaddingLeft();
             int touchY = (int) event.getY() - getPaddingTop();
-            if (touchY >= -mVerticalCorrection)
+            if (touchY >= -mVerticalCorrection) {
                 touchY += mVerticalCorrection;
+            }
             keyIndex = getKeyIndices(touchX, touchY, null);
         }
 
@@ -1245,8 +1244,9 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
     private boolean onModifiedTouchEvent(MotionEvent me, boolean possiblePoly) {
         int touchX = (int) me.getX() - getPaddingLeft();
         int touchY = (int) me.getY() - getPaddingTop();
-        if (touchY >= -mVerticalCorrection)
+        if (touchY >= -mVerticalCorrection) {
             touchY += mVerticalCorrection;
+        }
         final int action = me.getAction();
         final long eventTime = me.getEventTime();
         int keyIndex = getKeyIndices(touchX, touchY, null);
@@ -1290,8 +1290,9 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
                 mDownTime = me.getEventTime();
                 mLastMoveTime = mDownTime;
                 checkMultiTap(eventTime, keyIndex);
-                if (mKeyboardActionListener != null)
+                if (mKeyboardActionListener != null) {
                     mKeyboardActionListener.onPress(keyIndex != NOT_A_KEY ? mKeys[keyIndex].codes[0] : 0);
+                }
                 if (mCurrentKey >= 0 && mKeys[mCurrentKey].repeatable) {
                     mRepeatKeyIndex = mCurrentKey;
                     Message msg = mHandler.obtainMessage(MSG_REPEAT);

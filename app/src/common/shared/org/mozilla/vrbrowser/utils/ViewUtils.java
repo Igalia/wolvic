@@ -67,8 +67,9 @@ public class ViewUtils {
     }
 
     public static UIWidget getParentWidget(@NonNull View view) {
-        if (view == null)
+        if (view == null) {
             return null;
+        }
 
         ViewParent v = view.getParent();
         if (v instanceof UIWidget) {
@@ -91,11 +92,13 @@ public class ViewUtils {
     }
 
     public static boolean isChildrenOf(@NonNull View parent, @NonNull View view) {
-        if (parent == null || view == null)
+        if (parent == null || view == null) {
             return false;
+        }
 
-        if (!(parent instanceof ViewGroup))
+        if (!(parent instanceof ViewGroup)) {
             return false;
+        }
 
         return parent.findViewById(view.getId()) != null;
     }

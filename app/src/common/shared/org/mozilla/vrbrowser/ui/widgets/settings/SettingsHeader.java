@@ -59,13 +59,15 @@ public class SettingsHeader extends FrameLayout {
             String description = attributes.getString(R.styleable.SettingsHeader_description);
             int helpVisibility = attributes.getInt(R.styleable.SettingsHeader_helpVisibility, VISIBLE);
 
-            if (title != null)
+            if (title != null) {
                 mBinding.setTitle(title);
+            }
 
-            if (description != null)
+            if (description != null) {
                 mBinding.setDescription(description);
-            else
+            } else {
                 mBinding.displayLanguageDescription.setVisibility(View.GONE);
+            }
 
             mBinding.setHelpVisibility(helpVisibility);
         }

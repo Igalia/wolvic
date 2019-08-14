@@ -149,8 +149,9 @@ public abstract class MenuWidget extends UIWidget {
         @Override
         public boolean onHover(View view, MotionEvent event) {
             int position = (int)view.getTag(R.string.position_tag);
-            if (!isEnabled(position))
+            if (!isEnabled(position)) {
                 return false;
+            }
 
             TextView label = view.findViewById(R.id.listItemText);
             ImageView image = view.findViewById(R.id.listItemImage);

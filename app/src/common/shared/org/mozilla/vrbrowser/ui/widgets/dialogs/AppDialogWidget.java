@@ -56,14 +56,16 @@ public class AppDialogWidget extends UIDialog {
         mBinding = DataBindingUtil.inflate(inflater, R.layout.app_dialog, this, true);
 
         mBinding.leftButton.setOnClickListener(v ->  {
-            if (mAppDialogDelegate != null)
+            if (mAppDialogDelegate != null) {
                 mAppDialogDelegate.onButtonClicked(LEFT);
+            }
 
             AppDialogWidget.this.onDismiss();
         });
         mBinding.rightButton.setOnClickListener(v -> {
-            if (mAppDialogDelegate != null)
+            if (mAppDialogDelegate != null) {
                 mAppDialogDelegate.onButtonClicked(RIGHT);
+            }
 
             AppDialogWidget.this.onDismiss();
         });
@@ -143,17 +145,21 @@ public class AppDialogWidget extends UIDialog {
     }
 
     public void setButtons(@StringRes int[] buttons) {
-        if (buttons.length > 0)
+        if (buttons.length > 0) {
             mBinding.leftButton.setText(buttons[LEFT]);
-        if (buttons.length > 1)
+        }
+        if (buttons.length > 1) {
             mBinding.rightButton.setText(buttons[RIGHT]);
+        }
     }
 
     public void setButtons(@NonNull String[] buttons) {
-        if (buttons.length > 0)
+        if (buttons.length > 0) {
             mBinding.leftButton.setText(buttons[LEFT]);
-        if (buttons.length > 1)
+        }
+        if (buttons.length > 1) {
             mBinding.rightButton.setText(buttons[RIGHT]);
+        }
     }
 
 }

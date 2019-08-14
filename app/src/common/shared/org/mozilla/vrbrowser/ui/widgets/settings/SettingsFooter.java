@@ -57,8 +57,9 @@ public class SettingsFooter extends FrameLayout {
         if (attributes != null) {
             String description = attributes.getString(R.styleable.SettingsFooter_description);
 
-            if (description != null)
+            if (description != null) {
                 mBinding.setDescription(description);
+            }
         }
     }
 

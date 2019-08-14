@@ -76,21 +76,24 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
 
     @TargetApi(Build.VERSION_CODES.O)
     public String getTooltip() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             return mTooltipText;
-        else
+        } else {
             return getTooltipText() == null ? null : getTooltipText().toString();
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.O)
     public void setTooltip(String text) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             mTooltipText = text;
-        else
+        } else {
             setTooltipText(text);
+        }
 
-        if (mTooltipView != null && mTooltipView.isVisible())
+        if (mTooltipView != null && mTooltipView.isVisible()) {
             mTooltipView.setText(text);
+        }
     }
 
     @Override
@@ -156,8 +159,9 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
 
     private void setPrivate() {
         mState = State.PRIVATE;
-        if (mPrivateModeBackground != null)
+        if (mPrivateModeBackground != null) {
             setBackground(mPrivateModeBackground);
+        }
 
         if (mPrivateModeTintColorListRes != 0) {
             setTintColorList(mPrivateModeTintColorListRes);
@@ -166,8 +170,9 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
 
     private void setNormal() {
         mState = State.NORMAL;
-        if (mBackground != null)
+        if (mBackground != null) {
             setBackground(mBackground);
+        }
 
         if(mTintColorListRes != 0) {
             setTintColorList(mTintColorListRes);
@@ -176,8 +181,9 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
 
     private void setActive() {
         mState = State.ACTIVE;
-        if (mActiveModeBackground != null)
+        if (mActiveModeBackground != null) {
             setBackground(mActiveModeBackground);
+        }
 
         if (mActiveModeTintColorListRes != 0) {
             setTintColorList(mActiveModeTintColorListRes);
@@ -187,8 +193,9 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
     private Runnable mShowTooltipRunnable = new Runnable() {
         @Override
         public void run() {
-            if (mTooltipView != null && mTooltipView.isVisible())
+            if (mTooltipView != null && mTooltipView.isVisible()) {
                 return;
+            }
 
             mTooltipView = new TooltipWidget(getContext());
             mTooltipView.setText(getTooltip());

@@ -278,8 +278,9 @@ class DisplayOptionsView extends SettingsView {
         setAutoplay(SettingsStore.AUTOPLAY_ENABLED, true);
         setCurvedDisplay(false, true);
 
-        if (restart)
+        if (restart) {
             showRestartDialog();
+        }
     };
 
     private void setCurvedDisplay(boolean value, boolean doApply) {

@@ -149,8 +149,9 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mBackButton.setOnClickListener(v -> {
             v.requestFocusFromTouch();
 
-            if (mSessionStack.canGoBack())
+            if (mSessionStack.canGoBack()) {
                 mSessionStack.goBack();
+            }
 
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.BACK);
@@ -384,8 +385,9 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             mSessionStack.removeContentListener(this);
             mSessionStack = null;
         }
-        if (mAttachedWindow != null)
+        if (mAttachedWindow != null) {
             mAttachedWindow.removeBookmarksListener(this);
+        }
         mAttachedWindow = null;
     }
 
@@ -576,8 +578,9 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mWidgetManager.setTrayVisible(!mIsInFullScreenMode);
         closeFloatingMenus();
 
-        if (aResizeAction == ResizeAction.KEEP_SIZE)
+        if (aResizeAction == ResizeAction.KEEP_SIZE) {
             TelemetryWrapper.windowsResizeEvent();
+        }
     }
 
     private void enterVRVideo(@VideoProjectionMenuWidget.VideoProjectionFlags int aProjection) {
@@ -740,8 +743,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         final GeckoResult<AllowOrDeny> result = new GeckoResult<>();
 
         Uri uri = Uri.parse(aRequest.uri);
-        if ("file".equalsIgnoreCase(uri.getScheme())
-                && !mWidgetManager.isPermissionGranted(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+        if ("file".equalsIgnoreCase(uri.getScheme()) &&
+                !mWidgetManager.isPermissionGranted(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
             mWidgetManager.requestPermission(
                     aRequest.uri,
                     android.Manifest.permission.READ_EXTERNAL_STORAGE,

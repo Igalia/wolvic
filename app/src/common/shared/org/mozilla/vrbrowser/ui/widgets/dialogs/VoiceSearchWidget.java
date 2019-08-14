@@ -187,8 +187,9 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
                         Log.d(LOGTAG, "===> STT_RESULT");
                         String transcription = ((STTResult)aPayload).mTranscription;
                         float confidence = ((STTResult)aPayload).mConfidence;
-                        if (mDelegate != null)
+                        if (mDelegate != null) {
                             mDelegate.OnVoiceSearchResult(transcription, confidence);
+                        }
                         hide(REMOVE_WIDGET);
                         break;
                     case START_LISTEN:
@@ -204,15 +205,17 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
                         // Handle when a cancelation was fully executed
                         Log.d(LOGTAG, "===> CANCELED");
                         setResultState();
-                        if (mDelegate != null)
+                        if (mDelegate != null) {
                             mDelegate.OnVoiceSearchCanceled();
+                        }
                         break;
                     case ERROR:
                         Log.d(LOGTAG, "===> ERROR: " + aPayload.toString());
                         setResultState();
                         // Handle when any error occurred
-                        if (mDelegate != null)
+                        if (mDelegate != null) {
                             mDelegate.OnVoiceSearchError();
+                        }
                         break;
                     default:
                         break;
@@ -222,16 +225,17 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
     };
 
     public void startVoiceSearch() {
-        if (ActivityCompat.checkSelfPermission(getContext().getApplicationContext(), Manifest.permission.RECORD_AUDIO)
-                != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(getContext().getApplicationContext(), Manifest.permission.RECORD_AUDIO) !=
+                PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions((Activity)getContext(), new String[]{Manifest.permission.RECORD_AUDIO},
                     VOICESEARCH_AUDIO_REQUEST_CODE);
         } else {
             String locale = LocaleUtils.getVoiceSearchLocale(getContext());
             mMozillaSpeechService.setLanguage(LocaleUtils.mapToMozillaSpeechLocales(locale));
             boolean storeData = SettingsStore.getInstance(getContext()).isSpeechDataCollectionEnabled();
-            if (SessionStore.get().getActiveStore().isPrivateMode())
+            if (SessionStore.get().getActiveStore().isPrivateMode()) {
                 storeData = false;
+            }
             mMozillaSpeechService.storeSamples(storeData);
             mMozillaSpeechService.storeTranscriptions(storeData);
             mMozillaSpeechService.start(getContext().getApplicationContext());

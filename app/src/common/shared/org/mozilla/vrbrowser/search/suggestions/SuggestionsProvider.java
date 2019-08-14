@@ -27,8 +27,9 @@ public class SuggestionsProvider {
 
             } else if (suggestion1.type == suggestion2.type) {
                 if (mFilterText != null) {
-                    if (suggestion1.title != null && suggestion2.title != null)
+                    if (suggestion1.title != null && suggestion2.title != null) {
                         return suggestion1.title.toLowerCase().indexOf(mFilterText) - suggestion2.title.toLowerCase().indexOf(mFilterText);
+                    }
                     return suggestion1.url.toLowerCase().indexOf(mFilterText) - suggestion2.url.indexOf(mFilterText);
 
                 } else {
@@ -85,8 +86,9 @@ public class SuggestionsProvider {
                             null,
                             Type.BOOKMARK
                     )));
-            if (mComparator != null)
+            if (mComparator != null) {
                 items.sort(mComparator);
+            }
             future.complete(items);
         });
 
@@ -105,8 +107,9 @@ public class SuggestionsProvider {
                             null,
                             Type.HISTORY
                     )));
-            if (mComparator != null)
+            if (mComparator != null) {
                 items.sort(mComparator);
+            }
             future.complete(items);
         });
 
@@ -145,8 +148,9 @@ public class SuggestionsProvider {
                         Type.SUGGESTION
                 ));
             });
-            if (mComparator != null)
+            if (mComparator != null) {
                 items.sort(mComparator);
+            }
             future.complete(items);
         });
 

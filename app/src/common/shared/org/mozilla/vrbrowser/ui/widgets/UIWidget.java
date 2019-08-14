@@ -310,8 +310,9 @@ public abstract class UIWidget extends FrameLayout implements Widget {
     @Override
     public boolean isVisible() {
         for (UIWidget child : mChildren.values()) {
-            if (child.isVisible())
+            if (child.isVisible()) {
                 return true;
+            }
         }
 
         return mWidgetPlacement.visible;

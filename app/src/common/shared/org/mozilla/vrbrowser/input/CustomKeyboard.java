@@ -72,8 +72,7 @@ public class CustomKeyboard extends Keyboard {
 
             final Key key = new Key(mRows[rowIndex]);
 
-            if (column >= maxColumns
-                    || x + mDefaultWidth + horizontalPadding > mDisplayWidth) {
+            if (column >= maxColumns || x + mDefaultWidth + horizontalPadding > mDisplayWidth) {
 
                 mRows[rowIndex].rowEdgeFlags = EDGE_BOTTOM;
 
@@ -103,8 +102,9 @@ public class CustomKeyboard extends Keyboard {
         }
 
         for (Row row : mRows) {
-            if (rows != null)
+            if (rows != null) {
                 rows.add(row);
+            }
         }
         setParentField(this, "mTotalHeight", y + mDefaultHeight);
     }

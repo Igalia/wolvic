@@ -66,10 +66,11 @@ public class AuthPromptWidget extends PromptWidget {
             }
 
             if (mPromptDelegate != null && mPromptDelegate instanceof  AuthPromptDelegate) {
-                if (mUsernameText.getVisibility() == VISIBLE)
-                    ((AuthPromptDelegate)mPromptDelegate).confirm(mUsernameText.getText().toString(), mPasswordText.getText().toString());
-                else
-                    ((AuthPromptDelegate)mPromptDelegate).confirm(mPasswordText.getText().toString());
+                if (mUsernameText.getVisibility() == VISIBLE) {
+                    ((AuthPromptDelegate) mPromptDelegate).confirm(mUsernameText.getText().toString(), mPasswordText.getText().toString());
+                } else {
+                    ((AuthPromptDelegate) mPromptDelegate).confirm(mPasswordText.getText().toString());
+                }
             }
 
             hide(REMOVE_WIDGET);

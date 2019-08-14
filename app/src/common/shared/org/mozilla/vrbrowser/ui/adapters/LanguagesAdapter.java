@@ -153,13 +153,15 @@ public class LanguagesAdapter extends RecyclerView.Adapter<LanguagesAdapter.Lang
 
                 } else if (holder.binding.add.getVisibility() == View.VISIBLE &&
                         ViewUtils.isInsideView(holder.binding.add, (int)event.getRawX(), (int)event.getRawY())) {
-                    if (!language.isDefault() && !language.isPreferred())
+                    if (!language.isDefault() && !language.isPreferred()) {
                         mLanguageItemCallback.onAdd(holder.binding.add, language);
+                    }
 
                 } else if (holder.binding.delete.getVisibility() == View.VISIBLE &&
                         ViewUtils.isInsideView(holder.binding.delete, (int)event.getRawX(), (int)event.getRawY())) {
-                    if (!language.isDefault() && language.isPreferred())
+                    if (!language.isDefault() && language.isPreferred()) {
                         mLanguageItemCallback.onRemove(holder.binding.delete, language);
+                    }
                 }
 
             }

@@ -291,14 +291,15 @@ public class NavigationURLBar extends FrameLayout {
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-            if (aURL.startsWith("jar:"))
+            if (aURL.startsWith("jar:")) {
                 return;
-            else if (aURL.startsWith("resource:") || mSessionStack.isHomeUri(aURL))
+            } else if (aURL.startsWith("resource:") || mSessionStack.isHomeUri(aURL)) {
                 aURL = "";
-            else if (aURL.startsWith("data:") && mSessionStack.isPrivateMode())
+            } else if (aURL.startsWith("data:") && mSessionStack.isPrivateMode()) {
                 aURL = "";
-            else
+            } else {
                 index = aURL.indexOf("://");
+            }
 
             // Update the URL bar only if the URL is different than the current one and
             // the URL bar is not focused to avoid override user input
@@ -413,8 +414,7 @@ public class NavigationURLBar extends FrameLayout {
             mLoadingView.setVisibility(mIsLoading ? View.VISIBLE : View.GONE);
             mInsecureIcon.setVisibility(!mIsLoading && mIsInsecure ? View.VISIBLE : View.GONE);
             leftPadding = mURLLeftContainer.getMeasuredWidth();
-        }
-        else {
+        } else {
             mURLLeftContainer.setVisibility(View.GONE);
             mLoadingView.setVisibility(View.GONE);
             mInsecureIcon.setVisibility(View.GONE);
@@ -469,10 +469,11 @@ public class NavigationURLBar extends FrameLayout {
     }
 
     public void setPrivateMode(boolean isEnabled) {
-        if (isEnabled)
+        if (isEnabled) {
             mURL.setBackground(getContext().getDrawable(R.drawable.url_background_private));
-        else
+        } else {
             mURL.setBackground(getContext().getDrawable(R.drawable.url_background));
+        }
     }
 
     @Override
@@ -487,8 +488,9 @@ public class NavigationURLBar extends FrameLayout {
         }
 
         view.requestFocusFromTouch();
-        if (mDelegate != null)
+        if (mDelegate != null) {
             mDelegate.OnVoiceSearchClicked();
+        }
 
         TelemetryWrapper.voiceInputEvent();
     };

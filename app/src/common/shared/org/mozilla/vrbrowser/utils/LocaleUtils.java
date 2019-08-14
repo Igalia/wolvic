@@ -49,8 +49,9 @@ public class LocaleUtils {
     }
 
     private static HashMap<String, Language> getAllLanguages() {
-        if (mLanguagesCache != null)
+        if (mLanguagesCache != null) {
             return mLanguagesCache;
+        }
 
         String currentLocale = getCurrentLocale();
         Locale[] locales = Locale.getAvailableLocales();
@@ -59,8 +60,9 @@ public class LocaleUtils {
             String languageId = temp.toLanguageTag();
             String displayName = temp.getDisplayName().substring(0, 1).toUpperCase() + temp.getDisplayName().substring(1);
             Language locale = new Language(languageId, displayName + " [" + languageId + "]");
-            if (languageId.equals(currentLocale))
+            if (languageId.equals(currentLocale)) {
                 locale.setDefault(true);
+            }
             mLanguagesCache.put(languageId, locale);
         }
 
@@ -97,8 +99,9 @@ public class LocaleUtils {
             preferredLanguages.add(lang);
         }
 
-        if (!savedLanguages.stream().anyMatch(str -> str.trim().equals(getCurrentLocale())))
+        if (!savedLanguages.stream().anyMatch(str -> str.trim().equals(getCurrentLocale()))) {
             preferredLanguages.add(getCurrentLocaleLanguage());
+        }
 
         return preferredLanguages;
     }
@@ -204,19 +207,21 @@ public class LocaleUtils {
     }
 
     public static String mapOldLocaleToNew(@NonNull String locale) {
-        if (locale.equalsIgnoreCase("cmn-Hant-TW"))
+        if (locale.equalsIgnoreCase("cmn-Hant-TW")) {
             locale = "zh-Hant-TW";
-        else if (locale.equalsIgnoreCase("cmn-Hans-CN"))
+        } else if (locale.equalsIgnoreCase("cmn-Hans-CN")) {
             locale = "zh-Hans-CN";
+        }
 
         return locale;
     }
 
     public static String mapToMozillaSpeechLocales(@NonNull String locale) {
-        if (locale.equalsIgnoreCase("zh-Hant-TW"))
+        if (locale.equalsIgnoreCase("zh-Hant-TW")) {
             locale = "cmn-Hant-TW";
-        else if (locale.equalsIgnoreCase("zh-Hans-CN"))
+        } else if (locale.equalsIgnoreCase("zh-Hans-CN")) {
             locale = "cmn-Hans-CN";
+        }
 
         return locale;
     }

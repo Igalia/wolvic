@@ -191,8 +191,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     public void loadHomeIfNotRestored() {
-        if (!mIsRestored)
+        if (!mIsRestored) {
             loadHome();
+        }
     }
 
     public void loadHome() {
@@ -336,13 +337,15 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     public void setWindowPlacement(@NonNull Windows.WindowPlacement aPlacement) {
-        if (mActive)
+        if (mActive) {
             TelemetryWrapper.activePlacementEvent(mWindowPlacement.getValue(), false);
+        }
 
         mWindowPlacement = aPlacement;
 
-        if (mActive)
+        if (mActive) {
             TelemetryWrapper.activePlacementEvent(mWindowPlacement.getValue(), true);
+        }
     }
 
     public @NonNull Windows.WindowPlacement getWindowPlacement() {
@@ -451,8 +454,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     private void callSurfaceChanged() {
-        if (mDisplay != null)
+        if (mDisplay != null) {
             mDisplay.surfaceChanged(mSurface, mBorderWidth, mBorderWidth, mWidth - mBorderWidth * 2, mHeight - mBorderWidth * 2);
+        }
     }
 
     @Override
@@ -611,10 +615,11 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         aSession.getTextInput().setView(this);
 
         boolean isPrivateMode  = aSession.getSettings().getUsePrivateMode();
-        if (isPrivateMode)
+        if (isPrivateMode) {
             setPrivateBrowsingEnabled(true);
-        else
+        } else {
             setPrivateBrowsingEnabled(false);
+        }
     }
 
     // View
@@ -965,17 +970,19 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     @Override
     public void onLocationChange(@NonNull GeckoSession session, @Nullable String url) {
-        if (isBookmarksVisible())
+        if (isBookmarksVisible()) {
             switchBookmarks();
+        }
     }
 
     @Nullable
     @Override
     public GeckoResult<AllowOrDeny> onLoadRequest(@NonNull GeckoSession session, @NonNull LoadRequest request) {
-        if (request.isRedirect)
+        if (request.isRedirect) {
             SessionStore.get().getHistoryStore().addHistory(request.uri, VisitType.EMBED);
-        else if (request.triggerUri != null)
+        } else if (request.triggerUri != null) {
             SessionStore.get().getHistoryStore().addHistory(request.uri, VisitType.LINK);
+        }
 
         return GeckoResult.ALLOW;
     }

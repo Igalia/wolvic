@@ -446,8 +446,9 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
 
     private void stackSession(int sessionId) {
         int currentSessionId = getCurrentSessionId();
-        if (currentSessionId != NO_SESSION)
+        if (currentSessionId != NO_SESSION) {
             pushSession(currentSessionId);
+        }
         setCurrentSession(sessionId);
 
         mCurrentSession = null;
@@ -524,8 +525,9 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
         }
         dumpAllState(mCurrentSession);
 
-        if (mCurrentSession != null)
+        if (mCurrentSession != null) {
             mCurrentSession.setActive(true);
+        }
     }
 
     public void setRegion(String aRegion) {
@@ -750,9 +752,9 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
     }
 
     public boolean isPrivateMode() {
-        if (mCurrentSession != null)
+        if (mCurrentSession != null) {
             return mCurrentSession.getSettings().getUsePrivateMode();
-
+        }
         return false;
     }
 
@@ -1169,72 +1171,72 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
     @Nullable
     @Override
     public GeckoResult<PromptResponse> onAlertPrompt(@NonNull GeckoSession geckoSession, @NonNull AlertPrompt alertPrompt) {
-        if (mPromptDelegate != null)
+        if (mPromptDelegate != null) {
             return mPromptDelegate.onAlertPrompt(geckoSession, alertPrompt);
-
+        }
         return GeckoResult.fromValue(alertPrompt.dismiss());
     }
 
     @Nullable
     @Override
     public GeckoResult<PromptResponse> onButtonPrompt(@NonNull GeckoSession geckoSession, @NonNull ButtonPrompt buttonPrompt) {
-        if (mPromptDelegate != null)
+        if (mPromptDelegate != null) {
             return mPromptDelegate.onButtonPrompt(geckoSession, buttonPrompt);
-
+        }
         return GeckoResult.fromValue(buttonPrompt.dismiss());
     }
 
     @Nullable
     @Override
     public GeckoResult<PromptResponse> onTextPrompt(@NonNull GeckoSession geckoSession, @NonNull TextPrompt textPrompt) {
-        if (mPromptDelegate != null)
+        if (mPromptDelegate != null) {
             return mPromptDelegate.onTextPrompt(geckoSession, textPrompt);
-
+        }
         return GeckoResult.fromValue(textPrompt.dismiss());
     }
 
     @Nullable
     @Override
     public GeckoResult<PromptResponse> onAuthPrompt(@NonNull GeckoSession geckoSession, @NonNull AuthPrompt authPrompt) {
-        if (mPromptDelegate != null)
+        if (mPromptDelegate != null) {
             return mPromptDelegate.onAuthPrompt(geckoSession, authPrompt);
-
+        }
         return GeckoResult.fromValue(authPrompt.dismiss());
     }
 
     @Nullable
     @Override
     public GeckoResult<PromptResponse> onChoicePrompt(@NonNull GeckoSession geckoSession, @NonNull ChoicePrompt choicePrompt) {
-        if (mPromptDelegate != null)
+        if (mPromptDelegate != null) {
             return mPromptDelegate.onChoicePrompt(geckoSession, choicePrompt);
-
+        }
         return GeckoResult.fromValue(choicePrompt.dismiss());
     }
 
     @Nullable
     @Override
     public GeckoResult<PromptResponse> onColorPrompt(@NonNull GeckoSession geckoSession, @NonNull ColorPrompt colorPrompt) {
-        if (mPromptDelegate != null)
+        if (mPromptDelegate != null) {
             return mPromptDelegate.onColorPrompt(geckoSession, colorPrompt);
-
+        }
         return GeckoResult.fromValue(colorPrompt.dismiss());
     }
 
     @Nullable
     @Override
     public GeckoResult<PromptResponse> onDateTimePrompt(@NonNull GeckoSession geckoSession, @NonNull DateTimePrompt dateTimePrompt) {
-        if (mPromptDelegate != null)
+        if (mPromptDelegate != null) {
             return mPromptDelegate.onDateTimePrompt(geckoSession, dateTimePrompt);
-
+        }
         return GeckoResult.fromValue(dateTimePrompt.dismiss());
     }
 
     @Nullable
     @Override
     public GeckoResult<PromptResponse> onFilePrompt(@NonNull GeckoSession geckoSession, @NonNull FilePrompt filePrompt) {
-        if (mPromptDelegate != null)
+        if (mPromptDelegate != null) {
             return mPromptDelegate.onFilePrompt(geckoSession, filePrompt);
-
+        }
         return GeckoResult.fromValue(filePrompt.dismiss());
     }
 

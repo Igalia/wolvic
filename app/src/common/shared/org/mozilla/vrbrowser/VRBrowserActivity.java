@@ -307,8 +307,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     protected void onStop() {
         super.onStop();
 
-        if (SettingsStore.getInstance(this).getCylinderDensity() > 0.0f)
+        if (SettingsStore.getInstance(this).getCylinderDensity() > 0.0f) {
             TelemetryWrapper.queueCurvedModeActiveEvent();
+        }
 
         TelemetryWrapper.stop();
 
@@ -1286,8 +1287,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Override
     public void openNewWindow(String uri) {
         WindowWidget newWindow = mWindows.addWindow();
-        if (newWindow != null)
+        if (newWindow != null) {
             newWindow.getSessionStack().newSessionWithUrl(uri);
+        }
     }
 
     @Override

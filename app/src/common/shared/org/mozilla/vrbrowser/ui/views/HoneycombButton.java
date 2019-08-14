@@ -82,8 +82,9 @@ public class HoneycombButton extends LinearLayout {
         setClickable(true);
 
         mIcon = findViewById(R.id.settings_button_icon);
-        if (mIcon != null)
+        if (mIcon != null) {
             mIcon.setImageDrawable(mButtonIcon);
+        }
 
         mText = findViewById(R.id.settings_button_text);
         if (mText != null) {
@@ -94,8 +95,9 @@ public class HoneycombButton extends LinearLayout {
         }
 
         mSecondaryText = findViewById(R.id.settings_secondary_text);
-        if (mSecondaryText != null)
+        if (mSecondaryText != null) {
             mSecondaryText.setText(mSecondaryButtonText);
+        }
 
         setOnHoverListener((view, motionEvent) -> false);
     }

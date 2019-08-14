@@ -286,8 +286,9 @@ public class TelemetryWrapper {
             return;
         }
 
-        if (uri == null)
+        if (uri == null) {
             return;
+        }
 
         try {
             URI uriLink = URI.create(uri);
@@ -546,8 +547,9 @@ public class TelemetryWrapper {
         for (long time : activePlacementTime)
             totalTime += time;
 
-        if (totalTime == 0)
+        if (totalTime == 0) {
             return;
+        }
 
         float[] pcts = new float[MAX_WINDOWS];
         for (int index = 0; index< MAX_WINDOWS; index++)
@@ -596,10 +598,12 @@ public class TelemetryWrapper {
         Log.d(LOGTAG, "\tPrivate: " + privateWM);
 
         for (int index = 0; index< MAX_WINDOWS; index++) {
-            if (openWindows[index] != 0)
+            if (openWindows[index] != 0) {
                 openWindows[index] = 1;
-            if (openPrivateWindows[index] != 0)
+            }
+            if (openPrivateWindows[index] != 0) {
                 openPrivateWindows[index] = 1;
+            }
         }
     }
 
@@ -622,8 +626,9 @@ public class TelemetryWrapper {
         for (long time : openPrivateWindowsTime)
             totalTime += time;
 
-        if (totalTime == 0)
+        if (totalTime == 0) {
             return;
+        }
 
         float[] pcts = new float[MAX_WINDOWS];
         for (int index = 0; index< MAX_WINDOWS; index++)

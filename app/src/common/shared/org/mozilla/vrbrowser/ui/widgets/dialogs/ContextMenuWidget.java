@@ -145,28 +145,31 @@ public class ContextMenuWidget extends UIWidget implements WidgetManagerDelegate
         float halfWidth = WidgetPlacement.convertPixelsToDp(getContext(), getWidth());
         float halfHeight = WidgetPlacement.convertPixelsToDp(getContext(), getHeight());
         if (mMousePos.x > (browserWindowWidth - halfWidth)) {
-            if (mMousePos.y < halfHeight)
+            if (mMousePos.y < halfHeight) {
                 // Top Right
                 return new PointF(1.0f, 1.0f);
-            else
+            } else {
                 // Middle/Bottom Right
                 return new PointF(1.0f, 0.0f);
+            }
 
         } else if (mMousePos.x < (browserWindowWidth + halfWidth)) {
-            if (mMousePos.y < halfHeight)
+            if (mMousePos.y < halfHeight) {
                 // Top Left
                 return new PointF(0.0f, 1.0f);
-            else
+            } else {
                 // Middle/Bottom Left
                 new PointF(0.0f, 0.0f);
+            }
 
         } else {
-            if (mMousePos.y < halfHeight)
+            if (mMousePos.y < halfHeight) {
                 // Top Middle
                 return new PointF(1.0f, 1.0f);
-            else if (mMousePos.y > (browserWindowHeight - halfHeight))
+            } else if (mMousePos.y > (browserWindowHeight - halfHeight)) {
                 // Bottom Middle
                 return new PointF(0.0f, 0.0f);
+            }
         }
 
         return new PointF(0.0f, 0.0f);

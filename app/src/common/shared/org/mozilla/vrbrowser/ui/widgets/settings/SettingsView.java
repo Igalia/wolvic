@@ -63,8 +63,9 @@ abstract class SettingsView extends FrameLayout {
     }
 
     public void onShown() {
-        if (mScrollbar != null)
+        if (mScrollbar != null) {
             mScrollbar.fullScroll(ScrollView.FOCUS_UP);
+        }
 
         setFocusableInTouchMode(true);
         requestFocusFromTouch();

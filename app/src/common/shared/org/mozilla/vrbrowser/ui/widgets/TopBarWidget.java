@@ -159,8 +159,7 @@ public class TopBarWidget extends UIWidget implements SessionChangeListener, Wid
 
         if (aIsVisible) {
             mWidgetManager.addWidget(this);
-        }
-        else {
+        } else {
             mWidgetManager.removeWidget(this);
         }
     }

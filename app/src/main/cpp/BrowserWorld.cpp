@@ -443,8 +443,7 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
         hitWidget->GetWorldSize(width, height);
         VRBrowser::HandleResize(hitWidget->GetHandle(), width, height);
       }
-    }
-    else if (hitWidget) {
+    } else if (hitWidget) {
       float theX = 0.0f, theY = 0.0f;
       hitWidget->ConvertToWidgetCoordinates(hitPoint, theX, theY);
       const uint32_t handle = hitWidget->GetHandle();
@@ -751,8 +750,7 @@ BrowserWorld::Draw() {
   m.CheckExitImmersive();
   if (m.splashAnimation) {
     DrawSplashAnimation();
-  }
-  else if (m.externalVR->IsPresenting()) {
+  } else if (m.externalVR->IsPresenting()) {
     m.CheckBackButton();
     DrawImmersive();
   } else {
@@ -814,8 +812,9 @@ BrowserWorld::UpdatePointerColor() {
   int32_t color = VRBrowser::GetPointerColor();
   VRB_LOG("Setting pointer color to: %d:", color);
 
-  if (m.controllers)
+  if (m.controllers) {
     m.controllers->SetPointerColor(vrb::Color(color));
+  }
 }
 
 void
