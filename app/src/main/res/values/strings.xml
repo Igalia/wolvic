@@ -831,10 +831,10 @@
     <!-- This string is displayed in the message of the notification message shown when the user tries to open a new window and
       it has already opened the maximum number of allowed windows. %1$s expands to a integer value that represent the maximum windows
       that can be opened (initially 3) -->
-    <string name="max_windows_message">You cannot have more than %1$s windows open at a time. Please close one before opening another.</string>
+    <string name="max_windows_message">Only 3 windows can be open. Close one to open another.</string>
     <!-- This string is displayed in the button of the notification message shown when the user tries to open a new window and
       it has already opened the maximum number of allowed windows. -->
-    <string name="max_windows_button">Exit</string>
+    <string name="max_windows_button">OK</string>
 
     <!-- This string is displayed in the title of the alert dialog shown when the user does not have permission to run the application on the device. -->
     <string name="not_entitled_title">Unable To Run</string>
@@ -847,18 +847,18 @@
     <!-- This string is displayed as the title of a dialog displayed when poor web page performance has been detected. -->
     <string name="performance_title">Poor Performance Detected</string>
     <!-- This string is displayed as the message body of a dialog displayed when poor web page performance has been detected and the page has been unloaded to restore performance. -->
-    <string name="performance_message">The current web page is affecting performance and has been suspended. Reducing the window size can help improve a web page with poor performance.</string>
+    <string name="performance_message">Try reducing the window size to improve performance. Unblocking this page may crash your app.</string>
 
     <!-- This string is displayed anywhere where we need to display the "Default" string by itself. -->
     <string name="tag_default">Default</string>
 
     <!-- This string is displayed in the title of the Voice Search samples collect dialog. That dialog is shown the first time
          a user tries to use the voice search. -->
-    <string name="voice_samples_collect_dialog_title">Allow Firefox to Collect Voice Samples?</string>
+    <string name="voice_samples_collect_dialog_title">Allow Firefox to Anonymously Collect Voice Samples?</string>
 
     <!-- This string is displayed in the description of the Voice Search samples collect dialog. That dialog is shown the first time
          a user tries to use the voice search. -->
-    <string name="voice_samples_collect_dialog_description">Please help Mozilla improve Firefox Reality. In order to improve our voice recognition services, we need to collect samples for research. Don’t worry, your data is protected and will always be anonymous. You can change your decision in SETTINGS. You can use Voice Search feature no matter what your decision is. &lt;a href="privacy">Learn More&lt;/a></string>
+    <string name="voice_samples_collect_dialog_description">Your data is always anonymous and protected under our Personal Data Promise. We collect voice samples to improve the experience and performance of our products. You can always use Voice Search and change your preference in settings. &lt;a href="privacy">Learn More&lt;/a></string>
 
     <!-- This string is displayed in the button of the Voice Search samples collect dialog.
          When clicked the user opts out from the voice data collection. -->
