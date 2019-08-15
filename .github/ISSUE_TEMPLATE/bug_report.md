@@ -7,8 +7,15 @@ assignees: ''
 
 ---
 
-## Hardware
+## Configuration
+
+<!--- State the version number and build ID affected. -->
+<!--- The build ID is obtained by clicking on the build date in settings. -->
+Firefox Reality version: 
+Firefox Reality build ID: 
+
 <!--- Include the name and version of the hardware/VR headset you experienced the bug in. -->
+Hardware: 
 
 ## Steps to Reproduce
 <!--- For bugs, please provide a link to a live web site, test page, or a rough set of -->
