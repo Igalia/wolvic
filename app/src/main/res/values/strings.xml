@@ -845,7 +845,7 @@
     <!-- This string is displayed in a button that when pressed allows a user to view a page that has been blocked from being displayed.-->
     <string name="performance_unblock_page">Unblock Page</string>
     <!-- This string is displayed as the title of a dialog displayed when poor web page performance has been detected. -->
-    <string name="performance_title">Poor Performance Detected</string>
+    <string name="performance_title">Poor Site Performance</string>
     <!-- This string is displayed as the message body of a dialog displayed when poor web page performance has been detected and the page has been unloaded to restore performance. -->
     <string name="performance_message">Try reducing the window size to improve performance. Unblocking this page may crash your app.</string>
 
@@ -858,7 +858,7 @@
 
     <!-- This string is displayed in the description of the Voice Search samples collect dialog. That dialog is shown the first time
          a user tries to use the voice search. -->
-    <string name="voice_samples_collect_dialog_description">Your data is always anonymous and protected under our Personal Data Promise. We collect voice samples to improve the experience and performance of our products. You can always use Voice Search and change your preference in settings. &lt;a href="privacy">Learn More&lt;/a></string>
+    <string name="voice_samples_collect_dialog_description">Your data is always anonymous and protected under our Personal Data Promise. We collect voice samples to improve the experience and performance of our products. You’ll always be able to use voice search, even if you don’t allow collection.&lt;a href="privacy">Learn More&lt;/a></string>
 
     <!-- This string is displayed in the button of the Voice Search samples collect dialog.
          When clicked the user opts out from the voice data collection. -->
