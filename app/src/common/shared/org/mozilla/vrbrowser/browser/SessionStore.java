@@ -770,6 +770,7 @@ public class SessionStore implements ContentBlocking.Delegate, GeckoSession.Navi
             String geckoLogLevel = BuildConfig.DEBUG ? "Debug" : "Fatal";
             out.write(("pref(\"geckoview.logging\", \"" + geckoLogLevel + "\");\n").getBytes());
             out.write(("pref(\"consoleservice.logcat\", false);\n").getBytes());
+            out.write(("pref(\"devtools.console.stdout.chrome\", false);\n").getBytes());
             // Uncomment this to enable WebRender. WARNING NOT READY FOR USAGE.
             // out.write("pref(\"gfx.webrender.all\", true);\n".getBytes());
             int msaa = SettingsStore.getInstance(aContext).getMSAALevel();
