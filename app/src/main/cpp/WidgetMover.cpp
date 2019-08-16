@@ -62,14 +62,19 @@ struct WidgetMover::State {
 
     vrb::Vector result = ProjectPoint(widget, hitPoint);
 
-    if (parentWidget && moveBehaviour == WidgetMoveBehaviour::KEYBOARD && widget->GetCylinder()) {
-      // For Cylindrical keyboard move we want to use the x translation from the parent widget (the window)
-      parentWidget->TestControllerIntersection(aStart, aDirection, hitPoint, hitNormal, false, isInWidget, hitDistance);
-      if (hitDistance >= 0) {
-        vrb::Vector point = ProjectPoint(parentWidget, hitPoint);
-        result.x() = point.x();
-        result.z() = point.z();
+    if (parentWidget && moveBehaviour == WidgetMoveBehaviour::KEYBOARD) {
+      if (widget->GetCylinder()) {
+        // For Cylindrical keyboard move we want to use the x translation from the parent widget (the window)
+        parentWidget->TestControllerIntersection(aStart, aDirection, hitPoint, hitNormal, false, isInWidget, hitDistance);
+        if (hitDistance >= 0) {
+          vrb::Vector point = ProjectPoint(parentWidget, hitPoint);
+          result.x() = point.x();
+          result.z() = point.z();
+        }
       }
+
+      // Convert the world point to a point relative to the window.
+      result = parentWidget->GetTransformNode()->GetWorldTransform().AfineInverse().MultiplyPosition(result);
     }
 
     return result;
@@ -150,10 +155,8 @@ WidgetMover::HandleMove(const vrb::Vector& aStart, const vrb::Vector& aDirection
 
   vrb::Vector delta = hitPoint - m.initialPoint;
   delta.y() = hitPoint.y() - m.initialPoint.y();
-  delta.x() = vrb::Vector(hitPoint.x() - m.initialPoint.x(), 0.0f, hitPoint.z() - m.initialPoint.z()).Magnitude();
-  if (hitPoint.x() < m.initialPoint.x()) {
-    delta.x() *= -1.0f;
-  }
+  delta.x() = hitPoint.x() - m.initialPoint.x();
+
 
   if (m.moveBehaviour == WidgetMoveBehaviour::KEYBOARD) {
     return m.HandleKeyboardMove(delta);
