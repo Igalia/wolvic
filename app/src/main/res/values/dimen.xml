@@ -5,7 +5,7 @@
     <!-- Browser window -->
     <dimen name="browser_width_pixels">800px</dimen>
     <item name="window_world_width" format="float" type="dimen">4.0</item>
-    <item name="window_world_y" format="float" type="dimen">0.5</item>
+    <item name="window_world_y" format="float" type="dimen">0.35</item>
     <item name="window_world_z" format="float" type="dimen">-4.2</item>
     <item name="multi_window_angle" format="float" type="dimen">60.0</item>
     <dimen name="multi_window_padding">10dp</dimen>
@@ -21,7 +21,7 @@
     <!-- Keyboard -->
     <item name="keyboard_world_width" format="float" type="dimen">3.25</item>
     <item name="keyboard_x" format="float" type="dimen">-0.15</item>
-    <item name="keyboard_y" format="float" type="dimen">-0.3</item>
+    <item name="keyboard_y" format="float" type="dimen">-0.45</item>
     <item name="keyboard_z" format="float" type="dimen">-2.5</item>
     <item name="keyboard_world_rotation" format="float" type="dimen">-35.0</item>
     <dimen name="keyboard_height">188dp</dimen>
@@ -119,7 +119,7 @@
     <dimen name="autocompletion_widget_item_padding">20dp</dimen>
 
     <!-- Tray -->
-    <item name="tray_world_y" format="float" type="dimen">0.4</item>
+    <item name="tray_world_y" format="float" type="dimen">0.25</item>
     <item name="tray_world_z" format="float" type="dimen">-2.5</item>
     <item name="tray_world_width" format="float" type="dimen">1.2</item>
     <dimen name="tray_width">206dp</dimen>
