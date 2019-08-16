@@ -72,6 +72,7 @@ public class SettingsStore {
     public final static int FOVEATED_WEBVR_DEFAULT_LEVEL = 0;
     private final static long CRASH_RESTART_DELTA = 2000;
     public final static boolean AUTOPLAY_ENABLED = false;
+    public final static boolean DEBUG_LOGGING_DEFAULT = false;
 
     // Enable telemetry by default (opt-out).
     public final static boolean CRASH_REPORTING_DEFAULT = false;
@@ -552,6 +553,16 @@ public class SettingsStore {
     public void setSpeechDataCollectionReviewed(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_speech_data_collection_reviewed), isEnabled);
+        editor.commit();
+    }
+
+    public boolean isDebugLogginEnabled() {
+        return mPrefs.getBoolean(mContext.getString(R.string.settings_key_debug_logging), DEBUG_LOGGING_DEFAULT);
+    }
+
+    public void setDebugLoggingEnabled(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_debug_logging), isEnabled);
         editor.commit();
     }
 }

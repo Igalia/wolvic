@@ -40,8 +40,6 @@ class SessionUtils {
             out.write("pref(\"media.webspeech.synth.enabled\", false);\n".getBytes());
             // Prevent autozoom when giving a form field focus.
             out.write("pref(\"formhelper.autozoom\", false);\n".getBytes());
-            String geckoLogLevel = BuildConfig.DEBUG ? "Debug" : "Warn";
-            out.write(("pref(\"geckoview.logging\", \"" + geckoLogLevel + "\");\n").getBytes());
             // Uncomment this to enable WebRender. WARNING NOT READY FOR USAGE.
             // out.write("pref(\"gfx.webrender.all\", true);\n".getBytes());
             int msaa = SettingsStore.getInstance(aContext).getMSAALevel();

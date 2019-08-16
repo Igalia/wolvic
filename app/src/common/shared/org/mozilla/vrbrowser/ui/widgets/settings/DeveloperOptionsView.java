@@ -11,6 +11,7 @@ import android.view.View;
 
 import androidx.databinding.DataBindingUtil;
 
+import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
@@ -56,6 +57,12 @@ class DeveloperOptionsView extends SettingsView {
         mBinding.performanceMonitorSwitch.setOnCheckedChangeListener(mPerformanceListener);
         setPerformance(SettingsStore.getInstance(getContext()).isPerformanceMonitorEnabled(), false);
 
+        if (BuildConfig.DEBUG) {
+            mBinding.debugLoggingSwitch.setVisibility(View.GONE);
+        } else {
+            setDebugLogging(SettingsStore.getInstance(getContext()).isDebugLogginEnabled(), false);
+        }
+
         if (!isServoAvailable()) {
             mBinding.servoSwitch.setVisibility(View.GONE);
 
@@ -81,6 +88,10 @@ class DeveloperOptionsView extends SettingsView {
         setPerformance(value, doApply);
     };
 
+    private SwitchSetting.OnCheckedChangeListener mDebugLogginListener = (compoundButton, value, doApply) -> {
+        setDebugLogging(value, doApply);
+    };
+
     private SwitchSetting.OnCheckedChangeListener mServoListener = (compoundButton, b, doApply) -> {
         setServo(b, true);
     };
@@ -89,7 +100,6 @@ class DeveloperOptionsView extends SettingsView {
         boolean restart = false;
         if (mBinding.remoteDebuggingSwitch.isChecked() != SettingsStore.REMOTE_DEBUGGING_DEFAULT) {
             setRemoteDebugging(SettingsStore.REMOTE_DEBUGGING_DEFAULT, true);
-            restart = true;
         }
 
         if (mBinding.showConsoleSwitch.isChecked() != SettingsStore.CONSOLE_LOGS_DEFAULT) {
@@ -106,7 +116,12 @@ class DeveloperOptionsView extends SettingsView {
             setPerformance(SettingsStore.PERFORMANCE_MONITOR_DEFAULT, true);
         }
 
-        if (restart && mDelegate != null) {
+        if (mBinding.debugLoggingSwitch.isChecked() != SettingsStore.DEBUG_LOGGING_DEFAULT) {
+            setDebugLogging(SettingsStore.DEBUG_LOGGING_DEFAULT, true);
+            restart = true;
+        }
+
+        if (restart) {
             showRestartDialog();
         }
     };
@@ -154,6 +169,17 @@ class DeveloperOptionsView extends SettingsView {
 
         if (doApply) {
             SettingsStore.getInstance(getContext()).setPerformanceMonitorEnabled(value);
+        }
+    }
+
+    private void setDebugLogging(boolean value, boolean doApply) {
+        mBinding.debugLoggingSwitch.setOnCheckedChangeListener(null);
+        mBinding.debugLoggingSwitch.setValue(value, false);
+        mBinding.debugLoggingSwitch.setOnCheckedChangeListener(mDebugLogginListener);
+
+        if (doApply) {
+            SettingsStore.getInstance(getContext()).setDebugLoggingEnabled(value);
+            showRestartDialog();
         }
     }
 
