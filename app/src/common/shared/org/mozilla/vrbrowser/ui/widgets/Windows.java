@@ -27,6 +27,8 @@ import java.util.ArrayList;
 
 public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSession.ContentDelegate {
 
+    private static final String LOGTAG = Windows.class.getSimpleName();
+
     private static final String WINDOWS_SAVE_FILENAME = "windows_state.json";
 
     class WindowState {
@@ -114,8 +116,11 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSessio
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             gson.toJson(state, writer);
 
+            Log.d(LOGTAG, "Windows state saved");
+
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(LOGTAG, "Error saving windows state: " + e.getLocalizedMessage());
+            file.delete();
         }
     }
 
@@ -128,16 +133,13 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSessio
             Type type = new TypeToken<WindowsState>() {}.getType();
             restored = gson.fromJson(reader, type);
 
+            Log.d(LOGTAG, "Windows state restored");
+
         } catch (IOException e) {
-            Log.w(getClass().getCanonicalName(), "Error restoring persistent windows state", e);
+            Log.w(LOGTAG, "Error restoring windows state: " + e.getLocalizedMessage());
 
         } finally {
-            boolean deleted = file.delete();
-            if (deleted) {
-                Log.d(getClass().getCanonicalName(), "Persistent windows state successfully restored");
-            } else {
-                Log.d(getClass().getCanonicalName(), "Persistent window state couldn't be deleted");
-            }
+            file.delete();
         }
 
         return restored;
@@ -203,7 +205,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSessio
         return newWindow;
     }
 
-    private WindowWidget addWindow(WindowState aState) {
+    private WindowWidget addWindow(@NonNull WindowState aState) {
         if (getCurrentWindows().size() >= MAX_WINDOWS) {
             showMaxWindowsMessage();
             return null;
@@ -337,7 +339,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSessio
         }
     }
 
-    public void onStop() {
+    public void onPause() {
         saveState();
     }
 
@@ -377,6 +379,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSessio
         } else {
             focusWindow(getFrontWindow());
         }
+        updateViews();
         mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
     }
 
@@ -393,6 +396,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSessio
             setWindowVisible(window, false);
         }
         focusWindow(getFrontWindow());
+        updateViews();
         mWidgetManager.popWorldBrightness(this);
     }
 
@@ -460,6 +464,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSessio
     private void restoreWindows() {
         WindowsState windowsState = restoreState();
         if (windowsState != null) {
+            mPrivateMode = false;
             for (WindowState windowState : windowsState.regularWindowsState) {
                 WindowWidget window = addWindow(windowState);
                 window.getSessionStack().restore(windowState.sessionStack, windowState.currentSessionId);
@@ -469,9 +474,11 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSessio
                 WindowWidget window = addWindow(windowState);
                 window.getSessionStack().restore(windowState.sessionStack, windowState.currentSessionId);
             }
-            mPrivateMode = false;
+            mPrivateMode = !windowsState.privateMode;
             if (windowsState.privateMode) {
                 enterPrivateMode();
+            } else {
+                exitPrivateMode();
             }
 
             WindowWidget windowToFocus = getWindowWithPlacement(windowsState.focusedWindowPlacement);
@@ -505,7 +512,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSessio
         updateMaxWindowScales();
         updateCurvedMode();
 
-        if (aWindow.getSessionStack().isPrivateMode()) {
+        if (mPrivateMode) {
             TelemetryWrapper.openWindowsEvent(mPrivateWindows.size() + 1, mPrivateWindows.size(), true);
         } else {
             TelemetryWrapper.openWindowsEvent(mRegularWindows.size() + 1, mRegularWindows.size(), false);
@@ -622,8 +629,10 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSessio
             }
         }
         if (isInPrivateMode() && mPrivateWindows.size() == 1) {
-            mFocusedWindow.getTopBar().setMoveLeftButtonEnabled(false);
-            mFocusedWindow.getTopBar().setMoveRightButtonEnabled(false);
+            if (mFocusedWindow != null) {
+                mFocusedWindow.getTopBar().setMoveLeftButtonEnabled(false);
+                mFocusedWindow.getTopBar().setMoveRightButtonEnabled(false);
+            }
         }
     }
 

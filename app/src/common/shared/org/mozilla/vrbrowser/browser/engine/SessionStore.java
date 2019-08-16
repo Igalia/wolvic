@@ -220,9 +220,7 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
 
     public boolean getAutoplayEnabled() {
         if (mRuntime != null) {
-            return mRuntime.getSettings().getAutoplayDefault() == GeckoRuntimeSettings.AUTOPLAY_DEFAULT_ALLOWED ?
-                    true :
-                    false;
+            return mRuntime.getSettings().getAutoplayDefault() == GeckoRuntimeSettings.AUTOPLAY_DEFAULT_ALLOWED;
         }
 
         return false;

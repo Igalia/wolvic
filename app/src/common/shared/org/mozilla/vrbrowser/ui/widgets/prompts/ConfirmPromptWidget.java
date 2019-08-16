@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
 
+import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 
@@ -78,12 +79,12 @@ public class ConfirmPromptWidget extends PromptWidget {
     public void setButtons(String[] btnMsg) {
         if (btnMsg[POSITIVE] != null) {
             mButtons[POSITIVE].setText(btnMsg[POSITIVE]);
-            mButtons[POSITIVE].setTag(POSITIVE);
+            mButtons[POSITIVE].setTag(GeckoSession.PromptDelegate.ButtonPrompt.Type.POSITIVE);
             mButtons[POSITIVE].setVisibility(VISIBLE);
         }
         if (btnMsg[NEGATIVE] != null) {
             mButtons[NEGATIVE].setText(btnMsg[NEGATIVE]);
-            mButtons[NEGATIVE].setTag(NEGATIVE);
+            mButtons[NEGATIVE].setTag(GeckoSession.PromptDelegate.ButtonPrompt.Type.NEGATIVE);
             mButtons[NEGATIVE].setVisibility(VISIBLE);
         }
     }

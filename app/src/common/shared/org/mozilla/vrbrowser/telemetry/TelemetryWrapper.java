@@ -453,13 +453,15 @@ public class TelemetryWrapper {
 
     public static void openWindowsEvent(int from, int to, boolean isPrivate) {
         if (isPrivate) {
-            openPrivateWindows[to-1]++;
-
             if (from > 0) {
                 openPrivateWindowsTime[from-1] += SystemClock.elapsedRealtime() - openPrivateWindowsStartTime[from-1];
                 openPrivateWindowsStartTime[from-1] = 0;
             }
-            openPrivateWindowsStartTime[to-1] = SystemClock.elapsedRealtime();
+
+            if (to > 0) {
+                openPrivateWindows[to-1]++;
+                openPrivateWindowsStartTime[to-1] = SystemClock.elapsedRealtime();
+            }
 
             Log.d(LOGTAG, "Placements times (private):");
             Log.d(LOGTAG, "\tONE: " + openPrivateWindowsTime[WindowPlacement.FRONT.getValue()]);
@@ -472,13 +474,15 @@ public class TelemetryWrapper {
             Log.d(LOGTAG, "\tRIGHT: " + openPrivateWindows[WindowPlacement.RIGHT.getValue()]);
 
         } else {
-            openWindows[to-1]++;
-
             if (from > 0) {
                 openWindowsTime[from-1] += SystemClock.elapsedRealtime() - openWindowsStartTime[from-1];
                 openWindowsStartTime[from-1] = 0;
             }
-            openWindowsStartTime[to-1] = SystemClock.elapsedRealtime();
+
+            if (to > 0) {
+                openWindows[to-1]++;
+                openWindowsStartTime[to-1] = SystemClock.elapsedRealtime();
+            }
 
             Log.d(LOGTAG, "Placements times:");
             Log.d(LOGTAG, "\tONE: " + openWindowsTime[WindowPlacement.FRONT.getValue()]);

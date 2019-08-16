@@ -312,8 +312,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         }
 
         TelemetryWrapper.stop();
-
-        mWindows.onStop();
     }
 
     @Override
@@ -326,6 +324,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mAudioEngine.pauseEngine();
 
         SessionStore.get().onPause();
+
+        mWindows.onPause();
 
         for (Widget widget: mWidgets.values()) {
             widget.onPause();

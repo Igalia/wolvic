@@ -140,10 +140,10 @@ public class InternalPages {
         }
     }
 
-    public static String createErrorPage(Context context,
-                                         String uri,
-                                         int errorCategory,
-                                         int errorType) {
+    public static String createErrorPageDataURI(Context context,
+                                                String uri,
+                                                int errorCategory,
+                                                int errorType) {
         // TODO: browser-error pages component needs to accept a uri parameter
         String html = ErrorPages.INSTANCE.createErrorPage(
                 context,
@@ -152,7 +152,7 @@ public class InternalPages {
                 R.raw.error_pages,
                 R.raw.error_style);
 
-        return "data:text/html;base64," + Base64.encodeToString(html.getBytes(), Base64.DEFAULT);
+        return "data:text/html;base64," + Base64.encodeToString(html.getBytes(), Base64.NO_WRAP);
     }
 
     public static byte[] createAboutPage(Context context,

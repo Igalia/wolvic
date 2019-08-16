@@ -15,7 +15,7 @@ class SessionSettings {
     private boolean isServoEnabled;
 
     private SessionSettings(@NotNull Builder builder) {
-        this.isMultiprocessEnabled = builder.isMltiprocessEnabled;
+        this.isMultiprocessEnabled = builder.isMultiprocessEnabled;
         this.isTrackingProtectionEnabled = builder.isTrackingProtectionEnabled;
         this.isSuspendMediaWhenInactiveEnabled = builder.isSuspendMediaWhenInactiveEnabled;
         this.userAgentMode = builder.userAgentMode;
@@ -60,7 +60,7 @@ class SessionSettings {
 
     public static class Builder {
 
-        private boolean isMltiprocessEnabled;
+        private boolean isMultiprocessEnabled;
         private boolean isTrackingProtectionEnabled;
         private boolean isSuspendMediaWhenInactiveEnabled;
         private int userAgentMode;
@@ -70,7 +70,7 @@ class SessionSettings {
         }
 
         public Builder withMultiprocess(boolean isMultiprocessEnabled){
-            this.isMltiprocessEnabled = isMultiprocessEnabled;
+            this.isMultiprocessEnabled = isMultiprocessEnabled;
             return this;
         }
 

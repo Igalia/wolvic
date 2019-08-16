@@ -198,8 +198,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     public void loadHome() {
         if (mSessionStack.isPrivateMode()) {
-            InternalPages.PageResources pageResources = InternalPages.PageResources.create(R.raw.private_mode, R.raw.private_style);
-            mSessionStack.getCurrentSession().loadData(InternalPages.createAboutPage(getContext(), pageResources), "text/html");
+            mSessionStack.loadPrivateBrowsingPage();
+
         } else {
             mSessionStack.loadUri(SettingsStore.getInstance(getContext()).getHomepage());
         }

@@ -404,11 +404,11 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
         mSessionStack = aWindow.getSessionStack();
         if (mSessionStack != null) {
+            mURLBar.setSessionStack(mSessionStack);
             mSessionStack.addSessionChangeListener(this);
             mSessionStack.addNavigationListener(this);
             mSessionStack.addProgressListener(this);
             mSessionStack.addContentListener(this);
-            mURLBar.setSessionStack(mSessionStack);
             updateServoButton();
             handleSessionState();
         }
