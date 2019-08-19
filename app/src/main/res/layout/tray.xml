@@ -41,7 +41,7 @@
                 android:tooltipText="@string/settings_tooltip"
                 app:tooltipDensity="@dimen/tray_tooltip_density"
                 app:tooltipPosition="top"
-                android:src="@drawable/ic_icon_tray_settings_v2"/>
+                android:src="@drawable/ic_icon_tray_settings_v3"/>
         </LinearLayout>
 
     </RelativeLayout>
