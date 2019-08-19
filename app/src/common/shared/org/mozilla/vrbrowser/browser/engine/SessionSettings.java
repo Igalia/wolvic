@@ -12,6 +12,7 @@ class SessionSettings {
     private boolean isTrackingProtectionEnabled;
     private boolean isSuspendMediaWhenInactiveEnabled;
     private int userAgentMode;
+    private int viewportMode;
     private boolean isServoEnabled;
 
     private SessionSettings(@NotNull Builder builder) {
@@ -19,6 +20,7 @@ class SessionSettings {
         this.isTrackingProtectionEnabled = builder.isTrackingProtectionEnabled;
         this.isSuspendMediaWhenInactiveEnabled = builder.isSuspendMediaWhenInactiveEnabled;
         this.userAgentMode = builder.userAgentMode;
+        this.viewportMode = builder.viewportMode;
         this.isServoEnabled = builder.isServoEnabled;
     }
 
@@ -50,6 +52,10 @@ class SessionSettings {
         userAgentMode = mode;
     }
 
+    public int getViewportMode() { return viewportMode; }
+
+    public void setViewportMode(final int mode) { viewportMode = mode; }
+
     public boolean isServoEnabled() {
         return isServoEnabled;
     }
@@ -64,6 +70,7 @@ class SessionSettings {
         private boolean isTrackingProtectionEnabled;
         private boolean isSuspendMediaWhenInactiveEnabled;
         private int userAgentMode;
+        private int viewportMode;
         private boolean isServoEnabled;
 
         public Builder() {
@@ -89,6 +96,11 @@ class SessionSettings {
             return this;
         }
 
+        public Builder withViewport(int viewport) {
+            this.viewportMode = viewport;
+            return this;
+        }
+
         public Builder withServo(boolean isServoEnabled){
             this.isServoEnabled= isServoEnabled;
             return this;
@@ -100,6 +112,7 @@ class SessionSettings {
                     .withTrackingProteccion(SettingsStore.getInstance(context).isTrackingProtectionEnabled())
                     .withSuspendMediaWhenInactive(true)
                     .withUserAgent(GeckoSessionSettings.USER_AGENT_MODE_VR)
+                    .withViewport(GeckoSessionSettings.VIEWPORT_MODE_MOBILE)
                     .withServo(false);
         }
 

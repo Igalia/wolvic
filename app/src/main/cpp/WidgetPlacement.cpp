@@ -17,7 +17,7 @@ WidgetPlacement::FromJava(JNIEnv* aEnv, jobject& aObject) {
 
   jclass clazz = aEnv->GetObjectClass(aObject);
 
-  std::shared_ptr<WidgetPlacement> result(new WidgetPlacement());;
+  std::shared_ptr<WidgetPlacement> result(new WidgetPlacement());
 
 #define GET_INT_FIELD(name) { \
   jfieldID f = aEnv->GetFieldID(clazz, #name, "I"); \

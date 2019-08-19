@@ -36,6 +36,10 @@ import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.utils.InternalPages;
 
 import java.util.ArrayList;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -743,13 +747,55 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
         return mCurrentSession.getSettings().getUserAgentMode();
     }
 
+    private static final String M_PREFIX = "m.";
+    private static final String MOBILE_PREFIX = "mobile.";
+
+    private String checkForMobileSite(String aUri) {
+        String result = null;
+        URI uri;
+        try {
+            uri = new URI(aUri);
+        } catch (URISyntaxException e) {
+            Log.d(LOGTAG, "Error parsing URL: " + aUri + " " + e.getMessage());
+            return null;
+        }
+        String authority = uri.getAuthority();
+        if (authority == null) {
+            return null;
+        }
+        authority = authority.toLowerCase();
+        String foundPrefix = null;
+        if (authority.startsWith(M_PREFIX)) {
+            foundPrefix= M_PREFIX;
+        } else if (authority.startsWith(MOBILE_PREFIX)) {
+            foundPrefix = MOBILE_PREFIX;
+        }
+        if (foundPrefix != null) {
+            try {
+                uri = new URI(uri.getScheme(), authority.substring(foundPrefix.length()), uri.getPath(), uri.getQuery(), uri.getFragment());
+                result = uri.toString();
+            } catch (URISyntaxException e) {
+                Log.d(LOGTAG, "Error dropping mobile prefix from: " + aUri + " " + e.getMessage());
+            }
+        }
+        return result;
+    }
+
     public void setUaMode(int mode) {
         if (mCurrentSession != null) {
             SessionState state = mSessions.get(mCurrentSession.hashCode());
             if (state != null && state.mSettings.getUserAgentMode() != mode) {
                 state.mSettings.setUserAgentMode(mode);
                 mCurrentSession.getSettings().setUserAgentMode(mode);
-                mCurrentSession.reload();
+                String overrideUri = null;
+                if (mode == GeckoSessionSettings.USER_AGENT_MODE_DESKTOP) {
+                    state.mSettings.setViewportMode(GeckoSessionSettings.VIEWPORT_MODE_DESKTOP);
+                    overrideUri = checkForMobileSite(state.mUri);
+                } else {
+                    state.mSettings.setViewportMode(GeckoSessionSettings.VIEWPORT_MODE_MOBILE);
+                }
+                mCurrentSession.getSettings().setViewportMode(state.mSettings.getViewportMode());
+                mCurrentSession.loadUri(overrideUri != null ? overrideUri : state.mUri, GeckoSession.LOAD_FLAGS_BYPASS_CACHE | GeckoSession.LOAD_FLAGS_REPLACE_HISTORY);
             }
         }
     }
