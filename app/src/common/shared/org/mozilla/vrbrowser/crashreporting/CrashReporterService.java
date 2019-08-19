@@ -29,6 +29,9 @@ public class CrashReporterService extends JobIntentService {
     // Threshold used to fix Infinite restart loop on startup crashes.
     // See https://github.com/MozillaReality/FirefoxReality/issues/651
     public static final long MAX_RESTART_COUNT = 2;
+    private static final int MAX_PID_CHECK_COUNT = 5;
+
+    private int mPidCheckCount = 0;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -71,7 +74,7 @@ public class CrashReporterService extends JobIntentService {
                         }
                     }
 
-                    if (!otherProcessesFound) {
+                    if (!otherProcessesFound || (mPidCheckCount > MAX_PID_CHECK_COUNT)) {
                         intent.setClass(CrashReporterService.this, VRBrowserActivity.class);
                         intent.setPackage(BuildConfig.APPLICATION_ID);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -79,6 +82,7 @@ public class CrashReporterService extends JobIntentService {
                         break;
 
                     } else {
+                        mPidCheckCount++;
                         try {
                             Thread.sleep(PID_CHECK_INTERVAL);
                         } catch (InterruptedException e) {
