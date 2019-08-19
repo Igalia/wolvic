@@ -48,7 +48,6 @@ import org.mozilla.vrbrowser.browser.engine.SessionStack;
 import org.mozilla.vrbrowser.crashreporting.CrashReporterService;
 import org.mozilla.vrbrowser.crashreporting.GlobalExceptionHandler;
 import org.mozilla.vrbrowser.geolocation.GeolocationWrapper;
-import org.mozilla.vrbrowser.ui.widgets.prompts.AlertPromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.ConfirmPromptWidget;
 import org.mozilla.vrbrowser.utils.DeviceType;
 import org.mozilla.vrbrowser.input.MotionEventGenerator;
@@ -1273,9 +1272,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public void setCylinderDensity(final float aDensity) {
+        if (mWindows != null && aDensity == 0.0f && mWindows.getWindowsCount() > 1) {
+            return;
+        }
         queueRunnable(() -> setCylinderDensityNative(aDensity));
         if (mWindows != null) {
-            mWindows.updateCurvedMode();
+            mWindows.updateCurvedMode(false);
         }
     }
 
