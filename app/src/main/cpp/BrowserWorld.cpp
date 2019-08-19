@@ -1320,6 +1320,7 @@ BrowserWorld::DrawSplashAnimation() {
 void
 BrowserWorld::CreateSkyBox(const std::string& aBasePath, const std::string& aExtension) {
   ASSERT_ON_RENDER_THREAD();
+  vrb::PausePerformanceMonitor pauseMonitor(*m.monitor);
   const bool empty = aBasePath == "cubemap/void";
   const std::string extension = aExtension.empty() ? ".ktx" : aExtension;
   const GLenum glFormat = extension == ".ktx" ? GL_COMPRESSED_RGB8_ETC2 : GL_RGBA8;
