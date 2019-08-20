@@ -1,0 +1,34 @@
+# Data Review Form
+
+Instructions: Data Stewards will review a request for data collection and endorse responses to each question.
+**If the request does not provide answers to questions, reviewers give an r- and point to the questions that can’t be answered.**
+
+1) Is there or will there be **documentation** that describes the schema for the ultimate data set in a public, complete, and accurate way? (see [here](https://github.com/mozilla/activity-stream/blob/master/docs/v2-system-addon/data_dictionary.md), [here](https://github.com/mozilla-mobile/focus/wiki/Install-and-event-tracking-with-the-Adjust-SDK), and [here](https://firefox-source-docs.mozilla.org/toolkit/components/telemetry/telemetry/index.html) for examples).  Refer to the appendix for "documentation" if more detail about documentation standards is needed.
+Yes. Documentation will be at https://github.com/MozillaReality/FirefoxReality/wiki/Telemetry
+
+2) Is there a control mechanism that allows the user to turn the data collection on and off? (Note, for data collection not needed for security purposes, Mozilla provides such a control mechanism) Provide details as to the control mechanism available.
+Yes, in the App Settings
+
+If the answer to either of the first two questions is no, reviewers give an r-. **Incremental changes to measurements or systems that have previously gone through analysis review may not require additional review.**
+
+3) If the request is for permanent data collection, is there someone who will monitor the data over time?
+Initial collection period is six months, with evaluation first in February 2020 by @jvonitter.
+
+4) Using the **[category system of data types](https://wiki.mozilla.org/Firefox/Data_Collection)** on the Mozilla wiki, what collection type of data do the requested measurements fall under?
+category 2
+
+5) Is the data collection request for default-on or default-off?
+Default on
+
+6) Does the instrumentation include the addition of **any *new* identifiers** (whether anonymous or otherwise; e.g., username, random IDs, etc.  See the appendix for more details)?
+No
+
+7) Is the data collection covered by the existing Firefox privacy notice? **If unsure: escalate to legal if:**
+Yes
+* The data includes new identifiers; OR
+* The data falls within the Web activity category AND is default-on.
+
+8) Does there need to be a check-in in the future to determine whether to renew the data? (Yes/No) (If yes, set a todo reminder or file a bug if appropriate)**
+Yes, in February 2020. Reminder is set.
+9) Does the data collection use a third-party collection tool? **If yes, escalate to legal.**
+No
