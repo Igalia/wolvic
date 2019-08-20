@@ -929,7 +929,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             if (mPoorPerformanceWhiteList.contains(originalUrl)) {
                 return;
             }
-            window.getSessionStack().loadUri("about:blank");
+            window.getSessionStack().loadHomePage();
             final String[] buttons = {getString(R.string.ok_button), getString(R.string.performance_unblock_page)};
             window.showButtonPrompt(getString(R.string.performance_title), getString(R.string.performance_message), buttons, new ConfirmPromptWidget.ConfirmPromptDelegate() {
                 @Override

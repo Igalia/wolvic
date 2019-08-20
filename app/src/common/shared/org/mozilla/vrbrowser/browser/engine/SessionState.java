@@ -17,7 +17,7 @@ import org.mozilla.vrbrowser.browser.Media;
 import java.io.IOException;
 import java.util.ArrayList;
 
-@JsonAdapter(SessionState.SafeTypeAdapterFactory.class)
+@JsonAdapter(SessionState.SessionStateAdapterFactory.class)
 public class SessionState {
 
     public boolean mCanGoBack;
@@ -53,7 +53,7 @@ public class SessionState {
         }
     }
 
-    public class SafeTypeAdapterFactory implements TypeAdapterFactory {
+    public class SessionStateAdapterFactory implements TypeAdapterFactory {
         public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
             final TypeAdapter<T> delegate = gson.getDelegateAdapter(this, type);
             final TypeAdapter<GeckoSession.SessionState> gsDelegate = new GeckoSessionStateAdapter();
@@ -77,7 +77,12 @@ public class SessionState {
                                 out.name("mSessionState").jsonValue(null);
 
                             } else {
-                                out.name("mSessionState").jsonValue(gsDelegate.toJson(session.mSessionState));
+                                if (session.mSessionState != null) {
+                                    out.name("mSessionState").jsonValue(gsDelegate.toJson(session.mSessionState));
+
+                                } else {
+                                    out.name("mSessionState").jsonValue(null);
+                                }
                             }
                             out.endObject();
 

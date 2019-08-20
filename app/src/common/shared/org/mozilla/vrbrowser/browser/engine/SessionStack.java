@@ -58,7 +58,8 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
     private static final String LOGTAG = "VRB";
 
     // You can test a local file using: "resource://android/assets/webvr/index.html"
-    public static final String PRIVATE_BROWSING_URI = "about:privatebrowsing";
+    private static final String PRIVATE_BROWSING_URI = "about:privatebrowsing";
+    private static final String BLANK_BROWSING_URI = "about:blank";
     public static final int NO_SESSION = -1;
 
     private transient LinkedList<GeckoSession.NavigationDelegate> mNavigationListeners;
@@ -314,6 +315,10 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
 
             if (mUsePrivateMode) {
                 loadPrivateBrowsingPage();
+
+            } else if(state.mSessionState == null || state.mUri.equals(BLANK_BROWSING_URI) ||
+                    (state.mSessionState != null && state.mSessionState.size() == 0)) {
+                loadHomePage();
             }
 
             dumpAllState(state.mSession);
@@ -639,6 +644,14 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
         }
         Log.d(LOGTAG, "Loading URI: " + aUri);
         mCurrentSession.loadUri(aUri);
+    }
+
+    public void loadHomePage() {
+        if (mCurrentSession == null) {
+            return;
+        }
+
+        mCurrentSession.loadUri(getHomeUri());
     }
 
     public void loadPrivateBrowsingPage() {
