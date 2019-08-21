@@ -11,13 +11,13 @@ import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
 import androidx.annotation.IdRes;
 import androidx.appcompat.widget.AppCompatImageButton;
 
+import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.ui.widgets.TooltipWidget;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
@@ -44,7 +44,6 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
     private int mTooltipDelay;
     private float mTooltipDensity;
     private ViewUtils.TooltipPosition mTooltipPosition;
-    private Handler mHandler;
 
     public UIButton(Context context, AttributeSet attrs) {
         this(context, attrs, R.attr.imageButtonStyle);
@@ -74,7 +73,6 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
         mBackground = getBackground();
 
         mState = State.NORMAL;
-        mHandler = getHandler();
     }
 
     @TargetApi(Build.VERSION_CODES.O)
@@ -103,15 +101,11 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
     public boolean onHoverEvent(MotionEvent event) {
         if (getTooltip() != null) {
             if (event.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
-                if (mHandler != null) {
-                    mHandler.postDelayed(mShowTooltipRunnable, mTooltipDelay);
-                }
+                ThreadUtils.postDelayedToUiThread(mShowTooltipRunnable, mTooltipDelay);
 
             } else if (event.getAction() == MotionEvent.ACTION_HOVER_EXIT) {
-                if (mHandler != null) {
-                    mHandler.removeCallbacks(mShowTooltipRunnable);
-                    mHandler.post(mHideTooltipRunnable);
-                }
+                ThreadUtils.removeCallbacksFromUiThread(mShowTooltipRunnable);
+                ThreadUtils.postToUiThread(mHideTooltipRunnable);
             }
         }
 
