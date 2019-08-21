@@ -565,6 +565,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         if (aResizeAction == ResizeAction.RESTORE_SIZE) {
             mAttachedWindow.getPlacement().copyFrom(mPlacementBeforeResize);
             mWidgetManager.updateWidget(mAttachedWindow);
+            mWidgetManager.updateVisibleWidgets();
         }
         mIsResizing = false;
         finishWidgetResize();

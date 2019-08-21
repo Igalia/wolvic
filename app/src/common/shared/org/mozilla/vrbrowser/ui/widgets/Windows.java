@@ -674,9 +674,22 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSessio
             TelemetryWrapper.openWindowsEvent(mRegularWindows.size() - 1, mRegularWindows.size(), false);
         }
 
+        mForcedCurvedMode = getCurrentWindows().size() > 1;
+
         return window;
     }
 
+    public void enterResizeMode() {
+        for (WindowWidget window : getCurrentWindows()) {
+            window.getTopBar().setVisible(false);
+        }
+    }
+
+    public void exitResizeMode() {
+        for (WindowWidget window : getCurrentWindows()) {
+            window.getTopBar().setVisible(true);
+        }
+    }
 
     // Tray Listener
     @Override
@@ -706,6 +719,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSessio
     public void onCloseClicked(TopBarWidget aWidget) {
         WindowWidget window = aWidget.getAttachedWindow();
         if (window != null) {
+            focusWindow(window);
             closeWindow(window);
         }
     }

@@ -1063,11 +1063,13 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public void startWidgetResize(final Widget aWidget, float aMaxWidth, float aMaxHeight) {
+        mWindows.enterResizeMode();
         queueRunnable(() -> startWidgetResizeNative(aWidget.getHandle(), aMaxWidth, aMaxHeight));
     }
 
     @Override
     public void finishWidgetResize(final Widget aWidget) {
+        mWindows.exitResizeMode();
         queueRunnable(() -> finishWidgetResizeNative(aWidget.getHandle()));
     }
 
