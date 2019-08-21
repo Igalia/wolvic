@@ -75,7 +75,7 @@
                 android:id="@+id/uaModeButton"
                 style="@style/urlBarIconTheme"
                 android:src="@drawable/ic_icon_ua_default"
-                android:tooltipText="@string/user_agent_tooltip"
+                android:tooltipText="@string/request_dekstop_site_tooltip"
                 android:tint="@color/fog" />
 
             <org.mozilla.vrbrowser.ui.views.UIButton

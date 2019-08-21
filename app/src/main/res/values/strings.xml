@@ -731,9 +731,9 @@
          speech-to-text recognition. -->
     <string name="voice_search_tooltip">Voice Search</string>
 
-    <!-- This string is for the tooltip that appears upon hovering the 'User Agent' button in the
+    <!-- This string is for the tooltip that appears upon hovering the 'Request desktop site' button in the
          browser's navigation bar. The button it labels, when pressed, change the currently used user agent. -->
-    <string name="user_agent_tooltip">Request desktop site</string>
+    <string name="request_dekstop_site_tooltip">Request desktop site</string>
 
     <!-- This string is for the tooltip that appears upon hovering the 'Clear' button in the
          browser's navigation bar. The button it labels, when pressed, clears the navigation bar text. -->
@@ -855,9 +855,6 @@
     <!-- This string is displayed as the message body of a dialog displayed when poor web page performance has been detected and the page has been unloaded to restore performance. -->
     <string name="performance_message">Try reducing the window size to improve performance. Unblocking this page may crash your app.</string>
 
-    <!-- This string is displayed anywhere where we need to display the "Default" string by itself. -->
-    <string name="tag_default">Default</string>
-
     <!-- This string is displayed in the title of the Voice Search samples collect dialog. That dialog is shown the first time
          a user tries to use the voice search. -->
     <string name="voice_samples_collect_data_dialog_title">Allow %1$s to Collect Voice Samples for Research?</string>
@@ -867,11 +864,11 @@
     <string name="voice_samples_collect_dialog_description">Your data is always secure and never shared with third parties. We collect voice samples to improve the experience and performance of our products. You’ll always be able to use voice search, even if you don’t allow collection.&lt;a href="privacy">Learn More&lt;/a></string>
 
     <!-- This string is displayed in the button of the Voice Search samples collect dialog.
-         When clicked the user opts out from the voice data collection. -->
+         When clicked the user opts in to the voice data collection. -->
     <string name="voice_samples_collect_dialog_allow">Allow</string>
 
     <!-- This string is displayed in the button of the Voice Search samples collect dialog.
-         When clicked the user opts in for the voice data collection. -->
+         When clicked the user opts out of the voice data collection. -->
     <string name="voice_samples_collect_dialog_do_not_allow">Don’t Allow</string>
 
     <!-- This string is displayed in the content language list in front of the system default language in between parenthesis -->
