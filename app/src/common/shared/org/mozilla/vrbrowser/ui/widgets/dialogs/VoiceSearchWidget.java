@@ -286,7 +286,7 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
 
         } else {
             mWidgetManager.getFocusedWindow().showAppDialog(
-                    R.string.voice_samples_collect_dialog_title,
+                    getResources().getString(R.string.voice_samples_collect_data_dialog_title, getResources().getString(R.string.app_name)),
                     R.string.voice_samples_collect_dialog_description,
                     new int[]{
                             R.string.voice_samples_collect_dialog_do_not_allow,

@@ -81,4 +81,8 @@ public class SettingsHeader extends FrameLayout {
         mBinding.setHelpClickListener(listener);
     }
 
+    public void setTitle(@NonNull String title) {
+        mBinding.setTitle(title);
+    }
+
 }

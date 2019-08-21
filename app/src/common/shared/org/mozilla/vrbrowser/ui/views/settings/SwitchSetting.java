@@ -122,4 +122,8 @@ public class SwitchSetting extends LinearLayout {
         }
     }
 
+    public void setDescription(@NonNull String description) {
+        mSwitchDescription.setText(description);
+    }
+
 }

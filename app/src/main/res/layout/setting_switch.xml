@@ -22,6 +22,7 @@
                 <TextView
                     android:id="@+id/setting_description"
                     android:textAlignment="textStart"
+                    android:paddingEnd="20dp"
                     style="@style/settingsText"
                     tools:text="Switch Setting Description" />
 

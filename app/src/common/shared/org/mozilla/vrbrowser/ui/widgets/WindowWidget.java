@@ -736,17 +736,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mConfirmPrompt.show(REQUEST_FOCUS);
     }
 
-    public void showAppDialog(@NonNull @StringRes int title, @NonNull @StringRes int  description, @NonNull  @StringRes int [] btnMsg, @NonNull AppDialogWidget.Delegate callback) {
-        mAppDialog = new AppDialogWidget(getContext());
-        mAppDialog.mWidgetPlacement.parentHandle = getHandle();
-        mAppDialog.setTitle(title);
-        mAppDialog.setMessage(description);
-        mAppDialog.setButtons(btnMsg);
-        mAppDialog.setDelegate(callback);
-        mAppDialog.show(REQUEST_FOCUS);
-    }
-
-    public void showAppDialog(@NonNull String title, @NonNull String description, @NonNull String[] btnMsg, @NonNull AppDialogWidget.Delegate callback) {
+    public void showAppDialog(@NonNull String title, @NonNull @StringRes int  description, @NonNull  @StringRes int [] btnMsg, @NonNull AppDialogWidget.Delegate callback) {
         mAppDialog = new AppDialogWidget(getContext());
         mAppDialog.mWidgetPlacement.parentHandle = getHandle();
         mAppDialog.setTitle(title);

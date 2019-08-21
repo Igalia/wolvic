@@ -18,7 +18,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:title="@string/settings_language_choose_language_display_title" />
+            app:title="@{String.format(@string/settings_language_choose_display_language_title, @string/app_name)}" />
 
         <ScrollView
             android:id="@+id/scrollbar"
