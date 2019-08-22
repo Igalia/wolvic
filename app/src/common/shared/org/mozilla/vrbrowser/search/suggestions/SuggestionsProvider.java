@@ -1,6 +1,7 @@
 package org.mozilla.vrbrowser.search.suggestions;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -16,6 +17,8 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class SuggestionsProvider {
+
+    private static final String LOGTAG = SuggestionsProvider.class.getSimpleName();
 
     public class DefaultSuggestionsComparator implements Comparator {
 
@@ -90,6 +93,11 @@ public class SuggestionsProvider {
                 items.sort(mComparator);
             }
             future.complete(items);
+
+        }).exceptionally(th -> {
+            Log.d(LOGTAG, "Error getting bookmarks suggestions: " + th.getLocalizedMessage());
+            future.complete(items);
+            return null;
         });
 
         return future;
@@ -111,6 +119,11 @@ public class SuggestionsProvider {
                 items.sort(mComparator);
             }
             future.complete(items);
+
+        }).exceptionally(th -> {
+            Log.d(LOGTAG, "Error getting history suggestions: " + th.getLocalizedMessage());
+            future.complete(items);
+           return null;
         });
 
         return future;
@@ -152,6 +165,11 @@ public class SuggestionsProvider {
                 items.sort(mComparator);
             }
             future.complete(items);
+
+        }).exceptionally(th -> {
+            Log.d(LOGTAG, "Error getting search engine suggestions: " + th.getLocalizedMessage());
+            future.complete(items);
+            return null;
         });
 
         return future;

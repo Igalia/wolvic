@@ -12,6 +12,7 @@ import android.text.SpannableString;
 import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -52,6 +53,9 @@ import mozilla.components.concept.storage.VisitType;
 import mozilla.components.ui.autocomplete.InlineAutocompleteEditText;
 
 public class NavigationURLBar extends FrameLayout {
+
+    private static final String LOGTAG = NavigationURLBar.class.getSimpleName();
+
     private InlineAutocompleteEditText mURL;
     private UIButton mMicrophoneButton;
     private UIButton mUAModeButton;
@@ -255,7 +259,10 @@ public class NavigationURLBar extends FrameLayout {
                 bookmarkStore.deleteBookmarkByURL(url);
                 setBookmarked(false);
             }
-        }, mUIThreadExecutor);
+        }, mUIThreadExecutor).exceptionally(th -> {
+            Log.d(LOGTAG, "Error getting bookmarks: " + th.getLocalizedMessage());
+            return null;
+        });
 
     }
 
