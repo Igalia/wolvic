@@ -19,6 +19,7 @@ import android.widget.TextView;
 import androidx.databinding.DataBindingUtil;
 
 import org.mozilla.geckoview.GeckoSession;
+import org.mozilla.geckoview.StorageController;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
@@ -60,6 +61,17 @@ class PrivacyOptionsView extends SettingsView {
         mBinding.showPrivacyButton.setOnClickListener(v -> {
             SessionStore.get().getActiveStore().newSessionWithUrl(getContext().getString(R.string.private_policy_url));
             exitWholeSettings();
+        });
+
+        mBinding.clearCookiesSite.setOnClickListener(v -> {
+            SessionStore.get().clearCache(
+                    StorageController.ClearFlags.SITE_DATA |
+                            StorageController.ClearFlags.COOKIES |
+                            StorageController.ClearFlags.SITE_SETTINGS);
+        });
+
+        mBinding.clearWebContent.setOnClickListener(v -> {
+            SessionStore.get().clearCache(StorageController.ClearFlags.ALL_CACHES);
         });
 
         TextView permissionsTitleText = findViewById(R.id.permissionsTitle);

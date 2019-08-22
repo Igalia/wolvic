@@ -24,6 +24,7 @@ import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.geckoview.MediaElement;
+import org.mozilla.geckoview.StorageController;
 import org.mozilla.geckoview.WebRequestError;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.Media;
@@ -833,6 +834,27 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
         }
 
         recreateAllSessions();
+    }
+
+    public void clearCache(final long clearFlags) {
+        if (mRuntime != null) {
+            // Per GeckoView Docs:
+            // Note: Any open session may re-accumulate previously cleared data.
+            // To ensure that no persistent data is left behind, you need to close all sessions prior to clearing data.
+            // https://mozilla.github.io/geckoview/javadoc/mozilla-central/org/mozilla/geckoview/StorageController.html#clearData-long-
+            for (Map.Entry<Integer, SessionState> entry : mSessions.entrySet()) {
+                SessionState state = entry.getValue();
+                if (state != null) {
+                    state.mSession.stop();
+                    state.mSession.close();
+                }
+            }
+
+            mRuntime.getStorageController().clearData(clearFlags).then(aVoid -> {
+                recreateAllSessions();
+                return null;
+            });
+        }
     }
 
     // NavigationDelegate

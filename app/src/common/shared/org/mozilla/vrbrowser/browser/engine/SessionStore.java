@@ -235,6 +235,12 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
         }
     }
 
+    public void clearCache(long clearFlags) {
+        for (Map.Entry<Integer, SessionStack> entry : mSessionStacks.entrySet()) {
+            entry.getValue().clearCache(clearFlags);
+        }
+    }
+
     // Permission Delegate
 
     @Override

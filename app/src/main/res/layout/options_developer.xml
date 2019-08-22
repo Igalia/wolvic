@@ -13,11 +13,11 @@
             android:id="@+id/header_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:helpVisibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:title="@string/settings_developer_options"
-            app:helpVisibility="gone" />
+            app:title="@string/settings_developer_options" />
 
         <ScrollView
             android:id="@+id/scrollbar"
