@@ -279,11 +279,20 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     public void switchBookmarks() {
         if (mView == null) {
             setView(mBookmarksView);
+            if (mTitleBar != null) {
+                mTitleBar.setURL(R.string.url_bookmarks_title);
+                mTitleBar.setInsecureVisibility(View.GONE);
+            }
             for (BookmarkListener listener : mBookmarksListeners)
                 listener.onBookmarksShown(this);
 
         } else {
             unsetView(mBookmarksView);
+            if (mTitleBar != null) {
+                mTitleBar.setURL(mSessionStack.getCurrentUri());
+                mTitleBar.setInsecureVisibility(View.VISIBLE);
+                mTitleBar.setIsInsecure(!mSessionStack.isSecure());
+            }
             for (BookmarkListener listener : mBookmarksListeners)
                 listener.onBookmarksHidden(this);
         }
