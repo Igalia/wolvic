@@ -194,6 +194,10 @@
          a developer-build version of the app. -->
     <string name="settings_version_developer">開発者ビルド</string>
 
+    <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
+        opens the Firfox Reality support web site in the browser window. -->
+    <string name="settings_help">ヘルプ</string>
+
     <!-- This string is the title of a dialog box shown to the user when a settings
          change requires the application to restart. -->
     <string name="restart_dialog_restart">再起動が必要です</string>
@@ -224,7 +228,7 @@
 
     <!-- This string labels an On/Off switch in the developer options dialog
          and is used to customize background environments of the app. -->
-    <string name="developer_options_env_override">実行環境の上書きを有効化</string>
+    <string name="developer_options_env_override">景色の上書きを有効化</string>
 
     <!-- This string labels an On/Off switch in the developer options dialog and is used to toggle
          running content in a separate process.
@@ -232,6 +236,12 @@
          simultaneously by a computer with more than one central processor.
          A dialog should appear with a field labeled with the text, 'Enable Multiprocess'. -->
     <string name="developer_options_multiprocess">マルチプロセスを有効化</string>
+
+    <!-- This string labels and On/Off switch in the developer options dialog and is used to toggle
+         the performance monitor. The Performance monitor is used to detect pages that cause the
+         browser to run below a target framerate and pauses the page to restore performance.
+    -->
+    <string name="developer_options_performance_monitor">パフォーマンスモニターを有効にする</string>
 
     <!-- The string labels an On/Off switch in the developer options dialog and is used to toggle enabling Servo. -->
     <string name="developer_options_servo">Servo を有効化</string>
@@ -334,7 +344,7 @@
 
     <!-- This string describes the radio buttons used to select the user's background environment
          (seen while not in Immersive Mode). -->
-    <string name="developer_options_environments">実行環境</string>
+    <string name="developer_options_environments">景色</string>
 
     <!-- This string labels the radio button that selects the 'Void' environment.
          The 'Void' environment is an empty space that surrounds the user in empty, black space. -->
@@ -374,6 +384,10 @@
          for the home page. -->
     <string name="developer_options_homepage">ホームページ</string>
 
+    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
+     and is used to enable or disable playback of DRM controlled content. -->
+    <string name="security_options_drm_content">DRM 制御のコンテンツを再生 (&lt;a href=&quot;http://somesite.com/&quot;&gt;詳細&lt;/a&gt;)</string>
+
     <!-- This string labels an On/Off switch in the Privacy and Security settings dialog
      and is used to enable or disable tracking protection. -->
     <string name="security_options_tracking_protection">トラッキング防止</string>
@@ -412,6 +426,22 @@
          "external" storage. Note that on modern systems, "external" is still used in the name
          of this storage even though the storage may not reside on external removable media. -->
     <string name="security_options_permission_storage">外部ストレージの読み取り</string>
+
+    <!-- This string is a label above the group of switches that indicates that the switches below
+         relate to Firefox data collection and use. -->
+    <string name="security_options_speech_data_title">Firefox のデータ収集と利用について</string>
+
+    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
+     and is used to enable or disable permission to collect speech data. -->
+    <string name="security_options_speech_data">Firefox が音声データを収集することを許可する</string>
+
+    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
+     and is used to enable or disable permission to collect telemetry data. -->
+    <string name="security_options_telemetry_data">Firefox が技術的な対話データを Mozilla へ送信することを許可する</string>
+
+    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
+     and is used to enable or disable permission to send crash reports. -->
+    <string name="security_options_crash_reports_data">Firefox があなたに代わって未送信のクラッシュレポートを送信することを許可する</string>
 
     <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'On'. -->
     <string name="on">オン</string>
@@ -580,7 +610,7 @@
     <string name="controller_options_reset">コントローラーの設定をリセット</string>
 
     <!-- This string labels the Reset button that restores the default environment settings values. -->
-    <string name="environment_options_reset">環境設定をリセット</string>
+    <string name="environment_options_reset">景色の設定をリセット</string>
 
     <!-- This string labels the Reset button that restores the default voice search language settings values. -->
     <string name="language_options_reset">音声検索の言語設定をリセット</string>
@@ -615,6 +645,10 @@
          'Refresh' refers to reloading the current page. -->
     <string name="refresh_tooltip">更新</string>
 
+    <!-- This string is for the tooltip that appears upon hovering the 'Stop' button in the browser's navigation bar.
+         'Stop' stops the current page load. -->
+    <string name="stop_tooltip">読み込みを中止します</string>
+
     <!-- This string is for the tooltip that appears upon hovering the 'Home' button in the browser's navigation bar.
          'Home' refers to the browser's start page (e.g., the Firefox Reality Home Page). -->
     <string name="home_tooltip">ホーム</string>
@@ -624,9 +658,25 @@
          speech-to-text recognition. -->
     <string name="voice_search_tooltip">音声検索</string>
 
+    <!-- This string is for the tooltip that appears upon hovering the 'User Agent' button in the
+         browser's navigation bar. The button it labels, when pressed, change the currently used user agent. -->
+    <string name="user_agent_tooltip">ユーザーエージェント文字列を切り替えます</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Clear' button in the
+         browser's navigation bar. The button it labels, when pressed, clears the navigation bar text. -->
+    <string name="clear_tooltip">消去します</string>
+
     <!-- This string is for the tooltip that when clicking the 'Info' (ⓘ) icon visible next to the current website's
          URL in the URL bar. The button it labels, when pressed, shows information about the site. -->
     <string name="site_info_tooltip">サイトの情報を表示</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Servo' button in the browser's navigation bar.
+         'Servo' refers to the Servo engine. -->
+    <string name="servo_tooltip">Servo を使用します</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Resize' button in the browser's navigation bar.
+         'Resize' refers to the button used to resize the browset window. -->
+    <string name="resize_tooltip">サイズ変更します</string>
 
     <!-- This string is for the tooltip that appears when the user is not in the browser's Private Browsing mode
          and hovers over the 'Private Browsing' icon in the browser's tray menu. -->
@@ -639,10 +689,31 @@
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the target url in a new window. -->
     <string name="context_menu_open_new_window">新しいウィンドウで開く</string>
 
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmark' icon in the
+         browser's navigation bar. The button it labels, when pressed, bookmarks the currently open web site. -->
+    <string name="bookmark_tooltip">このページをブックマークに追加します</string>
+
     <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmarks' icon in the
-         browser's navigation bar. The button it labels, when pressed, opens a list view of the user's saved
+         tray. The button it labels, when pressed, opens a list view of the user's saved
          Bookmarks. -->
     <string name="bookmarks_tooltip">ブックマーク</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmarks' icon in the
+         tray and the Bookmarks view is closed. The button it labels, when pressed, opens a list view of the user's saved
+         Bookmarks. -->
+    <string name="open_bookmarks_tooltip">ブックマークを開きます</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmarks' icon in the
+         tray and the Bookmarks view is closed. The button it labels, when pressed, closes the Bookmarks view. -->
+    <string name="close_bookmarks_tooltip">ブックマークを閉じます</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Settings' icon in the
+         tray. The button it labels, when pressed, opens the Settings panel. -->
+    <string name="settings_tooltip">設定</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'New Window' icon in the
+         tray. The button it labels, when pressed, opens a new browser window. -->
+    <string name="new_window_tooltip">新しいウィンドウで開きます</string>
 
     <!-- This string is for the tooltip that appears when the user hovers over the down-arrow icon that appears in the
          URL bar upon hover. The icon it labels, when pressed, expands a list of recently visited websites in the
@@ -700,4 +771,11 @@
     <!-- This string is displayed in the message body of the alert dialog shown when the user does not have permission to run the application on the device.
          '%1$s' will be replace at runtime with the app's name. -->
     <string name="not_entitled_message">%1$s にこの端末で実行する権限がないため終了します。</string>
+
+    <!-- This string is displayed in a button that when pressed allows a user to view a page that has been blocked from being displayed.-->
+    <string name="performance_unblock_page">ページのブロックを解除します</string>
+    <!-- This string is displayed as the title of a dialog displayed when poor web page performance has been detected. -->
+    <string name="performance_title">パフォーマンスが低下しています</string>
+    <!-- This string is displayed as the message body of a dialog displayed when poor web page performance has been detected and the page has been unloaded to restore performance. -->
+    <string name="performance_message">このウェブページはパフォーマンスに影響を及ぼすため、読み込みが中断されています。ウィンドウのサイズを小さくすると、ウェブページのパフォーマンスを改善できる場合があります。</string>
 </resources>

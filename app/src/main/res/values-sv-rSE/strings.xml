@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- IMPORTANT NOTE: If this file is updated anyhow, the STRs wiki must be updated accordingly:
+    https://github.com/MozillaReality/FirefoxReality/wiki/L10n -->
+
+    <!-- This string is displayed in the button that means the user accepts the
+         permission requested for in the permission dialog box. -->
+    <string name="permission_allow">Tillåt</string>
+
+    <!-- This string is displayed in the button that means the user rejects the
+         permission requested for in the permission dialog box. -->
+    <string name="permission_reject">Tillåt inte</string>
+
+    <!-- This string is displayed in the button that means the user wants to enable/grant a permission. -->
+    <string name="permission_enable">Aktivera</string>
+
+    <!-- This string is displayed in a label that means the permission has already been granted -->
+    <string name="permission_enabled">Aktiverad</string>
+
+    <!-- This string is displayed in the Settings dialog box and is used to label an
+         On/Off switch which toggles whether browser-level Telemetry is reported back to Mozilla. -->
+    <string name="settings_telemetry">Telemetri</string>
+
+    <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
+         opens a dialog box that contains language-related settings. -->
+    <string name="settings_language">Språk</string>
+
+    <!-- This string is used to label a radio button in the 'Settings' Language dialog that, when pressed,
+         changes the app and the language of the speech-recognition-based search to 'English (US)'. -->
+    <string name="settings_language_english">Engelska (USA)</string>
+
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+         changes the app and the language of the speech-recognition-based search to 'Japanese'. -->
+    <string name="settings_language_japanese">Japanska</string>
+
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+         changes the app and the language of the speech-recognition-based search to 'French'. -->
+    <string name="settings_language_french">Franska</string>
+
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+         changes the app and the language of the speech-recognition-based search to 'German'. -->
+    <string name="settings_language_german">Tyska</string>
+
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+         changes the app and the language of the speech-recognition-based search to 'Spanish'. -->
+    <string name="settings_language_spanish">Spanska</string>
+
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+         changes the app and the language of the speech-recognition-based search to 'Korean'. -->
+    <string name="settings_language_korean">Koreanska</string>
+
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+         changes the app and the language of the speech-recognition-based search to 'Italian'. -->
+    <string name="settings_language_italian">Italienska</string>
+
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+     changes the app and the language of the speech-recognition-based search to 'Russian'. -->
+    <string name="settings_language_russian">Ryska</string>
+
+    <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
+        opens the Firfox Reality support web site in the browser window. -->
+    <string name="settings_help">Hjälp</string>
+
+    <!-- This string is the title of a dialog box shown to the user when a settings
+         change requires the application to restart. -->
+    <string name="restart_dialog_restart">Omstart krävs</string>
+
+    <!-- This string is used to label the button the user presses to restart the
+         application in the restart dialog. -->
+    <string name="restart_now_dialog_button">Starta om nu</string>
+
+    <!-- This string is used to label the button the user presses in order to skip the application
+         from being restarted. -->
+    <string name="restart_later_dialog_button">Starta om senare</string>
+
+    <!-- The string labels an On/Off switch in the developer options dialog and is used to toggle enabling Servo. -->
+    <string name="developer_options_servo">Aktivera Servo</string>
+
+    <!-- This string is used to label the 'Edit' button once it has been pressed by the user. It
+         indicates that, when the button is pressed, the user's edits will be saved. -->
+    <string name="developer_options_save">Spara</string>
+
+    <!-- This string is used to label the 'Show' button in Settings. It
+     indicates that, when the button is pressed opens a dialog box that contains more information.
+     For example it's used to open a URL with the privacy policy. -->
+    <string name="developer_options_show">Visa</string>
+
+    <!-- This string is used to label radio buttons for setting Multi-Sample Anti-Aliasing (MSAA) in
+         VR Immersive Mode. -->
+    <string name="developer_options_msaa">MSAA</string>
+
+    <!-- This string is used to label the MSAA radio button that disables MSAA in Immersive Mode. -->
+    <string name="developer_options_msaa_disabled">Inaktiverad</string>
+
+    <!-- This string is used to label the MSAA radio button that enables two times MSAA in Immersive Mode. -->
+    <string name="developer_options_msaa_2">2x</string>
+
+    <!-- This string is used to label the MSAA radio button that enables two times MSAA in Immersive Mode. -->
+    <string name="developer_options_msaa_4">4x</string>
+
+    <!-- This string is used to label the 'VR' radio button of the 'User-Agent Mode' settings option. -->
+    <string name="developer_options_ua_vr">VR</string>
+
+    <!-- This string is used to label the Foveated radio button that disables fixed-foveated-rendering in immersive mode. -->
+    <string name="developer_options_foveated_disabled">Inaktiverad</string>
+    <!-- This string is used to label the Foveated radio button that enables low-level fixed-foveated-rendering. -->
+    <string name="developer_options_foveated_1">1</string>
+    <!-- This string is used to label the Foveated radio button that enables medium-level fixed-foveated-rendering. -->
+    <string name="developer_options_foveated_2">2</string>
+    <!-- This string is used to label the Foveated radio button that enables high-level fixed-foveated-rendering. -->
+    <string name="developer_options_foveated_3">3</string>
+
+    <!-- This string labels the radio button that selects the 'Underwater' environment,
+         a brightly lit submarine themed environment. -->
+    <string name="developer_options_env_underwater">Undervatten</string>
+
+    <!-- This string labels the radio button that selects the 'Winter' environment,
+         a snow-covered outdoor winter mountain scene. -->
+    <string name="developer_options_env_winter">Vinter</string>
+
+    <!-- This string labels the radio button that selects the 'Cave' environment,
+         a dimly-lit subterranean environment with fairytale structures set amongst mushrooms. -->
+    <string name="developer_options_env_cave">Grotta</string>
+
+    <!-- This string labels the radio button that sets the pointer color to purple. -->
+    <string name="developer_options_pointer_purple">Lila</string>
+
+    <!-- This string labels the radio button that sets the pointer color to white. -->
+    <string name="developer_options_pointer_white">Vit</string>
+
+    <!-- This string labels the button that displays or enables application access to the device's
+         camera, if a camera is present. -->
+    <string name="security_options_permission_camera">Kamera</string>
+
+    <!-- This string labels the button that displays or enables application access to the device's
+         microphone, if a microphone is present. -->
+    <string name="security_options_permission_microphone">Mikrofon</string>
+
+    <!-- This string labels the button that displays or enables application access to the device's
+         geographic location, if the device supports determination of geographic location. -->
+    <string name="security_options_permission_location">Plats</string>
+
+    <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'On'. -->
+    <string name="on">På</string>
+
+    <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'Off'. -->
+    <string name="off">Av</string>
+
+    <!-- This string is displayed in a dialog box show to the user while the Voice Search is being
+         performed. It indicates that the search query is running and they should wait for the result. -->
+    <string name="voice_search_decoding">Söker…</string>
+
+    <!-- This string labels a button that is used to cancel an action.
+         This appears in such contexts as dialog boxes, `<select>` menus, etc. -->
+    <string name="cancel_button">Avbryt</string>
+
+    <!-- This string labels a button that is used to approve an action.
+         This appears in such contexts as dialog boxes, `<select>` menus, etc. -->
+    <string name="ok_button">OK</string>
+
+    <!-- This string labels a button that, when pressed, prevents browser-level crash data from being sent to Mozilla. -->
+    <string name="do_not_sent_button">Skicka inte</string>
+
+    <!-- This string labels a button that, when pressed, allows the crash data to be sent to Mozilla. -->
+    <string name="send_data_button">Skicka data</string>
+
+    <!-- This string labels the radio option that selects the 'Dark' background in the 'Brightness' mode. -->
+    <string name="brightness_mode_dark">Mörkt</string>
+
+    <!-- This string is displayed when selecting a video playback mode. -->
+    <string name="video_mode_360">360</string>
+
+    <!-- This string is displayed when selecting a video playback mode. -->
+    <string name="video_mode_180">180</string>
+
+    <!-- This string is displayed when selecting a video playback mode. -->
+    <string name="video_mode_2d">2D</string>
+
+    <!-- This string is displayed in a tooltip below the video controls UI. -->
+    <string name="video_controls_volume">Volym</string>
+
+    <!-- This string is displayed in the video control seekbar when the media is not seekable
+         (e.g., a live video stream). Prefer a short text because it affects the width of the seek bar. -->
+    <string name="video_controls_live">LIVE</string>
+
+    <!-- This string is displayed as the title of the Bookmarks List, which contains the user's bookmarked websites. -->
+    <string name="bookmarks_title">Bokmärken</string>
+
+    <!-- This string is displayed in a tooltip that appears when a user hovers
+         over an icon representing 'Remove Bookmark' for an individual bookmark
+         item listed in the Bookmarks List. -->
+    <string name="bookmarks_remove">Ta bort bokmärke</string>
+
+    <!-- This string is displayed in a tooltip in the bookmark button in the URL bar. -->
+    <string name="bookmarks_bookmark">Bokmärk denna sida</string>
+
+    <!-- This string is displayed in the Bookmarks List for as the header of the most recently
+         bookmarked items. -->
+    <string name="bookmarks_recent">Senaste bokmärken</string>
+
+    <!-- This string is displayed in the Bookmarks List as a tooltip of the button for showing
+         all the bookmarks. -->
+    <string name="bookmarks_show_all">Visa alla bokmärken</string>
+
+    <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the 'Name' of the bookmarked website. -->
+    <string name="col_name">Namn</string>
+
+    <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the 'Tags' of the bookmarked website. -->
+    <string name="col_tags">Taggar</string>
+
+    <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the 'Location' (or 'URL' or 'Address') of the bookmarked website. -->
+    <string name="col_url">Plats</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Home' button in the browser's navigation bar.
+         'Home' refers to the browser's start page (e.g., the Firefox Reality Home Page). -->
+    <string name="home_tooltip">Hem</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Voice Search' (microphone) button in the
+         browser's navigation bar. 'Voice Search' refers to the browser's system for searching the Web using
+         speech-to-text recognition. -->
+    <string name="voice_search_tooltip">Röstsökning</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Servo' button in the browser's navigation bar.
+         'Servo' refers to the Servo engine. -->
+    <string name="servo_tooltip">Använd Servo</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the target url in a new window. -->
+    <string name="context_menu_open_new_window">Öppna i nytt fönster.</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmark' icon in the
+         browser's navigation bar. The button it labels, when pressed, bookmarks the currently open web site. -->
+    <string name="bookmark_tooltip">Bokmärk denna sida</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmarks' icon in the
+         tray. The button it labels, when pressed, opens a list view of the user's saved
+         Bookmarks. -->
+    <string name="bookmarks_tooltip">Bokmärken</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmarks' icon in the
+         tray and the Bookmarks view is closed. The button it labels, when pressed, opens a list view of the user's saved
+         Bookmarks. -->
+    <string name="open_bookmarks_tooltip">Öppna Bokmärken</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmarks' icon in the
+         tray and the Bookmarks view is closed. The button it labels, when pressed, closes the Bookmarks view. -->
+    <string name="close_bookmarks_tooltip">Stäng Bokmärken</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Settings' icon in the
+         tray. The button it labels, when pressed, opens the Settings panel. -->
+    <string name="settings_tooltip">Inställningar</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'New Window' icon in the
+         tray. The button it labels, when pressed, opens a new browser window. -->
+    <string name="new_window_tooltip">Öppna i nytt fönster</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the down-arrow icon that appears in the
+         URL bar upon hover. The icon it labels, when pressed, expands a list of recently visited websites in the
+         user's History. -->
+    <string name="show_history_tooltip">Visa historik</string>
+
+    <!-- This string is displayed in any button used for removing all the items in the current context. -->
+    <string name="remove_all">Ta bort alla</string>
+
+    <!-- This string is used as the title of the Private Browsing page that is opened when the
+         Private Browsing Mode button from the tray is clicked. -->
+    <string name="private_browsing_title">Privat surfning</string>
+
+    <!-- This string is displayed in any button used for removing all the items in the current context.
+         '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="homepage_hint">%1$s Hem (standard)</string>
+
+    <!-- This string is displayed in the title of an authentication prompt, which requests a username and a password. -->
+    <string name="authentication_required">Autentisering krävs</string>
+    <!-- This string is displayed as the label of a username input in an authentication prompt. -->
+    <string name="authentication_username">Användarnamn:</string>
+    <!-- This string is displayed as the label of a password input in an authentication prompt. -->
+    <string name="authentication_password">Lösenord:</string>
+    <!-- This string is displayed as the label of a switch of an authentication prompt in order to show or hide the text in a password field. -->
+    <string name="authentication_show_password">Visa lösenord:</string>
+
+
+    </resources>

@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- IMPORTANT NOTE: If this file is updated anyhow, the STRs wiki must be updated accordingly:
+    https://github.com/MozillaReality/FirefoxReality/wiki/L10n -->
+
+    <!-- This string is used on the virtual keyboard to label the 'Enter' key (stylized in uppercase letters as 'ENTER'). -->
+    <string name="keyboard_enter_label">ENTER</string>
+
+    <!-- This string is used on the virtual keyboard to label the 'Enter' key with a "Go" IME action.
+         The action key performs a "go" operation to take the user to the target of the text they typed.
+         Typically used, for example, when entering a URL. (stylized in uppercase letters as 'GO')
+    -->
+    <string name="keyboard_go_label">SIIRRY</string>
+
+    <!-- This string is used on the virtual keyboard to label the 'Enter' key with a "Search" IME action.
+         The action key performs a "search" operation, taking the user to the results of searching for the text
+         they have typed. (stylized in uppercase letters as 'SEARCH')
+    -->
+    <string name="keyboard_search_label">HAE</string>
+
+    <!-- This string is used on the virtual keyboard to label the 'Enter' key with a "Send" IME action.
+         The action key performs a "send" operation, delivering the text to its target. This is typically used
+         when composing a message in IM or SMS where sending is immediate. (stylized in uppercase letters as 'SEND')
+    -->
+    <string name="keyboard_send_label">LÄHETÄ</string>
+
+    <!-- This string is used on the virtual keyboard to label the 'Enter' key with a "Next" IME action.
+         The action key performs a "next" operation, taking the user to the next field that will accept text.
+         (stylized in uppercase letters as 'NEXT')
+    -->
+    <string name="keyboard_next_label">SEURAAVA</string>
+
+    <!-- This string is used on the virtual keyboard to label the 'Enter' key with a "Done" IME action.
+     The action key performs a "done" operation, typically meaning there is nothing more to input and the
+     IME will be closed. (stylized in uppercase letters as 'DONE')
+    -->
+    <string name="keyboard_done_label">VALMIS</string>
+
+    <!-- This string is used on the virtual keyboard to label the 'space' key-->
+    <string name="keyboard_space_label">välilyönti</string>
+
+    <!-- This string is displayed in the button that means the user accepts the
+         permission requested for in the permission dialog box. -->
+    <string name="permission_allow">Salli</string>
+
+    <!-- This string is displayed in the button that means the user rejects the
+         permission requested for in the permission dialog box. -->
+    <string name="permission_reject">Älä salli</string>
+
+    <!-- This string is displayed in the button that means the user wants to enable/grant a permission. -->
+    <string name="permission_enable">Käytä</string>
+
+    <!-- This string is displayed in a label that means the permission has already been granted -->
+    <string name="permission_enabled">Käytössä</string>
+
+    <!-- This string is displayed in the Settings dialog box and how
+         the user can know which version of the application they are currently running.
+         '%1$s' will be replaced at runtime with the application version number. -->
+    <string name="settings_version">versio %1$s</string>
+
+    <!-- This string is displayed in the Settings dialog box and is used to label an
+         On/Off switch which toggles whether browser-level Telemetry is reported back to Mozilla. -->
+    <string name="settings_telemetry">Telemetria</string>
+
+    <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
+         opens a dialog box that contains language-related settings. -->
+    <string name="settings_language">Kieli</string>
+
+    <!-- This string is used to label a button that, when pressed, loads a website
+         that allows the user file an issue or problem they may have encountered while using the
+         application or while visiting a site. -->
+    <string name="settings_report_issue">Ilmoita ongelmasta</string>
+
+    <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
+        opens the Firfox Reality support web site in the browser window. -->
+    <string name="settings_help">Ohje</string>
+
+    <!-- This string is the title of a dialog box shown to the user when a settings
+         change requires the application to restart. -->
+    <string name="restart_dialog_restart">Uudelleenkäynnistys vaaditaan</string>
+
+    <!-- This string is used to label the button the user presses to restart the
+         application in the restart dialog. -->
+    <string name="restart_now_dialog_button">Käynnistä uudelleen nyt</string>
+
+    <!-- This string is used to label the button the user presses in order to skip the application
+         from being restarted. -->
+    <string name="restart_later_dialog_button">Käynnistä myöhemmin uudelleen</string>
+
+    <!-- This string is used to label two integer-entry fields where the default width and height of
+         the browser window may be set. -->
+    <string name="developer_options_window_size">Ikkunan koko:</string>
+
+    <!-- This string is used to label buttons to enable editing of text fields in the
+         'Developer Options' dialog. Pressing this button switches the text to
+         editable-text fields so their values may be changed. -->
+    <string name="developer_options_edit">Muokkaa</string>
+
+    <!-- This string is used to label the 'Edit' button once it has been pressed by the user. It
+         indicates that, when the button is pressed, the user's edits will be saved. -->
+    <string name="developer_options_save">Tallenna</string>
+
+    <!-- This string is used to label the 'Show' button in Settings. It
+     indicates that, when the button is pressed opens a dialog box that contains more information.
+     For example it's used to open a URL with the privacy policy. -->
+    <string name="developer_options_show">Näytä</string>
+
+    <!-- This string is used to label two integer entry fields that will allow the user to adjust
+         the maximum window size in the X and Y dimensions. -->
+    <string name="developer_options_max_window_size">Ikkunan enimmäiskoko:</string>
+
+    <!-- This string is used to label the 'Desktop' radio button of the 'User-Agent Mode' settings option. -->
+    <string name="developer_options_ua_desktop">Työpöytä</string>
+
+    <!-- This string is used to label the 'Mobile' radio button of the 'User-Agent Mode' settings option. -->
+    <string name="developer_options_ua_mobile">Mobiili</string>
+
+    <!-- This string is used to label the Foveated radio button that enables low-level fixed-foveated-rendering. -->
+    <string name="developer_options_foveated_1">1</string>
+    <!-- This string is used to label the Foveated radio button that enables medium-level fixed-foveated-rendering. -->
+    <string name="developer_options_foveated_2">2</string>
+    <!-- This string is used to label the Foveated radio button that enables high-level fixed-foveated-rendering. -->
+    <string name="developer_options_foveated_3">3</string>
+
+    <!-- This string is used to label a set of radio buttons that allow the user to change the
+     scroll direction of the remote controller. -->
+    <string name="developer_options_scroll_direction">Vierityksen suunta</string>
+
+    <!-- This string is used to label the 'Natural' radio button of the 'Scroll Direction' settings option.
+         "Natural" refers to the motion of scrolled material being congruent with respect to direction of
+         motion of user input. -->
+    <string name="developer_options_scroll_direction_natural">Luonnollinen</string>
+
+    <!-- This string is used to label the 'Reversed' radio button of the 'Scroll Direction' settings option.
+         "Reversed" refers to the motion of scrolled material being reversed with respect to direction of
+         motion of user input. -->
+    <string name="developer_options_scroll_direction_reversed">Käänteinen</string>
+
+    <!-- This string labels the 'Reset' button that restores the default developer settings values. -->
+    <string name="developer_options_reset_button">Nollaa</string>
+
+    <!-- This string describes the radio buttons used to select the user's background environment
+         (seen while not in Immersive Mode). -->
+    <string name="developer_options_environments">Ympäristö</string>
+
+    <!-- This string labels the radio button that selects the 'Underwater' environment,
+         a brightly lit submarine themed environment. -->
+    <string name="developer_options_env_underwater">Vedenalainen</string>
+
+    <!-- This string labels the radio button that selects the 'Winter' environment,
+         a snow-covered outdoor winter mountain scene. -->
+    <string name="developer_options_env_winter">Talvi</string>
+
+    <!-- This string describes the radio buttons used to select the pointer color. -->
+    <string name="developer_options_pointer_color">Osoittimen väri</string>
+
+    <!-- This string labels the radio button that sets the pointer color to purple. -->
+    <string name="developer_options_pointer_purple">Liila</string>
+
+    <!-- This string labels the radio button that sets the pointer color to white. -->
+    <string name="developer_options_pointer_white">Valkoinen</string>
+
+    <!-- This string is used to label a text entry field where the user may enter a new value
+         for the home page. -->
+    <string name="developer_options_homepage">Aloitussivu</string>
+
+    <!-- This string labels an On/Off switch in the Privacy and Security settings dialog
+     and is used to enable or disable tracking protection. -->
+    <string name="security_options_tracking_protection">Seurannan suojaus</string>
+
+    <!-- This string labels the button that displays or enables application access to the device's
+         camera, if a camera is present. -->
+    <string name="security_options_permission_camera">Kamera</string>
+
+    <!-- This string labels the button that displays or enables application access to the device's
+         microphone, if a microphone is present. -->
+    <string name="security_options_permission_microphone">Mikrofoni</string>
+
+    <!-- This string labels the button that displays or enables application access to the device's
+         geographic location, if the device supports determination of geographic location. -->
+    <string name="security_options_permission_location">Sijainti</string>
+
+    <!-- This string labels the button that displays or enables the application to post system-wide
+         notifications. -->
+    <string name="security_options_permission_notifications">Ilmoitukset</string>
+
+    <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'On'. -->
+    <string name="on">Päällä</string>
+
+    <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'Off'. -->
+    <string name="off">Pois</string>
+
+    <!-- This string is displayed in a dialog box show to the user while the Voice Search is being
+         performed. It indicates that the search query is running and they should wait for the result. -->
+    <string name="voice_search_decoding">Haetaan…</string>
+
+    <!-- This string is displayed in a dialog box show to the user while the Voice Search is being
+         performed. It indicates that the search query is running and they should wait for the result. -->
+    <string name="voice_search_error">Valitettavasti en ymmärtänyt.</string>
+
+    <!-- This string is displayed in a dialog box after a failed Voice Search and the system is prompting the
+         user to try the Voice Search again. -->
+    <string name="voice_search_try_again">Yritä uudelleen.</string>
+
+    <!-- This string is displayed in the URL bar when it is empty. It informs the user that they
+         may use the URL bar to search the Web or enter a Web address. -->
+    <string name="search_placeholder">Hae verkosta tai kirjoita osoite</string>
+
+    <!-- This string labels a button that is used to cancel an action.
+         This appears in such contexts as dialog boxes, `<select>` menus, etc. -->
+    <string name="cancel_button">Peruuta</string>
+
+    <!-- This string labels a button that is used to approve an action.
+         This appears in such contexts as dialog boxes, `<select>` menus, etc. -->
+    <string name="ok_button">OK</string>
+
+    <!-- This string is displayed in a dialog after an application crash. -->
+    <string name="crash_dialog_heading">Sovellus kohtasi ongelman ja kaatui</string>
+
+    <!-- This string labels a checkbox in the crash dialog box. When checked, the user will no longer
+         be prompted for permission to upload crash data after an application crash. -->
+    <string name="crash_dialog_send_data">Lähetä aina tiedot kysymättä</string>
+
+    <!-- This string labels a button that, when pressed, allows the user to learn more about the
+         currently open dialog. -->
+    <string name="learn_more_button">Lue lisää</string>
+
+    <!-- This string labels a button that, when pressed, prevents browser-level crash data from being sent to Mozilla. -->
+    <string name="do_not_sent_button">Älä lähetä</string>
+
+    <!-- This string labels a button that, when pressed, allows the crash data to be sent to Mozilla. -->
+    <string name="send_data_button">Lähetä tiedot</string>
+
+    <!-- This string appears in the tooltip for the button to change the 'Brightness'
+         (i.e., the brightness level of the background environment), in particular when playing a video. -->
+    <string name="brightness_mode_tooltip">Kirkkaus</string>
+
+    <!-- This string labels the radio option that selects the 'Normal' background in the 'Brightness' mode. -->
+    <string name="brightness_mode_normal">Normaali</string>
+
+    <!-- This string labels the radio option that selects the 'Dark' background in the 'Brightness' mode. -->
+    <string name="brightness_mode_dark">Tumma</string>
+
+    <!-- This string is displayed when selecting a video playback mode. -->
+    <string name="video_mode_360">360</string>
+
+    <!-- This string is displayed when selecting a video playback mode. -->
+    <string name="video_mode_180">180</string>
+
+    <!-- This string is displayed in a tooltip in the video controls UI. -->
+    <string name="video_controls_play">Toista</string>
+
+    <!-- This string is displayed in a tooltip in the video controls UI. -->
+    <string name="video_controls_pause">Tauko</string>
+
+    <!-- This string is displayed in a tooltip that appears when a user hovers
+         over an icon representing 'Remove Bookmark' for an individual bookmark
+         item listed in the Bookmarks List. -->
+    <string name="bookmarks_remove">Poista kirjanmerkki</string>
+
+    <!-- This string is displayed in a tooltip that appears when a user hovers
+         over an icon representing 'Edit This Bookmark' for an individual bookmark
+         item listed in the Bookmarks List. -->
+    <string name="bookmarks_edit">Muokkaa tätä kirjanmerkkiä</string>
+
+    <!-- This string is displayed in a tooltip in the bookmark button in the URL bar. -->
+    <string name="bookmarks_bookmark">Lisää sivu kirjanmerkkeihin</string>
+
+    <!-- This string is displayed in the Bookmarks List as a tooltip of the button for showing
+         all the bookmarks. -->
+    <string name="bookmarks_show_all">Näytä kaikki kirjanmerkit</string>
+
+    <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the 'Name' of the bookmarked website. -->
+    <string name="col_name">Nimi</string>
+
+    <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the 'Tags' of the bookmarked website. -->
+    <string name="col_tags">Tunnisteet</string>
+
+    <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the 'Location' (or 'URL' or 'Address') of the bookmarked website. -->
+    <string name="col_url">Sijainti</string>
+
+    <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the date of when the website was bookmarked. -->
+    <string name="col_date_added">Lisätty</string>
+
+    <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the date of when the bookmarked website was last edited. -->
+    <string name="col_date_last_modified">Viimeksi muokattu</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Back' button in the browser's navigation bar.
+         'Back' refers to going back one page in 'History'. -->
+    <string name="back_tooltip">Taaksepäin</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Forward' button in the browser's navigation bar.
+         'Forward' refers to going back one page in 'History'. -->
+    <string name="forward_tooltip">Eteenpäin</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Refresh' button in the browser's navigation bar.
+         'Refresh' refers to reloading the current page. -->
+    <string name="refresh_tooltip">Päivitä</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Stop' button in the browser's navigation bar.
+         'Stop' stops the current page load. -->
+    <string name="stop_tooltip">Pysäytä lataaminen</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Home' button in the browser's navigation bar.
+         'Home' refers to the browser's start page (e.g., the Firefox Reality Home Page). -->
+    <string name="home_tooltip">Aloitussivu</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Voice Search' (microphone) button in the
+         browser's navigation bar. 'Voice Search' refers to the browser's system for searching the Web using
+         speech-to-text recognition. -->
+    <string name="voice_search_tooltip">Äänihaku</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Clear' button in the
+         browser's navigation bar. The button it labels, when pressed, clears the navigation bar text. -->
+    <string name="clear_tooltip">Tyhjennä</string>
+
+    <!-- This string is for the tooltip that when clicking the 'Info' (ⓘ) icon visible next to the current website's
+         URL in the URL bar. The button it labels, when pressed, shows information about the site. -->
+    <string name="site_info_tooltip">Näytä sivuston tiedot.</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Resize' button in the browser's navigation bar.
+         'Resize' refers to the button used to resize the browset window. -->
+    <string name="resize_tooltip">Muuta kokoa</string>
+
+    <!-- This string is for the tooltip that appears when the user is not in the browser's Private Browsing mode
+         and hovers over the 'Private Browsing' icon in the browser's tray menu. -->
+    <string name="private_browsing_enter_tooltip">Siirry yksityiseen selaukseen</string>
+
+    <!-- This string is for the tooltip that appears when the user is in the browser's Private Browsing mode
+         and hovers over the 'Private Browsing' icon in the browser's tray menu. -->
+    <string name="private_browsing_exit_tooltip">Poistu yksityisestä selauksesta</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the target url in a new window. -->
+    <string name="context_menu_open_new_window">Avaa uudessa ikkunassa.</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmark' icon in the
+         browser's navigation bar. The button it labels, when pressed, bookmarks the currently open web site. -->
+    <string name="bookmark_tooltip">Lisää tämä sivu kirjanmerkkeihin</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmarks' icon in the
+         tray. The button it labels, when pressed, opens a list view of the user's saved
+         Bookmarks. -->
+    <string name="bookmarks_tooltip">Kirjanmerkit</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmarks' icon in the
+         tray and the Bookmarks view is closed. The button it labels, when pressed, opens a list view of the user's saved
+         Bookmarks. -->
+    <string name="open_bookmarks_tooltip">Avaa kirjanmerkit</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmarks' icon in the
+         tray and the Bookmarks view is closed. The button it labels, when pressed, closes the Bookmarks view. -->
+    <string name="close_bookmarks_tooltip">Sulje kirjanmerkit</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Settings' icon in the
+         tray. The button it labels, when pressed, opens the Settings panel. -->
+    <string name="settings_tooltip">Asetukset</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'New Window' icon in the
+         tray. The button it labels, when pressed, opens a new browser window. -->
+    <string name="new_window_tooltip">Avaa uusi ikkuna</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the down-arrow icon that appears in the
+         URL bar upon hover. The icon it labels, when pressed, expands a list of recently visited websites in the
+         user's History. -->
+    <string name="show_history_tooltip">Näytä historia</string>
+
+    <!-- This string is displayed in any button used for removing all the items in the current context. -->
+    <string name="remove_all">Poista kaikki</string>
+
+    <!-- This string is used as the title of the Private Browsing page that is opened when the
+         Private Browsing Mode button from the tray is clicked. -->
+    <string name="private_browsing_title">Yksityinen selaus</string>
+
+    <!-- This string is displayed as the label of a username input in an authentication prompt. -->
+    <string name="authentication_username">Käyttäjätunnus:</string>
+    <!-- This string is displayed as the label of a password input in an authentication prompt. -->
+    <string name="authentication_password">Salasana:</string>
+
+
+    <!-- This string is displayed as the label of a switch of an authentication prompt in order to show or hide the text in a password field. -->
+    <string name="authentication_show_password">Näytä salasana:</string>
+
+
+    <!-- This string is displayed in the title of the notification message shown when the device loses internet connection. -->
+    <string name="no_internet_title">Internetyhteys menetettiin</string>
+
+    </resources>

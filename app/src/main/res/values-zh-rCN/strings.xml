@@ -133,6 +133,12 @@
          (e.g., `Español` is mapped to `es`) when configured in the 'Voice Search' system. -->
     <string name="settings_language_choose_language_voice_search">选择优先使用哪种语言进行语音搜索</string>
 
+    <!-- This string is used to label a text label that appears in the header of 'Language Settings' ->
+         'Voice Search Language' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of locales for the user to choose as their preferred voice search
+         language. -->
+    <string name="settings_language_choose_language_voice_search_title">语音搜索语言</string>
+
     <!-- This string is used to label a radio button in the 'Settings' Language dialog that, when pressed,
          changes the app and the language of the speech-recognition-based search to 'English (US)'. -->
     <string name="settings_language_english">英语（美国）</string>
@@ -194,6 +200,10 @@
          a developer-build version of the app. -->
     <string name="settings_version_developer">开发者版本</string>
 
+    <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
+        opens the Firfox Reality support web site in the browser window. -->
+    <string name="settings_help">帮助</string>
+
     <!-- This string is the title of a dialog box shown to the user when a settings
          change requires the application to restart. -->
     <string name="restart_dialog_restart">需要重开</string>
@@ -232,6 +242,12 @@
          simultaneously by a computer with more than one central processor.
          A dialog should appear with a field labeled with the text, 'Enable Multiprocess'. -->
     <string name="developer_options_multiprocess">启用多进程</string>
+
+    <!-- This string labels an On/Off switch in the developer options dialog and is used to toggle
+         the performance monitor. The Performance monitor is used to detect pages that cause the
+         browser to run below a target framerate and pauses the page to restore performance.
+    -->
+    <string name="developer_options_performance_monitor">启用性能监视器</string>
 
     <!-- The string labels an On/Off switch in the developer options dialog and is used to toggle enabling Servo. -->
     <string name="developer_options_servo">启用 Servo</string>
@@ -332,6 +348,9 @@
     <!-- This string labels the 'Reset' button that restores the default developer settings values. -->
     <string name="developer_options_reset_button">重置</string>
 
+    <!-- This string is used to label buttons to enable editing of other options. -->
+    <string name="settings_button_edit">编辑</string>
+
     <!-- This string describes the radio buttons used to select the user's background environment
          (seen while not in Immersive Mode). -->
     <string name="developer_options_environments">环境</string>
@@ -373,6 +392,10 @@
     <!-- This string is used to label a text entry field where the user may enter a new value
          for the home page. -->
     <string name="developer_options_homepage">主页</string>
+
+    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
+     and is used to enable or disable playback of DRM controlled content. -->
+    <string name="security_options_drm_content">播放 DRM 控制内容（&lt;a href=&quot;http://somesite.com/&quot;&gt;详细了解&lt;/a&gt;）</string>
 
     <!-- This string labels an On/Off switch in the Privacy and Security settings dialog
      and is used to enable or disable tracking protection. -->
@@ -585,6 +608,18 @@
     <!-- This string labels the Reset button that restores the default voice search language settings values. -->
     <string name="language_options_reset">重置语音搜索语言设置</string>
 
+    <!-- This string labels the Reset button that restores the default display language settings values. -->
+    <string name="display_language_options_reset">重置显示语言</string>
+
+    <!-- This string labels the Reset button that restores all language settings values. -->
+    <string name="all_language_options_reset">重置所有语言设置</string>
+
+    <!-- This string labels the description in the Content Language header for preferred languages list. -->
+    <string name="language_options_preferred_languages">首选语言</string>
+
+    <!-- This string labels the description in the Content Language header for available languages list. -->
+    <string name="language_options_available_languages">可用语言</string>
+
     <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the 'Name' of the bookmarked website. -->
     <string name="col_name">名称</string>
 
@@ -615,6 +650,10 @@
          'Refresh' refers to reloading the current page. -->
     <string name="refresh_tooltip">刷新</string>
 
+    <!-- This string is for the tooltip that appears upon hovering the 'Stop' button in the browser's navigation bar.
+         'Stop' stops the current page load. -->
+    <string name="stop_tooltip">停止加载</string>
+
     <!-- This string is for the tooltip that appears upon hovering the 'Home' button in the browser's navigation bar.
          'Home' refers to the browser's start page (e.g., the Firefox Reality Home Page). -->
     <string name="home_tooltip">主页</string>
@@ -624,9 +663,25 @@
          speech-to-text recognition. -->
     <string name="voice_search_tooltip">语音搜索</string>
 
+    <!-- This string is for the tooltip that appears upon hovering the 'Request desktop site' button in the
+         browser's navigation bar. The button it labels, when pressed, change the currently used user agent. -->
+    <string name="request_dekstop_site_tooltip">要求桌面版网站</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Clear' button in the
+         browser's navigation bar. The button it labels, when pressed, clears the navigation bar text. -->
+    <string name="clear_tooltip">清除</string>
+
     <!-- This string is for the tooltip that when clicking the 'Info' (ⓘ) icon visible next to the current website's
          URL in the URL bar. The button it labels, when pressed, shows information about the site. -->
     <string name="site_info_tooltip">显示网站信息。</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Servo' button in the browser's navigation bar.
+         'Servo' refers to the Servo engine. -->
+    <string name="servo_tooltip">使用 Servo</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Resize' button in the browser's navigation bar.
+         'Resize' refers to the button used to resize the browset window. -->
+    <string name="resize_tooltip">重设大小</string>
 
     <!-- This string is for the tooltip that appears when the user is not in the browser's Private Browsing mode
          and hovers over the 'Private Browsing' icon in the browser's tray menu. -->
@@ -639,10 +694,31 @@
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the target url in a new window. -->
     <string name="context_menu_open_new_window">新建窗口打开。</string>
 
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmark' icon in the
+         browser's navigation bar. The button it labels, when pressed, bookmarks the currently open web site. -->
+    <string name="bookmark_tooltip">为此页添加书签</string>
+
     <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmarks' icon in the
-         browser's navigation bar. The button it labels, when pressed, opens a list view of the user's saved
+         tray. The button it labels, when pressed, opens a list view of the user's saved
          Bookmarks. -->
     <string name="bookmarks_tooltip">书签</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmarks' icon in the
+         tray and the Bookmarks view is closed. The button it labels, when pressed, opens a list view of the user's saved
+         Bookmarks. -->
+    <string name="open_bookmarks_tooltip">打开书签</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmarks' icon in the
+         tray and the Bookmarks view is closed. The button it labels, when pressed, closes the Bookmarks view. -->
+    <string name="close_bookmarks_tooltip">关闭书签</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Settings' icon in the
+         tray. The button it labels, when pressed, opens the Settings panel. -->
+    <string name="settings_tooltip">设置</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'New Window' icon in the
+         tray. The button it labels, when pressed, opens a new browser window. -->
+    <string name="new_window_tooltip">打开新窗口</string>
 
     <!-- This string is for the tooltip that appears when the user hovers over the down-arrow icon that appears in the
          URL bar upon hover. The icon it labels, when pressed, expands a list of recently visited websites in the
@@ -694,9 +770,31 @@
       that can be opened (initially 3) -->
     <string name="max_windows_message">您不能同时打开超过 %1$s 个窗口，请先关闭一些后再打开。</string>
 
+    <!-- This string is displayed in the button of the notification message shown when the user tries to open a new window and
+      it has already opened the maximum number of allowed windows. -->
+    <string name="max_windows_button">好</string>
+
     <!-- This string is displayed in the title of the alert dialog shown when the user does not have permission to run the application on the device. -->
     <string name="not_entitled_title">无法运行</string>
     <!-- This string is displayed in the message body of the alert dialog shown when the user does not have permission to run the application on the device.
          '%1$s' will be replace at runtime with the app's name. -->
     <string name="not_entitled_message">%1$s 没有在此设备上运行的权限，程序即将退出。</string>
+
+    <!-- This string is displayed in a button that when pressed allows a user to view a page that has been blocked from being displayed.-->
+    <string name="performance_unblock_page">解除屏蔽页面</string>
+    <!-- This string is displayed as the title of a dialog displayed when poor web page performance has been detected. -->
+    <string name="performance_title">检测到性能欠佳</string>
+    <!-- This string is displayed as the message body of a dialog displayed when poor web page performance has been detected and the page has been unloaded to restore performance. -->
+    <string name="performance_message">当前网页影响性能，已暂时挂起。缩小窗口有助于改善性能较差的网页。</string>
+
+    <!-- This string is displayed in the button of the Voice Search samples collect dialog.
+         When clicked the user opts in to the voice data collection. -->
+    <string name="voice_samples_collect_dialog_allow">允许</string>
+
+    <!-- This string is displayed in the button of the Voice Search samples collect dialog.
+         When clicked the user opts out of the voice data collection. -->
+    <string name="voice_samples_collect_dialog_do_not_allow">不允许</string>
+
+    <!-- This string is displayed in the content language list in front of the system default language in between parenthesis -->
+    <string name="language_default">默认</string>
 </resources>
