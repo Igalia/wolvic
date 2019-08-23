@@ -359,6 +359,23 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
        hideOverlays();
     }
 
+    public void proxifyLayerIfNeeded(ArrayList<WindowWidget> aWindows) {
+        if (!SettingsStore.getInstance(getContext()).getLayersEnabled()) {
+            return;
+        }
+        boolean proxify = false;
+        for (WindowWidget window: aWindows) {
+            if (window.getPlacement().borderColor != 0) {
+                proxify = true;
+                break;
+            }
+        }
+        if (mWidgetPlacement.proxifyLayer != proxify) {
+            mWidgetPlacement.proxifyLayer = proxify;
+            mWidgetManager.updateWidget(this);
+        }
+    }
+
     private void hideOverlays() {
         mPopupKeyboardView.setVisibility(View.GONE);
         mPopupKeyboardLayer.setVisibility(View.GONE);

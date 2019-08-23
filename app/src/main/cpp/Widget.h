@@ -60,8 +60,8 @@ public:
   vrb::NodePtr GetRoot() const;
   QuadPtr GetQuad() const;
   CylinderPtr GetCylinder() const;
-  void SetQuad(const QuadPtr& aQuad) const;
-  void SetCylinder(const CylinderPtr& aCylinder) const;
+  void SetQuad(const QuadPtr& aQuad);
+  void SetCylinder(const CylinderPtr& aCylinder);
   VRLayerSurfacePtr GetLayer() const;
   vrb::TransformPtr GetTransformNode() const;
   const WidgetPlacementPtr& GetPlacement() const;
@@ -74,6 +74,8 @@ public:
   void HoverExitResize();
   void SetCylinderDensity(const float aDensity);
   float GetCylinderDensity() const;
+  void SetBorderColor(const vrb::Color& aColor);
+  void SetProxifyLayer(const bool aValue);
 protected:
   struct State;
   Widget(State& aState, vrb::RenderContextPtr& aContext);

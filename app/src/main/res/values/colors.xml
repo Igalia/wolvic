@@ -38,4 +38,6 @@
     <color name="text_shadow">#8F000000</color>
     <color name="text_shadow_light">#7FFFFFFF</color>
     <color name="smoke">#f5f6fa</color>
+    <color name="window_border_hover">#1ac1dd</color>
+    <color name="window_border_click">#2bd2ee</color>
 </resources>

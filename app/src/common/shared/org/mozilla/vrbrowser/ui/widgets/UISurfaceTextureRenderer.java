@@ -43,6 +43,9 @@ class UISurfaceTextureRenderer {
             mSurfaceTexture.setDefaultBufferSize(aWidth, aHeight);
         }
     }
+    public boolean isLayer() {
+        return mSurface != null && mSurfaceTexture == null;
+    }
 
     void release() {
         if(mSurface != null){

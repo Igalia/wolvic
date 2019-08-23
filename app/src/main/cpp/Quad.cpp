@@ -166,6 +166,15 @@ Quad::Create(vrb::CreationContextPtr aContext, const float aWorldWidth, const fl
   return result;
 }
 
+QuadPtr
+Quad::Create(vrb::CreationContextPtr aContext, const Quad& aQuad) {
+  QuadPtr result = std::make_shared<vrb::ConcreteClass<Quad, Quad::State> >(aContext);
+  result->m.worldMin = aQuad.m.worldMin;
+  result->m.worldMax = aQuad.m.worldMax;
+  result->m.Initialize();
+  return result;
+}
+
 vrb::GeometryPtr
 Quad::CreateGeometry(vrb::CreationContextPtr aContext, const vrb::Vector &aMin, const vrb::Vector &aMax) {
   device::EyeRect rect(0.0f, 0.0f, 1.0f, 1.0f);

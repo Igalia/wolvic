@@ -10,11 +10,15 @@
 #include "VRBrowser.h"
 #include "WidgetPlacement.h"
 #include "WidgetResizer.h"
+#include "WidgetBorder.h"
 #include "vrb/ConcreteClass.h"
 
 #include "vrb/Color.h"
 #include "vrb/RenderContext.h"
+#include "vrb/CreationContext.h"
+#include "vrb/TextureGL.h"
 #include "vrb/Matrix.h"
+#include "vrb/GLError.h"
 #include "vrb/Geometry.h"
 #include "vrb/RenderState.h"
 #include "vrb/SurfaceTextureFactory.h"
@@ -25,6 +29,14 @@
 #include "vrb/VertexArray.h"
 
 namespace crow {
+
+static const float kFrameSize = 0.02f;
+#if defined(OCULUSVR)
+static const float kBorder = 0.0f;
+#else
+static const float kBorder = kFrameSize * 0.15f;
+#endif
+
 
 struct Widget::State {
   vrb::RenderContextWeak context;
@@ -43,6 +55,9 @@ struct Widget::State {
   WidgetResizerPtr resizer;
   bool resizing;
   bool toggleState;
+  vrb::TogglePtr bordersContainer;
+  std::vector<WidgetBorderPtr> borders;
+  vrb::TogglePtr layerProxy;
 
   State()
       : handle(0)
@@ -169,6 +184,14 @@ struct Widget::State {
       resizer = nullptr;
     }
   }
+
+  void RemoveBorder() {
+    if (bordersContainer) {
+      bordersContainer->RemoveFromParents();
+      bordersContainer = nullptr;
+    }
+    borders.clear();
+  }
 };
 
 WidgetPtr
@@ -185,7 +208,7 @@ Widget::Create(vrb::RenderContextPtr& aContext, const int aHandle, const float a
                const int32_t aTextureWidth, const int32_t aTextureHeight, const CylinderPtr& aCylinder) {
   WidgetPtr result = std::make_shared<vrb::ConcreteClass<Widget, Widget::State> >(aContext);
   result->m.min = vrb::Vector(-aWorldWidth * 0.5f, -aWorldHeight * 0.5f, 0.0f);
-  result->m.max = vrb::Vector(aWorldWidth *0.5f, aWorldHeight * 0.5f, 0.0f);
+  result->m.max = vrb::Vector(aWorldWidth * 0.5f, aWorldHeight * 0.5f, 0.0f);
   result->m.Initialize(aHandle, aTextureWidth, aTextureHeight, nullptr, aCylinder);
   return result;
 }
@@ -247,6 +270,7 @@ Widget::SetWorldWidth(float aWorldWidth) const {
   const float aspect = (float)width / (float) height;
   const float worldHeight = aWorldWidth / aspect;
 
+  const float oldWidth = m.max.x() - m.min.x();
   m.min = vrb::Vector(-aWorldWidth * 0.5f, -worldHeight * 0.5f, 0.0f);
   m.max = vrb::Vector(aWorldWidth *0.5f, worldHeight * 0.5f, 0.0f);
 
@@ -259,6 +283,10 @@ Widget::SetWorldWidth(float aWorldWidth) const {
 
   if (m.resizing && m.resizer) {
     m.resizer->SetSize(m.min, m.max);
+  }
+
+  if (oldWidth != aWorldWidth) {
+    m.RemoveBorder();
   }
 }
 
@@ -346,7 +374,7 @@ Widget::GetCylinder() const {
 }
 
 void
-Widget::SetQuad(const QuadPtr& aQuad) const {
+Widget::SetQuad(const QuadPtr& aQuad) {
   int32_t textureWidth, textureHeight;
   GetSurfaceTextureSize(textureWidth, textureHeight);
   if (m.cylinder) {
@@ -362,11 +390,12 @@ Widget::SetQuad(const QuadPtr& aQuad) const {
   m.transformContainer->SetTransform(vrb::Matrix::Identity());
 
   m.RemoveResizer();
+  m.RemoveBorder();
   m.UpdateSurface(textureWidth, textureHeight);
 }
 
 void
-Widget::SetCylinder(const CylinderPtr& aCylinder) const {
+Widget::SetCylinder(const CylinderPtr& aCylinder) {
   int32_t textureWidth, textureHeight;
   GetSurfaceTextureSize(textureWidth, textureHeight);
   if (m.quad) {
@@ -381,6 +410,7 @@ Widget::SetCylinder(const CylinderPtr& aCylinder) const {
   m.transform->AddNode(aCylinder->GetRoot());
 
   m.RemoveResizer();
+  m.RemoveBorder();
   m.UpdateSurface(textureWidth, textureHeight);
 }
 
@@ -461,7 +491,6 @@ void
 Widget::HandleResize(const vrb::Vector& aPoint, bool aPressed, bool& aResized, bool &aResizeEnded) {
   m.resizer->HandleResizeGestures(aPoint, aPressed, aResized, aResizeEnded);
   if (aResized || aResizeEnded) {
-
     m.min = m.resizer->GetResizeMin();
     m.max = m.resizer->GetResizeMax();
     if (m.quad) {
@@ -469,6 +498,7 @@ Widget::HandleResize(const vrb::Vector& aPoint, bool aPressed, bool& aResized, b
     } else if (m.cylinder) {
       m.UpdateCylinderMatrix();
     }
+    m.RemoveBorder();
   }
 }
 
@@ -490,6 +520,75 @@ Widget::SetCylinderDensity(const float aDensity) {
 float
 Widget::GetCylinderDensity() const {
   return m.cylinderDensity;
+}
+
+void
+Widget::SetBorderColor(const vrb::Color &aColor) {
+  const bool visible = aColor.Alpha() > 0.0f;
+  if (!visible && m.bordersContainer) {
+    m.bordersContainer->ToggleAll(false);
+    return;
+  }
+  if (visible && !m.bordersContainer) {
+    vrb::RenderContextPtr render = m.context.lock();
+    vrb::CreationContextPtr create = render->GetRenderThreadCreationContext();
+    m.bordersContainer = vrb::Toggle::Create(create);
+    m.borders = WidgetBorder::CreateFrame(create, *this, kFrameSize, kBorder);
+    for (const WidgetBorderPtr& border: m.borders) {
+      m.bordersContainer->AddNode(border->GetTransformNode());
+    }
+    m.transform->InsertNode(m.bordersContainer, 0);
+  }
+
+  if (visible) {
+    m.bordersContainer->ToggleAll(true);
+    for (const WidgetBorderPtr& border: m.borders) {
+      border->SetColor(aColor);
+    }
+  }
+}
+
+void
+Widget::SetProxifyLayer(const bool aValue) {
+  if (!aValue) {
+    if (m.layerProxy) {
+      m.layerProxy->ToggleAll(false);
+    }
+    return;
+  }
+
+  if (!m.layerProxy) {
+    vrb::RenderContextPtr render = m.context.lock();
+    vrb::CreationContextPtr create = render->GetRenderThreadCreationContext();
+    m.layerProxy = vrb::Toggle::Create(create);
+    // Proxy objects must clear the existing surface, so set a proper blend function.
+    m.layerProxy->SetPreRenderLambda(create, []() {
+      VRB_GL_CHECK(glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_ALPHA));
+    });
+    m.layerProxy->SetPostRenderLambda(create, []() {
+      VRB_GL_CHECK(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+    });
+    m.transform->AddNode(m.layerProxy);
+    int32_t textureWidth, textureHeight;
+    GetSurfaceTextureSize(textureWidth, textureHeight);
+    // Reduce quality, proxy objects do not need full quality.
+    textureWidth /= 2;
+    textureHeight /= 2;
+    vrb::TextureSurfacePtr proxySurface = vrb::TextureSurface::Create(render, m.name);
+    if (m.cylinder) {
+      CylinderPtr proxy = Cylinder::Create(create, *m.cylinder);
+      proxy->SetCylinderTheta(m.cylinder->GetCylinderTheta());
+      proxy->SetTexture(proxySurface, textureWidth, textureHeight);
+      proxy->SetTransform(m.cylinder->GetTransformNode()->GetTransform());
+      m.layerProxy->AddNode(proxy->GetRoot());
+    } else {
+      QuadPtr proxy = Quad::Create(create, *m.quad);
+      proxy->SetTexture(proxySurface, textureWidth, textureHeight);
+      m.layerProxy->AddNode(proxy->GetRoot());
+    }
+  }
+
+  m.layerProxy->ToggleAll(true);
 }
 
 Widget::Widget(State& aState, vrb::RenderContextPtr& aContext) : m(aState) {

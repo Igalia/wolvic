@@ -25,7 +25,7 @@ import java.io.Writer;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
-public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSession.ContentDelegate {
+public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSession.ContentDelegate, WindowWidget.WindowDelegate {
 
     private static final String LOGTAG = Windows.class.getSimpleName();
 
@@ -86,6 +86,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSessio
 
     public interface Delegate {
         void onFocusedWindowChanged(@NonNull WindowWidget aFocusedWindow, @Nullable WindowWidget aPrevFocusedWindow);
+        void onWindowBorderChanged(@NonNull WindowWidget aChangeWindow);
     }
 
     public Windows(Context aContext) {
@@ -347,6 +348,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSessio
     }
 
     public void onDestroy() {
+        mDelegate = null;
         for (WindowWidget window: mRegularWindows) {
             window.close();
         }
@@ -436,7 +438,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSessio
         mFocusedWindow.showMaxWindowsDialog(MAX_WINDOWS);
     }
 
-    private ArrayList<WindowWidget> getCurrentWindows() {
+    public ArrayList<WindowWidget> getCurrentWindows() {
         return mPrivateMode ? mPrivateWindows : mRegularWindows;
     }
 
@@ -510,6 +512,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSessio
         mPrivateWindows.remove(aWindow);
         aWindow.getTopBar().setVisible(false);
         aWindow.getTopBar().setDelegate((TopBarWidget.Delegate) null);
+        aWindow.setWindowDelegate(null);
         aWindow.getSessionStack().removeContentListener(this);
         aWindow.close();
         updateMaxWindowScales();
@@ -664,6 +667,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSessio
     private WindowWidget createWindow() {
         int newWindowId = sIndex++;
         WindowWidget window = new WindowWidget(mContext, newWindowId, mPrivateMode);
+        window.setWindowDelegate(this);
         getCurrentWindows().add(window);
         window.getTopBar().setDelegate(this);
         window.getSessionStack().addContentListener(this);
@@ -780,6 +784,20 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSessio
             }
         }
         return null;
+    }
+
+    // WindowWidget.Delegate
+    @Override
+    public void onFocusRequest(WindowWidget aWindow) {
+        focusWindow(aWindow);
+    }
+
+    @Override
+    public void onBorderChanged(WindowWidget aWindow) {
+        if (mDelegate != null) {
+            mDelegate.onWindowBorderChanged(aWindow);
+        }
+
     }
 
 }

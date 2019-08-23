@@ -256,7 +256,16 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     protected void initializeWidgets() {
         mWindows = new Windows(this);
-        mWindows.setDelegate(this::attachToWindow);
+        mWindows.setDelegate(new Windows.Delegate() {
+            @Override
+            public void onFocusedWindowChanged(@NonNull WindowWidget aFocusedWindow, @Nullable WindowWidget aPrevFocusedWindow) {
+                attachToWindow(aFocusedWindow, aPrevFocusedWindow);
+            }
+            @Override
+            public void onWindowBorderChanged(@NonNull WindowWidget aChangeWindow) {
+                mKeyboard.proxifyLayerIfNeeded(mWindows.getCurrentWindows());
+            }
+        });
 
         // Create Browser navigation widget
         mNavigationBar = new NavigationBarWidget(this);
@@ -648,20 +657,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             if (!isWidgetInputEnabled(widget)) {
                 widget = null; // Fallback to mRootWidget in order to allow world clicks to dismiss UI.
             }
-            if (widget instanceof WindowWidget) {
-                WindowWidget window = (WindowWidget) widget;
-                boolean focused = mWindows.getFocusedWindow() == window;
-                if (!focused && aPressed) {
-                    // Focus the window when pressed
-                    mWindows.focusWindow(window);
-                    // Discard first click.
-                    return;
-                } else if (!focused) {
-                    // Do not send hover events to not focused windows.
-                    widget = null;
-                }
-            }
-
 
             float scale = widget != null ? widget.getPlacement().textureScale : 1.0f;
             final float x = aX / scale;

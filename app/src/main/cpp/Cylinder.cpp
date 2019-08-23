@@ -218,6 +218,18 @@ Cylinder::Create(vrb::CreationContextPtr aContext, const float aRadius, const fl
 }
 
 CylinderPtr
+Cylinder::Create(vrb::CreationContextPtr aContext, const Cylinder& aCylinder) {
+  CylinderPtr result = std::make_shared<vrb::ConcreteClass<Cylinder, Cylinder::State> >(aContext);
+  result->m.radius = aCylinder.m.radius;
+  result->m.height = aCylinder.m.height;
+  result->m.solidColor = aCylinder.m.solidColor;
+  result->m.border = aCylinder.m.border;;
+  result->m.borderColor = aCylinder.m.borderColor;
+  result->m.Initialize();
+  return result;
+}
+
+CylinderPtr
 Cylinder::Create(vrb::CreationContextPtr aContext, const VRLayerCylinderPtr& aLayer) {
   CylinderPtr result = std::make_shared<vrb::ConcreteClass<Cylinder, Cylinder::State> >(aContext);
   result->m.layer = aLayer;

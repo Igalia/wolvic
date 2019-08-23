@@ -45,6 +45,8 @@ import org.mozilla.vrbrowser.ui.widgets.prompts.ChoicePromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.ConfirmPromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.PromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.TextPromptWidget;
+import org.mozilla.vrbrowser.utils.InternalPages;
+import org.mozilla.vrbrowser.utils.ViewUtils;
 
 import java.util.ArrayList;
 
@@ -90,7 +92,15 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private Windows.WindowPlacement mWindowPlacement = Windows.WindowPlacement.FRONT;
     private float mMaxWindowScale = 3;
     private boolean mIsRestored = false;
+    private WindowDelegate mWindowDelegate;
     boolean mActive = false;
+    boolean mHovered = false;
+    boolean mClickedAfterFocus = false;
+
+    public interface WindowDelegate {
+        void onFocusRequest(@NonNull WindowWidget aWindow);
+        void onBorderChanged(@NonNull WindowWidget aWindow);
+    }
 
     public WindowWidget(Context aContext, int windowId, boolean privateMode) {
         super(aContext);
@@ -387,6 +397,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
 
         TelemetryWrapper.activePlacementEvent(mWindowPlacement.getValue(), mActive);
+        updateBorder();
     }
 
     public SessionStack getSessionStack() {
@@ -488,6 +499,26 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     @Override
     public void handleTouchEvent(MotionEvent aEvent) {
         mLastMouseClickPos = new Point((int)aEvent.getX(), (int)aEvent.getY());
+        if (aEvent.getAction() == MotionEvent.ACTION_DOWN) {
+            if (!mActive) {
+                mClickedAfterFocus = true;
+                updateBorder();
+                if (mWindowDelegate != null) {
+                    // Focus this window
+                    mWindowDelegate.onFocusRequest(this);
+                }
+                // Return to discard first click after focus
+                return;
+            }
+        } else if (aEvent.getAction() == MotionEvent.ACTION_UP || aEvent.getAction() == MotionEvent.ACTION_CANCEL) {
+            mClickedAfterFocus = false;
+            updateBorder();
+        }
+
+        if (!mActive) {
+            // Do not send touch events to not focused windows.
+            return;
+        }
 
         if (mView != null) {
             super.handleTouchEvent(aEvent);
@@ -507,6 +538,19 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     @Override
     public void handleHoverEvent(MotionEvent aEvent) {
+        if (aEvent.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
+            mHovered = true;
+            updateBorder();
+        } else if (aEvent.getAction() == MotionEvent.ACTION_HOVER_EXIT) {
+            mHovered = false;
+            updateBorder();
+        }
+
+        if (!mActive) {
+            // Do not send touch events to not focused windows.
+            return;
+        }
+
         if (mView != null) {
             super.handleHoverEvent(aEvent);
 
@@ -518,6 +562,26 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             }
             session.getPanZoomController().onMotionEvent(aEvent);
         }
+    }
+
+    protected void updateBorder() {
+        int color = 0;
+        if (!mActive && !mClickedAfterFocus && mHovered) {
+            color = ViewUtils.ARGBtoRGBA(getContext().getColor(R.color.window_border_hover));
+        } else if (mClickedAfterFocus) {
+            color = ViewUtils.ARGBtoRGBA(getContext().getColor(R.color.window_border_click));
+        }
+        if (mWidgetPlacement.borderColor != color) {
+            mWidgetPlacement.borderColor = color;
+            mWidgetManager.updateWidget(this);
+            if (mWindowDelegate != null) {
+                mWindowDelegate.onBorderChanged(this);
+            }
+        }
+    }
+
+    public void setWindowDelegate(WindowDelegate aDelegate) {
+        mWindowDelegate = aDelegate;
     }
 
     @Override
@@ -975,5 +1039,4 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         return GeckoResult.ALLOW;
     }
-
 }

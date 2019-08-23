@@ -6,6 +6,8 @@
 #ifndef VRBROWSER_DEVICE_H
 #define VRBROWSER_DEVICE_H
 
+#include <stdint.h>
+
 namespace crow {
 namespace device {
 typedef uint32_t CapabilityFlags;

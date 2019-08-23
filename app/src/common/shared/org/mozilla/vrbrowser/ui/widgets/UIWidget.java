@@ -35,6 +35,7 @@ public abstract class UIWidget extends FrameLayout implements Widget {
     }
 
     protected UISurfaceTextureRenderer mRenderer;
+    protected UISurfaceTextureRenderer mProxyRenderer;
     protected SurfaceTexture mTexture;
     protected float mWorldWidth;
     protected int mHandle;
@@ -100,6 +101,15 @@ public abstract class UIWidget extends FrameLayout implements Widget {
     public void setSurfaceTexture(SurfaceTexture aTexture, final int aWidth, final int aHeight) {
         if (mTexture!= null && (mTexture.equals(aTexture))) {
             Log.d(LOGTAG, "Texture already set");
+            return;
+        }
+        if (mRenderer != null && mRenderer.isLayer()) {
+            // Widget is using a layer write-only surface but we also want a proxy.
+            if (mProxyRenderer != null) {
+                mProxyRenderer.release();
+            }
+            mProxyRenderer = new UISurfaceTextureRenderer(aTexture, aWidth, aHeight);
+            postInvalidate();
             return;
         }
         mTexture = aTexture;
@@ -211,7 +221,19 @@ public abstract class UIWidget extends FrameLayout implements Widget {
             super.draw(aCanvas);
             return;
         }
-        Canvas textureCanvas = mRenderer.drawBegin();
+        draw(aCanvas, mRenderer);
+        if (mProxyRenderer != null && mWidgetPlacement.proxifyLayer) {
+            draw(aCanvas, mProxyRenderer);
+        }
+
+        if (mFirstDrawCallback != null) {
+            mFirstDrawCallback.run();
+            mFirstDrawCallback = null;
+        }
+    }
+
+    private void draw(Canvas aCanvas, UISurfaceTextureRenderer aRenderer) {
+        Canvas textureCanvas = aRenderer.drawBegin();
         if(textureCanvas != null) {
             // set the proper scale
             float xScale = textureCanvas.getWidth() / (float)aCanvas.getWidth();
@@ -219,11 +241,7 @@ public abstract class UIWidget extends FrameLayout implements Widget {
             // draw the view to SurfaceTexture
             super.draw(textureCanvas);
         }
-        mRenderer.drawEnd();
-        if (mFirstDrawCallback != null) {
-            mFirstDrawCallback.run();
-            mFirstDrawCallback = null;
-        }
+        aRenderer.drawEnd();
     }
 
     @Override

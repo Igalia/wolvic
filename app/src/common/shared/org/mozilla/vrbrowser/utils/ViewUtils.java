@@ -1,5 +1,6 @@
 package org.mozilla.vrbrowser.utils;
 
+import android.graphics.Color;
 import android.os.Build;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
@@ -7,6 +8,7 @@ import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.URLSpan;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -117,4 +119,7 @@ public class ViewUtils {
         return true;
     }
 
+    public static int ARGBtoRGBA(int c) {
+        return (c & 0x00FFFFFF) << 8 | (c & 0xFF000000) >>> 24;
+    }
 }
