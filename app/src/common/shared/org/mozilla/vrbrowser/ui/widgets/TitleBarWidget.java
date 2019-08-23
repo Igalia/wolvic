@@ -1,0 +1,170 @@
+/* -*- Mode: Java; c-basic-offset: 4; tab-width: 4; indent-tabs-mode: nil; -*-
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+package org.mozilla.vrbrowser.ui.widgets;
+
+import android.content.Context;
+import android.util.AttributeSet;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.webkit.URLUtil;
+
+import androidx.annotation.IntegerRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.databinding.DataBindingUtil;
+
+import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.browser.SettingsStore;
+import org.mozilla.vrbrowser.databinding.TitleBarBinding;
+
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+
+public class TitleBarWidget extends UIWidget  {
+
+    private static final String LOGTAG = TitleBarWidget.class.getSimpleName();
+
+    public interface Delegate {
+        void onTitleClicked(TitleBarWidget aWidget);
+    }
+
+    private TitleBarBinding mBinding;
+    private WindowWidget mAttachedWindow;
+    private boolean mVisible;
+
+    public TitleBarWidget(Context aContext) {
+        super(aContext);
+        initialize(aContext);
+    }
+
+    public TitleBarWidget(Context aContext, AttributeSet aAttrs) {
+        super(aContext, aAttrs);
+        initialize(aContext);
+    }
+
+    public TitleBarWidget(Context aContext, AttributeSet aAttrs, int aDefStyle) {
+        super(aContext, aAttrs, aDefStyle);
+        initialize(aContext);
+    }
+
+    private void initialize(@NonNull Context aContext) {
+        LayoutInflater inflater = LayoutInflater.from(aContext);
+
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.title_bar, this, true);
+        mBinding.setWidget(this);
+        mBinding.executePendingBindings();
+    }
+
+    public void setDelegate(Delegate delegate) {
+        mBinding.setDelegate(delegate);
+    }
+
+    public @Nullable
+    WindowWidget getAttachedWindow() {
+        return mAttachedWindow;
+    }
+
+    @Override
+    public void releaseWidget() {
+        detachFromWindow();
+
+        mAttachedWindow = null;
+        super.releaseWidget();
+    }
+
+    @Override
+    protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
+        aPlacement.width = WidgetPlacement.dpDimension(getContext(), R.dimen.navigation_bar_width);
+        aPlacement.worldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width);
+        aPlacement.height = WidgetPlacement.dpDimension(getContext(), R.dimen.navigation_bar_height);
+        aPlacement.anchorX = 0.5f;
+        aPlacement.anchorY = 1.0f;
+        aPlacement.parentAnchorX = 0.5f;
+        aPlacement.parentAnchorY = 0.0f;
+        aPlacement.translationY = -35;
+        aPlacement.opaque = false;
+        aPlacement.cylinder = true;
+        aPlacement.visible = true;
+    }
+
+    @Override
+    public void detachFromWindow() {
+        mAttachedWindow = null;
+    }
+
+    @Override
+    public void attachToWindow(@NonNull WindowWidget aWindow) {
+        if (aWindow == mAttachedWindow) {
+            return;
+        }
+        detachFromWindow();
+
+        mWidgetPlacement.parentHandle = aWindow.getHandle();
+        mAttachedWindow = aWindow;
+
+        setPrivateMode(aWindow.getSessionStack().isPrivateMode());
+    }
+
+    @Override
+    public void setVisible(boolean aIsVisible) {
+        if (mVisible == aIsVisible) {
+            return;
+        }
+        mVisible = aIsVisible;
+        getPlacement().visible = aIsVisible;
+
+        if (aIsVisible) {
+            mWidgetManager.addWidget(this);
+        } else {
+            mWidgetManager.removeWidget(this);
+        }
+    }
+
+    private void setPrivateMode(boolean aPrivateMode) {
+        mBinding.titleBar.setBackground(getContext().getDrawable(aPrivateMode ? R.drawable.title_bar_background_private : R.drawable.title_bar_background));
+    }
+
+    public void setURL(@StringRes int id) {
+        setURL(getResources().getString(id));
+    }
+
+    public void setURL(String urlString) {
+        if (urlString == null) {
+            return;
+        }
+
+        if (URLUtil.isValidUrl(urlString)) {
+            try {
+                URI uri = URI.create(urlString);
+                URL url = new URL(
+                        uri.getScheme() != null ? uri.getScheme() : "",
+                        uri.getAuthority() != null ? uri.getAuthority() : "",
+                        "");
+                mBinding.url.setText(url.toString());
+
+            } catch (MalformedURLException e) {
+                mBinding.url.setText("");
+            }
+
+        } else {
+            mBinding.url.setText(urlString);
+        }
+    }
+
+    public void setIsInsecure(boolean aIsInsecure) {
+        if (!(mAttachedWindow.getSessionStack().getCurrentUri().startsWith("data") &&
+                mAttachedWindow.getSessionStack().isPrivateMode())) {
+            mBinding.insecureIcon.setVisibility(aIsInsecure ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    public void setInsecureVisibility(int visibility) {
+        mBinding.insecureIcon.setVisibility(visibility);
+    }
+
+}

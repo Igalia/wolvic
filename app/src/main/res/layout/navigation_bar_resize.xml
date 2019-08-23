@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:id="@+id/resizeModeContainer"
+        style="?attr/navigationBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:padding="0dp"
+        android:visibility="gone">
+
+        <org.mozilla.vrbrowser.ui.views.UITextButton
+            android:id="@+id/resizePreset3"
+            style="@style/navigationBarTextButtonStartTheme"
+            android:text="3x"
+            android:textSize="14sp" />
+
+        <org.mozilla.vrbrowser.ui.views.UITextButton
+            android:id="@+id/resizePreset2"
+            style="@style/navigationBarTextButtonMiddleTheme"
+            android:padding="5dp"
+            android:text="2x"
+            android:textSize="14sp" />
+
+        <org.mozilla.vrbrowser.ui.views.UITextButton
+            android:id="@+id/resizePreset15"
+            style="@style/navigationBarTextButtonMiddleTheme"
+            android:padding="5dp"
+            android:text="1.5x"
+            android:textSize="14sp" />
+
+        <org.mozilla.vrbrowser.ui.views.UITextButton
+            android:id="@+id/resizePreset1"
+            style="@style/navigationBarTextButtonMiddleTheme"
+            android:padding="5dp"
+            android:text="1x"
+            android:textSize="14sp" />
+
+        <org.mozilla.vrbrowser.ui.views.UITextButton
+            android:id="@+id/resizePreset0"
+            style="@style/navigationBarTextButtonMiddleTheme"
+            android:padding="5dp"
+            android:text="0.5x"
+            android:textSize="14sp" />
+
+        <org.mozilla.vrbrowser.ui.views.UIButton
+            android:id="@+id/resizeExitButton"
+            style="@style/navigationBarTextButtonEndTheme"
+            android:src="@drawable/ic_icon_resize_done" />
+    </LinearLayout>
+</merge>

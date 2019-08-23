@@ -884,4 +884,13 @@
 
     <!-- This string is displayed in the content language list in front of the system default language in between parenthesis -->
     <string name="language_default">Default</string>
+
+    <!-- This string is displayed in the URL bar when the user is in the home page -->
+    <string name="url_home_title">%1$s Home</string>
+
+    <!-- This string is displayed in the URL bar when the user is in the bookmarks panel -->
+    <string name="url_bookmarks_title">Bookmarks</string>
+
+    <!-- This string is displayed in the URL bar when the user is in the history panel -->
+    <string name="url_history_title">History</string>
 </resources>

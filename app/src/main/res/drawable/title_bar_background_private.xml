@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <layer-list>
+            <item>
+                <shape android:shape="rectangle">
+                    <corners android:radius="20dp" />
+                    <stroke android:width="@dimen/blur_radius" android:color="@color/caribbean_blur" />
+                </shape>
+            </item>
+            <item android:bottom="@dimen/blur_radius_half" android:end="@dimen/blur_radius_half" android:start="@dimen/blur_radius_half" android:top="@dimen/blur_radius_half">
+                <shape android:shape="rectangle">
+                    <corners android:radius="20dp" />
+                    <solid android:color="@color/blackberry" />
+                    <stroke android:width="2dp" android:color="@color/caribbean" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+    <item android:state_hovered="true" android:state_pressed="false">
+        <layer-list>
+            <item>
+                <shape android:shape="rectangle">
+                    <corners android:radius="20dp" />
+                    <stroke android:width="@dimen/blur_radius" android:color="@color/caribbean_blur" />
+                </shape>
+            </item>
+            <item android:bottom="@dimen/blur_radius_half" android:end="@dimen/blur_radius_half" android:start="@dimen/blur_radius_half" android:top="@dimen/blur_radius_half">
+                <shape android:shape="rectangle">
+                    <corners android:radius="20dp" />
+                    <solid android:color="@color/eggplant" />
+                    <stroke android:width="2dp" android:color="@color/caribbean" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+    <item android:state_hovered="false" android:state_pressed="false">
+        <shape android:shape="rectangle">
+            <corners android:radius="20dp" />
+            <stroke android:width="@dimen/blur_radius" android:color="@color/asphalt_blur" />
+            <solid android:color="@color/eggplant" />
+        </shape>
+    </item>
+</selector>
+

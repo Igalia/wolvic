@@ -375,9 +375,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         if (mIsInFullScreenMode) {
             exitFullScreenMode();
         }
-        if (mURLBar.isInBookmarkMode() && mAttachedWindow != null) {
-            onBookmarksHidden(mAttachedWindow);
-        }
+
         if (mSessionStack != null) {
             mSessionStack.removeSessionChangeListener(this);
             mSessionStack.removeNavigationListener(this);
@@ -401,6 +399,19 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mWidgetPlacement.parentHandle = aWindow.getHandle();
         mAttachedWindow = aWindow;
         mAttachedWindow.addBookmarksListener(this);
+
+        if (mAttachedWindow != null) {
+            mURLBar.setIsBookmarkMode(mAttachedWindow.isBookmarksVisible());
+            if (mAttachedWindow.isBookmarksVisible()) {
+                mURLBar.setURL(getResources().getString(R.string.url_bookmarks_title));
+                mURLBar.setInsecureVisibility(View.GONE);
+
+            } else {
+                mURLBar.setURL(mAttachedWindow.getSessionStack().getCurrentUri());
+                mURLBar.setHint(R.string.search_placeholder);
+                mURLBar.setInsecureVisibility(View.VISIBLE);
+            }
+        }
 
         mSessionStack = aWindow.getSessionStack();
         if (mSessionStack != null) {
@@ -712,6 +723,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         if (mURLBar != null && !mAttachedWindow.isBookmarksVisible()) {
             Log.d(LOGTAG, "Got location change");
             mURLBar.setURL(url);
+            mURLBar.setHint(R.string.search_placeholder);
             mReloadButton.setEnabled(true);
         }
         updateServoButton();
@@ -773,6 +785,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         if (mURLBar != null) {
             Log.d(LOGTAG, "Got onPageStart");
             mURLBar.setURL(aUri);
+            mURLBar.setHint(R.string.search_placeholder);
         }
         mIsLoading = true;
         mURLBar.setIsLoading(true);
@@ -966,7 +979,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     public void onBookmarksShown(WindowWidget aWindow) {
         if (mAttachedWindow == aWindow) {
             mURLBar.setURL("");
-            mURLBar.setHint(R.string.about_bookmarks);
+            mURLBar.setHint(R.string.url_bookmarks_title);
             mURLBar.setIsBookmarkMode(true);
         }
     }
