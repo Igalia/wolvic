@@ -310,7 +310,10 @@ public class NavigationURLBar extends FrameLayout {
                 }
             }
             mIsContextButtonsEnabled = aURL.length() > 0 && !aURL.startsWith("about://");
-            showContextButtons(mIsContextButtonsEnabled);
+
+            if (!aURL.equals(getResources().getString(R.string.url_bookmarks_title))) {
+                showContextButtons(mIsContextButtonsEnabled);
+            }
         }
 
         mURL.addTextChangedListener(mURLTextWatcher);

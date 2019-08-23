@@ -279,23 +279,16 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     public void switchBookmarks() {
         if (mView == null) {
             setView(mBookmarksView);
-            if (mTitleBar != null) {
-                mTitleBar.setURL(R.string.url_bookmarks_title);
-                mTitleBar.setInsecureVisibility(View.GONE);
-            }
             for (BookmarkListener listener : mBookmarksListeners)
                 listener.onBookmarksShown(this);
 
         } else {
             unsetView(mBookmarksView);
-            if (mTitleBar != null) {
-                mTitleBar.setURL(mSessionStack.getCurrentUri());
-                mTitleBar.setInsecureVisibility(View.VISIBLE);
-                mTitleBar.setIsInsecure(!mSessionStack.isSecure());
-            }
             for (BookmarkListener listener : mBookmarksListeners)
                 listener.onBookmarksHidden(this);
         }
+
+        updateTitleBar();
     }
 
     public void hideBookmarks() {
@@ -407,10 +400,42 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             if (session != null) {
                 session.getTextInput().setView(this);
             }
+        } else {
+            updateTitleBar();
         }
 
         TelemetryWrapper.activePlacementEvent(mWindowPlacement.getValue(), mActive);
         updateBorder();
+    }
+
+    private void updateTitleBar() {
+        if (isBookmarksVisible()) {
+            updateTitleBarUrl(getResources().getString(R.string.url_bookmarks_title));
+
+        } else {
+            updateTitleBarUrl(mSessionStack.getCurrentUri());
+        }
+    }
+
+    private void updateTitleBarUrl(String url) {
+        if (mTitleBar != null && url != null) {
+            mTitleBar.setIsInsecure(!mSessionStack.isSecure());
+            if (url.startsWith("data") && mSessionStack.isPrivateMode()) {
+                mTitleBar.setInsecureVisibility(GONE);
+                mTitleBar.setURL(getResources().getString(R.string.private_browsing_title));
+
+            } else if (url.equals(mSessionStack.getHomeUri())) {
+                mTitleBar.setInsecureVisibility(GONE);
+                mTitleBar.setURL(getResources().getString(R.string.url_home_title, getResources().getString(R.string.app_name)));
+
+            } else if (url.equals(getResources().getString(R.string.url_bookmarks_title))) {
+                mTitleBar.setInsecureVisibility(GONE);
+                mTitleBar.setURL(url);
+
+            } else {
+                mTitleBar.setURL(url);
+            }
+        }
     }
 
     public SessionStack getSessionStack() {
