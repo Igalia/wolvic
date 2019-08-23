@@ -225,21 +225,6 @@ public class NavigationURLBar extends FrameLayout {
         syncViews();
     }
 
-    public boolean isInBookmarkMode() {
-        return mIsBookmarkMode;
-    }
-
-    private void setBookmarkEnabled(boolean aEnabled) {
-        if (mBookmarkEnabled != aEnabled) {
-            mBookmarkEnabled = aEnabled;
-            mBookmarkButton.setVisibility(aEnabled ? View.VISIBLE : View.GONE);
-            ViewGroup.LayoutParams params = mMicrophoneButton.getLayoutParams();
-            params.width = (int) getResources().getDimension(aEnabled ? R.dimen.url_bar_item_width : R.dimen.url_bar_last_item_width);
-            mMicrophoneButton.setLayoutParams(params);
-            mMicrophoneButton.setBackgroundResource(aEnabled ? R.drawable.url_button : R.drawable.url_button_end);
-        }
-    }
-
     private void handleBookmarkClick() {
         if (mAudio != null) {
             mAudio.playSound(AudioEngine.Sound.CLICK);
@@ -278,11 +263,11 @@ public class NavigationURLBar extends FrameLayout {
         mURL.setHint(aHint);
     }
 
-    public void setURL(String aURL) {
-        if (mIsBookmarkMode) {
-            return;
-        }
+    public void setInsecureVisibility(int visibility) {
+        mInsecureIcon.setVisibility(visibility);
+    }
 
+    public void setURL(String aURL) {
         mURL.removeTextChangedListener(mURLTextWatcher);
         if (StringUtils.isEmpty(aURL)) {
             setBookmarked(false);
@@ -419,8 +404,11 @@ public class NavigationURLBar extends FrameLayout {
             mURLLeftContainer.setVisibility(View.VISIBLE);
             mURLLeftContainer.measure(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
             mLoadingView.setVisibility(mIsLoading ? View.VISIBLE : View.GONE);
-            mInsecureIcon.setVisibility(!mIsLoading && mIsInsecure ? View.VISIBLE : View.GONE);
+            if (!mIsBookmarkMode) {
+                mInsecureIcon.setVisibility(!mIsLoading && mIsInsecure ? View.VISIBLE : View.GONE);
+            }
             leftPadding = mURLLeftContainer.getMeasuredWidth();
+
         } else {
             mURLLeftContainer.setVisibility(View.GONE);
             mLoadingView.setVisibility(View.GONE);
@@ -478,6 +466,7 @@ public class NavigationURLBar extends FrameLayout {
     public void setPrivateMode(boolean isEnabled) {
         if (isEnabled) {
             mURL.setBackground(getContext().getDrawable(R.drawable.url_background_private));
+
         } else {
             mURL.setBackground(getContext().getDrawable(R.drawable.url_background));
         }

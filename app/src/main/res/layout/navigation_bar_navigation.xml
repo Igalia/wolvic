@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:id="@+id/navigationBarContainer"
+        style="?attr/navigationBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:padding="0dp">
+
+        <org.mozilla.vrbrowser.ui.views.UIButton
+            android:id="@+id/backButton"
+            style="?attr/navigationBarButtonStyle"
+            android:layout_weight="1"
+            android:src="@drawable/ic_icon_back"
+            android:tint="@color/midnight"
+            android:tooltipText="@string/back_tooltip" />
+
+        <org.mozilla.vrbrowser.ui.views.UIButton
+            android:id="@+id/forwardButton"
+            style="?attr/navigationBarButtonStyle"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_icon_forward"
+            android:tooltipText="@string/forward_tooltip" />
+
+        <org.mozilla.vrbrowser.ui.views.UIButton
+            android:id="@+id/reloadButton"
+            style="?attr/navigationBarButtonStyle"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_icon_reload"
+            android:tooltipText="@string/refresh_tooltip" />
+
+        <org.mozilla.vrbrowser.ui.views.UIButton
+            android:id="@+id/homeButton"
+            style="?attr/navigationBarButtonStyle"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_icon_home"
+            android:tooltipText="@string/home_tooltip" />
+
+        <org.mozilla.vrbrowser.ui.views.NavigationURLBar
+            android:id="@+id/urlBar"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="10dp"
+            android:layout_weight="100"
+            android:orientation="horizontal" />
+
+        <org.mozilla.vrbrowser.ui.views.UIButton
+            android:id="@+id/servoButton"
+            style="?attr/navigationBarButtonStyle"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_icon_servo"
+            android:tooltipText="@string/servo_tooltip" />
+
+        <org.mozilla.vrbrowser.ui.views.UIButton
+            android:id="@+id/resizeEnterButton"
+            style="?attr/navigationBarButtonStyle"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_icon_resize"
+            android:tooltipText="@string/resize_tooltip" />
+    </LinearLayout>
+</merge>

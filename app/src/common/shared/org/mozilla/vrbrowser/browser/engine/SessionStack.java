@@ -36,11 +36,9 @@ import org.mozilla.vrbrowser.geolocation.GeolocationData;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.utils.InternalPages;
 
-import java.util.ArrayList;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayDeque;
-import java.util.Deque;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -544,6 +542,18 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
             result = state.mTitle;
         }
         return result;
+    }
+
+    public boolean isSecure() {
+        boolean isSecure = false;
+        if (mCurrentSession != null) {
+            SessionState state = mSessions.get(mCurrentSession.hashCode());
+            if (state == null) {
+                return false;
+            }
+            isSecure = state.mSecurityInformation != null && state.mSecurityInformation.isSecure;
+        }
+        return isSecure;
     }
 
     public Media getFullScreenVideo() {

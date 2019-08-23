@@ -25,7 +25,8 @@ import java.io.Writer;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
-public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSession.ContentDelegate, WindowWidget.WindowDelegate {
+public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWidget.Delegate,
+        GeckoSession.ContentDelegate, WindowWidget.WindowDelegate {
 
     private static final String LOGTAG = Windows.class.getSimpleName();
 
@@ -317,7 +318,11 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSessio
             mFocusedWindow = aWindow;
             if (prev != null) {
                 prev.setActiveWindow(false);
+                if (prev.isVisible()) {
+                    prev.getTitleBar().setVisible(true);
+                }
             }
+            mFocusedWindow.getTitleBar().setVisible(false);
             mFocusedWindow.setActiveWindow(true);
             if (mDelegate != null) {
                 mDelegate.onFocusedWindowChanged(mFocusedWindow, prev);
@@ -513,6 +518,8 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSessio
         aWindow.getTopBar().setVisible(false);
         aWindow.getTopBar().setDelegate((TopBarWidget.Delegate) null);
         aWindow.setWindowDelegate(null);
+        aWindow.getTitleBar().setVisible(false);
+        aWindow.getTitleBar().setDelegate((TitleBarWidget.Delegate) null);
         aWindow.getSessionStack().removeContentListener(this);
         aWindow.close();
         updateMaxWindowScales();
@@ -528,6 +535,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSessio
     private void setWindowVisible(@NonNull WindowWidget aWindow, boolean aVisible) {
         aWindow.setVisible(aVisible);
         aWindow.getTopBar().setVisible(aVisible);
+        aWindow.getTitleBar().setVisible(aVisible);
     }
 
     private void placeWindow(@NonNull WindowWidget aWindow, WindowPlacement aPosition) {
@@ -635,12 +643,15 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSessio
         }
 
         updateTopBars();
+        updateTitleBars();
+
         ArrayList<WindowWidget> windows = getCurrentWindows();
         // Sort windows so frontWindow is the first one. Required for proper native matrix updates.
         windows.sort((o1, o2) -> o1 == frontWindow ? -1 : 0);
         for (WindowWidget window: getCurrentWindows()) {
             mWidgetManager.updateWidget(window);
             mWidgetManager.updateWidget(window.getTopBar());
+            mWidgetManager.updateWidget(window.getTitleBar());
         }
     }
 
@@ -664,12 +675,25 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSessio
         }
     }
 
+    private void updateTitleBars() {
+        ArrayList<WindowWidget> windows = getCurrentWindows();
+        for (WindowWidget window: windows) {
+            if (window == mFocusedWindow) {
+                window.getTitleBar().setVisible(false);
+
+            } else {
+                window.getTitleBar().setVisible(true);
+            }
+        }
+    }
+
     private WindowWidget createWindow() {
         int newWindowId = sIndex++;
         WindowWidget window = new WindowWidget(mContext, newWindowId, mPrivateMode);
         window.setWindowDelegate(this);
         getCurrentWindows().add(window);
         window.getTopBar().setDelegate(this);
+        window.getTitleBar().setDelegate(this);
         window.getSessionStack().addContentListener(this);
 
         if (mPrivateMode) {
@@ -746,6 +770,12 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, GeckoSessio
 
             moveWindowRight(window);
         }
+    }
+
+    // Title Bar Delegate
+    @Override
+    public void onTitleClicked(TitleBarWidget aWidget) {
+        focusWindow(aWidget.getAttachedWindow());
     }
 
     // Content delegate

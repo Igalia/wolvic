@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable name="widget" type="org.mozilla.vrbrowser.ui.widgets.TitleBarWidget"/>
+        <variable name="delegate" type="org.mozilla.vrbrowser.ui.widgets.TitleBarWidget.Delegate"/>
+    </data>
+
+
+    <LinearLayout
+        android:id="@+id/title_bar"
+        style="?attr/navigationBarStyle"
+        android:background="@drawable/title_bar_background"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:focusable="true"
+        android:clickable="true"
+        android:onClick="@{(view) -> delegate != null ? delegate.onTitleClicked(widget) : void}"
+        android:padding="10dp">
+
+        <ImageView
+            android:id="@+id/insecureIcon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical"
+            android:contentDescription="SSL icon"
+            android:padding="5dp"
+            android:duplicateParentState="true"
+            android:tint="@color/rhino"
+            android:visibility="gone"
+            android:src="@drawable/ic_icon_security_state_insecure" />
+
+        <TextView
+            android:id="@+id/url"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:duplicateParentState="true"
+            android:contentDescription="Page URL"
+            android:ellipsize="none"
+            android:fadingEdgeLength="80dp"
+            android:requiresFadingEdge="horizontal"
+            android:singleLine="true"
+            tools:text="http://mozilla.org" />
+    </LinearLayout>
+</layout>

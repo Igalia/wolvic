@@ -45,7 +45,6 @@ import org.mozilla.vrbrowser.ui.widgets.prompts.ChoicePromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.ConfirmPromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.PromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.TextPromptWidget;
-import org.mozilla.vrbrowser.utils.InternalPages;
 import org.mozilla.vrbrowser.utils.ViewUtils;
 
 import java.util.ArrayList;
@@ -55,7 +54,7 @@ import mozilla.components.concept.storage.VisitType;
 import static org.mozilla.vrbrowser.utils.ServoUtils.isInstanceOfServoSession;
 
 public class WindowWidget extends UIWidget implements SessionChangeListener,
-        GeckoSession.ContentDelegate, GeckoSession.PromptDelegate,
+        GeckoSession.ContentDelegate, GeckoSession.PromptDelegate, GeckoSession.ProgressDelegate,
         GeckoSession.NavigationDelegate, VideoAvailabilityListener {
 
     private static final String LOGTAG = "VRB";
@@ -68,6 +67,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private int mHandle;
     private WidgetPlacement mWidgetPlacement;
     private TopBarWidget mTopBar;
+    private TitleBarWidget mTitleBar;
     private WidgetManagerDelegate mWidgetManager;
     private ChoicePromptWidget mChoicePrompt;
     private AlertPromptWidget mAlertPrompt;
@@ -114,6 +114,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mSessionStack.addContentListener(this);
         mSessionStack.addVideoAvailabilityListener(this);
         mSessionStack.addNavigationListener(this);
+        mSessionStack.addProgressListener(this);
         mSessionStack.newSession();
 
         mBookmarksView  = new BookmarksView(aContext);
@@ -126,6 +127,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mTopBar = new TopBarWidget(aContext);
         mTopBar.attachToWindow(this);
         mLastMouseClickPos = new Point(0, 0);
+
+        mTitleBar = new TitleBarWidget(aContext);
+        mTitleBar.attachToWindow(this);
 
         setFocusable(true);
 
@@ -275,11 +279,20 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     public void switchBookmarks() {
         if (mView == null) {
             setView(mBookmarksView);
+            if (mTitleBar != null) {
+                mTitleBar.setURL(R.string.url_bookmarks_title);
+                mTitleBar.setInsecureVisibility(View.GONE);
+            }
             for (BookmarkListener listener : mBookmarksListeners)
                 listener.onBookmarksShown(this);
 
         } else {
             unsetView(mBookmarksView);
+            if (mTitleBar != null) {
+                mTitleBar.setURL(mSessionStack.getCurrentUri());
+                mTitleBar.setInsecureVisibility(View.VISIBLE);
+                mTitleBar.setIsInsecure(!mSessionStack.isSecure());
+            }
             for (BookmarkListener listener : mBookmarksListeners)
                 listener.onBookmarksHidden(this);
         }
@@ -406,6 +419,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     public TopBarWidget getTopBar() {
         return mTopBar;
+    }
+
+    public TitleBarWidget getTitleBar() {
+        return mTitleBar;
     }
 
     @Override
@@ -603,6 +620,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mSessionStack.removeContentListener(this);
         mSessionStack.removeVideoAvailabilityListener(this);
         mSessionStack.removeNavigationListener(this);
+        mSessionStack.removeProgressListener(this);
         GeckoSession session = mSessionStack.getSession(mSessionId);
         if (session == null) {
             return;
@@ -1026,6 +1044,25 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         if (isBookmarksVisible()) {
             switchBookmarks();
         }
+
+        if (mTitleBar != null && url != null) {
+            if (url.startsWith("data") && mSessionStack.isPrivateMode()) {
+                mTitleBar.setInsecureVisibility(GONE);
+                mTitleBar.setURL(getResources().getString(R.string.private_browsing_title));
+
+            } else if (url.equals(mSessionStack.getHomeUri())) {
+                mTitleBar.setInsecureVisibility(VISIBLE);
+                mTitleBar.setURL(getResources().getString(R.string.url_home_title, getResources().getString(R.string.app_name)));
+
+            } else if (url.equals(getResources().getString(R.string.url_bookmarks_title))) {
+                mTitleBar.setInsecureVisibility(GONE);
+                mTitleBar.setURL(url);
+
+            } else {
+                mTitleBar.setInsecureVisibility(View.VISIBLE);
+                mTitleBar.setURL(url);
+            }
+        }
     }
 
     @Nullable
@@ -1039,4 +1076,14 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         return GeckoResult.ALLOW;
     }
+
+    // GeckoSession.ProgressDelegate
+
+    @Override
+    public void onSecurityChange(GeckoSession geckoSession, SecurityInformation securityInformation) {
+        if (mTitleBar != null) {
+            mTitleBar.setIsInsecure(!securityInformation.isSecure);
+        }
+    }
+
 }
