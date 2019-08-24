@@ -41,6 +41,7 @@ import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoVRManager;
+import org.mozilla.gecko.gfx.ExternalVRSurface;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.Accounts;
 import org.mozilla.vrbrowser.browser.PermissionDelegate;
@@ -1068,6 +1069,21 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 }
             });
         });
+    }
+
+    public void setExternalVRSurfaceIndex(int aIndex) {
+        GeckoVRManager.setExternalSurfaceIndex(aIndex);
+    }
+
+    public void insertExternalSurface(int aWidth, int aHeight, int aIndex, Surface aSurface) {
+        if (aSurface == null) {
+            Log.e(LOGTAG, "aSurface is null in setExternalVRSurface...");
+        }
+        GeckoVRManager.insertExternalSurface(new ExternalVRSurface(aIndex, aWidth, aHeight, aSurface));
+    }
+
+    public void releaseExternalVRSurfaces() {
+        GeckoVRManager.releaseExternalSurfaces();
     }
 
     private SurfaceTexture createSurfaceTexture() {

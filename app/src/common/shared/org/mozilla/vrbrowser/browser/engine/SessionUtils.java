@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import org.mozilla.gecko.GeckoProfile;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.utils.SystemUtils;
+import org.mozilla.vrbrowser.utils.DeviceType;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -55,6 +56,12 @@ class SessionUtils {
                 out.write("pref(\"media.autoplay.enabled.user-gestures-needed\", false);\n".getBytes());
                 out.write("pref(\"media.autoplay.enabled.ask-permission\", false);\n".getBytes());
                 out.write("pref(\"media.autoplay.default\", 0);\n".getBytes());
+            }
+            // In Oculus platform, we can render WebGL immersive frames info AndroidSurface.
+            if (DeviceType.isOculusBuild()) {
+                out.write("pref(\"webgl.enable-externalvr-surface\", true);\n".getBytes());
+            } else {
+                out.write("pref(\"webgl.enable-externalvr-surface\", false);\n".getBytes());
             }
         } catch (FileNotFoundException e) {
             Log.e(LOGTAG, "Unable to create file: '" + prefFileName + "' got exception: " + e.toString());

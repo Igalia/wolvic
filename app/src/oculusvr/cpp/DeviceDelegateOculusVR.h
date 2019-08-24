@@ -45,6 +45,7 @@ public:
   void StartFrame() override;
   void BindEye(const device::Eye aWhich) override;
   void EndFrame(const bool aDiscard) override;
+  void EnableExternalSurfaceRender(bool aEnable) override;
   VRLayerQuadPtr CreateLayerQuad(int32_t aWidth, int32_t aHeight,
                                  VRLayerSurface::SurfaceType aSurfaceType) override;
   VRLayerQuadPtr CreateLayerQuad(const VRLayerSurfacePtr& aMoveLayer) override;
@@ -65,6 +66,9 @@ protected:
   virtual ~DeviceDelegateOculusVR();
 private:
   State& m;
+  int32_t externalSurfaceId;
+  bool enableExternalSurfaceRender;
+  bool mNeedResize;
   VRB_NO_DEFAULTS(DeviceDelegateOculusVR)
 };
 

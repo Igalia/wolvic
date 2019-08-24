@@ -10,6 +10,7 @@
 #include "Controller.h"
 #include "DeviceDelegate.h"
 #include "Device.h"
+#include "moz_external_vr.h"
 #include <memory>
 #include <string>
 #include <vector>
@@ -54,7 +55,8 @@ public:
   VRState GetVRState() const;
   void PushFramePoses(const vrb::Matrix& aHeadTransform, const std::vector<Controller>& aControllers, const double aTimestamp);
   bool WaitFrameResult();
-  void GetFrameResult(int32_t& aSurfaceHandle,
+  void GetFrameResult(mozilla::gfx::VRLayerTextureType& aSurfaceType,
+                      int32_t& aSurfaceHandle,
                       int32_t& aTextureWidth,
                       int32_t& aTextureHeight,
                       device::EyeRect& aLeftEye,

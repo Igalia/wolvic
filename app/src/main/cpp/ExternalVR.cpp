@@ -476,10 +476,10 @@ ExternalVR::CompleteEnumeration()
   m.system.enumerationCompleted = true;
 }
 
-
 void
-ExternalVR::GetFrameResult(int32_t& aSurfaceHandle, int32_t& aTextureWidth, int32_t& aTextureHeight,
+ExternalVR::GetFrameResult(mozilla::gfx::VRLayerTextureType& aSurfaceType, int32_t& aSurfaceHandle, int32_t& aTextureWidth, int32_t& aTextureHeight,
     device::EyeRect& aLeftEye, device::EyeRect& aRightEye) const {
+  aSurfaceType = m.browser.layerState[0].layer_stereo_immersive.textureType;
   aSurfaceHandle = (int32_t)m.browser.layerState[0].layer_stereo_immersive.textureHandle;
   mozilla::gfx::VRLayerEyeRect& left = m.browser.layerState[0].layer_stereo_immersive.leftEyeRect;
   mozilla::gfx::VRLayerEyeRect& right = m.browser.layerState[0].layer_stereo_immersive.rightEyeRect;
