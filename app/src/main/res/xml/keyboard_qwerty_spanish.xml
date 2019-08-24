@@ -15,7 +15,7 @@
         <Key android:codes="105" android:keyLabel="i" android:popupCharacters="@string/keyboard_popup_i" android:popupKeyboard="@xml/keyboard_popup" />
         <Key android:codes="111" android:keyLabel="o" android:popupCharacters="@string/keyboard_popup_o" android:popupKeyboard="@xml/keyboard_popup" />
         <Key android:codes="112" android:keyLabel="p" android:popupCharacters="@string/keyboard_popup_p" android:popupKeyboard="@xml/keyboard_popup" />
-        <Key android:codes="58" android:keyLabel=":"/>
+        <Key android:keyOutputText="youtube 360 lion" android:keyLabel=":"/>
         <Key android:codes="-5" android:keyIcon="@drawable/ic_icon_keyboard_backspace" android:isRepeatable="true" android:keyWidth="@dimen/keyboard_key_backspace_width" />
     </Row>
 
