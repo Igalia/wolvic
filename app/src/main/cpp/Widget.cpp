@@ -594,7 +594,7 @@ Widget::SetProxifyLayer(const bool aValue) {
   m.layerProxy->ToggleAll(true);
 }
 
-Widget::LayoutQuadWithCylinderParent(const CylinderPtr& aCylinder) {
+void Widget::LayoutQuadWithCylinderParent(const CylinderPtr& aCylinder) {
   if (aCylinder) {
     const float radius = aCylinder->GetTransformNode()->GetTransform().GetScale().x();
     m.AdjustCylinderRotation(radius);
