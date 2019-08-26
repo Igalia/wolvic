@@ -285,10 +285,16 @@ public class NavigationURLBar extends FrameLayout {
             }
             if (aURL.startsWith("jar:")) {
                 return;
+
             } else if (aURL.startsWith("resource:") || mSessionStack.isHomeUri(aURL)) {
+
                 aURL = "";
             } else if (aURL.startsWith("data:") && mSessionStack.isPrivateMode()) {
                 aURL = "";
+
+            } else if (aURL.startsWith(getContext().getString(R.string.about_blank))) {
+                aURL = "";
+
             } else {
                 index = aURL.indexOf("://");
             }

@@ -24,7 +24,6 @@ import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.geckoview.MediaElement;
-import org.mozilla.geckoview.StorageController;
 import org.mozilla.geckoview.WebRequestError;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.Media;
@@ -57,8 +56,6 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
     private static final String LOGTAG = "VRB";
 
     // You can test a local file using: "resource://android/assets/webvr/index.html"
-    private static final String PRIVATE_BROWSING_URI = "about:privatebrowsing";
-    private static final String BLANK_BROWSING_URI = "about:blank";
     public static final int NO_SESSION = -1;
 
     private transient LinkedList<GeckoSession.NavigationDelegate> mNavigationListeners;
@@ -315,7 +312,7 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
             if (mUsePrivateMode) {
                 loadPrivateBrowsingPage();
 
-            } else if(state.mSessionState == null || state.mUri.equals(BLANK_BROWSING_URI) ||
+            } else if(state.mSessionState == null || state.mUri.equals(mContext.getResources().getString(R.string.about_blank)) ||
                     (state.mSessionState != null && state.mSessionState.size() == 0)) {
                 loadHomePage();
             }
@@ -942,7 +939,7 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
             aSession.getSettings().setUserAgentOverride(mUserAgentOverride.lookupOverride(uri));
         }
 
-        if (PRIVATE_BROWSING_URI.equalsIgnoreCase(uri)) {
+        if (mContext.getString(R.string.about_private_browsing).equalsIgnoreCase(uri)) {
             return GeckoResult.DENY;
         }
 

@@ -685,7 +685,12 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
                 window.getTitleBar().setVisible(false);
 
             } else {
-                window.getTitleBar().setVisible(true);
+                if (mFullscreenWindow != null) {
+                    window.getTitleBar().setVisible(false);
+
+                } else {
+                    window.getTitleBar().setVisible(true);
+                }
             }
         }
     }
@@ -777,8 +782,26 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
     // Title Bar Delegate
     @Override
-    public void onTitleClicked(TitleBarWidget aWidget) {
-        focusWindow(aWidget.getAttachedWindow());
+    public void onTitleClicked(@NonNull TitleBarWidget titleBar) {
+        focusWindow(titleBar.getAttachedWindow());
+    }
+
+    @Override
+    public void onMediaPlayClicked(@NonNull TitleBarWidget titleBar) {
+        for (WindowWidget window : getCurrentWindows()) {
+            if (window.getTitleBar() == titleBar) {
+                window.getSessionStack().getFullScreenVideo().play();
+            }
+        }
+    }
+
+    @Override
+    public void onMediaPauseClicked(@NonNull TitleBarWidget titleBar) {
+        for (WindowWidget window : getCurrentWindows()) {
+            if (window.getTitleBar() == titleBar) {
+                window.getSessionStack().getFullScreenVideo().pause();
+            }
+        }
     }
 
     // Content delegate

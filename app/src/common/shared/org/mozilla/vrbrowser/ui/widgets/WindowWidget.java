@@ -432,6 +432,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 mTitleBar.setInsecureVisibility(GONE);
                 mTitleBar.setURL(url);
 
+            } else if (url.equals(getResources().getString(R.string.about_blank))) {
+                mTitleBar.setInsecureVisibility(GONE);
+                mTitleBar.setURL("");
+
             } else {
                 mTitleBar.setURL(url);
             }
@@ -1060,6 +1064,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mWidgetManager.setCPULevel(aVideosAvailable ?
                 WidgetManagerDelegate.CPU_LEVEL_HIGH :
                 WidgetManagerDelegate.CPU_LEVEL_NORMAL);
+
+        if (mTitleBar != null) {
+            mTitleBar.mediaAvailabilityChanged(aVideosAvailable);
+        }
     }
 
     // GeckoSession.NavigationDelegate
@@ -1082,6 +1090,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             } else if (url.equals(getResources().getString(R.string.url_bookmarks_title))) {
                 mTitleBar.setInsecureVisibility(GONE);
                 mTitleBar.setURL(url);
+
+            } else if (url.equals(getResources().getString(R.string.about_blank))) {
+                mTitleBar.setInsecureVisibility(GONE);
+                mTitleBar.setURL("");
 
             } else {
                 mTitleBar.setInsecureVisibility(View.VISIBLE);

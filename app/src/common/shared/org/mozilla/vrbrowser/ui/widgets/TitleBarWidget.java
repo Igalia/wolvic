@@ -11,31 +11,34 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.URLUtil;
 
-import androidx.annotation.IntegerRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.databinding.DataBindingUtil;
 
+import org.mozilla.geckoview.MediaElement;
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.browser.SettingsStore;
+import org.mozilla.vrbrowser.browser.Media;
 import org.mozilla.vrbrowser.databinding.TitleBarBinding;
 
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 
-public class TitleBarWidget extends UIWidget  {
+public class TitleBarWidget extends UIWidget {
 
     private static final String LOGTAG = TitleBarWidget.class.getSimpleName();
 
     public interface Delegate {
-        void onTitleClicked(TitleBarWidget aWidget);
+        void onTitleClicked(@NonNull TitleBarWidget titleBar);
+        void onMediaPlayClicked(@NonNull TitleBarWidget titleBar);
+        void onMediaPauseClicked(@NonNull TitleBarWidget titleBar);
     }
 
     private TitleBarBinding mBinding;
     private WindowWidget mAttachedWindow;
     private boolean mVisible;
+    private Media mMedia;
 
     public TitleBarWidget(Context aContext) {
         super(aContext);
@@ -130,6 +133,7 @@ public class TitleBarWidget extends UIWidget  {
 
     private void setPrivateMode(boolean aPrivateMode) {
         mBinding.titleBar.setBackground(getContext().getDrawable(aPrivateMode ? R.drawable.title_bar_background_private : R.drawable.title_bar_background));
+        mBinding.mediaButton.setPrivateMode(aPrivateMode);
     }
 
     public void setURL(@StringRes int id) {
@@ -169,5 +173,33 @@ public class TitleBarWidget extends UIWidget  {
     public void setInsecureVisibility(int visibility) {
         mBinding.insecureIcon.setVisibility(visibility);
     }
+
+    public void mediaAvailabilityChanged(boolean available) {
+        mBinding.setIsMediaAvailable(false);
+        if (available) {
+            mMedia = mAttachedWindow.getSessionStack().getFullScreenVideo();
+            if (mMedia != null) {
+                mBinding.setIsMediaPlaying(mMedia.isPlaying());
+                mMedia.setDelegate(mMediaDelegate);
+            }
+        }
+    }
+
+    MediaElement.Delegate mMediaDelegate = new MediaElement.Delegate() {
+        @Override
+        public void onPlaybackStateChange(@NonNull MediaElement mediaElement, int state) {
+            switch(state) {
+                case MediaElement.MEDIA_STATE_PLAY:
+                case MediaElement.MEDIA_STATE_PLAYING:
+                    mBinding.setIsMediaAvailable(true);
+                    mBinding.setIsMediaPlaying(true);
+                    break;
+                case MediaElement.MEDIA_STATE_PAUSE:
+                    mBinding.setIsMediaAvailable(true);
+                    mBinding.setIsMediaPlaying(false);
+            }
+        }
+    };
+
 
 }

@@ -15,6 +15,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 
 import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageButton;
 
 import org.mozilla.gecko.util.ThreadUtils;
@@ -95,6 +96,10 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
         if (mTooltipView != null && mTooltipView.isVisible()) {
             mTooltipView.setText(text);
         }
+    }
+
+    public void setTooltipText(@NonNull String text) {
+        mTooltipText = text;
     }
 
     @Override

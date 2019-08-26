@@ -3,50 +3,81 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <variable name="widget" type="org.mozilla.vrbrowser.ui.widgets.TitleBarWidget"/>
-        <variable name="delegate" type="org.mozilla.vrbrowser.ui.widgets.TitleBarWidget.Delegate"/>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="widget"
+            type="org.mozilla.vrbrowser.ui.widgets.TitleBarWidget" />
+
+        <variable
+            name="delegate"
+            type="org.mozilla.vrbrowser.ui.widgets.TitleBarWidget.Delegate" />
+
+        <variable
+            name="isMediaPlaying"
+            type="boolean" />
+
+        <variable
+            name="isMediaAvailable"
+            type="boolean" />
     </data>
 
-
     <LinearLayout
-        android:id="@+id/title_bar"
-        style="?attr/navigationBarStyle"
-        android:background="@drawable/title_bar_background"
-        android:layout_width="300dp"
-        android:layout_height="40dp"
+        android:layout_width="@dimen/title_bar_width"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center_horizontal"
-        android:orientation="horizontal"
-        android:focusable="true"
-        android:clickable="true"
-        android:onClick="@{(view) -> delegate != null ? delegate.onTitleClicked(widget) : void}"
-        android:padding="10dp">
+        android:orientation="horizontal">
 
-        <ImageView
-            android:id="@+id/insecureIcon"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_gravity="center_vertical"
-            android:contentDescription="SSL icon"
-            android:padding="5dp"
-            android:duplicateParentState="true"
-            android:tint="@color/rhino"
-            android:visibility="gone"
-            android:src="@drawable/ic_icon_security_state_insecure" />
+        <LinearLayout
+            android:id="@+id/title_bar"
+            style="?attr/navigationBarStyle"
+            android:layout_width="260dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:background="@drawable/title_bar_background"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_horizontal"
+            android:onClick="@{(view) -> delegate != null ? delegate.onTitleClicked(widget) : void}"
+            android:orientation="horizontal"
+            android:padding="10dp">
 
-        <TextView
-            android:id="@+id/url"
-            android:paddingStart="5dp"
-            android:paddingEnd="5dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:duplicateParentState="true"
-            android:contentDescription="Page URL"
-            android:ellipsize="none"
-            android:fadingEdgeLength="80dp"
-            android:requiresFadingEdge="horizontal"
-            android:singleLine="true"
-            tools:text="http://mozilla.org" />
+            <ImageView
+                android:id="@+id/insecureIcon"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center_vertical"
+                android:contentDescription="SSL icon"
+                android:duplicateParentState="true"
+                android:padding="5dp"
+                android:src="@drawable/ic_icon_security_state_insecure"
+                android:tint="@color/rhino"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/url"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:contentDescription="Page URL"
+                android:duplicateParentState="true"
+                android:ellipsize="none"
+                android:fadingEdgeLength="80dp"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:requiresFadingEdge="horizontal"
+                android:singleLine="true"
+                tools:text="http://mozilla.org" />
+        </LinearLayout>
+
+        <org.mozilla.vrbrowser.ui.views.UIButton
+            android:id="@+id/mediaButton"
+            style="?attr/navigationBarButtonStyle"
+            android:src="@{isMediaPlaying ? @drawable/ic_icon_media_pause : @drawable/ic_icon_media_play}"
+            android:onClick="@{(view) -> isMediaPlaying ? delegate.onMediaPauseClicked(widget) : delegate.onMediaPlayClicked(widget)}"
+            android:tooltipText="@{isMediaPlaying ? @string/media_pause_tooltip : @string/media_resume_tooltip}"
+            android:visibility="@{isMediaAvailable ? View.VISIBLE : View.GONE}" />
     </LinearLayout>
 </layout>
