@@ -150,6 +150,7 @@ public:
   virtual void SetBindDelegate(const BindDelegate& aDelegate) = 0;
   virtual jobject GetSurface() const = 0;
   virtual SurfaceChangedTargetPtr GetSurfaceChangedTarget() const = 0;
+  virtual void HandleResize(ovrTextureSwapChain * newSwapChain, jobject newSurface, vrb::FBOPtr newFBO) = 0;
   virtual ~OculusLayer() {}
 };
 
@@ -246,6 +247,8 @@ public:
     return surfaceChangedTarget;
   }
 
+  void HandleResize(ovrTextureSwapChain * newSwapChain, jobject newSurface, vrb::FBOPtr newFBO) override {}
+
   virtual ~OculusLayerBase() {}
 };
 
@@ -286,18 +289,27 @@ public:
     vrb::FBOPtr newFBO;
     InitSwapChain(newSwapChain, newSurface, newFBO);
     this->layer->SetSurface(newSurface);
+
+    SurfaceChangedTargetWeakPtr weakTarget = this->surfaceChangedTarget;
     this->layer->NotifySurfaceChanged(VRLayer::SurfaceChange::Create, [=]() {
-      if (this->swapChain) {
-        vrapi_DestroyTextureSwapChain(this->swapChain);
+      SurfaceChangedTargetPtr target = weakTarget.lock();
+      if (target && target->layer) {
+        target->layer->HandleResize(newSwapChain, newSurface, newFBO);
       }
-      if (this->surface) {
-        jniEnv->DeleteGlobalRef(this->surface);
-      }
-      this->swapChain = newSwapChain;
-      this->surface = newSurface;
-      this->fbo = newFBO;
-      this->composited = true;
     });
+  }
+
+  void HandleResize(ovrTextureSwapChain * newSwapChain, jobject newSurface, vrb::FBOPtr newFBO) override {
+    if (this->swapChain) {
+      vrapi_DestroyTextureSwapChain(this->swapChain);
+    }
+    if (this->surface) {
+      jniEnv->DeleteGlobalRef(this->surface);
+    }
+    this->swapChain = newSwapChain;
+    this->surface = newSurface;
+    this->fbo = newFBO;
+    this->composited = true;
   }
 
   void Destroy() override {
