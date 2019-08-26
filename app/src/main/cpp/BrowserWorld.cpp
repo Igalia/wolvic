@@ -1062,6 +1062,10 @@ BrowserWorld::LayoutWidget(int32_t aHandle) {
     translation = transform.GetTranslation();
   }
   widget->SetTransform(parent ? parent->GetTransform().PostMultiply(transform) : transform);
+
+  if (!widget->GetCylinder()) {
+    widget->LayoutQuadWithCylinderParent(parent && parent->GetCylinder() ? parent->GetCylinder() : nullptr);
+  }
 }
 
 void

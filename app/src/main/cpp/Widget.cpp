@@ -162,13 +162,16 @@ struct Widget::State {
     // Translate the z of the cylinder to make the back of the curved surface the z position anchor point.
     vrb::Matrix translation = vrb::Matrix::Translation(vrb::Vector(0.0f, 0.0f, radius * scale));
     cylinder->SetTransform(translation.PostMultiply(scaleMatrix));
+    AdjustCylinderRotation(radius * scale);
+  }
+
+  void AdjustCylinderRotation(const float radius) {
     const float x = transform->GetTransform().GetTranslation().x();
     if (x != 0.0f && placement->cylinderMapRadius > 0) {
       // Automatically adjust correct yaw angle & position for the cylinders not centered on the X axis
-      const float r = radius * scale;
-      const float perimeter = 2.0f * r * (float)M_PI;
+      const float perimeter = 2.0f * radius * (float)M_PI;
       float angle = 0.5f * (float)M_PI - x / perimeter * 2.0f * (float)M_PI;
-      float delta = placement->cylinderMapRadius - radius * scale;
+      float delta = placement->cylinderMapRadius - radius;
       vrb::Matrix transform = vrb::Matrix::Rotation(vrb::Vector(-cosf(angle), 0.0f, sinf(angle)));
       transform.PreMultiplyInPlace(vrb::Matrix::Translation(vrb::Vector(0.0f, 0.0f, -delta)));
       transform.PostMultiplyInPlace(vrb::Matrix::Translation(vrb::Vector(-x, 0.0f, delta)));
@@ -589,6 +592,15 @@ Widget::SetProxifyLayer(const bool aValue) {
   }
 
   m.layerProxy->ToggleAll(true);
+}
+
+Widget::LayoutQuadWithCylinderParent(const CylinderPtr& aCylinder) {
+  if (aCylinder) {
+    const float radius = aCylinder->GetTransformNode()->GetTransform().GetScale().x();
+    m.AdjustCylinderRotation(radius);
+  } else {
+    m.transformContainer->SetTransform(vrb::Matrix::Identity());
+  }
 }
 
 Widget::Widget(State& aState, vrb::RenderContextPtr& aContext) : m(aState) {

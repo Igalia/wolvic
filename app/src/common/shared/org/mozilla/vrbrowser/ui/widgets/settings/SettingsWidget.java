@@ -205,11 +205,13 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
         aPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.settings_width);
         aPlacement.height = WidgetPlacement.dpDimension(getContext(), R.dimen.settings_height);
         aPlacement.parentAnchorX = 0.5f;
-        aPlacement.parentAnchorY = 0.5f;
+        aPlacement.parentAnchorY = 0.0f;
         aPlacement.anchorX = 0.5f;
         aPlacement.anchorY = 0.5f;
-        aPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.settings_world_y);
-        aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.settings_world_z);
+        aPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.settings_world_y) -
+                                  WidgetPlacement.unitFromMeters(getContext(), R.dimen.window_world_y);
+        aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.settings_world_z) -
+                                  WidgetPlacement.unitFromMeters(getContext(), R.dimen.window_world_z);
     }
 
     private void onSettingsPrivacyClick() {
