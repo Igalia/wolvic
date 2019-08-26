@@ -79,8 +79,11 @@ public class TitleBarWidget extends UIWidget  {
 
     @Override
     protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
-        aPlacement.width = WidgetPlacement.dpDimension(getContext(), R.dimen.navigation_bar_width);
-        aPlacement.worldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width);
+        aPlacement.width = WidgetPlacement.dpDimension(getContext(), R.dimen.title_bar_width);
+        float ratio = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width) /
+                      WidgetPlacement.dpDimension(getContext(), R.dimen.navigation_bar_width);
+
+        aPlacement.worldWidth = aPlacement.width * ratio;
         aPlacement.height = WidgetPlacement.dpDimension(getContext(), R.dimen.navigation_bar_height);
         aPlacement.anchorX = 0.5f;
         aPlacement.anchorY = 1.0f;

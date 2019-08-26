@@ -18,6 +18,9 @@
     <dimen name="url_bar_item_width">28dp</dimen>
     <dimen name="url_bar_last_item_width">36dp</dimen>
 
+    <!-- Title bar -->
+    <dimen name="title_bar_width">300dp</dimen>
+
     <!-- Keyboard -->
     <item name="keyboard_world_width" format="float" type="dimen">3.25</item>
     <item name="keyboard_x" format="float" type="dimen">-0.15</item>
