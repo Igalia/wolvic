@@ -226,7 +226,7 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
             if (url == null) {
                 // In case the user had no active sessions when reporting, just leave the URL field empty.
                 url = "";
-            } else if (url.startsWith("jar:") || url.startsWith("resource:") || url.startsWith("about:")) {
+            } else if (url.startsWith("jar:") || url.startsWith("resource:") || url.startsWith("about:") || url.startsWith("data:")) {
                 url = "";
             } else if (sessionStack.isHomeUri(url)) {
                 // Use the original URL (without any hash).
