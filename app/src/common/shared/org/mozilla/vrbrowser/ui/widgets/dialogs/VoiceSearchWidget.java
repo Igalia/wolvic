@@ -291,21 +291,16 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
                     new int[]{
                             R.string.voice_samples_collect_dialog_do_not_allow,
                             R.string.voice_samples_collect_dialog_allow},
-                    new AppDialogWidget.Delegate() {
-                        @Override
-                        public void onButtonClicked(int index) {
-                            SettingsStore.getInstance(getContext()).setSpeechDataCollectionReviewed(true);
-                            if (index == AppDialogWidget.RIGHT) {
-                                SettingsStore.getInstance(getContext()).setSpeechDataCollectionEnabled(true);
-                            }
-                            ThreadUtils.postToUiThread(() -> show(aShowFlags));
+                    index -> {
+                        SettingsStore.getInstance(getContext()).setSpeechDataCollectionReviewed(true);
+                        if (index == MessageDialogWidget.RIGHT) {
+                            SettingsStore.getInstance(getContext()).setSpeechDataCollectionEnabled(true);
                         }
-
-                        @Override
-                        public void onMessageLinkClicked(@NonNull String url) {
-                            mWidgetManager.getFocusedWindow().getSessionStack().loadUri(getResources().getString(R.string.private_policy_url));
-                            onDismiss();
-                        }
+                        ThreadUtils.postToUiThread(() -> show(aShowFlags));
+                    },
+                    url -> {
+                        mWidgetManager.getFocusedWindow().getSessionStack().loadUri(getResources().getString(R.string.private_policy_url));
+                        onDismiss();
                     });
         }
     }

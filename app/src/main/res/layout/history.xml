@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="isLoading"
+            type="boolean" />
+
+        <variable
+            name="isEmpty"
+            type="boolean" />
+
+        <variable
+            name="callback"
+            type="org.mozilla.vrbrowser.ui.callbacks.HistoryCallback" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/panel_background"
+        android:orientation="vertical"
+        android:paddingStart="30dp"
+        android:paddingTop="30dp"
+        android:paddingEnd="30dp"
+        android:paddingBottom="30dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="60dp"
+            android:layout_marginEnd="60dp"
+            android:gravity="center_vertical|center_horizontal"
+            android:orientation="vertical"
+            app:visibleGone="@{!isLoading &amp;&amp; isEmpty}">
+
+            <ImageView
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:src="@drawable/ic_icon_history"
+                app:srcCompat="@drawable/ic_icon_history" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="35dp"
+                android:fontFamily="sans-serif"
+                android:text="@string/history_title"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textColor="@color/fog"
+                android:textSize="@dimen/text_biggest_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="35dp"
+                android:fontFamily="sans-serif"
+                android:text="@string/history_description"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textColor="@color/fog"
+                android:textSize="@dimen/text_medium_big_size"
+                android:textStyle="normal" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/loading_tv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/history_loading"
+            android:gravity="center_vertical|center_horizontal"
+            android:text="@string/history_loading"
+            android:textAlignment="center"
+            android:textColor="@color/fog"
+            android:visibility="gone"
+            app:visibleGone="@{isLoading}" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="20dp"
+            app:visibleGone="@{!isLoading &amp;&amp; !isEmpty}">
+
+            <ImageView
+                android:id="@+id/icon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentStart="true"
+                android:src="@drawable/ic_icon_history"
+                android:tint="@color/concrete"
+                app:srcCompat="@drawable/ic_icon_history" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/icon"
+                android:gravity="center_vertical"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:text="@string/history_title"
+                android:textColor="@color/smoke"
+                android:textSize="@dimen/text_biggest_size"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/positiveButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/content_panel_button_background"
+                android:fontFamily="sans-serif"
+                android:gravity="center"
+                android:onClick="@{(view) ->  callback != null ? callback.onClearHistory(view) : void}"
+                android:padding="5dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:text="@string/history_clear"
+                android:textColor="@color/library_panel_button_text_color"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/history_list"
+            style="@style/contentScrollbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="20dp"
+            android:contentDescription="History feed"
+            android:fadingEdge="vertical"
+            android:fadingEdgeLength="60dp"
+            android:requiresFadingEdge="vertical"
+            app:layoutManager="org.mozilla.vrbrowser.ui.adapters.LanguagesAdapter$CustLinearLayoutManager"
+            app:visibleGone="@{!isLoading &amp;&amp; !isEmpty}" />
+
+    </LinearLayout>
+</layout>

@@ -8,6 +8,7 @@ package org.mozilla.vrbrowser.ui.widgets;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Point;
+import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.util.Log;
@@ -22,23 +23,30 @@ import android.view.inputmethod.InputConnection;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
+import androidx.annotation.UiThread;
 
 import org.mozilla.gecko.util.ThreadUtils;
-import org.mozilla.geckoview.AllowOrDeny;
 import org.mozilla.geckoview.GeckoDisplay;
 import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.browser.HistoryStore;
 import org.mozilla.vrbrowser.browser.SessionChangeListener;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.browser.VideoAvailabilityListener;
 import org.mozilla.vrbrowser.browser.engine.SessionStack;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
+import org.mozilla.vrbrowser.ui.callbacks.HistoryCallback;
+import org.mozilla.vrbrowser.ui.callbacks.HistoryItemContextMenuClickCallback;
 import org.mozilla.vrbrowser.ui.views.BookmarksView;
-import org.mozilla.vrbrowser.ui.widgets.dialogs.AppDialogWidget;
+import org.mozilla.vrbrowser.ui.views.HistoryView;
+import org.mozilla.vrbrowser.ui.widgets.dialogs.BaseAppDialogWidget;
+import org.mozilla.vrbrowser.ui.widgets.dialogs.ClearCacheDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.ContextMenuWidget;
+import org.mozilla.vrbrowser.ui.widgets.dialogs.HistoryItemContextMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.MaxWindowsWidget;
+import org.mozilla.vrbrowser.ui.widgets.dialogs.MessageDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.AlertPromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.AuthPromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.ChoicePromptWidget;
@@ -46,18 +54,35 @@ import org.mozilla.vrbrowser.ui.widgets.prompts.ConfirmPromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.PromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.TextPromptWidget;
 import org.mozilla.vrbrowser.utils.ViewUtils;
+import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
+import mozilla.components.concept.storage.PageObservation;
+import mozilla.components.concept.storage.VisitInfo;
 import mozilla.components.concept.storage.VisitType;
 
 import static org.mozilla.vrbrowser.utils.ServoUtils.isInstanceOfServoSession;
 
 public class WindowWidget extends UIWidget implements SessionChangeListener,
-        GeckoSession.ContentDelegate, GeckoSession.PromptDelegate, GeckoSession.ProgressDelegate,
-        GeckoSession.NavigationDelegate, VideoAvailabilityListener {
+        GeckoSession.ContentDelegate, GeckoSession.PromptDelegate,
+        GeckoSession.NavigationDelegate, VideoAvailabilityListener,
+        GeckoSession.HistoryDelegate, GeckoSession.ProgressDelegate {
 
-    private static final String LOGTAG = "VRB";
+    private static final String LOGTAG = WindowWidget.class.getSimpleName();
+
+    public interface HistoryViewDelegate {
+        default void onHistoryViewShown(WindowWidget aWindow) {}
+        default void onHistoryViewHidden(WindowWidget aWindow) {};
+    }
+
+    public interface BookmarksViewDelegate {
+        default void onBookmarksShown(WindowWidget aWindow) {};
+        default void onBookmarksHidden(WindowWidget aWindow) {};
+    }
 
     private int mSessionId;
     private GeckoDisplay mDisplay;
@@ -76,8 +101,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private TextPromptWidget mTextPrompt;
     private AuthPromptWidget mAuthPrompt;
     private NoInternetWidget mNoInternetToast;
-    private AppDialogWidget mAppDialog;
+    private MessageDialogWidget mAppDialog;
+    private ClearCacheDialogWidget mClearCacheDialog;
     private ContextMenuWidget mContextMenu;
+    private HistoryItemContextMenuWidget mHistoryContextMenu;
     private int mWidthBackup;
     private int mHeightBackup;
     private int mBorderWidth;
@@ -88,7 +115,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private SessionStack mSessionStack;
     private int mWindowId;
     private BookmarksView mBookmarksView;
-    private ArrayList<BookmarkListener> mBookmarksListeners;
+    private HistoryView mHistoryView;
+    private ArrayList<BookmarksViewDelegate> mBookmarksViewListeners;
+    private ArrayList<HistoryViewDelegate> mHistoryViewListeners;
     private Windows.WindowPlacement mWindowPlacement = Windows.WindowPlacement.FRONT;
     private float mMaxWindowScale = 3;
     private boolean mIsRestored = false;
@@ -97,6 +126,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     boolean mHovered = false;
     boolean mClickedAfterFocus = false;
     boolean mIsBookmarksVisible = false;
+    boolean mIsHistoryVisible = false;
 
     public interface WindowDelegate {
         void onFocusRequest(@NonNull WindowWidget aWindow);
@@ -116,10 +146,15 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mSessionStack.addVideoAvailabilityListener(this);
         mSessionStack.addNavigationListener(this);
         mSessionStack.addProgressListener(this);
+        mSessionStack.setHistoryDelegate(this);
         mSessionStack.newSession();
 
         mBookmarksView  = new BookmarksView(aContext);
-        mBookmarksListeners = new ArrayList<>();
+        mBookmarksViewListeners = new ArrayList<>();
+
+        mHistoryView = new HistoryView(aContext);
+        mHistoryView.setHistoryCallback(mHistoryCallback);
+        mHistoryViewListeners = new ArrayList<>();
 
         mHandle = ((WidgetManagerDelegate)aContext).newWidgetHandle();
         mWidgetPlacement = new WidgetPlacement(aContext);
@@ -186,7 +221,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     @Override
     protected void onDismiss() {
         if (isBookmarksVisible()) {
-            switchBookmarks();
+            hideBookmarks();
+
+        } else if (isHistoryVisible()) {
+            hideHistory();
 
         } else {
             SessionStack activeStore = SessionStore.get().getSessionStack(mWindowId);
@@ -201,6 +239,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         releaseWidget();
         mBookmarksView.onDestroy();
+        mHistoryView.onDestroy();
         SessionStore.get().destroySessionStack(mWindowId);
     }
 
@@ -266,29 +305,49 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     public boolean isBookmarksVisible() {
-        return (mView != null);
+        return (mView != null && mView == mBookmarksView);
     }
 
-    public void addBookmarksListener(@NonNull BookmarkListener listener) {
-        mBookmarksListeners.add(listener);
+    public boolean isHistoryVisible() {
+        return (mView != null && mView == mHistoryView);
     }
 
-    public void removeBookmarksListener(@NonNull BookmarkListener listener) {
-        mBookmarksListeners.remove(listener);
+    public void addBookmarksViewListener(@NonNull BookmarksViewDelegate listener) {
+        mBookmarksViewListeners.add(listener);
+    }
+
+    public void removeBookmarksViewListener(@NonNull BookmarksViewDelegate listener) {
+        mBookmarksViewListeners.remove(listener);
+    }
+
+    public void addHistoryViewListener(@NonNull HistoryViewDelegate listener) {
+        mHistoryViewListeners.add(listener);
+    }
+
+    public void removeHistoryViewListener(@NonNull HistoryViewDelegate listener) {
+        mHistoryViewListeners.remove(listener);
     }
 
     public void switchBookmarks() {
-        if (mView == null) {
-            setView(mBookmarksView);
-            for (BookmarkListener listener : mBookmarksListeners)
-                listener.onBookmarksShown(this);
-            mIsBookmarksVisible = true;
+        if (isHistoryVisible()) {
+            hideHistory();
+            showBookmarks();
+
+        } else if (isBookmarksVisible()) {
+            hideBookmarks();
 
         } else {
-            unsetView(mBookmarksView);
-            for (BookmarkListener listener : mBookmarksListeners)
-                listener.onBookmarksHidden(this);
-            mIsBookmarksVisible = false;
+            showBookmarks();
+        }
+    }
+
+    public void showBookmarks() {
+        if (mView == null) {
+            setView(mBookmarksView);
+            for (BookmarksViewDelegate listener : mBookmarksViewListeners) {
+                listener.onBookmarksShown(this);
+            }
+            mIsBookmarksVisible = true;
         }
 
         updateTitleBar();
@@ -297,8 +356,43 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     public void hideBookmarks() {
         if (mView != null) {
             unsetView(mBookmarksView);
-            for (BookmarkListener listener : mBookmarksListeners)
+            for (BookmarksViewDelegate listener : mBookmarksViewListeners) {
                 listener.onBookmarksHidden(this);
+            }
+            mIsBookmarksVisible = false;
+        }
+    }
+
+    public void switchHistory() {
+        if (isBookmarksVisible()) {
+            hideBookmarks();
+            showHistory();
+
+        } else if (isHistoryVisible()) {
+            hideHistory();
+
+        } else {
+            showHistory();
+        }
+    }
+
+    public void showHistory() {
+        if (mView == null) {
+            setView(mHistoryView);
+            for (HistoryViewDelegate listener : mHistoryViewListeners) {
+                listener.onHistoryViewShown(this);
+            }
+            mIsHistoryVisible = true;
+        }
+    }
+
+    public void hideHistory() {
+        if (mView != null) {
+            unsetView(mHistoryView);
+            for (HistoryViewDelegate listener : mHistoryViewListeners) {
+                listener.onHistoryViewHidden(this);
+            }
+            mIsHistoryVisible = false;
         }
     }
 
@@ -415,6 +509,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         if (isBookmarksVisible()) {
             updateTitleBarUrl(getResources().getString(R.string.url_bookmarks_title));
 
+        } else if (isHistoryVisible()) {
+                updateTitleBarUrl(getResources().getString(R.string.url_history_title));
+
         } else {
             updateTitleBarUrl(mSessionStack.getCurrentUri());
         }
@@ -431,7 +528,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 mTitleBar.setInsecureVisibility(GONE);
                 mTitleBar.setURL(getResources().getString(R.string.url_home_title, getResources().getString(R.string.app_name)));
 
-            } else if (url.equals(getResources().getString(R.string.url_bookmarks_title))) {
+            } else if (url.equals(getResources().getString(R.string.url_bookmarks_title)) ||
+                    url.equals(getResources().getString(R.string.url_history_title))) {
                 mTitleBar.setInsecureVisibility(GONE);
                 mTitleBar.setURL(url);
 
@@ -653,6 +751,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mSessionStack.removeVideoAvailabilityListener(this);
         mSessionStack.removeNavigationListener(this);
         mSessionStack.removeProgressListener(this);
+        mSessionStack.setHistoryDelegate(null);
         GeckoSession session = mSessionStack.getSession(mSessionId);
         if (session == null) {
             return;
@@ -688,16 +787,17 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
         mWidgetPlacement.visible = aVisible;
         if (!aVisible) {
-            if (mIsBookmarksVisible) {
+            if (mIsBookmarksVisible || mIsHistoryVisible) {
                 mWidgetManager.popWorldBrightness(this);
             }
 
         } else {
-            if (mIsBookmarksVisible) {
+            if (mIsBookmarksVisible || mIsHistoryVisible) {
                 mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
             }
         }
         mIsBookmarksVisible = isBookmarksVisible();
+        mIsHistoryVisible = isHistoryVisible();
         mWidgetManager.updateWidget(this);
         if (!aVisible) {
             clearFocus();
@@ -861,20 +961,66 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mConfirmPrompt.show(REQUEST_FOCUS);
     }
 
-    public void showAppDialog(@NonNull String title, @NonNull @StringRes int  description, @NonNull  @StringRes int [] btnMsg, @NonNull AppDialogWidget.Delegate callback) {
-        mAppDialog = new AppDialogWidget(getContext());
+    public void showAppDialog(@NonNull String title, @NonNull @StringRes int  description, @NonNull  @StringRes int [] btnMsg,
+                              @NonNull BaseAppDialogWidget.Delegate buttonsCallback, @NonNull MessageDialogWidget.Delegate messageCallback) {
+        mAppDialog = new MessageDialogWidget(getContext());
         mAppDialog.mWidgetPlacement.parentHandle = getHandle();
         mAppDialog.setTitle(title);
         mAppDialog.setMessage(description);
         mAppDialog.setButtons(btnMsg);
-        mAppDialog.setDelegate(callback);
+        mAppDialog.setButtonsDelegate(buttonsCallback);
+        mAppDialog.setMessageDelegate(messageCallback);
         mAppDialog.show(REQUEST_FOCUS);
+    }
+
+    public void showClearCacheDialog() {
+        mClearCacheDialog = new ClearCacheDialogWidget(getContext());
+        mClearCacheDialog.mWidgetPlacement.parentHandle = getHandle();
+        mClearCacheDialog.setTitle(R.string.history_clear);
+        mClearCacheDialog.setButtons(new int[] {
+                R.string.history_clear_cancel,
+                R.string.history_clear_now
+        });
+        mClearCacheDialog.setButtonsDelegate((index) -> {
+            if (index == BaseAppDialogWidget.LEFT) {
+                mClearCacheDialog.hide(REMOVE_WIDGET);
+
+            } else {
+                Calendar date = new GregorianCalendar();
+                date.set(Calendar.HOUR_OF_DAY, 0);
+                date.set(Calendar.MINUTE, 0);
+                date.set(Calendar.SECOND, 0);
+                date.set(Calendar.MILLISECOND, 0);
+
+                long currentTime = System.currentTimeMillis();
+                long todayLimit = date.getTimeInMillis();
+                long yesterdayLimit = todayLimit - SystemUtils.ONE_DAY_MILLIS;
+                long oneWeekLimit = todayLimit - SystemUtils.ONE_WEEK_MILLIS;
+
+                HistoryStore store = SessionStore.get().getHistoryStore();
+                switch (mClearCacheDialog.getSelectedRange()) {
+                    case ClearCacheDialogWidget.TODAY:
+                        store.deleteVisitsBetween(todayLimit, currentTime);
+                        break;
+                    case ClearCacheDialogWidget.YESTERDAY:
+                        store.deleteVisitsBetween(yesterdayLimit, todayLimit);
+                        break;
+                    case ClearCacheDialogWidget.LAST_WEEK:
+                        store.deleteVisitsBetween(oneWeekLimit, yesterdayLimit);
+                        break;
+                    case ClearCacheDialogWidget.EVERYTHING:
+                        store.deleteEverything();
+                        break;
+                }
+            }
+        });
+        mClearCacheDialog.show(REQUEST_FOCUS);
     }
 
     public void showMaxWindowsDialog(int maxDialogs) {
         mMaxWindowsDialog = new MaxWindowsWidget(getContext());
         mMaxWindowsDialog.mWidgetPlacement.parentHandle = getHandle();
-        mMaxWindowsDialog.setMessage(getContext().getString(R.string.max_windows_message, String.valueOf(maxDialogs)));
+        mMaxWindowsDialog.setMessage(getContext().getString(R.string.max_windows_msg, String.valueOf(maxDialogs)));
         mMaxWindowsDialog.show(REQUEST_FOCUS);
     }
 
@@ -914,6 +1060,69 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private int getWindowWidth(float aWorldWidth) {
         return (int) Math.floor(SettingsStore.WINDOW_WIDTH_DEFAULT * aWorldWidth / WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width));
     }
+
+    private HistoryCallback mHistoryCallback = new HistoryCallback() {
+        @Override
+        public void onClearHistory(View view) {
+            view.requestFocusFromTouch();
+            showClearCacheDialog();
+        }
+
+        @Override
+        public void onShowContextMenu(View view, VisitInfo item, boolean isLastVisibleItem) {
+            view.requestFocusFromTouch();
+
+            if (mHistoryContextMenu != null) {
+                mHistoryContextMenu.hide(REMOVE_WIDGET);
+            }
+
+            float ratio = WidgetPlacement.viewToWidgetRatio(getContext(), WindowWidget.this);
+
+            Rect offsetViewBounds = new Rect();
+            getDrawingRect(offsetViewBounds);
+            offsetDescendantRectToMyCoords(view, offsetViewBounds);
+
+            mHistoryContextMenu = new HistoryItemContextMenuWidget(getContext());
+            mHistoryContextMenu.mWidgetPlacement.parentHandle = getHandle();
+
+            PointF position;
+            if (isLastVisibleItem) {
+                mHistoryContextMenu.mWidgetPlacement.anchorY = 0.0f;
+                position = new PointF(
+                        (offsetViewBounds.left + view.getWidth()) * ratio,
+                        -(offsetViewBounds.top) * ratio);
+
+            } else {
+                mHistoryContextMenu.mWidgetPlacement.anchorY = 1.0f;
+                position = new PointF(
+                        (offsetViewBounds.left + view.getWidth()) * ratio,
+                        -(offsetViewBounds.top + view.getHeight()) * ratio);
+            }
+
+            mHistoryContextMenu.setPosition(position);
+            mHistoryContextMenu.setItem(item);
+            mHistoryContextMenu.setHistoryContextMenuItemCallback((new HistoryItemContextMenuClickCallback() {
+                @Override
+                public void onOpenInNewWindowClick(VisitInfo item) {
+                    mWidgetManager.openNewWindow(item.getUrl());
+                    mHistoryContextMenu.hide(REMOVE_WIDGET);
+                }
+
+                @Override
+                public void onAddToBookmarks(VisitInfo item) {
+                    SessionStore.get().getBookmarkStore().addBookmark(item.getUrl(), item.getTitle());
+                    mHistoryContextMenu.hide(REMOVE_WIDGET);
+                }
+
+                @Override
+                public void onRemoveFromBookmarks(VisitInfo item) {
+                    SessionStore.get().getBookmarkStore().deleteBookmarkByURL(item.getUrl());
+                    mHistoryContextMenu.hide(REMOVE_WIDGET);
+                }
+            }));
+            mHistoryContextMenu.show(REQUEST_FOCUS);
+        }
+    };
 
     // PromptDelegate
 
@@ -1089,43 +1298,76 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     @Override
     public void onLocationChange(@NonNull GeckoSession session, @Nullable String url) {
         if (isBookmarksVisible()) {
-            switchBookmarks();
+            hideBookmarks();
+
+        } else if (isHistoryVisible()) {
+            hideHistory();
         }
 
-        if (mTitleBar != null && url != null) {
-            if (url.startsWith("data") && mSessionStack.isPrivateMode()) {
-                mTitleBar.setInsecureVisibility(GONE);
-                mTitleBar.setURL(getResources().getString(R.string.private_browsing_title));
+        updateTitleBarUrl(url);
+    }
 
-            } else if (url.equals(mSessionStack.getHomeUri())) {
-                mTitleBar.setInsecureVisibility(VISIBLE);
-                mTitleBar.setURL(getResources().getString(R.string.url_home_title, getResources().getString(R.string.app_name)));
+    // GeckoSession.HistoryDelegate
 
-            } else if (url.equals(getResources().getString(R.string.url_bookmarks_title))) {
-                mTitleBar.setInsecureVisibility(GONE);
-                mTitleBar.setURL(url);
-
-            } else if (url.equals(getResources().getString(R.string.about_blank))) {
-                mTitleBar.setInsecureVisibility(GONE);
-                mTitleBar.setURL("");
-
-            } else {
-                mTitleBar.setInsecureVisibility(View.VISIBLE);
-                mTitleBar.setURL(url);
-            }
+    @Override
+    public void onHistoryStateChange(@NonNull GeckoSession geckoSession, @NonNull HistoryList historyList) {
+        for (HistoryItem item : historyList) {
+            SessionStore.get().getHistoryStore().recordObservation(item.getUri(), new PageObservation(item.getTitle()));
         }
     }
 
     @Nullable
     @Override
-    public GeckoResult<AllowOrDeny> onLoadRequest(@NonNull GeckoSession session, @NonNull LoadRequest request) {
-        if (request.isRedirect) {
-            SessionStore.get().getHistoryStore().addHistory(request.uri, VisitType.EMBED);
-        } else if (request.triggerUri != null) {
-            SessionStore.get().getHistoryStore().addHistory(request.uri, VisitType.LINK);
+    public GeckoResult<Boolean> onVisited(@NonNull GeckoSession geckoSession, @NonNull String url, @Nullable String lastVisitedURL, int flags) {
+        if (mSessionStack.isPrivateMode() ||
+                (flags & VISIT_TOP_LEVEL) == 0 ||
+                (flags & VISIT_UNRECOVERABLE_ERROR) != 0) {
+            return GeckoResult.fromValue(false);
         }
 
-        return GeckoResult.ALLOW;
+        boolean isReload = lastVisitedURL != null && lastVisitedURL.equals(url);
+
+        VisitType visitType;
+        if (isReload) {
+            visitType = VisitType.RELOAD;
+
+        } else {
+            if ((flags & VISIT_REDIRECT_SOURCE_PERMANENT) != 0) {
+                visitType = VisitType.REDIRECT_PERMANENT;
+
+            } else if ((flags & VISIT_REDIRECT_SOURCE) != 0) {
+                visitType = VisitType.REDIRECT_TEMPORARY;
+
+            } else {
+                visitType = VisitType.LINK;
+            }
+        }
+
+        SessionStore.get().getHistoryStore().deleteVisitsFor(url);
+        SessionStore.get().getHistoryStore().recordVisit(url, visitType);
+
+        return GeckoResult.fromValue(true);
+    }
+
+    @UiThread
+    @Nullable
+    public GeckoResult<boolean[]> getVisited(@NonNull GeckoSession geckoSession, @NonNull String[] urls) {
+        if (mSessionStack.isPrivateMode()) {
+            return GeckoResult.fromValue(new boolean[]{});
+        }
+
+        GeckoResult<boolean[]> result = new GeckoResult<>();
+
+        SessionStore.get().getHistoryStore().getVisited(Arrays.asList(urls)).thenAcceptAsync(list -> {
+            final boolean[] primitives = new boolean[list.size()];
+            int index = 0;
+            for (Boolean object : list) {
+                primitives[index++] = object;
+            }
+            result.complete(primitives);
+        });
+
+        return result;
     }
 
     // GeckoSession.ProgressDelegate

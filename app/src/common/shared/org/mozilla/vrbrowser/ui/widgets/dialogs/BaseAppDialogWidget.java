@@ -16,35 +16,33 @@ import androidx.annotation.StringRes;
 import androidx.databinding.DataBindingUtil;
 
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.databinding.AppDialogBinding;
+import org.mozilla.vrbrowser.databinding.BaseAppDialogBinding;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
-import org.mozilla.vrbrowser.utils.ViewUtils;
 
-public class AppDialogWidget extends UIDialog {
+public class BaseAppDialogWidget extends UIDialog {
 
     public interface Delegate {
         void onButtonClicked(int index);
-        void onMessageLinkClicked(@NonNull String url);
     }
 
     public static final int LEFT = 0;
     public static final int RIGHT = 1;
 
-    private AppDialogBinding mBinding;
+    protected BaseAppDialogBinding mBinding;
     private Delegate mAppDialogDelegate;
 
-    public AppDialogWidget(Context aContext) {
+    public BaseAppDialogWidget(Context aContext) {
         super(aContext);
         initialize(aContext);
     }
 
-    public AppDialogWidget(Context aContext, AttributeSet aAttrs) {
+    public BaseAppDialogWidget(Context aContext, AttributeSet aAttrs) {
         super(aContext, aAttrs);
         initialize(aContext);
     }
 
-    public AppDialogWidget(Context aContext, AttributeSet aAttrs, int aDefStyle) {
+    public BaseAppDialogWidget(Context aContext, AttributeSet aAttrs, int aDefStyle) {
         super(aContext, aAttrs, aDefStyle);
         initialize(aContext);
     }
@@ -53,42 +51,41 @@ public class AppDialogWidget extends UIDialog {
         LayoutInflater inflater = LayoutInflater.from(aContext);
 
         // Inflate this data binding layout
-        mBinding = DataBindingUtil.inflate(inflater, R.layout.app_dialog, this, true);
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.base_app_dialog, this, true);
 
         mBinding.leftButton.setOnClickListener(v ->  {
             if (mAppDialogDelegate != null) {
                 mAppDialogDelegate.onButtonClicked(LEFT);
             }
 
-            AppDialogWidget.this.onDismiss();
+            BaseAppDialogWidget.this.onDismiss();
         });
         mBinding.rightButton.setOnClickListener(v -> {
             if (mAppDialogDelegate != null) {
                 mAppDialogDelegate.onButtonClicked(RIGHT);
             }
 
-            AppDialogWidget.this.onDismiss();
+            BaseAppDialogWidget.this.onDismiss();
         });
     }
 
     @Override
     protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
         aPlacement.visible = false;
-        aPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.app_dialog_width);
+        aPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.base_app_dialog_width);
         aPlacement.height = WidgetPlacement.pixelDimension(getContext(), R.dimen.browser_width_pixels)/2;
         aPlacement.parentAnchorX = 0.5f;
         aPlacement.parentAnchorY = 0.5f;
         aPlacement.anchorX = 0.5f;
         aPlacement.anchorY = 0.5f;
-        aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.app_dialog_z_distance);
+        aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.base_app_dialog_z_distance);
     }
 
 
     @Override
     public void show(@ShowFlags int aShowFlags) {
-        measure(View.MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
-                View.MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-
+        measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
+                MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
         super.show(aShowFlags);
 
         mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
@@ -100,7 +97,7 @@ public class AppDialogWidget extends UIDialog {
                 public void onGlobalLayout() {
                     getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     mWidgetPlacement.height = (int)(getHeight()/mWidgetPlacement.density);
-                    mWidgetManager.updateWidget(AppDialogWidget.this);
+                    mWidgetManager.updateWidget(BaseAppDialogWidget.this);
                 }
             });
         }
@@ -112,6 +109,7 @@ public class AppDialogWidget extends UIDialog {
     }
 
     // WidgetManagerDelegate.FocusChangeListener
+
     @Override
     public void onGlobalFocusChanged(View oldFocus, View newFocus) {
         if (oldFocus == this && isVisible() && findViewById(newFocus.getId()) == null) {
@@ -119,7 +117,7 @@ public class AppDialogWidget extends UIDialog {
         }
     }
 
-    public void setDelegate(Delegate delegate) {
+    public void setButtonsDelegate(Delegate delegate) {
         mAppDialogDelegate = delegate;
     }
 
@@ -129,19 +127,6 @@ public class AppDialogWidget extends UIDialog {
 
     public void setTitle(String title) {
         mBinding.title.setText(title);
-    }
-
-    public void setMessage(@StringRes int message) {
-        ViewUtils.setTextViewHTML(mBinding.message, getResources().getString(message), (widget, url) -> {
-            if (mAppDialogDelegate != null) {
-                mAppDialogDelegate.onMessageLinkClicked(url);
-                onDismiss();
-            }
-        });
-    }
-
-    public void setMessage(String message) {
-        mBinding.message.setText(message);
     }
 
     public void setButtons(@StringRes int[] buttons) {

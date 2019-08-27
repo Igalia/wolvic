@@ -64,6 +64,8 @@
     <string name="user_agent_override_file" translatable="false">userAgentOverride.json</string>
     <string name="about_blank" translatable="false">about:blank</string>
     <string name="about_private_browsing" translatable="false">about:privatebrowsing</string>
+    <string name="about_bookmarks" translatable="false">about:bookmarks</string>
+    <string name="about_history" translatable="false">about:history</string>
     <string name="voice_app_id" translatable="false">fxr</string>
     <string name="keyboard_mode_change" translatable="false">ABC</string>
     <string name="keyboard_symbol" translatable="false">%&amp;=</string>

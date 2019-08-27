@@ -135,4 +135,19 @@
         <item>ko-KR</item>
         <item>it-IT</item>
     </string-array>
+
+    <!-- Clear Cache Options -->
+    <string-array name="clear_cache_options" translatable="false">
+        <item>@string/history_clear_range_today</item>
+        <item>@string/history_clear_range_yesterday</item>
+        <item>@string/history_clear_range_last_week</item>
+        <item>@string/history_clear_range_everything</item>
+    </string-array>
+
+    <integer-array name="clear_cache_options_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </integer-array>
 </resources>

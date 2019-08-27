@@ -26,9 +26,8 @@ import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.Media;
 import org.mozilla.vrbrowser.browser.SessionChangeListener;
-import org.mozilla.vrbrowser.browser.engine.SessionStore;
-import org.mozilla.vrbrowser.browser.engine.SessionStack;
 import org.mozilla.vrbrowser.browser.SettingsStore;
+import org.mozilla.vrbrowser.browser.engine.SessionStack;
 import org.mozilla.vrbrowser.search.suggestions.SuggestionsProvider;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.ui.views.CustomUIButton;
@@ -44,14 +43,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import mozilla.components.concept.storage.VisitType;
-
 public class NavigationBarWidget extends UIWidget implements GeckoSession.NavigationDelegate,
         GeckoSession.ProgressDelegate, GeckoSession.ContentDelegate, WidgetManagerDelegate.WorldClickListener,
         WidgetManagerDelegate.UpdateListener, SessionChangeListener,
         NavigationURLBar.NavigationURLBarDelegate, VoiceSearchWidget.VoiceSearchDelegate,
         SharedPreferences.OnSharedPreferenceChangeListener, SuggestionsWidget.URLBarPopupDelegate,
-        BookmarkListener, TrayListener {
+        WindowWidget.BookmarksViewDelegate, WindowWidget.HistoryViewDelegate, TrayListener {
 
     private static final String LOGTAG = NavigationBarWidget.class.getSimpleName();
 
@@ -168,9 +165,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
         mReloadButton.setOnClickListener(v -> {
             v.requestFocusFromTouch();
-            SessionStore.get().getHistoryStore().addHistory(
-                    mAttachedWindow.getSessionStack().getCurrentUri(),
-                    VisitType.RELOAD);
             if (mIsLoading) {
                 mSessionStack.stop();
             } else {
@@ -384,7 +378,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             mSessionStack = null;
         }
         if (mAttachedWindow != null) {
-            mAttachedWindow.removeBookmarksListener(this);
+            mAttachedWindow.removeBookmarksViewListener(this);
+            mAttachedWindow.removeHistoryViewListener(this);
         }
         mAttachedWindow = null;
     }
@@ -398,12 +393,17 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
         mWidgetPlacement.parentHandle = aWindow.getHandle();
         mAttachedWindow = aWindow;
-        mAttachedWindow.addBookmarksListener(this);
+        mAttachedWindow.addBookmarksViewListener(this);
+        mAttachedWindow.addHistoryViewListener(this);
 
         if (mAttachedWindow != null) {
-            mURLBar.setIsBookmarkMode(mAttachedWindow.isBookmarksVisible());
+            mURLBar.setIsContentMode(mAttachedWindow.isBookmarksVisible());
             if (mAttachedWindow.isBookmarksVisible()) {
                 mURLBar.setURL(getResources().getString(R.string.url_bookmarks_title));
+                mURLBar.setInsecureVisibility(View.GONE);
+
+            } if (mAttachedWindow.isHistoryVisible()) {
+                mURLBar.setURL(getResources().getString(R.string.url_history_title));
                 mURLBar.setInsecureVisibility(View.GONE);
 
             } else {
@@ -979,21 +979,41 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mURLBar.handleURLEdit(item.url);
     }
 
-    // BookmarkListener
+    // BookmarksViewListener
 
     @Override
     public void onBookmarksShown(WindowWidget aWindow) {
         if (mAttachedWindow == aWindow) {
             mURLBar.setURL("");
             mURLBar.setHint(R.string.url_bookmarks_title);
-            mURLBar.setIsBookmarkMode(true);
+            mURLBar.setIsContentMode(true);
         }
     }
 
     @Override
     public void onBookmarksHidden(WindowWidget aWindow) {
         if (mAttachedWindow == aWindow) {
-            mURLBar.setIsBookmarkMode(false);
+            mURLBar.setIsContentMode(false);
+            mURLBar.setURL(mSessionStack.getCurrentUri());
+            mURLBar.setHint(R.string.search_placeholder);
+        }
+    }
+
+    // HistoryViewListener
+
+    @Override
+    public void onHistoryViewShown(WindowWidget aWindow) {
+        if (mAttachedWindow == aWindow) {
+            mURLBar.setURL("");
+            mURLBar.setHint(R.string.url_history_title);
+            mURLBar.setIsContentMode(true);
+        }
+    }
+
+    @Override
+    public void onHistoryViewHidden(WindowWidget aWindow) {
+        if (mAttachedWindow == aWindow) {
+            mURLBar.setIsContentMode(false);
             mURLBar.setURL(mSessionStack.getCurrentUri());
             mURLBar.setHint(R.string.search_placeholder);
         }
@@ -1017,6 +1037,19 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     @Override
     public void onPrivateBrowsingClicked() {
 
+    }
+
+    @Override
+    public void onHistoryClicked() {
+        if (mIsResizing) {
+            exitResizeMode(ResizeAction.RESTORE_SIZE);
+
+        } else if (mIsInFullScreenMode) {
+            exitFullScreenMode();
+
+        } else if (mIsInVRVideo) {
+            exitVRVideo();
+        }
     }
 
     private void finishWidgetResize() {

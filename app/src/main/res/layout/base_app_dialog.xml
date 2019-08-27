@@ -28,30 +28,24 @@
             android:typeface="sans"
             tools:text="Title" />
 
-        <TextView
-            android:id="@+id/message"
+        <FrameLayout
+            android:id="@+id/dialog_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
             android:layout_marginTop="15dp"
             android:layout_marginBottom="15dp"
-            android:layout_marginEnd="20dp"
-            android:gravity="top|center_horizontal"
-            android:text=""
-            android:textColor="@color/fog"
-            android:textSize="@dimen/text_medium_size"
-            android:typeface="sans"
-            tools:text="Message" />
+            android:gravity="top|center_horizontal" />
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/buttonsLayout"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:gravity="center_horizontal">
 
             <Button
                 android:id="@+id/leftButton"
                 style="@style/dialogButtonRegular"
+                android:layout_alignParentStart="true"
                 android:layout_marginEnd="@dimen/dialog_button_margin_end"
                 android:text=""
                 tools:text="Cancel" />
@@ -59,9 +53,10 @@
             <Button
                 android:id="@+id/rightButton"
                 style="@style/dialogButtonHighlighted"
+                android:layout_alignParentEnd="true"
                 android:text=""
                 tools:text="Accept" />
-        </LinearLayout>
+        </RelativeLayout>
 
     </LinearLayout>
 </layout>

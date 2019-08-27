@@ -1,6 +1,10 @@
 package org.mozilla.vrbrowser.utils;
 
+import android.animation.Animator;
+import android.animation.ValueAnimator;
+import android.util.Log;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -63,5 +67,47 @@ public class AnimationHelper {
         });
 
         aView.setAnimation(animation);
+    }
+
+    public static void animateViewPadding(View view, int paddingStart, int paddingEnd, int duration) {
+        animateViewPadding(view, paddingStart, paddingEnd, duration, null);
+    }
+
+    public static void animateViewPadding(View view, int paddingStart, int paddingEnd, int duration, Runnable onAnimationEnd) {
+        ValueAnimator animation = ValueAnimator.ofInt(paddingStart, paddingEnd);
+        animation.setDuration(duration);
+        animation.setInterpolator(new AccelerateDecelerateInterpolator());
+        animation.addUpdateListener(valueAnimator -> {
+            try {
+                int newPadding = Integer.parseInt(valueAnimator.getAnimatedValue().toString());
+                view.setPadding(newPadding, newPadding, newPadding, newPadding);
+            } catch (NumberFormatException ex) {
+                ex.printStackTrace();
+            }
+        });
+        animation.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animator) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                if (onAnimationEnd != null) {
+                    onAnimationEnd.run();
+                }
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) {
+
+            }
+        });
+        animation.start();
     }
 }

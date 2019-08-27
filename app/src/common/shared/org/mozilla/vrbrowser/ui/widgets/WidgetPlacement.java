@@ -153,4 +153,8 @@ public class WidgetPlacement {
         return (WidgetPlacement.floatDimension(aContext, R.dimen.window_world_width) / SettingsStore.WINDOW_WIDTH_DEFAULT)/ WORLD_DPI_RATIO;
     }
 
+    public static float viewToWidgetRatio(@NonNull Context context, @NonNull UIWidget widget) {
+        return WidgetPlacement.worldToWidgetRatio(widget) / context.getResources().getDisplayMetrics().density;
+    }
+
 }

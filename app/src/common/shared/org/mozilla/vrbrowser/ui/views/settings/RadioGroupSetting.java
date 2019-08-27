@@ -24,7 +24,7 @@ public class RadioGroupSetting extends LinearLayout {
     }
 
     private AudioEngine mAudio;
-    private String mDecription;
+    private String mDescription;
     private CharSequence[] mOptions;
     private Object[] mValues;
     protected RadioGroup mRadioGroup;
@@ -40,7 +40,7 @@ public class RadioGroupSetting extends LinearLayout {
         super(context, attrs, defStyleAttr);
 
         TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.RadioGroupSetting, defStyleAttr, 0);
-        mDecription = attributes.getString(R.styleable.RadioGroupSetting_description);
+        mDescription = attributes.getString(R.styleable.RadioGroupSetting_description);
         mOptions = attributes.getTextArray(R.styleable.RadioGroupSetting_options);
         mLayout = attributes.getResourceId(R.styleable.RadioGroupSetting_layout, R.layout.setting_radio_group);
         int id = attributes.getResourceId(R.styleable.RadioGroupSetting_values, 0);
@@ -68,7 +68,7 @@ public class RadioGroupSetting extends LinearLayout {
 
         mRadioDescription = findViewById(R.id.setting_description);
         if (mRadioDescription != null) {
-            mRadioDescription.setText(mDecription);
+            mRadioDescription.setText(mDescription);
         }
 
         mRadioGroup = findViewById(R.id.radio_group);

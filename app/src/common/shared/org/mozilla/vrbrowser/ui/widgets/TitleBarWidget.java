@@ -164,7 +164,8 @@ public class TitleBarWidget extends UIWidget {
     }
 
     public void setIsInsecure(boolean aIsInsecure) {
-        if (!(mAttachedWindow.getSessionStack().getCurrentUri().startsWith("data") &&
+        if (mAttachedWindow.getSessionStack().getCurrentUri() != null &&
+                !(mAttachedWindow.getSessionStack().getCurrentUri().startsWith("data") &&
                 mAttachedWindow.getSessionStack().isPrivateMode())) {
             mBinding.insecureIcon.setVisibility(aIsInsecure ? View.VISIBLE : View.GONE);
         }

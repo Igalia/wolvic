@@ -58,9 +58,9 @@
             android:id="@+id/loading_tv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:contentDescription="@string/app_name"
+            android:contentDescription="@string/bookmarks_loading"
             android:gravity="center_vertical|center_horizontal"
-            android:text="@string/app_name"
+            android:text="@string/bookmarks_loading"
             android:textAlignment="center"
             android:textColor="@color/fog"
             android:visibility="gone"
@@ -84,7 +84,7 @@
             android:fadingEdge="vertical"
             android:fadingEdgeLength="60dp"
             android:requiresFadingEdge="vertical"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layoutManager="org.mozilla.vrbrowser.ui.adapters.LanguagesAdapter$CustLinearLayoutManager"
             app:visibleGone="@{!isLoading &amp;&amp; !isEmpty}" />
 
     </LinearLayout>

@@ -29,13 +29,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class TrayWidget extends UIWidget implements SessionChangeListener, BookmarkListener, WidgetManagerDelegate.UpdateListener {
-    static final String LOGTAG = "VRB";
+public class TrayWidget extends UIWidget implements SessionChangeListener, WindowWidget.BookmarksViewDelegate,
+        WindowWidget.HistoryViewDelegate, WidgetManagerDelegate.UpdateListener {
+
+    static final String LOGTAG = TrayWidget.class.getSimpleName();
+
     private static final int ICON_ANIMATION_DURATION = 200;
 
     private UIButton mSettingsButton;
     private UIButton mPrivateButton;
     private UIButton mBookmarksButton;
+    private UIButton mHistoryButton;
     private AudioEngine mAudio;
     private int mSettingsDialogHandle = -1;
     private boolean mIsLastSessionPrivate;
@@ -102,6 +106,17 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Bookm
             }
 
             notifyBookmarksClicked();
+            view.requestFocusFromTouch();
+        });
+
+        mHistoryButton = findViewById(R.id.historyButton);
+        mHistoryButton.setOnHoverListener(mButtonScaleHoverListener);
+        mHistoryButton.setOnClickListener(view -> {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
+
+            notifyHistoryClicked();
             view.requestFocusFromTouch();
         });
 
@@ -200,6 +215,10 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Bookm
         mTrayListeners.forEach(TrayListener::onBookmarksClicked);
     }
 
+    private void notifyHistoryClicked() {
+        mTrayListeners.forEach(TrayListener::onHistoryClicked);
+    }
+
     private void notifyPrivateBrowsingClicked() {
         mTrayListeners.forEach(TrayListener::onPrivateBrowsingClicked);
     }
@@ -267,7 +286,8 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Bookm
             mSessionStack = null;
         }
         if (mAttachedWindow != null) {
-            mAttachedWindow.removeBookmarksListener(this);
+            mAttachedWindow.removeBookmarksViewListener(this);
+            mAttachedWindow.removeHistoryViewListener(this);
         }
         mWidgetPlacement.parentHandle = -1;
 
@@ -282,7 +302,8 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Bookm
 
         mAttachedWindow = aWindow;
         mWidgetPlacement.parentHandle = aWindow.getHandle();
-        mAttachedWindow.addBookmarksListener(this);
+        mAttachedWindow.addBookmarksViewListener(this);
+        mAttachedWindow.addHistoryViewListener(this);
 
         mSessionStack = aWindow.getSessionStack();
         if (mSessionStack != null) {
@@ -294,6 +315,12 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Bookm
             onBookmarksShown(aWindow);
         } else {
             onBookmarksHidden(aWindow);
+        }
+
+        if (mAttachedWindow.isHistoryVisible()) {
+            onHistoryViewShown(aWindow);
+        } else {
+            onHistoryViewHidden(aWindow);
         }
     }
 
@@ -366,7 +393,7 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Bookm
         return false;
     }
 
-    // BookmarkListener
+    // BookmarksViewListener
 
     @Override
     public void onBookmarksShown(WindowWidget aWindow) {
@@ -380,7 +407,22 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Bookm
         mBookmarksButton.setActiveMode(false);
     }
 
+    // HistoryViewListener
+
+    @Override
+    public void onHistoryViewShown(WindowWidget aWindow) {
+        mHistoryButton.setTooltip(getResources().getString(R.string.close_history_tooltip));
+        mHistoryButton.setActiveMode(true);
+    }
+
+    @Override
+    public void onHistoryViewHidden(WindowWidget aWindow) {
+        mHistoryButton.setTooltip(getResources().getString(R.string.open_history_tooltip));
+        mHistoryButton.setActiveMode(false);
+    }
+
     // WidgetManagerDelegate.UpdateListener
+
     @Override
     public void onWidgetUpdate(Widget aWidget) {
         if (!aWidget.getClass().equals(KeyboardWidget.class)) {

@@ -15,8 +15,8 @@ import androidx.databinding.DataBindingUtil;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.BookmarksStore;
-import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.browser.engine.SessionStack;
+import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.databinding.BookmarksBinding;
 import org.mozilla.vrbrowser.ui.adapters.BookmarkAdapter;
 import org.mozilla.vrbrowser.ui.callbacks.BookmarkClickCallback;
@@ -25,7 +25,6 @@ import org.mozilla.vrbrowser.utils.UIThreadExecutor;
 import java.util.List;
 
 import mozilla.components.concept.storage.BookmarkNode;
-import mozilla.components.concept.storage.VisitType;
 
 public class BookmarksView extends FrameLayout implements BookmarksStore.BookmarkListener {
 
@@ -77,8 +76,6 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
 
-            SessionStore.get().getHistoryStore().addHistory(bookmark.getUrl(), VisitType.BOOKMARK);
-
             SessionStack sessionStack = SessionStore.get().getActiveStore();
             sessionStack.loadUri(bookmark.getUrl());
         }
@@ -118,7 +115,7 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
         mBinding.executePendingBindings();
     }
 
-    // BookmarksStore.BookmarkListener
+    // BookmarksStore.BookmarksViewListener
     @Override
     public void onBookmarksUpdated() {
         if (mIgnoreNextListener) {

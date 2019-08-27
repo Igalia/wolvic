@@ -36,6 +36,14 @@
                 android:src="@drawable/ic_icon_tray_bookmarks_v2"/>
 
             <org.mozilla.vrbrowser.ui.views.UIButton
+                android:id="@+id/historyButton"
+                style="@style/trayButtonMiddleTheme"
+                android:tooltipText="@string/open_history_tooltip"
+                app:tooltipDensity="@dimen/tray_tooltip_density"
+                app:tooltipPosition="top"
+                android:src="@drawable/ic_icon_history"/>
+
+            <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/settingsButton"
                 style="@style/trayButtonEndTheme"
                 android:tooltipText="@string/settings_tooltip"

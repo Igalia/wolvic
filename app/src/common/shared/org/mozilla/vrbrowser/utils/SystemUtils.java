@@ -12,6 +12,10 @@ import org.mozilla.vrbrowser.VRBrowserActivity;
 
 public class SystemUtils {
 
+    public static final long ONE_DAY_MILLIS = 86400000;
+    public static final long TWO_DAYS_MILLIS = 172800000;
+    public static final long ONE_WEEK_MILLIS = 604800000;
+
     public static final void restart(@NonNull Context context) {
         Intent i = new Intent(context, VRBrowserActivity.class);
         i.setPackage(BuildConfig.APPLICATION_ID);

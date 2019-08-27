@@ -200,6 +200,13 @@
     <!-- Bookmarks -->
     <dimen name="bookmark_row_height">64dp</dimen>
 
+    <!-- History -->
+    <dimen name="history_row_height">38dp</dimen>
+    <dimen name="history_section_text_size">18sp</dimen>
+    <dimen name="history_title_text_size">20sp</dimen>
+    <dimen name="history_url_text_size">16sp</dimen>
+    <dimen name="history_date_text_size">16sp</dimen>
+
     <!-- Language -->
     <dimen name="language_row_height">22dp</dimen>
     <dimen name="language_row_icon_size">20dp</dimen>
@@ -208,7 +215,12 @@
     <!-- Context Menu -->
     <dimen name="context_menu_row_width">360dp</dimen>
     <dimen name="context_menu_row_height">72dp</dimen>
-    <item name="context_menu_z_distance" format="float" type="dimen">0.05</item>
+    <item name="context_menu_z_distance" format="float" type="dimen">0.1</item>
+
+    <!-- Library Menu -->
+    <dimen name="library_context_menu_width">320dp</dimen>
+    <dimen name="library_context_menu_top_margin">4dp</dimen>
+    <item name="library_context_menu_z_distance" format="float" type="dimen">0.12</item>
 
     <!-- Blur -->
     <dimen name="blur_radius">2dp</dimen>
@@ -238,7 +250,10 @@
     <dimen name="display_options_width">585dp</dimen>
     <dimen name="display_options_height">420dp</dimen>
 
-    <!-- App Dialog -->
-    <dimen name="app_dialog_width">420dp</dimen>
-    <item name="app_dialog_z_distance" format="float" type="dimen">2</item>
+    <!-- Base App Dialog -->
+    <dimen name="base_app_dialog_width">420dp</dimen>
+    <item name="base_app_dialog_z_distance" format="float" type="dimen">2</item>
+
+    <!-- Cache Dialog -->
+    <dimen name="cache_app_dialog_width">585dp</dimen>
 </resources>

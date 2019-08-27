@@ -234,6 +234,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         WindowWidget rightWindow = getRightWindow();
 
         aWindow.hideBookmarks();
+        aWindow.hideHistory();
 
         if (leftWindow == aWindow) {
             removeWindow(leftWindow);
@@ -748,6 +749,11 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         if (window != null) {
             window.loadHome();
         }
+    }
+
+    @Override
+    public void onHistoryClicked() {
+        mFocusedWindow.switchHistory();
     }
 
     // TopBarWidget Delegate

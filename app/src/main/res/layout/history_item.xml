@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="mozilla.components.concept.storage.VisitType"/>
+
+        <variable
+            name="item"
+            type="mozilla.components.concept.storage.VisitInfo" />
+
+        <variable
+            name="callback"
+            type="org.mozilla.vrbrowser.ui.callbacks.HistoryItemCallback" />
+
+        <variable
+            name="isHovered"
+            type="boolean" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/history_row_height"
+        android:background="@color/void_color">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:duplicateParentState="true"
+            android:ellipsize="end"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:text="@{item.title}"
+            android:textAllCaps="true"
+            android:textColor="@color/rhino"
+            android:textSize="@dimen/history_title_text_size"
+            android:textStyle="bold"
+            app:visibleGone="@{item.visitType == VisitType.NOT_A_VISIT}"
+            tools:text="History Item Title" />
+
+        <RelativeLayout
+            android:id="@+id/layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/library_panel_item_background_color"
+            android:clickable="true"
+            android:descendantFocusability="blocksDescendants"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:onClick="@{(view) ->  callback.onClick(view, item)}"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:soundEffectsEnabled="false"
+            app:visibleGone="@{item.visitType != VisitType.NOT_A_VISIT}">
+
+            <LinearLayout
+                android:id="@+id/title_url"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@id/time_buttons"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:duplicateParentState="true"
+                    android:ellipsize="end"
+                    android:paddingEnd="20dp"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
+                    android:text="@{item.title}"
+                    android:textColor="@color/library_panel_title_text_color"
+                    android:textSize="@dimen/history_title_text_size"
+                    android:textStyle="bold"
+                    tools:text="History Item Title" />
+
+                <TextView
+                    android:id="@+id/url"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:paddingEnd="20dp"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
+                    android:text="@{item.url}"
+                    android:textColor="@color/library_panel_description_color"
+                    android:textSize="@dimen/history_url_text_size"
+                    tools:text="http://mozilla.org" />
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/time_buttons"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:duplicateParentState="true"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|end"
+                    android:ellipsize="end"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
+                    android:textColor="@color/library_panel_description_color"
+                    android:textSize="@dimen/history_date_text_size"
+                    app:bindDate="@{item.visitTime}"
+                    app:visibleInvisible="@{!isHovered}"
+                    tools:text="8/2/19, 2:18 PM" />
+
+                <LinearLayout
+                    android:id="@+id/buttons_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:duplicateParentState="true"
+                    android:orientation="horizontal"
+                    app:visibleInvisible="@{isHovered}">
+
+                    <ImageView
+                        android:id="@+id/trash"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_gravity="center_vertical|end"
+                        android:layout_marginEnd="10dp"
+                        android:duplicateParentState="true"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:padding="@dimen/settings_icon_padding_max"
+                        android:soundEffectsEnabled="false"
+                        android:src="@drawable/ic_icon_trash"
+                        android:tint="@color/library_panel_icon_color"
+                        android:visibility="visible"
+                        app:srcCompat="@drawable/ic_icon_trash" />
+
+                    <ImageView
+                        android:id="@+id/more"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_gravity="center_vertical|end"
+                        android:duplicateParentState="true"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:padding="@dimen/settings_icon_padding_max"
+                        android:soundEffectsEnabled="false"
+                        android:src="@drawable/ic_icon_more_options"
+                        android:tint="@color/library_panel_icon_color"
+                        android:visibility="visible"
+                        app:srcCompat="@drawable/ic_icon_more_options" />
+                </LinearLayout>
+            </FrameLayout>
+        </RelativeLayout>
+    </FrameLayout>
+</layout>

@@ -17,7 +17,7 @@
         android:id="@+id/layout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/bookmark_row_height"
-        android:background="@drawable/bookmark_background_color"
+        android:background="@drawable/library_panel_item_background_color"
         android:clickable="true"
         android:focusable="true"
         android:descendantFocusability="blocksDescendants"
@@ -35,7 +35,7 @@
             android:scrollHorizontally="true"
             android:singleLine="true"
             android:text="@{bookmark.title}"
-            android:textColor="@drawable/bookmark_text_color"
+            android:textColor="@color/library_panel_title_text_color"
             android:textSize="@dimen/text_big_size"
             android:textStyle="bold" />
 
@@ -50,7 +50,7 @@
             android:scrollHorizontally="true"
             android:singleLine="true"
             android:text="@{bookmark.url}"
-            android:textColor="@drawable/bookmark_description_color"
+            android:textColor="@color/library_panel_description_color"
             android:textSize="@dimen/text_medium_size" />
 
         <ImageView
@@ -66,7 +66,7 @@
             android:padding="12dp"
             android:soundEffectsEnabled="false"
             android:src="@drawable/ic_icon_trash"
-            android:tint="@drawable/bookmark_icon_color"
+            android:tint="@color/library_panel_icon_color"
             android:visibility="visible"
             app:srcCompat="@drawable/ic_icon_trash" />
     </RelativeLayout>

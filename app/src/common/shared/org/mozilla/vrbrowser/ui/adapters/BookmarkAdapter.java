@@ -1,23 +1,12 @@
 package org.mozilla.vrbrowser.ui.adapters;
 
-import android.animation.Animator;
-import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
-
-import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.databinding.BookmarkItemBinding;
-import org.mozilla.vrbrowser.ui.callbacks.BookmarkClickCallback;
-import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
-
-import java.util.List;
-import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,10 +14,21 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.databinding.BookmarkItemBinding;
+import org.mozilla.vrbrowser.ui.callbacks.BookmarkClickCallback;
+import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
+import org.mozilla.vrbrowser.utils.AnimationHelper;
+
+import java.util.List;
+import java.util.Objects;
+
 import mozilla.components.concept.storage.BookmarkNode;
 
 public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.BookmarkViewHolder> {
-    static final String LOGTAG = "VRB";
+
+    static final String LOGTAG = BookmarkAdapter.class.getSimpleName();
+
     private static final int ICON_ANIMATION_DURATION = 200;
 
     private List<? extends BookmarkNode> mBookmarkList;
@@ -102,13 +102,14 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
         return mBookmarkList != null ? mBookmarkList.size() : 0;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public BookmarkViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         BookmarkItemBinding binding = DataBindingUtil
                 .inflate(LayoutInflater.from(parent.getContext()), R.layout.bookmark_item,
                         parent, false);
         binding.setCallback(mBookmarkClickCallback);
-        binding.trash.setOnHoverListener(mTrashHoverListener);
+        binding.trash.setOnHoverListener(mIconHoverListener);
         binding.trash.setOnTouchListener((view, motionEvent) -> {
             int ev = motionEvent.getActionMasked();
             switch (ev) {
@@ -151,20 +152,20 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
         }
     }
 
-    private View.OnHoverListener mTrashHoverListener = (view, motionEvent) -> {
+    private View.OnHoverListener mIconHoverListener = (view, motionEvent) -> {
         ImageView icon = (ImageView)view;
         int ev = motionEvent.getActionMasked();
         switch (ev) {
             case MotionEvent.ACTION_HOVER_ENTER:
                 icon.setColorFilter(mIconColorHover);
-                animateViewPadding(view,
+                AnimationHelper.animateViewPadding(view,
                         mMaxPadding,
                         mMinPadding,
                         ICON_ANIMATION_DURATION);
                 return false;
 
             case MotionEvent.ACTION_HOVER_EXIT:
-                animateViewPadding(view,
+                AnimationHelper.animateViewPadding(view,
                         mMinPadding,
                         mMaxPadding,
                         ICON_ANIMATION_DURATION,
@@ -174,47 +175,5 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
 
         return false;
     };
-
-    private void animateViewPadding(View view, int paddingStart, int paddingEnd, int duration) {
-        animateViewPadding(view, paddingStart, paddingEnd, duration, null);
-    }
-
-    private void animateViewPadding(View view, int paddingStart, int paddingEnd, int duration, Runnable onAnimationEnd) {
-        ValueAnimator animation = ValueAnimator.ofInt(paddingStart, paddingEnd);
-        animation.setDuration(duration);
-        animation.setInterpolator(new AccelerateDecelerateInterpolator());
-        animation.addUpdateListener(valueAnimator -> {
-            try {
-                int newPadding = Integer.parseInt(valueAnimator.getAnimatedValue().toString());
-                view.setPadding(newPadding, newPadding, newPadding, newPadding);
-            } catch (NumberFormatException ex) {
-                Log.e(LOGTAG, "Error parsing BookmarkAdapter animation value: " + valueAnimator.getAnimatedValue().toString());
-            }
-        });
-        animation.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animator) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animator) {
-                if (onAnimationEnd != null) {
-                    onAnimationEnd.run();
-                }
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animator) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animator) {
-
-            }
-        });
-        animation.start();
-    }
 
 }

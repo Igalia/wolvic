@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="callback"
+            type="org.mozilla.vrbrowser.ui.callbacks.HistoryItemContextMenuClickCallback" />
+
+        <variable
+            name="item"
+            type="mozilla.components.concept.storage.VisitInfo" />
+
+        <variable
+            name="isBookmarked"
+            type="boolean" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="@dimen/library_context_menu_width"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="15dp"
+            android:background="@drawable/library_panel_context_menu_item_background_color_top"
+            android:clickable="true"
+            android:descendantFocusability="blocksDescendants"
+            android:focusable="true"
+            android:orientation="vertical"
+            android:onClick="@{(view) ->  callback.onOpenInNewWindowClick(item)}">
+
+            <TextView
+                android:id="@+id/new_window"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_icon_library_new_window"
+                android:drawablePadding="10dp"
+                android:duplicateParentState="true"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:text="@string/history_context_menu_new_window"
+                android:textColor="@color/library_panel_context_menu_item_color"
+                android:drawableTint="@color/library_panel_context_menu_item_color"
+                android:textSize="@dimen/history_title_text_size"
+                tools:text="Context menu item" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="15dp"
+            android:background="@drawable/library_panel_context_menu_item_background_color_bottom"
+            android:clickable="true"
+            android:descendantFocusability="blocksDescendants"
+            android:focusable="true"
+            android:orientation="vertical"
+            android:onClick="@{(view) ->  isBookmarked ? callback.onRemoveFromBookmarks(item) : callback.onAddToBookmarks(item)}">
+
+            <TextView
+                android:id="@+id/bookmark"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@{isBookmarked ? @drawable/ic_icon_bookmarked_active : @drawable/ic_icon_bookmarked}"
+                android:drawablePadding="10dp"
+                android:duplicateParentState="true"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:text="@{isBookmarked ? @string/history_context_remove_bookmarks : @string/history_context_add_bookmarks}"
+                android:textColor="@color/library_panel_context_menu_item_color"
+                android:drawableTint="@color/library_panel_context_menu_item_color"
+                android:textSize="@dimen/history_title_text_size"
+                tools:drawableLeft="@drawable/ic_icon_bookmarked"
+                tools:text="Context menu item" />
+        </FrameLayout>
+
+    </LinearLayout>
+</layout>
