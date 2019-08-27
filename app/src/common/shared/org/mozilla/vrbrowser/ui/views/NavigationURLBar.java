@@ -5,6 +5,7 @@
 
 package org.mozilla.vrbrowser.ui.views;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.text.Editable;
@@ -105,6 +106,7 @@ public class NavigationURLBar extends FrameLayout {
         initialize(context);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void initialize(Context aContext) {
         mAudio = AudioEngine.fromContext(aContext);
 
@@ -142,6 +144,10 @@ public class NavigationURLBar extends FrameLayout {
                 return true;
             }
             return view.onTouchEvent(motionEvent);
+        });
+        mURL.setOnLongClickListener(v -> {
+            mURL.requestFocus();
+            return false;
         });
         mURL.addTextChangedListener(mURLTextWatcher);
 
