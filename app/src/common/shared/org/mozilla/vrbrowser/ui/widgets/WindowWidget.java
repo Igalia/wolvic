@@ -781,6 +781,11 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     @Override
+    public boolean isLayer() {
+        return mSurface != null && mTexture == null;
+    }
+
+    @Override
     public void setVisible(boolean aVisible) {
         if (mWidgetPlacement.visible == aVisible) {
             return;
