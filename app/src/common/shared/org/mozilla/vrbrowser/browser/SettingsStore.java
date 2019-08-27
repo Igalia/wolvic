@@ -199,7 +199,8 @@ public class SettingsStore {
     }
 
     public boolean isPerformanceMonitorEnabled() {
-        return mPrefs.getBoolean(mContext.getString(R.string.settings_key_performance_monitor), PERFORMANCE_MONITOR_DEFAULT);
+        // Disabling Performance Monitor until it can properly handle multi-window
+        return false; // mPrefs.getBoolean(mContext.getString(R.string.settings_key_performance_monitor), PERFORMANCE_MONITOR_DEFAULT);
     }
 
     public void setPerformanceMonitorEnabled(boolean isEnabled) {

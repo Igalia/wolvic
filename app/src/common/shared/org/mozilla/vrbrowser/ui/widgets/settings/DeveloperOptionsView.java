@@ -56,6 +56,8 @@ class DeveloperOptionsView extends SettingsView {
 
         mBinding.performanceMonitorSwitch.setOnCheckedChangeListener(mPerformanceListener);
         setPerformance(SettingsStore.getInstance(getContext()).isPerformanceMonitorEnabled(), false);
+        // Hide Performance Monitor switch until it can handle multiple windows.
+        mBinding.performanceMonitorSwitch.setVisibility(View.GONE);
 
         if (BuildConfig.DEBUG) {
             mBinding.debugLoggingSwitch.setVisibility(View.GONE);
