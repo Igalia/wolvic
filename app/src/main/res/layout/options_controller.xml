@@ -18,7 +18,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:title="@string/settings_developer_options" />
+            app:title="@string/settings_controller_options" />
 
         <ScrollView
             android:id="@+id/scrollbar"
