@@ -7,6 +7,7 @@ package org.mozilla.vrbrowser.ui.widgets;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,15 +17,18 @@ import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.SessionChangeListener;
 import org.mozilla.vrbrowser.ui.views.UIButton;
+import org.mozilla.vrbrowser.ui.views.UITextButton;
 
 public class TopBarWidget extends UIWidget implements SessionChangeListener, WidgetManagerDelegate.UpdateListener {
 
     private UIButton mCloseButton;
     private UIButton mMoveLeftButton;
     private UIButton mMoveRightButton;
+    private UITextButton mClearButton;
     private AudioEngine mAudio;
     private WindowWidget mAttachedWindow;
     private TopBarWidget.Delegate mDelegate;
+    private LinearLayout mMultiWindowControlsContainer;
     private boolean mVisible;
 
     public TopBarWidget(Context aContext) {
@@ -50,6 +54,8 @@ public class TopBarWidget extends UIWidget implements SessionChangeListener, Wid
 
     private void initialize(Context aContext) {
         inflate(aContext, R.layout.top_bar, this);
+
+        mMultiWindowControlsContainer = findViewById(R.id.multiWindowControlsContainer);
 
         mCloseButton = findViewById(R.id.closeWindowButton);
         mCloseButton.setOnClickListener(view -> {
@@ -84,7 +90,16 @@ public class TopBarWidget extends UIWidget implements SessionChangeListener, Wid
             }
         });
 
-
+        mClearButton = findViewById(R.id.clearButton);
+        mClearButton.setOnClickListener(view -> {
+            view.requestFocusFromTouch();
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
+            if (mDelegate != null) {
+                mDelegate.onCloseClicked(TopBarWidget.this);
+            }
+        });
 
         mAudio = AudioEngine.fromContext(aContext);
 
@@ -162,6 +177,11 @@ public class TopBarWidget extends UIWidget implements SessionChangeListener, Wid
         } else {
             mWidgetManager.removeWidget(this);
         }
+    }
+
+    public void setClearMode(boolean showClear) {
+        mMultiWindowControlsContainer.setVisibility(showClear ? GONE : VISIBLE);
+        mClearButton.setVisibility(showClear ? VISIBLE : GONE);
     }
 
     public void setDelegate(TopBarWidget.Delegate aDelegate) {

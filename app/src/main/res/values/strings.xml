@@ -901,4 +901,8 @@
 
     <!-- This string is displayed in the URL bar when the user is in the history panel -->
     <string name="url_history_title">History</string>
+
+    <!-- This string is displayed in the Clear button on top of the window when in private mode. It only appears
+         when there is one window left. When clicked, it closes the private session -->
+    <string name="private_clear_button">Clear</string>
 </resources>

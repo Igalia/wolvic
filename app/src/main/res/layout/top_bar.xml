@@ -1,26 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
-    <LinearLayout
-        style="?attr/navigationBarStyle"
-        android:id="@+id/fullScreenModeContainer"
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center_horizontal"
-        android:padding="0dp"
-        android:orientation="horizontal">
-        <org.mozilla.vrbrowser.ui.views.UIButton
-            android:id="@+id/moveWindowLeftButton"
-            style="?attr/fullScreenButtonStyle"
-            android:background="@drawable/fullscreen_button_first"
-            android:src="@drawable/ic_icon_window_left" />
-        <org.mozilla.vrbrowser.ui.views.UIButton
-            android:id="@+id/closeWindowButton"
-            style="?attr/fullScreenButtonStyle"
-            android:src="@drawable/ic_icon_window_exit" />
-        <org.mozilla.vrbrowser.ui.views.UIButton
-            android:id="@+id/moveWindowRightButton"
-            android:background="@drawable/fullscreen_button_last"
-            style="?attr/fullScreenButtonStyle"
-            android:src="@drawable/ic_icon_window_right" />
-    </LinearLayout>
+        android:layout_gravity="center"
+        android:gravity="center_horizontal">
+
+        <LinearLayout
+            android:id="@+id/multiWindowControlsContainer"
+            style="?attr/navigationBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:padding="0dp">
+
+            <org.mozilla.vrbrowser.ui.views.UIButton
+                android:id="@+id/moveWindowLeftButton"
+                style="?attr/fullScreenButtonStyle"
+                android:background="@drawable/fullscreen_button_first"
+                android:src="@drawable/ic_icon_window_left" />
+
+            <org.mozilla.vrbrowser.ui.views.UIButton
+                android:id="@+id/closeWindowButton"
+                style="?attr/fullScreenButtonStyle"
+                android:src="@drawable/ic_icon_window_exit" />
+
+            <org.mozilla.vrbrowser.ui.views.UIButton
+                android:id="@+id/moveWindowRightButton"
+                style="?attr/fullScreenButtonStyle"
+                android:background="@drawable/fullscreen_button_last"
+                android:src="@drawable/ic_icon_window_right" />
+        </LinearLayout>
+
+        <org.mozilla.vrbrowser.ui.views.UITextButton
+            android:id="@+id/clearButton"
+            style="@style/textButtonTheme"
+            android:background="@drawable/text_button_private"
+            android:text="@string/private_clear_button"
+            android:textAllCaps="true"
+            android:textSize="@dimen/text_medium_big_size"
+            android:visibility="gone" />
+    </FrameLayout>
 </merge>

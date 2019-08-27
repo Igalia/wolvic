@@ -136,6 +136,21 @@
         <item name="privateModeTintColorList">@drawable/main_button_icon_color_private</item>
     </style>
 
+    <style name="textButtonTheme">
+        <item name="android:background">@drawable/text_button_private</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:paddingStart">20dp</item>
+        <item name="android:paddingEnd">20dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:textAlignment">center</item>
+        <item name="tintColorList">@drawable/main_button_icon_color</item>
+        <item name="privateModeTintColorList">@drawable/main_button_icon_color_private</item>
+        <item name="privateModeBackground">@drawable/text_button</item>
+    </style>
+
     <style name="navigationBarTextButtonStartTheme" parent="navigationBarTextButtonTheme">
         <item name="android:background">@drawable/fullscreen_button_first</item>
         <item name="privateModeBackground">@drawable/fullscreen_button_private_first</item>
