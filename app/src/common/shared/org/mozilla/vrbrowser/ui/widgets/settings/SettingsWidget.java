@@ -96,7 +96,7 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
 
         LinearLayout reportIssue = findViewById(R.id.reportIssueLayout);
         reportIssue.setOnClickListener(v -> {
-            SessionStore.get().getActiveStore().loadUri(getContext().getString(R.string.bug_report_url));
+            onSettingsReportClick();
             onDismiss();
         });
 
@@ -162,8 +162,8 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
-
-            onSettingsReportClick();
+            SessionStore.get().getActiveStore().loadUri(getContext().getString(R.string.help_url));
+            onDismiss();
         });
 
         HoneycombButton developerOptionsButton = findViewById(R.id.developerOptionsButton);
@@ -241,7 +241,7 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
 
         sessionStack.newSessionWithUrl(getContext().getString(R.string.private_report_url, url));
 
-        hide(REMOVE_WIDGET);
+        onDismiss();
     }
 
     private void onDeveloperOptionsClick() {
