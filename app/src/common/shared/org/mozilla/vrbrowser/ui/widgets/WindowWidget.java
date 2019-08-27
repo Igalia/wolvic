@@ -96,6 +96,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     boolean mActive = false;
     boolean mHovered = false;
     boolean mClickedAfterFocus = false;
+    boolean mIsBookmarksVisible = false;
 
     public interface WindowDelegate {
         void onFocusRequest(@NonNull WindowWidget aWindow);
@@ -281,11 +282,13 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             setView(mBookmarksView);
             for (BookmarkListener listener : mBookmarksListeners)
                 listener.onBookmarksShown(this);
+            mIsBookmarksVisible = true;
 
         } else {
             unsetView(mBookmarksView);
             for (BookmarkListener listener : mBookmarksListeners)
                 listener.onBookmarksHidden(this);
+            mIsBookmarksVisible = false;
         }
 
         updateTitleBar();
@@ -684,6 +687,17 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             return;
         }
         mWidgetPlacement.visible = aVisible;
+        if (!aVisible) {
+            if (mIsBookmarksVisible) {
+                mWidgetManager.popWorldBrightness(this);
+            }
+
+        } else {
+            if (mIsBookmarksVisible) {
+                mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
+            }
+        }
+        mIsBookmarksVisible = isBookmarksVisible();
         mWidgetManager.updateWidget(this);
         if (!aVisible) {
             clearFocus();
