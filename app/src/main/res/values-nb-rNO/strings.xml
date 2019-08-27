@@ -168,6 +168,11 @@
          Below this string appears a list of locales for the user to choose as their preferred languages for web content. -->
     <string name="settings_language_choose_language_content_title">Foretrukne nettstedspråk</string>
 
+    <!-- This string is used to label a text label that appears in the header description of 'Language Settings' ->
+         'Preferred Language for Displaying Websites' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of locales for the user to choose as their preferred languages for web content. -->
+    <string name="settings_language_choose_language_content_description">Noen nettsider tilbys noen ganger på mer enn ett språk.  Velg hvilke språk du vil vise, i ønsket rekkefølge til venstre.</string>
+
     <!-- This string is used to label a radio button in the 'Settings' Language dialog that, when pressed,
          changes the app and the language of the speech-recognition-based search to 'English (US)'. -->
     <string name="settings_language_english">Engelsk (amerikansk)</string>
@@ -286,6 +291,17 @@
 
     <!-- The string labels an On/Off switch in the developer options dialog and is used to toggle enabling Servo. -->
     <string name="developer_options_servo">Slå på Servo</string>
+
+    <!-- The string labels the description text for the clear cookies and site data button in the
+         privacy options dialog. -->
+    <string name="developer_options_clear_cache_cookies_site_description">Infokapsler og nettstedsdata</string>
+
+    <!-- The string labels the description text for the clear cached web content button in the
+         privacy options dialog. -->
+    <string name="developer_options_clear_cache_web_content_description">Hurtiglagret (cachet) nettinnhold</string>
+
+    <!-- The string labels the button text for the clear cache buttons in the privacy options dialog. -->
+    <string name="developer_options_clear_cache">Tøm data</string>
 
     <!-- This string is used to label a numerical-entry field where the user may set a new value to
          use for the display density. -->
@@ -438,7 +454,7 @@
 
     <!-- This string labels an On/Off switch in the Privacy and Security settings dialog
      and is used to enable or disable media autoplay. -->
-    <string name="security_options_autoplay">Autoavspill media</string>
+    <string name="security_options_autoplay">Avspill medie-innhold automatisk</string>
 
     <!-- This string is a label above the group of buttons that indicates that the buttons below
          relate to Android system permissions granted to the app.
@@ -481,7 +497,7 @@
 
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable permission to collect telemetry data. -->
-    <string name="security_options_telemetry_send_data">Tillat %1$s å sende tekniske- og interaksjonsdata til Mozilla
+    <string name="security_options_telemetry_send_data">Tillat %1$s å sende tekniske data og data for bruk til Mozilla
  </string>
 
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
@@ -853,6 +869,14 @@
     <string name="performance_title">Dårlig ytelse oppdaget</string>
     <!-- This string is displayed as the message body of a dialog displayed when poor web page performance has been detected and the page has been unloaded to restore performance. -->
     <string name="performance_message">Det gjeldende nettstedet påvirker ytelsen og er satt i hvilemodus. Reduksjon av vindusstørrelsen kan bidra til å forbedre en nettside med dårlig ytelse.</string>
+
+    <!-- This string is displayed in the title of the Voice Search samples collect dialog. That dialog is shown the first time
+         a user tries to use the voice search. -->
+    <string name="voice_samples_collect_data_dialog_title">Tillat %1$s å samle stemmeprøver for forskning?</string>
+
+    <!-- This string is displayed in the description of the Voice Search samples collect dialog. That dialog is shown the first time
+         a user tries to use the voice search. -->
+    <string name="voice_samples_collect_dialog_description">Dine data er alltid sikre og deles aldri med tredjeparter. Vi samler stemmeprøver for å forbedre opplevelsen og ytelsen til våre produkter. Du vil alltid kunne bruke stemmesøk, selv om du ikke tillater innsamling. &lt;a href=&quot;privacy&quot;&gt;Les mer&lt;/a&gt;</string>
 
     <!-- This string is displayed in the button of the Voice Search samples collect dialog.
          When clicked the user opts in to the voice data collection. -->

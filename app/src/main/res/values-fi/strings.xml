@@ -62,9 +62,69 @@
          On/Off switch which toggles whether browser-level Telemetry is reported back to Mozilla. -->
     <string name="settings_telemetry">Telemetria</string>
 
+    <!-- This string is used to label a button that, when pressed, loads a website that
+         describes Mozilla's Privacy Policy. -->
+    <string name="settings_privacy_policy">Yksityisyyskäytäntö</string>
+
+    <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
+         opens a dialog box that contains settings that an application or Web developer might want to change. -->
+    <string name="settings_developer_options">Kehittäjävalinnat</string>
+
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains language-related settings. -->
     <string name="settings_language">Kieli</string>
+
+    <!-- This string is used to label a text label for selecting the language in the 'Language' dialog window
+         (accessible from the browser's Settings' dialog window). Below this string appears
+         the different options for language settings. -->
+    <string name="settings_language_settings">Kieliasetukset</string>
+
+    <!-- This string is used to label a text label for selecting the language in the 'Language' dialog window
+         (accessible from the browser's Settings' dialog window). Below this string appears a list of locales for
+         the user to choose as their preferred reading languages for website content. Each locale,
+         as `language-tag` strings, is then included in the browser's `Accept-Language` HTTP request
+         header that is sent to websites, as well as the JavaScript property, `navigator.language`. -->
+    <string name="settings_language_choose_language_webpage_content">Valitse ensisijainen kieli, jolla sivut näytetään</string>
+
+    <!-- This string is used to label a text label for selecting the language in the 'Language' dialog window
+         (accessible from the browser's Settings' dialog window). Below this string appears a list of locales for
+         the user to choose as their preferred language for the browser's speech-to-text 'Voice Search' system.
+         Based on the user's selection, the printed language is mapped to its ISO 639-1 code
+         (e.g., `Español` is mapped to `es`) when configured in the 'Voice Search' system. -->
+    <string name="settings_language_choose_language_voice_search">Valitse ensisijainen kieli äänihakua varten</string>
+
+    <!-- This string is used to label a text label that appears in the header of 'Language Settings' ->
+         'Firefox Display Language' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of locales for the user to choose as their preferred display
+         language for the application UI. -->
+    <string name="settings_language_choose_display_language_title">%1$s-näyttökieli</string>
+
+    <!-- This string is used to label a text label that appears in the header description of 'Language Settings' ->
+         'Firefox Display Language' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of locales for the user to choose as their preferred display
+         language for the application UI. -->
+    <string name="settings_language_choose_language_display_description">Valitse kieli, jolla valikot, viestit ja ilmoitukset näytetään.</string>
+
+    <!-- This string is used to label a text label that appears in the header of 'Language Settings' ->
+         'Voice Search Language' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of locales for the user to choose as their preferred voice search
+         language. -->
+    <string name="settings_language_choose_language_voice_search_title">Äänihaun kieli</string>
+
+    <!-- This string is used to label a text label that appears in the header description of 'Language Settings' ->
+         'Voice Search Language' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of locales for the user to choose as their preferred voice search
+         language. -->
+    <string name="settings_language_choose_language_voice_search_description">Valitse ensisijainen kieli äänihakua varten.</string>
+
+    <!-- This string is used to label a text label that appears in the header of 'Language Settings' ->
+         'Preferred Language for Displaying Websites' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of locales for the user to choose as their preferred languages for web content. -->
+    <string name="settings_language_choose_language_content_title">Ensisijainen kieli sivustoille</string>
+
+    <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
+         opens a dialog box that contains controller-related options: pointer color and scroll direction. -->
+    <string name="settings_controller_options">Ohjainvalinnat</string>
 
     <!-- This string is used to label a button that, when pressed, loads a website
          that allows the user file an issue or problem they may have encountered while using the
@@ -87,6 +147,17 @@
          from being restarted. -->
     <string name="restart_later_dialog_button">Käynnistä myöhemmin uudelleen</string>
 
+    <!-- The string labels the description text for the clear cookies and site data button in the
+         privacy options dialog. -->
+    <string name="developer_options_clear_cache_cookies_site_description">Evästeet ja sivustotiedot</string>
+
+    <!-- The string labels the description text for the clear cached web content button in the
+         privacy options dialog. -->
+    <string name="developer_options_clear_cache_web_content_description">Välimuistissa oleva sisältö</string>
+
+    <!-- The string labels the button text for the clear cache buttons in the privacy options dialog. -->
+    <string name="developer_options_clear_cache">Tyhjennä tiedot</string>
+
     <!-- This string is used to label two integer-entry fields where the default width and height of
          the browser window may be set. -->
     <string name="developer_options_window_size">Ikkunan koko:</string>
@@ -108,6 +179,19 @@
     <!-- This string is used to label two integer entry fields that will allow the user to adjust
          the maximum window size in the X and Y dimensions. -->
     <string name="developer_options_max_window_size">Ikkunan enimmäiskoko:</string>
+
+    <!-- This string is used to label radio buttons for setting Multi-Sample Anti-Aliasing (MSAA) in
+         VR Immersive Mode. -->
+    <string name="developer_options_msaa">MSAA</string>
+
+    <!-- This string is used to label the MSAA radio button that disables MSAA in Immersive Mode. -->
+    <string name="developer_options_msaa_disabled">Pois käytöstä</string>
+
+    <!-- This string is used to label the MSAA radio button that enables two times MSAA in Immersive Mode. -->
+    <string name="developer_options_msaa_2">2x</string>
+
+    <!-- This string is used to label the MSAA radio button that enables two times MSAA in Immersive Mode. -->
+    <string name="developer_options_msaa_4">4x</string>
 
     <!-- This string is used to label the 'Desktop' radio button of the 'User-Agent Mode' settings option. -->
     <string name="developer_options_ua_desktop">Työpöytä</string>
@@ -136,8 +220,15 @@
          motion of user input. -->
     <string name="developer_options_scroll_direction_reversed">Käänteinen</string>
 
+    <!-- This string describes what the 'Reset' button in the developer options does which is
+         restore all the developer settings to their default value. -->
+    <string name="developer_options_reset">Nollaa kehittäjäasetukset</string>
+
     <!-- This string labels the 'Reset' button that restores the default developer settings values. -->
     <string name="developer_options_reset_button">Nollaa</string>
+
+    <!-- This string is used to label buttons to enable editing of other options. -->
+    <string name="settings_button_edit">Muokkaa</string>
 
     <!-- This string describes the radio buttons used to select the user's background environment
          (seen while not in Immersive Mode). -->
@@ -190,6 +281,10 @@
     <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'Off'. -->
     <string name="off">Pois</string>
 
+    <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
+         button used to initiate Voice Search. -->
+    <string name="voice_search_start">Mitä haluat etsiä verkosta?</string>
+
     <!-- This string is displayed in a dialog box show to the user while the Voice Search is being
          performed. It indicates that the search query is running and they should wait for the result. -->
     <string name="voice_search_decoding">Haetaan…</string>
@@ -202,6 +297,10 @@
          user to try the Voice Search again. -->
     <string name="voice_search_try_again">Yritä uudelleen.</string>
 
+    <!-- This string is displayed in a dialog after the user has declined permission to use the
+         device's microphone. It explains why Voice Search is not working. -->
+    <string name="voice_search_permission_after_decline">Salli mikrofonin käyttö käyttääksesi äänihakua.</string>
+
     <!-- This string is displayed in the URL bar when it is empty. It informs the user that they
          may use the URL bar to search the Web or enter a Web address. -->
     <string name="search_placeholder">Hae verkosta tai kirjoita osoite</string>
@@ -213,6 +312,9 @@
     <!-- This string labels a button that is used to approve an action.
          This appears in such contexts as dialog boxes, `<select>` menus, etc. -->
     <string name="ok_button">OK</string>
+
+    <!-- This string labels a button that is used to approve an action. -->
+    <string name="back_button">Takaisin</string>
 
     <!-- This string is displayed in a dialog after an application crash. -->
     <string name="crash_dialog_heading">Sovellus kohtasi ongelman ja kaatui</string>
@@ -247,11 +349,20 @@
     <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_180">180</string>
 
+    <!-- This string is displayed when selecting a video playback mode. -->
+    <string name="video_mode_2d">2D</string>
+
     <!-- This string is displayed in a tooltip in the video controls UI. -->
     <string name="video_controls_play">Toista</string>
 
     <!-- This string is displayed in a tooltip in the video controls UI. -->
     <string name="video_controls_pause">Tauko</string>
+
+    <!-- This string is displayed in a tooltip below the video controls UI. -->
+    <string name="video_controls_volume">Äänenvoimakkuus</string>
+
+    <!-- This string is displayed as the title of the Bookmarks List, which contains the user's bookmarked websites. -->
+    <string name="bookmarks_title">Kirjanmerkit</string>
 
     <!-- This string is displayed in a tooltip that appears when a user hovers
          over an icon representing 'Remove Bookmark' for an individual bookmark
@@ -263,12 +374,49 @@
          item listed in the Bookmarks List. -->
     <string name="bookmarks_edit">Muokkaa tätä kirjanmerkkiä</string>
 
+    <!-- This string is displayed as placeholder text in the search field in the Bookmarks List. -->
+    <string name="bookmarks_search">Etsi kirjanmerkkejä</string>
+
     <!-- This string is displayed in a tooltip in the bookmark button in the URL bar. -->
     <string name="bookmarks_bookmark">Lisää sivu kirjanmerkkeihin</string>
+
+    <!-- This string is displayed in the Bookmarks List for as the header of the most recently
+         bookmarked items. -->
+    <string name="bookmarks_recent">Äskettäin lisätyt kirjanmerkit</string>
 
     <!-- This string is displayed in the Bookmarks List as a tooltip of the button for showing
          all the bookmarks. -->
     <string name="bookmarks_show_all">Näytä kaikki kirjanmerkit</string>
+
+    <!-- This string labels the Reset button that restores the default display settings values. -->
+    <string name="display_options_reset">Nollaa näyttöasetukset</string>
+
+    <!-- This string labels the Reset button that restores the default controller settings values. -->
+    <string name="controller_options_reset">Nollaa ohjainasetukset</string>
+
+    <!-- This string labels the Reset button that restores the default environment settings values. -->
+    <string name="environment_options_reset">Nollaa ympäristöasetukset</string>
+
+    <!-- This string labels the Reset button that restores the default voice search language settings values. -->
+    <string name="language_options_reset">Nollaa äänihaun kieliasetukset</string>
+
+    <!-- This string labels the Reset button that restores the default display language settings values. -->
+    <string name="display_language_options_reset">Nollaa näyttökieli</string>
+
+    <!-- This string labels the Reset button that restores the default content language settings values. -->
+    <string name="content_language_options_reset">Nollaa sivustojen ensisijaisen kielen asetukset</string>
+
+    <!-- This string labels the Reset button that restores all language settings values. -->
+    <string name="all_language_options_reset">Nollaa kaikki kieliasetukset</string>
+
+    <!-- This string labels the description in the Voice Search Language button in the main language setting dialog. -->
+    <string name="language_options_voice_search_language"><![CDATA[Äänihaun kieli: <br>&emsp;&emsp;<b>%1$s</b>]]></string>
+
+    <!-- This string labels the description in the Content Language header for preferred languages list. -->
+    <string name="language_options_preferred_languages">Ensisijainen kieli/kielet</string>
+
+    <!-- This string labels the description in the Content Language header for available languages list. -->
+    <string name="language_options_available_languages">Saatavilla olevat kielet</string>
 
     <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the 'Name' of the bookmarked website. -->
     <string name="col_name">Nimi</string>
@@ -278,6 +426,9 @@
 
     <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the 'Location' (or 'URL' or 'Address') of the bookmarked website. -->
     <string name="col_url">Sijainti</string>
+
+    <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the date of when the bookmarked website was most recently visited. -->
+    <string name="col_most_recent_visit">Viimeisin käynti</string>
 
     <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the date of when the website was bookmarked. -->
     <string name="col_date_added">Lisätty</string>
@@ -310,6 +461,10 @@
          speech-to-text recognition. -->
     <string name="voice_search_tooltip">Äänihaku</string>
 
+    <!-- This string is for the tooltip that appears upon hovering the 'Request desktop site' button in the
+         browser's navigation bar. The button it labels, when pressed, change the currently used user agent. -->
+    <string name="request_dekstop_site_tooltip">Pyydä työpöytäversiota</string>
+
     <!-- This string is for the tooltip that appears upon hovering the 'Clear' button in the
          browser's navigation bar. The button it labels, when pressed, clears the navigation bar text. -->
     <string name="clear_tooltip">Tyhjennä</string>
@@ -317,6 +472,10 @@
     <!-- This string is for the tooltip that when clicking the 'Info' (ⓘ) icon visible next to the current website's
          URL in the URL bar. The button it labels, when pressed, shows information about the site. -->
     <string name="site_info_tooltip">Näytä sivuston tiedot.</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Servo' button in the browser's navigation bar.
+         'Servo' refers to the Servo engine. -->
+    <string name="servo_tooltip">Käytä Servoa</string>
 
     <!-- This string is for the tooltip that appears upon hovering the 'Resize' button in the browser's navigation bar.
          'Resize' refers to the button used to resize the browset window. -->
@@ -371,6 +530,8 @@
          Private Browsing Mode button from the tray is clicked. -->
     <string name="private_browsing_title">Yksityinen selaus</string>
 
+    <!-- This string is displayed in the title of an authentication prompt, which requests a username and a password. -->
+    <string name="authentication_required">Tunnistautuminen vaaditaan</string>
     <!-- This string is displayed as the label of a username input in an authentication prompt. -->
     <string name="authentication_username">Käyttäjätunnus:</string>
     <!-- This string is displayed as the label of a password input in an authentication prompt. -->
@@ -384,4 +545,22 @@
     <!-- This string is displayed in the title of the notification message shown when the device loses internet connection. -->
     <string name="no_internet_title">Internetyhteys menetettiin</string>
 
-    </resources>
+    <!-- This string is displayed in the message of the notification message shown when the user tries to open a new window and
+      it has already opened the maximum number of allowed windows. %1$s expands to a integer value that represent the maximum windows
+      that can be opened (initially 3) -->
+    <string name="max_windows_message">Vain 3 ikkunaa voi olla avoinna. Sulje ainakin yksi ikkuna, jotta voit avata uuden ikkunan.</string>
+    <!-- This string is displayed in the button of the notification message shown when the user tries to open a new window and
+      it has already opened the maximum number of allowed windows. -->
+    <string name="max_windows_button">OK</string>
+
+    <!-- This string is displayed in the button of the Voice Search samples collect dialog.
+         When clicked the user opts in to the voice data collection. -->
+    <string name="voice_samples_collect_dialog_allow">Salli</string>
+
+    <!-- This string is displayed in the button of the Voice Search samples collect dialog.
+         When clicked the user opts out of the voice data collection. -->
+    <string name="voice_samples_collect_dialog_do_not_allow">Älä salli</string>
+
+    <!-- This string is displayed in the content language list in front of the system default language in between parenthesis -->
+    <string name="language_default">Oletus</string>
+</resources>

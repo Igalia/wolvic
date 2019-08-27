@@ -53,6 +53,42 @@
     <!-- This string is displayed in a label that means the permission has already been granted -->
     <string name="permission_enabled">Aktiveret</string>
 
+    <!-- This string will be displayed in a dialog box presented to the user
+         when the application needs to request permission to access the device's camera.
+         '%1$s' will be replaced at runtime with the website's domain name. -->
+    <string name="permission_camera">Vil du give %1$s lov til at anvende dit kamera?</string>
+
+    <!-- This string will be displayed in a dialog box presented to the user
+         when the application needs to request permission to access the device's microphone.
+         '%1$s' will be replaced at runtime with the website's domain name. -->
+    <string name="permission_microphone">Vil du give %1$s lov til at anvende din mikrofon?</string>
+
+    <!-- This string will be displayed in a dialog box presented to the user
+         when the application needs to request permission to access the device's camera and microphone.
+         '%1$s' will be replaced at runtime with the website's domain name. -->
+    <string name="permission_camera_and_microphone">Vil du give %1$s lov til at anvende dit kamera og din mikrofon?</string>
+
+    <!-- This string will be displayed in a dialog box presented to the user
+         when the application needs to request permission to access the device's geographic location.
+         '%1$s' will be replaced at runtime with the website's domain name. -->
+    <string name="permission_location">Vil du give %1$s adgang til din position?</string>
+
+    <!-- This string will be displayed in a dialog box presented to the user
+         when the application needs to request permission to send browser-level
+         push notifications from a particular website (i.e., same origin).
+         '%1$s' will be replaced at runtime with the website's domain name. -->
+    <string name="permission_notification">Vil du give %1$s lov til at sende beskeder?</string>
+
+    <!-- This string will be displayed in a dialog box presented to the user when the application
+         needs to request permission to access the device's external storage such as the
+         sdcard. '%1$s' will be replaced at runtime with the website's domain name. -->
+    <string name="permission_read_external_storage">Vil du give %1$s lov til at læse dit eksterne lager?</string>
+
+    <!-- This string will be displayed in a dialog box presented to the user when the application
+         needs to request permission to access the device's external storage such as the
+         sdcard. '%1$s' will be replaced at runtime with the website's domain name. -->
+    <string name="permission_persistent_storage">Vil du give %1$s lov til at gemme data i vedvarende lager?</string>
+
     <!-- This string is displayed in the Settings dialog box and how
          the user can know which version of the application they are currently running.
          '%1$s' will be replaced at runtime with the application version number. -->
@@ -62,6 +98,10 @@
          On/Off switch which toggles whether an application crash is reported without first
          prompting the user. -->
     <string name="settings_crash_reporting">Fejlrapportering</string>
+
+    <!-- This string is displayed in the Settings dialog box and is used to label an
+         On/Off switch which toggles whether browser-level Telemetry is reported back to Mozilla. -->
+    <string name="settings_telemetry">Telemetry</string>
 
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains privacy and security related settings. -->
@@ -78,6 +118,11 @@
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains language-related settings. -->
     <string name="settings_language">Sprog</string>
+
+    <!-- This string is used to label a text label for selecting the language in the 'Language' dialog window
+         (accessible from the browser's Settings' dialog window). Below this string appears
+         the different options for language settings. -->
+    <string name="settings_language_settings">Sprogindstillinger</string>
 
     <!-- This string is used to label a text label for selecting the language in the 'Language' dialog window
          (accessible from the browser's Settings' dialog window). Below this string appears a list of locales for
@@ -246,6 +291,17 @@
     <!-- The string labels an On/Off switch in the developer options dialog and is used to toggle enabling Servo. -->
     <string name="developer_options_servo">Aktiver Servo</string>
 
+    <!-- The string labels the description text for the clear cookies and site data button in the
+         privacy options dialog. -->
+    <string name="developer_options_clear_cache_cookies_site_description">Cookies og webstedsdata</string>
+
+    <!-- The string labels the description text for the clear cached web content button in the
+         privacy options dialog. -->
+    <string name="developer_options_clear_cache_web_content_description">Cached webstedsindhold</string>
+
+    <!-- The string labels the button text for the clear cache buttons in the privacy options dialog. -->
+    <string name="developer_options_clear_cache">Ryd data</string>
+
     <!-- This string is used to label a numerical-entry field where the user may set a new value to
          use for the display density. -->
     <string name="developer_options_display_density">Skærm-tæthed:</string>
@@ -272,6 +328,10 @@
          for the virtual displays Dots Per Inch (DPI). -->
     <string name="developer_options_display_dpi">Skærm-DPI:</string>
 
+    <!-- This string is used to label two integer entry fields that will allow the user to adjust
+         the maximum window size in the X and Y dimensions. -->
+    <string name="developer_options_max_window_size">Maksimal vinduesstørrelse:</string>
+
     <!-- This string is used to label radio buttons for setting Multi-Sample Anti-Aliasing (MSAA) in
          VR Immersive Mode. -->
     <string name="developer_options_msaa">MSAA</string>
@@ -284,6 +344,10 @@
 
     <!-- This string is used to label the MSAA radio button that enables two times MSAA in Immersive Mode. -->
     <string name="developer_options_msaa_4">4x</string>
+
+    <!-- This string is used to label a set of radio buttons that allow the user to change the
+         User-Agent (UA) string of the browser. -->
+    <string name="developer_options_ua_mode">User Agent-tilstand</string>
 
     <!-- This string is used to label the 'Desktop' radio button of the 'User-Agent Mode' settings option. -->
     <string name="developer_options_ua_desktop">Computer</string>
@@ -392,6 +456,11 @@
      and is used to enable or disable media autoplay. -->
     <string name="security_options_autoplay">Afspil medie-indhold automatisk</string>
 
+    <!-- This string is a label above the group of buttons that indicates that the buttons below
+         relate to Android system permissions granted to the app.
+         '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="security_options_permissions_title">Tilladelser (giv %1$s adgang til)</string>
+
     <!-- This string is displayed in an alert box if the user attempts to disable an enabled
          permission and informs the user that the app cannot disable the given permission, that
          function being reserved by the system permissions app. -->
@@ -440,6 +509,14 @@
     <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'Off'. -->
     <string name="off">Fra</string>
 
+    <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
+         button used to initiate Voice Search. -->
+    <string name="voice_search_start">Hvad vil du søge efter på nettet?</string>
+
+    <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
+         button used to initiate Voice Search. -->
+    <string name="voice_search_example">Sig for eksempel: “360 videos, weather, news…”</string>
+
     <!-- This string is displayed in a dialog box show to the user while the Voice Search is being
          performed. It indicates that the search query is running and they should wait for the result. -->
     <string name="voice_search_decoding">Søger…</string>
@@ -451,6 +528,10 @@
     <!-- This string is displayed in a dialog box after a failed Voice Search and the system is prompting the
          user to try the Voice Search again. -->
     <string name="voice_search_try_again">Prøv igen.</string>
+
+    <!-- This string is displayed in a dialog after the user has declined permission to use the
+         device's microphone. It explains why Voice Search is not working. -->
+    <string name="voice_search_permission_after_decline">Giv adgang til mikrofonen for at bruge stemme-søgning.</string>
 
     <!-- This string is displayed in the URL bar when it is empty. It informs the user that they
          may use the URL bar to search the Web or enter a Web address. -->
@@ -503,6 +584,9 @@
 
     <!-- This string labels a button to open the Video Projection selector. -->
     <string name="video_mode_tooltip">Videoprojektion</string>
+
+    <!-- This string is displayed when selecting a video playback mode. -->
+    <string name="video_mode_3d_side">3D side-om-side</string>
 
     <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_360">360</string>
@@ -584,6 +668,9 @@
 
     <!-- This string labels the Reset button that restores the default controller settings values. -->
     <string name="controller_options_reset">Nulstil controller-indstillinger</string>
+
+    <!-- This string labels the Reset button that restores the default environment settings values. -->
+    <string name="environment_options_reset">Nulstil miljøindstillinger</string>
 
     <!-- This string labels the Reset button that restores the default voice search language settings values. -->
     <string name="language_options_reset">Nulstil indstillinger for sprog til stemme-søgning</string>

@@ -168,6 +168,11 @@
          Below this string appears a list of locales for the user to choose as their preferred languages for web content. -->
     <string name="settings_language_choose_language_content_title">Føretrekte nettstadspråk</string>
 
+    <!-- This string is used to label a text label that appears in the header description of 'Language Settings' ->
+         'Preferred Language for Displaying Websites' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of locales for the user to choose as their preferred languages for web content. -->
+    <string name="settings_language_choose_language_content_description">Nettstadar kan ofte visast på fleire ulike språk. Vel, på venstre side, dei språka du vil vise - i den rekkjefølgja du føretrekkjer.</string>
+
     <!-- This string is used to label a radio button in the 'Settings' Language dialog that, when pressed,
          changes the app and the language of the speech-recognition-based search to 'English (US)'. -->
     <string name="settings_language_english">Engelsk (amerikansk)</string>
@@ -286,6 +291,17 @@
 
     <!-- The string labels an On/Off switch in the developer options dialog and is used to toggle enabling Servo. -->
     <string name="developer_options_servo">Slå på Servo</string>
+
+    <!-- The string labels the description text for the clear cookies and site data button in the
+         privacy options dialog. -->
+    <string name="developer_options_clear_cache_cookies_site_description">Infokapslar og nettstaddata</string>
+
+    <!-- The string labels the description text for the clear cached web content button in the
+         privacy options dialog. -->
+    <string name="developer_options_clear_cache_web_content_description">Mellomlagra nettinnhald</string>
+
+    <!-- The string labels the button text for the clear cache buttons in the privacy options dialog. -->
+    <string name="developer_options_clear_cache">Tøm data</string>
 
     <!-- This string is used to label a numerical-entry field where the user may set a new value to
          use for the display density. -->
@@ -438,7 +454,7 @@
 
     <!-- This string labels an On/Off switch in the Privacy and Security settings dialog
      and is used to enable or disable media autoplay. -->
-    <string name="security_options_autoplay">Autoavspel medium</string>
+    <string name="security_options_autoplay">Spel av medieinnhald automatisk</string>
 
     <!-- This string is a label above the group of buttons that indicates that the buttons below
          relate to Android system permissions granted to the app.
@@ -481,7 +497,7 @@
 
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable permission to collect telemetry data. -->
-    <string name="security_options_telemetry_send_data">Tillat %1$s å sende inn tekniske data og interaksjonsdata til Mozilla
+    <string name="security_options_telemetry_send_data">Tillat %1$s å sende tekniske data og data for bruk til Mozilla
  </string>
 
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
@@ -858,6 +874,10 @@
     <!-- This string is displayed in the title of the Voice Search samples collect dialog. That dialog is shown the first time
          a user tries to use the voice search. -->
     <string name="voice_samples_collect_data_dialog_title">TIllate %1$s å samle inn stemmeprøver for forsking?</string>
+
+    <!-- This string is displayed in the description of the Voice Search samples collect dialog. That dialog is shown the first time
+         a user tries to use the voice search. -->
+    <string name="voice_samples_collect_dialog_description">Dine data er alltid sikre og vert aldri delt med tredjepartar. Vi samlar inn stemmedata for å forbetre oppllevinga og yting av produkta våre. Du kan sjølvsagt òg bruke stemmesøk, om du ikkje tillèt innsamling. &lt;a href=&quot;privacy&quot;&gt;Les meir&lt;/a&gt;</string>
 
     <!-- This string is displayed in the button of the Voice Search samples collect dialog.
          When clicked the user opts in to the voice data collection. -->
