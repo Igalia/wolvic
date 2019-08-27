@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.widget.FrameLayout;
 
 import androidx.databinding.DataBindingUtil;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.databinding.ContextMenuBinding;
@@ -47,6 +49,12 @@ public class ContextMenu extends FrameLayout {
         mBinding = DataBindingUtil.inflate(inflater, R.layout.context_menu, this, true);
         mContextMenuAdapter = new ContextMenuAdapter(mContextMenuClickCallback);
         mBinding.contextMenuList.setAdapter(mContextMenuAdapter);
+        mBinding.contextMenuList.setLayoutManager(new LinearLayoutManager(getContext()) {
+            @Override
+            public boolean canScrollVertically() {
+                return false;
+            }
+        });
         mBinding.executePendingBindings();
     }
 

@@ -14,7 +14,7 @@
 
     <LinearLayout
         android:id="@+id/layout"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/context_menu_row_width"
         android:layout_height="@dimen/context_menu_row_height"
         android:background="@drawable/context_menu_item_background_color"
         android:clickable="true"

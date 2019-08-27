@@ -58,9 +58,8 @@ public class ContextMenuWidget extends UIWidget implements WidgetManagerDelegate
     @Override
     protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
         aPlacement.visible = false;
-        aPlacement.width =  WidgetPlacement.pixelDimension(getContext(), R.dimen.browser_width_pixels)/2;
-        mMaxHeight = WidgetPlacement.dpDimension(getContext(), R.dimen.prompt_height);
-        aPlacement.height = mMaxHeight;
+        aPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.context_menu_row_width);
+        aPlacement.height = WidgetPlacement.dpDimension(getContext(), R.dimen.context_menu_row_height);
         aPlacement.parentAnchorX = 0.0f;
         aPlacement.parentAnchorY = 1.0f;
         aPlacement.anchorX = 0.5f;
@@ -89,10 +88,12 @@ public class ContextMenuWidget extends UIWidget implements WidgetManagerDelegate
                     PointF anchor = anchorForCurrentMousePosition();
                     mWidgetPlacement.anchorX = anchor.x;
                     mWidgetPlacement.anchorY = anchor.y;
+                    int paddingH = getPaddingStart() + getPaddingEnd();
+                    int paddingV = getPaddingTop() + getPaddingBottom();
                     mWidgetPlacement.translationX = mMousePos.x * WidgetPlacement.worldToWindowRatio(getContext());
                     mWidgetPlacement.translationY = -(mMousePos.y * WidgetPlacement.worldToWindowRatio(getContext()));
-                    mWidgetPlacement.width = (int)(mContextMenu.getWidth()/mWidgetPlacement.density);
-                    mWidgetPlacement.height = (int)(mContextMenu.getHeight()/mWidgetPlacement.density);
+                    mWidgetPlacement.width = (int)((mContextMenu.getWidth()+paddingH*2)/mWidgetPlacement.density);
+                    mWidgetPlacement.height = (int)((mContextMenu.getHeight()+paddingV*2)/mWidgetPlacement.density);
                     mWidgetManager.updateWidget(ContextMenuWidget.this);
                 }
             });
