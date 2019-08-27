@@ -252,6 +252,7 @@ struct WidgetResizer::State {
   vrb::Vector currentMax;
   vrb::Vector pointerOffset;
   vrb::Vector maxSize;
+  vrb::Vector minSize;
   bool resizing;
   vrb::TogglePtr root;
   std::vector<ResizeHandlePtr> resizeHandles;
@@ -274,6 +275,7 @@ struct WidgetResizer::State {
     currentMin = min;
     currentMax = max;
     maxSize = kDefaultMaxResize;
+    minSize = kDefaultMinResize;
 
     vrb::Vector horizontalSize(0.0f, 0.5f, 0.0f);
     vrb::Vector verticalSize(0.5f, 0.0f, 0.0f);
@@ -485,8 +487,8 @@ struct WidgetResizer::State {
     }
 
     // Clamp to max and min resize sizes
-    width = fmaxf(fminf(width, maxSize.x()), kDefaultMinResize.x());
-    height = fmaxf(fminf(height, maxSize.y()), kDefaultMinResize.y());
+    width = fmaxf(fminf(width, maxSize.x()), minSize.x());
+    height = fmaxf(fminf(height, maxSize.y()), minSize.y());
     if (keepAspect) {
       height = width / originalAspect;
     }
@@ -529,8 +531,9 @@ WidgetResizer::SetSize(const vrb::Vector& aMin, const vrb::Vector& aMax) {
 }
 
 void
-WidgetResizer::SetMaxSize(const vrb::Vector& aMaxSize) {
+WidgetResizer::SetResizeLimits(const vrb::Vector& aMaxSize, const vrb::Vector& aMinSize) {
   m.maxSize = aMaxSize;
+  m.minSize = aMinSize;
 }
 
 void

@@ -850,8 +850,10 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         // Browser window may have been resized, adjust the navigation bar
         float targetWidth = aWidget.getPlacement().worldWidth;
         float defaultWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width);
-        targetWidth = Math.max(defaultWidth, targetWidth);
-        targetWidth = Math.min(targetWidth, defaultWidth * 1.5f);
+        float maxWidth = defaultWidth * 1.5f;
+        float minWidth = defaultWidth * 0.5f;
+        targetWidth = Math.max(targetWidth, minWidth);
+        targetWidth = Math.min(targetWidth, maxWidth);
 
         float ratio = targetWidth / defaultWidth;
         mWidgetPlacement.worldWidth = targetWidth;
@@ -1019,8 +1021,9 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     private void startWidgetResize() {
         if (mAttachedWindow != null) {
-            Pair<Float, Float> targetSize = mAttachedWindow.getSizeForScale(mAttachedWindow.getMaxWindowScale());
-            mWidgetManager.startWidgetResize(mAttachedWindow, targetSize.first, 4.5f);
+            Pair<Float, Float> maxSize = mAttachedWindow.getSizeForScale(mAttachedWindow.getMaxWindowScale());
+            Pair<Float, Float> minSize = mAttachedWindow.getSizeForScale(0.5f);
+            mWidgetManager.startWidgetResize(mAttachedWindow, maxSize.first, 4.5f, minSize.first, minSize.second);
         }
     }
 

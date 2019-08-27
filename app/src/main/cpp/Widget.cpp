@@ -444,7 +444,7 @@ Widget::SetPlacement(const WidgetPlacementPtr& aPlacement) {
 }
 
 void
-Widget::StartResize(const vrb::Vector& aMaxSize) {
+Widget::StartResize(const vrb::Vector& aMaxSize, const vrb::Vector& aMinSize) {
   vrb::Vector worldMin, worldMax;
   GetWidgetMinAndMax(worldMin, worldMax);
   if (m.resizer) {
@@ -458,7 +458,7 @@ Widget::StartResize(const vrb::Vector& aMaxSize) {
     m.resizer = WidgetResizer::Create(create, this);
     m.transform->InsertNode(m.resizer->GetRoot(), 0);
   }
-  m.resizer->SetMaxSize(aMaxSize);
+  m.resizer->SetResizeLimits(aMaxSize, aMinSize);
   m.resizing = true;
   m.resizer->ToggleVisible(true);
   if (m.quad) {

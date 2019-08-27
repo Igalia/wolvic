@@ -25,7 +25,7 @@ public:
   static WidgetResizerPtr Create(vrb::CreationContextPtr& aContext, Widget * aWidget);
   vrb::NodePtr GetRoot() const;
   void SetSize(const vrb::Vector& aMin, const vrb::Vector& aMax);
-  void SetMaxSize(const vrb::Vector& aMaxSize);
+  void SetResizeLimits(const vrb::Vector& aMaxSize, const vrb::Vector& aMinSize);
   void ToggleVisible(bool aVisible);
   bool TestIntersection(const vrb::Vector& point) const;
   void HandleResizeGestures(const vrb::Vector& aPoint, bool aPressed, bool& aResized, bool &aResizeEnded);
