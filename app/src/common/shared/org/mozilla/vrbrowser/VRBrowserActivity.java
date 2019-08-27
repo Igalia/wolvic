@@ -635,16 +635,16 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 }
             };
 
-
             widget.setSurface(aSurface, aWidth, aHeight, aFirstDrawCallback);
 
-            View view = (View) widget;
+            UIWidget view = (UIWidget) widget;
             // Add widget to a virtual display for invalidation
             if (aSurface != null && view.getParent() == null) {
                 mWidgetContainer.addView(view, new FrameLayout.LayoutParams(widget.getPlacement().viewWidth(), widget.getPlacement().viewHeight()));
-            } else if (aSurface == null && view.getParent() != null) {
+            }  else if (aSurface == null && view.getParent() != null) {
                 mWidgetContainer.removeView(view);
             }
+            view.setResizing(false);
             view.postInvalidate();
         });
     }
@@ -1021,15 +1021,22 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             // Widget not added yet
             return;
         }
+        UIWidget view = (UIWidget)aWidget;
+
         if (params.width != viewWidth || params.height != viewHeight) {
             params.width = viewWidth;
             params.height = viewHeight;
+            if (view.isLayer()) {
+                // Reuse last frame and do not render while resizing surface with Layers enabled.
+                // Fixes resizing glitches.
+                view.setResizing(true);
+            }
             ((View)aWidget).setLayoutParams(params);
             aWidget.resizeSurface(textureWidth, textureHeight);
         }
 
         boolean visible = aWidget.getPlacement().visible;
-        View view = (View)aWidget;
+
         if (visible != (view.getVisibility() == View.VISIBLE)) {
             view.setVisibility(visible ? View.VISIBLE : View.GONE);
         }

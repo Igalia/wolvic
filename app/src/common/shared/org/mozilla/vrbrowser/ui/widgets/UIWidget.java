@@ -48,6 +48,7 @@ public abstract class UIWidget extends FrameLayout implements Widget {
     protected Delegate mDelegate;
     protected int mBorderWidth;
     private Runnable mFirstDrawCallback;
+    protected boolean mResizing = false;
 
     public UIWidget(Context aContext) {
         super(aContext);
@@ -233,6 +234,9 @@ public abstract class UIWidget extends FrameLayout implements Widget {
     }
 
     private void draw(Canvas aCanvas, UISurfaceTextureRenderer aRenderer) {
+        if (mResizing) {
+            return;
+        }
         Canvas textureCanvas = aRenderer.drawBegin();
         if(textureCanvas != null) {
             // set the proper scale
@@ -276,6 +280,14 @@ public abstract class UIWidget extends FrameLayout implements Widget {
         } else {
             show(REQUEST_FOCUS);
         }
+    }
+
+    public void setResizing(boolean aResizing) {
+        mResizing = aResizing;
+    }
+
+    public boolean isLayer() {
+        return mRenderer != null && mRenderer.isLayer();
     }
 
     @IntDef(value = { REQUEST_FOCUS, CLEAR_FOCUS })

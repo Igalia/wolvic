@@ -423,6 +423,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             updateServoButton();
             handleSessionState();
         }
+        handleWindowResize();
     }
 
     @Override
@@ -843,12 +844,14 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     // WidgetManagerDelegate.UpdateListener
     @Override
     public void onWidgetUpdate(Widget aWidget) {
-        if (aWidget != mAttachedWindow || mIsResizing) {
-            return;
+        if (aWidget == mAttachedWindow && !mIsResizing) {
+            handleWindowResize();
         }
+    }
 
+    private void handleWindowResize() {
         // Browser window may have been resized, adjust the navigation bar
-        float targetWidth = aWidget.getPlacement().worldWidth;
+        float targetWidth = mAttachedWindow.getPlacement().worldWidth;
         float defaultWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width);
         float maxWidth = defaultWidth * 1.5f;
         float minWidth = defaultWidth * 0.5f;
@@ -859,6 +862,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mWidgetPlacement.worldWidth = targetWidth;
         mWidgetPlacement.width = (int) (WidgetPlacement.dpDimension(getContext(), R.dimen.navigation_bar_width) * ratio);
         mWidgetManager.updateWidget(this);
+        postInvalidate();
     }
 
     // SessionStack.SessionChangeListener
