@@ -238,13 +238,11 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         if (leftWindow == aWindow) {
             removeWindow(leftWindow);
             if (mFocusedWindow == leftWindow) {
-                mFocusedWindow = null;
                 focusWindow(frontWindow);
             }
         } else if (rightWindow == aWindow) {
             removeWindow(rightWindow);
             if (mFocusedWindow == rightWindow) {
-                mFocusedWindow = null;
                 focusWindow(frontWindow);
             }
         } else if (frontWindow == aWindow) {
@@ -256,7 +254,6 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             }
 
             if (mFocusedWindow == frontWindow && !getCurrentWindows().isEmpty()) {
-                mFocusedWindow = null;
                 focusWindow(getFrontWindow());
             }
 
@@ -319,7 +316,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         if (aWindow != mFocusedWindow) {
             WindowWidget prev = mFocusedWindow;
             mFocusedWindow = aWindow;
-            if (prev != null) {
+            if (prev != null && getCurrentWindows().contains(prev)) {
                 prev.setActiveWindow(false);
                 if (prev.isVisible()) {
                     prev.getTitleBar().setVisible(true);
