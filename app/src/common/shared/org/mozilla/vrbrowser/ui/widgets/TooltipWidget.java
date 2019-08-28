@@ -39,6 +39,7 @@ public class TooltipWidget extends UIWidget {
         aPlacement.parentAnchorY = 1.0f;
         aPlacement.anchorX = 0.5f;
         aPlacement.anchorY = 0.5f;
+        aPlacement.cylinder = false;
         aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.tooltip_z_distance);
     }
 
@@ -92,6 +93,10 @@ public class TooltipWidget extends UIWidget {
                         offsetViewBounds.top * mDensityRatio);
             }
         }
+    }
+
+    public void setCurvedMode(boolean enabled) {
+        mWidgetPlacement.cylinder = enabled;
     }
 
     public void setText(String text) {
