@@ -244,7 +244,7 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
             return;
         }
         if (mMedia != null) {
-            mMedia.setDelegate(null);
+            mMedia.removeMediaListener(this);
         }
         mMedia = aMedia;
         boolean enabled = mMedia != null;
@@ -266,7 +266,7 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
             onPlaybackStateChange(mMedia.getMediaElement(), MediaElement.MEDIA_STATE_PLAY);
         }
 
-        mMedia.setDelegate(this);
+        mMedia.addMediaListener(this);
     }
 
     public void setProjectionSelectorEnabled(boolean aEnabled) {
