@@ -69,6 +69,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private boolean mIsInVRVideo;
     private boolean mAutoEnteredVRVideo;
     private WidgetPlacement mPlacementBeforeResize;
+    private WidgetPlacement mPlacementBeforeFullscreen;
     private Runnable mResizeBackHandler;
     private Runnable mFullScreenBackHandler;
     private Runnable mVRVideoBackHandler;
@@ -131,6 +132,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mFullScreenResizeButton = findViewById(R.id.fullScreenResizeEnterButton);
         mProjectionButton = findViewById(R.id.projectionButton);
         mPlacementBeforeResize = new WidgetPlacement(aContext);
+        mPlacementBeforeFullscreen = new WidgetPlacement(aContext);
 
 
         mResizeBackHandler = () -> exitResizeMode(ResizeAction.RESTORE_SIZE);
@@ -432,7 +434,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     private void setFullScreenSize() {
-        mPlacementBeforeResize.copyFrom(mAttachedWindow.getPlacement());
+        mPlacementBeforeFullscreen.copyFrom(mAttachedWindow.getPlacement());
         final float minScale = WidgetPlacement.floatDimension(getContext(), R.dimen.window_fullscreen_min_scale);
         // Set browser fullscreen size
         float aspect = SettingsStore.getInstance(getContext()).getWindowAspect();
@@ -501,7 +503,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             }
         }, 50);
 
-        mAttachedWindow.getPlacement().copyFrom(mPlacementBeforeResize);
+        mAttachedWindow.getPlacement().copyFrom(mPlacementBeforeFullscreen);
         mWidgetManager.updateWidget(mAttachedWindow);
 
         mIsInFullScreenMode = false;
