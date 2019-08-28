@@ -73,6 +73,7 @@
 -dontskipnonpubliclibraryclasses
 -dontpreverify
 -verbose
+-dontobfuscate
 -optimizations !code/simplification/arithmetic,!code/allocation/variable
 -keepattributes *
 -printconfiguration "build/outputs/mapping/configuration.txt"
