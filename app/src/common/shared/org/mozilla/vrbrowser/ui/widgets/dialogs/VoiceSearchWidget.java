@@ -277,7 +277,8 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
 
     @Override
     public void show(@ShowFlags int aShowFlags) {
-        if (SettingsStore.getInstance(getContext()).isSpeechDataCollectionReviewed()) {
+        if (SettingsStore.getInstance(getContext()).isSpeechDataCollectionEnabled() ||
+                SettingsStore.getInstance(getContext()).isSpeechDataCollectionReviewed()) {
             super.show(aShowFlags);
 
             setStartListeningState();
