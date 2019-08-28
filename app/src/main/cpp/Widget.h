@@ -30,6 +30,9 @@ typedef std::shared_ptr<Quad> QuadPtr;
 class Widget;
 typedef std::shared_ptr<Widget> WidgetPtr;
 
+class WidgetResizer;
+typedef std::shared_ptr<WidgetResizer> WidgetResizerPtr;
+
 class WidgetPlacement;
 typedef std::shared_ptr<WidgetPlacement> WidgetPlacementPtr;
 
@@ -66,7 +69,7 @@ public:
   vrb::TransformPtr GetTransformNode() const;
   const WidgetPlacementPtr& GetPlacement() const;
   void SetPlacement(const WidgetPlacementPtr& aPlacement);
-  void StartResize(const vrb::Vector& aMaxSize,  const vrb::Vector& aMinSize);
+  WidgetResizerPtr StartResize(const vrb::Vector& aMaxSize,  const vrb::Vector& aMinSize);
   void FinishResize();
   bool IsResizing() const;
   bool IsResizingActive() const;

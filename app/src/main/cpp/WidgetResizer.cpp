@@ -14,6 +14,7 @@
 #include "vrb/Color.h"
 #include "vrb/CreationContext.h"
 #include "vrb/Matrix.h"
+#include "vrb/GLError.h"
 #include "vrb/Geometry.h"
 #include "vrb/RenderState.h"
 #include "vrb/SurfaceTextureFactory.h"
@@ -255,6 +256,7 @@ struct WidgetResizer::State {
   vrb::Vector minSize;
   bool resizing;
   vrb::TogglePtr root;
+  vrb::TransformPtr transform;
   std::vector<ResizeHandlePtr> resizeHandles;
   std::vector<ResizeBarPtr> resizeBars;
   ResizeHandlePtr activeHandle;
@@ -272,6 +274,8 @@ struct WidgetResizer::State {
       return;
     }
     root = vrb::Toggle::Create(create);
+    transform = vrb::Transform::Create(create);
+    root->AddNode(transform);
     currentMin = min;
     currentMax = max;
     maxSize = kDefaultMaxResize;
@@ -313,7 +317,7 @@ struct WidgetResizer::State {
     }
     ResizeBarPtr result = ResizeBar::Create(create, aCenter, aScale, aBorder, aMode);
     resizeBars.push_back(result);
-    root->AddNode(result->border->GetTransformNode());
+    transform->AddNode(result->border->GetTransformNode());
     return result;
   }
 
@@ -325,7 +329,7 @@ struct WidgetResizer::State {
     ResizeHandlePtr result = ResizeHandle::Create(create, aCenter, aResizeMode, aBars);
     result->touchRatio = aTouchRatio;
     resizeHandles.push_back(result);
-    root->InsertNode(result->root, 0);
+    transform->InsertNode(result->root, 0);
     return result;
   }
 
@@ -629,6 +633,15 @@ WidgetResizer::IsActive() const {
   return m.activeHandle && m.activeHandle->resizeState == ResizeState::Active;
 }
 
+void
+WidgetResizer::SetTransform(const vrb::Matrix &aTransform){
+  m.transform->SetTransform(aTransform);
+}
+
+Widget*
+WidgetResizer::GetWidget() const {
+  return m.widget;
+}
 
 WidgetResizer::WidgetResizer(State& aState, vrb::CreationContextPtr& aContext) : m(aState) {
   m.context = aContext;

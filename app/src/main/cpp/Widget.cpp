@@ -163,6 +163,7 @@ struct Widget::State {
     vrb::Matrix translation = vrb::Matrix::Translation(vrb::Vector(0.0f, 0.0f, radius * scale));
     cylinder->SetTransform(translation.PostMultiply(scaleMatrix));
     AdjustCylinderRotation(radius * scale);
+    UpdateResizerTransform();
   }
 
   void AdjustCylinderRotation(const float radius) {
@@ -194,6 +195,12 @@ struct Widget::State {
       bordersContainer = nullptr;
     }
     borders.clear();
+  }
+
+  void UpdateResizerTransform() {
+    if (resizer) {
+      resizer->SetTransform(transformContainer->GetTransform().PostMultiply(transform->GetTransform()));
+    }
   }
 };
 
@@ -347,6 +354,7 @@ Widget::SetTransform(const vrb::Matrix& aTransform) {
   if (m.cylinder) {
     m.UpdateCylinderMatrix();
   }
+  m.UpdateResizerTransform();
 }
 
 void
@@ -443,7 +451,7 @@ Widget::SetPlacement(const WidgetPlacementPtr& aPlacement) {
   }
 }
 
-void
+WidgetResizerPtr
 Widget::StartResize(const vrb::Vector& aMaxSize, const vrb::Vector& aMinSize) {
   vrb::Vector worldMin, worldMax;
   GetWidgetMinAndMax(worldMin, worldMax);
@@ -452,11 +460,10 @@ Widget::StartResize(const vrb::Vector& aMaxSize, const vrb::Vector& aMinSize) {
   } else {
     vrb::RenderContextPtr render = m.context.lock();
     if (!render) {
-      return;
+      return nullptr;
     }
     vrb::CreationContextPtr create = render->GetRenderThreadCreationContext();
     m.resizer = WidgetResizer::Create(create, this);
-    m.transform->InsertNode(m.resizer->GetRoot(), 0);
   }
   m.resizer->SetResizeLimits(aMaxSize, aMinSize);
   m.resizing = true;
@@ -465,6 +472,8 @@ Widget::StartResize(const vrb::Vector& aMaxSize, const vrb::Vector& aMinSize) {
     m.quad->SetScaleMode(Quad::ScaleMode::AspectFit);
     m.quad->SetBackgroundColor(vrb::Color(1.0f, 1.0f, 1.0f, 1.0f));
   }
+  m.UpdateResizerTransform();
+  return m.resizer;
 }
 
 void
@@ -601,6 +610,7 @@ void Widget::LayoutQuadWithCylinderParent(const CylinderPtr& aCylinder) {
   } else {
     m.transformContainer->SetTransform(vrb::Matrix::Identity());
   }
+  m.UpdateResizerTransform();
 }
 
 Widget::Widget(State& aState, vrb::RenderContextPtr& aContext) : m(aState) {

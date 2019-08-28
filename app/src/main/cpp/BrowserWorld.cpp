@@ -18,6 +18,7 @@
 #include "Pointer.h"
 #include "Widget.h"
 #include "WidgetMover.h"
+#include "WidgetResizer.h"
 #include "WidgetPlacement.h"
 #include "Cylinder.h"
 #include "Quad.h"
@@ -182,6 +183,7 @@ struct BrowserWorld::State {
   VRVideoPtr vrVideo;
   PerformanceMonitorPtr monitor;
   WidgetMoverPtr movingWidget;
+  WidgetResizerPtr widgetResizer;
 
   State() : paused(true), glInitialized(false), modelsLoaded(false), env(nullptr), cylinderDensity(0.0f), nearClip(0.1f),
             farClip(300.0f), activity(nullptr), windowsInitialized(false), exitImmersiveRequested(false), loaderDelay(0) {
@@ -937,7 +939,8 @@ BrowserWorld::StartWidgetResize(int32_t aHandle, const vrb::Vector& aMaxSize, co
   ASSERT_ON_RENDER_THREAD();
   WidgetPtr widget = m.GetWidget(aHandle);
   if (widget) {
-    widget->StartResize(aMaxSize, aMinSize);
+    m.widgetResizer = widget->StartResize(aMaxSize, aMinSize);
+    m.rootTransparent->AddNode(m.widgetResizer->GetRoot());
   }
 }
 
@@ -949,6 +952,10 @@ BrowserWorld::FinishWidgetResize(int32_t aHandle) {
     return;
   }
   widget->FinishResize();
+  if (m.widgetResizer) {
+    m.widgetResizer->GetRoot()->RemoveFromParents();
+    m.widgetResizer = nullptr;
+  }
 }
 
 void
@@ -1354,22 +1361,27 @@ BrowserWorld::CreateSkyBox(const std::string& aBasePath, const std::string& aExt
 
 float
 BrowserWorld::ComputeNormalizedZ(const vrb::NodePtr& aNode) const {
-  WidgetPtr target;
-  bool pointer = false;
+  Widget * target = nullptr;
+  float zDelta = 0.0f;
   for (const auto & widget: m.widgets) {
     if (widget->GetRoot() == aNode) {
-      target = widget;
+      target = widget.get();
       break;
     }
   }
   if (!target) {
     for (Controller& controller: m.controllers->GetControllers()) {
       if (controller.pointer && controller.pointer->GetRoot() == aNode) {
-        target = controller.pointer->GetHitWidget();
-        pointer = true;
+        target = controller.pointer->GetHitWidget().get();
+        zDelta = 0.02f;
         break;
       }
     }
+  }
+
+  if (!target && m.widgetResizer && m.widgetResizer ->GetRoot() == aNode) {
+    target = m.widgetResizer->GetWidget();
+    zDelta = 0.01f;
   }
 
   if (!target) {
@@ -1395,12 +1407,7 @@ BrowserWorld::ComputeNormalizedZ(const vrb::NodePtr& aNode) const {
 
   vrb::Vector ndc = viewProjection.MultiplyPosition(hitPoint);
 
-  float z = ndc.z();
-
-  if (pointer) {
-    z-= 0.001f;
-  }
-  return z;
+  return ndc.z() - zDelta;
 }
 
 } // namespace crow
