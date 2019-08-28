@@ -84,6 +84,7 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Windo
             notifyPrivateBrowsingClicked();
             view.requestFocusFromTouch();
         });
+        mPrivateButton.setCurvedTooltip(false);
 
         mSettingsButton = findViewById(R.id.settingsButton);
         mSettingsButton.setOnHoverListener(mButtonScaleHoverListener);
@@ -97,6 +98,7 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Windo
                 view.requestFocusFromTouch();
             }
         });
+        mSettingsButton.setCurvedTooltip(false);
 
         mBookmarksButton = findViewById(R.id.bookmarksButton);
         mBookmarksButton.setOnHoverListener(mButtonScaleHoverListener);
@@ -108,6 +110,7 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Windo
             notifyBookmarksClicked();
             view.requestFocusFromTouch();
         });
+        mBookmarksButton.setCurvedTooltip(false);
 
         mHistoryButton = findViewById(R.id.historyButton);
         mHistoryButton.setOnHoverListener(mButtonScaleHoverListener);
@@ -119,6 +122,7 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Windo
             notifyHistoryClicked();
             view.requestFocusFromTouch();
         });
+        mHistoryButton.setCurvedTooltip(false);
 
         UIButton addWindowButton = findViewById(R.id.addwindowButton);
         addWindowButton.setOnHoverListener(mButtonScaleHoverListener);
@@ -133,6 +137,7 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Windo
 
             notifyAddWindowClicked();
         });
+        addWindowButton.setCurvedTooltip(false);
 
         mAudio = AudioEngine.fromContext(aContext);
 

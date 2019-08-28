@@ -603,12 +603,20 @@ Widget::SetProxifyLayer(const bool aValue) {
   m.layerProxy->ToggleAll(true);
 }
 
-void Widget::LayoutQuadWithCylinderParent(const CylinderPtr& aCylinder) {
-  if (aCylinder) {
-    const float radius = aCylinder->GetTransformNode()->GetTransform().GetScale().x();
+void Widget::LayoutQuadWithCylinderParent(const WidgetPtr& aParent) {
+  CylinderPtr cylinder = aParent->GetCylinder();
+  if (cylinder) {
+    // The widget is flat and the parent is a cylinder.
+    // Adjust the widget rotation based on the parent cylinder
+    // e.g. rotate the tray based on the parent cylindrical window.
+    const float radius = cylinder->GetTransformNode()->GetTransform().GetScale().x();
     m.AdjustCylinderRotation(radius);
   } else {
-    m.transformContainer->SetTransform(vrb::Matrix::Identity());
+    // The widget is flat and the parent is flat. Copy the parent transformContainer matrix (used for cylinder rotations)
+    // because the parent widget can still be recursively rotated based on a parent cylinder.
+    // e.g. Place the tray tooltips on the correct tray position which may be rotated based on the
+    // parent cylindrical window.
+    m.transformContainer->SetTransform(aParent->m.transformContainer->GetTransform());
   }
   m.UpdateResizerTransform();
 }

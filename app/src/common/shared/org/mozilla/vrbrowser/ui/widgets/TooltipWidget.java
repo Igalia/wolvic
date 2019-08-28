@@ -94,6 +94,10 @@ public class TooltipWidget extends UIWidget {
         }
     }
 
+    public void setCurvedMode(boolean enabled) {
+        mWidgetPlacement.cylinder = enabled;
+    }
+
     public void setText(String text) {
         mText.setText(text);
     }

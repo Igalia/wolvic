@@ -44,6 +44,7 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
     private State mState;
     private int mTooltipDelay;
     private float mTooltipDensity;
+    private boolean mCurvedTooltip = true;
     private ViewUtils.TooltipPosition mTooltipPosition;
 
     public UIButton(Context context, AttributeSet attrs) {
@@ -95,6 +96,13 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
 
         if (mTooltipView != null && mTooltipView.isVisible()) {
             mTooltipView.setText(text);
+        }
+    }
+
+    public void setCurvedTooltip(boolean aEnabled) {
+        mCurvedTooltip = aEnabled;
+        if (mTooltipView != null) {
+            mTooltipView.setCurvedMode(aEnabled);
         }
     }
 
@@ -204,6 +212,7 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
             }
 
             mTooltipView = new TooltipWidget(getContext());
+            mTooltipView.setCurvedMode(mCurvedTooltip);
             mTooltipView.setText(getTooltip());
             mTooltipView.setLayoutParams(UIButton.this, mTooltipPosition, mTooltipDensity);
             mTooltipView.show(UIWidget.CLEAR_FOCUS);
