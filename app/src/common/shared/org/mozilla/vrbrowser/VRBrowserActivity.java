@@ -265,6 +265,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             public void onWindowBorderChanged(@NonNull WindowWidget aChangeWindow) {
                 mKeyboard.proxifyLayerIfNeeded(mWindows.getCurrentWindows());
             }
+
+            @Override
+            public void onWindowsMoved() {
+                updateWidget(mTray);
+            }
         });
 
         // Create Browser navigation widget

@@ -88,6 +88,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     public interface Delegate {
         void onFocusedWindowChanged(@NonNull WindowWidget aFocusedWindow, @Nullable WindowWidget aPrevFocusedWindow);
         void onWindowBorderChanged(@NonNull WindowWidget aChangeWindow);
+        void onWindowsMoved();
     }
 
     public Windows(Context aContext) {
@@ -192,14 +193,16 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             placeWindow(frontWindow, WindowPlacement.RIGHT);
         } else if (leftWindow != null && focusedWindow == frontWindow) {
             // Opening a new window from front window
-            placeWindow(newWindow, WindowPlacement.RIGHT);
+            placeWindow(newWindow, WindowPlacement.FRONT);
+            placeWindow(frontWindow, WindowPlacement.RIGHT);
         } else if (rightWindow != null && focusedWindow == rightWindow) {
             // Opening a new window from right window
             placeWindow(newWindow, WindowPlacement.FRONT);
             placeWindow(frontWindow, WindowPlacement.LEFT);
         } else if (rightWindow != null && focusedWindow == frontWindow) {
             // Opening a new window from right window
-            placeWindow(newWindow, WindowPlacement.LEFT);
+            placeWindow(newWindow, WindowPlacement.FRONT);
+            placeWindow(frontWindow, WindowPlacement.LEFT);
         }
 
         updateMaxWindowScales();
@@ -292,6 +295,9 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             placeWindow(frontWindow, WindowPlacement.RIGHT);
         }
         updateViews();
+        if (mDelegate != null) {
+            mDelegate.onWindowsMoved();
+        }
     }
 
     public void moveWindowLeft(@NonNull WindowWidget aWindow) {
@@ -311,6 +317,9 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             placeWindow(frontWindow, WindowPlacement.LEFT);
         }
         updateViews();
+        if (mDelegate != null) {
+            mDelegate.onWindowsMoved();
+        }
     }
 
     public void focusWindow(@NonNull WindowWidget aWindow) {
