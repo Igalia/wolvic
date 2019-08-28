@@ -296,7 +296,7 @@ class PrivacyOptionsView extends SettingsView {
 
         @Override
         public void onActivityDestroyed(Activity activity) {
-
+            activity.getApplication().unregisterActivityLifecycleCallbacks(mLifeCycleListener);
         }
     };
 
