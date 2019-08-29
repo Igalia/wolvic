@@ -11,6 +11,8 @@
         android:background="@drawable/dialog_background"
         android:divider="@android:color/transparent"
         android:dividerHeight="0dp"
+        android:paddingLeft="1dp"
+        android:paddingRight="1dp"
         android:paddingTop="15dp"
         android:paddingBottom="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
