@@ -1620,8 +1620,14 @@ DeviceDelegateOculusVR::DeleteLayer(const VRLayerPtr& aLayer) {
     m.cubeLayer = nullptr;
     return;
   }
+  if (m.equirectLayer && m.equirectLayer->layer == aLayer) {
+    m.equirectLayer->Destroy();
+    m.equirectLayer = nullptr;
+    return;
+  }
   for (int i = 0; i < m.uiLayers.size(); ++i) {
     if (m.uiLayers[i]->GetLayer() == aLayer) {
+      m.uiLayers[i]->Destroy();
       m.uiLayers.erase(m.uiLayers.begin() + i);
       return;
     }
