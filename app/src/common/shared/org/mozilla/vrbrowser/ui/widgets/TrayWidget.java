@@ -8,7 +8,6 @@ package org.mozilla.vrbrowser.ui.widgets;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.graphics.PointF;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -281,6 +280,8 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Windo
 
     @Override
     public void hide(@HideFlags int aHideFlags) {
+        ThreadUtils.postToUiThread(hideBookmarkNotification);
+
         if (mWidgetPlacement.visible) {
             mWidgetPlacement.visible = false;
             if (aHideFlags == REMOVE_WIDGET) {
@@ -293,6 +294,8 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Windo
 
     @Override
     public void detachFromWindow() {
+        ThreadUtils.postToUiThread(hideBookmarkNotification);
+        
         if (mSessionStack != null) {
             mSessionStack.removeSessionChangeListener(this);
             mSessionStack = null;
@@ -460,35 +463,45 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Windo
         @Override
         public void onBookmarkAdded() {
             mBookmarksButton.setNotificationMode(true);
-            ThreadUtils.postToUiThread(() -> {
-                if (mLibraryNotification != null && mLibraryNotification.isVisible()) {
-                    return;
-                }
+            ThreadUtils.postToUiThread(showBookmarkNotification);
+        }
+    };
 
-                Rect offsetViewBounds = new Rect();
-                getDrawingRect(offsetViewBounds);
-                offsetDescendantRectToMyCoords(mBookmarksButton, offsetViewBounds);
+    private Runnable showBookmarkNotification = new Runnable() {
+        @Override
+        public void run() {
+            if (mLibraryNotification != null && mLibraryNotification.isVisible()) {
+                return;
+            }
 
-                float ratio = WidgetPlacement.viewToWidgetRatio(getContext(), TrayWidget.this);
+            Rect offsetViewBounds = new Rect();
+            getDrawingRect(offsetViewBounds);
+            offsetDescendantRectToMyCoords(mBookmarksButton, offsetViewBounds);
 
-                mLibraryNotification = new TooltipWidget(getContext(), R.layout.library_notification);
-                mLibraryNotification.getPlacement().parentHandle = getHandle();
-                mLibraryNotification.getPlacement().anchorY = 0.0f;
-                mLibraryNotification.getPlacement().translationX = (offsetViewBounds.left + mBookmarksButton.getWidth() / 2.0f) * ratio;
-                mLibraryNotification.getPlacement().translationY = ((offsetViewBounds.top - 60) * ratio);
-                mLibraryNotification.getPlacement().translationZ = 25.0f;
-                mLibraryNotification.getPlacement().density = 3.0f;
-                mLibraryNotification.setText(R.string.bookmarks_saved_notification);
-                mLibraryNotification.setCurvedMode(false);
-                mLibraryNotification.show(UIWidget.CLEAR_FOCUS);
+            float ratio = WidgetPlacement.viewToWidgetRatio(getContext(), TrayWidget.this);
 
-                ThreadUtils.postDelayedToUiThread(() -> {
-                    if (mLibraryNotification != null) {
-                        mLibraryNotification.hide(UIWidget.REMOVE_WIDGET);
-                    }
-                    mBookmarksButton.setNotificationMode(false);
-                }, LIBRARY_NOTIFICATION_DURATION);
-            });
+            mLibraryNotification = new TooltipWidget(getContext(), R.layout.library_notification);
+            mLibraryNotification.getPlacement().parentHandle = getHandle();
+            mLibraryNotification.getPlacement().anchorY = 0.0f;
+            mLibraryNotification.getPlacement().translationX = (offsetViewBounds.left + mBookmarksButton.getWidth() / 2.0f) * ratio;
+            mLibraryNotification.getPlacement().translationY = ((offsetViewBounds.top - 60) * ratio);
+            mLibraryNotification.getPlacement().translationZ = 25.0f;
+            mLibraryNotification.getPlacement().density = 3.0f;
+            mLibraryNotification.setText(R.string.bookmarks_saved_notification);
+            mLibraryNotification.setCurvedMode(false);
+            mLibraryNotification.show(UIWidget.CLEAR_FOCUS);
+
+            ThreadUtils.postDelayedToUiThread(hideBookmarkNotification, LIBRARY_NOTIFICATION_DURATION);
+        }
+    };
+
+    private Runnable hideBookmarkNotification = new Runnable() {
+        @Override
+        public void run() {
+            if (mLibraryNotification != null) {
+                mLibraryNotification.hide(UIWidget.REMOVE_WIDGET);
+            }
+            mBookmarksButton.setNotificationMode(false);
         }
     };
 
