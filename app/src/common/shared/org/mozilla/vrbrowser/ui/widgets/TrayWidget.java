@@ -8,6 +8,8 @@ package org.mozilla.vrbrowser.ui.widgets;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.graphics.PointF;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -16,11 +18,14 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 
 import androidx.annotation.NonNull;
 
+import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
+import org.mozilla.vrbrowser.browser.BookmarksStore;
 import org.mozilla.vrbrowser.browser.SessionChangeListener;
 import org.mozilla.vrbrowser.browser.engine.SessionStack;
+import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.widgets.settings.SettingsWidget;
@@ -35,6 +40,7 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Windo
     static final String LOGTAG = TrayWidget.class.getSimpleName();
 
     private static final int ICON_ANIMATION_DURATION = 200;
+    private static final int LIBRARY_NOTIFICATION_DURATION = 3000;
 
     private UIButton mSettingsButton;
     private UIButton mPrivateButton;
@@ -50,6 +56,7 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Windo
     private boolean mTrayVisible = true;
     private SessionStack mSessionStack;
     private WindowWidget mAttachedWindow;
+    private TooltipWidget mLibraryNotification;
 
     public TrayWidget(Context aContext) {
         super(aContext);
@@ -291,6 +298,7 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Windo
             mSessionStack = null;
         }
         if (mAttachedWindow != null) {
+            SessionStore.get().getBookmarkStore().addListener(mBookmarksListener);
             mAttachedWindow.removeBookmarksViewListener(this);
             mAttachedWindow.removeHistoryViewListener(this);
         }
@@ -309,6 +317,8 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Windo
         mWidgetPlacement.parentHandle = aWindow.getHandle();
         mAttachedWindow.addBookmarksViewListener(this);
         mAttachedWindow.addHistoryViewListener(this);
+
+        SessionStore.get().getBookmarkStore().addListener(mBookmarksListener);
 
         mSessionStack = aWindow.getSessionStack();
         if (mSessionStack != null) {
@@ -440,5 +450,47 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Windo
             updateVisibility();
         }
     }
+
+    private BookmarksStore.BookmarkListener mBookmarksListener = new BookmarksStore.BookmarkListener() {
+        @Override
+        public void onBookmarksUpdated() {
+            // Nothing to do
+        }
+
+        @Override
+        public void onBookmarkAdded() {
+            mBookmarksButton.setNotificationMode(true);
+            ThreadUtils.postToUiThread(() -> {
+                if (mLibraryNotification != null && mLibraryNotification.isVisible()) {
+                    return;
+                }
+
+                Rect offsetViewBounds = new Rect();
+                getDrawingRect(offsetViewBounds);
+                offsetDescendantRectToMyCoords(mBookmarksButton, offsetViewBounds);
+
+                float ratio = WidgetPlacement.viewToWidgetRatio(getContext(), TrayWidget.this);
+
+                mLibraryNotification = new TooltipWidget(getContext(), R.layout.library_notification);
+                mLibraryNotification.getPlacement().parentHandle = getHandle();
+                mLibraryNotification.getPlacement().anchorY = 0.0f;
+                mLibraryNotification.getPlacement().translationX = (offsetViewBounds.left + mBookmarksButton.getWidth() / 2.0f) * ratio;
+                mLibraryNotification.getPlacement().translationY = ((offsetViewBounds.top - 60) * ratio);
+                mLibraryNotification.getPlacement().translationZ = 25.0f;
+                mLibraryNotification.getPlacement().density = 3.0f;
+                mLibraryNotification.setText(R.string.bookmarks_saved_notification);
+                mLibraryNotification.setCurvedMode(false);
+                mLibraryNotification.show(UIWidget.CLEAR_FOCUS);
+
+                ThreadUtils.postDelayedToUiThread(() -> {
+                    if (mLibraryNotification != null) {
+                        mLibraryNotification.hide(UIWidget.REMOVE_WIDGET);
+                    }
+                    mBookmarksButton.setNotificationMode(false);
+                }, LIBRARY_NOTIFICATION_DURATION);
+            });
+        }
+    };
+
 
 }

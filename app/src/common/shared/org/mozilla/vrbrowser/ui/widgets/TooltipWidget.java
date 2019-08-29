@@ -1,32 +1,37 @@
 package org.mozilla.vrbrowser.ui.widgets;
 
 import android.content.Context;
-import android.graphics.PointF;
-import android.graphics.Rect;
-import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
+
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.utils.ViewUtils;
+import org.mozilla.vrbrowser.utils.AnimationHelper;
 
 public class TooltipWidget extends UIWidget {
 
-    private View mTargetView;
-    private UIWidget mParentWidget;
     protected TextView mText;
-    private PointF mTranslation;
-    private float mRatio;
-    private float mDensityRatio;
+    protected ViewGroup mLayout;
+
+    public TooltipWidget(@NonNull Context aContext, @NonNull  @LayoutRes int layoutRes) {
+        super(aContext);
+
+        initialize(layoutRes);
+    }
 
     public TooltipWidget(Context aContext) {
         super(aContext);
 
-        initialize();
+        initialize(R.layout.tooltip);
     }
 
-    private void initialize() {
-        inflate(getContext(), R.layout.tooltip, this);
+    private void initialize(@NonNull @LayoutRes int layoutRes) {
+        inflate(getContext(), layoutRes, this);
 
+        mLayout = findViewById(R.id.layout);
         mText = findViewById(R.id.tooltipText);
     }
 
@@ -46,56 +51,26 @@ public class TooltipWidget extends UIWidget {
     public void show(@ShowFlags int aShowFlags) {
         measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
                 MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-        mWidgetPlacement.translationX = mTranslation.x * (mRatio / mWidgetPlacement.density);
-        mWidgetPlacement.translationY = mTranslation.y * (mRatio / mWidgetPlacement.density);
         int paddingH = getPaddingStart() + getPaddingEnd();
         int paddingV = getPaddingTop() + getPaddingBottom();
-        mWidgetPlacement.width = (int)(WidgetPlacement.convertPixelsToDp(getContext(), getMeasuredWidth() + paddingH)/mDensityRatio);
-        mWidgetPlacement.height = (int)(WidgetPlacement.convertPixelsToDp(getContext(), getMeasuredHeight() + paddingV)/mDensityRatio);
+        mWidgetPlacement.width = (int)((getMeasuredWidth() + paddingH)/mWidgetPlacement.density);
+        mWidgetPlacement.height = (int)((getMeasuredHeight() + paddingV)/mWidgetPlacement.density);
 
         super.show(aShowFlags);
+        AnimationHelper.scaleIn(mLayout, 100, 0, null);
     }
 
-    public void setLayoutParams(View targetView) {
-        this.setLayoutParams(targetView, ViewUtils.TooltipPosition.BOTTOM);
-    }
-
-    public void setLayoutParams(View targetView, ViewUtils.TooltipPosition position) {
-        this.setLayoutParams(targetView, position, mWidgetPlacement.density);
-    }
-
-    public void setLayoutParams(View targetView, ViewUtils.TooltipPosition position, float density) {
-        mTargetView = targetView;
-        mParentWidget = ViewUtils.getParentWidget(mTargetView);
-        if (mParentWidget != null) {
-            mRatio = WidgetPlacement.worldToWidgetRatio(mParentWidget);
-            mWidgetPlacement.density = density;
-            mDensityRatio = mWidgetPlacement.density / getContext().getResources().getDisplayMetrics().density;
-
-            Rect offsetViewBounds = new Rect();
-            getDrawingRect(offsetViewBounds);
-            mParentWidget.offsetDescendantRectToMyCoords(mTargetView, offsetViewBounds);
-
-            mWidgetPlacement.parentHandle = mParentWidget.getHandle();
-            // At the moment we only support showing tooltips on top or bottom of the target view
-            if (position == ViewUtils.TooltipPosition.BOTTOM) {
-                mWidgetPlacement.anchorY = 1.0f;
-                mWidgetPlacement.parentAnchorY = 0.0f;
-                mTranslation = new PointF(
-                        (offsetViewBounds.left + mTargetView.getWidth() / 2) * mDensityRatio,
-                        -offsetViewBounds.top * mDensityRatio);
-            } else {
-                mWidgetPlacement.anchorY = 0.0f;
-                mWidgetPlacement.parentAnchorY = 1.0f;
-                mTranslation = new PointF(
-                        (offsetViewBounds.left + mTargetView.getWidth() / 2) * mDensityRatio,
-                        offsetViewBounds.top * mDensityRatio);
-            }
-        }
+    @Override
+    public void hide(int aHideFlags) {
+        AnimationHelper.scaleOut(mLayout, 100, 0, () -> TooltipWidget.super.hide(aHideFlags));
     }
 
     public void setCurvedMode(boolean enabled) {
         mWidgetPlacement.cylinder = enabled;
+    }
+
+    public void setText(@StringRes int stringRes) {
+        mText.setText(stringRes);
     }
 
     public void setText(String text) {

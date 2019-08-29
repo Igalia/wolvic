@@ -8,9 +8,13 @@ package org.mozilla.vrbrowser.ui.views;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.FrameLayout;
 
+import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
@@ -19,7 +23,8 @@ import org.mozilla.vrbrowser.browser.engine.SessionStack;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.databinding.BookmarksBinding;
 import org.mozilla.vrbrowser.ui.adapters.BookmarkAdapter;
-import org.mozilla.vrbrowser.ui.callbacks.BookmarkClickCallback;
+import org.mozilla.vrbrowser.ui.callbacks.BookmarkItemCallback;
+import org.mozilla.vrbrowser.ui.callbacks.BookmarksCallback;
 import org.mozilla.vrbrowser.utils.UIThreadExecutor;
 
 import java.util.List;
@@ -55,48 +60,76 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
 
         // Inflate this data binding layout
         mBinding = DataBindingUtil.inflate(inflater, R.layout.bookmarks, this, true);
-        mBookmarkAdapter = new BookmarkAdapter(mBookmarkClickCallback, aContext);
+        mBookmarkAdapter = new BookmarkAdapter(mBookmarkItemCallback, aContext);
         mBinding.bookmarksList.setAdapter(mBookmarkAdapter);
+        mBinding.bookmarksList.setOnTouchListener((v, event) -> {
+            v.requestFocusFromTouch();
+            return false;
+        });
         mBinding.setIsLoading(true);
         mBinding.executePendingBindings();
         syncBookmarks();
         SessionStore.get().getBookmarkStore().addListener(this);
 
         setVisibility(GONE);
+
+        setOnTouchListener((v, event) -> {
+            v.requestFocusFromTouch();
+            return false;
+        });
     }
 
     public void onDestroy() {
         SessionStore.get().getBookmarkStore().removeListener(this);
     }
 
-    private final BookmarkClickCallback mBookmarkClickCallback = new BookmarkClickCallback() {
+    private final BookmarkItemCallback mBookmarkItemCallback = new BookmarkItemCallback() {
         @Override
-        public void onClick(BookmarkNode bookmark) {
-            if (mAudio != null) {
-                mAudio.playSound(AudioEngine.Sound.CLICK);
-            }
+        public void onClick(View view, BookmarkNode item) {
+            mBinding.bookmarksList.requestFocusFromTouch();
 
             SessionStack sessionStack = SessionStore.get().getActiveStore();
-            sessionStack.loadUri(bookmark.getUrl());
+            sessionStack.loadUri(item.getUrl());
         }
 
         @Override
-        public void onDelete(BookmarkNode bookmark) {
-            if (mAudio != null) {
-                mAudio.playSound(AudioEngine.Sound.CLICK);
-            }
+        public void onDelete(View view, BookmarkNode item) {
+            mBinding.bookmarksList.requestFocusFromTouch();
 
             mIgnoreNextListener = true;
-            SessionStore.get().getBookmarkStore().deleteBookmarkById(bookmark.getGuid());
-            mBookmarkAdapter.removeItem(bookmark);
+            SessionStore.get().getBookmarkStore().deleteBookmarkById(item.getGuid());
+            mBookmarkAdapter.removeItem(item);
             if (mBookmarkAdapter.itemCount() == 0) {
                 mBinding.setIsEmpty(true);
                 mBinding.setIsLoading(false);
                 mBinding.executePendingBindings();
             }
         }
+
+        @Override
+        public void onMore(View view, BookmarkNode item) {
+            mBinding.bookmarksList.requestFocusFromTouch();
+
+            int rowPosition = mBookmarkAdapter.getItemPosition(item.getGuid());
+            RecyclerView.ViewHolder row = mBinding.bookmarksList.findViewHolderForLayoutPosition(rowPosition);
+            boolean isLastVisibleItem = false;
+            if (mBinding.bookmarksList.getLayoutManager() instanceof LinearLayoutManager) {
+                LinearLayoutManager layoutManager = (LinearLayoutManager) mBinding.bookmarksList.getLayoutManager();
+                if (rowPosition == layoutManager.findLastVisibleItemPosition()) {
+                    isLastVisibleItem = true;
+                }
+            }
+
+            mBinding.getCallback().onShowContextMenu(
+                    row.itemView,
+                    item,
+                    isLastVisibleItem);
+        }
     };
 
+    public void setBookmarksCallback(@NonNull BookmarksCallback callback) {
+        mBinding.setCallback(callback);
+    }
 
     private void syncBookmarks() {
         SessionStore.get().getBookmarkStore().getBookmarks().thenAcceptAsync(this::showBookmarks, new UIThreadExecutor());
@@ -113,6 +146,8 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
             mBookmarkAdapter.setBookmarkList(aBookmarks);
         }
         mBinding.executePendingBindings();
+        mBinding.bookmarksList.post(() -> mBinding.bookmarksList.smoothScrollToPosition(
+                mBookmarkAdapter.getItemCount() > 0 ? mBookmarkAdapter.getItemCount() - 1 : 0));
     }
 
     // BookmarksStore.BookmarksViewListener
@@ -123,5 +158,10 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
             return;
         }
         syncBookmarks();
+    }
+
+    @Override
+    public void onBookmarkAdded() {
+        // Nothing to do
     }
 }

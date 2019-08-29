@@ -9,6 +9,8 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
+import android.graphics.PointF;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
@@ -22,6 +24,7 @@ import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.ui.widgets.TooltipWidget;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
+import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.utils.ViewUtils;
 
 public class UIButton extends AppCompatImageButton implements CustomUIButton {
@@ -29,7 +32,8 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
     private enum State {
         NORMAL,
         PRIVATE,
-        ACTIVE
+        ACTIVE,
+        NOTIFICATION
     }
 
     private ColorStateList mTintColorList;
@@ -39,6 +43,7 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
     private @IdRes int mTintColorListRes;
     private @IdRes int mPrivateModeTintColorListRes;
     private @IdRes int mActiveModeTintColorListRes;
+    private @IdRes int mNotificationModeTintColorListRes;
     private TooltipWidget mTooltipView;
     private String mTooltipText;
     private State mState;
@@ -63,6 +68,7 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
         mActiveModeBackground = attributes.getDrawable(R.styleable.UIButton_activeModeBackground);
         mPrivateModeTintColorListRes = attributes.getResourceId(R.styleable.UIButton_privateModeTintColorList, 0);
         mActiveModeTintColorListRes = attributes.getResourceId(R.styleable.UIButton_activeModeTintColorList, 0);
+        mNotificationModeTintColorListRes = attributes.getResourceId(R.styleable.UIButton_notificationModeTintColorList, 0);
         mTooltipDelay = attributes.getInt(R.styleable.UIButton_tooltipDelay, getResources().getInteger(R.integer.tooltip_delay));
         mTooltipPosition = ViewUtils.TooltipPosition.fromId(attributes.getInt(R.styleable.UIButton_tooltipPosition, ViewUtils.TooltipPosition.BOTTOM.ordinal()));
         mTooltipDensity = attributes.getFloat(R.styleable.UIButton_tooltipDensity, getContext().getResources().getDisplayMetrics().density);
@@ -163,6 +169,15 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
         }
     }
 
+    public void setNotificationMode(boolean isNotification) {
+        if (isNotification) {
+            setNotification();
+
+        } else {
+            setNormal();
+        }
+    }
+
     public boolean isActive() {
         return mState == State.ACTIVE;
     }
@@ -204,6 +219,13 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
         }
     }
 
+    private void setNotification() {
+        mState = State.NOTIFICATION;
+        if (mActiveModeTintColorListRes != 0) {
+            setTintColorList(mNotificationModeTintColorListRes);
+        }
+    }
+
     private Runnable mShowTooltipRunnable = new Runnable() {
         @Override
         public void run() {
@@ -214,7 +236,31 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
             mTooltipView = new TooltipWidget(getContext());
             mTooltipView.setCurvedMode(mCurvedTooltip);
             mTooltipView.setText(getTooltip());
-            mTooltipView.setLayoutParams(UIButton.this, mTooltipPosition, mTooltipDensity);
+
+            Rect offsetViewBounds = new Rect();
+            getDrawingRect(offsetViewBounds);
+            UIWidget parent = ViewUtils.getParentWidget(UIButton.this);
+            parent.offsetDescendantRectToMyCoords(UIButton.this, offsetViewBounds);
+
+            float ratio = WidgetPlacement.viewToWidgetRatio(getContext(), parent);
+
+            mTooltipView.getPlacement().parentHandle = parent.getHandle();
+            mTooltipView.getPlacement().density = mTooltipDensity;
+            // At the moment we only support showing tooltips on top or bottom of the target view
+            if (mTooltipPosition == ViewUtils.TooltipPosition.BOTTOM) {
+                mTooltipView.getPlacement().anchorY = 1.0f;
+                mTooltipView.getPlacement().parentAnchorY = 0.0f;
+                mTooltipView.getPlacement().translationX = (offsetViewBounds.left + UIButton.this.getWidth() / 2.0f) * ratio;
+                mTooltipView.getPlacement().translationY = -offsetViewBounds.top * ratio;
+
+            } else {
+                mTooltipView.getPlacement().anchorY = 0.0f;
+                mTooltipView.getPlacement().parentAnchorY = 1.0f;
+                mTooltipView.getPlacement().translationX = (offsetViewBounds.left + UIButton.this.getHeight() / 2.0f) * ratio;
+                mTooltipView.getPlacement().translationY = offsetViewBounds.top * ratio;
+            }
+
+            mTooltipView.setCurvedMode(false);
             mTooltipView.show(UIWidget.CLEAR_FOCUS);
         }
     };

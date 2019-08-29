@@ -25,6 +25,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.annotation.UiThread;
 
+import org.jetbrains.annotations.NotNull;
 import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.geckoview.GeckoDisplay;
 import org.mozilla.geckoview.GeckoResult;
@@ -37,14 +38,16 @@ import org.mozilla.vrbrowser.browser.VideoAvailabilityListener;
 import org.mozilla.vrbrowser.browser.engine.SessionStack;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
+import org.mozilla.vrbrowser.ui.callbacks.BookmarksCallback;
 import org.mozilla.vrbrowser.ui.callbacks.HistoryCallback;
-import org.mozilla.vrbrowser.ui.callbacks.HistoryItemContextMenuClickCallback;
+import org.mozilla.vrbrowser.ui.callbacks.LibraryItemContextMenuClickCallback;
 import org.mozilla.vrbrowser.ui.views.BookmarksView;
 import org.mozilla.vrbrowser.ui.views.HistoryView;
+import org.mozilla.vrbrowser.ui.views.LibraryItemContextMenu;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.BaseAppDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.ClearCacheDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.ContextMenuWidget;
-import org.mozilla.vrbrowser.ui.widgets.dialogs.HistoryItemContextMenuWidget;
+import org.mozilla.vrbrowser.ui.widgets.dialogs.LibraryItemContextMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.MaxWindowsWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.MessageDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.AlertPromptWidget;
@@ -61,6 +64,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import mozilla.components.concept.storage.BookmarkNode;
 import mozilla.components.concept.storage.PageObservation;
 import mozilla.components.concept.storage.VisitInfo;
 import mozilla.components.concept.storage.VisitType;
@@ -76,12 +80,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     public interface HistoryViewDelegate {
         default void onHistoryViewShown(WindowWidget aWindow) {}
-        default void onHistoryViewHidden(WindowWidget aWindow) {};
+        default void onHistoryViewHidden(WindowWidget aWindow) {}
     }
 
     public interface BookmarksViewDelegate {
-        default void onBookmarksShown(WindowWidget aWindow) {};
-        default void onBookmarksHidden(WindowWidget aWindow) {};
+        default void onBookmarksShown(WindowWidget aWindow) {}
+        default void onBookmarksHidden(WindowWidget aWindow) {}
     }
 
     private int mSessionId;
@@ -104,7 +108,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private MessageDialogWidget mAppDialog;
     private ClearCacheDialogWidget mClearCacheDialog;
     private ContextMenuWidget mContextMenu;
-    private HistoryItemContextMenuWidget mHistoryContextMenu;
+    private LibraryItemContextMenuWidget mLibraryItemContextMenu;
     private int mWidthBackup;
     private int mHeightBackup;
     private int mBorderWidth;
@@ -150,6 +154,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mSessionStack.newSession();
 
         mBookmarksView  = new BookmarksView(aContext);
+        mBookmarksView.setBookmarksCallback(mBookmarksCallback);
         mBookmarksViewListeners = new ArrayList<>();
 
         mHistoryView = new HistoryView(aContext);
@@ -262,45 +267,54 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mIsRestored = restored;
     }
 
-    private void setView(View view) {
-        pauseCompositor();
+    private void setView(View view, boolean switchSurface) {
+        if (switchSurface) {
+            pauseCompositor();
+        }
+
         mView = view;
         removeView(view);
         mView.setVisibility(VISIBLE);
         addView(mView);
-        mWidgetPlacement.density = getContext().getResources().getDisplayMetrics().density;
-        if (mTexture != null && mSurface != null && mRenderer == null) {
-            // Create the UI Renderer for the current surface.
-            // Surface must be released when switching back to WebView surface or the browser
-            // will not render it correctly. See release code in unsetView().
-            mRenderer = new UISurfaceTextureRenderer(mSurface, mWidgetPlacement.textureWidth(), mWidgetPlacement.textureHeight());
+
+        if (switchSurface) {
+            mWidgetPlacement.density = getContext().getResources().getDisplayMetrics().density;
+            if (mTexture != null && mSurface != null && mRenderer == null) {
+                // Create the UI Renderer for the current surface.
+                // Surface must be released when switching back to WebView surface or the browser
+                // will not render it correctly. See release code in unsetView().
+                mRenderer = new UISurfaceTextureRenderer(mSurface, mWidgetPlacement.textureWidth(), mWidgetPlacement.textureHeight());
+            }
+            mWidgetManager.updateWidget(this);
+            mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
+            mWidgetManager.pushBackHandler(mBackHandler);
+            setWillNotDraw(false);
+            postInvalidate();
         }
-        mWidgetManager.updateWidget(this);
-        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
-        mWidgetManager.pushBackHandler(mBackHandler);
-        setWillNotDraw(false);
-        postInvalidate();
     }
 
-    private void unsetView(View view) {
+    private void unsetView(View view, boolean switchSurface) {
         if (mView != null && mView == view) {
             mView = null;
             removeView(view);
             view.setVisibility(GONE);
-            setWillNotDraw(true);
-            if (mTexture != null) {
-                // Surface must be recreated here when not using layers.
-                // When using layers the new Surface is received via the setSurface() method.
-                if (mRenderer != null) {
-                    mRenderer.release();
-                    mRenderer = null;
+
+            if (switchSurface) {
+                setWillNotDraw(true);
+                if (mTexture != null) {
+                    // Surface must be recreated here when not using layers.
+                    // When using layers the new Surface is received via the setSurface() method.
+                    if (mRenderer != null) {
+                        mRenderer.release();
+                        mRenderer = null;
+                    }
+                    mSurface = new Surface(mTexture);
                 }
-                mSurface = new Surface(mTexture);
+                mWidgetPlacement.density = 1.0f;
+                mWidgetManager.updateWidget(this);
+                mWidgetManager.popWorldBrightness(this);
+                mWidgetManager.popBackHandler(mBackHandler);
             }
-            mWidgetPlacement.density = 1.0f;
-            mWidgetManager.updateWidget(this);
-            mWidgetManager.popWorldBrightness(this);
-            mWidgetManager.popBackHandler(mBackHandler);
         }
     }
 
@@ -330,8 +344,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     public void switchBookmarks() {
         if (isHistoryVisible()) {
-            hideHistory();
-            showBookmarks();
+            hideHistory(false);
+            showBookmarks(false);
 
         } else if (isBookmarksVisible()) {
             hideBookmarks();
@@ -342,8 +356,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     public void showBookmarks() {
+        showBookmarks(true);
+    }
+
+    public void showBookmarks(boolean switchSurface) {
         if (mView == null) {
-            setView(mBookmarksView);
+            setView(mBookmarksView, switchSurface);
             for (BookmarksViewDelegate listener : mBookmarksViewListeners) {
                 listener.onBookmarksShown(this);
             }
@@ -354,8 +372,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     public void hideBookmarks() {
+        hideBookmarks(true);
+    }
+
+    public void hideBookmarks(boolean switchSurface) {
         if (mView != null) {
-            unsetView(mBookmarksView);
+            unsetView(mBookmarksView, switchSurface);
             for (BookmarksViewDelegate listener : mBookmarksViewListeners) {
                 listener.onBookmarksHidden(this);
             }
@@ -365,8 +387,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     public void switchHistory() {
         if (isBookmarksVisible()) {
-            hideBookmarks();
-            showHistory();
+            hideBookmarks(false);
+            showHistory(false);
 
         } else if (isHistoryVisible()) {
             hideHistory();
@@ -377,8 +399,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     public void showHistory() {
+        showHistory(true);
+    }
+
+    public void showHistory(boolean switchSurface) {
         if (mView == null) {
-            setView(mHistoryView);
+            setView(mHistoryView, switchSurface);
             for (HistoryViewDelegate listener : mHistoryViewListeners) {
                 listener.onHistoryViewShown(this);
             }
@@ -387,8 +413,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     public void hideHistory() {
+        hideHistory(true);
+    }
+
+    public void hideHistory(boolean switchSurface) {
         if (mView != null) {
-            unsetView(mHistoryView);
+            unsetView(mHistoryView, switchSurface);
             for (HistoryViewDelegate listener : mHistoryViewListeners) {
                 listener.onHistoryViewHidden(this);
             }
@@ -1066,66 +1096,95 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         return (int) Math.floor(SettingsStore.WINDOW_WIDTH_DEFAULT * aWorldWidth / WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width));
     }
 
+    private void showLibraryItemContextMenu(@NotNull View view, LibraryItemContextMenu.LibraryContextMenuItem item, boolean isLastVisibleItem) {
+        view.requestFocusFromTouch();
+
+        if (mLibraryItemContextMenu != null) {
+            mLibraryItemContextMenu.hide(REMOVE_WIDGET);
+        }
+
+        float ratio = WidgetPlacement.viewToWidgetRatio(getContext(), WindowWidget.this);
+
+        Rect offsetViewBounds = new Rect();
+        getDrawingRect(offsetViewBounds);
+        offsetDescendantRectToMyCoords(view, offsetViewBounds);
+
+        mLibraryItemContextMenu = new LibraryItemContextMenuWidget(getContext());
+        mLibraryItemContextMenu.mWidgetPlacement.parentHandle = getHandle();
+
+        PointF position;
+        if (isLastVisibleItem) {
+            mLibraryItemContextMenu.mWidgetPlacement.anchorY = 0.0f;
+            position = new PointF(
+                    (offsetViewBounds.left + view.getWidth()) * ratio,
+                    -(offsetViewBounds.top) * ratio);
+
+        } else {
+            mLibraryItemContextMenu.mWidgetPlacement.anchorY = 1.0f;
+            position = new PointF(
+                    (offsetViewBounds.left + view.getWidth()) * ratio,
+                    -(offsetViewBounds.top + view.getHeight()) * ratio);
+        }
+
+        mLibraryItemContextMenu.setPosition(position);
+        mLibraryItemContextMenu.setItem(item);
+        mLibraryItemContextMenu.setHistoryContextMenuItemCallback((new LibraryItemContextMenuClickCallback() {
+            @Override
+            public void onOpenInNewWindowClick(LibraryItemContextMenu.LibraryContextMenuItem item) {
+                mWidgetManager.openNewWindow(item.getUrl());
+                mLibraryItemContextMenu.hide(REMOVE_WIDGET);
+            }
+
+            @Override
+            public void onAddToBookmarks(LibraryItemContextMenu.LibraryContextMenuItem item) {
+                SessionStore.get().getBookmarkStore().addBookmark(item.getUrl(), item.getTitle());
+                mLibraryItemContextMenu.hide(REMOVE_WIDGET);
+            }
+
+            @Override
+            public void onRemoveFromBookmarks(LibraryItemContextMenu.LibraryContextMenuItem item) {
+                SessionStore.get().getBookmarkStore().deleteBookmarkByURL(item.getUrl());
+                mLibraryItemContextMenu.hide(REMOVE_WIDGET);
+            }
+        }));
+        mLibraryItemContextMenu.show(REQUEST_FOCUS);
+    }
+
+    private BookmarksCallback mBookmarksCallback = new BookmarksCallback() {
+
+        @Override
+        public void onClearBookmarks(View view) {
+            // Not used ATM
+        }
+
+        @Override
+        public void onShowContextMenu(@NonNull View view, @NotNull BookmarkNode item, boolean isLastVisibleItem) {
+            showLibraryItemContextMenu(
+                    view,
+                    new LibraryItemContextMenu.LibraryContextMenuItem(
+                            item.getUrl(),
+                            item.getTitle(),
+                            LibraryItemContextMenu.LibraryItemType.BOOKMARKS),
+                    isLastVisibleItem);
+        }
+    };
+
     private HistoryCallback mHistoryCallback = new HistoryCallback() {
         @Override
-        public void onClearHistory(View view) {
+        public void onClearHistory(@NonNull View view) {
             view.requestFocusFromTouch();
             showClearCacheDialog();
         }
 
         @Override
-        public void onShowContextMenu(View view, VisitInfo item, boolean isLastVisibleItem) {
-            view.requestFocusFromTouch();
-
-            if (mHistoryContextMenu != null) {
-                mHistoryContextMenu.hide(REMOVE_WIDGET);
-            }
-
-            float ratio = WidgetPlacement.viewToWidgetRatio(getContext(), WindowWidget.this);
-
-            Rect offsetViewBounds = new Rect();
-            getDrawingRect(offsetViewBounds);
-            offsetDescendantRectToMyCoords(view, offsetViewBounds);
-
-            mHistoryContextMenu = new HistoryItemContextMenuWidget(getContext());
-            mHistoryContextMenu.mWidgetPlacement.parentHandle = getHandle();
-
-            PointF position;
-            if (isLastVisibleItem) {
-                mHistoryContextMenu.mWidgetPlacement.anchorY = 0.0f;
-                position = new PointF(
-                        (offsetViewBounds.left + view.getWidth()) * ratio,
-                        -(offsetViewBounds.top) * ratio);
-
-            } else {
-                mHistoryContextMenu.mWidgetPlacement.anchorY = 1.0f;
-                position = new PointF(
-                        (offsetViewBounds.left + view.getWidth()) * ratio,
-                        -(offsetViewBounds.top + view.getHeight()) * ratio);
-            }
-
-            mHistoryContextMenu.setPosition(position);
-            mHistoryContextMenu.setItem(item);
-            mHistoryContextMenu.setHistoryContextMenuItemCallback((new HistoryItemContextMenuClickCallback() {
-                @Override
-                public void onOpenInNewWindowClick(VisitInfo item) {
-                    mWidgetManager.openNewWindow(item.getUrl());
-                    mHistoryContextMenu.hide(REMOVE_WIDGET);
-                }
-
-                @Override
-                public void onAddToBookmarks(VisitInfo item) {
-                    SessionStore.get().getBookmarkStore().addBookmark(item.getUrl(), item.getTitle());
-                    mHistoryContextMenu.hide(REMOVE_WIDGET);
-                }
-
-                @Override
-                public void onRemoveFromBookmarks(VisitInfo item) {
-                    SessionStore.get().getBookmarkStore().deleteBookmarkByURL(item.getUrl());
-                    mHistoryContextMenu.hide(REMOVE_WIDGET);
-                }
-            }));
-            mHistoryContextMenu.show(REQUEST_FOCUS);
+        public void onShowContextMenu(@NonNull View view, @NonNull VisitInfo item, boolean isLastVisibleItem) {
+            showLibraryItemContextMenu(
+                    view,
+                    new LibraryItemContextMenu.LibraryContextMenuItem(
+                            item.getUrl(),
+                            item.getTitle(),
+                            LibraryItemContextMenu.LibraryItemType.HISTORY),
+                    isLastVisibleItem);
         }
     };
 

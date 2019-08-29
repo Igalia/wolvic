@@ -14,39 +14,38 @@ import android.view.ViewTreeObserver;
 import androidx.annotation.NonNull;
 
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.ui.callbacks.HistoryItemContextMenuClickCallback;
-import org.mozilla.vrbrowser.ui.views.HistoryItemContextMenu;
+import org.mozilla.vrbrowser.ui.callbacks.LibraryItemContextMenuClickCallback;
+import org.mozilla.vrbrowser.ui.views.LibraryItemContextMenu;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.utils.ViewUtils;
 
-import mozilla.components.concept.storage.VisitInfo;
+public class LibraryItemContextMenuWidget extends UIWidget implements WidgetManagerDelegate.FocusChangeListener {
 
-public class HistoryItemContextMenuWidget extends UIWidget implements WidgetManagerDelegate.FocusChangeListener {
-
-    private HistoryItemContextMenu mContextMenu;
+    private LibraryItemContextMenu mContextMenu;
     private int mMaxHeight;
     private PointF mTranslation;
+    private int height;
 
-    public HistoryItemContextMenuWidget(Context aContext) {
+    public LibraryItemContextMenuWidget(Context aContext) {
         super(aContext);
 
-        mContextMenu = new HistoryItemContextMenu(aContext);
+        mContextMenu = new LibraryItemContextMenu(aContext);
         initialize();
     }
 
-    public HistoryItemContextMenuWidget(Context aContext, AttributeSet aAttrs) {
+    public LibraryItemContextMenuWidget(Context aContext, AttributeSet aAttrs) {
         super(aContext, aAttrs);
 
-        mContextMenu = new HistoryItemContextMenu(aContext, aAttrs);
+        mContextMenu = new LibraryItemContextMenu(aContext, aAttrs);
         initialize();
     }
 
-    public HistoryItemContextMenuWidget(Context aContext, AttributeSet aAttrs, int aDefStyle) {
+    public LibraryItemContextMenuWidget(Context aContext, AttributeSet aAttrs, int aDefStyle) {
         super(aContext, aAttrs, aDefStyle);
 
-        mContextMenu = new HistoryItemContextMenu(aContext, aAttrs, aDefStyle);
+        mContextMenu = new LibraryItemContextMenu(aContext, aAttrs, aDefStyle);
         initialize();
     }
 
@@ -71,7 +70,7 @@ public class HistoryItemContextMenuWidget extends UIWidget implements WidgetMana
 
     @Override
     public void show(@ShowFlags int aShowFlags) {
-        mWidgetManager.addFocusChangeListener(HistoryItemContextMenuWidget.this);
+        mWidgetManager.addFocusChangeListener(LibraryItemContextMenuWidget.this);
 
         measure(View.MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
                 View.MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
@@ -89,9 +88,9 @@ public class HistoryItemContextMenuWidget extends UIWidget implements WidgetMana
                     mWidgetPlacement.translationX = mTranslation.x - (getWidth()/mWidgetPlacement.density);
                     mWidgetPlacement.translationY = mTranslation.y + getResources().getDimension(R.dimen.library_context_menu_top_margin)/mWidgetPlacement.density;
 
-                    mWidgetPlacement.width = (int)(getWidth()/mWidgetPlacement.density);
-                    mWidgetPlacement.height = (int)(getHeight()/mWidgetPlacement.density);
-                    mWidgetManager.updateWidget(HistoryItemContextMenuWidget.this);
+                    mWidgetPlacement.width = (int)((getWidth() + 5)/mWidgetPlacement.density);
+                    mWidgetPlacement.height = mContextMenu.getMenuHeight() + 5;
+                    mWidgetManager.updateWidget(LibraryItemContextMenuWidget.this);
                 }
             });
         }
@@ -109,11 +108,11 @@ public class HistoryItemContextMenuWidget extends UIWidget implements WidgetMana
         hide(REMOVE_WIDGET);
     }
 
-    public void setHistoryContextMenuItemCallback(HistoryItemContextMenuClickCallback callback) {
+    public void setHistoryContextMenuItemCallback(LibraryItemContextMenuClickCallback callback) {
         mContextMenu.setContextMenuClickCallback(callback);
     }
 
-    public void setItem(@NonNull VisitInfo item) {
+    public void setItem(@NonNull LibraryItemContextMenu.LibraryContextMenuItem item) {
         mContextMenu.setItem(item);
     }
 

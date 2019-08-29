@@ -92,7 +92,8 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
     private final HistoryItemCallback mHistoryItemCallback = new HistoryItemCallback() {
         @Override
         public void onClick(View view, VisitInfo item) {
-            view.requestFocusFromTouch();
+            mBinding.historyList.requestFocusFromTouch();
+
             SessionStack sessionStack = SessionStore.get().getActiveStore();
             sessionStack.loadUri(item.getUrl());
         }
@@ -100,6 +101,7 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
         @Override
         public void onDelete(View view, VisitInfo item) {
             mBinding.historyList.requestFocusFromTouch();
+
             mIgnoreNextListener = true;
             SessionStore.get().getHistoryStore().deleteHistory(item.getUrl(), item.getVisitTime());
             mHistoryAdapter.removeItem(item);
@@ -112,7 +114,7 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
 
         @Override
         public void onMore(View view, VisitInfo item) {
-            view.requestFocusFromTouch();
+            mBinding.historyList.requestFocusFromTouch();
 
             int rowPosition = mHistoryAdapter.getItemPosition(item.getVisitTime());
             RecyclerView.ViewHolder row = mBinding.historyList.findViewHolderForLayoutPosition(rowPosition);
@@ -193,6 +195,7 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
             mHistoryAdapter.setHistoryList(historyItems);
         }
         mBinding.executePendingBindings();
+        mBinding.historyList.post(() -> mBinding.historyList.smoothScrollToPosition(0));
     }
 
     // HistoryStore.HistoryListener

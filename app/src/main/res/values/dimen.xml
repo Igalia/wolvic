@@ -127,7 +127,7 @@
     <item name="tray_world_width" format="float" type="dimen">1.2</item>
     <dimen name="tray_width">206dp</dimen>
     <dimen name="tray_height">40dp</dimen>
-    <item name="tray_tooltip_density" format="float" type="dimen">4.0</item>
+    <item name="tray_tooltip_density" format="float" type="dimen">4.5</item>
 
     <!-- Developer Options Panel -->
     <dimen name="developer_options_width">585dp</dimen>
@@ -197,15 +197,15 @@
     <dimen name="settings_icon_padding_max">2dp</dimen>
     <dimen name="settings_icon_padding_min">0dp</dimen>
 
-    <!-- Bookmarks -->
-    <dimen name="bookmark_row_height">64dp</dimen>
-
-    <!-- History -->
-    <dimen name="history_row_height">38dp</dimen>
-    <dimen name="history_section_text_size">18sp</dimen>
-    <dimen name="history_title_text_size">20sp</dimen>
-    <dimen name="history_url_text_size">16sp</dimen>
-    <dimen name="history_date_text_size">16sp</dimen>
+    <!-- Library -->
+    <dimen name="library_item_row_height">55dp</dimen>
+    <dimen name="library_section_text_size">18sp</dimen>
+    <dimen name="library_item_title_text_size">20sp</dimen>
+    <dimen name="library_item_url_text_size">16sp</dimen>
+    <dimen name="library_item_date_text_size">16sp</dimen>
+    <dimen name="library_icon_padding_max">2dp</dimen>
+    <dimen name="library_icon_padding_min">0dp</dimen>
+    <dimen name="library_notification_font_size">13sp</dimen>
 
     <!-- Language -->
     <dimen name="language_row_height">22dp</dimen>

@@ -44,8 +44,8 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryI
     public HistoryAdapter(@Nullable HistoryItemCallback clickCallback, Context aContext) {
         mHistoryItemCallback = clickCallback;
 
-        mMinPadding = WidgetPlacement.pixelDimension(aContext, R.dimen.settings_icon_padding_min);
-        mMaxPadding = WidgetPlacement.pixelDimension(aContext, R.dimen.settings_icon_padding_max);
+        mMinPadding = WidgetPlacement.pixelDimension(aContext, R.dimen.library_icon_padding_min);
+        mMaxPadding = WidgetPlacement.pixelDimension(aContext, R.dimen.library_icon_padding_max);
 
         mIconColorHover = aContext.getResources().getColor(R.color.white, aContext.getTheme());
         mIconNormalColor = aContext.getResources().getColor(R.color.rhino, aContext.getTheme());

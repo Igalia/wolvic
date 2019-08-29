@@ -30,8 +30,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="60dp"
-            android:layout_marginEnd="60dp"
+            android:layout_marginStart="180dp"
+            android:layout_marginEnd="180dp"
             android:gravity="center_vertical|center_horizontal"
             android:orientation="vertical"
             app:visibleGone="@{!isLoading &amp;&amp; isEmpty}">
@@ -47,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="35dp"
                 android:fontFamily="sans-serif"
-                android:text="@string/history_title"
+                android:text="@string/history_empty"
                 android:textAlignment="center"
                 android:textAllCaps="false"
                 android:textColor="@color/fog"

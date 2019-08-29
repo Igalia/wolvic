@@ -21,7 +21,7 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/history_row_height"
+        android:layout_height="@dimen/library_item_row_height"
         android:background="@color/void_color">
 
         <TextView
@@ -37,16 +37,16 @@
             android:text="@{item.title}"
             android:textAllCaps="true"
             android:textColor="@color/rhino"
-            android:textSize="@dimen/history_title_text_size"
+            android:textSize="@dimen/library_item_title_text_size"
             android:textStyle="bold"
             app:visibleGone="@{item.visitType == VisitType.NOT_A_VISIT}"
-            tools:text="History Item Title" />
+            tools:text="Item Title" />
 
         <RelativeLayout
             android:id="@+id/layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/library_panel_item_background_color"
+            android:background="@drawable/library_item_background_color"
             android:clickable="true"
             android:descendantFocusability="blocksDescendants"
             android:focusable="true"
@@ -79,7 +79,7 @@
                     android:singleLine="true"
                     android:text="@{item.title}"
                     android:textColor="@color/library_panel_title_text_color"
-                    android:textSize="@dimen/history_title_text_size"
+                    android:textSize="@dimen/library_item_title_text_size"
                     android:textStyle="bold"
                     tools:text="History Item Title" />
 
@@ -94,7 +94,7 @@
                     android:singleLine="true"
                     android:text="@{item.url}"
                     android:textColor="@color/library_panel_description_color"
-                    android:textSize="@dimen/history_url_text_size"
+                    android:textSize="@dimen/library_item_url_text_size"
                     tools:text="http://mozilla.org" />
             </LinearLayout>
 
@@ -116,7 +116,7 @@
                     android:scrollHorizontally="true"
                     android:singleLine="true"
                     android:textColor="@color/library_panel_description_color"
-                    android:textSize="@dimen/history_date_text_size"
+                    android:textSize="@dimen/library_item_date_text_size"
                     app:bindDate="@{item.visitTime}"
                     app:visibleInvisible="@{!isHovered}"
                     tools:text="8/2/19, 2:18 PM" />

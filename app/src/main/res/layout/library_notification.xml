@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:id="@+id/layout"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/library_notification_background"
+            android:padding="5dp">
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center">
+
+                <TextView
+                    android:id="@+id/tooltipText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:shadowColor="@color/asphalt_blur"
+                    android:shadowDx="2.0"
+                    android:shadowDy="2.0"
+                    android:shadowRadius="0.5"
+                    android:singleLine="true"
+                    android:textColor="@color/smoke"
+                    android:textSize="@dimen/library_notification_font_size"
+                    tools:text="Library Notification"
+                    android:typeface="sans"
+                    android:drawableTint="@color/smoke"
+                    android:drawableLeft="@drawable/ic_icon_check"
+                    android:drawablePadding="5dp"/>
+            </FrameLayout>
+        </FrameLayout>
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="-3dp">
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="30dp"
+                android:layout_height="15dp"
+                android:background="@drawable/library_notification_background_triangle"/>
+        </FrameLayout>
+    </LinearLayout>
+</merge>

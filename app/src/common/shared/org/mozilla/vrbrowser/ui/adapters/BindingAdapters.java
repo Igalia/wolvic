@@ -1,17 +1,20 @@
 package org.mozilla.vrbrowser.ui.adapters;
 
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ImageSpan;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.databinding.BindingAdapter;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
 
 
 public class BindingAdapters {
@@ -52,5 +55,14 @@ public class BindingAdapters {
             androidDateTime=androidDateTime.replace(AmPm, "");
         }
         textView.setText(androidDateTime.concat(AmPm));
+    }
+
+    @BindingAdapter(value={"textDrawable", "textString"})
+    public static void setSpannableString(@NonNull TextView textView, Drawable drawable, String text) {
+        SpannableString spannableString = new SpannableString(text);
+        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        ImageSpan span = new ImageSpan(drawable, ImageSpan.ALIGN_BOTTOM);
+        spannableString.setSpan(span, spannableString.toString().indexOf("@"),  spannableString.toString().indexOf("@")+1, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+        textView.setText(spannableString);
     }
 }

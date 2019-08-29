@@ -636,6 +636,12 @@
     <!-- This string is displayed as the title of the Bookmarks List, which contains the user's bookmarked websites. -->
     <string name="bookmarks_title">Bookmarks</string>
 
+    <!-- This string is displayed as the title of the Bookmarks List when the bookmarks list is empty. -->
+    <string name="bookmarks_empty">Your Bookmarks List is Empty</string>
+
+    <!-- This string is displayed under the bookmarks title in the bookmarks list. -->
+    <string name="bookmarks_description">Click the @ icon when you’re on a page to add it to your bookmarks.</string>
+
     <!-- This string is displayed in the middle of the Bookmarks List while the bookmarks are being loaded. -->
     <string name="bookmarks_loading">Loading Bookmarks</string>
 
@@ -643,6 +649,10 @@
          over an icon representing 'Remove Bookmark' for an individual bookmark
          item listed in the Bookmarks List. -->
     <string name="bookmarks_remove">Remove Bookmark</string>
+
+    <!-- This string is displayed in a tooltip that appears in the tray bar on top of the
+         bookmarks tray button then a new item is bookmarked. -->
+    <string name="bookmarks_saved_notification">Saved to Bookmarks!</string>
 
     <!-- This string is displayed in a tooltip that appears when a user hovers
          over an icon representing 'Edit This Bookmark' for an individual bookmark
@@ -665,6 +675,9 @@
 
     <!-- This string is displayed as the title of the history list, which contains the user's visited websites. -->
     <string name="history_title">History</string>
+
+    <!-- This string is displayed as the title of the history list when the history is empty. -->
+    <string name="history_empty">Your History is Empty</string>
 
     <!-- This string is displayed under the history title in the history list. -->
     <string name="history_description">You can access your browsing history here</string>

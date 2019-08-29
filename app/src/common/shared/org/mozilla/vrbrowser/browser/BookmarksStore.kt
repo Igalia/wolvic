@@ -21,6 +21,7 @@ class BookmarksStore constructor(val context: Context) {
 
     interface BookmarkListener {
         fun onBookmarksUpdated()
+        fun onBookmarkAdded()
     }
 
     fun addListener(aListener: BookmarkListener) {
@@ -44,6 +45,7 @@ class BookmarksStore constructor(val context: Context) {
     fun addBookmark(aURL: String, aTitle: String) = GlobalScope.future {
         storage.addItem(BookmarkRoot.Mobile.id, aURL, aTitle, null)
         notifyListeners()
+        notifyAddedListeners()
     }
 
     fun deleteBookmarkByURL(aURL: String) = GlobalScope.future {
@@ -85,6 +87,17 @@ class BookmarksStore constructor(val context: Context) {
             Handler(Looper.getMainLooper()).post {
                 for (listener in listenersCopy) {
                     listener.onBookmarksUpdated()
+                }
+            }
+        }
+    }
+
+    private fun notifyAddedListeners() {
+        if (listeners.size > 0) {
+            val listenersCopy = ArrayList(listeners)
+            Handler(Looper.getMainLooper()).post {
+                for (listener in listenersCopy) {
+                    listener.onBookmarkAdded()
                 }
             }
         }

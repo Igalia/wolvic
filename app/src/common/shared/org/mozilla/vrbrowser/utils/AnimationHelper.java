@@ -1,6 +1,7 @@
 package org.mozilla.vrbrowser.utils;
 
 import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.util.Log;
 import android.view.View;
@@ -9,6 +10,10 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
+
+import androidx.annotation.NonNull;
+
+import org.mozilla.gecko.util.ThreadUtils;
 
 public class AnimationHelper {
     public static final long FADE_ANIMATION_DURATION = 150;
@@ -109,5 +114,31 @@ public class AnimationHelper {
             }
         });
         animation.start();
+    }
+
+    public static void scaleIn(@NonNull View aView, long duration, long delay, final Runnable aCallback) {
+        aView.setScaleX(0);
+        aView.setScaleY(0);
+        aView.animate().setStartDelay(delay).scaleX(1f).scaleY(1f).setDuration(duration).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                if (aCallback != null)
+                    ThreadUtils.postToUiThread(aCallback);
+            }
+        }).setUpdateListener(animation -> aView.invalidate());
+    }
+
+    public static void scaleOut(@NonNull View aView, long duration, long delay, final Runnable aCallback) {
+        aView.setScaleX(1);
+        aView.setScaleY(1);
+        aView.animate().setStartDelay(delay).scaleX(0f).scaleY(0f).setDuration(duration).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                if (aCallback != null)
+                    ThreadUtils.postToUiThread(aCallback);
+            }
+        }).setUpdateListener(animation -> aView.invalidate());
     }
 }

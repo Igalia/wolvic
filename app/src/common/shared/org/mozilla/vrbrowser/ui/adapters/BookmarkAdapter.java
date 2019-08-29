@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.databinding.BookmarkItemBinding;
-import org.mozilla.vrbrowser.ui.callbacks.BookmarkClickCallback;
+import org.mozilla.vrbrowser.ui.callbacks.BookmarkItemCallback;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.utils.AnimationHelper;
 
@@ -39,13 +39,13 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
     private int mIconNormalColor;
 
     @Nullable
-    private final BookmarkClickCallback mBookmarkClickCallback;
+    private final BookmarkItemCallback mBookmarkItemCallback;
 
-    public BookmarkAdapter(@Nullable BookmarkClickCallback clickCallback, Context aContext) {
-        mBookmarkClickCallback = clickCallback;
+    public BookmarkAdapter(@Nullable BookmarkItemCallback clickCallback, Context aContext) {
+        mBookmarkItemCallback = clickCallback;
 
-        mMinPadding = WidgetPlacement.pixelDimension(aContext, R.dimen.tray_icon_padding_min);
-        mMaxPadding = WidgetPlacement.pixelDimension(aContext, R.dimen.tray_icon_padding_max);
+        mMinPadding = WidgetPlacement.pixelDimension(aContext, R.dimen.library_icon_padding_min);
+        mMaxPadding = WidgetPlacement.pixelDimension(aContext, R.dimen.library_icon_padding_max);
 
         mIconColorHover = aContext.getResources().getColor(R.color.white, aContext.getTheme());
         mIconNormalColor = aContext.getResources().getColor(R.color.rhino, aContext.getTheme());
@@ -102,19 +102,66 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
         return mBookmarkList != null ? mBookmarkList.size() : 0;
     }
 
+    public int getItemPosition(String id) {
+        for (int position=0; position<mBookmarkList.size(); position++)
+            if (mBookmarkList.get(position).getGuid() == id)
+                return position;
+        return 0;
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public BookmarkViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         BookmarkItemBinding binding = DataBindingUtil
                 .inflate(LayoutInflater.from(parent.getContext()), R.layout.bookmark_item,
                         parent, false);
-        binding.setCallback(mBookmarkClickCallback);
+        binding.setCallback(mBookmarkItemCallback);
+        binding.setIsHovered(false);
+        binding.layout.setOnHoverListener((view, motionEvent) -> {
+            int ev = motionEvent.getActionMasked();
+            switch (ev) {
+                case MotionEvent.ACTION_HOVER_ENTER:
+                    binding.setIsHovered(true);
+                    return false;
+
+                case MotionEvent.ACTION_HOVER_EXIT:
+                    binding.setIsHovered(false);
+                    return false;
+            }
+
+            return false;
+        });
+        binding.layout.setOnTouchListener((view, motionEvent) -> {
+            int ev = motionEvent.getActionMasked();
+            switch (ev) {
+                case MotionEvent.ACTION_UP:
+                    return false;
+
+                case MotionEvent.ACTION_DOWN:
+                    binding.setIsHovered(true);
+                    return false;
+            }
+            return false;
+        });
+        binding.more.setOnHoverListener(mIconHoverListener);
+        binding.more.setOnTouchListener((view, motionEvent) -> {
+            int ev = motionEvent.getActionMasked();
+            switch (ev) {
+                case MotionEvent.ACTION_UP:
+                    mBookmarkItemCallback.onMore(view, binding.getItem());
+                    return true;
+
+                case MotionEvent.ACTION_DOWN:
+                    return true;
+            }
+            return false;
+        });
         binding.trash.setOnHoverListener(mIconHoverListener);
         binding.trash.setOnTouchListener((view, motionEvent) -> {
             int ev = motionEvent.getActionMasked();
             switch (ev) {
                 case MotionEvent.ACTION_UP:
-                    mBookmarkClickCallback.onDelete(binding.getBookmark());
+                    mBookmarkItemCallback.onDelete(view, binding.getItem());
                     return true;
 
                 case MotionEvent.ACTION_DOWN:
@@ -127,7 +174,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
 
     @Override
     public void onBindViewHolder(@NonNull BookmarkViewHolder holder, int position) {
-        holder.binding.setBookmark(mBookmarkList.get(position));
+        holder.binding.setItem(mBookmarkList.get(position));
         holder.binding.executePendingBindings();
     }
 
