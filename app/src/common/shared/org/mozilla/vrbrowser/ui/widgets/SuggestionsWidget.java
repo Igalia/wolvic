@@ -23,13 +23,14 @@ import androidx.annotation.NonNull;
 import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
+import org.mozilla.vrbrowser.ui.views.CustomListView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate.FocusChangeListener {
 
-    private ListView mList;
+    private CustomListView mList;
     private SuggestionsAdapter mAdapter;
     private Animation mScaleUpAnimation;
     private Animation mScaleDownAnimation;

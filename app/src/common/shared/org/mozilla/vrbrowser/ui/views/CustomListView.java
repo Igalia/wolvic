@@ -45,18 +45,18 @@ public class CustomListView extends ListView {
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
 
-        boolean scrollVisible = false;
+        boolean fits = getCount() == 0;
 
-        if (getChildCount() > 0) {
-            View first = getChildAt(0);
-            View last = getChildAt(getChildCount() - 1);
-            if (first.getTop() < 0 || last.getBottom() > getHeight()) {
-                scrollVisible = true;
-            }
+        // Check if all the items fit on the ListView
+        int last = getLastVisiblePosition();
+        int first = getFirstVisiblePosition();
+        if (!fits && first == 0 && last == getCount() - 1) {
+            fits = getChildAt(first).getTop() >= 0 && getChildAt(last).getBottom() <= getHeight();
         }
 
-        setVerticalScrollBarEnabled(scrollVisible);
-        setFastScrollAlwaysVisible(scrollVisible);
+        // Hide scrollbar is all item fit.
+        setVerticalScrollBarEnabled(!fits);
+        setFastScrollAlwaysVisible(!fits);
     }
 
 
