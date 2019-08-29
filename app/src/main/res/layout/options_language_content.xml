@@ -42,9 +42,6 @@
                     android:layout_height="wrap_content"
                     android:paddingBottom="5dp"
                     style="@style/settingsText"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-                    android:layout_toStartOf="@+id/button"
                     android:gravity="center_vertical"
                     android:text="@string/language_options_preferred_languages"
                     tools:text="@string/language_options_preferred_languages" />
@@ -69,9 +66,6 @@
                     android:layout_height="wrap_content"
                     android:paddingBottom="5dp"
                     style="@style/settingsText"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-                    android:layout_toStartOf="@+id/button"
                     android:gravity="center_vertical"
                     android:text="@string/language_options_available_languages"
                     tools:text="@string/language_options_available_languages" />
