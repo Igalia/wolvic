@@ -191,13 +191,17 @@ public abstract class UIWidget extends FrameLayout implements Widget {
         mWidgetPlacement.rotation = aRotation;
     }
 
-    @Override
-    public void releaseWidget() {
+    private void releaseRenderer() {
         if (mRenderer != null) {
             mRenderer.release();
             mRenderer = null;
         }
         mTexture = null;
+    }
+
+    @Override
+    public void releaseWidget() {
+        releaseRenderer();
         mWidgetManager = null;
     }
 
@@ -327,7 +331,7 @@ public abstract class UIWidget extends FrameLayout implements Widget {
             mWidgetPlacement.visible = false;
             if (aHideFlags == REMOVE_WIDGET) {
                 mWidgetManager.removeWidget(this);
-
+                releaseRenderer();
             } else {
                 mWidgetManager.updateWidget(this);
             }
