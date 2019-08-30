@@ -246,6 +246,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mBookmarksView.onDestroy();
         mHistoryView.onDestroy();
         SessionStore.get().destroySessionStack(mWindowId);
+        if (mTopBar != null) {
+            mWidgetManager.removeWidget(mTopBar);
+        }
+        if (mTitleBar != null) {
+            mWidgetManager.removeWidget(mTitleBar);
+        }
     }
 
     public void loadHomeIfNotRestored() {
@@ -783,15 +789,26 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mSessionStack.removeProgressListener(this);
         mSessionStack.setHistoryDelegate(null);
         GeckoSession session = mSessionStack.getSession(mSessionId);
-        if (session == null) {
-            return;
-        }
         if (mDisplay != null) {
             mDisplay.surfaceDestroyed();
-            session.releaseDisplay(mDisplay);
+            if (session != null) {
+                session.releaseDisplay(mDisplay);
+            }
             mDisplay = null;
         }
-        session.getTextInput().setView(null);
+        if (session != null) {
+            session.getTextInput().setView(null);
+        }
+        if (mSurface != null) {
+            mSurface.release();
+            mSurface = null;
+        }
+        if (mTexture != null && mRenderer == null) {
+            // Custom SurfaceTexture used for GeckoView
+            mTexture.release();
+            mTexture = null;
+        }
+        super.releaseWidget();
     }
 
 

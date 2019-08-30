@@ -29,7 +29,8 @@ public class TopBarWidget extends UIWidget implements SessionChangeListener, Wid
     private WindowWidget mAttachedWindow;
     private TopBarWidget.Delegate mDelegate;
     private LinearLayout mMultiWindowControlsContainer;
-    private boolean mVisible;
+    private boolean mVisible = false;
+    private boolean mWidgetAdded = false;
 
     public TopBarWidget(Context aContext) {
         super(aContext);
@@ -171,11 +172,11 @@ public class TopBarWidget extends UIWidget implements SessionChangeListener, Wid
         }
         mVisible = aIsVisible;
         getPlacement().visible = aIsVisible;
-
-        if (aIsVisible) {
+        if (!mWidgetAdded) {
             mWidgetManager.addWidget(this);
+            mWidgetAdded = true;
         } else {
-            mWidgetManager.removeWidget(this);
+            mWidgetManager.updateWidget(this);
         }
     }
 

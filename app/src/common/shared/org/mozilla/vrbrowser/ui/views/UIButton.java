@@ -233,7 +233,9 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
                 return;
             }
 
-            mTooltipView = new TooltipWidget(getContext());
+            if (mTooltipView == null) {
+                mTooltipView = new TooltipWidget(getContext());
+            }
             mTooltipView.setCurvedMode(mCurvedTooltip);
             mTooltipView.setText(getTooltip());
 

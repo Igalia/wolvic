@@ -37,8 +37,9 @@ public class TitleBarWidget extends UIWidget {
 
     private TitleBarBinding mBinding;
     private WindowWidget mAttachedWindow;
-    private boolean mVisible;
+    private boolean mVisible = false;
     private Media mMedia;
+    private boolean mWidgetAdded = false;
 
     public TitleBarWidget(Context aContext) {
         super(aContext);
@@ -123,11 +124,11 @@ public class TitleBarWidget extends UIWidget {
         }
         mVisible = aIsVisible;
         getPlacement().visible = aIsVisible;
-
-        if (aIsVisible) {
+        if (!mWidgetAdded) {
             mWidgetManager.addWidget(this);
+            mWidgetAdded = true;
         } else {
-            mWidgetManager.removeWidget(this);
+            mWidgetManager.updateWidget(this);
         }
     }
 
