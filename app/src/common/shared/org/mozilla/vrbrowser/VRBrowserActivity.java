@@ -270,6 +270,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             public void onWindowsMoved() {
                 updateWidget(mTray);
             }
+
+            @Override
+            public void onWindowClosed() {
+                updateWidget(mTray);
+            }
         });
 
         // Create Browser navigation widget
