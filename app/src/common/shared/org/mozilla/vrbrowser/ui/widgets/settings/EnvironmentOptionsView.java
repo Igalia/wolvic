@@ -56,6 +56,14 @@ class EnvironmentOptionsView extends SettingsView {
     }
 
     @Override
+    public void onShown() {
+        super.onShown();
+
+        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_NO_DIM_BRIGHTNESS);
+    }
+
+
+    @Override
     public void onHidden() {
         mWidgetManager.popWorldBrightness(this);
     }
