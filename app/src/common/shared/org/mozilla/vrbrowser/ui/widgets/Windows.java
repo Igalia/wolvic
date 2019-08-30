@@ -364,6 +364,21 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
     public void onPause() {
         saveState();
+        for (WindowWidget window: mRegularWindows) {
+            window.onPause();
+        }
+        for (WindowWidget window: mPrivateWindows) {
+            window.onPause();
+        }
+    }
+
+    public void onResume() {
+        for (WindowWidget window: mRegularWindows) {
+            window.onResume();
+        }
+        for (WindowWidget window: mPrivateWindows) {
+            window.onResume();
+        }
     }
 
     public void onDestroy() {

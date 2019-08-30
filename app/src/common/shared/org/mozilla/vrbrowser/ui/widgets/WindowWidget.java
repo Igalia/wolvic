@@ -239,6 +239,20 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        mSessionStack.setActive(false);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (isVisible()) {
+            mSessionStack.setActive(true);
+        }
+    }
+
     public void close() {
         TelemetryWrapper.closeWindowEvent(mWindowId);
 
@@ -837,6 +851,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         if (mWidgetPlacement.visible == aVisible) {
             return;
         }
+        mSessionStack.setActive(aVisible);
         mWidgetPlacement.visible = aVisible;
         if (!aVisible) {
             if (mIsBookmarksVisible || mIsHistoryVisible) {
