@@ -89,6 +89,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         void onFocusedWindowChanged(@NonNull WindowWidget aFocusedWindow, @Nullable WindowWidget aPrevFocusedWindow);
         void onWindowBorderChanged(@NonNull WindowWidget aChangeWindow);
         void onWindowsMoved();
+        void onWindowClosed();
     }
 
     public Windows(Context aContext) {
@@ -276,6 +277,9 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         }
 
         updateViews();
+        if (mDelegate != null) {
+            mDelegate.onWindowClosed();
+        }
     }
 
     public void moveWindowRight(@NonNull WindowWidget aWindow) {
