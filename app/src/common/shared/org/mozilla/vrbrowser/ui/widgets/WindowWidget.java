@@ -248,7 +248,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     @Override
     public void onResume() {
         super.onResume();
-        if (isVisible()) {
+        if (isVisible() || mIsInVRVideoMode) {
             mSessionStack.setActive(true);
         }
     }
@@ -851,7 +851,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         if (mWidgetPlacement.visible == aVisible) {
             return;
         }
-        mSessionStack.setActive(aVisible);
+        if (!mIsInVRVideoMode) {
+            mSessionStack.setActive(aVisible);
+        }
         mWidgetPlacement.visible = aVisible;
         if (!aVisible) {
             if (mIsBookmarksVisible || mIsHistoryVisible) {
