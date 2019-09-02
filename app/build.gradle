@@ -195,6 +195,18 @@ android {
             }
         }
 
+        nreal {
+            dimension "platform"
+            externalNativeBuild {
+                cmake {
+                    cppFlags " -I" + file("${project.rootDir}/third_party/nreal/include").absolutePath +
+                            " -I" + file("${project.rootDir}/app/src/nreal/cpp").absolutePath +
+                            " -DNREALVR"
+                    arguments "-DVR_SDK_LIB=nreal-lib", "-DNREALVR=ON"
+                }
+            }
+        }
+
         noapi {
             dimension "platform"
             externalNativeBuild {
@@ -258,6 +270,8 @@ android {
                 'wavevrStoreArmRelease',
                 'wavevrStoreArm64Debug',
                 'wavevrStoreArm64Release',
+                'nrealArmDebug',
+                'nrealArmRelease',
                 'noapiArmDebug',
                 'noapiArmRelease',
                 'noapiArm64Debug',
@@ -390,6 +404,13 @@ android {
             ]
             jniLibs.srcDirs = ["${project.rootDir}/third_party/wavesdk/build/wvr_client/jni"]
             manifest.srcFile "src/wavevr/AndroidManifest.xml"
+        }
+
+        nreal {
+            java.srcDirs = [
+                    'src/nreal/java'
+            ]
+            jniLibs.srcDirs = ["${project.rootDir}/third_party/nreal/libs"]
         }
 
         noapi {

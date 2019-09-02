@@ -16,6 +16,8 @@
 #include <vrb/RunnableQueue.h>
 #if defined(OCULUSVR)
 #include "DeviceDelegateOculusVR.h"
+#elif defined(NREALVR)
+#include "DeviceDelegateNreal.h"
 #elif defined(SNAPDRAGONVR)
 #include "DeviceDelegateSVR.h"
 #endif
@@ -33,6 +35,9 @@ using namespace crow;
 #if defined(OCULUSVR)
 typedef DeviceDelegateOculusVR PlatformDeviceDelegate;
 typedef DeviceDelegateOculusVRPtr PlatformDeviceDelegatePtr;
+#elif defined(NREALVR)
+typedef DeviceDelegateNreal PlatformDeviceDelegate;
+typedef DeviceDelegateNrealPtr PlatformDeviceDelegatePtr;
 #elif defined(SNAPDRAGONVR)
 typedef DeviceDelegateSVR PlatformDeviceDelegate;
 typedef DeviceDelegateSVRPtr PlatformDeviceDelegatePtr;

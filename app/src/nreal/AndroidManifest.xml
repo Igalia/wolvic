@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.mozilla.vrbrowser">
+    <!-- Make accelerometer and gyroscope hard requirements for good head tracking. -->
+    <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true"/>
+    <uses-feature android:name="android.hardware.sensor.gyroscope" android:required="true"/>
+
+    <application>
+        <meta-data android:name="com.osterhoutgroup.display_mode" android:value="extend"/>
+        <activity android:name=".VRBrowserActivity" android:screenOrientation="landscape">
+            <meta-data android:name="android.app.lib_name" android:value="native-lib" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

@@ -108,6 +108,14 @@ target_sources(
     )
 endif()
 
+if(NREALVR)
+    target_sources(
+    native-lib
+    PUBLIC
+    src/nreal/cpp/DeviceDelegateNreal.cpp
+    )
+endif()
+
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
 # default, you only need to specify the name of the public NDK library
@@ -141,6 +149,10 @@ set_target_properties(svr-lib PROPERTIES IMPORTED_LOCATION
 add_library(wavevr-lib SHARED IMPORTED)
 set_target_properties(wavevr-lib PROPERTIES IMPORTED_LOCATION
                       ${CMAKE_SOURCE_DIR}/../third_party/wavesdk/build/wvr_client/jni/${ANDROID_ABI}/libwvr_api.so )
+
+add_library(nreal-lib SHARED IMPORTED)
+set_target_properties(nreal-lib PROPERTIES IMPORTED_LOCATION
+        ${CMAKE_SOURCE_DIR}/../third_party/nreal/libs/${ANDROID_ABI}/libnr_api.so )
 
 
 # Specifies libraries CMake should link to your target library. You
