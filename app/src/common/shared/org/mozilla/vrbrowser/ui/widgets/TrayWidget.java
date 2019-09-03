@@ -280,7 +280,7 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Windo
 
     @Override
     public void hide(@HideFlags int aHideFlags) {
-        ThreadUtils.postToUiThread(hideBookmarkNotification);
+        hideBookmarkNotification.run();
 
         if (mWidgetPlacement.visible) {
             mWidgetPlacement.visible = false;
@@ -294,7 +294,7 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Windo
 
     @Override
     public void detachFromWindow() {
-        ThreadUtils.postToUiThread(hideBookmarkNotification);
+        hideBookmarkNotification.run();
         
         if (mSessionStack != null) {
             mSessionStack.removeSessionChangeListener(this);
@@ -503,8 +503,9 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Windo
         public void run() {
             if (mLibraryNotification != null) {
                 mLibraryNotification.hide(UIWidget.REMOVE_WIDGET);
+                mLibraryNotification = null;
+                mBookmarksButton.setNotificationMode(false);
             }
-            mBookmarksButton.setNotificationMode(false);
         }
     };
 
