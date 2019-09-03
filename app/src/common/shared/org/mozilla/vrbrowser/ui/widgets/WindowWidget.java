@@ -551,6 +551,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             updateTitleBar();
         }
 
+        if (mContextMenu != null) {
+            mContextMenu.hide(REMOVE_WIDGET);
+        }
+
         TelemetryWrapper.activePlacementEvent(mWindowPlacement.getValue(), mActive);
         updateBorder();
     }
