@@ -392,6 +392,9 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Windo
         if (mTrayVisible != aVisible) {
             mTrayVisible = aVisible;
             updateVisibility();
+
+        } else {
+            mWidgetManager.updateWidget(this);
         }
     }
 

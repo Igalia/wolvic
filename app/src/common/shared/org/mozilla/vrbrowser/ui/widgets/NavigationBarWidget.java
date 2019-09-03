@@ -492,6 +492,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     private void exitFullScreenMode() {
         if (!mIsInFullScreenMode) {
+            mWidgetManager.setTrayVisible(true);
             return;
         }
 
