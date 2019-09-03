@@ -3,12 +3,10 @@
 
     <LinearLayout
         android:id="@+id/resizeModeContainer"
-        style="?attr/navigationBarStyle"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:orientation="horizontal"
-        android:padding="0dp"
         android:visibility="gone">
 
         <org.mozilla.vrbrowser.ui.views.UITextButton
