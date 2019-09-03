@@ -140,6 +140,10 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
                 case MotionEvent.ACTION_DOWN:
                     binding.setIsHovered(true);
                     return false;
+
+                case MotionEvent.ACTION_CANCEL:
+                    binding.setIsHovered(false);
+                    return false;
             }
             return false;
         });

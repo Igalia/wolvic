@@ -140,6 +140,10 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryI
                 case MotionEvent.ACTION_DOWN:
                     binding.setIsHovered(true);
                     return false;
+
+                case MotionEvent.ACTION_CANCEL:
+                    binding.setIsHovered(false);
+                    return false;
             }
             return false;
         });
