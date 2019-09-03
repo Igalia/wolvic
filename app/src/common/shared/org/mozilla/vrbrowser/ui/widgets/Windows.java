@@ -68,6 +68,8 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     public static final int MAX_WINDOWS = 3;
     private WindowWidget mFullscreenWindow;
     private WindowPlacement mPrevWindowPlacement;
+    private WindowPlacement mRegularWindowPlacement;
+    private WindowPlacement mPrivateWindowPlacement;
     private boolean mStoredCurvedMode = false;
     private boolean mForcedCurvedMode = false;
 
@@ -97,6 +99,9 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         mWidgetManager = (WidgetManagerDelegate) aContext;
         mRegularWindows = new ArrayList<>();
         mPrivateWindows = new ArrayList<>();
+
+        mRegularWindowPlacement = WindowPlacement.FRONT;
+        mPrivateWindowPlacement = WindowPlacement.FRONT;
 
         mStoredCurvedMode = SettingsStore.getInstance(mContext).getCylinderDensity() > 0.0f;
 
@@ -402,6 +407,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         }
         mPrivateMode = true;
         updateCurvedMode(true);
+        mRegularWindowPlacement = mFocusedWindow.getWindowPlacement();
         for (WindowWidget window: mRegularWindows) {
             setWindowVisible(window, false);
         }
@@ -416,7 +422,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             }
 
         } else {
-            focusWindow(getFrontWindow());
+            focusWindow(getWindowWithPlacement(mPrivateWindowPlacement));
         }
         updateViews();
         mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
@@ -428,13 +434,14 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         }
         mPrivateMode = false;
         updateCurvedMode(true);
+        mPrivateWindowPlacement = mFocusedWindow.getWindowPlacement();
         for (WindowWidget window: mRegularWindows) {
             setWindowVisible(window, true);
         }
         for (WindowWidget window: mPrivateWindows) {
             setWindowVisible(window, false);
         }
-        focusWindow(getFrontWindow());
+        focusWindow(getWindowWithPlacement(mRegularWindowPlacement));
         updateViews();
         mWidgetManager.popWorldBrightness(this);
     }
@@ -866,6 +873,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         }
     }
 
+    @Nullable
     private WindowWidget getWindowWithSession(GeckoSession aSession) {
         for (WindowWidget window: getCurrentWindows()) {
             if (window.getSessionStack().containsSession(aSession)) {
