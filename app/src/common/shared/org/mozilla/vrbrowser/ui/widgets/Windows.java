@@ -407,7 +407,12 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         }
         mPrivateMode = true;
         updateCurvedMode(true);
-        mRegularWindowPlacement = mFocusedWindow.getWindowPlacement();
+        if (mFocusedWindow != null) {
+            mRegularWindowPlacement = mFocusedWindow.getWindowPlacement();
+
+        } else {
+            mRegularWindowPlacement = WindowPlacement.FRONT;
+        }
         for (WindowWidget window: mRegularWindows) {
             setWindowVisible(window, false);
         }
@@ -434,7 +439,12 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         }
         mPrivateMode = false;
         updateCurvedMode(true);
-        mPrivateWindowPlacement = mFocusedWindow.getWindowPlacement();
+        if (mFocusedWindow != null) {
+            mPrivateWindowPlacement = mFocusedWindow.getWindowPlacement();
+
+        } else {
+            mPrivateWindowPlacement = WindowPlacement.FRONT;
+        }
         for (WindowWidget window: mRegularWindows) {
             setWindowVisible(window, true);
         }
