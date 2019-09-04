@@ -72,6 +72,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     private WindowPlacement mPrivateWindowPlacement;
     private boolean mStoredCurvedMode = false;
     private boolean mForcedCurvedMode = false;
+    private boolean mIsPaused = false;
 
     public enum WindowPlacement{
         FRONT(0),
@@ -368,6 +369,8 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     }
 
     public void onPause() {
+        mIsPaused = true;
+
         saveState();
         for (WindowWidget window: mRegularWindows) {
             window.onPause();
@@ -378,6 +381,8 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     }
 
     public void onResume() {
+        mIsPaused = false;
+
         for (WindowWidget window: mRegularWindows) {
             window.onResume();
         }
@@ -400,6 +405,43 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         return mPrivateMode;
     }
 
+    public void enterImmersiveMode() {
+        if (!isInPrivateMode()) {
+            for (WindowWidget window: mRegularWindows) {
+                if (window != mFocusedWindow) {
+                    window.onPause();
+                }
+            }
+
+        } else {
+            for (WindowWidget window: mPrivateWindows) {
+                if (window != mFocusedWindow) {
+                    window.onPause();
+                }
+            }
+        }
+    }
+
+    public void exitImmersiveMode() {
+        if (mIsPaused) {
+            return;
+        }
+
+        if (!isInPrivateMode()) {
+            for (WindowWidget window: mRegularWindows) {
+                if (window != mFocusedWindow) {
+                    window.onResume();
+                }
+            }
+
+        } else {
+            for (WindowWidget window: mPrivateWindows) {
+                if (window != mFocusedWindow) {
+                    window.onResume();
+                }
+            }
+        }
+    }
 
     public void enterPrivateMode() {
         if (mPrivateMode) {
