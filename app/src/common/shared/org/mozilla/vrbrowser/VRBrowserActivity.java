@@ -395,8 +395,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         }
 
         // Remove all widget listeners
-        mTray.removeListeners(mWindows);
-        mTray.onDestroy();
         mWindows.onDestroy();
 
         SessionStore.get().onDestroy();
@@ -1209,7 +1207,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public void setTrayVisible(boolean visible) {
-        mTray.setTrayVisible(visible);
+        if (mTray != null && !mTray.isReleased()) {
+            mTray.setTrayVisible(visible);
+        }
     }
 
     @Override

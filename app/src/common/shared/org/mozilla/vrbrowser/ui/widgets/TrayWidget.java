@@ -218,10 +218,6 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Windo
         mTrayListeners.removeAll(Arrays.asList(listeners));
     }
 
-    public void onDestroy() {
-        mTrayListeners.clear();
-    }
-
     private void notifyBookmarksClicked() {
         mTrayListeners.forEach(TrayListener::onBookmarksClicked);
     }
@@ -266,6 +262,7 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Windo
         }
 
         mWidgetManager.removeUpdateListener(this);
+        mTrayListeners.clear();
 
         super.releaseWidget();
     }

@@ -49,6 +49,7 @@ public abstract class UIWidget extends FrameLayout implements Widget {
     protected int mBorderWidth;
     private Runnable mFirstDrawCallback;
     protected boolean mResizing = false;
+    protected boolean mReleased = false;
 
     public UIWidget(Context aContext) {
         super(aContext);
@@ -203,6 +204,11 @@ public abstract class UIWidget extends FrameLayout implements Widget {
     public void releaseWidget() {
         releaseRenderer();
         mWidgetManager = null;
+        mReleased = true;
+    }
+
+    public boolean isReleased() {
+        return mReleased;
     }
 
     @Override
