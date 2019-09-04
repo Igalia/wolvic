@@ -1454,7 +1454,7 @@ DeviceDelegateOculusVR::EndFrame(const bool aDiscard) {
 
   // Draw back layers
   for (const OculusLayerPtr& layer: m.uiLayers) {
-    if (!layer->GetDrawInFront() && layer->IsDrawRequested() && layerCount < ovrMaxLayerCount) {
+    if (!layer->GetDrawInFront() && layer->IsDrawRequested() && (layerCount < ovrMaxLayerCount - 1)) {
       layer->Update(m.predictedTracking);
       layers[layerCount++] = layer->Header();
       layer->ClearRequestDraw();

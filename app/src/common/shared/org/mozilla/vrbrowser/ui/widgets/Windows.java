@@ -487,11 +487,11 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         } else {
             mPrivateWindowPlacement = WindowPlacement.FRONT;
         }
-        for (WindowWidget window: mRegularWindows) {
-            setWindowVisible(window, true);
-        }
         for (WindowWidget window: mPrivateWindows) {
             setWindowVisible(window, false);
+        }
+        for (WindowWidget window: mRegularWindows) {
+            setWindowVisible(window, true);
         }
         focusWindow(getWindowWithPlacement(mRegularWindowPlacement));
         updateViews();
