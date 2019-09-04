@@ -5,6 +5,7 @@
 
 package org.mozilla.vrbrowser.ui.views;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -53,6 +54,7 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
         initialize(aContext);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void initialize(Context aContext) {
         mAudio = AudioEngine.fromContext(aContext);
 
@@ -115,7 +117,8 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
             boolean isLastVisibleItem = false;
             if (mBinding.bookmarksList.getLayoutManager() instanceof LinearLayoutManager) {
                 LinearLayoutManager layoutManager = (LinearLayoutManager) mBinding.bookmarksList.getLayoutManager();
-                if (rowPosition == layoutManager.findLastVisibleItemPosition()) {
+                int lastVisibleItem = layoutManager.findLastCompletelyVisibleItemPosition();
+                if (rowPosition == layoutManager.findLastVisibleItemPosition() && rowPosition != lastVisibleItem) {
                     isLastVisibleItem = true;
                 }
             }

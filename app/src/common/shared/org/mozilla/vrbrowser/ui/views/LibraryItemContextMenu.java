@@ -79,8 +79,8 @@ public class LibraryItemContextMenu extends FrameLayout {
     }
 
     public void setItem(@NonNull LibraryContextMenuItem item) {
+        mBinding.setItem(item);
         SessionStore.get().getBookmarkStore().isBookmarked(item.getUrl()).thenAccept((isBookmarked -> {
-            mBinding.setItem(item);
             mBinding.setIsBookmarked(isBookmarked);
             mBinding.bookmark.setText(isBookmarked ? R.string.history_context_remove_bookmarks : R.string.history_context_add_bookmarks);
             invalidate();
@@ -96,6 +96,10 @@ public class LibraryItemContextMenu extends FrameLayout {
     }
 
     public int getMenuHeight() {
+        if (mBinding.getItem() == null) {
+            throw new IllegalStateException("setItem must be called before getMenuHeight");
+
+        }
         switch (mBinding.getItem().getType()) {
             case BOOKMARKS:
                 mBinding.bookmarkLayout.setVisibility(GONE);

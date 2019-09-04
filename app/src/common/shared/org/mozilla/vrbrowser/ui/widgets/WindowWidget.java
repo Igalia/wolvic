@@ -1148,6 +1148,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         offsetDescendantRectToMyCoords(view, offsetViewBounds);
 
         mLibraryItemContextMenu = new LibraryItemContextMenuWidget(getContext());
+        mLibraryItemContextMenu.setItem(item);
         mLibraryItemContextMenu.mWidgetPlacement.parentHandle = getHandle();
 
         PointF position;
@@ -1165,7 +1166,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
 
         mLibraryItemContextMenu.setPosition(position);
-        mLibraryItemContextMenu.setItem(item);
         mLibraryItemContextMenu.setHistoryContextMenuItemCallback((new LibraryItemContextMenuClickCallback() {
             @Override
             public void onOpenInNewWindowClick(LibraryItemContextMenu.LibraryContextMenuItem item) {

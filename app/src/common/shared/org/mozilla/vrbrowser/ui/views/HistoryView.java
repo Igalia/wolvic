@@ -121,7 +121,8 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
             boolean isLastVisibleItem = false;
             if (mBinding.historyList.getLayoutManager() instanceof LinearLayoutManager) {
                 LinearLayoutManager layoutManager = (LinearLayoutManager) mBinding.historyList.getLayoutManager();
-                if (rowPosition == layoutManager.findLastVisibleItemPosition()) {
+                int lastVisibleItem = layoutManager.findLastCompletelyVisibleItemPosition();
+                if (rowPosition == layoutManager.findLastVisibleItemPosition() && rowPosition != lastVisibleItem) {
                     isLastVisibleItem = true;
                 }
             }

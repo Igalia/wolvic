@@ -104,7 +104,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
 
     public int getItemPosition(String id) {
         for (int position=0; position<mBookmarkList.size(); position++)
-            if (mBookmarkList.get(position).getGuid() == id)
+            if (mBookmarkList.get(position).getGuid().equalsIgnoreCase(id))
                 return position;
         return 0;
     }

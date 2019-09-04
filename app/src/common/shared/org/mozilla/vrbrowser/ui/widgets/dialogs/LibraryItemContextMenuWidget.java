@@ -26,7 +26,6 @@ public class LibraryItemContextMenuWidget extends UIWidget implements WidgetMana
     private LibraryItemContextMenu mContextMenu;
     private int mMaxHeight;
     private PointF mTranslation;
-    private int height;
 
     public LibraryItemContextMenuWidget(Context aContext) {
         super(aContext);
