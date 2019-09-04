@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -60,9 +59,6 @@ public class LocaleUtils {
             String languageId = temp.toLanguageTag();
             String displayName = temp.getDisplayName().substring(0, 1).toUpperCase() + temp.getDisplayName().substring(1);
             Language locale = new Language(languageId, displayName + " [" + languageId + "]");
-            if (languageId.equals(currentLocale)) {
-                locale.setDefault(true);
-            }
             mLanguagesCache.put(languageId, locale);
         }
 
@@ -93,14 +89,17 @@ public class LocaleUtils {
         HashMap<String, Language> languages = getAllLanguages();
         List<String> savedLanguages = SettingsStore.getInstance(aContext).getContentLocales();
         List<Language> preferredLanguages = new ArrayList<>();
-        for (String language : savedLanguages) {
-            Language lang = languages.get(language);
-            lang.setPreferred(true);
-            preferredLanguages.add(lang);
-        }
+        if (savedLanguages != null) {
+            for (String language : savedLanguages) {
+                Language lang = languages.get(language);
+                lang.setPreferred(true);
+                preferredLanguages.add(lang);
+            }
 
-        if (!savedLanguages.stream().anyMatch(str -> str.trim().equals(getCurrentLocale()))) {
-            preferredLanguages.add(getCurrentLocaleLanguage());
+        } else {
+            Language currentLanguage = getCurrentLocaleLanguage();
+            currentLanguage.setPreferred(true);
+            preferredLanguages.add(currentLanguage);
         }
 
         return preferredLanguages;

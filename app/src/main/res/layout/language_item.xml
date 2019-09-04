@@ -67,7 +67,7 @@
                 android:contentDescription="Preferred language delete button"
                 android:duplicateParentState="true"
                 android:soundEffectsEnabled="false"
-                android:src="@{language.isDefault ? @drawable/ic_icon_empty : @drawable/ic_icon_language_delete}"
+                android:src="@{@drawable/ic_icon_language_delete}"
                 android:tint="@color/fog"
                 app:srcCompat="@drawable/ic_icon_language_delete"
                 app:visibleGone="@{isPreferred}" />
@@ -95,8 +95,7 @@
                 android:gravity="center_vertical"
                 android:paddingStart="5dp"
                 android:singleLine="true"
-                android:text="@{language.isDefault &amp;&amp; isPreferred ? `(` + @string/language_default + `) ` + language.name : language.name}"
-                app:typeface='@{language.isDefault ? "bold" : "normal"}'
+                android:text="@{language.name}"
                 tool:text="Language Item" />
         </org.mozilla.vrbrowser.ui.views.FadingFrameLayout>
 

@@ -426,7 +426,7 @@ public class SettingsStore {
 
         String json = mPrefs.getString(
                 mContext.getString(R.string.settings_key_content_languages),
-                new JSONArray().toString());
+                null);
 
         try {
             JSONArray jsonArray = new JSONArray(json);
@@ -434,11 +434,11 @@ public class SettingsStore {
                 result.add(jsonArray.getString(i));
             }
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+            return result;
 
-        return result;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public void setContentLocales(List<String> languages) {

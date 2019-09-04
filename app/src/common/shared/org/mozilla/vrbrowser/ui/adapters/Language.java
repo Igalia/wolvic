@@ -6,13 +6,11 @@ public class Language {
         this.id = id;
         this.name = name;
         this.isPreferred = false;
-        this.isDefault = false;
     }
 
     private String name;
     private String id;
     private boolean isPreferred;
-    private boolean isDefault;
 
     public String getId() {
         return this.id;
@@ -28,14 +26,6 @@ public class Language {
 
     public boolean isPreferred() {
         return isPreferred;
-    }
-
-    public void setDefault(boolean isDefault) {
-        this.isDefault = isDefault;
-    }
-
-    public boolean isDefault() {
-        return isDefault;
     }
 
     @Override

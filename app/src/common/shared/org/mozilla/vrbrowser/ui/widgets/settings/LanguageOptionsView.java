@@ -92,8 +92,11 @@ class LanguageOptionsView extends SettingsView {
 
     private void setContentLanguage() {
         List<Language> preferredLanguages = LocaleUtils.getPreferredLanguages(getContext());
-        String text = getContext().getResources().getString(R.string.language_options_content_language, preferredLanguages.get(0).getName());
-        mBinding.contentLanguageButton.setDescription(ViewUtils.getSpannedText(text));
+        String text = "";
+        if (preferredLanguages.size() > 0) {
+            text = preferredLanguages.get(0).getName();
+        }
+        mBinding.contentLanguageButton.setDescription(ViewUtils.getSpannedText(getContext().getResources().getString(R.string.language_options_content_language, text)));
     }
 
     private void setDisplayLanguage() {
