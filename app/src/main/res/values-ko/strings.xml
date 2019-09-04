@@ -120,6 +120,11 @@
     <string name="settings_language">언어</string>
 
     <!-- This string is used to label a text label for selecting the language in the 'Language' dialog window
+         (accessible from the browser's Settings' dialog window). Below this string appears
+         the different options for language settings. -->
+    <string name="settings_language_settings">언어 설정</string>
+
+    <!-- This string is used to label a text label for selecting the language in the 'Language' dialog window
          (accessible from the browser's Settings' dialog window). Below this string appears a list of locales for
          the user to choose as their preferred reading languages for website content. Each locale,
          as `language-tag` strings, is then included in the browser's `Accept-Language` HTTP request
@@ -132,6 +137,40 @@
          Based on the user's selection, the printed language is mapped to its ISO 639-1 code
          (e.g., `Español` is mapped to `es`) when configured in the 'Voice Search' system. -->
     <string name="settings_language_choose_language_voice_search">음성 검색을 위한 귀하의 선호 언어를 선택하십시오</string>
+
+    <!-- This string is used to label a text label that appears in the header of 'Language Settings' ->
+         'Firefox Display Language' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of locales for the user to choose as their preferred display
+         language for the application UI. -->
+    <string name="settings_language_choose_display_language_title">%1$s 표시 언어</string>
+
+    <!-- This string is used to label a text label that appears in the header description of 'Language Settings' ->
+         'Firefox Display Language' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of locales for the user to choose as their preferred display
+         language for the application UI. -->
+    <string name="settings_language_choose_language_display_description">메뉴와 메시지, 알림을 표시하는데 사용할 언어를 선택하십시오.</string>
+
+    <!-- This string is used to label a text label that appears in the header of 'Language Settings' ->
+         'Voice Search Language' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of locales for the user to choose as their preferred voice search
+         language. -->
+    <string name="settings_language_choose_language_voice_search_title">음성 검색 언어</string>
+
+    <!-- This string is used to label a text label that appears in the header description of 'Language Settings' ->
+         'Voice Search Language' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of locales for the user to choose as their preferred voice search
+         language. -->
+    <string name="settings_language_choose_language_voice_search_description">음성 검색을 위한 귀하의 선호 언어를 선택하십시오.</string>
+
+    <!-- This string is used to label a text label that appears in the header of 'Language Settings' ->
+         'Preferred Language for Displaying Websites' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of locales for the user to choose as their preferred languages for web content. -->
+    <string name="settings_language_choose_language_content_title">선호하는 웹 사이트 언어</string>
+
+    <!-- This string is used to label a text label that appears in the header description of 'Language Settings' ->
+         'Preferred Language for Displaying Websites' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of locales for the user to choose as their preferred languages for web content. -->
+    <string name="settings_language_choose_language_content_description">웹 페이지는 때때로 둘 이상의 언어로 제공됩니다. 표시하려는 언어를 선호도순으로 왼쪽에서 선택하십시오.</string>
 
     <!-- This string is used to label a radio button in the 'Settings' Language dialog that, when pressed,
          changes the app and the language of the speech-recognition-based search to 'English (US)'. -->
@@ -194,6 +233,10 @@
          a developer-build version of the app. -->
     <string name="settings_version_developer">개발자 빌드</string>
 
+    <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
+        opens the Firfox Reality support web site in the browser window. -->
+    <string name="settings_help">도움말</string>
+
     <!-- This string is the title of a dialog box shown to the user when a settings
          change requires the application to restart. -->
     <string name="restart_dialog_restart">재시작 필요</string>
@@ -233,8 +276,31 @@
          A dialog should appear with a field labeled with the text, 'Enable Multiprocess'. -->
     <string name="developer_options_multiprocess">멀티 프로세스 활성화</string>
 
+    <!-- This string labels an On/Off switch in the developer options dialog and is used to toggle
+         the performance monitor. The Performance monitor is used to detect pages that cause the
+         browser to run below a target framerate and pauses the page to restore performance.
+    -->
+    <string name="developer_options_performance_monitor">성능 모니터 활성화</string>
+
+    <!-- This string labels an On/Off switch in the developer options dialog and is used to toggle
+         debug logging. Debug logging provides runtime diagnostic information that may be collected
+         to help diagnose and fix problems with the application.
+    -->
+    <string name="developer_options_debug_logging">디버그 로깅 활성화</string>
+
     <!-- The string labels an On/Off switch in the developer options dialog and is used to toggle enabling Servo. -->
     <string name="developer_options_servo">서보 활성화</string>
+
+    <!-- The string labels the description text for the clear cookies and site data button in the
+         privacy options dialog. -->
+    <string name="developer_options_clear_cache_cookies_site_description">쿠키와 사이트 데이터</string>
+
+    <!-- The string labels the description text for the clear cached web content button in the
+         privacy options dialog. -->
+    <string name="developer_options_clear_cache_web_content_description">캐시된 웹 콘텐츠</string>
+
+    <!-- The string labels the button text for the clear cache buttons in the privacy options dialog. -->
+    <string name="developer_options_clear_cache">데이터 삭제</string>
 
     <!-- This string is used to label a numerical-entry field where the user may set a new value to
          use for the display density. -->
@@ -332,6 +398,9 @@
     <!-- This string labels the 'Reset' button that restores the default developer settings values. -->
     <string name="developer_options_reset_button">초기화</string>
 
+    <!-- This string is used to label buttons to enable editing of other options. -->
+    <string name="settings_button_edit">편집</string>
+
     <!-- This string describes the radio buttons used to select the user's background environment
          (seen while not in Immersive Mode). -->
     <string name="developer_options_environments">환경</string>
@@ -374,6 +443,10 @@
          for the home page. -->
     <string name="developer_options_homepage">홈페이지</string>
 
+    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
+     and is used to enable or disable playback of DRM controlled content. -->
+    <string name="security_options_drm_content">DRM 제어 콘텐츠 재생 (&lt;a href=&quot;http://somesite.com/&quot;&gt;자세히 알아보기&lt;/a&gt;)</string>
+
     <!-- This string labels an On/Off switch in the Privacy and Security settings dialog
      and is used to enable or disable tracking protection. -->
     <string name="security_options_tracking_protection">추적 방지</string>
@@ -412,6 +485,10 @@
          "external" storage. Note that on modern systems, "external" is still used in the name
          of this storage even though the storage may not reside on external removable media. -->
     <string name="security_options_permission_storage">외부 저장소 읽기</string>
+
+    <!-- This string is a label above the group of switches that indicates that the switches below
+         relate to Firefox data collection and use. -->
+    <string name="security_options_speech_data_collection_title">%1$s 데이터 수집과 사용</string>
 
     <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'On'. -->
     <string name="on">켜기</string>
@@ -585,6 +662,30 @@
     <!-- This string labels the Reset button that restores the default voice search language settings values. -->
     <string name="language_options_reset">음성 검색 언어 설정 초기화</string>
 
+    <!-- This string labels the Reset button that restores the default display language settings values. -->
+    <string name="display_language_options_reset">표시 언어 초기화</string>
+
+    <!-- This string labels the Reset button that restores the default content language settings values. -->
+    <string name="content_language_options_reset">선호하는 웹 사이트 언어 초기화</string>
+
+    <!-- This string labels the Reset button that restores all language settings values. -->
+    <string name="all_language_options_reset">모든 언어 설정 초기화</string>
+
+    <!-- This string labels the description in the Voice Search Language button in the main language setting dialog. -->
+    <string name="language_options_voice_search_language"><![CDATA[음성 검색 언어: <br>&emsp;&emsp;<b>%1$s</b>]]></string>
+
+    <!-- This string labels the description in the Content Language button in the main language setting dialog. -->
+    <string name="language_options_content_language"><![CDATA[선호하는 웹 사이트 표시 언어: <br>&emsp;&emsp;<b>%1$s</b>]]></string>
+
+    <!-- This string labels the description in the Display Language button in the main language setting dialog. -->
+    <string name="language_options_display_language"><![CDATA[앱 표시 언어: <br>&emsp;&emsp;<b>%1$s</b>]]></string>
+
+    <!-- This string labels the description in the Content Language header for preferred languages list. -->
+    <string name="language_options_preferred_languages">선호 언어</string>
+
+    <!-- This string labels the description in the Content Language header for available languages list. -->
+    <string name="language_options_available_languages">사용 가능한 언어</string>
+
     <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the 'Name' of the bookmarked website. -->
     <string name="col_name">이름</string>
 
@@ -615,6 +716,10 @@
          'Refresh' refers to reloading the current page. -->
     <string name="refresh_tooltip">새로 고침</string>
 
+    <!-- This string is for the tooltip that appears upon hovering the 'Stop' button in the browser's navigation bar.
+         'Stop' stops the current page load. -->
+    <string name="stop_tooltip">로딩 중지</string>
+
     <!-- This string is for the tooltip that appears upon hovering the 'Home' button in the browser's navigation bar.
          'Home' refers to the browser's start page (e.g., the Firefox Reality Home Page). -->
     <string name="home_tooltip">홈</string>
@@ -624,9 +729,25 @@
          speech-to-text recognition. -->
     <string name="voice_search_tooltip">음성 검색</string>
 
+    <!-- This string is for the tooltip that appears upon hovering the 'Request desktop site' button in the
+         browser's navigation bar. The button it labels, when pressed, change the currently used user agent. -->
+    <string name="request_dekstop_site_tooltip">데스크톱 사이트 보기</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Clear' button in the
+         browser's navigation bar. The button it labels, when pressed, clears the navigation bar text. -->
+    <string name="clear_tooltip">지우기</string>
+
     <!-- This string is for the tooltip that when clicking the 'Info' (ⓘ) icon visible next to the current website's
          URL in the URL bar. The button it labels, when pressed, shows information about the site. -->
     <string name="site_info_tooltip">사이트 정보 보기</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Servo' button in the browser's navigation bar.
+         'Servo' refers to the Servo engine. -->
+    <string name="servo_tooltip">Servo 엔진 사용</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Resize' button in the browser's navigation bar.
+         'Resize' refers to the button used to resize the browset window. -->
+    <string name="resize_tooltip">크기 조정</string>
 
     <!-- This string is for the tooltip that appears when the user is not in the browser's Private Browsing mode
          and hovers over the 'Private Browsing' icon in the browser's tray menu. -->
@@ -639,10 +760,31 @@
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the target url in a new window. -->
     <string name="context_menu_open_new_window">새 창으로 열기</string>
 
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmark' icon in the
+         browser's navigation bar. The button it labels, when pressed, bookmarks the currently open web site. -->
+    <string name="bookmark_tooltip">이 페이지를 북마크</string>
+
     <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmarks' icon in the
-         browser's navigation bar. The button it labels, when pressed, opens a list view of the user's saved
+         tray. The button it labels, when pressed, opens a list view of the user's saved
          Bookmarks. -->
     <string name="bookmarks_tooltip">북마크</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmarks' icon in the
+         tray and the Bookmarks view is closed. The button it labels, when pressed, opens a list view of the user's saved
+         Bookmarks. -->
+    <string name="open_bookmarks_tooltip">북마크 열기</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmarks' icon in the
+         tray and the Bookmarks view is closed. The button it labels, when pressed, closes the Bookmarks view. -->
+    <string name="close_bookmarks_tooltip">북마크 닫기</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Settings' icon in the
+         tray. The button it labels, when pressed, opens the Settings panel. -->
+    <string name="settings_tooltip">설정</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'New Window' icon in the
+         tray. The button it labels, when pressed, opens a new browser window. -->
+    <string name="new_window_tooltip">새 창 열기</string>
 
     <!-- This string is for the tooltip that appears when the user hovers over the down-arrow icon that appears in the
          URL bar upon hover. The icon it labels, when pressed, expands a list of recently visited websites in the
@@ -695,9 +837,27 @@
       that can be opened (initially 3) -->
     <string name="max_windows_message">한 번에 %1$s개 이상의 창을 열 수 없습니다. 다른 창을 열기 전에 이전 창을 하나 닫으세요.</string>
 
+    <!-- This string is displayed in the button of the notification message shown when the user tries to open a new window and
+      it has already opened the maximum number of allowed windows. -->
+    <string name="max_windows_button">확인</string>
+
     <!-- This string is displayed in the title of the alert dialog shown when the user does not have permission to run the application on the device. -->
     <string name="not_entitled_title">실행할 수 없음</string>
     <!-- This string is displayed in the message body of the alert dialog shown when the user does not have permission to run the application on the device.
          '%1$s' will be replace at runtime with the app's name. -->
     <string name="not_entitled_message">이 기기에서 %1$s 어플리케이션을 실행을 권한이 없으므로 종료합니다.</string>
+
+    <!-- This string is displayed in a button that when pressed allows a user to view a page that has been blocked from being displayed.-->
+    <string name="performance_unblock_page">페이지 차단 해제</string>
+
+    <!-- This string is displayed in the button of the Voice Search samples collect dialog.
+         When clicked the user opts in to the voice data collection. -->
+    <string name="voice_samples_collect_dialog_allow">허용</string>
+
+    <!-- This string is displayed in the button of the Voice Search samples collect dialog.
+         When clicked the user opts out of the voice data collection. -->
+    <string name="voice_samples_collect_dialog_do_not_allow">허용하지 않음</string>
+
+    <!-- This string is displayed in the content language list in front of the system default language in between parenthesis -->
+    <string name="language_default">기본</string>
 </resources>

@@ -120,6 +120,11 @@
     <string name="settings_language">Lingua</string>
 
     <!-- This string is used to label a text label for selecting the language in the 'Language' dialog window
+         (accessible from the browser's Settings' dialog window). Below this string appears
+         the different options for language settings. -->
+    <string name="settings_language_settings">Impostazioni lingua</string>
+
+    <!-- This string is used to label a text label for selecting the language in the 'Language' dialog window
          (accessible from the browser's Settings' dialog window). Below this string appears a list of locales for
          the user to choose as their preferred reading languages for website content. Each locale,
          as `language-tag` strings, is then included in the browser's `Accept-Language` HTTP request
@@ -132,6 +137,40 @@
          Based on the user's selection, the printed language is mapped to its ISO 639-1 code
          (e.g., `Español` is mapped to `es`) when configured in the 'Voice Search' system. -->
     <string name="settings_language_choose_language_voice_search">Scegliere la lingua in cui condurre ricerche vocali</string>
+
+    <!-- This string is used to label a text label that appears in the header of 'Language Settings' ->
+         'Firefox Display Language' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of locales for the user to choose as their preferred display
+         language for the application UI. -->
+    <string name="settings_language_choose_display_language_title">Lingua dell’interfaccia di %1$s</string>
+
+    <!-- This string is used to label a text label that appears in the header description of 'Language Settings' ->
+         'Firefox Display Language' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of locales for the user to choose as their preferred display
+         language for the application UI. -->
+    <string name="settings_language_choose_language_display_description">Scegli la lingua utilizzata per mostrare menu, messaggi e notifiche.</string>
+
+    <!-- This string is used to label a text label that appears in the header of 'Language Settings' ->
+         'Voice Search Language' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of locales for the user to choose as their preferred voice search
+         language. -->
+    <string name="settings_language_choose_language_voice_search_title">Lingua per la ricerca vocale</string>
+
+    <!-- This string is used to label a text label that appears in the header description of 'Language Settings' ->
+         'Voice Search Language' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of locales for the user to choose as their preferred voice search
+         language. -->
+    <string name="settings_language_choose_language_voice_search_description">Scegli la lingua da utilizzare per le ricerche vocali.</string>
+
+    <!-- This string is used to label a text label that appears in the header of 'Language Settings' ->
+         'Preferred Language for Displaying Websites' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of locales for the user to choose as their preferred languages for web content. -->
+    <string name="settings_language_choose_language_content_title">Lingua preferita per la visualizzazione dei siti web</string>
+
+    <!-- This string is used to label a text label that appears in the header description of 'Language Settings' ->
+         'Preferred Language for Displaying Websites' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of locales for the user to choose as their preferred languages for web content. -->
+    <string name="settings_language_choose_language_content_description">Le pagine web sono spesso disponibili in più lingue. È possibile scegliere le lingue predefinite per queste pagine, in ordine di preferenza, nella sezione a sinistra.</string>
 
     <!-- This string is used to label a radio button in the 'Settings' Language dialog that, when pressed,
          changes the app and the language of the speech-recognition-based search to 'English (US)'. -->
@@ -237,14 +276,31 @@
          A dialog should appear with a field labeled with the text, 'Enable Multiprocess'. -->
     <string name="developer_options_multiprocess">Abilita multiprocesso</string>
 
-    <!-- This string labels and On/Off switch in the developer options dialog and is used to toggle
+    <!-- This string labels an On/Off switch in the developer options dialog and is used to toggle
          the performance monitor. The Performance monitor is used to detect pages that cause the
          browser to run below a target framerate and pauses the page to restore performance.
     -->
     <string name="developer_options_performance_monitor">Attiva monitoraggio prestazioni</string>
 
+    <!-- This string labels an On/Off switch in the developer options dialog and is used to toggle
+         debug logging. Debug logging provides runtime diagnostic information that may be collected
+         to help diagnose and fix problems with the application.
+    -->
+    <string name="developer_options_debug_logging">Attiva i log di debug</string>
+
     <!-- The string labels an On/Off switch in the developer options dialog and is used to toggle enabling Servo. -->
     <string name="developer_options_servo">Abilita Servo</string>
+
+    <!-- The string labels the description text for the clear cookies and site data button in the
+         privacy options dialog. -->
+    <string name="developer_options_clear_cache_cookies_site_description">Cookie e dati dei siti web</string>
+
+    <!-- The string labels the description text for the clear cached web content button in the
+         privacy options dialog. -->
+    <string name="developer_options_clear_cache_web_content_description">Contenuti web memorizzati nella cache</string>
+
+    <!-- The string labels the button text for the clear cache buttons in the privacy options dialog. -->
+    <string name="developer_options_clear_cache">Elimina dati</string>
 
     <!-- This string is used to label a numerical-entry field where the user may set a new value to
          use for the display density. -->
@@ -342,6 +398,9 @@
     <!-- This string labels the 'Reset' button that restores the default developer settings values. -->
     <string name="developer_options_reset_button">Ripristina</string>
 
+    <!-- This string is used to label buttons to enable editing of other options. -->
+    <string name="settings_button_edit">Modifica</string>
+
     <!-- This string describes the radio buttons used to select the user's background environment
          (seen while not in Immersive Mode). -->
     <string name="developer_options_environments">Ambiente</string>
@@ -429,19 +488,19 @@
 
     <!-- This string is a label above the group of switches that indicates that the switches below
          relate to Firefox data collection and use. -->
-    <string name="security_options_speech_data_title">Raccolta e utilizzo dati di Firefox</string>
+    <string name="security_options_speech_data_collection_title">Raccolta e utilizzo dati di %1$s</string>
 
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable permission to collect speech data. -->
-    <string name="security_options_speech_data">Consenti a Firefox di raccogliere dati vocali</string>
+    <string name="security_options_speech_data_collect">Consenti a %1$s di raccogliere dati vocali</string>
 
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable permission to collect telemetry data. -->
-    <string name="security_options_telemetry_data">Consenti a Firefox di inviare a Mozilla dati tecnici e relativi all’interazione con il browser</string>
+    <string name="security_options_telemetry_send_data">Consenti a %1$s di inviare a Mozilla dati tecnici e relativi all’interazione con il browser</string>
 
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable permission to send crash reports. -->
-    <string name="security_options_crash_reports_data">Consenti a Firefox di inviare segnalazioni di arresto anomalo in sospeso</string>
+    <string name="security_options_crash_reports_send_data">Consenti a %1$s di inviare segnalazioni di arresto anomalo in sospeso</string>
 
     <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'On'. -->
     <string name="on">Attivato</string>
@@ -615,6 +674,30 @@
     <!-- This string labels the Reset button that restores the default voice search language settings values. -->
     <string name="language_options_reset">Ripristina impostazioni lingua ricerca vocale</string>
 
+    <!-- This string labels the Reset button that restores the default display language settings values. -->
+    <string name="display_language_options_reset">Reimposta lingua dell’interfaccia</string>
+
+    <!-- This string labels the Reset button that restores the default content language settings values. -->
+    <string name="content_language_options_reset">Reimposta lingue preferite per i siti web</string>
+
+    <!-- This string labels the Reset button that restores all language settings values. -->
+    <string name="all_language_options_reset">Ripristina tutte le impostazioni della lingua</string>
+
+    <!-- This string labels the description in the Voice Search Language button in the main language setting dialog. -->
+    <string name="language_options_voice_search_language"><![CDATA[Lingua per la ricerca vocale: <br>&emsp;&emsp;<b>%1$s</b>]]></string>
+
+    <!-- This string labels the description in the Content Language button in the main language setting dialog. -->
+    <string name="language_options_content_language"><![CDATA[Lingua preferita per la visualizzazione di siti web:<br>&emsp;&emsp;<b>%1$s</b>]]></string>
+
+    <!-- This string labels the description in the Display Language button in the main language setting dialog. -->
+    <string name="language_options_display_language"><![CDATA[Lingua dell’interfaccia per l’app: <br>&emsp;&emsp;<b>%1$s</b>]]></string>
+
+    <!-- This string labels the description in the Content Language header for preferred languages list. -->
+    <string name="language_options_preferred_languages">Lingue preferite</string>
+
+    <!-- This string labels the description in the Content Language header for available languages list. -->
+    <string name="language_options_available_languages">Lingue disponibili</string>
+
     <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the 'Name' of the bookmarked website. -->
     <string name="col_name">Nome</string>
 
@@ -658,9 +741,9 @@
          speech-to-text recognition. -->
     <string name="voice_search_tooltip">Ricerca vocale</string>
 
-    <!-- This string is for the tooltip that appears upon hovering the 'User Agent' button in the
+    <!-- This string is for the tooltip that appears upon hovering the 'Request desktop site' button in the
          browser's navigation bar. The button it labels, when pressed, change the currently used user agent. -->
-    <string name="user_agent_tooltip">Cambia User Agent</string>
+    <string name="request_dekstop_site_tooltip">Richiedi sito desktop</string>
 
     <!-- This string is for the tooltip that appears upon hovering the 'Clear' button in the
          browser's navigation bar. The button it labels, when pressed, clears the navigation bar text. -->
@@ -769,6 +852,10 @@
       that can be opened (initially 3) -->
     <string name="max_windows_message">Non puoi avere più di %1$s finestre aperte contemporaneamente. Chiudine una prima di aprirne una nuova.</string>
 
+    <!-- This string is displayed in the button of the notification message shown when the user tries to open a new window and
+      it has already opened the maximum number of allowed windows. -->
+    <string name="max_windows_button">OK</string>
+
     <!-- This string is displayed in the title of the alert dialog shown when the user does not have permission to run the application on the device. -->
     <string name="not_entitled_title">Impossibile eseguire</string>
     <!-- This string is displayed in the message body of the alert dialog shown when the user does not have permission to run the application on the device.
@@ -781,4 +868,23 @@
     <string name="performance_title">Rilevate prestazioni non ottimali</string>
     <!-- This string is displayed as the message body of a dialog displayed when poor web page performance has been detected and the page has been unloaded to restore performance. -->
     <string name="performance_message">La pagina web corrente è stata sospesa a causa del suo impatto negativo sulle prestazioni. Per migliorare le prestazioni della pagina web prova a ridurre le dimensioni della finestra.</string>
+
+    <!-- This string is displayed in the title of the Voice Search samples collect dialog. That dialog is shown the first time
+         a user tries to use the voice search. -->
+    <string name="voice_samples_collect_data_dialog_title">Consenti a %1$s di raccogliere campioni vocali per scopi di ricerca?</string>
+
+    <!-- This string is displayed in the description of the Voice Search samples collect dialog. That dialog is shown the first time
+         a user tries to use the voice search. -->
+    <string name="voice_samples_collect_dialog_description">I tuoi dati sono sempre al sicuro e non vengono mai condivisi con terze parti. Raccogliamo campioni vocali per migliorare l’esperienza e le prestazioni dei nostri prodotti. Sarai sempre in grado di utilizzare la ricerca vocale, anche se non dai il consenso alla raccolta. &lt;a href=&quot;privacy&quot;&gt;Ulteriori informazioni&lt;/a&gt;</string>
+
+    <!-- This string is displayed in the button of the Voice Search samples collect dialog.
+         When clicked the user opts in to the voice data collection. -->
+    <string name="voice_samples_collect_dialog_allow">Consenti</string>
+
+    <!-- This string is displayed in the button of the Voice Search samples collect dialog.
+         When clicked the user opts out of the voice data collection. -->
+    <string name="voice_samples_collect_dialog_do_not_allow">Non consentire</string>
+
+    <!-- This string is displayed in the content language list in front of the system default language in between parenthesis -->
+    <string name="language_default">Predefinito</string>
 </resources>
