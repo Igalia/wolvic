@@ -64,12 +64,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private ViewGroup mResizeModeContainer;
     private WindowWidget mAttachedWindow;
     private boolean mIsLoading;
-    private boolean mIsInFullScreenMode;
-    private boolean mIsResizing;
     private boolean mIsInVRVideo;
     private boolean mAutoEnteredVRVideo;
-    private WidgetPlacement mPlacementBeforeResize;
-    private WidgetPlacement mPlacementBeforeFullscreen;
     private Runnable mResizeBackHandler;
     private Runnable mFullScreenBackHandler;
     private Runnable mVRVideoBackHandler;
@@ -131,9 +127,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mBrightnessButton = findViewById(R.id.brightnessButton);
         mFullScreenResizeButton = findViewById(R.id.fullScreenResizeEnterButton);
         mProjectionButton = findViewById(R.id.projectionButton);
-        mPlacementBeforeResize = new WidgetPlacement(aContext);
-        mPlacementBeforeFullscreen = new WidgetPlacement(aContext);
-
 
         mResizeBackHandler = () -> exitResizeMode(ResizeAction.RESTORE_SIZE);
 
@@ -365,10 +358,10 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     @Override
     public void detachFromWindow() {
-        if (mIsResizing) {
+        if (mAttachedWindow != null && mAttachedWindow.isResizing()) {
             exitResizeMode(ResizeAction.RESTORE_SIZE);
         }
-        if (mIsInFullScreenMode) {
+        if (mAttachedWindow != null && mAttachedWindow.isFullScreen()) {
             exitFullScreenMode();
         }
 
@@ -434,7 +427,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     private void setFullScreenSize() {
-        mPlacementBeforeFullscreen.copyFrom(mAttachedWindow.getPlacement());
         final float minScale = WidgetPlacement.floatDimension(getContext(), R.dimen.window_fullscreen_min_scale);
         // Set browser fullscreen size
         float aspect = SettingsStore.getInstance(getContext()).getWindowAspect();
@@ -451,13 +443,14 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     private void enterFullScreenMode() {
-        if (mIsInFullScreenMode) {
+        if (mAttachedWindow.isFullScreen()) {
             return;
         }
 
+        mAttachedWindow.saveBeforeFullscreenPlacement();
         setFullScreenSize();
         mWidgetManager.pushBackHandler(mFullScreenBackHandler);
-        mIsInFullScreenMode = true;
+        mAttachedWindow.setIsFullScreen(true);
         AnimationHelper.fadeIn(mFullScreenModeContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
 
         AnimationHelper.fadeOut(mNavigationContainer, 0, null);
@@ -491,7 +484,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     private void exitFullScreenMode() {
-        if (!mIsInFullScreenMode) {
+        if (!mAttachedWindow.isFullScreen()) {
             mWidgetManager.setTrayVisible(true);
             return;
         }
@@ -504,10 +497,10 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             }
         }, 50);
 
-        mAttachedWindow.getPlacement().copyFrom(mPlacementBeforeFullscreen);
+        mAttachedWindow.restoreBeforeFullscreenPlacement();
         mWidgetManager.updateWidget(mAttachedWindow);
 
-        mIsInFullScreenMode = false;
+        mAttachedWindow.setIsFullScreen(false);
         mWidgetManager.popBackHandler(mFullScreenBackHandler);
 
         AnimationHelper.fadeIn(mNavigationContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
@@ -521,14 +514,14 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     private void enterResizeMode() {
-        if (mIsResizing) {
+        if (mAttachedWindow.isResizing()) {
             return;
         }
-        mIsResizing = true;
-        mPlacementBeforeResize.copyFrom(mAttachedWindow.getPlacement());
+        mAttachedWindow.setIsResizing(true);
+        mAttachedWindow.saveBeforeResizePlacement();
         startWidgetResize();
         AnimationHelper.fadeIn(mResizeModeContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
-        if (mIsInFullScreenMode) {
+        if (mAttachedWindow.isFullScreen()) {
             AnimationHelper.fadeOut(mFullScreenModeContainer, 0, null);
         } else {
             AnimationHelper.fadeOut(mNavigationContainer, 0, null);
@@ -574,24 +567,24 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     private void exitResizeMode(ResizeAction aResizeAction) {
-        if (!mIsResizing) {
+        if (!mAttachedWindow.isResizing()) {
             return;
         }
         if (aResizeAction == ResizeAction.RESTORE_SIZE) {
-            mAttachedWindow.getPlacement().copyFrom(mPlacementBeforeResize);
+            mAttachedWindow.restoreBeforeResizePlacement();
             mWidgetManager.updateWidget(mAttachedWindow);
             mWidgetManager.updateVisibleWidgets();
         }
-        mIsResizing = false;
+        mAttachedWindow.setIsResizing(false);
         finishWidgetResize();
-        if (mIsInFullScreenMode) {
+        if (mAttachedWindow.isFullScreen()) {
             AnimationHelper.fadeIn(mFullScreenModeContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
         } else {
             AnimationHelper.fadeIn(mNavigationContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
         }
         AnimationHelper.fadeOut(mResizeModeContainer, 0, () -> updateWidget());
         mWidgetManager.popBackHandler(mResizeBackHandler);
-        mWidgetManager.setTrayVisible(!mIsInFullScreenMode);
+        mWidgetManager.setTrayVisible(!mAttachedWindow.isFullScreen());
         closeFloatingMenus();
 
         if (aResizeAction == ResizeAction.KEEP_SIZE) {
@@ -822,10 +815,10 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     @Override
     public void onFullScreen(GeckoSession session, boolean aFullScreen) {
         if (aFullScreen) {
-            if (!mIsInFullScreenMode) {
+            if (!mAttachedWindow.isFullScreen()) {
                 enterFullScreenMode();
             }
-            if (mIsResizing) {
+            if (mAttachedWindow.isResizing()) {
                 exitResizeMode(ResizeAction.KEEP_SIZE);
             }
             AtomicBoolean autoEnter = new AtomicBoolean(false);
@@ -847,7 +840,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     // WidgetManagerDelegate.UpdateListener
     @Override
     public void onWidgetUpdate(Widget aWidget) {
-        if (aWidget == mAttachedWindow && !mIsResizing) {
+        if (aWidget == mAttachedWindow && !mAttachedWindow.isResizing()) {
             handleWindowResize();
         }
     }
@@ -875,9 +868,9 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         handleSessionState();
 
         boolean isFullScreen = mSessionStack.isInFullScreen(aSession);
-        if (isFullScreen && !mIsInFullScreenMode) {
+        if (isFullScreen && !mAttachedWindow.isFullScreen()) {
             enterFullScreenMode();
-        } else if (!isFullScreen && mIsInFullScreenMode) {
+        } else if (!isFullScreen && mAttachedWindow.isFullScreen()) {
             exitVRVideo();
             exitFullScreenMode();
         }
@@ -1026,10 +1019,10 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     @Override
     public void onBookmarksClicked() {
-        if (mIsResizing) {
+        if (mAttachedWindow.isResizing()) {
             exitResizeMode(ResizeAction.RESTORE_SIZE);
 
-        } else if (mIsInFullScreenMode) {
+        } else if (mAttachedWindow.isFullScreen()) {
             exitFullScreenMode();
 
         } else if (mIsInVRVideo) {
@@ -1044,10 +1037,10 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     @Override
     public void onHistoryClicked() {
-        if (mIsResizing) {
+        if (mAttachedWindow.isResizing()) {
             exitResizeMode(ResizeAction.RESTORE_SIZE);
 
-        } else if (mIsInFullScreenMode) {
+        } else if (mAttachedWindow.isFullScreen()) {
             exitFullScreenMode();
 
         } else if (mIsInVRVideo) {

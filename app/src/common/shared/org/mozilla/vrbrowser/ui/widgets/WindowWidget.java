@@ -131,6 +131,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     boolean mClickedAfterFocus = false;
     boolean mIsBookmarksVisible = false;
     boolean mIsHistoryVisible = false;
+    private WidgetPlacement mPlacementBeforeFullscreen;
+    private WidgetPlacement mPlacementBeforeResize;
+    private boolean mIsResizing;
+    private boolean mIsFullScreen;
 
     public interface WindowDelegate {
         void onFocusRequest(@NonNull WindowWidget aWindow);
@@ -163,6 +167,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         mHandle = ((WidgetManagerDelegate)aContext).newWidgetHandle();
         mWidgetPlacement = new WidgetPlacement(aContext);
+        mPlacementBeforeFullscreen = new WidgetPlacement(aContext);
+        mPlacementBeforeResize = new WidgetPlacement(aContext);
+        mIsResizing = false;
+        mIsFullScreen = false;
         initializeWidgetPlacement(mWidgetPlacement);
 
         mTopBar = new TopBarWidget(aContext);
@@ -779,6 +787,46 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 mWindowDelegate.onBorderChanged(this);
             }
         }
+    }
+
+    public void saveBeforeFullscreenPlacement() {
+        mPlacementBeforeFullscreen.copyFrom(mWidgetPlacement);
+    }
+
+    public void restoreBeforeFullscreenPlacement() {
+        mWidgetPlacement.copyFrom(mPlacementBeforeFullscreen);
+    }
+
+    public WidgetPlacement getBeforeFullscreenPlacement() {
+        return mPlacementBeforeFullscreen;
+    }
+
+    public void saveBeforeResizePlacement() {
+        mPlacementBeforeResize.copyFrom(mWidgetPlacement);
+    }
+
+    public void restoreBeforeResizePlacement() {
+        mWidgetPlacement.copyFrom(mPlacementBeforeResize);
+    }
+
+    public WidgetPlacement getBeforeResizePlacement() {
+        return mPlacementBeforeResize;
+    }
+
+    public void setIsResizing(boolean isResizing) {
+        mIsResizing = isResizing;
+    }
+
+    public boolean isResizing() {
+        return mIsResizing;
+    }
+
+    public void setIsFullScreen(boolean isFullScreen) {
+        mIsFullScreen = isFullScreen;
+    }
+
+    public boolean isFullScreen() {
+        return mIsFullScreen;
     }
 
     public void setWindowDelegate(WindowDelegate aDelegate) {

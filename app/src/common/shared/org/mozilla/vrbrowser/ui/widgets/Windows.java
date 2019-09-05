@@ -41,12 +41,28 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         float worldWidth;
 
         public void load(WindowWidget aWindow) {
-            placement = aWindow.getWindowPlacement();
+            if (aWindow == mFullscreenWindow) {
+                placement = mPrevWindowPlacement;
+
+            } else {
+                placement = aWindow.getWindowPlacement();
+            }
             sessionStack = aWindow.getSessionStack();
             currentSessionId = aWindow.getSessionStack().getCurrentSessionId();
-            textureWidth = aWindow.getPlacement().width;
-            textureHeight = aWindow.getPlacement().height;
-            worldWidth = aWindow.getPlacement().worldWidth;
+            WidgetPlacement placement;
+            if (aWindow.isFullScreen()) {
+                placement = aWindow.getBeforeFullscreenPlacement();
+
+            } else if (aWindow.isResizing()) {
+                placement = aWindow.getBeforeResizePlacement();
+
+            } else {
+                placement = aWindow.getPlacement();
+            }
+
+            textureWidth = placement.width;
+            textureHeight = placement.height;
+            worldWidth = placement.worldWidth;
         }
     }
 
@@ -802,15 +818,19 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     }
 
     public void enterResizeMode() {
-        for (WindowWidget window : getCurrentWindows()) {
-            window.getTopBar().setVisible(false);
+        if (mFullscreenWindow == null) {
+            for (WindowWidget window : getCurrentWindows()) {
+                window.getTopBar().setVisible(false);
+            }
         }
     }
 
     public void exitResizeMode() {
-        for (WindowWidget window : getCurrentWindows()) {
-            if (getCurrentWindows().size() > 1 || isInPrivateMode()) {
-                window.getTopBar().setVisible(window != mFullscreenWindow);
+        if (mFullscreenWindow == null) {
+            for (WindowWidget window : getCurrentWindows()) {
+                if (getCurrentWindows().size() > 1 || isInPrivateMode()) {
+                    window.getTopBar().setVisible(true);
+                }
             }
         }
     }

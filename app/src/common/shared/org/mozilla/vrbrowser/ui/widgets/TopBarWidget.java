@@ -167,7 +167,7 @@ public class TopBarWidget extends UIWidget implements SessionChangeListener, Wid
 
     @Override
     public void setVisible(boolean aIsVisible) {
-        if (mVisible == aIsVisible) {
+        if (mVisible == aIsVisible ||  mWidgetManager == null) {
             return;
         }
         mVisible = aIsVisible;
