@@ -83,7 +83,7 @@
 
     <!-- Video Projection Menu -->
     <dimen name="video_projection_menu_width">330dp</dimen>
-    <dimen name="video_projection_menu_translation_y">7dp</dimen>
+    <dimen name="video_projection_menu_translation_y">15dp</dimen>
 
     <!-- Brightness Menu -->
     <dimen name="brightness_menu_width">150dp</dimen>
