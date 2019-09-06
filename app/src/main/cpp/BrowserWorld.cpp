@@ -795,6 +795,8 @@ BrowserWorld::UpdateEnvironment() {
       } else {
         VRB_ERROR("Failed to find custom skybox files.");
       }
+    } else {
+      VRB_ERROR("Failed to find override skybox storage path %s", storagePath.c_str());
     }
   }
 
