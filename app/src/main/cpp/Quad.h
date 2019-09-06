@@ -58,7 +58,8 @@ public:
   vrb::TransformPtr GetTransformNode() const;
   VRLayerQuadPtr GetLayer() const;
   bool TestIntersection(const vrb::Vector& aStartPoint, const vrb::Vector& aDirection, vrb::Vector& aResult, vrb::Vector& aNormal, bool aClamp, bool& aIsInside, float& aDistance) const;
-  void ConvertToQuadCoordinates(const vrb::Vector& point, float& aX, float& aY, bool aClamp) const;
+  void ConvertToQuadCoordinates(const vrb::Vector& aWorldPoint, float& aX, float& aY, bool aClamp) const;
+  void ConvertToWorldCoordinates(const float aX, const float aY, vrb::Vector& aWorldPoint, vrb::Vector& aNormal);
 protected:
   struct State;
   Quad(State& aState, vrb::CreationContextPtr& aContext);

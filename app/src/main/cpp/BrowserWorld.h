@@ -44,6 +44,7 @@ public:
   void UpdatePointerColor();
   void SetSurfaceTexture(const std::string& aName, jobject& aSurface);
   void AddWidget(int32_t aHandle, const WidgetPlacementPtr& placement);
+  WidgetPtr GetWidget(int32_t aHandle) const;
   void UpdateWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement);
   void RemoveWidget(int32_t aHandle);
   void StartWidgetResize(int32_t aHandle, const vrb::Vector& aMaxSize, const vrb::Vector& aMinSize);

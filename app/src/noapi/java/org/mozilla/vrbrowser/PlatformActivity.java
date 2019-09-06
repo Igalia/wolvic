@@ -18,12 +18,16 @@ import android.widget.TextView;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import androidx.annotation.Keep;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
+import org.mozilla.vrbrowser.ui.widgets.Widget;
 public class PlatformActivity extends Activity {
     static String LOGTAG = SystemUtils.createLogtag(PlatformActivity.class);
     static final float ROTATION = 0.098174770424681f;
@@ -38,6 +42,8 @@ public class PlatformActivity extends Activity {
     private boolean mSurfaceCreated = false;
     private int mFrameCount;
     private long mLastFrameTime = System.currentTimeMillis();
+    private HashMap<Integer, InverseTouchCallback> mInverseTouchCallbacks;
+    private int mInverseTouchIndex = 0;
 
     private final Runnable activityDestroyedRunnable = new Runnable() {
         @Override
@@ -73,6 +79,7 @@ public class PlatformActivity extends Activity {
 
         setContentView(R.layout.noapi_layout);
         mPendingEvents = new ArrayList<>();
+        mInverseTouchCallbacks = new HashMap<>();
         mFrameRate = findViewById(R.id.frame_rate_text);
         mView = findViewById(R.id.gl_view);
         mView.setEGLContextClientVersion(3);
@@ -282,9 +289,35 @@ public class PlatformActivity extends Activity {
         queueRunnable(() -> controllerButtonPressed(aPressed));
     }
 
+
+    protected interface InverseTouchCallback {
+        void onResult(float aX, float aY);
+    }
+
+    protected void inverseTouch(Widget aWidget, float aX, float aY, @NonNull InverseTouchCallback aCallback) {
+        int callbackId = ++mInverseTouchIndex;
+        mInverseTouchCallbacks.put(callbackId, aCallback);
+        queueRunnable(() -> {
+            inverseTouch(aWidget.getHandle(), aX, aY, callbackId);
+        });
+    }
+
     @Keep
     private void setRenderMode(final int aMode) {
         runOnUiThread(() -> updateUI(aMode));
+    }
+
+    @Keep
+    private void notifyInverseTouch(final float aX, final float aY, final int aCallbackId) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+               InverseTouchCallback callback = mInverseTouchCallbacks.remove(aCallbackId);
+               if (callback != null) {
+                   callback.onResult(aX, aY);
+               }
+            }
+        });
     }
 
     private native void activityCreated(Object aAssetManager);
@@ -298,4 +331,5 @@ public class PlatformActivity extends Activity {
     private native void rotatePitch(float aPitch);
     private native void touchEvent(boolean aDown, float aX, float aY);
     private native void controllerButtonPressed(boolean aDown);
+    private native void inverseTouch(int aHandle, float aX, float aY, int aCallback);
 }

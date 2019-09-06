@@ -18,6 +18,9 @@ namespace crow {
 class DeviceDelegateNoAPI;
 typedef std::shared_ptr<DeviceDelegateNoAPI> DeviceDelegateNoAPIPtr;
 
+class Widget;
+typedef std::shared_ptr<Widget> WidgetPtr;
+
 class DeviceDelegateNoAPI : public DeviceDelegate {
 public:
   static DeviceDelegateNoAPIPtr Create(vrb::RenderContextPtr& aContext);
@@ -50,6 +53,7 @@ public:
   void RotateHeading(const float aHeading);
   void RotatePitch(const float aPitch);
   void TouchEvent(const bool aDown, const float aX, const float aY);
+  void InverseTouch(const WidgetPtr& aWidget, const float aX, const float aY, const int aCallback);
   void ControllerButtonPressed(const bool aDown);
 protected:
   struct State;

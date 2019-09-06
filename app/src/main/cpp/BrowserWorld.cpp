@@ -988,6 +988,11 @@ BrowserWorld::AddWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement) {
   UpdateWidget(widget->GetHandle(), aPlacement);
 }
 
+WidgetPtr
+BrowserWorld::GetWidget(int32_t aHandle) const {
+  return m.GetWidget(aHandle);
+}
+
 void
 BrowserWorld::UpdateWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement) {
   ASSERT_ON_RENDER_THREAD();

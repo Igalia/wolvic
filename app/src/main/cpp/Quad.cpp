@@ -455,8 +455,8 @@ Quad::TestIntersection(const vrb::Vector& aStartPoint, const vrb::Vector& aDirec
 }
 
 void
-Quad::ConvertToQuadCoordinates(const vrb::Vector& point, float& aX, float& aY, bool aClamp) const {
-  vrb::Vector value = m.transform->GetWorldTransform().AfineInverse().MultiplyPosition(point);
+Quad::ConvertToQuadCoordinates(const vrb::Vector& aWorldPoint, float& aX, float& aY, bool aClamp) const {
+  vrb::Vector value = m.transform->GetWorldTransform().AfineInverse().MultiplyPosition(aWorldPoint);
   // Clamp value to quad bounds.
   if (aClamp) {
     if (value.x() > m.worldMax.x()) { value.x() = m.worldMax.x(); }
@@ -468,6 +468,21 @@ Quad::ConvertToQuadCoordinates(const vrb::Vector& point, float& aX, float& aY, b
   // Convert to quad coordinates.
   aX = (((value.x() - m.worldMin.x()) / (m.worldMax.x() - m.worldMin.x())) * (float)m.textureWidth);
   aY = (((m.worldMax.y() - value.y()) / (m.worldMax.y() - m.worldMin.y())) * (float)m.textureHeight);
+}
+
+void
+Quad::ConvertToWorldCoordinates(const float aX, const float aY, vrb::Vector& aWorldPoint, vrb::Vector& aNormal) {
+  const float ratioX = aX / m.textureWidth;
+  const float ratioY = aY / m.textureHeight;
+  float w, h;
+  GetWorldSize(w, h);
+  vrb::Vector localPoint;
+  localPoint.x() = m.worldMin.x() + w * ratioX;
+  localPoint.y() = m.worldMin.y() + h * ratioY;
+  localPoint.z() = 0.0f;
+
+  aWorldPoint = m.transform->GetWorldTransform().MultiplyPosition(localPoint);
+  aNormal = GetNormal();
 }
 
 Quad::Quad(State& aState, vrb::CreationContextPtr& aContext) : m(aState) {

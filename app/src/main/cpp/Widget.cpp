@@ -352,6 +352,15 @@ Widget::ConvertToWorldCoordinates(const vrb::Vector& aLocalPoint) const {
   return m.transform->GetTransform().MultiplyPosition(aLocalPoint);
 }
 
+void
+Widget::ConvertToWorldCoordinates(const float aWidgetX, const float aWidgetY, vrb::Vector& aWorldPoint, vrb::Vector& aNormal) const {
+  if (m.quad) {
+    m.quad->ConvertToWorldCoordinates(aWidgetX, aWidgetY, aWorldPoint, aNormal);
+  } else {
+    m.cylinder->ConvertToWorldCoordinates(aWidgetX, aWidgetY, aWorldPoint, aNormal);
+  }
+}
+
 const vrb::Matrix
 Widget::GetTransform() const {
   return m.transform->GetTransform();

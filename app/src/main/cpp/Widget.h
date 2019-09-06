@@ -55,7 +55,7 @@ public:
                                   const bool aClamp, bool& aIsInWidget, float& aDistance) const;
   void ConvertToWidgetCoordinates(const vrb::Vector& aPoint, float& aX, float& aY) const;
   vrb::Vector ConvertToWorldCoordinates(const vrb::Vector& aLocalPoint) const;
-  vrb::Vector ConvertToWorldCoordinates(const float aWidgetX, const float aWidgetY) const;
+  void ConvertToWorldCoordinates(const float aWidgetX, const float aWidgetY, vrb::Vector& aWorldPoint, vrb::Vector& aNormal) const;
   const vrb::Matrix GetTransform() const;
   void SetTransform(const vrb::Matrix& aTransform);
   void ToggleWidget(const bool aEnabled);

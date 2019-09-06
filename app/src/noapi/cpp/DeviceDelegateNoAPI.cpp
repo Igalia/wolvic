@@ -6,6 +6,7 @@
 #include "DeviceDelegateNoAPI.h"
 #include "ElbowModel.h"
 #include "GestureDelegate.h"
+#include "Widget.h"
 
 #include "vrb/CameraSimple.h"
 #include "vrb/Color.h"
@@ -23,11 +24,13 @@ namespace {
 
 const char* kSetRenderModeName = "setRenderMode";
 const char* kSetRenderModeSignature = "(I)V";
+const char* kNotifyInverseTouchName = "notifyInverseTouch";
+const char* kNotifyInverseTouchSignature = "(FFI)V";
 JNIEnv* sEnv;
 jclass sBrowserClass;
 jobject sActivity;
 jmethodID sSetRenderMode;
-
+jmethodID sNotifyInverseTouch;
 }
 
 namespace crow {
@@ -260,6 +263,7 @@ DeviceDelegateNoAPI::InitializeJava(JNIEnv* aEnv, jobject aActivity) {
   }
 
   sSetRenderMode = FindJNIMethodID(sEnv, sBrowserClass, kSetRenderModeName, kSetRenderModeSignature);
+  sNotifyInverseTouch = FindJNIMethodID(sEnv, sBrowserClass, kNotifyInverseTouchName, kNotifyInverseTouchSignature);
 }
 
 void
@@ -376,6 +380,24 @@ DeviceDelegateNoAPI::TouchEvent(const bool aDown, const float aX, const float aY
   }
   transform.TranslateInPlace(start);
   m.controller->SetTransform(kControllerIndex, transform);
+}
+
+void
+DeviceDelegateNoAPI::InverseTouch(const WidgetPtr& aWidget, const float aX, const float aY, const int aCallback) {
+  vrb::Vector worldPoint;
+  vrb::Vector normal;
+  aWidget->ConvertToWorldCoordinates(aX, aY, worldPoint, normal);
+  vrb::Matrix viewProjection = m.camera->GetPerspective().PostMultiply(m.camera->GetView());
+  vrb::Vector ndc = viewProjection.MultiplyPosition(worldPoint);
+  const float viewportWidth = m.camera->GetViewportWidth();
+  const float viewportHeight = m.camera->GetViewportHeight();
+  const float width = (ndc.x() + 1.0f) * 0.5f * viewportWidth;
+  const float height = (-ndc.y() + 1.0f) * 0.5f * viewportHeight;
+
+  if (ValidateMethodID(sEnv, sActivity, sNotifyInverseTouch, __FUNCTION__)) {
+    sEnv->CallVoidMethod(sActivity, sNotifyInverseTouch, (jfloat)width, (jfloat)height, (jint)aCallback);
+    CheckJNIException(sEnv, __FUNCTION__);
+  }
 }
 
 void
