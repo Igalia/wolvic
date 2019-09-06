@@ -101,6 +101,14 @@ JNI_METHOD(void, controllerButtonPressed)
   sDevice->ControllerButtonPressed(aDown);
 }
 
+JNI_METHOD(void, inverseTouch)
+(JNIEnv*, jobject, jint aHandle, jfloat aX, jfloat aY, jint aCallback) {
+  WidgetPtr widget =  BrowserWorld::Instance().GetWidget(aHandle);
+  if (widget) {
+    sDevice->InverseTouch(widget, aX, aY, aCallback);
+  }
+}
+
 jint JNI_OnLoad(JavaVM*, void*) {
   return JNI_VERSION_1_6;
 }

@@ -421,8 +421,8 @@ Cylinder::TestIntersection(const vrb::Vector& aStartPoint, const vrb::Vector& aD
 }
 
 void
-Cylinder::ConvertToQuadCoordinates(const vrb::Vector& point, float& aX, float& aY, bool aClamp) const {
-  const vrb::Vector intersection = m.transform->GetWorldTransform().AfineInverse().MultiplyPosition(point);
+Cylinder::ConvertToQuadCoordinates(const vrb::Vector& aWorldPoint, float& aX, float& aY, bool aClamp) const {
+  const vrb::Vector intersection = m.transform->GetWorldTransform().AfineInverse().MultiplyPosition(aWorldPoint);
   const float radius = GetCylinderRadius();
   float ratioY;
   if (intersection.y() > 0.0f) {
@@ -461,7 +461,7 @@ Cylinder::ConvertToQuadCoordinates(const vrb::Vector& point, float& aX, float& a
 }
 
 void
-Cylinder::ConvertFromQuadCoordinates(const float aX, const float aY, vrb::Vector& aWorldPoint, vrb::Vector& aNormal) {
+Cylinder::ConvertToWorldCoordinates(const float aX, const float aY, vrb::Vector& aWorldPoint, vrb::Vector& aNormal) {
   const float ratioX = aX / m.textureWidth;
   const float ratioY = aY / m.textureHeight;
   const float radius = GetCylinderRadius();
