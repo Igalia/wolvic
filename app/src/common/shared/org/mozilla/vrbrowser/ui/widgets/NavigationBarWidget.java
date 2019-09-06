@@ -334,6 +334,18 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mWidgetManager.removeUpdateListener(this);
         mWidgetManager.removeWorldClickListener(this);
         mPrefs.unregisterOnSharedPreferenceChangeListener(this);
+        
+        if (mAttachedWindow != null && mAttachedWindow.isFullScreen()) {
+            // Workaround for https://issuetracker.google.com/issues/37123764
+            // exitFullScreenMode() may animate some views that are then released
+            // so use a custom way to exit fullscreen here without triggering view updates.
+            if (mSessionStack.isInFullScreen()) {
+                mSessionStack.exitFullScreen();
+            }
+            mAttachedWindow.restoreBeforeFullscreenPlacement();
+            mAttachedWindow.setIsFullScreen(false);
+            mWidgetManager.popBackHandler(mFullScreenBackHandler);
+        }
 
         detachFromWindow();
 
