@@ -1313,6 +1313,16 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         return mWindows.getFocusedWindow();
     }
 
+    @Override
+    protected @Nullable Widget getWidgetByClass(Class aClass) {
+        for (Widget widget: mWidgets.values()) {
+            if (aClass.isInstance(widget)) {
+                return widget;
+            }
+        }
+        return null;
+    }
+
     private native void addWidgetNative(int aHandle, WidgetPlacement aPlacement);
     private native void updateWidgetNative(int aHandle, WidgetPlacement aPlacement);
     private native void updateVisibleWidgetsNative();

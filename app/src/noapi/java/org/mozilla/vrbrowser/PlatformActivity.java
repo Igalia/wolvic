@@ -8,6 +8,7 @@ package org.mozilla.vrbrowser;
 import android.app.Activity;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -25,7 +26,9 @@ import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import org.mozilla.vrbrowser.ui.widgets.TrayWidget;
 import org.mozilla.vrbrowser.ui.widgets.Widget;
+
 public class PlatformActivity extends Activity {
     static String LOGTAG = "VRB";
     static final float ROTATION = 0.098174770424681f;
@@ -249,18 +252,22 @@ public class PlatformActivity extends Activity {
         findViewById(R.id.pitch_up_button).setOnClickListener((View view) -> dispatchRotatePitch(ROTATION * mScale));
         findViewById(R.id.pitch_down_button).setOnClickListener((View view) -> dispatchRotatePitch(-ROTATION * mScale));
         findViewById(R.id.back_button).setOnClickListener((View view) -> onBackPressed());
-        findViewById(R.id.click_button).setOnTouchListener((View view, MotionEvent event) -> {
-            switch(event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    view.performClick();
-                    buttonClicked(true);
-                    break;
-                case MotionEvent.ACTION_UP:
-                case MotionEvent.ACTION_CANCEL:
-                    buttonClicked(false);
-                    break;
-            }
-            return false;
+        findViewById(R.id.click_button).setOnClickListener((View view) -> {
+           testClick();
+        });
+    }
+
+    private void testClick() {
+        Widget widget = getWidgetByClass(TrayWidget.class);
+        float x = widget.getPlacement().textureWidth() * 0.2f;
+        float y = widget.getPlacement().textureHeight() * 0.6f;
+        inverseTouch(widget, x, y, this::simulateClick);
+    }
+
+    private void simulateClick(float aX, float aY) {
+        queueRunnable(() -> {
+            touchEvent(true, aX, aY);
+            runOnUiThread(() -> queueRunnable(() -> touchEvent(false, aX, aY)));
         });
     }
 
@@ -288,6 +295,10 @@ public class PlatformActivity extends Activity {
 
     private void buttonClicked(final boolean aPressed) {
         queueRunnable(() -> controllerButtonPressed(aPressed));
+    }
+
+    protected @Nullable Widget getWidgetByClass(Class aClass) {
+        return null;
     }
 
 

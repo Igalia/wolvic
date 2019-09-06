@@ -343,6 +343,7 @@ Clamp(const float aValue) {
 
 void
 DeviceDelegateNoAPI::TouchEvent(const bool aDown, const float aX, const float aY) {
+  VRB_ERROR("TouchEvent %f %f", aX, aY);
   static const vrb::Vector sForward(0.0f, 0.0f, -1.0f);
   if (!m.controller) {
     return;
