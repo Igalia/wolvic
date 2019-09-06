@@ -3,11 +3,12 @@ package org.mozilla.vrbrowser.browser;
 import androidx.annotation.NonNull;
 
 import org.mozilla.geckoview.MediaElement;
+import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Media implements MediaElement.Delegate {
-    private static final String LOGTAG = "VRB";
+    private static final String LOGTAG = SystemUtils.createLogtag(Media.class);
     private boolean mIsFullscreen = false;
     private double mCurrentTime  = 0.0f;
     private MediaElement.Metadata mMetaData;

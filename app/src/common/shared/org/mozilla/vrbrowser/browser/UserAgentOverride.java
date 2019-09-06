@@ -7,6 +7,7 @@ import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,7 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class UserAgentOverride {
-    private final static String LOGTAG = "VRB";
+    private final static String LOGTAG = SystemUtils.createLogtag(UserAgentOverride.class);
     private static final String NO_OVERRIDE_FOUND = "NO OVERRIDE USER AGENT FOUND";
     private ArrayMap<String, String> mOverrideMap;
     private ArrayMap<String, String> mOverrideCache;

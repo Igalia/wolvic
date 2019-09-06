@@ -10,6 +10,7 @@ import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.input.CustomKeyboard;
 import org.mozilla.vrbrowser.utils.StringUtils;
+import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,7 +24,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public class ChinesePinyinKeyboard extends BaseKeyboard {
-    private static final String LOGTAG = "VRB";
+    private static final String LOGTAG = SystemUtils.createLogtag(ChinesePinyinKeyboard.class);
     private CustomKeyboard mKeyboard;
     private DBHelper mDB;
     private HashMap<String, KeyMap> mKeymaps = new HashMap<>();

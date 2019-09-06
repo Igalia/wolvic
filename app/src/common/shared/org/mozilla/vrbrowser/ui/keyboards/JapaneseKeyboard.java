@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.input.CustomKeyboard;
 import org.mozilla.vrbrowser.utils.StringUtils;
+import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,7 +26,7 @@ import jp.co.omronsoft.openwnn.WnnWord;
 
 public class JapaneseKeyboard extends BaseKeyboard {
 
-    private static final String LOGTAG = "VRB";
+    private static final String LOGTAG = SystemUtils.createLogtag(JapaneseKeyboard.class);
 
     private CustomKeyboard mKeyboard;
     private CustomKeyboard mSymbolsKeyboard;

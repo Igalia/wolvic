@@ -17,10 +17,9 @@ import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
+import org.mozilla.vrbrowser.utils.SystemUtils;
 
 public class CrashDialogWidget extends UIDialog {
-
-    private static final String LOGTAG = "VRB";
 
     public interface CrashDialogDelegate {
         void onSendData();

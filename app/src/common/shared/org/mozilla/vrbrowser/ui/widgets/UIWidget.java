@@ -19,6 +19,7 @@ import android.widget.FrameLayout;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.SettingsStore;
+import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
@@ -28,7 +29,7 @@ import androidx.annotation.NonNull;
 
 public abstract class UIWidget extends FrameLayout implements Widget {
 
-    private static final String LOGTAG = "VRB";
+    protected final String LOGTAG = SystemUtils.createLogtag(this.getClass());
 
     public interface Delegate {
         void onDismiss();

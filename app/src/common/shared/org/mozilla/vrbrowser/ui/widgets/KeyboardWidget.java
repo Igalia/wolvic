@@ -49,6 +49,7 @@ import org.mozilla.vrbrowser.ui.widgets.dialogs.VoiceSearchWidget;
 import org.mozilla.vrbrowser.ui.keyboards.ChinesePinyinKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.EnglishKeyboard;
 import org.mozilla.vrbrowser.utils.StringUtils;
+import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -59,8 +60,6 @@ import androidx.annotation.Nullable;
 
 public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKeyboardActionListener, AutoCompletionView.Delegate,
         GeckoSession.TextInputDelegate, WidgetManagerDelegate.FocusChangeListener, VoiceSearchWidget.VoiceSearchDelegate, TextWatcher {
-
-    private static final String LOGTAG = "VRB";
 
     private static int MAX_CHARS_PER_POPUP_LINE = 10;
 

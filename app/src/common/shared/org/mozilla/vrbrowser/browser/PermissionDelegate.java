@@ -14,6 +14,7 @@ import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.PermissionWidget;
+import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,7 +23,7 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
 
     static final int PERMISSION_REQUEST_CODE = 1143;
 
-    static final String LOGTAG = "VRB";
+    static final String LOGTAG = SystemUtils.createLogtag(PermissionDelegate.class);
     private Context mContext;
     private int mParentWidgetHandle;
     private WidgetManagerDelegate mWidgetManager;

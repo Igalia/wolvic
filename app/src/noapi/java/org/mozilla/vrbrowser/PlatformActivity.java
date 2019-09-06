@@ -15,6 +15,8 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import org.mozilla.vrbrowser.utils.SystemUtils;
+
 import java.util.ArrayList;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -23,7 +25,7 @@ import javax.microedition.khronos.opengles.GL10;
 import androidx.annotation.Keep;
 
 public class PlatformActivity extends Activity {
-    static String LOGTAG = "VRB";
+    static String LOGTAG = SystemUtils.createLogtag(PlatformActivity.class);
     static final float ROTATION = 0.098174770424681f;
 
     public static boolean filterPermission(final String aPermission) {

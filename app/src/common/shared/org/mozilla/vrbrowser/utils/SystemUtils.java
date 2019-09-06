@@ -36,4 +36,8 @@ public class SystemUtils {
         System.exit(0);
     }
 
+    @NonNull
+    public static String createLogtag(@NonNull Class aClass) {
+        return "VRB[" + aClass.getSimpleName() + "]";
+    }
 }

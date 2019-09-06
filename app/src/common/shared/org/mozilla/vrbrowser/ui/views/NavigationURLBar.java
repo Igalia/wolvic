@@ -39,6 +39,7 @@ import org.mozilla.vrbrowser.search.SearchEngineWrapper;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.utils.StringUtils;
+import org.mozilla.vrbrowser.utils.SystemUtils;
 import org.mozilla.vrbrowser.utils.UIThreadExecutor;
 import org.mozilla.vrbrowser.utils.UrlUtils;
 
@@ -54,7 +55,7 @@ import mozilla.components.ui.autocomplete.InlineAutocompleteEditText;
 
 public class NavigationURLBar extends FrameLayout {
 
-    private static final String LOGTAG = NavigationURLBar.class.getSimpleName();
+    private static final String LOGTAG = SystemUtils.createLogtag(NavigationURLBar.class);
 
     private InlineAutocompleteEditText mURL;
     private UIButton mMicrophoneButton;

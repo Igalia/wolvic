@@ -76,8 +76,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         GeckoSession.NavigationDelegate, VideoAvailabilityListener,
         GeckoSession.HistoryDelegate, GeckoSession.ProgressDelegate {
 
-    private static final String LOGTAG = WindowWidget.class.getSimpleName();
-
     public interface HistoryViewDelegate {
         default void onHistoryViewShown(WindowWidget aWindow) {}
         default void onHistoryViewHidden(WindowWidget aWindow) {}

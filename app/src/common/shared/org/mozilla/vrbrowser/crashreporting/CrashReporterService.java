@@ -13,13 +13,14 @@ import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserActivity;
 import org.mozilla.vrbrowser.browser.SettingsStore;
+import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.JobIntentService;
 
 public class CrashReporterService extends JobIntentService {
 
-    private static final String LOGTAG = "VRB";
+    private static final String LOGTAG = SystemUtils.createLogtag(CrashReporterService.class);
 
     public static final String CRASH_ACTION = BuildConfig.APPLICATION_ID + ".CRASH_ACTION";
     public static final String DATA_TAG = "intent";

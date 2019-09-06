@@ -20,10 +20,10 @@ import org.mozilla.vrbrowser.browser.Media;
 import org.mozilla.vrbrowser.ui.views.MediaSeekBar;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.views.VolumeControl;
+import org.mozilla.vrbrowser.utils.SystemUtils;
 
 public class MediaControlsWidget extends UIWidget implements MediaElement.Delegate {
 
-    private static final String LOGTAG = "VRB";
     private Media mMedia;
     private MediaSeekBar mSeekBar;
     private VolumeControl mVolumeControl;

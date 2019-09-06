@@ -4,6 +4,7 @@ import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import androidx.annotation.NonNull;
 
@@ -12,7 +13,7 @@ import androidx.annotation.NonNull;
  */
 public class GeolocationData {
 
-    private static final String LOGTAG = "VRB";
+    private static final String LOGTAG = SystemUtils.createLogtag(GeolocationData.class);
 
     private JSONObject mData;
 

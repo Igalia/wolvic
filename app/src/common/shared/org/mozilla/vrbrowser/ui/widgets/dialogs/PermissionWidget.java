@@ -20,12 +20,11 @@ import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
+import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.net.URI;
 
 public class PermissionWidget extends UIDialog implements WidgetManagerDelegate.FocusChangeListener {
-
-    private static final String LOGTAG = "VRB";
 
     private TextView mPermissionMessage;
     private ImageView mPermissionIcon;

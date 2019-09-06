@@ -6,6 +6,9 @@
 package org.mozilla.vrbrowser.audio;
 
 import android.content.Context;
+
+import org.mozilla.vrbrowser.utils.SystemUtils;
+
 import java.util.concurrent.ConcurrentHashMap;
 
 public class AudioEngine {
@@ -15,7 +18,7 @@ public class AudioEngine {
     private float mMasterVolume = 1.0f;
     private static ConcurrentHashMap<Context, AudioEngine> mEngines = new ConcurrentHashMap<>();
     private boolean mEnabled;
-    private static final String LOGTAG = "VRB";
+    private static final String LOGTAG = SystemUtils.createLogtag(AudioEngine.class);
 
     public enum SoundType {
         STEREO,

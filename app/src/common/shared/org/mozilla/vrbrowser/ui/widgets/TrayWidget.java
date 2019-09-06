@@ -28,6 +28,7 @@ import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.widgets.settings.SettingsWidget;
+import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,8 +36,6 @@ import java.util.List;
 
 public class TrayWidget extends UIWidget implements SessionChangeListener, WindowWidget.BookmarksViewDelegate,
         WindowWidget.HistoryViewDelegate, WidgetManagerDelegate.UpdateListener {
-
-    static final String LOGTAG = TrayWidget.class.getSimpleName();
 
     private static final int ICON_ANIMATION_DURATION = 200;
     private static final int LIBRARY_NOTIFICATION_DURATION = 3000;

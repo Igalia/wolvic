@@ -11,8 +11,10 @@ import android.Manifest;
 import android.content.res.AssetManager;
 import android.os.Bundle;
 
+import org.mozilla.vrbrowser.utils.SystemUtils;
+
 public class PlatformActivity extends VRActivity {
-    static final String LOGTAG = "VRB";
+    static String LOGTAG = SystemUtils.createLogtag(PlatformActivity.class);
 
     public static boolean filterPermission(final String aPermission) {
         if (aPermission.equals(Manifest.permission.CAMERA)) {

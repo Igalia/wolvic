@@ -19,6 +19,7 @@ import org.mozilla.vrbrowser.databinding.BookmarkItemBinding;
 import org.mozilla.vrbrowser.ui.callbacks.BookmarkItemCallback;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.utils.AnimationHelper;
+import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.util.List;
 import java.util.Objects;
@@ -27,7 +28,7 @@ import mozilla.components.concept.storage.BookmarkNode;
 
 public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.BookmarkViewHolder> {
 
-    static final String LOGTAG = BookmarkAdapter.class.getSimpleName();
+    static final String LOGTAG = SystemUtils.createLogtag(BookmarkAdapter.class);
 
     private static final int ICON_ANIMATION_DURATION = 200;
 

@@ -15,6 +15,7 @@ import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.utils.DeviceType;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
 import org.mozilla.vrbrowser.utils.StringUtils;
+import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import androidx.annotation.NonNull;
 
@@ -26,7 +27,7 @@ import static org.mozilla.vrbrowser.utils.ServoUtils.isServoAvailable;
 
 public class SettingsStore {
 
-    private static final String LOGTAG = "VRB";
+    private static final String LOGTAG = SystemUtils.createLogtag(SettingsStore.class);
 
     private static SettingsStore mSettingsInstance;
 

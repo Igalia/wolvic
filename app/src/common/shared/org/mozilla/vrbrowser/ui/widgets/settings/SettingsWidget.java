@@ -32,6 +32,7 @@ import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.RestartDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.UIDialog;
 import org.mozilla.vrbrowser.ui.widgets.prompts.AlertPromptWidget;
+import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -40,7 +41,6 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.WorldClickListener, SettingsView.Delegate {
-    private static final String LOGTAG = "VRB";
     private AudioEngine mAudio;
     private SettingsView mCurrentView;
     private TextView mBuildText;

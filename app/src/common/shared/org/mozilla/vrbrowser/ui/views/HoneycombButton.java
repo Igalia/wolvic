@@ -14,12 +14,13 @@ import android.widget.TextView;
 
 import org.mozilla.vrbrowser.utils.DeviceType;
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import androidx.annotation.Nullable;
 
 public class HoneycombButton extends LinearLayout {
 
-    private static final String LOGTAG = "VRB";
+    private static final String LOGTAG = SystemUtils.createLogtag(HoneycombButton.class);
 
     private ImageView mIcon;
     private TextView mText;

@@ -24,6 +24,7 @@ import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.search.SearchEngineWrapper;
 import org.mozilla.vrbrowser.utils.DeviceType;
+import org.mozilla.vrbrowser.utils.SystemUtils;
 import org.mozilla.vrbrowser.utils.UrlUtils;
 
 import java.net.URI;
@@ -40,7 +41,7 @@ import static org.mozilla.vrbrowser.ui.widgets.Windows.*;
 
 public class TelemetryWrapper {
     private final static String APP_NAME = "FirefoxReality";
-    private final static String LOGTAG = TelemetryWrapper.class.getSimpleName();
+    private final static String LOGTAG = SystemUtils.createLogtag(TelemetryWrapper.class);
     private final static int MIN_LOAD_TIME = 40;
     private final static int LOADING_BUCKET_SIZE_MS = 100;
     private final static int MIN_IMMERSIVE_TIME = 1000;

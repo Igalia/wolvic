@@ -5,12 +5,13 @@ import android.os.Bundle;
 import android.util.Log;
 
 import org.mozilla.gecko.CrashHandler;
+import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import androidx.annotation.NonNull;
 
 public class GlobalExceptionHandler {
 
-    private static final String LOGTAG = "VRB";
+    private static final String LOGTAG = SystemUtils.createLogtag(GlobalExceptionHandler.class);
 
     private static GlobalExceptionHandler mInstance;
 

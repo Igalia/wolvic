@@ -33,6 +33,7 @@ import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
+import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -40,7 +41,6 @@ import androidx.core.app.ActivityCompat;
 public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate.PermissionListener,
         Application.ActivityLifecycleCallbacks {
 
-    private static final String LOGTAG = "VRB";
     private static final int VOICESEARCH_AUDIO_REQUEST_CODE = 7455;
     private static final int ANIMATION_DURATION = 1000;
 

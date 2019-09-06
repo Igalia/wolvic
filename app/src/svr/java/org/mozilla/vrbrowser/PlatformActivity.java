@@ -14,10 +14,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 
+import org.mozilla.vrbrowser.utils.SystemUtils;
+
 import com.osterhoutgroup.api.ext.OdgHardwareExt;
 
 public class PlatformActivity extends NativeActivity {
-    static String LOGTAG = "VRBrowser";
+    static String LOGTAG = SystemUtils.createLogtag(PlatformActivity.class);
     private OdgHardwareExt mOdgHardware;
 
     public static boolean filterPermission(final String aPermission) {

@@ -37,6 +37,7 @@ import org.mozilla.vrbrowser.ui.views.UITextButton;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.VoiceSearchWidget;
 import org.mozilla.vrbrowser.utils.AnimationHelper;
 import org.mozilla.vrbrowser.utils.ServoUtils;
+import org.mozilla.vrbrowser.utils.SystemUtils;
 import org.mozilla.vrbrowser.utils.UIThreadExecutor;
 
 import java.util.ArrayList;
@@ -49,8 +50,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         NavigationURLBar.NavigationURLBarDelegate, VoiceSearchWidget.VoiceSearchDelegate,
         SharedPreferences.OnSharedPreferenceChangeListener, SuggestionsWidget.URLBarPopupDelegate,
         WindowWidget.BookmarksViewDelegate, WindowWidget.HistoryViewDelegate, TrayListener {
-
-    private static final String LOGTAG = NavigationBarWidget.class.getSimpleName();
 
     private AudioEngine mAudio;
     private UIButton mBackButton;

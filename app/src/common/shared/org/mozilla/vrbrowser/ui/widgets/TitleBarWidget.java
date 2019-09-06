@@ -20,14 +20,13 @@ import org.mozilla.geckoview.MediaElement;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.Media;
 import org.mozilla.vrbrowser.databinding.TitleBarBinding;
+import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 
 public class TitleBarWidget extends UIWidget {
-
-    private static final String LOGTAG = TitleBarWidget.class.getSimpleName();
 
     public interface Delegate {
         void onTitleClicked(@NonNull TitleBarWidget titleBar);

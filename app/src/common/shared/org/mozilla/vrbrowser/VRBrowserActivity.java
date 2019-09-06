@@ -69,6 +69,7 @@ import org.mozilla.vrbrowser.ui.widgets.dialogs.CrashDialogWidget;
 import org.mozilla.vrbrowser.utils.ConnectivityReceiver;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
 import org.mozilla.vrbrowser.utils.ServoUtils;
+import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -112,7 +113,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     static final int SwipeDelay = 1000; // milliseconds
     static final long RESET_CRASH_COUNT_DELAY = 5000;
 
-    static final String LOGTAG = "VRB";
+    static final String LOGTAG = SystemUtils.createLogtag(VRBrowserActivity.class);
     HashMap<Integer, Widget> mWidgets;
     private int mWidgetHandleIndex = 1;
     AudioEngine mAudioEngine;

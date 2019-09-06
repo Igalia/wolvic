@@ -15,6 +15,7 @@ import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.browser.engine.SessionStack;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
+import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.io.File;
 import java.io.FileReader;
@@ -28,7 +29,7 @@ import java.util.ArrayList;
 public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWidget.Delegate,
         GeckoSession.ContentDelegate, WindowWidget.WindowDelegate {
 
-    private static final String LOGTAG = Windows.class.getSimpleName();
+    private static final String LOGTAG = SystemUtils.createLogtag(Windows.class);
 
     private static final String WINDOWS_SAVE_FILENAME = "windows_state.json";
 

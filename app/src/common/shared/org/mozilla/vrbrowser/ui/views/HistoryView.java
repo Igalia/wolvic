@@ -39,7 +39,7 @@ import mozilla.components.concept.storage.VisitType;
 
 public class HistoryView extends FrameLayout implements HistoryStore.HistoryListener {
 
-    private static final String LOGTAG = HistoryView.class.getSimpleName();
+    private static final String LOGTAG = SystemUtils.createLogtag(HistoryView.class);
 
     private HistoryBinding mBinding;
     private HistoryAdapter mHistoryAdapter;

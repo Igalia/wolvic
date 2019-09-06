@@ -17,8 +17,10 @@ import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.mozilla.vrbrowser.utils.SystemUtils;
+
 public class OffscreenDisplay {
-    final String LOGTAG = "VRB";
+    final String LOGTAG = SystemUtils.createLogtag(OffscreenDisplay.class);
     private Context mContext;
     private int mWidth;
     private int mHeight;

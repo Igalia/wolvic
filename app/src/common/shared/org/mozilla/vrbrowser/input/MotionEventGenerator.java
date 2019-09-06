@@ -12,9 +12,10 @@ import android.view.InputDevice;
 import android.util.SparseArray;
 
 import org.mozilla.vrbrowser.ui.widgets.Widget;
+import org.mozilla.vrbrowser.utils.SystemUtils;
 
 public class MotionEventGenerator {
-    static final String LOGTAG = "VRB";
+    static final String LOGTAG = SystemUtils.createLogtag(MotionEventGenerator.class);
     static class Device {
         int mDevice;
         Widget mPreviousWidget = null;

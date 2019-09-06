@@ -19,6 +19,7 @@ import org.mozilla.vrbrowser.databinding.HistoryItemBinding;
 import org.mozilla.vrbrowser.ui.callbacks.HistoryItemCallback;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.utils.AnimationHelper;
+import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.util.List;
 import java.util.Objects;
@@ -27,7 +28,7 @@ import mozilla.components.concept.storage.VisitInfo;
 
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryItemViewHolder> {
 
-    static final String LOGTAG = HistoryAdapter.class.getSimpleName();
+    static final String LOGTAG = SystemUtils.createLogtag(HistoryAdapter.class);
 
     private static final int ICON_ANIMATION_DURATION = 200;
 

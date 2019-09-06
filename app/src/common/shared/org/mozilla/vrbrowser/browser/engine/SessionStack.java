@@ -35,6 +35,7 @@ import org.mozilla.vrbrowser.browser.VideoAvailabilityListener;
 import org.mozilla.vrbrowser.geolocation.GeolocationData;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.utils.InternalPages;
+import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -55,8 +56,7 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
         GeckoSession.PromptDelegate, GeckoSession.MediaDelegate, GeckoSession.HistoryDelegate,
         SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private static final String LOGTAG = "VRB";
-
+    private static final String LOGTAG = SystemUtils.createLogtag(SessionStack.class);
     // You can test a local file using: "resource://android/assets/webvr/index.html"
     public static final int NO_SESSION = -1;
 
