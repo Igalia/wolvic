@@ -72,6 +72,7 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
             runtimeSettingsBuilder.displayDpiOverride(SettingsStore.getInstance(context).getDisplayDpi());
             runtimeSettingsBuilder.screenSizeOverride(SettingsStore.getInstance(context).getMaxWindowWidth(),
                     SettingsStore.getInstance(context).getMaxWindowHeight());
+            runtimeSettingsBuilder.autoplayDefault(SettingsStore.getInstance(mContext).isAutoplayEnabled() ? GeckoRuntimeSettings.AUTOPLAY_DEFAULT_ALLOWED : GeckoRuntimeSettings.AUTOPLAY_DEFAULT_BLOCKED);
 
             if (SettingsStore.getInstance(context).getTransparentBorderWidth() > 0) {
                 runtimeSettingsBuilder.useMaxScreenDepth(true);

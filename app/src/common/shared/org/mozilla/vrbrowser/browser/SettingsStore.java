@@ -567,5 +567,15 @@ public class SettingsStore {
         editor.putBoolean(mContext.getString(R.string.settings_key_debug_logging), isEnabled);
         editor.commit();
     }
+
+    public boolean isAutoplayEnabled() {
+        return mPrefs.getBoolean(mContext.getString(R.string.settings_key_autoplay), AUTOPLAY_ENABLED);
+    }
+
+    public void setAutoplayEnabled(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_autoplay), isEnabled);
+        editor.commit();
+    }
 }
 

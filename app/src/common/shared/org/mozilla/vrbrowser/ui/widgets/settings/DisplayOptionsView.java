@@ -302,6 +302,7 @@ class DisplayOptionsView extends SettingsView {
 
         if (doApply) {
             SessionStore.get().setAutoplayEnabled(value);
+            SettingsStore.getInstance(getContext()).setAutoplayEnabled(value);
         }
     }
 
