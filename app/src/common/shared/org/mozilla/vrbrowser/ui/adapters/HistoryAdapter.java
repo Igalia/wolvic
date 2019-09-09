@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Objects;
 
 import mozilla.components.concept.storage.VisitInfo;
+import mozilla.components.concept.storage.VisitType;
 
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryItemViewHolder> {
 
@@ -100,7 +101,14 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryI
     }
 
     public int itemCount() {
-        return mHistoryList != null ? mHistoryList.size() : 0;
+        if (mHistoryList != null) {
+            return mHistoryList.stream().allMatch(item ->
+                    item.getVisitType() == VisitType.NOT_A_VISIT) ?
+                    0 :
+                    mHistoryList.size();
+        }
+
+        return 0;
     }
 
     public int getItemPosition(long id) {
