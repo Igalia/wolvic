@@ -979,7 +979,8 @@
     <!-- This string is displayed in the content language list in front of the system default language in between parenthesis -->
     <string name="language_default">Default</string>
 
-    <!-- This string is displayed in the URL bar when the user is in the home page -->
+    <!-- This string is displayed in the URL bar when the user is in the home page.
+         '%1$s' will be replaced at runtime with the app's name. -->
     <string name="url_home_title">%1$s Home</string>
 
     <!-- This string is displayed in the URL bar when the user is in the bookmarks panel -->
