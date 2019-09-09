@@ -1,7 +1,4 @@
 <resources>
-    <!-- IMPORTANT NOTE: If this file is updated anyhow, the STRs wiki must be updated accordingly:
-    https://github.com/MozillaReality/FirefoxReality/wiki/L10n -->
-
     <!-- This string is used on the virtual keyboard to label the 'Enter' key (stylized in uppercase letters as 'ENTER'). -->
     <string name="keyboard_enter_label">ENTER</string>
 
@@ -966,7 +963,7 @@
 
     <!-- This string is displayed in the description of the Voice Search samples collect dialog. That dialog is shown the first time
          a user tries to use the voice search. -->
-    <string name="voice_samples_collect_dialog_description">Your data is always secure and never shared with third parties. We collect voice samples to improve the experience and performance of our products. You’ll always be able to use voice search, even if you don’t allow collection.&lt;a href="privacy">Learn More&lt;/a></string>
+    <string name="voice_samples_collect_dialog_description2">In order to improve our voice recognition and other services, we need to collect voice samples for research. We store your data securely and without identifying information. You’ll always be able to use voice search, even if you don’t allow collection.&lt;a href="privacy">Learn More&lt;/a></string>
 
     <!-- This string is displayed in the button of the Voice Search samples collect dialog.
          When clicked the user opts in to the voice data collection. -->
