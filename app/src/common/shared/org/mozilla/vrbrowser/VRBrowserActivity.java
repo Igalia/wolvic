@@ -22,6 +22,7 @@ import android.opengl.GLES20;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Process;
 import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
@@ -179,6 +180,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SettingsStore.getInstance(getBaseContext()).setPid(Process.myPid());
         // Fix for infinite restart on startup crashes.
         long count = SettingsStore.getInstance(getBaseContext()).getCrashRestartCount();
         boolean cancelRestart = count > CrashReporterService.MAX_RESTART_COUNT;
@@ -318,12 +320,14 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     protected void onStart() {
+        SettingsStore.getInstance(getBaseContext()).setPid(Process.myPid());
         super.onStart();
         TelemetryWrapper.start();
     }
 
     @Override
     protected void onStop() {
+        SettingsStore.getInstance(getBaseContext()).setPid(0);
         super.onStop();
 
         if (SettingsStore.getInstance(this).getCylinderDensity() > 0.0f) {
@@ -377,6 +381,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     protected void onDestroy() {
+        SettingsStore.getInstance(getBaseContext()).setPid(0);
         // Unregister the crash service broadcast receiver
         unregisterReceiver(mCrashReceiver);
         mSearchEngineWrapper.unregisterForUpdates();

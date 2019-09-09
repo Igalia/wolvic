@@ -577,5 +577,15 @@ public class SettingsStore {
         editor.putBoolean(mContext.getString(R.string.settings_key_autoplay), isEnabled);
         editor.commit();
     }
+
+    public void setPid(int aPid) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putInt(mContext.getString(R.string.settings_key_pid), aPid);
+        editor.commit();
+    }
+
+    public int getPid() {
+        return mPrefs.getInt(mContext.getString(R.string.settings_key_pid), 0);
+    }
 }
 

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Process;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import org.mozilla.geckoview.GeckoRuntime;
@@ -32,11 +31,9 @@ public class CrashReporterService extends JobIntentService {
     public static final long MAX_RESTART_COUNT = 2;
     private static final int MAX_PID_CHECK_COUNT = 5;
 
-    private int mPidCheckCount = 0;
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(LOGTAG, "======> onStartCommand");
+        Log.d(LOGTAG, "onStartCommand");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             enqueueWork(this, CrashReporterService.class, JOB_ID, intent);
         }
@@ -48,34 +45,39 @@ public class CrashReporterService extends JobIntentService {
     protected void onHandleWork(@NonNull Intent intent) {
         String action = intent.getAction();
         if (GeckoRuntime.ACTION_CRASHED.equals(action)) {
+            final int activityPid = SettingsStore.getInstance(getBaseContext()).getPid();
             boolean fatal = intent.getBooleanExtra(GeckoRuntime.EXTRA_CRASH_FATAL, false);
 
             long count = SettingsStore.getInstance(getBaseContext()).getCrashRestartCount();
             boolean cancelRestart = count > MAX_RESTART_COUNT;
             if (cancelRestart || BuildConfig.DISABLE_CRASH_RESTART) {
-                Log.e(LOGTAG, "CANCEL CRASH HANDLER");
+                Log.e(LOGTAG, "Too many restarts. Abort crash reporter service.");
                 return;
             }
 
             if (fatal) {
-                Log.d(LOGTAG, "======> NATIVE CRASH PARENT " + intent);
-                final int pid = Process.myPid();
+                Log.d(LOGTAG, "Main process crash " + intent);
+                if (activityPid == 0) {
+                    Log.e(LOGTAG, "Application was quitting. Crash reporter will not trigger a restart.");
+                    return;
+                }
                 final ActivityManager activityManager = (ActivityManager) this.getSystemService(Context.ACTIVITY_SERVICE);
                 if (activityManager == null) {
                     return;
                 }
 
+                int pidCheckCount = 0;
                 do {
-                    boolean otherProcessesFound = false;
+                    boolean activityFound = false;
                     for (final ActivityManager.RunningAppProcessInfo info : activityManager.getRunningAppProcesses()) {
-                        if (pid != info.pid) {
-                            otherProcessesFound = true;
-                            Log.e(LOGTAG, "======> Found PID " + info.pid);
+                        if (activityPid == info.pid) {
+                            activityFound = true;
+                            Log.e(LOGTAG, "Main activity still running: " + activityPid);
                             break;
                         }
                     }
 
-                    if (!otherProcessesFound || (mPidCheckCount > MAX_PID_CHECK_COUNT)) {
+                    if (!activityFound || (pidCheckCount > MAX_PID_CHECK_COUNT)) {
                         intent.setClass(CrashReporterService.this, VRBrowserActivity.class);
                         intent.setPackage(BuildConfig.APPLICATION_ID);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -83,7 +85,7 @@ public class CrashReporterService extends JobIntentService {
                         break;
 
                     } else {
-                        mPidCheckCount++;
+                        pidCheckCount++;
                         try {
                             Thread.sleep(PID_CHECK_INTERVAL);
                         } catch (InterruptedException e) {
@@ -94,14 +96,14 @@ public class CrashReporterService extends JobIntentService {
                 } while (true);
 
             } else {
-                Log.d(LOGTAG, "======> NATIVE CRASH CONTENT" + intent);
+                Log.d(LOGTAG, "Content process crash " + intent);
                 Intent broadcastIntent = new Intent(CRASH_ACTION);
                 broadcastIntent.putExtra(DATA_TAG, intent);
                 sendBroadcast(broadcastIntent, getString(R.string.app_permission_name));
             }
         }
 
-        Log.d(LOGTAG, "======> Crash reporter job finished");
+        Log.d(LOGTAG, "Crash reporter job finished");
     }
 
 }
