@@ -158,7 +158,7 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
             addSection(orderedItems, getResources().getString(R.string.history_section_today), currentTime, todayLimit);
             addSection(orderedItems, getResources().getString(R.string.history_section_yesterday), todayLimit, yesterdayLimit);
             addSection(orderedItems, getResources().getString(R.string.history_section_last_week), yesterdayLimit, oneWeekLimit);
-            addSection(orderedItems, getResources().getString(R.string.history_section_today), oneWeekLimit, 0);
+            addSection(orderedItems, getResources().getString(R.string.history_section_older), oneWeekLimit, 0);
 
             showHistory(orderedItems);
 
