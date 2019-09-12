@@ -83,7 +83,7 @@ public class PlatformActivity extends Activity {
                 new GLSurfaceView.Renderer() {
                     @Override
                     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-                        Log.e(LOGTAG, "In onSurfaceCreated");
+                        Log.d(LOGTAG, "In onSurfaceCreated");
                         activityCreated(getAssets());
                         mSurfaceCreated = true;
                         notifyPendingEvents();
@@ -91,7 +91,7 @@ public class PlatformActivity extends Activity {
 
                     @Override
                     public void onSurfaceChanged(GL10 gl, int width, int height) {
-                        Log.e(LOGTAG, "In onSurfaceChanged");
+                        Log.d(LOGTAG, "In onSurfaceChanged");
                         updateViewport(width, height);
                     }
 
@@ -130,7 +130,6 @@ public class PlatformActivity extends Activity {
             return false;
         }
 
-        Log.e(LOGTAG, "real onTouchEvent: " + aEvent.toString());
         final boolean isDown = down;
 
         final float xx = aEvent.getX(0);
@@ -150,8 +149,6 @@ public class PlatformActivity extends Activity {
             return false;
         }
 
-        // Log.e(LOGTAG, "real onGenericMotionEvent: " + aEvent.toString());
-
         final float xx = aEvent.getX(0);
         final float yy = aEvent.getY(0);
         queueRunnable(() -> touchEvent(false, xx, yy));
@@ -160,7 +157,7 @@ public class PlatformActivity extends Activity {
 
     @Override
     protected void onPause() {
-        Log.e(LOGTAG, "PlatformActivity onPause");
+        Log.d(LOGTAG, "PlatformActivity onPause");
         synchronized (activityPausedRunnable) {
             queueRunnable(activityPausedRunnable);
             try {
@@ -175,7 +172,7 @@ public class PlatformActivity extends Activity {
 
     @Override
     protected void onResume() {
-        Log.e(LOGTAG, "PlatformActivity onResume");
+        Log.d(LOGTAG, "PlatformActivity onResume");
         super.onResume();
         mView.onResume();
         queueRunnable(activityResumedRunnable);
@@ -184,7 +181,7 @@ public class PlatformActivity extends Activity {
 
     @Override
     protected void onDestroy() {
-        Log.e(LOGTAG, "PlatformActivity onDestroy");
+        Log.d(LOGTAG, "PlatformActivity onDestroy");
         super.onDestroy();
         synchronized (activityDestroyedRunnable) {
             queueRunnable(activityDestroyedRunnable);
@@ -261,10 +258,10 @@ public class PlatformActivity extends Activity {
 
     private void updateUI(final int aMode) {
         if (aMode == 0) {
-            Log.e(LOGTAG, "Got render mode of Stand Alone");
+            Log.d(LOGTAG, "Got render mode of Stand Alone");
             findViewById(R.id.click_button).setVisibility(View.GONE);
         } else {
-            Log.e(LOGTAG, "Got render mode of Immersive");
+            Log.d(LOGTAG, "Got render mode of Immersive");
             findViewById(R.id.click_button).setVisibility(View.VISIBLE);
         }
     }
