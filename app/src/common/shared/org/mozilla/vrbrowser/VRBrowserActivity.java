@@ -363,6 +363,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     protected void onResume() {
+        MotionEventGenerator.clearDevices();
         mWidgetContainer.getViewTreeObserver().addOnGlobalFocusChangeListener(globalFocusListener);
         if (mOffscreenDisplay != null) {
             mOffscreenDisplay.onResume();

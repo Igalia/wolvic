@@ -132,4 +132,8 @@ public class MotionEventGenerator {
         device.mCoords[0].setAxisValue(MotionEvent.AXIS_VSCROLL, 0.0f);
         device.mCoords[0].setAxisValue(MotionEvent.AXIS_HSCROLL, 0.0f);
     }
+
+    public static void clearDevices() {
+        devices.clear();
+    }
 }
