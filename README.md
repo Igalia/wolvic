@@ -100,14 +100,19 @@ cp ./extra/wavesdk/build.gradle ./third_party/wavesdk
 
 Make certain to set the build flavor to `wavevrDebug` in Android Studio before building the project.
 
-## Using a custom GeckoView
+## Local Development
 
-Create a file called `user.properties` in the top-level project directory. Add a variable called `geckoViewLocalArm` and `geckoViewLocalX86` and set it to the location of your locally built AAR:
+### Dependency substitutions
 
-```ini
-geckoViewLocalArm=/path/to/your/build/geckoview-nightly-armeabi-v7a-64.0.20180924100359.aar
-geckoViewLocalX86=/path/to/your/build/geckoview-nightly-x86-64.0.20180924100359.aar
-```
+You might be interested in building this project against local versions of some of the dependencies.
+This could be done either by using a [local maven repository](https://mozilla-mobile.github.io/android-components/contributing/testing-components-inside-app) (quite cumbersome), or via Gradle's [dependency substitutions](https://docs.gradle.org/current/userguide/customizing_dependency_resolution_behavior.html) (not at all cumbersome!).
+
+Currently, the substitution flow is streamlined for some of the core dependencies via configuration flags in `local.properties`. You can build against a local checkout of the following dependencies by specifying their local paths:
+- [GeckoView](https://hg.mozilla.org/mozilla-central), specifying its path via `dependencySubstitutions.geckoviewTopsrcdir=/path/to/mozilla-central` (and, optionally, `dependencySubstitutions.geckoviewTopobjdir=/path/to/topobjdir`). See [Bug 1533465](https://bugzilla.mozilla.org/show_bug.cgi?id=1533465).
+  - This assumes that you have built, packaged, and published your local GeckoView -- but don't worry, the dependency substitution script has the latest instructions for doing that.
+
+Do not forget to run a Gradle sync in Android Studio after changing `local.properties`. If you specified any substitutions, they will be reflected in the modules list, and you'll be able to modify them from a single Android Studio window.
+
 
 ## Install dev and production builds on device simultaneously
 
@@ -141,16 +146,6 @@ npm run compress
 ### `Device supports , but APK only supports armeabi-v7a[...]`
 
 Enable [USB Remote Debugging](https://github.com/MozillaReality/FirefoxReality/wiki/Developer-Info#remote-debugging) on the device.
-
-### `Could not get unknown property 'geckoViewLocal' for build 'FirefoxReality'[...]`
-
-```bash
-./mach build
-./mach package
-./mach android archive-geckoview
-find $objdir -name *.aar
-echo "geckoViewLocalArm=$objdir/gradle/build/mobile/android/geckoview/outputs/aar/geckoview-official-withGeckoBinaries-noMinApi-release.aar" > $FirefoxReality/user.properties
-```
 
 ### **`Firefox > Web Developer > WebIDE > Performance`** gets stuck with greyed out "stop and show profile"
 

@@ -12,22 +12,22 @@ def getGitHash = { ->
 }
 
 def getCrashRestartDisabled = { ->
-    if (gradle.hasProperty("disableCrashRestart")) {
-        return gradle.disableCrashRestart
+    if (gradle.hasProperty("userProperties.disableCrashRestart")) {
+        return gradle."userProperties.disableCrashRestart"
     }
     return "false"
 }
 
 def getDevApplicationIdSuffix = { ->
-    if (gradle.hasProperty("simultaneousDevProduction")) {
-        return gradle.simultaneousDevProduction == "true" ? ".dev" : ""
+    if (gradle.hasProperty("userProperties.simultaneousDevProduction")) {
+        return gradle."userProperties.simultaneousDevProduction" == "true" ? ".dev" : ""
     }
     return ""
 }
 
 def getUseDebugSigningOnRelease = { ->
-    if (gradle.hasProperty("useDebugSigningOnRelease")) {
-        return gradle.useDebugSigningOnRelease == "true"
+    if (gradle.hasProperty("userProperties.useDebugSigningOnRelease")) {
+        return gradle."userProperties.useDebugSigningOnRelease" == "true"
     }
     return false
 }
@@ -59,7 +59,7 @@ android {
         }
     }
 
-    if (gradle.hasProperty('taskclusterBuild')) {
+    if (gradle.hasProperty('userProperties.taskclusterBuild')) {
         project.archivesBaseName = "FirefoxReality-$defaultConfig.versionName-$generatedVersionCode"
         defaultConfig.versionCode = generatedVersionCode
     } else {
@@ -476,21 +476,25 @@ if (findProject(':wavesdk')) {
     }
 }
 
-if (findProject(':geckoview-local')) {
-    dependencies {
-        implementation project(':geckoview-local')
-        implementation deps.snakeyaml
-    }
-} else {
-    dependencies {
-        // To see what the latest geckoview-nightly version is go here:
-        // https://maven.mozilla.org/?prefix=maven2/org/mozilla/geckoview/geckoview-nightly-armeabi-v7a/
-        armImplementation deps.gecko_view.nightly_armv7a
-        arm64Implementation deps.gecko_view.nightly_arm64
-        x86_64Implementation deps.gecko_view.nightly_x86_64
-    }
+dependencies {
+    // To see what the latest geckoview-nightly version is go here:
+    // https://maven.mozilla.org/?prefix=maven2/org/mozilla/geckoview/geckoview-nightly-armeabi-v7a/
+    armImplementation deps.gecko_view.nightly_armv7a
+    arm64Implementation deps.gecko_view.nightly_arm64
+    x86_64Implementation deps.gecko_view.nightly_x86_64
 }
 
+if (gradle.hasProperty('geckoViewLocalArm') || gradle.hasProperty('geckoViewLocalX86')) {
+    throw new GradleException("geckoViewLocal{Arm,X86} are deprecated: use geckoViewLocalTopsrcdir and geckoViewLocalTopobjdir")
+}
+
+if (gradle.hasProperty('localProperties.dependencySubstitutions.geckoviewTopsrcdir')) {
+    if (gradle.hasProperty('localProperties.dependencySubstitutions.geckoviewTopobjdir')) {
+        ext.topobjdir = gradle."localProperties.dependencySubstitutions.geckoviewTopobjdir"
+    }
+    ext.topsrcdir = gradle."localProperties.dependencySubstitutions.geckoviewTopsrcdir"
+    apply from: "${topsrcdir}/substitute-local-geckoview.gradle"
+}
 
 // -------------------------------------------------------------------------------------------------
 //  Dynamically set versionCode (See tools/build/versionCode.gradle
@@ -498,7 +502,7 @@ if (findProject(':geckoview-local')) {
 
 android.applicationVariants.all { variant ->
     def buildType = variant.buildType.name
-    if (gradle.hasProperty('taskclusterBuild')) {
+    if (gradle.hasProperty('userProperties.taskclusterBuild')) {
         def versionCode = generatedVersionCode
 
         // The Google Play Store does not allow multiple APKs for the same app that all have the

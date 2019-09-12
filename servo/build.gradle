@@ -24,14 +24,8 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 }
 
-if (findProject(':geckoview-local')) {
-    dependencies {
-        compileOnly project(':geckoview-local')
-    }
-} else {
-    dependencies {
-        compileOnly deps.gecko_view.nightly_armv7a
-    }
+dependencies {
+    compileOnly deps.gecko_view.nightly_armv7a
 }
 
 if (gradle.hasProperty('servoViewLocal')) {

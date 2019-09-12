@@ -7,26 +7,38 @@ if (wavebuild.exists()) {
     project(':wavesdk').projectDir = new File('third_party/wavesdk/')
 }
 
-def userPropertiesFile = new File('user.properties')
-if (userPropertiesFile.exists()) {
-    println("Loading user.properties")
-    def props = new Properties()
-    userPropertiesFile.withInputStream {
-        props.load(it)
+Properties userProperties = null;
+if (file('user.properties').canRead()) {
+    userProperties = new Properties()
+    userProperties.load(file('user.properties').newDataInputStream())
+    logger.lifecycle('Local configuration: loaded user.properties')
+} else {
+    logger.lifecycle('Local configuration: absent user.properties; proceeding as normal.')
+}
+
+if (userProperties != null) {
+    userProperties.each { prop ->
+        gradle.ext.set("userProperties.${prop.key}", prop.value)
+        logger.lifecycle("\tuserProperties.${prop.key}" + '=' + prop.value)
     }
-    props.each { prop ->
-        println(prop.key + " = " + prop.value)
-        gradle.ext.set(prop.key, prop.value)
-    }
-    if (gradle.hasProperty('geckoViewLocalArm') || gradle.hasProperty('geckoViewLocalX86')) {
-        println("Using local build of geckoview")
-        include ':geckoview-local'
-        project(':geckoview-local').projectDir = new File('geckoview-local')
-    }
-    if (gradle.hasProperty('enableServo')) {
-        println("Including :servo")
+    if (gradle.hasProperty('userProperties.enableServo')) {
+        logger.lifecycle('Including Servo.')
         include ':servo'
     }
+}
+
+Properties localProperties = null;
+if (file('local.properties').canRead()) {
+    localProperties = new Properties()
+    localProperties.load(file('local.properties').newDataInputStream())
+    logger.lifecycle('Local configuration: loaded local.properties')
 } else {
-    println("FILE DOESN'T EXIST")
+    logger.lifecycle('Local configuration: absent local.properties; proceeding as normal.')
+}
+
+if (localProperties != null) {
+    localProperties.each { prop ->
+        gradle.ext.set("localProperties.${prop.key}", prop.value)
+        logger.lifecycle("\tlocalProperties.${prop.key}" + '=' + prop.value)
+    }
 }
