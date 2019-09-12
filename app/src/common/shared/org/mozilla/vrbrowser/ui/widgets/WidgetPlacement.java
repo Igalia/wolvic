@@ -51,6 +51,7 @@ public class WidgetPlacement {
     // Widget will be curved if enabled.
     public boolean cylinder = true;
     public int borderColor = 0;
+    public String name;
     /*
      * Flat surface placements are automatically mapped to curved coordinates.
      * If a radius is set it's used for the automatic mapping of the yaw & angle when the
@@ -92,6 +93,7 @@ public class WidgetPlacement {
         this.cylinder = w.cylinder;
         this.cylinderMapRadius = w.cylinderMapRadius;
         this.borderColor = w.borderColor;
+        this.name = w.name;
     }
 
     public int textureWidth() {

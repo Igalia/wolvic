@@ -449,6 +449,9 @@ Widget::SetPlacement(const WidgetPlacementPtr& aPlacement) {
   if (m.cylinder) {
     m.UpdateCylinderMatrix();
   }
+  if (GetLayer()) {
+    GetLayer()->SetName(aPlacement->name);
+  }
 }
 
 WidgetResizerPtr

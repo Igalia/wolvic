@@ -34,6 +34,17 @@ WidgetPlacement::FromJava(JNIEnv* aEnv, jobject& aObject) {
   result->name = aEnv->GetBooleanField(aObject, f); \
 }
 
+#define GET_STRING_FIELD(name) { \
+  jfieldID f = aEnv->GetFieldID(clazz, #name, "Ljava/lang/String;"); \
+  jstring javaString = (jstring)aEnv->GetObjectField(aObject, f); \
+  if (javaString) { \
+    const char* nativeString = aEnv->GetStringUTFChars(javaString, 0); \
+    result->name = nativeString; \
+    aEnv->ReleaseStringUTFChars(javaString, nativeString); \
+  } \
+}
+
+
   GET_INT_FIELD(width);
   GET_INT_FIELD(height);
   GET_FLOAT_FIELD(anchor.x(), "anchorX");
@@ -60,6 +71,7 @@ WidgetPlacement::FromJava(JNIEnv* aEnv, jobject& aObject) {
   GET_BOOLEAN_FIELD(cylinder);
   GET_FLOAT_FIELD(cylinderMapRadius, "cylinderMapRadius");
   GET_INT_FIELD(borderColor);
+  GET_STRING_FIELD(name);
 
   return result;
 }

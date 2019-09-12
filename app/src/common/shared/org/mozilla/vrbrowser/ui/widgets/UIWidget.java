@@ -71,6 +71,7 @@ public abstract class UIWidget extends FrameLayout implements Widget {
         mBorderWidth = SettingsStore.getInstance(getContext()).getTransparentBorderWidth();
         mWidgetManager = (WidgetManagerDelegate) getContext();
         mWidgetPlacement = new WidgetPlacement(getContext());
+        mWidgetPlacement.name = getClass().getSimpleName();
         mHandle = mWidgetManager.newWidgetHandle();
         mWorldWidth = WidgetPlacement.pixelDimension(getContext(), R.dimen.world_width);
         initializeWidgetPlacement(mWidgetPlacement);

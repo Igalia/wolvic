@@ -36,6 +36,7 @@ struct WidgetPlacement {
   bool cylinder;
   float cylinderMapRadius;
   int borderColor;
+  std::string name;
 
   int32_t GetTextureWidth() const;
   int32_t GetTextureHeight() const;

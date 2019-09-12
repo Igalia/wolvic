@@ -26,6 +26,7 @@ struct VRLayer::State {
   device::EyeRect textureRect[2];
   SurfaceChangedDelegate surfaceChangedDelegate;
   std::function<void()> pendingEvent;
+  std::string name;
   State():
       initialized(false),
       priority(0),
@@ -92,6 +93,11 @@ VRLayer::GetTextureRect(crow::device::Eye aEye) const {
 bool
 VRLayer::GetDrawInFront() const {
   return m.drawInFront;
+}
+
+std::string
+VRLayer::GetName() const {
+  return m.name;
 }
 
 bool
@@ -175,6 +181,11 @@ VRLayer::SetSurfaceChangedDelegate(const crow::VRLayer::SurfaceChangedDelegate &
 void
 VRLayer::SetDrawInFront(bool aDrawInFront) {
   m.drawInFront = aDrawInFront;
+}
+
+void
+VRLayer::SetName(const std::string &aName) {
+  m.name = aName;
 }
 
 void VRLayer::NotifySurfaceChanged(SurfaceChange aChange, const std::function<void()>& aFirstCompositeCallback) {

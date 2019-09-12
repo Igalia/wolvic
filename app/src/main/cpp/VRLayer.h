@@ -47,6 +47,7 @@ public:
   const vrb::Color& GetTintColor() const;
   const device::EyeRect& GetTextureRect(device::Eye aEye) const;
   bool GetDrawInFront() const;
+  std::string GetName() const;
 
   bool ShouldDrawBefore(const VRLayer& aLayer);
   void SetInitialized(bool aInitialized);
@@ -60,6 +61,7 @@ public:
   void SetTextureRect(device::Eye aEye, const device::EyeRect& aTextureRect);
   void SetSurfaceChangedDelegate(const SurfaceChangedDelegate& aDelegate);
   void SetDrawInFront(bool aDrawInFront);
+  void SetName(const std::string& aName);
   void NotifySurfaceChanged(SurfaceChange aChange, const std::function<void()>& aFirstCompositeCallback);
 protected:
   struct State;
