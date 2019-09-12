@@ -73,15 +73,17 @@ public class SessionState {
                             out.name("mTitle").value(session.mTitle);
                             out.name("mFullScreen").value(session.mFullScreen);
                             out.name("mSettings").jsonValue(gson.toJson(session.mSettings));
-                            if (session.mSession.getSettings().getUsePrivateMode()) {
-                                out.name("mSessionState").jsonValue(null);
-
-                            } else {
-                                if (session.mSessionState != null) {
-                                    out.name("mSessionState").jsonValue(gsDelegate.toJson(session.mSessionState));
+                            if (session.mSession != null) {
+                                if (session.mSession.getSettings().getUsePrivateMode()) {
+                                    out.name("mSessionState").jsonValue(null);
 
                                 } else {
-                                    out.name("mSessionState").jsonValue(null);
+                                    if (session.mSessionState != null) {
+                                        out.name("mSessionState").jsonValue(gsDelegate.toJson(session.mSessionState));
+
+                                    } else {
+                                        out.name("mSessionState").jsonValue(null);
+                                    }
                                 }
                             }
                             out.endObject();

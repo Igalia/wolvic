@@ -12,6 +12,7 @@ import com.google.gson.reflect.TypeToken;
 
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.browser.Media;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.browser.engine.SessionStack;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
@@ -42,28 +43,23 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         float worldWidth;
 
         public void load(WindowWidget aWindow) {
-            if (aWindow == mFullscreenWindow) {
-                placement = mPrevWindowPlacement;
-
-            } else {
-                placement = aWindow.getWindowPlacement();
-            }
             sessionStack = aWindow.getSessionStack();
             currentSessionId = aWindow.getSessionStack().getCurrentSessionId();
-            WidgetPlacement placement;
+            WidgetPlacement widgetPlacement;
             if (aWindow.isFullScreen()) {
-                placement = aWindow.getBeforeFullscreenPlacement();
-
+                widgetPlacement = aWindow.getBeforeFullscreenPlacement();
+                placement = aWindow.getmWindowPlacementBeforeFullscreen();
             } else if (aWindow.isResizing()) {
-                placement = aWindow.getBeforeResizePlacement();
-
+                widgetPlacement = aWindow.getBeforeResizePlacement();
+                placement = aWindow.getWindowPlacement();
             } else {
-                placement = aWindow.getPlacement();
+                widgetPlacement = aWindow.getPlacement();
+                placement = aWindow.getWindowPlacement();
             }
 
-            textureWidth = placement.width;
-            textureHeight = placement.height;
-            worldWidth = placement.worldWidth;
+            textureWidth = widgetPlacement.width;
+            textureHeight = widgetPlacement.height;
+            worldWidth = widgetPlacement.worldWidth;
         }
     }
 
@@ -84,7 +80,6 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     private boolean mPrivateMode = false;
     public static final int MAX_WINDOWS = 3;
     private WindowWidget mFullscreenWindow;
-    private WindowPlacement mPrevWindowPlacement;
     private WindowPlacement mRegularWindowPlacement;
     private WindowPlacement mPrivateWindowPlacement;
     private boolean mStoredCurvedMode = false;
@@ -131,8 +126,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         try (Writer writer = new FileWriter(file)) {
             WindowsState state = new WindowsState();
             state.privateMode = mPrivateMode;
-            state.focusedWindowPlacement = mFocusedWindow.getWindowPlacement();
-            state.regularWindowsState = new ArrayList<>();
+            state.focusedWindowPlacement = mFocusedWindow.isFullScreen() ?  mFocusedWindow.getmWindowPlacementBeforeFullscreen() : mFocusedWindow.getWindowPlacement();
             for (WindowWidget window : mRegularWindows) {
                 WindowState windowState = new WindowState();
                 windowState.load(window);
@@ -917,6 +911,26 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         }
     }
 
+    private void setFullScreenSize(WindowWidget aWindow) {
+        final float minScale = WidgetPlacement.floatDimension(mContext, R.dimen.window_fullscreen_min_scale);
+        // Set browser fullscreen size
+        float aspect = SettingsStore.getInstance(mContext).getWindowAspect();
+        SessionStack sessionStack = mFocusedWindow.getSessionStack();
+        if (sessionStack == null) {
+            return;
+        }
+        Media media = sessionStack.getFullScreenVideo();
+        if (media != null && media.getWidth() > 0 && media.getHeight() > 0) {
+            aspect = (float)media.getWidth() / (float)media.getHeight();
+        }
+        float scale = aWindow.getCurrentScale();
+        // Enforce min fullscreen size.
+        // If current window area is larger only resize if the aspect changes (e.g. media).
+        if (scale < minScale || aspect != aWindow.getCurrentAspect()) {
+            aWindow.resizeByMultiplier(aspect, Math.max(scale, minScale));
+        }
+    }
+
     // Content delegate
     @Override
     public void onFullScreen(GeckoSession session, boolean aFullScreen) {
@@ -927,7 +941,8 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
         if (aFullScreen) {
             mFullscreenWindow = window;
-            mPrevWindowPlacement = window.getWindowPlacement();
+            window.saveBeforeFullscreenPlacement();
+            setFullScreenSize(window);
             placeWindow(window, WindowPlacement.FRONT);
             focusWindow(window);
             for (WindowWidget win: getCurrentWindows()) {
@@ -936,7 +951,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             updateMaxWindowScales();
             updateViews();
         } else if (mFullscreenWindow != null) {
-            placeWindow(mFullscreenWindow, mPrevWindowPlacement);
+            window.restoreBeforeFullscreenPlacement();
             mFullscreenWindow = null;
             for (WindowWidget win : getCurrentWindows()) {
                 setWindowVisible(win, true);

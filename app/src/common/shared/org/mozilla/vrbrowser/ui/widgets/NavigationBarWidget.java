@@ -437,29 +437,11 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         super.onDraw(canvas);
     }
 
-    private void setFullScreenSize() {
-        final float minScale = WidgetPlacement.floatDimension(getContext(), R.dimen.window_fullscreen_min_scale);
-        // Set browser fullscreen size
-        float aspect = SettingsStore.getInstance(getContext()).getWindowAspect();
-        Media media = mSessionStack.getFullScreenVideo();
-        if (media != null && media.getWidth() > 0 && media.getHeight() > 0) {
-            aspect = (float)media.getWidth() / (float)media.getHeight();
-        }
-        float scale = mAttachedWindow.getCurrentScale();
-        // Enforce min fullscreen size.
-        // If current window area is larger only resize if the aspect changes (e.g. media).
-        if (scale < minScale || aspect != mAttachedWindow.getCurrentAspect()) {
-            mAttachedWindow.resizeByMultiplier(aspect, Math.max(scale, minScale));
-        }
-    }
-
     private void enterFullScreenMode() {
         if (mAttachedWindow.isFullScreen()) {
             return;
         }
 
-        mAttachedWindow.saveBeforeFullscreenPlacement();
-        setFullScreenSize();
         mWidgetManager.pushBackHandler(mFullScreenBackHandler);
         mAttachedWindow.setIsFullScreen(true);
         AnimationHelper.fadeIn(mFullScreenModeContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
@@ -475,7 +457,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             mProjectionMenu.setParentWidget(this);
             mProjectionMenuPlacement = new WidgetPlacement(getContext());
             mWidgetManager.addWidget(mProjectionMenu);
-            mProjectionMenu.setDelegate((projection )-> {
+            mProjectionMenu.setDelegate((projection)-> {
                 if (mIsInVRVideo) {
                     // Reproject while reproducing VRVideo
                     mWidgetManager.showVRVideo(mAttachedWindow.getHandle(), projection);
@@ -508,7 +490,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             }
         }, 50);
 
-        mAttachedWindow.restoreBeforeFullscreenPlacement();
         mWidgetManager.updateWidget(mAttachedWindow);
 
         mAttachedWindow.setIsFullScreen(false);
