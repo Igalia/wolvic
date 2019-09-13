@@ -297,7 +297,7 @@
 
     <!-- The string labels the description text for the clear cached web content button in the
          privacy options dialog. -->
-    <string name="developer_options_clear_cache_web_content_description">网络内容缓存</string>
+    <string name="developer_options_clear_cache_web_content_description">已缓存网络内容</string>
 
     <!-- The string labels the button text for the clear cache buttons in the privacy options dialog. -->
     <string name="developer_options_clear_cache">清除数据</string>

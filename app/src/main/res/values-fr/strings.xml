@@ -742,6 +742,10 @@
          speech-to-text recognition. -->
     <string name="voice_search_tooltip">Commande vocale</string>
 
+    <!-- This string is for the tooltip that appears upon hovering the 'Request desktop site' button in the
+         browser's navigation bar. The button it labels, when pressed, change the currently used user agent. -->
+    <string name="request_dekstop_site_tooltip">Afficher la version du site pour ordinateurs</string>
+
     <!-- This string is for the tooltip that appears upon hovering the 'Clear' button in the
          browser's navigation bar. The button it labels, when pressed, clears the navigation bar text. -->
     <string name="clear_tooltip">Effacer</string>

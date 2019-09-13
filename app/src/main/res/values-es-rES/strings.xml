@@ -133,9 +133,21 @@
          (e.g., `Español` is mapped to `es`) when configured in the 'Voice Search' system. -->
     <string name="settings_language_choose_language_voice_search">Elige el idioma en el que quieras para las búsquedas por voz</string>
 
+    <!-- This string is used to label a text label that appears in the header of 'Language Settings' ->
+         'Voice Search Language' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of locales for the user to choose as their preferred voice search
+         language. -->
+    <string name="settings_language_choose_language_voice_search_title">Idioma de búsqueda por voz</string>
+
+    <!-- This string is used to label a text label that appears in the header description of 'Language Settings' ->
+         'Voice Search Language' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of locales for the user to choose as their preferred voice search
+         language. -->
+    <string name="settings_language_choose_language_voice_search_description">Elige tu idioma favorito para la búsqueda por voz.</string>
+
     <!-- This string is used to label a radio button in the 'Settings' Language dialog that, when pressed,
          changes the app and the language of the speech-recognition-based search to 'English (US)'. -->
-    <string name="settings_language_english">Inglés (US)</string>
+    <string name="settings_language_english">Inglés (EE. UU.)</string>
 
     <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
          changes the app and the language of the speech-recognition-based search to 'Chinese (Traditional/Zhuyin)'. -->
@@ -194,6 +206,10 @@
          a developer-build version of the app. -->
     <string name="settings_version_developer">Compilación del desarrollador</string>
 
+    <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
+        opens the Firfox Reality support web site in the browser window. -->
+    <string name="settings_help">Ayuda</string>
+
     <!-- This string is the title of a dialog box shown to the user when a settings
          change requires the application to restart. -->
     <string name="restart_dialog_restart">Se requiere reiniciar</string>
@@ -232,6 +248,12 @@
          simultaneously by a computer with more than one central processor.
          A dialog should appear with a field labeled with the text, 'Enable Multiprocess'. -->
     <string name="developer_options_multiprocess">Habilitar multiproceso</string>
+
+    <!-- This string labels an On/Off switch in the developer options dialog and is used to toggle
+         the performance monitor. The Performance monitor is used to detect pages that cause the
+         browser to run below a target framerate and pauses the page to restore performance.
+    -->
+    <string name="developer_options_performance_monitor">Activar el monitor de rendimiento</string>
 
     <!-- The string labels an On/Off switch in the developer options dialog and is used to toggle enabling Servo. -->
     <string name="developer_options_servo">Habilitar Servo</string>
@@ -331,6 +353,9 @@
 
     <!-- This string labels the 'Reset' button that restores the default developer settings values. -->
     <string name="developer_options_reset_button">Restablecer</string>
+
+    <!-- This string is used to label buttons to enable editing of other options. -->
+    <string name="settings_button_edit">Editar</string>
 
     <!-- This string describes the radio buttons used to select the user's background environment
          (seen while not in Immersive Mode). -->
@@ -640,7 +665,7 @@
     <string name="context_menu_open_new_window">Abrir en una nueva ventana.</string>
 
     <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmarks' icon in the
-         browser's navigation bar. The button it labels, when pressed, opens a list view of the user's saved
+         tray. The button it labels, when pressed, opens a list view of the user's saved
          Bookmarks. -->
     <string name="bookmarks_tooltip">Marcadores</string>
 
@@ -700,4 +725,5 @@
     <!-- This string is displayed in the message body of the alert dialog shown when the user does not have permission to run the application on the device.
          '%1$s' will be replace at runtime with the app's name. -->
     <string name="not_entitled_message">%1$s no tiene permiso para ejecutarse en este dispositivo y se cerrará.</string>
-</resources>
+
+    </resources>

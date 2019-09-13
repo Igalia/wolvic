@@ -237,7 +237,7 @@
          A dialog should appear with a field labeled with the text, 'Enable Multiprocess'. -->
     <string name="developer_options_multiprocess">マルチプロセスを有効化</string>
 
-    <!-- This string labels and On/Off switch in the developer options dialog and is used to toggle
+    <!-- This string labels an On/Off switch in the developer options dialog and is used to toggle
          the performance monitor. The Performance monitor is used to detect pages that cause the
          browser to run below a target framerate and pauses the page to restore performance.
     -->
@@ -426,22 +426,6 @@
          "external" storage. Note that on modern systems, "external" is still used in the name
          of this storage even though the storage may not reside on external removable media. -->
     <string name="security_options_permission_storage">外部ストレージの読み取り</string>
-
-    <!-- This string is a label above the group of switches that indicates that the switches below
-         relate to Firefox data collection and use. -->
-    <string name="security_options_speech_data_title">Firefox のデータ収集と利用について</string>
-
-    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
-     and is used to enable or disable permission to collect speech data. -->
-    <string name="security_options_speech_data">Firefox が音声データを収集することを許可する</string>
-
-    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
-     and is used to enable or disable permission to collect telemetry data. -->
-    <string name="security_options_telemetry_data">Firefox が技術的な対話データを Mozilla へ送信することを許可する</string>
-
-    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
-     and is used to enable or disable permission to send crash reports. -->
-    <string name="security_options_crash_reports_data">Firefox があなたに代わって未送信のクラッシュレポートを送信することを許可する</string>
 
     <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'On'. -->
     <string name="on">オン</string>
@@ -658,10 +642,6 @@
          speech-to-text recognition. -->
     <string name="voice_search_tooltip">音声検索</string>
 
-    <!-- This string is for the tooltip that appears upon hovering the 'User Agent' button in the
-         browser's navigation bar. The button it labels, when pressed, change the currently used user agent. -->
-    <string name="user_agent_tooltip">ユーザーエージェント文字列を切り替えます</string>
-
     <!-- This string is for the tooltip that appears upon hovering the 'Clear' button in the
          browser's navigation bar. The button it labels, when pressed, clears the navigation bar text. -->
     <string name="clear_tooltip">消去します</string>
@@ -778,4 +758,15 @@
     <string name="performance_title">パフォーマンスが低下しています</string>
     <!-- This string is displayed as the message body of a dialog displayed when poor web page performance has been detected and the page has been unloaded to restore performance. -->
     <string name="performance_message">このウェブページはパフォーマンスに影響を及ぼすため、読み込みが中断されています。ウィンドウのサイズを小さくすると、ウェブページのパフォーマンスを改善できる場合があります。</string>
+
+    <!-- This string is displayed in the button of the Voice Search samples collect dialog.
+         When clicked the user opts in to the voice data collection. -->
+    <string name="voice_samples_collect_dialog_allow">許可する</string>
+
+    <!-- This string is displayed in the button of the Voice Search samples collect dialog.
+         When clicked the user opts out of the voice data collection. -->
+    <string name="voice_samples_collect_dialog_do_not_allow">許可しない</string>
+
+    <!-- This string is displayed in the content language list in front of the system default language in between parenthesis -->
+    <string name="language_default">既定</string>
 </resources>
