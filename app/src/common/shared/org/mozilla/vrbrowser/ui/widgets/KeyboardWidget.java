@@ -387,7 +387,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
     @Override
     public void onPress(int primaryCode) {
-        Log.d("VRB", "Keyboard onPress " + primaryCode);
+        Log.d(LOGTAG, "Keyboard onPress " + primaryCode);
     }
 
     @Override
@@ -447,7 +447,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
     @Override
     public void onKey(int primaryCode, int[] keyCodes, boolean hasPopup) {
-        Log.d("VRB", "Keyboard onPress++ " + primaryCode);
+        Log.d(LOGTAG, "Keyboard onPress++ " + primaryCode);
         switch (primaryCode) {
             case Keyboard.KEYCODE_MODE_CHANGE:
                 handleModeChange();
@@ -716,8 +716,9 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         final int action = mEditorInfo.imeOptions & EditorInfo.IME_MASK_ACTION;
         postInputCommand(() -> connection.performEditorAction(action));
 
-        boolean hide = (action & (EditorInfo.IME_ACTION_DONE | EditorInfo.IME_ACTION_GO |
-                                 EditorInfo.IME_ACTION_SEARCH | EditorInfo.IME_ACTION_SEND)) != 0;
+        boolean hide = (action == EditorInfo.IME_ACTION_DONE) || (action == EditorInfo.IME_ACTION_GO) ||
+                (action == EditorInfo.IME_ACTION_SEARCH) || (action == EditorInfo.IME_ACTION_SEND);
+
         if (hide && mFocusedView != null) {
             mFocusedView.clearFocus();
         }
