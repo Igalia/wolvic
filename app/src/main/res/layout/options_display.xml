@@ -112,27 +112,6 @@
                     app:description="@string/developer_options_display_dpi"
                     app:highlightedTextColor="@color/fog" />
 
-                <org.mozilla.vrbrowser.ui.views.settings.DoubleEditSetting
-                    android:id="@+id/windowSize_edit"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:width="75dp"
-                    android:inputType="number"
-                    android:maxLength="4"
-                    app:by="@string/developer_options_by"
-                    app:description="@string/developer_options_window_size"
-                    app:highlightedTextColor="@color/fog" />
-
-                <org.mozilla.vrbrowser.ui.views.settings.DoubleEditSetting
-                    android:id="@+id/maxWindowSize_edit"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:width="75dp"
-                    android:inputType="number"
-                    android:maxLength="4"
-                    app:by="@string/developer_options_by"
-                    app:description="@string/developer_options_max_window_size"
-                    app:highlightedTextColor="@color/fog" />
             </LinearLayout>
         </ScrollView>
 

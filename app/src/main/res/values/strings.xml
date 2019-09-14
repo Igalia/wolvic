@@ -302,10 +302,6 @@
          use for the display density. -->
     <string name="developer_options_display_density">Display Density:</string>
 
-    <!-- This string is used to label two integer-entry fields where the default width and height of
-         the browser window may be set. -->
-    <string name="developer_options_window_size">Window Size:</string>
-
     <!-- This string is used to label buttons to enable editing of text fields in the
          'Developer Options' dialog. Pressing this button switches the text to
          editable-text fields so their values may be changed. -->
@@ -323,10 +319,6 @@
     <!-- This string is used to label a numerical entry field where the user may enter a new value
          for the virtual displays Dots Per Inch (DPI). -->
     <string name="developer_options_display_dpi">Display DPI:</string>
-
-    <!-- This string is used to label two integer entry fields that will allow the user to adjust
-         the maximum window size in the X and Y dimensions. -->
-    <string name="developer_options_max_window_size">Max. Window Size:</string>
 
     <!-- This string is used to label radio buttons for setting Multi-Sample Anti-Aliasing (MSAA) in
          VR Immersive Mode. -->

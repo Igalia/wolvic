@@ -266,25 +266,11 @@ public class SettingsStore {
     }
 
     public int getWindowWidth() {
-        return mPrefs.getInt(
-                mContext.getString(R.string.settings_key_window_width), WINDOW_WIDTH_DEFAULT);
-    }
-
-    public void setWindowWidth(int aWindowWidth) {
-        SharedPreferences.Editor editor = mPrefs.edit();
-        editor.putInt(mContext.getString(R.string.settings_key_window_width), aWindowWidth);
-        editor.commit();
+        return WINDOW_WIDTH_DEFAULT;
     }
 
     public int getWindowHeight() {
-        return mPrefs.getInt(
-                mContext.getString(R.string.settings_key_window_height), WINDOW_HEIGHT_DEFAULT);
-    }
-
-    public void setWindowHeight(int aWindowHeight) {
-        SharedPreferences.Editor editor = mPrefs.edit();
-        editor.putInt(mContext.getString(R.string.settings_key_window_height), aWindowHeight);
-        editor.commit();
+        return WINDOW_HEIGHT_DEFAULT;
     }
 
     public float getWindowAspect() {
@@ -303,25 +289,11 @@ public class SettingsStore {
     }
 
     public int getMaxWindowWidth() {
-        return mPrefs.getInt(
-                mContext.getString(R.string.settings_key_max_window_width), MAX_WINDOW_WIDTH_DEFAULT);
-    }
-
-    public void setMaxWindowWidth(int aMaxWindowWidth) {
-        SharedPreferences.Editor editor = mPrefs.edit();
-        editor.putInt(mContext.getString(R.string.settings_key_max_window_width), aMaxWindowWidth);
-        editor.commit();
+        return MAX_WINDOW_WIDTH_DEFAULT;
     }
 
     public int getMaxWindowHeight() {
-        return mPrefs.getInt(
-                mContext.getString(R.string.settings_key_max_window_height), MAX_WINDOW_HEIGHT_DEFAULT);
-    }
-
-    public void setMaxWindowHeight(int aMaxWindowHeight) {
-        SharedPreferences.Editor editor = mPrefs.edit();
-        editor.putInt(mContext.getString(R.string.settings_key_max_window_height), aMaxWindowHeight);
-        editor.commit();
+        return MAX_WINDOW_HEIGHT_DEFAULT;
     }
 
     public String getEnvironment() {

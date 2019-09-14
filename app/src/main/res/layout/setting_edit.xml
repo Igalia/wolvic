@@ -25,7 +25,7 @@
                     android:id="@+id/setting_description"
                     style="@style/settingsText"
                     android:layout_marginEnd="5dp"
-                    android:text="@string/developer_options_window_size"
+                    android:text="@string/developer_options_display_dpi"
                     tools:text="Setting Description" />
 
                 <TextView

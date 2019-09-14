@@ -93,30 +93,6 @@ class DisplayOptionsView extends SettingsView {
         mBinding.dpiEdit.setFirstText(Integer.toString(SettingsStore.getInstance(getContext()).getDisplayDpi()));
         mBinding.dpiEdit.setOnClickListener(mDpiListener);
         setDisplayDpi(SettingsStore.getInstance(getContext()).getDisplayDpi());
-
-        mBinding.windowSizeEdit.setHint1(String.valueOf(SettingsStore.WINDOW_WIDTH_DEFAULT));
-        mBinding.windowSizeEdit.setHint2(String.valueOf(SettingsStore.WINDOW_HEIGHT_DEFAULT));
-        mBinding.windowSizeEdit.setDefaultFirstValue(String.valueOf(SettingsStore.WINDOW_WIDTH_DEFAULT));
-        mBinding.windowSizeEdit.setDefaultSecondValue(String.valueOf(SettingsStore.WINDOW_HEIGHT_DEFAULT));
-        mBinding.windowSizeEdit.setFirstText(Integer.toString(SettingsStore.getInstance(getContext()).getWindowWidth()));
-        mBinding.windowSizeEdit.setSecondText(Integer.toString(SettingsStore.getInstance(getContext()).getWindowHeight()));
-        mBinding.windowSizeEdit.setOnClickListener(mWindowSizeListener);
-        setWindowSize(
-                SettingsStore.getInstance(getContext()).getWindowWidth(),
-                SettingsStore.getInstance(getContext()).getWindowHeight(),
-                false);
-
-        mBinding.maxWindowSizeEdit.setHint1(String.valueOf(SettingsStore.MAX_WINDOW_WIDTH_DEFAULT));
-        mBinding.maxWindowSizeEdit.setHint2(String.valueOf(SettingsStore.MAX_WINDOW_HEIGHT_DEFAULT));
-        mBinding.maxWindowSizeEdit.setDefaultFirstValue(String.valueOf(SettingsStore.MAX_WINDOW_WIDTH_DEFAULT));
-        mBinding.maxWindowSizeEdit.setDefaultSecondValue(String.valueOf(SettingsStore.MAX_WINDOW_HEIGHT_DEFAULT));
-        mBinding.maxWindowSizeEdit.setFirstText(Integer.toString(SettingsStore.getInstance(getContext()).getMaxWindowWidth()));
-        mBinding.maxWindowSizeEdit.setSecondText(Integer.toString(SettingsStore.getInstance(getContext()).getMaxWindowHeight()));
-        mBinding.maxWindowSizeEdit.setOnClickListener(mMaxWindowSizeListener);
-        setMaxWindowSize(
-                SettingsStore.getInstance(getContext()).getMaxWindowWidth(),
-                SettingsStore.getInstance(getContext()).getMaxWindowHeight(),
-                false);
     }
 
     @Override
@@ -145,16 +121,6 @@ class DisplayOptionsView extends SettingsView {
         if (mBinding.dpiEdit.isEditing()) {
             editing = true;
             mBinding.dpiEdit.cancel();
-        }
-
-        if (mBinding.windowSizeEdit.isEditing()) {
-            editing = true;
-            mBinding.windowSizeEdit.cancel();
-        }
-
-        if (mBinding.maxWindowSizeEdit.isEditing()) {
-            editing = true;
-            mBinding.maxWindowSizeEdit.cancel();
         }
 
         if (mBinding.homepageEdit.isEditing()) {
@@ -214,28 +180,6 @@ class DisplayOptionsView extends SettingsView {
         }
     };
 
-    private OnClickListener mWindowSizeListener = (view) -> {
-        try {
-            int newWindowWidth = Integer.parseInt(mBinding.windowSizeEdit.getFirstText());
-            int newWindowHeight = Integer.parseInt(mBinding.windowSizeEdit.getSecondText());
-            setWindowSize(newWindowWidth, newWindowHeight, true);
-
-        } catch (NumberFormatException e) {
-            setWindowSize(SettingsStore.WINDOW_WIDTH_DEFAULT, SettingsStore.WINDOW_HEIGHT_DEFAULT, true);
-        }
-    };
-
-    private OnClickListener mMaxWindowSizeListener = (view) -> {
-        try {
-            int newMaxWindowWidth = Integer.parseInt(mBinding.maxWindowSizeEdit.getFirstText());
-            int newMaxWindowHeight = Integer.parseInt(mBinding.maxWindowSizeEdit.getSecondText());
-            setMaxWindowSize(newMaxWindowWidth, newMaxWindowHeight, true);
-
-        } catch (NumberFormatException e) {
-            setMaxWindowSize(SettingsStore.MAX_WINDOW_WIDTH_DEFAULT, SettingsStore.MAX_WINDOW_HEIGHT_DEFAULT, true);
-        }
-    };
-
     private SwitchSetting.OnCheckedChangeListener mCurvedDisplayListener = (compoundButton, enabled, apply) ->
             setCurvedDisplay(enabled, true);
 
@@ -260,19 +204,6 @@ class DisplayOptionsView extends SettingsView {
         restart = restart | setDisplayDensity(SettingsStore.DISPLAY_DENSITY_DEFAULT);
         restart = restart | setDisplayDpi(SettingsStore.DISPLAY_DPI_DEFAULT);
 
-        try {
-            if (Integer.parseInt(mBinding.windowSizeEdit.getFirstText()) != SettingsStore.WINDOW_WIDTH_DEFAULT ||
-                    Integer.parseInt(mBinding.windowSizeEdit.getSecondText()) != SettingsStore.WINDOW_HEIGHT_DEFAULT) {
-                setWindowSize(SettingsStore.WINDOW_WIDTH_DEFAULT, SettingsStore.WINDOW_HEIGHT_DEFAULT, true);
-            }
-            if (Integer.parseInt(mBinding.maxWindowSizeEdit.getFirstText()) != SettingsStore.MAX_WINDOW_WIDTH_DEFAULT ||
-                    Integer.parseInt(mBinding.maxWindowSizeEdit.getSecondText()) != SettingsStore.MAX_WINDOW_HEIGHT_DEFAULT) {
-                setMaxWindowSize(SettingsStore.MAX_WINDOW_WIDTH_DEFAULT, SettingsStore.MAX_WINDOW_HEIGHT_DEFAULT, true);
-            }
-        } catch (NumberFormatException ex) {
-            setWindowSize(SettingsStore.WINDOW_WIDTH_DEFAULT, SettingsStore.WINDOW_HEIGHT_DEFAULT, true);
-            setMaxWindowSize(SettingsStore.MAX_WINDOW_WIDTH_DEFAULT, SettingsStore.MAX_WINDOW_HEIGHT_DEFAULT, true);
-        }
 
         setHomepage(mDefaultHomepageUrl);
         setAutoplay(SettingsStore.AUTOPLAY_ENABLED, true);
@@ -393,81 +324,6 @@ class DisplayOptionsView extends SettingsView {
         return restart;
     }
 
-    private void setWindowSize(int newWindowWidth, int newWindowHeight, boolean doApply) {
-        int prevWindowWidth = SettingsStore.getInstance(getContext()).getWindowWidth();
-        if (newWindowWidth <= 0) {
-            newWindowWidth = prevWindowWidth;
-        }
-
-        int prevWindowHeight = SettingsStore.getInstance(getContext()).getWindowHeight();
-        if (newWindowHeight <= 0) {
-            newWindowHeight = prevWindowHeight;
-        }
-
-        int maxWindowWidth = SettingsStore.getInstance(getContext()).getMaxWindowWidth();
-        if (newWindowWidth > maxWindowWidth) {
-            newWindowWidth = maxWindowWidth;
-        }
-
-        int maxWindowHeight = SettingsStore.getInstance(getContext()).getMaxWindowHeight();
-        if (newWindowHeight > maxWindowHeight) {
-            newWindowHeight = maxWindowHeight;
-        }
-
-        if (prevWindowWidth != newWindowWidth || prevWindowHeight != newWindowHeight) {
-            SettingsStore.getInstance(getContext()).setWindowWidth(newWindowWidth);
-            SettingsStore.getInstance(getContext()).setWindowHeight(newWindowHeight);
-
-            if (doApply) {
-                mWidgetManager.setWindowSize(newWindowWidth, newWindowHeight);
-            }
-        }
-
-        String newWindowWidthStr = Integer.toString(newWindowWidth);
-        mBinding.windowSizeEdit.setFirstText(newWindowWidthStr);
-        String newWindowHeightStr = Integer.toString(newWindowHeight);
-        mBinding.windowSizeEdit.setSecondText(newWindowHeightStr);
-    }
-
-    private void setMaxWindowSize(int newMaxWindowWidth, int newMaxWindowHeight, boolean doApply) {
-        int prevMaxWindowWidth = SettingsStore.getInstance(getContext()).getMaxWindowWidth();
-        if (newMaxWindowWidth <= 0) {
-            newMaxWindowWidth = prevMaxWindowWidth;
-        }
-
-        int prevMaxWindowHeight = SettingsStore.getInstance(getContext()).getMaxWindowHeight();
-        if (newMaxWindowHeight <= 0) {
-            newMaxWindowHeight = prevMaxWindowHeight;
-        }
-
-        int windowWidth = SettingsStore.getInstance(getContext()).getWindowWidth();
-        if (newMaxWindowWidth < windowWidth) {
-            newMaxWindowWidth = windowWidth;
-        }
-
-        int windowHeight = SettingsStore.getInstance(getContext()).getWindowHeight();
-        if (newMaxWindowHeight < windowHeight) {
-            newMaxWindowHeight = windowHeight;
-        }
-
-        if (newMaxWindowWidth != prevMaxWindowWidth ||
-                newMaxWindowHeight != prevMaxWindowHeight) {
-            SettingsStore.getInstance(getContext()).setMaxWindowWidth(newMaxWindowWidth);
-            SettingsStore.getInstance(getContext()).setMaxWindowHeight(newMaxWindowHeight);
-
-            if (doApply) {
-                SettingsStore.getInstance(getContext()).setMaxWindowWidth(newMaxWindowWidth);
-                SettingsStore.getInstance(getContext()).setMaxWindowHeight(newMaxWindowHeight);
-                showRestartDialog();
-            }
-        }
-
-        String newMaxWindowWidthStr = Integer.toString(newMaxWindowWidth);
-        mBinding.maxWindowSizeEdit.setFirstText(newMaxWindowWidthStr);
-        String newMaxWindowHeightStr = Integer.toString(newMaxWindowHeight);
-        mBinding.maxWindowSizeEdit.setSecondText(newMaxWindowHeightStr);
-    }
-
     @Override
     public void onGlobalFocusChanged(View oldFocus, View newFocus) {
         if (oldFocus != null) {
@@ -476,16 +332,6 @@ class DisplayOptionsView extends SettingsView {
             }
             if (mBinding.dpiEdit.contains(oldFocus) && mBinding.dpiEdit.isEditing()) {
                 mBinding.dpiEdit.cancel();
-            }
-            if (mBinding.windowSizeEdit.contains(oldFocus) &&
-                    (newFocus != null && !mBinding.windowSizeEdit.contains(newFocus)) &&
-                    mBinding.windowSizeEdit.isEditing()) {
-                mBinding.windowSizeEdit.cancel();
-            }
-            if (mBinding.maxWindowSizeEdit.contains(oldFocus) &&
-                    (newFocus != null && !mBinding.maxWindowSizeEdit.contains(newFocus)) &&
-                    mBinding.maxWindowSizeEdit.isEditing()) {
-                mBinding.maxWindowSizeEdit.cancel();
             }
             if (mBinding.homepageEdit.contains(oldFocus) && mBinding.homepageEdit.isEditing()) {
                 mBinding.homepageEdit.cancel();
