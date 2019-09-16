@@ -19,6 +19,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.ExtractedText;
 import android.view.inputmethod.ExtractedTextRequest;
 import android.view.inputmethod.InputConnection;
 import android.widget.ImageButton;
@@ -799,7 +800,12 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             return "";
         }
 
-        String fullText = aConnection.getExtractedText(new ExtractedTextRequest(),0).text.toString();
+        ExtractedText extracted = aConnection.getExtractedText(new ExtractedTextRequest(),0);
+        if ((extracted == null) || extracted.text == null) {
+            return "";
+        }
+
+        String fullText = extracted.text.toString();
         return aConnection.getTextBeforeCursor(fullText.length(),0).toString();
     }
 

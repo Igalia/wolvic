@@ -114,7 +114,7 @@ public class CustomKeyboard extends Keyboard {
             Field mField = getField(obj.getClass().getSuperclass(), fieldName);
             mField.setAccessible(true);
             return mField.getInt(obj);
-        } catch (IllegalAccessException e) {
+        } catch (IllegalAccessException | RuntimeException e) {
             e.printStackTrace();
             return 0;
         }
@@ -125,7 +125,7 @@ public class CustomKeyboard extends Keyboard {
             Field mField = getField(obj.getClass(), fieldName);
             mField.setAccessible(true);
             return mField.get(obj);
-        } catch (IllegalAccessException e) {
+        } catch (IllegalAccessException | RuntimeException e) {
             e.printStackTrace();
             return null;
         }
@@ -135,7 +135,7 @@ public class CustomKeyboard extends Keyboard {
             Field mField = getField(obj.getClass().getSuperclass(), fieldName);
             mField.setAccessible(true);
             return mField.get(this);
-        } catch (IllegalAccessException e) {
+        } catch (IllegalAccessException| RuntimeException e) {
             e.printStackTrace();
             return null;
         }
@@ -157,14 +157,15 @@ public class CustomKeyboard extends Keyboard {
     }
 
     public static void setParentField(Object obj, String fieldName, Object value) {
+        if (obj.getClass().getSuperclass() == null) {
+            return;
+        }
         try {
             Field privateField = obj.getClass().getSuperclass().getDeclaredField(fieldName);
             privateField.setAccessible(true);
             privateField.set(obj, value);
 
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
     }
