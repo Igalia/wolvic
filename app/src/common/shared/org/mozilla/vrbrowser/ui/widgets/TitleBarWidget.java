@@ -154,7 +154,7 @@ public class TitleBarWidget extends UIWidget {
                         "");
                 mBinding.url.setText(url.toString());
 
-            } catch (MalformedURLException e) {
+            } catch (MalformedURLException | IllegalArgumentException e) {
                 mBinding.url.setText("");
             }
 
