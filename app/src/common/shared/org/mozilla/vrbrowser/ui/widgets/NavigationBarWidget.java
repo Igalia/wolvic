@@ -403,13 +403,14 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mAttachedWindow.addHistoryViewListener(this);
 
         if (mAttachedWindow != null) {
-            mURLBar.setIsContentMode(mAttachedWindow.isBookmarksVisible());
+            mURLBar.setIsContentMode(mAttachedWindow.isBookmarksVisible() || mAttachedWindow.isHistoryVisible());
+            mURLBar.setURL("");
             if (mAttachedWindow.isBookmarksVisible()) {
-                mURLBar.setURL(getResources().getString(R.string.url_bookmarks_title));
+                mURLBar.setHint(R.string.url_bookmarks_title);
                 mURLBar.setInsecureVisibility(View.GONE);
 
-            } if (mAttachedWindow.isHistoryVisible()) {
-                mURLBar.setURL(getResources().getString(R.string.url_history_title));
+            } else if (mAttachedWindow.isHistoryVisible()) {
+                mURLBar.setHint(R.string.url_history_title);
                 mURLBar.setInsecureVisibility(View.GONE);
 
             } else {
@@ -715,7 +716,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     @Override
     public void onLocationChange(GeckoSession session, String url) {
-        if (mURLBar != null && !mAttachedWindow.isBookmarksVisible()) {
+        if (mURLBar != null && !mAttachedWindow.isBookmarksVisible() && !mAttachedWindow.isHistoryVisible()) {
             Log.d(LOGTAG, "Got location change");
             mURLBar.setURL(url);
             mURLBar.setHint(R.string.search_placeholder);
