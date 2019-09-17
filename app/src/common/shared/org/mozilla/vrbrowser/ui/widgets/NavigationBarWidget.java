@@ -419,6 +419,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             }
         }
 
+        clearFocus();
+
         mSessionStack = aWindow.getSessionStack();
         if (mSessionStack != null) {
             mURLBar.setSessionStack(mSessionStack);
