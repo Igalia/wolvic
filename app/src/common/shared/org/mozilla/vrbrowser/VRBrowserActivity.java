@@ -72,8 +72,14 @@ import org.mozilla.vrbrowser.utils.LocaleUtils;
 import org.mozilla.vrbrowser.utils.ServoUtils;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -88,7 +94,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         public void onReceive(Context context, Intent intent) {
             if(intent.getAction().equals(CrashReporterService.CRASH_ACTION)) {
                 Intent crashIntent = intent.getParcelableExtra(CrashReporterService.DATA_TAG);
-                handleCrashIntent(crashIntent);
+                handleContentCrashIntent(crashIntent);
             }
         }
     };
@@ -113,6 +119,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     static final int GestureSwipeRight = 1;
     static final int SwipeDelay = 1000; // milliseconds
     static final long RESET_CRASH_COUNT_DELAY = 5000;
+    static final String CRASH_STATS_URL = "https://crash-stats.mozilla.com/report/index/";
 
     static final String LOGTAG = SystemUtils.createLogtag(VRBrowserActivity.class);
     HashMap<Integer, Widget> mWidgets;
@@ -255,6 +262,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         mConnectivityReceiver = new ConnectivityReceiver();
         mPoorPerformanceWhiteList = new HashSet<>();
+        checkForCrash();
     }
 
     protected void initializeWidgets() {
@@ -420,7 +428,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 loadFromIntent(intent);
             }
         } else if (GeckoRuntime.ACTION_CRASHED.equals(intent.getAction())) {
-            handleCrashIntent(intent);
+            Log.e(LOGTAG, "Restarted after a crash");
         }
     }
 
@@ -433,7 +441,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     void loadFromIntent(final Intent intent) {
         if (GeckoRuntime.ACTION_CRASHED.equals(intent.getAction())) {
-            handleCrashIntent(intent);
+            Log.e(LOGTAG,"Loading from crash Intent");
         }
 
         Uri uri = intent.getData();
@@ -481,44 +489,104 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mConnectionAvailable = connected;
     }
 
-    private void handleCrashIntent(@NonNull final Intent intent) {
-        Log.e(LOGTAG, "======> Got crashed intent");
-        Log.d(LOGTAG, "======> Dump File: " +
-                intent.getStringExtra(GeckoRuntime.EXTRA_MINIDUMP_PATH));
-        Log.d(LOGTAG, "======> Extras File: " +
-                intent.getStringExtra(GeckoRuntime.EXTRA_EXTRAS_PATH));
-        Log.d(LOGTAG, "======> Fatal: " +
-                intent.getBooleanExtra(GeckoRuntime.EXTRA_CRASH_FATAL, false));
-
+    private void checkForCrash() {
+        final ArrayList<String> files = CrashReporterService.findCrashFiles(getBaseContext());
+        if (files.isEmpty()) {
+            Log.d(LOGTAG, "No crash files found.");
+            return;
+        }
         boolean isCrashReportingEnabled = SettingsStore.getInstance(this).isCrashReportingEnabled();
         if (isCrashReportingEnabled) {
-            sendCrashData(intent);
-
+            postCrashFiles(files);
         } else {
             if (mCrashDialog == null) {
                 mCrashDialog = new CrashDialogWidget(this);
-                mCrashDialog.setCrashDialogDelegate(() -> sendCrashData(intent));
             }
+            mCrashDialog.setCrashDialogDelegate(
+                    new CrashDialogWidget.CrashDialogDelegate() {
+                        @Override
+                        public void onSendData() {
+                            postCrashFiles(files);
+                        }
 
+                        @Override
+                        public void onDoNotSendData() {
+                            for (String file : files) {
+                                Log.e(LOGTAG, "Deleting crashfile: " + file);
+                                getBaseContext().deleteFile(file);
+                            }
+                        }
+                    }
+            );
             mCrashDialog.show(UIWidget.REQUEST_FOCUS);
         }
     }
 
-    private void sendCrashData(final Intent intent) {
-        ThreadUtils.postToBackgroundThread(() -> {
-            try {
-                GeckoResult<String> result = CrashReporter.sendCrashReport(VRBrowserActivity.this, intent, getString(R.string.crash_app_name));
+    private void handleContentCrashIntent(@NonNull final Intent intent) {
+        Log.e(LOGTAG, "Got content crashed intent");
+        final String dumpFile = intent.getStringExtra(GeckoRuntime.EXTRA_MINIDUMP_PATH);
+        final String extraFile = intent.getStringExtra(GeckoRuntime.EXTRA_EXTRAS_PATH);
+        Log.d(LOGTAG, "Dump File: " + dumpFile);
+        Log.d(LOGTAG, "Extras File: " + extraFile);
+        Log.d(LOGTAG, "Fatal: " + intent.getBooleanExtra(GeckoRuntime.EXTRA_CRASH_FATAL, false));
 
-                result.then(crashID -> {
-                    Log.e(LOGTAG, "Submitted crash report id: " + crashID);
-                    Log.e(LOGTAG, "Report available at: https://crash-stats.mozilla.com/report/index/" + crashID);
-                    return null;
-                }, (GeckoResult.OnExceptionListener<Void>) ex -> {
-                    Log.e(LOGTAG, "Failed to submit crash report: " + ex.getMessage());
-                    return null;
-                });
-            } catch (IOException | URISyntaxException e) {
-                Log.e(LOGTAG, "Failed to send crash report: " + e.toString());
+        boolean isCrashReportingEnabled = SettingsStore.getInstance(this).isCrashReportingEnabled();
+        if (isCrashReportingEnabled) {
+            postCrashFiles(dumpFile, extraFile);
+        } else {
+            if (mCrashDialog == null) {
+                mCrashDialog = new CrashDialogWidget(this);
+            }
+            mCrashDialog.setCrashDialogDelegate(() -> postCrashFiles(dumpFile, extraFile));
+            mCrashDialog.show(UIWidget.REQUEST_FOCUS);
+        }
+    }
+
+    private void sendCrashFiles(@NonNull final String aDumpFile, @NonNull final String aExtraFile) {
+        try {
+            GeckoResult<String> result = CrashReporter.sendCrashReport(VRBrowserActivity.this, new File(aDumpFile), new File(aExtraFile), getString(R.string.crash_app_name));
+
+            result.accept(crashID -> {
+                Log.e(LOGTAG, "Submitted crash report id: " + crashID);
+                Log.e(LOGTAG, "Report available at: " + CRASH_STATS_URL + crashID);
+            }, ex -> {
+                Log.e(LOGTAG, "Failed to submit crash report: " + (ex != null ? ex.getMessage() : "Exception is NULL"));
+            });
+        } catch (IOException | URISyntaxException e) {
+            Log.e(LOGTAG, "Failed to send crash report: " + e.toString());
+        }
+    }
+
+    private void postCrashFiles(@NonNull final String aDumpFile, @NonNull final String aExtraFile) {
+        ThreadUtils.postToBackgroundThread(() -> {
+            sendCrashFiles(aDumpFile, aExtraFile);
+        });
+    }
+
+    private void postCrashFiles(final ArrayList<String> aFiles) {
+        ThreadUtils.postToBackgroundThread(() -> {
+            for (String file: aFiles) {
+                try {
+                    ArrayList<String> list = new ArrayList<>(2);
+                    try (FileInputStream in = getBaseContext().openFileInput(file)) {
+                        try(BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
+                            String line;
+                            while((line = br.readLine()) != null) {
+                                list.add(line);
+                            }
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    if (list.size() < 2) {
+                        Log.e(LOGTAG, "Failed read crash dump file names from: " + file);
+                        return;
+                    }
+                    sendCrashFiles(list.get(0), list.get(1));
+                } finally {
+                    Log.d(LOGTAG,"Removing crash file: " + file);
+                    getBaseContext().deleteFile(file);
+                }
             }
         });
     }

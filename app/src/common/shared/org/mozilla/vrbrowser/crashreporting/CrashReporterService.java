@@ -4,7 +4,6 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.os.Process;
 import android.util.Log;
 
 import org.mozilla.geckoview.GeckoRuntime;
@@ -13,6 +12,12 @@ import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserActivity;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.utils.SystemUtils;
+
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.UUID;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.JobIntentService;
@@ -23,6 +28,7 @@ public class CrashReporterService extends JobIntentService {
 
     public static final String CRASH_ACTION = BuildConfig.APPLICATION_ID + ".CRASH_ACTION";
     public static final String DATA_TAG = "intent";
+    public static final String CRASH_FILE_PREFIX = "crashfile-";
 
     private static final int PID_CHECK_INTERVAL = 100;
     private static final int JOB_ID = 1000;
@@ -41,13 +47,24 @@ public class CrashReporterService extends JobIntentService {
         return super.onStartCommand(intent, flags, startId);
     }
 
+    @NonNull
+    public static ArrayList<String> findCrashFiles(@NonNull Context aContext) {
+        ArrayList<String> files = new ArrayList<>();
+        String[] allFiles = aContext.fileList();
+        for (String value: allFiles) {
+            if (value.startsWith(CRASH_FILE_PREFIX)) {
+                files.add(value);
+            }
+        }
+        return files;
+    }
+
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
         String action = intent.getAction();
         if (GeckoRuntime.ACTION_CRASHED.equals(action)) {
             final int activityPid = SettingsStore.getInstance(getBaseContext()).getPid();
             boolean fatal = intent.getBooleanExtra(GeckoRuntime.EXTRA_CRASH_FATAL, false);
-
             long count = SettingsStore.getInstance(getBaseContext()).getCrashRestartCount();
             boolean cancelRestart = count > MAX_RESTART_COUNT;
             if (cancelRestart || BuildConfig.DISABLE_CRASH_RESTART) {
@@ -57,6 +74,16 @@ public class CrashReporterService extends JobIntentService {
 
             if (fatal) {
                 Log.d(LOGTAG, "Main process crash " + intent);
+                final String dumpFile = intent.getStringExtra(GeckoRuntime.EXTRA_MINIDUMP_PATH) + "\n";
+                final String extraFile = intent.getStringExtra(GeckoRuntime.EXTRA_EXTRAS_PATH);
+                final String crashFile = CRASH_FILE_PREFIX + UUID.randomUUID().toString().replaceAll("-", "") + ".txt";
+                try (FileOutputStream file = getBaseContext().openFileOutput(crashFile, 0)) {
+                    file.write(dumpFile.getBytes());
+                    file.write(extraFile.getBytes());
+                    Log.d(LOGTAG, "Wrote crashfile: " + crashFile);
+                } catch (IOException e) {
+                    Log.e(LOGTAG, "Failed to create crash file: '" + crashFile + "' error: " + e.getMessage());
+                }
                 if (activityPid == 0) {
                     Log.e(LOGTAG, "Application was quitting. Crash reporter will not trigger a restart.");
                     return;
@@ -74,6 +101,8 @@ public class CrashReporterService extends JobIntentService {
                             activityFound = true;
                             Log.e(LOGTAG, "Main activity still running: " + activityPid);
                             break;
+                        } else {
+                            Log.d(LOGTAG, "Main activity not found: " + activityPid);
                         }
                     }
 

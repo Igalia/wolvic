@@ -17,12 +17,12 @@ import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
-import org.mozilla.vrbrowser.utils.SystemUtils;
 
 public class CrashDialogWidget extends UIDialog {
 
     public interface CrashDialogDelegate {
         void onSendData();
+        default void onDoNotSendData() {}
     }
 
     private Button mLearnMoreButton;
@@ -74,6 +74,9 @@ public class CrashDialogWidget extends UIDialog {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
 
+            if(mCrashDialogDelegate != null) {
+                mCrashDialogDelegate.onDoNotSendData();
+            }
             onDismiss();
         });
 
