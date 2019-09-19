@@ -38,9 +38,9 @@ typedef std::shared_ptr<WidgetPlacement> WidgetPlacementPtr;
 
 class Widget {
 public:
-  static WidgetPtr Create(vrb::RenderContextPtr& aContext, const int aHandle,
+  static WidgetPtr Create(vrb::RenderContextPtr& aContext, const int aHandle, const WidgetPlacementPtr& aPlacement,
                           const int32_t aTextureWidth, const int32_t aTextureHeight, const QuadPtr& aQuad);
-  static WidgetPtr Create(vrb::RenderContextPtr& aContext, const int aHandle, const float aWorldWidth, const float aWorldHeight,
+  static WidgetPtr Create(vrb::RenderContextPtr& aContext, const int aHandle, const WidgetPlacementPtr& aPlacement, const float aWorldWidth, const float aWorldHeight,
                           const int32_t aTextureWidth, const int32_t aTextureHeight, const CylinderPtr& aCylinder);
   uint32_t GetHandle() const;
   void ResetFirstDraw();

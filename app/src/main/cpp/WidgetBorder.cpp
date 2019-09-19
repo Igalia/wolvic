@@ -27,23 +27,6 @@
 
 namespace crow {
 
-static const char* sCylinderFragmentShader = R"SHADER(
-precision highp float;
-
-uniform sampler2D u_texture0;
-varying vec4 v_color;
-varying vec2 v_uv;
-
-void main() {
-  vec4 color = vec4(1.0f, 1.0f, 1.0f, 1.0f);
-  if ((v_uv.x < 0.0f) || (v_uv.x > 1.0f)) {
-    color.a = 0.0f;
-  }
-  gl_FragColor = color * v_color;
-}
-
-)SHADER";
-
 struct WidgetBorder::State {
   CylinderPtr cylinder;
   vrb::GeometryPtr geometry;
@@ -156,7 +139,10 @@ WidgetBorderPtr WidgetBorder::Create(vrb::CreationContextPtr& aContext, const vr
     // Sometimes there is no handle to hide it (e.g. bottom bar and anchor points != 0.5f)
     vrb::TextureGLPtr defaultTexture = aContext->GetDefaultTexture();
     result->m.cylinder->SetTexture(defaultTexture, defaultTexture->GetWidth(), defaultTexture->GetHeight());
-    result->m.cylinder->GetRenderState()->SetCustomFragmentShader(sCylinderFragmentShader);
+    const std::string customFragment =
+#include "shaders/clear_color.fs"
+    ;
+    result->m.cylinder->GetRenderState()->SetCustomFragmentShader(customFragment);
     result->m.transform->AddNode(result->m.cylinder->GetRoot());
   } else {
     result->m.geometry = result->m.CreateGeometry(aContext, -max, max, aBorderRect);

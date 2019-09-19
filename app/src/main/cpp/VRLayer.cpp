@@ -22,6 +22,7 @@ struct VRLayer::State {
   vrb::Matrix modelTransform[2];
   vrb::Matrix modelView[2];
   device::Eye currentEye;
+  vrb::Color clearColor;
   vrb::Color tintColor;
   device::EyeRect textureRect[2];
   SurfaceChangedDelegate surfaceChangedDelegate;
@@ -34,6 +35,7 @@ struct VRLayer::State {
       drawRequested(false),
       drawInFront(false),
       currentEye(device::Eye::Left),
+      clearColor(0),
       tintColor(1.0f, 1.0f, 1.0f, 1.0f)
   {
     for (int i = 0; i < 2; ++i) {
@@ -78,6 +80,12 @@ VRLayer::GetCurrentEye() const {
 int32_t
 VRLayer::GetPriority() const {
   return m.priority;
+}
+
+
+const vrb::Color&
+VRLayer::GetClearColor() const {
+  return m.clearColor;
 }
 
 const vrb::Color&
@@ -159,8 +167,14 @@ VRLayer::VRLayer(State& aState, LayerType aLayerType): m(aState) {
   m.layerType = aLayerType;
 }
 
+
 void
-VRLayer::SetTintColor(const vrb::Color &aTintColor) {
+VRLayer::SetClearColor(const vrb::Color& aClearColor) {
+  m.clearColor = aClearColor;
+}
+
+void
+VRLayer::SetTintColor(const vrb::Color& aTintColor) {
   m.tintColor = aTintColor;
 }
 

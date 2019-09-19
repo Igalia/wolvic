@@ -48,6 +48,7 @@ public:
   const vrb::Vector& GetWorldMax() const;
   float GetWorldWidth() const;
   float GetWorldHeight() const;
+  vrb::RenderStatePtr GetRenderState() const;
   void GetWorldSize(float& aWidth, float& aHeight) const;
   void SetWorldSize(const float aWidth, const float aHeight) const;
   void SetWorldSize(const vrb::Vector& aMin, const vrb::Vector& aMax) const;

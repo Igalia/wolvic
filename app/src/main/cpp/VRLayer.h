@@ -44,6 +44,7 @@ public:
   const vrb::Matrix& GetView(device::Eye aEye) const;
   device::Eye GetCurrentEye() const;
   int32_t GetPriority() const;
+  const vrb::Color& GetClearColor() const;
   const vrb::Color& GetTintColor() const;
   const device::EyeRect& GetTextureRect(device::Eye aEye) const;
   bool GetDrawInFront() const;
@@ -57,6 +58,7 @@ public:
   void SetView(device::Eye aEye, const vrb::Matrix& aModelView);
   void SetCurrentEye(device::Eye aEye);
   void SetPriority(int32_t aPriority);
+  void SetClearColor(const vrb::Color& aClearColor);
   void SetTintColor(const vrb::Color& aTintColor);
   void SetTextureRect(device::Eye aEye, const device::EyeRect& aTextureRect);
   void SetSurfaceChangedDelegate(const SurfaceChangedDelegate& aDelegate);

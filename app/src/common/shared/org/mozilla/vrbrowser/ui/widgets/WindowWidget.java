@@ -134,6 +134,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private WidgetPlacement mPlacementBeforeResize;
     private boolean mIsResizing;
     private boolean mIsFullScreen;
+    private boolean mAfterFirstlPaint;
 
     public interface WindowDelegate {
         void onFocusRequest(@NonNull WindowWidget aWindow);
@@ -171,6 +172,11 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mIsResizing = false;
         mIsFullScreen = false;
         initializeWidgetPlacement(mWidgetPlacement);
+        if (mSessionStack.isPrivateMode()) {
+            mWidgetPlacement.clearColor = ViewUtils.ARGBtoRGBA(getContext().getColor(R.color.window_private_clear_color));
+        } else {
+            mWidgetPlacement.clearColor = ViewUtils.ARGBtoRGBA(getContext().getColor(R.color.window_blank_clear_color));
+        }
 
         mTopBar = new TopBarWidget(aContext);
         mTopBar.attachToWindow(this);
@@ -622,9 +628,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     @Override
-    public void setSurfaceTexture(SurfaceTexture aTexture, final int aWidth, final int aHeight) {
+    public void setSurfaceTexture(SurfaceTexture aTexture, final int aWidth, final int aHeight, Runnable aFirstDrawCallback) {
+        mFirstDrawCallback = aFirstDrawCallback;
         if (mView != null) {
-            super.setSurfaceTexture(aTexture, aWidth, aHeight);
+            super.setSurfaceTexture(aTexture, aWidth, aHeight, aFirstDrawCallback);
 
         } else {
             GeckoSession session = mSessionStack.getSession(mSessionId);
@@ -886,12 +893,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     @Override
     public void setFirstDraw(final boolean aIsFirstDraw) {
-        mWidgetPlacement.firstDraw = aIsFirstDraw;
+        mWidgetPlacement.composited = aIsFirstDraw;
     }
 
     @Override
     public boolean getFirstDraw() {
-        return mWidgetPlacement.firstDraw;
+        return mWidgetPlacement.composited;
     }
 
     @Override
@@ -1427,12 +1434,25 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     @Override
-    public void onFirstComposite(GeckoSession session) {
+    public void onFirstComposite(@NonNull GeckoSession session) {
+        if (!mAfterFirstlPaint) {
+            return;
+        }
         if (mFirstDrawCallback != null) {
-            // Post this call because running it synchronously can cause a deadlock if the runnable
-            // resizes the widget and calls surfaceChanged. See https://github.com/MozillaReality/FirefoxReality/issues/1459.
             ThreadUtils.postToUiThread(mFirstDrawCallback);
             mFirstDrawCallback = null;
+        }
+    }
+
+    @Override
+    public void onFirstContentfulPaint(@NonNull GeckoSession session) {
+        if (mAfterFirstlPaint) {
+            return;
+        }
+        if (mFirstDrawCallback != null) {
+            ThreadUtils.postToUiThread(mFirstDrawCallback);
+            mFirstDrawCallback = null;
+            mAfterFirstlPaint = true;
         }
     }
 

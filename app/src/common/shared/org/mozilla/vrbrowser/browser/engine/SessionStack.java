@@ -1159,6 +1159,15 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
         }
     }
 
+    @Override
+    public void onFirstContentfulPaint(@NonNull GeckoSession aSession) {
+        if (mCurrentSession == aSession) {
+            for (GeckoSession.ContentDelegate listener : mContentListeners) {
+                listener.onFirstContentfulPaint(aSession);
+            }
+        }
+    }
+
     // TextInput Delegate
 
     @Override

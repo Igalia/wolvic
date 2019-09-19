@@ -23,6 +23,7 @@
 #include "vrb/RenderState.h"
 #include "vrb/SurfaceTextureFactory.h"
 #include "vrb/TextureSurface.h"
+#include "vrb/TextureCache.h"
 #include "vrb/Toggle.h"
 #include "vrb/Transform.h"
 #include "vrb/Vector.h"
@@ -66,7 +67,7 @@ struct Widget::State {
       , cylinderDensity(4680.0f)
   {}
 
-  void Initialize(const int aHandle, const int32_t aTextureWidth, const int32_t aTextureHeight,
+  void Initialize(const int aHandle, const WidgetPlacementPtr& aPlacement, const int32_t aTextureWidth, const int32_t aTextureHeight,
                   const QuadPtr& aQuad, const CylinderPtr& aCylinder) {
     handle = (uint32_t)aHandle;
     name = "crow::Widget-" + std::to_string(handle);
@@ -74,7 +75,7 @@ struct Widget::State {
     if (!render) {
       return;
     }
-
+    placement = aPlacement;
     quad = aQuad;
     cylinder = aCylinder;
 
@@ -92,12 +93,8 @@ struct Widget::State {
       transform->AddNode(cylinder->GetRoot());
     }
 
-    if (GetLayer()) {
-      toggleState = true;
-      root->ToggleAll(true);
-    } else {
-      root->ToggleAll(false);
-    }
+    toggleState = IsReadyForComposition();
+    root->ToggleAll(toggleState);
   }
 
   void UpdateSurface(const int32_t aTextureWidth, const int32_t aTextureHeight) {
@@ -112,21 +109,32 @@ struct Widget::State {
         vrb::RenderContextPtr render = context.lock();
         surface = vrb::TextureSurface::Create(render, name);
       }
+
+      vrb::Color tintColor(1.0f, 1.0f, 1.0f, 1.0f);
+      std::string customFragment;
+      if (!placement->composited && placement->GetClearColor().Alpha() > 0.0f) {
+        customFragment =
+#include "shaders/clear_color.fs"
+        ;
+        tintColor = placement->GetClearColor();
+      }
+
       if (quad) {
         quad->SetTexture(surface, aTextureWidth, aTextureHeight);
         quad->SetMaterial(vrb::Color(0.4f, 0.4f, 0.4f), vrb::Color(1.0f, 1.0f, 1.0f), vrb::Color(0.0f, 0.0f, 0.0f), 0.0f);
+        quad->GetRenderState()->SetCustomFragmentShader(customFragment);
+        quad->GetRenderState()->SetTintColor(tintColor);
       } else if (cylinder) {
         cylinder->SetTexture(surface, aTextureWidth, aTextureHeight);
         cylinder->SetMaterial(vrb::Color(0.4f, 0.4f, 0.4f), vrb::Color(1.0f, 1.0f, 1.0f), vrb::Color(0.0f, 0.0f, 0.0f), 0.0f);
+        cylinder->GetRenderState()->SetCustomFragmentShader(customFragment);
+        cylinder->GetRenderState()->SetTintColor(tintColor);
       }
     }
   }
 
-  bool FirstDraw() {
-    if (!placement) {
-      return false;
-    }
-    return placement->firstDraw;
+  bool IsReadyForComposition() {
+    return GetLayer() || placement->composited || placement->GetClearColor().Alpha() > 0;
   }
 
   const VRLayerSurfacePtr GetLayer() {
@@ -205,21 +213,21 @@ struct Widget::State {
 };
 
 WidgetPtr
-Widget::Create(vrb::RenderContextPtr& aContext, const int aHandle,
+Widget::Create(vrb::RenderContextPtr& aContext, const int aHandle, const WidgetPlacementPtr& aPlacement,
                const int32_t aTextureWidth, const int32_t aTextureHeight,const QuadPtr& aQuad) {
   WidgetPtr result = std::make_shared<vrb::ConcreteClass<Widget, Widget::State> >(aContext);
   aQuad->GetWorldMinAndMax(result->m.min, result->m.max);
-  result->m.Initialize(aHandle, aTextureWidth, aTextureHeight, aQuad, nullptr);
+  result->m.Initialize(aHandle, aPlacement, aTextureWidth, aTextureHeight, aQuad, nullptr);
   return result;
 }
 
 WidgetPtr
-Widget::Create(vrb::RenderContextPtr& aContext, const int aHandle, const float aWorldWidth, const float aWorldHeight,
+Widget::Create(vrb::RenderContextPtr& aContext, const int aHandle, const WidgetPlacementPtr& aPlacement, const float aWorldWidth, const float aWorldHeight,
                const int32_t aTextureWidth, const int32_t aTextureHeight, const CylinderPtr& aCylinder) {
   WidgetPtr result = std::make_shared<vrb::ConcreteClass<Widget, Widget::State> >(aContext);
   result->m.min = vrb::Vector(-aWorldWidth * 0.5f, -aWorldHeight * 0.5f, 0.0f);
-  result->m.max = vrb::Vector(aWorldWidth * 0.5f, aWorldHeight * 0.5f, 0.0f);
-  result->m.Initialize(aHandle, aTextureWidth, aTextureHeight, nullptr, aCylinder);
+  result->m.max = vrb::Vector(aWorldWidth *0.5f, aWorldHeight * 0.5f, 0.0f);
+  result->m.Initialize(aHandle, aPlacement, aTextureWidth, aTextureHeight, nullptr, aCylinder);
   return result;
 }
 
@@ -231,7 +239,7 @@ Widget::GetHandle() const {
 void
 Widget::ResetFirstDraw() {
   if (m.placement) {
-    m.placement->firstDraw = false;
+    m.placement->composited = false;
   }
   if (m.root) {
     m.root->ToggleAll(false);
@@ -360,7 +368,7 @@ Widget::SetTransform(const vrb::Matrix& aTransform) {
 void
 Widget::ToggleWidget(const bool aEnabled) {
   m.toggleState = aEnabled;
-  m.root->ToggleAll(aEnabled && m.FirstDraw());
+  m.root->ToggleAll(aEnabled && m.IsReadyForComposition());
 }
 
 bool
@@ -442,15 +450,22 @@ Widget::GetPlacement() const {
 
 void
 Widget::SetPlacement(const WidgetPlacementPtr& aPlacement) {
-  if (!m.FirstDraw() && aPlacement && aPlacement->firstDraw && m.root) {
-      m.root->ToggleAll(m.toggleState);
-  }
+  bool wasComposited = m.placement->composited;
   m.placement = aPlacement;
+  if (!wasComposited && aPlacement->composited && m.root) {
+    m.root->ToggleAll(m.toggleState);
+    int32_t textureWidth, textureHeight;
+    GetSurfaceTextureSize(textureWidth, textureHeight);
+    m.UpdateSurface(textureWidth, textureHeight);
+  }
   if (m.cylinder) {
     m.UpdateCylinderMatrix();
   }
-  if (GetLayer()) {
-    GetLayer()->SetName(aPlacement->name);
+
+  VRLayerSurfacePtr layer = GetLayer();
+  if (layer) {
+    layer->SetName(aPlacement->name);
+    layer->SetClearColor(aPlacement->clearColor);
   }
 }
 

@@ -44,7 +44,7 @@ public class WidgetPlacement {
     public boolean visible = true;
     public boolean opaque = false;
     public boolean showPointer = true;
-    public boolean firstDraw = false;
+    public boolean composited = false;
     public boolean layer = true;
     public boolean proxifyLayer = false;
     public float textureScale = 0.7f;
@@ -52,6 +52,8 @@ public class WidgetPlacement {
     public boolean cylinder = true;
     public int borderColor = 0;
     public String name;
+    // Color used to render the widget before the it's composited
+    public int clearColor = 0;
     /*
      * Flat surface placements are automatically mapped to curved coordinates.
      * If a radius is set it's used for the automatic mapping of the yaw & angle when the
@@ -86,7 +88,7 @@ public class WidgetPlacement {
         this.visible = w.visible;
         this.opaque = w.opaque;
         this.showPointer = w.showPointer;
-        this.firstDraw = w.firstDraw;
+        this.composited = w.composited;
         this.layer = w.layer;
         this.proxifyLayer = w.proxifyLayer;
         this.textureScale = w.textureScale;

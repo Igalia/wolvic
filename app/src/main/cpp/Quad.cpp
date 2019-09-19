@@ -335,6 +335,14 @@ Quad::GetWorldHeight() const {
   return m.GetWorldHeight();
 }
 
+vrb::RenderStatePtr
+Quad::GetRenderState() const {
+  if (m.geometry) {
+    return m.geometry->GetRenderState();
+  }
+  return nullptr;
+}
+
 void
 Quad::GetWorldSize(float& aWidth, float& aHeight) const {
   aWidth = m.worldMax.x() - m.worldMin.x();

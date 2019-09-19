@@ -641,9 +641,9 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mIsInVRVideo = false;
         mWidgetManager.popBackHandler(mVRVideoBackHandler);
         mWidgetManager.hideVRVideo();
-        boolean firstDraw = mProjectionMenu.getPlacement().firstDraw;
+        boolean composited = mProjectionMenu.getPlacement().composited;
         mProjectionMenu.getPlacement().copyFrom(mProjectionMenuPlacement);
-        mProjectionMenu.getPlacement().firstDraw = firstDraw;
+        mProjectionMenu.getPlacement().composited = composited;
         mWidgetManager.updateWidget(mProjectionMenu);
         closeFloatingMenus();
         mWidgetManager.setControllersVisible(true);

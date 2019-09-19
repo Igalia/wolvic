@@ -102,11 +102,12 @@ public abstract class UIWidget extends FrameLayout implements Widget {
     protected abstract void initializeWidgetPlacement(WidgetPlacement aPlacement);
 
     @Override
-    public void setSurfaceTexture(SurfaceTexture aTexture, final int aWidth, final int aHeight) {
+    public void setSurfaceTexture(SurfaceTexture aTexture, final int aWidth, final int aHeight, Runnable aFirstDrawCallback) {
         if (mTexture!= null && (mTexture.equals(aTexture))) {
             Log.d(LOGTAG, "Texture already set");
             return;
         }
+        mFirstDrawCallback = aFirstDrawCallback;
         if (mRenderer != null && mRenderer.isLayer()) {
             // Widget is using a layer write-only surface but we also want a proxy.
             if (mProxyRenderer != null) {
@@ -220,12 +221,12 @@ public abstract class UIWidget extends FrameLayout implements Widget {
 
     @Override
     public void setFirstDraw(final boolean aIsFirstDraw) {
-        mWidgetPlacement.firstDraw = aIsFirstDraw;
+        mWidgetPlacement.composited = aIsFirstDraw;
     }
 
     @Override
     public boolean getFirstDraw() {
-        return mWidgetPlacement.firstDraw;
+        return mWidgetPlacement.composited;
     }
 
     @Override

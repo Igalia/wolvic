@@ -17,7 +17,7 @@ public interface Widget {
 
     void onPause();
     void onResume();
-    void setSurfaceTexture(SurfaceTexture aTexture, final int aWidth, final int aHeight);
+    void setSurfaceTexture(SurfaceTexture aTexture, final int aWidth, final int aHeight, Runnable aFirstDrawCallback);
     void setSurface(Surface aSurface, final int aWidth, final int aHeight, Runnable aFirstDrawCallback);
     void resizeSurface(final int aWidth, final int aHeight);
     int getHandle();

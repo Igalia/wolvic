@@ -858,7 +858,7 @@ BrowserWorld::AddWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement) {
   if (aPlacement->cylinder && m.cylinderDensity > 0) {
     VRLayerCylinderPtr layer = m.device->CreateLayerCylinder(textureWidth, textureHeight, VRLayerQuad::SurfaceType::AndroidSurface);
     CylinderPtr cylinder = Cylinder::Create(m.create, layer);
-    widget = Widget::Create(m.context, aHandle, textureWidth, textureHeight, (int32_t)worldWidth, (int32_t)worldHeight, cylinder);
+    widget = Widget::Create(m.context, aHandle, aPlacement, textureWidth, textureHeight, (int32_t)worldWidth, (int32_t)worldHeight, cylinder);
   }
 
   if (!widget) {
@@ -868,7 +868,7 @@ BrowserWorld::AddWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement) {
     }
 
     QuadPtr quad = Quad::Create(m.create, worldWidth, worldHeight, layer);
-    widget = Widget::Create(m.context, aHandle, textureWidth, textureHeight, quad);
+    widget = Widget::Create(m.context, aHandle, aPlacement, textureWidth, textureHeight, quad);
   }
 
   if (aPlacement->opaque) {
