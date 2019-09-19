@@ -40,8 +40,8 @@ class SessionUtils {
             out.write("pref(\"media.webspeech.synth.enabled\", false);\n".getBytes());
             // Prevent autozoom when giving a form field focus.
             out.write("pref(\"formhelper.autozoom\", false);\n".getBytes());
-            // Uncomment this to enable WebRender. WARNING NOT READY FOR USAGE.
-            // out.write("pref(\"gfx.webrender.all\", true);\n".getBytes());
+            // Disable WebRender until it works with FxR
+            out.write("pref(\"gfx.webrender.force-disabled\", true);\n".getBytes());
             int msaa = SettingsStore.getInstance(aContext).getMSAALevel();
             if (msaa > 0) {
                 int msaaLevel = msaa == 2 ? 4 : 2;
