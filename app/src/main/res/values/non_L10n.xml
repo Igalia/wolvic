@@ -76,6 +76,7 @@
     <string name="language_de_DE" translatable="false">Deutsch</string>
     <string name="language_es_ES" translatable="false">Español (España)</string>
     <string name="language_es" translatable="false">Español</string>
+    <string name="language_ru" translatable="false">Русский</string>
     <string name="language_ko_KR" translatable="false">한국어</string>
     <string name="language_it_IT" translatable="false">Italiano</string>
 
