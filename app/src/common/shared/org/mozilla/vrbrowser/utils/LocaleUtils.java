@@ -52,7 +52,6 @@ public class LocaleUtils {
             return mLanguagesCache;
         }
 
-        String currentLocale = getCurrentLocale();
         Locale[] locales = Locale.getAvailableLocales();
         mLanguagesCache = new HashMap<>();
         for(Locale temp : locales) {
@@ -184,8 +183,7 @@ public class LocaleUtils {
     }
 
     private static Context updateResources(@NonNull Context context, @NonNull String language) {
-        String[] localeStr = language.split("-");
-        Locale locale = new Locale(localeStr[0], localeStr.length > 1 ? localeStr[1] : "");
+        Locale locale = Locale.forLanguageTag(language);
         Locale.setDefault(locale);
 
         Resources res = context.getResources();
