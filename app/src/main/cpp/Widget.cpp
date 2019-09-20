@@ -289,6 +289,7 @@ Widget::SetWorldWidth(float aWorldWidth) const {
   const float worldHeight = aWorldWidth / aspect;
 
   const float oldWidth = m.max.x() - m.min.x();
+  const float oldHeight = m.max.y() - m.min.y();
   m.min = vrb::Vector(-aWorldWidth * 0.5f, -worldHeight * 0.5f, 0.0f);
   m.max = vrb::Vector(aWorldWidth *0.5f, worldHeight * 0.5f, 0.0f);
 
@@ -303,7 +304,7 @@ Widget::SetWorldWidth(float aWorldWidth) const {
     m.resizer->SetSize(m.min, m.max);
   }
 
-  if (oldWidth != aWorldWidth) {
+  if ((oldWidth != aWorldWidth) || (oldHeight != worldHeight)) {
     m.RemoveBorder();
   }
 }
