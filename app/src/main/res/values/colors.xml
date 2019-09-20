@@ -42,6 +42,6 @@
     <color name="smoke">#f5f6fa</color>
     <color name="window_border_hover">#1ac1dd</color>
     <color name="window_border_click">#2bd2ee</color>
-    <color name="window_blank_clear_color">#3d3d3d</color>
+    <color name="window_blank_clear_color">#5d5d5d</color>
     <color name="window_private_clear_color">#331a50</color>
 </resources>
