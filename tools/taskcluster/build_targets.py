@@ -33,14 +33,14 @@ assembleOculusvrArm64 assembleWavevrArm assembleNoapiX86
 import sys
 
 platforms = {
-   'oculusvr': ['arm', 'arm64'],
-   'oculusvrStore': ['arm', 'arm64'],
-   'oculusvr3dofStore': ['arm', 'arm64'],
-   'wavevr': ['arm', 'arm64'],
-   'wavevrStore': ['arm', 'arm64'],
-   'googlevr': ['arm', 'arm64'],
-   'noapi': ['arm', 'arm64', 'x86_64'],
-   'svr': ['arm', 'arm64'],
+   'oculusvr': ['arm64'],
+   'oculusvrStore': ['arm64'],
+   'oculusvr3dofStore': ['arm64'],
+   'wavevr': ['arm64'],
+   'wavevrStore': ['arm64', 'arm'],
+   'googlevr': ['arm64'],
+   'noapi': ['arm64', 'x86_64'],
+   'svr': ['arm64'],
 }
 
 def findMode(arg):
@@ -56,7 +56,7 @@ def findMode(arg):
    return 'Release'
 
 def findArch(mode):
-   archList = platforms.get(mode[0], ['arm'])
+   archList = platforms.get(mode[0], ['arm64'])
    if len(mode) > 1:
       value = mode[1]
       if value == 'a' or value == 'all':
