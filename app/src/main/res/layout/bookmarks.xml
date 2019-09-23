@@ -31,8 +31,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="180dp"
-            android:layout_marginEnd="180dp"
             android:gravity="center_vertical|center_horizontal"
             android:orientation="vertical"
             app:visibleGone="@{!isLoading &amp;&amp; isEmpty}">
@@ -65,6 +63,7 @@
                 android:textColor="@color/fog"
                 android:textSize="@dimen/text_medium_big_size"
                 android:textStyle="normal"
+                android:maxWidth="360dp"
                 app:textDrawable="@{@drawable/ic_icon_bookmarked}"
                 app:textString="@{@string/bookmarks_description}"
                 tools:text="@string/bookmarks_description" />
