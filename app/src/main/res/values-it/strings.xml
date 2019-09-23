@@ -306,10 +306,6 @@
          use for the display density. -->
     <string name="developer_options_display_density">Densità display:</string>
 
-    <!-- This string is used to label two integer-entry fields where the default width and height of
-         the browser window may be set. -->
-    <string name="developer_options_window_size">Dimensioni della finestra:</string>
-
     <!-- This string is used to label buttons to enable editing of text fields in the
          'Developer Options' dialog. Pressing this button switches the text to
          editable-text fields so their values may be changed. -->
@@ -327,10 +323,6 @@
     <!-- This string is used to label a numerical entry field where the user may enter a new value
          for the virtual displays Dots Per Inch (DPI). -->
     <string name="developer_options_display_dpi">DPI display:</string>
-
-    <!-- This string is used to label two integer entry fields that will allow the user to adjust
-         the maximum window size in the X and Y dimensions. -->
-    <string name="developer_options_max_window_size">Dimensioni massima finestra:</string>
 
     <!-- This string is used to label radio buttons for setting Multi-Sample Anti-Aliasing (MSAA) in
          VR Immersive Mode. -->
@@ -635,10 +627,23 @@
     <!-- This string is displayed as the title of the Bookmarks List, which contains the user's bookmarked websites. -->
     <string name="bookmarks_title">Segnalibri</string>
 
+    <!-- This string is displayed as the title of the Bookmarks List when the bookmarks list is empty. -->
+    <string name="bookmarks_empty">L’elenco dei segnalibri è vuoto</string>
+
+    <!-- This string is displayed under the bookmarks title in the bookmarks list. -->
+    <string name="bookmarks_description">Quando ti trovi in una pagina, fai clic sull’icona @ per aggiungerla ai tuoi segnalibri.</string>
+
+    <!-- This string is displayed in the middle of the Bookmarks List while the bookmarks are being loaded. -->
+    <string name="bookmarks_loading">Caricamento dei segnalibri in corso…</string>
+
     <!-- This string is displayed in a tooltip that appears when a user hovers
          over an icon representing 'Remove Bookmark' for an individual bookmark
          item listed in the Bookmarks List. -->
     <string name="bookmarks_remove">Elimina segnalibro</string>
+
+    <!-- This string is displayed in a tooltip that appears in the tray bar on top of the
+         bookmarks tray button then a new item is bookmarked. -->
+    <string name="bookmarks_saved_notification">Salvato nei segnalibri.</string>
 
     <!-- This string is displayed in a tooltip that appears when a user hovers
          over an icon representing 'Edit This Bookmark' for an individual bookmark
@@ -658,6 +663,74 @@
     <!-- This string is displayed in the Bookmarks List as a tooltip of the button for showing
          all the bookmarks. -->
     <string name="bookmarks_show_all">Visualizza tutti i segnalibri</string>
+
+    <!-- This string is displayed as the title of the history list, which contains the user's visited websites. -->
+    <string name="history_title">Cronologia</string>
+
+    <!-- This string is displayed as the title of the history list when the history is empty. -->
+    <string name="history_empty">La cronologia è vuota</string>
+
+    <!-- This string is displayed under the history title in the history list. -->
+    <string name="history_description">Puoi accedere alla cronologia di navigazione qui</string>
+
+    <!-- This string is displayed in the middle of the history list while the history is being loaded. -->
+    <string name="history_loading">Caricamento della cronologia</string>
+
+    <!-- This string is displayed as the section title in the history list for history entries that happened today. -->
+    <string name="history_section_today">Oggi</string>
+
+    <!-- This string is displayed as the section title in the history list for history entries that happened yesterday. -->
+    <string name="history_section_yesterday">Ieri</string>
+
+    <!-- This string is displayed as the section title in the history list for history entries that happened last week. -->
+    <string name="history_section_last_week">Ultima settimana</string>
+
+    <!-- This string is displayed as the section title in the history list for history entries that happened before last week. -->
+    <string name="history_section_older">Più vecchi</string>
+
+    <!-- This string is displayed is the "Clear History" button in the history list. When pressed a dialog for
+         clearing history is displayed. -->
+    <string name="history_clear">Cancella cronologia</string>
+
+    <!-- This string is displayed is the "Cancel" button from the clear history dialog.
+         When pressed the dialog is closed. -->
+    <string name="history_clear_cancel">Annulla</string>
+
+    <!-- This string is displayed is the "Clear Now" button from the clear history dialog.
+         When pressed the selected history range is deleted from the history storage. -->
+    <string name="history_clear_now">Cancella ora</string>
+
+    <!-- This string is displayed is the clear history dialog.
+         If selected today's history is deleted from the history storage. -->
+    <string name="history_clear_range_today">Oggi</string>
+
+    <!-- This string is displayed is the clear history dialog.
+         If selected history since yesterday is deleted from the history storage. -->
+    <string name="history_clear_range_yesterday">Ieri</string>
+
+    <!-- This string is displayed is the clear history dialog.
+         If selected history since last week is removed from the history storage. -->
+    <string name="history_clear_range_last_week">Ultima settimana</string>
+
+    <!-- This string is displayed is the clear history dialog.
+         If selected all the history is deleted from the history storage. -->
+    <string name="history_clear_range_everything">Tutto</string>
+
+    <!-- This string is displayed in the header of the radio button where the clear cache time range
+         can be selected. -->
+    <string name="history_clear_time_range">Intervallo di tempo da cancellare:</string>
+
+    <!-- This string is displayed is the history context menu that is displayed when
+         the more button is pressed in a history item. It opens the selected history item in a new window. -->
+    <string name="history_context_menu_new_window">Apri in una nuova finestra</string>
+
+    <!-- This string is displayed is the history context menu that is displayed when
+         the more button is pressed in a history item. It add the selected items to favorites. -->
+    <string name="history_context_add_bookmarks">Aggiungi ai segnalibri</string>
+
+    <!-- This string is displayed is the history context menu that is displayed when
+         the more button is pressed in a history item. It removes the selected item from favorites. -->
+    <string name="history_context_remove_bookmarks">Rimuovi dai segnalibri</string>
 
     <!-- This string labels the Reset button that restores the default display settings values. -->
     <string name="display_options_reset">Ripristina impostazioni di visualizzazione</string>
@@ -732,6 +805,14 @@
          'Stop' stops the current page load. -->
     <string name="stop_tooltip">Interrompi caricamento</string>
 
+    <!-- This string is for the tooltip that appears upon hovering the 'Resume' button in the browser's title bar media buttons.
+         When clicked the current media playback is resumed. -->
+    <string name="media_resume_tooltip">Riprendi</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Pause' button in the browser's title bar media buttons.
+         When clicked the current media playback is paused. -->
+    <string name="media_pause_tooltip">Pausa</string>
+
     <!-- This string is for the tooltip that appears upon hovering the 'Home' button in the browser's navigation bar.
          'Home' refers to the browser's start page (e.g., the Firefox Reality Home Page). -->
     <string name="home_tooltip">Pagina iniziale</string>
@@ -798,10 +879,14 @@
          tray. The button it labels, when pressed, opens a new browser window. -->
     <string name="new_window_tooltip">Apri nuova finestra</string>
 
-    <!-- This string is for the tooltip that appears when the user hovers over the down-arrow icon that appears in the
-         URL bar upon hover. The icon it labels, when pressed, expands a list of recently visited websites in the
-         user's History. -->
-    <string name="show_history_tooltip">Visualizza cronologia</string>
+    <!-- This string is for the tooltip that appears when the user hovers over the 'History' icon in the
+         tray and the History view is closed. The button it labels, when pressed, opens a list view of the user's visited
+         pages. -->
+    <string name="open_history_tooltip">Apri cronologia</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'History' icon in the
+         tray and the History view is closed. The button it labels, when pressed, closes the History view. -->
+    <string name="close_history_tooltip">Chiudi cronologia</string>
 
     <!-- This string is displayed in any button used for removing all the items in the current context. -->
     <string name="remove_all">Rimuovi tutto</string>
@@ -850,7 +935,7 @@
     <!-- This string is displayed in the message of the notification message shown when the user tries to open a new window and
       it has already opened the maximum number of allowed windows. %1$s expands to a integer value that represent the maximum windows
       that can be opened (initially 3) -->
-    <string name="max_windows_message">Non puoi avere più di %1$s finestre aperte contemporaneamente. Chiudine una prima di aprirne una nuova.</string>
+    <string name="max_windows_msg">È possibile aprire solo %1$s finestre. Chiudine una per aprirne un’altra.</string>
 
     <!-- This string is displayed in the button of the notification message shown when the user tries to open a new window and
       it has already opened the maximum number of allowed windows. -->
@@ -875,7 +960,7 @@
 
     <!-- This string is displayed in the description of the Voice Search samples collect dialog. That dialog is shown the first time
          a user tries to use the voice search. -->
-    <string name="voice_samples_collect_dialog_description">I tuoi dati sono sempre al sicuro e non vengono mai condivisi con terze parti. Raccogliamo campioni vocali per migliorare l’esperienza e le prestazioni dei nostri prodotti. Sarai sempre in grado di utilizzare la ricerca vocale, anche se non dai il consenso alla raccolta. &lt;a href=&quot;privacy&quot;&gt;Ulteriori informazioni&lt;/a&gt;</string>
+    <string name="voice_samples_collect_dialog_description2">Per migliorare il riconoscimento vocale e altri servizi, raccogliamo campioni vocali a fini di ricerca. Conserviamo i tuoi dati con sistemi sicuri e non registriamo informazioni che possano identificarti. Sarai sempre in grado di utilizzare la ricerca vocale, anche se non dai il tuo consenso alla raccolta.&lt;a href=&quot;privacy&quot;&gt;Ulteriori informazioni&lt;/a&gt;                     </string>
 
     <!-- This string is displayed in the button of the Voice Search samples collect dialog.
          When clicked the user opts in to the voice data collection. -->
@@ -887,4 +972,18 @@
 
     <!-- This string is displayed in the content language list in front of the system default language in between parenthesis -->
     <string name="language_default">Predefinito</string>
+
+    <!-- This string is displayed in the URL bar when the user is in the home page.
+         '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="url_home_title">Pagina principale %1$s</string>
+
+    <!-- This string is displayed in the URL bar when the user is in the bookmarks panel -->
+    <string name="url_bookmarks_title">Segnalibri</string>
+
+    <!-- This string is displayed in the URL bar when the user is in the history panel -->
+    <string name="url_history_title">Cronologia</string>
+
+    <!-- This string is displayed in the Clear button on top of the window when in private mode. It only appears
+         when there is one window left. When clicked, it closes the private session -->
+    <string name="private_clear_button">Cancella</string>
 </resources>

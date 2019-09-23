@@ -361,6 +361,14 @@
     <!-- This string is displayed in a tooltip below the video controls UI. -->
     <string name="video_controls_volume">Äänenvoimakkuus</string>
 
+    <!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek +30 seconds').
+    '%1$s' will be replaced at runtime with a duration in seconds (e.g., '30'). -->
+    <string name="video_controls_seek_forward">Siirry +%1$s sekuntia</string>
+
+    <!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek -15 seconds').
+    '%1$s' will be replaced at runtime with a duration in seconds (e.g., '15'). -->
+    <string name="video_controls_seek_backward">Siirry -%1$s sekuntia</string>
+
     <!-- This string is displayed as the title of the Bookmarks List, which contains the user's bookmarked websites. -->
     <string name="bookmarks_title">Kirjanmerkit</string>
 

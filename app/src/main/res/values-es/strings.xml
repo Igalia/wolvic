@@ -120,6 +120,11 @@
     <string name="settings_language">Idioma</string>
 
     <!-- This string is used to label a text label for selecting the language in the 'Language' dialog window
+         (accessible from the browser's Settings' dialog window). Below this string appears
+         the different options for language settings. -->
+    <string name="settings_language_settings">Ajustes de idioma</string>
+
+    <!-- This string is used to label a text label for selecting the language in the 'Language' dialog window
          (accessible from the browser's Settings' dialog window). Below this string appears a list of locales for
          the user to choose as their preferred reading languages for website content. Each locale,
          as `language-tag` strings, is then included in the browser's `Accept-Language` HTTP request
@@ -132,6 +137,40 @@
          Based on the user's selection, the printed language is mapped to its ISO 639-1 code
          (e.g., `Español` is mapped to `es`) when configured in the 'Voice Search' system. -->
     <string name="settings_language_choose_language_voice_search">Elegir el idioma preferido para mostrar la búsqueda por voz</string>
+
+    <!-- This string is used to label a text label that appears in the header of 'Language Settings' ->
+         'Firefox Display Language' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of locales for the user to choose as their preferred display
+         language for the application UI. -->
+    <string name="settings_language_choose_display_language_title">%1$s Idioma visualizado</string>
+
+    <!-- This string is used to label a text label that appears in the header description of 'Language Settings' ->
+         'Firefox Display Language' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of locales for the user to choose as their preferred display
+         language for the application UI. -->
+    <string name="settings_language_choose_language_display_description">Elige el idioma en el que se mostrarán los menús, mensajes y notificaciones.</string>
+
+    <!-- This string is used to label a text label that appears in the header of 'Language Settings' ->
+         'Voice Search Language' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of locales for the user to choose as their preferred voice search
+         language. -->
+    <string name="settings_language_choose_language_voice_search_title">Idioma de búsqueda por voz</string>
+
+    <!-- This string is used to label a text label that appears in the header description of 'Language Settings' ->
+         'Voice Search Language' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of locales for the user to choose as their preferred voice search
+         language. -->
+    <string name="settings_language_choose_language_voice_search_description">Elige el idioma que prefieras para la búsqueda por voz.</string>
+
+    <!-- This string is used to label a text label that appears in the header of 'Language Settings' ->
+         'Preferred Language for Displaying Websites' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of locales for the user to choose as their preferred languages for web content. -->
+    <string name="settings_language_choose_language_content_title">Idiomas preferidos del sitio web</string>
+
+    <!-- This string is used to label a text label that appears in the header description of 'Language Settings' ->
+         'Preferred Language for Displaying Websites' dialog window (accessible from the browser's Settings dialog window).
+         Below this string appears a list of locales for the user to choose as their preferred languages for web content. -->
+    <string name="settings_language_choose_language_content_description">Las páginas web a veces se muestran en más de un idioma. En el panel izquierdo, elige los idiomas en los que quieres que se muestren en orden de preferencia.</string>
 
     <!-- This string is used to label a radio button in the 'Settings' Language dialog that, when pressed,
          changes the app and the language of the speech-recognition-based search to 'English (US)'. -->
@@ -194,6 +233,10 @@
          a developer-build version of the app. -->
     <string name="settings_version_developer">Compilación del desarrollador</string>
 
+    <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
+        opens the Firfox Reality support web site in the browser window. -->
+    <string name="settings_help">Ayuda</string>
+
     <!-- This string is the title of a dialog box shown to the user when a settings
          change requires the application to restart. -->
     <string name="restart_dialog_restart">Reinicio requerido</string>
@@ -233,16 +276,35 @@
          A dialog should appear with a field labeled with the text, 'Enable Multiprocess'. -->
     <string name="developer_options_multiprocess">Habilitar multiproceso</string>
 
+    <!-- This string labels an On/Off switch in the developer options dialog and is used to toggle
+         the performance monitor. The Performance monitor is used to detect pages that cause the
+         browser to run below a target framerate and pauses the page to restore performance.
+    -->
+    <string name="developer_options_performance_monitor">Habilitar monitor de rendimiento</string>
+
+    <!-- This string labels an On/Off switch in the developer options dialog and is used to toggle
+         debug logging. Debug logging provides runtime diagnostic information that may be collected
+         to help diagnose and fix problems with the application.
+    -->
+    <string name="developer_options_debug_logging">Habilitar registro de depuración</string>
+
     <!-- The string labels an On/Off switch in the developer options dialog and is used to toggle enabling Servo. -->
     <string name="developer_options_servo">Habilitar Servo</string>
+
+    <!-- The string labels the description text for the clear cookies and site data button in the
+         privacy options dialog. -->
+    <string name="developer_options_clear_cache_cookies_site_description">Cookies y datos del sitio</string>
+
+    <!-- The string labels the description text for the clear cached web content button in the
+         privacy options dialog. -->
+    <string name="developer_options_clear_cache_web_content_description">Contenido web en caché</string>
+
+    <!-- The string labels the button text for the clear cache buttons in the privacy options dialog. -->
+    <string name="developer_options_clear_cache">Limpiar datos</string>
 
     <!-- This string is used to label a numerical-entry field where the user may set a new value to
          use for the display density. -->
     <string name="developer_options_display_density">Densidad de la pantalla:</string>
-
-    <!-- This string is used to label two integer-entry fields where the default width and height of
-         the browser window may be set. -->
-    <string name="developer_options_window_size">Tamaño de la ventana:</string>
 
     <!-- This string is used to label buttons to enable editing of text fields in the
          'Developer Options' dialog. Pressing this button switches the text to
@@ -261,10 +323,6 @@
     <!-- This string is used to label a numerical entry field where the user may enter a new value
          for the virtual displays Dots Per Inch (DPI). -->
     <string name="developer_options_display_dpi">PPP de la pantalla:</string>
-
-    <!-- This string is used to label two integer entry fields that will allow the user to adjust
-         the maximum window size in the X and Y dimensions. -->
-    <string name="developer_options_max_window_size">Tamaño máx. de la ventana:</string>
 
     <!-- This string is used to label radio buttons for setting Multi-Sample Anti-Aliasing (MSAA) in
          VR Immersive Mode. -->
@@ -332,6 +390,9 @@
     <!-- This string labels the 'Reset' button that restores the default developer settings values. -->
     <string name="developer_options_reset_button">Restablecer</string>
 
+    <!-- This string is used to label buttons to enable editing of other options. -->
+    <string name="settings_button_edit">Editar</string>
+
     <!-- This string describes the radio buttons used to select the user's background environment
          (seen while not in Immersive Mode). -->
     <string name="developer_options_environments">Entorno</string>
@@ -374,6 +435,10 @@
          for the home page. -->
     <string name="developer_options_homepage">Página de inicio</string>
 
+    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
+     and is used to enable or disable playback of DRM controlled content. -->
+    <string name="security_options_drm_content">Reproducir contenido controlado por DRM (&lt;a href=&quot;http://somesite.com/&quot;&gt;Saber más &lt;/a&gt;)</string>
+
     <!-- This string labels an On/Off switch in the Privacy and Security settings dialog
      and is used to enable or disable tracking protection. -->
     <string name="security_options_tracking_protection">Protección contra rastreo</string>
@@ -412,6 +477,24 @@
          "external" storage. Note that on modern systems, "external" is still used in the name
          of this storage even though the storage may not reside on external removable media. -->
     <string name="security_options_permission_storage">Leer almacenamiento externo</string>
+
+    <!-- This string is a label above the group of switches that indicates that the switches below
+         relate to Firefox data collection and use. -->
+    <string name="security_options_speech_data_collection_title">%1$s Recopilación y uso de datos</string>
+
+    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
+     and is used to enable or disable permission to collect speech data. -->
+    <string name="security_options_speech_data_collect">Permitir que %1$s recopile datos de voz</string>
+
+    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
+     and is used to enable or disable permission to collect telemetry data. -->
+    <string name="security_options_telemetry_send_data">Permitir que %1$s envíe datos técnicos y de interacción a Mozilla
+ </string>
+
+    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
+     and is used to enable or disable permission to send crash reports. -->
+    <string name="security_options_crash_reports_send_data">Permitir que %1$s envíe informes de fallos acumulados en tu nombre
+</string>
 
     <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'On'. -->
     <string name="on">Activado</string>
@@ -546,10 +629,23 @@
     <!-- This string is displayed as the title of the Bookmarks List, which contains the user's bookmarked websites. -->
     <string name="bookmarks_title">Marcadores</string>
 
+    <!-- This string is displayed as the title of the Bookmarks List when the bookmarks list is empty. -->
+    <string name="bookmarks_empty">Tu lista de marcadores está vacía</string>
+
+    <!-- This string is displayed under the bookmarks title in the bookmarks list. -->
+    <string name="bookmarks_description">Haz clic en el icono @ cuando estés en una página para agregarlo a tus marcadores.</string>
+
+    <!-- This string is displayed in the middle of the Bookmarks List while the bookmarks are being loaded. -->
+    <string name="bookmarks_loading">Cargando marcadores</string>
+
     <!-- This string is displayed in a tooltip that appears when a user hovers
          over an icon representing 'Remove Bookmark' for an individual bookmark
          item listed in the Bookmarks List. -->
     <string name="bookmarks_remove">Eliminar marcador</string>
+
+    <!-- This string is displayed in a tooltip that appears in the tray bar on top of the
+         bookmarks tray button then a new item is bookmarked. -->
+    <string name="bookmarks_saved_notification">¡Guardado en Marcadores!</string>
 
     <!-- This string is displayed in a tooltip that appears when a user hovers
          over an icon representing 'Edit This Bookmark' for an individual bookmark
@@ -570,6 +666,74 @@
          all the bookmarks. -->
     <string name="bookmarks_show_all">Mostrar todos los marcadores</string>
 
+    <!-- This string is displayed as the title of the history list, which contains the user's visited websites. -->
+    <string name="history_title">Historial</string>
+
+    <!-- This string is displayed as the title of the history list when the history is empty. -->
+    <string name="history_empty">Tu historial está vacío</string>
+
+    <!-- This string is displayed under the history title in the history list. -->
+    <string name="history_description">Puedes acceder a tu historial de navegación aquí</string>
+
+    <!-- This string is displayed in the middle of the history list while the history is being loaded. -->
+    <string name="history_loading">Cargando historial</string>
+
+    <!-- This string is displayed as the section title in the history list for history entries that happened today. -->
+    <string name="history_section_today">Hoy</string>
+
+    <!-- This string is displayed as the section title in the history list for history entries that happened yesterday. -->
+    <string name="history_section_yesterday">Ayer</string>
+
+    <!-- This string is displayed as the section title in the history list for history entries that happened last week. -->
+    <string name="history_section_last_week">La semana pasada</string>
+
+    <!-- This string is displayed as the section title in the history list for history entries that happened before last week. -->
+    <string name="history_section_older">Más antiguos</string>
+
+    <!-- This string is displayed is the "Clear History" button in the history list. When pressed a dialog for
+         clearing history is displayed. -->
+    <string name="history_clear">Limpiar historial</string>
+
+    <!-- This string is displayed is the "Cancel" button from the clear history dialog.
+         When pressed the dialog is closed. -->
+    <string name="history_clear_cancel">Cancelar</string>
+
+    <!-- This string is displayed is the "Clear Now" button from the clear history dialog.
+         When pressed the selected history range is deleted from the history storage. -->
+    <string name="history_clear_now">Limpiar ahora</string>
+
+    <!-- This string is displayed is the clear history dialog.
+         If selected today's history is deleted from the history storage. -->
+    <string name="history_clear_range_today">Hoy</string>
+
+    <!-- This string is displayed is the clear history dialog.
+         If selected history since yesterday is deleted from the history storage. -->
+    <string name="history_clear_range_yesterday">Ayer</string>
+
+    <!-- This string is displayed is the clear history dialog.
+         If selected history since last week is removed from the history storage. -->
+    <string name="history_clear_range_last_week">La semana pasada</string>
+
+    <!-- This string is displayed is the clear history dialog.
+         If selected all the history is deleted from the history storage. -->
+    <string name="history_clear_range_everything">Todo</string>
+
+    <!-- This string is displayed in the header of the radio button where the clear cache time range
+         can be selected. -->
+    <string name="history_clear_time_range">Rango de tiempo a limpiar:</string>
+
+    <!-- This string is displayed is the history context menu that is displayed when
+         the more button is pressed in a history item. It opens the selected history item in a new window. -->
+    <string name="history_context_menu_new_window">Abrir en una ventana nueva</string>
+
+    <!-- This string is displayed is the history context menu that is displayed when
+         the more button is pressed in a history item. It add the selected items to favorites. -->
+    <string name="history_context_add_bookmarks">Agregar a marcadores</string>
+
+    <!-- This string is displayed is the history context menu that is displayed when
+         the more button is pressed in a history item. It removes the selected item from favorites. -->
+    <string name="history_context_remove_bookmarks">Eliminar de marcadores</string>
+
     <!-- This string labels the Reset button that restores the default display settings values. -->
     <string name="display_options_reset">Restablecer los ajustes de visualización</string>
 
@@ -584,6 +748,30 @@
 
     <!-- This string labels the Reset button that restores the default voice search language settings values. -->
     <string name="language_options_reset">Restablecer los ajustes de idioma para la búsqueda por voz</string>
+
+    <!-- This string labels the Reset button that restores the default display language settings values. -->
+    <string name="display_language_options_reset">Restablecer idioma de visualización</string>
+
+    <!-- This string labels the Reset button that restores the default content language settings values. -->
+    <string name="content_language_options_reset">Restablecer idioma preferido del sitio web</string>
+
+    <!-- This string labels the Reset button that restores all language settings values. -->
+    <string name="all_language_options_reset">Restablecer todas las configuraciones de idioma</string>
+
+    <!-- This string labels the description in the Voice Search Language button in the main language setting dialog. -->
+    <string name="language_options_voice_search_language"><![CDATA[Idioma de búsqueda por voz: <br>&emsp;&emsp;<b>%1$s</b>]]></string>
+
+    <!-- This string labels the description in the Content Language button in the main language setting dialog. -->
+    <string name="language_options_content_language"><![CDATA[Idioma preferido para mostrar sitios web: <br>&emsp;&emsp;<b>%1$s</b>]]></string>
+
+    <!-- This string labels the description in the Display Language button in the main language setting dialog. -->
+    <string name="language_options_display_language"><![CDATA[Idioma de visualización para la aplicación: <br>&emsp;&emsp;<b>%1$s</b>]]></string>
+
+    <!-- This string labels the description in the Content Language header for preferred languages list. -->
+    <string name="language_options_preferred_languages">Idioma(s) preferido(s)</string>
+
+    <!-- This string labels the description in the Content Language header for available languages list. -->
+    <string name="language_options_available_languages">Idiomas disponibles</string>
 
     <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the 'Name' of the bookmarked website. -->
     <string name="col_name">Nombre</string>
@@ -615,6 +803,18 @@
          'Refresh' refers to reloading the current page. -->
     <string name="refresh_tooltip">Refrescar</string>
 
+    <!-- This string is for the tooltip that appears upon hovering the 'Stop' button in the browser's navigation bar.
+         'Stop' stops the current page load. -->
+    <string name="stop_tooltip">Dejar de cargar</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Resume' button in the browser's title bar media buttons.
+         When clicked the current media playback is resumed. -->
+    <string name="media_resume_tooltip">Continuar</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Pause' button in the browser's title bar media buttons.
+         When clicked the current media playback is paused. -->
+    <string name="media_pause_tooltip">Pausar</string>
+
     <!-- This string is for the tooltip that appears upon hovering the 'Home' button in the browser's navigation bar.
          'Home' refers to the browser's start page (e.g., the Firefox Reality Home Page). -->
     <string name="home_tooltip">Inicio</string>
@@ -624,9 +824,25 @@
          speech-to-text recognition. -->
     <string name="voice_search_tooltip">Búsqueda por voz</string>
 
+    <!-- This string is for the tooltip that appears upon hovering the 'Request desktop site' button in the
+         browser's navigation bar. The button it labels, when pressed, change the currently used user agent. -->
+    <string name="request_dekstop_site_tooltip">Solicitar sitio de escritorio</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Clear' button in the
+         browser's navigation bar. The button it labels, when pressed, clears the navigation bar text. -->
+    <string name="clear_tooltip">Limpiar</string>
+
     <!-- This string is for the tooltip that when clicking the 'Info' (ⓘ) icon visible next to the current website's
          URL in the URL bar. The button it labels, when pressed, shows information about the site. -->
     <string name="site_info_tooltip">Mostrar información del sitio</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Servo' button in the browser's navigation bar.
+         'Servo' refers to the Servo engine. -->
+    <string name="servo_tooltip">Utilizar servo</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Resize' button in the browser's navigation bar.
+         'Resize' refers to the button used to resize the browset window. -->
+    <string name="resize_tooltip">Cambiar de tamaño</string>
 
     <!-- This string is for the tooltip that appears when the user is not in the browser's Private Browsing mode
          and hovers over the 'Private Browsing' icon in the browser's tray menu. -->
@@ -639,15 +855,40 @@
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the target url in a new window. -->
     <string name="context_menu_open_new_window">Abrir en una ventana nueva.</string>
 
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmark' icon in the
+         browser's navigation bar. The button it labels, when pressed, bookmarks the currently open web site. -->
+    <string name="bookmark_tooltip">Agregar esta página a marcadores</string>
+
     <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmarks' icon in the
-         browser's navigation bar. The button it labels, when pressed, opens a list view of the user's saved
+         tray. The button it labels, when pressed, opens a list view of the user's saved
          Bookmarks. -->
     <string name="bookmarks_tooltip">Marcadores</string>
 
-    <!-- This string is for the tooltip that appears when the user hovers over the down-arrow icon that appears in the
-         URL bar upon hover. The icon it labels, when pressed, expands a list of recently visited websites in the
-         user's History. -->
-    <string name="show_history_tooltip">Mostrar historial</string>
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmarks' icon in the
+         tray and the Bookmarks view is closed. The button it labels, when pressed, opens a list view of the user's saved
+         Bookmarks. -->
+    <string name="open_bookmarks_tooltip">Abrir marcadores</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmarks' icon in the
+         tray and the Bookmarks view is closed. The button it labels, when pressed, closes the Bookmarks view. -->
+    <string name="close_bookmarks_tooltip">Cerrar marcadores</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Settings' icon in the
+         tray. The button it labels, when pressed, opens the Settings panel. -->
+    <string name="settings_tooltip">Ajustes</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'New Window' icon in the
+         tray. The button it labels, when pressed, opens a new browser window. -->
+    <string name="new_window_tooltip">Abrir una nueva ventana</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'History' icon in the
+         tray and the History view is closed. The button it labels, when pressed, opens a list view of the user's visited
+         pages. -->
+    <string name="open_history_tooltip">Abrir historial</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'History' icon in the
+         tray and the History view is closed. The button it labels, when pressed, closes the History view. -->
+    <string name="close_history_tooltip">Cerrar historial</string>
 
     <!-- This string is displayed in any button used for removing all the items in the current context. -->
     <string name="remove_all">Eliminar todo</string>
@@ -693,11 +934,55 @@
     <!-- This string is displayed in the message of the notification message shown when the user tries to open a new window and
       it has already opened the maximum number of allowed windows. %1$s expands to a integer value that represent the maximum windows
       that can be opened (initially 3) -->
-    <string name="max_windows_message">No puedes tener más de %1$s de ventanas abiertas a la vez. Cierra una antes de abrir otra.</string>
+    <string name="max_windows_msg">Solo se pueden abrir %1$s ventanas. Cierra una para abrir otra.</string>
+
+    <!-- This string is displayed in the button of the notification message shown when the user tries to open a new window and
+      it has already opened the maximum number of allowed windows. -->
+    <string name="max_windows_button">Aceptar</string>
 
     <!-- This string is displayed in the title of the alert dialog shown when the user does not have permission to run the application on the device. -->
     <string name="not_entitled_title">Imposible de ejecutar</string>
     <!-- This string is displayed in the message body of the alert dialog shown when the user does not have permission to run the application on the device.
          '%1$s' will be replace at runtime with the app's name. -->
     <string name="not_entitled_message">%1$s no tiene permiso para ejecutarse en este dispositivo y se cerrará.</string>
+
+    <!-- This string is displayed in a button that when pressed allows a user to view a page that has been blocked from being displayed.-->
+    <string name="performance_unblock_page">Desbloquear página</string>
+    <!-- This string is displayed as the title of a dialog displayed when poor web page performance has been detected. -->
+    <string name="performance_title">Bajo rendimiento detectado</string>
+    <!-- This string is displayed as the message body of a dialog displayed when poor web page performance has been detected and the page has been unloaded to restore performance. -->
+    <string name="performance_message">Reducir el tamaño de la ventana puede ayudar a mejorar una página web con bajo rendimiento. Si desbloqueas esta página, puede que la aplicación se cuelgue.</string>
+
+    <!-- This string is displayed in the title of the Voice Search samples collect dialog. That dialog is shown the first time
+         a user tries to use the voice search. -->
+    <string name="voice_samples_collect_data_dialog_title">¿Permitir que %1$s recopile muestras de voz para investigación?</string>
+
+    <!-- This string is displayed in the description of the Voice Search samples collect dialog. That dialog is shown the first time
+         a user tries to use the voice search. -->
+    <string name="voice_samples_collect_dialog_description2">Para mejorar nuestro reconocimiento de voz y otros servicios, necesitamos recopilar muestras de voz para investigación. Almacenamos tus datos de forma segura y sin información de identificación. Siempre podrás usar la búsqueda por voz, incluso si no permites la recopilación. &lt;a href=&quot;privacy&quot;&gt;Más información&lt;/a&gt;</string>
+
+    <!-- This string is displayed in the button of the Voice Search samples collect dialog.
+         When clicked the user opts in to the voice data collection. -->
+    <string name="voice_samples_collect_dialog_allow">Permitir</string>
+
+    <!-- This string is displayed in the button of the Voice Search samples collect dialog.
+         When clicked the user opts out of the voice data collection. -->
+    <string name="voice_samples_collect_dialog_do_not_allow">No permitir</string>
+
+    <!-- This string is displayed in the content language list in front of the system default language in between parenthesis -->
+    <string name="language_default">Predeterminado</string>
+
+    <!-- This string is displayed in the URL bar when the user is in the home page.
+         '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="url_home_title">Inicio de %1$s </string>
+
+    <!-- This string is displayed in the URL bar when the user is in the bookmarks panel -->
+    <string name="url_bookmarks_title">Marcadores</string>
+
+    <!-- This string is displayed in the URL bar when the user is in the history panel -->
+    <string name="url_history_title">Historial</string>
+
+    <!-- This string is displayed in the Clear button on top of the window when in private mode. It only appears
+         when there is one window left. When clicked, it closes the private session -->
+    <string name="private_clear_button">Limpiar</string>
 </resources>

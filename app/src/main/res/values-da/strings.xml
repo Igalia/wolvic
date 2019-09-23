@@ -306,10 +306,6 @@
          use for the display density. -->
     <string name="developer_options_display_density">Skærm-tæthed:</string>
 
-    <!-- This string is used to label two integer-entry fields where the default width and height of
-         the browser window may be set. -->
-    <string name="developer_options_window_size">Vinduesstørrelse:</string>
-
     <!-- This string is used to label buttons to enable editing of text fields in the
          'Developer Options' dialog. Pressing this button switches the text to
          editable-text fields so their values may be changed. -->
@@ -327,10 +323,6 @@
     <!-- This string is used to label a numerical entry field where the user may enter a new value
          for the virtual displays Dots Per Inch (DPI). -->
     <string name="developer_options_display_dpi">Skærm-DPI:</string>
-
-    <!-- This string is used to label two integer entry fields that will allow the user to adjust
-         the maximum window size in the X and Y dimensions. -->
-    <string name="developer_options_max_window_size">Maksimal vinduesstørrelse:</string>
 
     <!-- This string is used to label radio buttons for setting Multi-Sample Anti-Aliasing (MSAA) in
          VR Immersive Mode. -->
@@ -476,7 +468,7 @@
 
     <!-- This string labels the button that displays or enables application access to the device's
          geographic location, if the device supports determination of geographic location. -->
-    <string name="security_options_permission_location">Placering</string>
+    <string name="security_options_permission_location">Position</string>
 
     <!-- This string labels the button that displays or enables the application to post system-wide
          notifications. -->
@@ -636,10 +628,23 @@
     <!-- This string is displayed as the title of the Bookmarks List, which contains the user's bookmarked websites. -->
     <string name="bookmarks_title">Bogmærker</string>
 
+    <!-- This string is displayed as the title of the Bookmarks List when the bookmarks list is empty. -->
+    <string name="bookmarks_empty">Din liste med bogmærker er tom</string>
+
+    <!-- This string is displayed under the bookmarks title in the bookmarks list. -->
+    <string name="bookmarks_description">Klik på @-ikonet for at tilføje et bogmærke til den side, du er på.</string>
+
+    <!-- This string is displayed in the middle of the Bookmarks List while the bookmarks are being loaded. -->
+    <string name="bookmarks_loading">Indlæser bogmærker</string>
+
     <!-- This string is displayed in a tooltip that appears when a user hovers
          over an icon representing 'Remove Bookmark' for an individual bookmark
          item listed in the Bookmarks List. -->
     <string name="bookmarks_remove">Fjern bogmærke</string>
+
+    <!-- This string is displayed in a tooltip that appears in the tray bar on top of the
+         bookmarks tray button then a new item is bookmarked. -->
+    <string name="bookmarks_saved_notification">Bogmærket er gemt!</string>
 
     <!-- This string is displayed in a tooltip that appears when a user hovers
          over an icon representing 'Edit This Bookmark' for an individual bookmark
@@ -659,6 +664,74 @@
     <!-- This string is displayed in the Bookmarks List as a tooltip of the button for showing
          all the bookmarks. -->
     <string name="bookmarks_show_all">Vis alle bogmærker</string>
+
+    <!-- This string is displayed as the title of the history list, which contains the user's visited websites. -->
+    <string name="history_title">Historik</string>
+
+    <!-- This string is displayed as the title of the history list when the history is empty. -->
+    <string name="history_empty">Din historik er tom</string>
+
+    <!-- This string is displayed under the history title in the history list. -->
+    <string name="history_description">Du kan se din browserhistorik her</string>
+
+    <!-- This string is displayed in the middle of the history list while the history is being loaded. -->
+    <string name="history_loading">Indlæser historik</string>
+
+    <!-- This string is displayed as the section title in the history list for history entries that happened today. -->
+    <string name="history_section_today">I dag</string>
+
+    <!-- This string is displayed as the section title in the history list for history entries that happened yesterday. -->
+    <string name="history_section_yesterday">I går</string>
+
+    <!-- This string is displayed as the section title in the history list for history entries that happened last week. -->
+    <string name="history_section_last_week">Sidste uge</string>
+
+    <!-- This string is displayed as the section title in the history list for history entries that happened before last week. -->
+    <string name="history_section_older">Ældre</string>
+
+    <!-- This string is displayed is the "Clear History" button in the history list. When pressed a dialog for
+         clearing history is displayed. -->
+    <string name="history_clear">Ryd historik</string>
+
+    <!-- This string is displayed is the "Cancel" button from the clear history dialog.
+         When pressed the dialog is closed. -->
+    <string name="history_clear_cancel">Annuller</string>
+
+    <!-- This string is displayed is the "Clear Now" button from the clear history dialog.
+         When pressed the selected history range is deleted from the history storage. -->
+    <string name="history_clear_now">Ryd nu</string>
+
+    <!-- This string is displayed is the clear history dialog.
+         If selected today's history is deleted from the history storage. -->
+    <string name="history_clear_range_today">I dag</string>
+
+    <!-- This string is displayed is the clear history dialog.
+         If selected history since yesterday is deleted from the history storage. -->
+    <string name="history_clear_range_yesterday">I går</string>
+
+    <!-- This string is displayed is the clear history dialog.
+         If selected history since last week is removed from the history storage. -->
+    <string name="history_clear_range_last_week">Sidste uge</string>
+
+    <!-- This string is displayed is the clear history dialog.
+         If selected all the history is deleted from the history storage. -->
+    <string name="history_clear_range_everything">Alt</string>
+
+    <!-- This string is displayed in the header of the radio button where the clear cache time range
+         can be selected. -->
+    <string name="history_clear_time_range">Tidsinterval der skal ryddes:</string>
+
+    <!-- This string is displayed is the history context menu that is displayed when
+         the more button is pressed in a history item. It opens the selected history item in a new window. -->
+    <string name="history_context_menu_new_window">Åbn i et nyt vindue</string>
+
+    <!-- This string is displayed is the history context menu that is displayed when
+         the more button is pressed in a history item. It add the selected items to favorites. -->
+    <string name="history_context_add_bookmarks">Føj til bogmærker</string>
+
+    <!-- This string is displayed is the history context menu that is displayed when
+         the more button is pressed in a history item. It removes the selected item from favorites. -->
+    <string name="history_context_remove_bookmarks">Fjern fra bogmærker</string>
 
     <!-- This string labels the Reset button that restores the default display settings values. -->
     <string name="display_options_reset">Nulstil skærmindstillinger</string>
@@ -706,7 +779,7 @@
     <string name="col_tags">Mærkater</string>
 
     <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the 'Location' (or 'URL' or 'Address') of the bookmarked website. -->
-    <string name="col_url">Placering</string>
+    <string name="col_url">Adresse</string>
 
     <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the date of when the bookmarked website was most recently visited. -->
     <string name="col_most_recent_visit">Seneste besøg</string>
@@ -732,6 +805,14 @@
     <!-- This string is for the tooltip that appears upon hovering the 'Stop' button in the browser's navigation bar.
          'Stop' stops the current page load. -->
     <string name="stop_tooltip">Stop indlæsning</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Resume' button in the browser's title bar media buttons.
+         When clicked the current media playback is resumed. -->
+    <string name="media_resume_tooltip">Genoptag</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Pause' button in the browser's title bar media buttons.
+         When clicked the current media playback is paused. -->
+    <string name="media_pause_tooltip">Pause</string>
 
     <!-- This string is for the tooltip that appears upon hovering the 'Home' button in the browser's navigation bar.
          'Home' refers to the browser's start page (e.g., the Firefox Reality Home Page). -->
@@ -799,10 +880,14 @@
          tray. The button it labels, when pressed, opens a new browser window. -->
     <string name="new_window_tooltip">Åbn et nyt vindue</string>
 
-    <!-- This string is for the tooltip that appears when the user hovers over the down-arrow icon that appears in the
-         URL bar upon hover. The icon it labels, when pressed, expands a list of recently visited websites in the
-         user's History. -->
-    <string name="show_history_tooltip">Vis historik</string>
+    <!-- This string is for the tooltip that appears when the user hovers over the 'History' icon in the
+         tray and the History view is closed. The button it labels, when pressed, opens a list view of the user's visited
+         pages. -->
+    <string name="open_history_tooltip">Åbn historik</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'History' icon in the
+         tray and the History view is closed. The button it labels, when pressed, closes the History view. -->
+    <string name="close_history_tooltip">Luk historik</string>
 
     <!-- This string is displayed in any button used for removing all the items in the current context. -->
     <string name="remove_all">Fjern alle</string>
@@ -848,7 +933,8 @@
     <!-- This string is displayed in the message of the notification message shown when the user tries to open a new window and
       it has already opened the maximum number of allowed windows. %1$s expands to a integer value that represent the maximum windows
       that can be opened (initially 3) -->
-    <string name="max_windows_message">Kun tre vinduer kan være åbne. Luk ét for at åbne et nyt.</string>
+    <string name="max_windows_msg">Kun %1$s vinduer kan være åbne. Luk ét for at åbne et andet.</string>
+
     <!-- This string is displayed in the button of the notification message shown when the user tries to open a new window and
       it has already opened the maximum number of allowed windows. -->
     <string name="max_windows_button">OK</string>
@@ -872,7 +958,7 @@
 
     <!-- This string is displayed in the description of the Voice Search samples collect dialog. That dialog is shown the first time
          a user tries to use the voice search. -->
-    <string name="voice_samples_collect_dialog_description">Dine data er altid sikre og bliver aldrig delt med tredjeparter. Vi indsamler stemmedata for at forbedre vores produkters ydelse og brugervenlighed. Du kan selvfølgelig også bruge stemme-søgning, hvis du ikke tillader indsamling. &lt;a href=&quot;privacy&quot;&gt;Læs mere&lt;/a&gt;</string>
+    <string name="voice_samples_collect_dialog_description2">For at forbedre vores stemmegenkendelse og andre tjenester indsamler vi stemme-optagelser til forskningsbrug. Vi opbevarer dine data sikkert og uden information, der kan spores tilbage til dig. Du kan bruge stemme-søgning uden at tillade indsamling af dine data. &lt;a href=&quot;privacy&quot;&gt;Læs mere&lt;/a&gt;</string>
 
     <!-- This string is displayed in the button of the Voice Search samples collect dialog.
          When clicked the user opts in to the voice data collection. -->
@@ -884,4 +970,18 @@
 
     <!-- This string is displayed in the content language list in front of the system default language in between parenthesis -->
     <string name="language_default">Standard</string>
+
+    <!-- This string is displayed in the URL bar when the user is in the home page.
+         '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="url_home_title">Startside for %1$s</string>
+
+    <!-- This string is displayed in the URL bar when the user is in the bookmarks panel -->
+    <string name="url_bookmarks_title">Bogmærker</string>
+
+    <!-- This string is displayed in the URL bar when the user is in the history panel -->
+    <string name="url_history_title">Historik</string>
+
+    <!-- This string is displayed in the Clear button on top of the window when in private mode. It only appears
+         when there is one window left. When clicked, it closes the private session -->
+    <string name="private_clear_button">Ryd</string>
 </resources>

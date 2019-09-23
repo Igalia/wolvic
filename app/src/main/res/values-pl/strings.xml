@@ -638,10 +638,23 @@
     <!-- This string is displayed as the title of the Bookmarks List, which contains the user's bookmarked websites. -->
     <string name="bookmarks_title">Zakładki</string>
 
+    <!-- This string is displayed as the title of the Bookmarks List when the bookmarks list is empty. -->
+    <string name="bookmarks_empty">Lista zakładek jest pusta</string>
+
+    <!-- This string is displayed under the bookmarks title in the bookmarks list. -->
+    <string name="bookmarks_description">Kliknij ikonę @ podczas przeglądania strony, aby dodać do niej zakładkę.</string>
+
+    <!-- This string is displayed in the middle of the Bookmarks List while the bookmarks are being loaded. -->
+    <string name="bookmarks_loading">Wczytywanie zakładek</string>
+
     <!-- This string is displayed in a tooltip that appears when a user hovers
          over an icon representing 'Remove Bookmark' for an individual bookmark
          item listed in the Bookmarks List. -->
     <string name="bookmarks_remove">Usuń zakładkę</string>
+
+    <!-- This string is displayed in a tooltip that appears in the tray bar on top of the
+         bookmarks tray button then a new item is bookmarked. -->
+    <string name="bookmarks_saved_notification">Dodano zakładkę</string>
 
     <!-- This string is displayed in a tooltip that appears when a user hovers
          over an icon representing 'Edit This Bookmark' for an individual bookmark
@@ -661,6 +674,74 @@
     <!-- This string is displayed in the Bookmarks List as a tooltip of the button for showing
          all the bookmarks. -->
     <string name="bookmarks_show_all">Wyświetl wszystkie zakładki</string>
+
+    <!-- This string is displayed as the title of the history list, which contains the user's visited websites. -->
+    <string name="history_title">Historia</string>
+
+    <!-- This string is displayed as the title of the history list when the history is empty. -->
+    <string name="history_empty">Historia jest pusta</string>
+
+    <!-- This string is displayed under the history title in the history list. -->
+    <string name="history_description">Tutaj znajduje się historia przeglądania</string>
+
+    <!-- This string is displayed in the middle of the history list while the history is being loaded. -->
+    <string name="history_loading">Wczytywanie historii</string>
+
+    <!-- This string is displayed as the section title in the history list for history entries that happened today. -->
+    <string name="history_section_today">Dzisiaj</string>
+
+    <!-- This string is displayed as the section title in the history list for history entries that happened yesterday. -->
+    <string name="history_section_yesterday">Wczoraj</string>
+
+    <!-- This string is displayed as the section title in the history list for history entries that happened last week. -->
+    <string name="history_section_last_week">Ostatni tydzień</string>
+
+    <!-- This string is displayed as the section title in the history list for history entries that happened before last week. -->
+    <string name="history_section_older">Starsze</string>
+
+    <!-- This string is displayed is the "Clear History" button in the history list. When pressed a dialog for
+         clearing history is displayed. -->
+    <string name="history_clear">Usuń historię</string>
+
+    <!-- This string is displayed is the "Cancel" button from the clear history dialog.
+         When pressed the dialog is closed. -->
+    <string name="history_clear_cancel">Anuluj</string>
+
+    <!-- This string is displayed is the "Clear Now" button from the clear history dialog.
+         When pressed the selected history range is deleted from the history storage. -->
+    <string name="history_clear_now">Usuń teraz</string>
+
+    <!-- This string is displayed is the clear history dialog.
+         If selected today's history is deleted from the history storage. -->
+    <string name="history_clear_range_today">Dzisiaj</string>
+
+    <!-- This string is displayed is the clear history dialog.
+         If selected history since yesterday is deleted from the history storage. -->
+    <string name="history_clear_range_yesterday">Wczoraj</string>
+
+    <!-- This string is displayed is the clear history dialog.
+         If selected history since last week is removed from the history storage. -->
+    <string name="history_clear_range_last_week">Ostatni tydzień</string>
+
+    <!-- This string is displayed is the clear history dialog.
+         If selected all the history is deleted from the history storage. -->
+    <string name="history_clear_range_everything">Wszystko</string>
+
+    <!-- This string is displayed in the header of the radio button where the clear cache time range
+         can be selected. -->
+    <string name="history_clear_time_range">Okres do usunięcia:</string>
+
+    <!-- This string is displayed is the history context menu that is displayed when
+         the more button is pressed in a history item. It opens the selected history item in a new window. -->
+    <string name="history_context_menu_new_window">Otwórz w nowym oknie</string>
+
+    <!-- This string is displayed is the history context menu that is displayed when
+         the more button is pressed in a history item. It add the selected items to favorites. -->
+    <string name="history_context_add_bookmarks">Dodaj zakładkę</string>
+
+    <!-- This string is displayed is the history context menu that is displayed when
+         the more button is pressed in a history item. It removes the selected item from favorites. -->
+    <string name="history_context_remove_bookmarks">Usuń zakładkę</string>
 
     <!-- This string labels the Reset button that restores the default display settings values. -->
     <string name="display_options_reset">Przywróć ustawienia wyświetlania</string>
@@ -735,6 +816,14 @@
          'Stop' stops the current page load. -->
     <string name="stop_tooltip">Zatrzymaj wczytywanie</string>
 
+    <!-- This string is for the tooltip that appears upon hovering the 'Resume' button in the browser's title bar media buttons.
+         When clicked the current media playback is resumed. -->
+    <string name="media_resume_tooltip">Wznów</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Pause' button in the browser's title bar media buttons.
+         When clicked the current media playback is paused. -->
+    <string name="media_pause_tooltip">Wstrzymaj</string>
+
     <!-- This string is for the tooltip that appears upon hovering the 'Home' button in the browser's navigation bar.
          'Home' refers to the browser's start page (e.g., the Firefox Reality Home Page). -->
     <string name="home_tooltip">Strona startowa</string>
@@ -801,10 +890,14 @@
          tray. The button it labels, when pressed, opens a new browser window. -->
     <string name="new_window_tooltip">Otwórz nowe okno</string>
 
-    <!-- This string is for the tooltip that appears when the user hovers over the down-arrow icon that appears in the
-         URL bar upon hover. The icon it labels, when pressed, expands a list of recently visited websites in the
-         user's History. -->
-    <string name="show_history_tooltip">Wyświetl historię</string>
+    <!-- This string is for the tooltip that appears when the user hovers over the 'History' icon in the
+         tray and the History view is closed. The button it labels, when pressed, opens a list view of the user's visited
+         pages. -->
+    <string name="open_history_tooltip">Otwórz historię</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'History' icon in the
+         tray and the History view is closed. The button it labels, when pressed, closes the History view. -->
+    <string name="close_history_tooltip">Zamknij historię</string>
 
     <!-- This string is displayed in any button used for removing all the items in the current context. -->
     <string name="remove_all">Usuń wszystko</string>
@@ -851,7 +944,7 @@
     <!-- This string is displayed in the message of the notification message shown when the user tries to open a new window and
       it has already opened the maximum number of allowed windows. %1$s expands to a integer value that represent the maximum windows
       that can be opened (initially 3) -->
-    <string name="max_windows_message">Nie można otworzyć więcej okien jednocześnie niż %1$s. Proszę zamknąć jedno przed otwarciem następnego.</string>
+    <string name="max_windows_msg">Nie można otworzyć więcej okien niż %1$s. Zamknij jedno, aby otworzyć następne.</string>
 
     <!-- This string is displayed in the button of the notification message shown when the user tries to open a new window and
       it has already opened the maximum number of allowed windows. -->
@@ -876,7 +969,7 @@
 
     <!-- This string is displayed in the description of the Voice Search samples collect dialog. That dialog is shown the first time
          a user tries to use the voice search. -->
-    <string name="voice_samples_collect_dialog_description">Twoje dane są zawsze bezpiecznie i nigdy nie są udostępniane stronom trzecim. Zbieramy próbki głosu, aby poprawić działanie i zwiększyć wydajność naszych produktów. Zawsze możesz używać wyszukiwania głosowego, nawet jeśli nie zgodzisz się na zbieranie. &lt;a href=&quot;privacy&quot;&gt;Więcej informacji&lt;/a&gt;</string>
+    <string name="voice_samples_collect_dialog_description2">Aby ulepszyć rozpoznawanie głosu i inne usługi, musimy zbierać próbki głosu w celach badawczych. Przechowujemy dane użytkowników bezpiecznie i bez informacji identyfikujących. Zawsze można używać wyszukiwania głosowego, nawet jeśli nie wyrazi się zgody na zbieranie danych. &lt;a href=&quot;privacy&quot;&gt;Więcej informacji&lt;/a&gt;</string>
 
     <!-- This string is displayed in the button of the Voice Search samples collect dialog.
          When clicked the user opts in to the voice data collection. -->
@@ -888,4 +981,18 @@
 
     <!-- This string is displayed in the content language list in front of the system default language in between parenthesis -->
     <string name="language_default">Domyślny</string>
+
+    <!-- This string is displayed in the URL bar when the user is in the home page.
+         '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="url_home_title">Strona startowa programu %1$s</string>
+
+    <!-- This string is displayed in the URL bar when the user is in the bookmarks panel -->
+    <string name="url_bookmarks_title">Zakładki</string>
+
+    <!-- This string is displayed in the URL bar when the user is in the history panel -->
+    <string name="url_history_title">Historia</string>
+
+    <!-- This string is displayed in the Clear button on top of the window when in private mode. It only appears
+         when there is one window left. When clicked, it closes the private session -->
+    <string name="private_clear_button">Usuń</string>
 </resources>

@@ -4,13 +4,13 @@
     https://github.com/MozillaReality/FirefoxReality/wiki/L10n -->
 
     <!-- This string is used on the virtual keyboard to label the 'Enter' key (stylized in uppercase letters as 'ENTER'). -->
-    <string name="keyboard_enter_label">엔터</string>
+    <string name="keyboard_enter_label">입력</string>
 
     <!-- This string is used on the virtual keyboard to label the 'Enter' key with a "Go" IME action.
          The action key performs a "go" operation to take the user to the target of the text they typed.
          Typically used, for example, when entering a URL. (stylized in uppercase letters as 'GO')
     -->
-    <string name="keyboard_go_label">가기</string>
+    <string name="keyboard_go_label">이동</string>
 
     <!-- This string is used on the virtual keyboard to label the 'Enter' key with a "Search" IME action.
          The action key performs a "search" operation, taking the user to the results of searching for the text
@@ -37,7 +37,7 @@
     <string name="keyboard_done_label">완료</string>
 
     <!-- This string is used on the virtual keyboard to label the 'space' key-->
-    <string name="keyboard_space_label">공백</string>
+    <string name="keyboard_space_label">간격</string>
 
     <!-- This string is displayed in the button that means the user accepts the
          permission requested for in the permission dialog box. -->
@@ -306,10 +306,6 @@
          use for the display density. -->
     <string name="developer_options_display_density">디스플레이 밀도</string>
 
-    <!-- This string is used to label two integer-entry fields where the default width and height of
-         the browser window may be set. -->
-    <string name="developer_options_window_size">창 크기:</string>
-
     <!-- This string is used to label buttons to enable editing of text fields in the
          'Developer Options' dialog. Pressing this button switches the text to
          editable-text fields so their values may be changed. -->
@@ -327,10 +323,6 @@
     <!-- This string is used to label a numerical entry field where the user may enter a new value
          for the virtual displays Dots Per Inch (DPI). -->
     <string name="developer_options_display_dpi">디스플레이 DPI:</string>
-
-    <!-- This string is used to label two integer entry fields that will allow the user to adjust
-         the maximum window size in the X and Y dimensions. -->
-    <string name="developer_options_max_window_size">최대 창 크기:</string>
 
     <!-- This string is used to label radio buttons for setting Multi-Sample Anti-Aliasing (MSAA) in
          VR Immersive Mode. -->
@@ -786,11 +778,6 @@
          tray. The button it labels, when pressed, opens a new browser window. -->
     <string name="new_window_tooltip">새 창 열기</string>
 
-    <!-- This string is for the tooltip that appears when the user hovers over the down-arrow icon that appears in the
-         URL bar upon hover. The icon it labels, when pressed, expands a list of recently visited websites in the
-         user's History. -->
-    <string name="show_history_tooltip">방문 기록 보기</string>
-
     <!-- This string is displayed in any button used for removing all the items in the current context. -->
     <string name="remove_all">모두 삭제</string>
 
@@ -832,11 +819,6 @@
     <!-- This string is displayed in the message of the notification message shown when the device loses internet connection. -->
     <string name="no_internet_message">문제 해결을 위해 기기의 설정을 확인해 보세요.</string>
 
-    <!-- This string is displayed in the message of the notification message shown when the user tries to open a new window and
-      it has already opened the maximum number of allowed windows. %1$s expands to a integer value that represent the maximum windows
-      that can be opened (initially 3) -->
-    <string name="max_windows_message">한 번에 %1$s개 이상의 창을 열 수 없습니다. 다른 창을 열기 전에 이전 창을 하나 닫으세요.</string>
-
     <!-- This string is displayed in the button of the notification message shown when the user tries to open a new window and
       it has already opened the maximum number of allowed windows. -->
     <string name="max_windows_button">확인</string>
@@ -860,4 +842,5 @@
 
     <!-- This string is displayed in the content language list in front of the system default language in between parenthesis -->
     <string name="language_default">기본</string>
-</resources>
+
+    </resources>
