@@ -488,7 +488,7 @@
 
     <!-- This string is a label above the group of switches that indicates that the switches below
          relate to Firefox data collection and use. -->
-    <string name="security_options_speech_data_collection_title">Collecte et utilisation de données par $1$s</string>
+    <string name="security_options_speech_data_collection_title">Collecte et utilisation de données par %1$s</string>
 
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable permission to collect speech data. -->
