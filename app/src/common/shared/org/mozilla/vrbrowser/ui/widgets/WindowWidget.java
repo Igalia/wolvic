@@ -1506,22 +1506,19 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         VisitType visitType;
         if (isReload) {
             visitType = VisitType.RELOAD;
-
         } else {
             if ((flags & VISIT_REDIRECT_SOURCE_PERMANENT) != 0) {
                 visitType = VisitType.REDIRECT_PERMANENT;
-
             } else if ((flags & VISIT_REDIRECT_SOURCE) != 0) {
                 visitType = VisitType.REDIRECT_TEMPORARY;
-
             } else {
                 visitType = VisitType.LINK;
             }
         }
 
-        SessionStore.get().getHistoryStore().deleteVisitsFor(url);
-        SessionStore.get().getHistoryStore().recordVisit(url, visitType);
-
+        SessionStore.get().getHistoryStore().deleteVisitsFor(url).thenAcceptAsync(result -> {
+            SessionStore.get().getHistoryStore().recordVisit(url, visitType);
+        });
         return GeckoResult.fromValue(true);
     }
 
