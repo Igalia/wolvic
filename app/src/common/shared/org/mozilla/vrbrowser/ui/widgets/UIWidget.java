@@ -107,7 +107,7 @@ public abstract class UIWidget extends FrameLayout implements Widget {
             Log.d(LOGTAG, "Texture already set");
             return;
         }
-        mFirstDrawCallback = aFirstDrawCallback;
+
         if (mRenderer != null && mRenderer.isLayer()) {
             // Widget is using a layer write-only surface but we also want a proxy.
             if (mProxyRenderer != null) {
@@ -116,6 +116,8 @@ public abstract class UIWidget extends FrameLayout implements Widget {
             mProxyRenderer = new UISurfaceTextureRenderer(aTexture, aWidth, aHeight);
             postInvalidate();
             return;
+        } else {
+            mFirstDrawCallback = aFirstDrawCallback;
         }
         mTexture = aTexture;
         if (mRenderer != null) {
