@@ -51,12 +51,6 @@ android {
                 arguments "-DANDROID_STL=c++_shared"
             }
         }
-
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
-            }
-        }
     }
 
     if (gradle.hasProperty('userProperties.taskclusterBuild')) {
@@ -418,8 +412,6 @@ dependencies {
 
     // Common
     // implementation deps.google_vr.sdk_audio
-    implementation deps.room.runtime
-    annotationProcessor deps.room.compiler
     implementation deps.lifecycle.runtime
     implementation deps.lifecycle.extensions
     implementation deps.support.cardview
@@ -453,7 +445,6 @@ dependencies {
     testImplementation deps.junit
     androidTestImplementation deps.atsl.runner
     androidTestImplementation deps.espresso.core
-    testImplementation deps.room.testing
 
     // Daydream
     googlevrImplementation deps.google_vr.sdk_base
