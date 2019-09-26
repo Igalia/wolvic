@@ -4,8 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="mozilla.components.concept.storage.VisitType"/>
-
         <variable
             name="item"
             type="mozilla.components.concept.storage.VisitInfo" />
@@ -24,24 +22,6 @@
         android:layout_height="@dimen/library_item_row_height"
         android:background="@color/void_color">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:duplicateParentState="true"
-            android:ellipsize="end"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            android:scrollHorizontally="true"
-            android:singleLine="true"
-            android:text="@{item.title}"
-            android:textAllCaps="true"
-            android:textColor="@color/rhino"
-            android:textSize="@dimen/library_item_title_text_size"
-            android:textStyle="bold"
-            app:visibleGone="@{item.visitType == VisitType.NOT_A_VISIT}"
-            tools:text="Item Title" />
-
         <RelativeLayout
             android:id="@+id/layout"
             android:layout_width="match_parent"
@@ -54,8 +34,7 @@
             android:onClick="@{(view) ->  callback.onClick(view, item)}"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
-            android:soundEffectsEnabled="false"
-            app:visibleGone="@{item.visitType != VisitType.NOT_A_VISIT}">
+            android:soundEffectsEnabled="false">
 
             <LinearLayout
                 android:id="@+id/title_url"
@@ -72,7 +51,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:duplicateParentState="true"
                     android:ellipsize="end"
                     android:paddingEnd="20dp"
                     android:scrollHorizontally="true"
@@ -104,7 +82,6 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:duplicateParentState="true"
                 android:gravity="center_vertical">
 
                 <TextView
@@ -126,7 +103,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
-                    android:duplicateParentState="true"
                     android:orientation="horizontal"
                     app:visibleInvisible="@{isHovered}">
 
@@ -136,7 +112,6 @@
                         android:layout_height="22dp"
                         android:layout_gravity="center_vertical|end"
                         android:layout_marginEnd="10dp"
-                        android:duplicateParentState="true"
                         android:focusable="false"
                         android:focusableInTouchMode="false"
                         android:padding="@dimen/settings_icon_padding_max"
@@ -151,7 +126,6 @@
                         android:layout_width="22dp"
                         android:layout_height="22dp"
                         android:layout_gravity="center_vertical|end"
-                        android:duplicateParentState="true"
                         android:focusable="false"
                         android:focusableInTouchMode="false"
                         android:padding="@dimen/settings_icon_padding_max"

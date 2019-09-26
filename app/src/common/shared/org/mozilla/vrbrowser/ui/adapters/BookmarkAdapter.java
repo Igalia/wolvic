@@ -153,10 +153,12 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
             int ev = motionEvent.getActionMasked();
             switch (ev) {
                 case MotionEvent.ACTION_UP:
+                    binding.setIsHovered(true);
                     mBookmarkItemCallback.onMore(view, binding.getItem());
                     return true;
 
                 case MotionEvent.ACTION_DOWN:
+                    binding.setIsHovered(true);
                     return true;
             }
             return false;
@@ -166,10 +168,12 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
             int ev = motionEvent.getActionMasked();
             switch (ev) {
                 case MotionEvent.ACTION_UP:
+                    binding.setIsHovered(true);
                     mBookmarkItemCallback.onDelete(view, binding.getItem());
                     return true;
 
                 case MotionEvent.ACTION_DOWN:
+                    binding.setIsHovered(true);
                     return true;
             }
             return false;

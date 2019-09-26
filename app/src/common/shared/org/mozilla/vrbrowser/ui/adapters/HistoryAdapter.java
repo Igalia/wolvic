@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.databinding.HistoryItemBinding;
+import org.mozilla.vrbrowser.databinding.HistoryItemHeaderBinding;
 import org.mozilla.vrbrowser.ui.callbacks.HistoryItemCallback;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.utils.AnimationHelper;
@@ -27,9 +28,12 @@ import java.util.Objects;
 import mozilla.components.concept.storage.VisitInfo;
 import mozilla.components.concept.storage.VisitType;
 
-public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryItemViewHolder> {
+public class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     static final String LOGTAG = SystemUtils.createLogtag(HistoryAdapter.class);
+
+    private static final int TYPE_HEADER = 0;
+    private static final int TYPE_ITEM = 1;
 
     private static final int ICON_ANIMATION_DURATION = 200;
 
@@ -120,75 +124,99 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryI
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
-    public HistoryItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        HistoryItemBinding binding = DataBindingUtil
-                .inflate(LayoutInflater.from(parent.getContext()), R.layout.history_item,
-                        parent, false);
-        binding.setCallback(mHistoryItemCallback);
-        binding.setIsHovered(false);
-        binding.layout.setOnHoverListener((view, motionEvent) -> {
-            int ev = motionEvent.getActionMasked();
-            switch (ev) {
-                case MotionEvent.ACTION_HOVER_ENTER:
-                    binding.setIsHovered(true);
-                    return false;
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        if (viewType == TYPE_ITEM) {
+            HistoryItemBinding binding = DataBindingUtil
+                    .inflate(LayoutInflater.from(parent.getContext()), R.layout.history_item,
+                            parent, false);
+            binding.setCallback(mHistoryItemCallback);
+            binding.setIsHovered(false);
+            binding.layout.setOnHoverListener((view, motionEvent) -> {
+                int ev = motionEvent.getActionMasked();
+                switch (ev) {
+                    case MotionEvent.ACTION_HOVER_ENTER:
+                        binding.setIsHovered(true);
+                        return false;
 
-                case MotionEvent.ACTION_HOVER_EXIT:
-                    binding.setIsHovered(false);
-                    return false;
-            }
+                    case MotionEvent.ACTION_HOVER_EXIT:
+                        binding.setIsHovered(false);
+                        return false;
+                }
 
-            return false;
-        });
-        binding.layout.setOnTouchListener((view, motionEvent) -> {
-            int ev = motionEvent.getActionMasked();
-            switch (ev) {
-                case MotionEvent.ACTION_UP:
-                    return false;
+                return false;
+            });
+            binding.layout.setOnTouchListener((view, motionEvent) -> {
+                int ev = motionEvent.getActionMasked();
+                switch (ev) {
+                    case MotionEvent.ACTION_UP:
+                        return false;
 
-                case MotionEvent.ACTION_DOWN:
-                    binding.setIsHovered(true);
-                    return false;
+                    case MotionEvent.ACTION_DOWN:
+                        binding.setIsHovered(true);
+                        return false;
 
-                case MotionEvent.ACTION_CANCEL:
-                    binding.setIsHovered(false);
-                    return false;
-            }
-            return false;
-        });
-        binding.more.setOnHoverListener(mIconHoverListener);
-        binding.more.setOnTouchListener((view, motionEvent) -> {
-            int ev = motionEvent.getActionMasked();
-            switch (ev) {
-                case MotionEvent.ACTION_UP:
-                    mHistoryItemCallback.onMore(view, binding.getItem());
-                    return true;
+                    case MotionEvent.ACTION_CANCEL:
+                        binding.setIsHovered(false);
+                        return false;
+                }
+                return false;
+            });
+            binding.more.setOnHoverListener(mIconHoverListener);
+            binding.more.setOnTouchListener((view, motionEvent) -> {
+                int ev = motionEvent.getActionMasked();
+                switch (ev) {
+                    case MotionEvent.ACTION_UP:
+                        binding.setIsHovered(true);
+                        mHistoryItemCallback.onMore(view, binding.getItem());
+                        return true;
 
-                case MotionEvent.ACTION_DOWN:
-                    return true;
-            }
-            return false;
-        });
-        binding.trash.setOnHoverListener(mIconHoverListener);
-        binding.trash.setOnTouchListener((view, motionEvent) -> {
-            int ev = motionEvent.getActionMasked();
-            switch (ev) {
-                case MotionEvent.ACTION_UP:
-                    mHistoryItemCallback.onDelete(view, binding.getItem());
-                    return true;
+                    case MotionEvent.ACTION_DOWN:
+                        binding.setIsHovered(true);
+                        return true;
+                }
+                return false;
+            });
+            binding.trash.setOnHoverListener(mIconHoverListener);
+            binding.trash.setOnTouchListener((view, motionEvent) -> {
+                int ev = motionEvent.getActionMasked();
+                switch (ev) {
+                    case MotionEvent.ACTION_UP:
+                        binding.setIsHovered(true);
+                        mHistoryItemCallback.onDelete(view, binding.getItem());
+                        return true;
 
-                case MotionEvent.ACTION_DOWN:
-                    return true;
-            }
-            return false;
-        });
-        return new HistoryItemViewHolder(binding);
+                    case MotionEvent.ACTION_DOWN:
+                        binding.setIsHovered(true);
+                        return true;
+                }
+                return false;
+            });
+
+            return new HistoryItemViewHolder(binding);
+
+         } else if (viewType == TYPE_HEADER){
+            HistoryItemHeaderBinding binding = DataBindingUtil
+                    .inflate(LayoutInflater.from(parent.getContext()), R.layout.history_item_header,
+                            parent, false);
+
+            return new HistoryItemViewHeaderHolder(binding);
+        }
+
+        throw new RuntimeException("there is no type that matches the type " + viewType + " + make sure your using types correctly");
     }
 
     @Override
-    public void onBindViewHolder(@NonNull HistoryItemViewHolder holder, int position) {
-        holder.binding.setItem(mHistoryList.get(position));
-        holder.binding.executePendingBindings();
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        if (holder instanceof HistoryItemViewHolder) {
+            HistoryItemViewHolder item = (HistoryItemViewHolder) holder;
+            item.binding.setItem(mHistoryList.get(position));
+            item.binding.executePendingBindings();
+
+        } else if (holder instanceof HistoryItemViewHeaderHolder) {
+            HistoryItemViewHeaderHolder item = (HistoryItemViewHeaderHolder) holder;
+            item.binding.setTitle(mHistoryList.get(position).getTitle());
+            item.binding.executePendingBindings();
+        }
     }
 
     @Override
@@ -202,14 +230,16 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryI
         return  historyItem.getVisitTime();
     }
 
-    static class HistoryItemViewHolder extends RecyclerView.ViewHolder {
+    @Override
+    public int getItemViewType(int position) {
+        if (isPositionHeader(position))
+            return TYPE_HEADER;
 
-        final HistoryItemBinding binding;
+        return TYPE_ITEM;
+    }
 
-        HistoryItemViewHolder(@NonNull HistoryItemBinding binding) {
-            super(binding.getRoot());
-            this.binding = binding;
-        }
+    private boolean isPositionHeader(int position) {
+        return mHistoryList.get(position).getVisitType() == VisitType.NOT_A_VISIT;
     }
 
     private View.OnHoverListener mIconHoverListener = (view, motionEvent) -> {
@@ -235,5 +265,25 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryI
 
         return false;
     };
+
+    static class HistoryItemViewHolder extends RecyclerView.ViewHolder {
+
+        final HistoryItemBinding binding;
+
+        HistoryItemViewHolder(@NonNull HistoryItemBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+        }
+    }
+
+    static class HistoryItemViewHeaderHolder extends RecyclerView.ViewHolder {
+
+        final HistoryItemHeaderBinding binding;
+
+        HistoryItemViewHeaderHolder(@NonNull HistoryItemHeaderBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+        }
+    }
 
 }

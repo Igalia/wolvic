@@ -52,7 +52,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:contentDescription="@string/app_name"
-                    app:layoutManager="org.mozilla.vrbrowser.ui.adapters.LanguagesAdapter$CustLinearLayoutManager" />
+                    app:layoutManager="org.mozilla.vrbrowser.ui.adapters.CustomLinearLayoutManager" />
             </LinearLayout>
 
             <LinearLayout
@@ -76,7 +76,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:contentDescription="@string/app_name"
-                    app:layoutManager="org.mozilla.vrbrowser.ui.adapters.LanguagesAdapter$CustLinearLayoutManager" />
+                    app:layoutManager="org.mozilla.vrbrowser.ui.adapters.CustomLinearLayoutManager" />
             </LinearLayout>
         </LinearLayout>
 

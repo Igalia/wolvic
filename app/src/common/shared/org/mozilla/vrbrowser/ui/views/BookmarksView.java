@@ -147,10 +147,10 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
             mBinding.setIsEmpty(false);
             mBinding.setIsLoading(false);
             mBookmarkAdapter.setBookmarkList(aBookmarks);
+            mBinding.bookmarksList.post(() -> mBinding.bookmarksList.smoothScrollToPosition(
+                    mBookmarkAdapter.getItemCount() > 0 ? mBookmarkAdapter.getItemCount() - 1 : 0));
         }
         mBinding.executePendingBindings();
-        mBinding.bookmarksList.post(() -> mBinding.bookmarksList.smoothScrollToPosition(
-                mBookmarkAdapter.getItemCount() > 0 ? mBookmarkAdapter.getItemCount() - 1 : 0));
     }
 
     // BookmarksStore.BookmarksViewListener
@@ -165,6 +165,10 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
 
     @Override
     public void onBookmarkAdded() {
-        // Nothing to do
+        if (mIgnoreNextListener) {
+            mIgnoreNextListener = false;
+            return;
+        }
+        syncBookmarks();
     }
 }

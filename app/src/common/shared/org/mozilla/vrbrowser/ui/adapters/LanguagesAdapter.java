@@ -1,8 +1,6 @@
 package org.mozilla.vrbrowser.ui.adapters;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -12,7 +10,6 @@ import android.view.animation.AnimationUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.mozilla.gecko.util.ThreadUtils;
@@ -188,30 +185,6 @@ public class LanguagesAdapter extends RecyclerView.Adapter<LanguagesAdapter.Lang
     @Override
     public long getItemId(int position) {
         return  position;
-    }
-
-    // There seems to be a bug int he RecyclerView adapter that makes it crash sometimes when updating the dataset
-    // This seems to be the only thing that works until there is a ew RecyclerView version > 1.0.0
-    public static class CustLinearLayoutManager extends LinearLayoutManager {
-
-        public CustLinearLayoutManager(Context context) {
-            super(context);
-        }
-
-        public CustLinearLayoutManager(Context context, int orientation, boolean reverseLayout) {
-            super(context, orientation, reverseLayout);
-        }
-
-        public CustLinearLayoutManager(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-            super(context, attrs, defStyleAttr, defStyleRes);
-        }
-
-        // Something is happening here
-
-        @Override
-        public boolean supportsPredictiveItemAnimations() {
-            return false;
-        }
     }
 
 }

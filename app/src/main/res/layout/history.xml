@@ -135,10 +135,9 @@
             android:layout_height="match_parent"
             android:layout_marginEnd="20dp"
             android:contentDescription="History feed"
-            android:fadingEdge="vertical"
             android:fadingEdgeLength="60dp"
             android:requiresFadingEdge="vertical"
-            app:layoutManager="org.mozilla.vrbrowser.ui.adapters.LanguagesAdapter$CustLinearLayoutManager"
+            app:layoutManager="org.mozilla.vrbrowser.ui.adapters.CustomLinearLayoutManager"
             app:visibleGone="@{!isLoading &amp;&amp; !isEmpty}" />
 
     </LinearLayout>

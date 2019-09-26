@@ -44,7 +44,6 @@ class BookmarksStore constructor(val context: Context) {
 
     fun addBookmark(aURL: String, aTitle: String) = GlobalScope.future {
         storage.addItem(BookmarkRoot.Mobile.id, aURL, aTitle, null)
-        notifyListeners()
         notifyAddedListeners()
     }
 

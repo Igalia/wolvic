@@ -155,7 +155,7 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
                     .sorted((o1, o2) -> Long.valueOf(o2.getVisitTime() - o1.getVisitTime()).intValue())
                     .collect(Collectors.toList());
 
-            addSection(orderedItems, getResources().getString(R.string.history_section_today), currentTime, todayLimit);
+            addSection(orderedItems, getResources().getString(R.string.history_section_today), Long.MAX_VALUE, todayLimit);
             addSection(orderedItems, getResources().getString(R.string.history_section_yesterday), todayLimit, yesterdayLimit);
             addSection(orderedItems, getResources().getString(R.string.history_section_last_week), yesterdayLimit, oneWeekLimit);
             addSection(orderedItems, getResources().getString(R.string.history_section_older), oneWeekLimit, 0);
@@ -175,7 +175,7 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
 
             if (items.get(i).getVisitTime() < rangeStart && items.get(i).getVisitTime() > rangeEnd) {
                 items.add(i, new VisitInfo(
-                        "",
+                        section,
                         section,
                         rangeStart,
                         VisitType.NOT_A_VISIT
@@ -194,9 +194,9 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
             mBinding.setIsEmpty(false);
             mBinding.setIsLoading(false);
             mHistoryAdapter.setHistoryList(historyItems);
+            mBinding.historyList.post(() -> mBinding.historyList.smoothScrollToPosition(0));
         }
         mBinding.executePendingBindings();
-        mBinding.historyList.post(() -> mBinding.historyList.smoothScrollToPosition(0));
     }
 
     // HistoryStore.HistoryListener

@@ -52,7 +52,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:duplicateParentState="true"
                     android:ellipsize="end"
                     android:paddingEnd="20dp"
                     android:scrollHorizontally="true"
@@ -84,7 +83,6 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:duplicateParentState="true"
                 android:gravity="center_vertical">
 
                 <LinearLayout
@@ -92,7 +90,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
-                    android:duplicateParentState="true"
                     android:orientation="horizontal"
                     app:visibleInvisible="@{isHovered}">
 
@@ -102,7 +99,6 @@
                         android:layout_height="22dp"
                         android:layout_gravity="center_vertical|end"
                         android:layout_marginEnd="10dp"
-                        android:duplicateParentState="true"
                         android:focusable="false"
                         android:focusableInTouchMode="false"
                         android:padding="@dimen/settings_icon_padding_max"
@@ -117,7 +113,6 @@
                         android:layout_width="22dp"
                         android:layout_height="22dp"
                         android:layout_gravity="center_vertical|end"
-                        android:duplicateParentState="true"
                         android:focusable="false"
                         android:focusableInTouchMode="false"
                         android:padding="@dimen/settings_icon_padding_max"
