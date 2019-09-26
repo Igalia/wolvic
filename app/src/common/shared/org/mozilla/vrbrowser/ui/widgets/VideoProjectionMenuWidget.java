@@ -46,7 +46,7 @@ public class VideoProjectionMenuWidget extends MenuWidget {
         aPlacement.anchorX = 0.0f;
         aPlacement.anchorY = 0.0f;
         aPlacement.translationY = WidgetPlacement.dpDimension(getContext(), R.dimen.video_projection_menu_translation_y);
-        aPlacement.translationZ = 30.0f;
+        aPlacement.translationZ = 2.0f;
     }
 
     public void setParentWidget(UIWidget aParent) {

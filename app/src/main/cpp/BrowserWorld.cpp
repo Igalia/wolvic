@@ -1398,9 +1398,9 @@ BrowserWorld::ComputeNormalizedZ(const vrb::NodePtr& aNode) const {
   bool inside = false;
   float distance;
   if (target->GetQuad()) {
-    target->GetQuad()->TestIntersection(headPosition, headDirection, hitPoint, normal, true, inside, distance);
+    target->GetQuad()->TestIntersection(headPosition, headDirection, hitPoint, normal, false, inside, distance);
   } else if (target->GetCylinder()) {
-    target->GetCylinder()->TestIntersection(headPosition, headDirection, hitPoint, normal, true, inside, distance);
+    target->GetCylinder()->TestIntersection(headPosition, headDirection, hitPoint, normal, false, inside, distance);
   }
 
   const vrb::Matrix& projection = m.device->GetCamera(device::Eye::Left)->GetPerspective();
