@@ -15,14 +15,15 @@ def main(name, argv):
    token = ''
    sign_url = 'https://edge.stage.autograph.services.mozaws.net/sign'
    release = False
+   feature_name = ""
    try:
-      opts, args = getopt.getopt(argv,"ht:r")
+      opts, args = getopt.getopt(argv,"hrt:f:")
    except getopt.GetoptError:
-      print name + '-t <token file name> -r'
+      print name + ' -t <token file name> -r -f <feature name>'
       sys.exit(2)
    for opt, arg in opts:
       if opt == '-h':
-         print name + '-t <token file name> -r'
+         print name + ' -t <token file name> -r -f <feature name>'
          sys.exit()
       elif opt in ("-t"):
          with open(arg, 'r') as tokenfile:
@@ -30,6 +31,9 @@ def main(name, argv):
       elif opt in ('-r'):
          sign_url = 'https://edge.prod.autograph.services.mozaws.net/sign'
          release = True
+      elif opt in ('-f'):
+         feature_name = arg.replace('/','-') + '-'
+
 
    build_output_path = './app/build/outputs/apk'
 
@@ -37,7 +41,7 @@ def main(name, argv):
    for apk in glob.glob(build_output_path + "/*/*/*-unsigned.apk"):
       target = apk.replace('-unsigned', '-signed')
       if not release:
-         target = target.replace('-release-', '-staging-')
+         target = target.replace('-release-', '-staging-' + feature_name)
       print "Signing", apk
       print "Target ", target
       print subprocess.check_output([

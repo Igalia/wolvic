@@ -11,7 +11,10 @@ tasks:
       $if: 'tasks_for == "github-pull-request"'
       then: ${event.pull_request.head.repo.clone_url}
       else: ${event.repository.clone_url}
-
+    isFeatureBranch:
+      $if: 'tasks_for == "github-push"'
+      then: {$eval: 'event.ref[0:19] == "refs/heads/feature/"'}
+      else: false
   in:
 ###############################################################################
 # Task: Pull requests
@@ -53,50 +56,56 @@ tasks:
 # testing only and should not be uploaded to App Stores.
 #
 ###############################################################################
-    - $if: 'tasks_for == "github-push" && event["ref"] == "refs/heads/master"'
+    - $if: 'tasks_for == "github-push" && (event["ref"] == "refs/heads/master" || isFeatureBranch == true)'
       then:
-        provisionerId: 'aws-provisioner-v1'
-        workerType: 'github-worker'
-        deadline: {$fromNow: 1 day}
-        expires: {$fromNow: 1 year}
-        scopes:
-          - "secrets:get:project/firefoxreality/github-deploy-key"
-          - "secrets:get:project/firefoxreality/staging-signing-token"
-          - "secrets:get:project/firefoxreality/symbols-token"
-        routes:
-          - notify.email.fxr-releng@mozilla.com.on-any
-        payload:
-          maxRunTime: 14400
-          image: 'mozillamixedreality/firefoxreality:190312'
-          features:
-            taskclusterProxy: true
-          command:
-            - /bin/bash
-            - '--login'
-            - '-cx'
-            - >-
-              git fetch origin
-              && git config advice.detachedHead false
-              && git rebase origin/master
-              && rm -rf gvr-android-sdk && git clone https://github.com/MozillaReality/FirefoxReality-gvr-android-sdk.git gvr-android-sdk
-              && git submodule update
-              && . tools/taskcluster/get_third_party.sh
-              && cp tools/gradle/taskcluster.properties ./user.properties
-              && ./gradlew --no-daemon --console=plain clean `python tools/taskcluster/build_targets.py =all`
-              && python tools/taskcluster/fetch_secret.py -s project/firefoxreality/staging-signing-token -o token -n token
-              && python tools/taskcluster/sign_apk.py -t token
-              && python tools/taskcluster/archive_debug_apk.py
-              && . tools/taskcluster/upload_symbols.sh
-          artifacts:
-            'public':
-              type: 'directory'
-              path: '/opt/FirefoxReality/builds/'
-              expires: {$fromNow: '1 month'}
-        metadata:
-          name: Firefox Reality for Android - Build - Master update
-          description: Building Firefox Reality for Android (via Gradle) - triggered by update to master
-          owner: noreply@mozilla.com
-          source: ${repository}
+        $let:
+          featureName:
+            $if: 'isFeatureBranch == true'
+            then: "-f ${event.ref[19:]}"
+            else: "-f master"
+        in:
+          provisionerId: 'aws-provisioner-v1'
+          workerType: 'github-worker'
+          deadline: {$fromNow: 1 day}
+          expires: {$fromNow: 1 year}
+          scopes:
+            - "secrets:get:project/firefoxreality/github-deploy-key"
+            - "secrets:get:project/firefoxreality/staging-signing-token"
+            - "secrets:get:project/firefoxreality/symbols-token"
+          routes:
+            - notify.email.fxr-releng@mozilla.com.on-any
+          payload:
+            maxRunTime: 14400
+            image: 'mozillamixedreality/firefoxreality:190312'
+            features:
+              taskclusterProxy: true
+            command:
+              - /bin/bash
+              - '--login'
+              - '-cx'
+              - >-
+                git fetch origin
+                && git config advice.detachedHead false
+                && git checkout -b build-${event.after} ${event.after}
+                && rm -rf gvr-android-sdk && git clone https://github.com/MozillaReality/FirefoxReality-gvr-android-sdk.git gvr-android-sdk
+                && git submodule update
+                && . tools/taskcluster/get_third_party.sh
+                && cp tools/gradle/taskcluster.properties ./user.properties
+                && ./gradlew --no-daemon --console=plain clean `python tools/taskcluster/build_targets.py =all`
+                && python tools/taskcluster/fetch_secret.py -s project/firefoxreality/staging-signing-token -o token -n token
+                && python tools/taskcluster/sign_apk.py -t token ${featureName}
+                && python tools/taskcluster/archive_debug_apk.py
+                && . tools/taskcluster/upload_symbols.sh
+            artifacts:
+              'public':
+                type: 'directory'
+                path: '/opt/FirefoxReality/builds/'
+                expires: {$fromNow: '1 month'}
+          metadata:
+            name: Firefox Reality for Android - Build - Master update
+            description: Building Firefox Reality for Android (via Gradle) - triggered by update to master or feature branch
+            owner: noreply@mozilla.com
+            source: ${repository}
 ###############################################################################
 # Task: Release builds
 #
