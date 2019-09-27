@@ -104,14 +104,14 @@ public class LibraryItemContextMenu extends FrameLayout {
             case BOOKMARKS:
                 mBinding.bookmarkLayout.setVisibility(GONE);
                 mBinding.newWindowLayout.setBackgroundResource(R.drawable.library_context_menu_item_background_single);
-                return WidgetPlacement.dpDimension(getContext(), R.dimen.library_item_row_height);
+                return WidgetPlacement.dpDimension(getContext(), R.dimen.library_context_menu_height);
             case HISTORY:
                 mBinding.bookmarkLayout.setVisibility(VISIBLE);
                 mBinding.newWindowLayout.setBackgroundResource(R.drawable.library_context_menu_item_background_top);
-                return WidgetPlacement.dpDimension(getContext(), R.dimen.library_item_row_height) * 2;
+                return WidgetPlacement.dpDimension(getContext(), R.dimen.library_context_menu_height) * 2;
         }
 
-        return WidgetPlacement.dpDimension(getContext(), R.dimen.library_item_row_height) * 2;
+        return WidgetPlacement.dpDimension(getContext(), R.dimen.library_context_menu_height) * 2;
     }
 
 }

@@ -26,7 +26,7 @@
         <FrameLayout
             android:id="@+id/new_window_layout"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/library_item_row_height"
+            android:layout_height="@dimen/library_context_menu_height"
             android:padding="15dp"
             android:background="@drawable/library_context_menu_item_background_top"
             android:clickable="true"
@@ -58,7 +58,7 @@
         <FrameLayout
             android:id="@+id/bookmark_layout"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/library_item_row_height"
+            android:layout_height="@dimen/library_context_menu_height"
             android:padding="15dp"
             android:background="@drawable/library_context_menu_item_background_bottom"
             android:clickable="true"
