@@ -198,13 +198,13 @@
     <dimen name="settings_icon_padding_min">0dp</dimen>
 
     <!-- Library -->
-    <dimen name="library_item_row_height">55dp</dimen>
+    <dimen name="library_item_row_height">38dp</dimen>
     <dimen name="library_section_text_size">18sp</dimen>
     <dimen name="library_item_title_text_size">20sp</dimen>
     <dimen name="library_item_url_text_size">16sp</dimen>
     <dimen name="library_item_date_text_size">16sp</dimen>
-    <dimen name="library_icon_padding_max">2dp</dimen>
-    <dimen name="library_icon_padding_min">0dp</dimen>
+    <dimen name="library_icon_padding_max">10dp</dimen>
+    <dimen name="library_icon_padding_min">8dp</dimen>
     <dimen name="library_notification_font_size">13sp</dimen>
 
     <!-- Language -->
@@ -219,6 +219,7 @@
 
     <!-- Library Menu -->
     <dimen name="library_context_menu_width">320dp</dimen>
+    <dimen name="library_context_menu_height">55dp</dimen>
     <dimen name="library_context_menu_top_margin">4dp</dimen>
     <item name="library_context_menu_z_distance" format="float" type="dimen">0.12</item>
 
