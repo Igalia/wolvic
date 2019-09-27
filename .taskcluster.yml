@@ -11,7 +11,10 @@ tasks:
       $if: 'tasks_for == "github-pull-request"'
       then: ${event.pull_request.head.repo.clone_url}
       else: ${event.repository.clone_url}
-
+    isFeatureBranch:
+      $if: 'tasks_for == "github-push"'
+      then: {$eval: 'event.ref[0:18] == "refs/heads/feature/"'}
+      else: false
   in:
 ###############################################################################
 # Task: Pull requests
@@ -53,8 +56,13 @@ tasks:
 # testing only and should not be uploaded to App Stores.
 #
 ###############################################################################
-    - $if: 'tasks_for == "github-push" && event["ref"] == "refs/heads/master"'
+    - $if: 'tasks_for == "github-push" && (event["ref"] == "refs/heads/master" || isFeatureBranch == true)'
       then:
+        $let:
+          featureName:
+            $if: 'isFeatureBranch == true'
+            then: " -f ${event.ref[19:]}"
+            else: ""
         provisionerId: 'aws-provisioner-v1'
         workerType: 'github-worker'
         deadline: {$fromNow: 1 day}
@@ -84,7 +92,7 @@ tasks:
               && cp tools/gradle/taskcluster.properties ./user.properties
               && ./gradlew --no-daemon --console=plain clean `python tools/taskcluster/build_targets.py =all`
               && python tools/taskcluster/fetch_secret.py -s project/firefoxreality/staging-signing-token -o token -n token
-              && python tools/taskcluster/sign_apk.py -t token
+              && python tools/taskcluster/sign_apk.py -t token ${featureName}
               && python tools/taskcluster/archive_debug_apk.py
               && . tools/taskcluster/upload_symbols.sh
           artifacts:
@@ -94,7 +102,7 @@ tasks:
               expires: {$fromNow: '1 month'}
         metadata:
           name: Firefox Reality for Android - Build - Master update
-          description: Building Firefox Reality for Android (via Gradle) - triggered by update to master
+          description: Building Firefox Reality for Android (via Gradle) - triggered by update to master or feature branch
           owner: noreply@mozilla.com
           source: ${repository}
 ###############################################################################
