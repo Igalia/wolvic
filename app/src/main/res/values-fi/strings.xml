@@ -62,6 +62,10 @@
          On/Off switch which toggles whether browser-level Telemetry is reported back to Mozilla. -->
     <string name="settings_telemetry">Telemetria</string>
 
+    <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
+         opens a dialog box that contains privacy and security related settings. -->
+    <string name="settings_privacy_security">Yksityisyys ja tietoturva</string>
+
     <!-- This string is used to label a button that, when pressed, loads a website that
          describes Mozilla's Privacy Policy. -->
     <string name="settings_privacy_policy">Yksityisyyskäytäntö</string>
@@ -158,10 +162,6 @@
     <!-- The string labels the button text for the clear cache buttons in the privacy options dialog. -->
     <string name="developer_options_clear_cache">Tyhjennä tiedot</string>
 
-    <!-- This string is used to label two integer-entry fields where the default width and height of
-         the browser window may be set. -->
-    <string name="developer_options_window_size">Ikkunan koko:</string>
-
     <!-- This string is used to label buttons to enable editing of text fields in the
          'Developer Options' dialog. Pressing this button switches the text to
          editable-text fields so their values may be changed. -->
@@ -175,10 +175,6 @@
      indicates that, when the button is pressed opens a dialog box that contains more information.
      For example it's used to open a URL with the privacy policy. -->
     <string name="developer_options_show">Näytä</string>
-
-    <!-- This string is used to label two integer entry fields that will allow the user to adjust
-         the maximum window size in the X and Y dimensions. -->
-    <string name="developer_options_max_window_size">Ikkunan enimmäiskoko:</string>
 
     <!-- This string is used to label radio buttons for setting Multi-Sample Anti-Aliasing (MSAA) in
          VR Immersive Mode. -->
@@ -358,6 +354,12 @@
     <!-- This string is displayed in a tooltip in the video controls UI. -->
     <string name="video_controls_pause">Tauko</string>
 
+    <!-- This string is displayed in a tooltip in the video controls UI. -->
+    <string name="video_controls_mute">Mykistä</string>
+
+    <!-- This string is displayed in a tooltip in the video controls UI. -->
+    <string name="video_controls_unmute">Poista mykistys</string>
+
     <!-- This string is displayed in a tooltip below the video controls UI. -->
     <string name="video_controls_volume">Äänenvoimakkuus</string>
 
@@ -369,13 +371,27 @@
     '%1$s' will be replaced at runtime with a duration in seconds (e.g., '15'). -->
     <string name="video_controls_seek_backward">Siirry -%1$s sekuntia</string>
 
+    <!-- This string is displayed in the video control seekbar when the media is not seekable
+         (e.g., a live video stream). Prefer a short text because it affects the width of the seek bar. -->
+    <string name="video_controls_live">LIVE</string>
+
     <!-- This string is displayed as the title of the Bookmarks List, which contains the user's bookmarked websites. -->
     <string name="bookmarks_title">Kirjanmerkit</string>
+
+    <!-- This string is displayed as the title of the Bookmarks List when the bookmarks list is empty. -->
+    <string name="bookmarks_empty">Kirjanmerkkilistasi on tyhjä</string>
+
+    <!-- This string is displayed in the middle of the Bookmarks List while the bookmarks are being loaded. -->
+    <string name="bookmarks_loading">Ladataan kirjanmerkkejä</string>
 
     <!-- This string is displayed in a tooltip that appears when a user hovers
          over an icon representing 'Remove Bookmark' for an individual bookmark
          item listed in the Bookmarks List. -->
     <string name="bookmarks_remove">Poista kirjanmerkki</string>
+
+    <!-- This string is displayed in a tooltip that appears in the tray bar on top of the
+         bookmarks tray button then a new item is bookmarked. -->
+    <string name="bookmarks_saved_notification">Tallennettu kirjanmerkkeihin!</string>
 
     <!-- This string is displayed in a tooltip that appears when a user hovers
          over an icon representing 'Edit This Bookmark' for an individual bookmark
@@ -396,8 +412,79 @@
          all the bookmarks. -->
     <string name="bookmarks_show_all">Näytä kaikki kirjanmerkit</string>
 
+    <!-- This string is displayed as the title of the history list, which contains the user's visited websites. -->
+    <string name="history_title">Historia</string>
+
+    <!-- This string is displayed as the title of the history list when the history is empty. -->
+    <string name="history_empty">Historia on tyhjä</string>
+
+    <!-- This string is displayed under the history title in the history list. -->
+    <string name="history_description">Voit katsella selaushistoriaasi täällä</string>
+
+    <!-- This string is displayed in the middle of the history list while the history is being loaded. -->
+    <string name="history_loading">Ladataan historiaa</string>
+
+    <!-- This string is displayed as the section title in the history list for history entries that happened today. -->
+    <string name="history_section_today">Tänään</string>
+
+    <!-- This string is displayed as the section title in the history list for history entries that happened yesterday. -->
+    <string name="history_section_yesterday">Eilen</string>
+
+    <!-- This string is displayed as the section title in the history list for history entries that happened last week. -->
+    <string name="history_section_last_week">Viime viikolla</string>
+
+    <!-- This string is displayed as the section title in the history list for history entries that happened before last week. -->
+    <string name="history_section_older">Vanhemmat</string>
+
+    <!-- This string is displayed is the "Clear History" button in the history list. When pressed a dialog for
+         clearing history is displayed. -->
+    <string name="history_clear">Tyhjennä historia</string>
+
+    <!-- This string is displayed is the "Cancel" button from the clear history dialog.
+         When pressed the dialog is closed. -->
+    <string name="history_clear_cancel">Peruuta</string>
+
+    <!-- This string is displayed is the "Clear Now" button from the clear history dialog.
+         When pressed the selected history range is deleted from the history storage. -->
+    <string name="history_clear_now">Tyhjennä nyt</string>
+
+    <!-- This string is displayed is the clear history dialog.
+         If selected today's history is deleted from the history storage. -->
+    <string name="history_clear_range_today">Tänään</string>
+
+    <!-- This string is displayed is the clear history dialog.
+         If selected history since yesterday is deleted from the history storage. -->
+    <string name="history_clear_range_yesterday">Eilen</string>
+
+    <!-- This string is displayed is the clear history dialog.
+         If selected history since last week is removed from the history storage. -->
+    <string name="history_clear_range_last_week">Viime viikko</string>
+
+    <!-- This string is displayed is the clear history dialog.
+         If selected all the history is deleted from the history storage. -->
+    <string name="history_clear_range_everything">Kaikki</string>
+
+    <!-- This string is displayed in the header of the radio button where the clear cache time range
+         can be selected. -->
+    <string name="history_clear_time_range">Tyhjennettävä aikajakso:</string>
+
+    <!-- This string is displayed is the history context menu that is displayed when
+         the more button is pressed in a history item. It opens the selected history item in a new window. -->
+    <string name="history_context_menu_new_window">Avaa uuteen ikkunaan</string>
+
+    <!-- This string is displayed is the history context menu that is displayed when
+         the more button is pressed in a history item. It add the selected items to favorites. -->
+    <string name="history_context_add_bookmarks">Lisää kirjanmerkkeihin</string>
+
+    <!-- This string is displayed is the history context menu that is displayed when
+         the more button is pressed in a history item. It removes the selected item from favorites. -->
+    <string name="history_context_remove_bookmarks">Poista kirjanmerkeistä</string>
+
     <!-- This string labels the Reset button that restores the default display settings values. -->
     <string name="display_options_reset">Nollaa näyttöasetukset</string>
+
+    <!-- This string labels the Reset button that restores the default privacy and security settings values. -->
+    <string name="privacy_options_reset">Nollaa tietosuojan ja turvallisuuden asetukset</string>
 
     <!-- This string labels the Reset button that restores the default controller settings values. -->
     <string name="controller_options_reset">Nollaa ohjainasetukset</string>
@@ -419,6 +506,9 @@
 
     <!-- This string labels the description in the Voice Search Language button in the main language setting dialog. -->
     <string name="language_options_voice_search_language"><![CDATA[Äänihaun kieli: <br>&emsp;&emsp;<b>%1$s</b>]]></string>
+
+    <!-- This string labels the description in the Content Language button in the main language setting dialog. -->
+    <string name="language_options_content_language"><![CDATA[Ensisijainen kieli verkkosivuille: <br>&emsp;&emsp;<b>%1$s</b>]]></string>
 
     <!-- This string labels the description in the Display Language button in the main language setting dialog. -->
     <string name="language_options_display_language"><![CDATA[Sovelluksen kieli: <br>&emsp;&emsp;<b>%1$s</b>]]></string>
@@ -463,6 +553,14 @@
          'Stop' stops the current page load. -->
     <string name="stop_tooltip">Pysäytä lataaminen</string>
 
+    <!-- This string is for the tooltip that appears upon hovering the 'Resume' button in the browser's title bar media buttons.
+         When clicked the current media playback is resumed. -->
+    <string name="media_resume_tooltip">Jatka toistoa</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Pause' button in the browser's title bar media buttons.
+         When clicked the current media playback is paused. -->
+    <string name="media_pause_tooltip">Tauko</string>
+
     <!-- This string is for the tooltip that appears upon hovering the 'Home' button in the browser's navigation bar.
          'Home' refers to the browser's start page (e.g., the Firefox Reality Home Page). -->
     <string name="home_tooltip">Aloitussivu</string>
@@ -501,7 +599,7 @@
     <string name="private_browsing_exit_tooltip">Poistu yksityisestä selauksesta</string>
 
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the target url in a new window. -->
-    <string name="context_menu_open_new_window">Avaa uudessa ikkunassa.</string>
+    <string name="context_menu_open_new_window">Avaa uuteen ikkunaan.</string>
 
     <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmark' icon in the
          browser's navigation bar. The button it labels, when pressed, bookmarks the currently open web site. -->
@@ -529,10 +627,14 @@
          tray. The button it labels, when pressed, opens a new browser window. -->
     <string name="new_window_tooltip">Avaa uusi ikkuna</string>
 
-    <!-- This string is for the tooltip that appears when the user hovers over the down-arrow icon that appears in the
-         URL bar upon hover. The icon it labels, when pressed, expands a list of recently visited websites in the
-         user's History. -->
-    <string name="show_history_tooltip">Näytä historia</string>
+    <!-- This string is for the tooltip that appears when the user hovers over the 'History' icon in the
+         tray and the History view is closed. The button it labels, when pressed, opens a list view of the user's visited
+         pages. -->
+    <string name="open_history_tooltip">Avaa historia</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'History' icon in the
+         tray and the History view is closed. The button it labels, when pressed, closes the History view. -->
+    <string name="close_history_tooltip">Sulje historia</string>
 
     <!-- This string is displayed in any button used for removing all the items in the current context. -->
     <string name="remove_all">Poista kaikki</string>
@@ -556,10 +658,6 @@
     <!-- This string is displayed in the title of the notification message shown when the device loses internet connection. -->
     <string name="no_internet_title">Internetyhteys menetettiin</string>
 
-    <!-- This string is displayed in the message of the notification message shown when the user tries to open a new window and
-      it has already opened the maximum number of allowed windows. %1$s expands to a integer value that represent the maximum windows
-      that can be opened (initially 3) -->
-    <string name="max_windows_message">Vain 3 ikkunaa voi olla avoinna. Sulje ainakin yksi ikkuna, jotta voit avata uuden ikkunan.</string>
     <!-- This string is displayed in the button of the notification message shown when the user tries to open a new window and
       it has already opened the maximum number of allowed windows. -->
     <string name="max_windows_button">OK</string>
@@ -574,4 +672,14 @@
 
     <!-- This string is displayed in the content language list in front of the system default language in between parenthesis -->
     <string name="language_default">Oletus</string>
+
+    <!-- This string is displayed in the URL bar when the user is in the bookmarks panel -->
+    <string name="url_bookmarks_title">Kirjanmerkit</string>
+
+    <!-- This string is displayed in the URL bar when the user is in the history panel -->
+    <string name="url_history_title">Historia</string>
+
+    <!-- This string is displayed in the Clear button on top of the window when in private mode. It only appears
+         when there is one window left. When clicked, it closes the private session -->
+    <string name="private_clear_button">Tyhjennä</string>
 </resources>

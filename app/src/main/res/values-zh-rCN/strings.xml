@@ -239,19 +239,19 @@
 
     <!-- This string is the title of a dialog box shown to the user when a settings
          change requires the application to restart. -->
-    <string name="restart_dialog_restart">需要重开</string>
+    <string name="restart_dialog_restart">需要重启应用</string>
 
     <!-- This string is the text displayed in the restart dialog box explaining why the
          restart is required. '%1$s' will be replaced at runtime with the app's name. -->
-    <string name="restart_dialog_text">您必须重开 %1$s 才能完成更改。您希望立即重开吗？</string>
+    <string name="restart_dialog_text">您必须重启 %1$s 才能完成更改。您希望立即重启吗？</string>
 
     <!-- This string is used to label the button the user presses to restart the
          application in the restart dialog. -->
-    <string name="restart_now_dialog_button">立即重开</string>
+    <string name="restart_now_dialog_button">立即重启应用</string>
 
     <!-- This string is used to label the button the user presses in order to skip the application
          from being restarted. -->
-    <string name="restart_later_dialog_button">稍后重开</string>
+    <string name="restart_later_dialog_button">稍后重启应用</string>
 
     <!-- This string labels an On/Off switch in the 'Developer Options' dialog
      and is used to enable or disable curved display. -->
@@ -306,11 +306,7 @@
          use for the display density. -->
     <string name="developer_options_display_density">显示密度：</string>
 		 
-	<!-- This string is used to label two integer-entry fields where the default width and height of
-         the browser window may be set. -->
-    <string name="developer_options_window_size">窗口大小：</string>
-
-    <!-- This string is used to label buttons to enable editing of text fields in the
+	<!-- This string is used to label buttons to enable editing of text fields in the
          'Developer Options' dialog. Pressing this button switches the text to
          editable-text fields so their values may be changed. -->
     <string name="developer_options_edit">编辑</string>
@@ -327,10 +323,6 @@
     <!-- This string is used to label a numerical entry field where the user may enter a new value
          for the virtual displays Dots Per Inch (DPI). -->
     <string name="developer_options_display_dpi">显示像素密度（DPI）：</string>
-
-    <!-- This string is used to label two integer entry fields that will allow the user to adjust
-         the maximum window size in the X and Y dimensions. -->
-    <string name="developer_options_max_window_size">最大窗口：</string>
 
     <!-- This string is used to label radio buttons for setting Multi-Sample Anti-Aliasing (MSAA) in
          VR Immersive Mode. -->
