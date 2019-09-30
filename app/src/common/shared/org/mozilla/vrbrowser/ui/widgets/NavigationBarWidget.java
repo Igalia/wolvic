@@ -621,7 +621,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             mMediaControlsWidget.setParentWidget(mAttachedWindow.getHandle());
             mMediaControlsWidget.getPlacement().visible = false;
             mWidgetManager.addWidget(mMediaControlsWidget);
-            mMediaControlsWidget.setBackHandler(this::exitVRVideo);
+            mMediaControlsWidget.setBackHandler(mVRVideoBackHandler);
         }
         mMediaControlsWidget.setProjectionMenuWidget(mProjectionMenu);
         mMediaControlsWidget.setMedia(mFullScreenMedia);
