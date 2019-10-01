@@ -30,6 +30,7 @@ import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.geckoview.GeckoDisplay;
 import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoSession;
+import org.mozilla.geckoview.PanZoomController;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.HistoryStore;
 import org.mozilla.vrbrowser.browser.SessionChangeListener;
@@ -1052,13 +1053,13 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     @Override
     public boolean onTouchEvent(MotionEvent aEvent) {
         GeckoSession session = mSessionStack.getSession(mSessionId);
-        return (session != null) && session.getPanZoomController().onTouchEvent(aEvent);
+        return (session != null) && session.getPanZoomController().onTouchEvent(aEvent) == PanZoomController.INPUT_RESULT_HANDLED;
     }
 
     @Override
     public boolean onGenericMotionEvent(MotionEvent aEvent) {
         GeckoSession session = mSessionStack.getSession(mSessionId);
-        return (session != null) && session.getPanZoomController().onMotionEvent(aEvent);
+        return (session != null) && session.getPanZoomController().onMotionEvent(aEvent) == PanZoomController.INPUT_RESULT_HANDLED;
     }
 
     private void setPrivateBrowsingEnabled(boolean isEnabled) {
