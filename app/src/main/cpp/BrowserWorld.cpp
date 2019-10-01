@@ -57,6 +57,7 @@
 #include <array>
 #include <functional>
 #include <fstream>
+#include <unordered_map>
 
 #define ASSERT_ON_RENDER_THREAD(X)                                          \
   if (m.context && !m.context->IsOnRenderThread()) {                        \
@@ -184,6 +185,7 @@ struct BrowserWorld::State {
   PerformanceMonitorPtr monitor;
   WidgetMoverPtr movingWidget;
   WidgetResizerPtr widgetResizer;
+  std::unordered_map<vrb::Node*, std::pair<Widget*, float>> depthSorting;
 
   State() : paused(true), glInitialized(false), modelsLoaded(false), env(nullptr), cylinderDensity(0.0f), nearClip(0.1f),
             farClip(300.0f), activity(nullptr), windowsInitialized(false), exitImmersiveRequested(false), loaderDelay(0) {
@@ -221,6 +223,9 @@ struct BrowserWorld::State {
   void UpdateControllers(bool& aRelayoutWidgets);
   WidgetPtr GetWidget(int32_t aHandle) const;
   WidgetPtr FindWidget(const std::function<bool(const WidgetPtr&)>& aCondition) const;
+  bool IsParent(const Widget& aChild, const Widget& aParent) const;
+  float ComputeNormalizedZ(const Widget& aWidget) const;
+  void SortWidgets();
 };
 
 void
@@ -543,6 +548,108 @@ BrowserWorld::State::FindWidget(const std::function<bool(const WidgetPtr&)>& aCo
     }
   }
   return {};
+}
+
+bool
+BrowserWorld::State::IsParent(const Widget& aChild, const Widget& aParent) const {
+  if (aChild.GetPlacement()->parentHandle == aParent.GetHandle()) {
+    return true;
+  }
+
+  if (aChild.GetPlacement()->parentHandle > 0) {
+    WidgetPtr next = GetWidget(aChild.GetPlacement()->parentHandle);
+    if (next) {
+      return IsParent(*next, aParent);
+    }
+  }
+
+  return false;
+}
+
+float
+BrowserWorld::State::ComputeNormalizedZ(const Widget& aWidget) const {
+  const vrb::Vector headPosition = device->GetHeadTransform().GetTranslation();
+  const vrb::Vector headDirection = device->GetHeadTransform().MultiplyDirection(vrb::Vector(0.0f, 0.0f, -1.0f));
+
+  vrb::Vector hitPoint;
+  vrb::Vector normal;
+  bool inside = false;
+  float distance;
+  if (aWidget.GetQuad()) {
+    aWidget.GetQuad()->TestIntersection(headPosition, headDirection, hitPoint, normal, true, inside, distance);
+  } else if (aWidget.GetCylinder()) {
+    aWidget.GetCylinder()->TestIntersection(headPosition, headDirection, hitPoint, normal, true, inside, distance);
+  }
+
+  const vrb::Matrix& projection = device->GetCamera(device::Eye::Left)->GetPerspective();
+  const vrb::Matrix& view = device->GetCamera(device::Eye::Left)->GetView();
+  vrb::Matrix viewProjection = projection.PostMultiply(view);
+
+  vrb::Vector ndc = viewProjection.MultiplyPosition(hitPoint);
+
+  return ndc.z();
+}
+
+void
+BrowserWorld::State::SortWidgets() {
+  depthSorting.clear();
+
+  // Compute normalized z for each widget
+  for (int i = 0; i < rootTransparent->GetNodeCount(); ++i) {
+    vrb::NodePtr node = rootTransparent->GetNode(i);
+    Widget * target = nullptr;
+    float zDelta = 0.0f;
+    for (const auto & widget: widgets) {
+      if (widget->GetRoot() == node) {
+        target = widget.get();
+        break;
+      }
+    }
+    if (!target) {
+      for (Controller& controller: controllers->GetControllers()) {
+        if (controller.pointer && controller.pointer->GetRoot() == node) {
+          target = controller.pointer->GetHitWidget().get();
+          zDelta = 0.02f;
+          break;
+        }
+      }
+    }
+
+    if (!target && widgetResizer && widgetResizer->GetRoot() == node) {
+      target = widgetResizer->GetWidget();
+      zDelta = 0.01f;
+    }
+
+    if (!target || !target->IsVisible()) {
+      depthSorting.emplace(node.get(), std::make_pair(target, 1.0f));
+      continue;
+    }
+
+    const float z = ComputeNormalizedZ(*target) - zDelta;
+
+    depthSorting.emplace(node.get(), std::make_pair(target, z));
+  }
+
+  // Sort nodes based on cached depth values
+  rootTransparent->SortNodes([=](const NodePtr& a, const NodePtr& b) {
+    auto da = depthSorting.find(a.get());
+    auto db = depthSorting.find(b.get());
+    Widget* wa = da->second.first;
+    Widget* wb = db->second.first;
+
+    // Parenting sort
+    if (wa && wb && IsParent(*wa, *wb)) {
+      return true;
+    } else if (wa && wb && IsParent(*wb, *wa)) {
+      return false;
+    }
+
+    // Depth sort
+    return da->second.second < db->second.second;
+  });
+
+
+
 }
 
 static BrowserWorldPtr sWorldInstance;
@@ -1199,11 +1306,8 @@ BrowserWorld::DrawWorld() {
   if (m.skybox) {
     m.skybox->SetTransform(vrb::Matrix::Translation(headPosition));
   }
-  m.rootTransparent->SortNodes([=](const NodePtr& a, const NodePtr& b) {
-    float da = ComputeNormalizedZ(a);
-    float db = ComputeNormalizedZ(b);
-    return da < db;
-  });
+
+  m.SortWidgets();
   m.device->StartFrame();
   m.rootOpaque->SetTransform(m.device->GetReorientTransform());
   m.rootTransparent->SetTransform(m.device->GetReorientTransform());
@@ -1359,57 +1463,6 @@ BrowserWorld::CreateSkyBox(const std::string& aBasePath, const std::string& aExt
     m.rootOpaqueParent->AddNode(m.skybox->GetRoot());
     m.skybox->Load(m.loader, aBasePath, extension);
   }
-}
-
-float
-BrowserWorld::ComputeNormalizedZ(const vrb::NodePtr& aNode) const {
-  Widget * target = nullptr;
-  float zDelta = 0.0f;
-  for (const auto & widget: m.widgets) {
-    if (widget->GetRoot() == aNode) {
-      target = widget.get();
-      break;
-    }
-  }
-  if (!target) {
-    for (Controller& controller: m.controllers->GetControllers()) {
-      if (controller.pointer && controller.pointer->GetRoot() == aNode) {
-        target = controller.pointer->GetHitWidget().get();
-        zDelta = 0.02f;
-        break;
-      }
-    }
-  }
-
-  if (!target && m.widgetResizer && m.widgetResizer ->GetRoot() == aNode) {
-    target = m.widgetResizer->GetWidget();
-    zDelta = 0.01f;
-  }
-
-  if (!target) {
-    return 1.0f;
-  }
-
-  const vrb::Vector headPosition = m.device->GetHeadTransform().GetTranslation();
-  const vrb::Vector headDirection = m.device->GetHeadTransform().MultiplyDirection(vrb::Vector(0.0f, 0.0f, -1.0f));
-
-  vrb::Vector hitPoint;
-  vrb::Vector normal;
-  bool inside = false;
-  float distance;
-  if (target->GetQuad()) {
-    target->GetQuad()->TestIntersection(headPosition, headDirection, hitPoint, normal, false, inside, distance);
-  } else if (target->GetCylinder()) {
-    target->GetCylinder()->TestIntersection(headPosition, headDirection, hitPoint, normal, false, inside, distance);
-  }
-
-  const vrb::Matrix& projection = m.device->GetCamera(device::Eye::Left)->GetPerspective();
-  const vrb::Matrix& view = m.device->GetCamera(device::Eye::Left)->GetView();
-  vrb::Matrix viewProjection = projection.PostMultiply(view);
-
-  vrb::Vector ndc = viewProjection.MultiplyPosition(hitPoint);
-
-  return ndc.z() - zDelta;
 }
 
 } // namespace crow
