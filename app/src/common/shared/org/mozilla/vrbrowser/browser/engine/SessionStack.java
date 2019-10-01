@@ -8,6 +8,7 @@ package org.mozilla.vrbrowser.browser.engine;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.inputmethod.CursorAnchorInfo;
@@ -46,6 +47,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 
 import static org.mozilla.vrbrowser.utils.ServoUtils.createServoSession;
 import static org.mozilla.vrbrowser.utils.ServoUtils.isInstanceOfServoSession;
@@ -70,6 +72,7 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
 
     private transient GeckoSession mCurrentSession;
     private LinkedHashMap<Integer, SessionState> mSessions;
+    private LinkedList<Tab> mTabs;
     private transient GeckoSession.PermissionDelegate mPermissionDelegate;
     private transient GeckoSession.PromptDelegate mPromptDelegate;
     private transient GeckoSession.HistoryDelegate mHistoryDelegate;
@@ -81,9 +84,19 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
     private boolean mUsePrivateMode;
     private transient byte[] mPrivatePage;
 
+    public static class Tab {
+        public int sessionId;
+        public int openedFrom = -1;
+
+        Tab(int aSessionId) {
+            sessionId = aSessionId;
+        }
+    }
+
     protected SessionStack(Context context, GeckoRuntime runtime, boolean usePrivateMode) {
         mRuntime = runtime;
         mSessions = new LinkedHashMap<>();
+        mTabs = new LinkedList<>();
         mUsePrivateMode = usePrivateMode;
 
         mNavigationListeners = new LinkedList<>();
@@ -416,19 +429,22 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
             session.setMediaDelegate(null);
             session.setHistoryDelegate(null);
             mSessions.remove(aSessionId);
-            for (SessionChangeListener listener: mSessionChangeListeners) {
+            for (SessionChangeListener listener : mSessionChangeListeners) {
                 listener.onRemoveSession(session, aSessionId);
             }
             session.setActive(false);
             session.stop();
             session.close();
         }
+
+        mTabs.removeIf(tab -> tab.sessionId == aSessionId);
     }
 
     public void newSession() {
         SessionSettings settings = new SessionSettings.Builder().withDefaultSettings(mContext).build();
         int id = createSession(settings);
         setCurrentSession(id);
+        mTabs.add(new Tab(id));
     }
 
     public void newSessionWithUrl(String url) {
@@ -469,16 +485,36 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
     }
 
     public String getUriFromSession(GeckoSession aSession) {
-        Integer sessionId = getSessionId(aSession);
-        if (sessionId == NO_SESSION) {
+        return getUriFromSessionId(getSessionId(aSession));
+    }
+
+    public String getUriFromSessionId(int aSessionId) {
+        if (aSessionId == NO_SESSION) {
             return "";
         }
-        SessionState state = mSessions.get(sessionId);
+        SessionState state = mSessions.get(aSessionId);
         if (state != null) {
             return state.mUri;
         }
 
         return "";
+    }
+
+    public void setBitmap(Bitmap aBitmap, GeckoSession aSession) {
+        SessionState state = mSessions.get(getSessionId(aSession));
+        if (state != null) {
+            state.mBitmap = aBitmap;
+            Log.e("VRB", "makelele bitmap: " + aBitmap.getWidth() + " " + aBitmap.getHeight());
+        }
+    }
+
+    public @Nullable Bitmap getBitmapFromSessionId(int aSessionId) {
+        SessionState state = mSessions.get(aSessionId);
+        if (state != null) {
+            return state.mBitmap;
+        }
+
+        return null;
     }
 
     public void setCurrentSession(int aId) {
@@ -504,6 +540,14 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
         if (mCurrentSession != null) {
             mCurrentSession.setActive(true);
         }
+    }
+
+    public int getTabCount() {
+        return mTabs.size();
+    }
+
+    public Tab getTabAt(int aIndex) {
+        return mTabs.get(aIndex);
     }
 
     public void setRegion(String aRegion) {

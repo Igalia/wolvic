@@ -1,5 +1,9 @@
 package org.mozilla.vrbrowser.browser.engine;
 
+import android.graphics.Bitmap;
+
+import androidx.annotation.Nullable;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
@@ -24,6 +28,7 @@ public class SessionState {
     public boolean mCanGoForward;
     public boolean mIsLoading;
     public boolean mIsInputActive;
+    public @Nullable Bitmap mBitmap;
     public transient GeckoSession.ProgressDelegate.SecurityInformation mSecurityInformation;
     public String mUri;
     public String mPreviousUri;

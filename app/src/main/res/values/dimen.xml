@@ -107,6 +107,13 @@
     <dimen name="top_bar_height">40dp</dimen>
     <dimen name="top_bar_window_margin">20dp</dimen>
 
+    <!-- Tabs -->
+    <dimen name="tabs_width">700dp</dimen>
+    <dimen name="tabs_height">400dp</dimen>
+    <dimen name="tabs_spacing">50dp</dimen>
+    <dimen name="tab_view_width">150dp</dimen>
+    <dimen name="tab_view_height">120dp</dimen>
+
     <!-- No Internet toast -->
     <dimen name="no_internet_width">400dp</dimen>
     <dimen name="no_internet_height">200dp</dimen>

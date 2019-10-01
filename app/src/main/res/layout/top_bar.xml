@@ -27,6 +27,11 @@
                 style="?attr/fullScreenButtonStyle"
                 android:src="@drawable/ic_icon_window_exit" />
 
+            <org.mozilla.vrbrowser.ui.views.UITextButton
+                android:id="@+id/tabsButton"
+                style="?attr/fullScreenButtonStyle"
+                android:text="+" />
+
             <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/moveWindowRightButton"
                 style="?attr/fullScreenButtonStyle"

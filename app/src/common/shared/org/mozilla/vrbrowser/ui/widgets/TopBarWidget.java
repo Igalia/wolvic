@@ -7,6 +7,7 @@ package org.mozilla.vrbrowser.ui.widgets;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
@@ -24,6 +25,7 @@ public class TopBarWidget extends UIWidget implements SessionChangeListener, Wid
     private UIButton mCloseButton;
     private UIButton mMoveLeftButton;
     private UIButton mMoveRightButton;
+    private UITextButton mTabsButton;
     private UITextButton mClearButton;
     private AudioEngine mAudio;
     private WindowWidget mAttachedWindow;
@@ -51,6 +53,7 @@ public class TopBarWidget extends UIWidget implements SessionChangeListener, Wid
         void onCloseClicked(TopBarWidget aWidget);
         void onMoveLeftClicked(TopBarWidget aWidget);
         void onMoveRightClicked(TopBarWidget aWidget);
+        void onTabsClicked(TopBarWidget aWidget);
     }
 
     private void initialize(Context aContext) {
@@ -99,6 +102,17 @@ public class TopBarWidget extends UIWidget implements SessionChangeListener, Wid
             }
             if (mDelegate != null) {
                 mDelegate.onCloseClicked(TopBarWidget.this);
+            }
+        });
+
+        mTabsButton = findViewById(R.id.tabsButton);
+        mTabsButton.setOnClickListener(view -> {
+            view.requestFocusFromTouch();
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
+            if (mDelegate != null) {
+                mDelegate.onTabsClicked(TopBarWidget.this);
             }
         });
 
@@ -197,6 +211,14 @@ public class TopBarWidget extends UIWidget implements SessionChangeListener, Wid
     public void setMoveRightButtonEnabled(boolean aEnabled) {
         mMoveLeftButton.setHovered(false);
         mMoveRightButton.setEnabled(aEnabled);
+    }
+
+    public void setTabCount(int aTabs) {
+        if (aTabs > 1) {
+            mTabsButton.setText(String.valueOf(aTabs));
+        } else {
+            mTabsButton.setText("+");
+        }
     }
 
     private void handleSessionState() {

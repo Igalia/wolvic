@@ -6,6 +6,7 @@
 package org.mozilla.vrbrowser.ui.widgets;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.PointF;
@@ -135,6 +136,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private boolean mIsResizing;
     private boolean mIsFullScreen;
     private boolean mAfterFirstlPaint;
+    private TabsWidget mTabsWidget;
 
     public interface WindowDelegate {
         void onFocusRequest(@NonNull WindowWidget aWindow);
@@ -946,6 +948,15 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     // SessionStack.GeckoSessionChange
+    @Override
+    public void onNewSession(GeckoSession aSession, int aId) {
+        updateTabCounter();
+    }
+
+    @Override
+    public void onRemoveSession(GeckoSession aSession, int aId) {
+        updateTabCounter();
+    }
 
     @Override
     public void onCurrentSessionChange(GeckoSession aSession, int aId) {
@@ -978,6 +989,20 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         } else {
             setPrivateBrowsingEnabled(false);
         }
+    }
+
+    private void updateTabCounter() {
+        if (mTopBar != null) {
+            mTopBar.setTabCount(mSessionStack.getTabCount());
+        }
+    }
+
+    public void showTabsMenu() {
+        if (mTabsWidget == null) {
+            mTabsWidget = new TabsWidget(getContext(), mSessionStack);
+            mTabsWidget.getPlacement().parentHandle = mHandle;
+        }
+        mTabsWidget.show(REQUEST_FOCUS);
     }
 
     // View
@@ -1470,6 +1495,19 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     // GeckoSession.NavigationDelegate
+    @Override
+    public void onPageStop(@NonNull GeckoSession aSession, boolean b) {
+        if (mDisplay == null || !aSession.isOpen()) {
+            return;
+        }
+
+        mDisplay.capturePixels().then(bitmap -> {
+            if (bitmap != null) {
+                mSessionStack.setBitmap(bitmap, aSession);
+            }
+            return null;
+        });
+    }
 
     @Override
     public void onLocationChange(@NonNull GeckoSession session, @Nullable String url) {
@@ -1551,5 +1589,4 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             mTitleBar.setIsInsecure(!securityInformation.isSecure);
         }
     }
-
 }

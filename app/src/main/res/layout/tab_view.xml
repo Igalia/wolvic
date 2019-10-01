@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.cardview.widget.CardView
+xmlns:card_view="http://schemas.android.com/apk/res-auto"
+xmlns:android="http://schemas.android.com/apk/res/android"
+android:id="@+id/card_view"
+android:layout_width="@dimen/tab_view_width"
+android:layout_height="@dimen/tab_view_height"
+card_view:cardUseCompatPadding="true"
+card_view:cardCornerRadius="8dp"
+android:layout_marginBottom="16dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/tabPreview"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:src="@drawable/environment_meadow"
+            android:scaleType="centerCrop" />
+
+        <TextView
+            android:id="@+id/tabUrl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="13sp"
+            android:text="Title"
+            android:gravity="center"
+            android:layout_below="@+id/tabPreview"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp"
+            android:layout_alignParentBottom="true" />
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

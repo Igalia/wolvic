@@ -758,7 +758,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         ArrayList<WindowWidget> windows = getCurrentWindows();
         WindowWidget leftWindow = getLeftWindow();
         WindowWidget rightWindow = getRightWindow();
-        boolean visible = mFullscreenWindow == null && (windows.size() > 1 || isInPrivateMode());
+        boolean visible = mFullscreenWindow == null;// && (windows.size() > 1 || isInPrivateMode());
         for (WindowWidget window: windows) {
             window.getTopBar().setVisible(visible);
             window.getTopBar().setClearMode((windows.size() == 1 && isInPrivateMode()));
@@ -884,6 +884,19 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             TelemetryWrapper.windowsMoveEvent();
 
             moveWindowRight(window);
+        }
+    }
+
+    @Override
+    public void onTabsClicked(TopBarWidget aWidget) {
+        WindowWidget window = aWidget.getAttachedWindow();
+        if (window != null) {
+            if (window.getSessionStack().getTabCount() <= 1) {
+                String url = SettingsStore.getInstance(mContext).getHomepage();
+                window.getSessionStack().newSessionWithUrl(url);
+            } else {
+                window.showTabsMenu();
+            }
         }
     }
 
