@@ -506,6 +506,12 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
         }
     }
 
+    public void purgeHistory() {
+        for (Map.Entry<Integer, SessionState> entry :mSessions.entrySet()) {
+            entry.getValue().mSession.purgeHistory();
+        }
+    }
+
     public void setRegion(String aRegion) {
         Log.d(LOGTAG, "SessionStack setRegion: " + aRegion);
         mRegion = aRegion != null ? aRegion.toLowerCase() : "worldwide";

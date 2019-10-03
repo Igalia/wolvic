@@ -141,6 +141,12 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
         return mHistoryStore;
     }
 
+    public void purgeSessionHistory() {
+        for (Map.Entry<Integer, SessionStack> entry : mSessionStacks.entrySet()) {
+            entry.getValue().purgeHistory();
+        }
+    }
+
     public void onPause() {
         for (Map.Entry<Integer, SessionStack> entry : mSessionStacks.entrySet()) {
             entry.getValue().setActive(false);
