@@ -570,12 +570,19 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             updateTitleBar();
         }
 
-        if (mContextMenu != null) {
-            mContextMenu.hide(REMOVE_WIDGET);
-        }
+        hideContextMenus();
 
         TelemetryWrapper.activePlacementEvent(mWindowPlacement.getValue(), mActive);
         updateBorder();
+    }
+
+    private void hideContextMenus() {
+        if (mContextMenu != null && mContextMenu.isVisible()) {
+            mContextMenu.hide(REMOVE_WIDGET);
+        }
+        if (mLibraryItemContextMenu != null && mLibraryItemContextMenu.isVisible()) {
+            mLibraryItemContextMenu.hide(REMOVE_WIDGET);
+        }
     }
 
     private void updateTitleBar() {
@@ -1200,9 +1207,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private void showLibraryItemContextMenu(@NotNull View view, LibraryItemContextMenu.LibraryContextMenuItem item, boolean isLastVisibleItem) {
         view.requestFocusFromTouch();
 
-        if (mLibraryItemContextMenu != null) {
-            mLibraryItemContextMenu.hide(REMOVE_WIDGET);
-        }
+        hideContextMenus();
 
         float ratio = WidgetPlacement.viewToWidgetRatio(getContext(), WindowWidget.this);
 
@@ -1233,19 +1238,19 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             @Override
             public void onOpenInNewWindowClick(LibraryItemContextMenu.LibraryContextMenuItem item) {
                 mWidgetManager.openNewWindow(item.getUrl());
-                mLibraryItemContextMenu.hide(REMOVE_WIDGET);
+                hideContextMenus();
             }
 
             @Override
             public void onAddToBookmarks(LibraryItemContextMenu.LibraryContextMenuItem item) {
                 SessionStore.get().getBookmarkStore().addBookmark(item.getUrl(), item.getTitle());
-                mLibraryItemContextMenu.hide(REMOVE_WIDGET);
+                hideContextMenus();
             }
 
             @Override
             public void onRemoveFromBookmarks(LibraryItemContextMenu.LibraryContextMenuItem item) {
                 SessionStore.get().getBookmarkStore().deleteBookmarkByURL(item.getUrl());
-                mLibraryItemContextMenu.hide(REMOVE_WIDGET);
+                hideContextMenus();
             }
         }));
         mLibraryItemContextMenu.show(REQUEST_FOCUS);
@@ -1425,9 +1430,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     public void onContextMenu(GeckoSession session, int screenX, int screenY, ContextElement element) {
         TelemetryWrapper.longPressContextMenuEvent();
 
-        if (mContextMenu != null) {
-            mContextMenu.hide(REMOVE_WIDGET);
-        }
+        hideContextMenus();
 
         mContextMenu = new ContextMenuWidget(getContext());
         mContextMenu.mWidgetPlacement.parentHandle = getHandle();
