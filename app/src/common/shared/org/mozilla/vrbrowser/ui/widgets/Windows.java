@@ -66,7 +66,6 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     class WindowsState {
         WindowPlacement focusedWindowPlacement = WindowPlacement.FRONT;
         ArrayList<WindowState> regularWindowsState = new ArrayList<>();
-        ArrayList<WindowState> privateWindowsState = new ArrayList<>();
         boolean privateMode = false;
     }
 
@@ -131,11 +130,6 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
                 WindowState windowState = new WindowState();
                 windowState.load(window);
                 state.regularWindowsState.add(windowState);
-            }
-            for (WindowWidget window : mPrivateWindows) {
-                WindowState windowState = new WindowState();
-                windowState.load(window);
-                state.privateWindowsState.add(windowState);
             }
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             gson.toJson(state, writer);
@@ -575,11 +569,6 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         if (windowsState != null) {
             mPrivateMode = false;
             for (WindowState windowState : windowsState.regularWindowsState) {
-                WindowWidget window = addWindow(windowState);
-                window.getSessionStack().restore(windowState.sessionStack, windowState.currentSessionId);
-            }
-            mPrivateMode = true;
-            for (WindowState windowState : windowsState.privateWindowsState) {
                 WindowWidget window = addWindow(windowState);
                 window.getSessionStack().restore(windowState.sessionStack, windowState.currentSessionId);
             }
