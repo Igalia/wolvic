@@ -8,8 +8,6 @@
     <color name="dusk">#556f8e</color>
     <color name="azure">#518fe1</color>
     <color name="azure_blur">#80518fe1</color>
-    <color name="caribbean">#1ac1dd</color>
-    <color name="caribbean_blur">#1ac1dd3d</color>
     <color name="concrete">#9ea3ab</color>
     <color name="sky">#75eff9</color>
     <color name="silver">#e3e4e5</color>
@@ -40,7 +38,7 @@
     <color name="text_shadow">#8F000000</color>
     <color name="text_shadow_light">#7FFFFFFF</color>
     <color name="smoke">#f5f6fa</color>
-    <color name="window_border_hover">#1ac1dd</color>
+    <color name="window_border_hover">@color/azure</color>
     <color name="window_border_click">#2bd2ee</color>
     <color name="window_blank_clear_color">#5d5d5d</color>
     <color name="window_private_clear_color">#331a50</color>

@@ -5,14 +5,14 @@
             <item>
                 <shape android:shape="rectangle">
                     <corners android:radius="20dp" />
-                    <stroke android:width="@dimen/blur_radius" android:color="@color/caribbean_blur" />
+                    <stroke android:width="@dimen/blur_radius" android:color="@color/azure_blur" />
                 </shape>
             </item>
             <item android:bottom="@dimen/blur_radius_half" android:end="@dimen/blur_radius_half" android:start="@dimen/blur_radius_half" android:top="@dimen/blur_radius_half">
                 <shape android:shape="rectangle">
                     <corners android:radius="20dp" />
                     <solid android:color="@color/void_color" />
-                    <stroke android:width="2dp" android:color="@color/caribbean" />
+                    <stroke android:width="2dp" android:color="@color/azure" />
                 </shape>
             </item>
         </layer-list>
@@ -22,14 +22,14 @@
             <item>
                 <shape android:shape="rectangle">
                     <corners android:radius="20dp" />
-                    <stroke android:width="@dimen/blur_radius" android:color="@color/caribbean_blur" />
+                    <stroke android:width="@dimen/blur_radius" android:color="@color/azure_blur" />
                 </shape>
             </item>
             <item android:bottom="@dimen/blur_radius_half" android:end="@dimen/blur_radius_half" android:start="@dimen/blur_radius_half" android:top="@dimen/blur_radius_half">
                 <shape android:shape="rectangle">
                     <corners android:radius="20dp" />
                     <solid android:color="@color/asphalt" />
-                    <stroke android:width="2dp" android:color="@color/caribbean" />
+                    <stroke android:width="2dp" android:color="@color/azure" />
                 </shape>
             </item>
         </layer-list>
