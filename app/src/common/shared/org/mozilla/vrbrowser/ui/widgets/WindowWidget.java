@@ -631,6 +631,13 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         return mTopBar;
     }
 
+    public void setTopBar(TopBarWidget aWidget) {
+        if (mTopBar != aWidget) {
+            mTopBar = aWidget;
+            mTopBar.attachToWindow(this);
+        }
+    }
+
     public TitleBarWidget getTitleBar() {
         return mTitleBar;
     }

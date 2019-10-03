@@ -301,11 +301,14 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         if (aWindow == leftWindow) {
             placeWindow(leftWindow, WindowPlacement.FRONT);
             placeWindow(frontWindow, WindowPlacement.LEFT);
+            switchTopBars(leftWindow, frontWindow);
         } else if (aWindow == frontWindow) {
             if (rightWindow != null) {
                 placeWindow(rightWindow, WindowPlacement.FRONT);
+                switchTopBars(rightWindow, frontWindow);
             } else if (leftWindow != null) {
                 placeWindow(leftWindow, WindowPlacement.FRONT);
+                switchTopBars(leftWindow, frontWindow);
             }
             placeWindow(frontWindow, WindowPlacement.RIGHT);
         }
@@ -323,11 +326,14 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         if (aWindow == rightWindow) {
             placeWindow(rightWindow, WindowPlacement.FRONT);
             placeWindow(frontWindow, WindowPlacement.RIGHT);
+            switchTopBars(rightWindow, frontWindow);
         } else if (aWindow == frontWindow) {
             if (leftWindow != null) {
                 placeWindow(leftWindow, WindowPlacement.FRONT);
+                switchTopBars(leftWindow, frontWindow);
             } else if (rightWindow != null) {
                 placeWindow(rightWindow, WindowPlacement.FRONT);
+                switchTopBars(rightWindow, frontWindow);
             }
             placeWindow(frontWindow, WindowPlacement.LEFT);
         }
@@ -713,6 +719,15 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
     public int getWindowsCount() {
         return getCurrentWindows().size();
+    }
+
+    private void switchTopBars(WindowWidget w1, WindowWidget w2) {
+        // Used to fix a minor visual glitch.
+        // See https://github.com/MozillaReality/FirefoxReality/issues/1722
+        TopBarWidget bar1 = w1.getTopBar();
+        TopBarWidget bar2 = w2.getTopBar();
+        w1.setTopBar(bar2);
+        w2.setTopBar(bar1);
     }
 
     private void updateViews() {
