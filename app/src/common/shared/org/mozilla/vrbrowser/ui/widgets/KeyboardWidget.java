@@ -501,7 +501,11 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
     @Override
     public void onText(CharSequence text) {
-        handleText(text.toString());
+        if (!mIsLongPress) {
+            handleText(text.toString());
+        }
+        mIsLongPress = false;
+        mIsMultiTap = false;
     }
 
     @Override
