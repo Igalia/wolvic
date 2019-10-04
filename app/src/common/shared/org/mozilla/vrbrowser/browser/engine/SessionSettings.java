@@ -14,6 +14,7 @@ class SessionSettings {
     private int userAgentMode;
     private int viewportMode;
     private boolean isServoEnabled;
+    private String userAgentOverride;
 
     private SessionSettings(@NotNull Builder builder) {
         this.isMultiprocessEnabled = builder.isMultiprocessEnabled;
@@ -22,6 +23,7 @@ class SessionSettings {
         this.userAgentMode = builder.userAgentMode;
         this.viewportMode = builder.viewportMode;
         this.isServoEnabled = builder.isServoEnabled;
+        this.userAgentOverride = builder.userAgentOverride;
     }
 
     public boolean isMultiprocessEnabled() {
@@ -52,6 +54,14 @@ class SessionSettings {
         userAgentMode = mode;
     }
 
+    public void setUserAgentOverride(String userAgentOverride) {
+        this.userAgentOverride = userAgentOverride;
+    }
+
+    public String getUserAgentOverride() {
+        return userAgentOverride;
+    }
+
     public int getViewportMode() { return viewportMode; }
 
     public void setViewportMode(final int mode) { viewportMode = mode; }
@@ -72,6 +82,7 @@ class SessionSettings {
         private int userAgentMode;
         private int viewportMode;
         private boolean isServoEnabled;
+        private String userAgentOverride;
 
         public Builder() {
         }
@@ -103,6 +114,11 @@ class SessionSettings {
 
         public Builder withServo(boolean isServoEnabled){
             this.isServoEnabled= isServoEnabled;
+            return this;
+        }
+
+        public Builder withUserAgentOverride(String userAgentOverride) {
+            this.userAgentOverride = userAgentOverride;
             return this;
         }
 

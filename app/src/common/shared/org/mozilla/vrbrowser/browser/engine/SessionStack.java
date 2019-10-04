@@ -280,6 +280,7 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
                     .useMultiprocess(state.mSettings.isMultiprocessEnabled())
                     .usePrivateMode(mUsePrivateMode)
                     .userAgentMode(state.mSettings.getUserAgentMode())
+                    .userAgentOverride(state.mSettings.getUserAgentOverride())
                     .suspendMediaWhenInactive(state.mSettings.isSuspendMediaWhenInactiveEnabled())
                     .useTrackingProtection(state.mSettings.isTrackingProtectionEnabled())
                     .build();
@@ -366,6 +367,7 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
 
         state.mSession.getSettings().setSuspendMediaWhenInactive(aSettings.isSuspendMediaWhenInactiveEnabled());
         state.mSession.getSettings().setUserAgentMode(aSettings.getUserAgentMode());
+        state.mSession.getSettings().setUserAgentOverride(aSettings.getUserAgentOverride());
         state.mSession.setNavigationDelegate(this);
         state.mSession.setProgressDelegate(this);
         state.mSession.setContentDelegate(this);
@@ -954,8 +956,12 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
         }
 
         if (aSession == mCurrentSession) {
+            SessionState state = mSessions.get(getCurrentSessionId());
             Log.d(LOGTAG, "Testing for UA override");
-            aSession.getSettings().setUserAgentOverride(mUserAgentOverride.lookupOverride(uri));
+
+            final String userAgentOverride = mUserAgentOverride.lookupOverride(uri);
+            aSession.getSettings().setUserAgentOverride(userAgentOverride);
+            state.mSettings.setUserAgentOverride(userAgentOverride);
         }
 
         if (mContext.getString(R.string.about_private_browsing).equalsIgnoreCase(uri)) {
