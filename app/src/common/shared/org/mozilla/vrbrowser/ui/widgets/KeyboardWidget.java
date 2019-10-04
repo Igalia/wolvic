@@ -97,6 +97,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private String mComposingDisplayText = "";
     private boolean mInternalDeleteHint = false;
     private SessionStack mSessionStack;
+    private boolean mInputRestarted = false;
 
     private class MoveTouchListener implements OnTouchListener {
         @Override
@@ -914,13 +915,15 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     @Override
     public void restartInput(@NonNull GeckoSession session, int reason) {
         resetKeyboardLayout();
+        mInputRestarted = true;
     }
 
     @Override
     public void showSoftInput(@NonNull GeckoSession session) {
-        if (mFocusedView != mAttachedWindow || getVisibility() != View.VISIBLE) {
+        if (mFocusedView != mAttachedWindow || getVisibility() != View.VISIBLE || mInputRestarted) {
             updateFocusedView(mAttachedWindow);
         }
+        mInputRestarted = false;
     }
 
     @Override
