@@ -29,13 +29,6 @@ import org.mozilla.vrbrowser.utils.ViewUtils;
 
 public class UIButton extends AppCompatImageButton implements CustomUIButton {
 
-    private enum State {
-        NORMAL,
-        PRIVATE,
-        ACTIVE,
-        NOTIFICATION
-    }
-
     private ColorStateList mTintColorList;
     private Drawable mPrivateModeBackground;
     private Drawable mActiveModeBackground;
@@ -46,11 +39,13 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
     private @IdRes int mNotificationModeTintColorListRes;
     private TooltipWidget mTooltipView;
     private String mTooltipText;
-    private State mState;
     private int mTooltipDelay;
     private float mTooltipDensity;
     private boolean mCurvedTooltip = true;
     private ViewUtils.TooltipPosition mTooltipPosition;
+    private boolean mIsPrivate;
+    private boolean mIsActive;
+    private boolean mIsNotification;
 
     public UIButton(Context context, AttributeSet attrs) {
         this(context, attrs, R.attr.imageButtonStyle);
@@ -79,8 +74,6 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
         attributes.recycle();
 
         mBackground = getBackground();
-
-        mState = State.NORMAL;
     }
 
     @TargetApi(Build.VERSION_CODES.O)
@@ -152,42 +145,41 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
 
     @Override
     public void setPrivateMode(boolean isPrivateMode) {
-        if (isPrivateMode) {
-            setPrivate();
-
-        } else {
-            setNormal();
-        }
+        mIsPrivate = isPrivateMode;
+        updateButtonColor();
     }
 
     public void setActiveMode(boolean isActive) {
-        if (isActive) {
-            setActive();
-
-        } else {
-            setNormal();
-        }
+        mIsActive = isActive;
+        updateButtonColor();
     }
 
     public void setNotificationMode(boolean isNotification) {
-        if (isNotification) {
-            setNotification();
+        mIsNotification = isNotification;
+        updateButtonColor();
+    }
 
+    public boolean isActive() {
+        return mIsActive;
+    }
+
+    public boolean isPrivate() {
+        return mIsPrivate;
+    }
+
+    private void updateButtonColor() {
+        if (mIsNotification) {
+            setNotification();
+        } else if (mIsPrivate) {
+            setPrivate();
+        } else if (mIsActive) {
+            setActive();
         } else {
             setNormal();
         }
     }
 
-    public boolean isActive() {
-        return mState == State.ACTIVE;
-    }
-
-    public boolean isPrivate() {
-        return mState == State.PRIVATE;
-    }
-
     private void setPrivate() {
-        mState = State.PRIVATE;
         if (mPrivateModeBackground != null) {
             setBackground(mPrivateModeBackground);
         }
@@ -198,7 +190,6 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
     }
 
     private void setNormal() {
-        mState = State.NORMAL;
         if (mBackground != null) {
             setBackground(mBackground);
         }
@@ -209,7 +200,6 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
     }
 
     private void setActive() {
-        mState = State.ACTIVE;
         if (mActiveModeBackground != null) {
             setBackground(mActiveModeBackground);
         }
@@ -220,7 +210,6 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
     }
 
     private void setNotification() {
-        mState = State.NOTIFICATION;
         if (mActiveModeTintColorListRes != 0) {
             setTintColorList(mNotificationModeTintColorListRes);
         }
