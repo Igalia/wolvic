@@ -79,4 +79,16 @@
         <attr name="description" />
     </declare-styleable>
 
+    <declare-styleable name="CustomRecyclerView">
+        <attr name="android:fastScrollAlwaysVisible" />
+        <attr name="customFastScrollEnabled" format="boolean"/>
+    </declare-styleable>
+
+    <declare-styleable name="CustomScrollView">
+        <attr name="android:fastScrollThumbDrawable" />
+        <attr name="android:scrollbarSize" />
+        <attr name="android:fastScrollAlwaysVisible" />
+        <attr name="dynamicHeight" format="boolean"/>
+    </declare-styleable>
+
 </resources>

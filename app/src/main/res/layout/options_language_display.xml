@@ -20,9 +20,9 @@
             app:layout_constraintTop_toTopOf="parent"
             app:title="@{String.format(@string/settings_language_choose_display_language_title, @string/app_name)}" />
 
-        <ScrollView
+        <org.mozilla.vrbrowser.ui.views.CustomScrollView
             android:id="@+id/scrollbar"
-            style="@style/scrollbar"
+            style="@style/customScrollViewStyle"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="10dp"
@@ -33,11 +33,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/header_layout">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
                 <org.mozilla.vrbrowser.ui.views.settings.RadioGroupVSetting
                     android:id="@+id/languageRadio"
                     android:layout_width="match_parent"
@@ -46,8 +41,7 @@
                     app:options="@array/developer_options_display_languages"
                     app:values="@array/developer_options_display_languages_values" />
 
-            </LinearLayout>
-        </ScrollView>
+        </org.mozilla.vrbrowser.ui.views.CustomScrollView>
 
         <org.mozilla.vrbrowser.ui.widgets.settings.SettingsFooter
             android:id="@+id/footer_layout"

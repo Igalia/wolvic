@@ -9,13 +9,14 @@ import android.widget.ScrollView;
 import androidx.annotation.NonNull;
 
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.ui.views.CustomScrollView;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 
 abstract class SettingsView extends FrameLayout {
     protected Delegate mDelegate;
     protected WidgetManagerDelegate mWidgetManager;
-    protected ScrollView mScrollbar;
+    protected CustomScrollView mScrollbar;
 
     public interface Delegate {
         void onDismiss();
@@ -65,6 +66,7 @@ abstract class SettingsView extends FrameLayout {
     public void onShown() {
         if (mScrollbar != null) {
             mScrollbar.fullScroll(ScrollView.FOCUS_UP);
+            mScrollbar.setSmoothScrollingEnabled(true);
         }
 
         setFocusableInTouchMode(true);

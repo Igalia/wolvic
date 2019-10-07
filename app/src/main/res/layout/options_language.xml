@@ -36,9 +36,10 @@
             app:layout_constraintTop_toTopOf="parent"
             app:title="@string/settings_language_settings" />
 
-        <ScrollView
+        <!-- ScrollView doesn't support fast scrollbar so we need to use a custom implementation -->
+        <org.mozilla.vrbrowser.ui.views.CustomScrollView
             android:id="@+id/scrollbar"
-            style="@style/scrollbar"
+            style="@style/customScrollViewStyle"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="10dp"
@@ -108,7 +109,7 @@
                     tools:text="Description" />
             </LinearLayout>
 
-        </ScrollView>
+        </org.mozilla.vrbrowser.ui.views.CustomScrollView>
 
         <org.mozilla.vrbrowser.ui.widgets.settings.SettingsFooter
             android:id="@+id/footer_layout"

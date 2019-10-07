@@ -209,6 +209,24 @@
         <item name="android:requiresFadingEdge">vertical</item>
     </style>
 
+    <style name="customScrollViewStyle">
+        <item name="android:fastScrollAlwaysVisible">true</item>
+        <item name="android:scrollbarSize">@dimen/scrollbarWidth</item>
+        <item name="android:fastScrollThumbDrawable">@drawable/scrollbar_thumb</item>
+        <item name="dynamicHeight">true</item>
+    </style>
+
+    <style name="customRecyclerViewStyle">
+        <item name="android:fastScrollAlwaysVisible">true</item>
+        <item name="customFastScrollEnabled">true</item>
+        <item name="fastScrollEnabled">false</item>
+        <item name="fastScrollHorizontalThumbDrawable">@drawable/empty_drawable</item>
+        <item name="fastScrollHorizontalTrackDrawable">@drawable/empty_drawable</item>
+        <item name="fastScrollVerticalThumbDrawable">@drawable/scrollbar_thumb</item>
+        <item name="fastScrollVerticalTrackDrawable">@drawable/empty_drawable</item>
+        <item name="android:smoothScrollbar">true</item>
+    </style>
+
     <style name="settingsEdit">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -376,7 +394,7 @@
         <!-- Draggable scrollbar -->
         <item name="android:fastScrollEnabled">true</item>
         <item name="android:fastScrollAlwaysVisible">true</item>
-        <item name="android:scrollbarSize">15dp</item>
+        <item name="android:scrollbarSize">@dimen/scrollbarWidth</item>
         <item name="android:fastScrollThumbDrawable">@drawable/fast_scroll_thumb</item>
         <item name="android:fastScrollStyle">@style/Widget.FastScroll</item>
         <item name="android:fastScrollOverlayPosition">atThumb</item>
