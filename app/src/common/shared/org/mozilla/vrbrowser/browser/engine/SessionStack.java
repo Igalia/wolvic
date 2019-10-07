@@ -793,11 +793,14 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
     private static final String MOBILE_PREFIX = "mobile.";
 
     private String checkForMobileSite(String aUri) {
+        if (aUri == null) {
+            return null;
+        }
         String result = null;
         URI uri;
         try {
             uri = new URI(aUri);
-        } catch (URISyntaxException e) {
+        } catch (URISyntaxException | NullPointerException e) {
             Log.d(LOGTAG, "Error parsing URL: " + aUri + " " + e.getMessage());
             return null;
         }
@@ -816,7 +819,7 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
             try {
                 uri = new URI(uri.getScheme(), authority.substring(foundPrefix.length()), uri.getPath(), uri.getQuery(), uri.getFragment());
                 result = uri.toString();
-            } catch (URISyntaxException e) {
+            } catch (URISyntaxException | NullPointerException e) {
                 Log.d(LOGTAG, "Error dropping mobile prefix from: " + aUri + " " + e.getMessage());
             }
         }

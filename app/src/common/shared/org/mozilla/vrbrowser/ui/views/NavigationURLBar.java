@@ -313,8 +313,9 @@ public class NavigationURLBar extends FrameLayout {
             try {
                 aURL = URLDecoder.decode(aURL, "UTF-8");
 
-            } catch (UnsupportedEncodingException e) {
+            } catch (UnsupportedEncodingException | IllegalArgumentException e) {
                 e.printStackTrace();
+                aURL = "";
             }
             if (aURL.startsWith("jar:")) {
                 return;
