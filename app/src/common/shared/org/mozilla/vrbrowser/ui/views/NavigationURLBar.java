@@ -67,6 +67,7 @@ public class NavigationURLBar extends FrameLayout {
     private View mHintFading;
     private boolean mIsLoading = false;
     private boolean mIsInsecure = false;
+    private boolean mIsPrivateMode = false;
     private int mDefaultURLLeftPadding = 0;
     private int mURLProtocolColor;
     private int mURLWebsiteColor;
@@ -246,7 +247,11 @@ public class NavigationURLBar extends FrameLayout {
             ViewGroup.LayoutParams params = mMicrophoneButton.getLayoutParams();
             params.width = (int) getResources().getDimension(aEnabled ? R.dimen.url_bar_item_width : R.dimen.url_bar_last_item_width);
             mMicrophoneButton.setLayoutParams(params);
-            mMicrophoneButton.setBackgroundResource(aEnabled ? R.drawable.url_button : R.drawable.url_button_end);
+            if (mIsPrivateMode) {
+                mMicrophoneButton.setBackgroundResource(aEnabled ? R.drawable.url_button_private : R.drawable.url_button_end_private);
+            } else {
+                mMicrophoneButton.setBackgroundResource(aEnabled ? R.drawable.url_button : R.drawable.url_button_end);
+            }
         }
     }
 
@@ -405,13 +410,13 @@ public class NavigationURLBar extends FrameLayout {
         }
 
         if (aEnabled) {
-            mMicrophoneButton.setBackgroundResource(R.drawable.url_button);
+            mMicrophoneButton.setBackgroundResource(mIsPrivateMode ? R.drawable.url_button_private : R.drawable.url_button);
             mMicrophoneButton.getLayoutParams().width = (int)getContext().getResources().getDimension(R.dimen.url_bar_item_width);
             mBookmarkButton.setVisibility(VISIBLE);
             mUAModeButton.setVisibility(VISIBLE);
 
         } else {
-            mMicrophoneButton.setBackgroundResource(R.drawable.url_button_end);
+            mMicrophoneButton.setBackgroundResource(mIsPrivateMode ? R.drawable.url_button_end_private : R.drawable.url_button_end);
             mMicrophoneButton.getLayoutParams().width = (int)getContext().getResources().getDimension(R.dimen.url_bar_last_item_width);
             mBookmarkButton.setVisibility(GONE);
             mUAModeButton.setVisibility(GONE);
@@ -520,12 +525,26 @@ public class NavigationURLBar extends FrameLayout {
     }
 
     public void setPrivateMode(boolean isEnabled) {
+        mIsPrivateMode = isEnabled;
         if (isEnabled) {
             mURL.setBackground(getContext().getDrawable(R.drawable.url_background_private));
 
         } else {
             mURL.setBackground(getContext().getDrawable(R.drawable.url_background));
         }
+
+
+        int background = isEnabled ? R.drawable.url_button_private : R.drawable.url_button;
+        int backgroundEnd = isEnabled ? R.drawable.url_button_end_private : R.drawable.url_button_end;
+
+        mBookmarkButton.setBackgroundResource(backgroundEnd);
+        mUAModeButton.setBackgroundResource(background);
+        if (mBookmarkButton.getVisibility() == View.VISIBLE) {
+            mMicrophoneButton.setBackgroundResource(background);
+        } else {
+            mMicrophoneButton.setBackgroundResource(backgroundEnd);
+        }
+
     }
 
     @Override
