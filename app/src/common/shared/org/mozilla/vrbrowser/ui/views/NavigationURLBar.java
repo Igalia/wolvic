@@ -64,6 +64,7 @@ public class NavigationURLBar extends FrameLayout {
     private ImageView mLoadingView;
     private Animation mLoadingAnimation;
     private RelativeLayout mURLLeftContainer;
+    private View mHintFading;
     private boolean mIsLoading = false;
     private boolean mIsInsecure = false;
     private int mDefaultURLLeftPadding = 0;
@@ -133,6 +134,7 @@ public class NavigationURLBar extends FrameLayout {
         mURL.setOnFocusChangeListener((view, focused) -> {
             showVoiceSearch(!focused || (mURL.getText().length() == 0));
             showContextButtons(!focused && mIsContextButtonsEnabled);
+            updateHintFading();
 
             mURL.setSelection(mURL.getText().length(), 0);
         });
@@ -166,6 +168,7 @@ public class NavigationURLBar extends FrameLayout {
         mUAModeButton.setOnClickListener(mUAModeListener);
         setUAMode(mSessionStack.getUaMode());
 
+        mHintFading = findViewById(R.id.urlBarHintFadingEdge);
         mURLLeftContainer = findViewById(R.id.urlLeftContainer);
         mInsecureIcon = findViewById(R.id.insecureIcon);
         mLoadingView = findViewById(R.id.loadingView);
@@ -188,6 +191,7 @@ public class NavigationURLBar extends FrameLayout {
         setFocusable(true);
         setClickable(true);
         syncViews();
+        updateHintFading();
     }
 
     public void setSessionStack(SessionStack sessionStack) {
@@ -412,23 +416,42 @@ public class NavigationURLBar extends FrameLayout {
             mBookmarkButton.setVisibility(GONE);
             mUAModeButton.setVisibility(GONE);
         }
+        updateRightPadding();
     }
 
     public void showVoiceSearch(boolean enabled) {
         if (enabled) {
-            mURL.setPadding(mURL.getPaddingStart(), mURL.getPaddingTop(), WidgetPlacement.convertDpToPixel(getContext(), 100), mURL.getPaddingBottom());
-
             mMicrophoneButton.setImageResource(R.drawable.ic_icon_microphone);
             mMicrophoneButton.setTooltip(getResources().getString(R.string.voice_search_tooltip));
             mMicrophoneButton.setOnClickListener(mMicrophoneListener);
 
         } else if (mURL.hasFocus()){
-            mURL.setPadding(mURL.getPaddingStart(), mURL.getPaddingTop(), WidgetPlacement.convertDpToPixel(getContext(), 40), mURL.getPaddingBottom());
-
             mMicrophoneButton.setImageResource(R.drawable.ic_icon_clear);
             mMicrophoneButton.setTooltip(getResources().getString(R.string.clear_tooltip));
             mMicrophoneButton.setOnClickListener(mClearListener);
         }
+        updateRightPadding();
+    }
+
+    public void updateHintFading() {
+        mHintFading.setVisibility(StringUtils.isEmpty(mURL.getText()) ? View.VISIBLE : View.GONE);
+        mHintFading.setEnabled(mURL.isFocused());
+    }
+
+    private void updateRightPadding() {
+        int padding = WidgetPlacement.convertDpToPixel(getContext(), 5);
+        if (mMicrophoneButton.getVisibility() == View.VISIBLE) {
+            padding += mMicrophoneButton.getLayoutParams().width;
+        }
+        if (mUAModeButton.getVisibility() == View.VISIBLE) {
+            padding += mUAModeButton.getLayoutParams().width;
+        }
+        if (mBookmarkButton.getVisibility() == View.VISIBLE) {
+            padding += mBookmarkButton.getLayoutParams().width;
+        }
+        // Min padding of 20 if no icons are visible
+        padding = Math.max(padding, WidgetPlacement.convertDpToPixel(getContext(), 20));
+        mURL.setPadding(mURL.getPaddingLeft(), mURL.getPaddingTop(), padding, mURL.getPaddingBottom());
     }
 
     private void syncViews() {
@@ -563,6 +586,7 @@ public class NavigationURLBar extends FrameLayout {
             String aURL = mURL.getText().toString();
             showVoiceSearch(isEmptyUrl(aURL));
             showContextButtons(isEmptyUrl(aURL) && mIsContextButtonsEnabled);
+            updateHintFading();
         }
 
         @Override

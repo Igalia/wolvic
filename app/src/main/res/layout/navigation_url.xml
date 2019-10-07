@@ -64,6 +64,14 @@
             android:layout_gravity="center_vertical|end"
             android:orientation="horizontal">
 
+            <View
+                android:id="@+id/urlBarHintFadingEdge"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/url_bar_hint_fading_edge"
+                android:visibility="gone"/>
+
             <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/microphoneButton"
                 style="@style/urlBarIconTheme"
