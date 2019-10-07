@@ -212,10 +212,10 @@
     <style name="settingsEdit">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">@dimen/text_medium_size</item>
         <item name="android:background">@drawable/edittext_background</item>
         <item name="android:textColor">@drawable/edittext_textcolor</item>
-        <item name="android:textColorHighlight">@color/ocean</item>
+        <item name="android:textColorHighlight">@color/rhino</item>
         <item name="android:padding">5dp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:imeActionId">1</item>
@@ -313,8 +313,8 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">center</item>
-        <item name="android:textColor">@color/sky</item>
-        <item name="android:textSize">20dip</item>
+        <item name="android:textColor">@color/rhino</item>
+        <item name="android:textSize">@dimen/text_medium_size</item>
         <item name="android:textStyle">bold</item>
         <item name="android:layout_marginEnd">5dp</item>
     </style>

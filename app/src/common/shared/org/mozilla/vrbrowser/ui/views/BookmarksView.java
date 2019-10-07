@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.BookmarksStore;
+import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.browser.engine.SessionStack;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.databinding.BookmarksBinding;
@@ -151,6 +152,14 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
                     mBookmarkAdapter.getItemCount() > 0 ? mBookmarkAdapter.getItemCount() - 1 : 0));
         }
         mBinding.executePendingBindings();
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+
+        double width = Math.ceil(getWidth()/getContext().getResources().getDisplayMetrics().density);
+        mBookmarkAdapter.setNarrow(width < SettingsStore.WINDOW_WIDTH_DEFAULT);
     }
 
     // BookmarksStore.BookmarksViewListener

@@ -28,7 +28,6 @@ import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.widgets.settings.SettingsWidget;
-import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -485,7 +484,7 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Windo
             mLibraryNotification.getPlacement().translationX = (offsetViewBounds.left + mBookmarksButton.getWidth() / 2.0f) * ratio;
             mLibraryNotification.getPlacement().translationY = ((offsetViewBounds.top - 60) * ratio);
             mLibraryNotification.getPlacement().translationZ = 25.0f;
-            mLibraryNotification.getPlacement().density = 3.0f;
+            mLibraryNotification.getPlacement().density = WidgetPlacement.floatDimension(getContext(), R.dimen.tray_tooltip_density);
             mLibraryNotification.setText(R.string.bookmarks_saved_notification);
             mLibraryNotification.setCurvedMode(false);
             mLibraryNotification.show(UIWidget.CLEAR_FOCUS);

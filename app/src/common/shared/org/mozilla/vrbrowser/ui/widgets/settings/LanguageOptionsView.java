@@ -7,17 +7,24 @@ package org.mozilla.vrbrowser.ui.widgets.settings;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Point;
+import android.graphics.Typeface;
 import android.preference.PreferenceManager;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.databinding.OptionsLanguageBinding;
 import org.mozilla.vrbrowser.ui.adapters.Language;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
+import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
-import org.mozilla.vrbrowser.utils.ViewUtils;
 
 import java.util.List;
 
@@ -85,9 +92,7 @@ class LanguageOptionsView extends SettingsView {
     };
 
     private void setVoiceLanguage() {
-        String voiceLanguageString = LocaleUtils.getVoiceSearchLanguageString(getContext());
-        String text = getContext().getResources().getString(R.string.language_options_voice_search_language, voiceLanguageString);
-        mBinding.voiceSearchLanguageButton.setDescription(ViewUtils.getSpannedText(text));
+        mBinding.voiceSearchLanguageDescription.setText(getSpannedLanguageText(LocaleUtils.getVoiceSearchLanguageString(getContext())),  TextView.BufferType.SPANNABLE);
     }
 
     private void setContentLanguage() {
@@ -96,13 +101,30 @@ class LanguageOptionsView extends SettingsView {
         if (preferredLanguages.size() > 0) {
             text = preferredLanguages.get(0).getName();
         }
-        mBinding.contentLanguageButton.setDescription(ViewUtils.getSpannedText(getContext().getResources().getString(R.string.language_options_content_language, text)));
+        mBinding.contentLanguageDescription.setText(getSpannedLanguageText(text));
     }
 
     private void setDisplayLanguage() {
-        String displayLanguageString = LocaleUtils.getDisplayCurrentLanguageString();
-        String text = getContext().getResources().getString(R.string.language_options_display_language, displayLanguageString);
-        mBinding.displayLanguageButton.setDescription(ViewUtils.getSpannedText(text));
+        mBinding.displayLanguageDescription.setText(getSpannedLanguageText(LocaleUtils.getDisplayCurrentLanguageString()));
+    }
+
+    private int getLanguageIndex(@NonNull String text) {
+        if (text.contains("(")) {
+            return text.indexOf("(");
+        }
+
+        if (text.contains("[")) {
+            return text.indexOf("[");
+        }
+
+        return text.length() - 1;
+    }
+
+    private SpannableStringBuilder getSpannedLanguageText(@NonNull String language) {
+        int end = getLanguageIndex(language);
+        SpannableStringBuilder spanned = new SpannableStringBuilder(language);
+        spanned.setSpan(new StyleSpan(Typeface.BOLD), 0, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return spanned;
     }
 
     private OnClickListener mContentListener = v -> mDelegate.showView(mContentLanguage);
@@ -122,5 +144,11 @@ class LanguageOptionsView extends SettingsView {
             setDisplayLanguage();
         }
     };
+
+    @Override
+    public Point getDimensions() {
+        return new Point( WidgetPlacement.dpDimension(getContext(), R.dimen.language_options_width),
+                WidgetPlacement.dpDimension(getContext(), R.dimen.language_options_height));
+    }
 
 }

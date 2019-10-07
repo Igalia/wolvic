@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -58,7 +59,17 @@
                     android:layout_height="wrap_content"
                     android:onClick="@{(view) -> voiceSearchClickListener.onClick(view)}"
                     app:buttonText="@string/settings_button_edit"
-                    app:description="@string/language_options_voice_search_language" />
+                    app:description="@string/language_options_voice_search_language_title" />
+
+                <TextView
+                    android:id="@+id/voiceSearchLanguageDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/rhino"
+                    android:textSize="@dimen/text_medium_size"
+                    tools:text="Description" />
 
                 <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
                     android:id="@+id/contentLanguageButton"
@@ -66,7 +77,17 @@
                     android:layout_height="wrap_content"
                     android:onClick="@{(view) -> contentClickListener.onClick(view)}"
                     app:buttonText="@string/settings_button_edit"
-                    app:description="@string/language_options_content_language" />
+                    app:description="@string/language_options_content_language_title" />
+
+                <TextView
+                    android:id="@+id/contentLanguageDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/rhino"
+                    android:textSize="@dimen/text_medium_size"
+                    tools:text="Description" />
 
                 <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
                     android:id="@+id/displayLanguageButton"
@@ -74,7 +95,17 @@
                     android:layout_height="wrap_content"
                     android:onClick="@{(view) -> displayClickListener.onClick(view)}"
                     app:buttonText="@string/settings_button_edit"
-                    app:description="@string/language_options_display_language" />
+                    app:description="@string/language_options_display_language_title" />
+
+                <TextView
+                    android:id="@+id/displayLanguageDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/rhino"
+                    android:textSize="@dimen/text_medium_size"
+                    tools:text="Description" />
             </LinearLayout>
 
         </ScrollView>

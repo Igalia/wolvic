@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.HistoryStore;
+import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.browser.engine.SessionStack;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.databinding.HistoryBinding;
@@ -197,6 +198,14 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
             mBinding.historyList.post(() -> mBinding.historyList.smoothScrollToPosition(0));
         }
         mBinding.executePendingBindings();
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+
+        double width = Math.ceil(getWidth()/getContext().getResources().getDisplayMetrics().density);
+        mHistoryAdapter.setNarrow(width < SettingsStore.WINDOW_WIDTH_DEFAULT);
     }
 
     // HistoryStore.HistoryListener

@@ -82,8 +82,8 @@ abstract class SettingsView extends FrameLayout {
     protected void onGlobalFocusChanged(View oldFocus, View newFocus) {}
 
     public Point getDimensions() {
-        return new Point( WidgetPlacement.dpDimension(getContext(), R.dimen.developer_options_width),
-                WidgetPlacement.dpDimension(getContext(), R.dimen.developer_options_height));
+        return new Point( WidgetPlacement.dpDimension(getContext(), R.dimen.options_width),
+                WidgetPlacement.dpDimension(getContext(), R.dimen.options_height));
     }
 
     protected boolean reset() {

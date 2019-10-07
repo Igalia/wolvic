@@ -6,8 +6,10 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ImageSpan;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.Dimension;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.databinding.BindingAdapter;
@@ -64,5 +66,12 @@ public class BindingAdapters {
         ImageSpan span = new ImageSpan(drawable, ImageSpan.ALIGN_BOTTOM);
         spannableString.setSpan(span, spannableString.toString().indexOf("@"),  spannableString.toString().indexOf("@")+1, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
         textView.setText(spannableString);
+    }
+
+    @BindingAdapter("layout_height")
+    public static void setLayoutHeight(@NonNull View view, @NonNull @Dimension float dimen) {
+        ViewGroup.LayoutParams params = view.getLayoutParams();
+        params.height = (int)dimen;
+        view.setLayoutParams(params);
     }
 }

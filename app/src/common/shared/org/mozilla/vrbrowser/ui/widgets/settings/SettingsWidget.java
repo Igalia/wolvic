@@ -32,7 +32,6 @@ import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.RestartDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.UIDialog;
 import org.mozilla.vrbrowser.ui.widgets.prompts.AlertPromptWidget;
-import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -186,9 +185,9 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
 
         mAudio = AudioEngine.fromContext(aContext);
 
-        mViewMarginH = mWidgetPlacement.width - WidgetPlacement.dpDimension(getContext(), R.dimen.developer_options_width);
+        mViewMarginH = mWidgetPlacement.width - WidgetPlacement.dpDimension(getContext(), R.dimen.options_width);
         mViewMarginH = WidgetPlacement.convertDpToPixel(getContext(), mViewMarginH);
-        mViewMarginV = mWidgetPlacement.height - WidgetPlacement.dpDimension(getContext(), R.dimen.developer_options_height);
+        mViewMarginV = mWidgetPlacement.height - WidgetPlacement.dpDimension(getContext(), R.dimen.options_height);
         mViewMarginV = WidgetPlacement.convertDpToPixel(getContext(), mViewMarginV);
     }
 

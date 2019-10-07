@@ -9,14 +9,15 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
-import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.MotionEvent;
 
 import androidx.annotation.IdRes;
+import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageButton;
 
@@ -41,6 +42,7 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
     private String mTooltipText;
     private int mTooltipDelay;
     private float mTooltipDensity;
+    private @LayoutRes int mTooltipLayout;
     private boolean mCurvedTooltip = true;
     private ViewUtils.TooltipPosition mTooltipPosition;
     private boolean mIsPrivate;
@@ -66,11 +68,14 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
         mNotificationModeTintColorListRes = attributes.getResourceId(R.styleable.UIButton_notificationModeTintColorList, 0);
         mTooltipDelay = attributes.getInt(R.styleable.UIButton_tooltipDelay, getResources().getInteger(R.integer.tooltip_delay));
         mTooltipPosition = ViewUtils.TooltipPosition.fromId(attributes.getInt(R.styleable.UIButton_tooltipPosition, ViewUtils.TooltipPosition.BOTTOM.ordinal()));
-        mTooltipDensity = attributes.getFloat(R.styleable.UIButton_tooltipDensity, getContext().getResources().getDisplayMetrics().density);
+        TypedValue densityValue = new TypedValue();
+        getResources().getValue(R.dimen.tooltip_default_density, densityValue, true);
+        mTooltipDensity = attributes.getFloat(R.styleable.UIButton_tooltipDensity, densityValue.getFloat());
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             TypedArray arr = context.obtainStyledAttributes(attrs, new int [] {android.R.attr.tooltipText});
             mTooltipText = arr.getString(0);
         }
+        mTooltipLayout = attributes.getResourceId(R.styleable.UIButton_tooltipLayout, R.layout.tooltip);
         attributes.recycle();
 
         mBackground = getBackground();
@@ -223,7 +228,7 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
             }
 
             if (mTooltipView == null) {
-                mTooltipView = new TooltipWidget(getContext());
+                mTooltipView = new TooltipWidget(getContext(), mTooltipLayout);
             }
             mTooltipView.setCurvedMode(mCurvedTooltip);
             mTooltipView.setText(getTooltip());

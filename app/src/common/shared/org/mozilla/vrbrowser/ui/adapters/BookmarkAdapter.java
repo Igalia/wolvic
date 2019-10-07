@@ -38,6 +38,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
     private int mMaxPadding;
     private int mIconColorHover;
     private int mIconNormalColor;
+    private boolean mIsNarrowLayout;
 
     @Nullable
     private final BookmarkItemCallback mBookmarkItemCallback;
@@ -51,7 +52,16 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
         mIconColorHover = aContext.getResources().getColor(R.color.white, aContext.getTheme());
         mIconNormalColor = aContext.getResources().getColor(R.color.rhino, aContext.getTheme());
 
+        mIsNarrowLayout = false;
+
         setHasStableIds(true);
+    }
+
+    public void setNarrow(boolean isNarrow) {
+        if (mIsNarrowLayout != isNarrow) {
+            mIsNarrowLayout = isNarrow;
+            notifyDataSetChanged();
+        }
     }
 
     public void setBookmarkList(final List<? extends BookmarkNode> bookmarkList) {
@@ -116,8 +126,10 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
         BookmarkItemBinding binding = DataBindingUtil
                 .inflate(LayoutInflater.from(parent.getContext()), R.layout.bookmark_item,
                         parent, false);
+
         binding.setCallback(mBookmarkItemCallback);
         binding.setIsHovered(false);
+        binding.setIsNarrow(mIsNarrowLayout);
         binding.layout.setOnHoverListener((view, motionEvent) -> {
             int ev = motionEvent.getActionMasked();
             switch (ev) {
@@ -184,6 +196,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
     @Override
     public void onBindViewHolder(@NonNull BookmarkViewHolder holder, int position) {
         holder.binding.setItem(mBookmarkList.get(position));
+        holder.binding.setIsNarrow(mIsNarrowLayout);
         holder.binding.executePendingBindings();
     }
 

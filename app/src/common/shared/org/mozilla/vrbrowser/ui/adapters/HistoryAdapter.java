@@ -43,6 +43,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private int mMaxPadding;
     private int mIconColorHover;
     private int mIconNormalColor;
+    private boolean mIsNarrowLayout;
 
     @Nullable
     private final HistoryItemCallback mHistoryItemCallback;
@@ -56,7 +57,16 @@ public class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         mIconColorHover = aContext.getResources().getColor(R.color.white, aContext.getTheme());
         mIconNormalColor = aContext.getResources().getColor(R.color.rhino, aContext.getTheme());
 
+        mIsNarrowLayout = false;
+
         setHasStableIds(true);
+    }
+
+    public void setNarrow(boolean isNarrow) {
+        if (mIsNarrowLayout != isNarrow) {
+            mIsNarrowLayout = isNarrow;
+            notifyDataSetChanged();
+        }
     }
 
     public void setHistoryList(final List<? extends VisitInfo> historyList) {
@@ -131,6 +141,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                             parent, false);
             binding.setCallback(mHistoryItemCallback);
             binding.setIsHovered(false);
+            binding.setIsNarrow(mIsNarrowLayout);
             binding.layout.setOnHoverListener((view, motionEvent) -> {
                 int ev = motionEvent.getActionMasked();
                 switch (ev) {
@@ -210,6 +221,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (holder instanceof HistoryItemViewHolder) {
             HistoryItemViewHolder item = (HistoryItemViewHolder) holder;
             item.binding.setItem(mHistoryList.get(position));
+            item.binding.setIsNarrow(mIsNarrowLayout);
             item.binding.executePendingBindings();
 
         } else if (holder instanceof HistoryItemViewHeaderHolder) {

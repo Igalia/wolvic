@@ -6,9 +6,9 @@
         android:id="@+id/layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="@dimen/tooltip_default_padding_v"
-        android:paddingStart="@dimen/tooltip_default_padding_h"
-        android:paddingEnd="@dimen/tooltip_default_padding_h"
+        android:padding="@dimen/tray_tooltip_padding_v"
+        android:paddingStart="@dimen/tray_tooltip_padding_h"
+        android:paddingEnd="@dimen/tray_tooltip_padding_h"
         android:layout_gravity="center"
         android:background="@drawable/tooltip_background">
 
@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:textSize="@dimen/tooltip_default_text_size"
+            android:textSize="@dimen/tray_tooltip_text_size"
             android:maxLines="1"
             android:singleLine="true"
             android:textColor="@color/smoke"

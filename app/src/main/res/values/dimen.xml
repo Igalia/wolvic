@@ -127,11 +127,16 @@
     <item name="tray_world_width" format="float" type="dimen">1.2</item>
     <dimen name="tray_width">206dp</dimen>
     <dimen name="tray_height">40dp</dimen>
-    <item name="tray_tooltip_density" format="float" type="dimen">4.5</item>
+    <item name="tray_tooltip_density" format="float" type="dimen">4.0</item>
+    <dimen name="tray_tooltip_padding_h">20dp</dimen>
+    <dimen name="tray_tooltip_padding_v">10dp</dimen>
+    <dimen name="tray_tooltip_text_size">22sp</dimen>
 
-    <!-- Developer Options Panel -->
-    <dimen name="developer_options_width">585dp</dimen>
-    <dimen name="developer_options_height">385dp</dimen>
+    <!-- Options Panel -->
+    <dimen name="options_width">585dp</dimen>
+    <dimen name="options_height">385dp</dimen>
+
+    <!-- Developer Panel -->
     <dimen name="developer_options_button_width">120dp</dimen>
     <dimen name="developer_options_row_width">40dp</dimen>
 
@@ -199,13 +204,13 @@
 
     <!-- Library -->
     <dimen name="library_item_row_height">38dp</dimen>
+    <dimen name="library_item_row_height_narrow">64dp</dimen>
     <dimen name="library_section_text_size">18sp</dimen>
     <dimen name="library_item_title_text_size">20sp</dimen>
     <dimen name="library_item_url_text_size">16sp</dimen>
     <dimen name="library_item_date_text_size">16sp</dimen>
     <dimen name="library_icon_padding_max">10dp</dimen>
     <dimen name="library_icon_padding_min">8dp</dimen>
-    <dimen name="library_notification_font_size">13sp</dimen>
 
     <!-- Language -->
     <dimen name="language_row_height">22dp</dimen>
@@ -234,6 +239,10 @@
     <!-- Tooltip -->
     <item name="tooltip_z_distance" format="float" type="dimen">0.02</item>
     <item name="tooltip_delay" format="integer" type="integer">1000</item>
+    <dimen name="tooltip_default_padding_h">25dp</dimen>
+    <dimen name="tooltip_default_padding_v">15dp</dimen>
+    <dimen name="tooltip_default_text_size">24sp</dimen>
+    <item name="tooltip_default_density" format="float" type="dimen">3.0</item>
 
     <!-- Dialog buttons -->
     <dimen name="report_issue_width">145dp</dimen>
@@ -245,7 +254,7 @@
 
     <!-- Privacy settings -->
     <dimen name="language_options_width">585dp</dimen>
-    <dimen name="language_options_height">490dp</dimen>
+    <dimen name="language_options_height">360dp</dimen>
 
     <!-- Display settings -->
     <dimen name="display_options_width">585dp</dimen>

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="android.widget.LinearLayout"/>
 
         <variable
             name="item"
@@ -16,11 +17,16 @@
         <variable
             name="isHovered"
             type="boolean" />
+
+        <variable
+            name="isNarrow"
+            type="boolean" />
     </data>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/library_item_row_height"
+        app:layout_height="@{isNarrow ? @dimen/library_item_row_height_narrow : @dimen/library_item_row_height}"
         android:background="@color/void_color">
 
         <RelativeLayout
@@ -45,7 +51,7 @@
                 android:layout_centerVertical="true"
                 android:layout_toStartOf="@id/time_buttons"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="@{isNarrow ? LinearLayout.VERTICAL : LinearLayout.HORIZONTAL}">
 
                 <TextView
                     android:id="@+id/title"
