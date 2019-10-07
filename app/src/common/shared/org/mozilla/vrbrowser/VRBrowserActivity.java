@@ -154,6 +154,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private AudioManager mAudioManager;
     private Widget mActiveDialog;
     private Set<String> mPoorPerformanceWhiteList;
+    private float mCurrentCylinderDensity = 0;
 
     private boolean callOnAudioManager(Consumer<AudioManager> fn) {
         if (mAudioManager == null) {
@@ -1358,10 +1359,16 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         if (mWindows != null && aDensity == 0.0f && mWindows.getWindowsCount() > 1) {
             return;
         }
+        mCurrentCylinderDensity = aDensity;
         queueRunnable(() -> setCylinderDensityNative(aDensity));
         if (mWindows != null) {
             mWindows.updateCurvedMode(false);
         }
+    }
+
+    @Override
+    public float getCylinderDensity() {
+        return mCurrentCylinderDensity;
     }
 
     @Override

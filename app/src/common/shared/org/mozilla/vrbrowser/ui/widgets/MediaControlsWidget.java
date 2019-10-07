@@ -106,6 +106,11 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
             placement.worldWidth = 0.5f;
             placement.parentAnchorX = 0.65f;
             placement.parentAnchorY = 0.4f;
+            placement.cylinderMapRadius = 0.0f;
+            if (mWidgetManager.getCylinderDensity() > 0) {
+                placement.rotationAxisY = 1.0f;
+                placement.rotation = (float) Math.toRadians(-7);
+            }
             mProjectionMenu.getPlacement().visible = !mProjectionMenu.getPlacement().visible;
             mWidgetManager.updateWidget(mProjectionMenu);
         });

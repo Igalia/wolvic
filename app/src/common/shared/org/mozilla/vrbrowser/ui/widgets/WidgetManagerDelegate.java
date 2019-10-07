@@ -69,6 +69,7 @@ public interface WidgetManagerDelegate {
     void hideVRVideo();
     void resetUIYaw();
     void setCylinderDensity(float aDensity);
+    float getCylinderDensity();
     void setCPULevel(@VRBrowserActivity.CPULevelFlags int aCPULevel);
     void addFocusChangeListener(@NonNull FocusChangeListener aListener);
     void removeFocusChangeListener(@NonNull FocusChangeListener aListener);
