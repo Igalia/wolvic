@@ -303,8 +303,8 @@ struct DeviceDelegateWaveVR::State {
 
       delegate->SetVisible(controller.index, !WVR_IsInputFocusCapturedBySystem());
 
-      const bool bumperPressed = WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Digital_Trigger)
-                                || WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Trigger);
+      const bool bumperPressed =  (controller.is6DoF) ? WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Trigger)
+                                  : WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Digital_Trigger);
       const bool touchpadPressed = WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Touchpad);
       const bool touchpadTouched = WVR_GetInputTouchState(controller.type, WVR_InputId_Alias1_Touchpad);
       const bool menuPressed = WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Menu);
