@@ -382,6 +382,9 @@ android {
             res.srcDirs = [
                     'src/wavevr/res'
             ]
+            assets.srcDirs = [
+                    'src/wavevr/assets'
+            ]
             jniLibs.srcDirs = ["${project.rootDir}/third_party/wavesdk/build/wvr_client/jni"]
             manifest.srcFile "src/wavevr/AndroidManifest.xml"
         }
