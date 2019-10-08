@@ -24,6 +24,7 @@ import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
@@ -234,6 +235,7 @@ public class NavigationURLBar extends FrameLayout {
             }
         }
         syncViews();
+        updateRightPadding();
     }
 
     public boolean isInBookmarkMode() {
@@ -446,18 +448,35 @@ public class NavigationURLBar extends FrameLayout {
 
     private void updateRightPadding() {
         int padding = WidgetPlacement.convertDpToPixel(getContext(), 5);
+        boolean anyButtonVisible = false;
         if (mMicrophoneButton.getVisibility() == View.VISIBLE) {
             padding += mMicrophoneButton.getLayoutParams().width;
+            anyButtonVisible = true;
         }
         if (mUAModeButton.getVisibility() == View.VISIBLE) {
             padding += mUAModeButton.getLayoutParams().width;
+            anyButtonVisible = true;
         }
         if (mBookmarkButton.getVisibility() == View.VISIBLE) {
             padding += mBookmarkButton.getLayoutParams().width;
+            anyButtonVisible = true;
         }
         // Min padding of 20 if no icons are visible
         padding = Math.max(padding, WidgetPlacement.convertDpToPixel(getContext(), 20));
         mURL.setPadding(mURL.getPaddingLeft(), mURL.getPaddingTop(), padding, mURL.getPaddingBottom());
+
+        // Update hint fading
+        int margin = 0;
+        if (anyButtonVisible) {
+            mHintFading.setBackgroundResource(mIsPrivateMode ? R.drawable.url_bar_hint_fading_edge_private : R.drawable.url_bar_hint_fading_edge);
+        } else {
+            mHintFading.setBackgroundResource(mIsPrivateMode ? R.drawable.url_bar_hint_fading_edge_end_private : R.drawable.url_bar_hint_fading_edge_end);
+            margin = WidgetPlacement.convertDpToPixel(getContext(), 5);
+        }
+
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)mHintFading.getLayoutParams();
+        params.rightMargin = margin;
+        mHintFading.setLayoutParams(params);
     }
 
     private void syncViews() {
@@ -545,7 +564,7 @@ public class NavigationURLBar extends FrameLayout {
         } else {
             mMicrophoneButton.setBackgroundResource(backgroundEnd);
         }
-
+        updateRightPadding();
     }
 
     @Override
