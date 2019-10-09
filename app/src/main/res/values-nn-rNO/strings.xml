@@ -632,6 +632,9 @@
     <!-- This string is displayed as the title of the Bookmarks List when the bookmarks list is empty. -->
     <string name="bookmarks_empty">Bokmerkelista di er tom</string>
 
+    <!-- This string is displayed under the bookmarks title in the bookmarks list. -->
+    <string name="bookmarks_description">Klikk på @-ikonet når du er på ei side for å leggje det til i bokmerke.</string>
+
     <!-- This string is displayed in the middle of the Bookmarks List while the bookmarks are being loaded. -->
     <string name="bookmarks_loading">Lastar inn bokmerke</string>
 
@@ -755,6 +758,15 @@
     <!-- This string labels the Reset button that restores all language settings values. -->
     <string name="all_language_options_reset">Tilbakestill alle språkinnstillingar</string>
 
+    <!-- This string labels the description in the Voice Search Language button in the main language setting dialog. -->
+    <string name="language_options_voice_search_language_title">Språk for stemmesøk:</string>
+
+    <!-- This string labels the description in the Content Language button in the main language setting dialog. -->
+    <string name="language_options_content_language_title">Føretrekt språk for vising av nettsider:</string>
+
+    <!-- This string labels the description in the Display Language button in the main language setting dialog. -->
+    <string name="language_options_display_language_title">Visingsspråk for app:</string>
+
     <!-- This string labels the description in the Content Language header for preferred languages list. -->
     <string name="language_options_preferred_languages">Føretrekt(e) språk</string>
 
@@ -870,6 +882,15 @@
          tray. The button it labels, when pressed, opens a new browser window. -->
     <string name="new_window_tooltip">Opne i nytt vindauge</string>
 
+    <!-- This string is for the tooltip that appears when the user hovers over the 'History' icon in the
+         tray and the History view is closed. The button it labels, when pressed, opens a list view of the user's visited
+         pages. -->
+    <string name="open_history_tooltip">Opne historikk</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'History' icon in the
+         tray and the History view is closed. The button it labels, when pressed, closes the History view. -->
+    <string name="close_history_tooltip">Lat att historikk</string>
+
     <!-- This string is displayed in any button used for removing all the items in the current context. -->
     <string name="remove_all">Fjern alle</string>
 
@@ -912,6 +933,11 @@
     <!-- This string is displayed in the message of the notification message shown when the device loses internet connection. -->
     <string name="no_internet_message">Kontroller einingskonfigurasjonen for å løyse problemet.</string>
 
+    <!-- This string is displayed in the message of the notification message shown when the user tries to open a new window and
+      it has already opened the maximum number of allowed windows. %1$s expands to a integer value that represent the maximum windows
+      that can be opened (initially 3) -->
+    <string name="max_windows_msg">Berre %1$s vindauge kan vere opne. Lat att eitt for å opne eit anna.</string>
+
     <!-- This string is displayed in the button of the notification message shown when the user tries to open a new window and
       it has already opened the maximum number of allowed windows. -->
     <string name="max_windows_button">OK</string>
@@ -933,6 +959,10 @@
     <!-- This string is displayed in the title of the Voice Search samples collect dialog. That dialog is shown the first time
          a user tries to use the voice search. -->
     <string name="voice_samples_collect_data_dialog_title">TIllate %1$s å samle inn stemmeprøver for forsking?</string>
+
+    <!-- This string is displayed in the description of the Voice Search samples collect dialog. That dialog is shown the first time
+         a user tries to use the voice search. -->
+    <string name="voice_samples_collect_dialog_description2">For å forbetre stemmeattkjenninga og andre tenester, treng vi å samle inn stemmeprøver for forsking. Vi lagrar dataa dine trygt, og utan identifiserbar informasjon. Du vil alltid kunne bruke stemmesøk, sjølv om du ikkje tillèt innsamling.&lt;a href=&quot;privacy&quot;&gt;Les meir&lt;/a&gt;</string>
 
     <!-- This string is displayed in the button of the Voice Search samples collect dialog.
          When clicked the user opts in to the voice data collection. -->
