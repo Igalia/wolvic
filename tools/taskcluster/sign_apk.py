@@ -36,6 +36,10 @@ def main(name, argv):
 
 
    build_output_path = './app/build/outputs/apk'
+   # Create folder for saving build artifacts
+   artifacts_path = './builds'
+   if not os.path.exists(artifacts_path):
+      os.makedirs(artifacts_path)
 
    # Sign APKs
    for apk in glob.glob(build_output_path + "/*/*/*-unsigned.apk"):
@@ -50,24 +54,10 @@ def main(name, argv):
             "-o", target,
             "-H", "Authorization: " + token,
             sign_url])
-
-   # Run zipalign
-   for apk in glob.glob(build_output_path + "/*/*/*-signed.apk"):
-      split = os.path.splitext(apk)
-      print subprocess.check_output(["zipalign", "-f", "-v", "-p", "4", apk, split[0] + "-aligned" + split[1]])
-
-   # Create folder for saving build artifacts
-   artifacts_path = './builds'
-   if not os.path.exists(artifacts_path):
-      os.makedirs(artifacts_path)
-
-   # Verify signature and move APK to artifact path
-   for apk in glob.glob(build_output_path + "/*/*/*-signed-*.apk"):
-      print "Verifying", apk
-      print subprocess.check_output(['apksigner', 'verify', apk])
-
-      print "Archiving", apk
-      os.rename(apk, artifacts_path + "/" + os.path.basename(apk))
+      print "Verifying", target
+      print subprocess.check_output(['apksigner', 'verify', target])
+      print "Archiving", target
+      os.rename(target, artifacts_path + "/" + os.path.basename(target))
 
 if __name__ == "__main__":
    main(sys.argv[0], sys.argv[1:])

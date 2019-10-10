@@ -102,8 +102,8 @@ tasks:
                 path: '/opt/FirefoxReality/builds/'
                 expires: {$fromNow: '1 month'}
           metadata:
-            name: Firefox Reality for Android - Build - Master update
-            description: Building Firefox Reality for Android (via Gradle) - triggered by update to master or feature branch
+            name: Firefox Reality for Android - Build - ${event.ref[11:]} update
+            description: Building Firefox Reality for Android (via Gradle) - triggered by update to ${event.ref[11:]} branch
             owner: noreply@mozilla.com
             source: ${repository}
 ###############################################################################
@@ -153,7 +153,7 @@ tasks:
               expires: {$fromNow: '1 year'}
         metadata:
           name: Firefox Reality for Android - Release Build (${event.release.tag_name})
-          description: Building Firefox Reality for Android (via Gradle) - triggered by release
+          description: Building Firefox Reality for Android (via Gradle) - triggered by release (${event.release.tag_name})
           owner: noreply@mozilla.com
           source: ${repository}
 
