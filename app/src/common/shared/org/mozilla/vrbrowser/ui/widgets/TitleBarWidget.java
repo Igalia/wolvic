@@ -26,7 +26,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 
-public class TitleBarWidget extends UIWidget {
+public class TitleBarWidget extends UIWidget implements WidgetManagerDelegate.UpdateListener {
 
     public interface Delegate {
         void onTitleClicked(@NonNull TitleBarWidget titleBar);
@@ -61,6 +61,8 @@ public class TitleBarWidget extends UIWidget {
         mBinding = DataBindingUtil.inflate(inflater, R.layout.title_bar, this, true);
         mBinding.setWidget(this);
         mBinding.executePendingBindings();
+
+        mWidgetManager.addUpdateListener(this);
     }
 
     public void setDelegate(Delegate delegate) {
@@ -75,6 +77,8 @@ public class TitleBarWidget extends UIWidget {
     @Override
     public void releaseWidget() {
         detachFromWindow();
+
+        mWidgetManager.removeUpdateListener(this);
 
         mAttachedWindow = null;
         super.releaseWidget();
@@ -203,5 +207,12 @@ public class TitleBarWidget extends UIWidget {
         }
     };
 
+    // WidgetManagerDelegate.UpdateListener
+    @Override
+    public void onWidgetUpdate(Widget aWidget) {
+        if (aWidget == mWidgetManager.getFocusedWindow()) {
+            mWidgetManager.updateWidget(this);
+        }
+    }
 
 }
