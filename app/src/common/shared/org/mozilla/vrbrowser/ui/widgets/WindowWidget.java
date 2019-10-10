@@ -1083,6 +1083,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         if (mNoInternetToast == null) {
             mNoInternetToast = new NoInternetWidget(getContext());
             mNoInternetToast.mWidgetPlacement.parentHandle = getHandle();
+            mNoInternetToast.mWidgetPlacement.parentAnchorY = 0.0f;
+            mNoInternetToast.mWidgetPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.base_app_dialog_y_distance);
         }
         if (aVisible && !mNoInternetToast.isVisible()) {
             mNoInternetToast.show(REQUEST_FOCUS);
@@ -1094,6 +1096,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     public void showAlert(String title, @NonNull String msg, @NonNull PromptWidget.PromptDelegate callback) {
         mAlertPrompt = new AlertPromptWidget(getContext());
         mAlertPrompt.mWidgetPlacement.parentHandle = getHandle();
+        mAlertPrompt.mWidgetPlacement.parentAnchorY = 0.0f;
+        mAlertPrompt.mWidgetPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.base_app_dialog_y_distance);
         mAlertPrompt.setTitle(title);
         mAlertPrompt.setMessage(msg);
         mAlertPrompt.setPromptDelegate(callback);
@@ -1103,6 +1107,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     public void showButtonPrompt(String title, @NonNull String msg, @NonNull String[] btnMsg, @NonNull ConfirmPromptWidget.ConfirmPromptDelegate callback) {
         mConfirmPrompt = new ConfirmPromptWidget(getContext());
         mConfirmPrompt.mWidgetPlacement.parentHandle = getHandle();
+        mConfirmPrompt.mWidgetPlacement.parentAnchorY = 0.0f;
+        mConfirmPrompt.mWidgetPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.base_app_dialog_y_distance);
         mConfirmPrompt.setTitle(title);
         mConfirmPrompt.setMessage(msg);
         mConfirmPrompt.setButtons(btnMsg);
@@ -1114,6 +1120,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                               @NonNull BaseAppDialogWidget.Delegate buttonsCallback, @NonNull MessageDialogWidget.Delegate messageCallback) {
         mAppDialog = new MessageDialogWidget(getContext());
         mAppDialog.mWidgetPlacement.parentHandle = getHandle();
+        mAppDialog.mWidgetPlacement.parentAnchorY = 0.0f;
+        mAppDialog.mWidgetPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.base_app_dialog_y_distance);
         mAppDialog.setTitle(title);
         mAppDialog.setMessage(description);
         mAppDialog.setButtons(btnMsg);
@@ -1125,6 +1133,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     public void showClearCacheDialog() {
         mClearCacheDialog = new ClearCacheDialogWidget(getContext());
         mClearCacheDialog.mWidgetPlacement.parentHandle = getHandle();
+        mClearCacheDialog.mWidgetPlacement.parentAnchorY = 0.0f;
+        mClearCacheDialog.mWidgetPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.base_app_dialog_y_distance);
         mClearCacheDialog.setTitle(R.string.history_clear);
         mClearCacheDialog.setButtons(new int[] {
                 R.string.history_clear_cancel,
@@ -1169,6 +1179,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     public void showMaxWindowsDialog(int maxDialogs) {
         mMaxWindowsDialog = new MaxWindowsWidget(getContext());
+        mMaxWindowsDialog.mWidgetPlacement.parentAnchorY = 0.0f;
+        mMaxWindowsDialog.mWidgetPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.base_app_dialog_y_distance);
         mMaxWindowsDialog.mWidgetPlacement.parentHandle = getHandle();
         mMaxWindowsDialog.setMessage(getContext().getString(R.string.max_windows_msg, String.valueOf(maxDialogs)));
         mMaxWindowsDialog.show(REQUEST_FOCUS);
@@ -1310,6 +1322,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         mAlertPrompt = new AlertPromptWidget(getContext());
         mAlertPrompt.mWidgetPlacement.parentHandle = getHandle();
+        mAlertPrompt.mWidgetPlacement.parentAnchorY = 0.0f;
+        mAlertPrompt.mWidgetPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.base_app_dialog_y_distance);
         mAlertPrompt.setTitle(alertPrompt.title);
         mAlertPrompt.setMessage(alertPrompt.message);
         mAlertPrompt.setPromptDelegate(() -> result.complete(alertPrompt.dismiss()));
@@ -1325,6 +1339,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         mConfirmPrompt = new ConfirmPromptWidget(getContext());
         mConfirmPrompt.mWidgetPlacement.parentHandle = getHandle();
+        mConfirmPrompt.mWidgetPlacement.parentAnchorY = 0.0f;
+        mConfirmPrompt.mWidgetPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.base_app_dialog_y_distance);
         mConfirmPrompt.setTitle(buttonPrompt.title);
         mConfirmPrompt.setMessage(buttonPrompt.message);
         mConfirmPrompt.setButtons(new String[] {
@@ -1354,6 +1370,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         mTextPrompt = new TextPromptWidget(getContext());
         mTextPrompt.mWidgetPlacement.parentHandle = getHandle();
+        mTextPrompt.mWidgetPlacement.parentAnchorY = 0.0f;
+        mTextPrompt.mWidgetPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.base_app_dialog_y_distance);
         mTextPrompt.setTitle(textPrompt.title);
         mTextPrompt.setMessage(textPrompt.message);
         mTextPrompt.setDefaultText(textPrompt.defaultValue);
@@ -1380,6 +1398,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         mAuthPrompt = new AuthPromptWidget(getContext());
         mAuthPrompt.mWidgetPlacement.parentHandle = getHandle();
+        mAuthPrompt.mWidgetPlacement.parentAnchorY = 0.0f;
+        mAuthPrompt.mWidgetPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.base_app_dialog_y_distance);
         mAuthPrompt.setTitle(authPrompt.title);
         mAuthPrompt.setMessage(authPrompt.message);
         mAuthPrompt.setAuthOptions(authPrompt.authOptions);
@@ -1411,6 +1431,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         mChoicePrompt = new ChoicePromptWidget(getContext());
         mChoicePrompt.mWidgetPlacement.parentHandle = getHandle();
+        mChoicePrompt.mWidgetPlacement.parentAnchorY = 0.0f;
+        mChoicePrompt.mWidgetPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.base_app_dialog_y_distance);
         mChoicePrompt.setTitle(choicePrompt.title);
         mChoicePrompt.setMessage(choicePrompt.message);
         mChoicePrompt.setChoices(choicePrompt.choices);

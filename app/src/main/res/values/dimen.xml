@@ -110,7 +110,6 @@
     <!-- No Internet toast -->
     <dimen name="no_internet_width">400dp</dimen>
     <dimen name="no_internet_height">200dp</dimen>
-    <dimen name="no_internet_z_distance" format="float" type="dimen">2.5</dimen>
 
     <!-- Autocompletion Widget -->
     <dimen name="autocompletion_widget_line_height">36dp</dimen>
@@ -263,6 +262,7 @@
     <!-- Base App Dialog -->
     <dimen name="base_app_dialog_width">420dp</dimen>
     <item name="base_app_dialog_z_distance" format="float" type="dimen">2</item>
+    <item name="base_app_dialog_y_distance" format="float" type="dimen">1.2</item>
 
     <!-- Cache Dialog -->
     <dimen name="cache_app_dialog_width">585dp</dimen>
