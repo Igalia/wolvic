@@ -15,6 +15,8 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.KeyCharacterMap;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +24,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.ExtractedText;
 import android.view.inputmethod.ExtractedTextRequest;
 import android.view.inputmethod.InputConnection;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -307,6 +310,10 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         }
         handleShift(false);
         updateCandidates();
+    }
+
+    private boolean isAttachToWindowWidget() {
+        return mFocusedView instanceof WindowWidget;
     }
 
     public void updateFocusedView(View aFocusedView) {
@@ -908,6 +915,59 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         if (aAction == ComposingAction.FINISH) {
             mInputConnection.finishComposingText();
         }
+    }
+
+    private void moveCursor(final int direction) {
+        EditText textView;
+        if (mFocusedView != null && mFocusedView instanceof EditText) {
+            textView = (EditText)mFocusedView;
+            final int cursor = textView.getSelectionStart() + direction;
+            if ((cursor <= textView.length()) && (cursor >= 0)) {
+                textView.setSelection(cursor);
+            }
+        }
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(final KeyEvent event) {
+        final int keyCode = event.getKeyCode();
+        final InputConnection connection = mInputConnection;
+        if (connection != null) {
+            if (isAttachToWindowWidget()) {
+                connection.sendKeyEvent(event);
+                hide(UIWidget.KEEP_WIDGET);
+                return true;
+            }
+            // Android Components do not support InputConnection.sendKeyEvent()
+            if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                Log.e("reb", "key = " + KeyEvent.keyCodeToString(keyCode));
+
+                switch (keyCode) {
+                    case KeyEvent.KEYCODE_DEL:
+                        handleBackspace(event.isLongPress());
+                        return true;
+                    case KeyEvent.KEYCODE_ENTER:
+                    case KeyEvent.KEYCODE_NUMPAD_ENTER:
+                        handleDone();
+                        return true;
+                    case KeyEvent.KEYCODE_DPAD_LEFT:
+                        moveCursor(-1);
+                        return true;
+                    case KeyEvent.KEYCODE_DPAD_RIGHT:
+                        moveCursor(1);
+                        return true;
+                    default:
+                        break;
+                }
+                if (event.getUnicodeChar() != 0) {
+                    KeyCharacterMap map = event.getKeyCharacterMap();
+                    String value = String.valueOf((char) map.get(keyCode, event.getMetaState()));
+                    connection.commitText(value, 1);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     // GeckoSession.TextInputDelegate

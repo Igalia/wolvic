@@ -608,12 +608,15 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
+        if (mKeyboard.dispatchKeyEvent(event)) {
+            return true;
+        }
+        final int keyCode = event.getKeyCode();
         if (DeviceType.isOculusBuild()) {
             int action = event.getAction();
             if (action != KeyEvent.ACTION_DOWN) {
                 return super.dispatchKeyEvent(event);
             }
-            int keyCode = event.getKeyCode();
             boolean result;
             switch (keyCode) {
                 case KeyEvent.KEYCODE_VOLUME_UP:
@@ -622,6 +625,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 case KeyEvent.KEYCODE_VOLUME_DOWN:
                     result = callOnAudioManager((AudioManager aManager) -> aManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, AudioManager.FLAG_SHOW_UI));
                     break;
+                case KeyEvent.KEYCODE_VOLUME_MUTE:
+                    result = callOnAudioManager((AudioManager aManager) -> aManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, AudioManager.FLAG_SHOW_UI));
+                    break;
                 default:
                     return super.dispatchKeyEvent(event);
             }
@@ -629,7 +635,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         } else if (DeviceType.isGoogleVR()) {
             boolean result;
-            switch( event.getKeyCode() ) {
+            switch (keyCode) {
                 case KeyEvent.KEYCODE_VOLUME_UP:
                 case KeyEvent.KEYCODE_VOLUME_DOWN:
                     result = true;
