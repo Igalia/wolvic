@@ -307,10 +307,6 @@
          use for the display density. -->
     <string name="developer_options_display_density">Gęstość wyświetlacza:</string>
 
-    <!-- This string is used to label two integer-entry fields where the default width and height of
-         the browser window may be set. -->
-    <string name="developer_options_window_size">Rozmiar okna:</string>
-
     <!-- This string is used to label buttons to enable editing of text fields in the
          'Developer Options' dialog. Pressing this button switches the text to
          editable-text fields so their values may be changed. -->
@@ -328,10 +324,6 @@
     <!-- This string is used to label a numerical entry field where the user may enter a new value
          for the virtual displays Dots Per Inch (DPI). -->
     <string name="developer_options_display_dpi">DPI wyświetlacza:</string>
-
-    <!-- This string is used to label two integer entry fields that will allow the user to adjust
-         the maximum window size in the X and Y dimensions. -->
-    <string name="developer_options_max_window_size">Maks. rozmiar okna:</string>
 
     <!-- This string is used to label radio buttons for setting Multi-Sample Anti-Aliasing (MSAA) in
          VR Immersive Mode. -->
@@ -768,13 +760,13 @@
     <string name="all_language_options_reset">Przywróć wszystkie ustawienia języka</string>
 
     <!-- This string labels the description in the Voice Search Language button in the main language setting dialog. -->
-    <string name="language_options_voice_search_language"><![CDATA[Język wyszukiwania głosowego: <br>&emsp;&emsp;<b>%1$s</b>]]></string>
+    <string name="language_options_voice_search_language_title">Język wyszukiwania głosowego:</string>
 
     <!-- This string labels the description in the Content Language button in the main language setting dialog. -->
-    <string name="language_options_content_language"><![CDATA[Preferowany język stron WWW: <br>&emsp;&emsp;<b>%1$s</b>]]></string>
+    <string name="language_options_content_language_title">Preferowany język stron WWW:</string>
 
     <!-- This string labels the description in the Display Language button in the main language setting dialog. -->
-    <string name="language_options_display_language"><![CDATA[Język interfejsu aplikacji: <br>&emsp;&emsp;<b>%1$s</b>]]></string>
+    <string name="language_options_display_language_title">Język interfejsu aplikacji:</string>
 
     <!-- This string labels the description in the Content Language header for preferred languages list. -->
     <string name="language_options_preferred_languages">Preferowane języki</string>

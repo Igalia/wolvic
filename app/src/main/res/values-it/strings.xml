@@ -757,13 +757,13 @@
     <string name="all_language_options_reset">Ripristina tutte le impostazioni della lingua</string>
 
     <!-- This string labels the description in the Voice Search Language button in the main language setting dialog. -->
-    <string name="language_options_voice_search_language"><![CDATA[Lingua per la ricerca vocale: <br>&emsp;&emsp;<b>%1$s</b>]]></string>
+    <string name="language_options_voice_search_language_title">Lingua per la ricerca vocale:</string>
 
     <!-- This string labels the description in the Content Language button in the main language setting dialog. -->
-    <string name="language_options_content_language"><![CDATA[Lingua preferita per la visualizzazione di siti web:<br>&emsp;&emsp;<b>%1$s</b>]]></string>
+    <string name="language_options_content_language_title">Lingua preferita per i siti web:</string>
 
     <!-- This string labels the description in the Display Language button in the main language setting dialog. -->
-    <string name="language_options_display_language"><![CDATA[Lingua dell’interfaccia per l’app: <br>&emsp;&emsp;<b>%1$s</b>]]></string>
+    <string name="language_options_display_language_title">Lingua di interfaccia dell’app:</string>
 
     <!-- This string labels the description in the Content Language header for preferred languages list. -->
     <string name="language_options_preferred_languages">Lingue preferite</string>
