@@ -42,4 +42,9 @@ public class EnglishKeyboard extends BaseKeyboard {
     public Locale getLocale() {
         return Locale.ENGLISH;
     }
+    @Override
+    public String getSpaceKeyText(String aComposingText) {
+
+        return StringUtils.getStringByLocale(mContext, R.string.settings_language_english, getLocale());
+    }
 }

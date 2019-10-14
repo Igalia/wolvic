@@ -79,6 +79,8 @@
     <string name="language_ru" translatable="false">Русский</string>
     <string name="language_ko_KR" translatable="false">한국어</string>
     <string name="language_it_IT" translatable="false">Italiano</string>
+    <string name="language_pl_PL" translatable="false">Polski</string>
+    <string name="language_da_DK" translatable="false">Dansk</string>
 
     <string name="pinyin_spacebar_selection" translatable="false">选定</string>
     <string name="pinyin_spacebar_space" translatable="false">空格</string>
@@ -122,6 +124,29 @@
     <string name="keyboard_popup_y" translatable="false">yýỳŷÿỹ</string>
     <string name="keyboard_popup_z" translatable="false">zźẑžżẓ</string>
 
+    <!-- Keyboard Polish -->
+    <string name="keyboard_pl_PL_popup_e" translatable="false">eęèéêëẽėē</string>
+    <string name="keyboard_pl_PL_popup_a" translatable="false">aąàáâäæãāå</string>
+    <string name="keyboard_pl_PL_popup_s" translatable="false">sśßš</string>
+    <string name="keyboard_pl_PL_popup_z" translatable="false">zżźž</string>
+    <string name="keyboard_pl_PL_popup_c" translatable="false">cćçč</string>
+    <string name="keyboard_pl_PL_popup_o" translatable="false">oóôöòõœøō</string>
+    <string name="keyboard_pl_PL_popup_l" translatable="false">lł</string>
+    <string name="keyboard_pl_PL_popup_n" translatable="false">nńñ</string>
+
+    <!-- Keyboard Danish -->
+    <string name="keyboard_da_DK_popup_e" translatable="false">eéë</string>
+    <string name="keyboard_da_DK_popup_y" translatable="false">yýÿ</string>
+    <string name="keyboard_da_DK_popup_a" translatable="false">aáäàâãā</string>
+    <string name="keyboard_da_DK_popup_s" translatable="false">sßśš</string>
+    <string name="keyboard_da_DK_popup_d" translatable="false">dð</string>
+    <string name="keyboard_da_DK_popup_u" translatable="false">uúüûùū</string>
+    <string name="keyboard_da_DK_popup_i" translatable="false">iíï</string>
+    <string name="keyboard_da_DK_popup_o" translatable="false">oóôòõœōö</string>
+    <string name="keyboard_da_DK_popup_l" translatable="false">lł</string>
+    <string name="keyboard_da_DK_popup_æ" translatable="false">æä</string>
+    <string name="keyboard_da_DK_popup_ø" translatable="false">øö</string>
+    <string name="keyboard_da_DK_popup_n" translatable="false">nñń</string>
 
     <!-- SEARCH ENGINES -->
     <string name="geolocation_api_url" translatable="false">https://location.services.mozilla.com/v1/country</string>

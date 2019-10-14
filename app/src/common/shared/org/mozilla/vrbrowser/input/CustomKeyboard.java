@@ -10,7 +10,6 @@ import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
 import android.inputmethodservice.Keyboard;
 import android.view.KeyEvent;
-import android.view.inputmethod.EditorInfo;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -22,6 +21,7 @@ public class CustomKeyboard extends Keyboard {
     private Key mSpaceKey;
     private Key mModeChangeKey;
     private int mMaxColums;
+    private int[] mDisabledKeysIndexes;
 
     public static final int KEYCODE_SYMBOLS_CHANGE = -10;
     public static final int KEYCODE_VOICE_INPUT = -11;
@@ -235,7 +235,23 @@ public class CustomKeyboard extends Keyboard {
         }
     }
 
-    public int getMaxColums() {
+    public int getMaxColumns() {
         return mMaxColums;
+    }
+
+    public void disableKeys(int[] disabledKeyIndexes) {
+        mDisabledKeysIndexes = disabledKeyIndexes;
+    }
+
+    public boolean isKeyEnabled(int keyIndex) {
+        if (mDisabledKeysIndexes != null) {
+            for (int key : mDisabledKeysIndexes) {
+                if (key == keyIndex) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }

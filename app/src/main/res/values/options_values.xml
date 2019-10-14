@@ -96,6 +96,8 @@
         <item>@string/language_ru</item>
         <item>@string/language_ko_KR</item>
         <item>@string/language_it_IT</item>
+        <item>@string/language_da_DK</item>
+        <item>@string/language_pl_PL</item>
     </string-array>
 
     <string-array name="developer_options_voice_search_languages_values" translatable="false">
@@ -109,6 +111,8 @@
         <item>ru-RU</item>
         <item>ko-KR</item>
         <item>it-IT</item>
+        <item>da-DK</item>
+        <item>pl-PL</item>
     </string-array>
 
     <!-- Language Options -->
@@ -124,6 +128,8 @@
         <item>@string/language_ru</item>
         <item>@string/language_ko_KR</item>
         <item>@string/language_it_IT</item>
+        <item>@string/language_da_DK</item>
+        <item>@string/language_pl_PL</item>
     </string-array>
 
     <string-array name="developer_options_display_languages_values" translatable="false">
@@ -138,6 +144,8 @@
         <item>ru-RU</item>
         <item>ko-KR</item>
         <item>it-IT</item>
+        <item>da-DK</item>
+        <item>pl-PL</item>
     </string-array>
 
     <!-- Clear Cache Options -->

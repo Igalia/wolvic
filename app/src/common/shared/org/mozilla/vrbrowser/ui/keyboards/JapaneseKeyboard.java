@@ -183,7 +183,7 @@ public class JapaneseKeyboard extends BaseKeyboard {
     @Override
     public String getSpaceKeyText(String aComposingText) {
         if (aComposingText == null || aComposingText.trim().isEmpty()) {
-            return mContext.getString(R.string.japanese_spacebar_space);
+            return StringUtils.getStringByLocale(mContext, R.string.settings_language_japanese, getLocale());
         } else {
             return mContext.getString(R.string.japanese_spacebar_selection);
         }

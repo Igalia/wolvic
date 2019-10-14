@@ -58,4 +58,9 @@ public class GermanKeyboard extends BaseKeyboard {
     public Locale getLocale() {
         return Locale.GERMAN;
     }
+
+    @Override
+    public String getSpaceKeyText(String aComposingText) {
+        return StringUtils.getStringByLocale(mContext, R.string.settings_language_german, getLocale());
+    }
 }

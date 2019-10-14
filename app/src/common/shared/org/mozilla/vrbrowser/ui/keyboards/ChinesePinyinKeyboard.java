@@ -197,7 +197,7 @@ public class ChinesePinyinKeyboard extends BaseKeyboard {
     @Override
     public String getSpaceKeyText(String aComposingText) {
         if (aComposingText == null || aComposingText.trim().isEmpty()) {
-            return mContext.getString(R.string.pinyin_spacebar_space);
+            return StringUtils.getStringByLocale(mContext, R.string.settings_language_simplified_chinese, getLocale());
         } else {
             return mContext.getString(R.string.pinyin_spacebar_selection);
         }

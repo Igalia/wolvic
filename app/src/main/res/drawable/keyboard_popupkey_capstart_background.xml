@@ -115,7 +115,7 @@
                 </shape>
             </item>
             <item>
-                <shape android:shape="rectangle" android:tint="@color/void_color">
+                <shape android:shape="rectangle" android:tint="@color/azure">
                     <corners android:bottomLeftRadius="@dimen/keyboard_key_rounded_corner"
                              android:bottomRightRadius="0dp"
                              android:topLeftRadius="@dimen/keyboard_key_rounded_corner"

@@ -42,4 +42,9 @@ public class ItalianKeyboard extends BaseKeyboard {
     public Locale getLocale() {
         return Locale.ITALIAN;
     }
+
+    @Override
+    public String getSpaceKeyText(String aComposingText) {
+        return StringUtils.getStringByLocale(mContext, R.string.settings_language_italian, getLocale());
+    }
 }

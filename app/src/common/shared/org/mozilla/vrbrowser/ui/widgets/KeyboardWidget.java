@@ -37,12 +37,14 @@ import org.mozilla.vrbrowser.browser.engine.SessionStack;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.input.CustomKeyboard;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
+import org.mozilla.vrbrowser.ui.keyboards.DanishKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.ItalianKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.FrenchKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.GermanKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.ChineseZhuyinKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.JapaneseKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.KeyboardInterface;
+import org.mozilla.vrbrowser.ui.keyboards.PolishKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.RussianKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.KoreanKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.SpanishKeyboard;
@@ -53,7 +55,6 @@ import org.mozilla.vrbrowser.ui.widgets.dialogs.VoiceSearchWidget;
 import org.mozilla.vrbrowser.ui.keyboards.ChinesePinyinKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.EnglishKeyboard;
 import org.mozilla.vrbrowser.utils.StringUtils;
-import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -76,6 +77,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private CustomKeyboard mKeyboardNumeric;
     private Drawable mShiftOnIcon;
     private Drawable mShiftOffIcon;
+    private Drawable mShiftDisabledIcon;
     private Drawable mCapsLockOnIcon;
     private View mFocusedView;
     private LinearLayout mKeyboardLayout;
@@ -183,6 +185,8 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mKeyboards.add(new ChineseZhuyinKeyboard(aContext));
         mKeyboards.add(new KoreanKeyboard(aContext));
         mKeyboards.add(new JapaneseKeyboard(aContext));
+        mKeyboards.add(new PolishKeyboard(aContext));
+        mKeyboards.add(new DanishKeyboard(aContext));
 
         mDefaultKeyboardSymbols = new CustomKeyboard(aContext.getApplicationContext(), R.xml.keyboard_symbols);
         mKeyboardNumeric = new CustomKeyboard(aContext.getApplicationContext(), R.xml.keyboard_numeric);
@@ -218,6 +222,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
         mShiftOnIcon = getResources().getDrawable(R.drawable.ic_icon_keyboard_shift_on, getContext().getTheme());
         mShiftOffIcon = getResources().getDrawable(R.drawable.ic_icon_keyboard_shift_off, getContext().getTheme());
+        mShiftDisabledIcon = getResources().getDrawable(R.drawable.ic_icon_keyboard_shift_disabled, getContext().getTheme());
         mCapsLockOnIcon = getResources().getDrawable(R.drawable.ic_icon_keyboard_caps, getContext().getTheme());
         mCloseKeyboardButton = findViewById(R.id.keyboardCloseButton);
         mCloseKeyboardButton.setOnClickListener(v -> dismiss());
@@ -601,9 +606,14 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                 // Update shift icon
                 Keyboard.Key key = keyboard.getKeys().get(shiftIndex);
                 if (key != null) {
-                    if (mIsCapsLock) {
+                    if (keyboard == getSymbolsKeyboard()) {
+                        key.icon = mShiftDisabledIcon;
+                        key.pressed = false;
+
+                    } else if (mIsCapsLock) {
                         key.icon = mCapsLockOnIcon;
                         key.pressed = true;
+
                     } else {
                         key.icon = shifted ? mShiftOnIcon : mShiftOffIcon;
                         key.pressed = false;
@@ -663,7 +673,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         if (mLanguageSelectorView.getItems() == null || mLanguageSelectorView.getItems().size() == 0) {
             ArrayList<LanguageSelectorView.Item> items = new ArrayList<>();
             for (KeyboardInterface keyboard: mKeyboards) {
-                items.add(new LanguageSelectorView.Item(keyboard.getKeyboardTitle().toUpperCase(), keyboard));
+                items.add(new LanguageSelectorView.Item(keyboard.getKeyboardTitle(), keyboard));
             }
             mLanguageSelectorView.setItems(items);
         }
@@ -700,9 +710,25 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
         SettingsStore.getInstance(getContext()).setSelectedKeyboard(aKeyboard.getLocale());
         mKeyboardView.setKeyboard(mCurrentKeyboard.getAlphabeticKeyboard());
+        updateSpaceBarLanguageLabel();
+        disableShift(getSymbolsKeyboard());
         handleShift(false);
         hideOverlays();
         updateCandidates();
+    }
+
+    private void disableShift(@NonNull CustomKeyboard keyboard) {
+        int[] shiftIndices = keyboard.getShiftKeyIndices();
+        for (int shiftIndex: shiftIndices) {
+            if (shiftIndex >= 0) {
+                Keyboard.Key key = keyboard.getKeys().get(shiftIndex);
+                if (key != null) {
+                    key.icon = mShiftDisabledIcon;
+                    key.pressed = false;
+                }
+            }
+        }
+        keyboard.disableKeys(shiftIndices);
     }
 
     private void handleSpace() {
@@ -743,6 +769,9 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         Keyboard alphabetic = mCurrentKeyboard.getAlphabeticKeyboard();
         mKeyboardView.setKeyboard(current == alphabetic ? getSymbolsKeyboard() : alphabetic);
         mKeyboardView.setLayoutParams(mKeyboardView.getLayoutParams());
+        if (current == alphabetic) {
+            mCurrentKeyboard.getAlphabeticKeyboard().setSpaceKeyLabel("");
+        }
     }
 
     private void handleKey(int primaryCode, int[] keyCodes) {
@@ -873,17 +902,32 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     }
 
     private void updateSpecialKeyLabels() {
-        String spaceText = mCurrentKeyboard.getSpaceKeyText(mComposingText);
+        String spaceText = mCurrentKeyboard.getSpaceKeyText(mComposingText).toUpperCase();
         String enterText = mCurrentKeyboard.getEnterKeyText(mEditorInfo.imeOptions, mComposingText);
         String modeChangeText = mCurrentKeyboard.getModeChangeKeyText();
         boolean changed = mCurrentKeyboard.getAlphabeticKeyboard().setSpaceKeyLabel(spaceText);
         changed |= mCurrentKeyboard.getAlphabeticKeyboard().setEnterKeyLabel(enterText);
         CustomKeyboard symbolsKeyboard = getSymbolsKeyboard();
         changed |= symbolsKeyboard.setModeChangeKeyLabel(modeChangeText);
-        symbolsKeyboard.setSpaceKeyLabel(spaceText);
         symbolsKeyboard.setEnterKeyLabel(enterText);
         if (changed) {
             mKeyboardView.invalidateAllKeys();
+        }
+
+        if (!isVisible()) {
+            updateSpaceBarLanguageLabel();
+        }
+    }
+
+    private Runnable mHideSpaceBarLanguageLabel = () -> {
+        mCurrentKeyboard.getAlphabeticKeyboard().setSpaceKeyLabel("");
+        mKeyboardView.invalidateAllKeys();
+    };
+
+    private void updateSpaceBarLanguageLabel() {
+        if (getHandler() != null) {
+            getHandler().removeCallbacks(mHideSpaceBarLanguageLabel);
+            getHandler().postDelayed(mHideSpaceBarLanguageLabel, 3000);
         }
     }
 

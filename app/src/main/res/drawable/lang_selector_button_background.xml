@@ -2,25 +2,25 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_selected="true">
         <shape android:shape="rectangle">
-            <corners android:radius="@dimen/keyboard_key_rounded_corner"/>
+            <corners android:radius="@dimen/keyboard_language_rounded_corner"/>
             <solid android:color="@color/white" />
         </shape>
     </item>>
     <item android:state_pressed="true">
         <shape android:shape="rectangle">
-            <corners android:radius="@dimen/keyboard_key_rounded_corner"/>
+            <corners android:radius="@dimen/keyboard_language_rounded_corner"/>
             <solid android:color="@color/void_color" />
         </shape>
     </item>>
     <item android:state_hovered="true">
         <shape android:shape="rectangle">
-            <corners android:radius="@dimen/keyboard_key_rounded_corner"/>
-            <solid android:color="@color/asphalt" />
+            <corners android:radius="@dimen/keyboard_language_rounded_corner"/>
+            <solid android:color="@color/azure" />
         </shape>
     </item>
     <item>
         <shape android:shape="rectangle">
-            <corners android:radius="@dimen/keyboard_key_rounded_corner"/>
+            <corners android:radius="@dimen/keyboard_language_rounded_corner"/>
             <solid android:color="@color/fog" />
         </shape>
     </item>

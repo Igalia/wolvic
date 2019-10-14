@@ -42,4 +42,9 @@ public class FrenchKeyboard extends BaseKeyboard {
     public Locale getLocale() {
         return Locale.FRENCH;
     }
+
+    @Override
+    public String getSpaceKeyText(String aComposingText) {
+        return StringUtils.getStringByLocale(mContext, R.string.settings_language_french, getLocale());
+    }
 }

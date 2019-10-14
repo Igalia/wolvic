@@ -12,21 +12,21 @@ import org.mozilla.vrbrowser.utils.StringUtils;
 
 import java.util.Locale;
 
-public class RussianKeyboard extends BaseKeyboard {
+public class DanishKeyboard extends BaseKeyboard {
     private CustomKeyboard mKeyboard;
     private CustomKeyboard mSymbolsKeyboard;
     private Locale mLocale;
 
-    public RussianKeyboard(Context aContext) {
+    public DanishKeyboard(Context aContext) {
         super(aContext);
-        mLocale = new Locale("ru", "RU");
+        mLocale = new Locale("da", "DK");
     }
 
     @NonNull
     @Override
     public CustomKeyboard getAlphabeticKeyboard() {
         if (mKeyboard == null) {
-            mKeyboard = new CustomKeyboard(mContext.getApplicationContext(), R.xml.keyboard_qwerty_russian);
+            mKeyboard = new CustomKeyboard(mContext.getApplicationContext(), R.xml.keyboard_qwerty_danish);
         }
         return mKeyboard;
     }
@@ -35,14 +35,14 @@ public class RussianKeyboard extends BaseKeyboard {
     @Override
     public CustomKeyboard getSymbolsKeyboard() {
         if (mSymbolsKeyboard == null) {
-            mSymbolsKeyboard = new CustomKeyboard(mContext.getApplicationContext(), R.xml.keyboard_symbols_russian);
+            mSymbolsKeyboard = new CustomKeyboard(mContext.getApplicationContext(), R.xml.keyboard_symbols_danish);
         }
         return mSymbolsKeyboard;
     }
 
     @Override
     public float getAlphabeticKeyboardWidth() {
-        return WidgetPlacement.dpDimension(mContext, R.dimen.keyboard_alphabetic_width_extra_column);
+        return WidgetPlacement.dpDimension(mContext, R.dimen.keyboard_alphabetic_width_danish);
     }
 
     @Nullable
@@ -53,7 +53,7 @@ public class RussianKeyboard extends BaseKeyboard {
 
     @Override
     public String getKeyboardTitle() {
-        return StringUtils.getStringByLocale(mContext, R.string.settings_language_russian, getLocale());
+        return StringUtils.getStringByLocale(mContext, R.string.settings_language_danish, getLocale());
     }
 
     @Override
@@ -63,6 +63,6 @@ public class RussianKeyboard extends BaseKeyboard {
 
     @Override
     public String getSpaceKeyText(String aComposingText) {
-        return StringUtils.getStringByLocale(mContext, R.string.settings_language_russian, getLocale());
+        return StringUtils.getStringByLocale(mContext, R.string.settings_language_danish, getLocale());
     }
 }

@@ -400,4 +400,9 @@ public class KoreanKeyboard extends BaseKeyboard {
     public Locale getLocale() {
         return Locale.KOREAN;
     }
+
+    @Override
+    public String getSpaceKeyText(String aComposingText) {
+        return StringUtils.getStringByLocale(mContext, R.string.settings_language_korean, getLocale());
+    }
 }
