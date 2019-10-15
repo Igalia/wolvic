@@ -112,7 +112,7 @@ tasks:
 # Triggered when a new release is tagged. Produces signed release APKs.
 #
 ###############################################################################
-    - $if: 'tasks_for == "github-release"'
+    - $if: 'tasks_for == "github-release" && event["action"] == "published"'
       then:
         provisionerId: 'aws-provisioner-v1'
         workerType: 'github-worker'
