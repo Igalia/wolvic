@@ -107,7 +107,7 @@ atsl.rules = "androidx.test:rules:$versions.atsl_runner"
 deps.atsl = atsl
 
 def sqlite = [:]
-sqlite.sqlite = 'com.readystatesoftware.sqliteasset:sqliteassethelper:+'
+sqlite.sqlite = 'com.readystatesoftware.sqliteasset:sqliteassethelper:2.0.1'
 deps.sqlite = sqlite
 
 def kotlin = [:]
