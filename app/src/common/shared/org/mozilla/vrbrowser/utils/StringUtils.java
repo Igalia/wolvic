@@ -45,4 +45,26 @@ public class StringUtils {
         }
         return "";
     }
+
+    public static String removeRange(@NonNull String aText, int aStart, int aEnd) {
+        String start = "";
+        if (aStart > 0) {
+            start = aText.substring(0, aStart);
+        }
+        String end = "";
+        if (aEnd < aText.length() - 1) {
+            end = aText.substring(aEnd);
+        }
+        return start + end;
+    }
+
+    public static boolean contains(String[] aTarget, String aText) {
+        for (String str: aTarget) {
+            if (str.equals(aText)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

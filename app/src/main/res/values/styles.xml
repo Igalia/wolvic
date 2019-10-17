@@ -10,6 +10,7 @@
         <attr name="fullScreenLastButtonStyle" format="reference" />
         <attr name="mediaControlsButtonStyle" format="reference" />
         <attr name="navigationBarTextButtonStyle" format="reference" />
+        <attr name="selectionActionButtonStyle" format="reference" />
         <attr name="navigationBarButtonTint" format="reference" />
         <attr name="separatorStyle" format="reference" />
         <attr name="urlProtocolColor" format="color" />
@@ -135,6 +136,19 @@
         <item name="android:textAlignment">center</item>
         <item name="tintColorList">@drawable/main_button_icon_color</item>
         <item name="privateModeTintColorList">@drawable/main_button_icon_color_private</item>
+    </style>
+
+    <style name="selectionActionButtonTheme">
+        <item name="android:padding">15dp</item>
+        <item name="android:textColor">@color/fog</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textSize">26sp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:maxWidth">150dp</item>
     </style>
 
     <style name="textButtonTheme">
@@ -385,6 +399,7 @@
         <item name="separatorStyle">@style/separatorTheme</item>
         <item name="uiButtonStyle">@style/uiButtonTheme</item>
         <item name="navigationBarTextButtonStyle">@style/navigationBarTextButtonTheme</item>
+        <item name="selectionActionButtonStyle">@style/selectionActionButtonTheme</item>
         <item name="urlProtocolColor">@color/fog_url_protocol</item>
         <item name="urlWebsiteColor">@color/fog</item>
         <item name="scrollbarStyle">@style/scrollbar</item>

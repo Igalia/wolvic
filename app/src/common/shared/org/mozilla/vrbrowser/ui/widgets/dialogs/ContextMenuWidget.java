@@ -5,99 +5,55 @@
 
 package org.mozilla.vrbrowser.ui.widgets.dialogs;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
-import android.graphics.Point;
-import android.graphics.PointF;
-import android.util.AttributeSet;
+import android.net.Uri;
+import android.util.Log;
 import android.view.View;
-import android.view.ViewTreeObserver;
 
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.browser.SettingsStore;
-import org.mozilla.vrbrowser.ui.callbacks.ContextMenuClickCallback;
-import org.mozilla.vrbrowser.ui.views.ContextMenu;
-import org.mozilla.vrbrowser.ui.widgets.UIWidget;
+import org.mozilla.vrbrowser.ui.widgets.MenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
+import org.mozilla.vrbrowser.utils.StringUtils;
 import org.mozilla.vrbrowser.utils.ViewUtils;
 
-public class ContextMenuWidget extends UIWidget implements WidgetManagerDelegate.FocusChangeListener {
+import java.util.ArrayList;
 
-    private GeckoSession.ContentDelegate.ContextElement mContextElement;
-    private ContextMenu mContextMenu;
-    private int mMaxHeight;
-    private Point mMousePos;
+public class ContextMenuWidget extends MenuWidget implements WidgetManagerDelegate.FocusChangeListener {
+    ArrayList<MenuItem> mItems;
+    private Runnable mDismissCallback;
 
     public ContextMenuWidget(Context aContext) {
         super(aContext);
-
-        mContextMenu = new ContextMenu(aContext);
-        initialize();
-    }
-
-    public ContextMenuWidget(Context aContext, AttributeSet aAttrs) {
-        super(aContext, aAttrs);
-
-        mContextMenu = new ContextMenu(aContext, aAttrs);
-        initialize();
-    }
-
-    public ContextMenuWidget(Context aContext, AttributeSet aAttrs, int aDefStyle) {
-        super(aContext, aAttrs, aDefStyle);
-
-        mContextMenu = new ContextMenu(aContext, aAttrs, aDefStyle);
         initialize();
     }
 
     private void initialize() {
-        addView(mContextMenu);
-        mContextMenu.setContextMenuClickCallback(mContextMenuClickCallback);
+        mAdapter.updateBackgrounds(getContext().getDrawable(R.drawable.context_menu_item_background_first),
+                getContext().getDrawable(R.drawable.context_menu_item_background_last),
+                getContext().getDrawable(R.drawable.context_menu_item_background));
+        mAdapter.updateLayourId(R.layout.context_menu_item);
+        menuContainer.setBackground(getContext().getDrawable(R.drawable.context_menu_background));
     }
 
     @Override
     protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
         aPlacement.visible = false;
-        aPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.context_menu_row_width);
-        aPlacement.height = WidgetPlacement.dpDimension(getContext(), R.dimen.context_menu_row_height);
-        aPlacement.parentAnchorX = 0.0f;
-        aPlacement.parentAnchorY = 1.0f;
+        aPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.context_menu_row_width) + mBorderWidth * 2;
+        aPlacement.parentAnchorX = 0.5f;
+        aPlacement.parentAnchorY = 0.5f;
         aPlacement.anchorX = 0.5f;
         aPlacement.anchorY = 0.5f;
-        aPlacement.opaque = false;
-        aPlacement.cylinder = true;
         aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.context_menu_z_distance);
     }
 
     @Override
     public void show(@ShowFlags int aShowFlags) {
         mWidgetManager.addFocusChangeListener(ContextMenuWidget.this);
-
-        mContextMenu.measure(View.MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
-                View.MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-        mWidgetPlacement.width = (int)(mContextMenu.getMeasuredWidth()/mWidgetPlacement.density);
-        mWidgetPlacement.height = (int)(mContextMenu.getMeasuredHeight()/mWidgetPlacement.density);
         super.show(aShowFlags);
-
-        ViewTreeObserver viewTreeObserver = mContextMenu.getViewTreeObserver();
-        if (viewTreeObserver.isAlive()) {
-            viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    mContextMenu.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    PointF anchor = anchorForCurrentMousePosition();
-                    mWidgetPlacement.anchorX = anchor.x;
-                    mWidgetPlacement.anchorY = anchor.y;
-                    int paddingH = getPaddingStart() + getPaddingEnd();
-                    int paddingV = getPaddingTop() + getPaddingBottom();
-                    mWidgetPlacement.translationX = mMousePos.x * WidgetPlacement.worldToWindowRatio(getContext());
-                    mWidgetPlacement.translationY = -(mMousePos.y * WidgetPlacement.worldToWindowRatio(getContext()));
-                    mWidgetPlacement.width = (int)((mContextMenu.getWidth()+paddingH*2)/mWidgetPlacement.density);
-                    mWidgetPlacement.height = (int)((mContextMenu.getHeight()+paddingV*2)/mWidgetPlacement.density);
-                    mWidgetManager.updateWidget(ContextMenuWidget.this);
-                }
-            });
-        }
     }
 
     @Override
@@ -109,78 +65,57 @@ public class ContextMenuWidget extends UIWidget implements WidgetManagerDelegate
 
     @Override
     protected void onDismiss() {
-        hide(REMOVE_WIDGET);
-    }
-
-    private final ContextMenuClickCallback mContextMenuClickCallback = contextMenuNode -> {
-        mWidgetManager.openNewWindow(mContextElement.linkUri);
-        hide(REMOVE_WIDGET);
-    };
-
-    public void setContextElement(Point mousePos, GeckoSession.ContentDelegate.ContextElement element) {
-        mMousePos = mousePos;
-        mContextElement = element;
-
-        switch (mContextElement.type) {
-            case GeckoSession.ContentDelegate.ContextElement.TYPE_AUDIO:
-                mContextMenu.createAudioContextMenu();
-                break;
-
-            case GeckoSession.ContentDelegate.ContextElement.TYPE_IMAGE:
-                mContextMenu.createImageContextMenu();
-                break;
-
-            case GeckoSession.ContentDelegate.ContextElement.TYPE_NONE:
-                mContextMenu.createLinkContextMenu();
-                break;
-
-            case GeckoSession.ContentDelegate.ContextElement.TYPE_VIDEO:
-                mContextMenu.createVideoContextMenu();
-                break;
+        if (mDismissCallback != null) {
+            mDismissCallback.run();
         }
     }
 
-    private PointF anchorForCurrentMousePosition() {
-        float browserWindowWidth = SettingsStore.getInstance(getContext()).getWindowWidth();
-        float browserWindowHeight = SettingsStore.getInstance(getContext()).getWindowHeight();
-        float halfWidth = WidgetPlacement.convertPixelsToDp(getContext(), getWidth());
-        float halfHeight = WidgetPlacement.convertPixelsToDp(getContext(), getHeight());
-        if (mMousePos.x > (browserWindowWidth - halfWidth)) {
-            if (mMousePos.y < halfHeight) {
-                // Top Right
-                return new PointF(1.0f, 1.0f);
-            } else {
-                // Middle/Bottom Right
-                return new PointF(1.0f, 0.0f);
-            }
+    public void setDismissCallback(Runnable aCallback) {
+        mDismissCallback = aCallback;
+    }
 
-        } else if (mMousePos.x < (browserWindowWidth + halfWidth)) {
-            if (mMousePos.y < halfHeight) {
-                // Top Left
-                return new PointF(0.0f, 1.0f);
-            } else {
-                // Middle/Bottom Left
-                new PointF(0.0f, 0.0f);
+    public void setContextElement(GeckoSession.ContentDelegate.ContextElement aContextElement) {
+        mItems = new ArrayList<>();
+        mItems.add(new MenuWidget.MenuItem(aContextElement.linkUri, 0, null));
+        mItems.add(new MenuWidget.MenuItem(getContext().getString(R.string.context_menu_open_new_window), 0, () -> {
+            if (!StringUtils.isEmpty(aContextElement.linkUri)) {
+                mWidgetManager.openNewWindow(aContextElement.linkUri);
             }
-
-        } else {
-            if (mMousePos.y < halfHeight) {
-                // Top Middle
-                return new PointF(1.0f, 1.0f);
-            } else if (mMousePos.y > (browserWindowHeight - halfHeight)) {
-                // Bottom Middle
-                return new PointF(0.0f, 0.0f);
+            onDismiss();
+        }));
+        mItems.add(new MenuWidget.MenuItem(getContext().getString(R.string.context_menu_copy_link), 0, () -> {
+            ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+            if (aContextElement.linkUri != null) {
+                Uri uri = Uri.parse(aContextElement.linkUri);
+                if (uri != null) {
+                    String label = aContextElement.title;
+                    if (StringUtils.isEmpty(label)) {
+                        label = aContextElement.altText;
+                    }
+                    if (StringUtils.isEmpty(label)) {
+                        label = aContextElement.altText;
+                    }
+                    if (StringUtils.isEmpty(label)) {
+                        label = aContextElement.linkUri;
+                    }
+                    ClipData clip = ClipData.newRawUri(label, uri);
+                    clipboard.setPrimaryClip(clip);
+                }
             }
-        }
+            onDismiss();
+        }));
+        updateMenuItems(mItems);
 
-        return new PointF(0.0f, 0.0f);
+        mWidgetPlacement.height = mItems.size() * WidgetPlacement.dpDimension(getContext(), R.dimen.context_menu_row_height);
+        mWidgetPlacement.height += mBorderWidth * 2;
+        mWidgetPlacement.height += 10.0f; // Link separator
     }
 
     // WidgetManagerDelegate.FocusChangeListener
 
     @Override
     public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-        if (!ViewUtils.isChildrenOf(mContextMenu, newFocus)) {
+        if (!ViewUtils.isChildrenOf(this, newFocus) && isVisible()) {
             onDismiss();
         }
     }

@@ -7,7 +7,7 @@
         android:descendantFocusability="beforeDescendants"
         android:focusableInTouchMode="true">
 
-        <mozilla.components.ui.autocomplete.InlineAutocompleteEditText
+        <org.mozilla.vrbrowser.ui.views.CustomInlineAutocompleteEditText
             android:id="@+id/urlEditText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -22,9 +22,10 @@
             android:paddingStart="20dp"
             android:paddingEnd="100dp"
             android:requiresFadingEdge="horizontal"
-            android:selectAllOnFocus="true"
+            android:selectAllOnFocus="false"
             android:textColor="@color/fog"
             android:textColorHighlight="@color/azure"
+            android:textIsSelectable="true"
             android:textSize="16sp"
             app:autocompleteBackgroundColor="@color/azure" />
 

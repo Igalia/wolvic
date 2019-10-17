@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 
@@ -50,6 +51,7 @@ public class WidgetPlacement {
     public float textureScale = 0.7f;
     // Widget will be curved if enabled.
     public boolean cylinder = true;
+    public int tintColor = 0xFFFFFFFF;
     public int borderColor = 0;
     public String name;
     // Color used to render the widget before the it's composited
@@ -94,6 +96,7 @@ public class WidgetPlacement {
         this.textureScale = w.textureScale;
         this.cylinder = w.cylinder;
         this.cylinderMapRadius = w.cylinderMapRadius;
+        this.tintColor = w.tintColor;
         this.borderColor = w.borderColor;
         this.name = w.name;
     }
@@ -112,6 +115,16 @@ public class WidgetPlacement {
 
     public int viewHeight() {
         return (int) Math.ceil(height * density);
+    }
+
+    public void setSizeFromMeasure(Context aContext, View aView) {
+        aView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                      View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        int border =  SettingsStore.getInstance(aContext).getTransparentBorderWidth();
+        int paddingH = aView.getPaddingStart() + aView.getPaddingEnd();
+        int paddingV = aView.getPaddingTop() + aView.getPaddingBottom();
+        width = (int)Math.ceil((aView.getMeasuredWidth() + paddingH)/density) + border * 2;
+        height = (int)Math.ceil((aView.getMeasuredHeight() + paddingV)/density) + border * 2;
     }
 
     public static int pixelDimension(Context aContext, int aDimensionID) {

@@ -40,9 +40,9 @@ public class BrightnessMenuWidget extends MenuWidget {
             }
         };
 
-        mItems.add(new MenuItem(R.string.brightness_mode_normal, 0, action));
-        mItems.add(new MenuItem(R.string.brightness_mode_dark, 0, action));
-        mItems.add(new MenuItem(R.string.brightness_mode_void, 0, action));
+        mItems.add(new MenuItem(getContext().getString(R.string.brightness_mode_normal), 0, action));
+        mItems.add(new MenuItem(getContext().getString(R.string.brightness_mode_dark), 0, action));
+        mItems.add(new MenuItem(getContext().getString(R.string.brightness_mode_void), 0, action));
 
 
         super.updateMenuItems(mItems);

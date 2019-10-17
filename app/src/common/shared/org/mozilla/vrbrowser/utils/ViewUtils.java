@@ -3,6 +3,7 @@ package org.mozilla.vrbrowser.utils;
 import android.graphics.Color;
 import android.os.Build;
 import android.text.Html;
+import android.text.Layout;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -121,5 +123,43 @@ public class ViewUtils {
 
     public static int ARGBtoRGBA(int c) {
         return (c & 0x00FFFFFF) << 8 | (c & 0xFF000000) >>> 24;
+    }
+
+    public static float GetLetterPositionX(@NonNull TextView aView, int aLetterIndex, boolean aClamp) {
+        Layout layout = aView.getLayout();
+        if (layout == null) {
+            return 0;
+        }
+        float x = layout.getPrimaryHorizontal(aLetterIndex);
+        x += aView.getPaddingLeft();
+        x -= aView.getScrollX();
+        if (aClamp && x > (aView.getMeasuredWidth() - aView.getPaddingRight())) {
+            x = aView.getMeasuredWidth() - aView.getPaddingRight();
+        }
+        if (aClamp && x < aView.getPaddingLeft()) {
+            x = aView.getPaddingLeft();
+        }
+        return x;
+    }
+
+
+    public static int getCursorOffset(@NonNull EditText aView, float aX) {
+        Layout layout = aView.getLayout();
+        if (layout != null) {
+            float x = aX + aView.getScrollX() - aView.getPaddingLeft();
+            return layout.getOffsetForHorizontal(0, x);
+        }
+
+        return -1;
+    }
+
+    public static void placeSelection(@NonNull EditText aView, int offset1, int offset2) {
+        if (offset1 < 0 || offset2 < 0 || offset1 == offset2) {
+            return;
+        }
+
+        int start = Math.min(offset1, offset2);
+        int end = Math.max(offset1, offset2);
+        aView.setSelection(start, end);
     }
 }

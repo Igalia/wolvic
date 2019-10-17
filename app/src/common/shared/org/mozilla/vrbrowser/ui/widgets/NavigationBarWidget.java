@@ -8,6 +8,7 @@ package org.mozilla.vrbrowser.ui.widgets;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
@@ -34,6 +35,7 @@ import org.mozilla.vrbrowser.ui.views.CustomUIButton;
 import org.mozilla.vrbrowser.ui.views.NavigationURLBar;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.views.UITextButton;
+import org.mozilla.vrbrowser.ui.widgets.dialogs.SelectionActionWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.VoiceSearchWidget;
 import org.mozilla.vrbrowser.utils.AnimationHelper;
 import org.mozilla.vrbrowser.utils.ServoUtils;
@@ -577,7 +579,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         } else {
             AnimationHelper.fadeIn(mNavigationContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
         }
-        AnimationHelper.fadeOut(mResizeModeContainer, 0, () -> updateWidget());
+        AnimationHelper.fadeOut(mResizeModeContainer, 0, () -> onWidgetUpdate(mAttachedWindow));
         mWidgetManager.popBackHandler(mResizeBackHandler);
         mWidgetManager.setTrayVisible(!mAttachedWindow.isFullScreen());
         closeFloatingMenus();
@@ -878,7 +880,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     // NavigationURLBarDelegate
 
     @Override
-    public void OnVoiceSearchClicked() {
+    public void onVoiceSearchClicked() {
         if (mVoiceSearchWidget.isVisible()) {
             mVoiceSearchWidget.hide(REMOVE_WIDGET);
 
@@ -890,7 +892,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
 
     @Override
-    public void OnShowSearchPopup() {
+    public void onShowSearchPopup() {
         if (mPopup == null) {
             mPopup = createChild(SuggestionsWidget.class);
             mPopup.setURLBarPopupDelegate(this);
@@ -926,6 +928,18 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         if (mPopup != null) {
             mPopup.hide(UIWidget.KEEP_WIDGET);
         }
+    }
+
+    @Override
+    public void onLongPress(float centerX, SelectionActionWidget actionMenu) {
+        actionMenu.getPlacement().parentHandle = this.getHandle();
+        actionMenu.getPlacement().parentAnchorY = 1.0f;
+        actionMenu.getPlacement().anchorY = 0.34f;
+        Rect offsetViewBounds = new Rect();
+        mURLBar.getDrawingRect(offsetViewBounds);
+        offsetDescendantRectToMyCoords(mURLBar, offsetViewBounds);
+        float x = offsetViewBounds.left + centerX;
+        actionMenu.getPlacement().parentAnchorX = x / getMeasuredWidth();
     }
 
     // VoiceSearch Delegate
@@ -1058,9 +1072,4 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             mWidgetManager.startWidgetResize(mAttachedWindow, maxSize.first, 4.5f, minSize.first, minSize.second);
         }
     }
-
-    private void updateWidget() {
-        onWidgetUpdate(mAttachedWindow);
-    }
-
 }

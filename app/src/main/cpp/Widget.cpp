@@ -110,7 +110,7 @@ struct Widget::State {
         surface = vrb::TextureSurface::Create(render, name);
       }
 
-      vrb::Color tintColor(1.0f, 1.0f, 1.0f, 1.0f);
+      vrb::Color tintColor = placement->GetTintColor();
       std::string customFragment;
       if (!placement->composited && placement->GetClearColor().Alpha() > 0.0f) {
         customFragment =
@@ -467,6 +467,11 @@ Widget::SetPlacement(const WidgetPlacementPtr& aPlacement) {
   if (layer) {
     layer->SetName(aPlacement->name);
     layer->SetClearColor(aPlacement->clearColor);
+    layer->SetTintColor(aPlacement->tintColor);
+  } else if (m.quad && aPlacement->composited) {
+    m.quad->SetTintColor(aPlacement->GetTintColor());
+  } else if (m.cylinder && aPlacement->composited) {
+    m.cylinder->SetTintColor(aPlacement->GetTintColor());
   }
 }
 

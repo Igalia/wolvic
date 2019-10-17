@@ -20,6 +20,7 @@ import androidx.annotation.UiThread;
 
 import org.mozilla.geckoview.AllowOrDeny;
 import org.mozilla.geckoview.ContentBlocking;
+import org.mozilla.geckoview.GeckoResponse;
 import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoSession;
@@ -54,7 +55,7 @@ import static org.mozilla.vrbrowser.utils.ServoUtils.isServoAvailable;
 public class SessionStack implements ContentBlocking.Delegate, GeckoSession.NavigationDelegate,
         GeckoSession.ProgressDelegate, GeckoSession.ContentDelegate, GeckoSession.TextInputDelegate,
         GeckoSession.PromptDelegate, GeckoSession.MediaDelegate, GeckoSession.HistoryDelegate,
-        SharedPreferences.OnSharedPreferenceChangeListener {
+        GeckoSession.SelectionActionDelegate, SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String LOGTAG = SystemUtils.createLogtag(SessionStack.class);
     // You can test a local file using: "resource://android/assets/webvr/index.html"
@@ -66,6 +67,7 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
     private transient LinkedList<SessionChangeListener> mSessionChangeListeners;
     private transient LinkedList<GeckoSession.TextInputDelegate> mTextInputListeners;
     private transient LinkedList<VideoAvailabilityListener> mVideoAvailabilityListeners;
+    private transient LinkedList<GeckoSession.SelectionActionDelegate> mSelectionActionListeners;
     private transient UserAgentOverride mUserAgentOverride;
 
     private transient GeckoSession mCurrentSession;
@@ -92,6 +94,7 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
         mSessionChangeListeners = new LinkedList<>();
         mTextInputListeners = new LinkedList<>();
         mVideoAvailabilityListeners = new LinkedList<>();
+        mSelectionActionListeners = new LinkedList<>();
 
         if (mPrefs != null) {
             mPrefs.registerOnSharedPreferenceChangeListener(this);
@@ -122,6 +125,7 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
         mSessionChangeListeners.clear();
         mTextInputListeners.clear();
         mVideoAvailabilityListeners.clear();
+        mSelectionActionListeners.clear();
 
         if (mPrefs != null) {
             mPrefs.unregisterOnSharedPreferenceChangeListener(this);
@@ -267,6 +271,27 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
         mVideoAvailabilityListeners.remove(aListener);
     }
 
+    public void addSelectionActionListener(GeckoSession.SelectionActionDelegate aListener) {
+        mSelectionActionListeners.add(aListener);
+    }
+
+    public void removeSelectionActionListener(GeckoSession.ContentDelegate aListener) {
+        mSelectionActionListeners.remove(aListener);
+    }
+
+    private void setUpListeners(GeckoSession aSession) {
+        aSession.setNavigationDelegate(this);
+        aSession.setProgressDelegate(this);
+        aSession.setContentDelegate(this);
+        aSession.getTextInput().setDelegate(this);
+        aSession.setPermissionDelegate(mPermissionDelegate);
+        aSession.setPromptDelegate(mPromptDelegate);
+        aSession.setContentBlockingDelegate(this);
+        aSession.setMediaDelegate(this);
+        aSession.setHistoryDelegate(this);
+        aSession.setSelectionActionDelegate(this);
+    }
+
     public void restore(SessionStack store, int currentSessionId) {
         mSessions.clear();
 
@@ -301,16 +326,8 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
             }
 
             int newSessionId = state.mSession.hashCode();
+            setUpListeners(state.mSession);
 
-            state.mSession.setNavigationDelegate(this);
-            state.mSession.setProgressDelegate(this);
-            state.mSession.setContentDelegate(this);
-            state.mSession.getTextInput().setDelegate(this);
-            state.mSession.setPermissionDelegate(mPermissionDelegate);
-            state.mSession.setPromptDelegate(mPromptDelegate);
-            state.mSession.setContentBlockingDelegate(this);
-            state.mSession.setMediaDelegate(this);
-            state.mSession.setHistoryDelegate(this);
             for (SessionChangeListener listener: mSessionChangeListeners) {
                 listener.onNewSession(state.mSession, newSessionId);
             }
@@ -368,15 +385,7 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
         state.mSession.getSettings().setSuspendMediaWhenInactive(aSettings.isSuspendMediaWhenInactiveEnabled());
         state.mSession.getSettings().setUserAgentMode(aSettings.getUserAgentMode());
         state.mSession.getSettings().setUserAgentOverride(aSettings.getUserAgentOverride());
-        state.mSession.setNavigationDelegate(this);
-        state.mSession.setProgressDelegate(this);
-        state.mSession.setContentDelegate(this);
-        state.mSession.getTextInput().setDelegate(this);
-        state.mSession.setPermissionDelegate(mPermissionDelegate);
-        state.mSession.setPromptDelegate(mPromptDelegate);
-        state.mSession.setContentBlockingDelegate(this);
-        state.mSession.setMediaDelegate(this);
-        state.mSession.setHistoryDelegate(this);
+        setUpListeners(state.mSession);
         for (SessionChangeListener listener: mSessionChangeListeners) {
             listener.onNewSession(state.mSession, result);
         }
@@ -417,6 +426,7 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
             session.setContentBlockingDelegate(null);
             session.setMediaDelegate(null);
             session.setHistoryDelegate(null);
+            session.setSelectionActionDelegate(this);
             mSessions.remove(aSessionId);
             for (SessionChangeListener listener: mSessionChangeListeners) {
                 listener.onRemoveSession(session, aSessionId);
@@ -1416,6 +1426,26 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
             if (key.equals(mContext.getString(R.string.settings_key_geolocation_data))) {
                 GeolocationData data = GeolocationData.parse(sharedPreferences.getString(key, null));
                 setRegion(data.getCountryCode());
+            }
+        }
+    }
+
+    // GeckoSession.SelectionActionDelegate
+
+    @Override
+    public void onShowActionRequest(@NonNull GeckoSession aSession, @NonNull Selection selection, @NonNull String[] strings, @NonNull GeckoResponse<String> geckoResponse) {
+        if (aSession == mCurrentSession) {
+            for (GeckoSession.SelectionActionDelegate listener : mSelectionActionListeners) {
+                listener.onShowActionRequest(aSession, selection, strings, geckoResponse);
+            }
+        }
+    }
+
+    @Override
+    public void onHideAction(@NonNull GeckoSession aSession, int aHideReason) {
+        if (aSession == mCurrentSession) {
+            for (GeckoSession.SelectionActionDelegate listener : mSelectionActionListeners) {
+                listener.onHideAction(aSession, aHideReason);
             }
         }
     }

@@ -70,6 +70,7 @@ WidgetPlacement::FromJava(JNIEnv* aEnv, jobject& aObject) {
   GET_FLOAT_FIELD(textureScale, "textureScale");
   GET_BOOLEAN_FIELD(cylinder);
   GET_FLOAT_FIELD(cylinderMapRadius, "cylinderMapRadius");
+  GET_INT_FIELD(tintColor);
   GET_INT_FIELD(borderColor);
   GET_STRING_FIELD(name);
   GET_INT_FIELD(clearColor);
@@ -95,6 +96,11 @@ WidgetPlacement::GetTextureHeight() const {
 vrb::Color
 WidgetPlacement::GetClearColor() const {
   return vrb::Color(clearColor);
+}
+
+vrb::Color
+WidgetPlacement::GetTintColor() const {
+  return vrb::Color(tintColor);
 }
 
 }

@@ -36,12 +36,14 @@ struct WidgetPlacement {
   float textureScale;
   bool cylinder;
   float cylinderMapRadius;
+  int tintColor;
   int borderColor;
   std::string name;
   int clearColor;
 
   int32_t GetTextureWidth() const;
   int32_t GetTextureHeight() const;
+  vrb::Color GetTintColor() const;
   vrb::Color GetClearColor() const;
 
   static const float kWorldDPIRatio;

@@ -6,6 +6,8 @@
 package org.mozilla.vrbrowser.ui.views;
 
 import android.annotation.SuppressLint;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.res.Resources;
 import android.text.Editable;
@@ -30,6 +32,8 @@ import android.widget.RelativeLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 
+import org.mozilla.gecko.util.ThreadUtils;
+import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
@@ -38,16 +42,20 @@ import org.mozilla.vrbrowser.browser.engine.SessionStack;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.search.SearchEngineWrapper;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
+import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
+import org.mozilla.vrbrowser.ui.widgets.dialogs.SelectionActionWidget;
 import org.mozilla.vrbrowser.utils.StringUtils;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 import org.mozilla.vrbrowser.utils.UIThreadExecutor;
 import org.mozilla.vrbrowser.utils.UrlUtils;
+import org.mozilla.vrbrowser.utils.ViewUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 
 import kotlin.Unit;
 import mozilla.components.browser.domains.autocomplete.DomainAutocompleteResult;
@@ -58,7 +66,7 @@ public class NavigationURLBar extends FrameLayout {
 
     private static final String LOGTAG = SystemUtils.createLogtag(NavigationURLBar.class);
 
-    private InlineAutocompleteEditText mURL;
+    private CustomInlineAutocompleteEditText mURL;
     private UIButton mMicrophoneButton;
     private UIButton mUAModeButton;
     private ImageView mInsecureIcon;
@@ -81,6 +89,10 @@ public class NavigationURLBar extends FrameLayout {
     private boolean mIsContextButtonsEnabled = true;
     private UIThreadExecutor mUIThreadExecutor = new UIThreadExecutor();
     private SessionStack mSessionStack;
+    private SelectionActionWidget mSelectionMenu;
+    private boolean mWasFocusedWhenTouchBegan = false;
+    private boolean mLongPressed = false;
+    private int lastTouchDownOffset = 0;
 
     private Unit domainAutocompleteFilter(String text) {
         if (mURL != null) {
@@ -99,9 +111,10 @@ public class NavigationURLBar extends FrameLayout {
     }
 
     public interface NavigationURLBarDelegate {
-        void OnVoiceSearchClicked();
-        void OnShowSearchPopup();
+        void onVoiceSearchClicked();
+        void onShowSearchPopup();
         void onHideSearchPopup();
+        void onLongPress(float centerX, SelectionActionWidget actionMenu);
     }
 
     public NavigationURLBar(Context context, AttributeSet attrs) {
@@ -139,21 +152,75 @@ public class NavigationURLBar extends FrameLayout {
             updateHintFading();
 
             mURL.setSelection(mURL.getText().length(), 0);
+            if (focused) {
+                mURL.selectAll();
+            } else {
+                hideSelectionMenu();
+            }
+
         });
 
         final GestureDetector gd = new GestureDetector(getContext(), new UrlGestureListener());
         gd.setOnDoubleTapListener(mUrlDoubleTapListener);
         mURL.setOnTouchListener((view, motionEvent) -> {
+            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                mWasFocusedWhenTouchBegan = view.isFocused();
+                lastTouchDownOffset = ViewUtils.getCursorOffset(mURL, motionEvent.getX());
+            } else if (mLongPressed && motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
+                // Selection gesture while longpressing
+                ViewUtils.placeSelection(mURL, lastTouchDownOffset, ViewUtils.getCursorOffset(mURL, motionEvent.getX()));
+            } else if (motionEvent.getAction() == MotionEvent.ACTION_UP || motionEvent.getAction() == MotionEvent.ACTION_CANCEL) {
+                mLongPressed = false;
+            }
             if (gd.onTouchEvent(motionEvent)) {
+                return true;
+            }
+            if (mLongPressed) {
+                // Do not scroll editable when selecting text after a long press.
                 return true;
             }
             return view.onTouchEvent(motionEvent);
         });
+        mURL.setOnClickListener(v -> {
+            if (mWasFocusedWhenTouchBegan) {
+                hideSelectionMenu();
+            }
+        });
         mURL.setOnLongClickListener(v -> {
-            mURL.requestFocus();
-            return false;
+            if (!v.isFocused()) {
+                mURL.requestFocus();
+                mURL.selectAll();
+            } else if (!mURL.hasSelection()) {
+                // Place the cursor in the longpressed position.
+                if (lastTouchDownOffset >= 0) {
+                    mURL.setSelection(lastTouchDownOffset);
+                }
+                mLongPressed = true;
+            }
+            // Add some delay so selection ranges are ready
+            ThreadUtils.postDelayedToUiThread(this::handleLongPress, 10);
+            return true;
         });
         mURL.addTextChangedListener(mURLTextWatcher);
+
+        mURL.setOnSelectionChangedCallback((start, end) -> {
+            if (mSelectionMenu != null) {
+                boolean hasCopy = mSelectionMenu.hasAction(GeckoSession.SelectionActionDelegate.ACTION_COPY);
+                boolean showCopy = end > start;
+                if (hasCopy != showCopy) {
+                    handleLongPress();
+                } else {
+                    mDelegate.onLongPress(getSelectionCenterX(), mSelectionMenu);
+                    mSelectionMenu.updateWidget();
+                }
+            }
+        });
+
+        mURL.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+            if (mLongPressed) {
+                hideSelectionMenu();
+            }
+        });
 
         // Set a filter to provide domain autocomplete results
         mURL.setOnFilterListener(this::domainAutocompleteFilter);
@@ -580,7 +647,7 @@ public class NavigationURLBar extends FrameLayout {
 
         view.requestFocusFromTouch();
         if (mDelegate != null) {
-            mDelegate.OnVoiceSearchClicked();
+            mDelegate.onVoiceSearchClicked();
         }
 
         TelemetryWrapper.voiceInputEvent();
@@ -590,7 +657,6 @@ public class NavigationURLBar extends FrameLayout {
         if (mAudio != null) {
             mAudio.playSound(AudioEngine.Sound.CLICK);
         }
-
         view.requestFocusFromTouch();
 
         int uaMode = mSessionStack.getUaMode();
@@ -631,8 +697,9 @@ public class NavigationURLBar extends FrameLayout {
         @Override
         public void afterTextChanged(Editable editable) {
             if (mDelegate != null) {
-                mDelegate.OnShowSearchPopup();
+                mDelegate.onShowSearchPopup();
             }
+            hideSelectionMenu();
         }
     };
 
@@ -647,7 +714,7 @@ public class NavigationURLBar extends FrameLayout {
     GestureDetector.OnDoubleTapListener mUrlDoubleTapListener = new GestureDetector.OnDoubleTapListener() {
         @Override
         public boolean onSingleTapConfirmed(MotionEvent motionEvent) {
-            return false;
+            return true;
         }
 
         @Override
@@ -657,9 +724,110 @@ public class NavigationURLBar extends FrameLayout {
 
         @Override
         public boolean onDoubleTapEvent(MotionEvent motionEvent) {
-            mURL.setSelection(mURL.getText().length(), 0);
+            mURL.selectAll();
             return true;
         }
     };
+
+    private void handleLongPress() {
+        ArrayList<String> actions = new ArrayList<>();
+        if (mURL.getSelectionEnd() > mURL.getSelectionStart()) {
+            actions.add(GeckoSession.SelectionActionDelegate.ACTION_CUT);
+            actions.add(GeckoSession.SelectionActionDelegate.ACTION_COPY);
+        }
+        ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+        if (clipboard.hasPrimaryClip()) {
+            actions.add(GeckoSession.SelectionActionDelegate.ACTION_PASTE);
+        }
+        if (!StringUtils.isEmpty(mURL.getText().toString()) &&
+                (mURL.getSelectionStart() != 0 || mURL.getSelectionEnd() != mURL.getText().toString().length())) {
+            actions.add(GeckoSession.SelectionActionDelegate.ACTION_SELECT_ALL);
+        }
+
+        if (actions.size() == 0) {
+            hideSelectionMenu();
+            return;
+        }
+
+        String[] actionsArray = actions.toArray(new String[0]);
+        if (mSelectionMenu != null && !mSelectionMenu.hasSameActions(actionsArray)) {
+            // Release current selection menu to recreate it with different actions.
+            hideSelectionMenu();
+        }
+
+        if (mSelectionMenu == null) {
+            mSelectionMenu = new SelectionActionWidget(getContext());
+            mSelectionMenu.setActions(actionsArray);
+            mSelectionMenu.setDelegate(new SelectionActionWidget.Delegate() {
+                @Override
+                public void onAction(String action) {
+                    int startSelection = mURL.getSelectionStart();
+                    int endSelection = mURL.getSelectionEnd();
+                    boolean selectionValid = endSelection > startSelection;
+
+                    if (action.equals(GeckoSession.SelectionActionDelegate.ACTION_CUT) && selectionValid) {
+                        String selectedText = mURL.getText().toString().substring(startSelection, endSelection);
+                        clipboard.setPrimaryClip(ClipData.newPlainText("text", selectedText));
+                        mURL.setText(StringUtils.removeRange(mURL.getText().toString(), startSelection, endSelection));
+                    } else if (action.equals(GeckoSession.SelectionActionDelegate.ACTION_COPY) && selectionValid) {
+                        String selectedText = mURL.getText().toString().substring(startSelection, endSelection);
+                        clipboard.setPrimaryClip(ClipData.newPlainText("text", selectedText));
+                    } else if (action.equals(GeckoSession.SelectionActionDelegate.ACTION_PASTE) && clipboard.hasPrimaryClip()) {
+                        ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
+                        if (selectionValid) {
+                            mURL.setText(StringUtils.removeRange(mURL.getText().toString(), startSelection, endSelection));
+                        }
+                        if (item != null && item.getText() != null) {
+                            mURL.getText().insert(mURL.getSelectionStart(), item.getText());
+                        } else if (item != null && item.getUri() != null) {
+                            mURL.getText().insert(mURL.getSelectionStart(), item.getUri().toString());
+                        }
+                    } else if (action.equals(GeckoSession.SelectionActionDelegate.ACTION_SELECT_ALL)) {
+                        mURL.selectAll();
+                        handleLongPress();
+                        return;
+
+                    }
+                    hideSelectionMenu();
+                }
+
+                @Override
+                public void onDismiss() {
+                    hideSelectionMenu();
+                }
+            });
+        }
+
+        if (mDelegate != null) {
+            mDelegate.onLongPress(getSelectionCenterX(), mSelectionMenu);
+        }
+
+        mSelectionMenu.show(UIWidget.KEEP_FOCUS);
+    }
+
+
+    private float getSelectionCenterX() {
+        float start = 0;
+        if (mURL.getSelectionStart() >= 0) {
+            start = ViewUtils.GetLetterPositionX(mURL, mURL.getSelectionStart(), true);
+        }
+        float end = start;
+        if (mURL.getSelectionEnd() > mURL.getSelectionStart()) {
+            end = ViewUtils.GetLetterPositionX(mURL, mURL.getSelectionEnd(), true);
+        }
+        if (end < start) {
+            end = start;
+        }
+        return start + (end - start) * 0.5f;
+    }
+
+    private void hideSelectionMenu() {
+        if (mSelectionMenu != null) {
+            mSelectionMenu.setDelegate((SelectionActionWidget.Delegate) null);
+            mSelectionMenu.hide(UIWidget.REMOVE_WIDGET);
+            mSelectionMenu.releaseWidget();
+            mSelectionMenu = null;
+        }
+    }
 
 }

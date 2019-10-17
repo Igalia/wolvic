@@ -7,7 +7,7 @@ package org.mozilla.vrbrowser.ui.widgets;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Point;
+import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
@@ -28,6 +28,7 @@ import androidx.annotation.UiThread;
 import org.jetbrains.annotations.NotNull;
 import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.geckoview.GeckoDisplay;
+import org.mozilla.geckoview.GeckoResponse;
 import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.PanZoomController;
@@ -51,6 +52,7 @@ import org.mozilla.vrbrowser.ui.widgets.dialogs.ContextMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.LibraryItemContextMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.MaxWindowsWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.MessageDialogWidget;
+import org.mozilla.vrbrowser.ui.widgets.dialogs.SelectionActionWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.AlertPromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.AuthPromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.ChoicePromptWidget;
@@ -75,7 +77,8 @@ import static org.mozilla.vrbrowser.utils.ServoUtils.isInstanceOfServoSession;
 public class WindowWidget extends UIWidget implements SessionChangeListener,
         GeckoSession.ContentDelegate, GeckoSession.PromptDelegate,
         GeckoSession.NavigationDelegate, VideoAvailabilityListener,
-        GeckoSession.HistoryDelegate, GeckoSession.ProgressDelegate {
+        GeckoSession.HistoryDelegate, GeckoSession.ProgressDelegate,
+        GeckoSession.SelectionActionDelegate {
 
     public interface HistoryViewDelegate {
         default void onHistoryViewShown(WindowWidget aWindow) {}
@@ -107,6 +110,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private MessageDialogWidget mAppDialog;
     private ClearCacheDialogWidget mClearCacheDialog;
     private ContextMenuWidget mContextMenu;
+    private SelectionActionWidget mSelectionMenu;
     private LibraryItemContextMenuWidget mLibraryItemContextMenu;
     private int mWidthBackup;
     private int mHeightBackup;
@@ -114,7 +118,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private Runnable mFirstDrawCallback;
     private boolean mIsInVRVideoMode;
     private View mView;
-    private Point mLastMouseClickPos;
     private SessionStack mSessionStack;
     private int mWindowId;
     private BookmarksView mBookmarksView;
@@ -156,6 +159,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mSessionStack.addNavigationListener(this);
         mSessionStack.addProgressListener(this);
         mSessionStack.setHistoryDelegate(this);
+        mSessionStack.addSelectionActionListener(this);
         mSessionStack.newSession();
 
         mBookmarksView  = new BookmarksView(aContext);
@@ -181,7 +185,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         mTopBar = new TopBarWidget(aContext);
         mTopBar.attachToWindow(this);
-        mLastMouseClickPos = new Point(0, 0);
 
         mTitleBar = new TitleBarWidget(aContext);
         mTitleBar.attachToWindow(this);
@@ -576,15 +579,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         updateBorder();
     }
 
-    private void hideContextMenus() {
-        if (mContextMenu != null && mContextMenu.isVisible()) {
-            mContextMenu.hide(REMOVE_WIDGET);
-        }
-        if (mLibraryItemContextMenu != null && mLibraryItemContextMenu.isVisible()) {
-            mLibraryItemContextMenu.hide(REMOVE_WIDGET);
-        }
-    }
-
     private void updateTitleBar() {
         if (isBookmarksVisible()) {
             updateTitleBarUrl(getResources().getString(R.string.url_bookmarks_title));
@@ -733,7 +727,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     @Override
     public void handleTouchEvent(MotionEvent aEvent) {
-        mLastMouseClickPos = new Point((int)aEvent.getX(), (int)aEvent.getY());
         if (aEvent.getAction() == MotionEvent.ACTION_DOWN) {
             if (!mActive) {
                 mClickedAfterFocus = true;
@@ -882,6 +875,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mSessionStack.removeNavigationListener(this);
         mSessionStack.removeProgressListener(this);
         mSessionStack.setHistoryDelegate(null);
+        mSessionStack.removeSelectionActionListener(this);
         GeckoSession session = mSessionStack.getSession(mSessionId);
         if (mDisplay != null) {
             mDisplay.surfaceDestroyed();
@@ -1453,6 +1447,29 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         return result;
     }
 
+    private void hideContextMenus() {
+        if (mContextMenu != null) {
+            mContextMenu.hide(REMOVE_WIDGET);
+            mContextMenu.releaseWidget();
+            mContextMenu = null;
+        }
+        if (mSelectionMenu != null) {
+            mSelectionMenu.setDelegate((SelectionActionWidget.Delegate)null);
+            mSelectionMenu.hide(REMOVE_WIDGET);
+            mSelectionMenu.releaseWidget();
+            mSelectionMenu = null;
+        }
+
+        if (mWidgetPlacement.tintColor != 0xFFFFFFFF) {
+            mWidgetPlacement.tintColor = 0xFFFFFFFF;
+            mWidgetManager.updateWidget(this);
+        }
+        
+        if (mLibraryItemContextMenu != null && mLibraryItemContextMenu.isVisible()) {
+            mLibraryItemContextMenu.hide(REMOVE_WIDGET);
+        }
+    }
+
     // GeckoSession.ContentDelegate
 
     @Override
@@ -1463,8 +1480,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         mContextMenu = new ContextMenuWidget(getContext());
         mContextMenu.mWidgetPlacement.parentHandle = getHandle();
-        mContextMenu.setContextElement(mLastMouseClickPos, element);
+        mContextMenu.setDismissCallback(this::hideContextMenus);
+        mContextMenu.setContextElement(element);
         mContextMenu.show(REQUEST_FOCUS);
+
+        mWidgetPlacement.tintColor = 0x555555FF;
+        mWidgetManager.updateWidget(this);
     }
 
     @Override
@@ -1584,6 +1605,41 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         if (mTitleBar != null) {
             mTitleBar.setIsInsecure(!securityInformation.isSecure);
         }
+    }
+
+    // GeckoSession.SelectionActionDelegate
+
+    @Override
+    public void onShowActionRequest(@NonNull GeckoSession aSession, @NonNull Selection aSelection, @NonNull String[] aActions, @NonNull GeckoResponse<String> aResponse) {
+        TelemetryWrapper.longPressContextMenuEvent();
+
+        hideContextMenus();
+        mSelectionMenu = new SelectionActionWidget(getContext());
+        mSelectionMenu.mWidgetPlacement.parentHandle = getHandle();
+        mSelectionMenu.setActions(aActions);
+        Matrix matrix = new Matrix();
+        aSession.getClientToSurfaceMatrix(matrix);
+        matrix.mapRect(aSelection.clientRect);
+        mSelectionMenu.setSelectionRect(aSelection.clientRect);
+        mSelectionMenu.setDelegate(new SelectionActionWidget.Delegate() {
+            @Override
+            public void onAction(String action) {
+                hideContextMenus();
+                aResponse.respond(action);
+            }
+
+            @Override
+            public void onDismiss() {
+                hideContextMenus();
+                aResponse.respond(GeckoSession.SelectionActionDelegate.ACTION_UNSELECT);
+            }
+        });
+        mSelectionMenu.show(KEEP_FOCUS);
+    }
+
+    @Override
+    public void onHideAction(@NonNull GeckoSession aSession, int aHideReason) {
+        hideContextMenus();
     }
 
 }
