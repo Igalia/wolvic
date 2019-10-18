@@ -56,7 +56,6 @@ infer-out/
 fastlane/
 
 app/.externalNativeBuild
-app/.cxx
 openwnn/.externalNativeBuild
 
 *.swp
