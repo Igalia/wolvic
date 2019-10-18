@@ -217,6 +217,10 @@
     <string name="settings_language_danish">Danish</string>
 
     <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+     changes the app and the language of the speech-recognition-based search to 'Norwegian'. -->
+    <string name="settings_language_norwegian">Norwegian</string>
+  
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
      changes the app and the language of the speech-recognition-based search to 'Danish'. -->
     <string name="settings_language_swedish">Swedish</string>
 

@@ -30,6 +30,7 @@
     <dimen name="keyboard_height">188dp</dimen>
     <dimen name="keyboard_alphabetic_width">526dp</dimen>
     <dimen name="keyboard_alphabetic_width_danish">540dp</dimen>
+    <dimen name="keyboard_alphabetic_width_norwegian">540dp</dimen>
     <dimen name="keyboard_alphabetic_width_swedish">540dp</dimen>
     <dimen name="keyboard_alphabetic_width_finnish">540dp</dimen>
     <dimen name="keyboard_alphabetic_width_extra_column">564dp</dimen>

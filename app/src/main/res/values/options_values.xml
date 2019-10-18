@@ -98,6 +98,7 @@
         <item>@string/language_it_IT</item>
         <item>@string/language_da_DK</item>
         <item>@string/language_pl_PL</item>
+        <item>@string/language_nb_NO</item>
         <item>@string/language_sv_SE</item>
         <item>@string/language_fi_FI</item>
         <item>@string/language_nl_NL</item>
@@ -116,6 +117,7 @@
         <item>it-IT</item>
         <item>da-DK</item>
         <item>pl-PL</item>
+        <item>nb-NO</item>
         <item>sv-SE</item>
         <item>fi-FI</item>
         <item>nl-NL</item>
@@ -136,6 +138,7 @@
         <item>@string/language_it_IT</item>
         <item>@string/language_da_DK</item>
         <item>@string/language_pl_PL</item>
+        <item>@string/language_nb_NO</item>
         <item>@string/language_sv_SE</item>
         <item>@string/language_fi_FI</item>
         <item>@string/language_nl_NL</item>
@@ -155,6 +158,7 @@
         <item>it-IT</item>
         <item>da-DK</item>
         <item>pl-PL</item>
+        <item>nb-NO</item>
         <item>sv-SE</item>
         <item>fi-FI</item>
         <item>nl-NL</item>
