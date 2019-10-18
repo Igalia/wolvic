@@ -81,6 +81,7 @@
     <string name="language_it_IT" translatable="false">Italiano</string>
     <string name="language_pl_PL" translatable="false">Polski</string>
     <string name="language_da_DK" translatable="false">Dansk</string>
+    <string name="language_fi_FI" translatable="false">Suomea</string>
     <string name="language_nl_NL" translatable="false">Nederlands</string>
 
     <string name="pinyin_spacebar_selection" translatable="false">选定</string>
@@ -149,6 +150,21 @@
     <string name="keyboard_da_DK_popup_æ" translatable="false">æä</string>
     <string name="keyboard_da_DK_popup_ø" translatable="false">øö</string>
     <string name="keyboard_da_DK_popup_n" translatable="false">nñń</string>
+
+    <!-- Keyboard Finnish -->
+    <string name="keyboard_fi_FI_popup_a" translatable="false">aæàáâãā</string>
+    <string name="keyboard_fi_FI_popup_d" translatable="false">dđ</string>
+    <string name="keyboard_fi_FI_popup_e" translatable="false">eéèëê</string>
+    <string name="keyboard_fi_FI_popup_s" translatable="false">sšßś</string>
+    <string name="keyboard_fi_FI_popup_t" translatable="false">tŧ</string>
+    <string name="keyboard_fi_FI_popup_u" translatable="false">uüûū</string>
+    <string name="keyboard_fi_FI_popup_z" translatable="false">zžźż</string>
+    <string name="keyboard_fi_FI_popup_c" translatable="false">cç</string>
+    <string name="keyboard_fi_FI_popup_o" translatable="false">oøôóòõœō</string>
+    <string name="keyboard_fi_FI_popup_i" translatable="false">iíïìîįī</string>
+    <string name="keyboard_fi_FI_popup_ö" translatable="false">öø</string>
+    <string name="keyboard_fi_FI_popup_ä" translatable="false">äæ</string>
+    <string name="keyboard_fi_FI_popup_n" translatable="false">nŋñ</string>
 
     <!-- Keyboard Dutch -->
     <string name="keyboard_nl_NL_popup_e" translatable="false">eéëêèęėēěĕə</string>
