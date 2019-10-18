@@ -98,6 +98,7 @@
         <item>@string/language_it_IT</item>
         <item>@string/language_da_DK</item>
         <item>@string/language_pl_PL</item>
+        <item>@string/language_nl_NL</item>
     </string-array>
 
     <string-array name="developer_options_voice_search_languages_values" translatable="false">
@@ -113,6 +114,7 @@
         <item>it-IT</item>
         <item>da-DK</item>
         <item>pl-PL</item>
+        <item>nl-NL</item>
     </string-array>
 
     <!-- Language Options -->
@@ -130,6 +132,7 @@
         <item>@string/language_it_IT</item>
         <item>@string/language_da_DK</item>
         <item>@string/language_pl_PL</item>
+        <item>@string/language_nl_NL</item>
     </string-array>
 
     <string-array name="developer_options_display_languages_values" translatable="false">
@@ -146,6 +149,7 @@
         <item>it-IT</item>
         <item>da-DK</item>
         <item>pl-PL</item>
+        <item>nl-NL</item>
     </string-array>
 
     <!-- Clear Cache Options -->

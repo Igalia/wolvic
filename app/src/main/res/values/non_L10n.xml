@@ -81,6 +81,7 @@
     <string name="language_it_IT" translatable="false">Italiano</string>
     <string name="language_pl_PL" translatable="false">Polski</string>
     <string name="language_da_DK" translatable="false">Dansk</string>
+    <string name="language_nl_NL" translatable="false">Nederlands</string>
 
     <string name="pinyin_spacebar_selection" translatable="false">选定</string>
     <string name="pinyin_spacebar_space" translatable="false">空格</string>
@@ -123,6 +124,7 @@
     <string name="keyboard_popup_x" translatable="false">xẍẋ</string>
     <string name="keyboard_popup_y" translatable="false">yýỳŷÿỹ</string>
     <string name="keyboard_popup_z" translatable="false">zźẑžżẓ</string>
+    <string name="keyboard_popup_dot" translatable="false">. \.com \.net \.org</string>
 
     <!-- Keyboard Polish -->
     <string name="keyboard_pl_PL_popup_e" translatable="false">eęèéêëẽėē</string>
@@ -147,6 +149,13 @@
     <string name="keyboard_da_DK_popup_æ" translatable="false">æä</string>
     <string name="keyboard_da_DK_popup_ø" translatable="false">øö</string>
     <string name="keyboard_da_DK_popup_n" translatable="false">nñń</string>
+
+    <!-- Keyboard Dutch -->
+    <string name="keyboard_nl_NL_popup_e" translatable="false">eéëêèęėēěĕə</string>
+    <string name="keyboard_nl_NL_popup_a" translatable="false">aáäâàæãåāăą</string>
+    <string name="keyboard_nl_NL_popup_o" translatable="false">oöôòõœøōóő</string>
+    <string name="keyboard_nl_NL_popup_u" translatable="false">uúüûùūůų</string>
+    <string name="keyboard_nl_NL_popup_i" translatable="false">ìíiïîįī</string>
 
     <!-- SEARCH ENGINES -->
     <string name="geolocation_api_url" translatable="false">https://location.services.mozilla.com/v1/country</string>

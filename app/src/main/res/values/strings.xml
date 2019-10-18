@@ -216,6 +216,10 @@
      changes the app and the language of the speech-recognition-based search to 'Danish'. -->
     <string name="settings_language_danish">Danish</string>
 
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+     changes the app and the language of the speech-recognition-based search to 'Dutch'. -->
+    <string name="settings_language_dutch">Dutch</string>
+
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
         opens a dialog box that contains display-related settings: window size, pixel density, etc. -->
     <string name="settings_display">Display</string>
