@@ -50,6 +50,7 @@ import org.mozilla.vrbrowser.ui.keyboards.PolishKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.RussianKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.KoreanKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.SpanishKeyboard;
+import org.mozilla.vrbrowser.ui.keyboards.SwedishKeyboard;
 import org.mozilla.vrbrowser.ui.views.AutoCompletionView;
 import org.mozilla.vrbrowser.ui.views.CustomKeyboardView;
 import org.mozilla.vrbrowser.ui.views.LanguageSelectorView;
@@ -189,6 +190,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mKeyboards.add(new JapaneseKeyboard(aContext));
         mKeyboards.add(new PolishKeyboard(aContext));
         mKeyboards.add(new DanishKeyboard(aContext));
+        mKeyboards.add(new SwedishKeyboard(aContext));
         mKeyboards.add(new FinnishKeyboard(aContext));
         mKeyboards.add(new DutchKeyboard(aContext));
 
