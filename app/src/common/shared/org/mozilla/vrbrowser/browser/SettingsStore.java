@@ -7,7 +7,6 @@ import android.os.StrictMode;
 import android.preference.PreferenceManager;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.telemetry.TelemetryHolder;
 import org.mozilla.vrbrowser.R;
@@ -74,6 +73,7 @@ public class SettingsStore {
     private final static long CRASH_RESTART_DELTA = 2000;
     public final static boolean AUTOPLAY_ENABLED = false;
     public final static boolean DEBUG_LOGGING_DEFAULT = false;
+    public final static boolean POP_UPS_BLOCKING_DEFAULT = true;
 
     // Enable telemetry by default (opt-out).
     public final static boolean CRASH_REPORTING_DEFAULT = false;
@@ -558,6 +558,16 @@ public class SettingsStore {
 
     public int getPid() {
         return mPrefs.getInt(mContext.getString(R.string.settings_key_pid), 0);
+    }
+
+    public boolean isPopUpsBlockingEnabled() {
+        return mPrefs.getBoolean(mContext.getString(R.string.settings_key_pop_up_blocking), POP_UPS_BLOCKING_DEFAULT);
+    }
+
+    public void setPopUpsBlockingEnabled(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_pop_up_blocking), isEnabled);
+        editor.commit();
     }
 }
 

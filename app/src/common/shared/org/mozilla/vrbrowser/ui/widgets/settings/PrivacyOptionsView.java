@@ -35,6 +35,7 @@ class PrivacyOptionsView extends SettingsView {
 
     private OptionsPrivacyBinding mBinding;
     private ArrayList<Pair<SwitchSetting, String>> mPermissionButtons;
+    private SettingsView mPopUpsBlockingExceptions;
 
     public PrivacyOptionsView(Context aContext, WidgetManagerDelegate aWidgetManager) {
         super(aContext, aWidgetManager);
@@ -77,6 +78,8 @@ class PrivacyOptionsView extends SettingsView {
         TextView permissionsTitleText = findViewById(R.id.permissionsTitle);
         permissionsTitleText.setText(getContext().getString(R.string.security_options_permissions_title, getContext().getString(R.string.app_name)));
 
+        mPopUpsBlockingExceptions = new AllowedPopUpsOptionsView(getContext(), mWidgetManager);
+
         mPermissionButtons = new ArrayList<>();
         mPermissionButtons.add(Pair.create(findViewById(R.id.cameraPermissionSwitch), Manifest.permission.CAMERA));
         mPermissionButtons.add(Pair.create(findViewById(R.id.microphonePermissionSwitch), Manifest.permission.RECORD_AUDIO));
@@ -114,6 +117,11 @@ class PrivacyOptionsView extends SettingsView {
 
         mBinding.crashReportsDataSwitch.setOnCheckedChangeListener(mCrashReportsListener);
         setCrashReports(SettingsStore.getInstance(getContext()).isCrashReportingEnabled(), false);
+
+        mBinding.popUpsBlockingSwitch.setOnCheckedChangeListener(mPopUpsBlockingListener);
+        setPopUpsBlocking(SettingsStore.getInstance(getContext()).isPopUpsBlockingEnabled(), false);
+
+        mBinding.popUpsBlockingExceptionsButton.setOnClickListener(v -> mDelegate.showView(mPopUpsBlockingExceptions));
     }
 
     private void togglePermission(SwitchSetting aButton, String aPermission) {
@@ -159,6 +167,10 @@ class PrivacyOptionsView extends SettingsView {
         setCrashReports(value, doApply);
     };
 
+    private SwitchSetting.OnCheckedChangeListener mPopUpsBlockingListener = (compoundButton, value, doApply) -> {
+        setPopUpsBlocking(value, doApply);
+    };
+
     private void resetOptions() {
         if (mBinding.drmContentPlaybackSwitch.isChecked() != SettingsStore.DRM_PLAYBACK_DEFAULT) {
             setDrmContent(SettingsStore.DRM_PLAYBACK_DEFAULT, true);
@@ -182,6 +194,10 @@ class PrivacyOptionsView extends SettingsView {
 
         if (mBinding.crashReportsDataSwitch.isChecked() != SettingsStore.CRASH_REPORTING_DEFAULT) {
             setCrashReports(SettingsStore.CRASH_REPORTING_DEFAULT, true);
+        }
+
+        if (mBinding.popUpsBlockingSwitch.isChecked() != SettingsStore.POP_UPS_BLOCKING_DEFAULT) {
+            setPopUpsBlocking(SettingsStore.POP_UPS_BLOCKING_DEFAULT, true);
         }
     }
 
@@ -244,6 +260,16 @@ class PrivacyOptionsView extends SettingsView {
 
         if (doApply) {
             SettingsStore.getInstance(getContext()).setCrashReportingEnabled(value);
+        }
+    }
+
+    private void setPopUpsBlocking(boolean value, boolean doApply) {
+        mBinding.popUpsBlockingSwitch.setOnCheckedChangeListener(null);
+        mBinding.popUpsBlockingSwitch.setValue(value, false);
+        mBinding.popUpsBlockingSwitch.setOnCheckedChangeListener(mPopUpsBlockingListener);
+
+        if (doApply) {
+            SettingsStore.getInstance(getContext()).setPopUpsBlockingEnabled(value);
         }
     }
 

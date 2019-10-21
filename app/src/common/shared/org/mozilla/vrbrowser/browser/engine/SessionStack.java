@@ -1350,6 +1350,15 @@ public class SessionStack implements ContentBlocking.Delegate, GeckoSession.Navi
         return GeckoResult.fromValue(filePrompt.dismiss());
     }
 
+    @Nullable
+    @Override
+    public GeckoResult<PromptResponse> onPopupPrompt(@NonNull GeckoSession geckoSession, @NonNull PopupPrompt popupPrompt) {
+        if (mPromptDelegate != null) {
+            return mPromptDelegate.onPopupPrompt(geckoSession, popupPrompt);
+        }
+        return GeckoResult.fromValue(popupPrompt.dismiss());
+    }
+
     // MediaDelegate
 
     @Override

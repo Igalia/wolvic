@@ -21,46 +21,47 @@ public class SettingsFooter extends FrameLayout {
     public SettingsFooter(@NonNull Context context) {
         super(context);
 
-        initialize(context, null);
+        initialize(context, null, 0, 0);
     }
 
     public SettingsFooter(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
 
-        TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.SettingsHeader, 0, 0);
-
-        initialize(context, attributes);
+        initialize(context, attrs, 0, 0);
     }
 
     public SettingsFooter(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
-        TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.SettingsFooter, defStyleAttr, 0);
-
-        initialize(context, attributes);
+        initialize(context, attrs, defStyleAttr, 0);
     }
 
     public SettingsFooter(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
 
-        TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.SettingsFooter, defStyleAttr, 0);
-
-        initialize(context, attributes);
+        initialize(context, attrs, defStyleAttr, defStyleRes);
     }
 
-    private void initialize(@NonNull Context aContext, @NonNull TypedArray attributes) {
+    private void initialize(@NonNull Context aContext, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         LayoutInflater inflater = LayoutInflater.from(aContext);
 
         // Inflate this data binding layout
         mBinding = DataBindingUtil.inflate(inflater, R.layout.options_footer, this, true);
 
+        TypedArray attributes = aContext.obtainStyledAttributes(attrs, R.styleable.SettingsFooter, defStyleAttr, defStyleRes);
         if (attributes != null) {
+            String buttonText = attributes.getString(R.styleable.SettingsFooter_buttonText);
             String description = attributes.getString(R.styleable.SettingsFooter_description);
 
+            if (buttonText != null) {
+                mBinding.resetButton.setButtonText(buttonText);
+            }
+
             if (description != null) {
-                mBinding.setDescription(description);
+                mBinding.resetButton.setDescription(description);
             }
         }
+        attributes.recycle();
     }
 
     public void setResetClickListener(@NonNull View.OnClickListener listener) {

@@ -71,3 +71,6 @@ user.properties*
 # Node modules
 node_modules
 tools/webgfx-tests-fxr/
+
+# Room schemas
+app/schemas/

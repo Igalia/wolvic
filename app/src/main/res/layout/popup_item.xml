@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tool="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="callback"
+            type="org.mozilla.vrbrowser.ui.callbacks.PopUpSiteItemCallback" />
+        <variable
+            name="item"
+            type="org.mozilla.vrbrowser.db.PopUpSite" />
+    </data>
+
+    <RelativeLayout
+        android:id="@+id/layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp">
+
+        <ImageView
+            android:id="@+id/delete"
+            android:layout_width="@dimen/language_row_icon_size"
+            android:layout_height="@dimen/language_row_icon_size"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_icon_language_delete"
+            app:srcCompat="@drawable/ic_icon_language_delete"
+            android:tint="@color/fog"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="@{(view) -> callback != null ? callback.onDelete(item) : void}" />
+
+        <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+            android:id="@+id/site"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_toEndOf="@id/delete"
+            android:layout_alignParentEnd="true"
+            android:gravity="center_vertical"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            app:description="@{item.url}"
+            app:on_text="@string/pop_up_site_switch_allow"
+            app:off_text="@string/pop_up_site_switch_block"
+            tool:text="http://mozilla.org"/>
+
+    </RelativeLayout>
+</layout>

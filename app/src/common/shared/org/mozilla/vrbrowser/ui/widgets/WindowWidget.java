@@ -54,13 +54,10 @@ import org.mozilla.vrbrowser.ui.widgets.dialogs.MaxWindowsWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.MessageDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.SelectionActionWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.AlertPromptWidget;
-import org.mozilla.vrbrowser.ui.widgets.prompts.AuthPromptWidget;
-import org.mozilla.vrbrowser.ui.widgets.prompts.ChoicePromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.ConfirmPromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.PromptWidget;
-import org.mozilla.vrbrowser.ui.widgets.prompts.TextPromptWidget;
-import org.mozilla.vrbrowser.utils.ViewUtils;
 import org.mozilla.vrbrowser.utils.SystemUtils;
+import org.mozilla.vrbrowser.utils.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -75,10 +72,8 @@ import mozilla.components.concept.storage.VisitType;
 import static org.mozilla.vrbrowser.utils.ServoUtils.isInstanceOfServoSession;
 
 public class WindowWidget extends UIWidget implements SessionChangeListener,
-        GeckoSession.ContentDelegate, GeckoSession.PromptDelegate,
-        GeckoSession.NavigationDelegate, VideoAvailabilityListener,
-        GeckoSession.HistoryDelegate, GeckoSession.ProgressDelegate,
-        GeckoSession.SelectionActionDelegate {
+        GeckoSession.ContentDelegate, GeckoSession.NavigationDelegate, VideoAvailabilityListener,
+        GeckoSession.HistoryDelegate, GeckoSession.ProgressDelegate, GeckoSession.SelectionActionDelegate {
 
     public interface HistoryViewDelegate {
         default void onHistoryViewShown(WindowWidget aWindow) {}
@@ -100,12 +95,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private TopBarWidget mTopBar;
     private TitleBarWidget mTitleBar;
     private WidgetManagerDelegate mWidgetManager;
-    private ChoicePromptWidget mChoicePrompt;
     private AlertPromptWidget mAlertPrompt;
     private MaxWindowsWidget mMaxWindowsDialog;
     private ConfirmPromptWidget mConfirmPrompt;
-    private TextPromptWidget mTextPrompt;
-    private AuthPromptWidget mAuthPrompt;
     private NoInternetWidget mNoInternetToast;
     private MessageDialogWidget mAppDialog;
     private ClearCacheDialogWidget mClearCacheDialog;
@@ -152,7 +144,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         mWindowId = windowId;
         mSessionStack = SessionStore.get().createSessionStack(mWindowId, privateMode);
-        mSessionStack.setPromptDelegate(this);
         mSessionStack.addSessionChangeListener(this);
         mSessionStack.addContentListener(this);
         mSessionStack.addVideoAvailabilityListener(this);
@@ -868,7 +859,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     @Override
     public void releaseWidget() {
-        mSessionStack.setPromptDelegate(null);
         mSessionStack.removeSessionChangeListener(this);
         mSessionStack.removeContentListener(this);
         mSessionStack.removeVideoAvailabilityListener(this);
@@ -1134,7 +1124,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 R.string.history_clear_cancel,
                 R.string.history_clear_now
         });
-        mClearCacheDialog.setButtonsDelegate((index) -> {
+        mClearCacheDialog.setButtonsDelegate(index -> {
             if (index == BaseAppDialogWidget.LEFT) {
                 mClearCacheDialog.hide(REMOVE_WIDGET);
 
@@ -1307,146 +1297,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
     };
 
-    // PromptDelegate
-
-    @Nullable
-    @Override
-    public GeckoResult<PromptResponse> onAlertPrompt(@NonNull GeckoSession geckoSession, @NonNull AlertPrompt alertPrompt) {
-        final GeckoResult<PromptResponse> result = new GeckoResult<>();
-
-        mAlertPrompt = new AlertPromptWidget(getContext());
-        mAlertPrompt.mWidgetPlacement.parentHandle = getHandle();
-        mAlertPrompt.mWidgetPlacement.parentAnchorY = 0.0f;
-        mAlertPrompt.mWidgetPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.base_app_dialog_y_distance);
-        mAlertPrompt.setTitle(alertPrompt.title);
-        mAlertPrompt.setMessage(alertPrompt.message);
-        mAlertPrompt.setPromptDelegate(() -> result.complete(alertPrompt.dismiss()));
-        mAlertPrompt.show(REQUEST_FOCUS);
-
-        return result;
-    }
-
-    @Nullable
-    @Override
-    public GeckoResult<PromptResponse> onButtonPrompt(@NonNull GeckoSession geckoSession, @NonNull ButtonPrompt buttonPrompt) {
-        final GeckoResult<PromptResponse> result = new GeckoResult<>();
-
-        mConfirmPrompt = new ConfirmPromptWidget(getContext());
-        mConfirmPrompt.mWidgetPlacement.parentHandle = getHandle();
-        mConfirmPrompt.mWidgetPlacement.parentAnchorY = 0.0f;
-        mConfirmPrompt.mWidgetPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.base_app_dialog_y_distance);
-        mConfirmPrompt.setTitle(buttonPrompt.title);
-        mConfirmPrompt.setMessage(buttonPrompt.message);
-        mConfirmPrompt.setButtons(new String[] {
-                getResources().getText(R.string.ok_button).toString(),
-                getResources().getText(R.string.cancel_button).toString()
-        });
-        mConfirmPrompt.setPromptDelegate(new ConfirmPromptWidget.ConfirmPromptDelegate() {
-            @Override
-            public void confirm(int index) {
-                result.complete(buttonPrompt.confirm(index));
-            }
-
-            @Override
-            public void dismiss() {
-                result.complete(buttonPrompt.dismiss());
-            }
-        });
-        mConfirmPrompt.show(REQUEST_FOCUS);
-
-        return result;
-    }
-
-    @Nullable
-    @Override
-    public GeckoResult<PromptResponse> onTextPrompt(@NonNull GeckoSession geckoSession, @NonNull TextPrompt textPrompt) {
-        final GeckoResult<PromptResponse> result = new GeckoResult<>();
-
-        mTextPrompt = new TextPromptWidget(getContext());
-        mTextPrompt.mWidgetPlacement.parentHandle = getHandle();
-        mTextPrompt.mWidgetPlacement.parentAnchorY = 0.0f;
-        mTextPrompt.mWidgetPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.base_app_dialog_y_distance);
-        mTextPrompt.setTitle(textPrompt.title);
-        mTextPrompt.setMessage(textPrompt.message);
-        mTextPrompt.setDefaultText(textPrompt.defaultValue);
-        mTextPrompt.setPromptDelegate(new TextPromptWidget.TextPromptDelegate() {
-            @Override
-            public void confirm(String message) {
-                result.complete(textPrompt.confirm(message));
-            }
-
-            @Override
-            public void dismiss() {
-                result.complete(textPrompt.dismiss());
-            }
-        });
-        mTextPrompt.show(REQUEST_FOCUS);
-
-        return result;
-    }
-
-    @Nullable
-    @Override
-    public GeckoResult<PromptResponse> onAuthPrompt(@NonNull GeckoSession geckoSession, @NonNull AuthPrompt authPrompt) {
-        final GeckoResult<PromptResponse> result = new GeckoResult<>();
-
-        mAuthPrompt = new AuthPromptWidget(getContext());
-        mAuthPrompt.mWidgetPlacement.parentHandle = getHandle();
-        mAuthPrompt.mWidgetPlacement.parentAnchorY = 0.0f;
-        mAuthPrompt.mWidgetPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.base_app_dialog_y_distance);
-        mAuthPrompt.setTitle(authPrompt.title);
-        mAuthPrompt.setMessage(authPrompt.message);
-        mAuthPrompt.setAuthOptions(authPrompt.authOptions);
-        mAuthPrompt.setPromptDelegate(new AuthPromptWidget.AuthPromptDelegate() {
-            @Override
-            public void dismiss() {
-                result.complete(authPrompt.dismiss());
-            }
-
-            @Override
-            public void confirm(String password) {
-                result.complete(authPrompt.confirm(password));
-            }
-
-            @Override
-            public void confirm(String username, String password) {
-                result.complete(authPrompt.confirm(username, password));
-            }
-        });
-        mAuthPrompt.show(REQUEST_FOCUS);
-
-        return result;
-    }
-
-    @Nullable
-    @Override
-    public GeckoResult<PromptResponse> onChoicePrompt(@NonNull GeckoSession geckoSession, @NonNull ChoicePrompt choicePrompt) {
-        final GeckoResult<PromptResponse> result = new GeckoResult<>();
-
-        mChoicePrompt = new ChoicePromptWidget(getContext());
-        mChoicePrompt.mWidgetPlacement.parentHandle = getHandle();
-        mChoicePrompt.mWidgetPlacement.parentAnchorY = 0.0f;
-        mChoicePrompt.mWidgetPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.base_app_dialog_y_distance);
-        mChoicePrompt.setTitle(choicePrompt.title);
-        mChoicePrompt.setMessage(choicePrompt.message);
-        mChoicePrompt.setChoices(choicePrompt.choices);
-        mChoicePrompt.setMenuType(choicePrompt.type);
-        mChoicePrompt.setPromptDelegate(new ChoicePromptWidget.ChoicePromptDelegate() {
-            @Override
-            public void confirm(String[] choices) {
-                result.complete(choicePrompt.confirm(choices));
-            }
-
-            @Override
-            public void dismiss() {
-
-            }
-        });
-        mChoicePrompt.show(REQUEST_FOCUS);
-
-        return result;
-    }
-
     private void hideContextMenus() {
         if (mContextMenu != null) {
             mContextMenu.hide(REMOVE_WIDGET);
@@ -1464,7 +1314,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             mWidgetPlacement.tintColor = 0xFFFFFFFF;
             mWidgetManager.updateWidget(this);
         }
-        
+
         if (mLibraryItemContextMenu != null && mLibraryItemContextMenu.isVisible()) {
             mLibraryItemContextMenu.hide(REMOVE_WIDGET);
         }

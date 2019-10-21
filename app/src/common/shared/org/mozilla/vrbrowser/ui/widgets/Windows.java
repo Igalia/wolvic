@@ -13,6 +13,7 @@ import com.google.gson.reflect.TypeToken;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.Media;
+import org.mozilla.vrbrowser.browser.PromptDelegate;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.browser.engine.SessionStack;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
@@ -84,6 +85,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     private boolean mStoredCurvedMode = false;
     private boolean mForcedCurvedMode = false;
     private boolean mIsPaused = false;
+    private PromptDelegate mPromptDelegate;
 
     public enum WindowPlacement{
         FRONT(0),
@@ -114,6 +116,8 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
         mRegularWindowPlacement = WindowPlacement.FRONT;
         mPrivateWindowPlacement = WindowPlacement.FRONT;
+
+        mPromptDelegate = new PromptDelegate(mContext);
 
         mStoredCurvedMode = SettingsStore.getInstance(mContext).getCylinderDensity() > 0.0f;
 
@@ -358,6 +362,8 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             if (mDelegate != null) {
                 mDelegate.onFocusedWindowChanged(mFocusedWindow, prev);
             }
+
+            mPromptDelegate.attachToWindow(mFocusedWindow);
         }
     }
 
@@ -404,6 +410,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
     public void onDestroy() {
         mDelegate = null;
+        mPromptDelegate.detachFromWindow();
         for (WindowWidget window: mRegularWindows) {
             window.close();
         }

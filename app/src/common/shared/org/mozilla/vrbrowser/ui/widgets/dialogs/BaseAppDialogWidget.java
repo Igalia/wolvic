@@ -24,6 +24,7 @@ public class BaseAppDialogWidget extends UIDialog {
 
     public interface Delegate {
         void onButtonClicked(int index);
+        default void onDismiss() {}
     }
 
     public static final int LEFT = 0;

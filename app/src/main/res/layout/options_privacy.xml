@@ -125,6 +125,19 @@
                     app:off_text="@string/permission_reject"
                     app:description="@string/security_options_permission_storage" />
 
+                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                    android:id="@+id/popUpsBlockingSwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="40dp"
+                    app:description="@string/security_options_block_pup_up_windows" />
+
+                <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                    android:id="@+id/popUpsBlockingExceptionsButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:buttonText="@string/security_options_block_pup_up_settings" />
+
                 <TextView
                     android:id="@+id/dataCollectionTitle"
                     style="@style/settingsDescription"
@@ -167,6 +180,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:description="@string/privacy_options_reset"
+            app:buttonText="@string/developer_options_reset_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

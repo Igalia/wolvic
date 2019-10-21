@@ -275,6 +275,11 @@
     <!-- Cache Dialog -->
     <dimen name="cache_app_dialog_width">585dp</dimen>
 
+    <!-- PopUp Dialog -->
+    <dimen name="pop_up_app_dialog_width">420dp</dimen>
+    <dimen name="pop_up_app_dialog_height">280dp</dimen>
+    <dimen name="pop_up_row_fade_size">120dp</dimen>
+
     <dimen name="scrollbarWidth">10dp</dimen>
     <dimen name="scrollbarMinHeight">20dp</dimen>
 </resources>

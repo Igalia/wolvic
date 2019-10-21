@@ -51,6 +51,15 @@ android {
                 arguments "-DANDROID_STL=c++_shared"
             }
         }
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [
+                        "room.schemaLocation":"$projectDir/schemas".toString(),
+                        "room.incremental":"true",
+                        "room.expandProjection":"true"]
+            }
+        }
+
     }
 
     if (gradle.hasProperty('userProperties.taskclusterBuild')) {
@@ -424,6 +433,8 @@ dependencies {
     implementation deps.support.annotations
     implementation deps.constraint_layout
     implementation deps.gson
+    implementation deps.room.runtime
+    annotationProcessor deps.room.compiler
 
     // Android Components
     implementation deps.mozilla_speech
