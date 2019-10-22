@@ -208,4 +208,7 @@
     <string name="search_yandex_by" translatable="false">https://yandex.by/search</string>
     <string name="search_yandex_tr" translatable="false">https://yandex.com.tr/search</string>
     <string name="search_yandex_kz" translatable="false">https://yandex.kz/search</string>
+
+    <!-- Settings Survey link -->
+    <string name="survey_link" translatable="false">https://qsurvey.mozilla.com/s3/FxR</string>
 </resources>

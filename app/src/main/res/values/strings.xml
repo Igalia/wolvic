@@ -85,11 +85,6 @@
          sdcard. '%1$s' will be replaced at runtime with the website's domain name. -->
     <string name="permission_persistent_storage">Will you allow %1$s to store data in persistent storage?</string>
 
-    <!-- This string is displayed in the Settings dialog box and how
-         the user can know which version of the application they are currently running.
-         '%1$s' will be replaced at runtime with the application version number. -->
-    <string name="settings_version">version %1$s</string>
-
     <!-- This string is displayed in the Settings dialog box and is used to label an
          On/Off switch which toggles whether an application crash is reported without first
          prompting the user. -->
@@ -270,6 +265,10 @@
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
         opens the Firfox Reality support web site in the browser window. -->
     <string name="settings_help">Help</string>
+
+    <!-- This string is displayed in the settings header under the Firefox Reality logo. When clicked the settings panel is closed
+         a the survey web site in opened in the currently focused window -->
+    <string name="settings_send_your_feedback">Send us Your Feedback</string>
 
     <!-- This string is the title of a dialog box shown to the user when a settings
          change requires the application to restart. -->

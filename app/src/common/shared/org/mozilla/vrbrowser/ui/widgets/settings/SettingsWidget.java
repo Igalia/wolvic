@@ -5,10 +5,12 @@
 
 package org.mozilla.vrbrowser.ui.widgets.settings;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
+import android.text.Html;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -23,8 +25,8 @@ import android.widget.TextView;
 import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
-import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.browser.engine.SessionStack;
+import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.ui.views.HoneycombButton;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
@@ -78,6 +80,7 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
         initialize(aContext);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void initialize(Context aContext) {
         inflate(aContext, R.layout.settings, this);
 
@@ -138,7 +141,12 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
         TextView versionText = findViewById(R.id.versionText);
         try {
             PackageInfo pInfo = getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), 0);
-            versionText.setText(String.format(getResources().getString(R.string.settings_version), pInfo.versionName));
+            String app_name = getResources().getString(R.string.app_name);
+            String[] app_name_parts = app_name.split(" ");
+            versionText.setText(Html.fromHtml("<b>" + app_name_parts[0] + "</b>" +
+                    " " + app_name_parts[1] + " " +
+                    " <b>" + pInfo.versionName + "</b>",
+                    Html.FROM_HTML_MODE_LEGACY));
 
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
@@ -147,13 +155,19 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
         mBuildText = findViewById(R.id.buildText);
         mBuildText.setText(versionCodeToDate(BuildConfig.VERSION_CODE));
 
-        ViewGroup settingsMasthead = findViewById(R.id.settingsMasthead);
+        TextView settingsMasthead = findViewById(R.id.buildText);
         final GestureDetector gd = new GestureDetector(getContext(), new VersionGestureListener());
         settingsMasthead.setOnTouchListener((view, motionEvent) -> {
             if (gd.onTouchEvent(motionEvent)) {
                 return true;
             }
             return view.performClick();
+        });
+
+        TextView surveyLink = findViewById(R.id.surveyLink);
+        surveyLink.setOnClickListener(v -> {
+            mWidgetManager.getFocusedWindow().getSessionStack().newSessionWithUrl(getResources().getString(R.string.survey_link));
+            exitWholeSettings();
         });
 
         HoneycombButton reportButton = findViewById(R.id.helpButton);
