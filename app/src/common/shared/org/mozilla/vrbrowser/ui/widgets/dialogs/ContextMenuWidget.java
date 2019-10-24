@@ -32,9 +32,9 @@ public class ContextMenuWidget extends MenuWidget implements WidgetManagerDelega
     }
 
     private void initialize() {
-        mAdapter.updateBackgrounds(getContext().getDrawable(R.drawable.context_menu_item_background_first),
-                getContext().getDrawable(R.drawable.context_menu_item_background_last),
-                getContext().getDrawable(R.drawable.context_menu_item_background));
+        mAdapter.updateBackgrounds(R.drawable.context_menu_item_background_first,
+                R.drawable.context_menu_item_background_last,
+                R.drawable.context_menu_item_background);
         mAdapter.updateLayourId(R.layout.context_menu_item);
         menuContainer.setBackground(getContext().getDrawable(R.drawable.context_menu_background));
     }
@@ -78,14 +78,14 @@ public class ContextMenuWidget extends MenuWidget implements WidgetManagerDelega
         mItems = new ArrayList<>();
         mItems.add(new MenuWidget.MenuItem(aContextElement.linkUri, 0, null));
         if (mWidgetManager.canOpenNewWindow()) {
-            mItems.add(new MenuWidget.MenuItem(getContext().getString(R.string.context_menu_open_new_window), 0, () -> {
+            mItems.add(new MenuWidget.MenuItem(getContext().getString(R.string.context_menu_open_new_window_1), 0, () -> {
                 if (!StringUtils.isEmpty(aContextElement.linkUri)) {
                     mWidgetManager.openNewWindow(aContextElement.linkUri);
                 }
                 onDismiss();
             }));
         }
-        mItems.add(new MenuWidget.MenuItem(getContext().getString(R.string.context_menu_open_new_tab), 0, () -> {
+        mItems.add(new MenuWidget.MenuItem(getContext().getString(R.string.context_menu_open_new_tab_1), 0, () -> {
             if (!StringUtils.isEmpty(aContextElement.linkUri)) {
                 mWidgetManager.openNewTab(aContextElement.linkUri);
             }

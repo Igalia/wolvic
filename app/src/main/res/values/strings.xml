@@ -903,10 +903,10 @@
     <string name="private_browsing_exit_tooltip">Exit Private Browsing</string>
 
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the target url in a new window. -->
-    <string name="context_menu_open_new_window">Open in a new window.</string>
+    <string name="context_menu_open_new_window_1">Open in a new window</string>
 
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the target url in a new tab. -->
-    <string name="context_menu_open_new_tab">Open in a new tab.</string>
+    <string name="context_menu_open_new_tab_1">Open in a new tab</string>
 
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it copies the target to the clipboard -->
     <string name="context_menu_copy_link">Copy link</string>

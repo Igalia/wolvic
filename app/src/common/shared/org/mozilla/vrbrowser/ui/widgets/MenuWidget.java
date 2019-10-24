@@ -102,22 +102,22 @@ public abstract class MenuWidget extends UIWidget {
         private Context mContext;
         private ArrayList<MenuItem> mItems;
         private LayoutInflater mInflater;
-        private Drawable firstItemDrawable;
-        private Drawable lastItemDrawable;
-        private Drawable regularItemDrawable;
+        private int firstItemDrawable;
+        private int lastItemDrawable;
+        private int regularItemDrawable;
         private int layoutId;
 
         MenuAdapter(Context aContext, ArrayList<MenuItem> aItems) {
             mContext = aContext;
             mItems = aItems != null ? aItems : new ArrayList<MenuItem>();
             mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            firstItemDrawable = aContext.getDrawable(R.drawable.menu_item_background_first);
-            lastItemDrawable = aContext.getDrawable(R.drawable.menu_item_background_last);
-            regularItemDrawable = aContext.getDrawable(R.drawable.menu_item_background);
+            firstItemDrawable = R.drawable.menu_item_background_first;
+            lastItemDrawable = R.drawable.menu_item_background_last;
+            regularItemDrawable = R.drawable.menu_item_background;
             layoutId = R.layout.menu_item_image_text;
         }
 
-        public void updateBackgrounds(Drawable first, Drawable last, Drawable regular) {
+        public void updateBackgrounds(int first, int last, int regular) {
             firstItemDrawable = first;
             lastItemDrawable = last;
             regularItemDrawable = regular;
@@ -152,11 +152,11 @@ public abstract class MenuWidget extends UIWidget {
             }
             view.setTag(R.string.position_tag, position);
             if (position == 0) {
-                view.setBackground(firstItemDrawable);
+                view.setBackgroundResource(firstItemDrawable);
             } else if (position == mItems.size() - 1) {
-                view.setBackground(lastItemDrawable);
+                view.setBackgroundResource(lastItemDrawable);
             } else {
-                view.setBackground(regularItemDrawable);
+                view.setBackgroundResource(regularItemDrawable);
             }
 
             MenuItem item = mItems.get(position);
