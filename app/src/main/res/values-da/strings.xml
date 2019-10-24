@@ -1058,6 +1058,13 @@
          when there is one window left. When clicked, it closes the private session -->
     <string name="private_clear_button">Ryd</string>
 
+    <!-- This string is displayed in the title of the pop-up blocking dialog.
+         '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="popup_block_title">%1$s forhindrede et pop op-vindue fra at blive åbnet på dette websted</string>
+
+    <!-- This string is displayed as a description below the title of the pop-up blocking dialog. -->
+    <string name="popup_block_description">Vil du åbne det alligevel?</string>
+
     <!-- This string is displayed on the right of the checkbox in the the pop-up blocking dialog.
          If the checkbox is checked Firefox will never ask again to block pop-ups for this site -->
     <string name="popup_block_checkbox">Spørg ikke igen for dette websted</string>
