@@ -62,7 +62,7 @@ public class CustomScrollView extends ScrollView {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CustomScrollView, 0, defStyle);
             mThumbDrawable = a.getDrawable(R.styleable.CustomScrollView_android_fastScrollThumbDrawable);
             if (mThumbDrawable == null) {
-                mThumbDrawable = getResources().getDrawable(R.drawable.fast_scroll_thumb, getContext().getTheme());
+                mThumbDrawable = getResources().getDrawable(R.drawable.scrollbar_thumb, getContext().getTheme());
             }
             mIsAlwaysVisible = a.getBoolean(R.styleable.CustomScrollView_android_fastScrollAlwaysVisible, false);
             mThumbDynamicHeight = a.getBoolean(R.styleable.CustomScrollView_dynamicHeight, true);

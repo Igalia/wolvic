@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
+<selector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:enterFadeDuration="@integer/ui_fadeAnimTime"
+    android:exitFadeDuration="@integer/ui_fadeAnimTime">
 <item android:state_enabled="false">
     <shape android:shape="rectangle">
+        <stroke android:color="@color/asphalt_blur" android:width="@dimen/blur_radius" />
         <solid android:color="@color/asphalt" />
         <size android:width="20dp" android:height="20dp" />
         <corners android:bottomRightRadius="20dp" android:topRightRadius="20dp" />
@@ -9,6 +12,7 @@
 </item>
 <item android:state_pressed="true">
     <shape android:shape="rectangle">
+        <stroke android:color="@color/void_color_blur" android:width="@dimen/blur_radius" />
         <solid android:color="@color/void_color" />
         <size
             android:width="20dp"
@@ -20,6 +24,7 @@
 </item>
 <item android:state_hovered="true" android:state_pressed="false">
     <shape android:shape="rectangle">
+        <stroke android:color="@color/fog_blur" android:width="@dimen/blur_radius" />
         <solid android:color="@color/fog" />
         <size
             android:width="20dp"
@@ -31,6 +36,7 @@
 </item>
 <item android:state_hovered="false" android:state_pressed="false">
     <shape android:shape="rectangle">
+        <stroke android:color="@color/asphalt_blur" android:width="@dimen/blur_radius" />
         <solid android:color="@color/asphalt" />
         <size
             android:width="20dp"

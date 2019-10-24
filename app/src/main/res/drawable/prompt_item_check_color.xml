@@ -1,38 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
+<selector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:enterFadeDuration="@integer/ui_fadeAnimTime"
+    android:exitFadeDuration="@integer/ui_fadeAnimTime">
     <item android:state_pressed="true" android:state_hovered="false">
         <vector android:height="24dp" android:viewportHeight="200"
-                android:viewportWidth="200" android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
+                android:viewportWidth="200" android:width="24dp">
             <path android:fillColor="@color/fog" android:fillType="evenOdd" android:pathData="M41.57,110.36c-5.36,-8.11 19.78,-23 25,-12.92 5.7,11.09 13,21.31 18.93,27.33 17.22,-28.24 37.69,-65.12 58.25,-81.64 10,-8 19.55,7 13.6,12.89 -26.21,26.12 -50,68.16 -60.76,97.57 -2.54,6.94 -15,8 -21.88,0 -9.44,-11 -23.43,-28.56 -33.13,-43.23Z"/>
         </vector>
     </item>
     <item android:state_checked="false" android:state_hovered="true" android:state_pressed="false">
         <vector android:height="24dp" android:viewportHeight="200"
-                android:viewportWidth="200" android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
+                android:viewportWidth="200" android:width="24dp">
             <path android:fillColor="@color/fog" android:fillType="evenOdd" android:pathData="M41.57,110.36c-5.36,-8.11 19.78,-23 25,-12.92 5.7,11.09 13,21.31 18.93,27.33 17.22,-28.24 37.69,-65.12 58.25,-81.64 10,-8 19.55,7 13.6,12.89 -26.21,26.12 -50,68.16 -60.76,97.57 -2.54,6.94 -15,8 -21.88,0 -9.44,-11 -23.43,-28.56 -33.13,-43.23Z"/>
         </vector>
     </item>
     <item android:state_checked="true" android:state_hovered="true" android:state_pressed="false">
         <vector android:height="24dp" android:viewportHeight="200"
-                android:viewportWidth="200" android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
+                android:viewportWidth="200" android:width="24dp">
             <path android:fillColor="@color/void_color" android:fillType="evenOdd" android:pathData="M41.57,110.36c-5.36,-8.11 19.78,-23 25,-12.92 5.7,11.09 13,21.31 18.93,27.33 17.22,-28.24 37.69,-65.12 58.25,-81.64 10,-8 19.55,7 13.6,12.89 -26.21,26.12 -50,68.16 -60.76,97.57 -2.54,6.94 -15,8 -21.88,0 -9.44,-11 -23.43,-28.56 -33.13,-43.23Z"/>
         </vector>
     </item>
     <item android:state_enabled="false">
         <vector android:height="24dp" android:viewportHeight="200"
-                android:viewportWidth="200" android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
+                android:viewportWidth="200" android:width="24dp">
             <path android:fillColor="@color/iron" android:fillType="evenOdd" android:pathData="M41.57,110.36c-5.36,-8.11 19.78,-23 25,-12.92 5.7,11.09 13,21.31 18.93,27.33 17.22,-28.24 37.69,-65.12 58.25,-81.64 10,-8 19.55,7 13.6,12.89 -26.21,26.12 -50,68.16 -60.76,97.57 -2.54,6.94 -15,8 -21.88,0 -9.44,-11 -23.43,-28.56 -33.13,-43.23Z"/>
         </vector>
     </item>
     <item android:state_checked="false">
         <vector android:height="24dp" android:viewportHeight="200"
-                android:viewportWidth="200" android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
+                android:viewportWidth="200" android:width="24dp">
             <path android:fillColor="@color/void_color" android:fillType="evenOdd" android:pathData="M41.57,110.36c-5.36,-8.11 19.78,-23 25,-12.92 5.7,11.09 13,21.31 18.93,27.33 17.22,-28.24 37.69,-65.12 58.25,-81.64 10,-8 19.55,7 13.6,12.89 -26.21,26.12 -50,68.16 -60.76,97.57 -2.54,6.94 -15,8 -21.88,0 -9.44,-11 -23.43,-28.56 -33.13,-43.23Z"/>
         </vector>
     </item>
     <item android:state_checked="true">
         <vector android:height="24dp" android:viewportHeight="200"
-                android:viewportWidth="200" android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
+                android:viewportWidth="200" android:width="24dp">
             <path android:fillColor="@color/fog" android:fillType="evenOdd" android:pathData="M41.57,110.36c-5.36,-8.11 19.78,-23 25,-12.92 5.7,11.09 13,21.31 18.93,27.33 17.22,-28.24 37.69,-65.12 58.25,-81.64 10,-8 19.55,7 13.6,12.89 -26.21,26.12 -50,68.16 -60.76,97.57 -2.54,6.94 -15,8 -21.88,0 -9.44,-11 -23.43,-28.56 -33.13,-43.23Z"/>
         </vector>
     </item>

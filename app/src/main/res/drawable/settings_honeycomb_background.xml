@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:enterFadeDuration="@integer/ui_fadeAnimTime"
+    android:exitFadeDuration="@integer/ui_fadeAnimTime">
+    <item android:state_pressed="true">
+        <vector android:width="200dp"
+            android:height="200dp"
+            android:viewportWidth="200"
+            android:viewportHeight="200">
+            <path
+                android:fillColor="@color/void_color"
+                android:pathData="M14.75 60.84v78.32a17.45 17.45 0 0 0 8.72 15.09l67.82 39.15a17.38 17.38 0 0 0 17.42 0l67.82-39.15a17.45 17.45 0 0 0 8.72-15.09V60.84a17.45 17.45 0 0 0-8.72-15.09L108.71 6.6a17.38 17.38 0 0 0-17.42 0L23.47 45.75a17.45 17.45 0 0 0-8.72 15.09z"/>
+        </vector>
+    </item>
+    <item android:state_hovered="true">
+        <vector android:width="200dp"
+            android:height="200dp"
+            android:viewportWidth="200"
+            android:viewportHeight="200">
+            <path
+                android:fillColor="@color/fog"
+                android:pathData="M14.75 60.84v78.32a17.45 17.45 0 0 0 8.72 15.09l67.82 39.15a17.38 17.38 0 0 0 17.42 0l67.82-39.15a17.45 17.45 0 0 0 8.72-15.09V60.84a17.45 17.45 0 0 0-8.72-15.09L108.71 6.6a17.38 17.38 0 0 0-17.42 0L23.47 45.75a17.45 17.45 0 0 0-8.72 15.09z"/>
+        </vector>
+    </item>
+    <item>
+        <vector android:width="200dp"
+            android:height="200dp"
+            android:viewportWidth="200"
+            android:viewportHeight="200">
+            <path
+                android:fillColor="@color/asphalt"
+                android:pathData="M14.75 60.84v78.32a17.45 17.45 0 0 0 8.72 15.09l67.82 39.15a17.38 17.38 0 0 0 17.42 0l67.82-39.15a17.45 17.45 0 0 0 8.72-15.09V60.84a17.45 17.45 0 0 0-8.72-15.09L108.71 6.6a17.38 17.38 0 0 0-17.42 0L23.47 45.75a17.45 17.45 0 0 0-8.72 15.09z"/>
+        </vector>
+    </item>
+</selector>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:enterFadeDuration="100" android:exitFadeDuration="100">
+    android:enterFadeDuration="@integer/ui_fadeAnimTime"
+    android:exitFadeDuration="@integer/ui_fadeAnimTime">
     <item android:state_pressed="true">
         <shape
             android:shape="rectangle">

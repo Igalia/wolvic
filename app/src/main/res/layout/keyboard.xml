@@ -25,7 +25,7 @@
                     android:padding="10dp"
                     android:src="@drawable/ic_icon_exit"
                     android:scaleType="fitCenter"
-                    android:background="@drawable/keyboard_key_background"/>
+                    android:background="@drawable/keyboard_button_background"/>
                 <org.mozilla.vrbrowser.ui.views.UIButton
                     android:id="@+id/keyboardMoveButton"
                     android:layout_width="@dimen/keyboard_key_width"
@@ -37,7 +37,7 @@
                     android:padding="10dp"
                     android:src="@drawable/ic_icon_move"
                     android:scaleType="fitCenter"
-                    android:background="@drawable/keyboard_key_background"/>
+                    android:background="@drawable/keyboard_button_background"/>
             </LinearLayout>
 
             <RelativeLayout

@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_enabled="true">
+<selector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:enterFadeDuration="@integer/ui_fadeAnimTime"
+    android:exitFadeDuration="@integer/ui_fadeAnimTime">
+    <item android:state_enabled="false">
+        <shape>
+            <gradient
+                android:type="linear"
+                android:angle="0"
+                android:startColor="#00000000"
+                android:endColor="@color/asphalt" />
+        </shape>
+    </item>
+    <item android:state_focused="true">
         <shape>
             <gradient
                 android:type="linear"
@@ -9,7 +20,16 @@
                 android:endColor="@color/void_color" />
         </shape>
     </item>
-    <item android:state_enabled="false">
+    <item android:state_hovered="true">
+        <shape>
+            <gradient
+                android:type="linear"
+                android:angle="0"
+                android:startColor="#00000000"
+                android:endColor="@color/asphalt" />
+        </shape>
+    </item>
+    <item>
         <shape>
             <gradient
                 android:type="linear"

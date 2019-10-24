@@ -7,6 +7,12 @@
         android:layout_gravity="center"
         android:gravity="center_horizontal">
 
+        <FrameLayout
+            android:layout_width="45dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:background="@drawable/fullscreen_button" />
+
         <LinearLayout
             android:id="@+id/multiWindowControlsContainer"
             style="?attr/navigationBarStyle"
@@ -42,5 +48,6 @@
             android:textAllCaps="true"
             android:textSize="@dimen/text_medium_big_size"
             android:visibility="gone" />
+
     </FrameLayout>
 </merge>
