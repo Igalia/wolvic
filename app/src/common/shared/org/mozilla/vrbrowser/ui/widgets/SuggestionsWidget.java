@@ -75,7 +75,7 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                ThreadUtils.postToUiThread(() -> SuggestionsWidget.super.hide(REMOVE_WIDGET));
+                post(() -> SuggestionsWidget.super.hide(REMOVE_WIDGET));
             }
 
             @Override
@@ -145,6 +145,7 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
         mAdapter.clear();
         mAdapter.addAll(items);
         mAdapter.notifyDataSetChanged();
+        mList.invalidateViews();
     }
 
     public void updatePlacement(int aWidth) {
@@ -199,6 +200,7 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
             super(context, resource, objects);
         }
 
+        @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View listItem = convertView;
 

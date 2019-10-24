@@ -109,7 +109,7 @@ public class SearchEngineWrapper implements SharedPreferences.OnSharedPreference
         // TODO: Use mSuggestionsClient.getSuggestions when fixed in browser-search.
         String query = getSuggestionURL(aQuery);
         new Handler(mContext.getMainLooper()).post(() ->
-                SuggestionsClient.getSuggestions(mSearchEngine, query).thenAcceptAsync((result) -> future.complete(result)));
+                SuggestionsClient.getSuggestions(mSearchEngine, query).thenAcceptAsync(future::complete));
 
         return future;
     }

@@ -1463,8 +1463,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     @Override
     public void onHistoryStateChange(@NonNull GeckoSession geckoSession, @NonNull HistoryList historyList) {
-        for (HistoryItem item : historyList) {
-            SessionStore.get().getHistoryStore().recordObservation(item.getUri(), new PageObservation(item.getTitle()));
+        if (!mSession.isPrivateMode()) {
+            for (HistoryItem item : historyList) {
+                SessionStore.get().getHistoryStore().recordObservation(item.getUri(), new PageObservation(item.getTitle()));
+            }
         }
     }
 

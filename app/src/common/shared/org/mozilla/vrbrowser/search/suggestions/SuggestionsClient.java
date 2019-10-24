@@ -14,7 +14,7 @@ public class SuggestionsClient {
     private static AsyncHttpClient client = new AsyncHttpClient();
 
     public static CompletableFuture<List<String>> getSuggestions(SearchEngine mEngine, String aQuery) {
-        final CompletableFuture future = new CompletableFuture();
+        final CompletableFuture<List<String>> future = new CompletableFuture<>();
         client.cancelAllRequests(true);
         client.get(aQuery, null, new TextHttpResponseHandler("ISO-8859-1") {
             @Override
