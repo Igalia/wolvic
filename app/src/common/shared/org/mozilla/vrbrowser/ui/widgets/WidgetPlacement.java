@@ -95,10 +95,11 @@ public class WidgetPlacement {
         this.proxifyLayer = w.proxifyLayer;
         this.textureScale = w.textureScale;
         this.cylinder = w.cylinder;
-        this.cylinderMapRadius = w.cylinderMapRadius;
         this.tintColor = w.tintColor;
         this.borderColor = w.borderColor;
         this.name = w.name;
+        this.clearColor = w.clearColor;
+        this.cylinderMapRadius = w.cylinderMapRadius;
     }
 
     public int textureWidth() {

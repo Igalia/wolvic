@@ -1052,15 +1052,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
 
     public void addWidgets(final Iterable<? extends Widget> aWidgets) {
-        for (Widget widget: aWidgets) {
-            mWidgets.put(widget.getHandle(), widget);
-            ((View)widget).setVisibility(widget.getPlacement().visible ? View.VISIBLE : View.GONE);
+        for (Widget widget : aWidgets) {
+            addWidget(widget);
         }
-        queueRunnable(() -> {
-            for (Widget widget: aWidgets) {
-                addWidgetNative(widget.getHandle(), widget.getPlacement());
-            }
-        });
     }
 
     private void updateActiveDialog(final Widget aWidget) {
@@ -1084,13 +1078,17 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     public void addWidget(Widget aWidget) {
         mWidgets.put(aWidget.getHandle(), aWidget);
         ((View)aWidget).setVisibility(aWidget.getPlacement().visible ? View.VISIBLE : View.GONE);
-        queueRunnable(() -> addWidgetNative(aWidget.getHandle(), aWidget.getPlacement()));
+        final int handle = aWidget.getHandle();
+        final WidgetPlacement clone = aWidget.getPlacement().clone();
+        queueRunnable(() -> addWidgetNative(handle, clone));
         updateActiveDialog(aWidget);
     }
 
     @Override
     public void updateWidget(final Widget aWidget) {
-        queueRunnable(() -> updateWidgetNative(aWidget.getHandle(), aWidget.getPlacement()));
+        final int handle = aWidget.getHandle();
+        final WidgetPlacement clone = aWidget.getPlacement().clone();
+        queueRunnable(() -> updateWidgetNative(handle, clone));
 
         final int textureWidth = aWidget.getPlacement().textureWidth();
         final int textureHeight = aWidget.getPlacement().textureHeight();
