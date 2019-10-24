@@ -6,7 +6,9 @@ import android.os.StrictMode;
 import android.os.SystemClock;
 import android.util.Log;
 
-import mozilla.components.lib.fetch.httpurlconnection.HttpURLConnectionClient;
+import androidx.annotation.NonNull;
+import androidx.annotation.UiThread;
+
 import org.mozilla.telemetry.Telemetry;
 import org.mozilla.telemetry.TelemetryHolder;
 import org.mozilla.telemetry.config.TelemetryConfiguration;
@@ -32,11 +34,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.UiThread;
+import mozilla.components.lib.fetch.httpurlconnection.HttpURLConnectionClient;
 
 import static java.lang.Math.toIntExact;
-import static org.mozilla.vrbrowser.ui.widgets.Windows.*;
+import static org.mozilla.vrbrowser.ui.widgets.Windows.MAX_WINDOWS;
+import static org.mozilla.vrbrowser.ui.widgets.Windows.WindowPlacement;
 
 
 public class TelemetryWrapper {
@@ -87,6 +89,7 @@ public class TelemetryWrapper {
         // TODO: Support "select_query" after providing search suggestion.
         private static final String VOICE_QUERY = "voice_query";
         private static final String IMMERSIVE_MODE = "immersive_mode";
+        private static final String TELEMETRY_STATUS = "status";
 
         // How many max-windows dialogs happen / what percentage
         private static final String MAX_WINDOWS_DIALOG = "max_windows_dialog";
@@ -132,6 +135,7 @@ public class TelemetryWrapper {
         private static final String THREE_OPEN_WINDOWS_TIME_PCT = "three_windows_open_time_pct";
         private static final String WINDOWS_OPEN_W_MEAN = "window_open_w_mean";
         private static final String WINDOWS_PRIVATE_OPEN_W_MEAN = "window_open_private_w_mean";
+        private static final String TELEMETRY_STATUS = "telemetry_status";
     }
 
     // We should call this at the application initial stage. Instead,
@@ -151,6 +155,8 @@ public class TelemetryWrapper {
                     .setPreferencesImportantForTelemetry(resources.getString(R.string.settings_key_locale))
                     .setCollectionEnabled(telemetryEnabled)
                     .setUploadEnabled(telemetryEnabled)
+                    // We need to set this to 1 as we want the telemetry opt-in/out ping always to be sent and the minimum is 3 by default.
+                    .setMinimumEventsForUpload(1)
                     .setBuildId(String.valueOf(BuildConfig.VERSION_CODE));
 
             final JSONPingSerializer serializer = new JSONPingSerializer();
@@ -166,6 +172,19 @@ public class TelemetryWrapper {
             TelemetryHolder.set(new Telemetry(configuration, storage, client, scheduler)
                     .addPingBuilder(new TelemetryCorePingBuilder(configuration))
                     .addPingBuilder(new TelemetryMobileEventPingBuilder(configuration)));
+
+            // Check if the Telemetry status has ever been saved (enabled/disabled)
+            boolean saved = SettingsStore.getInstance(aContext).telemetryStatusSaved();
+            // Check if we have already sent the previous status event
+            boolean sent = SettingsStore.getInstance(aContext).isTelemetryPingUpdateSent();
+            // If the Telemetry status has been changed but that ping has not been sent, we send it now
+            // This should only been true for versions of the app prior to implementing the Telemetry status ping
+            // We only send the status ping if it was disabled
+            if (saved && !sent && !telemetryEnabled) {
+                telemetryStatus(false);
+                SettingsStore.getInstance(aContext).setTelemetryPingUpdateSent(true);
+            }
+
         } finally {
             StrictMode.setThreadPolicy(threadPolicy);
         }
@@ -654,6 +673,19 @@ public class TelemetryWrapper {
             openWindowsTime[index] = 0;
             openPrivateWindowsTime[index] = 0;
         }
+    }
+
+    public static void telemetryStatus(boolean status) {
+        TelemetryEvent event = TelemetryEvent.create(Category.ACTION, Method.TELEMETRY_STATUS, Object.APP);
+        event.extra(Extra.TELEMETRY_STATUS, String.valueOf(status));
+        event.queue();
+
+        // We flush immediately as the Telemetry is going to be turned off in case of opting-out
+        // and we want to make sure that this ping is delivered.
+        TelemetryHolder.get()
+                .queuePing(TelemetryCorePingBuilder.TYPE)
+                .queuePing(TelemetryMobileEventPingBuilder.TYPE)
+                .scheduleUpload();
     }
 
 }

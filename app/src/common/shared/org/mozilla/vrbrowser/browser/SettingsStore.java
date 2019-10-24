@@ -74,6 +74,7 @@ public class SettingsStore {
     public final static boolean AUTOPLAY_ENABLED = false;
     public final static boolean DEBUG_LOGGING_DEFAULT = false;
     public final static boolean POP_UPS_BLOCKING_DEFAULT = true;
+    public final static boolean TELEMETRY_STATUS_UPDATE_SENT_DEFAULT = false;
 
     // Enable telemetry by default (opt-out).
     public final static boolean CRASH_REPORTING_DEFAULT = false;
@@ -112,6 +113,11 @@ public class SettingsStore {
         editor.putBoolean(mContext.getString(R.string.settings_key_telemetry), isEnabled);
         editor.commit();
 
+        // We send before disabling in case of opting-out
+        if (!isEnabled) {
+            TelemetryWrapper.telemetryStatus(false);
+        }
+
         // If the state of Telemetry is not the same, we reinitialize it.
         final boolean hasEnabled = isTelemetryEnabled();
         if (hasEnabled != isEnabled) {
@@ -120,6 +126,28 @@ public class SettingsStore {
 
         TelemetryHolder.get().getConfiguration().setUploadEnabled(isEnabled);
         TelemetryHolder.get().getConfiguration().setCollectionEnabled(isEnabled);
+
+        // We send after enabling in case of opting-in
+        if (isEnabled) {
+            TelemetryWrapper.telemetryStatus(true);
+        }
+
+        // Update the status sent flag
+        setTelemetryPingUpdateSent(true);
+    }
+
+    public boolean telemetryStatusSaved() {
+        return mPrefs.contains(mContext.getString(R.string.settings_key_telemetry));
+    }
+
+    public boolean isTelemetryPingUpdateSent() {
+        return mPrefs.getBoolean(mContext.getString(R.string.settings_key_telemetry_status_update_sent), TELEMETRY_STATUS_UPDATE_SENT_DEFAULT);
+    }
+
+    public void setTelemetryPingUpdateSent(boolean isSent) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_telemetry_status_update_sent), isSent);
+        editor.commit();
     }
 
     public void setGeolocationData(String aGeolocationData) {
