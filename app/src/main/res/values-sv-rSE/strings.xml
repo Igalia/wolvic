@@ -10,7 +10,7 @@
          The action key performs a "go" operation to take the user to the target of the text they typed.
          Typically used, for example, when entering a URL. (stylized in uppercase letters as 'GO')
     -->
-    <string name="keyboard_go_label">STARTA</string>
+    <string name="keyboard_go_label">KÖR</string>
 
     <!-- This string is used on the virtual keyboard to label the 'Enter' key with a "Search" IME action.
          The action key performs a "search" operation, taking the user to the results of searching for the text
