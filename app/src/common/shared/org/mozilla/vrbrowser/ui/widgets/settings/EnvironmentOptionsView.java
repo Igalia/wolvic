@@ -50,7 +50,7 @@ class EnvironmentOptionsView extends SettingsView {
         mBinding.envOverrideSwitch.setOnCheckedChangeListener(mEnvOverrideListener);
         setEnvOverride(SettingsStore.getInstance(getContext()).isEnvironmentOverrideEnabled());
         mBinding.envOverrideSwitch.setHelpDelegate(() -> {
-            SessionStore.get().getActiveStore().loadUri(getContext().getString(R.string.environment_override_help_url));
+            SessionStore.get().getActiveSession().loadUri(getContext().getString(R.string.environment_override_help_url));
             exitWholeSettings();
         });
     }

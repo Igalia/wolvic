@@ -158,7 +158,6 @@ template <class T, class U>
 class OculusLayerBase: public OculusLayer {
 public:
   ovrTextureSwapChain * swapChain = nullptr;
-  bool composited = false;
   SurfaceChangedTargetPtr surfaceChangedTarget;
   T layer;
   U ovrLayer;
@@ -177,7 +176,7 @@ public:
 
   virtual void Update(const ovrTracking2& aTracking, ovrTextureSwapChain* aClearSwapChain) override{
     vrb::Color tintColor = layer->GetTintColor();
-    if (!composited && layer->GetClearColor().Alpha()) {
+    if (!IsComposited() && layer->GetClearColor().Alpha()) {
       tintColor = layer->GetClearColor();
     }
     ovrLayer.Header.ColorScale.x = tintColor.Red();
@@ -199,7 +198,7 @@ public:
   }
 
   virtual bool IsDrawRequested() const override {
-    return layer->IsDrawRequested() && ((swapChain && composited) || layer->GetClearColor().Alpha() > 0.0f);
+    return layer->IsDrawRequested() && ((swapChain && IsComposited()) || layer->GetClearColor().Alpha() > 0.0f);
   }
 
   bool GetDrawInFront() const override {
@@ -211,11 +210,11 @@ public:
   }
 
   bool IsComposited() const override {
-    return composited;
+    return layer->IsComposited();
   }
 
   void SetComposited(bool aValue) override  {
-    composited = aValue;
+    layer->SetComposited(aValue);
   }
 
   VRLayerPtr GetLayer() const override  {
@@ -236,7 +235,7 @@ public:
       swapChain = nullptr;
     }
     layer->SetInitialized(false);
-    composited = false;
+    SetComposited(false);
     layer->NotifySurfaceChanged(VRLayer::SurfaceChange::Destroy, nullptr);
   }
 
@@ -253,7 +252,7 @@ public:
   void HandleResize(ovrTextureSwapChain * newSwapChain, jobject newSurface, vrb::FBOPtr newFBO) override {}
 
   ovrTextureSwapChain* GetTargetSwapChain(ovrTextureSwapChain* aClearSwapChain) {
-    return (composited || layer->GetClearColor().Alpha() == 0) ? swapChain : aClearSwapChain;
+    return (IsComposited() || layer->GetClearColor().Alpha() == 0) ? swapChain : aClearSwapChain;
   }
 
   virtual ~OculusLayerBase() {}
@@ -316,7 +315,7 @@ public:
     this->swapChain = newSwapChain;
     this->surface = newSurface;
     this->fbo = newFBO;
-    this->composited = true;
+    this->SetComposited(true);
   }
 
   void Destroy() override {
@@ -351,7 +350,7 @@ protected:
       // Indicate that the first composite notification should be notified to this layer.
       this->surfaceChangedTarget->layer = this;
     }
-    this->composited = aSource->IsComposited();
+    this->SetComposited(aSource->IsComposited());
     this->layer->SetInitialized(aSource->GetLayer()->IsInitialized());
     this->layer->SetResizeDelegate([=]{
       Resize();

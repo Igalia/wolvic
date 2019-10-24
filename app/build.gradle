@@ -455,6 +455,9 @@ dependencies {
     // SQLite helper to handle DBs from assets
     implementation deps.sqlite.sqlite
 
+    // DiskLRUCache used to cache snapshots
+    implementation deps.disklrucache.disklrucache
+
     // Testing
     testImplementation deps.junit
     androidTestImplementation deps.atsl.runner

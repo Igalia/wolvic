@@ -56,7 +56,7 @@ class ContentLanguageOptionsView extends SettingsView {
             mDelegate.showView(new LanguageOptionsView(getContext(), mWidgetManager));
         });
         mBinding.headerLayout.setHelpClickListener(view -> {
-            SessionStore.get().getActiveStore().loadUri(getResources().getString(R.string.sumo_language_content_url));
+            SessionStore.get().getActiveSession().loadUri(getResources().getString(R.string.sumo_language_content_url));
             mDelegate.exitWholeSettings();
         });
 

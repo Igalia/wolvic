@@ -33,6 +33,30 @@ public class UrlUtils {
         return host.substring(start);
     }
 
+    public static String stripProtocol(@Nullable String host) {
+        if (host == null) {
+            return "";
+        }
+
+        if (host.startsWith("data:")) {
+            return "";
+        }
+
+        String result;
+        int index = host.indexOf("://");
+        if (index >= 0) {
+            result = host.substring(index + 3);
+        } else {
+            result = host;
+        }
+
+        if (result.endsWith("/")) {
+            result = result.substring(0, result.length() - 1);
+        }
+
+        return result;
+    }
+
     private static Pattern domainPattern = Pattern.compile("^(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?$");
     public static boolean isDomain(String text) {
         return domainPattern.matcher(text).find();

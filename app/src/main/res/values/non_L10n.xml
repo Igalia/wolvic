@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name" translatable="false">Firefox Reality</string>
     <string name="bug_report_url" translatable="false">mzl.la/fxr</string>
+    <!-- You can test a local file using: "resource://android/assets/webvr/index.html" -->
     <string name="homepage_url" translatable="false">https://webxr.today/</string>
     <string name="settings_key_homepage" translatable="false">settings_homepage</string>
     <string name="settings_key_crash" translatable="false">settings_crash</string>

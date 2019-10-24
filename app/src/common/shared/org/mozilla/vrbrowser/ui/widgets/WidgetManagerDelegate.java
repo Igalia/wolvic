@@ -79,6 +79,8 @@ public interface WidgetManagerDelegate {
     void removeWorldClickListener(WorldClickListener aListener);
     boolean isPermissionGranted(@NonNull String permission);
     void requestPermission(String uri, @NonNull String permission, GeckoSession.PermissionDelegate.Callback aCallback);
+    boolean canOpenNewWindow();
     void openNewWindow(@NonNull String uri);
+    void openNewTab(@NonNull String uri);
     WindowWidget getFocusedWindow();
 }

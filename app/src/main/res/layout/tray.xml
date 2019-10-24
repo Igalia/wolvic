@@ -21,6 +21,15 @@
                 android:src="@drawable/ic_icon_tray_newwindow"/>
 
             <org.mozilla.vrbrowser.ui.views.UIButton
+                android:id="@+id/tabsButton"
+                style="@style/trayButtonMiddleTheme"
+                android:tooltipText="@string/tabs_tray_tooltip"
+                app:tooltipDensity="@dimen/tray_tooltip_density"
+                app:tooltipPosition="top"
+                app:tooltipLayout="@layout/tooltip_tray"
+                android:src="@drawable/ic_icon_tray_tabs"/>
+
+            <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/privateButton"
                 style="@style/trayButtonMiddleTheme"
                 android:tooltipText="@string/private_browsing_enter_tooltip"

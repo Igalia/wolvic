@@ -25,7 +25,7 @@ import android.widget.TextView;
 import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
-import org.mozilla.vrbrowser.browser.engine.SessionStack;
+import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.ui.views.HoneycombButton;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
@@ -166,7 +166,7 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
 
         TextView surveyLink = findViewById(R.id.surveyLink);
         surveyLink.setOnClickListener(v -> {
-            mWidgetManager.getFocusedWindow().getSessionStack().newSessionWithUrl(getResources().getString(R.string.survey_link));
+            SessionStore.get().getActiveSession().loadUri(getResources().getString(R.string.survey_link));
             exitWholeSettings();
         });
 
@@ -175,7 +175,7 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
-            SessionStore.get().getActiveStore().loadUri(getContext().getString(R.string.help_url));
+            SessionStore.get().getActiveSession().loadUri(getContext().getString(R.string.help_url));
             onDismiss();
         });
 
@@ -232,8 +232,8 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
     }
 
     private void onSettingsReportClick() {
-        SessionStack sessionStack = SessionStore.get().getActiveStore();
-        String url = sessionStack.getCurrentUri();
+        Session session = SessionStore.get().getActiveSession();
+        String url = session.getCurrentUri();
 
         try {
             if (url == null) {
@@ -241,9 +241,9 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
                 url = "";
             } else if (url.startsWith("jar:") || url.startsWith("resource:") || url.startsWith("about:") || url.startsWith("data:")) {
                 url = "";
-            } else if (sessionStack.isHomeUri(url)) {
+            } else if (session.isHomeUri(url)) {
                 // Use the original URL (without any hash).
-                url = sessionStack.getHomeUri();
+                url = session.getHomeUri();
             }
 
             url = URLEncoder.encode(url, "UTF-8");
@@ -252,7 +252,7 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
             Log.e(LOGTAG, "Cannot encode URL");
         }
 
-        sessionStack.newSessionWithUrl(getContext().getString(R.string.private_report_url, url));
+        session.loadUri(getContext().getString(R.string.private_report_url, url));
 
         onDismiss();
     }

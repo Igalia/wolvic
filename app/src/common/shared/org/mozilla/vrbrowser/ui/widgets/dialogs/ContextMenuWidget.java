@@ -77,9 +77,17 @@ public class ContextMenuWidget extends MenuWidget implements WidgetManagerDelega
     public void setContextElement(GeckoSession.ContentDelegate.ContextElement aContextElement) {
         mItems = new ArrayList<>();
         mItems.add(new MenuWidget.MenuItem(aContextElement.linkUri, 0, null));
-        mItems.add(new MenuWidget.MenuItem(getContext().getString(R.string.context_menu_open_new_window), 0, () -> {
+        if (mWidgetManager.canOpenNewWindow()) {
+            mItems.add(new MenuWidget.MenuItem(getContext().getString(R.string.context_menu_open_new_window), 0, () -> {
+                if (!StringUtils.isEmpty(aContextElement.linkUri)) {
+                    mWidgetManager.openNewWindow(aContextElement.linkUri);
+                }
+                onDismiss();
+            }));
+        }
+        mItems.add(new MenuWidget.MenuItem(getContext().getString(R.string.context_menu_open_new_tab), 0, () -> {
             if (!StringUtils.isEmpty(aContextElement.linkUri)) {
-                mWidgetManager.openNewWindow(aContextElement.linkUri);
+                mWidgetManager.openNewTab(aContextElement.linkUri);
             }
             onDismiss();
         }));

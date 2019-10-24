@@ -141,4 +141,22 @@ public class AnimationHelper {
             }
         }).setUpdateListener(animation -> aView.invalidate());
     }
+
+    public static void scaleTo(@NonNull View aView, float scaleX, float scaleY, long duration, long delay, final Runnable aCallback) {
+        if (aView.getScaleX() == scaleX && aView.getScaleY() == scaleY) {
+            if (aCallback != null) {
+                ThreadUtils.postToUiThread(aCallback);
+            }
+            return;
+        }
+        aView.animate().setStartDelay(delay).scaleX(scaleX).scaleY(scaleX).setDuration(duration).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                if (aCallback != null) {
+                    ThreadUtils.postToUiThread(aCallback);
+                }
+            }
+        }).setUpdateListener(animation -> aView.invalidate());
+    }
 }

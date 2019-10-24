@@ -19,9 +19,8 @@ import org.mozilla.vrbrowser.browser.PermissionDelegate;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.crashreporting.CrashReporterService;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class SessionStore implements GeckoSession.PermissionDelegate {
 
@@ -43,15 +42,14 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
 
     private Context mContext;
     private GeckoRuntime mRuntime;
-    private HashMap<Integer, SessionStack> mSessionStacks;
-    private Integer mActiveStoreId;
+    private ArrayList<Session> mSessions;
+    private Session mActiveSession;
     private PermissionDelegate mPermissionDelegate;
     private BookmarksStore mBookmarksStore;
     private HistoryStore mHistoryStore;
 
     private SessionStore() {
-        mSessionStacks = new HashMap<>();
-        mActiveStoreId = NO_ACTIVE_STORE_ID;
+        mSessions = new ArrayList<>();
     }
 
     public void setContext(Context context, Bundle aExtras) {
@@ -101,32 +99,47 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
         mHistoryStore = new HistoryStore(context);
     }
 
-    public SessionStack createSessionStack(int storeId, boolean privateMode) {
-        SessionStack store = new SessionStack(mContext, mRuntime, privateMode);
-        store.setPermissionDelegate(this);
-        mSessionStacks.put(storeId, store);
-
-        return store;
+    public Session createSession(boolean aPrivateMode) {
+        return createSession(aPrivateMode, null, true);
     }
 
-    public void destroySessionStack(int storeId) {
-        SessionStack store = mSessionStacks.remove(storeId);
-        if (store != null) {
-            store.setPermissionDelegate(null);
-            store.shutdown();
+    public Session createSession(boolean aPrivateMode, @Nullable SessionSettings aSettings, boolean aOpen) {
+        Session session = new Session(mContext, mRuntime, aPrivateMode, aSettings, aOpen);
+        session.setPermissionDelegate(this);
+        mSessions.add(session);
+
+        return session;
+    }
+
+    public Session createSession(SessionState aRestoreState) {
+        Session session = new Session(mContext, mRuntime, aRestoreState);
+        session.setPermissionDelegate(this);
+        mSessions.add(session);
+
+        return session;
+    }
+
+    public void destroySession(Session aSession) {
+        mSessions.remove(aSession);
+        if (aSession != null) {
+            aSession.setPermissionDelegate(null);
+            aSession.shutdown();
         }
     }
 
-    public void setActiveStore(int storeId) {
-        mActiveStoreId = storeId;
+    public void setActiveSession(Session aSession) {
+        mActiveSession = aSession;
     }
 
-    public SessionStack getSessionStack(int storeId) {
-        return mSessionStacks.get(storeId);
+    public Session getActiveSession() {
+        return mActiveSession;
     }
 
-    public SessionStack getActiveStore() {
-        return mSessionStacks.get(mActiveStoreId);
+    public ArrayList<Session> getSortedSessions(boolean aPrivateMode) {
+        ArrayList<Session> result = new ArrayList<>(mSessions);
+        result.removeIf(session -> session.isPrivateMode() != aPrivateMode);
+        result.sort((o1, o2) -> (int)(o2.getLastUse() - o1.getLastUse()));
+        return result;
     }
 
     public void setPermissionDelegate(PermissionDelegate delegate) {
@@ -142,27 +155,26 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
     }
 
     public void purgeSessionHistory() {
-        for (Map.Entry<Integer, SessionStack> entry : mSessionStacks.entrySet()) {
-            entry.getValue().purgeHistory();
+        for (Session session: mSessions) {
+            session.purgeHistory();
         }
     }
 
     public void onPause() {
-        for (Map.Entry<Integer, SessionStack> entry : mSessionStacks.entrySet()) {
-            entry.getValue().setActive(false);
+        for (Session session: mSessions) {
+            session.setActive(false);
         }
     }
 
     public void onResume() {
-        for (Map.Entry<Integer, SessionStack> entry : mSessionStacks.entrySet()) {
-            entry.getValue().setActive(true);
+        for (Session session: mSessions) {
+            session.setActive(true);
         }
     }
 
     public void onDestroy() {
-        HashMap<Integer, SessionStack> sessionStacks = new HashMap<>(mSessionStacks);
-        for (Map.Entry<Integer, SessionStack> entry : sessionStacks.entrySet()) {
-            destroySessionStack(entry.getKey());
+        for (int i = mSessions.size() - 1; i >= 0; --i) {
+            destroySession(mSessions.get(i));
         }
 
         if (mBookmarksStore != null) {
@@ -183,26 +195,26 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
     // Session Settings
 
     public void setServo(final boolean enabled) {
-        for (Map.Entry<Integer, SessionStack> entry : mSessionStacks.entrySet()) {
-            entry.getValue().setServo(enabled);
+        for (Session session: mSessions) {
+            session.setServo(enabled);
         }
     }
 
     public void setUaMode(final int mode) {
-        for (Map.Entry<Integer, SessionStack> entry : mSessionStacks.entrySet()) {
-            entry.getValue().setUaMode(mode);
+        for (Session session: mSessions) {
+            session.setUaMode(mode);
         }
     }
 
     public void setMultiprocess(final boolean aEnabled) {
-        for (Map.Entry<Integer, SessionStack> entry : mSessionStacks.entrySet()) {
-            entry.getValue().setMultiprocess(aEnabled);
+        for (Session session: mSessions) {
+            session.setMultiprocess(aEnabled);
         }
     }
 
     public void setTrackingProtection(final boolean aEnabled) {
-        for (Map.Entry<Integer, SessionStack> entry : mSessionStacks.entrySet()) {
-            entry.getValue().setTrackingProtection(aEnabled);
+        for (Session session: mSessions) {
+            session.setTrackingProtection(aEnabled);
         }
     }
 
@@ -243,8 +255,8 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
     }
 
     public void clearCache(long clearFlags) {
-        for (Map.Entry<Integer, SessionStack> entry : mSessionStacks.entrySet()) {
-            entry.getValue().clearCache(clearFlags);
+        for (Session session: mSessions) {
+            session.clearCache(clearFlags);
         }
     }
 

@@ -27,8 +27,8 @@ public interface Widget {
     void handleResizeEvent(float aWorldWidth, float aWorldHeight);
     void handleMoveEvent(float aDeltaX, float aDeltaY, float aDeltaZ, float aRotation);
     void releaseWidget();
-    void setFirstDraw(boolean aIsFirstDraw);
-    boolean getFirstDraw();
+    void setFirstPaintReady(boolean aIsFirstDraw);
+    boolean isFirstPaintReady();
     boolean isVisible();
     boolean isDialog();
     void setVisible(boolean aVisible);

@@ -57,7 +57,7 @@ public class PromptDelegate implements GeckoSession.PromptDelegate {
         detachFromWindow();
 
         mAttachedWindow = window;
-        mAttachedWindow.getSessionStack().setPromptDelegate(this);
+        mAttachedWindow.getSession().setPromptDelegate(this);
         mViewModel.getAll().observeForever(mObserver);
     }
 
@@ -215,9 +215,8 @@ public class PromptDelegate implements GeckoSession.PromptDelegate {
 
         if (!SettingsStore.getInstance(mContext).isPopUpsBlockingEnabled()) {
             result.complete(popupPrompt.confirm(AllowOrDeny.ALLOW));
-
         } else {
-            String uri = mAttachedWindow.getSessionStack().getUriFromSession(geckoSession);
+            String uri = mAttachedWindow.getSession().getCurrentUri();
             PopUpRequest request = PopUpRequest.newRequest(uri, popupPrompt, result);
             handlePopUpRequest(request);
         }

@@ -13,11 +13,13 @@ import org.mozilla.vrbrowser.browser.Places;
 import org.mozilla.vrbrowser.db.AppDatabase;
 import org.mozilla.vrbrowser.db.DataRepository;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
+import org.mozilla.vrbrowser.utils.BitmapCache;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
 
 public class VRBrowserApplication extends Application {
 
     private AppExecutors mAppExecutors;
+    private BitmapCache mBitmapCache;
     private Places mPlaces;
 
     @Override
@@ -26,6 +28,7 @@ public class VRBrowserApplication extends Application {
 
         mAppExecutors = new AppExecutors();
         mPlaces = new Places(this);
+        mBitmapCache = new BitmapCache(this, mAppExecutors.diskIO(), mAppExecutors.mainThread());
 
         TelemetryWrapper.init(this);
     }
@@ -56,5 +59,9 @@ public class VRBrowserApplication extends Application {
 
     public DataRepository getRepository() {
         return DataRepository.getInstance(getDatabase(), mAppExecutors);
+    }
+
+    public BitmapCache getBitmapCache() {
+        return mBitmapCache;
     }
 }

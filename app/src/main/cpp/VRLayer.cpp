@@ -28,12 +28,14 @@ struct VRLayer::State {
   SurfaceChangedDelegate surfaceChangedDelegate;
   std::function<void()> pendingEvent;
   std::string name;
+  bool composited;
   State():
       initialized(false),
       priority(0),
       drawIndex(0),
       drawRequested(false),
       drawInFront(false),
+      composited(false),
       currentEye(device::Eye::Left),
       clearColor(0),
       tintColor(1.0f, 1.0f, 1.0f, 1.0f)
@@ -106,6 +108,10 @@ VRLayer::GetDrawInFront() const {
 std::string
 VRLayer::GetName() const {
   return m.name;
+}
+
+bool VRLayer::IsComposited() const {
+  return m.composited;
 }
 
 bool
@@ -200,6 +206,11 @@ VRLayer::SetDrawInFront(bool aDrawInFront) {
 void
 VRLayer::SetName(const std::string &aName) {
   m.name = aName;
+}
+
+void
+VRLayer::SetComposited(bool aComposited) {
+  m.composited = aComposited;
 }
 
 void VRLayer::NotifySurfaceChanged(SurfaceChange aChange, const std::function<void()>& aFirstCompositeCallback) {

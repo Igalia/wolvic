@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<org.mozilla.vrbrowser.ui.views.TabView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/tab_view_height"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <View android:id="@+id/tabShadow"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="12dp"
+        android:layout_marginStart="3dp"
+        android:visibility="gone"
+        android:background="@drawable/tab_shadow" />
+
+    <RelativeLayout
+        android:id="@+id/tabCardView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="@dimen/tab_view_url_height"
+        android:paddingStart="@dimen/tab_shadow_padding"
+        android:paddingEnd="@dimen/tab_shadow_padding"
+        android:layout_weight="100">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/tabViewPreview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_icon_tabs_placeholder"
+                android:background="#00000000"
+                android:scaleType="centerCrop" />
+            <View
+                android:id="@+id/tabOverlay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/tab_overlay" />
+        </RelativeLayout>
+
+
+        <TextView
+            android:id="@+id/tabViewTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:shadowColor="#00000000"
+            android:textColor="#ffffff"
+            android:lines="1"
+            tools:text="Title"/>
+
+        <org.mozilla.vrbrowser.ui.views.UIButton
+            android:id="@+id/tabViewCloseButton"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:padding="@dimen/tabs_icon_padding_max"
+            android:src="@drawable/ic_icon_exit"
+            android:tint="@drawable/tab_close_icon_color"
+            android:tintMode="multiply"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true" />
+
+        <ImageView
+            android:id="@+id/tabViewSelected"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_icon_check"
+            android:tint="@color/azure"
+            android:background="@android:color/transparent"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
+
+        <ImageView
+            android:id="@+id/tabViewUnselect"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_icon_exit"
+            android:tint="@color/azure"
+            android:background="@android:color/transparent"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/tabAddView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="@dimen/tab_view_url_height"
+        android:paddingStart="@dimen/tab_shadow_padding"
+        android:paddingEnd="@dimen/tab_shadow_padding"
+        android:visibility="gone"
+        android:background="@drawable/tab_add_background">
+        <ImageView
+            android:id="@+id/tabAddIcon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:padding="@dimen/tabs_icon_padding_max"
+            android:src="@drawable/ic_icon_newtab"
+            android:tint="@color/rhino"
+            android:tintMode="multiply"
+            android:scaleType="fitCenter"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
+    </RelativeLayout>
+
+
+    <TextView
+        android:id="@+id/tabViewUrl"
+        android:layout_width="match_parent"
+        android:layout_height="15dp"
+        android:paddingStart="@dimen/tab_shadow_padding"
+        android:paddingEnd="@dimen/tab_shadow_padding"
+        android:textSize="12sp"
+        android:textColor="@color/rhino"
+        android:gravity="start"
+        android:lines="1"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/transparent"/>
+
+</org.mozilla.vrbrowser.ui.views.TabView>

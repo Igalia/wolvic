@@ -20,7 +20,6 @@ import org.mozilla.geckoview.MediaElement;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.Media;
 import org.mozilla.vrbrowser.databinding.TitleBarBinding;
-import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -117,7 +116,7 @@ public class TitleBarWidget extends UIWidget implements WidgetManagerDelegate.Up
         mWidgetPlacement.parentHandle = aWindow.getHandle();
         mAttachedWindow = aWindow;
 
-        setPrivateMode(aWindow.getSessionStack().isPrivateMode());
+        setPrivateMode(aWindow.getSession().isPrivateMode());
     }
 
     @Override
@@ -168,9 +167,9 @@ public class TitleBarWidget extends UIWidget implements WidgetManagerDelegate.Up
     }
 
     public void setIsInsecure(boolean aIsInsecure) {
-        if (mAttachedWindow.getSessionStack().getCurrentUri() != null &&
-                !(mAttachedWindow.getSessionStack().getCurrentUri().startsWith("data") &&
-                mAttachedWindow.getSessionStack().isPrivateMode())) {
+        if (mAttachedWindow.getSession().getCurrentUri() != null &&
+                !(mAttachedWindow.getSession().getCurrentUri().startsWith("data") &&
+                mAttachedWindow.getSession().isPrivateMode())) {
             mBinding.insecureIcon.setVisibility(aIsInsecure ? View.VISIBLE : View.GONE);
         }
     }
@@ -182,7 +181,7 @@ public class TitleBarWidget extends UIWidget implements WidgetManagerDelegate.Up
     public void mediaAvailabilityChanged(boolean available) {
         mBinding.setIsMediaAvailable(false);
         if (available) {
-            mMedia = mAttachedWindow.getSessionStack().getFullScreenVideo();
+            mMedia = mAttachedWindow.getSession().getFullScreenVideo();
             if (mMedia != null) {
                 mBinding.setIsMediaPlaying(mMedia.isPlaying());
                 mMedia.removeMediaListener(mMediaDelegate);

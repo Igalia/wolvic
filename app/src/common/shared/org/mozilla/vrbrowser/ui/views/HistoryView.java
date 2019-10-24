@@ -21,7 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.HistoryStore;
 import org.mozilla.vrbrowser.browser.SettingsStore;
-import org.mozilla.vrbrowser.browser.engine.SessionStack;
+import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.databinding.HistoryBinding;
 import org.mozilla.vrbrowser.ui.adapters.HistoryAdapter;
@@ -95,8 +95,8 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
         public void onClick(View view, VisitInfo item) {
             mBinding.historyList.requestFocusFromTouch();
 
-            SessionStack sessionStack = SessionStore.get().getActiveStore();
-            sessionStack.loadUri(item.getUrl());
+            Session session = SessionStore.get().getActiveSession();
+            session.loadUri(item.getUrl());
         }
 
         @Override

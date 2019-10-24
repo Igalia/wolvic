@@ -41,7 +41,7 @@ class VoiceSearchLanguageOptionsView extends SettingsView {
             mDelegate.showView(new LanguageOptionsView(getContext(), mWidgetManager));
         });
         mBinding.headerLayout.setHelpClickListener(view -> {
-            SessionStore.get().getActiveStore().loadUri(getResources().getString(R.string.sumo_language_voice_url));
+            SessionStore.get().getActiveSession().loadUri(getResources().getString(R.string.sumo_language_voice_url));
             mDelegate.exitWholeSettings();
         });
 

@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.coordinatorlayout.widget.ViewGroupUtils;
 import androidx.core.text.HtmlCompat;
 
 import org.jetbrains.annotations.NotNull;
@@ -105,6 +106,13 @@ public class ViewUtils {
         }
 
         return parent.findViewById(view.getId()) != null;
+    }
+
+    public static boolean isEqualOrChildrenOf(@NonNull ViewGroup aParent, @NonNull View aView) {
+        if (aParent == aView) {
+            return true;
+        }
+        return isChildrenOf(aParent, aView);
     }
 
     public static boolean isInsideView(@NotNull View view, int rx, int ry) {

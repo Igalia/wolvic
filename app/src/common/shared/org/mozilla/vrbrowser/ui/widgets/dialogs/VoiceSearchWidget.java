@@ -33,9 +33,7 @@ import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
-import org.mozilla.vrbrowser.utils.SystemUtils;
 
-import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
 public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate.PermissionListener,
@@ -233,7 +231,7 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
             String locale = LocaleUtils.getVoiceSearchLocale(getContext());
             mMozillaSpeechService.setLanguage(LocaleUtils.mapToMozillaSpeechLocales(locale));
             boolean storeData = SettingsStore.getInstance(getContext()).isSpeechDataCollectionEnabled();
-            if (SessionStore.get().getActiveStore().isPrivateMode()) {
+            if (SessionStore.get().getActiveSession().isPrivateMode()) {
                 storeData = false;
             }
             mMozillaSpeechService.storeSamples(storeData);
@@ -300,7 +298,7 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
                         ThreadUtils.postToUiThread(() -> show(aShowFlags));
                     },
                     url -> {
-                        mWidgetManager.getFocusedWindow().getSessionStack().loadUri(getResources().getString(R.string.private_policy_url));
+                        mWidgetManager.getFocusedWindow().getSession().loadUri(getResources().getString(R.string.private_policy_url));
                         onDismiss();
                     });
         }

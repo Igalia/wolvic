@@ -64,7 +64,7 @@ public class CrashDialogWidget extends UIDialog {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
 
-            SessionStore.get().getActiveStore().newSessionWithUrl(getContext().getString(R.string.crash_dialog_learn_more_url));
+            SessionStore.get().getActiveSession().loadUri(getContext().getString(R.string.crash_dialog_learn_more_url));
 
             onDismiss();
         });

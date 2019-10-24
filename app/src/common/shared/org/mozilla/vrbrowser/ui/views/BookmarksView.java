@@ -21,7 +21,7 @@ import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.BookmarksStore;
 import org.mozilla.vrbrowser.browser.SettingsStore;
-import org.mozilla.vrbrowser.browser.engine.SessionStack;
+import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.databinding.BookmarksBinding;
 import org.mozilla.vrbrowser.ui.adapters.BookmarkAdapter;
@@ -91,8 +91,8 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
         public void onClick(View view, BookmarkNode item) {
             mBinding.bookmarksList.requestFocusFromTouch();
 
-            SessionStack sessionStack = SessionStore.get().getActiveStore();
-            sessionStack.loadUri(item.getUrl());
+            Session session = SessionStore.get().getActiveSession();
+            session.loadUri(item.getUrl());
         }
 
         @Override

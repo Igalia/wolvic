@@ -2,6 +2,7 @@ package org.mozilla.vrbrowser.ui.widgets;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.TabWidget;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,8 +16,11 @@ import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.Media;
 import org.mozilla.vrbrowser.browser.PromptDelegate;
 import org.mozilla.vrbrowser.browser.SettingsStore;
-import org.mozilla.vrbrowser.browser.engine.SessionStack;
+import org.mozilla.vrbrowser.browser.engine.Session;
+import org.mozilla.vrbrowser.browser.engine.SessionState;
+import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
+import org.mozilla.vrbrowser.utils.BitmapCache;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.io.File;
@@ -27,9 +31,12 @@ import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
+
+import static org.mozilla.vrbrowser.ui.widgets.UIWidget.REQUEST_FOCUS;
 
 public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWidget.Delegate,
-        GeckoSession.ContentDelegate, WindowWidget.WindowDelegate {
+        GeckoSession.ContentDelegate, WindowWidget.WindowListener, TabsWidget.TabDelegate {
 
     private static final String LOGTAG = SystemUtils.createLogtag(Windows.class);
 
@@ -37,15 +44,12 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
     class WindowState {
         WindowPlacement placement;
-        SessionStack sessionStack;
-        int currentSessionId;
         int textureWidth;
         int textureHeight;
         float worldWidth;
+        int tabIndex = -1;
 
-        public void load(WindowWidget aWindow) {
-            sessionStack = aWindow.getSessionStack();
-            currentSessionId = aWindow.getSessionStack().getCurrentSessionId();
+        public void load(WindowWidget aWindow, WindowsState aState, int aTabIndex) {
             WidgetPlacement widgetPlacement;
             if (aWindow.isFullScreen()) {
                 widgetPlacement = aWindow.getBeforeFullscreenPlacement();
@@ -61,12 +65,14 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             textureWidth = widgetPlacement.width;
             textureHeight = widgetPlacement.height;
             worldWidth = widgetPlacement.worldWidth;
+            tabIndex = aTabIndex;
         }
     }
 
     class WindowsState {
         WindowPlacement focusedWindowPlacement = WindowPlacement.FRONT;
         ArrayList<WindowState> regularWindowsState = new ArrayList<>();
+        ArrayList<SessionState> tabs = new ArrayList<>();
         boolean privateMode = false;
     }
 
@@ -86,6 +92,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     private boolean mForcedCurvedMode = false;
     private boolean mIsPaused = false;
     private PromptDelegate mPromptDelegate;
+    private TabsWidget mTabsWidget;
 
     public enum WindowPlacement{
         FRONT(0),
@@ -130,9 +137,11 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             WindowsState state = new WindowsState();
             state.privateMode = mPrivateMode;
             state.focusedWindowPlacement = mFocusedWindow.isFullScreen() ?  mFocusedWindow.getmWindowPlacementBeforeFullscreen() : mFocusedWindow.getWindowPlacement();
+            ArrayList<Session> sessions = SessionStore.get().getSortedSessions(false);
+            state.tabs = sessions.stream().map(Session::getSessionState).collect(Collectors.toCollection(ArrayList::new));
             for (WindowWidget window : mRegularWindows) {
                 WindowState windowState = new WindowState();
-                windowState.load(window);
+                windowState.load(window, state, sessions.indexOf(window.getSession()));
                 state.regularWindowsState.add(windowState);
             }
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -157,7 +166,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
             Log.d(LOGTAG, "Windows state restored");
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             Log.w(LOGTAG, "Error restoring windows state: " + e.getLocalizedMessage());
 
         } finally {
@@ -180,20 +189,19 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
     public WindowWidget addWindow() {
         if (getCurrentWindows().size() >= MAX_WINDOWS) {
-            showMaxWindowsMessage();
             return null;
         }
 
         if (mFullscreenWindow != null) {
-            mFullscreenWindow.getSessionStack().exitFullScreen();
-            onFullScreen(mFullscreenWindow.getSessionStack().getCurrentSession(), false);
+            mFullscreenWindow.getSession().exitFullScreen();
+            onFullScreen(mFullscreenWindow.getSession().getGeckoSession(), false);
         }
 
         WindowWidget frontWindow = getFrontWindow();
         WindowWidget leftWindow = getLeftWindow();
         WindowWidget rightWindow = getRightWindow();
 
-        WindowWidget newWindow = createWindow();
+        WindowWidget newWindow = createWindow(null);
         WindowWidget focusedWindow = getFocusedWindow();
 
         if (frontWindow == null) {
@@ -229,13 +237,12 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         return newWindow;
     }
 
-    private WindowWidget addWindow(@NonNull WindowState aState) {
+    private WindowWidget addRestoredWindow(@NonNull WindowState aState, @NonNull Session aSession) {
         if (getCurrentWindows().size() >= MAX_WINDOWS) {
-            showMaxWindowsMessage();
             return null;
         }
 
-        WindowWidget newWindow = createWindow();
+        WindowWidget newWindow = createWindow(aSession);
         newWindow.getPlacement().width = aState.textureWidth;
         newWindow.getPlacement().height = aState.textureHeight;
         newWindow.getPlacement().worldWidth = aState.worldWidth;
@@ -520,8 +527,8 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         if (mFocusedWindow == null) {
             return false;
         }
-        if (mFocusedWindow.getSessionStack().canGoBack()) {
-            mFocusedWindow.getSessionStack().goBack();
+        if (mFocusedWindow.getSession().canGoBack()) {
+            mFocusedWindow.getSession().goBack();
             return true;
         } else if (isInPrivateMode()) {
             exitPrivateMode();
@@ -542,11 +549,6 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         for (WindowWidget window: getCurrentWindows()) {
             window.setMaxWindowScale(maxScale);
         }
-    }
-
-    private void showMaxWindowsMessage() {
-        TelemetryWrapper.maxWindowsDialogEvent();
-        mFocusedWindow.showMaxWindowsDialog(MAX_WINDOWS);
     }
 
     public ArrayList<WindowWidget> getCurrentWindows() {
@@ -580,10 +582,15 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     private void restoreWindows() {
         WindowsState windowsState = restoreState();
         if (windowsState != null) {
+            ArrayList<Session> restoredSessions = new ArrayList<>();
+            if (windowsState.tabs != null) {
+                windowsState.tabs.forEach(state -> restoredSessions.add(SessionStore.get().createSession(state)));
+            }
             mPrivateMode = false;
             for (WindowState windowState : windowsState.regularWindowsState) {
-                WindowWidget window = addWindow(windowState);
-                window.getSessionStack().restore(windowState.sessionStack, windowState.currentSessionId);
+                if (windowState.tabIndex >= 0 && windowState.tabIndex < restoredSessions.size()) {
+                    addRestoredWindow(windowState, restoredSessions.get(windowState.tabIndex));
+                }
             }
             mPrivateMode = !windowsState.privateMode;
             if (windowsState.privateMode) {
@@ -613,15 +620,16 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     }
 
     private void removeWindow(@NonNull WindowWidget aWindow) {
+        BitmapCache.getInstance(mContext).removeBitmap(aWindow.getSession().getId());
         mWidgetManager.removeWidget(aWindow);
         mRegularWindows.remove(aWindow);
         mPrivateWindows.remove(aWindow);
         aWindow.getTopBar().setVisible(false);
         aWindow.getTopBar().setDelegate((TopBarWidget.Delegate) null);
-        aWindow.setWindowDelegate(null);
+        aWindow.removeWindowListener(this);
         aWindow.getTitleBar().setVisible(false);
         aWindow.getTitleBar().setDelegate((TitleBarWidget.Delegate) null);
-        aWindow.getSessionStack().removeContentListener(this);
+        aWindow.getSession().removeContentListener(this);
         aWindow.close();
         updateMaxWindowScales();
         updateCurvedMode(true);
@@ -728,6 +736,10 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         return getCurrentWindows().size();
     }
 
+    public boolean canOpenNewWindow() {
+        return getWindowsCount() < MAX_WINDOWS;
+    }
+
     private void switchTopBars(WindowWidget w1, WindowWidget w2) {
         // Used to fix a minor visual glitch.
         // See https://github.com/MozillaReality/FirefoxReality/issues/1722
@@ -803,14 +815,20 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         }
     }
 
-    private WindowWidget createWindow() {
+    private WindowWidget createWindow(@Nullable Session aSession) {
         int newWindowId = sIndex++;
-        WindowWidget window = new WindowWidget(mContext, newWindowId, mPrivateMode);
-        window.setWindowDelegate(this);
+        WindowWidget window;
+        if (aSession != null) {
+            window = new WindowWidget(mContext, newWindowId, aSession);
+        } else {
+            window = new WindowWidget(mContext, newWindowId, mPrivateMode);
+        }
+
+        window.addWindowListener(this);
         getCurrentWindows().add(window);
         window.getTopBar().setDelegate(this);
         window.getTitleBar().setDelegate(this);
-        window.getSessionStack().addContentListener(this);
+        window.getSession().addContentListener(this);
 
         if (mPrivateMode) {
             TelemetryWrapper.openWindowsEvent(mPrivateWindows.size() - 1, mPrivateWindows.size(), true);
@@ -869,6 +887,20 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         mFocusedWindow.switchHistory();
     }
 
+    @Override
+    public void onTabsClicked() {
+        if (mTabsWidget == null) {
+            mTabsWidget = new TabsWidget(mContext);
+            mTabsWidget.setTabDelegate(this);
+        }
+
+        if (mFocusedWindow != null) {
+            mTabsWidget.getPlacement().parentHandle = mFocusedWindow.getHandle();
+            mTabsWidget.attachToWindow(mFocusedWindow);
+            mTabsWidget.show(UIWidget.KEEP_FOCUS);
+        }
+    }
+
     // TopBarWidget Delegate
     @Override
     public void onCloseClicked(TopBarWidget aWidget) {
@@ -908,7 +940,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     public void onMediaPlayClicked(@NonNull TitleBarWidget titleBar) {
         for (WindowWidget window : getCurrentWindows()) {
             if (window.getTitleBar() == titleBar) {
-                window.getSessionStack().getFullScreenVideo().play();
+                window.getSession().getFullScreenVideo().play();
             }
         }
     }
@@ -917,7 +949,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     public void onMediaPauseClicked(@NonNull TitleBarWidget titleBar) {
         for (WindowWidget window : getCurrentWindows()) {
             if (window.getTitleBar() == titleBar) {
-                window.getSessionStack().getFullScreenVideo().pause();
+                window.getSession().getFullScreenVideo().pause();
             }
         }
     }
@@ -926,11 +958,11 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         final float minScale = WidgetPlacement.floatDimension(mContext, R.dimen.window_fullscreen_min_scale);
         // Set browser fullscreen size
         float aspect = SettingsStore.getInstance(mContext).getWindowAspect();
-        SessionStack sessionStack = mFocusedWindow.getSessionStack();
-        if (sessionStack == null) {
+        Session session = mFocusedWindow.getSession();
+        if (session == null) {
             return;
         }
-        Media media = sessionStack.getFullScreenVideo();
+        Media media = session.getFullScreenVideo();
         if (media != null && media.getWidth() > 0 && media.getHeight() > 0) {
             aspect = (float)media.getWidth() / (float)media.getHeight();
         }
@@ -975,7 +1007,17 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     @Nullable
     private WindowWidget getWindowWithSession(GeckoSession aSession) {
         for (WindowWidget window: getCurrentWindows()) {
-            if (window.getSessionStack().containsSession(aSession)) {
+            if (window.getSession().getGeckoSession() == aSession) {
+                return window;
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    private WindowWidget getWindowWithSession(Session aSession) {
+        for (WindowWidget window: getCurrentWindows()) {
+            if (window.getSession() == aSession) {
                 return window;
             }
         }
@@ -996,4 +1038,108 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
     }
 
+    @Override
+    public void onTabSelect(Session aTab) {
+        WindowWidget targetWindow = mFocusedWindow;
+        WindowWidget windowToMove = getWindowWithSession(aTab);
+        if (windowToMove != null && windowToMove != targetWindow) {
+            // Move session between windows
+            Session moveFrom = windowToMove.getSession();
+            Session moveTo = targetWindow.getSession();
+            windowToMove.releaseDisplay(moveFrom.getGeckoSession());
+            targetWindow.releaseDisplay(moveTo.getGeckoSession());
+            windowToMove.setSession(moveTo);
+            targetWindow.setSession(moveFrom);
+            SessionStore.get().setActiveSession(targetWindow.getSession());
+
+        } else{
+            targetWindow.getSession().setActive(false);
+            targetWindow.setSession(aTab);
+            targetWindow.getSession().setActive(true);
+            SessionStore.get().setActiveSession(aTab);
+        }
+    }
+
+    public void addTab(WindowWidget targetWindow) {
+        Session session = SessionStore.get().createSession(targetWindow.getSession().isPrivateMode());
+        targetWindow.setFirstPaintReady(false);
+        targetWindow.setFirstDrawCallback(() -> {
+            if (!targetWindow.isFirstPaintReady()) {
+                targetWindow.setFirstPaintReady(true);
+                mWidgetManager.updateWidget(targetWindow);
+            }
+        });
+        mWidgetManager.updateWidget(targetWindow);
+        targetWindow.getSession().setActive(false);
+        targetWindow.setSession(session);
+        session.loadHomePage();
+        SessionStore.get().setActiveSession(session);
+    }
+
+    public void addBackgroundTab(WindowWidget targetWindow, String aUri) {
+        Session session = SessionStore.get().createSession(targetWindow.getSession().isPrivateMode());
+        session.loadUri(aUri);
+        session.updateLastUse();
+        mFocusedWindow.getSession().updateLastUse();
+    }
+
+    @Override
+    public void onTabAdd() {
+        addTab(mFocusedWindow);
+    }
+
+    @Override
+    public void onTabsClose(ArrayList<Session> aTabs) {
+        WindowWidget targetWindow = mFocusedWindow;
+        // Prepare available tabs to choose from
+        ArrayList<Session> available = SessionStore.get().getSortedSessions(mPrivateMode);
+        available.removeAll(aTabs);
+        available.removeIf(session -> getWindowWithSession(session) != null);
+
+        // Sort windows by priority to take an available tab
+        WindowWidget front = getFrontWindow();
+        ArrayList<WindowWidget> windows =  new ArrayList<>(getCurrentWindows());
+        windows.sort((w1, w2) -> {
+            // Max priority for the target window
+            if (w1 == targetWindow) {
+                return -1;
+            }
+            if (w2 == targetWindow) {
+                return 1;
+            }
+            // Front window has next max priority
+            if (w1 == front) {
+                return -1;
+            }
+            if (w2 == front) {
+                return 1;
+            }
+            return 0;
+        });
+
+        // Take tabs for each window
+        for (WindowWidget window: windows) {
+            if (!aTabs.contains(window.getSession())) {
+                // Window already contains a no closed tab
+                continue;
+            }
+            if (available.size() > 0) {
+                // Window contains a closed tab and we have a tab available from the list
+                window.setSession(available.get(0));
+                window.getSession().setActive(true);
+                available.remove(0);
+            } else {
+                // We don't have more tabs available for the front window, load home.
+                addTab(window);
+            }
+        }
+
+        BitmapCache cache = BitmapCache.getInstance(mContext);
+        for (Session session: aTabs) {
+            cache.removeBitmap(session.getId());
+            SessionStore.get().destroySession(session);
+        }
+
+        SessionStore.get().setActiveSession(targetWindow.getSession());
+    }
 }

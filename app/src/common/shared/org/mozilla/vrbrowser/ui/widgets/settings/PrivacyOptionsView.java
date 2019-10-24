@@ -60,7 +60,7 @@ class PrivacyOptionsView extends SettingsView {
 
         // Options
         mBinding.showPrivacyButton.setOnClickListener(v -> {
-            SessionStore.get().getActiveStore().newSessionWithUrl(getContext().getString(R.string.private_policy_url));
+            SessionStore.get().getActiveSession().loadUri(getContext().getString(R.string.private_policy_url));
             exitWholeSettings();
         });
 
@@ -98,7 +98,7 @@ class PrivacyOptionsView extends SettingsView {
 
         mBinding.drmContentPlaybackSwitch.setOnCheckedChangeListener(mDrmContentListener);
         mBinding.drmContentPlaybackSwitch.setLinkClickListener((widget, url) -> {
-            SessionStore.get().getActiveStore().loadUri(url);
+            SessionStore.get().getActiveSession().loadUri(url);
             exitWholeSettings();
         });
         setDrmContent(SettingsStore.getInstance(getContext()).isDrmContentPlaybackEnabled(), false);

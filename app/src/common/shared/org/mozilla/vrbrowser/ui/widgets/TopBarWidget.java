@@ -12,14 +12,12 @@ import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
-import org.mozilla.vrbrowser.browser.SessionChangeListener;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.views.UITextButton;
 
-public class TopBarWidget extends UIWidget implements SessionChangeListener, WidgetManagerDelegate.UpdateListener {
+public class TopBarWidget extends UIWidget implements WidgetManagerDelegate.UpdateListener {
 
     private UIButton mCloseButton;
     private UIButton mMoveLeftButton;
@@ -141,7 +139,7 @@ public class TopBarWidget extends UIWidget implements SessionChangeListener, Wid
         mWidgetPlacement.parentHandle = aWindow.getHandle();
         mAttachedWindow = aWindow;
 
-        setPrivateMode(aWindow.getSessionStack().isPrivateMode());
+        setPrivateMode(aWindow.getSession().isPrivateMode());
 
     }
 
@@ -156,13 +154,6 @@ public class TopBarWidget extends UIWidget implements SessionChangeListener, Wid
         mCloseButton.setBackground(getContext().getDrawable(aPrivateMode ? R.drawable.fullscreen_button_private : R.drawable.fullscreen_button));
         mMoveLeftButton.setBackground(getContext().getDrawable(aPrivateMode ? R.drawable.fullscreen_button_private_first : R.drawable.fullscreen_button_first));
         mMoveRightButton.setBackground(getContext().getDrawable(aPrivateMode ? R.drawable.fullscreen_button_private_last : R.drawable.fullscreen_button_last));
-    }
-
-    // SessionStack.SessionChangeListener
-
-    @Override
-    public void onCurrentSessionChange(GeckoSession aSession, int aId) {
-        handleSessionState();
     }
 
     @Override
@@ -195,9 +186,6 @@ public class TopBarWidget extends UIWidget implements SessionChangeListener, Wid
 
     public void setMoveRightButtonEnabled(boolean aEnabled) {
         mMoveRightButton.setEnabled(aEnabled);
-    }
-
-    private void handleSessionState() {
     }
 
     // WidgetManagerDelegate.UpdateListener

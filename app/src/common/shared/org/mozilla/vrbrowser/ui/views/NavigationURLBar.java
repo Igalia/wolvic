@@ -38,7 +38,7 @@ import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.BookmarksStore;
-import org.mozilla.vrbrowser.browser.engine.SessionStack;
+import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.search.SearchEngineWrapper;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
@@ -88,7 +88,7 @@ public class NavigationURLBar extends FrameLayout {
     private boolean mBookmarkEnabled = true;
     private boolean mIsContextButtonsEnabled = true;
     private UIThreadExecutor mUIThreadExecutor = new UIThreadExecutor();
-    private SessionStack mSessionStack;
+    private Session mSession;
     private SelectionActionWidget mSelectionMenu;
     private boolean mWasFocusedWhenTouchBegan = false;
     private boolean mLongPressed = false;
@@ -126,7 +126,7 @@ public class NavigationURLBar extends FrameLayout {
     private void initialize(Context aContext) {
         mAudio = AudioEngine.fromContext(aContext);
 
-        mSessionStack = SessionStore.get().getActiveStore();
+        mSession = SessionStore.get().getActiveSession();
 
         // Inflate this data binding layout
         inflate(aContext, R.layout.navigation_url, this);
@@ -235,7 +235,7 @@ public class NavigationURLBar extends FrameLayout {
         mUAModeButton = findViewById(R.id.uaModeButton);
         mUAModeButton.setTag(R.string.view_id_tag, R.id.uaModeButton);
         mUAModeButton.setOnClickListener(mUAModeListener);
-        setUAMode(mSessionStack.getUaMode());
+        setUAMode(mSession.getUaMode());
 
         mHintFading = findViewById(R.id.urlBarHintFadingEdge);
         mURLLeftContainer = findViewById(R.id.urlLeftContainer);
@@ -263,9 +263,9 @@ public class NavigationURLBar extends FrameLayout {
         updateHintFading();
     }
 
-    public void setSessionStack(SessionStack sessionStack) {
-        mSessionStack = sessionStack;
-        setUAMode(mSessionStack.getUaMode());
+    public void setSession(Session session) {
+        mSession = session;
+        setUAMode(mSession.getUaMode());
     }
 
     public void onPause() {
@@ -329,14 +329,14 @@ public class NavigationURLBar extends FrameLayout {
             mAudio.playSound(AudioEngine.Sound.CLICK);
         }
 
-        String url = mSessionStack.getCurrentUri();
+        String url = mSession.getCurrentUri();
         if (StringUtils.isEmpty(url)) {
             return;
         }
         BookmarksStore bookmarkStore = SessionStore.get().getBookmarkStore();
         bookmarkStore.isBookmarked(url).thenAcceptAsync(bookmarked -> {
             if (!bookmarked) {
-                bookmarkStore.addBookmark(url, mSessionStack.getCurrentTitle());
+                bookmarkStore.addBookmark(url, mSession.getCurrentTitle());
                 setBookmarked(true);
             } else {
                 // Delete
@@ -389,10 +389,10 @@ public class NavigationURLBar extends FrameLayout {
             if (aURL.startsWith("jar:")) {
                 return;
 
-            } else if (aURL.startsWith("resource:") || mSessionStack.isHomeUri(aURL)) {
+            } else if (aURL.startsWith("resource:") || mSession.isHomeUri(aURL)) {
 
                 aURL = "";
-            } else if (aURL.startsWith("data:") && mSessionStack.isPrivateMode()) {
+            } else if (aURL.startsWith("data:") && mSession.isPrivateMode()) {
                 aURL = "";
 
             } else if (aURL.startsWith(getContext().getString(R.string.about_blank))) {
@@ -600,8 +600,8 @@ public class NavigationURLBar extends FrameLayout {
             TelemetryWrapper.urlBarEvent(false);
         }
 
-        if (mSessionStack.getCurrentUri() != url) {
-            mSessionStack.loadUri(url);
+        if (mSession.getCurrentUri() != url) {
+            mSession.loadUri(url);
 
             if (mDelegate != null) {
                 mDelegate.onHideSearchPopup();
@@ -659,14 +659,14 @@ public class NavigationURLBar extends FrameLayout {
         }
         view.requestFocusFromTouch();
 
-        int uaMode = mSessionStack.getUaMode();
+        int uaMode = mSession.getUaMode();
         if (uaMode == GeckoSessionSettings.USER_AGENT_MODE_DESKTOP) {
             setUAMode(GeckoSessionSettings.USER_AGENT_MODE_VR);
-            mSessionStack.setUaMode(GeckoSessionSettings.USER_AGENT_MODE_VR);
+            mSession.setUaMode(GeckoSessionSettings.USER_AGENT_MODE_VR);
 
         }else {
             setUAMode(GeckoSessionSettings.USER_AGENT_MODE_DESKTOP);
-            mSessionStack.setUaMode(GeckoSessionSettings.USER_AGENT_MODE_DESKTOP);
+            mSession.setUaMode(GeckoSessionSettings.USER_AGENT_MODE_DESKTOP);
         }
 
         TelemetryWrapper.voiceInputEvent();

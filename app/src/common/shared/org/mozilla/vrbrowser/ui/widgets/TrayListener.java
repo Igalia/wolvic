@@ -5,4 +5,5 @@ public interface TrayListener {
     default void onPrivateBrowsingClicked() {}
     default void onAddWindowClicked() {}
     default void onHistoryClicked() {}
+    default void onTabsClicked() {}
 }
