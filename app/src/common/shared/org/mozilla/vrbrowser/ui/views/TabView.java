@@ -167,10 +167,12 @@ public class TabView extends RelativeLayout implements GeckoSession.ContentDeleg
         mShowAddTab = aShow;
         if (mShowAddTab) {
             mTabCardView.setVisibility(View.GONE);
+            mURL.setVisibility(View.INVISIBLE);
             mTabAddView.setVisibility(View.VISIBLE);
         } else {
             mTabCardView.setVisibility(View.VISIBLE);
             mTabAddView.setVisibility(View.GONE);
+            mURL.setVisibility(View.VISIBLE);
         }
     }
 
