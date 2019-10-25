@@ -129,7 +129,7 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
             onLanguageOptionsClick();
         });
 
-        mBinding.languageButton.setOnClickListener(view -> {
+        mBinding.privacyButton.setOnClickListener(view -> {
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
