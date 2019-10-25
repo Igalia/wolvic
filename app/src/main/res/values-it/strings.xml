@@ -89,11 +89,6 @@
          sdcard. '%1$s' will be replaced at runtime with the website's domain name. -->
     <string name="permission_persistent_storage">Consentire a %1$s di salvare dati nella memoria permanente?</string>
 
-    <!-- This string is displayed in the Settings dialog box and how
-         the user can know which version of the application they are currently running.
-         '%1$s' will be replaced at runtime with the application version number. -->
-    <string name="settings_version">Versione %1$s</string>
-
     <!-- This string is displayed in the Settings dialog box and is used to label an
          On/Off switch which toggles whether an application crash is reported without first
          prompting the user. -->
@@ -110,6 +105,16 @@
     <!-- This string is used to label a button that, when pressed, loads a website that
          describes Mozilla's Privacy Policy. -->
     <string name="settings_privacy_policy">Informativa sulla privacy</string>
+
+    <!-- This string is used as the title of the pop-ups dialog used to remove sites from the currently
+         allowed pop-up sites. -->
+    <string name="settings_privacy_policy_popups_title">Permessi per i pop-up</string>
+
+    <!-- This string is displayed in the switch of each item of the the pop-up blocking list when the site is allowed. -->
+    <string name="pop_up_site_switch_allow">Consenti</string>
+
+    <!-- This string is displayed in the switch of each item of the the pop-up blocking list when the site is denied. -->
+    <string name="pop_up_site_switch_block">Blocca</string>
 
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains settings that an application or Web developer might want to change. -->
@@ -502,6 +507,14 @@
          of this storage even though the storage may not reside on external removable media. -->
     <string name="security_options_permission_storage">Lettura memoria esterna</string>
 
+    <!-- This string labels the button in the privacy option panel that enables/disables the pop-up
+         blocking. -->
+    <string name="security_options_block_pup_up_windows">Blocca finestre pop-up</string>
+
+    <!-- This string labels the button in the privacy option panel that open the dialog to add/remove
+         pop-up blocked sites. -->
+    <string name="security_options_block_pup_up_settings">Avanzate</string>
+
     <!-- This string is a label above the group of switches that indicates that the switches below
          relate to Firefox data collection and use. -->
     <string name="security_options_speech_data_collection_title">Raccolta e utilizzo dati di %1$s</string>
@@ -762,6 +775,12 @@
     <!-- This string labels the Reset button that restores the default privacy and security settings values. -->
     <string name="privacy_options_reset">Ripristina impostazioni privacy e sicurezza</string>
 
+    <!-- This string labels the Reset button that removes all the sites from the stored allowed pop-ups sites. -->
+    <string name="privacy_options_popups_reset">Ripristina le impostazioni di blocco pop-up di Windows</string>
+
+    <!-- This string is displayed on top of the allowed sites list in the allowed pop-ups panel. -->
+    <string name="privacy_options_popups_list_header">I seguenti siti web hanno richiesto l’apertura di finestre pop-up:</string>
+
     <!-- This string labels the Reset button that restores the default controller settings values. -->
     <string name="controller_options_reset">Ripristina impostazioni controller</string>
 
@@ -876,6 +895,9 @@
 
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the target url in a new window. -->
     <string name="context_menu_open_new_window">Apri in una nuova finestra.</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the target url in a new tab. -->
+    <string name="context_menu_open_new_tab">Apri in una nuova scheda.</string>
 
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it copies the target to the clipboard -->
     <string name="context_menu_copy_link">Copia link</string>
@@ -1028,4 +1050,69 @@
     <!-- This string is displayed in the Clear button on top of the window when in private mode. It only appears
          when there is one window left. When clicked, it closes the private session -->
     <string name="private_clear_button">Cancella</string>
+
+    <!-- This string is displayed as a description below the title of the pop-up blocking dialog. -->
+    <string name="popup_block_description">Mostrarli comunque?</string>
+
+    <!-- This string is displayed on the right of the checkbox in the the pop-up blocking dialog.
+         If the checkbox is checked Firefox will never ask again to block pop-ups for this site -->
+    <string name="popup_block_checkbox">Non chiedere più per questo sito</string>
+
+    <!-- This string is displayed on the left button of the pop-up blocking dialog.
+         If the button is clicked the pop-up will be shown -->
+    <string name="popup_block_button_show">Mostra</string>
+
+    <!-- This string is displayed in a button on the header of the tabs dialog. When clicked,
+        it allows to select tabs from the tab -->
+    <string name="tabs_select">Scegli</string>
+
+    <!-- This string is displayed in a button on the header of the tabs dialog, after selection mode is enabled with
+        the Select` button. When clicked it closes the selection mode -->
+    <string name="tabs_select_done">Fatto</string>
+
+    <!-- This string is displayed in a button on the header of the tabs dialog, after selection mode is enabled with
+    the Select` button. When clicked it selects all the available tabs -->
+    <string name="tabs_select_all">Seleziona tutto</string>
+
+    <!-- This string is displayed in a button on the header of the tabs dialog, after selection mode is enabled with
+the Select` button. When clicked it closes all the previously selected tabs -->
+    <string name="tabs_close_selected">Chiudi schede</string>
+
+    <!-- This string is displayed in a button on the header of the tabs dialog.
+     When clicked it closes all the available tabs -->
+    <string name="tabs_close_all">Chiudi tutto</string>
+
+    <!-- This string is displayed in a button on the header of the tabs dialog.
+       When clicked it unselects all the tabs -->
+    <string name="tabs_unselect">Deseleziona tutto</string>
+
+    <!-- This string is displayed in a label on the header of the tabs dialog. It indicates that there is one tab
+        available -->
+    <string name="tabs_counter_singular">1 scheda</string>
+
+    <!-- This string is displayed in a label on the header of the tabs dialog. It indicates that there are n tabs available.
+        %1$s expands to a integer which indicates the number of tabs. This number is always larger than 1, ortherwise
+        tabs_counter_singular key is used-->
+    <string name="tabs_counter_plural">%1$s schede</string>
+
+    <!-- This string is displayed in a label on the header of the tabs dialog. It's only visible in tab selection mode.
+        It indicates that there is one tab selected -->
+    <string name="tabs_selected_counter_singular">1 scheda selezionata</string>
+
+    <!-- This string is displayed in a label on the header of the tabs dialog. It's only visible in tab selection mode.
+        It indicates that there are n tabs selected. %1$s expands to a integer which indicates the number of tabs.
+        This number is always larger than 1, ortherwise tabs_selected_counter_singular key is used-->
+    <string name="tabs_selected_counter_plural">%1$s schede selezionate</string>
+
+    <!-- This string is displayed in a label on the header of the tabs dialog. It's only visible in tab selection mode.
+     It indicates that there are no tabs selected -->
+    <string name="tabs_selected_counter_none">0 schede selezionate</string>
+
+    <!-- This string is for the tooltip that appears when the users hovers in the tabs icon in the browser's
+        tray menu. When clicked it opens the tray dialog in the current active window -->
+    <string name="tabs_tray_tooltip">Visualizza schede</string>
+
+    <!-- This string is displayed in a tooltip that appears in the tray bar on top of the
+     tabs tray button then a tab has been added on the background. -->
+    <string name="tab_added_notification">Nuova scheda aggiunta!</string>
 </resources>
