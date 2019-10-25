@@ -2,10 +2,13 @@ package org.mozilla.vrbrowser.ui.callbacks;
 
 import android.view.View;
 
-import mozilla.components.concept.storage.BookmarkNode;
+import androidx.annotation.NonNull;
+
+import org.mozilla.vrbrowser.ui.adapters.Bookmark;
 
 public interface BookmarkItemCallback {
-    void onClick(View view, BookmarkNode item);
-    void onDelete(View view, BookmarkNode item);
-    void onMore(View view, BookmarkNode item);
+    void onClick(@NonNull View view, @NonNull Bookmark item);
+    void onDelete(@NonNull View view, @NonNull Bookmark item);
+    void onMore(@NonNull View view, @NonNull Bookmark item);
+    void onFolderOpened(@NonNull Bookmark item);
 }

@@ -2,6 +2,12 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android"
     android:enterFadeDuration="@integer/ui_fadeAnimTime"
     android:exitFadeDuration="@integer/ui_fadeAnimTime">
+    <item android:state_enabled="false">
+        <shape android:shape="rectangle">
+            <corners android:radius="2dp" />
+            <stroke android:width="1pt" android:color="@color/rhino" />
+        </shape>
+    </item>
     <item android:state_pressed="true">
         <shape android:shape="rectangle">
             <corners android:radius="2dp" />

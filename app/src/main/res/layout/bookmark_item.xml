@@ -5,21 +5,20 @@
 
     <data>
         <import type="android.widget.LinearLayout"/>
-
         <variable
             name="item"
-            type="mozilla.components.concept.storage.BookmarkNode" />
+            type="org.mozilla.vrbrowser.ui.adapters.Bookmark" />
 
         <variable
             name="callback"
             type="org.mozilla.vrbrowser.ui.callbacks.BookmarkItemCallback" />
 
         <variable
-            name="isHovered"
+            name="isNarrow"
             type="boolean" />
 
         <variable
-            name="isNarrow"
+            name="isHovered"
             type="boolean" />
     </data>
 
@@ -27,6 +26,8 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/library_item_row_height"
         app:layout_height="@{isNarrow ? @dimen/library_item_row_height_narrow : @dimen/library_item_row_height}"
+        app:leftMargin="@{item.level*100}"
+        android:layout_marginEnd="20dp"
         android:background="@color/void_color">
 
         <RelativeLayout
@@ -38,7 +39,7 @@
             android:descendantFocusability="blocksDescendants"
             android:focusable="true"
             android:gravity="center_vertical"
-            android:onClick="@{(view) ->  callback.onClick(view, item)}"
+            android:onClick="@{(view) -> callback.onClick(view, item)}"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
             android:soundEffectsEnabled="false">
@@ -80,7 +81,8 @@
                     android:text="@{item.url}"
                     android:textColor="@color/library_panel_description_color"
                     android:textSize="@dimen/library_item_url_text_size"
-                    tools:text="http://mozilla.org" />
+                    tools:text="http://mozilla.org"
+                    android:visibility="visible"/>
             </LinearLayout>
 
             <FrameLayout
@@ -89,7 +91,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:visibility="visible">
 
                 <LinearLayout
                     android:id="@+id/buttons_container"

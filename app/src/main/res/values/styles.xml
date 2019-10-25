@@ -118,6 +118,7 @@
         <item name="android:orientation">vertical</item>
         <item name="android:layout_width">136dp</item>
         <item name="android:layout_height">136dp</item>
+        <item name="android:layout_marginEnd">-10dp</item>
         <item name="android:background">@drawable/settings_honeycomb_background</item>
         <item name="android:scaleType">fitCenter</item>
         <item name="android:gravity">center</item>

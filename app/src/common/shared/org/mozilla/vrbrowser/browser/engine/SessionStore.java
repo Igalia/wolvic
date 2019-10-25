@@ -13,9 +13,11 @@ import org.mozilla.geckoview.GeckoRuntimeSettings;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.WebExtension;
 import org.mozilla.vrbrowser.BuildConfig;
+import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.browser.BookmarksStore;
 import org.mozilla.vrbrowser.browser.HistoryStore;
 import org.mozilla.vrbrowser.browser.PermissionDelegate;
+import org.mozilla.vrbrowser.browser.Services;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.crashreporting.CrashReporterService;
 
@@ -23,8 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SessionStore implements GeckoSession.PermissionDelegate {
-
-    public final int NO_ACTIVE_STORE_ID = -1;
 
     private static final String[] WEB_EXTENSIONS = new String[] {
             "webcompat_vimeo",
@@ -47,6 +47,7 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
     private PermissionDelegate mPermissionDelegate;
     private BookmarksStore mBookmarksStore;
     private HistoryStore mHistoryStore;
+    private Services mServices;
 
     private SessionStore() {
         mSessions = new ArrayList<>();
@@ -94,6 +95,14 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
         }
     }
 
+    public GeckoRuntime getRuntime() {
+        return mRuntime;
+    }
+
+    public void initializeServices() {
+        mServices = ((VRBrowserApplication)mContext.getApplicationContext()).getServices();
+    }
+
     public void initializeStores(Context context) {
         mBookmarksStore = new BookmarksStore(context);
         mHistoryStore = new HistoryStore(context);
@@ -106,6 +115,7 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
     public Session createSession(boolean aPrivateMode, @Nullable SessionSettings aSettings, boolean aOpen) {
         Session session = new Session(mContext, mRuntime, aPrivateMode, aSettings, aOpen);
         session.setPermissionDelegate(this);
+        session.addNavigationListener(mServices);
         mSessions.add(session);
 
         return session;
@@ -114,6 +124,7 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
     public Session createSession(SessionState aRestoreState) {
         Session session = new Session(mContext, mRuntime, aRestoreState);
         session.setPermissionDelegate(this);
+        session.addNavigationListener(mServices);
         mSessions.add(session);
 
         return session;
@@ -123,6 +134,7 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
         mSessions.remove(aSession);
         if (aSession != null) {
             aSession.setPermissionDelegate(null);
+            aSession.removeNavigationListener(mServices);
             aSession.shutdown();
         }
     }

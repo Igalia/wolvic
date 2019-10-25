@@ -59,8 +59,10 @@ public class CustomRecyclerView extends RecyclerView {
 
         getViewTreeObserver().addOnGlobalLayoutListener(() -> {
             if (getVisibility() == VISIBLE) {
-                mFastScroller.updateScrollPosition(computeHorizontalScrollOffset(),
-                        computeVerticalScrollOffset());
+                if (mFastScroller != null) {
+                    mFastScroller.updateScrollPosition(computeHorizontalScrollOffset(),
+                            computeVerticalScrollOffset());
+                }
             }
         });
     }

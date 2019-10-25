@@ -1,41 +1,32 @@
 package org.mozilla.vrbrowser.search;
 
+import androidx.annotation.NonNull;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mozilla.vrbrowser.geolocation.GeolocationData;
 
 import java.util.Locale;
 
+import kotlin.coroutines.Continuation;
+import mozilla.components.browser.search.provider.localization.SearchLocalization;
 import mozilla.components.browser.search.provider.localization.SearchLocalizationProvider;
 
-public class GeolocationLocalizationProvider extends SearchLocalizationProvider {
+public class GeolocationLocalizationProvider implements SearchLocalizationProvider {
 
     private String mCountry;
     private String mLanguage;
     private String mRegion;
 
-    GeolocationLocalizationProvider(GeolocationData data) {
+    GeolocationLocalizationProvider(@NonNull GeolocationData data) {
         mCountry = data.getCountryCode();
         mLanguage = Locale.getDefault().getLanguage();
         mRegion = data.getCountryCode();
     }
 
-    @NotNull
-    @Override
-    public String getCountry() {
-        return mCountry;
-    }
-
-    @NotNull
-    @Override
-    public String getLanguage() {
-        return mLanguage;
-    }
-
     @Nullable
     @Override
-    public String getRegion() {
-        return mRegion;
+    public SearchLocalization determineRegion(@NotNull Continuation<? super SearchLocalization> continuation) {
+        return new SearchLocalization(mLanguage, mCountry, mRegion);
     }
-
 }

@@ -2,7 +2,6 @@ package org.mozilla.vrbrowser.ui.widgets;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.TabWidget;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -11,8 +10,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+import org.jetbrains.annotations.NotNull;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.VRBrowserApplication;
+import org.mozilla.vrbrowser.browser.Accounts;
 import org.mozilla.vrbrowser.browser.Media;
 import org.mozilla.vrbrowser.browser.PromptDelegate;
 import org.mozilla.vrbrowser.browser.SettingsStore;
@@ -20,6 +22,7 @@ import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.browser.engine.SessionState;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
+import org.mozilla.vrbrowser.ui.widgets.settings.SettingsWidget;
 import org.mozilla.vrbrowser.utils.BitmapCache;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
@@ -33,7 +36,10 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
-import static org.mozilla.vrbrowser.ui.widgets.UIWidget.REQUEST_FOCUS;
+import mozilla.components.concept.sync.AccountObserver;
+import mozilla.components.concept.sync.AuthType;
+import mozilla.components.concept.sync.OAuthAccount;
+import mozilla.components.concept.sync.Profile;
 
 public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWidget.Delegate,
         GeckoSession.ContentDelegate, WindowWidget.WindowListener, TabsWidget.TabDelegate {
@@ -93,6 +99,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     private boolean mIsPaused = false;
     private PromptDelegate mPromptDelegate;
     private TabsWidget mTabsWidget;
+    private Accounts mAccounts;
 
     public enum WindowPlacement{
         FRONT(0),
@@ -127,6 +134,9 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         mPromptDelegate = new PromptDelegate(mContext);
 
         mStoredCurvedMode = SettingsStore.getInstance(mContext).getCylinderDensity() > 0.0f;
+
+        mAccounts = ((VRBrowserApplication)mContext.getApplicationContext()).getAccounts();
+        mAccounts.addAccountListener(mAccountObserver);
 
         restoreWindows();
     }
@@ -424,6 +434,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         for (WindowWidget window: mPrivateWindows) {
             window.close();
         }
+        mAccounts.removeAccountListener(mAccountObserver);
     }
 
     public boolean isInPrivateMode() {
@@ -858,6 +869,40 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             }
         }
     }
+
+    private AccountObserver mAccountObserver = new AccountObserver() {
+        @Override
+        public void onLoggedOut() {
+
+        }
+
+        @Override
+        public void onAuthenticated(@NotNull OAuthAccount oAuthAccount, @NotNull AuthType authType) {
+            switch (mAccounts.getLoginOrigin()) {
+                case BOOKMARKS:
+                    getFocusedWindow().switchBookmarks();
+                    break;
+
+                case HISTORY:
+                    getFocusedWindow().switchHistory();
+                    break;
+
+                case SETTINGS:
+                    mWidgetManager.getTray().toggleSettingsDialog(SettingsWidget.SettingDialog.FXA);
+                    break;
+            }
+        }
+
+        @Override
+        public void onProfileUpdated(@NotNull Profile profile) {
+
+        }
+
+        @Override
+        public void onAuthenticationProblems() {
+
+        }
+    };
 
     // Tray Listener
     @Override

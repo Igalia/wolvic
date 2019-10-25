@@ -49,8 +49,6 @@ import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.crashreporting.CrashReporterService;
 import org.mozilla.vrbrowser.crashreporting.GlobalExceptionHandler;
 import org.mozilla.vrbrowser.geolocation.GeolocationWrapper;
-import org.mozilla.vrbrowser.ui.widgets.prompts.ConfirmPromptWidget;
-import org.mozilla.vrbrowser.utils.DeviceType;
 import org.mozilla.vrbrowser.input.MotionEventGenerator;
 import org.mozilla.vrbrowser.search.SearchEngineWrapper;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
@@ -67,7 +65,9 @@ import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.ui.widgets.WindowWidget;
 import org.mozilla.vrbrowser.ui.widgets.Windows;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.CrashDialogWidget;
+import org.mozilla.vrbrowser.ui.widgets.prompts.ConfirmPromptWidget;
 import org.mozilla.vrbrowser.utils.ConnectivityReceiver;
+import org.mozilla.vrbrowser.utils.DeviceType;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
 import org.mozilla.vrbrowser.utils.ServoUtils;
 import org.mozilla.vrbrowser.utils.SystemUtils;
@@ -212,6 +212,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         Bundle extras = getIntent() != null ? getIntent().getExtras() : null;
         SessionStore.get().setContext(this, extras);
+        SessionStore.get().initializeServices();
         SessionStore.get().initializeStores(this);
 
         // Create broadcast receiver for getting crash messages from crash process
@@ -387,7 +388,13 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             widget.onResume();
         }
         handleConnectivityChange();
-        mConnectivityReceiver.register(this, () -> runOnUiThread(() -> handleConnectivityChange()));
+        mConnectivityReceiver.register(this, () -> runOnUiThread(this::handleConnectivityChange));
+
+        // If we're signed-in, poll for any new device events (e.g. received tabs) on activity resume.
+        // There's no push support right now, so this helps with the perception of speedy tab delivery.
+        ((VRBrowserApplication)getApplicationContext()).getAccounts().refreshDevicesAsync();
+        ((VRBrowserApplication)getApplicationContext()).getAccounts().pollForEventsAsync();
+
         super.onResume();
     }
 
@@ -1399,6 +1406,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Override
     public WindowWidget getFocusedWindow() {
         return mWindows.getFocusedWindow();
+    }
+
+    @Override
+    public TrayWidget getTray() {
+        return mTray;
     }
 
     private native void addWidgetNative(int aHandle, WidgetPlacement aPlacement);

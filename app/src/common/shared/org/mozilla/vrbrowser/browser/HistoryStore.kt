@@ -8,17 +8,43 @@ package org.mozilla.vrbrowser.browser
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import androidx.lifecycle.ProcessLifecycleOwner
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.future.future
 import mozilla.components.concept.storage.PageObservation
+import mozilla.components.concept.storage.PageVisit
 import mozilla.components.concept.storage.VisitInfo
 import mozilla.components.concept.storage.VisitType
+import mozilla.components.service.fxa.sync.SyncStatusObserver
+import mozilla.components.support.base.log.logger.Logger
 import org.mozilla.vrbrowser.VRBrowserApplication
+import org.mozilla.vrbrowser.utils.SystemUtils
 import java.util.concurrent.CompletableFuture
 
 class HistoryStore constructor(val context: Context) {
+
+    private val LOGTAG = SystemUtils.createLogtag(HistoryStore::class.java)
+
     private var listeners = ArrayList<HistoryListener>()
     private val storage = (context.applicationContext as VRBrowserApplication).places.history
+
+    // Bookmarks might have changed during sync, so notify our listeners.
+    private val syncStatusObserver = object : SyncStatusObserver {
+        override fun onStarted() {}
+
+        override fun onIdle() {
+            Logger(LOGTAG).debug("Detected that sync is finished, notifying listeners")
+            notifyListeners()
+        }
+
+        override fun onError(error: Exception?) {}
+    }
+
+    init {
+        (context.applicationContext as VRBrowserApplication).services.accountManager.registerForSyncEvents(
+                syncStatusObserver, ProcessLifecycleOwner.get(), false
+        )
+    }
 
     interface HistoryListener {
         fun onHistoryUpdated()
@@ -49,8 +75,15 @@ class HistoryStore constructor(val context: Context) {
                 VisitType.REDIRECT_PERMANENT))
     }
 
-    fun recordVisit(aURL: String, visitType: VisitType) = GlobalScope.future {
-        storage.recordVisit(aURL, visitType)
+    fun getVisitsPaginated(offset: Long, count: Long): CompletableFuture<List<VisitInfo>?> = GlobalScope.future {
+        storage.getVisitsPaginated(offset, count, excludeTypes = listOf(
+                VisitType.NOT_A_VISIT,
+                VisitType.REDIRECT_TEMPORARY,
+                VisitType.REDIRECT_PERMANENT))
+    }
+
+    fun recordVisit(aURL: String, pageVisit: PageVisit) = GlobalScope.future {
+        storage.recordVisit(aURL, pageVisit)
         notifyListeners()
     }
 

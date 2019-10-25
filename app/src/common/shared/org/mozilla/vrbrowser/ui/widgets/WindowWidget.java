@@ -41,6 +41,7 @@ import org.mozilla.vrbrowser.browser.VideoAvailabilityListener;
 import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
+import org.mozilla.vrbrowser.ui.adapters.Bookmark;
 import org.mozilla.vrbrowser.ui.callbacks.BookmarksCallback;
 import org.mozilla.vrbrowser.ui.callbacks.HistoryCallback;
 import org.mozilla.vrbrowser.ui.callbacks.LibraryItemContextMenuClickCallback;
@@ -57,6 +58,7 @@ import org.mozilla.vrbrowser.ui.widgets.dialogs.SelectionActionWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.AlertPromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.ConfirmPromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.PromptWidget;
+import org.mozilla.vrbrowser.ui.widgets.settings.SettingsWidget;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 import org.mozilla.vrbrowser.utils.ViewUtils;
 
@@ -65,8 +67,9 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import mozilla.components.concept.storage.BookmarkNode;
 import mozilla.components.concept.storage.PageObservation;
+import mozilla.components.concept.storage.PageVisit;
+import mozilla.components.concept.storage.RedirectSource;
 import mozilla.components.concept.storage.VisitInfo;
 import mozilla.components.concept.storage.VisitType;
 
@@ -159,12 +162,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mListeners = new ArrayList<>();
         setupListeners(mSession);
 
-        mBookmarksView  = new BookmarksView(aContext);
-        mBookmarksView.setBookmarksCallback(mBookmarksCallback);
+        mBookmarksView = new BookmarksView(aContext);
+        mBookmarksView.addBookmarksListener(mBookmarksListener);
         mBookmarksViewListeners = new ArrayList<>();
 
         mHistoryView = new HistoryView(aContext);
-        mHistoryView.setHistoryCallback(mHistoryCallback);
+        mHistoryView.addHistoryListener(mHistoryListener);
         mHistoryViewListeners = new ArrayList<>();
 
         mHandle = ((WidgetManagerDelegate)aContext).newWidgetHandle();
@@ -421,6 +424,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     public void showBookmarks(boolean switchSurface) {
         if (mView == null) {
             setView(mBookmarksView, switchSurface);
+            mBookmarksView.onShow();
             for (BookmarksViewDelegate listener : mBookmarksViewListeners) {
                 listener.onBookmarksShown(this);
             }
@@ -464,6 +468,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     public void showHistory(boolean switchSurface) {
         if (mView == null) {
             setView(mHistoryView, switchSurface);
+            mHistoryView.onShow();
             for (HistoryViewDelegate listener : mHistoryViewListeners) {
                 listener.onHistoryViewShown(this);
             }
@@ -917,6 +922,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             mTexture.release();
             mTexture = null;
         }
+        mBookmarksView.removeBookmarksListener(mBookmarksListener);
+        mHistoryView.removeHistoryListener(mHistoryListener);
         super.releaseWidget();
     }
 
@@ -1310,15 +1317,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mLibraryItemContextMenu.show(REQUEST_FOCUS);
     }
 
-    private BookmarksCallback mBookmarksCallback = new BookmarksCallback() {
-
+    private BookmarksCallback mBookmarksListener = new BookmarksCallback() {
         @Override
-        public void onClearBookmarks(View view) {
-            // Not used ATM
-        }
-
-        @Override
-        public void onShowContextMenu(@NonNull View view, @NotNull BookmarkNode item, boolean isLastVisibleItem) {
+        public void onShowContextMenu(@NonNull View view, @NotNull Bookmark item, boolean isLastVisibleItem) {
             showLibraryItemContextMenu(
                     view,
                     new LibraryItemContextMenu.LibraryContextMenuItem(
@@ -1327,9 +1328,14 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                             LibraryItemContextMenu.LibraryItemType.BOOKMARKS),
                     isLastVisibleItem);
         }
+
+        @Override
+        public void onFxASynSettings(@NonNull View view) {
+            mWidgetManager.getTray().toggleSettingsDialog(SettingsWidget.SettingDialog.FXA);
+        }
     };
 
-    private HistoryCallback mHistoryCallback = new HistoryCallback() {
+    private HistoryCallback mHistoryListener = new HistoryCallback() {
         @Override
         public void onClearHistory(@NonNull View view) {
             view.requestFocusFromTouch();
@@ -1345,6 +1351,11 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                             item.getTitle(),
                             LibraryItemContextMenu.LibraryItemType.HISTORY),
                     isLastVisibleItem);
+        }
+
+        @Override
+        public void onFxASynSettings(@NonNull View view) {
+            mWidgetManager.getTray().toggleSettingsDialog(SettingsWidget.SettingDialog.FXA);
         }
     };
 
@@ -1481,21 +1492,22 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         boolean isReload = lastVisitedURL != null && lastVisitedURL.equals(url);
 
-        VisitType visitType;
+        PageVisit pageVisit;
         if (isReload) {
-            visitType = VisitType.RELOAD;
+            pageVisit = new PageVisit(VisitType.RELOAD, RedirectSource.NOT_A_SOURCE);
+
         } else {
             if ((flags & VISIT_REDIRECT_SOURCE_PERMANENT) != 0) {
-                visitType = VisitType.REDIRECT_PERMANENT;
+                pageVisit = new PageVisit(VisitType.REDIRECT_PERMANENT, RedirectSource.NOT_A_SOURCE);
             } else if ((flags & VISIT_REDIRECT_SOURCE) != 0) {
-                visitType = VisitType.REDIRECT_TEMPORARY;
+                pageVisit = new PageVisit(VisitType.REDIRECT_TEMPORARY, RedirectSource.NOT_A_SOURCE);
             } else {
-                visitType = VisitType.LINK;
+                pageVisit = new PageVisit(VisitType.LINK, RedirectSource.NOT_A_SOURCE);
             }
         }
 
         SessionStore.get().getHistoryStore().deleteVisitsFor(url).thenAcceptAsync(result -> {
-            SessionStore.get().getHistoryStore().recordVisit(url, visitType);
+            SessionStore.get().getHistoryStore().recordVisit(url, pageVisit);
         });
         return GeckoResult.fromValue(true);
     }

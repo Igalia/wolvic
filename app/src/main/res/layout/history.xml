@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+        <import type="android.view.View"/>
 
         <variable
             name="isLoading"
@@ -10,6 +11,26 @@
 
         <variable
             name="isEmpty"
+            type="boolean" />
+
+        <variable
+            name="isSignedIn"
+            type="boolean" />
+
+        <variable
+            name="isSyncEnabled"
+            type="boolean" />
+
+        <variable
+            name="lastSync"
+            type="long" />
+
+        <variable
+            name="isSyncing"
+            type="boolean" />
+
+        <variable
+            name="isNarrow"
             type="boolean" />
 
         <variable
@@ -62,7 +83,6 @@
                 android:textSize="@dimen/text_medium_big_size"
                 android:textStyle="normal"
                 android:maxWidth="360dp" />
-
         </LinearLayout>
 
         <TextView
@@ -77,64 +97,46 @@
             android:visibility="gone"
             app:visibleGone="@{isLoading}" />
 
-        <RelativeLayout
+        <include
+            android:id="@+id/history_narrow"
+            layout="@layout/history_narrow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="30dp"
-            android:paddingEnd="30dp"
-            android:layout_marginEnd="20dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="50dp"
             android:layout_marginBottom="20dp"
-            app:visibleGone="@{!isLoading &amp;&amp; !isEmpty}">
+            app:isLoading="@{isLoading}"
+            app:isEmpty="@{isEmpty}"
+            app:isSignedIn="@{isSignedIn}"
+            app:isSyncEnabled="@{isSyncEnabled}"
+            app:lastSync="@{lastSync}"
+            app:isSyncing="@{isSyncing}"
+            app:isNarrow="@{isNarrow}"
+            app:callback="@{callback}" />
 
-            <ImageView
-                android:id="@+id/icon"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_alignParentStart="true"
-                android:src="@drawable/ic_icon_history"
-                android:tint="@color/concrete"
-                app:srcCompat="@drawable/ic_icon_history" />
-
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toEndOf="@id/icon"
-                android:gravity="center_vertical"
-                android:paddingStart="15dp"
-                android:paddingEnd="15dp"
-                android:text="@string/history_title"
-                android:textColor="@color/smoke"
-                android:textSize="@dimen/text_biggest_size"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/positiveButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:background="@drawable/content_panel_button_background"
-                android:fontFamily="sans-serif"
-                android:gravity="center"
-                android:onClick="@{(view) ->  callback != null ? callback.onClearHistory(view) : void}"
-                android:padding="5dp"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp"
-                android:text="@string/history_clear"
-                android:textColor="@color/library_panel_button_text_color"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-        </RelativeLayout>
+        <include
+            android:id="@+id/history_wide"
+            layout="@layout/history_wide"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="50dp"
+            android:layout_marginBottom="20dp"
+            app:isLoading="@{isLoading}"
+            app:isEmpty="@{isEmpty}"
+            app:isSignedIn="@{isSignedIn}"
+            app:isSyncEnabled="@{isSyncEnabled}"
+            app:lastSync="@{lastSync}"
+            app:isSyncing="@{isSyncing}"
+            app:isNarrow="@{isNarrow}"
+            app:callback="@{callback}" />
 
         <org.mozilla.vrbrowser.ui.views.CustomRecyclerView
             android:id="@+id/history_list"
             style="@style/customRecyclerViewStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingStart="30dp"
-            android:paddingEnd="10dp"
+            android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"
             android:contentDescription="History feed"
             android:fadingEdgeLength="60dp"

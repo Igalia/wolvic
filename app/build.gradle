@@ -443,9 +443,15 @@ dependencies {
     implementation deps.android_components.browser_search
     implementation deps.android_components.browser_storage
     implementation deps.android_components.browser_domains
+    implementation deps.android_components.service_accounts
     implementation deps.android_components.ui_autocomplete
     implementation deps.android_components.concept_fetch
     implementation deps.android_components.lib_fetch
+    implementation deps.android_components.support_rustlog
+    implementation deps.android_components.support_rusthttp
+
+    // TODO this should not be necessary at all, see Services.kt
+    implementation deps.work.runtime
 
     // Kotlin dependency
     implementation deps.kotlin.stdlib

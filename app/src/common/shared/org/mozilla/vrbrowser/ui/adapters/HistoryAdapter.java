@@ -222,12 +222,10 @@ public class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             HistoryItemViewHolder item = (HistoryItemViewHolder) holder;
             item.binding.setItem(mHistoryList.get(position));
             item.binding.setIsNarrow(mIsNarrowLayout);
-            item.binding.executePendingBindings();
 
         } else if (holder instanceof HistoryItemViewHeaderHolder) {
             HistoryItemViewHeaderHolder item = (HistoryItemViewHeaderHolder) holder;
             item.binding.setTitle(mHistoryList.get(position).getTitle());
-            item.binding.executePendingBindings();
         }
     }
 

@@ -83,4 +83,5 @@ public interface WidgetManagerDelegate {
     void openNewWindow(@NonNull String uri);
     void openNewTab(@NonNull String uri);
     WindowWidget getFocusedWindow();
+    TrayWidget getTray();
 }

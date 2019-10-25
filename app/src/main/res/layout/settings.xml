@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -188,14 +188,21 @@
                             style="?attr/honeycombButtonStyle"
                             app:honeycombButtonIcon="@drawable/ic_settings_privacypolicy"
                             app:honeycombButtonText="@string/settings_privacy_security"
-                            app:honeycombSwitchTextSize="@dimen/settings_main_button_text_width" />
+                            app:honeycombButtonTextSize="@dimen/settings_main_button_text_width" />
 
                         <org.mozilla.vrbrowser.ui.views.HoneycombButton
                             android:id="@+id/developerOptionsButton"
                             style="?attr/honeycombButtonStyle"
                             app:honeycombButtonIcon="@drawable/ic_settings_developeroptions"
                             app:honeycombButtonText="@string/settings_developer_options"
-                            app:honeycombSwitchTextSize="@dimen/settings_main_button_text_width" />
+                            app:honeycombButtonTextSize="@dimen/settings_main_button_text_width" />
+
+                        <org.mozilla.vrbrowser.ui.views.HoneycombButton
+                            android:id="@+id/fxaButton"
+                            style="?attr/honeycombButtonStyle"
+                            app:honeycombButtonIcon="@drawable/ic_icon_settings_sign_in"
+                            app:honeycombButtonText="@string/settings_fxa_account_sign_in"
+                            app:honeycombButtonTextSize="@dimen/settings_main_button_text_width" />
 
                     </LinearLayout>
 
@@ -204,8 +211,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/first_row"
-                        android:layout_marginStart="68.5dp"
-                        android:layout_marginTop="-23dp"
+                        android:layout_marginStart="65dp"
+                        android:layout_marginTop="-28dp"
                         android:orientation="horizontal">
 
                         <org.mozilla.vrbrowser.ui.views.HoneycombButton
@@ -229,10 +236,10 @@
                             style="?attr/honeycombButtonStyle"
                             app:honeycombButtonIcon="@drawable/ic_settings_help"
                             app:honeycombButtonText="@string/settings_help"
-                            app:honeycombSwitchTextSize="@dimen/settings_main_button_text_width" />
+                            app:honeycombButtonTextSize="@dimen/settings_main_button_text_width" />
                     </LinearLayout>
                 </RelativeLayout>
             </HorizontalScrollView>
         </ScrollView>
     </androidx.constraintlayout.widget.ConstraintLayout>
-</merge>
+</layout>

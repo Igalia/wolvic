@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.StringRes;
+
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 
@@ -84,6 +86,10 @@ public class ButtonSetting extends LinearLayout {
 
     public void setButtonText(String aText) {
         mButton.setText(aText);
+    }
+
+    public void setButtonText(@StringRes int aStringRes) {
+        mButton.setText(aStringRes);
     }
 
     public void setDescription(String description) {

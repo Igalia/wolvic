@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/dialog_background"
+        android:paddingStart="30dp"
+        android:paddingEnd="30dp">
+
+        <org.mozilla.vrbrowser.ui.widgets.settings.SettingsHeader
+            android:id="@+id/header_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:helpVisibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:title="@string/settings_display" />
+
+        <org.mozilla.vrbrowser.ui.views.CustomScrollView
+            android:id="@+id/scrollbar"
+            style="@style/customScrollViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:paddingEnd="30dp"
+            app:layout_constraintBottom_toTopOf="@id/footer_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/header_layout">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                    android:id="@+id/sign_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:buttonText="@string/settings_fxa_account_sign_out"
+                    app:description="@string/fxa_account_options_account" />
+
+                <TextView
+                    android:id="@+id/account_email"
+                    style="@style/settingsDescription"
+                    android:layout_below="@+id/backButton"
+                    android:gravity="center_vertical"
+                    android:layout_marginLeft="50dp"
+                    android:layout_marginBottom="15dp"
+                    android:text=""
+                    tools:text="" />
+
+                <TextView
+                    style="@style/settingsDescription"
+                    android:layout_below="@+id/backButton"
+                    android:gravity="center_vertical"
+                    android:text="@string/fxa_account_options_sync_title"
+                    tools:text="@string/fxa_account_options_sync_title" />
+
+                <TextView
+                    style="@style/settingsDescriptionText"
+                    android:layout_below="@+id/backButton"
+                    android:gravity="center_vertical"
+                    android:text="@string/fxa_account_options_sync_description"
+                    tools:text="@string/fxa_account_options_sync_description" />
+
+                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                    android:id="@+id/bookmarks_sync_switch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="50dp"
+                    app:description="@string/fxa_account_options_bookmarks_sync"
+                    app:on_text="@string/sync"
+                    app:off_text="@string/do_not_sync"/>
+
+                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                    android:id="@+id/history_sync_switch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="50dp"
+                    app:description="@string/fxa_account_options_history_sync"
+                    app:on_text="@string/sync"
+                    app:off_text="@string/do_not_sync"/>
+
+            </LinearLayout>
+        </org.mozilla.vrbrowser.ui.views.CustomScrollView>
+
+        <org.mozilla.vrbrowser.ui.widgets.settings.SettingsFooter
+            android:id="@+id/footer_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:buttonText="@string/fxa_account_options_reset"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

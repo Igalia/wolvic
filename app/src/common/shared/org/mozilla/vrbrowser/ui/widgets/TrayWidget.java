@@ -386,7 +386,11 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Windo
         }
     }
 
-    private void toggleSettingsDialog() {
+    public void toggleSettingsDialog() {
+        toggleSettingsDialog(SettingsWidget.SettingDialog.MAIN);
+    }
+
+    public void toggleSettingsDialog(SettingsWidget.SettingDialog settingDialog) {
         UIWidget widget = getChild(mSettingsDialogHandle);
         if (widget == null) {
             widget = createChild(SettingsWidget.class, false);
@@ -399,7 +403,7 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Windo
         if (widget.isVisible()) {
             widget.hide(REMOVE_WIDGET);
         } else {
-            widget.show(REQUEST_FOCUS);
+            ((SettingsWidget)widget).show(REQUEST_FOCUS, settingDialog);
         }
     }
 

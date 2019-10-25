@@ -14,6 +14,9 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.databinding.BindingAdapter;
 
+import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.ui.views.HoneycombButton;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -32,7 +35,7 @@ public class BindingAdapters {
     }
 
     @BindingAdapter("typeface")
-    public static void setTypeface(@NonNull TextView v, String style) {
+    public static void setTypeface(@NonNull TextView v, @NonNull String style) {
         switch (style) {
             case "bold":
                 v.setTypeface(null, Typeface.BOLD);
@@ -60,12 +63,17 @@ public class BindingAdapters {
     }
 
     @BindingAdapter(value={"textDrawable", "textString"})
-    public static void setSpannableString(@NonNull TextView textView, Drawable drawable, String text) {
+    public static void setSpannableString(@NonNull TextView textView, @NonNull Drawable drawable, String text) {
         SpannableString spannableString = new SpannableString(text);
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         ImageSpan span = new ImageSpan(drawable, ImageSpan.ALIGN_BOTTOM);
         spannableString.setSpan(span, spannableString.toString().indexOf("@"),  spannableString.toString().indexOf("@")+1, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
         textView.setText(spannableString);
+    }
+
+    @BindingAdapter("honeycombButtonText")
+    public static void setHoneycombButtonText(@NonNull HoneycombButton button, int resource){
+        button.setText(resource);
     }
 
     @BindingAdapter("layout_height")
@@ -74,4 +82,33 @@ public class BindingAdapters {
         params.height = (int)dimen;
         view.setLayoutParams(params);
     }
+
+    @BindingAdapter("leftMargin")
+    public static void setLeftMargin(@NonNull View view, @NonNull @Dimension float margin) {
+        if (view.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+            if (params.getMarginStart() != Math.round(margin)) {
+                params.setMarginStart(Math.round(margin));
+                view.setLayoutParams(params);
+            }
+        }
+    }
+
+    @BindingAdapter("lastSync")
+    public static void setFxALastSync(@NonNull TextView view, long lastSync) {
+        if (lastSync == 0) {
+            view.setText(view.getContext().getString(R.string.fxa_account_last_no_synced));
+
+        } else {
+            long timeDiff = System.currentTimeMillis() - lastSync;
+            if (timeDiff < 60000) {
+                view.setText(view.getContext().getString(R.string.fxa_account_last_synced_now));
+
+            } else {
+                view.setText(view.getContext().getString(R.string.fxa_account_last_synced, timeDiff / 60000));
+            }
+        }
+    }
+
+
 }

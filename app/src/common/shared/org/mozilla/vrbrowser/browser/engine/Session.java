@@ -46,7 +46,6 @@ import java.net.URISyntaxException;
 import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 
 import static org.mozilla.vrbrowser.utils.ServoUtils.createServoSession;
 import static org.mozilla.vrbrowser.utils.ServoUtils.isInstanceOfServoSession;
