@@ -110,6 +110,10 @@
          allowed pop-up sites. -->
     <string name="settings_privacy_policy_popups_title">Permessi per i pop-up</string>
 
+    <!-- This string is displayed under the title the pop-ups dialog used to remove sites from the currently
+         allowed pop-up sites. -->
+    <string name="settings_privacy_policy_popups_description">È possibile specificare i siti web autorizzati ad aprire finestre pop-up</string>
+
     <!-- This string is displayed in the switch of each item of the the pop-up blocking list when the site is allowed. -->
     <string name="pop_up_site_switch_allow">Consenti</string>
 
@@ -265,6 +269,10 @@
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
         opens the Firfox Reality support web site in the browser window. -->
     <string name="settings_help">Aiuto</string>
+
+    <!-- This string is displayed in the settings header under the Firefox Reality logo. When clicked the settings panel is closed
+         a the survey web site in opened in the currently focused window -->
+    <string name="settings_send_your_feedback">Invia feedback</string>
 
     <!-- This string is the title of a dialog box shown to the user when a settings
          change requires the application to restart. -->
@@ -775,6 +783,9 @@
     <!-- This string labels the Reset button that restores the default privacy and security settings values. -->
     <string name="privacy_options_reset">Ripristina impostazioni privacy e sicurezza</string>
 
+    <!-- This string labels the Clear All button that removes all the sites from the stored allowed pop-ups sites. -->
+    <string name="privacy_options_popups_clear_all">Cancella tutto</string>
+
     <!-- This string labels the Reset button that removes all the sites from the stored allowed pop-ups sites. -->
     <string name="privacy_options_popups_reset">Ripristina le impostazioni di blocco pop-up di Windows</string>
 
@@ -1051,6 +1062,10 @@
          when there is one window left. When clicked, it closes the private session -->
     <string name="private_clear_button">Cancella</string>
 
+    <!-- This string is displayed in the title of the pop-up blocking dialog.
+         '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="popup_block_title">%1$s ha bloccato un pop-up su questo sito</string>
+
     <!-- This string is displayed as a description below the title of the pop-up blocking dialog. -->
     <string name="popup_block_description">Mostrarli comunque?</string>
 
@@ -1061,6 +1076,10 @@
     <!-- This string is displayed on the left button of the pop-up blocking dialog.
          If the button is clicked the pop-up will be shown -->
     <string name="popup_block_button_show">Mostra</string>
+
+    <!-- This string is displayed on the right button of the pop-up blocking dialog.
+         If the button is clicked the pop-up will be blocked -->
+    <string name="popup_block_button_do_not_show">Nascondi</string>
 
     <!-- This string is displayed in a button on the header of the tabs dialog. When clicked,
         it allows to select tabs from the tab -->
