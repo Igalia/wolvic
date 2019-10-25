@@ -1089,6 +1089,18 @@
     the Select` button. When clicked it selects all the available tabs -->
     <string name="tabs_select_all">全选</string>
 
+    <!-- This string is displayed in a button on the header of the tabs dialog, after selection mode is enabled with
+the Select` button. When clicked it closes all the previously selected tabs -->
+    <string name="tabs_close_selected">关闭标签页</string>
+
+    <!-- This string is displayed in a button on the header of the tabs dialog.
+     When clicked it closes all the available tabs -->
+    <string name="tabs_close_all">关闭全部</string>
+
+    <!-- This string is displayed in a button on the header of the tabs dialog.
+       When clicked it unselects all the tabs -->
+    <string name="tabs_unselect">取消选择全部</string>
+
     <!-- This string is displayed in a label on the header of the tabs dialog. It indicates that there is one tab
         available -->
     <string name="tabs_counter_singular">1 个标签页</string>
@@ -1098,4 +1110,24 @@
         tabs_counter_singular key is used-->
     <string name="tabs_counter_plural">%1$s 个标签页</string>
 
-    </resources>
+    <!-- This string is displayed in a label on the header of the tabs dialog. It's only visible in tab selection mode.
+        It indicates that there is one tab selected -->
+    <string name="tabs_selected_counter_singular">已选取 1 个标签页</string>
+
+    <!-- This string is displayed in a label on the header of the tabs dialog. It's only visible in tab selection mode.
+        It indicates that there are n tabs selected. %1$s expands to a integer which indicates the number of tabs.
+        This number is always larger than 1, ortherwise tabs_selected_counter_singular key is used-->
+    <string name="tabs_selected_counter_plural">已选取 %1$s 个标签页</string>
+
+    <!-- This string is displayed in a label on the header of the tabs dialog. It's only visible in tab selection mode.
+     It indicates that there are no tabs selected -->
+    <string name="tabs_selected_counter_none">未选取标签页</string>
+
+    <!-- This string is for the tooltip that appears when the users hovers in the tabs icon in the browser's
+        tray menu. When clicked it opens the tray dialog in the current active window -->
+    <string name="tabs_tray_tooltip">查看标签页</string>
+
+    <!-- This string is displayed in a tooltip that appears in the tray bar on top of the
+     tabs tray button then a tab has been added on the background. -->
+    <string name="tab_added_notification">已新建标签页！</string>
+</resources>
