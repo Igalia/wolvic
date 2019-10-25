@@ -2,10 +2,11 @@ package org.mozilla.vrbrowser.ui.widgets;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
+import android.view.MotionEvent;
 
 public class RootWidget extends UIWidget {
     private Runnable mOnClickCallback;
+    private boolean mTouched = true;
 
     public RootWidget(Context aContext) {
         super(aContext);
@@ -31,14 +32,29 @@ public class RootWidget extends UIWidget {
 
     private void initialize(Context aContext) {
         setFocusable(true);
+    }
 
-        setOnClickListener(v -> {
-            requestFocus();
-            requestFocusFromTouch();
-            if (mOnClickCallback != null) {
-                mOnClickCallback.run();
-            }
-        });
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                mTouched = true;
+                break;
+            case MotionEvent.ACTION_UP:
+                if (mTouched) {
+                    mTouched = false;
+                    requestFocus();
+                    requestFocusFromTouch();
+                    if (mOnClickCallback != null) {
+                        mOnClickCallback.run();
+                    }
+                }
+                break;
+            case MotionEvent.ACTION_CANCEL:
+                mTouched = false;
+                break;
+        }
+        return super.onTouchEvent(event);
     }
 
     public void setClickCallback(Runnable aRunnable) {
