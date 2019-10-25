@@ -118,8 +118,9 @@ class Services(context: Context, places: Places): GeckoSession.NavigationDelegat
 
                 return GeckoResult.ALLOW
             }
+            return GeckoResult.DENY
         }
 
-        return GeckoResult.DENY
+        return GeckoResult.ALLOW
     }
 }
