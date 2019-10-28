@@ -1041,10 +1041,23 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     @Override
-    public void onNewTab(Session aTab) {
+    public void onStackSession(Session aSession) {
         // e.g. tab opened via window.open()
-        setSession(aTab);
-        SessionStore.get().setActiveSession(aTab);
+        Session current = mSession;
+        setSession(aSession);
+        SessionStore.get().setActiveSession(aSession);
+        current.setActive(false);
+        mWidgetManager.getTray().showTabAddedNotification();
+    }
+
+    @Override
+    public void onUnstackSession(Session aSession, Session aParent) {
+        if (mSession == aSession) {
+            setSession(aParent);
+            aParent.setActive(true);
+            SessionStore.get().setActiveSession(aParent);
+            SessionStore.get().destroySession(aSession);
+        }
     }
 
     // View

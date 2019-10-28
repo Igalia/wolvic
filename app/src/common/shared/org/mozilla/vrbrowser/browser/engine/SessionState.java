@@ -41,6 +41,7 @@ public class SessionState {
     public long mLastUse;
     public String mRegion;
     public String mId = UUID.randomUUID().toString();
+    public String mParentId; // Parent session stack Id.
 
     public static class GeckoSessionStateAdapter extends TypeAdapter<GeckoSession.SessionState> {
         @Override
@@ -83,6 +84,7 @@ public class SessionState {
                             out.name("mLastUse").value(session.mLastUse);
                             out.name("mRegion").value(session.mRegion);
                             out.name("mId").value(session.mId);
+                            out.name("mParentId").value(session.mParentId);
                             if (session.mSession != null) {
                                 if (session.mSession.getSettings().getUsePrivateMode()) {
                                     out.name("mSessionState").jsonValue(null);
