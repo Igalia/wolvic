@@ -1400,7 +1400,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Override
     public void openNewTab(@NonNull String uri) {
         mWindows.addBackgroundTab(mWindows.getFocusedWindow(), uri);
-        mTray.showTabAddedNotification();
     }
 
     @Override

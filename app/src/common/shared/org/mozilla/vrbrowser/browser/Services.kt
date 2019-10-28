@@ -14,10 +14,7 @@ import androidx.work.WorkManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import mozilla.components.concept.sync.DeviceCapability
-import mozilla.components.concept.sync.DeviceEvent
-import mozilla.components.concept.sync.DeviceEventsObserver
-import mozilla.components.concept.sync.DeviceType
+import mozilla.components.concept.sync.*
 import mozilla.components.lib.fetch.httpurlconnection.HttpURLConnectionClient
 import mozilla.components.service.fxa.*
 import mozilla.components.service.fxa.manager.FxaAccountManager
@@ -38,6 +35,11 @@ class Services(context: Context, places: Places): GeckoSession.NavigationDelegat
         const val CLIENT_ID = "7ad9917f6c55fb77"
         const val REDIRECT_URL = "https://accounts.firefox.com/oauth/success/$CLIENT_ID"
     }
+    interface TabReceivedDelegate {
+        fun onTabsReceived(uri: List<TabData>)
+    }
+
+    var tabReceivedDelegate: TabReceivedDelegate? = null
 
     // This makes bookmarks storage accessible to background sync workers.
     init {
@@ -73,10 +75,10 @@ class Services(context: Context, places: Places): GeckoSession.NavigationDelegat
         override fun onEvents(events: List<DeviceEvent>) {
             CoroutineScope(Dispatchers.Main).launch {
                 Logger(logTag).info("Received ${events.size} device event(s)")
-                events.filterIsInstance(DeviceEvent.TabReceived::class.java).forEach {
-                    // Just load the first tab that was sent.
-                    // TODO Update when there is a push notifications API available
-                    SessionStore.get().activeSession.loadUri(it.entries[0].url)
+                val events = events.filterIsInstance(DeviceEvent.TabReceived::class.java)
+                if (!events.isEmpty()) {
+                    val tabs = events.map { event -> event.entries }.flatten()
+                    tabReceivedDelegate?.onTabsReceived(tabs)
                 }
             }
         }

@@ -135,6 +135,10 @@ public class BitmapCache {
         });
     }
 
+    public boolean hasBitmap(@NonNull String aKey) {
+        return mMemoryCache.get(aKey) != null;
+    }
+
     private void runIO(Runnable aRunnable) {
         mIOExecutor.execute(() -> {
             if (mDiskCache != null) {

@@ -421,6 +421,10 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         });
     }
 
+    public boolean hasCapturedBitmap() {
+        return BitmapCache.getInstance(mContext).hasBitmap(mState.mId);
+    }
+
     public void purgeHistory() {
         if (mState.mSession != null) {
             mState.mSession.purgeHistory();

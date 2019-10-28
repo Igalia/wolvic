@@ -52,7 +52,6 @@ import org.mozilla.vrbrowser.ui.widgets.dialogs.BaseAppDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.ClearCacheDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.ContextMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.LibraryItemContextMenuWidget;
-import org.mozilla.vrbrowser.ui.widgets.dialogs.MaxWindowsWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.MessageDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.SelectionActionWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.AlertPromptWidget;
@@ -1459,7 +1458,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     @Override
     public void onPageStop(@NonNull GeckoSession aSession, boolean b) {
-        if (mCaptureOnPageStop) {
+        if (mCaptureOnPageStop || !mSession.hasCapturedBitmap()) {
             mCaptureOnPageStop = false;
             captureImage();
         }

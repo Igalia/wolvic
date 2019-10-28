@@ -153,7 +153,7 @@ public class TabsWidget extends UIDialog implements WidgetManagerDelegate.WorldC
     @Override
     public void show(int aShowFlags) {
         super.show(aShowFlags);
-        mAdapter.updateTabs(SessionStore.get().getSortedSessions(mPrivateMode));
+        refreshTabs();
         mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
         mTabsList.requestFocusFromTouch();
     }
@@ -167,6 +167,10 @@ public class TabsWidget extends UIDialog implements WidgetManagerDelegate.WorldC
 
     public void setTabDelegate(TabDelegate aDelegate) {
         mTabDelegate = aDelegate;
+    }
+
+    public void refreshTabs() {
+        mAdapter.updateTabs(SessionStore.get().getSortedSessions(mPrivateMode));
     }
 
     public class TabAdapter extends RecyclerView.Adapter<TabAdapter.MyViewHolder> {

@@ -17,6 +17,7 @@ import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.browser.Accounts;
 import org.mozilla.vrbrowser.browser.Media;
 import org.mozilla.vrbrowser.browser.PromptDelegate;
+import org.mozilla.vrbrowser.browser.Services;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.browser.engine.SessionState;
@@ -34,15 +35,18 @@ import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import mozilla.components.concept.sync.AccountObserver;
 import mozilla.components.concept.sync.AuthType;
 import mozilla.components.concept.sync.OAuthAccount;
 import mozilla.components.concept.sync.Profile;
+import mozilla.components.concept.sync.TabData;
 
 public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWidget.Delegate,
-        GeckoSession.ContentDelegate, WindowWidget.WindowListener, TabsWidget.TabDelegate {
+        GeckoSession.ContentDelegate, WindowWidget.WindowListener, TabsWidget.TabDelegate,
+        Services.TabReceivedDelegate {
 
     private static final String LOGTAG = SystemUtils.createLogtag(Windows.class);
 
@@ -100,6 +104,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     private PromptDelegate mPromptDelegate;
     private TabsWidget mTabsWidget;
     private Accounts mAccounts;
+    private Services mServices;
 
     public enum WindowPlacement{
         FRONT(0),
@@ -137,6 +142,8 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
         mAccounts = ((VRBrowserApplication)mContext.getApplicationContext()).getAccounts();
         mAccounts.addAccountListener(mAccountObserver);
+        mServices = ((VRBrowserApplication)mContext.getApplicationContext()).getServices();
+        mServices.setTabReceivedDelegate(this);
 
         restoreWindows();
     }
@@ -435,6 +442,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             window.close();
         }
         mAccounts.removeAccountListener(mAccountObserver);
+        mServices.setTabReceivedDelegate(null);
     }
 
     public boolean isInPrivateMode() {
@@ -943,6 +951,10 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             mTabsWidget.getPlacement().parentHandle = mFocusedWindow.getHandle();
             mTabsWidget.attachToWindow(mFocusedWindow);
             mTabsWidget.show(UIWidget.KEEP_FOCUS);
+            // If we're signed-in, poll for any new device events (e.g. received tabs)
+            // There's no push support right now, so this helps with the perception of speedy tab delivery.
+            ((VRBrowserApplication)mContext.getApplicationContext()).getAccounts().refreshDevicesAsync();
+            ((VRBrowserApplication)mContext.getApplicationContext()).getAccounts().pollForEventsAsync();
         }
     }
 
@@ -1105,7 +1117,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         }
     }
 
-    public void addTab(WindowWidget targetWindow) {
+    public void addTab(WindowWidget targetWindow, @Nullable String aUri) {
         Session session = SessionStore.get().createSession(targetWindow.getSession().isPrivateMode());
         targetWindow.setFirstPaintReady(false);
         targetWindow.setFirstDrawCallback(() -> {
@@ -1117,7 +1129,11 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         mWidgetManager.updateWidget(targetWindow);
         targetWindow.getSession().setActive(false);
         targetWindow.setSession(session);
-        session.loadHomePage();
+        if (aUri != null) {
+            session.loadUri(aUri);
+        } else {
+            session.loadHomePage();
+        }
         SessionStore.get().setActiveSession(session);
     }
 
@@ -1126,11 +1142,12 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         session.loadUri(aUri);
         session.updateLastUse();
         mFocusedWindow.getSession().updateLastUse();
+        mWidgetManager.getTray().showTabAddedNotification();
     }
 
     @Override
     public void onTabAdd() {
-        addTab(mFocusedWindow);
+        addTab(mFocusedWindow, null);
     }
 
     @Override
@@ -1175,7 +1192,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
                 available.remove(0);
             } else {
                 // We don't have more tabs available for the front window, load home.
-                addTab(window);
+                addTab(window, null);
             }
         }
 
@@ -1187,4 +1204,30 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
         SessionStore.get().setActiveSession(targetWindow.getSession());
     }
+
+    @Override
+    public void onTabsReceived(@NotNull List<TabData> aTabs) {
+        WindowWidget targetWindow = mFocusedWindow;
+        for (int i = aTabs.size() - 1; i >= 0; --i) {
+            Session session = SessionStore.get().createSession(targetWindow.getSession().isPrivateMode());
+            // Cache the provided data to avoid delays if the tabs are loaded at the same time the
+            // tabs panel is shown.
+            session.getSessionState().mTitle = aTabs.get(i).getTitle();
+            session.getSessionState().mUri = aTabs.get(i).getUrl();
+            session.loadUri(aTabs.get(i).getUrl());
+            session.updateLastUse();
+            if (i == 0) {
+                // Set the first received tab of the list the current one.
+                SessionStore.get().setActiveSession(session);
+                targetWindow.setSession(session);
+            }
+        }
+
+        mWidgetManager.getTray().showTabAddedNotification();
+
+        if (mTabsWidget != null && mTabsWidget.isVisible()) {
+            mTabsWidget.refreshTabs();
+        }
+    }
+
 }
