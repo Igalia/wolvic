@@ -123,12 +123,16 @@ class SessionSettings {
         }
 
         public Builder withDefaultSettings(Context context) {
+            int ua = SettingsStore.getInstance(context).getUaMode();
+            int viewport = ua == GeckoSessionSettings.USER_AGENT_MODE_DESKTOP ?
+                    GeckoSessionSettings.VIEWPORT_MODE_DESKTOP : GeckoSessionSettings.VIEWPORT_MODE_MOBILE;
+
             return new SessionSettings.Builder()
                     .withMultiprocess(SettingsStore.getInstance(context).isMultiprocessEnabled())
                     .withTrackingProteccion(SettingsStore.getInstance(context).isTrackingProtectionEnabled())
                     .withSuspendMediaWhenInactive(true)
-                    .withUserAgent(GeckoSessionSettings.USER_AGENT_MODE_VR)
-                    .withViewport(GeckoSessionSettings.VIEWPORT_MODE_MOBILE)
+                    .withUserAgent(ua)
+                    .withViewport(viewport)
                     .withServo(false);
         }
 

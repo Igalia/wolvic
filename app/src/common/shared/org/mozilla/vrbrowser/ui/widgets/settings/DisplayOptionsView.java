@@ -250,10 +250,6 @@ class DisplayOptionsView extends SettingsView {
         mBinding.uaRadio.setOnCheckedChangeListener(mUaModeListener);
 
         SettingsStore.getInstance(getContext()).setUaMode(checkId);
-
-        if (doApply) {
-            SessionStore.get().setUaMode((Integer)mBinding.uaRadio.getValueForId(checkId));
-        }
     }
 
     private void setMSAAMode(int checkedId, boolean doApply) {

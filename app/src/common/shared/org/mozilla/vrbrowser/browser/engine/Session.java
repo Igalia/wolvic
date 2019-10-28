@@ -654,7 +654,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     }
 
     public void setUaMode(int mode) {
-        if (mState.mSession == null) {
+        if (mState.mSession == null || mState.mSettings.getUserAgentMode() == mode) {
             return;
         }
         mState.mSettings.setUserAgentMode(mode);
