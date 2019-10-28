@@ -14,6 +14,7 @@ import org.mozilla.vrbrowser.browser.Places;
 import org.mozilla.vrbrowser.browser.Services;
 import org.mozilla.vrbrowser.db.AppDatabase;
 import org.mozilla.vrbrowser.db.DataRepository;
+import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.utils.BitmapCache;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
@@ -37,6 +38,7 @@ public class VRBrowserApplication extends Application {
         mAccounts = new Accounts(this);
 
         TelemetryWrapper.init(this);
+        GleanMetricsService.init(this);
     }
 
     @Override

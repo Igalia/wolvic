@@ -10,6 +10,7 @@ import org.json.JSONArray;
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.telemetry.TelemetryHolder;
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.utils.DeviceType;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
@@ -132,6 +133,9 @@ public class SettingsStore {
         // We send after enabling in case of opting-in
         if (isEnabled) {
             TelemetryWrapper.telemetryStatus(true);
+            GleanMetricsService.start();
+        } else {
+            GleanMetricsService.stop();
         }
 
         // Update the status sent flag
