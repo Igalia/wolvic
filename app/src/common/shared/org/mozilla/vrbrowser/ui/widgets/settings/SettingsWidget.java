@@ -116,7 +116,7 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
             onDismiss();
         });
 
-        mBinding.reportIssueLayout.setOnClickListener(v -> {
+        mBinding.reportIssueButton.setOnClickListener(v -> {
             onSettingsReportClick();
             onDismiss();
         });

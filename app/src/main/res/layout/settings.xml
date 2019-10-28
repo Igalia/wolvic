@@ -26,56 +26,6 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
-            android:id="@+id/reportIssueLayout"
-            android:layout_width="@dimen/report_issue_width"
-            android:layout_height="@dimen/report_issue_height"
-            android:layout_marginTop="54dp"
-            android:layout_marginEnd="42dp"
-            android:background="@drawable/panel_button_background"
-            android:descendantFocusability="afterDescendants"
-            android:gravity="center"
-            android:focusable="true"
-            android:clickable="true"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
-                android:id="@+id/settings_button_icon"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="center"
-                android:layout_marginEnd="5dp"
-                android:gravity="center"
-                android:scaleType="fitXY"
-                android:duplicateParentState="true"
-                android:tint="@color/fog_void_tint"
-                android:src="@drawable/ic_settings_reportissue" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:descendantFocusability="afterDescendants"
-                android:duplicateParentState="true"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:duplicateParentState="true"
-                    android:text="@string/settings_report_issue"
-                    android:textColor="@color/fog_void_tint"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:duplicateParentState="true"
-                    android:text="@string/bug_report_url"
-                    android:textColor="@color/fog_void_tint"/>
-            </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
             android:id="@+id/settingsMasthead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -236,6 +186,14 @@
                             style="?attr/honeycombButtonStyle"
                             app:honeycombButtonIcon="@drawable/ic_settings_help"
                             app:honeycombButtonText="@string/settings_help"
+                            app:honeycombButtonTextSize="@dimen/settings_main_button_text_width" />
+
+                        <org.mozilla.vrbrowser.ui.views.HoneycombButton
+                            android:id="@+id/reportIssueButton"
+                            style="?attr/honeycombButtonStyle"
+                            app:honeycombButtonIcon="@drawable/ic_settings_reportissue"
+                            app:honeycombButtonText="@string/settings_report_issue"
+                            app:honeycombSecondaryText="@string/bug_report_url"
                             app:honeycombButtonTextSize="@dimen/settings_main_button_text_width" />
                     </LinearLayout>
                 </RelativeLayout>

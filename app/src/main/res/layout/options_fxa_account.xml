@@ -18,7 +18,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:title="@string/settings_display" />
+            app:title="@string/settings_fxa_account_manage" />
 
         <org.mozilla.vrbrowser.ui.views.CustomScrollView
             android:id="@+id/scrollbar"
