@@ -98,6 +98,9 @@ public class SessionState {
                                     }
                                 }
                             }
+                            if (session.mSettings != null) {
+                                out.name("mSettings").jsonValue(gson.toJson(session.mSettings));
+                            }
                             out.endObject();
 
                         } else {
@@ -112,16 +115,7 @@ public class SessionState {
                 public T read(JsonReader in) throws IOException {
                     try {
                         return delegate.read(in);
-
-                    } catch (IOException e) {
-                        in.skipValue();
-                        return null;
-
-                    } catch (IllegalStateException e) {
-                        in.skipValue();
-                        return null;
-
-                    } catch (JsonSyntaxException e) {
+                    } catch (Exception e) {
                         in.skipValue();
                         return null;
                     }
