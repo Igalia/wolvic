@@ -10,6 +10,7 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.URLSpan;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -169,5 +170,42 @@ public class ViewUtils {
         int start = Math.min(offset1, offset2);
         int end = Math.max(offset1, offset2);
         aView.setSelection(start, end);
+    }
+
+    static class StickyClickListener implements View.OnTouchListener {
+        private boolean mTouched;
+        private View.OnClickListener mClickListener;
+
+        StickyClickListener(View.OnClickListener aListener) {
+            mClickListener = aListener;
+        }
+
+        @Override
+        public boolean onTouch(View view, MotionEvent event) {
+            view.getParent().requestDisallowInterceptTouchEvent(true);
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    mTouched = true;
+                    break;
+                case MotionEvent.ACTION_UP:
+                    if (mTouched && ViewUtils.isInsideView(view, (int)event.getRawX(), (int)event.getRawY())) {
+                        view.requestFocus();
+                        view.requestFocusFromTouch();
+                        if (mClickListener != null) {
+                            mClickListener.onClick(view);
+                        }
+                    }
+                    mTouched = false;
+                    break;
+                case MotionEvent.ACTION_CANCEL:
+                    mTouched = false;
+                    break;
+            }
+            return false;
+        }
+    }
+
+    public static void setStickyClickListener(@NonNull View aView, View.OnClickListener aCallback) {
+        aView.setOnTouchListener(new StickyClickListener(aCallback));
     }
 }
