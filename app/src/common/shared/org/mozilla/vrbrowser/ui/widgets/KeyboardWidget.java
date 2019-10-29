@@ -68,7 +68,7 @@ import androidx.annotation.Nullable;
 
 
 public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKeyboardActionListener, AutoCompletionView.Delegate,
-        GeckoSession.TextInputDelegate, WidgetManagerDelegate.FocusChangeListener, VoiceSearchWidget.VoiceSearchDelegate, TextWatcher {
+        GeckoSession.TextInputDelegate, WidgetManagerDelegate.FocusChangeListener, VoiceSearchWidget.VoiceSearchDelegate, TextWatcher, WindowWidget.WindowListener {
 
     private static int MAX_CHARS_PER_POPUP_LINE = 10;
 
@@ -86,7 +86,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private View mFocusedView;
     private LinearLayout mKeyboardLayout;
     private RelativeLayout mKeyboardContainer;
-    private UIWidget mAttachedWindow;
+    private WindowWidget mAttachedWindow;
     private InputConnection mInputConnection;
     private EditorInfo mEditorInfo = new EditorInfo();
     private VoiceSearchWidget mVoiceSearchWidget;
@@ -287,6 +287,10 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
     @Override
     public void detachFromWindow() {
+        if (mAttachedWindow != null) {
+            mAttachedWindow.removeWindowListener(this);
+        }
+        
         if (mSession != null) {
             mSession.removeTextInputListener(this);
             mSession = null;
@@ -299,6 +303,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             return;
         }
         mAttachedWindow = aWindow;
+        mAttachedWindow.addWindowListener(this);
         mWidgetPlacement.parentHandle = aWindow.getHandle();
 
         mSession = aWindow.getSession();
@@ -1151,5 +1156,13 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             updateCandidates();
         }
         mInternalDeleteHint = false;
+    }
+
+    // WindowListener
+
+    @Override
+    public void onSessionChanged(@NonNull Session aOldSession, @NonNull Session aSession) {
+        aOldSession.removeTextInputListener(this);
+        aSession.addTextInputListener(this);
     }
 }
