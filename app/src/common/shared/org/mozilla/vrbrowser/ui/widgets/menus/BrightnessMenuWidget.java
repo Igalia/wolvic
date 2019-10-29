@@ -1,8 +1,10 @@
-package org.mozilla.vrbrowser.ui.widgets;
+package org.mozilla.vrbrowser.ui.widgets.menus;
 
 import android.content.Context;
 
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.ui.widgets.UIWidget;
+import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 
 import java.util.ArrayList;
 
@@ -10,7 +12,7 @@ public class BrightnessMenuWidget extends MenuWidget {
 
     ArrayList<MenuItem> mItems;
     public BrightnessMenuWidget(Context aContext) {
-        super(aContext);
+        super(aContext, R.layout.menu);
         createMenuItems();
     }
 
@@ -33,12 +35,7 @@ public class BrightnessMenuWidget extends MenuWidget {
     private void createMenuItems() {
         mItems = new ArrayList<>();
 
-        final Runnable action = new Runnable() {
-            @Override
-            public void run() {
-                handleClick();
-            }
-        };
+        final Runnable action = () -> handleClick();
 
         mItems.add(new MenuItem(getContext().getString(R.string.brightness_mode_normal), 0, action));
         mItems.add(new MenuItem(getContext().getString(R.string.brightness_mode_dark), 0, action));

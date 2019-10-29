@@ -54,7 +54,7 @@ class PrivacyOptionsView extends SettingsView {
         mBinding.headerLayout.setBackClickListener(view -> onDismiss());
 
         // Footer
-        mBinding.footerLayout.setResetClickListener(v -> resetOptions());
+        mBinding.footerLayout.setFooterButtonClickListener(v -> resetOptions());
 
         ((Application)aContext.getApplicationContext()).registerActivityLifecycleCallbacks(mLifeCycleListener);
 

@@ -57,7 +57,7 @@ class AllowedPopUpsOptionsView extends SettingsView {
         mBinding.siteList.setAdapter(mAdapter);
 
         // Footer
-        mBinding.footerLayout.setResetClickListener(mClearAllListener);
+        mBinding.footerLayout.setFooterButtonClickListener(mClearAllListener);
 
         mBinding.executePendingBindings();
     }

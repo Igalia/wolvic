@@ -173,13 +173,15 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
         public String title;
         public String url;
         public Type type = Type.SUGGESTION;
+        public int score;
 
-        public static SuggestionItem create(@NonNull String title, String url, String faviconURL, Type type) {
+        public static SuggestionItem create(@NonNull String title, String url, String faviconURL, Type type, int score) {
             SuggestionItem item = new SuggestionItem();
             item.title = title;
             item.url = url;
             item.faviconURL = faviconURL;
             item.type = type;
+            item.score = score;
 
             return item;
         }

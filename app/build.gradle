@@ -464,6 +464,9 @@ dependencies {
     // TODO this should not be necessary at all, see Services.kt
     implementation deps.work.runtime
 
+    // TODO this should not be necessary at all, see Services.kt
+    implementation deps.work.runtime
+
     // Kotlin dependency
     implementation deps.kotlin.stdlib
     implementation deps.kotlin.coroutines

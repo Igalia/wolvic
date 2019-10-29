@@ -26,8 +26,10 @@ import androidx.databinding.DataBindingUtil;
 
 import org.jetbrains.annotations.NotNull;
 import org.mozilla.gecko.util.ThreadUtils;
+import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.VRBrowserActivity;
 import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.Accounts;
@@ -41,6 +43,7 @@ import org.mozilla.vrbrowser.ui.widgets.dialogs.RestartDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.UIDialog;
 import org.mozilla.vrbrowser.ui.widgets.prompts.AlertPromptWidget;
 import org.mozilla.vrbrowser.utils.StringUtils;
+import org.mozilla.vrbrowser.utils.UIThreadExecutor;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -276,13 +279,13 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
             case NEEDS_RECONNECT:
                 mAccounts.getAuthenticationUrlAsync().thenAcceptAsync((url) -> {
                     if (url != null) {
-                        post(() -> {
-                            mAccounts.setLoginOrigin(Accounts.LoginOrigin.SETTINGS);
-                            SessionStore.get().getActiveSession().loadUri(url);
-                            hide(REMOVE_WIDGET);
-                        });
+                        mAccounts.setLoginOrigin(Accounts.LoginOrigin.SETTINGS);
+                        WidgetManagerDelegate widgetManager = ((VRBrowserActivity)getContext());
+                        widgetManager.openNewTabForeground(url);
+                        widgetManager.getFocusedWindow().getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
+                        hide(REMOVE_WIDGET);
                     }
-                });
+                }, new UIThreadExecutor());
                 break;
 
             case SIGNED_IN:
@@ -347,7 +350,7 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
             });
 
         } else {
-            mBinding.fxaButton.setImageDrawable(getContext().getDrawable(R.drawable.ic_icon_settings_sign_in));
+            mBinding.fxaButton.setImageDrawable(getContext().getDrawable(R.drawable.ic_icon_settings_account));
         }
     }
 

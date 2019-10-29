@@ -6,7 +6,6 @@
 package org.mozilla.vrbrowser.ui.widgets.dialogs;
 
 import android.content.Context;
-import android.util.AttributeSet;
 import android.view.LayoutInflater;
 
 import androidx.annotation.IntDef;
@@ -29,20 +28,12 @@ public class ClearCacheDialogWidget extends BaseAppDialogWidget {
 
     public ClearCacheDialogWidget(Context aContext) {
         super(aContext);
-        initialize(aContext);
     }
 
-    public ClearCacheDialogWidget(Context aContext, AttributeSet aAttrs) {
-        super(aContext, aAttrs);
-        initialize(aContext);
-    }
+    @Override
+    protected void initialize(Context aContext) {
+        super.initialize(aContext);
 
-    public ClearCacheDialogWidget(Context aContext, AttributeSet aAttrs, int aDefStyle) {
-        super(aContext, aAttrs, aDefStyle);
-        initialize(aContext);
-    }
-
-    private void initialize(Context aContext) {
         LayoutInflater inflater = LayoutInflater.from(aContext);
 
         // Inflate this data binding layout

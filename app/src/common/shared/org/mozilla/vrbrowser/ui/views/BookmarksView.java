@@ -19,7 +19,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.VRBrowserActivity;
 import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.browser.Accounts;
 import org.mozilla.vrbrowser.browser.BookmarksStore;
@@ -32,6 +34,7 @@ import org.mozilla.vrbrowser.ui.adapters.BookmarkAdapter;
 import org.mozilla.vrbrowser.ui.adapters.CustomLinearLayoutManager;
 import org.mozilla.vrbrowser.ui.callbacks.BookmarkItemCallback;
 import org.mozilla.vrbrowser.ui.callbacks.BookmarksCallback;
+import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.utils.UIThreadExecutor;
 
 import java.util.ArrayList;
@@ -103,6 +106,12 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
         mBinding.setIsSyncEnabled(mAccounts.isEngineEnabled(SyncEngine.Bookmarks.INSTANCE));
         mBinding.setIsNarrow(false);
         mBinding.executePendingBindings();
+
+        updateBookmarks();
+        SessionStore.get().getBookmarkStore().addListener(this);
+
+        mBinding.setIsSignedIn(mAccounts.isSignedIn());
+        mBinding.setIsSyncEnabled(mAccounts.isEngineEnabled(SyncEngine.Bookmarks.INSTANCE));
 
         updateBookmarks();
         SessionStore.get().getBookmarkStore().addListener(this);
@@ -192,9 +201,11 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
             mAccounts.getAuthenticationUrlAsync().thenAcceptAsync((url) -> {
                 if (url != null) {
                     mAccounts.setLoginOrigin(Accounts.LoginOrigin.BOOKMARKS);
-                    SessionStore.get().getActiveSession().loadUri(url);
+                    WidgetManagerDelegate widgetManager = ((VRBrowserActivity)getContext());
+                    widgetManager.openNewTabForeground(url);
+                    widgetManager.getFocusedWindow().getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
                 }
-            });
+            }, new UIThreadExecutor());
         }
 
         @Override
@@ -295,6 +306,9 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
 
             if (isNarrow != mBinding.getIsNarrow()) {
                 mBookmarkAdapter.setNarrow(isNarrow);
+
+                mBinding.setIsNarrow(isNarrow);
+                mBinding.executePendingBindings();
 
                 mBinding.setIsNarrow(isNarrow);
                 mBinding.executePendingBindings();

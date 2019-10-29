@@ -494,6 +494,11 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Windo
         ThreadUtils.postToUiThread(() -> showNotification(mTabsButton, R.string.tab_added_notification));
     }
 
+    public void showTabSentNotification() {
+        mTabsButton.setNotificationMode(true);
+        ThreadUtils.postToUiThread(() -> showNotification(mTabsButton, R.string.tab_sent_notification));
+    }
+
     private BookmarksStore.BookmarkListener mBookmarksListener = new BookmarksStore.BookmarkListener() {
         @Override
         public void onBookmarksUpdated() {

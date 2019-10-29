@@ -40,7 +40,7 @@ class EnvironmentOptionsView extends SettingsView {
         mBinding.headerLayout.setBackClickListener(view -> onDismiss());
 
         // Footer
-        mBinding.footerLayout.setResetClickListener(mResetListener);
+        mBinding.footerLayout.setFooterButtonClickListener(mResetListener);
 
         String env = SettingsStore.getInstance(getContext()).getEnvironment();
         mEnvironmentsRadio = findViewById(R.id.environmentRadio);

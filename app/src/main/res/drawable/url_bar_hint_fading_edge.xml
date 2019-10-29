@@ -1,33 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:enterFadeDuration="@integer/ui_fadeAnimTime"
-    android:exitFadeDuration="@integer/ui_fadeAnimTime">
-    <item android:state_enabled="false">
-        <shape>
-            <gradient
-                android:type="linear"
-                android:angle="0"
-                android:startColor="#00000000"
-                android:endColor="@color/asphalt" />
-        </shape>
-    </item>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_focused="true">
-        <shape>
-            <gradient
-                android:type="linear"
-                android:angle="0"
-                android:startColor="#00000000"
-                android:endColor="@color/void_color" />
-        </shape>
+        <layer-list>
+            <item android:width="120dp">
+                <shape>
+                    <gradient
+                        android:startColor="#00000000"
+                        android:endColor="@color/void_color" />
+                    <corners android:topRightRadius="20dp" android:bottomRightRadius="20dp"/>
+                </shape>
+            </item>
+        </layer-list>
     </item>
-    <item android:state_hovered="true">
-        <shape>
-            <gradient
-                android:type="linear"
-                android:angle="0"
-                android:startColor="#00000000"
-                android:endColor="@color/asphalt" />
-        </shape>
+    <item android:state_focused="false">
+        <layer-list>
+            <item android:width="120dp">
+                <shape>
+                    <gradient
+                        android:startColor="@android:color/transparent"
+                        android:endColor="@color/asphalt" />
+                    <corners android:topRightRadius="20dp" android:bottomRightRadius="20dp"/>
+                </shape>
+            </item>
+        </layer-list>
     </item>
     <item>
         <shape>

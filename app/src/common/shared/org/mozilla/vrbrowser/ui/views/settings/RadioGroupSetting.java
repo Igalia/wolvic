@@ -1,6 +1,7 @@
 package org.mozilla.vrbrowser.ui.views.settings;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.text.InputType;
 import android.util.AttributeSet;
@@ -16,6 +17,7 @@ import org.mozilla.vrbrowser.audio.AudioEngine;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
 
 public class RadioGroupSetting extends LinearLayout {
 
@@ -24,11 +26,11 @@ public class RadioGroupSetting extends LinearLayout {
     }
 
     private AudioEngine mAudio;
-    private String mDescription;
+    protected String mDescription;
     private CharSequence[] mOptions;
     private Object[] mValues;
     protected RadioGroup mRadioGroup;
-    private TextView mRadioDescription;
+    protected TextView mRadioDescription;
     private OnCheckedChangeListener mRadioGroupListener;
     private @LayoutRes int mLayout;
 
@@ -40,21 +42,27 @@ public class RadioGroupSetting extends LinearLayout {
         super(context, attrs, defStyleAttr);
 
         TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.RadioGroupSetting, defStyleAttr, 0);
+        mLayout = attributes.getResourceId(R.styleable.RadioGroupSetting_layout, R.layout.setting_radio_group);
         mDescription = attributes.getString(R.styleable.RadioGroupSetting_description);
         mOptions = attributes.getTextArray(R.styleable.RadioGroupSetting_options);
-        mLayout = attributes.getResourceId(R.styleable.RadioGroupSetting_layout, R.layout.setting_radio_group);
         int id = attributes.getResourceId(R.styleable.RadioGroupSetting_values, 0);
-        TypedArray array = context.getResources().obtainTypedArray(id);
-        if (array.getType(0) == TypedValue.TYPE_STRING) {
-            mValues = getResources().getStringArray(id);
+        try {
+            TypedArray array = context.getResources().obtainTypedArray(id);
+            if (array.getType(0) == TypedValue.TYPE_STRING) {
+                mValues = getResources().getStringArray(id);
 
-        } else if (array.getType(0) == TypedValue.TYPE_INT_HEX ||
-                array.getType(0) == TypedValue.TYPE_INT_DEC) {
-            int [] values = getResources().getIntArray(id);
-            mValues = new Integer[values.length];
-            for (int i=0; i<values.length; i++) {
-                mValues[i] = values[i];
+            } else if (array.getType(0) == TypedValue.TYPE_INT_HEX ||
+                    array.getType(0) == TypedValue.TYPE_INT_DEC) {
+                int [] values = getResources().getIntArray(id);
+                mValues = new Integer[values.length];
+                for (int i=0; i<values.length; i++) {
+                    mValues[i] = values[i];
+                }
             }
+            array.recycle();
+
+        } catch (Resources.NotFoundException ignored) {
+
         }
         attributes.recycle();
 
@@ -73,13 +81,15 @@ public class RadioGroupSetting extends LinearLayout {
 
         mRadioGroup = findViewById(R.id.radio_group);
 
-        for (int i=0; i<mOptions.length; i++) {
-            RadioButton button = new RadioButton(new ContextThemeWrapper(getContext(), R.style.radioButtonTheme), null, 0);
-            button.setInputType(InputType.TYPE_NULL);
-            button.setClickable(true);
-            button.setId(i);
-            button.setText(mOptions[i]);
-            mRadioGroup.addView(button);
+        if (mOptions != null) {
+            for (int i = 0; i < mOptions.length; i++) {
+                RadioButton button = new RadioButton(new ContextThemeWrapper(getContext(), R.style.radioButtonTheme), null, 0);
+                button.setInputType(InputType.TYPE_NULL);
+                button.setClickable(true);
+                button.setId(i);
+                button.setText(mOptions[i]);
+                mRadioGroup.addView(button);
+            }
         }
 
         mRadioGroup.setOnCheckedChangeListener(mInternalRadioListener);
@@ -119,7 +129,7 @@ public class RadioGroupSetting extends LinearLayout {
         mRadioGroupListener = aListener;
     }
 
-    public OnCheckedChangeListener getOnCheckdChangeListener() {
+    public OnCheckedChangeListener getOnCheckedChangeListener() {
         return mRadioGroupListener;
     }
 
@@ -139,6 +149,19 @@ public class RadioGroupSetting extends LinearLayout {
 
     public int getCheckedRadioButtonId() {
         return mRadioGroup.getCheckedRadioButtonId();
+    }
+
+    public void setOptions(@NonNull String[] options) {
+        mRadioGroup.removeAllViews();
+
+        for (int i=0; i<options.length; i++) {
+            RadioButton button = new RadioButton(new ContextThemeWrapper(getContext(), R.style.radioButtonTheme), null, 0);
+            button.setInputType(InputType.TYPE_NULL);
+            button.setClickable(true);
+            button.setId(i);
+            button.setText(options[i]);
+            mRadioGroup.addView(button);
+        }
     }
 
 }

@@ -5,48 +5,24 @@
     <item android:state_enabled="false">
         <shape android:shape="rectangle">
             <corners android:radius="20dp" />
-            <stroke android:color="@color/asphalt_blur" android:width="@dimen/blur_radius" />
             <solid android:color="@color/asphalt" />
         </shape>
     </item>
     <item android:state_focused="true">
-        <layer-list>
-            <item>
-                <shape android:shape="rectangle">
-                    <corners android:radius="20dp" />
-                    <stroke android:width="@dimen/blur_radius" android:color="@color/azure_blur" />
-                </shape>
-            </item>
-            <item android:start="@dimen/blur_radius_half" android:end="@dimen/blur_radius_half" android:top="@dimen/blur_radius_half" android:bottom="@dimen/blur_radius_half">
-                <shape android:shape="rectangle">
-                    <corners android:radius="20dp" />
-                    <solid android:color="@color/void_color" />
-                    <stroke android:width="2dp" android:color="@color/azure" />
-                </shape>
-            </item>
-        </layer-list>
+        <shape android:shape="rectangle">
+            <corners android:radius="20dp" />
+            <solid android:color="@color/void_color" />
+        </shape>
     </item>
-    <item android:state_hovered="true">
-        <layer-list>
-            <item>
-                <shape android:shape="rectangle">
-                    <corners android:radius="20dp" />
-                    <stroke android:width="@dimen/blur_radius" android:color="@color/azure_blur" />
-                </shape>
-            </item>
-            <item android:start="@dimen/blur_radius_half" android:end="@dimen/blur_radius_half" android:top="@dimen/blur_radius_half" android:bottom="@dimen/blur_radius_half">
-                <shape android:shape="rectangle">
-                    <corners android:radius="20dp" />
-                    <solid android:color="@color/asphalt" />
-                    <stroke android:width="2dp" android:color="@color/azure" />
-                </shape>
-            </item>
-        </layer-list>
+    <item android:state_hovered="true" android:state_pressed="false">
+        <shape android:shape="rectangle">
+            <corners android:radius="20dp" />
+            <solid android:color="@color/asphalt" />
+        </shape>
     </item>
     <item>
         <shape android:shape="rectangle">
             <corners android:radius="20dp" />
-            <stroke android:color="@color/asphalt_blur" android:width="@dimen/blur_radius" />
             <solid android:color="@color/asphalt" />
         </shape>
     </item>

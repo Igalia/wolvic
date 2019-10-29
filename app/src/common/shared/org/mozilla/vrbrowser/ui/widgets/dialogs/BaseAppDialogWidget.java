@@ -6,7 +6,6 @@
 package org.mozilla.vrbrowser.ui.widgets.dialogs;
 
 import android.content.Context;
-import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -16,6 +15,7 @@ import androidx.annotation.StringRes;
 import androidx.databinding.DataBindingUtil;
 
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.databinding.BaseAppDialogBinding;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
@@ -27,28 +27,19 @@ public class BaseAppDialogWidget extends UIDialog {
         default void onDismiss() {}
     }
 
-    public static final int LEFT = 0;
-    public static final int RIGHT = 1;
+    public static final int NEGATIVE = 0;
+    public static final int POSITIVE = 1;
 
     protected BaseAppDialogBinding mBinding;
     private Delegate mAppDialogDelegate;
+    private String mHelpLink;
 
     public BaseAppDialogWidget(Context aContext) {
         super(aContext);
         initialize(aContext);
     }
 
-    public BaseAppDialogWidget(Context aContext, AttributeSet aAttrs) {
-        super(aContext, aAttrs);
-        initialize(aContext);
-    }
-
-    public BaseAppDialogWidget(Context aContext, AttributeSet aAttrs, int aDefStyle) {
-        super(aContext, aAttrs, aDefStyle);
-        initialize(aContext);
-    }
-
-    private void initialize(Context aContext) {
+    protected void initialize(Context aContext) {
         LayoutInflater inflater = LayoutInflater.from(aContext);
 
         // Inflate this data binding layout
@@ -56,18 +47,19 @@ public class BaseAppDialogWidget extends UIDialog {
 
         mBinding.leftButton.setOnClickListener(v ->  {
             if (mAppDialogDelegate != null) {
-                mAppDialogDelegate.onButtonClicked(LEFT);
+                mAppDialogDelegate.onButtonClicked(NEGATIVE);
             }
 
             BaseAppDialogWidget.this.onDismiss();
         });
         mBinding.rightButton.setOnClickListener(v -> {
             if (mAppDialogDelegate != null) {
-                mAppDialogDelegate.onButtonClicked(RIGHT);
+                mAppDialogDelegate.onButtonClicked(POSITIVE);
             }
 
             BaseAppDialogWidget.this.onDismiss();
         });
+        mBinding.helpButton.setOnClickListener(v -> SessionStore.get().getActiveSession().loadUri(mHelpLink));
     }
 
     @Override
@@ -81,7 +73,6 @@ public class BaseAppDialogWidget extends UIDialog {
         aPlacement.anchorY = 0.5f;
         aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.base_app_dialog_z_distance);
     }
-
 
     @Override
     public void show(@ShowFlags int aShowFlags) {
@@ -130,21 +121,41 @@ public class BaseAppDialogWidget extends UIDialog {
         mBinding.title.setText(title);
     }
 
-    public void setButtons(@StringRes int[] buttons) {
+    public void setDescription(String title) {
+        mBinding.description.setVisibility(VISIBLE);
+        mBinding.description.setText(title);
+    }
+
+    public void setDescription(@StringRes int title) {
+        mBinding.description.setVisibility(VISIBLE);
+        mBinding.description.setText(title);
+    }
+
+    public void setHelpLink(@NonNull String text) {
+        mBinding.helpButton.setVisibility(VISIBLE);
+        mHelpLink = text;
+    }
+
+    public void setHelpLink(@StringRes int textRes) {
+        mBinding.helpButton.setVisibility(VISIBLE);
+        mHelpLink = getResources().getString(textRes);
+    }
+
+    public void setButtons(@NonNull @StringRes int[] buttons) {
         if (buttons.length > 0) {
-            mBinding.leftButton.setText(buttons[LEFT]);
+            mBinding.leftButton.setText(buttons[NEGATIVE]);
         }
         if (buttons.length > 1) {
-            mBinding.rightButton.setText(buttons[RIGHT]);
+            mBinding.rightButton.setText(buttons[POSITIVE]);
         }
     }
 
     public void setButtons(@NonNull String[] buttons) {
         if (buttons.length > 0) {
-            mBinding.leftButton.setText(buttons[LEFT]);
+            mBinding.leftButton.setText(buttons[NEGATIVE]);
         }
         if (buttons.length > 1) {
-            mBinding.rightButton.setText(buttons[RIGHT]);
+            mBinding.rightButton.setText(buttons[POSITIVE]);
         }
     }
 

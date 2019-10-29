@@ -46,7 +46,7 @@ class DisplayLanguageOptionsView extends SettingsView {
         });
 
         // Footer
-        mBinding.footerLayout.setResetClickListener(mResetListener);
+        mBinding.footerLayout.setFooterButtonClickListener(mResetListener);
 
         String language = LocaleUtils.getDisplayLocale(getContext());
         mBinding.languageRadio.setOnCheckedChangeListener(mLanguageListener);

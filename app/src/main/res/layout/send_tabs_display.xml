@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="isEmpty"
+            type="boolean" />
+
+        <variable
+            name="isSyncing"
+            type="boolean" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            style="@style/settingsText"
+            android:gravity="center_vertical"
+            android:text="@string/send_tab_dialog_options_header"
+            tools:text="@string/send_tab_dialog_options_header"
+            app:visibleGone="@{!isEmpty}"/>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
+                style="@style/settingsText"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@string/send_tab_dialog_no_devices"
+                tools:text="@string/send_tab_dialog_no_devices"
+                app:visibleGone="@{isEmpty &amp;&amp; !isSyncing}"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
+                style="@style/settingsText"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@string/send_tab_dialog_syncing"
+                tools:text="@string/send_tab_dialog_syncing "
+                app:visibleGone="@{isSyncing}"/>
+
+            <!-- ScrollView doesn't support fast scrollbar so we need to use a custom implementation -->
+            <org.mozilla.vrbrowser.ui.views.CustomScrollView
+                android:id="@+id/scrollbar"
+                style="@style/customScrollViewStyle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp"
+                android:paddingStart="50dp"
+                android:paddingEnd="30dp"
+                app:visibleGone="@{!isEmpty &amp;&amp; !isSyncing}">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <org.mozilla.vrbrowser.ui.views.settings.RadioGroupVSetting
+                        android:id="@+id/devices_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout="@layout/setting_radio_group_v"/>
+
+                </LinearLayout>
+            </org.mozilla.vrbrowser.ui.views.CustomScrollView>
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+</layout>

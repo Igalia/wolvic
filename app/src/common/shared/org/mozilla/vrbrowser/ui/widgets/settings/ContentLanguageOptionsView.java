@@ -65,7 +65,7 @@ class ContentLanguageOptionsView extends SettingsView {
         mBinding.availableList.setAdapter(mAvailableAdapter);
 
         // Footer
-        mBinding.footerLayout.setResetClickListener(mResetListener);
+        mBinding.footerLayout.setFooterButtonClickListener(mResetListener);
 
         mBinding.executePendingBindings();
     }

@@ -2,10 +2,10 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:background="@drawable/dialog_background"
         android:gravity="center_horizontal"
@@ -14,36 +14,87 @@
         android:paddingEnd="@dimen/dialog_padding_sides"
         android:paddingBottom="@dimen/dialog_padding_bottom">
 
-        <TextView
-            android:id="@+id/title"
+        <RelativeLayout
+            android:id="@+id/header_layout"
+            android:layout_alignParentTop="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
-            android:text=""
-            android:textColor="@color/fog"
-            android:textSize="@dimen/text_bigger_size"
-            android:textStyle="bold"
-            android:typeface="sans"
-            android:singleLine="true"
-            android:ellipsize="end"
-            android:layout_marginStart="50dp"
-            android:layout_marginEnd="50dp"
-            tools:text="Title" />
+            android:paddingBottom="10dp">
 
-        <FrameLayout
-            android:id="@+id/dialog_content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:layout_marginBottom="15dp"
-            android:gravity="top|center_horizontal" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@id/helpButton"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/title"
+                    style="@style/settingsHeaderText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    tools:text="Setting title" />
+
+                <TextView
+                    android:id="@+id/description"
+                    style="@style/settingsDescriptionText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    tools:text="Setting description"
+                    android:visibility="gone"/>
+            </LinearLayout>
+
+            <org.mozilla.vrbrowser.ui.views.UIButton
+                android:id="@+id/helpButton"
+                style="?attr/navigationBarButtonStyle"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/ic_icon_settings_help"
+                android:tint="@color/midnight"
+                android:visibility="gone"/>
+
+        </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/buttonsLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/header_layout"
+            android:layout_above="@+id/footer_layout"
+            android:orientation="vertical">
+
+            <View
+                android:id="@+id/separatorTop"
+                style="?attr/separatorStyle"
+                android:layout_marginBottom="10dp"
+                android:layout_width="match_parent"
+                android:layout_alignParentTop="true"/>
+
+            <FrameLayout
+                android:id="@+id/dialog_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="top|center_horizontal"
+                android:layout_below="@+id/separatorTop"
+                android:layout_above="@+id/separatorBottom" />
+
+            <View
+                android:id="@+id/separatorBottom"
+                style="?attr/separatorStyle"
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_alignParentBottom="true"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/footer_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="20dp"
             android:gravity="center_horizontal">
 
             <Button
@@ -51,16 +102,14 @@
                 style="@style/dialogButtonRegular"
                 android:layout_alignParentStart="true"
                 android:layout_marginEnd="@dimen/dialog_button_margin_end"
-                android:text=""
                 tools:text="Cancel" />
 
             <Button
                 android:id="@+id/rightButton"
                 style="@style/dialogButtonHighlighted"
                 android:layout_alignParentEnd="true"
-                android:text=""
                 tools:text="Accept" />
         </RelativeLayout>
 
-    </LinearLayout>
+    </RelativeLayout>
 </layout>

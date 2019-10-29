@@ -12,14 +12,12 @@
         <shape android:shape="rectangle">
             <corners android:radius="20dp" />
             <solid android:color="@color/blackberry" />
-            <stroke android:width="2dp" android:color="@color/azure" />
         </shape>
     </item>
     <item android:state_hovered="true" android:state_pressed="false">
         <shape android:shape="rectangle">
             <corners android:radius="20dp" />
             <solid android:color="@color/eggplant" />
-            <stroke android:width="2dp" android:color="@color/azure" />
         </shape>
     </item>
     <item android:state_hovered="false" android:state_pressed="false">

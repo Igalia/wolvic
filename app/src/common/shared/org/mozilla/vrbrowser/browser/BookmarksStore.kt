@@ -162,6 +162,10 @@ class BookmarksStore constructor(val context: Context) {
                 }
     }
 
+    fun searchBookmarks(query: String, limit: Int): CompletableFuture<List<BookmarkNode>> = GlobalScope.future {
+        storage.searchBookmarks(query, limit)
+    }
+
     private suspend fun getBookmarkByUrl(aURL: String): BookmarkNode? {
         val bookmarks: List<BookmarkNode>? = storage.getBookmarksWithUrl(aURL)
         if (bookmarks == null || bookmarks.isEmpty()) {

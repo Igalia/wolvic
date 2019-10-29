@@ -9,6 +9,7 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.databinding.DataBindingUtil;
 
 import org.mozilla.vrbrowser.R;
@@ -64,7 +65,19 @@ public class SettingsFooter extends FrameLayout {
         attributes.recycle();
     }
 
-    public void setResetClickListener(@NonNull View.OnClickListener listener) {
+    public void setFooterButtonClickListener(@NonNull View.OnClickListener listener) {
        mBinding.setResetClickListener(listener);
+    }
+
+    public void setFooterButtonText(String text) {
+        mBinding.resetButton.setButtonText(text);
+    }
+
+    public void setFooterButtonText(@StringRes int textRes) {
+        mBinding.resetButton.setButtonText(textRes);
+    }
+
+    public void setFooterButtonVisibility(int visibility) {
+        mBinding.resetButton.setFooterButtonVisibility(visibility);
     }
 }

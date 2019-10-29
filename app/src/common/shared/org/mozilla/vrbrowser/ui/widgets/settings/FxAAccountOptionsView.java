@@ -64,7 +64,7 @@ class FxAAccountOptionsView extends SettingsView {
         updateCurrentAccountState();
 
         // Footer
-        mBinding.footerLayout.setResetClickListener(v -> resetOptions());
+        mBinding.footerLayout.setFooterButtonClickListener(v -> resetOptions());
     }
 
     @Override

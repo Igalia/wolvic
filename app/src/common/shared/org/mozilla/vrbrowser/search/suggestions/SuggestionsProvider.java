@@ -16,8 +16,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import mozilla.appservices.places.BookmarkRoot;
-
 public class SuggestionsProvider {
 
     private static final String LOGTAG = SuggestionsProvider.class.getSimpleName();
@@ -31,15 +29,13 @@ public class SuggestionsProvider {
                 return 0;
 
             } else if (suggestion1.type == suggestion2.type) {
-                if (mFilterText != null) {
-                    if (suggestion1.title != null && suggestion2.title != null) {
-                        return suggestion1.title.toLowerCase().indexOf(mFilterText) - suggestion2.title.toLowerCase().indexOf(mFilterText);
+                if (suggestion1.type == Type.HISTORY) {
+                    if (suggestion1.score != suggestion2.score) {
+                        return suggestion1.score - suggestion2.score;
                     }
-                    return suggestion1.url.toLowerCase().indexOf(mFilterText) - suggestion2.url.indexOf(mFilterText);
-
-                } else {
-                    return suggestion1.url.compareTo(suggestion2.url);
                 }
+
+                return suggestion1.url.compareTo(suggestion2.url);
 
             } else {
                 return suggestion1.type.ordinal() - suggestion2.type.ordinal();
@@ -47,15 +43,13 @@ public class SuggestionsProvider {
         }
     }
 
-    private Context mContext;
     private SearchEngineWrapper mSearchEngineWrapper;
     private String mText;
     private String mFilterText;
     private Comparator mComparator;
 
     public SuggestionsProvider(Context context) {
-        mContext = context;
-        mSearchEngineWrapper = SearchEngineWrapper.get(mContext);
+        mSearchEngineWrapper = SearchEngineWrapper.get(context);
         mFilterText = "";
         mComparator = new DefaultSuggestionsComparator();
     }
@@ -81,16 +75,16 @@ public class SuggestionsProvider {
 
     public CompletableFuture<List<SuggestionItem>> getBookmarkSuggestions(@NonNull List<SuggestionItem> items) {
         CompletableFuture future = new CompletableFuture();
-        // Explicitly passing  Root will look in all the bookmarks, default is just to look in the mobile bookmarks.
-        SessionStore.get().getBookmarkStore().getBookmarks(BookmarkRoot.Root.getId()).thenAcceptAsync((bookmarks) -> {
-            bookmarks.stream().
-                    filter(b -> b.getUrl().toLowerCase().contains(mFilterText) ||
-                            b.getTitle().toLowerCase().contains(mFilterText))
+        SessionStore.get().getBookmarkStore().searchBookmarks(mFilterText, 100).thenAcceptAsync((bookmarks) -> {
+            bookmarks.stream()
+                    .filter((b) -> !b.getUrl().startsWith("place:") &&
+                            !b.getUrl().startsWith("about:reader"))
                     .forEach(b -> items.add(SuggestionItem.create(
                             b.getTitle(),
                             b.getUrl(),
                             null,
-                            Type.BOOKMARK
+                            Type.BOOKMARK,
+                            0
                     )));
             if (mComparator != null) {
                 items.sort(mComparator);
@@ -108,15 +102,13 @@ public class SuggestionsProvider {
 
     public CompletableFuture<List<SuggestionItem>> getHistorySuggestions(@NonNull final List<SuggestionItem> items) {
         CompletableFuture future = new CompletableFuture();
-        SessionStore.get().getHistoryStore().getHistory().thenAcceptAsync((history) -> {
-            history.stream()
-                    .filter(h ->
-                            h.toLowerCase().contains(mFilterText))
-                    .forEach(h -> items.add(SuggestionItem.create(
-                            h,
-                            h,
+        SessionStore.get().getHistoryStore().getSuggestions(mFilterText, 100).thenAcceptAsync((history) -> {
+            history.forEach(h -> items.add(SuggestionItem.create(
+                            h.getTitle(),
+                            h.getUrl(),
                             null,
-                            Type.HISTORY
+                            Type.HISTORY,
+                            h.getScore()
                     )));
             if (mComparator != null) {
                 items.sort(mComparator);
@@ -141,7 +133,8 @@ public class SuggestionsProvider {
                     mText,
                     getSearchURLOrDomain(mText),
                     null,
-                    Type.COMPLETION
+                    Type.COMPLETION,
+                    0
             ));
         }
 
@@ -150,7 +143,8 @@ public class SuggestionsProvider {
                 mFilterText,
                 getSearchURLOrDomain(mFilterText),
                 null,
-                Type.SUGGESTION
+                Type.SUGGESTION,
+                0
         ));
 
         // Suggestions
@@ -161,7 +155,8 @@ public class SuggestionsProvider {
                         s,
                         url,
                         null,
-                        Type.SUGGESTION
+                        Type.SUGGESTION,
+                        0
                 ));
             });
             if (mComparator != null) {

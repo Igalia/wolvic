@@ -262,7 +262,7 @@ public class PromptDelegate implements GeckoSession.PromptDelegate, WindowWidget
                 mPopUpPrompt.setButtonsDelegate(new BaseAppDialogWidget.Delegate() {
                     @Override
                     public void onButtonClicked(int index) {
-                        boolean allowed = index != PopUpBlockDialogWidget.LEFT;
+                        boolean allowed = index != PopUpBlockDialogWidget.NEGATIVE;
                         boolean askAgain = mPopUpPrompt.askAgain();
                         if (!askAgain) {
                             mAllowedPopUpSites.add(new PopUpSite(request.uri, allowed));

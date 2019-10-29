@@ -4,9 +4,8 @@
     <LinearLayout
         android:id="@+id/menuContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="@drawable/menu_background">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <ListView
             android:id="@+id/menuListView"
@@ -14,13 +13,22 @@
             android:layout_height="match_parent"
             android:padding="0dp"
             android:layout_gravity="center_vertical"
-            android:background="@null"
+            android:background="@drawable/context_menu_background"
             android:divider="@null"
             android:dividerHeight="0dp"
             android:scrollbars="none"
             android:choiceMode="singleChoice"
             android:listSelector="@null">
         </ListView>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="30dp"
+            android:layout_height="@dimen/hamburger_menu_triangle_height"
+            android:layout_gravity="end"
+            android:layout_marginEnd="60dp"
+            android:paddingTop="-6dp"
+            android:background="@drawable/triangle"
+            android:backgroundTint="@color/asphalt"/>
     </LinearLayout>
 
 </merge>

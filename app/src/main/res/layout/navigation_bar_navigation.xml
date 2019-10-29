@@ -59,11 +59,11 @@
             android:tooltipText="@string/servo_tooltip" />
 
         <org.mozilla.vrbrowser.ui.views.UIButton
-            android:id="@+id/resizeEnterButton"
+            android:id="@+id/menuButton"
             style="?attr/navigationBarButtonStyle"
             android:layout_marginStart="10dp"
             android:layout_weight="1"
-            android:src="@drawable/ic_icon_resize"
-            android:tooltipText="@string/resize_tooltip" />
+            android:src="@drawable/ic_icon_hamburger_menu"
+            android:tooltipText="@string/hamburger_menu_tooltip" />
     </LinearLayout>
 </merge>

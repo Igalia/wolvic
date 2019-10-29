@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/dialog_background"
+        android:paddingStart="30dp"
+        android:paddingEnd="30dp">
+
+        <org.mozilla.vrbrowser.ui.widgets.settings.SettingsHeader
+            android:id="@+id/header_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:helpVisibility="gone"
+            android:layout_alignParentTop="true"
+            app:title="@string/settings_display" />
+
+        <FrameLayout
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/header_layout"
+            android:layout_above="@id/footer_layout"/>
+
+        <org.mozilla.vrbrowser.ui.widgets.settings.SettingsFooter
+            android:id="@+id/footer_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:buttonText="@string/fxa_account_options_reset"
+            android:layout_alignParentBottom="true" />
+    </RelativeLayout>
+</layout>

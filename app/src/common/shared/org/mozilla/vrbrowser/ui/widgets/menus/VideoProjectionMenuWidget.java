@@ -1,14 +1,17 @@
-package org.mozilla.vrbrowser.ui.widgets;
+package org.mozilla.vrbrowser.ui.widgets.menus;
 
 import android.content.Context;
 import android.net.Uri;
-import org.mozilla.vrbrowser.R;
-
-import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
+
+import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.ui.widgets.UIWidget;
+import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
+
+import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class VideoProjectionMenuWidget extends MenuWidget {
 
@@ -33,7 +36,7 @@ public class VideoProjectionMenuWidget extends MenuWidget {
     @VideoProjectionFlags int mSelectedProjection = VIDEO_PROJECTION_3D_SIDE_BY_SIDE;
 
     public VideoProjectionMenuWidget(Context aContext) {
-        super(aContext);
+        super(aContext, R.layout.menu);
         createMenuItems();
     }
 

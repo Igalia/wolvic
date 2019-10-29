@@ -23,6 +23,7 @@ import androidx.annotation.Nullable;
 import org.mozilla.geckoview.AllowOrDeny;
 import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoSession;
+import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.Media;
@@ -36,7 +37,11 @@ import org.mozilla.vrbrowser.ui.views.NavigationURLBar;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.views.UITextButton;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.SelectionActionWidget;
+import org.mozilla.vrbrowser.ui.widgets.dialogs.SendTabDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.VoiceSearchWidget;
+import org.mozilla.vrbrowser.ui.widgets.menus.BrightnessMenuWidget;
+import org.mozilla.vrbrowser.ui.widgets.menus.HamburgerMenuWidget;
+import org.mozilla.vrbrowser.ui.widgets.menus.VideoProjectionMenuWidget;
 import org.mozilla.vrbrowser.utils.AnimationHelper;
 import org.mozilla.vrbrowser.utils.ServoUtils;
 import org.mozilla.vrbrowser.utils.UIThreadExecutor;
@@ -69,8 +74,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private Runnable mResizeBackHandler;
     private Runnable mFullScreenBackHandler;
     private Runnable mVRVideoBackHandler;
-    private UIButton mResizeEnterButton;
     private UIButton mResizeExitButton;
+    private UIButton mMenuButton;
     private UIButton mFullScreenExitButton;
     private UIButton mBrightnessButton;
     private UIButton mFullScreenResizeButton;
@@ -84,7 +89,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private VoiceSearchWidget mVoiceSearchWidget;
     private Context mAppContext;
     private SharedPreferences mPrefs;
-    private SuggestionsWidget mPopup;
+    private SuggestionsWidget mAwesomeBar;
     private SuggestionsProvider mSuggestionsProvider;
     private VideoProjectionMenuWidget mProjectionMenu;
     private WidgetPlacement mProjectionMenuPlacement;
@@ -92,6 +97,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private MediaControlsWidget mMediaControlsWidget;
     private Media mFullScreenMedia;
     private @VideoProjectionMenuWidget.VideoProjectionFlags Integer mAutoSelectedProjection;
+    private HamburgerMenuWidget mHamburgerMenu;
+    private SendTabDialogWidget mSendTabDialog;
 
     public NavigationBarWidget(Context aContext) {
         super(aContext);
@@ -185,7 +192,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             }
         });
 
-        mResizeEnterButton = findViewById(R.id.resizeEnterButton);
+        mMenuButton = findViewById(R.id.menuButton);
         mResizeExitButton = findViewById(R.id.resizeExitButton);
         mPreset0 = findViewById(R.id.resizePreset0);
         mPreset1 = findViewById(R.id.resizePreset1);
@@ -193,9 +200,11 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mPreset2 = findViewById(R.id.resizePreset2);
         mPreset3 = findViewById(R.id.resizePreset3);
 
-        mResizeEnterButton.setOnClickListener(view -> {
+        mMenuButton.setOnClickListener(view -> {
             view.requestFocusFromTouch();
-            enterResizeMode();
+
+            showMenu();
+
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
@@ -204,6 +213,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mResizeExitButton.setOnClickListener(view -> {
             view.requestFocusFromTouch();
             exitResizeMode(ResizeAction.KEEP_SIZE);
+
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
@@ -300,7 +310,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
         mButtons = new ArrayList<>();
         mButtons.addAll(Arrays.<CustomUIButton>asList(
-                mBackButton, mForwardButton, mReloadButton, mHomeButton, mResizeEnterButton, mResizeExitButton,
+                mBackButton, mForwardButton, mReloadButton, mHomeButton, mMenuButton,
                 mServoButton, mPreset0, mPreset1, mPreset15, mPreset2, mPreset3));
 
         mURLBar.setDelegate(this);
@@ -309,6 +319,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mWidgetManager.addWorldClickListener(this);
 
         mVoiceSearchWidget = createChild(VoiceSearchWidget.class, false);
+        mVoiceSearchWidget.getPlacement().parentAnchorY = 0.0f;
+        mVoiceSearchWidget.getPlacement().translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.base_app_dialog_y_distance);
         mVoiceSearchWidget.setDelegate(this);
 
         mSuggestionsProvider = new SuggestionsProvider(getContext());
@@ -405,20 +417,20 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mAttachedWindow.addWindowListener(this);
 
         if (mAttachedWindow != null) {
-            mURLBar.setIsContentMode(mAttachedWindow.isBookmarksVisible() || mAttachedWindow.isHistoryVisible());
+            mURLBar.setIsLibraryVisible(mAttachedWindow.isBookmarksVisible() || mAttachedWindow.isHistoryVisible());
             mURLBar.setURL("");
             if (mAttachedWindow.isBookmarksVisible()) {
                 mURLBar.setHint(R.string.url_bookmarks_title);
-                mURLBar.setInsecureVisibility(View.GONE);
+                mURLBar.setIsLibraryVisible(true);
 
             } else if (mAttachedWindow.isHistoryVisible()) {
                 mURLBar.setHint(R.string.url_history_title);
-                mURLBar.setInsecureVisibility(View.GONE);
+                mURLBar.setIsLibraryVisible(true);
 
             } else {
                 mURLBar.setURL(mAttachedWindow.getSession().getCurrentUri());
                 mURLBar.setHint(R.string.search_placeholder);
-                mURLBar.setInsecureVisibility(View.VISIBLE);
+                mURLBar.setIsLibraryVisible(false);
             }
         }
 
@@ -684,7 +696,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     public void showVoiceSearch() {
-        mURLBar.showVoiceSearch(true);
+        mURLBar.setMicrophoneEnabled(true);
     }
 
     public void updateServoButton() {
@@ -904,15 +916,15 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     @Override
     public void onShowSearchPopup() {
-        if (mPopup == null) {
-            mPopup = createChild(SuggestionsWidget.class);
-            mPopup.setURLBarPopupDelegate(this);
+        if (mAwesomeBar == null) {
+            mAwesomeBar = createChild(SuggestionsWidget.class);
+            mAwesomeBar.setURLBarPopupDelegate(this);
         }
 
         final String text = mURLBar.getText().trim();
         final String originalText = mURLBar.getOriginalText().trim();
         if (originalText.length() <= 0) {
-            mPopup.hide(UIWidget.KEEP_WIDGET);
+            mAwesomeBar.hide(UIWidget.KEEP_WIDGET);
             return;
         }
 
@@ -920,12 +932,14 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mSuggestionsProvider.setFilterText(originalText);
         mSuggestionsProvider.getSuggestions()
                 .whenCompleteAsync((items, ex) -> {
-                    mPopup.updateItems(items);
-                    mPopup.setHighlightedText(originalText);
+                    if (mURLBar.hasFocus()) {
+                        mAwesomeBar.updateItems(items);
+                        mAwesomeBar.setHighlightedText(originalText);
 
-                    if (!mPopup.isVisible()) {
-                        mPopup.updatePlacement((int)WidgetPlacement.convertPixelsToDp(getContext(), mURLBar.getWidth()));
-                        mPopup.show(CLEAR_FOCUS);
+                        if (!mAwesomeBar.isVisible()) {
+                            mAwesomeBar.updatePlacement((int) WidgetPlacement.convertPixelsToDp(getContext(), mURLBar.getWidth()));
+                            mAwesomeBar.show(CLEAR_FOCUS);
+                        }
                     }
 
                 }, new UIThreadExecutor()).exceptionally(th -> {
@@ -936,8 +950,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     @Override
     public void onHideSearchPopup() {
-        if (mPopup != null) {
-            mPopup.hide(UIWidget.KEEP_WIDGET);
+        if (mAwesomeBar != null) {
+            mAwesomeBar.hide(UIWidget.KEEP_WIDGET);
         }
     }
 
@@ -961,12 +975,14 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key == mAppContext.getString(R.string.settings_key_servo)) {
+    public void onSharedPreferenceChanged(@NonNull SharedPreferences sharedPreferences, String key) {
+        if (key.equals(mAppContext.getString(R.string.settings_key_servo))) {
             updateServoButton();
 
-        } else if (key == mAppContext.getString(R.string.settings_key_user_agent_version)) {
-            mURLBar.setUAMode(SettingsStore.getInstance(getContext()).getUaMode());
+        } else if (key.equals(mAppContext.getString(R.string.settings_key_user_agent_version))) {
+            if (mHamburgerMenu != null) {
+                mHamburgerMenu.setUAMode(SettingsStore.getInstance(getContext()).getUaMode());
+            }
         }
     }
 
@@ -1006,14 +1022,14 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         if (mAttachedWindow == aWindow) {
             mURLBar.setURL("");
             mURLBar.setHint(R.string.url_bookmarks_title);
-            mURLBar.setIsContentMode(true);
+            mURLBar.setIsLibraryVisible(true);
         }
     }
 
     @Override
     public void onBookmarksHidden(WindowWidget aWindow) {
         if (mAttachedWindow == aWindow) {
-            mURLBar.setIsContentMode(false);
+            mURLBar.setIsLibraryVisible(false);
             mURLBar.setURL(getSession().getCurrentUri());
             mURLBar.setHint(R.string.search_placeholder);
         }
@@ -1026,14 +1042,14 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         if (mAttachedWindow == aWindow) {
             mURLBar.setURL("");
             mURLBar.setHint(R.string.url_history_title);
-            mURLBar.setIsContentMode(true);
+            mURLBar.setIsLibraryVisible(true);
         }
     }
 
     @Override
     public void onHistoryViewHidden(WindowWidget aWindow) {
         if (mAttachedWindow == aWindow) {
-            mURLBar.setIsContentMode(false);
+            mURLBar.setIsLibraryVisible(false);
             mURLBar.setURL(getSession().getCurrentUri());
             mURLBar.setHint(R.string.search_placeholder);
         }
@@ -1082,5 +1098,67 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             Pair<Float, Float> minSize = mAttachedWindow.getSizeForScale(0.5f);
             mWidgetManager.startWidgetResize(mAttachedWindow, maxSize.first, 4.5f, minSize.first, minSize.second);
         }
+    }
+
+    private void showMenu() {
+        if (mHamburgerMenu != null && mHamburgerMenu.isVisible()) {
+            // Release current selection menu to recreate it with different actions.
+            hideMenu();
+            return;
+        }
+
+        if (mHamburgerMenu == null) {
+            mHamburgerMenu = new HamburgerMenuWidget(getContext());
+            mHamburgerMenu.getPlacement().parentHandle = getHandle();
+            mHamburgerMenu.setMenuDelegate(new HamburgerMenuWidget.MenuDelegate() {
+                @Override
+                public void onSendTab() {
+                    hideMenu();
+
+                    showSendTabDialog();
+                }
+
+                @Override
+                public void onResize() {
+                    hideMenu();
+
+                    enterResizeMode();
+                }
+
+                @Override
+                public void onSwitchMode() {
+                    int uaMode = mAttachedWindow.getSession().getUaMode();
+                    if (uaMode == GeckoSessionSettings.USER_AGENT_MODE_DESKTOP) {
+                        mHamburgerMenu.setUAMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
+                        mAttachedWindow.getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
+
+                    } else {
+                        mHamburgerMenu.setUAMode(GeckoSessionSettings.USER_AGENT_MODE_DESKTOP);
+                        mAttachedWindow.getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_DESKTOP);
+                    }
+
+                    hideMenu();
+                }
+            });
+        }
+
+        mHamburgerMenu.setUAMode(mAttachedWindow.getSession().getUaMode());
+        mHamburgerMenu.show(UIWidget.KEEP_FOCUS);
+    }
+
+    private void hideMenu() {
+        if (mHamburgerMenu != null) {
+            mHamburgerMenu.hide(UIWidget.REMOVE_WIDGET);
+        }
+    }
+
+    public void showSendTabDialog() {
+        mSendTabDialog = new SendTabDialogWidget(getContext());
+        mSendTabDialog.mWidgetPlacement.parentHandle = mAttachedWindow.getHandle();
+        mSendTabDialog.setDelegate(() -> {
+            mSendTabDialog.releaseWidget();
+            mSendTabDialog = null;
+        });
+        mSendTabDialog.show(REQUEST_FOCUS);
     }
 }

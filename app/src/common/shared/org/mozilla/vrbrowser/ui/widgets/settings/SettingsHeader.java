@@ -9,6 +9,7 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.databinding.DataBindingUtil;
 
 import org.mozilla.vrbrowser.R;
@@ -81,8 +82,20 @@ public class SettingsHeader extends FrameLayout {
         mBinding.setHelpClickListener(listener);
     }
 
-    public void setTitle(@NonNull String title) {
-        mBinding.setTitle(title);
+    public void setTitle(@NonNull String text) {
+        mBinding.setTitle(text);
+    }
+
+    public void setTitle(@StringRes int textRes) {
+        mBinding.setTitle(getResources().getString(textRes));
+    }
+
+    public void setDescription(@NonNull String text) {
+        mBinding.setDescription(text);
+    }
+
+    public void setDescription(@StringRes int textRes) {
+        mBinding.setDescription(getResources().getString(textRes));
     }
 
 }

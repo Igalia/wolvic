@@ -44,7 +44,7 @@ class DisplayOptionsView extends SettingsView {
         mBinding.headerLayout.setBackClickListener(view -> onDismiss());
 
         // Footer
-        mBinding.footerLayout.setResetClickListener(mResetListener);
+        mBinding.footerLayout.setFooterButtonClickListener(mResetListener);
 
         // Options
         mBinding.curvedDisplaySwitch.setOnCheckedChangeListener(mCurvedDisplayListener);
@@ -264,7 +264,7 @@ class DisplayOptionsView extends SettingsView {
     }
 
     private void setFoveatedLevel(RadioGroupSetting aSetting, int checkedId, boolean doApply) {
-        RadioGroupSetting.OnCheckedChangeListener listener = aSetting.getOnCheckdChangeListener();
+        RadioGroupSetting.OnCheckedChangeListener listener = aSetting.getOnCheckedChangeListener();
         aSetting.setOnCheckedChangeListener(null);
         aSetting.setChecked(checkedId, doApply);
         aSetting.setOnCheckedChangeListener(listener);

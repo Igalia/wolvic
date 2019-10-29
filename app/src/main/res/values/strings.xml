@@ -1230,4 +1230,41 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed in a tooltip that appears in the tray bar on top of the
      tabs tray button then a tab has been added on the background. -->
     <string name="tab_added_notification">New Tab Added!</string>
+
+    <!-- This string is displayed in a tooltip that appears in the tray bar on top of the
+     tabs tray button then a tab has been sent. -->
+    <string name="tab_sent_notification">Tab Sent!</string>
+
+    <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
+         it opens the send tab dialog -->
+    <string name="hamburger_menu_send_tab">Send Tab to Device</string>
+
+    <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
+         it opens the window resize panel -->
+    <string name="hamburger_menu_resize">Window Resize</string>
+
+    <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
+         it switches User Agent from desktop to mobile and vice versa -->
+    <string name="hamburger_menu_switch_to_desktop">Desktop Mode</string>
+
+    <!-- This string is displayed in the tooltip that is displayed when the user hovers the hamburger menu icon -->
+    <string name="hamburger_menu_tooltip">Menu</string>
+
+    <!-- This string is displayed in the title of the Send Tab to device dialog. -->
+    <string name="send_tab_dialog_title">Send Tab to Device</string>
+
+    <!-- This string is displayed in the description of the Send Tab to device dialog. -->
+    <string name="send_tab_dialog_description">Choose a device to send the tab.</string>
+
+    <!-- This string is displayed on top of the available devices list. -->
+    <string name="send_tab_dialog_options_header">Available devices:</string>
+
+    <!-- This string is displayed instead of the devices list if there are no available devices. -->
+    <string name="send_tab_dialog_no_devices">No devices connected.</string>
+
+    <!-- This string is displayed instead of the devices list if the devices list is being synced. -->
+    <string name="send_tab_dialog_syncing">Syncing...</string>
+
+    <!-- This string is displayed in the button of the Send Tab to device dialog. When clicked the current tab is sent to the selected device -->
+    <string name="send_tab_dialog_button">Send</string>
 </resources>

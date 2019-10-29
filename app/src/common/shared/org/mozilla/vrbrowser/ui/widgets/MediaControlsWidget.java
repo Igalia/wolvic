@@ -20,7 +20,7 @@ import org.mozilla.vrbrowser.browser.Media;
 import org.mozilla.vrbrowser.ui.views.MediaSeekBar;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.views.VolumeControl;
-import org.mozilla.vrbrowser.utils.SystemUtils;
+import org.mozilla.vrbrowser.ui.widgets.menus.VideoProjectionMenuWidget;
 
 public class MediaControlsWidget extends UIWidget implements MediaElement.Delegate {
 

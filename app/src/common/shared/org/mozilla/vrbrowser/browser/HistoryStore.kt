@@ -11,10 +11,7 @@ import android.os.Looper
 import androidx.lifecycle.ProcessLifecycleOwner
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.future.future
-import mozilla.components.concept.storage.PageObservation
-import mozilla.components.concept.storage.PageVisit
-import mozilla.components.concept.storage.VisitInfo
-import mozilla.components.concept.storage.VisitType
+import mozilla.components.concept.storage.*
 import mozilla.components.service.fxa.sync.SyncStatusObserver
 import mozilla.components.support.base.log.logger.Logger
 import org.mozilla.vrbrowser.VRBrowserApplication
@@ -124,6 +121,10 @@ class HistoryStore constructor(val context: Context) {
     fun isInHistory(aURL: String): CompletableFuture<Boolean> = GlobalScope.future {
         var result = storage.getVisited(listOf(aURL))
         result.isNotEmpty() && result[0]
+    }
+
+    fun getSuggestions(query: String, limit: Int): CompletableFuture<List<SearchResult>> = GlobalScope.future {
+        storage.getSuggestions(query, limit)
     }
 
     private fun notifyListeners() {

@@ -15,7 +15,9 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MotionEvent;
+import android.view.ViewGroup;
 
+import androidx.annotation.Dimension;
 import androidx.annotation.IdRes;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
@@ -276,5 +278,11 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
             }
         }
     };
+
+    public void setLayoutWidth(@NonNull @Dimension float dimen) {
+        ViewGroup.LayoutParams params = getLayoutParams();
+        params.width = (int)dimen;
+        setLayoutParams(params);
+    }
 
 }

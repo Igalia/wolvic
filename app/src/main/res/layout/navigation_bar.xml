@@ -5,5 +5,5 @@
 
     <include layout="@layout/navigation_bar_fullscreen" />
 
-    <include layout="@layout/navigation_bar_resize" />
+    <include layout="@layout/navigation_bar_menu" />
 </merge>

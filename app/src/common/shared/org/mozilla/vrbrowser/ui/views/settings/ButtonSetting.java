@@ -104,4 +104,8 @@ public class ButtonSetting extends LinearLayout {
         return mDescription;
     }
 
+    public void setFooterButtonVisibility(int visibility) {
+        mButton.setVisibility(visibility);
+    }
+
 }

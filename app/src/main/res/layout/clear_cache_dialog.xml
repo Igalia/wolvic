@@ -1,40 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <LinearLayout
+    <org.mozilla.vrbrowser.ui.views.settings.RadioGroupVSetting
+        android:id="@+id/clearCacheRadio"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <View
-            android:id="@+id/separatorTop"
-            style="?attr/separatorStyle"
-            android:layout_marginBottom="20dp"
-            android:layout_width="match_parent"/>
-
-        <TextView
-            android:id="@+id/setting_description"
-            style="@style/settingsText"
-            android:text="@string/history_clear_time_range"
-            tools:text="@string/history_clear_time_range" />
-
-        <org.mozilla.vrbrowser.ui.views.settings.RadioGroupVSetting
-            android:id="@+id/clearCacheRadio"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="40dp"
-            app:layout="@layout/setting_radio_group_v"
-            app:options="@array/clear_cache_options"
-            app:values="@array/clear_cache_options_values" />
-
-        <View
-            android:id="@+id/separatorBottom"
-            style="?attr/separatorStyle"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="15dp"
-            android:layout_width="match_parent"/>
-    </LinearLayout>
+        app:layout="@layout/setting_radio_group_v"
+        app:description="@string/history_clear_time_range"
+        app:options="@array/clear_cache_options"
+        app:values="@array/clear_cache_options_values" />
 
 </layout>

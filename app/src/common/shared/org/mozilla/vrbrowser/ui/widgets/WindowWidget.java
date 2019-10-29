@@ -50,10 +50,10 @@ import org.mozilla.vrbrowser.ui.views.HistoryView;
 import org.mozilla.vrbrowser.ui.views.LibraryItemContextMenu;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.BaseAppDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.ClearCacheDialogWidget;
-import org.mozilla.vrbrowser.ui.widgets.dialogs.ContextMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.LibraryItemContextMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.MessageDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.SelectionActionWidget;
+import org.mozilla.vrbrowser.ui.widgets.menus.ContextMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.AlertPromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.ConfirmPromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.PromptWidget;
@@ -134,6 +134,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private boolean mIsFullScreen;
     private boolean mAfterFirstPaint;
     private boolean mCaptureOnPageStop;
+    private View mSendTabCheckLayout;
 
     public interface WindowListener {
         default void onFocusRequest(@NonNull WindowWidget aWindow) {}
@@ -187,6 +188,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         mTitleBar = new TitleBarWidget(aContext);
         mTitleBar.attachToWindow(this);
+
+        // Load the send tab check layout that is displayed after a tab is sent
+        mSendTabCheckLayout = inflate(getContext(), R.layout.window_check, null);
 
         setFocusable(true);
 
@@ -1203,8 +1207,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 R.string.history_clear_cancel,
                 R.string.history_clear_now
         });
-        mClearCacheDialog.setButtonsDelegate(index -> {
-            if (index == BaseAppDialogWidget.LEFT) {
+        mClearCacheDialog.setButtonsDelegate((index) -> {
+            if (index == BaseAppDialogWidget.NEGATIVE) {
                 mClearCacheDialog.hide(REMOVE_WIDGET);
 
             } else {
@@ -1520,6 +1524,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         SessionStore.get().getHistoryStore().deleteVisitsFor(url).thenAcceptAsync(result -> {
             SessionStore.get().getHistoryStore().recordVisit(url, pageVisit);
+            SessionStore.get().getHistoryStore().recordObservation(url, new PageObservation(url));
         });
         return GeckoResult.fromValue(true);
     }

@@ -150,7 +150,7 @@
                         <org.mozilla.vrbrowser.ui.views.HoneycombButton
                             android:id="@+id/fxaButton"
                             style="?attr/honeycombButtonStyle"
-                            app:honeycombButtonIcon="@drawable/ic_icon_settings_sign_in"
+                            app:honeycombButtonIcon="@drawable/ic_icon_settings_account"
                             app:honeycombButtonText="@string/settings_fxa_account_sign_in"
                             app:honeycombButtonTextSize="@dimen/settings_main_button_text_width" />
 

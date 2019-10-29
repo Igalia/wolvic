@@ -6,7 +6,6 @@
 package org.mozilla.vrbrowser.ui.widgets.dialogs;
 
 import android.content.Context;
-import android.util.AttributeSet;
 import android.view.LayoutInflater;
 
 import androidx.annotation.NonNull;
@@ -28,20 +27,12 @@ public class MessageDialogWidget extends BaseAppDialogWidget {
 
     public MessageDialogWidget(Context aContext) {
         super(aContext);
-        initialize(aContext);
     }
 
-    public MessageDialogWidget(Context aContext, AttributeSet aAttrs) {
-        super(aContext, aAttrs);
-        initialize(aContext);
-    }
+    @Override
+    protected void initialize(Context aContext) {
+        super.initialize(aContext);
 
-    public MessageDialogWidget(Context aContext, AttributeSet aAttrs, int aDefStyle) {
-        super(aContext, aAttrs, aDefStyle);
-        initialize(aContext);
-    }
-
-    private void initialize(Context aContext) {
         LayoutInflater inflater = LayoutInflater.from(aContext);
 
         // Inflate this data binding layout

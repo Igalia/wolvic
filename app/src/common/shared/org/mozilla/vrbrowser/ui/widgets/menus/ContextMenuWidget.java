@@ -3,18 +3,16 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.vrbrowser.ui.widgets.dialogs;
+package org.mozilla.vrbrowser.ui.widgets.menus;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 import android.view.View;
 
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.ui.widgets.MenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.utils.StringUtils;
@@ -27,7 +25,7 @@ public class ContextMenuWidget extends MenuWidget implements WidgetManagerDelega
     private Runnable mDismissCallback;
 
     public ContextMenuWidget(Context aContext) {
-        super(aContext);
+        super(aContext, R.layout.menu);
         initialize();
     }
 
@@ -35,7 +33,7 @@ public class ContextMenuWidget extends MenuWidget implements WidgetManagerDelega
         mAdapter.updateBackgrounds(R.drawable.context_menu_item_background_first,
                 R.drawable.context_menu_item_background_last,
                 R.drawable.context_menu_item_background);
-        mAdapter.updateLayourId(R.layout.context_menu_item);
+        mAdapter.updateLayoutId(R.layout.context_menu_item);
         menuContainer.setBackground(getContext().getDrawable(R.drawable.context_menu_background));
     }
 

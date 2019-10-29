@@ -292,7 +292,7 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
                             R.string.voice_samples_collect_dialog_allow},
                     index -> {
                         SettingsStore.getInstance(getContext()).setSpeechDataCollectionReviewed(true);
-                        if (index == MessageDialogWidget.RIGHT) {
+                        if (index == MessageDialogWidget.POSITIVE) {
                             SettingsStore.getInstance(getContext()).setSpeechDataCollectionEnabled(true);
                         }
                         ThreadUtils.postToUiThread(() -> show(aShowFlags));

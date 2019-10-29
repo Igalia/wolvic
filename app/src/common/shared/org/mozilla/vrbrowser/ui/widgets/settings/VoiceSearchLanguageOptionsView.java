@@ -46,7 +46,7 @@ class VoiceSearchLanguageOptionsView extends SettingsView {
         });
 
         // Footer
-        mBinding.footerLayout.setResetClickListener(mResetListener);
+        mBinding.footerLayout.setFooterButtonClickListener(mResetListener);
 
         String language = LocaleUtils.getVoiceSearchLocale(getContext());
         mBinding.languageRadio.setOnCheckedChangeListener(mLanguageListener);

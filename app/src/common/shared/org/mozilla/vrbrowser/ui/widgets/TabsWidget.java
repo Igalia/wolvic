@@ -17,6 +17,7 @@ import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.ui.views.TabView;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.views.UITextButton;
+import org.mozilla.vrbrowser.ui.widgets.dialogs.SendTabDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.UIDialog;
 import org.mozilla.vrbrowser.utils.BitmapCache;
 import org.mozilla.vrbrowser.utils.ViewUtils;
@@ -39,6 +40,7 @@ public class TabsWidget extends UIDialog implements WidgetManagerDelegate.WorldC
     protected UITextButton mSelectAllButton;
     protected UITextButton mUnselectTabs;
     protected LinearLayout mTabsSelectModeView;
+    protected SendTabDialogWidget mSendTabDialog;
 
     protected boolean mSelecting;
     protected ArrayList<Session> mSelectedTabs = new ArrayList<>();
@@ -269,6 +271,19 @@ public class TabsWidget extends UIDialog implements WidgetManagerDelegate.WorldC
                         mTabDelegate.onTabAdd();
                     }
                     onDismiss();
+                }
+
+                @Override
+                public void onSend(TabView aSender) {
+                    hide(KEEP_WIDGET);
+                    mSendTabDialog = new SendTabDialogWidget(getContext());
+                    mSendTabDialog.mWidgetPlacement.parentHandle = mWidgetManager.getFocusedWindow().getHandle();
+                    mSendTabDialog.setDelegate(() -> {
+                        mSendTabDialog.releaseWidget();
+                        mSendTabDialog = null;
+                        show(REQUEST_FOCUS);
+                    });
+                    mSendTabDialog.show(UIWidget.REQUEST_FOCUS);
                 }
             });
         }

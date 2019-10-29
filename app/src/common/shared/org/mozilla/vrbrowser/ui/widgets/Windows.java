@@ -1117,6 +1117,10 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         }
     }
 
+    public void addTab(WindowWidget targetWindow) {
+        addTab(targetWindow, null);
+    }
+
     public void addTab(WindowWidget targetWindow, @Nullable String aUri) {
         Session session = SessionStore.get().createSession(targetWindow.getSession().isPrivateMode());
         targetWindow.setFirstPaintReady(false);
@@ -1129,10 +1133,10 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         mWidgetManager.updateWidget(targetWindow);
         targetWindow.getSession().setActive(false);
         targetWindow.setSession(session);
-        if (aUri != null) {
-            session.loadUri(aUri);
-        } else {
+        if (aUri == null || aUri.isEmpty()) {
             session.loadHomePage();
+        } else {
+            session.loadUri(aUri);
         }
         SessionStore.get().setActiveSession(session);
     }
@@ -1229,5 +1233,4 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             mTabsWidget.refreshTabs();
         }
     }
-
 }

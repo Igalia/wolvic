@@ -37,7 +37,7 @@ class ControllerOptionsView extends SettingsView {
         mBinding.headerLayout.setBackClickListener(view -> onDismiss());
 
         // Footer
-        mBinding.footerLayout.setResetClickListener(v -> resetOptions());
+        mBinding.footerLayout.setFooterButtonClickListener(v -> resetOptions());
 
         int color = SettingsStore.getInstance(getContext()).getPointerColor();
         mBinding.pointerColorRadio.setOnCheckedChangeListener(mPointerColorListener);

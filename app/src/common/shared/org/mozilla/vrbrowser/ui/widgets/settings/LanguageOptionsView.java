@@ -51,7 +51,7 @@ class LanguageOptionsView extends SettingsView {
         mBinding.headerLayout.setBackClickListener(view -> onDismiss());
 
         // Footer
-        mBinding.footerLayout.setResetClickListener(mResetListener);
+        mBinding.footerLayout.setFooterButtonClickListener(mResetListener);
 
         // Set listeners
         mBinding.setContentClickListener(mContentListener);

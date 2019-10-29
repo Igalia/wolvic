@@ -4,53 +4,43 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.vrbrowser.ui.widgets;
+package org.mozilla.vrbrowser.ui.widgets.menus;
 
 import android.content.Context;
-import android.graphics.Point;
-import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.annotation.LayoutRes;
 
-import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.ui.views.UITextButton;
-import org.mozilla.vrbrowser.utils.StringUtils;
-import org.mozilla.vrbrowser.utils.ViewUtils;
+import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 
 import java.util.ArrayList;
-
-import static android.view.Gravity.CENTER_VERTICAL;
 
 public abstract class MenuWidget extends UIWidget {
     protected MenuAdapter mAdapter;
     protected ListView mListView;
     protected View menuContainer;
 
-    public MenuWidget(Context aContext) {
+    public MenuWidget(Context aContext, @LayoutRes int layout) {
         super(aContext);
-        initialize(aContext, null);
+        initialize(aContext, layout, null);
     }
 
-    public MenuWidget(Context aContext, ArrayList<MenuItem> aItems) {
+    public MenuWidget(Context aContext, @LayoutRes int layout, ArrayList<MenuItem> aItems) {
         super(aContext);
-        initialize(aContext, aItems);
+        initialize(aContext, layout, aItems);
     }
 
-    private void initialize(Context aContext, ArrayList<MenuItem> aItems) {
-        inflate(aContext, R.layout.menu, this);
+    private void initialize(Context aContext, @LayoutRes int layout, ArrayList<MenuItem> aItems) {
+        inflate(aContext, layout, this);
         mListView = findViewById(R.id.menuListView);
         menuContainer = findViewById(R.id.menuContainer);
 
@@ -59,18 +49,6 @@ public abstract class MenuWidget extends UIWidget {
         mListView.setAdapter(mAdapter);
         mListView.setVerticalScrollBarEnabled(false);
         mListView.setFastScrollAlwaysVisible(false);
-
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position,
-                                    long id) {
-                setSelectedItem(position);
-                MenuItem item = mAdapter.mItems.get(position);
-                if (item.mCallback != null) {
-                    item.mCallback.run();
-                }
-            }
-        });
     }
 
     public void updateMenuItems(ArrayList<MenuItem> aItems) {
@@ -98,7 +76,7 @@ public abstract class MenuWidget extends UIWidget {
         }
     }
 
-    public static class MenuAdapter extends BaseAdapter implements OnHoverListener {
+    public class MenuAdapter extends BaseAdapter implements OnHoverListener {
         private Context mContext;
         private ArrayList<MenuItem> mItems;
         private LayoutInflater mInflater;
@@ -109,7 +87,7 @@ public abstract class MenuWidget extends UIWidget {
 
         MenuAdapter(Context aContext, ArrayList<MenuItem> aItems) {
             mContext = aContext;
-            mItems = aItems != null ? aItems : new ArrayList<MenuItem>();
+            mItems = aItems != null ? aItems : new ArrayList<>();
             mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             firstItemDrawable = R.drawable.menu_item_background_first;
             lastItemDrawable = R.drawable.menu_item_background_last;
@@ -123,7 +101,7 @@ public abstract class MenuWidget extends UIWidget {
             regularItemDrawable = regular;
         }
 
-        public void updateLayourId(int aLayoutId) {
+        public void updateLayoutId(int aLayoutId) {
             layoutId = aLayoutId;
         }
 
@@ -149,6 +127,13 @@ public abstract class MenuWidget extends UIWidget {
             if (view == null) {
                 view = mInflater.inflate(layoutId, parent, false);
                 view.setOnHoverListener(this);
+                view.setOnClickListener(v -> {
+                    setSelectedItem(position);
+                    MenuItem item = mItems.get(position);
+                    if (item.mCallback != null) {
+                        item.mCallback.run();
+                    }
+                });
             }
             view.setTag(R.string.position_tag, position);
             if (position == 0) {

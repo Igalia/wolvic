@@ -12,6 +12,7 @@
     <color name="sky">#75eff9</color>
     <color name="silver">#e3e4e5</color>
     <color name="white">#ffffff</color>
+    <color name="white_blur">#80ffffff</color>
     <color name="fire">#ee513f</color>
     <color name="spark">#f7ce4d</color>
     <color name="eggplant">#45236d</color>

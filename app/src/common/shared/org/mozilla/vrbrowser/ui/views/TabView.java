@@ -30,6 +30,7 @@ public class TabView extends RelativeLayout implements GeckoSession.ContentDeleg
     protected TextView mURL;
     protected TextView mTitle;
     protected UIButton mCloseButton;
+    protected UIButton mSendTabButton;
     protected ImageView mSelectionImage;
     protected ImageView mUnselectImage;
     protected Delegate mDelegate;
@@ -50,6 +51,7 @@ public class TabView extends RelativeLayout implements GeckoSession.ContentDeleg
         void onClose(TabView aSender);
         void onClick(TabView aSender);
         void onAdd(TabView aSender);
+        void onSend(TabView aSender);
     }
 
     public TabView(Context context) {
@@ -76,6 +78,16 @@ public class TabView extends RelativeLayout implements GeckoSession.ContentDeleg
 
         mUnselectImage = findViewById(R.id.tabViewUnselect);
         mUnselectImage.setVisibility(View.GONE);
+
+        mSendTabButton = findViewById(R.id.tabViewSendButton);
+        mSendTabButton.setVisibility(View.GONE);
+        mSendTabButton.setOnClickListener(v -> {
+            v.requestFocusFromTouch();
+            if (mDelegate != null) {
+                mDelegate.onSend(this);
+            }
+        });
+        mSendTabButton.setOnHoverListener(mIconHoverListener);
 
         mCloseButton = findViewById(R.id.tabViewCloseButton);
         mCloseButton.setVisibility(View.GONE);
@@ -222,11 +234,12 @@ public class TabView extends RelativeLayout implements GeckoSession.ContentDeleg
     }
 
     private void updateState() {
-        boolean hovered = isHovered() || mCloseButton.isHovered();
+        boolean hovered = isHovered() || mCloseButton.isHovered() || mSendTabButton.isHovered();
         boolean interacted = hovered || mPressed;
         boolean selected = isSelected();
 
         mCloseButton.setVisibility(interacted && !selected && !mSelecting ? View.VISIBLE : View.GONE);
+        mSendTabButton.setVisibility(interacted && !selected && !mSelecting ? View.VISIBLE : View.GONE);
         mTitle.setVisibility(interacted && !selected ? View.VISIBLE : View.GONE);
         mTabOverlay.setHovered(hovered || selected);
         mTabOverlay.setPressed(mPressed);

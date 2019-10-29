@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.DimenRes;
 import androidx.annotation.Dimension;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
@@ -16,6 +17,7 @@ import androidx.databinding.BindingAdapter;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.ui.views.HoneycombButton;
+import org.mozilla.vrbrowser.ui.views.UIButton;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -111,4 +113,9 @@ public class BindingAdapters {
     }
 
 
+
+    @BindingAdapter("android:layout_width")
+    public static void setLayoutWidth(@NonNull UIButton button, @NonNull @Dimension float dimen) {
+        button.setLayoutWidth(dimen);
+    }
 }

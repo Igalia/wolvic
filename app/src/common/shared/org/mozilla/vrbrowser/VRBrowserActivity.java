@@ -58,7 +58,7 @@ import org.mozilla.vrbrowser.ui.widgets.NavigationBarWidget;
 import org.mozilla.vrbrowser.ui.widgets.RootWidget;
 import org.mozilla.vrbrowser.ui.widgets.TrayWidget;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
-import org.mozilla.vrbrowser.ui.widgets.VideoProjectionMenuWidget;
+import org.mozilla.vrbrowser.ui.widgets.menus.VideoProjectionMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.Widget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
@@ -1400,6 +1400,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Override
     public void openNewTab(@NonNull String uri) {
         mWindows.addBackgroundTab(mWindows.getFocusedWindow(), uri);
+    }
+
+    @Override
+    public void openNewTabForeground(@NonNull String uri) {
+        mWindows.addTab(mWindows.getFocusedWindow(), uri);
     }
 
     @Override

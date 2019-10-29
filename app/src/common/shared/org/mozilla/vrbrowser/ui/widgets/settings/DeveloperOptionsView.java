@@ -42,7 +42,7 @@ class DeveloperOptionsView extends SettingsView {
         mBinding.headerLayout.setBackClickListener(view -> onDismiss());
 
         // Footer
-        mBinding.footerLayout.setResetClickListener(mResetListener);
+        mBinding.footerLayout.setFooterButtonClickListener(mResetListener);
 
         // Switches
         mBinding.remoteDebuggingSwitch.setOnCheckedChangeListener(mRemoteDebuggingListener);
