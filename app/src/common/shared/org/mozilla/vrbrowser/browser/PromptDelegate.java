@@ -13,6 +13,7 @@ import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.AppExecutors;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserApplication;
+import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.db.PopUpSite;
 import org.mozilla.vrbrowser.ui.viewmodel.PopUpsViewModel;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
@@ -33,7 +34,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-public class PromptDelegate implements GeckoSession.PromptDelegate {
+public class PromptDelegate implements GeckoSession.PromptDelegate, WindowWidget.WindowListener {
 
     private PromptWidget mPrompt;
     private PopUpBlockDialogWidget mPopUpPrompt;
@@ -57,12 +58,16 @@ public class PromptDelegate implements GeckoSession.PromptDelegate {
         detachFromWindow();
 
         mAttachedWindow = window;
+        mAttachedWindow.addWindowListener(this);
         mAttachedWindow.getSession().setPromptDelegate(this);
         mViewModel.getAll().observeForever(mObserver);
     }
 
     public void detachFromWindow() {
-        mAttachedWindow = null;
+        if (mAttachedWindow != null) {
+            mAttachedWindow.removeWindowListener(this);
+            mAttachedWindow = null;
+        }
         mViewModel.getAll().removeObserver(mObserver);
     }
 
@@ -307,4 +312,11 @@ public class PromptDelegate implements GeckoSession.PromptDelegate {
         }
     }
 
+    // WindowWidget.WindowListener
+
+    @Override
+    public void onSessionChanged(@NonNull Session aOldSession, @NonNull Session aSession) {
+        aOldSession.setPromptDelegate(null);
+        aSession.setPromptDelegate(this);
+    }
 }
