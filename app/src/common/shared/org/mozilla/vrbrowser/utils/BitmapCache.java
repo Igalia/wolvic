@@ -3,9 +3,14 @@ package org.mozilla.vrbrowser.utils;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.SurfaceTexture;
 import android.util.Log;
 import android.util.LruCache;
+import android.view.Surface;
+
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.jakewharton.disklrucache.DiskLruCache;
 
 import org.mozilla.vrbrowser.VRBrowserApplication;
@@ -24,6 +29,9 @@ public class BitmapCache {
     private final Object mLock = new Object();
     private static final int DISK_CACHE_SIZE = 1024 * 1024 * 100; // 100MB
     private static final String LOGTAG = SystemUtils.createLogtag(BitmapCache.class);
+    private SurfaceTexture mCaptureSurfaceTexture;
+    private Surface mCaptureSurface;
+    private boolean mCapturedAcquired;
 
     public static BitmapCache getInstance(Context aContext) {
         return ((VRBrowserApplication)aContext.getApplicationContext()).getBitmapCache();
@@ -33,6 +41,9 @@ public class BitmapCache {
         mContext = aContext;
         mIOExecutor = aIOExecutor;
         mMainThreadExecutor = aMainThreadExecutor;
+    }
+
+    public void onCreate() {
         initMemoryCache();
         initDiskCache();
     }
@@ -181,5 +192,44 @@ public class BitmapCache {
         });
 
         return result;
+    }
+
+    public void setCaptureSurface(SurfaceTexture aSurfaceTexture) {
+        mCaptureSurfaceTexture = aSurfaceTexture;
+        mCaptureSurface = new Surface(aSurfaceTexture);
+    }
+
+    public @Nullable Surface acquireCaptureSurface(int width, int height) {
+        if (mCapturedAcquired) {
+            return null;
+        }
+        mCapturedAcquired = true;
+        mCaptureSurfaceTexture.setDefaultBufferSize(width, height);
+        return mCaptureSurface;
+    }
+
+    public void releaseCaptureSurface() {
+        mCapturedAcquired = false;
+    }
+
+    public void onDestroy() {
+        if (mDiskCache != null) {
+            runIO(() -> {
+                try {
+                    mDiskCache.close();
+                } catch (IOException ex) {
+                    Log.e(LOGTAG, "Failed to close DiskLruCache:" + ex.getMessage());
+                }
+                mDiskCache = null;
+            });
+        }
+        if (mCaptureSurface != null) {
+            mCaptureSurface.release();
+            mCaptureSurface = null;
+        }
+        if (mCaptureSurfaceTexture != null) {
+            mCaptureSurfaceTexture.release();
+            mCaptureSurfaceTexture = null;
+        }
     }
 }

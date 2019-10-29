@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -66,6 +67,7 @@ import org.mozilla.vrbrowser.ui.widgets.WindowWidget;
 import org.mozilla.vrbrowser.ui.widgets.Windows;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.CrashDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.ConfirmPromptWidget;
+import org.mozilla.vrbrowser.utils.BitmapCache;
 import org.mozilla.vrbrowser.utils.ConnectivityReceiver;
 import org.mozilla.vrbrowser.utils.DeviceType;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
@@ -210,6 +212,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         }
         mUiThread = Thread.currentThread();
 
+        BitmapCache.getInstance(this).onCreate();
+
         Bundle extras = getIntent() != null ? getIntent().getExtras() : null;
         SessionStore.get().setContext(this, extras);
         SessionStore.get().initializeServices();
@@ -246,7 +250,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         mSettings = SettingsStore.getInstance(this);
 
-        queueRunnable(() -> createOffscreenDisplay());
+        queueRunnable(() -> {
+            createOffscreenDisplay();
+            createCaptureSurface();
+        });
         final String tempPath = getCacheDir().getAbsolutePath();
         queueRunnable(() -> setTemporaryFilePath(tempPath));
         updateFoveatedLevel();
@@ -422,7 +429,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         // Remove all widget listeners
         mWindows.onDestroy();
 
+        BitmapCache.getInstance(this).onDestroy();
+
         SessionStore.get().onDestroy();
+
 
         super.onDestroy();
     }
@@ -1031,7 +1041,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         });
     }
 
-    void createOffscreenDisplay() {
+    private SurfaceTexture createSurfaceTexture() {
         int[] ids = new int[1];
         GLES20.glGenTextures(1, ids, 0);
         GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, ids[0]);
@@ -1042,13 +1052,26 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
         int error = GLES20.glGetError();
         if (error != GLES20.GL_NO_ERROR) {
-            Log.e(LOGTAG, "OpenGL Error creating OffscreenDisplay: " + error);
+            Log.e(LOGTAG, "OpenGL Error creating SurfaceTexture: " + error);
         }
 
-        final SurfaceTexture texture = new SurfaceTexture(ids[0]);
+        return new SurfaceTexture(ids[0]);
+    }
+
+    void createOffscreenDisplay() {
+        final SurfaceTexture texture = createSurfaceTexture();
         runOnUiThread(() -> {
             mOffscreenDisplay = new OffscreenDisplay(VRBrowserActivity.this, texture, 16, 16);
             mOffscreenDisplay.setContentView(mWidgetContainer);
+        });
+    }
+
+    void createCaptureSurface() {
+        final SurfaceTexture texture = createSurfaceTexture();
+        runOnUiThread(() -> {
+            SettingsStore settings = SettingsStore.getInstance(this);
+            texture.setDefaultBufferSize(settings.getWindowWidth(), settings.getWindowHeight());
+            BitmapCache.getInstance(this).setCaptureSurface(texture);
         });
     }
 

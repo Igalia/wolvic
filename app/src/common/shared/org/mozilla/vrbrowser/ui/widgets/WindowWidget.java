@@ -391,6 +391,14 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         return (mView != null && mView == mHistoryView);
     }
 
+    public int getWindowWidth() {
+        return mWidgetPlacement.width;
+    }
+
+    public int getWindowHeight() {
+        return mWidgetPlacement.height;
+    }
+
     public void addBookmarksViewListener(@NonNull BookmarksViewDelegate listener) {
         mBookmarksViewListeners.add(listener);
     }
@@ -1050,6 +1058,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         setSession(aSession);
         SessionStore.get().setActiveSession(aSession);
         current.setActive(false);
+        current.captureBackgroundBitmap(getWindowWidth(), getWindowHeight());
         mWidgetManager.getTray().showTabAddedNotification();
     }
 
@@ -1468,7 +1477,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
     }
 
-    private void captureImage() {
+    public void captureImage() {
         if (mDisplay != null) {
             mSession.captureBitmap(mDisplay);
         }

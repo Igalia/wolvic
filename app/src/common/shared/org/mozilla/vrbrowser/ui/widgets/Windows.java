@@ -956,6 +956,11 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             ((VRBrowserApplication)mContext.getApplicationContext()).getAccounts().refreshDevicesAsync();
             ((VRBrowserApplication)mContext.getApplicationContext()).getAccounts().pollForEventsAsync();
         }
+
+        // Capture active session snapshots when showing the tabs menu
+        for (WindowWidget window: getCurrentWindows()) {
+            window.captureImage();
+        }
     }
 
     // TopBarWidget Delegate

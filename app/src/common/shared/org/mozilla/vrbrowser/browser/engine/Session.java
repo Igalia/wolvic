@@ -9,8 +9,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.SurfaceTexture;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.Surface;
 import android.view.inputmethod.CursorAnchorInfo;
 import android.view.inputmethod.ExtractedText;
 import android.view.inputmethod.ExtractedTextRequest;
@@ -417,6 +419,30 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
                     }
                 });
             }
+            return null;
+        });
+    }
+
+    public void captureBackgroundBitmap(int displayWidth, int displayHeight) {
+        Surface captureSurface = BitmapCache.getInstance(mContext).acquireCaptureSurface(displayWidth, displayHeight);
+        if (captureSurface == null) {
+            return;
+        }
+        GeckoSession session = mState.mSession;
+        GeckoDisplay display = session.acquireDisplay();
+        display.surfaceChanged(captureSurface, displayWidth, displayHeight);
+        display.capturePixels().then(bitmap -> {
+            if (bitmap != null) {
+                BitmapCache.getInstance(mContext).scaleBitmap(bitmap, 500, 280).thenAccept(scaledBitmap -> {
+                    BitmapCache.getInstance(mContext).addBitmap(getId(), scaledBitmap);
+                    for (BitmapChangedListener listener: mBitmapChangedListeners) {
+                        listener.onBitmapChanged(Session.this, scaledBitmap);
+                    }
+                });
+            }
+            display.surfaceDestroyed();
+            session.releaseDisplay(display);
+            BitmapCache.getInstance(mContext).releaseCaptureSurface();
             return null;
         });
     }
