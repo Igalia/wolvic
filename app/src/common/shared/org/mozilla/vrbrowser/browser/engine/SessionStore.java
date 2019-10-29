@@ -82,6 +82,7 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
             if (BuildConfig.DEBUG) {
                 runtimeSettingsBuilder.arguments(new String[] { "-purgecaches" });
                 runtimeSettingsBuilder.debugLogging(true);
+                runtimeSettingsBuilder.aboutConfigEnabled(true);
             } else {
                 runtimeSettingsBuilder.debugLogging(SettingsStore.getInstance(context).isDebugLogginEnabled());
             }

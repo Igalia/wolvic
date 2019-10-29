@@ -42,6 +42,7 @@ class SessionUtils {
             out.write("pref(\"formhelper.autozoom\", false);\n".getBytes());
             // Disable WebRender until it works with FxR
             out.write("pref(\"gfx.webrender.force-disabled\", true);\n".getBytes());
+            out.write("pref(\"signon.rememberSignons\", false);\n".getBytes());
             int msaa = SettingsStore.getInstance(aContext).getMSAALevel();
             if (msaa > 0) {
                 int msaaLevel = msaa == 2 ? 4 : 2;
