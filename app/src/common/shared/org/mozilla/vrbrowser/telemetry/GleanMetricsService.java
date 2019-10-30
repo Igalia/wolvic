@@ -36,7 +36,7 @@ public class GleanMetricsService {
         } else {
             GleanMetricsService.stop();
         }
-        Configuration config = new Configuration();
+        Configuration config = new Configuration(Configuration.DEFAULT_TELEMETRY_ENDPOINT, BuildConfig.BUILD_TYPE);
         Glean.INSTANCE.initialize(aContext, config);
     }
 
