@@ -78,6 +78,7 @@ public class SettingsStore {
     public final static boolean TELEMETRY_STATUS_UPDATE_SENT_DEFAULT = false;
     public final static boolean BOOKMARKS_SYNC_DEFAULT = true;
     public final static boolean HISTORY_SYNC_DEFAULT = true;
+    public final static boolean WHATS_NEW_DISPLAYED = false;
 
     // Enable telemetry by default (opt-out).
     public final static boolean CRASH_REPORTING_DEFAULT = false;
@@ -621,6 +622,16 @@ public class SettingsStore {
 
     public boolean isHistorySyncEnabled() {
         return mPrefs.getBoolean(mContext.getString(R.string.settings_key_history_sync), HISTORY_SYNC_DEFAULT);
+    }
+
+    public void setWhatsNewDisplayed(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_whats_new_displayed), isEnabled);
+        editor.commit();
+    }
+
+    public boolean isWhatsNewDisplayed() {
+        return mPrefs.getBoolean(mContext.getString(R.string.settings_key_whats_new_displayed), WHATS_NEW_DISPLAYED);
     }
 
 }

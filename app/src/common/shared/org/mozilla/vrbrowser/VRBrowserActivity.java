@@ -66,6 +66,7 @@ import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.ui.widgets.WindowWidget;
 import org.mozilla.vrbrowser.ui.widgets.Windows;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.CrashDialogWidget;
+import org.mozilla.vrbrowser.ui.widgets.dialogs.WhatsNewWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.ConfirmPromptWidget;
 import org.mozilla.vrbrowser.utils.BitmapCache;
 import org.mozilla.vrbrowser.utils.ConnectivityReceiver;
@@ -322,6 +323,15 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         attachToWindow(mWindows.getFocusedWindow(), null);
 
         addWidgets(Arrays.asList(mRootWidget, mNavigationBar, mKeyboard, mTray));
+
+        // Show the what's upp dialog if we haven't showed it yet and this is v6.
+        if (!SettingsStore.getInstance(this).isWhatsNewDisplayed() && BuildConfig.VERSION_NAME.equals("6")) {
+            WhatsNewWidget whatsNew = new WhatsNewWidget(this);
+            whatsNew.getPlacement().parentHandle = mWindows.getFocusedWindow().getHandle();
+            whatsNew.setStartBrowsingCallback(() -> whatsNew.hide(UIWidget.REMOVE_WIDGET));
+            whatsNew.setSignInCallback(() -> whatsNew.hide(UIWidget.REMOVE_WIDGET));
+            whatsNew.show(UIWidget.REQUEST_FOCUS);
+        }
     }
 
     private void attachToWindow(@NonNull WindowWidget aWindow, @Nullable WindowWidget aPrevWindow) {

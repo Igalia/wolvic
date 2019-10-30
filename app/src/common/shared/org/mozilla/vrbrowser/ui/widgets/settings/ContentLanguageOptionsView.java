@@ -26,7 +26,7 @@ import org.mozilla.vrbrowser.utils.LocaleUtils;
 
 import java.util.Arrays;
 
-class ContentLanguageOptionsView extends SettingsView {
+public class ContentLanguageOptionsView extends SettingsView {
 
     private OptionsLanguageContentBinding mBinding;
     private LanguagesAdapter mPreferredAdapter;

@@ -202,6 +202,7 @@
     <dimen name="text_medium_size">14sp</dimen>
     <dimen name="text_small_size">12sp</dimen>
     <dimen name="text_smaller_size">11sp</dimen>
+    <dimen name="text_smallest_size">8sp</dimen>
 
     <dimen name="settings_header_text_size">20sp</dimen>
     <dimen name="settings_text_size">14sp</dimen>
@@ -298,4 +299,8 @@
     <dimen name="hamburger_menu_width">300dp</dimen>
     <dimen name="hamburger_menu_item_height">60dp</dimen>
     <dimen name="hamburger_menu_triangle_height">30dp</dimen>
+
+    <!-- Whats new -->
+    <dimen name="whats_new_width">450dp</dimen>
+    <dimen name="whats_new_height">340dp</dimen>
 </resources>

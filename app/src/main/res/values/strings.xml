@@ -1271,4 +1271,24 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 
     <!-- This string is displayed in the button of the Send Tab to device dialog. When clicked the current tab is sent to the selected device -->
     <string name="send_tab_dialog_button">Send</string>
+
+    <!-- This string is displayed in the header of the what's new dialog that is displayed if the user has updated
+         or updated the app and hasn't signed it yet. -->
+    <string name="whats_new_title">Now You Can Sign In!</string>
+
+    <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
+         or updated the app and hasn't signed it yet. -->
+    <string name="whats_new_body">Sign in or create an account to send a tab from Firefox on your desktop or mobile device to Firefox Reality in your VR headset.</string>
+
+    <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
+         or updated the app and hasn't signed it yet. -->
+    <string name="whats_new_body_sub">Synchronize your bookmarks, history, tabs, passwords, add-ons, and preferences across all your devices.</string>
+
+    <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
+         or updated the app and hasn't signed it yet. If clicked the user is redirected to the Firefox Account sign-in page. -->
+    <string name="whats_new_button_sign_in">Sign In</string>
+
+    <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
+         or updated the app and hasn't signed it yet. If clicked the dialog is dismissed. -->
+    <string name="whats_new_button_start_browsing">Start Browsing</string>
 </resources>

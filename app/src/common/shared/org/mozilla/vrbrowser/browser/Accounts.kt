@@ -40,6 +40,7 @@ class Accounts constructor(val context: Context) {
         BOOKMARKS,
         HISTORY,
         SETTINGS,
+        SEND_TABS,
         UNDEFINED
     }
 
