@@ -66,7 +66,7 @@ public class BaseAppDialogWidget extends UIDialog {
     protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
         aPlacement.visible = false;
         aPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.base_app_dialog_width);
-        aPlacement.height = WidgetPlacement.pixelDimension(getContext(), R.dimen.browser_width_pixels)/2;
+        aPlacement.height = WidgetPlacement.dpDimension(getContext(), R.dimen.base_app_dialog_height);
         aPlacement.parentAnchorX = 0.5f;
         aPlacement.parentAnchorY = 0.5f;
         aPlacement.anchorX = 0.5f;

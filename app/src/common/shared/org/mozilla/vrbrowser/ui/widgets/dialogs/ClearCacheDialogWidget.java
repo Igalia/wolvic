@@ -39,8 +39,6 @@ public class ClearCacheDialogWidget extends BaseAppDialogWidget {
         // Inflate this data binding layout
         mClearCacheBinding = DataBindingUtil.inflate(inflater, R.layout.clear_cache_dialog, mBinding.dialogContent, true);
         mClearCacheBinding.clearCacheRadio.setChecked(0, false);
-
-        mWidgetPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.cache_app_dialog_width);
     }
 
     public @ClearCacheRange int getSelectedRange() {

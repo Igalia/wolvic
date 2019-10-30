@@ -16,6 +16,7 @@
     <dimen name="navigation_bar_width">720dp</dimen>
     <dimen name="navigation_bar_height">44dp</dimen>
     <dimen name="url_bar_item_width">28dp</dimen>
+    <dimen name="url_bar_first_item_width">36dp</dimen>
     <dimen name="url_bar_last_item_width">36dp</dimen>
 
     <!-- Title bar -->
@@ -279,7 +280,8 @@
     <dimen name="display_options_height">420dp</dimen>
 
     <!-- Base App Dialog -->
-    <dimen name="base_app_dialog_width">420dp</dimen>
+    <dimen name="base_app_dialog_width">450dp</dimen>
+    <dimen name="base_app_dialog_height">340dp</dimen>
     <item name="base_app_dialog_z_distance" format="float" type="dimen">2</item>
     <item name="base_app_dialog_y_distance" format="float" type="dimen">1.2</item>
 
@@ -287,8 +289,6 @@
     <dimen name="cache_app_dialog_width">585dp</dimen>
 
     <!-- PopUp Dialog -->
-    <dimen name="pop_up_app_dialog_width">420dp</dimen>
-    <dimen name="pop_up_app_dialog_height">280dp</dimen>
     <dimen name="pop_up_row_fade_size">120dp</dimen>
 
     <dimen name="scrollbarWidth">10dp</dimen>

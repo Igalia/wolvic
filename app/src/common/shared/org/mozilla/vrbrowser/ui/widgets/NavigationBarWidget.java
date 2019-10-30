@@ -27,6 +27,7 @@ import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.Media;
+import org.mozilla.vrbrowser.browser.PromptDelegate;
 import org.mozilla.vrbrowser.browser.SessionChangeListener;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.browser.engine.Session;
@@ -56,6 +57,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         NavigationURLBar.NavigationURLBarDelegate, VoiceSearchWidget.VoiceSearchDelegate,
         SharedPreferences.OnSharedPreferenceChangeListener, SuggestionsWidget.URLBarPopupDelegate,
         WindowWidget.BookmarksViewDelegate, WindowWidget.HistoryViewDelegate, TrayListener, WindowWidget.WindowListener {
+
+    private static final int NOTIFICATION_DURATION = 3000;
 
     private AudioEngine mAudio;
     private UIButton mBackButton;
@@ -99,6 +102,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private @VideoProjectionMenuWidget.VideoProjectionFlags Integer mAutoSelectedProjection;
     private HamburgerMenuWidget mHamburgerMenu;
     private SendTabDialogWidget mSendTabDialog;
+    private TooltipWidget mPopUpNotification;
 
     public NavigationBarWidget(Context aContext) {
         super(aContext);
@@ -385,6 +389,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     @Override
     public void detachFromWindow() {
+        hideNotification(mURLBar.getPopUpButton());
+
         if (mAttachedWindow != null && mAttachedWindow.isResizing()) {
             exitResizeMode(ResizeAction.RESTORE_SIZE);
         }
@@ -399,6 +405,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             mAttachedWindow.removeBookmarksViewListener(this);
             mAttachedWindow.removeHistoryViewListener(this);
             mAttachedWindow.removeWindowListener(this);
+            mAttachedWindow.setPopUpDelegate(null);
         }
         mAttachedWindow = null;
     }
@@ -415,6 +422,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mAttachedWindow.addBookmarksViewListener(this);
         mAttachedWindow.addHistoryViewListener(this);
         mAttachedWindow.addWindowListener(this);
+        mAttachedWindow.setPopUpDelegate(mPopUpDelegate);
 
         if (mAttachedWindow != null) {
             mURLBar.setIsLibraryVisible(mAttachedWindow.isBookmarksVisible() || mAttachedWindow.isHistoryVisible());
@@ -432,6 +440,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
                 mURLBar.setHint(R.string.search_placeholder);
                 mURLBar.setIsLibraryVisible(false);
             }
+            mURLBar.setIsPopUpAvailable(mAttachedWindow.hasPendingPopUps());
         }
 
         clearFocus();
@@ -468,6 +477,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     @Override
     public void onSessionChanged(@NonNull Session aOldSession, @NonNull Session aSession) {
+        mURLBar.setIsPopUpAvailable(mAttachedWindow.hasPendingPopUps());
+
         cleanSession(aOldSession);
         setUpSession(aSession);
     }
@@ -915,7 +926,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
 
     @Override
-    public void onShowSearchPopup() {
+    public void onShowAwesomeBar() {
         if (mAwesomeBar == null) {
             mAwesomeBar = createChild(SuggestionsWidget.class);
             mAwesomeBar.setURLBarPopupDelegate(this);
@@ -949,7 +960,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     @Override
-    public void onHideSearchPopup() {
+    public void onHideAwesomeBar() {
         if (mAwesomeBar != null) {
             mAwesomeBar.hide(UIWidget.KEEP_WIDGET);
         }
@@ -965,6 +976,11 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         offsetDescendantRectToMyCoords(mURLBar, offsetViewBounds);
         float x = offsetViewBounds.left + centerX;
         actionMenu.getPlacement().parentAnchorX = x / getMeasuredWidth();
+    }
+
+    @Override
+    public void onPopUpButtonClicked() {
+        mAttachedWindow.showPopUps();
     }
 
     // VoiceSearch Delegate
@@ -1160,5 +1176,55 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             mSendTabDialog = null;
         });
         mSendTabDialog.show(REQUEST_FOCUS);
+    }
+
+    private PromptDelegate.PopUpDelegate mPopUpDelegate = new PromptDelegate.PopUpDelegate() {
+        @Override
+        public void onPopUpAvailable() {
+            showPopUpsBlockedNotification();
+            mURLBar.setIsPopUpAvailable(true);
+        }
+
+        @Override
+        public void onPopUpsCleared() {
+            mURLBar.setIsPopUpAvailable(false);
+        }
+    };
+
+    public void showPopUpsBlockedNotification() {
+        post(() -> showNotification(mURLBar.getPopUpButton(), R.string.popup_tooltip));
+    }
+
+    private void showNotification(UIButton button, int stringRes) {
+        if (mPopUpNotification != null && mPopUpNotification.isVisible()) {
+            return;
+        }
+
+        Rect offsetViewBounds = new Rect();
+        getDrawingRect(offsetViewBounds);
+        offsetDescendantRectToMyCoords(button, offsetViewBounds);
+
+        float ratio = WidgetPlacement.viewToWidgetRatio(getContext(), NavigationBarWidget.this);
+
+        mPopUpNotification = new TooltipWidget(getContext(), R.layout.library_notification);
+        mPopUpNotification.getPlacement().parentHandle = getHandle();
+        mPopUpNotification.getPlacement().anchorY = 0.0f;
+        mPopUpNotification.getPlacement().translationX = (offsetViewBounds.left + button.getWidth() / 2.0f) * ratio;
+        mPopUpNotification.getPlacement().translationY = ((offsetViewBounds.top - 60) * ratio);
+        mPopUpNotification.getPlacement().translationZ = 25.0f;
+        mPopUpNotification.getPlacement().density = WidgetPlacement.floatDimension(getContext(), R.dimen.tooltip_default_density);
+        mPopUpNotification.setText(stringRes);
+        mPopUpNotification.setCurvedMode(false);
+        mPopUpNotification.show(UIWidget.CLEAR_FOCUS);
+
+        postDelayed(() -> hideNotification(button), NOTIFICATION_DURATION);
+    }
+
+    private void hideNotification(UIButton button) {
+        if (mPopUpNotification != null) {
+            mPopUpNotification.hide(UIWidget.REMOVE_WIDGET);
+            mPopUpNotification = null;
+        }
+        button.setNotificationMode(false);
     }
 }

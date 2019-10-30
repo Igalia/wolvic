@@ -983,6 +983,10 @@
          browser's navigation bar. The button it labels, when pressed, clears the navigation bar text. -->
     <string name="clear_tooltip">Clear</string>
 
+    <!-- This string is for the tooltip that appears upon hovering the 'Pop-Up' button in the
+         browser's navigation bar. The button it labels, when pressed, Shows the pop-up blocked dialog. -->
+    <string name="popup_tooltip">Pop-Up Blocked</string>
+
     <!-- This string is for the tooltip that when clicking the 'Info' (ⓘ) icon visible next to the current website's
          URL in the URL bar. The button it labels, when pressed, shows information about the site. -->
     <string name="site_info_tooltip">Show site info.</string>
@@ -1175,7 +1179,7 @@
 
     <!-- This string is displayed on the right button of the pop-up blocking dialog.
          If the button is clicked the pop-up will be blocked -->
-    <string name="popup_block_button_do_not_show">Don’t show</string>
+    <string name="popup_block_button_cancel">Cancel</string>
 
     <!-- This string is displayed in a button on the header of the tabs dialog. When clicked,
         it allows to select tabs from the tab -->

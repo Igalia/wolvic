@@ -94,9 +94,10 @@ public class NavigationURLBar extends FrameLayout {
 
     public interface NavigationURLBarDelegate {
         void onVoiceSearchClicked();
-        void onShowSearchPopup();
-        void onHideSearchPopup();
+        void onShowAwesomeBar();
+        void onHideAwesomeBar();
         void onLongPress(float centerX, SelectionActionWidget actionMenu);
+        void onPopUpButtonClicked();
     }
 
     public NavigationURLBar(Context context, AttributeSet attrs) {
@@ -221,6 +222,8 @@ public class NavigationURLBar extends FrameLayout {
         mBinding.clearButton.setTag(R.string.view_id_tag, R.id.clearButton);
         mBinding.clearButton.setOnClickListener(mClearListener);
 
+        mBinding.popup.setOnClickListener(mPopUpListener);
+
         mLoadingAnimation = AnimationUtils.loadAnimation(aContext, R.anim.loading);
 
         TypedValue typedValue = new TypedValue();
@@ -241,6 +244,7 @@ public class NavigationURLBar extends FrameLayout {
         mBinding.setIsFocused(false);
         mBinding.setIsSpecialUrl(false);
         mBinding.setIsUrlEmpty(true);
+        mBinding.setIsPopUpAvailable(false);
         mBinding.executePendingBindings();
 
         clearFocus();
@@ -401,6 +405,14 @@ public class NavigationURLBar extends FrameLayout {
         mBinding.setIsPrivateMode(isEnabled);
     }
 
+    public void setIsPopUpAvailable(boolean isAvailable) {
+        mBinding.setIsPopUpAvailable(isAvailable);
+    }
+
+    public UIButton getPopUpButton() {
+        return mBinding.popup;
+    }
+
     public  void handleURLEdit(String text) {
         text = text.trim();
         URI uri = null;
@@ -438,7 +450,7 @@ public class NavigationURLBar extends FrameLayout {
             mSession.loadUri(url);
 
             if (mDelegate != null) {
-                mDelegate.onHideSearchPopup();
+                mDelegate.onHideAwesomeBar();
             }
         }
 
@@ -472,6 +484,16 @@ public class NavigationURLBar extends FrameLayout {
         mBinding.urlEditText.getText().clear();
     };
 
+    private OnClickListener mPopUpListener = view -> {
+        if (mAudio != null) {
+            mAudio.playSound(AudioEngine.Sound.CLICK);
+        }
+
+        if (mDelegate != null) {
+            mDelegate.onPopUpButtonClicked();
+        }
+    };
+
     private TextWatcher mURLTextWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -489,7 +511,7 @@ public class NavigationURLBar extends FrameLayout {
         @Override
         public void afterTextChanged(Editable editable) {
             if (mDelegate != null && mBinding.urlEditText.isFocused()) {
-                mDelegate.onShowSearchPopup();
+                mDelegate.onShowAwesomeBar();
             }
             hideSelectionMenu();
         }

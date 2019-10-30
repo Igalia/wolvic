@@ -8,7 +8,6 @@ package org.mozilla.vrbrowser.ui.widgets;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
@@ -35,6 +34,7 @@ import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.PanZoomController;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.HistoryStore;
+import org.mozilla.vrbrowser.browser.PromptDelegate;
 import org.mozilla.vrbrowser.browser.SessionChangeListener;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.browser.VideoAvailabilityListener;
@@ -65,6 +65,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import mozilla.components.concept.storage.PageObservation;
 import mozilla.components.concept.storage.PageVisit;
@@ -111,7 +112,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private Runnable mFirstDrawCallback;
     private boolean mIsInVRVideoMode;
     private View mView;
-    private Point mLastMouseClickPos;
     private Session mSession;
     private int mWindowId;
     private BookmarksView mBookmarksView;
@@ -122,7 +122,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private Windows.WindowPlacement mWindowPlacementBeforeFullscreen = Windows.WindowPlacement.FRONT;
     private float mMaxWindowScale = 3;
     private boolean mIsRestored = false;
-    private ArrayList<WindowListener> mListeners;
+    private CopyOnWriteArrayList<WindowListener> mListeners;
     boolean mActive = false;
     boolean mHovered = false;
     boolean mClickedAfterFocus = false;
@@ -134,7 +134,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private boolean mIsFullScreen;
     private boolean mAfterFirstPaint;
     private boolean mCaptureOnPageStop;
-    private View mSendTabCheckLayout;
+    private PromptDelegate mPromptDelegate;
 
     public interface WindowListener {
         default void onFocusRequest(@NonNull WindowWidget aWindow) {}
@@ -159,7 +159,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private void initialize(Context aContext) {
         mWidgetManager = (WidgetManagerDelegate) aContext;
         mBorderWidth = SettingsStore.getInstance(aContext).getTransparentBorderWidth();
-        mListeners = new ArrayList<>();
+
+        mListeners = new CopyOnWriteArrayList<>();
         setupListeners(mSession);
 
         mBookmarksView = new BookmarksView(aContext);
@@ -189,8 +190,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mTitleBar = new TitleBarWidget(aContext);
         mTitleBar.attachToWindow(this);
 
-        // Load the send tab check layout that is displayed after a tab is sent
-        mSendTabCheckLayout = inflate(getContext(), R.layout.window_check, null);
+        mPromptDelegate = new PromptDelegate(getContext());
+        mPromptDelegate.attachToWindow(this);
 
         setFocusable(true);
 
@@ -214,6 +215,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         aPlacement.textureScale = 1.0f;
         aPlacement.name = "Window";
         // Check Windows.placeWindow method for remaining placement set-up
+    }
+
+    public void setPopUpDelegate(@Nullable PromptDelegate.PopUpDelegate delegate) {
+        mPromptDelegate.setPopupDelegate(delegate);
     }
 
     void setupListeners(Session aSession) {
@@ -935,6 +940,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
         mBookmarksView.removeBookmarksListener(mBookmarksListener);
         mHistoryView.removeHistoryListener(mHistoryListener);
+        mPromptDelegate.detachFromWindow();
         super.releaseWidget();
     }
 
@@ -1028,6 +1034,20 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             aSession.releaseDisplay(mDisplay);
             mDisplay = null;
         }
+    }
+
+    public void showPopUps() {
+        if (mPromptDelegate != null) {
+            mPromptDelegate.showPopUps(getSession().getGeckoSession());
+        }
+    }
+
+    public boolean hasPendingPopUps() {
+        if (mPromptDelegate != null) {
+            return mPromptDelegate.hasPendingPopUps(getSession().getGeckoSession());
+        }
+
+        return false;
     }
 
     // Session.GeckoSessionChange
@@ -1602,4 +1622,5 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     public void onHideAction(@NonNull GeckoSession aSession, int aHideReason) {
         hideContextMenus();
     }
+
 }

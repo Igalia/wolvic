@@ -107,10 +107,5 @@ class AllowedPopUpsOptionsView extends SettingsView {
             mViewModel.deleteSite(item);
         }
 
-        @Override
-        public void onSwitch(@NonNull PopUpSite item, boolean on) {
-            item.allowed = on;
-            mViewModel.insertSite(item);
-        }
     };
 }

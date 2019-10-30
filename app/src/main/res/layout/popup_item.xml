@@ -34,8 +34,9 @@
             android:focusable="true"
             android:onClick="@{(view) -> callback != null ? callback.onDelete(item) : void}" />
 
-        <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+        <TextView
             android:id="@+id/site"
+            style="@style/settingsText"
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:layout_toEndOf="@id/delete"
@@ -43,10 +44,9 @@
             android:gravity="center_vertical"
             android:paddingStart="5dp"
             android:paddingEnd="5dp"
-            app:description="@{item.url}"
-            app:on_text="@string/pop_up_site_switch_allow"
-            app:off_text="@string/pop_up_site_switch_block"
-            tool:text="http://mozilla.org"/>
+            android:singleLine="true"
+            android:text="@{item.url}"
+            tool:text="Site" />
 
     </RelativeLayout>
 </layout>

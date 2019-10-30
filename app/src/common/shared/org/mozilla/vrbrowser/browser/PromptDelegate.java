@@ -2,6 +2,8 @@ package org.mozilla.vrbrowser.browser;
 
 import android.app.Application;
 import android.content.Context;
+import android.util.Pair;
+import android.util.SparseArray;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,7 +21,6 @@ import org.mozilla.vrbrowser.ui.viewmodel.PopUpsViewModel;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.ui.widgets.WindowWidget;
-import org.mozilla.vrbrowser.ui.widgets.dialogs.BaseAppDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.PopUpBlockDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.AlertPromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.AuthPromptWidget;
@@ -31,10 +32,17 @@ import org.mozilla.vrbrowser.ui.widgets.prompts.TextPromptWidget;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
-public class PromptDelegate implements GeckoSession.PromptDelegate, WindowWidget.WindowListener {
+public class PromptDelegate implements
+        GeckoSession.PromptDelegate,
+        WindowWidget.WindowListener,
+        GeckoSession.NavigationDelegate {
+
+    public interface PopUpDelegate {
+        void onPopUpAvailable();
+        void onPopUpsCleared();
+    }
 
     private PromptWidget mPrompt;
     private PopUpBlockDialogWidget mPopUpPrompt;
@@ -43,6 +51,7 @@ public class PromptDelegate implements GeckoSession.PromptDelegate, WindowWidget
     private List<PopUpSite> mAllowedPopUpSites;
     private PopUpsViewModel mViewModel;
     private AppExecutors mExecutors;
+    private PopUpDelegate mPopupDelegate;
 
     public PromptDelegate(@NonNull Context context) {
         mContext = context;
@@ -59,16 +68,55 @@ public class PromptDelegate implements GeckoSession.PromptDelegate, WindowWidget
 
         mAttachedWindow = window;
         mAttachedWindow.addWindowListener(this);
-        mAttachedWindow.getSession().setPromptDelegate(this);
         mViewModel.getAll().observeForever(mObserver);
+
+        if (getSession() != null) {
+            setUpSession(getSession());
+        }
     }
 
     public void detachFromWindow() {
+        if (getSession() != null) {
+            cleanSession(getSession());
+        }
+
         if (mAttachedWindow != null) {
             mAttachedWindow.removeWindowListener(this);
             mAttachedWindow = null;
         }
         mViewModel.getAll().removeObserver(mObserver);
+
+        clearPopUps();
+    }
+
+    private Session getSession() {
+        if (mAttachedWindow != null) {
+            return mAttachedWindow.getSession();
+        }
+        return null;
+    }
+
+    private void setUpSession(@NonNull Session aSession) {
+        aSession.setPromptDelegate(this);
+        aSession.addNavigationListener(this);
+    }
+
+    private void cleanSession(@NonNull Session aSession) {
+        aSession.setPromptDelegate(null);
+        aSession.removeNavigationListener(this);
+        mPopUpRequests.remove(aSession.hashCode());
+    }
+
+    public void setPopupDelegate(@Nullable PopUpDelegate delegate) {
+        mPopupDelegate = delegate;
+    }
+
+    public void clearPopUps() {
+        mPopUpRequests.clear();
+
+        if (mPopupDelegate != null) {
+            mPopupDelegate.onPopUpsCleared();
+        }
     }
 
     @Nullable
@@ -220,10 +268,36 @@ public class PromptDelegate implements GeckoSession.PromptDelegate, WindowWidget
 
         if (!SettingsStore.getInstance(mContext).isPopUpsBlockingEnabled()) {
             result.complete(popupPrompt.confirm(AllowOrDeny.ALLOW));
+
         } else {
-            String uri = mAttachedWindow.getSession().getCurrentUri();
-            PopUpRequest request = PopUpRequest.newRequest(uri, popupPrompt, result);
-            handlePopUpRequest(request);
+            final int sessionId = geckoSession.hashCode();
+            final String uri = mAttachedWindow.getSession().getCurrentUri();
+
+            Optional<PopUpSite> site = mAllowedPopUpSites.stream().filter((item) -> item.url.equals(uri)).findFirst();
+            if (site.isPresent()) {
+                mAttachedWindow.postDelayed(() -> {
+                    if (site.get().allowed) {
+                        result.complete(popupPrompt.confirm(AllowOrDeny.ALLOW));
+
+                    } else {
+                        result.complete(popupPrompt.dismiss());
+                    }
+                }, 500);
+
+            } else {
+                PopUpRequest request = PopUpRequest.newRequest(popupPrompt, result, sessionId);
+                Pair<String, LinkedList<PopUpRequest>> domainRequestList = mPopUpRequests.get(sessionId);
+                if (domainRequestList == null) {
+                    LinkedList<PopUpRequest> requestList = new LinkedList<>();
+                    domainRequestList = new Pair<>(uri, requestList);
+                    mPopUpRequests.put(sessionId, domainRequestList);
+                }
+                domainRequestList.second.add(request);
+
+                if (mPopupDelegate != null) {
+                    mPopupDelegate.onPopUpAvailable();
+                }
+            }
         }
 
         return result;
@@ -231,84 +305,87 @@ public class PromptDelegate implements GeckoSession.PromptDelegate, WindowWidget
 
     static class PopUpRequest {
 
-        public static PopUpRequest newRequest(@NonNull String uri, @NonNull PopupPrompt prompt, @NonNull GeckoResult<PromptResponse> response) {
+        public static PopUpRequest newRequest(@NonNull PopupPrompt prompt, @NonNull GeckoResult<PromptResponse> response, int sessionId) {
             PopUpRequest request = new PopUpRequest();
-            request.uri = uri;
             request.prompt = prompt;
             request.response = response;
+            request.sessionId = sessionId;
 
             return request;
         }
 
-        String uri;
         PopupPrompt prompt;
         GeckoResult<PromptResponse> response;
+        int sessionId;
     }
 
-    private LinkedList<PopUpRequest> mPopUpRequests = new LinkedList<>();
+    private SparseArray<Pair<String, LinkedList<PopUpRequest>>> mPopUpRequests = new SparseArray<>();
 
-    private void handlePopUpRequest(@NonNull PopUpRequest request) {
-        if (mPopUpPrompt != null && mPopUpPrompt.isVisible()) {
-            mPopUpRequests.add(request);
+    public void showPopUps(GeckoSession session) {
+        Pair<String, LinkedList<PopUpRequest>> requests = mPopUpRequests.get(session.hashCode());
+        if (requests != null && !requests.second.isEmpty()) {
+            showPopUp(session.hashCode(), requests);
+        }
+    }
+
+    public boolean hasPendingPopUps(GeckoSession session) {
+        Pair<String, LinkedList<PopUpRequest>> requests = mPopUpRequests.get(session.hashCode());
+        if (requests != null) {
+            return !requests.second.isEmpty();
+        }
+
+        return false;
+    }
+
+    private void showPopUp(int sessionId, @NonNull Pair<String, LinkedList<PopUpRequest>> requests) {
+        String uri = requests.first;
+        Optional<PopUpSite> site = mAllowedPopUpSites.stream().filter((item) -> item.url.equals(uri)).findFirst();
+        if (!site.isPresent()) {
+            mPopUpPrompt = new PopUpBlockDialogWidget(mContext);
+            mPopUpPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
+            mPopUpPrompt.getPlacement().parentAnchorY = 0.0f;
+            mPopUpPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.base_app_dialog_y_distance);
+            mPopUpPrompt.setTitle(uri);
+            mPopUpPrompt.setButtonsDelegate(index -> {
+                boolean allowed = index != PopUpBlockDialogWidget.NEGATIVE;
+                boolean askAgain = mPopUpPrompt.askAgain();
+                if (allowed && !askAgain) {
+                    mAllowedPopUpSites.add(new PopUpSite(uri, allowed));
+                    mViewModel.insertSite(uri, allowed);
+                }
+
+                if (allowed) {
+                    requests.second.forEach((request) -> {
+                        request.response.complete(request.prompt.confirm(AllowOrDeny.ALLOW));
+                    });
+
+                    mPopUpRequests.remove(sessionId);
+
+                    mExecutors.mainThread().execute(() -> {
+                        if (mPopupDelegate != null) {
+                            mPopupDelegate.onPopUpsCleared();
+                        }
+                    });
+
+                } else {
+                    mExecutors.mainThread().execute(() -> {
+                        if (mPopupDelegate != null) {
+                            mPopupDelegate.onPopUpAvailable();
+                        }
+                    });
+                }
+            });
+            mPopUpPrompt.show(UIWidget.REQUEST_FOCUS);
 
         } else {
-            Optional<PopUpSite> site = mAllowedPopUpSites.stream().filter((item) -> item.url.equals(request.uri)).findFirst();
-            if (!site.isPresent()) {
-                mPopUpPrompt = new PopUpBlockDialogWidget(mContext);
-                mPopUpPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
-                mPopUpPrompt.getPlacement().parentAnchorY = 0.0f;
-                mPopUpPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.base_app_dialog_y_distance);
-                mPopUpPrompt.setTitle(request.uri);
-                mPopUpPrompt.setButtonsDelegate(new BaseAppDialogWidget.Delegate() {
-                    @Override
-                    public void onButtonClicked(int index) {
-                        boolean allowed = index != PopUpBlockDialogWidget.NEGATIVE;
-                        boolean askAgain = mPopUpPrompt.askAgain();
-                        if (!askAgain) {
-                            mAllowedPopUpSites.add(new PopUpSite(request.uri, allowed));
-                            mViewModel.insertSite(request.uri, allowed);
-                        }
-
-                        if (allowed) {
-                            request.response.complete(request.prompt.confirm(AllowOrDeny.ALLOW));
-
-                        } else {
-                            request.response.complete(request.prompt.dismiss());
-                        }
-
-                        mExecutors.mainThread().execute(() -> {
-                            try {
-                                PopUpRequest next = mPopUpRequests.pop();
-                                handlePopUpRequest(next);
-
-                            } catch (NoSuchElementException ignored) {}
-                        });
-                    }
-
-                    @Override
-                    public void onDismiss() {
-                        request.response.complete(request.prompt.dismiss());
-
-                        mExecutors.mainThread().execute(() -> {
-                            try {
-                                PopUpRequest next = mPopUpRequests.pop();
-                                handlePopUpRequest(next);
-
-                            } catch (NoSuchElementException ignored) {}
-                        });
-                    }
-                });
-                mPopUpPrompt.show(UIWidget.REQUEST_FOCUS);
-
-            } else {
+            requests.second.forEach((request) -> {
                 if (site.get().allowed) {
                     request.response.complete(request.prompt.confirm(AllowOrDeny.ALLOW));
 
                 } else {
                     request.response.complete(request.prompt.dismiss());
                 }
-            }
-
+            });
         }
     }
 
@@ -316,7 +393,14 @@ public class PromptDelegate implements GeckoSession.PromptDelegate, WindowWidget
 
     @Override
     public void onSessionChanged(@NonNull Session aOldSession, @NonNull Session aSession) {
-        aOldSession.setPromptDelegate(null);
-        aSession.setPromptDelegate(this);
+        cleanSession(aOldSession);
+        setUpSession(aSession);
+    }
+
+    // NavigationDelegate
+
+    @Override
+    public void onLocationChange(@NonNull GeckoSession geckoSession, @Nullable String s) {
+        clearPopUps();
     }
 }

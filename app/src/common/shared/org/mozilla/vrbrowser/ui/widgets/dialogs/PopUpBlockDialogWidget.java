@@ -12,7 +12,6 @@ import androidx.databinding.DataBindingUtil;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.databinding.PopupBlockDialogBinding;
-import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 
 public class PopUpBlockDialogWidget extends BaseAppDialogWidget {
 
@@ -33,10 +32,8 @@ public class PopUpBlockDialogWidget extends BaseAppDialogWidget {
         mPopUpBinding = DataBindingUtil.inflate(inflater, R.layout.popup_block_dialog, mBinding.dialogContent, true);
         mPopUpBinding.contentCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> mIsChecked = isChecked);
 
-        mWidgetPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.pop_up_app_dialog_width);
-
         setButtons(new int[] {
-                R.string.popup_block_button_do_not_show,
+                R.string.popup_block_button_cancel,
                 R.string.popup_block_button_show
         });
 

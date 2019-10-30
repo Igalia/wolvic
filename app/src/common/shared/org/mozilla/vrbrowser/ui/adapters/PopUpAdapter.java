@@ -93,11 +93,6 @@ public class PopUpAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
             return false;
         });
-        binding.site.setOnCheckedChangeListener((compoundButton, value, apply) -> {
-            if (mCallback != null) {
-                mCallback.onSwitch(binding.getItem(), value);
-            }
-        });
 
         return new PopUpSiteViewHolder(binding);
     }
@@ -107,7 +102,6 @@ public class PopUpAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         PopUpSiteViewHolder siteHolder = (PopUpSiteViewHolder) holder;
         PopUpSite site = mDisplayList.get(position);
         siteHolder.binding.setItem(site);
-        siteHolder.binding.site.setChecked(site.allowed);
     }
 
     @Override

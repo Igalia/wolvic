@@ -4,15 +4,16 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal">
+        android:layout_height="match_parent"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:gravity="center">
 
         <TextView
             android:id="@+id/content_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:gravity="center"
             android:text="@{String.format(@string/popup_block_title, @string/app_name)}"
@@ -26,9 +27,7 @@
             android:id="@+id/content_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="40dp"
             android:layout_marginTop="15dp"
-            android:layout_marginEnd="40dp"
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/content_title"
             android:gravity="center"
@@ -46,7 +45,6 @@
             android:layout_centerHorizontal="true"
             android:button="@drawable/checkbox"
             android:gravity="center_vertical"
-            android:maxHeight="18dp"
             android:text="@string/popup_block_checkbox"
             android:textSize="@dimen/text_medium_size"
             tools:text="@string/crash_dialog_send_data" />
