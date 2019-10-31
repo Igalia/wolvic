@@ -42,7 +42,8 @@ public class HamburgerMenuWidget extends MenuWidget implements WidgetManagerDele
     private void initialize() {
         mAdapter.updateBackgrounds(R.drawable.context_menu_item_background_first,
                 R.drawable.context_menu_item_background_last,
-                R.drawable.context_menu_item_background);
+                R.drawable.context_menu_item_background,
+                R.drawable.context_menu_item_background_single);
         mAdapter.updateLayoutId(R.layout.hamburger_menu_item);
     }
 

@@ -243,10 +243,9 @@
     <item name="context_menu_z_distance" format="float" type="dimen">0.1</item>
 
     <!-- Library Menu -->
-    <dimen name="library_context_menu_width">320dp</dimen>
-    <dimen name="library_context_menu_height">55dp</dimen>
-    <dimen name="library_context_menu_top_margin">4dp</dimen>
-    <item name="library_context_menu_z_distance" format="float" type="dimen">0.12</item>
+    <dimen name="library_menu_width">320dp</dimen>
+    <dimen name="library_menu_item_height">60dp</dimen>
+    <dimen name="library_menu_top_margin">4dp</dimen>
 
     <!-- Blur -->
     <dimen name="blur_radius">2dp</dimen>

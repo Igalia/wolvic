@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android" android:enterFadeDuration="@integer/ui_fadeAnimTime" android:exitFadeDuration="@integer/ui_fadeAnimTime">
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <corners android:bottomLeftRadius="@dimen/menu_corner_radius" android:bottomRightRadius="@dimen/menu_corner_radius" android:topLeftRadius="@dimen/menu_corner_radius" android:topRightRadius="@dimen/menu_corner_radius" />
+            <solid android:color="@color/iron" />
+        </shape>
+    </item>
+    <item android:state_activated="true" android:state_hovered="false">
+        <shape android:shape="rectangle">
+            <corners android:bottomLeftRadius="@dimen/menu_corner_radius" android:bottomRightRadius="@dimen/menu_corner_radius" android:topLeftRadius="@dimen/menu_corner_radius" android:topRightRadius="@dimen/menu_corner_radius" />
+            <solid android:color="@color/dusk" />
+        </shape>
+    </item>
+    <item android:state_hovered="true">
+        <shape android:shape="rectangle">
+            <corners android:bottomLeftRadius="@dimen/menu_corner_radius" android:bottomRightRadius="@dimen/menu_corner_radius" android:topLeftRadius="@dimen/menu_corner_radius" android:topRightRadius="@dimen/menu_corner_radius" />
+            <solid android:color="@color/fog" />
+        </shape>
+    </item>
+    <item>
+        <shape />
+    </item>
+</selector>

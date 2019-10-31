@@ -80,6 +80,7 @@ public abstract class MenuWidget extends UIWidget {
         private Context mContext;
         private ArrayList<MenuItem> mItems;
         private LayoutInflater mInflater;
+        private int singleItemDrawable;
         private int firstItemDrawable;
         private int lastItemDrawable;
         private int regularItemDrawable;
@@ -92,13 +93,15 @@ public abstract class MenuWidget extends UIWidget {
             firstItemDrawable = R.drawable.menu_item_background_first;
             lastItemDrawable = R.drawable.menu_item_background_last;
             regularItemDrawable = R.drawable.menu_item_background;
+            singleItemDrawable = R.drawable.menu_item_background_single;
             layoutId = R.layout.menu_item_image_text;
         }
 
-        public void updateBackgrounds(int first, int last, int regular) {
+        public void updateBackgrounds(int first, int last, int regular, int single) {
             firstItemDrawable = first;
             lastItemDrawable = last;
             regularItemDrawable = regular;
+            singleItemDrawable = single;
         }
 
         public void updateLayoutId(int aLayoutId) {
@@ -136,7 +139,9 @@ public abstract class MenuWidget extends UIWidget {
                 });
             }
             view.setTag(R.string.position_tag, position);
-            if (position == 0) {
+            if (mItems.size() == 1) {
+                view.setBackgroundResource(singleItemDrawable);
+            } else if (position == 0) {
                 view.setBackgroundResource(firstItemDrawable);
             } else if (position == mItems.size() - 1) {
                 view.setBackgroundResource(lastItemDrawable);

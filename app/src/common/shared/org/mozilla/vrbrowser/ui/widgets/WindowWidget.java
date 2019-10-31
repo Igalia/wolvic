@@ -47,18 +47,18 @@ import org.mozilla.vrbrowser.ui.callbacks.HistoryCallback;
 import org.mozilla.vrbrowser.ui.callbacks.LibraryItemContextMenuClickCallback;
 import org.mozilla.vrbrowser.ui.views.BookmarksView;
 import org.mozilla.vrbrowser.ui.views.HistoryView;
-import org.mozilla.vrbrowser.ui.views.LibraryItemContextMenu;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.BaseAppDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.ClearCacheDialogWidget;
-import org.mozilla.vrbrowser.ui.widgets.dialogs.LibraryItemContextMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.MessageDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.SelectionActionWidget;
 import org.mozilla.vrbrowser.ui.widgets.menus.ContextMenuWidget;
+import org.mozilla.vrbrowser.ui.widgets.menus.LibraryMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.AlertPromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.ConfirmPromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.PromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.settings.SettingsWidget;
 import org.mozilla.vrbrowser.utils.SystemUtils;
+import org.mozilla.vrbrowser.utils.UIThreadExecutor;
 import org.mozilla.vrbrowser.utils.ViewUtils;
 
 import java.util.ArrayList;
@@ -105,7 +105,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private ClearCacheDialogWidget mClearCacheDialog;
     private ContextMenuWidget mContextMenu;
     private SelectionActionWidget mSelectionMenu;
-    private LibraryItemContextMenuWidget mLibraryItemContextMenu;
+    private LibraryMenuWidget mLibraryItemContextMenu;
     private int mWidthBackup;
     private int mHeightBackup;
     private int mBorderWidth;
@@ -1310,7 +1310,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         return (int) Math.floor(SettingsStore.WINDOW_WIDTH_DEFAULT * aWorldWidth / WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width));
     }
 
-    private void showLibraryItemContextMenu(@NotNull View view, LibraryItemContextMenu.LibraryContextMenuItem item, boolean isLastVisibleItem) {
+    private void showLibraryItemContextMenu(@NotNull View view, LibraryMenuWidget.LibraryContextMenuItem item, boolean isLastVisibleItem) {
         view.requestFocusFromTouch();
 
         hideContextMenus();
@@ -1321,45 +1321,57 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         getDrawingRect(offsetViewBounds);
         offsetDescendantRectToMyCoords(view, offsetViewBounds);
 
-        mLibraryItemContextMenu = new LibraryItemContextMenuWidget(getContext());
-        mLibraryItemContextMenu.setItem(item);
-        mLibraryItemContextMenu.mWidgetPlacement.parentHandle = getHandle();
+        SessionStore.get().getBookmarkStore().isBookmarked(item.getUrl()).thenAcceptAsync((isBookmarked -> {
+            mLibraryItemContextMenu = new LibraryMenuWidget(getContext(), item, mWidgetManager.canOpenNewWindow(), isBookmarked);
+            mLibraryItemContextMenu.getPlacement().parentHandle = getHandle();
 
-        PointF position;
-        if (isLastVisibleItem) {
-            mLibraryItemContextMenu.mWidgetPlacement.anchorY = 0.0f;
-            position = new PointF(
-                    (offsetViewBounds.left + view.getWidth()) * ratio,
-                    -(offsetViewBounds.top) * ratio);
+            PointF position;
+            if (isLastVisibleItem) {
+                mLibraryItemContextMenu.mWidgetPlacement.anchorY = 0.0f;
+                position = new PointF(
+                        (offsetViewBounds.left + view.getWidth()) * ratio,
+                        -(offsetViewBounds.top) * ratio);
 
-        } else {
-            mLibraryItemContextMenu.mWidgetPlacement.anchorY = 1.0f;
-            position = new PointF(
-                    (offsetViewBounds.left + view.getWidth()) * ratio,
-                    -(offsetViewBounds.top + view.getHeight()) * ratio);
-        }
-
-        mLibraryItemContextMenu.setPosition(position);
-        mLibraryItemContextMenu.setHistoryContextMenuItemCallback((new LibraryItemContextMenuClickCallback() {
-            @Override
-            public void onOpenInNewWindowClick(LibraryItemContextMenu.LibraryContextMenuItem item) {
-                mWidgetManager.openNewWindow(item.getUrl());
-                hideContextMenus();
+            } else {
+                mLibraryItemContextMenu.mWidgetPlacement.anchorY = 1.0f;
+                position = new PointF(
+                        (offsetViewBounds.left + view.getWidth()) * ratio,
+                        -(offsetViewBounds.top + view.getHeight()) * ratio);
             }
+            mLibraryItemContextMenu.mWidgetPlacement.translationX = position.x - (mLibraryItemContextMenu.getWidth()/mLibraryItemContextMenu.mWidgetPlacement.density);
+            mLibraryItemContextMenu.mWidgetPlacement.translationY = position.y + getResources().getDimension(R.dimen.library_menu_top_margin)/mLibraryItemContextMenu.mWidgetPlacement.density;
 
-            @Override
-            public void onAddToBookmarks(LibraryItemContextMenu.LibraryContextMenuItem item) {
-                SessionStore.get().getBookmarkStore().addBookmark(item.getUrl(), item.getTitle());
-                hideContextMenus();
-            }
+            mLibraryItemContextMenu.setItemDelegate((new LibraryItemContextMenuClickCallback() {
+                @Override
+                public void onOpenInNewWindowClick(LibraryMenuWidget.LibraryContextMenuItem item) {
+                    mWidgetManager.openNewWindow(item.getUrl());
+                    hideContextMenus();
+                }
 
-            @Override
-            public void onRemoveFromBookmarks(LibraryItemContextMenu.LibraryContextMenuItem item) {
-                SessionStore.get().getBookmarkStore().deleteBookmarkByURL(item.getUrl());
-                hideContextMenus();
-            }
-        }));
-        mLibraryItemContextMenu.show(REQUEST_FOCUS);
+                @Override
+                public void onOpenInNewTabClick(LibraryMenuWidget.LibraryContextMenuItem item) {
+                    mWidgetManager.openNewTabForeground(item.getUrl());
+                    hideContextMenus();
+                }
+
+                @Override
+                public void onAddToBookmarks(LibraryMenuWidget.LibraryContextMenuItem item) {
+                    SessionStore.get().getBookmarkStore().addBookmark(item.getUrl(), item.getTitle());
+                    hideContextMenus();
+                }
+
+                @Override
+                public void onRemoveFromBookmarks(LibraryMenuWidget.LibraryContextMenuItem item) {
+                    SessionStore.get().getBookmarkStore().deleteBookmarkByURL(item.getUrl());
+                    hideContextMenus();
+                }
+            }));
+            mLibraryItemContextMenu.show(REQUEST_FOCUS);
+
+        }), new UIThreadExecutor()).exceptionally(throwable -> {
+            Log.d(LOGTAG, "Couldn't get the bookmarked status of the history item");
+            return null;
+        });
     }
 
     private BookmarksCallback mBookmarksListener = new BookmarksCallback() {
@@ -1367,10 +1379,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         public void onShowContextMenu(@NonNull View view, @NotNull Bookmark item, boolean isLastVisibleItem) {
             showLibraryItemContextMenu(
                     view,
-                    new LibraryItemContextMenu.LibraryContextMenuItem(
+                    new LibraryMenuWidget.LibraryContextMenuItem(
                             item.getUrl(),
                             item.getTitle(),
-                            LibraryItemContextMenu.LibraryItemType.BOOKMARKS),
+                            LibraryMenuWidget.LibraryItemType.BOOKMARKS),
                     isLastVisibleItem);
         }
 
@@ -1391,10 +1403,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         public void onShowContextMenu(@NonNull View view, @NonNull VisitInfo item, boolean isLastVisibleItem) {
             showLibraryItemContextMenu(
                     view,
-                    new LibraryItemContextMenu.LibraryContextMenuItem(
+                    new LibraryMenuWidget.LibraryContextMenuItem(
                             item.getUrl(),
                             item.getTitle(),
-                            LibraryItemContextMenu.LibraryItemType.HISTORY),
+                            LibraryMenuWidget.LibraryItemType.HISTORY),
                     isLastVisibleItem);
         }
 

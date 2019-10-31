@@ -32,7 +32,8 @@ public class ContextMenuWidget extends MenuWidget implements WidgetManagerDelega
     private void initialize() {
         mAdapter.updateBackgrounds(R.drawable.context_menu_item_background_first,
                 R.drawable.context_menu_item_background_last,
-                R.drawable.context_menu_item_background);
+                R.drawable.context_menu_item_background,
+                R.drawable.context_menu_item_background_single);
         mAdapter.updateLayoutId(R.layout.context_menu_item);
         menuContainer.setBackground(getContext().getDrawable(R.drawable.context_menu_background));
     }

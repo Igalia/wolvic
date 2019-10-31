@@ -869,6 +869,10 @@
     <string name="history_context_menu_new_window">Open in a New Window</string>
 
     <!-- This string is displayed is the history context menu that is displayed when
+         the more button is pressed in a history item. It opens the selected history item in a new tab. -->
+    <string name="history_context_menu_new_tab">Open in a New Tab</string>
+
+    <!-- This string is displayed is the history context menu that is displayed when
          the more button is pressed in a history item. It add the selected items to favorites. -->
     <string name="history_context_add_bookmarks">Add to Bookmarks</string>
 
