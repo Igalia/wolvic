@@ -20,15 +20,12 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import org.jetbrains.annotations.NotNull;
 import org.mozilla.geckoview.AllowOrDeny;
 import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.audio.AudioEngine;
-import org.mozilla.vrbrowser.browser.Accounts;
 import org.mozilla.vrbrowser.browser.Media;
 import org.mozilla.vrbrowser.browser.PromptDelegate;
 import org.mozilla.vrbrowser.browser.SessionChangeListener;
@@ -43,7 +40,6 @@ import org.mozilla.vrbrowser.ui.views.UITextButton;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.SelectionActionWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.SendTabDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.VoiceSearchWidget;
-import org.mozilla.vrbrowser.ui.widgets.dialogs.WhatsNewWidget;
 import org.mozilla.vrbrowser.ui.widgets.menus.BrightnessMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.menus.HamburgerMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.menus.VideoProjectionMenuWidget;
@@ -54,11 +50,6 @@ import org.mozilla.vrbrowser.utils.UIThreadExecutor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import mozilla.components.concept.sync.AccountObserver;
-import mozilla.components.concept.sync.AuthType;
-import mozilla.components.concept.sync.OAuthAccount;
-import mozilla.components.concept.sync.Profile;
 
 public class NavigationBarWidget extends UIWidget implements GeckoSession.NavigationDelegate,
         GeckoSession.ProgressDelegate, GeckoSession.ContentDelegate, WidgetManagerDelegate.WorldClickListener,
@@ -112,7 +103,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private HamburgerMenuWidget mHamburgerMenu;
     private SendTabDialogWidget mSendTabDialog;
     private TooltipWidget mPopUpNotification;
-    protected Accounts mAccounts;
 
     public NavigationBarWidget(Context aContext) {
         super(aContext);
@@ -133,8 +123,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mAppContext = aContext.getApplicationContext();
         inflate(aContext, R.layout.navigation_bar, this);
 
-        mAccounts = ((VRBrowserApplication)getContext().getApplicationContext()).getAccounts();
-        mAccounts.addAccountListener(mAccountObserver);
         mAudio = AudioEngine.fromContext(aContext);
         mBackButton = findViewById(R.id.backButton);
         mForwardButton = findViewById(R.id.forwardButton);
@@ -363,7 +351,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     @Override
     public void releaseWidget() {
-        mAccounts.removeAccountListener(mAccountObserver);
         mWidgetManager.removeUpdateListener(this);
         mWidgetManager.removeWorldClickListener(this);
         mPrefs.unregisterOnSharedPreferenceChangeListener(this);
@@ -1182,23 +1169,15 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     public void showSendTabDialog() {
-        if (mAccounts.isSignedIn()) {
-            mSendTabDialog = new SendTabDialogWidget(getContext());
-            mSendTabDialog.mWidgetPlacement.parentHandle = mWidgetManager.getFocusedWindow().getHandle();
-            mSendTabDialog.setDelegate(() -> {
-                mSendTabDialog.releaseWidget();
-                mSendTabDialog = null;
-                show(REQUEST_FOCUS);
-            });
-            mSendTabDialog.show(UIWidget.REQUEST_FOCUS);
-
-        } else {
-            final WhatsNewWidget whatsNew = new WhatsNewWidget(getContext());
-            whatsNew.getPlacement().parentHandle = mWidgetManager.getFocusedWindow().getHandle();
-            whatsNew.setStartBrowsingCallback(() -> whatsNew.hide(UIWidget.REMOVE_WIDGET));
-            whatsNew.setSignInCallback(() -> whatsNew.hide(UIWidget.REMOVE_WIDGET));
-            whatsNew.show(UIWidget.REQUEST_FOCUS);
-        }
+        mSendTabDialog = new SendTabDialogWidget(getContext());
+        mSendTabDialog.mWidgetPlacement.parentHandle = mWidgetManager.getFocusedWindow().getHandle();
+        mSendTabDialog.setSessionId(mAttachedWindow.getSession().getId());
+        mSendTabDialog.setDelegate(() -> {
+            mSendTabDialog.releaseWidget();
+            mSendTabDialog = null;
+            NavigationBarWidget.this.show(REQUEST_FOCUS);
+        });
+        mSendTabDialog.show(UIWidget.REQUEST_FOCUS);
     }
 
     private PromptDelegate.PopUpDelegate mPopUpDelegate = new PromptDelegate.PopUpDelegate() {
@@ -1251,27 +1230,4 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         button.setNotificationMode(false);
     }
 
-    private AccountObserver mAccountObserver = new AccountObserver() {
-        @Override
-        public void onLoggedOut() {
-
-        }
-
-        @Override
-        public void onAuthenticated(@NotNull OAuthAccount oAuthAccount, @NotNull AuthType authType) {
-            if (mAccounts.getLoginOrigin() == Accounts.LoginOrigin.SEND_TABS) {
-                showSendTabDialog();
-            }
-        }
-
-        @Override
-        public void onProfileUpdated(@NotNull Profile profile) {
-
-        }
-
-        @Override
-        public void onAuthenticationProblems() {
-
-        }
-    };
 }

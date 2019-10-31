@@ -12,8 +12,6 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.VRBrowserApplication;
-import org.mozilla.vrbrowser.browser.Accounts;
 import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.ui.views.TabView;
@@ -21,7 +19,6 @@ import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.views.UITextButton;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.SendTabDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.UIDialog;
-import org.mozilla.vrbrowser.ui.widgets.dialogs.WhatsNewWidget;
 import org.mozilla.vrbrowser.utils.BitmapCache;
 import org.mozilla.vrbrowser.utils.ViewUtils;
 
@@ -44,7 +41,6 @@ public class TabsWidget extends UIDialog implements WidgetManagerDelegate.WorldC
     protected UITextButton mUnselectTabs;
     protected LinearLayout mTabsSelectModeView;
     protected SendTabDialogWidget mSendTabDialog;
-    protected Accounts mAccounts;
 
     protected boolean mSelecting;
     protected ArrayList<Session> mSelectedTabs = new ArrayList<>();
@@ -78,7 +74,7 @@ public class TabsWidget extends UIDialog implements WidgetManagerDelegate.WorldC
 
     private void initialize() {
         inflate(getContext(), R.layout.tabs, this);
-        mAccounts = ((VRBrowserApplication)getContext().getApplicationContext()).getAccounts();
+
         mTabsList = findViewById(R.id.tabsRecyclerView);
         mTabsList.setHasFixedSize(true);
         final int columns = 4;
@@ -281,30 +277,15 @@ public class TabsWidget extends UIDialog implements WidgetManagerDelegate.WorldC
                 @Override
                 public void onSend(TabView aSender) {
                     hide(KEEP_WIDGET);
-                    if (mAccounts.isSignedIn()) {
-                        mSendTabDialog = new SendTabDialogWidget(getContext());
-                        mSendTabDialog.mWidgetPlacement.parentHandle = mWidgetManager.getFocusedWindow().getHandle();
-                        mSendTabDialog.setDelegate(() -> {
-                            mSendTabDialog.releaseWidget();
-                            mSendTabDialog = null;
-                            show(REQUEST_FOCUS);
-                        });
-                        mSendTabDialog.show(UIWidget.REQUEST_FOCUS);
-
-                    } else {
-                        final WhatsNewWidget whatsNew = new WhatsNewWidget(getContext());
-                        whatsNew.getPlacement().parentHandle = mWidgetManager.getFocusedWindow().getHandle();
-                        whatsNew.setStartBrowsingCallback(() -> {
-                            whatsNew.hide(REMOVE_WIDGET);
-                            show(REQUEST_FOCUS);
-                        });
-                        whatsNew.setSignInCallback(() -> {
-                            whatsNew.hide(REMOVE_WIDGET);
-                            onDismiss();
-                        });
-                        whatsNew.setDelegate(() -> show(REQUEST_FOCUS));
-                        whatsNew.show(UIWidget.REQUEST_FOCUS);
-                    }
+                    mSendTabDialog = new SendTabDialogWidget(getContext());
+                    mSendTabDialog.setSessionId(aSender.getSession().getId());
+                    mSendTabDialog.mWidgetPlacement.parentHandle = mWidgetManager.getFocusedWindow().getHandle();
+                    mSendTabDialog.setDelegate(() -> {
+                        mSendTabDialog.releaseWidget();
+                        mSendTabDialog = null;
+                        TabsWidget.this.show(REQUEST_FOCUS);
+                    });
+                    mSendTabDialog.show(UIWidget.REQUEST_FOCUS);
                 }
             });
         }
@@ -315,7 +296,7 @@ public class TabsWidget extends UIDialog implements WidgetManagerDelegate.WorldC
         }
     }
 
-    private Runnable mSelectModeBackHandler = () -> exitSelectMode();
+    private Runnable mSelectModeBackHandler = this::exitSelectMode;
 
     private void enterSelectMode() {
         if (mSelecting) {

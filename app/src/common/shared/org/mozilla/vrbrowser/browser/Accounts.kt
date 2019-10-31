@@ -41,10 +41,10 @@ class Accounts constructor(val context: Context) {
         HISTORY,
         SETTINGS,
         SEND_TABS,
-        UNDEFINED
+        NONE
     }
 
-    var loginOrigin: LoginOrigin = LoginOrigin.UNDEFINED
+    var loginOrigin: LoginOrigin = LoginOrigin.NONE
     var accountStatus = AccountStatus.SIGNED_OUT
     private val accountListeners = ArrayList<AccountObserver>()
     private val syncListeners = ArrayList<SyncStatusObserver>()

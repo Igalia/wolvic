@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -43,6 +42,7 @@ import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoVRManager;
 import org.mozilla.vrbrowser.audio.AudioEngine;
+import org.mozilla.vrbrowser.browser.Accounts;
 import org.mozilla.vrbrowser.browser.PermissionDelegate;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.browser.engine.Session;
@@ -326,10 +326,21 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         // Show the what's upp dialog if we haven't showed it yet and this is v6.
         if (!SettingsStore.getInstance(this).isWhatsNewDisplayed() && BuildConfig.VERSION_NAME.equals("6")) {
-            WhatsNewWidget whatsNew = new WhatsNewWidget(this);
+            final WhatsNewWidget whatsNew = new WhatsNewWidget(this);
+            whatsNew.setLoginOrigin(Accounts.LoginOrigin.NONE);
             whatsNew.getPlacement().parentHandle = mWindows.getFocusedWindow().getHandle();
-            whatsNew.setStartBrowsingCallback(() -> whatsNew.hide(UIWidget.REMOVE_WIDGET));
-            whatsNew.setSignInCallback(() -> whatsNew.hide(UIWidget.REMOVE_WIDGET));
+            whatsNew.setStartBrowsingCallback(() -> {
+                whatsNew.hide(UIWidget.REMOVE_WIDGET);
+                whatsNew.releaseWidget();
+            });
+            whatsNew.setSignInCallback(() -> {
+                whatsNew.hide(UIWidget.REMOVE_WIDGET);
+                whatsNew.releaseWidget();
+            });
+            whatsNew.setDelegate(() -> {
+                whatsNew.hide(UIWidget.REMOVE_WIDGET);
+                whatsNew.releaseWidget();
+            });
             whatsNew.show(UIWidget.REQUEST_FOCUS);
         }
     }

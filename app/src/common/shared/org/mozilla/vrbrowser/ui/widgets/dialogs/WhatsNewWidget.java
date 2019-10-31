@@ -9,6 +9,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
@@ -25,23 +26,13 @@ import org.mozilla.vrbrowser.utils.UIThreadExecutor;
 
 public class WhatsNewWidget extends UIDialog implements WidgetManagerDelegate.WorldClickListener {
 
-    private WhatsNewBinding mBinding;
     private Accounts mAccounts;
     private Runnable mSignInCallback;
     private Runnable mStartBrowsingCallback;
+    private Accounts.LoginOrigin mLoginOrigin;
 
     public WhatsNewWidget(Context aContext) {
         super(aContext);
-        initialize();
-    }
-
-    public WhatsNewWidget(Context aContext, AttributeSet aAttrs) {
-        super(aContext, aAttrs);
-        initialize();
-    }
-
-    public WhatsNewWidget(Context aContext, AttributeSet aAttrs, int aDefStyle) {
-        super(aContext, aAttrs, aDefStyle);
         initialize();
     }
 
@@ -60,14 +51,14 @@ public class WhatsNewWidget extends UIDialog implements WidgetManagerDelegate.Wo
         mAccounts = ((VRBrowserApplication)getContext().getApplicationContext()).getAccounts();
 
         // Inflate this data binding layout
-        mBinding = DataBindingUtil.inflate(inflater, R.layout.whats_new, this, true);
+        WhatsNewBinding mBinding = DataBindingUtil.inflate(inflater, R.layout.whats_new, this, true);
 
-        mBinding.signInButton.setOnClickListener(v -> signIn());
-        mBinding.startBrowsingButton.setOnClickListener((v) -> {
-            if (mStartBrowsingCallback != null) {
-                mStartBrowsingCallback.run();
-            }
-        });
+        mBinding.signInButton.setOnClickListener(this::signIn);
+        mBinding.startBrowsingButton.setOnClickListener(this::startBrowsing);
+    }
+
+    public void setLoginOrigin(Accounts.LoginOrigin origin) {
+        mLoginOrigin = origin;
     }
 
     @Override
@@ -103,10 +94,10 @@ public class WhatsNewWidget extends UIDialog implements WidgetManagerDelegate.Wo
         mWidgetManager.removeWorldClickListener(this);
     }
 
-    private void signIn() {
+    private void signIn(View view) {
         mAccounts.getAuthenticationUrlAsync().thenAcceptAsync((url) -> {
             if (url != null) {
-                mAccounts.setLoginOrigin(Accounts.LoginOrigin.SEND_TABS);
+                mAccounts.setLoginOrigin(mLoginOrigin);
                 mWidgetManager.openNewTabForeground(url);
                 mWidgetManager.getFocusedWindow().getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_VR);
                 mWidgetManager.getFocusedWindow().getSession().loadUri(url);
@@ -117,6 +108,12 @@ public class WhatsNewWidget extends UIDialog implements WidgetManagerDelegate.Wo
             }
 
         }, new UIThreadExecutor());
+    }
+
+    private void startBrowsing(View view) {
+        if (mStartBrowsingCallback != null) {
+            mStartBrowsingCallback.run();
+        }
     }
 
     // WidgetManagerDelegate.WorldClickListener
