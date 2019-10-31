@@ -132,6 +132,7 @@
                     <org.mozilla.vrbrowser.ui.views.UIButton
                         android:id="@+id/popup"
                         style="@style/urlBarIconThemeStart"
+                        android:paddingStart="5dp"
                         android:src="@drawable/ic_icon_popup_awesomebar"
                         android:tint="@color/fog"
                         android:tooltipText="@string/popup_tooltip"
@@ -139,7 +140,7 @@
 
                     <View
                         android:layout_width="10dp"
-                        android:layout_height="24dp"
+                        android:layout_height="match_parent"
                         app:visibleGone="@{!isPopUpAvailable}"/>
                 </LinearLayout>
 
@@ -167,14 +168,20 @@
 
             </RelativeLayout>
 
+            <View
+                android:id="@+id/padding"
+                android:layout_width="10dp"
+                android:layout_height="match_parent"
+                android:layout_toEndOf="@id/iconsLayout"
+                app:visibleGone="@{isLibraryVisible}"/>
+
             <org.mozilla.vrbrowser.ui.views.CustomInlineAutocompleteEditText
                 android:id="@+id/urlEditText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingStart="10dp"
                 android:paddingEnd="10dp"
                 android:layout_toStartOf="@id/endButtonsLayout"
-                android:layout_toEndOf="@id/iconsLayout"
+                android:layout_toEndOf="@id/padding"
                 android:foreground="@{isUrlEmpty ? @drawable/url_bar_hint_fading_edge : null}"
                 android:foregroundGravity="fill_vertical|right"
                 android:ems="10"
