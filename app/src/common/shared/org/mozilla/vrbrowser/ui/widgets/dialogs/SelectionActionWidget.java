@@ -120,9 +120,6 @@ public class SelectionActionWidget extends UIWidget implements WidgetManagerDele
         if (StringUtils.contains(aActions, GeckoSession.SelectionActionDelegate.ACTION_SELECT_ALL)) {
             buttons.add(createButton(R.string.context_menu_select_all_text, GeckoSession.SelectionActionDelegate.ACTION_SELECT_ALL, this::handleAction));
         }
-        if (StringUtils.contains(aActions, GeckoSession.SelectionActionDelegate.ACTION_UNSELECT)) {
-            buttons.add(createButton(R.string.context_menu_unselect, GeckoSession.SelectionActionDelegate.ACTION_UNSELECT, this::handleAction));
-        }
 
         for (int i = 0; i < buttons.size(); ++i) {
             mContainer.addView(buttons.get(i));
