@@ -187,6 +187,10 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         for (GeckoSession.ContentDelegate listener: mContentListeners) {
             dumpState(listener);
         }
+
+        for (VideoAvailabilityListener listener: mVideoAvailabilityListeners) {
+            dumpState(listener);
+        }
     }
 
     private void dumpState(GeckoSession.NavigationDelegate aListener) {
@@ -211,6 +215,10 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
     private void dumpState(GeckoSession.ContentDelegate aListener) {
         aListener.onTitleChange(mState.mSession, mState.mTitle);
+    }
+
+    private void dumpState(VideoAvailabilityListener aListener) {
+        aListener.onVideoAvailabilityChanged(mState.mMediaElements != null && mState.mMediaElements.size() > 0);
     }
 
     public void setPermissionDelegate(GeckoSession.PermissionDelegate aDelegate) {
@@ -270,6 +278,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
     public void addVideoAvailabilityListener(VideoAvailabilityListener aListener) {
         mVideoAvailabilityListeners.add(aListener);
+        dumpState(aListener);
     }
 
     public void removeVideoAvailabilityListener(VideoAvailabilityListener aListener) {
@@ -491,6 +500,10 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
     public boolean isSecure() {
         return mState.mSecurityInformation != null && mState.mSecurityInformation.isSecure;
+    }
+
+    public boolean isVideoAvailable() {
+        return mState.mMediaElements != null && mState.mMediaElements.size() > 0;
     }
 
     public Media getFullScreenVideo() {
@@ -1157,10 +1170,8 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         Media media = new Media(element);
         mState.mMediaElements.add(media);
 
-        if (mState.mMediaElements.size() == 1) {
-            for (VideoAvailabilityListener listener: mVideoAvailabilityListeners) {
-                listener.onVideoAvailabilityChanged(true);
-            }
+        for (VideoAvailabilityListener listener: mVideoAvailabilityListeners) {
+            listener.onVideoAvailabilityChanged(true);
         }
     }
 

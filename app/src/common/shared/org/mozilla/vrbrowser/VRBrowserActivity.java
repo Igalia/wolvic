@@ -297,6 +297,14 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 mTray.setAddWindowVisible(mWindows.canOpenNewWindow());
                 updateWidget(mTray);
             }
+
+            @Override
+            public void onWindowVideoAvailabilityChanged(@NonNull WindowWidget aWindow) {
+                @CPULevelFlags int cpuLevel = mWindows.isVideoAvailable() ? WidgetManagerDelegate.CPU_LEVEL_HIGH :
+                        WidgetManagerDelegate.CPU_LEVEL_NORMAL;
+
+                queueRunnable(() -> setCPULevelNative(cpuLevel));
+            }
         });
 
         // Create Browser navigation widget
@@ -1421,11 +1429,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Override
     public float getCylinderDensity() {
         return mCurrentCylinderDensity;
-    }
-
-    @Override
-    public void setCPULevel(int aCPULevel) {
-        queueRunnable(() -> setCPULevelNative(aCPULevel));
     }
 
     @Override

@@ -140,6 +140,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         default void onFocusRequest(@NonNull WindowWidget aWindow) {}
         default void onBorderChanged(@NonNull WindowWidget aWindow) {}
         default void onSessionChanged(@NonNull Session aOldSession, @NonNull Session aSession) {}
+        default void onVideoAvailabilityChanged(@NonNull WindowWidget aWindow) {}
     }
 
     public WindowWidget(Context aContext, int windowId, boolean privateMode)  {
@@ -1484,12 +1485,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     @Override
     public void onVideoAvailabilityChanged(boolean aVideosAvailable) {
-        mWidgetManager.setCPULevel(aVideosAvailable ?
-                WidgetManagerDelegate.CPU_LEVEL_HIGH :
-                WidgetManagerDelegate.CPU_LEVEL_NORMAL);
-
         if (mTitleBar != null) {
             mTitleBar.mediaAvailabilityChanged(aVideosAvailable);
+        }
+
+        for (WindowListener listener: mListeners) {
+            listener.onVideoAvailabilityChanged(this);
         }
     }
 

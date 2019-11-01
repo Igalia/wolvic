@@ -121,7 +121,7 @@ public class TitleBarWidget extends UIWidget implements WidgetManagerDelegate.Up
 
     @Override
     public void setVisible(boolean aIsVisible) {
-        if (mVisible == aIsVisible) {
+        if (mVisible == aIsVisible || mWidgetManager == null) {
             return;
         }
         mVisible = aIsVisible;
@@ -179,14 +179,18 @@ public class TitleBarWidget extends UIWidget implements WidgetManagerDelegate.Up
     }
 
     public void mediaAvailabilityChanged(boolean available) {
-        mBinding.setIsMediaAvailable(false);
+        if (mMedia != null) {
+            mMedia.removeMediaListener(mMediaDelegate);
+        }
         if (available) {
             mMedia = mAttachedWindow.getSession().getFullScreenVideo();
             if (mMedia != null) {
+                mBinding.setIsMediaAvailable(true);
                 mBinding.setIsMediaPlaying(mMedia.isPlaying());
-                mMedia.removeMediaListener(mMediaDelegate);
                 mMedia.addMediaListener(mMediaDelegate);
             }
+        } else {
+            mBinding.setIsMediaAvailable(false);
         }
     }
 
