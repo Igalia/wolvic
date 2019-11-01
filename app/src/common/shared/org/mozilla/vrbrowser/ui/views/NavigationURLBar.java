@@ -29,7 +29,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.databinding.DataBindingUtil;
 
-import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
@@ -138,6 +137,9 @@ public class NavigationURLBar extends FrameLayout {
             mBinding.setIsUrlEmpty(isUrlEmpty);
             if (!focused) {
                 hideSelectionMenu();
+
+            } else {
+                mBinding.urlEditText.setSelection(mBinding.urlEditText.length(), 0);
             }
         });
 
@@ -187,7 +189,7 @@ public class NavigationURLBar extends FrameLayout {
             }
 
             // Add some delay so selection ranges are ready
-            ThreadUtils.postDelayedToUiThread(this::handleLongPress, 10);
+            postDelayed(this::showSelectionMenu, 10);
             return true;
         });
 
@@ -198,7 +200,7 @@ public class NavigationURLBar extends FrameLayout {
                 boolean hasCopy = mSelectionMenu.hasAction(GeckoSession.SelectionActionDelegate.ACTION_COPY);
                 boolean showCopy = end > start;
                 if (hasCopy != showCopy) {
-                    handleLongPress();
+                    showSelectionMenu();
 
                 } else {
                     mDelegate.onLongPress(getSelectionCenterX(), mSelectionMenu);
@@ -539,11 +541,12 @@ public class NavigationURLBar extends FrameLayout {
         @Override
         public boolean onDoubleTapEvent(MotionEvent motionEvent) {
             mBinding.urlEditText.selectAll();
+            showSelectionMenu();
             return true;
         }
     };
 
-    private void handleLongPress() {
+    private void showSelectionMenu() {
         ArrayList<String> actions = new ArrayList<>();
         if (mBinding.urlEditText.getSelectionEnd() > mBinding.urlEditText.getSelectionStart()) {
             actions.add(GeckoSession.SelectionActionDelegate.ACTION_CUT);
@@ -598,7 +601,7 @@ public class NavigationURLBar extends FrameLayout {
                         }
                     } else if (action.equals(GeckoSession.SelectionActionDelegate.ACTION_SELECT_ALL)) {
                         mBinding.urlEditText.selectAll();
-                        handleLongPress();
+                        showSelectionMenu();
                         return;
 
                     }
