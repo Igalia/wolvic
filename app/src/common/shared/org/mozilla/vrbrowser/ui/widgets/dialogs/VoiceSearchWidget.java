@@ -200,9 +200,8 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
                         setResultState();
                         break;
                     case CANCELED:
-                        // Handle when a cancelation was fully executed
+                        // Handle when a cancellation was fully executed
                         Log.d(LOGTAG, "===> CANCELED");
-                        setResultState();
                         if (mDelegate != null) {
                             mDelegate.OnVoiceSearchCanceled();
                         }
