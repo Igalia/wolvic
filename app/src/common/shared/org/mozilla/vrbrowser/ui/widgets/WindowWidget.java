@@ -140,6 +140,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         default void onFocusRequest(@NonNull WindowWidget aWindow) {}
         default void onBorderChanged(@NonNull WindowWidget aWindow) {}
         default void onSessionChanged(@NonNull Session aOldSession, @NonNull Session aSession) {}
+        default void onFullScreen(@NonNull WindowWidget aWindow, boolean aFullScreen) {}
         default void onVideoAvailabilityChanged(@NonNull WindowWidget aWindow) {}
     }
 
@@ -886,7 +887,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     public void setIsFullScreen(boolean isFullScreen) {
-        mIsFullScreen = isFullScreen;
+        if (isFullScreen != mIsFullScreen) {
+            mIsFullScreen = isFullScreen;
+            for (WindowListener listener: mListeners) {
+                listener.onFullScreen(this, isFullScreen);
+            }
+        }
     }
 
     public boolean isFullScreen() {
