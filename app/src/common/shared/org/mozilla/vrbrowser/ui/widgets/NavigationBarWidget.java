@@ -103,6 +103,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private HamburgerMenuWidget mHamburgerMenu;
     private SendTabDialogWidget mSendTabDialog;
     private TooltipWidget mPopUpNotification;
+    private int mBlockedCount;
 
     public NavigationBarWidget(Context aContext) {
         super(aContext);
@@ -1190,11 +1191,29 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         @Override
         public void onPopUpsCleared() {
             mURLBar.setIsPopUpAvailable(false);
+            hidePopUpsBlockedNotification();
         }
     };
 
     public void showPopUpsBlockedNotification() {
-        post(() -> showNotification(mURLBar.getPopUpButton(), R.string.popup_tooltip));
+        final int POP_UP_NOTIFICATION_DELAY = 800;
+        mBlockedCount++;
+        final int currentCount = mBlockedCount;
+        postDelayed(() -> {
+            if (currentCount == mBlockedCount) {
+                showNotification(mURLBar.getPopUpButton(), R.string.popup_tooltip);
+            }
+        }, POP_UP_NOTIFICATION_DELAY);
+    }
+
+    public void hidePopUpsBlockedNotification() {
+        mBlockedCount++;
+        final int currentCount = mBlockedCount;
+        post(() -> {
+            if (currentCount == mBlockedCount) {
+                hideNotification(mURLBar.getPopUpButton());
+            }
+        });
     }
 
     private void showNotification(UIButton button, int stringRes) {
