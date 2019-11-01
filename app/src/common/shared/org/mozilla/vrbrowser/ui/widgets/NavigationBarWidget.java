@@ -1216,7 +1216,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mPopUpNotification.getPlacement().translationZ = 25.0f;
         mPopUpNotification.getPlacement().density = WidgetPlacement.floatDimension(getContext(), R.dimen.tooltip_default_density);
         mPopUpNotification.setText(stringRes);
-        mPopUpNotification.setCurvedMode(false);
+        mPopUpNotification.setCurvedMode(true);
         mPopUpNotification.show(UIWidget.CLEAR_FOCUS);
 
         postDelayed(() -> hideNotification(button), NOTIFICATION_DURATION);
