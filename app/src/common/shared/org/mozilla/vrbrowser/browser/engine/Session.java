@@ -404,6 +404,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         if (previous.mSession != null) {
             closeSession(previous.mSession);
         }
+        setupSessionListeners(mState.mSession);
 
         for (SessionChangeListener listener : mSessionChangeListeners) {
             listener.onCurrentSessionChange(previous.mSession, mState.mSession);
@@ -723,7 +724,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     protected void setTrackingProtection(final boolean aEnabled) {
         if (mState.mSettings.isTrackingProtectionEnabled() != aEnabled) {
             mState.mSettings.setTrackingProtectionEnabled(aEnabled);
-            recreateSession();
+            mState.mSession.getSettings().setUseTrackingProtection(aEnabled);
         }
     }
 
