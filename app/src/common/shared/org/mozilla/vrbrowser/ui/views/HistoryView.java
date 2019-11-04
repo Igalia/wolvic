@@ -61,7 +61,6 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
     private HistoryBinding mBinding;
     private Accounts mAccounts;
     private HistoryAdapter mHistoryAdapter;
-    private boolean mIgnoreNextListener;
     private ArrayList<HistoryCallback> mHistoryViewListeners;
 
     public HistoryView(Context aContext) {
@@ -116,9 +115,6 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
         mBinding.setIsSignedIn(mAccounts.isSignedIn());
         mBinding.setIsSyncEnabled(mAccounts.isEngineEnabled(SyncEngine.History.INSTANCE));
 
-        updateHistory();
-        SessionStore.get().getHistoryStore().addListener(this);
-
         setVisibility(GONE);
 
         setOnTouchListener((v, event) -> {
@@ -150,14 +146,14 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
         public void onDelete(View view, VisitInfo item) {
             mBinding.historyList.requestFocusFromTouch();
 
-            mIgnoreNextListener = true;
-            SessionStore.get().getHistoryStore().deleteHistory(item.getUrl(), item.getVisitTime());
             mHistoryAdapter.removeItem(item);
             if (mHistoryAdapter.itemCount() == 0) {
                 mBinding.setIsEmpty(true);
                 mBinding.setIsLoading(false);
                 mBinding.executePendingBindings();
             }
+
+            SessionStore.get().getHistoryStore().deleteHistory(item.getUrl(), item.getVisitTime());
         }
 
         @Override
@@ -365,10 +361,6 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
 
     @Override
     public void onHistoryUpdated() {
-        if (mIgnoreNextListener) {
-            mIgnoreNextListener = false;
-            return;
-        }
         updateHistory();
     }
 }

@@ -55,7 +55,6 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
     private BookmarksBinding mBinding;
     private Accounts mAccounts;
     private BookmarkAdapter mBookmarkAdapter;
-    private boolean mIgnoreNextListener;
     private ArrayList<BookmarksCallback> mBookmarksViewListeners;
     private CustomLinearLayoutManager mLayoutManager;
 
@@ -113,9 +112,6 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
         mBinding.setIsSignedIn(mAccounts.isSignedIn());
         mBinding.setIsSyncEnabled(mAccounts.isEngineEnabled(SyncEngine.Bookmarks.INSTANCE));
 
-        updateBookmarks();
-        SessionStore.get().getBookmarkStore().addListener(this);
-
         setVisibility(GONE);
 
         setOnTouchListener((v, event) -> {
@@ -147,14 +143,14 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
         public void onDelete(@NonNull View view, @NonNull Bookmark item) {
             mBinding.bookmarksList.requestFocusFromTouch();
 
-            mIgnoreNextListener = true;
-            SessionStore.get().getBookmarkStore().deleteBookmarkById(item.getGuid());
             mBookmarkAdapter.removeItem(item);
             if (mBookmarkAdapter.itemCount() == 0) {
                 mBinding.setIsEmpty(true);
                 mBinding.setIsLoading(false);
                 mBinding.executePendingBindings();
             }
+
+            SessionStore.get().getBookmarkStore().deleteBookmarkById(item.getGuid());
         }
 
         @Override
@@ -322,19 +318,11 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
 
     @Override
     public void onBookmarksUpdated() {
-        if (mIgnoreNextListener) {
-            mIgnoreNextListener = false;
-            return;
-        }
         updateBookmarks();
     }
 
     @Override
     public void onBookmarkAdded() {
-        if (mIgnoreNextListener) {
-            mIgnoreNextListener = false;
-            return;
-        }
         updateBookmarks();
     }
 }
