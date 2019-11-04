@@ -25,8 +25,8 @@ tasks:
 ###############################################################################
     - $if: 'tasks_for == "github-pull-request" && event["action"] in ["opened", "edited", "reopened", "synchronize"]'
       then:
-        provisionerId: 'aws-provisioner-v1'
-        workerType: 'github-worker'
+        provisionerId: 'proj-firefoxreality'
+        workerType: 'ci-linux'
         deadline: {$fromNow: 1 day}
         expires: {$fromNow: 1 year}
         payload:
@@ -64,14 +64,14 @@ tasks:
             then: "-f ${event.ref[19:]}"
             else: "-f master"
         in:
-          provisionerId: 'aws-provisioner-v1'
-          workerType: 'github-worker'
+          provisionerId: 'proj-firefoxreality'
+          workerType: 'ci-linux'
           deadline: {$fromNow: 1 day}
           expires: {$fromNow: 1 year}
           scopes:
-            - "secrets:get:project/firefoxreality/github-deploy-key"
-            - "secrets:get:project/firefoxreality/staging-signing-token"
-            - "secrets:get:project/firefoxreality/symbols-token"
+            - "secrets:get:project/firefoxreality/fr/github-deploy-key"
+            - "secrets:get:project/firefoxreality/fr/staging-signing-token"
+            - "secrets:get:project/firefoxreality/fr/symbols-token"
           routes:
             - notify.email.fxr-releng@mozilla.com.on-any
           payload:
@@ -92,7 +92,7 @@ tasks:
                 && . tools/taskcluster/get_third_party.sh
                 && cp tools/gradle/taskcluster.properties ./user.properties
                 && ./gradlew --no-daemon --console=plain clean `python tools/taskcluster/build_targets.py =all`
-                && python tools/taskcluster/fetch_secret.py -s project/firefoxreality/staging-signing-token -o token -n token
+                && python tools/taskcluster/fetch_secret.py -s project/firefoxreality/fr/staging-signing-token -o token -n token
                 && python tools/taskcluster/sign_apk.py -t token ${featureName}
                 && python tools/taskcluster/archive_debug_apk.py
                 && . tools/taskcluster/upload_symbols.sh
@@ -114,14 +114,14 @@ tasks:
 ###############################################################################
     - $if: 'tasks_for == "github-release" && event["action"] == "published"'
       then:
-        provisionerId: 'aws-provisioner-v1'
-        workerType: 'github-worker'
+        provisionerId: 'proj-firefoxreality'
+        workerType: 'ci-linux'
         deadline: {$fromNow: 1 day}
         expires: {$fromNow: 1 year}
         scopes:
-          - "secrets:get:project/firefoxreality/github-deploy-key"
-          - "secrets:get:project/firefoxreality/release-signing-token"
-          - "secrets:get:project/firefoxreality/symbols-token"
+          - "secrets:get:project/firefoxreality/fr/github-deploy-key"
+          - "secrets:get:project/firefoxreality/fr/release-signing-token"
+          - "secrets:get:project/firefoxreality/fr/symbols-token"
         routes:
           - notify.email.fxr-releng@mozilla.com.on-any
         payload:
@@ -142,7 +142,7 @@ tasks:
               && . tools/taskcluster/get_third_party.sh
               && cp tools/gradle/taskcluster.properties ./user.properties
               && ./gradlew --no-daemon --console=plain clean `python tools/taskcluster/build_targets.py ${event.release.tag_name}`
-              && python tools/taskcluster/fetch_secret.py -s project/firefoxreality/release-signing-token -o token -n token
+              && python tools/taskcluster/fetch_secret.py -s project/firefoxreality/fr/release-signing-token -o token -n token
               && python tools/taskcluster/sign_apk.py -t token -r
               && python tools/taskcluster/archive_debug_apk.py
               && . tools/taskcluster/upload_symbols.sh

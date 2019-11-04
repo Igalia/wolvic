@@ -4,15 +4,15 @@ The goal of the Firefox Reality project is to create a full-featured browser exc
 
 You can find us on Twitter [@MozillaReality](https://twitter.com/mozillareality) and at [mixedreality@mozilla.com](mailto:mixedreality@mozilla.com).
 
-[![Task Status](https://github.taskcluster.net/v1/repository/MozillaReality/FirefoxReality/master/badge.svg)](https://github.taskcluster.net/v1/repository/MozillaReality/FirefoxReality/master/latest) [Build results](https://github.taskcluster.net/v1/repository/MozillaReality/FirefoxReality/master/latest)
+[![Task Status](https://community-tc.services.mozilla.com/api/github/v1/repository/MozillaReality/FirefoxReality/master/badge.svg)](https://community-tc.services.mozilla.com/api/github/v1/repository/MozillaReality/FirefoxReality/master/latest) [Build results](https://community-tc.services.mozilla.com/api/github/v1/repository/MozillaReality/FirefoxReality/master/latest)
 
 ## Download developer APKs
 
-**[Download](https://github.taskcluster.net/v1/repository/MozillaReality/FirefoxReality/master/latest)** [bleeding-edge](https://github.com/MozillaReality/FirefoxReality/commits/master) developer APKs for Firefox Reality.
+**[Download](https://community-tc.services.mozilla.com/api/github/v1/repository/MozillaReality/FirefoxReality/master/latest)** [bleeding-edge](https://github.com/MozillaReality/FirefoxReality/commits/master) developer APKs for Firefox Reality.
 
 ### Advanced
 
-1. Load [this TaskCluster URL](https://github.taskcluster.net/v1/repository/MozillaReality/FirefoxReality/master/latest).
+1. Load [this TaskCluster URL](https://community-tc.services.mozilla.com/api/github/v1/repository/MozillaReality/FirefoxReality/master/latest).
 2. Click the `Firefox Reality for Android - Build - Master update →` link.
 3. Click the `Run Artifacts` tab, and click to download the APK for your platform of choice.
 
