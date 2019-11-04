@@ -326,8 +326,8 @@ public class NavigationURLBar extends FrameLayout {
                 return;
 
             } else if (aURL.startsWith("resource:") || mSession.isHomeUri(aURL)) {
-
                 aURL = "";
+
             } else if (aURL.startsWith("data:") && mSession.isPrivateMode()) {
                 aURL = "";
 

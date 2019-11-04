@@ -139,7 +139,7 @@
                         app:visibleGone="@{isPopUpAvailable}" />
 
                     <View
-                        android:layout_width="10dp"
+                        android:layout_width="15dp"
                         android:layout_height="match_parent"
                         app:visibleGone="@{!isPopUpAvailable}"/>
                 </LinearLayout>
@@ -154,6 +154,7 @@
                         android:id="@+id/loadingView"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
+                        android:paddingEnd="5dp"
                         android:contentDescription="Loading animation"
                         android:src="@drawable/loading_shape"
                         app:visibleGone="@{isLoading}" />
@@ -163,14 +164,14 @@
                         android:layout_height="24dp"
                         android:contentDescription="SSL icon"
                         android:src="@drawable/ic_icon_security_state_insecure"
-                        app:visibleGone="@{isInsecure}" />
+                        app:visibleGone="@{isInsecure &amp;&amp; (urlEditText.length() != 0)}" />
                 </LinearLayout>
 
             </RelativeLayout>
 
             <View
                 android:id="@+id/padding"
-                android:layout_width="10dp"
+                android:layout_width="15dp"
                 android:layout_height="match_parent"
                 android:layout_toEndOf="@id/iconsLayout"
                 app:visibleGone="@{isLibraryVisible}"/>
@@ -182,7 +183,7 @@
                 android:paddingEnd="10dp"
                 android:layout_toStartOf="@id/endButtonsLayout"
                 android:layout_toEndOf="@id/padding"
-                android:foreground="@{isUrlEmpty ? @drawable/url_bar_hint_fading_edge : null}"
+                android:foreground="@{isUrlEmpty ? (isPrivateMode ? @drawable/url_bar_hint_fading_edge_private : @drawable/url_bar_hint_fading_edge) : null}"
                 android:foregroundGravity="fill_vertical|right"
                 android:ems="10"
                 android:fadingEdgeLength="40dp"

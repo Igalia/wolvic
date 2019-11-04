@@ -425,9 +425,15 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mAttachedWindow.addWindowListener(this);
         mAttachedWindow.setPopUpDelegate(mPopUpDelegate);
 
+        clearFocus();
+
+        if (getSession() != null) {
+            setUpSession(getSession());
+        }
+        handleWindowResize();
+
         if (mAttachedWindow != null) {
             mURLBar.setIsLibraryVisible(mAttachedWindow.isBookmarksVisible() || mAttachedWindow.isHistoryVisible());
-            mURLBar.setURL("");
             if (mAttachedWindow.isBookmarksVisible()) {
                 mURLBar.setHint(R.string.url_bookmarks_title);
                 mURLBar.setIsLibraryVisible(true);
@@ -443,13 +449,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             }
             mURLBar.setIsPopUpAvailable(mAttachedWindow.hasPendingPopUps());
         }
-
-        clearFocus();
-
-        if (getSession() != null) {
-            setUpSession(getSession());
-        }
-        handleWindowResize();
     }
 
     private Session getSession() {
