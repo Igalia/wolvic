@@ -832,7 +832,9 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
             final String userAgentOverride = mUserAgentOverride.lookupOverride(uri);
             aSession.getSettings().setUserAgentOverride(userAgentOverride);
-            mState.mSettings.setUserAgentOverride(userAgentOverride);
+            if (mState.mSettings != null) {
+                mState.mSettings.setUserAgentOverride(userAgentOverride);
+            }
         }
 
         if (mContext.getString(R.string.about_private_browsing).equalsIgnoreCase(uri)) {
