@@ -8,6 +8,7 @@ package org.mozilla.vrbrowser.browser
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.lifecycle.ProcessLifecycleOwner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -56,6 +57,8 @@ class Accounts constructor(val context: Context) {
 
     private val syncStatusObserver = object : SyncStatusObserver {
         override fun onStarted() {
+            Log.d(LOGTAG, "Account syncing has started")
+
             isSyncing = true
             syncListeners.toMutableList().forEach {
                 Handler(Looper.getMainLooper()).post {
@@ -65,6 +68,8 @@ class Accounts constructor(val context: Context) {
         }
 
         override fun onIdle() {
+            Log.d(LOGTAG, "Account syncing has finished")
+
             isSyncing = false
             syncListeners.toMutableList().forEach {
                 Handler(Looper.getMainLooper()).post {
@@ -74,6 +79,8 @@ class Accounts constructor(val context: Context) {
         }
 
         override fun onError(error: Exception?) {
+            Log.d(LOGTAG, "There was an error while syncing the account: " + error?.localizedMessage)
+
             isSyncing = false
             syncListeners.toMutableList().forEach {
                 Handler(Looper.getMainLooper()).post {
@@ -85,6 +92,8 @@ class Accounts constructor(val context: Context) {
 
     private val deviceConstellationObserver = object : DeviceConstellationObserver {
         override fun onDevicesUpdate(constellation: ConstellationState) {
+            Log.d(LOGTAG, "Device constellation has been updated: " + constellation.otherDevices.toString())
+
             otherDevices = constellation.otherDevices
             deviceConstellationListeners.toMutableList().forEach {
                 Handler(Looper.getMainLooper()).post {
@@ -96,6 +105,8 @@ class Accounts constructor(val context: Context) {
 
     private val accountObserver = object : AccountObserver {
         override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
+            Log.d(LOGTAG, "The user has been successfully logged in")
+
             accountStatus = AccountStatus.SIGNED_IN
 
             // Enable syncing after signing in
@@ -119,6 +130,8 @@ class Accounts constructor(val context: Context) {
         }
 
         override fun onAuthenticationProblems() {
+            Log.d(LOGTAG, "There was a problem authenticating the user")
+
             accountStatus = AccountStatus.NEEDS_RECONNECT
             accountListeners.toMutableList().forEach {
                 Handler(Looper.getMainLooper()).post {
@@ -128,6 +141,8 @@ class Accounts constructor(val context: Context) {
         }
 
         override fun onLoggedOut() {
+            Log.d(LOGTAG, "The user has been logged out")
+
             accountStatus = AccountStatus.SIGNED_OUT
             accountListeners.toMutableList().forEach {
                 Handler(Looper.getMainLooper()).post {
@@ -137,6 +152,8 @@ class Accounts constructor(val context: Context) {
         }
 
         override fun onProfileUpdated(profile: Profile) {
+            Log.d(LOGTAG, "The user profile has been updated")
+
             accountListeners.toMutableList().forEach {
                 Handler(Looper.getMainLooper()).post {
                     it.onProfileUpdated(profile)
