@@ -301,6 +301,8 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
         boolean empty = getCurrentWindows().isEmpty();
         if (empty && isInPrivateMode()) {
+            // Clear private tabs
+            SessionStore.get().destroyPrivateSessions();
             // Exit private mode if the only window is closed.
             exitPrivateMode();
         } else if (empty) {

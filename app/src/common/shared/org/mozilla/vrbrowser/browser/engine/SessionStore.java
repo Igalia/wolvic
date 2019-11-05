@@ -23,8 +23,6 @@ import org.mozilla.vrbrowser.crashreporting.CrashReporterService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 public class SessionStore implements GeckoSession.PermissionDelegate {
 
@@ -133,13 +131,27 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
         return session;
     }
 
+    private void shutdownSession(@NonNull Session aSession) {
+        aSession.setPermissionDelegate(null);
+        aSession.removeNavigationListener(mServices);
+        aSession.shutdown();
+    }
+
     public void destroySession(Session aSession) {
         mSessions.remove(aSession);
         if (aSession != null) {
-            aSession.setPermissionDelegate(null);
-            aSession.removeNavigationListener(mServices);
-            aSession.shutdown();
+            shutdownSession(aSession);
         }
+    }
+
+    public void destroyPrivateSessions() {
+        mSessions.removeIf(session -> {
+            if (!session.isPrivateMode()) {
+                return false;
+            }
+            shutdownSession(session);
+            return true;
+        });
     }
 
     public @Nullable Session getSession(String aId) {
