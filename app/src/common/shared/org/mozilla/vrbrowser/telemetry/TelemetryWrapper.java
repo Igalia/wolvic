@@ -595,6 +595,26 @@ public class TelemetryWrapper {
         }
     }
 
+    public static void resetOpenedWindowsCount(int number, boolean isPrivate) {
+        if (isPrivate) {
+            for (int i=0; i<openPrivateWindows.length; i++) {
+                openPrivateWindows[i] = 0;
+            }
+            if (number > 0) {
+                openPrivateWindows[number -1 ] = 1;
+            }
+
+        } else {
+            for (int i=0; i<openWindows.length; i++) {
+                openWindows[i] = 0;
+            }
+
+            if (number > 0) {
+                openWindows[number - 1] = 1;
+            }
+        }
+    }
+
     private static void queueOpenWindowsAvgEvent() {
         float weight = 0;
         float weightSum = 0;
