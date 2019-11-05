@@ -638,10 +638,12 @@ BrowserWorld::State::SortWidgets() {
     Widget* wb = db->second.first;
 
     // Parenting sort
-    if (wa && wb && IsParent(*wa, *wb)) {
-      return true;
-    } else if (wa && wb && IsParent(*wb, *wa)) {
-      return false;
+    if (wa && wb && wa->IsVisible() && wb->IsVisible()) {
+      if (IsParent(*wa, *wb)) {
+        return true;
+      } else if (IsParent(*wb, *wa)) {
+        return false;
+      }
     }
 
     // Depth sort
