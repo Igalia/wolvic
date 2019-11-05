@@ -185,8 +185,9 @@ public class ViewUtils {
             view.getParent().requestDisallowInterceptTouchEvent(true);
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
+                    view.setPressed(true);
                     mTouched = true;
-                    break;
+                    return true;
                 case MotionEvent.ACTION_UP:
                     if (mTouched && ViewUtils.isInsideView(view, (int)event.getRawX(), (int)event.getRawY())) {
                         view.requestFocus();
@@ -195,11 +196,15 @@ public class ViewUtils {
                             mClickListener.onClick(view);
                         }
                     }
+                    view.setPressed(false);
                     mTouched = false;
-                    break;
+                    return true;
+                case MotionEvent.ACTION_MOVE:
+                    return true;
                 case MotionEvent.ACTION_CANCEL:
+                    view.setPressed(false);
                     mTouched = false;
-                    break;
+                    return true;
             }
             return false;
         }

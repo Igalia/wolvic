@@ -21,6 +21,7 @@ import androidx.annotation.LayoutRes;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
+import org.mozilla.vrbrowser.utils.ViewUtils;
 
 import java.util.ArrayList;
 
@@ -130,7 +131,7 @@ public abstract class MenuWidget extends UIWidget {
             if (view == null) {
                 view = mInflater.inflate(layoutId, parent, false);
                 view.setOnHoverListener(this);
-                view.setOnClickListener(v -> {
+                ViewUtils.setStickyClickListener(view, v -> {
                     setSelectedItem(position);
                     MenuItem item = mItems.get(position);
                     if (item.mCallback != null) {
