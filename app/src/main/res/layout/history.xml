@@ -46,6 +46,38 @@
         android:paddingTop="30dp"
         android:paddingBottom="30dp">
 
+        <include
+            android:id="@+id/history_narrow"
+            layout="@layout/history_narrow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="50dp"
+            android:layout_marginBottom="20dp"
+            app:isEmpty="@{isEmpty}"
+            app:isSignedIn="@{isSignedIn}"
+            app:isSyncEnabled="@{isSyncEnabled}"
+            app:lastSync="@{lastSync}"
+            app:isSyncing="@{isSyncing}"
+            app:isNarrow="@{isNarrow}"
+            app:callback="@{callback}" />
+
+        <include
+            android:id="@+id/history_wide"
+            layout="@layout/history_wide"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="50dp"
+            android:layout_marginBottom="20dp"
+            app:isEmpty="@{isEmpty}"
+            app:isSignedIn="@{isSignedIn}"
+            app:isSyncEnabled="@{isSyncEnabled}"
+            app:lastSync="@{lastSync}"
+            app:isSyncing="@{isSyncing}"
+            app:isNarrow="@{isNarrow}"
+            app:callback="@{callback}" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -96,40 +128,6 @@
             android:textColor="@color/fog"
             android:visibility="gone"
             app:visibleGone="@{isLoading}" />
-
-        <include
-            android:id="@+id/history_narrow"
-            layout="@layout/history_narrow"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
-            android:layout_marginEnd="50dp"
-            android:layout_marginBottom="20dp"
-            app:isLoading="@{isLoading}"
-            app:isEmpty="@{isEmpty}"
-            app:isSignedIn="@{isSignedIn}"
-            app:isSyncEnabled="@{isSyncEnabled}"
-            app:lastSync="@{lastSync}"
-            app:isSyncing="@{isSyncing}"
-            app:isNarrow="@{isNarrow}"
-            app:callback="@{callback}" />
-
-        <include
-            android:id="@+id/history_wide"
-            layout="@layout/history_wide"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
-            android:layout_marginEnd="50dp"
-            android:layout_marginBottom="20dp"
-            app:isLoading="@{isLoading}"
-            app:isEmpty="@{isEmpty}"
-            app:isSignedIn="@{isSignedIn}"
-            app:isSyncEnabled="@{isSyncEnabled}"
-            app:lastSync="@{lastSync}"
-            app:isSyncing="@{isSyncing}"
-            app:isNarrow="@{isNarrow}"
-            app:callback="@{callback}" />
 
         <org.mozilla.vrbrowser.ui.views.CustomRecyclerView
             android:id="@+id/history_list"

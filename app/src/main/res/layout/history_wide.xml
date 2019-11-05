@@ -3,11 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
-        <variable
-            name="isLoading"
-            type="boolean" />
-
         <variable
             name="isEmpty"
             type="boolean" />
@@ -41,7 +36,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:visibleGone="@{!isNarrow &amp;&amp; !isLoading &amp;&amp; !isEmpty}">
+        app:visibleGone="@{!isNarrow}">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -174,7 +169,8 @@
                 android:text="@string/history_clear"
                 android:textColor="@color/library_panel_button_text_color"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:enabled="@{!isEmpty}"/>
         </RelativeLayout>
 
     </LinearLayout>
