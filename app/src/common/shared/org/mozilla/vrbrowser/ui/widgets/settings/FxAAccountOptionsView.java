@@ -20,6 +20,7 @@ import org.mozilla.vrbrowser.databinding.OptionsFxaAccountBinding;
 import org.mozilla.vrbrowser.ui.views.settings.SwitchSetting;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.utils.SystemUtils;
+import org.mozilla.vrbrowser.utils.UIThreadExecutor;
 
 import java.util.Objects;
 
@@ -133,7 +134,7 @@ class FxAAccountOptionsView extends SettingsView {
                     updateProfile(profile);
 
                 } else {
-                    Objects.requireNonNull(mAccounts.updateProfileAsync()).thenAcceptAsync((u) -> updateProfile(mAccounts.accountProfile()));
+                    Objects.requireNonNull(mAccounts.updateProfileAsync()).thenAcceptAsync((u) -> updateProfile(mAccounts.accountProfile()), new UIThreadExecutor());
                 }
                 break;
 
