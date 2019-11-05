@@ -13,7 +13,9 @@ import androidx.databinding.DataBindingUtil;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.VRBrowserActivity;
 import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.browser.Accounts;
 import org.mozilla.vrbrowser.browser.SettingsStore;
@@ -79,8 +81,6 @@ class FxAAccountOptionsView extends SettingsView {
         super.onShown();
 
         mAccounts.addAccountListener(mAccountListener);
-        mAccounts.addSyncListener(mSyncListener);
-
         updateSyncState();
     }
 
@@ -89,64 +89,48 @@ class FxAAccountOptionsView extends SettingsView {
         super.onHidden();
 
         mAccounts.removeAccountListener(mAccountListener);
-        mAccounts.removeSyncListener(mSyncListener);
     }
 
     private SwitchSetting.OnCheckedChangeListener mBookmarksSyncListener = (compoundButton, value, apply) -> {
-        mAccounts.setSyncStatus(SyncEngine.Bookmarks.INSTANCE, value);
         sync();
     };
 
     private SwitchSetting.OnCheckedChangeListener mHistorySyncListener = (compoundButton, value, apply) -> {
-        mAccounts.setSyncStatus(SyncEngine.History.INSTANCE, value);
         sync();
     };
 
     private void resetOptions() {
-        mAccounts.setSyncStatus(SyncEngine.Bookmarks.INSTANCE, SettingsStore.BOOKMARKS_SYNC_DEFAULT);
-        mAccounts.setSyncStatus(SyncEngine.History.INSTANCE, SettingsStore.HISTORY_SYNC_DEFAULT);
+        mBinding.historySyncSwitch.setValue(SettingsStore.HISTORY_SYNC_DEFAULT, false);
+        mBinding.bookmarksSyncSwitch.setValue(SettingsStore.BOOKMARKS_SYNC_DEFAULT, false);
         sync();
     }
-
-    private SyncStatusObserver mSyncListener = new SyncStatusObserver() {
-        @Override
-        public void onStarted() {
-            mSyncing = true;
-            Log.d(LOGTAG, "SyncStatusObserver sync started");
-        }
-
-        @Override
-        public void onIdle() {
-            mSyncing = false;
-            if (mResyncNeeded) {
-                Log.d(LOGTAG, "SyncStatusObserver resync: The user has changed the settings while it was syncing");
-                mResyncNeeded = false;
-                mAccounts.setSyncStatus(SyncEngine.Bookmarks.INSTANCE, mBinding.bookmarksSyncSwitch.isChecked());
-                mAccounts.setSyncStatus(SyncEngine.History.INSTANCE, mBinding.historySyncSwitch.isChecked());
-                sync();
-            } else {
-                Log.d(LOGTAG, "SyncStatusObserver sync completed");
-                updateSyncState();
-            }
-        }
-
-        @Override
-        public void onError(@Nullable Exception ex) {
-            Log.d(LOGTAG, "SyncStatusObserver sync failed");
-            if (ex != null) {
-                ex.printStackTrace();
-            }
-            // Resync if needed
-            onIdle();
-        }
-    };
 
     private void sync() {
         if (mSyncing) {
             mResyncNeeded = true;
         } else {
+            Log.d(LOGTAG, "SyncStatusObserver sync started");
             mSyncing = true;
-            mAccounts.syncNowAsync(SyncReason.EngineChange.INSTANCE, false);
+            mAccounts.setSyncStatus(SyncEngine.Bookmarks.INSTANCE, mBinding.bookmarksSyncSwitch.isChecked());
+            mAccounts.setSyncStatus(SyncEngine.History.INSTANCE, mBinding.historySyncSwitch.isChecked());
+            mAccounts.syncNowAsync(SyncReason.EngineChange.INSTANCE, false).thenAcceptAsync((value) -> {
+                mSyncing = false;
+                if (mResyncNeeded) {
+                    Log.d(LOGTAG, "SyncStatusObserver resync: The user has changed the settings while it was syncing");
+                    mResyncNeeded = false;
+                    mAccounts.setSyncStatus(SyncEngine.Bookmarks.INSTANCE, mBinding.bookmarksSyncSwitch.isChecked());
+                    mAccounts.setSyncStatus(SyncEngine.History.INSTANCE, mBinding.historySyncSwitch.isChecked());
+                    sync();
+                } else {
+                    Log.d(LOGTAG, "SyncStatusObserver sync completed");
+                    updateSyncState();
+                }
+            }, mUIThreadExecutor).exceptionally(throwable -> {
+                Log.d(LOGTAG, "SyncStatusObserver sync failed");
+                mSyncing = false;
+                throwable.printStackTrace();
+                return null;
+            });
         }
     }
 
