@@ -40,6 +40,8 @@ class FxAAccountOptionsView extends SettingsView {
     private OptionsFxaAccountBinding mBinding;
     private Accounts mAccounts;
     private Executor mUIThreadExecutor;
+    private boolean mSyncing;
+    private boolean mResyncNeeded;
 
     public FxAAccountOptionsView(Context aContext, WidgetManagerDelegate aWidgetManager) {
         super(aContext, aWidgetManager);
@@ -79,8 +81,7 @@ class FxAAccountOptionsView extends SettingsView {
         mAccounts.addAccountListener(mAccountListener);
         mAccounts.addSyncListener(mSyncListener);
 
-        mBinding.bookmarksSyncSwitch.setValue(mAccounts.isEngineEnabled(SyncEngine.Bookmarks.INSTANCE), false);
-        mBinding.historySyncSwitch.setValue(mAccounts.isEngineEnabled(SyncEngine.History.INSTANCE), false);
+        updateSyncState();
     }
 
     @Override
@@ -93,37 +94,66 @@ class FxAAccountOptionsView extends SettingsView {
 
     private SwitchSetting.OnCheckedChangeListener mBookmarksSyncListener = (compoundButton, value, apply) -> {
         mAccounts.setSyncStatus(SyncEngine.Bookmarks.INSTANCE, value);
-        mAccounts.syncNowAsync(SyncReason.EngineChange.INSTANCE, false);
+        sync();
     };
 
     private SwitchSetting.OnCheckedChangeListener mHistorySyncListener = (compoundButton, value, apply) -> {
         mAccounts.setSyncStatus(SyncEngine.History.INSTANCE, value);
-        mAccounts.syncNowAsync(SyncReason.EngineChange.INSTANCE, false);
+        sync();
     };
 
     private void resetOptions() {
         mAccounts.setSyncStatus(SyncEngine.Bookmarks.INSTANCE, SettingsStore.BOOKMARKS_SYNC_DEFAULT);
         mAccounts.setSyncStatus(SyncEngine.History.INSTANCE, SettingsStore.HISTORY_SYNC_DEFAULT);
-        mAccounts.syncNowAsync(SyncReason.EngineChange.INSTANCE, false);
+        sync();
     }
 
     private SyncStatusObserver mSyncListener = new SyncStatusObserver() {
         @Override
         public void onStarted() {
-
+            mSyncing = true;
+            Log.d(LOGTAG, "SyncStatusObserver sync started");
         }
 
         @Override
         public void onIdle() {
-            mBinding.bookmarksSyncSwitch.setValue(mAccounts.isEngineEnabled(SyncEngine.Bookmarks.INSTANCE), false);
-            mBinding.historySyncSwitch.setValue(mAccounts.isEngineEnabled(SyncEngine.History.INSTANCE), false);
+            mSyncing = false;
+            if (mResyncNeeded) {
+                Log.d(LOGTAG, "SyncStatusObserver resync: The user has changed the settings while it was syncing");
+                mResyncNeeded = false;
+                mAccounts.setSyncStatus(SyncEngine.Bookmarks.INSTANCE, mBinding.bookmarksSyncSwitch.isChecked());
+                mAccounts.setSyncStatus(SyncEngine.History.INSTANCE, mBinding.historySyncSwitch.isChecked());
+                sync();
+            } else {
+                Log.d(LOGTAG, "SyncStatusObserver sync completed");
+                updateSyncState();
+            }
         }
 
         @Override
-        public void onError(@Nullable Exception e) {
-
+        public void onError(@Nullable Exception ex) {
+            Log.d(LOGTAG, "SyncStatusObserver sync failed");
+            if (ex != null) {
+                ex.printStackTrace();
+            }
+            // Resync if needed
+            onIdle();
         }
     };
+
+    private void sync() {
+        if (mSyncing) {
+            mResyncNeeded = true;
+        } else {
+            mSyncing = true;
+            mAccounts.syncNowAsync(SyncReason.EngineChange.INSTANCE, false);
+        }
+    }
+
+    private void updateSyncState() {
+        mBinding.bookmarksSyncSwitch.setValue(mAccounts.isEngineEnabled(SyncEngine.Bookmarks.INSTANCE), false);
+        mBinding.historySyncSwitch.setValue(mAccounts.isEngineEnabled(SyncEngine.History.INSTANCE), false);
+    }
 
     void updateCurrentAccountState() {
         switch(mAccounts.getAccountStatus()) {
