@@ -32,7 +32,7 @@ public class SessionState {
     public String mUri = "";
     public String mPreviousUri;
     public String mTitle = "";
-    public boolean mFullScreen;
+    public transient boolean mFullScreen;
     public transient GeckoSession mSession;
     public SessionSettings mSettings;
     public transient ArrayList<Media> mMediaElements = new ArrayList<>();
@@ -79,7 +79,6 @@ public class SessionState {
                             out.name("mUri").value(session.mUri);
                             out.name("mPreviousUri").value(session.mPreviousUri);
                             out.name("mTitle").value(session.mTitle);
-                            out.name("mFullScreen").value(session.mFullScreen);
                             out.name("mSettings").jsonValue(gson.toJson(session.mSettings));
                             out.name("mLastUse").value(session.mLastUse);
                             out.name("mRegion").value(session.mRegion);
