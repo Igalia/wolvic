@@ -25,6 +25,7 @@ import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.Media;
 import org.mozilla.vrbrowser.browser.PromptDelegate;
@@ -45,10 +46,10 @@ import org.mozilla.vrbrowser.ui.widgets.menus.HamburgerMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.menus.VideoProjectionMenuWidget;
 import org.mozilla.vrbrowser.utils.AnimationHelper;
 import org.mozilla.vrbrowser.utils.ServoUtils;
-import org.mozilla.vrbrowser.utils.UIThreadExecutor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class NavigationBarWidget extends UIWidget implements GeckoSession.NavigationDelegate,
@@ -104,6 +105,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private SendTabDialogWidget mSendTabDialog;
     private TooltipWidget mPopUpNotification;
     private int mBlockedCount;
+    private Executor mUIThreadExecutor;
 
     public NavigationBarWidget(Context aContext) {
         super(aContext);
@@ -123,6 +125,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private void initialize(@NonNull Context aContext) {
         mAppContext = aContext.getApplicationContext();
         inflate(aContext, R.layout.navigation_bar, this);
+
+        mUIThreadExecutor = ((VRBrowserApplication)aContext.getApplicationContext()).getExecutors().mainThread();
 
         mAudio = AudioEngine.fromContext(aContext);
         mBackButton = findViewById(R.id.backButton);
@@ -953,8 +957,9 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
                         }
                     }
 
-                }, new UIThreadExecutor()).exceptionally(th -> {
-                    Log.d(LOGTAG, "Error getting suggestions: " + th.getLocalizedMessage());
+                }, mUIThreadExecutor).exceptionally(throwable -> {
+                    Log.d(LOGTAG, "Error getting suggestions: " + throwable.getLocalizedMessage());
+                    throwable.printStackTrace();
                     return null;
         });
     }

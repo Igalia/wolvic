@@ -5,6 +5,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.search.SearchEngineWrapper;
 import org.mozilla.vrbrowser.ui.widgets.SuggestionsWidget.SuggestionItem;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 public class SuggestionsProvider {
 
@@ -47,11 +49,13 @@ public class SuggestionsProvider {
     private String mText;
     private String mFilterText;
     private Comparator mComparator;
+    private Executor mUIThreadExecutor;
 
     public SuggestionsProvider(Context context) {
         mSearchEngineWrapper = SearchEngineWrapper.get(context);
         mFilterText = "";
         mComparator = new DefaultSuggestionsComparator();
+        mUIThreadExecutor = ((VRBrowserApplication)context.getApplicationContext()).getExecutors().mainThread();
     }
 
     private String getSearchURLOrDomain(String text) {
@@ -91,8 +95,9 @@ public class SuggestionsProvider {
             }
             future.complete(items);
 
-        }).exceptionally(th -> {
-            Log.d(LOGTAG, "Error getting bookmarks suggestions: " + th.getLocalizedMessage());
+        }, mUIThreadExecutor).exceptionally(throwable -> {
+            Log.d(LOGTAG, "Error getting bookmarks suggestions: " + throwable.getLocalizedMessage());
+            throwable.printStackTrace();
             future.complete(items);
             return null;
         });
@@ -115,10 +120,11 @@ public class SuggestionsProvider {
             }
             future.complete(items);
 
-        }).exceptionally(th -> {
-            Log.d(LOGTAG, "Error getting history suggestions: " + th.getLocalizedMessage());
+        }, mUIThreadExecutor).exceptionally(throwable -> {
+            Log.d(LOGTAG, "Error getting history suggestions: " + throwable.getLocalizedMessage());
+            throwable.printStackTrace();
             future.complete(items);
-           return null;
+            return null;
         });
 
         return future;
@@ -164,8 +170,9 @@ public class SuggestionsProvider {
             }
             future.complete(items);
 
-        }).exceptionally(th -> {
-            Log.d(LOGTAG, "Error getting search engine suggestions: " + th.getLocalizedMessage());
+        }, mUIThreadExecutor).exceptionally(throwable -> {
+            Log.d(LOGTAG, "Error getting search engine suggestions: " + throwable.getLocalizedMessage());
+            throwable.printStackTrace();
             future.complete(items);
             return null;
         });

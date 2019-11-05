@@ -43,12 +43,12 @@ import org.mozilla.vrbrowser.ui.widgets.dialogs.RestartDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.UIDialog;
 import org.mozilla.vrbrowser.ui.widgets.prompts.AlertPromptWidget;
 import org.mozilla.vrbrowser.utils.StringUtils;
-import org.mozilla.vrbrowser.utils.UIThreadExecutor;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.concurrent.Executor;
 
 import mozilla.components.concept.sync.AccountObserver;
 import mozilla.components.concept.sync.AuthType;
@@ -69,6 +69,7 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
     private int mRestartDialogHandle = -1;
     private int mAlertDialogHandle = -1;
     private Accounts mAccounts;
+    private Executor mUIThreadExecutor;
 
     class VersionGestureListener extends GestureDetector.SimpleOnGestureListener {
 
@@ -110,6 +111,8 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
 
         mAccounts = ((VRBrowserApplication)getContext().getApplicationContext()).getAccounts();
         mAccounts.addAccountListener(mAccountObserver);
+
+        mUIThreadExecutor = ((VRBrowserApplication)getContext().getApplicationContext()).getExecutors().mainThread();
 
         mBinding.backButton.setOnClickListener(v -> {
             if (mAudio != null) {
@@ -285,7 +288,11 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
                         widgetManager.getFocusedWindow().getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
                         hide(REMOVE_WIDGET);
                     }
-                }, new UIThreadExecutor());
+                }, mUIThreadExecutor).exceptionally(throwable -> {
+                    Log.d(LOGTAG, "Error getting the authentication URL: " + throwable.getLocalizedMessage());
+                    throwable.printStackTrace();
+                    return null;
+                });
                 break;
 
             case SIGNED_IN:

@@ -7,7 +7,7 @@ package org.mozilla.vrbrowser.ui.widgets.dialogs;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -22,7 +22,8 @@ import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.databinding.WhatsNewBinding;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
-import org.mozilla.vrbrowser.utils.UIThreadExecutor;
+
+import java.util.concurrent.Executor;
 
 public class WhatsNewWidget extends UIDialog implements WidgetManagerDelegate.WorldClickListener {
 
@@ -30,6 +31,7 @@ public class WhatsNewWidget extends UIDialog implements WidgetManagerDelegate.Wo
     private Runnable mSignInCallback;
     private Runnable mStartBrowsingCallback;
     private Accounts.LoginOrigin mLoginOrigin;
+    private Executor mUIThreadExecutor;
 
     public WhatsNewWidget(Context aContext) {
         super(aContext);
@@ -47,6 +49,8 @@ public class WhatsNewWidget extends UIDialog implements WidgetManagerDelegate.Wo
     @SuppressLint("ClickableViewAccessibility")
     private void initialize() {
         LayoutInflater inflater = LayoutInflater.from(getContext());
+
+        mUIThreadExecutor = ((VRBrowserApplication)getContext().getApplicationContext()).getExecutors().mainThread();
 
         mAccounts = ((VRBrowserApplication)getContext().getApplicationContext()).getAccounts();
 
@@ -107,7 +111,11 @@ public class WhatsNewWidget extends UIDialog implements WidgetManagerDelegate.Wo
                 mSignInCallback.run();
             }
 
-        }, new UIThreadExecutor());
+        }, mUIThreadExecutor).exceptionally(throwable -> {
+            Log.d(LOGTAG, "Error getting the authentication URL: " + throwable.getLocalizedMessage());
+            throwable.printStackTrace();
+            return null;
+        });
     }
 
     private void startBrowsing(View view) {

@@ -427,6 +427,11 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
                     for (BitmapChangedListener listener: mBitmapChangedListeners) {
                         listener.onBitmapChanged(Session.this, scaledBitmap);
                     }
+
+                }).exceptionally(throwable -> {
+                    Log.d(LOGTAG, "Error scaling the bitmap: " + throwable.getLocalizedMessage());
+                    throwable.printStackTrace();
+                    return null;
                 });
             }
             return null;
@@ -448,6 +453,11 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
                     for (BitmapChangedListener listener: mBitmapChangedListeners) {
                         listener.onBitmapChanged(Session.this, scaledBitmap);
                     }
+
+                }).exceptionally(throwable -> {
+                    Log.d(LOGTAG, "Error scaling the bitmap: " + throwable.getLocalizedMessage());
+                    throwable.printStackTrace();
+                    return null;
                 });
             }
             display.surfaceDestroyed();

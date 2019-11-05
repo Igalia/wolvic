@@ -35,13 +35,13 @@ import org.mozilla.vrbrowser.ui.callbacks.HistoryCallback;
 import org.mozilla.vrbrowser.ui.callbacks.HistoryItemCallback;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.utils.SystemUtils;
-import org.mozilla.vrbrowser.utils.UIThreadExecutor;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
 import mozilla.components.concept.storage.VisitInfo;
@@ -62,6 +62,7 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
     private Accounts mAccounts;
     private HistoryAdapter mHistoryAdapter;
     private ArrayList<HistoryCallback> mHistoryViewListeners;
+    private Executor mUIThreadExecutor;
 
     public HistoryView(Context aContext) {
         super(aContext);
@@ -81,6 +82,8 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
     @SuppressLint("ClickableViewAccessibility")
     private void initialize(Context aContext) {
         LayoutInflater inflater = LayoutInflater.from(aContext);
+
+        mUIThreadExecutor = ((VRBrowserApplication)getContext().getApplicationContext()).getExecutors().mainThread();
 
         mHistoryViewListeners = new ArrayList<>();
 
@@ -198,7 +201,11 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
                     widgetManager.openNewTabForeground(url);
                     widgetManager.getFocusedWindow().getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
                 }
-            }, new UIThreadExecutor());
+            }, mUIThreadExecutor).exceptionally(throwable -> {
+                Log.d(LOGTAG, "Error getting the authentication URL: " + throwable.getLocalizedMessage());
+                throwable.printStackTrace();
+                return null;
+            });
         }
 
         @Override
@@ -294,8 +301,9 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
 
             showHistory(orderedItems);
 
-        }, new UIThreadExecutor()).exceptionally(throwable -> {
-            Log.d(LOGTAG, "Can get the detailed history");
+        }, mUIThreadExecutor).exceptionally(throwable -> {
+            Log.d(LOGTAG, "Error getting history: " + throwable.getLocalizedMessage());
+            throwable.printStackTrace();
             return null;
         });
     }

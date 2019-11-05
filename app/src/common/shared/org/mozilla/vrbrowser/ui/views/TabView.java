@@ -3,6 +3,7 @@ package org.mozilla.vrbrowser.ui.views;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -18,11 +19,15 @@ import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.utils.AnimationHelper;
 import org.mozilla.vrbrowser.utils.BitmapCache;
+import org.mozilla.vrbrowser.utils.SystemUtils;
 import org.mozilla.vrbrowser.utils.UrlUtils;
 
 import java.util.concurrent.CompletableFuture;
 
 public class TabView extends RelativeLayout implements GeckoSession.ContentDelegate, Session.BitmapChangedListener {
+
+    private static final String LOGTAG = SystemUtils.createLogtag(TabView.class);
+
     protected RelativeLayout mTabCardView;
     protected RelativeLayout mTabAddView;
     protected View mTabOverlay;
@@ -150,6 +155,11 @@ public class TabView extends RelativeLayout implements GeckoSession.ContentDeleg
                 mUsingPlaceholder = false;
                 updateState();
             }
+
+        }).exceptionally(throwable -> {
+            Log.d(LOGTAG, "Error getting the bitmap: " + throwable.getLocalizedMessage());
+            throwable.printStackTrace();
+            return null;
         });
 
         mURL.setText(UrlUtils.stripProtocol(aSession.getCurrentUri()));

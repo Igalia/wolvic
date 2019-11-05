@@ -6,6 +6,7 @@
 package org.mozilla.vrbrowser.ui.widgets.settings;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 
 import androidx.databinding.DataBindingUtil;
@@ -20,9 +21,9 @@ import org.mozilla.vrbrowser.databinding.OptionsFxaAccountBinding;
 import org.mozilla.vrbrowser.ui.views.settings.SwitchSetting;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.utils.SystemUtils;
-import org.mozilla.vrbrowser.utils.UIThreadExecutor;
 
 import java.util.Objects;
+import java.util.concurrent.Executor;
 
 import mozilla.components.concept.sync.AccountObserver;
 import mozilla.components.concept.sync.AuthType;
@@ -38,6 +39,7 @@ class FxAAccountOptionsView extends SettingsView {
 
     private OptionsFxaAccountBinding mBinding;
     private Accounts mAccounts;
+    private Executor mUIThreadExecutor;
 
     public FxAAccountOptionsView(Context aContext, WidgetManagerDelegate aWidgetManager) {
         super(aContext, aWidgetManager);
@@ -56,6 +58,8 @@ class FxAAccountOptionsView extends SettingsView {
         mBinding.headerLayout.setBackClickListener(view -> onDismiss());
 
         mAccounts = ((VRBrowserApplication)getContext().getApplicationContext()).getAccounts();
+
+        mUIThreadExecutor = ((VRBrowserApplication)getContext().getApplicationContext()).getExecutors().mainThread();
 
         mBinding.signButton.setOnClickListener(view -> mAccounts.logoutAsync());
         mBinding.bookmarksSyncSwitch.setOnCheckedChangeListener(mBookmarksSyncListener);
@@ -134,7 +138,13 @@ class FxAAccountOptionsView extends SettingsView {
                     updateProfile(profile);
 
                 } else {
-                    Objects.requireNonNull(mAccounts.updateProfileAsync()).thenAcceptAsync((u) -> updateProfile(mAccounts.accountProfile()), new UIThreadExecutor());
+                    Objects.requireNonNull(mAccounts.updateProfileAsync()).
+                            thenAcceptAsync((u) -> updateProfile(mAccounts.accountProfile()), mUIThreadExecutor).
+                            exceptionally(throwable -> {
+                                Log.d(LOGTAG, "Error getting the account profile: " + throwable.getLocalizedMessage());
+                                throwable.printStackTrace();
+                                return null;
+                    });
                 }
                 break;
 

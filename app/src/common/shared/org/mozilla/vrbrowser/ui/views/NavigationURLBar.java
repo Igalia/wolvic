@@ -31,6 +31,7 @@ import androidx.databinding.DataBindingUtil;
 
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.BookmarksStore;
 import org.mozilla.vrbrowser.browser.engine.Session;
@@ -42,7 +43,6 @@ import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.SelectionActionWidget;
 import org.mozilla.vrbrowser.utils.StringUtils;
 import org.mozilla.vrbrowser.utils.SystemUtils;
-import org.mozilla.vrbrowser.utils.UIThreadExecutor;
 import org.mozilla.vrbrowser.utils.UrlUtils;
 import org.mozilla.vrbrowser.utils.ViewUtils;
 
@@ -51,6 +51,7 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.concurrent.Executor;
 
 import kotlin.Unit;
 import mozilla.components.browser.domains.autocomplete.DomainAutocompleteResult;
@@ -68,7 +69,7 @@ public class NavigationURLBar extends FrameLayout {
     private NavigationURLBarDelegate mDelegate;
     private ShippedDomainsProvider mAutocompleteProvider;
     private AudioEngine mAudio;
-    private UIThreadExecutor mUIThreadExecutor = new UIThreadExecutor();
+    private Executor mUIThreadExecutor;
     private Session mSession;
     private SelectionActionWidget mSelectionMenu;
     private boolean mWasFocusedWhenTouchBegan = false;
@@ -107,6 +108,8 @@ public class NavigationURLBar extends FrameLayout {
     @SuppressLint("ClickableViewAccessibility")
     private void initialize(Context aContext) {
         mAudio = AudioEngine.fromContext(aContext);
+
+        mUIThreadExecutor = ((VRBrowserApplication)getContext().getApplicationContext()).getExecutors().mainThread();
 
         mSession = SessionStore.get().getActiveSession();
 
@@ -291,8 +294,9 @@ public class NavigationURLBar extends FrameLayout {
                 bookmarkStore.deleteBookmarkByURL(url);
                 setIsBookmarked(false);
             }
-        }, mUIThreadExecutor).exceptionally(th -> {
-            Log.d(LOGTAG, "Error getting bookmarks: " + th.getLocalizedMessage());
+        }, mUIThreadExecutor).exceptionally(throwable -> {
+            Log.d(LOGTAG, "Error checking bookmark: " + throwable.getLocalizedMessage());
+            throwable.printStackTrace();
             return null;
         });
 
@@ -310,7 +314,11 @@ public class NavigationURLBar extends FrameLayout {
         if (StringUtils.isEmpty(aURL)) {
             setIsBookmarked(false);
         } else {
-            SessionStore.get().getBookmarkStore().isBookmarked(aURL).thenAcceptAsync(this::setIsBookmarked, mUIThreadExecutor);
+            SessionStore.get().getBookmarkStore().isBookmarked(aURL).thenAcceptAsync(this::setIsBookmarked, mUIThreadExecutor).exceptionally(throwable -> {
+                Log.d(LOGTAG, "Error getting the bookmarked status: " + throwable.getLocalizedMessage());
+                throwable.printStackTrace();
+                return null;
+            });
         }
 
         int index = -1;

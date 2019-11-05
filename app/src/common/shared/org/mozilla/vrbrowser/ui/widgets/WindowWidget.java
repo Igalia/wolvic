@@ -26,13 +26,13 @@ import androidx.annotation.StringRes;
 import androidx.annotation.UiThread;
 
 import org.jetbrains.annotations.NotNull;
-import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.geckoview.GeckoDisplay;
 import org.mozilla.geckoview.GeckoResponse;
 import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.PanZoomController;
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.browser.HistoryStore;
 import org.mozilla.vrbrowser.browser.PromptDelegate;
 import org.mozilla.vrbrowser.browser.SessionChangeListener;
@@ -58,7 +58,6 @@ import org.mozilla.vrbrowser.ui.widgets.prompts.ConfirmPromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.PromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.settings.SettingsWidget;
 import org.mozilla.vrbrowser.utils.SystemUtils;
-import org.mozilla.vrbrowser.utils.UIThreadExecutor;
 import org.mozilla.vrbrowser.utils.ViewUtils;
 
 import java.util.ArrayList;
@@ -66,6 +65,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Executor;
 
 import mozilla.components.concept.storage.PageObservation;
 import mozilla.components.concept.storage.PageVisit;
@@ -135,6 +135,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private boolean mAfterFirstPaint;
     private boolean mCaptureOnPageStop;
     private PromptDelegate mPromptDelegate;
+    private Executor mUIThreadExecutor;
 
     public interface WindowListener {
         default void onFocusRequest(@NonNull WindowWidget aWindow) {}
@@ -161,6 +162,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private void initialize(Context aContext) {
         mWidgetManager = (WidgetManagerDelegate) aContext;
         mBorderWidth = SettingsStore.getInstance(aContext).getTransparentBorderWidth();
+
+        mUIThreadExecutor = ((VRBrowserApplication)getContext().getApplicationContext()).getExecutors().mainThread();
 
         mListeners = new CopyOnWriteArrayList<>();
         setupListeners(mSession);
@@ -1375,8 +1378,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             }));
             mLibraryItemContextMenu.show(REQUEST_FOCUS);
 
-        }), new UIThreadExecutor()).exceptionally(throwable -> {
-            Log.d(LOGTAG, "Couldn't get the bookmarked status of the history item");
+        }), mUIThreadExecutor).exceptionally(throwable -> {
+            Log.d(LOGTAG, "Error getting the bookmarked status: " + throwable.getLocalizedMessage());
+            throwable.printStackTrace();
             return null;
         });
     }
@@ -1470,7 +1474,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             return;
         }
         if (mFirstDrawCallback != null) {
-            ThreadUtils.postToUiThread(mFirstDrawCallback);
+            mUIThreadExecutor.execute(mFirstDrawCallback);
             mFirstDrawCallback = null;
         }
     }
@@ -1481,7 +1485,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             return;
         }
         if (mFirstDrawCallback != null) {
-            ThreadUtils.postToUiThread(mFirstDrawCallback);
+            mUIThreadExecutor.execute(mFirstDrawCallback);
             mFirstDrawCallback = null;
             mAfterFirstPaint = true;
         }
@@ -1574,6 +1578,11 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         SessionStore.get().getHistoryStore().deleteVisitsFor(url).thenAcceptAsync(result -> {
             SessionStore.get().getHistoryStore().recordVisit(url, pageVisit);
             SessionStore.get().getHistoryStore().recordObservation(url, new PageObservation(url));
+
+        }, mUIThreadExecutor).exceptionally(throwable -> {
+            Log.d(LOGTAG, "Error deleting history: " + throwable.getLocalizedMessage());
+            throwable.printStackTrace();
+            return null;
         });
         return GeckoResult.fromValue(true);
     }
@@ -1594,6 +1603,11 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 primitives[index++] = object;
             }
             result.complete(primitives);
+
+        }, mUIThreadExecutor).exceptionally(throwable -> {
+            Log.d(LOGTAG, "Error getting history: " + throwable.getLocalizedMessage());
+            throwable.printStackTrace();
+            return null;
         });
 
         return result;

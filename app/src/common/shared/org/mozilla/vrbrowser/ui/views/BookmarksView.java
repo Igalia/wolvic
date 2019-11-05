@@ -8,6 +8,7 @@ package org.mozilla.vrbrowser.ui.views;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -35,10 +36,11 @@ import org.mozilla.vrbrowser.ui.adapters.CustomLinearLayoutManager;
 import org.mozilla.vrbrowser.ui.callbacks.BookmarkItemCallback;
 import org.mozilla.vrbrowser.ui.callbacks.BookmarksCallback;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
-import org.mozilla.vrbrowser.utils.UIThreadExecutor;
+import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
 
 import mozilla.appservices.places.BookmarkRoot;
 import mozilla.components.concept.storage.BookmarkNode;
@@ -52,11 +54,14 @@ import mozilla.components.service.fxa.sync.SyncStatusObserver;
 
 public class BookmarksView extends FrameLayout implements BookmarksStore.BookmarkListener {
 
+    private static final String LOGTAG = SystemUtils.createLogtag(BookmarksView.class);
+
     private BookmarksBinding mBinding;
     private Accounts mAccounts;
     private BookmarkAdapter mBookmarkAdapter;
     private ArrayList<BookmarksCallback> mBookmarksViewListeners;
     private CustomLinearLayoutManager mLayoutManager;
+    private Executor mUIThreadExecutor;
 
     public BookmarksView(Context aContext) {
         super(aContext);
@@ -76,6 +81,8 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
     @SuppressLint("ClickableViewAccessibility")
     private void initialize(Context aContext) {
         LayoutInflater inflater = LayoutInflater.from(aContext);
+
+        mUIThreadExecutor = ((VRBrowserApplication)getContext().getApplicationContext()).getExecutors().mainThread();
 
         mBookmarksViewListeners = new ArrayList<>();
 
@@ -201,7 +208,11 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
                     widgetManager.openNewTabForeground(url);
                     widgetManager.getFocusedWindow().getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
                 }
-            }, new UIThreadExecutor());
+            }, mUIThreadExecutor).exceptionally(throwable -> {
+                Log.d(LOGTAG, "Error getting the authentication URL: " + throwable.getLocalizedMessage());
+                throwable.printStackTrace();
+                return null;
+            });
         }
 
         @Override
@@ -273,7 +284,13 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
     };
 
     private void updateBookmarks() {
-        SessionStore.get().getBookmarkStore().getTree(BookmarkRoot.Root.getId(), true).thenAcceptAsync(this::showBookmarks, new UIThreadExecutor());
+        SessionStore.get().getBookmarkStore().getTree(BookmarkRoot.Root.getId(), true).
+                thenAcceptAsync(this::showBookmarks, mUIThreadExecutor).
+                exceptionally(throwable -> {
+                    Log.d(LOGTAG, "Error getting bookmarks: " + throwable.getLocalizedMessage());
+                    throwable.printStackTrace();
+                    return null;
+        });
     }
 
     private void showBookmarks(List<BookmarkNode> aBookmarks) {

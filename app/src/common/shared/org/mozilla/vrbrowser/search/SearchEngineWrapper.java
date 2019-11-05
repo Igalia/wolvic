@@ -6,15 +6,16 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 
 import androidx.annotation.NonNull;
 
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.geolocation.GeolocationData;
 import org.mozilla.vrbrowser.search.suggestions.SuggestionsClient;
+import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 import kotlinx.coroutines.Dispatchers;
 import mozilla.components.browser.search.SearchEngine;
@@ -34,6 +36,8 @@ import mozilla.components.browser.search.provider.localization.SearchLocalizatio
 import mozilla.components.browser.search.suggestions.SearchSuggestionClient;
 
 public class SearchEngineWrapper implements SharedPreferences.OnSharedPreferenceChangeListener {
+
+    private static final String LOGTAG = SystemUtils.createLogtag(SearchEngineWrapper.class);
 
     // Specific FxR engine overrides. US is already overridden by browser-search component
     // https://github.com/MozillaReality/FirefoxReality/issues/248#issuecomment-412278211
@@ -68,10 +72,12 @@ public class SearchEngineWrapper implements SharedPreferences.OnSharedPreference
     private SearchEngineManager mSearchEngineManager;
     private SearchSuggestionClient mSuggestionsClient;
     private SharedPreferences mPrefs;
+    private Executor mUIThreadExecutor;
 
     private SearchEngineWrapper(@NonNull Context aContext) {
         mContext = aContext;
         mPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+        mUIThreadExecutor = ((VRBrowserApplication)aContext.getApplicationContext()).getExecutors().mainThread();
 
         setupSearchEngine(aContext, EMPTY);
     }
@@ -108,7 +114,7 @@ public class SearchEngineWrapper implements SharedPreferences.OnSharedPreference
         CompletableFuture<List<String>> future = new CompletableFuture<>();
         // TODO: Use mSuggestionsClient.getSuggestions when fixed in browser-search.
         String query = getSuggestionURL(aQuery);
-        new Handler(mContext.getMainLooper()).post(() ->
+        mUIThreadExecutor.execute(() ->
                 SuggestionsClient.getSuggestions(mSearchEngine, query).thenAcceptAsync(future::complete));
 
         return future;
