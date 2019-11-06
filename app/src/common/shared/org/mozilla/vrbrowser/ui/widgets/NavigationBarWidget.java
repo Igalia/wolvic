@@ -320,7 +320,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mButtons = new ArrayList<>();
         mButtons.addAll(Arrays.<CustomUIButton>asList(
                 mBackButton, mForwardButton, mReloadButton, mHomeButton, mMenuButton,
-                mServoButton, mPreset0, mPreset1, mPreset15, mPreset2, mPreset3));
+                mServoButton, mPreset0, mPreset1, mPreset15, mPreset2, mPreset3, mResizeExitButton));
 
         mURLBar.setDelegate(this);
 
