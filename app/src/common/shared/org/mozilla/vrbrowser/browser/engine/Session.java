@@ -361,6 +361,8 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         } else if(mState.mSessionState == null || mState.mUri.equals(mContext.getResources().getString(R.string.about_blank)) ||
                 (mState.mSessionState != null && mState.mSessionState.size() == 0)) {
             loadHomePage();
+        } else if (mState.mUri != null && mState.mUri.contains(".youtube.com")) {
+            mState.mSession.loadUri(mState.mUri);
         }
 
         dumpAllState();
@@ -391,6 +393,9 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
                 .useMultiprocess(aSettings.isMultiprocessEnabled())
                 .usePrivateMode(mUsePrivateMode)
                 .useTrackingProtection(aSettings.isTrackingProtectionEnabled())
+                .userAgentMode(aSettings.getUserAgentMode())
+                .viewportMode(aSettings.getViewportMode())
+                .suspendMediaWhenInactive(aSettings.isSuspendMediaWhenInactiveEnabled())
                 .build();
 
         GeckoSession session;
@@ -400,8 +405,6 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
             session = new GeckoSession(geckoSettings);
         }
 
-        session.getSettings().setSuspendMediaWhenInactive(aSettings.isSuspendMediaWhenInactiveEnabled());
-        session.getSettings().setUserAgentMode(aSettings.getUserAgentMode());
         session.getSettings().setUserAgentOverride(aSettings.getUserAgentOverride());
 
         return session;
