@@ -132,7 +132,7 @@
             android:textSize="@dimen/text_medium_size"
             android:textStyle="italic"
             app:lastSync="@{lastSync}"
-            app:visibleGone="@{isSignedIn}" />
+            app:visibleGone="@{isSignedIn &amp;&amp; isSyncEnabled &amp;&amp; !isSyncing}" />
 
         <TextView
             android:id="@+id/textView"

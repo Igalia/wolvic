@@ -126,4 +126,17 @@ public class SwitchSetting extends LinearLayout {
         mSwitchDescription.setText(description);
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+
+        mSwitch.setEnabled(enabled);
+    }
+
+    @Override
+    public void setHovered(boolean hovered) {
+        super.setHovered(hovered);
+
+        mSwitch.setHovered(hovered);
+    }
 }

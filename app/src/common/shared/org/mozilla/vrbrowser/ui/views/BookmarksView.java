@@ -109,15 +109,17 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
         mAccounts.addSyncListener(mSyncListener);
 
         mBinding.setIsSignedIn(mAccounts.isSignedIn());
-        mBinding.setIsSyncEnabled(mAccounts.isEngineEnabled(SyncEngine.Bookmarks.INSTANCE));
+        boolean isSyncEnabled = mAccounts.isEngineEnabled(SyncEngine.Bookmarks.INSTANCE);
+        mBinding.setIsSyncEnabled(isSyncEnabled);
+        if (isSyncEnabled) {
+            mBinding.setLastSync(mAccounts.lastSync());
+            mBinding.setIsSyncing(mAccounts.isSyncing());
+        }
         mBinding.setIsNarrow(false);
         mBinding.executePendingBindings();
 
         updateBookmarks();
         SessionStore.get().getBookmarkStore().addListener(this);
-
-        mBinding.setIsSignedIn(mAccounts.isSignedIn());
-        mBinding.setIsSyncEnabled(mAccounts.isEngineEnabled(SyncEngine.Bookmarks.INSTANCE));
 
         setVisibility(GONE);
 
@@ -239,27 +241,35 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
     private SyncStatusObserver mSyncListener = new SyncStatusObserver() {
         @Override
         public void onStarted() {
-            boolean isSyncEnabled = mAccounts.isEngineEnabled(SyncEngine.Bookmarks.INSTANCE);
-            mBinding.setIsSyncEnabled(isSyncEnabled);
-            mBinding.setIsSyncing(true);
-            mBinding.executePendingBindings();
+            updateSyncBindings(true);
         }
 
         @Override
         public void onIdle() {
-            mBinding.setIsSyncing(false);
-            if (mAccounts.isEngineEnabled(SyncEngine.Bookmarks.INSTANCE)) {
-                mBinding.setLastSync(mAccounts.lastSync());
-            }
+            updateSyncBindings(false);
+
+            // This shouldn't be necessary but for some reason the buttons stays hovered after the sync.
+            // I guess Android is after enabling it it's state is restored to the latest one (hovered)
+            // Probably an Android bindings bug.
+            mBinding.bookmarksNarrow.syncButton.setHovered(false);
+            mBinding.bookmarksWide.syncButton.setHovered(false);
         }
 
         @Override
         public void onError(@Nullable Exception e) {
-            mBinding.setIsSyncing(false);
-            mBinding.setIsSyncEnabled(mAccounts.isEngineEnabled(SyncEngine.Bookmarks.INSTANCE));
-            mBinding.executePendingBindings();
+            updateSyncBindings(false);
         }
     };
+
+    private void updateSyncBindings(boolean isSyncing) {
+        boolean isSyncEnabled = mAccounts.isEngineEnabled(SyncEngine.Bookmarks.INSTANCE);
+        mBinding.setIsSyncEnabled(isSyncEnabled);
+        if (isSyncEnabled) {
+            mBinding.setIsSyncing(isSyncing);
+            mBinding.setLastSync(mAccounts.lastSync());
+        }
+        mBinding.executePendingBindings();
+    }
 
     private AccountObserver mAccountListener = new AccountObserver() {
 

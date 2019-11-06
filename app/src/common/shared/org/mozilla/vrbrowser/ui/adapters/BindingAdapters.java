@@ -18,6 +18,7 @@ import androidx.databinding.BindingAdapter;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.ui.views.HoneycombButton;
 import org.mozilla.vrbrowser.ui.views.UIButton;
+import org.mozilla.vrbrowser.ui.views.settings.SwitchSetting;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -112,10 +113,13 @@ public class BindingAdapters {
         }
     }
 
-
-
     @BindingAdapter("android:layout_width")
     public static void setLayoutWidth(@NonNull UIButton button, @NonNull @Dimension float dimen) {
         button.setLayoutWidth(dimen);
+    }
+
+    @BindingAdapter("android:enabled")
+    public static void setEnabled(@NonNull SwitchSetting button, boolean enabled) {
+        button.setEnabled(enabled);
     }
 }

@@ -154,7 +154,7 @@
                 android:textStyle="italic"
                 android:text="@{!isSyncEnabled ? @string/fxa_account_syncing_off : null}"
                 app:lastSync="@{lastSync}"
-                app:visibleGone="@{isSignedIn}"/>
+                app:visibleGone="@{isSignedIn &amp;&amp; isSyncEnabled &amp;&amp; !isSyncing}"/>
         </LinearLayout>
 
     </LinearLayout>

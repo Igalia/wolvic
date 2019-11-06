@@ -389,9 +389,9 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             params.leftMargin = params.rightMargin = mViewMarginH / 2;
             params.topMargin = params.bottomMargin = mViewMarginV / 2;
+            mCurrentView.onShown();
             this.addView(mCurrentView, params);
             mCurrentView.setDelegate(this);
-            mCurrentView.onShown();
             mBinding.optionsLayout.setVisibility(View.GONE);
 
         } else {

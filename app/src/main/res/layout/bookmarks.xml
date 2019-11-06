@@ -47,7 +47,8 @@
         android:paddingTop="30dp"
         android:paddingBottom="30dp">
 
-        <include layout="@layout/bookmarks_narrow"
+        <include android:id="@+id/bookmarks_narrow"
+            layout="@layout/bookmarks_narrow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="30dp"
@@ -61,7 +62,8 @@
             app:isNarrow="@{isNarrow}"
             app:callback="@{callback}"/>
 
-        <include layout="@layout/bookmarks_wide"
+        <include android:id="@+id/bookmarks_wide"
+            layout="@layout/bookmarks_wide"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="30dp"
