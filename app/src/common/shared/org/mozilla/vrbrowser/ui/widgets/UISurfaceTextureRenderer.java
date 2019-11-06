@@ -79,6 +79,11 @@ class UISurfaceTextureRenderer {
         mSurfaceCanvas = null;
     }
 
+    void clearSurface() {
+        drawBegin();
+        drawEnd();
+    }
+
     int width() {
         return mTextureWidth;
     }

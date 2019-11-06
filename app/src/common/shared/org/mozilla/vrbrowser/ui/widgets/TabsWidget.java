@@ -157,6 +157,7 @@ public class TabsWidget extends UIDialog implements WidgetManagerDelegate.WorldC
     public void show(int aShowFlags) {
         super.show(aShowFlags);
         refreshTabs();
+        invalidate();
         mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
         mTabsList.requestFocusFromTouch();
     }
@@ -164,7 +165,7 @@ public class TabsWidget extends UIDialog implements WidgetManagerDelegate.WorldC
     @Override
     public void hide(@HideFlags int aHideFlags) {
         super.hide(aHideFlags);
-
+        mRenderer.clearSurface();
         mWidgetManager.popWorldBrightness(this);
     }
 
