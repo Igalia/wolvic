@@ -9,7 +9,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Surface;
@@ -47,7 +46,6 @@ import org.mozilla.vrbrowser.utils.SystemUtils;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.LinkedList;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -1239,11 +1237,9 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
             } else {
                 mQueuedCalls.add(() -> {
-                    new Handler(mContext.getMainLooper()).postDelayed(() -> {
-                        if (mHistoryDelegate != null) {
-                            mHistoryDelegate.onHistoryStateChange(aSession, historyList);
-                        }
-                    }, 100);
+                    if (mHistoryDelegate != null) {
+                        mHistoryDelegate.onHistoryStateChange(aSession, historyList);
+                    }
                 });
             }
         }

@@ -41,7 +41,11 @@ import java.util.Calendar;
 import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import mozilla.components.concept.storage.VisitInfo;
@@ -286,6 +290,12 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
         }
     };
 
+    @NotNull
+    public static <T> Predicate<T> distinctByUrl(Function<? super T, ?> keyExtractor) {
+        Set<Object> seen = ConcurrentHashMap.newKeySet();
+        return t -> seen.add(keyExtractor.apply(t));
+    }
+
     private void updateHistory() {
         Calendar date = new GregorianCalendar();
         date.set(Calendar.HOUR_OF_DAY, 0);
@@ -301,6 +311,7 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
             List<VisitInfo> orderedItems = items.stream()
                     .sorted(Comparator.comparing(VisitInfo::getVisitTime)
                     .reversed())
+                    .filter(distinctByUrl(VisitInfo::getUrl))
                     .collect(Collectors.toList());
 
             addSection(orderedItems, getResources().getString(R.string.history_section_today), Long.MAX_VALUE, todayLimit);

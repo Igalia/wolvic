@@ -1575,15 +1575,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             }
         }
 
-        SessionStore.get().getHistoryStore().deleteVisitsFor(url).thenAcceptAsync(result -> {
-            SessionStore.get().getHistoryStore().recordVisit(url, pageVisit);
-            SessionStore.get().getHistoryStore().recordObservation(url, new PageObservation(url));
+        SessionStore.get().getHistoryStore().recordVisit(url, pageVisit);
+        SessionStore.get().getHistoryStore().recordObservation(url, new PageObservation(url));
 
-        }, mUIThreadExecutor).exceptionally(throwable -> {
-            Log.d(LOGTAG, "Error deleting history: " + throwable.getLocalizedMessage());
-            throwable.printStackTrace();
-            return null;
-        });
         return GeckoResult.fromValue(true);
     }
 
