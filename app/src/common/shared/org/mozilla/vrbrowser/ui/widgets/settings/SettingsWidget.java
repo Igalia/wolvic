@@ -497,6 +497,10 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
             if (!mCurrentView.isEditing()) {
                 if (isLanguagesSubView(mCurrentView)) {
                     showLanguageOptionsDialog();
+
+                } else if (isPrivacySubView(mCurrentView)) {
+                    showPrivacyOptionsDialog();
+
                 } else {
                     showView(null);
                 }
@@ -548,6 +552,14 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
         if (view instanceof DisplayLanguageOptionsView ||
                 view instanceof ContentLanguageOptionsView ||
                 view instanceof  VoiceSearchLanguageOptionsView) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean isPrivacySubView(View view) {
+        if (view instanceof AllowedPopUpsOptionsView) {
             return true;
         }
 
