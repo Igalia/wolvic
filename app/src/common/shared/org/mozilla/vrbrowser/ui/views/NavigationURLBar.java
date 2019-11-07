@@ -140,9 +140,8 @@ public class NavigationURLBar extends FrameLayout {
             mBinding.setIsUrlEmpty(isUrlEmpty);
             if (!focused) {
                 hideSelectionMenu();
-
             } else {
-                mBinding.urlEditText.setSelection(mBinding.urlEditText.length(), 0);
+                mBinding.urlEditText.selectAll();
             }
         });
 
