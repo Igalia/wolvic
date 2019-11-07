@@ -1463,6 +1463,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     @Override
     public void onContextMenu(GeckoSession session, int screenX, int screenY, ContextElement element) {
+        if (element.type == ContextElement.TYPE_VIDEO) {
+            return;
+        }
         TelemetryWrapper.longPressContextMenuEvent();
 
         hideContextMenus();
