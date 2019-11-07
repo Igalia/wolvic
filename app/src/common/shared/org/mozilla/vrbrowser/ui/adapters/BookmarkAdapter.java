@@ -24,9 +24,12 @@ import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.utils.AnimationHelper;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import mozilla.appservices.places.BookmarkRoot;
 import mozilla.components.concept.storage.BookmarkNode;
 import mozilla.components.concept.storage.BookmarkNodeType;
 
@@ -74,8 +77,15 @@ public class BookmarkAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         List<Bookmark> newDisplayList;
         if (mDisplayList == null || mDisplayList.isEmpty()) {
-            newDisplayList = Bookmark.getRootDisplayListTree(mBookmarksList);
+            newDisplayList = Bookmark.getDisplayListTree(mBookmarksList, Collections.singletonList(BookmarkRoot.Mobile.getId()));
             mDisplayList = newDisplayList;
+            for (Bookmark node : mDisplayList) {
+                if (node.isExpanded()) {
+                    if (mBookmarkItemCallback != null) {
+                        mBookmarkItemCallback.onFolderOpened(node);
+                    }
+                }
+            }
             notifyItemRangeInserted(0, mDisplayList.size());
 
         } else {
@@ -198,7 +208,9 @@ public class BookmarkAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 switch (ev) {
                     case MotionEvent.ACTION_UP:
                         binding.setIsHovered(true);
-                        mBookmarkItemCallback.onMore(view, binding.getItem());
+                        if (mBookmarkItemCallback != null) {
+                            mBookmarkItemCallback.onMore(view, binding.getItem());
+                        }
                         return true;
 
                     case MotionEvent.ACTION_DOWN:
@@ -213,7 +225,9 @@ public class BookmarkAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 switch (ev) {
                     case MotionEvent.ACTION_UP:
                         binding.setIsHovered(true);
-                        mBookmarkItemCallback.onDelete(view, binding.getItem());
+                        if (mBookmarkItemCallback != null) {
+                            mBookmarkItemCallback.onDelete(view, binding.getItem());
+                        }
                         return true;
 
                     case MotionEvent.ACTION_DOWN:
@@ -349,7 +363,9 @@ public class BookmarkAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             List<Bookmark> newDisplayList = Bookmark.getDisplayListTree(mBookmarksList, openFoldersGuid);
             notifyDiff(newDisplayList);
 
-            mBookmarkItemCallback.onFolderOpened(item);
+            if (mBookmarkItemCallback != null) {
+                mBookmarkItemCallback.onFolderOpened(item);
+            }
         }
     };
 

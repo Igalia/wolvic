@@ -178,7 +178,9 @@ public class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 switch (ev) {
                     case MotionEvent.ACTION_UP:
                         binding.setIsHovered(true);
-                        mHistoryItemCallback.onMore(view, binding.getItem());
+                        if (mHistoryItemCallback != null) {
+                            mHistoryItemCallback.onMore(view, binding.getItem());
+                        }
                         return true;
 
                     case MotionEvent.ACTION_DOWN:
@@ -193,7 +195,9 @@ public class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 switch (ev) {
                     case MotionEvent.ACTION_UP:
                         binding.setIsHovered(true);
-                        mHistoryItemCallback.onDelete(view, binding.getItem());
+                        if (mHistoryItemCallback != null) {
+                            mHistoryItemCallback.onDelete(view, binding.getItem());
+                        }
                         return true;
 
                     case MotionEvent.ACTION_DOWN:
