@@ -123,7 +123,9 @@ class LanguageOptionsView extends SettingsView {
     private SpannableStringBuilder getSpannedLanguageText(@NonNull String language) {
         int end = getLanguageIndex(language);
         SpannableStringBuilder spanned = new SpannableStringBuilder(language);
-        spanned.setSpan(new StyleSpan(Typeface.BOLD), 0, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        if (end > 0) {
+            spanned.setSpan(new StyleSpan(Typeface.BOLD), 0, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
         return spanned;
     }
 
