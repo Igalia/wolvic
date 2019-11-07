@@ -309,7 +309,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     public void close() {
         TelemetryWrapper.closeWindowEvent(mWindowId);
-
+        hideContextMenus();
         releaseWidget();
         mBookmarksView.onDestroy();
         mHistoryView.onDestroy();
@@ -1429,14 +1429,22 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     private void hideContextMenus() {
         if (mContextMenu != null) {
-            mContextMenu.hide(REMOVE_WIDGET);
-            mContextMenu.releaseWidget();
+            if (!mContextMenu.isReleased()) {
+                if (mContextMenu.isVisible()) {
+                    mContextMenu.hide(REMOVE_WIDGET);
+                }
+                mContextMenu.releaseWidget();
+            }
             mContextMenu = null;
         }
         if (mSelectionMenu != null) {
             mSelectionMenu.setDelegate((SelectionActionWidget.Delegate)null);
-            mSelectionMenu.hide(REMOVE_WIDGET);
-            mSelectionMenu.releaseWidget();
+            if (!mSelectionMenu.isReleased()) {
+                if (mSelectionMenu.isVisible()) {
+                    mSelectionMenu.hide(REMOVE_WIDGET);
+                }
+                mSelectionMenu.releaseWidget();
+            }
             mSelectionMenu = null;
         }
 
@@ -1445,7 +1453,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             mWidgetManager.updateWidget(this);
         }
 
-        if (mLibraryItemContextMenu != null && mLibraryItemContextMenu.isVisible()) {
+        if (mLibraryItemContextMenu != null && !mLibraryItemContextMenu.isReleased()
+            && mLibraryItemContextMenu.isVisible()) {
             mLibraryItemContextMenu.hide(REMOVE_WIDGET);
         }
     }
