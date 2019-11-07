@@ -143,7 +143,8 @@ tasks:
               && cp tools/gradle/taskcluster.properties ./user.properties
               && ./gradlew --no-daemon --console=plain clean `python tools/taskcluster/build_targets.py ${event.release.tag_name}`
               && python tools/taskcluster/fetch_secret.py -s project/firefoxreality/fr/release-signing-token -o token -n token
-              && python tools/taskcluster/sign_apk.py -t token -r
+              && python tools/taskcluster/fetch_secret.py -s project/firefoxreality/fr/release-signing-token -o v1token -n v1
+              && python tools/taskcluster/sign_apk.py -t token -c v1token -r
               && python tools/taskcluster/archive_debug_apk.py
               && . tools/taskcluster/upload_symbols.sh
           artifacts:
