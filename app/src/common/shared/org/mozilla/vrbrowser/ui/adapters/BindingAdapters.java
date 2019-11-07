@@ -7,6 +7,7 @@ import android.text.SpannableString;
 import android.text.style.ImageSpan;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.DimenRes;
@@ -18,6 +19,7 @@ import androidx.databinding.BindingAdapter;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.ui.views.HoneycombButton;
 import org.mozilla.vrbrowser.ui.views.UIButton;
+import org.mozilla.vrbrowser.ui.views.settings.ButtonSetting;
 import org.mozilla.vrbrowser.ui.views.settings.SwitchSetting;
 
 import java.text.SimpleDateFormat;
@@ -121,5 +123,35 @@ public class BindingAdapters {
     @BindingAdapter("android:enabled")
     public static void setEnabled(@NonNull SwitchSetting button, boolean enabled) {
         button.setEnabled(enabled);
+    }
+
+    @BindingAdapter("lastSync")
+    public static void setFxALastSync(@NonNull ButtonSetting view, long lastSync) {
+        if (lastSync == 0) {
+            view.setDescription(view.getContext().getString(R.string.fxa_account_last_no_synced));
+
+        } else {
+            long timeDiff = System.currentTimeMillis() - lastSync;
+            if (timeDiff < 60000) {
+                view.setDescription(view.getContext().getString(R.string.fxa_account_last_synced_now));
+
+            } else {
+                view.setDescription(view.getContext().getString(R.string.fxa_account_last_synced, timeDiff / 60000));
+            }
+        }
+    }
+
+    @BindingAdapter("android:layout_height")
+    public static void setLayoutHeight(@NonNull ImageView view, @NonNull @Dimension float dimen) {
+        ViewGroup.LayoutParams params = view.getLayoutParams();
+        params.width = (int)dimen;
+        view.setLayoutParams(params);
+    }
+
+    @BindingAdapter("android:layout_width")
+    public static void setLayoutWidth(@NonNull ImageView view, @NonNull @Dimension float dimen) {
+        ViewGroup.LayoutParams params = view.getLayoutParams();
+        params.height = (int)dimen;
+        view.setLayoutParams(params);
     }
 }

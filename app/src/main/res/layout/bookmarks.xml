@@ -7,6 +7,10 @@
         <import type="android.view.View"/>
 
         <variable
+            name="isAccountsUIEnabled"
+            type="boolean" />
+
+        <variable
             name="isLoading"
             type="boolean" />
 
@@ -54,6 +58,7 @@
             android:layout_marginStart="30dp"
             android:layout_marginEnd="50dp"
             android:layout_marginBottom="20dp"
+            app:isAccountsUIEnabled="@{isAccountsUIEnabled}"
             app:isEmpty="@{isEmpty}"
             app:isSignedIn="@{isSignedIn}"
             app:isSyncEnabled="@{isSyncEnabled}"
@@ -69,6 +74,7 @@
             android:layout_marginStart="30dp"
             android:layout_marginEnd="50dp"
             android:layout_marginBottom="20dp"
+            app:isAccountsUIEnabled="@{isAccountsUIEnabled}"
             app:isEmpty="@{isEmpty}"
             app:isSignedIn="@{isSignedIn}"
             app:isSyncEnabled="@{isSyncEnabled}"
@@ -85,8 +91,8 @@
             app:visibleGone="@{!isLoading &amp;&amp; isEmpty}">
 
             <ImageView
-                android:layout_width="75dp"
-                android:layout_height="75dp"
+                android:layout_width="@{isNarrow ? @dimen/library_icon_size_narrow : @dimen/library_icon_size_wide, default=wrap_content}"
+                android:layout_height="@{isNarrow ? @dimen/library_icon_size_narrow : @dimen/library_icon_size_wide, default=wrap_content}"
                 android:src="@drawable/ic_icon_bookmarks"
                 app:srcCompat="@drawable/ic_icon_bookmarks" />
 

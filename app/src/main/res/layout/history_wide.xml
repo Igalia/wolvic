@@ -4,6 +4,10 @@
 
     <data>
         <variable
+            name="isAccountsUIEnabled"
+            type="boolean" />
+
+        <variable
             name="isEmpty"
             type="boolean" />
 
@@ -79,7 +83,7 @@
                 android:textStyle="italic"
                 android:text="@{!isSyncEnabled ? @string/fxa_account_syncing_off : null}"
                 app:lastSync="@{lastSync}"
-                app:visibleGone="@{isSignedIn &amp;&amp; isSyncEnabled &amp;&amp; !isSyncing}"/>
+                app:visibleGone="@{isAccountsUIEnabled &amp;&amp; isSignedIn &amp;&amp; isSyncEnabled &amp;&amp; !isSyncing}"/>
 
             <FrameLayout
                 android:id="@+id/buttons_layout"
@@ -87,7 +91,8 @@
                 android:layout_height="wrap_content"
                 android:layout_toStartOf="@+id/clearButton"
                 android:layout_centerVertical="true"
-                android:layout_marginEnd="20dp">
+                android:layout_marginEnd="20dp"
+                visibleGone="@{isAccountsUIEnabled}">
                 <Button
                     android:id="@+id/syncButton"
                     android:layout_width="wrap_content"

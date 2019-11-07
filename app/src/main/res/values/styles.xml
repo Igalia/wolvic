@@ -276,7 +276,7 @@
         <item name="android:layout_gravity">center</item>
         <item name="android:gravity">center</item>
         <item name="android:text">@string/developer_options_edit</item>
-        <item name="android:textColor">@drawable/main_button_icon_color</item>
+        <item name="android:textColor">@drawable/main_button_text_color</item>
         <item name="android:textSize">14sp</item>
         <item name="android:typeface">sans</item>
         <item name="android:textStyle">bold</item>

@@ -497,6 +497,14 @@
     <!-- This string is used to in the FxA account manage panel as a header for the sync options. -->
     <string name="fxa_account_options_sync_title">Sync Settings</string>
 
+    <!-- This string is used to in the FxA account manage panel as the description of the Sync button when is not syncing.
+         The sync button will start syncing when pressed-->
+    <string name="fxa_account_options_sync_now">Sync Now</string>
+
+    <!-- This string is used to in the FxA account manage panel as the description of the Sync button while syncon.
+         The sync button will start syncing when pressed-->
+    <string name="fxa_account_options_syncing">Syncing...</string>
+
     <!-- This string is used to in the FxA account manage panel as a description for the sync options. -->
     <string name="fxa_account_options_sync_description">Choose what to synchronize on your devices using Firefox</string>
 

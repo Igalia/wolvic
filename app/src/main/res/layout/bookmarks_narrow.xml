@@ -4,6 +4,10 @@
 
     <data>
         <variable
+            name="isAccountsUIEnabled"
+            type="boolean" />
+
+        <variable
             name="isEmpty"
             type="boolean" />
 
@@ -71,7 +75,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            visibleGone="@{isAccountsUIEnabled}">
 
             <FrameLayout
                 android:id="@+id/buttons_layout"

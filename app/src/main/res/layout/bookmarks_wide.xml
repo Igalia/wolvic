@@ -4,6 +4,10 @@
 
     <data>
         <variable
+            name="isAccountsUIEnabled"
+            type="boolean" />
+
+        <variable
             name="isEmpty"
             type="boolean" />
 
@@ -42,7 +46,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true">
+            android:layout_centerVertical="true"
+            visibleGone="@{isAccountsUIEnabled}">
 
             <Button
                 android:id="@+id/syncButton"
@@ -132,7 +137,7 @@
             android:textSize="@dimen/text_medium_size"
             android:textStyle="italic"
             app:lastSync="@{lastSync}"
-            app:visibleGone="@{isSignedIn &amp;&amp; isSyncEnabled &amp;&amp; !isSyncing}" />
+            app:visibleGone="@{isAccountsUIEnabled &amp;&amp; isSignedIn &amp;&amp; isSyncEnabled &amp;&amp; !isSyncing}" />
 
         <TextView
             android:id="@+id/textView"

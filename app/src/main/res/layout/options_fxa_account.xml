@@ -4,6 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
     <data>
         <variable
+            name="lastSync"
+            type="long" />
+        <variable
             name="isSyncing"
             type="boolean" />
     </data>
@@ -45,6 +48,15 @@
                 android:orientation="vertical">
 
                 <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                    android:id="@+id/sync_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="@{!isSyncing}"
+                    app:buttonText="@{isSyncing ? @string/fxa_account_options_syncing : @string/fxa_account_options_sync_now}"
+                    app:description="@string/fxa_account_last_no_synced"
+                    lastSync="@{lastSync}"/>
+
+                <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
                     android:id="@+id/sign_button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -54,49 +66,29 @@
                 <TextView
                     android:id="@+id/account_email"
                     style="@style/settingsDescription"
-                    android:layout_below="@+id/backButton"
                     android:gravity="center_vertical"
-                    android:layout_marginLeft="50dp"
+                    android:layout_marginStart="50dp"
                     android:layout_marginBottom="15dp"
                     android:text=""
-                    tools:text="" />
+                    tools:text="mozilla@mozilla.com" />
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:orientation="vertical">
-                        <TextView
-                            style="@style/settingsDescription"
-                            android:layout_below="@+id/backButton"
-                            android:gravity="center_vertical"
-                            android:text="@string/fxa_account_options_sync_title"
-                            tools:text="@string/fxa_account_options_sync_title" />
-                        <TextView
-                            style="@style/settingsDescriptionText"
-                            android:layout_below="@+id/backButton"
-                            android:gravity="center_vertical"
-                            android:text="@string/fxa_account_options_sync_description"
-                            tools:text="@string/fxa_account_options_sync_description" />
-                    </LinearLayout>
-                    <ProgressBar
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:indeterminate="true"
-                        visibleGone="@{isSyncing}"/>
-                </RelativeLayout>
+                <TextView
+                    style="@style/settingsDescription"
+                    android:gravity="center_vertical"
+                    android:text="@string/fxa_account_options_sync_title"
+                    tools:text="@string/fxa_account_options_sync_title" />
+
+                <TextView
+                    style="@style/settingsDescriptionText"
+                    android:gravity="center_vertical"
+                    android:text="@string/fxa_account_options_sync_description"
+                    tools:text="@string/fxa_account_options_sync_description" />
 
                 <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
                     android:id="@+id/bookmarks_sync_switch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="50dp"
-                    android:enabled="@{!isSyncing}"
+                    android:layout_marginStart="50dp"
                     app:description="@string/fxa_account_options_bookmarks_sync"
                     app:on_text="@string/sync"
                     app:off_text="@string/do_not_sync"/>
@@ -105,8 +97,7 @@
                     android:id="@+id/history_sync_switch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="50dp"
-                    android:enabled="@{!isSyncing}"
+                    android:layout_marginStart="50dp"
                     app:description="@string/fxa_account_options_history_sync"
                     app:on_text="@string/sync"
                     app:off_text="@string/do_not_sync"/>

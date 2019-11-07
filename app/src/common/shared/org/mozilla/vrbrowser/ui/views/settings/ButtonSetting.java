@@ -108,4 +108,10 @@ public class ButtonSetting extends LinearLayout {
         mButton.setVisibility(visibility);
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+
+        mButton.setEnabled(enabled);
+    }
 }

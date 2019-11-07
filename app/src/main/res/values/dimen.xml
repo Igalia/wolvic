@@ -230,6 +230,8 @@
     <dimen name="library_item_date_text_size">16sp</dimen>
     <dimen name="library_icon_padding_max">10dp</dimen>
     <dimen name="library_icon_padding_min">8dp</dimen>
+    <dimen name="library_icon_size_wide">75dp</dimen>
+    <dimen name="library_icon_size_narrow">65dp</dimen>
 
     <!-- Language -->
     <dimen name="language_row_height">22dp</dimen>

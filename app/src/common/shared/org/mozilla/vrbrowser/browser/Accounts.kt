@@ -112,7 +112,7 @@ class Accounts constructor(val context: Context) {
             // Enable syncing after signing in
             syncStorage.setStatus(SyncEngine.Bookmarks, SettingsStore.getInstance(context).isBookmarksSyncEnabled)
             syncStorage.setStatus(SyncEngine.History, SettingsStore.getInstance(context).isHistorySyncEnabled)
-            services.accountManager.syncNowAsync(SyncReason.EngineChange, false)
+            services.accountManager.syncNowAsync(SyncReason.EngineChange, true)
 
             // Update device list
             account.deviceConstellation().registerDeviceObserver(
