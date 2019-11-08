@@ -114,4 +114,11 @@ public class ButtonSetting extends LinearLayout {
 
         mButton.setEnabled(enabled);
     }
+
+    @Override
+    public void setHovered(boolean hovered) {
+        super.setHovered(hovered);
+
+        mButton.setHovered(hovered);
+    }
 }
