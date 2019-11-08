@@ -132,9 +132,6 @@ class FxAAccountOptionsView extends SettingsView {
         public void onIdle() {
             updateSyncBindings(false);
 
-            mBinding.bookmarksSyncSwitch.setValue(mAccounts.isEngineEnabled(SyncEngine.Bookmarks.INSTANCE), false);
-            mBinding.historySyncSwitch.setValue(mAccounts.isEngineEnabled(SyncEngine.History.INSTANCE), false);
-
             // This shouldn't be necessary but for some reason the buttons stays hovered after the sync.
             // I guess Android restoring it to the latest state (hovered) before being disabled
             // Probably an Android bindings bug.
