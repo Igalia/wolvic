@@ -333,17 +333,20 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
     }
 
     private void setResultState() {
-        mVoiceSearchText1.setText(R.string.voice_search_error);
-        mVoiceSearchText1.setVisibility(View.VISIBLE);
-        mVoiceSearchText2.setText(R.string.voice_search_try_again);
-        mVoiceSearchText2.setVisibility(View.VISIBLE);
-        mVoiceSearchText3.setVisibility(View.VISIBLE);
-        mVoiceSearchInput.setVisibility(View.VISIBLE);
-        mVoiceSearchSearching.clearAnimation();
-        mVoiceSearchSearching.setVisibility(View.INVISIBLE);
-
         stopVoiceSearch();
-        startVoiceSearch();
+
+        postDelayed(() -> {
+            mVoiceSearchText1.setText(R.string.voice_search_error);
+            mVoiceSearchText1.setVisibility(View.VISIBLE);
+            mVoiceSearchText2.setText(R.string.voice_search_try_again);
+            mVoiceSearchText2.setVisibility(View.VISIBLE);
+            mVoiceSearchText3.setVisibility(View.VISIBLE);
+            mVoiceSearchInput.setVisibility(View.VISIBLE);
+            mVoiceSearchSearching.clearAnimation();
+            mVoiceSearchSearching.setVisibility(View.INVISIBLE);
+
+            startVoiceSearch();
+        }, 100);
     }
 
     private void setPermissionNotGranted() {
