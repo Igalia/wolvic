@@ -15,6 +15,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.future.future
 import kotlinx.coroutines.launch
 import mozilla.components.concept.sync.*
+import mozilla.components.service.fxa.FirefoxAccount
 import mozilla.components.service.fxa.SyncEngine
 import mozilla.components.service.fxa.manager.SyncEnginesStorage
 import mozilla.components.service.fxa.sync.SyncReason
@@ -22,6 +23,7 @@ import mozilla.components.service.fxa.sync.SyncStatusObserver
 import mozilla.components.service.fxa.sync.getLastSynced
 import mozilla.components.support.base.log.logger.Logger
 import org.mozilla.vrbrowser.VRBrowserApplication
+import org.mozilla.vrbrowser.browser.engine.SessionStore
 import org.mozilla.vrbrowser.utils.SystemUtils
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ExecutionException
@@ -354,6 +356,10 @@ class Accounts constructor(val context: Context) {
                 }
             }
         }
+    }
+
+    fun getConnectionSuccessURL(): String {
+        return (services.accountManager.authenticatedAccount() as FirefoxAccount).getConnectionSuccessURL()
     }
 
 }

@@ -34,6 +34,8 @@ import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -889,6 +891,10 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
         @Override
         public void onAuthenticated(@NotNull OAuthAccount oAuthAccount, @NotNull AuthType authType) {
+            Session session = mFocusedWindow.getSession();
+            addTab(mFocusedWindow, mAccounts.getConnectionSuccessURL());
+            onTabsClose(new ArrayList<>(Collections.singletonList(session)));
+
             switch (mAccounts.getLoginOrigin()) {
                 case BOOKMARKS:
                     getFocusedWindow().switchBookmarks();
