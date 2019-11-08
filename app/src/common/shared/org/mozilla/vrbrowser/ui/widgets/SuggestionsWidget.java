@@ -24,6 +24,7 @@ import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.ui.views.CustomListView;
+import org.mozilla.vrbrowser.utils.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -128,8 +129,8 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
 
     @Override
     public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-        if (oldFocus != null && isVisible()) {
-            onDismiss();
+        if (!ViewUtils.isChildrenOf(this, newFocus)) {
+            hide(KEEP_WIDGET);
         }
     }
 
