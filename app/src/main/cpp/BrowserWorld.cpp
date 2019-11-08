@@ -224,6 +224,7 @@ struct BrowserWorld::State {
   WidgetPtr GetWidget(int32_t aHandle) const;
   WidgetPtr FindWidget(const std::function<bool(const WidgetPtr&)>& aCondition) const;
   bool IsParent(const Widget& aChild, const Widget& aParent) const;
+  int ParentCount(const WidgetPtr& aWidget) const;
   float ComputeNormalizedZ(const Widget& aWidget) const;
   void SortWidgets();
 };
@@ -564,6 +565,19 @@ BrowserWorld::State::IsParent(const Widget& aChild, const Widget& aParent) const
   }
 
   return false;
+}
+
+int
+BrowserWorld::State::ParentCount(const WidgetPtr& aWidget) const {
+  int result = 0;
+  WidgetPtr current = aWidget;
+  while (current && current->GetPlacement()->parentHandle > 0) {
+    current = GetWidget(current->GetPlacement()->parentHandle);
+    if (current) {
+      result++;
+    }
+  }
+  return result;
 }
 
 float
@@ -1123,7 +1137,19 @@ BrowserWorld::FinishWidgetMove() {
 void
 BrowserWorld::UpdateVisibleWidgets() {
   ASSERT_ON_RENDER_THREAD();
-  for (const WidgetPtr& widget: m.widgets) {
+
+  std::vector<WidgetPtr> widgets = m.widgets;
+  // Sort by parent before updating.
+  std::sort(widgets.begin(), widgets.end(), [=](const WidgetPtr& a, const WidgetPtr& b) {
+    int parentsA = m.ParentCount(a);
+    int parentsB = m.ParentCount(b);
+    if (parentsA != parentsB) {
+      return parentsA < parentsB;
+    }
+    return m.IsParent(*b, *a);
+  });
+
+  for (const WidgetPtr& widget: widgets) {
     if (widget->IsVisible() && !widget->IsResizing()) {
       UpdateWidget(widget->GetHandle(), widget->GetPlacement());
     }
