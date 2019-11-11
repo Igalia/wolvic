@@ -1633,7 +1633,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     @Override
     public void onShowActionRequest(@NonNull GeckoSession aSession, @NonNull Selection aSelection, @NonNull String[] aActions, @NonNull GeckoResponse<String> aResponse) {
-        if (StringUtils.isEmpty(aSelection.text) || (aActions.length == 1 && GeckoSession.SelectionActionDelegate.ACTION_HIDE.equals(aActions[0]))) {
+        if (aActions.length == 1 && GeckoSession.SelectionActionDelegate.ACTION_HIDE.equals(aActions[0])) {
             // See: https://github.com/MozillaReality/FirefoxReality/issues/2214
             aResponse.respond(GeckoSession.SelectionActionDelegate.ACTION_HIDE);
             return;
