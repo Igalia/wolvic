@@ -83,6 +83,8 @@ class AllowedPopUpsOptionsView extends SettingsView {
         super.onShown();
 
         mViewModel.getAll().observeForever(mObserver);
+
+        mBinding.siteList.post(() -> mBinding.siteList.scrollToPosition(0));
     }
 
     @Override
