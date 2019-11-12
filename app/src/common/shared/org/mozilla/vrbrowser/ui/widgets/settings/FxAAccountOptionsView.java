@@ -191,7 +191,12 @@ class FxAAccountOptionsView extends SettingsView {
     }
 
     private void sync(View view) {
-        mAccounts.syncNowAsync(SyncReason.User.INSTANCE, false);
+        if (mBinding.bookmarksSyncSwitch.isChecked() != mInitialBookmarksState ||
+                mBinding.historySyncSwitch.isChecked() != mInitialHistoryState) {
+            mAccounts.syncNowAsync(SyncReason.EngineChange.INSTANCE, false);
+        } else {
+            mAccounts.syncNowAsync(SyncReason.User.INSTANCE, false);
+        }
     }
 
     private AccountObserver mAccountListener = new AccountObserver() {
