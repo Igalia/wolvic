@@ -117,6 +117,7 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
     public void show(@ShowFlags int aShowFlags) {
         super.show(aShowFlags);
         mList.startAnimation(mScaleUpAnimation);
+        mList.post(() -> mList.setSelectionAfterHeaderView());
     }
 
     @Override
