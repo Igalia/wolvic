@@ -39,7 +39,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:visibleGone="@{!isNarrow}">
+        app:visibleGone="@{!isNarrow &amp;&amp; !isEmpty}">
 
         <FrameLayout
             android:id="@+id/buttons_layout"
