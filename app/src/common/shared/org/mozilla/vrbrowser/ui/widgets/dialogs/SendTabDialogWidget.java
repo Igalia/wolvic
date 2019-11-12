@@ -98,6 +98,7 @@ public class SendTabDialogWidget extends SettingDialogWidget implements
     @Override
     public void show(int aShowFlags) {
         if (mAccounts.isSignedIn()) {
+            mBinding.footerLayout.setFooterButtonVisibility(View.GONE);
             mAccounts.refreshDevicesAsync();
             mSendTabsDialogBinding.setIsSyncing(true);
 
@@ -182,6 +183,7 @@ public class SendTabDialogWidget extends SettingDialogWidget implements
             }
 
             if (!mDevicesList.isEmpty()) {
+                mBinding.footerLayout.setFooterButtonVisibility(View.VISIBLE);
                 mSendTabsDialogBinding.devicesList.setChecked(0, false);
             }
 
