@@ -28,7 +28,6 @@ import org.mozilla.geckoview.AllowOrDeny
 import org.mozilla.geckoview.GeckoResult
 import org.mozilla.geckoview.GeckoSession
 import org.mozilla.vrbrowser.R
-import org.mozilla.vrbrowser.browser.engine.SessionStore
 
 class Services(context: Context, places: Places): GeckoSession.NavigationDelegate {
     companion object {
