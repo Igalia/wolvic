@@ -19,6 +19,8 @@ import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.core.app.ActivityCompat;
+
 import com.mozilla.speechlibrary.ISpeechRecognitionListener;
 import com.mozilla.speechlibrary.MozillaSpeechService;
 import com.mozilla.speechlibrary.STTResult;
@@ -28,13 +30,10 @@ import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
-import org.mozilla.vrbrowser.utils.DeviceType;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
-
-import androidx.core.app.ActivityCompat;
 
 public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate.PermissionListener,
         Application.ActivityLifecycleCallbacks {
@@ -326,9 +325,7 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
         mVoiceSearchText2.setVisibility(View.GONE);
         mVoiceSearchText3.setVisibility(View.INVISIBLE);
         mVoiceSearchInput.setVisibility(View.INVISIBLE);
-        if (DeviceType.getType() != DeviceType.OculusQuest) {
-            mVoiceSearchSearching.startAnimation(mSearchingAnimation);
-        }
+        mVoiceSearchSearching.startAnimation(mSearchingAnimation);
         mVoiceSearchSearching.setVisibility(View.VISIBLE);
     }
 
