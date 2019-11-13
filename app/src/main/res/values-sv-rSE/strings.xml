@@ -509,16 +509,17 @@
          The sync button will start syncing when pressed-->
     <string name="fxa_account_options_syncing">Synkroniserar...</string>
 
-    <!-- This string is used to in the FxA account manage panel as a description for the sync options. -->
+    <!-- This string is used in the FxA account manager panel as a header for the sync options for syncing
+         history, bookmarks, passwords, etc. -->
     <string name="fxa_account_options_sync_description">Välj vad du vill synkronisera på dina enheter med Firefox</string>
 
-    <!-- This string is used to in the FxA account manage panel as a description of the Sign In/Out button. -->
+    <!-- This string is used to in the FxA account manage panel as a description for the Bookmarks sync switch. -->
     <string name="fxa_account_options_bookmarks_sync">Bokmärken</string>
 
-    <!-- This string is used to in the FxA account manage panel as a description of the Sign In/Out button. -->
+    <!-- This string is used to in the FxA account manage panel as a description for the History sync switch. -->
     <string name="fxa_account_options_history_sync">Historik</string>
 
-    <!-- This string is used to in the FxA account manage panel as a description of the Sign In/Out button. -->
+    <!-- This string is used to in the FxA account manage panel as a description for the Sign In/Out button. -->
     <string name="fxa_account_options_reset">Återställ</string>
 
     <!-- This string is used to in the Library panels in the sync button when the user is not signed in. -->
@@ -1289,15 +1290,15 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 
     <!-- This string is displayed in the header of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_title">Nu kan du logga in!</string>
+    <string name="whats_new_title_1">Logga in för att skicka flikar</string>
 
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body">Logga in eller skapa ett konto för att skicka en flik från Firefox på din stationära eller mobila enhet till Firefox Reality i ditt VR-headset.</string>
+    <string name="whats_new_body_1">Logga in eller skapa ett nytt Firefox-konto för att skicka flikar från Firefox på din stationära eller mobila enhet till ditt headset.</string>
 
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body_sub">Synkronisera dina bokmärken, historik, flikar, lösenord, tillägg och inställningar på alla dina enheter.</string>
+    <string name="whats_new_body_sub_1">Med ett Firefox-konto kan du också synkronisera bokmärken och historik mellan alla dina enheter.</string>
 
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. If clicked the user is redirected to the Firefox Account sign-in page. -->
