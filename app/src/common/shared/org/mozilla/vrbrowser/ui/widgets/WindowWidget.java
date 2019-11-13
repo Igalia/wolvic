@@ -483,6 +483,14 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
     }
 
+    private void hideLibraryPanels() {
+        if (isBookmarksVisible()) {
+            hideBookmarks();
+        } else if (isHistoryVisible()) {
+            hideHistory();
+        }
+    }
+
     public void showHistory() {
         showHistory(true);
     }
@@ -1035,6 +1043,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 listener.onSessionChanged(oldSession, aSession);
             }
         }
+        hideLibraryPanels();
     }
 
     public void releaseDisplay(GeckoSession aSession) {
