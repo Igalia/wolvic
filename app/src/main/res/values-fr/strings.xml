@@ -89,11 +89,6 @@
          sdcard. '%1$s' will be replaced at runtime with the website's domain name. -->
     <string name="permission_persistent_storage">Autorisez-vous %1$s à conserver des données dans le stockage persistant ?</string>
 
-    <!-- This string is displayed in the Settings dialog box and how
-         the user can know which version of the application they are currently running.
-         '%1$s' will be replaced at runtime with the application version number. -->
-    <string name="settings_version">Version %1$s</string>
-
     <!-- This string is displayed in the Settings dialog box and is used to label an
          On/Off switch which toggles whether an application crash is reported without first
          prompting the user. -->
@@ -128,6 +123,9 @@
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains settings that an application or Web developer might want to change. -->
     <string name="settings_developer_options">Options de développement</string>
+
+    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account -->
+    <string name="settings_fxa_account_manage">Gérer le compte</string>
 
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains language-related settings. -->
@@ -274,6 +272,10 @@
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
         opens the Firfox Reality support web site in the browser window. -->
     <string name="settings_help">Aide</string>
+
+    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account, but needs to re-enter their password.
+         Most common reason for this state is that the account password was changed on another device. -->
+    <string name="settings_accounts_reconnect">Se reconnecter</string>
 
     <!-- This string is the title of a dialog box shown to the user when a settings
          change requires the application to restart. -->
@@ -472,6 +474,32 @@
     <!-- This string is used to label a text entry field where the user may enter a new value
          for the home page. -->
     <string name="developer_options_homepage">Page d’accueil</string>
+
+    <!-- This string is used to in the FxA account manage panel as a description of the Sign In/Out button. -->
+    <string name="fxa_account_options_account">Compte</string>
+
+    <!-- This string is used to in the FxA account manage panel as a header for the sync options. -->
+    <string name="fxa_account_options_sync_title">Paramètres de synchronisation</string>
+
+    <!-- This string is used to in the FxA account manage panel as the description of the Sync button when is not syncing.
+         The sync button will start syncing when pressed-->
+    <string name="fxa_account_options_sync_now">Synchroniser maintenant</string>
+
+    <!-- This string is used to in the FxA account manage panel as a description for the Bookmarks sync switch. -->
+    <string name="fxa_account_options_bookmarks_sync">Marque-pages</string>
+
+    <!-- This string is used to in the FxA account manage panel as a description for the History sync switch. -->
+    <string name="fxa_account_options_history_sync">Historique</string>
+
+    <!-- This string is used to in the FxA account manage panel as a description for the Sign In/Out button. -->
+    <string name="fxa_account_options_reset">Réinitialiser</string>
+
+    <!-- This string is used to in the Library panels in the sync button when syncing is off. -->
+    <string name="fxa_account_sync_settings">Paramètres de synchronisation</string>
+
+    <!-- This string is used to in the Library panels to the left of the sync button to indicate
+         that there was an error while syncing. -->
+    <string name="fxa_account_last_sync_error">Erreur de synchronisation</string>
 
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable playback of DRM controlled content. -->
@@ -906,9 +934,6 @@
          and hovers over the 'Private Browsing' icon in the browser's tray menu. -->
     <string name="private_browsing_exit_tooltip">Quitter la navigation privée</string>
 
-    <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the target url in a new window. -->
-    <string name="context_menu_open_new_window">Ouvrir dans une nouvelle fenêtre.</string>
-
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it copies the target to the clipboard -->
     <string name="context_menu_copy_link">Copier le lien</string>
 
@@ -1069,7 +1094,4 @@
          If the button is clicked the pop-up will be shown -->
     <string name="popup_block_button_show">Afficher</string>
 
-    <!-- This string is displayed on the right button of the pop-up blocking dialog.
-         If the button is clicked the pop-up will be blocked -->
-    <string name="popup_block_button_do_not_show">Ne pas afficher</string>
-</resources>
+    </resources>
