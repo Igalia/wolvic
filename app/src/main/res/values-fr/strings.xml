@@ -127,6 +127,10 @@
     <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account -->
     <string name="settings_fxa_account_manage">Gérer le compte</string>
 
+    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account, but needs to re-enter their password.
+         Most common reason for this state is that the account password was changed on another device. -->
+    <string name="settings_fxa_account_reconnect">Se reconnecter</string>
+
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains language-related settings. -->
     <string name="settings_language">Langues</string>
@@ -485,6 +489,14 @@
          The sync button will start syncing when pressed-->
     <string name="fxa_account_options_sync_now">Synchroniser maintenant</string>
 
+    <!-- This string is used to in the FxA account manage panel as the description of the Sync button while syncon.
+         The sync button will start syncing when pressed-->
+    <string name="fxa_account_options_syncing">Synchronisation…</string>
+
+    <!-- This string is used in the FxA account manager panel as a header for the sync options for syncing
+         history, bookmarks, passwords, etc. -->
+    <string name="fxa_account_options_sync_description">Sélectionnez les données à synchroniser entre vos appareils utilisant Firefox</string>
+
     <!-- This string is used to in the FxA account manage panel as a description for the Bookmarks sync switch. -->
     <string name="fxa_account_options_bookmarks_sync">Marque-pages</string>
 
@@ -500,6 +512,10 @@
     <!-- This string is used to in the Library panels to the left of the sync button to indicate
          that there was an error while syncing. -->
     <string name="fxa_account_last_sync_error">Erreur de synchronisation</string>
+
+    <!-- This string is used to in the Library panels to the left of the sync button to indicate
+         when that the content was just synced some time ago. -->
+    <string name="fxa_account_last_synced">Dernière synchronisation : il y a %1$d minutes</string>
 
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable playback of DRM controlled content. -->
@@ -711,6 +727,21 @@
     <!-- This string is displayed in the middle of the Bookmarks List while the bookmarks are being loaded. -->
     <string name="bookmarks_loading">Chargement des marque-pages</string>
 
+    <!-- This string is displayed as the title of the folder containing mobile bookmarks (after they're synced). -->
+    <string name="bookmarks_mobile_folder_title">Marque-pages des appareils mobiles</string>
+
+    <!-- This string is displayed as the title of the folder containing desktop bookmarks (after they're synced). -->
+    <string name="bookmarks_desktop_folder_title">Marque-pages ordinateur</string>
+
+    <!-- This string is displayed as the title of the desktop "menu" bookmarks folder. -->
+    <string name="bookmarks_desktop_menu_title">Menu des marque-pages</string>
+
+    <!-- This string is displayed as the title of the desktop "toolbar" bookmarks folder. -->
+    <string name="bookmarks_desktop_toolbar_title">Barre d’outils des marque-pages</string>
+
+    <!-- This string is displayed as the title of the desktop "unfiled" bookmarks folder. -->
+    <string name="bookmarks_desktop_unfiled_title">Autres marque-pages</string>
+
     <!-- This string is displayed in a tooltip that appears when a user hovers
          over an icon representing 'Remove Bookmark' for an individual bookmark
          item listed in the Bookmarks List. -->
@@ -767,6 +798,9 @@
          clearing history is displayed. -->
     <string name="history_clear">Effacer l’historique</string>
 
+    <!-- This string is displayed is the "Sync" button in the history panel when the sync is in progress. -->
+    <string name="fxa_syncing">Synchronisation…</string>
+
     <!-- This string is displayed is the "Cancel" button from the clear history dialog.
          When pressed the dialog is closed. -->
     <string name="history_clear_cancel">Annuler</string>
@@ -798,6 +832,10 @@
     <!-- This string is displayed is the history context menu that is displayed when
          the more button is pressed in a history item. It opens the selected history item in a new window. -->
     <string name="history_context_menu_new_window">Ouvrir dans une nouvelle fenêtre</string>
+
+    <!-- This string is displayed is the history context menu that is displayed when
+         the more button is pressed in a history item. It opens the selected history item in a new tab. -->
+    <string name="history_context_menu_new_tab">Ouvrir dans un nouvel onglet</string>
 
     <!-- This string is displayed is the history context menu that is displayed when
          the more button is pressed in a history item. It add the selected items to favorites. -->
