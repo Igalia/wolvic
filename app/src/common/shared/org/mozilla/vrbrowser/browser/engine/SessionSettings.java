@@ -8,7 +8,6 @@ import org.mozilla.vrbrowser.browser.SettingsStore;
 
 class SessionSettings {
 
-    private boolean isMultiprocessEnabled;
     private boolean isTrackingProtectionEnabled;
     private boolean isSuspendMediaWhenInactiveEnabled;
     private int userAgentMode;
@@ -17,21 +16,12 @@ class SessionSettings {
     private String userAgentOverride;
 
     private SessionSettings(@NotNull Builder builder) {
-        this.isMultiprocessEnabled = builder.isMultiprocessEnabled;
         this.isTrackingProtectionEnabled = builder.isTrackingProtectionEnabled;
         this.isSuspendMediaWhenInactiveEnabled = builder.isSuspendMediaWhenInactiveEnabled;
         this.userAgentMode = builder.userAgentMode;
         this.viewportMode = builder.viewportMode;
         this.isServoEnabled = builder.isServoEnabled;
         this.userAgentOverride = builder.userAgentOverride;
-    }
-
-    public boolean isMultiprocessEnabled() {
-        return isMultiprocessEnabled;
-    }
-
-    public void setMultiprocessEnabled(boolean enabled) {
-        isMultiprocessEnabled = enabled;
     }
 
     public boolean isTrackingProtectionEnabled() {
@@ -76,7 +66,6 @@ class SessionSettings {
 
     public static class Builder {
 
-        private boolean isMultiprocessEnabled;
         private boolean isTrackingProtectionEnabled;
         private boolean isSuspendMediaWhenInactiveEnabled;
         private int userAgentMode;
@@ -87,10 +76,6 @@ class SessionSettings {
         public Builder() {
         }
 
-        public Builder withMultiprocess(boolean isMultiprocessEnabled){
-            this.isMultiprocessEnabled = isMultiprocessEnabled;
-            return this;
-        }
 
         public Builder withTrackingProteccion(boolean isTrackingProtectionEnabled){
             this.isTrackingProtectionEnabled = isTrackingProtectionEnabled;
@@ -128,7 +113,6 @@ class SessionSettings {
                     GeckoSessionSettings.VIEWPORT_MODE_DESKTOP : GeckoSessionSettings.VIEWPORT_MODE_MOBILE;
 
             return new SessionSettings.Builder()
-                    .withMultiprocess(SettingsStore.getInstance(context).isMultiprocessEnabled())
                     .withTrackingProteccion(SettingsStore.getInstance(context).isTrackingProtectionEnabled())
                     .withSuspendMediaWhenInactive(true)
                     .withUserAgent(ua)
@@ -137,10 +121,7 @@ class SessionSettings {
         }
 
         public SessionSettings build(){
-            SessionSettings settings = new SessionSettings(this);
-
-            return settings;
-
+            return new SessionSettings(this);
         }
     }
 

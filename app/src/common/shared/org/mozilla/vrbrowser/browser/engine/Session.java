@@ -388,7 +388,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
     private GeckoSession createGeckoSession(@NonNull SessionSettings aSettings) {
         GeckoSessionSettings geckoSettings = new GeckoSessionSettings.Builder()
-                .useMultiprocess(aSettings.isMultiprocessEnabled())
+                .useMultiprocess(SettingsStore.getInstance(mContext).isMultiprocessEnabled())
                 .usePrivateMode(mUsePrivateMode)
                 .useTrackingProtection(aSettings.isTrackingProtectionEnabled())
                 .userAgentMode(aSettings.getUserAgentMode())
@@ -743,11 +743,8 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         mState.mSession.loadUri(overrideUri != null ? overrideUri : mState.mUri, GeckoSession.LOAD_FLAGS_BYPASS_CACHE | GeckoSession.LOAD_FLAGS_REPLACE_HISTORY);
     }
 
-    protected void setMultiprocess(final boolean aEnabled) {
-        if (mState.mSettings.isMultiprocessEnabled() != aEnabled) {
-            mState.mSettings.setMultiprocessEnabled(aEnabled);
-            recreateSession();
-        }
+    protected void resetMultiprocess() {
+        recreateSession();
     }
 
     protected void setTrackingProtection(final boolean aEnabled) {

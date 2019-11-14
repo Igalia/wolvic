@@ -47,7 +47,7 @@ public class SettingsStore {
     public final static boolean REMOTE_DEBUGGING_DEFAULT = false;
     public final static boolean CONSOLE_LOGS_DEFAULT = false;
     public final static boolean ENV_OVERRIDE_DEFAULT = false;
-    public final static boolean MULTIPROCESS_DEFAULT = false;
+    public final static boolean MULTIPROCESS_DEFAULT = true;
     public final static boolean PERFORMANCE_MONITOR_DEFAULT = true;
     public final static boolean DRM_PLAYBACK_DEFAULT = false;
     public final static boolean TRACKING_DEFAULT = true;
@@ -225,12 +225,12 @@ public class SettingsStore {
 
     public boolean isMultiprocessEnabled() {
         return mPrefs.getBoolean(
-                mContext.getString(R.string.settings_key_multiprocess), MULTIPROCESS_DEFAULT);
+                mContext.getString(R.string.settings_key_multiprocess_e10s), MULTIPROCESS_DEFAULT);
     }
 
     public void setMultiprocessEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
-        editor.putBoolean(mContext.getString(R.string.settings_key_multiprocess), isEnabled);
+        editor.putBoolean(mContext.getString(R.string.settings_key_multiprocess_e10s), isEnabled);
         editor.commit();
     }
 

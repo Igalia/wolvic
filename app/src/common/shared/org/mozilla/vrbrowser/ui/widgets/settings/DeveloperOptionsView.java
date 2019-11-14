@@ -160,7 +160,7 @@ class DeveloperOptionsView extends SettingsView {
         SettingsStore.getInstance(getContext()).setMultiprocessEnabled(value);
 
         if (doApply) {
-            SessionStore.get().setMultiprocess(value);
+            SessionStore.get().resetMultiprocess();
         }
     }
 

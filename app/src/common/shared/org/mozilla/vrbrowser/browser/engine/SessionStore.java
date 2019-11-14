@@ -237,9 +237,9 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
         }
     }
 
-    public void setMultiprocess(final boolean aEnabled) {
+    public void resetMultiprocess() {
         for (Session session: mSessions) {
-            session.setMultiprocess(aEnabled);
+            session.resetMultiprocess();
         }
     }
 
