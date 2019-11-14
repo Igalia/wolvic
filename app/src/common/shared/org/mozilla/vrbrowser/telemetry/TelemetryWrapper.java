@@ -509,7 +509,7 @@ public class TelemetryWrapper {
             Log.d(LOGTAG, "\tTWO: " + openWindowsTime[WindowPlacement.LEFT.getValue()]);
             Log.d(LOGTAG, "\tTHREE: " + openWindowsTime[WindowPlacement.RIGHT.getValue()]);
 
-            Log.d(LOGTAG, "Open Private Windows Count:");
+            Log.d(LOGTAG, "Open Windows Count:");
             Log.d(LOGTAG, "\tFRONT: " + openWindows[WindowPlacement.FRONT.getValue()]);
             Log.d(LOGTAG, "\tLEFT: " + openWindows[WindowPlacement.LEFT.getValue()]);
             Log.d(LOGTAG, "\tRIGHT: " + openWindows[WindowPlacement.RIGHT.getValue()]);
