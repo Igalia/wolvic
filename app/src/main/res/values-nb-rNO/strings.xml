@@ -1313,7 +1313,11 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 
 
     <!-- This string is displayed in the title of the slow script dialog. -->
-    <string name="slow_script_dialog_title">Trege skript</string>
+    <string name="slow_script_dialog_title">Tregt skript</string>
+
+    <!-- This string is displayed as a description below the title of slow script dialog.
+        '%1$s' will be replaced the script filename that is causing the slow down. -->
+    <string name="slow_script_dialog_description">En nettside gjør at nettleseren går tregere (%1$s). Hva vil du gjøre?</string>
 
     <!-- This string is displayed as a button below the slow script dialog description message. When clicked
         it stops the slow script that is causing the web page slow down. -->
