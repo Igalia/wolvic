@@ -512,17 +512,28 @@
          The sync button will start syncing when pressed-->
     <string name="fxa_account_options_syncing">Bezig met synchroniseren…</string>
 
-    <!-- This string is used to in the FxA account manage panel as a description of the Sign In/Out button. -->
+    <!-- This string is used in the FxA account manager panel as a header for the sync options for syncing
+         history, bookmarks, passwords, etc. -->
+    <string name="fxa_account_options_sync_description">Kies wat u op uw apparaten wilt synchroniseren met Firefox</string>
+
+    <!-- This string is used to in the FxA account manage panel as a description for the Bookmarks sync switch. -->
     <string name="fxa_account_options_bookmarks_sync">Bladwijzers</string>
 
-    <!-- This string is used to in the FxA account manage panel as a description of the Sign In/Out button. -->
+    <!-- This string is used to in the FxA account manage panel as a description for the History sync switch. -->
     <string name="fxa_account_options_history_sync">Geschiedenis</string>
 
-    <!-- This string is used to in the FxA account manage panel as a description of the Sign In/Out button. -->
+    <!-- This string is used to in the FxA account manage panel as a description for the Sign In/Out button. -->
     <string name="fxa_account_options_reset">Herinitialiseren</string>
+
+    <!-- This string is used to in the Library panels in the sync button when the user is not signed in. -->
+    <string name="fxa_account_sing_to_sync">Aanmelden bij account om te synchroniseren</string>
 
     <!-- This string is used to in the Library panels in the sync button when syncing is off. -->
     <string name="fxa_account_sync_settings">Sync-instellingen</string>
+
+    <!-- This string is used to in the Library panels to the left of the sync button to indicate
+         when that the content was just synced. -->
+    <string name="fxa_account_last_synced_now">Laatst gesynchroniseerd: nu</string>
 
     <!-- This string is used to in the Library panels to the left of the sync button to indicate
          that the content has never been synced yet. -->
@@ -762,6 +773,9 @@
     <!-- This string is displayed as the title of the folder containing mobile bookmarks (after they're synced). -->
     <string name="bookmarks_mobile_folder_title">Mobiel</string>
 
+    <!-- This string is displayed as the title of the folder containing desktop bookmarks (after they're synced). -->
+    <string name="bookmarks_desktop_folder_title">Desktopbladwijzers</string>
+
     <!-- This string is displayed as the title of the desktop "menu" bookmarks folder. -->
     <string name="bookmarks_desktop_menu_title">Menu</string>
 
@@ -800,6 +814,10 @@
          all the bookmarks. -->
     <string name="bookmarks_show_all">Alle bladwijzers tonen</string>
 
+    <!-- This string is displayed is the "Sync" button in the bookmarks panel. When pressed the
+         bookmarks are synced with the Firefox account. -->
+    <string name="bookmarks_sync">Sync</string>
+
     <!-- This string is displayed as the title of the history list, which contains the user's visited websites. -->
     <string name="history_title">Geschiedenis</string>
 
@@ -827,6 +845,10 @@
     <!-- This string is displayed is the "Clear History" button in the history list. When pressed a dialog for
          clearing history is displayed. -->
     <string name="history_clear">Geschiedenis wissen</string>
+
+    <!-- This string is displayed is the "Sync" button in the history panel. When pressed the
+         history is synced with the Firefox account. -->
+    <string name="fxa_sync">Sync</string>
 
     <!-- This string is displayed is the "Sync" button in the history panel when the sync is in progress. -->
     <string name="fxa_syncing">Synchroniseren…</string>
@@ -1243,11 +1265,32 @@ the Select` button. When clicked it closes all the previously selected tabs -->
      tabs tray button then a tab has been sent. -->
     <string name="tab_sent_notification">Tabblad verzonden!</string>
 
+    <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
+         it opens the send tab dialog -->
+    <string name="hamburger_menu_send_tab">Tabblad naar apparaat verzenden</string>
+
+    <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
+         it opens the window resize panel -->
+    <string name="hamburger_menu_resize">Venstergrootte wijzigen</string>
+
+    <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
+         it switches User Agent from desktop to mobile and vice versa -->
+    <string name="hamburger_menu_switch_to_desktop">Desktopmodus</string>
+
     <!-- This string is displayed in the tooltip that is displayed when the user hovers the hamburger menu icon -->
     <string name="hamburger_menu_tooltip">Menu</string>
 
     <!-- This string is displayed in the title of the Send Tab to device dialog. -->
     <string name="send_tab_dialog_title">Tabblad naar apparaat verzenden</string>
+
+    <!-- This string is displayed in the description of the Send Tab to device dialog. -->
+    <string name="send_tab_dialog_description">Kies een apparaat, om het tabblad te verzenden.</string>
+
+    <!-- This string is displayed on top of the available devices list. -->
+    <string name="send_tab_dialog_options_header">Beschikbare apparaten:</string>
+
+    <!-- This string is displayed instead of the devices list if there are no available devices. -->
+    <string name="send_tab_dialog_no_devices">Geen apparaten verbonden.</string>
 
     <!-- This string is displayed instead of the devices list if the devices list is being synced. -->
     <string name="send_tab_dialog_syncing">Bezig met synchroniseren…</string>
@@ -1255,8 +1298,25 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed in the button of the Send Tab to device dialog. When clicked the current tab is sent to the selected device -->
     <string name="send_tab_dialog_button">Verzenden</string>
 
+    <!-- This string is displayed in the header of the what's new dialog that is displayed if the user has updated
+         or updated the app and hasn't signed it yet. -->
+    <string name="whats_new_title_1">Meld u aan om tabbladen te verzenden</string>
+
+    <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
+         or updated the app and hasn't signed it yet. -->
+    <string name="whats_new_body_1">Meld u aan of maak een nieuwe Firefox-account aan om tabbladen van Firefox op uw desktop of mobiele apparaat naar uw headset te verzenden.</string>
+
+    <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
+         or updated the app and hasn't signed it yet. -->
+    <string name="whats_new_body_sub_1">Met Firefox Account kunt u ook bladwijzers en uw geschiedenis met al uw apparaten synchroniseren.</string>
+
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. If clicked the user is redirected to the Firefox Account sign-in page. -->
     <string name="whats_new_button_sign_in">Aanmelden</string>
+
+    <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
+         or updated the app and hasn't signed it yet. If clicked the dialog is dismissed. -->
+    <string name="whats_new_button_start_browsing">Beginnen met browsen</string>
+
 
     </resources>
