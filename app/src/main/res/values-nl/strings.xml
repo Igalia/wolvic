@@ -1319,4 +1319,18 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="whats_new_button_start_browsing">Beginnen met browsen</string>
 
 
-    </resources>
+    <!-- This string is displayed in the title of the slow script dialog. -->
+    <string name="slow_script_dialog_title">Langzaam script</string>
+
+    <!-- This string is displayed as a description below the title of slow script dialog.
+        '%1$s' will be replaced the script filename that is causing the slow down. -->
+    <string name="slow_script_dialog_description">Een webpagina vertraagt uw browser (%1$s). Wat wilt u doen?</string>
+
+    <!-- This string is displayed as a button below the slow script dialog description message. When clicked
+        it stops the slow script that is causing the web page slow down. -->
+    <string name="slow_script_dialog_action_stop">Website stoppen</string>
+
+    <!-- This string is displayed as a button below the slow script dialog description message. When clicked
+       it continues to wait for execution of the web page script that caused the slow down. -->
+    <string name="slow_script_dialog_action_wait">Wachten</string>
+</resources>
