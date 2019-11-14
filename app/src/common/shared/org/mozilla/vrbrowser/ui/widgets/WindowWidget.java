@@ -57,7 +57,7 @@ import org.mozilla.vrbrowser.ui.widgets.prompts.AlertPromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.ConfirmPromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.PromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.settings.SettingsWidget;
-import org.mozilla.vrbrowser.utils.StringUtils;
+import org.mozilla.vrbrowser.utils.ConnectivityReceiver;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 import org.mozilla.vrbrowser.utils.ViewUtils;
 
@@ -235,6 +235,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         aSession.addProgressListener(this);
         aSession.setHistoryDelegate(this);
         aSession.addSelectionActionListener(this);
+
+        mWidgetManager.addConnectivityListener(mConnectivityDelegate);
     }
 
     void cleanListeners(Session aSession) {
@@ -245,6 +247,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         aSession.removeProgressListener(this);
         aSession.setHistoryDelegate(null);
         aSession.removeSelectionActionListener(this);
+
+        mWidgetManager.removeConnectivityListener(mConnectivityDelegate);
     }
 
     @Override
@@ -323,6 +327,23 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
         mListeners.clear();
     }
+
+    private ConnectivityReceiver.Delegate mConnectivityDelegate = connected -> {
+        if (mActive) {
+            if (mNoInternetToast == null) {
+                mNoInternetToast = new NoInternetWidget(getContext());
+                mNoInternetToast.mWidgetPlacement.parentHandle = getHandle();
+                mNoInternetToast.mWidgetPlacement.parentAnchorY = 0.0f;
+                mNoInternetToast.mWidgetPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.base_app_dialog_y_distance);
+            }
+            if (!connected && !mNoInternetToast.isVisible()) {
+                mNoInternetToast.show(REQUEST_FOCUS);
+
+            } else if (connected && mNoInternetToast.isVisible()) {
+                mNoInternetToast.hide(REMOVE_WIDGET);
+            }
+        }
+    };
 
     public void loadHomeIfNotRestored() {
         if (!mIsRestored) {
@@ -1193,20 +1214,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     private void setPrivateBrowsingEnabled(boolean isEnabled) {
-    }
-
-    public void setNoInternetToastVisible(boolean aVisible) {
-        if (mNoInternetToast == null) {
-            mNoInternetToast = new NoInternetWidget(getContext());
-            mNoInternetToast.mWidgetPlacement.parentHandle = getHandle();
-            mNoInternetToast.mWidgetPlacement.parentAnchorY = 0.0f;
-            mNoInternetToast.mWidgetPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.base_app_dialog_y_distance);
-        }
-        if (aVisible && !mNoInternetToast.isVisible()) {
-            mNoInternetToast.show(REQUEST_FOCUS);
-        } else if (!aVisible && mNoInternetToast.isVisible()) {
-            mNoInternetToast.hide(REMOVE_WIDGET);
-        }
     }
 
     public void showAlert(String title, @NonNull String msg, @NonNull PromptWidget.PromptDelegate callback) {

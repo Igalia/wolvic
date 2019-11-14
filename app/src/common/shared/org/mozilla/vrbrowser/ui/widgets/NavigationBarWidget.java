@@ -45,6 +45,7 @@ import org.mozilla.vrbrowser.ui.widgets.menus.BrightnessMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.menus.HamburgerMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.menus.VideoProjectionMenuWidget;
 import org.mozilla.vrbrowser.utils.AnimationHelper;
+import org.mozilla.vrbrowser.utils.ConnectivityReceiver;
 import org.mozilla.vrbrowser.utils.ServoUtils;
 
 import java.util.ArrayList;
@@ -326,6 +327,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
         mWidgetManager.addUpdateListener(this);
         mWidgetManager.addWorldClickListener(this);
+        mWidgetManager.addConnectivityListener(mConnectivityDelegate);
 
         mVoiceSearchWidget = createChild(VoiceSearchWidget.class, false);
         mVoiceSearchWidget.getPlacement().parentAnchorY = 0.0f;
@@ -358,6 +360,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     public void releaseWidget() {
         mWidgetManager.removeUpdateListener(this);
         mWidgetManager.removeWorldClickListener(this);
+        mWidgetManager.removeConnectivityListener(mConnectivityDelegate);
         mPrefs.unregisterOnSharedPreferenceChangeListener(this);
         
         if (mAttachedWindow != null && mAttachedWindow.isFullScreen()) {
@@ -1255,5 +1258,11 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         }
         button.setNotificationMode(false);
     }
+
+    private ConnectivityReceiver.Delegate mConnectivityDelegate = connected -> {
+        if (mMediaControlsWidget != null) {
+            mMediaControlsWidget.setVisible(connected && mMediaControlsWidget.isVisible());
+        }
+    };
 
 }

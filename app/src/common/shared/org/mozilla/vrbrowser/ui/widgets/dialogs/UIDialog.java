@@ -6,6 +6,7 @@ import android.view.View;
 
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
+import org.mozilla.vrbrowser.utils.ViewUtils;
 
 public abstract class UIDialog extends UIWidget implements WidgetManagerDelegate.FocusChangeListener {
     public UIDialog(Context aContext) {
@@ -42,7 +43,7 @@ public abstract class UIDialog extends UIWidget implements WidgetManagerDelegate
 
     @Override
     public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-        if (oldFocus == this && isVisible()) {
+        if (!ViewUtils.isEqualOrChildrenOf(this, newFocus) && isVisible()) {
             onDismiss();
         }
     }

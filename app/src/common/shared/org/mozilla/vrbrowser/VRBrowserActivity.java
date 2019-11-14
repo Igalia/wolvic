@@ -70,6 +70,7 @@ import org.mozilla.vrbrowser.ui.widgets.dialogs.WhatsNewWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.ConfirmPromptWidget;
 import org.mozilla.vrbrowser.utils.BitmapCache;
 import org.mozilla.vrbrowser.utils.ConnectivityReceiver;
+import org.mozilla.vrbrowser.utils.ConnectivityReceiver.Delegate;
 import org.mozilla.vrbrowser.utils.DeviceType;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
 import org.mozilla.vrbrowser.utils.ServoUtils;
@@ -88,6 +89,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
 public class VRBrowserActivity extends PlatformActivity implements WidgetManagerDelegate {
@@ -145,6 +147,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     LinkedList<PermissionListener> mPermissionListeners;
     LinkedList<FocusChangeListener> mFocusChangeListeners;
     LinkedList<WorldClickListener> mWorldClickListeners;
+    CopyOnWriteArrayList<Delegate> mConnectivityListeners;
     LinkedList<Runnable> mBackHandlers;
     private boolean mIsPresentingImmersive = false;
     private Thread mUiThread;
@@ -234,6 +237,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mWorldClickListeners = new LinkedList<>();
         mBackHandlers = new LinkedList<>();
         mBrightnessQueue = new LinkedList<>();
+        mConnectivityListeners = new CopyOnWriteArrayList<>();
         mCurrentBrightness = Pair.create(null, 1.0f);
 
         mWidgets = new HashMap<>();
@@ -423,8 +427,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         for (Widget widget: mWidgets.values()) {
             widget.onResume();
         }
-        handleConnectivityChange();
-        mConnectivityReceiver.register(this, () -> runOnUiThread(this::handleConnectivityChange));
+        mConnectivityListeners.forEach((listener) -> {
+            listener.OnConnectivityChanged(ConnectivityReceiver.isNetworkAvailable(this));
+        });
+        mConnectivityReceiver.register(this, mConnectivityDelegate);
 
         // If we're signed-in, poll for any new device events (e.g. received tabs) on activity resume.
         // There's no push support right now, so this helps with the perception of speedy tab delivery.
@@ -524,13 +530,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         }
     }
 
-    private void handleConnectivityChange() {
-        boolean connected = ConnectivityReceiver.isNetworkAvailable(this);
-        if (connected != mConnectionAvailable && mWindows.getFocusedWindow() != null) {
-            mWindows.getFocusedWindow().setNoInternetToastVisible(!connected);
-        }
+    private ConnectivityReceiver.Delegate mConnectivityDelegate = connected -> {
+        mConnectivityListeners.forEach((listener) -> listener.OnConnectivityChanged(connected));
         mConnectionAvailable = connected;
-    }
+    };
 
     private void checkForCrash() {
         final ArrayList<String> files = CrashReporterService.findCrashFiles(getBaseContext());
@@ -1270,6 +1273,18 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Override
     public void removeWorldClickListener(WorldClickListener aListener) {
         mWorldClickListeners.remove(aListener);
+    }
+
+    @Override
+    public void addConnectivityListener(Delegate aListener) {
+        if (!mConnectivityListeners.contains(aListener)) {
+            mConnectivityListeners.add(aListener);
+        }
+    }
+
+    @Override
+    public void removeConnectivityListener(Delegate aListener) {
+        mConnectivityListeners.remove(aListener);
     }
 
     @Override

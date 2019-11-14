@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.VRBrowserActivity;
 import org.mozilla.vrbrowser.ui.widgets.menus.VideoProjectionMenuWidget;
+import org.mozilla.vrbrowser.utils.ConnectivityReceiver;
 
 public interface WidgetManagerDelegate {
 
@@ -85,4 +86,6 @@ public interface WidgetManagerDelegate {
     void openNewTabForeground(@NonNull String uri);
     WindowWidget getFocusedWindow();
     TrayWidget getTray();
+    void addConnectivityListener(ConnectivityReceiver.Delegate aListener);
+    void removeConnectivityListener(ConnectivityReceiver.Delegate aListener);
 }

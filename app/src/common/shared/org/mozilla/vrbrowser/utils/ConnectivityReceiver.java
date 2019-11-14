@@ -14,7 +14,7 @@ import static android.net.ConnectivityManager.CONNECTIVITY_ACTION;
 public class ConnectivityReceiver extends BroadcastReceiver {
 
     public interface Delegate {
-        void OnConnectivityChanged();
+        void OnConnectivityChanged(boolean connected);
     }
 
     private Delegate mDelegate;
@@ -22,7 +22,7 @@ public class ConnectivityReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (mDelegate != null) {
-            mDelegate.OnConnectivityChanged();
+            mDelegate.OnConnectivityChanged(isNetworkAvailable(context));
         }
     }
 
