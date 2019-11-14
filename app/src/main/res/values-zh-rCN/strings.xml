@@ -509,16 +509,17 @@
          The sync button will start syncing when pressed-->
     <string name="fxa_account_options_syncing">正在同步…</string>
 
-    <!-- This string is used to in the FxA account manage panel as a description for the sync options. -->
+    <!-- This string is used in the FxA account manager panel as a header for the sync options for syncing
+         history, bookmarks, passwords, etc. -->
     <string name="fxa_account_options_sync_description">选择在您的设备上使用 Firefox 时同步哪些内容</string>
 
-    <!-- This string is used to in the FxA account manage panel as a description of the Sign In/Out button. -->
+    <!-- This string is used to in the FxA account manage panel as a description for the Bookmarks sync switch. -->
     <string name="fxa_account_options_bookmarks_sync">书签</string>
 
-    <!-- This string is used to in the FxA account manage panel as a description of the Sign In/Out button. -->
+    <!-- This string is used to in the FxA account manage panel as a description for the History sync switch. -->
     <string name="fxa_account_options_history_sync">历史记录</string>
 
-    <!-- This string is used to in the FxA account manage panel as a description of the Sign In/Out button. -->
+    <!-- This string is used to in the FxA account manage panel as a description for the Sign In/Out button. -->
     <string name="fxa_account_options_reset">重置</string>
 
     <!-- This string is used to in the Library panels in the sync button when the user is not signed in. -->
@@ -1287,15 +1288,15 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 
     <!-- This string is displayed in the header of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_title">准备好登录了吗？</string>
+    <string name="whats_new_title_1">登录以发送标签页</string>
 
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body">创建或登录一个账户，以便您在台式机、笔记本电脑、移动设备乃至头戴式 VR 之间的 Firefox 上发送标签页。</string>
+    <string name="whats_new_body_1">创建或登录一个 Firefox 账户，以便您在台式机、笔记本电脑、移动设备向头戴式设备上的 Firefox 发送标签页。</string>
 
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body_sub">同步您的书签、历史记录、标签页、密码、附加组件以及首选项到您的所有设备。</string>
+    <string name="whats_new_body_sub_1">Firefox 账户还可让您在所有设备上同步书签和历史记录。</string>
 
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. If clicked the user is redirected to the Firefox Account sign-in page. -->
