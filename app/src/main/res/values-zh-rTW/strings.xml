@@ -509,16 +509,17 @@
          The sync button will start syncing when pressed-->
     <string name="fxa_account_options_syncing">同步中···</string>
 
-    <!-- This string is used to in the FxA account manage panel as a description for the sync options. -->
+    <!-- This string is used in the FxA account manager panel as a header for the sync options for syncing
+         history, bookmarks, passwords, etc. -->
     <string name="fxa_account_options_sync_description">選擇要在裝置上的 Firefox 同步哪些資料。</string>
 
-    <!-- This string is used to in the FxA account manage panel as a description of the Sign In/Out button. -->
+    <!-- This string is used to in the FxA account manage panel as a description for the Bookmarks sync switch. -->
     <string name="fxa_account_options_bookmarks_sync">書籤</string>
 
-    <!-- This string is used to in the FxA account manage panel as a description of the Sign In/Out button. -->
+    <!-- This string is used to in the FxA account manage panel as a description for the History sync switch. -->
     <string name="fxa_account_options_history_sync">瀏覽紀錄</string>
 
-    <!-- This string is used to in the FxA account manage panel as a description of the Sign In/Out button. -->
+    <!-- This string is used to in the FxA account manage panel as a description for the Sign In/Out button. -->
     <string name="fxa_account_options_reset">重設</string>
 
     <!-- This string is used to in the Library panels in the sync button when the user is not signed in. -->
@@ -1288,15 +1289,15 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 
     <!-- This string is displayed in the header of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_title">現在可以登入了！</string>
+    <string name="whats_new_title_1">登入即可傳送分頁</string>
 
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body">註冊或登入帳號，即可從桌面版或行動裝置上的 Firefox 將分頁傳送到 VR 眼鏡中的 Firefox Reality。</string>
+    <string name="whats_new_body_1">註冊或登入 Firefox Account，即可從桌面版或行動版 Firefox 將分頁傳送到 VR 眼鏡。</string>
 
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body_sub">在您所有裝置間同步書籤、歷史紀錄、分頁、密碼、附加元件與偏好設定。</string>
+    <string name="whats_new_body_sub_1">Firefox Account 還可以用來在裝置間同步書籤與上網紀錄。</string>
 
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. If clicked the user is redirected to the Firefox Account sign-in page. -->
