@@ -1245,6 +1245,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     @Override
     public void onTabsReceived(@NotNull List<TabData> aTabs) {
         WindowWidget targetWindow = mFocusedWindow;
+        boolean fullscreen = targetWindow.getSession().isInFullScreen();
         for (int i = aTabs.size() - 1; i >= 0; --i) {
             Session session = SessionStore.get().createSession(targetWindow.getSession().isPrivateMode());
             // Cache the provided data to avoid delays if the tabs are loaded at the same time the
@@ -1253,14 +1254,16 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             session.getSessionState().mUri = aTabs.get(i).getUrl();
             session.loadUri(aTabs.get(i).getUrl());
             session.updateLastUse();
-            if (i == 0) {
+            if (i == 0 && !fullscreen) {
                 // Set the first received tab of the list the current one.
                 SessionStore.get().setActiveSession(session);
                 targetWindow.setSession(session);
             }
         }
 
-        mWidgetManager.getTray().showTabAddedNotification();
+        if (!fullscreen) {
+            mWidgetManager.getTray().showTabAddedNotification();
+        }
 
         if (mTabsWidget != null && mTabsWidget.isVisible()) {
             mTabsWidget.refreshTabs();
