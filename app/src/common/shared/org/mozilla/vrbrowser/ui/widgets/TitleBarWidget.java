@@ -185,9 +185,11 @@ public class TitleBarWidget extends UIWidget implements WidgetManagerDelegate.Up
         if (available) {
             mMedia = mAttachedWindow.getSession().getFullScreenVideo();
             if (mMedia != null) {
-                mBinding.setIsMediaAvailable(true);
-                mBinding.setIsMediaPlaying(mMedia.isPlaying());
                 mMedia.addMediaListener(mMediaDelegate);
+                if (mMedia.isPlayed()) {
+                    mBinding.setIsMediaAvailable(true);
+                    mBinding.setIsMediaPlaying(true);
+                }
             }
         } else {
             mBinding.setIsMediaAvailable(false);

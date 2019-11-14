@@ -15,6 +15,7 @@ public class Media implements MediaElement.Delegate {
     private double mPlaybackRate = 1.0f;
     private int mReadyState = MediaElement.MEDIA_READY_STATE_HAVE_NOTHING;
     private boolean mPlaying = false;
+    private boolean mWasPlayed = false;
     private boolean mEnded = false;
     private double mVolume = 1.0f;
     private boolean mIsMuted = false;
@@ -66,6 +67,10 @@ public class Media implements MediaElement.Delegate {
 
     public boolean isPlaying() {
         return mPlaying;
+    }
+
+    public boolean isPlayed() {
+        return mWasPlayed;
     }
 
     public boolean isEnded() {
@@ -133,6 +138,7 @@ public class Media implements MediaElement.Delegate {
     @Override
     public void onPlaybackStateChange(MediaElement mediaElement, int playbackState) {
         if (playbackState == MediaElement.MEDIA_STATE_PLAY) {
+            mWasPlayed = true;
             mPlaying = true;
         } else if (playbackState == MediaElement.MEDIA_STATE_PAUSE) {
             mPlaying = false;
