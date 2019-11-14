@@ -12,6 +12,7 @@ import androidx.lifecycle.Observer;
 import org.mozilla.geckoview.AllowOrDeny;
 import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoSession;
+import org.mozilla.geckoview.SlowScriptResponse;
 import org.mozilla.vrbrowser.AppExecutors;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserApplication;
@@ -37,7 +38,8 @@ import java.util.Optional;
 public class PromptDelegate implements
         GeckoSession.PromptDelegate,
         WindowWidget.WindowListener,
-        GeckoSession.NavigationDelegate {
+        GeckoSession.NavigationDelegate,
+        GeckoSession.ContentDelegate {
 
     public interface PopUpDelegate {
         void onPopUpAvailable();
@@ -46,6 +48,7 @@ public class PromptDelegate implements
 
     private PromptWidget mPrompt;
     private PopUpBlockDialogWidget mPopUpPrompt;
+    private ConfirmPromptWidget mSlowScriptPrompt;
     private Context mContext;
     private WindowWidget mAttachedWindow;
     private List<PopUpSite> mAllowedPopUpSites;
@@ -99,11 +102,13 @@ public class PromptDelegate implements
     private void setUpSession(@NonNull Session aSession) {
         aSession.setPromptDelegate(this);
         aSession.addNavigationListener(this);
+        aSession.addContentListener(this);
     }
 
     private void cleanSession(@NonNull Session aSession) {
         aSession.setPromptDelegate(null);
         aSession.removeNavigationListener(this);
+        aSession.removeContentListener(this);
         mPopUpRequests.remove(aSession.hashCode());
     }
 
@@ -387,6 +392,43 @@ public class PromptDelegate implements
                 }
             });
         }
+    }
+
+    @Nullable
+    @Override
+    public GeckoResult<SlowScriptResponse> onSlowScript(@NonNull GeckoSession aSession, @NonNull String aScriptFileName) {
+        final GeckoResult<SlowScriptResponse> result = new GeckoResult<>();
+        if (mSlowScriptPrompt == null) {
+            mSlowScriptPrompt = new ConfirmPromptWidget(mContext);
+            mSlowScriptPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
+            mSlowScriptPrompt.getPlacement().parentAnchorY = 0.0f;
+            mSlowScriptPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.base_app_dialog_y_distance);
+            mSlowScriptPrompt.setTitle(mContext.getResources().getString(R.string.slow_script_dialog_title));
+            mSlowScriptPrompt.setMessage(mContext.getResources().getString(R.string.slow_script_dialog_description, aScriptFileName));
+            mSlowScriptPrompt.setButtons(new String[]{
+                    mContext.getResources().getString(R.string.slow_script_dialog_action_wait),
+                    mContext.getResources().getString(R.string.slow_script_dialog_action_stop)
+            });
+            mSlowScriptPrompt.setPromptDelegate(new ConfirmPromptWidget.ConfirmPromptDelegate() {
+                @Override
+                public void confirm(int index) {
+                    result.complete(index == 0 ? SlowScriptResponse.CONTINUE : SlowScriptResponse.STOP);
+                }
+                @Override
+                public void dismiss() {
+                    result.complete(SlowScriptResponse.CONTINUE);
+                }
+            });
+            mSlowScriptPrompt.show(UIWidget.REQUEST_FOCUS);
+        }
+
+        return result.then(value -> {
+            if (mSlowScriptPrompt != null && !mSlowScriptPrompt.isReleased()) {
+                mSlowScriptPrompt.releaseWidget();
+            }
+            mSlowScriptPrompt = null;
+            return GeckoResult.fromValue(value);
+        });
     }
 
     // WindowWidget.WindowListener

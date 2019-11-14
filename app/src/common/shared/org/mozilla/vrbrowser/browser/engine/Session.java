@@ -30,6 +30,7 @@ import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.geckoview.MediaElement;
+import org.mozilla.geckoview.SlowScriptResponse;
 import org.mozilla.geckoview.WebRequestError;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.Media;
@@ -1027,6 +1028,20 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
                 listener.onFirstContentfulPaint(aSession);
             }
         }
+    }
+
+    @Nullable
+    @Override
+    public GeckoResult<SlowScriptResponse> onSlowScript(@NonNull GeckoSession aSession, @NonNull String aScriptFileName) {
+        if (mState.mSession == aSession) {
+            for (GeckoSession.ContentDelegate listener : mContentListeners) {
+                GeckoResult<SlowScriptResponse> result = listener.onSlowScript(aSession, aScriptFileName);
+                if (result != null) {
+                    return result;
+                }
+            }
+        }
+        return null;
     }
 
     // TextInput Delegate
