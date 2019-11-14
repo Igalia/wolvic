@@ -280,13 +280,13 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
         switch(mAccounts.getAccountStatus()) {
             case SIGNED_OUT:
             case NEEDS_RECONNECT:
+                hide(REMOVE_WIDGET);
                 mAccounts.getAuthenticationUrlAsync().thenAcceptAsync((url) -> {
                     if (url != null) {
                         mAccounts.setLoginOrigin(Accounts.LoginOrigin.SETTINGS);
                         WidgetManagerDelegate widgetManager = ((VRBrowserActivity)getContext());
                         widgetManager.openNewTabForeground(url);
                         widgetManager.getFocusedWindow().getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
-                        hide(REMOVE_WIDGET);
                     }
                 }, mUIThreadExecutor).exceptionally(throwable -> {
                     Log.d(LOGTAG, "Error getting the authentication URL: " + throwable.getLocalizedMessage());
