@@ -509,16 +509,17 @@
          The sync button will start syncing when pressed-->
     <string name="fxa_account_options_syncing">Wird synchronisiert...</string>
 
-    <!-- This string is used to in the FxA account manage panel as a description for the sync options. -->
+    <!-- This string is used in the FxA account manager panel as a header for the sync options for syncing
+         history, bookmarks, passwords, etc. -->
     <string name="fxa_account_options_sync_description">Wählen Sie die zwischen den Geräten zu synchronisierenden Firefox-Eigenschaften</string>
 
-    <!-- This string is used to in the FxA account manage panel as a description of the Sign In/Out button. -->
+    <!-- This string is used to in the FxA account manage panel as a description for the Bookmarks sync switch. -->
     <string name="fxa_account_options_bookmarks_sync">Lesezeichen</string>
 
-    <!-- This string is used to in the FxA account manage panel as a description of the Sign In/Out button. -->
+    <!-- This string is used to in the FxA account manage panel as a description for the History sync switch. -->
     <string name="fxa_account_options_history_sync">Chronik</string>
 
-    <!-- This string is used to in the FxA account manage panel as a description of the Sign In/Out button. -->
+    <!-- This string is used to in the FxA account manage panel as a description for the Sign In/Out button. -->
     <string name="fxa_account_options_reset">Zurücksetzen</string>
 
     <!-- This string is used to in the Library panels in the sync button when the user is not signed in. -->
@@ -1289,15 +1290,15 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 
     <!-- This string is displayed in the header of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_title">Jetzt können Sie sich anmelden!</string>
+    <string name="whats_new_title_1">Melden Sie sich an, um Tabs zu versenden</string>
 
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body">Melden Sie sich an oder erstellen Sie ein Konto, um einen Tab von Firefox auf Ihrem Desktop oder Mobilgerät an Firefox Reality in Ihrem VR-Headset zu senden.</string>
+    <string name="whats_new_body_1">Melden Sie sich an oder erstellen Sie ein neues Firefox-Konto, um Tabs von Firefox auf Ihrem Desktop oder Mobilgerät an Ihr Headset zu senden.</string>
 
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body_sub">Synchronisieren Sie Ihre Lesezeichen, Chronik, Tabs, Passwörter, Add-ons und Einstellungen zwischen allen Ihren Geräten.</string>
+    <string name="whats_new_body_sub_1">Mit dem Firefox-Konto können Sie außerdem Lesezeichen und Chronik auf allen Ihren Geräten synchronisieren.</string>
 
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. If clicked the user is redirected to the Firefox Account sign-in page. -->
@@ -1306,4 +1307,20 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. If clicked the dialog is dismissed. -->
     <string name="whats_new_button_start_browsing">Lossurfen</string>
+
+
+    <!-- This string is displayed in the title of the slow script dialog. -->
+    <string name="slow_script_dialog_title">Langsames Skript</string>
+
+    <!-- This string is displayed as a description below the title of slow script dialog.
+        '%1$s' will be replaced the script filename that is causing the slow down. -->
+    <string name="slow_script_dialog_description">Eine Webseite verlangsamt Ihren Browser (%1$s). Was soll getan werden?</string>
+
+    <!-- This string is displayed as a button below the slow script dialog description message. When clicked
+        it stops the slow script that is causing the web page slow down. -->
+    <string name="slow_script_dialog_action_stop">Webseite anhalten</string>
+
+    <!-- This string is displayed as a button below the slow script dialog description message. When clicked
+       it continues to wait for execution of the web page script that caused the slow down. -->
+    <string name="slow_script_dialog_action_wait">Warten</string>
 </resources>
