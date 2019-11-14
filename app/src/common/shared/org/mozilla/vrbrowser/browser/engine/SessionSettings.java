@@ -8,6 +8,7 @@ import org.mozilla.vrbrowser.browser.SettingsStore;
 
 class SessionSettings {
 
+    private boolean isPrivateBrowsingEnabled;
     private boolean isTrackingProtectionEnabled;
     private boolean isSuspendMediaWhenInactiveEnabled;
     private int userAgentMode;
@@ -15,13 +16,19 @@ class SessionSettings {
     private boolean isServoEnabled;
     private String userAgentOverride;
 
-    private SessionSettings(@NotNull Builder builder) {
+    /* package */ SessionSettings(@NotNull Builder builder) {
+        this.isPrivateBrowsingEnabled = builder.isPrivateBrowsingEnabled;
         this.isTrackingProtectionEnabled = builder.isTrackingProtectionEnabled;
         this.isSuspendMediaWhenInactiveEnabled = builder.isSuspendMediaWhenInactiveEnabled;
         this.userAgentMode = builder.userAgentMode;
         this.viewportMode = builder.viewportMode;
         this.isServoEnabled = builder.isServoEnabled;
         this.userAgentOverride = builder.userAgentOverride;
+    }
+
+    public boolean isPrivateBrowsingEnabled() { return isPrivateBrowsingEnabled; }
+    public void setPrivateBrowsingEnabled(boolean enabled) {
+        isPrivateBrowsingEnabled = enabled;
     }
 
     public boolean isTrackingProtectionEnabled() {
@@ -66,6 +73,7 @@ class SessionSettings {
 
     public static class Builder {
 
+        private boolean isPrivateBrowsingEnabled;
         private boolean isTrackingProtectionEnabled;
         private boolean isSuspendMediaWhenInactiveEnabled;
         private int userAgentMode;
@@ -76,6 +84,10 @@ class SessionSettings {
         public Builder() {
         }
 
+        public Builder withPrivateBrowsing(boolean enabled) {
+            isPrivateBrowsingEnabled = enabled;
+            return this;
+        }
 
         public Builder withTrackingProteccion(boolean isTrackingProtectionEnabled){
             this.isTrackingProtectionEnabled = isTrackingProtectionEnabled;
@@ -113,6 +125,7 @@ class SessionSettings {
                     GeckoSessionSettings.VIEWPORT_MODE_DESKTOP : GeckoSessionSettings.VIEWPORT_MODE_MOBILE;
 
             return new SessionSettings.Builder()
+                    .withPrivateBrowsing(false)
                     .withTrackingProteccion(SettingsStore.getInstance(context).isTrackingProtectionEnabled())
                     .withSuspendMediaWhenInactive(true)
                     .withUserAgent(ua)
@@ -124,5 +137,4 @@ class SessionSettings {
             return new SessionSettings(this);
         }
     }
-
 }

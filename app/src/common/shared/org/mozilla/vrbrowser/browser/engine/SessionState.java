@@ -15,6 +15,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
 import org.json.JSONException;
+import org.mozilla.geckoview.GeckoDisplay;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.browser.Media;
 
@@ -24,6 +25,7 @@ import java.util.UUID;
 
 @JsonAdapter(SessionState.SessionStateAdapterFactory.class)
 public class SessionState {
+    public transient boolean mIsActive;
     public boolean mCanGoBack;
     public boolean mCanGoForward;
     public boolean mIsLoading;
@@ -34,6 +36,7 @@ public class SessionState {
     public String mTitle = "";
     public transient boolean mFullScreen;
     public transient GeckoSession mSession;
+    public transient GeckoDisplay mDisplay;
     public SessionSettings mSettings;
     public transient ArrayList<Media> mMediaElements = new ArrayList<>();
     @JsonAdapter(SessionState.GeckoSessionStateAdapter.class)
@@ -84,8 +87,8 @@ public class SessionState {
                             out.name("mRegion").value(session.mRegion);
                             out.name("mId").value(session.mId);
                             out.name("mParentId").value(session.mParentId);
-                            if (session.mSession != null) {
-                                if (session.mSession.getSettings().getUsePrivateMode()) {
+                            if (session.mSettings != null) {
+                                if (session.mSettings.isPrivateBrowsingEnabled()) {
                                     out.name("mSessionState").jsonValue(null);
 
                                 } else {

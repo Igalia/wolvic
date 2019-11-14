@@ -109,26 +109,32 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
         mHistoryStore = new HistoryStore(context);
     }
 
+    private Session addSession(@NonNull Session aSession) {
+        aSession.setPermissionDelegate(this);
+        aSession.addNavigationListener(mServices);
+        mSessions.add(aSession);
+        return aSession;
+    }
+
     public Session createSession(boolean aPrivateMode) {
-        return createSession(aPrivateMode, null, Session.SESSION_OPEN);
+        SessionSettings settings = new SessionSettings(new SessionSettings.Builder().withDefaultSettings(mContext).withPrivateBrowsing(aPrivateMode));
+        return createSession(settings, Session.SESSION_OPEN);
     }
 
-    public Session createSession(boolean aPrivateMode, @Nullable SessionSettings aSettings, @Session.SessionOpenModeFlags int aOpenMode) {
-        Session session = new Session(mContext, mRuntime, aPrivateMode, aSettings, aOpenMode);
-        session.setPermissionDelegate(this);
-        session.addNavigationListener(mServices);
-        mSessions.add(session);
-
-        return session;
+    /* package */ Session createSession(@NonNull SessionSettings aSettings, @Session.SessionOpenModeFlags int aOpenMode) {
+        return addSession(new Session(mContext, mRuntime, aSettings, aOpenMode));
     }
 
-    public Session createSession(SessionState aRestoreState) {
-        Session session = new Session(mContext, mRuntime, aRestoreState);
-        session.setPermissionDelegate(this);
-        session.addNavigationListener(mServices);
-        mSessions.add(session);
+    public Session createSuspendedSession(SessionState aRestoreState) {
+        return addSession(new Session(mContext, mRuntime, aRestoreState));
+    }
 
-        return session;
+    public Session createSuspendedSession(final String aUri, final boolean aPrivateMode) {
+        SessionState state = new SessionState();
+        state.mUri = aUri;
+        state.mSettings = new SessionSettings(new SessionSettings.Builder().withDefaultSettings(mContext).withPrivateBrowsing(aPrivateMode));
+        Session session = new Session(mContext, mRuntime, state);
+        return addSession(session);
     }
 
     private void shutdownSession(@NonNull Session aSession) {
@@ -152,6 +158,14 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
             shutdownSession(session);
             return true;
         });
+    }
+
+    public void suspendAllInactiveSessions() {
+        for (Session session: mSessions) {
+            if (!session.isActive()) {
+                session.suspend();
+            }
+        }
     }
 
     public @Nullable Session getSession(String aId) {

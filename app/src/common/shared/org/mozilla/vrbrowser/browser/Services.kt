@@ -74,9 +74,9 @@ class Services(context: Context, places: Places): GeckoSession.NavigationDelegat
         override fun onEvents(events: List<DeviceEvent>) {
             CoroutineScope(Dispatchers.Main).launch {
                 Logger(logTag).info("Received ${events.size} device event(s)")
-                val events = events.filterIsInstance(DeviceEvent.TabReceived::class.java)
-                if (!events.isEmpty()) {
-                    val tabs = events.map { event -> event.entries }.flatten()
+                val filteredEvents = events.filterIsInstance(DeviceEvent.TabReceived::class.java)
+                if (filteredEvents.isNotEmpty()) {
+                    val tabs = filteredEvents.map { event -> event.entries }.flatten()
                     tabReceivedDelegate?.onTabsReceived(tabs)
                 }
             }

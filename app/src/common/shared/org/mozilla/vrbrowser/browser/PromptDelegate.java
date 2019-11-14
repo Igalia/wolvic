@@ -327,6 +327,9 @@ public class PromptDelegate implements
     private SparseArray<Pair<String, LinkedList<PopUpRequest>>> mPopUpRequests = new SparseArray<>();
 
     public void showPopUps(GeckoSession session) {
+        if (session == null) {
+            return;
+        }
         Pair<String, LinkedList<PopUpRequest>> requests = mPopUpRequests.get(session.hashCode());
         if (requests != null && !requests.second.isEmpty()) {
             showPopUp(session.hashCode(), requests);
@@ -334,9 +337,11 @@ public class PromptDelegate implements
     }
 
     public boolean hasPendingPopUps(GeckoSession session) {
-        Pair<String, LinkedList<PopUpRequest>> requests = mPopUpRequests.get(session.hashCode());
-        if (requests != null) {
-            return !requests.second.isEmpty();
+        if (session != null) {
+            Pair<String, LinkedList<PopUpRequest>> requests = mPopUpRequests.get(session.hashCode());
+            if (requests != null) {
+                return !requests.second.isEmpty();
+            }
         }
 
         return false;

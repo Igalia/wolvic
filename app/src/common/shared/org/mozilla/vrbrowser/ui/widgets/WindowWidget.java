@@ -90,7 +90,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         default void onBookmarksHidden(WindowWidget aWindow) {}
     }
 
-    private GeckoDisplay mDisplay;
     private Surface mSurface;
     private int mWidth;
     private int mHeight;
@@ -542,15 +541,15 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     public void pauseCompositor() {
-        if (mDisplay == null) {
+        if (mSession == null) {
             return;
         }
 
-        mDisplay.surfaceDestroyed();
+        mSession.surfaceDestroyed();
     }
 
     public void resumeCompositor() {
-        if (mDisplay == null) {
+        if (mSession == null) {
             return;
         }
         if (mSurface == null) {
@@ -733,11 +732,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             mTexture = aTexture;
             aTexture.setDefaultBufferSize(aWidth, aHeight);
             mSurface = new Surface(aTexture);
-            if (mDisplay == null) {
-                mDisplay = session.acquireDisplay();
-            } else {
-                Log.e(LOGTAG, "GeckoDisplay was not null in BrowserWidget.setSurfaceTexture()");
-            }
             callSurfaceChanged();
         }
     }
@@ -748,32 +742,21 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             super.setSurface(aSurface, aWidth, aHeight, aFirstDrawCallback);
 
         } else {
-            GeckoSession session = mSession.getGeckoSession();
-            if (session == null) {
-                return;
-            }
             mWidth = aWidth;
             mHeight = aHeight;
             mSurface = aSurface;
             mFirstDrawCallback = aFirstDrawCallback;
-            if (mDisplay == null) {
-                mDisplay = session.acquireDisplay();
-            } else {
-                Log.e(LOGTAG, "GeckoDisplay was not null in BrowserWidget.setSurfaceTexture()");
-            }
             if (mSurface != null) {
                 callSurfaceChanged();
             } else {
-                mDisplay.surfaceDestroyed();
+                mSession.surfaceDestroyed();
             }
         }
     }
 
     private void callSurfaceChanged() {
-        if (mDisplay != null) {
-            mDisplay.surfaceChanged(mSurface, mBorderWidth, mBorderWidth, mWidth - mBorderWidth * 2, mHeight - mBorderWidth * 2);
-        }
         if (mSession != null) {
+            mSession.surfaceChanged(mSurface, mBorderWidth, mBorderWidth, mWidth - mBorderWidth * 2, mHeight - mBorderWidth * 2);
             mSession.updateLastUse();
         }
     }
@@ -959,12 +942,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         cleanListeners(mSession);
         GeckoSession session = mSession.getGeckoSession();
 
-        if (mDisplay != null) {
-            mDisplay.surfaceDestroyed();
-            if (session != null) {
-                session.releaseDisplay(mDisplay);
-            }
-            mDisplay = null;
+        if (mSession != null) {
+            mSession.releaseDisplay();
         }
         if (session != null) {
             session.getTextInput().setView(null);
@@ -1017,8 +996,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         if (mWidgetPlacement.visible == aVisible) {
             return;
         }
+
         if (!mIsInVRVideoMode) {
             mSession.setActive(aVisible);
+            if (aVisible) {
+                callSurfaceChanged();
+            }
         }
         mWidgetPlacement.visible = aVisible;
         if (!aVisible) {
@@ -1051,6 +1034,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             Session oldSession = mSession;
             if (oldSession != null) {
                 cleanListeners(oldSession);
+                oldSession.releaseDisplay();
             }
 
             mSession = aSession;
@@ -1067,15 +1051,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         hideLibraryPanels();
     }
 
-    public void releaseDisplay(GeckoSession aSession) {
-        if (aSession != null && mDisplay != null) {
-            Log.d(LOGTAG, "Detach from previous session: " + aSession.hashCode());
-            aSession.getTextInput().setView(null);
-            mDisplay.surfaceDestroyed();
-            aSession.releaseDisplay(mDisplay);
-            mDisplay = null;
-        }
-    }
 
     public void showPopUps() {
         if (mPromptDelegate != null) {
@@ -1094,12 +1069,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     // Session.GeckoSessionChange
     @Override
     public void onCurrentSessionChange(GeckoSession aOldSession, GeckoSession aSession) {
-        Log.d(LOGTAG, "onCurrentSessionChange: " + this.toString());
+        Log.d(LOGTAG, "onCurrentSessionChange: " + this.hashCode());
 
-        releaseDisplay(aOldSession);
         mWidgetManager.setIsServoSession(isInstanceOfServoSession(aSession));
-
-        mDisplay = aSession.acquireDisplay();
         Log.d(LOGTAG, "surfaceChanged: " + aSession.hashCode());
         callSurfaceChanged();
         aSession.getTextInput().setView(this);
@@ -1558,9 +1530,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     public void captureImage() {
-        if (mDisplay != null) {
-            mSession.captureBitmap(mDisplay);
-        }
+        mSession.captureBitmap();
     }
 
     @Override
