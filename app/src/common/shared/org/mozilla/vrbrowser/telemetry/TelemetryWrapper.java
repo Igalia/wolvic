@@ -601,7 +601,7 @@ public class TelemetryWrapper {
                 openPrivateWindows[i] = 0;
             }
             if (number > 0) {
-                openPrivateWindows[number -1 ] = 1;
+                openPrivateWindows[number-1] = 1;
             }
 
         } else {
@@ -610,7 +610,7 @@ public class TelemetryWrapper {
             }
 
             if (number > 0) {
-                openWindows[number - 1] = 1;
+                openWindows[number-1] = 1;
             }
         }
     }
