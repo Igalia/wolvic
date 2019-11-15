@@ -1305,4 +1305,20 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. If clicked the dialog is dismissed. -->
     <string name="whats_new_button_start_browsing">开始浏览</string>
+
+
+    <!-- This string is displayed in the title of the slow script dialog. -->
+    <string name="slow_script_dialog_title">脚本运行缓慢</string>
+
+    <!-- This string is displayed as a description below the title of slow script dialog.
+        '%1$s' will be replaced the script filename that is causing the slow down. -->
+    <string name="slow_script_dialog_description">某个网页（%1$s）让您的浏览器变慢了。您想如何处理？</string>
+
+    <!-- This string is displayed as a button below the slow script dialog description message. When clicked
+        it stops the slow script that is causing the web page slow down. -->
+    <string name="slow_script_dialog_action_stop">停止</string>
+
+    <!-- This string is displayed as a button below the slow script dialog description message. When clicked
+       it continues to wait for execution of the web page script that caused the slow down. -->
+    <string name="slow_script_dialog_action_wait">等待</string>
 </resources>
