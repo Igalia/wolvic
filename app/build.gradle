@@ -448,6 +448,7 @@ dependencies {
 
     // Android Components
     implementation deps.mozilla_speech
+    implementation 'net.lingala.zip4j:zip4j:1.3.2'
     implementation deps.android_components.telemetry
     implementation deps.android_components.browser_errorpages
     implementation deps.android_components.browser_search

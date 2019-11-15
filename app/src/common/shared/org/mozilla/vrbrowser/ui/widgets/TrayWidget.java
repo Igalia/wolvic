@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 
 import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.geckoview.GeckoSession;
@@ -499,6 +500,11 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Windo
         ThreadUtils.postToUiThread(() -> showNotification(mTabsButton, R.string.tab_sent_notification));
     }
 
+    public void showNotification(String text) {
+        mSettingsButton.setNotificationMode(true);
+        ThreadUtils.postToUiThread(() -> showNotification(mSettingsButton, text));
+    }
+
     private BookmarksStore.BookmarkListener mBookmarksListener = new BookmarksStore.BookmarkListener() {
         @Override
         public void onBookmarksUpdated() {
@@ -512,7 +518,11 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Windo
         }
     };
 
-    private void showNotification(UIButton button, int stringRes) {
+    private void showNotification(UIButton button, @StringRes int stringRes) {
+        showNotification(button, getResources().getString(stringRes));
+    }
+
+    private void showNotification(UIButton button, String string) {
         if (mLibraryNotification != null && mLibraryNotification.isVisible()) {
             return;
         }
@@ -530,7 +540,7 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Windo
         mLibraryNotification.getPlacement().translationY = ((offsetViewBounds.top - 60) * ratio);
         mLibraryNotification.getPlacement().translationZ = 25.0f;
         mLibraryNotification.getPlacement().density = WidgetPlacement.floatDimension(getContext(), R.dimen.tray_tooltip_density);
-        mLibraryNotification.setText(stringRes);
+        mLibraryNotification.setText(string);
         mLibraryNotification.setCurvedMode(false);
         mLibraryNotification.show(UIWidget.CLEAR_FOCUS);
 

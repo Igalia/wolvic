@@ -3,11 +3,18 @@ package org.mozilla.vrbrowser.ui.widgets.dialogs;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Application;
+import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.drawable.ClipDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -25,6 +32,8 @@ import com.mozilla.speechlibrary.ISpeechRecognitionListener;
 import com.mozilla.speechlibrary.MozillaSpeechService;
 import com.mozilla.speechlibrary.STTResult;
 
+import net.lingala.zip4j.core.ZipFile;
+
 import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
@@ -34,6 +43,8 @@ import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
+
+import java.io.File;
 
 public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate.PermissionListener,
         Application.ActivityLifecycleCallbacks {
@@ -65,6 +76,7 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
     private boolean mIsSpeechRecognitionRunning = false;
     private boolean mWasSpeechRecognitionRunning = false;
     private AudioEngine mAudio;
+    private String mModelPath;
 
     public VoiceSearchWidget(Context aContext) {
         super(aContext);
@@ -85,6 +97,8 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
         inflate(aContext, R.layout.voice_search_dialog, this);
 
         mAudio = AudioEngine.fromContext(aContext);
+
+        mModelPath = getContext().getExternalFilesDir("models").getAbsolutePath();
 
         mWidgetManager.addPermissionListener(this);
 
@@ -234,10 +248,19 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
             }
             mMozillaSpeechService.storeSamples(storeData);
             mMozillaSpeechService.storeTranscriptions(storeData);
-            mMozillaSpeechService.setModelPath(getContext().getExternalFilesDir("models").getAbsolutePath());
+            mMozillaSpeechService.setModelPath(mModelPath);
             mMozillaSpeechService.useDeepSpeech(true);
-            mMozillaSpeechService.start(getContext().getApplicationContext());
-            mIsSpeechRecognitionRunning = true;
+            if (mMozillaSpeechService.ensureModelInstalled()) {
+                mMozillaSpeechService.start(getContext().getApplicationContext());
+                mIsSpeechRecognitionRunning = true;
+
+            } else if (mDownloadId == 0){
+                maybeDownloadOrExtractModel(mModelPath, mMozillaSpeechService.getLanguageDir());
+                onDismiss();
+
+            } else {
+                mWidgetManager.getFocusedWindow().showAlert("Deep Speech", "Model not ready yet", null);
+            }
         }
     }
 
@@ -395,6 +418,127 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
 
     @Override
     public void onActivityDestroyed(Activity activity) {
+
+    }
+
+    private static long mDownloadId = 0;
+    private static DownloadManager sDownloadManager = null;
+    public void maybeDownloadOrExtractModel(String aModelsPath, String aLang) {
+        String zipFile   = aModelsPath + "/" + aLang + ".zip";
+        String aModelPath= aModelsPath + "/" + aLang + "/";
+
+        File aModelFolder = new File(aModelPath);
+        if (!aModelFolder.exists()) {
+            aModelFolder.mkdirs();
+        }
+
+        Uri modelZipURL  = Uri.parse(mMozillaSpeechService.getModelDownloadURL());
+        Uri modelZipFile = Uri.parse("file://" + zipFile);
+
+        BroadcastReceiver receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
+                    long downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
+                    DownloadManager.Query query = new DownloadManager.Query();
+                    query.setFilterById(downloadId);
+                    Cursor c = sDownloadManager.query(query);
+                    if (c.moveToFirst()) {
+                        int columnIndex = c.getColumnIndex(DownloadManager.COLUMN_STATUS);
+                        if (DownloadManager.STATUS_SUCCESSFUL == c.getInt(columnIndex)) {
+                            Log.d(LOGTAG, "Model download finished");
+                            mWidgetManager.getTray().showNotification("Download finished");
+                            mWidgetManager.getFocusedWindow().showAlert("Deep Speech", "Model download finished", null);
+
+                            new AsyncUnzip(new AsyncUnzip.Delegate() {
+                                @Override
+                                public void onDownloadStarted() {
+                                    Log.d(LOGTAG, "Model unzipping started");
+                                    mWidgetManager.getTray().showNotification("Model unzipping started");
+                                    mWidgetManager.getFocusedWindow().showAlert("Deep Speech", "Model unzipping started", null);
+                                }
+
+                                @Override
+                                public void onDownloadFinished() {
+                                    Log.d(LOGTAG, "Model unzipping finished");
+                                    mWidgetManager.getTray().showNotification("Model unzipping finished");
+                                    mWidgetManager.getFocusedWindow().showAlert("Deep Speech", "Model unzipping finished", null);
+                                }
+
+                                @Override
+                                public void onDownloadError(String error) {
+                                    Log.d(LOGTAG, "Model unzipping error: " + error);
+                                    mWidgetManager.getTray().showNotification("Model unzipping error");
+                                    mWidgetManager.getFocusedWindow().showAlert("Deep Speech", "Model unzipping error: " + error, null);
+                                }
+                            }).execute(zipFile, aModelPath);
+                        }
+                    }
+                }
+            }
+        };
+
+        sDownloadManager = (DownloadManager) getContext().getSystemService(Context.DOWNLOAD_SERVICE);
+        DownloadManager.Request request = new DownloadManager.Request(modelZipURL);
+        request.setTitle("DeepSpeech " + aLang);
+        request.setDescription("DeepSpeech Model");
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.setVisibleInDownloadsUi(false);
+        request.setDestinationUri(modelZipFile);
+        mDownloadId = sDownloadManager.enqueue(request);
+
+        Log.d(LOGTAG, "Model download started");
+        mWidgetManager.getTray().showNotification("Model download started");
+        mWidgetManager.getFocusedWindow().showAlert("Deep Speech", "Model download started", null);
+
+        getContext().getApplicationContext().registerReceiver(receiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+    }
+
+    private static class AsyncUnzip extends AsyncTask<String, Void, Boolean> {
+
+        public interface Delegate {
+            void onDownloadStarted();
+            void onDownloadFinished();
+            void onDownloadError(String error);
+        }
+
+        private Delegate mDelegate;
+
+        public AsyncUnzip(Delegate delegate) {
+            mDelegate = delegate;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            if (mDelegate != null) {
+                mDelegate.onDownloadStarted();
+            }
+        }
+
+        @Override
+        protected Boolean doInBackground(String...params) {
+            String aZipFile = params[0], aRootModelsPath = params[1];
+            try {
+                ZipFile zf = new ZipFile(aZipFile);
+                zf.extractAll(aRootModelsPath);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                if (mDelegate != null) {
+                    mDelegate.onDownloadError(e.getMessage());
+                }
+            }
+
+            return (new File(aZipFile)).delete();
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            if (mDelegate != null) {
+                mDelegate.onDownloadFinished();
+            }
+        }
 
     }
 }
