@@ -609,6 +609,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             }
         }
 
+        hideNotifications();
+
         // Update preset styles
     }
 
@@ -1051,6 +1053,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             mURLBar.setHint(R.string.url_bookmarks_title);
             mURLBar.setIsLibraryVisible(true);
         }
+
+        hideNotifications();
     }
 
     @Override
@@ -1071,6 +1075,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             mURLBar.setHint(R.string.url_history_title);
             mURLBar.setIsLibraryVisible(true);
         }
+
+        hideNotifications();
     }
 
     @Override
@@ -1224,6 +1230,10 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
                 hideNotification(mURLBar.getPopUpButton());
             }
         });
+    }
+
+    public void hideNotifications() {
+        hidePopUpsBlockedNotification();
     }
 
     private void showNotification(UIButton button, int stringRes) {
