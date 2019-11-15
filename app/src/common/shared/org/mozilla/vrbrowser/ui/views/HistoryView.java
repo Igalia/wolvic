@@ -102,6 +102,7 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
             v.requestFocusFromTouch();
             return false;
         });
+        mBinding.historyList.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> mHistoryViewListeners.forEach((listener) -> listener.onHideContextMenu(v)));
         mBinding.historyList.setHasFixedSize(true);
         mBinding.historyList.setItemViewCacheSize(20);
         mBinding.historyList.setDrawingCacheEnabled(true);

@@ -97,6 +97,7 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
             v.requestFocusFromTouch();
             return false;
         });
+        mBinding.bookmarksList.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> mBookmarksViewListeners.forEach((listener) -> listener.onHideContextMenu(v)));
         mBinding.bookmarksList.setHasFixedSize(true);
         mBinding.bookmarksList.setItemViewCacheSize(20);
         mBinding.bookmarksList.setDrawingCacheEnabled(true);
