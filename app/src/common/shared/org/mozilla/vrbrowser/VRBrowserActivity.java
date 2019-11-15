@@ -580,6 +580,27 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         Log.d(LOGTAG, "Extras File: " + extraFile);
         Log.d(LOGTAG, "Fatal: " + intent.getBooleanExtra(GeckoRuntime.EXTRA_CRASH_FATAL, false));
 
+                        @Override
+                        public void onDoNotSendData() {
+                            for (String file : files) {
+                                Log.e(LOGTAG, "Deleting crashfile: " + file);
+                                getBaseContext().deleteFile(file);
+                            }
+                        }
+                    }
+            );
+            mCrashDialog.show(UIWidget.REQUEST_FOCUS);
+        }
+    }
+
+    private void handleContentCrashIntent(@NonNull final Intent intent) {
+        Log.e(LOGTAG, "Got content crashed intent");
+        final String dumpFile = intent.getStringExtra(GeckoRuntime.EXTRA_MINIDUMP_PATH);
+        final String extraFile = intent.getStringExtra(GeckoRuntime.EXTRA_EXTRAS_PATH);
+        Log.d(LOGTAG, "Dump File: " + dumpFile);
+        Log.d(LOGTAG, "Extras File: " + extraFile);
+        Log.d(LOGTAG, "Fatal: " + intent.getBooleanExtra(GeckoRuntime.EXTRA_CRASH_FATAL, false));
+
         boolean isCrashReportingEnabled = SettingsStore.getInstance(this).isCrashReportingEnabled();
         if (isCrashReportingEnabled) {
             postCrashFiles(dumpFile, extraFile);
