@@ -1,12 +1,15 @@
 package org.mozilla.vrbrowser.browser.engine;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.geckoview.ContentBlocking;
 import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoRuntimeSettings;
@@ -20,11 +23,15 @@ import org.mozilla.vrbrowser.browser.PermissionDelegate;
 import org.mozilla.vrbrowser.browser.Services;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.crashreporting.CrashReporterService;
+import org.mozilla.vrbrowser.utils.SystemUtils;
 
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SessionStore implements GeckoSession.PermissionDelegate {
+    private static final String LOGTAG = SystemUtils.createLogtag(SessionStore.class);
+    private static final int MAX_GECKO_SESSIONS = 5;
 
     private static final String[] WEB_EXTENSIONS = new String[] {
             "webcompat_vimeo",
@@ -48,6 +55,7 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
     private BookmarksStore mBookmarksStore;
     private HistoryStore mHistoryStore;
     private Services mServices;
+    private boolean mSuspendPending;
 
     private SessionStore() {
         mSessions = new ArrayList<>();
@@ -113,6 +121,7 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
         aSession.setPermissionDelegate(this);
         aSession.addNavigationListener(mServices);
         mSessions.add(aSession);
+        sessionActiveStateChanged();
         return aSession;
     }
 
@@ -173,7 +182,44 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
     }
 
     public void setActiveSession(Session aSession) {
+        if (aSession != null) {
+            aSession.setActive(true);
+        }
         mActiveSession = aSession;
+    }
+
+
+    private void limitInactiveSessions() {
+        Log.d(LOGTAG, "Limiting Inactive Sessions");
+        suspendAllInactiveSessions();
+        mSuspendPending = false;
+    }
+
+    void sessionActiveStateChanged() {
+        if (mSuspendPending) {
+            return;
+        }
+        int count = 0;
+        int activeCount = 0;
+        int inactiveCount = 0;
+        int suspendedCount = 0;
+        for(Session session: mSessions) {
+            if (session.getGeckoSession() != null) {
+                count++;
+                if (session.isActive()) {
+                    activeCount++;
+                } else {
+                    inactiveCount++;
+                }
+            } else {
+                suspendedCount++;
+            }
+        }
+        if (count > MAX_GECKO_SESSIONS) {
+            Log.d(LOGTAG, "Too many GeckoSessions. Active: " + activeCount + " Inactive: " + inactiveCount + " Suspended: " + suspendedCount);
+            mSuspendPending = true;
+            ThreadUtils.postToUiThread(this::limitInactiveSessions);
+        }
     }
 
     public Session getActiveSession() {

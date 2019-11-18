@@ -99,6 +99,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         mRuntime = aRuntime;
         initialize();
         mState = createSession(aSettings, aOpenMode);
+        mState.setActive(true);
     }
 
     protected Session(Context aContext, GeckoRuntime aRuntime, @NonNull SessionState aRestoreState) {
@@ -325,7 +326,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     }
 
     public void suspend() {
-        if (mState.mIsActive) {
+        if (mState.isActive()) {
             Log.e(LOGTAG, "Active Sessions can not be suspended");
             return;
         }
@@ -345,22 +346,26 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
                     .build();
         }
 
-        String restoreUri = mState.mUri;
-
         mState.mSession = createGeckoSession(settings);
         if (!mState.mSession.isOpen()) {
             mState.mSession.open(mRuntime);
+        }
+
+        // data:text URLs can not be restored.
+        if (mState.mSessionState != null && ((mState.mUri == null) || mState.mUri.startsWith("data:text"))) {
+            mState.mSessionState = null;
+            mState.mUri = null;
         }
 
         if (mState.mSessionState != null) {
             mState.mSession.restoreState(mState.mSessionState);
         }
 
-        if ((mState.mSessionState == null) && (restoreUri != null)) {
-            mState.mSession.loadUri(restoreUri);
+        if ((mState.mSessionState == null) && (mState.mUri != null)) {
+            mState.mSession.loadUri(mState.mUri);
         } else if (mState.mSettings.isPrivateBrowsingEnabled() && mState.mUri == null) {
             loadPrivateBrowsingPage();
-        } else if(mState.mSessionState == null || mState.mUri.equals(mContext.getResources().getString(R.string.about_blank)) ||
+        } else if(mState.mSessionState == null || ((mState.mUri == null) || mState.mUri.equals(mContext.getResources().getString(R.string.about_blank))) ||
                 (mState.mSessionState != null && mState.mSessionState.size() == 0)) {
             loadHomePage();
         } else if (mState.mUri != null && mState.mUri.contains(".youtube.com")) {
@@ -368,6 +373,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         }
 
         dumpAllState();
+        mState.setActive(true);
     }
 
 
@@ -410,6 +416,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         SessionState previous = mState;
 
         mState = createSession(previous.mSettings, SESSION_OPEN);
+        mState.setActive(true);
         if (previous.mSessionState != null) {
             mState.mSession.restoreState(previous.mSessionState);
         }
@@ -435,7 +442,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
             aState.mDisplay = null;
         }
         aState.mSession.close();
-        aState.mIsActive = false;
+        aState.setActive(false);
     }
 
     public void captureBitmap() {
@@ -596,17 +603,18 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
     public void setActive(boolean aActive) {
         // Flush the events queued while the session was inactive
-        if (mState.mSession != null && !mState.mIsActive && aActive) {
+        if (mState.mSession != null && !mState.isActive() && aActive) {
             flushQueuedEvents();
         }
 
         if (mState.mSession != null) {
             mState.mSession.setActive(aActive);
-        } else {
+            mState.setActive(aActive);
+        } else if (aActive) {
             restore();
+        } else {
+            Log.e(LOGTAG, "ERROR: Setting null GeckoView to inactive!");
         }
-
-        mState.mIsActive = aActive;
 
         for (SessionChangeListener listener: mSessionChangeListeners) {
             listener.onActiveStateChange(this, aActive);
@@ -661,6 +669,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
         mState = createSession(settings, SESSION_OPEN);
         closeSession(previous);
+        mState.setActive(true);
         loadUri(uri);
     }
 
@@ -705,7 +714,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     }
 
     public boolean isActive() {
-        return mState.mIsActive;
+        return mState.isActive();
     }
 
     private static final String M_PREFIX = "m.";

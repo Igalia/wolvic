@@ -1,12 +1,7 @@
 package org.mozilla.vrbrowser.browser.engine;
 
-import android.graphics.Bitmap;
-
-import androidx.annotation.Nullable;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
 import com.google.gson.annotations.JsonAdapter;
@@ -25,7 +20,7 @@ import java.util.UUID;
 
 @JsonAdapter(SessionState.SessionStateAdapterFactory.class)
 public class SessionState {
-    public transient boolean mIsActive;
+    private transient boolean mIsActive;
     public boolean mCanGoBack;
     public boolean mCanGoForward;
     public boolean mIsLoading;
@@ -62,6 +57,18 @@ public class SessionState {
                 return null;
             }
         }
+    }
+
+    boolean isActive() {
+        return mIsActive;
+    }
+
+    void setActive(boolean active) {
+        if (active == mIsActive) {
+            return;
+        }
+        mIsActive = active;
+        SessionStore.get().sessionActiveStateChanged();
     }
 
     public class SessionStateAdapterFactory implements TypeAdapterFactory {

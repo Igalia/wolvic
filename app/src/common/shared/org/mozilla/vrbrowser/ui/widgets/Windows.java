@@ -667,6 +667,9 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     }
 
     private void setWindowVisible(@NonNull WindowWidget aWindow, boolean aVisible) {
+        if (aVisible && (aWindow.getSession() != null) && (aWindow.getSession().getGeckoSession() == null)) {
+            setFirstPaint(aWindow, aWindow.getSession());
+        }
         aWindow.setVisible(aVisible);
         aWindow.getTopBar().setVisible(aVisible);
         aWindow.getTitleBar().setVisible(aVisible);
