@@ -601,6 +601,7 @@ public class NavigationURLBar extends FrameLayout {
                         ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
                         if (selectionValid) {
                             mBinding.urlEditText.setText(StringUtils.removeRange(mBinding.urlEditText.getText().toString(), startSelection, endSelection));
+                            mBinding.urlEditText.setSelection(startSelection);
                         }
                         if (item != null && item.getText() != null) {
                             mBinding.urlEditText.getText().insert(mBinding.urlEditText.getSelectionStart(), item.getText());
