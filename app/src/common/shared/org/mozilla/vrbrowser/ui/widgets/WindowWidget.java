@@ -978,7 +978,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     @Override
     public boolean isFirstPaintReady() {
-        return mWidgetPlacement.composited;
+        return mWidgetPlacement != null && mWidgetPlacement.composited;
     }
 
     @Override
@@ -1536,7 +1536,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     public void onPageStop(@NonNull GeckoSession aSession, boolean b) {
         if (mCaptureOnPageStop || !mSession.hasCapturedBitmap()) {
             mCaptureOnPageStop = false;
-            captureImage();
+            if (isFirstPaintReady()) {
+                captureImage();
+            }
         }
     }
 
