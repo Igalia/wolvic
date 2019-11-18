@@ -509,7 +509,7 @@ public class TelemetryWrapper {
             Log.d(LOGTAG, "\tTWO: " + openWindowsTime[WindowPlacement.LEFT.getValue()]);
             Log.d(LOGTAG, "\tTHREE: " + openWindowsTime[WindowPlacement.RIGHT.getValue()]);
 
-            Log.d(LOGTAG, "Open Private Windows Count:");
+            Log.d(LOGTAG, "Open Windows Count:");
             Log.d(LOGTAG, "\tFRONT: " + openWindows[WindowPlacement.FRONT.getValue()]);
             Log.d(LOGTAG, "\tLEFT: " + openWindows[WindowPlacement.LEFT.getValue()]);
             Log.d(LOGTAG, "\tRIGHT: " + openWindows[WindowPlacement.RIGHT.getValue()]);
@@ -592,6 +592,26 @@ public class TelemetryWrapper {
 
         for (int index = 0; index< MAX_WINDOWS; index++) {
             activePlacementTime[index] = 0;
+        }
+    }
+
+    public static void resetOpenedWindowsCount(int number, boolean isPrivate) {
+        if (isPrivate) {
+            for (int i=0; i<openPrivateWindows.length; i++) {
+                openPrivateWindows[i] = 0;
+            }
+            if (number > 0) {
+                openPrivateWindows[number-1] = 1;
+            }
+
+        } else {
+            for (int i=0; i<openWindows.length; i++) {
+                openWindows[i] = 0;
+            }
+
+            if (number > 0) {
+                openWindows[number-1] = 1;
+            }
         }
     }
 
