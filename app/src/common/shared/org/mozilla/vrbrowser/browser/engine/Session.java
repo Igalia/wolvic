@@ -24,7 +24,6 @@ import androidx.annotation.UiThread;
 import org.mozilla.geckoview.AllowOrDeny;
 import org.mozilla.geckoview.ContentBlocking;
 import org.mozilla.geckoview.GeckoDisplay;
-import org.mozilla.geckoview.GeckoResponse;
 import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoSession;
@@ -1389,10 +1388,10 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     // GeckoSession.SelectionActionDelegate
 
     @Override
-    public void onShowActionRequest(@NonNull GeckoSession aSession, @NonNull Selection selection, @NonNull String[] strings, @NonNull GeckoResponse<String> geckoResponse) {
+    public void onShowActionRequest(@NonNull GeckoSession aSession, @NonNull Selection selection) {
         if (mState.mSession == aSession) {
             for (GeckoSession.SelectionActionDelegate listener : mSelectionActionListeners) {
-                listener.onShowActionRequest(aSession, selection, strings, geckoResponse);
+                listener.onShowActionRequest(aSession, selection);
             }
         }
     }

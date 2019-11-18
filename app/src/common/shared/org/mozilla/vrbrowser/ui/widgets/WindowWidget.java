@@ -26,8 +26,6 @@ import androidx.annotation.StringRes;
 import androidx.annotation.UiThread;
 
 import org.jetbrains.annotations.NotNull;
-import org.mozilla.geckoview.GeckoDisplay;
-import org.mozilla.geckoview.GeckoResponse;
 import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.PanZoomController;
@@ -1631,10 +1629,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     // GeckoSession.SelectionActionDelegate
 
     @Override
-    public void onShowActionRequest(@NonNull GeckoSession aSession, @NonNull Selection aSelection, @NonNull String[] aActions, @NonNull GeckoResponse<String> aResponse) {
-        if (aActions.length == 1 && GeckoSession.SelectionActionDelegate.ACTION_HIDE.equals(aActions[0])) {
+    public void onShowActionRequest(@NonNull GeckoSession aSession, @NonNull Selection aSelection) {
+        if (aSelection.availableActions.size() == 1 && (aSelection.availableActions.contains(GeckoSession.SelectionActionDelegate.ACTION_HIDE))) {
             // See: https://github.com/MozillaReality/FirefoxReality/issues/2214
-            aResponse.respond(GeckoSession.SelectionActionDelegate.ACTION_HIDE);
+            aSelection.hide();
             return;
         }
         TelemetryWrapper.longPressContextMenuEvent();
@@ -1642,7 +1640,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         hideContextMenus();
         mSelectionMenu = new SelectionActionWidget(getContext());
         mSelectionMenu.mWidgetPlacement.parentHandle = getHandle();
-        mSelectionMenu.setActions(aActions);
+        mSelectionMenu.setActions(aSelection.availableActions);
         Matrix matrix = new Matrix();
         aSession.getClientToSurfaceMatrix(matrix);
         matrix.mapRect(aSelection.clientRect);
@@ -1651,13 +1649,13 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             @Override
             public void onAction(String action) {
                 hideContextMenus();
-                aResponse.respond(action);
+                aSelection.execute(action);
             }
 
             @Override
             public void onDismiss() {
                 hideContextMenus();
-                aResponse.respond(GeckoSession.SelectionActionDelegate.ACTION_UNSELECT);
+                aSelection.execute(GeckoSession.SelectionActionDelegate.ACTION_UNSELECT);
             }
         });
         mSelectionMenu.show(KEEP_FOCUS);

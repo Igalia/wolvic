@@ -50,7 +50,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.concurrent.Executor;
 
 import kotlin.Unit;
@@ -555,7 +556,7 @@ public class NavigationURLBar extends FrameLayout {
     };
 
     private void showSelectionMenu() {
-        ArrayList<String> actions = new ArrayList<>();
+        Collection<String> actions = new HashSet<>();
         if (mBinding.urlEditText.getSelectionEnd() > mBinding.urlEditText.getSelectionStart()) {
             actions.add(GeckoSession.SelectionActionDelegate.ACTION_CUT);
             actions.add(GeckoSession.SelectionActionDelegate.ACTION_COPY);
@@ -574,15 +575,14 @@ public class NavigationURLBar extends FrameLayout {
             return;
         }
 
-        String[] actionsArray = actions.toArray(new String[0]);
-        if (mSelectionMenu != null && !mSelectionMenu.hasSameActions(actionsArray)) {
+        if (mSelectionMenu != null && !mSelectionMenu.hasSameActions(actions)) {
             // Release current selection menu to recreate it with different actions.
             hideSelectionMenu();
         }
 
         if (mSelectionMenu == null) {
             mSelectionMenu = new SelectionActionWidget(getContext());
-            mSelectionMenu.setActions(actionsArray);
+            mSelectionMenu.setActions(actions);
             mSelectionMenu.setDelegate(new SelectionActionWidget.Delegate() {
                 @Override
                 public void onAction(String action) {
