@@ -68,6 +68,6 @@ public class PolishKeyboard extends BaseKeyboard {
 
     @Override
     public String[] getDomains(String... domains) {
-        return super.getDomains(".po");
+        return super.getDomains(".pl");
     }
 }
