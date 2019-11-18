@@ -20,13 +20,14 @@ public class CustomKeyboard extends Keyboard {
     private Key mEnterKey;
     private Key mSpaceKey;
     private Key mModeChangeKey;
-    private int mMaxColums;
+    private int mMaxColumns;
     private int[] mDisabledKeysIndexes;
 
     public static final int KEYCODE_SYMBOLS_CHANGE = -10;
     public static final int KEYCODE_VOICE_INPUT = -11;
     public static final int KEYCODE_LANGUAGE_CHANGE = -12;
     public static final int KEYCODE_EMOJI = -13;
+    public static final int KEYCODE_DOMAIN = -14;
 
     public CustomKeyboard(Context context, int xmlLayoutResId) {
         super(context, xmlLayoutResId, 0);
@@ -36,7 +37,7 @@ public class CustomKeyboard extends Keyboard {
     public CustomKeyboard (Context context, int layoutTemplateResId, CharSequence characters, int columns, int horizontalPadding, int verticalGap) {
         this(context, layoutTemplateResId);
 
-        mMaxColums = columns;
+        mMaxColumns = columns;
 
         int x = 0;
         int y = 0;
@@ -236,7 +237,7 @@ public class CustomKeyboard extends Keyboard {
     }
 
     public int getMaxColumns() {
-        return mMaxColums;
+        return mMaxColumns;
     }
 
     public void disableKeys(int[] disabledKeyIndexes) {

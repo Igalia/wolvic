@@ -56,6 +56,7 @@
         <Key android:codes="46" android:keyLabel="."/>
         <Key android:codes="0x300C" android:keyLabel="「" />
         <Key android:codes="0x300D" android:keyLabel="」" />
+        <Key android:codes="-14" android:keyLabel="\.com" />
         <Key android:codes="-13" android:keyLabel="^.^"/>
     </Row>
 </Keyboard>

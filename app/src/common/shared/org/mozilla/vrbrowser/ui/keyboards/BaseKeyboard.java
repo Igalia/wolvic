@@ -9,6 +9,7 @@ import org.mozilla.vrbrowser.utils.StringUtils;
 
 import java.util.Locale;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 public abstract class BaseKeyboard implements KeyboardInterface {
     protected Context mContext;
@@ -50,5 +51,11 @@ public abstract class BaseKeyboard implements KeyboardInterface {
 
     public float getAlphabeticKeyboardWidth() {
         return WidgetPlacement.dpDimension(mContext, R.dimen.keyboard_alphabetic_width);
+    }
+
+    @Override
+    public String[] getDomains(String... domains) {
+        return Stream.of(new String[]{".com", ".net", ".org", ".co"}, domains).flatMap(Stream::of)
+                .toArray(String[]::new);
     }
 }

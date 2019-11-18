@@ -65,4 +65,9 @@ public class FinnishKeyboard extends BaseKeyboard {
     public String getSpaceKeyText(String aComposingText) {
         return StringUtils.getStringByLocale(mContext, R.string.settings_language_finnish, getLocale());
     }
+
+    @Override
+    public String[] getDomains(String... domains) {
+        return super.getDomains(".fi");
+    }
 }

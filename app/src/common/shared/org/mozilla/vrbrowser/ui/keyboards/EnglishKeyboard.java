@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.Locale;
+import java.util.stream.Stream;
 
 public class EnglishKeyboard extends BaseKeyboard {
     private CustomKeyboard mKeyboard;
@@ -46,5 +47,10 @@ public class EnglishKeyboard extends BaseKeyboard {
     public String getSpaceKeyText(String aComposingText) {
 
         return StringUtils.getStringByLocale(mContext, R.string.settings_language_english, getLocale());
+    }
+
+    @Override
+    public String[] getDomains(String... domains) {
+        return super.getDomains(".uk", ".us");
     }
 }

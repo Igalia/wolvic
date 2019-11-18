@@ -47,4 +47,9 @@ public class FrenchKeyboard extends BaseKeyboard {
     public String getSpaceKeyText(String aComposingText) {
         return StringUtils.getStringByLocale(mContext, R.string.settings_language_french, getLocale());
     }
+
+    @Override
+    public String[] getDomains(String... domains) {
+        return super.getDomains(".fr");
+    }
 }

@@ -48,4 +48,9 @@ public class SpanishKeyboard extends BaseKeyboard {
     public String getSpaceKeyText(String aComposingText) {
         return StringUtils.getStringByLocale(mContext, R.string.settings_language_spanish, getLocale());
     }
+
+    @Override
+    public String[] getDomains(String... domains) {
+        return super.getDomains(".es");
+    }
 }

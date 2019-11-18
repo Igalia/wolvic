@@ -208,4 +208,9 @@ public class JapaneseKeyboard extends BaseKeyboard {
         mConverter.init();
     }
 
+    @Override
+    public String[] getDomains(String... domains) {
+        return super.getDomains(".jp");
+    }
+
 }
