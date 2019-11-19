@@ -976,9 +976,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
         // Capture active session snapshots when showing the tabs menu
         for (WindowWidget window: getCurrentWindows()) {
-            if (window.isFirstPaintReady()) {
-                window.captureImage();
-            }
+            window.captureImage();
         }
     }
 

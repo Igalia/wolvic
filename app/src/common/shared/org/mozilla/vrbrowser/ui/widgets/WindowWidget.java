@@ -65,6 +65,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
+import java.util.function.Consumer;
 
 import mozilla.components.concept.storage.PageObservation;
 import mozilla.components.concept.storage.PageVisit;
@@ -1089,8 +1090,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         Session current = mSession;
         setSession(aSession);
         SessionStore.get().setActiveSession(aSession);
-        current.setActive(false);
-        current.captureBackgroundBitmap(getWindowWidth(), getWindowHeight());
+        current.captureBackgroundBitmap(getWindowWidth(), getWindowHeight()).thenAccept(aVoid -> current.setActive(false));
         mWidgetManager.getTray().showTabAddedNotification();
     }
 
@@ -1534,9 +1534,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     public void onPageStop(@NonNull GeckoSession aSession, boolean b) {
         if (mCaptureOnPageStop || !mSession.hasCapturedBitmap()) {
             mCaptureOnPageStop = false;
-            if (isFirstPaintReady()) {
-                captureImage();
-            }
+            captureImage();
         }
     }
 

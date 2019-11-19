@@ -46,6 +46,7 @@ import org.mozilla.vrbrowser.utils.SystemUtils;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.LinkedList;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -81,6 +82,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     private transient SharedPreferences mPrefs;
     private transient GeckoRuntime mRuntime;
     private transient byte[] mPrivatePage;
+    private transient boolean mFirstContentfulPaint;
 
 
     public interface BitmapChangedListener {
@@ -436,7 +438,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         aState.mSession.setActive(false);
         aState.mSession.stop();
         if (aState.mDisplay != null) {
-            aState.mDisplay.surfaceDestroyed();
+            surfaceDestroyed();
             aState.mSession.releaseDisplay(aState.mDisplay);
             aState.mDisplay = null;
         }
@@ -445,54 +447,46 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     }
 
     public void captureBitmap() {
-        if (mState.mDisplay == null) {
+        if (mState.mDisplay == null || !mFirstContentfulPaint) {
             return;
         }
-        mState.mDisplay.capturePixels().then(bitmap -> {
+        mState.mDisplay.screenshot().aspectPreservingSize(500).capture().then(bitmap -> {
             if (bitmap != null) {
-                BitmapCache.getInstance(mContext).scaleBitmap(bitmap, 500, 280).thenAccept(scaledBitmap -> {
-                    BitmapCache.getInstance(mContext).addBitmap(getId(), scaledBitmap);
-                    for (BitmapChangedListener listener: mBitmapChangedListeners) {
-                        listener.onBitmapChanged(Session.this, scaledBitmap);
-                    }
-
-                }).exceptionally(throwable -> {
-                    Log.d(LOGTAG, "Error scaling the bitmap: " + throwable.getLocalizedMessage());
-                    throwable.printStackTrace();
-                    return null;
-                });
+                BitmapCache.getInstance(mContext).addBitmap(getId(), bitmap);
+                for (BitmapChangedListener listener: mBitmapChangedListeners) {
+                    listener.onBitmapChanged(Session.this, bitmap);
+                }
             }
             return null;
         });
     }
 
-    public void captureBackgroundBitmap(int displayWidth, int displayHeight) {
+    public CompletableFuture<Void> captureBackgroundBitmap(int displayWidth, int displayHeight) {
+        if (mState.mSession == null || !mFirstContentfulPaint) {
+            return CompletableFuture.completedFuture(null);
+        }
         Surface captureSurface = BitmapCache.getInstance(mContext).acquireCaptureSurface(displayWidth, displayHeight);
         if (captureSurface == null) {
-            return;
+            return CompletableFuture.completedFuture(null);
         }
-        GeckoSession session = mState.mSession;
-        GeckoDisplay display = session.acquireDisplay();
-        display.surfaceChanged(captureSurface, displayWidth, displayHeight);
-        display.capturePixels().then(bitmap -> {
-            if (bitmap != null) {
-                BitmapCache.getInstance(mContext).scaleBitmap(bitmap, 500, 280).thenAccept(scaledBitmap -> {
-                    BitmapCache.getInstance(mContext).addBitmap(getId(), scaledBitmap);
-                    for (BitmapChangedListener listener: mBitmapChangedListeners) {
-                        listener.onBitmapChanged(Session.this, scaledBitmap);
-                    }
 
-                }).exceptionally(throwable -> {
-                    Log.d(LOGTAG, "Error scaling the bitmap: " + throwable.getLocalizedMessage());
-                    throwable.printStackTrace();
-                    return null;
-                });
+        CompletableFuture<Void> result = new CompletableFuture<>();
+        GeckoDisplay display = mState.mSession.acquireDisplay();
+        display.surfaceChanged(captureSurface, displayWidth, displayHeight);
+        display.screenshot().aspectPreservingSize(500).capture().then(bitmap -> {
+            if (bitmap != null) {
+                BitmapCache.getInstance(mContext).addBitmap(getId(), bitmap);
+                for (BitmapChangedListener listener: mBitmapChangedListeners) {
+                    listener.onBitmapChanged(Session.this, bitmap);
+                }
             }
             display.surfaceDestroyed();
-            session.releaseDisplay(display);
+            mState.mSession.releaseDisplay(display);
             BitmapCache.getInstance(mContext).releaseCaptureSurface();
+            result.complete(null);
             return null;
         });
+        return result;
     }
 
     public boolean hasCapturedBitmap() {
@@ -549,6 +543,10 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
     public boolean isVideoAvailable() {
         return mState.mMediaElements != null && mState.mMediaElements.size() > 0;
+    }
+
+    public boolean isFirstContentfulPaint() {
+        return mFirstContentfulPaint;
     }
 
     public Media getFullScreenVideo() {
@@ -1049,6 +1047,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
     @Override
     public void onFirstContentfulPaint(@NonNull GeckoSession aSession) {
+        mFirstContentfulPaint = true;
         if (mState.mSession == aSession) {
             for (GeckoSession.ContentDelegate listener : mContentListeners) {
                 listener.onFirstContentfulPaint(aSession);
