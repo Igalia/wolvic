@@ -239,7 +239,10 @@ public class NavigationURLBar extends FrameLayout {
         mURLWebsiteColor = typedValue.data;
 
         // Bookmarks
-        mBinding.bookmarkButton.setOnClickListener(v -> handleBookmarkClick());
+        mBinding.bookmarkButton.setOnClickListener(v -> {
+            v.requestFocusFromTouch();
+            handleBookmarkClick();
+        });
 
         // Initialize bindings
         mBinding.setIsLibraryVisible(false);
@@ -479,6 +482,7 @@ public class NavigationURLBar extends FrameLayout {
         if (mAudio != null) {
             mAudio.playSound(AudioEngine.Sound.CLICK);
         }
+        view.requestFocusFromTouch();
 
         if (mDelegate != null) {
             mDelegate.onVoiceSearchClicked();
@@ -500,6 +504,7 @@ public class NavigationURLBar extends FrameLayout {
             mAudio.playSound(AudioEngine.Sound.CLICK);
         }
 
+        view.requestFocusFromTouch();
         if (mDelegate != null) {
             mDelegate.onPopUpButtonClicked();
         }
