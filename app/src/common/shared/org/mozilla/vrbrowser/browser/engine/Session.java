@@ -81,6 +81,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     private transient SharedPreferences mPrefs;
     private transient GeckoRuntime mRuntime;
     private transient byte[] mPrivatePage;
+    private transient boolean mDisplayReady;
 
 
     public interface BitmapChangedListener {
@@ -436,7 +437,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         aState.mSession.setActive(false);
         aState.mSession.stop();
         if (aState.mDisplay != null) {
-            aState.mDisplay.surfaceDestroyed();
+            surfaceDestroyed();
             aState.mSession.releaseDisplay(aState.mDisplay);
             aState.mDisplay = null;
         }
@@ -445,22 +446,15 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     }
 
     public void captureBitmap() {
-        if (mState.mDisplay == null) {
+        if (mState.mDisplay == null || !mDisplayReady) {
             return;
         }
-        mState.mDisplay.capturePixels().then(bitmap -> {
+        mState.mDisplay.screenshot().aspectPreservingSize(500).capture().then(bitmap -> {
             if (bitmap != null) {
-                BitmapCache.getInstance(mContext).scaleBitmap(bitmap, 500, 280).thenAccept(scaledBitmap -> {
-                    BitmapCache.getInstance(mContext).addBitmap(getId(), scaledBitmap);
-                    for (BitmapChangedListener listener: mBitmapChangedListeners) {
-                        listener.onBitmapChanged(Session.this, scaledBitmap);
-                    }
-
-                }).exceptionally(throwable -> {
-                    Log.d(LOGTAG, "Error scaling the bitmap: " + throwable.getLocalizedMessage());
-                    throwable.printStackTrace();
-                    return null;
-                });
+                BitmapCache.getInstance(mContext).addBitmap(getId(), bitmap);
+                for (BitmapChangedListener listener: mBitmapChangedListeners) {
+                    listener.onBitmapChanged(Session.this, bitmap);
+                }
             }
             return null;
         });
@@ -468,28 +462,19 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
     public void captureBackgroundBitmap(int displayWidth, int displayHeight) {
         Surface captureSurface = BitmapCache.getInstance(mContext).acquireCaptureSurface(displayWidth, displayHeight);
-        if (captureSurface == null) {
+        if (captureSurface == null || mState.mDisplay == null) {
             return;
         }
-        GeckoSession session = mState.mSession;
-        GeckoDisplay display = session.acquireDisplay();
-        display.surfaceChanged(captureSurface, displayWidth, displayHeight);
-        display.capturePixels().then(bitmap -> {
+        GeckoDisplay display = mState.mDisplay;
+        surfaceChanged(captureSurface, 0, 0, displayWidth, displayHeight);
+        mState.mDisplay.screenshot().aspectPreservingSize(500).capture().then(bitmap -> {
             if (bitmap != null) {
-                BitmapCache.getInstance(mContext).scaleBitmap(bitmap, 500, 280).thenAccept(scaledBitmap -> {
-                    BitmapCache.getInstance(mContext).addBitmap(getId(), scaledBitmap);
-                    for (BitmapChangedListener listener: mBitmapChangedListeners) {
-                        listener.onBitmapChanged(Session.this, scaledBitmap);
-                    }
-
-                }).exceptionally(throwable -> {
-                    Log.d(LOGTAG, "Error scaling the bitmap: " + throwable.getLocalizedMessage());
-                    throwable.printStackTrace();
-                    return null;
-                });
+                BitmapCache.getInstance(mContext).addBitmap(getId(), bitmap);
+                for (BitmapChangedListener listener: mBitmapChangedListeners) {
+                    listener.onBitmapChanged(Session.this, bitmap);
+                }
             }
-            display.surfaceDestroyed();
-            session.releaseDisplay(display);
+            surfaceDestroyed();
             BitmapCache.getInstance(mContext).releaseCaptureSurface();
             return null;
         });
@@ -1437,12 +1422,14 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
             }
             mState.mDisplay = null;
         }
+        mDisplayReady = false;
     }
 
     public void surfaceDestroyed() {
         if (mState.mDisplay != null) {
             mState.mDisplay.surfaceDestroyed();
         }
+        mDisplayReady = false;
     }
 
     public void surfaceChanged(@NonNull final Surface surface, final int left, final int top,
@@ -1454,5 +1441,6 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
             mState.mDisplay = mState.mSession.acquireDisplay();
         }
         mState.mDisplay.surfaceChanged(surface, left, top, width, height);
+        mDisplayReady = true;
     }
 }
