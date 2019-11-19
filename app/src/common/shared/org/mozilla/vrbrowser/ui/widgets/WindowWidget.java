@@ -1117,7 +1117,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     @Override
     public boolean onCheckIsTextEditor() {
-        return mSession.isInputActive();
+        return !mIsResizing && mSession.isInputActive();
     }
 
 
