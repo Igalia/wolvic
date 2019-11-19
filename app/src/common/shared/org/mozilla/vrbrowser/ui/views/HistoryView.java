@@ -171,7 +171,7 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
                 mBinding.executePendingBindings();
             }
 
-            SessionStore.get().getHistoryStore().deleteHistory(item.getUrl(), item.getVisitTime());
+            SessionStore.get().getHistoryStore().deleteVisitsFor(item.getUrl());
         }
 
         @Override
