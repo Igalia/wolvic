@@ -12,6 +12,7 @@ import org.mozilla.telemetry.TelemetryHolder;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
+import org.mozilla.vrbrowser.ui.widgets.UISurfaceTextureRenderer;
 import org.mozilla.vrbrowser.utils.DeviceType;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
 import org.mozilla.vrbrowser.utils.StringUtils;
@@ -48,6 +49,7 @@ public class SettingsStore {
     public final static boolean CONSOLE_LOGS_DEFAULT = false;
     public final static boolean ENV_OVERRIDE_DEFAULT = false;
     public final static boolean MULTIPROCESS_DEFAULT = true;
+    public final static boolean UI_HARDWARE_ACCELERATION_DEFAULT = false;
     public final static boolean PERFORMANCE_MONITOR_DEFAULT = true;
     public final static boolean DRM_PLAYBACK_DEFAULT = false;
     public final static boolean TRACKING_DEFAULT = true;
@@ -231,6 +233,17 @@ public class SettingsStore {
     public void setMultiprocessEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_multiprocess_e10s), isEnabled);
+        editor.commit();
+    }
+
+    public boolean isUIHardwareAccelerationEnabled() {
+        return mPrefs.getBoolean(
+                mContext.getString(R.string.settings_key_ui_hardware_acceleration), UI_HARDWARE_ACCELERATION_DEFAULT);
+    }
+
+    public void setUIHardwareAccelerationEnabled(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_ui_hardware_acceleration), isEnabled);
         editor.commit();
     }
 

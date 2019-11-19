@@ -17,6 +17,7 @@ import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.databinding.OptionsDeveloperBinding;
 import org.mozilla.vrbrowser.ui.views.settings.SwitchSetting;
+import org.mozilla.vrbrowser.ui.widgets.UISurfaceTextureRenderer;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 
 import static org.mozilla.vrbrowser.utils.ServoUtils.isServoAvailable;
@@ -59,6 +60,9 @@ class DeveloperOptionsView extends SettingsView {
         // Hide Performance Monitor switch until it can handle multiple windows.
         mBinding.performanceMonitorSwitch.setVisibility(View.GONE);
 
+        mBinding.hardwareAccelerationSwitch.setOnCheckedChangeListener(mUIHardwareAccelerationListener);
+        setUIHardwareAcceleration(SettingsStore.getInstance(getContext()).isUIHardwareAccelerationEnabled(), false);
+
         if (BuildConfig.DEBUG) {
             mBinding.debugLoggingSwitch.setVisibility(View.GONE);
         } else {
@@ -92,6 +96,10 @@ class DeveloperOptionsView extends SettingsView {
 
     private SwitchSetting.OnCheckedChangeListener mDebugLogginListener = (compoundButton, value, doApply) -> {
         setDebugLogging(value, doApply);
+    };
+
+    private SwitchSetting.OnCheckedChangeListener mUIHardwareAccelerationListener = (compoundButton, value, doApply) -> {
+        setUIHardwareAcceleration(value, doApply);
     };
 
     private SwitchSetting.OnCheckedChangeListener mServoListener = (compoundButton, b, doApply) -> {
@@ -161,6 +169,17 @@ class DeveloperOptionsView extends SettingsView {
 
         if (doApply) {
             SessionStore.get().resetMultiprocess();
+        }
+    }
+
+    private void setUIHardwareAcceleration(boolean value, boolean doApply) {
+        mBinding.hardwareAccelerationSwitch.setOnCheckedChangeListener(null);
+        mBinding.hardwareAccelerationSwitch.setValue(value, false);
+        mBinding.hardwareAccelerationSwitch.setOnCheckedChangeListener(mUIHardwareAccelerationListener);
+
+        if (doApply) {
+            SettingsStore.getInstance(getContext()).setUIHardwareAccelerationEnabled(value);
+            showRestartDialog();
         }
     }
 

@@ -59,6 +59,7 @@ import org.mozilla.vrbrowser.ui.widgets.KeyboardWidget;
 import org.mozilla.vrbrowser.ui.widgets.NavigationBarWidget;
 import org.mozilla.vrbrowser.ui.widgets.RootWidget;
 import org.mozilla.vrbrowser.ui.widgets.TrayWidget;
+import org.mozilla.vrbrowser.ui.widgets.UISurfaceTextureRenderer;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.menus.VideoProjectionMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.Widget;
@@ -280,6 +281,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     protected void initializeWidgets() {
+        UISurfaceTextureRenderer.setUseHardwareAcceleration(SettingsStore.getInstance(getBaseContext()).isUIHardwareAccelerationEnabled());
         mWindows = new Windows(this);
         mWindows.setDelegate(new Windows.Delegate() {
             @Override

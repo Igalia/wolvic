@@ -12,12 +12,17 @@ import android.graphics.PorterDuff;
 import android.graphics.SurfaceTexture;
 import android.view.Surface;
 
-class UISurfaceTextureRenderer {
+public class UISurfaceTextureRenderer {
     private int mTextureWidth;
     private int mTextureHeight;
     private SurfaceTexture mSurfaceTexture;
     private Surface mSurface;
     private Canvas mSurfaceCanvas;
+    private static boolean sUseHarwareAcceleration;
+
+    public static void setUseHardwareAcceleration(boolean aEnabled) {
+        sUseHarwareAcceleration = aEnabled;
+    }
 
     UISurfaceTextureRenderer(SurfaceTexture aTexture, int aWidth, int aHeight) {
         mTextureWidth = aWidth;
@@ -62,7 +67,11 @@ class UISurfaceTextureRenderer {
         mSurfaceCanvas = null;
         if (mSurface != null) {
             try {
-                mSurfaceCanvas = mSurface.lockHardwareCanvas();
+                if (sUseHarwareAcceleration) {
+                    mSurfaceCanvas = mSurface.lockHardwareCanvas();
+                } else {
+                    mSurfaceCanvas = mSurface.lockCanvas(null);
+                }
                 mSurfaceCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
             }
             catch (Exception e){
