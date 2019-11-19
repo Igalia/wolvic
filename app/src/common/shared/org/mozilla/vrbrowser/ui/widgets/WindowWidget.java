@@ -1503,7 +1503,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         if (element.type == ContextElement.TYPE_VIDEO) {
             return;
         }
-        TelemetryWrapper.longPressContextMenuEvent();
 
         hideContextMenus();
 
@@ -1672,7 +1671,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             aSelection.hide();
             return;
         }
-        TelemetryWrapper.longPressContextMenuEvent();
 
         hideContextMenus();
         mSelectionMenu = new SelectionActionWidget(getContext());

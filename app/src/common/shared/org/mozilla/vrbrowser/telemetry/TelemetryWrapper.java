@@ -91,12 +91,6 @@ public class TelemetryWrapper {
         private static final String IMMERSIVE_MODE = "immersive_mode";
         private static final String TELEMETRY_STATUS = "status";
 
-        // How many max-windows dialogs happen / what percentage
-        private static final String MAX_WINDOWS_DIALOG = "max_windows_dialog";
-        // New Window tray button use
-        private static final String NEW_WINDOW_BUTTON = "tray_new_window";
-        // Long press to bring the context menu event
-        private static final String LONG_PRESS_CONTEXT_MENU = "context_menu";
         // How long is a window open for / window life
         private static final String WINDOW_LIFETIME = "window_lifetime";
         // Frequency of window moves
@@ -119,7 +113,6 @@ public class TelemetryWrapper {
         private static final String SEARCH_BAR = "search_bar";
         private static final String VOICE_INPUT = "voice_input";
         private static final String WINDOW = "window";
-        private static final String TRAY = "tray";
     }
 
     private class Extra {
@@ -413,27 +406,6 @@ public class TelemetryWrapper {
         queueOpenWindowsPctEvent();
     }
 
-    public static void trayNewWindowEvent() {
-        TelemetryEvent event = TelemetryEvent.create(Category.ACTION, Method.NEW_WINDOW_BUTTON, Object.TRAY);
-        event.queue();
-
-        Log.d(LOGTAG, "[Queue] Tray New Window Click");
-    }
-
-    public static void maxWindowsDialogEvent() {
-        TelemetryEvent event = TelemetryEvent.create(Category.ACTION, Method.MAX_WINDOWS_DIALOG, Object.WINDOW);
-        event.queue();
-
-        Log.d(LOGTAG, "[Queue] Max Windows dialog");
-    }
-
-    public static void longPressContextMenuEvent() {
-        TelemetryEvent event = TelemetryEvent.create(Category.ACTION, Method.LONG_PRESS_CONTEXT_MENU, Object.WINDOW);
-        event.queue();
-
-        Log.d(LOGTAG, "[Queue] Context Menu Long Press");
-    }
-
     public static void openWindowEvent(int windowId) {
         windowLifetime.put(windowId, SystemClock.elapsedRealtime());
     }
@@ -514,13 +486,6 @@ public class TelemetryWrapper {
             Log.d(LOGTAG, "\tLEFT: " + openWindows[WindowPlacement.LEFT.getValue()]);
             Log.d(LOGTAG, "\tRIGHT: " + openWindows[WindowPlacement.RIGHT.getValue()]);
         }
-    }
-
-    public static void queueCurvedModeActiveEvent() {
-        TelemetryEvent event = TelemetryEvent.create(Category.ACTION, Method.CURVED_MODE_ACTIVE, Object.WINDOW);
-        event.queue();
-
-        Log.d(LOGTAG, "[Queue] Curved mode active");
     }
 
     private static void queueWindowsLifetimeHistogram() {

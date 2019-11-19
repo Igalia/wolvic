@@ -151,8 +151,6 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Windo
 
             view.requestFocusFromTouch();
 
-            TelemetryWrapper.trayNewWindowEvent();
-
             notifyAddWindowClicked();
         });
         mAddWindowButton.setCurvedTooltip(false);
