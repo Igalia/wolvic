@@ -41,11 +41,11 @@ public class ContentLanguageOptionsView extends SettingsView {
         LayoutInflater inflater = LayoutInflater.from(aContext);
 
         // Preferred languages adapter
-        mPreferredAdapter = new LanguagesAdapter(mLanguageItemCallback, true);
+        mPreferredAdapter = new LanguagesAdapter(getContext(), mLanguageItemCallback, true);
         mPreferredAdapter.setLanguageList(LocaleUtils.getPreferredLanguages(getContext()));
 
         // Available languages adapter
-        mAvailableAdapter = new LanguagesAdapter(mLanguageItemCallback, false);
+        mAvailableAdapter = new LanguagesAdapter(getContext(), mLanguageItemCallback, false);
         mAvailableAdapter.setLanguageList(LocaleUtils.getAvailableLanguages());
 
         // Inflate this data binding layout

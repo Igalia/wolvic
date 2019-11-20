@@ -1,11 +1,14 @@
 package org.mozilla.vrbrowser.ui.adapters;
 
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,15 +26,28 @@ import java.util.List;
 
 public class LanguagesAdapter extends RecyclerView.Adapter<LanguagesAdapter.LanguageViewHolder> {
 
+    private static final int ICON_ANIMATION_DURATION = 200;
+
     private List<Language> mLanguagesList;
     private boolean mIsPreferred;
+
+    private int mIconColorHover;
+    private int mIconNormalColor;
+    private int mIconSize;
+    private int mMaxIconSize;
 
     @Nullable
     private final LanguageItemCallback mLanguageItemCallback;
 
-    public LanguagesAdapter(@Nullable LanguageItemCallback clickCallback, boolean isPreferred) {
+    public LanguagesAdapter(@NonNull Context context, @Nullable LanguageItemCallback clickCallback, boolean isPreferred) {
         mLanguageItemCallback = clickCallback;
         mIsPreferred = isPreferred;
+
+        mIconSize = (int)context.getResources().getDimension(R.dimen.language_row_icon_size);
+        mMaxIconSize = mIconSize + ((mIconSize*25)/100);
+
+        mIconColorHover = context.getResources().getColor(R.color.smoke, context.getTheme());
+        mIconNormalColor = context.getResources().getColor(R.color.concrete, context.getTheme());
 
         setHasStableIds(true);
     }
@@ -123,6 +139,10 @@ public class LanguagesAdapter extends RecyclerView.Adapter<LanguagesAdapter.Lang
         LanguageItemBinding binding = DataBindingUtil
                 .inflate(LayoutInflater.from(parent.getContext()), R.layout.language_item,
                         parent, false);
+        binding.add.setOnHoverListener(mIconHoverListener);
+        binding.delete.setOnHoverListener(mIconHoverListener);
+        binding.up.setOnHoverListener(mIconHoverListener);
+        binding.down.setOnHoverListener(mIconHoverListener);
         binding.setIsPreferred(mIsPreferred);
 
         return new LanguageViewHolder(binding);
@@ -186,5 +206,45 @@ public class LanguagesAdapter extends RecyclerView.Adapter<LanguagesAdapter.Lang
     public long getItemId(int position) {
         return  position;
     }
+
+    private View.OnHoverListener mIconHoverListener = (view, motionEvent) -> {
+        ImageView icon = (ImageView)view;
+        int ev = motionEvent.getActionMasked();
+        switch (ev) {
+            case MotionEvent.ACTION_HOVER_ENTER: {
+                icon.setColorFilter(mIconColorHover);
+                ValueAnimator anim = ValueAnimator.ofInt(mIconSize, mMaxIconSize);
+                anim.addUpdateListener(valueAnimator -> {
+                    int val = (Integer) valueAnimator.getAnimatedValue();
+                    ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+                    layoutParams.width = val;
+                    layoutParams.height = val;
+                    view.setLayoutParams(layoutParams);
+                });
+                anim.setDuration(ICON_ANIMATION_DURATION);
+                anim.start();
+
+                return false;
+            }
+
+            case MotionEvent.ACTION_HOVER_EXIT: {
+                ValueAnimator anim = ValueAnimator.ofInt(mMaxIconSize, mIconSize);
+                anim.addUpdateListener(valueAnimator -> {
+                    int val = (Integer) valueAnimator.getAnimatedValue();
+                    ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+                    layoutParams.width = val;
+                    layoutParams.height = val;
+                    view.setLayoutParams(layoutParams);
+                });
+                anim.setDuration(ICON_ANIMATION_DURATION);
+                anim.start();
+                icon.setColorFilter(mIconNormalColor);
+
+                return false;
+            }
+        }
+
+        return false;
+    };
 
 }
