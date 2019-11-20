@@ -1145,8 +1145,8 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             Session moveTo = targetWindow.getSession();
             moveFrom.surfaceDestroyed();
             moveTo.surfaceDestroyed();
-            windowToMove.setSession(moveTo);
-            targetWindow.setSession(moveFrom);
+            windowToMove.setSession(moveTo, WindowWidget.SESSION_DO_NOT_RELEASE_DISPLAY);
+            targetWindow.setSession(moveFrom, WindowWidget.SESSION_DO_NOT_RELEASE_DISPLAY);
             SessionStore.get().setActiveSession(targetWindow.getSession());
 
         } else {

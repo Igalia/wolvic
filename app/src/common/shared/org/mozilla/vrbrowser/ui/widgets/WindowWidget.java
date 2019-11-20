@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 
+import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
@@ -88,6 +89,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         default void onBookmarksShown(WindowWidget aWindow) {}
         default void onBookmarksHidden(WindowWidget aWindow) {}
     }
+
+    @IntDef(value = { SESSION_RELEASE_DISPLAY, SESSION_DO_NOT_RELEASE_DISPLAY})
+    public @interface OldSessionDisplayAction {}
+    public static final int SESSION_RELEASE_DISPLAY = 0;
+    public static final int SESSION_DO_NOT_RELEASE_DISPLAY = 1;
+
 
     private Surface mSurface;
     private int mWidth;
@@ -1030,11 +1037,17 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     public void setSession(@NonNull Session aSession) {
+        setSession(aSession, SESSION_RELEASE_DISPLAY);
+    }
+
+    public void setSession(@NonNull Session aSession, @OldSessionDisplayAction int aDisplayAction) {
         if (mSession != aSession) {
             Session oldSession = mSession;
             if (oldSession != null) {
                 cleanListeners(oldSession);
-                oldSession.releaseDisplay();
+                if (aDisplayAction == SESSION_RELEASE_DISPLAY) {
+                    oldSession.releaseDisplay();
+                }
             }
 
             mSession = aSession;
