@@ -16,6 +16,7 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -980,15 +981,15 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     @Override
-    public void onLongPress(float centerX, SelectionActionWidget actionMenu) {
+    public void onURLSelectionAction(EditText aURLEdit, float centerX, SelectionActionWidget actionMenu) {
         actionMenu.getPlacement().parentHandle = this.getHandle();
         actionMenu.getPlacement().parentAnchorY = 1.0f;
-        actionMenu.getPlacement().anchorY = 0.34f;
+        actionMenu.getPlacement().anchorY = 0.44f;
         Rect offsetViewBounds = new Rect();
-        mURLBar.getDrawingRect(offsetViewBounds);
-        offsetDescendantRectToMyCoords(mURLBar, offsetViewBounds);
-        float x = offsetViewBounds.left + centerX;
-        actionMenu.getPlacement().parentAnchorX = x / getMeasuredWidth();
+        aURLEdit.getDrawingRect(offsetViewBounds);
+        offsetDescendantRectToMyCoords(aURLEdit, offsetViewBounds);
+        float x = aURLEdit.getPaddingLeft() + offsetViewBounds.left + centerX;
+        actionMenu.getPlacement().parentAnchorX = x / getWidth();
     }
 
     @Override

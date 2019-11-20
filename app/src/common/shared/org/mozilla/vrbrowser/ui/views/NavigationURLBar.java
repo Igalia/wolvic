@@ -23,6 +23,7 @@ import android.view.MotionEvent;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
@@ -97,7 +98,7 @@ public class NavigationURLBar extends FrameLayout {
         void onVoiceSearchClicked();
         void onShowAwesomeBar();
         void onHideAwesomeBar();
-        void onLongPress(float centerX, SelectionActionWidget actionMenu);
+        void onURLSelectionAction(EditText aURLEdit, float centerX, SelectionActionWidget actionMenu);
         void onPopUpButtonClicked();
     }
 
@@ -206,7 +207,7 @@ public class NavigationURLBar extends FrameLayout {
                     showSelectionMenu();
 
                 } else {
-                    mDelegate.onLongPress(getSelectionCenterX(), mSelectionMenu);
+                    mDelegate.onURLSelectionAction(mBinding.urlEditText, getSelectionCenterX(), mSelectionMenu);
                     mSelectionMenu.updateWidget();
                 }
             }
@@ -630,7 +631,7 @@ public class NavigationURLBar extends FrameLayout {
         }
 
         if (mDelegate != null) {
-            mDelegate.onLongPress(getSelectionCenterX(), mSelectionMenu);
+            mDelegate.onURLSelectionAction(mBinding.urlEditText, getSelectionCenterX(), mSelectionMenu);
         }
 
         mSelectionMenu.show(UIWidget.KEEP_FOCUS);

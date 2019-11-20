@@ -61,7 +61,7 @@ public class SelectionActionWidget extends UIWidget implements WidgetManagerDele
         aPlacement.anchorY = 0.5f;
         aPlacement.translationX = 0.0f;
         aPlacement.translationY = 0.0f;
-        aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.context_menu_z_distance);
+        aPlacement.translationZ = 1.0f;
         aPlacement.visible = false;
     }
 
