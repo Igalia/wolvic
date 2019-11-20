@@ -8,7 +8,6 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -33,6 +32,7 @@ public class HoneycombButton extends LinearLayout {
     private float mButtonTextSize;
     private String mSecondaryButtonText;
     private Drawable mButtonIcon;
+    private boolean mButtonIconHover;
 
     public HoneycombButton(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, R.style.honeycombButtonTheme);
@@ -44,6 +44,7 @@ public class HoneycombButton extends LinearLayout {
         mButtonText = attributes.getString(R.styleable.HoneycombButton_honeycombButtonText);
         mButtonTextSize = attributes.getDimension(R.styleable.HoneycombButton_honeycombButtonTextSize, 0.0f);
         mButtonIcon = attributes.getDrawable(R.styleable.HoneycombButton_honeycombButtonIcon);
+        mButtonIconHover = attributes.getBoolean(R.styleable.HoneycombButton_honeycombButtonIconHover, true);
 
         String iconIdStr = attributes.getString(R.styleable.HoneycombButton_honeycombButtonIcon);
         int deviceTypeId = DeviceType.getType();
@@ -123,14 +124,18 @@ public class HoneycombButton extends LinearLayout {
             switch (motionEvent.getAction()) {
                 case MotionEvent.ACTION_HOVER_ENTER:
                     if (mIcon != null && mText != null) {
-                        mIcon.setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.asphalt, getContext().getTheme()), PorterDuff.Mode.MULTIPLY));
+                        if (mButtonIconHover) {
+                            mIcon.setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.asphalt, getContext().getTheme()), PorterDuff.Mode.MULTIPLY));
+                        }
                         mText.setTextColor(getContext().getColor(R.color.asphalt));
                         mSecondaryText.setTextColor(getContext().getColor(R.color.asphalt));
                     }
                     break;
                 case MotionEvent.ACTION_HOVER_EXIT:
                     if (mIcon != null && mText != null) {
-                        mIcon.setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.fog, getContext().getTheme()), PorterDuff.Mode.MULTIPLY));
+                        if (mButtonIconHover) {
+                            mIcon.setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.fog, getContext().getTheme()), PorterDuff.Mode.MULTIPLY));
+                        }
                         mText.setTextColor(getContext().getColor(R.color.fog));
                         mSecondaryText.setTextColor(getContext().getColor(R.color.fog));
                     }
