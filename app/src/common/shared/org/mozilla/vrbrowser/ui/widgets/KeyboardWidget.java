@@ -463,8 +463,6 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         } else if (popupKey.codes[0] == CustomKeyboard.KEYCODE_SHIFT) {
             mIsLongPress = !mIsCapsLock;
 
-        } else if (popupKey.codes[0] == Keyboard.KEYCODE_DELETE) {
-            handleBackspace(true);
         }
     }
 
@@ -489,7 +487,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                 handleShift(!mKeyboardView.isShifted());
                 break;
             case Keyboard.KEYCODE_DELETE:
-                handleBackspace(false);
+                handleBackspace();
                 break;
             case Keyboard.KEYCODE_DONE:
                 handleDone();
@@ -645,7 +643,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mKeyboardView.setShifted(shifted || mIsCapsLock);
     }
 
-    private void handleBackspace(final boolean isLongPress) {
+    private void handleBackspace() {
         final InputConnection connection = mInputConnection;
         if (mComposingText.length() > 0) {
             CharSequence selectedText = mInputConnection.getSelectedText(0);
@@ -668,25 +666,18 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                 return;
             }
 
-            if (isLongPress) {
-                CharSequence currentText = connection.getExtractedText(new ExtractedTextRequest(), 0).text;
-                CharSequence beforeCursorText = connection.getTextBeforeCursor(currentText.length(), 0);
-                CharSequence afterCursorText = connection.getTextAfterCursor(currentText.length(), 0);
-                connection.deleteSurroundingText(beforeCursorText.length(), afterCursorText.length());
-            } else {
-                if (mCurrentKeyboard.usesTextOverride()) {
-                    String beforeText = getTextBeforeCursor(connection);
-                    String newBeforeText = mCurrentKeyboard.overrideBackspace(beforeText);
-                    if (newBeforeText != null) {
-                        // Replace whole before text
-                        connection.deleteSurroundingText(beforeText.length(), 0);
-                        connection.commitText(newBeforeText, 1);
-                        return;
-                    }
+            if (mCurrentKeyboard.usesTextOverride()) {
+                String beforeText = getTextBeforeCursor(connection);
+                String newBeforeText = mCurrentKeyboard.overrideBackspace(beforeText);
+                if (newBeforeText != null) {
+                    // Replace whole before text
+                    connection.deleteSurroundingText(beforeText.length(), 0);
+                    connection.commitText(newBeforeText, 1);
+                    return;
                 }
-                // Remove the character before the cursor.
-                connection.deleteSurroundingText(1, 0);
             }
+            // Remove the character before the cursor.
+            connection.deleteSurroundingText(1, 0);
         });
     }
 
@@ -1030,7 +1021,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
                 switch (keyCode) {
                     case KeyEvent.KEYCODE_DEL:
-                        handleBackspace(event.isLongPress());
+                        handleBackspace();
                         return true;
                     case KeyEvent.KEYCODE_ENTER:
                     case KeyEvent.KEYCODE_NUMPAD_ENTER:
