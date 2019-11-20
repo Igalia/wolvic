@@ -7,7 +7,7 @@
         android:id="@+id/optionsLayout"
         android:layout_width="@dimen/whats_new_width"
         android:layout_height="@dimen/whats_new_height"
-        android:background="@drawable/settings_background"
+        android:background="@drawable/dialog_background"
         android:orientation="vertical"
         android:paddingTop="27dp"
         android:paddingBottom="40dp">
