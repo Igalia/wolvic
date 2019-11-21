@@ -229,7 +229,12 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
     public ArrayList<Session> getSortedSessions(boolean aPrivateMode) {
         ArrayList<Session> result = new ArrayList<>(mSessions);
         result.removeIf(session -> session.isPrivateMode() != aPrivateMode);
-        result.sort((o1, o2) -> (int)(o2.getLastUse() - o1.getLastUse()));
+        result.sort((o1, o2) -> {
+            if (o2.getLastUse() < o1.getLastUse()) {
+                return -1;
+            }
+            return o2.getLastUse() == o1.getLastUse() ? 0 : 1;
+        });
         return result;
     }
 

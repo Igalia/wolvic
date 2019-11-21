@@ -982,14 +982,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
     private void setFirstPaint(@NonNull final WindowWidget aWindow, @NonNull final Session aSession) {
         if (aSession.getGeckoSession() == null) {
-            aWindow.setFirstPaintReady(false);
-            aWindow.setFirstDrawCallback(() -> {
-                if (!aWindow.isFirstPaintReady()) {
-                    aWindow.setFirstPaintReady(true);
-                    mWidgetManager.updateWidget(aWindow);
-                }
-            });
-            mWidgetManager.updateWidget(aWindow);
+            aWindow.waitForFirstPaint();
         } else {
             // If the new session has a GeckoSession there won't be a first paint event.
             // So trigger the first paint callback in case the window is grayed out

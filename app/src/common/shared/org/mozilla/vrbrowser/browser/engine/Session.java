@@ -62,7 +62,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
     private static final String LOGTAG = SystemUtils.createLogtag(Session.class);
     private static UserAgentOverride sUserAgentOverride;
-
+    private static final long KEEP_ALIVE_DURATION_MS = 1000; // 1 second.
 
     private transient LinkedList<GeckoSession.NavigationDelegate> mNavigationListeners;
     private transient LinkedList<GeckoSession.ProgressDelegate> mProgressListeners;
@@ -83,7 +83,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     private transient GeckoRuntime mRuntime;
     private transient byte[] mPrivatePage;
     private transient boolean mFirstContentfulPaint;
-
+    private transient long mKeepAlive;
 
     public interface BitmapChangedListener {
         void onBitmapChanged(Session aSession, Bitmap aBitmap);
@@ -334,6 +334,11 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         if (mState.mSession == null) {
             return;
         }
+        if (mKeepAlive > System.currentTimeMillis()) {
+            Log.e(LOGTAG, "Unable to suspend activity with active keep alive time.");
+            return;
+        }
+
         Log.d(LOGTAG, "Suspending Session: " + mState.mId);
         closeSession(mState);
         mState.mSession = null;
@@ -688,6 +693,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         return mState.mId;
     }
 
+
     public boolean isPrivateMode() {
         if (mState.mSession != null) {
             return mState.mSession.getSettings().getUsePrivateMode();
@@ -916,10 +922,12 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
     @Override
     public GeckoResult<GeckoSession> onNewSession(@NonNull GeckoSession aSession, @NonNull String aUri) {
-        Log.d(LOGTAG, "Session onStackSession: " + aUri);
+        mKeepAlive = System.currentTimeMillis() + KEEP_ALIVE_DURATION_MS;
+        Log.d(LOGTAG, "onNewSession: " + aUri);
 
         Session session = SessionStore.get().createSession(mState.mSettings, SESSION_DO_NOT_OPEN);
         session.mState.mParentId = mState.mId;
+        session.mKeepAlive = mKeepAlive;
         for (SessionChangeListener listener: new LinkedList<>(mSessionChangeListeners)) {
             listener.onStackSession(session);
         }
@@ -1424,6 +1432,16 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
             for (GeckoSession.NavigationDelegate listener : mNavigationListeners) {
                 listener.onCanGoBack(this.getGeckoSession(), canGoBack());
             }
+        }
+    }
+
+    @Override
+    public void onStackSession(Session aSession) {
+        if (aSession.equals(this)) {
+            return;
+        }
+        for (SessionChangeListener listener : mSessionChangeListeners) {
+            listener.onStackSession(aSession);
         }
     }
 

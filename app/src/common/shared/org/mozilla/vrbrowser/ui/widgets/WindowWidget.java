@@ -931,6 +931,17 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mListeners.remove(aListener);
     }
 
+    public void waitForFirstPaint() {
+        setFirstPaintReady(false);
+        setFirstDrawCallback(() -> {
+            if (!isFirstPaintReady()) {
+                setFirstPaintReady(true);
+                mWidgetManager.updateWidget(WindowWidget.this);
+            }
+        });
+        mWidgetManager.updateWidget(this);
+    }
+
     @Override
     public void handleResizeEvent(float aWorldWidth, float aWorldHeight) {
         int width = getWindowWidth(aWorldWidth);
@@ -1100,6 +1111,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     @Override
     public void onStackSession(Session aSession) {
         // e.g. tab opened via window.open()
+        aSession.updateLastUse();
+        waitForFirstPaint();
         Session current = mSession;
         setSession(aSession);
         SessionStore.get().setActiveSession(aSession);
