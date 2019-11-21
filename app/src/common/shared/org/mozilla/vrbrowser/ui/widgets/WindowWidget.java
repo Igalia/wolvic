@@ -1110,8 +1110,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     @Override
     public void onUnstackSession(Session aSession, Session aParent) {
         if (mSession == aSession) {
-            setSession(aParent);
             aParent.setActive(true);
+            setSession(aParent);
             SessionStore.get().setActiveSession(aParent);
             SessionStore.get().destroySession(aSession);
         }
