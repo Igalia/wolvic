@@ -1676,6 +1676,11 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 if (aSelection.isActionAvailable(action)) {
                     aSelection.execute(action);
                 }
+                if (GeckoSession.SelectionActionDelegate.ACTION_COPY.equals(action) &&
+                        aSelection.isActionAvailable(GeckoSession.SelectionActionDelegate.ACTION_UNSELECT)) {
+                    // Don't keep the text selected after it's copied.
+                    aSelection.execute(GeckoSession.SelectionActionDelegate.ACTION_UNSELECT);
+                }
             }
 
             @Override

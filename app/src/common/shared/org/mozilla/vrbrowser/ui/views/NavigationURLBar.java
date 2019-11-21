@@ -603,6 +603,7 @@ public class NavigationURLBar extends FrameLayout {
                     } else if (action.equals(GeckoSession.SelectionActionDelegate.ACTION_COPY) && selectionValid) {
                         String selectedText = mBinding.urlEditText.getText().toString().substring(startSelection, endSelection);
                         clipboard.setPrimaryClip(ClipData.newPlainText("text", selectedText));
+                        mBinding.urlEditText.setSelection(endSelection);
                     } else if (action.equals(GeckoSession.SelectionActionDelegate.ACTION_PASTE) && clipboard.hasPrimaryClip()) {
                         ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
                         if (selectionValid) {
