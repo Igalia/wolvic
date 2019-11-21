@@ -12,6 +12,7 @@ import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.IntStream;
 
 public class VideoProjectionMenuWidget extends MenuWidget {
 
@@ -29,6 +30,14 @@ public class VideoProjectionMenuWidget extends MenuWidget {
 
     public interface Delegate {
         void onVideoProjectionClick(@VideoProjectionFlags int aProjection);
+    }
+
+    class ProjectionMenuItem extends MenuItem {
+        @VideoProjectionFlags int projection;
+        public ProjectionMenuItem(@VideoProjectionFlags int aProjection, String aString, int aImage) {
+            super(aString, aImage, () -> handleClick(aProjection));
+            projection = aProjection;
+        }
     }
 
     ArrayList<MenuItem> mItems;
@@ -63,23 +72,23 @@ public class VideoProjectionMenuWidget extends MenuWidget {
     private void createMenuItems() {
         mItems = new ArrayList<>();
 
-        mItems.add(new MenuItem(getContext().getString(R.string.video_mode_3d_side),
-                R.drawable.ic_icon_videoplayback_3dsidebyside, () -> handleClick(VIDEO_PROJECTION_3D_SIDE_BY_SIDE)));
+        mItems.add(new ProjectionMenuItem(VIDEO_PROJECTION_3D_SIDE_BY_SIDE, getContext().getString(R.string.video_mode_3d_side),
+                R.drawable.ic_icon_videoplayback_3dsidebyside));
 
-        mItems.add(new MenuItem(getContext().getString(R.string.video_mode_360),
-                R.drawable.ic_icon_videoplayback_360, () -> handleClick(VIDEO_PROJECTION_360)));
+        mItems.add(new ProjectionMenuItem(VIDEO_PROJECTION_360, getContext().getString(R.string.video_mode_360),
+                R.drawable.ic_icon_videoplayback_360));
 
-        mItems.add(new MenuItem(getContext().getString(R.string.video_mode_360_stereo),
-                R.drawable.ic_icon_videoplayback_360_stereo, () -> handleClick(VIDEO_PROJECTION_360_STEREO)));
+        mItems.add(new ProjectionMenuItem(VIDEO_PROJECTION_360_STEREO, getContext().getString(R.string.video_mode_360_stereo),
+                R.drawable.ic_icon_videoplayback_360_stereo));
 
-        mItems.add(new MenuItem(getContext().getString(R.string.video_mode_180),
-                R.drawable.ic_icon_videoplayback_180, () -> handleClick(VIDEO_PROJECTION_180)));
+        mItems.add(new ProjectionMenuItem(VIDEO_PROJECTION_180, getContext().getString(R.string.video_mode_180),
+                R.drawable.ic_icon_videoplayback_180));
 
-        mItems.add(new MenuItem(getContext().getString(R.string.video_mode_180_left_right),
-                R.drawable.ic_icon_videoplayback_180_stereo_leftright, () -> handleClick(VIDEO_PROJECTION_180_STEREO_LEFT_RIGHT)));
+        mItems.add(new ProjectionMenuItem(VIDEO_PROJECTION_180_STEREO_LEFT_RIGHT, getContext().getString(R.string.video_mode_180_left_right),
+                R.drawable.ic_icon_videoplayback_180_stereo_leftright));
 
-        mItems.add(new MenuItem(getContext().getString(R.string.video_mode_180_top_bottom),
-                R.drawable.ic_icon_videoplayback_180_stereo_topbottom, () -> handleClick(VIDEO_PROJECTION_180_STEREO_TOP_BOTTOM)));
+        mItems.add(new ProjectionMenuItem(VIDEO_PROJECTION_180_STEREO_TOP_BOTTOM, getContext().getString(R.string.video_mode_180_top_bottom),
+                R.drawable.ic_icon_videoplayback_180_stereo_topbottom));
 
 
         super.updateMenuItems(mItems);
@@ -101,6 +110,10 @@ public class VideoProjectionMenuWidget extends MenuWidget {
 
     public void setSelectedProjection(@VideoProjectionFlags int aProjection) {
         mSelectedProjection = aProjection;
+        IntStream.range(0, mItems.size())
+                .filter(i -> ((ProjectionMenuItem)mItems.get(i)).projection == aProjection)
+                .findFirst()
+                .ifPresent(this::setSelectedItem);
     }
 
     public static @VideoProjectionFlags Integer getAutomaticProjection(String aURL, AtomicBoolean autoEnter) {
