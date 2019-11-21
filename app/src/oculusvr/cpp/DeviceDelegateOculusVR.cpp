@@ -674,6 +674,9 @@ struct DeviceDelegateOculusVR::State {
   uint32_t frameIndex = 0;
   double predictedDisplayTime = 0;
   ovrTracking2 predictedTracking = {};
+  ovrTracking2 discardPredictedTracking = {};
+  uint32_t discardedFrameIndex = 0;
+  int discardCount = 0;
   uint32_t renderWidth = 0;
   uint32_t renderHeight = 0;
   int32_t standaloneFoveatedLevel = 0;
@@ -1463,7 +1466,17 @@ DeviceDelegateOculusVR::EndFrame(const bool aDiscard) {
   }
 
   if (aDiscard) {
-    return;
+    // Reuse the last frame when a frame is discarded.
+    // The last frame is timewarped by the VR compositor.
+    if (m.discardCount == 0) {
+      m.discardPredictedTracking = m.predictedTracking;
+      m.discardedFrameIndex = m.frameIndex;
+    }
+    m.discardCount++;
+    m.frameIndex = m.discardedFrameIndex;
+    m.predictedTracking = m.discardPredictedTracking;
+  } else {
+    m.discardCount = 0;
   }
 
   uint32_t layerCount = 0;
