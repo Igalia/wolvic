@@ -249,6 +249,11 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         focusWindow(newWindow);
         updateCurvedMode(true);
         updateViews();
+
+        // We are only interested in general windows opened.
+        if (!isInPrivateMode()) {
+            GleanMetricsService.newWindowOpenEvent();
+        }
         return newWindow;
     }
 

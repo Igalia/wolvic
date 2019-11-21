@@ -25,6 +25,7 @@ distribution:
       - fxr-telemetry@mozilla.com
       - dmu@mozilla.com
     expires: "2020-05-01"
+
 url:
   domains:
     type: counter
@@ -70,6 +71,7 @@ url:
       - fxr-telemetry@mozilla.com
       - dmu@mozilla.com
     expires: "2020-05-01"
+
 searches:
   counts:
     type: labeled_counter
@@ -108,7 +110,6 @@ tabs:
       - fxr-telemetry@mozilla.com
       - manmartin@mozilla.com
     expires: "2020-05-01"
-
   activated:
     type: counter
     description: >
@@ -137,7 +138,6 @@ firefox_account:
       - fxr-telemetry@mozilla.com
       - manmartin@mozilla.com
     expires: "2020-05-01"
-
   sign_in_result:
     type: event
     description: >
@@ -153,7 +153,6 @@ firefox_account:
       - fxr-telemetry@mozilla.com
       - manmartin@mozilla.com
     expires: "2020-05-01"
-
   sign_out:
     type: event
     description: >
@@ -166,7 +165,6 @@ firefox_account:
       - fxr-telemetry@mozilla.com
       - manmartin@mozilla.com
     expires: "2020-05-01"
-
   bookmarks_sync_status:
     type: boolean
     lifetime: application
@@ -180,7 +178,6 @@ firefox_account:
       - fxr-telemetry@mozilla.com
       - manmartin@mozilla.com
     expires: "2020-05-01"
-
   history_sync_status:
     type: boolean
     lifetime: application
@@ -194,7 +191,6 @@ firefox_account:
       - fxr-telemetry@mozilla.com
       - manmartin@mozilla.com
     expires: "2020-05-01"
-
   tab_sent:
     type: counter
     description: >
@@ -207,7 +203,6 @@ firefox_account:
       - fxr-telemetry@mozilla.com
       - manmartin@mozilla.com
     expires: "2020-05-01"
-
   received_tab:
     type: labeled_counter
     description: >
@@ -226,4 +221,20 @@ firefox_account:
     notification_emails:
       - fxr-telemetry@mozilla.com
       - manmartin@mozilla.com
+    expires: "2020-05-01"
+
+control:
+  open_new_window:
+    type: counter
+    description: >
+      Counting how many general windows are opened in a session.
+    send_in_pings:
+      - session_end
+    bugs:
+      - https://github.com/MozillaReality/FirefoxReality/issues/2347
+    data_reviews:
+      - https://github.com/MozillaReality/FirefoxReality/pull/2348#issuecomment-564736919
+    notification_emails:
+      - fxr-telemetry@mozilla.com
+      - dmu@mozilla.com
     expires: "2020-05-01"

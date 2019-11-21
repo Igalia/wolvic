@@ -12,6 +12,7 @@ import org.mozilla.vrbrowser.GleanMetrics.FirefoxAccount;
 import org.mozilla.vrbrowser.GleanMetrics.Pings;
 import org.mozilla.vrbrowser.GleanMetrics.Searches;
 import org.mozilla.vrbrowser.GleanMetrics.Url;
+import org.mozilla.vrbrowser.GleanMetrics.Control;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.search.SearchEngineWrapper;
 import org.mozilla.vrbrowser.utils.DeviceType;
@@ -148,6 +149,10 @@ public class GleanMetricsService {
 
     private static String getDefaultSearchEngineIdentifierForTelemetry() {
         return SearchEngineWrapper.get(context).getIdentifier();
+    }
+
+    public static void newWindowOpenEvent() {
+        Control.INSTANCE.getOpenNewWindow().add();
     }
 
     private static void setStartupMetrics() {
