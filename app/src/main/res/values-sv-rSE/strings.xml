@@ -348,6 +348,12 @@
     -->
     <string name="developer_options_debug_logging">Aktivera felsökning</string>
 
+    <!-- This string labels an On/Off switch in the developer options dialog and is used to toggle
+     UI render mode. If enables it uses hardware acceleration which should be faster but it may be more unstable.
+     If disabled it uses software rendering which is stable but not as performant as hardware acceleration
+-->
+    <string name="hardware_acceleration_switch">Aktivera UI-maskinvaruacceleration</string>
+
     <!-- The string labels an On/Off switch in the developer options dialog and is used to toggle enabling Servo. -->
     <string name="developer_options_servo">Aktivera Servo</string>
 
