@@ -1043,6 +1043,16 @@ BrowserWorld::UpdateWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement
 }
 
 void
+BrowserWorld::UpdateWidgetRecursive(int32_t aHandle, const WidgetPlacementPtr& aPlacement) {
+  UpdateWidget(aHandle, aPlacement);
+  for (WidgetPtr& widget: m.widgets) {
+    if (widget->GetPlacement() && widget->GetPlacement()->parentHandle == aHandle) {
+      UpdateWidgetRecursive(widget->GetHandle(), widget->GetPlacement());
+    }
+  }
+}
+
+void
 BrowserWorld::RemoveWidget(int32_t aHandle) {
   ASSERT_ON_RENDER_THREAD();
   WidgetPtr widget = m.GetWidget(aHandle);
@@ -1514,7 +1524,7 @@ JNI_METHOD(void, updateWidgetNative)
 (JNIEnv* aEnv, jobject, jint aHandle, jobject aPlacement) {
   crow::WidgetPlacementPtr placement = crow::WidgetPlacement::FromJava(aEnv, aPlacement);
   if (placement) {
-    crow::BrowserWorld::Instance().UpdateWidget(aHandle, placement);
+    crow::BrowserWorld::Instance().UpdateWidgetRecursive(aHandle, placement);
   }
 }
 
