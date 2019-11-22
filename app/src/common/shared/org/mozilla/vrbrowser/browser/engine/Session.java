@@ -781,7 +781,9 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     protected void setTrackingProtection(final boolean aEnabled) {
         if (mState.mSettings.isTrackingProtectionEnabled() != aEnabled) {
             mState.mSettings.setTrackingProtectionEnabled(aEnabled);
-            mState.mSession.getSettings().setUseTrackingProtection(aEnabled);
+            if (mState.mSession != null) {
+                mState.mSession.getSettings().setUseTrackingProtection(aEnabled);
+            }
         }
     }
 
