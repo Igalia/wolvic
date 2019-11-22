@@ -13,4 +13,5 @@ public interface HistoryCallback {
     default void onFxASynSettings(@NonNull View view) {}
     default void onShowContextMenu(@NonNull View view, @NonNull VisitInfo item, boolean isLastVisibleItem) {}
     default void onHideContextMenu(@NonNull View view) {}
+    default void onItemClicked(@NonNull View view, VisitInfo item) {}
 }
