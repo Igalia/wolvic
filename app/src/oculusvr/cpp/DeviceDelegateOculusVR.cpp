@@ -1025,7 +1025,7 @@ struct DeviceDelegateOculusVR::State {
         trackpadY = controllerState.inputState.Joystick.y;
         axes[0] = trackpadX;
         axes[1] = -trackpadY; // We did y axis intentionally inverted in FF desktop as well.
-        controller->SetScrolledDelta(controllerState.index, trackpadX, trackpadY);
+        controller->SetScrolledDelta(controllerState.index, -trackpadX, trackpadY);
 
         const bool gripPressed = (controllerState.inputState.Buttons & ovrButton_GripTrigger) != 0;
         controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_OTHERS, 2, gripPressed, gripPressed,
