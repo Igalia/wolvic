@@ -72,6 +72,11 @@ class Accounts constructor(val context: Context) {
             Log.d(LOGTAG, "Account syncing has finished")
 
             isSyncing = false
+
+            services.accountManager.accountProfile()?.email?.let {
+                SettingsStore.getInstance(context).setFxALastSync(it, getLastSynced(context))
+            }
+
             syncListeners.toMutableList().forEach {
                 Handler(Looper.getMainLooper()).post {
                     it.onIdle()
@@ -332,7 +337,10 @@ class Accounts constructor(val context: Context) {
     }
 
     fun lastSync(): Long {
-        return getLastSynced(context)
+        services.accountManager.accountProfile()?.email?.let {
+            return SettingsStore.getInstance(context).getFxALastSync(it)
+        }
+        return 0
     }
 
     fun devicesByCapability(capabilities: List<DeviceCapability>): List<Device> {

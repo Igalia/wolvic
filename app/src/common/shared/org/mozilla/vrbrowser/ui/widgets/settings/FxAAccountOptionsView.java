@@ -208,7 +208,8 @@ class FxAAccountOptionsView extends SettingsView {
 
         @Override
         public void onProfileUpdated(@NotNull Profile profile) {
-            post(() -> mBinding.accountEmail.setText(profile.getEmail()));
+            mBinding.accountEmail.setText(profile.getEmail());
+            mBinding.setLastSync(mAccounts.lastSync());
         }
 
         @Override

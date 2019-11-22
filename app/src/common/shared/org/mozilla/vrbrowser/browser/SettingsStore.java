@@ -5,8 +5,10 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.telemetry.TelemetryHolder;
 import org.mozilla.vrbrowser.R;
@@ -21,6 +23,8 @@ import org.mozilla.vrbrowser.utils.SystemUtils;
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -81,6 +85,7 @@ public class SettingsStore {
     public final static boolean BOOKMARKS_SYNC_DEFAULT = true;
     public final static boolean HISTORY_SYNC_DEFAULT = true;
     public final static boolean WHATS_NEW_DISPLAYED = false;
+    public final static long FXA_LAST_SYNC_NEVER = 0;
 
     // Enable telemetry by default (opt-out).
     public final static boolean CRASH_REPORTING_DEFAULT = false;
@@ -645,6 +650,48 @@ public class SettingsStore {
 
     public boolean isWhatsNewDisplayed() {
         return mPrefs.getBoolean(mContext.getString(R.string.settings_key_whats_new_displayed), WHATS_NEW_DISPLAYED);
+    }
+
+    public void setFxALastSync(@NonNull String email, long timestamp) {
+        String json = mPrefs.getString(
+                mContext.getString(R.string.settings_key_fxa_last_sync),
+                new JSONObject().toString());
+
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            jsonObject.put(email, timestamp);
+
+            SharedPreferences.Editor editor = mPrefs.edit();
+            editor.putString(mContext.getString(R.string.settings_key_fxa_last_sync), jsonObject.toString());
+            editor.commit();
+
+        } catch (Exception e) {
+            Log.d(LOGTAG, e.getMessage());
+        }
+    }
+
+    public long getFxALastSync(@NonNull String email) {
+        String json = mPrefs.getString(
+                mContext.getString(R.string.settings_key_fxa_last_sync),
+                null);
+
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            Iterator<String> iterator = jsonObject.keys();
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                if (key.equals(email)) {
+                    return jsonObject.getLong(key);
+                }
+            }
+
+            return FXA_LAST_SYNC_NEVER;
+
+        } catch (Exception e) {
+            return FXA_LAST_SYNC_NEVER;
+        }
+
+
     }
 
 }
