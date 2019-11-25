@@ -2,25 +2,29 @@ package org.mozilla.vrbrowser.ui.widgets.menus;
 
 import android.content.Context;
 import android.net.Uri;
+import android.view.View;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
+import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
+import org.mozilla.vrbrowser.utils.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.IntStream;
 
-public class VideoProjectionMenuWidget extends MenuWidget {
+public class VideoProjectionMenuWidget extends MenuWidget implements WidgetManagerDelegate.FocusChangeListener {
 
-    @IntDef(value = { VIDEO_PROJECTION_3D_SIDE_BY_SIDE, VIDEO_PROJECTION_360,
+    @IntDef(value = { VIDEO_PROJECTION_UNSUPPORTED, VIDEO_PROJECTION_3D_SIDE_BY_SIDE, VIDEO_PROJECTION_360,
                       VIDEO_PROJECTION_360_STEREO, VIDEO_PROJECTION_180,
                       VIDEO_PROJECTION_180_STEREO_LEFT_RIGHT, VIDEO_PROJECTION_180_STEREO_TOP_BOTTOM })
     public @interface VideoProjectionFlags {}
 
+    public static final int VIDEO_PROJECTION_UNSUPPORTED = -1;
     public static final int VIDEO_PROJECTION_3D_SIDE_BY_SIDE = 0;
     public static final int VIDEO_PROJECTION_360 = 1;
     public static final int VIDEO_PROJECTION_360_STEREO = 2;
@@ -59,6 +63,20 @@ public class VideoProjectionMenuWidget extends MenuWidget {
         aPlacement.anchorY = 0.0f;
         aPlacement.translationY = WidgetPlacement.dpDimension(getContext(), R.dimen.video_projection_menu_translation_y);
         aPlacement.translationZ = 2.0f;
+    }
+
+    @Override
+    public void show(@ShowFlags int aShowFlags) {
+        super.show(aShowFlags);
+
+        mWidgetManager.addFocusChangeListener(VideoProjectionMenuWidget.this);
+    }
+
+    @Override
+    public void hide(@HideFlags int aHideFlags) {
+        super.hide(aHideFlags);
+
+        mWidgetManager.removeFocusChangeListener(this);
     }
 
     public void setParentWidget(UIWidget aParent) {
@@ -151,6 +169,14 @@ public class VideoProjectionMenuWidget extends MenuWidget {
             return VIDEO_PROJECTION_3D_SIDE_BY_SIDE;
         }
 
-        return -1;
+        return VIDEO_PROJECTION_UNSUPPORTED;
     }
+
+    @Override
+    public void onGlobalFocusChanged(View oldFocus, View newFocus) {
+        if (!ViewUtils.isEqualOrChildrenOf(this, newFocus) && isVisible()) {
+            onDismiss();
+        }
+    }
+
 }
