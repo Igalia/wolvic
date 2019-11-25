@@ -1109,13 +1109,13 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         } else {
             setPrivateBrowsingEnabled(false);
         }
+        waitForFirstPaint();
     }
 
     @Override
     public void onStackSession(Session aSession) {
         // e.g. tab opened via window.open()
         aSession.updateLastUse();
-        waitForFirstPaint();
         Session current = mSession;
         setSession(aSession);
         SessionStore.get().setActiveSession(aSession);

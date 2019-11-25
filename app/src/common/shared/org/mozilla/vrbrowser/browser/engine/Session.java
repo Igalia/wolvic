@@ -345,6 +345,24 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         mState.mSession = null;
     }
 
+    private boolean shouldLoadDefaultPage(@NonNull SessionState aState) {
+        if (aState.mUri != null && aState.mUri.length() != 0 && !aState.mUri.equals(mContext.getString(R.string.about_blank))) {
+            return false;
+        }
+        if (aState.mSessionState != null && aState.mSessionState.size() != 0) {
+            return false;
+        }
+        return true;
+    }
+
+    private void loadDefaultPage() {
+        if (mState.mSettings.isPrivateBrowsingEnabled()) {
+            loadPrivateBrowsingPage();
+        } else {
+            loadHomePage();
+        }
+    }
+
     private void restore() {
         SessionSettings settings = mState.mSettings;
         if (settings == null) {
@@ -364,18 +382,17 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
             mState.mUri = null;
         }
 
-        if (mState.mSessionState != null) {
+        if (shouldLoadDefaultPage(mState)) {
+            loadDefaultPage();
+        } else if (mState.mSessionState != null) {
             mState.mSession.restoreState(mState.mSessionState);
+        } else if (mState.mUri != null) {
+            mState.mSession.loadUri(mState.mUri);
+        } else {
+            loadDefaultPage();
         }
 
-        if ((mState.mSessionState == null) && (mState.mUri != null)) {
-            mState.mSession.loadUri(mState.mUri);
-        } else if (mState.mSettings.isPrivateBrowsingEnabled() && mState.mUri == null) {
-            loadPrivateBrowsingPage();
-        } else if(mState.mSessionState == null || ((mState.mUri == null) || mState.mUri.equals(mContext.getResources().getString(R.string.about_blank))) ||
-                (mState.mSessionState != null && mState.mSessionState.size() == 0)) {
-            loadHomePage();
-        } else if (mState.mUri != null && mState.mUri.contains(".youtube.com")) {
+        if (mState.mUri != null && mState.mUri.contains(".youtube.com")) {
             mState.mSession.loadUri(mState.mUri, GeckoSession.LOAD_FLAGS_REPLACE_HISTORY);
         }
 
@@ -419,20 +436,19 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         return session;
     }
 
-    private void recreateSession() {
+    public void recreateSession() {
         SessionState previous = mState;
+        mState = mState.recreate();
+        restore();
 
-        mState = createSession(previous.mSettings, SESSION_OPEN);
-        mState.setActive(true);
-        if (previous.mSessionState != null) {
-            mState.mSession.restoreState(previous.mSessionState);
-        }
+        GeckoSession previousGeckoSession = null;
         if (previous.mSession != null) {
+            previousGeckoSession = previous.mSession;
             closeSession(previous);
         }
 
         for (SessionChangeListener listener : mSessionChangeListeners) {
-            listener.onCurrentSessionChange(previous.mSession, mState.mSession);
+            listener.onCurrentSessionChange(previousGeckoSession, mState.mSession);
         }
     }
 
@@ -444,12 +460,13 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         aState.mSession.setActive(false);
         aState.mSession.stop();
         if (aState.mDisplay != null) {
-            surfaceDestroyed();
+            aState.mDisplay.surfaceDestroyed();
             aState.mSession.releaseDisplay(aState.mDisplay);
             aState.mDisplay = null;
         }
         aState.mSession.close();
         aState.setActive(false);
+        mFirstContentfulPaint = false;
     }
 
     public void captureBitmap() {
@@ -788,24 +805,6 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         }
     }
 
-    public void clearCache(final long clearFlags) {
-        if (mRuntime != null) {
-            // Per GeckoView Docs:
-            // Note: Any open session may re-accumulate previously cleared data.
-            // To ensure that no persistent data is left behind, you need to close all sessions prior to clearing data.
-            // https://mozilla.github.io/geckoview/javadoc/mozilla-central/org/mozilla/geckoview/StorageController.html#clearData-long-
-            if (mState.mSession != null) {
-                mState.mSession.stop();
-                mState.mSession.close();
-            }
-
-            mRuntime.getStorageController().clearData(clearFlags).then(aVoid -> {
-                recreateSession();
-                return null;
-            });
-        }
-    }
-
     public void updateLastUse() {
         mState.mLastUse = System.currentTimeMillis();
     }
@@ -1054,6 +1053,14 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         if (mState.mSession == aSession) {
             for (GeckoSession.ContentDelegate listener : mContentListeners) {
                 listener.onFirstComposite(aSession);
+            }
+            if (mFirstContentfulPaint) {
+                // onFirstContentfulPaint is only called once after a session is opened.
+                // Notify onFirstContentfulPaint after a session is reattached before
+                // being closed ((e.g. tab selected)
+                for (GeckoSession.ContentDelegate listener : mContentListeners) {
+                    listener.onFirstContentfulPaint(aSession);
+                }
             }
         }
     }

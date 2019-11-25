@@ -41,6 +41,21 @@ public class SessionState {
     public String mId = UUID.randomUUID().toString();
     public String mParentId; // Parent session stack Id.
 
+    public SessionState recreate() {
+        SessionState result = new SessionState();
+        result.mUri = mUri;
+        result.mPreviousUri = mPreviousUri;
+        result.mTitle = mTitle;
+        result.mSettings = mSettings;
+        result.mSessionState = mSessionState;
+        result.mLastUse = mLastUse;
+        result.mRegion = mRegion;
+        result.mId = mId;
+        result.mParentId = mParentId;
+
+        return result;
+    }
+
     public static class GeckoSessionStateAdapter extends TypeAdapter<GeckoSession.SessionState> {
         @Override
         public void write(JsonWriter out, GeckoSession.SessionState session) throws IOException {

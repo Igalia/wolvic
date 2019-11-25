@@ -27,6 +27,7 @@ import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.security.KeyStore;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class SessionStore implements GeckoSession.PermissionDelegate {
@@ -351,9 +352,19 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
     }
 
     public void clearCache(long clearFlags) {
+        LinkedList<Session> activeSession = new LinkedList<>();
         for (Session session: mSessions) {
-            session.clearCache(clearFlags);
+            if (session.getGeckoSession() != null) {
+                session.suspend();
+                activeSession.add(session);
+            }
         }
+        mRuntime.getStorageController().clearData(clearFlags).then(aVoid -> {
+            for (Session session: activeSession) {
+                session.recreateSession();
+            }
+            return null;
+        });
     }
 
     // Permission Delegate
