@@ -348,6 +348,12 @@
     -->
     <string name="developer_options_debug_logging">Habilitar registro de depuración</string>
 
+    <!-- This string labels an On/Off switch in the developer options dialog and is used to toggle
+     UI render mode. If enables it uses hardware acceleration which should be faster but it may be more unstable.
+     If disabled it uses software rendering which is stable but not as performant as hardware acceleration
+-->
+    <string name="hardware_acceleration_switch">Activar aceleración de hardware para la interfaz de usuario</string>
+
     <!-- The string labels an On/Off switch in the developer options dialog and is used to toggle enabling Servo. -->
     <string name="developer_options_servo">Habilitar Servo</string>
 
@@ -544,6 +550,10 @@
          that there was an error while syncing. -->
     <string name="fxa_account_last_sync_error">Error en la sincronización</string>
 
+    <!-- This string is used to in the Library panels to the left of the sync button to indicate
+         when that the content was just synced some time ago. -->
+    <string name="fxa_account_last_synced">Última sincronización hace %1$d minutos</string>
+
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable playback of DRM controlled content. -->
     <string name="security_options_drm_content">Reproducir contenido controlado por DRM (&lt;a href=&quot;http://somesite.com/&quot;&gt;Saber más&lt;/a&gt;)</string>
@@ -618,6 +628,14 @@
 
     <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'Off'. -->
     <string name="off">Desactivado</string>
+
+    <!-- This string is displayed on the left of switched that are used to enable/disable sync when the switch is enabled.
+         i.e. The history switch for Firefox account syncing-->
+    <string name="sync">Sincronizar</string>
+
+    <!-- This string is displayed on the left of switched that are used to enable/disable sync when the switch is enabled.
+         i.e. The history switch for Firefox account syncing-->
+    <string name="do_not_sync">No sincronizar</string>
 
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
@@ -755,6 +773,21 @@
     <!-- This string is displayed in the middle of the Bookmarks List while the bookmarks are being loaded. -->
     <string name="bookmarks_loading">Cargando marcadores</string>
 
+    <!-- This string is displayed as the title of the folder containing mobile bookmarks (after they're synced). -->
+    <string name="bookmarks_mobile_folder_title">Marcadores del móvil</string>
+
+    <!-- This string is displayed as the title of the folder containing desktop bookmarks (after they're synced). -->
+    <string name="bookmarks_desktop_folder_title">Marcadores de escritorio</string>
+
+    <!-- This string is displayed as the title of the desktop "menu" bookmarks folder. -->
+    <string name="bookmarks_desktop_menu_title">Menú de marcadores</string>
+
+    <!-- This string is displayed as the title of the desktop "toolbar" bookmarks folder. -->
+    <string name="bookmarks_desktop_toolbar_title">Barra de herramientas de marcadores</string>
+
+    <!-- This string is displayed as the title of the desktop "unfiled" bookmarks folder. -->
+    <string name="bookmarks_desktop_unfiled_title">Otros marcadores</string>
+
     <!-- This string is displayed in a tooltip that appears when a user hovers
          over an icon representing 'Remove Bookmark' for an individual bookmark
          item listed in the Bookmarks List. -->
@@ -783,6 +816,10 @@
          all the bookmarks. -->
     <string name="bookmarks_show_all">Mostrar todos los marcadores</string>
 
+    <!-- This string is displayed is the "Sync" button in the bookmarks panel. When pressed the
+         bookmarks are synced with the Firefox account. -->
+    <string name="bookmarks_sync">Sincronizar</string>
+
     <!-- This string is displayed as the title of the history list, which contains the user's visited websites. -->
     <string name="history_title">Historial</string>
 
@@ -810,6 +847,13 @@
     <!-- This string is displayed is the "Clear History" button in the history list. When pressed a dialog for
          clearing history is displayed. -->
     <string name="history_clear">Limpiar historial</string>
+
+    <!-- This string is displayed is the "Sync" button in the history panel. When pressed the
+         history is synced with the Firefox account. -->
+    <string name="fxa_sync">Sincronizar</string>
+
+    <!-- This string is displayed is the "Sync" button in the history panel when the sync is in progress. -->
+    <string name="fxa_syncing">Sincronizando…</string>
 
     <!-- This string is displayed is the "Cancel" button from the clear history dialog.
          When pressed the dialog is closed. -->
@@ -842,6 +886,10 @@
     <!-- This string is displayed is the history context menu that is displayed when
          the more button is pressed in a history item. It opens the selected history item in a new window. -->
     <string name="history_context_menu_new_window">Abrir en una ventana nueva</string>
+
+    <!-- This string is displayed is the history context menu that is displayed when
+         the more button is pressed in a history item. It opens the selected history item in a new tab. -->
+    <string name="history_context_menu_new_tab">Abrir en una pestaña nueva</string>
 
     <!-- This string is displayed is the history context menu that is displayed when
          the more button is pressed in a history item. It add the selected items to favorites. -->
@@ -958,6 +1006,10 @@
          browser's navigation bar. The button it labels, when pressed, clears the navigation bar text. -->
     <string name="clear_tooltip">Limpiar</string>
 
+    <!-- This string is for the tooltip that appears upon hovering the 'Pop-Up' button in the
+         browser's navigation bar. The button it labels, when pressed, Shows the pop-up blocked dialog. -->
+    <string name="popup_tooltip">Ventana emergente bloqueada</string>
+
     <!-- This string is for the tooltip that when clicking the 'Info' (ⓘ) icon visible next to the current website's
          URL in the URL bar. The button it labels, when pressed, shows information about the site. -->
     <string name="site_info_tooltip">Mostrar información del sitio.</string>
@@ -977,6 +1029,12 @@
     <!-- This string is for the tooltip that appears when the user is in the browser's Private Browsing mode
          and hovers over the 'Private Browsing' icon in the browser's tray menu. -->
     <string name="private_browsing_exit_tooltip">Salir de la navegación privada</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the target url in a new window. -->
+    <string name="context_menu_open_new_window_1">Abrir en una nueva ventana</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the target url in a new tab. -->
+    <string name="context_menu_open_new_tab_1">Abrir en una nueva pestaña</string>
 
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it copies the target to the clipboard -->
     <string name="context_menu_copy_link">Copiar enlace</string>
@@ -1142,6 +1200,10 @@
          If the button is clicked the pop-up will be shown -->
     <string name="popup_block_button_show">Mostrar</string>
 
+    <!-- This string is displayed on the right button of the pop-up blocking dialog.
+         If the button is clicked the pop-up will be blocked -->
+    <string name="popup_block_button_cancel">Cancelar</string>
+
     <!-- This string is displayed in a button on the header of the tabs dialog. When clicked,
         it allows to select tabs from the tab -->
     <string name="tabs_select">Seleccionar</string>
@@ -1197,4 +1259,76 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="tab_added_notification">¡Nueva pestaña añadida!</string>
 
 
-    </resources>
+    <!-- This string is displayed in a tooltip that appears in the tray bar on top of the
+     tabs tray button then a tab has been sent. -->
+    <string name="tab_sent_notification">¡Pestaña enviada!</string>
+
+    <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
+         it opens the send tab dialog -->
+    <string name="hamburger_menu_send_tab">Enviar pestaña al dispositivo</string>
+
+    <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
+         it opens the window resize panel -->
+    <string name="hamburger_menu_resize">Cambiar tamaño de ventana</string>
+
+    <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
+         it switches User Agent from desktop to mobile and vice versa -->
+    <string name="hamburger_menu_switch_to_desktop">Modo de escritorio</string>
+
+    <!-- This string is displayed in the tooltip that is displayed when the user hovers the hamburger menu icon -->
+    <string name="hamburger_menu_tooltip">Menú</string>
+
+    <!-- This string is displayed in the title of the Send Tab to device dialog. -->
+    <string name="send_tab_dialog_title">Enviar pestaña al dispositivo</string>
+
+    <!-- This string is displayed in the description of the Send Tab to device dialog. -->
+    <string name="send_tab_dialog_description">Elije un dispositivo para enviar la pestaña.</string>
+
+    <!-- This string is displayed on top of the available devices list. -->
+    <string name="send_tab_dialog_options_header">Dispositivos disponibles:</string>
+
+    <!-- This string is displayed instead of the devices list if there are no available devices. -->
+    <string name="send_tab_dialog_no_devices">No hay dispositivos conectados.</string>
+
+    <!-- This string is displayed instead of the devices list if the devices list is being synced. -->
+    <string name="send_tab_dialog_syncing">Sincronizando...</string>
+
+    <!-- This string is displayed in the button of the Send Tab to device dialog. When clicked the current tab is sent to the selected device -->
+    <string name="send_tab_dialog_button">Enviar</string>
+
+    <!-- This string is displayed in the header of the what's new dialog that is displayed if the user has updated
+         or updated the app and hasn't signed it yet. -->
+    <string name="whats_new_title_1">Inicia sesión para enviar pestañas</string>
+
+    <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
+         or updated the app and hasn't signed it yet. -->
+    <string name="whats_new_body_1">Inicia sesión o crea una nueva cuenta de Firefox para enviar pestañas desde Firefox en tu ordenador de escritorio o dispositivo móvil a tus auriculares.</string>
+
+    <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
+         or updated the app and hasn't signed it yet. -->
+    <string name="whats_new_body_sub_1">La cuenta de Firefox también te permite sincronizar marcadores e historial en todos tus dispositivos.</string>
+
+    <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
+         or updated the app and hasn't signed it yet. If clicked the user is redirected to the Firefox Account sign-in page. -->
+    <string name="whats_new_button_sign_in">Iniciar sesión</string>
+
+    <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
+         or updated the app and hasn't signed it yet. If clicked the dialog is dismissed. -->
+    <string name="whats_new_button_start_browsing">Comenzar a navegar</string>
+
+
+    <!-- This string is displayed in the title of the slow script dialog. -->
+    <string name="slow_script_dialog_title">Script lento</string>
+
+    <!-- This string is displayed as a description below the title of slow script dialog.
+        '%1$s' will be replaced the script filename that is causing the slow down. -->
+    <string name="slow_script_dialog_description">Una página web está ralentizando tu navegador (%1$s). ¿Qué te gustaría hacer?</string>
+
+    <!-- This string is displayed as a button below the slow script dialog description message. When clicked
+        it stops the slow script that is causing the web page slow down. -->
+    <string name="slow_script_dialog_action_stop">Detenerlo</string>
+
+    <!-- This string is displayed as a button below the slow script dialog description message. When clicked
+       it continues to wait for execution of the web page script that caused the slow down. -->
+    <string name="slow_script_dialog_action_wait">Esperar</string>
+</resources>
