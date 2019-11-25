@@ -55,7 +55,7 @@ import mozilla.components.concept.sync.AuthType;
 import mozilla.components.concept.sync.OAuthAccount;
 import mozilla.components.concept.sync.Profile;
 
-public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.WorldClickListener, SettingsView.Delegate {
+public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
 
     public enum SettingDialog {
         MAIN, LANGUAGE, DISPLAY, PRIVACY, DEVELOPER, FXA, ENVIRONMENT, CONTROLLER
@@ -106,8 +106,6 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
 
         // Inflate this data binding layout
         mBinding = DataBindingUtil.inflate(inflater, R.layout.settings, this, true);
-
-        mWidgetManager.addWorldClickListener(this);
 
         mAccounts = ((VRBrowserApplication)getContext().getApplicationContext()).getAccounts();
         mAccounts.addAccountListener(mAccountObserver);
@@ -225,7 +223,6 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
 
     @Override
     public void releaseWidget() {
-        mWidgetManager.removeWorldClickListener(this);
         mAccounts.removeAccountListener(mAccountObserver);
 
         super.releaseWidget();
@@ -430,16 +427,6 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
         showView(new FxAAccountOptionsView(getContext(), mWidgetManager));
     }
 
-    // WindowManagerDelegate.FocusChangeListener
-    @Override
-    public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-        if (mCurrentView != null) {
-            mCurrentView.onGlobalFocusChanged(oldFocus, newFocus);
-        } else if (oldFocus == this && isVisible()) {
-            onDismiss();
-        }
-    }
-
     public void show(@ShowFlags int aShowFlags, @NonNull SettingDialog settingDialog) {
         show(aShowFlags);
 
@@ -472,22 +459,7 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
     public void show(@ShowFlags int aShowFlags) {
         super.show(aShowFlags);
 
-        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
-
         updateCurrentAccountState();
-    }
-
-    @Override
-    public void hide(@HideFlags int aHideFlags) {
-        super.hide(aHideFlags);
-
-        mWidgetManager.popWorldBrightness(this);
-    }
-
-    // WidgetManagerDelegate.WorldClickListener
-    @Override
-    public void onWorldClick() {
-        onDismiss();
     }
 
     // SettingsView.Delegate

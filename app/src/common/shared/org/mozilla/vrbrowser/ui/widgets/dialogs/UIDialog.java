@@ -2,13 +2,11 @@ package org.mozilla.vrbrowser.ui.widgets.dialogs;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
 
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
-import org.mozilla.vrbrowser.utils.ViewUtils;
 
-public abstract class UIDialog extends UIWidget implements WidgetManagerDelegate.FocusChangeListener {
+public abstract class UIDialog extends UIWidget implements WidgetManagerDelegate.WorldClickListener {
     public UIDialog(Context aContext) {
         super(aContext);
         initialize();
@@ -25,12 +23,12 @@ public abstract class UIDialog extends UIWidget implements WidgetManagerDelegate
     }
 
     private void initialize() {
-        mWidgetManager.addFocusChangeListener(this);
+        mWidgetManager.addWorldClickListener(this);
     }
 
     @Override
     public void releaseWidget() {
-        mWidgetManager.removeFocusChangeListener(this);
+        mWidgetManager.removeWorldClickListener(this);
         super.releaseWidget();
     }
 
@@ -39,13 +37,24 @@ public abstract class UIDialog extends UIWidget implements WidgetManagerDelegate
         return true;
     }
 
-    // WidgetManagerDelegate.FocusChangeListener
+    @Override
+    public void show(int aShowFlags) {
+        super.show(aShowFlags);
+
+        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
+    }
 
     @Override
-    public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-        if (!ViewUtils.isEqualOrChildrenOf(this, newFocus) && isVisible()) {
+    public void hide(int aHideFlags) {
+        super.hide(aHideFlags);
+
+        mWidgetManager.popWorldBrightness(this);
+    }
+
+    @Override
+    public void onWorldClick() {
+        if (this.isVisible()) {
             onDismiss();
         }
     }
-
 }

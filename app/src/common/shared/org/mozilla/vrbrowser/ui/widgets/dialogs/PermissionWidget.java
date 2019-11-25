@@ -10,21 +10,17 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.ui.widgets.UIWidget;
-import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
-import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.net.URI;
 
-public class PermissionWidget extends UIDialog implements WidgetManagerDelegate.FocusChangeListener {
+public class PermissionWidget extends UIDialog {
 
     private TextView mPermissionMessage;
     private ImageView mPermissionIcon;
@@ -78,20 +74,6 @@ public class PermissionWidget extends UIDialog implements WidgetManagerDelegate.
         aPlacement.parentAnchorY = 0.5f;
         aPlacement.anchorX = 0.5f;
         aPlacement.anchorY = 0.5f;
-    }
-
-    @Override
-    public void show(@ShowFlags int aShowFlags) {
-        super.show(aShowFlags);
-
-        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
-    }
-
-    @Override
-    public void hide(@HideFlags int aHideFlag) {
-        super.hide(aHideFlag);
-
-        mWidgetManager.popWorldBrightness(this);
     }
 
     public void showPrompt(String aUri, PermissionType aType, GeckoSession.PermissionDelegate.Callback aCallback) {

@@ -17,7 +17,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
-import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoSession.PromptDelegate.ChoicePrompt.Choice;
 import org.mozilla.geckoview.GeckoSession.PromptDelegate.ChoicePrompt.Type;
 import org.mozilla.vrbrowser.R;
@@ -60,8 +59,6 @@ public class ChoicePromptWidget extends PromptWidget {
 
     protected void initialize(Context aContext) {
         inflate(aContext, R.layout.prompt_choice, this);
-
-        mWidgetManager.addFocusChangeListener(this);
 
         mAudio = AudioEngine.fromContext(aContext);
 

@@ -25,7 +25,7 @@ import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 
 import java.util.concurrent.Executor;
 
-public class WhatsNewWidget extends UIDialog implements WidgetManagerDelegate.WorldClickListener {
+public class WhatsNewWidget extends UIDialog {
 
     private Accounts mAccounts;
     private Runnable mSignInCallback;
@@ -81,21 +81,10 @@ public class WhatsNewWidget extends UIDialog implements WidgetManagerDelegate.Wo
     }
 
     @Override
-    public void show(@ShowFlags int aShowFlags) {
-        super.show(aShowFlags);
-
-        mWidgetManager.addWorldClickListener(this);
-        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
-    }
-
-    @Override
     public void hide(@HideFlags int aHideFlags) {
         super.hide(aHideFlags);
 
         SettingsStore.getInstance(getContext()).setWhatsNewDisplayed(true);
-
-        mWidgetManager.popWorldBrightness(this);
-        mWidgetManager.removeWorldClickListener(this);
     }
 
     private void signIn(View view) {
@@ -122,13 +111,6 @@ public class WhatsNewWidget extends UIDialog implements WidgetManagerDelegate.Wo
         if (mStartBrowsingCallback != null) {
             mStartBrowsingCallback.run();
         }
-    }
-
-    // WidgetManagerDelegate.WorldClickListener
-
-    @Override
-    public void onWorldClick() {
-        onDismiss();
     }
 
 }

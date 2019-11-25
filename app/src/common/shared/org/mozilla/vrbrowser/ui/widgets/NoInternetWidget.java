@@ -53,18 +53,4 @@ public class NoInternetWidget extends UIDialog {
         aPlacement.visible = false;
     }
 
-    @Override
-    public void show(int aShowFlags) {
-        super.show(aShowFlags);
-
-        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
-    }
-
-    @Override
-    public void hide(int aHideFlags) {
-        super.hide(aHideFlags);
-
-        mWidgetManager.popWorldBrightness(this);
-    }
-
 }

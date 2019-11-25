@@ -10,7 +10,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.UIDialog;
 
@@ -83,8 +82,6 @@ public class PromptWidget extends UIDialog {
                 getMinHeight();
         super.show(aShowFlags);
 
-        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
-
         ViewTreeObserver viewTreeObserver = mLayout.getViewTreeObserver();
         if (viewTreeObserver.isAlive()) {
             viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -98,11 +95,6 @@ public class PromptWidget extends UIDialog {
         }
     }
 
-    public void hide(@HideFlags int aHideFlags) {
-        super.hide(aHideFlags);
-        mWidgetManager.popWorldBrightness(this);
-    }
-
     @Override
     protected void onDismiss() {
         hide(REMOVE_WIDGET);
@@ -113,14 +105,6 @@ public class PromptWidget extends UIDialog {
 
         if (mDelegate != null) {
             mDelegate.onDismiss();
-        }
-    }
-
-    // WidgetManagerDelegate.FocusChangeListener
-    @Override
-    public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-        if (oldFocus == this && isVisible() && findViewById(newFocus.getId()) == null) {
-            onDismiss();
         }
     }
 

@@ -13,9 +13,8 @@ import android.widget.TextView;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
-import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.browser.SettingsStore;
-import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
+import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 
 public class CrashDialogWidget extends UIDialog {
@@ -50,8 +49,6 @@ public class CrashDialogWidget extends UIDialog {
 
     private void initialize(Context aContext) {
         inflate(aContext, R.layout.crash_dialog, this);
-
-        mWidgetManager.addFocusChangeListener(this);
 
         mLearnMoreButton = findViewById(R.id.learnMoreButton);
         mDoNotSendButton = findViewById(R.id.dontSendButton);
@@ -107,13 +104,6 @@ public class CrashDialogWidget extends UIDialog {
     }
 
     @Override
-    public void releaseWidget() {
-        mWidgetManager.removeFocusChangeListener(this);
-
-        super.releaseWidget();
-    }
-
-    @Override
     protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
         aPlacement.visible = false;
         aPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.crash_dialog_width);
@@ -124,20 +114,6 @@ public class CrashDialogWidget extends UIDialog {
         aPlacement.anchorY = 0.5f;
         aPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.crash_dialog_world_y);
         aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.crash_dialog_world_z);
-    }
-
-    @Override
-    public void show(@ShowFlags int aShowFlags) {
-        super.show(aShowFlags);
-
-        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
-    }
-
-    @Override
-    public void hide(@HideFlags int aHideFlags) {
-        super.hide(aHideFlags);
-
-        mWidgetManager.popWorldBrightness(this);
     }
 
     public void setCrashDialogDelegate(CrashDialogDelegate aDelegate) {
