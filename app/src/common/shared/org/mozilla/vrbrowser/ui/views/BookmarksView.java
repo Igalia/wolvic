@@ -40,6 +40,7 @@ import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
 import mozilla.appservices.places.BookmarkRoot;
@@ -214,18 +215,32 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
 
         @Override
         public void onFxALogin(@NonNull View view) {
-            mAccounts.getAuthenticationUrlAsync().thenAcceptAsync((url) -> {
-                if (url != null) {
-                    mAccounts.setLoginOrigin(Accounts.LoginOrigin.BOOKMARKS);
-                    WidgetManagerDelegate widgetManager = ((VRBrowserActivity)getContext());
-                    widgetManager.openNewTabForeground(url);
-                    widgetManager.getFocusedWindow().getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
+            if (mAccounts.getAccountStatus() == Accounts.AccountStatus.SIGNED_IN) {
+                mAccounts.logoutAsync();
+
+            } else {
+                CompletableFuture<String> result = mAccounts.authUrlAsync();
+                if (result != null) {
+                    result.thenAcceptAsync((url) -> {
+                        if (url == null) {
+                            mAccounts.logoutAsync();
+
+                        } else {
+                            mAccounts.setLoginOrigin(Accounts.LoginOrigin.BOOKMARKS);
+                            WidgetManagerDelegate widgetManager = ((VRBrowserActivity) getContext());
+                            widgetManager.openNewTabForeground(url);
+                            widgetManager.getFocusedWindow().getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
+
+                            mBookmarksViewListeners.forEach((listener) -> listener.onFxALogin(view));
+                        }
+
+                    }, mUIThreadExecutor).exceptionally(throwable -> {
+                        Log.d(LOGTAG, "Error getting the authentication URL: " + throwable.getLocalizedMessage());
+                        throwable.printStackTrace();
+                        return null;
+                    });
                 }
-            }, mUIThreadExecutor).exceptionally(throwable -> {
-                Log.d(LOGTAG, "Error getting the authentication URL: " + throwable.getLocalizedMessage());
-                throwable.printStackTrace();
-                return null;
-            });
+            }
         }
 
         @Override

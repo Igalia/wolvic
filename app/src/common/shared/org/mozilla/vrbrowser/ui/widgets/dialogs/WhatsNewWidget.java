@@ -23,6 +23,7 @@ import org.mozilla.vrbrowser.databinding.WhatsNewBinding;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
 public class WhatsNewWidget extends UIDialog {
@@ -88,23 +89,36 @@ public class WhatsNewWidget extends UIDialog {
     }
 
     private void signIn(View view) {
-        mAccounts.getAuthenticationUrlAsync().thenAcceptAsync((url) -> {
-            if (url != null) {
-                mAccounts.setLoginOrigin(mLoginOrigin);
-                mWidgetManager.openNewTabForeground(url);
-                mWidgetManager.getFocusedWindow().getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_VR);
-                mWidgetManager.getFocusedWindow().getSession().loadUri(url);
-            }
+        if (mAccounts.getAccountStatus() == Accounts.AccountStatus.SIGNED_IN) {
+            mAccounts.logoutAsync();
 
-            if (mSignInCallback != null) {
-                mSignInCallback.run();
-            }
+        } else {
+            hide(REMOVE_WIDGET);
 
-        }, mUIThreadExecutor).exceptionally(throwable -> {
-            Log.d(LOGTAG, "Error getting the authentication URL: " + throwable.getLocalizedMessage());
-            throwable.printStackTrace();
-            return null;
-        });
+            CompletableFuture<String> result = mAccounts.authUrlAsync();
+            if (result != null) {
+                result.thenAcceptAsync((url) -> {
+                    if (url == null) {
+                        mAccounts.logoutAsync();
+
+                    } else {
+                        mAccounts.setLoginOrigin(mLoginOrigin);
+                        mWidgetManager.openNewTabForeground(url);
+                        mWidgetManager.getFocusedWindow().getSession().loadUri(url);
+                        mWidgetManager.getFocusedWindow().getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_VR);
+                    }
+
+                    if (mSignInCallback != null) {
+                        mSignInCallback.run();
+                    }
+
+                }, mUIThreadExecutor).exceptionally(throwable -> {
+                    Log.d(LOGTAG, "Error getting the authentication URL: " + throwable.getLocalizedMessage());
+                    throwable.printStackTrace();
+                    return null;
+                });
+            }
+        }
     }
 
     private void startBrowsing(View view) {

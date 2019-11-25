@@ -14,8 +14,6 @@ import org.mozilla.geckoview.ContentBlocking;
 import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoRuntimeSettings;
 import org.mozilla.geckoview.GeckoSession;
-import org.mozilla.geckoview.WebExtension;
-import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.browser.BookmarksStore;
 import org.mozilla.vrbrowser.browser.HistoryStore;
@@ -33,11 +31,6 @@ import java.util.List;
 public class SessionStore implements GeckoSession.PermissionDelegate {
     private static final String LOGTAG = SystemUtils.createLogtag(SessionStore.class);
     private static final int MAX_GECKO_SESSIONS = 5;
-
-    private static final String[] WEB_EXTENSIONS = new String[] {
-            "webcompat_vimeo",
-            "webcompat_youtube"
-    };
 
     private static SessionStore mInstance;
 
@@ -65,48 +58,10 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
     public void setContext(Context context, Bundle aExtras) {
         mContext = context;
 
-        if (mRuntime == null) {
-            // FIXME: Once GeckoView has a prefs API
-            SessionUtils.vrPrefsWorkAround(context, aExtras);
+        // FIXME: Once GeckoView has a prefs API
+        SessionUtils.vrPrefsWorkAround(context, aExtras);
 
-            GeckoRuntimeSettings.Builder runtimeSettingsBuilder = new GeckoRuntimeSettings.Builder();
-            runtimeSettingsBuilder.crashHandler(CrashReporterService.class);
-            runtimeSettingsBuilder.contentBlocking((new ContentBlocking.Settings.Builder()
-                    .antiTracking(ContentBlocking.AntiTracking.AD | ContentBlocking.AntiTracking.SOCIAL| ContentBlocking.AntiTracking.ANALYTIC))
-                    .build());
-            runtimeSettingsBuilder.consoleOutput(SettingsStore.getInstance(context).isConsoleLogsEnabled());
-            runtimeSettingsBuilder.displayDensityOverride(SettingsStore.getInstance(context).getDisplayDensity());
-            runtimeSettingsBuilder.remoteDebuggingEnabled(SettingsStore.getInstance(context).isRemoteDebuggingEnabled());
-            runtimeSettingsBuilder.displayDpiOverride(SettingsStore.getInstance(context).getDisplayDpi());
-            runtimeSettingsBuilder.screenSizeOverride(SettingsStore.getInstance(context).getMaxWindowWidth(),
-                    SettingsStore.getInstance(context).getMaxWindowHeight());
-            runtimeSettingsBuilder.autoplayDefault(SettingsStore.getInstance(mContext).isAutoplayEnabled() ? GeckoRuntimeSettings.AUTOPLAY_DEFAULT_ALLOWED : GeckoRuntimeSettings.AUTOPLAY_DEFAULT_BLOCKED);
-
-            if (SettingsStore.getInstance(context).getTransparentBorderWidth() > 0) {
-                runtimeSettingsBuilder.useMaxScreenDepth(true);
-            }
-
-            if (BuildConfig.DEBUG) {
-                runtimeSettingsBuilder.arguments(new String[] { "-purgecaches" });
-                runtimeSettingsBuilder.debugLogging(true);
-                runtimeSettingsBuilder.aboutConfigEnabled(true);
-            } else {
-                runtimeSettingsBuilder.debugLogging(SettingsStore.getInstance(context).isDebugLogginEnabled());
-            }
-
-            mRuntime = GeckoRuntime.create(context, runtimeSettingsBuilder.build());
-            for (String extension: WEB_EXTENSIONS) {
-                String path = "resource://android/assets/web_extensions/" + extension + "/";
-                mRuntime.registerWebExtension(new WebExtension(path));
-            }
-
-        } else {
-            mRuntime.attachTo(context);
-        }
-    }
-
-    public GeckoRuntime getRuntime() {
-        return mRuntime;
+        mRuntime = EngineProvider.INSTANCE.getOrCreateRuntime(context);
     }
 
     public void initializeServices() {

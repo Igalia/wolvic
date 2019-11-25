@@ -21,12 +21,9 @@ import mozilla.components.service.fxa.manager.SyncEnginesStorage
 import mozilla.components.service.fxa.sync.SyncReason
 import mozilla.components.service.fxa.sync.SyncStatusObserver
 import mozilla.components.service.fxa.sync.getLastSynced
-import mozilla.components.support.base.log.logger.Logger
 import org.mozilla.vrbrowser.VRBrowserApplication
 import org.mozilla.vrbrowser.utils.SystemUtils
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.ExecutionException
-import java.util.concurrent.Executors
 
 class Accounts constructor(val context: Context) {
 
@@ -279,53 +276,6 @@ class Accounts constructor(val context: Context) {
         return CoroutineScope(Dispatchers.Main).future {
             services.accountManager.logoutAsync().await()
         }
-    }
-
-    fun getAuthenticationUrlAsync(): CompletableFuture<String> {
-        val future: CompletableFuture<String> = CompletableFuture()
-
-        // If we're already logged-in, and not in a "need to reconnect" state, logout.
-        if (services.accountManager.authenticatedAccount() != null && !services.accountManager.accountNeedsReauth()) {
-            services.accountManager.logoutAsync()
-            future.complete(null)
-        }
-
-        // Otherwise, obtain an authentication URL and load it in the gecko session.
-        // Recovering from "need to reconnect" state is treated the same as just logging in.
-        val futureUrl = authUrlAsync()
-        if (futureUrl == null) {
-            Logger(LOGTAG).debug("Got a 'null' futureUrl")
-            services.accountManager.logoutAsync()
-            future.complete(null)
-        }
-
-        Executors.newSingleThreadExecutor().submit {
-            try {
-                val url = futureUrl!!.get()
-                if (url == null) {
-                    Logger(LOGTAG).debug("Got a 'null' url after resolving futureUrl")
-                    services.accountManager.logoutAsync()
-                    future.complete(null)
-                }
-                Logger(LOGTAG).debug("Got an auth url: " + url!!)
-
-                // Actually process the url on the main thread.
-                Handler(Looper.getMainLooper()).post {
-                    Logger(LOGTAG).debug("We got an authentication url, we can continue...")
-                    future.complete(url)
-                }
-
-            } catch (e: ExecutionException) {
-                Logger(LOGTAG).debug("Error obtaining auth url", e)
-                future.complete(null)
-
-            } catch (e: InterruptedException) {
-                Logger(LOGTAG).debug("Error obtaining auth url", e)
-                future.complete(null)
-            }
-        }
-
-        return future
     }
 
     fun isEngineEnabled(engine: SyncEngine): Boolean {

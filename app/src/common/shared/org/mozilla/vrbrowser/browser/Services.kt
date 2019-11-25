@@ -14,6 +14,7 @@ import androidx.work.WorkManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import mozilla.appservices.Megazord
 import mozilla.components.concept.sync.*
 import mozilla.components.lib.fetch.httpurlconnection.HttpURLConnectionClient
 import mozilla.components.service.fxa.*
@@ -28,6 +29,9 @@ import org.mozilla.geckoview.AllowOrDeny
 import org.mozilla.geckoview.GeckoResult
 import org.mozilla.geckoview.GeckoSession
 import org.mozilla.vrbrowser.R
+import org.mozilla.vrbrowser.browser.engine.EngineProvider
+import org.mozilla.vrbrowser.browser.engine.GeckoViewFetchClient
+import org.mozilla.vrbrowser.browser.engine.SessionStore
 
 class Services(context: Context, places: Places): GeckoSession.NavigationDelegate {
     companion object {
@@ -42,8 +46,9 @@ class Services(context: Context, places: Places): GeckoSession.NavigationDelegat
 
     // This makes bookmarks storage accessible to background sync workers.
     init {
+        Megazord.init()
         RustLog.enable()
-        RustHttpConfig.setClient(lazy { HttpURLConnectionClient() })
+        RustHttpConfig.setClient(lazy { EngineProvider.createClient(context) })
 
         // Make sure we get logs out of our android-components.
         Log.addSink(AndroidLogSink())
