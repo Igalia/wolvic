@@ -872,7 +872,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
         String uriOverride = SessionUtils.checkYoutubeOverride(uri);
         if (uriOverride != null) {
-            aSession.loadUri(uriOverride);
+            aSession.loadUri(uriOverride, GeckoSession.LOAD_FLAGS_REPLACE_HISTORY);
             return GeckoResult.DENY;
         }
 
