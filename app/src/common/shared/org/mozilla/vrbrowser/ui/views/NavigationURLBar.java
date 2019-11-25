@@ -39,6 +39,7 @@ import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.databinding.NavigationUrlBinding;
 import org.mozilla.vrbrowser.search.SearchEngineWrapper;
+import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.SelectionActionWidget;
@@ -452,6 +453,7 @@ public class NavigationURLBar extends FrameLayout {
         if (uri != null) {
             url = uri.toString();
             TelemetryWrapper.urlBarEvent(true);
+            GleanMetricsService.urlBarEvent(true);
         } else if (text.startsWith("about:") || text.startsWith("resource://")) {
             url = text;
         } else {
@@ -459,6 +461,7 @@ public class NavigationURLBar extends FrameLayout {
 
             // Doing search in the URL bar, so sending "aIsURL: false" to telemetry.
             TelemetryWrapper.urlBarEvent(false);
+            GleanMetricsService.urlBarEvent(false);
         }
 
         if (mSession.getCurrentUri() != url) {
@@ -490,6 +493,7 @@ public class NavigationURLBar extends FrameLayout {
         }
 
         TelemetryWrapper.voiceInputEvent();
+        GleanMetricsService.voiceInputEvent();
     };
 
     private OnClickListener mClearListener = view -> {

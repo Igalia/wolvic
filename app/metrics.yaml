@@ -16,10 +16,70 @@ distribution:
       - baseline
       - events
       - metrics
+      - session_end
     bugs:
       - https://github.com/MozillaReality/FirefoxReality/issues/1420
     data_reviews:
       - https://github.com/MozillaReality/FirefoxReality/pull/1854#issuecomment-546214568
     notification_emails:
+      - fxr-telemetry@mozilla.com
+      - dmu@mozilla.com
+    expires: "2020-05-01"
+url:
+  domains:
+    type: counter
+    send_in_pings:
+      - session_end
+    description: >
+      Counting how many domains are visited in a session.
+    bugs:
+      - https://github.com/MozillaReality/FirefoxReality/issues/2230
+    data_reviews:
+      - https://github.com/MozillaReality/FirefoxReality/pull/2241#issuecomment-557740258
+    notification_emails:
+      - fxr-telemetry@mozilla.com
+      - dmu@mozilla.com
+    expires: "2020-05-01"
+  visits:
+    type: counter
+    send_in_pings:
+      - session_end
+    description: >
+      Counting how many URL links are visited in a session.
+    bugs:
+      - https://github.com/MozillaReality/FirefoxReality/issues/2230
+    data_reviews:
+      - https://github.com/MozillaReality/FirefoxReality/pull/2241#issuecomment-557740258
+    notification_emails:
+      - fxr-telemetry@mozilla.com
+      - dmu@mozilla.com
+    expires: "2020-05-01"
+  query_type:
+    type: labeled_counter
+    description: >
+      Counting how many URLs are visited in a day, by input method.
+    labels:
+      - type_link
+      - type_query
+      - voice_query
+    bugs:
+      - https://github.com/MozillaReality/FirefoxReality/issues/2230
+    data_reviews:
+      - https://github.com/MozillaReality/FirefoxReality/pull/2241#issuecomment-557740258
+    notification_emails:
+      - fxr-telemetry@mozilla.com
+      - dmu@mozilla.com
+    expires: "2020-05-01"
+searches:
+  counts:
+    type: labeled_counter
+    description: >
+      Counting how many searches are queried in a specific search engine. The search engine `identifier`s are used as keys for this metric.
+    bugs:
+      - https://github.com/MozillaReality/FirefoxReality/issues/2230
+    data_reviews:
+      - https://github.com/MozillaReality/FirefoxReality/pull/2241#issuecomment-557740258
+    notification_emails:
+      - fxr-telemetry@mozilla.com
       - dmu@mozilla.com
     expires: "2020-05-01"

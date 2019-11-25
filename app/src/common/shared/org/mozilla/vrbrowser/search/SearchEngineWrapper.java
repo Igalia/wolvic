@@ -125,6 +125,10 @@ public class SearchEngineWrapper implements SharedPreferences.OnSharedPreference
         return uri.getScheme() + "://" + uri.getHost();
     }
 
+    public String getIdentifier() {
+        return mSearchEngine.getIdentifier();
+    }
+
     // Receiver for locale updates
     private BroadcastReceiver mLocaleChangedReceiver = new BroadcastReceiver() {
         @Override
