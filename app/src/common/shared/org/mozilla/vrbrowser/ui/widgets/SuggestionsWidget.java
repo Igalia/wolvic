@@ -24,6 +24,7 @@ import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.ui.views.CustomListView;
+import org.mozilla.vrbrowser.utils.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -125,11 +126,15 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
         mList.startAnimation(mScaleDownAnimation);
     }
 
+    public void hideNoAnim(@HideFlags int aHideFlags) {
+        super.hide(aHideFlags);
+    }
+
     // FocusChangeListener
 
     @Override
     public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-        if (oldFocus != null && isVisible()) {
+        if (!ViewUtils.isEqualOrChildrenOf(this, newFocus)) {
             onDismiss();
         }
     }

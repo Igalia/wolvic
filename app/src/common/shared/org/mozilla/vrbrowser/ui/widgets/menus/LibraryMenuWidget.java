@@ -140,8 +140,8 @@ public class LibraryMenuWidget extends MenuWidget implements WidgetManagerDelega
 
     @Override
     public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-        if (!ViewUtils.isChildrenOf(menuContainer, newFocus)) {
-            hide(KEEP_WIDGET);
+        if (!ViewUtils.isEqualOrChildrenOf(this, newFocus)) {
+            onDismiss();
         }
     }
 }

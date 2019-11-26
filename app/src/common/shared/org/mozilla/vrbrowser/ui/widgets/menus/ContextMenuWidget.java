@@ -122,7 +122,7 @@ public class ContextMenuWidget extends MenuWidget implements WidgetManagerDelega
 
     @Override
     public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-        if (!ViewUtils.isChildrenOf(this, newFocus) && isVisible()) {
+        if (!ViewUtils.isEqualOrChildrenOf(this, newFocus) && isVisible()) {
             onDismiss();
         }
     }

@@ -418,7 +418,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         }
         mAttachedWindow = null;
         if (mAwesomeBar != null && mAwesomeBar.isVisible()) {
-            onHideAwesomeBar();
+            mAwesomeBar.hideNoAnim(UIWidget.KEEP_WIDGET);
         }
     }
 

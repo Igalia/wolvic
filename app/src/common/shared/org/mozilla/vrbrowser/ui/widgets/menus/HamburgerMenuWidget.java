@@ -123,8 +123,8 @@ public class HamburgerMenuWidget extends MenuWidget implements WidgetManagerDele
 
     @Override
     public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-        if (!ViewUtils.isChildrenOf(menuContainer, newFocus)) {
-            hide(KEEP_WIDGET);
+        if (!ViewUtils.isEqualOrChildrenOf(this, newFocus)) {
+            onDismiss();
         }
     }
 }

@@ -184,7 +184,7 @@ public class SelectionActionWidget extends UIWidget implements WidgetManagerDele
 
     @Override
     public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-        if (!ViewUtils.isChildrenOf(getChildAt(0), newFocus)) {
+        if (!ViewUtils.isEqualOrChildrenOf(this, newFocus)) {
             onDismiss();
         }
     }
