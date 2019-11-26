@@ -156,8 +156,6 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
 
             Session session = SessionStore.get().getActiveSession();
             session.loadUri(item.getUrl());
-
-            mBookmarksViewListeners.forEach((listener) -> listener.onItemClicked(view, item));
         }
 
         @Override

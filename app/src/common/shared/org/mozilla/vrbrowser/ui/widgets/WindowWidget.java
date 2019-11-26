@@ -27,6 +27,7 @@ import androidx.annotation.StringRes;
 import androidx.annotation.UiThread;
 
 import org.jetbrains.annotations.NotNull;
+import org.mozilla.geckoview.AllowOrDeny;
 import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.PanZoomController;
@@ -67,7 +68,6 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
-import java.util.function.Consumer;
 
 import mozilla.components.concept.storage.PageObservation;
 import mozilla.components.concept.storage.PageVisit;
@@ -1425,11 +1425,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
 
         @Override
-        public void onItemClicked(@NonNull View view, Bookmark item) {
-            hideBookmarks();
-        }
-
-        @Override
         public void onFxALogin(@NonNull View view) {
             hideBookmarks();
         }
@@ -1461,11 +1456,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         @Override
         public void onHideContextMenu(@NonNull View view) {
             hideContextMenus();
-        }
-
-        @Override
-        public void onItemClicked(@NonNull View view, VisitInfo item) {
-            hideHistory();
         }
 
         @Override
@@ -1581,6 +1571,22 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     public void captureImage() {
         mSession.captureBitmap();
+    }
+
+    // GeckoSession.NavigationDelegate
+
+    @Nullable
+    @Override
+    public GeckoResult<AllowOrDeny> onLoadRequest(@NonNull GeckoSession geckoSession, @NonNull LoadRequest loadRequest) {
+        if (isHistoryVisible()) {
+            hideHistory();
+        }
+
+        if (isBookmarksVisible()) {
+            hideBookmarks();
+        }
+
+        return GeckoResult.ALLOW;
     }
 
     @Override
