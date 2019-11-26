@@ -42,6 +42,7 @@ import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.utils.BitmapCache;
 import org.mozilla.vrbrowser.utils.InternalPages;
+import org.mozilla.vrbrowser.utils.StringUtils;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.net.URI;
@@ -869,12 +870,6 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         String uri = aRequest.uri;
 
         Log.d(LOGTAG, "onLoadRequest: " + uri);
-
-        String uriOverride = SessionUtils.checkYoutubeOverride(uri);
-        if (uriOverride != null) {
-            aSession.loadUri(uriOverride);
-            return GeckoResult.DENY;
-        }
 
         if (aSession == mState.mSession) {
             Log.d(LOGTAG, "Testing for UA override");
