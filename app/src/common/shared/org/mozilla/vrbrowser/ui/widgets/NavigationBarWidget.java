@@ -1251,9 +1251,9 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mPopUpNotification = new TooltipWidget(getContext(), R.layout.library_notification);
         mPopUpNotification.getPlacement().parentHandle = getHandle();
         mPopUpNotification.getPlacement().anchorY = 0.0f;
-        mPopUpNotification.getPlacement().translationX = (button.getPaddingLeft() + offsetViewBounds.left + button.getWidth() / 2.0f) * ratio;
+        mPopUpNotification.getPlacement().translationX = (getPaddingLeft() + offsetViewBounds.left + button.getWidth() / 2.0f) * ratio;
         mPopUpNotification.getPlacement().translationY = ((offsetViewBounds.top - 60) * ratio);
-        mPopUpNotification.getPlacement().translationZ = 25.0f;
+        mPopUpNotification.getPlacement().translationZ = 1.0f;
         mPopUpNotification.getPlacement().density = WidgetPlacement.floatDimension(getContext(), R.dimen.tooltip_default_density);
         mPopUpNotification.setText(stringRes);
         mPopUpNotification.setCurvedMode(true);
