@@ -6,6 +6,8 @@
 package org.mozilla.vrbrowser.browser
 
 import android.content.Context
+import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -21,9 +23,15 @@ import mozilla.components.service.fxa.manager.SyncEnginesStorage
 import mozilla.components.service.fxa.sync.SyncReason
 import mozilla.components.service.fxa.sync.SyncStatusObserver
 import mozilla.components.service.fxa.sync.getLastSynced
+import org.mozilla.vrbrowser.R
 import org.mozilla.vrbrowser.VRBrowserApplication
+import org.mozilla.vrbrowser.utils.BitmapCache
 import org.mozilla.vrbrowser.utils.SystemUtils
+import org.mozilla.vrbrowser.utils.ViewUtils
+import java.net.URL
 import java.util.concurrent.CompletableFuture
+
+const val PROFILE_PICTURE_TAG = "fxa_profile_picture"
 
 class Accounts constructor(val context: Context) {
 
@@ -43,6 +51,7 @@ class Accounts constructor(val context: Context) {
         NONE
     }
 
+    var profilePicture: BitmapDrawable? = loadDefaultProfilePicture()
     var loginOrigin: LoginOrigin = LoginOrigin.NONE
     var accountStatus = AccountStatus.SIGNED_OUT
     private val accountListeners = ArrayList<AccountObserver>()
@@ -152,6 +161,8 @@ class Accounts constructor(val context: Context) {
                     it.onLoggedOut()
                 }
             }
+
+            loadDefaultProfilePicture()
         }
 
         override fun onProfileUpdated(profile: Profile) {
@@ -162,6 +173,8 @@ class Accounts constructor(val context: Context) {
                     it.onProfileUpdated(profile)
                 }
             }
+
+            loadProfilePicture(profile)
         }
     }
 
@@ -183,6 +196,38 @@ class Accounts constructor(val context: Context) {
         }
     }
 
+    private fun loadProfilePicture(profile: Profile) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val url = URL(profile.avatar!!.url)
+                BitmapFactory.decodeStream(url.openStream())?.let {
+                    val bitmap = ViewUtils.getRoundedCroppedBitmap(it)
+                    profilePicture = BitmapDrawable(context.resources, bitmap)
+                    BitmapCache.getInstance(context).addBitmap(PROFILE_PICTURE_TAG, bitmap)
+
+                } ?: throw IllegalArgumentException()
+
+            } catch (e: Exception) {
+                loadDefaultProfilePicture()
+
+            } finally {
+                accountListeners.toMutableList().forEach {
+                    Handler(Looper.getMainLooper()).post {
+                        it.onProfileUpdated(profile)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun loadDefaultProfilePicture(): BitmapDrawable? {
+        BitmapFactory.decodeResource(context.resources, R.drawable.ic_icon_settings_account)?.let {
+            BitmapCache.getInstance(context).addBitmap(PROFILE_PICTURE_TAG, it)
+            profilePicture = BitmapDrawable(context.resources, ViewUtils.getRoundedCroppedBitmap(it))
+        }
+
+        return profilePicture
+    }
 
     fun addAccountListener(aListener: AccountObserver) {
         if (!accountListeners.contains(aListener)) {
@@ -271,7 +316,7 @@ class Accounts constructor(val context: Context) {
         return services.accountManager.accountProfile()
     }
 
-    fun logoutAsync(): CompletableFuture<Unit?>? {
+    fun logoutAsync(): CompletableFuture<Unit?> {
         otherDevices = emptyList()
         return CoroutineScope(Dispatchers.Main).future {
             services.accountManager.logoutAsync().await()

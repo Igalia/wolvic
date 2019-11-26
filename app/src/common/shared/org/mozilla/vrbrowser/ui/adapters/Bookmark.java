@@ -104,7 +104,8 @@ public class Bookmark {
         for (BookmarkNode node : bookmarkNodes) {
             if (node.getType() == BookmarkNodeType.FOLDER) {
                 if (openFolderGuid != null && openFolderGuid.contains(node.getGuid())) {
-                    Bookmark bookmark = new Bookmark(node, level, true);
+                    boolean canExpand = node.getChildren() != null && !node.getChildren().isEmpty();
+                    Bookmark bookmark = new Bookmark(node, level, canExpand);
                     children.add(bookmark);
                     if (node.getChildren() != null) {
                         children.addAll(getDisplayListTree(node.getChildren(), level + 1, openFolderGuid));

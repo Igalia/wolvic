@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <RelativeLayout
+        android:layout_width="@dimen/checkbox_dialog_width"
+        android:layout_height="@dimen/checkbox_dialog_height"
+        android:background="@drawable/dialog_background"
+        android:paddingStart="@dimen/checkbox_dialog_padding_sides"
+        android:paddingTop="@dimen/checkbox_dialog_padding_top"
+        android:paddingEnd="@dimen/checkbox_dialog_padding_sides"
+        android:paddingBottom="@dimen/checkbox_dialog_padding_bottom">
+
+        <FrameLayout
+            android:id="@+id/imageContainer"
+            android:layout_width="322dp"
+            android:layout_height="60dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="10dp">
+            <ImageView
+                android:id="@+id/icon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ff_logo" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/titleContainer"
+            android:layout_width="322dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/imageContainer">
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                tools:text="Title"
+                android:textStyle="bold"
+                android:textColor="@color/fog"
+                android:textSize="@dimen/text_bigger_size" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/bodyContainer"
+            android:layout_width="322dp"
+            android:layout_height="80dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/titleContainer">
+            <TextView
+                android:id="@+id/body"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                tools:text="Body"
+                android:textColor="@color/fog"
+                android:textSize="@dimen/text_medium_size" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/checkboxContainer"
+            android:layout_width="322dp"
+            android:layout_height="22dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="10dp"
+            android:layout_below="@+id/bodyContainer">
+            <CheckBox
+                android:id="@+id/checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:button="@drawable/checkbox"
+                android:layout_gravity="center_horizontal"
+                android:textSize="@dimen/text_medium_size"
+                tools:text="Checkbox" />
+        </FrameLayout>
+
+        <RelativeLayout
+            android:id="@+id/buttonsLayout"
+            android:layout_width="322dp"
+            android:layout_height="36dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true">
+
+            <Button
+                android:id="@+id/leftButton"
+                android:layout_width="156dp"
+                android:layout_height="36dp"
+                android:layout_alignParentStart="true"
+                android:background="@drawable/dialog_regular_button_background"
+                android:fontFamily="sans-serif"
+                android:scaleType="fitCenter"
+                tools:text="Cancel"
+                android:textColor="@drawable/dialog_button_text_color"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/rightButton"
+                android:layout_width="156dp"
+                android:layout_height="36dp"
+                android:layout_alignParentEnd="true"
+                android:background="@drawable/dialog_highlighted_button_background"
+                android:fontFamily="sans-serif"
+                android:scaleType="fitCenter"
+                tools:text="Accept"
+                android:textColor="@drawable/dialog_button_text_color"
+                android:textStyle="bold" />
+        </RelativeLayout>
+    </RelativeLayout>
+</layout>

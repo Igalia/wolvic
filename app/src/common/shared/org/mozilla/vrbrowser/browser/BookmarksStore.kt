@@ -59,7 +59,7 @@ class BookmarksStore constructor(val context: Context) {
     }
 
     private val listeners = ArrayList<BookmarkListener>()
-    private val storage = (context.applicationContext as VRBrowserApplication).places.bookmarks
+    private var storage = (context.applicationContext as VRBrowserApplication).places.bookmarks
     private val titles = rootTitles(context)
     private val accountManager = (context.applicationContext as VRBrowserApplication).services.accountManager
 
@@ -98,6 +98,11 @@ class BookmarksStore constructor(val context: Context) {
 
     fun removeAllListeners() {
         listeners.clear()
+    }
+
+    internal fun updateStorage() {
+        storage = (context.applicationContext as VRBrowserApplication).places.bookmarks
+        notifyListeners()
     }
 
     fun getBookmarks(guid: String): CompletableFuture<List<BookmarkNode>?> = GlobalScope.future {
@@ -157,9 +162,7 @@ class BookmarksStore constructor(val context: Context) {
 
     fun getTree(guid: String, recursive: Boolean): CompletableFuture<List<BookmarkNode>?> = GlobalScope.future {
         storage.getTree(guid, recursive)?.children
-                ?.map {
-                    it.copy(title = titles[it.guid])
-                }
+                ?.map { it.copy(title = titles[it.guid]) }
     }
 
     fun searchBookmarks(query: String, limit: Int): CompletableFuture<List<BookmarkNode>> = GlobalScope.future {

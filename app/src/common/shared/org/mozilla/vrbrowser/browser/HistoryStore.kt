@@ -23,7 +23,7 @@ class HistoryStore constructor(val context: Context) {
     private val LOGTAG = SystemUtils.createLogtag(HistoryStore::class.java)
 
     private var listeners = ArrayList<HistoryListener>()
-    private val storage = (context.applicationContext as VRBrowserApplication).places.history
+    private var storage = (context.applicationContext as VRBrowserApplication).places.history
 
     // Bookmarks might have changed during sync, so notify our listeners.
     private val syncStatusObserver = object : SyncStatusObserver {
@@ -59,6 +59,11 @@ class HistoryStore constructor(val context: Context) {
 
     fun removeAllListeners() {
         listeners.clear()
+    }
+
+    internal fun updateStorage() {
+        storage = (context.applicationContext as VRBrowserApplication).places.history
+        notifyListeners()
     }
 
     fun getHistory(): CompletableFuture<List<String>?> = GlobalScope.future {

@@ -10,7 +10,7 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
-import android.graphics.drawable.Drawable;
+import android.graphics.drawable.BitmapDrawable;
 import android.text.Html;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -25,7 +25,6 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 
 import org.jetbrains.annotations.NotNull;
-import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.R;
@@ -44,9 +43,7 @@ import org.mozilla.vrbrowser.ui.widgets.dialogs.UIDialog;
 import org.mozilla.vrbrowser.ui.widgets.prompts.AlertPromptWidget;
 import org.mozilla.vrbrowser.utils.StringUtils;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -354,18 +351,9 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
     };
 
     private void updateProfile(Profile profile) {
-        if (profile != null) {
-            ThreadUtils.postToBackgroundThread(() -> {
-                try {
-                    URL url = new URL(profile.getAvatar().getUrl());
-                    Drawable picture = Drawable.createFromStream(url.openStream(), "src");
-                    post(() -> mBinding.fxaButton.setImageDrawable(picture));
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-
-                }
-            });
+        BitmapDrawable profilePicture = mAccounts.getProfilePicture();
+        if (profile != null && profilePicture != null) {
+            mBinding.fxaButton.setImageDrawable(profilePicture);
 
         } else {
             mBinding.fxaButton.setImageDrawable(getContext().getDrawable(R.drawable.ic_icon_settings_account));

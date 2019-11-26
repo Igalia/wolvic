@@ -6,6 +6,7 @@
 package org.mozilla.vrbrowser.ui.widgets.settings;
 
 import android.content.Context;
+import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,10 +18,14 @@ import org.jetbrains.annotations.Nullable;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.browser.Accounts;
+import org.mozilla.vrbrowser.browser.Places;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.databinding.OptionsFxaAccountBinding;
 import org.mozilla.vrbrowser.ui.views.settings.SwitchSetting;
+import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
+import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
+import org.mozilla.vrbrowser.ui.widgets.dialogs.CheckboxDialogWidget;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.util.Objects;
@@ -40,9 +45,11 @@ class FxAAccountOptionsView extends SettingsView {
 
     private OptionsFxaAccountBinding mBinding;
     private Accounts mAccounts;
+    private Places mPlaces;
     private Executor mUIThreadExecutor;
     private boolean mInitialBookmarksState;
     private boolean mInitialHistoryState;
+    private CheckboxDialogWidget mSignOutDialog;
 
     public FxAAccountOptionsView(Context aContext, WidgetManagerDelegate aWidgetManager) {
         super(aContext, aWidgetManager);
@@ -61,10 +68,11 @@ class FxAAccountOptionsView extends SettingsView {
         mBinding.headerLayout.setBackClickListener(view -> onDismiss());
 
         mAccounts = ((VRBrowserApplication)getContext().getApplicationContext()).getAccounts();
+        mPlaces = ((VRBrowserApplication)getContext().getApplicationContext()).getPlaces();
 
         mUIThreadExecutor = ((VRBrowserApplication)getContext().getApplicationContext()).getExecutors().mainThread();
 
-        mBinding.signButton.setOnClickListener(view -> mAccounts.logoutAsync());
+        mBinding.signButton.setOnClickListener(this::signOut);
         mBinding.syncButton.setOnClickListener(this::sync);
 
         mBinding.setIsSyncing(mAccounts.isSyncing());
@@ -165,13 +173,17 @@ class FxAAccountOptionsView extends SettingsView {
                     updateProfile(profile);
 
                 } else {
-                    Objects.requireNonNull(mAccounts.updateProfileAsync()).
-                            thenAcceptAsync((u) -> updateProfile(mAccounts.accountProfile()), mUIThreadExecutor).
-                            exceptionally(throwable -> {
-                                Log.d(LOGTAG, "Error getting the account profile: " + throwable.getLocalizedMessage());
-                                throwable.printStackTrace();
-                                return null;
-                            });
+                    try {
+                        Objects.requireNonNull(mAccounts.updateProfileAsync()).
+                                thenAcceptAsync((u) -> updateProfile(mAccounts.accountProfile()), mUIThreadExecutor).
+                                exceptionally(throwable -> {
+                                    Log.d(LOGTAG, "Error getting the account profile: " + throwable.getLocalizedMessage());
+                                    return null;
+                                });
+
+                    } catch (NullPointerException e) {
+                        Log.d(LOGTAG, "Error getting the account profile: " + e.getLocalizedMessage());
+                    }
                 }
                 break;
 
@@ -197,6 +209,52 @@ class FxAAccountOptionsView extends SettingsView {
         } else {
             mAccounts.syncNowAsync(SyncReason.User.INSTANCE, false);
         }
+        mAccounts.updateProfileAsync();
+    }
+
+    private void signOut(View view) {
+        if (mSignOutDialog == null) {
+            mSignOutDialog = new CheckboxDialogWidget(getContext());
+            mSignOutDialog.getPlacement().parentHandle = mWidgetManager.getFocusedWindow().getHandle();
+            mSignOutDialog.getPlacement().parentAnchorY = 0.0f;
+            mSignOutDialog.getPlacement().translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.base_app_dialog_y_distance);
+            BitmapDrawable profilePicture = mAccounts.getProfilePicture();
+            if (profilePicture != null) {
+                mSignOutDialog.setIcon(profilePicture);
+
+            } else {
+                mSignOutDialog.setIcon(R.drawable.ic_icon_settings_account);
+            }
+            mSignOutDialog.setTitle(R.string.fxa_signout_confirmation_title);
+            mSignOutDialog.setBody(R.string.fxa_signout_confirmation_body);
+            mSignOutDialog.setCheckboxText(R.string.fxa_signout_confirmation_checkbox);
+            mSignOutDialog.setButtons(new int[] {
+                    R.string.fxa_signout_confirmation_signout,
+                    R.string.fxa_signout_confirmation_cancel
+            });
+            mSignOutDialog.setButtonsDelegate(index -> {
+                // Sign out button pressed
+                if (index == CheckboxDialogWidget.NEGATIVE) {
+                    mAccounts.logoutAsync().thenAcceptAsync(unit -> {
+                        if (mSignOutDialog.isChecked()) {
+                            // Clear History and Bookmarks
+                            mPlaces.clear();
+                        }
+                        mSignOutDialog.hide(UIWidget.REMOVE_WIDGET);
+                        mWidgetManager.getTray().toggleSettingsDialog();
+
+                    }, mUIThreadExecutor);
+
+                } else if (index == CheckboxDialogWidget.POSITIVE) {
+                    mSignOutDialog.hide(UIWidget.REMOVE_WIDGET);
+                    mWidgetManager.getTray().toggleSettingsDialog(SettingsWidget.SettingDialog.FXA);
+                }
+            });
+            mSignOutDialog.setDelegate(() -> mWidgetManager.getTray().toggleSettingsDialog(SettingsWidget.SettingDialog.FXA));
+        }
+
+        exitWholeSettings();
+        mSignOutDialog.show(UIWidget.REQUEST_FOCUS);
     }
 
     private AccountObserver mAccountListener = new AccountObserver() {

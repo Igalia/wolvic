@@ -16,7 +16,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import mozilla.appservices.Megazord
 import mozilla.components.concept.sync.*
-import mozilla.components.lib.fetch.httpurlconnection.HttpURLConnectionClient
 import mozilla.components.service.fxa.*
 import mozilla.components.service.fxa.manager.FxaAccountManager
 import mozilla.components.service.fxa.sync.GlobalSyncableStoreProvider
@@ -32,8 +31,13 @@ import org.mozilla.vrbrowser.R
 import org.mozilla.vrbrowser.browser.engine.EngineProvider
 import org.mozilla.vrbrowser.browser.engine.GeckoViewFetchClient
 import org.mozilla.vrbrowser.browser.engine.SessionStore
+import org.mozilla.vrbrowser.utils.SystemUtils
 
-class Services(context: Context, places: Places): GeckoSession.NavigationDelegate {
+
+class Services(val context: Context, places: Places): GeckoSession.NavigationDelegate {
+
+    private val LOGTAG = SystemUtils.createLogtag(Services::class.java)
+
     companion object {
         const val CLIENT_ID = "7ad9917f6c55fb77"
         const val REDIRECT_URL = "https://accounts.firefox.com/oauth/success/$CLIENT_ID"

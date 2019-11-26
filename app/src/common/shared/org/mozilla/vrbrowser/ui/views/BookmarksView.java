@@ -53,6 +53,8 @@ import mozilla.components.service.fxa.SyncEngine;
 import mozilla.components.service.fxa.sync.SyncReason;
 import mozilla.components.service.fxa.sync.SyncStatusObserver;
 
+import static org.mozilla.vrbrowser.browser.BookmarksStoreKt.DESKTOP_ROOT;
+
 public class BookmarksView extends FrameLayout implements BookmarksStore.BookmarkListener {
 
     private static final String LOGTAG = SystemUtils.createLogtag(BookmarksView.class);

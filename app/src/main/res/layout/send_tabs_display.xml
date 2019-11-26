@@ -54,7 +54,7 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:text="@string/send_tab_dialog_syncing"
-                tools:text="@string/send_tab_dialog_syncing "
+                tools:text="@string/send_tab_dialog_syncing"
                 app:visibleGone="@{isSyncing}"/>
 
             <!-- ScrollView doesn't support fast scrollbar so we need to use a custom implementation -->

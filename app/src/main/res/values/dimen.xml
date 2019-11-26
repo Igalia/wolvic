@@ -305,4 +305,11 @@
     <!-- Whats new -->
     <dimen name="whats_new_width">450dp</dimen>
     <dimen name="whats_new_height">340dp</dimen>
+
+    <!-- Icon dialog -->
+    <dimen name="checkbox_dialog_width">450dp</dimen>
+    <dimen name="checkbox_dialog_height">340dp</dimen>
+    <dimen name="checkbox_dialog_padding_top">20dp</dimen>
+    <dimen name="checkbox_dialog_padding_bottom">42dp</dimen>
+    <dimen name="checkbox_dialog_padding_sides">64dp</dimen>
 </resources>
