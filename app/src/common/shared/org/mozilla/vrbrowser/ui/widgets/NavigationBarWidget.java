@@ -339,10 +339,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
         mPrefs = PreferenceManager.getDefaultSharedPreferences(mAppContext);
         mPrefs.registerOnSharedPreferenceChangeListener(this);
-
-        for (CustomUIButton button : mButtons) {
-            button.setPrivateMode(true);
-        }
     }
 
     @Override
@@ -781,10 +777,10 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     @Override
     public void onCanGoBack(GeckoSession aSession, boolean canGoBack) {
         if (mBackButton != null) {
-            boolean enableBackButton = getSession().canGoBack();
-
-            Log.d(LOGTAG, "Got onCanGoBack: " + (enableBackButton ? "true" : "false"));
-            mBackButton.setEnabled(enableBackButton);
+            Log.d(LOGTAG, "Got onCanGoBack: " + (canGoBack ? "true" : "false"));
+            mBackButton.setEnabled(canGoBack);
+            mBackButton.setHovered(false);
+            mBackButton.setClickable(canGoBack);
         }
     }
 
@@ -793,6 +789,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         if (mForwardButton != null) {
             Log.d(LOGTAG, "Got onCanGoForward: " + (canGoForward ? "true" : "false"));
             mForwardButton.setEnabled(canGoForward);
+            mForwardButton.setHovered(false);
+            mForwardButton.setClickable(canGoForward);
         }
     }
 

@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!-- Animations -->
-    <integer name="ui_fadeAnimTime">75</integer>
-</resources>

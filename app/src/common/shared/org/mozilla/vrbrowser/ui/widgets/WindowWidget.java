@@ -1559,6 +1559,14 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     @Override
     public void onPageStart(@NonNull GeckoSession geckoSession, @NonNull String s) {
         mCaptureOnPageStop = true;
+
+        if (isHistoryVisible()) {
+            hideHistory();
+        }
+
+        if (isBookmarksVisible()) {
+            hideBookmarks();
+        }
     }
 
     @Override
@@ -1571,22 +1579,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     public void captureImage() {
         mSession.captureBitmap();
-    }
-
-    // GeckoSession.NavigationDelegate
-
-    @Nullable
-    @Override
-    public GeckoResult<AllowOrDeny> onLoadRequest(@NonNull GeckoSession geckoSession, @NonNull LoadRequest loadRequest) {
-        if (isHistoryVisible()) {
-            hideHistory();
-        }
-
-        if (isBookmarksVisible()) {
-            hideBookmarks();
-        }
-
-        return GeckoResult.ALLOW;
     }
 
     @Override
