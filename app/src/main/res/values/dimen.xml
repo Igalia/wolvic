@@ -245,6 +245,10 @@
     <dimen name="context_menu_corner_radius">20dp</dimen>
     <item name="context_menu_z_distance" format="float" type="dimen">0.1</item>
 
+    <!-- Selection Action Menu -->
+    <dimen name="selection_action_item_min_width">56dp</dimen>
+    <dimen name="selection_action_item_max_width">300dp</dimen>
+
     <!-- Library Menu -->
     <dimen name="library_menu_width">320dp</dimen>
     <dimen name="library_menu_item_height">60dp</dimen>

@@ -35,6 +35,7 @@ public class SelectionActionWidget extends UIWidget implements WidgetManagerDele
     private Point mPosition;
     private LinearLayout mContainer;
     private int mMinButtonWidth;
+    private int mMaxButtonWidth;
     private Collection<String> mActions;
 
     public SelectionActionWidget(Context aContext) {
@@ -45,7 +46,8 @@ public class SelectionActionWidget extends UIWidget implements WidgetManagerDele
     private void initialize() {
         inflate(getContext(), R.layout.selection_action_menu, this);
         mContainer = findViewById(R.id.selectionMenuContainer);
-        mMinButtonWidth = WidgetPlacement.pixelDimension(getContext(), R.dimen.autocompletion_widget_min_item_width);
+        mMinButtonWidth = WidgetPlacement.pixelDimension(getContext(), R.dimen.selection_action_item_min_width);
+        mMaxButtonWidth = WidgetPlacement.pixelDimension(getContext(), R.dimen.selection_action_item_max_width);
         mBackHandler = () -> {
             onDismiss();
         };
@@ -156,6 +158,7 @@ public class SelectionActionWidget extends UIWidget implements WidgetManagerDele
         }
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         button.setMinWidth(mMinButtonWidth);
+        button.setMaxWidth(mMaxButtonWidth);
         params.gravity = CENTER_VERTICAL;
         button.setLayoutParams(params);
         button.setTag(aAction);
