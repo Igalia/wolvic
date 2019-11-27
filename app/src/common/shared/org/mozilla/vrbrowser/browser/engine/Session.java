@@ -474,15 +474,25 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         if (mState.mDisplay == null || !mFirstContentfulPaint) {
             return;
         }
-        mState.mDisplay.screenshot().aspectPreservingSize(500).capture().then(bitmap -> {
-            if (bitmap != null) {
-                BitmapCache.getInstance(mContext).addBitmap(getId(), bitmap);
-                for (BitmapChangedListener listener: mBitmapChangedListeners) {
-                    listener.onBitmapChanged(Session.this, bitmap);
+        try {
+            mState.mDisplay.screenshot().aspectPreservingSize(500).capture().then(bitmap -> {
+                if (bitmap != null) {
+                    BitmapCache.getInstance(mContext).addBitmap(getId(), bitmap);
+                    for (BitmapChangedListener listener: mBitmapChangedListeners) {
+                        listener.onBitmapChanged(Session.this, bitmap);
+                    }
                 }
-            }
-            return null;
-        });
+                return null;
+            }).exceptionally(throwable -> {
+                Log.e(LOGTAG, "Error capturing session bitmap");
+                throwable.printStackTrace();
+                return null;
+            });
+        } catch (Exception ex) {
+            Log.e(LOGTAG, "Error capturing session bitmap");
+            ex.printStackTrace();
+        }
+
     }
 
     public CompletableFuture<Void> captureBackgroundBitmap(int displayWidth, int displayHeight) {
@@ -497,19 +507,38 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         CompletableFuture<Void> result = new CompletableFuture<>();
         GeckoDisplay display = mState.mSession.acquireDisplay();
         display.surfaceChanged(captureSurface, displayWidth, displayHeight);
-        display.screenshot().aspectPreservingSize(500).capture().then(bitmap -> {
-            if (bitmap != null) {
-                BitmapCache.getInstance(mContext).addBitmap(getId(), bitmap);
-                for (BitmapChangedListener listener: mBitmapChangedListeners) {
-                    listener.onBitmapChanged(Session.this, bitmap);
-                }
-            }
+
+        Runnable cleanResources = () -> {
             display.surfaceDestroyed();
             mState.mSession.releaseDisplay(display);
             BitmapCache.getInstance(mContext).releaseCaptureSurface();
+        };
+
+        try {
+            display.screenshot().aspectPreservingSize(500).capture().then(bitmap -> {
+                if (bitmap != null) {
+                    BitmapCache.getInstance(mContext).addBitmap(getId(), bitmap);
+                    for (BitmapChangedListener listener : mBitmapChangedListeners) {
+                        listener.onBitmapChanged(Session.this, bitmap);
+                    }
+                }
+                cleanResources.run();
+                result.complete(null);
+                return null;
+            }).exceptionally(throwable -> {
+                Log.e(LOGTAG, "Error capturing session background bitmap");
+                throwable.printStackTrace();
+                cleanResources.run();
+                result.complete(null);
+                return null;
+            });
+        }
+        catch (Exception ex) {
+            Log.e(LOGTAG, "Error capturing session background bitmap");
+            ex.printStackTrace();
+            cleanResources.run();
             result.complete(null);
-            return null;
-        });
+        }
         return result;
     }
 

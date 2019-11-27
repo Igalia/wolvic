@@ -1075,6 +1075,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 listener.onSessionChanged(oldSession, aSession);
             }
         }
+        mCaptureOnPageStop = false;
         hideLibraryPanels();
     }
 
