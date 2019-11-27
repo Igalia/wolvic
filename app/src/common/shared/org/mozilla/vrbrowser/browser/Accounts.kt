@@ -26,6 +26,7 @@ import mozilla.components.service.fxa.sync.getLastSynced
 import org.mozilla.vrbrowser.R
 import org.mozilla.vrbrowser.VRBrowserApplication
 import org.mozilla.vrbrowser.utils.BitmapCache
+import org.mozilla.vrbrowser.telemetry.GleanMetricsService
 import org.mozilla.vrbrowser.utils.SystemUtils
 import org.mozilla.vrbrowser.utils.ViewUtils
 import java.net.URL
@@ -119,6 +120,10 @@ class Accounts constructor(val context: Context) {
         override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
             Log.d(LOGTAG, "The user has been successfully logged in")
 
+            if (authType !== AuthType.Existing) {
+                GleanMetricsService.FxA.signInResult(true)
+            }
+
             accountStatus = AccountStatus.SIGNED_IN
 
             // Enable syncing after signing in
@@ -143,6 +148,8 @@ class Accounts constructor(val context: Context) {
 
         override fun onAuthenticationProblems() {
             Log.d(LOGTAG, "There was a problem authenticating the user")
+
+            GleanMetricsService.FxA.signInResult(false)
 
             accountStatus = AccountStatus.NEEDS_RECONNECT
             accountListeners.toMutableList().forEach {
@@ -272,6 +279,7 @@ class Accounts constructor(val context: Context) {
     }
 
     fun authUrlAsync(): CompletableFuture<String?>? {
+        GleanMetricsService.FxA.signIn()
         return CoroutineScope(Dispatchers.Main).future {
             services.accountManager.beginAuthenticationAsync().await()
         }
@@ -303,10 +311,15 @@ class Accounts constructor(val context: Context) {
     }
 
     fun setSyncStatus(engine: SyncEngine, value: Boolean) {
-
         when(engine) {
-            SyncEngine.Bookmarks -> SettingsStore.getInstance(context).isBookmarksSyncEnabled = value
-            SyncEngine.History -> SettingsStore.getInstance(context).isHistorySyncEnabled = value
+            SyncEngine.Bookmarks -> {
+                GleanMetricsService.FxA.bookmarksSyncStatus(value)
+                SettingsStore.getInstance(context).isBookmarksSyncEnabled = value
+            }
+            SyncEngine.History -> {
+                GleanMetricsService.FxA.historySyncStatus(value)
+                SettingsStore.getInstance(context).isHistorySyncEnabled = value
+            }
         }
 
         syncStorage.setStatus(engine, value)
@@ -316,7 +329,9 @@ class Accounts constructor(val context: Context) {
         return services.accountManager.accountProfile()
     }
 
-    fun logoutAsync(): CompletableFuture<Unit?> {
+    fun logoutAsync(): CompletableFuture<Unit?>? {
+        GleanMetricsService.FxA.signOut()
+
         otherDevices = emptyList()
         return CoroutineScope(Dispatchers.Main).future {
             services.accountManager.logoutAsync().await()
@@ -351,10 +366,10 @@ class Accounts constructor(val context: Context) {
                     targetDevices.contains(it)
                 }
 
-                targets?.forEach {
+                targets?.forEach { it ->
                     constellation.sendEventToDeviceAsync(
                             it.id, DeviceEventOutgoing.SendTab(title, url)
-                    ).await()
+                    ).await().also { if (it) GleanMetricsService.FxA.sentTab() }
                 }
             }
         }

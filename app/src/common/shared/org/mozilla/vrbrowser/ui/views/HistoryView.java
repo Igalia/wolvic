@@ -30,6 +30,7 @@ import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.databinding.HistoryBinding;
+import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.ui.adapters.HistoryAdapter;
 import org.mozilla.vrbrowser.ui.callbacks.HistoryCallback;
 import org.mozilla.vrbrowser.ui.callbacks.HistoryItemCallback;
@@ -225,6 +226,7 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
                             WidgetManagerDelegate widgetManager = ((VRBrowserActivity) getContext());
                             widgetManager.openNewTabForeground(url);
                             widgetManager.getFocusedWindow().getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
+                            GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.FXA_LOGIN);
 
                             mHistoryViewListeners.forEach((listener) -> listener.onFxALogin(view));
                         }

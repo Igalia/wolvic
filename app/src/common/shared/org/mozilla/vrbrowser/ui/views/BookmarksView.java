@@ -30,6 +30,7 @@ import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.databinding.BookmarksBinding;
+import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.ui.adapters.Bookmark;
 import org.mozilla.vrbrowser.ui.adapters.BookmarkAdapter;
 import org.mozilla.vrbrowser.ui.adapters.CustomLinearLayoutManager;
@@ -230,6 +231,7 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
                             WidgetManagerDelegate widgetManager = ((VRBrowserActivity) getContext());
                             widgetManager.openNewTabForeground(url);
                             widgetManager.getFocusedWindow().getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
+                            GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.FXA_LOGIN);
 
                             mBookmarksViewListeners.forEach((listener) -> listener.onFxALogin(view));
                         }

@@ -32,6 +32,7 @@ import org.mozilla.vrbrowser.browser.engine.EngineProvider
 import org.mozilla.vrbrowser.browser.engine.GeckoViewFetchClient
 import org.mozilla.vrbrowser.browser.engine.SessionStore
 import org.mozilla.vrbrowser.utils.SystemUtils
+import org.mozilla.vrbrowser.telemetry.GleanMetricsService
 
 
 class Services(val context: Context, places: Places): GeckoSession.NavigationDelegate {
@@ -85,7 +86,10 @@ class Services(val context: Context, places: Places): GeckoSession.NavigationDel
                 Logger(logTag).info("Received ${events.size} device event(s)")
                 val filteredEvents = events.filterIsInstance(DeviceEvent.TabReceived::class.java)
                 if (filteredEvents.isNotEmpty()) {
-                    val tabs = filteredEvents.map { event -> event.entries }.flatten()
+                    filteredEvents.map { event -> event.from?.deviceType?.let { GleanMetricsService.FxA.receivedTab(it) } }
+                    val tabs = filteredEvents.map {
+                        event -> event.entries
+                    }.flatten()
                     tabReceivedDelegate?.onTabsReceived(tabs)
                 }
             }

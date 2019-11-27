@@ -35,6 +35,7 @@ import org.mozilla.vrbrowser.browser.Accounts;
 import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.databinding.SettingsBinding;
+import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
@@ -292,6 +293,7 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
                                 mWidgetManager.openNewTabForeground(url);
                                 WidgetManagerDelegate widgetManager = ((VRBrowserActivity)getContext());
                                 widgetManager.getFocusedWindow().getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
+                                GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.FXA_LOGIN);
                             }
 
                         }, mUIThreadExecutor).exceptionally(throwable -> {

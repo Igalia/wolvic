@@ -3,8 +3,12 @@ package org.mozilla.vrbrowser.telemetry;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.UiThread;
 
+import org.mozilla.vrbrowser.BuildConfig;
+import org.mozilla.vrbrowser.GleanMetrics.Distribution;
+import org.mozilla.vrbrowser.GleanMetrics.FirefoxAccount;
 import org.mozilla.vrbrowser.GleanMetrics.Pings;
 import org.mozilla.vrbrowser.GleanMetrics.Searches;
 import org.mozilla.vrbrowser.GleanMetrics.Url;
@@ -12,12 +16,12 @@ import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.search.SearchEngineWrapper;
 import org.mozilla.vrbrowser.utils.DeviceType;
 import org.mozilla.vrbrowser.utils.SystemUtils;
-import org.mozilla.vrbrowser.BuildConfig;
-import org.mozilla.vrbrowser.GleanMetrics.Distribution;
 import org.mozilla.vrbrowser.utils.UrlUtils;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import mozilla.components.service.glean.Glean;
 import mozilla.components.service.glean.config.Configuration;
@@ -148,5 +152,60 @@ public class GleanMetricsService {
 
     private static void setStartupMetrics() {
         Distribution.INSTANCE.getChannelName().set(DeviceType.isOculusBuild() ? "oculusvr" : BuildConfig.FLAVOR_platform);
+    }
+
+    public static class FxA {
+
+        public static void signIn() {
+            FirefoxAccount.INSTANCE.getSignIn().record();
+        }
+
+        public static void signInResult(boolean status) {
+            Map<FirefoxAccount.signInResultKeys, String> map = new HashMap<>();
+            map.put(FirefoxAccount.signInResultKeys.state, String.valueOf(status));
+            FirefoxAccount.INSTANCE.getSignInResult().record(map);
+        }
+
+        public static void signOut() {
+            FirefoxAccount.INSTANCE.getSignOut().record();
+        }
+
+        public static void bookmarksSyncStatus(boolean status) {
+            FirefoxAccount.INSTANCE.getBookmarksSyncStatus().set(status);
+        }
+
+        public static void historySyncStatus(boolean status) {
+            FirefoxAccount.INSTANCE.getHistorySyncStatus().set(status);
+        }
+
+        public static void sentTab() {
+            FirefoxAccount.INSTANCE.getTabSent().add();
+        }
+
+        public static void receivedTab(@NonNull mozilla.components.concept.sync.DeviceType source) {
+            FirefoxAccount.INSTANCE.getReceivedTab().get(source.name()).add();
+        }
+    }
+
+    public static class Tabs {
+
+        public enum TabSource {
+            CONTEXT_MENU,       // Tab opened from the browsers long click context menu
+            TABS_DIALOG,        // Tab opened from the tabs dialog
+            BOOKMARKS,          // Tab opened from the bookmarks panel
+            HISTORY,            // Tab opened from the history panel
+            FXA_LOGIN,          // Tab opened by the FxA login flow
+            RECEIVED,           // Tab opened by FxA when a tab is received
+            PRE_EXISTING,       // Tab opened as a result of restoring the last session
+            BROWSER             // Tab opened by the browser as a result of a new window open
+        }
+
+        public static void openedCounter(@NonNull TabSource source) {
+            org.mozilla.vrbrowser.GleanMetrics.Tabs.INSTANCE.getOpened().get(source.name()).add();
+        }
+
+        public static void activatedEvent() {
+            org.mozilla.vrbrowser.GleanMetrics.Tabs.INSTANCE.getActivated().add();
+        }
     }
 }

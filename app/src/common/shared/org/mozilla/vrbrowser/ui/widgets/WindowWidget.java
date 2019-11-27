@@ -1122,6 +1122,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         SessionStore.get().setActiveSession(aSession);
         current.captureBackgroundBitmap(getWindowWidth(), getWindowHeight()).thenAccept(aVoid -> current.setActive(false));
         mWidgetManager.getTray().showTabAddedNotification();
+
+        GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.BROWSER);
     }
 
     @Override
@@ -1379,6 +1381,11 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 @Override
                 public void onOpenInNewTabClick(LibraryMenuWidget.LibraryContextMenuItem item) {
                     mWidgetManager.openNewTabForeground(item.getUrl());
+                    if (item.getType() == LibraryMenuWidget.LibraryItemType.HISTORY) {
+                        GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.HISTORY);
+                    } else if (item.getType() == LibraryMenuWidget.LibraryItemType.BOOKMARKS) {
+                        GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.BOOKMARKS);
+                    }
                     hideContextMenus();
                 }
 
