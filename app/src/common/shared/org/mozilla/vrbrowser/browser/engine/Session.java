@@ -189,7 +189,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
     private void dumpState(GeckoSession.NavigationDelegate aListener) {
         if (mState.mSession != null) {
-            aListener.onCanGoBack(mState.mSession, mState.mCanGoBack);
+            aListener.onCanGoBack(mState.mSession, canGoBack());
             aListener.onCanGoForward(mState.mSession, mState.mCanGoForward);
             aListener.onLocationChange(mState.mSession, mState.mUri);
         }
@@ -840,15 +840,15 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     }
 
     @Override
-    public void onCanGoBack(@NonNull GeckoSession aSession, boolean aCanGoBack) {
+    public void onCanGoBack(@NonNull GeckoSession aSession, boolean aGeckoSessionCanGoBack) {
         if (mState.mSession != aSession) {
             return;
         }
-        Log.d(LOGTAG, "Session onCanGoBack: " + (aCanGoBack ? "true" : "false"));
-        mState.mCanGoBack = aCanGoBack;
+        Log.d(LOGTAG, "Session onCanGoBack: " + (aGeckoSessionCanGoBack ? "true" : "false"));
+        mState.mCanGoBack = aGeckoSessionCanGoBack;
 
         for (GeckoSession.NavigationDelegate listener : mNavigationListeners) {
-            listener.onCanGoBack(aSession, aCanGoBack);
+            listener.onCanGoBack(aSession, canGoBack());
         }
     }
 
