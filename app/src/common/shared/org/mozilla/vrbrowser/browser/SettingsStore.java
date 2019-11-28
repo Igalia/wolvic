@@ -52,7 +52,7 @@ public class SettingsStore {
     public final static boolean REMOTE_DEBUGGING_DEFAULT = false;
     public final static boolean CONSOLE_LOGS_DEFAULT = false;
     public final static boolean ENV_OVERRIDE_DEFAULT = false;
-    public final static boolean MULTIPROCESS_DEFAULT = true;
+    public final static boolean MULTIPROCESS_DEFAULT = false;
     public final static boolean UI_HARDWARE_ACCELERATION_DEFAULT = false;
     public final static boolean PERFORMANCE_MONITOR_DEFAULT = true;
     public final static boolean DRM_PLAYBACK_DEFAULT = false;
