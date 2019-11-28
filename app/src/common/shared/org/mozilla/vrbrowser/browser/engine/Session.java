@@ -658,7 +658,9 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         }
 
         if (mState.mSession != null) {
-            mState.mSession.setActive(aActive);
+            if (mState.isActive() != aActive) {
+                mState.mSession.setActive(aActive);
+            }
             mState.setActive(aActive);
         } else if (aActive) {
             restore();
