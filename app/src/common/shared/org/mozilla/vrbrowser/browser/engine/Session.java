@@ -42,13 +42,12 @@ import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.utils.BitmapCache;
 import org.mozilla.vrbrowser.utils.InternalPages;
-import org.mozilla.vrbrowser.utils.StringUtils;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.LinkedList;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -66,17 +65,17 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     private static UserAgentOverride sUserAgentOverride;
     private static final long KEEP_ALIVE_DURATION_MS = 1000; // 1 second.
 
-    private transient LinkedList<GeckoSession.NavigationDelegate> mNavigationListeners;
-    private transient LinkedList<GeckoSession.ProgressDelegate> mProgressListeners;
-    private transient LinkedList<GeckoSession.ContentDelegate> mContentListeners;
-    private transient LinkedList<SessionChangeListener> mSessionChangeListeners;
-    private transient LinkedList<GeckoSession.TextInputDelegate> mTextInputListeners;
-    private transient LinkedList<VideoAvailabilityListener> mVideoAvailabilityListeners;
-    private transient LinkedList<BitmapChangedListener> mBitmapChangedListeners;
-    private transient LinkedList<GeckoSession.SelectionActionDelegate> mSelectionActionListeners;
+    private transient CopyOnWriteArrayList<GeckoSession.NavigationDelegate> mNavigationListeners;
+    private transient CopyOnWriteArrayList<GeckoSession.ProgressDelegate> mProgressListeners;
+    private transient CopyOnWriteArrayList<GeckoSession.ContentDelegate> mContentListeners;
+    private transient CopyOnWriteArrayList<SessionChangeListener> mSessionChangeListeners;
+    private transient CopyOnWriteArrayList<GeckoSession.TextInputDelegate> mTextInputListeners;
+    private transient CopyOnWriteArrayList<VideoAvailabilityListener> mVideoAvailabilityListeners;
+    private transient CopyOnWriteArrayList<BitmapChangedListener> mBitmapChangedListeners;
+    private transient CopyOnWriteArrayList<GeckoSession.SelectionActionDelegate> mSelectionActionListeners;
 
     private SessionState mState;
-    private LinkedList<Runnable> mQueuedCalls = new LinkedList<>();
+    private CopyOnWriteArrayList<Runnable> mQueuedCalls = new CopyOnWriteArrayList<>();
     private transient GeckoSession.PermissionDelegate mPermissionDelegate;
     private transient GeckoSession.PromptDelegate mPromptDelegate;
     private transient GeckoSession.HistoryDelegate mHistoryDelegate;
@@ -113,14 +112,14 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     }
 
     private void initialize() {
-        mNavigationListeners = new LinkedList<>();
-        mProgressListeners = new LinkedList<>();
-        mContentListeners = new LinkedList<>();
-        mSessionChangeListeners = new LinkedList<>();
-        mTextInputListeners = new LinkedList<>();
-        mVideoAvailabilityListeners = new LinkedList<>();
-        mSelectionActionListeners = new LinkedList<>();
-        mBitmapChangedListeners = new LinkedList<>();
+        mNavigationListeners = new CopyOnWriteArrayList<>();
+        mProgressListeners = new CopyOnWriteArrayList<>();
+        mContentListeners = new CopyOnWriteArrayList<>();
+        mSessionChangeListeners = new CopyOnWriteArrayList<>();
+        mTextInputListeners = new CopyOnWriteArrayList<>();
+        mVideoAvailabilityListeners = new CopyOnWriteArrayList<>();
+        mSelectionActionListeners = new CopyOnWriteArrayList<>();
+        mBitmapChangedListeners = new CopyOnWriteArrayList<>();
 
         if (mPrefs != null) {
             mPrefs.registerOnSharedPreferenceChangeListener(this);
@@ -956,7 +955,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         Session session = SessionStore.get().createSession(mState.mSettings, SESSION_DO_NOT_OPEN);
         session.mState.mParentId = mState.mId;
         session.mKeepAlive = mKeepAlive;
-        for (SessionChangeListener listener: new LinkedList<>(mSessionChangeListeners)) {
+        for (SessionChangeListener listener: mSessionChangeListeners) {
             listener.onStackSession(session);
         }
         mSessionChangeListeners.add(session);
