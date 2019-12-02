@@ -853,6 +853,24 @@
     <!-- This string is displayed is the "Sync" button in the history panel when the sync is in progress. -->
     <string name="fxa_syncing">同步中…</string>
 
+    <!-- This string is displayed in the title of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
+    <string name="fxa_signout_confirmation_title">要登出 Firefox 帳號嗎？</string>
+
+    <!-- This string is displayed in the body of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
+    <string name="fxa_signout_confirmation_body">登出後，就無法傳送分頁或收到來自其他裝置的分頁，也會停止同步書籤與上網紀錄。</string>
+
+    <!-- This string is displayed in the checkbox text of the FxA sign out dialog displayed when the user clicks on the Sign out button.
+         When checked the history and Bookmarks will be deleted from gthe device after signing in. -->
+    <string name="fxa_signout_confirmation_checkbox">清除此裝置上的瀏覽紀錄與書籤</string>
+
+    <!-- This string is displayed in the cancel button of the FxA sign out dialog displayed when the user clicks on the Sign out button.
+         If clicked the user will be signed out from their FxA account and the dialog will be dismissed. -->
+    <string name="fxa_signout_confirmation_signout">登出</string>
+
+    <!-- This string is displayed in the accept button of the FxA sign out dialog displayed when the user clicks on the Sign out button.
+         If clicked the user will not be signed out from the FxA account and the dialog will be dismissed. -->
+    <string name="fxa_signout_confirmation_cancel">取消</string>
+
     <!-- This string is displayed is the "Cancel" button from the clear history dialog.
          When pressed the dialog is closed. -->
     <string name="history_clear_cancel">取消</string>

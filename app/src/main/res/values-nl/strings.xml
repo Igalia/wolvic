@@ -859,6 +859,14 @@
     <!-- This string is displayed is the "Sync" button in the history panel when the sync is in progress. -->
     <string name="fxa_syncing">Synchroniseren…</string>
 
+    <!-- This string is displayed in the cancel button of the FxA sign out dialog displayed when the user clicks on the Sign out button.
+         If clicked the user will be signed out from their FxA account and the dialog will be dismissed. -->
+    <string name="fxa_signout_confirmation_signout">Afmelden</string>
+
+    <!-- This string is displayed in the accept button of the FxA sign out dialog displayed when the user clicks on the Sign out button.
+         If clicked the user will not be signed out from the FxA account and the dialog will be dismissed. -->
+    <string name="fxa_signout_confirmation_cancel">Annuleren</string>
+
     <!-- This string is displayed is the "Cancel" button from the clear history dialog.
          When pressed the dialog is closed. -->
     <string name="history_clear_cancel">Annuleren</string>

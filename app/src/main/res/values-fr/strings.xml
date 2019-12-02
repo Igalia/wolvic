@@ -283,6 +283,10 @@
         opens the Firfox Reality support web site in the browser window. -->
     <string name="settings_help">Aide</string>
 
+    <!-- This string is displayed in the settings header under the Firefox Reality logo. When clicked the settings panel is closed
+         a the survey web site in opened in the currently focused window -->
+    <string name="settings_send_your_feedback">Donnez-nous votre avis</string>
+
     <!-- This string is used in the 'Settings' window when user is signed-out of Firefox Accounts -->
     <string name="settings_accounts_sign_in">Connexion</string>
 
@@ -849,6 +853,24 @@
 
     <!-- This string is displayed is the "Sync" button in the history panel when the sync is in progress. -->
     <string name="fxa_syncing">Synchronisation…</string>
+
+    <!-- This string is displayed in the title of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
+    <string name="fxa_signout_confirmation_title">Vous déconnecter de votre compte Firefox ?</string>
+
+    <!-- This string is displayed in the body of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
+    <string name="fxa_signout_confirmation_body">SI vous vous déconnectez, vous ne pourrez plus envoyer ni recevoir d’onglets d’autres appareils. Vos marque-pages et votre historique cesseront également de se synchroniser.</string>
+
+    <!-- This string is displayed in the checkbox text of the FxA sign out dialog displayed when the user clicks on the Sign out button.
+         When checked the history and Bookmarks will be deleted from gthe device after signing in. -->
+    <string name="fxa_signout_confirmation_checkbox">Effacer l’historique et les marque-pages de cet appareil</string>
+
+    <!-- This string is displayed in the cancel button of the FxA sign out dialog displayed when the user clicks on the Sign out button.
+         If clicked the user will be signed out from their FxA account and the dialog will be dismissed. -->
+    <string name="fxa_signout_confirmation_signout">Déconnexion</string>
+
+    <!-- This string is displayed in the accept button of the FxA sign out dialog displayed when the user clicks on the Sign out button.
+         If clicked the user will not be signed out from the FxA account and the dialog will be dismissed. -->
+    <string name="fxa_signout_confirmation_cancel">Annuler</string>
 
     <!-- This string is displayed is the "Cancel" button from the clear history dialog.
          When pressed the dialog is closed. -->
