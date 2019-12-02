@@ -131,6 +131,11 @@ class DeveloperOptionsView extends SettingsView {
             restart = true;
         }
 
+        if (mBinding.hardwareAccelerationSwitch.isChecked() != SettingsStore.UI_HARDWARE_ACCELERATION_DEFAULT) {
+            setUIHardwareAcceleration(SettingsStore.UI_HARDWARE_ACCELERATION_DEFAULT, true);
+            restart = true;
+        }
+
         if (restart) {
             showRestartDialog();
         }
