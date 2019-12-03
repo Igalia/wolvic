@@ -396,6 +396,9 @@
     <!-- This string is used to in the FxA account manage panel as a description for the History sync switch. -->
     <string name="fxa_account_options_history_sync">Historia</string>
 
+    <!-- This string is used to in the Library panels in the sync button when the user is not signed in. -->
+    <string name="fxa_account_sing_to_sync">Kirjaudu tilillesi synkronoidaksesi</string>
+
     <!-- This string is used to in the Library panels in the sync button when syncing is off. -->
     <string name="fxa_account_sync_settings">Synkronointiasetukset</string>
 
@@ -630,6 +633,9 @@
     <!-- This string is displayed is the "Clear History" button in the history list. When pressed a dialog for
          clearing history is displayed. -->
     <string name="history_clear">Tyhjennä historia</string>
+
+    <!-- This string is displayed is the "Sync" button in the history panel when the sync is in progress. -->
+    <string name="fxa_syncing">Synkronoidaan…</string>
 
     <!-- This string is displayed is the "Cancel" button from the clear history dialog.
          When pressed the dialog is closed. -->
@@ -884,9 +890,17 @@
     <!-- This string is displayed in the title of the notification message shown when the device loses internet connection. -->
     <string name="no_internet_title">Internetyhteys menetettiin</string>
 
+    <!-- This string is displayed in the message of the notification message shown when the user tries to open a new window and
+      it has already opened the maximum number of allowed windows. %1$s expands to a integer value that represent the maximum windows
+      that can be opened (initially 3) -->
+    <string name="max_windows_msg">Vain %1$s ikkunaa voi olla avoina. Sulje yksi ikkuna avataksesi uuden.</string>
+
     <!-- This string is displayed in the button of the notification message shown when the user tries to open a new window and
       it has already opened the maximum number of allowed windows. -->
     <string name="max_windows_button">OK</string>
+
+    <!-- This string is displayed in the title of the alert dialog shown when the user does not have permission to run the application on the device. -->
+    <string name="not_entitled_title">Suorittaminen ei onnistu</string>
 
     <!-- This string is displayed in the button of the Voice Search samples collect dialog.
          When clicked the user opts in to the voice data collection. -->
@@ -1012,10 +1026,25 @@ the Select` button. When clicked it closes all the previously selected tabs -->
          or updated the app and hasn't signed it yet. -->
     <string name="whats_new_title_1">Kirjaudu sisään lähettääksesi välilehtiä</string>
 
+    <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
+         or updated the app and hasn't signed it yet. -->
+    <string name="whats_new_body_sub_1">Firefox-tili mahdollistaa kirjanmerkkien ja historian synkronoinnin kaikkien laitteidesi välillä.</string>
+
+    <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
+         or updated the app and hasn't signed it yet. If clicked the user is redirected to the Firefox Account sign-in page. -->
+    <string name="whats_new_button_sign_in">Kirjaudu sisään</string>
+
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. If clicked the dialog is dismissed. -->
     <string name="whats_new_button_start_browsing">Aloita selaaminen</string>
 
+
+    <!-- This string is displayed in the title of the slow script dialog. -->
+    <string name="slow_script_dialog_title">Hidas komentosarja</string>
+
+    <!-- This string is displayed as a description below the title of slow script dialog.
+        '%1$s' will be replaced the script filename that is causing the slow down. -->
+    <string name="slow_script_dialog_description">Verkkosivu hidastaa selaintasi (%1$s). Mitä haluat tehdä?</string>
 
     <!-- This string is displayed as a button below the slow script dialog description message. When clicked
         it stops the slow script that is causing the web page slow down. -->
