@@ -133,11 +133,18 @@ enum class ControllerCapabilityFlags : uint16_t {
 
 enum class VRControllerType : uint8_t {
   _empty,
-  Vive,
-  WMR,
-  Knuckles,
-  Cosmos,
+  HTCVive,
+  HTCViveCosmos,
+  HTCViveFocus,
+  HTCViveFocusPlus,
+  MSMR,
+  ValveIndex,
+  OculusGo,
   OculusTouch,
+  OculusTouch2,
+  PicoGaze,
+  PicoG2,
+  PicoNeo2,
   _end
 };
 

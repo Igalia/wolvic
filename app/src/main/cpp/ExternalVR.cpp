@@ -207,6 +207,40 @@ struct ExternalVR::State {
 
 ExternalVR::State * ExternalVR::State::sState = nullptr;
 
+mozilla::gfx::VRControllerType GetVRControllerTypeByDevice(device::DeviceType aType) {
+  mozilla::gfx::VRControllerType result = mozilla::gfx::VRControllerType::_empty;
+
+  switch (aType) {
+    case device::OculusGo:
+      result = mozilla::gfx::VRControllerType::OculusGo;
+      break;
+    case device::OculusQuest:
+      result = mozilla::gfx::VRControllerType::OculusTouch2;
+      break;
+    case device::ViveFocus:
+      result = mozilla::gfx::VRControllerType::HTCViveFocus;
+      break;
+    case device::ViveFocusPlus:
+      result = mozilla::gfx::VRControllerType::HTCViveFocusPlus;
+      break;
+    case device::PicoGaze:
+      result = mozilla::gfx::VRControllerType::PicoGaze;
+      break;
+    case device::PicoNeo2:
+      result = mozilla::gfx::VRControllerType::PicoNeo2;
+      break;
+    case device::PicoG2:
+      result = mozilla::gfx::VRControllerType::PicoG2;
+      break;
+    case device::UnknownType:
+    default:
+      result = mozilla::gfx::VRControllerType::_empty;
+      VRB_LOG("Unknown controller type.");
+      break;
+  }
+  return  result;
+}
+
 ExternalVRPtr
 ExternalVR::Create() {
   return std::make_shared<ExternalVR>();
@@ -332,6 +366,11 @@ ExternalVR::SetSourceBrowser(VRBrowserType aBrowser) {
   m.SetSourceBrowser(aBrowser);
 }
 
+uint64_t
+ExternalVR::GetFrameId() const {
+  return m.lastFrameId;
+}
+
 void
 ExternalVR::SetCompositorEnabled(bool aEnabled) {
   if (aEnabled == m.compositorEnabled) {
@@ -429,23 +468,39 @@ ExternalVR::PushFramePoses(const vrb::Matrix& aHeadTransform, const std::vector<
     }
     immersiveController.numHaptics = controller.numHaptics;
     immersiveController.hand = controller.leftHanded ? mozilla::gfx::ControllerHand::Left : mozilla::gfx::ControllerHand::Right;
+    immersiveController.type = GetVRControllerTypeByDevice(controller.type);
 
     const uint16_t flags = GetControllerCapabilityFlags(controller.deviceCapabilities);
     immersiveController.flags = static_cast<mozilla::gfx::ControllerCapabilityFlags>(flags);
-
+    const vrb::Matrix beamTransform = controller.transformMatrix.PostMultiply(controller.immersiveBeamTransform);
     if (flags & static_cast<uint16_t>(mozilla::gfx::ControllerCapabilityFlags::Cap_Orientation)) {
       immersiveController.isOrientationValid = true;
 
       vrb::Quaternion quaternion(controller.transformMatrix);
       quaternion = quaternion.Inverse();
       memcpy(&(immersiveController.pose.orientation), quaternion.Data(), sizeof(immersiveController.pose.orientation));
+
+      quaternion.SetFromRotationMatrix(beamTransform);
+      quaternion = quaternion.Inverse();
+      memcpy(&(immersiveController.targetRayPose.orientation), quaternion.Data(), sizeof(immersiveController.targetRayPose.orientation));
     }
     if (flags & static_cast<uint16_t>(mozilla::gfx::ControllerCapabilityFlags::Cap_Position)) {
       immersiveController.isPositionValid = true;
 
       vrb::Vector position(controller.transformMatrix.GetTranslation());
       memcpy(&(immersiveController.pose.position), position.Data(), sizeof(immersiveController.pose.position));
+
+      position = beamTransform.GetTranslation();
+      memcpy(&(immersiveController.targetRayPose.position), position.Data(), sizeof(immersiveController.targetRayPose.position));
     }
+    // TODO:: We should add TargetRayMode::_end in moz_external_vr.h to help this check.
+    assert((uint8_t)mozilla::gfx::TargetRayMode::Screen == (uint8_t)device::TargetRayMode::Screen);
+    immersiveController.targetRayMode = (mozilla::gfx::TargetRayMode)controller.targetRayMode;
+    immersiveController.mappingType = mozilla::gfx::GamepadMappingType::XRStandard;
+    immersiveController.selectActionStartFrameId = controller.selectActionStartFrameId;
+    immersiveController.selectActionStopFrameId = controller.selectActionStopFrameId;
+    immersiveController.squeezeActionStartFrameId = controller.squeezeActionStartFrameId;
+    immersiveController.squeezeActionStopFrameId = controller.squeezeActionStopFrameId;
   }
 
   m.system.sensorState.timestamp = aTimestamp;

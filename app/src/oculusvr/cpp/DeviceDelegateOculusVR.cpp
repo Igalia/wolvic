@@ -379,15 +379,26 @@ struct DeviceDelegateOculusVR::State {
             }
             controller->CreateController(controllerState.index, int32_t(controllerState.hand),
                                          controllerName, beamTransform);
-            controller->SetButtonCount(controllerState.index, 6);
+            controller->SetButtonCount(controllerState.index, 7);
             controller->SetHapticCount(controllerState.index, 1);
+            controller->SetControllerType(controllerState.index, device::OculusQuest);
+
+            const vrb::Matrix trans = vrb::Matrix::Position(vrb::Vector(0.0f, 0.02f, -0.03f));
+            vrb::Matrix transform = vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), -0.77f);
+            transform = transform.PostMultiply(trans);
+
+            controller->SetImmersiveBeamTransform(controllerState.index, beamTransform.PostMultiply(transform));
           } else {
             // Oculus Go only has one kind of controller model.
             controller->CreateController(controllerState.index, 0, "Oculus Go Controller");
-            controller->SetButtonCount(controllerState.index, 2);
+            // Although Go only has two buttons, in order to match WebXR input profile (squeeze placeholder),
+            // we make Go has three buttons.
+            controller->SetButtonCount(controllerState.index, 3);
             // Oculus Go has no haptic feedback.
             controller->SetHapticCount(controllerState.index, 0);
+            controller->SetControllerType(controllerState.index, device::OculusGo);
           }
+          controller->SetTargetRayMode(controllerState.index, device::TargetRayMode::TrackedPointer);
           controllerState.created = true;
         }
       }
@@ -440,16 +451,23 @@ struct DeviceDelegateOculusVR::State {
       }
 
       controller->SetCapabilityFlags(controllerState.index, flags);
+      if (renderMode == device::RenderMode::Immersive && controllerState.Is6DOF()) {
+        static vrb::Matrix transform(vrb::Matrix::Identity());
+        if (transform.IsIdentity()) {
+          transform = vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), 0.77f);
+          const vrb::Matrix trans = vrb::Matrix::Position(vrb::Vector(0.0f, 0.0f, 0.025f));
+          transform = transform.PostMultiply(trans);
+        }
+        controllerState.transform = controllerState.transform.PostMultiply(transform);
+      }
       controller->SetTransform(controllerState.index, controllerState.transform);
 
       controllerState.inputState.Header.ControllerType = ovrControllerType_TrackedRemote;
       vrapi_GetCurrentInputState(ovr, controllerState.deviceId, &controllerState.inputState.Header);
 
       reorientCount = controllerState.inputState.RecenterCount;
-      const int32_t kNumAxes = 2;
       bool triggerPressed = false, triggerTouched = false;
       bool trackpadPressed = false, trackpadTouched = false;
-      float axes[kNumAxes];
       float trackpadX = 0.0f, trackpadY = 0.0f;
       if (controllerState.Is6DOF()) {
         triggerPressed = (controllerState.inputState.Buttons & ovrButton_Trigger) != 0;
@@ -458,13 +476,16 @@ struct DeviceDelegateOculusVR::State {
         trackpadTouched = (controllerState.inputState.Touches & ovrTouch_Joystick) != 0;
         trackpadX = controllerState.inputState.Joystick.x;
         trackpadY = controllerState.inputState.Joystick.y;
-        axes[0] = trackpadX;
-        axes[1] = -trackpadY; // We did y axis intentionally inverted in FF desktop as well.
+        const int32_t kNumAxes = 4;
+        float axes[kNumAxes];
+        axes[device::kImmersiveAxisTouchpadX] = axes[device::kImmersiveAxisTouchpadY] = 0.0f;
+        axes[device::kImmersiveAxisThumbstickX] = trackpadX;
+        axes[device::kImmersiveAxisThumbstickY] = -trackpadY; // We did y axis intentionally inverted in FF desktop as well.
         controller->SetScrolledDelta(controllerState.index, -trackpadX, trackpadY);
 
         const bool gripPressed = (controllerState.inputState.Buttons & ovrButton_GripTrigger) != 0;
-        controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_OTHERS, 2, gripPressed, gripPressed,
-                                   controllerState.inputState.GripTrigger);
+        controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_OTHERS, device::kImmersiveButtonSqueeze,
+                gripPressed, gripPressed, controllerState.inputState.GripTrigger);
         if (controllerState.hand == ElbowModel::HandEnum::Left) {
           const bool xPressed = (controllerState.inputState.Buttons & ovrButton_X) != 0;
           const bool xTouched = (controllerState.inputState.Touches & ovrTouch_X) != 0;
@@ -472,8 +493,8 @@ struct DeviceDelegateOculusVR::State {
           const bool yTouched = (controllerState.inputState.Touches & ovrTouch_Y) != 0;
           const bool menuPressed = (controllerState.inputState.Buttons & ovrButton_Enter) != 0;
 
-          controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_X, 3, xPressed, xTouched);
-          controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_Y, 4, yPressed, yTouched);
+          controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_X, device::kImmersiveButtonA, xPressed, xTouched);
+          controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_Y, device::kImmersiveButtonB, yPressed, yTouched);
 
           if (renderMode != device::RenderMode::Immersive) {
             controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_APP, -1, yPressed, yTouched);
@@ -486,8 +507,8 @@ struct DeviceDelegateOculusVR::State {
           const bool bPressed = (controllerState.inputState.Buttons & ovrButton_B) != 0;
           const bool bTouched = (controllerState.inputState.Touches & ovrTouch_B) != 0;
 
-          controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_A, 3, aPressed, aTouched);
-          controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_B, 4, bPressed, bTouched);
+          controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_A, device::kImmersiveButtonA, aPressed, aTouched);
+          controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_B, device::kImmersiveButtonB, bPressed, bTouched);
 
           if (renderMode != device::RenderMode::Immersive) {
             controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_APP, -1, bPressed, bTouched);
@@ -495,6 +516,18 @@ struct DeviceDelegateOculusVR::State {
         } else {
           VRB_WARN("Undefined hand type in DeviceDelegateOculusVR.");
         }
+        controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_TOUCHPAD,
+                                   device::kImmersiveButtonThumbstick, trackpadPressed, trackpadTouched);
+        // This is always false in Oculus Browser.
+        const bool thumbRest = false;
+        controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_OTHERS, device::kImmersiveButtonThumbrest, thumbRest, thumbRest);
+
+        if (gripPressed && renderMode == device::RenderMode::Immersive) {
+          controller->SetSqueezeActionStart(controllerState.index);
+        } else {
+          controller->SetSqueezeActionStop(controllerState.index);
+        }
+        controller->SetAxes(controllerState.index, axes, kNumAxes);
       } else {
         triggerPressed = (controllerState.inputState.Buttons & ovrButton_A) != 0;
         triggerTouched = triggerPressed;
@@ -510,20 +543,29 @@ struct DeviceDelegateOculusVR::State {
         trackpadX = controllerState.inputState.TrackpadPosition.x / (float)controllerState.capabilities.TrackpadMaxX;
         trackpadY = controllerState.inputState.TrackpadPosition.y / (float)controllerState.capabilities.TrackpadMaxY;
 
+        controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_TOUCHPAD,
+                device::kImmersiveButtonTouchpad, trackpadPressed, trackpadTouched);
         if (trackpadTouched && !trackpadPressed) {
           controller->SetTouchPosition(controllerState.index, trackpadX, trackpadY);
         } else {
           controller->SetTouchPosition(controllerState.index, trackpadX, trackpadY);
           controller->EndTouch(controllerState.index);
         }
-        axes[0] = trackpadTouched ? trackpadX * 2.0f - 1.0f : 0.0f;
-        axes[1] = trackpadTouched ? trackpadY * 2.0f - 1.0f : 0.0f;
+        const int32_t kNumAxes = 2;
+        float axes[kNumAxes];
+        axes[device::kImmersiveAxisTouchpadX] = trackpadTouched ? trackpadX * 2.0f - 1.0f : 0.0f;
+        axes[device::kImmersiveAxisTouchpadY] = trackpadTouched ? trackpadY * 2.0f - 1.0f : 0.0f;
+        controller->SetAxes(controllerState.index, axes, kNumAxes);
       }
-      controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_TRIGGER, 1, triggerPressed, triggerTouched,
+      controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_TRIGGER,
+                                 device::kImmersiveButtonTrigger, triggerPressed, triggerTouched,
                                  controllerState.inputState.IndexTrigger);
-      controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_TOUCHPAD, 0, trackpadPressed, trackpadTouched);
 
-      controller->SetAxes(controllerState.index, axes, kNumAxes);
+      if (triggerPressed && renderMode == device::RenderMode::Immersive) {
+        controller->SetSelectActionStart(controllerState.index);
+      } else {
+        controller->SetSelectActionStop(controllerState.index);
+      }
       if (controller->GetHapticCount(controllerState.index)) {
         UpdateHaptics(controllerState);
       }

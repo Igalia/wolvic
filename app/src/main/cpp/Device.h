@@ -32,6 +32,31 @@ typedef int32_t DeviceType;
 const DeviceType UnknownType = 0;
 const DeviceType OculusGo = 1;
 const DeviceType OculusQuest = 2;
+const DeviceType ViveFocus = 3;
+const DeviceType ViveFocusPlus = 4;
+const DeviceType PicoGaze = 5;
+const DeviceType PicoNeo2 = 6;
+const DeviceType PicoG2 = 7;
+
+enum class TargetRayMode : uint8_t { Gaze, TrackedPointer, Screen };
+
+// Placeholder buttons for WebXR
+// https://www.w3.org/TR/webxr-gamepads-module-1/#xr-standard-gamepad-mapping
+const uint8_t kImmersiveButtonTrigger = 0;
+const uint8_t kImmersiveButtonSqueeze = 1;
+const uint8_t kImmersiveButtonTouchpad = 2;
+const uint8_t kImmersiveButtonThumbstick = 3;
+const uint8_t kImmersiveButtonA = 4;
+const uint8_t kImmersiveButtonB = 5;
+const uint8_t kImmersiveButtonThumbrest = 6;
+
+// Placeholder axes for WebXR
+// https://www.w3.org/TR/webxr-gamepads-module-1/#xr-standard-gamepad-mapping
+const uint8_t kImmersiveAxisTouchpadX = 0;
+const uint8_t kImmersiveAxisTouchpadY = 1;
+const uint8_t kImmersiveAxisThumbstickX = 2;
+const uint8_t kImmersiveAxisThumbstickY = 3;
+
 struct EyeRect {
   float mX, mY;
   float mWidth, mHeight;
