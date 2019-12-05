@@ -859,6 +859,16 @@
     <!-- This string is displayed is the "Sync" button in the history panel when the sync is in progress. -->
     <string name="fxa_syncing">Synchroniseren…</string>
 
+    <!-- This string is displayed in the title of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
+    <string name="fxa_signout_confirmation_title">Afmelden bij uw Firefox-account?</string>
+
+    <!-- This string is displayed in the body of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
+    <string name="fxa_signout_confirmation_body">Wanneer u zicht afmeldt, kunt u geen tabbladen van andere apparaten ontvangen of verzenden. Uw bladwijzers en geschiedenis worden ook niet meer gesynchroniseerd.</string>
+
+    <!-- This string is displayed in the checkbox text of the FxA sign out dialog displayed when the user clicks on the Sign out button.
+         When checked the history and Bookmarks will be deleted from gthe device after signing in. -->
+    <string name="fxa_signout_confirmation_checkbox">Geschiedenis en bladwijzers van dit apparaat wissen</string>
+
     <!-- This string is displayed in the cancel button of the FxA sign out dialog displayed when the user clicks on the Sign out button.
          If clicked the user will be signed out from their FxA account and the dialog will be dismissed. -->
     <string name="fxa_signout_confirmation_signout">Afmelden</string>
