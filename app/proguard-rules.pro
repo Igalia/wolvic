@@ -60,13 +60,6 @@
 -keep class com.htc.** {*;}
 -keep class com.qualcomm.** {*;}
 
-# --------------------------------------------------------------------
-# Keep rules for mozillaspeechlibrary dependency
-# --------------------------------------------------------------------
--keep class cz.msebera.android.httpclient.** {*;}
--keep class com.loopj.android.http.** {*;}
--keep class com.github.axet.opusjni.Opus {*;}
-
 -dontwarn **
 -target 1.7
 -dontusemixedcaseclassnames
