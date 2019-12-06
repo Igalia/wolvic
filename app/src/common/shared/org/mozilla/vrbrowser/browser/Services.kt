@@ -29,10 +29,8 @@ import org.mozilla.geckoview.GeckoResult
 import org.mozilla.geckoview.GeckoSession
 import org.mozilla.vrbrowser.R
 import org.mozilla.vrbrowser.browser.engine.EngineProvider
-import org.mozilla.vrbrowser.browser.engine.GeckoViewFetchClient
-import org.mozilla.vrbrowser.browser.engine.SessionStore
-import org.mozilla.vrbrowser.utils.SystemUtils
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService
+import org.mozilla.vrbrowser.utils.SystemUtils
 
 
 class Services(val context: Context, places: Places): GeckoSession.NavigationDelegate {
@@ -42,6 +40,12 @@ class Services(val context: Context, places: Places): GeckoSession.NavigationDel
     companion object {
         const val CLIENT_ID = "7ad9917f6c55fb77"
         const val REDIRECT_URL = "https://accounts.firefox.com/oauth/success/$CLIENT_ID"
+
+        fun redirectUrl(context: Context) = if (SettingsStore.getInstance(context).isFxAWebChannelsEnabled) {
+            "urn:ietf:wg:oauth:2.0:oob:oauth-redirect-webchannel"
+        } else {
+            REDIRECT_URL
+        }
     }
     interface TabReceivedDelegate {
         fun onTabsReceived(uri: List<TabData>)
@@ -97,7 +101,7 @@ class Services(val context: Context, places: Places): GeckoSession.NavigationDel
     }
     val accountManager = FxaAccountManager(
         context = context,
-        serverConfig = ServerConfig.release(CLIENT_ID, REDIRECT_URL),
+        serverConfig = ServerConfig.release(CLIENT_ID, redirectUrl(context)),
         deviceConfig = DeviceConfig(
             // This is a default name, and can be changed once user is logged in.
             // E.g. accountManager.authenticatedAccount()?.deviceConstellation()?.setDeviceNameAsync("new name")
