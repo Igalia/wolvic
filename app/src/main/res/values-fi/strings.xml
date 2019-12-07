@@ -237,6 +237,22 @@
      changes the app and the language of the speech-recognition-based search to 'Danish'. -->
     <string name="settings_language_danish">tanska</string>
   
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+     changes the app and the language of the speech-recognition-based search to 'Norwegian'. -->
+    <string name="settings_language_norwegian">norja</string>
+  
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+     changes the app and the language of the speech-recognition-based search to 'Danish'. -->
+    <string name="settings_language_swedish">ruotsi</string>
+
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+     changes the app and the language of the speech-recognition-based search to 'Finnish'. -->
+    <string name="settings_language_finnish">suomi</string>
+  
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+     changes the app and the language of the speech-recognition-based search to 'Dutch'. -->
+    <string name="settings_language_dutch">hollanti</string>
+
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains controller-related options: pointer color and scroll direction. -->
     <string name="settings_controller_options">Ohjainvalinnat</string>
