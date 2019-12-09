@@ -484,9 +484,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         setIntent(intent);
         final String action = intent.getAction();
         if (Intent.ACTION_VIEW.equals(action)) {
-            if (intent.getData() != null) {
-                loadFromIntent(intent);
-            }
+            loadFromIntent(intent);
+
         } else if (GeckoRuntime.ACTION_CRASHED.equals(intent.getAction())) {
             Log.e(LOGTAG, "Restarted after a crash");
         }
@@ -505,33 +504,80 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         }
 
         Uri uri = intent.getData();
-        if (uri == null && intent.getExtras() != null && intent.getExtras().containsKey("url")) {
-            uri = Uri.parse(intent.getExtras().getString("url"));
-        }
 
-        Session activeSession = SessionStore.get().getActiveSession();
+        boolean openInWindow = false;
+        boolean openInTab = false;
+        boolean openInBackground = false;
 
         Bundle extras = intent.getExtras();
-        if (extras != null && extras.containsKey("homepage")) {
-            Uri homepageUri = Uri.parse(extras.getString("homepage"));
-            SettingsStore.getInstance(this).setHomepage(homepageUri.toString());
-        }
-        if (extras != null && extras.containsKey("e10s")) {
-            boolean wasEnabled = SettingsStore.getInstance(this).isMultiprocessEnabled();
-            boolean enabled = extras.getBoolean("e10s", wasEnabled);
-            if (wasEnabled != enabled) {
-                SettingsStore.getInstance(this).setMultiprocessEnabled(enabled);
-                SessionStore.get().resetMultiprocess();
+        if (extras != null) {
+            // If there is no data uri and there is a url parameter we get that
+            if (uri == null && extras.containsKey("url")) {
+                uri = Uri.parse(intent.getExtras().getString("url"));
+            }
+
+            // Overwrite the stored homepage
+            if (extras.containsKey("homepage")) {
+                Uri homepageUri = Uri.parse(extras.getString("homepage"));
+                SettingsStore.getInstance(this).setHomepage(homepageUri.toString());
+            }
+
+            // Enable/Disbale e10s
+            if (extras.containsKey("e10s")) {
+                boolean wasEnabled = SettingsStore.getInstance(this).isMultiprocessEnabled();
+                boolean enabled = extras.getBoolean("e10s", wasEnabled);
+                if (wasEnabled != enabled) {
+                    SettingsStore.getInstance(this).setMultiprocessEnabled(enabled);
+                    SessionStore.get().resetMultiprocess();
+                }
+            }
+
+            // Open the provided URL in a new tab, if there is no URL provided we just open the homepage
+            if (extras.containsKey("create_new_tab")) {
+                openInTab = extras.getBoolean("create_new_tab", false);
+                if (uri == null) {
+                    uri = Uri.parse(SettingsStore.getInstance(this).getHomepage());
+                }
+            }
+
+            // Open the tab in background/foreground, if there is no URL provided we just open the homepage
+            if (extras.containsKey("background")) {
+                openInBackground = extras.getBoolean("background", false);
+                if (uri == null) {
+                    uri = Uri.parse(SettingsStore.getInstance(this).getHomepage());
+                }
+            }
+
+            // Open the provided URL in a new window, if there is no URL provided we just open the homepage
+            if (extras.containsKey("create_new_window")) {
+                openInWindow = extras.getBoolean("create_new_window", false);
+                if (uri == null) {
+                    uri = Uri.parse(SettingsStore.getInstance(this).getHomepage());
+                }
             }
         }
 
-        if (activeSession != null) {
-            if (uri != null) {
-                Log.d(LOGTAG, "Loading URI from intent: " + uri.toString());
-                activeSession.loadUri(uri.toString());
+        // If there is a URI we open it
+        if (uri != null) {
+            Log.d(LOGTAG, "Loading URI from intent: " + uri.toString());
+
+            if (openInWindow) {
+                openNewWindow(uri.toString());
+
+            } else if (openInTab) {
+                if (openInBackground) {
+                    openNewTab(uri.toString());
+
+                } else {
+                    openNewTabForeground(uri.toString());
+                }
+
             } else {
-                mWindows.getFocusedWindow().loadHomeIfNotRestored();
+                SessionStore.get().getActiveSession().loadUri(uri.toString());
             }
+
+        } else {
+            mWindows.getFocusedWindow().loadHomeIfNotRestored();
         }
     }
 
