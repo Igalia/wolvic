@@ -212,7 +212,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         // Set a global exception handler as soon as possible
         GlobalExceptionHandler.register(this.getApplicationContext());
 
-        LocaleUtils.init(this);
+        LocaleUtils.init();
 
         if (DeviceType.isOculusBuild()) {
             workaroundGeckoSigAction();
@@ -225,6 +225,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         SessionStore.get().setContext(this, extras);
         SessionStore.get().initializeServices();
         SessionStore.get().initializeStores(this);
+        SessionStore.get().setLocales(LocaleUtils.getPreferredLocales(this));
 
         // Create broadcast receiver for getting crash messages from crash process
         IntentFilter intentFilter = new IntentFilter();

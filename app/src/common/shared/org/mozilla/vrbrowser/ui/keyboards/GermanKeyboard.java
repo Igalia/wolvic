@@ -66,6 +66,6 @@ public class GermanKeyboard extends BaseKeyboard {
 
     @Override
     public String[] getDomains(String... domains) {
-        return super.getDomains(".de");
+        return super.getDomains(".de", ".at", ".ch");
     }
 }

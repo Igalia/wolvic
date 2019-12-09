@@ -48,16 +48,18 @@ class VoiceSearchLanguageOptionsView extends SettingsView {
         // Footer
         mBinding.footerLayout.setFooterButtonClickListener(mResetListener);
 
-        String language = LocaleUtils.getVoiceSearchLocale(getContext());
+        mBinding.languageRadio.setOptions(LocaleUtils.getSupportedLocalizedLanguages(getContext()));
+
+        String locale = LocaleUtils.getVoiceSearchLocale(getContext());
         mBinding.languageRadio.setOnCheckedChangeListener(mLanguageListener);
-        setLanguage(mBinding.languageRadio.getIdForValue(language), false);
+        setLanguage(LocaleUtils.getIndexForSupportedLocale(locale), false);
     }
 
     @Override
     protected boolean reset() {
-        String value = mBinding.languageRadio.getValueForId(mBinding.languageRadio.getCheckedRadioButtonId()).toString();
+        String value = LocaleUtils.getSupportedLocaleForIndex(mBinding.languageRadio.getCheckedRadioButtonId());
         if (!value.equals(LocaleUtils.getSystemLocale())) {
-            setLanguage(mBinding.languageRadio.getIdForValue(LocaleUtils.getSystemLocale()), true);
+            setLanguage(LocaleUtils.getIndexForSupportedLocale(LocaleUtils.getSystemLocale()), true);
         }
 
         return false;
@@ -76,7 +78,7 @@ class VoiceSearchLanguageOptionsView extends SettingsView {
         mBinding.languageRadio.setChecked(checkedId, doApply);
         mBinding.languageRadio.setOnCheckedChangeListener(mLanguageListener);
 
-        LocaleUtils.setVoiceSearchLocale(getContext(), mBinding.languageRadio.getValueForId(checkedId).toString());
+        LocaleUtils.setVoiceSearchLocale(getContext(), LocaleUtils.getSupportedLocaleForIndex(checkedId));
     }
 
     @Override

@@ -421,7 +421,7 @@ public class SettingsStore {
         String language = mPrefs.getString(
                 mContext.getString(R.string.settings_key_voice_search_language), null);
         if (language == null) {
-            return LocaleUtils.getDefaultVoiceSearchLocale(mContext);
+            return LocaleUtils.getDefaultSupportedLocale();
         }
         return language;
     }
@@ -436,7 +436,7 @@ public class SettingsStore {
         String language = mPrefs.getString(
                 mContext.getString(R.string.settings_key_display_language), null);
         if (language == null) {
-            return LocaleUtils.getDefaultDisplayLocale(mContext);
+            return LocaleUtils.getDefaultSupportedLocale();
         }
         return language;
     }

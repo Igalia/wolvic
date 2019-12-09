@@ -48,9 +48,11 @@ class DisplayLanguageOptionsView extends SettingsView {
         // Footer
         mBinding.footerLayout.setFooterButtonClickListener(mResetListener);
 
-        String language = LocaleUtils.getDisplayLocale(getContext());
+        mBinding.languageRadio.setOptions(LocaleUtils.getSupportedLocalizedLanguages(getContext()));
+
+        String locale = LocaleUtils.getDisplayLocale(getContext());
         mBinding.languageRadio.setOnCheckedChangeListener(mLanguageListener);
-        setLanguage(mBinding.languageRadio.getIdForValue(language), false);
+        setLanguage(LocaleUtils.getIndexForSupportedLocale(locale), false);
     }
 
     @Override
@@ -58,18 +60,18 @@ class DisplayLanguageOptionsView extends SettingsView {
         String systemLocale = LocaleUtils.getSystemLocale();
         String currentLocale = LocaleUtils.getCurrentLocale();
         if (!currentLocale.equalsIgnoreCase(systemLocale)) {
-            setLanguage(mBinding.languageRadio.getIdForValue(systemLocale), true);
+            setLanguage(LocaleUtils.getIndexForSupportedLocale(systemLocale), true);
             return true;
 
         } else {
-            setLanguage(mBinding.languageRadio.getIdForValue(systemLocale), false);
+            setLanguage(LocaleUtils.getIndexForSupportedLocale(systemLocale), false);
             return false;
         }
     }
 
     private RadioGroupSetting.OnCheckedChangeListener mLanguageListener = (radioGroup, checkedId, doApply) -> {
         String currentLocale = LocaleUtils.getCurrentLocale();
-        String locale = mBinding.languageRadio.getValueForId(mBinding.languageRadio.getCheckedRadioButtonId()).toString();
+        String locale = LocaleUtils.getSupportedLocaleForIndex(mBinding.languageRadio.getCheckedRadioButtonId());
 
         if (!locale.equalsIgnoreCase(currentLocale)) {
             setLanguage(checkedId, true);
@@ -86,8 +88,8 @@ class DisplayLanguageOptionsView extends SettingsView {
         mBinding.languageRadio.setOnCheckedChangeListener(mLanguageListener);
 
         if (doApply) {
-            String language = mBinding.languageRadio.getValueForId(checkedId).toString();
-            LocaleUtils.setDisplayLocale(getContext(), language);
+            String locale = LocaleUtils.getSupportedLocaleForIndex(checkedId);
+            LocaleUtils.setDisplayLocale(getContext(), locale);
 
             if (mDelegate != null) {
                 mDelegate.showRestartDialog();

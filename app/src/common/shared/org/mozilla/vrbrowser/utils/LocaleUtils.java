@@ -6,18 +6,19 @@ import android.content.res.Resources;
 import android.os.Build;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.SettingsStore;
-import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.ui.adapters.Language;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static android.os.Build.VERSION_CODES.JELLY_BEAN_MR1;
 import static android.os.Build.VERSION_CODES.N;
@@ -27,10 +28,8 @@ public class LocaleUtils {
     private static Locale mSystemLocale;
     private static HashMap<String, Language> mLanguagesCache;
 
-    public static void init(Context context) {
+    public static void init() {
         getAllLanguages();
-        SessionStore.get().setLocales(
-                LocaleUtils.getLanguageIdsFromList(getPreferredLanguages(context)));
     }
 
     public static void saveSystemLocale() {
@@ -75,13 +74,17 @@ public class LocaleUtils {
         return mLanguagesCache.get(getCurrentLocale());
     }
 
-    public static List<String> getLanguageIdsFromList(@NonNull final List<Language> languages) {
+    public static List<String> getLocalesFromLanguages(@NonNull final List<Language> languages) {
         List<String> result = new ArrayList<>();
         for (Language language : languages) {
             result.add(language.getId());
         }
 
         return result;
+    }
+
+    public static List<String> getPreferredLocales(@NonNull Context context) {
+        return LocaleUtils.getLocalesFromLanguages(LocaleUtils.getPreferredLanguages(context));
     }
 
     public static List<Language> getPreferredLanguages(@NonNull Context aContext) {
@@ -106,40 +109,14 @@ public class LocaleUtils {
 
     public static List<Language> getAvailableLanguages() {
         HashMap<String, Language> languages = getAllLanguages();
-        List<Language> availableLanguages = languages.values().stream()
+        return languages.values().stream()
                 .sorted((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()))
                 .collect(Collectors.toList());
-
-        return availableLanguages;
-    }
-
-    @NonNull
-    public static List<String> getSupportedVoiceLanguages(@NonNull Context aContext) {
-        return Arrays.asList(aContext.getResources().getStringArray(
-                R.array.developer_options_voice_search_languages_values));
-    }
-
-    @NonNull
-    public static List<String> getSupportedDisplayLanguages(@NonNull Context aContext) {
-        return Arrays.asList(aContext.getResources().getStringArray(
-                R.array.developer_options_display_languages_values));
-    }
-
-    @NonNull
-    public static String getDefaultVoiceSearchLocale(@NonNull Context aContext) {
-        String locale = getCurrentLocale();
-        List<String> supportedLanguages = getSupportedVoiceLanguages(aContext);
-        if (!supportedLanguages.contains(locale)) {
-            return supportedLanguages.get(0);
-        }
-
-        return locale;
     }
 
     @NonNull
     public static String getVoiceSearchLocale(@NonNull Context aContext) {
-        String locale = SettingsStore.getInstance(aContext).getVoiceSearchLocale();
-        return mapOldLocaleToNew(locale);
+        return SettingsStore.getInstance(aContext).getVoiceSearchLocale();
     }
 
     public static void setVoiceSearchLocale(@NonNull Context context, @NonNull String locale) {
@@ -147,20 +124,9 @@ public class LocaleUtils {
     }
 
     @NonNull
-    public static String getVoiceSearchLanguageString(@NonNull Context aContext) {
+    public static String getVoiceSearchLanguage(@NonNull Context aContext) {
         String language = LocaleUtils.getVoiceSearchLocale(aContext);
         return getAllLanguages().get(language).getName();
-    }
-
-    @NonNull
-    public static String getDefaultDisplayLocale(@NonNull Context aContext) {
-        String locale = getCurrentLocale();
-        List<String> supportedLanguages = getSupportedDisplayLanguages(aContext);
-        if (!supportedLanguages.contains(locale)) {
-            return supportedLanguages.get(0);
-        }
-
-        return locale;
     }
 
     @NonNull
@@ -174,7 +140,7 @@ public class LocaleUtils {
     }
 
     @NonNull
-    public static String getDisplayCurrentLanguageString() {
+    public static String getDisplayLanguage() {
         return getAllLanguages().get(getCurrentLocale()).getName();
     }
 
@@ -218,6 +184,79 @@ public class LocaleUtils {
             locale = "cmn-Hant-TW";
         } else if (locale.equalsIgnoreCase("zh-Hans-CN")) {
             locale = "cmn-Hans-CN";
+        }
+
+        return locale;
+    }
+
+    public static class LocalizedLanguage {
+        public @StringRes int name;
+        public Locale locale;
+
+        private LocalizedLanguage() {}
+
+        public static LocalizedLanguage create(@StringRes int name, @NonNull Locale locale) {
+            LocalizedLanguage language = new LocalizedLanguage();
+            language.name = name;
+            language.locale = locale;
+
+            return language;
+        }
+    }
+
+    private static List<LocalizedLanguage> localizedSupportedLanguages = Stream.of(
+            LocalizedLanguage.create(R.string.settings_language_english, new Locale("en", "US")),
+            LocalizedLanguage.create(R.string.settings_language_traditional_chinese, new Locale.Builder().setLanguage("zh").setScript("Hant").setRegion("TW").build()),
+            LocalizedLanguage.create(R.string.settings_language_simplified_chinese, new Locale.Builder().setLanguage("zh").setScript("Hans").setRegion("CN").build()),
+            LocalizedLanguage.create(R.string.settings_language_japanese, new Locale("ja", "JP")),
+            LocalizedLanguage.create(R.string.settings_language_french, new Locale("fr", "FR")),
+            LocalizedLanguage.create(R.string.settings_language_german, new Locale("de", "DE")),
+            LocalizedLanguage.create(R.string.settings_language_spanish, new Locale("es", "ES")),
+            LocalizedLanguage.create(R.string.settings_language_russian, new Locale("ru", "RU")),
+            LocalizedLanguage.create(R.string.settings_language_korean, new Locale("ko", "KR")),
+            LocalizedLanguage.create(R.string.settings_language_italian, new Locale("it", "IT")),
+            LocalizedLanguage.create(R.string.settings_language_danish, new Locale("da", "DK")),
+            LocalizedLanguage.create(R.string.settings_language_polish, new Locale("pl", "PL")),
+            LocalizedLanguage.create(R.string.settings_language_norwegian, new Locale("nb", "NO")),
+            LocalizedLanguage.create(R.string.settings_language_swedish, new Locale("sv", "SE")),
+            LocalizedLanguage.create(R.string.settings_language_finnish, new Locale("fi", "FI")),
+            LocalizedLanguage.create(R.string.settings_language_dutch, new Locale("nl", "NL"))
+    ).collect(Collectors.toList());
+
+    public static String[] getSupportedLocalizedLanguages(@NonNull Context context) {
+        return LocaleUtils.localizedSupportedLanguages.stream().map(
+                item -> StringUtils.capitalize(StringUtils.getStringByLocale(context, item.name, item.locale))).
+                collect(Collectors.toList()).toArray(new String[]{});
+    }
+
+    public static List<String> getSupportedLocales() {
+        return LocaleUtils.localizedSupportedLanguages.stream().map(
+                item -> item.locale.toLanguageTag()).
+                collect(Collectors.toList());
+    }
+
+    public static int getIndexForSupportedLocale(@NonNull String locale) {
+        Optional<LocalizedLanguage> locLang = localizedSupportedLanguages.stream().filter(item -> item.locale.toLanguageTag().equals(locale)).findFirst();
+        return locLang.map(localizedLanguage -> localizedSupportedLanguages.indexOf(localizedLanguage)).orElse(0);
+    }
+
+    public static String getSupportedLocalizedLanguageForIndex(@NonNull Context context, int index) {
+        return StringUtils.capitalize(
+                StringUtils.getStringByLocale(
+                        context,
+                        localizedSupportedLanguages.get(index).name,
+                        localizedSupportedLanguages.get(index).locale));
+    }
+
+    public static String getSupportedLocaleForIndex(int index) {
+        return localizedSupportedLanguages.get(index).locale.toLanguageTag();
+    }
+
+    public static String getDefaultSupportedLocale() {
+        String locale = getCurrentLocale();
+        List<String> supportedLocales = getSupportedLocales();
+        if (!supportedLocales.contains(locale)) {
+            return supportedLocales.get(0);
         }
 
         return locale;
