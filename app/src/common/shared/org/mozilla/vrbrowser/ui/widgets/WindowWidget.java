@@ -11,6 +11,7 @@ import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
+import android.net.Uri;
 import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
@@ -27,7 +28,6 @@ import androidx.annotation.StringRes;
 import androidx.annotation.UiThread;
 
 import org.jetbrains.annotations.NotNull;
-import org.mozilla.geckoview.AllowOrDeny;
 import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.PanZoomController;
@@ -66,8 +66,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import mozilla.components.concept.storage.PageObservation;
 import mozilla.components.concept.storage.PageVisit;
@@ -1613,26 +1616,84 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             return GeckoResult.fromValue(false);
         }
 
-        boolean isReload = lastVisitedURL != null && lastVisitedURL.equals(url);
-
-        PageVisit pageVisit;
-        if (isReload) {
-            pageVisit = new PageVisit(VisitType.RELOAD, RedirectSource.NOT_A_SOURCE);
-
-        } else {
-            if ((flags & VISIT_REDIRECT_SOURCE_PERMANENT) != 0) {
-                pageVisit = new PageVisit(VisitType.REDIRECT_PERMANENT, RedirectSource.NOT_A_SOURCE);
-            } else if ((flags & VISIT_REDIRECT_SOURCE) != 0) {
-                pageVisit = new PageVisit(VisitType.REDIRECT_TEMPORARY, RedirectSource.NOT_A_SOURCE);
-            } else {
-                pageVisit = new PageVisit(VisitType.LINK, RedirectSource.NOT_A_SOURCE);
-            }
+        // Check if we want this type of url.
+        if (!shouldStoreUri(url)) {
+            return GeckoResult.fromValue(false);
         }
 
-        SessionStore.get().getHistoryStore().recordVisit(url, pageVisit);
+        boolean isReload = lastVisitedURL != null && lastVisitedURL.equals(url);
+
+        VisitType visitType;
+        if (isReload) {
+            visitType = VisitType.RELOAD;
+
+        } else {
+            // Note the difference between `VISIT_REDIRECT_PERMANENT`,
+            // `VISIT_REDIRECT_TEMPORARY`, `VISIT_REDIRECT_SOURCE`, and
+            // `VISIT_REDIRECT_SOURCE_PERMANENT`.
+            //
+            // The former two indicate if the visited page is the *target*
+            // of a redirect; that is, another page redirected to it.
+            //
+            // The latter two indicate if the visited page is the *source*
+            // of a redirect: it's redirecting to another page, because the
+            // server returned an HTTP 3xy status code.
+            if ((flags & VISIT_REDIRECT_PERMANENT) != 0) {
+                visitType = VisitType.REDIRECT_PERMANENT;
+
+            } else if ((flags & VISIT_REDIRECT_TEMPORARY) != 0) {
+                visitType = VisitType.REDIRECT_TEMPORARY;
+
+            } else {
+                visitType = VisitType.LINK;
+            }
+        }
+        RedirectSource redirectSource;
+        if ((flags & GeckoSession.HistoryDelegate.VISIT_REDIRECT_SOURCE_PERMANENT) != 0) {
+            redirectSource = RedirectSource.PERMANENT;
+
+        } else if ((flags & GeckoSession.HistoryDelegate.VISIT_REDIRECT_SOURCE) != 0) {
+            redirectSource = RedirectSource.TEMPORARY;
+
+        } else {
+            redirectSource = RedirectSource.NOT_A_SOURCE;
+        }
+
+        SessionStore.get().getHistoryStore().recordVisit(url, new PageVisit(visitType, redirectSource));
         SessionStore.get().getHistoryStore().recordObservation(url, new PageObservation(url));
 
         return GeckoResult.fromValue(true);
+    }
+
+    /**
+     * Filter out unwanted URIs, such as "chrome:", "about:", etc.
+     * Ported from nsAndroidHistory::CanAddURI
+     * See https://dxr.mozilla.org/mozilla-central/source/mobile/android/components/build/nsAndroidHistory.cpp#326
+     */
+    private boolean shouldStoreUri(@NonNull String uri) {
+        Uri parsedUri = Uri.parse(uri);
+        String scheme = parsedUri.getScheme();
+        if (scheme == null) {
+            return false;
+        }
+
+        // Short-circuit most common schemes.
+        if (scheme.equals("http") || scheme.equals("https")) {
+            return true;
+        }
+
+        // Allow about about:reader uris. They are of the form:
+        // about:reader?url=http://some.interesting.page/to/read.html
+        if (uri.startsWith("about:reader")) {
+            return true;
+        }
+
+        List<String> schemasToIgnore = Stream.of(
+                "about", "imap", "news", "mailbox", "moz-anno", "moz-extension",
+                "view-source", "chrome", "resource", "data", "javascript", "blob"
+        ).collect(Collectors.toList());
+
+        return !schemasToIgnore.contains(scheme);
     }
 
     @UiThread
