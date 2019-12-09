@@ -160,6 +160,8 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
 
             Session session = SessionStore.get().getActiveSession();
             session.loadUri(item.getUrl());
+
+            mHistoryViewListeners.forEach((listener) -> listener.onClickItem(view, item));
         }
 
         @Override

@@ -1439,6 +1439,11 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         public void onFxALogin(@NonNull View view) {
             hideBookmarks();
         }
+
+        @Override
+        public void onClickItem(@NonNull View view, Bookmark item) {
+            hideBookmarks();
+        }
     };
 
     private HistoryCallback mHistoryListener = new HistoryCallback() {
@@ -1471,6 +1476,11 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         @Override
         public void onFxALogin(@NonNull View view) {
+            hideHistory();
+        }
+
+        @Override
+        public void onClickItem(@NonNull View view, @NonNull VisitInfo item) {
             hideHistory();
         }
     };
