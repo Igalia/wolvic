@@ -17,7 +17,6 @@ import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.databinding.OptionsDeveloperBinding;
 import org.mozilla.vrbrowser.ui.views.settings.SwitchSetting;
-import org.mozilla.vrbrowser.ui.widgets.UISurfaceTextureRenderer;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 
 import static org.mozilla.vrbrowser.utils.ServoUtils.isServoAvailable;
@@ -66,7 +65,7 @@ class DeveloperOptionsView extends SettingsView {
         if (BuildConfig.DEBUG) {
             mBinding.debugLoggingSwitch.setVisibility(View.GONE);
         } else {
-            setDebugLogging(SettingsStore.getInstance(getContext()).isDebugLogginEnabled(), false);
+            setDebugLogging(SettingsStore.getInstance(getContext()).isDebugLoggingEnabled(), false);
         }
 
         if (!isServoAvailable()) {

@@ -583,7 +583,7 @@ public class SettingsStore {
         editor.commit();
     }
 
-    public boolean isDebugLogginEnabled() {
+    public boolean isDebugLoggingEnabled() {
         return mPrefs.getBoolean(mContext.getString(R.string.settings_key_debug_logging), DEBUG_LOGGING_DEFAULT);
     }
 

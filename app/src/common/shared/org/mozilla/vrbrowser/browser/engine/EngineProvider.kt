@@ -46,7 +46,7 @@ object EngineProvider {
                 builder.debugLogging(true)
                 builder.aboutConfigEnabled(true)
             } else {
-                builder.debugLogging(SettingsStore.getInstance(context).isDebugLogginEnabled)
+                builder.debugLogging(SettingsStore.getInstance(context).isDebugLoggingEnabled)
             }
 
             runtime = GeckoRuntime.create(context, builder.build())
