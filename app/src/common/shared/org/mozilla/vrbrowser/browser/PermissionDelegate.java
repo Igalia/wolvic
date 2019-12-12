@@ -115,6 +115,11 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
     @Override
     public void onContentPermissionRequest(GeckoSession aSession, String aUri, int aType, Callback callback) {
         Log.d(LOGTAG, "onContentPermissionRequest: " + aUri + " " + aType);
+        if (aType == PERMISSION_XR) {
+            callback.grant();
+            return;
+        }
+
         PermissionWidget.PermissionType type;
         if (aType == PERMISSION_DESKTOP_NOTIFICATION) {
             type = PermissionWidget.PermissionType.Notification;
