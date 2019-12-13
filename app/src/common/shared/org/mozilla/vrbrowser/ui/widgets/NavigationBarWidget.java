@@ -708,6 +708,9 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mAttachedWindow.disableVRVideoMode();
         mAttachedWindow.setVisible(true);
         mMediaControlsWidget.setVisible(false);
+
+        // Reposition UI in front of the user when exiting a VR video.
+        mWidgetManager.resetUIYaw();
     }
 
     private void setResizePreset(float aMultiplier) {
