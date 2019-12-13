@@ -1215,8 +1215,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     @Override
     public boolean onGenericMotionEvent(MotionEvent aEvent) {
-        GeckoSession session = mSession.getGeckoSession();
-        return (session != null) && session.getPanZoomController().onMotionEvent(aEvent) == PanZoomController.INPUT_RESULT_HANDLED;
+        if (mView != null) {
+            return super.onGenericMotionEvent(aEvent);
+        } else {
+            GeckoSession session = mSession.getGeckoSession();
+            return (session != null) && session.getPanZoomController().onMotionEvent(aEvent) == PanZoomController.INPUT_RESULT_HANDLED;
+        }
     }
 
     private void setPrivateBrowsingEnabled(boolean isEnabled) {
