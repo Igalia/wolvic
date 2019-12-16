@@ -12,6 +12,8 @@ import android.graphics.PorterDuff;
 import android.graphics.SurfaceTexture;
 import android.view.Surface;
 
+import androidx.annotation.Nullable;
+
 public class UISurfaceTextureRenderer {
     private int mTextureWidth;
     private int mTextureHeight;
@@ -19,9 +21,14 @@ public class UISurfaceTextureRenderer {
     private Surface mSurface;
     private Canvas mSurfaceCanvas;
     private static boolean sUseHarwareAcceleration;
+    private static boolean sRenderActive = true;
 
     public static void setUseHardwareAcceleration(boolean aEnabled) {
         sUseHarwareAcceleration = aEnabled;
+    }
+
+    public static void setRenderActive(boolean aActive) {
+        sRenderActive = aActive;
     }
 
     UISurfaceTextureRenderer(SurfaceTexture aTexture, int aWidth, int aHeight) {
@@ -63,8 +70,12 @@ public class UISurfaceTextureRenderer {
         mSurfaceTexture = null;
     }
 
+    @Nullable
     Canvas drawBegin() {
         mSurfaceCanvas = null;
+        if (!sRenderActive) {
+            return null;
+        }
         if (mSurface != null) {
             try {
                 if (sUseHarwareAcceleration) {
