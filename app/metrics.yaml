@@ -16,7 +16,7 @@ distribution:
       - baseline
       - events
       - metrics
-      - session_end
+      - session-end
     bugs:
       - https://github.com/MozillaReality/FirefoxReality/issues/1420
     data_reviews:
@@ -30,7 +30,7 @@ url:
   domains:
     type: counter
     send_in_pings:
-      - session_end
+      - session-end
     description: >
       Counting how many domains are visited in a session.
     bugs:
@@ -44,7 +44,7 @@ url:
   visits:
     type: counter
     send_in_pings:
-      - session_end
+      - session-end
     description: >
       Counting how many URL links are visited in a session.
     bugs:
@@ -92,7 +92,7 @@ tabs:
     description: >
       Number of tabs opened during a session
     send_in_pings:
-      - session_end
+      - session-end
     labels:
       - context_menu
       - tabs_dialog
@@ -115,7 +115,7 @@ tabs:
     description: >
       Number of tabs activated during a session
     send_in_pings:
-      - session_end
+      - session-end
     bugs:
       - https://github.com/MozillaReality/FirefoxReality/issues/1609
     data_reviews:
@@ -229,7 +229,7 @@ control:
     description: >
       Counting how many general windows are opened in a session.
     send_in_pings:
-      - session_end
+      - session-end
     bugs:
       - https://github.com/MozillaReality/FirefoxReality/issues/2347
     data_reviews:

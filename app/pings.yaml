@@ -4,7 +4,7 @@
 
 $schema: moz://mozilla.org/schemas/glean/pings/1-0-0
 
-session_end:
+session-end:
   description: >
     This ping is sent at the end of a session (when Firefox Reality switches to the background).
     We usually send search and UI control metrics at the end of a session.

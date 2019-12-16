@@ -10,7 +10,7 @@ This means you might have to go searching through the dependency tree to get a f
  - [baseline](#baseline)
  - [events](#events)
  - [metrics](#metrics)
- - [session_end](#session_end)
+ - [session-end](#session-end)
 
 
 ## baseline
@@ -49,7 +49,7 @@ The following metrics are added to the ping:
 | searches.counts |[labeled_counter](https://mozilla.github.io/glean/book/user/metrics/labeled_counters.html) |Counting how many searches are queried in a specific search engine. The search engine `identifier`s are used as keys for this metric.  |[1](https://github.com/MozillaReality/FirefoxReality/pull/2241#issuecomment-557740258)||2020-05-01 |
 | url.query_type |[labeled_counter](https://mozilla.github.io/glean/book/user/metrics/labeled_counters.html) |Counting how many URLs are visited in a day, by input method.  |[1](https://github.com/MozillaReality/FirefoxReality/pull/2241#issuecomment-557740258)|<ul><li>type_link</li><li>type_query</li><li>voice_query</li></ul>|2020-05-01 |
 
-## session_end
+## session-end
 This ping is sent at the end of a session (when Firefox Reality switches to the background). We usually send search and UI control metrics at the end of a session.
 
 The following metrics are added to the ping:
