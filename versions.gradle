@@ -50,6 +50,7 @@ versions.kotlin = "1.3.31"
 versions.kotlin_coroutines = "1.2.1"
 versions.snakeyaml = "1.24"
 versions.gson = "2.8.5"
+ext.versions = versions
 def deps = [:]
 
 def gecko_view = [:]

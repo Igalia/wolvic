@@ -6,6 +6,7 @@ apply plugin: 'com.android.application'
 apply from: "$project.rootDir/tools/gradle/versionCode.gradle"
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: "org.mozilla.telemetry.glean-gradle-plugin"
 
 def getGitHash = { ->
     def stdout = new ByteArrayOutputStream()
@@ -37,10 +38,9 @@ def getUseDebugSigningOnRelease = { ->
     return false
 }
 
-// Generate markdown docs for the collected metrics.
+// Glean: Generate markdown docs for the collected metrics.
 ext.gleanGenerateMarkdownDocs = true
 ext.gleanDocsDirectory = "$rootDir/docs"
-apply from: 'https://github.com/mozilla-mobile/android-components/raw/v' + deps.android_components_version + '/components/service/glean/scripts/sdk_generator.gradle'
 
 android {
     compileSdkVersion build_versions.target_sdk
