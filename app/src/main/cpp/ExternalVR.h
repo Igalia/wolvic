@@ -8,6 +8,7 @@
 
 #include "vrb/MacroUtils.h"
 #include "Controller.h"
+#include "ControllerContainer.h"
 #include "DeviceDelegate.h"
 #include "Device.h"
 #include <memory>
@@ -59,6 +60,7 @@ public:
                       int32_t& aTextureHeight,
                       device::EyeRect& aLeftEye,
                       device::EyeRect& aRightEye) const;
+  void SetHapticState(ControllerContainerPtr aControllerContainer) const;
   void StopPresenting();
   void SetSourceBrowser(VRBrowserType aBrowser);
   ExternalVR();

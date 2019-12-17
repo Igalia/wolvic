@@ -43,6 +43,10 @@ public:
   void SetButtonCount(const int32_t aControllerIndex, const uint32_t aNumButtons) override;
   void SetButtonState(const int32_t aControllerIndex, const Button aWhichButton, const int32_t aImmersiveIndex, const bool aPressed, const bool aTouched, const float aImmersiveTrigger = -1.0f) override;
   void SetAxes(const int32_t aControllerIndex, const float* aData, const uint32_t aLength) override;
+  void SetHapticCount(const int32_t aControllerIndex, const uint32_t aNumHaptics) override;
+  uint32_t GetHapticCount(const int32_t aControllerIndex) override;
+  void SetHapticFeedback(const int32_t aControllerIndex, const uint64_t aInputFrameID, const float aPulseDuration, const float aPulseIntensity) override;
+  void GetHapticFeedback(const int32_t aControllerIndex, uint64_t &aInputFrameID, float& aPulseDuration, float& aPulseIntensity) override;
   void SetLeftHanded(const int32_t aControllerIndex, const bool aLeftHanded) override;
   void SetTouchPosition(const int32_t aControllerIndex, const float aTouchX, const float aTouchY) override;
   void EndTouch(const int32_t aControllerIndex) override;

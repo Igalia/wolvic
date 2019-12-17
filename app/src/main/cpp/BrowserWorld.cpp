@@ -871,6 +871,7 @@ BrowserWorld::Draw() {
   m.device->ProcessEvents();
   m.context->Update();
   m.externalVR->PullBrowserState();
+  m.externalVR->SetHapticState(m.controllers);
 
   m.CheckExitImmersive();
   if (m.splashAnimation) {
