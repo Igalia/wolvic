@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 public class StringUtils {
     @NonNull
@@ -113,5 +114,24 @@ public class StringUtils {
     @NonNull
     public static String capitalize(@NonNull String input) {
         return input.substring(0, 1).toUpperCase() + input.substring(1);
+    }
+
+    /**
+     * A collection of regular expressions used in the `is*` methods below.
+     */
+    private static Pattern phoneish = Pattern.compile("^\\s*tel:\\S?\\d+\\S*\\s*$");
+    private static Pattern emailish = Pattern.compile("^\\s*mailto:\\w+\\S*\\s*$");
+    private static Pattern geoish = Pattern.compile("^\\s*geo:\\S*\\d+\\S*\\s*$");
+
+    public static boolean isPhone(@NonNull String text) {
+        return phoneish.matcher(text).find();
+    }
+
+    public static boolean isEmail(@NonNull String text) {
+        return emailish.matcher(text).find();
+    }
+
+    public static boolean isGeolocation(@NonNull String text) {
+        return geoish.matcher(text).find();
     }
 }

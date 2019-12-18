@@ -83,8 +83,9 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     private transient SharedPreferences mPrefs;
     private transient GeckoRuntime mRuntime;
     private transient byte[] mPrivatePage;
-    private transient boolean mFirstContentfulPaint;
+    private transient boolean mFirstContentFulPaint;
     private transient long mKeepAlive;
+    private transient boolean mIsFirstActivation;
 
     public interface BitmapChangedListener {
         void onBitmapChanged(Session aSession, Bitmap aBitmap);
@@ -112,6 +113,8 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     }
 
     private void initialize() {
+        mIsFirstActivation = true;
+
         mNavigationListeners = new CopyOnWriteArrayList<>();
         mProgressListeners = new CopyOnWriteArrayList<>();
         mContentListeners = new CopyOnWriteArrayList<>();
@@ -136,13 +139,9 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         }
     }
 
-    protected void shutdown() {
+    public void shutdown() {
         if (mState.mSession != null) {
-            if (mState.mSession.isOpen()) {
-                mState.mSession.close();
-            }
-            mState.mDisplay = null;
-            mState.mSession = null;
+            closeSession(mState);
         }
 
         for (SessionChangeListener listener : mSessionChangeListeners) {
@@ -466,11 +465,16 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         }
         aState.mSession.close();
         aState.setActive(false);
-        mFirstContentfulPaint = false;
+        mFirstContentFulPaint = false;
+
+        for (SessionChangeListener listener : mSessionChangeListeners) {
+            listener.onSessionClosed(this);
+        }
+        mIsFirstActivation = true;
     }
 
     public void captureBitmap() {
-        if (mState.mDisplay == null || !mFirstContentfulPaint) {
+        if (mState.mDisplay == null || !mFirstContentFulPaint) {
             return;
         }
         try {
@@ -495,7 +499,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     }
 
     public CompletableFuture<Void> captureBackgroundBitmap(int displayWidth, int displayHeight) {
-        if (mState.mSession == null || !mFirstContentfulPaint) {
+        if (mState.mSession == null || !mFirstContentFulPaint) {
             return CompletableFuture.completedFuture(null);
         }
         Surface captureSurface = BitmapCache.getInstance(mContext).acquireCaptureSurface(displayWidth, displayHeight);
@@ -598,7 +602,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     }
 
     public boolean isFirstContentfulPaint() {
-        return mFirstContentfulPaint;
+        return mFirstContentFulPaint;
     }
 
     public Media getFullScreenVideo() {
@@ -670,6 +674,12 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         for (SessionChangeListener listener: mSessionChangeListeners) {
             listener.onActiveStateChange(this, aActive);
         }
+
+        if (aActive && mIsFirstActivation) {
+            mSessionChangeListeners.forEach(listener -> listener.onSessionOpened(this));
+        }
+
+        mIsFirstActivation = false;
     }
 
     public void reload() {
@@ -734,8 +744,15 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         }
     }
 
+    @Nullable
     public GeckoSession getGeckoSession() {
-        return mState.mSession;
+        // Might be null if the session is supended
+        if (mState != null) {
+            return mState.mSession;
+
+        } else {
+            return null;
+        }
     }
 
     public String getId() {
@@ -1079,7 +1096,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
             for (GeckoSession.ContentDelegate listener : mContentListeners) {
                 listener.onFirstComposite(aSession);
             }
-            if (mFirstContentfulPaint) {
+            if (mFirstContentFulPaint) {
                 // onFirstContentfulPaint is only called once after a session is opened.
                 // Notify onFirstContentfulPaint after a session is reattached before
                 // being closed ((e.g. tab selected)
@@ -1092,7 +1109,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
     @Override
     public void onFirstContentfulPaint(@NonNull GeckoSession aSession) {
-        mFirstContentfulPaint = true;
+        mFirstContentFulPaint = true;
         if (mState.mSession == aSession) {
             for (GeckoSession.ContentDelegate listener : mContentListeners) {
                 listener.onFirstContentfulPaint(aSession);

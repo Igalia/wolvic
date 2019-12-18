@@ -9,7 +9,6 @@ import mozilla.components.concept.fetch.Client
 import org.mozilla.geckoview.ContentBlocking
 import org.mozilla.geckoview.GeckoRuntime
 import org.mozilla.geckoview.GeckoRuntimeSettings
-import org.mozilla.geckoview.WebExtension
 import org.mozilla.vrbrowser.BuildConfig
 import org.mozilla.vrbrowser.browser.SettingsStore
 import org.mozilla.vrbrowser.crashreporting.CrashReporterService
@@ -50,12 +49,6 @@ object EngineProvider {
             }
 
             runtime = GeckoRuntime.create(context, builder.build())
-            for (extension in WEB_EXTENSIONS) {
-                val path = "resource://android/assets/web_extensions/$extension/"
-                runtime!!.registerWebExtension(WebExtension(path))
-            }
-
-
         }
 
         return runtime!!

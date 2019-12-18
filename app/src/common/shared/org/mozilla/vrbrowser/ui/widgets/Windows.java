@@ -1151,7 +1151,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     }
 
     public void addTab(@NotNull WindowWidget targetWindow, @Nullable String aUri) {
-        Session session = SessionStore.get().createSuspendedSession(aUri, targetWindow.getSession().isPrivateMode());
+        Session session = SessionStore.get().createSession(targetWindow.getSession().isPrivateMode());
         setFirstPaint(targetWindow, session);
         targetWindow.getSession().setActive(false);
         session.setActive(true);

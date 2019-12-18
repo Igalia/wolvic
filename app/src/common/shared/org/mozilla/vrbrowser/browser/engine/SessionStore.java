@@ -1,6 +1,5 @@
 package org.mozilla.vrbrowser.browser.engine;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -10,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import org.mozilla.gecko.util.ThreadUtils;
-import org.mozilla.geckoview.ContentBlocking;
 import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoRuntimeSettings;
 import org.mozilla.geckoview.GeckoSession;
@@ -19,11 +17,10 @@ import org.mozilla.vrbrowser.browser.BookmarksStore;
 import org.mozilla.vrbrowser.browser.HistoryStore;
 import org.mozilla.vrbrowser.browser.PermissionDelegate;
 import org.mozilla.vrbrowser.browser.Services;
-import org.mozilla.vrbrowser.browser.SettingsStore;
-import org.mozilla.vrbrowser.crashreporting.CrashReporterService;
+import org.mozilla.vrbrowser.browser.engine.gecko.FxRSessionManager;
+import org.mozilla.vrbrowser.utils.LocaleUtils;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
-import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,6 +47,7 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
     private HistoryStore mHistoryStore;
     private Services mServices;
     private boolean mSuspendPending;
+    private FxRSessionManager mSessionManager;
 
     private SessionStore() {
         mSessions = new ArrayList<>();
@@ -62,22 +60,23 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
         SessionUtils.vrPrefsWorkAround(context, aExtras);
 
         mRuntime = EngineProvider.INSTANCE.getOrCreateRuntime(context);
-    }
+        setLocales(LocaleUtils.getPreferredLocales(mContext));
 
-    public void initializeServices() {
         mServices = ((VRBrowserApplication)mContext.getApplicationContext()).getServices();
-    }
 
-    public void initializeStores(Context context) {
         mBookmarksStore = new BookmarksStore(context);
         mHistoryStore = new HistoryStore(context);
+
+        mSessionManager = new FxRSessionManager(mContext, this);
     }
 
     private Session addSession(@NonNull Session aSession) {
         aSession.setPermissionDelegate(this);
         aSession.addNavigationListener(mServices);
+        aSession.addSessionChangeListener(mSessionManager);
         mSessions.add(aSession);
         sessionActiveStateChanged();
+
         return aSession;
     }
 
@@ -112,6 +111,7 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
         mSessions.remove(aSession);
         if (aSession != null) {
             shutdownSession(aSession);
+            aSession.removeSessionChangeListener(mSessionManager);
         }
     }
 
@@ -131,6 +131,10 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
                 session.suspend();
             }
         }
+    }
+
+    public GeckoRuntime getRuntime() {
+        return mRuntime;
     }
 
     public @Nullable Session getSession(String aId) {
@@ -344,4 +348,5 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
             mPermissionDelegate.onMediaPermissionRequest(session, uri, video, audio, callback);
         }
     }
+
 }

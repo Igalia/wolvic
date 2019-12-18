@@ -71,6 +71,9 @@ android_components.concept_fetch = "org.mozilla.components:concept-fetch:$versio
 android_components.lib_fetch = "org.mozilla.components:lib-fetch-httpurlconnection:$versions.android_components"
 android_components.support_rustlog = "org.mozilla.components:support-rustlog:$versions.android_components"
 android_components.support_rusthttp = "org.mozilla.components:support-rusthttp:$versions.android_components"
+android_components.concept_engine = "org.mozilla.components:concept-engine:$versions.android_components"
+android_components.support_webextensions = "org.mozilla.components:support-webextensions:$versions.android_components"
+android_components.browser_session = "org.mozilla.components:browser-session:$versions.android_components"
 deps.android_components = android_components
 
 def app_services = [:]

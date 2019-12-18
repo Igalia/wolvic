@@ -84,6 +84,10 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
     buildTypes {
         release {
             minifyEnabled true
@@ -460,6 +464,9 @@ dependencies {
     implementation deps.android_components.support_rustlog
     implementation deps.android_components.support_rusthttp
     implementation deps.android_components.glean
+    implementation deps.android_components.concept_engine
+    implementation deps.android_components.support_webextensions
+    implementation deps.android_components.browser_session
 
     // For production builds, the native code for all `org.mozilla.appservices`
     // dependencies gets compiled together into a single "megazord" build, and
