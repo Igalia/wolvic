@@ -467,6 +467,9 @@ dependencies {
     implementation deps.android_components.concept_engine
     implementation deps.android_components.support_webextensions
     implementation deps.android_components.browser_session
+    implementation deps.android_components.feature_accounts
+    implementation deps.android_components.feature_accounts
+    implementation deps.android_components.feature_webcompat
 
     // For production builds, the native code for all `org.mozilla.appservices`
     // dependencies gets compiled together into a single "megazord" build, and

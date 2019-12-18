@@ -40,6 +40,12 @@ class Services(val context: Context, places: Places): GeckoSession.NavigationDel
     companion object {
         const val CLIENT_ID = "7ad9917f6c55fb77"
         const val REDIRECT_URL = "https://accounts.firefox.com/oauth/success/$CLIENT_ID"
+
+        fun redirectUrl(context: Context) = if (SettingsStore.getInstance(context).isFxAWebChannelsEnabled) {
+            "urn:ietf:wg:oauth:2.0:oob:oauth-redirect-webchannel"
+        } else {
+            REDIRECT_URL
+        }
     }
     interface TabReceivedDelegate {
         fun onTabsReceived(uri: List<TabData>)
@@ -94,16 +100,16 @@ class Services(val context: Context, places: Places): GeckoSession.NavigationDel
         }
     }
     val accountManager = FxaAccountManager(
-        context = context,
-        serverConfig = ServerConfig.release(CLIENT_ID, REDIRECT_URL),
-        deviceConfig = DeviceConfig(
-            // This is a default name, and can be changed once user is logged in.
-            // E.g. accountManager.authenticatedAccount()?.deviceConstellation()?.setDeviceNameAsync("new name")
-            name = "${context.getString(R.string.app_name)} on ${Build.MANUFACTURER} ${Build.MODEL}",
-            type = DeviceType.VR,
-            capabilities = setOf(DeviceCapability.SEND_TAB)
-        ),
-        syncConfig = SyncConfig(setOf(SyncEngine.History, SyncEngine.Bookmarks), syncPeriodInMinutes = 1440L)
+            context = context,
+            serverConfig = ServerConfig.release(CLIENT_ID, redirectUrl(context)),
+            deviceConfig = DeviceConfig(
+                    // This is a default name, and can be changed once user is logged in.
+                    // E.g. accountManager.authenticatedAccount()?.deviceConstellation()?.setDeviceNameAsync("new name")
+                    name = "${context.getString(R.string.app_name)} on ${Build.MANUFACTURER} ${Build.MODEL}",
+                    type = DeviceType.VR,
+                    capabilities = setOf(DeviceCapability.SEND_TAB)
+            ),
+            syncConfig = SyncConfig(setOf(SyncEngine.History, SyncEngine.Bookmarks), syncPeriodInMinutes = 1440L)
 
     ).also {
         it.registerForDeviceEvents(deviceEventObserver, ProcessLifecycleOwner.get(), true)

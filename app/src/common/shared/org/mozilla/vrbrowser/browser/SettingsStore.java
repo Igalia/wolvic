@@ -84,6 +84,7 @@ public class SettingsStore {
     public final static boolean HISTORY_SYNC_DEFAULT = true;
     public final static boolean WHATS_NEW_DISPLAYED = false;
     public final static long FXA_LAST_SYNC_NEVER = 0;
+    public final static boolean FXA_WEBCHANNELS_ENABLED = true;
 
     // Enable telemetry by default (opt-out).
     public final static boolean CRASH_REPORTING_DEFAULT = false;
@@ -690,5 +691,14 @@ public class SettingsStore {
         }
     }
 
-}
+    public void setFxAWebChannelsEnabled(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_webchannels_enabled), isEnabled);
+        editor.commit();
+    }
 
+    public boolean isFxAWebChannelsEnabled() {
+        return mPrefs.getBoolean(mContext.getString(R.string.settings_key_webchannels_enabled), FXA_WEBCHANNELS_ENABLED);
+    }
+
+}

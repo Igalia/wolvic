@@ -4,6 +4,7 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
+import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.browser.SessionChangeListener;
 import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
@@ -11,9 +12,14 @@ import org.mozilla.vrbrowser.browser.extensions.VimeoExtensionFeature;
 import org.mozilla.vrbrowser.browser.extensions.YoutubeExtensionFeature;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
+import java.util.Collections;
+
 import mozilla.components.browser.session.LegacySessionManager;
 import mozilla.components.browser.session.SessionManager;
 import mozilla.components.browser.state.store.BrowserStore;
+import mozilla.components.feature.accounts.FxaCapability;
+import mozilla.components.feature.accounts.FxaWebChannelFeature;
+import mozilla.components.feature.webcompat.WebCompatFeature;
 import mozilla.components.support.base.observer.ObserverRegistry;
 
 public class FxRSessionManager implements SessionChangeListener {
@@ -42,6 +48,16 @@ public class FxRSessionManager implements SessionChangeListener {
 
         VimeoExtensionFeature.install(geckoEngine);
         YoutubeExtensionFeature.install(geckoEngine);
+        WebCompatFeature.INSTANCE.install(geckoEngine);
+
+        FxaWebChannelFeature mFxAWebChannelsFeature = new FxaWebChannelFeature(
+                context,
+                null,
+                geckoEngine,
+                mSessionManager,
+                ((VRBrowserApplication) context.getApplicationContext()).getServices().getAccountManager(),
+                Collections.singleton(FxaCapability.CHOOSE_WHAT_TO_SYNC));
+        mFxAWebChannelsFeature.start();
     }
 
     // SessionChangeListener
