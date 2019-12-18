@@ -278,10 +278,7 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
         onTimeChange(mMedia.getMediaElement(), mMedia.getCurrentTime());
         onVolumeChange(mMedia.getMediaElement(), mMedia.getVolume(), mMedia.isMuted());
         onReadyStateChange(mMedia.getMediaElement(), mMedia.getReadyState());
-        if (mMedia.isPlaying()) {
-            onPlaybackStateChange(mMedia.getMediaElement(), MediaElement.MEDIA_STATE_PLAY);
-        }
-
+        onPlaybackStateChange(mMedia.getMediaElement(), mMedia.isPlaying() ? MediaElement.MEDIA_STATE_PLAY : MediaElement.MEDIA_STATE_PAUSE);
         mMedia.addMediaListener(this);
     }
 
