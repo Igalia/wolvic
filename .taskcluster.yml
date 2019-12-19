@@ -43,6 +43,7 @@ tasks:
               && rm -rf gvr-android-sdk && git clone https://github.com/MozillaReality/FirefoxReality-gvr-android-sdk.git gvr-android-sdk
               && git submodule update
               && ./gradlew --no-daemon --console=plain clean `python tools/taskcluster/build_targets.py =all+googlevr+noapi`
+              && ./gradlew app:testNoapiArm64DebugUnitTest
         metadata:
           name: Firefox Reality for Android - Build - Pull Request
           description: Building Firefox Reality for Android (via Gradle) - triggered by a pull request.

@@ -15,6 +15,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import mozilla.appservices.Megazord
+import mozilla.appservices.rustlog.LogAdapterCannotEnable
 import mozilla.components.concept.sync.*
 import mozilla.components.service.fxa.*
 import mozilla.components.service.fxa.manager.FxaAccountManager
@@ -29,8 +30,6 @@ import org.mozilla.geckoview.GeckoResult
 import org.mozilla.geckoview.GeckoSession
 import org.mozilla.vrbrowser.R
 import org.mozilla.vrbrowser.browser.engine.EngineProvider
-import org.mozilla.vrbrowser.browser.engine.GeckoViewFetchClient
-import org.mozilla.vrbrowser.browser.engine.SessionStore
 import org.mozilla.vrbrowser.utils.SystemUtils
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService
 
@@ -52,7 +51,11 @@ class Services(val context: Context, places: Places): GeckoSession.NavigationDel
     // This makes bookmarks storage accessible to background sync workers.
     init {
         Megazord.init()
-        RustLog.enable()
+        try {
+            RustLog.enable()
+        } catch (e: LogAdapterCannotEnable) {
+            android.util.Log.w(LOGTAG, "RustLog has been enabled.")
+        }
         RustHttpConfig.setClient(lazy { EngineProvider.createClient(context) })
 
         // Make sure we get logs out of our android-components.

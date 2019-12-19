@@ -5,6 +5,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.UiThread;
+import androidx.annotation.VisibleForTesting;
 
 import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.GleanMetrics.Distribution;
@@ -157,6 +158,11 @@ public class GleanMetricsService {
 
     private static void setStartupMetrics() {
         Distribution.INSTANCE.getChannelName().set(DeviceType.isOculusBuild() ? "oculusvr" : BuildConfig.FLAVOR_platform);
+    }
+
+    @VisibleForTesting
+    public static void testSetStartupMetrics() {
+        setStartupMetrics();
     }
 
     public static class FxA {

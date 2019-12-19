@@ -229,7 +229,12 @@ class Accounts constructor(val context: Context) {
 
     private fun loadDefaultProfilePicture(): BitmapDrawable? {
         BitmapFactory.decodeResource(context.resources, R.drawable.ic_icon_settings_account)?.let {
-            BitmapCache.getInstance(context).addBitmap(PROFILE_PICTURE_TAG, it)
+            try {
+                BitmapCache.getInstance(context).addBitmap(PROFILE_PICTURE_TAG, it)
+            } catch (e: NullPointerException) {
+                Log.w(LOGTAG, "Bitmap is a null pointer.")
+                return null
+            }
             profilePicture = BitmapDrawable(context.resources, ViewUtils.getRoundedCroppedBitmap(it))
         }
 

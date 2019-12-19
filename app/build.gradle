@@ -414,6 +414,10 @@ android {
             ]
         }
     }
+
+    testOptions {
+        unitTests.includeAndroidResources = true
+    }
 }
 
 configurations {
@@ -460,6 +464,7 @@ dependencies {
     implementation deps.android_components.support_rustlog
     implementation deps.android_components.support_rusthttp
     implementation deps.android_components.glean
+    implementation deps.app_services.rustlog
 
     // For production builds, the native code for all `org.mozilla.appservices`
     // dependencies gets compiled together into a single "megazord" build, and
@@ -467,13 +472,9 @@ dependencies {
     // https://mozilla.github.io/application-services/docs/applications/consuming-megazord-libraries.html
     // For now we can jut use the one that's specifically designed for Fenix.
     implementation deps.app_services.megazord
-    testImplementation deps.app_services.megazord_forUnitTests
     modules {
         module('org.mozilla.appservices:full-megazord') {
             replacedBy('org.mozilla.appservices:fenix-megazord', 'prefer the fenix megazord, to reduce final application size')
-        }
-        module('org.mozilla.appservices:fenix-megazord') {
-            replacedBy('org.mozilla.appservices:fenix-megazord-forUnitTests', 'prefer the forUnitTests variant if present')
         }
     }
 
@@ -495,9 +496,16 @@ dependencies {
     implementation deps.disklrucache.disklrucache
 
     // Testing
-    testImplementation deps.junit
     androidTestImplementation deps.atsl.runner
     androidTestImplementation deps.espresso.core
+    testImplementation deps.junit
+    testImplementation deps.atsl.core
+    testImplementation deps.robolectric
+    testImplementation deps.app_services.megazord_forUnitTests
+    testImplementation deps.app_services.rustlog
+    testImplementation deps.android_components.support_test
+    testImplementation deps.telemetry.glean_unittests
+    testImplementation deps.work.testing
 
     // Daydream
     googlevrImplementation deps.google_vr.sdk_base
