@@ -164,7 +164,7 @@
          'Firefox Display Language' dialog window (accessible from the browser's Settings dialog window).
          Below this string appears a list of locales for the user to choose as their preferred display
          language for the application UI. -->
-    <string name="settings_language_choose_display_language_title">Langue d\'affichage de %1$s</string>
+    <string name="settings_language_choose_display_language_title">Langue d’affichage de %1$s</string>
 
     <!-- This string is used to label a text label that appears in the header description of 'Language Settings' ->
          'Firefox Display Language' dialog window (accessible from the browser's Settings dialog window).
@@ -615,8 +615,7 @@
 
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable permission to collect telemetry data. -->
-    <string name="security_options_telemetry_send_data">Autoriser %1$s à envoyer des données techniques et d’interaction à Mozilla
-</string>
+    <string name="security_options_telemetry_send_data">Autoriser %1$s à envoyer des données techniques et d’interaction à Mozilla</string>
 
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable permission to send crash reports. -->
@@ -646,7 +645,7 @@
 
     <!-- This string is displayed in a dialog box show to the user while the Voice Search is being
          performed. It indicates that the search query is running and they should wait for the result. -->
-    <string name="voice_search_decoding">Recherche en cours...</string>
+    <string name="voice_search_decoding">Recherche en cours…</string>
 
     <!-- This string is displayed in a dialog box show to the user while the Voice Search is being
          performed. It indicates that the search query is running and they should wait for the result. -->
@@ -662,7 +661,7 @@
 
     <!-- This string is displayed in the URL bar when it is empty. It informs the user that they
          may use the URL bar to search the Web or enter a Web address. -->
-    <string name="search_placeholder">Rechercher sur Internet ou saisir une adresse</string>
+    <string name="search_placeholder">Rechercher sur le Web ou saisir une adresse</string>
 
     <!-- This string labels a button that is used to cancel an action.
          This appears in such contexts as dialog boxes, `<select>` menus, etc. -->
@@ -1116,17 +1115,15 @@
     <!-- This string is used as the body of the Private Browsing page that is opened when the
          Private Browsing Mode button from the tray is clicked.
          '%1$s' will be replaced at runtime with the app's name. -->
-    <string name="private_browsing_body"><![CDATA[
-<p>Lorsque vous naviguez dans une fenêtre privée, %1$s <strong>n’enregistre pas</strong>:</p>
+    <string name="private_browsing_body"><![CDATA[<p>Lorsque vous naviguez dans une fenêtre privée, %1$s <strong>n’enregistre pas</strong> :</p>
 <ul class="two-column">
 	<li>les pages consultées</li>
-	<li>recherches</li>
-	<li>cookies</li>
-	<li>fichiers temporaires</li>
+	<li>les recherches</li>
+	<li>les cookies</li>
+	<li>les fichiers temporaires</li>
 </ul>
 <p>La navigation privée <strong>ne vous offre pas l’anonymat</strong> sur Internet. Votre fournisseur d’accès à Internet ou votre employeur peuvent toujours connaître les pages que vous visitez.</p>
-<p class="about-info">En savoir plus <a id="learnMore">Navigation privée</a>.</p>
-     ]]></string>
+<p class="about-info">En savoir plus sur la <a id="learnMore">navigation privée</a>.</p>]]></string>
 
     <!-- This string is displayed in any button used for removing all the items in the current context.
          '%1$s' will be replaced at runtime with the app's name. -->
