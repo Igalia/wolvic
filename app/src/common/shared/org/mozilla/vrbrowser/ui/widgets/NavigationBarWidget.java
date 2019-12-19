@@ -331,8 +331,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mWidgetManager.addConnectivityListener(mConnectivityDelegate);
 
         mVoiceSearchWidget = createChild(VoiceSearchWidget.class, false);
-        mVoiceSearchWidget.getPlacement().parentAnchorY = 0.0f;
-        mVoiceSearchWidget.getPlacement().translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.base_app_dialog_y_distance);
         mVoiceSearchWidget.setDelegate(this);
 
         mSuggestionsProvider = new SuggestionsProvider(getContext());

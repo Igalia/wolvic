@@ -33,7 +33,6 @@ import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.PanZoomController;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserApplication;
-import org.mozilla.vrbrowser.browser.HistoryStore;
 import org.mozilla.vrbrowser.browser.PromptDelegate;
 import org.mozilla.vrbrowser.browser.SessionChangeListener;
 import org.mozilla.vrbrowser.browser.SettingsStore;
@@ -48,24 +47,17 @@ import org.mozilla.vrbrowser.ui.callbacks.HistoryCallback;
 import org.mozilla.vrbrowser.ui.callbacks.LibraryItemContextMenuClickCallback;
 import org.mozilla.vrbrowser.ui.views.BookmarksView;
 import org.mozilla.vrbrowser.ui.views.HistoryView;
-import org.mozilla.vrbrowser.ui.widgets.dialogs.BaseAppDialogWidget;
-import org.mozilla.vrbrowser.ui.widgets.dialogs.ClearCacheDialogWidget;
-import org.mozilla.vrbrowser.ui.widgets.dialogs.MessageDialogWidget;
+import org.mozilla.vrbrowser.ui.widgets.dialogs.ClearHistoryDialogWidget;
+import org.mozilla.vrbrowser.ui.widgets.dialogs.PromptDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.SelectionActionWidget;
 import org.mozilla.vrbrowser.ui.widgets.menus.ContextMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.menus.LibraryMenuWidget;
-import org.mozilla.vrbrowser.ui.widgets.prompts.AlertPromptWidget;
-import org.mozilla.vrbrowser.ui.widgets.prompts.ConfirmPromptWidget;
-import org.mozilla.vrbrowser.ui.widgets.prompts.PromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.settings.SettingsWidget;
 import org.mozilla.vrbrowser.utils.ConnectivityReceiver;
-import org.mozilla.vrbrowser.utils.SystemUtils;
 import org.mozilla.vrbrowser.utils.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
@@ -108,11 +100,11 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private TopBarWidget mTopBar;
     private TitleBarWidget mTitleBar;
     private WidgetManagerDelegate mWidgetManager;
-    private AlertPromptWidget mAlertPrompt;
-    private ConfirmPromptWidget mConfirmPrompt;
-    private NoInternetWidget mNoInternetToast;
-    private MessageDialogWidget mAppDialog;
-    private ClearCacheDialogWidget mClearCacheDialog;
+    private PromptDialogWidget mAlertDialog;
+    private PromptDialogWidget mConfirmDialog;
+    private PromptDialogWidget mNoInternetDialog;
+    private PromptDialogWidget mAppDialog;
+    private ClearHistoryDialogWidget mClearHistoryDialog;
     private ContextMenuWidget mContextMenu;
     private SelectionActionWidget mSelectionMenu;
     private LibraryMenuWidget mLibraryItemContextMenu;
@@ -341,17 +333,25 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     private ConnectivityReceiver.Delegate mConnectivityDelegate = connected -> {
         if (mActive) {
-            if (mNoInternetToast == null) {
-                mNoInternetToast = new NoInternetWidget(getContext());
-                mNoInternetToast.mWidgetPlacement.parentHandle = getHandle();
-                mNoInternetToast.mWidgetPlacement.parentAnchorY = 0.0f;
-                mNoInternetToast.mWidgetPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.base_app_dialog_y_distance);
+            if (mNoInternetDialog == null) {
+                mNoInternetDialog = new PromptDialogWidget(getContext());
+                mNoInternetDialog.setButtons(new int[] {
+                        R.string.ok_button
+                });
+                mNoInternetDialog.setCheckboxVisible(false);
+                mNoInternetDialog.setDescriptionVisible(false);
+                mNoInternetDialog.setTitle(R.string.no_internet_title);
+                mNoInternetDialog.setBody(R.string.no_internet_message);
+                mNoInternetDialog.setButtonsDelegate(index -> {
+                    mNoInternetDialog.hide(REMOVE_WIDGET);
+                });
             }
-            if (!connected && !mNoInternetToast.isVisible()) {
-                mNoInternetToast.show(REQUEST_FOCUS);
 
-            } else if (connected && mNoInternetToast.isVisible()) {
-                mNoInternetToast.hide(REMOVE_WIDGET);
+            if (!connected && !mNoInternetDialog.isVisible()) {
+                mNoInternetDialog.show(REQUEST_FOCUS);
+
+            } else if (connected && mNoInternetDialog.isVisible()) {
+                mNoInternetDialog.hide(REMOVE_WIDGET);
             }
         }
     };
@@ -1226,88 +1226,77 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private void setPrivateBrowsingEnabled(boolean isEnabled) {
     }
 
-    public void showAlert(String title, @NonNull String msg, @NonNull PromptWidget.PromptDelegate callback) {
-        mAlertPrompt = new AlertPromptWidget(getContext());
-        mAlertPrompt.mWidgetPlacement.parentHandle = getHandle();
-        mAlertPrompt.mWidgetPlacement.parentAnchorY = 0.0f;
-        mAlertPrompt.mWidgetPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.base_app_dialog_y_distance);
-        mAlertPrompt.setTitle(title);
-        mAlertPrompt.setMessage(msg);
-        mAlertPrompt.setPromptDelegate(callback);
-        mAlertPrompt.show(REQUEST_FOCUS);
+    public void showAlert(String title, @NonNull String msg, @Nullable PromptDialogWidget.Delegate callback) {
+        if (mAlertDialog == null) {
+            mAlertDialog = new PromptDialogWidget(getContext());
+            mAlertDialog.setButtons(new int[] {
+                    R.string.ok_button
+            });
+            mAlertDialog.setCheckboxVisible(false);
+            mAlertDialog.setDescriptionVisible(false);
+        }
+        mAlertDialog.setTitle(title);
+        mAlertDialog.setBody(msg);
+        mAlertDialog.setButtonsDelegate(index -> {
+            mAlertDialog.hide(REMOVE_WIDGET);
+            if (callback != null) {
+                callback.onButtonClicked(index);
+            }
+        });
+        mAlertDialog.show(REQUEST_FOCUS);
     }
 
-    public void showButtonPrompt(String title, @NonNull String msg, @NonNull String[] btnMsg, @NonNull ConfirmPromptWidget.ConfirmPromptDelegate callback) {
-        mConfirmPrompt = new ConfirmPromptWidget(getContext());
-        mConfirmPrompt.mWidgetPlacement.parentHandle = getHandle();
-        mConfirmPrompt.mWidgetPlacement.parentAnchorY = 0.0f;
-        mConfirmPrompt.mWidgetPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.base_app_dialog_y_distance);
-        mConfirmPrompt.setTitle(title);
-        mConfirmPrompt.setMessage(msg);
-        mConfirmPrompt.setButtons(btnMsg);
-        mConfirmPrompt.setPromptDelegate(callback);
-        mConfirmPrompt.show(REQUEST_FOCUS);
+    public void showConfirmPrompt(String title, @NonNull String msg, @NonNull String[] btnMsg, @Nullable PromptDialogWidget.Delegate callback) {
+        if (mConfirmDialog == null) {
+            mConfirmDialog = new PromptDialogWidget(getContext());
+            mAlertDialog.setButtons(new int[] {
+                    R.string.cancel_button,
+                    R.string.ok_button
+            });
+            mConfirmDialog.setCheckboxVisible(false);
+            mConfirmDialog.setDescriptionVisible(false);
+        }
+        mConfirmDialog.setTitle(title);
+        mConfirmDialog.setBody(msg);
+        mConfirmDialog.setButtons(btnMsg);
+        mAlertDialog.setButtonsDelegate(index -> {
+            mAlertDialog.hide(REMOVE_WIDGET);
+            if (callback != null) {
+                callback.onButtonClicked(index);
+            }
+        });
+        mConfirmDialog.show(REQUEST_FOCUS);
     }
 
-    public void showAppDialog(@NonNull String title, @NonNull @StringRes int  description, @NonNull  @StringRes int [] btnMsg,
-                              @NonNull BaseAppDialogWidget.Delegate buttonsCallback, @NonNull MessageDialogWidget.Delegate messageCallback) {
-        mAppDialog = new MessageDialogWidget(getContext());
-        mAppDialog.mWidgetPlacement.parentHandle = getHandle();
-        mAppDialog.mWidgetPlacement.parentAnchorY = 0.0f;
-        mAppDialog.mWidgetPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.base_app_dialog_y_distance);
+    public void showDialog(@NonNull String title, @NonNull @StringRes int  description, @NonNull  @StringRes int [] btnMsg,
+                           @Nullable PromptDialogWidget.Delegate buttonsCallback, @Nullable Runnable linkCallback) {
+        mAppDialog = new PromptDialogWidget(getContext());
+        mAppDialog.setIconVisible(false);
+        mAppDialog.setCheckboxVisible(false);
+        mAppDialog.setDescriptionVisible(false);
         mAppDialog.setTitle(title);
-        mAppDialog.setMessage(description);
+        mAppDialog.setBody(description);
         mAppDialog.setButtons(btnMsg);
-        mAppDialog.setButtonsDelegate(buttonsCallback);
-        mAppDialog.setMessageDelegate(messageCallback);
+        mAppDialog.setButtonsDelegate(index -> {
+            mAppDialog.hide(REMOVE_WIDGET);
+            if (buttonsCallback != null) {
+                buttonsCallback.onButtonClicked(index);
+            }
+        });
+        mAppDialog.setLinkDelegate(() -> {
+            mAppDialog.hide(REMOVE_WIDGET);
+            if (linkCallback != null) {
+                linkCallback.run();
+            }
+        });
         mAppDialog.show(REQUEST_FOCUS);
     }
 
     public void showClearCacheDialog() {
-        mClearCacheDialog = new ClearCacheDialogWidget(getContext());
-        mClearCacheDialog.mWidgetPlacement.parentHandle = getHandle();
-        mClearCacheDialog.mWidgetPlacement.parentAnchorY = 0.0f;
-        mClearCacheDialog.mWidgetPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.base_app_dialog_y_distance);
-        mClearCacheDialog.setTitle(R.string.history_clear);
-        mClearCacheDialog.setButtons(new int[] {
-                R.string.history_clear_cancel,
-                R.string.history_clear_now
-        });
-        mClearCacheDialog.setButtonsDelegate((index) -> {
-            if (index == BaseAppDialogWidget.NEGATIVE) {
-                mClearCacheDialog.hide(REMOVE_WIDGET);
-
-            } else {
-                Calendar date = new GregorianCalendar();
-                date.set(Calendar.HOUR_OF_DAY, 0);
-                date.set(Calendar.MINUTE, 0);
-                date.set(Calendar.SECOND, 0);
-                date.set(Calendar.MILLISECOND, 0);
-
-                long currentTime = System.currentTimeMillis();
-                long todayLimit = date.getTimeInMillis();
-                long yesterdayLimit = todayLimit - SystemUtils.ONE_DAY_MILLIS;
-                long oneWeekLimit = todayLimit - SystemUtils.ONE_WEEK_MILLIS;
-
-                HistoryStore store = SessionStore.get().getHistoryStore();
-                switch (mClearCacheDialog.getSelectedRange()) {
-                    case ClearCacheDialogWidget.TODAY:
-                        store.deleteVisitsBetween(todayLimit, currentTime);
-                        break;
-                    case ClearCacheDialogWidget.YESTERDAY:
-                        store.deleteVisitsBetween(yesterdayLimit, currentTime);
-                        break;
-                    case ClearCacheDialogWidget.LAST_WEEK:
-                        store.deleteVisitsBetween(oneWeekLimit, currentTime);
-                        break;
-                    case ClearCacheDialogWidget.EVERYTHING:
-                        store.deleteEverything();
-                        break;
-                }
-                SessionStore.get().purgeSessionHistory();
-            }
-        });
-        mClearCacheDialog.show(REQUEST_FOCUS);
+        if (mClearHistoryDialog == null) {
+            mClearHistoryDialog = new ClearHistoryDialogWidget(getContext());
+        }
+        mClearHistoryDialog.show(REQUEST_FOCUS);
     }
 
     public void setMaxWindowScale(float aScale) {

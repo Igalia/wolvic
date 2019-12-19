@@ -6,16 +6,11 @@
 package org.mozilla.vrbrowser.ui.widgets.dialogs;
 
 import android.content.Context;
-import android.view.LayoutInflater;
-
-import androidx.databinding.DataBindingUtil;
 
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.databinding.PopupBlockDialogBinding;
 
-public class PopUpBlockDialogWidget extends BaseAppDialogWidget {
+public class PopUpBlockDialogWidget extends PromptDialogWidget {
 
-    private PopupBlockDialogBinding mPopUpBinding;
     private boolean mIsChecked;
 
     public PopUpBlockDialogWidget(Context aContext) {
@@ -26,16 +21,19 @@ public class PopUpBlockDialogWidget extends BaseAppDialogWidget {
     protected void initialize(Context aContext) {
         super.initialize(aContext);
 
-        LayoutInflater inflater = LayoutInflater.from(aContext);
-
-        // Inflate this data binding layout
-        mPopUpBinding = DataBindingUtil.inflate(inflater, R.layout.popup_block_dialog, mBinding.dialogContent, true);
-        mPopUpBinding.contentCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> mIsChecked = isChecked);
+        setDescriptionVisible(false);
 
         setButtons(new int[] {
                 R.string.popup_block_button_cancel,
                 R.string.popup_block_button_show
         });
+
+        setIcon(R.drawable.ff_logo);
+        setTitle(String.format(getContext().getString(R.string.popup_block_title), getContext().getString(R.string.app_name)));
+        setBody(R.string.popup_block_description);
+        setCheckboxText(R.string.popup_block_checkbox);
+
+        mBinding.checkbox.setOnCheckedChangeListener((buttonView, isChecked) -> mIsChecked = isChecked);
 
     }
 

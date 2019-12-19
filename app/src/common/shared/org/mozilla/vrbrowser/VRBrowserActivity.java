@@ -36,9 +36,6 @@ import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import org.mozilla.gecko.util.ThreadUtils;
-import org.mozilla.geckoview.CrashReporter;
-import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoVRManager;
@@ -62,15 +59,15 @@ import org.mozilla.vrbrowser.ui.widgets.RootWidget;
 import org.mozilla.vrbrowser.ui.widgets.TrayWidget;
 import org.mozilla.vrbrowser.ui.widgets.UISurfaceTextureRenderer;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
-import org.mozilla.vrbrowser.ui.widgets.menus.VideoProjectionMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.Widget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.ui.widgets.WindowWidget;
 import org.mozilla.vrbrowser.ui.widgets.Windows;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.CrashDialogWidget;
+import org.mozilla.vrbrowser.ui.widgets.dialogs.PromptDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.WhatsNewWidget;
-import org.mozilla.vrbrowser.ui.widgets.prompts.ConfirmPromptWidget;
+import org.mozilla.vrbrowser.ui.widgets.menus.VideoProjectionMenuWidget;
 import org.mozilla.vrbrowser.utils.BitmapCache;
 import org.mozilla.vrbrowser.utils.ConnectivityReceiver;
 import org.mozilla.vrbrowser.utils.ConnectivityReceiver.Delegate;
@@ -79,13 +76,6 @@ import org.mozilla.vrbrowser.utils.LocaleUtils;
 import org.mozilla.vrbrowser.utils.ServoUtils;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -127,7 +117,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     static final int GestureSwipeRight = 1;
     static final int SwipeDelay = 1000; // milliseconds
     static final long RESET_CRASH_COUNT_DELAY = 5000;
-    static final String CRASH_STATS_URL = "https://crash-stats.mozilla.com/report/index/";
 
     static final String LOGTAG = SystemUtils.createLogtag(VRBrowserActivity.class);
     HashMap<Integer, Widget> mWidgets;
@@ -230,7 +219,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         // Create broadcast receiver for getting crash messages from crash process
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(CrashReporterService.CRASH_ACTION);
-        registerReceiver(mCrashReceiver, intentFilter, getString(R.string.app_permission_name), null);
+        registerReceiver(mCrashReceiver, intentFilter, BuildConfig.APPLICATION_ID + "." + getString(R.string.app_permission_name), null);
 
         mLastGesture = NoGesture;
         super.onCreate(savedInstanceState);
@@ -594,27 +583,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         }
         boolean isCrashReportingEnabled = SettingsStore.getInstance(this).isCrashReportingEnabled();
         if (isCrashReportingEnabled) {
-            postCrashFiles(files);
+            SystemUtils.postCrashFiles(this, files);
+
         } else {
             if (mCrashDialog == null) {
-                mCrashDialog = new CrashDialogWidget(this);
+                mCrashDialog = new CrashDialogWidget(this, files);
             }
-            mCrashDialog.setCrashDialogDelegate(
-                    new CrashDialogWidget.CrashDialogDelegate() {
-                        @Override
-                        public void onSendData() {
-                            postCrashFiles(files);
-                        }
-
-                        @Override
-                        public void onDoNotSendData() {
-                            for (String file : files) {
-                                Log.e(LOGTAG, "Deleting crashfile: " + file);
-                                getBaseContext().deleteFile(file);
-                            }
-                        }
-                    }
-            );
             mCrashDialog.show(UIWidget.REQUEST_FOCUS);
         }
     }
@@ -629,63 +603,14 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         boolean isCrashReportingEnabled = SettingsStore.getInstance(this).isCrashReportingEnabled();
         if (isCrashReportingEnabled) {
-            postCrashFiles(dumpFile, extraFile);
+            SystemUtils.postCrashFiles(this, dumpFile, extraFile);
+
         } else {
             if (mCrashDialog == null) {
-                mCrashDialog = new CrashDialogWidget(this);
+                mCrashDialog = new CrashDialogWidget(this, dumpFile, extraFile);
             }
-            mCrashDialog.setCrashDialogDelegate(() -> postCrashFiles(dumpFile, extraFile));
             mCrashDialog.show(UIWidget.REQUEST_FOCUS);
         }
-    }
-
-    private void sendCrashFiles(@NonNull final String aDumpFile, @NonNull final String aExtraFile) {
-        try {
-            GeckoResult<String> result = CrashReporter.sendCrashReport(VRBrowserActivity.this, new File(aDumpFile), new File(aExtraFile), getString(R.string.crash_app_name));
-
-            result.accept(crashID -> {
-                Log.e(LOGTAG, "Submitted crash report id: " + crashID);
-                Log.e(LOGTAG, "Report available at: " + CRASH_STATS_URL + crashID);
-            }, ex -> {
-                Log.e(LOGTAG, "Failed to submit crash report: " + (ex != null ? ex.getMessage() : "Exception is NULL"));
-            });
-        } catch (IOException | URISyntaxException e) {
-            Log.e(LOGTAG, "Failed to send crash report: " + e.toString());
-        }
-    }
-
-    private void postCrashFiles(@NonNull final String aDumpFile, @NonNull final String aExtraFile) {
-        ThreadUtils.postToBackgroundThread(() -> {
-            sendCrashFiles(aDumpFile, aExtraFile);
-        });
-    }
-
-    private void postCrashFiles(final ArrayList<String> aFiles) {
-        ThreadUtils.postToBackgroundThread(() -> {
-            for (String file: aFiles) {
-                try {
-                    ArrayList<String> list = new ArrayList<>(2);
-                    try (FileInputStream in = getBaseContext().openFileInput(file)) {
-                        try(BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
-                            String line;
-                            while((line = br.readLine()) != null) {
-                                list.add(line);
-                            }
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    if (list.size() < 2) {
-                        Log.e(LOGTAG, "Failed read crash dump file names from: " + file);
-                        return;
-                    }
-                    sendCrashFiles(list.get(0), list.get(1));
-                } finally {
-                    Log.d(LOGTAG,"Removing crash file: " + file);
-                    getBaseContext().deleteFile(file);
-                }
-            }
-        });
     }
 
     @Override
@@ -1109,7 +1034,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 mWindows.getFocusedWindow().showAlert(
                         getString(R.string.not_entitled_title),
                         getString(R.string.not_entitled_message, getString(R.string.app_name)),
-                        () -> VRBrowserActivity.this.finish());
+                        index -> finish());
             }
         });
     }
@@ -1135,18 +1060,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             }
             window.getSession().loadHomePage();
             final String[] buttons = {getString(R.string.ok_button), getString(R.string.performance_unblock_page)};
-            window.showButtonPrompt(getString(R.string.performance_title), getString(R.string.performance_message), buttons, new ConfirmPromptWidget.ConfirmPromptDelegate() {
-                @Override
-                public void confirm(int index) {
-                    if (index == GeckoSession.PromptDelegate.ButtonPrompt.Type.NEGATIVE) {
-                        mPoorPerformanceWhiteList.add(originalUri);
-                        window.getSession().loadUri(originalUri);
-                    }
-                }
-
-                @Override
-                public void dismiss() {
-
+            window.showConfirmPrompt(getString(R.string.performance_title), getString(R.string.performance_message), buttons, index -> {
+                if (index == PromptDialogWidget.NEGATIVE) {
+                    mPoorPerformanceWhiteList.add(originalUri);
+                    window.getSession().loadUri(originalUri);
                 }
             });
         });

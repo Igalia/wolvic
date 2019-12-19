@@ -5,29 +5,22 @@
 
 package org.mozilla.vrbrowser.ui.widgets.dialogs;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.databinding.DataBindingUtil;
 
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.browser.Accounts;
 import org.mozilla.vrbrowser.browser.SettingsStore;
-import org.mozilla.vrbrowser.databinding.WhatsNewBinding;
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
-import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
-import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-public class WhatsNewWidget extends UIDialog {
+public class WhatsNewWidget extends PromptDialogWidget {
 
     private Accounts mAccounts;
     private Runnable mSignInCallback;
@@ -37,7 +30,8 @@ public class WhatsNewWidget extends UIDialog {
 
     public WhatsNewWidget(Context aContext) {
         super(aContext);
-        initialize();
+
+        initialize(aContext);
     }
 
     public void setSignInCallback(@NonNull Runnable callback) {
@@ -48,38 +42,36 @@ public class WhatsNewWidget extends UIDialog {
         mStartBrowsingCallback = callback;
     }
 
-    @SuppressLint("ClickableViewAccessibility")
-    private void initialize() {
-        LayoutInflater inflater = LayoutInflater.from(getContext());
+    @Override
+    protected void initialize(Context aContext) {
+        super.initialize(aContext);
 
         mUIThreadExecutor = ((VRBrowserApplication)getContext().getApplicationContext()).getExecutors().mainThread();
-
         mAccounts = ((VRBrowserApplication)getContext().getApplicationContext()).getAccounts();
 
-        // Inflate this data binding layout
-        WhatsNewBinding mBinding = DataBindingUtil.inflate(inflater, R.layout.whats_new, this, true);
+        setButtons(new int[] {
+                R.string.whats_new_button_start_browsing,
+                R.string.whats_new_button_sign_in
+        });
+        setButtonsDelegate(index -> {
+            if (index == PromptDialogWidget.NEGATIVE) {
+                startBrowsing();
 
-        mBinding.signInButton.setOnClickListener(this::signIn);
-        mBinding.startBrowsingButton.setOnClickListener(this::startBrowsing);
+            } else if (index == PromptDialogWidget.POSITIVE) {
+                signIn();
+            }
+        });
+
+        setCheckboxVisible(false);
+
+        setIcon(R.drawable.ic_asset_image_accounts);
+        setTitle(R.string.whats_new_title_1);
+        setBody(R.string.whats_new_body_1);
+        setDescription(R.string.whats_new_body_sub_1);
     }
 
     public void setLoginOrigin(Accounts.LoginOrigin origin) {
         mLoginOrigin = origin;
-    }
-
-    @Override
-    protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
-        aPlacement.visible = false;
-        aPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.whats_new_width);
-        aPlacement.height = WidgetPlacement.dpDimension(getContext(), R.dimen.whats_new_height);
-        aPlacement.parentAnchorX = 0.5f;
-        aPlacement.parentAnchorY = 0.0f;
-        aPlacement.anchorX = 0.5f;
-        aPlacement.anchorY = 0.5f;
-        aPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.settings_world_y) -
-                                  WidgetPlacement.unitFromMeters(getContext(), R.dimen.window_world_y);
-        aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.settings_world_z) -
-                                  WidgetPlacement.unitFromMeters(getContext(), R.dimen.window_world_z);
     }
 
     @Override
@@ -89,7 +81,7 @@ public class WhatsNewWidget extends UIDialog {
         SettingsStore.getInstance(getContext()).setWhatsNewDisplayed(true);
     }
 
-    private void signIn(View view) {
+    private void signIn() {
         if (mAccounts.getAccountStatus() == Accounts.AccountStatus.SIGNED_IN) {
             mAccounts.logoutAsync();
 
@@ -123,7 +115,7 @@ public class WhatsNewWidget extends UIDialog {
         }
     }
 
-    private void startBrowsing(View view) {
+    private void startBrowsing() {
         if (mStartBrowsingCallback != null) {
             mStartBrowsingCallback.run();
         }

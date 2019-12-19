@@ -3,13 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <RelativeLayout
-        android:layout_width="@dimen/checkbox_dialog_width"
-        android:layout_height="@dimen/checkbox_dialog_height"
+        android:layout_width="@dimen/prompt_dialog_width"
+        android:layout_height="@dimen/prompt_dialog_height"
         android:background="@drawable/dialog_background"
-        android:paddingStart="@dimen/checkbox_dialog_padding_sides"
-        android:paddingTop="@dimen/checkbox_dialog_padding_top"
-        android:paddingEnd="@dimen/checkbox_dialog_padding_sides"
-        android:paddingBottom="@dimen/checkbox_dialog_padding_bottom">
+        android:paddingStart="@dimen/prompt_dialog_padding_sides"
+        android:paddingTop="@dimen/prompt_dialog_padding_top"
+        android:paddingEnd="@dimen/prompt_dialog_padding_sides"
+        android:paddingBottom="@dimen/prompt_dialog_padding_bottom">
 
         <FrameLayout
             android:id="@+id/imageContainer"
@@ -32,7 +32,8 @@
             android:layout_width="322dp"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_below="@+id/imageContainer">
+            android:layout_below="@+id/imageContainer"
+            android:layout_marginBottom="10dp">
             <TextView
                 android:id="@+id/title"
                 android:layout_width="match_parent"
@@ -48,9 +49,11 @@
         <FrameLayout
             android:id="@+id/bodyContainer"
             android:layout_width="322dp"
-            android:layout_height="80dp"
+            android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_below="@+id/titleContainer">
+            android:layout_below="@+id/titleContainer"
+            android:layout_above="@+id/descriptionContainer"
+            android:layout_marginBottom="10dp">
             <TextView
                 android:id="@+id/body"
                 android:layout_width="match_parent"
@@ -58,8 +61,27 @@
                 android:layout_gravity="center_horizontal"
                 android:gravity="center_horizontal"
                 tools:text="Body"
+                android:lineSpacingMultiplier="1.25"
                 android:textColor="@color/fog"
                 android:textSize="@dimen/text_medium_size" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/descriptionContainer"
+            android:layout_width="322dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_above="@+id/checkboxContainer"
+            android:layout_marginBottom="10dp">
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:text="Description"
+                android:textColor="@color/rhino"
+                android:textSize="@dimen/text_smaller_size" />
         </FrameLayout>
 
         <FrameLayout
@@ -68,7 +90,7 @@
             android:layout_height="22dp"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="10dp"
-            android:layout_below="@+id/bodyContainer">
+            android:layout_above="@+id/buttonsLayout">
             <CheckBox
                 android:id="@+id/checkbox"
                 android:layout_width="wrap_content"
@@ -76,6 +98,7 @@
                 android:button="@drawable/checkbox"
                 android:layout_gravity="center_horizontal"
                 android:textSize="@dimen/text_medium_size"
+                android:text="Checkbox"
                 tools:text="Checkbox" />
         </FrameLayout>
 
@@ -84,7 +107,8 @@
             android:layout_width="322dp"
             android:layout_height="36dp"
             android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true">
+            android:layout_centerHorizontal="true"
+            android:gravity="center">
 
             <Button
                 android:id="@+id/leftButton"
@@ -96,7 +120,7 @@
                 android:scaleType="fitCenter"
                 tools:text="Cancel"
                 android:textColor="@drawable/dialog_button_text_color"
-                android:textStyle="bold" />
+                android:textStyle="bold"/>
 
             <Button
                 android:id="@+id/rightButton"
@@ -108,7 +132,7 @@
                 android:scaleType="fitCenter"
                 tools:text="Accept"
                 android:textColor="@drawable/dialog_button_text_color"
-                android:textStyle="bold" />
+                android:textStyle="bold"/>
         </RelativeLayout>
     </RelativeLayout>
 </layout>

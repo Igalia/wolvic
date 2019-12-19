@@ -132,8 +132,8 @@
             <FrameLayout
                 android:layout_width="@dimen/language_row_icon_size"
                 android:layout_height="@dimen/language_row_icon_size"
-                android:duplicateParentState="true">
-
+                android:duplicateParentState="true"
+                android:layout_marginEnd="10dp">
                 <ImageView
                     android:id="@+id/up"
                     android:layout_width="match_parent"
@@ -146,7 +146,12 @@
                     android:tint="@color/fog"
                     app:srcCompat="@drawable/ic_icon_language_move_up"
                     app:visibleGone="@{isPreferred &amp;&amp; !isFirst}" />
+            </FrameLayout>
 
+            <FrameLayout
+                android:layout_width="@dimen/language_row_icon_size"
+                android:layout_height="@dimen/language_row_icon_size"
+                android:duplicateParentState="true">
                 <ImageView
                     android:id="@+id/down"
                     android:layout_width="match_parent"
@@ -159,7 +164,6 @@
                     android:tint="@color/fog"
                     app:srcCompat="@drawable/ic_icon_language_move_down"
                     app:visibleGone="@{isPreferred &amp;&amp; !isLast}" />
-
             </FrameLayout>
         </LinearLayout>
     </RelativeLayout>

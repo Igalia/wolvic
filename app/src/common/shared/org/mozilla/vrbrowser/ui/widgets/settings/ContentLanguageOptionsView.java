@@ -24,7 +24,6 @@ import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
 
-import java.util.Arrays;
 import java.util.Collections;
 
 public class ContentLanguageOptionsView extends SettingsView {
@@ -77,8 +76,8 @@ public class ContentLanguageOptionsView extends SettingsView {
 
     @Override
     public Point getDimensions() {
-        return new Point( WidgetPlacement.dpDimension(getContext(), R.dimen.language_options_width),
-                WidgetPlacement.dpDimension(getContext(), R.dimen.language_options_height));
+        return new Point( WidgetPlacement.dpDimension(getContext(), R.dimen.settings_dialog_width),
+                WidgetPlacement.dpDimension(getContext(), R.dimen.settings_dialog_height));
     }
 
     private LanguageItemCallback mLanguageItemCallback = new LanguageItemCallback() {

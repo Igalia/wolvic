@@ -132,7 +132,7 @@ public class PromptDelegate implements
         mPrompt = new AlertPromptWidget(mContext);
         mPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
         mPrompt.getPlacement().parentAnchorY = 0.0f;
-        mPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.base_app_dialog_y_distance);
+        mPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.js_prompt_y_distance);
         mPrompt.setTitle(alertPrompt.title);
         mPrompt.setMessage(alertPrompt.message);
         mPrompt.setPromptDelegate(() -> result.complete(alertPrompt.dismiss()));
@@ -149,7 +149,7 @@ public class PromptDelegate implements
         mPrompt = new ConfirmPromptWidget(mContext);
         mPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
         mPrompt.getPlacement().parentAnchorY = 0.0f;
-        mPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.base_app_dialog_y_distance);
+        mPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.js_prompt_y_distance);
         mPrompt.setTitle(buttonPrompt.title);
         mPrompt.setMessage(buttonPrompt.message);
         ((ConfirmPromptWidget)mPrompt).setButtons(new String[] {
@@ -180,7 +180,7 @@ public class PromptDelegate implements
         mPrompt = new TextPromptWidget(mContext);
         mPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
         mPrompt.getPlacement().parentAnchorY = 0.0f;
-        mPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.base_app_dialog_y_distance);
+        mPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.js_prompt_y_distance);
         mPrompt.setTitle(textPrompt.title);
         mPrompt.setMessage(textPrompt.message);
         ((TextPromptWidget)mPrompt).setDefaultText(textPrompt.defaultValue);
@@ -208,7 +208,7 @@ public class PromptDelegate implements
         mPrompt = new AuthPromptWidget(mContext);
         mPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
         mPrompt.getPlacement().parentAnchorY = 0.0f;
-        mPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.base_app_dialog_y_distance);
+        mPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.js_prompt_y_distance);
         mPrompt.setTitle(authPrompt.title);
         mPrompt.setMessage(authPrompt.message);
         ((AuthPromptWidget)mPrompt).setAuthOptions(authPrompt.authOptions);
@@ -241,7 +241,7 @@ public class PromptDelegate implements
         mPrompt = new ChoicePromptWidget(mContext);
         mPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
         mPrompt.getPlacement().parentAnchorY = 0.0f;
-        mPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.base_app_dialog_y_distance);
+        mPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.js_prompt_y_distance);
         mPrompt.setTitle(choicePrompt.title);
         mPrompt.setMessage(choicePrompt.message);
         ((ChoicePromptWidget)mPrompt).setChoices(choicePrompt.choices);
@@ -352,10 +352,6 @@ public class PromptDelegate implements
         Optional<PopUpSite> site = mAllowedPopUpSites.stream().filter((item) -> item.url.equals(uri)).findFirst();
         if (!site.isPresent()) {
             mPopUpPrompt = new PopUpBlockDialogWidget(mContext);
-            mPopUpPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
-            mPopUpPrompt.getPlacement().parentAnchorY = 0.0f;
-            mPopUpPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.base_app_dialog_y_distance);
-            mPopUpPrompt.setTitle(uri);
             mPopUpPrompt.setButtonsDelegate(index -> {
                 boolean allowed = index != PopUpBlockDialogWidget.NEGATIVE;
                 boolean askAgain = mPopUpPrompt.askAgain();
@@ -384,7 +380,14 @@ public class PromptDelegate implements
                         }
                     });
                 }
+
+                mPopUpPrompt.hide(UIWidget.REMOVE_WIDGET);
             });
+            mPopUpPrompt.setDelegate(() -> mExecutors.mainThread().execute(() -> {
+                if (mPopupDelegate != null) {
+                    mPopupDelegate.onPopUpAvailable();
+                }
+            }));
             mPopUpPrompt.show(UIWidget.REQUEST_FOCUS);
 
         } else {
@@ -407,7 +410,7 @@ public class PromptDelegate implements
             mSlowScriptPrompt = new ConfirmPromptWidget(mContext);
             mSlowScriptPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
             mSlowScriptPrompt.getPlacement().parentAnchorY = 0.0f;
-            mSlowScriptPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.base_app_dialog_y_distance);
+            mSlowScriptPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.js_prompt_y_distance);
             mSlowScriptPrompt.setTitle(mContext.getResources().getString(R.string.slow_script_dialog_title));
             mSlowScriptPrompt.setMessage(mContext.getResources().getString(R.string.slow_script_dialog_description, aScriptFileName));
             mSlowScriptPrompt.setButtons(new String[]{

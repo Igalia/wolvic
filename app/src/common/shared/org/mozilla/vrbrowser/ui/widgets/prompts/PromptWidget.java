@@ -7,12 +7,15 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.UIDialog;
 
+/**
+ * Base widget used for the browser triggered prompts: alert, confirm, prompt, auth and select
+ */
 public class PromptWidget extends UIDialog {
 
     public interface PromptDelegate {
@@ -37,7 +40,7 @@ public class PromptWidget extends UIDialog {
         super(aContext, aAttrs, aDefStyle);
     }
 
-    public void setPromptDelegate(@NonNull PromptDelegate delegate) {
+    public void setPromptDelegate(@Nullable PromptDelegate delegate) {
         mPromptDelegate = delegate;
     }
 
@@ -62,7 +65,7 @@ public class PromptWidget extends UIDialog {
     @Override
     protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
         aPlacement.visible = false;
-        aPlacement.width =  WidgetPlacement.pixelDimension(getContext(), R.dimen.browser_width_pixels)/2;
+        aPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.prompt_width);
         mMaxHeight = WidgetPlacement.dpDimension(getContext(), R.dimen.prompt_height);
         aPlacement.height = mMaxHeight;
         aPlacement.parentAnchorX = 0.5f;
@@ -71,7 +74,6 @@ public class PromptWidget extends UIDialog {
         aPlacement.anchorY = 0.5f;
         aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.browser_children_z_distance);
     }
-
 
     @Override
     public void show(@ShowFlags int aShowFlags) {

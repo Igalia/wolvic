@@ -68,7 +68,6 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
             mWidgetManager.addWidget(mPermissionWidget);
         }
 
-        mPermissionWidget.getPlacement().parentHandle = mParentWidgetHandle;
         mPermissionWidget.showPrompt(aUri, aType, aCallback);
     }
 

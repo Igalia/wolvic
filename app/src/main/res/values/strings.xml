@@ -593,6 +593,10 @@
          of this storage even though the storage may not reside on external removable media. -->
     <string name="security_options_permission_storage">Read External Storage</string>
 
+    <!-- This string labels the button that displays or enables application access to the device's
+         camera and microphone, if present. -->
+    <string name="security_options_permission_camera_and_microphone">Camera And Microphone</string>
+
     <!-- This string labels the button in the privacy option panel that enables/disables the pop-up
          blocking. -->
     <string name="security_options_block_pup_up_windows">Block Pop-Up Windows</string>
@@ -657,6 +661,9 @@
          device's microphone. It explains why Voice Search is not working. -->
     <string name="voice_search_permission_after_decline">Please allow microphone access to use the Voice Search.</string>
 
+    <!-- This string is displayed in the button at the bottom of the Voice Search dialog. When clicked the Voice search dialog is closed. -->
+    <string name="voice_search_close">Close</string>
+
     <!-- This string is displayed in the URL bar when it is empty. It informs the user that they
          may use the URL bar to search the Web or enter a Web address. -->
     <string name="search_placeholder">Search the Web or enter address</string>
@@ -677,7 +684,7 @@
 
     <!-- This string explains why Mozilla would like the user to allow the crash data to be uploaded.
          '%1$s' will be replaced at runtime with the app's domain name. -->
-    <string name="crash_dialog_message">Please help Mozilla improve %1$s by sending your crash data.</string>
+    <string name="crash_dialog_message">Please help Mozilla improve %1$s by sending your crash data. &lt;a href="more">Learn More&lt;/a></string>
 
     <!-- This string labels a checkbox in the crash dialog box. When checked, the user will no longer
          be prompted for permission to upload crash data after an application crash. -->
@@ -927,6 +934,14 @@
 
     <!-- This string is displayed on top of the allowed sites list in the allowed pop-ups panel. -->
     <string name="privacy_options_popups_list_header">The following websites have requested to open pop-up windows:</string>
+
+    <!-- This string is displayed in the first line of a text that's displayed in the middle of allowed pop-ups panel instead of the exceptions list
+         when there are no exceptions. -->
+    <string name="privacy_options_popups_list_empty_first">When you open a website with pop-up windows, you will see a dialog that lets you choose to block pop-up windows.</string>
+
+    <!-- This string is displayed in the second line of a text that's displayed in the middle of allowed pop-ups panel instead of the exceptions list
+         when there are no exceptions. -->
+    <string name="privacy_options_popups_list_empty_second">A list of sites with permissions will appear here.</string>
 
     <!-- This string labels the Reset button that restores the default controller settings values. -->
     <string name="controller_options_reset">Reset Controller Settings</string>

@@ -21,8 +21,6 @@ import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.databinding.SendTabsDisplayBinding;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
-import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
-import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,8 +38,7 @@ import mozilla.components.concept.sync.Profile;
 
 public class SendTabDialogWidget extends SettingDialogWidget implements
         DeviceConstellationObserver,
-        AccountObserver,
-        WidgetManagerDelegate.WorldClickListener {
+        AccountObserver {
 
     private SendTabsDisplayBinding mSendTabsDialogBinding;
     private Accounts mAccounts;
@@ -72,19 +69,6 @@ public class SendTabDialogWidget extends SettingDialogWidget implements
         mBinding.headerLayout.setDescription(R.string.send_tab_dialog_description);
         mBinding.footerLayout.setFooterButtonText(R.string.send_tab_dialog_button);
         mBinding.footerLayout.setFooterButtonClickListener(this::sendTabButtonClick);
-
-        mWidgetPlacement.width = WidgetPlacement.dpDimension(getContext(), R.dimen.cache_app_dialog_width);
-    }
-
-    @Override
-    protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
-        super.initializeWidgetPlacement(aPlacement);
-
-        mWidgetPlacement.parentAnchorY = 0.0f;
-        mWidgetPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.settings_world_y) -
-                WidgetPlacement.unitFromMeters(getContext(), R.dimen.window_world_y);
-        mWidgetPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.settings_world_z) -
-                WidgetPlacement.unitFromMeters(getContext(), R.dimen.window_world_z);
     }
 
     @Override
@@ -102,9 +86,6 @@ public class SendTabDialogWidget extends SettingDialogWidget implements
             mAccounts.refreshDevicesAsync();
             mSendTabsDialogBinding.setIsSyncing(true);
 
-            mWidgetManager.addWorldClickListener(this);
-            mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
-
             super.show(aShowFlags);
 
         } else {
@@ -116,7 +97,6 @@ public class SendTabDialogWidget extends SettingDialogWidget implements
     public void hide(int aHideFlags) {
         super.hide(aHideFlags);
 
-        mWidgetManager.popWorldBrightness(this);
         mWidgetManager.removeWorldClickListener(this);
     }
 
@@ -143,7 +123,6 @@ public class SendTabDialogWidget extends SettingDialogWidget implements
     private void showWhatsNewDialog() {
         mWhatsNew = new WhatsNewWidget(getContext());
         mWhatsNew.setLoginOrigin(Accounts.LoginOrigin.SEND_TABS);
-        mWhatsNew.getPlacement().parentHandle = mWidgetManager.getFocusedWindow().getHandle();
         mWhatsNew.setStartBrowsingCallback(() -> {
             mWhatsNew.hide(REMOVE_WIDGET);
             mWhatsNew.releaseWidget();
@@ -220,12 +199,5 @@ public class SendTabDialogWidget extends SettingDialogWidget implements
             hide(KEEP_WIDGET);
         }
         showWhatsNewDialog();
-    }
-
-    // WidgetManagerDelegate.WorldClickListener
-
-    @Override
-    public void onWorldClick() {
-        onDismiss();
     }
 }

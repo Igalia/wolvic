@@ -39,9 +39,11 @@ public abstract class UIDialog extends UIWidget implements WidgetManagerDelegate
 
     @Override
     public void show(int aShowFlags) {
-        super.show(aShowFlags);
+        if (!isVisible()) {
+            super.show(aShowFlags);
 
-        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
+            mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
+        }
     }
 
     @Override

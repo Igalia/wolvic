@@ -78,7 +78,7 @@ class PrivacyOptionsView extends SettingsView {
         TextView permissionsTitleText = findViewById(R.id.permissionsTitle);
         permissionsTitleText.setText(getContext().getString(R.string.security_options_permissions_title, getContext().getString(R.string.app_name)));
 
-        mPopUpsBlockingExceptions = new AllowedPopUpsOptionsView(getContext(), mWidgetManager);
+        mPopUpsBlockingExceptions = new PopUpExceptionsOptionsView(getContext(), mWidgetManager);
 
         mPermissionButtons = new ArrayList<>();
         mPermissionButtons.add(Pair.create(findViewById(R.id.cameraPermissionSwitch), Manifest.permission.CAMERA));

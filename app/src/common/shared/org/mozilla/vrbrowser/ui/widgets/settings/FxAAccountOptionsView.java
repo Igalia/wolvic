@@ -6,7 +6,6 @@
 package org.mozilla.vrbrowser.ui.widgets.settings;
 
 import android.content.Context;
-import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,8 +23,7 @@ import org.mozilla.vrbrowser.databinding.OptionsFxaAccountBinding;
 import org.mozilla.vrbrowser.ui.views.settings.SwitchSetting;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
-import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
-import org.mozilla.vrbrowser.ui.widgets.dialogs.CheckboxDialogWidget;
+import org.mozilla.vrbrowser.ui.widgets.dialogs.SignOutDialogWidget;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.util.Objects;
@@ -49,7 +47,7 @@ class FxAAccountOptionsView extends SettingsView {
     private Executor mUIThreadExecutor;
     private boolean mInitialBookmarksState;
     private boolean mInitialHistoryState;
-    private CheckboxDialogWidget mSignOutDialog;
+    private SignOutDialogWidget mSignOutDialog;
 
     public FxAAccountOptionsView(Context aContext, WidgetManagerDelegate aWidgetManager) {
         super(aContext, aWidgetManager);
@@ -214,43 +212,7 @@ class FxAAccountOptionsView extends SettingsView {
 
     private void signOut(View view) {
         if (mSignOutDialog == null) {
-            mSignOutDialog = new CheckboxDialogWidget(getContext());
-            mSignOutDialog.getPlacement().parentHandle = mWidgetManager.getFocusedWindow().getHandle();
-            mSignOutDialog.getPlacement().parentAnchorY = 0.0f;
-            mSignOutDialog.getPlacement().translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.base_app_dialog_y_distance);
-            BitmapDrawable profilePicture = mAccounts.getProfilePicture();
-            if (profilePicture != null) {
-                mSignOutDialog.setIcon(profilePicture);
-
-            } else {
-                mSignOutDialog.setIcon(R.drawable.ic_icon_settings_account);
-            }
-            mSignOutDialog.setTitle(R.string.fxa_signout_confirmation_title);
-            mSignOutDialog.setBody(R.string.fxa_signout_confirmation_body);
-            mSignOutDialog.setCheckboxText(R.string.fxa_signout_confirmation_checkbox);
-            mSignOutDialog.setButtons(new int[] {
-                    R.string.fxa_signout_confirmation_signout,
-                    R.string.fxa_signout_confirmation_cancel
-            });
-            mSignOutDialog.setButtonsDelegate(index -> {
-                // Sign out button pressed
-                if (index == CheckboxDialogWidget.NEGATIVE) {
-                    mAccounts.logoutAsync().thenAcceptAsync(unit -> {
-                        if (mSignOutDialog.isChecked()) {
-                            // Clear History and Bookmarks
-                            mPlaces.clear();
-                        }
-                        mSignOutDialog.hide(UIWidget.REMOVE_WIDGET);
-                        mWidgetManager.getTray().toggleSettingsDialog();
-
-                    }, mUIThreadExecutor);
-
-                } else if (index == CheckboxDialogWidget.POSITIVE) {
-                    mSignOutDialog.hide(UIWidget.REMOVE_WIDGET);
-                    mWidgetManager.getTray().toggleSettingsDialog(SettingsWidget.SettingDialog.FXA);
-                }
-            });
-            mSignOutDialog.setDelegate(() -> mWidgetManager.getTray().toggleSettingsDialog(SettingsWidget.SettingDialog.FXA));
+            mSignOutDialog = new SignOutDialogWidget(getContext());
         }
 
         exitWholeSettings();

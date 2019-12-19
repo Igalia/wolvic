@@ -12,14 +12,13 @@ import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.View;
+import android.view.LayoutInflater;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.core.app.ActivityCompat;
+import androidx.databinding.DataBindingUtil;
 
 import com.mozilla.speechlibrary.ISpeechRecognitionListener;
 import com.mozilla.speechlibrary.MozillaSpeechService;
@@ -27,10 +26,9 @@ import com.mozilla.speechlibrary.STTResult;
 
 import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
-import org.mozilla.vrbrowser.ui.views.UIButton;
+import org.mozilla.vrbrowser.databinding.VoiceSearchDialogBinding;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
@@ -38,7 +36,14 @@ import org.mozilla.vrbrowser.utils.LocaleUtils;
 public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate.PermissionListener,
         Application.ActivityLifecycleCallbacks {
 
-    private static final int VOICESEARCH_AUDIO_REQUEST_CODE = 7455;
+    public enum State {
+        LISTENING,
+        SEARCHING,
+        ERROR,
+        PERMISSIONS
+    }
+
+    private static final int VOICE_SEARCH_AUDIO_REQUEST_CODE = 7455;
     private static final int ANIMATION_DURATION = 1000;
 
     private static int MAX_CLIPPING = 10000;
@@ -51,20 +56,13 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
         default void OnVoiceSearchError() {};
     }
 
+    private VoiceSearchDialogBinding mBinding;
     private MozillaSpeechService mMozillaSpeechService;
     private VoiceSearchDelegate mDelegate;
-    private ImageView mVoiceSearchInput;
-    private ImageView mVoiceSearchSearching;
-    private Drawable mVoiceInputBackgroundDrawable;
     private ClipDrawable mVoiceInputClipDrawable;
-    private int mVoiceInputGravity;
-    private TextView mVoiceSearchText1;
-    private TextView mVoiceSearchText2;
-    private TextView mVoiceSearchText3;
     private RotateAnimation mSearchingAnimation;
     private boolean mIsSpeechRecognitionRunning = false;
     private boolean mWasSpeechRecognitionRunning = false;
-    private AudioEngine mAudio;
 
     public VoiceSearchWidget(Context aContext) {
         super(aContext);
@@ -82,26 +80,21 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
     }
 
     private void initialize(Context aContext) {
-        inflate(aContext, R.layout.voice_search_dialog, this);
+        LayoutInflater inflater = LayoutInflater.from(aContext);
 
-        mAudio = AudioEngine.fromContext(aContext);
+        // Inflate this data binding layout
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.voice_search_dialog, this, true);
 
         mWidgetManager.addPermissionListener(this);
 
         mMozillaSpeechService = MozillaSpeechService.getInstance();
         mMozillaSpeechService.setProductTag(getContext().getString(R.string.voice_app_id));
 
-        mVoiceSearchText1 = findViewById(R.id.voiceSearchText1);
-        mVoiceSearchText2 = findViewById(R.id.voiceSearchText2);
-        mVoiceSearchText3 = findViewById(R.id.voiceSearchText3);
-
-        mVoiceInputGravity = 0;
-        mVoiceInputBackgroundDrawable = getResources().getDrawable(R.drawable.ic_voice_search_volume_input_black, getContext().getTheme());
+        Drawable mVoiceInputBackgroundDrawable = getResources().getDrawable(R.drawable.ic_voice_search_volume_input_black, getContext().getTheme());
         mVoiceInputClipDrawable = new ClipDrawable(getContext().getDrawable(R.drawable.ic_voice_search_volume_input_clip), Gravity.START, ClipDrawable.HORIZONTAL);
         Drawable[] layers = new Drawable[] {mVoiceInputBackgroundDrawable, mVoiceInputClipDrawable };
-        mVoiceSearchInput = findViewById(R.id.voiceSearchInput);
-        mVoiceSearchInput.setImageDrawable(new LayerDrawable(layers));
-        mVoiceInputClipDrawable.setLevel(mVoiceInputGravity);
+        mBinding.voiceSearchAnimationListening.setImageDrawable(new LayerDrawable(layers));
+        mVoiceInputClipDrawable.setLevel(0);
 
         mSearchingAnimation = new RotateAnimation(0, 360f,
                 Animation.RELATIVE_TO_SELF, 0.5f,
@@ -110,16 +103,8 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
         mSearchingAnimation.setInterpolator(new LinearInterpolator());
         mSearchingAnimation.setDuration(ANIMATION_DURATION);
         mSearchingAnimation.setRepeatCount(Animation.INFINITE);
-        mVoiceSearchSearching = findViewById(R.id.voiceSearchSearching);
 
-        UIButton backButton = findViewById(R.id.backButton);
-        backButton.setOnClickListener(view -> {
-            if (mAudio != null) {
-                mAudio.playSound(AudioEngine.Sound.CLICK);
-            }
-
-            onDismiss();
-        });
+        mBinding.closeButton.setOnClickListener(view -> onDismiss());
 
         mMozillaSpeechService.addListener(mVoiceSearchListener);
         ((Application)aContext.getApplicationContext()).registerActivityLifecycleCallbacks(this);
@@ -141,13 +126,16 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
     @Override
     protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
         aPlacement.visible = false;
-        aPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.voice_search_width);
-        aPlacement.height = WidgetPlacement.dpDimension(getContext(), R.dimen.voice_search_height);
-        aPlacement.parentAnchorX = 0.5f;
-        aPlacement.parentAnchorY = 0.5f;
+        aPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.prompt_dialog_width);
+        aPlacement.height = WidgetPlacement.dpDimension(getContext(), R.dimen.prompt_dialog_height);
         aPlacement.anchorX = 0.5f;
         aPlacement.anchorY = 0.5f;
-        aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.voice_search_world_z);
+        aPlacement.parentAnchorX = 0.5f;
+        aPlacement.parentAnchorY = 0.0f;
+        aPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.settings_world_y) -
+                WidgetPlacement.unitFromMeters(getContext(), R.dimen.window_world_y);
+        aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.settings_world_z) -
+                WidgetPlacement.unitFromMeters(getContext(), R.dimen.window_world_z);
     }
 
     public void setPlacementForKeyboard(int aHandle) {
@@ -224,7 +212,7 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
         if (ActivityCompat.checkSelfPermission(getContext().getApplicationContext(), Manifest.permission.RECORD_AUDIO) !=
                 PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions((Activity)getContext(), new String[]{Manifest.permission.RECORD_AUDIO},
-                    VOICESEARCH_AUDIO_REQUEST_CODE);
+                    VOICE_SEARCH_AUDIO_REQUEST_CODE);
         } else {
             String locale = LocaleUtils.getVoiceSearchLocale(getContext());
             mMozillaSpeechService.setLanguage(LocaleUtils.mapToMozillaSpeechLocales(locale));
@@ -253,7 +241,7 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         boolean granted = false;
-        if (requestCode == VOICESEARCH_AUDIO_REQUEST_CODE) {
+        if (requestCode == VOICE_SEARCH_AUDIO_REQUEST_CODE) {
             for (int result: grantResults) {
                 if (result == PackageManager.PERMISSION_GRANTED) {
                     granted = true;
@@ -275,6 +263,7 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
     public void show(@ShowFlags int aShowFlags) {
         if (SettingsStore.getInstance(getContext()).isSpeechDataCollectionEnabled() ||
                 SettingsStore.getInstance(getContext()).isSpeechDataCollectionReviewed()) {
+            mWidgetPlacement.parentHandle = mWidgetManager.getFocusedWindow().getHandle();
             super.show(aShowFlags);
 
             setStartListeningState();
@@ -282,7 +271,7 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
             startVoiceSearch();
 
         } else {
-            mWidgetManager.getFocusedWindow().showAppDialog(
+            mWidgetManager.getFocusedWindow().showDialog(
                     getResources().getString(R.string.voice_samples_collect_data_dialog_title, getResources().getString(R.string.app_name)),
                     R.string.voice_samples_collect_dialog_description2,
                     new int[]{
@@ -290,14 +279,13 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
                             R.string.voice_samples_collect_dialog_allow},
                     index -> {
                         SettingsStore.getInstance(getContext()).setSpeechDataCollectionReviewed(true);
-                        if (index == MessageDialogWidget.POSITIVE) {
+                        if (index == PromptDialogWidget.POSITIVE) {
                             SettingsStore.getInstance(getContext()).setSpeechDataCollectionEnabled(true);
                         }
                         ThreadUtils.postToUiThread(() -> show(aShowFlags));
                     },
-                    url -> {
-                        mWidgetManager.getFocusedWindow().getSession().loadUri(getResources().getString(R.string.private_policy_url));
-                        onDismiss();
+                    () -> {
+                        mWidgetManager.openNewTabForeground(getResources().getString(R.string.private_policy_url));
                     });
         }
     }
@@ -307,53 +295,37 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
         super.hide(aHideFlags);
 
         stopVoiceSearch();
+        mBinding.setState(State.LISTENING);
     }
 
     private void setStartListeningState() {
-        mVoiceSearchText1.setText(R.string.voice_search_start);
-        mVoiceSearchText1.setVisibility(View.VISIBLE);
-        mVoiceSearchText2.setVisibility(View.GONE);
-        mVoiceSearchText3.setVisibility(View.VISIBLE);
-        mVoiceSearchInput.setVisibility(View.VISIBLE);
-        mVoiceSearchSearching.clearAnimation();
-        mVoiceSearchSearching.setVisibility(View.INVISIBLE);
+        mBinding.setState(State.LISTENING);
+        mBinding.voiceSearchAnimationSearching.clearAnimation();
+        mBinding.executePendingBindings();
     }
 
     private void setDecodingState() {
-        mVoiceSearchText1.setText(R.string.voice_search_decoding);
-        mVoiceSearchText1.setVisibility(View.VISIBLE);
-        mVoiceSearchText2.setVisibility(View.GONE);
-        mVoiceSearchText3.setVisibility(View.INVISIBLE);
-        mVoiceSearchInput.setVisibility(View.INVISIBLE);
-        mVoiceSearchSearching.startAnimation(mSearchingAnimation);
-        mVoiceSearchSearching.setVisibility(View.VISIBLE);
+        mBinding.setState(State.SEARCHING);
+        mBinding.voiceSearchAnimationSearching.startAnimation(mSearchingAnimation);
+        mBinding.executePendingBindings();
     }
 
     private void setResultState() {
         stopVoiceSearch();
 
         postDelayed(() -> {
-            mVoiceSearchText1.setText(R.string.voice_search_error);
-            mVoiceSearchText1.setVisibility(View.VISIBLE);
-            mVoiceSearchText2.setText(R.string.voice_search_try_again);
-            mVoiceSearchText2.setVisibility(View.VISIBLE);
-            mVoiceSearchText3.setVisibility(View.VISIBLE);
-            mVoiceSearchInput.setVisibility(View.VISIBLE);
-            mVoiceSearchSearching.clearAnimation();
-            mVoiceSearchSearching.setVisibility(View.INVISIBLE);
+            mBinding.setState(State.ERROR);
+            mBinding.voiceSearchAnimationSearching.clearAnimation();
+            mBinding.executePendingBindings();
 
             startVoiceSearch();
         }, 100);
     }
 
     private void setPermissionNotGranted() {
-        mVoiceSearchText1.setText(R.string.voice_search_permission_after_decline);
-        mVoiceSearchText1.setVisibility(View.VISIBLE);
-        mVoiceSearchText2.setVisibility(View.GONE);
-        mVoiceSearchText3.setVisibility(View.INVISIBLE);
-        mVoiceSearchInput.setVisibility(View.INVISIBLE);
-        mVoiceSearchSearching.clearAnimation();
-        mVoiceSearchSearching.setVisibility(View.INVISIBLE);
+        mBinding.setState(State.PERMISSIONS);
+        mBinding.voiceSearchAnimationSearching.clearAnimation();
+        mBinding.executePendingBindings();
     }
 
     @Override

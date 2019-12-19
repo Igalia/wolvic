@@ -8,7 +8,7 @@ package org.mozilla.vrbrowser.ui.widgets.dialogs;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
-import android.view.ViewTreeObserver;
+import android.view.View;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
@@ -16,11 +16,11 @@ import androidx.annotation.StringRes;
 import androidx.databinding.DataBindingUtil;
 
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.databinding.CheckboxDialogBinding;
-import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
+import org.mozilla.vrbrowser.databinding.PromptDialogBinding;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
+import org.mozilla.vrbrowser.utils.ViewUtils;
 
-public class CheckboxDialogWidget extends UIDialog {
+public class PromptDialogWidget extends UIDialog {
 
     public interface Delegate {
         void onButtonClicked(int index);
@@ -30,10 +30,11 @@ public class CheckboxDialogWidget extends UIDialog {
     public static final int NEGATIVE = 0;
     public static final int POSITIVE = 1;
 
-    protected CheckboxDialogBinding mBinding;
+    protected PromptDialogBinding mBinding;
     private Delegate mAppDialogDelegate;
+    private Runnable mLinkDelegate;
 
-    public CheckboxDialogWidget(Context aContext) {
+    public PromptDialogWidget(Context aContext) {
         super(aContext);
         initialize(aContext);
     }
@@ -42,7 +43,7 @@ public class CheckboxDialogWidget extends UIDialog {
         LayoutInflater inflater = LayoutInflater.from(aContext);
 
         // Inflate this data binding layout
-        mBinding = DataBindingUtil.inflate(inflater, R.layout.checkbox_dialog, this, true);
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.prompt_dialog, this, true);
 
         mBinding.leftButton.setOnClickListener(v ->  {
             if (mAppDialogDelegate != null) {
@@ -58,44 +59,37 @@ public class CheckboxDialogWidget extends UIDialog {
 
     @Override
     protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
+        // We align it at the same position as the settings panel
         aPlacement.visible = false;
-        aPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.checkbox_dialog_width);
-        aPlacement.height = WidgetPlacement.dpDimension(getContext(), R.dimen.checkbox_dialog_height);
-        aPlacement.parentAnchorX = 0.5f;
-        aPlacement.parentAnchorY = 0.5f;
+        aPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.prompt_dialog_width);
+        aPlacement.height = WidgetPlacement.dpDimension(getContext(), R.dimen.prompt_dialog_height);
         aPlacement.anchorX = 0.5f;
         aPlacement.anchorY = 0.5f;
-        aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.base_app_dialog_z_distance);
+        aPlacement.parentAnchorY = 0.0f;
+        aPlacement.parentAnchorX = 0.5f;
+        aPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.settings_world_y) -
+                WidgetPlacement.unitFromMeters(getContext(), R.dimen.window_world_y);
+        aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.settings_world_z) -
+                WidgetPlacement.unitFromMeters(getContext(), R.dimen.window_world_z);
     }
 
     @Override
     public void show(@ShowFlags int aShowFlags) {
-        measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
-                MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+        mWidgetPlacement.parentHandle = mWidgetManager.getFocusedWindow().getHandle();
+
         super.show(aShowFlags);
-
-        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
-
-        ViewTreeObserver viewTreeObserver = getViewTreeObserver();
-        if (viewTreeObserver.isAlive()) {
-            viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    mWidgetPlacement.height = (int)(getHeight()/mWidgetPlacement.density);
-                    mWidgetManager.updateWidget(CheckboxDialogWidget.this);
-                }
-            });
-        }
-    }
-
-    public void hide(@HideFlags int aHideFlags) {
-        super.hide(aHideFlags);
-        mWidgetManager.popWorldBrightness(this);
     }
 
     public void setButtonsDelegate(Delegate delegate) {
         mAppDialogDelegate = delegate;
+    }
+
+    public void setLinkDelegate(@NonNull Runnable delegate) {
+        mLinkDelegate = delegate;
+    }
+
+    public void setIconVisible(boolean visible) {
+        mBinding.imageContainer.setVisibility(visible ? VISIBLE: GONE);
     }
 
     public void setIcon(Drawable icon) {
@@ -114,12 +108,28 @@ public class CheckboxDialogWidget extends UIDialog {
         mBinding.title.setText(title);
     }
 
-    public void setBody(String body) {
+    public void setBody(@NonNull String body) {
+        ViewUtils.setTextViewHTML(mBinding.body, body, (widget, url) -> {
+            if (mLinkDelegate != null) {
+                mLinkDelegate.run();
+            }
+        });
+    }
+
+    public void setBody(@StringRes int body) {
+        ViewUtils.setTextViewHTML(mBinding.body, getResources().getString(body), (widget, url) -> {
+            if (mLinkDelegate != null) {
+                mLinkDelegate.run();
+            }
+        });
+    }
+
+    public void setBody(@NonNull CharSequence body) {
         mBinding.body.setText(body);
     }
 
-    public void setBody(@StringRes int title) {
-        mBinding.body.setText(title);
+    public void setCheckboxVisible(boolean visible) {
+        mBinding.checkboxContainer.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
     public void setCheckboxText(@StringRes int text) {
@@ -130,21 +140,47 @@ public class CheckboxDialogWidget extends UIDialog {
         mBinding.checkbox.setText(text);
     }
 
+    public void setDescriptionVisible(boolean visible) {
+        mBinding.descriptionContainer.setVisibility(visible ? View.VISIBLE : View.GONE);
+    }
+
+    public void setDescription(@StringRes int description) {
+        mBinding.description.setText(description);
+    }
+
+    public void setDescription(String description) {
+        mBinding.title.setText(description);
+    }
+
     public void setButtons(@NonNull @StringRes int[] buttons) {
         if (buttons.length > 0) {
             mBinding.leftButton.setText(buttons[NEGATIVE]);
+
+        } else {
+            mBinding.leftButton.setVisibility(View.GONE);
         }
+
         if (buttons.length > 1) {
             mBinding.rightButton.setText(buttons[POSITIVE]);
+
+        } else {
+            mBinding.rightButton.setVisibility(View.GONE);
         }
     }
 
     public void setButtons(@NonNull String[] buttons) {
         if (buttons.length > 0) {
             mBinding.leftButton.setText(buttons[NEGATIVE]);
+
+        } else {
+            mBinding.leftButton.setVisibility(View.GONE);
         }
+
         if (buttons.length > 1) {
             mBinding.rightButton.setText(buttons[POSITIVE]);
+
+        } else {
+            mBinding.rightButton.setVisibility(View.GONE);
         }
     }
 

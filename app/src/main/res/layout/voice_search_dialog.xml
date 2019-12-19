@@ -1,91 +1,151 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="@dimen/voice_search_width"
-    android:layout_height="@dimen/voice_search_height"
-    android:layout_centerHorizontal="true"
-    android:background="@drawable/dialog_background"
-    android:paddingStart="@dimen/voice_search_padding_sides"
-    android:paddingTop="@dimen/voice_search_padding_top"
-    android:paddingEnd="@dimen/voice_search_padding_sides"
-    android:paddingBottom="@dimen/voice_search_padding_bottom">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <org.mozilla.vrbrowser.ui.views.UIButton
-        android:id="@+id/backButton"
-        style="?attr/navigationBarButtonStyle"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:src="@drawable/ic_icon_back"
-        android:tint="@color/midnight"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <data>
+        <import type="org.mozilla.vrbrowser.ui.widgets.dialogs.VoiceSearchWidget.State"/>
+        <variable
+            name="state"
+            type="State" />
+    </data>
 
-    <TextView
-        android:id="@+id/voiceSearchText2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/voice_search_try_again"
-        android:textAlignment="viewStart"
-        android:textColor="@color/white"
-        android:textSize="24sp"
-        android:typeface="sans"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="@+id/voiceSearchText1"
-        app:layout_constraintTop_toBottomOf="@+id/voiceSearchText1"
-        tools:text="@string/voice_search_try_again" />
+    <RelativeLayout
+        android:layout_width="@dimen/prompt_dialog_width"
+        android:layout_height="@dimen/prompt_dialog_height"
+        android:background="@drawable/dialog_background"
+        android:paddingStart="@dimen/prompt_dialog_padding_sides"
+        android:paddingTop="@dimen/prompt_dialog_padding_top"
+        android:paddingEnd="@dimen/prompt_dialog_padding_sides"
+        android:paddingBottom="@dimen/prompt_dialog_padding_bottom">
 
-    <TextView
-        android:id="@+id/voiceSearchText1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:text="@string/voice_search_start"
-        android:textAlignment="viewStart"
-        android:textColor="@color/white"
-        android:textSize="24sp"
-        android:typeface="sans"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/backButton"
-        tools:text="@string/voice_search_start" />
+        <FrameLayout
+            android:id="@+id/animationContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="15dp">
+            <ImageView
+                android:id="@+id/voiceSearchAnimationListening"
+                android:layout_width="@dimen/voice_search_input_width"
+                android:layout_height="@dimen/voice_search_input_height"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_voice_search_volume_input_black"
+                visibleInvisible="@{state != State.SEARCHING }"
+                tools:src="@drawable/ic_voice_search_volume_input_black" />
 
-    <TextView
-        android:id="@+id/voiceSearchText3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:text="@string/voice_search_example"
-        android:textAlignment="viewStart"
-        android:textColor="@color/rhino"
-        android:textSize="12sp"
-        android:typeface="sans"
-        android:visibility="visible"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/voiceSearchText2"
-        tools:text="@string/voice_search_example" />
+            <ImageView
+                android:id="@+id/voiceSearchAnimationSearching"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/ic_voice_search_searching"
+                visibleInvisible="@{state == State.SEARCHING }"
+                tools:src="@drawable/ic_voice_search_searching" />
+        </FrameLayout>
 
-    <ImageView
-        android:id="@+id/voiceSearchInput"
-        android:layout_width="@dimen/voice_search_input_width"
-        android:layout_height="@dimen/voice_search_input_height"
-        android:layout_marginEnd="8dp"
-        android:src="@drawable/ic_voice_search_volume_input_black"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:src="@drawable/ic_voice_search_volume_input_black" />
+        <FrameLayout
+            android:id="@+id/titleContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/animationContainer"
+            android:layout_marginBottom="10dp">
+            <TextView
+                android:id="@+id/voiceSearchStart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/voice_search_start"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                android:typeface="sans"
+                visibleInvisible="@{state == State.LISTENING}"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                tools:text="@string/voice_search_start" />
 
-    <ImageView
-        android:id="@+id/voiceSearchSearching"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/ic_voice_search_searching"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:src="@drawable/ic_voice_search_searching" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/voiceSearchSearching"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/voice_search_decoding"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                android:typeface="sans"
+                visibleInvisible="@{state == State.SEARCHING}"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                tools:text="@string/voice_search_decoding" />
+
+            <TextView
+                android:id="@+id/voiceSearchError"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text='@{String.format("%s %s", @string/voice_search_error, @string/voice_search_try_again)}'
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                android:typeface="sans"
+                visibleInvisible="@{state == State.ERROR}"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                tools:text='@{String.format("%s %s", @string/voice_search_error, @string/voice_search_try_again)}' />
+
+            <TextView
+                android:id="@+id/voiceSearchPermissions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/voice_search_permission_after_decline"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                android:typeface="sans"
+                visibleInvisible="@{state == State.PERMISSIONS}"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                tools:text="@string/voice_search_permission_after_decline" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/descriptionContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/buttonsContainer"
+            android:layout_marginBottom="15dp"
+            visibleGone="@{state == State.LISTENING || state == State.ERROR}">
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="@string/voice_search_example"
+                android:textColor="@color/rhino"
+                android:textSize="12sp"
+                android:typeface="sans"
+                android:visibility="visible"
+                android:gravity="center"
+                android:layout_gravity="center"
+                tools:text="@string/voice_search_example" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/buttonsContainer"
+            android:layout_width="322dp"
+            android:layout_height="36dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true">
+
+            <Button
+                android:id="@+id/closeButton"
+                android:layout_width="156dp"
+                android:layout_height="36dp"
+                android:background="@drawable/dialog_regular_button_background"
+                android:fontFamily="sans-serif"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center"
+                tools:text="@string/voice_search_close"
+                android:text="@string/voice_search_close"
+                android:textColor="@drawable/dialog_button_text_color"
+                android:textStyle="bold" />
+        </FrameLayout>
+    </RelativeLayout>
+</layout>

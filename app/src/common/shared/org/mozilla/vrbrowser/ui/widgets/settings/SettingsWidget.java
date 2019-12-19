@@ -41,7 +41,6 @@ import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.RestartDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.UIDialog;
-import org.mozilla.vrbrowser.ui.widgets.prompts.AlertPromptWidget;
 import org.mozilla.vrbrowser.utils.StringUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -65,8 +64,7 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
     private SettingsView mCurrentView;
     private int mViewMarginH;
     private int mViewMarginV;
-    private int mRestartDialogHandle = -1;
-    private int mAlertDialogHandle = -1;
+    private RestartDialogWidget mRestartDialog;
     private Accounts mAccounts;
     private Executor mUIThreadExecutor;
 
@@ -180,7 +178,7 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
         });
 
         mBinding.surveyLink.setOnClickListener(v -> {
-            mWidgetManager.getFocusedWindow().getSession().loadUri(getResources().getString(R.string.survey_link));
+            mWidgetManager.openNewTabForeground(getResources().getString(R.string.survey_link));
             exitWholeSettings();
         });
 
@@ -188,7 +186,7 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
-            SessionStore.get().getActiveSession().loadUri(getContext().getString(R.string.help_url));
+            mWidgetManager.openNewTabForeground(getContext().getString(R.string.help_url));
             onDismiss();
         });
 
@@ -267,7 +265,7 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
             Log.e(LOGTAG, "Cannot encode URL");
         }
 
-        session.loadUri(getContext().getString(R.string.private_report_url, url));
+        mWidgetManager.openNewTabForeground(getContext().getString(R.string.private_report_url, url));
 
         onDismiss();
     }
@@ -496,32 +494,19 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
     public void showRestartDialog() {
         hide(UIWidget.REMOVE_WIDGET);
 
-        UIWidget widget = getChild(mRestartDialogHandle);
-        if (widget == null) {
-            widget = createChild(RestartDialogWidget.class, false);
-            mRestartDialogHandle = widget.getHandle();
-            widget.setDelegate(() -> show(REQUEST_FOCUS));
+        if (mRestartDialog == null) {
+            mRestartDialog = new RestartDialogWidget(getContext());
+            mRestartDialog.setDelegate(() -> SettingsWidget.this.show(REQUEST_FOCUS));
         }
 
-        widget.show(REQUEST_FOCUS);
+        mRestartDialog.show(REQUEST_FOCUS);
     }
 
     @Override
     public void showAlert(String aTitle, String aMessage) {
         hide(UIWidget.KEEP_WIDGET);
 
-        AlertPromptWidget widget = getChild(mAlertDialogHandle);
-        if (widget == null) {
-            widget = createChild(AlertPromptWidget.class, false);
-            mAlertDialogHandle = widget.getHandle();
-            widget.setDelegate(() -> show(REQUEST_FOCUS));
-        }
-        widget.getPlacement().translationZ = 0;
-        widget.getPlacement().parentHandle = mHandle;
-        widget.setTitle(aTitle);
-        widget.setMessage(aMessage);
-
-        widget.show(REQUEST_FOCUS);
+        mWidgetManager.getFocusedWindow().showAlert(aTitle, aMessage, index -> show(REQUEST_FOCUS));
     }
 
     private boolean isLanguagesSubView(View view) {
@@ -535,7 +520,7 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
     }
 
     private boolean isPrivacySubView(View view) {
-        if (view instanceof AllowedPopUpsOptionsView) {
+        if (view instanceof PopUpExceptionsOptionsView) {
             return true;
         }
 
