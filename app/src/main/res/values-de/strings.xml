@@ -597,6 +597,10 @@
          of this storage even though the storage may not reside on external removable media. -->
     <string name="security_options_permission_storage">Externen Speicher lesen</string>
 
+    <!-- This string labels the button that displays or enables application access to the device's
+         camera and microphone, if present. -->
+    <string name="security_options_permission_camera_and_microphone">Kamera und Mikrofon</string>
+
     <!-- This string labels the button in the privacy option panel that enables/disables the pop-up
          blocking. -->
     <string name="security_options_block_pup_up_windows">Pop-up-Fenster blockieren</string>
@@ -659,6 +663,9 @@
     <!-- This string is displayed in a dialog after the user has declined permission to use the
          device's microphone. It explains why Voice Search is not working. -->
     <string name="voice_search_permission_after_decline">Bitte erlauben Sie den Zugriff auf das Mikrofon, um die Sprachsuche zu verwenden.</string>
+
+    <!-- This string is displayed in the button at the bottom of the Voice Search dialog. When clicked the Voice search dialog is closed. -->
+    <string name="voice_search_close">Schließen</string>
 
     <!-- This string is displayed in the URL bar when it is empty. It informs the user that they
          may use the URL bar to search the Web or enter a Web address. -->
@@ -930,6 +937,14 @@
 
     <!-- This string is displayed on top of the allowed sites list in the allowed pop-ups panel. -->
     <string name="privacy_options_popups_list_header">Die folgenden Websites bitten um die Erlaubnis, Pop-up-Fenster zu öffnen:</string>
+
+    <!-- This string is displayed in the first line of a text that's displayed in the middle of allowed pop-ups panel instead of the exceptions list
+         when there are no exceptions. -->
+    <string name="privacy_options_popups_list_empty_first">Wenn Sie eine Website mit Pop-up-Fenstern öffnen, wird ein Dialogfeld angezeigt, in dem Sie auswählen können, ob Pop-up-Fenster blockiert werden sollen.</string>
+
+    <!-- This string is displayed in the second line of a text that's displayed in the middle of allowed pop-ups panel instead of the exceptions list
+         when there are no exceptions. -->
+    <string name="privacy_options_popups_list_empty_second">Eine Liste der Websites mit Berechtigungen wird hier angezeigt.</string>
 
     <!-- This string labels the Reset button that restores the default controller settings values. -->
     <string name="controller_options_reset">Controller-Einstellungen zurücksetzen</string>

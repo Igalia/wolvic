@@ -599,6 +599,10 @@
          of this storage even though the storage may not reside on external removable media. -->
     <string name="security_options_permission_storage">Odczyt pamięci zewnętrznej</string>
 
+    <!-- This string labels the button that displays or enables application access to the device's
+         camera and microphone, if present. -->
+    <string name="security_options_permission_camera_and_microphone">Kamera i mikrofon</string>
+
     <!-- This string labels the button in the privacy option panel that enables/disables the pop-up
          blocking. -->
     <string name="security_options_block_pup_up_windows">Blokuj wyskakujące okna</string>
@@ -661,6 +665,9 @@
     <!-- This string is displayed in a dialog after the user has declined permission to use the
          device's microphone. It explains why Voice Search is not working. -->
     <string name="voice_search_permission_after_decline">Wyszukiwanie głosowe wymaga zezwolenia na dostęp do mikrofonu.</string>
+
+    <!-- This string is displayed in the button at the bottom of the Voice Search dialog. When clicked the Voice search dialog is closed. -->
+    <string name="voice_search_close">Zamknij</string>
 
     <!-- This string is displayed in the URL bar when it is empty. It informs the user that they
          may use the URL bar to search the Web or enter a Web address. -->
