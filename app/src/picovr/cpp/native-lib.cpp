@@ -78,6 +78,17 @@ JNI_METHOD(void, nativeEndFrame)
   BrowserWorld::Instance().EndFrame();
 }
 
+JNI_METHOD(void, nativeUpdateControllerPose)
+(JNIEnv*, jobject, jint index, jboolean dof6, jfloat px, jfloat py, jfloat pz, jfloat qx, jfloat qy, jfloat qz, jfloat qw) {
+  sDevice->UpdateControllerPose(index, dof6, vrb::Vector(px, py, pz), vrb::Quaternion(qx, qy, qz, qw));
+}
+
+JNI_METHOD(void, nativeUpdateControllerState)
+(JNIEnv*, jobject, jint index, jboolean connected, jint buttons, jfloat grip) {
+  sDevice->UpdateControllerConnected(index, connected);
+  sDevice->UpdateControllerButtons(index, buttons, grip);
+}
+
 JNI_METHOD(void, queueRunnable)
 (JNIEnv* aEnv, jobject, jobject aRunnable) {
   sQueue->AddRunnable(aEnv, aRunnable);

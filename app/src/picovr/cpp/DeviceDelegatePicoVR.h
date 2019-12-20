@@ -48,6 +48,9 @@ public:
   void UpdateFov(const float aFov);
   void UpdatePosition(const vrb::Vector& aPosition);
   void UpdateOrientation(const vrb::Quaternion& aOrientation);
+  void UpdateControllerConnected(const int aIndex, const bool aConnected);
+  void UpdateControllerPose(const int aIndex, const bool a6Dof, const vrb::Vector& aPosition, const vrb::Quaternion& aRotation);
+  void UpdateControllerButtons(const int aIndex, const int32_t aButtonsState, const float aGrip);
 protected:
   struct State;
   DeviceDelegatePicoVR(State& aState);

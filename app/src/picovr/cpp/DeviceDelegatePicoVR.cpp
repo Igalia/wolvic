@@ -18,6 +18,7 @@
 #include "vrb/Vector.h"
 #include "vrb/Quaternion.h"
 
+#include <array>
 #include <vector>
 #include <cstdlib>
 #include <unistd.h>
@@ -26,8 +27,34 @@
 namespace crow {
 
 static const vrb::Vector kAverageHeight(0.0f, 1.7f, 0.0f);
+// TODO: support different controllers & buttons
+static const int32_t kMaxControllerCount = 2;
+static const int32_t kNumButtons = 2;
+static const int32_t kNumAxes = 2;
+static const uint32_t kButtonApp = 1;
+static const uint32_t kButtonAction = 1 << 1;
 
 struct DeviceDelegatePicoVR::State {
+  struct Controller {
+    int32_t index;
+    bool created;
+    bool enabled;
+    bool touched;
+    bool is6DoF;
+    vrb::Matrix transform;
+    int32_t  buttonsState;
+    float grip = 0.0f;
+    ElbowModel::HandEnum hand;
+    Controller()
+        : index(-1)
+        , created(false)
+        , enabled(false)
+        , touched(false)
+        , is6DoF(false)
+        , transform(vrb::Matrix::Identity())
+        , hand(ElbowModel::HandEnum::Right)
+    {}
+  };
   vrb::RenderContextWeak context;
   bool initialized = false;
   bool paused = false;
@@ -38,10 +65,9 @@ struct DeviceDelegatePicoVR::State {
   vrb::Color clearColor;
   float near = 0.1f;
   float far = 100.f;
-  int32_t controllerHandle = -1;
-  vrb::Matrix controllerTransform = vrb::Matrix::Identity();
+  std::array<Controller, kMaxControllerCount> controllers = {};
   crow::ElbowModelPtr elbow;
-  ControllerDelegatePtr controller;
+  ControllerDelegatePtr controllerDelegate;
   ImmersiveDisplayPtr immersiveDisplay;
   vrb::Matrix reorientMatrix = vrb::Matrix::Identity();
   vrb::Quaternion orientation;
@@ -51,13 +77,23 @@ struct DeviceDelegatePicoVR::State {
 
   void Initialize() {
     vrb::RenderContextPtr localContext = context.lock();
-    elbow = crow::ElbowModel::Create();
 
     vrb::CreationContextPtr create = localContext->GetRenderThreadCreationContext();
     cameras[device::EyeIndex(device::Eye::Left)] = vrb::CameraEye::Create(create);
     cameras[device::EyeIndex(device::Eye::Right)] = vrb::CameraEye::Create(create);
     UpdatePerspective();
     UpdateEyeTransform();
+
+    for (int32_t index = 0; index < kMaxControllerCount; index++) {
+      controllers[index].index = index;
+      if (index == 0) {
+        controllers[index].hand = ElbowModel::HandEnum::Right;
+      } else {
+        controllers[index].hand = ElbowModel::HandEnum::Left;
+      }
+      controllers[index].is6DoF = true;
+    }
+
     initialized = true;
   }
 
@@ -78,6 +114,33 @@ struct DeviceDelegatePicoVR::State {
     if (immersiveDisplay) {
       immersiveDisplay->SetEyeOffset(device::Eye::Left, -ipd * 0.5f, 0.f, 0.f);
       immersiveDisplay->SetEyeOffset(device::Eye::Right, ipd * 0.5f, 0.f, 0.f);
+    }
+  }
+
+  void UpdateControllers() {
+    for (int32_t i = 0; i < controllers.size(); ++i) {
+      if (!controllers[i].enabled) {
+        continue;
+      }
+      auto & controller = controllers[i];
+      device::CapabilityFlags flags = device::Orientation;
+      if (controller.is6DoF) {
+        flags |= device::Position;
+      }
+      controllerDelegate->SetCapabilityFlags(i, flags);
+      const bool actionPressed = (controller.buttonsState & kButtonAction) > 0;
+      const bool appPressed = (controller.buttonsState & kButtonApp) > 0;
+
+      controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_TRIGGER, 0, actionPressed, actionPressed);
+      controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_APP, 1, appPressed, appPressed);
+      controllerDelegate->SetAxes(i, &controller.grip, 1);
+
+      vrb::Matrix transform = controller.transform;
+      if (renderMode == device::RenderMode::StandAlone) {
+        transform.TranslateInPlace(kAverageHeight);
+      }
+
+      controllerDelegate->SetTransform(i, transform);
     }
   }
 };
@@ -154,17 +217,23 @@ DeviceDelegatePicoVR::SetClipPlanes(const float aNear, const float aFar) {
 
 void
 DeviceDelegatePicoVR::SetControllerDelegate(ControllerDelegatePtr& aController) {
-  m.controller = aController;
+  m.controllerDelegate = aController;
+  for (int32_t index = 0; index < m.controllers.size(); index++) {
+    m.controllerDelegate->CreateController(index, 0, "Pico");
+    m.controllerDelegate->SetButtonCount(index, kNumButtons);
+    m.controllerDelegate->SetHapticCount(index, 0);
+    m.controllers[index].created = true;
+  }
 }
 
 void
 DeviceDelegatePicoVR::ReleaseControllerDelegate() {
-  m.controller = nullptr;
+  m.controllerDelegate = nullptr;
 }
 
 int32_t
 DeviceDelegatePicoVR::GetControllerModelCount() const {
-  return 1;
+  return m.controllers.size();
 }
 
 const std::string
@@ -190,6 +259,7 @@ DeviceDelegatePicoVR::StartFrame() {
 
   m.cameras[0]->SetHeadTransform(head);
   m.cameras[1]->SetHeadTransform(head);
+  m.UpdateControllers();
 }
 
 void
@@ -240,6 +310,31 @@ DeviceDelegatePicoVR::UpdatePosition(const vrb::Vector& aPosition) {
 void
 DeviceDelegatePicoVR::UpdateOrientation(const vrb::Quaternion& aOrientation) {
   m.orientation = aOrientation;
+}
+
+void
+DeviceDelegatePicoVR::UpdateControllerConnected(const int aIndex, const bool aConnected) {
+  auto & controller = m.controllers[aIndex];
+  if (controller.enabled != aConnected) {
+    controller.enabled = aConnected;
+    m.controllerDelegate->SetEnabled(aIndex, aConnected);
+    m.controllerDelegate->SetVisible(aIndex, aConnected);
+  }
+}
+
+void
+DeviceDelegatePicoVR::UpdateControllerPose(const int aIndex, const bool a6Dof, const vrb::Vector& aPosition, const vrb::Quaternion& aRotation) {
+  vrb::Quaternion quat(-aRotation.x(), -aRotation.y(), aRotation.z(), aRotation.w());
+  vrb::Matrix transform = vrb::Matrix::Rotation(quat);
+  transform.PreMultiplyInPlace(vrb::Matrix::Position(aPosition));
+  m.controllers[aIndex].transform = transform;
+  m.controllers[aIndex].is6DoF = a6Dof;
+}
+
+void
+DeviceDelegatePicoVR::UpdateControllerButtons(const int aIndex, const int32_t aButtonsState, const float aGrip) {
+  m.controllers[aIndex].buttonsState = aButtonsState;
+  m.controllers[aIndex].grip = aGrip;
 }
 
 
