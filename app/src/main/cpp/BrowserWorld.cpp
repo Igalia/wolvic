@@ -1440,8 +1440,8 @@ BrowserWorld::TickImmersive() {
 
 void
 BrowserWorld::DrawImmersive(device::Eye aEye) {
-  m.device->BindEye(device::Eye::Left);
-  m.blitter->Draw(device::Eye::Left);
+  m.device->BindEye(aEye);
+  m.blitter->Draw(aEye);
 }
 
 void

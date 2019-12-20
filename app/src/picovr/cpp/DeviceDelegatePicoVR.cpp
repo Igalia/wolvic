@@ -105,6 +105,10 @@ struct DeviceDelegatePicoVR::State {
     vrb::Matrix projection = vrb::Matrix::PerspectiveMatrix(fov, fov, fov, fov, near, far);
     cameras[0]->SetPerspective(projection);
     cameras[1]->SetPerspective(projection);
+
+    const float fovDegrees = fov * (float)(180.0 / M_PI);
+    immersiveDisplay->SetFieldOfView(device::Eye::Left, fovDegrees, fovDegrees, fovDegrees, fovDegrees);
+    immersiveDisplay->SetFieldOfView(device::Eye::Right, fovDegrees, fovDegrees, fovDegrees, fovDegrees);
   }
 
   void UpdateEyeTransform() {
