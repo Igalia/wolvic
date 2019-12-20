@@ -1,31 +1,8 @@
-const CUSTOM_USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12) AppleWebKit/602.1.21 (KHTML, like Gecko) Version/9.2 Safari/602.1.21';
+const CUSTOM_USER_AGENT = 'Mozilla/5.0 (Linux; Android 7.1.1; Quest) AppleWebKit/537.36 (KHTML, like Gecko) OculusBrowser/7.0.13.186866463 SamsungBrowser/4.0 Chrome/77.0.3865.126 Mobile VR Safari/537.36';
 const targetUrls = [
     "https://*.youtube.com/*",
     "https://*.youtube-nocookie.com/*"
 ];
-
-/**
- * 1. Disable YouTube's Polymer layout (which makes YouTube very slow in non-Chrome browsers)
- *    via a query-string parameter in the URL.
- * 2. Rewrite YouTube URLs from `m.youtube.com` -> `youtube.com` (to avoid serving YouTube's
- *    video pages intended for mobile phones, as linked from Google search results).
- */
-function redirectUrl(req) {
-    let redirect = false;
-    const url = new URL(req.url);
-    if (url.host.startsWith("m.")) {
-        url.host = url.host.replace("m.", "www.");
-        redirect = true;
-    }
-    if (!url.searchParams.get("disable_polymer")) {
-        url.searchParams.set("disable_polymer", "1");
-        redirect = true;
-    }
-    if (!redirect) {
-        return null;
-    }
-    return { redirectUrl: url.toString() };
-}
 
 /**
  * Override UA. This is required to get the equirectangular video formats from Youtube.
@@ -39,12 +16,6 @@ function overrideUA(req) {
     }
     return { requestHeaders: req.requestHeaders };
 }
-
-browser.webRequest.onBeforeRequest.addListener(
-    redirectUrl,
-    { urls: targetUrls, types: ["main_frame"]},
-    ["blocking"]
-);
 
 browser.webRequest.onBeforeSendHeaders.addListener(
     overrideUA,

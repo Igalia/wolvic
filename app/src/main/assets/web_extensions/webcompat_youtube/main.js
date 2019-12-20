@@ -1,5 +1,5 @@
 'use strict';
-const CUSTOM_USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12) AppleWebKit/602.1.21 (KHTML, like Gecko) Version/9.2 Safari/602.1.21';
+const CUSTOM_USER_AGENT = 'Mozilla/5.0 (Linux; Android 7.1.1; Quest) AppleWebKit/537.36 (KHTML, like Gecko) OculusBrowser/7.0.13.186866463 SamsungBrowser/4.0 Chrome/77.0.3865.126 Mobile VR Safari/537.36';
 const LOGTAG = '[firefoxreality:webcompat:youtube]';
 const VIDEO_PROJECTION_PARAM = 'mozVideoProjection';
 const YT_SELECTORS = {
@@ -96,6 +96,7 @@ class YoutubeExtension {
     }
 
     overrideClick(event) {
+        this.overrideVideoProjection();
         const player = this.getPlayer();
         if (!this.isWatchingPage() || !this.hasVideoProjection() || document.fullscreenElement || !player) {
             return; // Only override click in the Youtube watching page for 360 videos.
