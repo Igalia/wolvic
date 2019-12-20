@@ -30,6 +30,7 @@ public class RestartDialogWidget extends PromptDialogWidget {
                 onDismiss();
 
             } else if (index == PromptDialogWidget.POSITIVE) {
+                mWidgetManager.saveState();
                 postDelayed(() -> SystemUtils.scheduleRestart(getContext(), 100), 500);
             }
         });

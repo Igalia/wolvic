@@ -554,6 +554,10 @@
      and is used to enable or disable playback of DRM controlled content. -->
     <string name="security_options_drm_content">Play DRM-Controlled Content (&lt;a href="http://somesite.com/">Learn More&lt;/a>)</string>
 
+    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
+     and is used to enable or disable the tabs restoration after a fresh app start. -->
+    <string name="security_options_restore_tabs">Restore tabs and windows after restart</string>
+
     <!-- This string labels an On/Off switch in the Privacy and Security settings dialog
      and is used to enable or disable tracking protection. -->
     <string name="security_options_tracking_protection">Tracking Protection</string>

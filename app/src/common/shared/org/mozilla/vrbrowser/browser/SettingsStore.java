@@ -7,6 +7,8 @@ import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.mozilla.geckoview.GeckoSessionSettings;
@@ -14,16 +16,12 @@ import org.mozilla.telemetry.TelemetryHolder;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
-import org.mozilla.vrbrowser.ui.widgets.UISurfaceTextureRenderer;
 import org.mozilla.vrbrowser.utils.DeviceType;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
 import org.mozilla.vrbrowser.utils.StringUtils;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
-import androidx.annotation.NonNull;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -86,6 +84,7 @@ public class SettingsStore {
     public final static boolean HISTORY_SYNC_DEFAULT = true;
     public final static boolean WHATS_NEW_DISPLAYED = false;
     public final static long FXA_LAST_SYNC_NEVER = 0;
+    public final static boolean RESTORE_TABS_ENABLED = true;
 
     // Enable telemetry by default (opt-out).
     public final static boolean CRASH_REPORTING_DEFAULT = false;
@@ -690,8 +689,16 @@ public class SettingsStore {
         } catch (Exception e) {
             return FXA_LAST_SYNC_NEVER;
         }
+    }
 
+    public void setRestoreTabsEnabled(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_restore_tabs), isEnabled);
+        editor.commit();
+    }
 
+    public boolean isRestoreTabsEnabled() {
+        return mPrefs.getBoolean(mContext.getString(R.string.settings_key_restore_tabs), RESTORE_TABS_ENABLED);
     }
 
 }
