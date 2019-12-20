@@ -174,29 +174,41 @@
 
     <style name="urlBarIconTheme">
         <item name="android:background">@drawable/url_button</item>
-        <item name="tintColorList">@drawable/url_button_icon_color</item>
         <item name="android:layout_width">@dimen/url_bar_item_width</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:scaleType">centerInside</item>
         <item name="android:gravity">center</item>
+        <item name="privateModeBackground">@drawable/url_button_private</item>
+        <item name="tintColorList">@drawable/main_button_icon_color</item>
+        <item name="privateModeTintColorList">@drawable/main_button_icon_color_private</item>
+        <item name="activeModeTintColorList">@drawable/main_button_icon_color_active</item>
+        <item name="notificationModeTintColorList">@drawable/main_button_icon_color_notification</item>
     </style>
 
     <style name="urlBarIconThemeStart">
         <item name="android:background">@drawable/url_button_start</item>
-        <item name="tintColorList">@drawable/url_button_icon_color</item>
         <item name="android:layout_width">@dimen/url_bar_first_item_width</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:scaleType">centerInside</item>
         <item name="android:gravity">center</item>
+        <item name="privateModeBackground">@drawable/url_button_start_private</item>
+        <item name="tintColorList">@drawable/main_button_icon_color</item>
+        <item name="privateModeTintColorList">@drawable/main_button_icon_color_private</item>
+        <item name="activeModeTintColorList">@drawable/main_button_icon_color_active</item>
+        <item name="notificationModeTintColorList">@drawable/main_button_icon_color_notification</item>
     </style>
 
     <style name="urlBarIconThemeEnd">
         <item name="android:background">@drawable/url_button_end</item>
-        <item name="tintColorList">@drawable/url_button_icon_color</item>
         <item name="android:layout_width">@dimen/url_bar_last_item_width</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:scaleType">centerInside</item>
         <item name="android:gravity">center</item>
+        <item name="privateModeBackground">@drawable/url_button_end_private</item>
+        <item name="tintColorList">@drawable/main_button_icon_color</item>
+        <item name="privateModeTintColorList">@drawable/main_button_icon_color_private</item>
+        <item name="activeModeTintColorList">@drawable/main_button_icon_color_active</item>
+        <item name="notificationModeTintColorList">@drawable/main_button_icon_color_notification</item>
     </style>
 
     <style name="scrollbar">

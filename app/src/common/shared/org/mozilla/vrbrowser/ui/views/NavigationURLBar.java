@@ -418,6 +418,10 @@ public class NavigationURLBar extends FrameLayout {
     }
 
     public void setPrivateMode(boolean isEnabled) {
+        mBinding.bookmarkButton.setPrivateMode(isEnabled);
+        mBinding.microphoneButton.setPrivateMode(isEnabled);
+        mBinding.clearButton.setPrivateMode(isEnabled);
+
         mBinding.setIsPrivateMode(isEnabled);
     }
 

@@ -84,7 +84,7 @@
                     android:id="@+id/microphoneButton"
                     style="@style/urlBarIconTheme"
                     android:layout_width="@{(isLibraryVisible || isSpecialUrl) ? @dimen/url_bar_last_item_width : @dimen/url_bar_item_width}"
-                    android:background="@{(isLibraryVisible || isSpecialUrl) ? @drawable/url_button_end : @drawable/url_button}"
+                    android:background="@{(isLibraryVisible || isSpecialUrl) ? (isPrivateMode ? @drawable/url_button_end_private : @drawable/url_button_end) : (isPrivateMode ? @drawable/url_button_private : @drawable/url_button)}"
                     android:src="@drawable/ic_icon_microphone"
                     android:tint="@color/fog"
                     android:tooltipText="@string/voice_search_tooltip"

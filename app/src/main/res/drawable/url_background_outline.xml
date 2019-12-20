@@ -38,6 +38,22 @@
             </item>
         </layer-list>
     </item>
+    <item android:state_pressed="true">
+        <layer-list>
+            <item>
+                <shape android:shape="rectangle">
+                    <corners android:radius="20dp" />
+                    <stroke android:width="@dimen/blur_radius" android:color="@color/azure_blur" />
+                </shape>
+            </item>
+            <item android:start="@dimen/blur_radius_half" android:end="@dimen/blur_radius_half" android:top="@dimen/blur_radius_half" android:bottom="@dimen/blur_radius_half">
+                <shape android:shape="rectangle">
+                    <corners android:radius="20dp" />
+                    <stroke android:width="2dp" android:color="@color/azure" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
     <item android:state_hovered="false" android:state_pressed="false">
         <shape android:shape="rectangle">
             <corners android:radius="20dp" />
