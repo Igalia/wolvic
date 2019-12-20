@@ -208,6 +208,16 @@ android {
             }
         }
 
+        picovr {
+            dimension "platform"
+            externalNativeBuild {
+                cmake {
+                    cppFlags " -DPICOVR"
+                    arguments "-DVR_SDK_LIB=picovr-lib", "-DPICOVR=ON"
+                }
+            }
+        }
+
         noapi {
             dimension "platform"
             externalNativeBuild {
@@ -263,6 +273,8 @@ android {
                 'svrArmRelease',
                 'svrArm64Debug',
                 'svrArm64Release',
+                'picovrArm64Debug',
+                'picovrArm64Release',
                 'wavevrArmDebug',
                 'wavevrArmRelease',
                 'wavevrArm64Debug',
@@ -408,6 +420,13 @@ android {
             manifest.srcFile "src/wavevr/AndroidManifest.xml"
         }
 
+        picovr {
+            java.srcDirs = [
+                    'src/picovr/java'
+            ]
+            jniLibs.srcDirs = ["${project.rootDir}/third_party/picovr"]
+        }
+
         noapi {
             java.srcDirs = [
                     'src/noapi/java'
@@ -512,6 +531,9 @@ dependencies {
 
     // ODG
     svrImplementation fileTree(dir: "${project.rootDir}/third_party/svr/", include: ['*.jar'])
+
+    // Pico
+    picovrImplementation fileTree(dir: "${project.rootDir}/third_party/picovr/", include: ['*.jar'])
 }
 
 if (findProject(':servo')) {

@@ -61,6 +61,13 @@ target_sources(
     src/googlevr/cpp/native-lib.cpp
     src/googlevr/cpp/DeviceDelegateGoogleVR.cpp
     )
+elseif(PICOVR)
+target_sources(
+        native-lib
+        PUBLIC
+        src/picovr/cpp/native-lib.cpp
+        src/picovr/cpp/DeviceDelegatePicoVR.cpp
+)
 elseif(NOAPI)
 target_sources(
     native-lib
@@ -141,6 +148,10 @@ set_target_properties(svr-lib PROPERTIES IMPORTED_LOCATION
 add_library(wavevr-lib SHARED IMPORTED)
 set_target_properties(wavevr-lib PROPERTIES IMPORTED_LOCATION
                       ${CMAKE_SOURCE_DIR}/../third_party/wavesdk/build/wvr_client/jni/${ANDROID_ABI}/libwvr_api.so )
+
+add_library(picovr-lib SHARED IMPORTED)
+set_target_properties(picovr-lib PROPERTIES IMPORTED_LOCATION
+        ${CMAKE_SOURCE_DIR}/../third_party/picovr/${ANDROID_ABI}/libPvr_NativeSDK.so )
 
 
 # Specifies libraries CMake should link to your target library. You

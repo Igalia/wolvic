@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.mozilla.vrbrowser">
+    <!-- Make accelerometer and gyroscope hard requirements for good head tracking. -->
+    <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true"/>
+    <uses-feature android:name="android.hardware.sensor.gyroscope" android:required="true"/>
+
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.INJECT_EVENTS" />
+
+    <application>
+        <meta-data android:name="pvr.app.type" android:value="vr"/>
+        <meta-data android:name="pvr.display.orientation" android:value="180"/>
+    </application>
+</manifest>
