@@ -2,7 +2,8 @@ package org.mozilla.vrbrowser.browser.engine;
 
 import android.content.Context;
 
-import org.jetbrains.annotations.NotNull;
+import androidx.annotation.NonNull;
+
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 
@@ -16,7 +17,7 @@ class SessionSettings {
     private boolean isServoEnabled;
     private String userAgentOverride;
 
-    /* package */ SessionSettings(@NotNull Builder builder) {
+    /* package */ SessionSettings(@NonNull Builder builder) {
         this.isPrivateBrowsingEnabled = builder.isPrivateBrowsingEnabled;
         this.isTrackingProtectionEnabled = builder.isTrackingProtectionEnabled;
         this.isSuspendMediaWhenInactiveEnabled = builder.isSuspendMediaWhenInactiveEnabled;

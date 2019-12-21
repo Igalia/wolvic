@@ -10,10 +10,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.browser.Accounts;
@@ -222,12 +222,12 @@ class FxAAccountOptionsView extends SettingsView {
     private AccountObserver mAccountListener = new AccountObserver() {
 
         @Override
-        public void onAuthenticated(@NotNull OAuthAccount oAuthAccount, @NotNull AuthType authType) {
+        public void onAuthenticated(@NonNull OAuthAccount oAuthAccount, @NonNull AuthType authType) {
             mBinding.signButton.setButtonText(R.string.settings_fxa_account_sign_out);
         }
 
         @Override
-        public void onProfileUpdated(@NotNull Profile profile) {
+        public void onProfileUpdated(@NonNull Profile profile) {
             mBinding.accountEmail.setText(profile.getEmail());
             mBinding.setLastSync(mAccounts.lastSync());
         }

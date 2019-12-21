@@ -14,12 +14,11 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserActivity;
@@ -53,8 +52,6 @@ import mozilla.components.concept.sync.Profile;
 import mozilla.components.service.fxa.SyncEngine;
 import mozilla.components.service.fxa.sync.SyncReason;
 import mozilla.components.service.fxa.sync.SyncStatusObserver;
-
-import static org.mozilla.vrbrowser.browser.BookmarksStoreKt.DESKTOP_ROOT;
 
 public class BookmarksView extends FrameLayout implements BookmarksStore.BookmarkListener {
 
@@ -304,12 +301,12 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
     private AccountObserver mAccountListener = new AccountObserver() {
 
         @Override
-        public void onAuthenticated(@NotNull OAuthAccount oAuthAccount, @NotNull AuthType authType) {
+        public void onAuthenticated(@NonNull OAuthAccount oAuthAccount, @NonNull AuthType authType) {
             mBinding.setIsSignedIn(true);
         }
 
         @Override
-        public void onProfileUpdated(@NotNull Profile profile) {
+        public void onProfileUpdated(@NonNull Profile profile) {
         }
 
         @Override

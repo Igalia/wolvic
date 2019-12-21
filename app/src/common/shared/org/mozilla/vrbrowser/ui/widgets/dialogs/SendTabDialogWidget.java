@@ -13,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 
-import org.jetbrains.annotations.NotNull;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.browser.Accounts;
@@ -147,7 +146,7 @@ public class SendTabDialogWidget extends SettingDialogWidget implements
     // DeviceConstellationObserver
 
     @Override
-    public void onDevicesUpdate(@NotNull ConstellationState constellationState) {
+    public void onDevicesUpdate(@NonNull ConstellationState constellationState) {
         post(() -> {
             mSendTabsDialogBinding.setIsSyncing(false);
 
@@ -182,14 +181,14 @@ public class SendTabDialogWidget extends SettingDialogWidget implements
     }
 
     @Override
-    public void onAuthenticated(@NotNull OAuthAccount oAuthAccount, @NotNull AuthType authType) {
+    public void onAuthenticated(@NonNull OAuthAccount oAuthAccount, @NonNull AuthType authType) {
         if (mAccounts.getLoginOrigin() == Accounts.LoginOrigin.SEND_TABS) {
             show(REQUEST_FOCUS);
         }
     }
 
     @Override
-    public void onProfileUpdated(@NotNull Profile profile) {
+    public void onProfileUpdated(@NonNull Profile profile) {
 
     }
 

@@ -2,7 +2,6 @@ package org.mozilla.vrbrowser.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
@@ -16,7 +15,6 @@ import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.URLSpan;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,10 +23,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.coordinatorlayout.widget.ViewGroupUtils;
 import androidx.core.text.HtmlCompat;
 
-import org.jetbrains.annotations.NotNull;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 
 public class ViewUtils {
@@ -123,7 +119,7 @@ public class ViewUtils {
         return isChildrenOf(aParent, aView);
     }
 
-    public static boolean isInsideView(@NotNull View view, int rx, int ry) {
+    public static boolean isInsideView(@NonNull View view, int rx, int ry) {
         int[] location = new int[2];
         view.getLocationOnScreen(location);
         int x = location[0];

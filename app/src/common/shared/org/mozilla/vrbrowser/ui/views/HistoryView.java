@@ -14,12 +14,11 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserActivity;
@@ -299,12 +298,12 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
     private AccountObserver mAccountListener = new AccountObserver() {
 
         @Override
-        public void onAuthenticated(@NotNull OAuthAccount oAuthAccount, @NotNull AuthType authType) {
+        public void onAuthenticated(@NonNull OAuthAccount oAuthAccount, @NonNull AuthType authType) {
             mBinding.setIsSignedIn(true);
         }
 
         @Override
-        public void onProfileUpdated(@NotNull Profile profile) {
+        public void onProfileUpdated(@NonNull Profile profile) {
         }
 
         @Override
@@ -318,7 +317,7 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
         }
     };
 
-    @NotNull
+    @NonNull
     public static <T> Predicate<T> distinctByUrl(Function<? super T, ?> keyExtractor) {
         Set<Object> seen = ConcurrentHashMap.newKeySet();
         return t -> seen.add(keyExtractor.apply(t));

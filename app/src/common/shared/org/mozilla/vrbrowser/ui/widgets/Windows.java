@@ -10,7 +10,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-import org.jetbrains.annotations.NotNull;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserApplication;
@@ -893,7 +892,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         }
 
         @Override
-        public void onAuthenticated(@NotNull OAuthAccount oAuthAccount, @NotNull AuthType authType) {
+        public void onAuthenticated(@NonNull OAuthAccount oAuthAccount, @NonNull AuthType authType) {
             if (authType != AuthType.Existing.INSTANCE) {
                 Session session = mFocusedWindow.getSession();
                 addTab(mFocusedWindow, mAccounts.getConnectionSuccessURL());
@@ -901,22 +900,22 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
                 switch (mAccounts.getLoginOrigin()) {
                     case BOOKMARKS:
-                        getFocusedWindow().switchBookmarks();
+                        getFocusedWindow().showBookmarks();
                         break;
 
                     case HISTORY:
-                        getFocusedWindow().switchHistory();
+                        getFocusedWindow().showHistory();
                         break;
 
                     case SETTINGS:
-                        mWidgetManager.getTray().toggleSettingsDialog(SettingsWidget.SettingDialog.FXA);
+                        mWidgetManager.getTray().showSettingsDialog(SettingsWidget.SettingDialog.FXA);
                         break;
                 }
             }
         }
 
         @Override
-        public void onProfileUpdated(@NotNull Profile profile) {
+        public void onProfileUpdated(@NonNull Profile profile) {
 
         }
 
@@ -1156,7 +1155,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         addTab(targetWindow, null);
     }
 
-    public void addTab(@NotNull WindowWidget targetWindow, @Nullable String aUri) {
+    public void addTab(@NonNull WindowWidget targetWindow, @Nullable String aUri) {
         Session session = SessionStore.get().createSuspendedSession(aUri, targetWindow.getSession().isPrivateMode());
         setFirstPaint(targetWindow, session);
         targetWindow.getSession().setActive(false);
@@ -1244,7 +1243,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     }
 
     @Override
-    public void onTabsReceived(@NotNull List<TabData> aTabs) {
+    public void onTabsReceived(@NonNull List<TabData> aTabs) {
         WindowWidget targetWindow = mFocusedWindow;
 
         boolean fullscreen = targetWindow.getSession().isInFullScreen();

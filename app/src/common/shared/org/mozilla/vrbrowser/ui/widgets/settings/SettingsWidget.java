@@ -24,7 +24,6 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 
-import org.jetbrains.annotations.NotNull;
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.R;
@@ -330,12 +329,12 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
     private AccountObserver mAccountObserver = new AccountObserver() {
 
         @Override
-        public void onAuthenticated(@NotNull OAuthAccount oAuthAccount, @NotNull AuthType authType) {
+        public void onAuthenticated(@NonNull OAuthAccount oAuthAccount, @NonNull AuthType authType) {
 
         }
 
         @Override
-        public void onProfileUpdated(@NotNull Profile profile) {
+        public void onProfileUpdated(@NonNull Profile profile) {
             updateProfile(profile);
         }
 
@@ -430,7 +429,9 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
     }
 
     public void show(@ShowFlags int aShowFlags, @NonNull SettingDialog settingDialog) {
-        show(aShowFlags);
+        if (!isVisible()) {
+            show(aShowFlags);
+        }
 
         switch (settingDialog) {
             case LANGUAGE:
