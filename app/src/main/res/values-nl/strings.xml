@@ -600,6 +600,10 @@
          of this storage even though the storage may not reside on external removable media. -->
     <string name="security_options_permission_storage">Externe opslag lezen</string>
 
+    <!-- This string labels the button that displays or enables application access to the device's
+         camera and microphone, if present. -->
+    <string name="security_options_permission_camera_and_microphone">Camera en microfoon</string>
+
     <!-- This string labels the button in the privacy option panel that enables/disables the pop-up
          blocking. -->
     <string name="security_options_block_pup_up_windows">Pop-upvensters blokkeren</string>
@@ -663,6 +667,9 @@
     <!-- This string is displayed in a dialog after the user has declined permission to use the
          device's microphone. It explains why Voice Search is not working. -->
     <string name="voice_search_permission_after_decline">Sta microfoontoegang toe om gesproken zoekopdrachten te gebruiken.</string>
+
+    <!-- This string is displayed in the button at the bottom of the Voice Search dialog. When clicked the Voice search dialog is closed. -->
+    <string name="voice_search_close">Sluiten</string>
 
     <!-- This string is displayed in the URL bar when it is empty. It informs the user that they
          may use the URL bar to search the Web or enter a Web address. -->
@@ -935,6 +942,14 @@
 
     <!-- This string is displayed on top of the allowed sites list in the allowed pop-ups panel. -->
     <string name="privacy_options_popups_list_header">De volgende websites hebben het openen van pop-upvensters aangevraagd:</string>
+
+    <!-- This string is displayed in the first line of a text that's displayed in the middle of allowed pop-ups panel instead of the exceptions list
+         when there are no exceptions. -->
+    <string name="privacy_options_popups_list_empty_first">Wanneer u een website met pop-upvensters opent, ziet u een dialoogvenster waarin u kunt kiezen om pop-upvensters te blokkeren.</string>
+
+    <!-- This string is displayed in the second line of a text that's displayed in the middle of allowed pop-ups panel instead of the exceptions list
+         when there are no exceptions. -->
+    <string name="privacy_options_popups_list_empty_second">Een lijst van websites met machtigingen zal hier verschijnen.</string>
 
     <!-- This string labels the Reset button that restores the default controller settings values. -->
     <string name="controller_options_reset">Controllerinstellingen herinitialiseren</string>

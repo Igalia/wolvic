@@ -559,6 +559,10 @@
      and is used to enable or disable playback of DRM controlled content. -->
     <string name="security_options_drm_content">Odtwarzanie treści chronionych przez DRM (&lt;a href=&quot;http://somesite.com/&quot;&gt;więcej informacji&lt;/a&gt;)</string>
 
+    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
+     and is used to enable or disable the tabs restoration after a fresh app start. -->
+    <string name="security_options_restore_tabs">Przywracanie kart i okien po ponownym uruchomieniu</string>
+
     <!-- This string labels an On/Off switch in the Privacy and Security settings dialog
      and is used to enable or disable tracking protection. -->
     <string name="security_options_tracking_protection">Ochrona przed śledzeniem</string>
@@ -939,6 +943,14 @@
 
     <!-- This string is displayed on top of the allowed sites list in the allowed pop-ups panel. -->
     <string name="privacy_options_popups_list_header">Te witryny poprosiły o zezwolenie na otwieranie wyskakujących okien:</string>
+
+    <!-- This string is displayed in the first line of a text that's displayed in the middle of allowed pop-ups panel instead of the exceptions list
+         when there are no exceptions. -->
+    <string name="privacy_options_popups_list_empty_first">Po otwarciu witryny z wyskakującym oknem zostanie wyświetlone okno dialogowe umożliwiające wybranie opcji ich blokowania.</string>
+
+    <!-- This string is displayed in the second line of a text that's displayed in the middle of allowed pop-ups panel instead of the exceptions list
+         when there are no exceptions. -->
+    <string name="privacy_options_popups_list_empty_second">Tutaj będą wyświetlane witryny z zezwoleniem na otwieranie wyskakujących okien.</string>
 
     <!-- This string labels the Reset button that restores the default controller settings values. -->
     <string name="controller_options_reset">Przywróć ustawienia kontrolera</string>
