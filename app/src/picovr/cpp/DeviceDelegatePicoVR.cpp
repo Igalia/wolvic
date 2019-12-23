@@ -106,9 +106,13 @@ struct DeviceDelegatePicoVR::State {
     cameras[0]->SetPerspective(projection);
     cameras[1]->SetPerspective(projection);
 
-    const float fovDegrees = fov * (float)(180.0 / M_PI);
-    immersiveDisplay->SetFieldOfView(device::Eye::Left, fovDegrees, fovDegrees, fovDegrees, fovDegrees);
-    immersiveDisplay->SetFieldOfView(device::Eye::Right, fovDegrees, fovDegrees, fovDegrees, fovDegrees);
+    if (immersiveDisplay) {
+      const float fovDegrees = fov * (float) (180.0 / M_PI);
+      immersiveDisplay->SetFieldOfView(device::Eye::Left, fovDegrees, fovDegrees, fovDegrees,
+                                       fovDegrees);
+      immersiveDisplay->SetFieldOfView(device::Eye::Right, fovDegrees, fovDegrees, fovDegrees,
+                                       fovDegrees);
+    }
   }
 
   void UpdateEyeTransform() {
