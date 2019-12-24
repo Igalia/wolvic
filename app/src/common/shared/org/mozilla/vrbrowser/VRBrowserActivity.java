@@ -35,6 +35,7 @@ import android.widget.FrameLayout;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 
 import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoSession;
@@ -1478,6 +1479,16 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Override
     public void saveState() {
         mWindows.saveState();
+    }
+
+    @VisibleForTesting
+    public RootWidget getRootWidget() {
+        return mRootWidget;
+    }
+
+    @VisibleForTesting
+    public Windows getWindows() {
+        return mWindows;
     }
 
     private native void addWidgetNative(int aHandle, WidgetPlacement aPlacement);
