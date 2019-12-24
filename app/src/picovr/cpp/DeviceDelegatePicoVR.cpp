@@ -67,6 +67,8 @@ struct DeviceDelegatePicoVR::State {
   bool initialized = false;
   bool paused = false;
   device::RenderMode renderMode = device::RenderMode::StandAlone;
+  bool setHeadOffset = true;
+  vrb::Vector headOffset;
   vrb::CameraEyePtr cameras[2];
   uint32_t renderWidth = 0;
   uint32_t renderHeight = 0;
@@ -154,7 +156,7 @@ struct DeviceDelegatePicoVR::State {
       controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_APP, -1, appPressed, appPressed);
       controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_TOUCHPAD, 0, touchPadPressed, touchPadPressed);
       controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_TRIGGER, 1,triggerPressed, triggerPressed);
-      controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_OTHERS, 2, gripPressed, gripPressed, gripPressed ? 1.0f : 0.0f);
+      controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_OTHERS, 2, gripPressed, gripPressed, gripPressed ? 20.0f : 0.0f);
       controllerDelegate->SetButtonState(i, (controller.IsRightHand() ? ControllerDelegate::BUTTON_A : ControllerDelegate::BUTTON_X), 3, axPressed, axPressed);
       controllerDelegate->SetButtonState(i, (controller.IsRightHand() ? ControllerDelegate::BUTTON_B : ControllerDelegate::BUTTON_Y), 4, byPressed, byPressed);
       controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_OTHERS, 5, false, false);
@@ -162,7 +164,7 @@ struct DeviceDelegatePicoVR::State {
 
       vrb::Matrix transform = controller.transform;
       if (renderMode == device::RenderMode::StandAlone) {
-        transform.TranslateInPlace(kAverageHeight);
+        transform.TranslateInPlace(headOffset);
       }
 
       controllerDelegate->SetTransform(i, transform);
@@ -245,7 +247,6 @@ DeviceDelegatePicoVR::SetControllerDelegate(ControllerDelegatePtr& aController) 
   m.controllerDelegate = aController;
   for (State::Controller& controller: m.controllers) {
     const int32_t index = controller.index;
-    VRB_ERROR("CREATE CONTROLLER: %d", index);
     //m.controllerDelegate->CreateController(index, int32_t(controller.hand), controllerIsRightHand() ? "Pico (Right)" : "Pico (LEFT)");
     m.controllerDelegate->CreateController(index, int32_t(controller.hand), controller.IsRightHand() ? "Oculus Touch (Right)" : "Oculus Touch (LEFT)");
     m.controllerDelegate->SetButtonCount(index, kNumButtons);
@@ -282,7 +283,7 @@ DeviceDelegatePicoVR::StartFrame() {
   head.TranslateInPlace(m.position);
 
   if (m.renderMode == device::RenderMode::StandAlone) {
-    head.TranslateInPlace(kAverageHeight);
+    head.TranslateInPlace(m.headOffset);
   }
 
   m.cameras[0]->SetHeadTransform(head);
@@ -332,6 +333,10 @@ DeviceDelegatePicoVR::UpdateFov(const float aFov) {
 
 void
 DeviceDelegatePicoVR::UpdatePosition(const vrb::Vector& aPosition) {
+  if (m.setHeadOffset) {
+    m.headOffset = kAverageHeight - aPosition;
+    m.setHeadOffset = false;
+  }
   m.position = aPosition;
 }
 
