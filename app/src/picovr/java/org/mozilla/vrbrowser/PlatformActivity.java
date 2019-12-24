@@ -31,6 +31,13 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
 
     CVControllerManager mControllerManager;
     private boolean mControllersReady;
+    // These need to match DeviceDelegatePicoVR.cpp
+    private final int BUTTON_APP       = 1;
+    private final int BUTTON_TRIGGER   = 1 << 1;
+    private final int BUTTON_TOUCHPAD  = 1 << 2;
+    private final int BUTTON_AX        = 1 << 3;
+    private final int BUTTON_BY        = 1 << 4;
+    private final int BUTTON_GRIP      = 1 << 5;
 
     @Override
     protected void onCreate(Bundle bundle) {
@@ -90,20 +97,24 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
             nativeUpdateControllerState(aIndex, false, 0, 0);
             return;
         }
+        /*
+        if (aIndex == 0) {
+            aController.updateData();
+            int[] stick = aController.getTouchPad();
+            Log.e(LOGTAG, "STICK[" + aIndex + "]: " + stick[0] + " " + stick[1] + " " + stick.length);
 
+        }
+        */
         int buttons = 0;
         float trigger = (float)aController.getTriggerNum() / 255.0f;
-        boolean appButton = aController.getButtonState(ButtonNum.app);
-        boolean actionButton = aController.getButtonState(ButtonNum.buttonAX) ||
-                aController.getButtonState(ButtonNum.buttonBY) ||
-                trigger >= 0.9f;
-
-        if (appButton) {
-            buttons |= 1;
-        }
-        if (actionButton) {
-            buttons |= 1 << 1;
-        }
+        buttons |= aController.getButtonState(ButtonNum.app) ? BUTTON_APP : 0;
+        buttons |= aController.getButtonState(ButtonNum.buttonAX) ? BUTTON_AX : 0;
+        buttons |= aController.getButtonState(ButtonNum.buttonBY) ? BUTTON_BY : 0;
+        buttons |= trigger >= 0.9f ? BUTTON_TRIGGER : 0;
+        //buttons |= aController.getButtonState(aIndex == 0 ? ButtonNum.buttonRG : ButtonNum.buttonLG) ? BUTTON_GRIP : 0;
+        buttons |= aController.getButtonState(ButtonNum.buttonRG) ? BUTTON_GRIP : 0;
+        buttons |= aController.getButtonState(ButtonNum.buttonLG) ? BUTTON_GRIP : 0;
+        buttons |= aController.getButtonState(ButtonNum.click) ? BUTTON_TOUCHPAD : 0;
 
         nativeUpdateControllerState(aIndex, true, buttons, trigger);
 

@@ -29,10 +29,14 @@ namespace crow {
 static const vrb::Vector kAverageHeight(0.0f, 1.7f, 0.0f);
 // TODO: support different controllers & buttons
 static const int32_t kMaxControllerCount = 2;
-static const int32_t kNumButtons = 2;
+static const int32_t kNumButtons = 6;
 static const int32_t kNumAxes = 2;
-static const uint32_t kButtonApp = 1;
-static const uint32_t kButtonAction = 1 << 1;
+static const int32_t kButtonApp       = 1;
+static const int32_t kButtonTrigger   = 1 << 1;
+static const int32_t kButtonTouchPad  = 1 << 2;
+static const int32_t kButtonAX        = 1 << 3;
+static const int32_t kButtonBY        = 1 << 4;
+static const int32_t kButtonGrip      = 1 << 5;
 
 struct DeviceDelegatePicoVR::State {
   struct Controller {
@@ -54,6 +58,10 @@ struct DeviceDelegatePicoVR::State {
         , transform(vrb::Matrix::Identity())
         , hand(ElbowModel::HandEnum::Right)
     {}
+
+    bool IsRightHand() const {
+      return hand == ElbowModel::HandEnum::Right;
+    }
   };
   vrb::RenderContextWeak context;
   bool initialized = false;
@@ -136,12 +144,21 @@ struct DeviceDelegatePicoVR::State {
         flags |= device::Position;
       }
       controllerDelegate->SetCapabilityFlags(i, flags);
-      const bool actionPressed = (controller.buttonsState & kButtonAction) > 0;
       const bool appPressed = (controller.buttonsState & kButtonApp) > 0;
+      const bool triggerPressed = (controller.buttonsState & kButtonTrigger) > 0;
+      const bool touchPadPressed = (controller.buttonsState & kButtonTouchPad) > 0;
+      const bool axPressed = (controller.buttonsState & kButtonAX) > 0;
+      const bool byPressed = (controller.buttonsState & kButtonBY) > 0;
+      const bool gripPressed = (controller.buttonsState & kButtonGrip) > 0;
 
-      controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_TRIGGER, 0, actionPressed, actionPressed);
-      controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_APP, 1, appPressed, appPressed);
-      controllerDelegate->SetAxes(i, &controller.grip, 1);
+      controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_APP, -1, appPressed, appPressed);
+      controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_TOUCHPAD, 0, touchPadPressed, touchPadPressed);
+      controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_TRIGGER, 1,triggerPressed, triggerPressed);
+      controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_OTHERS, 2, gripPressed, gripPressed, gripPressed ? 1.0f : 0.0f);
+      controllerDelegate->SetButtonState(i, (controller.IsRightHand() ? ControllerDelegate::BUTTON_A : ControllerDelegate::BUTTON_X), 3, axPressed, axPressed);
+      controllerDelegate->SetButtonState(i, (controller.IsRightHand() ? ControllerDelegate::BUTTON_B : ControllerDelegate::BUTTON_Y), 4, byPressed, byPressed);
+      controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_OTHERS, 5, false, false);
+      //controllerDelegate->SetAxes(i, &controller.grip, 1);
 
       vrb::Matrix transform = controller.transform;
       if (renderMode == device::RenderMode::StandAlone) {
@@ -226,11 +243,14 @@ DeviceDelegatePicoVR::SetClipPlanes(const float aNear, const float aFar) {
 void
 DeviceDelegatePicoVR::SetControllerDelegate(ControllerDelegatePtr& aController) {
   m.controllerDelegate = aController;
-  for (int32_t index = 0; index < m.controllers.size(); index++) {
-    m.controllerDelegate->CreateController(index, 0, "Pico");
+  for (State::Controller& controller: m.controllers) {
+    const int32_t index = controller.index;
+    VRB_ERROR("CREATE CONTROLLER: %d", index);
+    //m.controllerDelegate->CreateController(index, int32_t(controller.hand), controllerIsRightHand() ? "Pico (Right)" : "Pico (LEFT)");
+    m.controllerDelegate->CreateController(index, int32_t(controller.hand), controller.IsRightHand() ? "Oculus Touch (Right)" : "Oculus Touch (LEFT)");
     m.controllerDelegate->SetButtonCount(index, kNumButtons);
     m.controllerDelegate->SetHapticCount(index, 0);
-    m.controllers[index].created = true;
+    controller.created = true;
   }
 }
 
@@ -248,7 +268,7 @@ const std::string
 DeviceDelegatePicoVR::GetControllerModelName(const int32_t aModelIndex) const {
   // FIXME: Need Pico based controller
   static const std::string name("vr_controller_daydream.obj");
-  return aModelIndex == 0 ? name : "";
+  return aModelIndex == 0 || aModelIndex == 1 ? name : "";
 }
 
 void
@@ -325,6 +345,7 @@ DeviceDelegatePicoVR::UpdateControllerConnected(const int aIndex, const bool aCo
   auto & controller = m.controllers[aIndex];
   if (controller.enabled != aConnected) {
     controller.enabled = aConnected;
+    m.controllerDelegate->SetLeftHanded(aIndex, !controller.IsRightHand());
     m.controllerDelegate->SetEnabled(aIndex, aConnected);
     m.controllerDelegate->SetVisible(aIndex, aConnected);
   }
