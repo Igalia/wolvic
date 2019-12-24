@@ -8,12 +8,12 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.geckoview.CrashReporter;
 import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserActivity;
-import org.mozilla.vrbrowser.VRBrowserApplication;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -23,7 +23,6 @@ import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.concurrent.Executor;
 
 public class SystemUtils {
 
@@ -61,52 +60,50 @@ public class SystemUtils {
     private static final String CRASH_STATS_URL = "https://crash-stats.mozilla.com/report/index/";
 
     private static void sendCrashFiles(@NonNull Context context, @NonNull final String aDumpFile, @NonNull final String aExtraFile) {
-        try {
-            GeckoResult<String> result = CrashReporter.sendCrashReport(context, new File(aDumpFile), new File(aExtraFile), context.getString(R.string.crash_app_name));
+        ThreadUtils.postToBackgroundThread(() -> {
+            try {
+                GeckoResult<String> result = CrashReporter.sendCrashReport(context, new File(aDumpFile), new File(aExtraFile), context.getString(R.string.crash_app_name));
 
-            result.accept(crashID -> {
-                Log.e(LOGTAG, "Submitted crash report id: " + crashID);
-                Log.e(LOGTAG, "Report available at: " + CRASH_STATS_URL + crashID);
-            }, ex -> {
-                Log.e(LOGTAG, "Failed to submit crash report: " + (ex != null ? ex.getMessage() : "Exception is NULL"));
-            });
-        } catch (IOException | URISyntaxException e) {
-            Log.e(LOGTAG, "Failed to send crash report: " + e.toString());
-        }
+                result.accept(crashID -> {
+                    Log.e(LOGTAG, "Submitted crash report id: " + crashID);
+                    Log.e(LOGTAG, "Report available at: " + CRASH_STATS_URL + crashID);
+                }, ex -> {
+                    Log.e(LOGTAG, "Failed to submit crash report: " + (ex != null ? ex.getMessage() : "Exception is NULL"));
+                });
+            } catch (IOException | URISyntaxException e) {
+                Log.e(LOGTAG, "Failed to send crash report: " + e.toString());
+            }
+        });
     }
 
     public static void postCrashFiles(@NonNull Context context, @NonNull final String aDumpFile, @NonNull final String aExtraFile) {
-        Executor executor = ((VRBrowserApplication)context.getApplicationContext()).getExecutors().mainThread();
-        executor.execute(() -> sendCrashFiles(context, aDumpFile, aExtraFile));
+        sendCrashFiles(context, aDumpFile, aExtraFile);
     }
 
     public static void postCrashFiles(@NonNull Context context, final ArrayList<String> aFiles) {
-        Executor executor = ((VRBrowserApplication)context.getApplicationContext()).getExecutors().mainThread();
-        executor.execute(() -> {
-            for (String file: aFiles) {
-                try {
-                    ArrayList<String> list = new ArrayList<>(2);
-                    try (FileInputStream in = context.openFileInput(file)) {
-                        try(BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
-                            String line;
-                            while((line = br.readLine()) != null) {
-                                list.add(line);
-                            }
+        for (String file: aFiles) {
+            try {
+                ArrayList<String> list = new ArrayList<>(2);
+                try (FileInputStream in = context.openFileInput(file)) {
+                    try(BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
+                        String line;
+                        while((line = br.readLine()) != null) {
+                            list.add(line);
                         }
-                    } catch (IOException e) {
-                        e.printStackTrace();
                     }
-                    if (list.size() < 2) {
-                        Log.e(LOGTAG, "Failed read crash dump file names from: " + file);
-                        return;
-                    }
-                    sendCrashFiles(context, list.get(0), list.get(1));
-                } finally {
-                    Log.d(LOGTAG,"Removing crash file: " + file);
-                    context.deleteFile(file);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
+                if (list.size() < 2) {
+                    Log.e(LOGTAG, "Failed read crash dump file names from: " + file);
+                    return;
+                }
+                sendCrashFiles(context, list.get(0), list.get(1));
+            } finally {
+                Log.d(LOGTAG,"Removing crash file: " + file);
+                context.deleteFile(file);
             }
-        });
+        }
     }
 
     public static void clearCrashFiles(@NonNull Context context, final ArrayList<String> aFiles) {
