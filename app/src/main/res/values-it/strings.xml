@@ -558,6 +558,10 @@
      and is used to enable or disable playback of DRM controlled content. -->
     <string name="security_options_drm_content">Riproduci contenuti protetti da DRM (&lt;a href=&quot;http://somesite.com/&quot;&gt;Scopri di più&lt;/a&gt;)</string>
 
+    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
+     and is used to enable or disable the tabs restoration after a fresh app start. -->
+    <string name="security_options_restore_tabs">Ripristina schede e finestre dopo il riavvio</string>
+
     <!-- This string labels an On/Off switch in the Privacy and Security settings dialog
      and is used to enable or disable tracking protection. -->
     <string name="security_options_tracking_protection">Protezione antitracciamento</string>
@@ -936,6 +940,14 @@
 
     <!-- This string is displayed on top of the allowed sites list in the allowed pop-ups panel. -->
     <string name="privacy_options_popups_list_header">I seguenti siti web hanno richiesto l’apertura di finestre pop-up:</string>
+
+    <!-- This string is displayed in the first line of a text that's displayed in the middle of allowed pop-ups panel instead of the exceptions list
+         when there are no exceptions. -->
+    <string name="privacy_options_popups_list_empty_first">Quando si apre un sito web con finestre pop-up, verrà visualizzata una finestra di dialogo che consente di scegliere se bloccare le finestre pop-up.</string>
+
+    <!-- This string is displayed in the second line of a text that's displayed in the middle of allowed pop-ups panel instead of the exceptions list
+         when there are no exceptions. -->
+    <string name="privacy_options_popups_list_empty_second">In questo spazio verrà visualizzato l’elenco di siti con permessi.</string>
 
     <!-- This string labels the Reset button that restores the default controller settings values. -->
     <string name="controller_options_reset">Ripristina impostazioni controller</string>
