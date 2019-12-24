@@ -53,6 +53,7 @@ android {
         buildConfigField "String", "GIT_HASH", "\"${getGitHash()}\""
         buildConfigField "Boolean", "DISABLE_CRASH_RESTART", getCrashRestartDisabled()
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArguments clearPackageData: 'true'
         externalNativeBuild {
             cmake {
                 cppFlags "-std=c++14 -fexceptions -frtti -Werror" +
@@ -460,6 +461,7 @@ dependencies {
     implementation deps.lifecycle.runtime
     implementation deps.lifecycle.extensions
     implementation deps.support.cardview
+    implementation deps.support.recyclerview
     //implementation deps.support.app_compat
     implementation(name:'appcompat', ext:'aar')
     implementation deps.support.vector_drawable
@@ -516,7 +518,10 @@ dependencies {
 
     // Testing
     androidTestImplementation deps.atsl.runner
+    androidTestImplementation deps.testing.uiautomator
+    androidTestImplementation deps.testing.core
     androidTestImplementation deps.espresso.core
+    androidTestImplementation deps.espresso.idling_resources
     testImplementation deps.junit
     testImplementation deps.atsl.core
     testImplementation deps.robolectric
@@ -525,6 +530,13 @@ dependencies {
     testImplementation deps.android_components.support_test
     testImplementation deps.telemetry.glean_unittests
     testImplementation deps.work.testing
+
+    androidTestImplementation deps.atsl.runner
+    androidTestImplementation deps.atsl.rules
+
+    androidTestImplementation "tools.fastlane:screengrab:2.0.0"
+
+    androidTestUtil deps.atsl.orchestrator
 
     // Daydream
     googlevrImplementation deps.google_vr.sdk_base

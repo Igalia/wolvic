@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ObservableBoolean;
 import androidx.lifecycle.Observer;
@@ -50,7 +51,7 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Widge
     private WindowViewModel mViewModel;
     private TrayBinding mBinding;
     private AudioEngine mAudio;
-    private int mSettingsDialogHandle = -1;
+    private SettingsWidget mSettingsWidget;
     private boolean mIsLastSessionPrivate;
     private List<TrayListener> mTrayListeners;
     private int mMinPadding;
@@ -116,7 +117,7 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Widge
             }
 
             toggleSettingsDialog();
-            if (isDialogOpened(mSettingsDialogHandle)) {
+            if (mSettingsWidget.isVisible()) {
                 view.requestFocusFromTouch();
             }
         });
@@ -432,35 +433,32 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Widge
         toggleSettingsDialog(SettingsWidget.SettingDialog.MAIN);
     }
 
-    public void toggleSettingsDialog(@NonNull SettingsWidget.SettingDialog settingDialog) {
-        UIWidget widget = getChild(mSettingsDialogHandle);
-        if (widget == null) {
-            widget = createChild(SettingsWidget.class, false);
-            mSettingsDialogHandle = widget.getHandle();
+    public void toggleSettingsDialog(SettingsWidget.SettingDialog settingDialog) {
+        if (mSettingsWidget == null) {
+            mSettingsWidget = new SettingsWidget(getContext());
         }
 
         if (mAttachedWindow != null) {
-            widget.getPlacement().parentHandle = mAttachedWindow.getHandle();
+            mSettingsWidget.getPlacement().parentHandle = mAttachedWindow.getHandle();
         }
-        if (widget.isVisible()) {
+        if (mSettingsWidget.isVisible()) {
             widget.hide(KEEP_WIDGET);
+
         } else {
-            ((SettingsWidget)widget).show(REQUEST_FOCUS, settingDialog);
+            mSettingsWidget.show(REQUEST_FOCUS, settingDialog);
         }
     }
 
     public void showSettingsDialog(@NonNull SettingsWidget.SettingDialog settingDialog) {
-        UIWidget widget = getChild(mSettingsDialogHandle);
-        if (widget == null) {
-            widget = createChild(SettingsWidget.class, false);
-            mSettingsDialogHandle = widget.getHandle();
+        if (mSettingsWidget == null) {
+            mSettingsWidget = new SettingsWidget(getContext());
         }
 
         if (mAttachedWindow != null) {
-            widget.getPlacement().parentHandle = mAttachedWindow.getHandle();
+            mSettingsWidget.getPlacement().parentHandle = mAttachedWindow.getHandle();
         }
 
-        ((SettingsWidget)widget).show(REQUEST_FOCUS, settingDialog);
+        mSettingsWidget.show(REQUEST_FOCUS, settingDialog);
     }
 
     public void setTrayVisible(boolean aVisible) {
@@ -479,14 +477,6 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Widge
         } else {
             this.hide(UIWidget.KEEP_WIDGET);
         }
-    }
-
-    public boolean isDialogOpened(int aHandle) {
-        UIWidget widget = getChild(aHandle);
-        if (widget != null) {
-            return widget.isVisible();
-        }
-        return false;
     }
 
     public void setAddWindowVisible(boolean aVisible) {

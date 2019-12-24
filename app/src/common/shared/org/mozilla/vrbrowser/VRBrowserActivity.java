@@ -40,6 +40,7 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.ViewModelStore;
 import androidx.lifecycle.ViewModelStoreOwner;
+import androidx.annotation.VisibleForTesting;
 
 import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoSession;
@@ -1530,6 +1531,16 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         Configuration configuration = context.getResources().getConfiguration();
         configuration.setLocale(Locale.forLanguageTag(LocaleUtils.getDisplayLanguage(this).getId()));
         onConfigurationChanged(new Configuration(context.getResources().getConfiguration()));
+    }
+
+    @VisibleForTesting
+    public RootWidget getRootWidget() {
+        return mRootWidget;
+    }
+
+    @VisibleForTesting
+    public Windows getWindows() {
+        return mWindows;
     }
 
     private native void addWidgetNative(int aHandle, WidgetPlacement aPlacement);
