@@ -194,7 +194,7 @@ struct DeviceDelegatePicoVR::State {
         } else {
           vrb::Matrix head = vrb::Matrix::Rotation(orientation);
           head.PreMultiplyInPlace(vrb::Matrix::Position(headOffset));
-          transform = elbow->GetTransform(ElbowModel::HandEnum::Right, head, transform);
+          transform = elbow->GetTransform(controller.hand, head, transform);
         }
       }
 

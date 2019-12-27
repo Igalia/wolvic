@@ -23,6 +23,7 @@ import com.picovr.vractivity.Eye;
 import com.picovr.vractivity.HmdState;
 import com.picovr.vractivity.RenderInterface;
 import com.picovr.vractivity.VRActivity;
+import com.psmart.vrlib.VrActivity;
 import com.psmart.vrlib.PicovrSDK;
 
 import org.mozilla.vrbrowser.utils.SystemUtils;
@@ -38,6 +39,7 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
     HbManager mHbManager;
     private boolean mControllersReady;
     private int mType = 0;
+    private int mHand = 0;
     // These need to match DeviceDelegatePicoVR.cpp
     private final int BUTTON_APP       = 1;
     private final int BUTTON_TRIGGER   = 1 << 1;
@@ -131,11 +133,18 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
             Log.e(LOGTAG, "CONTROLLER NULL");
             return;
         }
+
         if (controller.getConnectState() < 2) {
-            Log.e(LOGTAG, "NOT CONNECTED");
+            nativeUpdateControllerState(0, false, 0, 0, 0, 0, false);
             return;
         }
+        int hand = VrActivity.getPvrHandness(this);
+        if (mHand != hand) {
+            nativeUpdateControllerState(mHand, false, 0, 0, 0, 0, false);
+            mHand = hand;
+        }
         controller.update();
+
         float axisX = 0;
         float axisY = 0;
         int[] stick = controller.getTouchPosition();
@@ -143,7 +152,6 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
             axisY =  1.0f -((float)stick[0] / 255.0f);
             axisX = (float)stick[1] / 255.0f;
         }
-        //Log.e(LOGTAG, "STICK[" + aIndex + "]: " + stick[0] + " " + stick[1] + " " + stick.length);
 
         int buttons = 0;
         int trigger = controller.getTrigerKeyEvent();
@@ -152,10 +160,10 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
         buttons |= controller.getButtonState(HbTool.ButtonNum.click) ? BUTTON_TOUCHPAD : 0;
         buttons |= trigger > 0 ? BUTTON_TRIGGER : 0;
 
-        nativeUpdateControllerState(0, true, buttons, (float)trigger, axisX, axisY, touched);
+        nativeUpdateControllerState(mHand, true, buttons, (float)trigger, axisX, axisY, touched);
 
         Orientation q = controller.getOrientation();
-        nativeUpdateControllerPose(0, false, 0.0f, 0.0f, 0.0f, q.x, q.y, q.z, q.w);
+        nativeUpdateControllerPose(mHand, false, 0.0f, 0.0f, 0.0f, q.x, q.y, q.z, q.w);
     }
 
     private void updateController(int aIndex, @NonNull CVController aController) {
