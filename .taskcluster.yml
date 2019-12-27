@@ -91,6 +91,7 @@ tasks:
                 && rm -rf gvr-android-sdk && git clone https://github.com/MozillaReality/FirefoxReality-gvr-android-sdk.git gvr-android-sdk
                 && git submodule update
                 && . tools/taskcluster/get_third_party.sh
+                && . third_party/picovr/copy_assets.sh
                 && cp tools/gradle/taskcluster.properties ./user.properties
                 && ./gradlew --no-daemon --console=plain clean `python tools/taskcluster/build_targets.py =all`
                 && python tools/taskcluster/fetch_secret.py -s project/firefoxreality/fr/staging-signing-token -o token -n token
@@ -141,6 +142,7 @@ tasks:
               && rm -rf gvr-android-sdk && git clone https://github.com/MozillaReality/FirefoxReality-gvr-android-sdk.git gvr-android-sdk
               && git submodule update
               && . tools/taskcluster/get_third_party.sh
+              && . third_party/picovr/copy_assets.sh
               && cp tools/gradle/taskcluster.properties ./user.properties
               && ./gradlew --no-daemon --console=plain clean `python tools/taskcluster/build_targets.py ${event.release.tag_name}`
               && python tools/taskcluster/fetch_secret.py -s project/firefoxreality/fr/release-signing-token -o token -n token

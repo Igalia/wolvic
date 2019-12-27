@@ -31,6 +31,7 @@ static const vrb::Vector kAverageHeight(0.0f, 1.7f, 0.0f);
 static const int32_t kMaxControllerCount = 2;
 static const int32_t kNumButtons = 6;
 static const int32_t kNumAxes = 2;
+static const int32_t kTypeNeo2 = 1;
 static const int32_t kButtonApp       = 1;
 static const int32_t kButtonTrigger   = 1 << 1;
 static const int32_t kButtonTouchPad  = 1 << 2;
@@ -48,6 +49,8 @@ struct DeviceDelegatePicoVR::State {
     vrb::Matrix transform;
     int32_t  buttonsState;
     float grip = 0.0f;
+    int32_t axisX = 0;
+    int32_t axisY = 0;
     ElbowModel::HandEnum hand;
     Controller()
         : index(-1)
@@ -66,6 +69,7 @@ struct DeviceDelegatePicoVR::State {
   vrb::RenderContextWeak context;
   bool initialized = false;
   bool paused = false;
+  int32_t type = 0;
   device::RenderMode renderMode = device::RenderMode::StandAlone;
   bool setHeadOffset = true;
   vrb::Vector headOffset;
@@ -104,6 +108,7 @@ struct DeviceDelegatePicoVR::State {
       controllers[index].is6DoF = true;
     }
 
+    elbow = ElbowModel::Create();
     initialized = true;
   }
 
@@ -140,7 +145,7 @@ struct DeviceDelegatePicoVR::State {
       if (!controllers[i].enabled) {
         continue;
       }
-      auto & controller = controllers[i];
+      auto& controller = controllers[i];
       device::CapabilityFlags flags = device::Orientation;
       if (controller.is6DoF) {
         flags |= device::Position;
@@ -153,18 +158,36 @@ struct DeviceDelegatePicoVR::State {
       const bool byPressed = (controller.buttonsState & kButtonBY) > 0;
       const bool gripPressed = (controller.buttonsState & kButtonGrip) > 0;
 
-      controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_APP, -1, appPressed, appPressed);
-      controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_TOUCHPAD, 0, touchPadPressed, touchPadPressed);
-      controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_TRIGGER, 1,triggerPressed, triggerPressed);
-      controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_OTHERS, 2, gripPressed, gripPressed, gripPressed ? 20.0f : 0.0f);
-      controllerDelegate->SetButtonState(i, (controller.IsRightHand() ? ControllerDelegate::BUTTON_A : ControllerDelegate::BUTTON_X), 3, axPressed, axPressed);
-      controllerDelegate->SetButtonState(i, (controller.IsRightHand() ? ControllerDelegate::BUTTON_B : ControllerDelegate::BUTTON_Y), 4, byPressed, byPressed);
+      controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_APP, -1, appPressed,
+                                         appPressed);
+      controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_TOUCHPAD, 0, touchPadPressed,
+                                         touchPadPressed);
+      controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_TRIGGER, 1, triggerPressed,
+                                         triggerPressed);
+      controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_OTHERS, 2, gripPressed,
+                                         gripPressed, gripPressed ? 20.0f : 0.0f);
+      controllerDelegate->SetButtonState(i, (controller.IsRightHand() ? ControllerDelegate::BUTTON_A
+                                                                      : ControllerDelegate::BUTTON_X),
+                                         3, axPressed, axPressed);
+      controllerDelegate->SetButtonState(i, (controller.IsRightHand() ? ControllerDelegate::BUTTON_B
+                                                                      : ControllerDelegate::BUTTON_Y),
+                                         4, byPressed, byPressed);
       controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_OTHERS, 5, false, false);
       //controllerDelegate->SetAxes(i, &controller.grip, 1);
 
+      if (controller.axisX != 0 && controller.axisY != 0) {
+        controllerDelegate->SetTouchPosition(i, controller.axisX, controller.axisY);
+      }
+
       vrb::Matrix transform = controller.transform;
       if (renderMode == device::RenderMode::StandAlone) {
-        transform.TranslateInPlace(headOffset);
+        if (type == kTypeNeo2) {
+          transform.TranslateInPlace(headOffset);
+        } else {
+          vrb::Matrix head = vrb::Matrix::Rotation(orientation);
+          head.PreMultiplyInPlace(vrb::Matrix::Position(headOffset));
+          transform = elbow->GetTransform(ElbowModel::HandEnum::Right, head, transform);
+        }
       }
 
       controllerDelegate->SetTransform(i, transform);
@@ -247,8 +270,18 @@ DeviceDelegatePicoVR::SetControllerDelegate(ControllerDelegatePtr& aController) 
   m.controllerDelegate = aController;
   for (State::Controller& controller: m.controllers) {
     const int32_t index = controller.index;
+    int32_t model = 0;
+    vrb::Matrix beam;
+    if (m.type == kTypeNeo2) {
+      model = int32_t(controller.hand);
+      beam = vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), -vrb::PI_FLOAT / 11.5f);
+      beam.TranslateInPlace(vrb::Vector(0.0f, 0.012f, -0.06f));
+    } else {
+      beam =  vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), -vrb::PI_FLOAT / 11.5f);
+    }
+
     //m.controllerDelegate->CreateController(index, int32_t(controller.hand), controllerIsRightHand() ? "Pico (Right)" : "Pico (LEFT)");
-    m.controllerDelegate->CreateController(index, int32_t(controller.hand), controller.IsRightHand() ? "Oculus Touch (Right)" : "Oculus Touch (LEFT)");
+    m.controllerDelegate->CreateController(index, model, controller.IsRightHand() ? "Oculus Touch (Right)" : "Oculus Touch (LEFT)", beam);
     m.controllerDelegate->SetButtonCount(index, kNumButtons);
     m.controllerDelegate->SetHapticCount(index, 0);
     controller.created = true;
@@ -262,14 +295,21 @@ DeviceDelegatePicoVR::ReleaseControllerDelegate() {
 
 int32_t
 DeviceDelegatePicoVR::GetControllerModelCount() const {
-  return m.controllers.size();
+  return m.type == kTypeNeo2 ? 2 : 1;
 }
 
 const std::string
 DeviceDelegatePicoVR::GetControllerModelName(const int32_t aModelIndex) const {
-  // FIXME: Need Pico based controller
-  static const std::string name("vr_controller_daydream.obj");
-  return aModelIndex == 0 || aModelIndex == 1 ? name : "";
+  if (m.type == kTypeNeo2) {
+    if (aModelIndex == 0) {
+      return "left_controller.obj";
+    } else if (aModelIndex == 1) {
+      return "right_controller.obj";
+    }
+    return "";
+  } else {
+    return "g2-Controller.obj";
+  }
 }
 
 void
@@ -311,6 +351,11 @@ DeviceDelegatePicoVR::Pause() {
 void
 DeviceDelegatePicoVR::Resume() {
   m.paused = false;
+}
+
+void
+DeviceDelegatePicoVR::SetType(int aType) {
+  m.type = aType;
 }
 
 void
@@ -366,9 +411,11 @@ DeviceDelegatePicoVR::UpdateControllerPose(const int aIndex, const bool a6Dof, c
 }
 
 void
-DeviceDelegatePicoVR::UpdateControllerButtons(const int aIndex, const int32_t aButtonsState, const float aGrip) {
+DeviceDelegatePicoVR::UpdateControllerButtons(const int aIndex, const int32_t aButtonsState, const float aGrip, const int32_t axisX, const int32_t axisY) {
   m.controllers[aIndex].buttonsState = aButtonsState;
   m.controllers[aIndex].grip = aGrip;
+  m.controllers[aIndex].axisX = axisX;
+  m.controllers[aIndex].axisY = axisY;
 }
 
 

@@ -43,6 +43,7 @@ public:
   // Custom methods
   void Pause();
   void Resume();
+  void SetType(int aType);
   void SetRenderSize(const int32_t aWidth, const int32_t aHeight);
   void UpdateIpd(const float aIPD);
   void UpdateFov(const float aFov);
@@ -50,7 +51,7 @@ public:
   void UpdateOrientation(const vrb::Quaternion& aOrientation);
   void UpdateControllerConnected(const int aIndex, const bool aConnected);
   void UpdateControllerPose(const int aIndex, const bool a6Dof, const vrb::Vector& aPosition, const vrb::Quaternion& aRotation);
-  void UpdateControllerButtons(const int aIndex, const int32_t aButtonsState, const float aGrip);
+  void UpdateControllerButtons(const int aIndex, const int32_t aButtonsState, const float aGrip, const int32_t axisX, const int32_t axisY);
 protected:
   struct State;
   DeviceDelegatePicoVR(State& aState);

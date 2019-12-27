@@ -24,10 +24,11 @@ using namespace crow;
 extern "C" {
 
 JNI_METHOD(void, nativeInitialize)
-(JNIEnv* aEnv, jobject aActivity, jint width, jint height, jobject aAssetManager) {
+(JNIEnv* aEnv, jobject aActivity, jint width, jint height, jobject aAssetManager, jint type) {
   if (!sDevice) {
     sDevice = crow::DeviceDelegatePicoVR::Create(BrowserWorld::Instance().GetRenderContext());
   }
+  sDevice->SetType(type);
   sDevice->SetRenderSize(width, height);
   BrowserWorld::Instance().RegisterDeviceDelegate(sDevice);
   BrowserWorld::Instance().InitializeJava(aEnv, aActivity, aAssetManager);
@@ -84,9 +85,9 @@ JNI_METHOD(void, nativeUpdateControllerPose)
 }
 
 JNI_METHOD(void, nativeUpdateControllerState)
-(JNIEnv*, jobject, jint index, jboolean connected, jint buttons, jfloat grip) {
+(JNIEnv*, jobject, jint index, jboolean connected, jint buttons, jfloat grip, jint axisX, jint axisY) {
   sDevice->UpdateControllerConnected(index, connected);
-  sDevice->UpdateControllerButtons(index, buttons, grip);
+  sDevice->UpdateControllerButtons(index, buttons, grip, axisX, axisY);
 }
 
 JNI_METHOD(void, queueRunnable)
