@@ -51,7 +51,7 @@ public:
   void UpdateOrientation(const vrb::Quaternion& aOrientation);
   void UpdateControllerConnected(const int aIndex, const bool aConnected);
   void UpdateControllerPose(const int aIndex, const bool a6Dof, const vrb::Vector& aPosition, const vrb::Quaternion& aRotation);
-  void UpdateControllerButtons(const int aIndex, const int32_t aButtonsState, const float aGrip, const int32_t axisX, const int32_t axisY);
+  void UpdateControllerButtons(const int aIndex, const int32_t aButtonsState, const float aGrip, const float axisX, const float axisY, const bool touched);
 protected:
   struct State;
   DeviceDelegatePicoVR(State& aState);

@@ -85,9 +85,9 @@ JNI_METHOD(void, nativeUpdateControllerPose)
 }
 
 JNI_METHOD(void, nativeUpdateControllerState)
-(JNIEnv*, jobject, jint index, jboolean connected, jint buttons, jfloat grip, jint axisX, jint axisY) {
+(JNIEnv*, jobject, jint index, jboolean connected, jint buttons, jfloat grip, jfloat axisX, jfloat axisY, jboolean touched) {
   sDevice->UpdateControllerConnected(index, connected);
-  sDevice->UpdateControllerButtons(index, buttons, grip, axisX, axisY);
+  sDevice->UpdateControllerButtons(index, buttons, grip, axisX, axisY, touched);
 }
 
 JNI_METHOD(void, queueRunnable)

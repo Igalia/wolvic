@@ -30,6 +30,7 @@ static const vrb::Vector kAverageHeight(0.0f, 1.7f, 0.0f);
 // TODO: support different controllers & buttons
 static const int32_t kMaxControllerCount = 2;
 static const int32_t kNumButtons = 6;
+static const int32_t kNumG2Buttons = 2;
 static const int32_t kNumAxes = 2;
 static const int32_t kTypeNeo2 = 1;
 static const int32_t kButtonApp       = 1;
@@ -49,8 +50,8 @@ struct DeviceDelegatePicoVR::State {
     vrb::Matrix transform;
     int32_t  buttonsState;
     float grip = 0.0f;
-    int32_t axisX = 0;
-    int32_t axisY = 0;
+    float axisX = 0;
+    float axisY = 0;
     ElbowModel::HandEnum hand;
     Controller()
         : index(-1)
@@ -164,19 +165,26 @@ struct DeviceDelegatePicoVR::State {
                                          touchPadPressed);
       controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_TRIGGER, 1, triggerPressed,
                                          triggerPressed);
-      controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_OTHERS, 2, gripPressed,
-                                         gripPressed, gripPressed ? 20.0f : 0.0f);
-      controllerDelegate->SetButtonState(i, (controller.IsRightHand() ? ControllerDelegate::BUTTON_A
-                                                                      : ControllerDelegate::BUTTON_X),
-                                         3, axPressed, axPressed);
-      controllerDelegate->SetButtonState(i, (controller.IsRightHand() ? ControllerDelegate::BUTTON_B
-                                                                      : ControllerDelegate::BUTTON_Y),
-                                         4, byPressed, byPressed);
-      controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_OTHERS, 5, false, false);
-      //controllerDelegate->SetAxes(i, &controller.grip, 1);
+      if (type == kTypeNeo2) {
+        controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_OTHERS, 2, gripPressed,
+                                           gripPressed, gripPressed ? 20.0f : 0.0f);
+        controllerDelegate->SetButtonState(i,
+                                           (controller.IsRightHand() ? ControllerDelegate::BUTTON_A
+                                                                     : ControllerDelegate::BUTTON_X),
+                                           3, axPressed, axPressed);
+        controllerDelegate->SetButtonState(i,
+                                           (controller.IsRightHand() ? ControllerDelegate::BUTTON_B
+                                                                     : ControllerDelegate::BUTTON_Y),
+                                           4, byPressed, byPressed);
+        controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_OTHERS, 5, false, false);
+      }
+      float axes[kNumAxes] = { (controller.axisX * 2.0f) - 1.0f, (controller.axisY * 2.0f) - 1.0f };
+      controllerDelegate->SetAxes(i, axes, kNumAxes);
 
-      if (controller.axisX != 0 && controller.axisY != 0) {
+      if (controller.touched) {
         controllerDelegate->SetTouchPosition(i, controller.axisX, controller.axisY);
+      } else {
+        controllerDelegate->EndTouch(i);
       }
 
       vrb::Matrix transform = controller.transform;
@@ -270,20 +278,25 @@ DeviceDelegatePicoVR::SetControllerDelegate(ControllerDelegatePtr& aController) 
   m.controllerDelegate = aController;
   for (State::Controller& controller: m.controllers) {
     const int32_t index = controller.index;
-    int32_t model = 0;
-    vrb::Matrix beam;
-    if (m.type == kTypeNeo2) {
-      model = int32_t(controller.hand);
-      beam = vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), -vrb::PI_FLOAT / 11.5f);
-      beam.TranslateInPlace(vrb::Vector(0.0f, 0.012f, -0.06f));
-    } else {
-      beam =  vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), -vrb::PI_FLOAT / 11.5f);
-    }
 
-    //m.controllerDelegate->CreateController(index, int32_t(controller.hand), controllerIsRightHand() ? "Pico (Right)" : "Pico (LEFT)");
-    m.controllerDelegate->CreateController(index, model, controller.IsRightHand() ? "Oculus Touch (Right)" : "Oculus Touch (LEFT)", beam);
-    m.controllerDelegate->SetButtonCount(index, kNumButtons);
-    m.controllerDelegate->SetHapticCount(index, 0);
+    if (m.type == kTypeNeo2) {
+      vrb::Matrix beam = vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), -vrb::PI_FLOAT / 11.5f);
+      beam.TranslateInPlace(vrb::Vector(0.0f, 0.012f, -0.06f));
+      // m.controllerDelegate->CreateController(index, int32_t(controller.hand), controllerIsRightHand() ? "Pico Neo 2 (Right)" : "Pico Neo 2 (LEFT)", beam);
+      m.controllerDelegate->CreateController(index, int32_t(controller.hand),
+                                             controller.IsRightHand() ? "Oculus Touch (Right)"
+                                                                      : "Oculus Touch (LEFT)",
+                                             beam);
+      m.controllerDelegate->SetButtonCount(index, kNumButtons);
+      m.controllerDelegate->SetHapticCount(index, 0);
+    } else {
+      vrb::Matrix beam =  vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), -vrb::PI_FLOAT / 11.5f);
+
+      // m.controllerDelegate->CreateController(index, 0, "Pico G2 Controller", beam);
+      m.controllerDelegate->CreateController(index, 0, "Oculus Go Controller", beam);
+      m.controllerDelegate->SetButtonCount(index, kNumG2Buttons);
+      m.controllerDelegate->SetHapticCount(index, 0);
+    }
     controller.created = true;
   }
 }
@@ -411,11 +424,12 @@ DeviceDelegatePicoVR::UpdateControllerPose(const int aIndex, const bool a6Dof, c
 }
 
 void
-DeviceDelegatePicoVR::UpdateControllerButtons(const int aIndex, const int32_t aButtonsState, const float aGrip, const int32_t axisX, const int32_t axisY) {
+DeviceDelegatePicoVR::UpdateControllerButtons(const int aIndex, const int32_t aButtonsState, const float aGrip, const float axisX, const float axisY, const bool touched) {
   m.controllers[aIndex].buttonsState = aButtonsState;
   m.controllers[aIndex].grip = aGrip;
   m.controllers[aIndex].axisX = axisX;
   m.controllers[aIndex].axisY = axisY;
+  m.controllers[aIndex].touched = touched;
 }
 
 
