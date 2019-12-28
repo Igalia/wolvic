@@ -167,19 +167,24 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
     }
 
     private void updateController(int aIndex, @NonNull CVController aController) {
+        final float kMax = 25500;
         boolean connected = aController.getConnectState() > 0;
         if (!connected) {
             nativeUpdateControllerState(aIndex, false, 0, 0, 0, 0, false);
             return;
         }
-        int axisX = 0;
-        int axisY = 0;
+        float axisX = 0.0f;
+        float axisY = 0.0f;
         int[] stick = aController.getTouchPad();
         if (stick.length >= 2) {
-            axisX = stick[0];
-            axisY = stick[1];
+            axisY = (float)stick[0] / kMax;
+            axisX = (float)stick[1] / kMax;
+        } else {
+            stick = new int[2];
         }
-        //Log.e(LOGTAG, "STICK[" + aIndex + "]: " + stick[0] + " " + stick[1] + " " + stick.length);
+        if (aIndex == 0) {
+            //Log.e(LOGTAG, "STICK[" + aIndex + "]: " + stick[0] + " " + stick[1] + " " + stick.length);
+        }
 
         int buttons = 0;
         float trigger = (float)aController.getTriggerNum() / 255.0f;
@@ -192,7 +197,7 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
         buttons |= aController.getButtonState(ButtonNum.buttonLG) ? BUTTON_GRIP : 0;
         buttons |= aController.getButtonState(ButtonNum.click) ? BUTTON_TOUCHPAD : 0;
 
-        nativeUpdateControllerState(aIndex, true, buttons, trigger, axisX, axisY, false);
+        nativeUpdateControllerState(aIndex, true, buttons, trigger, axisX, axisY, (stick[0] != 0) || (stick[1]) != 0);
 
         boolean supports6Dof = aController.get6DofAbility() > 0;
         float[] q = aController.getOrientation();

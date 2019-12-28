@@ -181,11 +181,18 @@ struct DeviceDelegatePicoVR::State {
       float axes[kNumAxes] = { (controller.axisX * 2.0f) - 1.0f, (controller.axisY * 2.0f) - 1.0f };
       controllerDelegate->SetAxes(i, axes, kNumAxes);
 
-      if (controller.touched) {
-        controllerDelegate->SetTouchPosition(i, controller.axisX, controller.axisY);
-      } else {
-        controllerDelegate->EndTouch(i);
-      }
+      // Currently the Neo 2 controller joystick values are only updated while it is moving. This
+      // is a work around which allows the user to bump the joystick to scroll. Once we are able
+      // to query the joysticks absolute position we can use the ScrolledDelta call.
+      //if (type == kTypeNeo2) {
+      //  controllerDelegate->SetScrolledDelta(i, controller.axisX, controller.axisY);
+      //} else {
+        if (controller.touched) {
+          controllerDelegate->SetTouchPosition(i, controller.axisX, controller.axisY);
+        } else {
+          controllerDelegate->EndTouch(i);
+        }
+      //}
 
       vrb::Matrix transform = controller.transform;
       if (renderMode == device::RenderMode::StandAlone) {
