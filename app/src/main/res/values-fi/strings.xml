@@ -284,6 +284,10 @@
          change requires the application to restart. -->
     <string name="restart_dialog_restart">Uudelleenkäynnistys vaaditaan</string>
 
+    <!-- This string is the text displayed in the restart dialog box explaining why the
+         restart is required. '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="restart_dialog_text">%1$s pitää käynnistää uudelleen, jotta muutokset tulevat voimaan. Haluatko tehdä sen nyt?</string>
+
     <!-- This string is used to label the button the user presses to restart the
          application in the restart dialog. -->
     <string name="restart_now_dialog_button">Käynnistä uudelleen nyt</string>
@@ -437,6 +441,10 @@
     <!-- This string is used to in the Library panels to the left of the sync button to indicate
          when that the content was just synced some time ago. -->
     <string name="fxa_account_last_synced">Viimeksi synkronoitu %1$d minuuttia sitten</string>
+
+    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
+     and is used to enable or disable playback of DRM controlled content. -->
+    <string name="security_options_drm_content">Toista DRM-suojattua sisältöä (&lt;a href=&quot;http://somesite.com/&quot;&gt;Lue lisää&lt;/a&gt;)</string>
 
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable the tabs restoration after a fresh app start. -->
@@ -666,6 +674,10 @@
 
     <!-- This string is displayed in the title of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
     <string name="fxa_signout_confirmation_title">Haluatko kirjautua ulos Firefox-tililtäsi?</string>
+
+    <!-- This string is displayed in the checkbox text of the FxA sign out dialog displayed when the user clicks on the Sign out button.
+         When checked the history and Bookmarks will be deleted from gthe device after signing in. -->
+    <string name="fxa_signout_confirmation_checkbox">Tyhjennä historia ja kirjanmerkit tältä laitteelta</string>
 
     <!-- This string is displayed in the cancel button of the FxA sign out dialog displayed when the user clicks on the Sign out button.
          If clicked the user will be signed out from their FxA account and the dialog will be dismissed. -->
