@@ -316,15 +316,7 @@ BrowserWorld::State::EnsureControllerFocused() {
 
 void
 BrowserWorld::State::ChangeControllerFocus(const Controller& aController) {
-  for (Controller& controller: controllers->GetControllers()) {
-    controller.focused = (&controller == &aController);
-    if (controller.pointer) {
-      controller.pointer->SetVisible(controller.focused);
-    }
-    if (controller.beamToggle) {
-      controller.beamToggle->ToggleAll(controller.focused);
-    }
-  }
+  controllers->SetFocused(aController.index);
 }
 
 static inline float

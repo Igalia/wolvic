@@ -43,6 +43,7 @@ public:
   // Custom methods
   void Pause();
   void Resume();
+  void SetFocused(const int aIndex);
   void SetType(int aType);
   void SetRenderSize(const int32_t aWidth, const int32_t aHeight);
   void UpdateIpd(const float aIPD);

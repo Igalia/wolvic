@@ -89,6 +89,7 @@ struct DeviceDelegatePicoVR::State {
   vrb::Vector position;
   float ipd = 0.064f;
   float fov = (float) (51.0 * M_PI / 180.0);
+  int32_t focusIndex = 0;
 
   void Initialize() {
     vrb::RenderContextPtr localContext = context.lock();
@@ -179,23 +180,20 @@ struct DeviceDelegatePicoVR::State {
         controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_OTHERS, 5, false, false);
       }
 
-      // FIXME Zero out immersive axes until we can get usable values
-      // float axes[kNumAxes] = { (controller.axisX * 2.0f) - 1.0f, (controller.axisY * 2.0f) - 1.0f };
-      float axes[kNumAxes] = { 0.0f, 0.0f };
+      float axes[kNumAxes] = { controller.axisX , -controller.axisY };
       controllerDelegate->SetAxes(i, axes, kNumAxes);
 
-      // FIXME Currently the Neo 2 controller joystick values are only updated while it is moving. This
-      // FIXME is a work around which allows the user to bump the joystick to scroll. Once we are able
-      // FIXME to query the joysticks absolute position we can use the ScrolledDelta call.
-      // if (type == kTypeNeo2) {
-      //   controllerDelegate->SetScrolledDelta(i, controller.axisX, controller.axisY);
-      // } else {
+      if (type == kTypeNeo2) {
+        if (!triggerPressed) {
+          controllerDelegate->SetScrolledDelta(i, -controller.axisX, controller.axisY);
+        }
+      } else {
         if (controller.touched) {
           controllerDelegate->SetTouchPosition(i, controller.axisX, controller.axisY);
         } else {
           controllerDelegate->EndTouch(i);
         }
-      // }
+      }
 
       vrb::Matrix transform = controller.transform;
       if (renderMode == device::RenderMode::StandAlone) {
@@ -377,6 +375,14 @@ DeviceDelegatePicoVR::Resume() {
 }
 
 void
+DeviceDelegatePicoVR::SetFocused(const int aIndex) {
+  m.focusIndex = aIndex;
+  if (m.controllerDelegate) {
+    m.controllerDelegate->SetFocused(m.focusIndex);
+  }
+}
+
+void
 DeviceDelegatePicoVR::SetType(int aType) {
   m.type = aType;
 }
@@ -421,6 +427,10 @@ DeviceDelegatePicoVR::UpdateControllerConnected(const int aIndex, const bool aCo
     m.controllerDelegate->SetLeftHanded(aIndex, !controller.IsRightHand());
     m.controllerDelegate->SetEnabled(aIndex, aConnected);
     m.controllerDelegate->SetVisible(aIndex, aConnected);
+    if (m.focusIndex == aIndex) {
+      m.controllerDelegate->SetFocused(aIndex);
+      m.focusIndex = -1; // Do not set focus again;
+    }
   }
 }
 

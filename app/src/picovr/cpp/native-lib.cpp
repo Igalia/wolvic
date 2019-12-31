@@ -24,11 +24,12 @@ using namespace crow;
 extern "C" {
 
 JNI_METHOD(void, nativeInitialize)
-(JNIEnv* aEnv, jobject aActivity, jint width, jint height, jobject aAssetManager, jint type) {
+(JNIEnv* aEnv, jobject aActivity, jint width, jint height, jobject aAssetManager, jint type, jint focusInex) {
   if (!sDevice) {
     sDevice = crow::DeviceDelegatePicoVR::Create(BrowserWorld::Instance().GetRenderContext());
   }
   sDevice->SetType(type);
+  sDevice->SetFocused(focusInex);
   sDevice->SetRenderSize(width, height);
   BrowserWorld::Instance().RegisterDeviceDelegate(sDevice);
   BrowserWorld::Instance().InitializeJava(aEnv, aActivity, aAssetManager);
@@ -71,6 +72,8 @@ JNI_METHOD(void, nativeStartFrame)
 
 JNI_METHOD(void, nativeDrawEye)
 (JNIEnv*, jobject, jint eye) {
+  VRB_GL_CHECK(glEnable(GL_BLEND));
+  VRB_GL_CHECK(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
   BrowserWorld::Instance().Draw(eye == 0 ? device::Eye::Left : device::Eye::Right);
 }
 
