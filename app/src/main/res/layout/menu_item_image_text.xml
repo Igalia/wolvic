@@ -4,14 +4,18 @@
     android:orientation="horizontal"
     android:paddingStart="15dp"
     android:paddingEnd="20dp"
-    android:background="@drawable/menu_item_background">
+    android:background="@drawable/menu_item_background"
+    android:focusable="true"
+    android:clickable="true">
 
     <ImageView
         android:id="@+id/listItemImage"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:tint="@drawable/menu_item_color"
-        android:layout_gravity="center_vertical" />
+        android:layout_gravity="center_vertical"
+        android:duplicateParentState="true"
+        android:focusable="false"/>
 
     <TextView
         android:id="@+id/listItemText"
@@ -24,5 +28,7 @@
         android:layout_gravity="center_vertical"
         android:textColor="@drawable/menu_item_color"
         android:layout_marginStart="8dp"
-        android:singleLine="true" />
+        android:singleLine="true"
+        android:duplicateParentState="true"
+        android:focusable="false"/>
 </LinearLayout>

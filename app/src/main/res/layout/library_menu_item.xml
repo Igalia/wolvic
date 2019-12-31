@@ -4,7 +4,9 @@
     android:orientation="horizontal"
     android:paddingStart="15dp"
     android:paddingEnd="20dp"
-    android:background="@drawable/menu_item_background">
+    android:background="@drawable/menu_item_background"
+    android:focusable="true"
+    android:clickable="true">
 
     <ImageView
         android:id="@+id/listItemImage"
@@ -12,7 +14,9 @@
         android:layout_height="36dp"
         android:tint="@color/library_panel_context_menu_item_color"
         android:layout_gravity="center_vertical"
-        android:scaleType="fitCenter" />
+        android:scaleType="fitCenter"
+        android:duplicateParentState="true"
+        android:focusable="false"/>
 
     <TextView
         android:id="@+id/listItemText"
@@ -24,6 +28,8 @@
         android:gravity="center_vertical"
         android:textColor="@color/library_panel_context_menu_item_color"
         android:layout_marginStart="8dp"
-        android:singleLine="true" />
+        android:singleLine="true"
+        android:duplicateParentState="true"
+        android:focusable="false"/>
 
 </LinearLayout>

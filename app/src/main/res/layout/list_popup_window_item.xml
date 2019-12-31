@@ -6,6 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/suggestion_background_color"
+    android:focusable="true"
+    android:clickable="true"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -15,7 +17,8 @@
         android:layout_marginTop="2dp"
         android:layout_marginEnd="35dp"
         android:layout_marginBottom="2dp"
-        android:descendantFocusability="blocksDescendants">
+        android:duplicateParentState="true"
+        android:focusable="false">
 
         <ImageView
             android:id="@+id/favicon"
@@ -39,7 +42,9 @@
             android:layout_alignParentEnd="true"
             android:layout_toRightOf="@+id/favicon"
             android:gravity="left|center_vertical"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:duplicateParentState="true"
+            android:focusable="false">
 
             <TextView
                 android:id="@+id/title"
@@ -51,7 +56,9 @@
                 android:singleLine="true"
                 android:textColor="@drawable/suggestion_text_color"
                 android:textSize="@dimen/text_medium_size"
-                tools:text="a history/favorites/suggestions item" />
+                tools:text="a history/favorites/suggestions item"
+                android:duplicateParentState="true"
+                android:focusable="false"/>
 
             <TextView
                 android:id="@+id/url"
@@ -64,8 +71,21 @@
                 android:textColor="@drawable/suggestion_description_color"
                 android:textSize="@dimen/text_smaller_size"
                 android:visibility="visible"
-                tools:text="item URL" />
+                tools:text="item URL"
+                android:duplicateParentState="true"
+                android:focusable="false"/>
         </LinearLayout>
+        <ImageButton
+            android:id="@+id/delete"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/ic_icon_clear"
+            android:backgroundTint="@drawable/suggestion_icon_color"
+            android:duplicateParentState="true"
+            android:focusable="false"/>
     </RelativeLayout>
 
     <LinearLayout
@@ -77,5 +97,7 @@
         android:layout_marginTop="2dp"
         android:layout_marginEnd="35dp"
         android:background="@drawable/separator_background"
-        android:orientation="horizontal" />
+        android:orientation="horizontal"
+        android:duplicateParentState="true"
+        android:focusable="false"/>
 </LinearLayout>

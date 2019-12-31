@@ -7,7 +7,6 @@
 package org.mozilla.vrbrowser.ui.widgets.menus;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -190,25 +189,14 @@ public abstract class MenuWidget extends UIWidget {
             }
 
             TextView label = view.findViewById(R.id.listItemText);
-            ImageView image = view.findViewById(R.id.listItemImage);
             switch (event.getActionMasked()) {
                 case MotionEvent.ACTION_HOVER_ENTER:
-                    view.setHovered(true);
-                    label.setHovered(true);
                     label.setShadowLayer(label.getShadowRadius(), label.getShadowDx(), label.getShadowDy(), mContext.getColor(R.color.text_shadow_light));
-                    if (image != null) {
-                        image.setHovered(true);
-                    }
-                    return true;
+                    return false;
 
                 case MotionEvent.ACTION_HOVER_EXIT:
-                    view.setHovered(false);
                     label.setShadowLayer(label.getShadowRadius(), label.getShadowDx(), label.getShadowDy(), mContext.getColor(R.color.text_shadow));
-                    label.setHovered(false);
-                    if (image != null) {
-                        image.setHovered(false);
-                    }
-                    return true;
+                    return false;
             }
 
             return false;
