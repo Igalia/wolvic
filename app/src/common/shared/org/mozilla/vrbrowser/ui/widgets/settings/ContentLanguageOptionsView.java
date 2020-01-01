@@ -129,8 +129,8 @@ public class ContentLanguageOptionsView extends SettingsView {
 
     @Override
     protected boolean reset() {
-        SettingsStore.getInstance(getContext()).setContentLocales(Collections.singletonList(LocaleUtils.getSystemLocale()));
-        SessionStore.get().setLocales(Collections.singletonList(LocaleUtils.getSystemLocale()));
+        SettingsStore.getInstance(getContext()).setContentLocales(Collections.singletonList(LocaleUtils.getDeviceLanguage().getId()));
+        SessionStore.get().setLocales(Collections.singletonList(LocaleUtils.getDeviceLanguage().getId()));
         LocaleUtils.resetLanguages();
         refreshLanguages();
 

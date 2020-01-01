@@ -57,8 +57,9 @@ class VoiceSearchLanguageOptionsView extends SettingsView {
 
     @Override
     protected boolean reset() {
+        String systemLocale = LocaleUtils.getClosestSupportedLocale(getContext(), LocaleUtils.getDeviceLanguage().getId());
         String value = LocaleUtils.getSupportedLocaleForIndex(mBinding.languageRadio.getCheckedRadioButtonId());
-        if (!value.equals(LocaleUtils.getSystemLocale())) {
+        if (!value.equals(systemLocale)) {
             setLanguage(LocaleUtils.getIndexForSupportedLocale(LocaleUtils.getSystemLocale()), true);
         }
 

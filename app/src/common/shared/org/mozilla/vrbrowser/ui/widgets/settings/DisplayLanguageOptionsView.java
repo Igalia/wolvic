@@ -57,15 +57,15 @@ class DisplayLanguageOptionsView extends SettingsView {
 
     @Override
     protected boolean reset() {
-        String systemLocale = LocaleUtils.getSystemLocale();
+        String systemLocale = LocaleUtils.getClosestSupportedLocale(getContext(), LocaleUtils.getDeviceLanguage().getId());
         String currentLocale = LocaleUtils.getCurrentLocale();
-        if (!currentLocale.equalsIgnoreCase(systemLocale)) {
-            setLanguage(LocaleUtils.getIndexForSupportedLocale(systemLocale), true);
-            return true;
-
-        } else {
+        if (currentLocale.equalsIgnoreCase(systemLocale)) {
             setLanguage(LocaleUtils.getIndexForSupportedLocale(systemLocale), false);
             return false;
+
+        } else {
+            setLanguage(LocaleUtils.getIndexForSupportedLocale(systemLocale), true);
+            return true;
         }
     }
 

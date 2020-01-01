@@ -64,14 +64,18 @@ public class LocaleUtils {
     }
 
     public static void resetLanguages() {
-        String currentLocale = getCurrentLocale();
-        mLanguagesCache.values().stream().forEach((language) -> {
-            language.setPreferred(language.getId().equals(currentLocale));
+        mLanguagesCache.values().forEach((language) -> {
+            if (language == getDeviceLanguage()) {
+                language.setPreferred(true);
+
+            } else {
+                language.setPreferred(false);
+            }
         });
     }
 
-    public static Language getCurrentLocaleLanguage() {
-        return mLanguagesCache.get(getCurrentLocale());
+    public static Language getDeviceLanguage() {
+        return mLanguagesCache.get(Resources.getSystem().getConfiguration().getLocales().get(0).toLanguageTag());
     }
 
     public static List<String> getLocalesFromLanguages(@NonNull final List<Language> languages) {
@@ -99,7 +103,7 @@ public class LocaleUtils {
             }
 
         } else {
-            Language currentLanguage = getCurrentLocaleLanguage();
+            Language currentLanguage = getDeviceLanguage();
             currentLanguage.setPreferred(true);
             preferredLanguages.add(currentLanguage);
         }
@@ -260,6 +264,39 @@ public class LocaleUtils {
         }
 
         return locale;
+    }
+
+    public static String getClosestSupportedLocale(@NonNull Context context, @NonNull String languageTag) {
+        Locale locale = Locale.forLanguageTag(languageTag);
+        Optional<LocalizedLanguage> language = LocaleUtils.localizedSupportedLanguages.stream().filter(item ->
+                item.locale.equals(locale)
+        ).findFirst();
+
+        if (!language.isPresent()) {
+            language = LocaleUtils.localizedSupportedLanguages.stream().filter(item ->
+                    item.locale.getLanguage().equals(locale.getLanguage()) &&
+                            item.locale.getScript().equals(locale.getScript()) &&
+                            item.locale.getCountry().equals(locale.getCountry())
+            ).findFirst();
+        }
+        if (!language.isPresent()) {
+            language = LocaleUtils.localizedSupportedLanguages.stream().filter(item ->
+                    item.locale.getLanguage().equals(locale.getLanguage()) &&
+                            item.locale.getCountry().equals(locale.getCountry())
+            ).findFirst();
+        }
+        if (!language.isPresent()) {
+            language = LocaleUtils.localizedSupportedLanguages.stream().filter(item ->
+                    item.locale.getLanguage().equals(locale.getLanguage())
+            ).findFirst();
+        }
+
+        if (language.isPresent()) {
+            return language.get().locale.toLanguageTag();
+
+        } else {
+            return getDisplayLocale(context);
+        }
     }
 
 }
