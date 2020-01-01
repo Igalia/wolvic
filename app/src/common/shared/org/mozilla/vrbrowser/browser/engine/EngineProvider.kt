@@ -52,7 +52,7 @@ object EngineProvider {
             runtime = GeckoRuntime.create(context, builder.build())
             for (extension in WEB_EXTENSIONS) {
                 val path = "resource://android/assets/web_extensions/$extension/"
-                runtime!!.registerWebExtension(WebExtension(path))
+                runtime!!.registerWebExtension(WebExtension(path, runtime!!.webExtensionController))
             }
 
 

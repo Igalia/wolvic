@@ -966,7 +966,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     public GeckoResult<String> onLoadError(@NonNull GeckoSession session, String uri,  @NonNull WebRequestError error) {
         Log.d(LOGTAG, "Session onLoadError: " + uri);
 
-        return GeckoResult.fromValue(InternalPages.createErrorPageDataURI(mContext, uri, error.category, error.code));
+        return GeckoResult.fromValue(InternalPages.createErrorPageDataURI(mContext, uri, error.code));
     }
 
     // Progress Listener

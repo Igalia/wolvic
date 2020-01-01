@@ -16,110 +16,84 @@ import mozilla.components.browser.errorpages.ErrorType;
 
 public class InternalPages {
 
-    private static ErrorType fromGeckoErrorToErrorType(int category, int error) {
-        switch(category) {
-            case WebRequestError.ERROR_CATEGORY_UNKNOWN: {
-                return ErrorType.UNKNOWN;
+    private static ErrorType fromGeckoErrorToErrorType(int error) {
+        switch(error) {
+            case WebRequestError.ERROR_SECURITY_SSL: {
+                return ErrorType.ERROR_SECURITY_SSL;
             }
-            case WebRequestError.ERROR_CATEGORY_SECURITY: {
-                switch (error) {
-                    case WebRequestError.ERROR_SECURITY_SSL: {
-                        return ErrorType.ERROR_SECURITY_SSL;
-                    }
-                    case WebRequestError.ERROR_SECURITY_BAD_CERT: {
-                        return ErrorType.ERROR_SECURITY_BAD_CERT;
-                    }
-                }
+            case WebRequestError.ERROR_SECURITY_BAD_CERT: {
+                return ErrorType.ERROR_SECURITY_BAD_CERT;
             }
-            case WebRequestError.ERROR_CATEGORY_NETWORK: {
-                switch (error) {
-                    case WebRequestError.ERROR_NET_INTERRUPT: {
-                        return ErrorType.ERROR_NET_INTERRUPT;
-                    }
-                    case WebRequestError.ERROR_NET_TIMEOUT: {
-                        return ErrorType.ERROR_NET_TIMEOUT;
-                    }
-                    case WebRequestError.ERROR_CONNECTION_REFUSED: {
-                        return ErrorType.ERROR_CONNECTION_REFUSED;
-                    }
-                    case WebRequestError.ERROR_UNKNOWN_SOCKET_TYPE: {
-                        return ErrorType.ERROR_UNKNOWN_SOCKET_TYPE;
-                    }
-                    case WebRequestError.ERROR_REDIRECT_LOOP: {
-                        return ErrorType.ERROR_REDIRECT_LOOP;
-                    }
-                    case WebRequestError.ERROR_OFFLINE: {
-                        return ErrorType.ERROR_OFFLINE;
-                    }
-                    case WebRequestError.ERROR_PORT_BLOCKED: {
-                        return ErrorType.ERROR_PORT_BLOCKED;
-                    }
-                    case WebRequestError.ERROR_NET_RESET: {
-                        return ErrorType.ERROR_NET_RESET;
-                    }
-                }
+            case WebRequestError.ERROR_NET_INTERRUPT: {
+                return ErrorType.ERROR_NET_INTERRUPT;
             }
-            case WebRequestError.ERROR_CATEGORY_CONTENT: {
-                switch (error) {
-                    case WebRequestError.ERROR_UNSAFE_CONTENT_TYPE: {
-                        return ErrorType.ERROR_UNSAFE_CONTENT_TYPE;
-                    }
-                    case WebRequestError.ERROR_CORRUPTED_CONTENT: {
-                        return ErrorType.ERROR_CORRUPTED_CONTENT;
-                    }
-                    case WebRequestError.ERROR_CONTENT_CRASHED: {
-                        return ErrorType.ERROR_CONTENT_CRASHED;
-                    }
-                    case WebRequestError.ERROR_INVALID_CONTENT_ENCODING: {
-                        return ErrorType.ERROR_INVALID_CONTENT_ENCODING;
-                    }
-                }
+            case WebRequestError.ERROR_NET_TIMEOUT: {
+                return ErrorType.ERROR_NET_TIMEOUT;
             }
-            case WebRequestError.ERROR_CATEGORY_URI: {
-                switch (error) {
-                    case WebRequestError.ERROR_UNKNOWN_HOST: {
-                        return ErrorType.ERROR_UNKNOWN_HOST;
-                    }
-                    case WebRequestError.ERROR_MALFORMED_URI: {
-                        return ErrorType.ERROR_MALFORMED_URI;
-                    }
-                    case WebRequestError.ERROR_UNKNOWN_PROTOCOL: {
-                        return ErrorType.ERROR_UNKNOWN_PROTOCOL;
-                    }
-                    case WebRequestError.ERROR_FILE_NOT_FOUND: {
-                        return ErrorType.ERROR_FILE_NOT_FOUND;
-                    }
-                    case WebRequestError.ERROR_FILE_ACCESS_DENIED: {
-                        return ErrorType.ERROR_FILE_ACCESS_DENIED;
-                    }
-                }
+            case WebRequestError.ERROR_CONNECTION_REFUSED: {
+                return ErrorType.ERROR_CONNECTION_REFUSED;
             }
-            case WebRequestError.ERROR_CATEGORY_PROXY: {
-                switch (error) {
-                    case WebRequestError.ERROR_PROXY_CONNECTION_REFUSED: {
-                        return ErrorType.ERROR_CONNECTION_REFUSED;
-                    }
-                    case WebRequestError.ERROR_UNKNOWN_PROXY_HOST: {
-                        return ErrorType.ERROR_UNKNOWN_PROXY_HOST;
-                    }
-                }
+            case WebRequestError.ERROR_UNKNOWN_SOCKET_TYPE: {
+                return ErrorType.ERROR_UNKNOWN_SOCKET_TYPE;
             }
-            case WebRequestError.ERROR_CATEGORY_SAFEBROWSING: {
-                switch (error) {
-                    case WebRequestError.ERROR_SAFEBROWSING_MALWARE_URI: {
-                        return ErrorType.ERROR_SAFEBROWSING_MALWARE_URI;
-                    }
-                    case WebRequestError.ERROR_SAFEBROWSING_UNWANTED_URI: {
-                        return ErrorType.ERROR_SAFEBROWSING_UNWANTED_URI;
-                    }
-                    case WebRequestError.ERROR_SAFEBROWSING_HARMFUL_URI: {
-                        return ErrorType.ERROR_SAFEBROWSING_HARMFUL_URI;
-                    }
-                    case WebRequestError.ERROR_SAFEBROWSING_PHISHING_URI: {
-                        return ErrorType.ERROR_SAFEBROWSING_PHISHING_URI;
-                    }
-                }
+            case WebRequestError.ERROR_REDIRECT_LOOP: {
+                return ErrorType.ERROR_REDIRECT_LOOP;
             }
+            case WebRequestError.ERROR_OFFLINE: {
+                return ErrorType.ERROR_OFFLINE;
+            }
+            case WebRequestError.ERROR_PORT_BLOCKED: {
+                return ErrorType.ERROR_PORT_BLOCKED;
+            }
+            case WebRequestError.ERROR_NET_RESET: {
+                return ErrorType.ERROR_NET_RESET;
+            }
+            case WebRequestError.ERROR_UNSAFE_CONTENT_TYPE: {
+                return ErrorType.ERROR_UNSAFE_CONTENT_TYPE;
+            }
+            case WebRequestError.ERROR_CORRUPTED_CONTENT: {
+                return ErrorType.ERROR_CORRUPTED_CONTENT;
+            }
+            case WebRequestError.ERROR_CONTENT_CRASHED: {
+                return ErrorType.ERROR_CONTENT_CRASHED;
+            }
+            case WebRequestError.ERROR_INVALID_CONTENT_ENCODING: {
+                return ErrorType.ERROR_INVALID_CONTENT_ENCODING;
+            }
+            case WebRequestError.ERROR_UNKNOWN_HOST: {
+                return ErrorType.ERROR_UNKNOWN_HOST;
+            }
+            case WebRequestError.ERROR_MALFORMED_URI: {
+                return ErrorType.ERROR_MALFORMED_URI;
+            }
+            case WebRequestError.ERROR_UNKNOWN_PROTOCOL: {
+                return ErrorType.ERROR_UNKNOWN_PROTOCOL;
+            }
+            case WebRequestError.ERROR_FILE_NOT_FOUND: {
+                return ErrorType.ERROR_FILE_NOT_FOUND;
+            }
+            case WebRequestError.ERROR_FILE_ACCESS_DENIED: {
+                return ErrorType.ERROR_FILE_ACCESS_DENIED;
+            }
+            case WebRequestError.ERROR_PROXY_CONNECTION_REFUSED: {
+                return ErrorType.ERROR_PROXY_CONNECTION_REFUSED;
+            }
+            case WebRequestError.ERROR_UNKNOWN_PROXY_HOST: {
+                return ErrorType.ERROR_UNKNOWN_PROXY_HOST;
+            }
+            case WebRequestError.ERROR_SAFEBROWSING_MALWARE_URI: {
+                return ErrorType.ERROR_SAFEBROWSING_MALWARE_URI;
+            }
+            case WebRequestError.ERROR_SAFEBROWSING_UNWANTED_URI: {
+                return ErrorType.ERROR_SAFEBROWSING_UNWANTED_URI;
+            }
+            case WebRequestError.ERROR_SAFEBROWSING_HARMFUL_URI: {
+                return ErrorType.ERROR_SAFEBROWSING_HARMFUL_URI;
+            }
+            case WebRequestError.ERROR_SAFEBROWSING_PHISHING_URI: {
+                return ErrorType.ERROR_SAFEBROWSING_PHISHING_URI;
+            }
+            case WebRequestError.ERROR_CATEGORY_UNKNOWN:
             default: {
                 return ErrorType.UNKNOWN;
             }
@@ -142,15 +116,27 @@ public class InternalPages {
 
     public static String createErrorPageDataURI(Context context,
                                                 String uri,
-                                                int errorCategory,
                                                 int errorType) {
-        // TODO: browser-error pages component needs to accept a uri parameter
         String html = ErrorPages.INSTANCE.createErrorPage(
                 context,
-                fromGeckoErrorToErrorType(errorCategory, errorType),
+                fromGeckoErrorToErrorType(errorType),
                 uri,
                 R.raw.error_pages,
                 R.raw.error_style);
+
+        boolean showSSLAdvanced;
+        switch (errorType) {
+            case WebRequestError.ERROR_SECURITY_SSL:
+            case WebRequestError.ERROR_SECURITY_BAD_CERT:
+                showSSLAdvanced = true;
+                break;
+            default:
+                showSSLAdvanced = false;
+        }
+
+        html = html
+                .replace("%url%", uri)
+                .replace("%advancedSSLStyle%", showSSLAdvanced ? "block" : "none");
 
         return "data:text/html;base64," + Base64.encodeToString(html.getBytes(), Base64.NO_WRAP);
     }
