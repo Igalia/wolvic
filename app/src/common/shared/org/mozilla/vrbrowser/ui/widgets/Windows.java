@@ -893,7 +893,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
         @Override
         public void onAuthenticated(@NonNull OAuthAccount oAuthAccount, @NonNull AuthType authType) {
-            if (authType != AuthType.Existing.INSTANCE) {
+            if (authType == AuthType.Signin.INSTANCE || authType == AuthType.Signup.INSTANCE) {
                 Session session = mFocusedWindow.getSession();
                 addTab(mFocusedWindow, mAccounts.getConnectionSuccessURL());
                 onTabsClose(new ArrayList<>(Collections.singletonList(session)));
