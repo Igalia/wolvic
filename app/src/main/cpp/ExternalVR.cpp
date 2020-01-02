@@ -254,6 +254,15 @@ ExternalVR::SetCapabilityFlags(const device::CapabilityFlags aFlags) {
   if (device::PositionEmulated & aFlags) {
     result |= static_cast<uint16_t>(mozilla::gfx::VRDisplayCapabilityFlags::Cap_PositionEmulated);
   }
+  if (device::InlineSession & aFlags) {
+    result |= static_cast<uint16_t>(mozilla::gfx::VRDisplayCapabilityFlags::Cap_Inline);
+  }
+  if (device::ImmersiveVRSession & aFlags) {
+    result |= static_cast<uint16_t>(mozilla::gfx::VRDisplayCapabilityFlags::Cap_ImmersiveVR);
+  }
+  if (device::ImmersiveARSession & aFlags) {
+    result |= static_cast<uint16_t>(mozilla::gfx::VRDisplayCapabilityFlags::Cap_ImmersiveAR);
+  }
   //m.deviceCapabilities = aFlags;
   m.system.displayState.capabilityFlags = static_cast<mozilla::gfx::VRDisplayCapabilityFlags>(result);
   m.system.sensorState.flags = m.system.displayState.capabilityFlags;
