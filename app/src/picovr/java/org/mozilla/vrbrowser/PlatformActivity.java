@@ -181,10 +181,14 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
         int[] stick = aController.getTouchPad();
         if (stick.length >= 2) {
             //Log.e(LOGTAG, "stick[" + aIndex + "] " + stick[0] + " " + stick[1]);
+            /*
             axisY = ((float)stick[0] - kHalfMax) / kHalfMax;
             axisX = ((float)stick[1] - kHalfMax) / kHalfMax;
             if (axisX < 0.1f && axisX > -0.1f) { axisX = 0.0f; }
             if (axisY < 0.1f && axisY > -0.1f) { axisY = 0.0f; }
+            */
+            axisY = (float)stick[0] / kMax;
+            axisX = (float)stick[1] / kMax;
         } else {
             stick = new int[2];
         }
