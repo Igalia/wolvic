@@ -245,7 +245,7 @@ DeviceDelegatePicoVR::RegisterImmersiveDisplay(ImmersiveDisplayPtr aDisplay) {
   }
 
   m.immersiveDisplay->SetDeviceName("Pico");
-  m.immersiveDisplay->SetCapabilityFlags(device::Position | device::Orientation | device::Present);
+  m.immersiveDisplay->SetCapabilityFlags(device::Position | device::Orientation | device::Present | device::ImmersiveVRSession | device::InlineSession);
   m.immersiveDisplay->SetEyeResolution(m.renderWidth, m.renderHeight);
   m.immersiveDisplay->CompleteEnumeration();
 }
