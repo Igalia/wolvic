@@ -111,11 +111,11 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
         if (mControllerManager != null) {
             CVController main = mControllerManager.getMainController();
             if (main != null) {
-                updateController(1, main);
+                updateController(0, main);
             }
             CVController sub = mControllerManager.getSubController();
             if (sub != null) {
-                updateController(0, sub);
+                updateController(1, sub);
             }
         } else if (mHbManager != null) {
             update3DofController();
@@ -165,7 +165,7 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
     }
 
     private void updateController(int aIndex, @NonNull CVController aController) {
-        final float kMax = 255.0f;
+        final float kMax = 25500.0f;
         final float kHalfMax = kMax / 2.0f;
         boolean connected = aController.getConnectState() > 0;
         if (!connected) {
@@ -176,10 +176,13 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
         float axisY = 0.0f;
         int[] stick = aController.getTouchPad();
         if (stick.length >= 2) {
+            //Log.e(LOGTAG, "stick[" + aIndex + "] " + stick[0] + " " + stick[1]);
             axisY = ((float)stick[0] - kHalfMax) / kHalfMax;
             axisX = ((float)stick[1] - kHalfMax) / kHalfMax;
             if (axisX < 0.1f && axisX > -0.1f) { axisX = 0.0f; }
             if (axisY < 0.1f && axisY > -0.1f) { axisY = 0.0f; }
+        } else {
+            stick = new int[2];
         }
 
         int buttons = 0;
@@ -192,7 +195,7 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
         buttons |= aController.getButtonState(ButtonNum.buttonLG) ? BUTTON_GRIP : 0;
         buttons |= aController.getButtonState(ButtonNum.click) ? BUTTON_TOUCHPAD : 0;
 
-        nativeUpdateControllerState(aIndex, true, buttons, trigger, axisX, axisY, false);
+        nativeUpdateControllerState(aIndex, true, buttons, trigger, axisX, axisY, (stick[0] != 0 ) || (stick[1] != 0));
 
         boolean supports6Dof = aController.get6DofAbility() > 0;
         float[] q = aController.getOrientation();
@@ -243,10 +246,12 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
     }
 
     // CVControllerListener
+    /*
     @Override
     public void onBindSuccess() {
 
     }
+    */
 
     @Override
     public void onBindFail() {
@@ -265,11 +270,11 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
     @Override
     public void onMainControllerChanged(int serialNum) {
     }
-
+/*
     @Override
     public void onChannelChanged(int var1, int var2) {
     }
-
+*/
     protected native void nativeInitialize(int width, int height, Object aAssetManager, int type, int focusIndex);
     protected native void nativeShutdown();
     protected native void nativeDestroy();

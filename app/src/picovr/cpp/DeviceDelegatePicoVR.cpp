@@ -180,20 +180,23 @@ struct DeviceDelegatePicoVR::State {
         controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_OTHERS, 5, false, false);
       }
 
-      float axes[kNumAxes] = { controller.axisX , -controller.axisY };
+      // float axes[kNumAxes] = { controller.axisX , -controller.axisY };
+      float axes[kNumAxes] = { 0.0f, 0.0f };
       controllerDelegate->SetAxes(i, axes, kNumAxes);
 
+      /*
       if (type == kTypeNeo2) {
         if (!triggerPressed) {
           controllerDelegate->SetScrolledDelta(i, -controller.axisX, controller.axisY);
         }
       } else {
+       */
         if (controller.touched) {
           controllerDelegate->SetTouchPosition(i, controller.axisX, controller.axisY);
         } else {
           controllerDelegate->EndTouch(i);
         }
-      }
+      //}
 
       vrb::Matrix transform = controller.transform;
       if (renderMode == device::RenderMode::StandAlone) {
