@@ -337,7 +337,8 @@ DeviceDelegateSVR::RegisterImmersiveDisplay(ImmersiveDisplayPtr aDisplay) {
   }
 
   m.immersiveDisplay->SetDeviceName("ODG");
-  m.immersiveDisplay->SetCapabilityFlags(device::Position | device::Orientation | device::Present);
+  m.immersiveDisplay->SetCapabilityFlags(device::Position | device::Orientation | device::Present |
+                                         device::InlineSession | device::ImmersiveVRSession);
   m.immersiveDisplay->SetEyeResolution(m.renderWidth, m.renderHeight);
   m.immersiveDisplay->CompleteEnumeration();
 

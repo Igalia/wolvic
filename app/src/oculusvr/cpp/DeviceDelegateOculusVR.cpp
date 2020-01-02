@@ -1458,7 +1458,8 @@ DeviceDelegateOculusVR::StartFrame() {
   if (m.immersiveDisplay) {
     m.immersiveDisplay->SetEyeOffset(device::Eye::Left, -ipd * 0.5f, 0.f, 0.f);
     m.immersiveDisplay->SetEyeOffset(device::Eye::Right, ipd * 0.5f, 0.f, 0.f);
-    device::CapabilityFlags caps = device::Orientation | device::Present | device::StageParameters;
+    device::CapabilityFlags caps = device::Orientation | device::Present | device::StageParameters |
+                                   device::InlineSession | device::ImmersiveVRSession;
     if (m.predictedTracking.Status & VRAPI_TRACKING_STATUS_POSITION_TRACKED) {
       caps |= device::Position;
     } else {

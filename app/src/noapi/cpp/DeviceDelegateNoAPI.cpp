@@ -94,7 +94,7 @@ struct DeviceDelegateNoAPI::State {
       display->SetEyeResolution((int32_t)(glWidth / 2), glHeight);
       display->SetEyeOffset(device::Eye::Left, 0.0f, 0.0f, 0.0f);
       display->SetEyeOffset(device::Eye::Right, 0.0f, 0.0f, 0.0f);
-      display->SetCapabilityFlags(device::Position | device::Orientation | device::Present);
+      display->SetCapabilityFlags(device::Position | device::Orientation | device::Present | device::InlineSession | device::ImmersiveVRSession);
     }
   }
 };

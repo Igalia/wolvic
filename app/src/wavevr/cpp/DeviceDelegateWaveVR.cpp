@@ -461,7 +461,8 @@ DeviceDelegateWaveVR::RegisterImmersiveDisplay(ImmersiveDisplayPtr aDisplay) {
   }
 
   m.immersiveDisplay->SetDeviceName("Wave");
-  device::CapabilityFlags flags = device::Orientation | device::Present | device::StageParameters;
+  device::CapabilityFlags flags = device::Orientation | device::Present | device::StageParameters |
+                                  device::InlineSession | device::ImmersiveVRSession;
 
   if (WVR_GetDegreeOfFreedom(WVR_DeviceType_HMD) == WVR_NumDoF_6DoF) {
     flags |= device::Position;
