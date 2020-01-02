@@ -50,6 +50,7 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
 
     @Override
     protected void onCreate(Bundle bundle) {
+        nativeOnCreate();
         super.onCreate(bundle);
 
         if (ControllerClient.isControllerServiceExisted(this)) {
@@ -89,9 +90,12 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
         if (mControllerManager != null) {
             mControllerManager.setListener(null);
         }
-        nativeDestroy();
     }
 
+    @Override
+    public void onBackPressed() {
+        // Eat the back button.
+    }
 
     @Override
     public void onFrameBegin(HmdState hmdState) {
@@ -230,6 +234,7 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
     @Override
     public void onRendererShutdown() {
         nativeShutdown();
+        nativeDestroy();
     }
 
     @Override
@@ -275,6 +280,7 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
     public void onChannelChanged(int var1, int var2) {
     }
 */
+    protected native void nativeOnCreate();
     protected native void nativeInitialize(int width, int height, Object aAssetManager, int type, int focusIndex);
     protected native void nativeShutdown();
     protected native void nativeDestroy();
