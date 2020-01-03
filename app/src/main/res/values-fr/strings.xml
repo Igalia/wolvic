@@ -4,7 +4,7 @@
     https://github.com/MozillaReality/FirefoxReality/wiki/L10n -->
 
     <!-- This string is used on the virtual keyboard to label the 'Enter' key (stylized in uppercase letters as 'ENTER'). -->
-    <string name="keyboard_enter_label">ENTRER</string>
+    <string name="keyboard_enter_label">ENTRÉE</string>
 
     <!-- This string is used on the virtual keyboard to label the 'Enter' key with a "Go" IME action.
          The action key performs a "go" operation to take the user to the target of the text they typed.
