@@ -271,7 +271,7 @@ void
 DeviceDelegatePicoVR::SetReorientTransform(const vrb::Matrix& aMatrix) {
   // Until we can get the new heading don't reset it on the Neo 2
   if (m.type != kTypeNeo2) {
-    m.reorientMatrix = aMatrix;
+    // m.reorientMatrix = aMatrix;
   }
 }
 
