@@ -86,7 +86,7 @@
 
     <!-- Media Controls Widget -->
     <dimen name="media_controls_container_width">324dp</dimen>
-    <dimen name="media_controls_container_height">100dp</dimen>
+    <dimen name="media_controls_container_height">105dp</dimen>
     <dimen name="media_controls_panel_width">284dp</dimen>
     <dimen name="media_controls_panel_height">85dp</dimen>
     <dimen name="media_controls_rounded_corners">15dp</dimen>
