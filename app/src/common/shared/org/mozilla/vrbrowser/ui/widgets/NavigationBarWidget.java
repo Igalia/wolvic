@@ -54,6 +54,8 @@ import java.util.Arrays;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static org.mozilla.vrbrowser.ui.widgets.menus.VideoProjectionMenuWidget.VIDEO_PROJECTION_NONE;
+
 public class NavigationBarWidget extends UIWidget implements GeckoSession.NavigationDelegate,
         GeckoSession.ProgressDelegate, GeckoSession.ContentDelegate, WidgetManagerDelegate.WorldClickListener,
         WidgetManagerDelegate.UpdateListener, SessionChangeListener,
@@ -102,7 +104,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private BrightnessMenuWidget mBrightnessWidget;
     private MediaControlsWidget mMediaControlsWidget;
     private Media mFullScreenMedia;
-    private @VideoProjectionMenuWidget.VideoProjectionFlags Integer mAutoSelectedProjection;
+    private @VideoProjectionMenuWidget.VideoProjectionFlags int mAutoSelectedProjection = VIDEO_PROJECTION_NONE;
     private HamburgerMenuWidget mHamburgerMenu;
     private SendTabDialogWidget mSendTabDialog;
     private TooltipWidget mPopUpNotification;
@@ -252,7 +254,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
 
-            if (mAutoSelectedProjection != null) {
+            if (mAutoSelectedProjection != VIDEO_PROJECTION_NONE) {
                 enterVRVideo(mAutoSelectedProjection);
                 return;
             }
@@ -698,6 +700,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         boolean composited = mProjectionMenu.getPlacement().composited;
         mProjectionMenu.getPlacement().copyFrom(mProjectionMenuPlacement);
         mProjectionMenu.getPlacement().composited = composited;
+        mProjectionMenu.setSelectedProjection(VIDEO_PROJECTION_NONE);
         mWidgetManager.updateWidget(mProjectionMenu);
         closeFloatingMenus();
         mWidgetManager.setControllersVisible(true);
@@ -870,11 +873,14 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             }
             AtomicBoolean autoEnter = new AtomicBoolean(false);
             mAutoSelectedProjection = VideoProjectionMenuWidget.getAutomaticProjection(getSession().getCurrentUri(), autoEnter);
-            if (mAutoSelectedProjection != null && autoEnter.get()) {
+            if (mAutoSelectedProjection != VIDEO_PROJECTION_NONE && autoEnter.get()) {
                 mAutoEnteredVRVideo = true;
                 postDelayed(() -> enterVRVideo(mAutoSelectedProjection), 300);
             } else {
                 mAutoEnteredVRVideo = false;
+                if (mProjectionMenu != null) {
+                    mProjectionMenu.setSelectedProjection(mAutoSelectedProjection);
+                }
             }
         } else {
             if (mIsInVRVideo) {

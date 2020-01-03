@@ -19,12 +19,12 @@ import java.util.stream.IntStream;
 
 public class VideoProjectionMenuWidget extends MenuWidget implements WidgetManagerDelegate.FocusChangeListener {
 
-    @IntDef(value = { VIDEO_PROJECTION_UNSUPPORTED, VIDEO_PROJECTION_3D_SIDE_BY_SIDE, VIDEO_PROJECTION_360,
+    @IntDef(value = { VIDEO_PROJECTION_NONE, VIDEO_PROJECTION_3D_SIDE_BY_SIDE, VIDEO_PROJECTION_360,
                       VIDEO_PROJECTION_360_STEREO, VIDEO_PROJECTION_180,
                       VIDEO_PROJECTION_180_STEREO_LEFT_RIGHT, VIDEO_PROJECTION_180_STEREO_TOP_BOTTOM })
     public @interface VideoProjectionFlags {}
 
-    public static final int VIDEO_PROJECTION_UNSUPPORTED = -1;
+    public static final int VIDEO_PROJECTION_NONE = -1;
     public static final int VIDEO_PROJECTION_3D_SIDE_BY_SIDE = 0;
     public static final int VIDEO_PROJECTION_360 = 1;
     public static final int VIDEO_PROJECTION_360_STEREO = 2;
@@ -128,27 +128,28 @@ public class VideoProjectionMenuWidget extends MenuWidget implements WidgetManag
 
     public void setSelectedProjection(@VideoProjectionFlags int aProjection) {
         mSelectedProjection = aProjection;
-        IntStream.range(0, mItems.size())
+        int index = IntStream.range(0, mItems.size())
                 .filter(i -> ((ProjectionMenuItem)mItems.get(i)).projection == aProjection)
                 .findFirst()
-                .ifPresent(this::setSelectedItem);
+                .orElse(-1);
+        setSelectedItem(index);
     }
 
-    public static @VideoProjectionFlags Integer getAutomaticProjection(String aURL, AtomicBoolean autoEnter) {
+    public static @VideoProjectionFlags int getAutomaticProjection(String aURL, AtomicBoolean autoEnter) {
         if (aURL == null) {
-            return null;
+            return VIDEO_PROJECTION_NONE;
         }
 
         Uri uri = Uri.parse(aURL);
         if (uri == null) {
-            return null;
+            return VIDEO_PROJECTION_NONE;
         }
 
         String projection = uri.getQueryParameter("mozVideoProjection");
         if (projection == null) {
             projection = uri.getQueryParameter("mozvideoprojection");
             if (projection == null) {
-                return null;
+                return VIDEO_PROJECTION_NONE;
             }
         }
         projection = projection.toLowerCase();
@@ -169,7 +170,7 @@ public class VideoProjectionMenuWidget extends MenuWidget implements WidgetManag
             return VIDEO_PROJECTION_3D_SIDE_BY_SIDE;
         }
 
-        return VIDEO_PROJECTION_UNSUPPORTED;
+        return VIDEO_PROJECTION_NONE;
     }
 
     @Override
