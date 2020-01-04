@@ -75,7 +75,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     private transient CopyOnWriteArrayList<GeckoSession.SelectionActionDelegate> mSelectionActionListeners;
 
     private SessionState mState;
-    private CopyOnWriteArrayList<Runnable> mQueuedCalls = new CopyOnWriteArrayList<>();
+    private transient CopyOnWriteArrayList<Runnable> mQueuedCalls = new CopyOnWriteArrayList<>();
     private transient GeckoSession.PermissionDelegate mPermissionDelegate;
     private transient GeckoSession.PromptDelegate mPromptDelegate;
     private transient GeckoSession.HistoryDelegate mHistoryDelegate;
@@ -1469,16 +1469,6 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
             for (GeckoSession.NavigationDelegate listener : mNavigationListeners) {
                 listener.onCanGoBack(this.getGeckoSession(), canGoBack());
             }
-        }
-    }
-
-    @Override
-    public void onStackSession(Session aSession) {
-        if (aSession.equals(this)) {
-            return;
-        }
-        for (SessionChangeListener listener : mSessionChangeListeners) {
-            listener.onStackSession(aSession);
         }
     }
 
