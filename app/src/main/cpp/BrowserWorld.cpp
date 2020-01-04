@@ -853,7 +853,7 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
 #if !defined(SNAPDRAGONVR)
     UpdateEnvironment();
     // Don't load the env model, we are going for skyboxes in v1.0
-//    CreateFloor();
+    CreateFloor();
 #endif
     m.fadeAnimation->SetFadeChangeCallback([=](const vrb::Color& aTintColor) {
       if (m.skybox) {
@@ -1633,6 +1633,16 @@ BrowserWorld::CreateSkyBox(const std::string& aBasePath, const std::string& aExt
     m.rootOpaqueParent->AddNode(m.skybox->GetRoot());
     m.skybox->Load(m.loader, aBasePath, extension);
   }
+}
+
+void
+BrowserWorld::CreateFloor() {
+  ASSERT_ON_RENDER_THREAD();
+  vrb::TransformPtr model = Transform::Create(m.create);
+  m.loader->LoadModel("environments/Env.obj", model);
+  m.rootOpaque->AddNode(model);
+  vrb::Matrix transform = vrb::Matrix::Identity();
+  model->SetTransform(transform);
 }
 
 } // namespace crow
