@@ -468,7 +468,7 @@
 
     <!-- This string labels the radio button that selects the 'Void' environment.
          The 'Void' environment is an empty space that surrounds the user in empty, black space. -->
-    <string name="developer_options_env_void">Ongeldig</string>
+    <string name="developer_options_env_void">Leeg</string>
 
     <!-- This string labels the radio button that selects the 'Offworld' environment,
          a sci-fi themed desert-like environment. The offworld references sci-fi fictional
