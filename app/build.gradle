@@ -154,7 +154,7 @@ android {
                     arguments "-DVR_SDK_LIB=oculusvr-lib", "-DVR_SDK_EXTRA_LIB=ovrplatform-lib", "-DOCULUSVR=ON"
                 }
             }
-            manifestPlaceholders = [ headtrackingRequired:"true", permissionToRemove:"android.permission.RECEIVE_BOOT_COMPLETED" ]
+            manifestPlaceholders = [ headtrackingRequired:"false", permissionToRemove:"android.permission.RECEIVE_BOOT_COMPLETED" ]
         }
 
         oculusvr3dofStore {
