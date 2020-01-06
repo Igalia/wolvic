@@ -87,7 +87,7 @@
         <FrameLayout
             android:id="@+id/checkboxContainer"
             android:layout_width="322dp"
-            android:layout_height="22dp"
+            android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="10dp"
             android:layout_above="@+id/buttonsLayout">
@@ -105,7 +105,7 @@
         <RelativeLayout
             android:id="@+id/buttonsLayout"
             android:layout_width="322dp"
-            android:layout_height="36dp"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:gravity="center">
