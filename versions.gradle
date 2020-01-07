@@ -24,7 +24,7 @@ ext.deps = [:]
 def versions = [:]
 // GeckoView versions can be found here:
 // https://maven.mozilla.org/?prefix=maven2/org/mozilla/geckoview/
-versions.gecko_view = "73.0.20191220095035"
+versions.gecko_view = "74.0.20200107095722"
 versions.android_components = "21.0.0"
 // Note that android-components also depends on application-services,
 // and in fact is our main source of appservices-related functionality.
