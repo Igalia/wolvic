@@ -4,6 +4,10 @@
 .ytp-generic-popup, ytp-generic-popup {
   display: none;
 }
+/* Hide not working share button in fullscreen. */
+.ytp-share-icon {
+  display: none;
+}
 
 /* Improve readability a bit in FxR. */
 hr, html, i, iframe, img, ins, kbd, label, legend, li, menu, object, ol, p, pre, q, s, samp, small, span, strike, strong, sub {
