@@ -117,12 +117,20 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
         Log.d(LOGTAG, "onContentPermissionRequest: " + aUri + " " + aType);
         if (aType == PERMISSION_XR) {
             callback.grant();
+            return;
         }
         PermissionWidget.PermissionType type;
         if (aType == PERMISSION_DESKTOP_NOTIFICATION) {
             type = PermissionWidget.PermissionType.Notification;
         } else if (aType == PERMISSION_GEOLOCATION) {
             type = PermissionWidget.PermissionType.Location;
+        } else if (PERMISSION_AUTOPLAY_AUDIBLE == aType || PERMISSION_AUTOPLAY_INAUDIBLE == aType) {
+            if (SessionStore.get().getAutoplayEnabled()) {
+                callback.grant();
+            } else {
+                callback.grant();
+            }
+            return;
         } else {
             Log.e(LOGTAG, "onContentPermissionRequest unknown permission: " + aType);
             callback.reject();

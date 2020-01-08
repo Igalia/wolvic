@@ -58,8 +58,9 @@ class DisplayOptionsView extends SettingsView {
         mBinding.msaaRadio.setOnCheckedChangeListener(mMSSAChangeListener);
         setMSAAMode(mBinding.msaaRadio.getIdForValue(msaaLevel), false);
 
-        mBinding.autoplaySwitch.setOnCheckedChangeListener(mAutoplayListener);
-        setAutoplay(SessionStore.get().getAutoplayEnabled(), false);
+        mBinding.autoplaySwitch.setEnabled(false);
+        //mBinding.autoplaySwitch.setOnCheckedChangeListener(mAutoplayListener);
+        setAutoplay(SessionStore.get().getAutoplayEnabled(), true);
 
         mDefaultHomepageUrl = getContext().getString(R.string.homepage_url);
 
