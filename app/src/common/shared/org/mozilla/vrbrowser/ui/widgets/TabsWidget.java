@@ -158,7 +158,9 @@ public class TabsWidget extends UIDialog {
     @Override
     public void hide(@HideFlags int aHideFlags) {
         super.hide(aHideFlags);
-        mRenderer.clearSurface();
+        if (mRenderer != null) {
+            mRenderer.clearSurface();
+        }
     }
 
     public void setTabDelegate(TabDelegate aDelegate) {
@@ -269,15 +271,11 @@ public class TabsWidget extends UIDialog {
 
                 @Override
                 public void onSend(TabView aSender) {
-                    hide(KEEP_WIDGET);
-                    mSendTabDialog = new SendTabDialogWidget(getContext());
+                    if (mSendTabDialog == null) {
+                        mSendTabDialog = new SendTabDialogWidget(getContext());
+                    }
                     mSendTabDialog.setSessionId(aSender.getSession().getId());
                     mSendTabDialog.mWidgetPlacement.parentHandle = mWidgetManager.getFocusedWindow().getHandle();
-                    mSendTabDialog.setDelegate(() -> {
-                        mSendTabDialog.releaseWidget();
-                        mSendTabDialog = null;
-                        TabsWidget.this.show(REQUEST_FOCUS);
-                    });
                     mSendTabDialog.show(UIWidget.REQUEST_FOCUS);
                 }
             });

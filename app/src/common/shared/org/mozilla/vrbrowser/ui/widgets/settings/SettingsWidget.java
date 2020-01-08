@@ -493,11 +493,8 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
 
     @Override
     public void showRestartDialog() {
-        hide(UIWidget.REMOVE_WIDGET);
-
         if (mRestartDialog == null) {
             mRestartDialog = new RestartDialogWidget(getContext());
-            mRestartDialog.setDelegate(() -> SettingsWidget.this.show(REQUEST_FOCUS));
         }
 
         mRestartDialog.show(REQUEST_FOCUS);
@@ -505,9 +502,7 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
 
     @Override
     public void showAlert(String aTitle, String aMessage) {
-        hide(UIWidget.KEEP_WIDGET);
-
-        mWidgetManager.getFocusedWindow().showAlert(aTitle, aMessage, index -> show(REQUEST_FOCUS));
+        mWidgetManager.getFocusedWindow().showAlert(aTitle, aMessage, null);
     }
 
     private boolean isLanguagesSubView(View view) {

@@ -8,8 +8,6 @@ package org.mozilla.vrbrowser.ui.widgets.dialogs;
 import android.content.Context;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserApplication;
@@ -23,8 +21,6 @@ import java.util.concurrent.Executor;
 public class WhatsNewWidget extends PromptDialogWidget {
 
     private Accounts mAccounts;
-    private Runnable mSignInCallback;
-    private Runnable mStartBrowsingCallback;
     private Accounts.LoginOrigin mLoginOrigin;
     private Executor mUIThreadExecutor;
 
@@ -32,14 +28,6 @@ public class WhatsNewWidget extends PromptDialogWidget {
         super(aContext);
 
         initialize(aContext);
-    }
-
-    public void setSignInCallback(@NonNull Runnable callback) {
-        mSignInCallback = callback;
-    }
-
-    public void setStartBrowsingCallback(@NonNull Runnable callback) {
-        mStartBrowsingCallback = callback;
     }
 
     @Override
@@ -55,7 +43,7 @@ public class WhatsNewWidget extends PromptDialogWidget {
         });
         setButtonsDelegate(index -> {
             if (index == PromptDialogWidget.NEGATIVE) {
-                startBrowsing();
+                onDismiss();
 
             } else if (index == PromptDialogWidget.POSITIVE) {
                 signIn();
@@ -86,7 +74,7 @@ public class WhatsNewWidget extends PromptDialogWidget {
             mAccounts.logoutAsync();
 
         } else {
-            hide(REMOVE_WIDGET);
+            UIDialog.closeAllDialogs();
 
             CompletableFuture<String> result = mAccounts.authUrlAsync();
             if (result != null) {
@@ -102,22 +90,12 @@ public class WhatsNewWidget extends PromptDialogWidget {
                         GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.FXA_LOGIN);
                     }
 
-                    if (mSignInCallback != null) {
-                        mSignInCallback.run();
-                    }
-
                 }, mUIThreadExecutor).exceptionally(throwable -> {
                     Log.d(LOGTAG, "Error getting the authentication URL: " + throwable.getLocalizedMessage());
                     throwable.printStackTrace();
                     return null;
                 });
             }
-        }
-    }
-
-    private void startBrowsing() {
-        if (mStartBrowsingCallback != null) {
-            mStartBrowsingCallback.run();
         }
     }
 

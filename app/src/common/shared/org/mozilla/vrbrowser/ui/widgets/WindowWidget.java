@@ -52,7 +52,6 @@ import org.mozilla.vrbrowser.ui.widgets.dialogs.SelectionActionWidget;
 import org.mozilla.vrbrowser.ui.widgets.menus.ContextMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.menus.LibraryMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.settings.SettingsWidget;
-import org.mozilla.vrbrowser.utils.ConnectivityReceiver;
 import org.mozilla.vrbrowser.utils.ViewUtils;
 
 import java.util.ArrayList;
@@ -101,7 +100,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private WidgetManagerDelegate mWidgetManager;
     private PromptDialogWidget mAlertDialog;
     private PromptDialogWidget mConfirmDialog;
-    private PromptDialogWidget mNoInternetDialog;
     private PromptDialogWidget mAppDialog;
     private ClearHistoryDialogWidget mClearHistoryDialog;
     private ContextMenuWidget mContextMenu;
@@ -236,8 +234,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         aSession.addProgressListener(this);
         aSession.setHistoryDelegate(this);
         aSession.addSelectionActionListener(this);
-
-        mWidgetManager.addConnectivityListener(mConnectivityDelegate);
     }
 
     void cleanListeners(Session aSession) {
@@ -248,8 +244,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         aSession.removeProgressListener(this);
         aSession.setHistoryDelegate(null);
         aSession.removeSelectionActionListener(this);
-
-        mWidgetManager.removeConnectivityListener(mConnectivityDelegate);
     }
 
     @Override
@@ -329,31 +323,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
         mListeners.clear();
     }
-
-    private ConnectivityReceiver.Delegate mConnectivityDelegate = connected -> {
-        if (mActive) {
-            if (mNoInternetDialog == null) {
-                mNoInternetDialog = new PromptDialogWidget(getContext());
-                mNoInternetDialog.setButtons(new int[] {
-                        R.string.ok_button
-                });
-                mNoInternetDialog.setCheckboxVisible(false);
-                mNoInternetDialog.setDescriptionVisible(false);
-                mNoInternetDialog.setTitle(R.string.no_internet_title);
-                mNoInternetDialog.setBody(R.string.no_internet_message);
-                mNoInternetDialog.setButtonsDelegate(index -> {
-                    mNoInternetDialog.hide(REMOVE_WIDGET);
-                });
-            }
-
-            if (!connected && !mNoInternetDialog.isVisible()) {
-                mNoInternetDialog.show(REQUEST_FOCUS);
-
-            } else if (connected && mNoInternetDialog.isVisible()) {
-                mNoInternetDialog.hide(REMOVE_WIDGET);
-            }
-        }
-    };
 
     public void loadHomeIfNotRestored() {
         if (!mIsRestored) {

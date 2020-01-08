@@ -338,18 +338,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             final WhatsNewWidget whatsNew = new WhatsNewWidget(this);
             whatsNew.setLoginOrigin(Accounts.LoginOrigin.NONE);
             whatsNew.getPlacement().parentHandle = mWindows.getFocusedWindow().getHandle();
-            whatsNew.setStartBrowsingCallback(() -> {
-                whatsNew.hide(UIWidget.REMOVE_WIDGET);
-                whatsNew.releaseWidget();
-            });
-            whatsNew.setSignInCallback(() -> {
-                whatsNew.hide(UIWidget.REMOVE_WIDGET);
-                whatsNew.releaseWidget();
-            });
-            whatsNew.setDelegate(() -> {
-                whatsNew.hide(UIWidget.REMOVE_WIDGET);
-                whatsNew.releaseWidget();
-            });
             whatsNew.show(UIWidget.REQUEST_FOCUS);
         }
     }

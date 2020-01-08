@@ -61,8 +61,6 @@ public class SendTabDialogWidget extends SettingDialogWidget implements
         mSendTabsDialogBinding.setIsEmpty(false);
 
         mAccounts = ((VRBrowserApplication)getContext().getApplicationContext()).getAccounts();
-        mAccounts.addAccountListener(this);
-        mAccounts.addDeviceConstellationListener(this);
 
         mBinding.headerLayout.setTitle(getResources().getString(R.string.send_tab_dialog_title));
         mBinding.headerLayout.setDescription(R.string.send_tab_dialog_description);
@@ -71,15 +69,10 @@ public class SendTabDialogWidget extends SettingDialogWidget implements
     }
 
     @Override
-    public void releaseWidget() {
-        mAccounts.removeAccountListener(this);
-        mAccounts.removeDeviceConstellationListener(this);
-
-        super.releaseWidget();
-    }
-
-    @Override
     public void show(int aShowFlags) {
+        mAccounts.addAccountListener(this);
+        mAccounts.addDeviceConstellationListener(this);
+
         if (mAccounts.isSignedIn()) {
             mBinding.footerLayout.setFooterButtonVisibility(View.GONE);
             mAccounts.refreshDevicesAsync();
@@ -96,7 +89,8 @@ public class SendTabDialogWidget extends SettingDialogWidget implements
     public void hide(int aHideFlags) {
         super.hide(aHideFlags);
 
-        mWidgetManager.removeWorldClickListener(this);
+        mAccounts.removeAccountListener(this);
+        mAccounts.removeDeviceConstellationListener(this);
     }
 
     public void setSessionId(@Nullable String sessionId) {
@@ -122,24 +116,6 @@ public class SendTabDialogWidget extends SettingDialogWidget implements
     private void showWhatsNewDialog() {
         mWhatsNew = new WhatsNewWidget(getContext());
         mWhatsNew.setLoginOrigin(Accounts.LoginOrigin.SEND_TABS);
-        mWhatsNew.setStartBrowsingCallback(() -> {
-            mWhatsNew.hide(REMOVE_WIDGET);
-            mWhatsNew.releaseWidget();
-            mWhatsNew = null;
-            onDismiss();
-        });
-        mWhatsNew.setSignInCallback(() -> {
-            mWhatsNew.hide(REMOVE_WIDGET);
-            mWhatsNew.releaseWidget();
-            mWhatsNew = null;
-            hide(KEEP_WIDGET);
-        });
-        mWhatsNew.setDelegate(() -> {
-            mWhatsNew.hide(REMOVE_WIDGET);
-            mWhatsNew.releaseWidget();
-            mWhatsNew = null;
-            onDismiss();
-        });
         mWhatsNew.show(UIWidget.REQUEST_FOCUS);
     }
 

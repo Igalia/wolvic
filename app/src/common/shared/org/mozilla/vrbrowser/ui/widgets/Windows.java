@@ -22,8 +22,11 @@ import org.mozilla.vrbrowser.browser.engine.SessionState;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
+import org.mozilla.vrbrowser.ui.widgets.dialogs.PromptDialogWidget;
+import org.mozilla.vrbrowser.ui.widgets.dialogs.UIDialog;
 import org.mozilla.vrbrowser.ui.widgets.settings.SettingsWidget;
 import org.mozilla.vrbrowser.utils.BitmapCache;
+import org.mozilla.vrbrowser.utils.ConnectivityReceiver;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.io.File;
@@ -103,6 +106,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     private TabsWidget mTabsWidget;
     private Accounts mAccounts;
     private Services mServices;
+    private PromptDialogWidget mNoInternetDialog;
 
     public enum WindowPlacement{
         FRONT(0),
@@ -141,6 +145,8 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         mAccounts.addAccountListener(mAccountObserver);
         mServices = ((VRBrowserApplication)mContext.getApplicationContext()).getServices();
         mServices.setTabReceivedDelegate(this);
+
+        mWidgetManager.addConnectivityListener(mConnectivityDelegate);
 
         restoreWindows();
     }
@@ -435,6 +441,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         }
         mAccounts.removeAccountListener(mAccountObserver);
         mServices.setTabReceivedDelegate(null);
+        mWidgetManager.removeConnectivityListener(mConnectivityDelegate);
     }
 
     public boolean isInPrivateMode() {
@@ -894,6 +901,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         @Override
         public void onAuthenticated(@NonNull OAuthAccount oAuthAccount, @NonNull AuthType authType) {
             if (authType == AuthType.Signin.INSTANCE || authType == AuthType.Signup.INSTANCE) {
+                UIDialog.closeAllDialogs();
                 Session session = mFocusedWindow.getSession();
                 addTab(mFocusedWindow, mAccounts.getConnectionSuccessURL());
                 onTabsClose(new ArrayList<>(Collections.singletonList(session)));
@@ -1276,4 +1284,27 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             mTabsWidget.refreshTabs();
         }
     }
+
+    private ConnectivityReceiver.Delegate mConnectivityDelegate = connected -> {
+        if (mNoInternetDialog == null) {
+            mNoInternetDialog = new PromptDialogWidget(mContext);
+            mNoInternetDialog.setButtons(new int[] {
+                    R.string.ok_button
+            });
+            mNoInternetDialog.setCheckboxVisible(false);
+            mNoInternetDialog.setDescriptionVisible(false);
+            mNoInternetDialog.setTitle(R.string.no_internet_title);
+            mNoInternetDialog.setBody(R.string.no_internet_message);
+            mNoInternetDialog.setButtonsDelegate(index -> {
+                mNoInternetDialog.hide(UIWidget.REMOVE_WIDGET);
+            });
+        }
+
+        if (!connected && !mNoInternetDialog.isVisible()) {
+            mNoInternetDialog.show(UIWidget.REQUEST_FOCUS);
+
+        } else if (connected && mNoInternetDialog.isVisible()) {
+            mNoInternetDialog.hide(UIWidget.REMOVE_WIDGET);
+        }
+    };
 }
