@@ -792,7 +792,7 @@
     <string name="bookmarks_desktop_menu_title">菜单</string>
 
     <!-- This string is displayed as the title of the desktop "toolbar" bookmarks folder. -->
-    <string name="bookmarks_desktop_toolbar_title">工具栏</string>
+    <string name="bookmarks_desktop_toolbar_title">书签工具栏</string>
 
     <!-- This string is displayed as the title of the desktop "unfiled" bookmarks folder. -->
     <string name="bookmarks_desktop_unfiled_title">其他</string>
