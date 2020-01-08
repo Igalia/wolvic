@@ -1141,6 +1141,8 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             windowToMove.setSession(moveTo, WindowWidget.SESSION_DO_NOT_RELEASE_DISPLAY);
             targetWindow.setSession(moveFrom, WindowWidget.SESSION_DO_NOT_RELEASE_DISPLAY);
             SessionStore.get().setActiveSession(targetWindow.getSession());
+            windowToMove.setActiveWindow(false);
+            targetWindow.setActiveWindow(true);
 
         } else {
             setFirstPaint(targetWindow, aTab);

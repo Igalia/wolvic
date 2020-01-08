@@ -192,7 +192,15 @@ public class TitleBarWidget extends UIWidget implements WidgetManagerDelegate.Up
                 }
             }
         } else {
+            mMedia = null;
             mBinding.setIsMediaAvailable(false);
+        }
+    }
+
+    public void updateMediaStatus() {
+        if (mMedia != null) {
+            mBinding.setIsMediaAvailable(mMedia.isPlayed());
+            mBinding.setIsMediaPlaying(mMedia.isPlaying());
         }
     }
 

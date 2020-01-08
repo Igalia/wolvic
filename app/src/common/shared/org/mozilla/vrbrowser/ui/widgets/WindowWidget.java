@@ -660,6 +660,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             updateTitleBar();
         }
 
+        updateTitleBarMediaStatus();
         hideContextMenus();
 
         TelemetryWrapper.activePlacementEvent(mWindowPlacement.getValue(), mActive);
@@ -701,6 +702,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             } else {
                 mTitleBar.setURL(url);
             }
+        }
+    }
+
+    public void updateTitleBarMediaStatus() {
+        if (mTitleBar != null) {
+            mTitleBar.updateMediaStatus();
         }
     }
 
