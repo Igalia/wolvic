@@ -649,6 +649,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         }
         final int keyCode = event.getKeyCode();
         if (DeviceType.isOculusBuild()) {
+            if (event.getKeyCode() == KeyEvent.KEYCODE_SEARCH) {
+                // Eat search key, otherwise it causes a crash on Oculus
+                return true;
+            }
             int action = event.getAction();
             if (action != KeyEvent.ACTION_DOWN) {
                 return super.dispatchKeyEvent(event);
