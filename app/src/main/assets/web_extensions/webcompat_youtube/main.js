@@ -31,9 +31,10 @@ class YoutubeExtension {
         if (viewport) {
             viewport.setAttribute('content', content);
         } else {
-            document.head.insertAdjacentHTML('afterbegin', `<meta name="viewport" content="${content}"/>`);
+            const container = document.head || document.documentElement;
+            container.insertAdjacentHTML('afterbegin', `<meta name="viewport" content="${content}"/>`);
         }
-        logDebug(`Youtube viewport updated`);
+        logDebug(`Youtube viewport updated: ${window.innerWidth}x${window.innerHeight} `);
     }
 
     // Select a better youtube video quality
@@ -203,7 +204,7 @@ class YoutubeExtension {
 logDebug(`Initializing youtube extension in frame: ${window.location.href}`);
 const youtube = new YoutubeExtension();
 youtube.overrideUA();
-window.addEventListener('DOMContentLoaded', () => youtube.overrideViewport());
+youtube.overrideViewport();
 window.addEventListener('load', () => {
     logDebug('page load');
     youtube.overrideVideoProjection();

@@ -386,14 +386,13 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
             loadDefaultPage();
         } else if (mState.mSessionState != null) {
             mState.mSession.restoreState(mState.mSessionState);
+            if (mState.mUri != null && mState.mUri.contains(".youtube.com")) {
+                mState.mSession.loadUri(mState.mUri, GeckoSession.LOAD_FLAGS_REPLACE_HISTORY);
+            }
         } else if (mState.mUri != null) {
             mState.mSession.loadUri(mState.mUri);
         } else {
             loadDefaultPage();
-        }
-
-        if (mState.mUri != null && mState.mUri.contains(".youtube.com")) {
-            mState.mSession.loadUri(mState.mUri, GeckoSession.LOAD_FLAGS_REPLACE_HISTORY);
         }
 
         dumpAllState();
