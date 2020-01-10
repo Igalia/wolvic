@@ -273,6 +273,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     protected void initializeWidgets() {
         UISurfaceTextureRenderer.setUseHardwareAcceleration(SettingsStore.getInstance(getBaseContext()).isUIHardwareAccelerationEnabled());
+        UISurfaceTextureRenderer.setRenderActive(true);
         mWindows = new Windows(this);
         mWindows.setDelegate(new Windows.Delegate() {
             @Override
@@ -360,6 +361,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         SettingsStore.getInstance(getBaseContext()).setPid(Process.myPid());
         super.onStart();
         TelemetryWrapper.start();
+        UISurfaceTextureRenderer.setRenderActive(true);
     }
 
     @Override
@@ -369,6 +371,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         TelemetryWrapper.stop();
         GleanMetricsService.sessionStop();
+        UISurfaceTextureRenderer.setRenderActive(false);
     }
 
     @Override
