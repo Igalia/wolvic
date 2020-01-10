@@ -26,7 +26,7 @@ class YoutubeExtension {
 
     // If missing, inject a `<meta name="viewport">` tag to trigger YouTube's mobile layout.
     overrideViewport() {
-        const content = `width=device-width;`;
+        const content = `width=device-width;maximum-scale=1;minimum-scale=1;initial-scale=1;`;
         let viewport = document.querySelector('meta[name="viewport"]');
         if (viewport) {
             viewport.setAttribute('content', content);
