@@ -9,22 +9,22 @@
         android:name="trianglegroup"
         android:pivotX="50"
         android:pivotY="50"
-        android:scaleX="0.95"
-        android:scaleY="0.95"
+        android:scaleX="0.92"
+        android:scaleY="0.92"
         android:translateY="-50"
         android:rotation="180">
         <path
             android:name="triangle2"
             android:pathData="M 50 0 L 100 50 L 0 50 Z"
-            android:strokeColor="@color/asphalt_blur"
-            android:strokeWidth="4"/>
+            android:strokeColor="@color/iron"
+            android:strokeWidth="6"/>
     </group>
     <group
         android:name="trianglegroup2"
         android:pivotX="50"
         android:pivotY="50"
-        android:scaleX="0.90"
-        android:scaleY="0.90"
+        android:scaleX="0.85"
+        android:scaleY="0.85"
         android:translateY="-50"
         android:rotation="180">
         <path

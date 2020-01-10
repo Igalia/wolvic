@@ -36,7 +36,7 @@
             android:layout_centerHorizontal="false"
             android:layout_centerVertical="true"
             android:layout_gravity="center_vertical"
-            android:layout_toLeftOf="@+id/delete"
+            android:layout_alignParentEnd="true"
             android:layout_toRightOf="@+id/favicon"
             android:gravity="left|center_vertical"
             android:orientation="vertical">
@@ -66,16 +66,6 @@
                 android:visibility="visible"
                 tools:text="item URL" />
         </LinearLayout>
-
-        <ImageButton
-            android:id="@+id/delete"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_gravity="center_vertical"
-            android:background="@drawable/ic_icon_clear"
-            android:backgroundTint="@drawable/suggestion_icon_color" />
     </RelativeLayout>
 
     <LinearLayout

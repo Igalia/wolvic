@@ -10,6 +10,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.net.Uri;
 import android.util.Log;
@@ -1726,7 +1727,17 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         Matrix matrix = new Matrix();
         aSession.getClientToSurfaceMatrix(matrix);
         matrix.mapRect(aSelection.clientRect);
-        mSelectionMenu.setSelectionRect(aSelection.clientRect);
+        RectF selectionRect = null;
+        if (aSelection.clientRect != null) {
+            float ratio = WidgetPlacement.worldToWindowRatio(getContext());
+            selectionRect = new RectF(
+                    aSelection.clientRect.left * ratio,
+                    aSelection.clientRect.top* ratio,
+                    aSelection.clientRect.right * ratio,
+                    aSelection.clientRect.bottom * ratio
+            );
+        }
+        mSelectionMenu.setSelectionRect(selectionRect);
         mSelectionMenu.setDelegate(new SelectionActionWidget.Delegate() {
             @Override
             public void onAction(String action) {

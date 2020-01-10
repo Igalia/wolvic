@@ -16,11 +16,9 @@ import org.mozilla.vrbrowser.ui.views.UITextButton;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
-import org.mozilla.vrbrowser.utils.StringUtils;
 import org.mozilla.vrbrowser.utils.ViewUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 
 import static android.view.Gravity.CENTER_VERTICAL;
@@ -78,8 +76,8 @@ public class SelectionActionWidget extends UIWidget implements WidgetManagerDele
         if (mPosition != null) {
             mWidgetPlacement.parentAnchorX = 0.0f;
             mWidgetPlacement.parentAnchorY = 1.0f;
-            mWidgetPlacement.translationX = mPosition.x * WidgetPlacement.worldToWindowRatio(getContext());
-            mWidgetPlacement.translationY = -mPosition.y * WidgetPlacement.worldToWindowRatio(getContext());
+            mWidgetPlacement.translationX = mPosition.x;
+            mWidgetPlacement.translationY = -mPosition.y;
             mWidgetPlacement.translationY += mWidgetPlacement.height * 0.5f;
         }
         super.show(aShowFlags);
