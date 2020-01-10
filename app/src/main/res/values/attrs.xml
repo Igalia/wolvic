@@ -94,5 +94,4 @@
         <attr name="android:fastScrollAlwaysVisible" />
         <attr name="dynamicHeight" format="boolean"/>
     </declare-styleable>
-
 </resources>

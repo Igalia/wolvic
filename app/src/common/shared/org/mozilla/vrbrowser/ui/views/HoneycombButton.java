@@ -19,7 +19,6 @@ import androidx.annotation.StringRes;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.utils.DeviceType;
 import org.mozilla.vrbrowser.utils.SystemUtils;
-import org.mozilla.vrbrowser.utils.ViewUtils;
 
 public class HoneycombButton extends LinearLayout {
 
@@ -33,6 +32,7 @@ public class HoneycombButton extends LinearLayout {
     private String mSecondaryButtonText;
     private Drawable mButtonIcon;
     private boolean mButtonIconHover;
+    private VectorClippedEventDelegate mEventDelegate;
 
     public HoneycombButton(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, R.style.honeycombButtonTheme);
@@ -109,41 +109,53 @@ public class HoneycombButton extends LinearLayout {
             mSecondaryText.setClickable(false);
         }
 
-        setOnHoverListener((view, motionEvent) -> false);
+        mEventDelegate = new VectorClippedEventDelegate(R.drawable.settings_honeycomb_background, this);
+        setOnHoverListener(mEventDelegate);
+        setOnTouchListener(mEventDelegate);
     }
-
 
     @Override
     public void setOnClickListener(@Nullable OnClickListener aListener) {
-        ViewUtils.setStickyClickListener(this, aListener);
+        mEventDelegate.setOnClickListener(aListener);
     }
 
     @Override
-    public void setOnHoverListener(final OnHoverListener l) {
-        super.setOnHoverListener((view, motionEvent) -> {
-            switch (motionEvent.getAction()) {
-                case MotionEvent.ACTION_HOVER_ENTER:
-                    if (mIcon != null && mText != null) {
-                        if (mButtonIconHover) {
-                            mIcon.setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.asphalt, getContext().getTheme()), PorterDuff.Mode.MULTIPLY));
-                        }
-                        mText.setTextColor(getContext().getColor(R.color.asphalt));
-                        mSecondaryText.setTextColor(getContext().getColor(R.color.asphalt));
+    public boolean onHoverEvent(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_HOVER_ENTER:
+                if (mIcon != null && mText != null) {
+                    if (mButtonIconHover) {
+                        mIcon.setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.asphalt, getContext().getTheme()), PorterDuff.Mode.MULTIPLY));
                     }
-                    break;
-                case MotionEvent.ACTION_HOVER_EXIT:
-                    if (mIcon != null && mText != null) {
-                        if (mButtonIconHover) {
-                            mIcon.setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.fog, getContext().getTheme()), PorterDuff.Mode.MULTIPLY));
-                        }
-                        mText.setTextColor(getContext().getColor(R.color.fog));
-                        mSecondaryText.setTextColor(getContext().getColor(R.color.fog));
+                    mText.setTextColor(getContext().getColor(R.color.asphalt));
+                    mSecondaryText.setTextColor(getContext().getColor(R.color.asphalt));
+                }
+                break;
+            case MotionEvent.ACTION_HOVER_EXIT:
+                if (mIcon != null && mText != null) {
+                    if (mButtonIconHover) {
+                        mIcon.setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.fog, getContext().getTheme()), PorterDuff.Mode.MULTIPLY));
                     }
-                    break;
-            }
+                    mText.setTextColor(getContext().getColor(R.color.fog));
+                    mSecondaryText.setTextColor(getContext().getColor(R.color.fog));
+                }
+                break;
+        }
 
-            return l.onHover(view, motionEvent);
-        });
+        if (mEventDelegate.isInside(event)) {
+            return super.onHoverEvent(event);
+
+        } else {
+            setHovered(false);
+            if (mIcon != null && mText != null) {
+                if (mButtonIconHover) {
+                    mIcon.setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.fog, getContext().getTheme()), PorterDuff.Mode.MULTIPLY));
+                }
+                mText.setTextColor(getContext().getColor(R.color.fog));
+                mSecondaryText.setTextColor(getContext().getColor(R.color.fog));
+            }
+            return false;
+        }
     }
 
     @Override
