@@ -93,12 +93,7 @@
             android:layout_above="@+id/buttonsLayout">
             <CheckBox
                 android:id="@+id/checkbox"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:button="@drawable/checkbox"
-                android:layout_gravity="center_horizontal"
-                android:textSize="@dimen/text_medium_size"
-                android:text="Checkbox"
+                style="@style/checkbox"
                 tools:text="Checkbox" />
         </FrameLayout>
 

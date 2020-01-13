@@ -132,8 +132,8 @@
 
                 <CheckBox
                     android:id="@+id/showPasswordCheckbox"
-                    android:layout_marginStart="5dp"
-                    style="@style/settingsSwitch" />
+                    style="@style/checkbox"
+                    android:layout_marginStart="5dp"/>
 
             </LinearLayout>
 

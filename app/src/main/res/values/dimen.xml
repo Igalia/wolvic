@@ -243,7 +243,7 @@
 
     <!-- Prompt dialog -->
     <dimen name="prompt_dialog_width">450dp</dimen>
-    <dimen name="prompt_dialog_height">365dp</dimen>
+    <dimen name="prompt_dialog_height">375dp</dimen>
     <dimen name="prompt_dialog_padding_top">20dp</dimen>
     <dimen name="prompt_dialog_padding_bottom">42dp</dimen>
     <dimen name="prompt_dialog_padding_sides">64dp</dimen>
