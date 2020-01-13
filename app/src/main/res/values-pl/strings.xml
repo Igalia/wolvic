@@ -527,7 +527,7 @@
     <string name="fxa_account_options_history_sync">Historia</string>
 
     <!-- This string is used to in the FxA account manage panel as a description for the Sign In/Out button. -->
-    <string name="fxa_account_options_reset">Przywróć domyślne</string>
+    <string name="fxa_account_options_reset">Przywróć</string>
 
     <!-- This string is used to in the Library panels in the sync button when the user is not signed in. -->
     <string name="fxa_account_sing_to_sync">Zaloguj się na konto, aby synchronizować</string>
