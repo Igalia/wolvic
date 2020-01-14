@@ -681,6 +681,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
     }
 
+    @Nullable
     public Session getSession() {
         return mSession;
     }

@@ -1,6 +1,5 @@
 package org.mozilla.vrbrowser.browser.engine;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -10,20 +9,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import org.mozilla.gecko.util.ThreadUtils;
-import org.mozilla.geckoview.ContentBlocking;
 import org.mozilla.geckoview.GeckoRuntime;
-import org.mozilla.geckoview.GeckoRuntimeSettings;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.browser.BookmarksStore;
 import org.mozilla.vrbrowser.browser.HistoryStore;
 import org.mozilla.vrbrowser.browser.PermissionDelegate;
 import org.mozilla.vrbrowser.browser.Services;
-import org.mozilla.vrbrowser.browser.SettingsStore;
-import org.mozilla.vrbrowser.crashreporting.CrashReporterService;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
-import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -73,6 +67,7 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
         mHistoryStore = new HistoryStore(context);
     }
 
+    @NonNull
     private Session addSession(@NonNull Session aSession) {
         aSession.setPermissionDelegate(this);
         aSession.addNavigationListener(mServices);
@@ -81,19 +76,23 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
         return aSession;
     }
 
+    @NonNull
     public Session createSession(boolean aPrivateMode) {
         SessionSettings settings = new SessionSettings(new SessionSettings.Builder().withDefaultSettings(mContext).withPrivateBrowsing(aPrivateMode));
         return createSession(settings, Session.SESSION_OPEN);
     }
 
+    @NonNull
     /* package */ Session createSession(@NonNull SessionSettings aSettings, @Session.SessionOpenModeFlags int aOpenMode) {
         return addSession(new Session(mContext, mRuntime, aSettings, aOpenMode));
     }
 
+    @NonNull
     public Session createSuspendedSession(SessionState aRestoreState) {
         return addSession(new Session(mContext, mRuntime, aRestoreState));
     }
 
+    @NonNull
     public Session createSuspendedSession(final String aUri, final boolean aPrivateMode) {
         SessionState state = new SessionState();
         state.mUri = aUri;
