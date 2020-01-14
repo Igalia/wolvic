@@ -36,3 +36,13 @@ ytd-rich-grid-video-renderer {
         --ytd-rich-grid-posts-per-row: 4 !important;
     }
 }
+
+
+/* Youtube Videos tagged with Stereo VR have a layout problem, they don't take the whole area
+   of the video. This styles are used to make sure the video has the correct size for immersive
+   playback */
+div.ytp-fullscreen video, .fxr-vr-video {
+    width: 100% !important;
+    left: 0px !important;
+}
+

@@ -78,6 +78,7 @@ class YoutubeExtension {
         const qs = new URLSearchParams(window.location.search);
         if (qs.get(VIDEO_PROJECTION_PARAM)) {
             logDebug(`Video has already a video projection selected: ${qs.get(VIDEO_PROJECTION_PARAM)}`);
+            this.updateVideoStyle();
             return;
         }
         // There is no standard API to detect video projection yet.
@@ -90,9 +91,18 @@ class YoutubeExtension {
         if (is360) {
             qs.set('mozVideoProjection', '360_auto');
             this.updateURL(qs);
+            this.updateVideoStyle();
             logDebug(`Video projection set to: ${qs.get(VIDEO_PROJECTION_PARAM)}`);
         } else {
             logDebug(`Video is flat, no projection selected`);
+        }
+    }
+
+    updateVideoStyle() {
+        const video = this.getVideo();
+        if (video) {
+            video.classList.add('fxr-vr-video');
+            logDebug('Added video projection style');
         }
     }
 
@@ -117,7 +127,7 @@ class YoutubeExtension {
             // Force video play when entering immersive mode.
             setTimeout(() => this.retry("PlayVideo", () => {
                 player.playVideo();
-                return !document.getElementsByTagName("video")[0].paused;
+                return !this.getVideo().paused;
             }), 200);
         }
     }
@@ -125,7 +135,7 @@ class YoutubeExtension {
     // Runs the callback when the video is ready (has loaded the first frame).
     waitForVideoReady(callback) {
         this.retry("VideoReady", () => {
-            const video = document.getElementsByTagName("video")[0];
+            const video = this.getVideo();
             if (!video) {
                 return false;
             }
@@ -145,6 +155,10 @@ class YoutubeExtension {
             return null;
         }
         return player.wrappedJSObject;
+    }
+
+    getVideo() {
+        return document.getElementsByTagName('video')[0];
     }
 
     // Get's the preferred video qualities for the current device.
@@ -169,7 +183,7 @@ class YoutubeExtension {
     }
 
     isVideoReady() {
-        const video = document.getElementsByTagName("video")[0];
+        const video = this.getVideo();
         return video && video.readyState >=2;
     }
 
