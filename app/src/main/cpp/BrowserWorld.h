@@ -37,6 +37,12 @@ public:
   void InitializeGL();
   void ShutdownJava();
   void ShutdownGL();
+  void Draw(){
+    StartFrame();
+    Draw(device::Eye::Left);
+    Draw(device::Eye::Right);
+    EndFrame();
+  }
   void StartFrame();
   void Draw(device::Eye aEye);
   void EndFrame();
