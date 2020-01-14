@@ -16,7 +16,14 @@ ytd-rich-grid-video-renderer {
     min-width: 0px;
 }
 
-@media screen and (max-width: 899px) {
+@media screen and (max-width: 700px) {
+    ytd-rich-grid-renderer {
+        --ytd-rich-grid-items-per-row: 1 !important;
+        --ytd-rich-grid-posts-per-row: 1 !important;
+    }
+}
+
+@media screen and (max-width: 899px) and (min-width: 701px) {
     ytd-rich-grid-renderer {
         --ytd-rich-grid-items-per-row: 2 !important;
         --ytd-rich-grid-posts-per-row: 2 !important;
