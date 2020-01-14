@@ -5,6 +5,7 @@
 
 package org.mozilla.vrbrowser.ui.views;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -21,6 +22,7 @@ import androidx.annotation.Dimension;
 import androidx.annotation.IdRes;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageButton;
 
 import org.mozilla.gecko.util.ThreadUtils;
@@ -50,11 +52,13 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
     private boolean mIsPrivate;
     private boolean mIsActive;
     private boolean mIsNotification;
+    private ShapeClippedEventDelegate mClippedEventDelegate;
 
     public UIButton(Context context, AttributeSet attrs) {
         this(context, attrs, R.attr.imageButtonStyle);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     public UIButton(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
@@ -81,6 +85,10 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
         attributes.recycle();
 
         mBackground = getBackground();
+
+        mClippedEventDelegate = new ShapeClippedEventDelegate(this);
+        super.setOnHoverListener(mClippedEventDelegate);
+        super.setOnTouchListener(mClippedEventDelegate);
     }
 
     @TargetApi(Build.VERSION_CODES.O)
@@ -105,6 +113,16 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
         }
     }
 
+    @Override
+    public void setOnHoverListener(OnHoverListener l) {
+        mClippedEventDelegate.setOnHoverListener(l);
+    }
+
+    @Override
+    public void setOnClickListener(@Nullable OnClickListener l) {
+        mClippedEventDelegate.setOnClickListener(l);
+    }
+
     public void setCurvedTooltip(boolean aEnabled) {
         mCurvedTooltip = aEnabled;
         if (mTooltipView != null) {
@@ -118,17 +136,36 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
 
     @Override
     public boolean onHoverEvent(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_HOVER_ENTER:
+                onHoverChanged(true);
+                break;
+            case MotionEvent.ACTION_HOVER_EXIT:
+                onHoverChanged(false);
+                break;
+        }
+
+        if (mClippedEventDelegate.isInside(event)) {
+            return super.onHoverEvent(event);
+
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public void onHoverChanged(boolean hovered) {
+        super.onHoverChanged(hovered);
+
         if (getTooltip() != null) {
-            if (event.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
+            if (hovered) {
                 ThreadUtils.postDelayedToUiThread(mShowTooltipRunnable, mTooltipDelay);
 
-            } else if (event.getAction() == MotionEvent.ACTION_HOVER_EXIT) {
+            } else {
                 ThreadUtils.removeCallbacksFromUiThread(mShowTooltipRunnable);
                 ThreadUtils.postToUiThread(mHideTooltipRunnable);
             }
         }
-
-        return super.onHoverEvent(event);
     }
 
     public void setTintColorList(int aColorListId) {

@@ -1,5 +1,6 @@
 package org.mozilla.vrbrowser.ui.views;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
@@ -32,7 +33,7 @@ public class HoneycombButton extends LinearLayout {
     private String mSecondaryButtonText;
     private Drawable mButtonIcon;
     private boolean mButtonIconHover;
-    private VectorClippedEventDelegate mEventDelegate;
+    private VectorClippedEventDelegate mClippedEventDelegate;
 
     public HoneycombButton(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, R.style.honeycombButtonTheme);
@@ -82,6 +83,7 @@ public class HoneycombButton extends LinearLayout {
         initialize(context);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void initialize(Context aContext) {
         inflate(aContext, R.layout.honeycomb_button, this);
 
@@ -109,44 +111,55 @@ public class HoneycombButton extends LinearLayout {
             mSecondaryText.setClickable(false);
         }
 
-        mEventDelegate = new VectorClippedEventDelegate(R.drawable.settings_honeycomb_background, this);
-        setOnHoverListener(mEventDelegate);
-        setOnTouchListener(mEventDelegate);
+        mClippedEventDelegate = new VectorClippedEventDelegate(this, R.drawable.settings_honeycomb_background);
+        super.setOnHoverListener(mClippedEventDelegate);
+        super.setOnTouchListener(mClippedEventDelegate);
+    }
+
+    @Override
+    public void setOnHoverListener(OnHoverListener l) {
+        mClippedEventDelegate.setOnHoverListener(l);
     }
 
     @Override
     public void setOnClickListener(@Nullable OnClickListener aListener) {
-        mEventDelegate.setOnClickListener(aListener);
+        mClippedEventDelegate.setOnClickListener(aListener);
     }
 
     @Override
     public boolean onHoverEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_HOVER_ENTER:
-                if (mIcon != null && mText != null) {
-                    if (mButtonIconHover) {
-                        mIcon.setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.asphalt, getContext().getTheme()), PorterDuff.Mode.MULTIPLY));
-                    }
-                    mText.setTextColor(getContext().getColor(R.color.asphalt));
-                    mSecondaryText.setTextColor(getContext().getColor(R.color.asphalt));
-                }
+                onHoverChanged(true);
                 break;
             case MotionEvent.ACTION_HOVER_EXIT:
-                if (mIcon != null && mText != null) {
-                    if (mButtonIconHover) {
-                        mIcon.setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.fog, getContext().getTheme()), PorterDuff.Mode.MULTIPLY));
-                    }
-                    mText.setTextColor(getContext().getColor(R.color.fog));
-                    mSecondaryText.setTextColor(getContext().getColor(R.color.fog));
-                }
+                onHoverChanged(false);
                 break;
         }
 
-        if (mEventDelegate.isInside(event)) {
+        if (mClippedEventDelegate.isInside(event)) {
             return super.onHoverEvent(event);
 
         } else {
-            setHovered(false);
+            onHoverChanged(false);
+            return false;
+        }
+    }
+
+    @Override
+    public void onHoverChanged(boolean hovered) {
+        super.onHoverChanged(hovered);
+
+        if (hovered) {
+            if (mIcon != null && mText != null) {
+                if (mButtonIconHover) {
+                    mIcon.setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.asphalt, getContext().getTheme()), PorterDuff.Mode.MULTIPLY));
+                }
+                mText.setTextColor(getContext().getColor(R.color.asphalt));
+                mSecondaryText.setTextColor(getContext().getColor(R.color.asphalt));
+            }
+
+        } else {
             if (mIcon != null && mText != null) {
                 if (mButtonIconHover) {
                     mIcon.setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.fog, getContext().getTheme()), PorterDuff.Mode.MULTIPLY));
@@ -154,7 +167,6 @@ public class HoneycombButton extends LinearLayout {
                 mText.setTextColor(getContext().getColor(R.color.fog));
                 mSecondaryText.setTextColor(getContext().getColor(R.color.fog));
             }
-            return false;
         }
     }
 

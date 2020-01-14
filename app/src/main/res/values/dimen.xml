@@ -171,6 +171,9 @@
     <item name="url_bar_popup_world_x" format="float" type="dimen">1.25</item>
     <item name="url_bar_popup_world_y" format="float" type="dimen">0.15</item>
     <item name="url_bar_popup_world_z" format="float" type="dimen">0.1</item>
+    <dimen name="url_bar_icons_padding_start">5dp</dimen>
+    <dimen name="url_bar_url_padding_start">15dp</dimen>
+    <dimen name="url_bar_url_icons_padding_start">5dp</dimen>
 
     <dimen name="tray_icon_padding_max">10dp</dimen>
     <dimen name="tray_icon_padding_min">8dp</dimen>

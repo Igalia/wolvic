@@ -1,75 +1,82 @@
 package org.mozilla.vrbrowser.ui.views;
 
-import android.graphics.Path;
-import android.graphics.RectF;
 import android.graphics.Region;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 
 import org.mozilla.vrbrowser.utils.ViewUtils;
 
-import java.util.Deque;
+public abstract class ClippedEventDelegate implements View.OnHoverListener, View.OnTouchListener {
 
-public class ClippedEventDelegate implements View.OnHoverListener, View.OnTouchListener {
-
-    private View mView;
-    private Region mRegion;
     private boolean mHovered;
     private boolean mTouched;
     private OnClickListener mClickListener;
+    private View.OnHoverListener mOnHoverListener;
 
-    public ClippedEventDelegate(@DrawableRes int res, @NonNull View view) {
+    View mView;
+    Region mRegion;
+
+    ClippedEventDelegate(@NonNull View view) {
         mView = view;
         mHovered = false;
         mTouched = false;
+        mRegion = null;
 
-        view.getViewTreeObserver().addOnGlobalLayoutListener(
-                () -> {
-                    Path path = createPathFromResource(res);
-                    RectF bounds = new RectF();
-                    path.computeBounds(bounds, true);
+        view.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            if (!mView.isShown()) {
+                mView.onHoverChanged(false);
+                mView.setHovered(false);
+                mTouched = false;
+            }
+        });
+        view.getViewTreeObserver().addOnPreDrawListener(this::onUpdateRegion);
+    }
 
-                    bounds = new RectF();
-                    path.computeBounds(bounds, true);
-                    mRegion = new Region();
-                    mRegion.setPath(path, new Region((int) bounds.left, (int) bounds.top, (int) bounds.right, (int) bounds.bottom));
-                });
+    // The region should be recreated in this event based on the current state drawable
+    abstract boolean onUpdateRegion();
+
+    public void setOnHoverListener(View.OnHoverListener listener) {
+        mOnHoverListener = listener;
     }
 
     public void setOnClickListener(OnClickListener listener) {
         mClickListener = listener;
     }
 
-    private Path createPathFromResource(@DrawableRes int res) {
-        VectorShape shape = new VectorShape(mView.getContext(), res);
-        shape.onResize(mView.getWidth(), mView.getHeight());
-        Deque<VectorShape.Layer> layers = shape.getLayers();
-        VectorShape.Layer layer = layers.getFirst();
-
-        // TODO Handle state changes and update the Region based on the new current state shape
-
-        return layer.transformedPath;
-    }
-
     @Override
     public boolean onHover(View v, MotionEvent event) {
-        if(!mRegion.contains((int)event.getX(),(int) event.getY())) {
+        if(!isInside(event)) {
             if (mHovered) {
                 mHovered = false;
+                mView.setHovered(false);
+
+                mView.onHoverChanged(false);
                 event.setAction(MotionEvent.ACTION_HOVER_EXIT);
+
+                if (mOnHoverListener != null) {
+                    mOnHoverListener.onHover(v, event);
+                }
+
                 return v.onHoverEvent(event);
             }
 
-            return true;
+            mView.onHoverChanged(false);
+            return false;
 
         } else {
-            if (!mHovered) {
-                mHovered = true;
+            mHovered = true;
+            mView.setHovered(true);
+
+            if (event.getAction() != MotionEvent.ACTION_HOVER_MOVE) {
+                mView.onHoverChanged(true);
                 event.setAction(MotionEvent.ACTION_HOVER_ENTER);
+            }
+
+            if (mOnHoverListener != null) {
+                mOnHoverListener.onHover(v, event);
             }
 
             return v.onHoverEvent(event);
@@ -80,17 +87,20 @@ public class ClippedEventDelegate implements View.OnHoverListener, View.OnTouchL
     public boolean onTouch(View v, MotionEvent event) {
         v.getParent().requestDisallowInterceptTouchEvent(true);
 
-        if(!mRegion.contains((int)event.getX(),(int) event.getY())) {
+        if(!isInside(event)) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_UP:
                     if (mTouched) {
                         v.requestFocus();
                         v.requestFocusFromTouch();
                         if (mClickListener != null) {
+                            v.performClick();
                             mClickListener.onClick(v);
                         }
                     }
+                    v.onHoverChanged(false);
                     v.setPressed(false);
+                    v.setHovered(false);
                     mTouched = false;
             }
 
@@ -108,9 +118,12 @@ public class ClippedEventDelegate implements View.OnHoverListener, View.OnTouchL
                         v.requestFocus();
                         v.requestFocusFromTouch();
                         if (mClickListener != null) {
+                            v.performClick();
                             mClickListener.onClick(v);
                         }
                     }
+                    v.setHovered(false);
+                    v.onHoverChanged(false);
                     v.setPressed(false);
                     mTouched = false;
                     return true;
@@ -126,6 +139,14 @@ public class ClippedEventDelegate implements View.OnHoverListener, View.OnTouchL
 
             return false;
         }
+    }
+
+    boolean isInside(MotionEvent event) {
+        if (mRegion != null) {
+            return mRegion.contains((int)event.getX(),(int) event.getY());
+        }
+
+        return false;
     }
 
 }
