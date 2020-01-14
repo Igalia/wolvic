@@ -284,22 +284,6 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
         }
     }
 
-    public void setAutoplayEnabled(final boolean enabled) {
-        if (mRuntime != null) {
-            mRuntime.getSettings().setAutoplayDefault(enabled ?
-                    GeckoRuntimeSettings.AUTOPLAY_DEFAULT_ALLOWED :
-                    GeckoRuntimeSettings.AUTOPLAY_DEFAULT_BLOCKED);
-        }
-    }
-
-    public boolean getAutoplayEnabled() {
-        if (mRuntime != null) {
-            return mRuntime.getSettings().getAutoplayDefault() == GeckoRuntimeSettings.AUTOPLAY_DEFAULT_ALLOWED;
-        }
-
-        return false;
-    }
-
     public void setLocales(List<String> locales) {
         if (mRuntime != null) {
             mRuntime.getSettings().setLocales(locales.stream().toArray(String[]::new));

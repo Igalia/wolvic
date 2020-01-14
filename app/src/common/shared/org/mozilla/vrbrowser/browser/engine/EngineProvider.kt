@@ -35,7 +35,6 @@ object EngineProvider {
             builder.displayDpiOverride(SettingsStore.getInstance(context).displayDpi)
             builder.screenSizeOverride(SettingsStore.getInstance(context).maxWindowWidth,
                     SettingsStore.getInstance(context).maxWindowHeight)
-            builder.autoplayDefault(if (SettingsStore.getInstance(context).isAutoplayEnabled) GeckoRuntimeSettings.AUTOPLAY_DEFAULT_ALLOWED else GeckoRuntimeSettings.AUTOPLAY_DEFAULT_BLOCKED)
 
             if (SettingsStore.getInstance(context).transparentBorderWidth > 0) {
                 builder.useMaxScreenDepth(true)

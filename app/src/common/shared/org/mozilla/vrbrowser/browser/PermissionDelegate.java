@@ -119,6 +119,15 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
             return;
         }
 
+        if (aType == PERMISSION_AUTOPLAY_AUDIBLE || aType == PERMISSION_AUTOPLAY_INAUDIBLE) {
+            if (SettingsStore.getInstance(mContext).isAutoplayEnabled()) {
+                callback.grant();
+            } else {
+                callback.reject();
+            }
+            return;
+        }
+
         PermissionWidget.PermissionType type;
         if (aType == PERMISSION_DESKTOP_NOTIFICATION) {
             type = PermissionWidget.PermissionType.Notification;
