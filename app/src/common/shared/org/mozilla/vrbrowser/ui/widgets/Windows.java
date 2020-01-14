@@ -307,9 +307,8 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
                 placeWindow(leftWindow, WindowPlacement.FRONT);
             }
 
-            frontWindow = getFrontWindow();
-            if (mFocusedWindow == frontWindow && !getCurrentWindows().isEmpty() && frontWindow != null) {
-                focusWindow(frontWindow);
+            if (mFocusedWindow == frontWindow && !getCurrentWindows().isEmpty() && getFrontWindow() != null) {
+                focusWindow(getFrontWindow());
             }
 
         }
