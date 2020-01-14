@@ -297,7 +297,7 @@
 
     <style name="settingsSwitch">
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:switchMinWidth">0dp</item>
         <item name="android:textOff">""</item>
         <item name="android:textOn">""</item>
