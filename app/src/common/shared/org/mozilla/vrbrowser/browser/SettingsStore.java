@@ -621,25 +621,6 @@ public class SettingsStore {
         editor.putBoolean(mContext.getString(R.string.settings_key_pop_up_blocking), isEnabled);
         editor.commit();
     }
-    public void setBookmarksSyncEnabled(boolean isEnabled) {
-        SharedPreferences.Editor editor = mPrefs.edit();
-        editor.putBoolean(mContext.getString(R.string.settings_key_bookmarks_sync), isEnabled);
-        editor.commit();
-    }
-
-    public boolean isBookmarksSyncEnabled() {
-        return mPrefs.getBoolean(mContext.getString(R.string.settings_key_bookmarks_sync), BOOKMARKS_SYNC_DEFAULT);
-    }
-
-    public void setHistorySyncEnabled(boolean isEnabled) {
-        SharedPreferences.Editor editor = mPrefs.edit();
-        editor.putBoolean(mContext.getString(R.string.settings_key_history_sync), isEnabled);
-        editor.commit();
-    }
-
-    public boolean isHistorySyncEnabled() {
-        return mPrefs.getBoolean(mContext.getString(R.string.settings_key_history_sync), HISTORY_SYNC_DEFAULT);
-    }
 
     public void setWhatsNewDisplayed(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();

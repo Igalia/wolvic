@@ -45,8 +45,6 @@ class FxAAccountOptionsView extends SettingsView {
     private Accounts mAccounts;
     private Places mPlaces;
     private Executor mUIThreadExecutor;
-    private boolean mInitialBookmarksState;
-    private boolean mInitialHistoryState;
     private SignOutDialogWidget mSignOutDialog;
 
     public FxAAccountOptionsView(Context aContext, WidgetManagerDelegate aWidgetManager) {
@@ -92,11 +90,8 @@ class FxAAccountOptionsView extends SettingsView {
         mAccounts.addAccountListener(mAccountListener);
         mAccounts.addSyncListener(mSyncListener);
 
-        mInitialBookmarksState = mAccounts.isEngineEnabled(SyncEngine.Bookmarks.INSTANCE);
-        mInitialHistoryState = mAccounts.isEngineEnabled(SyncEngine.History.INSTANCE);
-
-        mBinding.bookmarksSyncSwitch.setValue(mInitialBookmarksState, false);
-        mBinding.historySyncSwitch.setValue(mInitialHistoryState, false);
+        mBinding.bookmarksSyncSwitch.setValue(mAccounts.isEngineEnabled(SyncEngine.Bookmarks.INSTANCE), false);
+        mBinding.historySyncSwitch.setValue(mAccounts.isEngineEnabled(SyncEngine.History.INSTANCE), false);
 
         updateSyncBindings(mAccounts.isSyncing());
     }
@@ -107,20 +102,16 @@ class FxAAccountOptionsView extends SettingsView {
 
         mAccounts.removeAccountListener(mAccountListener);
         mAccounts.removeSyncListener(mSyncListener);
-
-        // We only sync engines in case the user has changed the sync engines since previous sync
-        if (mBinding.bookmarksSyncSwitch.isChecked() != mInitialBookmarksState ||
-                mBinding.historySyncSwitch.isChecked() != mInitialHistoryState) {
-            mAccounts.syncNowAsync(SyncReason.EngineChange.INSTANCE, false);
-        }
     }
 
     private SwitchSetting.OnCheckedChangeListener mBookmarksSyncListener = (compoundButton, value, apply) -> {
         mAccounts.setSyncStatus(SyncEngine.Bookmarks.INSTANCE, value);
+        mAccounts.syncNowAsync(SyncReason.EngineChange.INSTANCE, false);
     };
 
     private SwitchSetting.OnCheckedChangeListener mHistorySyncListener = (compoundButton, value, apply) -> {
         mAccounts.setSyncStatus(SyncEngine.History.INSTANCE, value);
+        mAccounts.syncNowAsync(SyncReason.EngineChange.INSTANCE, false);
     };
 
     private void resetOptions() {
@@ -137,6 +128,9 @@ class FxAAccountOptionsView extends SettingsView {
         @Override
         public void onIdle() {
             updateSyncBindings(false);
+
+            mBinding.bookmarksSyncSwitch.setValue(mAccounts.isEngineEnabled(SyncEngine.Bookmarks.INSTANCE), false);
+            mBinding.historySyncSwitch.setValue(mAccounts.isEngineEnabled(SyncEngine.History.INSTANCE), false);
 
             // This shouldn't be necessary but for some reason the buttons stays hovered after the sync.
             // I guess Android restoring it to the latest state (hovered) before being disabled
@@ -201,12 +195,7 @@ class FxAAccountOptionsView extends SettingsView {
     }
 
     private void sync(View view) {
-        if (mBinding.bookmarksSyncSwitch.isChecked() != mInitialBookmarksState ||
-                mBinding.historySyncSwitch.isChecked() != mInitialHistoryState) {
-            mAccounts.syncNowAsync(SyncReason.EngineChange.INSTANCE, false);
-        } else {
-            mAccounts.syncNowAsync(SyncReason.User.INSTANCE, false);
-        }
+        mAccounts.syncNowAsync(SyncReason.User.INSTANCE, false);
         mAccounts.updateProfileAsync();
     }
 

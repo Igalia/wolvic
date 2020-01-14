@@ -25,8 +25,8 @@ import mozilla.components.service.fxa.sync.SyncStatusObserver
 import mozilla.components.service.fxa.sync.getLastSynced
 import org.mozilla.vrbrowser.R
 import org.mozilla.vrbrowser.VRBrowserApplication
-import org.mozilla.vrbrowser.utils.BitmapCache
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService
+import org.mozilla.vrbrowser.utils.BitmapCache
 import org.mozilla.vrbrowser.utils.SystemUtils
 import org.mozilla.vrbrowser.utils.ViewUtils
 import java.net.URL
@@ -127,8 +127,6 @@ class Accounts constructor(val context: Context) {
             accountStatus = AccountStatus.SIGNED_IN
 
             // Enable syncing after signing in
-            syncStorage.setStatus(SyncEngine.Bookmarks, SettingsStore.getInstance(context).isBookmarksSyncEnabled)
-            syncStorage.setStatus(SyncEngine.History, SettingsStore.getInstance(context).isHistorySyncEnabled)
             services.accountManager.syncNowAsync(SyncReason.EngineChange, true)
 
             // Update device list
@@ -319,11 +317,9 @@ class Accounts constructor(val context: Context) {
         when(engine) {
             SyncEngine.Bookmarks -> {
                 GleanMetricsService.FxA.bookmarksSyncStatus(value)
-                SettingsStore.getInstance(context).isBookmarksSyncEnabled = value
             }
             SyncEngine.History -> {
                 GleanMetricsService.FxA.historySyncStatus(value)
-                SettingsStore.getInstance(context).isHistorySyncEnabled = value
             }
         }
 
