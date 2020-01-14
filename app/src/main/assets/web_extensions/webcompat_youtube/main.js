@@ -87,9 +87,10 @@ class YoutubeExtension {
             document.querySelector(YT_SELECTORS.disclaimer),
             document.querySelector(YT_SELECTORS.embedTitle)
         ];
-        let is360 = targets.some((node) => node && node.textContent.includes('360'));
+        const is360 = targets.some((node) => node && node.textContent.includes('360'));
         if (is360) {
-            qs.set('mozVideoProjection', '360_auto');
+            const stereo = targets.some((node) => node && node.textContent.toLowerCase().includes('stereo'));
+            qs.set('mozVideoProjection', stereo ? '360s_auto' : '360_auto');
             this.updateURL(qs);
             this.updateVideoStyle();
             logDebug(`Video projection set to: ${qs.get(VIDEO_PROJECTION_PARAM)}`);
