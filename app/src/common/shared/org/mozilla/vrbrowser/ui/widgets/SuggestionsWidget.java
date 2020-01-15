@@ -49,7 +49,6 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
 
     public interface URLBarPopupDelegate {
         default void OnItemClicked(SuggestionItem item) {}
-        default void OnItemLongClicked(SuggestionItem item) {}
     }
 
     public SuggestionsWidget(Context aContext) {
@@ -298,17 +297,17 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
             }
 
             TextView title = view.findViewById(R.id.title);
-            View url = view.findViewById(R.id.url);
             int ev = motionEvent.getActionMasked();
             switch (ev) {
                 case MotionEvent.ACTION_HOVER_ENTER:
+                    view.setHovered(true);
                     title.setShadowLayer(title.getShadowRadius(), title.getShadowDx(), title.getShadowDy(), getContext().getColor(R.color.text_shadow_light));
-                    url.setHovered(true);
-                    return false;
+                    return true;
+
                 case MotionEvent.ACTION_HOVER_EXIT:
+                    view.setHovered(false);
                     title.setShadowLayer(title.getShadowRadius(), title.getShadowDx(), title.getShadowDy(), getContext().getColor(R.color.text_shadow));
-                    url.setHovered(false);
-                    return false;
+                    return true;
             }
 
             return false;
