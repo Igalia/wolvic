@@ -296,18 +296,13 @@ DeviceDelegatePicoVR::SetControllerDelegate(ControllerDelegatePtr& aController) 
     if (m.type == kTypeNeo2) {
       vrb::Matrix beam = vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), -vrb::PI_FLOAT / 11.5f);
       beam.TranslateInPlace(vrb::Vector(0.0f, 0.012f, -0.06f));
-      // m.controllerDelegate->CreateController(index, int32_t(controller.hand), controllerIsRightHand() ? "Pico Neo 2 (Right)" : "Pico Neo 2 (LEFT)", beam);
-      m.controllerDelegate->CreateController(index, int32_t(controller.hand),
-                                             controller.IsRightHand() ? "Oculus Touch (Right)"
-                                                                      : "Oculus Touch (LEFT)",
-                                             beam);
+      m.controllerDelegate->CreateController(index, int32_t(controller.hand), controller.IsRightHand() ? "Pico Neo 2 (Right)" : "Pico Neo 2 (LEFT)", beam);
       m.controllerDelegate->SetButtonCount(index, kNumButtons);
       m.controllerDelegate->SetHapticCount(index, 0);
     } else {
       vrb::Matrix beam =  vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), -vrb::PI_FLOAT / 11.5f);
 
-      // m.controllerDelegate->CreateController(index, 0, "Pico G2 Controller", beam);
-      m.controllerDelegate->CreateController(index, 0, "Oculus Go Controller", beam);
+      m.controllerDelegate->CreateController(index, 0, "Pico G2 Controller", beam);
       m.controllerDelegate->SetButtonCount(index, kNumG2Buttons);
       m.controllerDelegate->SetHapticCount(index, 0);
     }
