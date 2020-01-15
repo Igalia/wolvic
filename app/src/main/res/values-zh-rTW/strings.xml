@@ -513,11 +513,11 @@
 
     <!-- This string is used to in the FxA account manage panel as the description of the Sync button while syncon.
          The sync button will start syncing when pressed-->
-    <string name="fxa_account_options_syncing">同步中···</string>
+    <string name="fxa_account_options_syncing">同步中…</string>
 
     <!-- This string is used in the FxA account manager panel as a header for the sync options for syncing
          history, bookmarks, passwords, etc. -->
-    <string name="fxa_account_options_sync_description">選擇要在裝置上的 Firefox 同步哪些資料。</string>
+    <string name="fxa_account_options_sync_description">選擇要同步哪些資料到您其他使用 Firefox 的裝置</string>
 
     <!-- This string is used to in the FxA account manage panel as a description for the Bookmarks sync switch. -->
     <string name="fxa_account_options_bookmarks_sync">書籤</string>
@@ -786,7 +786,7 @@
     <string name="bookmarks_mobile_folder_title">行動版書籤</string>
 
     <!-- This string is displayed as the title of the folder containing desktop bookmarks (after they're synced). -->
-    <string name="bookmarks_desktop_folder_title">桌面版書籤</string>
+    <string name="bookmarks_desktop_folder_title">來自電腦的書籤</string>
 
     <!-- This string is displayed as the title of the desktop "menu" bookmarks folder. -->
     <string name="bookmarks_desktop_menu_title">選單</string>
