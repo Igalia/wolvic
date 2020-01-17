@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import androidx.databinding.DataBindingUtil;
 
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.databinding.OptionsLanguageDisplayBinding;
 import org.mozilla.vrbrowser.ui.views.settings.RadioGroupSetting;
@@ -65,6 +66,7 @@ class DisplayLanguageOptionsView extends SettingsView {
 
         } else {
             setLanguage(LocaleUtils.getIndexForSupportedLocale(systemLocale), true);
+            SettingsStore.getInstance(getContext()).setDisplayLocale(null);
             return true;
         }
     }

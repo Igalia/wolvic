@@ -37,8 +37,8 @@ public class LocaleUtils {
     }
 
     @NonNull
-    public static String getSystemLocale() {
-        return mSystemLocale.toLanguageTag();
+    public static Locale getSystemLocale() {
+        return mSystemLocale;
     }
 
     @NonNull
@@ -60,6 +60,14 @@ public class LocaleUtils {
             mLanguagesCache.put(languageId, locale);
         }
 
+        Locale locale = Locale.forLanguageTag(getDeviceLocale().toLanguageTag());
+        String languageId = locale.toLanguageTag();
+        if (!mLanguagesCache.containsKey(languageId)) {
+            String displayName = locale.getDisplayName().substring(0, 1).toUpperCase() + locale.getDisplayName().substring(1);
+            Language language = new Language(languageId, displayName + " [" + languageId + "]");
+            mLanguagesCache.put(languageId, language);
+        }
+
         return mLanguagesCache;
     }
 
@@ -75,7 +83,11 @@ public class LocaleUtils {
     }
 
     public static Language getDeviceLanguage() {
-        return mLanguagesCache.get(Resources.getSystem().getConfiguration().getLocales().get(0).toLanguageTag());
+        return mLanguagesCache.get(getDeviceLocale().toLanguageTag());
+    }
+
+    public static Locale getDeviceLocale() {
+        return Resources.getSystem().getConfiguration().getLocales().get(0);
     }
 
     public static List<String> getLocalesFromLanguages(@NonNull final List<Language> languages) {
@@ -97,15 +109,21 @@ public class LocaleUtils {
         List<Language> preferredLanguages = new ArrayList<>();
         if (savedLanguages != null) {
             for (String language : savedLanguages) {
-                Language lang = languages.get(language);
+                Language lang = languages.get(getClosestAvailableLocale(language));
+                if (lang != null) {
+                    lang.setPreferred(true);
+                    preferredLanguages.add(lang);
+                }
+            }
+
+        }
+
+        if (savedLanguages == null || savedLanguages.isEmpty()) {
+            Language lang = languages.get(getClosestAvailableLocale(getDeviceLocale().toLanguageTag()));
+            if (lang != null) {
                 lang.setPreferred(true);
                 preferredLanguages.add(lang);
             }
-
-        } else {
-            Language currentLanguage = getDeviceLanguage();
-            currentLanguage.setPreferred(true);
-            preferredLanguages.add(currentLanguage);
         }
 
         return preferredLanguages;
@@ -119,8 +137,46 @@ public class LocaleUtils {
     }
 
     @NonNull
+    public static String getClosestAvailableLocale(@NonNull String languageTag) {
+        List<Locale> locales = Stream.of(Locale.getAvailableLocales()).collect(Collectors.toList());
+        Locale inputLocale = Locale.forLanguageTag(languageTag);
+        Optional<Locale> outputLocale = locales.stream().filter(item ->
+                item.equals(inputLocale)
+        ).findFirst();
+
+        if (!outputLocale.isPresent()) {
+            outputLocale = locales.stream().filter(item ->
+                    item.getLanguage().equals(inputLocale.getLanguage()) &&
+                            item.getScript().equals(inputLocale.getScript()) &&
+                            item.getCountry().equals(inputLocale.getCountry())
+            ).findFirst();
+        }
+        if (!outputLocale.isPresent()) {
+            outputLocale = locales.stream().filter(item ->
+                    item.getLanguage().equals(inputLocale.getLanguage()) &&
+                            item.getCountry().equals(inputLocale.getCountry())
+            ).findFirst();
+        }
+        if (!outputLocale.isPresent()) {
+            outputLocale = locales.stream().filter(item ->
+                    item.getLanguage().equals(inputLocale.getLanguage())
+            ).findFirst();
+        }
+
+        if (outputLocale.isPresent()) {
+            return outputLocale.get().toLanguageTag();
+        }
+
+        return getDeviceLocale().toLanguageTag();
+    }
+
+    @NonNull
     public static String getVoiceSearchLocale(@NonNull Context aContext) {
-        return SettingsStore.getInstance(aContext).getVoiceSearchLocale();
+        String locale = SettingsStore.getInstance(aContext).getVoiceSearchLocale();
+        if (locale == null) {
+            locale = LocaleUtils.getDefaultSupportedLocale(aContext);
+        }
+        return locale;
     }
 
     public static void setVoiceSearchLocale(@NonNull Context context, @NonNull String locale) {
@@ -128,14 +184,16 @@ public class LocaleUtils {
     }
 
     @NonNull
-    public static String getVoiceSearchLanguage(@NonNull Context aContext) {
-        String language = LocaleUtils.getVoiceSearchLocale(aContext);
-        return getAllLanguages().get(language).getName();
+    public static Language getVoiceSearchLanguage(@NonNull Context aContext) {
+        return mLanguagesCache.get(getClosestAvailableLocale(getVoiceSearchLocale(aContext)));
     }
 
     @NonNull
     public static String getDisplayLocale(Context context) {
         String locale = SettingsStore.getInstance(context).getDisplayLocale();
+        if (locale == null) {
+            locale = LocaleUtils.getDefaultSupportedLocale(context);
+        }
         return mapOldLocaleToNew((locale));
     }
 
@@ -144,12 +202,16 @@ public class LocaleUtils {
     }
 
     @NonNull
-    public static String getDisplayLanguage() {
-        return getAllLanguages().get(getCurrentLocale()).getName();
+    public static Language getDisplayLanguage(@NonNull Context aContext) {
+        return mLanguagesCache.get(getClosestAvailableLocale(getDisplayLocale(aContext)));
     }
 
     public static Context setLocale(@NonNull Context context) {
-        return updateResources(context, SettingsStore.getInstance(context).getDisplayLocale());
+        String locale = SettingsStore.getInstance(context).getDisplayLocale();
+        if (locale == null) {
+            locale = LocaleUtils.getDefaultSupportedLocale(context);
+        }
+        return updateResources(context, locale);
     }
 
     private static Context updateResources(@NonNull Context context, @NonNull String language) {
@@ -256,14 +318,8 @@ public class LocaleUtils {
         return localizedSupportedLanguages.get(index).locale.toLanguageTag();
     }
 
-    public static String getDefaultSupportedLocale() {
-        String locale = getCurrentLocale();
-        List<String> supportedLocales = getSupportedLocales();
-        if (!supportedLocales.contains(locale)) {
-            return supportedLocales.get(0);
-        }
-
-        return locale;
+    public static String getDefaultSupportedLocale(@NonNull Context context) {
+        return getClosestSupportedLocale(context, getDeviceLocale().toLanguageTag());
     }
 
     public static String getClosestSupportedLocale(@NonNull Context context, @NonNull String languageTag) {
@@ -295,7 +351,8 @@ public class LocaleUtils {
             return language.get().locale.toLanguageTag();
 
         } else {
-            return getDisplayLocale(context);
+            // If there is no closest supported locale we fallback to en-US
+            return "en-US";
         }
     }
 

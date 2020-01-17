@@ -25,6 +25,7 @@ import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
 
 import java.util.Collections;
+import java.util.List;
 
 public class ContentLanguageOptionsView extends SettingsView {
 
@@ -129,10 +130,14 @@ public class ContentLanguageOptionsView extends SettingsView {
 
     @Override
     protected boolean reset() {
-        SettingsStore.getInstance(getContext()).setContentLocales(Collections.singletonList(LocaleUtils.getDeviceLanguage().getId()));
-        SessionStore.get().setLocales(Collections.singletonList(LocaleUtils.getDeviceLanguage().getId()));
-        LocaleUtils.resetLanguages();
-        refreshLanguages();
+        String systemLocale = LocaleUtils.getClosestAvailableLocale(LocaleUtils.getDeviceLanguage().getId());
+        List<Language> preferredLanguages = LocaleUtils.getPreferredLanguages(getContext());
+        if (preferredLanguages.size() > 1 || !preferredLanguages.get(0).getId().equals(systemLocale)) {
+            SettingsStore.getInstance(getContext()).setContentLocales(Collections.emptyList());
+            SessionStore.get().setLocales(Collections.emptyList());
+            LocaleUtils.resetLanguages();
+            refreshLanguages();
+        }
 
         return false;
     }

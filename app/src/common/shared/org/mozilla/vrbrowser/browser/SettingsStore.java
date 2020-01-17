@@ -17,7 +17,6 @@ import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.utils.DeviceType;
-import org.mozilla.vrbrowser.utils.LocaleUtils;
 import org.mozilla.vrbrowser.utils.StringUtils;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
@@ -419,9 +418,6 @@ public class SettingsStore {
     public String getVoiceSearchLocale() {
         String language = mPrefs.getString(
                 mContext.getString(R.string.settings_key_voice_search_language), null);
-        if (language == null) {
-            return LocaleUtils.getDefaultSupportedLocale();
-        }
         return language;
     }
 
@@ -434,9 +430,6 @@ public class SettingsStore {
     public String getDisplayLocale() {
         String language = mPrefs.getString(
                 mContext.getString(R.string.settings_key_display_language), null);
-        if (language == null) {
-            return LocaleUtils.getDefaultSupportedLocale();
-        }
         return language;
     }
 
