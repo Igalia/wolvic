@@ -72,7 +72,14 @@ public class ClearHistoryDialogWidget extends SettingDialogWidget {
                     break;
             }
             SessionStore.get().purgeSessionHistory();
+            onDismiss();
         }));
     }
 
+    @Override
+    public void show(int aShowFlags) {
+        super.show(aShowFlags);
+
+        mClearHistoryBinding.clearHistoryRadio.setChecked(0, false);
+    }
 }
