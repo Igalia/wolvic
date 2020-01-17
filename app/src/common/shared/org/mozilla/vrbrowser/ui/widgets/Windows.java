@@ -383,7 +383,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         }
     }
 
-    public void focusWindow(@NonNull WindowWidget aWindow) {
+    public void focusWindow(@Nullable WindowWidget aWindow) {
         if (aWindow != mFocusedWindow) {
             WindowWidget prev = mFocusedWindow;
             mFocusedWindow = aWindow;
@@ -518,15 +518,10 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
         if (mPrivateWindows.size() == 0) {
             WindowWidget window = addWindow();
-            if (window != null) {
-                window.loadHome();
-            }
+            window.loadHome();
 
         } else {
-            WindowWidget window = getWindowWithPlacement(mRegularWindowPlacement);
-            if (window != null) {
-                focusWindow(window);
-            }
+            focusWindow(getWindowWithPlacement(mPrivateWindowPlacement));
         }
         updateViews();
         mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
