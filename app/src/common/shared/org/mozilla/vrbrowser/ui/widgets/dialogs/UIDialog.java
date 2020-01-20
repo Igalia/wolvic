@@ -87,7 +87,7 @@ public abstract class UIDialog extends UIWidget implements WidgetManagerDelegate
     @Override
     public void onWorldClick() {
         if (isVisible()) {
-            post(() -> hide(REMOVE_WIDGET));
+            post(this::onDismiss);
         }
     }
 
