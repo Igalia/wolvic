@@ -59,16 +59,16 @@ class VoiceSearchLanguageOptionsView extends SettingsView {
     @Override
     protected boolean reset() {
         String systemLocale = LocaleUtils.getClosestSupportedLocale(getContext(), LocaleUtils.getDeviceLanguage().getId());
-        String currentLocale = LocaleUtils.getCurrentLocale();
+        String currentLocale = LocaleUtils.getVoiceSearchLanguage(getContext()).getId();
         if (currentLocale.equalsIgnoreCase(systemLocale)) {
             setLanguage(LocaleUtils.getIndexForSupportedLocale(systemLocale), false);
-            return false;
 
         } else {
             setLanguage(LocaleUtils.getIndexForSupportedLocale(systemLocale), true);
             SettingsStore.getInstance(getContext()).setVoiceSearchLocale(null);
-            return true;
         }
+
+        return false;
     }
 
     private RadioGroupSetting.OnCheckedChangeListener mLanguageListener = (radioGroup, checkedId, doApply) -> {

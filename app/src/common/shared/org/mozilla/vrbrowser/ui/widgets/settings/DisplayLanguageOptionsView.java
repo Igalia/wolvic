@@ -62,6 +62,7 @@ class DisplayLanguageOptionsView extends SettingsView {
         String currentLocale = LocaleUtils.getCurrentLocale();
         if (currentLocale.equalsIgnoreCase(systemLocale)) {
             setLanguage(LocaleUtils.getIndexForSupportedLocale(systemLocale), false);
+            SettingsStore.getInstance(getContext()).setDisplayLocale(currentLocale);
             return false;
 
         } else {
