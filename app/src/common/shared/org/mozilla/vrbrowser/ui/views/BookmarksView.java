@@ -164,13 +164,6 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
         public void onDelete(@NonNull View view, @NonNull Bookmark item) {
             mBinding.bookmarksList.requestFocusFromTouch();
 
-            mBookmarkAdapter.removeItem(item);
-            if (mBookmarkAdapter.itemCount() == 0) {
-                mBinding.setIsEmpty(true);
-                mBinding.setIsLoading(false);
-                mBinding.executePendingBindings();
-            }
-
             SessionStore.get().getBookmarkStore().deleteBookmarkById(item.getGuid());
         }
 

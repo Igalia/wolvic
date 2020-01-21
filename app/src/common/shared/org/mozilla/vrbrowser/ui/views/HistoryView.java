@@ -167,13 +167,6 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
         public void onDelete(View view, VisitInfo item) {
             mBinding.historyList.requestFocusFromTouch();
 
-            mHistoryAdapter.removeItem(item);
-            if (mHistoryAdapter.itemCount() == 0) {
-                mBinding.setIsEmpty(true);
-                mBinding.setIsLoading(false);
-                mBinding.executePendingBindings();
-            }
-
             SessionStore.get().getHistoryStore().deleteVisitsFor(item.getUrl());
         }
 
@@ -381,7 +374,6 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
             mBinding.setIsEmpty(false);
             mBinding.setIsLoading(false);
             mHistoryAdapter.setHistoryList(historyItems);
-            mBinding.historyList.post(() -> mBinding.historyList.smoothScrollToPosition(0));
         }
     }
 
