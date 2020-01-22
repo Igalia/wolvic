@@ -204,6 +204,7 @@ public class TabView extends RelativeLayout implements GeckoSession.ContentDeleg
         }
         if (mShowAddTab) {
             setOnClickListener(mSelecting ? null : mCardClickListener);
+            mTabAddView.setDuplicateParentStateEnabled(!mSelecting);
         }
     }
 
@@ -251,7 +252,6 @@ public class TabView extends RelativeLayout implements GeckoSession.ContentDeleg
         mCloseButton.setVisibility(interacted && !selected && !mSelecting ? View.VISIBLE : View.GONE);
         mSendTabButton.setVisibility(interacted && !selected && !mSelecting ? View.VISIBLE : View.GONE);
         mTitle.setVisibility(interacted && !selected ? View.VISIBLE : View.GONE);
-        mTabOverlay.setHovered(hovered || selected);
         mTabOverlay.setPressed(mPressed);
         if (mSelecting) {
             mTabOverlay.setBackgroundResource(selected ? R.drawable.tab_overlay_checked : R.drawable.tab_overlay_unchecked);
@@ -265,9 +265,7 @@ public class TabView extends RelativeLayout implements GeckoSession.ContentDeleg
         mSelectionImage.setVisibility(selected && !interacted ? View.VISIBLE : View.GONE);
         mUnselectImage.setVisibility(selected && interacted ? View.VISIBLE : View.GONE);
         if (mShowAddTab) {
-            mTabAddView.setHovered(hovered && !mSelecting);
             mTabAddView.setPressed(mPressed && !mSelecting);
-            mTabAddIcon.setHovered(mTabAddView.isHovered());
             mTabAddIcon.setPressed(mTabAddView.isPressed());
             if (mTabAddIcon.isHovered() && mTabAddIcon.getPaddingLeft() != mMinIconPadding) {
                 AnimationHelper.animateViewPadding(mTabAddIcon, mTabAddIcon.getPaddingLeft(), mMinIconPadding, ICON_ANIMATION_DURATION);
@@ -308,6 +306,7 @@ public class TabView extends RelativeLayout implements GeckoSession.ContentDeleg
                         mMaxIconPadding,
                         mMinIconPadding,
                         ICON_ANIMATION_DURATION);
+                post(() -> setHovered(true));
                 return false;
 
             case MotionEvent.ACTION_HOVER_EXIT:
@@ -316,6 +315,7 @@ public class TabView extends RelativeLayout implements GeckoSession.ContentDeleg
                         mMaxIconPadding,
                         ICON_ANIMATION_DURATION,
                         null);
+                setHovered(false);
                 return false;
         }
 

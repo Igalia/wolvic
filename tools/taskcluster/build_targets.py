@@ -38,6 +38,7 @@ platforms = {
    'oculusvr3dofStore': ['arm64'],
    'wavevr': ['arm64'],
    'wavevrStore': ['arm64', 'arm'],
+   'picovr': ['arm64'],
    'googlevr': ['arm64'],
    'noapi': ['arm64', 'x86_64'],
    'svr': ['arm64'],

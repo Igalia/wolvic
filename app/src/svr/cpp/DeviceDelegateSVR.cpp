@@ -444,7 +444,7 @@ DeviceDelegateSVR::StartFrame() {
   m.cameras[kRightEye]->SetHeadTransform(head);
 
   m.UpdateControllers(head);
-  VRB_GL_CHECK(glClearColor(m.clearColor.Red(), m.clearColor.Green(), m.clearColor.Blue(), m.clearColor.Alpha()));
+  VRB_GL_CHECK(glClearColor(1.0f, m.clearColor.Green(), m.clearColor.Blue(), m.clearColor.Alpha()));
 }
 
 void

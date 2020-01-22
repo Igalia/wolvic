@@ -60,6 +60,12 @@
 -keep class com.htc.** {*;}
 -keep class com.qualcomm.** {*;}
 
+# --------------------------------------------------------------------
+# Keep classes from PicoVR SDK
+# --------------------------------------------------------------------
+-keep class com.psmart.vrlib.** {*;}
+-keep class com.picovr.** {*;}
+
 -dontwarn **
 -target 1.7
 -dontusemixedcaseclassnames

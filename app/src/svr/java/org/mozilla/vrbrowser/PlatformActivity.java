@@ -9,8 +9,6 @@ import android.app.NativeActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.InputDevice;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -20,8 +18,6 @@ import com.osterhoutgroup.api.ext.OdgHardwareExt;
 
 public class PlatformActivity extends NativeActivity {
     static String LOGTAG = SystemUtils.createLogtag(PlatformActivity.class);
-    private OdgHardwareExt mOdgHardware;
-
     public static boolean filterPermission(final String aPermission) {
         return false;
     }
@@ -34,29 +30,16 @@ public class PlatformActivity extends NativeActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         // Set up full screen
         addFullScreenListener();
-
-        try {
-            mOdgHardware = new OdgHardwareExt(this);
-        }
-        catch (Exception ex) {
-            ex.printStackTrace();
-        }
     }
 
     @Override
     protected void onResume() {
         setFullScreen();
-        if (mOdgHardware != null) {
-            mOdgHardware.setTrackpadMode(InputDevice.SOURCE_TRACKBALL);
-        }
         super.onResume();
     }
 
     @Override
     protected void onPause() {
-        if (mOdgHardware != null) {
-            mOdgHardware.setTrackpadMode(InputDevice.SOURCE_MOUSE);
-        }
         super.onPause();
     }
 

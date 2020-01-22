@@ -226,6 +226,29 @@ ControllerContainer::CreateController(const int32_t aControllerIndex, const int3
 }
 
 void
+ControllerContainer::SetFocused(const int32_t aControllerIndex) {
+  if (!m.Contains(aControllerIndex)) {
+    return;
+  }
+  for (Controller& controller: m.list) {
+    bool show = false;
+    if (controller.index == aControllerIndex) {
+      controller.focused = true;
+      show = true;
+    } else  {
+      controller.focused = false;
+    }
+
+    if (controller.beamToggle) {
+      controller.beamToggle->ToggleAll(show);
+    }
+    if (controller.pointer) {
+      controller.pointer->SetVisible(show);
+    }
+  }
+}
+
+void
 ControllerContainer::DestroyController(const int32_t aControllerIndex) {
   if (m.Contains(aControllerIndex)) {
     m.list[aControllerIndex].DetachRoot();

@@ -37,7 +37,15 @@ public:
   void InitializeGL();
   void ShutdownJava();
   void ShutdownGL();
-  void Draw();
+  void Draw(){
+    StartFrame();
+    Draw(device::Eye::Left);
+    Draw(device::Eye::Right);
+    EndFrame();
+  }
+  void StartFrame();
+  void Draw(device::Eye aEye);
+  void EndFrame();
   void SetTemporaryFilePath(const std::string& aPath);
   void UpdateEnvironment();
   void UpdateFoveatedLevel(const int aAppLevel);
@@ -68,10 +76,14 @@ protected:
   static BrowserWorldPtr Create();
   BrowserWorld(State& aState);
   ~BrowserWorld() = default;
-  void DrawWorld();
-  void DrawImmersive();
-  void DrawLoadingAnimation();
-  void DrawSplashAnimation();
+  void TickWorld();
+  void TickImmersive();
+  void TickSplashAnimation();
+  void TickLoadingAnimation();
+  void DrawWorld(device::Eye aEye);
+  void DrawImmersive(device::Eye aEye);
+  void DrawLoadingAnimation(device::Eye aEye);
+  void DrawSplashAnimation(device::Eye aEye);
   void CreateSkyBox(const std::string& aBasePath, const std::string& aExtension);
 private:
   State& m;
