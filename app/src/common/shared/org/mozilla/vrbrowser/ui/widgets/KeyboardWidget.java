@@ -31,41 +31,41 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.browser.SettingsStore;
+import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.input.CustomKeyboard;
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
+import org.mozilla.vrbrowser.ui.keyboards.ChinesePinyinKeyboard;
+import org.mozilla.vrbrowser.ui.keyboards.ChineseZhuyinKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.DanishKeyboard;
-import org.mozilla.vrbrowser.ui.keyboards.FinnishKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.DutchKeyboard;
-import org.mozilla.vrbrowser.ui.keyboards.ItalianKeyboard;
+import org.mozilla.vrbrowser.ui.keyboards.EnglishKeyboard;
+import org.mozilla.vrbrowser.ui.keyboards.FinnishKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.FrenchKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.GermanKeyboard;
-import org.mozilla.vrbrowser.ui.keyboards.ChineseZhuyinKeyboard;
+import org.mozilla.vrbrowser.ui.keyboards.ItalianKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.JapaneseKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.KeyboardInterface;
+import org.mozilla.vrbrowser.ui.keyboards.KoreanKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.NorwegianKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.PolishKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.RussianKeyboard;
-import org.mozilla.vrbrowser.ui.keyboards.KoreanKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.SpanishKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.SwedishKeyboard;
 import org.mozilla.vrbrowser.ui.views.AutoCompletionView;
 import org.mozilla.vrbrowser.ui.views.CustomKeyboardView;
 import org.mozilla.vrbrowser.ui.views.KeyboardSelectorView;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.VoiceSearchWidget;
-import org.mozilla.vrbrowser.ui.keyboards.ChinesePinyinKeyboard;
-import org.mozilla.vrbrowser.ui.keyboards.EnglishKeyboard;
 import org.mozilla.vrbrowser.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Locale;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 
 public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKeyboardActionListener, AutoCompletionView.Delegate,
@@ -619,7 +619,6 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
     private void handleShift(boolean isShifted) {
         CustomKeyboard keyboard = (CustomKeyboard) mKeyboardView.getKeyboard();
-        boolean shifted = isShifted;
         int[] shiftIndices = keyboard.getShiftKeyIndices();
         for (int shiftIndex: shiftIndices) {
             if (shiftIndex >= 0) {
@@ -635,13 +634,13 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                         key.pressed = true;
 
                     } else {
-                        key.icon = shifted ? mShiftOnIcon : mShiftOffIcon;
+                        key.icon = isShifted ? mShiftOnIcon : mShiftOffIcon;
                         key.pressed = false;
                     }
                 }
             }
         }
-        mKeyboardView.setShifted(shifted || mIsCapsLock);
+        mKeyboardView.setShifted(isShifted || mIsCapsLock);
     }
 
     private void handleBackspace() {
@@ -822,11 +821,16 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         handleText(str);
     }
 
-    private void handleText(final String aText) {
+    private void handleText(String aText) {
         if (mFocusedView == null || mInputConnection == null) {
             return;
         }
 
+        if (mKeyboardView.isShifted()) {
+            aText = aText.toUpperCase();
+        }
+
+        final String text = aText;
         if (mCurrentKeyboard.usesComposingText()) {
             CharSequence seq = mInputConnection.getSelectedText(0);
             String selected = seq != null ? seq.toString() : "";
@@ -834,23 +838,23 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                 // Clean composing text if the text is selected.
                 mComposingText = "";
             }
-            mComposingText += aText;
+            mComposingText += text;
         } else if (mCurrentKeyboard.usesTextOverride()) {
             String beforeText = getTextBeforeCursor(mInputConnection);
-            final String newBeforeText = mCurrentKeyboard.overrideAddText(beforeText, aText);
+            final String newBeforeText = mCurrentKeyboard.overrideAddText(beforeText, text);
             final InputConnection connection = mInputConnection;
             postInputCommand(() -> {
                 if (newBeforeText != null) {
                     connection.deleteSurroundingText(beforeText.length(), 0);
                     connection.commitText(newBeforeText, 1);
                 } else {
-                    connection.commitText(aText, 1);
+                    connection.commitText(text, 1);
                 }
             });
 
         } else {
             final InputConnection connection = mInputConnection;
-            postInputCommand(() -> connection.commitText(aText, 1));
+            postInputCommand(() -> connection.commitText(text, 1));
         }
         updateCandidates();
     }
