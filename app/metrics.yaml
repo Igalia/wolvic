@@ -16,10 +16,225 @@ distribution:
       - baseline
       - events
       - metrics
+      - session_end
     bugs:
       - https://github.com/MozillaReality/FirefoxReality/issues/1420
     data_reviews:
       - https://github.com/MozillaReality/FirefoxReality/pull/1854#issuecomment-546214568
     notification_emails:
+      - fxr-telemetry@mozilla.com
+      - dmu@mozilla.com
+    expires: "2020-05-01"
+
+url:
+  domains:
+    type: counter
+    send_in_pings:
+      - session_end
+    description: >
+      Counting how many domains are visited in a session.
+    bugs:
+      - https://github.com/MozillaReality/FirefoxReality/issues/2230
+    data_reviews:
+      - https://github.com/MozillaReality/FirefoxReality/pull/2241#issuecomment-557740258
+    notification_emails:
+      - fxr-telemetry@mozilla.com
+      - dmu@mozilla.com
+    expires: "2020-05-01"
+  visits:
+    type: counter
+    send_in_pings:
+      - session_end
+    description: >
+      Counting how many URL links are visited in a session.
+    bugs:
+      - https://github.com/MozillaReality/FirefoxReality/issues/2230
+    data_reviews:
+      - https://github.com/MozillaReality/FirefoxReality/pull/2241#issuecomment-557740258
+    notification_emails:
+      - fxr-telemetry@mozilla.com
+      - dmu@mozilla.com
+    expires: "2020-05-01"
+  query_type:
+    type: labeled_counter
+    description: >
+      Counting how many URLs are visited in a day, by input method.
+    labels:
+      - type_link
+      - type_query
+      - voice_query
+    bugs:
+      - https://github.com/MozillaReality/FirefoxReality/issues/2230
+    data_reviews:
+      - https://github.com/MozillaReality/FirefoxReality/pull/2241#issuecomment-557740258
+    notification_emails:
+      - fxr-telemetry@mozilla.com
+      - dmu@mozilla.com
+    expires: "2020-05-01"
+
+searches:
+  counts:
+    type: labeled_counter
+    description: >
+      Counting how many searches are queried in a specific search engine. The search engine `identifier`s are used as keys for this metric.
+    bugs:
+      - https://github.com/MozillaReality/FirefoxReality/issues/2230
+    data_reviews:
+      - https://github.com/MozillaReality/FirefoxReality/pull/2241#issuecomment-557740258
+    notification_emails:
+      - fxr-telemetry@mozilla.com
+      - dmu@mozilla.com
+    expires: "2020-05-01"
+
+tabs:
+  opened:
+    type: labeled_counter
+    description: >
+      Number of tabs opened during a session
+    send_in_pings:
+      - session_end
+    labels:
+      - context_menu
+      - tabs_dialog
+      - bookmarks
+      - history
+      - fxa_login
+      - received
+      - pre_existing
+      - browser
+    bugs:
+      - https://github.com/MozillaReality/FirefoxReality/issues/1609
+    data_reviews:
+      - https://github.com/MozillaReality/FirefoxReality/pull/2327#issuecomment-559103837
+    notification_emails:
+      - fxr-telemetry@mozilla.com
+      - manmartin@mozilla.com
+    expires: "2020-05-01"
+  activated:
+    type: counter
+    description: >
+      Number of tabs activated during a session
+    send_in_pings:
+      - session_end
+    bugs:
+      - https://github.com/MozillaReality/FirefoxReality/issues/1609
+    data_reviews:
+      - https://github.com/MozillaReality/FirefoxReality/pull/2327#issuecomment-559103837
+    notification_emails:
+      - fxr-telemetry@mozilla.com
+      - manmartin@mozilla.com
+    expires: "2020-05-01"
+
+firefox_account:
+  sign_in:
+    type: event
+    description: >
+      The user starts the sign in flow
+    bugs:
+      - https://github.com/MozillaReality/FirefoxReality/issues/1610
+    data_reviews:
+      - https://github.com/MozillaReality/FirefoxReality/pull/2327#issuecomment-559103837
+    notification_emails:
+      - fxr-telemetry@mozilla.com
+      - manmartin@mozilla.com
+    expires: "2020-05-01"
+  sign_in_result:
+    type: event
+    description: >
+      The user finishes the sign in flow
+    extra_keys:
+      state:
+        description: "The result of the sign in flow. True in case of success, false in case of error"
+    bugs:
+      - https://github.com/MozillaReality/FirefoxReality/issues/1610
+    data_reviews:
+      - https://github.com/MozillaReality/FirefoxReality/pull/2327#issuecomment-559103837
+    notification_emails:
+      - fxr-telemetry@mozilla.com
+      - manmartin@mozilla.com
+    expires: "2020-05-01"
+  sign_out:
+    type: event
+    description: >
+      A user pressed the sign out button on the sync account page and was successfully signed out of FxA
+    bugs:
+      - https://github.com/MozillaReality/FirefoxReality/issues/1610
+    data_reviews:
+      - https://github.com/MozillaReality/FirefoxReality/pull/2327#issuecomment-559103837
+    notification_emails:
+      - fxr-telemetry@mozilla.com
+      - manmartin@mozilla.com
+    expires: "2020-05-01"
+  bookmarks_sync_status:
+    type: boolean
+    lifetime: application
+    description: >
+      Bookmarks sync engine status. True means that the bookmarks sync status is enabled, false otherwise.
+    bugs:
+      - https://github.com/MozillaReality/FirefoxReality/issues/1610
+    data_reviews:
+      - https://github.com/MozillaReality/FirefoxReality/pull/2327#issuecomment-559103837
+    notification_emails:
+      - fxr-telemetry@mozilla.com
+      - manmartin@mozilla.com
+    expires: "2020-05-01"
+  history_sync_status:
+    type: boolean
+    lifetime: application
+    description: >
+      History sync engine status. True means that the history sync status is enabled, false otherwise.
+    bugs:
+      - https://github.com/MozillaReality/FirefoxReality/issues/1610
+    data_reviews:
+      - https://github.com/MozillaReality/FirefoxReality/pull/2327#issuecomment-559103837
+    notification_emails:
+      - fxr-telemetry@mozilla.com
+      - manmartin@mozilla.com
+    expires: "2020-05-01"
+  tab_sent:
+    type: counter
+    description: >
+      Number of tabs successfully sent per day
+    bugs:
+      - https://github.com/MozillaReality/FirefoxReality/issues/1610
+    data_reviews:
+      - https://github.com/MozillaReality/FirefoxReality/pull/2327#issuecomment-559103837
+    notification_emails:
+      - fxr-telemetry@mozilla.com
+      - manmartin@mozilla.com
+    expires: "2020-05-01"
+  received_tab:
+    type: labeled_counter
+    description: >
+      Number of received tabs per day
+    labels:
+      - desktop
+      - mobile
+      - tablet
+      - tv
+      - vr
+      - unknown
+    bugs:
+      - https://github.com/MozillaReality/FirefoxReality/issues/1610
+    data_reviews:
+      - https://github.com/MozillaReality/FirefoxReality/pull/2327#issuecomment-559103837
+    notification_emails:
+      - fxr-telemetry@mozilla.com
+      - manmartin@mozilla.com
+    expires: "2020-05-01"
+
+control:
+  open_new_window:
+    type: counter
+    description: >
+      Counting how many general windows are opened in a session.
+    send_in_pings:
+      - session_end
+    bugs:
+      - https://github.com/MozillaReality/FirefoxReality/issues/2347
+    data_reviews:
+      - https://github.com/MozillaReality/FirefoxReality/pull/2348#issuecomment-564736919
+    notification_emails:
+      - fxr-telemetry@mozilla.com
       - dmu@mozilla.com
     expires: "2020-05-01"

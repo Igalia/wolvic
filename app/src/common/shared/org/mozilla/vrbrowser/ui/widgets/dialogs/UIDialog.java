@@ -2,13 +2,16 @@ package org.mozilla.vrbrowser.ui.widgets.dialogs;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
 
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
-import org.mozilla.vrbrowser.utils.ViewUtils;
 
-public abstract class UIDialog extends UIWidget implements WidgetManagerDelegate.FocusChangeListener {
+import java.util.LinkedList;
+
+public abstract class UIDialog extends UIWidget implements WidgetManagerDelegate.WorldClickListener {
+
+    private static LinkedList<UIDialog> mDialogs = new LinkedList<>();
+
     public UIDialog(Context aContext) {
         super(aContext);
         initialize();
@@ -25,12 +28,12 @@ public abstract class UIDialog extends UIWidget implements WidgetManagerDelegate
     }
 
     private void initialize() {
-        mWidgetManager.addFocusChangeListener(this);
+        mWidgetManager.addWorldClickListener(this);
     }
 
     @Override
     public void releaseWidget() {
-        mWidgetManager.removeFocusChangeListener(this);
+        mWidgetManager.removeWorldClickListener(this);
         super.releaseWidget();
     }
 
@@ -39,13 +42,56 @@ public abstract class UIDialog extends UIWidget implements WidgetManagerDelegate
         return true;
     }
 
-    // WidgetManagerDelegate.FocusChangeListener
-
     @Override
-    public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-        if (!ViewUtils.isEqualOrChildrenOf(this, newFocus) && isVisible()) {
-            onDismiss();
+    public void show(int aShowFlags) {
+        if (!isVisible()) {
+            super.show(aShowFlags);
+
+            mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
+
+            UIDialog head = mDialogs.peek();
+            if (head != null && head.isVisible()) {
+                head.hide();
+            }
+            mDialogs.push(this);
         }
     }
 
+    @Override
+    public void hide(int aHideFlags) {
+        super.hide(aHideFlags);
+
+        mWidgetManager.popWorldBrightness(this);
+
+        mDialogs.remove(this);
+        UIDialog head = mDialogs.peek();
+        if (head != null) {
+            head.show();
+        }
+    }
+
+    private void show() {
+        if (!isVisible()) {
+            super.show(REQUEST_FOCUS);
+
+            mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
+        }
+    }
+
+    private void hide() {
+        super.hide(KEEP_WIDGET);
+
+        mWidgetManager.popWorldBrightness(this);
+    }
+
+    @Override
+    public void onWorldClick() {
+        if (isVisible()) {
+            post(this::onDismiss);
+        }
+    }
+
+    public static void closeAllDialogs() {
+        new LinkedList<>(mDialogs).forEach(dialog -> dialog.onDismiss());
+    }
 }

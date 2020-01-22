@@ -1,28 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <!-- This Source Code Form is subject to the terms of the Mozilla Public
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-<html class="error">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
     <head>
-        <meta charset="utf-8">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width; user-scalable=false;" />
         <title>%pageTitle%</title>
         <style>%css%</style>
+        <script type="text/javascript">
+            var advancedVisible = false;
+            function toggleAdvanced() {
+                if (advancedVisible) {
+                    document.getElementById('badCertAdvancedPanel').style.display='none';
+
+                } else {
+                    document.getElementById('badCertAdvancedPanel').style.display='block';
+                }
+
+                advancedVisible = !advancedVisible;
+            }
+            function acceptAndContinue(temporary) {
+                document.addCertException(temporary).then(() => {
+                        location.reload();
+                    },
+                    err => {
+                        console.error("Unexpected error: " + err)
+                    }
+                );
+            }
+        </script>
     </head>
-    <body>
+
+    <body id="errorPage" dir="auto">
+        <!-- PAGE CONTAINER (for styling purposes only) -->
         <div id="errorPageContainer">
+
             <!-- Error Title -->
             <div id="errorTitle">
-                <h1 class="errorTitleText">%messageShort%</h1>
+                <h1 id="et_dnsNotFound" class="errorTitleText">%messageShort%</h1>
             </div>
 
+            <!-- LONG CONTENT (the section most likely to require scrolling) -->
             <div id="errorLongContent">
-                <!-- Long Description -->
-                <div id="errorLongDesc">%messageLong%</div>
+
+                <!-- Short Description -->
+                <div id="errorShortDesc">
+                    %messageLong%
+                </div>
+
             </div>
 
             <!-- Retry Button -->
-            <br/>
-            <button id="errorTryAgain" onclick="window.location.reload();">%button%</button>
+            <button id="errorTryAgain" onclick="window.location.reload()">%button%</button>
+
+            <!-- Advanced Button -->
+            <button id="advancedButton" class="buttonSecondary" onclick="toggleAdvanced()" style="display: %advancedSSLStyle%;">Advanced...</button>
+
+            <div id="advancedPanelContainer">
+                <div id="badCertAdvancedPanel" class="advanced-panel" style="display: none;">
+                    <p id="badCertTechnicalInfo">
+                        <label>Someone could be trying to impersonate the site and you should not continue.</label>
+
+                        <label>Websites prove their identity via certificates. Firefox does not trust <b>%url%</b> because its certificate issuer is unknown, the certificate is self-signed, or the server is not sending the correct intermediate certificates.</label>
+                    </p>
+                    <div id="advancedPanelButtonContainer" class="button-container">
+                        <button id="advancedPanelReturnButton" onClick="window.history.back()" class="button">Go Back (Recommended)</button>
+                    </div>
+                    <div id="advancedPanelButtonContainer" class="button-container">
+                        <button id="button" class="buttonSecondary" onClick="acceptAndContinue(true)">Accept the Risk and Continue</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </body>
 </html>

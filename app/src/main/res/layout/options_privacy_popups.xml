@@ -3,9 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <variable
+            name="isEmpty"
+            type="boolean" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="@dimen/settings_dialog_width"
+        android:layout_height="@dimen/settings_dialog_height"
         android:background="@drawable/dialog_background"
         android:paddingStart="30dp"
         android:paddingEnd="30dp">
@@ -21,35 +27,71 @@
             app:layout_constraintTop_toTopOf="parent"
             app:title="@string/settings_privacy_policy_popups_title" />
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:orientation="vertical"
             app:layout_constraintBottom_toTopOf="@id/footer_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/header_layout">
 
-            <TextView
-                style="@style/settingsText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:paddingBottom="5dp"
-                android:text="@string/privacy_options_popups_list_header"
-                tools:text="@string/privacy_options_popups_list_header" />
-
-            <org.mozilla.vrbrowser.ui.views.CustomRecyclerView
-                android:id="@+id/site_list"
-                style="@style/customRecyclerViewStyle"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:contentDescription="privacy_options_popups_list_header"
-                android:paddingEnd="15dp"
-                app:layoutManager="org.mozilla.vrbrowser.ui.adapters.CustomLinearLayoutManager" />
-        </LinearLayout>
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_marginLeft="110dp"
+                android:layout_marginRight="110dp"
+                visibleGone="@{isEmpty}">
+                <TextView
+                    style="@style/settingsText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:textAlignment="center"
+                    android:paddingBottom="15dp"
+                    android:textColor="@color/rhino"
+                    android:layout_gravity="center"
+                    android:text="@string/privacy_options_popups_list_empty_first"
+                    tools:text="@string/privacy_options_popups_list_empty_first" />
+                <TextView
+                    style="@style/settingsText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:textAlignment="center"
+                    android:textColor="@color/rhino"
+                    android:layout_gravity="center"
+                    android:text="@string/privacy_options_popups_list_empty_second"
+                    tools:text="@string/privacy_options_popups_list_empty_second" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                visibleGone="@{!isEmpty}">
+                <TextView
+                    style="@style/settingsText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:paddingBottom="5dp"
+                    android:text="@string/privacy_options_popups_list_header"
+                    tools:text="@string/privacy_options_popups_list_header" />
+
+                <org.mozilla.vrbrowser.ui.views.CustomRecyclerView
+                    android:id="@+id/site_list"
+                    style="@style/customRecyclerViewStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="privacy_options_popups_list_header"
+                    android:paddingEnd="15dp"
+                    app:layoutManager="org.mozilla.vrbrowser.ui.adapters.CustomLinearLayoutManager" />
+            </LinearLayout>
+        </FrameLayout>
 
         <org.mozilla.vrbrowser.ui.widgets.settings.SettingsFooter
             android:id="@+id/footer_layout"

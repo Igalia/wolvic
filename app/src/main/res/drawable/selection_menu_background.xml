@@ -3,5 +3,6 @@
     android:shape="rectangle">
     <corners android:radius="20dp" />
     <stroke android:color="@color/asphalt_blur" android:width="@dimen/blur_radius" />
+    <stroke android:color="@color/iron" android:width="2dp"/>
     <solid android:color="@color/asphalt"/>
 </shape>

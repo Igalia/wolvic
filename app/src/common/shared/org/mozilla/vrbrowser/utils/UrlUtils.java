@@ -5,9 +5,9 @@
 
 package org.mozilla.vrbrowser.utils;
 
-import java.util.regex.Pattern;
-
 import androidx.annotation.Nullable;
+
+import java.util.regex.Pattern;
 
 
 // This class refers from mozilla-mobile/focus-android

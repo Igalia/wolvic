@@ -58,6 +58,10 @@ Controller::operator=(const Controller& aController) {
   numButtons = aController.numButtons;
   memcpy(immersiveAxes, aController.immersiveAxes, sizeof(immersiveAxes));
   numAxes = aController.numAxes;
+  numHaptics = aController.numHaptics;
+  inputFrameID = aController.inputFrameID;
+  pulseDuration = aController.pulseDuration;
+  pulseIntensity = aController.pulseIntensity;
   leftHanded = aController.leftHanded;
   inDeadZone = aController.inDeadZone;
   lastHoverEvent = aController.lastHoverEvent;
@@ -91,6 +95,10 @@ Controller::Reset() {
   numButtons = 0;
   memset(immersiveAxes, 0, sizeof(immersiveAxes));
   numAxes = 0;
+  numHaptics = 0;
+  inputFrameID = 0;
+  pulseDuration = 0.0f;
+  pulseIntensity = 0.0f;
   leftHanded = false;
   inDeadZone = true;
   lastHoverEvent = 0.0;

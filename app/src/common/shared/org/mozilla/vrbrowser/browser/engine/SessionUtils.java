@@ -69,48 +69,4 @@ class SessionUtils {
             out.write(String.format("pref(\"%s\", %s);\n", aKey, value ? "true" : "false").getBytes());
         }
     }
-
-    /**
-     * 1. Disable YouTube's Polymer layout (which makes YouTube very slow in non-Chrome browsers)
-     *    via a query-string parameter in the URL.
-     * 2. Rewrite YouTube URLs from `m.youtube.com` -> `youtube.com` (to avoid serving YouTube's
-     *    video pages intended for mobile phones, as linked from Google search results).
-     */
-    public static String checkYoutubeOverride(String aUri) {
-        try {
-            Uri uri = Uri.parse(aUri);
-            String hostLower = uri.getHost().toLowerCase();
-            if (!hostLower.endsWith(".youtube.com") && !hostLower.endsWith(".youtube-nocookie.com")) {
-                return null;
-            }
-
-            Uri.Builder uriBuilder = uri.buildUpon();
-            Boolean updateUri = false;
-
-            if (!uri.getScheme().equalsIgnoreCase("https")) {
-                uriBuilder.scheme("https");
-                updateUri = true;
-            }
-            if (hostLower.startsWith("m.")) {
-                uriBuilder.authority(hostLower.replaceFirst("m.", "www."));
-                updateUri = true;
-            }
-            String queryDisablePolymer = uri.getQueryParameter("disable_polymer");
-            if (queryDisablePolymer == null) {
-                uriBuilder.appendQueryParameter("disable_polymer", "1");
-                updateUri = true;
-            }
-
-            if (!updateUri) {
-                return null;
-            }
-
-            return uriBuilder.build().toString();
-        } catch (Exception ex) {
-            Log.e(LOGTAG, "Unable to construct transformed URL: " + ex.toString());
-        }
-
-        return null;
-    }
-
 }

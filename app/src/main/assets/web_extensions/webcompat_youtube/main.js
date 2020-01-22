@@ -1,312 +1,236 @@
-const CUSTOM_USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12) AppleWebKit/602.1.21 (KHTML, like Gecko) Version/9.2 Safari/602.1.21';
+'use strict';
+const CUSTOM_USER_AGENT = 'Mozilla/5.0 (Linux; Android 7.1.1; Quest) AppleWebKit/537.36 (KHTML, like Gecko) OculusBrowser/7.0.13.186866463 SamsungBrowser/4.0 Chrome/77.0.3865.126 Mobile VR Safari/537.36';
 const LOGTAG = '[firefoxreality:webcompat:youtube]';
+const VIDEO_PROJECTION_PARAM = 'mozVideoProjection';
 const YT_SELECTORS = {
   disclaimer: '.yt-alert-message, yt-alert-message',
-  moviePlayer: '#movie_player'
+  player: '#movie_player',
+  embedPlayer: '.html5-video-player',
+  largePlayButton: '.ytp-large-play-button',
+  thumbnail: '.ytp-cued-thumbnail-overlay-image',
+  embedTitle: '.ytp-title-text'
 };
-const YT_PATHS = {
-  watch: '/watch'
-};
+const ENABLE_LOGS = true;
+const logDebug = (...args) => ENABLE_LOGS && console.log(LOGTAG, ...args);
+const logError = (...args) => ENABLE_LOGS && console.error(LOGTAG, ...args);
 
-try {
-  // Note: À la Oculus Browser, we intentionally use this particular `User-Agent` string
-  // for YouTube to force the most optimal, high-resolution layout available for playback in a mobile VR browser.
-  Object.defineProperty(navigator, 'userAgent', {
-    get: () => CUSTOM_USER_AGENT
-  });
-
-  // If missing, inject a `<meta name="viewport">` tag to trigger YouTube's mobile layout.
-  let viewportEl = document.querySelector('meta[name="viewport"]');
-  if (!viewportEl) {
-    document.documentElement.insertAdjacentHTML('afterbegin',
-      `<meta name="viewport" content="width=device-width, initial-scale=1" data-fxr-injected>`);
-  }
-
-  let is360 = null;
-  let qs = new URLSearchParams(window.location.search);
-  let retryTimeout = null;
-
-  const prefs = {
-    hd: false,
-    quality: 1440,
-    log: qs.get('mozDebug') !== '0' && qs.get('mozdebug') !== '0' && qs.get('debug') !== '0',
-    retryAttempts: parseInt(qs.get('retryAttempts') || qs.get('retryattempts') || '10', 10),
-    retryTimeout: parseInt(qs.get('retryTimeout') || qs.get('retrytimeout') || '500', 10)
-  };
-
-  const printLog = String(prefs.log) === 'true';
-
-  const log = (...args) => printLog && console.log(LOGTAG, ...args);
-  const logError = (...args) => printLog && console.error(LOGTAG, ...args);
-  const logWarn = (...args) => printLog && console.warn(LOGTAG, ...args);
-
-  let auto360 = true;
-
-  const onNavigate = (delayTime = 500) => setTimeout(() => {
-    ytImprover360(auto360);
-
-    ytImprover.completed = false;
-    ytImprover(1);
-  }, delayTime);
-
-  window.addEventListener('fullscreenchange', () => {
-    auto360 = !!document.fullscreenElement;
-    ytImprover360(auto360);
-  });
-
-  window.addEventListener('load', () => {
-    viewportEl = document.querySelector('meta[name="viewport"]:not([data-fxr-injected])');
-    if (viewportEl) {
-      viewportEl.parentNode.removeChild(viewportEl);
+class YoutubeExtension {
+    // We set a custom UA to force Youtube to display the most optimal
+    // and high-resolution layout available for playback in a mobile VR browser.
+    overrideUA() {
+        Object.defineProperty(navigator, 'userAgent', {
+            get: () => CUSTOM_USER_AGENT
+        });
+        logDebug(`Youtube UA overriden to: ${navigator.userAgent}`)
     }
 
+    // If missing, inject a `<meta name="viewport">` tag to trigger YouTube's mobile layout.
+    overrideViewport() {
+        const content = `width=device-width;maximum-scale=1;minimum-scale=1;initial-scale=1;`;
+        let viewport = document.querySelector('meta[name="viewport"]');
+        if (viewport) {
+            viewport.setAttribute('content', content);
+        } else {
+            const container = document.head || document.documentElement;
+            container.insertAdjacentHTML('afterbegin', `<meta name="viewport" content="${content}"/>`);
+        }
+        logDebug(`Youtube viewport updated: ${window.innerWidth}x${window.innerHeight} `);
+    }
+
+    // Select a better youtube video quality
+    overrideQuality() {
+        logDebug('overrideQuality attempt');
+        const player = this.getPlayer();
+        if (!player) {
+            logDebug('player not ready');
+            return false;
+        }
+        const preferredLevels = this.getPreferredQualities();
+        const currentLevel = player.getPlaybackQuality();
+        logDebug(`Video getPlaybackQuality: ${currentLevel}`);
+
+        let availableLevels = player.getAvailableQualityLevels();
+        logDebug(`Video getAvailableQualityLevels: ${availableLevels}`);
+        for (const level of preferredLevels) {
+            if (availableLevels.indexOf(level) >= 0) {
+                if (currentLevel !== level) {
+                    player.setPlaybackQualityRange(level, level);
+                    logDebug(`Video setPlaybackQualityRange: ${level}`);
+                } else {
+                    logDebug('Best quality already selected');
+                }
+                return true;
+            }
+        }
+       return false;
+    }
+
+    overrideQualityRetry() {
+        this.retry("overrideQuality", () => this.overrideQuality());
+    }
+
+    // Automatically select a video projection if needed
+    overrideVideoProjection() {
+        if (!this.isWatchingPage()) {
+            logDebug("is not watching page");
+            return; // Only override projection in the Youtube watching page.
+        }
+        const qs = new URLSearchParams(window.location.search);
+        if (qs.get(VIDEO_PROJECTION_PARAM)) {
+            logDebug(`Video has already a video projection selected: ${qs.get(VIDEO_PROJECTION_PARAM)}`);
+            this.updateVideoStyle();
+            return;
+        }
+        // There is no standard API to detect video projection yet.
+        // Try to infer it from the video disclaimer or title for now.
+        const targets = [
+            document.querySelector(YT_SELECTORS.disclaimer),
+            document.querySelector(YT_SELECTORS.embedTitle)
+        ];
+        const is360 = targets.some((node) => node && node.textContent.includes('360'));
+        if (is360) {
+            const stereo = targets.some((node) => node && node.textContent.toLowerCase().includes('stereo'));
+            qs.set('mozVideoProjection', stereo ? '360s_auto' : '360_auto');
+            this.updateURL(qs);
+            this.updateVideoStyle();
+            logDebug(`Video projection set to: ${qs.get(VIDEO_PROJECTION_PARAM)}`);
+        } else {
+            logDebug(`Video is flat, no projection selected`);
+        }
+    }
+
+    updateVideoStyle() {
+        const video = this.getVideo();
+        if (video) {
+            video.classList.add('fxr-vr-video');
+            logDebug('Added video projection style');
+        }
+    }
+
+    overrideClick(event) {
+        this.overrideVideoProjection();
+        const player = this.getPlayer();
+        if (!this.isWatchingPage() || !this.hasVideoProjection() || document.fullscreenElement || !player) {
+            return; // Only override click in the Youtube watching page for 360 videos.
+        }
+        if (this.isEmbed() && !this.isVideoReady()) {
+            return false; // Embeds videos are only loaded after the first click
+        }
+        const target = event.target;
+        let valid = target.tagName.toLowerCase() === 'video' ||
+            target === document.querySelector(YT_SELECTORS.thumbnail) ||
+            target === document.querySelector(YT_SELECTORS.largePlayButton) ||
+            target == player;
+
+        if (valid) {
+            player.playVideo();
+            player.requestFullscreen();
+            // Force video play when entering immersive mode.
+            setTimeout(() => this.retry("PlayVideo", () => {
+                player.playVideo();
+                return !this.getVideo().paused;
+            }), 200);
+        }
+    }
+
+    // Runs the callback when the video is ready (has loaded the first frame).
+    waitForVideoReady(callback) {
+        this.retry("VideoReady", () => {
+            const video = this.getVideo();
+            if (!video) {
+                return false;
+            }
+            if (video.readyState >= 2) {
+              callback();
+            } else {
+              video.addEventListener("loadeddata", callback, {once: true});
+            }
+            return true;
+       });
+    }
+
+     // Get's the Youtube player elements which contains the API functions.
+    getPlayer() {
+        let player = document.querySelector(this.isEmbed() ? YT_SELECTORS.embedPlayer : YT_SELECTORS.player);
+        if (!player || !player.wrappedJSObject) {
+            return null;
+        }
+        return player.wrappedJSObject;
+    }
+
+    getVideo() {
+        return document.getElementsByTagName('video')[0];
+    }
+
+    // Get's the preferred video qualities for the current device.
+    getPreferredQualities() {
+        let all = ['hd2880', 'hd2160','hd1440', 'hd1080', 'hd720', 'large', 'medium'];
+        return all;
+    }
+
+    // Returns true if we are in a video watching page.
+    isWatchingPage() {
+        return window.location.pathname.startsWith('/watch') || this.isEmbed();
+    }
+
+    isEmbed() {
+        return window.location.pathname.startsWith('/embed');
+    }
+
+    // Returns true if we are in a video watching page.
+    hasVideoProjection() {
+        const qs = new URLSearchParams(window.location.search);
+        return !!qs.get(VIDEO_PROJECTION_PARAM);
+    }
+
+    isVideoReady() {
+        const video = this.getVideo();
+        return video && video.readyState >=2;
+    }
+
+    // Utility function to retry tasks max n times until the execution is successful.
+    retry(taskName, task, attempts = 10, interval = 200) {
+        let succeeded = false;
+        try {
+            succeeded = task();
+        } catch (ex) {
+            logError(`Got exception runnning ${taskName} task: ${ex}`);
+        }
+        if (succeeded) {
+            logDebug(`${taskName} succeeded`);
+            return;
+        }
+        attempts--;
+        logDebug(`${taskName} failed. Remaining attempts ${attempts}`);
+        if (attempts > 0) {
+            setTimeout(() => {
+                this.retry(taskName, task, attempts, interval);
+            })
+        };
+    }
+    // Utility function to replace current URL params and update history.
+    updateURL(qs) {
+        const newUrl = `${window.location.pathname}?${qs}`;
+        window.history.replaceState({}, document.title, newUrl);
+        logDebug(`update URL to ${newUrl}`);
+    }
+}
+
+logDebug(`Initializing youtube extension in frame: ${window.location.href}`);
+const youtube = new YoutubeExtension();
+youtube.overrideUA();
+youtube.overrideViewport();
+window.addEventListener('load', () => {
+    logDebug('page load');
+    youtube.overrideVideoProjection();
     // Wait until video has loaded the first frame to force quality change.
     // This prevents the infinite spinner problem.
     // See https://github.com/MozillaReality/FirefoxReality/issues/1433
-    var video = document.getElementsByTagName("video")[0];
-    if (video.readyState >= 2) {
-      onNavigate(0);
-    } else {
-       video.addEventListener("loadeddata", () => onNavigate(0));
+    if (youtube.isWatchingPage()) {
+        youtube.waitForVideoReady(() => youtube.overrideQualityRetry());
     }
-  });
+});
 
-  window.addEventListener('pushstate', onNavigate);
-
-  window.addEventListener('popstate', onNavigate);
-
-  window.addEventListener('click', evt => {
-    if (!window.location.pathname.startsWith(YT_PATHS.watch)) {
-      return;
-    }
-    if (is360 && evt.target.closest(YT_SELECTORS.moviePlayer) && !evt.target.closest('.ytp-chrome-bottom')) {
-      const playerEl = document.querySelector(YT_SELECTORS.moviePlayer);
-      if (!playerEl) {
-        return;
-      }
-      playerEl.requestFullscreen();
-    }
-  });
-
-  function ytImprover360 (auto) {
-    if (!window.location.pathname.startsWith(YT_PATHS.watch)) {
-      is360 = false;
-      return;
-    }
-
-    const disclaimerEl = document.querySelector(YT_SELECTORS.disclaimer);
-    is360 = disclaimerEl ? disclaimerEl.textContent.includes('360') : false;
-
-    if (!is360) {
-      return;
-    }
-
-    qs = new URLSearchParams(window.location.search);
-
-    const currentProjection = (qs.get('mozVideoProjection') || '').toLowerCase();
-    qs.delete('mozVideoProjection');
-    switch (currentProjection) {
-      case '360':
-      case '360_auto':
-      case '360s':
-      case '360s_auto':
-      case '180':
-      case '180_auto':
-      case '180lr':
-      case '180lr_auto':
-      case '180tb':
-      case '180tb_auto':
-        qs.set('mozVideoProjection', currentProjection);
-        break;
-      default:
-        qs.set('mozVideoProjection', auto ? '360_auto' : '360');
-        break;
-    }
-
-    const newUrl = getNewUrl(qs);
-    if (newUrl && (window.location.pathname + window.location.search) !== newUrl) {
-      window.history.replaceState({}, document.title, newUrl);
-      return newUrl;
-    }
-  }
-
-  function getNewUrl (qs) {
-    let newUrl = `${window.location.pathname}`;
-    if (qs) {
-      newUrl = `${newUrl}?${qs}`;
-    }
-    return newUrl;
-  }
-
-  const ytImprover = window.ytImprover = (state, attempts) => {
-    if (!window.location.pathname.startsWith(YT_PATHS.watch)) {
-      ytImprover.completed = true;
-      return;
-    }
-    if (ytImprover.completed) {
-      return;
-    }
-
-    if (typeof attempts === 'undefined') {
-      attempts = 1;
-    }
-    if (attempts >= prefs.retryAttempts) {
-      logError(`Giving up trying to increase resolution after ${prefs.retryAttempts} attempts.`);
-      return;
-    }
-
-    let player = document.querySelector(YT_SELECTORS.moviePlayer);
-    let reason = 'unknown';
-    if (state !== 1) {
-      reason = 'invalid state';
-    } else if (!player) {
-      reason = 'player not found';
-    } else if (!player.wrappedJSObject) {
-      reason = 'player.wrappedJSObject not found';
-      player = null;
-    } else if (!player.wrappedJSObject.getAvailableQualityLevels) {
-      reason = 'player.wrappedJSObject.getAvailableQualityLevels not found';
-      player = null;
-    }
-
-    if (!player) {
-      logWarn(`Cannot find player because ${reason}. attempts: ${attempts}`);
-      attempts++;
-      retryTimeout = setTimeout(() => {
-        ytImprover(state, attempts);
-      }, prefs.retryTimeout);
-      return;
-    }
-
-    player = player.wrappedJSObject;
-
-    const levels = player.getAvailableQualityLevels();
-    if (!levels || !levels.length) {
-      logWarn(`Cannot read 'player.getAvailableQualityLevels()' attempts: ${attempts}`);
-      attempts++;
-      retryTimeout = setTimeout(() => {
-        ytImprover(state, attempts);
-      }, prefs.retryTimeout);
-      return;
-    }
-
-    clearTimeout(retryTimeout);
-    ytImprover.completed = true;
-
-    prefs.qualities = [
-      'highres', 'h2880', 'hd2160', 'hd1440', 'hd1080', 'hd720', 'large', 'medium', 'small', 'tiny', 'auto'
-    ];
-    prefs.qualityLabels = {
-      '4320': 'highres', // 8K / 4320p / QUHD
-      '2880': 'hd2880', // 5K / 2880p / UHD+
-      '2160': 'hd2160', // 4K / 2160p / UHD
-      '1440': 'hd1440', // 1440p / QHD
-      '1080': 'hd1080', // 1080p / FHD
-      '720': 'hd720', // 720p / HD
-      '480': 'large', // 480p
-      '360': 'medium', // 360p
-      '240': 'small', // 240p
-      '144': 'tiny', // 144p
-      '0': 'auto'
-    };
-
-    const getDesiredQuality = () => {
-      const qsQuality = (qs.get('vq') || qs.get('quality') || '').trim().toLowerCase();
-      if (qsQuality) {
-        if (qsQuality in prefs.qualityLabels) {
-          prefs.quality = prefs.qualityLabels[qsQuality];
-        } else {
-          const qsQualityNumber = parseInt(qsQuality, 10);
-          if (Number.isInteger(qsQualityNumber)) {
-            prefs.quality = qsQualityNumber;
-          } else {
-            prefs.quality = qsQuality;
-          }
-        }
-      }
-      prefs.quality = String(prefs.quality).toLowerCase();
-      if (qsQuality === 'auto' || qsQuality === 'default') {
-        prefs.quality = 'auto';
-      }
-      if (prefs.quality in prefs.qualityLabels) {
-        prefs.quality = prefs.qualityLabels[prefs.quality];
-      }
-      return prefs.quality;
-    };
-
-    prefs.quality = getDesiredQuality();
-    if (prefs.quality === 'auto') {
-      return log(`Desired quality is fine (${prefs.quality})`);
-    }
-
-    const currentQuality = player.getPlaybackQuality();
-    if (prefs.quality === currentQuality) {
-      return log(`Current quality is desired quality (${currentQuality})`);
-    }
-
-    const findBestQuality = increase => {
-      if (prefs.quality === 'highest' || prefs.quality === 'best' || prefs.quality === 'max' || prefs.quality === 'maximum') {
-        return levels[0];
-      }
-      if (prefs.quality === 'lowest' || prefs.quality === 'worst' || prefs.quality === 'min' || prefs.quality === 'minimum') {
-        return levels[levels.length - 1];
-      }
-      if (increase) {
-        prefs.quality = prefs.qualities[prefs.qualities.indexOf(prefs.quality) - 1] || levels[0];
-      }
-      const index = levels.indexOf(prefs.quality);
-      if (index !== -1) {
-        return prefs.quality;
-      }
-      return findBestQuality(true);
-    };
-    const newBestQuality = findBestQuality();
-    if (currentQuality === newBestQuality) {
-      return log(`Current quality "${currentQuality}" is the best available quality`);
-    }
-
-    if (!player.setPlaybackQuality) {
-      return logError('`player.setPlaybackQuality` not available');
-    }
-    player.setPlaybackQuality(newBestQuality);
-
-    if (!player.setPlaybackQualityRange) {
-      return logError('`player.setPlaybackQualityRange` not available');
-    }
-    try {
-      player.setPlaybackQualityRange(newBestQuality, newBestQuality);
-    } catch (e) {
-      logError(`Failed to call 'player.setPlaybackQualityRange(${newBestQuality}, ${newBestQuality})' with exception: `, e);
-      return;
-    }
-
-    log(`Changed quality from "${currentQuality}" to "${newBestQuality}"`);
-  };
-
-  window.wrappedJSObject.onYouTubePlayerReady = evt => {
-    log('`onYouTubePlayerReady` called');
-    window.ytImprover(1);
-    evt.addEventListener('onStateChange', 'ytImprover');
-    ytImprover360(true);
-  };
-
-  window.addEventListener('spfready', () => {
-    log('`spfready` event fired');
-    if (window.wrappedJSObject.ytplayer && window.wrappedJSObject.ytplayer.config) {
-      log('`window.ytplayer.config.args.jsapicallback` set');
-      window.wrappedJSObject.ytplayer.config.args.jsapicallback = 'onYouTubePlayerReady';
-    }
-  });
-
-  window.addEventListener("beforeunload", function (e) {
-    // Make sure that the disable_polymer parameter is kept. Youtube processes the parameter but removes it from the URL.
-    // See https://github.com/MozillaReality/FirefoxReality/issues/1426
-    let qs = new URLSearchParams(window.location.search);
-    qs.set('disable_polymer', '1');
-    let url = getNewUrl(qs);
-    window.history.replaceState({}, document.title, url);
-  });
-
-} catch (err) {
-  console.error(LOGTAG, 'Encountered error:', err);
-}
+window.addEventListener('pushstate', () => youtube.overrideVideoProjection());
+window.addEventListener('popstate', () => youtube.overrideVideoProjection());
+window.addEventListener('click', event => youtube.overrideClick(event));

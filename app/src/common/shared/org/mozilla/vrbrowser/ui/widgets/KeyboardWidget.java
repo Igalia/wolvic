@@ -36,6 +36,7 @@ import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.input.CustomKeyboard;
+import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.ui.keyboards.DanishKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.FinnishKeyboard;
@@ -54,7 +55,7 @@ import org.mozilla.vrbrowser.ui.keyboards.SpanishKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.SwedishKeyboard;
 import org.mozilla.vrbrowser.ui.views.AutoCompletionView;
 import org.mozilla.vrbrowser.ui.views.CustomKeyboardView;
-import org.mozilla.vrbrowser.ui.views.LanguageSelectorView;
+import org.mozilla.vrbrowser.ui.views.KeyboardSelectorView;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.VoiceSearchWidget;
 import org.mozilla.vrbrowser.ui.keyboards.ChinesePinyinKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.EnglishKeyboard;
@@ -91,7 +92,8 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private EditorInfo mEditorInfo = new EditorInfo();
     private VoiceSearchWidget mVoiceSearchWidget;
     private AutoCompletionView mAutoCompletionView;
-    private LanguageSelectorView mLanguageSelectorView;
+    private KeyboardSelectorView mLanguageSelectorView;
+    private KeyboardSelectorView mDomainSelectorView;
 
     private int mKeyWidth;
     private int mKeyboardPopupTopMargin;
@@ -178,19 +180,22 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mAutoCompletionView.setExtendedHeight((int)(mWidgetPlacement.height * mWidgetPlacement.density));
         mAutoCompletionView.setDelegate(this);
 
+        mDomainSelectorView = findViewById(R.id.domainSelectorView);
+        mDomainSelectorView.setDelegate(this::handleDomainChange);
+
         mKeyboards = new ArrayList<>();
         mKeyboards.add(new EnglishKeyboard(aContext));
-        mKeyboards.add(new ItalianKeyboard(aContext));
+        mKeyboards.add(new ChinesePinyinKeyboard(aContext));
+        mKeyboards.add(new ChineseZhuyinKeyboard(aContext));
+        mKeyboards.add(new JapaneseKeyboard(aContext));
         mKeyboards.add(new FrenchKeyboard(aContext));
         mKeyboards.add(new GermanKeyboard(aContext));
         mKeyboards.add(new SpanishKeyboard(aContext));
         mKeyboards.add(new RussianKeyboard(aContext));
-        mKeyboards.add(new ChinesePinyinKeyboard(aContext));
-        mKeyboards.add(new ChineseZhuyinKeyboard(aContext));
         mKeyboards.add(new KoreanKeyboard(aContext));
-        mKeyboards.add(new JapaneseKeyboard(aContext));
-        mKeyboards.add(new PolishKeyboard(aContext));
+        mKeyboards.add(new ItalianKeyboard(aContext));
         mKeyboards.add(new DanishKeyboard(aContext));
+        mKeyboards.add(new PolishKeyboard(aContext));
         mKeyboards.add(new NorwegianKeyboard(aContext));
         mKeyboards.add(new SwedishKeyboard(aContext));
         mKeyboards.add(new FinnishKeyboard(aContext));
@@ -406,6 +411,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mPopupKeyboardView.setVisibility(View.GONE);
         mPopupKeyboardLayer.setVisibility(View.GONE);
         mLanguageSelectorView.setVisibility(View.GONE);
+        mDomainSelectorView.setVisibility(View.GONE);
     }
 
     protected void onDismiss() {
@@ -458,8 +464,6 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         } else if (popupKey.codes[0] == CustomKeyboard.KEYCODE_SHIFT) {
             mIsLongPress = !mIsCapsLock;
 
-        } else if (popupKey.codes[0] == Keyboard.KEYCODE_DELETE) {
-            handleBackspace(true);
         }
     }
 
@@ -484,7 +488,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                 handleShift(!mKeyboardView.isShifted());
                 break;
             case Keyboard.KEYCODE_DELETE:
-                handleBackspace(false);
+                handleBackspace();
                 break;
             case Keyboard.KEYCODE_DONE:
                 handleDone();
@@ -497,6 +501,9 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                 break;
             case CustomKeyboard.KEYCODE_EMOJI:
                 handleEmojiInput();
+                break;
+            case CustomKeyboard.KEYCODE_DOMAIN:
+                handleDomain();
                 break;
             case ' ':
                 handleSpace();
@@ -637,7 +644,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mKeyboardView.setShifted(shifted || mIsCapsLock);
     }
 
-    private void handleBackspace(final boolean isLongPress) {
+    private void handleBackspace() {
         final InputConnection connection = mInputConnection;
         if (mComposingText.length() > 0) {
             CharSequence selectedText = mInputConnection.getSelectedText(0);
@@ -660,33 +667,26 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                 return;
             }
 
-            if (isLongPress) {
-                CharSequence currentText = connection.getExtractedText(new ExtractedTextRequest(), 0).text;
-                CharSequence beforeCursorText = connection.getTextBeforeCursor(currentText.length(), 0);
-                CharSequence afterCursorText = connection.getTextAfterCursor(currentText.length(), 0);
-                connection.deleteSurroundingText(beforeCursorText.length(), afterCursorText.length());
-            } else {
-                if (mCurrentKeyboard.usesTextOverride()) {
-                    String beforeText = getTextBeforeCursor(connection);
-                    String newBeforeText = mCurrentKeyboard.overrideBackspace(beforeText);
-                    if (newBeforeText != null) {
-                        // Replace whole before text
-                        connection.deleteSurroundingText(beforeText.length(), 0);
-                        connection.commitText(newBeforeText, 1);
-                        return;
-                    }
+            if (mCurrentKeyboard.usesTextOverride()) {
+                String beforeText = getTextBeforeCursor(connection);
+                String newBeforeText = mCurrentKeyboard.overrideBackspace(beforeText);
+                if (newBeforeText != null) {
+                    // Replace whole before text
+                    connection.deleteSurroundingText(beforeText.length(), 0);
+                    connection.commitText(newBeforeText, 1);
+                    return;
                 }
-                // Remove the character before the cursor.
-                connection.deleteSurroundingText(1, 0);
             }
+            // Remove the character before the cursor.
+            connection.deleteSurroundingText(1, 0);
         });
     }
 
     private void handleGlobeClick() {
         if (mLanguageSelectorView.getItems() == null || mLanguageSelectorView.getItems().size() == 0) {
-            ArrayList<LanguageSelectorView.Item> items = new ArrayList<>();
+            ArrayList<KeyboardSelectorView.Item> items = new ArrayList<>();
             for (KeyboardInterface keyboard: mKeyboards) {
-                items.add(new LanguageSelectorView.Item(keyboard.getKeyboardTitle(), keyboard));
+                items.add(new KeyboardSelectorView.Item(StringUtils.capitalize(keyboard.getKeyboardTitle()), keyboard));
             }
             mLanguageSelectorView.setItems(items);
         }
@@ -699,6 +699,17 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         final KeyboardInterface.CandidatesResult candidates = mCurrentKeyboard.getEmojiCandidates(mComposingText);
         setAutoCompletionVisible(candidates != null && candidates.words.size() > 0);
         mAutoCompletionView.setItems(candidates != null ? candidates.words : null);
+    }
+
+    private void handleDomain() {
+        ArrayList<KeyboardSelectorView.Item> items = new ArrayList<>();
+        for (String item: mCurrentKeyboard.getDomains()) {
+            items.add(new KeyboardSelectorView.Item(item, item));
+        }
+        mDomainSelectorView.setItems(items);
+
+        mDomainSelectorView.setVisibility(View.VISIBLE);
+        mPopupKeyboardLayer.setVisibility(View.VISIBLE);
     }
 
     private void handleLanguageChange(KeyboardInterface aKeyboard) {
@@ -731,6 +742,15 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
         String spaceText = mCurrentKeyboard.getSpaceKeyText(mComposingText).toUpperCase();
         mCurrentKeyboard.getAlphabeticKeyboard().setSpaceKeyLabel(spaceText);
+    }
+
+    private void handleDomainChange(KeyboardSelectorView.Item aItem) {
+        handleText(aItem.title);
+
+        disableShift(getSymbolsKeyboard());
+        handleShift(false);
+        hideOverlays();
+        updateCandidates();
     }
 
     private void disableShift(@NonNull CustomKeyboard keyboard) {
@@ -847,6 +867,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         }
         mIsInVoiceInput = true;
         TelemetryWrapper.voiceInputEvent();
+        GleanMetricsService.voiceInputEvent();
         mVoiceSearchWidget.show(CLEAR_FOCUS);
         mWidgetPlacement.visible = false;
         mWidgetManager.updateWidget(this);
@@ -1002,7 +1023,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
                 switch (keyCode) {
                     case KeyEvent.KEYCODE_DEL:
-                        handleBackspace(event.isLongPress());
+                        handleBackspace();
                         return true;
                     case KeyEvent.KEYCODE_ENTER:
                     case KeyEvent.KEYCODE_NUMPAD_ENTER:

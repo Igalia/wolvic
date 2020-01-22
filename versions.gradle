@@ -24,8 +24,15 @@ ext.deps = [:]
 def versions = [:]
 // GeckoView versions can be found here:
 // https://maven.mozilla.org/?prefix=maven2/org/mozilla/geckoview/
-versions.gecko_view = "72.0.20191104094118"
-versions.android_components = "19.0.1"
+versions.gecko_view = "74.0.20200107215758"
+versions.android_components = "21.0.0"
+// Note that android-components also depends on application-services,
+// and in fact is our main source of appservices-related functionality.
+// The version number below tracks the application-services version
+// that we depend on directly for the fenix-megazord (and for it's
+// forUnitTest variant), and it's important that it be kept in
+// sync with the version used by android-components above.
+versions.mozilla_appservices = "0.42.2"
 versions.mozilla_speech = "1.0.9"
 versions.openwnn = "1.3.7"
 versions.google_vr = "1.190.0"
@@ -35,6 +42,7 @@ versions.support = "1.0.0"
 versions.recyclerview = "1.1.0"
 versions.constraint_layout = "2.0.0-alpha2"
 versions.junit = "4.12"
+versions.atsl_core = "1.2.0"
 versions.atsl_runner = "1.1.0-alpha4"
 versions.atsl_rules = "1.1.0-alpha4"
 versions.espresso = "3.1.0-alpha4"
@@ -43,6 +51,11 @@ versions.kotlin = "1.3.31"
 versions.kotlin_coroutines = "1.2.1"
 versions.snakeyaml = "1.24"
 versions.gson = "2.8.5"
+versions.robolectric = "4.2.1"
+versions.work = "2.2.0"
+versions.telemetry = "22.0.0"
+ext.versions = versions
+
 def deps = [:]
 
 def gecko_view = [:]
@@ -64,7 +77,14 @@ android_components.concept_fetch = "org.mozilla.components:concept-fetch:$versio
 android_components.lib_fetch = "org.mozilla.components:lib-fetch-httpurlconnection:$versions.android_components"
 android_components.support_rustlog = "org.mozilla.components:support-rustlog:$versions.android_components"
 android_components.support_rusthttp = "org.mozilla.components:support-rusthttp:$versions.android_components"
+android_components.support_test = "org.mozilla.components:support-test:$versions.android_components"
 deps.android_components = android_components
+
+def app_services = [:]
+app_services.megazord = "org.mozilla.appservices:fenix-megazord:${versions.mozilla_appservices}"
+app_services.megazord_forUnitTests = "org.mozilla.appservices:fenix-megazord-forUnitTests:${versions.mozilla_appservices}"
+app_services.rustlog = "org.mozilla.appservices:rustlog:${versions.mozilla_appservices}"
+deps.app_services = app_services
 
 deps.mozilla_speech = "com.github.mozilla:mozillaspeechlibrary:$versions.mozilla_speech"
 
@@ -89,6 +109,7 @@ deps.support = support
 // TODO this should not be necessary at all, see Services.kt
 def work = [:]
 work.runtime = "androidx.work:work-runtime-ktx:$versions.work"
+work.testing = "androidx.work:work-testing:$versions.work"
 deps.work = work
 
 def room = [:]
@@ -111,6 +132,7 @@ espresso.intents = "androidx.test.espresso:espresso-intents:$versions.espresso"
 deps.espresso = espresso
 
 def atsl = [:]
+atsl.core = "androidx.test:core-ktx:$versions.atsl_core"
 atsl.runner = "androidx.test:runner:$versions.atsl_runner"
 atsl.rules = "androidx.test:rules:$versions.atsl_runner"
 deps.atsl = atsl
@@ -132,6 +154,10 @@ kotlin.coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$versions.kot
 kotlin.coroutines_jdk8 = "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$versions.kotlin_coroutines"
 deps.kotlin = kotlin
 
+def telemetry = [:]
+telemetry.glean_unittests = "org.mozilla.telemetry:glean-forUnitTests:$versions.telemetry"
+deps.telemetry = telemetry
+
 deps.constraint_layout = "androidx.constraintlayout:constraintlayout:$versions.constraint_layout"
 
 deps.junit = "junit:junit:$versions.junit"
@@ -143,6 +169,8 @@ deps.android_components_version = versions.android_components
 deps.snakeyaml = "org.yaml:snakeyaml:$versions.snakeyaml:android"
 
 deps.gson = "com.google.code.gson:gson:$versions.gson"
+
+deps.robolectric = "org.robolectric:robolectric:$versions.robolectric"
 
 ext.deps = deps
 

@@ -16,22 +16,13 @@
         <attr name="urlProtocolColor" format="color" />
         <attr name="urlWebsiteColor" format="color" />
         <attr name="scrollbarStyle" format="color" />
-
     </declare-styleable>
-
 
     <style name="ShadowTextViewStyle" parent="android:Widget.TextView">
         <item name="android:shadowColor">@color/text_shadow</item>
         <item name="android:shadowDx">2</item>
         <item name="android:shadowDy">2</item>
         <item name="android:shadowRadius">7</item>
-    </style>
-
-    <style name="ShadowLightTextViewStyle" parent="android:Widget.TextView">
-        <item name="android:shadowColor">@color/text_shadow_light</item>
-        <item name="android:shadowDx">2</item>
-        <item name="android:shadowDy">2</item>
-        <item name="android:shadowRadius">4</item>
     </style>
 
     <style name="radioButtonTheme">
@@ -183,46 +174,46 @@
 
     <style name="urlBarIconTheme">
         <item name="android:background">@drawable/url_button</item>
-        <item name="tintColorList">@drawable/url_button_icon_color</item>
         <item name="android:layout_width">@dimen/url_bar_item_width</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:scaleType">centerInside</item>
         <item name="android:gravity">center</item>
+        <item name="privateModeBackground">@drawable/url_button_private</item>
+        <item name="tintColorList">@drawable/main_button_icon_color</item>
+        <item name="privateModeTintColorList">@drawable/main_button_icon_color_private</item>
+        <item name="activeModeTintColorList">@drawable/main_button_icon_color_active</item>
+        <item name="notificationModeTintColorList">@drawable/main_button_icon_color_notification</item>
     </style>
 
     <style name="urlBarIconThemeStart">
         <item name="android:background">@drawable/url_button_start</item>
-        <item name="tintColorList">@drawable/url_button_icon_color</item>
         <item name="android:layout_width">@dimen/url_bar_first_item_width</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:scaleType">centerInside</item>
         <item name="android:gravity">center</item>
+        <item name="privateModeBackground">@drawable/url_button_start_private</item>
+        <item name="tintColorList">@drawable/main_button_icon_color</item>
+        <item name="privateModeTintColorList">@drawable/main_button_icon_color_private</item>
+        <item name="activeModeTintColorList">@drawable/main_button_icon_color_active</item>
+        <item name="notificationModeTintColorList">@drawable/main_button_icon_color_notification</item>
     </style>
 
     <style name="urlBarIconThemeEnd">
         <item name="android:background">@drawable/url_button_end</item>
-        <item name="tintColorList">@drawable/url_button_icon_color</item>
         <item name="android:layout_width">@dimen/url_bar_last_item_width</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:scaleType">centerInside</item>
         <item name="android:gravity">center</item>
+        <item name="privateModeBackground">@drawable/url_button_end_private</item>
+        <item name="tintColorList">@drawable/main_button_icon_color</item>
+        <item name="privateModeTintColorList">@drawable/main_button_icon_color_private</item>
+        <item name="activeModeTintColorList">@drawable/main_button_icon_color_active</item>
+        <item name="notificationModeTintColorList">@drawable/main_button_icon_color_notification</item>
     </style>
 
     <style name="scrollbar">
         <item name="android:scrollbarAlwaysDrawVerticalTrack">true</item>
         <item name="android:scrollbarStyle">outsideOverlay</item>
-        <item name="android:scrollbars">vertical</item>
-        <item name="android:fadeScrollbars">false</item>
-        <item name="android:scrollbarThumbVertical">@drawable/scrollbar_thumb</item>
-        <item name="android:fastScrollEnabled">true</item>
-        <item name="android:fastScrollAlwaysVisible">true</item>
-        <item name="android:fadingEdgeLength">60dp</item>
-        <item name="android:requiresFadingEdge">vertical</item>
-    </style>
-
-    <style name="contentScrollbar">
-        <item name="android:scrollbarAlwaysDrawVerticalTrack">true</item>
-        <item name="android:scrollbarStyle">outsideInset</item>
         <item name="android:scrollbars">vertical</item>
         <item name="android:fadeScrollbars">false</item>
         <item name="android:scrollbarThumbVertical">@drawable/scrollbar_thumb</item>
@@ -271,8 +262,8 @@
     </style>
 
     <style name="settingsButton">
-        <item name="android:layout_width">@dimen/developer_options_button_width</item>
-        <item name="android:layout_height">25dp</item>
+        <item name="android:layout_width">@dimen/options_button_width</item>
+        <item name="android:layout_height">@dimen/options_button_height</item>
         <item name="android:layout_gravity">center</item>
         <item name="android:gravity">center</item>
         <item name="android:text">@string/developer_options_edit</item>
@@ -312,6 +303,15 @@
         <item name="android:textOn">""</item>
         <item name="android:thumb">@drawable/switch_thumb</item>
         <item name="android:track">@drawable/switch_track</item>
+    </style>
+
+    <style name="checkbox">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:button">@drawable/checkbox</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:textSize">@dimen/text_medium_size</item>
+        <item name="android:paddingStart">5dp</item>
     </style>
 
     <style name="settingsHelpButton">
@@ -386,29 +386,6 @@
         <item name="android:textColor">@color/fog</item>
         <item name="android:textSize">@dimen/text_medium_size</item>
         <item name="android:linksClickable">true</item>
-    </style>
-
-    <style name="dialogButtonRegular">
-        <item name="android:layout_width">@dimen/dialog_button_width</item>
-        <item name="android:layout_height">36dp</item>
-        <item name="android:background">@drawable/dialog_regular_button_background</item>
-        <item name="android:fontFamily">sans-serif</item>
-        <item name="android:scaleType">fitCenter</item>
-        <item name="android:textSize">14dip</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@drawable/dialog_button_text_color</item>
-    </style>
-
-    <style name="dialogButtonWide" parent="dialogButtonRegular">
-        <item name="android:layout_width">@dimen/dialog_button_wide_width</item>
-    </style>
-
-    <style name="dialogButtonHighlighted" parent="dialogButtonRegular">
-        <item name="android:background">@drawable/dialog_highlighted_button_background</item>
-    </style>
-
-    <style name="dialogButtonWideHighlighted" parent="dialogButtonWide">
-        <item name="android:background">@drawable/dialog_highlighted_button_background</item>
     </style>
 
     <style name="FxR.Dark" parent="@android:style/Theme.Black.NoTitleBar.Fullscreen">

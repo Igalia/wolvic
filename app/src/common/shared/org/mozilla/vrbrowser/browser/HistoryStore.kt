@@ -23,7 +23,7 @@ class HistoryStore constructor(val context: Context) {
     private val LOGTAG = SystemUtils.createLogtag(HistoryStore::class.java)
 
     private var listeners = ArrayList<HistoryListener>()
-    private val storage = (context.applicationContext as VRBrowserApplication).places.history
+    private var storage = (context.applicationContext as VRBrowserApplication).places.history
 
     // Bookmarks might have changed during sync, so notify our listeners.
     private val syncStatusObserver = object : SyncStatusObserver {
@@ -61,6 +61,11 @@ class HistoryStore constructor(val context: Context) {
         listeners.clear()
     }
 
+    internal fun updateStorage() {
+        storage = (context.applicationContext as VRBrowserApplication).places.history
+        notifyListeners()
+    }
+
     fun getHistory(): CompletableFuture<List<String>?> = GlobalScope.future {
         storage.getVisited()
     }
@@ -68,14 +73,22 @@ class HistoryStore constructor(val context: Context) {
     fun getDetailedHistory(): CompletableFuture<List<VisitInfo>?> = GlobalScope.future {
         storage.getDetailedVisits(0, excludeTypes = listOf(
                 VisitType.NOT_A_VISIT,
+                VisitType.DOWNLOAD,
                 VisitType.REDIRECT_TEMPORARY,
+                VisitType.RELOAD,
+                VisitType.EMBED,
+                VisitType.FRAMED_LINK,
                 VisitType.REDIRECT_PERMANENT))
     }
 
     fun getVisitsPaginated(offset: Long, count: Long): CompletableFuture<List<VisitInfo>?> = GlobalScope.future {
         storage.getVisitsPaginated(offset, count, excludeTypes = listOf(
                 VisitType.NOT_A_VISIT,
+                VisitType.DOWNLOAD,
                 VisitType.REDIRECT_TEMPORARY,
+                VisitType.RELOAD,
+                VisitType.EMBED,
+                VisitType.FRAMED_LINK,
                 VisitType.REDIRECT_PERMANENT))
     }
 

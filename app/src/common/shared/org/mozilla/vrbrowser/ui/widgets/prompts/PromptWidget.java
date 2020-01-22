@@ -7,13 +7,15 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.UIDialog;
 
+/**
+ * Base widget used for the browser triggered prompts: alert, confirm, prompt, auth and select
+ */
 public class PromptWidget extends UIDialog {
 
     public interface PromptDelegate {
@@ -38,7 +40,7 @@ public class PromptWidget extends UIDialog {
         super(aContext, aAttrs, aDefStyle);
     }
 
-    public void setPromptDelegate(@NonNull PromptDelegate delegate) {
+    public void setPromptDelegate(@Nullable PromptDelegate delegate) {
         mPromptDelegate = delegate;
     }
 
@@ -63,7 +65,7 @@ public class PromptWidget extends UIDialog {
     @Override
     protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
         aPlacement.visible = false;
-        aPlacement.width =  WidgetPlacement.pixelDimension(getContext(), R.dimen.browser_width_pixels)/2;
+        aPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.prompt_width);
         mMaxHeight = WidgetPlacement.dpDimension(getContext(), R.dimen.prompt_height);
         aPlacement.height = mMaxHeight;
         aPlacement.parentAnchorX = 0.5f;
@@ -73,7 +75,6 @@ public class PromptWidget extends UIDialog {
         aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.browser_children_z_distance);
     }
 
-
     @Override
     public void show(@ShowFlags int aShowFlags) {
         mLayout.measure(View.MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
@@ -82,8 +83,6 @@ public class PromptWidget extends UIDialog {
                 (int)(mLayout.getMeasuredHeight()/mWidgetPlacement.density) :
                 getMinHeight();
         super.show(aShowFlags);
-
-        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
 
         ViewTreeObserver viewTreeObserver = mLayout.getViewTreeObserver();
         if (viewTreeObserver.isAlive()) {
@@ -98,11 +97,6 @@ public class PromptWidget extends UIDialog {
         }
     }
 
-    public void hide(@HideFlags int aHideFlags) {
-        super.hide(aHideFlags);
-        mWidgetManager.popWorldBrightness(this);
-    }
-
     @Override
     protected void onDismiss() {
         hide(REMOVE_WIDGET);
@@ -113,14 +107,6 @@ public class PromptWidget extends UIDialog {
 
         if (mDelegate != null) {
             mDelegate.onDismiss();
-        }
-    }
-
-    // WidgetManagerDelegate.FocusChangeListener
-    @Override
-    public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-        if (oldFocus == this && isVisible() && findViewById(newFocus.getId()) == null) {
-            onDismiss();
         }
     }
 

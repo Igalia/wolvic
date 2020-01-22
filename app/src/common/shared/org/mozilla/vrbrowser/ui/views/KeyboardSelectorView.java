@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class LanguageSelectorView extends FrameLayout {
+public class KeyboardSelectorView extends FrameLayout {
     public static class Item {
         public final String title;
         public final Object tag;
@@ -27,28 +28,29 @@ public class LanguageSelectorView extends FrameLayout {
     }
 
     public interface Delegate {
-        void onLanguageClick(Item aItem);
+        void onItemClick(Item aItem);
     }
 
     private GridLayout mLangRowContainer;
     private Delegate mDelegate;
     private List<Item> mItems;
     private List<UITextButton> mButtons = new ArrayList<>();
-    private int mFirstColItemWidth;
-    private int mSecondColItemWidth;
+    private int mDomainColItemWidth;
+    private int mNarrowColItemWidth;
+    private int mWideColItemWidth;
     private static final int kMaxItemsPerColumn = 4;
 
-    public LanguageSelectorView(@NonNull Context context) {
+    public KeyboardSelectorView(@NonNull Context context) {
         super(context);
         initialize();
     }
 
-    public LanguageSelectorView(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public KeyboardSelectorView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         initialize();
     }
 
-    public LanguageSelectorView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public KeyboardSelectorView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initialize();
     }
@@ -56,8 +58,9 @@ public class LanguageSelectorView extends FrameLayout {
     private void initialize() {
         inflate(getContext(), R.layout.language_selection, this);
         mLangRowContainer = findViewById(R.id.langRowContainer);
-        mFirstColItemWidth = WidgetPlacement.pixelDimension(getContext(), R.dimen.lang_selector_first_col_item_width);
-        mSecondColItemWidth = WidgetPlacement.pixelDimension(getContext(), R.dimen.lang_selector_second_col_item_width);
+        mDomainColItemWidth = WidgetPlacement.pixelDimension(getContext(), R.dimen.lang_selector_domain_col_item_width);
+        mNarrowColItemWidth = WidgetPlacement.pixelDimension(getContext(), R.dimen.lang_selector_narrow_col_item_width);
+        mWideColItemWidth = WidgetPlacement.pixelDimension(getContext(), R.dimen.lang_selector_wide_col_item_width);
     }
 
     public void setDelegate(Delegate aDelegate) {
@@ -73,14 +76,34 @@ public class LanguageSelectorView extends FrameLayout {
         mLangRowContainer.setColumnCount(columns);
         mLangRowContainer.setRowCount(rows);
 
-        int index = 0;
-        for (Item item: aItems) {
+        int[] columnWidth = new int[columns];
+        for (int i=0; i<aItems.size(); i++) {
             GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-            params.width = index < kMaxItemsPerColumn ? mFirstColItemWidth : mSecondColItemWidth;
-            UITextButton button = createLangButton(item);
+            params.width = GridLayout.LayoutParams.WRAP_CONTENT;
+            UITextButton button = createItemButton(aItems.get(i));
+            int padding = button.getPaddingStart() + button.getPaddingEnd();
+            float textWidth = button.getPaint().measureText(aItems.get(i).title) + padding;
+            int column = i/kMaxItemsPerColumn;
+            int width;
+            if (textWidth < mDomainColItemWidth) {
+                width = mDomainColItemWidth;
+            } else if (textWidth < mNarrowColItemWidth) {
+                width = mNarrowColItemWidth;
+            } else  {
+                width = mWideColItemWidth;
+            }
+            if (columnWidth[column] < width) {
+                columnWidth[column] = width;
+            }
             mLangRowContainer.addView(button, params);
             mButtons.add(button);
-            ++index;
+        }
+
+        // Assign widest row width to the whole column rows
+        for (int i=0; i<aItems.size(); i++) {
+            int column = i/kMaxItemsPerColumn;
+            UITextButton button = (UITextButton)mLangRowContainer.getChildAt(i);
+            button.getLayoutParams().width = columnWidth[column];
         }
     }
 
@@ -98,11 +121,11 @@ public class LanguageSelectorView extends FrameLayout {
     private OnClickListener clickHandler = v -> {
         UITextButton button = (UITextButton) v;
         if (mDelegate != null) {
-            mDelegate.onLanguageClick((Item)button.getTag());
+            mDelegate.onItemClick((Item)button.getTag());
         }
     };
 
-    private UITextButton createLangButton(Item aItem) {
+    private UITextButton createItemButton(Item aItem) {
         UITextButton button = new UITextButton(getContext());
         button.setTintColorList(R.drawable.lang_selector_button_color);
         button.setBackground(getContext().getDrawable(R.drawable.lang_selector_button_background));

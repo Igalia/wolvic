@@ -45,6 +45,9 @@ struct DeviceDelegateWaveVR::State {
     int32_t gripPressedCount;
     vrb::Matrix transform;
     ElbowModel::HandEnum hand;
+    uint64_t inputFrameID;
+    float remainingVibrateTime;
+    double lastHapticUpdateTimeStamp;
     Controller()
         : index(-1)
           , type(WVR_DeviceType_Controller_Right)
@@ -55,6 +58,9 @@ struct DeviceDelegateWaveVR::State {
           , gripPressedCount(0)
           , transform(vrb::Matrix::Identity())
           , hand(ElbowModel::HandEnum::Right)
+          , inputFrameID(0)
+          , remainingVibrateTime(0.0f)
+          , lastHapticUpdateTimeStamp(0.0f)
     {}
   };
 
@@ -259,6 +265,7 @@ struct DeviceDelegateWaveVR::State {
     }
     delegate->CreateController(aController.index, aController.is6DoF ? 1 : 0, aController.is6DoF ? "HTC Vive Focus Plus Controller" : "HTC Vive Focus Controller", transform);
     delegate->SetLeftHanded(aController.index, aController.hand == ElbowModel::HandEnum::Left);
+    delegate->SetHapticCount(aController.index, 1);
     aController.created = true;
     aController.enabled = false;
   }
@@ -350,6 +357,62 @@ struct DeviceDelegateWaveVR::State {
         delegate->EndTouch(controller.index);
       }
       delegate->SetAxes(controller.index, immersiveAxes, kNumAxes);
+
+      UpdateHaptics(controller);
+    }
+  }
+
+  void UpdateHaptics(Controller& controller) {
+    vrb::RenderContextPtr renderContext = context.lock();
+    if (!renderContext) {
+      return;
+    }
+    if (!delegate) {
+      return;
+    }
+
+    uint64_t inputFrameID = 0;
+    float pulseDuration = 0.0f, pulseIntensity = 0.0f;
+    delegate->GetHapticFeedback(controller.index, inputFrameID, pulseDuration, pulseIntensity);
+    if (inputFrameID > 0 && pulseIntensity > 0.0f && pulseDuration > 0) {
+      if (controller.inputFrameID != inputFrameID) {
+        // When there is a new input frame id from haptic vibration,
+        // that means we start a new session for a vibration.
+        controller.inputFrameID = inputFrameID;
+        controller.remainingVibrateTime = pulseDuration;
+        controller.lastHapticUpdateTimeStamp = renderContext->GetTimestamp();
+      } else {
+        // We are still running the previous vibration.
+        // So, it needs to reduce the delta time from the last vibration.
+        const double timeStamp = renderContext->GetTimestamp();
+        controller.remainingVibrateTime -= (timeStamp - controller.lastHapticUpdateTimeStamp);
+        controller.lastHapticUpdateTimeStamp = timeStamp;
+      }
+
+      if (controller.remainingVibrateTime > 0.0f && renderMode == device::RenderMode::Immersive) {
+        // THe duration time unit needs to be transformed from milliseconds to microseconds.
+        // The gamepad extensions API does not yet have independent control
+        // of frequency and intensity. It only has vibration value (0.0 ~ 1.0).
+        // In this WaveVR SDK, the value makes more sense to be intensity because frequency can't
+        // < 1.0 here.
+        int intensity = ceil(pulseIntensity * 5);
+        intensity = intensity <= 5 ? intensity : 5;
+        WVR_TriggerVibration(controller.type, WVR_InputId_Max, controller.remainingVibrateTime * 1000.0f,
+                             1, WVR_Intensity(intensity));
+      } else {
+        // The remaining time is zero or exiting the immersive mode, stop the vibration.
+#if !defined(__arm__) // It will crash at WaveVR SDK arm32, let's skip it.
+        WVR_TriggerVibration(controller.type, WVR_InputId_Max, 0, 0, WVR_Intensity_Normal);
+#endif
+        controller.remainingVibrateTime = 0.0f;
+      }
+    } else if (controller.remainingVibrateTime > 0.0f) {
+      // While the haptic feedback is terminated from the client side,
+      // but it still have remaining time, we need to ask for stopping vibration.
+#if !defined(__arm__) // It will crash at WaveVR SDK arm32, let's skip it.
+      WVR_TriggerVibration(controller.type, WVR_InputId_Max, 0, 0, WVR_Intensity_Normal);
+#endif
+      controller.remainingVibrateTime = 0.0f;
     }
   }
 };
@@ -398,7 +461,8 @@ DeviceDelegateWaveVR::RegisterImmersiveDisplay(ImmersiveDisplayPtr aDisplay) {
   }
 
   m.immersiveDisplay->SetDeviceName("Wave");
-  device::CapabilityFlags flags = device::Orientation | device::Present | device::StageParameters;
+  device::CapabilityFlags flags = device::Orientation | device::Present | device::StageParameters |
+                                  device::InlineSession | device::ImmersiveVRSession;
 
   if (WVR_GetDegreeOfFreedom(WVR_DeviceType_HMD) == WVR_NumDoF_6DoF) {
     flags |= device::Position;

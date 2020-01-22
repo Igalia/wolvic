@@ -10,7 +10,7 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
-import android.graphics.drawable.Drawable;
+import android.graphics.drawable.BitmapDrawable;
 import android.text.Html;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -24,8 +24,6 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 
-import org.jetbrains.annotations.NotNull;
-import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.R;
@@ -36,18 +34,17 @@ import org.mozilla.vrbrowser.browser.Accounts;
 import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.databinding.SettingsBinding;
+import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.RestartDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.UIDialog;
-import org.mozilla.vrbrowser.ui.widgets.prompts.AlertPromptWidget;
 import org.mozilla.vrbrowser.utils.StringUtils;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.net.URLEncoder;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
 import mozilla.components.concept.sync.AccountObserver;
@@ -55,7 +52,7 @@ import mozilla.components.concept.sync.AuthType;
 import mozilla.components.concept.sync.OAuthAccount;
 import mozilla.components.concept.sync.Profile;
 
-public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.WorldClickListener, SettingsView.Delegate {
+public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
 
     public enum SettingDialog {
         MAIN, LANGUAGE, DISPLAY, PRIVACY, DEVELOPER, FXA, ENVIRONMENT, CONTROLLER
@@ -66,8 +63,7 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
     private SettingsView mCurrentView;
     private int mViewMarginH;
     private int mViewMarginV;
-    private int mRestartDialogHandle = -1;
-    private int mAlertDialogHandle = -1;
+    private RestartDialogWidget mRestartDialog;
     private Accounts mAccounts;
     private Executor mUIThreadExecutor;
 
@@ -106,8 +102,6 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
 
         // Inflate this data binding layout
         mBinding = DataBindingUtil.inflate(inflater, R.layout.settings, this, true);
-
-        mWidgetManager.addWorldClickListener(this);
 
         mAccounts = ((VRBrowserApplication)getContext().getApplicationContext()).getAccounts();
         mAccounts.addAccountListener(mAccountObserver);
@@ -183,7 +177,7 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
         });
 
         mBinding.surveyLink.setOnClickListener(v -> {
-            mWidgetManager.getFocusedWindow().getSession().loadUri(getResources().getString(R.string.survey_link));
+            mWidgetManager.openNewTabForeground(getResources().getString(R.string.survey_link));
             exitWholeSettings();
         });
 
@@ -191,7 +185,7 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
-            SessionStore.get().getActiveSession().loadUri(getContext().getString(R.string.help_url));
+            mWidgetManager.openNewTabForeground(getContext().getString(R.string.help_url));
             onDismiss();
         });
 
@@ -225,7 +219,6 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
 
     @Override
     public void releaseWidget() {
-        mWidgetManager.removeWorldClickListener(this);
         mAccounts.removeAccountListener(mAccountObserver);
 
         super.releaseWidget();
@@ -271,7 +264,7 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
             Log.e(LOGTAG, "Cannot encode URL");
         }
 
-        session.loadUri(getContext().getString(R.string.private_report_url, url));
+        mWidgetManager.openNewTabForeground(getContext().getString(R.string.private_report_url, url));
 
         onDismiss();
     }
@@ -280,19 +273,33 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
         switch(mAccounts.getAccountStatus()) {
             case SIGNED_OUT:
             case NEEDS_RECONNECT:
-                hide(REMOVE_WIDGET);
-                mAccounts.getAuthenticationUrlAsync().thenAcceptAsync((url) -> {
-                    if (url != null) {
-                        mAccounts.setLoginOrigin(Accounts.LoginOrigin.SETTINGS);
-                        WidgetManagerDelegate widgetManager = ((VRBrowserActivity)getContext());
-                        widgetManager.openNewTabForeground(url);
-                        widgetManager.getFocusedWindow().getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
+                if (mAccounts.getAccountStatus() == Accounts.AccountStatus.SIGNED_IN) {
+                    mAccounts.logoutAsync();
+
+                } else {
+                    hide(REMOVE_WIDGET);
+
+                    CompletableFuture<String> result = mAccounts.authUrlAsync();
+                    if (result != null) {
+                        result.thenAcceptAsync((url) -> {
+                            if (url == null) {
+                                mAccounts.logoutAsync();
+
+                            } else {
+                                mAccounts.setLoginOrigin(Accounts.LoginOrigin.SETTINGS);
+                                mWidgetManager.openNewTabForeground(url);
+                                WidgetManagerDelegate widgetManager = ((VRBrowserActivity)getContext());
+                                widgetManager.getFocusedWindow().getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
+                                GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.FXA_LOGIN);
+                            }
+
+                        }, mUIThreadExecutor).exceptionally(throwable -> {
+                            Log.d(LOGTAG, "Error getting the authentication URL: " + throwable.getLocalizedMessage());
+                            throwable.printStackTrace();
+                            return null;
+                        });
                     }
-                }, mUIThreadExecutor).exceptionally(throwable -> {
-                    Log.d(LOGTAG, "Error getting the authentication URL: " + throwable.getLocalizedMessage());
-                    throwable.printStackTrace();
-                    return null;
-                });
+                }
                 break;
 
             case SIGNED_IN:
@@ -322,12 +329,12 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
     private AccountObserver mAccountObserver = new AccountObserver() {
 
         @Override
-        public void onAuthenticated(@NotNull OAuthAccount oAuthAccount, @NotNull AuthType authType) {
+        public void onAuthenticated(@NonNull OAuthAccount oAuthAccount, @NonNull AuthType authType) {
 
         }
 
         @Override
-        public void onProfileUpdated(@NotNull Profile profile) {
+        public void onProfileUpdated(@NonNull Profile profile) {
             updateProfile(profile);
         }
 
@@ -343,18 +350,9 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
     };
 
     private void updateProfile(Profile profile) {
-        if (profile != null) {
-            ThreadUtils.postToBackgroundThread(() -> {
-                try {
-                    URL url = new URL(profile.getAvatar().getUrl());
-                    Drawable picture = Drawable.createFromStream(url.openStream(), "src");
-                    post(() -> mBinding.fxaButton.setImageDrawable(picture));
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-
-                }
-            });
+        BitmapDrawable profilePicture = mAccounts.getProfilePicture();
+        if (profile != null && profilePicture != null) {
+            mBinding.fxaButton.setImageDrawable(profilePicture);
 
         } else {
             mBinding.fxaButton.setImageDrawable(getContext().getDrawable(R.drawable.ic_icon_settings_account));
@@ -430,18 +428,10 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
         showView(new FxAAccountOptionsView(getContext(), mWidgetManager));
     }
 
-    // WindowManagerDelegate.FocusChangeListener
-    @Override
-    public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-        if (mCurrentView != null) {
-            mCurrentView.onGlobalFocusChanged(oldFocus, newFocus);
-        } else if (oldFocus == this && isVisible()) {
-            onDismiss();
-        }
-    }
-
     public void show(@ShowFlags int aShowFlags, @NonNull SettingDialog settingDialog) {
-        show(aShowFlags);
+        if (!isVisible()) {
+            show(aShowFlags);
+        }
 
         switch (settingDialog) {
             case LANGUAGE:
@@ -472,22 +462,7 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
     public void show(@ShowFlags int aShowFlags) {
         super.show(aShowFlags);
 
-        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
-
         updateCurrentAccountState();
-    }
-
-    @Override
-    public void hide(@HideFlags int aHideFlags) {
-        super.hide(aHideFlags);
-
-        mWidgetManager.popWorldBrightness(this);
-    }
-
-    // WidgetManagerDelegate.WorldClickListener
-    @Override
-    public void onWorldClick() {
-        onDismiss();
     }
 
     // SettingsView.Delegate
@@ -518,34 +493,16 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
 
     @Override
     public void showRestartDialog() {
-        hide(UIWidget.REMOVE_WIDGET);
-
-        UIWidget widget = getChild(mRestartDialogHandle);
-        if (widget == null) {
-            widget = createChild(RestartDialogWidget.class, false);
-            mRestartDialogHandle = widget.getHandle();
-            widget.setDelegate(() -> show(REQUEST_FOCUS));
+        if (mRestartDialog == null) {
+            mRestartDialog = new RestartDialogWidget(getContext());
         }
 
-        widget.show(REQUEST_FOCUS);
+        mRestartDialog.show(REQUEST_FOCUS);
     }
 
     @Override
     public void showAlert(String aTitle, String aMessage) {
-        hide(UIWidget.KEEP_WIDGET);
-
-        AlertPromptWidget widget = getChild(mAlertDialogHandle);
-        if (widget == null) {
-            widget = createChild(AlertPromptWidget.class, false);
-            mAlertDialogHandle = widget.getHandle();
-            widget.setDelegate(() -> show(REQUEST_FOCUS));
-        }
-        widget.getPlacement().translationZ = 0;
-        widget.getPlacement().parentHandle = mHandle;
-        widget.setTitle(aTitle);
-        widget.setMessage(aMessage);
-
-        widget.show(REQUEST_FOCUS);
+        mWidgetManager.getFocusedWindow().showAlert(aTitle, aMessage, null);
     }
 
     private boolean isLanguagesSubView(View view) {
@@ -559,7 +516,7 @@ public class SettingsWidget extends UIDialog implements WidgetManagerDelegate.Wo
     }
 
     private boolean isPrivacySubView(View view) {
-        if (view instanceof AllowedPopUpsOptionsView) {
+        if (view instanceof PopUpExceptionsOptionsView) {
             return true;
         }
 

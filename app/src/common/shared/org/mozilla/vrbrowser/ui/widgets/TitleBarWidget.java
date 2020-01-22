@@ -167,7 +167,8 @@ public class TitleBarWidget extends UIWidget implements WidgetManagerDelegate.Up
     }
 
     public void setIsInsecure(boolean aIsInsecure) {
-        if (mAttachedWindow.getSession().getCurrentUri() != null &&
+        if (mAttachedWindow != null && mAttachedWindow.getSession() != null &&
+                mAttachedWindow.getSession().getCurrentUri() != null &&
                 !(mAttachedWindow.getSession().getCurrentUri().startsWith("data") &&
                 mAttachedWindow.getSession().isPrivateMode())) {
             mBinding.insecureIcon.setVisibility(aIsInsecure ? View.VISIBLE : View.GONE);
@@ -182,7 +183,7 @@ public class TitleBarWidget extends UIWidget implements WidgetManagerDelegate.Up
         if (mMedia != null) {
             mMedia.removeMediaListener(mMediaDelegate);
         }
-        if (available) {
+        if (available && mAttachedWindow != null && mAttachedWindow.getSession() != null) {
             mMedia = mAttachedWindow.getSession().getFullScreenVideo();
             if (mMedia != null) {
                 mMedia.addMediaListener(mMediaDelegate);
@@ -192,7 +193,15 @@ public class TitleBarWidget extends UIWidget implements WidgetManagerDelegate.Up
                 }
             }
         } else {
+            mMedia = null;
             mBinding.setIsMediaAvailable(false);
+        }
+    }
+
+    public void updateMediaStatus() {
+        if (mMedia != null) {
+            mBinding.setIsMediaAvailable(mMedia.isPlayed());
+            mBinding.setIsMediaPlaying(mMedia.isPlaying());
         }
     }
 

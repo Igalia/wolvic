@@ -6,141 +6,83 @@
 package org.mozilla.vrbrowser.ui.widgets.dialogs;
 
 import android.content.Context;
-import android.util.AttributeSet;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.audio.AudioEngine;
-import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.browser.SettingsStore;
-import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
-import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
+import org.mozilla.vrbrowser.utils.SystemUtils;
 
-public class CrashDialogWidget extends UIDialog {
+import java.util.ArrayList;
 
-    public interface CrashDialogDelegate {
-        void onSendData();
-        default void onDoNotSendData() {}
-    }
+public class CrashDialogWidget extends PromptDialogWidget {
 
-    private Button mLearnMoreButton;
-    private Button mDoNotSendButton;
-    private Button mSendDataButton;
-    private CheckBox mSendDataCheckBox;
-    private AudioEngine mAudio;
-    private CrashDialogDelegate mCrashDialogDelegate;
-    private TextView mCrashMessage;
+    private String mDumpFile;
+    private String mExtraFile;
+    private ArrayList<String> mFiles;
 
-    public CrashDialogWidget(Context aContext) {
+    public CrashDialogWidget(@NonNull Context aContext, @NonNull String dumpFile, @NonNull String extraFile) {
         super(aContext);
+
+        mDumpFile = dumpFile;
+        mExtraFile = extraFile;
+
         initialize(aContext);
     }
 
-    public CrashDialogWidget(Context aContext, AttributeSet aAttrs) {
-        super(aContext, aAttrs);
+    public CrashDialogWidget(@NonNull Context aContext, @NonNull ArrayList<String> files) {
+        super(aContext);
+
+        mFiles = files;
+
         initialize(aContext);
     }
 
-    public CrashDialogWidget(Context aContext, AttributeSet aAttrs, int aDefStyle) {
-        super(aContext, aAttrs, aDefStyle);
-        initialize(aContext);
-    }
+    @Override
+    protected void initialize(Context aContext) {
+        super.initialize(aContext);
 
-    private void initialize(Context aContext) {
-        inflate(aContext, R.layout.crash_dialog, this);
+        setButtons(new int[] {
+                R.string.do_not_sent_button,
+                R.string.send_data_button
+        });
+        setButtonsDelegate(index -> {
+            if (index == PromptDialogWidget.NEGATIVE) {
+                if (mFiles != null) {
+                    SystemUtils.clearCrashFiles(getContext(), mFiles);
+                }
+                 onDismiss();
 
-        mWidgetManager.addFocusChangeListener(this);
+            } else if (index == PromptDialogWidget.POSITIVE) {
+                if (mFiles != null) {
+                    SystemUtils.postCrashFiles(getContext(), mFiles);
 
-        mLearnMoreButton = findViewById(R.id.learnMoreButton);
-        mDoNotSendButton = findViewById(R.id.dontSendButton);
-        mSendDataButton = findViewById(R.id.sendDataButton);
-        mSendDataCheckBox = findViewById(R.id.crashSendDataCheckbox);
-        mCrashMessage = findViewById(R.id.crashMessage);
+                } else {
+                    SystemUtils.postCrashFiles(getContext(), mDumpFile, mExtraFile);
+                }
 
-        mLearnMoreButton.setOnClickListener(view -> {
-            if (mAudio != null) {
-                mAudio.playSound(AudioEngine.Sound.CLICK);
+                SettingsStore.getInstance(getContext()).setCrashReportingEnabled(mBinding.checkbox.isChecked());
+
+                onDismiss();
             }
+        });
 
-            SessionStore.get().getActiveSession().loadUri(getContext().getString(R.string.crash_dialog_learn_more_url));
+        setDescriptionVisible(false);
 
+        setIcon(R.drawable.sad_fox);
+        setTitle(R.string.crash_dialog_heading);
+        setBody(getContext().getString(R.string.crash_dialog_message, getContext().getString(R.string.app_name)));
+        setCheckboxText(R.string.crash_dialog_send_data);
+        setLinkDelegate(() -> {
+            mWidgetManager.openNewTabForeground(getContext().getString(R.string.crash_dialog_learn_more_url));
             onDismiss();
         });
-
-        mDoNotSendButton.setOnClickListener(view -> {
-            if (mAudio != null) {
-                mAudio.playSound(AudioEngine.Sound.CLICK);
-            }
-
-            if(mCrashDialogDelegate != null) {
-                mCrashDialogDelegate.onDoNotSendData();
-            }
-            onDismiss();
-        });
-
-        mSendDataButton.setOnClickListener(view -> {
-            if (mAudio != null) {
-                mAudio.playSound(AudioEngine.Sound.CLICK);
-            }
-
-            hide(REMOVE_WIDGET);
-
-            if(mCrashDialogDelegate != null) {
-                mCrashDialogDelegate.onSendData();
-            }
-
-            SettingsStore.getInstance(getContext()).setCrashReportingEnabled(mSendDataCheckBox.isChecked());
-        });
-
-        mSendDataCheckBox.setChecked(SettingsStore.getInstance(getContext()).isCrashReportingEnabled());
-        mSendDataCheckBox.setOnCheckedChangeListener((compoundButton, b) -> {
-            if (mAudio != null) {
-                mAudio.playSound(AudioEngine.Sound.CLICK);
-            }
-        });
-
-        mCrashMessage.setText(getContext().getString(R.string.crash_dialog_message, getContext().getString(R.string.app_name)));
-
-        mAudio = AudioEngine.fromContext(aContext);
     }
 
     @Override
-    public void releaseWidget() {
-        mWidgetManager.removeFocusChangeListener(this);
+    public void show(int aShowFlags) {
+        mBinding.checkbox.setChecked(false);
 
-        super.releaseWidget();
-    }
-
-    @Override
-    protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
-        aPlacement.visible = false;
-        aPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.crash_dialog_width);
-        aPlacement.height = WidgetPlacement.dpDimension(getContext(), R.dimen.crash_dialog_width);
-        aPlacement.parentAnchorX = 0.5f;
-        aPlacement.parentAnchorY = 0.5f;
-        aPlacement.anchorX = 0.5f;
-        aPlacement.anchorY = 0.5f;
-        aPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.crash_dialog_world_y);
-        aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.crash_dialog_world_z);
-    }
-
-    @Override
-    public void show(@ShowFlags int aShowFlags) {
         super.show(aShowFlags);
-
-        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
-    }
-
-    @Override
-    public void hide(@HideFlags int aHideFlags) {
-        super.hide(aHideFlags);
-
-        mWidgetManager.popWorldBrightness(this);
-    }
-
-    public void setCrashDialogDelegate(CrashDialogDelegate aDelegate) {
-        mCrashDialogDelegate = aDelegate;
     }
 }

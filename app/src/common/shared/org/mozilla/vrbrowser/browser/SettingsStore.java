@@ -5,21 +5,23 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.telemetry.TelemetryHolder;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.utils.DeviceType;
-import org.mozilla.vrbrowser.utils.LocaleUtils;
 import org.mozilla.vrbrowser.utils.StringUtils;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
-import androidx.annotation.NonNull;
-
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -47,7 +49,8 @@ public class SettingsStore {
     public final static boolean REMOTE_DEBUGGING_DEFAULT = false;
     public final static boolean CONSOLE_LOGS_DEFAULT = false;
     public final static boolean ENV_OVERRIDE_DEFAULT = false;
-    public final static boolean MULTIPROCESS_DEFAULT = true;
+    public final static boolean MULTIPROCESS_DEFAULT = false;
+    public final static boolean UI_HARDWARE_ACCELERATION_DEFAULT = true;
     public final static boolean PERFORMANCE_MONITOR_DEFAULT = true;
     public final static boolean DRM_PLAYBACK_DEFAULT = false;
     public final static boolean TRACKING_DEFAULT = true;
@@ -79,6 +82,8 @@ public class SettingsStore {
     public final static boolean BOOKMARKS_SYNC_DEFAULT = true;
     public final static boolean HISTORY_SYNC_DEFAULT = true;
     public final static boolean WHATS_NEW_DISPLAYED = false;
+    public final static long FXA_LAST_SYNC_NEVER = 0;
+    public final static boolean RESTORE_TABS_ENABLED = true;
 
     // Enable telemetry by default (opt-out).
     public final static boolean CRASH_REPORTING_DEFAULT = false;
@@ -231,6 +236,17 @@ public class SettingsStore {
     public void setMultiprocessEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_multiprocess_e10s), isEnabled);
+        editor.commit();
+    }
+
+    public boolean isUIHardwareAccelerationEnabled() {
+        return mPrefs.getBoolean(
+                mContext.getString(R.string.settings_key_ui_hardware_acceleration), UI_HARDWARE_ACCELERATION_DEFAULT);
+    }
+
+    public void setUIHardwareAccelerationEnabled(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_ui_hardware_acceleration), isEnabled);
         editor.commit();
     }
 
@@ -402,9 +418,6 @@ public class SettingsStore {
     public String getVoiceSearchLocale() {
         String language = mPrefs.getString(
                 mContext.getString(R.string.settings_key_voice_search_language), null);
-        if (language == null) {
-            return LocaleUtils.getDefaultVoiceSearchLocale(mContext);
-        }
         return language;
     }
 
@@ -417,9 +430,6 @@ public class SettingsStore {
     public String getDisplayLocale() {
         String language = mPrefs.getString(
                 mContext.getString(R.string.settings_key_display_language), null);
-        if (language == null) {
-            return LocaleUtils.getDefaultDisplayLocale(mContext);
-        }
         return language;
     }
 
@@ -565,7 +575,7 @@ public class SettingsStore {
         editor.commit();
     }
 
-    public boolean isDebugLogginEnabled() {
+    public boolean isDebugLoggingEnabled() {
         return mPrefs.getBoolean(mContext.getString(R.string.settings_key_debug_logging), DEBUG_LOGGING_DEFAULT);
     }
 
@@ -604,25 +614,6 @@ public class SettingsStore {
         editor.putBoolean(mContext.getString(R.string.settings_key_pop_up_blocking), isEnabled);
         editor.commit();
     }
-    public void setBookmarksSyncEnabled(boolean isEnabled) {
-        SharedPreferences.Editor editor = mPrefs.edit();
-        editor.putBoolean(mContext.getString(R.string.settings_key_bookmarks_sync), isEnabled);
-        editor.commit();
-    }
-
-    public boolean isBookmarksSyncEnabled() {
-        return mPrefs.getBoolean(mContext.getString(R.string.settings_key_bookmarks_sync), BOOKMARKS_SYNC_DEFAULT);
-    }
-
-    public void setHistorySyncEnabled(boolean isEnabled) {
-        SharedPreferences.Editor editor = mPrefs.edit();
-        editor.putBoolean(mContext.getString(R.string.settings_key_history_sync), isEnabled);
-        editor.commit();
-    }
-
-    public boolean isHistorySyncEnabled() {
-        return mPrefs.getBoolean(mContext.getString(R.string.settings_key_history_sync), HISTORY_SYNC_DEFAULT);
-    }
 
     public void setWhatsNewDisplayed(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
@@ -632,6 +623,56 @@ public class SettingsStore {
 
     public boolean isWhatsNewDisplayed() {
         return mPrefs.getBoolean(mContext.getString(R.string.settings_key_whats_new_displayed), WHATS_NEW_DISPLAYED);
+    }
+
+    public void setFxALastSync(@NonNull String email, long timestamp) {
+        String json = mPrefs.getString(
+                mContext.getString(R.string.settings_key_fxa_last_sync),
+                new JSONObject().toString());
+
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            jsonObject.put(email, timestamp);
+
+            SharedPreferences.Editor editor = mPrefs.edit();
+            editor.putString(mContext.getString(R.string.settings_key_fxa_last_sync), jsonObject.toString());
+            editor.commit();
+
+        } catch (Exception e) {
+            Log.d(LOGTAG, e.getMessage());
+        }
+    }
+
+    public long getFxALastSync(@NonNull String email) {
+        String json = mPrefs.getString(
+                mContext.getString(R.string.settings_key_fxa_last_sync),
+                null);
+
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            Iterator<String> iterator = jsonObject.keys();
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                if (key.equals(email)) {
+                    return jsonObject.getLong(key);
+                }
+            }
+
+            return FXA_LAST_SYNC_NEVER;
+
+        } catch (Exception e) {
+            return FXA_LAST_SYNC_NEVER;
+        }
+    }
+
+    public void setRestoreTabsEnabled(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_restore_tabs), isEnabled);
+        editor.commit();
+    }
+
+    public boolean isRestoreTabsEnabled() {
+        return mPrefs.getBoolean(mContext.getString(R.string.settings_key_restore_tabs), RESTORE_TABS_ENABLED);
     }
 
 }

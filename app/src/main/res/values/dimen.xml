@@ -3,7 +3,6 @@
     <dimen name="world_width">800px</dimen>
 
     <!-- Browser window -->
-    <dimen name="browser_width_pixels">800px</dimen>
     <item name="window_world_width" format="float" type="dimen">4.0</item>
     <item name="window_world_y" format="float" type="dimen">0.35</item>
     <item name="window_world_z" format="float" type="dimen">-4.2</item>
@@ -43,9 +42,9 @@
     <dimen name="keyboard_key_height">36dp</dimen>
     <dimen name="keyboard_key_rounded_corner">18dp</dimen>
     <dimen name="keyboard_language_rounded_corner">8dp</dimen>
-    <dimen name="keyboard_key_space_width">186dp</dimen>
-    <dimen name="keyboard_key_german_space_width">198dp</dimen>
-    <dimen name="keyboard_key_zhuyin_space_width">50dp</dimen>
+    <dimen name="keyboard_key_space_width">166dp</dimen>
+    <dimen name="keyboard_key_german_space_width">178dp</dimen>
+    <dimen name="keyboard_key_zhuyin_space_width">30dp</dimen>
     <dimen name="keyboard_key_zhuyin_space_height">36dp</dimen>
     <dimen name="keyboard_key_zhuyin_space_margin">8dp</dimen>
     <dimen name="keyboard_key_zhuyin_enter_margin">28dp</dimen>
@@ -61,29 +60,18 @@
     <dimen name="keyboard_key_pressed_padding">0dp</dimen>
     <dimen name="keyboard_layout_padding">4dp</dimen>
     <dimen name="keyboard_margin_top_without_autocompletion">37dp</dimen>
-    <!-- Permission PromptWidget -->
-    <item name="permission_world_width" format="float" type="dimen">1.6</item>
-    <dimen name="permission_width">320dp</dimen>
-    <dimen name="permission_height">260dp</dimen>
-    <dimen name="permission_padding_top">20dp</dimen>
-    <dimen name="permission_padding_bottom">25dp</dimen>
-    <dimen name="permission_padding_sides">45dp</dimen>
-
-    <dimen name="keyboard_microphone_margin_left">50dp</dimen>
-    <dimen name="keyboard_popup_left_margin">116dp</dimen>
 
     <!-- Settings Dialog -->
     <item name="settings_world_y" format="float" type="dimen">1.6</item>
     <item name="settings_world_z" format="float" type="dimen">-2.0</item>
     <dimen name="settings_width">770dp</dimen>
     <dimen name="settings_height">490dp</dimen>
-    <dimen name="settings_button_height">320dp</dimen>
-    <dimen name="settings_button_text_width">100dp</dimen>
     <dimen name="settings_main_button_text_width">125dp</dimen>
 
     <!-- Lang Selector -->
-    <dimen name="lang_selector_first_col_item_width">100dp</dimen>
-    <dimen name="lang_selector_second_col_item_width">130dp</dimen>
+    <dimen name="lang_selector_narrow_col_item_width">100dp</dimen>
+    <dimen name="lang_selector_wide_col_item_width">130dp</dimen>
+    <dimen name="lang_selector_domain_col_item_width">54dp</dimen>
 
     <!-- Common values for menu style widgets -->
     <dimen name="menu_item_height">88dp</dimen>
@@ -98,17 +86,11 @@
 
     <!-- Media Controls Widget -->
     <dimen name="media_controls_container_width">324dp</dimen>
-    <dimen name="media_controls_container_height">100dp</dimen>
+    <dimen name="media_controls_container_height">105dp</dimen>
     <dimen name="media_controls_panel_width">284dp</dimen>
     <dimen name="media_controls_panel_height">85dp</dimen>
     <dimen name="media_controls_rounded_corners">15dp</dimen>
     <dimen name="media_controls_world_z" format="float" type="dimen">2.5</dimen>
-
-    <!-- Restart Dialog -->
-    <item name="restart_dialog_world_y" format="float" type="dimen">1.6</item>
-    <item name="restart_dialog_world_z" format="float" type="dimen">-1.8</item>
-    <dimen name="restart_dialog_width">420dp</dimen>
-    <dimen name="restart_dialog_height">280dp</dimen>
 
     <!-- Top Bar -->
     <dimen name="top_bar_width">132dp</dimen>
@@ -119,7 +101,6 @@
     <dimen name="tabs_width">650dp</dimen>
     <dimen name="tabs_height">380dp</dimen>
     <dimen name="tabs_spacing_h">6dp</dimen>
-    <dimen name="tabs_spacing_v">10dp</dimen>
     <dimen name="tab_view_height">87dp</dimen>
     <dimen name="tab_view_url_height">15dp</dimen>
     <dimen name="tab_shadow_padding">2dp</dimen>
@@ -132,8 +113,6 @@
 
     <!-- Autocompletion Widget -->
     <dimen name="autocompletion_widget_line_height">36dp</dimen>
-    <dimen name="autocompletion_widget_extended_height">160dp</dimen>
-    <dimen name="autocompletion_widget_margin">4dp</dimen>
     <dimen name="autocompletion_widget_min_item_width">56dp</dimen>
     <dimen name="autocompletion_widget_item_height">34dp</dimen>
     <dimen name="autocompletion_widget_extend_button_width">74dp</dimen>
@@ -155,54 +134,32 @@
     <dimen name="options_height">385dp</dimen>
 
     <!-- Developer Panel -->
-    <dimen name="developer_options_button_width">120dp</dimen>
+    <dimen name="options_button_width">140dp</dimen>
+    <dimen name="options_button_height">30dp</dimen>
+    <dimen name="options_text_height">30dp</dimen>
     <dimen name="developer_options_row_width">40dp</dimen>
-
-    <!-- Voice search panel -->
-    <dimen name="voice_search_width">460dp</dimen>
-    <dimen name="voice_search_height">280dp</dimen>
-    <dimen name="voice_search_padding_top">20dp</dimen>
-    <dimen name="voice_search_padding_bottom">25dp</dimen>
-    <dimen name="voice_search_padding_sides">30dp</dimen>
-    <item name="voice_search_world_z" format="float" type="dimen">2</item>
 
     <!-- Voice search input -->
     <dimen name="voice_search_input_width">305dp</dimen>
     <dimen name="voice_search_input_height">65dp</dimen>
 
     <!-- Prompts -->
+    <dimen name="prompt_width">400dp</dimen>
     <dimen name="prompt_height">800dp</dimen>
     <dimen name="prompt_content_max_height">450dp</dimen>
     <dimen name="prompt_choice_min_height">300dp</dimen>
     <dimen name="prompt_choice_max_height">520dp</dimen>
     <dimen name="prompt_min_height">400dp</dimen>
 
-    <!-- Crash Dialog prompt -->
-    <dimen name="crash_dialog_width">640dp</dimen>
-    <dimen name="crash_dialog_height">350dp</dimen>
-    <item name="crash_dialog_world_y" format="float" type="dimen">1.2</item>
-    <item name="crash_dialog_world_z" format="float" type="dimen">-1.8</item>
-
     <!-- Dialog buttons -->
-    <dimen name="dialog_button_width">156dp</dimen>
-    <dimen name="dialog_button_wide_width">175dp</dimen>
-    <dimen name="dialog_button_height">35dp</dimen>
-    <dimen name="dialog_button_margin_end">20dp</dimen>
-    <dimen name="dialog_button_text_size">14dip</dimen>
-    <dimen name="dialog_padding_top">20dp</dimen>
-    <dimen name="dialog_padding_bottom">20dp</dimen>
-    <dimen name="dialog_padding_sides">30dp</dimen>
 
     <!-- Text sizes -->
-    <dimen name="text_huge_size">28sp</dimen>
     <dimen name="text_biggest_size">24sp</dimen>
     <dimen name="text_bigger_size">22sp</dimen>
     <dimen name="text_big_size">18sp</dimen>
     <dimen name="text_medium_big_size">16sp</dimen>
     <dimen name="text_medium_size">14sp</dimen>
-    <dimen name="text_small_size">12sp</dimen>
     <dimen name="text_smaller_size">11sp</dimen>
-    <dimen name="text_smallest_size">8sp</dimen>
 
     <dimen name="settings_header_text_size">20sp</dimen>
     <dimen name="settings_text_size">14sp</dimen>
@@ -218,13 +175,9 @@
     <dimen name="tray_icon_padding_max">10dp</dimen>
     <dimen name="tray_icon_padding_min">8dp</dimen>
 
-    <dimen name="settings_icon_padding_max">2dp</dimen>
-    <dimen name="settings_icon_padding_min">0dp</dimen>
-
     <!-- Library -->
     <dimen name="library_item_row_height">38dp</dimen>
     <dimen name="library_item_row_height_narrow">64dp</dimen>
-    <dimen name="library_section_text_size">18sp</dimen>
     <dimen name="library_item_title_text_size">20sp</dimen>
     <dimen name="library_item_url_text_size">16sp</dimen>
     <dimen name="library_item_date_text_size">16sp</dimen>
@@ -234,7 +187,6 @@
     <dimen name="library_icon_size_narrow">65dp</dimen>
 
     <!-- Language -->
-    <dimen name="language_row_height">22dp</dimen>
     <dimen name="language_row_icon_size">20dp</dimen>
     <dimen name="language_row_fade_size">120dp</dimen>
 
@@ -243,6 +195,10 @@
     <dimen name="context_menu_row_height">60dp</dimen>
     <dimen name="context_menu_corner_radius">20dp</dimen>
     <item name="context_menu_z_distance" format="float" type="dimen">0.1</item>
+
+    <!-- Selection Action Menu -->
+    <dimen name="selection_action_item_min_width">56dp</dimen>
+    <dimen name="selection_action_item_max_width">300dp</dimen>
 
     <!-- Library Menu -->
     <dimen name="library_menu_width">320dp</dimen>
@@ -253,10 +209,6 @@
     <dimen name="blur_radius">2dp</dimen>
     <dimen name="blur_radius_half">1dp</dimen>
 
-    <!-- Max windows prompt -->
-    <dimen name="max_windows_prompt_width">320dp</dimen>
-    <dimen name="max_windows_prompt_height">260dp</dimen>
-
     <!-- Tooltip -->
     <item name="tooltip_z_distance" format="float" type="dimen">0.02</item>
     <item name="tooltip_delay" format="integer" type="integer">1000</item>
@@ -265,43 +217,34 @@
     <dimen name="tooltip_default_text_size">24sp</dimen>
     <item name="tooltip_default_density" format="float" type="dimen">3.0</item>
 
-    <!-- Dialog buttons -->
-    <dimen name="report_issue_width">145dp</dimen>
-    <dimen name="report_issue_height">65dp</dimen>
+    <!-- General 2nd level settings dimensions -->
+    <dimen name="settings_dialog_width">585dp</dimen>
+    <dimen name="settings_dialog_height">360dp</dimen>
 
     <!-- Privacy settings -->
     <dimen name="privacy_options_width">585dp</dimen>
     <dimen name="privacy_options_height">490dp</dimen>
 
-    <!-- Privacy settings -->
-    <dimen name="language_options_width">585dp</dimen>
-    <dimen name="language_options_height">360dp</dimen>
-
     <!-- Display settings -->
     <dimen name="display_options_width">585dp</dimen>
     <dimen name="display_options_height">420dp</dimen>
 
-    <!-- Base App Dialog -->
-    <dimen name="base_app_dialog_width">450dp</dimen>
-    <dimen name="base_app_dialog_height">340dp</dimen>
-    <item name="base_app_dialog_z_distance" format="float" type="dimen">2</item>
-    <item name="base_app_dialog_y_distance" format="float" type="dimen">1.2</item>
-
-    <!-- Cache Dialog -->
-    <dimen name="cache_app_dialog_width">585dp</dimen>
+    <!-- JS Prompt dialogs -->
+    <item name="js_prompt_y_distance" format="float" type="dimen">1.2</item>
 
     <!-- PopUp Dialog -->
-    <dimen name="pop_up_row_fade_size">120dp</dimen>
 
     <dimen name="scrollbarWidth">10dp</dimen>
-    <dimen name="scrollbarMinHeight">20dp</dimen>
 
     <!-- Hamburger Menu -->
     <dimen name="hamburger_menu_width">300dp</dimen>
     <dimen name="hamburger_menu_item_height">60dp</dimen>
     <dimen name="hamburger_menu_triangle_height">30dp</dimen>
 
-    <!-- Whats new -->
-    <dimen name="whats_new_width">450dp</dimen>
-    <dimen name="whats_new_height">340dp</dimen>
+    <!-- Prompt dialog -->
+    <dimen name="prompt_dialog_width">450dp</dimen>
+    <dimen name="prompt_dialog_height">375dp</dimen>
+    <dimen name="prompt_dialog_padding_top">20dp</dimen>
+    <dimen name="prompt_dialog_padding_bottom">42dp</dimen>
+    <dimen name="prompt_dialog_padding_sides">64dp</dimen>
 </resources>

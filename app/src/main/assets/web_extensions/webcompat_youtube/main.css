@@ -4,3 +4,52 @@
 .ytp-generic-popup, ytp-generic-popup {
   display: none;
 }
+/* Hide not working share button in fullscreen. */
+.ytp-share-icon {
+  display: none;
+}
+
+
+/* Fix Youtube homepage is wrongly displayed on only one column
+   See https://github.com/MozillaReality/FirefoxReality/issues/2595 */
+ytd-rich-grid-video-renderer {
+    min-width: 0px;
+}
+
+@media screen and (max-width: 700px) {
+    ytd-rich-grid-renderer {
+        --ytd-rich-grid-items-per-row: 1 !important;
+        --ytd-rich-grid-posts-per-row: 1 !important;
+    }
+}
+
+@media screen and (max-width: 899px) and (min-width: 701px) {
+    ytd-rich-grid-renderer {
+        --ytd-rich-grid-items-per-row: 2 !important;
+        --ytd-rich-grid-posts-per-row: 2 !important;
+    }
+}
+
+@media screen and (max-width: 1115px) and (min-width: 900px) {
+    ytd-rich-grid-renderer {
+        --ytd-rich-grid-items-per-row: 3 !important;
+        --ytd-rich-grid-posts-per-row: 3 !important;
+    }
+}
+
+@media screen and (min-width: 1116px) {
+    ytd-rich-grid-renderer {
+        --ytd-rich-grid-items-per-row: 4 !important;
+        --ytd-rich-grid-posts-per-row: 4 !important;
+    }
+}
+
+
+/* Youtube Videos tagged with Stereo VR have a layout problem, they don't take the whole area
+   of the video. This styles are used to make sure the video has the correct size for immersive
+   playback */
+div.ytp-fullscreen video, .fxr-vr-video {
+    width: 100% !important;
+    left: 0px !important;
+}
+

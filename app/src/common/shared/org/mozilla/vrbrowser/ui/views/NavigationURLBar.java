@@ -23,6 +23,7 @@ import android.view.MotionEvent;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
@@ -38,6 +39,7 @@ import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.databinding.NavigationUrlBinding;
 import org.mozilla.vrbrowser.search.SearchEngineWrapper;
+import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.SelectionActionWidget;
@@ -50,7 +52,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.concurrent.Executor;
 
 import kotlin.Unit;
@@ -96,7 +99,7 @@ public class NavigationURLBar extends FrameLayout {
         void onVoiceSearchClicked();
         void onShowAwesomeBar();
         void onHideAwesomeBar();
-        void onLongPress(float centerX, SelectionActionWidget actionMenu);
+        void onURLSelectionAction(EditText aURLEdit, float centerX, SelectionActionWidget actionMenu);
         void onPopUpButtonClicked();
     }
 
@@ -205,7 +208,7 @@ public class NavigationURLBar extends FrameLayout {
                     showSelectionMenu();
 
                 } else {
-                    mDelegate.onLongPress(getSelectionCenterX(), mSelectionMenu);
+                    mDelegate.onURLSelectionAction(mBinding.urlEditText, getSelectionCenterX(), mSelectionMenu);
                     mSelectionMenu.updateWidget();
                 }
             }
@@ -238,7 +241,10 @@ public class NavigationURLBar extends FrameLayout {
         mURLWebsiteColor = typedValue.data;
 
         // Bookmarks
-        mBinding.bookmarkButton.setOnClickListener(v -> handleBookmarkClick());
+        mBinding.bookmarkButton.setOnClickListener(v -> {
+            v.requestFocusFromTouch();
+            handleBookmarkClick();
+        });
 
         // Initialize bindings
         mBinding.setIsLibraryVisible(false);
@@ -412,6 +418,10 @@ public class NavigationURLBar extends FrameLayout {
     }
 
     public void setPrivateMode(boolean isEnabled) {
+        mBinding.bookmarkButton.setPrivateMode(isEnabled);
+        mBinding.microphoneButton.setPrivateMode(isEnabled);
+        mBinding.clearButton.setPrivateMode(isEnabled);
+
         mBinding.setIsPrivateMode(isEnabled);
     }
 
@@ -447,6 +457,7 @@ public class NavigationURLBar extends FrameLayout {
         if (uri != null) {
             url = uri.toString();
             TelemetryWrapper.urlBarEvent(true);
+            GleanMetricsService.urlBarEvent(true);
         } else if (text.startsWith("about:") || text.startsWith("resource://")) {
             url = text;
         } else {
@@ -454,6 +465,7 @@ public class NavigationURLBar extends FrameLayout {
 
             // Doing search in the URL bar, so sending "aIsURL: false" to telemetry.
             TelemetryWrapper.urlBarEvent(false);
+            GleanMetricsService.urlBarEvent(false);
         }
 
         if (mSession.getCurrentUri() != url) {
@@ -478,12 +490,14 @@ public class NavigationURLBar extends FrameLayout {
         if (mAudio != null) {
             mAudio.playSound(AudioEngine.Sound.CLICK);
         }
+        view.requestFocusFromTouch();
 
         if (mDelegate != null) {
             mDelegate.onVoiceSearchClicked();
         }
 
         TelemetryWrapper.voiceInputEvent();
+        GleanMetricsService.voiceInputEvent();
     };
 
     private OnClickListener mClearListener = view -> {
@@ -499,6 +513,7 @@ public class NavigationURLBar extends FrameLayout {
             mAudio.playSound(AudioEngine.Sound.CLICK);
         }
 
+        view.requestFocusFromTouch();
         if (mDelegate != null) {
             mDelegate.onPopUpButtonClicked();
         }
@@ -555,7 +570,7 @@ public class NavigationURLBar extends FrameLayout {
     };
 
     private void showSelectionMenu() {
-        ArrayList<String> actions = new ArrayList<>();
+        Collection<String> actions = new HashSet<>();
         if (mBinding.urlEditText.getSelectionEnd() > mBinding.urlEditText.getSelectionStart()) {
             actions.add(GeckoSession.SelectionActionDelegate.ACTION_CUT);
             actions.add(GeckoSession.SelectionActionDelegate.ACTION_COPY);
@@ -574,15 +589,14 @@ public class NavigationURLBar extends FrameLayout {
             return;
         }
 
-        String[] actionsArray = actions.toArray(new String[0]);
-        if (mSelectionMenu != null && !mSelectionMenu.hasSameActions(actionsArray)) {
+        if (mSelectionMenu != null && !mSelectionMenu.hasSameActions(actions)) {
             // Release current selection menu to recreate it with different actions.
             hideSelectionMenu();
         }
 
         if (mSelectionMenu == null) {
             mSelectionMenu = new SelectionActionWidget(getContext());
-            mSelectionMenu.setActions(actionsArray);
+            mSelectionMenu.setActions(actions);
             mSelectionMenu.setDelegate(new SelectionActionWidget.Delegate() {
                 @Override
                 public void onAction(String action) {
@@ -597,10 +611,12 @@ public class NavigationURLBar extends FrameLayout {
                     } else if (action.equals(GeckoSession.SelectionActionDelegate.ACTION_COPY) && selectionValid) {
                         String selectedText = mBinding.urlEditText.getText().toString().substring(startSelection, endSelection);
                         clipboard.setPrimaryClip(ClipData.newPlainText("text", selectedText));
+                        mBinding.urlEditText.setSelection(endSelection);
                     } else if (action.equals(GeckoSession.SelectionActionDelegate.ACTION_PASTE) && clipboard.hasPrimaryClip()) {
                         ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
                         if (selectionValid) {
                             mBinding.urlEditText.setText(StringUtils.removeRange(mBinding.urlEditText.getText().toString(), startSelection, endSelection));
+                            mBinding.urlEditText.setSelection(startSelection);
                         }
                         if (item != null && item.getText() != null) {
                             mBinding.urlEditText.getText().insert(mBinding.urlEditText.getSelectionStart(), item.getText());
@@ -624,7 +640,7 @@ public class NavigationURLBar extends FrameLayout {
         }
 
         if (mDelegate != null) {
-            mDelegate.onLongPress(getSelectionCenterX(), mSelectionMenu);
+            mDelegate.onURLSelectionAction(mBinding.urlEditText, getSelectionCenterX(), mSelectionMenu);
         }
 
         mSelectionMenu.show(UIWidget.KEEP_FOCUS);

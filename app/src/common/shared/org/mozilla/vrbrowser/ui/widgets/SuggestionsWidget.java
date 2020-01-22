@@ -1,7 +1,12 @@
 package org.mozilla.vrbrowser.ui.widgets;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
@@ -12,20 +17,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
-import org.mozilla.gecko.util.ThreadUtils;
+import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.ui.views.CustomListView;
+import org.mozilla.vrbrowser.ui.widgets.dialogs.SelectionActionWidget;
+import org.mozilla.vrbrowser.utils.ViewUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate.FocusChangeListener {
@@ -37,10 +44,12 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
     private URLBarPopupDelegate mURLBarDelegate;
     private String mHighlightedText;
     private AudioEngine mAudio;
+    private ClipboardManager mClipboard;
+    private SelectionActionWidget mSelectionMenu;
 
     public interface URLBarPopupDelegate {
-        default void OnItemClicked(SuggestionItem item) {};
-        default void OnItemDeleted(SuggestionItem item) {};
+        default void OnItemClicked(SuggestionItem item) {}
+        default void OnItemLongClicked(SuggestionItem item) {}
     }
 
     public SuggestionsWidget(Context aContext) {
@@ -86,8 +95,12 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
 
         mAdapter = new SuggestionsAdapter(getContext(), R.layout.list_popup_window_item, new ArrayList<>());
         mList.setAdapter(mAdapter);
+        mList.setOnItemClickListener(mClickListener);
+        mList.setOnItemLongClickListener(mLongClickListener);
+        mList.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> hideMenu());
 
         mAudio = AudioEngine.fromContext(aContext);
+        mClipboard = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
 
         mHighlightedText = "";
     }
@@ -125,11 +138,16 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
         mList.startAnimation(mScaleDownAnimation);
     }
 
+    public void hideNoAnim(@HideFlags int aHideFlags) {
+        super.hide(aHideFlags);
+    }
+
     // FocusChangeListener
 
     @Override
     public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-        if (oldFocus != null && isVisible()) {
+        if (!ViewUtils.isEqualOrChildrenOf(this, newFocus)) {
+            hideMenu();
             onDismiss();
         }
     }
@@ -195,7 +213,6 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
             ImageView favicon;
             TextView title;
             TextView url;
-            ImageButton delete;
             View divider;
         }
 
@@ -215,24 +232,18 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
 
                 itemViewHolder.layout = listItem.findViewById(R.id.layout);
                 itemViewHolder.layout.setTag(R.string.position_tag, position);
-                itemViewHolder.layout.setOnClickListener(mRowListener);
                 itemViewHolder.favicon = listItem.findViewById(R.id.favicon);
                 itemViewHolder.title = listItem.findViewById(R.id.title);
                 itemViewHolder.url = listItem.findViewById(R.id.url);
-                itemViewHolder.delete = listItem.findViewById(R.id.delete);
-                itemViewHolder.delete.setTag(R.string.position_tag, position);
-                itemViewHolder.delete.setOnClickListener(mDeleteButtonListener);
                 itemViewHolder.divider = listItem.findViewById(R.id.divider);
 
                 listItem.setTag(R.string.list_item_view_tag, itemViewHolder);
 
                 listItem.setOnHoverListener(mHoverListener);
-                listItem.setOnTouchListener(mTouchListener);
 
             } else {
                 itemViewHolder = (ItemViewHolder) listItem.getTag(R.string.list_item_view_tag);
                 itemViewHolder.layout.setTag(R.string.position_tag, position);
-                itemViewHolder.delete.setTag(R.string.position_tag, position);
             }
 
             SuggestionItem selectedItem = getItem(position);
@@ -269,7 +280,6 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
                 itemViewHolder.favicon.setImageResource(R.drawable.ic_icon_bookmark);
             }
 
-            itemViewHolder.delete.setVisibility(GONE);
             itemViewHolder.favicon.setVisibility(VISIBLE);
 
             if (position == 0) {
@@ -281,22 +291,41 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
             return listItem;
         }
 
-        OnClickListener mDeleteButtonListener = v -> {
-            if (mAudio != null) {
-                mAudio.playSound(AudioEngine.Sound.CLICK);
+        private OnHoverListener mHoverListener = (view, motionEvent) -> {
+            int position = (int)view.getTag(R.string.position_tag);
+            if (!isEnabled(position)) {
+                return false;
             }
 
-            int position = (Integer)v.getTag(R.string.position_tag);
-            SuggestionItem item = getItem(position);
-            mAdapter.remove(item);
-            mAdapter.notifyDataSetChanged();
+            View favicon = view.findViewById(R.id.favicon);
+            TextView title = view.findViewById(R.id.title);
+            View url = view.findViewById(R.id.url);
+            int ev = motionEvent.getActionMasked();
+            switch (ev) {
+                case MotionEvent.ACTION_HOVER_ENTER:
+                    view.setHovered(true);
+                    favicon.setHovered(true);
+                    title.setHovered(true);
+                    title.setShadowLayer(title.getShadowRadius(), title.getShadowDx(), title.getShadowDy(), getContext().getColor(R.color.text_shadow_light));
+                    url.setHovered(true);
+                    return true;
 
-            if (mURLBarDelegate != null) {
-                mURLBarDelegate.OnItemDeleted(item);
+                case MotionEvent.ACTION_HOVER_EXIT:
+                    view.setHovered(false);
+                    favicon.setHovered(false);
+                    title.setHovered(false);
+                    title.setShadowLayer(title.getShadowRadius(), title.getShadowDx(), title.getShadowDy(), getContext().getColor(R.color.text_shadow));
+                    url.setHovered(false);
+                    return true;
             }
+
+            return false;
         };
+    }
 
-        OnClickListener mRowListener = v -> {
+    private AdapterView.OnItemClickListener mClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
@@ -307,66 +336,75 @@ public class SuggestionsWidget extends UIWidget implements WidgetManagerDelegate
             requestFocusFromTouch();
 
             if (mURLBarDelegate != null) {
-                int position = (Integer)v.getTag(R.string.position_tag);
-                SuggestionItem item = getItem(position);
+                SuggestionItem item = mAdapter.getItem(position);
                 mURLBarDelegate.OnItemClicked(item);
             }
-        };
+        }
+    };
 
-        private OnTouchListener mTouchListener = (view, event) -> {
-            int position = (int)view.getTag(R.string.position_tag);
-            if (!isEnabled(position)) {
-                return false;
-            }
+    private AdapterView.OnItemLongClickListener mLongClickListener = new AdapterView.OnItemLongClickListener() {
+        @Override
+        public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+            SuggestionItem item = mAdapter.getItem(position);
 
-            int ev = event.getActionMasked();
-            switch (ev) {
-                case MotionEvent.ACTION_UP:
-                    view.setPressed(false);
-                    view.performClick();
-                    return true;
+            view.setHovered(true);
 
-                case MotionEvent.ACTION_DOWN:
-                    view.setPressed(true);
-                    return true;
+            hideMenu();
+            if (item != null) {
+                showMenu(view, item);
+
+                return true;
             }
 
             return false;
-        };
+        }
+    };
 
-        private OnHoverListener mHoverListener = (view, motionEvent) -> {
-            int position = (int)view.getTag(R.string.position_tag);
-            if (!isEnabled(position)) {
-                return false;
+    private void showMenu(@NonNull View view, @NonNull SuggestionItem item) {
+        if (mSelectionMenu == null) {
+            mSelectionMenu = new SelectionActionWidget(getContext());
+            mSelectionMenu.mWidgetPlacement.parentHandle = getHandle();
+            mSelectionMenu.setActions(Collections.singleton(GeckoSession.SelectionActionDelegate.ACTION_COPY));
+        }
+
+        Rect offsetViewBounds = new Rect();
+        view.getDrawingRect(offsetViewBounds);
+        float ratio = WidgetPlacement.viewToWidgetRatio(getContext(), this);
+        offsetDescendantRectToMyCoords(view, offsetViewBounds);
+        RectF rectF = new RectF(
+                offsetViewBounds.left * ratio,
+                offsetViewBounds.top * ratio,
+                offsetViewBounds.right * ratio,
+                offsetViewBounds.bottom * ratio
+        );
+        mSelectionMenu.setSelectionRect(rectF);
+        mSelectionMenu.setDelegate(new SelectionActionWidget.Delegate() {
+            @Override
+            public void onAction(String action) {
+                hideMenu();
+                ClipData clip = ClipData.newRawUri(item.title, Uri.parse(item.url));
+                mClipboard.setPrimaryClip(clip);
             }
 
-            View favicon = view.findViewById(R.id.favicon);
-            TextView title = view.findViewById(R.id.title);
-            View url = view.findViewById(R.id.url);
-            View delete = view.findViewById(R.id.delete);
-            int ev = motionEvent.getActionMasked();
-            switch (ev) {
-                case MotionEvent.ACTION_HOVER_ENTER:
-                    view.setHovered(true);
-                    favicon.setHovered(true);
-                    title.setHovered(true);
-                    title.setShadowLayer(title.getShadowRadius(), title.getShadowDx(), title.getShadowDy(), getContext().getColor(R.color.text_shadow_light));
-                    url.setHovered(true);
-                    delete.setHovered(true);
-                    return true;
-
-                case MotionEvent.ACTION_HOVER_EXIT:
-                    view.setHovered(false);
-                    favicon.setHovered(false);
-                    title.setHovered(false);
-                    title.setShadowLayer(title.getShadowRadius(), title.getShadowDx(), title.getShadowDy(), getContext().getColor(R.color.text_shadow));
-                    url.setHovered(false);
-                    delete.setHovered(false);
-                    return true;
+            @Override
+            public void onDismiss() {
+                hideMenu();
             }
+        });
+        mSelectionMenu.show(KEEP_FOCUS);
+    }
 
-            return false;
-        };
+    private void hideMenu() {
+        if (mSelectionMenu != null) {
+            mSelectionMenu.setDelegate((SelectionActionWidget.Delegate)null);
+            if (!mSelectionMenu.isReleased()) {
+                if (mSelectionMenu.isVisible()) {
+                    mSelectionMenu.hide(REMOVE_WIDGET);
+                }
+                mSelectionMenu.releaseWidget();
+            }
+            mSelectionMenu = null;
+        }
     }
 
     private SpannableStringBuilder createHighlightedText(@NonNull String text) {

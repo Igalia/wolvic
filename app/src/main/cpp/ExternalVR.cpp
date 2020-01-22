@@ -254,6 +254,15 @@ ExternalVR::SetCapabilityFlags(const device::CapabilityFlags aFlags) {
   if (device::PositionEmulated & aFlags) {
     result |= static_cast<uint16_t>(mozilla::gfx::VRDisplayCapabilityFlags::Cap_PositionEmulated);
   }
+  if (device::InlineSession & aFlags) {
+    result |= static_cast<uint16_t>(mozilla::gfx::VRDisplayCapabilityFlags::Cap_Inline);
+  }
+  if (device::ImmersiveVRSession & aFlags) {
+    result |= static_cast<uint16_t>(mozilla::gfx::VRDisplayCapabilityFlags::Cap_ImmersiveVR);
+  }
+  if (device::ImmersiveARSession & aFlags) {
+    result |= static_cast<uint16_t>(mozilla::gfx::VRDisplayCapabilityFlags::Cap_ImmersiveAR);
+  }
   //m.deviceCapabilities = aFlags;
   m.system.displayState.capabilityFlags = static_cast<mozilla::gfx::VRDisplayCapabilityFlags>(result);
   m.system.sensorState.flags = m.system.displayState.capabilityFlags;
@@ -412,6 +421,7 @@ ExternalVR::PushFramePoses(const vrb::Matrix& aHeadTransform, const std::vector<
     for (int i = 0; i< controller.numAxes; ++i) {
       immersiveController.axisValue[i] = controller.immersiveAxes[i];
     }
+    immersiveController.numHaptics = controller.numHaptics;
     immersiveController.hand = controller.leftHanded ? mozilla::gfx::ControllerHand::Left : mozilla::gfx::ControllerHand::Right;
 
     const uint16_t flags = GetControllerCapabilityFlags(controller.deviceCapabilities);
@@ -487,6 +497,26 @@ ExternalVR::GetFrameResult(int32_t& aSurfaceHandle, int32_t& aTextureWidth, int3
   aRightEye = device::EyeRect(right.x, right.y, right.width, right.height);
   aTextureWidth = (int32_t)m.browser.layerState[0].layer_stereo_immersive.textureSize.width;
   aTextureHeight = (int32_t)m.browser.layerState[0].layer_stereo_immersive.textureSize.height;
+}
+
+void
+ExternalVR::SetHapticState(ControllerContainerPtr aControllerContainer) const {
+  const uint32_t count = aControllerContainer->GetControllerCount();
+  uint32_t i = 0, j = 0;
+  for (i = 0; i < count; ++i) {
+    for (j = 0; j < mozilla::gfx::kVRHapticsMaxCount; ++j) {
+      if (m.browser.hapticState[j].controllerIndex == i && m.browser.hapticState[j].inputFrameID) {
+        aControllerContainer->SetHapticFeedback(i, m.browser.hapticState[j].inputFrameID,
+                m.browser.hapticState[j].pulseDuration + m.browser.hapticState[j].pulseStart,
+                m.browser.hapticState[j].pulseIntensity);
+        break;
+      }
+    }
+    // All hapticState has already been reset to zero, so it can't be match.
+    if (j == mozilla::gfx::kVRHapticsMaxCount) {
+      aControllerContainer->SetHapticFeedback(i, 0, 0.0f, 0.0f);
+    }
+  }
 }
 
 void

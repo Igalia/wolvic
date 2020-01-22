@@ -6,6 +6,8 @@
 package org.mozilla.vrbrowser.browser
 
 import android.content.Context
+import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -21,12 +23,16 @@ import mozilla.components.service.fxa.manager.SyncEnginesStorage
 import mozilla.components.service.fxa.sync.SyncReason
 import mozilla.components.service.fxa.sync.SyncStatusObserver
 import mozilla.components.service.fxa.sync.getLastSynced
-import mozilla.components.support.base.log.logger.Logger
+import org.mozilla.vrbrowser.R
 import org.mozilla.vrbrowser.VRBrowserApplication
+import org.mozilla.vrbrowser.telemetry.GleanMetricsService
+import org.mozilla.vrbrowser.utils.BitmapCache
 import org.mozilla.vrbrowser.utils.SystemUtils
+import org.mozilla.vrbrowser.utils.ViewUtils
+import java.net.URL
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.ExecutionException
-import java.util.concurrent.Executors
+
+const val PROFILE_PICTURE_TAG = "fxa_profile_picture"
 
 class Accounts constructor(val context: Context) {
 
@@ -46,6 +52,7 @@ class Accounts constructor(val context: Context) {
         NONE
     }
 
+    var profilePicture: BitmapDrawable? = loadDefaultProfilePicture()
     var loginOrigin: LoginOrigin = LoginOrigin.NONE
     var accountStatus = AccountStatus.SIGNED_OUT
     private val accountListeners = ArrayList<AccountObserver>()
@@ -72,6 +79,11 @@ class Accounts constructor(val context: Context) {
             Log.d(LOGTAG, "Account syncing has finished")
 
             isSyncing = false
+
+            services.accountManager.accountProfile()?.email?.let {
+                SettingsStore.getInstance(context).setFxALastSync(it, getLastSynced(context))
+            }
+
             syncListeners.toMutableList().forEach {
                 Handler(Looper.getMainLooper()).post {
                     it.onIdle()
@@ -108,11 +120,13 @@ class Accounts constructor(val context: Context) {
         override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
             Log.d(LOGTAG, "The user has been successfully logged in")
 
+            if (authType !== AuthType.Existing) {
+                GleanMetricsService.FxA.signInResult(true)
+            }
+
             accountStatus = AccountStatus.SIGNED_IN
 
             // Enable syncing after signing in
-            syncStorage.setStatus(SyncEngine.Bookmarks, SettingsStore.getInstance(context).isBookmarksSyncEnabled)
-            syncStorage.setStatus(SyncEngine.History, SettingsStore.getInstance(context).isHistorySyncEnabled)
             services.accountManager.syncNowAsync(SyncReason.EngineChange, true)
 
             // Update device list
@@ -133,6 +147,8 @@ class Accounts constructor(val context: Context) {
         override fun onAuthenticationProblems() {
             Log.d(LOGTAG, "There was a problem authenticating the user")
 
+            GleanMetricsService.FxA.signInResult(false)
+
             accountStatus = AccountStatus.NEEDS_RECONNECT
             accountListeners.toMutableList().forEach {
                 Handler(Looper.getMainLooper()).post {
@@ -150,6 +166,8 @@ class Accounts constructor(val context: Context) {
                     it.onLoggedOut()
                 }
             }
+
+            loadDefaultProfilePicture()
         }
 
         override fun onProfileUpdated(profile: Profile) {
@@ -160,6 +178,8 @@ class Accounts constructor(val context: Context) {
                     it.onProfileUpdated(profile)
                 }
             }
+
+            loadProfilePicture(profile)
         }
     }
 
@@ -181,6 +201,43 @@ class Accounts constructor(val context: Context) {
         }
     }
 
+    private fun loadProfilePicture(profile: Profile) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val url = URL(profile.avatar!!.url)
+                BitmapFactory.decodeStream(url.openStream())?.let {
+                    val bitmap = ViewUtils.getRoundedCroppedBitmap(it)
+                    profilePicture = BitmapDrawable(context.resources, bitmap)
+                    BitmapCache.getInstance(context).addBitmap(PROFILE_PICTURE_TAG, bitmap)
+
+                } ?: throw IllegalArgumentException()
+
+            } catch (e: Exception) {
+                loadDefaultProfilePicture()
+
+            } finally {
+                accountListeners.toMutableList().forEach {
+                    Handler(Looper.getMainLooper()).post {
+                        it.onProfileUpdated(profile)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun loadDefaultProfilePicture(): BitmapDrawable? {
+        BitmapFactory.decodeResource(context.resources, R.drawable.ic_icon_settings_account)?.let {
+            try {
+                BitmapCache.getInstance(context).addBitmap(PROFILE_PICTURE_TAG, it)
+            } catch (e: NullPointerException) {
+                Log.w(LOGTAG, "Bitmap is a null pointer.")
+                return null
+            }
+            profilePicture = BitmapDrawable(context.resources, ViewUtils.getRoundedCroppedBitmap(it))
+        }
+
+        return profilePicture
+    }
 
     fun addAccountListener(aListener: AccountObserver) {
         if (!accountListeners.contains(aListener)) {
@@ -225,6 +282,7 @@ class Accounts constructor(val context: Context) {
     }
 
     fun authUrlAsync(): CompletableFuture<String?>? {
+        GleanMetricsService.FxA.signIn()
         return CoroutineScope(Dispatchers.Main).future {
             services.accountManager.beginAuthenticationAsync().await()
         }
@@ -256,10 +314,13 @@ class Accounts constructor(val context: Context) {
     }
 
     fun setSyncStatus(engine: SyncEngine, value: Boolean) {
-
         when(engine) {
-            SyncEngine.Bookmarks -> SettingsStore.getInstance(context).isBookmarksSyncEnabled = value
-            SyncEngine.History -> SettingsStore.getInstance(context).isHistorySyncEnabled = value
+            SyncEngine.Bookmarks -> {
+                GleanMetricsService.FxA.bookmarksSyncStatus(value)
+            }
+            SyncEngine.History -> {
+                GleanMetricsService.FxA.historySyncStatus(value)
+            }
         }
 
         syncStorage.setStatus(engine, value)
@@ -270,57 +331,12 @@ class Accounts constructor(val context: Context) {
     }
 
     fun logoutAsync(): CompletableFuture<Unit?>? {
+        GleanMetricsService.FxA.signOut()
+
         otherDevices = emptyList()
         return CoroutineScope(Dispatchers.Main).future {
             services.accountManager.logoutAsync().await()
         }
-    }
-
-    fun getAuthenticationUrlAsync(): CompletableFuture<String> {
-        val future: CompletableFuture<String> = CompletableFuture()
-
-        // If we're already logged-in, and not in a "need to reconnect" state, logout.
-        if (services.accountManager.authenticatedAccount() != null && !services.accountManager.accountNeedsReauth()) {
-            services.accountManager.logoutAsync()
-            future.complete(null)
-        }
-
-        // Otherwise, obtain an authentication URL and load it in the gecko session.
-        // Recovering from "need to reconnect" state is treated the same as just logging in.
-        val futureUrl = authUrlAsync()
-        if (futureUrl == null) {
-            Logger(LOGTAG).debug("Got a 'null' futureUrl")
-            services.accountManager.logoutAsync()
-            future.complete(null)
-        }
-
-        Executors.newSingleThreadExecutor().submit {
-            try {
-                val url = futureUrl!!.get()
-                if (url == null) {
-                    Logger(LOGTAG).debug("Got a 'null' url after resolving futureUrl")
-                    services.accountManager.logoutAsync()
-                    future.complete(null)
-                }
-                Logger(LOGTAG).debug("Got an auth url: " + url!!)
-
-                // Actually process the url on the main thread.
-                Handler(Looper.getMainLooper()).post {
-                    Logger(LOGTAG).debug("We got an authentication url, we can continue...")
-                    future.complete(url)
-                }
-
-            } catch (e: ExecutionException) {
-                Logger(LOGTAG).debug("Error obtaining auth url", e)
-                future.complete(null)
-
-            } catch (e: InterruptedException) {
-                Logger(LOGTAG).debug("Error obtaining auth url", e)
-                future.complete(null)
-            }
-        }
-
-        return future
     }
 
     fun isEngineEnabled(engine: SyncEngine): Boolean {
@@ -332,7 +348,10 @@ class Accounts constructor(val context: Context) {
     }
 
     fun lastSync(): Long {
-        return getLastSynced(context)
+        services.accountManager.accountProfile()?.email?.let {
+            return SettingsStore.getInstance(context).getFxALastSync(it)
+        }
+        return 0
     }
 
     fun devicesByCapability(capabilities: List<DeviceCapability>): List<Device> {
@@ -348,10 +367,10 @@ class Accounts constructor(val context: Context) {
                     targetDevices.contains(it)
                 }
 
-                targets?.forEach {
+                targets?.forEach { it ->
                     constellation.sendEventToDeviceAsync(
                             it.id, DeviceEventOutgoing.SendTab(title, url)
-                    ).await()
+                    ).await().also { if (it) GleanMetricsService.FxA.sentTab() }
                 }
             }
         }

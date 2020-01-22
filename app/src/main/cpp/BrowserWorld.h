@@ -45,6 +45,7 @@ public:
   void SetSurfaceTexture(const std::string& aName, jobject& aSurface);
   void AddWidget(int32_t aHandle, const WidgetPlacementPtr& placement);
   void UpdateWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement);
+  void UpdateWidgetRecursive(int32_t aHandle, const WidgetPlacementPtr& aPlacement);
   void RemoveWidget(int32_t aHandle);
   void StartWidgetResize(int32_t aHandle, const vrb::Vector& aMaxSize, const vrb::Vector& aMinSize);
   void FinishWidgetResize(int32_t aHandle);

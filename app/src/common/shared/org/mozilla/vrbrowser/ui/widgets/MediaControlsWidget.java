@@ -85,11 +85,13 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
             } else {
                 mMedia.play();
             }
+
+            mMediaPlayButton.requestFocusFromTouch();
         });
 
         mMediaSeekBackButton.setOnClickListener(v -> {
             mMedia.seek(Math.max(0, mMedia.getCurrentTime() - 10.0f));
-
+            mMediaSeekBackButton.requestFocusFromTouch();
         });
 
         mMediaSeekForwardButton.setOnClickListener(v -> {
@@ -98,6 +100,7 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
                 t = Math.min(mMedia.getDuration(), t);
             }
             mMedia.seek(t);
+            mMediaSeekForwardButton.requestFocusFromTouch();
         });
 
         mMediaProjectionButton.setOnClickListener(v -> {
@@ -111,7 +114,12 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
                 placement.rotationAxisY = 1.0f;
                 placement.rotation = (float) Math.toRadians(-7);
             }
-            mProjectionMenu.getPlacement().visible = !mProjectionMenu.getPlacement().visible;
+            if (mProjectionMenu.isVisible()) {
+                mProjectionMenu.hide(KEEP_WIDGET);
+
+            } else {
+                mProjectionMenu.show(REQUEST_FOCUS);
+            }
             mWidgetManager.updateWidget(mProjectionMenu);
         });
 
@@ -122,13 +130,14 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
                 mMedia.setMuted(true);
                 mVolumeControl.setVolume(0);
             }
+            mMediaVolumeButton.requestFocusFromTouch();
         });
 
         mMediaBackButton.setOnClickListener(v -> {
             if (mBackHandler != null) {
                 mBackHandler.run();
             }
-
+            mMediaBackButton.requestFocusFromTouch();
         });
 
         mSeekBar.setDelegate(new MediaSeekBar.Delegate() {
@@ -137,6 +146,7 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
                 mPlayOnSeekEnd = mMedia.isPlaying();
                 mMediaSeekLabel.setVisibility(View.VISIBLE);
                 mMedia.pause();
+                mSeekBar.requestFocusFromTouch();
             }
 
             @Override
@@ -180,6 +190,7 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
             if (mMedia.isMuted()) {
                 mMedia.setMuted(false);
             }
+            mVolumeControl.requestFocusFromTouch();
         });
 
         this.setOnHoverListener((v, event) -> {
@@ -267,10 +278,7 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
         onTimeChange(mMedia.getMediaElement(), mMedia.getCurrentTime());
         onVolumeChange(mMedia.getMediaElement(), mMedia.getVolume(), mMedia.isMuted());
         onReadyStateChange(mMedia.getMediaElement(), mMedia.getReadyState());
-        if (mMedia.isPlaying()) {
-            onPlaybackStateChange(mMedia.getMediaElement(), MediaElement.MEDIA_STATE_PLAY);
-        }
-
+        onPlaybackStateChange(mMedia.getMediaElement(), mMedia.isPlaying() ? MediaElement.MEDIA_STATE_PLAY : MediaElement.MEDIA_STATE_PAUSE);
         mMedia.addMediaListener(this);
     }
 

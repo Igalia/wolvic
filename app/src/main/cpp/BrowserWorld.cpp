@@ -871,6 +871,7 @@ BrowserWorld::Draw() {
   m.device->ProcessEvents();
   m.context->Update();
   m.externalVR->PullBrowserState();
+  m.externalVR->SetHapticState(m.controllers);
 
   m.CheckExitImmersive();
   if (m.splashAnimation) {
@@ -1040,6 +1041,16 @@ BrowserWorld::UpdateWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement
   widget->SetBorderColor(vrb::Color(aPlacement->borderColor));
   widget->SetProxifyLayer(aPlacement->proxifyLayer);
   LayoutWidget(aHandle);
+}
+
+void
+BrowserWorld::UpdateWidgetRecursive(int32_t aHandle, const WidgetPlacementPtr& aPlacement) {
+  UpdateWidget(aHandle, aPlacement);
+  for (WidgetPtr& widget: m.widgets) {
+    if (widget->GetPlacement() && widget->GetPlacement()->parentHandle == aHandle) {
+      UpdateWidgetRecursive(widget->GetHandle(), widget->GetPlacement());
+    }
+  }
 }
 
 void
@@ -1469,13 +1480,21 @@ BrowserWorld::CreateSkyBox(const std::string& aBasePath, const std::string& aExt
   ASSERT_ON_RENDER_THREAD();
   vrb::PausePerformanceMonitor pauseMonitor(*m.monitor);
   const bool empty = aBasePath == "cubemap/void";
+  if (empty) {
+    if (m.skybox) {
+      VRLayerCubePtr layer = m.skybox->GetLayer();
+      if (layer) {
+        m.device->DeleteLayer(layer);
+      }
+      m.skybox->GetRoot()->RemoveFromParents();
+      m.skybox = nullptr;
+    }
+    return;
+  }
   const std::string extension = aExtension.empty() ? ".ktx" : aExtension;
   const GLenum glFormat = extension == ".ktx" ? GL_COMPRESSED_RGB8_ETC2 : GL_RGBA8;
   const int32_t size = 1024;
-  if (m.skybox && empty) {
-    m.skybox->SetVisible(false);
-    return;
-  } else if (m.skybox) {
+  if (m.skybox) {
     m.skybox->SetVisible(true);
     if (m.skybox->GetLayer() && (m.skybox->GetLayer()->GetWidth() != size || m.skybox->GetLayer()->GetFormat() != glFormat)) {
       VRLayerCubePtr oldLayer = m.skybox->GetLayer();
@@ -1484,8 +1503,7 @@ BrowserWorld::CreateSkyBox(const std::string& aBasePath, const std::string& aExt
       m.device->DeleteLayer(oldLayer);
     }
     m.skybox->Load(m.loader, aBasePath, extension);
-    return;
-  } else if (!empty) {
+  } else {
     VRLayerCubePtr layer = m.device->CreateLayerCube(size, size, glFormat);
     m.skybox = Skybox::Create(m.create, layer);
     m.rootOpaqueParent->AddNode(m.skybox->GetRoot());
@@ -1514,7 +1532,7 @@ JNI_METHOD(void, updateWidgetNative)
 (JNIEnv* aEnv, jobject, jint aHandle, jobject aPlacement) {
   crow::WidgetPlacementPtr placement = crow::WidgetPlacement::FromJava(aEnv, aPlacement);
   if (placement) {
-    crow::BrowserWorld::Instance().UpdateWidget(aHandle, placement);
+    crow::BrowserWorld::Instance().UpdateWidgetRecursive(aHandle, placement);
   }
 }
 

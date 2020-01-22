@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.JobIntentService;
+
 import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.R;
@@ -13,14 +16,10 @@ import org.mozilla.vrbrowser.VRBrowserActivity;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
-
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.UUID;
-
-import androidx.annotation.NonNull;
-import androidx.core.app.JobIntentService;
 
 public class CrashReporterService extends JobIntentService {
 
@@ -128,7 +127,7 @@ public class CrashReporterService extends JobIntentService {
                 Log.d(LOGTAG, "Content process crash " + intent);
                 Intent broadcastIntent = new Intent(CRASH_ACTION);
                 broadcastIntent.putExtra(DATA_TAG, intent);
-                sendBroadcast(broadcastIntent, getString(R.string.app_permission_name));
+                sendBroadcast(broadcastIntent, BuildConfig.APPLICATION_ID + "." + getString(R.string.app_permission_name));
             }
         }
 

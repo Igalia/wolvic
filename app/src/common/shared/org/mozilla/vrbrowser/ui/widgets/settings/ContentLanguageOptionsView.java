@@ -24,7 +24,8 @@ import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
 
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class ContentLanguageOptionsView extends SettingsView {
 
@@ -41,11 +42,11 @@ public class ContentLanguageOptionsView extends SettingsView {
         LayoutInflater inflater = LayoutInflater.from(aContext);
 
         // Preferred languages adapter
-        mPreferredAdapter = new LanguagesAdapter(mLanguageItemCallback, true);
+        mPreferredAdapter = new LanguagesAdapter(getContext(), mLanguageItemCallback, true);
         mPreferredAdapter.setLanguageList(LocaleUtils.getPreferredLanguages(getContext()));
 
         // Available languages adapter
-        mAvailableAdapter = new LanguagesAdapter(mLanguageItemCallback, false);
+        mAvailableAdapter = new LanguagesAdapter(getContext(), mLanguageItemCallback, false);
         mAvailableAdapter.setLanguageList(LocaleUtils.getAvailableLanguages());
 
         // Inflate this data binding layout
@@ -76,8 +77,8 @@ public class ContentLanguageOptionsView extends SettingsView {
 
     @Override
     public Point getDimensions() {
-        return new Point( WidgetPlacement.dpDimension(getContext(), R.dimen.language_options_width),
-                WidgetPlacement.dpDimension(getContext(), R.dimen.language_options_height));
+        return new Point( WidgetPlacement.dpDimension(getContext(), R.dimen.settings_dialog_width),
+                WidgetPlacement.dpDimension(getContext(), R.dimen.settings_dialog_height));
     }
 
     private LanguageItemCallback mLanguageItemCallback = new LanguageItemCallback() {
@@ -115,9 +116,9 @@ public class ContentLanguageOptionsView extends SettingsView {
 
     private void saveCurrentLanguages() {
         SettingsStore.getInstance(getContext()).setContentLocales(
-                LocaleUtils.getLanguageIdsFromList(mPreferredAdapter.getItems()));
+                LocaleUtils.getLocalesFromLanguages(mPreferredAdapter.getItems()));
         SessionStore.get().setLocales(
-                LocaleUtils.getLanguageIdsFromList(mPreferredAdapter.getItems()));
+                LocaleUtils.getLocalesFromLanguages(mPreferredAdapter.getItems()));
     }
 
     private void refreshLanguages() {
@@ -129,10 +130,14 @@ public class ContentLanguageOptionsView extends SettingsView {
 
     @Override
     protected boolean reset() {
-        SettingsStore.getInstance(getContext()).setContentLocales(Arrays.asList(LocaleUtils.getSystemLocale()));
-        SessionStore.get().setLocales(Arrays.asList(LocaleUtils.getSystemLocale()));
-        LocaleUtils.resetLanguages();
-        refreshLanguages();
+        String systemLocale = LocaleUtils.getClosestAvailableLocale(LocaleUtils.getDeviceLanguage().getId());
+        List<Language> preferredLanguages = LocaleUtils.getPreferredLanguages(getContext());
+        if (preferredLanguages.size() > 1 || !preferredLanguages.get(0).getId().equals(systemLocale)) {
+            SettingsStore.getInstance(getContext()).setContentLocales(Collections.emptyList());
+            SessionStore.get().setLocales(Collections.emptyList());
+            LocaleUtils.resetLanguages();
+            refreshLanguages();
+        }
 
         return false;
     }

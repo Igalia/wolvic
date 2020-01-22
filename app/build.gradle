@@ -6,6 +6,7 @@ apply plugin: 'com.android.application'
 apply from: "$project.rootDir/tools/gradle/versionCode.gradle"
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: "org.mozilla.telemetry.glean-gradle-plugin"
 
 def getGitHash = { ->
     def stdout = new ByteArrayOutputStream()
@@ -37,10 +38,9 @@ def getUseDebugSigningOnRelease = { ->
     return false
 }
 
-// Generate markdown docs for the collected metrics.
+// Glean: Generate markdown docs for the collected metrics.
 ext.gleanGenerateMarkdownDocs = true
 ext.gleanDocsDirectory = "$rootDir/docs"
-apply from: 'https://github.com/mozilla-mobile/android-components/raw/v' + deps.android_components_version + '/components/service/glean/scripts/sdk_generator.gradle'
 
 android {
     compileSdkVersion build_versions.target_sdk
@@ -49,7 +49,7 @@ android {
         minSdkVersion build_versions.min_sdk
         targetSdkVersion build_versions.target_sdk
         versionCode 1
-        versionName "7"
+        versionName "8"
         buildConfigField "String", "GIT_HASH", "\"${getGitHash()}\""
         buildConfigField "Boolean", "DISABLE_CRASH_RESTART", getCrashRestartDisabled()
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -154,7 +154,7 @@ android {
                     arguments "-DVR_SDK_LIB=oculusvr-lib", "-DVR_SDK_EXTRA_LIB=ovrplatform-lib", "-DOCULUSVR=ON"
                 }
             }
-            manifestPlaceholders = [ headtrackingRequired:"true", permissionToRemove:"android.permission.RECEIVE_BOOT_COMPLETED" ]
+            manifestPlaceholders = [ headtrackingRequired:"false", permissionToRemove:"android.permission.RECEIVE_BOOT_COMPLETED" ]
         }
 
         oculusvr3dofStore {
@@ -414,6 +414,10 @@ android {
             ]
         }
     }
+
+    testOptions {
+        unitTests.includeAndroidResources = true
+    }
 }
 
 configurations {
@@ -461,6 +465,19 @@ dependencies {
     implementation deps.android_components.support_rustlog
     implementation deps.android_components.support_rusthttp
     implementation deps.android_components.glean
+    implementation deps.app_services.rustlog
+
+    // For production builds, the native code for all `org.mozilla.appservices`
+    // dependencies gets compiled together into a single "megazord" build, and
+    // different megazords are published for different subsets of features. Ref
+    // https://mozilla.github.io/application-services/docs/applications/consuming-megazord-libraries.html
+    // For now we can jut use the one that's specifically designed for Fenix.
+    implementation deps.app_services.megazord
+    modules {
+        module('org.mozilla.appservices:full-megazord') {
+            replacedBy('org.mozilla.appservices:fenix-megazord', 'prefer the fenix megazord, to reduce final application size')
+        }
+    }
 
     // TODO this should not be necessary at all, see Services.kt
     implementation deps.work.runtime
@@ -480,9 +497,16 @@ dependencies {
     implementation deps.disklrucache.disklrucache
 
     // Testing
-    testImplementation deps.junit
     androidTestImplementation deps.atsl.runner
     androidTestImplementation deps.espresso.core
+    testImplementation deps.junit
+    testImplementation deps.atsl.core
+    testImplementation deps.robolectric
+    testImplementation deps.app_services.megazord_forUnitTests
+    testImplementation deps.app_services.rustlog
+    testImplementation deps.android_components.support_test
+    testImplementation deps.telemetry.glean_unittests
+    testImplementation deps.work.testing
 
     // Daydream
     googlevrImplementation deps.google_vr.sdk_base

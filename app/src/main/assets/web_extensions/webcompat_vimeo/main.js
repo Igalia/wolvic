@@ -331,6 +331,10 @@ try {
             if (newObjData.name === 'window.vimeo.clip_page_config') {
               if (configObj.clip.canvas === 1 || configObj.clip.is_spatial === true) {
                 is360 = true;
+                // Detect 360 stereo videos
+                if (configObj.clip.title.toLowerCase().indexOf('stereo') >= 0) {
+                    QS_DEFAULTS.mozVideoProjection = "360s_auto";
+                }
               }
 
               configObj.clip.canvas = 1;

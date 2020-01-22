@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:enterFadeDuration="@integer/ui_fadeAnimTime"
-    android:exitFadeDuration="@integer/ui_fadeAnimTime">
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_enabled="false">
         <shape android:shape="rectangle">
             <corners android:bottomRightRadius="20dp" android:topRightRadius="20dp" />
@@ -12,12 +10,14 @@
         <shape android:shape="rectangle">
             <corners android:bottomRightRadius="20dp" android:topRightRadius="20dp" />
             <solid android:color="@color/blackberry"/>
+            <stroke android:width="@dimen/blur_radius" android:color="@color/blackberry_blur" />
         </shape>
     </item>
     <item android:state_hovered="true" android:state_pressed="false">
         <shape android:shape="rectangle">
             <corners android:bottomRightRadius="20dp" android:topRightRadius="20dp" />
             <solid android:color="@color/fog"/>
+            <stroke android:width="@dimen/blur_radius" android:color="@color/fog_blur" />
         </shape>
     </item>
     <item android:state_hovered="false" android:state_pressed="false" android:drawable="@android:color/transparent" >

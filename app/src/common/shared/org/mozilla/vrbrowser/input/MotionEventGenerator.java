@@ -14,6 +14,9 @@ import android.util.SparseArray;
 import org.mozilla.vrbrowser.ui.widgets.Widget;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class MotionEventGenerator {
     static final String LOGTAG = SystemUtils.createLogtag(MotionEventGenerator.class);
     static class Device {
@@ -24,6 +27,7 @@ public class MotionEventGenerator {
         long mDownTime;
         MotionEvent.PointerProperties mProperties[];
         MotionEvent.PointerCoords mCoords[];
+        MotionEvent.PointerCoords mMouseOutCoords[];
 
         Device(final int aDevice) {
             mDevice = aDevice;
@@ -33,10 +37,16 @@ public class MotionEventGenerator {
             mProperties[0].toolType = MotionEvent.TOOL_TYPE_FINGER;
             mCoords = new MotionEvent.PointerCoords[1];
             mCoords[0] = new MotionEvent.PointerCoords();
-            mCoords[0].toolMajor = 2;
-            mCoords[0].toolMinor = 2;
-            mCoords[0].touchMajor = 2;
-            mCoords[0].touchMinor = 2;
+            mMouseOutCoords = new MotionEvent.PointerCoords[1];
+            for (MotionEvent.PointerCoords[] coords : Arrays.asList(mCoords, mMouseOutCoords)) {
+                coords[0] = new MotionEvent.PointerCoords();
+                coords[0].toolMajor = 2;
+                coords[0].toolMinor = 2;
+                coords[0].touchMajor = 2;
+                coords[0].touchMinor = 2;
+            }
+            mMouseOutCoords[0].x = -10;
+            mMouseOutCoords[0].y = -10;
         }
     }
 
@@ -44,13 +54,17 @@ public class MotionEventGenerator {
 
 
     private static void generateEvent(Widget aWidget, Device aDevice, int aAction, boolean aGeneric) {
+        generateEvent(aWidget, aDevice, aAction, aGeneric, aDevice.mCoords);
+    }
+
+    private static void generateEvent(Widget aWidget, Device aDevice, int aAction, boolean aGeneric, MotionEvent.PointerCoords[] aCoords) {
         MotionEvent event = MotionEvent.obtain(
                 /*mDownTime*/ aDevice.mDownTime,
                 /*eventTime*/ SystemClock.uptimeMillis(),
                 /*action*/ aAction,
                 /*pointerCount*/ 1,
                 /*pointerProperties*/ aDevice.mProperties,
-                /*pointerCoords*/ aDevice.mCoords,
+                /*pointerCoords*/ aCoords,
                 /*metaState*/ 0,
                 /*buttonState*/ 0,
                 /*xPrecision*/ 0,
@@ -88,7 +102,7 @@ public class MotionEventGenerator {
                 generateEvent(device.mPreviousWidget, device, MotionEvent.ACTION_CANCEL, false);
                 device.mWasPressed = false;
             }
-            generateEvent(device.mPreviousWidget, device, MotionEvent.ACTION_HOVER_EXIT, true);
+            generateEvent(device.mPreviousWidget, device, MotionEvent.ACTION_HOVER_EXIT, true, device.mMouseOutCoords);
             device.mPreviousWidget = null;
         }
         if (aWidget == null) {

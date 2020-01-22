@@ -10,7 +10,9 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
+import android.net.Uri;
 import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
@@ -20,26 +22,24 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 
+import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.annotation.UiThread;
 
-import org.jetbrains.annotations.NotNull;
-import org.mozilla.geckoview.GeckoDisplay;
-import org.mozilla.geckoview.GeckoResponse;
 import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.PanZoomController;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserApplication;
-import org.mozilla.vrbrowser.browser.HistoryStore;
 import org.mozilla.vrbrowser.browser.PromptDelegate;
 import org.mozilla.vrbrowser.browser.SessionChangeListener;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.browser.VideoAvailabilityListener;
 import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
+import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.ui.adapters.Bookmark;
 import org.mozilla.vrbrowser.ui.callbacks.BookmarksCallback;
@@ -47,26 +47,21 @@ import org.mozilla.vrbrowser.ui.callbacks.HistoryCallback;
 import org.mozilla.vrbrowser.ui.callbacks.LibraryItemContextMenuClickCallback;
 import org.mozilla.vrbrowser.ui.views.BookmarksView;
 import org.mozilla.vrbrowser.ui.views.HistoryView;
-import org.mozilla.vrbrowser.ui.widgets.dialogs.BaseAppDialogWidget;
-import org.mozilla.vrbrowser.ui.widgets.dialogs.ClearCacheDialogWidget;
-import org.mozilla.vrbrowser.ui.widgets.dialogs.MessageDialogWidget;
+import org.mozilla.vrbrowser.ui.widgets.dialogs.ClearHistoryDialogWidget;
+import org.mozilla.vrbrowser.ui.widgets.dialogs.PromptDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.SelectionActionWidget;
 import org.mozilla.vrbrowser.ui.widgets.menus.ContextMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.menus.LibraryMenuWidget;
-import org.mozilla.vrbrowser.ui.widgets.prompts.AlertPromptWidget;
-import org.mozilla.vrbrowser.ui.widgets.prompts.ConfirmPromptWidget;
-import org.mozilla.vrbrowser.ui.widgets.prompts.PromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.settings.SettingsWidget;
-import org.mozilla.vrbrowser.utils.ConnectivityReceiver;
-import org.mozilla.vrbrowser.utils.SystemUtils;
 import org.mozilla.vrbrowser.utils.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import mozilla.components.concept.storage.PageObservation;
 import mozilla.components.concept.storage.PageVisit;
@@ -90,6 +85,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         default void onBookmarksHidden(WindowWidget aWindow) {}
     }
 
+    @IntDef(value = { SESSION_RELEASE_DISPLAY, SESSION_DO_NOT_RELEASE_DISPLAY})
+    public @interface OldSessionDisplayAction {}
+    public static final int SESSION_RELEASE_DISPLAY = 0;
+    public static final int SESSION_DO_NOT_RELEASE_DISPLAY = 1;
+
+
     private Surface mSurface;
     private int mWidth;
     private int mHeight;
@@ -98,11 +99,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private TopBarWidget mTopBar;
     private TitleBarWidget mTitleBar;
     private WidgetManagerDelegate mWidgetManager;
-    private AlertPromptWidget mAlertPrompt;
-    private ConfirmPromptWidget mConfirmPrompt;
-    private NoInternetWidget mNoInternetToast;
-    private MessageDialogWidget mAppDialog;
-    private ClearCacheDialogWidget mClearCacheDialog;
+    private PromptDialogWidget mAlertDialog;
+    private PromptDialogWidget mConfirmDialog;
+    private PromptDialogWidget mAppDialog;
+    private ClearHistoryDialogWidget mClearHistoryDialog;
     private ContextMenuWidget mContextMenu;
     private SelectionActionWidget mSelectionMenu;
     private LibraryMenuWidget mLibraryItemContextMenu;
@@ -201,6 +201,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         setFocusable(true);
 
         TelemetryWrapper.openWindowEvent(mWindowId);
+        GleanMetricsService.openWindowEvent(mWindowId);
 
         if (mSession.getGeckoSession() != null) {
             onCurrentSessionChange(null, mSession.getGeckoSession());
@@ -234,8 +235,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         aSession.addProgressListener(this);
         aSession.setHistoryDelegate(this);
         aSession.addSelectionActionListener(this);
-
-        mWidgetManager.addConnectivityListener(mConnectivityDelegate);
     }
 
     void cleanListeners(Session aSession) {
@@ -246,8 +245,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         aSession.removeProgressListener(this);
         aSession.setHistoryDelegate(null);
         aSession.removeSelectionActionListener(this);
-
-        mWidgetManager.removeConnectivityListener(mConnectivityDelegate);
     }
 
     @Override
@@ -313,6 +310,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     public void close() {
         TelemetryWrapper.closeWindowEvent(mWindowId);
+        GleanMetricsService.closeWindowEvent(mWindowId);
         hideContextMenus();
         releaseWidget();
         mBookmarksView.onDestroy();
@@ -326,23 +324,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
         mListeners.clear();
     }
-
-    private ConnectivityReceiver.Delegate mConnectivityDelegate = connected -> {
-        if (mActive) {
-            if (mNoInternetToast == null) {
-                mNoInternetToast = new NoInternetWidget(getContext());
-                mNoInternetToast.mWidgetPlacement.parentHandle = getHandle();
-                mNoInternetToast.mWidgetPlacement.parentAnchorY = 0.0f;
-                mNoInternetToast.mWidgetPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.base_app_dialog_y_distance);
-            }
-            if (!connected && !mNoInternetToast.isVisible()) {
-                mNoInternetToast.show(REQUEST_FOCUS);
-
-            } else if (connected && mNoInternetToast.isVisible()) {
-                mNoInternetToast.hide(REMOVE_WIDGET);
-            }
-        }
-    };
 
     public void loadHomeIfNotRestored() {
         if (!mIsRestored) {
@@ -649,6 +630,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             updateTitleBar();
         }
 
+        updateTitleBarMediaStatus();
         hideContextMenus();
 
         TelemetryWrapper.activePlacementEvent(mWindowPlacement.getValue(), mActive);
@@ -693,6 +675,13 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
     }
 
+    public void updateTitleBarMediaStatus() {
+        if (mTitleBar != null) {
+            mTitleBar.updateMediaStatus();
+        }
+    }
+
+    @Nullable
     public Session getSession() {
         return mSession;
     }
@@ -925,6 +914,17 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mListeners.remove(aListener);
     }
 
+    public void waitForFirstPaint() {
+        setFirstPaintReady(false);
+        setFirstDrawCallback(() -> {
+            if (!isFirstPaintReady()) {
+                setFirstPaintReady(true);
+                mWidgetManager.updateWidget(WindowWidget.this);
+            }
+        });
+        mWidgetManager.updateWidget(this);
+    }
+
     @Override
     public void handleResizeEvent(float aWorldWidth, float aWorldHeight) {
         int width = getWindowWidth(aWorldWidth);
@@ -978,7 +978,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     @Override
     public boolean isFirstPaintReady() {
-        return mWidgetPlacement.composited;
+        return mWidgetPlacement != null && mWidgetPlacement.composited;
     }
 
     @Override
@@ -990,6 +990,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     public boolean isLayer() {
         return mSurface != null && mTexture == null;
     }
+
 
     @Override
     public void setVisible(boolean aVisible) {
@@ -1030,11 +1031,17 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     public void setSession(@NonNull Session aSession) {
+        setSession(aSession, SESSION_RELEASE_DISPLAY);
+    }
+
+    public void setSession(@NonNull Session aSession, @OldSessionDisplayAction int aDisplayAction) {
         if (mSession != aSession) {
             Session oldSession = mSession;
             if (oldSession != null) {
                 cleanListeners(oldSession);
-                oldSession.releaseDisplay();
+                if (aDisplayAction == SESSION_RELEASE_DISPLAY) {
+                    oldSession.releaseDisplay();
+                }
             }
 
             mSession = aSession;
@@ -1048,6 +1055,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 listener.onSessionChanged(oldSession, aSession);
             }
         }
+        mCaptureOnPageStop = false;
         hideLibraryPanels();
     }
 
@@ -1082,24 +1090,27 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         } else {
             setPrivateBrowsingEnabled(false);
         }
+        waitForFirstPaint();
     }
 
     @Override
     public void onStackSession(Session aSession) {
         // e.g. tab opened via window.open()
+        aSession.updateLastUse();
         Session current = mSession;
         setSession(aSession);
         SessionStore.get().setActiveSession(aSession);
-        current.setActive(false);
-        current.captureBackgroundBitmap(getWindowWidth(), getWindowHeight());
+        current.captureBackgroundBitmap(getWindowWidth(), getWindowHeight()).thenAccept(aVoid -> current.setActive(false));
         mWidgetManager.getTray().showTabAddedNotification();
+
+        GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.BROWSER);
     }
 
     @Override
     public void onUnstackSession(Session aSession, Session aParent) {
         if (mSession == aSession) {
-            setSession(aParent);
             aParent.setActive(true);
+            setSession(aParent);
             SessionStore.get().setActiveSession(aParent);
             SessionStore.get().destroySession(aSession);
         }
@@ -1118,7 +1129,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     @Override
     public boolean onCheckIsTextEditor() {
-        return mSession.isInputActive();
+        return !mIsResizing && mSession.isInputActive();
     }
 
 
@@ -1181,95 +1192,88 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     @Override
     public boolean onGenericMotionEvent(MotionEvent aEvent) {
-        GeckoSession session = mSession.getGeckoSession();
-        return (session != null) && session.getPanZoomController().onMotionEvent(aEvent) == PanZoomController.INPUT_RESULT_HANDLED;
+        if (mView != null) {
+            return super.onGenericMotionEvent(aEvent);
+        } else {
+            GeckoSession session = mSession.getGeckoSession();
+            return (session != null) && session.getPanZoomController().onMotionEvent(aEvent) == PanZoomController.INPUT_RESULT_HANDLED;
+        }
     }
 
     private void setPrivateBrowsingEnabled(boolean isEnabled) {
     }
 
-    public void showAlert(String title, @NonNull String msg, @NonNull PromptWidget.PromptDelegate callback) {
-        mAlertPrompt = new AlertPromptWidget(getContext());
-        mAlertPrompt.mWidgetPlacement.parentHandle = getHandle();
-        mAlertPrompt.mWidgetPlacement.parentAnchorY = 0.0f;
-        mAlertPrompt.mWidgetPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.base_app_dialog_y_distance);
-        mAlertPrompt.setTitle(title);
-        mAlertPrompt.setMessage(msg);
-        mAlertPrompt.setPromptDelegate(callback);
-        mAlertPrompt.show(REQUEST_FOCUS);
+    public void showAlert(String title, @NonNull String msg, @Nullable PromptDialogWidget.Delegate callback) {
+        if (mAlertDialog == null) {
+            mAlertDialog = new PromptDialogWidget(getContext());
+            mAlertDialog.setButtons(new int[] {
+                    R.string.ok_button
+            });
+            mAlertDialog.setCheckboxVisible(false);
+            mAlertDialog.setDescriptionVisible(false);
+        }
+        mAlertDialog.setTitle(title);
+        mAlertDialog.setBody(msg);
+        mAlertDialog.setButtonsDelegate(index -> {
+            mAlertDialog.hide(REMOVE_WIDGET);
+            if (callback != null) {
+                callback.onButtonClicked(index);
+            }
+        });
+        mAlertDialog.show(REQUEST_FOCUS);
     }
 
-    public void showButtonPrompt(String title, @NonNull String msg, @NonNull String[] btnMsg, @NonNull ConfirmPromptWidget.ConfirmPromptDelegate callback) {
-        mConfirmPrompt = new ConfirmPromptWidget(getContext());
-        mConfirmPrompt.mWidgetPlacement.parentHandle = getHandle();
-        mConfirmPrompt.mWidgetPlacement.parentAnchorY = 0.0f;
-        mConfirmPrompt.mWidgetPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.base_app_dialog_y_distance);
-        mConfirmPrompt.setTitle(title);
-        mConfirmPrompt.setMessage(msg);
-        mConfirmPrompt.setButtons(btnMsg);
-        mConfirmPrompt.setPromptDelegate(callback);
-        mConfirmPrompt.show(REQUEST_FOCUS);
+    public void showConfirmPrompt(String title, @NonNull String msg, @NonNull String[] btnMsg, @Nullable PromptDialogWidget.Delegate callback) {
+        if (mConfirmDialog == null) {
+            mConfirmDialog = new PromptDialogWidget(getContext());
+            mAlertDialog.setButtons(new int[] {
+                    R.string.cancel_button,
+                    R.string.ok_button
+            });
+            mConfirmDialog.setCheckboxVisible(false);
+            mConfirmDialog.setDescriptionVisible(false);
+        }
+        mConfirmDialog.setTitle(title);
+        mConfirmDialog.setBody(msg);
+        mConfirmDialog.setButtons(btnMsg);
+        mAlertDialog.setButtonsDelegate(index -> {
+            mAlertDialog.hide(REMOVE_WIDGET);
+            if (callback != null) {
+                callback.onButtonClicked(index);
+            }
+        });
+        mConfirmDialog.show(REQUEST_FOCUS);
     }
 
-    public void showAppDialog(@NonNull String title, @NonNull @StringRes int  description, @NonNull  @StringRes int [] btnMsg,
-                              @NonNull BaseAppDialogWidget.Delegate buttonsCallback, @NonNull MessageDialogWidget.Delegate messageCallback) {
-        mAppDialog = new MessageDialogWidget(getContext());
-        mAppDialog.mWidgetPlacement.parentHandle = getHandle();
-        mAppDialog.mWidgetPlacement.parentAnchorY = 0.0f;
-        mAppDialog.mWidgetPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.base_app_dialog_y_distance);
+    public void showDialog(@NonNull String title, @NonNull @StringRes int  description, @NonNull  @StringRes int [] btnMsg,
+                           @Nullable PromptDialogWidget.Delegate buttonsCallback, @Nullable Runnable linkCallback) {
+        mAppDialog = new PromptDialogWidget(getContext());
+        mAppDialog.setIconVisible(false);
+        mAppDialog.setCheckboxVisible(false);
+        mAppDialog.setDescriptionVisible(false);
         mAppDialog.setTitle(title);
-        mAppDialog.setMessage(description);
+        mAppDialog.setBody(description);
         mAppDialog.setButtons(btnMsg);
-        mAppDialog.setButtonsDelegate(buttonsCallback);
-        mAppDialog.setMessageDelegate(messageCallback);
+        mAppDialog.setButtonsDelegate(index -> {
+            mAppDialog.hide(REMOVE_WIDGET);
+            if (buttonsCallback != null) {
+                buttonsCallback.onButtonClicked(index);
+            }
+        });
+        mAppDialog.setLinkDelegate(() -> {
+            mAppDialog.hide(REMOVE_WIDGET);
+            if (linkCallback != null) {
+                linkCallback.run();
+            }
+        });
         mAppDialog.show(REQUEST_FOCUS);
     }
 
     public void showClearCacheDialog() {
-        mClearCacheDialog = new ClearCacheDialogWidget(getContext());
-        mClearCacheDialog.mWidgetPlacement.parentHandle = getHandle();
-        mClearCacheDialog.mWidgetPlacement.parentAnchorY = 0.0f;
-        mClearCacheDialog.mWidgetPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.base_app_dialog_y_distance);
-        mClearCacheDialog.setTitle(R.string.history_clear);
-        mClearCacheDialog.setButtons(new int[] {
-                R.string.history_clear_cancel,
-                R.string.history_clear_now
-        });
-        mClearCacheDialog.setButtonsDelegate((index) -> {
-            if (index == BaseAppDialogWidget.NEGATIVE) {
-                mClearCacheDialog.hide(REMOVE_WIDGET);
-
-            } else {
-                Calendar date = new GregorianCalendar();
-                date.set(Calendar.HOUR_OF_DAY, 0);
-                date.set(Calendar.MINUTE, 0);
-                date.set(Calendar.SECOND, 0);
-                date.set(Calendar.MILLISECOND, 0);
-
-                long currentTime = System.currentTimeMillis();
-                long todayLimit = date.getTimeInMillis();
-                long yesterdayLimit = todayLimit - SystemUtils.ONE_DAY_MILLIS;
-                long oneWeekLimit = todayLimit - SystemUtils.ONE_WEEK_MILLIS;
-
-                HistoryStore store = SessionStore.get().getHistoryStore();
-                switch (mClearCacheDialog.getSelectedRange()) {
-                    case ClearCacheDialogWidget.TODAY:
-                        store.deleteVisitsBetween(todayLimit, currentTime);
-                        break;
-                    case ClearCacheDialogWidget.YESTERDAY:
-                        store.deleteVisitsBetween(yesterdayLimit, currentTime);
-                        break;
-                    case ClearCacheDialogWidget.LAST_WEEK:
-                        store.deleteVisitsBetween(oneWeekLimit, currentTime);
-                        break;
-                    case ClearCacheDialogWidget.EVERYTHING:
-                        store.deleteEverything();
-                        break;
-                }
-                SessionStore.get().purgeSessionHistory();
-            }
-        });
-        mClearCacheDialog.show(REQUEST_FOCUS);
+        if (mClearHistoryDialog == null) {
+            mClearHistoryDialog = new ClearHistoryDialogWidget(getContext());
+        }
+        mClearHistoryDialog.show(REQUEST_FOCUS);
     }
 
     public void setMaxWindowScale(float aScale) {
@@ -1309,7 +1313,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         return (int) Math.floor(SettingsStore.WINDOW_WIDTH_DEFAULT * aWorldWidth / WidgetPlacement.floatDimension(getContext(), R.dimen.window_world_width));
     }
 
-    private void showLibraryItemContextMenu(@NotNull View view, LibraryMenuWidget.LibraryContextMenuItem item, boolean isLastVisibleItem) {
+    private void showLibraryItemContextMenu(@NonNull View view, LibraryMenuWidget.LibraryContextMenuItem item, boolean isLastVisibleItem) {
         view.requestFocusFromTouch();
 
         hideContextMenus();
@@ -1350,6 +1354,11 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 @Override
                 public void onOpenInNewTabClick(LibraryMenuWidget.LibraryContextMenuItem item) {
                     mWidgetManager.openNewTabForeground(item.getUrl());
+                    if (item.getType() == LibraryMenuWidget.LibraryItemType.HISTORY) {
+                        GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.HISTORY);
+                    } else if (item.getType() == LibraryMenuWidget.LibraryItemType.BOOKMARKS) {
+                        GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.BOOKMARKS);
+                    }
                     hideContextMenus();
                 }
 
@@ -1376,7 +1385,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     private BookmarksCallback mBookmarksListener = new BookmarksCallback() {
         @Override
-        public void onShowContextMenu(@NonNull View view, @NotNull Bookmark item, boolean isLastVisibleItem) {
+        public void onShowContextMenu(@NonNull View view, @NonNull Bookmark item, boolean isLastVisibleItem) {
             showLibraryItemContextMenu(
                     view,
                     new LibraryMenuWidget.LibraryContextMenuItem(
@@ -1388,7 +1397,22 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         @Override
         public void onFxASynSettings(@NonNull View view) {
-            mWidgetManager.getTray().toggleSettingsDialog(SettingsWidget.SettingDialog.FXA);
+            mWidgetManager.getTray().showSettingsDialog(SettingsWidget.SettingDialog.FXA);
+        }
+
+        @Override
+        public void onHideContextMenu(@NonNull View view) {
+            hideContextMenus();
+        }
+
+        @Override
+        public void onFxALogin(@NonNull View view) {
+            hideBookmarks();
+        }
+
+        @Override
+        public void onClickItem(@NonNull View view, Bookmark item) {
+            hideBookmarks();
         }
     };
 
@@ -1412,7 +1436,22 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         @Override
         public void onFxASynSettings(@NonNull View view) {
-            mWidgetManager.getTray().toggleSettingsDialog(SettingsWidget.SettingDialog.FXA);
+            mWidgetManager.getTray().showSettingsDialog(SettingsWidget.SettingDialog.FXA);
+        }
+
+        @Override
+        public void onHideContextMenu(@NonNull View view) {
+            hideContextMenus();
+        }
+
+        @Override
+        public void onFxALogin(@NonNull View view) {
+            hideHistory();
+        }
+
+        @Override
+        public void onClickItem(@NonNull View view, @NonNull VisitInfo item) {
+            hideHistory();
         }
     };
 
@@ -1455,7 +1494,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         if (element.type == ContextElement.TYPE_VIDEO) {
             return;
         }
-        TelemetryWrapper.longPressContextMenuEvent();
 
         hideContextMenus();
 
@@ -1558,26 +1596,84 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             return GeckoResult.fromValue(false);
         }
 
-        boolean isReload = lastVisitedURL != null && lastVisitedURL.equals(url);
-
-        PageVisit pageVisit;
-        if (isReload) {
-            pageVisit = new PageVisit(VisitType.RELOAD, RedirectSource.NOT_A_SOURCE);
-
-        } else {
-            if ((flags & VISIT_REDIRECT_SOURCE_PERMANENT) != 0) {
-                pageVisit = new PageVisit(VisitType.REDIRECT_PERMANENT, RedirectSource.NOT_A_SOURCE);
-            } else if ((flags & VISIT_REDIRECT_SOURCE) != 0) {
-                pageVisit = new PageVisit(VisitType.REDIRECT_TEMPORARY, RedirectSource.NOT_A_SOURCE);
-            } else {
-                pageVisit = new PageVisit(VisitType.LINK, RedirectSource.NOT_A_SOURCE);
-            }
+        // Check if we want this type of url.
+        if (!shouldStoreUri(url)) {
+            return GeckoResult.fromValue(false);
         }
 
-        SessionStore.get().getHistoryStore().recordVisit(url, pageVisit);
+        boolean isReload = lastVisitedURL != null && lastVisitedURL.equals(url);
+
+        VisitType visitType;
+        if (isReload) {
+            visitType = VisitType.RELOAD;
+
+        } else {
+            // Note the difference between `VISIT_REDIRECT_PERMANENT`,
+            // `VISIT_REDIRECT_TEMPORARY`, `VISIT_REDIRECT_SOURCE`, and
+            // `VISIT_REDIRECT_SOURCE_PERMANENT`.
+            //
+            // The former two indicate if the visited page is the *target*
+            // of a redirect; that is, another page redirected to it.
+            //
+            // The latter two indicate if the visited page is the *source*
+            // of a redirect: it's redirecting to another page, because the
+            // server returned an HTTP 3xy status code.
+            if ((flags & VISIT_REDIRECT_PERMANENT) != 0) {
+                visitType = VisitType.REDIRECT_PERMANENT;
+
+            } else if ((flags & VISIT_REDIRECT_TEMPORARY) != 0) {
+                visitType = VisitType.REDIRECT_TEMPORARY;
+
+            } else {
+                visitType = VisitType.LINK;
+            }
+        }
+        RedirectSource redirectSource;
+        if ((flags & GeckoSession.HistoryDelegate.VISIT_REDIRECT_SOURCE_PERMANENT) != 0) {
+            redirectSource = RedirectSource.PERMANENT;
+
+        } else if ((flags & GeckoSession.HistoryDelegate.VISIT_REDIRECT_SOURCE) != 0) {
+            redirectSource = RedirectSource.TEMPORARY;
+
+        } else {
+            redirectSource = RedirectSource.NOT_A_SOURCE;
+        }
+
+        SessionStore.get().getHistoryStore().recordVisit(url, new PageVisit(visitType, redirectSource));
         SessionStore.get().getHistoryStore().recordObservation(url, new PageObservation(url));
 
         return GeckoResult.fromValue(true);
+    }
+
+    /**
+     * Filter out unwanted URIs, such as "chrome:", "about:", etc.
+     * Ported from nsAndroidHistory::CanAddURI
+     * See https://dxr.mozilla.org/mozilla-central/source/mobile/android/components/build/nsAndroidHistory.cpp#326
+     */
+    private boolean shouldStoreUri(@NonNull String uri) {
+        Uri parsedUri = Uri.parse(uri);
+        String scheme = parsedUri.getScheme();
+        if (scheme == null) {
+            return false;
+        }
+
+        // Short-circuit most common schemes.
+        if (scheme.equals("http") || scheme.equals("https")) {
+            return true;
+        }
+
+        // Allow about about:reader uris. They are of the form:
+        // about:reader?url=http://some.interesting.page/to/read.html
+        if (uri.startsWith("about:reader")) {
+            return true;
+        }
+
+        List<String> schemasToIgnore = Stream.of(
+                "about", "imap", "news", "mailbox", "moz-anno", "moz-extension",
+                "view-source", "chrome", "resource", "data", "javascript", "blob"
+        ).collect(Collectors.toList());
+
+        return !schemasToIgnore.contains(scheme);
     }
 
     @UiThread
@@ -1618,33 +1714,51 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     // GeckoSession.SelectionActionDelegate
 
     @Override
-    public void onShowActionRequest(@NonNull GeckoSession aSession, @NonNull Selection aSelection, @NonNull String[] aActions, @NonNull GeckoResponse<String> aResponse) {
-        if (aActions.length == 1 && GeckoSession.SelectionActionDelegate.ACTION_HIDE.equals(aActions[0])) {
+    public void onShowActionRequest(@NonNull GeckoSession aSession, @NonNull Selection aSelection) {
+        if (aSelection.availableActions.size() == 1 && (aSelection.availableActions.contains(GeckoSession.SelectionActionDelegate.ACTION_HIDE))) {
             // See: https://github.com/MozillaReality/FirefoxReality/issues/2214
-            aResponse.respond(GeckoSession.SelectionActionDelegate.ACTION_HIDE);
+            aSelection.hide();
             return;
         }
-        TelemetryWrapper.longPressContextMenuEvent();
 
         hideContextMenus();
         mSelectionMenu = new SelectionActionWidget(getContext());
         mSelectionMenu.mWidgetPlacement.parentHandle = getHandle();
-        mSelectionMenu.setActions(aActions);
+        mSelectionMenu.setActions(aSelection.availableActions);
         Matrix matrix = new Matrix();
         aSession.getClientToSurfaceMatrix(matrix);
         matrix.mapRect(aSelection.clientRect);
-        mSelectionMenu.setSelectionRect(aSelection.clientRect);
+        RectF selectionRect = null;
+        if (aSelection.clientRect != null) {
+            float ratio = WidgetPlacement.worldToWindowRatio(getContext());
+            selectionRect = new RectF(
+                    aSelection.clientRect.left * ratio,
+                    aSelection.clientRect.top* ratio,
+                    aSelection.clientRect.right * ratio,
+                    aSelection.clientRect.bottom * ratio
+            );
+        }
+        mSelectionMenu.setSelectionRect(selectionRect);
         mSelectionMenu.setDelegate(new SelectionActionWidget.Delegate() {
             @Override
             public void onAction(String action) {
                 hideContextMenus();
-                aResponse.respond(action);
+                if (aSelection.isActionAvailable(action)) {
+                    aSelection.execute(action);
+                }
+                if (GeckoSession.SelectionActionDelegate.ACTION_COPY.equals(action) &&
+                        aSelection.isActionAvailable(GeckoSession.SelectionActionDelegate.ACTION_UNSELECT)) {
+                    // Don't keep the text selected after it's copied.
+                    aSelection.execute(GeckoSession.SelectionActionDelegate.ACTION_UNSELECT);
+                }
             }
 
             @Override
             public void onDismiss() {
                 hideContextMenus();
-                aResponse.respond(GeckoSession.SelectionActionDelegate.ACTION_UNSELECT);
+                if (aSelection.isActionAvailable(GeckoSession.SelectionActionDelegate.ACTION_UNSELECT)) {
+                    aSelection.execute(GeckoSession.SelectionActionDelegate.ACTION_UNSELECT);
+                }
             }
         });
         mSelectionMenu.show(KEEP_FOCUS);

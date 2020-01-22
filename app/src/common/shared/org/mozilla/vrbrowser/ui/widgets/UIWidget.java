@@ -318,9 +318,9 @@ public abstract class UIWidget extends FrameLayout implements Widget {
             mWidgetManager.pushBackHandler(mBackHandler);
         }
 
-        setFocusableInTouchMode(false);
+        setFocusableInTouchMode(true);
         if (aShowFlags == REQUEST_FOCUS) {
-            requestFocusFromTouch();
+            post(this::requestFocusFromTouch);
         } else if (aShowFlags == CLEAR_FOCUS) {
             clearFocus();
         }

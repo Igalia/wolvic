@@ -59,10 +59,13 @@ class DeveloperOptionsView extends SettingsView {
         // Hide Performance Monitor switch until it can handle multiple windows.
         mBinding.performanceMonitorSwitch.setVisibility(View.GONE);
 
+        mBinding.hardwareAccelerationSwitch.setOnCheckedChangeListener(mUIHardwareAccelerationListener);
+        setUIHardwareAcceleration(SettingsStore.getInstance(getContext()).isUIHardwareAccelerationEnabled(), false);
+
         if (BuildConfig.DEBUG) {
             mBinding.debugLoggingSwitch.setVisibility(View.GONE);
         } else {
-            setDebugLogging(SettingsStore.getInstance(getContext()).isDebugLogginEnabled(), false);
+            setDebugLogging(SettingsStore.getInstance(getContext()).isDebugLoggingEnabled(), false);
         }
 
         if (!isServoAvailable()) {
@@ -94,6 +97,10 @@ class DeveloperOptionsView extends SettingsView {
         setDebugLogging(value, doApply);
     };
 
+    private SwitchSetting.OnCheckedChangeListener mUIHardwareAccelerationListener = (compoundButton, value, doApply) -> {
+        setUIHardwareAcceleration(value, doApply);
+    };
+
     private SwitchSetting.OnCheckedChangeListener mServoListener = (compoundButton, b, doApply) -> {
         setServo(b, true);
     };
@@ -120,6 +127,11 @@ class DeveloperOptionsView extends SettingsView {
 
         if (mBinding.debugLoggingSwitch.isChecked() != SettingsStore.DEBUG_LOGGING_DEFAULT) {
             setDebugLogging(SettingsStore.DEBUG_LOGGING_DEFAULT, true);
+            restart = true;
+        }
+
+        if (mBinding.hardwareAccelerationSwitch.isChecked() != SettingsStore.UI_HARDWARE_ACCELERATION_DEFAULT) {
+            setUIHardwareAcceleration(SettingsStore.UI_HARDWARE_ACCELERATION_DEFAULT, true);
             restart = true;
         }
 
@@ -161,6 +173,17 @@ class DeveloperOptionsView extends SettingsView {
 
         if (doApply) {
             SessionStore.get().resetMultiprocess();
+        }
+    }
+
+    private void setUIHardwareAcceleration(boolean value, boolean doApply) {
+        mBinding.hardwareAccelerationSwitch.setOnCheckedChangeListener(null);
+        mBinding.hardwareAccelerationSwitch.setValue(value, false);
+        mBinding.hardwareAccelerationSwitch.setOnCheckedChangeListener(mUIHardwareAccelerationListener);
+
+        if (doApply) {
+            SettingsStore.getInstance(getContext()).setUIHardwareAccelerationEnabled(value);
+            showRestartDialog();
         }
     }
 

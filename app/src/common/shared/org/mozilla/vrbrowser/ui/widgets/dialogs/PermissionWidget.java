@@ -8,26 +8,15 @@ package org.mozilla.vrbrowser.ui.widgets.dialogs;
 import android.content.Context;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
-import android.util.AttributeSet;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.ui.widgets.UIWidget;
-import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
-import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
-import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.net.URI;
 
-public class PermissionWidget extends UIDialog implements WidgetManagerDelegate.FocusChangeListener {
+public class PermissionWidget extends PromptDialogWidget {
 
-    private TextView mPermissionMessage;
-    private ImageView mPermissionIcon;
     private GeckoSession.PermissionDelegate.Callback mPermissionCallback;
 
     public enum PermissionType {
@@ -44,81 +33,60 @@ public class PermissionWidget extends UIDialog implements WidgetManagerDelegate.
         initialize(aContext);
     }
 
-    public PermissionWidget(Context aContext, AttributeSet aAttrs) {
-        super(aContext, aAttrs);
-        initialize(aContext);
-    }
-
-    public PermissionWidget(Context aContext, AttributeSet aAttrs, int aDefStyle) {
-        super(aContext, aAttrs, aDefStyle);
-        initialize(aContext);
-    }
-
-    private void initialize(Context aContext) {
-        inflate(aContext, R.layout.permission, this);
-
-        mPermissionIcon = findViewById(R.id.permissionIcon);
-        mPermissionMessage = findViewById(R.id.permissionText);
-
-        Button cancelButton = findViewById(R.id.permissionCancelButton);
-        cancelButton.setOnClickListener(v -> handlePermissionResult(false));
-
-        Button allowButton = findViewById(R.id.permissionAllowButton);
-        allowButton.setOnClickListener(v -> handlePermissionResult(true));
-    }
-
     @Override
-    protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
-        Context context = getContext();
-        aPlacement.width = WidgetPlacement.dpDimension(context, R.dimen.permission_width);
-        aPlacement.height = WidgetPlacement.dpDimension(context, R.dimen.permission_height);
-        aPlacement.worldWidth = WidgetPlacement.floatDimension(context, R.dimen.permission_world_width);
-        aPlacement.translationZ = WidgetPlacement.unitFromMeters(context, R.dimen.browser_children_z_distance);
-        aPlacement.parentAnchorX = 0.5f;
-        aPlacement.parentAnchorY = 0.5f;
-        aPlacement.anchorX = 0.5f;
-        aPlacement.anchorY = 0.5f;
-    }
+    protected void initialize(Context aContext) {
+        super.initialize(aContext);
 
-    @Override
-    public void show(@ShowFlags int aShowFlags) {
-        super.show(aShowFlags);
+        setButtons(new int[] {
+                R.string.permission_reject,
+                R.string.permission_allow
+        });
+        setButtonsDelegate(index -> {
+            if (index == PromptDialogWidget.NEGATIVE) {
+                // Do not allow
+                handlePermissionResult(false);
 
-        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
-    }
-
-    @Override
-    public void hide(@HideFlags int aHideFlag) {
-        super.hide(aHideFlag);
-
-        mWidgetManager.popWorldBrightness(this);
+            } else if (index == PromptDialogWidget.POSITIVE) {
+                // Allow
+                handlePermissionResult(true);
+            }
+        });
+        setCheckboxVisible(false);
+        setDescriptionVisible(false);
     }
 
     public void showPrompt(String aUri, PermissionType aType, GeckoSession.PermissionDelegate.Callback aCallback) {
+        int titleId;
         int messageId;
         int iconId;
         switch (aType) {
             case Camera:
+                titleId = R.string.security_options_permission_camera;
                 messageId = R.string.permission_camera;
                 iconId = R.drawable.ic_icon_dialog_camera;
                 break;
             case Microphone:
+                titleId = R.string.security_options_permission_microphone;
                 messageId = R.string.permission_microphone;
                 iconId = R.drawable.ic_icon_microphone;
                 break;
             case CameraAndMicrophone:
+                titleId = R.string.security_options_permission_camera_and_microphone;
                 messageId = R.string.permission_camera_and_microphone;
                 iconId = R.drawable.ic_icon_dialog_camera;
                 break;
             case Location:
+                titleId = R.string.security_options_permission_location;
                 messageId = R.string.permission_location;
                 iconId = R.drawable.ic_icon_dialog_geolocation;
                 break;
             case Notification:
+                titleId = R.string.security_options_permission_notifications;
                 messageId = R.string.permission_notification;
                 iconId = R.drawable.ic_icon_dialog_notification;
                 break;
             case ReadExternalStorage:
+                titleId = R.string.security_options_permission_storage;
                 messageId = R.string.permission_read_external_storage;
                 iconId = R.drawable.ic_icon_storage;
                 break;
@@ -137,8 +105,9 @@ public class PermissionWidget extends UIDialog implements WidgetManagerDelegate.
         SpannableStringBuilder str = new SpannableStringBuilder(message);
         str.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-        mPermissionMessage.setText(str);
-        mPermissionIcon.setImageResource(iconId);
+        setIcon(iconId);
+        setTitle(titleId);
+        setBody(str);
 
         show(REQUEST_FOCUS);
     }

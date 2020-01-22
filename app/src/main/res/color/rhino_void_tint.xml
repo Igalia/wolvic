@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:enterFadeDuration="@integer/ui_fadeAnimTime"
-    android:exitFadeDuration="@integer/ui_fadeAnimTime">
-    <item android:state_hovered="true"
-        android:color="@color/void_color"/> <!-- focused -->
-    <item android:color="@color/rhino"/> <!-- default -->
-</selector>

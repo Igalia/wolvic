@@ -5,60 +5,57 @@
 
 package org.mozilla.vrbrowser.ui.widgets.dialogs;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-
-import androidx.annotation.NonNull;
-import androidx.databinding.DataBindingUtil;
 
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.browser.Accounts;
 import org.mozilla.vrbrowser.browser.SettingsStore;
-import org.mozilla.vrbrowser.databinding.WhatsNewBinding;
-import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
-import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
+import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-public class WhatsNewWidget extends UIDialog implements WidgetManagerDelegate.WorldClickListener {
+public class WhatsNewWidget extends PromptDialogWidget {
 
     private Accounts mAccounts;
-    private Runnable mSignInCallback;
-    private Runnable mStartBrowsingCallback;
     private Accounts.LoginOrigin mLoginOrigin;
     private Executor mUIThreadExecutor;
 
     public WhatsNewWidget(Context aContext) {
         super(aContext);
-        initialize();
+
+        initialize(aContext);
     }
 
-    public void setSignInCallback(@NonNull Runnable callback) {
-        mSignInCallback = callback;
-    }
-
-    public void setStartBrowsingCallback(@NonNull Runnable callback) {
-        mStartBrowsingCallback = callback;
-    }
-
-    @SuppressLint("ClickableViewAccessibility")
-    private void initialize() {
-        LayoutInflater inflater = LayoutInflater.from(getContext());
+    @Override
+    protected void initialize(Context aContext) {
+        super.initialize(aContext);
 
         mUIThreadExecutor = ((VRBrowserApplication)getContext().getApplicationContext()).getExecutors().mainThread();
-
         mAccounts = ((VRBrowserApplication)getContext().getApplicationContext()).getAccounts();
 
-        // Inflate this data binding layout
-        WhatsNewBinding mBinding = DataBindingUtil.inflate(inflater, R.layout.whats_new, this, true);
+        setButtons(new int[] {
+                R.string.whats_new_button_start_browsing,
+                R.string.whats_new_button_sign_in
+        });
+        setButtonsDelegate(index -> {
+            if (index == PromptDialogWidget.NEGATIVE) {
+                onDismiss();
 
-        mBinding.signInButton.setOnClickListener(this::signIn);
-        mBinding.startBrowsingButton.setOnClickListener(this::startBrowsing);
+            } else if (index == PromptDialogWidget.POSITIVE) {
+                signIn();
+            }
+        });
+
+        setCheckboxVisible(false);
+
+        setIcon(R.drawable.ic_asset_image_accounts);
+        setTitle(R.string.whats_new_title_1);
+        setBody(R.string.whats_new_body_1);
+        setDescription(R.string.whats_new_body_sub_1);
     }
 
     public void setLoginOrigin(Accounts.LoginOrigin origin) {
@@ -66,69 +63,40 @@ public class WhatsNewWidget extends UIDialog implements WidgetManagerDelegate.Wo
     }
 
     @Override
-    protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
-        aPlacement.visible = false;
-        aPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.whats_new_width);
-        aPlacement.height = WidgetPlacement.dpDimension(getContext(), R.dimen.whats_new_height);
-        aPlacement.parentAnchorX = 0.5f;
-        aPlacement.parentAnchorY = 0.0f;
-        aPlacement.anchorX = 0.5f;
-        aPlacement.anchorY = 0.5f;
-        aPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.settings_world_y) -
-                                  WidgetPlacement.unitFromMeters(getContext(), R.dimen.window_world_y);
-        aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.settings_world_z) -
-                                  WidgetPlacement.unitFromMeters(getContext(), R.dimen.window_world_z);
-    }
-
-    @Override
-    public void show(@ShowFlags int aShowFlags) {
-        super.show(aShowFlags);
-
-        mWidgetManager.addWorldClickListener(this);
-        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
-    }
-
-    @Override
     public void hide(@HideFlags int aHideFlags) {
         super.hide(aHideFlags);
 
         SettingsStore.getInstance(getContext()).setWhatsNewDisplayed(true);
-
-        mWidgetManager.popWorldBrightness(this);
-        mWidgetManager.removeWorldClickListener(this);
     }
 
-    private void signIn(View view) {
-        mAccounts.getAuthenticationUrlAsync().thenAcceptAsync((url) -> {
-            if (url != null) {
-                mAccounts.setLoginOrigin(mLoginOrigin);
-                mWidgetManager.openNewTabForeground(url);
-                mWidgetManager.getFocusedWindow().getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_VR);
-                mWidgetManager.getFocusedWindow().getSession().loadUri(url);
+    private void signIn() {
+        if (mAccounts.getAccountStatus() == Accounts.AccountStatus.SIGNED_IN) {
+            mAccounts.logoutAsync();
+
+        } else {
+            UIDialog.closeAllDialogs();
+
+            CompletableFuture<String> result = mAccounts.authUrlAsync();
+            if (result != null) {
+                result.thenAcceptAsync((url) -> {
+                    if (url == null) {
+                        mAccounts.logoutAsync();
+
+                    } else {
+                        mAccounts.setLoginOrigin(mLoginOrigin);
+                        mWidgetManager.openNewTabForeground(url);
+                        mWidgetManager.getFocusedWindow().getSession().loadUri(url);
+                        mWidgetManager.getFocusedWindow().getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_VR);
+                        GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.FXA_LOGIN);
+                    }
+
+                }, mUIThreadExecutor).exceptionally(throwable -> {
+                    Log.d(LOGTAG, "Error getting the authentication URL: " + throwable.getLocalizedMessage());
+                    throwable.printStackTrace();
+                    return null;
+                });
             }
-
-            if (mSignInCallback != null) {
-                mSignInCallback.run();
-            }
-
-        }, mUIThreadExecutor).exceptionally(throwable -> {
-            Log.d(LOGTAG, "Error getting the authentication URL: " + throwable.getLocalizedMessage());
-            throwable.printStackTrace();
-            return null;
-        });
-    }
-
-    private void startBrowsing(View view) {
-        if (mStartBrowsingCallback != null) {
-            mStartBrowsingCallback.run();
         }
-    }
-
-    // WidgetManagerDelegate.WorldClickListener
-
-    @Override
-    public void onWorldClick() {
-        onDismiss();
     }
 
 }

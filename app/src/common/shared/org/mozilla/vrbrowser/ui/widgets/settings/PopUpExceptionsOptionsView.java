@@ -25,13 +25,13 @@ import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 
 import java.util.List;
 
-class AllowedPopUpsOptionsView extends SettingsView {
+class PopUpExceptionsOptionsView extends SettingsView {
 
     private OptionsPrivacyPopupsBinding mBinding;
     private PopUpAdapter mAdapter;
     private PopUpsViewModel mViewModel;
 
-    public AllowedPopUpsOptionsView(Context aContext, WidgetManagerDelegate aWidgetManager) {
+    public PopUpExceptionsOptionsView(Context aContext, WidgetManagerDelegate aWidgetManager) {
         super(aContext, aWidgetManager);
         initialize(aContext);
     }
@@ -68,8 +68,8 @@ class AllowedPopUpsOptionsView extends SettingsView {
 
     @Override
     public Point getDimensions() {
-        return new Point( WidgetPlacement.dpDimension(getContext(), R.dimen.language_options_width),
-                WidgetPlacement.dpDimension(getContext(), R.dimen.language_options_height));
+        return new Point( WidgetPlacement.dpDimension(getContext(), R.dimen.settings_dialog_width),
+                WidgetPlacement.dpDimension(getContext(), R.dimen.settings_dialog_height));
     }
 
     @Override
@@ -99,6 +99,10 @@ class AllowedPopUpsOptionsView extends SettingsView {
         public void onChanged(List<PopUpSite> popUpSites) {
             if (popUpSites != null) {
                 mAdapter.setSites(popUpSites);
+                mBinding.setIsEmpty(popUpSites.isEmpty());
+
+            } else {
+                mBinding.setIsEmpty(true);
             }
         }
     };

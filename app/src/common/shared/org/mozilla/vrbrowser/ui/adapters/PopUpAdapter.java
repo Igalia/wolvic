@@ -1,9 +1,12 @@
 package org.mozilla.vrbrowser.ui.adapters;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
@@ -24,12 +27,25 @@ public class PopUpAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     static final String LOGTAG = SystemUtils.createLogtag(BookmarkAdapter.class);
 
+    private static final int ICON_ANIMATION_DURATION = 200;
+
     private List<PopUpSite> mDisplayList;
 
     private PopUpSiteItemCallback mCallback;
 
+    private int mIconColorHover;
+    private int mIconNormalColor;
+    private int mIconSize;
+    private int mMaxIconSize;
+
     public PopUpAdapter(Context aContext, PopUpSiteItemCallback callback) {
         mCallback = callback;
+
+        mIconSize = (int)aContext.getResources().getDimension(R.dimen.language_row_icon_size);
+        mMaxIconSize = mIconSize + ((mIconSize*25)/100);
+
+        mIconColorHover = aContext.getResources().getColor(R.color.smoke, aContext.getTheme());
+        mIconNormalColor = aContext.getResources().getColor(R.color.concrete, aContext.getTheme());
 
         setHasStableIds(true);
     }
@@ -93,6 +109,7 @@ public class PopUpAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
             return false;
         });
+        binding.delete.setOnHoverListener(mIconHoverListener);
 
         return new PopUpSiteViewHolder(binding);
     }
@@ -118,6 +135,46 @@ public class PopUpAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             this.binding = binding;
         }
     }
+
+    private View.OnHoverListener mIconHoverListener = (view, motionEvent) -> {
+        ImageView icon = (ImageView)view;
+        int ev = motionEvent.getActionMasked();
+        switch (ev) {
+            case MotionEvent.ACTION_HOVER_ENTER: {
+                icon.setColorFilter(mIconColorHover);
+                ValueAnimator anim = ValueAnimator.ofInt(mIconSize, mMaxIconSize);
+                anim.addUpdateListener(valueAnimator -> {
+                    int val = (Integer) valueAnimator.getAnimatedValue();
+                    ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+                    layoutParams.width = val;
+                    layoutParams.height = val;
+                    view.setLayoutParams(layoutParams);
+                });
+                anim.setDuration(ICON_ANIMATION_DURATION);
+                anim.start();
+
+                return false;
+            }
+
+            case MotionEvent.ACTION_HOVER_EXIT: {
+                ValueAnimator anim = ValueAnimator.ofInt(mMaxIconSize, mIconSize);
+                anim.addUpdateListener(valueAnimator -> {
+                    int val = (Integer) valueAnimator.getAnimatedValue();
+                    ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+                    layoutParams.width = val;
+                    layoutParams.height = val;
+                    view.setLayoutParams(layoutParams);
+                });
+                anim.setDuration(ICON_ANIMATION_DURATION);
+                anim.start();
+                icon.setColorFilter(mIconNormalColor);
+
+                return false;
+            }
+        }
+
+        return false;
+    };
 
 }
 

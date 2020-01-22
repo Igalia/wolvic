@@ -41,7 +41,6 @@
             android:duplicateParentState="true"
             android:drawableEnd="@{item.isExpanded ? @drawable/ic_baseline_arrow_drop_down_24px : @drawable/ic_baseline_arrow_drop_up_24px}"
             android:drawableTint="@color/fog"
-            android:drawablePadding="10dp"
-            visibleGone="@{item.hasChildren()}"/>
+            android:drawablePadding="10dp"/>
     </LinearLayout>
 </layout>

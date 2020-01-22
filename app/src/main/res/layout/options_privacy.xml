@@ -45,6 +45,12 @@
                     app:buttonText="@string/developer_options_show"
                     app:description="@string/settings_privacy_policy" />
 
+                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                    android:id="@+id/restoreTabsSwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:description="@string/security_options_restore_tabs" />
+
                 <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
                     android:id="@+id/clearCookiesSite"
                     android:layout_width="match_parent"

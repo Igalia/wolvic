@@ -37,9 +37,7 @@
                 android:id="@+id/languageRadio"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:layout="@layout/setting_radio_group_v"
-                app:options="@array/developer_options_voice_search_languages"
-                app:values="@array/developer_options_voice_search_languages_values" />
+                app:layout="@layout/setting_radio_group_v" />
         </org.mozilla.vrbrowser.ui.views.CustomScrollView>
 
         <org.mozilla.vrbrowser.ui.widgets.settings.SettingsFooter

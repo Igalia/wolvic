@@ -68,6 +68,12 @@
                     app:description="@string/developer_options_debug_logging" />
 
                 <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                    android:id="@+id/hardware_acceleration_switch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:description="@string/hardware_acceleration_switch" />
+
+                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
                     android:id="@+id/servo_switch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

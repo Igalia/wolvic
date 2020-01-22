@@ -68,7 +68,6 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
             mWidgetManager.addWidget(mPermissionWidget);
         }
 
-        mPermissionWidget.getPlacement().parentHandle = mParentWidgetHandle;
         mPermissionWidget.showPrompt(aUri, aType, aCallback);
     }
 
@@ -115,6 +114,20 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
     @Override
     public void onContentPermissionRequest(GeckoSession aSession, String aUri, int aType, Callback callback) {
         Log.d(LOGTAG, "onContentPermissionRequest: " + aUri + " " + aType);
+        if (aType == PERMISSION_XR) {
+            callback.grant();
+            return;
+        }
+
+        if (aType == PERMISSION_AUTOPLAY_AUDIBLE || aType == PERMISSION_AUTOPLAY_INAUDIBLE) {
+            if (SettingsStore.getInstance(mContext).isAutoplayEnabled()) {
+                callback.grant();
+            } else {
+                callback.reject();
+            }
+            return;
+        }
+
         PermissionWidget.PermissionType type;
         if (aType == PERMISSION_DESKTOP_NOTIFICATION) {
             type = PermissionWidget.PermissionType.Notification;

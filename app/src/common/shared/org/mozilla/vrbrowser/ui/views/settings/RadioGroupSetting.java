@@ -103,7 +103,6 @@ public class RadioGroupSetting extends LinearLayout {
             }
 
             setChecked(checkedId, true);
-            compoundButton.requestFocus();
         }
     };
 

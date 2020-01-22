@@ -6,7 +6,6 @@ import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 
 import org.mozilla.geckoview.GeckoSession;
-import org.mozilla.vrbrowser.VRBrowserActivity;
 import org.mozilla.vrbrowser.ui.widgets.menus.VideoProjectionMenuWidget;
 import org.mozilla.vrbrowser.utils.ConnectivityReceiver;
 
@@ -88,4 +87,5 @@ public interface WidgetManagerDelegate {
     TrayWidget getTray();
     void addConnectivityListener(ConnectivityReceiver.Delegate aListener);
     void removeConnectivityListener(ConnectivityReceiver.Delegate aListener);
+    void saveState();
 }

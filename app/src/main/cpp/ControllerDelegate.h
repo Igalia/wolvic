@@ -42,6 +42,10 @@ public:
   virtual void SetButtonCount(const int32_t aControllerIndex, const uint32_t aNumButtons) = 0;
   virtual void SetButtonState(const int32_t aControllerIndex, const Button aWhichButton, const int32_t aImmersiveIndex, const bool aPressed, const bool aTouched, const float aImmersiveTrigger = -1.0f) = 0;
   virtual void SetAxes(const int32_t aControllerIndex, const float* aData, const uint32_t aLength) = 0;
+  virtual void SetHapticCount(const int32_t aControllerIndex, const uint32_t aNumHaptics) = 0;
+  virtual uint32_t GetHapticCount(const int32_t aControllerIndex) = 0;
+  virtual void SetHapticFeedback(const int32_t aControllerIndex, const uint64_t aInputFrameID, const float aPulseDuration, const float aPulseIntensity) = 0;
+  virtual void GetHapticFeedback(const int32_t aControllerIndex, uint64_t & aInputFrameID, float& aPulseDuration, float& aPulseIntensity) = 0;
   virtual void SetLeftHanded(const int32_t aControllerIndex, const bool aLeftHanded) = 0;
   virtual void SetTouchPosition(const int32_t aControllerIndex, const float aTouchX, const float aTouchY) = 0;
   virtual void EndTouch(const int32_t aControllerIndex) = 0;

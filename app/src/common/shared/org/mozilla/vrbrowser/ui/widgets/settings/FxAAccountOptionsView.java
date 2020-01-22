@@ -10,17 +10,20 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.browser.Accounts;
+import org.mozilla.vrbrowser.browser.Places;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.databinding.OptionsFxaAccountBinding;
 import org.mozilla.vrbrowser.ui.views.settings.SwitchSetting;
+import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
+import org.mozilla.vrbrowser.ui.widgets.dialogs.SignOutDialogWidget;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.util.Objects;
@@ -40,9 +43,9 @@ class FxAAccountOptionsView extends SettingsView {
 
     private OptionsFxaAccountBinding mBinding;
     private Accounts mAccounts;
+    private Places mPlaces;
     private Executor mUIThreadExecutor;
-    private boolean mInitialBookmarksState;
-    private boolean mInitialHistoryState;
+    private SignOutDialogWidget mSignOutDialog;
 
     public FxAAccountOptionsView(Context aContext, WidgetManagerDelegate aWidgetManager) {
         super(aContext, aWidgetManager);
@@ -61,10 +64,11 @@ class FxAAccountOptionsView extends SettingsView {
         mBinding.headerLayout.setBackClickListener(view -> onDismiss());
 
         mAccounts = ((VRBrowserApplication)getContext().getApplicationContext()).getAccounts();
+        mPlaces = ((VRBrowserApplication)getContext().getApplicationContext()).getPlaces();
 
         mUIThreadExecutor = ((VRBrowserApplication)getContext().getApplicationContext()).getExecutors().mainThread();
 
-        mBinding.signButton.setOnClickListener(view -> mAccounts.logoutAsync());
+        mBinding.signButton.setOnClickListener(this::signOut);
         mBinding.syncButton.setOnClickListener(this::sync);
 
         mBinding.setIsSyncing(mAccounts.isSyncing());
@@ -86,11 +90,8 @@ class FxAAccountOptionsView extends SettingsView {
         mAccounts.addAccountListener(mAccountListener);
         mAccounts.addSyncListener(mSyncListener);
 
-        mInitialBookmarksState = mAccounts.isEngineEnabled(SyncEngine.Bookmarks.INSTANCE);
-        mInitialHistoryState = mAccounts.isEngineEnabled(SyncEngine.History.INSTANCE);
-
-        mBinding.bookmarksSyncSwitch.setValue(mInitialBookmarksState, false);
-        mBinding.historySyncSwitch.setValue(mInitialHistoryState, false);
+        mBinding.bookmarksSyncSwitch.setValue(mAccounts.isEngineEnabled(SyncEngine.Bookmarks.INSTANCE), false);
+        mBinding.historySyncSwitch.setValue(mAccounts.isEngineEnabled(SyncEngine.History.INSTANCE), false);
 
         updateSyncBindings(mAccounts.isSyncing());
     }
@@ -101,20 +102,16 @@ class FxAAccountOptionsView extends SettingsView {
 
         mAccounts.removeAccountListener(mAccountListener);
         mAccounts.removeSyncListener(mSyncListener);
-
-        // We only sync engines in case the user has changed the sync engines since previous sync
-        if (mBinding.bookmarksSyncSwitch.isChecked() != mInitialBookmarksState ||
-                mBinding.historySyncSwitch.isChecked() != mInitialHistoryState) {
-            mAccounts.syncNowAsync(SyncReason.EngineChange.INSTANCE, false);
-        }
     }
 
     private SwitchSetting.OnCheckedChangeListener mBookmarksSyncListener = (compoundButton, value, apply) -> {
         mAccounts.setSyncStatus(SyncEngine.Bookmarks.INSTANCE, value);
+        mAccounts.syncNowAsync(SyncReason.EngineChange.INSTANCE, false);
     };
 
     private SwitchSetting.OnCheckedChangeListener mHistorySyncListener = (compoundButton, value, apply) -> {
         mAccounts.setSyncStatus(SyncEngine.History.INSTANCE, value);
+        mAccounts.syncNowAsync(SyncReason.EngineChange.INSTANCE, false);
     };
 
     private void resetOptions() {
@@ -131,6 +128,9 @@ class FxAAccountOptionsView extends SettingsView {
         @Override
         public void onIdle() {
             updateSyncBindings(false);
+
+            mBinding.bookmarksSyncSwitch.setValue(mAccounts.isEngineEnabled(SyncEngine.Bookmarks.INSTANCE), false);
+            mBinding.historySyncSwitch.setValue(mAccounts.isEngineEnabled(SyncEngine.History.INSTANCE), false);
 
             // This shouldn't be necessary but for some reason the buttons stays hovered after the sync.
             // I guess Android restoring it to the latest state (hovered) before being disabled
@@ -165,13 +165,17 @@ class FxAAccountOptionsView extends SettingsView {
                     updateProfile(profile);
 
                 } else {
-                    Objects.requireNonNull(mAccounts.updateProfileAsync()).
-                            thenAcceptAsync((u) -> updateProfile(mAccounts.accountProfile()), mUIThreadExecutor).
-                            exceptionally(throwable -> {
-                                Log.d(LOGTAG, "Error getting the account profile: " + throwable.getLocalizedMessage());
-                                throwable.printStackTrace();
-                                return null;
-                            });
+                    try {
+                        Objects.requireNonNull(mAccounts.updateProfileAsync()).
+                                thenAcceptAsync((u) -> updateProfile(mAccounts.accountProfile()), mUIThreadExecutor).
+                                exceptionally(throwable -> {
+                                    Log.d(LOGTAG, "Error getting the account profile: " + throwable.getLocalizedMessage());
+                                    return null;
+                                });
+
+                    } catch (NullPointerException e) {
+                        Log.d(LOGTAG, "Error getting the account profile: " + e.getLocalizedMessage());
+                    }
                 }
                 break;
 
@@ -191,24 +195,30 @@ class FxAAccountOptionsView extends SettingsView {
     }
 
     private void sync(View view) {
-        if (mBinding.bookmarksSyncSwitch.isChecked() != mInitialBookmarksState ||
-                mBinding.historySyncSwitch.isChecked() != mInitialHistoryState) {
-            mAccounts.syncNowAsync(SyncReason.EngineChange.INSTANCE, false);
-        } else {
-            mAccounts.syncNowAsync(SyncReason.User.INSTANCE, false);
+        mAccounts.syncNowAsync(SyncReason.User.INSTANCE, false);
+        mAccounts.updateProfileAsync();
+    }
+
+    private void signOut(View view) {
+        if (mSignOutDialog == null) {
+            mSignOutDialog = new SignOutDialogWidget(getContext());
         }
+
+        exitWholeSettings();
+        mSignOutDialog.show(UIWidget.REQUEST_FOCUS);
     }
 
     private AccountObserver mAccountListener = new AccountObserver() {
 
         @Override
-        public void onAuthenticated(@NotNull OAuthAccount oAuthAccount, @NotNull AuthType authType) {
+        public void onAuthenticated(@NonNull OAuthAccount oAuthAccount, @NonNull AuthType authType) {
             mBinding.signButton.setButtonText(R.string.settings_fxa_account_sign_out);
         }
 
         @Override
-        public void onProfileUpdated(@NotNull Profile profile) {
-            post(() -> mBinding.accountEmail.setText(profile.getEmail()));
+        public void onProfileUpdated(@NonNull Profile profile) {
+            mBinding.accountEmail.setText(profile.getEmail());
+            mBinding.setLastSync(mAccounts.lastSync());
         }
 
         @Override

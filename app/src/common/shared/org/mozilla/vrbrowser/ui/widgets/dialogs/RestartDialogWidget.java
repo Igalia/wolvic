@@ -6,85 +6,40 @@
 package org.mozilla.vrbrowser.ui.widgets.dialogs;
 
 import android.content.Context;
-import android.util.AttributeSet;
-import android.widget.Button;
-import android.widget.TextView;
 
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.audio.AudioEngine;
-import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
-import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
-public class RestartDialogWidget extends UIDialog {
-
-    private AudioEngine mAudio;
+public class RestartDialogWidget extends PromptDialogWidget {
 
     public RestartDialogWidget(Context aContext) {
         super(aContext);
         initialize(aContext);
     }
 
-    public RestartDialogWidget(Context aContext, AttributeSet aAttrs) {
-        super(aContext, aAttrs);
-        initialize(aContext);
-    }
+    @Override
+    protected void initialize(Context aContext) {
+        super.initialize(aContext);
 
-    public RestartDialogWidget(Context aContext, AttributeSet aAttrs, int aDefStyle) {
-        super(aContext, aAttrs, aDefStyle);
-        initialize(aContext);
-    }
-
-    private void initialize(Context aContext) {
-        inflate(aContext, R.layout.restart_dialog, this);
-
-        Button acceptButton = findViewById(R.id.restartNowButton);
-        Button cancelButton = findViewById(R.id.restartLaterButton);
-        TextView restartText = findViewById(R.id.restartText);
-
-        acceptButton.setOnClickListener(view -> {
-            if (mAudio != null) {
-                mAudio.playSound(AudioEngine.Sound.CLICK);
-            }
-
-            postDelayed(() -> SystemUtils.scheduleRestart(getContext(), 100), 500);
+        setButtons(new int[] {
+                R.string.restart_later_dialog_button,
+                R.string.restart_now_dialog_button
         });
-        cancelButton.setOnClickListener(view -> {
-            if (mAudio != null) {
-                mAudio.playSound(AudioEngine.Sound.CLICK);
+        setButtonsDelegate(index -> {
+            if (index == PromptDialogWidget.NEGATIVE) {
+                onDismiss();
+
+            } else if (index == PromptDialogWidget.POSITIVE) {
+                mWidgetManager.saveState();
+                postDelayed(() -> SystemUtils.scheduleRestart(getContext(), 100), 500);
             }
-
-            onDismiss();
         });
-        restartText.setText(getContext().getString(R.string.restart_dialog_text, getContext().getString(R.string.app_name)));
+        setCheckboxVisible(false);
+        setDescriptionVisible(false);
 
-        mAudio = AudioEngine.fromContext(aContext);
+        setIcon(R.drawable.ff_logo);
+        setTitle(R.string.restart_dialog_restart);
+        setBody(getContext().getString(R.string.restart_dialog_text, getContext().getString(R.string.app_name)));
     }
 
-    @Override
-    protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
-        aPlacement.visible = false;
-        aPlacement.width =  WidgetPlacement.dpDimension(getContext(), R.dimen.restart_dialog_width);
-        aPlacement.height = WidgetPlacement.dpDimension(getContext(), R.dimen.restart_dialog_height);
-        aPlacement.parentAnchorX = 0.5f;
-        aPlacement.parentAnchorY = 0.5f;
-        aPlacement.anchorX = 0.5f;
-        aPlacement.anchorY = 0.5f;
-        aPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.restart_dialog_world_y);
-        aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.restart_dialog_world_z);
-    }
-
-    @Override
-    public void show(int aShowFlags) {
-        super.show(aShowFlags);
-
-        mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
-    }
-
-    @Override
-    public void hide(int aHideFlags) {
-        super.hide(aHideFlags);
-
-        mWidgetManager.popWorldBrightness(this);
-    }
 }

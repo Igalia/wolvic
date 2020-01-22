@@ -91,26 +91,18 @@ public class TelemetryWrapper {
         private static final String IMMERSIVE_MODE = "immersive_mode";
         private static final String TELEMETRY_STATUS = "status";
 
-        // How many max-windows dialogs happen / what percentage
-        private static final String MAX_WINDOWS_DIALOG = "max_windows_dialog";
-        // New Window tray button use
-        private static final String NEW_WINDOW_BUTTON = "tray_new_window";
-        // Long press to bring the context menu event
-        private static final String LONG_PRESS_CONTEXT_MENU = "context_menu";
         // How long is a window open for / window life
         private static final String WINDOW_LIFETIME = "window_lifetime";
         // Frequency of window moves
         private static final String WINDOWS_MOVES_FREQ = "windows_move_freq";
         // Frequency of window resizes
         private static final String WINDOWS_RESIZE_FREQ = "windows_resize_freq";
-        // When a session is multi-window, what percentage of time is each position the active window
-        private static final String PLACEMENTS_ACTIVE_TIME_PCT = "placements_active_time_pct";
-        // When a session is multi-window, what percentage of time are one, two or three windows open
-        private static final String OPEN_WINDOWS_TIME_PCT = "open_windows_time_pct";
-        // Curved windows setting - how many users use it / what percentage
-        private static final String CURVED_MODE_ACTIVE = "curved_mode_active";
-        // Average of how many windows are open at a time, per session
-        private static final String WINDOWS_OPEN_W_MEAN = "windows_open_w_mean";
+        // When a session is multi-window, what time is each position the active window
+        private static final String PLACEMENTS_ACTIVE_TIME = "place_active_time";
+        // When a session is multi-window, what time are one, two or three windows open
+        private static final String OPEN_WINDOWS_TIME = "open_windows_time";
+        // The weight of windows are opened at a time, per session
+        private static final String WINDOWS_OPEN_W = "windows_open_w";
     }
 
     private class Object {
@@ -119,22 +111,25 @@ public class TelemetryWrapper {
         private static final String SEARCH_BAR = "search_bar";
         private static final String VOICE_INPUT = "voice_input";
         private static final String WINDOW = "window";
-        private static final String TRAY = "tray";
     }
 
     private class Extra {
         private static final String TOTAL_URI_COUNT = "total_uri_count";
         private static final String UNIQUE_DOMAINS_COUNT = "unique_domains_count";
-        private static final String WINDOW_MOVES_FREQ = "windows_moves_freq";
-        private static final String WINDOW_RESIZE_FREQ = "windows_resize_freq";
-        private static final String LEFT_WINDOW_ACTIVE_TIME_PCT = "left_window_active_time_pct";
-        private static final String FRONT_WINDOW_ACTIVE_TIME_PCT = "front_window_active_time_pct";
-        private static final String RIGHT_WINDOW_ACTIVE_TIME_PCT = "right_window_active_time_pct";
-        private static final String ONE_OPEN_WINDOWS_TIME_PCT = "one_windows_open_time_pct";
-        private static final String TWO_OPEN_WINDOWS_TIME_PCT = "two_windows_open_time_pct";
-        private static final String THREE_OPEN_WINDOWS_TIME_PCT = "three_windows_open_time_pct";
-        private static final String WINDOWS_OPEN_W_MEAN = "window_open_w_mean";
-        private static final String WINDOWS_PRIVATE_OPEN_W_MEAN = "window_open_private_w_mean";
+        private static final String WINDOW_MOVES_COUNT = "windows_moves_count";
+        private static final String WINDOW_RESIZE_COUNT = "windows_resize_count";
+        private static final String LEFT_WINDOW_ACTIVE_TIME = "left_window_active_time";
+        private static final String FRONT_WINDOW_ACTIVE_TIME = "front_window_active_time";
+        private static final String RIGHT_WINDOW_ACTIVE_TIME = "right_window_active_time";
+        private static final String ONE_OPEN_WINDOWS_TIME = "one_w_open_time";
+        private static final String TWO_OPEN_WINDOWS_TIME = "two_w_open_time";
+        private static final String THREE_OPEN_WINDOWS_TIME = "thr_w_open_time";
+        private static final String ONE_WINDOWS_OPENED = "one_w_open";
+        private static final String TWO_WINDOWS_OPENED = "two_w_open";
+        private static final String THREE_WINDOWS_OPENED = "thr_w_open";
+        private static final String ONE_PRIVATE_WINDOWS_OPENED = "one_pri_w_open";
+        private static final String TWO_PRIVATE_WINDOWS_OPENED = "two_pri_w_open";
+        private static final String THREE_PRIVATE_WINDOWS_OPENED = "thr_pri_w_open";
         private static final String TELEMETRY_STATUS = "telemetry_status";
     }
 
@@ -403,35 +398,14 @@ public class TelemetryWrapper {
         // Queue Windows resizes freq during the session
         queueWindowsResizesCountEvent();
 
-        // Queue Windows active time pct
-        queueActiveWindowPctEvent();
+        // Queue Windows active time.
+        queueActiveWindowTimeEvent();
 
-        // Queue Windows active time pct
-        queueOpenWindowsAvgEvent();
+        // Queue Windows active weight.
+        queueOpenWindowsWeightEvent();
 
         // Queue open Windows time pct
-        queueOpenWindowsPctEvent();
-    }
-
-    public static void trayNewWindowEvent() {
-        TelemetryEvent event = TelemetryEvent.create(Category.ACTION, Method.NEW_WINDOW_BUTTON, Object.TRAY);
-        event.queue();
-
-        Log.d(LOGTAG, "[Queue] Tray New Window Click");
-    }
-
-    public static void maxWindowsDialogEvent() {
-        TelemetryEvent event = TelemetryEvent.create(Category.ACTION, Method.MAX_WINDOWS_DIALOG, Object.WINDOW);
-        event.queue();
-
-        Log.d(LOGTAG, "[Queue] Max Windows dialog");
-    }
-
-    public static void longPressContextMenuEvent() {
-        TelemetryEvent event = TelemetryEvent.create(Category.ACTION, Method.LONG_PRESS_CONTEXT_MENU, Object.WINDOW);
-        event.queue();
-
-        Log.d(LOGTAG, "[Queue] Context Menu Long Press");
+        queueOpenWindowsTimeEvent();
     }
 
     public static void openWindowEvent(int windowId) {
@@ -509,18 +483,11 @@ public class TelemetryWrapper {
             Log.d(LOGTAG, "\tTWO: " + openWindowsTime[WindowPlacement.LEFT.getValue()]);
             Log.d(LOGTAG, "\tTHREE: " + openWindowsTime[WindowPlacement.RIGHT.getValue()]);
 
-            Log.d(LOGTAG, "Open Private Windows Count:");
+            Log.d(LOGTAG, "Open Windows Count:");
             Log.d(LOGTAG, "\tFRONT: " + openWindows[WindowPlacement.FRONT.getValue()]);
             Log.d(LOGTAG, "\tLEFT: " + openWindows[WindowPlacement.LEFT.getValue()]);
             Log.d(LOGTAG, "\tRIGHT: " + openWindows[WindowPlacement.RIGHT.getValue()]);
         }
-    }
-
-    public static void queueCurvedModeActiveEvent() {
-        TelemetryEvent event = TelemetryEvent.create(Category.ACTION, Method.CURVED_MODE_ACTIVE, Object.WINDOW);
-        event.queue();
-
-        Log.d(LOGTAG, "[Queue] Curved mode active");
     }
 
     private static void queueWindowsLifetimeHistogram() {
@@ -538,28 +505,26 @@ public class TelemetryWrapper {
     }
 
     private static void queueWindowsMovesCountEvent() {
-        float movesFreqPerSession = (float)windowsMovesCount / ((SystemClock.elapsedRealtime() - sessionStartTime)/1000);
         TelemetryEvent event = TelemetryEvent.create(Category.ACTION, Method.WINDOWS_MOVES_FREQ, Object.WINDOW);
-        event.extra(Extra.WINDOW_MOVES_FREQ, String.valueOf(movesFreqPerSession));
+        event.extra(Extra.WINDOW_MOVES_COUNT, Integer.toString(windowsMovesCount));
         event.queue();
 
-        Log.d(LOGTAG, "[Queue] Windows Moves Freq: " + movesFreqPerSession);
+        Log.d(LOGTAG, "[Queue] Windows Moves per session: " + windowsMovesCount);
 
         windowsMovesCount = 0;
     }
 
     private static void queueWindowsResizesCountEvent() {
-        float resizesFreqPerSession = (float)windowsResizesCount / ((SystemClock.elapsedRealtime() - sessionStartTime)/1000);
         TelemetryEvent event = TelemetryEvent.create(Category.ACTION, Method.WINDOWS_RESIZE_FREQ, Object.WINDOW);
-        event.extra(Extra.WINDOW_RESIZE_FREQ, String.valueOf(resizesFreqPerSession));
+        event.extra(Extra.WINDOW_RESIZE_COUNT, Integer.toString(windowsResizesCount));
         event.queue();
 
-        Log.d(LOGTAG, "[Queue] Windows Resizes Freq: " + resizesFreqPerSession);
+        Log.d(LOGTAG, "[Queue] Windows Resizes per session: " + windowsResizesCount);
 
         windowsResizesCount = 0;
     }
 
-    private static void queueActiveWindowPctEvent() {
+    private static void queueActiveWindowTimeEvent() {
         for (int index = 0; index< MAX_WINDOWS; index++) {
             if (activePlacementStartTime[index] != 0) {
                 activePlacementTime[index] += SystemClock.elapsedRealtime() - activePlacementStartTime[index];
@@ -567,59 +532,61 @@ public class TelemetryWrapper {
             }
         }
 
-        long totalTime = 0;
-        for (long time : activePlacementTime)
-            totalTime += time;
-
-        if (totalTime == 0) {
-            return;
-        }
-
-        float[] pcts = new float[MAX_WINDOWS];
-        for (int index = 0; index< MAX_WINDOWS; index++)
-            pcts[index] = (activePlacementTime[index]*100.0f)/totalTime;
-
-        TelemetryEvent event = TelemetryEvent.create(Category.ACTION, Method.PLACEMENTS_ACTIVE_TIME_PCT, Object.WINDOW);
-        event.extra(Extra.LEFT_WINDOW_ACTIVE_TIME_PCT, String.valueOf(pcts[WindowPlacement.LEFT.getValue()]));
-        event.extra(Extra.FRONT_WINDOW_ACTIVE_TIME_PCT, String.valueOf(pcts[WindowPlacement.FRONT.getValue()]));
-        event.extra(Extra.RIGHT_WINDOW_ACTIVE_TIME_PCT, String.valueOf(pcts[WindowPlacement.RIGHT.getValue()]));
+        TelemetryEvent event = TelemetryEvent.create(Category.ACTION, Method.PLACEMENTS_ACTIVE_TIME, Object.WINDOW);
+        event.extra(Extra.LEFT_WINDOW_ACTIVE_TIME, String.valueOf(activePlacementTime[WindowPlacement.LEFT.getValue()]));
+        event.extra(Extra.FRONT_WINDOW_ACTIVE_TIME, String.valueOf(activePlacementTime[WindowPlacement.FRONT.getValue()]));
+        event.extra(Extra.RIGHT_WINDOW_ACTIVE_TIME, String.valueOf(activePlacementTime[WindowPlacement.RIGHT.getValue()]));
         event.queue();
 
-        Log.d(LOGTAG, "[Queue] Placements Active time Pct:");
-        Log.d(LOGTAG, "\tFRONT: " + pcts[WindowPlacement.FRONT.getValue()]);
-        Log.d(LOGTAG, "\tLEFT: " + pcts[WindowPlacement.LEFT.getValue()]);
-        Log.d(LOGTAG, "\tRIGHT: " + pcts[WindowPlacement.RIGHT.getValue()]);
+        Log.d(LOGTAG, "[Queue] Placements Active time total:");
+        Log.d(LOGTAG, "\tFRONT: " + activePlacementTime[WindowPlacement.FRONT.getValue()]);
+        Log.d(LOGTAG, "\tLEFT: " + activePlacementTime[WindowPlacement.LEFT.getValue()]);
+        Log.d(LOGTAG, "\tRIGHT: " + activePlacementTime[WindowPlacement.RIGHT.getValue()]);
 
         for (int index = 0; index< MAX_WINDOWS; index++) {
             activePlacementTime[index] = 0;
         }
     }
 
-    private static void queueOpenWindowsAvgEvent() {
-        float weight = 0;
-        float weightSum = 0;
-        for(int i=0; i < MAX_WINDOWS; i++){
-            weight += openWindows[i];
-            weightSum += (i+1) * openWindows[i];
-        }
-        float regularWM = weightSum > 0 ? weightSum/weight : 0;
+    public static void resetOpenedWindowsCount(int number, boolean isPrivate) {
+        if (isPrivate) {
+            for (int i=0; i<openPrivateWindows.length; i++) {
+                openPrivateWindows[i] = 0;
+            }
+            if (number > 0) {
+                openPrivateWindows[number-1] = 1;
+            }
 
-        weight = 0;
-        weightSum = 0;
-        for(int i=0; i < MAX_WINDOWS; i++){
-            weight += openPrivateWindows[i];
-            weightSum += (i+1) * openPrivateWindows[i];
-        }
-        float privateWM = weightSum > 0 ? weightSum/weight : 0;
+        } else {
+            for (int i=0; i<openWindows.length; i++) {
+                openWindows[i] = 0;
+            }
 
-        TelemetryEvent event = TelemetryEvent.create(Category.ACTION, Method.WINDOWS_OPEN_W_MEAN, Object.WINDOW);
-        event.extra(Extra.WINDOWS_OPEN_W_MEAN, String.valueOf(regularWM));
-        event.extra(Extra.WINDOWS_PRIVATE_OPEN_W_MEAN, String.valueOf(privateWM));
+            if (number > 0) {
+                openWindows[number-1] = 1;
+            }
+        }
+    }
+
+    private static void queueOpenWindowsWeightEvent() {
+        TelemetryEvent event = TelemetryEvent.create(Category.ACTION, Method.WINDOWS_OPEN_W, Object.WINDOW);
+        event.extra(Extra.ONE_WINDOWS_OPENED, String.valueOf(openWindows[0]));
+        event.extra(Extra.TWO_WINDOWS_OPENED, String.valueOf(openWindows[1]));
+        event.extra(Extra.THREE_WINDOWS_OPENED, String.valueOf(openWindows[2]));
+        event.extra(Extra.ONE_PRIVATE_WINDOWS_OPENED, String.valueOf(openPrivateWindows[0]));
+        event.extra(Extra.TWO_PRIVATE_WINDOWS_OPENED, String.valueOf(openPrivateWindows[1]));
+        event.extra(Extra.THREE_PRIVATE_WINDOWS_OPENED, String.valueOf(openPrivateWindows[2]));
+
         event.queue();
 
-        Log.d(LOGTAG, "[Queue] Open Windows Number Weighted Mean:");
-        Log.d(LOGTAG, "\tRegular: " + regularWM);
-        Log.d(LOGTAG, "\tPrivate: " + privateWM);
+        Log.d(LOGTAG, "[Queue] Open Windows Number:");
+        Log.d(LOGTAG, "\tRegular 1: " + openWindows[0]);
+        Log.d(LOGTAG, "\tRegular 2: " + openWindows[1]);
+        Log.d(LOGTAG, "\tRegular 3: " + openWindows[2]);
+
+        Log.d(LOGTAG, "\tPrivate 1: " + openPrivateWindows[0]);
+        Log.d(LOGTAG, "\tPrivate 2: " + openPrivateWindows[1]);
+        Log.d(LOGTAG, "\tPrivate 3: " + openPrivateWindows[2]);
 
         for (int index = 0; index< MAX_WINDOWS; index++) {
             if (openWindows[index] != 0) {
@@ -631,7 +598,7 @@ public class TelemetryWrapper {
         }
     }
 
-    private static void queueOpenWindowsPctEvent() {
+    private static void queueOpenWindowsTimeEvent() {
         for (int index = 0; index< MAX_WINDOWS; index++) {
             if (openWindowsStartTime[index] != 0) {
                 openWindowsTime[index] += SystemClock.elapsedRealtime() - openWindowsStartTime[index];
@@ -644,30 +611,16 @@ public class TelemetryWrapper {
             }
         }
 
-        long totalTime = 0;
-        for (long time : openWindowsTime)
-            totalTime += time;
-        for (long time : openPrivateWindowsTime)
-            totalTime += time;
-
-        if (totalTime == 0) {
-            return;
-        }
-
-        float[] pcts = new float[MAX_WINDOWS];
-        for (int index = 0; index< MAX_WINDOWS; index++)
-            pcts[index] = ((openWindowsTime[index]+openPrivateWindowsTime[index])*100.0f)/totalTime;
-
-        TelemetryEvent event = TelemetryEvent.create(Category.ACTION, Method.OPEN_WINDOWS_TIME_PCT, Object.WINDOW);
-        event.extra(Extra.ONE_OPEN_WINDOWS_TIME_PCT, String.valueOf(pcts[WindowPlacement.LEFT.getValue()]));
-        event.extra(Extra.TWO_OPEN_WINDOWS_TIME_PCT, String.valueOf(pcts[WindowPlacement.FRONT.getValue()]));
-        event.extra(Extra.THREE_OPEN_WINDOWS_TIME_PCT, String.valueOf(pcts[WindowPlacement.RIGHT.getValue()]));
+        TelemetryEvent event = TelemetryEvent.create(Category.ACTION, Method.OPEN_WINDOWS_TIME, Object.WINDOW);
+        event.extra(Extra.ONE_OPEN_WINDOWS_TIME, String.valueOf(openWindowsTime[0]+openPrivateWindowsTime[0]));
+        event.extra(Extra.TWO_OPEN_WINDOWS_TIME, String.valueOf(openWindowsTime[1]+openPrivateWindowsTime[1]));
+        event.extra(Extra.THREE_OPEN_WINDOWS_TIME, String.valueOf(openWindowsTime[2]+openPrivateWindowsTime[2]));
         event.queue();
 
-        Log.d(LOGTAG, "[Queue] Open Windows time Pct:");
-        Log.d(LOGTAG, "\tONE: " + pcts[WindowPlacement.FRONT.getValue()]);
-        Log.d(LOGTAG, "\tTWO: " + pcts[WindowPlacement.LEFT.getValue()]);
-        Log.d(LOGTAG, "\tTHREE: " + pcts[WindowPlacement.RIGHT.getValue()]);
+        Log.d(LOGTAG, "[Queue] Open Windows time:");
+        Log.d(LOGTAG, "\tONE: " + String.valueOf(openWindowsTime[0] + openPrivateWindowsTime[0]));
+        Log.d(LOGTAG, "\tTWO: " + String.valueOf(openWindowsTime[1] + openPrivateWindowsTime[1]));
+        Log.d(LOGTAG, "\tTHREE: " + String.valueOf(openWindowsTime[2] + openPrivateWindowsTime[2]));
 
         for (int index = 0; index< MAX_WINDOWS; index++) {
             openWindowsTime[index] = 0;

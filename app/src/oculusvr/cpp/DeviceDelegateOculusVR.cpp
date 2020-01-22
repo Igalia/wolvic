@@ -644,6 +644,9 @@ struct DeviceDelegateOculusVR::State {
     ovrInputTrackedRemoteCapabilities capabilities = {};
     vrb::Matrix transform = vrb::Matrix::Identity();
     ovrInputStateTrackedRemote inputState = {};
+    uint64_t inputFrameID = 0;
+    float remainingVibrateTime = 0.0f;
+    double lastHapticUpdateTimeStamp = 0.0f;
 
     bool Is6DOF() const {
       return (capabilities.ControllerCapabilities & ovrControllerCaps_HasPositionTracking) &&
@@ -674,6 +677,9 @@ struct DeviceDelegateOculusVR::State {
   uint32_t frameIndex = 0;
   double predictedDisplayTime = 0;
   ovrTracking2 predictedTracking = {};
+  ovrTracking2 discardPredictedTracking = {};
+  uint32_t discardedFrameIndex = 0;
+  int discardCount = 0;
   uint32_t renderWidth = 0;
   uint32_t renderHeight = 0;
   int32_t standaloneFoveatedLevel = 0;
@@ -688,7 +694,6 @@ struct DeviceDelegateOculusVR::State {
   vrb::Matrix reorientMatrix = vrb::Matrix::Identity();
   device::CPULevel minCPULevel = device::CPULevel::Normal;
   device::DeviceType deviceType = device::UnknownType;
-
 
   void UpdatePerspective() {
     float fovX = vrapi_GetSystemPropertyFloat(&java, VRAPI_SYS_PROP_SUGGESTED_EYE_FOV_DEGREES_X);
@@ -949,10 +954,13 @@ struct DeviceDelegateOculusVR::State {
             controller->CreateController(controllerState.index, int32_t(controllerState.hand),
                                          controllerName, beamTransform);
             controller->SetButtonCount(controllerState.index, 6);
+            controller->SetHapticCount(controllerState.index, 1);
           } else {
             // Oculus Go only has one kind of controller model.
             controller->CreateController(controllerState.index, 0, "Oculus Go Controller");
             controller->SetButtonCount(controllerState.index, 2);
+            // Oculus Go has no haptic feedback.
+            controller->SetHapticCount(controllerState.index, 0);
           }
           controllerState.created = true;
         }
@@ -1022,7 +1030,7 @@ struct DeviceDelegateOculusVR::State {
         trackpadY = controllerState.inputState.Joystick.y;
         axes[0] = trackpadX;
         axes[1] = -trackpadY; // We did y axis intentionally inverted in FF desktop as well.
-        controller->SetScrolledDelta(controllerState.index, trackpadX, trackpadY);
+        controller->SetScrolledDelta(controllerState.index, -trackpadX, trackpadY);
 
         const bool gripPressed = (controllerState.inputState.Buttons & ovrButton_GripTrigger) != 0;
         controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_OTHERS, 2, gripPressed, gripPressed,
@@ -1033,7 +1041,6 @@ struct DeviceDelegateOculusVR::State {
           const bool yPressed = (controllerState.inputState.Buttons & ovrButton_Y) != 0;
           const bool yTouched = (controllerState.inputState.Touches & ovrTouch_Y) != 0;
           const bool menuPressed = (controllerState.inputState.Buttons & ovrButton_Enter) != 0;
-
 
           controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_X, 3, xPressed, xTouched);
           controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_Y, 4, yPressed, yTouched);
@@ -1059,7 +1066,8 @@ struct DeviceDelegateOculusVR::State {
           VRB_WARN("Undefined hand type in DeviceDelegateOculusVR.");
         }
 
-        const bool thumbRest = (controllerState.inputState.Touches & ovrTouch_ThumbUp) != 0;
+        // This is always false in Oculus Browser.
+        const bool thumbRest = false;
         controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_OTHERS, 5, thumbRest, thumbRest);
       } else {
         triggerPressed = (controllerState.inputState.Buttons & ovrButton_A) != 0;
@@ -1090,6 +1098,58 @@ struct DeviceDelegateOculusVR::State {
       controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_TOUCHPAD, 0, trackpadPressed, trackpadTouched);
 
       controller->SetAxes(controllerState.index, axes, kNumAxes);
+      if (controller->GetHapticCount(controllerState.index)) {
+        UpdateHaptics(controllerState);
+      }
+    }
+  }
+
+  void UpdateHaptics(ControllerState& controllerState) {
+    vrb::RenderContextPtr renderContext = context.lock();
+    if (!renderContext) {
+      return;
+    }
+    if (!controller || !ovr) {
+      return;
+    }
+
+    uint64_t inputFrameID = 0;
+    float pulseDuration = 0.0f, pulseIntensity = 0.0f;
+    controller->GetHapticFeedback(controllerState.index, inputFrameID, pulseDuration, pulseIntensity);
+    if (inputFrameID > 0 && pulseIntensity > 0.0f && pulseDuration > 0) {
+      if (controllerState.inputFrameID != inputFrameID) {
+        // When there is a new input frame id from haptic vibration,
+        // that means we start a new session for a vibration.
+        controllerState.inputFrameID = inputFrameID;
+        controllerState.remainingVibrateTime = pulseDuration;
+        controllerState.lastHapticUpdateTimeStamp = renderContext->GetTimestamp();
+      } else {
+        // We are still running the previous vibration.
+        // So, it needs to reduce the delta time from the last vibration.
+        const double timeStamp = renderContext->GetTimestamp();
+        controllerState.remainingVibrateTime -= (timeStamp - controllerState.lastHapticUpdateTimeStamp);
+        controllerState.lastHapticUpdateTimeStamp = timeStamp;
+      }
+
+      if (controllerState.remainingVibrateTime > 0.0f && renderMode == device::RenderMode::Immersive) {
+        if (vrapi_SetHapticVibrationSimple(ovr, controllerState.deviceId, pulseIntensity > 1.0f ? 1.0f : pulseIntensity)
+            == ovrError_InvalidOperation) {
+          VRB_ERROR("vrapi_SetHapticVibrationBuffer failed.");
+        }
+      } else {
+        // The remaining time is zero or exiting the immersive mode, stop the vibration.
+        if (vrapi_SetHapticVibrationSimple(ovr, controllerState.deviceId, 0.0f) == ovrError_InvalidOperation) {
+          VRB_ERROR("vrapi_SetHapticVibrationBuffer failed.");
+        }
+        controllerState.remainingVibrateTime = 0.0f;
+      }
+    } else if (controllerState.remainingVibrateTime > 0.0f) {
+      // While the haptic feedback is terminated from the client side,
+      // but it still have remaining time, we need to ask for stopping vibration.
+      if (vrapi_SetHapticVibrationSimple(ovr, controllerState.deviceId, 0.0f) == ovrError_InvalidOperation) {
+        VRB_ERROR("vrapi_SetHapticVibrationBuffer failed.");
+      }
+      controllerState.remainingVibrateTime = 0.0f;
     }
   }
 
@@ -1398,7 +1458,8 @@ DeviceDelegateOculusVR::StartFrame() {
   if (m.immersiveDisplay) {
     m.immersiveDisplay->SetEyeOffset(device::Eye::Left, -ipd * 0.5f, 0.f, 0.f);
     m.immersiveDisplay->SetEyeOffset(device::Eye::Right, ipd * 0.5f, 0.f, 0.f);
-    device::CapabilityFlags caps = device::Orientation | device::Present | device::StageParameters;
+    device::CapabilityFlags caps = device::Orientation | device::Present | device::StageParameters |
+                                   device::InlineSession | device::ImmersiveVRSession;
     if (m.predictedTracking.Status & VRAPI_TRACKING_STATUS_POSITION_TRACKED) {
       caps |= device::Position;
     } else {
@@ -1463,7 +1524,17 @@ DeviceDelegateOculusVR::EndFrame(const bool aDiscard) {
   }
 
   if (aDiscard) {
-    return;
+    // Reuse the last frame when a frame is discarded.
+    // The last frame is timewarped by the VR compositor.
+    if (m.discardCount == 0) {
+      m.discardPredictedTracking = m.predictedTracking;
+      m.discardedFrameIndex = m.frameIndex;
+    }
+    m.discardCount++;
+    m.frameIndex = m.discardedFrameIndex;
+    m.predictedTracking = m.discardPredictedTracking;
+  } else {
+    m.discardCount = 0;
   }
 
   uint32_t layerCount = 0;

@@ -18,5 +18,9 @@
       "run_at": "document_start",
       "all_frames": true
     }
-  ]
+  ],
+  "permissions": ["webRequest", "webRequestBlocking", "*://*.youtube.com/*", "*://*.youtube-nocookie.com/*"],
+  "background": {
+    "scripts": ["background.js"]
+  }
 }

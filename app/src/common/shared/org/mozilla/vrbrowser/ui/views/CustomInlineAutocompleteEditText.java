@@ -3,8 +3,8 @@ package org.mozilla.vrbrowser.ui.views;
 import android.content.Context;
 import android.util.AttributeSet;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import mozilla.components.ui.autocomplete.InlineAutocompleteEditText;
 
@@ -14,15 +14,15 @@ public class CustomInlineAutocompleteEditText extends InlineAutocompleteEditText
         void onSelectionChanged(int selectionStart, int selectionEnd);
     }
 
-    public CustomInlineAutocompleteEditText(@NotNull Context ctx, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public CustomInlineAutocompleteEditText(@NonNull Context ctx, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(ctx, attrs, defStyleAttr);
     }
 
-    public CustomInlineAutocompleteEditText(@NotNull Context ctx, @Nullable AttributeSet attrs) {
+    public CustomInlineAutocompleteEditText(@NonNull Context ctx, @Nullable AttributeSet attrs) {
         super(ctx, attrs);
     }
 
-    public CustomInlineAutocompleteEditText(@NotNull Context ctx) {
+    public CustomInlineAutocompleteEditText(@NonNull Context ctx) {
         super(ctx);
     }
 

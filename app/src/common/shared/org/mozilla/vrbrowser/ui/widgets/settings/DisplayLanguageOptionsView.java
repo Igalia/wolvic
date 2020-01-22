@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import androidx.databinding.DataBindingUtil;
 
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.databinding.OptionsLanguageDisplayBinding;
 import org.mozilla.vrbrowser.ui.views.settings.RadioGroupSetting;
@@ -48,28 +49,32 @@ class DisplayLanguageOptionsView extends SettingsView {
         // Footer
         mBinding.footerLayout.setFooterButtonClickListener(mResetListener);
 
-        String language = LocaleUtils.getDisplayLocale(getContext());
+        mBinding.languageRadio.setOptions(LocaleUtils.getSupportedLocalizedLanguages(getContext()));
+
+        String locale = LocaleUtils.getDisplayLocale(getContext());
         mBinding.languageRadio.setOnCheckedChangeListener(mLanguageListener);
-        setLanguage(mBinding.languageRadio.getIdForValue(language), false);
+        setLanguage(LocaleUtils.getIndexForSupportedLocale(locale), false);
     }
 
     @Override
     protected boolean reset() {
-        String systemLocale = LocaleUtils.getSystemLocale();
+        String systemLocale = LocaleUtils.getClosestSupportedLocale(getContext(), LocaleUtils.getDeviceLanguage().getId());
         String currentLocale = LocaleUtils.getCurrentLocale();
-        if (!currentLocale.equalsIgnoreCase(systemLocale)) {
-            setLanguage(mBinding.languageRadio.getIdForValue(systemLocale), true);
-            return true;
+        if (currentLocale.equalsIgnoreCase(systemLocale)) {
+            setLanguage(LocaleUtils.getIndexForSupportedLocale(systemLocale), false);
+            SettingsStore.getInstance(getContext()).setDisplayLocale(currentLocale);
+            return false;
 
         } else {
-            setLanguage(mBinding.languageRadio.getIdForValue(systemLocale), false);
-            return false;
+            setLanguage(LocaleUtils.getIndexForSupportedLocale(systemLocale), true);
+            SettingsStore.getInstance(getContext()).setDisplayLocale(null);
+            return true;
         }
     }
 
     private RadioGroupSetting.OnCheckedChangeListener mLanguageListener = (radioGroup, checkedId, doApply) -> {
         String currentLocale = LocaleUtils.getCurrentLocale();
-        String locale = mBinding.languageRadio.getValueForId(mBinding.languageRadio.getCheckedRadioButtonId()).toString();
+        String locale = LocaleUtils.getSupportedLocaleForIndex(mBinding.languageRadio.getCheckedRadioButtonId());
 
         if (!locale.equalsIgnoreCase(currentLocale)) {
             setLanguage(checkedId, true);
@@ -86,8 +91,8 @@ class DisplayLanguageOptionsView extends SettingsView {
         mBinding.languageRadio.setOnCheckedChangeListener(mLanguageListener);
 
         if (doApply) {
-            String language = mBinding.languageRadio.getValueForId(checkedId).toString();
-            LocaleUtils.setDisplayLocale(getContext(), language);
+            String locale = LocaleUtils.getSupportedLocaleForIndex(checkedId);
+            LocaleUtils.setDisplayLocale(getContext(), locale);
 
             if (mDelegate != null) {
                 mDelegate.showRestartDialog();
@@ -97,7 +102,7 @@ class DisplayLanguageOptionsView extends SettingsView {
 
     @Override
     public Point getDimensions() {
-        return new Point( WidgetPlacement.dpDimension(getContext(), R.dimen.language_options_width),
-                WidgetPlacement.dpDimension(getContext(), R.dimen.language_options_height));
+        return new Point( WidgetPlacement.dpDimension(getContext(), R.dimen.settings_dialog_width),
+                WidgetPlacement.dpDimension(getContext(), R.dimen.settings_dialog_height));
     }
 }

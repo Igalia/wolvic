@@ -1,12 +1,7 @@
 package org.mozilla.vrbrowser.browser.engine;
 
-import android.graphics.Bitmap;
-
-import androidx.annotation.Nullable;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
 import com.google.gson.annotations.JsonAdapter;
@@ -25,7 +20,7 @@ import java.util.UUID;
 
 @JsonAdapter(SessionState.SessionStateAdapterFactory.class)
 public class SessionState {
-    public transient boolean mIsActive;
+    private transient boolean mIsActive;
     public boolean mCanGoBack;
     public boolean mCanGoForward;
     public boolean mIsLoading;
@@ -46,6 +41,21 @@ public class SessionState {
     public String mId = UUID.randomUUID().toString();
     public String mParentId; // Parent session stack Id.
 
+    public SessionState recreate() {
+        SessionState result = new SessionState();
+        result.mUri = mUri;
+        result.mPreviousUri = mPreviousUri;
+        result.mTitle = mTitle;
+        result.mSettings = mSettings;
+        result.mSessionState = mSessionState;
+        result.mLastUse = mLastUse;
+        result.mRegion = mRegion;
+        result.mId = mId;
+        result.mParentId = mParentId;
+
+        return result;
+    }
+
     public static class GeckoSessionStateAdapter extends TypeAdapter<GeckoSession.SessionState> {
         @Override
         public void write(JsonWriter out, GeckoSession.SessionState session) throws IOException {
@@ -62,6 +72,18 @@ public class SessionState {
                 return null;
             }
         }
+    }
+
+    boolean isActive() {
+        return mIsActive;
+    }
+
+    void setActive(boolean active) {
+        if (active == mIsActive) {
+            return;
+        }
+        mIsActive = active;
+        SessionStore.get().sessionActiveStateChanged();
     }
 
     public class SessionStateAdapterFactory implements TypeAdapterFactory {

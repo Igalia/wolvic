@@ -36,13 +36,13 @@
             android:layout_height="match_parent"
             android:background="@drawable/library_item_background_color"
             android:clickable="true"
-            android:descendantFocusability="blocksDescendants"
             android:focusable="true"
             android:gravity="center_vertical"
             android:onClick="@{(view) -> callback.onClick(view, item)}"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
-            android:soundEffectsEnabled="false">
+            android:soundEffectsEnabled="false"
+            android:addStatesFromChildren="true">
 
             <LinearLayout
                 android:id="@+id/title_url"
@@ -50,8 +50,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:layout_toStartOf="@id/time_buttons"
                 android:gravity="center_vertical"
+                android:layout_toStartOf="@id/buttons_container"
                 android:orientation="@{isNarrow ? LinearLayout.VERTICAL : LinearLayout.HORIZONTAL}">
 
                 <TextView
@@ -85,52 +85,39 @@
                     android:visibility="visible"/>
             </LinearLayout>
 
-            <FrameLayout
-                android:id="@+id/time_buttons"
+            <LinearLayout
+                android:id="@+id/buttons_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:gravity="center_vertical"
-                android:visibility="visible">
+                android:layout_gravity="end"
+                android:orientation="horizontal"
+                app:visibleInvisible="@{isHovered}"
+                android:addStatesFromChildren="true">
 
-                <LinearLayout
-                    android:id="@+id/buttons_container"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:orientation="horizontal"
-                    app:visibleInvisible="@{isHovered}">
+                <ImageView
+                    android:id="@+id/trash"
+                    android:layout_width="@dimen/library_item_row_height"
+                    android:layout_height="@dimen/library_item_row_height"
+                    android:layout_gravity="center_vertical|end"
+                    android:padding="@dimen/library_icon_padding_max"
+                    android:soundEffectsEnabled="false"
+                    android:src="@drawable/ic_icon_trash"
+                    android:tint="@color/library_panel_icon_color"
+                    app:srcCompat="@drawable/ic_icon_trash" />
 
-                    <ImageView
-                        android:id="@+id/trash"
-                        android:layout_width="@dimen/library_item_row_height"
-                        android:layout_height="@dimen/library_item_row_height"
-                        android:layout_gravity="center_vertical|end"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"
-                        android:padding="@dimen/library_icon_padding_max"
-                        android:soundEffectsEnabled="false"
-                        android:src="@drawable/ic_icon_trash"
-                        android:tint="@color/library_panel_icon_color"
-                        android:visibility="visible"
-                        app:srcCompat="@drawable/ic_icon_trash" />
-
-                    <ImageView
-                        android:id="@+id/more"
-                        android:layout_width="@dimen/library_item_row_height"
-                        android:layout_height="@dimen/library_item_row_height"
-                        android:layout_gravity="center_vertical|end"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"
-                        android:padding="@dimen/library_icon_padding_max"
-                        android:soundEffectsEnabled="false"
-                        android:src="@drawable/ic_icon_more_options"
-                        android:tint="@color/library_panel_icon_color"
-                        android:visibility="visible"
-                        app:srcCompat="@drawable/ic_icon_more_options" />
-                </LinearLayout>
-            </FrameLayout>
+                <ImageView
+                    android:id="@+id/more"
+                    android:layout_width="@dimen/library_item_row_height"
+                    android:layout_height="@dimen/library_item_row_height"
+                    android:layout_gravity="center_vertical|end"
+                    android:padding="@dimen/library_icon_padding_max"
+                    android:soundEffectsEnabled="false"
+                    android:src="@drawable/ic_icon_more_options"
+                    android:tint="@color/library_panel_icon_color"
+                    app:srcCompat="@drawable/ic_icon_more_options" />
+            </LinearLayout>
         </RelativeLayout>
     </FrameLayout>
 </layout>

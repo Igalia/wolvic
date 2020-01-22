@@ -11,11 +11,11 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import org.jetbrains.annotations.NotNull;
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
+
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
-
-import androidx.annotation.StringRes;
 
 public class SingleEditSetting extends LinearLayout {
 
@@ -162,7 +162,7 @@ public class SingleEditSetting extends LinearLayout {
         return mEdit1.getVisibility() == View.VISIBLE;
     }
 
-    public boolean contains(@NotNull View view) {
+    public boolean contains(@NonNull View view) {
         return findViewById(view.getId()) == view;
     }
 

@@ -78,7 +78,7 @@ class PrivacyOptionsView extends SettingsView {
         TextView permissionsTitleText = findViewById(R.id.permissionsTitle);
         permissionsTitleText.setText(getContext().getString(R.string.security_options_permissions_title, getContext().getString(R.string.app_name)));
 
-        mPopUpsBlockingExceptions = new AllowedPopUpsOptionsView(getContext(), mWidgetManager);
+        mPopUpsBlockingExceptions = new PopUpExceptionsOptionsView(getContext(), mWidgetManager);
 
         mPermissionButtons = new ArrayList<>();
         mPermissionButtons.add(Pair.create(findViewById(R.id.cameraPermissionSwitch), Manifest.permission.CAMERA));
@@ -122,6 +122,9 @@ class PrivacyOptionsView extends SettingsView {
         setPopUpsBlocking(SettingsStore.getInstance(getContext()).isPopUpsBlockingEnabled(), false);
 
         mBinding.popUpsBlockingExceptionsButton.setOnClickListener(v -> mDelegate.showView(mPopUpsBlockingExceptions));
+
+        mBinding.restoreTabsSwitch.setOnCheckedChangeListener(mRestoreTabsListener);
+        setRestoreTabs(SettingsStore.getInstance(getContext()).isRestoreTabsEnabled(), false);
     }
 
     private void togglePermission(SwitchSetting aButton, String aPermission) {
@@ -171,6 +174,10 @@ class PrivacyOptionsView extends SettingsView {
         setPopUpsBlocking(value, doApply);
     };
 
+    private SwitchSetting.OnCheckedChangeListener mRestoreTabsListener = (compoundButton, value, doApply) -> {
+        setRestoreTabs(value, doApply);
+    };
+
     private void resetOptions() {
         if (mBinding.drmContentPlaybackSwitch.isChecked() != SettingsStore.DRM_PLAYBACK_DEFAULT) {
             setDrmContent(SettingsStore.DRM_PLAYBACK_DEFAULT, true);
@@ -198,6 +205,10 @@ class PrivacyOptionsView extends SettingsView {
 
         if (mBinding.popUpsBlockingSwitch.isChecked() != SettingsStore.POP_UPS_BLOCKING_DEFAULT) {
             setPopUpsBlocking(SettingsStore.POP_UPS_BLOCKING_DEFAULT, true);
+        }
+
+        if (mBinding.restoreTabsSwitch.isChecked() != SettingsStore.RESTORE_TABS_ENABLED) {
+            setRestoreTabs(SettingsStore.RESTORE_TABS_ENABLED, true);
         }
     }
 
@@ -270,6 +281,16 @@ class PrivacyOptionsView extends SettingsView {
 
         if (doApply) {
             SettingsStore.getInstance(getContext()).setPopUpsBlockingEnabled(value);
+        }
+    }
+
+    private void setRestoreTabs(boolean value, boolean doApply) {
+        mBinding.restoreTabsSwitch.setOnCheckedChangeListener(null);
+        mBinding.restoreTabsSwitch.setValue(value, false);
+        mBinding.restoreTabsSwitch.setOnCheckedChangeListener(mRestoreTabsListener);
+
+        if (doApply) {
+            SettingsStore.getInstance(getContext()).setRestoreTabsEnabled(value);
         }
     }
 

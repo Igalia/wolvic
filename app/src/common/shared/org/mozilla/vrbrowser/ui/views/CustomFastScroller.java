@@ -498,18 +498,23 @@ class CustomFastScroller extends RecyclerView.ItemDecoration implements Recycler
 
     private int scrollTo(float oldDragPos, float newDragPos, int[] scrollbarRange, int scrollRange,
                          int scrollOffset, int viewLength) {
-        int scrollbarLength = scrollbarRange[1] - scrollbarRange[0];
+        final int scrollbarLength = scrollbarRange[1] - scrollbarRange[0];
         if (scrollbarLength == 0) {
             return 0;
         }
-        float percentage = ((newDragPos - oldDragPos) / (float) scrollbarLength);
-        int totalPossibleOffset = scrollRange - viewLength;
-        int scrollingBy = (int) (percentage * totalPossibleOffset);
-        int absoluteOffset = scrollOffset + scrollingBy;
+        final float percentage = ((newDragPos - oldDragPos) / (float)scrollbarLength);
+        final int totalPossibleOffset = scrollRange - viewLength;
+        final float scrollingBy = percentage * scrollRange;
+        final float absoluteOffset = scrollOffset + scrollingBy;
+
         if (absoluteOffset < totalPossibleOffset && absoluteOffset >= 0) {
-            return scrollingBy;
+            // Java is down-casting and scrollingBy is a float. Therefore, we need to use ceil() or floor()
+            // to find out the nearest integer of pixels.
+            return scrollingBy > 0.0f ? (int) Math.ceil(scrollingBy) : (int) Math.floor(scrollingBy);
         } else {
-            return 0;
+            // When scrolling the last part and its absoluteOffset is out of range of scrollbarLength,
+            // we still can scroll by its remaining scrollOffset.
+            return absoluteOffset < 0.0f ? -scrollOffset : totalPossibleOffset - scrollOffset;
         }
     }
 

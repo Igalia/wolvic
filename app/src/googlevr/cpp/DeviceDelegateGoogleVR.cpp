@@ -394,7 +394,8 @@ DeviceDelegateGoogleVR::RegisterImmersiveDisplay(ImmersiveDisplayPtr aDisplay) {
   }
 
   m.immersiveDisplay->SetDeviceName("Daydream");
-  m.immersiveDisplay->SetCapabilityFlags(device::Position | device::Orientation | device::Present | device::StageParameters);
+  m.immersiveDisplay->SetCapabilityFlags(device::Position | device::Orientation | device::Present | device::StageParameters |
+                                         device::InlineSession | device::ImmersiveVRSession);
   m.immersiveDisplay->SetSittingToStandingTransform(vrb::Matrix::Translation(kAverageHeight));
   gvr_sizei size = m.GetRecommendedImmersiveModeSize();
   m.immersiveDisplay->SetEyeResolution(size.width / 2, size.height);

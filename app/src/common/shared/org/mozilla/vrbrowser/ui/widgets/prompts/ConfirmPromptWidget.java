@@ -40,8 +40,6 @@ public class ConfirmPromptWidget extends PromptWidget {
     protected void initialize(Context aContext) {
         inflate(aContext, R.layout.prompt_confirm, this);
 
-        mWidgetManager.addFocusChangeListener(this);
-
         mAudio = AudioEngine.fromContext(aContext);
 
         mLayout = findViewById(R.id.layout);

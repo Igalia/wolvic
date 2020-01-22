@@ -14,12 +14,11 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserActivity;
@@ -30,6 +29,7 @@ import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.databinding.HistoryBinding;
+import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.ui.adapters.HistoryAdapter;
 import org.mozilla.vrbrowser.ui.callbacks.HistoryCallback;
 import org.mozilla.vrbrowser.ui.callbacks.HistoryItemCallback;
@@ -42,6 +42,7 @@ import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
@@ -102,6 +103,7 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
             v.requestFocusFromTouch();
             return false;
         });
+        mBinding.historyList.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> mHistoryViewListeners.forEach((listener) -> listener.onHideContextMenu(v)));
         mBinding.historyList.setHasFixedSize(true);
         mBinding.historyList.setItemViewCacheSize(20);
         mBinding.historyList.setDrawingCacheEnabled(true);
@@ -157,20 +159,15 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
 
             Session session = SessionStore.get().getActiveSession();
             session.loadUri(item.getUrl());
+
+            mHistoryViewListeners.forEach((listener) -> listener.onClickItem(view, item));
         }
 
         @Override
         public void onDelete(View view, VisitInfo item) {
             mBinding.historyList.requestFocusFromTouch();
 
-            mHistoryAdapter.removeItem(item);
-            if (mHistoryAdapter.itemCount() == 0) {
-                mBinding.setIsEmpty(true);
-                mBinding.setIsLoading(false);
-                mBinding.executePendingBindings();
-            }
-
-            SessionStore.get().getHistoryStore().deleteHistory(item.getUrl(), item.getVisitTime());
+            SessionStore.get().getHistoryStore().deleteVisitsFor(item.getUrl());
         }
 
         @Override
@@ -208,18 +205,33 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
 
         @Override
         public void onFxALogin(@NonNull View view) {
-            mAccounts.getAuthenticationUrlAsync().thenAcceptAsync((url) -> {
-                if (url != null) {
-                    mAccounts.setLoginOrigin(Accounts.LoginOrigin.HISTORY);
-                    WidgetManagerDelegate widgetManager = ((VRBrowserActivity)getContext());
-                    widgetManager.openNewTabForeground(url);
-                    widgetManager.getFocusedWindow().getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
+            if (mAccounts.getAccountStatus() == Accounts.AccountStatus.SIGNED_IN) {
+                mAccounts.logoutAsync();
+
+            } else {
+                CompletableFuture<String> result = mAccounts.authUrlAsync();
+                if (result != null) {
+                    result.thenAcceptAsync((url) -> {
+                        if (url == null) {
+                            mAccounts.logoutAsync();
+
+                        } else {
+                            mAccounts.setLoginOrigin(Accounts.LoginOrigin.HISTORY);
+                            WidgetManagerDelegate widgetManager = ((VRBrowserActivity) getContext());
+                            widgetManager.openNewTabForeground(url);
+                            widgetManager.getFocusedWindow().getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
+                            GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.FXA_LOGIN);
+
+                            mHistoryViewListeners.forEach((listener) -> listener.onFxALogin(view));
+                        }
+
+                    }, mUIThreadExecutor).exceptionally(throwable -> {
+                        Log.d(LOGTAG, "Error getting the authentication URL: " + throwable.getLocalizedMessage());
+                        throwable.printStackTrace();
+                        return null;
+                    });
                 }
-            }, mUIThreadExecutor).exceptionally(throwable -> {
-                Log.d(LOGTAG, "Error getting the authentication URL: " + throwable.getLocalizedMessage());
-                throwable.printStackTrace();
-                return null;
-            });
+            }
         }
 
         @Override
@@ -279,12 +291,12 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
     private AccountObserver mAccountListener = new AccountObserver() {
 
         @Override
-        public void onAuthenticated(@NotNull OAuthAccount oAuthAccount, @NotNull AuthType authType) {
+        public void onAuthenticated(@NonNull OAuthAccount oAuthAccount, @NonNull AuthType authType) {
             mBinding.setIsSignedIn(true);
         }
 
         @Override
-        public void onProfileUpdated(@NotNull Profile profile) {
+        public void onProfileUpdated(@NonNull Profile profile) {
         }
 
         @Override
@@ -298,7 +310,7 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
         }
     };
 
-    @NotNull
+    @NonNull
     public static <T> Predicate<T> distinctByUrl(Function<? super T, ?> keyExtractor) {
         Set<Object> seen = ConcurrentHashMap.newKeySet();
         return t -> seen.add(keyExtractor.apply(t));
@@ -362,7 +374,6 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
             mBinding.setIsEmpty(false);
             mBinding.setIsLoading(false);
             mHistoryAdapter.setHistoryList(historyItems);
-            mBinding.historyList.post(() -> mBinding.historyList.smoothScrollToPosition(0));
         }
     }
 

@@ -14,12 +14,11 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserActivity;
@@ -30,6 +29,7 @@ import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.databinding.BookmarksBinding;
+import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.ui.adapters.Bookmark;
 import org.mozilla.vrbrowser.ui.adapters.BookmarkAdapter;
 import org.mozilla.vrbrowser.ui.adapters.CustomLinearLayoutManager;
@@ -40,6 +40,7 @@ import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
 import mozilla.appservices.places.BookmarkRoot;
@@ -97,6 +98,7 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
             v.requestFocusFromTouch();
             return false;
         });
+        mBinding.bookmarksList.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> mBookmarksViewListeners.forEach((listener) -> listener.onHideContextMenu(v)));
         mBinding.bookmarksList.setHasFixedSize(true);
         mBinding.bookmarksList.setItemViewCacheSize(20);
         mBinding.bookmarksList.setDrawingCacheEnabled(true);
@@ -154,18 +156,13 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
 
             Session session = SessionStore.get().getActiveSession();
             session.loadUri(item.getUrl());
+
+            mBookmarksViewListeners.forEach((listener) -> listener.onClickItem(view, item));
         }
 
         @Override
         public void onDelete(@NonNull View view, @NonNull Bookmark item) {
             mBinding.bookmarksList.requestFocusFromTouch();
-
-            mBookmarkAdapter.removeItem(item);
-            if (mBookmarkAdapter.itemCount() == 0) {
-                mBinding.setIsEmpty(true);
-                mBinding.setIsLoading(false);
-                mBinding.executePendingBindings();
-            }
 
             SessionStore.get().getBookmarkStore().deleteBookmarkById(item.getGuid());
         }
@@ -211,18 +208,33 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
 
         @Override
         public void onFxALogin(@NonNull View view) {
-            mAccounts.getAuthenticationUrlAsync().thenAcceptAsync((url) -> {
-                if (url != null) {
-                    mAccounts.setLoginOrigin(Accounts.LoginOrigin.BOOKMARKS);
-                    WidgetManagerDelegate widgetManager = ((VRBrowserActivity)getContext());
-                    widgetManager.openNewTabForeground(url);
-                    widgetManager.getFocusedWindow().getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
+            if (mAccounts.getAccountStatus() == Accounts.AccountStatus.SIGNED_IN) {
+                mAccounts.logoutAsync();
+
+            } else {
+                CompletableFuture<String> result = mAccounts.authUrlAsync();
+                if (result != null) {
+                    result.thenAcceptAsync((url) -> {
+                        if (url == null) {
+                            mAccounts.logoutAsync();
+
+                        } else {
+                            mAccounts.setLoginOrigin(Accounts.LoginOrigin.BOOKMARKS);
+                            WidgetManagerDelegate widgetManager = ((VRBrowserActivity) getContext());
+                            widgetManager.openNewTabForeground(url);
+                            widgetManager.getFocusedWindow().getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
+                            GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.FXA_LOGIN);
+
+                            mBookmarksViewListeners.forEach((listener) -> listener.onFxALogin(view));
+                        }
+
+                    }, mUIThreadExecutor).exceptionally(throwable -> {
+                        Log.d(LOGTAG, "Error getting the authentication URL: " + throwable.getLocalizedMessage());
+                        throwable.printStackTrace();
+                        return null;
+                    });
                 }
-            }, mUIThreadExecutor).exceptionally(throwable -> {
-                Log.d(LOGTAG, "Error getting the authentication URL: " + throwable.getLocalizedMessage());
-                throwable.printStackTrace();
-                return null;
-            });
+            }
         }
 
         @Override
@@ -282,12 +294,12 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
     private AccountObserver mAccountListener = new AccountObserver() {
 
         @Override
-        public void onAuthenticated(@NotNull OAuthAccount oAuthAccount, @NotNull AuthType authType) {
+        public void onAuthenticated(@NonNull OAuthAccount oAuthAccount, @NonNull AuthType authType) {
             mBinding.setIsSignedIn(true);
         }
 
         @Override
-        public void onProfileUpdated(@NotNull Profile profile) {
+        public void onProfileUpdated(@NonNull Profile profile) {
         }
 
         @Override

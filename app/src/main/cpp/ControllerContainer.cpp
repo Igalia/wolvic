@@ -342,6 +342,45 @@ ControllerContainer::SetAxes(const int32_t aControllerIndex, const float* aData,
 }
 
 void
+ControllerContainer::SetHapticCount(const int32_t aControllerIndex, const uint32_t aNumHaptics) {
+  if (!m.Contains(aControllerIndex)) {
+    return;
+  }
+  m.list[aControllerIndex].numHaptics = aNumHaptics;
+}
+
+uint32_t
+ControllerContainer::GetHapticCount(const int32_t aControllerIndex) {
+  if (!m.Contains(aControllerIndex)) {
+    return 0;
+  }
+
+  return m.list[aControllerIndex].numHaptics;
+}
+
+void
+ControllerContainer::SetHapticFeedback(const int32_t aControllerIndex, const uint64_t aInputFrameID,
+                                        const float aPulseDuration, const float aPulseIntensity) {
+  if (!m.Contains(aControllerIndex)) {
+    return;
+  }
+  m.list[aControllerIndex].inputFrameID = aInputFrameID;
+  m.list[aControllerIndex].pulseDuration = aPulseDuration;
+  m.list[aControllerIndex].pulseIntensity = aPulseIntensity;
+}
+
+void
+ControllerContainer::GetHapticFeedback(const int32_t aControllerIndex, uint64_t & aInputFrameID,
+                                        float& aPulseDuration, float& aPulseIntensity) {
+  if (!m.Contains(aControllerIndex)) {
+    return;
+  }
+  aInputFrameID = m.list[aControllerIndex].inputFrameID;
+  aPulseDuration = m.list[aControllerIndex].pulseDuration;
+  aPulseIntensity = m.list[aControllerIndex].pulseIntensity;
+}
+
+void
 ControllerContainer::SetLeftHanded(const int32_t aControllerIndex, const bool aLeftHanded) {
   if (!m.Contains(aControllerIndex)) {
     return;

@@ -40,6 +40,7 @@ public interface KeyboardInterface {
     default boolean usesTextOverride() { return false; }
     String getComposingText(String aComposing, String aCode);
     String getKeyboardTitle();
+    default String[] getDomains(String... domains) { return null; }
     Locale getLocale();
     String getSpaceKeyText(String aComposingText);
     String getEnterKeyText(int aIMEOptions, String aComposingText);

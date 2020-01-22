@@ -20,26 +20,31 @@
         android:paddingTop="5dp"
         android:paddingBottom="5dp">
 
-        <ImageView
-            android:id="@+id/delete"
+        <FrameLayout
+            android:id="@+id/deleteContainer"
             android:layout_width="@dimen/language_row_icon_size"
             android:layout_height="@dimen/language_row_icon_size"
             android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_icon_language_delete"
-            app:srcCompat="@drawable/ic_icon_language_delete"
-            android:tint="@color/fog"
-            android:clickable="true"
-            android:focusable="true"
-            android:onClick="@{(view) -> callback != null ? callback.onDelete(item) : void}" />
+            android:layout_centerVertical="true">
+            <ImageView
+                android:id="@+id/delete"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_icon_language_delete"
+                app:srcCompat="@drawable/ic_icon_language_delete"
+                android:tint="@color/concrete"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="@{(view) -> callback != null ? callback.onDelete(item) : void}" />
+        </FrameLayout>
 
         <TextView
             android:id="@+id/site"
             style="@style/settingsText"
             android:layout_width="match_parent"
             android:layout_height="30dp"
-            android:layout_toEndOf="@id/delete"
+            android:layout_toEndOf="@id/deleteContainer"
             android:layout_alignParentEnd="true"
             android:gravity="center_vertical"
             android:paddingStart="5dp"

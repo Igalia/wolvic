@@ -24,7 +24,6 @@ import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.utils.AnimationHelper;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -44,8 +43,6 @@ public class BookmarkAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private int mMinPadding;
     private int mMaxPadding;
-    private int mIconColorHover;
-    private int mIconNormalColor;
     private boolean mIsNarrowLayout;
 
     @Nullable
@@ -56,9 +53,6 @@ public class BookmarkAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         mMinPadding = WidgetPlacement.pixelDimension(aContext, R.dimen.library_icon_padding_min);
         mMaxPadding = WidgetPlacement.pixelDimension(aContext, R.dimen.library_icon_padding_max);
-
-        mIconColorHover = aContext.getResources().getColor(R.color.white, aContext.getTheme());
-        mIconNormalColor = aContext.getResources().getColor(R.color.rhino, aContext.getTheme());
 
         mIsNarrowLayout = false;
 
@@ -193,6 +187,8 @@ public class BookmarkAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         return false;
 
                     case MotionEvent.ACTION_DOWN:
+                        binding.more.setImageState(new int[]{android.R.attr.state_active},false);
+                        binding.trash.setImageState(new int[]{android.R.attr.state_active},false);
                         binding.setIsHovered(true);
                         return false;
 
@@ -204,35 +200,47 @@ public class BookmarkAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             });
             binding.more.setOnHoverListener(mIconHoverListener);
             binding.more.setOnTouchListener((view, motionEvent) -> {
+                binding.setIsHovered(true);
                 int ev = motionEvent.getActionMasked();
                 switch (ev) {
                     case MotionEvent.ACTION_UP:
-                        binding.setIsHovered(true);
                         if (mBookmarkItemCallback != null) {
                             mBookmarkItemCallback.onMore(view, binding.getItem());
                         }
+                        binding.more.setImageState(new int[]{android.R.attr.state_active},true);
                         return true;
 
                     case MotionEvent.ACTION_DOWN:
-                        binding.setIsHovered(true);
+                        binding.more.setImageState(new int[]{android.R.attr.state_pressed},true);
                         return true;
+
+                    case MotionEvent.ACTION_CANCEL:
+                        binding.setIsHovered(false);
+                        binding.more.setImageState(new int[]{android.R.attr.state_active},true);
+                        return false;
                 }
                 return false;
             });
             binding.trash.setOnHoverListener(mIconHoverListener);
             binding.trash.setOnTouchListener((view, motionEvent) -> {
+                binding.setIsHovered(true);
                 int ev = motionEvent.getActionMasked();
                 switch (ev) {
                     case MotionEvent.ACTION_UP:
-                        binding.setIsHovered(true);
                         if (mBookmarkItemCallback != null) {
                             mBookmarkItemCallback.onDelete(view, binding.getItem());
                         }
+                        binding.trash.setImageState(new int[]{android.R.attr.state_active},true);
                         return true;
 
                     case MotionEvent.ACTION_DOWN:
-                        binding.setIsHovered(true);
+                        binding.trash.setImageState(new int[]{android.R.attr.state_pressed},true);
                         return true;
+
+                    case MotionEvent.ACTION_CANCEL:
+                        binding.setIsHovered(false);
+                        binding.trash.setImageState(new int[]{android.R.attr.state_active},true);
+                        return false;
                 }
                 return false;
             });
@@ -324,7 +332,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         int ev = motionEvent.getActionMasked();
         switch (ev) {
             case MotionEvent.ACTION_HOVER_ENTER:
-                icon.setColorFilter(mIconColorHover);
+                icon.setImageState(new int[]{android.R.attr.state_hovered},true);
                 AnimationHelper.animateViewPadding(view,
                         mMaxPadding,
                         mMinPadding,
@@ -332,11 +340,11 @@ public class BookmarkAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 return false;
 
             case MotionEvent.ACTION_HOVER_EXIT:
+                icon.setImageState(new int[]{android.R.attr.state_active},true);
                 AnimationHelper.animateViewPadding(view,
                         mMinPadding,
                         mMaxPadding,
-                        ICON_ANIMATION_DURATION,
-                        () -> icon.setColorFilter(mIconNormalColor));
+                        ICON_ANIMATION_DURATION);
                 return false;
         }
 

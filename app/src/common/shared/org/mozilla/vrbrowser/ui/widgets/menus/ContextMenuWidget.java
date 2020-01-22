@@ -13,6 +13,7 @@ import android.view.View;
 
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.utils.StringUtils;
@@ -87,6 +88,7 @@ public class ContextMenuWidget extends MenuWidget implements WidgetManagerDelega
         mItems.add(new MenuWidget.MenuItem(getContext().getString(R.string.context_menu_open_new_tab_1), 0, () -> {
             if (!StringUtils.isEmpty(aContextElement.linkUri)) {
                 mWidgetManager.openNewTab(aContextElement.linkUri);
+                GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.CONTEXT_MENU);
             }
             onDismiss();
         }));
@@ -122,7 +124,7 @@ public class ContextMenuWidget extends MenuWidget implements WidgetManagerDelega
 
     @Override
     public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-        if (!ViewUtils.isChildrenOf(this, newFocus) && isVisible()) {
+        if (!ViewUtils.isEqualOrChildrenOf(this, newFocus) && isVisible()) {
             onDismiss();
         }
     }

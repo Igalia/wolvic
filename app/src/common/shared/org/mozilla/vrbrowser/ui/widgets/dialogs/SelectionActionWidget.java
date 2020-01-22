@@ -16,11 +16,10 @@ import org.mozilla.vrbrowser.ui.views.UITextButton;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
-import org.mozilla.vrbrowser.utils.StringUtils;
 import org.mozilla.vrbrowser.utils.ViewUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 
 import static android.view.Gravity.CENTER_VERTICAL;
 
@@ -34,7 +33,8 @@ public class SelectionActionWidget extends UIWidget implements WidgetManagerDele
     private Point mPosition;
     private LinearLayout mContainer;
     private int mMinButtonWidth;
-    private String[] mActions;
+    private int mMaxButtonWidth;
+    private Collection<String> mActions;
 
     public SelectionActionWidget(Context aContext) {
         super(aContext);
@@ -44,7 +44,8 @@ public class SelectionActionWidget extends UIWidget implements WidgetManagerDele
     private void initialize() {
         inflate(getContext(), R.layout.selection_action_menu, this);
         mContainer = findViewById(R.id.selectionMenuContainer);
-        mMinButtonWidth = WidgetPlacement.pixelDimension(getContext(), R.dimen.autocompletion_widget_min_item_width);
+        mMinButtonWidth = WidgetPlacement.pixelDimension(getContext(), R.dimen.selection_action_item_min_width);
+        mMaxButtonWidth = WidgetPlacement.pixelDimension(getContext(), R.dimen.selection_action_item_max_width);
         mBackHandler = () -> {
             onDismiss();
         };
@@ -60,7 +61,7 @@ public class SelectionActionWidget extends UIWidget implements WidgetManagerDele
         aPlacement.anchorY = 0.5f;
         aPlacement.translationX = 0.0f;
         aPlacement.translationY = 0.0f;
-        aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.context_menu_z_distance);
+        aPlacement.translationZ = 1.0f;
         aPlacement.visible = false;
     }
 
@@ -75,8 +76,8 @@ public class SelectionActionWidget extends UIWidget implements WidgetManagerDele
         if (mPosition != null) {
             mWidgetPlacement.parentAnchorX = 0.0f;
             mWidgetPlacement.parentAnchorY = 1.0f;
-            mWidgetPlacement.translationX = mPosition.x * WidgetPlacement.worldToWindowRatio(getContext());
-            mWidgetPlacement.translationY = -mPosition.y * WidgetPlacement.worldToWindowRatio(getContext());
+            mWidgetPlacement.translationX = mPosition.x;
+            mWidgetPlacement.translationY = -mPosition.y;
             mWidgetPlacement.translationY += mWidgetPlacement.height * 0.5f;
         }
         super.show(aShowFlags);
@@ -103,21 +104,21 @@ public class SelectionActionWidget extends UIWidget implements WidgetManagerDele
         }
     }
 
-    public void setActions(@NonNull String[] aActions) {
+    public void setActions(@NonNull Collection<String> aActions) {
         mActions = aActions;
         mContainer.removeAllViews();
         ArrayList<UITextButton> buttons = new ArrayList<>();
 
-        if (StringUtils.contains(aActions, GeckoSession.SelectionActionDelegate.ACTION_CUT)) {
+        if (aActions.contains(GeckoSession.SelectionActionDelegate.ACTION_CUT)) {
             buttons.add(createButton(R.string.context_menu_cut_text, GeckoSession.SelectionActionDelegate.ACTION_CUT, this::handleAction));
         }
-        if (StringUtils.contains(aActions, GeckoSession.SelectionActionDelegate.ACTION_COPY)) {
+        if (aActions.contains(GeckoSession.SelectionActionDelegate.ACTION_COPY)) {
             buttons.add(createButton(R.string.context_menu_copy_text, GeckoSession.SelectionActionDelegate.ACTION_COPY, this::handleAction));
         }
-        if (StringUtils.contains(aActions, GeckoSession.SelectionActionDelegate.ACTION_PASTE)) {
+        if (aActions.contains(GeckoSession.SelectionActionDelegate.ACTION_PASTE)) {
             buttons.add(createButton(R.string.context_menu_paste_text, GeckoSession.SelectionActionDelegate.ACTION_PASTE, this::handleAction));
         }
-        if (StringUtils.contains(aActions, GeckoSession.SelectionActionDelegate.ACTION_SELECT_ALL)) {
+        if (aActions.contains(GeckoSession.SelectionActionDelegate.ACTION_SELECT_ALL)) {
             buttons.add(createButton(R.string.context_menu_select_all_text, GeckoSession.SelectionActionDelegate.ACTION_SELECT_ALL, this::handleAction));
         }
 
@@ -140,11 +141,11 @@ public class SelectionActionWidget extends UIWidget implements WidgetManagerDele
     }
 
     public boolean hasAction(String aAction) {
-        return mActions != null && StringUtils.contains(mActions, aAction);
+        return mActions != null && mActions.contains(aAction);
     }
 
-    public boolean hasSameActions(@NonNull String[] aActions) {
-        return Arrays.deepEquals(mActions, aActions);
+    public boolean hasSameActions(@NonNull Collection<String> aActions) {
+        return (mActions != null) && mActions.containsAll(aActions) && (mActions.size() == aActions.size());
     }
 
     private UITextButton createButton(int aStringId, String aAction, OnClickListener aHandler) {
@@ -155,6 +156,7 @@ public class SelectionActionWidget extends UIWidget implements WidgetManagerDele
         }
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         button.setMinWidth(mMinButtonWidth);
+        button.setMaxWidth(mMaxButtonWidth);
         params.gravity = CENTER_VERTICAL;
         button.setLayoutParams(params);
         button.setTag(aAction);
@@ -183,7 +185,7 @@ public class SelectionActionWidget extends UIWidget implements WidgetManagerDele
 
     @Override
     public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-        if (!ViewUtils.isChildrenOf(getChildAt(0), newFocus)) {
+        if (!ViewUtils.isEqualOrChildrenOf(this, newFocus)) {
             onDismiss();
         }
     }

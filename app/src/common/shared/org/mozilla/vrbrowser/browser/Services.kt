@@ -14,8 +14,9 @@ import androidx.work.WorkManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import mozilla.appservices.Megazord
+import mozilla.appservices.rustlog.LogAdapterCannotEnable
 import mozilla.components.concept.sync.*
-import mozilla.components.lib.fetch.httpurlconnection.HttpURLConnectionClient
 import mozilla.components.service.fxa.*
 import mozilla.components.service.fxa.manager.FxaAccountManager
 import mozilla.components.service.fxa.sync.GlobalSyncableStoreProvider
@@ -28,8 +29,15 @@ import org.mozilla.geckoview.AllowOrDeny
 import org.mozilla.geckoview.GeckoResult
 import org.mozilla.geckoview.GeckoSession
 import org.mozilla.vrbrowser.R
+import org.mozilla.vrbrowser.browser.engine.EngineProvider
+import org.mozilla.vrbrowser.utils.SystemUtils
+import org.mozilla.vrbrowser.telemetry.GleanMetricsService
 
-class Services(context: Context, places: Places): GeckoSession.NavigationDelegate {
+
+class Services(val context: Context, places: Places): GeckoSession.NavigationDelegate {
+
+    private val LOGTAG = SystemUtils.createLogtag(Services::class.java)
+
     companion object {
         const val CLIENT_ID = "7ad9917f6c55fb77"
         const val REDIRECT_URL = "https://accounts.firefox.com/oauth/success/$CLIENT_ID"
@@ -42,8 +50,13 @@ class Services(context: Context, places: Places): GeckoSession.NavigationDelegat
 
     // This makes bookmarks storage accessible to background sync workers.
     init {
-        RustLog.enable()
-        RustHttpConfig.setClient(lazy { HttpURLConnectionClient() })
+        Megazord.init()
+        try {
+            RustLog.enable()
+        } catch (e: LogAdapterCannotEnable) {
+            android.util.Log.w(LOGTAG, "RustLog has been enabled.")
+        }
+        RustHttpConfig.setClient(lazy { EngineProvider.createClient(context) })
 
         // Make sure we get logs out of our android-components.
         Log.addSink(AndroidLogSink())
@@ -76,7 +89,10 @@ class Services(context: Context, places: Places): GeckoSession.NavigationDelegat
                 Logger(logTag).info("Received ${events.size} device event(s)")
                 val filteredEvents = events.filterIsInstance(DeviceEvent.TabReceived::class.java)
                 if (filteredEvents.isNotEmpty()) {
-                    val tabs = filteredEvents.map { event -> event.entries }.flatten()
+                    filteredEvents.map { event -> event.from?.deviceType?.let { GleanMetricsService.FxA.receivedTab(it) } }
+                    val tabs = filteredEvents.map {
+                        event -> event.entries
+                    }.flatten()
                     tabReceivedDelegate?.onTabsReceived(tabs)
                 }
             }

@@ -12,4 +12,6 @@ public interface BookmarksCallback {
     default void onFxALogin(@NonNull View view) {}
     default void onFxASynSettings(@NonNull View view) {}
     default void onShowContextMenu(@NonNull View view, Bookmark item, boolean isLastVisibleItem) {}
+    default void onHideContextMenu(@NonNull View view) {}
+    default void onClickItem(@NonNull View view, Bookmark item) {}
 }

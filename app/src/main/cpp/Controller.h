@@ -51,6 +51,11 @@ struct Controller {
   uint32_t numButtons;
   float immersiveAxes[kControllerMaxAxes];
   uint32_t numAxes;
+  uint32_t numHaptics;
+  float inputFrameID;
+  float pulseDuration;
+  float pulseIntensity;
+
   bool leftHanded;
   bool inDeadZone;
   double lastHoverEvent;
