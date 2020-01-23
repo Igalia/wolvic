@@ -5,7 +5,13 @@
 
 package org.mozilla.vrbrowser.utils;
 
+import android.content.Context;
+import android.util.Base64;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import org.mozilla.vrbrowser.R;
 
 import java.util.regex.Pattern;
 
@@ -60,5 +66,11 @@ public class UrlUtils {
     private static Pattern domainPattern = Pattern.compile("^(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?$");
     public static boolean isDomain(String text) {
         return domainPattern.matcher(text).find();
+    }
+
+    public static boolean isPrivateAboutPage(@NonNull Context context,  @NonNull String uri) {
+        InternalPages.PageResources pageResources = InternalPages.PageResources.create(R.raw.private_mode, R.raw.private_style);
+        byte[] privatePageBytes = InternalPages.createAboutPage(context, pageResources);
+        return uri.equals("data:text/html;base64," + Base64.encodeToString(privatePageBytes, Base64.NO_WRAP));
     }
 }

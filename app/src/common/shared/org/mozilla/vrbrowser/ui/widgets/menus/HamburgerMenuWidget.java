@@ -1,5 +1,6 @@
 package org.mozilla.vrbrowser.ui.widgets.menus;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.View;
 
@@ -13,6 +14,7 @@ import org.mozilla.vrbrowser.utils.AnimationHelper;
 import org.mozilla.vrbrowser.utils.ViewUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Optional;
 
 public class HamburgerMenuWidget extends MenuWidget implements WidgetManagerDelegate.FocusChangeListener {
@@ -29,14 +31,14 @@ public class HamburgerMenuWidget extends MenuWidget implements WidgetManagerDele
     public static final int WINDOW_RESIZE = 1;
     public static final int SWITCH_MODE = 2;
 
-    ArrayList<MenuItem> mItems;
+    HashMap<Integer, MenuItem> mItems;
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     Optional<MenuDelegate> mMenuDelegate;
+    boolean mSendTabEnabled = true;
 
     public HamburgerMenuWidget(Context aContext) {
         super(aContext, R.layout.hamburger_menu);
         initialize();
-        createMenuItems();
     }
 
     private void initialize() {
@@ -45,6 +47,8 @@ public class HamburgerMenuWidget extends MenuWidget implements WidgetManagerDele
                 R.drawable.context_menu_item_background,
                 R.drawable.context_menu_item_background_single);
         mAdapter.updateLayoutId(R.layout.hamburger_menu_item);
+
+        updateMenuItems();
     }
 
     @Override
@@ -94,29 +98,37 @@ public class HamburgerMenuWidget extends MenuWidget implements WidgetManagerDele
         mMenuDelegate = Optional.ofNullable(delegate);
     }
 
-    private void createMenuItems() {
-        mItems = new ArrayList<>();
+    @SuppressLint("UseSparseArrays")
+    private void updateMenuItems() {
+        mItems = new HashMap<>();
 
-        mItems.add(SEND_TAB,
-                new MenuItem(getContext().getString(R.string.hamburger_menu_send_tab),
-                        R.drawable.ic_icon_tabs_sendtodevice,
-                        () -> mMenuDelegate.ifPresent(MenuDelegate::onSendTab)));
+        if (mSendTabEnabled) {
+            mItems.put(SEND_TAB,
+                    new MenuItem(getContext().getString(R.string.hamburger_menu_send_tab),
+                            R.drawable.ic_icon_tabs_sendtodevice,
+                            () -> mMenuDelegate.ifPresent(MenuDelegate::onSendTab)));
+        }
 
-        mItems.add(WINDOW_RESIZE,
+        mItems.put(WINDOW_RESIZE,
                 new MenuItem(getContext().getString(R.string.hamburger_menu_resize),
                         R.drawable.ic_icon_resize,
                         () -> mMenuDelegate.ifPresent(MenuDelegate::onResize)));
 
-        mItems.add(SWITCH_MODE,
+        mItems.put(SWITCH_MODE,
                 new MenuItem(getContext().getString(R.string.hamburger_menu_switch_to_desktop),
                         R.drawable.ic_icon_ua_default,
                         () -> mMenuDelegate.ifPresent(MenuDelegate::onSwitchMode)));
 
-        super.updateMenuItems(mItems);
+        super.updateMenuItems(new ArrayList<>(mItems.values()));
 
         mWidgetPlacement.height = mItems.size() * WidgetPlacement.dpDimension(getContext(), R.dimen.hamburger_menu_item_height);
         mWidgetPlacement.height += mBorderWidth * 2;
         mWidgetPlacement.height += WidgetPlacement.dpDimension(getContext(), R.dimen.hamburger_menu_triangle_height);
+    }
+
+    public void setSendTabEnabled(boolean value) {
+        mSendTabEnabled = value;
+        updateMenuItems();
     }
 
     // FocusChangeListener

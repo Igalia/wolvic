@@ -48,6 +48,7 @@ import org.mozilla.vrbrowser.ui.widgets.menus.VideoProjectionMenuWidget;
 import org.mozilla.vrbrowser.utils.AnimationHelper;
 import org.mozilla.vrbrowser.utils.ConnectivityReceiver;
 import org.mozilla.vrbrowser.utils.ServoUtils;
+import org.mozilla.vrbrowser.utils.UrlUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1141,6 +1142,10 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     private void showMenu() {
+        if (mAttachedWindow.getSession() == null) {
+            return;
+        }
+
         if (mHamburgerMenu != null && mHamburgerMenu.isVisible()) {
             // Release current selection menu to recreate it with different actions.
             hideMenu();
@@ -1167,14 +1172,16 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
                 @Override
                 public void onSwitchMode() {
-                    int uaMode = mAttachedWindow.getSession().getUaMode();
-                    if (uaMode == GeckoSessionSettings.USER_AGENT_MODE_DESKTOP) {
-                        mHamburgerMenu.setUAMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
-                        mAttachedWindow.getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
+                    if (mAttachedWindow.getSession() != null) {
+                        int uaMode = mAttachedWindow.getSession().getUaMode();
+                        if (uaMode == GeckoSessionSettings.USER_AGENT_MODE_DESKTOP) {
+                            mHamburgerMenu.setUAMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
+                            mAttachedWindow.getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
 
-                    } else {
-                        mHamburgerMenu.setUAMode(GeckoSessionSettings.USER_AGENT_MODE_DESKTOP);
-                        mAttachedWindow.getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_DESKTOP);
+                        } else {
+                            mHamburgerMenu.setUAMode(GeckoSessionSettings.USER_AGENT_MODE_DESKTOP);
+                            mAttachedWindow.getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_DESKTOP);
+                        }
                     }
 
                     hideMenu();
@@ -1182,6 +1189,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             });
         }
 
+        mHamburgerMenu.setSendTabEnabled(!UrlUtils.isPrivateAboutPage(getContext(), mAttachedWindow.getSession().getCurrentUri()));
         mHamburgerMenu.setUAMode(mAttachedWindow.getSession().getUaMode());
         mHamburgerMenu.show(UIWidget.KEEP_FOCUS);
     }

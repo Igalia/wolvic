@@ -183,6 +183,10 @@ public abstract class MenuWidget extends UIWidget {
                 return false;
             }
 
+            if (mItems.size() <= position) {
+                return false;
+            }
+
             MenuItem item = mItems.get(position);
             if (item.mCallback == null) {
                 return false;
