@@ -246,13 +246,19 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mKeyboardPopupTopMargin  = getResources().getDimensionPixelSize(R.dimen.keyboard_key_pressed_padding) * 2;
 
         setOnClickListener(view -> hideOverlays());
-        mPopupKeyboardLayer.setOnClickListener(view -> hideOverlays());
+        setOnTouchListener((v, event) -> {
+            v.performClick();
+            dismiss();
+            return true;
+        });
 
         mKeyboardView.setVisibility(View.VISIBLE);
         mKeyboardNumericView.setKeyboard(mKeyboardNumeric);
+
+        mPopupKeyboardLayer.setOnClickListener(view -> hideOverlays());
         hideOverlays();
 
-        mBackHandler = () -> onDismiss();
+        mBackHandler = this::onDismiss;
 
         mAutoCompletionView = findViewById(R.id.autoCompletionView);
         mAutoCompletionView.setExtendedHeight((int)(mWidgetPlacement.height * mWidgetPlacement.density));
@@ -375,7 +381,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     }
 
     public void dismiss() {
-        exitVoiceInputMode();
+       exitVoiceInputMode();
        if (mFocusedView != null && mFocusedView != mAttachedWindow) {
            mFocusedView.clearFocus();
        }
