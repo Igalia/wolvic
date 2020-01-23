@@ -230,11 +230,13 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
         Context context = getContext();
         aPlacement.width = WidgetPlacement.dpDimension(context, R.dimen.media_controls_container_width);
         aPlacement.height = WidgetPlacement.dpDimension(context, R.dimen.media_controls_container_height);
+        aPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.settings_world_y) -
+                WidgetPlacement.unitFromMeters(getContext(), R.dimen.window_world_y);
         aPlacement.translationZ = WidgetPlacement.unitFromMeters(context, R.dimen.media_controls_world_z);
         aPlacement.anchorX = 0.45f;
         aPlacement.anchorY = 0.5f;
         aPlacement.parentAnchorX = 0.5f;
-        aPlacement.parentAnchorY = 0.5f;
+        aPlacement.parentAnchorY = 0.0f;
         aPlacement.cylinderMapRadius = 0.0f; // Do not map X when this widget uses cylindrical layout.
     }
 
