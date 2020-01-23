@@ -608,6 +608,8 @@ public class NavigationURLBar extends FrameLayout {
                         String selectedText = mBinding.urlEditText.getText().toString().substring(startSelection, endSelection);
                         clipboard.setPrimaryClip(ClipData.newPlainText("text", selectedText));
                         mBinding.urlEditText.setText(StringUtils.removeRange(mBinding.urlEditText.getText().toString(), startSelection, endSelection));
+                        mBinding.urlEditText.setSelection(startSelection);
+
                     } else if (action.equals(GeckoSession.SelectionActionDelegate.ACTION_COPY) && selectionValid) {
                         String selectedText = mBinding.urlEditText.getText().toString().substring(startSelection, endSelection);
                         clipboard.setPrimaryClip(ClipData.newPlainText("text", selectedText));
