@@ -33,13 +33,15 @@
                 <TextView
                     android:id="@+id/textValue1"
                     style="@style/settingsValue"
-                    android:inputType="number"
                     android:visibility="visible"
+                    android:ellipsize="end"
+                    android:maxLines="1"
                     tools:text="Value" />
 
                 <org.mozilla.vrbrowser.ui.views.settings.SettingsEditText
                     android:id="@+id/editValue1"
                     style="@style/settingsEdit"
+                    android:inputType="number"
                     android:visibility="gone"
                     tools:text="Value" />
 
@@ -53,6 +55,8 @@
                     android:id="@+id/textValue2"
                     style="@style/settingsValue"
                     android:visibility="visible"
+                    android:ellipsize="end"
+                    android:maxLines="1"
                     tools:text="Value" />
 
                 <org.mozilla.vrbrowser.ui.views.settings.SettingsEditText
