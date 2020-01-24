@@ -1,13 +1,15 @@
 package org.mozilla.vrbrowser.ui.views;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.widget.FrameLayout;
 import android.widget.SeekBar;
 
-import org.mozilla.vrbrowser.R;
-
 import androidx.annotation.Nullable;
+
+import org.mozilla.vrbrowser.R;
 
 public class VolumeControl extends FrameLayout implements SeekBar.OnSeekBarChangeListener {
     private SeekBar mSeekBar;
@@ -40,11 +42,18 @@ public class VolumeControl extends FrameLayout implements SeekBar.OnSeekBarChang
         void onVolumeChange(double aVolume);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void initialize() {
         inflate(getContext(), R.layout.volume_control, this);
         mSeekBar = findViewById(R.id.volumeSeekBar);
         mSeekBar.setProgress(100);
         mSeekBar.setOnSeekBarChangeListener(this);
+        mSeekBar.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                return true;
+            }
+            return false;
+        });
     }
 
     public void setDelegate(Delegate aDelegate) {
