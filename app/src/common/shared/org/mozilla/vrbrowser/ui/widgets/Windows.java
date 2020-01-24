@@ -1122,8 +1122,11 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         if (aFullScreen) {
             mFullscreenWindow = aWindow;
             aWindow.saveBeforeFullscreenPlacement();
+            // Do not depend on how many windows are opened to select flat/curved when entering fullscreen.
+            boolean fullscreenCurved = SettingsStore.getInstance(mContext).isCurvedModeEnabled() && (mStoredCurvedMode || mForcedCurvedMode);
+            aWindow.getPlacement().cylinder = fullscreenCurved;
             setFullScreenSize(aWindow);
-            placeWindow(aWindow, WindowPlacement.FRONT);
+            placeWindow(aWindow, WindowPlacement.FRONT, fullscreenCurved);
             focusWindow(aWindow);
             for (WindowWidget win: getCurrentWindows()) {
                 setWindowVisible(win, win == mFullscreenWindow);

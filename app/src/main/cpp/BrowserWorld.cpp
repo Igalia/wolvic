@@ -229,6 +229,7 @@ struct BrowserWorld::State {
   int ParentCount(const WidgetPtr& aWidget) const;
   float ComputeNormalizedZ(const Widget& aWidget) const;
   void SortWidgets();
+  void UpdateWidgetCylinder(const WidgetPtr& aWidget, const float aDensity);
 };
 
 void
@@ -657,9 +658,27 @@ BrowserWorld::State::SortWidgets() {
     // Depth sort
     return da->second.second < db->second.second;
   });
+}
 
-
-
+void
+BrowserWorld::State::UpdateWidgetCylinder(const WidgetPtr& aWidget, const float aDensity) {
+  const bool useCylinder = aDensity > 0 && aWidget->GetPlacement()->cylinder;
+  if (useCylinder && aWidget->GetCylinder()) {
+    aWidget->SetCylinderDensity(aDensity);
+  } else if (useCylinder && !aWidget->GetCylinder()) {
+    VRLayerSurfacePtr moveLayer = aWidget->GetLayer();
+    VRLayerCylinderPtr layer = device->CreateLayerCylinder(moveLayer);
+    CylinderPtr cylinder = Cylinder::Create(create, layer);
+    aWidget->SetCylinder(cylinder);
+    aWidget->SetCylinderDensity(aDensity);
+  } else if (aWidget->GetCylinder()) {
+    float w = 0, h = 0;
+    aWidget->GetWorldSize(w, h);
+    VRLayerSurfacePtr moveLayer = aWidget->GetLayer();
+    VRLayerQuadPtr layer = device->CreateLayerQuad(moveLayer);
+    QuadPtr quad = Quad::Create(create, w, h, layer);
+    aWidget->SetQuad(quad);
+  }
 }
 
 static BrowserWorldPtr sWorldInstance;
@@ -1037,7 +1056,7 @@ BrowserWorld::UpdateWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement
   }
 
   widget->SetPlacement(aPlacement);
-  widget->SetCylinderDensity(m.cylinderDensity);
+  m.UpdateWidgetCylinder(widget, m.cylinderDensity);
   widget->ToggleWidget(aPlacement->visible);
   widget->SetSurfaceTextureSize(aPlacement->GetTextureWidth(), aPlacement->GetTextureHeight());
 
@@ -1233,7 +1252,7 @@ BrowserWorld::LayoutWidget(int32_t aHandle) {
   }
   widget->SetTransform(parent ? parent->GetTransform().PostMultiply(transform) : transform);
 
-  if (!widget->GetCylinder() && parent) {
+  if (!widget->GetCylinder()) {
     widget->LayoutQuadWithCylinderParent(parent);
   }
 }
@@ -1304,21 +1323,7 @@ void
 BrowserWorld::SetCylinderDensity(const float aDensity) {
   m.cylinderDensity = aDensity;
   for (WidgetPtr& widget: m.widgets) {
-    const bool useCylinder = m.cylinderDensity > 0 && widget->GetPlacement()->cylinder;
-    if (useCylinder && widget->GetCylinder()) {
-      widget->SetCylinderDensity(aDensity);
-    } else if (useCylinder && !widget->GetCylinder()) {
-      VRLayerCylinderPtr layer = m.device->CreateLayerCylinder(widget->GetLayer());
-      CylinderPtr cylinder = Cylinder::Create(m.create, layer);
-      widget->SetCylinder(cylinder);
-      widget->SetCylinderDensity(aDensity);
-    } else if (widget->GetCylinder()) {
-      float w = 0, h = 0;
-      widget->GetWorldSize(w, h);
-      VRLayerQuadPtr layer = m.device->CreateLayerQuad(widget->GetLayer());
-      QuadPtr quad = Quad::Create(m.create, w, h, layer);
-      widget->SetQuad(quad);
-    }
+    m.UpdateWidgetCylinder(widget, aDensity);
   }
 }
 

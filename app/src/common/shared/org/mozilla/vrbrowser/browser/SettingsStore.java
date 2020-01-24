@@ -476,6 +476,10 @@ public class SettingsStore {
         editor.commit();
     }
 
+    public boolean isCurvedModeEnabled() {
+        return getCylinderDensity() > 0;
+    }
+
     public int getFoveatedLevelApp() {
         return mPrefs.getInt(
                 mContext.getString(R.string.settings_key_foveated_app), FOVEATED_APP_DEFAULT_LEVEL);

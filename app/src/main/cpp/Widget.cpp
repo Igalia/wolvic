@@ -629,6 +629,11 @@ Widget::SetProxifyLayer(const bool aValue) {
 }
 
 void Widget::LayoutQuadWithCylinderParent(const WidgetPtr& aParent) {
+  if (!aParent) {
+    // No parent, reset the container transform.
+    m.transformContainer->SetTransform(vrb::Matrix::Identity());
+    return;
+  }
   CylinderPtr cylinder = aParent->GetCylinder();
   if (cylinder) {
     // The widget is flat and the parent is a cylinder.
