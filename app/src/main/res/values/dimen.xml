@@ -218,15 +218,13 @@
     <item name="tooltip_default_density" format="float" type="dimen">3.0</item>
 
     <!-- General 2nd level settings dimensions -->
-    <dimen name="settings_dialog_width">585dp</dimen>
+    <dimen name="settings_dialog_width">600dp</dimen>
     <dimen name="settings_dialog_height">360dp</dimen>
 
     <!-- Privacy settings -->
-    <dimen name="privacy_options_width">585dp</dimen>
     <dimen name="privacy_options_height">490dp</dimen>
 
     <!-- Display settings -->
-    <dimen name="display_options_width">585dp</dimen>
     <dimen name="display_options_height">420dp</dimen>
 
     <!-- JS Prompt dialogs -->
