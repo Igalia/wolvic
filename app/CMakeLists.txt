@@ -94,6 +94,8 @@ target_sources(
     native-lib
     PUBLIC
     src/oculusvr/cpp/DeviceDelegateOculusVR.cpp
+    src/oculusvr/cpp/OculusSwapChain.cpp
+    src/oculusvr/cpp/OculusVRLayers.cpp
     )
 add_custom_command(TARGET native-lib POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
