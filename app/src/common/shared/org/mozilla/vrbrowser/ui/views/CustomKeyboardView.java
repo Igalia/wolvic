@@ -256,7 +256,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
     private int mTapCount;
     private long mLastTapTime;
     private boolean mInMultiTap;
-    private static final int MULTITAP_INTERVAL = 800; // milliseconds
+    private static final int MULTITAP_INTERVAL = 250; // milliseconds
     private StringBuilder mPreviewLabel = new StringBuilder(1);
 
     /** Whether the keyboard bitmap needs to be redrawn before it's blitted. **/
@@ -547,11 +547,10 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
      */
     public boolean setShifted(boolean shifted) {
         if (mKeyboard != null) {
-            if (mKeyboard.setShifted(shifted)) {
-                // The whole keyboard probably needs to be redrawn
-                invalidateAllKeys();
-                return true;
-            }
+            mKeyboard.setShifted(shifted);
+            // The whole keyboard probably needs to be redrawn
+            invalidateAllKeys();
+            return true;
         }
         return false;
     }
@@ -1519,7 +1518,10 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
             }
 
         } else if (key.codes[0] == CustomKeyboard.KEYCODE_SHIFT) {
-            mInMultiTap = true;
+            if (eventTime < mLastTapTime + MULTITAP_INTERVAL
+                    && keyIndex == mLastSentIndex) {
+                mInMultiTap = true;
+            }
         }
 
         if (eventTime > mLastTapTime + MULTITAP_INTERVAL || keyIndex != mLastSentIndex) {
