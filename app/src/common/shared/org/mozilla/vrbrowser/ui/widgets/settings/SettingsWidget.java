@@ -9,6 +9,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.text.Html;
@@ -98,15 +99,29 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
 
     @SuppressLint("ClickableViewAccessibility")
     private void initialize() {
-        LayoutInflater inflater = LayoutInflater.from(getContext());
-
-        // Inflate this data binding layout
-        mBinding = DataBindingUtil.inflate(inflater, R.layout.settings, this, true);
+        updateUI();
 
         mAccounts = ((VRBrowserApplication)getContext().getApplicationContext()).getAccounts();
         mAccounts.addAccountListener(mAccountObserver);
 
         mUIThreadExecutor = ((VRBrowserApplication)getContext().getApplicationContext()).getExecutors().mainThread();
+
+        mAudio = AudioEngine.fromContext(getContext());
+
+        mViewMarginH = mWidgetPlacement.width - WidgetPlacement.dpDimension(getContext(), R.dimen.options_width);
+        mViewMarginH = WidgetPlacement.convertDpToPixel(getContext(), mViewMarginH);
+        mViewMarginV = mWidgetPlacement.height - WidgetPlacement.dpDimension(getContext(), R.dimen.options_height);
+        mViewMarginV = WidgetPlacement.convertDpToPixel(getContext(), mViewMarginV);
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    public void updateUI() {
+        removeAllViews();
+
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+
+        // Inflate this data binding layout
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.settings, this, true);
 
         mBinding.backButton.setOnClickListener(v -> {
             if (mAudio != null) {
@@ -158,8 +173,8 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
             String app_name = getResources().getString(R.string.app_name);
             String[] app_name_parts = app_name.split(" ");
             mBinding.versionText.setText(Html.fromHtml("<b>" + app_name_parts[0] + "</b>" +
-                    " " + app_name_parts[1] + " " +
-                    " <b>" + pInfo.versionName + "</b>",
+                            " " + app_name_parts[1] + " " +
+                            " <b>" + pInfo.versionName + "</b>",
                     Html.FROM_HTML_MODE_LEGACY));
 
         } catch (PackageManager.NameNotFoundException e) {
@@ -209,12 +224,14 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
             showControllerOptionsDialog();
         });
 
-        mAudio = AudioEngine.fromContext(getContext());
+        mCurrentView = null;
+    }
 
-        mViewMarginH = mWidgetPlacement.width - WidgetPlacement.dpDimension(getContext(), R.dimen.options_width);
-        mViewMarginH = WidgetPlacement.convertDpToPixel(getContext(), mViewMarginH);
-        mViewMarginV = mWidgetPlacement.height - WidgetPlacement.dpDimension(getContext(), R.dimen.options_height);
-        mViewMarginV = WidgetPlacement.convertDpToPixel(getContext(), mViewMarginV);
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        updateUI();
     }
 
     @Override
@@ -277,7 +294,7 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
                     mAccounts.logoutAsync();
 
                 } else {
-                    hide(REMOVE_WIDGET);
+                    hide(KEEP_WIDGET);
 
                     CompletableFuture<String> result = mAccounts.authUrlAsync();
                     if (result != null) {

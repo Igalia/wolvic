@@ -6,26 +6,23 @@
 package org.mozilla.vrbrowser.ui.widgets;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.webkit.URLUtil;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
 import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ObservableBoolean;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
-import org.mozilla.geckoview.MediaElement;
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.browser.Media;
+import org.mozilla.vrbrowser.VRBrowserActivity;
 import org.mozilla.vrbrowser.databinding.TitleBarBinding;
+import org.mozilla.vrbrowser.ui.viewmodel.WindowViewModel;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-
-public class TitleBarWidget extends UIWidget implements WidgetManagerDelegate.UpdateListener {
+public class TitleBarWidget extends UIWidget {
 
     public interface Delegate {
         void onTitleClicked(@NonNull TitleBarWidget titleBar);
@@ -33,11 +30,11 @@ public class TitleBarWidget extends UIWidget implements WidgetManagerDelegate.Up
         void onMediaPauseClicked(@NonNull TitleBarWidget titleBar);
     }
 
+    private WindowViewModel mViewModel;
     private TitleBarBinding mBinding;
     private WindowWidget mAttachedWindow;
-    private boolean mVisible = false;
-    private Media mMedia;
     private boolean mWidgetAdded = false;
+    private Delegate mDelegate;
 
     public TitleBarWidget(Context aContext) {
         super(aContext);
@@ -55,17 +52,31 @@ public class TitleBarWidget extends UIWidget implements WidgetManagerDelegate.Up
     }
 
     private void initialize(@NonNull Context aContext) {
-        LayoutInflater inflater = LayoutInflater.from(aContext);
+        updateUI();
+    }
+
+    private void updateUI() {
+        removeAllViews();
+
+        LayoutInflater inflater = LayoutInflater.from(getContext());
 
         mBinding = DataBindingUtil.inflate(inflater, R.layout.title_bar, this, true);
         mBinding.setWidget(this);
-        mBinding.executePendingBindings();
+        mBinding.setDelegate(mDelegate);
+        mBinding.setLifecycleOwner((VRBrowserActivity)getContext());
+        mBinding.setViewmodel(mViewModel);
+    }
 
-        mWidgetManager.addUpdateListener(this);
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        updateUI();
     }
 
     public void setDelegate(Delegate delegate) {
-        mBinding.setDelegate(delegate);
+        mDelegate = delegate;
+        mBinding.setDelegate(mDelegate);
     }
 
     public @Nullable
@@ -76,8 +87,6 @@ public class TitleBarWidget extends UIWidget implements WidgetManagerDelegate.Up
     @Override
     public void releaseWidget() {
         detachFromWindow();
-
-        mWidgetManager.removeUpdateListener(this);
 
         mAttachedWindow = null;
         super.releaseWidget();
@@ -104,6 +113,11 @@ public class TitleBarWidget extends UIWidget implements WidgetManagerDelegate.Up
     @Override
     public void detachFromWindow() {
         mAttachedWindow = null;
+
+        if (mViewModel != null) {
+            mViewModel.getIsTitleBarVisible().removeObserver(mIsVisibleObserver);
+            mViewModel = null;
+        }
     }
 
     @Override
@@ -116,117 +130,25 @@ public class TitleBarWidget extends UIWidget implements WidgetManagerDelegate.Up
         mWidgetPlacement.parentHandle = aWindow.getHandle();
         mAttachedWindow = aWindow;
 
-        setPrivateMode(aWindow.getSession().isPrivateMode());
+        // ModelView creation and observers setup
+        mViewModel = new ViewModelProvider(
+                (VRBrowserActivity)getContext(),
+                ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
+                .get(String.valueOf(mAttachedWindow.hashCode()), WindowViewModel.class);
+
+        mBinding.setViewmodel(mViewModel);
+
+        mViewModel.getIsTitleBarVisible().observe((VRBrowserActivity)getContext(), mIsVisibleObserver);
     }
 
-    @Override
-    public void setVisible(boolean aIsVisible) {
-        if (mVisible == aIsVisible || mWidgetManager == null) {
-            return;
-        }
-        mVisible = aIsVisible;
-        getPlacement().visible = aIsVisible;
+    Observer<ObservableBoolean> mIsVisibleObserver = isVisible -> {
+        mWidgetPlacement.visible = isVisible.get();
         if (!mWidgetAdded) {
-            mWidgetManager.addWidget(this);
+            mWidgetManager.addWidget(TitleBarWidget.this);
             mWidgetAdded = true;
         } else {
-            mWidgetManager.updateWidget(this);
-        }
-    }
-
-    private void setPrivateMode(boolean aPrivateMode) {
-        mBinding.titleBar.setBackground(getContext().getDrawable(aPrivateMode ? R.drawable.title_bar_background_private : R.drawable.title_bar_background));
-        mBinding.mediaButton.setPrivateMode(aPrivateMode);
-    }
-
-    public void setURL(@StringRes int id) {
-        setURL(getResources().getString(id));
-    }
-
-    public void setURL(String urlString) {
-        if (urlString == null) {
-            return;
-        }
-
-        if (URLUtil.isValidUrl(urlString)) {
-            try {
-                URI uri = URI.create(urlString);
-                URL url = new URL(
-                        uri.getScheme() != null ? uri.getScheme() : "",
-                        uri.getAuthority() != null ? uri.getAuthority() : "",
-                        "");
-                mBinding.url.setText(url.toString());
-
-            } catch (MalformedURLException | IllegalArgumentException e) {
-                mBinding.url.setText("");
-            }
-
-        } else {
-            mBinding.url.setText(urlString);
-        }
-    }
-
-    public void setIsInsecure(boolean aIsInsecure) {
-        if (mAttachedWindow != null && mAttachedWindow.getSession() != null &&
-                mAttachedWindow.getSession().getCurrentUri() != null &&
-                !(mAttachedWindow.getSession().getCurrentUri().startsWith("data") &&
-                mAttachedWindow.getSession().isPrivateMode())) {
-            mBinding.insecureIcon.setVisibility(aIsInsecure ? View.VISIBLE : View.GONE);
-        }
-    }
-
-    public void setInsecureVisibility(int visibility) {
-        mBinding.insecureIcon.setVisibility(visibility);
-    }
-
-    public void mediaAvailabilityChanged(boolean available) {
-        if (mMedia != null) {
-            mMedia.removeMediaListener(mMediaDelegate);
-        }
-        if (available && mAttachedWindow != null && mAttachedWindow.getSession() != null) {
-            mMedia = mAttachedWindow.getSession().getFullScreenVideo();
-            if (mMedia != null) {
-                mMedia.addMediaListener(mMediaDelegate);
-                if (mMedia.isPlayed()) {
-                    mBinding.setIsMediaAvailable(true);
-                    mBinding.setIsMediaPlaying(true);
-                }
-            }
-        } else {
-            mMedia = null;
-            mBinding.setIsMediaAvailable(false);
-        }
-    }
-
-    public void updateMediaStatus() {
-        if (mMedia != null) {
-            mBinding.setIsMediaAvailable(mMedia.isPlayed());
-            mBinding.setIsMediaPlaying(mMedia.isPlaying());
-        }
-    }
-
-    MediaElement.Delegate mMediaDelegate = new MediaElement.Delegate() {
-        @Override
-        public void onPlaybackStateChange(@NonNull MediaElement mediaElement, int state) {
-            switch(state) {
-                case MediaElement.MEDIA_STATE_PLAY:
-                case MediaElement.MEDIA_STATE_PLAYING:
-                    mBinding.setIsMediaAvailable(true);
-                    mBinding.setIsMediaPlaying(true);
-                    break;
-                case MediaElement.MEDIA_STATE_PAUSE:
-                    mBinding.setIsMediaAvailable(true);
-                    mBinding.setIsMediaPlaying(false);
-            }
+            mWidgetManager.updateWidget(TitleBarWidget.this);
         }
     };
-
-    // WidgetManagerDelegate.UpdateListener
-    @Override
-    public void onWidgetUpdate(Widget aWidget) {
-        if (aWidget == mWidgetManager.getFocusedWindow()) {
-            mWidgetManager.updateWidget(this);
-        }
-    }
 
 }

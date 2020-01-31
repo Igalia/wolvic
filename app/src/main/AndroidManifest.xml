@@ -25,7 +25,7 @@
         <activity
             android:name=".VRBrowserActivity"
             android:launchMode="singleInstance"
-            android:configChanges="density|keyboardHidden|navigation|orientation|screenSize|uiMode|locale"
+            android:configChanges="density|keyboardHidden|navigation|orientation|screenSize|uiMode|locale|layoutDirection"
             android:windowSoftInputMode="stateAlwaysHidden">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

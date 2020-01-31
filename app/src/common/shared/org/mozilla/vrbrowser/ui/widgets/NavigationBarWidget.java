@@ -7,25 +7,27 @@ package org.mozilla.vrbrowser.ui.widgets;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Rect;
-import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.Pair;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ObservableBoolean;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
-import org.mozilla.geckoview.AllowOrDeny;
-import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.VRBrowserActivity;
 import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.Media;
@@ -33,9 +35,10 @@ import org.mozilla.vrbrowser.browser.PromptDelegate;
 import org.mozilla.vrbrowser.browser.SessionChangeListener;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.browser.engine.Session;
+import org.mozilla.vrbrowser.databinding.NavigationBarBinding;
 import org.mozilla.vrbrowser.search.suggestions.SuggestionsProvider;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
-import org.mozilla.vrbrowser.ui.views.CustomUIButton;
+import org.mozilla.vrbrowser.ui.viewmodel.WindowViewModel;
 import org.mozilla.vrbrowser.ui.views.NavigationURLBar;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.views.UITextButton;
@@ -47,54 +50,29 @@ import org.mozilla.vrbrowser.ui.widgets.menus.HamburgerMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.menus.VideoProjectionMenuWidget;
 import org.mozilla.vrbrowser.utils.AnimationHelper;
 import org.mozilla.vrbrowser.utils.ConnectivityReceiver;
-import org.mozilla.vrbrowser.utils.ServoUtils;
 import org.mozilla.vrbrowser.utils.UrlUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.mozilla.vrbrowser.ui.widgets.menus.VideoProjectionMenuWidget.VIDEO_PROJECTION_NONE;
 
 public class NavigationBarWidget extends UIWidget implements GeckoSession.NavigationDelegate,
-        GeckoSession.ProgressDelegate, GeckoSession.ContentDelegate, WidgetManagerDelegate.WorldClickListener,
+        GeckoSession.ContentDelegate, WidgetManagerDelegate.WorldClickListener,
         WidgetManagerDelegate.UpdateListener, SessionChangeListener,
         NavigationURLBar.NavigationURLBarDelegate, VoiceSearchWidget.VoiceSearchDelegate,
         SharedPreferences.OnSharedPreferenceChangeListener, SuggestionsWidget.URLBarPopupDelegate,
-        WindowWidget.BookmarksViewDelegate, WindowWidget.HistoryViewDelegate, TrayListener, WindowWidget.WindowListener {
+        TrayListener, WindowWidget.WindowListener {
 
     private static final int NOTIFICATION_DURATION = 3000;
 
+    private WindowViewModel mViewModel;
+    private NavigationBarBinding mBinding;
     private AudioEngine mAudio;
-    private UIButton mBackButton;
-    private UIButton mForwardButton;
-    private UIButton mReloadButton;
-    private UIButton mHomeButton;
-    private UIButton mServoButton;
-    private NavigationURLBar mURLBar;
-    private ViewGroup mNavigationContainer;
-    private ViewGroup mFullScreenModeContainer;
-    private ViewGroup mResizeModeContainer;
     private WindowWidget mAttachedWindow;
-    private boolean mIsLoading;
-    private boolean mIsInVRVideo;
-    private boolean mAutoEnteredVRVideo;
     private Runnable mResizeBackHandler;
     private Runnable mFullScreenBackHandler;
     private Runnable mVRVideoBackHandler;
-    private UIButton mResizeExitButton;
-    private UIButton mMenuButton;
-    private UIButton mFullScreenExitButton;
-    private UIButton mBrightnessButton;
-    private UIButton mFullScreenResizeButton;
-    private UIButton mProjectionButton;
-    private UITextButton mPreset0;
-    private UITextButton mPreset1;
-    private UITextButton mPreset15;
-    private UITextButton mPreset2;
-    private UITextButton mPreset3;
-    private ArrayList<CustomUIButton> mButtons;
     private VoiceSearchWidget mVoiceSearchWidget;
     private Context mAppContext;
     private SharedPreferences mPrefs;
@@ -128,37 +106,45 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     private void initialize(@NonNull Context aContext) {
+        updateUI();
+
         mAppContext = aContext.getApplicationContext();
-        inflate(aContext, R.layout.navigation_bar, this);
 
         mUIThreadExecutor = ((VRBrowserApplication)aContext.getApplicationContext()).getExecutors().mainThread();
 
         mAudio = AudioEngine.fromContext(aContext);
-        mBackButton = findViewById(R.id.backButton);
-        mForwardButton = findViewById(R.id.forwardButton);
-        mReloadButton = findViewById(R.id.reloadButton);
-        mHomeButton = findViewById(R.id.homeButton);
-        mServoButton = findViewById(R.id.servoButton);
-        mURLBar = findViewById(R.id.urlBar);
-        mNavigationContainer = findViewById(R.id.navigationBarContainer);
-        mFullScreenModeContainer = findViewById(R.id.fullScreenModeContainer);
-        mResizeModeContainer = findViewById(R.id.resizeModeContainer);
-        mFullScreenExitButton = findViewById(R.id.fullScreenExitButton);
-        mBrightnessButton = findViewById(R.id.brightnessButton);
-        mFullScreenResizeButton = findViewById(R.id.fullScreenResizeEnterButton);
-        mProjectionButton = findViewById(R.id.projectionButton);
 
         mResizeBackHandler = () -> exitResizeMode(ResizeAction.RESTORE_SIZE);
 
         mFullScreenBackHandler = this::exitFullScreenMode;
         mVRVideoBackHandler = () -> {
             exitVRVideo();
-            if (mAutoEnteredVRVideo) {
+            if (mViewModel.getAutoEnteredVRVideo().getValue().get()) {
                 exitFullScreenMode();
             }
         };
 
-        mBackButton.setOnClickListener(v -> {
+        mWidgetManager.addUpdateListener(this);
+        mWidgetManager.addWorldClickListener(this);
+        mWidgetManager.addConnectivityListener(mConnectivityDelegate);
+
+        mSuggestionsProvider = new SuggestionsProvider(getContext());
+
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(mAppContext);
+        mPrefs.registerOnSharedPreferenceChangeListener(this);
+    }
+
+    private void updateUI() {
+        removeAllViews();
+
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+
+        // Inflate this data binding layout
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.navigation_bar, this, true);
+        mBinding.setLifecycleOwner((VRBrowserActivity)getContext());
+        mBinding.setViewmodel(mViewModel);
+
+        mBinding.navigationBarNavigation.backButton.setOnClickListener(v -> {
             v.requestFocusFromTouch();
 
             if (getSession().canGoBack()) {
@@ -170,7 +156,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             }
         });
 
-        mForwardButton.setOnClickListener(v -> {
+        mBinding.navigationBarNavigation.forwardButton.setOnClickListener(v -> {
             v.requestFocusFromTouch();
             getSession().goForward();
             if (mAudio != null) {
@@ -178,9 +164,9 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             }
         });
 
-        mReloadButton.setOnClickListener(v -> {
+        mBinding.navigationBarNavigation.reloadButton.setOnClickListener(v -> {
             v.requestFocusFromTouch();
-            if (mIsLoading) {
+            if (mViewModel.getIsLoading().getValue().get()) {
                 getSession().stop();
             } else {
                 getSession().reload();
@@ -190,7 +176,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             }
         });
 
-        mHomeButton.setOnClickListener(v -> {
+        mBinding.navigationBarNavigation.homeButton.setOnClickListener(v -> {
             v.requestFocusFromTouch();
             getSession().loadUri(getSession().getHomeUri());
             if (mAudio != null) {
@@ -198,7 +184,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             }
         });
 
-        mServoButton.setOnClickListener(v -> {
+        mBinding.navigationBarNavigation.servoButton.setOnClickListener(v -> {
             v.requestFocusFromTouch();
             getSession().toggleServo();
             if (mAudio != null) {
@@ -206,15 +192,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             }
         });
 
-        mMenuButton = findViewById(R.id.menuButton);
-        mResizeExitButton = findViewById(R.id.resizeExitButton);
-        mPreset0 = findViewById(R.id.resizePreset0);
-        mPreset1 = findViewById(R.id.resizePreset1);
-        mPreset15 = findViewById(R.id.resizePreset15);
-        mPreset2 = findViewById(R.id.resizePreset2);
-        mPreset3 = findViewById(R.id.resizePreset3);
-
-        mMenuButton.setOnClickListener(view -> {
+        mBinding.navigationBarNavigation.menuButton.setOnClickListener(view -> {
             view.requestFocusFromTouch();
 
             showMenu();
@@ -224,7 +202,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             }
         });
 
-        mResizeExitButton.setOnClickListener(view -> {
+        mBinding.navigationBarMenu.resizeExitButton.setOnClickListener(view -> {
             view.requestFocusFromTouch();
             exitResizeMode(ResizeAction.KEEP_SIZE);
 
@@ -233,7 +211,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             }
         });
 
-        mFullScreenResizeButton.setOnClickListener(view -> {
+        mBinding.navigationBarFullscreen.fullScreenResizeEnterButton.setOnClickListener(view -> {
             view.requestFocusFromTouch();
             enterResizeMode();
             if (mAudio != null) {
@@ -241,7 +219,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             }
         });
 
-        mFullScreenExitButton.setOnClickListener(view -> {
+        mBinding.navigationBarFullscreen.fullScreenExitButton.setOnClickListener(view -> {
             view.requestFocusFromTouch();
             exitFullScreenMode();
             if (mAudio != null) {
@@ -249,8 +227,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             }
         });
 
-        mProjectionButton.setOnClickListener(view -> {
-            view.requestFocusFromTouch();
+        mBinding.navigationBarFullscreen.projectionButton.setOnClickListener(view -> {
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
@@ -265,24 +242,33 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             if (!wasVisible) {
                 mProjectionMenu.show(REQUEST_FOCUS);
             }
+
+            if (!mProjectionMenu.isVisible()) {
+                view.requestFocusFromTouch();
+            }
         });
 
-        mBrightnessButton.setOnClickListener(view -> {
-            view.requestFocusFromTouch();
+        mBinding.navigationBarFullscreen.brightnessButton.setOnClickListener(view -> {
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
+
             boolean wasVisible = mBrightnessWidget.isVisible();
             closeFloatingMenus();
+
             if (!wasVisible) {
-                float anchor = 0.5f + (float)mBrightnessButton.getMeasuredWidth() / (float)NavigationBarWidget.this.getMeasuredWidth();
+                float anchor = 0.5f + (float)mBinding.navigationBarFullscreen.brightnessButton.getMeasuredWidth() / (float)NavigationBarWidget.this.getMeasuredWidth();
                 mBrightnessWidget.getPlacement().parentAnchorX = anchor;
                 mBrightnessWidget.setVisible(true);
+            }
+
+            if (!mBrightnessWidget.isVisible()) {
+                view.requestFocusFromTouch();
             }
         });
 
 
-        mPreset0.setOnClickListener(view -> {
+        mBinding.navigationBarMenu.resizePreset0.setOnClickListener(view -> {
             view.requestFocusFromTouch();
             setResizePreset(0.5f);
             if (mAudio != null) {
@@ -290,7 +276,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             }
         });
 
-        mPreset1.setOnClickListener(view -> {
+        mBinding.navigationBarMenu.resizePreset1.setOnClickListener(view -> {
             view.requestFocusFromTouch();
             setResizePreset(1.0f);
             if (mAudio != null) {
@@ -298,7 +284,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             }
         });
 
-        mPreset15.setOnClickListener(view -> {
+        mBinding.navigationBarMenu.resizePreset15.setOnClickListener(view -> {
             view.requestFocusFromTouch();
             setResizePreset(1.5f);
             if (mAudio != null) {
@@ -306,7 +292,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             }
         });
 
-        mPreset2.setOnClickListener(view -> {
+        mBinding.navigationBarMenu.resizePreset2.setOnClickListener(view -> {
             view.requestFocusFromTouch();
             setResizePreset(2.0f);
             if (mAudio != null) {
@@ -314,7 +300,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             }
         });
 
-        mPreset3.setOnClickListener(view -> {
+        mBinding.navigationBarMenu.resizePreset3.setOnClickListener(view -> {
             view.requestFocusFromTouch();
             setResizePreset(3.0f);
             if (mAudio != null) {
@@ -322,36 +308,30 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             }
         });
 
-        mButtons = new ArrayList<>();
-        mButtons.addAll(Arrays.<CustomUIButton>asList(
-                mBackButton, mForwardButton, mReloadButton, mHomeButton, mMenuButton,
-                mServoButton, mPreset0, mPreset1, mPreset15, mPreset2, mPreset3, mResizeExitButton));
+        mBinding.navigationBarNavigation.urlBar.setDelegate(this);
 
-        mURLBar.setDelegate(this);
+        if (mAttachedWindow != null) {
+            mBinding.navigationBarNavigation.urlBar.attachToWindow(mAttachedWindow);
+        }
+    }
 
-        mWidgetManager.addUpdateListener(this);
-        mWidgetManager.addWorldClickListener(this);
-        mWidgetManager.addConnectivityListener(mConnectivityDelegate);
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
 
-        mVoiceSearchWidget = createChild(VoiceSearchWidget.class, false);
-        mVoiceSearchWidget.setDelegate(this);
-
-        mSuggestionsProvider = new SuggestionsProvider(getContext());
-
-        mPrefs = PreferenceManager.getDefaultSharedPreferences(mAppContext);
-        mPrefs.registerOnSharedPreferenceChangeListener(this);
+        updateUI();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mURLBar.onPause();
+        mBinding.navigationBarNavigation.urlBar.onPause();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mURLBar.onResume();
+        mBinding.navigationBarNavigation.urlBar.onResume();
     }
 
     @Override
@@ -395,7 +375,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     @Override
     public void detachFromWindow() {
-        hideNotification(mURLBar.getPopUpButton());
+        hideNotification(mBinding.navigationBarNavigation.urlBar.getPopUpButton());
 
         if (mAttachedWindow != null && mAttachedWindow.isResizing()) {
             exitResizeMode(ResizeAction.RESTORE_SIZE);
@@ -408,14 +388,19 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             cleanSession(getSession());
         }
         if (mAttachedWindow != null) {
-            mAttachedWindow.removeBookmarksViewListener(this);
-            mAttachedWindow.removeHistoryViewListener(this);
             mAttachedWindow.removeWindowListener(this);
             mAttachedWindow.setPopUpDelegate(null);
         }
         mAttachedWindow = null;
         if (mAwesomeBar != null && mAwesomeBar.isVisible()) {
             mAwesomeBar.hideNoAnim(UIWidget.KEEP_WIDGET);
+        }
+
+        mBinding.navigationBarNavigation.urlBar.detachFromWindow();
+
+        if (mViewModel != null) {
+            mViewModel.getIsFullscreen().removeObserver(mIsFullscreenObserver);
+            mViewModel = null;
         }
     }
 
@@ -426,10 +411,19 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         }
         detachFromWindow();
 
-        mWidgetPlacement.parentHandle = aWindow.getHandle();
         mAttachedWindow = aWindow;
-        mAttachedWindow.addBookmarksViewListener(this);
-        mAttachedWindow.addHistoryViewListener(this);
+        mWidgetPlacement.parentHandle = aWindow.getHandle();
+
+        mViewModel = new ViewModelProvider(
+                (VRBrowserActivity)getContext(),
+                ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
+                .get(String.valueOf(mAttachedWindow.hashCode()), WindowViewModel.class);
+
+        mBinding.setViewmodel(mViewModel);
+
+        mViewModel.getIsFullscreen().observe((VRBrowserActivity)getContext(), mIsFullscreenObserver);
+        mBinding.navigationBarNavigation.urlBar.attachToWindow(mAttachedWindow);
+
         mAttachedWindow.addWindowListener(this);
         mAttachedWindow.setPopUpDelegate(mPopUpDelegate);
 
@@ -439,24 +433,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             setUpSession(getSession());
         }
         handleWindowResize();
-
-        if (mAttachedWindow != null) {
-            mURLBar.setIsLibraryVisible(mAttachedWindow.isBookmarksVisible() || mAttachedWindow.isHistoryVisible());
-            if (mAttachedWindow.isBookmarksVisible()) {
-                mURLBar.setHint(R.string.url_bookmarks_title);
-                mURLBar.setIsLibraryVisible(true);
-
-            } else if (mAttachedWindow.isHistoryVisible()) {
-                mURLBar.setHint(R.string.url_history_title);
-                mURLBar.setIsLibraryVisible(true);
-
-            } else {
-                mURLBar.setURL(mAttachedWindow.getSession().getCurrentUri());
-                mURLBar.setHint(R.string.search_placeholder);
-                mURLBar.setIsLibraryVisible(false);
-            }
-            mURLBar.setIsPopUpAvailable(mAttachedWindow.hasPendingPopUps());
-        }
     }
 
     private Session getSession() {
@@ -469,23 +445,19 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private void setUpSession(@NonNull Session aSession) {
         aSession.addSessionChangeListener(this);
         aSession.addNavigationListener(this);
-        aSession.addProgressListener(this);
         aSession.addContentListener(this);
-        mURLBar.setSession(getSession());
-        updateServoButton();
-        handleSessionState();
+        mBinding.navigationBarNavigation.urlBar.setSession(getSession());
     }
 
     private void cleanSession(@NonNull Session aSession) {
         aSession.removeSessionChangeListener(this);
         aSession.removeNavigationListener(this);
-        aSession.removeProgressListener(this);
         aSession.removeContentListener(this);
     }
 
     @Override
     public void onSessionChanged(@NonNull Session aOldSession, @NonNull Session aSession) {
-        mURLBar.setIsPopUpAvailable(mAttachedWindow.hasPendingPopUps());
+        mViewModel.setIsPopUpAvailable(mAttachedWindow.hasPendingPopUps());
 
         cleanSession(aOldSession);
         setUpSession(aSession);
@@ -497,15 +469,11 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     private void enterFullScreenMode() {
-        if (mAttachedWindow.isFullScreen()) {
-            return;
-        }
-
         mWidgetManager.pushBackHandler(mFullScreenBackHandler);
         mAttachedWindow.setIsFullScreen(true);
-        AnimationHelper.fadeIn(mFullScreenModeContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
+        AnimationHelper.fadeIn(mBinding.navigationBarFullscreen.fullScreenModeContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
 
-        AnimationHelper.fadeOut(mNavigationContainer, 0, null);
+        AnimationHelper.fadeOut(mBinding.navigationBarNavigation.navigationBarContainer, 0, null);
 
         mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
 
@@ -517,7 +485,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             mProjectionMenuPlacement = new WidgetPlacement(getContext());
             mWidgetManager.addWidget(mProjectionMenu);
             mProjectionMenu.setDelegate((projection)-> {
-                if (mIsInVRVideo) {
+                if (mViewModel.getIsInVRVideo().getValue().get()) {
                     // Reproject while reproducing VRVideo
                     mWidgetManager.showVRVideo(mAttachedWindow.getHandle(), projection);
                     closeFloatingMenus();
@@ -536,6 +504,10 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     private void exitFullScreenMode() {
+        if (mAttachedWindow == null) {
+            return;
+        }
+
         if (!mAttachedWindow.isFullScreen()) {
             mWidgetManager.setTrayVisible(true);
             return;
@@ -554,10 +526,10 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mAttachedWindow.setIsFullScreen(false);
         mWidgetManager.popBackHandler(mFullScreenBackHandler);
 
-        AnimationHelper.fadeIn(mNavigationContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
+        AnimationHelper.fadeIn(mBinding.navigationBarNavigation.navigationBarContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
 
         mWidgetManager.popWorldBrightness(this);
-        AnimationHelper.fadeOut(mFullScreenModeContainer, 0, null);
+        AnimationHelper.fadeOut(mBinding.navigationBarFullscreen.fullScreenModeContainer, 0, null);
 
         mWidgetManager.setTrayVisible(true);
         closeFloatingMenus();
@@ -571,11 +543,11 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mAttachedWindow.setIsResizing(true);
         mAttachedWindow.saveBeforeResizePlacement();
         startWidgetResize();
-        AnimationHelper.fadeIn(mResizeModeContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
+        AnimationHelper.fadeIn(mBinding.navigationBarMenu.resizeModeContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
         if (mAttachedWindow.isFullScreen()) {
-            AnimationHelper.fadeOut(mFullScreenModeContainer, 0, null);
+            AnimationHelper.fadeOut(mBinding.navigationBarFullscreen.fullScreenModeContainer, 0, null);
         } else {
-            AnimationHelper.fadeOut(mNavigationContainer, 0, null);
+            AnimationHelper.fadeOut(mBinding.navigationBarNavigation.navigationBarContainer, 0, null);
         }
         mWidgetManager.pushBackHandler(mResizeBackHandler);
         mWidgetManager.setTrayVisible(false);
@@ -586,12 +558,16 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             maxScale = mAttachedWindow.getMaxWindowScale();
         }
 
-        mPreset3.setVisibility(maxScale >= 3.0f ? View.VISIBLE : View.GONE);
-        mPreset2.setVisibility(maxScale >= 2.0f ? View.VISIBLE : View.GONE);
-        mPreset15.setVisibility(maxScale == 1.5f ? View.VISIBLE: View.GONE);
+        mBinding.navigationBarMenu.resizePreset3.setVisibility(maxScale >= 3.0f ? View.VISIBLE : View.GONE);
+        mBinding.navigationBarMenu.resizePreset2.setVisibility(maxScale >= 2.0f ? View.VISIBLE : View.GONE);
+        mBinding.navigationBarMenu.resizePreset15.setVisibility(maxScale == 1.5f ? View.VISIBLE: View.GONE);
 
         // Update visible presets
-        UITextButton[] presets = { mPreset3, mPreset2, mPreset15, mPreset1};
+        UITextButton[] presets = {
+                mBinding.navigationBarMenu.resizePreset3,
+                mBinding.navigationBarMenu.resizePreset2,
+                mBinding.navigationBarMenu.resizePreset15,
+                mBinding.navigationBarMenu.resizePreset1};
         boolean fistVisible = true;
         for (UITextButton preset: presets) {
             if (fistVisible) {
@@ -630,11 +606,11 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mAttachedWindow.setIsResizing(false);
         finishWidgetResize();
         if (mAttachedWindow.isFullScreen()) {
-            AnimationHelper.fadeIn(mFullScreenModeContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
+            AnimationHelper.fadeIn(mBinding.navigationBarFullscreen.fullScreenModeContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
         } else {
-            AnimationHelper.fadeIn(mNavigationContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
+            AnimationHelper.fadeIn(mBinding.navigationBarNavigation.navigationBarContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
         }
-        AnimationHelper.fadeOut(mResizeModeContainer, 0, () -> onWidgetUpdate(mAttachedWindow));
+        AnimationHelper.fadeOut(mBinding.navigationBarMenu.resizeModeContainer, 0, () -> onWidgetUpdate(mAttachedWindow));
         mWidgetManager.popBackHandler(mResizeBackHandler);
         mWidgetManager.setTrayVisible(!mAttachedWindow.isFullScreen());
         closeFloatingMenus();
@@ -645,10 +621,10 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     private void enterVRVideo(@VideoProjectionMenuWidget.VideoProjectionFlags int aProjection) {
-        if (mIsInVRVideo) {
+        if (mViewModel.getIsInVRVideo().getValue().get()) {
             return;
         }
-        mIsInVRVideo = true;
+        mViewModel.setIsInVRVideo(true);
         mWidgetManager.pushBackHandler(mVRVideoBackHandler);
         mProjectionMenu.setSelectedProjection(aProjection);
         // Backup the placement because the same widget is reused in FullScreen & MediaControl menus
@@ -691,13 +667,13 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     private void exitVRVideo() {
-        if (!mIsInVRVideo) {
+        if (!mViewModel.getIsInVRVideo().getValue().get()) {
             return;
         }
         if (mFullScreenMedia != null) {
             mFullScreenMedia.setResizeDelegate(null);
         }
-        mIsInVRVideo = false;
+        mViewModel.setIsInVRVideo(false);
         mWidgetManager.popBackHandler(mVRVideoBackHandler);
         mWidgetManager.hideVRVideo();
         boolean composited = mProjectionMenu.getPlacement().composited;
@@ -723,31 +699,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     public void showVoiceSearch() {
-        mURLBar.setMicrophoneEnabled(true);
-    }
-
-    public void updateServoButton() {
-        // We show the Servo button if:
-        // 1. the current session is using Servo. No matter what, we need the toggle button to go back to Gecko.
-        // 2. Or, if the pref is enabled and the current url is white listed.
-        boolean show = false;
-        boolean isServoSession = false;
-        if (getSession() != null){
-            GeckoSession currentSession = getSession().getGeckoSession();
-            if (currentSession != null) {
-                String currentUri = getSession().getCurrentUri();
-                boolean isPrefEnabled = SettingsStore.getInstance(mAppContext).isServoEnabled();
-                boolean isUrlWhiteListed = ServoUtils.isUrlInServoWhiteList(mAppContext, currentUri);
-                isServoSession = ServoUtils.isInstanceOfServoSession(currentSession);
-                show = isServoSession || (isPrefEnabled && isUrlWhiteListed);
-            }
-            if (show) {
-                mServoButton.setVisibility(View.VISIBLE);
-                mServoButton.setImageResource(isServoSession ? R.drawable.ic_icon_gecko : R.drawable.ic_icon_servo);
-            } else {
-                mServoButton.setVisibility(View.GONE);
-            }
-        }
+        mViewModel.setIsMicrophoneEnabled(true);
     }
 
     private void closeFloatingMenus() {
@@ -759,115 +711,15 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         }
     }
 
-    private void handleSessionState() {
-        if (getSession() != null) {
-            boolean isPrivateMode = getSession().isPrivateMode();
-
-            mURLBar.setPrivateMode(isPrivateMode);
-            for (CustomUIButton button : mButtons) {
-                button.setPrivateMode(isPrivateMode);
-            }
-        }
-    }
-
-    @Override
-    public void onLocationChange(GeckoSession session, String url) {
-        if (mURLBar != null && !mAttachedWindow.isBookmarksVisible() && !mAttachedWindow.isHistoryVisible()) {
-            Log.d(LOGTAG, "Got location change");
-            mURLBar.setURL(url);
-            mURLBar.setHint(R.string.search_placeholder);
-            mReloadButton.setEnabled(true);
-        }
-        updateServoButton();
-    }
-
-    @Override
-    public void onCanGoBack(GeckoSession aSession, boolean canGoBack) {
-        if (mBackButton != null) {
-            Log.d(LOGTAG, "Got onCanGoBack: " + (canGoBack ? "true" : "false"));
-            mBackButton.setEnabled(canGoBack);
-            mBackButton.setHovered(false);
-            mBackButton.setClickable(canGoBack);
-        }
-    }
-
-    @Override
-    public void onCanGoForward(GeckoSession aSession, boolean canGoForward) {
-        if (mForwardButton != null) {
-            Log.d(LOGTAG, "Got onCanGoForward: " + (canGoForward ? "true" : "false"));
-            mForwardButton.setEnabled(canGoForward);
-            mForwardButton.setHovered(false);
-            mForwardButton.setClickable(canGoForward);
-        }
-    }
-
-    @Override
-    public @Nullable GeckoResult<AllowOrDeny> onLoadRequest(GeckoSession aSession, @NonNull LoadRequest aRequest) {
-        final GeckoResult<AllowOrDeny> result = new GeckoResult<>();
-
-        Uri uri = Uri.parse(aRequest.uri);
-        if ("file".equalsIgnoreCase(uri.getScheme()) &&
-                !mWidgetManager.isPermissionGranted(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            mWidgetManager.requestPermission(
-                    aRequest.uri,
-                    android.Manifest.permission.READ_EXTERNAL_STORAGE,
-                    new GeckoSession.PermissionDelegate.Callback() {
-                        @Override
-                        public void grant() {
-                            result.complete(AllowOrDeny.ALLOW);
-                        }
-
-                        @Override
-                        public void reject() {
-                            result.complete(AllowOrDeny.DENY);
-                        }
-                    });
-            return result;
-        }
-
-        result.complete(AllowOrDeny.ALLOW);
-        return result;
-    }
-
-    // Progress Listener
-    @Override
-    public void onPageStart(GeckoSession aSession, String aUri) {
-        if (mURLBar != null) {
-            Log.d(LOGTAG, "Got onPageStart");
-            mURLBar.setURL(aUri);
-            mURLBar.setHint(R.string.search_placeholder);
-        }
-        mIsLoading = true;
-        mURLBar.setIsLoading(true);
-        if (mReloadButton != null) {
-            mReloadButton.setImageResource(R.drawable.ic_icon_exit);
-            mReloadButton.setTooltip(getResources().getString(R.string.stop_tooltip));
-        }
-    }
-
-    @Override
-    public void onPageStop(GeckoSession aSession, boolean b) {
-        mIsLoading = false;
-        mURLBar.setIsLoading(false);
-        if (mReloadButton != null) {
-            mReloadButton.setImageResource(R.drawable.ic_icon_reload);
-            mReloadButton.setTooltip(getResources().getString(R.string.refresh_tooltip));
-        }
-    }
-
-    @Override
-    public void onSecurityChange(GeckoSession geckoSession, SecurityInformation securityInformation) {
-        if (mURLBar != null) {
-            boolean isSecure = securityInformation.isSecure;
-            mURLBar.setIsInsecure(!isSecure);
-        }
-    }
-
     // Content delegate
 
     @Override
-    public void onFullScreen(GeckoSession session, boolean aFullScreen) {
-        if (aFullScreen) {
+    public void onFullScreen(@NonNull GeckoSession session, boolean aFullScreen) {
+        mViewModel.setIsFullscreen(aFullScreen);
+    }
+
+    private Observer<ObservableBoolean> mIsFullscreenObserver = isFullScreen -> {
+        if (isFullScreen.get()) {
             if (!mAttachedWindow.isFullScreen()) {
                 enterFullScreenMode();
             }
@@ -877,21 +729,21 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             AtomicBoolean autoEnter = new AtomicBoolean(false);
             mAutoSelectedProjection = VideoProjectionMenuWidget.getAutomaticProjection(getSession().getCurrentUri(), autoEnter);
             if (mAutoSelectedProjection != VIDEO_PROJECTION_NONE && autoEnter.get()) {
-                mAutoEnteredVRVideo = true;
+                mViewModel.setAutoEnteredVRVideo(true);
                 postDelayed(() -> enterVRVideo(mAutoSelectedProjection), 300);
             } else {
-                mAutoEnteredVRVideo = false;
+                mViewModel.setAutoEnteredVRVideo(false);
                 if (mProjectionMenu != null) {
                     mProjectionMenu.setSelectedProjection(mAutoSelectedProjection);
                 }
             }
         } else {
-            if (mIsInVRVideo) {
+            if (mViewModel.getIsInVRVideo().getValue().get()) {
                 exitVRVideo();
             }
             exitFullScreenMode();
         }
-    }
+    };
 
     // WidgetManagerDelegate.UpdateListener
     @Override
@@ -921,8 +773,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     @Override
     public void onCurrentSessionChange(GeckoSession aOldSession, GeckoSession aSession) {
-        handleSessionState();
-
         boolean isFullScreen = getSession().isInFullScreen();
         if (isFullScreen && !mAttachedWindow.isFullScreen()) {
             enterFullScreenMode();
@@ -936,13 +786,13 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     @Override
     public void onVoiceSearchClicked() {
-        if (mVoiceSearchWidget.isVisible()) {
-            mVoiceSearchWidget.hide(REMOVE_WIDGET);
-
-        } else {
-            mVoiceSearchWidget.getPlacement().parentHandle = mAttachedWindow.getHandle();
-            mVoiceSearchWidget.show(REQUEST_FOCUS);
+        if (mVoiceSearchWidget == null) {
+            mVoiceSearchWidget = new VoiceSearchWidget(getContext());
+            mVoiceSearchWidget.setDelegate(this);
         }
+
+        mVoiceSearchWidget.getPlacement().parentHandle = mAttachedWindow.getHandle();
+        mVoiceSearchWidget.show(REQUEST_FOCUS);
     }
 
 
@@ -953,8 +803,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             mAwesomeBar.setURLBarPopupDelegate(this);
         }
 
-        final String text = mURLBar.getText().trim();
-        final String originalText = mURLBar.getOriginalText().trim();
+        final String text = mBinding.navigationBarNavigation.urlBar.getText().trim();
+        final String originalText = mBinding.navigationBarNavigation.urlBar.getOriginalText().trim();
         if (originalText.length() <= 0) {
             mAwesomeBar.hide(UIWidget.KEEP_WIDGET);
             return;
@@ -964,12 +814,12 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mSuggestionsProvider.setFilterText(originalText);
         mSuggestionsProvider.getSuggestions()
                 .whenCompleteAsync((items, ex) -> {
-                    if (mURLBar.hasFocus()) {
+                    if (mBinding.navigationBarNavigation.urlBar.hasFocus()) {
                         mAwesomeBar.updateItems(items);
                         mAwesomeBar.setHighlightedText(originalText);
 
                         if (!mAwesomeBar.isVisible()) {
-                            mAwesomeBar.updatePlacement((int) WidgetPlacement.convertPixelsToDp(getContext(), mURLBar.getWidth()));
+                            mAwesomeBar.updatePlacement((int) WidgetPlacement.convertPixelsToDp(getContext(), mBinding.navigationBarNavigation.urlBar.getWidth()));
                             mAwesomeBar.show(CLEAR_FOCUS);
                         }
                     }
@@ -1009,15 +859,12 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     @Override
     public void OnVoiceSearchResult(String transcription, float confidance) {
-        mURLBar.handleURLEdit(transcription);
+        mBinding.navigationBarNavigation.urlBar.handleURLEdit(transcription);
     }
 
     @Override
     public void onSharedPreferenceChanged(@NonNull SharedPreferences sharedPreferences, String key) {
-        if (key.equals(mAppContext.getString(R.string.settings_key_servo))) {
-            updateServoButton();
-
-        } else if (key.equals(mAppContext.getString(R.string.settings_key_user_agent_version))) {
+        if (key.equals(mAppContext.getString(R.string.settings_key_user_agent_version))) {
             if (mHamburgerMenu != null) {
                 mHamburgerMenu.setUAMode(SettingsStore.getInstance(getContext()).getUaMode());
             }
@@ -1027,7 +874,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     // WorldClickListener
     @Override
     public void onWorldClick() {
-        if (mIsInVRVideo && mMediaControlsWidget != null) {
+        if (mViewModel.getIsInVRVideo().getValue().get() && mMediaControlsWidget != null) {
             mMediaControlsWidget.setVisible(!mMediaControlsWidget.isVisible());
             if (mProjectionMenu.getSelectedProjection() != VideoProjectionMenuWidget.VIDEO_PROJECTION_3D_SIDE_BY_SIDE) {
                 if (mMediaControlsWidget.isVisible()) {
@@ -1050,51 +897,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     @Override
     public void OnItemClicked(SuggestionsWidget.SuggestionItem item) {
-        mURLBar.handleURLEdit(item.url);
-    }
-
-    // BookmarksViewListener
-
-    @Override
-    public void onBookmarksShown(WindowWidget aWindow) {
-        if (mAttachedWindow == aWindow) {
-            mURLBar.setURL("");
-            mURLBar.setHint(R.string.url_bookmarks_title);
-            mURLBar.setIsLibraryVisible(true);
-        }
-
-        hideNotifications();
-    }
-
-    @Override
-    public void onBookmarksHidden(WindowWidget aWindow) {
-        if (mAttachedWindow == aWindow) {
-            mURLBar.setIsLibraryVisible(false);
-            mURLBar.setURL(getSession().getCurrentUri());
-            mURLBar.setHint(R.string.search_placeholder);
-        }
-    }
-
-    // HistoryViewListener
-
-    @Override
-    public void onHistoryViewShown(WindowWidget aWindow) {
-        if (mAttachedWindow == aWindow) {
-            mURLBar.setURL("");
-            mURLBar.setHint(R.string.url_history_title);
-            mURLBar.setIsLibraryVisible(true);
-        }
-
-        hideNotifications();
-    }
-
-    @Override
-    public void onHistoryViewHidden(WindowWidget aWindow) {
-        if (mAttachedWindow == aWindow) {
-            mURLBar.setIsLibraryVisible(false);
-            mURLBar.setURL(getSession().getCurrentUri());
-            mURLBar.setHint(R.string.search_placeholder);
-        }
+        mBinding.navigationBarNavigation.urlBar.handleURLEdit(item.url);
     }
 
     // TrayListener
@@ -1107,7 +910,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         } else if (mAttachedWindow.isFullScreen()) {
             exitFullScreenMode();
 
-        } else if (mIsInVRVideo) {
+        } else if (mViewModel.getIsInVRVideo().getValue().get()) {
             exitVRVideo();
         }
     }
@@ -1125,7 +928,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         } else if (mAttachedWindow.isFullScreen()) {
             exitFullScreenMode();
 
-        } else if (mIsInVRVideo) {
+        } else if (mViewModel.getIsInVRVideo().getValue().get()) {
             exitVRVideo();
         }
     }
@@ -1153,43 +956,38 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             return;
         }
 
-        if (mHamburgerMenu == null) {
-            mHamburgerMenu = new HamburgerMenuWidget(getContext());
-            mHamburgerMenu.getPlacement().parentHandle = getHandle();
-            mHamburgerMenu.setMenuDelegate(new HamburgerMenuWidget.MenuDelegate() {
-                @Override
-                public void onSendTab() {
-                    hideMenu();
+        mHamburgerMenu = new HamburgerMenuWidget(getContext());
+        mHamburgerMenu.getPlacement().parentHandle = getHandle();
+        mHamburgerMenu.setMenuDelegate(new HamburgerMenuWidget.MenuDelegate() {
+            @Override
+            public void onSendTab() {
+                hideMenu();
 
-                    showSendTabDialog();
+                showSendTabDialog();
+            }
+
+            @Override
+            public void onResize() {
+                hideMenu();
+
+                enterResizeMode();
+            }
+
+            @Override
+            public void onSwitchMode() {
+                int uaMode = mAttachedWindow.getSession().getUaMode();
+                if (uaMode == GeckoSessionSettings.USER_AGENT_MODE_DESKTOP) {
+                    mHamburgerMenu.setUAMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
+                    mAttachedWindow.getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
+
+                } else {
+                    mHamburgerMenu.setUAMode(GeckoSessionSettings.USER_AGENT_MODE_DESKTOP);
+                    mAttachedWindow.getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_DESKTOP);
                 }
 
-                @Override
-                public void onResize() {
-                    hideMenu();
-
-                    enterResizeMode();
-                }
-
-                @Override
-                public void onSwitchMode() {
-                    if (mAttachedWindow.getSession() != null) {
-                        int uaMode = mAttachedWindow.getSession().getUaMode();
-                        if (uaMode == GeckoSessionSettings.USER_AGENT_MODE_DESKTOP) {
-                            mHamburgerMenu.setUAMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
-                            mAttachedWindow.getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
-
-                        } else {
-                            mHamburgerMenu.setUAMode(GeckoSessionSettings.USER_AGENT_MODE_DESKTOP);
-                            mAttachedWindow.getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_DESKTOP);
-                        }
-                    }
-
-                    hideMenu();
-                }
-            });
-        }
-
+                hideMenu();
+            }
+        });
         mHamburgerMenu.setSendTabEnabled(!UrlUtils.isPrivateAboutPage(getContext(), mAttachedWindow.getSession().getCurrentUri()));
         mHamburgerMenu.setUAMode(mAttachedWindow.getSession().getUaMode());
         mHamburgerMenu.show(UIWidget.KEEP_FOCUS);
@@ -1214,12 +1012,12 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         @Override
         public void onPopUpAvailable() {
             showPopUpsBlockedNotification();
-            mURLBar.setIsPopUpAvailable(true);
+            mViewModel.setIsPopUpAvailable(true);
         }
 
         @Override
         public void onPopUpsCleared() {
-            mURLBar.setIsPopUpAvailable(false);
+            mViewModel.setIsPopUpAvailable(false);
             hidePopUpsBlockedNotification();
         }
     };
@@ -1230,7 +1028,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         final int currentCount = mBlockedCount;
         postDelayed(() -> {
             if (currentCount == mBlockedCount) {
-                showNotification(mURLBar.getPopUpButton(), R.string.popup_tooltip);
+                showNotification(mBinding.navigationBarNavigation.urlBar.getPopUpButton(), R.string.popup_tooltip);
             }
         }, POP_UP_NOTIFICATION_DELAY);
     }
@@ -1240,7 +1038,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         final int currentCount = mBlockedCount;
         post(() -> {
             if (currentCount == mBlockedCount) {
-                hideNotification(mURLBar.getPopUpButton());
+                hideNotification(mBinding.navigationBarNavigation.urlBar.getPopUpButton());
             }
         });
     }

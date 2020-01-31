@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="org.mozilla.vrbrowser.ui.widgets.Windows.WindowPlacement"/>
+        <variable
+            name="viewmodel"
+            type="org.mozilla.vrbrowser.ui.viewmodel.WindowViewModel" />
+    </data>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -15,29 +23,34 @@
 
         <LinearLayout
             android:id="@+id/multiWindowControlsContainer"
-            style="?attr/navigationBarStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_horizontal"
             android:orientation="horizontal"
-            android:padding="0dp">
+            app:visibleGone="@{!viewmodel.showClearButton}">
 
             <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/moveWindowLeftButton"
-                style="?attr/fullScreenButtonStyle"
-                android:background="@drawable/fullscreen_button_first"
-                android:src="@drawable/ic_icon_window_left" />
+                style="@style/uiButtonTheme"
+                android:background="@{viewmodel.isPrivateSession ? @drawable/fullscreen_button_private_first : @drawable/fullscreen_button_first}"
+                android:src="@drawable/ic_icon_window_left"
+                android:enabled="@{viewmodel.placement != WindowPlacement.LEFT}"
+                app:privateMode="@{viewmodel.isPrivateSession}"/>
 
             <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/closeWindowButton"
-                style="?attr/fullScreenButtonStyle"
-                android:src="@drawable/ic_icon_window_exit" />
+                style="@style/uiButtonTheme"
+                android:background="@{viewmodel.isPrivateSession ? @drawable/fullscreen_button_private : @drawable/fullscreen_button}"
+                android:src="@drawable/ic_icon_window_exit"
+                app:privateMode="@{viewmodel.isPrivateSession}"/>
 
             <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/moveWindowRightButton"
-                style="?attr/fullScreenButtonStyle"
-                android:background="@drawable/fullscreen_button_last"
-                android:src="@drawable/ic_icon_window_right" />
+                style="@style/uiButtonTheme"
+                android:background="@{viewmodel.isPrivateSession ? @drawable/fullscreen_button_private_last : @drawable/fullscreen_button_last}"
+                android:src="@drawable/ic_icon_window_right"
+                android:enabled="@{viewmodel.placement != WindowPlacement.RIGHT}"
+                app:privateMode="@{viewmodel.isPrivateSession}"/>
         </LinearLayout>
 
         <org.mozilla.vrbrowser.ui.views.UITextButton
@@ -47,7 +60,7 @@
             android:text="@string/private_clear_button"
             android:textAllCaps="true"
             android:textSize="@dimen/text_medium_big_size"
-            android:visibility="gone" />
+            app:visibleGone="@{viewmodel.showClearButton}" />
 
     </FrameLayout>
-</merge>
+</layout>

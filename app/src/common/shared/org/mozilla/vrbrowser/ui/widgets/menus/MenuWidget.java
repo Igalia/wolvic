@@ -20,14 +20,16 @@ import androidx.annotation.LayoutRes;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
+import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.utils.ViewUtils;
 
 import java.util.ArrayList;
 
-public abstract class MenuWidget extends UIWidget {
+public abstract class MenuWidget extends UIWidget implements WidgetManagerDelegate.FocusChangeListener {
     protected MenuAdapter mAdapter;
     protected ListView mListView;
     protected View menuContainer;
+    protected int mLayoutRes;
 
     public MenuWidget(Context aContext, @LayoutRes int layout) {
         super(aContext);
@@ -40,15 +42,37 @@ public abstract class MenuWidget extends UIWidget {
     }
 
     private void initialize(Context aContext, @LayoutRes int layout, ArrayList<MenuItem> aItems) {
-        inflate(aContext, layout, this);
+        mLayoutRes = layout;
+        updateUI();
+    }
+
+    public void updateUI() {
+        removeAllViews();
+
+        inflate(getContext(), mLayoutRes, this);
         mListView = findViewById(R.id.menuListView);
         menuContainer = findViewById(R.id.menuContainer);
 
 
-        mAdapter = new MenuAdapter(aContext, aItems);
+        mAdapter = new MenuAdapter(getContext(), null);
         mListView.setAdapter(mAdapter);
         mListView.setVerticalScrollBarEnabled(false);
         mListView.setFastScrollAlwaysVisible(false);
+    }
+
+
+    @Override
+    public void show(@ShowFlags int aShowFlags) {
+        super.show(aShowFlags);
+
+        mWidgetManager.addFocusChangeListener(this);
+    }
+
+    @Override
+    public void hide(@HideFlags int aHideFlags) {
+        super.hide(aHideFlags);
+
+        mWidgetManager.removeFocusChangeListener(this);
     }
 
     public void updateMenuItems(ArrayList<MenuItem> aItems) {
@@ -204,6 +228,13 @@ public abstract class MenuWidget extends UIWidget {
             }
 
             return false;
+        }
+    }
+
+    @Override
+    public void onGlobalFocusChanged(View oldFocus, View newFocus) {
+        if (!ViewUtils.isEqualOrChildrenOf(this, newFocus) && isVisible()) {
+            onDismiss();
         }
     }
 

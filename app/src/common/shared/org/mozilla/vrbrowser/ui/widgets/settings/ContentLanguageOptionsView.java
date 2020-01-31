@@ -39,8 +39,6 @@ public class ContentLanguageOptionsView extends SettingsView {
     }
 
     private void initialize(Context aContext) {
-        LayoutInflater inflater = LayoutInflater.from(aContext);
-
         // Preferred languages adapter
         mPreferredAdapter = new LanguagesAdapter(getContext(), mLanguageItemCallback, true);
         mPreferredAdapter.setLanguageList(LocaleUtils.getPreferredLanguages(getContext()));
@@ -48,6 +46,17 @@ public class ContentLanguageOptionsView extends SettingsView {
         // Available languages adapter
         mAvailableAdapter = new LanguagesAdapter(getContext(), mLanguageItemCallback, false);
         mAvailableAdapter.setLanguageList(LocaleUtils.getAvailableLanguages());
+
+        updateUI();
+    }
+
+    @Override
+    protected void updateUI() {
+        super.updateUI();
+
+        removeAllViews();
+
+        LayoutInflater inflater = LayoutInflater.from(getContext());
 
         // Inflate this data binding layout
         mBinding = DataBindingUtil.inflate(inflater, R.layout.options_language_content, this, true);

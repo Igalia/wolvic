@@ -32,6 +32,10 @@ public class LocaleUtils {
         getAllLanguages();
     }
 
+    public static void refresh() {
+        getAllLanguages(true);
+    }
+
     public static void saveSystemLocale() {
         mSystemLocale = Locale.getDefault();
     }
@@ -47,7 +51,11 @@ public class LocaleUtils {
     }
 
     private static HashMap<String, Language> getAllLanguages() {
-        if (mLanguagesCache != null) {
+        return getAllLanguages(false);
+    }
+
+    private static HashMap<String, Language> getAllLanguages(boolean refresh) {
+        if (mLanguagesCache != null && !refresh) {
             return mLanguagesCache;
         }
 
@@ -198,7 +206,7 @@ public class LocaleUtils {
     }
 
     public static void setDisplayLocale(@NonNull Context context, @NonNull String locale) {
-        SettingsStore.getInstance(context).setDisplayLocale(locale);
+        SettingsStore.getInstance(context).setDisplayLocale(getClosestAvailableLocale(locale));
     }
 
     @NonNull

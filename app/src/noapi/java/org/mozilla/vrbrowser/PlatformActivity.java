@@ -8,12 +8,12 @@ package org.mozilla.vrbrowser;
 import android.app.Activity;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.TextView;
+
+import androidx.annotation.Keep;
 
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
@@ -21,8 +21,6 @@ import java.util.ArrayList;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
-
-import androidx.annotation.Keep;
 
 public class PlatformActivity extends Activity {
     static String LOGTAG = SystemUtils.createLogtag(PlatformActivity.class);

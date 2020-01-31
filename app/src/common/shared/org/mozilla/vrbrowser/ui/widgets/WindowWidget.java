@@ -6,6 +6,7 @@
 package org.mozilla.vrbrowser.ui.widgets;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.PointF;
@@ -27,12 +28,17 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.annotation.UiThread;
+import androidx.lifecycle.ViewModelProvider;
 
+import org.mozilla.geckoview.AllowOrDeny;
 import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoSession;
+import org.mozilla.geckoview.MediaElement;
 import org.mozilla.geckoview.PanZoomController;
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.VRBrowserActivity;
 import org.mozilla.vrbrowser.VRBrowserApplication;
+import org.mozilla.vrbrowser.browser.Media;
 import org.mozilla.vrbrowser.browser.PromptDelegate;
 import org.mozilla.vrbrowser.browser.SessionChangeListener;
 import org.mozilla.vrbrowser.browser.SettingsStore;
@@ -45,6 +51,7 @@ import org.mozilla.vrbrowser.ui.adapters.Bookmark;
 import org.mozilla.vrbrowser.ui.callbacks.BookmarksCallback;
 import org.mozilla.vrbrowser.ui.callbacks.HistoryCallback;
 import org.mozilla.vrbrowser.ui.callbacks.LibraryItemContextMenuClickCallback;
+import org.mozilla.vrbrowser.ui.viewmodel.WindowViewModel;
 import org.mozilla.vrbrowser.ui.views.BookmarksView;
 import org.mozilla.vrbrowser.ui.views.HistoryView;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.ClearHistoryDialogWidget;
@@ -55,7 +62,6 @@ import org.mozilla.vrbrowser.ui.widgets.menus.LibraryMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.settings.SettingsWidget;
 import org.mozilla.vrbrowser.utils.ViewUtils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -74,16 +80,6 @@ import static org.mozilla.vrbrowser.utils.ServoUtils.isInstanceOfServoSession;
 public class WindowWidget extends UIWidget implements SessionChangeListener,
         GeckoSession.ContentDelegate, GeckoSession.NavigationDelegate, VideoAvailabilityListener,
         GeckoSession.HistoryDelegate, GeckoSession.ProgressDelegate, GeckoSession.SelectionActionDelegate {
-
-    public interface HistoryViewDelegate {
-        default void onHistoryViewShown(WindowWidget aWindow) {}
-        default void onHistoryViewHidden(WindowWidget aWindow) {}
-    }
-
-    public interface BookmarksViewDelegate {
-        default void onBookmarksShown(WindowWidget aWindow) {}
-        default void onBookmarksHidden(WindowWidget aWindow) {}
-    }
 
     @IntDef(value = { SESSION_RELEASE_DISPLAY, SESSION_DO_NOT_RELEASE_DISPLAY})
     public @interface OldSessionDisplayAction {}
@@ -116,8 +112,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private int mWindowId;
     private BookmarksView mBookmarksView;
     private HistoryView mHistoryView;
-    private ArrayList<BookmarksViewDelegate> mBookmarksViewListeners;
-    private ArrayList<HistoryViewDelegate> mHistoryViewListeners;
     private Windows.WindowPlacement mWindowPlacement = Windows.WindowPlacement.FRONT;
     private Windows.WindowPlacement mWindowPlacementBeforeFullscreen = Windows.WindowPlacement.FRONT;
     private float mMaxWindowScale = 3;
@@ -136,6 +130,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private boolean mCaptureOnPageStop;
     private PromptDelegate mPromptDelegate;
     private Executor mUIThreadExecutor;
+    private WindowViewModel mViewModel;
 
     public interface WindowListener {
         default void onFocusRequest(@NonNull WindowWidget aWindow) {}
@@ -163,6 +158,13 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mWidgetManager = (WidgetManagerDelegate) aContext;
         mBorderWidth = SettingsStore.getInstance(aContext).getTransparentBorderWidth();
 
+        // ModelView creation and observers setup
+        mViewModel = new ViewModelProvider(
+                (VRBrowserActivity)getContext(),
+                ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
+                .get(String.valueOf(hashCode()), WindowViewModel.class);
+        mViewModel.setIsPrivateSession(mSession.isPrivateMode());
+
         mUIThreadExecutor = ((VRBrowserApplication)getContext().getApplicationContext()).getExecutors().mainThread();
 
         mListeners = new CopyOnWriteArrayList<>();
@@ -170,11 +172,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         mBookmarksView = new BookmarksView(aContext);
         mBookmarksView.addBookmarksListener(mBookmarksListener);
-        mBookmarksViewListeners = new ArrayList<>();
 
         mHistoryView = new HistoryView(aContext);
         mHistoryView.addHistoryListener(mHistoryListener);
-        mHistoryViewListeners = new ArrayList<>();
 
         mHandle = ((WidgetManagerDelegate)aContext).newWidgetHandle();
         mWidgetPlacement = new WidgetPlacement(aContext);
@@ -308,6 +308,22 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
     }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        mHistoryView.updateUI();
+        mBookmarksView.updateUI();
+
+        if (mView != null) {
+            View temp = mView;
+            unsetView(mView, false);
+            setView(temp, false);
+        }
+
+        mViewModel.refresh();
+    }
+
     public void close() {
         TelemetryWrapper.closeWindowEvent(mWindowId);
         GleanMetricsService.closeWindowEvent(mWindowId);
@@ -315,12 +331,16 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         releaseWidget();
         mBookmarksView.onDestroy();
         mHistoryView.onDestroy();
+        mViewModel.setIsTopBarVisible(false);
+        mViewModel.setIsTitleBarVisible(false);
         SessionStore.get().destroySession(mSession);
         if (mTopBar != null) {
             mWidgetManager.removeWidget(mTopBar);
+            mTopBar.setDelegate((TopBarWidget.Delegate) null);
         }
         if (mTitleBar != null) {
             mWidgetManager.removeWidget(mTitleBar);
+            mTitleBar.setDelegate((TitleBarWidget.Delegate) null);
         }
         mListeners.clear();
     }
@@ -411,22 +431,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         return mWidgetPlacement.height;
     }
 
-    public void addBookmarksViewListener(@NonNull BookmarksViewDelegate listener) {
-        mBookmarksViewListeners.add(listener);
-    }
-
-    public void removeBookmarksViewListener(@NonNull BookmarksViewDelegate listener) {
-        mBookmarksViewListeners.remove(listener);
-    }
-
-    public void addHistoryViewListener(@NonNull HistoryViewDelegate listener) {
-        mHistoryViewListeners.add(listener);
-    }
-
-    public void removeHistoryViewListener(@NonNull HistoryViewDelegate listener) {
-        mHistoryViewListeners.remove(listener);
-    }
-
     public void switchBookmarks() {
         if (isHistoryVisible()) {
             hideHistory(false);
@@ -448,13 +452,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         if (mView == null) {
             setView(mBookmarksView, switchSurface);
             mBookmarksView.onShow();
-            for (BookmarksViewDelegate listener : mBookmarksViewListeners) {
-                listener.onBookmarksShown(this);
-            }
+            mViewModel.setIsBookmarksVisible(true);
             mIsBookmarksVisible = true;
         }
-
-        updateTitleBar();
     }
 
     public void hideBookmarks() {
@@ -464,9 +464,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     public void hideBookmarks(boolean switchSurface) {
         if (mView != null) {
             unsetView(mBookmarksView, switchSurface);
-            for (BookmarksViewDelegate listener : mBookmarksViewListeners) {
-                listener.onBookmarksHidden(this);
-            }
+            mViewModel.setIsBookmarksVisible(false);
             mIsBookmarksVisible = false;
         }
     }
@@ -500,9 +498,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         if (mView == null) {
             setView(mHistoryView, switchSurface);
             mHistoryView.onShow();
-            for (HistoryViewDelegate listener : mHistoryViewListeners) {
-                listener.onHistoryViewShown(this);
-            }
+            mViewModel.setIsHistoryVisible(true);
             mIsHistoryVisible = true;
         }
     }
@@ -514,9 +510,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     public void hideHistory(boolean switchSurface) {
         if (mView != null) {
             unsetView(mHistoryView, switchSurface);
-            for (HistoryViewDelegate listener : mHistoryViewListeners) {
-                listener.onHistoryViewHidden(this);
-            }
+            mViewModel.setIsHistoryVisible(false);
             mIsHistoryVisible = false;
         }
     }
@@ -580,12 +574,18 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         mWindowPlacement = aPlacement;
 
+        mViewModel.setPlacement(mWindowPlacement);
+
         if (mActive) {
             TelemetryWrapper.activePlacementEvent(mWindowPlacement.getValue(), true);
         }
     }
 
-    public @NonNull Windows.WindowPlacement getmWindowPlacementBeforeFullscreen() {
+    public void setIsOnlyWindow(boolean isOnlyWindow) {
+        mViewModel.setIsOnlyWindow(isOnlyWindow);
+    }
+
+    public @NonNull Windows.WindowPlacement getWindowPlacementBeforeFullscreen() {
         return mWindowPlacementBeforeFullscreen;
     }
 
@@ -626,59 +626,14 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 session.getTextInput().setView(this);
             }
             mSession.updateLastUse();
-        } else {
-            updateTitleBar();
         }
 
-        updateTitleBarMediaStatus();
         hideContextMenus();
 
         TelemetryWrapper.activePlacementEvent(mWindowPlacement.getValue(), mActive);
         updateBorder();
-    }
 
-    private void updateTitleBar() {
-        if (isBookmarksVisible()) {
-            updateTitleBarUrl(getResources().getString(R.string.url_bookmarks_title));
-
-        } else if (isHistoryVisible()) {
-                updateTitleBarUrl(getResources().getString(R.string.url_history_title));
-
-        } else {
-            updateTitleBarUrl(mSession.getCurrentUri());
-        }
-    }
-
-    private void updateTitleBarUrl(String url) {
-        if (mTitleBar != null && url != null) {
-            mTitleBar.setIsInsecure(!mSession.isSecure());
-            if (url.startsWith("data") && mSession.isPrivateMode()) {
-                mTitleBar.setInsecureVisibility(GONE);
-                mTitleBar.setURL(getResources().getString(R.string.private_browsing_title));
-
-            } else if (url.equals(mSession.getHomeUri())) {
-                mTitleBar.setInsecureVisibility(GONE);
-                mTitleBar.setURL(getResources().getString(R.string.url_home_title, getResources().getString(R.string.app_name)));
-
-            } else if (url.equals(getResources().getString(R.string.url_bookmarks_title)) ||
-                    url.equals(getResources().getString(R.string.url_history_title))) {
-                mTitleBar.setInsecureVisibility(GONE);
-                mTitleBar.setURL(url);
-
-            } else if (url.equals(getResources().getString(R.string.about_blank))) {
-                mTitleBar.setInsecureVisibility(GONE);
-                mTitleBar.setURL("");
-
-            } else {
-                mTitleBar.setURL(url);
-            }
-        }
-    }
-
-    public void updateTitleBarMediaStatus() {
-        if (mTitleBar != null) {
-            mTitleBar.updateMediaStatus();
-        }
+        mViewModel.setIsActiveWindow(active);
     }
 
     @Nullable
@@ -695,6 +650,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             mTopBar = aWidget;
             mTopBar.attachToWindow(this);
         }
+    }
+
+    public void setResizeMode(boolean resizing) {
+        mViewModel.setIsResizeMode(resizing);
     }
 
     public TitleBarWidget getTitleBar() {
@@ -894,6 +853,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     public void setIsFullScreen(boolean isFullScreen) {
         if (isFullScreen != mIsFullScreen) {
             mIsFullScreen = isFullScreen;
+            mViewModel.setIsFullscreen(isFullScreen);
             for (WindowListener listener: mListeners) {
                 listener.onFullScreen(this, isFullScreen);
             }
@@ -1021,6 +981,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         if (!aVisible) {
             clearFocus();
         }
+
+        mViewModel.setIsWindowVisible(aVisible);
     }
 
     @Override
@@ -1045,6 +1007,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             }
 
             mSession = aSession;
+            mViewModel.setIsPrivateSession(mSession.isPrivateMode());
+
             if (oldSession != null) {
                 onCurrentSessionChange(oldSession.getGeckoSession(), aSession.getGeckoSession());
             } else {
@@ -1084,12 +1048,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         callSurfaceChanged();
         aSession.getTextInput().setView(this);
 
-        boolean isPrivateMode  = aSession.getSettings().getUsePrivateMode();
-        if (isPrivateMode) {
-            setPrivateBrowsingEnabled(true);
-        } else {
-            setPrivateBrowsingEnabled(false);
-        }
+        mViewModel.setIsPrivateSession(aSession.getSettings().getUsePrivateMode());
+
         waitForFirstPaint();
     }
 
@@ -1200,9 +1160,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
     }
 
-    private void setPrivateBrowsingEnabled(boolean isEnabled) {
-    }
-
     public void showAlert(String title, @NonNull String msg, @Nullable PromptDialogWidget.Delegate callback) {
         if (mAlertDialog == null) {
             mAlertDialog = new PromptDialogWidget(getContext());
@@ -1219,6 +1176,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             if (callback != null) {
                 callback.onButtonClicked(index);
             }
+            mAlertDialog.releaseWidget();
+            mAlertDialog = null;
         });
         mAlertDialog.show(REQUEST_FOCUS);
     }
@@ -1226,7 +1185,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     public void showConfirmPrompt(String title, @NonNull String msg, @NonNull String[] btnMsg, @Nullable PromptDialogWidget.Delegate callback) {
         if (mConfirmDialog == null) {
             mConfirmDialog = new PromptDialogWidget(getContext());
-            mAlertDialog.setButtons(new int[] {
+            mConfirmDialog.setButtons(new int[] {
                     R.string.cancel_button,
                     R.string.ok_button
             });
@@ -1236,11 +1195,13 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mConfirmDialog.setTitle(title);
         mConfirmDialog.setBody(msg);
         mConfirmDialog.setButtons(btnMsg);
-        mAlertDialog.setButtonsDelegate(index -> {
-            mAlertDialog.hide(REMOVE_WIDGET);
+        mConfirmDialog.setButtonsDelegate(index -> {
+            mConfirmDialog.hide(REMOVE_WIDGET);
             if (callback != null) {
                 callback.onButtonClicked(index);
             }
+            mConfirmDialog.releaseWidget();
+            mConfirmDialog = null;
         });
         mConfirmDialog.show(REQUEST_FOCUS);
     }
@@ -1259,12 +1220,15 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             if (buttonsCallback != null) {
                 buttonsCallback.onButtonClicked(index);
             }
+            mAppDialog.releaseWidget();
         });
         mAppDialog.setLinkDelegate(() -> {
             mAppDialog.hide(REMOVE_WIDGET);
             if (linkCallback != null) {
                 linkCallback.run();
             }
+            mAppDialog.releaseWidget();
+            mAppDialog = null;
         });
         mAppDialog.show(REQUEST_FOCUS);
     }
@@ -1532,22 +1496,68 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     // VideoAvailabilityListener
 
+    private Media mMedia;
+
     @Override
     public void onVideoAvailabilityChanged(boolean aVideosAvailable) {
-        if (mTitleBar != null) {
-            mTitleBar.mediaAvailabilityChanged(aVideosAvailable);
+        boolean mediaAvailable;
+        if (mSession != null) {
+            if (mMedia != null) {
+                mMedia.removeMediaListener(mMediaDelegate);
+            }
+
+            mMedia = mSession.getFullScreenVideo();
+            if (aVideosAvailable && mMedia != null) {
+                mMedia.addMediaListener(mMediaDelegate);
+                mediaAvailable = true;
+
+            } else {
+                mediaAvailable = false;
+            }
+
+        } else {
+            mediaAvailable = false;
         }
 
-        for (WindowListener listener: mListeners) {
-            listener.onVideoAvailabilityChanged(this);
+        if (mediaAvailable) {
+            if (mSession.getFullScreenVideo().isPlayed()) {
+                mViewModel.setIsMediaAvailable(true);
+                mViewModel.setIsMediaPlaying(true);
+            }
+
+        } else {
+            mMedia = null;
+            mViewModel.setIsMediaAvailable(false);
+            mViewModel.setIsMediaPlaying(false);
         }
     }
+
+    MediaElement.Delegate mMediaDelegate = new MediaElement.Delegate() {
+        @Override
+        public void onPlaybackStateChange(@NonNull MediaElement mediaElement, int state) {
+            switch(state) {
+                case MediaElement.MEDIA_STATE_PLAY:
+                case MediaElement.MEDIA_STATE_PLAYING:
+                    mViewModel.setIsMediaAvailable(true);
+                    mViewModel.setIsMediaPlaying(true);
+                    break;
+                case MediaElement.MEDIA_STATE_PAUSE:
+                    mViewModel.setIsMediaAvailable(true);
+                    mViewModel.setIsMediaPlaying(false);
+                    break;
+                case MediaElement.MEDIA_STATE_ABORT:
+                case MediaElement.MEDIA_STATE_EMPTIED:
+                    mViewModel.setIsMediaAvailable(false);
+                    mViewModel.setIsMediaPlaying(false);
+            }
+        }
+    };
 
     // GeckoSession.NavigationDelegate
 
 
     @Override
-    public void onPageStart(@NonNull GeckoSession geckoSession, @NonNull String s) {
+    public void onPageStart(@NonNull GeckoSession geckoSession, @NonNull String aUri) {
         mCaptureOnPageStop = true;
 
         if (isHistoryVisible()) {
@@ -1557,6 +1567,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         if (isBookmarksVisible()) {
             hideBookmarks();
         }
+
+        mViewModel.setUrl(aUri);
+        mViewModel.setIsLoading(true);
     }
 
     @Override
@@ -1565,6 +1578,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             mCaptureOnPageStop = false;
             captureImage();
         }
+
+        mViewModel.setIsLoading(false);
     }
 
     public void captureImage() {
@@ -1573,7 +1588,45 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     @Override
     public void onLocationChange(@NonNull GeckoSession session, @Nullable String url) {
-        updateTitleBarUrl(url);
+        mViewModel.setUrl(url);
+    }
+
+    @Override
+    public void onCanGoBack(@NonNull GeckoSession geckoSession, boolean canGoBack) {
+        mViewModel.setCanGoBack(canGoBack);
+    }
+
+    @Override
+    public void onCanGoForward(@NonNull GeckoSession geckoSession, boolean canGoForward) {
+        mViewModel.setCanGoForward(canGoForward);
+    }
+
+    @Override
+    public @Nullable GeckoResult<AllowOrDeny> onLoadRequest(GeckoSession aSession, @NonNull LoadRequest aRequest) {
+        final GeckoResult<AllowOrDeny> result = new GeckoResult<>();
+
+        Uri uri = Uri.parse(aRequest.uri);
+        if ("file".equalsIgnoreCase(uri.getScheme()) &&
+                !mWidgetManager.isPermissionGranted(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            mWidgetManager.requestPermission(
+                    aRequest.uri,
+                    android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                    new GeckoSession.PermissionDelegate.Callback() {
+                        @Override
+                        public void grant() {
+                            result.complete(AllowOrDeny.ALLOW);
+                        }
+
+                        @Override
+                        public void reject() {
+                            result.complete(AllowOrDeny.DENY);
+                        }
+                    });
+            return result;
+        }
+
+        result.complete(AllowOrDeny.ALLOW);
+        return result;
     }
 
     // GeckoSession.HistoryDelegate
@@ -1706,9 +1759,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     @Override
     public void onSecurityChange(GeckoSession geckoSession, SecurityInformation securityInformation) {
-        if (mTitleBar != null) {
-            mTitleBar.setIsInsecure(!securityInformation.isSecure);
-        }
+        mViewModel.setIsInsecure(!securityInformation.isSecure);
     }
 
     // GeckoSession.SelectionActionDelegate

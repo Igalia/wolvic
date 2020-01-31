@@ -37,13 +37,20 @@ class PopUpExceptionsOptionsView extends SettingsView {
     }
 
     private void initialize(Context aContext) {
-        LayoutInflater inflater = LayoutInflater.from(aContext);
+        updateUI();
 
         // Preferred languages adapter
         mAdapter = new PopUpAdapter(getContext(), mCallback);
 
         // View Model
         mViewModel = new PopUpsViewModel(((Application)getContext().getApplicationContext()));
+    }
+
+    @Override
+    protected void updateUI() {
+        super.updateUI();
+
+        LayoutInflater inflater = LayoutInflater.from(getContext());
 
         // Inflate this data binding layout
         mBinding = DataBindingUtil.inflate(inflater, R.layout.options_privacy_popups, this, true);
@@ -114,4 +121,5 @@ class PopUpExceptionsOptionsView extends SettingsView {
         }
 
     };
+
 }

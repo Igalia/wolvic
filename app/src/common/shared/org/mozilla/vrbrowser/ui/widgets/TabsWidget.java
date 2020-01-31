@@ -1,6 +1,7 @@
 package org.mozilla.vrbrowser.ui.widgets;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -72,6 +73,12 @@ public class TabsWidget extends UIDialog {
     }
 
     private void initialize() {
+        updateUI();
+    }
+
+    public void updateUI() {
+        removeAllViews();
+
         inflate(getContext(), R.layout.tabs, this);
 
         mTabsList = findViewById(R.id.tabsRecyclerView);
@@ -135,6 +142,13 @@ public class TabsWidget extends UIDialog {
             mAdapter.notifyDataSetChanged();
             updateSelectionMode();
         });
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        updateUI();
     }
 
     public void attachToWindow(WindowWidget aWindow) {

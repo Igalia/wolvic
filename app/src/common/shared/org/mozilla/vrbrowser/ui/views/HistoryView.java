@@ -86,18 +86,32 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
         initialize(aContext);
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     private void initialize(Context aContext) {
-        LayoutInflater inflater = LayoutInflater.from(aContext);
-
         mUIThreadExecutor = ((VRBrowserApplication)getContext().getApplicationContext()).getExecutors().mainThread();
 
         mHistoryViewListeners = new ArrayList<>();
 
+        mAccounts = ((VRBrowserApplication)getContext().getApplicationContext()).getAccounts();
+        if (ACCOUNTS_UI_ENABLED) {
+            mAccounts.addAccountListener(mAccountListener);
+            mAccounts.addSyncListener(mSyncListener);
+        }
+
+        SessionStore.get().getHistoryStore().addListener(this);
+
+        updateUI();
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    public void updateUI() {
+        removeAllViews();
+
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+
         // Inflate this data binding layout
         mBinding = DataBindingUtil.inflate(inflater, R.layout.history, this, true);
         mBinding.setCallback(mHistoryCallback);
-        mHistoryAdapter = new HistoryAdapter(mHistoryItemCallback, aContext);
+        mHistoryAdapter = new HistoryAdapter(mHistoryItemCallback, getContext());
         mBinding.historyList.setAdapter(mHistoryAdapter);
         mBinding.historyList.setOnTouchListener((v, event) -> {
             v.requestFocusFromTouch();
@@ -111,12 +125,6 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
 
         mBinding.setIsLoading(true);
 
-        mAccounts = ((VRBrowserApplication)getContext().getApplicationContext()).getAccounts();
-        if (ACCOUNTS_UI_ENABLED) {
-            mAccounts.addAccountListener(mAccountListener);
-            mAccounts.addSyncListener(mSyncListener);
-        }
-
         mBinding.setIsSignedIn(mAccounts.isSignedIn());
         boolean isSyncEnabled = mAccounts.isEngineEnabled(SyncEngine.History.INSTANCE);
         mBinding.setIsSyncEnabled(isSyncEnabled);
@@ -129,7 +137,6 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
         mBinding.executePendingBindings();
 
         updateHistory();
-        SessionStore.get().getHistoryStore().addListener(this);
 
         setVisibility(GONE);
 

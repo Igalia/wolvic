@@ -1,6 +1,7 @@
 package org.mozilla.vrbrowser.ui.widgets;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -15,6 +16,7 @@ public class TooltipWidget extends UIWidget {
 
     protected TextView mText;
     protected ViewGroup mLayout;
+    protected int mLayoutRes;
 
     public TooltipWidget(@NonNull Context aContext, @NonNull  @LayoutRes int layoutRes) {
         super(aContext);
@@ -29,10 +31,8 @@ public class TooltipWidget extends UIWidget {
     }
 
     private void initialize(@NonNull @LayoutRes int layoutRes) {
-        inflate(getContext(), layoutRes, this);
-
-        mLayout = findViewById(R.id.layout);
-        mText = findViewById(R.id.tooltipText);
+        mLayoutRes = layoutRes;
+        updateUI();
     }
 
     @Override
@@ -45,6 +45,22 @@ public class TooltipWidget extends UIWidget {
         aPlacement.anchorX = 0.5f;
         aPlacement.anchorY = 0.5f;
         aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.tooltip_z_distance);
+    }
+
+    public void updateUI() {
+        removeAllViews();
+
+        inflate(getContext(), mLayoutRes, this);
+
+        mLayout = findViewById(R.id.layout);
+        mText = findViewById(R.id.tooltipText);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        updateUI();
     }
 
     @Override

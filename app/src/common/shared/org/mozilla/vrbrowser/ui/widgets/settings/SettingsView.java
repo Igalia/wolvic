@@ -91,4 +91,9 @@ abstract class SettingsView extends FrameLayout {
     protected boolean reset() {
         return false;
     }
+
+    protected void updateUI() {
+        removeAllViews();
+    }
+
 }

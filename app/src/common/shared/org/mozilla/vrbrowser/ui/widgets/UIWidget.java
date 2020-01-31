@@ -6,6 +6,7 @@
 package org.mozilla.vrbrowser.ui.widgets;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
@@ -17,15 +18,15 @@ import android.view.View;
 import android.view.ViewParent;
 import android.widget.FrameLayout;
 
+import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
+
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
-
-import androidx.annotation.IntDef;
-import androidx.annotation.NonNull;
 
 public abstract class UIWidget extends FrameLayout implements Widget {
 
@@ -56,6 +57,7 @@ public abstract class UIWidget extends FrameLayout implements Widget {
         super(aContext);
         initialize();
     }
+
 
     public UIWidget(Context aContext, AttributeSet aAttrs) {
         super(aContext, aAttrs);
@@ -92,6 +94,10 @@ public abstract class UIWidget extends FrameLayout implements Widget {
 
     @Override
     public void onResume() {
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
     }
 
     @Override

@@ -3,6 +3,7 @@ package org.mozilla.vrbrowser.utils;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Build;
 
 import androidx.annotation.NonNull;
@@ -19,7 +20,14 @@ public class StringUtils {
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     public static String getStringByLocale(Context context, int id, Locale locale) {
         Configuration configuration = new Configuration(context.getResources().getConfiguration());
-        configuration.setLocale(locale);
+        // This looks like an Android bug, when trying to get the localized string for the system locale
+        // it returns the locale for the current context one.
+        Locale deviceLocale = Resources.getSystem().getConfiguration().getLocales().get(0);
+        if (deviceLocale.equals(locale)) {
+            configuration.setLocale(deviceLocale);
+        } else {
+            configuration.setLocale(locale);
+        }
         return context.createConfigurationContext(configuration).getResources().getString(id);
     }
 

@@ -2,22 +2,20 @@ package org.mozilla.vrbrowser.ui.widgets.menus;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.view.View;
+import android.content.res.Configuration;
 
 import androidx.annotation.IntDef;
 
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.utils.AnimationHelper;
-import org.mozilla.vrbrowser.utils.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
 
-public class HamburgerMenuWidget extends MenuWidget implements WidgetManagerDelegate.FocusChangeListener {
+public class HamburgerMenuWidget extends MenuWidget {
 
     public interface MenuDelegate {
         void onSendTab();
@@ -42,6 +40,13 @@ public class HamburgerMenuWidget extends MenuWidget implements WidgetManagerDele
     }
 
     private void initialize() {
+        updateUI();
+    }
+
+    @Override
+    public void updateUI() {
+        super.updateUI();
+
         mAdapter.updateBackgrounds(R.drawable.context_menu_item_background_first,
                 R.drawable.context_menu_item_background_last,
                 R.drawable.context_menu_item_background,
@@ -52,17 +57,22 @@ public class HamburgerMenuWidget extends MenuWidget implements WidgetManagerDele
     }
 
     @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        updateUI();
+    }
+
+    @Override
     public void show(int aShowFlags) {
         super.show(aShowFlags);
 
         AnimationHelper.scaleIn(findViewById(R.id.menuContainer), 100, 0, null);
-        mWidgetManager.addFocusChangeListener(this);
     }
 
     @Override
     public void hide(int aHideFlags) {
         AnimationHelper.scaleOut(findViewById(R.id.menuContainer), 100, 0, () -> HamburgerMenuWidget.super.hide(aHideFlags));
-        mWidgetManager.removeFocusChangeListener(this);
     }
 
     @Override
@@ -131,12 +141,4 @@ public class HamburgerMenuWidget extends MenuWidget implements WidgetManagerDele
         updateMenuItems();
     }
 
-    // FocusChangeListener
-
-    @Override
-    public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-        if (!ViewUtils.isEqualOrChildrenOf(this, newFocus)) {
-            onDismiss();
-        }
-    }
 }

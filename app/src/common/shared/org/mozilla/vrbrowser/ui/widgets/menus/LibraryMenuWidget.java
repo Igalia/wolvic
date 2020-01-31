@@ -1,21 +1,19 @@
 package org.mozilla.vrbrowser.ui.widgets.menus;
 
 import android.content.Context;
-import android.view.View;
+import android.content.res.Configuration;
 
 import androidx.annotation.NonNull;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.ui.callbacks.LibraryItemContextMenuClickCallback;
-import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.utils.AnimationHelper;
-import org.mozilla.vrbrowser.utils.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.Optional;
 
-public class LibraryMenuWidget extends MenuWidget implements WidgetManagerDelegate.FocusChangeListener {
+public class LibraryMenuWidget extends MenuWidget {
 
     public enum LibraryItemType {
         BOOKMARKS,
@@ -62,6 +60,13 @@ public class LibraryMenuWidget extends MenuWidget implements WidgetManagerDelega
     }
 
     private void initialize() {
+        updateUI();
+    }
+
+    @Override
+    public void updateUI() {
+        super.updateUI();
+
         mAdapter.updateBackgrounds(
                 R.drawable.library_context_menu_item_background_top,
                 R.drawable.library_context_menu_item_background_bottom,
@@ -71,17 +76,22 @@ public class LibraryMenuWidget extends MenuWidget implements WidgetManagerDelega
     }
 
     @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        updateUI();
+    }
+
+    @Override
     public void show(int aShowFlags) {
         super.show(aShowFlags);
 
         AnimationHelper.scaleIn(findViewById(R.id.menuContainer), 100, 0, null);
-        mWidgetManager.addFocusChangeListener(this);
     }
 
     @Override
     public void hide(int aHideFlags) {
         AnimationHelper.scaleOut(findViewById(R.id.menuContainer), 100, 0, () -> LibraryMenuWidget.super.hide(aHideFlags));
-        mWidgetManager.removeFocusChangeListener(this);
     }
 
     @Override
@@ -136,12 +146,4 @@ public class LibraryMenuWidget extends MenuWidget implements WidgetManagerDelega
         mWidgetPlacement.height += mBorderWidth * 2;
     }
 
-    // FocusChangeListener
-
-    @Override
-    public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-        if (!ViewUtils.isEqualOrChildrenOf(this, newFocus)) {
-            onDismiss();
-        }
-    }
 }

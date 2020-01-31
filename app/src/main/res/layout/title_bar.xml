@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
         <import type="android.view.View" />
+        <import type="org.mozilla.vrbrowser.utils.UrlUtils" />
+        <variable
+            name="viewmodel"
+            type="org.mozilla.vrbrowser.ui.viewmodel.WindowViewModel" />
 
         <variable
             name="widget"
@@ -32,11 +36,10 @@
 
         <LinearLayout
             android:id="@+id/title_bar"
-            style="?attr/navigationBarStyle"
             android:layout_width="260dp"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:background="@drawable/title_bar_background"
+            android:background="@{(viewmodel.isPrivateSession ? @drawable/title_bar_background_private : @drawable/title_bar_background)}"
             android:clickable="true"
             android:focusable="true"
             android:gravity="center_horizontal"
@@ -54,7 +57,7 @@
                 android:padding="5dp"
                 android:src="@drawable/ic_icon_security_state_insecure"
                 android:tint="@color/rhino"
-                android:visibility="gone" />
+                app:visibleGone="@{viewmodel.isInsecureVisible}" />
 
             <TextView
                 android:id="@+id/url"
@@ -69,15 +72,16 @@
                 android:paddingEnd="5dp"
                 android:requiresFadingEdge="horizontal"
                 android:singleLine="true"
-                tools:text="http://mozilla.org" />
+                tools:text="@{viewmodel.titleBarUrl}" />
         </LinearLayout>
 
         <org.mozilla.vrbrowser.ui.views.UIButton
             android:id="@+id/mediaButton"
             style="?attr/navigationBarButtonStyle"
-            android:src="@{isMediaPlaying ? @drawable/ic_icon_media_pause : @drawable/ic_icon_media_play}"
-            android:onClick="@{(view) -> isMediaPlaying ? delegate.onMediaPauseClicked(widget) : delegate.onMediaPlayClicked(widget)}"
-            android:tooltipText="@{isMediaPlaying ? @string/media_pause_tooltip : @string/media_resume_tooltip}"
-            android:visibility="@{isMediaAvailable ? View.VISIBLE : View.GONE}" />
+            android:src="@{viewmodel.isMediaPlaying ? @drawable/ic_icon_media_pause : @drawable/ic_icon_media_play}"
+            android:onClick="@{(view) -> viewmodel.isMediaPlaying ? delegate.onMediaPauseClicked(widget) : delegate.onMediaPlayClicked(widget)}"
+            android:tooltipText="@{viewmodel.isMediaPlaying ? @string/media_pause_tooltip : @string/media_resume_tooltip}"
+            android:visibility="@{viewmodel.isMediaAvailable ? View.VISIBLE : View.GONE}"
+            app:privateMode="@{viewmodel.isPrivateSession}"/>
     </LinearLayout>
 </layout>

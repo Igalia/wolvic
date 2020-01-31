@@ -9,14 +9,10 @@ import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.res.Resources;
 import android.text.Editable;
-import android.text.SpannableString;
 import android.text.TextWatcher;
-import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -27,11 +23,14 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.StringRes;
 import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ObservableBoolean;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.VRBrowserActivity;
 import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.BookmarksStore;
@@ -41,17 +40,17 @@ import org.mozilla.vrbrowser.databinding.NavigationUrlBinding;
 import org.mozilla.vrbrowser.search.SearchEngineWrapper;
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
+import org.mozilla.vrbrowser.ui.viewmodel.WindowViewModel;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
+import org.mozilla.vrbrowser.ui.widgets.WindowWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.SelectionActionWidget;
 import org.mozilla.vrbrowser.utils.StringUtils;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 import org.mozilla.vrbrowser.utils.UrlUtils;
 import org.mozilla.vrbrowser.utils.ViewUtils;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.concurrent.Executor;
@@ -65,10 +64,9 @@ public class NavigationURLBar extends FrameLayout {
 
     private static final String LOGTAG = SystemUtils.createLogtag(NavigationURLBar.class);
 
+    private WindowViewModel mViewModel;
     private NavigationUrlBinding mBinding;
     private Animation mLoadingAnimation;
-    private int mURLProtocolColor;
-    private int mURLWebsiteColor;
     private NavigationURLBarDelegate mDelegate;
     private ShippedDomainsProvider mAutocompleteProvider;
     private AudioEngine mAudio;
@@ -116,14 +114,15 @@ public class NavigationURLBar extends FrameLayout {
 
         mSession = SessionStore.get().getActiveSession();
 
-        LayoutInflater inflater = LayoutInflater.from(aContext);
+        mLoadingAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.loading);
 
-        // Inflate this data binding layout
-        mBinding = DataBindingUtil.inflate(inflater, R.layout.navigation_url, this, true);
+        // Layout setup
+        mBinding = DataBindingUtil.inflate(LayoutInflater.from(getContext()), R.layout.navigation_url, this, true);
+        mBinding.setLifecycleOwner((VRBrowserActivity)getContext());
 
         // Use Domain autocomplete provider from components
         mAutocompleteProvider = new ShippedDomainsProvider();
-        mAutocompleteProvider.initialize(aContext);
+        mAutocompleteProvider.initialize(getContext());
 
         mBinding.urlEditText.clearFocus();
         mBinding.urlEditText.setShowSoftInputOnFocus(false);
@@ -138,9 +137,9 @@ public class NavigationURLBar extends FrameLayout {
 
         mBinding.urlEditText.setOnFocusChangeListener((view, focused) -> {
             boolean isUrlEmpty = mBinding.urlEditText.getText().length() == 0;
-            setMicrophoneEnabled(!focused || isUrlEmpty);
-            mBinding.setIsFocused(focused);
-            mBinding.setIsUrlEmpty(isUrlEmpty);
+            mViewModel.setIsMicrophoneEnabled(!focused || isUrlEmpty);
+            mViewModel.setIsFocused(focused);
+            mViewModel.setIsUrlEmpty(isUrlEmpty);
             if (!focused) {
                 hideSelectionMenu();
             } else {
@@ -231,33 +230,35 @@ public class NavigationURLBar extends FrameLayout {
 
         mBinding.popup.setOnClickListener(mPopUpListener);
 
-        mLoadingAnimation = AnimationUtils.loadAnimation(aContext, R.anim.loading);
-
-        TypedValue typedValue = new TypedValue();
-        Resources.Theme theme = aContext.getTheme();
-        theme.resolveAttribute(R.attr.urlProtocolColor, typedValue, true);
-        mURLProtocolColor = typedValue.data;
-        theme.resolveAttribute(R.attr.urlWebsiteColor, typedValue, true);
-        mURLWebsiteColor = typedValue.data;
-
         // Bookmarks
         mBinding.bookmarkButton.setOnClickListener(v -> {
             v.requestFocusFromTouch();
             handleBookmarkClick();
         });
 
-        // Initialize bindings
-        mBinding.setIsLibraryVisible(false);
-        mBinding.setIsLoading(false);
-        mBinding.setIsInsecure(false);
-        mBinding.setIsMicrophoneEnabled(true);
-        mBinding.setIsFocused(false);
-        mBinding.setIsSpecialUrl(false);
-        mBinding.setIsUrlEmpty(true);
-        mBinding.setIsPopUpAvailable(false);
-        mBinding.executePendingBindings();
-
         clearFocus();
+    }
+
+    public void detachFromWindow() {
+        if (mViewModel != null) {
+            mViewModel.getIsLoading().removeObserver(mIsLoadingObserver);
+            mViewModel.getIsBookmarked().removeObserver(mIsBookmarkedObserver);
+            mViewModel.getHint().removeObserver(mHintObserver);
+            mViewModel = null;
+        }
+    }
+
+    public void attachToWindow(@NonNull WindowWidget aWindow) {
+        mViewModel = new ViewModelProvider(
+                (VRBrowserActivity)getContext(),
+                ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
+                .get(String.valueOf(aWindow.hashCode()), WindowViewModel.class);
+
+        mBinding.setViewmodel(mViewModel);
+
+        mViewModel.getIsLoading().observe((VRBrowserActivity)getContext(), mIsLoadingObserver);
+        mViewModel.getIsBookmarked().observe((VRBrowserActivity)getContext(), mIsBookmarkedObserver);
+        mViewModel.getHint().observe((VRBrowserActivity)getContext(), mHintObserver);
     }
 
     public void setSession(Session session) {
@@ -265,13 +266,13 @@ public class NavigationURLBar extends FrameLayout {
     }
 
     public void onPause() {
-        if (mBinding.getIsLoading()) {
+        if (mViewModel.getIsLoading().getValue().get()) {
             mBinding.loadingView.clearAnimation();
         }
     }
 
     public void onResume() {
-        if (mBinding.getIsLoading()) {
+        if (mViewModel.getIsLoading().getValue().get()) {
             mBinding.loadingView.startAnimation(mLoadingAnimation);
         }
     }
@@ -293,11 +294,12 @@ public class NavigationURLBar extends FrameLayout {
         bookmarkStore.isBookmarked(url).thenAcceptAsync(bookmarked -> {
             if (!bookmarked) {
                 bookmarkStore.addBookmark(url, mSession.getCurrentTitle());
-                setIsBookmarked(true);
+                mViewModel.setIsBookmarked(true);
+
             } else {
                 // Delete
                 bookmarkStore.deleteBookmarkByURL(url);
-                setIsBookmarked(false);
+                mViewModel.setIsBookmarked(false);
             }
         }, mUIThreadExecutor).exceptionally(throwable -> {
             Log.d(LOGTAG, "Error checking bookmark: " + throwable.getLocalizedMessage());
@@ -307,76 +309,17 @@ public class NavigationURLBar extends FrameLayout {
 
     }
 
-    public void setHint(@StringRes int aHint) {
-        mBinding.urlEditText.setHint(aHint);
-    }
-
-    public void setURL(String aURL) {
-        if (mBinding.getIsLibraryVisible()) {
-            return;
-        }
-        mBinding.urlEditText.removeTextChangedListener(mURLTextWatcher);
-        if (StringUtils.isEmpty(aURL)) {
-            setIsBookmarked(false);
+    private Observer<ObservableBoolean> mIsLoadingObserver = aBoolean -> {
+        if (aBoolean.get()) {
+            mBinding.loadingView.startAnimation(mLoadingAnimation);
         } else {
-            SessionStore.get().getBookmarkStore().isBookmarked(aURL).thenAcceptAsync(this::setIsBookmarked, mUIThreadExecutor).exceptionally(throwable -> {
-                Log.d(LOGTAG, "Error getting the bookmarked status: " + throwable.getLocalizedMessage());
-                throwable.printStackTrace();
-                return null;
-            });
+            mBinding.loadingView.clearAnimation();
         }
+    };
 
-        int index = -1;
-        if (aURL != null) {
-            try {
-                aURL = URLDecoder.decode(aURL, "UTF-8");
+    private Observer<ObservableBoolean> mIsBookmarkedObserver = aBoolean -> mBinding.bookmarkButton.clearFocus();
 
-            } catch (UnsupportedEncodingException | IllegalArgumentException e) {
-                e.printStackTrace();
-                aURL = "";
-            }
-            if (aURL.startsWith("jar:")) {
-                return;
-
-            } else if (aURL.startsWith("resource:") || mSession.isHomeUri(aURL)) {
-                aURL = "";
-
-            } else if (aURL.startsWith("data:") && mSession.isPrivateMode()) {
-                aURL = "";
-
-            } else if (aURL.startsWith(getContext().getString(R.string.about_blank))) {
-                aURL = "";
-
-            } else {
-                index = aURL.indexOf("://");
-            }
-
-            // Update the URL bar only if the URL is different than the current one and
-            // the URL bar is not focused to avoid override user input
-            if (!mBinding.urlEditText.getText().toString().equalsIgnoreCase(aURL) && !mBinding.urlEditText.isFocused()) {
-                mBinding.urlEditText.setText(aURL);
-                if (index > 0) {
-                    SpannableString spannable = new SpannableString(aURL);
-                    ForegroundColorSpan color1 = new ForegroundColorSpan(mURLProtocolColor);
-                    ForegroundColorSpan color2 = new ForegroundColorSpan(mURLWebsiteColor);
-                    spannable.setSpan(color1, 0, index + 3, 0);
-                    spannable.setSpan(color2, index + 3, aURL.length(), 0);
-                    mBinding.urlEditText.setText(spannable);
-
-                } else {
-                    mBinding.urlEditText.setText(aURL);
-                }
-            }
-
-            mBinding.setIsSpecialUrl(aURL.isEmpty());
-        }
-
-        mBinding.urlEditText.addTextChangedListener(mURLTextWatcher);
-    }
-
-    private boolean isEmptyUrl(@NonNull String aURL) {
-        return aURL.length() == 0 || aURL.startsWith("about://");
-    }
+    private Observer<String> mHintObserver = hint -> mBinding.urlEditText.setHint(hint);
 
     public String getText() {
         return mBinding.urlEditText.getText().toString();
@@ -391,49 +334,11 @@ public class NavigationURLBar extends FrameLayout {
         }
     }
 
-    public void setIsLibraryVisible(boolean isLibraryVisible) {
-        mBinding.setIsLibraryVisible(isLibraryVisible);
-    }
-
-    public void setIsInsecure(boolean aIsInsecure) {
-        mBinding.setIsInsecure(aIsInsecure);
-    }
-
-    public void setIsLoading(boolean aIsLoading) {
-        mBinding.setIsLoading(aIsLoading);
-        if (aIsLoading) {
-            mBinding.loadingView.startAnimation(mLoadingAnimation);
-        } else {
-            mBinding.loadingView.clearAnimation();
-        }
-    }
-
-    public void setMicrophoneEnabled(boolean enabled) {
-        mBinding.setIsMicrophoneEnabled(enabled);
-    }
-
-    private void setIsBookmarked(boolean aValue) {
-        mBinding.setIsBookmarked(aValue);
-        mBinding.bookmarkButton.clearFocus();
-    }
-
-    public void setPrivateMode(boolean isEnabled) {
-        mBinding.bookmarkButton.setPrivateMode(isEnabled);
-        mBinding.microphoneButton.setPrivateMode(isEnabled);
-        mBinding.clearButton.setPrivateMode(isEnabled);
-
-        mBinding.setIsPrivateMode(isEnabled);
-    }
-
-    public void setIsPopUpAvailable(boolean isAvailable) {
-        mBinding.setIsPopUpAvailable(isAvailable);
-    }
-
     public UIButton getPopUpButton() {
         return mBinding.popup;
     }
 
-    public  void handleURLEdit(String text) {
+    public void handleURLEdit(String text) {
         text = text.trim();
         URI uri = null;
         try {
@@ -476,7 +381,7 @@ public class NavigationURLBar extends FrameLayout {
             }
         }
 
-        setMicrophoneEnabled(!text.isEmpty());
+        mViewModel.setIsMicrophoneEnabled(!text.isEmpty());
         clearFocus();
     }
 
@@ -528,9 +433,9 @@ public class NavigationURLBar extends FrameLayout {
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             String aURL = mBinding.urlEditText.getText().toString();
-            boolean empty = isEmptyUrl(aURL);
-            mBinding.setIsUrlEmpty(empty);
-            setMicrophoneEnabled(empty);
+            boolean empty = aURL.length() == 0 || aURL.startsWith("about://");
+            mViewModel.setIsUrlEmpty(empty);
+            mViewModel.setIsMicrophoneEnabled(empty);
         }
 
         @Override
@@ -607,7 +512,7 @@ public class NavigationURLBar extends FrameLayout {
                     if (action.equals(GeckoSession.SelectionActionDelegate.ACTION_CUT) && selectionValid) {
                         String selectedText = mBinding.urlEditText.getText().toString().substring(startSelection, endSelection);
                         clipboard.setPrimaryClip(ClipData.newPlainText("text", selectedText));
-                        mBinding.urlEditText.setText(StringUtils.removeRange(mBinding.urlEditText.getText().toString(), startSelection, endSelection));
+                        mViewModel.setUrl(StringUtils.removeRange(mBinding.urlEditText.getText().toString(), startSelection, endSelection));
                         mBinding.urlEditText.setSelection(startSelection);
 
                     } else if (action.equals(GeckoSession.SelectionActionDelegate.ACTION_COPY) && selectionValid) {
@@ -617,7 +522,7 @@ public class NavigationURLBar extends FrameLayout {
                     } else if (action.equals(GeckoSession.SelectionActionDelegate.ACTION_PASTE) && clipboard.hasPrimaryClip()) {
                         ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
                         if (selectionValid) {
-                            mBinding.urlEditText.setText(StringUtils.removeRange(mBinding.urlEditText.getText().toString(), startSelection, endSelection));
+                            mViewModel.setUrl(StringUtils.removeRange(mBinding.urlEditText.getText().toString(), startSelection, endSelection));
                             mBinding.urlEditText.setSelection(startSelection);
                         }
                         if (item != null && item.getText() != null) {

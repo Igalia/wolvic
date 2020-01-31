@@ -7,12 +7,17 @@ package org.mozilla.vrbrowser.utils;
 
 import android.content.Context;
 import android.util.Base64;
+import android.webkit.URLUtil;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.browser.SettingsStore;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.util.regex.Pattern;
 
 
@@ -72,5 +77,42 @@ public class UrlUtils {
         InternalPages.PageResources pageResources = InternalPages.PageResources.create(R.raw.private_mode, R.raw.private_style);
         byte[] privatePageBytes = InternalPages.createAboutPage(context, pageResources);
         return uri.equals("data:text/html;base64," + Base64.encodeToString(privatePageBytes, Base64.NO_WRAP));
+    }
+
+    public static Boolean isHomeUri(@NonNull Context context, @Nullable String aUri) {
+        return aUri != null && aUri.toLowerCase().startsWith(
+                SettingsStore.getInstance(context).getHomepage()
+        );
+    }
+
+    public static Boolean isDataUri(@NonNull String aUri) {
+        return aUri.startsWith("data");
+    }
+
+    public static Boolean isBlankUri(@NonNull Context context, @NonNull String aUri) {
+        return aUri.equals(context.getString(R.string.about_blank));
+    }
+
+    public static String titleBarUrl(@Nullable String aUri) {
+        if (aUri == null) {
+            return "";
+        }
+
+        if (URLUtil.isValidUrl(aUri)) {
+            try {
+                URI uri = URI.create(aUri);
+                URL url = new URL(
+                        uri.getScheme() != null ? uri.getScheme() : "",
+                        uri.getAuthority() != null ? uri.getAuthority() : "",
+                        "");
+                return url.toString();
+
+            } catch (MalformedURLException | IllegalArgumentException e) {
+                return "";
+            }
+
+        } else {
+            return aUri;
+        }
     }
 }

@@ -1,6 +1,7 @@
 package org.mozilla.vrbrowser.ui.widgets.dialogs;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Point;
 import android.graphics.RectF;
 import android.view.View;
@@ -42,13 +43,25 @@ public class SelectionActionWidget extends UIWidget implements WidgetManagerDele
     }
 
     private void initialize() {
-        inflate(getContext(), R.layout.selection_action_menu, this);
-        mContainer = findViewById(R.id.selectionMenuContainer);
+        updateUI();
+
         mMinButtonWidth = WidgetPlacement.pixelDimension(getContext(), R.dimen.selection_action_item_min_width);
         mMaxButtonWidth = WidgetPlacement.pixelDimension(getContext(), R.dimen.selection_action_item_max_width);
-        mBackHandler = () -> {
-            onDismiss();
-        };
+        mBackHandler = this::onDismiss;
+    }
+
+    public void updateUI() {
+        removeAllViews();
+
+        inflate(getContext(), R.layout.selection_action_menu, this);
+        mContainer = findViewById(R.id.selectionMenuContainer);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        updateUI();
     }
 
     @Override

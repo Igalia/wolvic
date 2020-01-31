@@ -382,6 +382,8 @@ public class PromptDelegate implements
                 }
 
                 mPopUpPrompt.hide(UIWidget.REMOVE_WIDGET);
+                mPopUpPrompt.releaseWidget();
+                mPopUpPrompt = null;
             });
             mPopUpPrompt.setDelegate(() -> mExecutors.mainThread().execute(() -> {
                 if (mPopupDelegate != null) {

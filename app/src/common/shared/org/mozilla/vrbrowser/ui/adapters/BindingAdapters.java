@@ -10,15 +10,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.DimenRes;
 import androidx.annotation.Dimension;
-import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.databinding.BindingAdapter;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.ui.views.HoneycombButton;
 import org.mozilla.vrbrowser.ui.views.UIButton;
+import org.mozilla.vrbrowser.ui.views.UITextButton;
 import org.mozilla.vrbrowser.ui.views.settings.ButtonSetting;
 import org.mozilla.vrbrowser.ui.views.settings.SwitchSetting;
 
@@ -154,4 +153,15 @@ public class BindingAdapters {
         params.height = (int)dimen;
         view.setLayoutParams(params);
     }
-}
+
+    @BindingAdapter("privateMode")
+    public static void setPrivateMode(@NonNull UIButton button, boolean isPrivateMode) {
+        button.setPrivateMode(isPrivateMode);
+    }
+
+    @BindingAdapter("privateMode")
+    public static void setPrivateMode(@NonNull UITextButton button, boolean isPrivateMode) {
+        button.setPrivateMode(isPrivateMode);
+    }
+
+ }

@@ -95,7 +95,10 @@ public class SearchEngineWrapper implements SharedPreferences.OnSharedPreference
 
     public void unregisterForUpdates() {
         if (mContext != null) {
-            mContext.unregisterReceiver(mLocaleChangedReceiver);
+            try {
+                mContext.unregisterReceiver(mLocaleChangedReceiver);
+
+            } catch(IllegalArgumentException ignored) {}
             if (mPrefs != null) {
                 mPrefs.unregisterOnSharedPreferenceChangeListener(this);
             }

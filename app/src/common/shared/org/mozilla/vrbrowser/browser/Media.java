@@ -144,6 +144,10 @@ public class Media implements MediaElement.Delegate {
             mPlaying = false;
         } else if (playbackState == MediaElement.MEDIA_STATE_ENDED) {
             mEnded = true;
+        } else if (playbackState == MediaElement.MEDIA_STATE_EMPTIED) {
+            mEnded = true;
+            mPlaying = false;
+            mIsUnloaded = true;
         }
         mMediaListeners.forEach(listener -> listener.onPlaybackStateChange(mediaElement, playbackState));
     }

@@ -50,6 +50,7 @@ public class VRBrowserApplication extends Application {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+        LocaleUtils.setDisplayLocale(this, newConfig.getLocales().get(0).toLanguageTag());
         LocaleUtils.setLocale(this);
     }
 

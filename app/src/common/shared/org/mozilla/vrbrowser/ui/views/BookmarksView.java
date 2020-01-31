@@ -81,18 +81,33 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
         initialize(aContext);
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     private void initialize(Context aContext) {
-        LayoutInflater inflater = LayoutInflater.from(aContext);
-
         mUIThreadExecutor = ((VRBrowserApplication)getContext().getApplicationContext()).getExecutors().mainThread();
 
         mBookmarksViewListeners = new ArrayList<>();
 
+        mAccounts = ((VRBrowserApplication)getContext().getApplicationContext()).getAccounts();
+        if (ACCOUNTS_UI_ENABLED) {
+            mAccounts.addAccountListener(mAccountListener);
+            mAccounts.addSyncListener(mSyncListener);
+        }
+
+        SessionStore.get().getBookmarkStore().addListener(this);
+
+        updateUI();
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    public void updateUI() {
+        removeAllViews();
+
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+
         // Inflate this data binding layout
         mBinding = DataBindingUtil.inflate(inflater, R.layout.bookmarks, this, true);
+
         mBinding.setCallback(mBookmarksCallback);
-        mBookmarkAdapter = new BookmarkAdapter(mBookmarkItemCallback, aContext);
+        mBookmarkAdapter = new BookmarkAdapter(mBookmarkItemCallback, getContext());
         mBinding.bookmarksList.setAdapter(mBookmarkAdapter);
         mBinding.bookmarksList.setOnTouchListener((v, event) -> {
             v.requestFocusFromTouch();
@@ -108,12 +123,6 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
 
         mBinding.setIsLoading(true);
 
-        mAccounts = ((VRBrowserApplication)getContext().getApplicationContext()).getAccounts();
-        if (ACCOUNTS_UI_ENABLED) {
-            mAccounts.addAccountListener(mAccountListener);
-            mAccounts.addSyncListener(mSyncListener);
-        }
-
         mBinding.setIsSignedIn(mAccounts.isSignedIn());
         boolean isSyncEnabled = mAccounts.isEngineEnabled(SyncEngine.Bookmarks.INSTANCE);
         mBinding.setIsSyncEnabled(isSyncEnabled);
@@ -126,7 +135,6 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
         mBinding.executePendingBindings();
 
         updateBookmarks();
-        SessionStore.get().getBookmarkStore().addListener(this);
 
         setVisibility(GONE);
 

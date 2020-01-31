@@ -6,28 +6,30 @@
 package org.mozilla.vrbrowser.ui.widgets;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.util.AttributeSet;
-import android.widget.LinearLayout;
+import android.view.LayoutInflater;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ObservableBoolean;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.VRBrowserActivity;
 import org.mozilla.vrbrowser.audio.AudioEngine;
-import org.mozilla.vrbrowser.ui.views.UIButton;
-import org.mozilla.vrbrowser.ui.views.UITextButton;
+import org.mozilla.vrbrowser.databinding.TopBarBinding;
+import org.mozilla.vrbrowser.ui.viewmodel.WindowViewModel;
 
-public class TopBarWidget extends UIWidget implements WidgetManagerDelegate.UpdateListener {
+public class TopBarWidget extends UIWidget {
 
-    private UIButton mCloseButton;
-    private UIButton mMoveLeftButton;
-    private UIButton mMoveRightButton;
-    private UITextButton mClearButton;
+    private WindowViewModel mViewModel;
+    private TopBarBinding mBinding;
     private AudioEngine mAudio;
     private WindowWidget mAttachedWindow;
     private TopBarWidget.Delegate mDelegate;
-    private LinearLayout mMultiWindowControlsContainer;
-    private boolean mVisible = false;
     private boolean mWidgetAdded = false;
 
     public TopBarWidget(Context aContext) {
@@ -52,57 +54,9 @@ public class TopBarWidget extends UIWidget implements WidgetManagerDelegate.Upda
     }
 
     private void initialize(Context aContext) {
-        inflate(aContext, R.layout.top_bar, this);
-
-        mMultiWindowControlsContainer = findViewById(R.id.multiWindowControlsContainer);
-
-        mCloseButton = findViewById(R.id.closeWindowButton);
-        mCloseButton.setOnClickListener(view -> {
-            view.requestFocusFromTouch();
-            if (mAudio != null) {
-                mAudio.playSound(AudioEngine.Sound.CLICK);
-            }
-            if (mDelegate != null) {
-                mDelegate.onCloseClicked(TopBarWidget.this);
-            }
-        });
-
-        mMoveLeftButton = findViewById(R.id.moveWindowLeftButton);
-        mMoveLeftButton.setOnClickListener(view -> {
-            view.requestFocusFromTouch();
-            if (mAudio != null) {
-                mAudio.playSound(AudioEngine.Sound.CLICK);
-            }
-            if (mDelegate != null) {
-                mDelegate.onMoveLeftClicked(TopBarWidget.this);
-            }
-        });
-
-        mMoveRightButton = findViewById(R.id.moveWindowRightButton);
-        mMoveRightButton.setOnClickListener(view -> {
-            view.requestFocusFromTouch();
-            if (mAudio != null) {
-                mAudio.playSound(AudioEngine.Sound.CLICK);
-            }
-            if (mDelegate != null) {
-                mDelegate.onMoveRightClicked(TopBarWidget.this);
-            }
-        });
-
-        mClearButton = findViewById(R.id.clearButton);
-        mClearButton.setOnClickListener(view -> {
-            view.requestFocusFromTouch();
-            if (mAudio != null) {
-                mAudio.playSound(AudioEngine.Sound.CLICK);
-            }
-            if (mDelegate != null) {
-                mDelegate.onCloseClicked(TopBarWidget.this);
-            }
-        });
-
         mAudio = AudioEngine.fromContext(aContext);
 
-        mWidgetManager.addUpdateListener(this);
+        updateUI();
     }
 
     @Override
@@ -119,16 +73,72 @@ public class TopBarWidget extends UIWidget implements WidgetManagerDelegate.Upda
         aPlacement.opaque = false;
     }
 
-    @Override
-    public void releaseWidget() {
-        mWidgetManager.removeUpdateListener(this);
+    private void updateUI() {
+        removeAllViews();
 
-        super.releaseWidget();
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+
+        // Inflate this data binding layout
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.top_bar, this, true);
+        mBinding.setLifecycleOwner((VRBrowserActivity)getContext());
+        mBinding.setViewmodel(mViewModel);
+
+        mBinding.closeWindowButton.setOnClickListener(view -> {
+            view.requestFocusFromTouch();
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
+            if (mDelegate != null) {
+                mDelegate.onCloseClicked(TopBarWidget.this);
+            }
+        });
+
+        mBinding.moveWindowLeftButton.setOnClickListener(view -> {
+            view.requestFocusFromTouch();
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
+            if (mDelegate != null) {
+                mDelegate.onMoveLeftClicked(TopBarWidget.this);
+            }
+        });
+
+        mBinding.moveWindowRightButton.setOnClickListener(view -> {
+            view.requestFocusFromTouch();
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
+            if (mDelegate != null) {
+                mDelegate.onMoveRightClicked(TopBarWidget.this);
+            }
+        });
+
+        mBinding.clearButton.setOnClickListener(view -> {
+            view.requestFocusFromTouch();
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
+            if (mDelegate != null) {
+                mDelegate.onCloseClicked(TopBarWidget.this);
+            }
+        });
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        updateUI();
     }
 
     @Override
     public void detachFromWindow() {
         mAttachedWindow = null;
+
+        if (mViewModel != null) {
+            mViewModel.getIsTopBarVisible().removeObserver(mIsVisible);
+            mViewModel = null;
+        }
     }
 
     @Override
@@ -136,65 +146,46 @@ public class TopBarWidget extends UIWidget implements WidgetManagerDelegate.Upda
         if (mAttachedWindow == aWindow) {
             return;
         }
+        detachFromWindow();
+
         mWidgetPlacement.parentHandle = aWindow.getHandle();
         mAttachedWindow = aWindow;
 
-        setPrivateMode(aWindow.getSession().isPrivateMode());
+        // ModelView creation and observers setup
+        mViewModel = new ViewModelProvider(
+                (VRBrowserActivity)getContext(),
+                ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
+                .get(String.valueOf(mAttachedWindow.hashCode()), WindowViewModel.class);
 
+        mBinding.setViewmodel(mViewModel);
+
+        mViewModel.getIsTopBarVisible().observe((VRBrowserActivity)getContext(), mIsVisible);
     }
 
     public @Nullable WindowWidget getAttachedWindow() {
         return mAttachedWindow;
     }
 
-    private void setPrivateMode(boolean aPrivateMode) {
-        mCloseButton.setPrivateMode(aPrivateMode);
-        mMoveLeftButton.setPrivateMode(aPrivateMode);
-        mMoveRightButton.setPrivateMode(aPrivateMode);
-        mCloseButton.setBackground(getContext().getDrawable(aPrivateMode ? R.drawable.fullscreen_button_private : R.drawable.fullscreen_button));
-        mMoveLeftButton.setBackground(getContext().getDrawable(aPrivateMode ? R.drawable.fullscreen_button_private_first : R.drawable.fullscreen_button_first));
-        mMoveRightButton.setBackground(getContext().getDrawable(aPrivateMode ? R.drawable.fullscreen_button_private_last : R.drawable.fullscreen_button_last));
+    @Override
+    public void releaseWidget() {
+        detachFromWindow();
+
+        mAttachedWindow = null;
+        super.releaseWidget();
     }
 
-    @Override
-    public void setVisible(boolean aIsVisible) {
-        if (mVisible == aIsVisible ||  mWidgetManager == null) {
-            return;
-        }
-        mVisible = aIsVisible;
-        getPlacement().visible = aIsVisible;
+    Observer<ObservableBoolean> mIsVisible = isVisible -> {
+        mWidgetPlacement.visible = isVisible.get();
         if (!mWidgetAdded) {
-            mWidgetManager.addWidget(this);
+            mWidgetManager.addWidget(TopBarWidget.this);
             mWidgetAdded = true;
         } else {
-            mWidgetManager.updateWidget(this);
+            mWidgetManager.updateWidget(TopBarWidget.this);
         }
-    }
-
-    public void setClearMode(boolean showClear) {
-        mMultiWindowControlsContainer.setVisibility(showClear ? GONE : VISIBLE);
-        mClearButton.setVisibility(showClear ? VISIBLE : GONE);
-    }
+    };
 
     public void setDelegate(TopBarWidget.Delegate aDelegate) {
         mDelegate = aDelegate;
-    }
-
-    public void setMoveLeftButtonEnabled(boolean aEnabled) {
-        mMoveLeftButton.setEnabled(aEnabled);
-    }
-
-    public void setMoveRightButtonEnabled(boolean aEnabled) {
-        mMoveRightButton.setEnabled(aEnabled);
-    }
-
-    // WidgetManagerDelegate.UpdateListener
-
-    @Override
-    public void onWidgetUpdate(Widget aWidget) {
-        if (aWidget != mAttachedWindow) {
-            return;
-        }
     }
 
 }

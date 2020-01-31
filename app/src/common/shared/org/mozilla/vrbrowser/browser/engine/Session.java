@@ -43,6 +43,7 @@ import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.utils.BitmapCache;
 import org.mozilla.vrbrowser.utils.InternalPages;
 import org.mozilla.vrbrowser.utils.SystemUtils;
+import org.mozilla.vrbrowser.utils.UrlUtils;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -569,9 +570,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     }
 
     public Boolean isHomeUri(String aUri) {
-        return aUri != null && aUri.toLowerCase().startsWith(
-          SettingsStore.getInstance(mContext).getHomepage()
-        );
+        return UrlUtils.isHomeUri(mContext, aUri);
     }
 
     public String getCurrentUri() {

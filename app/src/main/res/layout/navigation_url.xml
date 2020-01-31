@@ -4,53 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
-        <import type="org.mozilla.geckoview.GeckoSessionSettings" />
         <import type="org.mozilla.vrbrowser.ui.views.CustomInlineAutocompleteEditText" />
-
         <variable
-            name="isLibraryVisible"
-            type="boolean" />
-
-        <variable
-            name="isInsecure"
-            type="boolean" />
-
-        <variable
-            name="isLoading"
-            type="boolean" />
-
-        <variable
-            name="uaMode"
-            type="int" />
-
-        <variable
-            name="isMicrophoneEnabled"
-            type="boolean" />
-
-        <variable
-            name="isBookmarked"
-            type="boolean" />
-
-        <variable
-            name="isFocused"
-            type="boolean" />
-
-        <variable
-            name="isSpecialUrl"
-            type="boolean" />
-
-        <variable
-            name="isPrivateMode"
-            type="boolean" />
-
-        <variable
-            name="isUrlEmpty"
-            type="boolean" />
-
-        <variable
-            name="isPopUpAvailable"
-            type="boolean" />
+            name="viewmodel"
+            type="org.mozilla.vrbrowser.ui.viewmodel.WindowViewModel" />
     </data>
 
     <FrameLayout
@@ -65,8 +22,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:addStatesFromChildren="true"
-            android:background="@{isPrivateMode ? @drawable/url_background_private : @drawable/url_background}"
-            android:foreground="@{isPrivateMode ? @drawable/url_background_private_outline : @drawable/url_background_outline}">
+            android:background="@{viewmodel.isPrivateSession ? @drawable/url_background_private : @drawable/url_background}"
+            android:foreground="@{viewmodel.isPrivateSession ? @drawable/url_background_private_outline : @drawable/url_background_outline}">
 
             <LinearLayout
                 android:id="@+id/endButtonsLayout"
@@ -83,20 +40,20 @@
                 <org.mozilla.vrbrowser.ui.views.UIButton
                     android:id="@+id/microphoneButton"
                     style="@style/urlBarIconTheme"
-                    android:layout_width="@{(isLibraryVisible || isSpecialUrl) ? @dimen/url_bar_last_item_width : @dimen/url_bar_item_width}"
-                    android:background="@{(isLibraryVisible || isSpecialUrl) ? (isPrivateMode ? @drawable/url_button_end_private : @drawable/url_button_end) : (isPrivateMode ? @drawable/url_button_private : @drawable/url_button)}"
+                    android:layout_width="@{(viewmodel.isLibraryVisible || viewmodel.isSpecialUrl) ? @dimen/url_bar_last_item_width : @dimen/url_bar_item_width}"
+                    android:background="@{(viewmodel.isLibraryVisible || viewmodel.isSpecialUrl) ? (viewmodel.isPrivateSession ? @drawable/url_button_end_private : @drawable/url_button_end) : (viewmodel.isPrivateSession ? @drawable/url_button_private : @drawable/url_button)}"
                     android:src="@drawable/ic_icon_microphone"
                     android:tint="@color/fog"
                     android:tooltipText="@string/voice_search_tooltip"
-                    app:visibleGone="@{isMicrophoneEnabled &amp;&amp; !isFocused}" />
+                    app:visibleGone="@{viewmodel.isMicrophoneEnabled &amp;&amp; !viewmodel.isFocused}"/>
 
                 <org.mozilla.vrbrowser.ui.views.UIButton
                     android:id="@+id/bookmarkButton"
                     style="@style/urlBarIconThemeEnd"
-                    android:src="@{isBookmarked ? @drawable/ic_icon_bookmarked_active : @drawable/ic_icon_bookmarked}"
+                    android:src="@{viewmodel.isBookmarked ? @drawable/ic_icon_bookmarked_active : @drawable/ic_icon_bookmarked}"
                     android:tint="@color/fog"
                     android:tooltipText="@string/bookmark_tooltip"
-                    app:visibleGone="@{!(isLibraryVisible || isSpecialUrl) &amp;&amp; !isFocused}"
+                    app:visibleGone="@{!(viewmodel.isLibraryVisible || viewmodel.isSpecialUrl) &amp;&amp; !viewmodel.isFocused}"
                     tools:src="@drawable/ic_icon_bookmarked" />
 
                 <org.mozilla.vrbrowser.ui.views.UIButton
@@ -105,7 +62,7 @@
                     android:src="@drawable/ic_icon_clear"
                     android:tint="@color/fog"
                     android:tooltipText="@string/clear_tooltip"
-                    app:visibleGone="@{!isMicrophoneEnabled &amp;&amp; isFocused &amp;&amp; (urlEditText.text.length > 0)}" />
+                    app:visibleGone="@{!viewmodel.isMicrophoneEnabled &amp;&amp; viewmodel.isFocused &amp;&amp; (urlEditText.text.length > 0)}" />
             </LinearLayout>
 
             <RelativeLayout
@@ -115,7 +72,7 @@
                 android:layout_alignParentStart="true"
                 android:addStatesFromChildren="true"
                 android:background="@null"
-                app:visibleGone="@{!isLibraryVisible}">
+                app:visibleGone="@{!viewmodel.isLibraryVisible}">
 
                 <LinearLayout
                     android:id="@+id/startButtonsLayout"
@@ -136,12 +93,12 @@
                         android:src="@drawable/ic_icon_popup_awesomebar"
                         android:tint="@color/fog"
                         android:tooltipText="@string/popup_tooltip"
-                        app:visibleGone="@{isPopUpAvailable}" />
+                        app:visibleGone="@{viewmodel.isPopUpAvailable}" />
 
                     <View
                         android:layout_width="15dp"
                         android:layout_height="match_parent"
-                        app:visibleGone="@{!isPopUpAvailable}"/>
+                        app:visibleGone="@{!viewmodel.isPopUpAvailable}"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -157,14 +114,14 @@
                         android:paddingEnd="5dp"
                         android:contentDescription="Loading animation"
                         android:src="@drawable/loading_shape"
-                        app:visibleGone="@{isLoading}" />
+                        app:visibleGone="@{viewmodel.isLoading}" />
                     <ImageView
                         android:id="@+id/insecureIcon"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:contentDescription="SSL icon"
                         android:src="@drawable/ic_icon_security_state_insecure"
-                        app:visibleGone="@{isInsecure &amp;&amp; (urlEditText.length() != 0)}" />
+                        app:visibleGone="@{viewmodel.isInsecureVisible &amp;&amp; (urlEditText.length() != 0)}" />
                 </LinearLayout>
 
             </RelativeLayout>
@@ -174,7 +131,7 @@
                 android:layout_width="15dp"
                 android:layout_height="match_parent"
                 android:layout_toEndOf="@id/iconsLayout"
-                app:visibleGone="@{isLibraryVisible}"/>
+                app:visibleGone="@{viewmodel.isLibraryVisible}"/>
 
             <org.mozilla.vrbrowser.ui.views.CustomInlineAutocompleteEditText
                 android:id="@+id/urlEditText"
@@ -183,7 +140,7 @@
                 android:paddingEnd="10dp"
                 android:layout_toStartOf="@id/endButtonsLayout"
                 android:layout_toEndOf="@id/padding"
-                android:foreground="@{isUrlEmpty ? (isPrivateMode ? @drawable/url_bar_hint_fading_edge_private : @drawable/url_bar_hint_fading_edge) : null}"
+                android:foreground="@{viewmodel.isUrlEmpty ? (viewmodel.isPrivateSession ? @drawable/url_bar_hint_fading_edge_private : @drawable/url_bar_hint_fading_edge) : null}"
                 android:foregroundGravity="fill_vertical|right"
                 android:ems="10"
                 android:fadingEdgeLength="40dp"
@@ -199,6 +156,7 @@
                 android:textColorHighlight="@color/azure"
                 android:textIsSelectable="true"
                 android:textSize="16sp"
+                android:text="@{viewmodel.navigationBarUrl}"
                 app:autocompleteBackgroundColor="@color/azure" />
         </RelativeLayout>
     </FrameLayout>

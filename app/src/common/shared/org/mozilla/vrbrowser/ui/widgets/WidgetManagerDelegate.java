@@ -1,5 +1,6 @@
 package org.mozilla.vrbrowser.ui.widgets;
 
+import android.content.Context;
 import android.view.View;
 
 import androidx.annotation.IntDef;
@@ -88,4 +89,5 @@ public interface WidgetManagerDelegate {
     void addConnectivityListener(ConnectivityReceiver.Delegate aListener);
     void removeConnectivityListener(ConnectivityReceiver.Delegate aListener);
     void saveState();
+    void updateLocale(@NonNull Context context);
 }

@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
-
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="viewmodel"
+            type="org.mozilla.vrbrowser.ui.viewmodel.WindowViewModel" />
+        <variable
+            name="ab"
+            type="boolean" />
+    </data>
     <FrameLayout
         android:id="@+id/fullScreenModeContainer"
         android:layout_width="wrap_content"
@@ -26,26 +34,30 @@
                 style="?attr/fullScreenButtonStyle"
                 android:background="@drawable/fullscreen_button_first"
                 android:src="@drawable/ic_icon_back"
-                android:tooltipText="@string/back_tooltip" />
+                android:tooltipText="@string/back_tooltip"
+                app:privateMode="@{viewmodel.isPrivateSession}"/>
 
             <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/fullScreenResizeEnterButton"
                 style="?attr/fullScreenButtonStyle"
                 android:src="@drawable/ic_icon_resize"
-                android:tooltipText="@string/resize_tooltip" />
+                android:tooltipText="@string/resize_tooltip"
+                app:privateMode="@{viewmodel.isPrivateSession}"/>
 
             <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/projectionButton"
                 style="?attr/fullScreenButtonStyle"
                 android:src="@drawable/ic_icon_vr_projection"
-                android:tooltipText="@string/video_mode_tooltip" />
+                android:tooltipText="@string/video_mode_tooltip"
+                app:privateMode="@{viewmodel.isPrivateSession}"/>
 
             <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/brightnessButton"
                 style="?attr/fullScreenButtonStyle"
                 android:background="@drawable/fullscreen_button_last"
                 android:src="@drawable/ic_icon_brightness"
-                android:tooltipText="@string/brightness_mode_tooltip" />
+                android:tooltipText="@string/brightness_mode_tooltip"
+                app:privateMode="@{viewmodel.isPrivateSession}"/>
         </LinearLayout>
     </FrameLayout>
-</merge>
+</layout>

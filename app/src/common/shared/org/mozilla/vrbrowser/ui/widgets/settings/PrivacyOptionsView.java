@@ -43,7 +43,16 @@ class PrivacyOptionsView extends SettingsView {
     }
 
     private void initialize(Context aContext) {
-        LayoutInflater inflater = LayoutInflater.from(aContext);
+        updateUI();
+
+        ((Application)aContext.getApplicationContext()).registerActivityLifecycleCallbacks(mLifeCycleListener);
+    }
+
+    @Override
+    protected void updateUI() {
+        super.updateUI();
+
+        LayoutInflater inflater = LayoutInflater.from(getContext());
 
         // Inflate this data binding layout
         mBinding = DataBindingUtil.inflate(inflater, R.layout.options_privacy, this, true);
@@ -55,8 +64,6 @@ class PrivacyOptionsView extends SettingsView {
 
         // Footer
         mBinding.footerLayout.setFooterButtonClickListener(v -> resetOptions());
-
-        ((Application)aContext.getApplicationContext()).registerActivityLifecycleCallbacks(mLifeCycleListener);
 
         // Options
         mBinding.showPrivacyButton.setOnClickListener(v -> {

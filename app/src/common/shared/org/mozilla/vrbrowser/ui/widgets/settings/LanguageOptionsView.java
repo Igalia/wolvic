@@ -42,7 +42,20 @@ class LanguageOptionsView extends SettingsView {
     }
 
     private void initialize(Context aContext) {
-        LayoutInflater inflater = LayoutInflater.from(aContext);
+        updateUI();
+
+        mContentLanguage = new ContentLanguageOptionsView(getContext(), mWidgetManager);
+        mVoiceLanguage = new VoiceSearchLanguageOptionsView(getContext(), mWidgetManager);
+        mDisplayLanguage = new DisplayLanguageOptionsView(getContext(), mWidgetManager);
+
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(aContext);
+    }
+
+    @Override
+    protected void updateUI() {
+        super.updateUI();
+
+        LayoutInflater inflater = LayoutInflater.from(getContext());
 
         // Inflate this data binding layout
         mBinding = DataBindingUtil.inflate(inflater, R.layout.options_language, this, true);
@@ -62,12 +75,6 @@ class LanguageOptionsView extends SettingsView {
         setVoiceLanguage();
         setContentLanguage();
         setDisplayLanguage();
-
-        mContentLanguage = new ContentLanguageOptionsView(getContext(), mWidgetManager);
-        mVoiceLanguage = new VoiceSearchLanguageOptionsView(getContext(), mWidgetManager);
-        mDisplayLanguage = new DisplayLanguageOptionsView(getContext(), mWidgetManager);
-
-        mPrefs = PreferenceManager.getDefaultSharedPreferences(aContext);
     }
 
     @Override
@@ -85,10 +92,9 @@ class LanguageOptionsView extends SettingsView {
     }
 
     private OnClickListener mResetListener = (view) -> {
-        if (mContentLanguage.reset() |
-            mDisplayLanguage.reset() |
-            mVoiceLanguage.reset())
-            showRestartDialog();
+        mContentLanguage.reset();
+        mDisplayLanguage.reset();
+        mVoiceLanguage.reset();
     };
 
     private void setVoiceLanguage() {

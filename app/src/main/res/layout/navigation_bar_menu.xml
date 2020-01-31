@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
-
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="viewmodel"
+            type="org.mozilla.vrbrowser.ui.viewmodel.WindowViewModel" />
+    </data>
     <LinearLayout
         android:id="@+id/resizeModeContainer"
         android:layout_width="wrap_content"
@@ -14,39 +19,45 @@
             android:id="@+id/resizePreset3"
             style="@style/navigationBarTextButtonStartTheme"
             android:text="3x"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            app:privateMode="@{viewmodel.isPrivateSession}"/>
 
         <org.mozilla.vrbrowser.ui.views.UITextButton
             android:id="@+id/resizePreset2"
             style="@style/navigationBarTextButtonMiddleTheme"
             android:padding="5dp"
             android:text="2x"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            app:privateMode="@{viewmodel.isPrivateSession}"/>
 
         <org.mozilla.vrbrowser.ui.views.UITextButton
             android:id="@+id/resizePreset15"
             style="@style/navigationBarTextButtonMiddleTheme"
             android:padding="5dp"
             android:text="1.5x"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            app:privateMode="@{viewmodel.isPrivateSession}"/>
 
         <org.mozilla.vrbrowser.ui.views.UITextButton
             android:id="@+id/resizePreset1"
             style="@style/navigationBarTextButtonMiddleTheme"
             android:padding="5dp"
             android:text="1x"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            app:privateMode="@{viewmodel.isPrivateSession}"/>
 
         <org.mozilla.vrbrowser.ui.views.UITextButton
             android:id="@+id/resizePreset0"
             style="@style/navigationBarTextButtonMiddleTheme"
             android:padding="5dp"
             android:text="0.5x"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            app:privateMode="@{viewmodel.isPrivateSession}"/>
 
         <org.mozilla.vrbrowser.ui.views.UIButton
             android:id="@+id/resizeExitButton"
             style="@style/navigationBarTextButtonEndTheme"
-            android:src="@drawable/ic_icon_resize_done" />
+            android:src="@drawable/ic_icon_resize_done"
+            app:privateMode="@{viewmodel.isPrivateSession}"/>
     </LinearLayout>
-</merge>
+</layout>

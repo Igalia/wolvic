@@ -35,6 +35,11 @@ import android.widget.FrameLayout;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LifecycleRegistry;
+import androidx.lifecycle.ViewModelStore;
+import androidx.lifecycle.ViewModelStoreOwner;
 
 import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoSession;
@@ -81,11 +86,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
-public class VRBrowserActivity extends PlatformActivity implements WidgetManagerDelegate, ComponentCallbacks2 {
+public class VRBrowserActivity extends PlatformActivity implements WidgetManagerDelegate, ComponentCallbacks2, LifecycleOwner, ViewModelStoreOwner {
 
     private BroadcastReceiver mCrashReceiver = new BroadcastReceiver() {
         @Override
@@ -96,6 +102,29 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             }
         }
     };
+
+    private final LifecycleRegistry mLifeCycle;
+
+    @NonNull
+    @Override
+    public Lifecycle getLifecycle() {
+        return mLifeCycle;
+    }
+
+    private final ViewModelStore mViewModelStore;
+
+    @NonNull
+    @Override
+    public ViewModelStore getViewModelStore() {
+        return mViewModelStore;
+    }
+
+    public VRBrowserActivity() {
+        mLifeCycle = new LifecycleRegistry(this);
+        mLifeCycle.setCurrentState(Lifecycle.State.INITIALIZED);
+
+        mViewModelStore = new ViewModelStore();
+    }
 
     class SwipeRunnable implements Runnable {
         boolean mCanceled = false;
@@ -269,6 +298,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mConnectivityReceiver = new ConnectivityReceiver();
         mPoorPerformanceWhiteList = new HashSet<>();
         checkForCrash();
+
+        mLifeCycle.setCurrentState(Lifecycle.State.CREATED);
     }
 
     protected void initializeWidgets() {
@@ -362,6 +393,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         super.onStart();
         TelemetryWrapper.start();
         UISurfaceTextureRenderer.setRenderActive(true);
+        mLifeCycle.setCurrentState(Lifecycle.State.STARTED);
     }
 
     @Override
@@ -423,6 +455,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         ((VRBrowserApplication)getApplicationContext()).getAccounts().pollForEventsAsync();
 
         super.onResume();
+        mLifeCycle.setCurrentState(Lifecycle.State.RESUMED);
     }
 
     @Override
@@ -455,6 +488,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
 
         super.onDestroy();
+        mLifeCycle.setCurrentState(Lifecycle.State.DESTROYED);
+        mViewModelStore.clear();
     }
 
     @Override
@@ -473,6 +508,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
+        getBaseContext().getResources().updateConfiguration(newConfig, getBaseContext().getResources().getDisplayMetrics());
+
+        LocaleUtils.refresh();
+        mWidgets.forEach((i, widget) -> widget.onConfigurationChanged(newConfig));
+
         SessionStore.get().onConfigurationChanged(newConfig);
 
         super.onConfigurationChanged(newConfig);
@@ -502,7 +542,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 SettingsStore.getInstance(this).setHomepage(homepageUri.toString());
             }
 
-            // Enable/Disbale e10s
+            // Enable/Disable e10s
             if (extras.containsKey("e10s")) {
                 boolean wasEnabled = SettingsStore.getInstance(this).isMultiprocessEnabled();
                 boolean enabled = extras.getBoolean("e10s", wasEnabled);
@@ -1445,7 +1485,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Override
     public void openNewWindow(String uri) {
         WindowWidget newWindow = mWindows.addWindow();
-        if (newWindow != null) {
+        if ((newWindow != null) && (newWindow.getSession() != null)) {
             newWindow.getSession().loadUri(uri);
         }
     }
@@ -1475,6 +1515,13 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mWindows.saveState();
     }
 
+    @Override
+    public void updateLocale(@NonNull Context context) {
+        Configuration configuration = context.getResources().getConfiguration();
+        configuration.setLocale(Locale.forLanguageTag(LocaleUtils.getDisplayLanguage(this).getId()));
+        onConfigurationChanged(new Configuration(context.getResources().getConfiguration()));
+    }
+
     private native void addWidgetNative(int aHandle, WidgetPlacement aPlacement);
     private native void updateWidgetNative(int aHandle, WidgetPlacement aPlacement);
     private native void updateVisibleWidgetsNative();
@@ -1483,7 +1530,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private native void finishWidgetResizeNative(int aHandle);
     private native void startWidgetMoveNative(int aHandle, int aMoveBehaviour);
     private native void finishWidgetMoveNative();
-    private native void setWorldBrightnessNative(float aBrigthness);
+    private native void setWorldBrightnessNative(float aBrightness);
     private native void setTemporaryFilePath(String aPath);
     private native void exitImmersiveNative();
     private native void workaroundGeckoSigAction();
