@@ -45,7 +45,7 @@
 
     <!-- This string is displayed in the button that means the user rejects the
          permission requested for in the permission dialog box. -->
-    <string name="permission_reject">허용하지 않음</string>
+    <string name="permission_reject">허용 안 함</string>
 
     <!-- This string is displayed in the button that means the user wants to enable/grant a permission. -->
     <string name="permission_enable">활성화</string>
@@ -56,22 +56,22 @@
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's camera.
          '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_camera">%1$s이(가) 귀하의 카메라를 사용하도록 허용하겠습니까?</string>
+    <string name="permission_camera">%1$s이(가) 카메라를 사용하도록 허용하겠습니까?</string>
 
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's microphone.
          '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_microphone">%1$s이(가) 귀하의 마이크를 사용하도록 허용하겠습니까?</string>
+    <string name="permission_microphone">%1$s이(가) 마이크를 사용하도록 허용하겠습니까?</string>
 
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's camera and microphone.
          '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_camera_and_microphone">%1$s이(가) 귀하의 카메라 및 마이크를 사용하도록 허용하겠습니까?</string>
+    <string name="permission_camera_and_microphone">%1$s이(가) 카메라 및 마이크를 사용하도록 허용하겠습니까?</string>
 
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's geographic location.
          '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_location">%1$s이(가) 귀하의 위치에 접근하도록 허용하겠습니까?</string>
+    <string name="permission_location">%1$s이(가) 사용자 위치에 접근하도록 허용하겠습니까?</string>
 
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to send browser-level
@@ -82,22 +82,17 @@
     <!-- This string will be displayed in a dialog box presented to the user when the application
          needs to request permission to access the device's external storage such as the
          sdcard. '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_read_external_storage">%1$s이(가) 귀하의 외부 저장 장치를 읽도록 허용하겠습니까?</string>
+    <string name="permission_read_external_storage">%1$s이(가) 외부 저장 장치를 읽도록 허용하겠습니까?</string>
 
     <!-- This string will be displayed in a dialog box presented to the user when the application
          needs to request permission to access the device's external storage such as the
          sdcard. '%1$s' will be replaced at runtime with the website's domain name. -->
     <string name="permission_persistent_storage">%1$s가 영구 저장 장치에 데이터를 저장하도록 허용하겠습니까?</string>
 
-    <!-- This string is displayed in the Settings dialog box and how
-         the user can know which version of the application they are currently running.
-         '%1$s' will be replaced at runtime with the application version number. -->
-    <string name="settings_version">버전 %1$s</string>
-
     <!-- This string is displayed in the Settings dialog box and is used to label an
          On/Off switch which toggles whether an application crash is reported without first
          prompting the user. -->
-    <string name="settings_crash_reporting">오류 보고</string>
+    <string name="settings_crash_reporting">충돌 보고</string>
 
     <!-- This string is displayed in the Settings dialog box and is used to label an
          On/Off switch which toggles whether browser-level Telemetry is reported back to Mozilla. -->
@@ -109,11 +104,38 @@
 
     <!-- This string is used to label a button that, when pressed, loads a website that
          describes Mozilla's Privacy Policy. -->
-    <string name="settings_privacy_policy">개인정보보호정책</string>
+    <string name="settings_privacy_policy">개인 정보 보호 정책</string>
+
+    <!-- This string is used as the title of the pop-ups dialog used to remove sites from the currently
+         allowed pop-up sites. -->
+    <string name="settings_privacy_policy_popups_title">팝업 권한</string>
+
+    <!-- This string is displayed under the title the pop-ups dialog used to remove sites from the currently
+         allowed pop-up sites. -->
+    <string name="settings_privacy_policy_popups_description">팝업 창을 열 수 있는 웹 사이트를 지정할 수 있습니다</string>
+
+    <!-- This string is displayed in the switch of each item of the the pop-up blocking list when the site is allowed. -->
+    <string name="pop_up_site_switch_allow">허가</string>
+
+    <!-- This string is displayed in the switch of each item of the the pop-up blocking list when the site is denied. -->
+    <string name="pop_up_site_switch_block">차단</string>
 
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains settings that an application or Web developer might want to change. -->
     <string name="settings_developer_options">개발자 옵션</string>
+
+    <!-- This string is used in the 'Settings' window when user is not signed into a Firefox Account -->
+    <string name="settings_fxa_account_sign_in">계정 로그인</string>
+
+    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account -->
+    <string name="settings_fxa_account_manage">계정 관리</string>
+
+    <!-- This string is used in the 'Account' window when user is signed into a Firefox Account -->
+    <string name="settings_fxa_account_sign_out">로그아웃</string>
+
+    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account, but needs to re-enter their password.
+         Most common reason for this state is that the account password was changed on another device. -->
+    <string name="settings_fxa_account_reconnect">다시 연결하기</string>
 
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains language-related settings. -->
@@ -129,14 +151,14 @@
          the user to choose as their preferred reading languages for website content. Each locale,
          as `language-tag` strings, is then included in the browser's `Accept-Language` HTTP request
          header that is sent to websites, as well as the JavaScript property, `navigator.language`. -->
-    <string name="settings_language_choose_language_webpage_content">웹페이지 표시를 위한 귀하의 선호 언어를 선택하십시오</string>
+    <string name="settings_language_choose_language_webpage_content">웹페이지 표시를 위한 기본 언어를 선택하세요</string>
 
     <!-- This string is used to label a text label for selecting the language in the 'Language' dialog window
          (accessible from the browser's Settings' dialog window). Below this string appears a list of locales for
          the user to choose as their preferred language for the browser's speech-to-text 'Voice Search' system.
          Based on the user's selection, the printed language is mapped to its ISO 639-1 code
          (e.g., `Español` is mapped to `es`) when configured in the 'Voice Search' system. -->
-    <string name="settings_language_choose_language_voice_search">음성 검색을 위한 귀하의 선호 언어를 선택하십시오</string>
+    <string name="settings_language_choose_language_voice_search">음성 검색을 위한 기본 언어를 선택하세요</string>
 
     <!-- This string is used to label a text label that appears in the header of 'Language Settings' ->
          'Firefox Display Language' dialog window (accessible from the browser's Settings dialog window).
@@ -148,7 +170,7 @@
          'Firefox Display Language' dialog window (accessible from the browser's Settings dialog window).
          Below this string appears a list of locales for the user to choose as their preferred display
          language for the application UI. -->
-    <string name="settings_language_choose_language_display_description">메뉴와 메시지, 알림을 표시하는데 사용할 언어를 선택하십시오.</string>
+    <string name="settings_language_choose_language_display_description">메뉴, 메시지 및 알림을 표시하는데 사용할 언어를 선택하세요.</string>
 
     <!-- This string is used to label a text label that appears in the header of 'Language Settings' ->
          'Voice Search Language' dialog window (accessible from the browser's Settings dialog window).
@@ -160,17 +182,17 @@
          'Voice Search Language' dialog window (accessible from the browser's Settings dialog window).
          Below this string appears a list of locales for the user to choose as their preferred voice search
          language. -->
-    <string name="settings_language_choose_language_voice_search_description">음성 검색을 위한 귀하의 선호 언어를 선택하십시오.</string>
+    <string name="settings_language_choose_language_voice_search_description">음성 검색을 위한 기본 언어를 선택하세요.</string>
 
     <!-- This string is used to label a text label that appears in the header of 'Language Settings' ->
          'Preferred Language for Displaying Websites' dialog window (accessible from the browser's Settings dialog window).
          Below this string appears a list of locales for the user to choose as their preferred languages for web content. -->
-    <string name="settings_language_choose_language_content_title">선호하는 웹 사이트 언어</string>
+    <string name="settings_language_choose_language_content_title">웹사이트 기본 언어</string>
 
     <!-- This string is used to label a text label that appears in the header description of 'Language Settings' ->
          'Preferred Language for Displaying Websites' dialog window (accessible from the browser's Settings dialog window).
          Below this string appears a list of locales for the user to choose as their preferred languages for web content. -->
-    <string name="settings_language_choose_language_content_description">웹 페이지는 때때로 둘 이상의 언어로 제공됩니다. 표시하려는 언어를 선호도순으로 왼쪽에서 선택하십시오.</string>
+    <string name="settings_language_choose_language_content_description">웹 페이지는 때때로 둘 이상의 언어로 제공됩니다. 표시하려는 언어를 선호도순으로 왼쪽에서 선택하세요.</string>
 
     <!-- This string is used to label a radio button in the 'Settings' Language dialog that, when pressed,
          changes the app and the language of the speech-recognition-based search to 'English (US)'. -->
@@ -211,6 +233,30 @@
     <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
      changes the app and the language of the speech-recognition-based search to 'Russian'. -->
     <string name="settings_language_russian">러시아어</string>
+  
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+     changes the app and the language of the speech-recognition-based search to 'Polish'. -->
+    <string name="settings_language_polish">폴란드어</string>
+
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+     changes the app and the language of the speech-recognition-based search to 'Danish'. -->
+    <string name="settings_language_danish">덴마크어</string>
+
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+     changes the app and the language of the speech-recognition-based search to 'Norwegian'. -->
+    <string name="settings_language_norwegian">노르웨이어</string>
+  
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+     changes the app and the language of the speech-recognition-based search to 'Danish'. -->
+    <string name="settings_language_swedish">스웨덴어</string>
+
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+     changes the app and the language of the speech-recognition-based search to 'Finnish'. -->
+    <string name="settings_language_finnish">핀란드어</string>
+  
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+     changes the app and the language of the speech-recognition-based search to 'Dutch'. -->
+    <string name="settings_language_dutch">네덜란드어</string>
 
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
         opens a dialog box that contains display-related settings: window size, pixel density, etc. -->
@@ -218,7 +264,7 @@
 
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains controller-related options: pointer color and scroll direction. -->
-    <string name="settings_controller_options">조절기 옵션</string>
+    <string name="settings_controller_options">컨트롤러 옵션</string>
 
     <!-- This string is displayed in the 'Settings' dialog window and, is used to label an,
          On/Off switch that enables/disables the speech-data reporting. -->
@@ -236,6 +282,20 @@
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
         opens the Firfox Reality support web site in the browser window. -->
     <string name="settings_help">도움말</string>
+
+    <!-- This string is displayed in the settings header under the Firefox Reality logo. When clicked the settings panel is closed
+         a the survey web site in opened in the currently focused window -->
+    <string name="settings_send_your_feedback">의견 보내기</string>
+
+    <!-- This string is used in the 'Settings' window when user is signed-out of Firefox Accounts -->
+    <string name="settings_accounts_sign_in">로그인</string>
+
+    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account -->
+    <string name="settings_accounts_sign_out">로그아웃</string>
+
+    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account, but needs to re-enter their password.
+         Most common reason for this state is that the account password was changed on another device. -->
+    <string name="settings_accounts_reconnect">다시 연결하기</string>
 
     <!-- This string is the title of a dialog box shown to the user when a settings
          change requires the application to restart. -->
@@ -287,6 +347,12 @@
          to help diagnose and fix problems with the application.
     -->
     <string name="developer_options_debug_logging">디버그 로깅 활성화</string>
+
+    <!-- This string labels an On/Off switch in the developer options dialog and is used to toggle
+     UI render mode. If enables it uses hardware acceleration which should be faster but it may be more unstable.
+     If disabled it uses software rendering which is stable but not as performant as hardware acceleration
+-->
+    <string name="hardware_acceleration_switch">UI 하드웨어 가속 사용</string>
 
     <!-- The string labels an On/Off switch in the developer options dialog and is used to toggle enabling Servo. -->
     <string name="developer_options_servo">서보 활성화</string>
@@ -345,7 +411,7 @@
     <string name="developer_options_ua_desktop">바탕화면</string>
 
     <!-- This string is used to label the 'Mobile' radio button of the 'User-Agent Mode' settings option. -->
-    <string name="developer_options_ua_mobile">휴대폰</string>
+    <string name="developer_options_ua_mobile">모바일</string>
 
     <!-- This string is used to label the 'VR' radio button of the 'User-Agent Mode' settings option. -->
     <string name="developer_options_ua_vr">VR</string>
@@ -435,9 +501,66 @@
          for the home page. -->
     <string name="developer_options_homepage">홈페이지</string>
 
+    <!-- This string is used to in the FxA account manage panel as a description of the Sign In/Out button. -->
+    <string name="fxa_account_options_account">계정</string>
+
+    <!-- This string is used to in the FxA account manage panel as a header for the sync options. -->
+    <string name="fxa_account_options_sync_title">동기화 설정</string>
+
+    <!-- This string is used to in the FxA account manage panel as the description of the Sync button when is not syncing.
+         The sync button will start syncing when pressed-->
+    <string name="fxa_account_options_sync_now">지금 동기화</string>
+
+    <!-- This string is used to in the FxA account manage panel as the description of the Sync button while syncon.
+         The sync button will start syncing when pressed-->
+    <string name="fxa_account_options_syncing">동기화하는 중...</string>
+
+    <!-- This string is used in the FxA account manager panel as a header for the sync options for syncing
+         history, bookmarks, passwords, etc. -->
+    <string name="fxa_account_options_sync_description">Firefox를 사용하여 기기에서 동기화 할 대상 선택</string>
+
+    <!-- This string is used to in the FxA account manage panel as a description for the Bookmarks sync switch. -->
+    <string name="fxa_account_options_bookmarks_sync">북마크</string>
+
+    <!-- This string is used to in the FxA account manage panel as a description for the History sync switch. -->
+    <string name="fxa_account_options_history_sync">방문 기록</string>
+
+    <!-- This string is used to in the FxA account manage panel as a description for the Sign In/Out button. -->
+    <string name="fxa_account_options_reset">초기화</string>
+
+    <!-- This string is used to in the Library panels in the sync button when the user is not signed in. -->
+    <string name="fxa_account_sing_to_sync">동기화를 위해 계정에 로그인</string>
+
+    <!-- This string is used to in the Library panels in the sync button when syncing is off. -->
+    <string name="fxa_account_sync_settings">동기화 설정</string>
+
+    <!-- This string is used to in the Library panels to the left of the sync button to indicate
+         when that the content was just synced. -->
+    <string name="fxa_account_last_synced_now">마지막 동기화: 지금</string>
+
+    <!-- This string is used to in the Library panels to the left of the sync button to indicate
+         that the content has never been synced yet. -->
+    <string name="fxa_account_last_no_synced">아직 동기화되지 않았습니다</string>
+
+    <!-- This string is used to in the Library panels to the left of the sync button to indicate
+         that the syncing is off. -->
+    <string name="fxa_account_syncing_off">동기화가 꺼져 있습니다</string>
+
+    <!-- This string is used to in the Library panels to the left of the sync button to indicate
+         that there was an error while syncing. -->
+    <string name="fxa_account_last_sync_error">동기화 오류</string>
+
+    <!-- This string is used to in the Library panels to the left of the sync button to indicate
+         when that the content was just synced some time ago. -->
+    <string name="fxa_account_last_synced">마지막 동기화: %1$d분 전</string>
+
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable playback of DRM controlled content. -->
     <string name="security_options_drm_content">DRM 제어 콘텐츠 재생 (&lt;a href=&quot;http://somesite.com/&quot;&gt;자세히 알아보기&lt;/a&gt;)</string>
+
+    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
+     and is used to enable or disable the tabs restoration after a fresh app start. -->
+    <string name="security_options_restore_tabs">다시 시작한 후 탭과 창 복원</string>
 
     <!-- This string labels an On/Off switch in the Privacy and Security settings dialog
      and is used to enable or disable tracking protection. -->
@@ -478,9 +601,35 @@
          of this storage even though the storage may not reside on external removable media. -->
     <string name="security_options_permission_storage">외부 저장소 읽기</string>
 
+    <!-- This string labels the button that displays or enables application access to the device's
+         camera and microphone, if present. -->
+    <string name="security_options_permission_camera_and_microphone">카메라와 마이크</string>
+
+    <!-- This string labels the button in the privacy option panel that enables/disables the pop-up
+         blocking. -->
+    <string name="security_options_block_pup_up_windows">팝업창 차단</string>
+
+    <!-- This string labels the button in the privacy option panel that open the dialog to add/remove
+         pop-up blocked sites. -->
+    <string name="security_options_block_pup_up_settings">고급</string>
+
     <!-- This string is a label above the group of switches that indicates that the switches below
          relate to Firefox data collection and use. -->
     <string name="security_options_speech_data_collection_title">%1$s 데이터 수집과 사용</string>
+
+    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
+     and is used to enable or disable permission to collect speech data. -->
+    <string name="security_options_speech_data_collect">%1$s이(가) 음성 데이터를 수집하도록 허용</string>
+
+    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
+     and is used to enable or disable permission to collect telemetry data. -->
+    <string name="security_options_telemetry_send_data">%1$s이(가) 기술 및 상호 작용 데이터를 Mozilla에 보내도록 허용
+ </string>
+
+    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
+     and is used to enable or disable permission to send crash reports. -->
+    <string name="security_options_crash_reports_send_data">사용자를 대신하여 %1$s이(가) 백로그된 충돌 보고서를 보내도록 허용
+</string>
 
     <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'On'. -->
     <string name="on">켜기</string>
@@ -488,13 +637,21 @@
     <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'Off'. -->
     <string name="off">끄기</string>
 
+    <!-- This string is displayed on the left of switched that are used to enable/disable sync when the switch is enabled.
+         i.e. The history switch for Firefox account syncing-->
+    <string name="sync">동기화</string>
+
+    <!-- This string is displayed on the left of switched that are used to enable/disable sync when the switch is enabled.
+         i.e. The history switch for Firefox account syncing-->
+    <string name="do_not_sync">동기화 안 함</string>
+
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
     <string name="voice_search_start">웹에서 무엇을 검색하고 싶습니까?</string>
 
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
-    <string name="voice_search_example">예: &quot;360 videos, weather, news…&quot;라고 말하십시오</string>
+    <string name="voice_search_example">예: &quot;360도 동영상, 날시, 뉴스…&quot;라고 말하세요</string>
 
     <!-- This string is displayed in a dialog box show to the user while the Voice Search is being
          performed. It indicates that the search query is running and they should wait for the result. -->
@@ -506,15 +663,18 @@
 
     <!-- This string is displayed in a dialog box after a failed Voice Search and the system is prompting the
          user to try the Voice Search again. -->
-    <string name="voice_search_try_again">다시 말해보십시오.</string>
+    <string name="voice_search_try_again">다시 시도해 주세요.</string>
 
     <!-- This string is displayed in a dialog after the user has declined permission to use the
          device's microphone. It explains why Voice Search is not working. -->
-    <string name="voice_search_permission_after_decline">음성 검색을 사용하려면 마이크 접근을 허용하십시오.</string>
+    <string name="voice_search_permission_after_decline">음성 검색을 사용하려면 마이크 접근을 허용하세요.</string>
+
+    <!-- This string is displayed in the button at the bottom of the Voice Search dialog. When clicked the Voice search dialog is closed. -->
+    <string name="voice_search_close">닫기</string>
 
     <!-- This string is displayed in the URL bar when it is empty. It informs the user that they
          may use the URL bar to search the Web or enter a Web address. -->
-    <string name="search_placeholder">웹을 검색하거나 주소를 입력하십시오</string>
+    <string name="search_placeholder">검색어 또는 주소 입력</string>
 
     <!-- This string labels a button that is used to cancel an action.
          This appears in such contexts as dialog boxes, `<select>` menus, etc. -->
@@ -532,7 +692,7 @@
 
     <!-- This string explains why Mozilla would like the user to allow the crash data to be uploaded.
          '%1$s' will be replaced at runtime with the app's domain name. -->
-    <string name="crash_dialog_message">귀하의 오류 데이터를 전송하면 Mozilla가 %1$s을(를) 개선하는 데 유용합니다.</string>
+    <string name="crash_dialog_message">충돌 데이터를 보내서 Mozilla가 %1$s을(를) 개선하도록 도와주세요. &lt;a href=&quot;more&quot;&gt;더 알아보기&lt;/a&gt;</string>
 
     <!-- This string labels a checkbox in the crash dialog box. When checked, the user will no longer
          be prompted for permission to upload crash data after an application crash. -->
@@ -615,10 +775,38 @@
     <!-- This string is displayed as the title of the Bookmarks List, which contains the user's bookmarked websites. -->
     <string name="bookmarks_title">북마크</string>
 
+    <!-- This string is displayed as the title of the Bookmarks List when the bookmarks list is empty. -->
+    <string name="bookmarks_empty">북마크 목록이 비어 있습니다</string>
+
+    <!-- This string is displayed under the bookmarks title in the bookmarks list. -->
+    <string name="bookmarks_description">@ 아이콘을 클릭하여 페이지를 북마크에 추가하세요.</string>
+
+    <!-- This string is displayed in the middle of the Bookmarks List while the bookmarks are being loaded. -->
+    <string name="bookmarks_loading">북마크 로드 중</string>
+
+    <!-- This string is displayed as the title of the folder containing mobile bookmarks (after they're synced). -->
+    <string name="bookmarks_mobile_folder_title">모바일 북마크</string>
+
+    <!-- This string is displayed as the title of the folder containing desktop bookmarks (after they're synced). -->
+    <string name="bookmarks_desktop_folder_title">데스크탑 북마크</string>
+
+    <!-- This string is displayed as the title of the desktop "menu" bookmarks folder. -->
+    <string name="bookmarks_desktop_menu_title">북마크 메뉴</string>
+
+    <!-- This string is displayed as the title of the desktop "toolbar" bookmarks folder. -->
+    <string name="bookmarks_desktop_toolbar_title">북마크 툴바</string>
+
+    <!-- This string is displayed as the title of the desktop "unfiled" bookmarks folder. -->
+    <string name="bookmarks_desktop_unfiled_title">다른 북마크</string>
+
     <!-- This string is displayed in a tooltip that appears when a user hovers
          over an icon representing 'Remove Bookmark' for an individual bookmark
          item listed in the Bookmarks List. -->
     <string name="bookmarks_remove">북마크 삭제</string>
+
+    <!-- This string is displayed in a tooltip that appears in the tray bar on top of the
+         bookmarks tray button then a new item is bookmarked. -->
+    <string name="bookmarks_saved_notification">북마크에 저장되었습니다!</string>
 
     <!-- This string is displayed in a tooltip that appears when a user hovers
          over an icon representing 'Edit This Bookmark' for an individual bookmark
@@ -639,8 +827,18 @@
          all the bookmarks. -->
     <string name="bookmarks_show_all">모든 북마크 보기</string>
 
+    <!-- This string is displayed is the "Sync" button in the bookmarks panel. When pressed the
+         bookmarks are synced with the Firefox account. -->
+    <string name="bookmarks_sync">동기화</string>
+
     <!-- This string is displayed as the title of the history list, which contains the user's visited websites. -->
     <string name="history_title">방문 기록</string>
+
+    <!-- This string is displayed as the title of the history list when the history is empty. -->
+    <string name="history_empty">방문 기록이 비어있습니다</string>
+
+    <!-- This string is displayed under the history title in the history list. -->
+    <string name="history_description">여기에서 방문 기록에 액세스 할 수 있습니다</string>
 
     <!-- This string is displayed in the middle of the history list while the history is being loaded. -->
     <string name="history_loading">방문 기록 로딩 중</string>
@@ -660,6 +858,31 @@
     <!-- This string is displayed is the "Clear History" button in the history list. When pressed a dialog for
          clearing history is displayed. -->
     <string name="history_clear">방문 기록 삭제</string>
+
+    <!-- This string is displayed is the "Sync" button in the history panel. When pressed the
+         history is synced with the Firefox account. -->
+    <string name="fxa_sync">동기화</string>
+
+    <!-- This string is displayed is the "Sync" button in the history panel when the sync is in progress. -->
+    <string name="fxa_syncing">동기화 중…</string>
+
+    <!-- This string is displayed in the title of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
+    <string name="fxa_signout_confirmation_title">Firefox 계정에서 로그아웃 하시겠습니까?</string>
+
+    <!-- This string is displayed in the body of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
+    <string name="fxa_signout_confirmation_body">로그 아웃하면 다른 기기에서 탭을 보내거나 받을 수 없습니다. 북마크와 방문 기록도 동기화가 중지됩니다.</string>
+
+    <!-- This string is displayed in the checkbox text of the FxA sign out dialog displayed when the user clicks on the Sign out button.
+         When checked the history and Bookmarks will be deleted from gthe device after signing in. -->
+    <string name="fxa_signout_confirmation_checkbox">이 기기에서 방문기록 및 북마크 지우기</string>
+
+    <!-- This string is displayed in the cancel button of the FxA sign out dialog displayed when the user clicks on the Sign out button.
+         If clicked the user will be signed out from their FxA account and the dialog will be dismissed. -->
+    <string name="fxa_signout_confirmation_signout">로그아웃</string>
+
+    <!-- This string is displayed in the accept button of the FxA sign out dialog displayed when the user clicks on the Sign out button.
+         If clicked the user will not be signed out from the FxA account and the dialog will be dismissed. -->
+    <string name="fxa_signout_confirmation_cancel">취소</string>
 
     <!-- This string is displayed is the "Cancel" button from the clear history dialog.
          When pressed the dialog is closed. -->
@@ -685,9 +908,17 @@
          If selected all the history is deleted from the history storage. -->
     <string name="history_clear_range_everything">모든 방문 기록</string>
 
+    <!-- This string is displayed in the header of the radio button where the clear cache time range
+         can be selected. -->
+    <string name="history_clear_time_range">삭제할 기간: </string>
+
     <!-- This string is displayed is the history context menu that is displayed when
          the more button is pressed in a history item. It opens the selected history item in a new window. -->
-    <string name="history_context_menu_new_window">새 창에서 열기</string>
+    <string name="history_context_menu_new_window">새 창에 열기</string>
+
+    <!-- This string is displayed is the history context menu that is displayed when
+         the more button is pressed in a history item. It opens the selected history item in a new tab. -->
+    <string name="history_context_menu_new_tab">새 탭에 열기</string>
 
     <!-- This string is displayed is the history context menu that is displayed when
          the more button is pressed in a history item. It add the selected items to favorites. -->
@@ -703,6 +934,23 @@
     <!-- This string labels the Reset button that restores the default privacy and security settings values. -->
     <string name="privacy_options_reset">개인 정보 및 보안 설정 초기화</string>
 
+    <!-- This string labels the Clear All button that removes all the sites from the stored allowed pop-ups sites. -->
+    <string name="privacy_options_popups_clear_all">모두 지우기</string>
+
+    <!-- This string labels the Reset button that removes all the sites from the stored allowed pop-ups sites. -->
+    <string name="privacy_options_popups_reset">팝업 차단 창 설정 초기화</string>
+
+    <!-- This string is displayed on top of the allowed sites list in the allowed pop-ups panel. -->
+    <string name="privacy_options_popups_list_header">다음 웹 사이트는 팝업 창을 열도록 요청됨:</string>
+
+    <!-- This string is displayed in the first line of a text that's displayed in the middle of allowed pop-ups panel instead of the exceptions list
+         when there are no exceptions. -->
+    <string name="privacy_options_popups_list_empty_first">팝업 창이 있는 웹 사이트를 열면, 팝업 창을 차단할 수 있는 대화 상자가 나타납니다.</string>
+
+    <!-- This string is displayed in the second line of a text that's displayed in the middle of allowed pop-ups panel instead of the exceptions list
+         when there are no exceptions. -->
+    <string name="privacy_options_popups_list_empty_second">권한이 있는 사이트 목록이 여기에 나타납니다.</string>
+
     <!-- This string labels the Reset button that restores the default controller settings values. -->
     <string name="controller_options_reset">제어 설정 초기화</string>
 
@@ -716,22 +964,22 @@
     <string name="display_language_options_reset">표시 언어 초기화</string>
 
     <!-- This string labels the Reset button that restores the default content language settings values. -->
-    <string name="content_language_options_reset">선호하는 웹 사이트 언어 초기화</string>
+    <string name="content_language_options_reset">웹사이트 기본 언어 초기화</string>
 
     <!-- This string labels the Reset button that restores all language settings values. -->
     <string name="all_language_options_reset">모든 언어 설정 초기화</string>
 
     <!-- This string labels the description in the Voice Search Language button in the main language setting dialog. -->
-    <string name="language_options_voice_search_language"><![CDATA[음성 검색 언어: <br>&emsp;&emsp;<b>%1$s</b>]]></string>
+    <string name="language_options_voice_search_language_title">음성 검색 언어:</string>
 
     <!-- This string labels the description in the Content Language button in the main language setting dialog. -->
-    <string name="language_options_content_language"><![CDATA[선호하는 웹 사이트 표시 언어: <br>&emsp;&emsp;<b>%1$s</b>]]></string>
+    <string name="language_options_content_language_title">웹페이지 표시를 위한 기본 언어:</string>
 
     <!-- This string labels the description in the Display Language button in the main language setting dialog. -->
-    <string name="language_options_display_language"><![CDATA[앱 표시 언어: <br>&emsp;&emsp;<b>%1$s</b>]]></string>
+    <string name="language_options_display_language_title">앱의 표시 언어:</string>
 
     <!-- This string labels the description in the Content Language header for preferred languages list. -->
-    <string name="language_options_preferred_languages">선호 언어</string>
+    <string name="language_options_preferred_languages">기본 언어</string>
 
     <!-- This string labels the description in the Content Language header for available languages list. -->
     <string name="language_options_available_languages">사용 가능한 언어</string>
@@ -795,6 +1043,10 @@
          browser's navigation bar. The button it labels, when pressed, clears the navigation bar text. -->
     <string name="clear_tooltip">지우기</string>
 
+    <!-- This string is for the tooltip that appears upon hovering the 'Pop-Up' button in the
+         browser's navigation bar. The button it labels, when pressed, Shows the pop-up blocked dialog. -->
+    <string name="popup_tooltip">팝업 차단</string>
+
     <!-- This string is for the tooltip that when clicking the 'Info' (ⓘ) icon visible next to the current website's
          URL in the URL bar. The button it labels, when pressed, shows information about the site. -->
     <string name="site_info_tooltip">사이트 정보 보기</string>
@@ -809,14 +1061,35 @@
 
     <!-- This string is for the tooltip that appears when the user is not in the browser's Private Browsing mode
          and hovers over the 'Private Browsing' icon in the browser's tray menu. -->
-    <string name="private_browsing_enter_tooltip">프라이빗 브라우징 시작</string>
+    <string name="private_browsing_enter_tooltip">사생활 보호 모드 시작</string>
 
     <!-- This string is for the tooltip that appears when the user is in the browser's Private Browsing mode
          and hovers over the 'Private Browsing' icon in the browser's tray menu. -->
-    <string name="private_browsing_exit_tooltip">프라이빗 브라우징 종료</string>
+    <string name="private_browsing_exit_tooltip">사생활 보호 모드 종료</string>
 
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the target url in a new window. -->
-    <string name="context_menu_open_new_window">새 창으로 열기</string>
+    <string name="context_menu_open_new_window_1">새 창에 열기</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the target url in a new tab. -->
+    <string name="context_menu_open_new_tab_1">새 탭에 열기</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it copies the target to the clipboard -->
+    <string name="context_menu_copy_link">링크 복사</string>
+
+    <!-- This string is shown in the context menu after a longpress on a text. When clicked it cuts the selected text and can be pasted later. -->
+    <string name="context_menu_cut_text">잘라내기</string>
+
+    <!-- This string is shown in the context menu after a longpress on a text. When clicked it copies the selected text and can be pasted later. -->
+    <string name="context_menu_copy_text">복사</string>
+
+    <!-- This string is shown in the context menu after a longpress on a input. When clicked it pastes the current text on the clipboard. -->
+    <string name="context_menu_paste_text">붙여넣기</string>
+
+    <!-- This string is shown in the context menu after a longpress on a text. When clicked it selects all text from the longpressed page area. -->
+    <string name="context_menu_select_all_text">모두 선택</string>
+
+    <!-- This string is shown in the context menu after a longpress on a text. When clicked it unselects the selected text. -->
+    <string name="context_menu_unselect">선택 취소</string>
 
     <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmark' icon in the
          browser's navigation bar. The button it labels, when pressed, bookmarks the currently open web site. -->
@@ -858,21 +1131,21 @@
 
     <!-- This string is used as the title of the Private Browsing page that is opened when the
          Private Browsing Mode button from the tray is clicked. -->
-    <string name="private_browsing_title">프라이빗 브라우징</string>
+    <string name="private_browsing_title">사생활 보호 모드</string>
 
     <!-- This string is used as the body of the Private Browsing page that is opened when the
          Private Browsing Mode button from the tray is clicked.
          '%1$s' will be replaced at runtime with the app's name. -->
     <string name="private_browsing_body"><![CDATA[
-<p>프라이빗 창으로 브라우징할 경우, %1$s은(는) <strong>다음을 저장하지 않습니다</strong>:</p>
+<p>사생활 보호 창으로 브라우징할 경우, %1$s은(는) <strong>다음을 저장하지 않습니다</strong>:</p>
 <ul class="two-column">
 	<li>방문한 웹페이지</li>
 	<li>검색</li>
 	<li>쿠키</li>
 	<li>임시 파일</li>
 </ul>
-<p>프라이빗 브라우징<strong>이 인터넷 상에서 귀하를 완전히 감추어주는 것은 아닙니다</strong>. 귀하의 고용주 또는 인터넷 서비스 제공자는 귀하가 방문하는 웹페이지를 알 수 있습니다.</p>
-<p class="about-info">프라이빗 브라우징에 대해 자세히 알아보십시오<a id="learnMore"></a>.</p>
+<p>사생활 보호 모드<strong>가 인터넷 상에서 사용자를 완전히 감추어주는 것은 아닙니다</strong>. 사용자의 고용주 또는 인터넷 서비스 제공자는 사용자가 방문하는 웹페이지를 알 수 있습니다.</p>
+<p class="about-info">사생활 보호 모드 더 알아보기<a id="learnMore"></a>.</p>
      ]]></string>
 
     <!-- This string is displayed in any button used for removing all the items in the current context.
@@ -884,9 +1157,9 @@
     <!-- This string is displayed as the label of a username input in an authentication prompt. -->
     <string name="authentication_username">사용자명:</string>
     <!-- This string is displayed as the label of a password input in an authentication prompt. -->
-    <string name="authentication_password">암호:</string>
+    <string name="authentication_password">비밀번호:</string>
     <!-- This string is displayed as the label of a switch of an authentication prompt in order to show or hide the text in a password field. -->
-    <string name="authentication_show_password">암호 보이기:</string>
+    <string name="authentication_show_password">비밀번호 보이기:</string>
 
 
     <!-- This string is displayed in the title of the notification message shown when the device loses internet connection. -->
@@ -915,9 +1188,16 @@
     <!-- This string is displayed as the title of a dialog displayed when poor web page performance has been detected. -->
     <string name="performance_title">성능 저하 감지됨</string>
 
+    <!-- This string is displayed as the message body of a dialog displayed when poor web page performance has been detected and the page has been unloaded to restore performance. -->
+    <string name="performance_message">창 크기를 줄여 성능을 향상시키세요. 이 페이지를 차단 해제하면 앱이 작동 중단 될 수 있습니다.</string>
+
     <!-- This string is displayed in the title of the Voice Search samples collect dialog. That dialog is shown the first time
          a user tries to use the voice search. -->
     <string name="voice_samples_collect_data_dialog_title">연구를 위하여 %1$s가 음성 샘플을 수집하도록 허용하시겠습니까?</string>
+
+    <!-- This string is displayed in the description of the Voice Search samples collect dialog. That dialog is shown the first time
+         a user tries to use the voice search. -->
+    <string name="voice_samples_collect_dialog_description2">음성 인식 및 기타 서비스를 개선하려면 연구 할 음성 샘플을 수집해야 합니다. 정보를 식별하지 않고 사용자 데이터를 안전하게 저장합니다. 수집을 허용하지 않더라도 항상 음성 검색을 사용할 수 있습니다. &lt;a href=&quot;privacy&quot;&gt;더 알아보기&lt;/a&gt;</string>
 
     <!-- This string is displayed in the button of the Voice Search samples collect dialog.
          When clicked the user opts in to the voice data collection. -->
@@ -925,7 +1205,7 @@
 
     <!-- This string is displayed in the button of the Voice Search samples collect dialog.
          When clicked the user opts out of the voice data collection. -->
-    <string name="voice_samples_collect_dialog_do_not_allow">허용하지 않음</string>
+    <string name="voice_samples_collect_dialog_do_not_allow">허용 안 함</string>
 
     <!-- This string is displayed in the content language list in front of the system default language in between parenthesis -->
     <string name="language_default">기본</string>
@@ -943,4 +1223,152 @@
     <!-- This string is displayed in the Clear button on top of the window when in private mode. It only appears
          when there is one window left. When clicked, it closes the private session -->
     <string name="private_clear_button">지우기</string>
+
+
+    <!-- This string is displayed in the title of the pop-up blocking dialog.
+         '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="popup_block_title">%1$s가 이 사이트에서 팝업을 차단했습니다</string>
+
+    <!-- This string is displayed as a description below the title of the pop-up blocking dialog. -->
+    <string name="popup_block_description">어쨌든 볼까요?</string>
+
+    <!-- This string is displayed on the right of the checkbox in the the pop-up blocking dialog.
+         If the checkbox is checked Firefox will never ask again to block pop-ups for this site -->
+    <string name="popup_block_checkbox">이 사이트는 다시 묻지 않음</string>
+
+    <!-- This string is displayed on the left button of the pop-up blocking dialog.
+         If the button is clicked the pop-up will be shown -->
+    <string name="popup_block_button_show">보기</string>
+
+    <!-- This string is displayed on the right button of the pop-up blocking dialog.
+         If the button is clicked the pop-up will be blocked -->
+    <string name="popup_block_button_cancel">취소</string>
+
+    <!-- This string is displayed in a button on the header of the tabs dialog. When clicked,
+        it allows to select tabs from the tab -->
+    <string name="tabs_select">선택</string>
+
+    <!-- This string is displayed in a button on the header of the tabs dialog, after selection mode is enabled with
+        the Select` button. When clicked it closes the selection mode -->
+    <string name="tabs_select_done">완료</string>
+
+    <!-- This string is displayed in a button on the header of the tabs dialog, after selection mode is enabled with
+    the Select` button. When clicked it selects all the available tabs -->
+    <string name="tabs_select_all">모두 선택</string>
+
+    <!-- This string is displayed in a button on the header of the tabs dialog, after selection mode is enabled with
+the Select` button. When clicked it closes all the previously selected tabs -->
+    <string name="tabs_close_selected">탭 닫기</string>
+
+    <!-- This string is displayed in a button on the header of the tabs dialog.
+     When clicked it closes all the available tabs -->
+    <string name="tabs_close_all">모두 닫기</string>
+
+    <!-- This string is displayed in a button on the header of the tabs dialog.
+       When clicked it unselects all the tabs -->
+    <string name="tabs_unselect">모두 선택해제</string>
+
+    <!-- This string is displayed in a label on the header of the tabs dialog. It indicates that there is one tab
+        available -->
+    <string name="tabs_counter_singular">1개 탭</string>
+
+    <!-- This string is displayed in a label on the header of the tabs dialog. It indicates that there are n tabs available.
+        %1$s expands to a integer which indicates the number of tabs. This number is always larger than 1, ortherwise
+        tabs_counter_singular key is used-->
+    <string name="tabs_counter_plural">%1$s개 탭</string>
+
+    <!-- This string is displayed in a label on the header of the tabs dialog. It's only visible in tab selection mode.
+        It indicates that there is one tab selected -->
+    <string name="tabs_selected_counter_singular">1개 탭 선택됨</string>
+
+    <!-- This string is displayed in a label on the header of the tabs dialog. It's only visible in tab selection mode.
+        It indicates that there are n tabs selected. %1$s expands to a integer which indicates the number of tabs.
+        This number is always larger than 1, ortherwise tabs_selected_counter_singular key is used-->
+    <string name="tabs_selected_counter_plural">%1$s개 탭 선택됨</string>
+
+    <!-- This string is displayed in a label on the header of the tabs dialog. It's only visible in tab selection mode.
+     It indicates that there are no tabs selected -->
+    <string name="tabs_selected_counter_none">0개 탭 선택됨</string>
+
+    <!-- This string is for the tooltip that appears when the users hovers in the tabs icon in the browser's
+        tray menu. When clicked it opens the tray dialog in the current active window -->
+    <string name="tabs_tray_tooltip">탭 보기</string>
+
+    <!-- This string is displayed in a tooltip that appears in the tray bar on top of the
+     tabs tray button then a tab has been added on the background. -->
+    <string name="tab_added_notification">새 탭 추가됨!</string>
+
+    <!-- This string is displayed in a tooltip that appears in the tray bar on top of the
+     tabs tray button then a tab has been sent. -->
+    <string name="tab_sent_notification">탭 보냄!</string>
+
+    <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
+         it opens the send tab dialog -->
+    <string name="hamburger_menu_send_tab">탭을 기기로 보내기</string>
+
+    <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
+         it opens the window resize panel -->
+    <string name="hamburger_menu_resize">창 크기 조정</string>
+
+    <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
+         it switches User Agent from desktop to mobile and vice versa -->
+    <string name="hamburger_menu_switch_to_desktop">데스크탑 모드</string>
+
+    <!-- This string is displayed in the tooltip that is displayed when the user hovers the hamburger menu icon -->
+    <string name="hamburger_menu_tooltip">메뉴</string>
+
+    <!-- This string is displayed in the title of the Send Tab to device dialog. -->
+    <string name="send_tab_dialog_title">탭을 기기로 보내기</string>
+
+    <!-- This string is displayed in the description of the Send Tab to device dialog. -->
+    <string name="send_tab_dialog_description">탭을 보낼 기기를 선택하세요.</string>
+
+    <!-- This string is displayed on top of the available devices list. -->
+    <string name="send_tab_dialog_options_header">사용 가능 기기:</string>
+
+    <!-- This string is displayed instead of the devices list if there are no available devices. -->
+    <string name="send_tab_dialog_no_devices">연결된 기기 없음.</string>
+
+    <!-- This string is displayed instead of the devices list if the devices list is being synced. -->
+    <string name="send_tab_dialog_syncing">동기화 중...</string>
+
+    <!-- This string is displayed in the button of the Send Tab to device dialog. When clicked the current tab is sent to the selected device -->
+    <string name="send_tab_dialog_button">보내기</string>
+
+    <!-- This string is displayed in the header of the what's new dialog that is displayed if the user has updated
+         or updated the app and hasn't signed it yet. -->
+    <string name="whats_new_title_1">탭을 보내기 위해 로그인</string>
+
+    <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
+         or updated the app and hasn't signed it yet. -->
+    <string name="whats_new_body_1">데스크탑 또는 모바일 기기의 Firefox에서 헤드셋으로 탭을 보내려면 로그인하거나 새 Firefox 계정을 만드세요.</string>
+
+    <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
+         or updated the app and hasn't signed it yet. -->
+    <string name="whats_new_body_sub_1">Firefox 계정을 사용하면 모든 장치에서 북마크와 방문 기록을 동기화 할 수 있습니다.</string>
+
+
+    <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
+         or updated the app and hasn't signed it yet. If clicked the user is redirected to the Firefox Account sign-in page. -->
+    <string name="whats_new_button_sign_in">로그인</string>
+
+    <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
+         or updated the app and hasn't signed it yet. If clicked the dialog is dismissed. -->
+    <string name="whats_new_button_start_browsing">브라우징 시작</string>
+
+
+    <!-- This string is displayed in the title of the slow script dialog. -->
+    <string name="slow_script_dialog_title">느린 스크립트</string>
+
+    <!-- This string is displayed as a description below the title of slow script dialog.
+        '%1$s' will be replaced the script filename that is causing the slow down. -->
+    <string name="slow_script_dialog_description">웹 페이지가 브라우저를 느리게 하고 있습니다 (%1$s). 무엇을 하시겠습니까?</string>
+
+    <!-- This string is displayed as a button below the slow script dialog description message. When clicked
+        it stops the slow script that is causing the web page slow down. -->
+    <string name="slow_script_dialog_action_stop">중지</string>
+
+    <!-- This string is displayed as a button below the slow script dialog description message. When clicked
+       it continues to wait for execution of the web page script that caused the slow down. -->
+    <string name="slow_script_dialog_action_wait">대기</string>
 </resources>
