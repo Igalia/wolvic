@@ -137,7 +137,6 @@ public class NavigationURLBar extends FrameLayout {
 
         mBinding.urlEditText.setOnFocusChangeListener((view, focused) -> {
             boolean isUrlEmpty = mBinding.urlEditText.getText().length() == 0;
-            mViewModel.setIsMicrophoneEnabled(!focused || isUrlEmpty);
             mViewModel.setIsFocused(focused);
             mViewModel.setIsUrlEmpty(isUrlEmpty);
             if (!focused) {
@@ -381,7 +380,6 @@ public class NavigationURLBar extends FrameLayout {
             }
         }
 
-        mViewModel.setIsMicrophoneEnabled(!text.isEmpty());
         clearFocus();
     }
 
@@ -435,7 +433,6 @@ public class NavigationURLBar extends FrameLayout {
             String aURL = mBinding.urlEditText.getText().toString();
             boolean empty = aURL.length() == 0 || aURL.startsWith("about://");
             mViewModel.setIsUrlEmpty(empty);
-            mViewModel.setIsMicrophoneEnabled(empty);
         }
 
         @Override
