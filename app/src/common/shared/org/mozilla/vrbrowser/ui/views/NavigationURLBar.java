@@ -372,7 +372,7 @@ public class NavigationURLBar extends FrameLayout {
             GleanMetricsService.urlBarEvent(false);
         }
 
-        if (mSession.getCurrentUri() != url) {
+        if (!mSession.getCurrentUri().equals(url)) {
             mSession.loadUri(url);
 
             if (mDelegate != null) {
