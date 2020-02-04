@@ -264,4 +264,202 @@
     <string name="settings_controller_options">Controller Options</string>
 
 
+    <!-- This string is displayed in the 'Settings' dialog window and, is used to label an,
+         On/Off switch that enables/disables the speech-data reporting. -->
+    <string name="settings_report_speech_data">Report Speech Data</string>
+
+    <!-- This string is used to label a button that, when pressed, loads a website
+         that allows the user file an issue or problem they may have encountered while using the
+         application or while visiting a site. -->
+    <string name="settings_report_issue">Report an Issue</string>
+
+    <!-- This string is used in place of the 'settings_version' string (e.g., `version 1.1`) when the user is running
+         a developer-build version of the app. -->
+    <string name="settings_version_developer">Developer Build</string>
+
+    <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
+        opens the Firfox Reality support web site in the browser window. -->
+    <string name="settings_help">Help</string>
+
+    <!-- This string is displayed in the settings header under the Firefox Reality logo. When clicked the settings panel is closed
+         a the survey web site in opened in the currently focused window -->
+    <string name="settings_send_your_feedback">Send us Your Feedback</string>
+
+    <!-- This string is used in the 'Settings' window when user is signed-out of Firefox Accounts -->
+    <string name="settings_accounts_sign_in">Sign in</string>
+
+    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account -->
+    <string name="settings_accounts_sign_out">Sign out</string>
+
+    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account, but needs to re-enter their password.
+         Most common reason for this state is that the account password was changed on another device. -->
+    <string name="settings_accounts_reconnect">Reconnect</string>
+
+    <!-- This string is the title of a dialog box shown to the user when a settings
+         change requires the application to restart. -->
+    <string name="restart_dialog_restart">Restart Required</string>
+
+    <!-- This string is the text displayed in the restart dialog box explaining why the
+         restart is required. '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="restart_dialog_text">You must restart %1$s in order to complete changes. Would you like to do that now?</string>
+
+    <!-- This string is used to label the button the user presses to restart the
+         application in the restart dialog. -->
+    <string name="restart_now_dialog_button">Restart Now</string>
+
+    <!-- This string is used to label the button the user presses in order to skip the application
+         from being restarted. -->
+    <string name="restart_later_dialog_button">Restart Later</string>
+
+    <!-- This string labels an On/Off switch in the 'Developer Options' dialog
+     and is used to enable or disable curved display. -->
+    <string name="developer_options_curved_display">Enable Curved Display</string>
+
+    <!-- This string labels an On/Off switch in the 'Developer Options' dialog
+         and is used to toggle remote debugging of website content in the application. -->
+    <string name="developer_options_remote_debugging">Enable Remote Debugging</string>
+
+    <!-- This string labels an On/Off switch in the 'Developer Options' dialog
+         and is used to toggle redirecting JavaScript Console output to the Android Logcat (i.e., `adb logcat`). -->
+    <string name="developer_options_show_console">Redirect Console to Logcat</string>
+
+    <!-- This string labels an On/Off switch in the developer options dialog
+         and is used to customize background environments of the app. -->
+    <string name="developer_options_env_override">Enable Environment Override</string>
+
+    <!-- This string labels an On/Off switch in the developer options dialog and is used to toggle
+         running content in a separate process.
+         Multiprocessing: the running of two or more programs or sequences of instructions
+         simultaneously by a computer with more than one central processor.
+         A dialog should appear with a field labeled with the text, 'Enable Multiprocess'. -->
+    <string name="developer_options_multiprocess">Enable Multiprocess</string>
+
+    <!-- This string labels an On/Off switch in the developer options dialog and is used to toggle
+         the performance monitor. The Performance monitor is used to detect pages that cause the
+         browser to run below a target framerate and pauses the page to restore performance.
+    -->
+    <string name="developer_options_performance_monitor">Enable Performance Monitor</string>
+
+    <!-- This string labels an On/Off switch in the developer options dialog and is used to toggle
+         debug logging. Debug logging provides runtime diagnostic information that may be collected
+         to help diagnose and fix problems with the application.
+    -->
+    <string name="developer_options_debug_logging">Enable Debug Logging</string>
+
+    <!-- This string labels an On/Off switch in the developer options dialog and is used to toggle
+     UI render mode. If enables it uses hardware acceleration which should be faster but it may be more unstable.
+     If disabled it uses software rendering which is stable but not as performant as hardware acceleration
+-->
+    <string name="hardware_acceleration_switch">Enable UI Hardware Acceleration</string>
+
+    <!-- The string labels an On/Off switch in the developer options dialog and is used to toggle enabling Servo. -->
+    <string name="developer_options_servo">Enable Servo</string>
+
+    <!-- The string labels the description text for the clear cookies and site data button in the
+         privacy options dialog. -->
+    <string name="developer_options_clear_cache_cookies_site_description">Cookies &amp; Site Data</string>
+
+    <!-- The string labels the description text for the clear cached web content button in the
+         privacy options dialog. -->
+    <string name="developer_options_clear_cache_web_content_description">Cached Web Content</string>
+
+    <!-- The string labels the button text for the clear cache buttons in the privacy options dialog. -->
+    <string name="developer_options_clear_cache">Clear Data</string>
+
+    <!-- This string is used to label a numerical-entry field where the user may set a new value to
+         use for the display density. -->
+    <string name="developer_options_display_density">Display Density:</string>
+
+    <!-- This string is used to label buttons to enable editing of text fields in the
+         'Developer Options' dialog. Pressing this button switches the text to
+         editable-text fields so their values may be changed. -->
+    <string name="developer_options_edit">Edit</string>
+
+    <!-- This string is used to label the 'Edit' button once it has been pressed by the user. It
+         indicates that, when the button is pressed, the user's edits will be saved. -->
+    <string name="developer_options_save">Save</string>
+
+    <!-- This string is used to label the 'Show' button in Settings. It
+     indicates that, when the button is pressed opens a dialog box that contains more information.
+     For example it's used to open a URL with the privacy policy. -->
+    <string name="developer_options_show">Show</string>
+
+    <!-- This string is used to label a numerical entry field where the user may enter a new value
+         for the virtual displays Dots Per Inch (DPI). -->
+    <string name="developer_options_display_dpi">Display DPI:</string>
+
+    <!-- This string is used to label radio buttons for setting Multi-Sample Anti-Aliasing (MSAA) in
+         VR Immersive Mode. -->
+    <string name="developer_options_msaa">MSAA</string>
+
+    <!-- This string is used to label the MSAA radio button that disables MSAA in Immersive Mode. -->
+    <string name="developer_options_msaa_disabled">Disabled</string>
+
+    <!-- This string is used to label the MSAA radio button that enables two times MSAA in Immersive Mode. -->
+    <string name="developer_options_msaa_2">2x</string>
+
+    <!-- This string is used to label the MSAA radio button that enables two times MSAA in Immersive Mode. -->
+    <string name="developer_options_msaa_4">4x</string>
+
+    <!-- This string is used to label a set of radio buttons that allow the user to change the
+         User-Agent (UA) string of the browser. -->
+    <string name="developer_options_ua_mode">User-Agent Mode</string>
+
+    <!-- This string is used to label the 'Desktop' radio button of the 'User-Agent Mode' settings option. -->
+    <string name="developer_options_ua_desktop">Desktop</string>
+
+    <!-- This string is used to label the 'Mobile' radio button of the 'User-Agent Mode' settings option. -->
+    <string name="developer_options_ua_mobile">Mobile</string>
+
+    <!-- This string is used to label the 'VR' radio button of the 'User-Agent Mode' settings option. -->
+    <string name="developer_options_ua_vr">VR</string>
+
+    <!-- This string is used to label radio buttons for setting fixed-foveated-rendering (FFR) level.
+     The term "foveation" derives from "fovea", the area of higher-resolution vision in the human retina.
+     Higher values of this option result in larger parts of the peripheral vision being rendered
+     at lower resolutions than the content in the center of the view.  These higher values reduce
+     quality to increase performance.
+     The Oculus implementation of fixed-foveated-rendering is described in more detail here:
+     https://developer.oculus.com/blog/optimizing-oculus-go-for-performance/-->
+    <string name="developer_options_foveated_app">Foveation Level (App)</string>
+    <!-- This string is used to label radio buttons for setting foveated level for WebVR immersive experiences -->
+    <string name="developer_options_foveated_webvr">Foveation Level (WebVR)</string>
+    <!-- This string is used to label the Foveated radio button that disables fixed-foveated-rendering in immersive mode. -->
+    <string name="developer_options_foveated_disabled">Disabled</string>
+    <!-- This string is used to label the Foveated radio button that enables low-level fixed-foveated-rendering. -->
+    <string name="developer_options_foveated_1">1</string>
+    <!-- This string is used to label the Foveated radio button that enables medium-level fixed-foveated-rendering. -->
+    <string name="developer_options_foveated_2">2</string>
+    <!-- This string is used to label the Foveated radio button that enables high-level fixed-foveated-rendering. -->
+    <string name="developer_options_foveated_3">3</string>
+
+    <!-- This string is used to label a set of radio buttons that allow the user to change the
+     scroll direction of the remote controller. -->
+    <string name="developer_options_scroll_direction">Scroll Direction</string>
+
+    <!-- This string is used to label the 'Natural' radio button of the 'Scroll Direction' settings option.
+         "Natural" refers to the motion of scrolled material being congruent with respect to direction of
+         motion of user input. -->
+    <string name="developer_options_scroll_direction_natural">Natural</string>
+
+    <!-- This string is used to label the 'Reversed' radio button of the 'Scroll Direction' settings option.
+         "Reversed" refers to the motion of scrolled material being reversed with respect to direction of
+         motion of user input. -->
+    <string name="developer_options_scroll_direction_reversed">Reversed</string>
+
+    <!-- This string describes what the 'Reset' button in the developer options does which is
+         restore all the developer settings to their default value. -->
+    <string name="developer_options_reset">Reset Developer Settings</string>
+
+    <!-- This string labels the 'Reset' button that restores the default developer settings values. -->
+    <string name="developer_options_reset_button">Reset</string>
+
+    <!-- This string is used to label buttons to enable editing of other options. -->
+    <string name="settings_button_edit">Edit</string>
+
+    <!-- This string describes the radio buttons used to select the user's background environment
+         (seen while not in Immersive Mode). -->
+    <string name="developer_options_environments">Environment</string>
+
+
     </resources>

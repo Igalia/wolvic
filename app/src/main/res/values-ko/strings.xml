@@ -556,7 +556,7 @@
 
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable playback of DRM controlled content. -->
-    <string name="security_options_drm_content">DRM 제어 콘텐츠 재생 (&lt;a href=&quot;http://somesite.com/&quot;&gt;자세히 알아보기&lt;/a&gt;)</string>
+    <string name="security_options_drm_content">DRM 제어 콘텐츠 재생 (&lt;a href=&quot;http://somesite.com/&quot;&gt;더 알아보기&lt;/a&gt;)</string>
 
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable the tabs restoration after a fresh app start. -->
@@ -564,7 +564,7 @@
 
     <!-- This string labels an On/Off switch in the Privacy and Security settings dialog
      and is used to enable or disable tracking protection. -->
-    <string name="security_options_tracking_protection">추적 방지</string>
+    <string name="security_options_tracking_protection">추적 방지 기능</string>
 
     <!-- This string labels an On/Off switch in the Privacy and Security settings dialog
      and is used to enable or disable media autoplay. -->
@@ -651,7 +651,7 @@
 
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
-    <string name="voice_search_example">예: &quot;360도 동영상, 날시, 뉴스…&quot;라고 말하세요</string>
+    <string name="voice_search_example">예: &quot;360 동영상, 날시, 뉴스…&quot;라고 말하세요</string>
 
     <!-- This string is displayed in a dialog box show to the user while the Voice Search is being
          performed. It indicates that the search query is running and they should wait for the result. -->
@@ -688,7 +688,7 @@
     <string name="back_button">뒤로</string>
 
     <!-- This string is displayed in a dialog after an application crash. -->
-    <string name="crash_dialog_heading">문제가 생겨 오류가 발생했습니다</string>
+    <string name="crash_dialog_heading">문제가 발생하여 충돌했습니다</string>
 
     <!-- This string explains why Mozilla would like the user to allow the crash data to be uploaded.
          '%1$s' will be replaced at runtime with the app's domain name. -->
@@ -700,13 +700,13 @@
 
     <!-- This string labels a button that, when pressed, allows the user to learn more about the
          currently open dialog. -->
-    <string name="learn_more_button">자세히 알아보기</string>
+    <string name="learn_more_button">더 알아보기</string>
 
     <!-- This string labels a button that, when pressed, prevents browser-level crash data from being sent to Mozilla. -->
-    <string name="do_not_sent_button">전송하지 마시오</string>
+    <string name="do_not_sent_button">보내지 않음</string>
 
     <!-- This string labels a button that, when pressed, allows the crash data to be sent to Mozilla. -->
-    <string name="send_data_button">데이터 전송</string>
+    <string name="send_data_button">데이터 보내기</string>
 
     <!-- This string appears in the tooltip for the button to change the 'Brightness'
          (i.e., the brightness level of the background environment), in particular when playing a video. -->
@@ -722,7 +722,7 @@
     <string name="brightness_mode_void">무</string>
 
     <!-- This string labels a button to open the Video Projection selector. -->
-    <string name="video_mode_tooltip">비디오 상영</string>
+    <string name="video_mode_tooltip">비디오 프로젝션</string>
 
     <!-- This string is displayed when selecting a video playback mode. -->
     <string name="video_mode_3d_side">3D 나란히</string>
@@ -762,11 +762,11 @@
 
     <!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek +30 seconds').
     '%1$s' will be replaced at runtime with a duration in seconds (e.g., '30'). -->
-    <string name="video_controls_seek_forward">+%1$s초 검색</string>
+    <string name="video_controls_seek_forward">+%1$s초 이동</string>
 
     <!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek -15 seconds').
     '%1$s' will be replaced at runtime with a duration in seconds (e.g., '15'). -->
-    <string name="video_controls_seek_backward">-%1$s초 검색</string>
+    <string name="video_controls_seek_backward">-%1$s초 이동</string>
 
     <!-- This string is displayed in the video control seekbar when the media is not seekable
          (e.g., a live video stream). Prefer a short text because it affects the width of the seek bar. -->
@@ -788,7 +788,7 @@
     <string name="bookmarks_mobile_folder_title">모바일 북마크</string>
 
     <!-- This string is displayed as the title of the folder containing desktop bookmarks (after they're synced). -->
-    <string name="bookmarks_desktop_folder_title">데스크탑 북마크</string>
+    <string name="bookmarks_desktop_folder_title">데스크톱 북마크</string>
 
     <!-- This string is displayed as the title of the desktop "menu" bookmarks folder. -->
     <string name="bookmarks_desktop_menu_title">북마크 메뉴</string>
@@ -811,17 +811,17 @@
     <!-- This string is displayed in a tooltip that appears when a user hovers
          over an icon representing 'Edit This Bookmark' for an individual bookmark
          item listed in the Bookmarks List. -->
-    <string name="bookmarks_edit">이 북마크 수정하기</string>
+    <string name="bookmarks_edit">이 북마크 편집</string>
 
     <!-- This string is displayed as placeholder text in the search field in the Bookmarks List. -->
     <string name="bookmarks_search">북마크 검색</string>
 
     <!-- This string is displayed in a tooltip in the bookmark button in the URL bar. -->
-    <string name="bookmarks_bookmark">이 페이지 북마크하기</string>
+    <string name="bookmarks_bookmark">이 페이지 북마크</string>
 
     <!-- This string is displayed in the Bookmarks List for as the header of the most recently
          bookmarked items. -->
-    <string name="bookmarks_recent">최근 북마크 페이지</string>
+    <string name="bookmarks_recent">최근 북마크됨</string>
 
     <!-- This string is displayed in the Bookmarks List as a tooltip of the button for showing
          all the bookmarks. -->
@@ -910,7 +910,7 @@
 
     <!-- This string is displayed in the header of the radio button where the clear cache time range
          can be selected. -->
-    <string name="history_clear_time_range">삭제할 기간: </string>
+    <string name="history_clear_time_range">삭제할 기간:</string>
 
     <!-- This string is displayed is the history context menu that is displayed when
          the more button is pressed in a history item. It opens the selected history item in a new window. -->
@@ -952,7 +952,7 @@
     <string name="privacy_options_popups_list_empty_second">권한이 있는 사이트 목록이 여기에 나타납니다.</string>
 
     <!-- This string labels the Reset button that restores the default controller settings values. -->
-    <string name="controller_options_reset">제어 설정 초기화</string>
+    <string name="controller_options_reset">컨트롤러 설정 초기화</string>
 
     <!-- This string labels the Reset button that restores the default environment settings values. -->
     <string name="environment_options_reset">환경 설정 초기화</string>
@@ -1155,7 +1155,7 @@
     <!-- This string is displayed in the title of an authentication prompt, which requests a username and a password. -->
     <string name="authentication_required">인증 필요</string>
     <!-- This string is displayed as the label of a username input in an authentication prompt. -->
-    <string name="authentication_username">사용자명:</string>
+    <string name="authentication_username">사용자 이름:</string>
     <!-- This string is displayed as the label of a password input in an authentication prompt. -->
     <string name="authentication_password">비밀번호:</string>
     <!-- This string is displayed as the label of a switch of an authentication prompt in order to show or hide the text in a password field. -->
@@ -1186,7 +1186,7 @@
     <string name="performance_unblock_page">페이지 차단 해제</string>
 
     <!-- This string is displayed as the title of a dialog displayed when poor web page performance has been detected. -->
-    <string name="performance_title">성능 저하 감지됨</string>
+    <string name="performance_title">낮은 사이트 성능</string>
 
     <!-- This string is displayed as the message body of a dialog displayed when poor web page performance has been detected and the page has been unloaded to restore performance. -->
     <string name="performance_message">창 크기를 줄여 성능을 향상시키세요. 이 페이지를 차단 해제하면 앱이 작동 중단 될 수 있습니다.</string>
@@ -1312,7 +1312,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 
     <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
          it switches User Agent from desktop to mobile and vice versa -->
-    <string name="hamburger_menu_switch_to_desktop">데스크탑 모드</string>
+    <string name="hamburger_menu_switch_to_desktop">데스크톱 모드</string>
 
     <!-- This string is displayed in the tooltip that is displayed when the user hovers the hamburger menu icon -->
     <string name="hamburger_menu_tooltip">메뉴</string>
@@ -1341,11 +1341,11 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body_1">데스크탑 또는 모바일 기기의 Firefox에서 헤드셋으로 탭을 보내려면 로그인하거나 새 Firefox 계정을 만드세요.</string>
+    <string name="whats_new_body_1">데스크톱 또는 모바일 기기의 Firefox에서 헤드셋으로 탭을 보내려면 로그인하거나 새 Firefox 계정을 만드세요.</string>
 
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body_sub_1">Firefox 계정을 사용하면 모든 장치에서 북마크와 방문 기록을 동기화 할 수 있습니다.</string>
+    <string name="whats_new_body_sub_1">Firefox 계정을 사용하면 모든 기기에서 북마크와 방문 기록을 동기화 할 수 있습니다.</string>
 
 
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
