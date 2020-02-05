@@ -79,7 +79,7 @@ class VoiceSearchLanguageOptionsView extends SettingsView {
     }
 
     private RadioGroupSetting.OnCheckedChangeListener mLanguageListener = (radioGroup, checkedId, doApply) -> {
-        String currentLocale = LocaleUtils.getCurrentLocale();
+        String currentLocale = LocaleUtils.getVoiceSearchLocale(getContext());
         String locale = LocaleUtils.getSupportedLocaleForIndex(mBinding.languageRadio.getCheckedRadioButtonId());
 
         if (!locale.equalsIgnoreCase(currentLocale)) {
