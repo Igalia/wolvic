@@ -163,14 +163,16 @@ public class WindowViewModel extends AndroidViewModel {
     private Observer<ObservableBoolean> mIsTopBarVisibleObserver = new Observer<ObservableBoolean>() {
         @Override
         public void onChanged(ObservableBoolean o) {
-            if (isFullscreen.getValue().get() || isResizeMode.getValue().get()) {
+            if (isFullscreen.getValue().get() || isResizeMode.getValue().get() || !isWindowVisible.getValue().get()) {
                 isTopBarVisible.setValue(new ObservableBoolean(false));
 
-            } else if (isPrivateSession.getValue().get() && isOnlyWindow.getValue().get()) {
-                isTopBarVisible.setValue(new ObservableBoolean(true));
-
             } else {
-                isTopBarVisible.setValue(new ObservableBoolean(isWindowVisible.getValue().get() && !isOnlyWindow.getValue().get()));
+                if (isOnlyWindow.getValue().get()) {
+                    isTopBarVisible.setValue(new ObservableBoolean(isPrivateSession.getValue().get()));
+
+                } else {
+                    isTopBarVisible.setValue(new ObservableBoolean(true));
+                }
             }
         }
     };
