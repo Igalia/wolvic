@@ -9,7 +9,6 @@ import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,7 +22,6 @@ import androidx.databinding.ObservableBoolean;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserActivity;
@@ -44,7 +42,10 @@ import java.util.List;
 public class TrayWidget extends UIWidget implements SessionChangeListener, WidgetManagerDelegate.UpdateListener {
 
     private static final int ICON_ANIMATION_DURATION = 200;
-    private static final int LIBRARY_NOTIFICATION_DURATION = 3000;
+
+    private static final int TAB_ADDED_NOTIFICATION_ID = 0;
+    private static final int TAB_SENT_NOTIFICATION_ID = 1;
+    private static final int BOOKMARK_ADDED_NOTIFICATION_ID = 2;
 
     private WindowViewModel mViewModel;
     private TrayBinding mBinding;
@@ -58,7 +59,6 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Widge
     private boolean mTrayVisible = true;
     private Session mSession;
     private WindowWidget mAttachedWindow;
-    private TooltipWidget mLibraryNotification;
     private boolean mAddWindowVisible;
 
     public TrayWidget(Context aContext) {
@@ -306,8 +306,7 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Widge
 
     @Override
     public void hide(@HideFlags int aHideFlags) {
-        hideNotification(mBinding.bookmarksButton);
-        hideNotification(mBinding.tabsButton);
+        hideNotifications();
 
         if (mWidgetPlacement.visible) {
             mWidgetPlacement.visible = false;
@@ -321,9 +320,8 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Widge
 
     @Override
     public void detachFromWindow() {
-        hideNotification(mBinding.bookmarksButton);
-        hideNotification(mBinding.tabsButton);
-
+        hideNotifications();
+        
         if (mSession != null) {
             mSession.removeSessionChangeListener(this);
             mSession = null;
@@ -522,13 +520,29 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Widge
     }
 
     public void showTabAddedNotification() {
-        mBinding.tabsButton.setNotificationMode(true);
-        ThreadUtils.postToUiThread(() -> showNotification(mBinding.tabsButton, R.string.tab_added_notification));
+        showNotification(TAB_ADDED_NOTIFICATION_ID, mBinding.tabsButton, R.string.tab_added_notification);
     }
 
     public void showTabSentNotification() {
-        mBinding.tabsButton.setNotificationMode(true);
-        ThreadUtils.postToUiThread(() -> showNotification(mBinding.tabsButton, R.string.tab_sent_notification));
+        showNotification(TAB_SENT_NOTIFICATION_ID, mBinding.tabsButton, R.string.tab_sent_notification);
+    }
+
+    public void showBookmarkAddedNotification() {
+        showNotification(BOOKMARK_ADDED_NOTIFICATION_ID, mBinding.bookmarksButton, R.string.bookmarks_saved_notification);
+    }
+
+    private void showNotification(int notificationId, UIButton button, int stringRes) {
+        NotificationManager.Notification notification = new NotificationManager.Builder(this)
+                .withView(button)
+                .withDensity(R.dimen.tray_tooltip_density)
+                .withString(stringRes)
+                .withPosition(NotificationManager.Notification.TOP)
+                .withZTranslation(25.0f).build();
+        NotificationManager.show(notificationId, notification);
+    }
+
+    private void hideNotifications() {
+        NotificationManager.hideAll();
     }
 
     private BookmarksStore.BookmarkListener mBookmarksListener = new BookmarksStore.BookmarkListener() {
@@ -539,40 +553,7 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Widge
 
         @Override
         public void onBookmarkAdded() {
-            mBinding.bookmarksButton.setNotificationMode(true);
-            ThreadUtils.postToUiThread(() -> showNotification(mBinding.bookmarksButton, R.string.bookmarks_saved_notification));
+            mWidgetManager.getWindows().showBookmarkAddedNotification();
         }
     };
-
-    private void showNotification(UIButton button, int stringRes) {
-        if (mLibraryNotification != null && mLibraryNotification.isVisible()) {
-            return;
-        }
-
-        Rect offsetViewBounds = new Rect();
-        getDrawingRect(offsetViewBounds);
-        offsetDescendantRectToMyCoords(button, offsetViewBounds);
-
-        float ratio = WidgetPlacement.viewToWidgetRatio(getContext(), TrayWidget.this);
-
-        mLibraryNotification = new TooltipWidget(getContext(), R.layout.library_notification);
-        mLibraryNotification.getPlacement().parentHandle = getHandle();
-        mLibraryNotification.getPlacement().anchorY = 0.0f;
-        mLibraryNotification.getPlacement().translationX = (offsetViewBounds.left + button.getWidth() / 2.0f) * ratio;
-        mLibraryNotification.getPlacement().translationY = ((offsetViewBounds.top - 60) * ratio);
-        mLibraryNotification.getPlacement().translationZ = 25.0f;
-        mLibraryNotification.getPlacement().density = WidgetPlacement.floatDimension(getContext(), R.dimen.tray_tooltip_density);
-        mLibraryNotification.setText(stringRes);
-        mLibraryNotification.setCurvedMode(false);
-        mLibraryNotification.show(UIWidget.CLEAR_FOCUS);
-
-        ThreadUtils.postDelayedToUiThread(() -> hideNotification(button), LIBRARY_NOTIFICATION_DURATION);
-    }
-
-    private void hideNotification(UIButton button) {
-        if (mLibraryNotification != null) {
-            mLibraryNotification.hide(UIWidget.REMOVE_WIDGET);
-        }
-        button.setNotificationMode(false);
-    }
 }

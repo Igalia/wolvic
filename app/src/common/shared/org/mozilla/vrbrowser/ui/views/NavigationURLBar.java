@@ -230,7 +230,6 @@ public class NavigationURLBar extends FrameLayout {
 
         // Bookmarks
         mBinding.bookmarkButton.setOnClickListener(v -> {
-            v.requestFocusFromTouch();
             handleBookmarkClick();
         });
 
@@ -392,7 +391,6 @@ public class NavigationURLBar extends FrameLayout {
         if (mAudio != null) {
             mAudio.playSound(AudioEngine.Sound.CLICK);
         }
-        view.requestFocusFromTouch();
 
         if (mDelegate != null) {
             mDelegate.onVoiceSearchClicked();
@@ -415,7 +413,6 @@ public class NavigationURLBar extends FrameLayout {
             mAudio.playSound(AudioEngine.Sound.CLICK);
         }
 
-        view.requestFocusFromTouch();
         if (mDelegate != null) {
             mDelegate.onPopUpButtonClicked();
         }

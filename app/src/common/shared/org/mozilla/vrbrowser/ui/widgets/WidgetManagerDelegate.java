@@ -86,6 +86,8 @@ public interface WidgetManagerDelegate {
     void openNewTabForeground(@NonNull String uri);
     WindowWidget getFocusedWindow();
     TrayWidget getTray();
+    NavigationBarWidget getNavigationBar();
+    Windows getWindows();
     void addConnectivityListener(ConnectivityReceiver.Delegate aListener);
     void removeConnectivityListener(ConnectivityReceiver.Delegate aListener);
     void saveState();

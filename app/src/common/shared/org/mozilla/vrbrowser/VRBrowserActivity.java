@@ -1511,6 +1511,16 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
+    public NavigationBarWidget getNavigationBar() {
+        return mNavigationBar;
+    }
+
+    @Override
+    public Windows getWindows() {
+        return mWindows;
+    }
+
+    @Override
     public void saveState() {
         mWindows.saveState();
     }

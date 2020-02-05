@@ -64,7 +64,10 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         SharedPreferences.OnSharedPreferenceChangeListener, SuggestionsWidget.URLBarPopupDelegate,
         TrayListener, WindowWidget.WindowListener {
 
-    private static final int NOTIFICATION_DURATION = 3000;
+    private static final int TAB_ADDED_NOTIFICATION_ID = 0;
+    private static final int TAB_SENT_NOTIFICATION_ID = 1;
+    private static final int BOOKMARK_ADDED_NOTIFICATION_ID = 2;
+    private static final int POPUP_NOTIFICATION_ID = 3;
 
     private WindowViewModel mViewModel;
     private NavigationBarBinding mBinding;
@@ -86,7 +89,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private @VideoProjectionMenuWidget.VideoProjectionFlags int mAutoSelectedProjection = VIDEO_PROJECTION_NONE;
     private HamburgerMenuWidget mHamburgerMenu;
     private SendTabDialogWidget mSendTabDialog;
-    private TooltipWidget mPopUpNotification;
     private int mBlockedCount;
     private Executor mUIThreadExecutor;
 
@@ -375,7 +377,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     @Override
     public void detachFromWindow() {
-        hideNotification(mBinding.navigationBarNavigation.urlBar.getPopUpButton());
+        hideNotification();
 
         if (mAttachedWindow != null && mAttachedWindow.isResizing()) {
             exitResizeMode(ResizeAction.RESTORE_SIZE);
@@ -1028,7 +1030,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         final int currentCount = mBlockedCount;
         postDelayed(() -> {
             if (currentCount == mBlockedCount) {
-                showNotification(mBinding.navigationBarNavigation.urlBar.getPopUpButton(), R.string.popup_tooltip);
+                showNotification(POPUP_NOTIFICATION_ID, mBinding.navigationBarNavigation.urlBar.getPopUpButton(), R.string.popup_tooltip);
             }
         }, POP_UP_NOTIFICATION_DELAY);
     }
@@ -1038,7 +1040,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         final int currentCount = mBlockedCount;
         post(() -> {
             if (currentCount == mBlockedCount) {
-                hideNotification(mBinding.navigationBarNavigation.urlBar.getPopUpButton());
+                hideNotification();
             }
         });
     }
@@ -1047,37 +1049,37 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         hidePopUpsBlockedNotification();
     }
 
-    private void showNotification(UIButton button, int stringRes) {
-        if (mPopUpNotification != null && mPopUpNotification.isVisible()) {
-            return;
-        }
-
-        Rect offsetViewBounds = new Rect();
-        getDrawingRect(offsetViewBounds);
-        offsetDescendantRectToMyCoords(button, offsetViewBounds);
-
-        float ratio = WidgetPlacement.viewToWidgetRatio(getContext(), this);
-
-        mPopUpNotification = new TooltipWidget(getContext(), R.layout.library_notification);
-        mPopUpNotification.getPlacement().parentHandle = getHandle();
-        mPopUpNotification.getPlacement().anchorY = 0.0f;
-        mPopUpNotification.getPlacement().translationX = (getPaddingLeft() + offsetViewBounds.left + button.getWidth() / 2.0f) * ratio;
-        mPopUpNotification.getPlacement().translationY = ((offsetViewBounds.top - 60) * ratio);
-        mPopUpNotification.getPlacement().translationZ = 1.0f;
-        mPopUpNotification.getPlacement().density = WidgetPlacement.floatDimension(getContext(), R.dimen.tooltip_default_density);
-        mPopUpNotification.setText(stringRes);
-        mPopUpNotification.setCurvedMode(true);
-        mPopUpNotification.show(UIWidget.CLEAR_FOCUS);
-
-        postDelayed(() -> hideNotification(button), NOTIFICATION_DURATION);
+    public void showTabAddedNotification() {
+        showNotification(TAB_ADDED_NOTIFICATION_ID, R.string.tab_added_notification);
     }
 
-    private void hideNotification(UIButton button) {
-        if (mPopUpNotification != null) {
-            mPopUpNotification.hide(UIWidget.REMOVE_WIDGET);
-            mPopUpNotification = null;
-        }
-        button.setNotificationMode(false);
+    public void showTabSentNotification() {
+        showNotification(TAB_SENT_NOTIFICATION_ID, R.string.tab_sent_notification);
+    }
+
+    public void showBookmarkAddedNotification() {
+        showNotification(BOOKMARK_ADDED_NOTIFICATION_ID, R.string.bookmarks_saved_notification);
+    }
+
+    private void showNotification(int notificationId, UIButton button, int stringRes) {
+        NotificationManager.Notification notification = new NotificationManager.Builder(this)
+                .withView(button)
+                .withString(stringRes)
+                .withPosition(NotificationManager.Notification.BOTTOM)
+                .withMargin(20.0f).build();
+        NotificationManager.show(notificationId, notification);
+    }
+
+    private void showNotification(int notificationId, int stringRes) {
+        NotificationManager.Notification notification = new NotificationManager.Builder(this)
+                .withString(stringRes)
+                .withPosition(NotificationManager.Notification.BOTTOM)
+                .withMargin(20.0f).build();
+        NotificationManager.show(notificationId, notification);
+    }
+
+    private void hideNotification() {
+        NotificationManager.hideAll();
     }
 
     private ConnectivityReceiver.Delegate mConnectivityDelegate = connected -> {

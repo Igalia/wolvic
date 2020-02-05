@@ -122,8 +122,8 @@ public class SendTabDialogWidget extends SettingDialogWidget implements
         // At some point we will support sending to multiple devices or to all of them
         mAccounts.sendTabs(Collections.singletonList(device), session.getCurrentUri(), session.getCurrentTitle());
 
-        // Show the tab sent notifications in the tray
-        mWidgetManager.getTray().showTabSentNotification();
+        // Show the tab sent notifications
+        mWidgetManager.getWindows().showTabSentNotification();
 
         onDismiss();
     }

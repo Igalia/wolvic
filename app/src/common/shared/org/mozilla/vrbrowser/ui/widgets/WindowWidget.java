@@ -1061,7 +1061,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         setSession(aSession);
         SessionStore.get().setActiveSession(aSession);
         current.captureBackgroundBitmap(getWindowWidth(), getWindowHeight()).thenAccept(aVoid -> current.setActive(false));
-        mWidgetManager.getTray().showTabAddedNotification();
+        mWidgetManager.getWindows().showTabAddedNotification();
 
         GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.BROWSER);
     }

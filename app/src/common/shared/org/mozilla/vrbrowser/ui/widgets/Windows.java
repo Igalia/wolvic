@@ -54,6 +54,10 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
     private static final String WINDOWS_SAVE_FILENAME = "windows_state.json";
 
+    private static final int TAB_ADDED_NOTIFICATION_ID = 0;
+    private static final int TAB_SENT_NOTIFICATION_ID = 1;
+    private static final int BOOKMARK_ADDED_NOTIFICATION_ID = 2;
+
     class WindowState {
         WindowPlacement placement;
         int textureWidth;
@@ -1148,7 +1152,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         Session session = SessionStore.get().createSuspendedSession(aUri, targetWindow.getSession().isPrivateMode());
         session.updateLastUse();
         mFocusedWindow.getSession().updateLastUse();
-        mWidgetManager.getTray().showTabAddedNotification();
+        showTabAddedNotification();
     }
 
     @Override
@@ -1242,7 +1246,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         }
 
         if (!fullscreen) {
-            mWidgetManager.getTray().showTabAddedNotification();
+            showTabAddedNotification();
         }
 
         if (mTabsWidget != null && mTabsWidget.isVisible()) {
@@ -1276,4 +1280,59 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             mNoInternetDialog = null;
         }
     };
+
+    public void showTabAddedNotification() {
+        if (mFocusedWindow.isFullScreen()) {
+            mWidgetManager.getNavigationBar().showTabAddedNotification();
+
+        } else {
+            if (mWidgetManager.getTray().isVisible()) {
+                mWidgetManager.getTray().showTabAddedNotification();
+
+            } else {
+                NotificationManager.Notification notification = new NotificationManager.Builder(mFocusedWindow)
+                        .withString(R.string.tab_added_notification)
+                        .withZTranslation(25.0f)
+                        .withCurved(true).build();
+                NotificationManager.show(TAB_ADDED_NOTIFICATION_ID, notification);
+            }
+        }
+
+    }
+
+    public void showTabSentNotification() {
+        if (mFocusedWindow.isFullScreen()) {
+            mWidgetManager.getNavigationBar().showTabSentNotification();
+
+        } else {
+            if (mWidgetManager.getTray().isVisible()) {
+                mWidgetManager.getTray().showTabSentNotification();
+
+            } else {
+                NotificationManager.Notification notification = new NotificationManager.Builder(mFocusedWindow)
+                        .withString(R.string.tab_sent_notification)
+                        .withZTranslation(25.0f)
+                        .withCurved(true).build();
+                NotificationManager.show(TAB_SENT_NOTIFICATION_ID, notification);
+            }
+        }
+    }
+
+    public void showBookmarkAddedNotification() {
+        if (mFocusedWindow.isFullScreen()) {
+            mWidgetManager.getNavigationBar().showBookmarkAddedNotification();
+
+        } else {
+            if (mWidgetManager.getTray().isVisible()) {
+                mWidgetManager.getTray().showBookmarkAddedNotification();
+
+            } else {
+                NotificationManager.Notification notification = new NotificationManager.Builder(mFocusedWindow)
+                        .withString(R.string.bookmarks_saved_notification)
+                        .withZTranslation(25.0f)
+                        .withCurved(true).build();
+                NotificationManager.show(BOOKMARK_ADDED_NOTIFICATION_ID, notification);
+            }
+        }
+    }
 }
