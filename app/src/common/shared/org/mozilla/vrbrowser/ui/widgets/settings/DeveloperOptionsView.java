@@ -227,4 +227,9 @@ class DeveloperOptionsView extends SettingsView {
         }
     }
 
+    @Override
+    protected SettingViewType getType() {
+        return SettingViewType.LANGUAGE_VOICE;
+    }
+
 }

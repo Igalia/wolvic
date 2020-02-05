@@ -55,10 +55,6 @@ import mozilla.components.concept.sync.Profile;
 
 public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
 
-    public enum SettingDialog {
-        MAIN, LANGUAGE, DISPLAY, PRIVACY, DEVELOPER, FXA, ENVIRONMENT, CONTROLLER
-    }
-
     private SettingsBinding mBinding;
     private AudioEngine mAudio;
     private SettingsView mCurrentView;
@@ -67,6 +63,7 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
     private RestartDialogWidget mRestartDialog;
     private Accounts mAccounts;
     private Executor mUIThreadExecutor;
+    private SettingsView.SettingViewType mOpenDialog;
 
     class VersionGestureListener extends GestureDetector.SimpleOnGestureListener {
 
@@ -100,6 +97,8 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
     @SuppressLint("ClickableViewAccessibility")
     private void initialize() {
         updateUI();
+
+        mOpenDialog = SettingsView.SettingViewType.MAIN;
 
         mAccounts = ((VRBrowserApplication)getContext().getApplicationContext()).getAccounts();
         mAccounts.addAccountListener(mAccountObserver);
@@ -165,7 +164,7 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
 
-            showEnvironmentOptionsDialog();
+            showView(SettingsView.SettingViewType.ENVIRONMENT);
         });
 
         try {
@@ -221,7 +220,7 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
 
-            showControllerOptionsDialog();
+            showView(SettingsView.SettingViewType.CONTROLLER);
         });
 
         mCurrentView = null;
@@ -231,7 +230,7 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
-        updateUI();
+        showView(mOpenDialog);
     }
 
     @Override
@@ -257,7 +256,7 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
     }
 
     private void onSettingsPrivacyClick() {
-        showView(new PrivacyOptionsView(getContext(), mWidgetManager));
+        showView(SettingsView.SettingViewType.PRIVACY);
     }
 
     private void onSettingsReportClick() {
@@ -320,7 +319,7 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
                 break;
 
             case SIGNED_IN:
-                post(this::showFXAOptionsDialog);
+                post(() -> showView(SettingsView.SettingViewType.FXA));
                 break;
         }
     }
@@ -377,24 +376,67 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
     }
 
     private void onDeveloperOptionsClick() {
-        showDeveloperOptionsDialog();
+        showView(SettingsView.SettingViewType.DEVELOPER);
     }
 
     private void onLanguageOptionsClick() {
-        showLanguageOptionsDialog();
+        showView(SettingsView.SettingViewType.LANGUAGE);
     }
 
     private void onDisplayOptionsClick() {
-        showDisplayOptionsDialog();
+        showView(SettingsView.SettingViewType.DISPLAY);
     }
 
-    public void showView(SettingsView aView) {
+    @Override
+    public void showView(SettingsView.SettingViewType aType) {
+        switch (aType) {
+            case MAIN:
+                showView((SettingsView) null);
+                break;
+            case LANGUAGE:
+                showView(new LanguageOptionsView(getContext(), mWidgetManager));
+                break;
+            case LANGUAGE_DISPLAY:
+                showView(new DisplayLanguageOptionsView(getContext(), mWidgetManager));
+                break;
+            case LANGUAGE_CONTENT:
+                showView(new ContentLanguageOptionsView(getContext(), mWidgetManager));
+                break;
+            case LANGUAGE_VOICE:
+                showView(new VoiceSearchLanguageOptionsView(getContext(), mWidgetManager));
+                break;
+            case DISPLAY:
+                showView(new DisplayOptionsView(getContext(), mWidgetManager));
+                break;
+            case PRIVACY:
+                showView(new PrivacyOptionsView(getContext(), mWidgetManager));
+                break;
+            case POPUP_EXCEPTIONS:
+                showView(new PopUpExceptionsOptionsView(getContext(), mWidgetManager));
+                break;
+            case DEVELOPER:
+                showView(new DeveloperOptionsView(getContext(), mWidgetManager));
+                break;
+            case FXA:
+                showView(new FxAAccountOptionsView(getContext(), mWidgetManager));
+                break;
+            case ENVIRONMENT:
+                showView(new EnvironmentOptionsView(getContext(), mWidgetManager));
+                break;
+            case CONTROLLER:
+                showView(new ControllerOptionsView(getContext(), mWidgetManager));
+                break;
+        }
+    }
+
+    private void showView(SettingsView aView) {
         if (mCurrentView != null) {
             mCurrentView.onHidden();
             this.removeView(mCurrentView);
         }
         mCurrentView = aView;
         if (mCurrentView != null) {
+            mOpenDialog = aView.getType();
             Point viewDimensions = mCurrentView.getDimensions();
             mViewMarginH = mWidgetPlacement.width - viewDimensions.x;
             mViewMarginH = WidgetPlacement.convertDpToPixel(getContext(), mViewMarginH);
@@ -410,69 +452,18 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
             mBinding.optionsLayout.setVisibility(View.GONE);
 
         } else {
+            updateUI();
             mBinding.optionsLayout.setVisibility(View.VISIBLE);
             updateCurrentAccountState();
         }
     }
 
-    private void showPrivacyOptionsDialog() {
-        showView(new PrivacyOptionsView(getContext(), mWidgetManager));
-    }
-
-    private void showDeveloperOptionsDialog() {
-        showView(new DeveloperOptionsView(getContext(), mWidgetManager));
-    }
-
-    private void showControllerOptionsDialog() {
-        showView(new ControllerOptionsView(getContext(), mWidgetManager));
-    }
-
-    private void showLanguageOptionsDialog() {
-        LanguageOptionsView view = new LanguageOptionsView(getContext(), mWidgetManager);
-        view.setDelegate(this);
-        showView(view);
-    }
-
-    private void showDisplayOptionsDialog() {
-        showView(new DisplayOptionsView(getContext(), mWidgetManager));
-    }
-
-    private void showEnvironmentOptionsDialog() {
-        showView(new EnvironmentOptionsView(getContext(), mWidgetManager));
-    }
-
-    private void showFXAOptionsDialog() {
-        showView(new FxAAccountOptionsView(getContext(), mWidgetManager));
-    }
-
-    public void show(@ShowFlags int aShowFlags, @NonNull SettingDialog settingDialog) {
+    public void show(@ShowFlags int aShowFlags, @NonNull SettingsView.SettingViewType settingDialog) {
         if (!isVisible()) {
             show(aShowFlags);
         }
 
-        switch (settingDialog) {
-            case LANGUAGE:
-                showLanguageOptionsDialog();
-                break;
-            case DISPLAY:
-                showDisplayOptionsDialog();
-                break;
-            case PRIVACY:
-                showPrivacyOptionsDialog();
-                break;
-            case DEVELOPER:
-                showDeveloperOptionsDialog();
-                break;
-            case FXA:
-                showFXAOptionsDialog();
-                break;
-            case ENVIRONMENT:
-                showEnvironmentOptionsDialog();
-                break;
-            case CONTROLLER:
-                showControllerOptionsDialog();
-                break;
-        }
+        showView(settingDialog);
     }
 
     @Override
@@ -488,13 +479,13 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
         if (mCurrentView != null) {
             if (!mCurrentView.isEditing()) {
                 if (isLanguagesSubView(mCurrentView)) {
-                    showLanguageOptionsDialog();
+                    showView(SettingsView.SettingViewType.LANGUAGE);
 
                 } else if (isPrivacySubView(mCurrentView)) {
-                    showPrivacyOptionsDialog();
+                    showView(SettingsView.SettingViewType.PRIVACY);
 
                 } else {
-                    showView(null);
+                    showView(SettingsView.SettingViewType.MAIN);
                 }
             }
         } else {
@@ -504,7 +495,7 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
 
     @Override
     public void exitWholeSettings() {
-        showView(null);
+        showView(SettingsView.SettingViewType.MAIN);
         hide(UIWidget.REMOVE_WIDGET);
     }
 

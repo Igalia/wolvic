@@ -135,8 +135,6 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
 
         updateHistory();
 
-        setVisibility(GONE);
-
         setOnTouchListener((v, event) -> {
             v.requestFocusFromTouch();
             return false;

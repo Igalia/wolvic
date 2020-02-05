@@ -132,8 +132,6 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
 
         updateBookmarks();
 
-        setVisibility(GONE);
-
         setOnTouchListener((v, event) -> {
             v.requestFocusFromTouch();
             return false;

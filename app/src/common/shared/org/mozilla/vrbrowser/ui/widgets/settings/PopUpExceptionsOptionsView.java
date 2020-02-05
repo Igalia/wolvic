@@ -57,7 +57,7 @@ class PopUpExceptionsOptionsView extends SettingsView {
 
         // Header
         mBinding.headerLayout.setBackClickListener(view -> {
-            mDelegate.showView(new PrivacyOptionsView(getContext(), mWidgetManager));
+            mDelegate.showView(SettingViewType.PRIVACY);
         });
 
         // Adapters
@@ -121,5 +121,10 @@ class PopUpExceptionsOptionsView extends SettingsView {
         }
 
     };
+
+    @Override
+    protected SettingViewType getType() {
+        return SettingViewType.POPUP_EXCEPTIONS;
+    }
 
 }

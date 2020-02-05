@@ -46,7 +46,7 @@ class DisplayLanguageOptionsView extends SettingsView {
 
         // Header
         mBinding.headerLayout.setBackClickListener(view -> {
-            mDelegate.showView(new LanguageOptionsView(getContext(), mWidgetManager));
+            mDelegate.showView(SettingViewType.LANGUAGE);
         });
         mBinding.headerLayout.setHelpClickListener(view -> {
             SessionStore.get().getActiveSession().loadUri(getResources().getString(R.string.sumo_language_display_url));
@@ -109,6 +109,11 @@ class DisplayLanguageOptionsView extends SettingsView {
     public Point getDimensions() {
         return new Point( WidgetPlacement.dpDimension(getContext(), R.dimen.settings_dialog_width),
                 WidgetPlacement.dpDimension(getContext(), R.dimen.settings_dialog_height));
+    }
+
+    @Override
+    protected SettingViewType getType() {
+        return SettingViewType.LANGUAGE_DISPLAY;
     }
 
 }

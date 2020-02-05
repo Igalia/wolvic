@@ -13,7 +13,23 @@ import org.mozilla.vrbrowser.ui.views.CustomScrollView;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 
-abstract class SettingsView extends FrameLayout {
+public abstract class SettingsView extends FrameLayout {
+
+    public enum SettingViewType {
+        MAIN,
+        LANGUAGE,
+        LANGUAGE_DISPLAY,
+        LANGUAGE_CONTENT,
+        LANGUAGE_VOICE,
+        DISPLAY,
+        PRIVACY,
+        POPUP_EXCEPTIONS,
+        DEVELOPER,
+        FXA,
+        ENVIRONMENT,
+        CONTROLLER
+    }
+
     protected Delegate mDelegate;
     protected WidgetManagerDelegate mWidgetManager;
     protected CustomScrollView mScrollbar;
@@ -23,7 +39,7 @@ abstract class SettingsView extends FrameLayout {
         void exitWholeSettings();
         void showRestartDialog();
         void showAlert(String aTitle, String aMessage);
-        void showView(SettingsView view);
+        void showView(SettingsView.SettingViewType type);
     }
 
     public SettingsView(@NonNull Context context, WidgetManagerDelegate aWidgetManager) {
@@ -95,5 +111,7 @@ abstract class SettingsView extends FrameLayout {
     protected void updateUI() {
         removeAllViews();
     }
+
+    protected abstract SettingViewType getType();
 
 }

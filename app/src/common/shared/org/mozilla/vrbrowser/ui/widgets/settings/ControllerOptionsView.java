@@ -93,4 +93,9 @@ class ControllerOptionsView extends SettingsView {
         setScrollDirection(checkedId, doApply);
     };
 
+    @Override
+    protected SettingViewType getType() {
+        return SettingViewType.CONTROLLER;
+    }
+
 }

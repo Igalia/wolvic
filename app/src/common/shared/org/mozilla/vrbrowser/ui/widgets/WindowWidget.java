@@ -59,7 +59,6 @@ import org.mozilla.vrbrowser.ui.widgets.dialogs.PromptDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.SelectionActionWidget;
 import org.mozilla.vrbrowser.ui.widgets.menus.ContextMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.menus.LibraryMenuWidget;
-import org.mozilla.vrbrowser.ui.widgets.settings.SettingsWidget;
 import org.mozilla.vrbrowser.utils.ViewUtils;
 
 import java.util.Arrays;
@@ -75,6 +74,7 @@ import mozilla.components.concept.storage.RedirectSource;
 import mozilla.components.concept.storage.VisitInfo;
 import mozilla.components.concept.storage.VisitType;
 
+import static org.mozilla.vrbrowser.ui.widgets.settings.SettingsView.SettingViewType.FXA;
 import static org.mozilla.vrbrowser.utils.ServoUtils.isInstanceOfServoSession;
 
 public class WindowWidget extends UIWidget implements SessionChangeListener,
@@ -314,12 +314,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         mHistoryView.updateUI();
         mBookmarksView.updateUI();
-
-        if (mView != null) {
-            View temp = mView;
-            unsetView(mView, false);
-            setView(temp, false);
-        }
 
         mViewModel.refresh();
     }
@@ -1361,7 +1355,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         @Override
         public void onFxASynSettings(@NonNull View view) {
-            mWidgetManager.getTray().showSettingsDialog(SettingsWidget.SettingDialog.FXA);
+            mWidgetManager.getTray().showSettingsDialog(FXA);
         }
 
         @Override
@@ -1400,7 +1394,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         @Override
         public void onFxASynSettings(@NonNull View view) {
-            mWidgetManager.getTray().showSettingsDialog(SettingsWidget.SettingDialog.FXA);
+            mWidgetManager.getTray().showSettingsDialog(FXA);
         }
 
         @Override

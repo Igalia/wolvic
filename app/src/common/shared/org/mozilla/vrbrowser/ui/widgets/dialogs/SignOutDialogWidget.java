@@ -13,10 +13,11 @@ import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.browser.Accounts;
 import org.mozilla.vrbrowser.browser.Places;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
-import org.mozilla.vrbrowser.ui.widgets.settings.SettingsWidget;
 
 import java.util.Objects;
 import java.util.concurrent.Executor;
+
+import static org.mozilla.vrbrowser.ui.widgets.settings.SettingsView.SettingViewType.FXA;
 
 public class SignOutDialogWidget extends PromptDialogWidget {
 
@@ -60,10 +61,10 @@ public class SignOutDialogWidget extends PromptDialogWidget {
 
             } else if (index == PromptDialogWidget.POSITIVE) {
                 hide(UIWidget.REMOVE_WIDGET);
-                mWidgetManager.getTray().toggleSettingsDialog(SettingsWidget.SettingDialog.FXA);
+                mWidgetManager.getTray().toggleSettingsDialog(FXA);
             }
         });
-        setDelegate(() -> mWidgetManager.getTray().toggleSettingsDialog(SettingsWidget.SettingDialog.FXA));
+        setDelegate(() -> mWidgetManager.getTray().toggleSettingsDialog(FXA));
 
         setDescriptionVisible(false);
 

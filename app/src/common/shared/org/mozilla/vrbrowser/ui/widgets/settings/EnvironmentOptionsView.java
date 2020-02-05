@@ -121,4 +121,9 @@ class EnvironmentOptionsView extends SettingsView {
         }
     }
 
+    @Override
+    protected SettingViewType getType() {
+        return SettingViewType.ENVIRONMENT;
+    }
+
 }

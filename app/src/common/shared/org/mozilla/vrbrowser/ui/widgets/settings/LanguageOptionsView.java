@@ -135,11 +135,11 @@ class LanguageOptionsView extends SettingsView {
         return spanned;
     }
 
-    private OnClickListener mContentListener = v -> mDelegate.showView(mContentLanguage);
+    private OnClickListener mContentListener = v -> mDelegate.showView(SettingViewType.LANGUAGE_CONTENT);
 
-    private OnClickListener mVoiceSearchListener = v -> mDelegate.showView(mVoiceLanguage);
+    private OnClickListener mVoiceSearchListener = v -> mDelegate.showView(SettingViewType.LANGUAGE_VOICE);
 
-    private OnClickListener mDisplayListener = v -> mDelegate.showView(mDisplayLanguage);
+    private OnClickListener mDisplayListener = v -> mDelegate.showView(SettingViewType.LANGUAGE_DISPLAY);
 
     private SharedPreferences.OnSharedPreferenceChangeListener mPreferencesListener = (sharedPreferences, key) -> {
         if (key.equals(getContext().getString(R.string.settings_key_content_languages))) {
@@ -157,6 +157,11 @@ class LanguageOptionsView extends SettingsView {
     public Point getDimensions() {
         return new Point( WidgetPlacement.dpDimension(getContext(), R.dimen.settings_dialog_width),
                 WidgetPlacement.dpDimension(getContext(), R.dimen.settings_dialog_height));
+    }
+
+    @Override
+    protected SettingViewType getType() {
+        return SettingViewType.LANGUAGE;
     }
 
 }

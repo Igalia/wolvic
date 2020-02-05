@@ -24,7 +24,6 @@ import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.PromptDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.UIDialog;
-import org.mozilla.vrbrowser.ui.widgets.settings.SettingsWidget;
 import org.mozilla.vrbrowser.utils.BitmapCache;
 import org.mozilla.vrbrowser.utils.ConnectivityReceiver;
 import org.mozilla.vrbrowser.utils.SystemUtils;
@@ -46,6 +45,8 @@ import mozilla.components.concept.sync.AuthType;
 import mozilla.components.concept.sync.OAuthAccount;
 import mozilla.components.concept.sync.Profile;
 import mozilla.components.concept.sync.TabData;
+
+import static org.mozilla.vrbrowser.ui.widgets.settings.SettingsView.SettingViewType.FXA;
 
 public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWidget.Delegate,
         WindowWidget.WindowListener, TabsWidget.TabDelegate, Services.TabReceivedDelegate {
@@ -880,7 +881,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
                         break;
 
                     case SETTINGS:
-                        mWidgetManager.getTray().showSettingsDialog(SettingsWidget.SettingDialog.FXA);
+                        mWidgetManager.getTray().showSettingsDialog(FXA);
                         break;
                 }
             }

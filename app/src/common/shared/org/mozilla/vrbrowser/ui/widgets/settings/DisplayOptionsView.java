@@ -346,4 +346,9 @@ class DisplayOptionsView extends SettingsView {
                 WidgetPlacement.dpDimension(getContext(), R.dimen.display_options_height));
     }
 
+    @Override
+    protected SettingViewType getType() {
+        return SettingViewType.DISPLAY;
+    }
+
 }

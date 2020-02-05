@@ -239,4 +239,9 @@ class FxAAccountOptionsView extends SettingsView {
         }
     };
 
+    @Override
+    protected SettingViewType getType() {
+        return SettingViewType.FXA;
+    }
+
 }
