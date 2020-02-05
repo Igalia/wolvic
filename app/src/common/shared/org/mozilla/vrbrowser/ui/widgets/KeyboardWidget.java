@@ -381,19 +381,19 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     }
 
     public void dismiss() {
-       exitVoiceInputMode();
-       if (mFocusedView != null && mFocusedView != mAttachedWindow) {
-           mFocusedView.clearFocus();
-       }
-       mWidgetPlacement.visible = false;
-       mWidgetManager.updateWidget(this);
+        exitVoiceInputMode();
+        if (mFocusedView != null && mFocusedView != mAttachedWindow) {
+            mFocusedView.clearFocus();
+        }
+        mWidgetPlacement.visible = false;
+        mWidgetManager.updateWidget(this);
 
-       mWidgetManager.popBackHandler(mBackHandler);
+        mWidgetManager.popBackHandler(mBackHandler);
 
-       mIsCapsLock = false;
-       mIsLongPress = false;
-       handleShift(false);
-       hideOverlays();
+        mIsCapsLock = false;
+        mIsLongPress = false;
+        handleShift(false);
+        hideOverlays();
     }
 
     public void proxifyLayerIfNeeded(ArrayList<WindowWidget> aWindows) {
@@ -1023,8 +1023,12 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         final InputConnection connection = mInputConnection;
         if (connection != null) {
             if (isAttachToWindowWidget()) {
-                connection.sendKeyEvent(event);
-                hide(UIWidget.KEEP_WIDGET);
+                if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+                    return false;
+                } else {
+                    connection.sendKeyEvent(event);
+                    hide(UIWidget.KEEP_WIDGET);
+                }
                 return true;
             }
             // Android Components do not support InputConnection.sendKeyEvent()
