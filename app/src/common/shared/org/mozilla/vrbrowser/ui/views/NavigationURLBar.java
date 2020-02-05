@@ -136,9 +136,8 @@ public class NavigationURLBar extends FrameLayout {
         });
 
         mBinding.urlEditText.setOnFocusChangeListener((view, focused) -> {
-            boolean isUrlEmpty = mBinding.urlEditText.getText().length() == 0;
             mViewModel.setIsFocused(focused);
-            mViewModel.setIsUrlEmpty(isUrlEmpty);
+            mViewModel.setIsUrlEmpty(mBinding.urlEditText.getText().toString().isEmpty());
             if (!focused) {
                 hideSelectionMenu();
             } else {
@@ -430,9 +429,7 @@ public class NavigationURLBar extends FrameLayout {
 
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            String aURL = mBinding.urlEditText.getText().toString();
-            boolean empty = aURL.length() == 0 || aURL.startsWith("about://");
-            mViewModel.setIsUrlEmpty(empty);
+            mViewModel.setIsUrlEmpty(mBinding.urlEditText.getText().toString().isEmpty());
         }
 
         @Override

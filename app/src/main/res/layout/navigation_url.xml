@@ -40,8 +40,8 @@
                 <org.mozilla.vrbrowser.ui.views.UIButton
                     android:id="@+id/microphoneButton"
                     style="@style/urlBarIconTheme"
-                    android:layout_width="@{(viewmodel.isLibraryVisible || viewmodel.isSpecialUrl) ? @dimen/url_bar_last_item_width : @dimen/url_bar_item_width}"
-                    android:background="@{(viewmodel.isLibraryVisible || viewmodel.isSpecialUrl) ? (viewmodel.isPrivateSession ? @drawable/url_button_end_private : @drawable/url_button_end) : (viewmodel.isPrivateSession ? @drawable/url_button_private : @drawable/url_button)}"
+                    android:layout_width="@{(viewmodel.isLibraryVisible || viewmodel.isUrlEmpty) ? @dimen/url_bar_last_item_width : @dimen/url_bar_item_width}"
+                    android:background="@{(viewmodel.isLibraryVisible || viewmodel.isUrlEmpty) ? (viewmodel.isPrivateSession ? @drawable/url_button_end_private : @drawable/url_button_end) : (viewmodel.isPrivateSession ? @drawable/url_button_private : @drawable/url_button)}"
                     android:src="@drawable/ic_icon_microphone"
                     android:tint="@color/fog"
                     android:tooltipText="@string/voice_search_tooltip"
@@ -53,7 +53,7 @@
                     android:src="@{viewmodel.isBookmarked ? @drawable/ic_icon_bookmarked_active : @drawable/ic_icon_bookmarked}"
                     android:tint="@color/fog"
                     android:tooltipText="@string/bookmark_tooltip"
-                    app:visibleGone="@{!(viewmodel.isLibraryVisible || viewmodel.isSpecialUrl) &amp;&amp; !viewmodel.isFocused}"
+                    app:visibleGone="@{!(viewmodel.isLibraryVisible || viewmodel.isUrlEmpty) &amp;&amp; !viewmodel.isFocused}"
                     tools:src="@drawable/ic_icon_bookmarked" />
 
                 <org.mozilla.vrbrowser.ui.views.UIButton
@@ -62,7 +62,7 @@
                     android:src="@drawable/ic_icon_clear"
                     android:tint="@color/fog"
                     android:tooltipText="@string/clear_tooltip"
-                    app:visibleGone="@{!viewmodel.isMicrophoneEnabled &amp;&amp; viewmodel.isFocused &amp;&amp; (urlEditText.text.length > 0)}" />
+                    app:visibleGone="@{viewmodel.isFocused &amp;&amp; !viewmodel.isUrlEmpty}" />
             </LinearLayout>
 
             <RelativeLayout
@@ -106,7 +106,8 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_toEndOf="@id/startButtonsLayout"
-                    android:layout_centerVertical="true">
+                    android:layout_centerVertical="true"
+                    app:visibleGone="@{!viewmodel.isFocused}">
                     <ImageView
                         android:id="@+id/loadingView"
                         android:layout_width="24dp"
@@ -121,7 +122,7 @@
                         android:layout_height="24dp"
                         android:contentDescription="SSL icon"
                         android:src="@drawable/ic_icon_security_state_insecure"
-                        app:visibleGone="@{viewmodel.isInsecureVisible &amp;&amp; (urlEditText.length() != 0)}" />
+                        app:visibleGone="@{viewmodel.isInsecureVisible}" />
                 </LinearLayout>
 
             </RelativeLayout>
