@@ -442,7 +442,7 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Widge
             mSettingsWidget.getPlacement().parentHandle = mAttachedWindow.getHandle();
         }
         if (mSettingsWidget.isVisible()) {
-            widget.hide(KEEP_WIDGET);
+            mSettingsWidget.hide(KEEP_WIDGET);
 
         } else {
             mSettingsWidget.show(REQUEST_FOCUS, settingDialog);
@@ -546,4 +546,9 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Widge
             mWidgetManager.getWindows().showBookmarkAddedNotification();
         }
     };
+
+    @VisibleForTesting
+    public SettingsWidget getSettingsWidget() {
+        return mSettingsWidget;
+    }
 }
