@@ -1081,7 +1081,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     public InputConnection onCreateInputConnection(final EditorInfo outAttrs) {
         Log.d(LOGTAG, "BrowserWidget onCreateInputConnection");
         GeckoSession session = mSession.getGeckoSession();
-        if (session == null) {
+        if (session == null || mView != null) {
             return null;
         }
         return session.getTextInput().onCreateInputConnection(outAttrs);
