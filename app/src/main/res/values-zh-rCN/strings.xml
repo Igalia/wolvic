@@ -1294,7 +1294,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 
     <!-- This string is displayed in a tooltip that appears in the tray bar on top of the
      tabs tray button then a tab has been sent. -->
-    <string name="tab_sent_notification">标签页已发送！</string>
+    <string name="tab_sent_notification">标签页发送成功！</string>
 
     <!-- This string is displayed inside the Hamburger menu at the right of the navigation bar. When clicked
          it opens the send tab dialog -->
