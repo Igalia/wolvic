@@ -276,7 +276,7 @@ public class WindowViewModel extends AndroidViewModel {
                 navigationBarUrl.setValue("");
 
             } else {
-                navigationBarUrl.setValue(UrlUtils.titleBarUrl(url));
+                navigationBarUrl.setValue(url);
             }
 
             if (isBookmarksVisible.getValue().get()) {
