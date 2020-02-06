@@ -113,6 +113,7 @@ struct Skybox::State {
       };
 
       VertexArrayPtr array = VertexArray::Create(aContext);
+      array->SetUVLength(3);
       const float kLength = 140.0f;
       for (int i = 0; i < cubeVertices.size(); i += 3) {
         array->AppendVertex(Vector(-kLength * cubeVertices[i], -kLength * cubeVertices[i + 1],
