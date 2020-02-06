@@ -109,6 +109,14 @@ JNI_METHOD(void, nativeEndFrame)
   BrowserWorld::Instance().EndFrame();
 }
 
+JNI_METHOD(void, nativeSetFocusedController)
+(JNIEnv*, jobject, jint index) {
+  if (gDestroyed) {
+    return;
+  }
+  sDevice->SetFocused(index);
+}
+
 JNI_METHOD(void, nativeUpdateControllerPose)
 (JNIEnv*, jobject, jint index, jboolean dof6, jfloat px, jfloat py, jfloat pz, jfloat qx, jfloat qy, jfloat qz, jfloat qw) {
   if (gDestroyed) {

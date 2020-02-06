@@ -113,13 +113,18 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
         }
 
         if (mControllerManager != null) {
+            int hand = VrActivity.getPvrHandness(this);
+            if (hand != mHand) {
+                nativeSetFocusedController(hand);
+                mHand = hand;
+            }
             CVController main = mControllerManager.getMainController();
             if (main != null) {
-                updateController(0, main);
+                updateController(hand, main);
             }
             CVController sub = mControllerManager.getSubController();
             if (sub != null) {
-                updateController(1, sub);
+                updateController(1 - hand, sub);
             }
         } else if (mHbManager != null) {
             update3DofController();
@@ -243,7 +248,8 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
 
     @Override
     public void initGL(int width, int height) {
-        nativeInitialize(width, height, getAssets(), mType, VrActivity.getPvrHandness(this));
+        mHand = VrActivity.getPvrHandness(this);
+        nativeInitialize(width, height, getAssets(), mType, mHand);
     }
 
     @Override
@@ -293,6 +299,7 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
     protected native void nativeEndFrame();
     protected native void nativePause();
     protected native void nativeResume();
+    protected native void nativeSetFocusedController(int index);
     protected native void nativeUpdateControllerState(int index, boolean connected, int buttons, float grip, float axisX, float axisY, boolean touched);
     protected native void nativeUpdateControllerPose(int index, boolean dof6, float px, float py, float pz, float qx, float qy, float qz, float qw);
     protected native void queueRunnable(Runnable aRunnable);
