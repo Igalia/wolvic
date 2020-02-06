@@ -199,7 +199,7 @@ android_main(android_app *aAppState) {
   // Attach JNI thread
   JNIEnv *jniEnv;
   (*aAppState->activity->vm).AttachCurrentThread(&jniEnv, nullptr);
-  sAppContext->mQueue->InitializeJava(jniEnv);
+  sAppContext->mQueue->AttachToThread();
 
   // Create Browser context
   crow::VRBrowser::InitializeJava(jniEnv, aAppState->activity->clazz);

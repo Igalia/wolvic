@@ -43,6 +43,7 @@ JNI_METHOD(void, activityResumed)
 }
 
 int main(int argc, char *argv[]) {
+  sQueue->AttachToThread();
   VRB_LOG("Call WVR_Init");
   WVR_InitError eError = WVR_Init(WVR_AppType_VRContent);
   if (eError != WVR_InitError_None) {
@@ -87,7 +88,14 @@ int main(int argc, char *argv[]) {
     VRB_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
     BrowserWorld::Instance().Draw();
   }
+  BrowserWorld::Instance().RegisterDeviceDelegate(nullptr);
+  sDevice = nullptr;
   BrowserWorld::Instance().ShutdownGL();
+  BrowserWorld::Instance().ShutdownJava();
+  sQueue->Clear();
+  sJavaInitialized = false;
+  BrowserWorld::Destroy();
+  WVR_Quit();
   return 0;
 }
 

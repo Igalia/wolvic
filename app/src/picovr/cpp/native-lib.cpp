@@ -35,6 +35,7 @@ JNI_METHOD(void, nativeOnCreate)
 JNI_METHOD(void, nativeInitialize)
 (JNIEnv* aEnv, jobject aActivity, jint width, jint height, jobject aAssetManager, jint type, jint focusInex) {
   gDestroyed = false;
+  sQueue->AttachToThread();
   if (!sDevice) {
     sDevice = crow::DeviceDelegatePicoVR::Create(BrowserWorld::Instance().GetRenderContext());
   }
@@ -55,7 +56,7 @@ JNI_METHOD(void, nativeShutdown)
 JNI_METHOD(void, nativeDestroy)
 (JNIEnv*, jobject) {
   gDestroyed = true;
-  sQueue->ProcessRunnables();
+  sQueue->Clear();
   BrowserWorld::Instance().ShutdownJava();
   BrowserWorld::Instance().RegisterDeviceDelegate(nullptr);
   sDevice = nullptr;
