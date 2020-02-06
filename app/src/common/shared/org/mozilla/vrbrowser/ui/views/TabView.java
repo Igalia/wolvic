@@ -50,6 +50,7 @@ public class TabView extends RelativeLayout implements GeckoSession.ContentDeleg
     protected boolean mPressed;
     protected CompletableFuture<Bitmap> mBitmapFuture;
     protected boolean mUsingPlaceholder;
+    private boolean mIsPrivateMode;
     private static final int ICON_ANIMATION_DURATION = 100;
 
     public interface Delegate {
@@ -215,6 +216,10 @@ public class TabView extends RelativeLayout implements GeckoSession.ContentDeleg
         }
     }
 
+    public void setPrivate(boolean privateMode) {
+        mIsPrivateMode = privateMode;
+    }
+
     @Override
     public void setSelected(boolean selected) {
         super.setSelected(selected);
@@ -250,7 +255,7 @@ public class TabView extends RelativeLayout implements GeckoSession.ContentDeleg
         boolean selected = isSelected();
 
         mCloseButton.setVisibility(interacted && !selected && !mSelecting ? View.VISIBLE : View.GONE);
-        mSendTabButton.setVisibility(interacted && !selected && !mSelecting ? View.VISIBLE : View.GONE);
+        mSendTabButton.setVisibility(interacted && !selected && !mSelecting && !mIsPrivateMode ? View.VISIBLE : View.GONE);
         mTitle.setVisibility(interacted && !selected ? View.VISIBLE : View.GONE);
         mTabOverlay.setPressed(mPressed);
         if (mSelecting) {

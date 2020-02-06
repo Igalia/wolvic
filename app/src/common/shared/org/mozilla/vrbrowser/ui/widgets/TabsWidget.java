@@ -21,6 +21,7 @@ import org.mozilla.vrbrowser.ui.views.UITextButton;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.SendTabDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.UIDialog;
 import org.mozilla.vrbrowser.utils.BitmapCache;
+import org.mozilla.vrbrowser.utils.UrlUtils;
 
 import java.util.ArrayList;
 
@@ -234,6 +235,9 @@ public class TabsWidget extends UIDialog {
             holder.tabView.setSelecting(mSelecting);
             holder.tabView.setSelected(mSelectedTabs.contains(holder.tabView.getSession()));
             holder.tabView.setActive(SessionStore.get().getActiveSession() == holder.tabView.getSession());
+            if (holder.tabView.getSession() != null) {
+                holder.tabView.setPrivate(UrlUtils.isPrivateAboutPage(getContext(), holder.tabView.getSession().getCurrentUri()));
+            }
             holder.tabView.setDelegate(new TabView.Delegate() {
                 @Override
                 public void onClose(TabView aSender) {
