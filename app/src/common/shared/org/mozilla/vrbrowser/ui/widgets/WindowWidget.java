@@ -1801,9 +1801,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             @Override
             public void onDismiss() {
                 if (aSelection.isActionAvailable(GeckoSession.SelectionActionDelegate.ACTION_UNSELECT)) {
-                    aSelection.execute(GeckoSession.SelectionActionDelegate.ACTION_UNSELECT);
-                } else {
-                    aSelection.collapseToEnd();
+                    aSelection.unselect();
+                } else if (aSelection.isActionAvailable(GeckoSession.SelectionActionDelegate.ACTION_COLLAPSE_TO_END)) {
+                    aSelection.collapseToEnd() ;
                 }
 
                 aSelection.hide();
