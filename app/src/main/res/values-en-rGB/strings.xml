@@ -462,4 +462,250 @@
     <string name="developer_options_environments">Environment</string>
 
 
+    <!-- This string labels the radio button that selects the 'Void' environment.
+         The 'Void' environment is an empty space that surrounds the user in empty, black space. -->
+    <string name="developer_options_env_void">Void</string>
+
+    <!-- This string labels the radio button that selects the 'Offworld' environment,
+         a sci-fi themed desert-like environment. The offworld references sci-fi fictional
+         representations of colonies on other non-Earth planets. -->
+    <string name="developer_options_env_offworld">Offworld</string>
+
+    <!-- This string labels the radio button that selects the 'Underwater' environment,
+         a brightly lit submarine themed environment. -->
+    <string name="developer_options_env_underwater">Underwater</string>
+
+    <!-- This string labels the radio button that selects the 'Winter' environment,
+         a snow-covered outdoor winter mountain scene. -->
+    <string name="developer_options_env_winter">Winter</string>
+
+    <!-- This string labels the radio button that selects the 'Meadow' environment,
+         a sunlit grassy meadow filled with tiny flowers and surrounded by mountains. -->
+    <string name="developer_options_env_meadow">Meadow</string>
+
+    <!-- This string labels the radio button that selects the 'Cave' environment,
+         a dimly-lit subterranean environment with fairytale structures set amongst mushrooms. -->
+    <string name="developer_options_env_cave">Cave</string>
+
+    <!-- This string describes the radio buttons used to select the pointer color. -->
+    <string name="developer_options_pointer_color">Pointer Colour</string>
+
+    <!-- This string labels the radio button that sets the pointer color to purple. -->
+    <string name="developer_options_pointer_purple">Purple</string>
+
+    <!-- This string labels the radio button that sets the pointer color to white. -->
+    <string name="developer_options_pointer_white">White</string>
+
+    <!-- This string is used to label a text entry field where the user may enter a new value
+         for the home page. -->
+    <string name="developer_options_homepage">Homepage</string>
+
+    <!-- This string is used to in the FxA account manage panel as a description of the Sign In/Out button. -->
+    <string name="fxa_account_options_account">Account</string>
+
+    <!-- This string is used to in the FxA account manage panel as a header for the sync options. -->
+    <string name="fxa_account_options_sync_title">Sync Settings</string>
+
+    <!-- This string is used to in the FxA account manage panel as the description of the Sync button when is not syncing.
+         The sync button will start syncing when pressed-->
+    <string name="fxa_account_options_sync_now">Synchronise Now</string>
+
+    <!-- This string is used to in the FxA account manage panel as the description of the Sync button while syncon.
+         The sync button will start syncing when pressed-->
+    <string name="fxa_account_options_syncing">Synchronising...</string>
+
+    <!-- This string is used in the FxA account manager panel as a header for the sync options for syncing
+         history, bookmarks, passwords, etc. -->
+    <string name="fxa_account_options_sync_description">Choose what to synchronise on your devices using Firefox</string>
+
+    <!-- This string is used to in the FxA account manage panel as a description for the Bookmarks sync switch. -->
+    <string name="fxa_account_options_bookmarks_sync">Bookmarks</string>
+
+    <!-- This string is used to in the FxA account manage panel as a description for the History sync switch. -->
+    <string name="fxa_account_options_history_sync">History</string>
+
+    <!-- This string is used to in the FxA account manage panel as a description for the Sign In/Out button. -->
+    <string name="fxa_account_options_reset">Reset</string>
+
+    <!-- This string is used to in the Library panels in the sync button when the user is not signed in. -->
+    <string name="fxa_account_sing_to_sync">Sign Into Account To Synchronise</string>
+
+    <!-- This string is used to in the Library panels in the sync button when syncing is off. -->
+    <string name="fxa_account_sync_settings">Sync Settings</string>
+
+    <!-- This string is used to in the Library panels to the left of the sync button to indicate
+         when that the content was just synced. -->
+    <string name="fxa_account_last_synced_now">Last synchronised now</string>
+
+    <!-- This string is used to in the Library panels to the left of the sync button to indicate
+         that the content has never been synced yet. -->
+    <string name="fxa_account_last_no_synced">Not synchronised yet</string>
+
+    <!-- This string is used to in the Library panels to the left of the sync button to indicate
+         that the syncing is off. -->
+    <string name="fxa_account_syncing_off">Synchronisation is turned off</string>
+
+    <!-- This string is used to in the Library panels to the left of the sync button to indicate
+         that there was an error while syncing. -->
+    <string name="fxa_account_last_sync_error">Synchronisation error</string>
+
+    <!-- This string is used to in the Library panels to the left of the sync button to indicate
+         when that the content was just synced some time ago. -->
+    <string name="fxa_account_last_synced">Last synchronised %1$d minutes ago</string>
+
+    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
+     and is used to enable or disable playback of DRM controlled content. -->
+    <string name="security_options_drm_content">Play DRM-Controlled Content (&lt;a href=&quot;http://somesite.com/&quot;&gt;Learn More&lt;/a&gt;)</string>
+
+    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
+     and is used to enable or disable the tabs restoration after a fresh app start. -->
+    <string name="security_options_restore_tabs">Restore tabs and windows after restart</string>
+
+    <!-- This string labels an On/Off switch in the Privacy and Security settings dialog
+     and is used to enable or disable tracking protection. -->
+    <string name="security_options_tracking_protection">Tracking Protection</string>
+
+    <!-- This string labels an On/Off switch in the Privacy and Security settings dialog
+     and is used to enable or disable media autoplay. -->
+    <string name="security_options_autoplay">Autoplay Media</string>
+
+    <!-- This string is a label above the group of buttons that indicates that the buttons below
+         relate to Android system permissions granted to the app.
+         '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="security_options_permissions_title">Permissions (Allow %1$s to access)</string>
+
+    <!-- This string is displayed in an alert box if the user attempts to disable an enabled
+         permission and informs the user that the app cannot disable the given permission, that
+         function being reserved by the system permissions app. -->
+    <string name="security_options_permissions_reject_message">This permission can only be disabled in system permissions</string>
+
+    <!-- This string labels the button that displays or enables application access to the device's
+         camera, if a camera is present. -->
+    <string name="security_options_permission_camera">Camera</string>
+
+    <!-- This string labels the button that displays or enables application access to the device's
+         microphone, if a microphone is present. -->
+    <string name="security_options_permission_microphone">Microphone</string>
+
+    <!-- This string labels the button that displays or enables application access to the device's
+         geographic location, if the device supports determination of geographic location. -->
+    <string name="security_options_permission_location">Location</string>
+
+    <!-- This string labels the button that displays or enables the application to post system-wide
+         notifications. -->
+    <string name="security_options_permission_notifications">Notifications</string>
+
+    <!-- This string labels the button that displays or enables application access to the device's
+         "external" storage. Note that on modern systems, "external" is still used in the name
+         of this storage even though the storage may not reside on external removable media. -->
+    <string name="security_options_permission_storage">Read External Storage</string>
+
+    <!-- This string labels the button that displays or enables application access to the device's
+         camera and microphone, if present. -->
+    <string name="security_options_permission_camera_and_microphone">Camera And Microphone</string>
+
+    <!-- This string labels the button in the privacy option panel that enables/disables the pop-up
+         blocking. -->
+    <string name="security_options_block_pup_up_windows">Block Pop-Up Windows</string>
+
+    <!-- This string labels the button in the privacy option panel that open the dialog to add/remove
+         pop-up blocked sites. -->
+    <string name="security_options_block_pup_up_settings">Advanced</string>
+
+    <!-- This string is a label above the group of switches that indicates that the switches below
+         relate to Firefox data collection and use. -->
+    <string name="security_options_speech_data_collection_title">%1$s Data Collection and Use</string>
+
+    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
+     and is used to enable or disable permission to collect speech data. -->
+    <string name="security_options_speech_data_collect">Allow %1$s to collect speech data</string>
+
+    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
+     and is used to enable or disable permission to collect telemetry data. -->
+    <string name="security_options_telemetry_send_data">Allow %1$s to send technical and interaction data to Mozilla
+ </string>
+
+    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
+     and is used to enable or disable permission to send crash reports. -->
+    <string name="security_options_crash_reports_send_data">Allow %1$s to send backlogged crash reports on your behalf
+</string>
+
+    <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'On'. -->
+    <string name="on">On</string>
+
+    <!-- This string is displayed below the On/Off switch to indicate a switch's current state as 'Off'. -->
+    <string name="off">Off</string>
+
+    <!-- This string is displayed on the left of switched that are used to enable/disable sync when the switch is enabled.
+         i.e. The history switch for Firefox account syncing-->
+    <string name="sync">Synchronise</string>
+
+    <!-- This string is displayed on the left of switched that are used to enable/disable sync when the switch is enabled.
+         i.e. The history switch for Firefox account syncing-->
+    <string name="do_not_sync">Don’t Synchronise</string>
+
+    <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
+         button used to initiate Voice Search. -->
+    <string name="voice_search_start">What would you like to search on the Web?</string>
+
+    <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
+         button used to initiate Voice Search. -->
+    <string name="voice_search_example">Example: Please say, “360 videos, weather, news…”</string>
+
+    <!-- This string is displayed in a dialog box show to the user while the Voice Search is being
+         performed. It indicates that the search query is running and they should wait for the result. -->
+    <string name="voice_search_decoding">Searching…</string>
+
+    <!-- This string is displayed in a dialog box show to the user while the Voice Search is being
+         performed. It indicates that the search query is running and they should wait for the result. -->
+    <string name="voice_search_error">Sorry! I could not understand.</string>
+
+    <!-- This string is displayed in a dialog box after a failed Voice Search and the system is prompting the
+         user to try the Voice Search again. -->
+    <string name="voice_search_try_again">Please try again.</string>
+
+    <!-- This string is displayed in a dialog after the user has declined permission to use the
+         device's microphone. It explains why Voice Search is not working. -->
+    <string name="voice_search_permission_after_decline">Please allow microphone access to use the Voice Search.</string>
+
+    <!-- This string is displayed in the button at the bottom of the Voice Search dialog. When clicked the Voice search dialog is closed. -->
+    <string name="voice_search_close">Close</string>
+
+    <!-- This string is displayed in the URL bar when it is empty. It informs the user that they
+         may use the URL bar to search the Web or enter a Web address. -->
+    <string name="search_placeholder">Search the Web or enter address</string>
+
+    <!-- This string labels a button that is used to cancel an action.
+         This appears in such contexts as dialog boxes, `<select>` menus, etc. -->
+    <string name="cancel_button">Cancel</string>
+
+    <!-- This string labels a button that is used to approve an action.
+         This appears in such contexts as dialog boxes, `<select>` menus, etc. -->
+    <string name="ok_button">OK</string>
+
+    <!-- This string labels a button that is used to approve an action. -->
+    <string name="back_button">Back</string>
+
+    <!-- This string is displayed in a dialog after an application crash. -->
+    <string name="crash_dialog_heading">We had an issue and crashed</string>
+
+    <!-- This string explains why Mozilla would like the user to allow the crash data to be uploaded.
+         '%1$s' will be replaced at runtime with the app's domain name. -->
+    <string name="crash_dialog_message">Please help Mozilla improve %1$s by sending your crash data. &lt;a href=&quot;more&quot;&gt;Learn More&lt;/a&gt;</string>
+
+    <!-- This string labels a checkbox in the crash dialog box. When checked, the user will no longer
+         be prompted for permission to upload crash data after an application crash. -->
+    <string name="crash_dialog_send_data">Always send data without asking</string>
+
+    <!-- This string labels a button that, when pressed, allows the user to learn more about the
+         currently open dialog. -->
+    <string name="learn_more_button">Learn More</string>
+
+    <!-- This string labels a button that, when pressed, prevents browser-level crash data from being sent to Mozilla. -->
+    <string name="do_not_sent_button">Do Not Send</string>
+
+    <!-- This string labels a button that, when pressed, allows the crash data to be sent to Mozilla. -->
+    <string name="send_data_button">Send Data</string>
+
+
     </resources>
