@@ -370,12 +370,10 @@ public class NavigationURLBar extends FrameLayout {
             GleanMetricsService.urlBarEvent(false);
         }
 
-        if (!mSession.getCurrentUri().equals(url)) {
-            mSession.loadUri(url);
+        mSession.loadUri(url);
 
-            if (mDelegate != null) {
-                mDelegate.onHideAwesomeBar();
-            }
+        if (mDelegate != null) {
+            mDelegate.onHideAwesomeBar();
         }
 
         clearFocus();
@@ -503,7 +501,7 @@ public class NavigationURLBar extends FrameLayout {
                     if (action.equals(GeckoSession.SelectionActionDelegate.ACTION_CUT) && selectionValid) {
                         String selectedText = mBinding.urlEditText.getText().toString().substring(startSelection, endSelection);
                         clipboard.setPrimaryClip(ClipData.newPlainText("text", selectedText));
-                        mViewModel.setUrl(StringUtils.removeRange(mBinding.urlEditText.getText().toString(), startSelection, endSelection));
+                        mBinding.urlEditText.setText(StringUtils.removeRange(mBinding.urlEditText.getText().toString(), startSelection, endSelection));
                         mBinding.urlEditText.setSelection(startSelection);
 
                     } else if (action.equals(GeckoSession.SelectionActionDelegate.ACTION_COPY) && selectionValid) {
@@ -513,7 +511,7 @@ public class NavigationURLBar extends FrameLayout {
                     } else if (action.equals(GeckoSession.SelectionActionDelegate.ACTION_PASTE) && clipboard.hasPrimaryClip()) {
                         ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
                         if (selectionValid) {
-                            mViewModel.setUrl(StringUtils.removeRange(mBinding.urlEditText.getText().toString(), startSelection, endSelection));
+                            mBinding.urlEditText.setText(StringUtils.removeRange(mBinding.urlEditText.getText().toString(), startSelection, endSelection));
                             mBinding.urlEditText.setSelection(startSelection);
                         }
                         if (item != null && item.getText() != null) {
