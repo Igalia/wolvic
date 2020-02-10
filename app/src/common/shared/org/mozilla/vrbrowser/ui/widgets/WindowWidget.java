@@ -59,6 +59,7 @@ import org.mozilla.vrbrowser.ui.widgets.dialogs.PromptDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.SelectionActionWidget;
 import org.mozilla.vrbrowser.ui.widgets.menus.ContextMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.menus.LibraryMenuWidget;
+import org.mozilla.vrbrowser.utils.StringUtils;
 import org.mozilla.vrbrowser.utils.ViewUtils;
 
 import java.util.Arrays;
@@ -1583,6 +1584,16 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     @Override
     public void onLocationChange(@NonNull GeckoSession session, @Nullable String url) {
         mViewModel.setUrl(url);
+
+        if (StringUtils.isEmpty(url)) {
+            mViewModel.setIsBookmarked(false);
+
+        } else {
+            SessionStore.get().getBookmarkStore().isBookmarked(url).thenAcceptAsync(aBoolean -> mViewModel.setIsBookmarked(aBoolean), mUIThreadExecutor).exceptionally(throwable -> {
+                throwable.printStackTrace();
+                return null;
+            });
+        }
     }
 
     @Override

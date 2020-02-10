@@ -18,10 +18,8 @@ import androidx.lifecycle.Observer;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.browser.SettingsStore;
-import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.ui.widgets.Windows;
 import org.mozilla.vrbrowser.utils.ServoUtils;
-import org.mozilla.vrbrowser.utils.StringUtils;
 import org.mozilla.vrbrowser.utils.UrlUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -129,7 +127,7 @@ public class WindowViewModel extends AndroidViewModel {
         isMicrophoneEnabled = new MutableLiveData<>(new ObservableBoolean(true));
         isBookmarked = new MutableLiveData<>(new ObservableBoolean(false));
         isFocused = new MutableLiveData<>(new ObservableBoolean(false));
-        isUrlEmpty = new MutableLiveData<>(new ObservableBoolean(false));
+        isUrlEmpty = new MutableLiveData<>(new ObservableBoolean(true));
         isPopUpAvailable = new MutableLiveData<>(new ObservableBoolean(false));
         canGoForward = new MutableLiveData<>(new ObservableBoolean(false));
         canGoBack = new MutableLiveData<>(new ObservableBoolean(false));
@@ -323,9 +321,7 @@ public class WindowViewModel extends AndroidViewModel {
     }
 
     public void setUrl(@Nullable String url) {
-        if (url != null) {
-            this.url.setValue(new SpannableString(url));
-        }
+        setUrl(new SpannableString(url));
     }
 
     public void setUrl(@Nullable Spannable url) {
@@ -337,16 +333,6 @@ public class WindowViewModel extends AndroidViewModel {
 
         if (isLibraryVisible.getValue().get()) {
             return;
-        }
-
-        if (StringUtils.isEmpty(aURL)) {
-            setIsBookmarked(false);
-
-        } else {
-            SessionStore.get().getBookmarkStore().isBookmarked(aURL).thenAcceptAsync(this::setIsBookmarked, mUIThreadExecutor).exceptionally(throwable -> {
-                throwable.printStackTrace();
-                return null;
-            });
         }
 
         int index = -1;
