@@ -708,4 +708,248 @@
     <string name="send_data_button">Send Data</string>
 
 
+    <!-- This string appears in the tooltip for the button to change the 'Brightness'
+         (i.e., the brightness level of the background environment), in particular when playing a video. -->
+    <string name="brightness_mode_tooltip">Brightness</string>
+
+    <!-- This string labels the radio option that selects the 'Normal' background in the 'Brightness' mode. -->
+    <string name="brightness_mode_normal">Normal</string>
+
+    <!-- This string labels the radio option that selects the 'Dark' background in the 'Brightness' mode. -->
+    <string name="brightness_mode_dark">Dark</string>
+
+    <!-- This string labels the radio option that selects the 'Void' background in the 'Brightness' mode. -->
+    <string name="brightness_mode_void">Void</string>
+
+    <!-- This string labels a button to open the Video Projection selector. -->
+    <string name="video_mode_tooltip">Video Projection</string>
+
+    <!-- This string is displayed when selecting a video playback mode. -->
+    <string name="video_mode_3d_side">3D Side by Side</string>
+
+    <!-- This string is displayed when selecting a video playback mode. -->
+    <string name="video_mode_360">360</string>
+
+    <!-- This string is displayed when selecting a video playback mode. -->
+    <string name="video_mode_360_stereo">360 Stereo</string>
+
+    <!-- This string is displayed when selecting a video playback mode. -->
+    <string name="video_mode_180">180</string>
+
+    <!-- This string is displayed when selecting a video playback mode. -->
+    <string name="video_mode_180_left_right">Stereo 180 Left to Right</string>
+
+    <!-- This string is displayed when selecting a video playback mode. -->
+    <string name="video_mode_180_top_bottom">Stereo 180 Top to Bottom</string>
+
+    <!-- This string is displayed when selecting a video playback mode. -->
+    <string name="video_mode_2d">2D</string>
+
+    <!-- This string is displayed in a tooltip in the video controls UI. -->
+    <string name="video_controls_play">Play</string>
+
+    <!-- This string is displayed in a tooltip in the video controls UI. -->
+    <string name="video_controls_pause">Pause</string>
+
+    <!-- This string is displayed in a tooltip in the video controls UI. -->
+    <string name="video_controls_mute">Mute</string>
+
+    <!-- This string is displayed in a tooltip in the video controls UI. -->
+    <string name="video_controls_unmute">Unmute</string>
+
+    <!-- This string is displayed in a tooltip below the video controls UI. -->
+    <string name="video_controls_volume">Volume</string>
+
+    <!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek +30 seconds').
+    '%1$s' will be replaced at runtime with a duration in seconds (e.g., '30'). -->
+    <string name="video_controls_seek_forward">Seek +%1$s seconds</string>
+
+    <!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek -15 seconds').
+    '%1$s' will be replaced at runtime with a duration in seconds (e.g., '15'). -->
+    <string name="video_controls_seek_backward">Seek -%1$s seconds</string>
+
+    <!-- This string is displayed in the video control seekbar when the media is not seekable
+         (e.g., a live video stream). Prefer a short text because it affects the width of the seek bar. -->
+    <string name="video_controls_live">LIVE</string>
+
+    <!-- This string is displayed as the title of the Bookmarks List, which contains the user's bookmarked websites. -->
+    <string name="bookmarks_title">Bookmarks</string>
+
+    <!-- This string is displayed as the title of the Bookmarks List when the bookmarks list is empty. -->
+    <string name="bookmarks_empty">Your Bookmarks List is Empty</string>
+
+    <!-- This string is displayed under the bookmarks title in the bookmarks list. -->
+    <string name="bookmarks_description">Click the @ icon when you’re on a page to add it to your bookmarks.</string>
+
+    <!-- This string is displayed in the middle of the Bookmarks List while the bookmarks are being loaded. -->
+    <string name="bookmarks_loading">Loading Bookmarks</string>
+
+    <!-- This string is displayed as the title of the folder containing mobile bookmarks (after they're synced). -->
+    <string name="bookmarks_mobile_folder_title">Mobile Bookmarks</string>
+
+    <!-- This string is displayed as the title of the folder containing desktop bookmarks (after they're synced). -->
+    <string name="bookmarks_desktop_folder_title">Desktop Bookmarks</string>
+
+    <!-- This string is displayed as the title of the desktop "menu" bookmarks folder. -->
+    <string name="bookmarks_desktop_menu_title">Bookmarks Menu</string>
+
+    <!-- This string is displayed as the title of the desktop "toolbar" bookmarks folder. -->
+    <string name="bookmarks_desktop_toolbar_title">Bookmarks Toolbar</string>
+
+    <!-- This string is displayed as the title of the desktop "unfiled" bookmarks folder. -->
+    <string name="bookmarks_desktop_unfiled_title">Other Bookmarks</string>
+
+    <!-- This string is displayed in a tooltip that appears when a user hovers
+         over an icon representing 'Remove Bookmark' for an individual bookmark
+         item listed in the Bookmarks List. -->
+    <string name="bookmarks_remove">Remove Bookmark</string>
+
+    <!-- This string is displayed in a tooltip that appears in the tray bar on top of the
+         bookmarks tray button then a new item is bookmarked. -->
+    <string name="bookmarks_saved_notification">Saved to Bookmarks!</string>
+
+    <!-- This string is displayed in a tooltip that appears when a user hovers
+         over an icon representing 'Edit This Bookmark' for an individual bookmark
+         item listed in the Bookmarks List. -->
+    <string name="bookmarks_edit">Edit this Bookmark</string>
+
+    <!-- This string is displayed as placeholder text in the search field in the Bookmarks List. -->
+    <string name="bookmarks_search">Search Bookmarks</string>
+
+    <!-- This string is displayed in a tooltip in the bookmark button in the URL bar. -->
+    <string name="bookmarks_bookmark">Bookmark This Page</string>
+
+    <!-- This string is displayed in the Bookmarks List for as the header of the most recently
+         bookmarked items. -->
+    <string name="bookmarks_recent">Recently Bookmarked</string>
+
+    <!-- This string is displayed in the Bookmarks List as a tooltip of the button for showing
+         all the bookmarks. -->
+    <string name="bookmarks_show_all">Show All Bookmarks</string>
+
+    <!-- This string is displayed is the "Sync" button in the bookmarks panel. When pressed the
+         bookmarks are synced with the Firefox account. -->
+    <string name="bookmarks_sync">Synchronise</string>
+
+    <!-- This string is displayed as the title of the history list, which contains the user's visited websites. -->
+    <string name="history_title">History</string>
+
+    <!-- This string is displayed as the title of the history list when the history is empty. -->
+    <string name="history_empty">Your History is Empty</string>
+
+    <!-- This string is displayed under the history title in the history list. -->
+    <string name="history_description">You can access your browsing history here</string>
+
+    <!-- This string is displayed in the middle of the history list while the history is being loaded. -->
+    <string name="history_loading">Loading History</string>
+
+    <!-- This string is displayed as the section title in the history list for history entries that happened today. -->
+    <string name="history_section_today">Today</string>
+
+    <!-- This string is displayed as the section title in the history list for history entries that happened yesterday. -->
+    <string name="history_section_yesterday">Yesterday</string>
+
+    <!-- This string is displayed as the section title in the history list for history entries that happened last week. -->
+    <string name="history_section_last_week">Last Week</string>
+
+    <!-- This string is displayed as the section title in the history list for history entries that happened before last week. -->
+    <string name="history_section_older">Older</string>
+
+    <!-- This string is displayed is the "Clear History" button in the history list. When pressed a dialog for
+         clearing history is displayed. -->
+    <string name="history_clear">Clear History</string>
+
+    <!-- This string is displayed is the "Sync" button in the history panel. When pressed the
+         history is synced with the Firefox account. -->
+    <string name="fxa_sync">Synchronise</string>
+
+    <!-- This string is displayed is the "Sync" button in the history panel when the sync is in progress. -->
+    <string name="fxa_syncing">Synchronising…</string>
+
+    <!-- This string is displayed in the title of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
+    <string name="fxa_signout_confirmation_title">Sign out of your Firefox Account?</string>
+
+    <!-- This string is displayed in the body of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
+    <string name="fxa_signout_confirmation_body">When you sign out, you won\'t be able to send or receive tabs from other devices. Your bookmarks and history will also stop synchronising.</string>
+
+    <!-- This string is displayed in the checkbox text of the FxA sign out dialog displayed when the user clicks on the Sign out button.
+         When checked the history and Bookmarks will be deleted from gthe device after signing in. -->
+    <string name="fxa_signout_confirmation_checkbox">Clear history and bookmarks from this device</string>
+
+    <!-- This string is displayed in the cancel button of the FxA sign out dialog displayed when the user clicks on the Sign out button.
+         If clicked the user will be signed out from their FxA account and the dialog will be dismissed. -->
+    <string name="fxa_signout_confirmation_signout">Sign Out</string>
+
+    <!-- This string is displayed in the accept button of the FxA sign out dialog displayed when the user clicks on the Sign out button.
+         If clicked the user will not be signed out from the FxA account and the dialog will be dismissed. -->
+    <string name="fxa_signout_confirmation_cancel">Cancel</string>
+
+    <!-- This string is displayed is the "Cancel" button from the clear history dialog.
+         When pressed the dialog is closed. -->
+    <string name="history_clear_cancel">Cancel</string>
+
+    <!-- This string is displayed is the "Clear Now" button from the clear history dialog.
+         When pressed the selected history range is deleted from the history storage. -->
+    <string name="history_clear_now">Clear Now</string>
+
+    <!-- This string is displayed is the clear history dialog.
+         If selected today's history is deleted from the history storage. -->
+    <string name="history_clear_range_today">Today</string>
+
+    <!-- This string is displayed is the clear history dialog.
+         If selected history since yesterday is deleted from the history storage. -->
+    <string name="history_clear_range_yesterday">Yesterday</string>
+
+    <!-- This string is displayed is the clear history dialog.
+         If selected history since last week is removed from the history storage. -->
+    <string name="history_clear_range_last_week">Last week</string>
+
+    <!-- This string is displayed is the clear history dialog.
+         If selected all the history is deleted from the history storage. -->
+    <string name="history_clear_range_everything">Everything</string>
+
+    <!-- This string is displayed in the header of the radio button where the clear cache time range
+         can be selected. -->
+    <string name="history_clear_time_range">Time range to clear:</string>
+
+    <!-- This string is displayed is the history context menu that is displayed when
+         the more button is pressed in a history item. It opens the selected history item in a new window. -->
+    <string name="history_context_menu_new_window">Open in a New Window</string>
+
+    <!-- This string is displayed is the history context menu that is displayed when
+         the more button is pressed in a history item. It opens the selected history item in a new tab. -->
+    <string name="history_context_menu_new_tab">Open in a New Tab</string>
+
+    <!-- This string is displayed is the history context menu that is displayed when
+         the more button is pressed in a history item. It add the selected items to favorites. -->
+    <string name="history_context_add_bookmarks">Add to Bookmarks</string>
+
+    <!-- This string is displayed is the history context menu that is displayed when
+         the more button is pressed in a history item. It removes the selected item from favorites. -->
+    <string name="history_context_remove_bookmarks">Remove from Bookmarks</string>
+
+    <!-- This string labels the Reset button that restores the default display settings values. -->
+    <string name="display_options_reset">Reset Display Settings</string>
+
+    <!-- This string labels the Reset button that restores the default privacy and security settings values. -->
+    <string name="privacy_options_reset">Reset Privacy &amp; Security Settings</string>
+
+    <!-- This string labels the Clear All button that removes all the sites from the stored allowed pop-ups sites. -->
+    <string name="privacy_options_popups_clear_all">Clear All</string>
+
+    <!-- This string labels the Reset button that removes all the sites from the stored allowed pop-ups sites. -->
+    <string name="privacy_options_popups_reset">Reset Block Pop-Ups Windows Settings</string>
+
+    <!-- This string is displayed on top of the allowed sites list in the allowed pop-ups panel. -->
+    <string name="privacy_options_popups_list_header">The following web sites have requested to open pop-up windows:</string>
+
+    <!-- This string is displayed in the first line of a text that's displayed in the middle of allowed pop-ups panel instead of the exceptions list
+         when there are no exceptions. -->
+    <string name="privacy_options_popups_list_empty_first">When you open a web site with pop-up windows, you will see a dialogue that lets you choose to block pop-up windows.</string>
+
+    <!-- This string is displayed in the second line of a text that's displayed in the middle of allowed pop-ups panel instead of the exceptions list
+         when there are no exceptions. -->
+    <string name="privacy_options_popups_list_empty_second">A list of sites with permissions will appear here.</string>
+
+
     </resources>
