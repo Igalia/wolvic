@@ -160,6 +160,7 @@ ExternalBlitter::CancelFrame(const int32_t aSurfaceHandle) {
     surface = iter->second;
   } else {
     surface = GeckoSurfaceTexture::Create(aSurfaceHandle);
+    m.surfaceMap[aSurfaceHandle] = surface;
   }
 
   if (surface) {

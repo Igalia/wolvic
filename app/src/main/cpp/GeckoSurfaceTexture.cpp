@@ -137,6 +137,7 @@ GeckoSurfaceTexture::Create(const int32_t aHandle) {
   }
   result = std::make_shared<vrb::ConcreteClass<GeckoSurfaceTexture, GeckoSurfaceTexture::State> >();
   result->m.surface = sEnv->NewGlobalRef(surface);
+  sEnv->DeleteLocalRef(surface);
   result->IncrementUse();
   return result;
 }
