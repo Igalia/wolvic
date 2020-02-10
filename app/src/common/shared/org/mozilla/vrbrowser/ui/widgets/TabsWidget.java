@@ -241,6 +241,9 @@ public class TabsWidget extends UIDialog {
             holder.tabView.setDelegate(new TabView.Delegate() {
                 @Override
                 public void onClose(TabView aSender) {
+                    if (aSender.getSession() != null) {
+                        holder.tabView.setPrivate(aSender.getSession().isPrivateMode());
+                    }
                     if (mTabDelegate != null) {
                         ArrayList<Session> closed = new ArrayList<>();
                         closed.add(aSender.getSession());
@@ -255,6 +258,7 @@ public class TabsWidget extends UIDialog {
                         mTabs.remove(holder.getAdapterPosition() - 1);
                         mAdapter.notifyItemRemoved(holder.getAdapterPosition());
                         updateTabCounter();
+
                     } else {
                         onDismiss();
                     }
