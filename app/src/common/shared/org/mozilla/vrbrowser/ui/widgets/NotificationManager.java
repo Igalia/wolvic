@@ -4,6 +4,7 @@ import android.graphics.Rect;
 import android.view.View;
 
 import androidx.annotation.DimenRes;
+import androidx.annotation.IntDef;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
@@ -11,6 +12,7 @@ import androidx.annotation.StringRes;
 import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.ui.views.UIButton;
+import org.mozilla.vrbrowser.ui.widgets.NotificationManager.Notification.NotificationPosition;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -38,6 +40,8 @@ public class NotificationManager {
 
     public static class Notification {
 
+        @IntDef(value = { MIDDLE, TOP, BOTTOM, LEFT, RIGHT})
+        public @interface NotificationPosition {}
         public static final int MIDDLE = 0;
         public static final int TOP = 1;
         public static final int BOTTOM = 2;
@@ -49,7 +53,7 @@ public class NotificationManager {
         private String mString;
         private float mMargin;
         private float mZTranslation;
-        private int mPositionFlags;
+        private @NotificationPosition int mPositionFlags;
         private @DimenRes int mDensity;
         private @LayoutRes int mLayoutRes;
         private int mDuration;
@@ -76,7 +80,7 @@ public class NotificationManager {
         private String string;
         private float margin = 0.0f;
         private float zTranslation = 0.0f;
-        private int positionFlags = Notification.MIDDLE;
+        private @NotificationPosition int positionFlags = Notification.MIDDLE;
         private @DimenRes int density;
         private @LayoutRes int layoutRes = R.layout.library_notification;
         private int duration = DEFAULT_DURATION;
@@ -107,7 +111,7 @@ public class NotificationManager {
             return this;
         }
 
-        public Builder withPosition(int positionFlags) {
+        public Builder withPosition(@NotificationPosition int positionFlags) {
             this.positionFlags = positionFlags;
             return this;
         }
@@ -150,14 +154,11 @@ public class NotificationManager {
 
         TooltipWidget notificationView = new TooltipWidget(notification.mParent.getContext(), notification.mLayoutRes);
 
-        notification.mParent.requestFocus();
-        notification.mParent.requestFocusFromTouch();
-
         setPlacement(notificationView, notification);
 
         notificationView.setText(notification.mString);
         notificationView.setCurvedMode(false);
-        notificationView.show(UIWidget.CLEAR_FOCUS);
+        notificationView.show(UIWidget.KEEP_FOCUS);
 
         if (notification.mView instanceof UIButton) {
             ((UIButton)notification.mView).setNotificationMode(true);

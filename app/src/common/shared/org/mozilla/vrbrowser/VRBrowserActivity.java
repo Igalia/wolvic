@@ -311,7 +311,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             public void onFocusedWindowChanged(@NonNull WindowWidget aFocusedWindow, @Nullable WindowWidget aPrevFocusedWindow) {
                 attachToWindow(aFocusedWindow, aPrevFocusedWindow);
                 mTray.setAddWindowVisible(mWindows.canOpenNewWindow());
-                mNavigationBar.hideNotifications();
+                mNavigationBar.hideAllNotifications();
             }
             @Override
             public void onWindowBorderChanged(@NonNull WindowWidget aChangeWindow) {
@@ -320,14 +320,14 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
             @Override
             public void onWindowsMoved() {
-                mNavigationBar.hideNotifications();
+                mNavigationBar.hideAllNotifications();
                 updateWidget(mTray);
             }
 
             @Override
             public void onWindowClosed() {
                 mTray.setAddWindowVisible(mWindows.canOpenNewWindow());
-                mNavigationBar.hideNotifications();
+                mNavigationBar.hideAllNotifications();
                 updateWidget(mTray);
             }
 
