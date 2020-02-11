@@ -153,6 +153,7 @@ public class NotificationManager {
         }
 
         TooltipWidget notificationView = new TooltipWidget(notification.mParent.getContext(), notification.mLayoutRes);
+        notificationView.setDelegate(() -> hide(notificationId));
 
         setPlacement(notificationView, notification);
 
