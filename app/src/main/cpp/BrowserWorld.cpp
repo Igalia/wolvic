@@ -14,6 +14,7 @@
 #include "GeckoSurfaceTexture.h"
 #include "Skybox.h"
 #include "SplashAnimation.h"
+#include "Environment.h"
 #include "Pointer.h"
 #include "Widget.h"
 #include "WidgetMover.h"
@@ -179,6 +180,7 @@ struct BrowserWorld::State {
   uint32_t loaderDelay;
   bool exitImmersiveRequested;
   WidgetPtr resizingWidget;
+  EnvironmentPtr environment;
   SplashAnimationPtr splashAnimation;
   VRVideoPtr vrVideo;
   PerformanceMonitorPtr monitor;
@@ -211,6 +213,7 @@ struct BrowserWorld::State {
     externalVR = ExternalVR::Create();
     blitter = ExternalBlitter::Create(create);
     fadeAnimation = FadeAnimation::Create(create);
+    environment = Environment::Create(create);
     splashAnimation = SplashAnimation::Create(create);
     monitor = PerformanceMonitor::Create(create);
     monitor->AddPerformanceMonitorObserver(std::make_shared<PerformanceObserver>());
@@ -852,7 +855,6 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
     }
 #if !defined(SNAPDRAGONVR)
     UpdateEnvironment();
-    // Don't load the env model, we are going for skyboxes in v1.0
     CreateFloor();
 #endif
     m.fadeAnimation->SetFadeChangeCallback([=](const vrb::Color& aTintColor) {
@@ -1445,6 +1447,8 @@ BrowserWorld::TickWorld() {
     m.skybox->SetTransform(vrb::Matrix::Translation(headPosition));
   }
 
+  m.environment->Update(m.context);
+
   m.SortWidgets();
   m.device->StartFrame();
   m.rootOpaque->SetTransform(m.device->GetReorientTransform());
@@ -1638,11 +1642,8 @@ BrowserWorld::CreateSkyBox(const std::string& aBasePath, const std::string& aExt
 void
 BrowserWorld::CreateFloor() {
   ASSERT_ON_RENDER_THREAD();
-  vrb::TransformPtr model = Transform::Create(m.create);
-  m.loader->LoadModel("environments/Env.obj", model);
-  m.rootOpaque->AddNode(model);
-  vrb::Matrix transform = vrb::Matrix::Identity();
-  model->SetTransform(transform);
+  m.environment->LoadModels(m.loader);
+  m.rootOpaque->AddNode(m.environment->GetRoot());
 }
 
 } // namespace crow

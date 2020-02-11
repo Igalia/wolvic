@@ -25,6 +25,7 @@ add_library( # Sets the name of the library.
              src/main/cpp/ControllerContainer.cpp
              src/main/cpp/DeviceUtils.cpp
              src/main/cpp/ElbowModel.cpp
+             src/main/cpp/Environment.cpp
              src/main/cpp/FadeAnimation.cpp
              src/main/cpp/Quad.cpp
              src/main/cpp/ExternalBlitter.cpp
