@@ -60,6 +60,7 @@ import org.mozilla.vrbrowser.ui.widgets.dialogs.SelectionActionWidget;
 import org.mozilla.vrbrowser.ui.widgets.menus.ContextMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.menus.LibraryMenuWidget;
 import org.mozilla.vrbrowser.utils.StringUtils;
+import org.mozilla.vrbrowser.utils.UrlUtils;
 import org.mozilla.vrbrowser.utils.ViewUtils;
 
 import java.util.Arrays;
@@ -439,11 +440,11 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
     }
 
-    public void showBookmarks() {
+    private void showBookmarks() {
         showBookmarks(true);
     }
 
-    public void showBookmarks(boolean switchSurface) {
+    private void showBookmarks(boolean switchSurface) {
         if (mView == null) {
             setView(mBookmarksView, switchSurface);
             mBookmarksView.onShow();
@@ -456,7 +457,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         hideBookmarks(true);
     }
 
-    public void hideBookmarks(boolean switchSurface) {
+    private void hideBookmarks(boolean switchSurface) {
         if (mView != null) {
             unsetView(mBookmarksView, switchSurface);
             mViewModel.setIsBookmarksVisible(false);
@@ -485,11 +486,11 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
     }
 
-    public void showHistory() {
+    private void showHistory() {
         showHistory(true);
     }
 
-    public void showHistory(boolean switchSurface) {
+    private void showHistory(boolean switchSurface) {
         if (mView == null) {
             setView(mHistoryView, switchSurface);
             mHistoryView.onShow();
@@ -1555,14 +1556,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     public void onPageStart(@NonNull GeckoSession geckoSession, @NonNull String aUri) {
         mCaptureOnPageStop = true;
 
-        if (isHistoryVisible()) {
-            hideHistory();
-        }
-
-        if (isBookmarksVisible()) {
-            hideBookmarks();
-        }
-
         mViewModel.setUrl(aUri);
         mViewModel.setIsLoading(true);
     }
@@ -1611,6 +1604,18 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         final GeckoResult<AllowOrDeny> result = new GeckoResult<>();
 
         Uri uri = Uri.parse(aRequest.uri);
+        if (UrlUtils.isAboutPage(uri.toString())) {
+            if(UrlUtils.isBookmarksUrl(uri.toString())) {
+                showBookmarks();
+
+            } else if (UrlUtils.isHistoryUrl(uri.toString())) {
+                showHistory();
+
+            } else {
+                hideLibraryPanels();
+            }
+        }
+
         if ("file".equalsIgnoreCase(uri.getScheme()) &&
                 !mWidgetManager.isPermissionGranted(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
             mWidgetManager.requestPermission(

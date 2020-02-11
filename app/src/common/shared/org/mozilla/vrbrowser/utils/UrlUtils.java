@@ -115,4 +115,38 @@ public class UrlUtils {
             return aUri;
         }
     }
+
+    public static final String ABOUT_HISTORY = "about://history";
+
+    public static boolean isHistoryUrl(@Nullable String url) {
+        if (url == null) {
+            return false;
+        }
+
+        return url.equalsIgnoreCase(ABOUT_HISTORY);
+    }
+
+    public static final String ABOUT_BOOKMARKS = "about://bookmarks";
+
+    public static boolean isBookmarksUrl(@Nullable String url) {
+        if (url == null) {
+            return false;
+        }
+
+        return url.equalsIgnoreCase(ABOUT_BOOKMARKS);
+    }
+
+    public static final String ABOUT_PRIVATE = "about://privatebrowsing";
+
+    public static boolean isPrivateUrl(@Nullable String url) {
+        if (url == null) {
+            return false;
+        }
+
+        return url.equalsIgnoreCase(ABOUT_PRIVATE);
+    }
+
+    public static boolean isAboutPage(@Nullable String url) {
+        return isHistoryUrl(url) || isBookmarksUrl(url) || isPrivateUrl(url);
+    }
 }

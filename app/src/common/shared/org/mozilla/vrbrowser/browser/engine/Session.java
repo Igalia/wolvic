@@ -942,6 +942,10 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
             }
         }
 
+        if (UrlUtils.isAboutPage(aRequest.uri)) {
+            return GeckoResult.DENY;
+        }
+
         return result;
     }
 

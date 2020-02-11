@@ -27,6 +27,7 @@ import org.mozilla.vrbrowser.ui.widgets.dialogs.UIDialog;
 import org.mozilla.vrbrowser.utils.BitmapCache;
 import org.mozilla.vrbrowser.utils.ConnectivityReceiver;
 import org.mozilla.vrbrowser.utils.SystemUtils;
+import org.mozilla.vrbrowser.utils.UrlUtils;
 
 import java.io.File;
 import java.io.FileReader;
@@ -65,6 +66,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         int textureHeight;
         float worldWidth;
         int tabIndex = -1;
+        PanelType panelType;
 
         public void load(WindowWidget aWindow, WindowsState aState, int aTabIndex) {
             WidgetPlacement widgetPlacement;
@@ -83,6 +85,13 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             textureHeight = widgetPlacement.height;
             worldWidth = widgetPlacement.worldWidth;
             tabIndex = aTabIndex;
+            if (aWindow.isBookmarksVisible()) {
+                panelType = PanelType.BOOKMARKS;
+            } else if (aWindow.isHistoryVisible()) {
+                panelType = PanelType.HISTORY;
+            } else {
+                panelType = PanelType.NONE;
+            }
         }
     }
 
@@ -112,6 +121,12 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     private Accounts mAccounts;
     private Services mServices;
     private PromptDialogWidget mNoInternetDialog;
+
+    private enum PanelType {
+        NONE,
+        BOOKMARKS,
+        HISTORY
+    }
 
     public enum WindowPlacement{
         FRONT(0),
@@ -280,6 +295,16 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         newWindow.getPlacement().worldWidth = aState.worldWidth;
         newWindow.setRestored(true);
         placeWindow(newWindow, aState.placement);
+        if (aState.panelType != null) {
+            switch (aState.panelType) {
+                case BOOKMARKS:
+                    newWindow.getSession().loadUri(UrlUtils.ABOUT_BOOKMARKS);
+                    break;
+                case HISTORY:
+                    newWindow.getSession().loadUri(UrlUtils.ABOUT_HISTORY);
+                    break;
+            }
+        }
         updateCurvedMode(true);
 
         mWidgetManager.addWidget(newWindow);
@@ -873,11 +898,11 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
                 switch (mAccounts.getLoginOrigin()) {
                     case BOOKMARKS:
-                        getFocusedWindow().showBookmarks();
+                        mFocusedWindow.getSession().loadUri(UrlUtils.ABOUT_BOOKMARKS);
                         break;
 
                     case HISTORY:
-                        getFocusedWindow().showHistory();
+                        mFocusedWindow.getSession().loadUri(UrlUtils.ABOUT_HISTORY);
                         break;
 
                     case SETTINGS:
