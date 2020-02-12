@@ -24,6 +24,7 @@
 #include "vrb/VertexArray.h"
 #include "WidgetBorder.h"
 #include <vector>
+#include <vrb/include/vrb/ProgramFactory.h>
 
 namespace crow {
 
@@ -89,7 +90,6 @@ struct WidgetBorder::State {
     array->AppendNormal(normal);
 
     vrb::RenderStatePtr state = vrb::RenderState::Create(aContext);
-    state->SetVertexColorEnabled(true);
     vrb::GeometryPtr geometry = vrb::Geometry::Create(aContext);
     geometry->SetVertexArray(array);
     geometry->SetRenderState(state);
@@ -142,11 +142,13 @@ WidgetBorderPtr WidgetBorder::Create(vrb::CreationContextPtr& aContext, const vr
     const std::string customFragment =
 #include "shaders/clear_color.fs"
     ;
-    result->m.cylinder->GetRenderState()->SetCustomFragmentShader(customFragment);
+    result->m.cylinder->UpdateProgram(customFragment);
     result->m.transform->AddNode(result->m.cylinder->GetRoot());
   } else {
     result->m.geometry = result->m.CreateGeometry(aContext, -max, max, aBorderRect);
     result->m.geometry->GetRenderState()->SetLightsEnabled(false);
+    vrb::ProgramPtr program = aContext->GetProgramFactory()->CreateProgram(aContext, vrb::FeatureVertexColor);
+    result->m.geometry->GetRenderState()->SetProgram(program);
     result->m.transform->AddNode(result->m.geometry);
   }
 

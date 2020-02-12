@@ -122,13 +122,13 @@ struct Widget::State {
       if (quad) {
         quad->SetTexture(surface, aTextureWidth, aTextureHeight);
         quad->SetMaterial(vrb::Color(0.4f, 0.4f, 0.4f), vrb::Color(1.0f, 1.0f, 1.0f), vrb::Color(0.0f, 0.0f, 0.0f), 0.0f);
-        quad->GetRenderState()->SetCustomFragmentShader(customFragment);
         quad->GetRenderState()->SetTintColor(tintColor);
+        quad->UpdateProgram(customFragment);
       } else if (cylinder) {
         cylinder->SetTexture(surface, aTextureWidth, aTextureHeight);
         cylinder->SetMaterial(vrb::Color(0.4f, 0.4f, 0.4f), vrb::Color(1.0f, 1.0f, 1.0f), vrb::Color(0.0f, 0.0f, 0.0f), 0.0f);
-        cylinder->GetRenderState()->SetCustomFragmentShader(customFragment);
         cylinder->GetRenderState()->SetTintColor(tintColor);
+        cylinder->UpdateProgram(customFragment);
       }
     }
   }
@@ -617,10 +617,12 @@ Widget::SetProxifyLayer(const bool aValue) {
       proxy->SetCylinderTheta(m.cylinder->GetCylinderTheta());
       proxy->SetTexture(proxySurface, textureWidth, textureHeight);
       proxy->SetTransform(m.cylinder->GetTransformNode()->GetTransform());
+      proxy->UpdateProgram("");
       m.layerProxy->AddNode(proxy->GetRoot());
     } else {
       QuadPtr proxy = Quad::Create(create, *m.quad);
       proxy->SetTexture(proxySurface, textureWidth, textureHeight);
+      proxy->UpdateProgram("");
       m.layerProxy->AddNode(proxy->GetRoot());
     }
   }

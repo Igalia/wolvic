@@ -109,6 +109,7 @@ SplashAnimation::Load(vrb::RenderContextPtr& aContext, const DeviceDelegatePtr& 
   m.logo = Quad::Create(create, w, w / aspect, m.layer);
   if (!m.layer) {
     m.logo->SetTexture(texture, texture->GetWidth(), texture->GetHeight());
+    m.logo->UpdateProgram("");
   }
   m.root->AddNode(m.logo->GetRoot());
 }

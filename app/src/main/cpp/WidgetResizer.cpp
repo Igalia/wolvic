@@ -16,6 +16,8 @@
 #include "vrb/Matrix.h"
 #include "vrb/GLError.h"
 #include "vrb/Geometry.h"
+#include "vrb/Program.h"
+#include "vrb/ProgramFactory.h"
 #include "vrb/RenderState.h"
 #include "vrb/SurfaceTextureFactory.h"
 #include "vrb/TextureGL.h"
@@ -177,9 +179,10 @@ struct ResizeHandle {
     normalIndices.push_back(1);
 
     vrb::GeometryPtr geometry = vrb::Geometry::Create(aContext);
+    vrb::ProgramPtr program = aContext->GetProgramFactory()->CreateProgram(aContext, vrb::FeatureVertexColor);
     vrb::RenderStatePtr state = vrb::RenderState::Create(aContext);
+    state->SetProgram(program);
     state->SetLightsEnabled(false);
-    state->SetVertexColorEnabled(true);
     geometry->SetVertexArray(array);
     geometry->SetRenderState(state);
     geometry->AddFace(indices, indices, normalIndices);

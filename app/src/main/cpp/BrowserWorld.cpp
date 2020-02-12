@@ -42,6 +42,7 @@
 #include "vrb/NodeFactoryObj.h"
 #include "vrb/ParserObj.h"
 #include "vrb/PerformanceMonitor.h"
+#include "vrb/ProgramFactory.h"
 #include "vrb/RenderContext.h"
 #include "vrb/RenderState.h"
 #include "vrb/SurfaceTextureFactory.h"
@@ -194,6 +195,7 @@ struct BrowserWorld::State {
     context = RenderContext::Create();
     create = context->GetRenderThreadCreationContext();
     loader = ModelLoaderAndroid::Create(context);
+    context->GetProgramFactory()->SetLoaderThread(loader);
     rootOpaque = Transform::Create(create);
     rootTransparent = Transform::Create(create);
     rootController = Group::Create(create);

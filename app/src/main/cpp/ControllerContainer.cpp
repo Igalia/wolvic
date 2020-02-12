@@ -9,10 +9,13 @@
 
 #include "vrb/ConcreteClass.h"
 #include "vrb/Color.h"
+#include "vrb/CreationContext.h"
 #include "vrb/Geometry.h"
 #include "vrb/Group.h"
 #include "vrb/Matrix.h"
 #include "vrb/ModelLoaderAndroid.h"
+#include "vrb/Program.h"
+#include "vrb/ProgramFactory.h"
 #include "vrb/RenderState.h"
 #include "vrb/Toggle.h"
 #include "vrb/Transform.h"
@@ -107,8 +110,9 @@ ControllerContainer::InitializeBeam() {
   array->AppendNormal(Vector(-1.0f, 1.0f, 0.0f).Normalize()); // Top left
   array->AppendNormal(Vector(0.0f, 0.0f, -1.0f).Normalize()); // in to the screen
 
-
+  ProgramPtr program = create->GetProgramFactory()->CreateProgram(create, 0);
   RenderStatePtr state = RenderState::Create(create);
+  state->SetProgram(program);
   state->SetMaterial(Color(1.0f, 1.0f, 1.0f), Color(1.0f, 1.0f, 1.0f), Color(0.0f, 0.0f, 0.0f), 0.0f);
   state->SetLightsEnabled(false);
   GeometryPtr geometry = Geometry::Create(create);

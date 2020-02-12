@@ -31,6 +31,7 @@ public:
   static CylinderPtr Create(vrb::CreationContextPtr aContext, const VRLayerCylinderPtr& aLayer = nullptr);
   static CylinderPtr Create(vrb::CreationContextPtr aContext, const Cylinder& aCylinder);
   static float kWorldDensityRatio;
+  void UpdateProgram(const std::string& aCustomFragmentShader);
   void GetTextureSize(int32_t& aWidth, int32_t& aHeight) const;
   void SetTextureSize(int32_t aWidth, int32_t aHeight);
   void SetTexture(const vrb::TexturePtr& aTexture, int32_t aWidth, int32_t aHeight);

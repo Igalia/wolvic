@@ -15,6 +15,8 @@
 #include "vrb/Geometry.h"
 #include "vrb/Matrix.h"
 #include "vrb/ModelLoaderAndroid.h"
+#include "vrb/Program.h"
+#include "vrb/ProgramFactory.h"
 #include "vrb/RenderState.h"
 #include "vrb/RenderContext.h"
 #include "vrb/TextureCubeMap.h"
@@ -110,10 +112,13 @@ struct Pointer::State {
     geometry = createCircle(kResolution, kInnerRadius, kOffset);
     vrb::GeometryPtr geometryOuter = createCircle(kResolution, kOuterRadius, kOffset);
 
+    vrb::ProgramPtr program = create->GetProgramFactory()->CreateProgram(create, 0);
     vrb::RenderStatePtr state = vrb::RenderState::Create(create);
+    state->SetProgram(program);
     state->SetMaterial(pointerColor, pointerColor, vrb::Color(0.0f, 0.0f, 0.0f), 0.0f);
     geometry->SetRenderState(state);
     vrb::RenderStatePtr stateOuter = vrb::RenderState::Create(create);
+    stateOuter->SetProgram(program);
     stateOuter->SetMaterial(POINTER_COLOR_OUTER, POINTER_COLOR_OUTER, vrb::Color(0.0f, 0.0f, 0.0f), 0.0f);
     geometryOuter->SetRenderState(stateOuter);
     pointerScale->AddNode(geometry);

@@ -13,6 +13,8 @@
 #include "vrb/CreationContext.h"
 #include "vrb/Matrix.h"
 #include "vrb/Geometry.h"
+#include "vrb/Program.h"
+#include "vrb/ProgramFactory.h"
 #include "vrb/RenderState.h"
 #include "vrb/SurfaceTextureFactory.h"
 #include "vrb/TextureSurface.h"
@@ -163,9 +165,6 @@ struct Cylinder::State {
 
     vrb::RenderStatePtr state = vrb::RenderState::Create(create);
     state->SetLightsEnabled(false);
-    state->SetVertexColorEnabled(border > 0.0f);
-    state->SetFragmentPrecision(GL_HIGH_FLOAT);
-    state->SetUVTransformEnabled(true);
     geometry->SetRenderState(state);
 
     return geometry;
@@ -235,6 +234,35 @@ Cylinder::Create(vrb::CreationContextPtr aContext, const VRLayerCylinderPtr& aLa
   result->m.layer = aLayer;
   result->m.Initialize();
   return result;
+}
+
+void
+Cylinder::UpdateProgram(const std::string& aCustomFragmentShader) {
+  if (!m.geometry) {
+    return;
+  }
+  vrb::CreationContextPtr create = m.context.lock();
+  if (!create) {
+    return;
+  }
+  uint32_t features = vrb::FeatureHighPrecision | vrb::FeatureUVTransform;
+  if (m.border > 0) {
+    features |= vrb::FeatureVertexColor;
+  }
+
+  vrb::TexturePtr texture = m.geometry->GetRenderState()->GetTexture();
+  if (texture) {
+    if (texture->GetTarget() == GL_TEXTURE_CUBE_MAP) {
+      features |= vrb::FeatureCubeTexture;
+    } else if (dynamic_cast<vrb::TextureSurface*>(texture.get()) != nullptr) {
+      features |= vrb::FeatureSurfaceTexture;
+    } else {
+      features |= vrb::FeatureTexture;
+    }
+  }
+
+  vrb::ProgramPtr program = create->GetProgramFactory()->CreateProgram(create, features, aCustomFragmentShader);
+  m.geometry->GetRenderState()->SetProgram(program);
 }
 
 void

@@ -13,6 +13,8 @@
 #include "vrb/Geometry.h"
 #include "vrb/Matrix.h"
 #include "vrb/ModelLoaderAndroid.h"
+#include "vrb/Program.h"
+#include "vrb/ProgramFactory.h"
 #include "vrb/RenderState.h"
 #include "vrb/RenderContext.h"
 #include "vrb/TextureGL.h"
@@ -155,9 +157,10 @@ struct VRVideo::State {
 
     std::vector<int> indices;
 
+    vrb::ProgramPtr program = create->GetProgramFactory()->CreateProgram(create, vrb::FeatureSurfaceTexture | vrb::FeatureHighPrecision);
     vrb::RenderStatePtr state = vrb::RenderState::Create(create);
+    state->SetProgram(program);
     state->SetLightsEnabled(false);
-    state->SetFragmentPrecision(GL_HIGH_FLOAT);
     vrb::TexturePtr texture = std::dynamic_pointer_cast<vrb::Texture>(window->GetSurfaceTexture());
     state->SetTexture(texture);
     vrb::GeometryPtr geometry = vrb::Geometry::Create(create);
@@ -308,7 +311,9 @@ struct VRVideo::State {
     vrb::Vector min, max;
     window->GetWidgetMinAndMax(min, max);
     vrb::GeometryPtr geometry = Quad::CreateGeometry(create, min, max, aUVRect);
+    vrb::ProgramPtr program = create->GetProgramFactory()->CreateProgram(create, vrb::FeatureSurfaceTexture);
     vrb::RenderStatePtr state = vrb::RenderState::Create(create);
+    state->SetProgram(program);
     state->SetLightsEnabled(false);
     vrb::TexturePtr texture = std::dynamic_pointer_cast<vrb::Texture>(window->GetSurfaceTexture());
     state->SetTexture(texture);
