@@ -321,6 +321,9 @@ public class WindowViewModel extends AndroidViewModel {
     }
 
     public void setUrl(@Nullable String url) {
+        if (url == null) {
+            return;
+        }
         setUrl(new SpannableString(url));
     }
 
