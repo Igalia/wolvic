@@ -548,7 +548,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 boolean enabled = extras.getBoolean("e10s", wasEnabled);
                 if (wasEnabled != enabled) {
                     SettingsStore.getInstance(this).setMultiprocessEnabled(enabled);
-                    SessionStore.get().resetMultiprocess();
+                    mHandler.postDelayed(() -> SystemUtils.scheduleRestart(this, 100), 500);
                 }
             }
 

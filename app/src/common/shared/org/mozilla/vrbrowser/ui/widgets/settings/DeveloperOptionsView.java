@@ -176,10 +176,9 @@ class DeveloperOptionsView extends SettingsView {
         mBinding.multiprocessSwitch.setValue(value, false);
         mBinding.multiprocessSwitch.setOnCheckedChangeListener(mMultiprocessListener);
 
-        SettingsStore.getInstance(getContext()).setMultiprocessEnabled(value);
-
         if (doApply) {
-            SessionStore.get().resetMultiprocess();
+            SettingsStore.getInstance(getContext()).setMultiprocessEnabled(value);
+            showRestartDialog();
         }
     }
 

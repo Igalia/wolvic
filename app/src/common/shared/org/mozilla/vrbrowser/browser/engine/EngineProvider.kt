@@ -35,6 +35,7 @@ object EngineProvider {
             builder.displayDpiOverride(SettingsStore.getInstance(context).displayDpi)
             builder.screenSizeOverride(SettingsStore.getInstance(context).maxWindowWidth,
                     SettingsStore.getInstance(context).maxWindowHeight)
+            builder.useMultiprocess(SettingsStore.getInstance(context).isMultiprocessEnabled)
 
             if (SettingsStore.getInstance(context).transparentBorderWidth > 0) {
                 builder.useMaxScreenDepth(true)

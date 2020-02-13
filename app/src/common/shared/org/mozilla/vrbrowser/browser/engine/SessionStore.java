@@ -257,12 +257,6 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
         }
     }
 
-    public void resetMultiprocess() {
-        for (Session session: mSessions) {
-            session.resetMultiprocess();
-        }
-    }
-
     public void setTrackingProtection(final boolean aEnabled) {
         for (Session session: mSessions) {
             session.setTrackingProtection(aEnabled);
