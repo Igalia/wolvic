@@ -285,4 +285,10 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
         setLayoutParams(params);
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+
+        setHovered(false);
+    }
 }
