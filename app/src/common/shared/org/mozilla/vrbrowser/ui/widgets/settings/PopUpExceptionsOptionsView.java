@@ -37,13 +37,13 @@ class PopUpExceptionsOptionsView extends SettingsView {
     }
 
     private void initialize(Context aContext) {
-        updateUI();
-
         // Preferred languages adapter
         mAdapter = new PopUpAdapter(getContext(), mCallback);
 
         // View Model
         mViewModel = new PopUpsViewModel(((Application)getContext().getApplicationContext()));
+
+        updateUI();
     }
 
     @Override
