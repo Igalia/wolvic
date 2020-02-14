@@ -16,6 +16,7 @@ import org.mozilla.vrbrowser.db.AppDatabase;
 import org.mozilla.vrbrowser.db.DataRepository;
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
+import org.mozilla.vrbrowser.ui.adapters.Language;
 import org.mozilla.vrbrowser.utils.BitmapCache;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
 
@@ -43,15 +44,16 @@ public class VRBrowserApplication extends Application {
 
     @Override
     protected void attachBaseContext(Context base) {
-        LocaleUtils.saveSystemLocale();
-        super.attachBaseContext(LocaleUtils.setLocale(base));
+        Context context = LocaleUtils.init(base);
+        super.attachBaseContext(context);
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
+        Context context = LocaleUtils.init(this);
+        Language language = LocaleUtils.getDisplayLanguage(context);
+        newConfig.setLocale(language.getLocale());
         super.onConfigurationChanged(newConfig);
-        LocaleUtils.setDisplayLocale(this, newConfig.getLocales().get(0).toLanguageTag());
-        LocaleUtils.setLocale(this);
     }
 
     public Services getServices() {

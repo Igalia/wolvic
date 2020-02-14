@@ -1,23 +1,40 @@
 package org.mozilla.vrbrowser.ui.adapters;
 
+import org.mozilla.vrbrowser.utils.StringUtils;
+
+import java.util.Locale;
+
 public class Language {
 
-    public Language(String id, String name) {
-        this.id = id;
-        this.name = name;
+    public Language(Locale locale) {
+        this.locale = locale;
         this.isPreferred = false;
+
+        String languageId = locale.toLanguageTag();
+        String displayName = StringUtils.capitalize(locale.getDisplayName());
+        this.displayName = displayName + " [" + languageId + "]";
     }
 
-    private String name;
-    private String id;
+    public Language(Locale locale, String displayName) {
+        this.locale = locale;
+        this.isPreferred = false;
+        this.displayName = StringUtils.capitalize(displayName);
+    }
+
+    private Locale locale;
     private boolean isPreferred;
+    private String displayName;
 
-    public String getId() {
-        return this.id;
+    public Locale getLocale() {
+        return this.locale;
     }
 
-    public String getName() {
-        return this.name;
+    public String getDisplayName() {
+        return this.displayName;
+    }
+
+    public String getLanguageTag() {
+        return this.locale.toLanguageTag();
     }
 
     public void setPreferred(boolean isPreferred) {
@@ -30,6 +47,6 @@ public class Language {
 
     @Override
     public int hashCode() {
-        return id.hashCode();
+        return locale.hashCode();
     }
 }

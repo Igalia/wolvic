@@ -279,7 +279,7 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
 
     public void setLocales(List<String> locales) {
         if (mRuntime != null) {
-            mRuntime.getSettings().setLocales(locales.stream().toArray(String[]::new));
+            mRuntime.getSettings().setLocales(locales.toArray(new String[0]));
         }
     }
 

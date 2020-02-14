@@ -58,6 +58,7 @@ import org.mozilla.vrbrowser.search.SearchEngineWrapper;
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.ui.OffscreenDisplay;
+import org.mozilla.vrbrowser.ui.adapters.Language;
 import org.mozilla.vrbrowser.ui.widgets.KeyboardWidget;
 import org.mozilla.vrbrowser.ui.widgets.NavigationBarWidget;
 import org.mozilla.vrbrowser.ui.widgets.RootWidget;
@@ -86,7 +87,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
@@ -210,7 +210,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     protected void attachBaseContext(Context base) {
-        super.attachBaseContext(LocaleUtils.setLocale(base));
+        Context newContext = LocaleUtils.init(base);
+        super.attachBaseContext(newContext);
     }
 
     @Override
@@ -230,8 +231,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         // Set a global exception handler as soon as possible
         GlobalExceptionHandler.register(this.getApplicationContext());
 
-        LocaleUtils.init();
-
         if (DeviceType.isOculusBuild()) {
             workaroundGeckoSigAction();
         }
@@ -243,7 +242,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         SessionStore.get().setContext(this, extras);
         SessionStore.get().initializeServices();
         SessionStore.get().initializeStores(this);
-        SessionStore.get().setLocales(LocaleUtils.getPreferredLocales(this));
+        SessionStore.get().setLocales(LocaleUtils.getPreferredLanguageTags(this));
 
         // Create broadcast receiver for getting crash messages from crash process
         IntentFilter intentFilter = new IntentFilter();
@@ -508,9 +507,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
+        Language language = LocaleUtils.getDisplayLanguage(this);
+        newConfig.setLocale(language.getLocale());
         getBaseContext().getResources().updateConfiguration(newConfig, getBaseContext().getResources().getDisplayMetrics());
 
-        LocaleUtils.refresh();
+        LocaleUtils.update(this, language);
+
         mWidgets.forEach((i, widget) -> widget.onConfigurationChanged(newConfig));
 
         SessionStore.get().onConfigurationChanged(newConfig);
@@ -1527,9 +1529,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public void updateLocale(@NonNull Context context) {
-        Configuration configuration = context.getResources().getConfiguration();
-        configuration.setLocale(Locale.forLanguageTag(LocaleUtils.getDisplayLanguage(this).getId()));
-        onConfigurationChanged(new Configuration(context.getResources().getConfiguration()));
+        onConfigurationChanged(context.getResources().getConfiguration());
     }
 
     private native void addWidgetNative(int aHandle, WidgetPlacement aPlacement);

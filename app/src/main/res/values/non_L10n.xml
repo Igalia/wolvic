@@ -56,9 +56,9 @@
     <string name="private_policy_url" translatable="false">https://www.mozilla.org/privacy/firefox/</string>
     <string name="private_report_url" translatable="false">https://mixedreality.mozilla.org/fxr/report?src=browser-fxr&amp;label=browser-firefox-reality&amp;url=%1$s</string>
     <string name="help_url" translatable="false">https://support.mozilla.org/products/firefox-reality</string>
-    <string name="sumo_language_voice_url" translatable="false">https://support.mozilla.org/en-US/kb/using-voice-search-firefox-reality</string>
-    <string name="sumo_language_display_url" translatable="false">https://support.mozilla.org/en-US/kb/use-firefox-another-language?as=u&amp;utm_source=inproduct</string>
-    <string name="sumo_language_content_url" translatable="false">https://support.mozilla.org/en-US/kb/choose-display-languages-multilingual-web-pages?as=u&amp;utm_source=inproduct</string>
+    <string name="sumo_language_voice_url" translatable="false">https://support.mozilla.org/kb/using-voice-search-firefox-reality</string>
+    <string name="sumo_language_display_url" translatable="false">https://support.mozilla.org/kb/use-firefox-another-language?as=u&amp;utm_source=inproduct</string>
+    <string name="sumo_language_content_url" translatable="false">https://support.mozilla.org/kb/choose-display-languages-multilingual-web-pages?as=u&amp;utm_source=inproduct</string>
     <string name="list_item_view_tag" translatable="false">view</string>
     <string name="position_tag" translatable="false">position</string>
     <string name="view_id_tag" translatable="false">view_id</string>

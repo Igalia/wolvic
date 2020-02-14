@@ -98,20 +98,20 @@ class LanguageOptionsView extends SettingsView {
     };
 
     private void setVoiceLanguage() {
-        mBinding.voiceSearchLanguageDescription.setText(getSpannedLanguageText(LocaleUtils.getVoiceSearchLanguage(getContext()).getName()),  TextView.BufferType.SPANNABLE);
+        mBinding.voiceSearchLanguageDescription.setText(getSpannedLanguageText(LocaleUtils.getVoiceSearchLanguage(getContext()).getDisplayName()),  TextView.BufferType.SPANNABLE);
     }
 
     private void setContentLanguage() {
         List<Language> preferredLanguages = LocaleUtils.getPreferredLanguages(getContext());
         String text = "";
         if (preferredLanguages.size() > 0) {
-            text = preferredLanguages.get(0).getName();
+            text = preferredLanguages.get(0).getDisplayName();
         }
         mBinding.contentLanguageDescription.setText(getSpannedLanguageText(text));
     }
 
     private void setDisplayLanguage() {
-        mBinding.displayLanguageDescription.setText(getSpannedLanguageText(LocaleUtils.getDisplayLanguage(getContext()).getName()));
+        mBinding.displayLanguageDescription.setText(getSpannedLanguageText(LocaleUtils.getDisplayLanguage(getContext()).getDisplayName()));
     }
 
     private int getLanguageIndex(@NonNull String text) {

@@ -93,6 +93,8 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Widge
     }
 
     public void updateUI() {
+        removeAllViews();
+
         LayoutInflater inflater = LayoutInflater.from(getContext());
 
         // Inflate this data binding layout

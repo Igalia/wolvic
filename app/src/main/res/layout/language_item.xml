@@ -115,7 +115,7 @@
                 android:gravity="center_vertical"
                 android:paddingStart="5dp"
                 android:singleLine="true"
-                android:text="@{language.name}"
+                android:text="@{language.displayName}"
                 tool:text="Language Item" />
         </org.mozilla.vrbrowser.ui.views.FadingFrameLayout>
 

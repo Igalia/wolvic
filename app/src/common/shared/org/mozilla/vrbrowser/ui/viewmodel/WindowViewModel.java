@@ -94,7 +94,7 @@ public class WindowViewModel extends AndroidViewModel {
         isTopBarVisible.addSource(isResizeMode, mIsTopBarVisibleObserver);
         isTopBarVisible.addSource(isPrivateSession, mIsTopBarVisibleObserver);
         isTopBarVisible.addSource(isWindowVisible, mIsTopBarVisibleObserver);
-        isTopBarVisible.setValue(new ObservableBoolean(false));
+        isTopBarVisible.setValue(new ObservableBoolean(true));
 
         showClearButton = new MediatorLiveData<>();
         showClearButton.addSource(isOnlyWindow, mShowClearButtonObserver);
@@ -160,14 +160,14 @@ public class WindowViewModel extends AndroidViewModel {
         @Override
         public void onChanged(ObservableBoolean o) {
             if (isFullscreen.getValue().get() || isResizeMode.getValue().get() || !isWindowVisible.getValue().get()) {
-                isTopBarVisible.setValue(new ObservableBoolean(false));
+                isTopBarVisible.postValue(new ObservableBoolean(false));
 
             } else {
                 if (isOnlyWindow.getValue().get()) {
-                    isTopBarVisible.setValue(new ObservableBoolean(isPrivateSession.getValue().get()));
+                    isTopBarVisible.postValue(new ObservableBoolean(isPrivateSession.getValue().get()));
 
                 } else {
-                    isTopBarVisible.setValue(new ObservableBoolean(true));
+                    isTopBarVisible.postValue(new ObservableBoolean(true));
                 }
             }
         }
@@ -176,7 +176,7 @@ public class WindowViewModel extends AndroidViewModel {
     private Observer<ObservableBoolean> mShowClearButtonObserver = new Observer<ObservableBoolean>() {
         @Override
         public void onChanged(ObservableBoolean o) {
-            showClearButton.setValue(new ObservableBoolean(isWindowVisible.getValue().get() &&
+            showClearButton.postValue(new ObservableBoolean(isWindowVisible.getValue().get() &&
                     isPrivateSession.getValue().get() && isOnlyWindow.getValue().get() &&
                     !isResizeMode.getValue().get() && !isFullscreen.getValue().get()));
         }
@@ -186,10 +186,10 @@ public class WindowViewModel extends AndroidViewModel {
         @Override
         public void onChanged(ObservableBoolean o) {
             if (isFullscreen.getValue().get() || isResizeMode.getValue().get() || isActiveWindow.getValue().get()) {
-                isTitleBarVisible.setValue(new ObservableBoolean(false));
+                isTitleBarVisible.postValue(new ObservableBoolean(false));
 
             } else {
-                isTitleBarVisible.setValue(new ObservableBoolean(isWindowVisible.getValue().get() && !isOnlyWindow.getValue().get()));
+                isTitleBarVisible.postValue(new ObservableBoolean(isWindowVisible.getValue().get() && !isOnlyWindow.getValue().get()));
             }
         }
     };
@@ -197,10 +197,10 @@ public class WindowViewModel extends AndroidViewModel {
     private Observer<ObservableBoolean> mIsLibraryVisibleObserver = new Observer<ObservableBoolean>() {
         @Override
         public void onChanged(ObservableBoolean o) {
-            isLibraryVisible.setValue(new ObservableBoolean(isBookmarksVisible.getValue().get() || isHistoryVisible.getValue().get()));
+            isLibraryVisible.postValue(new ObservableBoolean(isBookmarksVisible.getValue().get() || isHistoryVisible.getValue().get()));
 
             // We use this to force dispatch a title bar and navigation bar URL refresh when library is opened
-            url.setValue(url.getValue());
+            url.postValue(url.getValue());
         }
     };
 
@@ -236,7 +236,7 @@ public class WindowViewModel extends AndroidViewModel {
                 }
             }
 
-            titleBarUrl.setValue(UrlUtils.titleBarUrl(url));
+            titleBarUrl.postValue(UrlUtils.titleBarUrl(url));
         }
     };
 
@@ -250,14 +250,14 @@ public class WindowViewModel extends AndroidViewModel {
                         UrlUtils.isHomeUri(getApplication(), aUrl) ||
                         isLibraryVisible.getValue().get() ||
                         UrlUtils.isBlankUri(getApplication(), aUrl)) {
-                    isInsecureVisible.setValue(new ObservableBoolean(false));
+                    isInsecureVisible.postValue(new ObservableBoolean(false));
 
                 } else {
-                    isInsecureVisible.setValue(new ObservableBoolean(true));
+                    isInsecureVisible.postValue(new ObservableBoolean(true));
                 }
 
             } else {
-                isInsecureVisible.setValue(new ObservableBoolean(false));
+                isInsecureVisible.postValue(new ObservableBoolean(false));
             }
         }
     };
@@ -271,20 +271,20 @@ public class WindowViewModel extends AndroidViewModel {
                     UrlUtils.isHomeUri(getApplication(), aUrl.toString()) ||
                     isLibraryVisible.getValue().get() ||
                     UrlUtils.isBlankUri(getApplication(), aUrl.toString())) {
-                navigationBarUrl.setValue("");
+                navigationBarUrl.postValue("");
 
             } else {
-                navigationBarUrl.setValue(url);
+                navigationBarUrl.postValue(url);
             }
 
             if (isBookmarksVisible.getValue().get()) {
-                hint.setValue(getApplication().getString(R.string.url_bookmarks_title));
+                hint.postValue(getApplication().getString(R.string.url_bookmarks_title));
 
             } else if (isHistoryVisible.getValue().get()) {
-                hint.setValue(getApplication().getString(R.string.url_history_title));
+                hint.postValue(getApplication().getString(R.string.url_history_title));
 
             } else {
-                hint.setValue(getApplication().getString(R.string.search_placeholder));
+                hint.postValue(getApplication().getString(R.string.search_placeholder));
             }
         }
     };
@@ -365,21 +365,21 @@ public class WindowViewModel extends AndroidViewModel {
         // Update the URL bar only if the URL is different than the current one and
         // the URL bar is not focused to avoid override user input
         if (!getUrl().getValue().toString().equalsIgnoreCase(aURL) && !getIsFocused().getValue().get()) {
-            this.url.setValue(new SpannableString(aURL));
+            this.url.postValue(new SpannableString(aURL));
             if (index > 0) {
                 SpannableString spannable = new SpannableString(aURL);
                 ForegroundColorSpan color1 = new ForegroundColorSpan(mURLProtocolColor);
                 ForegroundColorSpan color2 = new ForegroundColorSpan(mURLWebsiteColor);
                 spannable.setSpan(color1, 0, index + 3, 0);
                 spannable.setSpan(color2, index + 3, aURL.length(), 0);
-                this.url.setValue(url);
+                this.url.postValue(url);
 
             } else {
-                this.url.setValue(url);
+                this.url.postValue(url);
             }
         }
 
-        this.url.setValue(url);
+        this.url.postValue(url);
     }
 
     @NonNull
@@ -532,7 +532,7 @@ public class WindowViewModel extends AndroidViewModel {
     }
 
     public void setIsBookmarked(boolean isBookmarked) {
-        this.isBookmarked.setValue(new ObservableBoolean(isBookmarked));
+        this.isBookmarked.postValue(new ObservableBoolean(isBookmarked));
     }
 
     @NonNull

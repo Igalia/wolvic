@@ -72,7 +72,7 @@ public class LanguagesAdapter extends RecyclerView.Adapter<LanguagesAdapter.Lang
 
     public void addItemAlphabetical(Language language) {
         int index = Collections.binarySearch(mLanguagesList, language,
-                (ob1, ob2) -> ob1.getName().compareToIgnoreCase(ob2.getName()));
+                (ob1, ob2) -> ob1.getLanguageTag().compareToIgnoreCase(ob2.getLanguageTag()));
 
         if (index < 0) {
             index = (index * -1) - 1;

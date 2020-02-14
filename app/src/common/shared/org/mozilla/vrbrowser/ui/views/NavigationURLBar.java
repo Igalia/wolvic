@@ -240,7 +240,6 @@ public class NavigationURLBar extends FrameLayout {
         if (mViewModel != null) {
             mViewModel.getIsLoading().removeObserver(mIsLoadingObserver);
             mViewModel.getIsBookmarked().removeObserver(mIsBookmarkedObserver);
-            mViewModel.getHint().removeObserver(mHintObserver);
             mViewModel = null;
         }
     }
@@ -255,7 +254,6 @@ public class NavigationURLBar extends FrameLayout {
 
         mViewModel.getIsLoading().observe((VRBrowserActivity)getContext(), mIsLoadingObserver);
         mViewModel.getIsBookmarked().observe((VRBrowserActivity)getContext(), mIsBookmarkedObserver);
-        mViewModel.getHint().observe((VRBrowserActivity)getContext(), mHintObserver);
     }
 
     public void setSession(Session session) {
@@ -315,8 +313,6 @@ public class NavigationURLBar extends FrameLayout {
     };
 
     private Observer<ObservableBoolean> mIsBookmarkedObserver = aBoolean -> mBinding.bookmarkButton.clearFocus();
-
-    private Observer<String> mHintObserver = hint -> mBinding.urlEditText.setHint(hint);
 
     public String getText() {
         return mBinding.urlEditText.getText().toString();

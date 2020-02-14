@@ -41,11 +41,9 @@ public class ContentLanguageOptionsView extends SettingsView {
     private void initialize(Context aContext) {
         // Preferred languages adapter
         mPreferredAdapter = new LanguagesAdapter(getContext(), mLanguageItemCallback, true);
-        mPreferredAdapter.setLanguageList(LocaleUtils.getPreferredLanguages(getContext()));
 
         // Available languages adapter
         mAvailableAdapter = new LanguagesAdapter(getContext(), mLanguageItemCallback, false);
-        mAvailableAdapter.setLanguageList(LocaleUtils.getAvailableLanguages());
 
         updateUI();
     }
@@ -77,12 +75,13 @@ public class ContentLanguageOptionsView extends SettingsView {
         // Footer
         mBinding.footerLayout.setFooterButtonClickListener(mResetListener);
 
+        mPreferredAdapter.setLanguageList(LocaleUtils.getPreferredLanguages(getContext()));
+        mAvailableAdapter.setLanguageList(LocaleUtils.getAvailableLanguages(getContext()));
+
         mBinding.executePendingBindings();
     }
 
-    private OnClickListener mResetListener = (view) -> {
-        reset();
-    };
+    private OnClickListener mResetListener = (view) -> reset();
 
     @Override
     public Point getDimensions() {
@@ -124,29 +123,20 @@ public class ContentLanguageOptionsView extends SettingsView {
     };
 
     private void saveCurrentLanguages() {
-        SettingsStore.getInstance(getContext()).setContentLocales(
-                LocaleUtils.getLocalesFromLanguages(mPreferredAdapter.getItems()));
-        SessionStore.get().setLocales(
-                LocaleUtils.getLocalesFromLanguages(mPreferredAdapter.getItems()));
+        LocaleUtils.setPreferredLanguages(getContext(), mPreferredAdapter.getItems());
     }
 
     private void refreshLanguages() {
         ThreadUtils.postToUiThread(() -> {
             mPreferredAdapter.setLanguageList(LocaleUtils.getPreferredLanguages(getContext()));
-            mAvailableAdapter.setLanguageList(LocaleUtils.getAvailableLanguages());
+            mAvailableAdapter.setLanguageList(LocaleUtils.getAvailableLanguages(getContext()));
         });
     }
 
     @Override
     protected boolean reset() {
-        String systemLocale = LocaleUtils.getClosestAvailableLocale(LocaleUtils.getDeviceLanguage().getId());
-        List<Language> preferredLanguages = LocaleUtils.getPreferredLanguages(getContext());
-        if (preferredLanguages.size() > 1 || !preferredLanguages.get(0).getId().equals(systemLocale)) {
-            SettingsStore.getInstance(getContext()).setContentLocales(Collections.emptyList());
-            SessionStore.get().setLocales(Collections.emptyList());
-            LocaleUtils.resetLanguages();
-            refreshLanguages();
-        }
+        LocaleUtils.resetPreferredLanguages(getContext());
+        refreshLanguages();
 
         return false;
     }
