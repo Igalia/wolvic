@@ -138,6 +138,10 @@
          opens a dialog box that contains language-related settings. -->
     <string name="settings_language">Language</string>
 
+    <!-- This string is used to label the first string in the language list for voice and display languages.
+         If chosen the device will use the system language as the main language. -->
+    <string name="settings_language_follow_device">Follow device language</string>
+
     <!-- This string is used to label a text label for selecting the language in the 'Language' dialog window
          (accessible from the browser's Settings' dialog window). Below this string appears
          the different options for language settings. -->
@@ -950,6 +954,206 @@
     <!-- This string is displayed in the second line of a text that's displayed in the middle of allowed pop-ups panel instead of the exceptions list
          when there are no exceptions. -->
     <string name="privacy_options_popups_list_empty_second">A list of sites with permissions will appear here.</string>
+
+
+    <!-- This string labels the Reset button that restores the default controller settings values. -->
+    <string name="controller_options_reset">Reset Controller Settings</string>
+
+    <!-- This string labels the Reset button that restores the default environment settings values. -->
+    <string name="environment_options_reset">Reset Environment Settings</string>
+
+    <!-- This string labels the Reset button that restores the default voice search language settings values. -->
+    <string name="language_options_reset">Reset Voice Search Language Settings</string>
+
+    <!-- This string labels the Reset button that restores the default display language settings values. -->
+    <string name="display_language_options_reset">Reset Display Language</string>
+
+    <!-- This string labels the Reset button that restores the default content language settings values. -->
+    <string name="content_language_options_reset">Reset Preferred Web Site Language</string>
+
+    <!-- This string labels the Reset button that restores all language settings values. -->
+    <string name="all_language_options_reset">Reset All Language Settings</string>
+
+    <!-- This string labels the description in the Voice Search Language button in the main language setting dialog. -->
+    <string name="language_options_voice_search_language_title">Voice Search Language:</string>
+
+    <!-- This string labels the description in the Content Language button in the main language setting dialog. -->
+    <string name="language_options_content_language_title">Preferred Language for Displaying Web Sites:</string>
+
+    <!-- This string labels the description in the Display Language button in the main language setting dialog. -->
+    <string name="language_options_display_language_title">Display Language for App:</string>
+
+    <!-- This string labels the description in the Content Language header for preferred languages list. -->
+    <string name="language_options_preferred_languages">Preferred Language(s)</string>
+
+    <!-- This string labels the description in the Content Language header for available languages list. -->
+    <string name="language_options_available_languages">Available Languages</string>
+
+    <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the 'Name' of the bookmarked website. -->
+    <string name="col_name">Name</string>
+
+    <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the 'Tags' of the bookmarked website. -->
+    <string name="col_tags">Tags</string>
+
+    <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the 'Location' (or 'URL' or 'Address') of the bookmarked website. -->
+    <string name="col_url">Location</string>
+
+    <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the date of when the bookmarked website was most recently visited. -->
+    <string name="col_most_recent_visit">Most Recent Visit</string>
+
+    <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the date of when the website was bookmarked. -->
+    <string name="col_date_added">Added</string>
+
+    <!-- This string is for the table column name (in the browser's 'Bookmarks' list) for the date of when the bookmarked website was last edited. -->
+    <string name="col_date_last_modified">Last Modified</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Back' button in the browser's navigation bar.
+         'Back' refers to going back one page in 'History'. -->
+    <string name="back_tooltip">Backwards</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Forward' button in the browser's navigation bar.
+         'Forward' refers to going back one page in 'History'. -->
+    <string name="forward_tooltip">Forwards</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Refresh' button in the browser's navigation bar.
+         'Refresh' refers to reloading the current page. -->
+    <string name="refresh_tooltip">Refresh</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Stop' button in the browser's navigation bar.
+         'Stop' stops the current page load. -->
+    <string name="stop_tooltip">Stop Loading</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Resume' button in the browser's title bar media buttons.
+         When clicked the current media playback is resumed. -->
+    <string name="media_resume_tooltip">Resume</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Pause' button in the browser's title bar media buttons.
+         When clicked the current media playback is paused. -->
+    <string name="media_pause_tooltip">Pause</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Home' button in the browser's navigation bar.
+         'Home' refers to the browser's start page (e.g., the Firefox Reality Home Page). -->
+    <string name="home_tooltip">Home</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Voice Search' (microphone) button in the
+         browser's navigation bar. 'Voice Search' refers to the browser's system for searching the Web using
+         speech-to-text recognition. -->
+    <string name="voice_search_tooltip">Voice Search</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Request desktop site' button in the
+         browser's navigation bar. The button it labels, when pressed, change the currently used user agent. -->
+    <string name="request_dekstop_site_tooltip">Request desktop site</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Clear' button in the
+         browser's navigation bar. The button it labels, when pressed, clears the navigation bar text. -->
+    <string name="clear_tooltip">Clear</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Pop-Up' button in the
+         browser's navigation bar. The button it labels, when pressed, Shows the pop-up blocked dialog. -->
+    <string name="popup_tooltip">Pop-Up Blocked</string>
+
+    <!-- This string is for the tooltip that when clicking the 'Info' (ⓘ) icon visible next to the current website's
+         URL in the URL bar. The button it labels, when pressed, shows information about the site. -->
+    <string name="site_info_tooltip">Show site info.</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Servo' button in the browser's navigation bar.
+         'Servo' refers to the Servo engine. -->
+    <string name="servo_tooltip">Use Servo</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Resize' button in the browser's navigation bar.
+         'Resize' refers to the button used to resize the browset window. -->
+    <string name="resize_tooltip">Resize</string>
+
+    <!-- This string is for the tooltip that appears when the user is not in the browser's Private Browsing mode
+         and hovers over the 'Private Browsing' icon in the browser's tray menu. -->
+    <string name="private_browsing_enter_tooltip">Enter Private Browsing</string>
+
+    <!-- This string is for the tooltip that appears when the user is in the browser's Private Browsing mode
+         and hovers over the 'Private Browsing' icon in the browser's tray menu. -->
+    <string name="private_browsing_exit_tooltip">Exit Private Browsing</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the target url in a new window. -->
+    <string name="context_menu_open_new_window_1">Open in a new window</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the target url in a new tab. -->
+    <string name="context_menu_open_new_tab_1">Open in a new tab</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it copies the target to the clipboard -->
+    <string name="context_menu_copy_link">Copy link</string>
+
+    <!-- This string is shown in the context menu after a longpress on a text. When clicked it cuts the selected text and can be pasted later. -->
+    <string name="context_menu_cut_text">Cut</string>
+
+    <!-- This string is shown in the context menu after a longpress on a text. When clicked it copies the selected text and can be pasted later. -->
+    <string name="context_menu_copy_text">Copy</string>
+
+    <!-- This string is shown in the context menu after a longpress on a input. When clicked it pastes the current text on the clipboard. -->
+    <string name="context_menu_paste_text">Paste</string>
+
+    <!-- This string is shown in the context menu after a longpress on a text. When clicked it selects all text from the longpressed page area. -->
+    <string name="context_menu_select_all_text">Select All</string>
+
+    <!-- This string is shown in the context menu after a longpress on a text. When clicked it unselects the selected text. -->
+    <string name="context_menu_unselect">Deselect</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmark' icon in the
+         browser's navigation bar. The button it labels, when pressed, bookmarks the currently open web site. -->
+    <string name="bookmark_tooltip">Bookmark this page</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmarks' icon in the
+         tray. The button it labels, when pressed, opens a list view of the user's saved
+         Bookmarks. -->
+    <string name="bookmarks_tooltip">Bookmarks</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmarks' icon in the
+         tray and the Bookmarks view is closed. The button it labels, when pressed, opens a list view of the user's saved
+         Bookmarks. -->
+    <string name="open_bookmarks_tooltip">Open Bookmarks</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmarks' icon in the
+         tray and the Bookmarks view is closed. The button it labels, when pressed, closes the Bookmarks view. -->
+    <string name="close_bookmarks_tooltip">Close Bookmarks</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Settings' icon in the
+         tray. The button it labels, when pressed, opens the Settings panel. -->
+    <string name="settings_tooltip">Settings</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'New Window' icon in the
+         tray. The button it labels, when pressed, opens a new browser window. -->
+    <string name="new_window_tooltip">Open a New Window</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'History' icon in the
+         tray and the History view is closed. The button it labels, when pressed, opens a list view of the user's visited
+         pages. -->
+    <string name="open_history_tooltip">Open History</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'History' icon in the
+         tray and the History view is closed. The button it labels, when pressed, closes the History view. -->
+    <string name="close_history_tooltip">Close History</string>
+
+    <!-- This string is displayed in any button used for removing all the items in the current context. -->
+    <string name="remove_all">Remove All</string>
+
+    <!-- This string is used as the title of the Private Browsing page that is opened when the
+         Private Browsing Mode button from the tray is clicked. -->
+    <string name="private_browsing_title">Private Browsing</string>
+
+    <!-- This string is used as the body of the Private Browsing page that is opened when the
+         Private Browsing Mode button from the tray is clicked.
+         '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="private_browsing_body"><![CDATA[<p>When you browse in a Private Window, %1$s <strong>does not save</strong>:</p>
+<ul class="two-column">
+  <li>visited pages</li>
+  <li>searches</li>
+  <li>cookies</li>
+  <li>temporary files</li>
+</ul>
+<p>Private Browsing <strong>doesn’t make you anonymous</strong> on the Internet. Your employer or Internet service provider can still know what page you visit.</p>
+<p class="about-info">Learn more about <a id="learnMore">Private Browsing</a>.</p>]]></string>
+
+    <!-- This string is displayed in any button used for removing all the items in the current context.
+         '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="homepage_hint">%1$s Home (Default)</string>
 
 
     </resources>
