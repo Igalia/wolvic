@@ -13,7 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:gravity="center_horizontal">
+        android:gravity="center_horizontal"
+        app:visibleGone="@{viewmodel.isWindowVisible}">
 
         <FrameLayout
             android:layout_width="45dp"

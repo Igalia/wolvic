@@ -528,7 +528,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             return;
         }
         mPrivateMode = true;
-        updateCurvedMode(true);
+
         if (mFocusedWindow != null) {
             mRegularWindowPlacement = mFocusedWindow.getWindowPlacement();
 
@@ -538,6 +538,10 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         for (WindowWidget window: mRegularWindows) {
             setWindowVisible(window, false);
         }
+
+        updateViews();
+        updateCurvedMode(true);
+
         for (WindowWidget window: mPrivateWindows) {
             setWindowVisible(window, true);
         }
@@ -551,7 +555,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         } else {
             focusWindow(getWindowWithPlacement(mPrivateWindowPlacement));
         }
-        updateViews();
+
         mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
     }
 
@@ -560,7 +564,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             return;
         }
         mPrivateMode = false;
-        updateCurvedMode(true);
+
         if (mFocusedWindow != null) {
             mPrivateWindowPlacement = mFocusedWindow.getWindowPlacement();
 
@@ -570,6 +574,10 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         for (WindowWidget window: mPrivateWindows) {
             setWindowVisible(window, false);
         }
+
+        updateViews();
+        updateCurvedMode(true);
+
         for (WindowWidget window: mRegularWindows) {
             setWindowVisible(window, true);
         }
@@ -577,7 +585,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         if (window != null) {
             focusWindow(window);
         }
-        updateViews();
+
         mWidgetManager.popWorldBrightness(this);
     }
 
