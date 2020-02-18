@@ -229,9 +229,7 @@ public class NavigationURLBar extends FrameLayout {
         mBinding.popup.setOnClickListener(mPopUpListener);
 
         // Bookmarks
-        mBinding.bookmarkButton.setOnClickListener(v -> {
-            handleBookmarkClick();
-        });
+        mBinding.bookmarkButton.setOnClickListener(v -> handleBookmarkClick());
 
         clearFocus();
     }

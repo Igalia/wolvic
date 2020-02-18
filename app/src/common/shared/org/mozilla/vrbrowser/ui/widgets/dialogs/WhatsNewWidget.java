@@ -36,6 +36,11 @@ public class WhatsNewWidget extends PromptDialogWidget {
 
         mUIThreadExecutor = ((VRBrowserApplication)getContext().getApplicationContext()).getExecutors().mainThread();
         mAccounts = ((VRBrowserApplication)getContext().getApplicationContext()).getAccounts();
+    }
+
+    @Override
+    public void updateUI() {
+        super.updateUI();
 
         setButtons(new int[] {
                 R.string.whats_new_button_start_browsing,

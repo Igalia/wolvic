@@ -18,8 +18,8 @@ public class RestartDialogWidget extends PromptDialogWidget {
     }
 
     @Override
-    protected void initialize(Context aContext) {
-        super.initialize(aContext);
+    public void updateUI() {
+        super.updateUI();
 
         setButtons(new int[] {
                 R.string.restart_later_dialog_button,
@@ -41,5 +41,4 @@ public class RestartDialogWidget extends PromptDialogWidget {
         setTitle(R.string.restart_dialog_restart);
         setBody(getContext().getString(R.string.restart_dialog_text, getContext().getString(R.string.app_name)));
     }
-
 }

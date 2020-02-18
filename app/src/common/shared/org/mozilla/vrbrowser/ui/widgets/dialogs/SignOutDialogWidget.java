@@ -37,6 +37,11 @@ public class SignOutDialogWidget extends PromptDialogWidget {
         mUIThreadExecutor = ((VRBrowserApplication)getContext().getApplicationContext()).getExecutors().mainThread();
         mAccounts = ((VRBrowserApplication)getContext().getApplicationContext()).getAccounts();
         mPlaces = ((VRBrowserApplication)getContext().getApplicationContext()).getPlaces();
+    }
+
+    @Override
+    public void updateUI() {
+        super.updateUI();
 
         setButtons(new int[] {
                 R.string.fxa_signout_confirmation_signout,

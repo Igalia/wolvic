@@ -53,6 +53,7 @@ public class VRBrowserApplication extends Application {
         Context context = LocaleUtils.init(this);
         Language language = LocaleUtils.getDisplayLanguage(context);
         newConfig.setLocale(language.getLocale());
+        getApplicationContext().getResources().updateConfiguration(newConfig, getBaseContext().getResources().getDisplayMetrics());
         super.onConfigurationChanged(newConfig);
     }
 

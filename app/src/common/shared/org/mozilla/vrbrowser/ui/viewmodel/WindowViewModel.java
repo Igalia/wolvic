@@ -277,20 +277,13 @@ public class WindowViewModel extends AndroidViewModel {
                 navigationBarUrl.postValue(url);
             }
 
-            if (isBookmarksVisible.getValue().get()) {
-                hint.postValue(getApplication().getString(R.string.url_bookmarks_title));
-
-            } else if (isHistoryVisible.getValue().get()) {
-                hint.postValue(getApplication().getString(R.string.url_history_title));
-
-            } else {
-                hint.postValue(getApplication().getString(R.string.search_placeholder));
-            }
+            hint.postValue(getHintValue());
         }
     };
 
     public void refresh() {
         url.postValue(url.getValue());
+        hint.postValue(getHintValue());
         isWindowVisible.postValue(isWindowVisible.getValue());
         placement.postValue(placement.getValue());
         isOnlyWindow.postValue(isOnlyWindow.getValue());
@@ -308,6 +301,7 @@ public class WindowViewModel extends AndroidViewModel {
         canGoBack.postValue(canGoBack.getValue());
         isInVRVideo.postValue(isInVRVideo.getValue());
         autoEnteredVRVideo.postValue(autoEnteredVRVideo.getValue());
+        titleBarUrl.setValue(titleBarUrl.getValue());
         isMediaAvailable.postValue(isMediaAvailable.getValue());
         isMediaPlaying.postValue(isMediaPlaying.getValue());
     }
@@ -384,10 +378,19 @@ public class WindowViewModel extends AndroidViewModel {
 
     @NonNull
     public MutableLiveData<String> getHint() {
-        if (hint == null) {
-            hint = new MutableLiveData<>("");
-        }
         return hint;
+    }
+
+    private String getHintValue() {
+        if (isBookmarksVisible.getValue().get()) {
+            return getApplication().getString(R.string.url_bookmarks_title);
+
+        } else if (isHistoryVisible.getValue().get()) {
+            return getApplication().getString(R.string.url_history_title);
+
+        } else {
+            return getApplication().getString(R.string.search_placeholder);
+        }
     }
 
     @NonNull

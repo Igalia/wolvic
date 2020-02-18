@@ -20,6 +20,11 @@ public class PopUpBlockDialogWidget extends PromptDialogWidget {
     @Override
     protected void initialize(Context aContext) {
         super.initialize(aContext);
+    }
+
+    @Override
+    public void updateUI() {
+        super.updateUI();
 
         setDescriptionVisible(false);
 
@@ -34,7 +39,6 @@ public class PopUpBlockDialogWidget extends PromptDialogWidget {
         setCheckboxText(R.string.popup_block_checkbox);
 
         mBinding.checkbox.setOnCheckedChangeListener((buttonView, isChecked) -> mIsChecked = isChecked);
-
     }
 
     public boolean askAgain() {

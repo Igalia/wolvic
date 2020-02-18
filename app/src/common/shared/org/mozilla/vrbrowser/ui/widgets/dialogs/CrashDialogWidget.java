@@ -39,8 +39,8 @@ public class CrashDialogWidget extends PromptDialogWidget {
     }
 
     @Override
-    protected void initialize(Context aContext) {
-        super.initialize(aContext);
+    public void updateUI() {
+        super.updateUI();
 
         setButtons(new int[] {
                 R.string.do_not_sent_button,
@@ -51,7 +51,7 @@ public class CrashDialogWidget extends PromptDialogWidget {
                 if (mFiles != null) {
                     SystemUtils.clearCrashFiles(getContext(), mFiles);
                 }
-                 onDismiss();
+                onDismiss();
 
             } else if (index == PromptDialogWidget.POSITIVE) {
                 if (mFiles != null) {

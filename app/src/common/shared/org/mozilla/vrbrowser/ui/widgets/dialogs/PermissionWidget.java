@@ -18,6 +18,8 @@ import java.net.URI;
 public class PermissionWidget extends PromptDialogWidget {
 
     private GeckoSession.PermissionDelegate.Callback mPermissionCallback;
+    private String mUri;
+    private PermissionType mPermissionType;
 
     public enum PermissionType {
         Camera,
@@ -34,8 +36,8 @@ public class PermissionWidget extends PromptDialogWidget {
     }
 
     @Override
-    protected void initialize(Context aContext) {
-        super.initialize(aContext);
+    public void updateUI() {
+        super.updateUI();
 
         setButtons(new int[] {
                 R.string.permission_reject,
@@ -53,6 +55,10 @@ public class PermissionWidget extends PromptDialogWidget {
         });
         setCheckboxVisible(false);
         setDescriptionVisible(false);
+
+        if (isVisible()) {
+            showPrompt(mUri, mPermissionType, mPermissionCallback);
+        }
     }
 
     public void showPrompt(String aUri, PermissionType aType, GeckoSession.PermissionDelegate.Callback aCallback) {
@@ -97,6 +103,8 @@ public class PermissionWidget extends PromptDialogWidget {
         }
 
         mPermissionCallback = aCallback;
+        mUri = aUri;
+        mPermissionType = aType;
 
         String requesterName = getRequesterName(aUri);
         String message = String.format(getContext().getString(messageId), requesterName);
