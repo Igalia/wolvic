@@ -1614,6 +1614,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             } else {
                 hideLibraryPanels();
             }
+            
+        } else {
+            hideLibraryPanels();
         }
 
         if ("file".equalsIgnoreCase(uri.getScheme()) &&
