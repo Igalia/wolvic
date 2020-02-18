@@ -15,6 +15,7 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MotionEvent;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 
 import androidx.annotation.Dimension;
@@ -81,6 +82,18 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
         attributes.recycle();
 
         mBackground = getBackground();
+
+        setLongClickable(false);
+        setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                long time = event.getEventTime() - event.getDownTime();
+                if (time > ViewConfiguration.getLongPressTimeout()) {
+                    performClick();
+                }
+            }
+
+            return false;
+        });
     }
 
     @TargetApi(Build.VERSION_CODES.O)
