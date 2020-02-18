@@ -513,9 +513,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         LocaleUtils.update(this, language);
 
-        mWidgets.forEach((i, widget) -> widget.onConfigurationChanged(newConfig));
-
         SessionStore.get().onConfigurationChanged(newConfig);
+        mWidgets.forEach((i, widget) -> widget.onConfigurationChanged(newConfig));
 
         super.onConfigurationChanged(newConfig);
     }

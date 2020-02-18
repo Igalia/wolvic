@@ -6,6 +6,7 @@
 package org.mozilla.vrbrowser.browser
 
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.ProcessLifecycleOwner
@@ -60,7 +61,7 @@ class BookmarksStore constructor(val context: Context) {
 
     private val listeners = ArrayList<BookmarkListener>()
     private var storage = (context.applicationContext as VRBrowserApplication).places.bookmarks
-    private val titles = rootTitles(context)
+    private var titles = rootTitles(context)
     private val accountManager = (context.applicationContext as VRBrowserApplication).services.accountManager
 
     // Bookmarks might have changed during sync, so notify our listeners.
@@ -79,6 +80,11 @@ class BookmarksStore constructor(val context: Context) {
         accountManager.registerForSyncEvents(
             syncStatusObserver, ProcessLifecycleOwner.get(), false
         )
+    }
+
+    // Update the folder strings after a language update
+    fun onConfigurationChanged(newConfig: Configuration) {
+        titles = rootTitles(context)
     }
 
     interface BookmarkListener {
