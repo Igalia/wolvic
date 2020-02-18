@@ -113,7 +113,7 @@ public class WindowViewModel extends AndroidViewModel {
         isTitleBarVisible.addSource(isActiveWindow, mIsTitleBarVisibleObserver);
         isTitleBarVisible.addSource(isWindowVisible, mIsTitleBarVisibleObserver);
         isTitleBarVisible.addSource(isOnlyWindow, mIsTitleBarVisibleObserver);
-        isTitleBarVisible.setValue(new ObservableBoolean(false));
+        isTitleBarVisible.setValue(new ObservableBoolean(true));
 
         isBookmarksVisible = new MutableLiveData<>(new ObservableBoolean(false));
         isHistoryVisible = new MutableLiveData<>(new ObservableBoolean(false));
