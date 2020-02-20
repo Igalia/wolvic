@@ -299,6 +299,8 @@ public class TabsWidget extends UIDialog {
                     mSendTabDialog.setSessionId(aSender.getSession().getId());
                     mSendTabDialog.mWidgetPlacement.parentHandle = mWidgetManager.getFocusedWindow().getHandle();
                     mSendTabDialog.show(UIWidget.REQUEST_FOCUS);
+
+                    holder.tabView.reset();
                 }
             });
         }

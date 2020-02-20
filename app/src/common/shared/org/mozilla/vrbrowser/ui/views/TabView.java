@@ -220,6 +220,12 @@ public class TabView extends RelativeLayout implements GeckoSession.ContentDeleg
         mIsPrivateMode = privateMode;
     }
 
+    public void reset() {
+        mSendTabButton.setHovered(false);
+        mCloseButton.setHovered(false);
+        updateState();
+    }
+
     @Override
     public void setSelected(boolean selected) {
         super.setSelected(selected);
