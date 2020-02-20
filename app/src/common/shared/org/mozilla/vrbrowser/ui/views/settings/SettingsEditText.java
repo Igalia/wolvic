@@ -10,9 +10,9 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.EditText;
 
-import org.mozilla.vrbrowser.R;
-
 import androidx.annotation.Nullable;
+
+import org.mozilla.vrbrowser.R;
 
 @SuppressLint("AppCompatCustomView")
 public class SettingsEditText extends EditText {
@@ -33,6 +33,7 @@ public class SettingsEditText extends EditText {
 
         TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.EditSetting, defStyleAttr, 0);
         mHighlightedTextColor = attributes.getColor(R.styleable.EditSetting_highlightedTextColor, 0);
+        setShowSoftInputOnFocus(false);
 
         initialize();
     }
