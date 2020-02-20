@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ObservableBoolean;
 import androidx.lifecycle.Observer;
@@ -53,6 +54,7 @@ import org.mozilla.vrbrowser.utils.AnimationHelper;
 import org.mozilla.vrbrowser.utils.ConnectivityReceiver;
 import org.mozilla.vrbrowser.utils.UrlUtils;
 
+import java.util.ArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -69,6 +71,14 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private static final int TAB_SENT_NOTIFICATION_ID = 1;
     private static final int BOOKMARK_ADDED_NOTIFICATION_ID = 2;
     private static final int POPUP_NOTIFICATION_ID = 3;
+
+    public interface NavigationListener {
+        void onBack();
+        void onForward();
+        void onReload();
+        void onStop();
+        void onHome();
+    }
 
     private WindowViewModel mViewModel;
     private NavigationBarBinding mBinding;
@@ -92,6 +102,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private SendTabDialogWidget mSendTabDialog;
     private int mBlockedCount;
     private Executor mUIThreadExecutor;
+    private ArrayList<NavigationListener> mNavigationListeners;
 
     public NavigationBarWidget(Context aContext) {
         super(aContext);
@@ -118,6 +129,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mAudio = AudioEngine.fromContext(aContext);
 
         mResizeBackHandler = () -> exitResizeMode(ResizeAction.RESTORE_SIZE);
+
+        mNavigationListeners = new ArrayList<>();
 
         mFullScreenBackHandler = this::exitFullScreenMode;
         mVRVideoBackHandler = () -> {
@@ -157,6 +170,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.BACK);
             }
+            mNavigationListeners.forEach(NavigationListener::onBack);
         });
 
         mBinding.navigationBarNavigation.forwardButton.setOnClickListener(v -> {
@@ -165,6 +179,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
+            mNavigationListeners.forEach(NavigationListener::onForward);
         });
 
         mBinding.navigationBarNavigation.reloadButton.setOnClickListener(v -> {
@@ -177,6 +192,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
+            mNavigationListeners.forEach(NavigationListener::onReload);
         });
 
         mBinding.navigationBarNavigation.homeButton.setOnClickListener(v -> {
@@ -185,6 +201,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
+            mNavigationListeners.forEach(NavigationListener::onHome);
         });
 
         mBinding.navigationBarNavigation.servoButton.setOnClickListener(v -> {
@@ -374,6 +391,14 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         aPlacement.translationY = -35;
         aPlacement.opaque = false;
         aPlacement.cylinder = true;
+    }
+
+    public void addNavigationBarListener(@Nullable NavigationListener listener) {
+        mNavigationListeners.add(listener);
+    }
+
+    public void removeNavigationBarListener(@Nullable NavigationListener listener) {
+        mNavigationListeners.remove(listener);
     }
 
     @Override

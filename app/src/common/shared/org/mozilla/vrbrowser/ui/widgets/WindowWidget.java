@@ -622,6 +622,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 session.getTextInput().setView(this);
             }
             mSession.updateLastUse();
+            mWidgetManager.getNavigationBar().addNavigationBarListener(mNavigationBarListener);
+
+        } else {
+            mWidgetManager.getNavigationBar().removeNavigationBarListener(mNavigationBarListener);
         }
 
         hideContextMenus();
@@ -915,6 +919,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
         mBookmarksView.removeBookmarksListener(mBookmarksListener);
         mHistoryView.removeHistoryListener(mHistoryListener);
+        mWidgetManager.getNavigationBar().removeNavigationBarListener(mNavigationBarListener);
         mPromptDelegate.detachFromWindow();
         super.releaseWidget();
     }
@@ -1412,6 +1417,33 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         @Override
         public void onClickItem(@NonNull View view, @NonNull VisitInfo item) {
             hideHistory();
+        }
+    };
+
+    private NavigationBarWidget.NavigationListener mNavigationBarListener = new NavigationBarWidget.NavigationListener() {
+        @Override
+        public void onBack() {
+            hideLibraryPanels();
+        }
+
+        @Override
+        public void onForward() {
+            hideLibraryPanels();
+        }
+
+        @Override
+        public void onReload() {
+            hideLibraryPanels();
+        }
+
+        @Override
+        public void onStop() {
+            // Nothing to do
+        }
+
+        @Override
+        public void onHome() {
+            hideLibraryPanels();
         }
     };
 

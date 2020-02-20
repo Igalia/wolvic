@@ -304,6 +304,22 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     protected void initializeWidgets() {
         UISurfaceTextureRenderer.setUseHardwareAcceleration(SettingsStore.getInstance(getBaseContext()).isUIHardwareAccelerationEnabled());
         UISurfaceTextureRenderer.setRenderActive(true);
+
+        // Empty widget just for handling focus on empty space
+        mRootWidget = new RootWidget(this);
+        mRootWidget.setClickCallback(() -> {
+            for (WorldClickListener listener: mWorldClickListeners) {
+                listener.onWorldClick();
+            }
+        });
+
+        // Create Browser navigation widget
+        mNavigationBar = new NavigationBarWidget(this);
+
+        // Create keyboard widget
+        mKeyboard = new KeyboardWidget(this);
+
+        // Windows
         mWindows = new Windows(this);
         mWindows.setDelegate(new Windows.Delegate() {
             @Override
@@ -339,24 +355,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             }
         });
 
-        // Create Browser navigation widget
-        mNavigationBar = new NavigationBarWidget(this);
-
-        // Create keyboard widget
-        mKeyboard = new KeyboardWidget(this);
-
         // Create the tray
         mTray = new TrayWidget(this);
-
-        // Empty widget just for handling focus on empty space
-        mRootWidget = new RootWidget(this);
-        mRootWidget.setClickCallback(() -> {
-            for (WorldClickListener listener: mWorldClickListeners) {
-                listener.onWorldClick();
-            }
-        });
-
-        // Add widget listeners
         mTray.addListeners(mWindows);
         mTray.setAddWindowVisible(mWindows.canOpenNewWindow());
 
