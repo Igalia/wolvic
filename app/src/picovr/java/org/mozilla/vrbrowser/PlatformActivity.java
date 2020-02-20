@@ -10,6 +10,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.picovr.client.HbListener;
 import com.picovr.cvclient.ButtonNum;
 import com.picovr.client.HbController;
 import com.picovr.client.HbManager;
@@ -60,7 +61,29 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
         } else {
             mHbManager = new HbManager(this);
             mHbManager.InitServices();
-            mControllersReady = true;
+            mHbManager.setHbListener(new HbListener() {
+                // Does not seem to get called.
+                @Override
+                public void onConnect() {}
+
+                // Does not seem to get called.
+                @Override
+                public void onDisconnect() {}
+
+                @Override
+                public void onDataUpdate() {
+                }
+
+                // Does not seem to get called.
+                @Override
+                public void onReCenter() {}
+
+                @Override
+                public void onBindService() {
+                    mControllersReady = true;
+                }
+            });
+
         }
     }
 
