@@ -83,17 +83,20 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
 
         mBackground = getBackground();
 
-        setLongClickable(false);
-        setOnTouchListener((v, event) -> {
-            if (event.getAction() == MotionEvent.ACTION_UP) {
-                long time = event.getEventTime() - event.getDownTime();
-                if (time > ViewConfiguration.getLongPressTimeout()) {
-                    performClick();
+        // Android >8 doesn't perform a click when long clicking in ImageViews even if long click is disabled
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            setLongClickable(false);
+            setOnTouchListener((v, event) -> {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    long time = event.getEventTime() - event.getDownTime();
+                    if (time > ViewConfiguration.getLongPressTimeout()) {
+                        performClick();
+                    }
                 }
-            }
 
-            return false;
-        });
+                return false;
+            });
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.O)
