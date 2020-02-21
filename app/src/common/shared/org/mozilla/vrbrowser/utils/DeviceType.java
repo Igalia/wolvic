@@ -39,4 +39,8 @@ public class DeviceType {
     public static boolean isGoogleVR() {
         return BuildConfig.FLAVOR_platform.toLowerCase().contains("googlevr");
     }
+
+    public static boolean isPicoVR() {
+        return BuildConfig.FLAVOR_platform.toLowerCase().contains("picovr");
+    }
 }

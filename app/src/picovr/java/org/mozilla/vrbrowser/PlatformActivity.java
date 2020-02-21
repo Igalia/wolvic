@@ -5,6 +5,7 @@
 
 package org.mozilla.vrbrowser;
 
+import android.Manifest;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -32,7 +33,11 @@ import org.mozilla.vrbrowser.utils.SystemUtils;
 
 public class PlatformActivity extends VRActivity implements RenderInterface, CVControllerListener {
     static String LOGTAG = SystemUtils.createLogtag(PlatformActivity.class);
+
     public static boolean filterPermission(final String aPermission) {
+        if (aPermission.equals(Manifest.permission.CAMERA)) {
+            return true;
+        }
         return false;
     }
 
