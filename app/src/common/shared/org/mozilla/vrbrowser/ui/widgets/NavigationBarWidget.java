@@ -1028,11 +1028,10 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     public void showSendTabDialog() {
-        if (mSendTabDialog == null) {
-            mSendTabDialog = new SendTabDialogWidget(getContext());
-        }
+        mSendTabDialog = SendTabDialogWidget.getInstance(getContext());
         mSendTabDialog.mWidgetPlacement.parentHandle = mWidgetManager.getFocusedWindow().getHandle();
         mSendTabDialog.setSessionId(mAttachedWindow.getSession().getId());
+        mSendTabDialog.setDelegate(null);
         mSendTabDialog.show(UIWidget.REQUEST_FOCUS);
     }
 

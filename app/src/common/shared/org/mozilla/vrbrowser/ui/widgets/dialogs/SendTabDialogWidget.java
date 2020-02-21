@@ -39,13 +39,23 @@ public class SendTabDialogWidget extends SettingDialogWidget implements
         DeviceConstellationObserver,
         AccountObserver {
 
+    private static SendTabDialogWidget mSendTabDialog;
+
     private SendTabsDisplayBinding mSendTabsDialogBinding;
     private Accounts mAccounts;
     private List<Device> mDevicesList = new ArrayList<>();
     private WhatsNewWidget mWhatsNew;
     private String mSessionId;
 
-    public SendTabDialogWidget(@NonNull Context aContext) {
+    public static SendTabDialogWidget getInstance(@NonNull Context context) {
+        if (mSendTabDialog == null) {
+            mSendTabDialog = new SendTabDialogWidget(context);
+        }
+
+        return mSendTabDialog;
+    }
+
+    private SendTabDialogWidget(@NonNull Context aContext) {
         super(aContext);
     }
 
@@ -56,6 +66,13 @@ public class SendTabDialogWidget extends SettingDialogWidget implements
         updateUI();
 
         mAccounts = ((VRBrowserApplication)getContext().getApplicationContext()).getAccounts();
+    }
+
+    @Override
+    public void releaseWidget() {
+        super.releaseWidget();
+
+        mSendTabDialog = null;
     }
 
     @Override

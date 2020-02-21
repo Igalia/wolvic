@@ -293,11 +293,10 @@ public class TabsWidget extends UIDialog {
 
                 @Override
                 public void onSend(TabView aSender) {
-                    if (mSendTabDialog == null) {
-                        mSendTabDialog = new SendTabDialogWidget(getContext());
-                    }
+                    mSendTabDialog = SendTabDialogWidget.getInstance(getContext());
                     mSendTabDialog.setSessionId(aSender.getSession().getId());
                     mSendTabDialog.mWidgetPlacement.parentHandle = mWidgetManager.getFocusedWindow().getHandle();
+                    mSendTabDialog.setDelegate(() -> show(REQUEST_FOCUS));
                     mSendTabDialog.show(UIWidget.REQUEST_FOCUS);
 
                     holder.tabView.reset();
