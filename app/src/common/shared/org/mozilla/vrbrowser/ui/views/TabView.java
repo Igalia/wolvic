@@ -239,6 +239,10 @@ public class TabView extends RelativeLayout implements GeckoSession.ContentDeleg
     @Override
     public void onHoverChanged(boolean aHovered) {
         super.onHoverChanged(aHovered);
+        if (!aHovered) {
+            mSendTabButton.setHovered(false);
+            mCloseButton.setHovered(false);
+        }
         updateState();
     }
 
