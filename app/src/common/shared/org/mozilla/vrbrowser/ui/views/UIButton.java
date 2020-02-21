@@ -22,6 +22,7 @@ import androidx.annotation.Dimension;
 import androidx.annotation.IdRes;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageButton;
 
 import org.mozilla.gecko.util.ThreadUtils;
@@ -99,26 +100,40 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.O)
-    public String getTooltip() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            return mTooltipText;
+    @Nullable
+    @Override
+    public CharSequence getTooltipText() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            return getTooltipTextInternal();
+
         } else {
-            return getTooltipText() == null ? null : getTooltipText().toString();
+            return mTooltipText;
         }
     }
 
     @TargetApi(Build.VERSION_CODES.O)
-    public void setTooltip(String text) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            mTooltipText = text;
-        } else {
-            setTooltipText(text);
+    private CharSequence getTooltipTextInternal() {
+        return super.getTooltipText();
+    }
+
+    @Override
+    public void setTooltipText(@Nullable CharSequence tooltipText) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            setTooltipTextInternal(tooltipText);
         }
 
-        if (mTooltipView != null && mTooltipView.isVisible()) {
-            mTooltipView.setText(text);
+        if (tooltipText != null) {
+            mTooltipText = tooltipText.toString();
+
+            if (mTooltipView != null && mTooltipView.isVisible()) {
+                mTooltipView.setText(tooltipText.toString());
+            }
         }
+    }
+
+    @TargetApi(Build.VERSION_CODES.O)
+    private void setTooltipTextInternal(@Nullable CharSequence tooltipText) {
+        super.setTooltipText(tooltipText);
     }
 
     public void setCurvedTooltip(boolean aEnabled) {
@@ -128,13 +143,9 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
         }
     }
 
-    public void setTooltipText(@NonNull String text) {
-        mTooltipText = text;
-    }
-
     @Override
     public boolean onHoverEvent(MotionEvent event) {
-        if (getTooltip() != null) {
+        if (getTooltipText() != null) {
             if (event.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
                 ThreadUtils.postDelayedToUiThread(mShowTooltipRunnable, mTooltipDelay);
 
@@ -256,7 +267,9 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
                 mTooltipView = new TooltipWidget(getContext(), mTooltipLayout);
             }
             mTooltipView.setCurvedMode(mCurvedTooltip);
-            mTooltipView.setText(getTooltip());
+            if (getTooltipText() != null) {
+                mTooltipView.setText(getTooltipText().toString());
+            }
 
             Rect offsetViewBounds = new Rect();
             getDrawingRect(offsetViewBounds);

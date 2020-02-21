@@ -348,22 +348,22 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Widge
 
     Observer<ObservableBoolean> mBookmarksVisibleObserver = isBookmarksVisible -> {
         if (isBookmarksVisible.get()) {
-            mBinding.bookmarksButton.setTooltip(getResources().getString(R.string.close_bookmarks_tooltip));
+            mBinding.bookmarksButton.setTooltipText(getResources().getString(R.string.close_bookmarks_tooltip));
             mBinding.bookmarksButton.setActiveMode(true);
 
         } else {
-            mBinding.bookmarksButton.setTooltip(getResources().getString(R.string.open_bookmarks_tooltip));
+            mBinding.bookmarksButton.setTooltipText(getResources().getString(R.string.open_bookmarks_tooltip));
             mBinding.bookmarksButton.setActiveMode(false);
         }
     };
 
     Observer<ObservableBoolean> mHistoryVisibleObserver = isHistoryVisible -> {
         if (isHistoryVisible.get()) {
-            mBinding.historyButton.setTooltip(getResources().getString(R.string.close_history_tooltip));
+            mBinding.historyButton.setTooltipText(getResources().getString(R.string.close_history_tooltip));
             mBinding.historyButton.setActiveMode(true);
 
         } else {
-            mBinding.historyButton.setTooltip(getResources().getString(R.string.open_history_tooltip));
+            mBinding.historyButton.setTooltipText(getResources().getString(R.string.open_history_tooltip));
             mBinding.historyButton.setActiveMode(false);
         }
     };
@@ -421,14 +421,14 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Widge
                         mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
                     }
                     mBinding.privateButton.setImageResource(R.drawable.ic_icon_tray_private_browsing_on_v2);
-                    mBinding.privateButton.setTooltip(getResources().getString(R.string.private_browsing_exit_tooltip));
+                    mBinding.privateButton.setTooltipText(getResources().getString(R.string.private_browsing_exit_tooltip));
 
                 } else {
                     if (!refresh) {
                         mWidgetManager.popWorldBrightness(this);
                     }
                     mBinding.privateButton.setImageResource(R.drawable.ic_icon_tray_private_browsing_v2);
-                    mBinding.privateButton.setTooltip(getResources().getString(R.string.private_browsing_enter_tooltip));
+                    mBinding.privateButton.setTooltipText(getResources().getString(R.string.private_browsing_enter_tooltip));
                 }
             }
 
