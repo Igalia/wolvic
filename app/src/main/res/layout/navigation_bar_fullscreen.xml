@@ -31,30 +31,28 @@
 
             <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/fullScreenExitButton"
-                style="?attr/fullScreenButtonStyle"
-                android:background="@drawable/fullscreen_button_first"
+                style="@style/fullScreenFirstButtonTheme"
                 android:src="@drawable/ic_icon_back"
                 android:tooltipText="@string/back_tooltip"
                 app:privateMode="@{viewmodel.isPrivateSession}"/>
 
             <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/fullScreenResizeEnterButton"
-                style="?attr/fullScreenButtonStyle"
+                style="@style/fullScreenButtonTheme"
                 android:src="@drawable/ic_icon_resize"
                 android:tooltipText="@string/resize_tooltip"
                 app:privateMode="@{viewmodel.isPrivateSession}"/>
 
             <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/projectionButton"
-                style="?attr/fullScreenButtonStyle"
+                style="@style/fullScreenButtonTheme"
                 android:src="@drawable/ic_icon_vr_projection"
                 android:tooltipText="@string/video_mode_tooltip"
                 app:privateMode="@{viewmodel.isPrivateSession}"/>
 
             <org.mozilla.vrbrowser.ui.views.UIButton
                 android:id="@+id/brightnessButton"
-                style="?attr/fullScreenButtonStyle"
-                android:background="@drawable/fullscreen_button_last"
+                style="@style/fullScreenLastButtonTheme"
                 android:src="@drawable/ic_icon_brightness"
                 android:tooltipText="@string/brightness_mode_tooltip"
                 app:privateMode="@{viewmodel.isPrivateSession}"/>
