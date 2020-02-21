@@ -247,22 +247,27 @@ public class TrayWidget extends UIWidget implements SessionChangeListener, Widge
     }
 
     private void notifyBookmarksClicked() {
+        hideNotifications();
         mTrayListeners.forEach(TrayListener::onBookmarksClicked);
     }
 
     private void notifyHistoryClicked() {
+        hideNotifications();
         mTrayListeners.forEach(TrayListener::onHistoryClicked);
     }
 
     private void notifyTabsClicked() {
+        hideNotifications();
         mTrayListeners.forEach(TrayListener::onTabsClicked);
     }
 
     private void notifyPrivateBrowsingClicked() {
+        hideNotifications();
         mTrayListeners.forEach(TrayListener::onPrivateBrowsingClicked);
     }
 
     private void notifyAddWindowClicked() {
+        hideNotifications();
         mTrayListeners.forEach(TrayListener::onAddWindowClicked);
     }
 

@@ -14,15 +14,15 @@ import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.widgets.NotificationManager.Notification.NotificationPosition;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class NotificationManager {
 
     private static final int DEFAULT_DURATION = 3000;
 
-    private static HashMap<Integer, NotificationData> mData = new HashMap<>();
+    private static ConcurrentHashMap<Integer, NotificationData> mData = new ConcurrentHashMap<>();
 
     private static class NotificationData {
 
