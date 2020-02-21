@@ -38,6 +38,7 @@ import org.mozilla.geckoview.PanZoomController;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserActivity;
 import org.mozilla.vrbrowser.VRBrowserApplication;
+import org.mozilla.vrbrowser.browser.BookmarksStore;
 import org.mozilla.vrbrowser.browser.Media;
 import org.mozilla.vrbrowser.browser.PromptDelegate;
 import org.mozilla.vrbrowser.browser.SessionChangeListener;
@@ -173,10 +174,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         setupListeners(mSession);
 
         mBookmarksView = new BookmarksView(aContext);
-        mBookmarksView.addBookmarksListener(mBookmarksListener);
+        mBookmarksView.addBookmarksListener(mBookmarksViewListener);
 
         mHistoryView = new HistoryView(aContext);
         mHistoryView.addHistoryListener(mHistoryListener);
+
+        SessionStore.get().getBookmarkStore().addListener(mBookmarksListener);
 
         mHandle = ((WidgetManagerDelegate)aContext).newWidgetHandle();
         mWidgetPlacement = new WidgetPlacement(aContext);
@@ -626,6 +629,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         } else {
             mWidgetManager.getNavigationBar().removeNavigationBarListener(mNavigationBarListener);
+            updateBookmarked();
+
         }
 
         hideContextMenus();
@@ -917,9 +922,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             mTexture.release();
             mTexture = null;
         }
-        mBookmarksView.removeBookmarksListener(mBookmarksListener);
+        mBookmarksView.removeBookmarksListener(mBookmarksViewListener);
         mHistoryView.removeHistoryListener(mHistoryListener);
         mWidgetManager.getNavigationBar().removeNavigationBarListener(mNavigationBarListener);
+        SessionStore.get().getBookmarkStore().removeListener(mBookmarksListener);
         mPromptDelegate.detachFromWindow();
         super.releaseWidget();
     }
@@ -1348,7 +1354,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         });
     }
 
-    private BookmarksCallback mBookmarksListener = new BookmarksCallback() {
+    private BookmarksCallback mBookmarksViewListener = new BookmarksCallback() {
         @Override
         public void onShowContextMenu(@NonNull View view, @NonNull Bookmark item, boolean isLastVisibleItem) {
             showLibraryItemContextMenu(
@@ -1446,6 +1452,33 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             hideLibraryPanels();
         }
     };
+
+    private BookmarksStore.BookmarkListener mBookmarksListener = new BookmarksStore.BookmarkListener() {
+        @Override
+        public void onBookmarksUpdated() {
+            updateBookmarked();
+        }
+
+        @Override
+        public void onBookmarkAdded() {
+            updateBookmarked();
+        }
+    };
+
+    private void updateBookmarked() {
+        SessionStore.get().getBookmarkStore().isBookmarked(mViewModel.getUrl().getValue().toString()).thenAcceptAsync(bookmarked -> {
+            if (bookmarked) {
+                mViewModel.setIsBookmarked(true);
+
+            } else {
+                mViewModel.setIsBookmarked(false);
+            }
+        }, mUIThreadExecutor).exceptionally(throwable -> {
+            Log.d(LOGTAG, "Error checking bookmark: " + throwable.getLocalizedMessage());
+            throwable.printStackTrace();
+            return null;
+        });
+    }
 
     private void hideContextMenus() {
         if (mContextMenu != null) {
