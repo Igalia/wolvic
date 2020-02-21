@@ -33,6 +33,7 @@ OculusLayerQuad::Init(JNIEnv * aEnv, vrb::RenderContextPtr& aContext) {
 
 void
 OculusLayerQuad::Update(const ovrTracking2& aTracking, ovrTextureSwapChain* aClearSwapChain)  {
+  OculusLayerSurface<VRLayerQuadPtr, ovrLayerProjection2>::Update(aTracking, aClearSwapChain);
   const float w = layer->GetWorldWidth();
   const float h = layer->GetWorldHeight();
 
@@ -83,6 +84,7 @@ OculusLayerCylinder::Init(JNIEnv * aEnv, vrb::RenderContextPtr& aContext) {
 
 void
 OculusLayerCylinder::Update(const ovrTracking2& aTracking, ovrTextureSwapChain* aClearSwapChain)  {
+  OculusLayerSurface<VRLayerCylinderPtr, ovrLayerCylinder2>::Update(aTracking, aClearSwapChain);
   ovrLayer.HeadPose = aTracking.HeadPose;
   ovrLayer.Header.SrcBlend = VRAPI_FRAME_LAYER_BLEND_ONE;
   ovrLayer.Header.DstBlend = VRAPI_FRAME_LAYER_BLEND_ONE_MINUS_SRC_ALPHA;
