@@ -639,6 +639,16 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         updateBorder();
 
         mViewModel.setIsActiveWindow(active);
+
+        // Remove tha back handler in case there is a library view visible, otherwise it gets dismissed
+        // when back is clicked even if other window is focused.
+        if (mView != null) {
+            if (active) {
+                mWidgetManager.pushBackHandler(mBackHandler);
+            } else {
+                mWidgetManager.popBackHandler(mBackHandler);
+            }
+        }
     }
 
     @Nullable
