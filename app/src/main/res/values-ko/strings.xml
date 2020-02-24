@@ -191,7 +191,7 @@
     <!-- This string is used to label a text label that appears in the header of 'Language Settings' ->
          'Preferred Language for Displaying Websites' dialog window (accessible from the browser's Settings dialog window).
          Below this string appears a list of locales for the user to choose as their preferred languages for web content. -->
-    <string name="settings_language_choose_language_content_title">웹사이트 기본 언어</string>
+    <string name="settings_language_choose_language_content_title">웹 사이트 기본 언어</string>
 
     <!-- This string is used to label a text label that appears in the header description of 'Language Settings' ->
          'Preferred Language for Displaying Websites' dialog window (accessible from the browser's Settings dialog window).
@@ -968,7 +968,7 @@
     <string name="display_language_options_reset">표시 언어 초기화</string>
 
     <!-- This string labels the Reset button that restores the default content language settings values. -->
-    <string name="content_language_options_reset">웹사이트 기본 언어 초기화</string>
+    <string name="content_language_options_reset">웹 사이트 기본 언어 초기화</string>
 
     <!-- This string labels the Reset button that restores all language settings values. -->
     <string name="all_language_options_reset">모든 언어 설정 초기화</string>
