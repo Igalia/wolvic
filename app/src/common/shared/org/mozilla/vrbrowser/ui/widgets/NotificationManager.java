@@ -14,15 +14,15 @@ import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.widgets.NotificationManager.Notification.NotificationPosition;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class NotificationManager {
 
     private static final int DEFAULT_DURATION = 3000;
 
-    private static ConcurrentHashMap<Integer, NotificationData> mData = new ConcurrentHashMap<>();
+    private static HashMap<Integer, NotificationData> mData = new HashMap<>();
 
     private static class NotificationData {
 
@@ -178,14 +178,7 @@ public class NotificationManager {
 
         NotificationData data = mData.get(notificationId);
         if (data != null && data.mNotificationView.isVisible()) {
-            ThreadUtils.removeCallbacksFromUiThread(data.mHideTask);
-
-            data.mNotificationView.hide(UIWidget.REMOVE_WIDGET);
-
-            if (data.mNotification.mView instanceof UIButton) {
-                ((UIButton)data.mNotification.mView).setNotificationMode(false);
-            }
-
+            hideNotification(data);
             mData.remove(notificationId);
         }
     }
@@ -193,7 +186,18 @@ public class NotificationManager {
     public static void hideAll() {
         Iterator<Map.Entry<Integer, NotificationData>> it = mData.entrySet().iterator();
         while (it.hasNext()) {
-            hide(it.next().getKey());
+            hideNotification(it.next().getValue());
+            it.remove();
+        }
+    }
+
+    private static void hideNotification(@NonNull NotificationData data) {
+        ThreadUtils.removeCallbacksFromUiThread(data.mHideTask);
+
+        data.mNotificationView.hide(UIWidget.REMOVE_WIDGET);
+
+        if (data.mNotification.mView instanceof UIButton) {
+            ((UIButton)data.mNotification.mView).setNotificationMode(false);
         }
     }
 
