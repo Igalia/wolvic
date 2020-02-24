@@ -53,3 +53,10 @@ div.ytp-fullscreen video, .fxr-vr-video {
     left: 0px !important;
 }
 
+/* When entering fullscreen mode using desktop mode, Youtube has
+   layout issues at high resolutions. These styles are a workaround to fix the problem:
+   See https://github.com/MozillaReality/FirefoxReality/issues/2816 */
+div.ytp-fullscreen video, .fxr-vr-video {
+    height: 100% !important;
+    position: relative !important;
+}
