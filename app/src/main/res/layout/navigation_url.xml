@@ -45,6 +45,7 @@
                     android:src="@drawable/ic_icon_microphone"
                     android:tint="@color/fog"
                     android:tooltipText="@string/voice_search_tooltip"
+                    app:privateMode="@{viewmodel.isPrivateSession}"
                     app:visibleGone="@{viewmodel.isMicrophoneEnabled &amp;&amp; !viewmodel.isFocused}"/>
 
                 <org.mozilla.vrbrowser.ui.views.UIButton
@@ -53,6 +54,7 @@
                     android:src="@{viewmodel.isBookmarked ? @drawable/ic_icon_bookmarked_active : @drawable/ic_icon_bookmarked}"
                     android:tint="@color/fog"
                     android:tooltipText="@string/bookmark_tooltip"
+                    app:privateMode="@{viewmodel.isPrivateSession}"
                     app:visibleGone="@{!(viewmodel.isLibraryVisible || viewmodel.isUrlEmpty) &amp;&amp; !viewmodel.isFocused}"
                     tools:src="@drawable/ic_icon_bookmarked" />
 
@@ -62,6 +64,7 @@
                     android:src="@drawable/ic_icon_clear"
                     android:tint="@color/fog"
                     android:tooltipText="@string/clear_tooltip"
+                    app:privateMode="@{viewmodel.isPrivateSession}"
                     app:visibleGone="@{viewmodel.isFocused &amp;&amp; !viewmodel.isUrlEmpty}" />
             </LinearLayout>
 
@@ -93,6 +96,7 @@
                         android:src="@drawable/ic_icon_popup_awesomebar"
                         android:tint="@color/fog"
                         android:tooltipText="@string/popup_tooltip"
+                        app:privateMode="@{viewmodel.isPrivateSession}"
                         app:visibleGone="@{viewmodel.isPopUpAvailable}" />
 
                     <View
