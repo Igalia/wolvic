@@ -8,6 +8,7 @@ import androidx.annotation.IntDef;
 
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.utils.AnimationHelper;
 
@@ -16,6 +17,8 @@ import java.util.LinkedHashMap;
 import java.util.Optional;
 
 public class HamburgerMenuWidget extends MenuWidget {
+
+    private boolean mProxify = SettingsStore.getInstance(getContext()).getLayersEnabled();
 
     public interface MenuDelegate {
         void onSendTab();
@@ -65,6 +68,7 @@ public class HamburgerMenuWidget extends MenuWidget {
 
     @Override
     public void show(int aShowFlags) {
+        mWidgetPlacement.proxifyLayer = mProxify;
         super.show(aShowFlags);
 
         AnimationHelper.scaleIn(findViewById(R.id.menuContainer), 100, 0, null);
@@ -73,6 +77,7 @@ public class HamburgerMenuWidget extends MenuWidget {
     @Override
     public void hide(int aHideFlags) {
         AnimationHelper.scaleOut(findViewById(R.id.menuContainer), 100, 0, () -> HamburgerMenuWidget.super.hide(aHideFlags));
+        mWidgetPlacement.proxifyLayer = false;
     }
 
     @Override
