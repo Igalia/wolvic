@@ -239,10 +239,6 @@ public class TabView extends RelativeLayout implements GeckoSession.ContentDeleg
     @Override
     public void onHoverChanged(boolean aHovered) {
         super.onHoverChanged(aHovered);
-        if (!aHovered) {
-            mSendTabButton.setHovered(false);
-            mCloseButton.setHovered(false);
-        }
         updateState();
     }
 
@@ -320,7 +316,8 @@ public class TabView extends RelativeLayout implements GeckoSession.ContentDeleg
                 AnimationHelper.animateViewPadding(view,
                         mMaxIconPadding,
                         mMinIconPadding,
-                        ICON_ANIMATION_DURATION);
+                        ICON_ANIMATION_DURATION,
+                        this::updateState);
                 post(() -> setHovered(true));
                 return false;
 
@@ -329,7 +326,7 @@ public class TabView extends RelativeLayout implements GeckoSession.ContentDeleg
                         mMinIconPadding,
                         mMaxIconPadding,
                         ICON_ANIMATION_DURATION,
-                        null);
+                        this::updateState);
                 setHovered(false);
                 return false;
         }
