@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Dimension;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.databinding.BindingAdapter;
 
 import org.mozilla.vrbrowser.R;
@@ -162,6 +163,11 @@ public class BindingAdapters {
     @BindingAdapter("privateMode")
     public static void setPrivateMode(@NonNull UITextButton button, boolean isPrivateMode) {
         button.setPrivateMode(isPrivateMode);
+    }
+
+    @BindingAdapter("android:tooltipText")
+    public static void setTooltipText(@NonNull UIButton button, @Nullable String text){
+        button.setTooltipText(text);
     }
 
  }
