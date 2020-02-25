@@ -134,6 +134,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private PromptDelegate mPromptDelegate;
     private Executor mUIThreadExecutor;
     private WindowViewModel mViewModel;
+    private CopyOnWriteArrayList<Runnable> mSetViewQueuedCalls;
 
     public interface WindowListener {
         default void onFocusRequest(@NonNull WindowWidget aWindow) {}
@@ -158,6 +159,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     private void initialize(Context aContext) {
+        mSetViewQueuedCalls = new CopyOnWriteArrayList<>();
+
         mWidgetManager = (WidgetManagerDelegate) aContext;
         mBorderWidth = SettingsStore.getInstance(aContext).getTransparentBorderWidth();
 
@@ -364,28 +367,40 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     private void setView(View view, boolean switchSurface) {
-        if (switchSurface) {
-            pauseCompositor();
-        }
+        Runnable setView = new Runnable() {
+            @Override
+            public void run() {
+                if (switchSurface) {
+                    pauseCompositor();
+                }
 
-        mView = view;
-        removeView(view);
-        mView.setVisibility(VISIBLE);
-        addView(mView);
+                mView = view;
+                removeView(view);
+                mView.setVisibility(VISIBLE);
+                addView(mView);
 
-        if (switchSurface) {
-            mWidgetPlacement.density = getContext().getResources().getDisplayMetrics().density;
-            if (mTexture != null && mSurface != null && mRenderer == null) {
-                // Create the UI Renderer for the current surface.
-                // Surface must be released when switching back to WebView surface or the browser
-                // will not render it correctly. See release code in unsetView().
-                mRenderer = new UISurfaceTextureRenderer(mSurface, mWidgetPlacement.textureWidth(), mWidgetPlacement.textureHeight());
+                if (switchSurface) {
+                    mWidgetPlacement.density = getContext().getResources().getDisplayMetrics().density;
+                    if (mTexture != null && mSurface != null && mRenderer == null) {
+                        // Create the UI Renderer for the current surface.
+                        // Surface must be released when switching back to WebView surface or the browser
+                        // will not render it correctly. See release code in unsetView().
+                        mRenderer = new UISurfaceTextureRenderer(mSurface, mWidgetPlacement.textureWidth(), mWidgetPlacement.textureHeight());
+                    }
+                    mWidgetManager.updateWidget(WindowWidget.this);
+                    mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
+                    mWidgetManager.pushBackHandler(mBackHandler);
+                    setWillNotDraw(false);
+                    postInvalidate();
+                }
             }
-            mWidgetManager.updateWidget(this);
-            mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
-            mWidgetManager.pushBackHandler(mBackHandler);
-            setWillNotDraw(false);
-            postInvalidate();
+        };
+
+        if (mAfterFirstPaint) {
+            setView.run();
+
+        } else {
+            mSetViewQueuedCalls.add(setView);
         }
     }
 
@@ -917,6 +932,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         cleanListeners(mSession);
         GeckoSession session = mSession.getGeckoSession();
 
+        mSetViewQueuedCalls.clear();
         if (mSession != null) {
             mSession.releaseDisplay();
         }
@@ -1562,6 +1578,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             mUIThreadExecutor.execute(mFirstDrawCallback);
             mFirstDrawCallback = null;
             mAfterFirstPaint = true;
+            mSetViewQueuedCalls.forEach(Runnable::run);
         }
     }
 
