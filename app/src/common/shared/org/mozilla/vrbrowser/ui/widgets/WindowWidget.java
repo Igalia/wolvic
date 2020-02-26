@@ -170,6 +170,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
                 .get(String.valueOf(hashCode()), WindowViewModel.class);
         mViewModel.setIsPrivateSession(mSession.isPrivateMode());
+        mViewModel.setUrl(mSession.getCurrentUri());
 
         mUIThreadExecutor = ((VRBrowserApplication)getContext().getApplicationContext()).getExecutors().mainThread();
 
