@@ -367,32 +367,29 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     private void setView(View view, boolean switchSurface) {
-        Runnable setView = new Runnable() {
-            @Override
-            public void run() {
-                if (switchSurface) {
-                    pauseCompositor();
-                }
+        Runnable setView = () -> {
+            if (switchSurface) {
+                pauseCompositor();
+            }
 
-                mView = view;
-                removeView(view);
-                mView.setVisibility(VISIBLE);
-                addView(mView);
+            mView = view;
+            removeView(view);
+            mView.setVisibility(VISIBLE);
+            addView(mView);
 
-                if (switchSurface) {
-                    mWidgetPlacement.density = getContext().getResources().getDisplayMetrics().density;
-                    if (mTexture != null && mSurface != null && mRenderer == null) {
-                        // Create the UI Renderer for the current surface.
-                        // Surface must be released when switching back to WebView surface or the browser
-                        // will not render it correctly. See release code in unsetView().
-                        mRenderer = new UISurfaceTextureRenderer(mSurface, mWidgetPlacement.textureWidth(), mWidgetPlacement.textureHeight());
-                    }
-                    mWidgetManager.updateWidget(WindowWidget.this);
-                    mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
-                    mWidgetManager.pushBackHandler(mBackHandler);
-                    setWillNotDraw(false);
-                    postInvalidate();
+            if (switchSurface) {
+                mWidgetPlacement.density = getContext().getResources().getDisplayMetrics().density;
+                if (mTexture != null && mSurface != null && mRenderer == null) {
+                    // Create the UI Renderer for the current surface.
+                    // Surface must be released when switching back to WebView surface or the browser
+                    // will not render it correctly. See release code in unsetView().
+                    mRenderer = new UISurfaceTextureRenderer(mSurface, mWidgetPlacement.textureWidth(), mWidgetPlacement.textureHeight());
                 }
+                mWidgetManager.updateWidget(WindowWidget.this);
+                mWidgetManager.pushWorldBrightness(WindowWidget.this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
+                mWidgetManager.pushBackHandler(mBackHandler);
+                setWillNotDraw(false);
+                postInvalidate();
             }
         };
 
@@ -405,27 +402,36 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     private void unsetView(View view, boolean switchSurface) {
-        if (mView != null && mView == view) {
-            mView = null;
-            removeView(view);
-            view.setVisibility(GONE);
+        Runnable unsetView = () -> {
+            if (mView != null && mView == view) {
+                mView = null;
+                removeView(view);
+                view.setVisibility(GONE);
 
-            if (switchSurface) {
-                setWillNotDraw(true);
-                if (mTexture != null) {
-                    // Surface must be recreated here when not using layers.
-                    // When using layers the new Surface is received via the setSurface() method.
-                    if (mRenderer != null) {
-                        mRenderer.release();
-                        mRenderer = null;
+                if (switchSurface) {
+                    setWillNotDraw(true);
+                    if (mTexture != null) {
+                        // Surface must be recreated here when not using layers.
+                        // When using layers the new Surface is received via the setSurface() method.
+                        if (mRenderer != null) {
+                            mRenderer.release();
+                            mRenderer = null;
+                        }
+                        mSurface = new Surface(mTexture);
                     }
-                    mSurface = new Surface(mTexture);
+                    mWidgetPlacement.density = 1.0f;
+                    mWidgetManager.updateWidget(WindowWidget.this);
+                    mWidgetManager.popWorldBrightness(WindowWidget.this);
+                    mWidgetManager.popBackHandler(mBackHandler);
                 }
-                mWidgetPlacement.density = 1.0f;
-                mWidgetManager.updateWidget(this);
-                mWidgetManager.popWorldBrightness(this);
-                mWidgetManager.popBackHandler(mBackHandler);
             }
+        };
+
+        if (mAfterFirstPaint) {
+            unsetView.run();
+
+        } else {
+            mSetViewQueuedCalls.add(unsetView);
         }
     }
 
@@ -1579,6 +1585,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             mFirstDrawCallback = null;
             mAfterFirstPaint = true;
             mSetViewQueuedCalls.forEach(Runnable::run);
+            mSetViewQueuedCalls.clear();
         }
     }
 
