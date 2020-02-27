@@ -817,7 +817,8 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
             mState.mSettings.setViewportMode(GeckoSessionSettings.VIEWPORT_MODE_MOBILE);
         }
         mState.mSession.getSettings().setViewportMode(mState.mSettings.getViewportMode());
-        mState.mSession.loadUri(overrideUri != null ? overrideUri : mState.mUri, GeckoSession.LOAD_FLAGS_BYPASS_CACHE | GeckoSession.LOAD_FLAGS_REPLACE_HISTORY);
+        // FIXME The GeckoSession.LOAD_FLAGS_REPLACE_HISTORY flag fails due to https://bugzilla.mozilla.org/show_bug.cgi?id=1618664
+        mState.mSession.loadUri(overrideUri != null ? overrideUri : mState.mUri, GeckoSession.LOAD_FLAGS_BYPASS_CACHE); //  | GeckoSession.LOAD_FLAGS_REPLACE_HISTORY);
     }
 
 

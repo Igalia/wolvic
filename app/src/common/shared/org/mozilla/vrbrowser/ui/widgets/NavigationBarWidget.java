@@ -1005,8 +1005,9 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             public void onSwitchMode() {
                 int uaMode = mAttachedWindow.getSession().getUaMode();
                 if (uaMode == GeckoSessionSettings.USER_AGENT_MODE_DESKTOP) {
-                    mHamburgerMenu.setUAMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
-                    mAttachedWindow.getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
+                    final int defaultUaMode = SettingsStore.getInstance(mAppContext).getUaMode();
+                    mHamburgerMenu.setUAMode(defaultUaMode);
+                    mAttachedWindow.getSession().setUaMode(defaultUaMode);
 
                 } else {
                     mHamburgerMenu.setUAMode(GeckoSessionSettings.USER_AGENT_MODE_DESKTOP);

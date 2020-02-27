@@ -58,7 +58,7 @@
                     android:layout_height="wrap_content"
                     app:description="@string/developer_options_msaa"
                     app:options="@array/developer_options_msaa"
-                    app:values="@array/developer_options_ua_mode_values" />
+                    app:values="@array/developer_options_msaa_mode_values" />
 
                 <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
                     android:id="@+id/autoplaySwitch"

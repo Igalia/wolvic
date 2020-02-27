@@ -90,7 +90,7 @@ class SessionSettings {
             return this;
         }
 
-        public Builder withTrackingProteccion(boolean isTrackingProtectionEnabled){
+        public Builder withTrackingProtection(boolean isTrackingProtectionEnabled){
             this.isTrackingProtectionEnabled = isTrackingProtectionEnabled;
             return this;
         }
@@ -127,7 +127,7 @@ class SessionSettings {
 
             return new SessionSettings.Builder()
                     .withPrivateBrowsing(false)
-                    .withTrackingProteccion(SettingsStore.getInstance(context).isTrackingProtectionEnabled())
+                    .withTrackingProtection(SettingsStore.getInstance(context).isTrackingProtectionEnabled())
                     .withSuspendMediaWhenInactive(true)
                     .withUserAgent(ua)
                     .withViewport(viewport)

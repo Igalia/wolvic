@@ -49,7 +49,7 @@ public class SettingsStore {
     public final static boolean REMOTE_DEBUGGING_DEFAULT = false;
     public final static boolean CONSOLE_LOGS_DEFAULT = false;
     public final static boolean ENV_OVERRIDE_DEFAULT = false;
-    public final static boolean MULTIPROCESS_DEFAULT = false;
+    public final static boolean MULTIPROCESS_DEFAULT = true;
     public final static boolean UI_HARDWARE_ACCELERATION_DEFAULT = true;
     public final static boolean PERFORMANCE_MONITOR_DEFAULT = true;
     public final static boolean DRM_PLAYBACK_DEFAULT = false;
@@ -277,8 +277,13 @@ public class SettingsStore {
     }
 
     public void setUaMode(int mode) {
+        int checkedMode = mode;
+        if ((mode != GeckoSessionSettings.USER_AGENT_MODE_VR) && (mode != GeckoSessionSettings.USER_AGENT_MODE_MOBILE)) {
+            Log.e(LOGTAG, "User agent mode: " + mode + " is not supported.");
+            checkedMode = UA_MODE_DEFAULT;
+        }
         SharedPreferences.Editor editor = mPrefs.edit();
-        editor.putInt(mContext.getString(R.string.settings_key_user_agent_version), mode);
+        editor.putInt(mContext.getString(R.string.settings_key_user_agent_version), checkedMode);
         editor.commit();
     }
 
