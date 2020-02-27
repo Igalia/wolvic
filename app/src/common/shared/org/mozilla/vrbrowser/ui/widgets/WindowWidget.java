@@ -1585,8 +1585,14 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             mUIThreadExecutor.execute(mFirstDrawCallback);
             mFirstDrawCallback = null;
             mAfterFirstPaint = true;
-            mSetViewQueuedCalls.forEach(Runnable::run);
-            mSetViewQueuedCalls.clear();
+            // view queue calls need to be delayed to avoid a deadlock
+            // caused by GeckoSession.syncResumeResizeCompositor()
+            // See: https://github.com/MozillaReality/FirefoxReality/issues/2889
+            mUIThreadExecutor.execute(() -> {
+                mSetViewQueuedCalls.forEach(Runnable::run);
+                mSetViewQueuedCalls.clear();
+            });
+
         }
     }
 
