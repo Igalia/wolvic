@@ -391,7 +391,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         SettingsStore.getInstance(getBaseContext()).setPid(Process.myPid());
         super.onStart();
         TelemetryWrapper.start();
-        UISurfaceTextureRenderer.setRenderActive(true);
         mLifeCycle.setCurrentState(Lifecycle.State.STARTED);
     }
 
@@ -402,7 +401,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         TelemetryWrapper.stop();
         GleanMetricsService.sessionStop();
-        UISurfaceTextureRenderer.setRenderActive(false);
     }
 
     @Override
@@ -427,10 +425,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         }
         mWidgetContainer.getViewTreeObserver().removeOnGlobalFocusChangeListener(globalFocusListener);
         super.onPause();
+        UISurfaceTextureRenderer.setRenderActive(false);
     }
 
     @Override
     protected void onResume() {
+        UISurfaceTextureRenderer.setRenderActive(true);
         MotionEventGenerator.clearDevices();
         mWidgetContainer.getViewTreeObserver().addOnGlobalFocusChangeListener(globalFocusListener);
         if (mOffscreenDisplay != null) {
