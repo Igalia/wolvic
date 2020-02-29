@@ -149,6 +149,10 @@ public class TitleBarWidget extends UIWidget {
         } else {
             mWidgetManager.updateWidget(TitleBarWidget.this);
         }
+
+        if (mAttachedWindow.getSession() != null) {
+            mViewModel.setUrl(mAttachedWindow.getSession().getCurrentUri());
+        }
     };
 
 }

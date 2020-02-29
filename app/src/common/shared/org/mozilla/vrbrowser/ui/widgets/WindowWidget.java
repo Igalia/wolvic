@@ -403,36 +403,28 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     private void unsetView(View view, boolean switchSurface) {
-        Runnable unsetView = () -> {
-            if (mView != null && mView == view) {
-                mView = null;
-                removeView(view);
-                view.setVisibility(GONE);
+        mSetViewQueuedCalls.clear();
+        if (mView != null && mView == view) {
+            mView = null;
+            removeView(view);
+            view.setVisibility(GONE);
 
-                if (switchSurface) {
-                    setWillNotDraw(true);
-                    if (mTexture != null) {
-                        // Surface must be recreated here when not using layers.
-                        // When using layers the new Surface is received via the setSurface() method.
-                        if (mRenderer != null) {
-                            mRenderer.release();
-                            mRenderer = null;
-                        }
-                        mSurface = new Surface(mTexture);
+            if (switchSurface) {
+                setWillNotDraw(true);
+                if (mTexture != null) {
+                    // Surface must be recreated here when not using layers.
+                    // When using layers the new Surface is received via the setSurface() method.
+                    if (mRenderer != null) {
+                        mRenderer.release();
+                        mRenderer = null;
                     }
-                    mWidgetPlacement.density = 1.0f;
-                    mWidgetManager.updateWidget(WindowWidget.this);
-                    mWidgetManager.popWorldBrightness(WindowWidget.this);
-                    mWidgetManager.popBackHandler(mBackHandler);
+                    mSurface = new Surface(mTexture);
                 }
+                mWidgetPlacement.density = 1.0f;
+                mWidgetManager.updateWidget(WindowWidget.this);
+                mWidgetManager.popWorldBrightness(WindowWidget.this);
+                mWidgetManager.popBackHandler(mBackHandler);
             }
-        };
-
-        if (mAfterFirstPaint) {
-            unsetView.run();
-
-        } else {
-            mSetViewQueuedCalls.add(unsetView);
         }
     }
 
@@ -1058,6 +1050,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             for (WindowListener listener: mListeners) {
                 listener.onSessionChanged(oldSession, aSession);
             }
+
+
         }
         mCaptureOnPageStop = false;
         hideLibraryPanels();
