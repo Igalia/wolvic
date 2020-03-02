@@ -211,18 +211,6 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
         }
     }
 
-    public void onPause() {
-        for (Session session: mSessions) {
-            session.setActive(false);
-        }
-    }
-
-    public void onResume() {
-        for (Session session: mSessions) {
-            session.setActive(true);
-        }
-    }
-
     public void onDestroy() {
         for (int i = mSessions.size() - 1; i >= 0; --i) {
             destroySession(mSessions.get(i));
