@@ -49,7 +49,7 @@
     <string name="settings_key_bookmarks_sync" translatable="false">settings_key_bookmarks_sync</string>
     <string name="settings_key_history_sync" translatable="false">settings_key_history_sync</string>
     <string name="settings_key_whats_new_displayed" translatable="false">settings_key_whats_new_displayed</string>
-    <string name="settings_key_ui_hardware_acceleration" translatable="false">settings_key_ui_hardware_acceleration_v2</string>
+    <string name="settings_key_ui_hardware_acceleration" translatable="false">settings_key_ui_hardware_acceleration_v3</string>
     <string name="settings_key_fxa_last_sync" translatable="false">settings_key_fxa_last_sync</string>
     <string name="settings_key_restore_tabs" translatable="false">settings_key_restore_tabs</string>
     <string name="environment_override_help_url" translatable="false">https://github.com/MozillaReality/FirefoxReality/wiki/Environments</string>

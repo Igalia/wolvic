@@ -51,6 +51,7 @@ public class SettingsStore {
     public final static boolean ENV_OVERRIDE_DEFAULT = false;
     public final static boolean MULTIPROCESS_DEFAULT = true;
     public final static boolean UI_HARDWARE_ACCELERATION_DEFAULT = true;
+    public final static boolean UI_HARDWARE_ACCELERATION_DEFAULT_WAVEVR = false;
     public final static boolean PERFORMANCE_MONITOR_DEFAULT = true;
     public final static boolean DRM_PLAYBACK_DEFAULT = false;
     public final static boolean TRACKING_DEFAULT = true;
@@ -240,8 +241,12 @@ public class SettingsStore {
     }
 
     public boolean isUIHardwareAccelerationEnabled() {
+        boolean defaultValue = UI_HARDWARE_ACCELERATION_DEFAULT;
+        if (DeviceType.isWaveBuild()) {
+            defaultValue = UI_HARDWARE_ACCELERATION_DEFAULT_WAVEVR;
+        }
         return mPrefs.getBoolean(
-                mContext.getString(R.string.settings_key_ui_hardware_acceleration), UI_HARDWARE_ACCELERATION_DEFAULT);
+                mContext.getString(R.string.settings_key_ui_hardware_acceleration), defaultValue);
     }
 
     public void setUIHardwareAccelerationEnabled(boolean isEnabled) {
