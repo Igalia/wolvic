@@ -485,18 +485,6 @@ dependencies {
     implementation deps.android_components.glean
     implementation deps.app_services.rustlog
 
-    // For production builds, the native code for all `org.mozilla.appservices`
-    // dependencies gets compiled together into a single "megazord" build, and
-    // different megazords are published for different subsets of features. Ref
-    // https://mozilla.github.io/application-services/docs/applications/consuming-megazord-libraries.html
-    // For now we can jut use the one that's specifically designed for Fenix.
-    implementation deps.app_services.megazord
-    modules {
-        module('org.mozilla.appservices:full-megazord') {
-            replacedBy('org.mozilla.appservices:fenix-megazord', 'prefer the fenix megazord, to reduce final application size')
-        }
-    }
-
     // TODO this should not be necessary at all, see Services.kt
     implementation deps.work.runtime
 
@@ -520,9 +508,9 @@ dependencies {
     testImplementation deps.junit
     testImplementation deps.atsl.core
     testImplementation deps.robolectric
-    testImplementation deps.app_services.megazord_forUnitTests
     testImplementation deps.app_services.rustlog
     testImplementation deps.android_components.support_test
+    testImplementation deps.android_components.support_test_appservices
     testImplementation deps.telemetry.glean_unittests
     testImplementation deps.work.testing
 
