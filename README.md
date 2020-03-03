@@ -2,7 +2,7 @@
 
 The goal of the Firefox Reality project is to create a full-featured browser exclusively for *standalone* AR and VR headsets.
 
-You can find us on Twitter [@MozillaReality](https://twitter.com/mozillareality) and at [mixedreality@mozilla.com](mailto:mixedreality@mozilla.com).
+You can find us on the [Matrix](https://chat.mozilla.org/#/room/#fxr:mozilla.org) ([Instructions for joining](https://wiki.mozilla.org/Matrix)), Twitter [@MozillaReality](https://twitter.com/mozillareality), and at [mixedreality@mozilla.com](mailto:mixedreality@mozilla.com).
 
 [![Task Status](https://community-tc.services.mozilla.com/api/github/v1/repository/MozillaReality/FirefoxReality/master/badge.svg)](https://community-tc.services.mozilla.com/api/github/v1/repository/MozillaReality/FirefoxReality/master/latest) [Build results](https://community-tc.services.mozilla.com/api/github/v1/repository/MozillaReality/FirefoxReality/master/latest)
 
