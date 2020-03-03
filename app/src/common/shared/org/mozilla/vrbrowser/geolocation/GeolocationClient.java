@@ -1,35 +1,63 @@
 package org.mozilla.vrbrowser.geolocation;
 
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.JsonHttpResponseHandler;
+import android.os.Handler;
+import android.os.Looper;
+
+import androidx.annotation.NonNull;
 
 import org.json.JSONObject;
+import org.mozilla.geckoview.GeckoWebExecutor;
+import org.mozilla.geckoview.WebRequest;
 
+import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.function.Function;
 
-import cz.msebera.android.httpclient.Header;
+class GeolocationClient {
 
-public class GeolocationClient {
+    static void getGeolocation(@NonNull GeckoWebExecutor executor, String aQuery, Function<GeolocationData, Void> success, Function<String, Void> error) {
+        new Handler(Looper.getMainLooper()).post(() -> {
+            WebRequest request = new WebRequest.Builder(aQuery)
+                    .method("GET")
+                    .build();
 
-    private static final int RETRY_SLEEP = 5 * 1000;
+            executor.fetch(request).then(webResponse -> {
+                String body;
+                if (webResponse != null) {
+                    if (webResponse.body != null) {
+                        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+                        int nRead;
+                        byte[] data = new byte[1024];
+                        while ((nRead = webResponse.body.read(data, 0, data.length)) != -1) {
+                            buffer.write(data, 0, nRead);
+                        }
+                        body = new String(buffer.toByteArray(), StandardCharsets.UTF_8);
 
-    private static AsyncHttpClient client = new AsyncHttpClient();
+                        if (webResponse.statusCode == 200) {
+                            JSONObject reader = new JSONObject(body);
+                            success.apply(GeolocationData.parse(reader.toString()));
 
-    public static void getGeolocation(String aQuery, int retries, Function success, Function error) {
-        client.cancelAllRequests(true);
-        client.setMaxRetriesAndTimeout(retries, RETRY_SLEEP);
-        client.get(aQuery, null, new JsonHttpResponseHandler("ISO-8859-1") {
+                        } else {
+                            // called when response HTTP status is not "200"
+                            error.apply(String.format("Network Error: %s", webResponse.statusCode));
+                        }
 
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                success.apply(GeolocationData.parse(response.toString()));
-            }
+                    } else {
+                        // WebResponse body is null
+                        error.apply("Response body is null");
+                    }
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                error.apply(errorResponse);
-            }
+                } else {
+                    // WebResponse is null
+                    error.apply("Response is null");
+                }
+                return null;
 
+            }).exceptionally(throwable -> {
+                // Exception happened
+                error.apply(String.format("Unknown network Error: %s", String.format("An exception happened during the request: %s", throwable.getMessage())));
+                return null;
+            });
         });
     }
 }

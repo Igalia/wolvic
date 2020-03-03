@@ -183,7 +183,8 @@
     <string name="keyboard_nl_NL_popup_i" translatable="false">ìíiïîįī</string>
 
     <!-- SEARCH ENGINES -->
-    <string name="geolocation_api_url" translatable="false">https://location.services.mozilla.com/v1/country</string>
+    <!-- The MLS policy has been updated and now we can't use it without an API key anymore -->
+    <string name="geolocation_api_url" translatable="false">https://location.services.mozilla.com/v1/country?key=fff72d56-b040-4205-9a11-82feda9d83a3</string>
     <!-- Google -->
     <string name="search_google_params" translatable="false">q=%1$s&amp;client=firefox-b-o</string>
     <string name="search_google_us_params" translatable="false">q=%1$s&amp;client=firefox-b-1-o</string>

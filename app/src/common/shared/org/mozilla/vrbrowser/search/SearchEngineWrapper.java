@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.browser.SettingsStore;
+import org.mozilla.vrbrowser.browser.engine.EngineProvider;
 import org.mozilla.vrbrowser.geolocation.GeolocationData;
 import org.mozilla.vrbrowser.search.suggestions.SuggestionsClient;
 import org.mozilla.vrbrowser.utils.SystemUtils;
@@ -118,7 +119,10 @@ public class SearchEngineWrapper implements SharedPreferences.OnSharedPreference
         // TODO: Use mSuggestionsClient.getSuggestions when fixed in browser-search.
         String query = getSuggestionURL(aQuery);
         mUIThreadExecutor.execute(() ->
-                SuggestionsClient.getSuggestions(mSearchEngine, query).thenAcceptAsync(future::complete));
+                SuggestionsClient.getSuggestions(
+                        EngineProvider.INSTANCE.getDefaultGeckoWebExecutor(mContext),
+                        mSearchEngine,
+                        query).thenAcceptAsync(future::complete));
 
         return future;
     }

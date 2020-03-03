@@ -1,31 +1,67 @@
 package org.mozilla.vrbrowser.search.suggestions;
 
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.TextHttpResponseHandler;
+import android.os.Handler;
+import android.os.Looper;
 
+import androidx.annotation.NonNull;
+
+import org.mozilla.geckoview.GeckoWebExecutor;
+import org.mozilla.geckoview.WebRequest;
+
+import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import cz.msebera.android.httpclient.Header;
 import mozilla.components.browser.search.SearchEngine;
 
 public class SuggestionsClient {
 
-    private static AsyncHttpClient client = new AsyncHttpClient();
 
-    public static CompletableFuture<List<String>> getSuggestions(SearchEngine mEngine, String aQuery) {
+    public static CompletableFuture<List<String>> getSuggestions(@NonNull GeckoWebExecutor executor, SearchEngine mEngine, String aQuery) {
         final CompletableFuture<List<String>> future = new CompletableFuture<>();
-        client.cancelAllRequests(true);
-        client.get(aQuery, null, new TextHttpResponseHandler("ISO-8859-1") {
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                future.completeExceptionally(throwable);
-            }
 
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                future.complete(SuggestionParser.selectResponseParser(mEngine).apply(responseString));
-            }
+        new Handler(Looper.getMainLooper()).post(() -> {
+            WebRequest request = new WebRequest.Builder(aQuery)
+                    .method("GET")
+                    .build();
+
+            executor.fetch(request).then(webResponse -> {
+                String body;
+                if (webResponse != null) {
+                    if (webResponse.body != null) {
+                        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+                        int nRead;
+                        byte[] data = new byte[1024];
+                        while ((nRead = webResponse.body.read(data, 0, data.length)) != -1) {
+                            buffer.write(data, 0, nRead);
+                        }
+                        body = new String(buffer.toByteArray(), StandardCharsets.UTF_8);
+
+                        if (webResponse.statusCode == 200) {
+                            future.complete(SuggestionParser.selectResponseParser(mEngine).apply(body));
+
+                        } else {
+                            // called when response HTTP status is not "200"
+                            future.completeExceptionally(new Throwable(String.format("Network Error: %s", webResponse.statusCode)));
+                        }
+
+                    } else {
+                        // WebResponse body is null
+                        future.completeExceptionally(new Throwable("Response body is null"));
+                    }
+
+                } else {
+                    // WebResponse is null
+                    future.completeExceptionally(new Throwable("Response is null"));
+                }
+                return null;
+
+            }).exceptionally(throwable -> {
+                // Exception happened
+                future.completeExceptionally(new Throwable(String.format("Unknown network Error: %s", String.format("An exception happened during the request: %s", throwable.getMessage()))));
+                return null;
+            });
         });
 
         return future;

@@ -6,13 +6,7 @@ package org.mozilla.vrbrowser.browser.engine
 
 import android.content.Context
 import androidx.annotation.VisibleForTesting
-import mozilla.components.concept.fetch.Client
-import mozilla.components.concept.fetch.Headers
-import mozilla.components.concept.fetch.MutableHeaders
-import mozilla.components.concept.fetch.Request
-import mozilla.components.concept.fetch.Response
-
-import org.mozilla.geckoview.GeckoRuntime
+import mozilla.components.concept.fetch.*
 import org.mozilla.geckoview.GeckoWebExecutor
 import org.mozilla.geckoview.WebRequest
 import org.mozilla.geckoview.WebRequest.CACHE_MODE_DEFAULT
@@ -30,12 +24,11 @@ import java.util.concurrent.TimeoutException
  */
 class GeckoViewFetchClient(
     context: Context,
-    runtime: GeckoRuntime = GeckoRuntime.getDefault(context),
     private val maxReadTimeOut: Pair<Long, TimeUnit> = Pair(MAX_READ_TIMEOUT_MINUTES, TimeUnit.MINUTES)
 ) : Client() {
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    internal var executor: GeckoWebExecutor = GeckoWebExecutor(runtime)
+    internal var executor: GeckoWebExecutor = EngineProvider.createGeckoWebExecutor(context)
 
     @Throws(IOException::class)
     override fun fetch(request: Request): Response {
