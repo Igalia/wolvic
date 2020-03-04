@@ -1,0 +1,44 @@
+{
+  "name": "Coil",
+  "description": "Support websites and creators with Web Monetization",
+  "version": "0.0.46",
+  "manifest_version": 2,
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "coilfirefoxextension@coil.com"
+    }
+  },
+  "icons": {
+    "128": "res/icn-coil-on.png"
+  },
+  "browser_action": {
+    "default_icon": "res/icn-coil-off.png",
+    "default_popup": "static/popup.html"
+  },
+  "background": {
+    "page": "static/background.html"
+  },
+  "web_accessible_resources": [],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*/*",
+        "http://*/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "match_about_blank": false,
+      "all_frames": true,
+      "run_at": "document_start"
+    }
+  ],
+  "permissions": [
+    "activeTab",
+    "storage",
+    "notifications",
+    "tabs",
+    "<all_urls>"
+  ]
+}
