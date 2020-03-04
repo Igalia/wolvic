@@ -340,6 +340,10 @@ public class NavigationURLBar extends FrameLayout {
             if (!hasProtocol && !urlText.contains(" ") && UrlUtils.isDomain(urlText)) {
                 urlText = "https://" + urlText;
                 hasProtocol = true;
+            } else if (!hasProtocol && !urlText.contains(" ") && UrlUtils.isIPUri(urlText)) {
+                String protocol = UrlUtils.isLocalIP(urlText) ? "http://" : "https://";
+                urlText = protocol + urlText;
+                hasProtocol = true;
             }
             if (hasProtocol) {
                 URL url = new URL(urlText);

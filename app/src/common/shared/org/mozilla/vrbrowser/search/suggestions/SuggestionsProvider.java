@@ -61,7 +61,8 @@ public class SuggestionsProvider {
     private String getSearchURLOrDomain(String text) {
         if (UrlUtils.isDomain(text)) {
             return text;
-
+        } else if (UrlUtils.isIPUri(text)) {
+            return text;
         } else {
             return mSearchEngineWrapper.getSearchURL(text);
         }
@@ -77,7 +78,7 @@ public class SuggestionsProvider {
         mComparator = comparator;
     }
 
-    public CompletableFuture<List<SuggestionItem>> getBookmarkSuggestions(@NonNull List<SuggestionItem> items) {
+    private CompletableFuture<List<SuggestionItem>> getBookmarkSuggestions(@NonNull List<SuggestionItem> items) {
         CompletableFuture future = new CompletableFuture();
         SessionStore.get().getBookmarkStore().searchBookmarks(mFilterText, 100).thenAcceptAsync((bookmarks) -> {
             bookmarks.stream()
@@ -105,7 +106,7 @@ public class SuggestionsProvider {
         return future;
     }
 
-    public CompletableFuture<List<SuggestionItem>> getHistorySuggestions(@NonNull final List<SuggestionItem> items) {
+    private CompletableFuture<List<SuggestionItem>> getHistorySuggestions(@NonNull final List<SuggestionItem> items) {
         CompletableFuture future = new CompletableFuture();
         SessionStore.get().getHistoryStore().getSuggestions(mFilterText, 100).thenAcceptAsync((history) -> {
             history.forEach(h -> items.add(SuggestionItem.create(
@@ -130,7 +131,7 @@ public class SuggestionsProvider {
         return future;
     }
 
-    public CompletableFuture<List<SuggestionItem>> getSearchEngineSuggestions(@NonNull final List<SuggestionItem> items) {
+    private CompletableFuture<List<SuggestionItem>> getSearchEngineSuggestions(@NonNull final List<SuggestionItem> items) {
         CompletableFuture future = new CompletableFuture();
 
         // Completion from browser-domains

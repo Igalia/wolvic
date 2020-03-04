@@ -7,6 +7,7 @@ package org.mozilla.vrbrowser.utils;
 
 import android.content.Context;
 import android.util.Base64;
+import android.util.Patterns;
 import android.webkit.URLUtil;
 
 import androidx.annotation.NonNull;
@@ -68,9 +69,27 @@ public class UrlUtils {
         return result;
     }
 
-    private static Pattern domainPattern = Pattern.compile("^(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?[a-zA-Z0-9]+([\\-\\.]{1}[a-zA-Z0-9]+)*\\.[a-zA-Z]{2,5}(:[0-9]{1,5})?(\\/.*)?$");
+    private static Pattern domainPattern = Pattern.compile("^(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?[a-zA-Z0-9]+([\\-\\.]{1}[a-zA-Z0-9]+)*\\.[a-zA-Z]{2,5}(:[0-9]{1,5})?(\\/[^ ]*)?$");
     public static boolean isDomain(String text) {
         return domainPattern.matcher(text).find();
+    }
+
+    private static Pattern ipPattern = Pattern.compile("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(:[0-9]+)?(/[^ ]*)?");
+    private static Pattern localhostPattern = Pattern.compile("^(localhost)(:[0-9]+)?(/[^ ]*)?", Pattern.CASE_INSENSITIVE);
+    public static boolean isIPUri(@NonNull String aUri) {
+        String uri = stripProtocol(aUri).trim();
+        return localhostPattern.matcher(uri).find() || ipPattern.matcher(uri).find();
+    }
+
+    public static boolean isLocalIP(@NonNull String aUri) {
+        if (!isIPUri(aUri)) {
+            return false;
+        }
+        String uri = stripProtocol(aUri).trim();
+        return uri.startsWith("10.") ||
+               uri.startsWith("172.") ||
+               uri.startsWith("192.168.") || //
+               localhostPattern.matcher(uri).find();
     }
 
     public static boolean isPrivateAboutPage(@NonNull Context context,  @NonNull String uri) {
