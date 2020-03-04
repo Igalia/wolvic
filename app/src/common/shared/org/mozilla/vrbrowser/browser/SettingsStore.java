@@ -73,8 +73,6 @@ public class SettingsStore {
     public final static int MSAA_DEFAULT_LEVEL = 1;
     public final static boolean AUDIO_ENABLED = false;
     public final static float CYLINDER_DENSITY_ENABLED_DEFAULT = 4680.0f;
-    public final static int FOVEATED_APP_DEFAULT_LEVEL = 0;
-    public final static int FOVEATED_WEBVR_DEFAULT_LEVEL = 0;
     private final static long CRASH_RESTART_DELTA = 2000;
     public final static boolean AUTOPLAY_ENABLED = false;
     public final static boolean DEBUG_LOGGING_DEFAULT = false;
@@ -488,28 +486,6 @@ public class SettingsStore {
 
     public boolean isCurvedModeEnabled() {
         return getCylinderDensity() > 0;
-    }
-
-    public int getFoveatedLevelApp() {
-        return mPrefs.getInt(
-                mContext.getString(R.string.settings_key_foveated_app), FOVEATED_APP_DEFAULT_LEVEL);
-    }
-
-    public int getFoveatedLevelWebVR() {
-        return mPrefs.getInt(
-                mContext.getString(R.string.settings_key_foveated_webvr), FOVEATED_WEBVR_DEFAULT_LEVEL);
-    }
-
-    public void setFoveatedLevelApp(int level) {
-        SharedPreferences.Editor editor = mPrefs.edit();
-        editor.putInt(mContext.getString(R.string.settings_key_foveated_app), level);
-        editor.commit();
-    }
-
-    public void setFoveatedLevelWebVR(int level) {
-        SharedPreferences.Editor editor = mPrefs.edit();
-        editor.putInt(mContext.getString(R.string.settings_key_foveated_webvr), level);
-        editor.commit();
     }
 
     public void setSelectedKeyboard(Locale aLocale) {

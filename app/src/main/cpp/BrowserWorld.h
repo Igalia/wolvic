@@ -48,7 +48,6 @@ public:
   void EndFrame();
   void SetTemporaryFilePath(const std::string& aPath);
   void UpdateEnvironment();
-  void UpdateFoveatedLevel(const int aAppLevel);
   void UpdatePointerColor();
   void SetSurfaceTexture(const std::string& aName, jobject& aSurface);
   void AddWidget(int32_t aHandle, const WidgetPlacementPtr& placement);

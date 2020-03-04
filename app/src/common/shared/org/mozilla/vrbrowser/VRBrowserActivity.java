@@ -282,7 +282,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         });
         final String tempPath = getCacheDir().getAbsolutePath();
         queueRunnable(() -> setTemporaryFilePath(tempPath));
-        updateFoveatedLevel();
 
         initializeWidgets();
 
@@ -1410,12 +1409,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
-    public void updateFoveatedLevel() {
-        final int appLevel = SettingsStore.getInstance(this).getFoveatedLevelApp();
-        queueRunnable(() -> updateFoveatedLevelNative(appLevel));
-    }
-
-    @Override
     public void updatePointerColor() {
         queueRunnable(() -> updatePointerColorNative());
     }
@@ -1553,6 +1546,4 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private native void setCylinderDensityNative(float aDensity);
     private native void setCPULevelNative(@CPULevelFlags int aCPULevel);
     private native void setIsServo(boolean aIsServo);
-    private native void updateFoveatedLevelNative(int appLevel);
-
 }

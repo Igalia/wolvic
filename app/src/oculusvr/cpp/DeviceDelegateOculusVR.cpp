@@ -95,7 +95,6 @@ struct DeviceDelegateOculusVR::State {
   int discardCount = 0;
   uint32_t renderWidth = 0;
   uint32_t renderHeight = 0;
-  int32_t standaloneFoveatedLevel = 0;
   vrb::Color clearColor;
   float near = 0.1f;
   float far = 100.f;
@@ -203,13 +202,6 @@ struct DeviceDelegateOculusVR::State {
     if (ovr) {
       vrapi_SetTrackingSpace(ovr, VRAPI_TRACKING_SPACE_LOCAL);
     }
-  }
-
-  void UpdateFoveatedLevel() {
-    if (!ovr) {
-      return;
-    }
-    vrapi_SetPropertyInt(&java, VRAPI_FOVEATION_LEVEL, standaloneFoveatedLevel);
   }
 
   void UpdateClockLevels() {
@@ -648,7 +640,6 @@ DeviceDelegateOculusVR::SetRenderMode(const device::RenderMode aMode) {
   }
 
   m.UpdateTrackingMode();
-  m.UpdateFoveatedLevel();
   m.UpdateDisplayRefreshRate();
   m.UpdateClockLevels();
 
@@ -745,12 +736,6 @@ DeviceDelegateOculusVR::SetControllerDelegate(ControllerDelegatePtr& aController
 void
 DeviceDelegateOculusVR::ReleaseControllerDelegate() {
   m.controller = nullptr;
-}
-
-void
-DeviceDelegateOculusVR::SetFoveatedLevel(const int32_t aAppLevel) {
-  m.standaloneFoveatedLevel = aAppLevel;
-  m.UpdateFoveatedLevel();
 }
 
 int32_t
@@ -1193,7 +1178,6 @@ DeviceDelegateOculusVR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
     m.UpdateDisplayRefreshRate();
     m.UpdateClockLevels();
     m.UpdateTrackingMode();
-    m.UpdateFoveatedLevel();
   }
 
   // Reset reorientation after Enter VR

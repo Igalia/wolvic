@@ -75,19 +75,6 @@ class DisplayOptionsView extends SettingsView {
         mBinding.homepageEdit.setOnClickListener(mHomepageListener);
         setHomepage(SettingsStore.getInstance(getContext()).getHomepage());
 
-        if (DeviceType.isOculusBuild() || DeviceType.isWaveBuild()) {
-            mBinding.foveatedAppRadio.setVisibility(View.VISIBLE);
-            // Uncomment this when Foveated Rendering for WebVR makes more sense
-            // mFoveatedWebVRRadio.setVisibility(View.VISIBLE);
-            int level = SettingsStore.getInstance(getContext()).getFoveatedLevelApp();
-            setFoveatedLevel(mBinding.foveatedAppRadio, mBinding.foveatedAppRadio.getIdForValue(level), false);
-            mBinding.foveatedAppRadio.setOnCheckedChangeListener((compoundButton, checkedId, apply) -> setFoveatedLevel(mBinding.foveatedAppRadio, checkedId, apply));
-
-            level = SettingsStore.getInstance(getContext()).getFoveatedLevelWebVR();
-            setFoveatedLevel(mBinding.foveatedWebvrRadio, mBinding.foveatedWebvrRadio.getIdForValue(level), false);
-            mBinding.foveatedWebvrRadio.setOnCheckedChangeListener((compoundButton, checkedId, apply) -> setFoveatedLevel(mBinding.foveatedWebvrRadio, checkedId, apply));
-        }
-
         mBinding.densityEdit.setHint1(String.valueOf(SettingsStore.DISPLAY_DENSITY_DEFAULT));
         mBinding.densityEdit.setDefaultFirstValue(String.valueOf(SettingsStore.DISPLAY_DENSITY_DEFAULT));
         mBinding.densityEdit.setFirstText(Float.toString(SettingsStore.getInstance(getContext()).getDisplayDensity()));
@@ -198,14 +185,6 @@ class DisplayOptionsView extends SettingsView {
         if (!mBinding.msaaRadio.getValueForId(mBinding.msaaRadio.getCheckedRadioButtonId()).equals(SettingsStore.MSAA_DEFAULT_LEVEL)) {
             setMSAAMode(mBinding.msaaRadio.getIdForValue(SettingsStore.MSAA_DEFAULT_LEVEL), true);
         }
-        if (DeviceType.isOculusBuild() || DeviceType.isWaveBuild()) {
-            if (!mBinding.foveatedAppRadio.getValueForId(mBinding.foveatedAppRadio.getCheckedRadioButtonId()).equals(SettingsStore.FOVEATED_APP_DEFAULT_LEVEL)) {
-                setFoveatedLevel(mBinding.foveatedAppRadio, mBinding.foveatedAppRadio.getIdForValue(SettingsStore.FOVEATED_APP_DEFAULT_LEVEL), true);
-            }
-            if (!mBinding.foveatedWebvrRadio.getValueForId(mBinding.foveatedWebvrRadio.getCheckedRadioButtonId()).equals(SettingsStore.FOVEATED_WEBVR_DEFAULT_LEVEL)) {
-                setFoveatedLevel(mBinding.foveatedWebvrRadio, mBinding.foveatedWebvrRadio.getIdForValue(SettingsStore.FOVEATED_WEBVR_DEFAULT_LEVEL), true);
-            }
-        }
 
         restart = restart | setDisplayDensity(SettingsStore.DISPLAY_DENSITY_DEFAULT);
         restart = restart | setDisplayDpi(SettingsStore.DISPLAY_DPI_DEFAULT);
@@ -265,29 +244,6 @@ class DisplayOptionsView extends SettingsView {
         if (doApply) {
             SettingsStore.getInstance(getContext()).setMSAALevel((Integer)mBinding.msaaRadio.getValueForId(checkedId));
             showRestartDialog();
-        }
-    }
-
-    private void setFoveatedLevel(RadioGroupSetting aSetting, int checkedId, boolean doApply) {
-        RadioGroupSetting.OnCheckedChangeListener listener = aSetting.getOnCheckedChangeListener();
-        aSetting.setOnCheckedChangeListener(null);
-        aSetting.setChecked(checkedId, doApply);
-        aSetting.setOnCheckedChangeListener(listener);
-
-        int level = (Integer)aSetting.getValueForId(checkedId);
-
-        if (aSetting == mBinding.foveatedAppRadio) {
-            SettingsStore.getInstance(getContext()).setFoveatedLevelApp(level);
-        } else {
-            SettingsStore.getInstance(getContext()).setFoveatedLevelWebVR(level);
-        }
-
-        if (doApply) {
-            mWidgetManager.updateFoveatedLevel();
-            // "WaveVR WVR_RenderFoveation(false) doesn't work properly, we need to restart."
-            if (level == 0 && DeviceType.isWaveBuild()) {
-                showRestartDialog();
-            }
         }
     }
 

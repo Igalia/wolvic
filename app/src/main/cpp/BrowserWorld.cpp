@@ -965,12 +965,6 @@ BrowserWorld::UpdateEnvironment() {
 }
 
 void
-BrowserWorld::UpdateFoveatedLevel(const int aAppLevel) {
-  ASSERT_ON_RENDER_THREAD();
-  m.device->SetFoveatedLevel(aAppLevel);
-}
-
-void
 BrowserWorld::UpdatePointerColor() {
   ASSERT_ON_RENDER_THREAD();
   int32_t color = VRBrowser::GetPointerColor();
@@ -1621,11 +1615,6 @@ JNI_METHOD(void, workaroundGeckoSigAction)
 JNI_METHOD(void, updateEnvironmentNative)
 (JNIEnv*, jobject) {
   crow::BrowserWorld::Instance().UpdateEnvironment();
-}
-
-JNI_METHOD(void, updateFoveatedLevelNative)
-(JNIEnv*, jobject, jint aAppLevel) {
-  crow::BrowserWorld::Instance().UpdateFoveatedLevel(aAppLevel);
 }
 
 JNI_METHOD(void, updatePointerColorNative)

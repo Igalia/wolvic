@@ -37,7 +37,6 @@ public:
   void SetClipPlanes(const float aNear, const float aFar) override;
   void SetControllerDelegate(ControllerDelegatePtr& aController) override;
   void ReleaseControllerDelegate() override;
-  void SetFoveatedLevel(const int32_t aAppLevel) override;
   int32_t GetControllerModelCount() const override;
   const std::string GetControllerModelName(const int32_t aModelIndex) const override;
   void SetCPULevel(const device::CPULevel aLevel) override;
