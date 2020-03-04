@@ -172,9 +172,6 @@ struct DeviceDelegateOculusVR::State {
     } else if ((type >= VRAPI_DEVICE_TYPE_OCULUSQUEST_START) && (type <= VRAPI_DEVICE_TYPE_OCULUSQUEST_END)) {
       VRB_DEBUG("Detected Oculus Quest");
       deviceType = device::OculusQuest;
-    } else if ((type >= VRAPI_DEVICE_TYPE_GEARVR_START) && (type <= VRAPI_DEVICE_TYPE_GEARVR_END)) {
-      VRB_DEBUG("Detected Gear VR");
-      appId = OCULUS_3DOF_APP_ID;
     } else {
       VRB_DEBUG("Detected Unknown Oculus device");
     }
