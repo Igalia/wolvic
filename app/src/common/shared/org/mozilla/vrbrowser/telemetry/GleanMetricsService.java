@@ -52,7 +52,7 @@ public class GleanMetricsService {
             GleanMetricsService.stop();
         }
         Configuration config = new Configuration(Configuration.DEFAULT_TELEMETRY_ENDPOINT, BuildConfig.BUILD_TYPE);
-        Glean.INSTANCE.initialize(aContext, true, config);
+        Glean.INSTANCE.initialize(aContext, config);
     }
 
     // It would be called when users turn on/off the setting of telemetry.
