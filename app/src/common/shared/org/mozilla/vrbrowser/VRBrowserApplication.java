@@ -31,15 +31,18 @@ public class VRBrowserApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
         mAppExecutors = new AppExecutors();
-        mPlaces = new Places(this);
         mBitmapCache = new BitmapCache(this, mAppExecutors.diskIO(), mAppExecutors.mainThread());
-        mServices = new Services(this, mPlaces);
-        mAccounts = new Accounts(this);
+
 
         TelemetryWrapper.init(this);
         GleanMetricsService.init(this);
+    }
+
+    protected void onActivityCreate() {
+        mPlaces = new Places(this);
+        mServices = new Services(this, mPlaces);
+        mAccounts = new Accounts(this);
     }
 
     @Override
