@@ -331,31 +331,10 @@ public class NavigationURLBar extends FrameLayout {
 
     public void handleURLEdit(String text) {
         text = text.trim();
-        URI uri = null;
-        try {
-            boolean hasProtocol = text.contains("://");
-            String urlText = text;
-            // Detect when the protocol is missing from the URL.
-            // Look for a separated '.' in the text with no white spaces.
-            if (!hasProtocol && !urlText.contains(" ") && UrlUtils.isDomain(urlText)) {
-                urlText = "https://" + urlText;
-                hasProtocol = true;
-            } else if (!hasProtocol && !urlText.contains(" ") && UrlUtils.isIPUri(urlText)) {
-                String protocol = UrlUtils.isLocalIP(urlText) ? "http://" : "https://";
-                urlText = protocol + urlText;
-                hasProtocol = true;
-            }
-            if (hasProtocol) {
-                URL url = new URL(urlText);
-                uri = url.toURI();
-            }
-        }
-        catch (Exception ex) {
-        }
 
         String url;
-        if (uri != null) {
-            url = uri.toString();
+        if ((UrlUtils.isDomain(text) || UrlUtils.isIPUri(text)) && !text.contains(" ")) {
+            url = text;
             TelemetryWrapper.urlBarEvent(true);
             GleanMetricsService.urlBarEvent(true);
         } else if (text.startsWith("about:") || text.startsWith("resource://")) {
