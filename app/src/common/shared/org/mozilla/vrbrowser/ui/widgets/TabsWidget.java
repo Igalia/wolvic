@@ -159,6 +159,10 @@ public class TabsWidget extends UIDialog {
 
     @Override
     public void releaseWidget() {
+        if (mSendTabDialog != null && !mSendTabDialog.isReleased()) {
+            mSendTabDialog.releaseWidget();
+        }
+        mSendTabDialog = null;
         super.releaseWidget();
     }
 

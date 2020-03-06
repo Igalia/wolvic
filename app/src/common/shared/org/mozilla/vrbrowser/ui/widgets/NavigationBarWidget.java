@@ -374,8 +374,13 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         }
 
         detachFromWindow();
-
         mAttachedWindow = null;
+
+        if (mSendTabDialog != null && !mSendTabDialog.isReleased()) {
+            mSendTabDialog.releaseWidget();
+        }
+        mSendTabDialog = null;
+
         super.releaseWidget();
     }
 
