@@ -459,6 +459,10 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     }
 
     public void onDestroy() {
+        if (mTabsWidget != null && !mTabsWidget.isReleased()) {
+            mTabsWidget.releaseWidget();
+            mTabsWidget = null;
+        }
         mDelegate = null;
         for (WindowWidget window: mRegularWindows) {
             window.close();

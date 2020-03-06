@@ -33,7 +33,9 @@ public abstract class UIDialog extends UIWidget implements WidgetManagerDelegate
 
     @Override
     public void releaseWidget() {
-        mWidgetManager.removeWorldClickListener(this);
+        if (mWidgetManager != null) {
+            mWidgetManager.removeWorldClickListener(this);
+        }
         mDialogs.remove(this);
         super.releaseWidget();
     }
