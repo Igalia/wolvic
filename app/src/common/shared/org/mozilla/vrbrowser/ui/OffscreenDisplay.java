@@ -13,10 +13,12 @@ import android.hardware.display.VirtualDisplay;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.mozilla.vrbrowser.VRBrowserActivity;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
 public class OffscreenDisplay {
@@ -131,6 +133,11 @@ public class OffscreenDisplay {
                                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
             } catch (Exception e) {
             }
+        }
+
+        @Override
+        public boolean dispatchKeyEvent(KeyEvent event) {
+            return ((VRBrowserActivity)mContext).dispatchKeyEvent(event);
         }
     }
 }
