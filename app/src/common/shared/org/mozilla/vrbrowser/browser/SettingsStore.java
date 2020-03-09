@@ -49,7 +49,6 @@ public class SettingsStore {
     public final static boolean REMOTE_DEBUGGING_DEFAULT = false;
     public final static boolean CONSOLE_LOGS_DEFAULT = false;
     public final static boolean ENV_OVERRIDE_DEFAULT = false;
-    public final static boolean MULTIPROCESS_DEFAULT = true;
     public final static boolean UI_HARDWARE_ACCELERATION_DEFAULT = true;
     public final static boolean UI_HARDWARE_ACCELERATION_DEFAULT_WAVEVR = false;
     public final static boolean PERFORMANCE_MONITOR_DEFAULT = true;
@@ -223,18 +222,6 @@ public class SettingsStore {
     public void setEnvironmentOverrideEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_environment_override), isEnabled);
-        editor.commit();
-    }
-
-
-    public boolean isMultiprocessEnabled() {
-        return mPrefs.getBoolean(
-                mContext.getString(R.string.settings_key_multiprocess_e10s), MULTIPROCESS_DEFAULT);
-    }
-
-    public void setMultiprocessEnabled(boolean isEnabled) {
-        SharedPreferences.Editor editor = mPrefs.edit();
-        editor.putBoolean(mContext.getString(R.string.settings_key_multiprocess_e10s), isEnabled);
         editor.commit();
     }
 

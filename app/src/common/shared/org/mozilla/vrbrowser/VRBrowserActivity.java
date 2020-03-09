@@ -543,16 +543,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 SettingsStore.getInstance(this).setHomepage(homepageUri.toString());
             }
 
-            // Enable/Disable e10s
-            if (extras.containsKey("e10s")) {
-                boolean wasEnabled = SettingsStore.getInstance(this).isMultiprocessEnabled();
-                boolean enabled = extras.getBoolean("e10s", wasEnabled);
-                if (wasEnabled != enabled) {
-                    SettingsStore.getInstance(this).setMultiprocessEnabled(enabled);
-                    mHandler.postDelayed(() -> SystemUtils.scheduleRestart(this, 100), 500);
-                }
-            }
-
             // Open the provided URL in a new tab, if there is no URL provided we just open the homepage
             if (extras.containsKey("create_new_tab")) {
                 openInTab = extras.getBoolean("create_new_tab", false);

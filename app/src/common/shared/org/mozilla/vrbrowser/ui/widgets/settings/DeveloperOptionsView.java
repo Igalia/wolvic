@@ -58,9 +58,6 @@ class DeveloperOptionsView extends SettingsView {
         mBinding.showConsoleSwitch.setOnCheckedChangeListener(mConsoleLogsListener);
         setConsoleLogs(SettingsStore.getInstance(getContext()).isConsoleLogsEnabled(), false);
 
-        mBinding.multiprocessSwitch.setOnCheckedChangeListener(mMultiprocessListener);
-        setMultiprocess(SettingsStore.getInstance(getContext()).isMultiprocessEnabled(), false);
-
         mBinding.performanceMonitorSwitch.setOnCheckedChangeListener(mPerformanceListener);
         setPerformance(SettingsStore.getInstance(getContext()).isPerformanceMonitorEnabled(), false);
         // Hide Performance Monitor switch until it can handle multiple windows.
@@ -92,10 +89,6 @@ class DeveloperOptionsView extends SettingsView {
         setConsoleLogs(value, doApply);
     };
 
-    private SwitchSetting.OnCheckedChangeListener mMultiprocessListener = (compoundButton, value, doApply) -> {
-        setMultiprocess(value, doApply);
-    };
-
     private SwitchSetting.OnCheckedChangeListener mPerformanceListener = (compoundButton, value, doApply) -> {
         setPerformance(value, doApply);
     };
@@ -121,9 +114,7 @@ class DeveloperOptionsView extends SettingsView {
         if (mBinding.showConsoleSwitch.isChecked() != SettingsStore.CONSOLE_LOGS_DEFAULT) {
             setConsoleLogs(SettingsStore.CONSOLE_LOGS_DEFAULT, true);
         }
-        if (mBinding.multiprocessSwitch.isChecked() != SettingsStore.MULTIPROCESS_DEFAULT) {
-            setMultiprocess(SettingsStore.MULTIPROCESS_DEFAULT, true);
-        }
+
         if (mBinding.servoSwitch.isChecked() != SettingsStore.SERVO_DEFAULT) {
             setServo(SettingsStore.SERVO_DEFAULT, true);
         }
@@ -168,17 +159,6 @@ class DeveloperOptionsView extends SettingsView {
 
         if (doApply) {
             SessionStore.get().setConsoleOutputEnabled(value);
-        }
-    }
-
-    private void setMultiprocess(boolean value, boolean doApply) {
-        mBinding.multiprocessSwitch.setOnCheckedChangeListener(null);
-        mBinding.multiprocessSwitch.setValue(value, false);
-        mBinding.multiprocessSwitch.setOnCheckedChangeListener(mMultiprocessListener);
-
-        if (doApply) {
-            SettingsStore.getInstance(getContext()).setMultiprocessEnabled(value);
-            showRestartDialog();
         }
     }
 
