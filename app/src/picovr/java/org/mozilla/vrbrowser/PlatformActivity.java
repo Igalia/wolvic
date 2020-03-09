@@ -62,7 +62,9 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
         if (ControllerClient.isControllerServiceExisted(this)) {
             mControllerManager = new CVControllerManager(this);
             mControllerManager.setListener(this);
-            mType = 1;
+            mType = 1; // Neo2
+            // Enable high res
+            PicovrSDK.SetEyeBufferSize(1920, 1920);
         } else {
             mHbManager = new HbManager(this);
             mHbManager.InitServices();
@@ -148,11 +150,11 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
             }
             CVController main = mControllerManager.getMainController();
             if (main != null) {
-                updateController(hand, main);
+                updateController(1, main);
             }
             CVController sub = mControllerManager.getSubController();
             if (sub != null) {
-                updateController(1 - hand, sub);
+                updateController(0, sub);
             }
         } else if (mHbManager != null) {
             update3DofController();
@@ -202,7 +204,7 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
     }
 
     private void updateController(int aIndex, @NonNull CVController aController) {
-        final float kMax = 25500.0f;
+        final float kMax = 255.0f;
         final float kHalfMax = kMax / 2.0f;
         boolean connected = aController.getConnectState() > 0;
         if (!connected) {
@@ -213,15 +215,11 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
         float axisY = 0.0f;
         int[] stick = aController.getTouchPad();
         if (stick.length >= 2) {
-            //Log.e(LOGTAG, "stick[" + aIndex + "] " + stick[0] + " " + stick[1]);
-            /*
             axisY = ((float)stick[0] - kHalfMax) / kHalfMax;
             axisX = ((float)stick[1] - kHalfMax) / kHalfMax;
             if (axisX < 0.1f && axisX > -0.1f) { axisX = 0.0f; }
             if (axisY < 0.1f && axisY > -0.1f) { axisY = 0.0f; }
-            */
-            axisY = (float)stick[0] / kMax;
-            axisX = (float)stick[1] / kMax;
+
         } else {
             stick = new int[2];
         }
@@ -289,12 +287,10 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
     }
 
     // CVControllerListener
-    /*
     @Override
     public void onBindSuccess() {
 
     }
-    */
 
     @Override
     public void onBindFail() {
@@ -313,11 +309,12 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
     @Override
     public void onMainControllerChanged(int serialNum) {
     }
-/*
+
     @Override
-    public void onChannelChanged(int var1, int var2) {
+    public void onChannelChanged(int i, int i1) {
+
     }
-*/
+
     protected native void nativeOnCreate();
     protected native void nativeInitialize(int width, int height, Object aAssetManager, int type, int focusIndex);
     protected native void nativeShutdown();
