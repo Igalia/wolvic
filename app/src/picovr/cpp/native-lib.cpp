@@ -8,6 +8,7 @@
 
 #include "BrowserWorld.h"
 #include "DeviceDelegatePicoVR.h"
+#include "VRBrowserPico.h"
 #include "vrb/GLError.h"
 #include "vrb/Logger.h"
 #include "vrb/RunnableQueue.h"
@@ -36,6 +37,7 @@ JNI_METHOD(void, nativeInitialize)
 (JNIEnv* aEnv, jobject aActivity, jint width, jint height, jobject aAssetManager, jint type, jint focusInex) {
   gDestroyed = false;
   sQueue->AttachToThread();
+  VRBrowserPico::InitializeJava(aEnv, aActivity);
   if (!sDevice) {
     sDevice = crow::DeviceDelegatePicoVR::Create(BrowserWorld::Instance().GetRenderContext());
   }
@@ -61,6 +63,7 @@ JNI_METHOD(void, nativeDestroy)
   BrowserWorld::Instance().RegisterDeviceDelegate(nullptr);
   sDevice = nullptr;
   BrowserWorld::Destroy();
+  VRBrowserPico::ShutdownJava();
 }
 
 JNI_METHOD(void, nativePause)

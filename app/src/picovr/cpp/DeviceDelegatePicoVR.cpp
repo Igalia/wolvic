@@ -5,7 +5,7 @@
 
 #include "DeviceDelegatePicoVR.h"
 #include "ElbowModel.h"
-#include "BrowserEGLContext.h"
+#include "VRBrowserPico.h"
 
 #include <EGL/egl.h>
 #include "vrb/CameraEye.h"
@@ -53,6 +53,7 @@ struct DeviceDelegatePicoVR::State {
     float axisX = 0;
     float axisY = 0;
     ElbowModel::HandEnum hand;
+    int hapticFrameID = 0;
     Controller()
         : index(-1)
         , created(false)
@@ -142,6 +143,16 @@ struct DeviceDelegatePicoVR::State {
     }
   }
 
+  void UpdateHaptics(Controller& aController) {
+    uint64_t inputFrameID = 0;
+    float pulseDuration = 0.0f, pulseIntensity = 0.0f;
+    controllerDelegate->GetHapticFeedback(aController.index, inputFrameID, pulseDuration, pulseIntensity);
+
+    if (aController.hapticFrameID != inputFrameID) {
+      VRBrowserPico::UpdateHaptics(aController.index, pulseIntensity, pulseDuration);
+    }
+  }
+
   void UpdateControllers() {
     for (int32_t i = 0; i < controllers.size(); ++i) {
       if (!controllers[i].enabled) {
@@ -208,6 +219,10 @@ struct DeviceDelegatePicoVR::State {
       }
 
       controllerDelegate->SetTransform(i, transform);
+
+      if (controllerDelegate->GetHapticCount(i)) {
+        UpdateHaptics(controllers[i]);
+      }
     }
   }
 };
@@ -227,6 +242,10 @@ DeviceDelegatePicoVR::SetRenderMode(const device::RenderMode aMode) {
     return;
   }
   m.renderMode = aMode;
+  if (aMode == device::RenderMode::StandAlone) {
+    // Ensure that all haptics are cancelled when exiting WebVR
+    VRBrowserPico::CancelAllHaptics();
+  }
 }
 
 device::RenderMode
@@ -296,7 +315,7 @@ DeviceDelegatePicoVR::SetControllerDelegate(ControllerDelegatePtr& aController) 
       beam.TranslateInPlace(vrb::Vector(0.0f, 0.012f, -0.06f));
       m.controllerDelegate->CreateController(index, int32_t(controller.hand), controller.IsRightHand() ? "Pico Neo 2 (Right)" : "Pico Neo 2 (LEFT)", beam);
       m.controllerDelegate->SetButtonCount(index, kNumButtons);
-      m.controllerDelegate->SetHapticCount(index, 0);
+      m.controllerDelegate->SetHapticCount(index, 1);
     } else {
       vrb::Matrix beam =  vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), -vrb::PI_FLOAT / 11.5f);
 

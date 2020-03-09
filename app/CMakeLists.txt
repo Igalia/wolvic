@@ -67,6 +67,7 @@ target_sources(
         PUBLIC
         src/picovr/cpp/native-lib.cpp
         src/picovr/cpp/DeviceDelegatePicoVR.cpp
+        src/picovr/cpp/VRBrowserPico.cpp
 )
 elseif(NOAPI)
 target_sources(

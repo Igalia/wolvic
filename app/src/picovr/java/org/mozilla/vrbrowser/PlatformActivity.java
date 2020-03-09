@@ -9,6 +9,7 @@ import android.Manifest;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 
 import com.picovr.client.HbListener;
@@ -97,6 +98,7 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
     @Override
     protected void onPause() {
         if (mControllerManager != null) {
+            cancelAllHaptics();
             mControllerManager.unbindService();
         } else if (mHbManager != null) {
             mHbManager.Pause();
@@ -313,6 +315,31 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
     @Override
     public void onChannelChanged(int i, int i1) {
 
+    }
+
+    // Called by native
+    @Keep
+    @SuppressWarnings("unused")
+    private void updateHaptics(int aControllerIndex, float aIntensity, float aDurationSeconds) {
+        runOnUiThread(() -> {
+            if (mControllerManager != null) {
+                float intensity = 255.0f * Math.max(Math.min(aIntensity, 1.0f), 0.0f);
+                int durationMs = Math.round(aDurationSeconds * 1000);
+                ControllerClient.vibrateCV2ControllerStrength(intensity, durationMs, 1 - aControllerIndex);
+            }
+        });
+    }
+
+    // Called by native
+    @Keep
+    @SuppressWarnings("unused")
+    private void cancelAllHaptics() {
+        runOnUiThread(() -> {
+            if (mControllerManager != null) {
+                ControllerClient.vibrateCV2ControllerStrength(0, 0, 0);
+                ControllerClient.vibrateCV2ControllerStrength(0, 0, 1);
+            }
+        });
     }
 
     protected native void nativeOnCreate();
