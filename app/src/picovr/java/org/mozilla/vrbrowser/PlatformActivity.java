@@ -6,6 +6,10 @@
 package org.mozilla.vrbrowser;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -29,6 +33,7 @@ import com.picovr.vractivity.VRActivity;
 import com.psmart.vrlib.VrActivity;
 import com.psmart.vrlib.PicovrSDK;
 
+import org.mozilla.vrbrowser.utils.DeviceType;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
 
@@ -41,6 +46,16 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
         }
         return false;
     }
+
+    private BroadcastReceiver mKeysReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String s = intent.getStringExtra("reason");
+            if (s.equalsIgnoreCase("recenter")) {
+                nativeRecenter();
+            }
+        }
+    };
 
     CVControllerManager mControllerManager;
     HbManager mHbManager;
@@ -59,6 +74,10 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
     protected void onCreate(Bundle bundle) {
         nativeOnCreate();
         super.onCreate(bundle);
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+        registerReceiver(mKeysReceiver, filter);
 
         if (ControllerClient.isControllerServiceExisted(this)) {
             mControllerManager = new CVControllerManager(this);
@@ -122,6 +141,7 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
         if (mControllerManager != null) {
             mControllerManager.setListener(null);
         }
+        unregisterReceiver(mKeysReceiver);
     }
 
     @Override
@@ -354,5 +374,6 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
     protected native void nativeSetFocusedController(int index);
     protected native void nativeUpdateControllerState(int index, boolean connected, int buttons, float grip, float axisX, float axisY, boolean touched);
     protected native void nativeUpdateControllerPose(int index, boolean dof6, float px, float py, float pz, float qx, float qy, float qz, float qw);
+    protected native void nativeRecenter();
     protected native void queueRunnable(Runnable aRunnable);
 }

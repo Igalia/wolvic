@@ -139,6 +139,14 @@ JNI_METHOD(void, nativeUpdateControllerState)
   sDevice->UpdateControllerButtons(index, buttons, grip, axisX, axisY, touched);
 }
 
+JNI_METHOD(void, nativeRecenter)
+(JNIEnv* env, jobject) {
+  if (gDestroyed) {
+    return;
+  }
+  sDevice->Recenter();
+}
+
 JNI_METHOD(void, queueRunnable)
 (JNIEnv* aEnv, jobject, jobject aRunnable) {
   if (gDestroyed) {

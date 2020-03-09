@@ -4,6 +4,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "DeviceDelegatePicoVR.h"
+#include "DeviceUtils.h"
 #include "ElbowModel.h"
 #include "VRBrowserPico.h"
 
@@ -91,6 +92,7 @@ struct DeviceDelegatePicoVR::State {
   float ipd = 0.064f;
   float fov = (float) (51.0 * M_PI / 180.0);
   int32_t focusIndex = 0;
+  bool recentered = false;
 
   void Initialize() {
     vrb::RenderContextPtr localContext = context.lock();
@@ -286,9 +288,8 @@ DeviceDelegatePicoVR::GetReorientTransform() const {
 
 void
 DeviceDelegatePicoVR::SetReorientTransform(const vrb::Matrix& aMatrix) {
-  // Until we can get the new heading don't reset it on the Neo 2
-  if (m.type != kTypeNeo2) {
-    // m.reorientMatrix = aMatrix;
+  if (m.type == kTypeNeo2) {
+    m.reorientMatrix = aMatrix;
   }
 }
 
@@ -362,8 +363,13 @@ DeviceDelegatePicoVR::StartFrame() {
   head.TranslateInPlace(m.position);
 
   if (m.renderMode == device::RenderMode::StandAlone) {
+    if (m.recentered) {
+      m.reorientMatrix = DeviceUtils::CalculateReorientationMatrix(head, kAverageHeight);
+    }
     head.TranslateInPlace(m.headOffset);
   }
+
+  m.recentered = false;
 
   m.cameras[0]->SetHeadTransform(head);
   m.cameras[1]->SetHeadTransform(head);
@@ -470,6 +476,10 @@ DeviceDelegatePicoVR::UpdateControllerButtons(const int aIndex, const int32_t aB
   m.controllers[aIndex].touched = touched;
 }
 
+void
+DeviceDelegatePicoVR:: Recenter() {
+    m.recentered = true;
+}
 
 DeviceDelegatePicoVR::DeviceDelegatePicoVR(State &aState) : m(aState) {}
 
