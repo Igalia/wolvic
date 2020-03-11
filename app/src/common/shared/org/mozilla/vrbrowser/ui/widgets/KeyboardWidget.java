@@ -751,7 +751,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     }
 
     private void handleDomainChange(KeyboardSelectorView.Item aItem) {
-        handleText(aItem.title);
+        handleText(aItem.title, true);
 
         disableShift(getSymbolsKeyboard());
         handleShift(false);
@@ -829,11 +829,15 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     }
 
     private void handleText(String aText) {
+        handleText(aText, false);
+    }
+
+    private void handleText(String aText, boolean skipCase) {
         if (mFocusedView == null || mInputConnection == null) {
             return;
         }
 
-        if (mKeyboardView.isShifted()) {
+        if (mKeyboardView.isShifted() && !skipCase) {
             aText = aText.toUpperCase();
         }
 
