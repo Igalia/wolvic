@@ -323,9 +323,10 @@ public class TabsWidget extends UIDialog {
         mSelecting = true;
         mSelectTabsButton.setVisibility(View.GONE);
         mDoneButton.setVisibility(View.VISIBLE);
-        mAdapter.notifyDataSetChanged();
         updateSelectionMode();
         mWidgetManager.pushBackHandler(mSelectModeBackHandler);
+
+        post(() -> mAdapter.notifyDataSetChanged());
     }
 
     private void exitSelectMode() {
@@ -336,9 +337,10 @@ public class TabsWidget extends UIDialog {
         mSelectTabsButton.setVisibility(View.VISIBLE);
         mDoneButton.setVisibility(View.GONE);
         mSelectedTabs.clear();
-        mAdapter.notifyDataSetChanged();
         updateSelectionMode();
         mWidgetManager.popBackHandler(mSelectModeBackHandler);
+
+        post(() -> mAdapter.notifyDataSetChanged());
     }
 
     private void updateSelectionMode() {
