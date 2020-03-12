@@ -68,6 +68,12 @@
                     app:description="@string/hardware_acceleration_switch" />
 
                 <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                    android:id="@+id/bypass_cache_on_reload_switch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:description="@string/bypass_cache_on_reload_switch" />
+
+                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
                     android:id="@+id/servo_switch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

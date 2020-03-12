@@ -669,9 +669,9 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         }
     }
 
-    public void reload() {
+    public void reload(final int flags) {
         if (mState.mSession != null) {
-            mState.mSession.reload();
+            mState.mSession.reload(flags);
         }
     }
 

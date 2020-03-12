@@ -187,12 +187,27 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             if (mViewModel.getIsLoading().getValue().get()) {
                 getSession().stop();
             } else {
-                getSession().reload();
+                int flags = SettingsStore.getInstance(mAppContext).isBypassCacheOnReloadEnabled() ? GeckoSession.LOAD_FLAGS_BYPASS_CACHE : GeckoSession.LOAD_FLAGS_NONE;
+                getSession().reload(flags);
             }
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
             mNavigationListeners.forEach(NavigationListener::onReload);
+        });
+
+        mBinding.navigationBarNavigation.reloadButton.setOnLongClickListener(v -> {
+            v.requestFocusFromTouch();
+            if (mViewModel.getIsLoading().getValue().get()) {
+                getSession().stop();
+            } else {
+                getSession().reload(GeckoSession.LOAD_FLAGS_BYPASS_CACHE);
+            }
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
+            mNavigationListeners.forEach(NavigationListener::onReload);
+            return true;
         });
 
         mBinding.navigationBarNavigation.homeButton.setOnClickListener(v -> {

@@ -82,6 +82,7 @@ public class SettingsStore {
     public final static boolean WHATS_NEW_DISPLAYED = false;
     public final static long FXA_LAST_SYNC_NEVER = 0;
     public final static boolean RESTORE_TABS_ENABLED = true;
+    public final static boolean BYPASS_CACHE_ON_RELOAD = false;
 
     // Enable telemetry by default (opt-out).
     public final static boolean CRASH_REPORTING_DEFAULT = false;
@@ -652,5 +653,14 @@ public class SettingsStore {
         return mPrefs.getBoolean(mContext.getString(R.string.settings_key_restore_tabs), RESTORE_TABS_ENABLED);
     }
 
+    public void setBypassCacheOnReload(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_bypass_cache_on_reload),isEnabled);
+        editor.commit();
+    }
+
+    public boolean isBypassCacheOnReloadEnabled() {
+        return mPrefs.getBoolean(mContext.getString(R.string.settings_key_bypass_cache_on_reload), BYPASS_CACHE_ON_RELOAD);
+    }
 }
 

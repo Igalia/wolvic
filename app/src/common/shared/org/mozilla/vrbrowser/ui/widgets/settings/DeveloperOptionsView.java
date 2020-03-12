@@ -66,6 +66,9 @@ class DeveloperOptionsView extends SettingsView {
         mBinding.hardwareAccelerationSwitch.setOnCheckedChangeListener(mUIHardwareAccelerationListener);
         setUIHardwareAcceleration(SettingsStore.getInstance(getContext()).isUIHardwareAccelerationEnabled(), false);
 
+        mBinding.bypassCacheOnReloadSwitch.setOnCheckedChangeListener(mBypassCacheOnReloadListener);
+        setBypassCacheOnReload(SettingsStore.getInstance(getContext()).isBypassCacheOnReloadEnabled(), false);
+
         if (BuildConfig.DEBUG) {
             mBinding.debugLoggingSwitch.setVisibility(View.GONE);
         } else {
@@ -101,6 +104,10 @@ class DeveloperOptionsView extends SettingsView {
         setUIHardwareAcceleration(value, doApply);
     };
 
+    private SwitchSetting.OnCheckedChangeListener mBypassCacheOnReloadListener = (compundButton, value, doApply) -> {
+        setBypassCacheOnReload(value, doApply);
+    };
+
     private SwitchSetting.OnCheckedChangeListener mServoListener = (compoundButton, b, doApply) -> {
         setServo(b, true);
     };
@@ -131,6 +138,10 @@ class DeveloperOptionsView extends SettingsView {
         if (mBinding.hardwareAccelerationSwitch.isChecked() != SettingsStore.UI_HARDWARE_ACCELERATION_DEFAULT) {
             setUIHardwareAcceleration(SettingsStore.UI_HARDWARE_ACCELERATION_DEFAULT, true);
             restart = true;
+        }
+
+        if (mBinding.bypassCacheOnReloadSwitch.isChecked() != SettingsStore.BYPASS_CACHE_ON_RELOAD) {
+            setBypassCacheOnReload(SettingsStore.BYPASS_CACHE_ON_RELOAD, true);
         }
 
         if (restart) {
@@ -191,6 +202,16 @@ class DeveloperOptionsView extends SettingsView {
         if (doApply) {
             SettingsStore.getInstance(getContext()).setDebugLoggingEnabled(value);
             showRestartDialog();
+        }
+    }
+
+    private void setBypassCacheOnReload(boolean value, boolean doApply) {
+        mBinding.bypassCacheOnReloadSwitch.setOnCheckedChangeListener(null);
+        mBinding.bypassCacheOnReloadSwitch.setValue(value, false);
+        mBinding.bypassCacheOnReloadSwitch.setOnCheckedChangeListener(mBypassCacheOnReloadListener);
+
+        if (doApply) {
+            SettingsStore.getInstance(getContext()).setBypassCacheOnReload(value);
         }
     }
 

@@ -90,7 +90,7 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
             setOnTouchListener((v, event) -> {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     long time = event.getEventTime() - event.getDownTime();
-                    if (time > ViewConfiguration.getLongPressTimeout()) {
+                    if (!v.isLongClickable() && time > ViewConfiguration.getLongPressTimeout()) {
                         performClick();
                     }
                 }
