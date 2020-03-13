@@ -544,6 +544,10 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         return BitmapCache.getInstance(mContext).hasBitmap(mState.mId);
     }
 
+    public boolean hasDisplay() {
+        return mState != null && mState.mDisplay != null;
+    }
+
     public void purgeHistory() {
         if (mState.mSession != null) {
             mState.mSession.purgeHistory();

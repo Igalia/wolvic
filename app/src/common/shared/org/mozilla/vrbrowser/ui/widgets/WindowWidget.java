@@ -314,7 +314,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         super.onResume();
         if (isVisible() || mIsInVRVideoMode) {
             mSession.setActive(true);
-            if (!SettingsStore.getInstance(getContext()).getLayersEnabled()) {
+            if (!SettingsStore.getInstance(getContext()).getLayersEnabled() && !mSession.hasDisplay()) {
                 // Ensure the Gecko Display is correctly recreated.
                 // See: https://github.com/MozillaReality/FirefoxReality/issues/2880
                 callSurfaceChanged();
