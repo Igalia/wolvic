@@ -3,8 +3,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#ifndef VRBROWSER_CONTROLLER_CONTAINER_H
-#define VRBROWSER_CONTROLLER_CONTAINER_H
+#ifndef VRBROWSER_GAZE_CONTROLLER_DELEGATE_H
+#define VRBROWSER_GAZE_CONTROLLER_DELEGATE_H
 
 #include "ControllerDelegate.h"
 #include "Controller.h"
@@ -18,18 +18,15 @@
 
 namespace crow {
 
-class Controller;
-class ControllerContainer;
-typedef std::shared_ptr<ControllerContainer> ControllerContainerPtr;
+class GazeControllerDelegate;
+typedef std::shared_ptr<GazeControllerDelegate> GazeControllerDelegatePtr;
 
-class ControllerContainer : public crow::ControllerDelegate  {
+class GazeControllerDelegate : public crow::ControllerDelegate  {
 public:
   enum class HandEnum { Left, Right };
-  static ControllerContainerPtr Create(vrb::CreationContextPtr& aContext, const vrb::GroupPtr& aPointerContainer);
+  static GazeControllerDelegatePtr Create(vrb::CreationContextPtr& aContext, const vrb::GroupPtr& aPointerContainer);
   // crow::ControllerDelegate interface
   vrb::TogglePtr GetRoot() const override;
-  void LoadControllerModel(const int32_t aModelIndex, const vrb::ModelLoaderAndroidPtr& aLoader, const std::string& aFileName) override;
-  void InitializeBeam() override;
   void Reset() override;
   uint32_t GetControllerCount() override;
   std::vector<Controller>& GetControllers() override;
@@ -57,14 +54,14 @@ public:
   void SetVisible(const bool aVisible) override;
 protected:
   struct State;
-  ControllerContainer(State& aState, vrb::CreationContextPtr& aContext);
-  ~ControllerContainer();
+  GazeControllerDelegate(State& aState, vrb::CreationContextPtr& aContext);
+  ~GazeControllerDelegate();
 private:
   State& m;
-  ControllerContainer() = delete;
-  VRB_NO_DEFAULTS(ControllerContainer)
+  GazeControllerDelegate() = delete;
+  VRB_NO_DEFAULTS(GazeControllerDelegate)
 };
 
 } // namespace crow
 
-#endif //VRBROWSER_CONTROLLER_CONTAINER_H
+#endif //VRBROWSER_GAZE_CONTROLLER_DELEGATE_H

@@ -83,8 +83,10 @@ struct DeviceDelegatePicoVR::State {
   float near = 0.1f;
   float far = 100.f;
   std::array<Controller, kMaxControllerCount> controllers = {};
+  Controller gazeController;
   crow::ElbowModelPtr elbow;
   ControllerDelegatePtr controllerDelegate;
+  ControllerDelegatePtr gazeControllerDelegate;
   ImmersiveDisplayPtr immersiveDisplay;
   vrb::Matrix reorientMatrix = vrb::Matrix::Identity();
   vrb::Quaternion orientation;
@@ -93,6 +95,7 @@ struct DeviceDelegatePicoVR::State {
   float fov = (float) (51.0 * M_PI / 180.0);
   int32_t focusIndex = 0;
   bool recentered = false;
+  bool isInGazeMode = false;
 
   void Initialize() {
     vrb::RenderContextPtr localContext = context.lock();
@@ -112,6 +115,9 @@ struct DeviceDelegatePicoVR::State {
       }
       controllers[index].is6DoF = true;
     }
+
+    gazeController.index = 0;
+    gazeController.is6DoF = false;
 
     elbow = ElbowModel::Create();
     initialized = true;
@@ -226,6 +232,17 @@ struct DeviceDelegatePicoVR::State {
         UpdateHaptics(controllers[i]);
       }
     }
+
+    if (isInGazeMode) {
+      gazeControllerDelegate->SetCapabilityFlags(0, device::Orientation);
+      const bool triggerPressed = (gazeController.buttonsState & kButtonTrigger) > 0;
+      gazeControllerDelegate->SetButtonState(0, ControllerDelegate::BUTTON_TRIGGER, 1, triggerPressed,
+                                             triggerPressed);
+      vrb::Matrix head = vrb::Matrix::Rotation(orientation);
+      head.PreMultiplyInPlace(vrb::Matrix::Position(headOffset));
+      gazeController.transform = head;
+      gazeControllerDelegate->SetTransform(0, gazeController.transform);
+    }
   }
 };
 
@@ -306,7 +323,7 @@ DeviceDelegatePicoVR::SetClipPlanes(const float aNear, const float aFar) {
 }
 
 void
-DeviceDelegatePicoVR::SetControllerDelegate(ControllerDelegatePtr& aController) {
+DeviceDelegatePicoVR::SetControllerDelegate(ControllerDelegatePtr& aController, ControllerDelegatePtr& aGazeController) {
   m.controllerDelegate = aController;
   for (State::Controller& controller: m.controllers) {
     const int32_t index = controller.index;
@@ -319,18 +336,27 @@ DeviceDelegatePicoVR::SetControllerDelegate(ControllerDelegatePtr& aController) 
       m.controllerDelegate->SetHapticCount(index, 1);
     } else {
       vrb::Matrix beam =  vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), -vrb::PI_FLOAT / 11.5f);
-
       m.controllerDelegate->CreateController(index, 0, "Pico G2 Controller", beam);
       m.controllerDelegate->SetButtonCount(index, kNumG2Buttons);
       m.controllerDelegate->SetHapticCount(index, 0);
     }
     controller.created = true;
   }
+
+  // Setup the gaze controller
+  m.gazeControllerDelegate = aGazeController;
+  if (m.gazeControllerDelegate) {
+    vrb::Matrix beam = vrb::Matrix::Identity();
+    m.gazeControllerDelegate->CreateController(0, 0, "Gaze Controller", beam);
+    m.gazeControllerDelegate->SetButtonCount(0, 0);
+    m.gazeControllerDelegate->SetHapticCount(0, 0);
+  }
 }
 
 void
 DeviceDelegatePicoVR::ReleaseControllerDelegate() {
   m.controllerDelegate = nullptr;
+  m.gazeControllerDelegate = nullptr;
 }
 
 int32_t
@@ -373,6 +399,17 @@ DeviceDelegatePicoVR::StartFrame() {
 
   m.cameras[0]->SetHeadTransform(head);
   m.cameras[1]->SetHeadTransform(head);
+
+  // Update te gaze mode state based on controllers availability
+  bool isControllerAvailable = false;
+  for (auto & controller : m.controllers) {
+    isControllerAvailable |= controller.enabled;
+  }
+  m.isInGazeMode = !isControllerAvailable;
+  if (m.isInGazeMode) {
+    m.gazeController.transform = GetHeadTransform();
+  }
+
   m.UpdateControllers();
 }
 
@@ -388,6 +425,11 @@ DeviceDelegatePicoVR::EndFrame(const bool aDiscard) {
 
 }
 
+bool
+DeviceDelegatePicoVR::IsInGazeMode() {
+  return m.isInGazeMode;
+};
+
 void
 DeviceDelegatePicoVR::Pause() {
   m.paused = true;
@@ -401,8 +443,14 @@ DeviceDelegatePicoVR::Resume() {
 void
 DeviceDelegatePicoVR::SetFocused(const int aIndex) {
   m.focusIndex = aIndex;
-  if (m.controllerDelegate) {
-    m.controllerDelegate->SetFocused(m.focusIndex);
+  if (m.isInGazeMode) {
+    if (m.gazeControllerDelegate) {
+      m.gazeControllerDelegate->SetFocused(0);
+    }
+  } else {
+    if (m.controllerDelegate) {
+      m.controllerDelegate->SetFocused(m.focusIndex);
+    }
   }
 }
 
@@ -474,6 +522,10 @@ DeviceDelegatePicoVR::UpdateControllerButtons(const int aIndex, const int32_t aB
   m.controllers[aIndex].axisX = axisX;
   m.controllers[aIndex].axisY = axisY;
   m.controllers[aIndex].touched = touched;
+}
+
+void DeviceDelegatePicoVR::UpdateGazeButtons(const int32_t aButtonsState) {
+  m.gazeController.buttonsState = aButtonsState;
 }
 
 void

@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
@@ -146,7 +147,19 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
 
     @Override
     public void onBackPressed() {
-        // Eat the back button.
+        super.onBackPressed();
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getKeyCode() == 1001) {
+            int buttons = 0;
+            buttons |= event.getAction() == KeyEvent.ACTION_DOWN ? BUTTON_TRIGGER : 0;
+            nativeUpdateGazeState(buttons);
+            return true;
+        }
+
+        return super.dispatchKeyEvent(event);
     }
 
     @Override
@@ -374,6 +387,7 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
     protected native void nativeSetFocusedController(int index);
     protected native void nativeUpdateControllerState(int index, boolean connected, int buttons, float grip, float axisX, float axisY, boolean touched);
     protected native void nativeUpdateControllerPose(int index, boolean dof6, float px, float py, float pz, float qx, float qy, float qz, float qw);
+    protected native void nativeUpdateGazeState(int buttons);
     protected native void nativeRecenter();
     protected native void queueRunnable(Runnable aRunnable);
 }

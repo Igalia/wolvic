@@ -500,7 +500,7 @@ ExternalVR::GetFrameResult(int32_t& aSurfaceHandle, int32_t& aTextureWidth, int3
 }
 
 void
-ExternalVR::SetHapticState(ControllerContainerPtr aControllerContainer) const {
+ExternalVR::SetHapticState(ControllerDelegatePtr aControllerContainer) const {
   const uint32_t count = aControllerContainer->GetControllerCount();
   uint32_t i = 0, j = 0;
   for (i = 0; i < count; ++i) {

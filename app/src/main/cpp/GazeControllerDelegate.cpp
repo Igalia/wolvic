@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#include "ControllerContainer.h"
+#include "GazeControllerDelegate.h"
 #include "Controller.h"
 #include "Pointer.h"
 
@@ -26,13 +26,11 @@ using namespace vrb;
 
 namespace crow {
 
-struct ControllerContainer::State {
+struct GazeControllerDelegate::State {
   std::vector<Controller> list;
   CreationContextWeak context;
   TogglePtr root;
   GroupPtr pointerContainer;
-  std::vector<GroupPtr> models;
-  GeometryPtr beamModel;
   bool visible = false;
   vrb::Color pointerColor;
 
@@ -45,16 +43,6 @@ struct ControllerContainer::State {
 
   bool Contains(const int32_t aControllerIndex) {
     return (aControllerIndex >= 0) && (aControllerIndex < list.size());
-  }
-
-  void SetUpModelsGroup(const int32_t aModelIndex) {
-    if (aModelIndex >= models.size()) {
-      models.resize((size_t)(aModelIndex + 1));
-    }
-    if (!models[aModelIndex]) {
-      CreationContextPtr create = context.lock();
-      models[aModelIndex] = std::move(Group::Create(create));
-    }
   }
 
   void updatePointerColor(Controller& aController) {
@@ -70,91 +58,20 @@ struct ControllerContainer::State {
   }
 };
 
-ControllerContainerPtr
-ControllerContainer::Create(vrb::CreationContextPtr& aContext, const vrb::GroupPtr& aPointerContainer) {
-  auto result = std::make_shared<vrb::ConcreteClass<ControllerContainer, ControllerContainer::State> >(aContext);
+GazeControllerDelegatePtr
+GazeControllerDelegate::Create(vrb::CreationContextPtr& aContext, const vrb::GroupPtr& aPointerContainer) {
+  auto result = std::make_shared<vrb::ConcreteClass<GazeControllerDelegate, GazeControllerDelegate::State> >(aContext);
   result->m.pointerContainer = aPointerContainer;
   return result;
 }
 
 TogglePtr
-ControllerContainer::GetRoot() const {
+GazeControllerDelegate::GetRoot() const {
   return m.root;
 }
 
 void
-ControllerContainer::LoadControllerModel(const int32_t aModelIndex, const ModelLoaderAndroidPtr& aLoader, const std::string& aFileName) {
-  m.SetUpModelsGroup(aModelIndex);
-  aLoader->LoadModel(aFileName, m.models[aModelIndex]);
-}
-
-void
-ControllerContainer::InitializeBeam() {
-  if (m.beamModel) {
-    return;
-  }
-  CreationContextPtr create = m.context.lock();
-  VertexArrayPtr array = VertexArray::Create(create);
-  const float kLength = -1.0f;
-  const float kHeight = 0.004f;
-
-  array->AppendVertex(Vector(-kHeight, -kHeight, 0.0f)); // Bottom left
-  array->AppendVertex(Vector(kHeight, -kHeight, 0.0f)); // Bottom right
-  array->AppendVertex(Vector(kHeight, kHeight, 0.0f)); // Top right
-  array->AppendVertex(Vector(-kHeight, kHeight, 0.0f)); // Top left
-  array->AppendVertex(Vector(0.0f, 0.0f, kLength)); // Tip
-
-  array->AppendNormal(Vector(-1.0f, -1.0f, 0.0f).Normalize()); // Bottom left
-  array->AppendNormal(Vector(1.0f, -1.0f, 0.0f).Normalize()); // Bottom right
-  array->AppendNormal(Vector(1.0f, 1.0f, 0.0f).Normalize()); // Top right
-  array->AppendNormal(Vector(-1.0f, 1.0f, 0.0f).Normalize()); // Top left
-  array->AppendNormal(Vector(0.0f, 0.0f, -1.0f).Normalize()); // in to the screen
-
-  ProgramPtr program = create->GetProgramFactory()->CreateProgram(create, 0);
-  RenderStatePtr state = RenderState::Create(create);
-  state->SetProgram(program);
-  state->SetMaterial(Color(1.0f, 1.0f, 1.0f), Color(1.0f, 1.0f, 1.0f), Color(0.0f, 0.0f, 0.0f), 0.0f);
-  state->SetLightsEnabled(false);
-  GeometryPtr geometry = Geometry::Create(create);
-  geometry->SetVertexArray(array);
-  geometry->SetRenderState(state);
-
-  std::vector<int> index;
-  std::vector<int> uvIndex;
-
-  index.push_back(2);
-  index.push_back(1);
-  index.push_back(5);
-  geometry->AddFace(index, uvIndex, index);
-
-  index.clear();
-  index.push_back(3);
-  index.push_back(2);
-  index.push_back(5);
-  geometry->AddFace(index, uvIndex, index);
-
-  index.clear();
-  index.push_back(4);
-  index.push_back(3);
-  index.push_back(5);
-  geometry->AddFace(index, uvIndex, index);
-
-  index.clear();
-  index.push_back(1);
-  index.push_back(4);
-  index.push_back(5);
-  geometry->AddFace(index, uvIndex, index);
-
-  m.beamModel = std::move(geometry);
-  for (Controller& controller: m.list) {
-    if (controller.beamParent) {
-      controller.beamParent->AddNode(m.beamModel);
-    }
-  }
-}
-
-void
-ControllerContainer::Reset() {
+GazeControllerDelegate::Reset() {
   for (Controller& controller: m.list) {
     controller.DetachRoot();
     controller.Reset();
@@ -162,28 +79,29 @@ ControllerContainer::Reset() {
 }
 
 std::vector<Controller>&
-ControllerContainer::GetControllers() {
+GazeControllerDelegate::GetControllers() {
   return m.list;
 }
 
 const std::vector<Controller>&
-ControllerContainer::GetControllers() const {
+GazeControllerDelegate::GetControllers() const {
   return m.list;
 }
 
 // crow::ControllerDelegate interface
 uint32_t
-ControllerContainer::GetControllerCount() {
+  GazeControllerDelegate::GetControllerCount() {
   return (uint32_t)m.list.size();
 }
 
 void
-ControllerContainer::CreateController(const int32_t aControllerIndex, const int32_t aModelIndex, const std::string& aImmersiveName) {
+GazeControllerDelegate::CreateController(const int32_t aControllerIndex, const int32_t aModelIndex, const std::string& aImmersiveName) {
   CreateController(aControllerIndex, aModelIndex, aImmersiveName, vrb::Matrix::Identity());
 }
 
 void
-ControllerContainer::CreateController(const int32_t aControllerIndex, const int32_t aModelIndex, const std::string& aImmersiveName, const vrb::Matrix& aBeamTransform) {
+GazeControllerDelegate::CreateController(const int32_t aControllerIndex, const int32_t aModelIndex, const std::string& aImmersiveName, const vrb::Matrix& aBeamTransform) {
+  VRB_LOG("Gaze controller created!")
   if ((size_t)aControllerIndex >= m.list.size()) {
     m.list.resize((size_t)aControllerIndex + 1);
   }
@@ -193,44 +111,21 @@ ControllerContainer::CreateController(const int32_t aControllerIndex, const int3
   controller.index = aControllerIndex;
   controller.immersiveName = aImmersiveName;
   controller.beamTransformMatrix = aBeamTransform;
-  if (aModelIndex < 0) {
-    return;
-  }
-  m.SetUpModelsGroup(aModelIndex);
   CreationContextPtr create = m.context.lock();
   controller.transform = Transform::Create(create);
   controller.pointer = Pointer::Create(create);
-  if ((m.models.size() >= aModelIndex) && m.models[aModelIndex]) {
-    controller.transform->AddNode(m.models[aModelIndex]);
-    controller.beamToggle = vrb::Toggle::Create(create);
-    if (aBeamTransform.IsIdentity()) {
-      controller.beamParent = controller.beamToggle;
-    } else {
-      vrb::TransformPtr beamTransform = Transform::Create(create);
-      beamTransform->SetTransform(aBeamTransform);
-      controller.beamParent = beamTransform;
-      controller.beamToggle->AddNode(beamTransform);
-    }
-    controller.transform->AddNode(controller.beamToggle);
-    controller.beamToggle->ToggleAll(false);
-    if (m.beamModel && controller.beamParent) {
-      controller.beamParent->AddNode(m.beamModel);
-    }
-    if (m.root) {
-      m.root->AddNode(controller.transform);
-      m.root->ToggleChild(*controller.transform, false);
-    }
-    if (m.pointerContainer) {
-      m.pointerContainer->AddNode(controller.pointer->GetRoot());
-    }
-    m.updatePointerColor(controller);
-  } else {
-    VRB_ERROR("Failed to add controller model");
+  if (m.root) {
+    m.root->AddNode(controller.transform);
+    m.root->ToggleChild(*controller.transform, false);
   }
+  if (m.pointerContainer) {
+    m.pointerContainer->AddNode(controller.pointer->GetRoot());
+  }
+  m.updatePointerColor(controller);
 }
 
 void
-ControllerContainer::SetFocused(const int32_t aControllerIndex) {
+GazeControllerDelegate::SetFocused(const int32_t aControllerIndex) {
   if (!m.Contains(aControllerIndex)) {
     return;
   }
@@ -253,7 +148,7 @@ ControllerContainer::SetFocused(const int32_t aControllerIndex) {
 }
 
 void
-ControllerContainer::DestroyController(const int32_t aControllerIndex) {
+GazeControllerDelegate::DestroyController(const int32_t aControllerIndex) {
   if (m.Contains(aControllerIndex)) {
     m.list[aControllerIndex].DetachRoot();
     m.list[aControllerIndex].Reset();
@@ -261,7 +156,7 @@ ControllerContainer::DestroyController(const int32_t aControllerIndex) {
 }
 
 void
-ControllerContainer::SetCapabilityFlags(const int32_t aControllerIndex, const device::CapabilityFlags aFlags) {
+GazeControllerDelegate::SetCapabilityFlags(const int32_t aControllerIndex, const device::CapabilityFlags aFlags) {
   if (!m.Contains(aControllerIndex)) {
     return;
   }
@@ -270,7 +165,8 @@ ControllerContainer::SetCapabilityFlags(const int32_t aControllerIndex, const de
 }
 
 void
-ControllerContainer::SetEnabled(const int32_t aControllerIndex, const bool aEnabled) {
+GazeControllerDelegate::SetEnabled(const int32_t aControllerIndex, const bool aEnabled) {
+  VRB_LOG("Gaze Enabled: %d", aEnabled)
   if (!m.Contains(aControllerIndex)) {
     return;
   }
@@ -282,7 +178,8 @@ ControllerContainer::SetEnabled(const int32_t aControllerIndex, const bool aEnab
 }
 
 void
-ControllerContainer::SetVisible(const int32_t aControllerIndex, const bool aVisible) {
+GazeControllerDelegate::SetVisible(const int32_t aControllerIndex, const bool aVisible) {
+  VRB_LOG("Gaze Visible: %d", aVisible)
   if (!m.Contains(aControllerIndex)) {
     return;
   }
@@ -296,7 +193,7 @@ ControllerContainer::SetVisible(const int32_t aControllerIndex, const bool aVisi
 }
 
 void
-ControllerContainer::SetTransform(const int32_t aControllerIndex, const vrb::Matrix& aTransform) {
+GazeControllerDelegate::SetTransform(const int32_t aControllerIndex, const vrb::Matrix& aTransform) {
   if (!m.Contains(aControllerIndex)) {
     return;
   }
@@ -308,7 +205,7 @@ ControllerContainer::SetTransform(const int32_t aControllerIndex, const vrb::Mat
 }
 
 void
-ControllerContainer::SetButtonCount(const int32_t aControllerIndex, const uint32_t aNumButtons) {
+GazeControllerDelegate::SetButtonCount(const int32_t aControllerIndex, const uint32_t aNumButtons) {
   if (!m.Contains(aControllerIndex)) {
     return;
   }
@@ -316,7 +213,7 @@ ControllerContainer::SetButtonCount(const int32_t aControllerIndex, const uint32
 }
 
 void
-ControllerContainer::SetButtonState(const int32_t aControllerIndex, const Button aWhichButton, const int32_t aImmersiveIndex, const bool aPressed, const bool aTouched, const float aImmersiveTrigger) {
+GazeControllerDelegate::SetButtonState(const int32_t aControllerIndex, const Button aWhichButton, const int32_t aImmersiveIndex, const bool aPressed, const bool aTouched, const float aImmersiveTrigger) {
   assert(kControllerMaxButtonCount > aImmersiveIndex
          && "Button index must < kControllerMaxButtonCount.");
 
@@ -354,7 +251,7 @@ ControllerContainer::SetButtonState(const int32_t aControllerIndex, const Button
 }
 
 void
-ControllerContainer::SetAxes(const int32_t aControllerIndex, const float* aData, const uint32_t aLength) {
+GazeControllerDelegate::SetAxes(const int32_t aControllerIndex, const float* aData, const uint32_t aLength) {
   assert(kControllerMaxAxes >= aLength
          && "Axis length must <= kControllerMaxAxes.");
 
@@ -369,7 +266,7 @@ ControllerContainer::SetAxes(const int32_t aControllerIndex, const float* aData,
 }
 
 void
-ControllerContainer::SetHapticCount(const int32_t aControllerIndex, const uint32_t aNumHaptics) {
+GazeControllerDelegate::SetHapticCount(const int32_t aControllerIndex, const uint32_t aNumHaptics) {
   if (!m.Contains(aControllerIndex)) {
     return;
   }
@@ -377,7 +274,7 @@ ControllerContainer::SetHapticCount(const int32_t aControllerIndex, const uint32
 }
 
 uint32_t
-ControllerContainer::GetHapticCount(const int32_t aControllerIndex) {
+GazeControllerDelegate::GetHapticCount(const int32_t aControllerIndex) {
   if (!m.Contains(aControllerIndex)) {
     return 0;
   }
@@ -386,7 +283,7 @@ ControllerContainer::GetHapticCount(const int32_t aControllerIndex) {
 }
 
 void
-ControllerContainer::SetHapticFeedback(const int32_t aControllerIndex, const uint64_t aInputFrameID,
+GazeControllerDelegate::SetHapticFeedback(const int32_t aControllerIndex, const uint64_t aInputFrameID,
                                        const float aPulseDuration, const float aPulseIntensity) {
   if (!m.Contains(aControllerIndex)) {
     return;
@@ -397,7 +294,7 @@ ControllerContainer::SetHapticFeedback(const int32_t aControllerIndex, const uin
 }
 
 void
-ControllerContainer::GetHapticFeedback(const int32_t aControllerIndex, uint64_t & aInputFrameID,
+GazeControllerDelegate::GetHapticFeedback(const int32_t aControllerIndex, uint64_t & aInputFrameID,
                                        float& aPulseDuration, float& aPulseIntensity) {
   if (!m.Contains(aControllerIndex)) {
     return;
@@ -408,7 +305,7 @@ ControllerContainer::GetHapticFeedback(const int32_t aControllerIndex, uint64_t 
 }
 
 void
-ControllerContainer::SetLeftHanded(const int32_t aControllerIndex, const bool aLeftHanded) {
+GazeControllerDelegate::SetLeftHanded(const int32_t aControllerIndex, const bool aLeftHanded) {
   if (!m.Contains(aControllerIndex)) {
     return;
   }
@@ -417,7 +314,7 @@ ControllerContainer::SetLeftHanded(const int32_t aControllerIndex, const bool aL
 }
 
 void
-ControllerContainer::SetTouchPosition(const int32_t aControllerIndex, const float aTouchX, const float aTouchY) {
+GazeControllerDelegate::SetTouchPosition(const int32_t aControllerIndex, const float aTouchX, const float aTouchY) {
   if (!m.Contains(aControllerIndex)) {
     return;
   }
@@ -428,7 +325,7 @@ ControllerContainer::SetTouchPosition(const int32_t aControllerIndex, const floa
 }
 
 void
-ControllerContainer::EndTouch(const int32_t aControllerIndex) {
+GazeControllerDelegate::EndTouch(const int32_t aControllerIndex) {
   if (!m.Contains(aControllerIndex)) {
     return;
   }
@@ -436,7 +333,7 @@ ControllerContainer::EndTouch(const int32_t aControllerIndex) {
 }
 
 void
-ControllerContainer::SetScrolledDelta(const int32_t aControllerIndex, const float aScrollDeltaX, const float aScrollDeltaY) {
+GazeControllerDelegate::SetScrolledDelta(const int32_t aControllerIndex, const float aScrollDeltaX, const float aScrollDeltaY) {
   if (!m.Contains(aControllerIndex)) {
     return;
   }
@@ -445,7 +342,8 @@ ControllerContainer::SetScrolledDelta(const int32_t aControllerIndex, const floa
   controller.scrollDeltaY = aScrollDeltaY;
 }
 
-void ControllerContainer::SetPointerColor(const vrb::Color& aColor) const {
+void
+GazeControllerDelegate::SetPointerColor(const vrb::Color& aColor) const {
   m.pointerColor = aColor;
   for (Controller& controller: m.list) {
     m.updatePointerColor(controller);
@@ -453,7 +351,8 @@ void ControllerContainer::SetPointerColor(const vrb::Color& aColor) const {
 }
 
 void
-ControllerContainer::SetVisible(const bool aVisible) {
+GazeControllerDelegate::SetVisible(const bool aVisible) {
+  VRB_LOG("Gaze Visible: %d", aVisible)
   if (m.visible == aVisible) {
     return;
   }
@@ -469,11 +368,11 @@ ControllerContainer::SetVisible(const bool aVisible) {
   }
 }
 
-ControllerContainer::ControllerContainer(State& aState, vrb::CreationContextPtr& aContext) : m(aState) {
+GazeControllerDelegate::GazeControllerDelegate(State& aState, vrb::CreationContextPtr& aContext) : m(aState) {
   m.Initialize(aContext);
 }
 
-ControllerContainer::~ControllerContainer() {
+GazeControllerDelegate::~GazeControllerDelegate() {
   if (m.root) {
     m.root->RemoveFromParents();
     m.root = nullptr;

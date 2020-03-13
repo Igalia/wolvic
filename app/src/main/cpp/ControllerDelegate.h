@@ -15,6 +15,7 @@
 
 namespace crow {
 
+class Controller;
 class ControllerDelegate;
 typedef std::shared_ptr<ControllerDelegate> ControllerDelegatePtr;
 
@@ -31,6 +32,12 @@ public:
     BUTTON_OTHERS    = 1u << 7u,  // Other buttons only for the immersive mode.
   };
 
+  virtual vrb::TogglePtr GetRoot() const = 0;
+  virtual void LoadControllerModel(const int32_t aModelIndex, const vrb::ModelLoaderAndroidPtr& aLoader, const std::string& aFileName) {};
+  virtual void InitializeBeam() {};
+  virtual void Reset() = 0;
+  virtual std::vector<Controller>& GetControllers() = 0;
+  virtual const std::vector<Controller>& GetControllers() const = 0;
   virtual void CreateController(const int32_t aControllerIndex, const int32_t aModelIndex, const std::string& aImmersiveName) = 0;
   virtual void CreateController(const int32_t aControllerIndex, const int32_t aModelIndex, const std::string& aImmersiveName, const vrb::Matrix& aBeamTransform) = 0;
   virtual void SetFocused(const int32_t aControllerIndex) = 0;
@@ -51,6 +58,8 @@ public:
   virtual void SetTouchPosition(const int32_t aControllerIndex, const float aTouchX, const float aTouchY) = 0;
   virtual void EndTouch(const int32_t aControllerIndex) = 0;
   virtual void SetScrolledDelta(const int32_t aControllerIndex, const float aScrollDeltaX, const float aScrollDeltaY) = 0;
+  virtual void SetPointerColor(const vrb::Color& color) const = 0;
+  virtual void SetVisible(const bool aVisible) = 0;
 protected:
   ControllerDelegate() {}
 private:

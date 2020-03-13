@@ -60,7 +60,7 @@ public:
                       int32_t& aTextureHeight,
                       device::EyeRect& aLeftEye,
                       device::EyeRect& aRightEye) const;
-  void SetHapticState(ControllerContainerPtr aControllerContainer) const;
+  void SetHapticState(ControllerDelegatePtr aControllerContainer) const;
   void StopPresenting();
   void SetSourceBrowser(VRBrowserType aBrowser);
   ExternalVR();

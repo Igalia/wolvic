@@ -6,6 +6,7 @@
 #include "BrowserWorld.h"
 #include "Controller.h"
 #include "ControllerContainer.h"
+#include "GazeControllerDelegate.h"
 #include "FadeAnimation.h"
 #include "Device.h"
 #include "DeviceDelegate.h"
@@ -161,7 +162,9 @@ struct BrowserWorld::State {
   TransformPtr rootTransparent;
   GroupPtr rootController;
   LightPtr light;
-  ControllerContainerPtr controllers;
+  ControllerDelegatePtr controllers;
+  ControllerDelegatePtr deviceControllers;
+  ControllerDelegatePtr gazeController;
   CullVisitorPtr cullVisitor;
   DrawableListPtr drawList;
   CameraPtr leftCamera;
@@ -189,6 +192,7 @@ struct BrowserWorld::State {
   std::unordered_map<vrb::Node*, std::pair<Widget*, float>> depthSorting;
   std::function<void(device::Eye)> drawHandler;
   std::function<void()> frameEndHandler;
+  bool wasInGazeMode;
 
   State() : paused(true), glInitialized(false), modelsLoaded(false), env(nullptr), cylinderDensity(0.0f), nearClip(0.1f),
             farClip(300.0f), activity(nullptr), windowsInitialized(false), exitImmersiveRequested(false), loaderDelay(0) {
@@ -207,7 +211,8 @@ struct BrowserWorld::State {
     rootController->AddLight(light);
     cullVisitor = CullVisitor::Create(create);
     drawList = DrawableList::Create(create);
-    controllers = ControllerContainer::Create(create, rootTransparent);
+    deviceControllers = ControllerContainer::Create(create, rootTransparent);
+    gazeController = GazeControllerDelegate::Create(create, rootTransparent);
     externalVR = ExternalVR::Create();
     blitter = ExternalBlitter::Create(create);
     fadeAnimation = FadeAnimation::Create(create);
@@ -232,6 +237,7 @@ struct BrowserWorld::State {
   float ComputeNormalizedZ(const Widget& aWidget) const;
   void SortWidgets();
   void UpdateWidgetCylinder(const WidgetPtr& aWidget, const float aDensity);
+  void UpdateControllerDelegate();
 };
 
 void
@@ -683,6 +689,27 @@ BrowserWorld::State::UpdateWidgetCylinder(const WidgetPtr& aWidget, const float 
   }
 }
 
+void
+BrowserWorld::State::UpdateControllerDelegate() {
+  bool isInGazeMode = device->IsInGazeMode();
+  if (isInGazeMode != wasInGazeMode) {
+    if (isInGazeMode) {
+      VRB_LOG("Gaze mode on")
+      gazeController->SetVisible(true);
+      deviceControllers->SetVisible(false);
+      gazeController->SetEnabled(0, true);
+      controllers = gazeController;
+    } else {
+      VRB_LOG("Gaze mode off")
+      gazeController->SetVisible(false);
+      deviceControllers->SetVisible(true);
+      gazeController->SetEnabled(0, false);
+      controllers = deviceControllers;
+    }
+    wasInGazeMode = isInGazeMode;
+  }
+}
+
 static BrowserWorldPtr sWorldInstance;
 
 BrowserWorld&
@@ -713,9 +740,9 @@ BrowserWorld::RegisterDeviceDelegate(DeviceDelegatePtr aDelegate) {
     m.device->SetClearColor(vrb::Color(0.0f, 0.0f, 0.0f, 0.0f));
     m.leftCamera = m.device->GetCamera(device::Eye::Left);
     m.rightCamera = m.device->GetCamera(device::Eye::Right);
-    ControllerDelegatePtr delegate = m.controllers;
+    m.controllers = std::dynamic_pointer_cast<ControllerDelegate>(m.deviceControllers);
     m.device->SetClipPlanes(m.nearClip, m.farClip);
-    m.device->SetControllerDelegate(delegate);
+    m.device->SetControllerDelegate(m.deviceControllers, m.gazeController);
     m.gestures = m.device->GetGestureDelegate();
   } else if (previousDevice) {
     m.leftCamera = m.rightCamera = nullptr;
@@ -776,13 +803,14 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
     for (int32_t index = 0; index < modelCount; index++) {
       const std::string fileName = m.device->GetControllerModelName(index);
       if (!fileName.empty()) {
-        m.controllers->LoadControllerModel(index, m.loader, fileName);
+        m.deviceControllers->LoadControllerModel(index, m.loader, fileName);
       }
     }
-    m.controllers->InitializeBeam();
-    m.controllers->SetPointerColor(vrb::Color(VRBrowser::GetPointerColor()));
+    m.deviceControllers->InitializeBeam();
+    m.deviceControllers->SetPointerColor(vrb::Color(VRBrowser::GetPointerColor()));
     m.loadingAnimation->LoadModels(m.loader);
-    m.rootController->AddNode(m.controllers->GetRoot());
+    m.rootController->AddNode(m.deviceControllers->GetRoot());
+    m.rootController->AddNode(m.gazeController->GetRoot());
 #if !defined(SNAPDRAGONVR)
     UpdateEnvironment();
     // Don't load the env model, we are going for skyboxes in v1.0
@@ -895,6 +923,7 @@ BrowserWorld::StartFrame() {
     m.CheckBackButton();
     TickImmersive();
   } else {
+    m.UpdateControllerDelegate();
     bool relayoutWidgets = false;
     m.UpdateControllers(relayoutWidgets);
     if (relayoutWidgets) {
@@ -970,8 +999,11 @@ BrowserWorld::UpdatePointerColor() {
   int32_t color = VRBrowser::GetPointerColor();
   VRB_LOG("Setting pointer color to: %d:", color);
 
-  if (m.controllers) {
-    m.controllers->SetPointerColor(vrb::Color(color));
+  if (m.deviceControllers) {
+    m.deviceControllers->SetPointerColor(vrb::Color(color));
+  }
+  if (m.gazeController) {
+    m.gazeController->SetPointerColor(vrb::Color(color));
   }
 }
 

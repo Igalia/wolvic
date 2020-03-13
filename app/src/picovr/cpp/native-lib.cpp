@@ -139,6 +139,14 @@ JNI_METHOD(void, nativeUpdateControllerState)
   sDevice->UpdateControllerButtons(index, buttons, grip, axisX, axisY, touched);
 }
 
+JNI_METHOD(void, nativeUpdateGazeState)
+(JNIEnv*, jobject,jint buttons) {
+  if (gDestroyed) {
+    return;
+  }
+  sDevice->UpdateGazeButtons(buttons);
+}
+
 JNI_METHOD(void, nativeRecenter)
 (JNIEnv* env, jobject) {
   if (gDestroyed) {
