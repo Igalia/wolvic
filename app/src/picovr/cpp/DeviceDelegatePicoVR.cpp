@@ -396,6 +396,7 @@ DeviceDelegatePicoVR::Pause() {
 void
 DeviceDelegatePicoVR::Resume() {
   m.paused = false;
+  m.setHeadOffset = true;
 }
 
 void
@@ -479,6 +480,7 @@ DeviceDelegatePicoVR::UpdateControllerButtons(const int aIndex, const int32_t aB
 void
 DeviceDelegatePicoVR:: Recenter() {
     m.recentered = true;
+    m.setHeadOffset = true;
 }
 
 DeviceDelegatePicoVR::DeviceDelegatePicoVR(State &aState) : m(aState) {}
