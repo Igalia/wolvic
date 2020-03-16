@@ -334,13 +334,6 @@
     <string name="developer_options_env_override">Abilita override dell’ambiente</string>
 
     <!-- This string labels an On/Off switch in the developer options dialog and is used to toggle
-         running content in a separate process.
-         Multiprocessing: the running of two or more programs or sequences of instructions
-         simultaneously by a computer with more than one central processor.
-         A dialog should appear with a field labeled with the text, 'Enable Multiprocess'. -->
-    <string name="developer_options_multiprocess">Abilita multiprocesso</string>
-
-    <!-- This string labels an On/Off switch in the developer options dialog and is used to toggle
          the performance monitor. The Performance monitor is used to detect pages that cause the
          browser to run below a target framerate and pauses the page to restore performance.
     -->
@@ -1096,6 +1089,11 @@
     <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmark' icon in the
          browser's navigation bar. The button it labels, when pressed, bookmarks the currently open web site. -->
     <string name="bookmark_tooltip">Aggiungi pagina ai segnalibri</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmark' icon in the
+         browser's navigation bar if the site is already bookmarked. The button it labels, when pressed,
+         removes the currently open web site from bookmarks. -->
+    <string name="remove_bookmark_tooltip">Elimina dai segnalibri</string>
 
     <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmarks' icon in the
          tray. The button it labels, when pressed, opens a list view of the user's saved
