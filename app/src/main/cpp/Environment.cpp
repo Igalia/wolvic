@@ -40,8 +40,8 @@ struct Environment::State {
   void Initialize() {
     vrb::CreationContextPtr create = context.lock();
     root = vrb::Toggle::Create(create);
-//    vrb::LightPtr light = vrb::Light::Create(create);
-//    root->AddLight(light);
+    vrb::LightPtr light = vrb::Light::Create(create);
+    root->AddLight(light);
   }
 };
 
@@ -56,8 +56,8 @@ Environment::LoadModels(const vrb::ModelLoaderAndroidPtr& aLoader) {
   m.root->AddNode(m.fan1);
   m.root->AddNode(m.fan2);
   aLoader->LoadModel("environments/Room.obj", m.room);
-  aLoader->LoadModel("environments/Fan.obj", m.fan1);
-  aLoader->LoadModel("environments/Fan.obj", m.fan2);
+//  aLoader->LoadModel("environments/Fan.obj", m.fan1);
+//  aLoader->LoadModel("environments/Fan.obj", m.fan2);
 
   vrb::Matrix transform = vrb::Matrix::Identity();
   m.room->SetTransform(transform);
