@@ -16,6 +16,7 @@ object EngineProvider {
 
     private var runtime: GeckoRuntime? = null
     private var executor: GeckoWebExecutor? = null
+    private var client: GeckoViewFetchClient? = null
 
     @Synchronized
     fun getOrCreateRuntime(context: Context): GeckoRuntime {
@@ -72,6 +73,14 @@ object EngineProvider {
 
     fun createClient(context: Context): GeckoViewFetchClient {
         return GeckoViewFetchClient(context)
+    }
+
+    fun getDefaultClient(context: Context): GeckoViewFetchClient {
+        if (client == null) {
+            client = createClient(context)
+        }
+
+        return client!!
     }
 
 }

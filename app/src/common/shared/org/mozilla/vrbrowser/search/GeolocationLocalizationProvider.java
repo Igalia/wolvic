@@ -23,6 +23,12 @@ public class GeolocationLocalizationProvider implements SearchLocalizationProvid
         mRegion = data.getCountryCode();
     }
 
+    GeolocationLocalizationProvider(@NonNull String countryCode, @NonNull String region) {
+        mCountry = countryCode;
+        mLanguage = Locale.getDefault().getLanguage();
+        mRegion = region;
+    }
+
     @Nullable
     @Override
     public SearchLocalization determineRegion(@NonNull Continuation<? super SearchLocalization> continuation) {

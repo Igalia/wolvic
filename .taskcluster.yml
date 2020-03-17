@@ -73,6 +73,7 @@ tasks:
             - "secrets:get:project/firefoxreality/fr/github-deploy-key"
             - "secrets:get:project/firefoxreality/fr/staging-signing-token"
             - "secrets:get:project/firefoxreality/fr/symbols-token"
+            - "secrets:get:project/firefoxreality/fr/mls-key"
           routes:
             - notify.email.fxr-releng@mozilla.com.on-any
           payload:
@@ -91,6 +92,7 @@ tasks:
                 && rm -rf gvr-android-sdk && git clone https://github.com/MozillaReality/FirefoxReality-gvr-android-sdk.git gvr-android-sdk
                 && git submodule update
                 && . tools/taskcluster/get_third_party.sh
+                && python tools/taskcluster/fetch_secret.py -s project/firefoxreality/fr/mls-key -o .mls_token -n key
                 && cp tools/gradle/taskcluster.properties ./user.properties
                 && ./gradlew --no-daemon --console=plain clean `python tools/taskcluster/build_targets.py =all`
                 && python tools/taskcluster/fetch_secret.py -s project/firefoxreality/fr/staging-signing-token -o token -n token
@@ -123,6 +125,7 @@ tasks:
           - "secrets:get:project/firefoxreality/fr/github-deploy-key"
           - "secrets:get:project/firefoxreality/fr/release-signing-token"
           - "secrets:get:project/firefoxreality/fr/symbols-token"
+          - "secrets:get:project/firefoxreality/fr/mls-key"
         routes:
           - notify.email.fxr-releng@mozilla.com.on-any
         payload:
@@ -141,6 +144,7 @@ tasks:
               && rm -rf gvr-android-sdk && git clone https://github.com/MozillaReality/FirefoxReality-gvr-android-sdk.git gvr-android-sdk
               && git submodule update
               && . tools/taskcluster/get_third_party.sh
+              && python tools/taskcluster/fetch_secret.py -s project/firefoxreality/fr/mls-key -o .mls_token -n key
               && cp tools/gradle/taskcluster.properties ./user.properties
               && ./gradlew --no-daemon --console=plain clean `python tools/taskcluster/build_targets.py ${event.release.tag_name}`
               && python tools/taskcluster/fetch_secret.py -s project/firefoxreality/fr/release-signing-token -o token -n token

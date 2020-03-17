@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * Class representing a Geolocation success response (HTTP 200)
@@ -14,6 +15,9 @@ import androidx.annotation.NonNull;
 public class GeolocationData {
 
     private static final String LOGTAG = SystemUtils.createLogtag(GeolocationData.class);
+
+    private static final String COUNTRY_CODE = "country_code";
+    private static final String COUNTRY_NAME = "country_name";
 
     private JSONObject mData;
 
@@ -27,6 +31,19 @@ public class GeolocationData {
     }
 
     @NonNull
+    public static GeolocationData create(String countryCode, String countryName) {
+        JSONObject json = new JSONObject();
+        try {
+            json.put(COUNTRY_CODE, countryCode);
+            json.put(COUNTRY_NAME, countryName);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return GeolocationData.create(json);
+    }
+
+    @Nullable
     public static GeolocationData parse(String aGeolocationJson) {
         try {
             return GeolocationData.create(new JSONObject(aGeolocationJson));
@@ -38,11 +55,11 @@ public class GeolocationData {
     }
 
     public String getCountryCode() {
-        return mData.optString("country_code", "");
+        return mData.optString(COUNTRY_CODE, "");
     }
 
     public String getCountryName() {
-        return mData.optString("country_name", "");
+        return mData.optString(COUNTRY_NAME, "");
     }
 
     @Override

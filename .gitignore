@@ -75,3 +75,6 @@ tools/webgfx-tests-fxr/
 
 # Room schemas
 app/schemas/
+
+# Token files
+.mls_token

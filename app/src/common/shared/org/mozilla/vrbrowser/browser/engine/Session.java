@@ -1430,7 +1430,9 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         if (mContext != null) {
             if (key.equals(mContext.getString(R.string.settings_key_geolocation_data))) {
                 GeolocationData data = GeolocationData.parse(sharedPreferences.getString(key, null));
-                setRegion(data.getCountryCode());
+                if (data != null) {
+                    setRegion(data.getCountryCode());
+                }
             }
         }
     }

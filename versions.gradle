@@ -71,6 +71,7 @@ android_components.browser_search = "org.mozilla.components:browser-search:$vers
 android_components.browser_storage = "org.mozilla.components:browser-storage-sync:$versions.android_components"
 android_components.browser_domains = "org.mozilla.components:browser-domains:$versions.android_components"
 android_components.service_accounts = "org.mozilla.components:service-firefox-accounts:$versions.android_components"
+android_components.mozilla_service_location = "org.mozilla.components:service-location:${versions.android_components}"
 android_components.ui_autocomplete = "org.mozilla.components:ui-autocomplete:$versions.android_components"
 android_components.concept_fetch = "org.mozilla.components:concept-fetch:$versions.android_components"
 android_components.lib_fetch = "org.mozilla.components:lib-fetch-httpurlconnection:$versions.android_components"

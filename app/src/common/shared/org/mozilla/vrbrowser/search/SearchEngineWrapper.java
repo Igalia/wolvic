@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -140,7 +141,7 @@ public class SearchEngineWrapper implements SharedPreferences.OnSharedPreference
     private BroadcastReceiver mLocaleChangedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction() == Intent.ACTION_LOCALE_CHANGED) {
+            if (intent.getAction().equals(Intent.ACTION_LOCALE_CHANGED)) {
                 setupSearchEngine(context, EMPTY);
             }
         }
@@ -157,10 +158,12 @@ public class SearchEngineWrapper implements SharedPreferences.OnSharedPreference
 
         GeolocationData data = GeolocationData.parse(SettingsStore.getInstance(aContext).getGeolocationData());
         if (data == null) {
+            Log.d(LOGTAG, "Using Locale based search localization provider");
             // If we don't have geolocation data we default to the Locale search localization provider
             mLocalizationProvider = new LocaleSearchLocalizationProvider();
 
         } else {
+            Log.d(LOGTAG, "Using Geolocation based search localization provider: " + data.toString());
             // If we have geolocation data we initialize the provider with the received data
             // and setup a filter to filter the engines that we need to override for FxR.
             mLocalizationProvider = new GeolocationLocalizationProvider(data);
@@ -199,7 +202,7 @@ public class SearchEngineWrapper implements SharedPreferences.OnSharedPreference
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (mContext != null) {
-            if (key == mContext.getString(R.string.settings_key_geolocation_data)) {
+            if (key.equals(mContext.getString(R.string.settings_key_geolocation_data))) {
                 setupSearchEngine(mContext, EMPTY);
             }
         }

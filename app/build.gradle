@@ -477,6 +477,7 @@ dependencies {
     implementation deps.android_components.browser_storage
     implementation deps.android_components.browser_domains
     implementation deps.android_components.service_accounts
+    implementation deps.android_components.mozilla_service_location
     implementation deps.android_components.ui_autocomplete
     implementation deps.android_components.concept_fetch
     implementation deps.android_components.lib_fetch
@@ -556,6 +557,24 @@ if (gradle.hasProperty('localProperties.dependencySubstitutions.geckoviewTopsrcd
     }
     ext.topsrcdir = gradle."localProperties.dependencySubstitutions.geckoviewTopsrcdir"
     apply from: "${topsrcdir}/substitute-local-geckoview.gradle"
+}
+
+// -------------------------------------------------------------------------------------------------
+// MLS: Read token from local file if it exists
+// -------------------------------------------------------------------------------------------------
+
+android.applicationVariants.all { variant ->
+    print("MLS token: ")
+
+    try {
+        def token = new File("${rootDir}/.mls_token").text.trim()
+        buildConfigField 'String', 'MLS_TOKEN', '"' + token + '"'
+        println "(Added from .mls_token file)"
+    } catch (FileNotFoundException ignored) {
+        buildConfigField 'String', 'MLS_TOKEN', '""'
+        println("X_X")
+    }
+
 }
 
 // -------------------------------------------------------------------------------------------------
