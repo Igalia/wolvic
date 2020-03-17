@@ -6,29 +6,29 @@
 This script configures which APKs are built using the options passed in
 from the taskcluster {{ event.version }}.
 
-{{ event.version }} should be in the form: <tag name>=[all,release,debug]+<platform name>=[arm,arm64,x86]
+{{ event.version }} should be in the form: <tag name>=[all,release,debug]+<platform name>=[arm64,x86_64]
 Some examples of {{ event.version }} and the resultant output from this script.
 
 This is the default behaviour with no options. Only the Release build of each
 architecture for each supported platform is built:
 $ python build_targets.py 1.1.4a
-assembleWavevrArmRelease assembleNoapiArmRelease assembleNoapiArm64Release assembleNoapiX86Release assembleSvrArmRelease assembleSvrArm64Release assembleOculusvrArmRelease assembleOculusvrArm64Release assembleGooglevrArmRelease assembleGooglevrArm64Release
+assembleNoapiArm64Release assembleNoapiX86_64Release assembleOculusvrArm64Release assembleWavevrstoreArm64Release assemblePicovrArm64Release assembleOculusvrstoreArm64Release assembleWavevrArm64Release assembleOculusvr3dofstoreArm64Release
 
-Specifies only build the Arm64 version of the OculusVR platform:
-$ python build_targets.py 1.1.4b+oculusvr=arm64
+Specifies only build the OculusVR platform:
+$ python build_targets.py 1.1.4b+oculusvr
 assembleOculusvrArm64Release
 
 Specifies all build types including Release and Debug:
 $ python build_targets.py 1.1.4c=all
-assembleWavevrArm assembleNoapiArm assembleNoapiArm64 assembleNoapiX86 assembleSvrArm assembleSvrArm64 assembleOculusvrArm assembleOculusvrArm64 assembleGooglevrArm assembleGooglevrArm64
+assembleNoapiArm64 assembleNoapiX86_64 assembleOculusvrArm64 assembleWavevrstoreArm64 assemblePicovrArm64 assembleOculusvrstoreArm64 assembleWavevrArm64 assembleOculusvr3dofstoreArm64
 
-Specifies Release builds of Arm64 OculusVR, Arm WaveVR, and x86 NoAPI:
-$ python build_targets.py 1.1.4d+oculusvr=arm64+wavevr=arm+noapi=x86
-assembleOculusvrArm64Release assembleWavevrArmRelease assembleNoapiX86Release
+Specifies Release builds of Arm64 OculusVR, Arm64 WaveVR, and x86_64 NoAPI:
+$ python build_targets.py 1.1.4d+oculusvr+wavevr+noapi=x86_64
+assembleOculusvrArm64Release assembleWavevrArm64Release assembleNoapiX86_64Release
 
-Specifies Release and Debug builds of Arm64 OculusVR, Arm WaveVR, and x86 NoAPI:
-$ python build_targets.py 1.1.4e=all+oculusvr=arm64+wavevr=arm+noapi=x86
-assembleOculusvrArm64 assembleWavevrArm assembleNoapiX86
+Specifies Release and Debug builds of Arm64 OculusVR, Arm64 WaveVR, and x86_64 NoAPI:
+$ python build_targets.py 1.1.4e=all+oculusvr+wavevr+noapi=x86_64
+assembleOculusvrArm64 assembleWavevrArm64 assembleNoapiX86_64
 """
 import sys
 
@@ -37,11 +37,9 @@ platforms = {
    'oculusvrStore': ['arm64'],
    'oculusvr3dofStore': ['arm64'],
    'wavevr': ['arm64'],
-   'wavevrStore': ['arm64', 'arm'],
+   'wavevrStore': ['arm64'],
    'picovr': ['arm64'],
-   'googlevr': ['arm64'],
    'noapi': ['arm64', 'x86_64'],
-   'svr': ['arm64'],
 }
 
 def findMode(arg):
