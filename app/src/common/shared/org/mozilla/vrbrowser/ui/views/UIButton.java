@@ -256,6 +256,21 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
         updateButtonColor();
     }
 
+    public void setRegularModeBackground(Drawable background) {
+        mBackground = background;
+        updateButtonColor();
+    }
+
+    public void setPrivateModeBackground(Drawable background) {
+        mPrivateModeBackground = background;
+        updateButtonColor();
+    }
+
+    public void setActiveModeBackground(Drawable background) {
+        mActiveModeBackground = background;
+        updateButtonColor();
+    }
+
     private Runnable mShowTooltipRunnable = new Runnable() {
         @Override
         public void run() {

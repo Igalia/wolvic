@@ -7,15 +7,11 @@
         <import type="android.view.View"/>
 
         <variable
+            name="bookmarksViewModel"
+            type="org.mozilla.vrbrowser.ui.viewmodel.BookmarksViewModel" />
+
+        <variable
             name="isAccountsUIEnabled"
-            type="boolean" />
-
-        <variable
-            name="isLoading"
-            type="boolean" />
-
-        <variable
-            name="isEmpty"
             type="boolean" />
 
         <variable
@@ -32,10 +28,6 @@
 
         <variable
             name="isSyncing"
-            type="boolean" />
-
-        <variable
-            name="isNarrow"
             type="boolean" />
 
         <variable
@@ -59,12 +51,12 @@
             android:layout_marginEnd="50dp"
             android:layout_marginBottom="20dp"
             app:isAccountsUIEnabled="@{isAccountsUIEnabled}"
-            app:isEmpty="@{isEmpty}"
+            app:isEmpty="@{bookmarksViewModel.isEmpty}"
             app:isSignedIn="@{isSignedIn}"
             app:isSyncEnabled="@{isSyncEnabled}"
             app:lastSync="@{lastSync}"
             app:isSyncing="@{isSyncing}"
-            app:isNarrow="@{isNarrow}"
+            app:isNarrow="@{bookmarksViewModel.isNarrow}"
             app:callback="@{callback}"/>
 
         <include android:id="@+id/bookmarks_wide"
@@ -75,12 +67,12 @@
             android:layout_marginEnd="50dp"
             android:layout_marginBottom="20dp"
             app:isAccountsUIEnabled="@{isAccountsUIEnabled}"
-            app:isEmpty="@{isEmpty}"
+            app:isEmpty="@{bookmarksViewModel.isEmpty}"
             app:isSignedIn="@{isSignedIn}"
             app:isSyncEnabled="@{isSyncEnabled}"
             app:lastSync="@{lastSync}"
             app:isSyncing="@{isSyncing}"
-            app:isNarrow="@{isNarrow}"
+            app:isNarrow="@{bookmarksViewModel.isNarrow}"
             app:callback="@{callback}"/>
 
         <LinearLayout
@@ -88,11 +80,11 @@
             android:layout_height="match_parent"
             android:gravity="center_vertical|center_horizontal"
             android:orientation="vertical"
-            app:visibleGone="@{!isLoading &amp;&amp; isEmpty}">
+            app:visibleGone="@{!bookmarksViewModel.isLoading &amp;&amp; bookmarksViewModel.isEmpty}">
 
             <ImageView
-                android:layout_width="@{isNarrow ? @dimen/library_icon_size_narrow : @dimen/library_icon_size_wide, default=wrap_content}"
-                android:layout_height="@{isNarrow ? @dimen/library_icon_size_narrow : @dimen/library_icon_size_wide, default=wrap_content}"
+                android:layout_width="@{bookmarksViewModel.isNarrow ? @dimen/library_icon_size_narrow : @dimen/library_icon_size_wide, default=wrap_content}"
+                android:layout_height="@{bookmarksViewModel.isNarrow ? @dimen/library_icon_size_narrow : @dimen/library_icon_size_wide, default=wrap_content}"
                 android:src="@drawable/ic_icon_bookmarks"
                 app:srcCompat="@drawable/ic_icon_bookmarks" />
 
@@ -135,7 +127,7 @@
             android:textAlignment="center"
             android:textColor="@color/fog"
             android:visibility="gone"
-            app:visibleGone="@{isLoading}" />
+            app:visibleGone="@{bookmarksViewModel.isLoading}" />
 
         <org.mozilla.vrbrowser.ui.views.CustomRecyclerView
             android:id="@+id/bookmarks_list"
@@ -148,7 +140,7 @@
             android:fadingEdgeLength="60dp"
             android:requiresFadingEdge="vertical"
             app:layoutManager="org.mozilla.vrbrowser.ui.adapters.CustomLinearLayoutManager"
-            app:visibleGone="@{!isLoading &amp;&amp; !isEmpty}" />
+            app:visibleGone="@{!bookmarksViewModel.isLoading &amp;&amp; !bookmarksViewModel.isEmpty}" />
 
     </LinearLayout>
 </layout>

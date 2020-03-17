@@ -16,6 +16,7 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener;
@@ -34,6 +35,7 @@ import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.ui.adapters.HistoryAdapter;
 import org.mozilla.vrbrowser.ui.callbacks.HistoryCallback;
 import org.mozilla.vrbrowser.ui.callbacks.HistoryItemCallback;
+import org.mozilla.vrbrowser.ui.viewmodel.HistoryViewModel;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
@@ -66,6 +68,7 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
 
     private static final boolean ACCOUNTS_UI_ENABLED = false;
 
+    private HistoryViewModel mViewModel;
     private HistoryBinding mBinding;
     private Accounts mAccounts;
     private HistoryAdapter mHistoryAdapter;
@@ -88,6 +91,11 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
     }
 
     private void initialize(Context aContext) {
+        mViewModel = new ViewModelProvider(
+                (VRBrowserActivity)getContext(),
+                ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
+                .get(HistoryViewModel.class);
+
         mUIThreadExecutor = ((VRBrowserApplication)getContext().getApplicationContext()).getExecutors().mainThread();
 
         mHistoryViewListeners = new ArrayList<>();
@@ -124,7 +132,7 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
         mBinding.historyList.setDrawingCacheEnabled(true);
         mBinding.historyList.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
-        mBinding.setIsLoading(true);
+        mViewModel.setIsLoading(true);
 
         mBinding.setIsSignedIn(mAccounts.isSignedIn());
         boolean isSyncEnabled = mAccounts.isEngineEnabled(SyncEngine.History.INSTANCE);
@@ -133,7 +141,7 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
             mBinding.setLastSync(mAccounts.lastSync());
             mBinding.setIsSyncing(mAccounts.isSyncing());
         }
-        mBinding.setIsNarrow(false);
+        mViewModel.setIsNarrow(false);
         mBinding.setIsAccountsUIEnabled(ACCOUNTS_UI_ENABLED);
         mBinding.executePendingBindings();
 
@@ -388,12 +396,12 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
 
     private void showHistory(List<VisitInfo> historyItems) {
         if (historyItems == null || historyItems.size() == 0) {
-            mBinding.setIsEmpty(true);
-            mBinding.setIsLoading(false);
+            mViewModel.setIsEmpty(true);
+            mViewModel.setIsLoading(false);
 
         } else {
-            mBinding.setIsEmpty(false);
-            mBinding.setIsLoading(false);
+            mViewModel.setIsEmpty(false);
+            mViewModel.setIsLoading(false);
             mHistoryAdapter.setHistoryList(historyItems);
         }
     }
@@ -410,13 +418,13 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
             double width = Math.ceil(getWidth()/getContext().getResources().getDisplayMetrics().density);
             boolean isNarrow = width < SettingsStore.WINDOW_WIDTH_DEFAULT;
 
-            if (isNarrow != mBinding.getIsNarrow()) {
+            if (isNarrow != mViewModel.getIsNarrow().getValue().get()) {
                 mHistoryAdapter.setNarrow(isNarrow);
 
-                mBinding.setIsNarrow(isNarrow);
+                mViewModel.setIsNarrow(isNarrow);
                 mBinding.executePendingBindings();
 
-                mBinding.setIsNarrow(isNarrow);
+                mViewModel.setIsNarrow(isNarrow);
                 mBinding.executePendingBindings();
 
                 requestLayout();

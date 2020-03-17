@@ -39,6 +39,7 @@ import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.databinding.NavigationBarBinding;
 import org.mozilla.vrbrowser.search.suggestions.SuggestionsProvider;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
+import org.mozilla.vrbrowser.ui.viewmodel.TrayViewModel;
 import org.mozilla.vrbrowser.ui.viewmodel.WindowViewModel;
 import org.mozilla.vrbrowser.ui.views.NavigationURLBar;
 import org.mozilla.vrbrowser.ui.views.UIButton;
@@ -81,6 +82,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     private WindowViewModel mViewModel;
+    private TrayViewModel mTrayViewModel;
     private NavigationBarBinding mBinding;
     private AudioEngine mAudio;
     private WindowWidget mAttachedWindow;
@@ -116,10 +118,16 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     public NavigationBarWidget(Context aContext, AttributeSet aAttrs, int aDefStyle) {
         super(aContext, aAttrs, aDefStyle);
+
         initialize(aContext);
     }
 
     private void initialize(@NonNull Context aContext) {
+        mTrayViewModel = new ViewModelProvider(
+                (VRBrowserActivity)getContext(),
+                ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
+                .get(TrayViewModel.class);
+
         updateUI();
 
         mAppContext = aContext.getApplicationContext();
@@ -525,7 +533,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
         mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
 
-        mWidgetManager.setTrayVisible(false);
+        mTrayViewModel.setShouldBeVisible(false);
 
         if (mProjectionMenu == null) {
             mProjectionMenu = new VideoProjectionMenuWidget(getContext());
@@ -557,7 +565,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         }
 
         if (!mAttachedWindow.isFullScreen()) {
-            mWidgetManager.setTrayVisible(true);
+            mTrayViewModel.setShouldBeVisible(true);
             return;
         }
 
@@ -579,7 +587,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mWidgetManager.popWorldBrightness(this);
         AnimationHelper.fadeOut(mBinding.navigationBarFullscreen.fullScreenModeContainer, 0, null);
 
-        mWidgetManager.setTrayVisible(true);
+        mTrayViewModel.setShouldBeVisible(true);
         closeFloatingMenus();
         mWidgetManager.popWorldBrightness(mBrightnessWidget);
     }
@@ -598,7 +606,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             AnimationHelper.fadeOut(mBinding.navigationBarNavigation.navigationBarContainer, 0, null);
         }
         mWidgetManager.pushBackHandler(mResizeBackHandler);
-        mWidgetManager.setTrayVisible(false);
+        mTrayViewModel.setShouldBeVisible(false);
         closeFloatingMenus();
 
         float maxScale = 3.0f;
@@ -660,7 +668,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         }
         AnimationHelper.fadeOut(mBinding.navigationBarMenu.resizeModeContainer, 0, () -> onWidgetUpdate(mAttachedWindow));
         mWidgetManager.popBackHandler(mResizeBackHandler);
-        mWidgetManager.setTrayVisible(!mAttachedWindow.isFullScreen());
+        mTrayViewModel.setShouldBeVisible(!mAttachedWindow.isFullScreen());
         closeFloatingMenus();
 
         if (aResizeAction == ResizeAction.KEEP_SIZE) {

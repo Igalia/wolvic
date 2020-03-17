@@ -489,7 +489,7 @@ public class WindowViewModel extends AndroidViewModel {
     }
 
     @NonNull
-    public MutableLiveData<ObservableBoolean> getIsBookmraksVisible() {
+    public MutableLiveData<ObservableBoolean> getIsBookmarksVisible() {
         return isBookmarksVisible;
     }
 

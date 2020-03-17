@@ -16,6 +16,7 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -35,6 +36,7 @@ import org.mozilla.vrbrowser.ui.adapters.BookmarkAdapter;
 import org.mozilla.vrbrowser.ui.adapters.CustomLinearLayoutManager;
 import org.mozilla.vrbrowser.ui.callbacks.BookmarkItemCallback;
 import org.mozilla.vrbrowser.ui.callbacks.BookmarksCallback;
+import org.mozilla.vrbrowser.ui.viewmodel.BookmarksViewModel;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
@@ -59,6 +61,7 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
 
     private static final boolean ACCOUNTS_UI_ENABLED = false;
 
+    private BookmarksViewModel mViewModel;
     private BookmarksBinding mBinding;
     private Accounts mAccounts;
     private BookmarkAdapter mBookmarkAdapter;
@@ -82,6 +85,11 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
     }
 
     private void initialize(Context aContext) {
+        mViewModel = new ViewModelProvider(
+                (VRBrowserActivity)getContext(),
+                ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
+                .get(BookmarksViewModel.class);
+
         mUIThreadExecutor = ((VRBrowserApplication)getContext().getApplicationContext()).getExecutors().mainThread();
 
         mBookmarksViewListeners = new ArrayList<>();
@@ -121,7 +129,7 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
 
         mLayoutManager = (CustomLinearLayoutManager) mBinding.bookmarksList.getLayoutManager();
 
-        mBinding.setIsLoading(true);
+        mViewModel.setIsLoading(true);
 
         mBinding.setIsSignedIn(mAccounts.isSignedIn());
         boolean isSyncEnabled = mAccounts.isEngineEnabled(SyncEngine.Bookmarks.INSTANCE);
@@ -130,7 +138,7 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
             mBinding.setLastSync(mAccounts.lastSync());
             mBinding.setIsSyncing(mAccounts.isSyncing());
         }
-        mBinding.setIsNarrow(false);
+        mViewModel.setIsNarrow(false);
         mBinding.setIsAccountsUIEnabled(ACCOUNTS_UI_ENABLED);
         mBinding.executePendingBindings();
 
@@ -346,12 +354,12 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
 
     private void showBookmarks(List<BookmarkNode> aBookmarks) {
         if (aBookmarks == null || aBookmarks.size() == 0) {
-            mBinding.setIsEmpty(true);
-            mBinding.setIsLoading(false);
+            mViewModel.setIsEmpty(true);
+            mViewModel.setIsLoading(false);
 
         } else {
-            mBinding.setIsEmpty(false);
-            mBinding.setIsLoading(false);
+            mViewModel.setIsEmpty(false);
+            mViewModel.setIsLoading(false);
             mBookmarkAdapter.setBookmarkList(aBookmarks);
         }
     }
@@ -368,13 +376,13 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
             double width = Math.ceil(getWidth()/getContext().getResources().getDisplayMetrics().density);
             boolean isNarrow = width < SettingsStore.WINDOW_WIDTH_DEFAULT;
 
-            if (isNarrow != mBinding.getIsNarrow()) {
+            if (isNarrow != mViewModel.getIsNarrow().getValue().get()) {
                 mBookmarkAdapter.setNarrow(isNarrow);
 
-                mBinding.setIsNarrow(isNarrow);
+                mViewModel.setIsNarrow(isNarrow);
                 mBinding.executePendingBindings();
 
-                mBinding.setIsNarrow(isNarrow);
+                mViewModel.setIsNarrow(isNarrow);
                 mBinding.executePendingBindings();
 
                 requestLayout();

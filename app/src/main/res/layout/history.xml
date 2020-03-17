@@ -6,15 +6,11 @@
         <import type="android.view.View"/>
 
         <variable
+            name="historyViewModel"
+            type="org.mozilla.vrbrowser.ui.viewmodel.HistoryViewModel" />
+
+        <variable
             name="isAccountsUIEnabled"
-            type="boolean" />
-
-        <variable
-            name="isLoading"
-            type="boolean" />
-
-        <variable
-            name="isEmpty"
             type="boolean" />
 
         <variable
@@ -31,10 +27,6 @@
 
         <variable
             name="isSyncing"
-            type="boolean" />
-
-        <variable
-            name="isNarrow"
             type="boolean" />
 
         <variable
@@ -59,12 +51,12 @@
             android:layout_marginEnd="50dp"
             android:layout_marginBottom="20dp"
             app:isAccountsUIEnabled="@{isAccountsUIEnabled}"
-            app:isEmpty="@{isEmpty}"
+            app:isEmpty="@{historyViewModel.isEmpty}"
             app:isSignedIn="@{isSignedIn}"
             app:isSyncEnabled="@{isSyncEnabled}"
             app:lastSync="@{lastSync}"
             app:isSyncing="@{isSyncing}"
-            app:isNarrow="@{isNarrow}"
+            app:isNarrow="@{historyViewModel.isNarrow}"
             app:callback="@{callback}" />
 
         <include
@@ -76,12 +68,12 @@
             android:layout_marginEnd="50dp"
             android:layout_marginBottom="20dp"
             app:isAccountsUIEnabled="@{isAccountsUIEnabled}"
-            app:isEmpty="@{isEmpty}"
+            app:isEmpty="@{historyViewModel.isEmpty}"
             app:isSignedIn="@{isSignedIn}"
             app:isSyncEnabled="@{isSyncEnabled}"
             app:lastSync="@{lastSync}"
             app:isSyncing="@{isSyncing}"
-            app:isNarrow="@{isNarrow}"
+            app:isNarrow="@{historyViewModel.isNarrow}"
             app:callback="@{callback}" />
 
         <LinearLayout
@@ -89,11 +81,11 @@
             android:layout_height="match_parent"
             android:gravity="center_vertical|center_horizontal"
             android:orientation="vertical"
-            app:visibleGone="@{!isLoading &amp;&amp; isEmpty}">
+            app:visibleGone="@{!historyViewModel.isLoading &amp;&amp; historyViewModel.isEmpty}">
 
             <ImageView
-                android:layout_width="@{isNarrow ? @dimen/library_icon_size_narrow : @dimen/library_icon_size_wide, default=wrap_content}"
-                android:layout_height="@{isNarrow ? @dimen/library_icon_size_narrow : @dimen/library_icon_size_wide, default=wrap_content}"
+                android:layout_width="@{historyViewModel.isNarrow ? @dimen/library_icon_size_narrow : @dimen/library_icon_size_wide, default=wrap_content}"
+                android:layout_height="@{historyViewModel.isNarrow ? @dimen/library_icon_size_narrow : @dimen/library_icon_size_wide, default=wrap_content}"
                 android:src="@drawable/ic_icon_history"
                 app:srcCompat="@drawable/ic_icon_history" />
 
@@ -133,7 +125,7 @@
             android:textAlignment="center"
             android:textColor="@color/fog"
             android:visibility="gone"
-            app:visibleGone="@{isLoading}" />
+            app:visibleGone="@{historyViewModel.isLoading}" />
 
         <org.mozilla.vrbrowser.ui.views.CustomRecyclerView
             android:id="@+id/history_list"
@@ -146,7 +138,7 @@
             android:fadingEdgeLength="60dp"
             android:requiresFadingEdge="vertical"
             app:layoutManager="org.mozilla.vrbrowser.ui.adapters.CustomLinearLayoutManager"
-            app:visibleGone="@{!isLoading &amp;&amp; !isEmpty}" />
+            app:visibleGone="@{!historyViewModel.isLoading &amp;&amp; !historyViewModel.isEmpty}" />
 
     </LinearLayout>
 </layout>

@@ -39,6 +39,7 @@ import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
+import org.mozilla.vrbrowser.ui.widgets.WindowWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.RestartDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.UIDialog;
 import org.mozilla.vrbrowser.utils.StringUtils;
@@ -253,6 +254,11 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
                                   WidgetPlacement.unitFromMeters(getContext(), R.dimen.window_world_y);
         aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.settings_world_z) -
                                   WidgetPlacement.unitFromMeters(getContext(), R.dimen.window_world_z);
+    }
+
+    @Override
+    public void attachToWindow(@NonNull WindowWidget window) {
+        mWidgetPlacement.parentHandle = window.getHandle();
     }
 
     private void onSettingsPrivacyClick() {
