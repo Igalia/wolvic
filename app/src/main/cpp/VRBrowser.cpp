@@ -15,7 +15,7 @@ const char* kDispatchCreateWidgetSignature = "(ILandroid/graphics/SurfaceTexture
 const char* kDispatchCreateWidgetLayerName = "dispatchCreateWidgetLayer";
 const char* kDispatchCreateWidgetLayerSignature = "(ILandroid/view/Surface;IIJ)V";
 const char* kHandleMotionEventName = "handleMotionEvent";
-const char* kHandleMotionEventSignature = "(IIZFF)V";
+const char* kHandleMotionEventSignature = "(IIZZFF)V";
 const char* kHandleScrollEventName = "handleScrollEvent";
 const char* kHandleScrollEventSignature = "(IIFF)V";
 const char* kHandleAudioPoseName = "handleAudioPose";
@@ -175,9 +175,9 @@ VRBrowser::DispatchCreateWidgetLayer(jint aWidgetHandle, jobject aSurface, jint 
 
 
 void
-VRBrowser::HandleMotionEvent(jint aWidgetHandle, jint aController, jboolean aPressed, jfloat aX, jfloat aY) {
+VRBrowser::HandleMotionEvent(jint aWidgetHandle, jint aController, jboolean aFocused, jboolean aPressed, jfloat aX, jfloat aY) {
   if (!ValidateMethodID(sEnv, sActivity, sHandleMotionEvent, __FUNCTION__)) { return; }
-  sEnv->CallVoidMethod(sActivity, sHandleMotionEvent, aWidgetHandle, aController, aPressed, aX, aY);
+  sEnv->CallVoidMethod(sActivity, sHandleMotionEvent, aWidgetHandle, aController, aFocused, aPressed, aX, aY);
   CheckJNIException(sEnv, __FUNCTION__);
 }
 

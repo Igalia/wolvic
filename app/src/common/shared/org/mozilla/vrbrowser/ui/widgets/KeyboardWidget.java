@@ -63,6 +63,7 @@ import org.mozilla.vrbrowser.ui.views.CustomKeyboardView;
 import org.mozilla.vrbrowser.ui.views.KeyboardSelectorView;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.VoiceSearchWidget;
 import org.mozilla.vrbrowser.utils.StringUtils;
+import org.mozilla.vrbrowser.utils.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -94,6 +95,9 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private AutoCompletionView mAutoCompletionView;
     private KeyboardSelectorView mLanguageSelectorView;
     private KeyboardSelectorView mDomainSelectorView;
+    private LinearLayout mControlButtons;
+    private ImageView mAutocompletionLayer;
+    private ImageView mKeyboardNumericLayer;
 
     private int mKeyWidth;
     private int mKeyboardPopupTopMargin;
@@ -109,6 +113,11 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private boolean mInternalDeleteHint = false;
     private Session mSession;
     private boolean mInputRestarted = false;
+    public int mPopUpHoverDeviceId = -1;
+    public int mLanguageHoverDeviceId = -1;
+    public int mDomainHoverDeviceId = -1;
+    public int mAutoCompleteHoverDeviceId = -1;
+    public int mControlHoverDeviceId = -1;
 
     private class MoveTouchListener implements OnTouchListener {
         @Override
@@ -133,7 +142,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         }
     }
 
-    private class MoveHoverListener implements OnHoverListener {
+    private class ControlButtonHoverListener implements OnHoverListener {
         @Override
         public boolean onHover(View v, MotionEvent event) {
             switch (event.getAction()) {
@@ -144,6 +153,88 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                     v.setHovered(false);
             }
             return false;
+        }
+    }
+
+    private int updateLastDeviceId(View view, int deviceId, int x, int y, int value) {
+        if (view.getVisibility() == VISIBLE && ViewUtils.isInsideView(view, x, y)) {
+            if (value == -1) {
+                return deviceId;
+            }
+        } else {
+            if (deviceId == value) {
+                return -1;
+            }
+        }
+
+        return value;
+    }
+
+    public boolean isValidPointer(int deviceId, int eventDeviceId) {
+        return deviceId == -1 || deviceId == eventDeviceId;
+    }
+
+    private void clearKeyboardHover() {
+        if (mKeyboardView.isHovered()) {
+            mKeyboardView.setHovered(false);
+        }
+        if (mKeyboardNumericView.isHovered()) {
+            mKeyboardNumericView.setHovered(false);
+        }
+    }
+
+    @Override
+    public void handleHoverEvent(MotionEvent aEvent) {
+        int x = (int)aEvent.getRawX();
+        int y = (int)aEvent.getRawY();
+
+        int prevAutocompleteDeviceId = mAutoCompleteHoverDeviceId;
+        int prevControlButtonsDeviceId = mControlHoverDeviceId;
+
+        mPopUpHoverDeviceId = updateLastDeviceId(mPopupKeyboardView, aEvent.getDeviceId(), x, y, mPopUpHoverDeviceId);
+        mLanguageHoverDeviceId = updateLastDeviceId(mLanguageSelectorView, aEvent.getDeviceId(), x, y, mLanguageHoverDeviceId);
+        mDomainHoverDeviceId = updateLastDeviceId(mDomainSelectorView, aEvent.getDeviceId(), x, y, mDomainHoverDeviceId);
+        mAutoCompleteHoverDeviceId = updateLastDeviceId(mAutoCompletionView, aEvent.getDeviceId(), x, y, mAutoCompleteHoverDeviceId);
+        mControlHoverDeviceId = updateLastDeviceId(mControlButtons, aEvent.getDeviceId(), x, y, mControlHoverDeviceId);
+
+        if (mPopupKeyboardView.getVisibility() == VISIBLE) {
+            if (isValidPointer(mPopUpHoverDeviceId, aEvent.getDeviceId()) &&
+                    isValidPointer(mControlHoverDeviceId, aEvent.getDeviceId())) {
+                clearKeyboardHover();
+                super.handleHoverEvent(aEvent);
+            }
+
+        } else if (mLanguageSelectorView.getVisibility() == VISIBLE) {
+            if (isValidPointer(mLanguageHoverDeviceId, aEvent.getDeviceId()) &&
+                    isValidPointer(mControlHoverDeviceId, aEvent.getDeviceId())) {
+                clearKeyboardHover();
+                super.handleHoverEvent(aEvent);
+            }
+
+        } else if (mDomainSelectorView.getVisibility() == VISIBLE) {
+            if (isValidPointer(mDomainHoverDeviceId, aEvent.getDeviceId()) &&
+                    isValidPointer(mControlHoverDeviceId, aEvent.getDeviceId())) {
+                clearKeyboardHover();
+                super.handleHoverEvent(aEvent);
+            }
+
+        } else if (mAutoCompletionView.getVisibility() == VISIBLE) {
+            if (isValidPointer(mAutoCompleteHoverDeviceId, aEvent.getDeviceId()) &&
+                    isValidPointer(mControlHoverDeviceId, aEvent.getDeviceId())) {
+                if (prevAutocompleteDeviceId != mAutoCompleteHoverDeviceId ||
+                        prevControlButtonsDeviceId != mControlHoverDeviceId) {
+                    clearKeyboardHover();
+                }
+                super.handleHoverEvent(aEvent);
+            }
+
+        } else {
+            if (isValidPointer(mControlHoverDeviceId, aEvent.getDeviceId())) {
+                if (prevControlButtonsDeviceId != mControlHoverDeviceId) {
+                    clearKeyboardHover();
+                }
+                super.handleHoverEvent(aEvent);
+            }
         }
     }
 
@@ -172,6 +263,8 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mKeyboardNumericView = findViewById(R.id.keyboardNumeric);
         mPopupKeyboardView = findViewById(R.id.popupKeyboard);
         mPopupKeyboardLayer = findViewById(R.id.popupKeyboardLayer);
+        mAutocompletionLayer = findViewById(R.id.autoCompletionOverlay);
+        mKeyboardNumericLayer = findViewById(R.id.numericKeyboardOverlay);
         mLanguageSelectorView = findViewById(R.id.langSelectorView);
         mKeyboardLayout = findViewById(R.id.keyboardLayout);
         mKeyboardContainer = findViewById(R.id.keyboardContainer);
@@ -179,6 +272,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mAutoCompletionView = findViewById(R.id.autoCompletionView);
         mAutoCompletionView.setExtendedHeight((int)(mWidgetPlacement.height * mWidgetPlacement.density));
         mAutoCompletionView.setDelegate(this);
+        mControlButtons = findViewById(R.id.controlButtons);
 
         mDomainSelectorView = findViewById(R.id.domainSelectorView);
         mDomainSelectorView.setDelegate(this::handleDomainChange);
@@ -239,9 +333,10 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mCapsLockOnIcon = getResources().getDrawable(R.drawable.ic_icon_keyboard_caps, getContext().getTheme());
         mCloseKeyboardButton = findViewById(R.id.keyboardCloseButton);
         mCloseKeyboardButton.setOnClickListener(v -> dismiss());
+        mCloseKeyboardButton.setOnHoverListener(new ControlButtonHoverListener());
         mKeyboardMoveButton = findViewById(R.id.keyboardMoveButton);
         mKeyboardMoveButton.setOnTouchListener(new MoveTouchListener());
-        mKeyboardMoveButton.setOnHoverListener(new MoveHoverListener());
+        mKeyboardMoveButton.setOnHoverListener(new ControlButtonHoverListener());
         mKeyWidth = getResources().getDimensionPixelSize(R.dimen.keyboard_key_width);
         mKeyboardPopupTopMargin  = getResources().getDimensionPixelSize(R.dimen.keyboard_key_pressed_padding) * 2;
 
@@ -255,6 +350,8 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mKeyboardView.setVisibility(View.VISIBLE);
         mKeyboardNumericView.setKeyboard(mKeyboardNumeric);
 
+        mAutocompletionLayer.setOnClickListener(view -> hideOverlays());
+        mKeyboardNumericLayer.setOnClickListener(view -> hideOverlays());
         mPopupKeyboardLayer.setOnClickListener(view -> hideOverlays());
         hideOverlays();
 
@@ -381,7 +478,9 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     }
 
     public void dismiss() {
-        if (mPopupKeyboardLayer.getVisibility() == VISIBLE) {
+        if (mPopupKeyboardLayer.getVisibility() == VISIBLE ||
+                mAutocompletionLayer.getVisibility() == VISIBLE ||
+                mKeyboardNumericLayer.getVisibility() == VISIBLE) {
             hideOverlays();
             return;
         }
@@ -420,8 +519,14 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private void hideOverlays() {
         mPopupKeyboardView.setVisibility(View.GONE);
         mPopupKeyboardLayer.setVisibility(View.GONE);
+        mAutocompletionLayer.setVisibility(View.GONE);
+        mKeyboardNumericLayer.setVisibility(View.GONE);
         mLanguageSelectorView.setVisibility(View.GONE);
         mDomainSelectorView.setVisibility(View.GONE);
+
+        mPopUpHoverDeviceId = -1;
+        mLanguageHoverDeviceId = -1;
+        mDomainHoverDeviceId = -1;
     }
 
     protected void onDismiss() {
@@ -468,6 +573,9 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             mPopupKeyboardView.setShifted(mIsCapsLock || mKeyboardView.isShifted());
             mPopupKeyboardView.setVisibility(View.VISIBLE);
             mPopupKeyboardLayer.setVisibility(View.VISIBLE);
+            mKeyboardNumericLayer.setVisibility(View.VISIBLE);
+            mAutocompletionLayer.setVisibility(mAutoCompletionView.getVisibility());
+            mPopUpHoverDeviceId = -1;
 
             mIsLongPress = true;
 
@@ -647,7 +755,12 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                 }
             }
         }
-        mKeyboardView.setShifted(isShifted || mIsCapsLock);
+
+        // setShifted trigger a full keyboard redraw.
+        // To avoid this we only call setShifted if it's state has changed.
+        if (mKeyboardView.isShifted() != isShifted) {
+            mKeyboardView.setShifted(isShifted || mIsCapsLock);
+        }
     }
 
     private void handleBackspace() {
@@ -699,6 +812,9 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mLanguageSelectorView.setSelectedItem(mCurrentKeyboard);
         mLanguageSelectorView.setVisibility(View.VISIBLE);
         mPopupKeyboardLayer.setVisibility(View.VISIBLE);
+        mKeyboardNumericLayer.setVisibility(View.VISIBLE);
+        mAutocompletionLayer.setVisibility(mAutoCompletionView.getVisibility());
+        mLanguageHoverDeviceId = -1;
     }
 
     private void handleEmojiInput() {
@@ -716,6 +832,9 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
         mDomainSelectorView.setVisibility(View.VISIBLE);
         mPopupKeyboardLayer.setVisibility(View.VISIBLE);
+        mKeyboardNumericLayer.setVisibility(View.VISIBLE);
+        mAutocompletionLayer.setVisibility(mAutoCompletionView.getVisibility());
+        mDomainHoverDeviceId = -1;
     }
 
     private void handleLanguageChange(KeyboardInterface aKeyboard) {
@@ -988,6 +1107,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
     private void setAutoCompletionVisible(boolean aVisible) {
         mAutoCompletionView.setVisibility(aVisible ? View.VISIBLE : View.GONE);
+        mAutoCompleteHoverDeviceId = -1;
     }
 
     // Must be called in the input thread, see postInputCommand.
@@ -1071,6 +1191,11 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean supportsMultipleInputDevices() {
+        return true;
     }
 
     // GeckoSession.TextInputDelegate

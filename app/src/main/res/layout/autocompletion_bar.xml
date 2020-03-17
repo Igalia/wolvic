@@ -6,7 +6,7 @@
     android:gravity="center_horizontal"
     android:padding="0dp"
     android:orientation="vertical">
-    
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/autocompletion_widget_line_height"

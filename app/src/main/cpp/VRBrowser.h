@@ -20,7 +20,7 @@ void InitializeJava(JNIEnv* aEnv, jobject aActivity);
 void ShutdownJava();
 void DispatchCreateWidget(jint aWidgetHandle, jobject aSurfaceTexture, jint aWidth, jint aHeight);
 void DispatchCreateWidgetLayer(jint aWidgetHandle, jobject aSurface, jint aWidth, jint aHeight, const std::function<void()>& aFirstCompositeCallback);
-void HandleMotionEvent(jint aWidgetHandle, jint aController, jboolean aPressed, jfloat aX, jfloat aY);
+void HandleMotionEvent(jint aWidgetHandle, jint aController, jboolean aFocused, jboolean aPressed, jfloat aX, jfloat aY);
 void HandleScrollEvent(jint aWidgetHandle, jint aController, jfloat aX, jfloat aY);
 void HandleAudioPose(jfloat qx, jfloat qy, jfloat qz, jfloat qw, jfloat px, jfloat py, jfloat pz);
 void HandleGesture(jint aType);

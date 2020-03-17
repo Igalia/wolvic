@@ -361,8 +361,6 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
       if (focusRequested) {
         ChangeControllerFocus(controller);
       }
-      controller.lastButtonState = controller.buttonState;
-      continue;
     }
 
     const vrb::Vector start = controller.StartPoint();
@@ -429,7 +427,7 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
           aRelayoutWidgets = true;
         }
       }
-    } else if (hitWidget && hitWidget->IsResizing()) {
+    } else if (hitWidget && hitWidget->IsResizing() && controller.focused) {
       bool aResized = false, aResizeEnded = false;
       hitWidget->HandleResize(hitPoint, pressed, aResized, aResizeEnded);
 
@@ -464,8 +462,7 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
         controller.widget = handle;
         controller.pointerX = theX;
         controller.pointerY = theY;
-        VRBrowser::HandleMotionEvent(handle, controller.index, jboolean(pressed),
-                                     controller.pointerX, controller.pointerY);
+        VRBrowser::HandleMotionEvent(handle, controller.index, jboolean(controller.focused), jboolean(pressed), controller.pointerX, controller.pointerY);
       }
       if ((controller.scrollDeltaX != 0.0f) || controller.scrollDeltaY != 0.0f) {
         if (controller.scrollStart < 0.0) {
@@ -498,18 +495,18 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
         }
       }
     } else if (controller.widget) {
-      VRBrowser::HandleMotionEvent(0, controller.index, (jboolean) pressed, 0.0f, 0.0f);
+      VRBrowser::HandleMotionEvent(0, controller.index, jboolean(controller.focused), (jboolean) pressed, 0.0f, 0.0f);
       controller.widget = 0;
 
     } else if (wasPressed != pressed) {
-      VRBrowser::HandleMotionEvent(0, controller.index, (jboolean) pressed, 0.0f, 0.0f);
+      VRBrowser::HandleMotionEvent(0, controller.index, jboolean(controller.focused), (jboolean) pressed, 0.0f, 0.0f);
     } else if (vrVideo != nullptr) {
       const bool togglePressed = controller.buttonState & ControllerDelegate::BUTTON_X ||
                                  controller.buttonState & ControllerDelegate::BUTTON_A;
       const bool toggleWasPressed = controller.lastButtonState & ControllerDelegate::BUTTON_X ||
                                     controller.lastButtonState & ControllerDelegate::BUTTON_A;
       if (togglePressed != toggleWasPressed) {
-        VRBrowser::HandleMotionEvent(0, controller.index, (jboolean) togglePressed, 0.0f, 0.0f);
+        VRBrowser::HandleMotionEvent(0, controller.index, jboolean(controller.focused), (jboolean) togglePressed, 0.0f, 0.0f);
       }
     }
     controller.lastButtonState = controller.buttonState;
@@ -1142,7 +1139,7 @@ BrowserWorld::StartWidgetMove(int32_t aHandle, int32_t aMoveBehavour) {
       continue;
     }
 
-    if (controller.pointer && controller.pointer->GetHitWidget() == widget) {
+    if (controller.pointer && controller.focused && controller.pointer->GetHitWidget() == widget) {
       controllerIndex = controller.index;
       start = controller.StartPoint();
       direction = controller.Direction();

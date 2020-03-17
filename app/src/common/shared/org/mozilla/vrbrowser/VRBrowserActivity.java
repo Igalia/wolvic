@@ -807,7 +807,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Keep
     @SuppressWarnings("unused")
-    void handleMotionEvent(final int aHandle, final int aDevice, final boolean aPressed, final float aX, final float aY) {
+    void handleMotionEvent(final int aHandle, final int aDevice, final boolean aFocused, final boolean aPressed, final float aX, final float aY) {
         runOnUiThread(() -> {
             Widget widget = mWidgets.get(aHandle);
             if (!isWidgetInputEnabled(widget)) {
@@ -819,12 +819,14 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             final float y = aY / scale;
 
             if (widget == null) {
-                MotionEventGenerator.dispatch(mRootWidget, aDevice, aPressed, x, y);
+                MotionEventGenerator.dispatch(mRootWidget, aDevice, aFocused, aPressed, x, y);
+
             } else if (widget.getBorderWidth() > 0) {
                 final int border = widget.getBorderWidth();
-                MotionEventGenerator.dispatch(widget, aDevice, aPressed, x - border, y - border);
+                MotionEventGenerator.dispatch(widget, aDevice, aFocused, aPressed, x - border, y - border);
+
             } else {
-                MotionEventGenerator.dispatch(widget, aDevice, aPressed, x, y);
+                MotionEventGenerator.dispatch(widget, aDevice, aFocused, aPressed, x, y);
             }
         });
     }
@@ -839,7 +841,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             }
             if (widget != null) {
                 float scrollDirection = mSettings.getScrollDirection() == 0 ? 1.0f : -1.0f;
-                MotionEventGenerator.dispatchScroll(widget, aDevice, aX * scrollDirection, aY * scrollDirection);
+                MotionEventGenerator.dispatchScroll(widget, aDevice, true,aX * scrollDirection, aY * scrollDirection);
             } else {
                 Log.e(LOGTAG, "Failed to find widget for scroll event: " + aHandle);
             }

@@ -7,15 +7,14 @@ package org.mozilla.vrbrowser.input;
 
 import android.os.SystemClock;
 import android.util.Log;
-import android.view.MotionEvent;
-import android.view.InputDevice;
 import android.util.SparseArray;
+import android.view.InputDevice;
+import android.view.MotionEvent;
 
 import org.mozilla.vrbrowser.ui.widgets.Widget;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.util.Arrays;
-import java.util.List;
 
 public class MotionEventGenerator {
     static final String LOGTAG = SystemUtils.createLogtag(MotionEventGenerator.class);
@@ -53,11 +52,11 @@ public class MotionEventGenerator {
     private static SparseArray<Device> devices = new SparseArray<>();
 
 
-    private static void generateEvent(Widget aWidget, Device aDevice, int aAction, boolean aGeneric) {
-        generateEvent(aWidget, aDevice, aAction, aGeneric, aDevice.mCoords);
+    private static void generateEvent(Widget aWidget, Device aDevice, boolean aFocused, int aAction, boolean aGeneric) {
+        generateEvent(aWidget, aDevice, aFocused, aAction, aGeneric, aDevice.mCoords);
     }
 
-    private static void generateEvent(Widget aWidget, Device aDevice, int aAction, boolean aGeneric, MotionEvent.PointerCoords[] aCoords) {
+    private static void generateEvent(Widget aWidget, Device aDevice, boolean aFocused, int aAction, boolean aGeneric, MotionEvent.PointerCoords[] aCoords) {
         MotionEvent event = MotionEvent.obtain(
                 /*mDownTime*/ aDevice.mDownTime,
                 /*eventTime*/ SystemClock.uptimeMillis(),
@@ -69,19 +68,24 @@ public class MotionEventGenerator {
                 /*buttonState*/ 0,
                 /*xPrecision*/ 0,
                 /*yPrecision*/ 0,
-                /*deviceId*/ 0, // aDevice.mDevice,
+                /*deviceId*/ aDevice.mDevice,
                 /*edgeFlags*/ 0,
                 /*source*/ InputDevice.SOURCE_TOUCHSCREEN,
                 /*flags*/ 0);
         if (aGeneric) {
-            aWidget.handleHoverEvent(event);
+            if (aWidget.supportsMultipleInputDevices()) {
+                aWidget.handleHoverEvent(event);
+
+            } else if (aFocused) {
+                aWidget.handleHoverEvent(event);
+            }
         } else {
             aWidget.handleTouchEvent(event);
         }
         event.recycle();
     }
 
-    public static void dispatch(Widget aWidget, int aDevice, boolean aPressed, float aX, float aY) {
+    public static void dispatch(Widget aWidget, int aDevice, boolean aFocused, boolean aPressed, float aX, float aY) {
         Device device = devices.get(aDevice);
         if (device == null) {
             device = new Device(aDevice);
@@ -99,10 +103,10 @@ public class MotionEventGenerator {
         }
         if (!aPressed && (device.mPreviousWidget != null) && (device.mPreviousWidget != aWidget)) {
             if (device.mWasPressed) {
-                generateEvent(device.mPreviousWidget, device, MotionEvent.ACTION_CANCEL, false);
+                generateEvent(device.mPreviousWidget, device, aFocused, MotionEvent.ACTION_CANCEL, false);
                 device.mWasPressed = false;
             }
-            generateEvent(device.mPreviousWidget, device, MotionEvent.ACTION_HOVER_EXIT, true, device.mMouseOutCoords);
+            generateEvent(device.mPreviousWidget, device, aFocused, MotionEvent.ACTION_HOVER_EXIT, true, device.mMouseOutCoords);
             device.mPreviousWidget = null;
         }
         if (aWidget == null) {
@@ -110,22 +114,27 @@ public class MotionEventGenerator {
             return;
         }
         if (aWidget != device.mPreviousWidget && !aPressed) {
-            generateEvent(aWidget, device, MotionEvent.ACTION_HOVER_ENTER, true);
+            generateEvent(aWidget, device, aFocused, MotionEvent.ACTION_HOVER_ENTER, true);
         }
         if (aPressed && !device.mWasPressed) {
             device.mDownTime = SystemClock.uptimeMillis();
             device.mWasPressed = true;
-            generateEvent(aWidget, device, MotionEvent.ACTION_HOVER_EXIT, true);
-            generateEvent(aWidget, device, MotionEvent.ACTION_DOWN, false);
+            if (!isOtherDeviceDown(device.mDevice)) {
+                generateEvent(aWidget, device, aFocused, MotionEvent.ACTION_HOVER_EXIT, true);
+                generateEvent(aWidget, device, aFocused, MotionEvent.ACTION_DOWN, false);
+            }
             device.mTouchStartWidget = aWidget;
         } else if (!aPressed && device.mWasPressed) {
             device.mWasPressed = false;
-            generateEvent(device.mTouchStartWidget, device, MotionEvent.ACTION_UP, false);
-            generateEvent(aWidget, device, MotionEvent.ACTION_HOVER_ENTER, true);
+            if (!isOtherDeviceDown(device.mDevice)) {
+                generateEvent(device.mTouchStartWidget, device, aFocused, MotionEvent.ACTION_UP, false);
+                generateEvent(aWidget, device, aFocused, MotionEvent.ACTION_HOVER_ENTER, true);
+            }
+            device.mTouchStartWidget = null;
         } else if (moving && aPressed) {
-            generateEvent(aWidget, device, MotionEvent.ACTION_MOVE, false);
+            generateEvent(aWidget, device, aFocused, MotionEvent.ACTION_MOVE, false);
         } else if (moving) {
-            generateEvent(aWidget, device, MotionEvent.ACTION_HOVER_MOVE, true);
+            generateEvent(aWidget, device, aFocused, MotionEvent.ACTION_HOVER_MOVE, true);
         } else {
             Log.e("VRB", "Unknown touch event action");
             return;
@@ -133,7 +142,27 @@ public class MotionEventGenerator {
         device.mPreviousWidget = aWidget;
     }
 
-    public static void dispatchScroll(Widget aWidget, int aDevice, float aX, float aY) {
+    /**
+     * Checks if any other device has an ongoing touch down event.
+     * Android throw away all previous state when starting a new touch gesture
+     * and this seem to make the previous touch to be sent up the view hierarchy.
+     * To avoid this we check if any other device has a button down before sending
+     * touch down/up event.
+     * @param deviceId Device Id to filter
+     * @return true if any other device has a button down, false otherwise
+     */
+    private static boolean isOtherDeviceDown(int deviceId) {
+        boolean result = false;
+        for (int i=0; i<devices.size(); i++) {
+            if (i != deviceId) {
+                result |= devices.get(i).mTouchStartWidget != null;
+            }
+        }
+
+        return result;
+    }
+
+    public static void dispatchScroll(Widget aWidget, int aDevice, boolean aFocused, float aX, float aY) {
         Device device = devices.get(aDevice);
         if (device == null) {
             device = new Device(aDevice);
@@ -142,7 +171,7 @@ public class MotionEventGenerator {
         device.mPreviousWidget = aWidget;
         device.mCoords[0].setAxisValue(MotionEvent.AXIS_VSCROLL, aY);
         device.mCoords[0].setAxisValue(MotionEvent.AXIS_HSCROLL, aX);
-        generateEvent(aWidget, device, MotionEvent.ACTION_SCROLL, true);
+        generateEvent(aWidget, device, aFocused, MotionEvent.ACTION_SCROLL, true);
         device.mCoords[0].setAxisValue(MotionEvent.AXIS_VSCROLL, 0.0f);
         device.mCoords[0].setAxisValue(MotionEvent.AXIS_HSCROLL, 0.0f);
     }

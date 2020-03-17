@@ -12,6 +12,7 @@
             android:layout_marginTop="0dp"
             android:orientation="horizontal">
             <LinearLayout
+                android:id="@+id/controlButtons"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -104,16 +105,29 @@
                 android:layout_height="0dp"
                 android:layout_weight="1" />
 
-            <org.mozilla.vrbrowser.ui.views.CustomKeyboardView
-                android:id="@+id/keyboardNumeric"
+            <FrameLayout
                 android:layout_width="@dimen/keyboard_numeric_width"
-                android:layout_height="match_parent"
-                android:padding="15dp"
-                android:background="@drawable/keyboard_background"
-                android:keyBackground="@drawable/keyboard_key_background"
-                android:shadowColor="@android:color/transparent"
-                android:shadowRadius="0.0"
-                android:verticalCorrection="0dp"/>
+                android:layout_height="match_parent">
+                <org.mozilla.vrbrowser.ui.views.CustomKeyboardView
+                    android:id="@+id/keyboardNumeric"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="15dp"
+                    android:background="@drawable/keyboard_background"
+                    android:keyBackground="@drawable/keyboard_key_background"
+                    android:shadowColor="@android:color/transparent"
+                    android:shadowRadius="0.0"
+                    android:verticalCorrection="0dp"/>
+                <ImageView
+                    android:id="@+id/numericKeyboardOverlay"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="15dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/dialog_background"
+                    android:alpha="0.5"
+                    android:visibility="gone"/>
+            </FrameLayout>
 
         </LinearLayout>
 
@@ -122,9 +136,16 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/autocompletion_widget_line_height"
             android:layout_marginStart="38dp"
-            android:visibility="gone">
-
-        </org.mozilla.vrbrowser.ui.views.AutoCompletionView>
+            android:visibility="gone"/>
+        <ImageView
+            android:id="@+id/autoCompletionOverlay"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/autocompletion_widget_line_height"
+            android:layout_marginStart="38dp"
+            android:layout_gravity="center"
+            android:background="@drawable/dialog_background"
+            android:alpha="0.5"
+            android:visibility="gone"/>
     </RelativeLayout>
 
 
