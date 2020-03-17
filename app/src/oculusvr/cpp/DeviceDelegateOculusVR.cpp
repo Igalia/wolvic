@@ -386,7 +386,7 @@ struct DeviceDelegateOculusVR::State {
         return;
       }
       ovrTracking tracking = {};
-      if (vrapi_GetInputTrackingState(ovr, controllerState.deviceId, 0, &tracking) != ovrSuccess) {
+      if (vrapi_GetInputTrackingState(ovr, controllerState.deviceId, predictedDisplayTime, &tracking) != ovrSuccess) {
         VRB_LOG("Failed to read controller tracking controllerStateList");
         return;
       }
