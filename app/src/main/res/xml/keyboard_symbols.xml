@@ -37,9 +37,9 @@
         <Key android:codes="-1" android:keyIcon="@drawable/ic_icon_keyboard_shift_on" android:keyEdgeFlags="left"/>
         <Key android:codes="60" android:keyLabel="&lt;"/>
         <Key android:codes="62" android:keyLabel="&gt;"/>
-        <Key android:codes="39" android:keyLabel="`"/>
+        <Key android:codes="96" android:keyLabel="`"/>
         <Key android:codes="126" android:keyLabel="~"/>
-        <Key android:codes="39" android:keyLabel="´"/>
+        <Key android:codes="39" android:keyLabel="'"/>
         <Key android:codes="34" android:keyLabel="&quot;"/>
         <Key android:codes="92" android:keyLabel="\\" />
         <Key android:codes="45" android:keyLabel="-" />

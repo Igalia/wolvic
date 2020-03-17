@@ -21,7 +21,7 @@
     </Row>
 
     <Row>
-        <Key android:codes="186" android:keyLabel="º" android:keyEdgeFlags="left" android:horizontalGap="@dimen/keyboard_left_margin"/>
+        <Key android:codes="176" android:keyLabel="°" android:keyEdgeFlags="left" android:horizontalGap="@dimen/keyboard_left_margin"/>
         <Key android:codes="94" android:keyLabel="^" />
         <Key android:codes="167" android:keyLabel="§" />
         <Key android:codes="123" android:keyLabel="{"/>
@@ -29,9 +29,9 @@
         <Key android:codes="91" android:keyLabel="["/>
         <Key android:codes="93" android:keyLabel="]"/>
         <Key android:codes="124" android:keyLabel="|"/>
-        <Key android:codes="39" android:keyLabel="'"/>
+        <Key android:codes="183" android:keyLabel="·"/>
         <Key android:codes="59" android:keyLabel=";"/>
-        <Key android:keyOutputText="º" android:keyLabel="º"/>
+        <Key android:codes="0x2116" android:keyLabel="№"/>
         <Key android:codes="-4" android:keyLabel="@string/keyboard_enter_label" android:keyWidth="@dimen/keyboard_key_enter_width"  />
     </Row>
 
@@ -39,9 +39,9 @@
         <Key android:codes="-1" android:keyIcon="@drawable/ic_icon_keyboard_shift_on" android:keyEdgeFlags="left"/>
         <Key android:codes="60" android:keyLabel="&lt;"/>
         <Key android:codes="62" android:keyLabel="&gt;"/>
-        <Key android:codes="39" android:keyLabel="`"/>
+        <Key android:codes="96" android:keyLabel="`"/>
         <Key android:codes="126" android:keyLabel="~"/>
-        <Key android:codes="39" android:keyLabel="´"/>
+        <Key android:codes="39" android:keyLabel="'"/>
         <Key android:codes="34" android:keyLabel="&quot;"/>
         <Key android:codes="92" android:keyLabel="\\" />
         <Key android:keyOutputText="≠" android:keyLabel="≠" />

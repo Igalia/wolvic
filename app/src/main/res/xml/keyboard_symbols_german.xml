@@ -29,9 +29,9 @@
         <Key android:codes="91" android:keyLabel="["/>
         <Key android:codes="93" android:keyLabel="]"/>
         <Key android:codes="124" android:keyLabel="|"/>
-        <Key android:codes="39" android:keyLabel="'"/>
         <Key android:codes="59" android:keyLabel=";"/>
-        <Key android:keyOutputText="©" android:keyLabel="©"/>
+        <Key android:codes="0xae" android:keyLabel="®"/>
+        <Key android:codes="0xa9" android:keyLabel="©"/>
         <Key android:codes="-4" android:keyLabel="@string/keyboard_enter_label" android:keyWidth="@dimen/keyboard_key_enter_width"  />
     </Row>
 
@@ -39,9 +39,9 @@
         <Key android:codes="-1" android:keyIcon="@drawable/ic_icon_keyboard_shift_on" android:keyEdgeFlags="left"/>
         <Key android:codes="60" android:keyLabel="&lt;"/>
         <Key android:codes="62" android:keyLabel="&gt;"/>
-        <Key android:codes="39" android:keyLabel="`"/>
+        <Key android:codes="96" android:keyLabel="`"/>
         <Key android:codes="126" android:keyLabel="~"/>
-        <Key android:codes="39" android:keyLabel="´"/>
+        <Key android:codes="39" android:keyLabel="'"/>
         <Key android:codes="34" android:keyLabel="&quot;"/>
         <Key android:codes="58" android:keyLabel="™"/>
         <Key android:codes="95" android:keyLabel="_"/>
