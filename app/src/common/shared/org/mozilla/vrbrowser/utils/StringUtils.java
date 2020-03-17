@@ -92,7 +92,7 @@ public class StringUtils {
      * @return String The converted date in the format yyyy-MM-dd
      */
     public static String versionCodeToDate(final @NonNull Context context, final int aVersionCode) {
-        String versionCode = Integer.toString(aVersionCode);
+        String versionCode = Integer.toString(aVersionCode - 100000000);
 
         String formatted;
         try {

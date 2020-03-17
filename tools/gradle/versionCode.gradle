@@ -37,7 +37,9 @@ ext {
     // minute.
     def time = new SimpleDateFormat("HHmm").format(today)
 
-    generatedVersionCode = (year + day + time) as int
+    def baseNumber = (year + day + time) as int
+
+    generatedVersionCode = 100000000 + baseNumber
 
     println("Generated versionCode: $generatedVersionCode")
     println()

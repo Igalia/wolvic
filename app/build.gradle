@@ -558,3 +558,14 @@ if (gradle.hasProperty('localProperties.dependencySubstitutions.geckoviewTopsrcd
     apply from: "${topsrcdir}/substitute-local-geckoview.gradle"
 }
 
+// -------------------------------------------------------------------------------------------------
+//  Dynamically set versionCode (See tools/build/versionCode.gradle
+// -------------------------------------------------------------------------------------------------
+
+android.applicationVariants.all { variant ->
+    if (gradle.hasProperty('userProperties.taskclusterBuild')) {
+        variant.outputs.each { output ->
+            output.versionCodeOverride = generatedVersionCode
+        }
+    }
+}
