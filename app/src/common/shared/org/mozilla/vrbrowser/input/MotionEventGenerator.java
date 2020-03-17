@@ -155,7 +155,9 @@ public class MotionEventGenerator {
         boolean result = false;
         for (int i=0; i<devices.size(); i++) {
             if (i != deviceId) {
-                result |= devices.get(i).mTouchStartWidget != null;
+                if (devices.get(i) != null) {
+                    result |= devices.get(i).mTouchStartWidget != null;
+                }
             }
         }
 
