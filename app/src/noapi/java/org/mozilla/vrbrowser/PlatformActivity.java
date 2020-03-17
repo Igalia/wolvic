@@ -26,43 +26,33 @@ public class PlatformActivity extends Activity {
     static String LOGTAG = SystemUtils.createLogtag(PlatformActivity.class);
     static final float ROTATION = 0.098174770424681f;
 
+    @SuppressWarnings("unused")
     public static boolean filterPermission(final String aPermission) {
         return false;
     }
 
     private GLSurfaceView mView;
     private TextView mFrameRate;
-    private ArrayList<Runnable> mPendingEvents;
+    private final ArrayList<Runnable> mPendingEvents = new ArrayList<>();
     private boolean mSurfaceCreated = false;
     private int mFrameCount;
     private long mLastFrameTime = System.currentTimeMillis();
 
-    private final Runnable activityDestroyedRunnable = new Runnable() {
-        @Override
-        public void run() {
-            synchronized (this) {
-                activityDestroyed();
-                notifyAll();
-            }
+    private final Runnable activityDestroyedRunnable = () -> {
+        synchronized (this) {
+            activityDestroyed();
+            notifyAll();
         }
     };
 
-    private final Runnable activityPausedRunnable = new Runnable() {
-        @Override
-        public void run() {
-            synchronized (this) {
-                activityPaused();
-                notifyAll();
-            }
+    private final Runnable activityPausedRunnable = () -> {
+        synchronized (this) {
+            activityPaused();
+            notifyAll();
         }
     };
 
-    private final Runnable activityResumedRunnable = new Runnable() {
-        @Override
-        public void run() {
-            activityResumed();
-        }
-    };
+    private final Runnable activityResumedRunnable = this::activityResumed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +60,6 @@ public class PlatformActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.noapi_layout);
-        mPendingEvents = new ArrayList<>();
         mFrameRate = findViewById(R.id.frame_rate_text);
         mView = findViewById(R.id.gl_view);
         mView.setEGLContextClientVersion(3);
@@ -252,6 +241,7 @@ public class PlatformActivity extends Activity {
             }
             return false;
         });
+        setImmersiveSticky();
     }
 
     private void updateUI(final int aMode) {
@@ -262,6 +252,7 @@ public class PlatformActivity extends Activity {
             Log.d(LOGTAG, "Got render mode of Immersive");
             findViewById(R.id.click_button).setVisibility(View.VISIBLE);
         }
+        setImmersiveSticky();
     }
 
     private void dispatchMoveAxis(final float aX, final float aY, final float aZ) {
@@ -281,6 +272,7 @@ public class PlatformActivity extends Activity {
     }
 
     @Keep
+    @SuppressWarnings("unused")
     private void setRenderMode(final int aMode) {
         runOnUiThread(() -> updateUI(aMode));
     }
