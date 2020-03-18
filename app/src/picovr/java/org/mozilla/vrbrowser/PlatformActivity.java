@@ -82,7 +82,7 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
         if (ControllerClient.isControllerServiceExisted(this)) {
             mControllerManager = new CVControllerManager(this);
             mControllerManager.setListener(this);
-            mType = 1; // Neo2
+            mType = 1; // 6Dof Headset
             // Enable high res
             PicovrSDK.SetEyeBufferSize(1920, 1920);
         } else {
