@@ -106,7 +106,7 @@ public class StringUtils {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             formatted = format.format(cal.getTime());
 
-        } catch (StringIndexOutOfBoundsException e) {
+        } catch (StringIndexOutOfBoundsException | NumberFormatException e) {
             formatted = context.getString(R.string.settings_version_developer);
         }
 
