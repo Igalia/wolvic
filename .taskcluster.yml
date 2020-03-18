@@ -31,7 +31,7 @@ tasks:
         expires: {$fromNow: 1 year}
         payload:
           maxRunTime: 14400
-          image: 'mozillamixedreality/firefoxreality:190312'
+          image: 'mozillamixedreality/firefoxreality:200316-SDK29'
           command:
             - /bin/bash
             - '--login'
@@ -77,7 +77,7 @@ tasks:
             - notify.email.fxr-releng@mozilla.com.on-any
           payload:
             maxRunTime: 14400
-            image: 'mozillamixedreality/firefoxreality:190312'
+            image: 'mozillamixedreality/firefoxreality:200316-SDK29'
             features:
               taskclusterProxy: true
             command:
@@ -129,7 +129,7 @@ tasks:
           - notify.email.fxr-releng@mozilla.com.on-any
         payload:
           maxRunTime: 14400
-          image: 'mozillamixedreality/firefoxreality:190312'
+          image: 'mozillamixedreality/firefoxreality:200316-SDK29'
           features:
             taskclusterProxy: true
           command:

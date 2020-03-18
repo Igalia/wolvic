@@ -31,6 +31,9 @@
     <attr name="buttonText" format="string" />
     <attr name="title" format="string" />
     <attr name="description" format="string" />
+    <attr name="itemMargin" format="dimension" />
+    <attr name="by" format="string" />
+    <attr name="highlightedTextColor" format="reference|color" />
     <attr name="tooltipDelay" format="integer" />
     <attr name="tooltipPosition" format="enum">
         <enum name="top" value="0"/>
