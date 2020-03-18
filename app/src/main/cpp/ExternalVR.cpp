@@ -414,12 +414,12 @@ ExternalVR::PushFramePoses(const vrb::Matrix& aHeadTransform, const std::vector<
     immersiveController.numButtons = controller.numButtons;
     immersiveController.buttonPressed = controller.immersivePressedState;
     immersiveController.buttonTouched = controller.immersiveTouchedState;
-    for (int i = 0; i< controller.numButtons; ++i) {
-      immersiveController.triggerValue[i] = controller.immersiveTriggerValues[i];
+    for (int j = 0; j < controller.numButtons; ++j) {
+      immersiveController.triggerValue[j] = controller.immersiveTriggerValues[j];
     }
     immersiveController.numAxes = controller.numAxes;
-    for (int i = 0; i< controller.numAxes; ++i) {
-      immersiveController.axisValue[i] = controller.immersiveAxes[i];
+    for (int j = 0; j < controller.numAxes; ++j) {
+      immersiveController.axisValue[j] = controller.immersiveAxes[j];
     }
     immersiveController.numHaptics = controller.numHaptics;
     immersiveController.hand = controller.leftHanded ? mozilla::gfx::ControllerHand::Left : mozilla::gfx::ControllerHand::Right;

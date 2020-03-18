@@ -29,9 +29,10 @@ namespace crow {
 
 static const vrb::Vector kAverageHeight(0.0f, 1.7f, 0.0f);
 // TODO: support different controllers & buttons
-static const int32_t kMaxControllerCount = 2;
+static const int32_t kMaxControllerCount = 3;
 static const int32_t kNumButtons = 6;
 static const int32_t kNumG2Buttons = 2;
+static const int32_t kNumGazeButtons = 2;
 static const int32_t kNumAxes = 2;
 static const int32_t k6DofHeadSet = 1;
 static const int32_t kButtonApp       = 1;
@@ -93,6 +94,8 @@ struct DeviceDelegatePicoVR::State {
   float fov = (float) (51.0 * M_PI / 180.0);
   int32_t focusIndex = 0;
   bool recentered = false;
+  bool isInGazeMode = false;
+  int32_t gazeIndex = -1;
 
   void Initialize() {
     vrb::RenderContextPtr localContext = context.lock();
@@ -102,6 +105,8 @@ struct DeviceDelegatePicoVR::State {
     cameras[device::EyeIndex(device::Eye::Right)] = vrb::CameraEye::Create(create);
     UpdatePerspective();
     UpdateEyeTransform();
+
+    gazeIndex = VRBrowserPico::GetGazeIndex();
 
     for (int32_t index = 0; index < kMaxControllerCount; index++) {
       controllers[index].index = index;
@@ -211,12 +216,21 @@ struct DeviceDelegatePicoVR::State {
 
       vrb::Matrix transform = controller.transform;
       if (renderMode == device::RenderMode::StandAlone) {
-        if (type == k6DofHeadSet) {
-          transform.TranslateInPlace(headOffset);
+        if (isInGazeMode) {
+          if (i == gazeIndex) {
+            vrb::Matrix head = vrb::Matrix::Rotation(orientation);
+            head.PreMultiplyInPlace(vrb::Matrix::Position(headOffset));
+            controller.transform = head;
+            transform = controller.transform;
+          }
         } else {
-          vrb::Matrix head = vrb::Matrix::Rotation(orientation);
-          head.PreMultiplyInPlace(vrb::Matrix::Position(headOffset));
-          transform = elbow->GetTransform(controller.hand, head, transform);
+          if (type == k6DofHeadSet) {
+            transform.TranslateInPlace(headOffset);
+          } else {
+            vrb::Matrix head = vrb::Matrix::Rotation(orientation);
+            head.PreMultiplyInPlace(vrb::Matrix::Position(headOffset));
+            transform = elbow->GetTransform(controller.hand, head, transform);
+          }
         }
       }
 
@@ -226,6 +240,10 @@ struct DeviceDelegatePicoVR::State {
         UpdateHaptics(controllers[i]);
       }
     }
+  }
+
+  int32_t GazeModeIndex() {
+    return gazeIndex;
   }
 };
 
@@ -315,18 +333,25 @@ DeviceDelegatePicoVR::SetControllerDelegate(ControllerDelegatePtr& aController) 
   for (State::Controller& controller: m.controllers) {
     const int32_t index = controller.index;
 
-    if (m.type == k6DofHeadSet) {
-      vrb::Matrix beam = vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), -vrb::PI_FLOAT / 11.5f);
-      beam.TranslateInPlace(vrb::Vector(0.0f, 0.012f, -0.06f));
-      m.controllerDelegate->CreateController(index, int32_t(controller.hand), controller.IsRightHand() ? "Pico Neo 2 (Right)" : "Pico Neo 2 (LEFT)", beam);
-      m.controllerDelegate->SetButtonCount(index, kNumButtons);
-      m.controllerDelegate->SetHapticCount(index, 1);
-    } else {
-      vrb::Matrix beam =  vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), -vrb::PI_FLOAT / 11.5f);
-
-      m.controllerDelegate->CreateController(index, 0, "Pico G2 Controller", beam);
-      m.controllerDelegate->SetButtonCount(index, kNumG2Buttons);
+    if (index == m.gazeIndex) {
+      vrb::Matrix beam = vrb::Matrix::Identity();
+      m.controllerDelegate->CreateController(index, 0, "Pico Gaze Controller", beam);
+      m.controllerDelegate->SetButtonCount(index, kNumGazeButtons);
       m.controllerDelegate->SetHapticCount(index, 0);
+
+    } else {
+      if (m.type == k6DofHeadSet) {
+        vrb::Matrix beam = vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), -vrb::PI_FLOAT / 11.5f);
+        beam.TranslateInPlace(vrb::Vector(0.0f, 0.012f, -0.06f));
+        m.controllerDelegate->CreateController(index, int32_t(controller.hand), controller.IsRightHand() ? "Pico Neo 2 (Right)" : "Pico Neo 2 (LEFT)", beam);
+        m.controllerDelegate->SetButtonCount(index, kNumButtons);
+        m.controllerDelegate->SetHapticCount(index, 1);
+      } else {
+        vrb::Matrix beam =  vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), -vrb::PI_FLOAT / 11.5f);
+        m.controllerDelegate->CreateController(index, 0, "Pico G2 Controller", beam);
+        m.controllerDelegate->SetButtonCount(index, kNumG2Buttons);
+        m.controllerDelegate->SetHapticCount(index, 0);
+      }
     }
     controller.created = true;
   }
@@ -377,6 +402,22 @@ DeviceDelegatePicoVR::StartFrame() {
 
   m.cameras[0]->SetHeadTransform(head);
   m.cameras[1]->SetHeadTransform(head);
+
+
+  // Update te gaze mode state based on controllers availability
+  m.isInGazeMode = true;
+  for (int32_t i = 0; i < m.controllers.size(); ++i) {
+    if (i != m.gazeIndex && m.controllers[i].enabled) {
+      m.isInGazeMode = false;
+      break;
+    }
+  }
+
+  if (m.isInGazeMode) {
+    m.controllers[m.gazeIndex].enabled = m.isInGazeMode;
+    m.controllers[m.gazeIndex].transform = GetHeadTransform();
+  }
+
   m.UpdateControllers();
 }
 
@@ -390,6 +431,16 @@ DeviceDelegatePicoVR::BindEye(const device::Eye aWhich) {
 void
 DeviceDelegatePicoVR::EndFrame(const bool aDiscard) {
 
+}
+
+bool
+DeviceDelegatePicoVR::IsInGazeMode() const {
+  return m.isInGazeMode;
+}
+
+int32_t
+DeviceDelegatePicoVR::GazeModeIndex() const {
+  return m.gazeIndex;
 }
 
 void

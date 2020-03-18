@@ -189,6 +189,7 @@ struct BrowserWorld::State {
   std::unordered_map<vrb::Node*, std::pair<Widget*, float>> depthSorting;
   std::function<void(device::Eye)> drawHandler;
   std::function<void()> frameEndHandler;
+  bool wasInGazeMode = false;
 
   State() : paused(true), glInitialized(false), modelsLoaded(false), env(nullptr), cylinderDensity(0.0f), nearClip(0.1f),
             farClip(300.0f), activity(nullptr), windowsInitialized(false), exitImmersiveRequested(false), loaderDelay(0) {
@@ -215,6 +216,7 @@ struct BrowserWorld::State {
     splashAnimation = SplashAnimation::Create(create);
     monitor = PerformanceMonitor::Create(create);
     monitor->AddPerformanceMonitorObserver(std::make_shared<PerformanceObserver>());
+    wasInGazeMode = false;
 #if defined(WAVEVR)
     monitor->SetPerformanceDelta(15.0);
 #endif
@@ -224,6 +226,7 @@ struct BrowserWorld::State {
   bool CheckExitImmersive();
   void EnsureControllerFocused();
   void ChangeControllerFocus(const Controller& aController);
+  void UpdateGazeModeState();
   void UpdateControllers(bool& aRelayoutWidgets);
   WidgetPtr GetWidget(int32_t aHandle) const;
   WidgetPtr FindWidget(const std::function<bool(const WidgetPtr&)>& aCondition) const;
@@ -334,6 +337,25 @@ ScaleScrollDelta(const float aValue, const double aStartTime, const double aCurr
     scale = kMinScale;
   }
   return aValue * scale;
+}
+
+void
+BrowserWorld::State::UpdateGazeModeState() {
+  bool isInGazeMode = device->IsInGazeMode();
+  if (isInGazeMode != wasInGazeMode) {
+    int32_t gazeIndex = device->GazeModeIndex();
+    if (isInGazeMode && gazeIndex >= 0) {
+      VRB_LOG("Gaze mode ON")
+      controllers->SetEnabled(gazeIndex, true);
+      controllers->SetVisible(gazeIndex, true);
+
+    } else {
+      VRB_LOG("Gaze mode OFF")
+      controllers->SetEnabled(gazeIndex, false);
+      controllers->SetVisible(gazeIndex, false);
+    }
+    wasInGazeMode = isInGazeMode;
+  }
 }
 
 void
@@ -711,6 +733,7 @@ BrowserWorld::RegisterDeviceDelegate(DeviceDelegatePtr aDelegate) {
     m.leftCamera = m.device->GetCamera(device::Eye::Left);
     m.rightCamera = m.device->GetCamera(device::Eye::Right);
     ControllerDelegatePtr delegate = m.controllers;
+    delegate->SetGazeModeIndex(m.device->GazeModeIndex());
     m.device->SetClipPlanes(m.nearClip, m.farClip);
     m.device->SetControllerDelegate(delegate);
     m.gestures = m.device->GetGestureDelegate();
@@ -893,6 +916,7 @@ BrowserWorld::StartFrame() {
     TickImmersive();
   } else {
     bool relayoutWidgets = false;
+    m.UpdateGazeModeState();
     m.UpdateControllers(relayoutWidgets);
     if (relayoutWidgets) {
       UpdateVisibleWidgets();

@@ -40,6 +40,8 @@ public:
   void StartFrame() override;
   void BindEye(const device::Eye aWhich) override;
   void EndFrame(const bool aDiscard) override;
+  bool IsInGazeMode() const override;
+  int32_t GazeModeIndex() const override;
   // Custom methods
   void Pause();
   void Resume();

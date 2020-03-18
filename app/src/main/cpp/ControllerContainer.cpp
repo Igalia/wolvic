@@ -35,6 +35,7 @@ struct ControllerContainer::State {
   GeometryPtr beamModel;
   bool visible = false;
   vrb::Color pointerColor;
+  int gazeIndex = -1;
 
   void Initialize(vrb::CreationContextPtr& aContext) {
     context = aContext;
@@ -201,33 +202,36 @@ ControllerContainer::CreateController(const int32_t aControllerIndex, const int3
   controller.transform = Transform::Create(create);
   controller.pointer = Pointer::Create(create);
   controller.pointer->SetVisible(true);
-  if ((m.models.size() >= aModelIndex) && m.models[aModelIndex]) {
-    controller.transform->AddNode(m.models[aModelIndex]);
-    controller.beamToggle = vrb::Toggle::Create(create);
-    controller.beamToggle->ToggleAll(true);
-    if (aBeamTransform.IsIdentity()) {
-      controller.beamParent = controller.beamToggle;
+  if (aControllerIndex != m.gazeIndex) {
+    if ((m.models.size() >= aModelIndex) && m.models[aModelIndex]) {
+      controller.transform->AddNode(m.models[aModelIndex]);
+      controller.beamToggle = vrb::Toggle::Create(create);
+      controller.beamToggle->ToggleAll(true);
+      if (aBeamTransform.IsIdentity()) {
+        controller.beamParent = controller.beamToggle;
+      } else {
+        vrb::TransformPtr beamTransform = Transform::Create(create);
+        beamTransform->SetTransform(aBeamTransform);
+        controller.beamParent = beamTransform;
+        controller.beamToggle->AddNode(beamTransform);
+      }
+      controller.transform->AddNode(controller.beamToggle);
+      if (m.beamModel && controller.beamParent) {
+        controller.beamParent->AddNode(m.beamModel);
+      }
     } else {
-      vrb::TransformPtr beamTransform = Transform::Create(create);
-      beamTransform->SetTransform(aBeamTransform);
-      controller.beamParent = beamTransform;
-      controller.beamToggle->AddNode(beamTransform);
+      VRB_ERROR("Failed to add controller model");
     }
-    controller.transform->AddNode(controller.beamToggle);
-    if (m.beamModel && controller.beamParent) {
-      controller.beamParent->AddNode(m.beamModel);
-    }
-    if (m.root) {
-      m.root->AddNode(controller.transform);
-      m.root->ToggleChild(*controller.transform, false);
-    }
-    if (m.pointerContainer) {
-      m.pointerContainer->AddNode(controller.pointer->GetRoot());
-    }
-    m.updatePointerColor(controller);
-  } else {
-    VRB_ERROR("Failed to add controller model");
   }
+
+  if (m.root) {
+    m.root->AddNode(controller.transform);
+    m.root->ToggleChild(*controller.transform, false);
+  }
+  if (m.pointerContainer) {
+    m.pointerContainer->AddNode(controller.pointer->GetRoot());
+  }
+  m.updatePointerColor(controller);
 }
 
 void
@@ -456,6 +460,10 @@ ControllerContainer::SetVisible(const bool aVisible) {
   } else {
     m.root->ToggleAll(false);
   }
+}
+
+void ControllerContainer::SetGazeModeIndex(const int32_t aControllerIndex) {
+  m.gazeIndex = aControllerIndex;
 }
 
 ControllerContainer::ControllerContainer(State& aState, vrb::CreationContextPtr& aContext) : m(aState) {

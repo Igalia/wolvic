@@ -11,13 +11,21 @@
 #include <jni.h>
 #include <functional>
 
+namespace {
+const char *kGetGazeIndex = "getGazeIndex";
+const char *kGetGazeIndexSignature = "()I";
+
+jmethodID sGetGazeIndex = nullptr;
+}
+
 namespace crow {
 
-namespace VRBrowserPico {
-void InitializeJava(JNIEnv* aEnv, jobject aActivity);
-void ShutdownJava();
-void UpdateHaptics(jint aControllerIndex, jfloat aIntensity, jfloat aDuration);
-void CancelAllHaptics();
-} // namespace VRBrowser;
+  namespace VRBrowserPico {
+    void InitializeJava(JNIEnv* aEnv, jobject aActivity);
+    void ShutdownJava();
+    void UpdateHaptics(jint aControllerIndex, jfloat aIntensity, jfloat aDuration);
+    void CancelAllHaptics();
+    int32_t GetGazeIndex();
+  } // namespace VRBrowser;
 
 } // namespace crow

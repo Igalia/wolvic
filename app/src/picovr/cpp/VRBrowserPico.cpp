@@ -39,6 +39,8 @@ VRBrowserPico::InitializeJava(JNIEnv* aEnv, jobject aActivity) {
     return;
   }
 
+  sGetGazeIndex = FindJNIMethodID(sEnv, sBrowserClass, kGetGazeIndex, kGetGazeIndexSignature);
+
   sUpdateHaptics = FindJNIMethodID(sEnv, sBrowserClass, sUpdateHapticsName, sUpdateHapticsSignature);
   sCancelAllHaptics = FindJNIMethodID(sEnv, sBrowserClass, sCancelAllHapticsName, sCancelAllHapticsSignature);
 }
@@ -71,6 +73,15 @@ VRBrowserPico::CancelAllHaptics() {
   if (!ValidateMethodID(sEnv, sActivity, sCancelAllHaptics, __FUNCTION__)) { return; }
   sEnv->CallVoidMethod(sActivity, sCancelAllHaptics);
   CheckJNIException(sEnv, __FUNCTION__);
+}
+
+int32_t
+VRBrowserPico::GetGazeIndex() {
+  if (!ValidateMethodID(sEnv, sActivity, sGetGazeIndex, __FUNCTION__)) { return -1; }
+  jint jGazeIndex = (jint) sEnv->CallIntMethod(sActivity, sGetGazeIndex);
+  CheckJNIException(sEnv, __FUNCTION__);
+
+  return (int32_t )jGazeIndex;
 }
 
 } // namespace crow

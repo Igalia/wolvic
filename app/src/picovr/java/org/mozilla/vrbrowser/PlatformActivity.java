@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
@@ -69,6 +70,8 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
     private final int BUTTON_AX        = 1 << 3;
     private final int BUTTON_BY        = 1 << 4;
     private final int BUTTON_GRIP      = 1 << 5;
+
+    private static final int GAZE_INDEX = 2;
 
     @Override
     protected void onCreate(Bundle bundle) {
@@ -147,6 +150,18 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
     @Override
     public void onBackPressed() {
         // Eat the back button.
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getKeyCode() == 1001) {
+            int buttons = 0;
+            buttons |= event.getAction() == KeyEvent.ACTION_DOWN ? BUTTON_TRIGGER : 0;
+            nativeUpdateControllerState(GAZE_INDEX, true, buttons, 0, 0, 0, false);
+            return true;
+        }
+
+        return super.dispatchKeyEvent(event);
     }
 
     @Override
@@ -360,6 +375,13 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
                 ControllerClient.vibrateCV2ControllerStrength(0, 0, 1);
             }
         });
+    }
+
+    // Called by native
+    @Keep
+    @SuppressWarnings("unused")
+    private int getGazeIndex() {
+        return GAZE_INDEX;
     }
 
     protected native void nativeOnCreate();

@@ -66,6 +66,8 @@ public:
   virtual void StartFrame() = 0;
   virtual void BindEye(const device::Eye aWhich) = 0;
   virtual void EndFrame(bool aDiscard = false) = 0;
+  virtual bool IsInGazeMode() const { return false; };
+  virtual int32_t GazeModeIndex() const { return -1; };
   virtual VRLayerQuadPtr CreateLayerQuad(int32_t aWidth, int32_t aHeight,
                                          VRLayerSurface::SurfaceType aSurfaceType) { return nullptr; }
   virtual VRLayerQuadPtr CreateLayerQuad(const VRLayerSurfacePtr& aMoveLayer) { return nullptr; }
