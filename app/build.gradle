@@ -110,25 +110,10 @@ android {
         disable "ExtraTranslation"
     }
 
-    packagingOptions {
-        pickFirst '/lib/*/libgvr.so'
-    }
-
     flavorDimensions "platform", "abi"
 
     productFlavors {
         // Supported platforms
-        googlevr {
-            dimension "platform"
-            externalNativeBuild {
-                cmake {
-                    cppFlags " -I" + file("${project.rootDir}/gvr-android-sdk/libraries/headers").absolutePath +
-                            " -DVRBROWSER_GOOGLEVR"
-                    arguments "-DVR_SDK_LIB=googlevr-lib", "-DGOOGLEVR=ON"
-                }
-            }
-        }
-
         oculusvr {
             dimension "platform"
             externalNativeBuild {
@@ -169,18 +154,6 @@ android {
                 }
             }
             manifestPlaceholders = [ headtrackingRequired:"false", permissionToRemove:"android.permission.CAMERA" ]
-        }
-
-        svr {
-            dimension "platform"
-            externalNativeBuild {
-                cmake {
-                    cppFlags " -I" + file("${project.rootDir}/third_party/svr/public").absolutePath +
-                            " -I" + file("${project.rootDir}/app/src/svr/cpp").absolutePath +
-                            " -DSNAPDRAGONVR"
-                    arguments "-DVR_SDK_LIB=svr-lib", "-DSNAPDRAGONVR=ON"
-                }
-            }
         }
 
         wavevr {
@@ -229,13 +202,6 @@ android {
         }
 
         // Supported ABIs
-        arm {
-            dimension "abi"
-            ndk {
-                abiFilters "armeabi-v7a"
-            }
-        }
-
         arm64 {
             dimension "abi"
             ndk {
@@ -253,38 +219,18 @@ android {
 
     variantFilter { variant ->
         def needed = variant.name in [
-                'googlevrArmDebug',
-                'googlevrArmRelease',
-                'googlevrArm64Debug',
-                'googlevrArm64Release',
-                'oculusvrArmDebug',
-                'oculusvrArmRelease',
                 'oculusvrArm64Debug',
                 'oculusvrArm64Release',
-                'oculusvrStoreArmDebug',
-                'oculusvrStoreArmRelease',
                 'oculusvrStoreArm64Debug',
                 'oculusvrStoreArm64Release',
-                'oculusvr3dofStoreArmDebug',
-                'oculusvr3dofStoreArmRelease',
                 'oculusvr3dofStoreArm64Debug',
                 'oculusvr3dofStoreArm64Release',
-                'svrArmDebug',
-                'svrArmRelease',
-                'svrArm64Debug',
-                'svrArm64Release',
                 'picovrArm64Debug',
                 'picovrArm64Release',
-                'wavevrArmDebug',
-                'wavevrArmRelease',
                 'wavevrArm64Debug',
                 'wavevrArm64Release',
-                'wavevrStoreArmDebug',
-                'wavevrStoreArmRelease',
                 'wavevrStoreArm64Debug',
                 'wavevrStoreArm64Release',
-                'noapiArmDebug',
-                'noapiArmRelease',
                 'noapiArm64Debug',
                 'noapiArm64Release',
                 'noapiX86_64Debug',
@@ -307,12 +253,6 @@ android {
             manifest.srcFile getUseDebugSigningOnRelease() ? "src/debug/AndroidManifest.xml"
                                                            : manifest.srcFile
 
-        }
-
-        googlevr {
-            java.srcDirs = [
-                    'src/googlevr/java'
-            ]
         }
 
         oculusvr {
@@ -339,11 +279,6 @@ android {
             ]
         }
 
-        oculusvrArmRelease {
-            manifest.srcFile getUseDebugSigningOnRelease() ? "src/oculusvrArmDebug/AndroidManifest.xml"
-                                                           :  manifest.srcFile
-        }
-
         oculusvrArm64Debug {
             manifest.srcFile "src/oculusvrArmDebug/AndroidManifest.xml"
         }
@@ -353,17 +288,8 @@ android {
                                                            : "src/oculusvrArmRelease/AndroidManifest.xml"
         }
 
-        oculusvrStoreArmDebug {
-            manifest.srcFile "src/oculusvrArmDebug/AndroidManifest.xml"
-        }
-
         oculusvrStoreArm64Debug {
             manifest.srcFile "src/oculusvrArmDebug/AndroidManifest.xml"
-        }
-
-        oculusvrStoreArmRelease {
-            manifest.srcFile getUseDebugSigningOnRelease() ? "src/oculusvrArmDebug/AndroidManifest.xml"
-                    : "src/oculusvrArmRelease/AndroidManifest.xml"
         }
 
         oculusvrStoreArm64Release {
@@ -371,29 +297,13 @@ android {
                     : "src/oculusvrArmRelease/AndroidManifest.xml"
         }
 
-        oculusvr3dofStoreArmDebug {
-            manifest.srcFile "src/oculusvrArmDebug/AndroidManifest.xml"
-        }
-
         oculusvr3dofStoreArm64Debug {
             manifest.srcFile "src/oculusvrArmDebug/AndroidManifest.xml"
-        }
-
-        oculusvr3dofStoreArmRelease {
-            manifest.srcFile getUseDebugSigningOnRelease() ? "src/oculusvrArmDebug/AndroidManifest.xml"
-                    : "src/oculusvrArmRelease/AndroidManifest.xml"
         }
 
         oculusvr3dofStoreArm64Release {
             manifest.srcFile getUseDebugSigningOnRelease() ? "src/oculusvrArmDebug/AndroidManifest.xml"
                     : "src/oculusvrArmRelease/AndroidManifest.xml"
-        }
-
-        svr {
-            java.srcDirs = [
-                    'src/svr/java'
-            ]
-            jniLibs.srcDirs = ["${project.rootDir}/third_party/svr/libs"]
         }
 
         wavevr {
@@ -456,7 +366,6 @@ dependencies {
     implementation deps.openwnn
 
     // Common
-    // implementation deps.google_vr.sdk_audio
     implementation deps.lifecycle.runtime
     implementation deps.lifecycle.extensions
     implementation deps.support.cardview
@@ -515,12 +424,6 @@ dependencies {
     testImplementation deps.telemetry.glean_unittests
     testImplementation deps.work.testing
 
-    // Daydream
-    googlevrImplementation deps.google_vr.sdk_base
-
-    // ODG
-    svrImplementation fileTree(dir: "${project.rootDir}/third_party/svr/", include: ['*.jar'])
-
     // Pico
     picovrImplementation fileTree(dir: "${project.rootDir}/third_party/picovr/", include: ['*.jar'])
 }
@@ -528,7 +431,6 @@ dependencies {
 if (findProject(':servo')) {
     dependencies {
       oculusvrImplementation project(':servo')
-      googlevrImplementation project(':servo')
     }
 }
 

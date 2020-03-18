@@ -11,7 +11,7 @@ distribution:
     lifetime: application
     description: >
       The distribution channel name of this application. We use this field to recognize Firefox Reality
-      is distributed to which channels, such as wavevr, oculusvr, googlevr, etc.
+      is distributed to which channels, such as wavevr, oculusvr, etc.
     send_in_pings:
       - baseline
       - events

@@ -54,13 +54,6 @@ target_sources(
     src/wavevr/cpp/native-lib.cpp
     src/wavevr/cpp/DeviceDelegateWaveVR.cpp
     )
-elseif(GOOGLEVR)
-target_sources(
-    native-lib
-    PUBLIC
-    src/googlevr/cpp/native-lib.cpp
-    src/googlevr/cpp/DeviceDelegateGoogleVR.cpp
-    )
 elseif(PICOVR)
 target_sources(
         native-lib
@@ -110,14 +103,6 @@ add_custom_command(TARGET native-lib POST_BUILD
         )
 endif()
 
-if(SNAPDRAGONVR)
-target_sources(
-    native-lib
-    PUBLIC
-    src/svr/cpp/DeviceDelegateSVR.cpp
-    )
-endif()
-
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
 # default, you only need to specify the name of the public NDK library
@@ -139,14 +124,6 @@ set_target_properties(oculusvr-lib PROPERTIES IMPORTED_LOCATION
 add_library(ovrplatform-lib SHARED IMPORTED)
 set_target_properties(ovrplatform-lib PROPERTIES IMPORTED_LOCATION
                       ${CMAKE_SOURCE_DIR}/../third_party/OVRPlatformSDK/Android/libs/${ANDROID_ABI}/libovrplatformloader.so )
-
-add_library(googlevr-lib SHARED IMPORTED)
-set_target_properties(googlevr-lib PROPERTIES IMPORTED_LOCATION
-                      ${CMAKE_SOURCE_DIR}/../gvr-android-sdk/libraries/jni/${ANDROID_ABI}/libgvr.so)
-
-add_library(svr-lib SHARED IMPORTED)
-set_target_properties(svr-lib PROPERTIES IMPORTED_LOCATION
-                      ${CMAKE_SOURCE_DIR}/../third_party/svr/libs/${ANDROID_ABI}/libsvrapi.so )
 
 add_library(wavevr-lib SHARED IMPORTED)
 set_target_properties(wavevr-lib PROPERTIES IMPORTED_LOCATION

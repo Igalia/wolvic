@@ -20,7 +20,7 @@ The following metrics are added to the ping:
 
 | Name | Type | Description | Data reviews | Extras | Expiration |
 | --- | --- | --- | --- | --- | --- |
-| distribution.channel_name |[string](https://mozilla.github.io/glean/book/user/metrics/string.html) |The distribution channel name of this application. We use this field to recognize Firefox Reality is distributed to which channels, such as wavevr, oculusvr, googlevr, etc.  |[1](https://github.com/MozillaReality/FirefoxReality/pull/1854#issuecomment-546214568)||2020-05-01 |
+| distribution.channel_name |[string](https://mozilla.github.io/glean/book/user/metrics/string.html) |The distribution channel name of this application. We use this field to recognize Firefox Reality is distributed to which channels, such as wavevr, oculusvr, etc.  |[1](https://github.com/MozillaReality/FirefoxReality/pull/1854#issuecomment-546214568)||2020-05-01 |
 
 ## events
 This is a built-in ping that is assembled out of the box by the Glean SDK.
@@ -29,7 +29,7 @@ The following metrics are added to the ping:
 
 | Name | Type | Description | Data reviews | Extras | Expiration |
 | --- | --- | --- | --- | --- | --- |
-| distribution.channel_name |[string](https://mozilla.github.io/glean/book/user/metrics/string.html) |The distribution channel name of this application. We use this field to recognize Firefox Reality is distributed to which channels, such as wavevr, oculusvr, googlevr, etc.  |[1](https://github.com/MozillaReality/FirefoxReality/pull/1854#issuecomment-546214568)||2020-05-01 |
+| distribution.channel_name |[string](https://mozilla.github.io/glean/book/user/metrics/string.html) |The distribution channel name of this application. We use this field to recognize Firefox Reality is distributed to which channels, such as wavevr, oculusvr, etc.  |[1](https://github.com/MozillaReality/FirefoxReality/pull/1854#issuecomment-546214568)||2020-05-01 |
 | firefox_account.sign_in |[event](https://mozilla.github.io/glean/book/user/metrics/event.html) |The user starts the sign in flow  |[1](https://github.com/MozillaReality/FirefoxReality/pull/2327#issuecomment-559103837)||2020-05-01 |
 | firefox_account.sign_in_result |[event](https://mozilla.github.io/glean/book/user/metrics/event.html) |The user finishes the sign in flow  |[1](https://github.com/MozillaReality/FirefoxReality/pull/2327#issuecomment-559103837)|<ul><li>state: The result of the sign in flow. True in case of success, false in case of error</li></ul>|2020-05-01 |
 | firefox_account.sign_out |[event](https://mozilla.github.io/glean/book/user/metrics/event.html) |A user pressed the sign out button on the sync account page and was successfully signed out of FxA  |[1](https://github.com/MozillaReality/FirefoxReality/pull/2327#issuecomment-559103837)||2020-05-01 |
@@ -41,7 +41,7 @@ The following metrics are added to the ping:
 
 | Name | Type | Description | Data reviews | Extras | Expiration |
 | --- | --- | --- | --- | --- | --- |
-| distribution.channel_name |[string](https://mozilla.github.io/glean/book/user/metrics/string.html) |The distribution channel name of this application. We use this field to recognize Firefox Reality is distributed to which channels, such as wavevr, oculusvr, googlevr, etc.  |[1](https://github.com/MozillaReality/FirefoxReality/pull/1854#issuecomment-546214568)||2020-05-01 |
+| distribution.channel_name |[string](https://mozilla.github.io/glean/book/user/metrics/string.html) |The distribution channel name of this application. We use this field to recognize Firefox Reality is distributed to which channels, such as wavevr, oculusvr, etc.  |[1](https://github.com/MozillaReality/FirefoxReality/pull/1854#issuecomment-546214568)||2020-05-01 |
 | firefox_account.bookmarks_sync_status |[boolean](https://mozilla.github.io/glean/book/user/metrics/boolean.html) |Bookmarks sync engine status. True means that the bookmarks sync status is enabled, false otherwise.  |[1](https://github.com/MozillaReality/FirefoxReality/pull/2327#issuecomment-559103837)||2020-05-01 |
 | firefox_account.history_sync_status |[boolean](https://mozilla.github.io/glean/book/user/metrics/boolean.html) |History sync engine status. True means that the history sync status is enabled, false otherwise.  |[1](https://github.com/MozillaReality/FirefoxReality/pull/2327#issuecomment-559103837)||2020-05-01 |
 | firefox_account.received_tab |[labeled_counter](https://mozilla.github.io/glean/book/user/metrics/labeled_counters.html) |Number of received tabs per day  |[1](https://github.com/MozillaReality/FirefoxReality/pull/2327#issuecomment-559103837)|<ul><li>desktop</li><li>mobile</li><li>tablet</li><li>tv</li><li>vr</li><li>unknown</li></ul>|2020-05-01 |
@@ -57,7 +57,7 @@ The following metrics are added to the ping:
 | Name | Type | Description | Data reviews | Extras | Expiration |
 | --- | --- | --- | --- | --- | --- |
 | control.open_new_window |[counter](https://mozilla.github.io/glean/book/user/metrics/counter.html) |Counting how many general windows are opened in a session.  |[1](https://github.com/MozillaReality/FirefoxReality/pull/2348#issuecomment-564736919)||2020-05-01 |
-| distribution.channel_name |[string](https://mozilla.github.io/glean/book/user/metrics/string.html) |The distribution channel name of this application. We use this field to recognize Firefox Reality is distributed to which channels, such as wavevr, oculusvr, googlevr, etc.  |[1](https://github.com/MozillaReality/FirefoxReality/pull/1854#issuecomment-546214568)||2020-05-01 |
+| distribution.channel_name |[string](https://mozilla.github.io/glean/book/user/metrics/string.html) |The distribution channel name of this application. We use this field to recognize Firefox Reality is distributed to which channels, such as wavevr, oculusvr, etc.  |[1](https://github.com/MozillaReality/FirefoxReality/pull/1854#issuecomment-546214568)||2020-05-01 |
 | tabs.activated |[counter](https://mozilla.github.io/glean/book/user/metrics/counter.html) |Number of tabs activated during a session  |[1](https://github.com/MozillaReality/FirefoxReality/pull/2327#issuecomment-559103837)||2020-05-01 |
 | tabs.opened |[labeled_counter](https://mozilla.github.io/glean/book/user/metrics/labeled_counters.html) |Number of tabs opened during a session  |[1](https://github.com/MozillaReality/FirefoxReality/pull/2327#issuecomment-559103837)|<ul><li>context_menu</li><li>tabs_dialog</li><li>bookmarks</li><li>history</li><li>fxa_login</li><li>received</li><li>pre_existing</li><li>browser</li></ul>|2020-05-01 |
 | url.domains |[counter](https://mozilla.github.io/glean/book/user/metrics/counter.html) |Counting how many domains are visited in a session.  |[1](https://github.com/MozillaReality/FirefoxReality/pull/2241#issuecomment-557740258)||2020-05-01 |

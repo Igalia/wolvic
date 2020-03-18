@@ -16,8 +16,6 @@
 #include <vrb/RunnableQueue.h>
 #if defined(OCULUSVR)
 #include "DeviceDelegateOculusVR.h"
-#elif defined(SNAPDRAGONVR)
-#include "DeviceDelegateSVR.h"
 #endif
 
 #include <android/looper.h>
@@ -33,9 +31,6 @@ using namespace crow;
 #if defined(OCULUSVR)
 typedef DeviceDelegateOculusVR PlatformDeviceDelegate;
 typedef DeviceDelegateOculusVRPtr PlatformDeviceDelegatePtr;
-#elif defined(SNAPDRAGONVR)
-typedef DeviceDelegateSVR PlatformDeviceDelegate;
-typedef DeviceDelegateSVRPtr PlatformDeviceDelegatePtr;
 #endif
 
 namespace {
