@@ -310,9 +310,7 @@ DeviceDelegatePicoVR::GetReorientTransform() const {
 
 void
 DeviceDelegatePicoVR::SetReorientTransform(const vrb::Matrix& aMatrix) {
-  if (m.type == k6DofHeadSet) {
-    m.reorientMatrix = aMatrix;
-  }
+  m.reorientMatrix = aMatrix;
 }
 
 void
@@ -393,7 +391,11 @@ DeviceDelegatePicoVR::StartFrame() {
 
   if (m.renderMode == device::RenderMode::StandAlone) {
     if (m.recentered) {
-      m.reorientMatrix = DeviceUtils::CalculateReorientationMatrix(head, kAverageHeight);
+      if (m.type == k6DofHeadSet) {
+        m.reorientMatrix = DeviceUtils::CalculateReorientationMatrix(head, kAverageHeight);
+      } else {
+        m.reorientMatrix = vrb::Matrix::Identity();
+      }
     }
     head.TranslateInPlace(m.headOffset);
   }
