@@ -22,6 +22,7 @@ public class MotionEventGenerator {
         int mDevice;
         Widget mPreviousWidget = null;
         Widget mTouchStartWidget = null;
+        Widget mHoverStartWidget = null;
         boolean mWasPressed;
         long mDownTime;
         MotionEvent.PointerProperties mProperties[];
@@ -108,13 +109,16 @@ public class MotionEventGenerator {
             }
             generateEvent(device.mPreviousWidget, device, aFocused, MotionEvent.ACTION_HOVER_EXIT, true, device.mMouseOutCoords);
             device.mPreviousWidget = null;
+            device.mHoverStartWidget = null;
         }
         if (aWidget == null) {
             device.mPreviousWidget = null;
+            device.mHoverStartWidget = null;
             return;
         }
         if (aWidget != device.mPreviousWidget && !aPressed) {
             generateEvent(aWidget, device, aFocused, MotionEvent.ACTION_HOVER_ENTER, true);
+            device.mHoverStartWidget = aWidget;
         }
         if (aPressed && !device.mWasPressed) {
             device.mDownTime = SystemClock.uptimeMillis();
@@ -122,6 +126,12 @@ public class MotionEventGenerator {
             if (!isOtherDeviceDown(device.mDevice)) {
                 generateEvent(aWidget, device, aFocused, MotionEvent.ACTION_HOVER_EXIT, true);
                 generateEvent(aWidget, device, aFocused, MotionEvent.ACTION_DOWN, false);
+                device.mHoverStartWidget = null;
+            }
+            for (int i=0; i<devices.size(); i++) {
+                if (devices.get(i) != device && devices.get(i).mHoverStartWidget != null) {
+                    generateEvent(devices.get(i).mHoverStartWidget, devices.get(i), aFocused, MotionEvent.ACTION_HOVER_EXIT, true);
+                }
             }
             device.mTouchStartWidget = aWidget;
         } else if (!aPressed && device.mWasPressed) {
@@ -129,6 +139,7 @@ public class MotionEventGenerator {
             if (!isOtherDeviceDown(device.mDevice)) {
                 generateEvent(device.mTouchStartWidget, device, aFocused, MotionEvent.ACTION_UP, false);
                 generateEvent(aWidget, device, aFocused, MotionEvent.ACTION_HOVER_ENTER, true);
+                device.mHoverStartWidget = aWidget;
             }
             device.mTouchStartWidget = null;
         } else if (moving && aPressed) {
