@@ -608,7 +608,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         return false;
     }
 
-    private void updateMaxWindowScales() {
+    void updateMaxWindowScales() {
         float maxScale = 3;
         if (mFullscreenWindow == null && getCurrentWindows().size() >= 3) {
             maxScale = 1.5f;

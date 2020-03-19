@@ -1295,6 +1295,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     public float getMaxWindowScale() {
+        Windows windows = mWidgetManager.getWindows();
+        if (windows != null) {
+            windows.updateMaxWindowScales();
+        }
         return mMaxWindowScale;
     }
 
