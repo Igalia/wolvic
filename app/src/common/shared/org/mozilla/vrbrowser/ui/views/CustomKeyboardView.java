@@ -214,7 +214,8 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
     private int mLastCodeY;
     private int mCurrentKey = NOT_A_KEY;
     // Fork
-    private int[] mHoveredKey = new int[2];
+    private int[] mHoveredKey = new int[3];
+    private int[] mPrevHoveredKey = new int[3];
     private int mDownKey = NOT_A_KEY;
     private long mLastKeyTime;
     private long mCurrentKeyTime;
@@ -344,8 +345,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
         mShadowColor = 0;
         mShadowRadius = 0;
         mBackgroundDimAmount = 0.5f;
-        mHoveredKey[0] = NOT_A_KEY;
-        mHoveredKey[1] = NOT_A_KEY;
+        clearHover();
 
         mPreviewPopup = new PopupWindow(context);
         if (previewLayout != 0) {
@@ -759,7 +759,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
             int[] drawableState = key.getCurrentDrawableState();
 
             if (((CustomKeyboard)mKeyboard).isKeyEnabled(i)) {
-                if ((mHoveredKey[0] == i || mHoveredKey[1] == i) && !key.pressed) {
+                if (isKeyHovered(i) && !key.pressed) {
                     // Fork: implement hovered key
                     drawableState = KEY_STATE_HOVERED;
                 }
@@ -1146,8 +1146,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
      * @see #invalidateKey(int)
      */
     public void invalidateAllKeys() {
-        mHoveredKey[0] = NOT_A_KEY;
-        mHoveredKey[1] = NOT_A_KEY;
+        clearHover();
         mDirtyRect.union(0, 0, getWidth(), getHeight());
         mDrawPending = true;
         invalidate();
@@ -1263,12 +1262,14 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
             keyIndex = getKeyIndices(touchX, touchY, null);
         }
 
-        int prevHovered = mHoveredKey[event.getDeviceId()];
+        mPrevHoveredKey[event.getDeviceId()] = mHoveredKey[event.getDeviceId()];
         mHoveredKey[event.getDeviceId()] = keyIndex;
-        if (mHoveredKey[event.getDeviceId()] != NOT_A_KEY && prevHovered != mHoveredKey[event.getDeviceId()]) {
-            invalidateKey(mHoveredKey[event.getDeviceId()]);
+        int prevHovered = mPrevHoveredKey[event.getDeviceId()];
+        int currentHovered = mHoveredKey[event.getDeviceId()];
+        if (currentHovered != NOT_A_KEY && prevHovered != currentHovered) {
+            invalidateKey(currentHovered);
         }
-        if (prevHovered != NOT_A_KEY && prevHovered != mHoveredKey[event.getDeviceId()]) {
+        if (prevHovered != NOT_A_KEY && prevHovered != currentHovered) {
             invalidateKey(prevHovered);
         }
         return result;
@@ -1277,16 +1278,40 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
     @Override
     public void setHovered(boolean hovered) {
         if (!hovered) {
-            mHoveredKey[0] = NOT_A_KEY;
-            mHoveredKey[1] = NOT_A_KEY;
-            invalidateAllKeys();
+            boolean hasChanged = false;
+            for (int i=0; i<mHoveredKey.length; i++) {
+                hasChanged |= mPrevHoveredKey[i] != mHoveredKey[i];
+            }
+
+            if (hasChanged) {
+                clearHover();
+                invalidateAllKeys();
+            }
         }
         super.setHovered(hovered);
     }
 
     @Override
     public boolean isHovered() {
-        return mHoveredKey[0] != NOT_A_KEY || mHoveredKey[1] != NOT_A_KEY;
+        boolean isHovered = false;
+        for (int value : mHoveredKey) {
+            isHovered |= value != NOT_A_KEY;
+        }
+        return isHovered;
+    }
+
+    private boolean isKeyHovered(int keyIndex) {
+        boolean isHovered = false;
+        for (int value : mHoveredKey) {
+            isHovered |= value == keyIndex;
+        }
+
+        return isHovered;
+    }
+
+    private void clearHover() {
+        Arrays.fill(mHoveredKey, NOT_A_KEY);
+        Arrays.fill(mPrevHoveredKey, NOT_A_KEY);
     }
 
     public void setFeaturedKeyBackground(int resId, int[] keyCodes) {
