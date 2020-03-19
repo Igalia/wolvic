@@ -105,6 +105,7 @@ public class MotionEventGenerator {
         if (!aPressed && (device.mPreviousWidget != null) && (device.mPreviousWidget != aWidget)) {
             if (device.mWasPressed) {
                 generateEvent(device.mPreviousWidget, device, aFocused, MotionEvent.ACTION_CANCEL, false);
+                device.mTouchStartWidget = null;
                 device.mWasPressed = false;
             }
             generateEvent(device.mPreviousWidget, device, aFocused, MotionEvent.ACTION_HOVER_EXIT, true, device.mMouseOutCoords);
