@@ -1039,7 +1039,7 @@
 
     <!-- This string is for the tooltip that appears upon hovering the 'Request desktop site' button in the
          browser's navigation bar. The button it labels, when pressed, change the currently used user agent. -->
-    <string name="request_dekstop_site_tooltip">要求桌面版网站</string>
+    <string name="request_dekstop_site_tooltip">请求桌面版网站</string>
 
     <!-- This string is for the tooltip that appears upon hovering the 'Clear' button in the
          browser's navigation bar. The button it labels, when pressed, clears the navigation bar text. -->
