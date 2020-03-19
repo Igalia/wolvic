@@ -30,7 +30,6 @@
     public static int d(...);
 }
 
-
 # --------------------------------------------------------------------
 # REMOVE android speech dependency from GV
 # --------------------------------------------------------------------
@@ -65,6 +64,21 @@
 # --------------------------------------------------------------------
 -keep class com.psmart.vrlib.** {*;}
 -keep class com.picovr.** {*;}
+
+# --------------------------------------------------------------------
+# App Services
+# --------------------------------------------------------------------
+-keep class mozilla.appservices.rustlog.** {*;}
+
+# --------------------------------------------------------------------
+# Android ViewModel
+# --------------------------------------------------------------------
+-keep class * extends androidx.lifecycle.ViewModel {
+    <init>();
+}
+-keep class * extends androidx.lifecycle.AndroidViewModel {
+    <init>(android.app.Application);
+}
 
 -dontwarn **
 -target 1.7

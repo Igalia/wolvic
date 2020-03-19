@@ -367,7 +367,7 @@ dependencies {
 
     // Common
     implementation deps.lifecycle.runtime
-    implementation deps.lifecycle.extensions
+    implementation deps.lifecycle.viewmodel
     implementation deps.support.cardview
     //implementation deps.support.app_compat
     implementation(name:'appcompat', ext:'aar')
