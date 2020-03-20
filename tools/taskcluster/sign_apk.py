@@ -87,7 +87,15 @@ def main(name, argv):
          print subprocess.check_output(["zipalign", "-f", "-v", "-p", "4", orig, target])
 
       print "Verifying", target
-      print subprocess.check_output(['apksigner', 'verify', '--verbose', target])
+      try:
+         print subprocess.check_output(['apksigner', 'verify', '--verbose', target])
+      except subprocess.CalledProcessError as err:
+         print "Verifying apk failed"
+         fileinfo = subprocess.check_output(['file', target])
+         if fileinfo.find("ASCII text") != -1:
+            print 'Error returned from autograph:'
+            print subprocess.check_output(['cat', target])
+         sys.exit(err.returncode)
       print "Archiving", target
       os.rename(target, artifacts_path + "/" + os.path.basename(target))
    print "=" * 80
