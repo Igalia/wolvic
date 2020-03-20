@@ -38,17 +38,19 @@ public class PlatformActivity extends Activity {
     private int mFrameCount;
     private long mLastFrameTime = System.currentTimeMillis();
 
+    final Object mRenderLock = new Object();
+
     private final Runnable activityDestroyedRunnable = () -> {
-        synchronized (this) {
+        synchronized (mRenderLock) {
             activityDestroyed();
-            notifyAll();
+            mRenderLock.notifyAll();
         }
     };
 
     private final Runnable activityPausedRunnable = () -> {
-        synchronized (this) {
+        synchronized (mRenderLock) {
             activityPaused();
-            notifyAll();
+            mRenderLock.notifyAll();
         }
     };
 
@@ -145,10 +147,10 @@ public class PlatformActivity extends Activity {
     @Override
     protected void onPause() {
         Log.d(LOGTAG, "PlatformActivity onPause");
-        synchronized (activityPausedRunnable) {
+        synchronized (mRenderLock) {
             queueRunnable(activityPausedRunnable);
             try {
-                activityPausedRunnable.wait();
+                mRenderLock.wait();
             } catch(InterruptedException e) {
                 Log.e(LOGTAG, "activityPausedRunnable interrupted: " + e.toString());
             }
