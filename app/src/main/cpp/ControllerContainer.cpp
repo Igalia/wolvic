@@ -97,7 +97,7 @@ ControllerContainer::InitializeBeam() {
   CreationContextPtr create = m.context.lock();
   VertexArrayPtr array = VertexArray::Create(create);
   const float kLength = -1.0f;
-  const float kHeight = 0.004f;
+  const float kHeight = 0.002f;
 
   array->AppendVertex(Vector(-kHeight, -kHeight, 0.0f)); // Bottom left
   array->AppendVertex(Vector(kHeight, -kHeight, 0.0f)); // Bottom right
