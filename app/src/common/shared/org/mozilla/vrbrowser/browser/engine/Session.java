@@ -686,12 +686,16 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     }
 
     public void loadUri(String aUri) {
+        loadUri(aUri, GeckoSession.LOAD_FLAGS_NONE);
+    }
+
+    public void loadUri(String aUri, int flags) {
         if (aUri == null) {
             aUri = getHomeUri();
         }
         if (mState.mSession != null) {
             Log.d(LOGTAG, "Loading URI: " + aUri);
-            mState.mSession.loadUri(aUri);
+            mState.mSession.loadUri(aUri, flags);
         }
     }
 
@@ -824,7 +828,9 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         if (overrideUri != null) {
             mState.mSession.loadUri(overrideUri, GeckoSession.LOAD_FLAGS_BYPASS_CACHE | GeckoSession.LOAD_FLAGS_REPLACE_HISTORY);
         } else {
-            mState.mSession.reload(GeckoSession.LOAD_FLAGS_BYPASS_CACHE);
+            // mState.mSession.reload(GeckoSession.LOAD_FLAGS_BYPASS_CACHE);
+            mState.mSession.loadUri(mState.mUri, GeckoSession.LOAD_FLAGS_BYPASS_CACHE);
+
         }
     }
 

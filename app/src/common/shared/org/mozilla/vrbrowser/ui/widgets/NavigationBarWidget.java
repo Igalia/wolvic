@@ -195,8 +195,13 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             if (mViewModel.getIsLoading().getValue().get()) {
                 getSession().stop();
             } else {
-                int flags = SettingsStore.getInstance(mAppContext).isBypassCacheOnReloadEnabled() ? GeckoSession.LOAD_FLAGS_BYPASS_CACHE : GeckoSession.LOAD_FLAGS_NONE;
-                getSession().reload(flags);
+                if (SettingsStore.getInstance(mAppContext).isBypassCacheOnReloadEnabled()) {
+                    getSession().loadUri(getSession().getCurrentUri(), GeckoSession.LOAD_FLAGS_BYPASS_CACHE);
+                } else {
+                    // int flags = SettingsStore.getInstance(mAppContext).isBypassCacheOnReloadEnabled() ? GeckoSession.LOAD_FLAGS_BYPASS_CACHE : GeckoSession.LOAD_FLAGS_NONE;
+                    // getSession().reload(flags);
+                    getSession().reload(GeckoSession.LOAD_FLAGS_NONE);
+                }
             }
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
@@ -209,7 +214,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             if (mViewModel.getIsLoading().getValue().get()) {
                 getSession().stop();
             } else {
-                getSession().reload(GeckoSession.LOAD_FLAGS_BYPASS_CACHE);
+                // getSession().reload(GeckoSession.LOAD_FLAGS_BYPASS_CACHE);
+                getSession().loadUri(getSession().getCurrentUri(), GeckoSession.LOAD_FLAGS_BYPASS_CACHE);
             }
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
