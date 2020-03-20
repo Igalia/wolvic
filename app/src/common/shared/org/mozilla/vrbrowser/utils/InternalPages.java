@@ -3,6 +3,8 @@ package org.mozilla.vrbrowser.utils;
 import android.content.Context;
 import android.util.Base64;
 
+import androidx.annotation.Nullable;
+
 import org.mozilla.vrbrowser.R;
 
 import org.mozilla.geckoview.WebRequestError;
@@ -115,7 +117,7 @@ public class InternalPages {
     }
 
     public static String createErrorPageDataURI(Context context,
-                                                String uri,
+                                                @Nullable String uri,
                                                 int errorType) {
         String html = ErrorPages.INSTANCE.createErrorPage(
                 context,
@@ -134,9 +136,10 @@ public class InternalPages {
                 showSSLAdvanced = false;
         }
 
-        html = html
-                .replace("%url%", uri)
-                .replace("%advancedSSLStyle%", showSSLAdvanced ? "block" : "none");
+        if (uri != null) {
+            html = html.replace("%url%", uri);
+        }
+        html = html.replace("%advancedSSLStyle%", showSSLAdvanced ? "block" : "none");
 
         return "data:text/html;base64," + Base64.encodeToString(html.getBytes(), Base64.NO_WRAP);
     }
