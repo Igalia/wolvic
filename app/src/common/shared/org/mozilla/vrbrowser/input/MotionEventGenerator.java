@@ -130,7 +130,7 @@ public class MotionEventGenerator {
                 device.mHoverStartWidget = null;
             }
             for (int i=0; i<devices.size(); i++) {
-                if (devices.get(i) != device && devices.get(i).mHoverStartWidget != null) {
+                if (devices.get(i) != null && devices.get(i) != device && devices.get(i).mHoverStartWidget != null) {
                     generateEvent(devices.get(i).mHoverStartWidget, devices.get(i), aFocused, MotionEvent.ACTION_HOVER_EXIT, true);
                 }
             }
