@@ -1405,7 +1405,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="slow_script_dialog_action_wait">Wait</string>
 
 
-    <!-- This string is displayed in the title of the quick WebXR blocking dialog, accesed from the VR icon in the URL bar.
+    <!-- This string is displayed in the title of the quick WebXR blocking dialog, accessed from the VR icon in the URL bar.
      '%1$s' will be replaced at runtime with the app's name. -->
-    <string name="webxr_block_dialog_message">\'%1$s\' wants to access WebXR api</string>
+    <string name="webxr_block_dialog_message">‘%1$s’ wants to access WebXR API</string>
 </resources>
