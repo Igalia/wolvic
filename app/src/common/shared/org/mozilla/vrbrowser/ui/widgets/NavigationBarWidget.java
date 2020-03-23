@@ -201,13 +201,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             if (mViewModel.getIsLoading().getValue().get()) {
                 getSession().stop();
             } else {
-                if (SettingsStore.getInstance(mAppContext).isBypassCacheOnReloadEnabled()) {
-                    getSession().loadUri(getSession().getCurrentUri(), GeckoSession.LOAD_FLAGS_BYPASS_CACHE);
-                } else {
-                    // int flags = SettingsStore.getInstance(mAppContext).isBypassCacheOnReloadEnabled() ? GeckoSession.LOAD_FLAGS_BYPASS_CACHE : GeckoSession.LOAD_FLAGS_NONE;
-                    // getSession().reload(flags);
-                    getSession().reload(GeckoSession.LOAD_FLAGS_NONE);
-                }
+                int flags = SettingsStore.getInstance(mAppContext).isBypassCacheOnReloadEnabled() ? GeckoSession.LOAD_FLAGS_BYPASS_CACHE : GeckoSession.LOAD_FLAGS_NONE;
+                getSession().reload(flags);
             }
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
@@ -220,8 +215,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             if (mViewModel.getIsLoading().getValue().get()) {
                 getSession().stop();
             } else {
-                // getSession().reload(GeckoSession.LOAD_FLAGS_BYPASS_CACHE);
-                getSession().loadUri(getSession().getCurrentUri(), GeckoSession.LOAD_FLAGS_BYPASS_CACHE);
+                getSession().reload(GeckoSession.LOAD_FLAGS_BYPASS_CACHE);
             }
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
@@ -1181,14 +1175,14 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             public void onBlock() {
                 SessionStore.get().setPermissionAllowed(uri, aCategory, false);
                 mQuickPermissionWidget.onDismiss();
-                mAttachedWindow.getSession().reload(GeckoSession.LOAD_FLAGS_NONE);
+                mAttachedWindow.getSession().reload();
             }
 
             @Override
             public void onAllow() {
                 SessionStore.get().setPermissionAllowed(uri, aCategory, true);
                 mQuickPermissionWidget.onDismiss();
-                mAttachedWindow.getSession().reload(GeckoSession.LOAD_FLAGS_NONE);
+                mAttachedWindow.getSession().reload();
             }
         });
         mQuickPermissionWidget.getPlacement().parentHandle = getHandle();

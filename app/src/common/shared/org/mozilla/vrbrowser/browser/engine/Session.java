@@ -697,6 +697,10 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         }
     }
 
+    public void reload() {
+        reload(GeckoSession.LOAD_FLAGS_NONE);
+    }
+
     public void reload(final int flags) {
         if (mState.mSession != null) {
             mState.mSession.reload(flags);
@@ -861,9 +865,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         if (overrideUri != null) {
             mState.mSession.loadUri(overrideUri, GeckoSession.LOAD_FLAGS_BYPASS_CACHE | GeckoSession.LOAD_FLAGS_REPLACE_HISTORY);
         } else {
-            // mState.mSession.reload(GeckoSession.LOAD_FLAGS_BYPASS_CACHE);
-            mState.mSession.loadUri(mState.mUri, GeckoSession.LOAD_FLAGS_BYPASS_CACHE);
-
+            mState.mSession.reload(GeckoSession.LOAD_FLAGS_BYPASS_CACHE);
         }
     }
 
