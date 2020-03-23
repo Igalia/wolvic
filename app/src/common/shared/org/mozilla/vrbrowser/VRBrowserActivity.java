@@ -82,6 +82,7 @@ import org.mozilla.vrbrowser.utils.LocaleUtils;
 import org.mozilla.vrbrowser.utils.ServoUtils;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -96,7 +97,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private BroadcastReceiver mCrashReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.getAction().equals(CrashReporterService.CRASH_ACTION)) {
+            if((intent.getAction() != null) && intent.getAction().equals(CrashReporterService.CRASH_ACTION)) {
                 Intent crashIntent = intent.getParcelableExtra(CrashReporterService.DATA_TAG);
                 handleContentCrashIntent(crashIntent);
             }
@@ -443,9 +444,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         for (Widget widget: mWidgets.values()) {
             widget.onResume();
         }
-        mConnectivityListeners.forEach((listener) -> {
-            listener.OnConnectivityChanged(ConnectivityReceiver.isNetworkAvailable(this));
-        });
+        mConnectivityListeners.forEach((listener) -> listener.OnConnectivityChanged(ConnectivityReceiver.isNetworkAvailable(this)));
         mConnectivityReceiver.register(this, mConnectivityDelegate);
 
         // If we're signed-in, poll for any new device events (e.g. received tabs) on activity resume.
@@ -664,7 +663,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Override
     public void onBackPressed() {
         if (mIsPresentingImmersive) {
-            queueRunnable(() -> exitImmersiveNative());
+            queueRunnable(this::exitImmersiveNative);
             return;
         }
         if (mBackHandlers.size() > 0) {
@@ -711,20 +710,21 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         return super.dispatchKeyEvent(event);
     }
 
-    private void exitImmersiveSync() {
-        Runnable exitImmersive = new Runnable() {
-            @Override
-            public void run() {
-                exitImmersiveNative();
-                synchronized(this) {
-                    this.notifyAll();
-                }
+    final Runnable mExitImmersive = new Runnable() {
+        @Override
+        public void run() {
+            exitImmersiveNative();
+            synchronized(this) {
+                this.notifyAll();
             }
-        };
-        synchronized (exitImmersive) {
-            queueRunnable(exitImmersive);
+        }
+    };
+
+    private void exitImmersiveSync() {
+        synchronized (mExitImmersive) {
+            queueRunnable(mExitImmersive);
             try {
-                exitImmersive.wait();
+                mExitImmersive.wait();
             } catch (InterruptedException e) {
                 Log.e(LOGTAG, "Waiting for exit immersive onPause interrupted");
             }
@@ -893,9 +893,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Keep
     @SuppressWarnings("unused")
     void handleResize(final int aHandle, final float aWorldWidth, final float aWorldHeight) {
-        runOnUiThread(() -> {
-            mWindows.getFocusedWindow().handleResizeEvent(aWorldWidth, aWorldHeight);
-        });
+        runOnUiThread(() -> mWindows.getFocusedWindow().handleResizeEvent(aWorldWidth, aWorldHeight));
     }
 
     @Keep
@@ -1008,7 +1006,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Keep
     @SuppressWarnings("unused")
     String getStorageAbsolutePath() {
-        return getExternalFilesDir(null).getAbsolutePath();
+        final File path = getExternalFilesDir(null);
+        if (path == null) {
+            return "";
+        }
+        return path.getAbsolutePath();
     }
 
     @Keep
@@ -1067,7 +1069,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 return;
             }
             WindowWidget window = mWindows.getFocusedWindow();
-            if (window == null) {
+            if (window == null || window.getSession() == null) {
                 return;
             }
             final String originalUri = window.getSession().getCurrentUri();
@@ -1143,6 +1145,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         }
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean isWidgetInputEnabled(Widget aWidget) {
         return mActiveDialog == null || aWidget == null || mActiveDialog == aWidget || aWidget instanceof KeyboardWidget;
     }
@@ -1150,6 +1153,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     // WidgetManagerDelegate
     @Override
     public void addWidget(Widget aWidget) {
+        if (aWidget == null) {
+            return;
+        }
         mWidgets.put(aWidget.getHandle(), aWidget);
         ((View)aWidget).setVisibility(aWidget.getPlacement().visible ? View.VISIBLE : View.GONE);
         final int handle = aWidget.getHandle();
@@ -1160,6 +1166,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public void updateWidget(final Widget aWidget) {
+        if (aWidget == null) {
+            return;
+        }
         final int handle = aWidget.getHandle();
         final WidgetPlacement clone = aWidget.getPlacement().clone();
         queueRunnable(() -> updateWidgetNative(handle, clone));
@@ -1202,6 +1211,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public void removeWidget(final Widget aWidget) {
+        if (aWidget == null) {
+            return;
+        }
         mWidgets.remove(aWidget.getHandle());
         mWidgetContainer.removeView((View) aWidget);
         aWidget.setFirstPaintReady(false);
@@ -1218,35 +1230,44 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public void startWidgetResize(final Widget aWidget, float aMaxWidth, float aMaxHeight, float minWidth, float minHeight) {
+        if (aWidget == null) {
+            return;
+        }
         mWindows.enterResizeMode();
         queueRunnable(() -> startWidgetResizeNative(aWidget.getHandle(), aMaxWidth, aMaxHeight, minWidth, minHeight));
     }
 
     @Override
     public void finishWidgetResize(final Widget aWidget) {
+        if (aWidget == null) {
+            return;
+        }
         mWindows.exitResizeMode();
         queueRunnable(() -> finishWidgetResizeNative(aWidget.getHandle()));
     }
 
     @Override
     public void startWidgetMove(final Widget aWidget, @WidgetMoveBehaviourFlags int aMoveBehaviour) {
+        if (aWidget == null) {
+            return;
+        }
         queueRunnable(() -> startWidgetMoveNative(aWidget.getHandle(), aMoveBehaviour));
     }
 
     @Override
     public void finishWidgetMove() {
-        queueRunnable(() -> finishWidgetMoveNative());
+        queueRunnable(this::finishWidgetMoveNative);
     }
 
     @Override
-    public void addUpdateListener(UpdateListener aUpdateListener) {
+    public void addUpdateListener(@NonNull UpdateListener aUpdateListener) {
         if (!mWidgetUpdateListeners.contains(aUpdateListener)) {
             mWidgetUpdateListeners.add(aUpdateListener);
         }
     }
 
     @Override
-    public void removeUpdateListener(UpdateListener aUpdateListener) {
+    public void removeUpdateListener(@NonNull UpdateListener aUpdateListener) {
         mWidgetUpdateListeners.remove(aUpdateListener);
     }
 
@@ -1263,14 +1284,14 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
-    public void addFocusChangeListener(FocusChangeListener aListener) {
+    public void addFocusChangeListener(@NonNull FocusChangeListener aListener) {
         if (!mFocusChangeListeners.contains(aListener)) {
             mFocusChangeListeners.add(aListener);
         }
     }
 
     @Override
-    public void removeFocusChangeListener(FocusChangeListener aListener) {
+    public void removeFocusChangeListener(@NonNull FocusChangeListener aListener) {
         mFocusChangeListeners.remove(aListener);
     }
 
@@ -1300,12 +1321,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
-    public void pushBackHandler(Runnable aRunnable) {
+    public void pushBackHandler(@NonNull Runnable aRunnable) {
         mBackHandlers.addLast(aRunnable);
     }
 
     @Override
-    public void popBackHandler(Runnable aRunnable) {
+    public void popBackHandler(@NonNull Runnable aRunnable) {
         mBackHandlers.removeLastOccurrence(aRunnable);
     }
 
@@ -1379,12 +1400,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public void updateEnvironment() {
-        queueRunnable(() -> updateEnvironmentNative());
+        queueRunnable(this::updateEnvironmentNative);
     }
 
     @Override
     public void updatePointerColor() {
-        queueRunnable(() -> updatePointerColorNative());
+        queueRunnable(this::updatePointerColorNative);
     }
 
     @Override

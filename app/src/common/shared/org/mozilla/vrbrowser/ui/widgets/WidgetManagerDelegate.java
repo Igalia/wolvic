@@ -44,13 +44,13 @@ public interface WidgetManagerDelegate {
     int CPU_LEVEL_HIGH = 1;
 
     int newWidgetHandle();
-    void addWidget(@NonNull Widget aWidget);
-    void updateWidget(@NonNull Widget aWidget);
-    void removeWidget(@NonNull Widget aWidget);
+    void addWidget(Widget aWidget);
+    void updateWidget(Widget aWidget);
+    void removeWidget(Widget aWidget);
     void updateVisibleWidgets();
-    void startWidgetResize(@NonNull Widget aWidget, float maxWidth, float maxHeight, float minWidth, float minHeight);
-    void finishWidgetResize(@NonNull Widget aWidget);
-    void startWidgetMove(@NonNull Widget aWidget, @WidgetMoveBehaviourFlags int aMoveBehaviour);
+    void startWidgetResize(Widget aWidget, float maxWidth, float maxHeight, float minWidth, float minHeight);
+    void finishWidgetResize(Widget aWidget);
+    void startWidgetMove(Widget aWidget, @WidgetMoveBehaviourFlags int aMoveBehaviour);
     void finishWidgetMove();
     void addUpdateListener(@NonNull UpdateListener aUpdateListener);
     void removeUpdateListener(@NonNull UpdateListener aUpdateListener);
@@ -79,7 +79,7 @@ public interface WidgetManagerDelegate {
     boolean isPermissionGranted(@NonNull String permission);
     void requestPermission(String uri, @NonNull String permission, GeckoSession.PermissionDelegate.Callback aCallback);
     boolean canOpenNewWindow();
-    void openNewWindow(@NonNull String uri);
+    void openNewWindow(String uri);
     void openNewTab(@NonNull String uri);
     void openNewTabForeground(@NonNull String uri);
     WindowWidget getFocusedWindow();
