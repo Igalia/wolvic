@@ -144,6 +144,19 @@
                     android:layout_height="wrap_content"
                     app:buttonText="@string/security_options_block_pup_up_settings" />
 
+                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                    android:id="@+id/webxrSwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="40dp"
+                    app:description="@string/security_options_permission_webxr" />
+
+                <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                    android:id="@+id/webxrExceptionsButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:buttonText="@string/security_options_block_pup_up_settings" />
+
                 <TextView
                     android:id="@+id/dataCollectionTitle"
                     style="@style/settingsDescription"

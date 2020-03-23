@@ -42,6 +42,7 @@
     <string name="settings_key_autoplay" translatable="false">settings_key_autoplay</string>
     <string name="settings_key_pid" translatable="false">settings_key_pid</string>
     <string name="settings_key_pop_up_blocking" translatable="false">settings_key_pop_up_blocking</string>
+    <string name="settings_key_webxr" translatable="false">settings_key_webxr</string>
     <string name="settings_key_telemetry_status_update_sent" translatable="false">settings_key_telemetry_status_update_sent</string>
     <string name="settings_key_bookmarks_sync" translatable="false">settings_key_bookmarks_sync</string>
     <string name="settings_key_history_sync" translatable="false">settings_key_history_sync</string>

@@ -16,6 +16,7 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.URLUtil;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
@@ -36,7 +37,10 @@ import org.mozilla.vrbrowser.browser.PromptDelegate;
 import org.mozilla.vrbrowser.browser.SessionChangeListener;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.browser.engine.Session;
+import org.mozilla.vrbrowser.browser.engine.SessionState;
+import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.databinding.NavigationBarBinding;
+import org.mozilla.vrbrowser.db.SitePermission;
 import org.mozilla.vrbrowser.search.suggestions.SuggestionsProvider;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.ui.viewmodel.TrayViewModel;
@@ -45,6 +49,7 @@ import org.mozilla.vrbrowser.ui.views.NavigationURLBar;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.views.UITextButton;
 import org.mozilla.vrbrowser.ui.widgets.NotificationManager.Notification.NotificationPosition;
+import org.mozilla.vrbrowser.ui.widgets.dialogs.QuickPermissionWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.SelectionActionWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.SendTabDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.VoiceSearchWidget;
@@ -101,6 +106,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private Media mFullScreenMedia;
     private @VideoProjectionMenuWidget.VideoProjectionFlags int mAutoSelectedProjection = VIDEO_PROJECTION_NONE;
     private HamburgerMenuWidget mHamburgerMenu;
+    private QuickPermissionWidget mQuickPermissionWidget;
     private SendTabDialogWidget mSendTabDialog;
     private int mBlockedCount;
     private Executor mUIThreadExecutor;
@@ -650,7 +656,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         // Update preset styles
     }
 
-
     enum ResizeAction {
         KEEP_SIZE,
         RESTORE_SIZE
@@ -917,6 +922,13 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mAttachedWindow.showPopUps();
     }
 
+    @Override
+    public void onWebXRButtonClicked() {
+        showQuickPermission(mBinding.navigationBarNavigation.urlBar.getWebxRButton(),
+                SitePermission.SITE_PERMISSION_WEBXR,
+                mViewModel.getIsWebXRBlocked().getValue().get());
+    }
+
     // VoiceSearch Delegate
 
     @Override
@@ -1157,4 +1169,35 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         }
     };
 
+    private void showQuickPermission(UIButton target, @SitePermission.Category int aCategory, boolean aBlocked) {
+        if (mQuickPermissionWidget == null) {
+            mQuickPermissionWidget = new QuickPermissionWidget(getContext());
+        }
+
+        String uri = UrlUtils.getHost(mAttachedWindow.getSession().getCurrentUri());
+        mQuickPermissionWidget.setData(uri, aCategory, aBlocked);
+        mQuickPermissionWidget.setDelegate(new QuickPermissionWidget.Delegate() {
+            @Override
+            public void onBlock() {
+                SessionStore.get().setPermissionAllowed(uri, aCategory, false);
+                mQuickPermissionWidget.onDismiss();
+                mAttachedWindow.getSession().reload(GeckoSession.LOAD_FLAGS_NONE);
+            }
+
+            @Override
+            public void onAllow() {
+                SessionStore.get().setPermissionAllowed(uri, aCategory, true);
+                mQuickPermissionWidget.onDismiss();
+                mAttachedWindow.getSession().reload(GeckoSession.LOAD_FLAGS_NONE);
+            }
+        });
+        mQuickPermissionWidget.getPlacement().parentHandle = getHandle();
+        // Place the dialog on top of the target button
+        Rect offsetViewBounds = new Rect();
+        target.getDrawingRect(offsetViewBounds);
+        offsetDescendantRectToMyCoords(target, offsetViewBounds);
+        float x = offsetViewBounds.left + (offsetViewBounds.right - offsetViewBounds.left) * 0.5f;
+        mQuickPermissionWidget.getPlacement().parentAnchorX = x / getWidth();
+        mQuickPermissionWidget.show(REQUEST_FOCUS);
+    }
 }

@@ -14,31 +14,31 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.databinding.PopupItemBinding;
-import org.mozilla.vrbrowser.db.PopUpSite;
-import org.mozilla.vrbrowser.ui.callbacks.PopUpSiteItemCallback;
+import org.mozilla.vrbrowser.databinding.SitePermissionItemBinding;
+import org.mozilla.vrbrowser.db.SitePermission;
+import org.mozilla.vrbrowser.ui.callbacks.PermissionSiteItemCallback;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 import org.mozilla.vrbrowser.utils.ViewUtils;
 
 import java.util.List;
 import java.util.Objects;
 
-public class PopUpAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class SitePermissionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    static final String LOGTAG = SystemUtils.createLogtag(BookmarkAdapter.class);
+    static final String LOGTAG = SystemUtils.createLogtag(SitePermissionAdapter.class);
 
     private static final int ICON_ANIMATION_DURATION = 200;
 
-    private List<PopUpSite> mDisplayList;
+    private List<SitePermission> mDisplayList;
 
-    private PopUpSiteItemCallback mCallback;
+    private PermissionSiteItemCallback mCallback;
 
     private int mIconColorHover;
     private int mIconNormalColor;
     private int mIconSize;
     private int mMaxIconSize;
 
-    public PopUpAdapter(Context aContext, PopUpSiteItemCallback callback) {
+    public SitePermissionAdapter(Context aContext, PermissionSiteItemCallback callback) {
         mCallback = callback;
 
         mIconSize = (int)aContext.getResources().getDimension(R.dimen.language_row_icon_size);
@@ -50,7 +50,7 @@ public class PopUpAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         setHasStableIds(true);
     }
 
-    public void setSites(@NonNull List<PopUpSite> sites) {
+    public void setSites(@NonNull List<SitePermission> sites) {
         if (mDisplayList == null) {
             mDisplayList = sites;
             notifyItemRangeChanged(0, sites.size());
@@ -60,7 +60,7 @@ public class PopUpAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-    private void notifyDiff(List<PopUpSite> newDisplayList) {
+    private void notifyDiff(List<SitePermission> newDisplayList) {
         DiffUtil.DiffResult result = DiffUtil.calculateDiff(new DiffUtil.Callback() {
             @Override
             public int getOldListSize() {
@@ -89,8 +89,8 @@ public class PopUpAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        PopupItemBinding binding = DataBindingUtil
-                .inflate(LayoutInflater.from(parent.getContext()), R.layout.popup_item,
+        SitePermissionItemBinding binding = DataBindingUtil
+                .inflate(LayoutInflater.from(parent.getContext()), R.layout.site_permission_item,
                         parent, false);
         binding.setCallback(mCallback);
         binding.layout.setOnHoverListener((v, event) -> {
@@ -111,13 +111,13 @@ public class PopUpAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         });
         binding.delete.setOnHoverListener(mIconHoverListener);
 
-        return new PopUpSiteViewHolder(binding);
+        return new PermissionSiteViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        PopUpSiteViewHolder siteHolder = (PopUpSiteViewHolder) holder;
-        PopUpSite site = mDisplayList.get(position);
+        PermissionSiteViewHolder siteHolder = (PermissionSiteViewHolder) holder;
+        SitePermission site = mDisplayList.get(position);
         siteHolder.binding.setItem(site);
     }
 
@@ -126,11 +126,11 @@ public class PopUpAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         return mDisplayList == null ? 0 : mDisplayList.size();
     }
 
-    static class PopUpSiteViewHolder extends RecyclerView.ViewHolder {
+    static class PermissionSiteViewHolder extends RecyclerView.ViewHolder {
 
-        final PopupItemBinding binding;
+        final SitePermissionItemBinding binding;
 
-        PopUpSiteViewHolder(@NonNull PopupItemBinding binding) {
+        PermissionSiteViewHolder(@NonNull SitePermissionItemBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }

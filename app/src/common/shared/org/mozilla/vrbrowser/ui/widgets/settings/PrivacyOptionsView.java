@@ -24,6 +24,7 @@ import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.databinding.OptionsPrivacyBinding;
+import org.mozilla.vrbrowser.db.SitePermission;
 import org.mozilla.vrbrowser.ui.views.settings.SwitchSetting;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
@@ -35,6 +36,8 @@ class PrivacyOptionsView extends SettingsView {
 
     private OptionsPrivacyBinding mBinding;
     private ArrayList<Pair<SwitchSetting, String>> mPermissionButtons;
+    private SettingsView mPopUpsBlockingExceptions;
+    private SettingsView mWebXRSitesExceptions;
 
     public PrivacyOptionsView(Context aContext, WidgetManagerDelegate aWidgetManager) {
         super(aContext, aWidgetManager);
@@ -84,6 +87,9 @@ class PrivacyOptionsView extends SettingsView {
         TextView permissionsTitleText = findViewById(R.id.permissionsTitle);
         permissionsTitleText.setText(getContext().getString(R.string.security_options_permissions_title, getContext().getString(R.string.app_name)));
 
+        mPopUpsBlockingExceptions = new SitePermissionsOptionsView(getContext(), mWidgetManager, SitePermission.SITE_PERMISSION_POPUP);
+        mWebXRSitesExceptions = new SitePermissionsOptionsView(getContext(), mWidgetManager, SitePermission.SITE_PERMISSION_WEBXR);
+
         mPermissionButtons = new ArrayList<>();
         mPermissionButtons.add(Pair.create(findViewById(R.id.cameraPermissionSwitch), Manifest.permission.CAMERA));
         mPermissionButtons.add(Pair.create(findViewById(R.id.microphonePermissionSwitch), Manifest.permission.RECORD_AUDIO));
@@ -129,6 +135,10 @@ class PrivacyOptionsView extends SettingsView {
 
         mBinding.restoreTabsSwitch.setOnCheckedChangeListener(mRestoreTabsListener);
         setRestoreTabs(SettingsStore.getInstance(getContext()).isRestoreTabsEnabled(), false);
+
+        mBinding.webxrSwitch.setOnCheckedChangeListener(mWebXRListener);
+        setWebXR(SettingsStore.getInstance(getContext()).isWebXREnabled(), false);
+        mBinding.webxrExceptionsButton.setOnClickListener(v -> mDelegate.showView(SettingViewType.WEBXR_EXCEPTIONS));
     }
 
     private void togglePermission(SwitchSetting aButton, String aPermission) {
@@ -182,6 +192,10 @@ class PrivacyOptionsView extends SettingsView {
         setRestoreTabs(value, doApply);
     };
 
+    private SwitchSetting.OnCheckedChangeListener mWebXRListener = (compoundButton, value, doApply) -> {
+        setWebXR(value, doApply);
+    };
+
     private void resetOptions() {
         if (mBinding.drmContentPlaybackSwitch.isChecked() != SettingsStore.DRM_PLAYBACK_DEFAULT) {
             setDrmContent(SettingsStore.DRM_PLAYBACK_DEFAULT, true);
@@ -213,6 +227,10 @@ class PrivacyOptionsView extends SettingsView {
 
         if (mBinding.restoreTabsSwitch.isChecked() != SettingsStore.RESTORE_TABS_ENABLED) {
             setRestoreTabs(SettingsStore.RESTORE_TABS_ENABLED, true);
+        }
+
+        if (mBinding.webxrSwitch.isChecked() != SettingsStore.WEBXR_ENABLED_DEFAULT) {
+            setWebXR(SettingsStore.WEBXR_ENABLED_DEFAULT, true);
         }
     }
 
@@ -295,6 +313,16 @@ class PrivacyOptionsView extends SettingsView {
 
         if (doApply) {
             SettingsStore.getInstance(getContext()).setRestoreTabsEnabled(value);
+        }
+    }
+
+    private void setWebXR(boolean value, boolean doApply) {
+        mBinding.webxrSwitch.setOnCheckedChangeListener(null);
+        mBinding.webxrSwitch.setValue(value, false);
+        mBinding.webxrSwitch.setOnCheckedChangeListener(mWebXRListener);
+
+        if (doApply) {
+            SettingsStore.getInstance(getContext()).setWebXREnabled(value);
         }
     }
 

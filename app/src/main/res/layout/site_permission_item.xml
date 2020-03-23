@@ -6,10 +6,10 @@
     <data>
         <variable
             name="callback"
-            type="org.mozilla.vrbrowser.ui.callbacks.PopUpSiteItemCallback" />
+            type="org.mozilla.vrbrowser.ui.callbacks.PermissionSiteItemCallback" />
         <variable
             name="item"
-            type="org.mozilla.vrbrowser.db.PopUpSite" />
+            type="org.mozilla.vrbrowser.db.SitePermission" />
     </data>
 
     <RelativeLayout

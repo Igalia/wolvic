@@ -35,6 +35,7 @@ import org.mozilla.vrbrowser.browser.Accounts;
 import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.databinding.SettingsBinding;
+import org.mozilla.vrbrowser.db.SitePermission;
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
@@ -418,7 +419,10 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
                 showView(new PrivacyOptionsView(getContext(), mWidgetManager));
                 break;
             case POPUP_EXCEPTIONS:
-                showView(new PopUpExceptionsOptionsView(getContext(), mWidgetManager));
+                showView(new SitePermissionsOptionsView(getContext(), mWidgetManager, SitePermission.SITE_PERMISSION_POPUP));
+                break;
+            case WEBXR_EXCEPTIONS:
+                showView(new SitePermissionsOptionsView(getContext(), mWidgetManager, SitePermission.SITE_PERMISSION_WEBXR));
                 break;
             case DEVELOPER:
                 showView(new DeveloperOptionsView(getContext(), mWidgetManager));
@@ -530,7 +534,7 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
     }
 
     private boolean isPrivacySubView(View view) {
-        if (view instanceof PopUpExceptionsOptionsView) {
+        if (view instanceof SitePermissionsOptionsView) {
             return true;
         }
 

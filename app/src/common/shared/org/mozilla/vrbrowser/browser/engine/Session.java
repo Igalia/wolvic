@@ -74,6 +74,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     private transient CopyOnWriteArrayList<VideoAvailabilityListener> mVideoAvailabilityListeners;
     private transient CopyOnWriteArrayList<BitmapChangedListener> mBitmapChangedListeners;
     private transient CopyOnWriteArrayList<GeckoSession.SelectionActionDelegate> mSelectionActionListeners;
+    private transient CopyOnWriteArrayList<WebXRStateChangedListener> mWebXRStateListeners;
 
     private SessionState mState;
     private transient CopyOnWriteArrayList<Runnable> mQueuedCalls = new CopyOnWriteArrayList<>();
@@ -89,6 +90,10 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
     public interface BitmapChangedListener {
         void onBitmapChanged(Session aSession, Bitmap aBitmap);
+    }
+
+    public interface WebXRStateChangedListener {
+        void onWebXRStateChanged(Session aSession, @SessionState.WebXRState int aWebXRState);
     }
 
     @IntDef(value = { SESSION_OPEN, SESSION_DO_NOT_OPEN})
@@ -121,6 +126,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         mVideoAvailabilityListeners = new CopyOnWriteArrayList<>();
         mSelectionActionListeners = new CopyOnWriteArrayList<>();
         mBitmapChangedListeners = new CopyOnWriteArrayList<>();
+        mWebXRStateListeners = new CopyOnWriteArrayList<>();
 
         if (mPrefs != null) {
             mPrefs.registerOnSharedPreferenceChangeListener(this);
@@ -165,6 +171,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         mVideoAvailabilityListeners.clear();
         mSelectionActionListeners.clear();
         mBitmapChangedListeners.clear();
+        mWebXRStateListeners.clear();
 
         if (mPrefs != null) {
             mPrefs.unregisterOnSharedPreferenceChangeListener(this);
@@ -183,6 +190,10 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         }
 
         for (VideoAvailabilityListener listener: mVideoAvailabilityListeners) {
+            dumpState(listener);
+        }
+
+        for (WebXRStateChangedListener listener: mWebXRStateListeners) {
             dumpState(listener);
         }
     }
@@ -213,6 +224,10 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
     private void dumpState(VideoAvailabilityListener aListener) {
         aListener.onVideoAvailabilityChanged(mState.mMediaElements != null && mState.mMediaElements.size() > 0);
+    }
+
+    private void dumpState(WebXRStateChangedListener aListener) {
+        aListener.onWebXRStateChanged(this, mState.mWebXRState);
     }
 
     private void flushQueuedEvents() {
@@ -300,6 +315,15 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
     public void removeBitmapChangedListener(BitmapChangedListener aListener) {
         mBitmapChangedListeners.remove(aListener);
+    }
+
+    public void addWebXRStateChangedListener(WebXRStateChangedListener aListener) {
+        mWebXRStateListeners.add(aListener);
+        dumpState(aListener);
+    }
+
+    public void removeWebXRStateChangedListener(WebXRStateChangedListener aListener) {
+        mWebXRStateListeners.remove(aListener);
     }
 
     private void setupSessionListeners(GeckoSession aSession) {
@@ -757,6 +781,15 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         return false;
     }
 
+    public void setWebXRState(@SessionState.WebXRState int aWebXRState) {
+        if (aWebXRState != mState.mWebXRState) {
+            mState.mWebXRState = aWebXRState;
+            for (WebXRStateChangedListener listener: mWebXRStateListeners) {
+                dumpState(listener);
+            }
+        }
+    }
+
     // Session Settings
 
     protected void setServo(final boolean enabled) {
@@ -993,6 +1026,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         TelemetryWrapper.startPageLoadTime();
         GleanMetricsService.startPageLoadTime();
 
+        setWebXRState(SessionState.WEBXR_UNUSED);
         for (GeckoSession.ProgressDelegate listener : mProgressListeners) {
             listener.onPageStart(aSession, aUri);
         }

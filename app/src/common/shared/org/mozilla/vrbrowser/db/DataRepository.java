@@ -10,6 +10,7 @@ import androidx.lifecycle.MediatorLiveData;
 import org.mozilla.vrbrowser.AppExecutors;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class DataRepository implements LifecycleOwner {
 
@@ -18,7 +19,7 @@ public class DataRepository implements LifecycleOwner {
     private final AppExecutors mExecutors;
     private final AppDatabase mDatabase;
     private final LifecycleRegistry mLifeCycle;
-    private MediatorLiveData<List<PopUpSite>> mObservablePopUps;
+    private MediatorLiveData<List<SitePermission>> mObservablePopUps;
 
     private DataRepository(final @NonNull AppDatabase database, final @NonNull AppExecutors executors) {
         mDatabase = database;
@@ -27,10 +28,10 @@ public class DataRepository implements LifecycleOwner {
         mLifeCycle.markState(Lifecycle.State.STARTED);
         mObservablePopUps = new MediatorLiveData<>();
 
-        mObservablePopUps.addSource(mDatabase.popUpSiteDao().loadAll(),
-                popUpSites -> {
+        mObservablePopUps.addSource(mDatabase.sitePermissionDao().loadAll(),
+                sites -> {
                     if (mDatabase.getDatabaseCreated().getValue() != null) {
-                        mObservablePopUps.postValue(popUpSites);
+                        mObservablePopUps.postValue(sites);
                     }
                 });
     }
@@ -53,28 +54,28 @@ public class DataRepository implements LifecycleOwner {
         return mLifeCycle;
     }
 
-    public LiveData<List<PopUpSite>> getPopUpSites() {
+    public LiveData<List<SitePermission>> getSitePermissions() {
         return mObservablePopUps;
     }
 
-    public LiveData<PopUpSite> findPopUpSiteByUrl(final @NonNull String url) {
-        return mDatabase.popUpSiteDao().findByUrl(url);
+    public CompletableFuture<SitePermission> getSitePermission(String aURL, @SitePermission.Category int category) {
+        CompletableFuture<SitePermission> future = new CompletableFuture<>();
+        mExecutors.diskIO().execute(() -> {
+            mDatabase.sitePermissionDao().findByUrl(aURL, category);
+        });
+        return future;
     }
 
-    public void insertPopUpSite(final @NonNull String url, boolean allowed) {
-        mExecutors.diskIO().execute(() -> mDatabase.popUpSiteDao().insert(new PopUpSite(url, allowed)));
+    public void insertSitePermission(final @NonNull SitePermission site) {
+        mExecutors.diskIO().execute(() -> mDatabase.sitePermissionDao().insert(site));
     }
 
-    public void insertPopUpSite(final @NonNull PopUpSite site) {
-        mExecutors.diskIO().execute(() -> mDatabase.popUpSiteDao().insert(site));
+    public void deleteSitePermission(final @NonNull SitePermission site) {
+        mExecutors.diskIO().execute(() -> mDatabase.sitePermissionDao().delete(site));
     }
 
-    public void deletePopUpSite(final @NonNull PopUpSite site) {
-        mExecutors.diskIO().execute(() -> mDatabase.popUpSiteDao().delete(site));
-    }
-
-    public void deleteAllPopUpSites() {
-        mExecutors.diskIO().execute(() -> mDatabase.popUpSiteDao().deleteAll());
+    public void deleteAllSitePermission(@SitePermission.Category int category) {
+        mExecutors.diskIO().execute(() -> mDatabase.sitePermissionDao().deleteAll(category));
     }
 
 }

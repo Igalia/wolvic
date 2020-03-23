@@ -16,6 +16,7 @@ import org.mozilla.vrbrowser.browser.BookmarksStore;
 import org.mozilla.vrbrowser.browser.HistoryStore;
 import org.mozilla.vrbrowser.browser.PermissionDelegate;
 import org.mozilla.vrbrowser.browser.Services;
+import org.mozilla.vrbrowser.db.SitePermission;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.util.ArrayList;
@@ -134,6 +135,10 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
 
     public @Nullable Session getSession(String aId) {
         return mSessions.stream().filter(session -> session.getId().equals(aId)).findFirst().orElse(null);
+    }
+
+    public @Nullable Session getSession(GeckoSession aGeckoSession) {
+        return mSessions.stream().filter(session -> session.getGeckoSession() == aGeckoSession).findFirst().orElse(null);
     }
 
     public void setActiveSession(Session aSession) {
@@ -309,6 +314,12 @@ public class SessionStore implements GeckoSession.PermissionDelegate {
     public void onMediaPermissionRequest(@NonNull GeckoSession session, @NonNull String uri, @Nullable MediaSource[] video, @Nullable MediaSource[] audio, @NonNull MediaCallback callback) {
         if (mPermissionDelegate != null) {
             mPermissionDelegate.onMediaPermissionRequest(session, uri, video, audio, callback);
+        }
+    }
+
+    public void setPermissionAllowed(String uri, @SitePermission.Category int category, boolean allowed) {
+        if (mPermissionDelegate != null) {
+            mPermissionDelegate.setPermissionAllowed(uri, category, allowed);
         }
     }
 }

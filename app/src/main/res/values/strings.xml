@@ -110,6 +110,19 @@
          allowed pop-up sites. -->
     <string name="settings_privacy_policy_popups_description">You can specify which websites are allowed to open pop-up windows</string>
 
+    <!-- This string is used as the title of the WebXR dialog used to do not allow websites to access WebXR devices. -->
+    <string name="settings_privacy_policy_webxr_title">Virtual Reality permissions</string>
+
+    <!-- This string is displayed under the title the  WebXR dialog used to do not allow websites to access WebXR devices. -->
+    <string name="settings_privacy_policy_webxr_description">The following sites are blocked from letting WebXR API access your VR device.</string>
+
+    <!-- This string is displayed in the first line of a text that's displayed in the middle of allowed pop-ups panel instead of the exceptions list
+     when there are no exceptions. -->
+    <string name="settings_privacy_policy_webxr_empty_description">When you open a website which uses WebXR, you can open a dialog that lets you to block WebXR on that site.</string>
+
+    <!-- This string labels the Reset button that removes all the sites not allowed to access WebXR -->
+    <string name="settings_privacy_policy_webxr_reset">Reset the sites not allowed to access Virtual Reality devices.</string>
+
     <!-- This string is displayed in the switch of each item of the the pop-up blocking list when the site is allowed. -->
     <string name="pop_up_site_switch_allow">Allow</string>
 
@@ -613,6 +626,10 @@
          pop-up blocked sites. -->
     <string name="security_options_block_pup_up_settings">Advanced</string>
 
+    <!-- This string labels the button in the privacy option panel that enables/disables Virtual Reality
+        Devices access to websites (WebXR). -->
+    <string name="security_options_permission_webxr">Virtual Reality Devices (WebXR)</string>
+
     <!-- This string is a label above the group of switches that indicates that the switches below
          relate to Firefox data collection and use. -->
     <string name="security_options_speech_data_collection_title">%1$s Data Collection and Use</string>
@@ -1059,6 +1076,14 @@
          'Resize' refers to the button used to resize the browset window. -->
     <string name="resize_tooltip">Resize</string>
 
+    <!-- This string is for the tooltip that appears upon hovering the 'WebXR' button in the
+     browser's navigation bar. The button it labels, when pressed, Shows the WebXR permission dialog. -->
+    <string name="webxr_allowed_tooltip">WebXR Allowed</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'WebXR' button in the
+ browser's navigation bar. The button it labels, when pressed, Shows the WebXR permission dialog. -->
+    <string name="webxr_blocked_tooltip">WebXR Blocked</string>
+
     <!-- This string is for the tooltip that appears when the user is not in the browser's Private Browsing mode
          and hovers over the 'Private Browsing' icon in the browser's tray menu. -->
     <string name="private_browsing_enter_tooltip">Enter Private Browsing</string>
@@ -1372,4 +1397,9 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed as a button below the slow script dialog description message. When clicked
        it continues to wait for execution of the web page script that caused the slow down. -->
     <string name="slow_script_dialog_action_wait">Wait</string>
+
+
+    <!-- This string is displayed in the title of the quick WebXR blocking dialog, accesed from the VR icon in the URL bar.
+     '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="webxr_block_dialog_message">\'%1$s\' wants to access WebXR api</string>
 </resources>

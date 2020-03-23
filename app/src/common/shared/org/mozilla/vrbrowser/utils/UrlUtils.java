@@ -168,4 +168,13 @@ public class UrlUtils {
     public static boolean isAboutPage(@Nullable String url) {
         return isHistoryUrl(url) || isBookmarksUrl(url) || isPrivateUrl(url);
     }
+
+    public static String getHost(String uri) {
+        try {
+            URL url = new URL(uri);
+            return url.getHost();
+        } catch (MalformedURLException e) {
+            return uri;
+        }
+    }
 }

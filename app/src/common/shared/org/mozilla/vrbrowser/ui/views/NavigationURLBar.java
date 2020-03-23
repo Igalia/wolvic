@@ -99,6 +99,7 @@ public class NavigationURLBar extends FrameLayout {
         void onHideAwesomeBar();
         void onURLSelectionAction(EditText aURLEdit, float centerX, SelectionActionWidget actionMenu);
         void onPopUpButtonClicked();
+        void onWebXRButtonClicked();
     }
 
     public NavigationURLBar(Context context, AttributeSet attrs) {
@@ -227,6 +228,7 @@ public class NavigationURLBar extends FrameLayout {
         mBinding.clearButton.setOnClickListener(mClearListener);
 
         mBinding.popup.setOnClickListener(mPopUpListener);
+        mBinding.webxr.setOnClickListener(mWebXRButtonClick);
 
         // Bookmarks
         mBinding.bookmarkButton.setOnClickListener(v -> handleBookmarkClick());
@@ -329,7 +331,11 @@ public class NavigationURLBar extends FrameLayout {
         return mBinding.popup;
     }
 
-    public void handleURLEdit(String text) {
+    public UIButton getWebxRButton() {
+        return mBinding.webxr;
+    }
+
+    public  void handleURLEdit(String text) {
         text = text.trim();
 
         String url;
@@ -390,6 +396,17 @@ public class NavigationURLBar extends FrameLayout {
 
         if (mDelegate != null) {
             mDelegate.onPopUpButtonClicked();
+        }
+    };
+
+    private OnClickListener mWebXRButtonClick = view -> {
+        if (mAudio != null) {
+            mAudio.playSound(AudioEngine.Sound.CLICK);
+        }
+
+        view.requestFocusFromTouch();
+        if (mDelegate != null) {
+            mDelegate.onWebXRButtonClicked();
         }
     };
 

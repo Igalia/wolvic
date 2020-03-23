@@ -76,6 +76,7 @@ public class SettingsStore {
     public final static boolean AUTOPLAY_ENABLED = false;
     public final static boolean DEBUG_LOGGING_DEFAULT = false;
     public final static boolean POP_UPS_BLOCKING_DEFAULT = true;
+    public final static boolean WEBXR_ENABLED_DEFAULT = true;
     public final static boolean TELEMETRY_STATUS_UPDATE_SENT_DEFAULT = false;
     public final static boolean BOOKMARKS_SYNC_DEFAULT = true;
     public final static boolean HISTORY_SYNC_DEFAULT = true;
@@ -590,6 +591,16 @@ public class SettingsStore {
     public void setPopUpsBlockingEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_pop_up_blocking), isEnabled);
+        editor.commit();
+    }
+
+    public boolean isWebXREnabled() {
+        return mPrefs.getBoolean(mContext.getString(R.string.settings_key_webxr), WEBXR_ENABLED_DEFAULT);
+    }
+
+    public void setWebXREnabled(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_webxr), isEnabled);
         editor.commit();
     }
 

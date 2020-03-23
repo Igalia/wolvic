@@ -99,6 +99,17 @@
                         app:privateMode="@{viewmodel.isPrivateSession}"
                         app:visibleGone="@{viewmodel.isPopUpAvailable}" />
 
+                    <org.mozilla.vrbrowser.ui.views.UIButton
+                        android:id="@+id/webxr"
+                        style="@style/urlBarIconThemeStart"
+                        android:paddingStart="5dp"
+                        android:paddingEnd="5dp"
+                        android:src="@{viewmodel.isWebXRBlocked ? @drawable/ic_icon_webxr_blocked : @drawable/ic_icon_webxr_allowed}"
+                        app:privateMode="@{viewmodel.isPrivateSession}"
+                        android:tint="@color/fog"
+                        android:tooltipText="@{viewmodel.isWebXRBlocked ? @string/webxr_blocked_tooltip : @string/webxr_allowed_tooltip}"
+                        app:visibleGone="@{viewmodel.isWebXRUsed}" />
+
                     <View
                         android:layout_width="15dp"
                         android:layout_height="match_parent"

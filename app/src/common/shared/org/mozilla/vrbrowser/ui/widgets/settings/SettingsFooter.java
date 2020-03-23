@@ -77,6 +77,10 @@ public class SettingsFooter extends FrameLayout {
         mBinding.resetButton.setButtonText(textRes);
     }
 
+    public void setDescription(@StringRes int textRes) {
+        mBinding.resetButton.setDescription(getContext().getString(textRes));
+    }
+
     public void setFooterButtonVisibility(int visibility) {
         mBinding.resetButton.setFooterButtonVisibility(visibility);
     }

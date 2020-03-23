@@ -17,12 +17,13 @@ import org.mozilla.vrbrowser.AppExecutors;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.browser.engine.Session;
-import org.mozilla.vrbrowser.db.PopUpSite;
-import org.mozilla.vrbrowser.ui.viewmodel.PopUpsViewModel;
+import org.mozilla.vrbrowser.db.SitePermission;
+import org.mozilla.vrbrowser.ui.viewmodel.SitePermissionViewModel;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.ui.widgets.WindowWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.PopUpBlockDialogWidget;
+import org.mozilla.vrbrowser.ui.widgets.dialogs.QuickPermissionWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.AlertPromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.AuthPromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.ChoicePromptWidget;
@@ -51,15 +52,15 @@ public class PromptDelegate implements
     private ConfirmPromptWidget mSlowScriptPrompt;
     private Context mContext;
     private WindowWidget mAttachedWindow;
-    private List<PopUpSite> mAllowedPopUpSites;
-    private PopUpsViewModel mViewModel;
+    private List<SitePermission> mAllowedPopUpSites;
+    private SitePermissionViewModel mViewModel;
     private AppExecutors mExecutors;
     private PopUpDelegate mPopupDelegate;
 
     public PromptDelegate(@NonNull Context context) {
         mContext = context;
         mExecutors = ((VRBrowserApplication)context.getApplicationContext()).getExecutors();
-        mViewModel = new PopUpsViewModel(((Application)context.getApplicationContext()));
+        mViewModel = new SitePermissionViewModel(((Application)context.getApplicationContext()));
         mAllowedPopUpSites = new ArrayList<>();
     }
 
@@ -71,7 +72,7 @@ public class PromptDelegate implements
 
         mAttachedWindow = window;
         mAttachedWindow.addWindowListener(this);
-        mViewModel.getAll().observeForever(mObserver);
+        mViewModel.getAll(SitePermission.SITE_PERMISSION_POPUP).observeForever(mPopUpSiteObserver);
 
         if (getSession() != null) {
             setUpSession(getSession());
@@ -87,7 +88,7 @@ public class PromptDelegate implements
             mAttachedWindow.removeWindowListener(this);
             mAttachedWindow = null;
         }
-        mViewModel.getAll().removeObserver(mObserver);
+        mViewModel.getAll(SitePermission.SITE_PERMISSION_POPUP).removeObserver(mPopUpSiteObserver);
 
         clearPopUps();
     }
@@ -262,8 +263,8 @@ public class PromptDelegate implements
         return result;
     }
 
-    private Observer<List<PopUpSite>> mObserver = popUpSites -> {
-        mAllowedPopUpSites = popUpSites;
+    private Observer<List<SitePermission>> mPopUpSiteObserver = sites -> {
+        mAllowedPopUpSites = sites;
     };
 
     @Nullable
@@ -278,7 +279,7 @@ public class PromptDelegate implements
             final int sessionId = geckoSession.hashCode();
             final String uri = mAttachedWindow.getSession().getCurrentUri();
 
-            Optional<PopUpSite> site = mAllowedPopUpSites.stream().filter((item) -> item.url.equals(uri)).findFirst();
+            Optional<SitePermission> site = mAllowedPopUpSites.stream().filter((item) -> item.url.equals(uri)).findFirst();
             if (site.isPresent()) {
                 mAttachedWindow.postDelayed(() -> {
                     if (site.get().allowed) {
@@ -349,15 +350,16 @@ public class PromptDelegate implements
 
     private void showPopUp(int sessionId, @NonNull Pair<String, LinkedList<PopUpRequest>> requests) {
         String uri = requests.first;
-        Optional<PopUpSite> site = mAllowedPopUpSites.stream().filter((item) -> item.url.equals(uri)).findFirst();
+        Optional<SitePermission> site = mAllowedPopUpSites.stream().filter((item) -> item.url.equals(uri)).findFirst();
         if (!site.isPresent()) {
             mPopUpPrompt = new PopUpBlockDialogWidget(mContext);
             mPopUpPrompt.setButtonsDelegate(index -> {
                 boolean allowed = index != PopUpBlockDialogWidget.NEGATIVE;
                 boolean askAgain = mPopUpPrompt.askAgain();
                 if (allowed && !askAgain) {
-                    mAllowedPopUpSites.add(new PopUpSite(uri, allowed));
-                    mViewModel.insertSite(uri, allowed);
+                    SitePermission permission = new SitePermission(uri, allowed, SitePermission.SITE_PERMISSION_POPUP);
+                    mAllowedPopUpSites.add(permission);
+                    mViewModel.insertSite(permission);
                 }
 
                 if (allowed) {

@@ -1,5 +1,7 @@
 package org.mozilla.vrbrowser.browser.engine;
 
+import androidx.annotation.IntDef;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import com.google.gson.TypeAdapter;
@@ -20,6 +22,12 @@ import java.util.UUID;
 
 @JsonAdapter(SessionState.SessionStateAdapterFactory.class)
 public class SessionState {
+    @IntDef(value = { WEBXR_UNUSED, WEBXR_ALLOWED, WEBXR_BLOCKED})
+    public @interface WebXRState {}
+    public static final int WEBXR_UNUSED = 0;
+    public static final int WEBXR_ALLOWED = 1;
+    public static final int WEBXR_BLOCKED = 2;
+
     private transient boolean mIsActive;
     public boolean mCanGoBack;
     public boolean mCanGoForward;
@@ -34,6 +42,7 @@ public class SessionState {
     public transient GeckoDisplay mDisplay;
     public SessionSettings mSettings;
     public transient ArrayList<Media> mMediaElements = new ArrayList<>();
+    public transient @WebXRState int mWebXRState = WEBXR_UNUSED;
     @JsonAdapter(SessionState.GeckoSessionStateAdapter.class)
     public GeckoSession.SessionState mSessionState;
     public long mLastUse;
