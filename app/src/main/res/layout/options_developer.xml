@@ -74,6 +74,12 @@
                     app:description="@string/bypass_cache_on_reload_switch" />
 
                 <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                    android:id="@+id/multi_e10s_switch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:description="@string/multi_e10s_switch" />
+
+                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
                     android:id="@+id/servo_switch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

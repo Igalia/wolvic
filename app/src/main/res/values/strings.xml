@@ -367,6 +367,12 @@
     -->
     <string name="bypass_cache_on_reload_switch">Enable Cache Bypass On Reload</string>
 
+    <!-- This string labels an On/Off switch in the developer options dialog and is used to toggle
+         Multi-e10s. Multi-e10s allocates a process for each open window instead of having only one
+         process for all windows.
+    -->
+    <string name="multi_e10s_switch">Enable Multi-e10s</string>
+
     <!-- The string labels an On/Off switch in the developer options dialog and is used to toggle enabling Servo. -->
     <string name="developer_options_servo">Enable Servo</string>
 

@@ -84,6 +84,7 @@ public class SettingsStore {
     public final static long FXA_LAST_SYNC_NEVER = 0;
     public final static boolean RESTORE_TABS_ENABLED = true;
     public final static boolean BYPASS_CACHE_ON_RELOAD = false;
+    public final static boolean MULTI_E10S = false;
 
     // Enable telemetry by default (opt-out).
     public final static boolean CRASH_REPORTING_DEFAULT = false;
@@ -666,12 +667,22 @@ public class SettingsStore {
 
     public void setBypassCacheOnReload(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
-        editor.putBoolean(mContext.getString(R.string.settings_key_bypass_cache_on_reload),isEnabled);
+        editor.putBoolean(mContext.getString(R.string.settings_key_bypass_cache_on_reload), isEnabled);
         editor.commit();
     }
 
     public boolean isBypassCacheOnReloadEnabled() {
         return mPrefs.getBoolean(mContext.getString(R.string.settings_key_bypass_cache_on_reload), BYPASS_CACHE_ON_RELOAD);
+    }
+
+    public void setMultiE10s(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_multi_e10s), isEnabled);
+        editor.commit();
+    }
+
+    public boolean isMultiE10s() {
+        return mPrefs.getBoolean(mContext.getString(R.string.settings_key_multi_e10s), MULTI_E10S);
     }
 }
 

@@ -69,6 +69,9 @@ class DeveloperOptionsView extends SettingsView {
         mBinding.bypassCacheOnReloadSwitch.setOnCheckedChangeListener(mBypassCacheOnReloadListener);
         setBypassCacheOnReload(SettingsStore.getInstance(getContext()).isBypassCacheOnReloadEnabled(), false);
 
+        mBinding.multiE10sSwitch.setOnCheckedChangeListener(mMultiE10sListener);
+        setMultiE10s(SettingsStore.getInstance(getContext()).isMultiE10s(), false);
+
         if (BuildConfig.DEBUG) {
             mBinding.debugLoggingSwitch.setVisibility(View.GONE);
         } else {
@@ -106,6 +109,10 @@ class DeveloperOptionsView extends SettingsView {
 
     private SwitchSetting.OnCheckedChangeListener mBypassCacheOnReloadListener = (compundButton, value, doApply) -> {
         setBypassCacheOnReload(value, doApply);
+    };
+
+    private SwitchSetting.OnCheckedChangeListener mMultiE10sListener = (compundButton, value, doApply) -> {
+        setMultiE10s(value, doApply);
     };
 
     private SwitchSetting.OnCheckedChangeListener mServoListener = (compoundButton, b, doApply) -> {
@@ -212,6 +219,17 @@ class DeveloperOptionsView extends SettingsView {
 
         if (doApply) {
             SettingsStore.getInstance(getContext()).setBypassCacheOnReload(value);
+        }
+    }
+
+    private void setMultiE10s(boolean value, boolean doApply) {
+        mBinding.multiE10sSwitch.setOnCheckedChangeListener(null);
+        mBinding.multiE10sSwitch.setValue(value, false);
+        mBinding.multiE10sSwitch.setOnCheckedChangeListener(mMultiE10sListener);
+
+        if (doApply) {
+            SettingsStore.getInstance(getContext()).setMultiE10s(value);
+            showRestartDialog();
         }
     }
 
