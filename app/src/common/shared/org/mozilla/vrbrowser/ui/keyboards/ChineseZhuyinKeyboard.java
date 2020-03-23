@@ -24,10 +24,17 @@ import java.util.regex.Pattern;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import jp.co.omronsoft.openwnn.ComposingText;
+import jp.co.omronsoft.openwnn.SymbolList;
+import jp.co.omronsoft.openwnn.WnnWord;
+
 public class ChineseZhuyinKeyboard extends BaseKeyboard {
     private static final String LOGTAG = SystemUtils.createLogtag(ChineseZhuyinKeyboard.class);
     private static final String nonZhuyinReg = "[^ㄅ-ㄩ˙ˊˇˋˉ]";
     private CustomKeyboard mKeyboard;
+    private CustomKeyboard mSymbolsKeyboard;
+    private SymbolList mSymbolsConverter;  // For Emoji characters.
+    private List<Words> mEmojiList = null;
     private DBWordHelper mWordDB;
     private DBPhraseHelper mPhraseDB;
     private HashMap<String, KeyMap> mKeymaps = new HashMap<>();
@@ -44,10 +51,21 @@ public class ChineseZhuyinKeyboard extends BaseKeyboard {
     @Override
     public CustomKeyboard getAlphabeticKeyboard() {
         if (mKeyboard == null) {
-            mKeyboard = new CustomKeyboard(mContext.getApplicationContext(), R.xml.keyboard_zhuyin);
+            mKeyboard = new CustomKeyboard(mContext.getApplicationContext(), R.xml.keyboard_qwerty_zhuyin);
             loadDatabase();
         }
         return mKeyboard;
+    }
+
+    @Nullable
+    @Override
+    public CustomKeyboard getSymbolsKeyboard() {
+        if (mSymbolsKeyboard == null) {
+            mSymbolsKeyboard = new CustomKeyboard(mContext.getApplicationContext(), R.xml.keyboard_symbols_zhuyin);
+            // We use openwnn to provide us Emoji character although we are not using JPN keyboard.
+            mSymbolsConverter = new SymbolList(mContext, SymbolList.LANG_JA);
+        }
+        return mSymbolsKeyboard;
     }
 
     @Nullable
@@ -93,6 +111,31 @@ public class ChineseZhuyinKeyboard extends BaseKeyboard {
         return result;
     }
 
+    @Override
+    public CandidatesResult getEmojiCandidates(String aComposingText) {
+        if (mEmojiList == null) {
+            List<Words> words = new ArrayList<>();
+            ComposingText text = new ComposingText();
+            mSymbolsConverter.convert(text);
+
+            int candidates = mSymbolsConverter.predict(text, 0, -1);
+            if (candidates > 0) {
+                WnnWord word;
+                while ((word = mSymbolsConverter.getNextCandidate()) != null) {
+                    words.add(new Words(1, word.stroke, word.candidate));
+                }
+                mEmojiList = words;
+            }
+        }
+
+        CandidatesResult result = new CandidatesResult();
+        result.words = mEmojiList;
+        result.action = CandidatesResult.Action.SHOW_CANDIDATES;
+        result.composing = aComposingText;
+
+        return result;
+    }
+
     private String GetTransCode(String aText) {
         String code = aText;
         String transCode = "";
@@ -112,6 +155,14 @@ public class ChineseZhuyinKeyboard extends BaseKeyboard {
 
         if (aComposing.matches(nonZhuyinReg)) {
             return aComposing.replaceFirst(Pattern.quote(aCode), "");
+        }
+
+        if (mEmojiList != null) {
+            for (Words word : mEmojiList) {
+                if (word.code.equals(aCode)) {
+                    return "";
+                }
+            }
         }
 
         for (int i = 0; i <= aCode.length() - shift; i += shift) {
@@ -153,7 +204,7 @@ public class ChineseZhuyinKeyboard extends BaseKeyboard {
     @Override
     public String getSpaceKeyText(String aComposingText) {
         if (aComposingText == null || aComposingText.trim().isEmpty()) {
-            return StringUtils.getStringByLocale(mContext, R.string.settings_language_traditional_chinese, getLocale());
+            return "";
         } else {
             return mContext.getString(R.string.zhuyin_spacebar_selection);
         }
