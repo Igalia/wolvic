@@ -58,6 +58,7 @@ public abstract class AppDatabase extends RoomDatabase {
                         super.onDestructiveMigration(db);
                     }
                 })
+                .fallbackToDestructiveMigration()
                 .build();
     }
 
