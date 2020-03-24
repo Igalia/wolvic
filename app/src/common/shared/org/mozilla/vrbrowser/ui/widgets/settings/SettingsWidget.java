@@ -25,10 +25,8 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 
-import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.VRBrowserActivity;
 import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.Accounts;
@@ -38,7 +36,6 @@ import org.mozilla.vrbrowser.databinding.SettingsBinding;
 import org.mozilla.vrbrowser.db.SitePermission;
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
-import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.ui.widgets.WindowWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.RestartDialogWidget;
@@ -311,8 +308,6 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
                             } else {
                                 mAccounts.setLoginOrigin(Accounts.LoginOrigin.SETTINGS);
                                 mWidgetManager.openNewTabForeground(url);
-                                WidgetManagerDelegate widgetManager = ((VRBrowserActivity)getContext());
-                                widgetManager.getFocusedWindow().getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
                                 GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.FXA_LOGIN);
                             }
 
