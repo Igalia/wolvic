@@ -39,6 +39,7 @@ bool AreLayersEnabled();
 void SetDeviceType(const jint aType);
 void HaltActivity(const jint aReason);
 void HandlePoorPerformance();
+void OnAppLink(const std::string& aJSON);
 } // namespace VRBrowser;
 
 } // namespace crow

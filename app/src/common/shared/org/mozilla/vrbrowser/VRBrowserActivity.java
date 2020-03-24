@@ -41,6 +41,7 @@ import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.ViewModelStore;
 import androidx.lifecycle.ViewModelStoreOwner;
 
+import org.json.JSONObject;
 import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoVRManager;
@@ -80,6 +81,7 @@ import org.mozilla.vrbrowser.utils.ConnectivityReceiver.Delegate;
 import org.mozilla.vrbrowser.utils.DeviceType;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
 import org.mozilla.vrbrowser.utils.ServoUtils;
+import org.mozilla.vrbrowser.utils.StringUtils;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.io.File;
@@ -1084,6 +1086,25 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                     window.getSession().loadUri(originalUri);
                 }
             });
+        });
+    }
+
+    @Keep
+    @SuppressWarnings("unused")
+    private void onAppLink(String aJSON) {
+        runOnUiThread(() -> {
+            try {
+                JSONObject object = new JSONObject(aJSON);
+                String uri = object.optString("url");
+                Session session = SessionStore.get().getActiveSession();
+                if (!StringUtils.isEmpty(uri) && session != null) {
+                    session.loadUri(uri);
+                }
+
+            } catch (Exception ex) {
+                Log.e(LOGTAG, "Error parsing app link JSON: " + ex.toString());
+            }
+
         });
     }
 

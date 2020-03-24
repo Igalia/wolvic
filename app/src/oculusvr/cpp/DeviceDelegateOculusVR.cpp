@@ -777,10 +777,6 @@ DeviceDelegateOculusVR::SetCPULevel(const device::CPULevel aLevel) {
 
 void
 DeviceDelegateOculusVR::ProcessEvents() {
-  if (m.applicationEntitled) {
-    return;
-  }
-
   ovrMessageHandle message;
   while ((message = ovr_PopMessage()) != nullptr) {
     switch (ovr_Message_GetType(message)) {
@@ -812,6 +808,14 @@ DeviceDelegateOculusVR::ProcessEvents() {
           m.applicationEntitled = true;
         }
         break;
+      case ovrMessage_Notification_ApplicationLifecycle_LaunchIntentChanged: {
+        auto details = ovr_ApplicationLifecycle_GetLaunchDetails();
+        const char *msg = ovr_LaunchDetails_GetDeeplinkMessage(details);
+        if (msg) {
+          VRBrowser::OnAppLink(msg);
+        }
+        break;
+      }
       default:
         break;
     }
