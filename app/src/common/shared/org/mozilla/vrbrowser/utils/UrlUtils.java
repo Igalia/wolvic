@@ -169,6 +169,11 @@ public class UrlUtils {
         return isHistoryUrl(url) || isBookmarksUrl(url) || isPrivateUrl(url);
     }
 
+    public static boolean isContentFeed(Context aContext, @Nullable String url) {
+        String feed = aContext.getString(R.string.homepage_url);
+        return UrlUtils.getHost(feed).equalsIgnoreCase(UrlUtils.getHost(url));
+    }
+
     public static String getHost(String uri) {
         try {
             URL url = new URL(uri);

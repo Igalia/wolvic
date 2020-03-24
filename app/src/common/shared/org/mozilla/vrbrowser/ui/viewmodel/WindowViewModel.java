@@ -67,6 +67,7 @@ public class WindowViewModel extends AndroidViewModel {
     private MediatorLiveData<String> navigationBarUrl;
     private MutableLiveData<ObservableBoolean> isWebXRUsed;
     private MutableLiveData<ObservableBoolean> isWebXRBlocked;
+    private MediatorLiveData<ObservableBoolean> isContentFeed;
 
     public WindowViewModel(Application application) {
         super(application);
@@ -158,6 +159,9 @@ public class WindowViewModel extends AndroidViewModel {
 
         isWebXRUsed = new MutableLiveData<>(new ObservableBoolean(false));
         isWebXRBlocked = new MutableLiveData<>(new ObservableBoolean(false));
+
+        isContentFeed = new MediatorLiveData<>();
+        isContentFeed.addSource(url, mIsContentFeedObserver);
     }
 
     private Observer<ObservableBoolean> mIsTopBarVisibleObserver = new Observer<ObservableBoolean>() {
@@ -282,6 +286,14 @@ public class WindowViewModel extends AndroidViewModel {
             }
 
             hint.postValue(getHintValue());
+        }
+    };
+
+    private Observer<Spannable> mIsContentFeedObserver = new Observer<Spannable>() {
+        @Override
+        public void onChanged(Spannable o) {
+            boolean feed = UrlUtils.isContentFeed(getApplication(), url.getValue().toString());
+            isContentFeed.postValue(new ObservableBoolean(feed));
         }
     };
 
@@ -662,5 +674,10 @@ public class WindowViewModel extends AndroidViewModel {
 
     public void setIsPopUpAvailable(boolean isPopUpAvailable) {
         this.isPopUpAvailable.postValue(new ObservableBoolean(isPopUpAvailable));
+    }
+
+    @NonNull
+    public MutableLiveData<ObservableBoolean> getIsContentFeed() {
+        return isContentFeed;
     }
 }

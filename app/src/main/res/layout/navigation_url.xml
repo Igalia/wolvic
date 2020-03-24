@@ -108,7 +108,7 @@
                         app:privateMode="@{viewmodel.isPrivateSession}"
                         android:tint="@color/fog"
                         android:tooltipText="@{viewmodel.isWebXRBlocked ? @string/webxr_blocked_tooltip : @string/webxr_allowed_tooltip}"
-                        app:visibleGone="@{viewmodel.isWebXRUsed}" />
+                        app:visibleGone="@{viewmodel.isWebXRUsed &amp;&amp; !viewmodel.isContentFeed}" />
 
                     <View
                         android:layout_width="15dp"
