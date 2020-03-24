@@ -41,9 +41,10 @@ public:
   const std::string GetControllerModelName(const int32_t aModelIndex) const override;
   void SetCPULevel(const device::CPULevel aLevel) override;
   void ProcessEvents() override;
-  void StartFrame() override;
+  bool SupportsFramePrediction(FramePrediction aPrediction) const override;
+  void StartFrame(const FramePrediction aPrediction) override;
   void BindEye(const device::Eye aWhich) override;
-  void EndFrame(const bool aDiscard) override;
+  void EndFrame(const FrameEndMode aMode) override;
   VRLayerQuadPtr CreateLayerQuad(int32_t aWidth, int32_t aHeight,
                                  VRLayerSurface::SurfaceType aSurfaceType) override;
   VRLayerQuadPtr CreateLayerQuad(const VRLayerSurfacePtr& aMoveLayer) override;

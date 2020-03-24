@@ -211,7 +211,7 @@ DeviceDelegateNoAPI::ProcessEvents() {
 }
 
 void
-DeviceDelegateNoAPI::StartFrame() {
+DeviceDelegateNoAPI::StartFrame(const FramePrediction aPrediction) {
   VRB_GL_CHECK(glClearColor(m.clearColor.Red(), m.clearColor.Green(), m.clearColor.Blue(), m.clearColor.Alpha()));
   VRB_GL_CHECK(glEnable(GL_DEPTH_TEST));
   VRB_GL_CHECK(glEnable(GL_CULL_FACE));
@@ -240,7 +240,7 @@ DeviceDelegateNoAPI::BindEye(const device::Eye aEye) {
 }
 
 void
-DeviceDelegateNoAPI::EndFrame(const bool aDiscard) {
+DeviceDelegateNoAPI::EndFrame(const FrameEndMode aMode) {
   // noop
 }
 

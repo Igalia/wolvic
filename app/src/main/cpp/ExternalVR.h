@@ -55,6 +55,7 @@ public:
   VRState GetVRState() const;
   void PushFramePoses(const vrb::Matrix& aHeadTransform, const std::vector<Controller>& aControllers, const double aTimestamp);
   bool WaitFrameResult();
+  bool WasFirstPresentingFrame() const;
   void GetFrameResult(int32_t& aSurfaceHandle,
                       int32_t& aTextureWidth,
                       int32_t& aTextureHeight,

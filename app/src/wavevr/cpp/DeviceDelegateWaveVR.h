@@ -31,9 +31,9 @@ public:
   int32_t GetControllerModelCount() const override;
   const std::string GetControllerModelName(const int32_t aModelIndex) const override;
   void ProcessEvents() override;
-  void StartFrame() override;
+  void StartFrame(const FramePrediction aPrediction) override;
   void BindEye(const device::Eye aWhich) override;
-  void EndFrame(const bool aDiscard) override;
+  void EndFrame(const FrameEndMode aMode) override;
   // DeviceDelegateWaveVR interface
   bool IsRunning();
 protected:

@@ -127,6 +127,7 @@ struct ExternalVR::State {
   vrb::Vector eyeOffsets[device::EyeCount];
   uint64_t lastFrameId = 0;
   bool firstPresentingFrame = false;
+  bool wasFirstPresentingFrame = false;
   bool compositorEnabled = false;
   bool waitingForExit = false;
 
@@ -455,6 +456,7 @@ ExternalVR::WaitFrameResult() {
   m.PullBrowserStateWhileLocked();
   while (true) {
     if (!IsPresenting() || m.browser.layerState[0].layer_stereo_immersive.frameId != m.lastFrameId) {
+      m.wasFirstPresentingFrame = m.firstPresentingFrame;
       m.firstPresentingFrame = false;
       m.system.displayState.lastSubmittedFrameSuccessful = true;
       m.system.displayState.lastSubmittedFrameId = m.browser.layerState[0].layer_stereo_immersive.frameId;
@@ -478,6 +480,10 @@ ExternalVR::WaitFrameResult() {
   }
   m.lastFrameId = m.browser.layerState[0].layer_stereo_immersive.frameId;
   return true;
+}
+
+bool ExternalVR::WasFirstPresentingFrame() const {
+  return m.wasFirstPresentingFrame;
 }
 
 void

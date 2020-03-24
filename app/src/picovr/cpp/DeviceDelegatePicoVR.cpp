@@ -385,7 +385,7 @@ DeviceDelegatePicoVR::ProcessEvents() {
 }
 
 void
-DeviceDelegatePicoVR::StartFrame() {
+DeviceDelegatePicoVR::StartFrame(const FramePrediction aPrediction) {
   vrb::Matrix head = vrb::Matrix::Rotation(m.orientation);
   head.TranslateInPlace(m.position);
 
@@ -431,7 +431,7 @@ DeviceDelegatePicoVR::BindEye(const device::Eye aWhich) {
 }
 
 void
-DeviceDelegatePicoVR::EndFrame(const bool aDiscard) {
+DeviceDelegatePicoVR::EndFrame(const FrameEndMode aMode) {
 
 }
 

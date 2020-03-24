@@ -45,6 +45,14 @@ public:
 
 class DeviceDelegate {
 public:
+  enum class FramePrediction {
+      NO_FRAME_AHEAD,
+      ONE_FRAME_AHEAD,
+  };
+  enum class FrameEndMode {
+      APPLY,
+      DISCARD
+  };
   virtual device::DeviceType GetDeviceType() { return device::UnknownType; }
   virtual void SetRenderMode(const device::RenderMode aMode) = 0;
   virtual device::RenderMode GetRenderMode() = 0;
@@ -63,9 +71,12 @@ public:
   virtual const std::string GetControllerModelName(const int32_t aModelIndex) const = 0;
   virtual void SetCPULevel(const device::CPULevel aLevel) {};
   virtual void ProcessEvents() = 0;
-  virtual void StartFrame() = 0;
+  virtual bool SupportsFramePrediction(FramePrediction aPrediction) const {
+    return aPrediction == FramePrediction::NO_FRAME_AHEAD;
+  }
+  virtual void StartFrame(const FramePrediction aPrediction = FramePrediction::NO_FRAME_AHEAD) = 0;
   virtual void BindEye(const device::Eye aWhich) = 0;
-  virtual void EndFrame(bool aDiscard = false) = 0;
+  virtual void EndFrame(const FrameEndMode aMode = FrameEndMode::APPLY) = 0;
   virtual bool IsInGazeMode() const { return false; };
   virtual int32_t GazeModeIndex() const { return -1; };
   virtual VRLayerQuadPtr CreateLayerQuad(int32_t aWidth, int32_t aHeight,

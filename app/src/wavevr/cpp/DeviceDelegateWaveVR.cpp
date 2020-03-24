@@ -16,6 +16,7 @@
 #include "vrb/Matrix.h"
 #include "vrb/RenderContext.h"
 #include "vrb/Vector.h"
+#include "../../main/cpp/DeviceDelegate.h"
 
 #include <array>
 #include <vector>
@@ -693,7 +694,7 @@ HandToString(ElbowModel::HandEnum hand) {
 }
 
 void
-DeviceDelegateWaveVR::StartFrame() {
+DeviceDelegateWaveVR::StartFrame(const FramePrediction aPrediction) {
   VRB_GL_CHECK(glClearColor(m.clearColor.Red(), m.clearColor.Green(), m.clearColor.Blue(), m.clearColor.Alpha()));
   if (!m.lastSubmitDiscarded) {
     m.leftFBOIndex = WVR_GetAvailableTextureIndex(m.leftTextureQueue);
@@ -801,14 +802,14 @@ DeviceDelegateWaveVR::BindEye(const device::Eye aWhich) {
 }
 
 void
-DeviceDelegateWaveVR::EndFrame(const bool aDiscard) {
+DeviceDelegateWaveVR::EndFrame(const FrameEndMode aMode) {
   if (m.currentFBO) {
     m.currentFBO->Unbind();
     m.currentFBO = nullptr;
   }
 
-  m.lastSubmitDiscarded = aDiscard;
-  if (aDiscard) {
+  m.lastSubmitDiscarded = aMode == DeviceDelegate::FrameEndMode::DISCARD;
+  if (m.lastSubmitDiscarded) {
     return;
   }
   // Left eye
