@@ -1422,10 +1422,12 @@ BrowserWorld::TickImmersive() {
   m.device->SetRenderMode(device::RenderMode::Immersive);
 
   const bool supportsFrameAhead = m.device->SupportsFramePrediction(DeviceDelegate::FramePrediction::ONE_FRAME_AHEAD);
+  auto framePrediction = DeviceDelegate::FramePrediction::ONE_FRAME_AHEAD;
   VRB_GL_CHECK(glDepthMask(GL_FALSE));
   if (!supportsFrameAhead || (m.externalVR->GetVRState() != ExternalVR::VRState::Rendering)) {
       // Do not use one frame ahead prediction if not supported or we are rendering the spinner.
-      m.device->StartFrame(DeviceDelegate::FramePrediction::NO_FRAME_AHEAD);
+      framePrediction = DeviceDelegate::FramePrediction::NO_FRAME_AHEAD;
+      m.device->StartFrame(framePrediction);
       m.externalVR->PushFramePoses(m.device->GetHeadTransform(), m.controllers->GetControllers(),
                                    m.context->GetTimestamp());
   }
@@ -1435,7 +1437,7 @@ BrowserWorld::TickImmersive() {
   m.externalVR->GetFrameResult(surfaceHandle, textureWidth, textureHeight, leftEye, rightEye);
   ExternalVR::VRState state = m.externalVR->GetVRState();
   if (supportsFrameAhead) {
-      if (m.externalVR->WasFirstPresentingFrame()) {
+      if (framePrediction != DeviceDelegate::FramePrediction::ONE_FRAME_AHEAD) {
           // StartFrame() has been already called to render the spinner, do not call it again.
           // Instead, repeat the XR frame and render the spinner while we transition
           // to one frame ahead prediction.
@@ -1443,7 +1445,7 @@ BrowserWorld::TickImmersive() {
       } else {
           // Predict poses for one frame ahead and push the data to shmem so Gecko
           // can start the next XR RAF ASAP.
-          m.device->StartFrame(DeviceDelegate::FramePrediction::ONE_FRAME_AHEAD);
+          m.device->StartFrame(framePrediction);
       }
       m.externalVR->PushFramePoses(m.device->GetHeadTransform(), m.controllers->GetControllers(),
               m.context->GetTimestamp());
