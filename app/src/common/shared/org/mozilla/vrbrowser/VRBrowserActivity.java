@@ -712,21 +712,23 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         return super.dispatchKeyEvent(event);
     }
 
+    final Object mWaitLock = new Object();
+
     final Runnable mExitImmersive = new Runnable() {
         @Override
         public void run() {
             exitImmersiveNative();
-            synchronized(this) {
-                this.notifyAll();
+            synchronized(mWaitLock) {
+                mWaitLock.notifyAll();
             }
         }
     };
 
     private void exitImmersiveSync() {
-        synchronized (mExitImmersive) {
+        synchronized (mWaitLock) {
             queueRunnable(mExitImmersive);
             try {
-                mExitImmersive.wait();
+                mWaitLock.wait();
             } catch (InterruptedException e) {
                 Log.e(LOGTAG, "Waiting for exit immersive onPause interrupted");
             }
@@ -916,16 +918,18 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         GeckoVRManager.setExternalContext(aContext);
     }
 
+    final Object mCompositorLock = new Object();
+
     class PauseCompositorRunnable implements Runnable {
         public boolean done;
         @Override
         public void run() {
-            synchronized (VRBrowserActivity.this) {
+            synchronized (mCompositorLock) {
                 Log.d(LOGTAG, "About to pause Compositor");
                 mWindows.pauseCompositor();
                 Log.d(LOGTAG, "Compositor Paused");
                 done = true;
-                VRBrowserActivity.this.notify();
+                mCompositorLock.notify();
             }
         }
     }
@@ -942,11 +946,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         GleanMetricsService.startImmersive();
         PauseCompositorRunnable runnable = new PauseCompositorRunnable();
 
-        synchronized (this) {
+        synchronized (mCompositorLock) {
             runOnUiThread(runnable);
             while (!runnable.done) {
                 try {
-                    this.wait();
+                    mCompositorLock.wait();
                 } catch (InterruptedException e) {
                     Log.e(LOGTAG, "Waiting for compositor pause interrupted");
                 }
