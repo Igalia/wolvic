@@ -20,6 +20,7 @@ import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.db.SitePermission;
 import org.mozilla.vrbrowser.ui.viewmodel.SitePermissionViewModel;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
+import org.mozilla.vrbrowser.ui.widgets.WindowWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.PermissionWidget;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 import org.mozilla.vrbrowser.utils.UrlUtils;
@@ -286,11 +287,20 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
             mSitePermissionModel.deleteSite(site);
         } else {
             if (site == null) {
-                site = new SitePermission(uri, false, SitePermission.SITE_PERMISSION_WEBXR);
+                site = new SitePermission(uri, false, category);
                 mSitePermissions.add(site);
             }
             site.allowed = false;
             mSitePermissionModel.insertSite(site);
         }
+
+        // Reload URIs with the same domain
+        for (WindowWidget window: mWidgetManager.getWindows().getCurrentWindows()) {
+            Session session = window.getSession();
+            if (uri.equalsIgnoreCase(UrlUtils.getHost(session.getCurrentUri()))) {
+                session.reload(GeckoSession.LOAD_FLAGS_BYPASS_CACHE);
+            }
+        }
+
     }
 }

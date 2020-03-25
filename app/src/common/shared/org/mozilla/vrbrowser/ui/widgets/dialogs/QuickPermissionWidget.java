@@ -64,6 +64,10 @@ public class QuickPermissionWidget extends UIWidget implements WidgetManagerDele
         mBinding.executePendingBindings();
     }
 
+    public @SitePermission.Category int getCategory() {
+        return mCategory;
+    }
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);

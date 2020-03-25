@@ -16,7 +16,6 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.webkit.URLUtil;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
@@ -37,7 +36,6 @@ import org.mozilla.vrbrowser.browser.PromptDelegate;
 import org.mozilla.vrbrowser.browser.SessionChangeListener;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.browser.engine.Session;
-import org.mozilla.vrbrowser.browser.engine.SessionState;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.databinding.NavigationBarBinding;
 import org.mozilla.vrbrowser.db.SitePermission;
@@ -918,7 +916,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     @Override
     public void onWebXRButtonClicked() {
-        showQuickPermission(mBinding.navigationBarNavigation.urlBar.getWebxRButton(),
+        toggleQuickPermission(mBinding.navigationBarNavigation.urlBar.getWebxRButton(),
                 SitePermission.SITE_PERMISSION_WEBXR,
                 mViewModel.getIsWebXRBlocked().getValue().get());
     }
@@ -1151,6 +1149,9 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     public void hideAllNotifications() {
         NotificationManager.hideAll();
+        if (mQuickPermissionWidget != null && mQuickPermissionWidget.isVisible()) {
+            mQuickPermissionWidget.hide(KEEP_WIDGET);
+        }
     }
 
     private void hideNotification(int notificationId) {
@@ -1163,9 +1164,14 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         }
     };
 
-    private void showQuickPermission(UIButton target, @SitePermission.Category int aCategory, boolean aBlocked) {
+    private void toggleQuickPermission(UIButton target, @SitePermission.Category int aCategory, boolean aBlocked) {
         if (mQuickPermissionWidget == null) {
             mQuickPermissionWidget = new QuickPermissionWidget(getContext());
+        }
+
+        if (mQuickPermissionWidget.isVisible() && mQuickPermissionWidget.getCategory() == aCategory) {
+            mQuickPermissionWidget.hide(KEEP_WIDGET);
+            return;
         }
 
         String uri = UrlUtils.getHost(mAttachedWindow.getSession().getCurrentUri());
@@ -1175,14 +1181,12 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             public void onBlock() {
                 SessionStore.get().setPermissionAllowed(uri, aCategory, false);
                 mQuickPermissionWidget.onDismiss();
-                mAttachedWindow.getSession().reload();
             }
 
             @Override
             public void onAllow() {
                 SessionStore.get().setPermissionAllowed(uri, aCategory, true);
                 mQuickPermissionWidget.onDismiss();
-                mAttachedWindow.getSession().reload();
             }
         });
         mQuickPermissionWidget.getPlacement().parentHandle = getHandle();

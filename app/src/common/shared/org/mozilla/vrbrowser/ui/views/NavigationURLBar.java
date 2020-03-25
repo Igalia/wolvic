@@ -404,7 +404,6 @@ public class NavigationURLBar extends FrameLayout {
             mAudio.playSound(AudioEngine.Sound.CLICK);
         }
 
-        view.requestFocusFromTouch();
         if (mDelegate != null) {
             mDelegate.onWebXRButtonClicked();
         }
