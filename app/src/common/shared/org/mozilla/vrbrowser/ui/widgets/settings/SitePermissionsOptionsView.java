@@ -14,7 +14,9 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 
+import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.databinding.OptionsExceptionsBinding;
 import org.mozilla.vrbrowser.db.SitePermission;
 import org.mozilla.vrbrowser.ui.adapters.SitePermissionAdapter;
@@ -22,6 +24,8 @@ import org.mozilla.vrbrowser.ui.callbacks.PermissionSiteItemCallback;
 import org.mozilla.vrbrowser.ui.viewmodel.SitePermissionViewModel;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
+import org.mozilla.vrbrowser.ui.widgets.WindowWidget;
+import org.mozilla.vrbrowser.utils.UrlUtils;
 
 import java.util.List;
 
@@ -102,7 +106,13 @@ class SitePermissionsOptionsView extends SettingsView {
 
     @Override
     protected boolean reset() {
+        List<SitePermission> sites = mAdapter.getSites();
         mViewModel.deleteAll(mCategory);
+        if (sites != null) {
+            for (SitePermission site: sites) {
+                reloadIfSameDomain(site.url);
+            }
+        }
         return true;
     }
 
@@ -150,6 +160,19 @@ class SitePermissionsOptionsView extends SettingsView {
         @Override
         public void onDelete(@NonNull SitePermission item) {
             mViewModel.deleteSite(item);
+            reloadIfSameDomain(item.url);
         }
     };
+
+    private void reloadIfSameDomain(String aHost) {
+        if (mCategory != SitePermission.SITE_PERMISSION_WEBXR) {
+            return;
+        }
+        for (WindowWidget window: mWidgetManager.getWindows().getCurrentWindows()) {
+            Session session = window.getSession();
+            if (aHost.equalsIgnoreCase(UrlUtils.getHost(session.getCurrentUri()))) {
+                session.reload(GeckoSession.LOAD_FLAGS_BYPASS_CACHE);
+            }
+        }
+    }
 }

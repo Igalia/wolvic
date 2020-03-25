@@ -60,6 +60,10 @@ public class SitePermissionAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         }
     }
 
+    public List<SitePermission> getSites() {
+        return mDisplayList;
+    }
+
     private void notifyDiff(List<SitePermission> newDisplayList) {
         DiffUtil.DiffResult result = DiffUtil.calculateDiff(new DiffUtil.Callback() {
             @Override

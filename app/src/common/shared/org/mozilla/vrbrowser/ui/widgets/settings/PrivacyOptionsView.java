@@ -22,12 +22,14 @@ import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.StorageController;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.SettingsStore;
+import org.mozilla.vrbrowser.browser.engine.SessionState;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.databinding.OptionsPrivacyBinding;
 import org.mozilla.vrbrowser.db.SitePermission;
 import org.mozilla.vrbrowser.ui.views.settings.SwitchSetting;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
+import org.mozilla.vrbrowser.ui.widgets.WindowWidget;
 import org.mozilla.vrbrowser.utils.DeviceType;
 
 import java.util.ArrayList;
@@ -36,8 +38,6 @@ class PrivacyOptionsView extends SettingsView {
 
     private OptionsPrivacyBinding mBinding;
     private ArrayList<Pair<SwitchSetting, String>> mPermissionButtons;
-    private SettingsView mPopUpsBlockingExceptions;
-    private SettingsView mWebXRSitesExceptions;
 
     public PrivacyOptionsView(Context aContext, WidgetManagerDelegate aWidgetManager) {
         super(aContext, aWidgetManager);
@@ -86,9 +86,6 @@ class PrivacyOptionsView extends SettingsView {
 
         TextView permissionsTitleText = findViewById(R.id.permissionsTitle);
         permissionsTitleText.setText(getContext().getString(R.string.security_options_permissions_title, getContext().getString(R.string.app_name)));
-
-        mPopUpsBlockingExceptions = new SitePermissionsOptionsView(getContext(), mWidgetManager, SitePermission.SITE_PERMISSION_POPUP);
-        mWebXRSitesExceptions = new SitePermissionsOptionsView(getContext(), mWidgetManager, SitePermission.SITE_PERMISSION_WEBXR);
 
         mPermissionButtons = new ArrayList<>();
         mPermissionButtons.add(Pair.create(findViewById(R.id.cameraPermissionSwitch), Manifest.permission.CAMERA));
@@ -323,6 +320,9 @@ class PrivacyOptionsView extends SettingsView {
 
         if (doApply) {
             SettingsStore.getInstance(getContext()).setWebXREnabled(value);
+            for (WindowWidget window: mWidgetManager.getWindows().getCurrentWindows()) {
+                window.getSession().reload(GeckoSession.LOAD_FLAGS_BYPASS_CACHE);
+            }
         }
     }
 
