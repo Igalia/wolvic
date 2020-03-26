@@ -88,6 +88,14 @@ class SitePermissionsOptionsView extends SettingsView {
                 mBinding.emptyText.setText(R.string.settings_privacy_policy_webxr_empty_description);
                 mBinding.footerLayout.setDescription(R.string.settings_privacy_policy_webxr_reset);
                 break;
+            case SitePermission.SITE_PERMISSION_TRACKING:
+                mBinding.headerLayout.setTitle(R.string.settings_privacy_policy_tracking_title);
+                mBinding.headerLayout.setDescription(R.string.settings_privacy_policy_tracking_description);
+                mBinding.contentText.setText(R.string.settings_privacy_policy_tracking_description);
+                mBinding.emptyText.setText(R.string.settings_privacy_policy_tracking_empty_description);
+                mBinding.emptySecondText.setVisibility(GONE);
+                mBinding.footerLayout.setDescription(R.string.settings_privacy_policy_tracking_reset);
+                break;
         }
 
         mBinding.executePendingBindings();

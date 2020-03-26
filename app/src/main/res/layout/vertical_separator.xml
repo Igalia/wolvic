@@ -8,7 +8,7 @@
         android:background="@drawable/tray_background_unchecked_middle">
 
         <LinearLayout
-            android:layout_width="0.5dp"
+            android:layout_width="1dp"
             android:layout_height="match_parent"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"

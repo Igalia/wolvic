@@ -4,6 +4,10 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.text.InputType;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.ContextThemeWrapper;
@@ -12,14 +16,18 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.audio.AudioEngine;
-
 import androidx.annotation.IdRes;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 
+import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.audio.AudioEngine;
+
+import java.util.stream.Stream;
+
 public class RadioGroupSetting extends LinearLayout {
+
+    private static final int MARGIN = 0;
 
     public interface OnCheckedChangeListener {
         void onCheckedChanged(RadioGroup compoundButton, @IdRes int checkedId, boolean apply);
@@ -28,10 +36,12 @@ public class RadioGroupSetting extends LinearLayout {
     private AudioEngine mAudio;
     protected String mDescription;
     private CharSequence[] mOptions;
+    private CharSequence[] mDescriptions;
     private Object[] mValues;
     protected RadioGroup mRadioGroup;
     protected TextView mRadioDescription;
     private OnCheckedChangeListener mRadioGroupListener;
+    protected float mMargin;
     private @LayoutRes int mLayout;
 
     public RadioGroupSetting(Context context, AttributeSet attrs) {
@@ -45,6 +55,8 @@ public class RadioGroupSetting extends LinearLayout {
         mLayout = attributes.getResourceId(R.styleable.RadioGroupSetting_layout, R.layout.setting_radio_group);
         mDescription = attributes.getString(R.styleable.RadioGroupSetting_description);
         mOptions = attributes.getTextArray(R.styleable.RadioGroupSetting_options);
+        mDescriptions = attributes.getTextArray(R.styleable.RadioGroupSetting_descriptions);
+        mMargin = attributes.getDimension(R.styleable.RadioGroupSetting_itemMargin, getDefaultMargin());
         int id = attributes.getResourceId(R.styleable.RadioGroupSetting_values, 0);
         try {
             TypedArray array = context.getResources().obtainTypedArray(id);
@@ -82,14 +94,7 @@ public class RadioGroupSetting extends LinearLayout {
         mRadioGroup = findViewById(R.id.radio_group);
 
         if (mOptions != null) {
-            for (int i = 0; i < mOptions.length; i++) {
-                RadioButton button = new RadioButton(new ContextThemeWrapper(getContext(), R.style.radioButtonTheme), null, 0);
-                button.setInputType(InputType.TYPE_NULL);
-                button.setClickable(true);
-                button.setId(i);
-                button.setText(mOptions[i]);
-                mRadioGroup.addView(button);
-            }
+            setOptions(Stream.of(mOptions).map(CharSequence::toString).toArray(String[]::new));
         }
 
         mRadioGroup.setOnCheckedChangeListener(mInternalRadioListener);
@@ -154,13 +159,36 @@ public class RadioGroupSetting extends LinearLayout {
         mRadioGroup.removeAllViews();
 
         for (int i=0; i<options.length; i++) {
+            SpannableString spannable = new SpannableString(options[i]);
+            if (mDescriptions != null && mDescriptions[i] != null) {
+                spannable = new SpannableString(options[i] +
+                        System.getProperty ("line.separator") +
+                        mDescriptions[i]);
+                int start = (options[i] + System.getProperty ("line.separator")).length();
+                int end = spannable.length();
+                spannable.setSpan(new RelativeSizeSpan(0.8f), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                spannable.setSpan(new ForegroundColorSpan(
+                                getResources().getColor(R.color.rhino, getContext().getTheme())),
+                        start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+
             RadioButton button = new RadioButton(new ContextThemeWrapper(getContext(), R.style.radioButtonTheme), null, 0);
             button.setInputType(InputType.TYPE_NULL);
             button.setClickable(true);
             button.setId(i);
-            button.setText(options[i]);
+            button.setText(spannable);
+            button.setSingleLine(false);
+            button.setLayoutParams(getItemParams(i));
             mRadioGroup.addView(button);
         }
+    }
+
+    protected int getDefaultMargin() {
+        return MARGIN;
+    }
+
+    protected LayoutParams getItemParams(int itemPos) {
+        return new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
     }
 
 }

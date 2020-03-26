@@ -60,9 +60,7 @@ public class DataRepository implements LifecycleOwner {
 
     public CompletableFuture<SitePermission> getSitePermission(String aURL, @SitePermission.Category int category) {
         CompletableFuture<SitePermission> future = new CompletableFuture<>();
-        mExecutors.diskIO().execute(() -> {
-            mDatabase.sitePermissionDao().findByUrl(aURL, category);
-        });
+        mExecutors.diskIO().execute(() -> mDatabase.sitePermissionDao().findByUrl(aURL, category));
         return future;
     }
 

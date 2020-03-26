@@ -10,8 +10,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout_width="400dp"
-        tools:layout_height="200dp"
+        tools:layout_width="@dimen/quick_permission_width"
+        tools:layout_height="@dimen/quick_permission_height"
         android:orientation="vertical">
         <RelativeLayout
             android:id="@+id/selectionMenuContainer"
@@ -22,13 +22,14 @@
             android:gravity="center"
             android:orientation="vertical"
             android:background="@drawable/context_menu_background">
-            <TextView
+            <org.mozilla.vrbrowser.ui.views.LinkTextView
                 android:id="@+id/message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:layout_marginBottom="20dp"
+                android:gravity="center_horizontal"
                 android:paddingStart="20dp"
                 android:paddingEnd="20dp"
                 android:text="@string/webxr_block_dialog_message"

@@ -40,6 +40,7 @@ import org.mozilla.vrbrowser.databinding.NavigationUrlBinding;
 import org.mozilla.vrbrowser.search.SearchEngineWrapper;
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
+import org.mozilla.vrbrowser.ui.viewmodel.SettingsViewModel;
 import org.mozilla.vrbrowser.ui.viewmodel.WindowViewModel;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WindowWidget;
@@ -49,8 +50,6 @@ import org.mozilla.vrbrowser.utils.SystemUtils;
 import org.mozilla.vrbrowser.utils.UrlUtils;
 import org.mozilla.vrbrowser.utils.ViewUtils;
 
-import java.net.URI;
-import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.concurrent.Executor;
@@ -65,6 +64,7 @@ public class NavigationURLBar extends FrameLayout {
     private static final String LOGTAG = SystemUtils.createLogtag(NavigationURLBar.class);
 
     private WindowViewModel mViewModel;
+    private SettingsViewModel mSettingsViewModel;
     private NavigationUrlBinding mBinding;
     private Animation mLoadingAnimation;
     private NavigationURLBarDelegate mDelegate;
@@ -78,17 +78,15 @@ public class NavigationURLBar extends FrameLayout {
     private int lastTouchDownOffset = 0;
 
     private Unit domainAutocompleteFilter(String text) {
-        if (mBinding.urlEditText != null) {
-            DomainAutocompleteResult result = mAutocompleteProvider.getAutocompleteSuggestion(text);
-            if (result != null) {
-                mBinding.urlEditText.applyAutocompleteResult(new InlineAutocompleteEditText.AutocompleteResult(
-                        result.getText(),
-                        result.getSource(),
-                        result.getTotalItems(),
-                        null));
-            } else {
-                mBinding.urlEditText.noAutocompleteResult();
-            }
+        DomainAutocompleteResult result = mAutocompleteProvider.getAutocompleteSuggestion(text);
+        if (result != null) {
+            mBinding.urlEditText.applyAutocompleteResult(new InlineAutocompleteEditText.AutocompleteResult(
+                    result.getText(),
+                    result.getSource(),
+                    result.getTotalItems(),
+                    null));
+        } else {
+            mBinding.urlEditText.noAutocompleteResult();
         }
         return Unit.INSTANCE;
     }
@@ -100,6 +98,7 @@ public class NavigationURLBar extends FrameLayout {
         void onURLSelectionAction(EditText aURLEdit, float centerX, SelectionActionWidget actionMenu);
         void onPopUpButtonClicked();
         void onWebXRButtonClicked();
+        void onTrackingButtonClicked();
     }
 
     public NavigationURLBar(Context context, AttributeSet attrs) {
@@ -229,6 +228,7 @@ public class NavigationURLBar extends FrameLayout {
 
         mBinding.popup.setOnClickListener(mPopUpListener);
         mBinding.webxr.setOnClickListener(mWebXRButtonClick);
+        mBinding.tracking.setOnClickListener(mTrackingButtonClick);
 
         // Bookmarks
         mBinding.bookmarkButton.setOnClickListener(v -> handleBookmarkClick());
@@ -242,6 +242,9 @@ public class NavigationURLBar extends FrameLayout {
             mViewModel.getIsBookmarked().removeObserver(mIsBookmarkedObserver);
             mViewModel = null;
         }
+        if (mSettingsViewModel != null) {
+            mSettingsViewModel = null;
+        }
     }
 
     public void attachToWindow(@NonNull WindowWidget aWindow) {
@@ -249,8 +252,15 @@ public class NavigationURLBar extends FrameLayout {
                 (VRBrowserActivity)getContext(),
                 ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
                 .get(String.valueOf(aWindow.hashCode()), WindowViewModel.class);
+        mSettingsViewModel = new ViewModelProvider(
+                (VRBrowserActivity)getContext(),
+                ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
+                .get(SettingsViewModel.class);
 
         mBinding.setViewmodel(mViewModel);
+        mBinding.setSettingsViewmodel(mSettingsViewModel);
+
+        mSettingsViewModel.refresh();
 
         mViewModel.getIsLoading().observe((VRBrowserActivity)getContext(), mIsLoadingObserver);
         mViewModel.getIsBookmarked().observe((VRBrowserActivity)getContext(), mIsBookmarkedObserver);
@@ -263,6 +273,7 @@ public class NavigationURLBar extends FrameLayout {
     public void onPause() {
         if (mViewModel.getIsLoading().getValue().get()) {
             mBinding.loadingView.clearAnimation();
+
         }
     }
 
@@ -333,6 +344,10 @@ public class NavigationURLBar extends FrameLayout {
 
     public UIButton getWebxRButton() {
         return mBinding.webxr;
+    }
+
+    public UIButton getTrackingRButton() {
+        return mBinding.tracking;
     }
 
     public  void handleURLEdit(String text) {
@@ -406,6 +421,16 @@ public class NavigationURLBar extends FrameLayout {
 
         if (mDelegate != null) {
             mDelegate.onWebXRButtonClicked();
+        }
+    };
+
+    private OnClickListener mTrackingButtonClick = view -> {
+        if (mAudio != null) {
+            mAudio.playSound(AudioEngine.Sound.CLICK);
+        }
+
+        if (mDelegate != null) {
+            mDelegate.onTrackingButtonClicked();
         }
     };
 
@@ -559,5 +584,4 @@ public class NavigationURLBar extends FrameLayout {
             mSelectionMenu = null;
         }
     }
-
 }

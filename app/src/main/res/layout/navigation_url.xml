@@ -4,10 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="org.mozilla.vrbrowser.utils.UrlUtils"/>
         <import type="org.mozilla.vrbrowser.ui.views.CustomInlineAutocompleteEditText" />
         <variable
             name="viewmodel"
             type="org.mozilla.vrbrowser.ui.viewmodel.WindowViewModel" />
+        <variable
+            name="settingsViewmodel"
+            type="org.mozilla.vrbrowser.ui.viewmodel.SettingsViewModel" />
     </data>
 
     <FrameLayout
@@ -24,6 +28,154 @@
             android:addStatesFromChildren="true"
             android:background="@{viewmodel.isPrivateSession ? @drawable/url_background_private : @drawable/url_background}"
             android:foreground="@{viewmodel.isPrivateSession ? @drawable/url_background_private_outline : @drawable/url_background_outline}">
+
+            <LinearLayout
+                android:id="@+id/startButtonsLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:gravity="center_vertical"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"
+                android:layout_marginStart="2dp"
+                android:addStatesFromChildren="true"
+                android:orientation="horizontal"
+                app:visibleGone="@{!viewmodel.isLibraryVisible}">
+
+                <org.mozilla.vrbrowser.ui.views.UIButton
+                    android:id="@+id/tracking"
+                    style="@style/urlBarIconThemeStart"
+                    android:paddingStart="6dp"
+                    android:paddingEnd="2dp"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp"
+                    android:src="@{viewmodel.isTrackingEnabled ? @drawable/ic_icon_tracking_enabled : @drawable/ic_icon_tracking_disabled}"
+                    app:privateMode="@{viewmodel.isPrivateSession}"
+                    android:tint="@color/fog"
+                    app:visibleGone="@{settingsViewmodel.isTrackingProtectionEnabled &amp;&amp; !UrlUtils.isContentFeed(context, viewmodel.url.toString())}"
+                    android:tooltipText="@{viewmodel.isTrackingEnabled ? @string/tracking_allowed_tooltip : @string/tracking_disabled_tooltip}" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    app:visibleGone="@{viewmodel.isPopUpAvailable}">
+                    <LinearLayout
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginEnd="2dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:background="@color/rhino"
+                        visibleGone="@{settingsViewmodel.isTrackingProtectionEnabled}" />
+                    <org.mozilla.vrbrowser.ui.views.UIButton
+                        android:id="@+id/popup"
+                        style="@style/urlBarIconTheme"
+                        android:layout_width="@{!settingsViewmodel.isTrackingProtectionEnabled ? @dimen/url_bar_first_item_width : @dimen/url_bar_item_width}"
+                        app:regularModeBackground="@{!settingsViewmodel.isTrackingProtectionEnabled ? @drawable/url_button_start : @drawable/url_button}"
+                        app:privateModeBackground="@{!settingsViewmodel.isTrackingProtectionEnabled ? @drawable/url_button_start_private : @drawable/url_button_private}"
+                        android:paddingStart="@{settingsViewmodel.isTrackingProtectionEnabled ? @dimen/navigation_bar_icon_padding_small : @dimen/navigation_bar_icon_padding_big}"
+                        android:paddingEnd="2dp"
+                        android:src="@drawable/ic_icon_popup_awesomebar"
+                        android:tint="@color/fog"
+                        android:tooltipText="@string/popup_tooltip"
+                        app:privateMode="@{viewmodel.isPrivateSession}" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    app:visibleGone="@{viewmodel.isWebXRUsed &amp;&amp; !UrlUtils.isContentFeed(context, viewmodel.url.toString())}">
+                    <LinearLayout
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginEnd="2dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:background="@color/rhino"
+                        visibleGone="@{settingsViewmodel.isTrackingProtectionEnabled || viewmodel.isPopUpAvailable}"/>
+                    <org.mozilla.vrbrowser.ui.views.UIButton
+                        android:id="@+id/webxr"
+                        style="@style/urlBarIconTheme"
+                        android:layout_width="@{!settingsViewmodel.isTrackingProtectionEnabled &amp;&amp; !viewmodel.isPopUpAvailable ? @dimen/url_bar_first_item_width : @dimen/url_bar_item_width}"
+                        app:regularModeBackground="@{!settingsViewmodel.isTrackingProtectionEnabled &amp;&amp; !viewmodel.isPopUpAvailable ? @drawable/url_button_start : @drawable/url_button}"
+                        app:privateModeBackground="@{!settingsViewmodel.isTrackingProtectionEnabled &amp;&amp; !viewmodel.isPopUpAvailable ? @drawable/url_button_start_private : @drawable/url_button_private}"
+                        android:paddingStart="@{settingsViewmodel.isTrackingProtectionEnabled ? @dimen/navigation_bar_icon_padding_small : @dimen/navigation_bar_icon_padding_big}"
+                        android:paddingEnd="2dp"
+                        android:src="@{viewmodel.isWebXRBlocked ? @drawable/ic_icon_webxr_blocked : @drawable/ic_icon_webxr_allowed}"
+                        app:privateMode="@{viewmodel.isPrivateSession}"
+                        android:tint="@color/fog"
+                        android:tooltipText="@{viewmodel.isWebXRBlocked ? @string/webxr_blocked_tooltip : @string/webxr_allowed_tooltip}" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="4dp"
+                    android:layout_height="match_parent"
+                    app:visibleGone="@{!UrlUtils.isHomeUri(context, viewmodel.url.toString())}"/>
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/padding"
+                android:layout_width="15dp"
+                android:layout_height="match_parent"
+                android:layout_toEndOf="@id/startButtonsLayout"
+                app:visibleGone="@{(!settingsViewmodel.isTrackingProtectionEnabled &amp;&amp; !viewmodel.isPopUpAvailable &amp;&amp; !viewmodel.isWebXRUsed) || viewmodel.isLibraryVisible || UrlUtils.isHomeUri(context, viewmodel.url.toString())}"/>
+
+            <LinearLayout
+                android:id="@+id/icons"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_toEndOf="@id/padding"
+                android:layout_centerVertical="true"
+                app:visibleGone="@{!viewmodel.isFocused}">
+                <ImageView
+                    android:id="@+id/loadingView"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:paddingEnd="5dp"
+                    android:contentDescription="Loading animation"
+                    android:src="@drawable/loading_shape"
+                    app:visibleGone="@{viewmodel.isLoading}" />
+                <ImageView
+                    android:id="@+id/insecureIcon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="SSL icon"
+                    android:src="@drawable/ic_icon_security_state_insecure"
+                    app:visibleGone="@{viewmodel.isInsecureVisible}" />
+            </LinearLayout>
+
+            <org.mozilla.vrbrowser.ui.views.CustomInlineAutocompleteEditText
+                android:id="@+id/urlEditText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingEnd="10dp"
+                android:layout_toStartOf="@id/endButtonsLayout"
+                android:layout_toEndOf="@id/icons"
+                android:foreground="@{viewmodel.isUrlEmpty ? (viewmodel.isPrivateSession ? @drawable/url_bar_hint_fading_edge_private : @drawable/url_bar_hint_fading_edge) : null}"
+                android:foregroundGravity="fill_vertical|right"
+                android:ems="10"
+                android:fadingEdgeLength="40dp"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="center_vertical"
+                android:hint="@{viewmodel.hint}"
+                android:imeOptions="actionGo"
+                android:inputType="textUri"
+                android:requiresFadingEdge="horizontal"
+                android:selectAllOnFocus="true"
+                android:textColor="@color/fog"
+                android:textColorHighlight="@color/azure"
+                android:textIsSelectable="true"
+                android:textSize="16sp"
+                android:text="@{viewmodel.navigationBarUrl}"
+                app:autocompleteBackgroundColor="@color/azure" />
 
             <LinearLayout
                 android:id="@+id/endButtonsLayout"
@@ -67,113 +219,6 @@
                     app:privateMode="@{viewmodel.isPrivateSession}"
                     app:visibleGone="@{viewmodel.isFocused &amp;&amp; !viewmodel.isUrlEmpty}" />
             </LinearLayout>
-
-            <RelativeLayout
-                android:id="@+id/iconsLayout"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentStart="true"
-                android:addStatesFromChildren="true"
-                android:background="@null"
-                app:visibleGone="@{!viewmodel.isLibraryVisible}">
-
-                <LinearLayout
-                    android:id="@+id/startButtonsLayout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginTop="2dp"
-                    android:layout_marginBottom="2dp"
-                    android:layout_marginStart="2dp"
-                    android:addStatesFromChildren="true"
-                    android:orientation="horizontal">
-
-                    <org.mozilla.vrbrowser.ui.views.UIButton
-                        android:id="@+id/popup"
-                        style="@style/urlBarIconThemeStart"
-                        android:paddingStart="5dp"
-                        android:src="@drawable/ic_icon_popup_awesomebar"
-                        android:tint="@color/fog"
-                        android:tooltipText="@string/popup_tooltip"
-                        app:privateMode="@{viewmodel.isPrivateSession}"
-                        app:visibleGone="@{viewmodel.isPopUpAvailable}" />
-
-                    <org.mozilla.vrbrowser.ui.views.UIButton
-                        android:id="@+id/webxr"
-                        style="@style/urlBarIconThemeStart"
-                        android:paddingStart="5dp"
-                        android:paddingEnd="5dp"
-                        android:src="@{viewmodel.isWebXRBlocked ? @drawable/ic_icon_webxr_blocked : @drawable/ic_icon_webxr_allowed}"
-                        app:privateMode="@{viewmodel.isPrivateSession}"
-                        android:tint="@color/fog"
-                        android:tooltipText="@{viewmodel.isWebXRBlocked ? @string/webxr_blocked_tooltip : @string/webxr_allowed_tooltip}"
-                        app:visibleGone="@{viewmodel.isWebXRUsed &amp;&amp; !viewmodel.isContentFeed}" />
-
-                    <View
-                        android:layout_width="15dp"
-                        android:layout_height="match_parent"
-                        app:visibleGone="@{!viewmodel.isPopUpAvailable}"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_toEndOf="@id/startButtonsLayout"
-                    android:layout_centerVertical="true"
-                    app:visibleGone="@{!viewmodel.isFocused}">
-                    <ImageView
-                        android:id="@+id/loadingView"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:paddingEnd="5dp"
-                        android:contentDescription="Loading animation"
-                        android:src="@drawable/loading_shape"
-                        app:visibleGone="@{viewmodel.isLoading}" />
-                    <ImageView
-                        android:id="@+id/insecureIcon"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:contentDescription="SSL icon"
-                        android:src="@drawable/ic_icon_security_state_insecure"
-                        app:visibleGone="@{viewmodel.isInsecureVisible}" />
-                </LinearLayout>
-
-            </RelativeLayout>
-
-            <View
-                android:id="@+id/padding"
-                android:layout_width="15dp"
-                android:layout_height="match_parent"
-                android:layout_toEndOf="@id/iconsLayout"
-                app:visibleGone="@{viewmodel.isLibraryVisible}"/>
-
-            <org.mozilla.vrbrowser.ui.views.CustomInlineAutocompleteEditText
-                android:id="@+id/urlEditText"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingEnd="10dp"
-                android:layout_toStartOf="@id/endButtonsLayout"
-                android:layout_toEndOf="@id/padding"
-                android:foreground="@{viewmodel.isUrlEmpty ? (viewmodel.isPrivateSession ? @drawable/url_bar_hint_fading_edge_private : @drawable/url_bar_hint_fading_edge) : null}"
-                android:foregroundGravity="fill_vertical|right"
-                android:ems="10"
-                android:fadingEdgeLength="40dp"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:gravity="center_vertical"
-                android:hint="@{viewmodel.hint}"
-                android:imeOptions="actionGo"
-                android:inputType="textUri"
-                android:requiresFadingEdge="horizontal"
-                android:selectAllOnFocus="true"
-                android:textColor="@color/fog"
-                android:textColorHighlight="@color/azure"
-                android:textIsSelectable="true"
-                android:textSize="16sp"
-                android:text="@{viewmodel.navigationBarUrl}"
-                app:autocompleteBackgroundColor="@color/azure" />
         </RelativeLayout>
     </FrameLayout>
 

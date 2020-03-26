@@ -357,7 +357,7 @@ public class PromptDelegate implements
                 boolean allowed = index != PopUpBlockDialogWidget.NEGATIVE;
                 boolean askAgain = mPopUpPrompt.askAgain();
                 if (allowed && !askAgain) {
-                    SitePermission permission = new SitePermission(uri, allowed, SitePermission.SITE_PERMISSION_POPUP);
+                    SitePermission permission = new SitePermission(uri, uri, allowed, SitePermission.SITE_PERMISSION_POPUP);
                     mAllowedPopUpSites.add(permission);
                     mViewModel.insertSite(permission);
                 }

@@ -8,6 +8,8 @@ import android.content.Context
 import org.mozilla.geckoview.*
 import org.mozilla.vrbrowser.BuildConfig
 import org.mozilla.vrbrowser.browser.SettingsStore
+import org.mozilla.vrbrowser.browser.content.TrackingProtectionPolicy
+import org.mozilla.vrbrowser.browser.content.TrackingProtectionStore
 import org.mozilla.vrbrowser.crashreporting.CrashReporterService
 
 object EngineProvider {
@@ -23,9 +25,11 @@ object EngineProvider {
         if (runtime == null) {
             val builder = GeckoRuntimeSettings.Builder()
 
+            val policy : TrackingProtectionPolicy = TrackingProtectionStore.getTrackingProtectionPolicy(context);
             builder.crashHandler(CrashReporterService::class.java)
             builder.contentBlocking(ContentBlocking.Settings.Builder()
-                    .antiTracking(ContentBlocking.AntiTracking.AD or ContentBlocking.AntiTracking.SOCIAL or ContentBlocking.AntiTracking.ANALYTIC)
+                    .antiTracking(policy.antiTrackingPolicy)
+                    .enhancedTrackingProtectionLevel(SettingsStore.getInstance(context).trackingProtectionLevel)
                     .build())
             builder.consoleOutput(SettingsStore.getInstance(context).isConsoleLogsEnabled)
             builder.displayDensityOverride(SettingsStore.getInstance(context).displayDensity)
@@ -52,8 +56,6 @@ object EngineProvider {
                 val path = "resource://android/assets/web_extensions/$extension/"
                 runtime!!.registerWebExtension(WebExtension(path, runtime!!.webExtensionController))
             }
-
-
         }
 
         return runtime!!

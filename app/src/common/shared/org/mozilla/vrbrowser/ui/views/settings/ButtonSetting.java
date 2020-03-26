@@ -9,10 +9,12 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
+import org.mozilla.vrbrowser.utils.ViewUtils;
 
 public class ButtonSetting extends LinearLayout {
 
@@ -101,7 +103,7 @@ public class ButtonSetting extends LinearLayout {
     }
 
     public String getDescription() {
-        return mDescription;
+        return mDescriptionView.getText().toString();
     }
 
     public void setFooterButtonVisibility(int visibility) {
@@ -120,5 +122,9 @@ public class ButtonSetting extends LinearLayout {
         super.setHovered(hovered);
 
         mButton.setHovered(hovered);
+    }
+
+    public void setLinkClickListener(@NonNull ViewUtils.LinkClickableSpan listener) {
+        ViewUtils.setTextViewHTML(mDescriptionView, mDescriptionView.getText().toString(), listener::onClick);
     }
 }

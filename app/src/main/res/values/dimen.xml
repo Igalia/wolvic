@@ -236,8 +236,8 @@
     <dimen name="scrollbarWidth">10dp</dimen>
 
     <!-- Quick Permission -->
-    <dimen name="quick_permission_width">350dp</dimen>
-    <dimen name="quick_permission_height">200dp</dimen>
+    <dimen name="quick_permission_width">420dp</dimen>
+    <dimen name="quick_permission_height">220dp</dimen>
 
     <!-- Hamburger Menu -->
     <dimen name="hamburger_menu_width">300dp</dimen>
@@ -250,4 +250,8 @@
     <dimen name="prompt_dialog_padding_top">20dp</dimen>
     <dimen name="prompt_dialog_padding_bottom">42dp</dimen>
     <dimen name="prompt_dialog_padding_sides">64dp</dimen>
+
+    <!-- Navigation Bar icons -->
+    <dimen name="navigation_bar_icon_padding_small">2dp</dimen>
+    <dimen name="navigation_bar_icon_padding_big">6dp</dimen>
 </resources>

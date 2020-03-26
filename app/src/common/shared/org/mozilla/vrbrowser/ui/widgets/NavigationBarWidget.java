@@ -11,6 +11,7 @@ import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.preference.PreferenceManager;
+import android.text.Spannable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.Pair;
@@ -37,6 +38,7 @@ import org.mozilla.vrbrowser.browser.SessionChangeListener;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
+import org.mozilla.vrbrowser.browser.content.TrackingProtectionStore;
 import org.mozilla.vrbrowser.databinding.NavigationBarBinding;
 import org.mozilla.vrbrowser.db.SitePermission;
 import org.mozilla.vrbrowser.search.suggestions.SuggestionsProvider;
@@ -62,6 +64,7 @@ import java.util.ArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static org.mozilla.vrbrowser.db.SitePermission.SITE_PERMISSION_TRACKING;
 import static org.mozilla.vrbrowser.ui.widgets.menus.VideoProjectionMenuWidget.VIDEO_PROJECTION_NONE;
 
 public class NavigationBarWidget extends UIWidget implements GeckoSession.NavigationDelegate,
@@ -109,6 +112,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private int mBlockedCount;
     private Executor mUIThreadExecutor;
     private ArrayList<NavigationListener> mNavigationListeners;
+    private TrackingProtectionStore mTrackingDelegate;
 
     public NavigationBarWidget(Context aContext) {
         super(aContext);
@@ -157,6 +161,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mWidgetManager.addConnectivityListener(mConnectivityDelegate);
 
         mSuggestionsProvider = new SuggestionsProvider(getContext());
+
+        mTrackingDelegate = SessionStore.get().getTrackingProtectionStore();
 
         mPrefs = PreferenceManager.getDefaultSharedPreferences(mAppContext);
         mPrefs.registerOnSharedPreferenceChangeListener(this);
@@ -362,6 +368,19 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         }
     }
 
+    TrackingProtectionStore.TrackingProtectionListener mTrackingListener = new TrackingProtectionStore.TrackingProtectionListener() {
+        @Override
+        public void onExcludedTrackingProtectionChange(@NonNull String host, boolean excluded) {
+            Session currentSession = getSession();
+            if (currentSession != null) {
+                String existingHost = UrlUtils.getHost(currentSession.getCurrentUri());
+                if (existingHost.equals(host)) {
+                    mViewModel.setIsTrackingEnabled(!excluded);
+                }
+            }
+        }
+    };
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -458,8 +477,12 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
         mBinding.navigationBarNavigation.urlBar.detachFromWindow();
 
+        mTrackingDelegate.removeListener(mTrackingListener);
+
         if (mViewModel != null) {
             mViewModel.getIsFullscreen().removeObserver(mIsFullscreenObserver);
+            mViewModel.getIsActiveWindow().removeObserver(mIsActiveWindowObserver);
+            mViewModel.getUrl().removeObserver(mUrlObserver);
             mViewModel = null;
         }
     }
@@ -481,8 +504,12 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
         mBinding.setViewmodel(mViewModel);
 
-        mViewModel.getIsFullscreen().observe((VRBrowserActivity)getContext(), mIsFullscreenObserver);
+        mViewModel.getIsFullscreen().observeForever( mIsFullscreenObserver);
+        mViewModel.getIsActiveWindow().observeForever(mIsActiveWindowObserver);
+        mViewModel.getUrl().observeForever(mUrlObserver);
         mBinding.navigationBarNavigation.urlBar.attachToWindow(mAttachedWindow);
+
+        mTrackingDelegate.addListener(mTrackingListener);
 
         mAttachedWindow.addWindowListener(this);
         mAttachedWindow.setPopUpDelegate(mPopUpDelegate);
@@ -804,6 +831,30 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         }
     };
 
+    private Observer<Spannable> mUrlObserver = sitePermissions -> updateTrackingProtection();
+
+    private Observer<ObservableBoolean> mIsActiveWindowObserver = aIsActiveWindow -> updateTrackingProtection();
+
+    private void updateTrackingProtection() {
+        if (getSession() != null) {
+            mTrackingDelegate.contains(getSession(), isExcluded -> {
+                if (isExcluded != null) {
+                    mViewModel.setIsTrackingEnabled(!isExcluded);
+                }
+
+                return null;
+            });
+
+            mTrackingDelegate.fetchAll(sitePermissions -> {
+                Log.d(LOGTAG, "Start");
+                sitePermissions.forEach(site -> Log.d(LOGTAG, site.url + " - " + site.allowed));
+                Log.d(LOGTAG, "End");
+
+                return null;
+            });
+        }
+    }
+
     // WidgetManagerDelegate.UpdateListener
     @Override
     public void onWidgetUpdate(Widget aWidget) {
@@ -919,6 +970,13 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         toggleQuickPermission(mBinding.navigationBarNavigation.urlBar.getWebxRButton(),
                 SitePermission.SITE_PERMISSION_WEBXR,
                 mViewModel.getIsWebXRBlocked().getValue().get());
+    }
+
+    @Override
+    public void onTrackingButtonClicked() {
+        toggleQuickPermission(mBinding.navigationBarNavigation.urlBar.getTrackingRButton(),
+                SitePermission.SITE_PERMISSION_TRACKING,
+                mViewModel.getIsTrackingEnabled().getValue().get());
     }
 
     // VoiceSearch Delegate
@@ -1179,13 +1237,27 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mQuickPermissionWidget.setDelegate(new QuickPermissionWidget.Delegate() {
             @Override
             public void onBlock() {
-                SessionStore.get().setPermissionAllowed(uri, aCategory, false);
+                if (aCategory == SITE_PERMISSION_TRACKING) {
+                    if (getSession() != null) {
+                        mTrackingDelegate.remove(getSession());
+                    }
+
+                } else {
+                    SessionStore.get().setPermissionAllowed(uri, aCategory, false);
+                }
                 mQuickPermissionWidget.onDismiss();
             }
 
             @Override
             public void onAllow() {
-                SessionStore.get().setPermissionAllowed(uri, aCategory, true);
+                if (aCategory == SITE_PERMISSION_TRACKING) {
+                    if (getSession() != null) {
+                        mTrackingDelegate.add(getSession());
+                    }
+
+                } else {
+                    SessionStore.get().setPermissionAllowed(uri, aCategory, true);
+                }
                 mQuickPermissionWidget.onDismiss();
             }
         });

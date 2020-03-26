@@ -37,6 +37,8 @@ import org.mozilla.vrbrowser.browser.SessionChangeListener;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.browser.UserAgentOverride;
 import org.mozilla.vrbrowser.browser.VideoAvailabilityListener;
+import org.mozilla.vrbrowser.browser.content.TrackingProtectionPolicy;
+import org.mozilla.vrbrowser.browser.content.TrackingProtectionStore;
 import org.mozilla.vrbrowser.geolocation.GeolocationData;
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
@@ -337,6 +339,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         aSession.setMediaDelegate(this);
         aSession.setHistoryDelegate(this);
         aSession.setSelectionActionDelegate(this);
+        aSession.setContentBlockingDelegate(this);
     }
 
     private void cleanSessionListeners(GeckoSession aSession) {
@@ -350,6 +353,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         aSession.setMediaDelegate(null);
         aSession.setHistoryDelegate(null);
         aSession.setSelectionActionDelegate(null);
+        aSession.setContentBlockingDelegate(null);
     }
 
     public void suspend() {
@@ -462,6 +466,10 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     public void recreateSession() {
         SessionState previous = mState;
         mState = mState.recreate();
+
+        TrackingProtectionPolicy policy = TrackingProtectionStore.getTrackingProtectionPolicy(mContext);
+        mState.mSettings.setTrackingProtectionEnabled(policy.shouldBlockContent());
+
         restore();
 
         GeckoSession previousGeckoSession = null;
@@ -873,16 +881,6 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         }
     }
 
-
-    protected void setTrackingProtection(final boolean aEnabled) {
-        if (mState.mSettings.isTrackingProtectionEnabled() != aEnabled) {
-            mState.mSettings.setTrackingProtectionEnabled(aEnabled);
-            if (mState.mSession != null) {
-                mState.mSession.getSettings().setUseTrackingProtection(aEnabled);
-            }
-        }
-    }
-
     public void updateLastUse() {
         mState.mLastUse = System.currentTimeMillis();
     }
@@ -1227,19 +1225,38 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     @Override
     public void onContentBlocked(@NonNull final GeckoSession session, @NonNull final ContentBlocking.BlockEvent event) {
         if ((event.getAntiTrackingCategory() & ContentBlocking.AntiTracking.AD) != 0) {
-          Log.i(LOGTAG, "Blocking Ad: " + event.uri);
+            Log.d(LOGTAG, "Blocking Ad: " + event.uri);
         }
 
         if ((event.getAntiTrackingCategory() & ContentBlocking.AntiTracking.ANALYTIC) != 0) {
-            Log.i(LOGTAG, "Blocking Analytic: " + event.uri);
+            Log.d(LOGTAG, "Blocking Analytic: " + event.uri);
         }
 
         if ((event.getAntiTrackingCategory() & ContentBlocking.AntiTracking.CONTENT) != 0) {
-            Log.i(LOGTAG, "Blocking Content: " + event.uri);
+            Log.d(LOGTAG, "Blocking Content: " + event.uri);
         }
 
         if ((event.getAntiTrackingCategory() & ContentBlocking.AntiTracking.SOCIAL) != 0) {
-            Log.i(LOGTAG, "Blocking Social: " + event.uri);
+            Log.d(LOGTAG, "Blocking Social: " + event.uri);
+        }
+    }
+
+    @Override
+    public void onContentLoaded(@NonNull GeckoSession geckoSession, @NonNull ContentBlocking.BlockEvent event) {
+        if ((event.getAntiTrackingCategory() & ContentBlocking.AntiTracking.AD) != 0) {
+            Log.d(LOGTAG, "Loading Ad: " + event.uri);
+        }
+
+        if ((event.getAntiTrackingCategory() & ContentBlocking.AntiTracking.ANALYTIC) != 0) {
+            Log.d(LOGTAG, "Loading Analytic: " + event.uri);
+        }
+
+        if ((event.getAntiTrackingCategory() & ContentBlocking.AntiTracking.CONTENT) != 0) {
+            Log.d(LOGTAG, "Loading Content: " + event.uri);
+        }
+
+        if ((event.getAntiTrackingCategory() & ContentBlocking.AntiTracking.SOCIAL) != 0) {
+            Log.d(LOGTAG, "Loading Social: " + event.uri);
         }
     }
 

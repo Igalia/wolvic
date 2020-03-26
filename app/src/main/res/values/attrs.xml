@@ -22,6 +22,7 @@
         <attr name="notificationModeTintColorList" format="reference|color" />
         <attr name="privateModeBackground" format="integer" />
         <attr name="activeModeBackground" format="integer" />
+        <attr name="regularModeBackground" format="integer" />
         <attr name="tooltipDelay" />
         <attr name="tooltipPosition" />
         <attr name="tooltipDensity" />
@@ -53,6 +54,7 @@
         <attr name="description" />
         <attr name="itemMargin" />
         <attr name="options" format="reference" />
+        <attr name="descriptions" format="reference" />
         <attr name="values" format="reference" />
         <attr name="images" format="reference" />
         <attr name="layout" format="reference" />

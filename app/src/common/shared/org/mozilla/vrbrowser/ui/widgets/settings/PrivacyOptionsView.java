@@ -26,6 +26,7 @@ import org.mozilla.vrbrowser.browser.engine.SessionState;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.databinding.OptionsPrivacyBinding;
 import org.mozilla.vrbrowser.db.SitePermission;
+import org.mozilla.vrbrowser.ui.views.settings.RadioGroupSetting;
 import org.mozilla.vrbrowser.ui.views.settings.SwitchSetting;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
@@ -105,13 +106,10 @@ class PrivacyOptionsView extends SettingsView {
 
         mBinding.drmContentPlaybackSwitch.setOnCheckedChangeListener(mDrmContentListener);
         mBinding.drmContentPlaybackSwitch.setLinkClickListener((widget, url) -> {
-            SessionStore.get().getActiveSession().loadUri(url);
+            mWidgetManager.openNewTabForeground(url);
             exitWholeSettings();
         });
         setDrmContent(SettingsStore.getInstance(getContext()).isDrmContentPlaybackEnabled(), false);
-
-        mBinding.trackingProtectionSwitch.setOnCheckedChangeListener(mTrackingProtectionListener);
-        setTrackingProtection(SettingsStore.getInstance(getContext()).isTrackingProtectionEnabled(), false);
 
         mBinding.notificationsPermissionSwitch.setOnCheckedChangeListener(mNotificationsListener);
         setNotifications(SettingsStore.getInstance(getContext()).isNotificationsEnabled(), false);
@@ -136,6 +134,16 @@ class PrivacyOptionsView extends SettingsView {
         mBinding.webxrSwitch.setOnCheckedChangeListener(mWebXRListener);
         setWebXR(SettingsStore.getInstance(getContext()).isWebXREnabled(), false);
         mBinding.webxrExceptionsButton.setOnClickListener(v -> mDelegate.showView(SettingViewType.WEBXR_EXCEPTIONS));
+
+        mBinding.trackingProtectionButton.setOnClickListener(v -> mDelegate.showView(SettingViewType.TRACKING_EXCEPTION));
+        mBinding.trackingProtectionButton.setDescription(getResources().getString(R.string.privacy_options_tracking, getResources().getString(R.string.sumo_etp_url)));
+        mBinding.trackingProtectionButton.setLinkClickListener((widget, url) -> {
+            mWidgetManager.openNewTabForeground(url);
+            exitWholeSettings();
+        });
+        int etpLevel = SettingsStore.getInstance(getContext()).getTrackingProtectionLevel();
+        mBinding.trackingProtectionRadio.setOnCheckedChangeListener(mTrackingProtectionListener);
+        setTrackingProtection(mBinding.trackingProtectionRadio.getIdForValue(etpLevel), false);
     }
 
     private void togglePermission(SwitchSetting aButton, String aPermission) {
@@ -161,8 +169,8 @@ class PrivacyOptionsView extends SettingsView {
         setDrmContent(value, doApply);
     };
 
-    private SwitchSetting.OnCheckedChangeListener mTrackingProtectionListener = (compoundButton, value, doApply) -> {
-        setTrackingProtection(value, doApply);
+    private RadioGroupSetting.OnCheckedChangeListener mTrackingProtectionListener = (radioGroup, checkedId, doApply) -> {
+        setTrackingProtection(checkedId, true);
     };
 
     private SwitchSetting.OnCheckedChangeListener mNotificationsListener = (compoundButton, value, doApply) -> {
@@ -198,8 +206,8 @@ class PrivacyOptionsView extends SettingsView {
             setDrmContent(SettingsStore.DRM_PLAYBACK_DEFAULT, true);
         }
 
-        if (mBinding.trackingProtectionSwitch.isChecked() != SettingsStore.TRACKING_DEFAULT) {
-            setTrackingProtection(SettingsStore.TRACKING_DEFAULT, true);
+        if (!mBinding.trackingProtectionRadio.getValueForId(mBinding.trackingProtectionRadio.getCheckedRadioButtonId()).equals(SettingsStore.MSAA_DEFAULT_LEVEL)) {
+            setTrackingProtection(mBinding.trackingProtectionRadio.getIdForValue(SettingsStore.TRACKING_DEFAULT), true);
         }
 
         if (mBinding.notificationsPermissionSwitch.isChecked() != SettingsStore.NOTIFICATIONS_DEFAULT) {
@@ -242,14 +250,13 @@ class PrivacyOptionsView extends SettingsView {
         }
     }
 
-    private void setTrackingProtection(boolean value, boolean doApply) {
-        mBinding.trackingProtectionSwitch.setOnCheckedChangeListener(null);
-        mBinding.trackingProtectionSwitch.setValue(value, false);
-        mBinding.trackingProtectionSwitch.setOnCheckedChangeListener(mTrackingProtectionListener);
+    private void setTrackingProtection(int checkedId, boolean doApply) {
+        mBinding.trackingProtectionRadio.setOnCheckedChangeListener(null);
+        mBinding.trackingProtectionRadio.setChecked(checkedId, false);
+        mBinding.trackingProtectionRadio.setOnCheckedChangeListener(mTrackingProtectionListener);
 
         if (doApply) {
-            SettingsStore.getInstance(getContext()).setTrackingProtectionEnabled(value);
-            SessionStore.get().setTrackingProtection(value);
+            SettingsStore.getInstance(getContext()).setTrackingProtectionLevel((Integer)mBinding.trackingProtectionRadio.getValueForId(checkedId));
         }
     }
 

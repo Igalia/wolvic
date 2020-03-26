@@ -123,6 +123,19 @@
     <!-- This string labels the Reset button that removes all the sites not allowed to access WebXR -->
     <string name="settings_privacy_policy_webxr_reset">Reset the sites not allowed to access Virtual Reality devices.</string>
 
+    <!-- This string is used as the title of the Tracking dialog used to do not allow websites to bypass tracking protection. -->
+    <string name="settings_privacy_policy_tracking_title">Exceptions for Enhanced Tracking Protection</string>
+
+    <!-- This string is displayed under the title the  Tracking dialog used to do not allow websites to bypass tracking protection. -->
+    <string name="settings_privacy_policy_tracking_description">You’ve turned off protections on these websites.</string>
+
+    <!-- This string is displayed in the first line of a text that's displayed in the middle of the etp exceptions instead of the exceptions list
+     when there are no exceptions. -->
+    <string name="settings_privacy_policy_tracking_empty_description">When you allow a website to track your activity, they will appear here.</string>
+
+    <!-- This string labels the Reset button that removes all the sites not allowed to access WebXR -->
+    <string name="settings_privacy_policy_tracking_reset">Reset the Exceptions for Enhanced Tracking Protection.</string>
+
     <!-- This string is displayed in the switch of each item of the the pop-up blocking list when the site is allowed. -->
     <string name="pop_up_site_switch_allow">Allow</string>
 
@@ -434,6 +447,24 @@
 
     <!-- This string is used to label the 'VR' radio button of the 'User-Agent Mode' settings option. -->
     <string name="developer_options_ua_vr">VR</string>
+
+    <!-- This string is used to label the 'Standard' radio button of the 'Enhanced Tracking protection' settings option. -->
+    <string name="privacy_options_tracking_etp">Standard</string>
+
+    <!-- This string is used as the description of the 'Standard' radio button of the 'Enhanced Tracking protection' settings option. -->
+    <string name="privacy_options_tracking_etp_description">Balanced for protection and performance. Pages will load normally.</string>
+
+    <!-- This string is used to label the 'Strict' radio button of the 'Tracking protection' settings option. -->
+    <string name="privacy_options_tracking_strict">Strict</string>
+
+    <!-- This string is used as the description of the 'Strict' radio button of the 'Enhanced Tracking protection' settings option. -->
+    <string name="privacy_options_tracking_strict_description">Stronger protection, but may cause some sites or content to break.</string>
+
+    <!-- This string is used to label the 'Off' radio button of the 'Tracking protection' settings option. -->
+    <string name="privacy_options_tracking_off">Off</string>
+
+    <!-- This string is used as the description of the 'Off' radio button of the 'Enhanced Tracking protection' settings option. -->
+    <string name="privacy_options_tracking_off_description">Allow every page to follow you around online to collect you browsing habits and interests.</string>
 
     <!-- This string is used to label radio buttons for setting fixed-foveated-rendering (FFR) level.
      The term "foveation" derives from "fovea", the area of higher-resolution vision in the human retina.
@@ -974,6 +1005,13 @@
          when there are no exceptions. -->
     <string name="privacy_options_popups_list_empty_second">A list of sites with permissions will appear here.</string>
 
+    <!-- This string is used to label radio buttons for setting ETP in. -->
+    <string name="privacy_options_tracking">Enhanced Tracking Protection. (&lt;a href="%1$s">Learn More&lt;/a>)</string>
+
+    <!-- This string labels the button in the privacy option panel that opens the dialog to add/remove
+         Tracking protection exceptions. -->
+    <string name="privacy_options_tracking_exceptions">Exceptions</string>
+
     <!-- This string labels the Reset button that restores the default controller settings values. -->
     <string name="controller_options_reset">Reset Controller Settings</string>
 
@@ -1089,6 +1127,14 @@
     <!-- This string is for the tooltip that appears upon hovering the 'WebXR' button in the
  browser's navigation bar. The button it labels, when pressed, Shows the WebXR permission dialog. -->
     <string name="webxr_blocked_tooltip">WebXR Blocked</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Tracking' button in the
+     browser's navigation bar. The button it labels, when pressed, Shows the Tracking dialog. -->
+    <string name="tracking_allowed_tooltip">Tracking Protection Enabled</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Tracking Protection' button in the
+ browser's navigation bar. The button it labels, when pressed, Shows the Tracking Protection dialog. -->
+    <string name="tracking_disabled_tooltip">Tracking Protection Disabled</string>
 
     <!-- This string is for the tooltip that appears when the user is not in the browser's Private Browsing mode
          and hovers over the 'Private Browsing' icon in the browser's tray menu. -->
@@ -1408,4 +1454,13 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed in the title of the quick WebXR blocking dialog, accessed from the VR icon in the URL bar.
      '%1$s' will be replaced at runtime with the app's name. -->
     <string name="webxr_block_dialog_message">‘%1$s’ wants to access WebXR API</string>
+
+    <!-- This string is displayed in the title of the quick Tracking Protection dialog, accessed from the Tracking Protection icon in the URL bar. -->
+    <string name="tracking_dialog_message">Enhanced Tracking Protection is %1$s for this site. (&lt;a href="%2$s">Learn More&lt;/a>)</string>
+
+    <!-- This string is displayed in the enable button of the quick Tracking Protection dialog, accessed from the Tracking Protection icon in the URL bar. -->
+    <string name="tracking_dialog_button_enable">Enable</string>
+
+    <!-- This string is displayed in the disable button of the quick Tracking Protection dialog, accessed from the Tracking Protection icon in the URL bar. -->
+    <string name="tracking_dialog_button_disable">Disable</string>
 </resources>

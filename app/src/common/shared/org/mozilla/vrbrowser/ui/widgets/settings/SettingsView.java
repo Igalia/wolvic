@@ -28,7 +28,8 @@ public abstract class SettingsView extends FrameLayout {
         DEVELOPER,
         FXA,
         ENVIRONMENT,
-        CONTROLLER
+        CONTROLLER,
+        TRACKING_EXCEPTION
     }
 
     protected Delegate mDelegate;

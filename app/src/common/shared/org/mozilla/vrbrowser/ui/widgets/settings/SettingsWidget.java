@@ -431,6 +431,9 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
             case CONTROLLER:
                 showView(new ControllerOptionsView(getContext(), mWidgetManager));
                 break;
+            case TRACKING_EXCEPTION:
+                showView(new SitePermissionsOptionsView(getContext(), mWidgetManager, SitePermission.SITE_PERMISSION_TRACKING));
+                break;
         }
     }
 

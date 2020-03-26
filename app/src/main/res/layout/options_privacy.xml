@@ -51,6 +51,47 @@
                     android:layout_height="wrap_content"
                     app:description="@string/security_options_restore_tabs" />
 
+                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                    android:id="@+id/popUpsBlockingSwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:description="@string/security_options_block_pup_up_windows" />
+
+                <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                    android:id="@+id/popUpsBlockingExceptionsButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:buttonText="@string/security_options_block_pup_up_settings" />
+
+                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                    android:id="@+id/webxrSwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:description="@string/security_options_permission_webxr" />
+
+                <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                    android:id="@+id/webxrExceptionsButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:buttonText="@string/security_options_block_pup_up_settings" />
+
+                <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                    android:id="@+id/trackingProtectionButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:buttonText="@string/privacy_options_tracking_exceptions"
+                    app:description="@string/privacy_options_tracking"/>
+
+                <org.mozilla.vrbrowser.ui.views.settings.RadioGroupVSetting
+                    android:id="@+id/trackingProtectionRadio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="40dp"
+                    app:layout="@layout/setting_radio_group_v"
+                    app:options="@array/privacy_options_tracking"
+                    app:descriptions="@array/privacy_options_tracking_description"
+                    app:values="@array/privacy_options_tracking_values" />
+
                 <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
                     android:id="@+id/clearCookiesSite"
                     android:layout_width="match_parent"
@@ -71,12 +112,6 @@
                     android:layout_height="wrap_content"
                     android:visibility="gone"
                     app:description="@string/security_options_drm_content" />
-
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
-                    android:id="@+id/trackingProtectionSwitch"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:description="@string/security_options_tracking_protection" />
 
                 <TextView
                     android:id="@+id/permissionsTitle"
@@ -130,32 +165,6 @@
                     app:on_text="@string/permission_allow"
                     app:off_text="@string/permission_reject"
                     app:description="@string/security_options_permission_storage" />
-
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
-                    android:id="@+id/popUpsBlockingSwitch"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="40dp"
-                    app:description="@string/security_options_block_pup_up_windows" />
-
-                <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
-                    android:id="@+id/popUpsBlockingExceptionsButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:buttonText="@string/security_options_block_pup_up_settings" />
-
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
-                    android:id="@+id/webxrSwitch"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="40dp"
-                    app:description="@string/security_options_permission_webxr" />
-
-                <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
-                    android:id="@+id/webxrExceptionsButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:buttonText="@string/security_options_block_pup_up_settings" />
 
                 <TextView
                     android:id="@+id/dataCollectionTitle"

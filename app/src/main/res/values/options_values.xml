@@ -73,6 +73,25 @@
         <item>2</item>
     </integer-array>
 
+    <!-- Tracking Options -->
+    <string-array name="privacy_options_tracking" translatable="false">
+        <item>@string/privacy_options_tracking_etp</item>
+        <item>@string/privacy_options_tracking_strict</item>
+        <item>@string/privacy_options_tracking_off</item>
+    </string-array>
+
+    <string-array name="privacy_options_tracking_description" translatable="false">
+        <item>@string/privacy_options_tracking_etp_description</item>
+        <item>@string/privacy_options_tracking_strict_description</item>
+        <item>@string/privacy_options_tracking_off_description</item>
+    </string-array>
+
+    <integer-array name="privacy_options_tracking_values" translatable="false">
+        <item>1</item>
+        <item>2</item>
+        <item>0</item>
+    </integer-array>
+
     <!-- Clear Cache Options -->
     <string-array name="clear_cache_options" translatable="false">
         <item>@string/history_clear_range_today</item>

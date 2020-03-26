@@ -4,8 +4,11 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.view.LayoutInflater;
 import android.view.View;
+
+import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.databinding.QuickPermissionDialogBinding;
 import org.mozilla.vrbrowser.db.SitePermission;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
@@ -59,7 +62,23 @@ public class QuickPermissionWidget extends UIWidget implements WidgetManagerDele
                 mBinding.message.setText(getResources().getString(R.string.webxr_block_dialog_message, mDomain));
                 break;
             }
+            case SitePermission.SITE_PERMISSION_TRACKING: {
+                mBinding.message.setText(
+                        getResources().getString(R.string.tracking_dialog_message,
+                        mBinding.getBlocked() ?
+                                getResources().getString(R.string.on).toUpperCase() :
+                                getResources().getString(R.string.off).toUpperCase(),
+                                getResources().getString(R.string.sumo_etp_url)));
+                mBinding.allowButton.setText(R.string.tracking_dialog_button_disable);
+                mBinding.blockButton.setText(R.string.tracking_dialog_button_enable);
+                break;
+            }
         }
+
+        mBinding.message.setLinkClickListener((widget, url) -> {
+            mWidgetManager.openNewTabForeground(url);
+            onDismiss();
+        });
 
         mBinding.executePendingBindings();
     }

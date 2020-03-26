@@ -8,14 +8,19 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProvider;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.mozilla.geckoview.ContentBlocking;
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.telemetry.TelemetryHolder;
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.VRBrowserActivity;
+import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
+import org.mozilla.vrbrowser.ui.viewmodel.SettingsViewModel;
 import org.mozilla.vrbrowser.utils.DeviceType;
 import org.mozilla.vrbrowser.utils.StringUtils;
 import org.mozilla.vrbrowser.utils.SystemUtils;
@@ -44,6 +49,7 @@ public class SettingsStore {
 
     private Context mContext;
     private SharedPreferences mPrefs;
+    private SettingsViewModel mSettingsViewModel;
 
     // Developer options default values
     public final static boolean REMOTE_DEBUGGING_DEFAULT = false;
@@ -53,7 +59,7 @@ public class SettingsStore {
     public final static boolean UI_HARDWARE_ACCELERATION_DEFAULT_WAVEVR = false;
     public final static boolean PERFORMANCE_MONITOR_DEFAULT = true;
     public final static boolean DRM_PLAYBACK_DEFAULT = false;
-    public final static boolean TRACKING_DEFAULT = true;
+    public final static int TRACKING_DEFAULT = ContentBlocking.EtpLevel.DEFAULT;
     public final static boolean NOTIFICATIONS_DEFAULT = true;
     public final static boolean SPEECH_DATA_COLLECTION_DEFAULT = false;
     public final static boolean SPEECH_DATA_COLLECTION_REVIEWED_DEFAULT = false;
@@ -95,6 +101,14 @@ public class SettingsStore {
     public SettingsStore(Context aContext) {
         mContext = aContext;
         mPrefs = PreferenceManager.getDefaultSharedPreferences(aContext);
+    }
+
+    public void initModel(@NonNull Context context) {
+        mSettingsViewModel = new ViewModelProvider(
+                (VRBrowserActivity)context,
+                ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) context).getApplication()))
+                .get(SettingsViewModel.class);
+        mSettingsViewModel.refresh();
     }
 
     public boolean isCrashReportingEnabled() {
@@ -206,15 +220,17 @@ public class SettingsStore {
         editor.commit();
     }
 
-    public boolean isTrackingProtectionEnabled() {
-        return mPrefs.getBoolean(
-                mContext.getString(R.string.settings_key_tracking_protection), TRACKING_DEFAULT);
+    public int getTrackingProtectionLevel() {
+        return mPrefs.getInt(
+                mContext.getString(R.string.settings_key_tracking_protection_level), TRACKING_DEFAULT);
     }
 
-    public void setTrackingProtectionEnabled(boolean isEnabled) {
+    public void setTrackingProtectionLevel(int level) {
         SharedPreferences.Editor editor = mPrefs.edit();
-        editor.putBoolean(mContext.getString(R.string.settings_key_tracking_protection), isEnabled);
+        editor.putInt(mContext.getString(R.string.settings_key_tracking_protection_level), level);
         editor.commit();
+
+        mSettingsViewModel.setIsTrackingProtectionEnabled(level != ContentBlocking.EtpLevel.NONE);
     }
 
     public boolean isEnvironmentOverrideEnabled() {

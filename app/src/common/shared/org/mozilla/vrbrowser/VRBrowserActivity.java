@@ -279,6 +279,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mAudioUpdateRunnable = () -> mAudioEngine.update();
 
         mSettings = SettingsStore.getInstance(this);
+        mSettings.initModel(this);
 
         queueRunnable(() -> {
             createOffscreenDisplay();
@@ -485,7 +486,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         BitmapCache.getInstance(this).onDestroy();
 
         SessionStore.get().onDestroy();
-
 
         super.onDestroy();
         mLifeCycle.setCurrentState(Lifecycle.State.DESTROYED);

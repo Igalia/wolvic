@@ -67,7 +67,7 @@ public class WindowViewModel extends AndroidViewModel {
     private MediatorLiveData<String> navigationBarUrl;
     private MutableLiveData<ObservableBoolean> isWebXRUsed;
     private MutableLiveData<ObservableBoolean> isWebXRBlocked;
-    private MediatorLiveData<ObservableBoolean> isContentFeed;
+    private MutableLiveData<ObservableBoolean> isTrackingEnabled;
 
     public WindowViewModel(Application application) {
         super(application);
@@ -160,8 +160,7 @@ public class WindowViewModel extends AndroidViewModel {
         isWebXRUsed = new MutableLiveData<>(new ObservableBoolean(false));
         isWebXRBlocked = new MutableLiveData<>(new ObservableBoolean(false));
 
-        isContentFeed = new MediatorLiveData<>();
-        isContentFeed.addSource(url, mIsContentFeedObserver);
+        isTrackingEnabled = new MutableLiveData<>(new ObservableBoolean(true));
     }
 
     private Observer<ObservableBoolean> mIsTopBarVisibleObserver = new Observer<ObservableBoolean>() {
@@ -289,14 +288,6 @@ public class WindowViewModel extends AndroidViewModel {
         }
     };
 
-    private Observer<Spannable> mIsContentFeedObserver = new Observer<Spannable>() {
-        @Override
-        public void onChanged(Spannable o) {
-            boolean feed = UrlUtils.isContentFeed(getApplication(), url.getValue().toString());
-            isContentFeed.postValue(new ObservableBoolean(feed));
-        }
-    };
-
     public void refresh() {
         url.postValue(url.getValue());
         hint.postValue(getHintValue());
@@ -322,6 +313,7 @@ public class WindowViewModel extends AndroidViewModel {
         isMediaPlaying.postValue(isMediaPlaying.getValue());
         isWebXRUsed.postValue(isWebXRUsed.getValue());
         isWebXRBlocked.postValue(isWebXRBlocked.getValue());
+        isTrackingEnabled.postValue(isTrackingEnabled.getValue());
     }
 
     @NonNull
@@ -677,7 +669,11 @@ public class WindowViewModel extends AndroidViewModel {
     }
 
     @NonNull
-    public MutableLiveData<ObservableBoolean> getIsContentFeed() {
-        return isContentFeed;
+    public MutableLiveData<ObservableBoolean> getIsTrackingEnabled() {
+        return isTrackingEnabled;
+    }
+
+    public void setIsTrackingEnabled(boolean isTrackingEnabled) {
+        this.isTrackingEnabled.postValue(new ObservableBoolean(isTrackingEnabled));
     }
 }

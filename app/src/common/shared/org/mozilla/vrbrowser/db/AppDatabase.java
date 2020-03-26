@@ -13,7 +13,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import org.mozilla.vrbrowser.AppExecutors;
 
-@Database(entities = {SitePermission.class}, version = 2)
+@Database(entities = {SitePermission.class}, version = 3)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static final String DATABASE_NAME = "app";
@@ -84,6 +84,22 @@ public abstract class AppDatabase extends RoomDatabase {
         public void migrate(SupportSQLiteDatabase database) {
             database.execSQL("ALTER TABLE PopUpSite RENAME TO SitePermission");
             database.execSQL("ALTER TABLE SitePermission ADD COLUMN category INTEGER NOT NULL DEFAULT 0");
+        }
+    };
+
+    private static final Migration MIGRATION_1_3 = new Migration(1, 3) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE PopUpSite RENAME TO SitePermission");
+            database.execSQL("ALTER TABLE SitePermission ADD COLUMN category INTEGER NOT NULL DEFAULT 0");
+            database.execSQL("ALTER TABLE SitePermission ADD COLUMN principal STRING NOT NULL DEFAULT ''");
+        }
+    };
+
+    private static final Migration MIGRATION_2_3 = new Migration(2, 3) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE SitePermission ADD COLUMN principal STRING NOT NULL DEFAULT ''");
         }
     };
 

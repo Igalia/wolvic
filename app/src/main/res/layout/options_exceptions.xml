@@ -50,7 +50,7 @@
                     android:id="@+id/empty_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
+                    android:gravity="center_horizontal"
                     android:textAlignment="center"
                     android:paddingBottom="15dp"
                     android:textColor="@color/rhino"
@@ -59,9 +59,10 @@
                     tools:text="@string/privacy_options_popups_list_empty_first" />
                 <TextView
                     style="@style/settingsText"
+                    android:id="@+id/empty_second_Text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
+                    android:gravity="center_horizontal"
                     android:textAlignment="center"
                     android:textColor="@color/rhino"
                     android:layout_gravity="center"

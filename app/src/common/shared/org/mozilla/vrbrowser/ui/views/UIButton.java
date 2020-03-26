@@ -65,6 +65,7 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
         if (mTintColorListRes != 0) {
             setTintColorList(mTintColorListRes);
         }
+        mBackground = attributes.getDrawable(R.styleable.UIButton_regularModeBackground);
         mPrivateModeBackground = attributes.getDrawable(R.styleable.UIButton_privateModeBackground);
         mActiveModeBackground = attributes.getDrawable(R.styleable.UIButton_activeModeBackground);
         mPrivateModeTintColorListRes = attributes.getResourceId(R.styleable.UIButton_privateModeTintColorList, 0);
@@ -82,7 +83,9 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
         mTooltipLayout = attributes.getResourceId(R.styleable.UIButton_tooltipLayout, R.layout.tooltip);
         attributes.recycle();
 
-        mBackground = getBackground();
+        if (mBackground == null) {
+            mBackground = getBackground();
+        }
 
         // Android >8 doesn't perform a click when long clicking in ImageViews even if long click is disabled
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

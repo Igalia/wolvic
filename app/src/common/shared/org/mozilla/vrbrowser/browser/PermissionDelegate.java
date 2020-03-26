@@ -287,7 +287,7 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
             mSitePermissionModel.deleteSite(site);
         } else {
             if (site == null) {
-                site = new SitePermission(uri, false, category);
+                site = new SitePermission(uri, uri, false, category);
                 mSitePermissions.add(site);
             }
             site.allowed = false;
