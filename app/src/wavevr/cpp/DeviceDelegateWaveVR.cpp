@@ -102,6 +102,7 @@ struct DeviceDelegateWaveVR::State {
   bool ignoreNextRecenter;
   int32_t sixDoFControllerCount;
   bool handsCalculated;
+  uint32_t delta = 0;
   State()
       : isRunning(true)
       , near(0.1f)
@@ -316,6 +317,19 @@ struct DeviceDelegateWaveVR::State {
       const bool touchpadPressed = WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Touchpad);
       const bool touchpadTouched = WVR_GetInputTouchState(controller.type, WVR_InputId_Alias1_Touchpad);
       const bool menuPressed = WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Menu);
+      const bool grip = WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Grip);
+      static bool sTouchpadPressed = false;
+      static bool sBumperPressed = false;
+      if (renderMode == device::RenderMode::Immersive) {
+        if (grip && !sTouchpadPressed) {
+          delta += 1;
+        }
+        if (bumperPressed && !sBumperPressed) {
+          delta -= 1;
+        }
+      }
+      sTouchpadPressed = grip;
+      sBumperPressed = bumperPressed;
 
       delegate->SetButtonCount(controller.index, controller.is6DoF ? 3 : 2); // For immersive mode
       delegate->SetButtonState(controller.index, ControllerDelegate::BUTTON_TOUCHPAD, 0, touchpadPressed, touchpadTouched);
