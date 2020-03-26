@@ -969,7 +969,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     public void onWebXRButtonClicked() {
         toggleQuickPermission(mBinding.navigationBarNavigation.urlBar.getWebxRButton(),
                 SitePermission.SITE_PERMISSION_WEBXR,
-                mViewModel.getIsWebXRBlocked().getValue().get());
+                !mViewModel.getIsWebXRBlocked().getValue().get());
     }
 
     @Override
