@@ -297,6 +297,9 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
         mDefaultKeyboardSymbols = new CustomKeyboard(aContext.getApplicationContext(), R.xml.keyboard_symbols);
         mKeyboardNumeric = new CustomKeyboard(aContext.getApplicationContext(), R.xml.keyboard_numeric);
+        mShiftOnIcon = getResources().getDrawable(R.drawable.ic_icon_keyboard_shift_on, getContext().getTheme());
+        mShiftOffIcon = getResources().getDrawable(R.drawable.ic_icon_keyboard_shift_off, getContext().getTheme());
+        mShiftDisabledIcon = getResources().getDrawable(R.drawable.ic_icon_keyboard_shift_disabled, getContext().getTheme());
         setDefaultKeyboard();
 
         mKeyboardView.setPreviewEnabled(false);
@@ -327,9 +330,6 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mPopupKeyboardView.setOnKeyboardActionListener(this);
         mKeyboardNumericView.setOnKeyboardActionListener(this);
 
-        mShiftOnIcon = getResources().getDrawable(R.drawable.ic_icon_keyboard_shift_on, getContext().getTheme());
-        mShiftOffIcon = getResources().getDrawable(R.drawable.ic_icon_keyboard_shift_off, getContext().getTheme());
-        mShiftDisabledIcon = getResources().getDrawable(R.drawable.ic_icon_keyboard_shift_disabled, getContext().getTheme());
         mCapsLockOnIcon = getResources().getDrawable(R.drawable.ic_icon_keyboard_caps, getContext().getTheme());
         mCloseKeyboardButton = findViewById(R.id.keyboardCloseButton);
         mCloseKeyboardButton.setOnClickListener(v -> dismiss());
