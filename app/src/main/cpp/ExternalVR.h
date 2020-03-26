@@ -63,6 +63,8 @@ public:
   void SetHapticState(ControllerContainerPtr aControllerContainer) const;
   void StopPresenting();
   void SetSourceBrowser(VRBrowserType aBrowser);
+  void OnPause();
+  void OnResume();
   ExternalVR();
   ~ExternalVR() = default;
 protected:

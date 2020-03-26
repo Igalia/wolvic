@@ -748,6 +748,7 @@ void
 BrowserWorld::Pause() {
   ASSERT_ON_RENDER_THREAD();
   m.paused = true;
+  m.externalVR->OnPause();
   m.monitor->Pause();
 }
 
@@ -755,6 +756,7 @@ void
 BrowserWorld::Resume() {
   ASSERT_ON_RENDER_THREAD();
   m.paused = false;
+  m.externalVR->OnResume();
   m.monitor->Resume();
 }
 
