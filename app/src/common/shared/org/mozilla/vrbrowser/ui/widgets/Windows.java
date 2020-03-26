@@ -458,6 +458,10 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         TelemetryWrapper.resetOpenedWindowsCount(mPrivateWindows.size(), true);
     }
 
+    public boolean isPaused() {
+        return mIsPaused;
+    }
+
     public void onDestroy() {
         if (mTabsWidget != null && !mTabsWidget.isReleased()) {
             mTabsWidget.releaseWidget();

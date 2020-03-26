@@ -973,8 +973,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         GleanMetricsService.stopImmersive();
         Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(() -> {
-            mWindows.resumeCompositor();
-            Log.d(LOGTAG, "Compositor Resumed");
+            if (!mWindows.isPaused()) {
+                Log.d(LOGTAG, "Compositor resume begin");
+                mWindows.resumeCompositor();
+                Log.d(LOGTAG, "Compositor resume end");
+            }
         }, 20);
     }
 
