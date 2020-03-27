@@ -45,6 +45,7 @@ public:
                       const double aBottomDegrees) override;
   void SetEyeOffset(const device::Eye aEye, const float aX, const float aY, const float aZ) override;
   void SetEyeResolution(const int32_t aX, const int32_t aY) override;
+  void SetStageSize(const float aWidth, const float aDepth) override;
   void SetSittingToStandingTransform(const vrb::Matrix& aTransform) override;
   void CompleteEnumeration() override;
   // ExternalVR interface

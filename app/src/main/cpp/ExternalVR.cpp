@@ -300,6 +300,12 @@ ExternalVR::SetEyeResolution(const int32_t aWidth, const int32_t aHeight) {
 }
 
 void
+ExternalVR::SetStageSize(const float aWidth, const float aDepth) {
+  m.system.displayState.stageSize.width = aWidth;
+  m.system.displayState.stageSize.height = aDepth;
+}
+
+void
 ExternalVR::SetSittingToStandingTransform(const vrb::Matrix& aTransform) {
   memcpy(&(m.system.displayState.sittingToStandingTransform), aTransform.Data(), sizeof(m.system.displayState.sittingToStandingTransform));
 }

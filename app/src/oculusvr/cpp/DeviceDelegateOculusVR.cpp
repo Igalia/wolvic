@@ -227,6 +227,18 @@ struct DeviceDelegateOculusVR::State {
     }
   }
 
+  void UpdateBoundary() {
+    if (!ovr || !Is6DOF()) {
+      return;
+    }
+    ovrPosef pose;
+    ovrVector3f size;
+    vrapi_GetBoundaryOrientedBoundingBox(ovr, &pose, &size);
+    if (immersiveDisplay) {
+      immersiveDisplay->SetStageSize(size.x * 2.0f, size.z * 2.0f);
+    }
+  }
+
   void AddUILayer(const OculusLayerPtr& aLayer, VRLayerSurface::SurfaceType aSurfaceType) {
     if (ovr) {
       vrb::RenderContextPtr ctx = context.lock();
@@ -669,9 +681,10 @@ DeviceDelegateOculusVR::RegisterImmersiveDisplay(ImmersiveDisplayPtr aDisplay) {
   m.GetImmersiveRenderSize(width, height);
   m.immersiveDisplay->SetEyeResolution(width, height);
   m.immersiveDisplay->SetSittingToStandingTransform(vrb::Matrix::Translation(kAverageOculusHeight));
-  m.immersiveDisplay->CompleteEnumeration();
-
+  m.UpdateBoundary();
   m.UpdatePerspective();
+
+  m.immersiveDisplay->CompleteEnumeration();
 }
 
 void
@@ -1199,6 +1212,7 @@ DeviceDelegateOculusVR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
     m.UpdateDisplayRefreshRate();
     m.UpdateClockLevels();
     m.UpdateTrackingMode();
+    m.UpdateBoundary();
   }
 
   // Reset reorientation after Enter VR

@@ -28,6 +28,7 @@
 #include <wvr/wvr_overlay.h>
 #include <wvr/wvr_system.h>
 #include <wvr/wvr_events.h>
+#include <wvr/wvr_arena.h>
 
 namespace crow {
 
@@ -331,6 +332,22 @@ struct DeviceDelegateWaveVR::State {
     }
   }
 
+  void UpdateBoundary() {
+    if (!immersiveDisplay) {
+      return;
+    }
+    WVR_Arena_t arena = WVR_GetArena();
+    if (arena.shape == WVR_ArenaShape_Rectangle &&
+        arena.area.rectangle.width > 0 &&
+        arena.area.rectangle.length > 0) {
+      immersiveDisplay->SetStageSize(arena.area.rectangle.width, arena.area.rectangle.length);
+    } else if (arena.shape == WVR_ArenaShape_Round && arena.area.round.diameter > 0) {
+      immersiveDisplay->SetStageSize(arena.area.round.diameter, arena.area.round.diameter);
+    } else {
+      immersiveDisplay->SetStageSize(0.0f, 0.0f);
+    }
+  }
+
   void UpdateHaptics(Controller& controller) {
     vrb::RenderContextPtr renderContext = context.lock();
     if (!renderContext) {
@@ -442,8 +459,9 @@ DeviceDelegateWaveVR::RegisterImmersiveDisplay(ImmersiveDisplayPtr aDisplay) {
   m.immersiveDisplay->SetCapabilityFlags(flags);
   m.immersiveDisplay->SetEyeResolution(m.renderWidth, m.renderHeight);
   m.immersiveDisplay->SetSittingToStandingTransform(vrb::Matrix::Translation(kAverageHeight));
-  m.immersiveDisplay->CompleteEnumeration();
+  m.UpdateBoundary();
   m.InitializeCameras();
+  m.immersiveDisplay->CompleteEnumeration();
 }
 
 void
@@ -590,6 +608,7 @@ DeviceDelegateWaveVR::ProcessEvents() {
       case WVR_EventType_DeviceResume: {
         VRB_WAVE_EVENT_LOG("WVR_EventType_DeviceResume");
         m.reorientMatrix = vrb::Matrix::Identity();
+        m.UpdateBoundary();
       }
         break;
       case WVR_EventType_DeviceRoleChanged: {
