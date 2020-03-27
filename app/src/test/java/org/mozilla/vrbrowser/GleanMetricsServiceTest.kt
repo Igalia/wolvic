@@ -7,7 +7,10 @@ import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mozilla.vrbrowser.GleanMetrics.*
+import org.mozilla.vrbrowser.GleanMetrics.Distribution
+import org.mozilla.vrbrowser.GleanMetrics.FirefoxAccount
+import org.mozilla.vrbrowser.GleanMetrics.Tabs
+import org.mozilla.vrbrowser.GleanMetrics.Url
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
@@ -51,7 +54,9 @@ class GleanMetricsServiceTest {
         assertFalse(Distribution.channelName.testHasValue())
         GleanMetricsService.testSetStartupMetrics()
         assertTrue(Distribution.channelName.testHasValue())
-        assertEquals(Distribution.channelName.testGetValue(), BuildConfig.FLAVOR_platform)
+        assertEquals(Distribution.channelName.testGetValue(),
+                if (org.mozilla.vrbrowser.utils.DeviceType.isOculusBuild()) "oculusvr"
+                else BuildConfig.FLAVOR_platform)
     }
 
     @Test
