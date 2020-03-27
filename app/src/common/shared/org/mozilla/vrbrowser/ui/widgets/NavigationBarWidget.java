@@ -415,7 +415,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
                 getSession().exitFullScreen();
             }
             mAttachedWindow.restoreBeforeFullscreenPlacement();
-            mAttachedWindow.setIsFullScreen(false);
             mWidgetManager.popBackHandler(mFullScreenBackHandler);
         }
 
@@ -557,7 +556,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     private void enterFullScreenMode() {
         mWidgetManager.pushBackHandler(mFullScreenBackHandler);
-        mAttachedWindow.setIsFullScreen(true);
+
         AnimationHelper.fadeIn(mBinding.navigationBarFullscreen.fullScreenModeContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
 
         AnimationHelper.fadeOut(mBinding.navigationBarNavigation.navigationBarContainer, 0, null);
@@ -610,7 +609,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
         mWidgetManager.updateWidget(mAttachedWindow);
 
-        mAttachedWindow.setIsFullScreen(false);
         mWidgetManager.popBackHandler(mFullScreenBackHandler);
 
         AnimationHelper.fadeIn(mBinding.navigationBarNavigation.navigationBarContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
@@ -799,16 +797,10 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     // Content delegate
 
-    @Override
-    public void onFullScreen(@NonNull GeckoSession session, boolean aFullScreen) {
-        mViewModel.setIsFullscreen(aFullScreen);
-    }
-
     private Observer<ObservableBoolean> mIsFullscreenObserver = isFullScreen -> {
         if (isFullScreen.get()) {
-            if (!mAttachedWindow.isFullScreen()) {
-                enterFullScreenMode();
-            }
+            enterFullScreenMode();
+
             if (mAttachedWindow.isResizing()) {
                 exitResizeMode(ResizeAction.KEEP_SIZE);
             }

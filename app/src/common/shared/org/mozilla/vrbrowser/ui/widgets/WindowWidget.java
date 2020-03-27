@@ -130,7 +130,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private WidgetPlacement mPlacementBeforeFullscreen;
     private WidgetPlacement mPlacementBeforeResize;
     private boolean mIsResizing;
-    private boolean mIsFullScreen;
     private boolean mAfterFirstPaint;
     private boolean mCaptureOnPageStop;
     private PromptDelegate mPromptDelegate;
@@ -192,7 +191,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mPlacementBeforeFullscreen = new WidgetPlacement(aContext);
         mPlacementBeforeResize = new WidgetPlacement(aContext);
         mIsResizing = false;
-        mIsFullScreen = false;
         initializeWidgetPlacement(mWidgetPlacement);
         if (mSession.isPrivateMode()) {
             mWidgetPlacement.clearColor = ViewUtils.ARGBtoRGBA(getContext().getColor(R.color.window_private_clear_color));
@@ -889,8 +887,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     public void setIsFullScreen(boolean isFullScreen) {
-        if (isFullScreen != mIsFullScreen) {
-            mIsFullScreen = isFullScreen;
+        if (mViewModel.getIsFullscreen().getValue().get() != isFullScreen) {
             mViewModel.setIsFullscreen(isFullScreen);
             for (WindowListener listener: mListeners) {
                 listener.onFullScreen(this, isFullScreen);
@@ -899,7 +896,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     public boolean isFullScreen() {
-        return mIsFullScreen;
+        return mViewModel.getIsFullscreen().getValue().get();
     }
 
     public void addWindowListener(WindowListener aListener) {
@@ -1553,6 +1550,11 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     // GeckoSession.ContentDelegate
+
+    @Override
+    public void onFullScreen(@NonNull GeckoSession session, boolean aFullScreen) {
+        setIsFullScreen(aFullScreen);
+    }
 
     @Override
     public void onContextMenu(GeckoSession session, int screenX, int screenY, ContextElement element) {
