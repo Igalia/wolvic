@@ -35,7 +35,7 @@ public class QuickPermissionWidget extends UIWidget implements WidgetManagerDele
     private void initialize() {
         LayoutInflater inflater = LayoutInflater.from(getContext());
         mBinding = DataBindingUtil.inflate(inflater, R.layout.quick_permission_dialog, this, true);
-        mBinding.setBlocked(false);
+        mBinding.setBlockButtonVisible(false);
         mBinding.allowButton.setOnClickListener(v -> {
             if (mDelegate != null) {
                 mDelegate.onAllow();
@@ -52,20 +52,27 @@ public class QuickPermissionWidget extends UIWidget implements WidgetManagerDele
     public void setData(String uri, int aCategory, boolean aBlocked) {
         mCategory = aCategory;
         mDomain = uri;
-        mBinding.setBlocked(aBlocked);
+        mBinding.setBlockButtonVisible(aBlocked);
         updateUI();
     }
 
     public void updateUI() {
         switch (mCategory) {
             case SitePermission.SITE_PERMISSION_WEBXR: {
-                mBinding.message.setText(getResources().getString(R.string.webxr_block_dialog_message, mDomain));
+                mBinding.message.setText(
+                        getResources().getString(R.string.webxr_permission_dialog_message,
+                                mBinding.getBlockButtonVisible() ?
+                                        getResources().getString(R.string.off).toUpperCase() :
+                                        getResources().getString(R.string.on).toUpperCase(),
+                                getResources().getString(R.string.sumo_webxr_url)));
+                mBinding.allowButton.setText(R.string.permission_allow);
+                mBinding.blockButton.setText(R.string.pop_up_site_switch_block);
                 break;
             }
             case SitePermission.SITE_PERMISSION_TRACKING: {
                 mBinding.message.setText(
                         getResources().getString(R.string.tracking_dialog_message,
-                        mBinding.getBlocked() ?
+                        mBinding.getBlockButtonVisible() ?
                                 getResources().getString(R.string.on).toUpperCase() :
                                 getResources().getString(R.string.off).toUpperCase(),
                                 getResources().getString(R.string.sumo_etp_url)));

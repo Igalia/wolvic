@@ -1453,7 +1453,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 
     <!-- This string is displayed in the title of the quick WebXR blocking dialog, accessed from the VR icon in the URL bar.
      '%1$s' will be replaced at runtime with the app's name. -->
-    <string name="webxr_block_dialog_message">‘%1$s’ wants to access WebXR API</string>
+    <string name="webxr_permission_dialog_message">WebXR is %1$s for this site. (&lt;a href="%2$s">Learn More&lt;/a>)</string>
 
     <!-- This string is displayed in the title of the quick Tracking Protection dialog, accessed from the Tracking Protection icon in the URL bar. -->
     <string name="tracking_dialog_message">Enhanced Tracking Protection is %1$s for this site. (&lt;a href="%2$s">Learn More&lt;/a>)</string>
