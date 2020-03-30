@@ -525,6 +525,26 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             Log.e(LOGTAG,"Loading from crash Intent");
         }
 
+        // FIXME https://github.com/MozillaReality/FirefoxReality/issues/3066
+        if (DeviceType.isOculusBuild()) {
+            Bundle bundle = intent.getExtras();
+            if (bundle != null) {
+                String cmd = (String) bundle.get("intent_cmd");
+                if ((cmd != null) && (cmd.length() > 0)) {
+                    try {
+                        JSONObject object = new JSONObject(cmd);
+                        JSONObject launch = object.getJSONObject("ovr_social_launch");
+                        String msg = launch.getString("deeplink_message");
+                        Log.d(LOGTAG, "deeplink message: " + msg);
+                        onAppLink(msg);
+                        return;
+                    } catch (Exception ex) {
+                        Log.e(LOGTAG, "Error parsing deeplink JSON: " + ex.toString());
+                    }
+                }
+            }
+        }
+
         Uri uri = intent.getData();
 
         boolean openInWindow = false;

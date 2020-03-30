@@ -825,10 +825,14 @@ DeviceDelegateOculusVR::ProcessEvents() {
         }
         break;
       case ovrMessage_Notification_ApplicationLifecycle_LaunchIntentChanged: {
-        auto details = ovr_ApplicationLifecycle_GetLaunchDetails();
-        const char *msg = ovr_LaunchDetails_GetDeeplinkMessage(details);
-        if (msg) {
-          VRBrowser::OnAppLink(msg);
+        ovrLaunchDetailsHandle details = ovr_ApplicationLifecycle_GetLaunchDetails();
+        if (ovr_LaunchDetails_GetLaunchType(details) == ovrLaunchType_Deeplink) {
+          const char* msg = ovr_LaunchDetails_GetDeeplinkMessage(details);
+          if (msg) {
+            // FIXME see https://github.com/MozillaReality/FirefoxReality/issues/3066
+            // Currently handled in VRBrowserActivity.loadFromIntent()
+            // VRBrowser::OnAppLink(msg);
+          }
         }
         break;
       }
