@@ -69,6 +69,15 @@ class YoutubeExtension {
         this.retry("overrideQuality", () => this.overrideQuality());
     }
 
+    is360(text) {
+        return text.includes('360');
+    }
+
+    isStereo(text) {
+        const words = text.toLowerCase().split(/\s+|\./);
+        return words.includes('stereo') || words.includes('3d') || words.includes('vr');
+    }
+
     // Automatically select a video projection if needed
     overrideVideoProjection() {
         if (!this.isWatchingPage()) {
@@ -87,9 +96,9 @@ class YoutubeExtension {
             document.querySelector(YT_SELECTORS.disclaimer),
             document.querySelector(YT_SELECTORS.embedTitle)
         ];
-        const is360 = targets.some((node) => node && node.textContent.includes('360'));
+        const is360 = targets.some((node) => node && this.is360(node.textContent));
         if (is360) {
-            const stereo = targets.some((node) => node && node.textContent.toLowerCase().includes('stereo'));
+            const stereo = targets.some((node) => node && this.isStereo(node.textContent));
             qs.set('mozVideoProjection', stereo ? '360s_auto' : '360_auto');
             this.updateURL(qs);
             this.updateVideoStyle();
