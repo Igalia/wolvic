@@ -131,7 +131,6 @@ struct DeviceDelegateOculusVR::State {
 
   void Initialize() {
     elbow = ElbowModel::Create();
-    layersEnabled = VRBrowser::AreLayersEnabled();
     vrb::RenderContextPtr localContext = context.lock();
 
     java.Vm = app->activity->vm;
@@ -147,6 +146,14 @@ struct DeviceDelegateOculusVR::State {
       return;
     }
     initialized = true;
+    std::string version = vrapi_GetVersionString();
+    if (version.find("1.1.32.0") != std::string::npos) {
+      VRB_ERROR("Disable layers due to driver bug. VRAPI Runtime Version: %s", vrapi_GetVersionString());
+      layersEnabled = false;
+      VRBrowser::DisableLayers();
+    } else {
+      layersEnabled = VRBrowser::AreLayersEnabled();
+    }
     SetRenderSize(device::RenderMode::StandAlone);
 
     for (int i = 0; i < VRAPI_EYE_COUNT; ++i) {

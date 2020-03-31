@@ -54,6 +54,8 @@ const char* kHandlePoorPerformance = "handlePoorPerformance";
 const char* kHandlePoorPerformanceSignature = "()V";
 const char* kOnAppLink = "onAppLink";
 const char* kOnAppLinkSignature = "(Ljava/lang/String;)V";
+const char* kDisableLayers = "disableLayers";
+const char* kDisableLayersSignature = "()V";
 
 JNIEnv* sEnv = nullptr;
 jclass sBrowserClass = nullptr;
@@ -80,6 +82,7 @@ jmethodID sSetDeviceType = nullptr;
 jmethodID sHaltActivity = nullptr;
 jmethodID sHandlePoorPerformance = nullptr;
 jmethodID sOnAppLink = nullptr;
+jmethodID sDisableLayers = nullptr;
 }
 
 namespace crow {
@@ -121,6 +124,7 @@ VRBrowser::InitializeJava(JNIEnv* aEnv, jobject aActivity) {
   sHaltActivity = FindJNIMethodID(sEnv, sBrowserClass, kHaltActivity, kHaltActivitySignature);
   sHandlePoorPerformance = FindJNIMethodID(sEnv, sBrowserClass, kHandlePoorPerformance, kHandlePoorPerformanceSignature);
   sOnAppLink = FindJNIMethodID(sEnv, sBrowserClass, kOnAppLink, kOnAppLinkSignature);
+  sDisableLayers = FindJNIMethodID(sEnv, sBrowserClass, kDisableLayers, kDisableLayersSignature);
 }
 
 void
@@ -155,7 +159,8 @@ VRBrowser::ShutdownJava() {
   sAreLayersEnabled = nullptr;
   sSetDeviceType = nullptr;
   sHaltActivity = nullptr;
-    sOnAppLink = nullptr;
+  sOnAppLink = nullptr;
+  sDisableLayers = nullptr;
   sEnv = nullptr;
 }
 
@@ -350,6 +355,13 @@ VRBrowser::OnAppLink(const std::string& aJSON) {
   jstring json = sEnv->NewStringUTF(aJSON.c_str());
   sEnv->CallVoidMethod(sActivity, sOnAppLink, json);
   sEnv->DeleteLocalRef(json);
+  CheckJNIException(sEnv, __FUNCTION__);
+}
+
+void
+VRBrowser::DisableLayers() {
+  if (!ValidateMethodID(sEnv, sActivity, sDisableLayers, __FUNCTION__)) { return; }
+  sEnv->CallVoidMethod(sActivity, sDisableLayers);
   CheckJNIException(sEnv, __FUNCTION__);
 }
 

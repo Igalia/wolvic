@@ -1135,6 +1135,14 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         });
     }
 
+    @Keep
+    @SuppressWarnings("unused")
+    private void disableLayers() {
+        runOnUiThread(() -> {
+            SettingsStore.getInstance(this).setDisableLayers(true);
+        });
+    }
+
     private SurfaceTexture createSurfaceTexture() {
         int[] ids = new int[1];
         GLES20.glGenTextures(1, ids, 0);
