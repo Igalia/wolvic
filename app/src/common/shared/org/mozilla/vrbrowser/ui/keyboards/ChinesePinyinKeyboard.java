@@ -23,9 +23,16 @@ import java.util.regex.Pattern;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import jp.co.omronsoft.openwnn.ComposingText;
+import jp.co.omronsoft.openwnn.SymbolList;
+import jp.co.omronsoft.openwnn.WnnWord;
+
 public class ChinesePinyinKeyboard extends BaseKeyboard {
     private static final String LOGTAG = SystemUtils.createLogtag(ChinesePinyinKeyboard.class);
     private CustomKeyboard mKeyboard;
+    private CustomKeyboard mSymbolsKeyboard;
+    private SymbolList mSymbolsConverter;  // For Emoji characters.
+    private List<Words> mEmojiList = null;
     private DBHelper mDB;
     private HashMap<String, KeyMap> mKeymaps = new HashMap<>();
     private HashMap<String, KeyMap> mExtraKeymaps = new HashMap<>();
@@ -49,13 +56,36 @@ public class ChinesePinyinKeyboard extends BaseKeyboard {
 
     @Nullable
     @Override
+    public CustomKeyboard getSymbolsKeyboard() {
+        if (mSymbolsKeyboard == null) {
+            mSymbolsKeyboard = new CustomKeyboard(mContext.getApplicationContext(), R.xml.keyboard_symbols_pinyin);
+            // We use openwnn to provide us Emoji character although we are not using JPN keyboard.
+            mSymbolsConverter = new SymbolList(mContext, SymbolList.LANG_JA);
+        }
+        return mSymbolsKeyboard;
+    }
+
+    @Override
+    public String getModeChangeKeyText() {
+        return mContext.getString(R.string.pinyin_keyboard_mode_change);
+    }
+
+    @Nullable
+    @Override
     public CandidatesResult getCandidates(String aComposingText) {
         if (StringUtils.isEmpty(aComposingText)) {
             return null;
         }
 
         // Autocomplete when special characters are clicked
+        final char kBackslashCode = 92;
         char lastChar = aComposingText.charAt(aComposingText.length() - 1);
+
+        // When using backslashes ({@code \}) in the replacement string
+        // will cause crash at `replaceFirst()`, so we need to replace it first.
+        if (lastChar == kBackslashCode) {
+            aComposingText = aComposingText.replace("\\", "\\\\");
+        }
         boolean autocomponse = mAutocompleteEndings.indexOf(lastChar) >= 0;
 
         aComposingText = aComposingText.replaceAll("\\s","");
@@ -121,6 +151,43 @@ public class ChinesePinyinKeyboard extends BaseKeyboard {
         }
 
         return result;
+    }
+
+    @Override
+    public CandidatesResult getEmojiCandidates(String aComposingText) {
+        if (mEmojiList == null) {
+            List<Words> words = new ArrayList<>();
+            ComposingText text = new ComposingText();
+            mSymbolsConverter.convert(text);
+
+            int candidates = mSymbolsConverter.predict(text, 0, -1);
+            if (candidates > 0) {
+                WnnWord word;
+                while ((word = mSymbolsConverter.getNextCandidate()) != null) {
+                    words.add(new Words(1, word.stroke, word.candidate));
+                }
+                mEmojiList = words;
+            }
+        }
+
+        CandidatesResult result = new CandidatesResult();
+        result.words = mEmojiList;
+        result.action = CandidatesResult.Action.SHOW_CANDIDATES;
+        result.composing = aComposingText;
+
+        return result;
+    }
+
+    @Override
+    public String getComposingText(String aComposing, String aCode) {
+        if (mEmojiList != null) {
+            for (Words word : mEmojiList) {
+                if (word.code.equals(aCode)) {
+                    return "";
+                }
+            }
+        }
+        return aComposing.replaceFirst(Pattern.quote(aCode), "");
     }
 
     private ArrayList<String> getDisplayCode(String aKey) {

@@ -449,11 +449,9 @@ public class ChineseZhuyinKeyboard extends BaseKeyboard {
         return aCursor.getString(aIndex);
     }
 
-
     class KeyMap {
         ArrayList<Words> displays = new ArrayList<>();
     }
-
 
     class DBWordHelper extends SQLiteAssetHelper {
         private static final String DATABASE_NAME = "zhuyin_words.db";

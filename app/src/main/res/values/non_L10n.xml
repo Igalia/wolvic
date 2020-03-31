@@ -82,6 +82,7 @@
     <string name="pinyin_spacebar_selection" translatable="false">选定</string>
     <string name="pinyin_spacebar_space" translatable="false">空格</string>
     <string name="pinyin_enter_completion" translatable="false">确认</string>
+    <string name="pinyin_keyboard_mode_change" translatable="false">拼音</string>
 
     <string name="zhuyin_spacebar_selection" translatable="false">一聲</string>
     <string name="zhuyin_spacebar_space" translatable="false">空格</string>

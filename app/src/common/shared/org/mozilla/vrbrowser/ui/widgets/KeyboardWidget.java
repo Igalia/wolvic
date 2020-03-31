@@ -578,10 +578,11 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             mPopUpHoverDeviceId = -1;
 
             mIsLongPress = true;
-
         } else if (popupKey.codes[0] == CustomKeyboard.KEYCODE_SHIFT) {
             mIsLongPress = !mIsCapsLock;
-
+        } else if (popupKey.codes[0] == CustomKeyboard.KEYCODE_DOMAIN) {
+            handleDomainLongPress();
+            mIsLongPress = true;
         }
     }
 
@@ -824,6 +825,12 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     }
 
     private void handleDomain() {
+        if (!mIsLongPress) {
+            handleText(mCurrentKeyboard.getDomains()[0]);
+        }
+    }
+
+    private void handleDomainLongPress() {
         ArrayList<KeyboardSelectorView.Item> items = new ArrayList<>();
         for (String item: mCurrentKeyboard.getDomains()) {
             items.add(new KeyboardSelectorView.Item(item, item));
@@ -835,6 +842,15 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mKeyboardNumericLayer.setVisibility(View.VISIBLE);
         mAutocompletionLayer.setVisibility(mAutoCompletionView.getVisibility());
         mDomainHoverDeviceId = -1;
+    }
+
+    private void handleDomainChange(KeyboardSelectorView.Item aItem) {
+        handleText(aItem.title, true);
+
+        disableShift(getSymbolsKeyboard());
+        handleShift(false);
+        hideOverlays();
+        updateCandidates();
     }
 
     private void handleLanguageChange(KeyboardInterface aKeyboard) {
@@ -867,15 +883,6 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
         String spaceText = mCurrentKeyboard.getSpaceKeyText(mComposingText).toUpperCase();
         mCurrentKeyboard.getAlphabeticKeyboard().setSpaceKeyLabel(spaceText);
-    }
-
-    private void handleDomainChange(KeyboardSelectorView.Item aItem) {
-        handleText(aItem.title, true);
-
-        disableShift(getSymbolsKeyboard());
-        handleShift(false);
-        hideOverlays();
-        updateCandidates();
     }
 
     private void disableShift(@NonNull CustomKeyboard keyboard) {
