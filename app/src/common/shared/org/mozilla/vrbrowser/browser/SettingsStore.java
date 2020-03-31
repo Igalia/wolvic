@@ -92,6 +92,11 @@ public class SettingsStore {
 
     private int mCachedScrollDirection = -1;
 
+    private boolean mDisableLayers = false;
+    public void setDisableLayers(final boolean aDisableLayers) {
+        mDisableLayers = aDisableLayers;
+    }
+
     public SettingsStore(Context aContext) {
         mContext = aContext;
         mPrefs = PreferenceManager.getDefaultSharedPreferences(aContext);
@@ -405,9 +410,11 @@ public class SettingsStore {
     }
 
     public boolean getLayersEnabled() {
-        if (DeviceType.isOculusBuild()) {
+        if (DeviceType.isOculusBuild() && !mDisableLayers) {
+            Log.i(LOGTAG, "Layers are enabled");
             return true;
         }
+        Log.i(LOGTAG, "Layers are not supported");
         return false;
     }
 
