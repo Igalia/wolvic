@@ -32,10 +32,9 @@ static const vrb::Vector kAverageHeight(0.0f, 1.7f, 0.0f);
 static const vrb::Vector kAverageSittingToStanding(0.0f, 1.2f, 0.0f);
 // TODO: support different controllers & buttons
 static const int32_t kMaxControllerCount = 3;
-static const int32_t kNumButtons = 6;
-static const int32_t kNumG2Buttons = 2;
-static const int32_t kNumGazeButtons = 2;
-static const int32_t kNumAxes = 2;
+static const int32_t kNumButtons = 7;
+static const int32_t kNumG2Buttons = 3;
+static const int32_t kNumGazeButtons = 1;
 static const int32_t k6DofHeadSet = 1;
 static const int32_t kButtonApp       = 1;
 static const int32_t kButtonTrigger   = 1 << 1;
@@ -182,33 +181,48 @@ struct DeviceDelegatePicoVR::State {
 
       controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_APP, -1, appPressed,
                                          appPressed);
-      controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_TOUCHPAD, 0, touchPadPressed,
-                                         touchPadPressed);
-      controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_TRIGGER, 1, triggerPressed,
+      controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_TOUCHPAD, type == k6DofHeadSet ?
+          device::kImmersiveButtonThumbstick : device::kImmersiveButtonTouchpad, touchPadPressed, touchPadPressed);
+      controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_TRIGGER, device::kImmersiveButtonTrigger, triggerPressed,
                                          triggerPressed);
+      if (triggerPressed && renderMode == device::RenderMode::Immersive) {
+        controllerDelegate->SetSelectActionStart(i);
+      } else {
+        controllerDelegate->SetSelectActionStop(i);
+      }
       if (type == k6DofHeadSet) {
-        controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_OTHERS, 2, gripPressed,
+        controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_OTHERS, device::kImmersiveButtonSqueeze, gripPressed,
                                            gripPressed, gripPressed ? 20.0f : 0.0f);
+        if (gripPressed && renderMode == device::RenderMode::Immersive) {
+          controllerDelegate->SetSqueezeActionStart(i);
+        } else {
+          controllerDelegate->SetSqueezeActionStop(i);
+        }
         controllerDelegate->SetButtonState(i,
                                            (controller.IsRightHand() ? ControllerDelegate::BUTTON_A
                                                                      : ControllerDelegate::BUTTON_X),
-                                           3, axPressed, axPressed);
+                                           device::kImmersiveButtonA, axPressed, axPressed);
         controllerDelegate->SetButtonState(i,
                                            (controller.IsRightHand() ? ControllerDelegate::BUTTON_B
                                                                      : ControllerDelegate::BUTTON_Y),
-                                           4, byPressed, byPressed);
-        controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_OTHERS, 5, false, false);
-      }
+                                           device::kImmersiveButtonB, byPressed, byPressed);
+        controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_OTHERS, device::kImmersiveButtonThumbrest, false, false);
 
-      float axes[kNumAxes] = { controller.axisX , -controller.axisY };
-      controllerDelegate->SetAxes(i, axes, kNumAxes);
+        const int32_t kNumAxes = 4;
+        float axes[kNumAxes];
+        axes[device::kImmersiveAxisTouchpadX] = axes[device::kImmersiveAxisTouchpadY] = 0.0f;
+        axes[device::kImmersiveAxisThumbstickX] = controller.axisX;
+        axes[device::kImmersiveAxisThumbstickY] = -controller.axisY;
+        controllerDelegate->SetAxes(i, axes, controller.index != GazeModeIndex() ? kNumAxes : 0);
 
-
-      if (type == k6DofHeadSet) {
         if (!triggerPressed) {
           controllerDelegate->SetScrolledDelta(i, -controller.axisX, controller.axisY);
         }
       } else {
+        const int32_t kNumAxes = 2;
+        float axes[kNumAxes] = { controller.axisX , -controller.axisY };
+        controllerDelegate->SetAxes(i, axes, controller.index != GazeModeIndex() ? kNumAxes : 0);
+
         if (controller.touched) {
           controllerDelegate->SetTouchPosition(i, controller.axisX, controller.axisY);
         } else {
@@ -331,7 +345,8 @@ DeviceDelegatePicoVR::SetControllerDelegate(ControllerDelegatePtr& aController) 
       m.controllerDelegate->CreateController(index, 0, "Pico Gaze Controller", beam);
       m.controllerDelegate->SetButtonCount(index, kNumGazeButtons);
       m.controllerDelegate->SetHapticCount(index, 0);
-
+      m.controllerDelegate->SetControllerType(index, device::PicoGaze);
+      m.controllerDelegate->SetTargetRayMode(index, device::TargetRayMode::Gaze);
     } else {
       if (m.type == k6DofHeadSet) {
         vrb::Matrix beam = vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), -vrb::PI_FLOAT / 11.5f);
@@ -339,11 +354,15 @@ DeviceDelegatePicoVR::SetControllerDelegate(ControllerDelegatePtr& aController) 
         m.controllerDelegate->CreateController(index, int32_t(controller.hand), controller.IsRightHand() ? "Pico Neo 2 (Right)" : "Pico Neo 2 (LEFT)", beam);
         m.controllerDelegate->SetButtonCount(index, kNumButtons);
         m.controllerDelegate->SetHapticCount(index, 1);
+        m.controllerDelegate->SetControllerType(index, device::PicoNeo2);
+        m.controllerDelegate->SetTargetRayMode(index, device::TargetRayMode::TrackedPointer);
       } else {
         vrb::Matrix beam =  vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), -vrb::PI_FLOAT / 11.5f);
         m.controllerDelegate->CreateController(index, 0, "Pico G2 Controller", beam);
         m.controllerDelegate->SetButtonCount(index, kNumG2Buttons);
         m.controllerDelegate->SetHapticCount(index, 0);
+        m.controllerDelegate->SetControllerType(index, device::PicoG2);
+        m.controllerDelegate->SetTargetRayMode(index, device::TargetRayMode::TrackedPointer);
       }
     }
     controller.created = true;
