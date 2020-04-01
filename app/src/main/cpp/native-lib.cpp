@@ -238,6 +238,7 @@ android_main(android_app *aAppState) {
       if (aAppState->destroyRequested != 0) {
         sAppContext->mEgl->MakeCurrent();
         sAppContext->mQueue->ProcessRunnables();
+        sAppContext->mDevice->OnDestroy();
         BrowserWorld::Instance().ShutdownGL();
         BrowserWorld::Instance().ShutdownJava();
         BrowserWorld::Destroy();

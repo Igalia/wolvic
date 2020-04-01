@@ -1236,6 +1236,16 @@ DeviceDelegateOculusVR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
 
 void
 DeviceDelegateOculusVR::LeaveVR() {
+  if (m.ovr) {
+    vrapi_LeaveVrMode(m.ovr);
+    m.ovr = nullptr;
+  }
+  m.currentFBO = nullptr;
+  m.previousFBO = nullptr;
+}
+
+void
+DeviceDelegateOculusVR::OnDestroy() {
   for (OculusLayerPtr& layer: m.uiLayers) {
     layer->Destroy();
   }
@@ -1252,13 +1262,6 @@ DeviceDelegateOculusVR::LeaveVR() {
   if (m.clearColorSwapChain) {
     vrapi_DestroyTextureSwapChain(m.clearColorSwapChain);
     m.clearColorSwapChain = nullptr;
-  }
-  m.currentFBO = nullptr;
-  m.previousFBO = nullptr;
-
-  if (m.ovr) {
-    vrapi_LeaveVrMode(m.ovr);
-    m.ovr = nullptr;
   }
 }
 

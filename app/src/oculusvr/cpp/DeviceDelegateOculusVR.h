@@ -57,6 +57,7 @@ public:
   // Custom methods for NativeActivity render loop based devices.
   void EnterVR(const crow::BrowserEGLContext& aEGLContext);
   void LeaveVR();
+  void OnDestroy();
   bool IsInVRMode() const;
   bool ExitApp();
 protected:
