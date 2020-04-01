@@ -9,10 +9,10 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 
-import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.widgets.NotificationManager.Notification.NotificationPosition;
+import org.mozilla.vrbrowser.utils.ThreadUtils;
 
 import java.util.HashMap;
 import java.util.Iterator;

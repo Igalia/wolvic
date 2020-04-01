@@ -15,10 +15,10 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.databinding.LanguageItemBinding;
 import org.mozilla.vrbrowser.ui.callbacks.LanguageItemCallback;
+import org.mozilla.vrbrowser.utils.ThreadUtils;
 import org.mozilla.vrbrowser.utils.ViewUtils;
 
 import java.util.Collections;

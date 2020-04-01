@@ -3,7 +3,6 @@ package org.mozilla.vrbrowser.utils;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
@@ -12,8 +11,6 @@ import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 
 import androidx.annotation.NonNull;
-
-import org.mozilla.gecko.util.ThreadUtils;
 
 public class AnimationHelper {
     public static final long FADE_ANIMATION_DURATION = 150;

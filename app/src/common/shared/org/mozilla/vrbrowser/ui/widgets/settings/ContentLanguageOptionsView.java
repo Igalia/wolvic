@@ -12,9 +12,7 @@ import android.view.View;
 
 import androidx.databinding.DataBindingUtil;
 
-import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.databinding.OptionsLanguageContentBinding;
 import org.mozilla.vrbrowser.ui.adapters.Language;
@@ -23,6 +21,7 @@ import org.mozilla.vrbrowser.ui.callbacks.LanguageItemCallback;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
+import org.mozilla.vrbrowser.utils.ThreadUtils;
 
 import java.util.Collections;
 import java.util.List;

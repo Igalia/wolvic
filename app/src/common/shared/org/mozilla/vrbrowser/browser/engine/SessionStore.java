@@ -8,7 +8,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.VRBrowserApplication;
@@ -19,6 +18,7 @@ import org.mozilla.vrbrowser.browser.Services;
 import org.mozilla.vrbrowser.browser.content.TrackingProtectionStore;
 import org.mozilla.vrbrowser.db.SitePermission;
 import org.mozilla.vrbrowser.utils.SystemUtils;
+import org.mozilla.vrbrowser.utils.ThreadUtils;
 import org.mozilla.vrbrowser.utils.UrlUtils;
 
 import java.util.ArrayList;
