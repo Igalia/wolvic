@@ -1086,10 +1086,8 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
     private void updateSpecialKeyLabels() {
         String enterText = mCurrentKeyboard.getEnterKeyText(mEditorInfo.imeOptions, mComposingText);
-        String spaceText = mCurrentKeyboard.getSpaceKeyText(mComposingText);
         String modeChangeText = mCurrentKeyboard.getModeChangeKeyText();
         boolean changed = mCurrentKeyboard.getAlphabeticKeyboard().setEnterKeyLabel(enterText);
-        changed |= mCurrentKeyboard.getAlphabeticKeyboard().setSpaceKeyLabel(spaceText);
         CustomKeyboard symbolsKeyboard = getSymbolsKeyboard();
         changed |= symbolsKeyboard.setModeChangeKeyLabel(modeChangeText);
         symbolsKeyboard.setEnterKeyLabel(enterText);
