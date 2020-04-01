@@ -901,6 +901,9 @@ DeviceDelegateOculusVR::StartFrame(const FramePrediction aPrediction) {
                                    device::InlineSession | device::ImmersiveVRSession;
     if (m.predictedTracking.Status & VRAPI_TRACKING_STATUS_POSITION_TRACKED) {
       caps |= device::Position;
+      auto standing = vrapi_LocateTrackingSpace(m.ovr, VRAPI_TRACKING_SPACE_LOCAL_FLOOR);
+      vrb::Vector translation(-standing.Position.x, -standing.Position.y, -standing.Position.z);
+      m.immersiveDisplay->SetSittingToStandingTransform(vrb::Matrix::Translation(translation));
     } else {
       caps |= device::PositionEmulated;
     }
