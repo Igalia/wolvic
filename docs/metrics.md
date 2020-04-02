@@ -14,8 +14,11 @@ This means you might have to go searching through the dependency tree to get a f
 
 
 ## baseline
+
 This is a built-in ping that is assembled out of the box by the Glean SDK.
+
 See the Glean SDK documentation for the [`baseline` ping](https://mozilla.github.io/glean/book/user/pings/baseline.html).
+
 The following metrics are added to the ping:
 
 | Name | Type | Description | Data reviews | Extras | Expiration |
@@ -23,8 +26,11 @@ The following metrics are added to the ping:
 | distribution.channel_name |[string](https://mozilla.github.io/glean/book/user/metrics/string.html) |The distribution channel name of this application. We use this field to recognize Firefox Reality is distributed to which channels, such as wavevr, oculusvr, etc.  |[1](https://github.com/MozillaReality/FirefoxReality/pull/1854#issuecomment-546214568), [2](https://github.com/MozillaReality/FirefoxReality/pull/3199#issuecomment-617938749)||2020-11-01 |
 
 ## events
+
 This is a built-in ping that is assembled out of the box by the Glean SDK.
+
 See the Glean SDK documentation for the [`events` ping](https://mozilla.github.io/glean/book/user/pings/events.html).
+
 The following metrics are added to the ping:
 
 | Name | Type | Description | Data reviews | Extras | Expiration |
@@ -35,8 +41,11 @@ The following metrics are added to the ping:
 | firefox_account.sign_out |[event](https://mozilla.github.io/glean/book/user/metrics/event.html) |A user pressed the sign out button on the sync account page and was successfully signed out of FxA  |[1](https://github.com/MozillaReality/FirefoxReality/pull/2327#issuecomment-559103837), [2](https://github.com/MozillaReality/FirefoxReality/pull/3199#issuecomment-617938749)||2020-11-01 |
 
 ## metrics
+
 This is a built-in ping that is assembled out of the box by the Glean SDK.
+
 See the Glean SDK documentation for the [`metrics` ping](https://mozilla.github.io/glean/book/user/pings/metrics.html).
+
 The following metrics are added to the ping:
 
 | Name | Type | Description | Data reviews | Extras | Expiration |
@@ -50,7 +59,9 @@ The following metrics are added to the ping:
 | url.query_type |[labeled_counter](https://mozilla.github.io/glean/book/user/metrics/labeled_counters.html) |Counting how many URLs are visited in a day, by input method.  |[1](https://github.com/MozillaReality/FirefoxReality/pull/2241#issuecomment-557740258), [2](https://github.com/MozillaReality/FirefoxReality/pull/3199#issuecomment-617938749)|<ul><li>type_link</li><li>type_query</li><li>voice_query</li></ul>|2020-11-01 |
 
 ## session-end
+
 This ping is sent at the end of a session (when Firefox Reality switches to the background). We usually send search and UI control metrics at the end of a session.
+
 
 The following metrics are added to the ping:
 

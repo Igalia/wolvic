@@ -8,6 +8,8 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: "org.mozilla.telemetry.glean-gradle-plugin"
 
+deps.telemetry.glean_unittests = "org.mozilla.telemetry:glean-forUnitTests:$project.ext.glean_version"
+
 def getGitHash = { ->
     def stdout = new ByteArrayOutputStream()
     exec {
