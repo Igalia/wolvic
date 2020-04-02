@@ -1216,7 +1216,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     @Override
     public void showSoftInput(@NonNull GeckoSession session) {
         if (mFocusedView != mAttachedWindow || getVisibility() != View.VISIBLE || mInputRestarted) {
-            updateFocusedView(mAttachedWindow);
+            post(() -> updateFocusedView(mAttachedWindow));
         }
         mInputRestarted = false;
     }
