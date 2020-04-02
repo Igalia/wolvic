@@ -115,11 +115,31 @@
          allowed pop-up sites. -->
     <string name="settings_privacy_policy_popups_description">U kunt opgeven welke websites pop-upvensters mogen openen</string>
 
+    <!-- This string is used as the title of the WebXR dialog used to do not allow websites to access WebXR devices. -->
+    <string name="settings_privacy_policy_webxr_title">Virtual Reality-machtigingen</string>
+
+    <!-- This string is displayed under the title the  WebXR dialog used to do not allow websites to access WebXR devices. -->
+    <string name="settings_privacy_policy_webxr_description">De volgende websites mogen de WebXR-API geen toegang geven tot uw VR-apparaat.</string>
+
+    <!-- This string is displayed in the first line of a text that's displayed in the middle of allowed pop-ups panel instead of the exceptions list
+     when there are no exceptions. -->
+    <string name="settings_privacy_policy_webxr_empty_description">Wanneer u een website opent die WebXR gebruikt, kunt u een dialoogvenster openen waarmee u WebXR op die website kunt blokkeren.</string>
+
+    <!-- This string labels the Reset button that removes all the sites not allowed to access WebXR -->
+    <string name="settings_privacy_policy_webxr_reset">De websites die geen toegang hebben tot VR-apparaten herinitialiseren.</string>
+
     <!-- This string is used as the title of the Tracking dialog used to do not allow websites to bypass tracking protection. -->
     <string name="settings_privacy_policy_tracking_title">Uitzonderingen voor Verbeterde bescherming tegen volgen</string>
 
     <!-- This string is displayed under the title the  Tracking dialog used to do not allow websites to bypass tracking protection. -->
     <string name="settings_privacy_policy_tracking_description">U hebt beschermingen voor deze websites uitgeschakeld.</string>
+
+    <!-- This string is displayed in the first line of a text that's displayed in the middle of the etp exceptions instead of the exceptions list
+     when there are no exceptions. -->
+    <string name="settings_privacy_policy_tracking_empty_description">Wanneer u een website toestaat uw activiteiten te volgen, wordt deze hier weergegeven.</string>
+
+    <!-- This string labels the Reset button that removes all the sites not allowed to access WebXR -->
+    <string name="settings_privacy_policy_tracking_reset">Uitzonderingen voor Verbeterde bescherming tegen volgen herinitialiseren.</string>
 
     <!-- This string is displayed in the switch of each item of the the pop-up blocking list when the site is allowed. -->
     <string name="pop_up_site_switch_allow">Toestaan</string>
@@ -365,6 +385,12 @@
     -->
     <string name="bypass_cache_on_reload_switch">Omzeilen van buffer bij opnieuw laden inschakelen</string>
 
+    <!-- This string labels an On/Off switch in the developer options dialog and is used to toggle
+         Multi-e10s. Multi-e10s allocates a process for each open window instead of having only one
+         process for all windows.
+    -->
+    <string name="multi_e10s_switch">Multi-e10s inschakelen</string>
+
     <!-- The string labels an On/Off switch in the developer options dialog and is used to toggle enabling Servo. -->
     <string name="developer_options_servo">Servo inschakelen</string>
 
@@ -441,6 +467,9 @@
 
     <!-- This string is used to label the 'Off' radio button of the 'Tracking protection' settings option. -->
     <string name="privacy_options_tracking_off">Uit</string>
+
+    <!-- This string is used as the description of the 'Off' radio button of the 'Enhanced Tracking protection' settings option. -->
+    <string name="privacy_options_tracking_off_description">Elke pagina toestaan om u online te volgen en uw surfgedrag en interesses te verzamelen.</string>
 
     <!-- This string is used to label radio buttons for setting fixed-foveated-rendering (FFR) level.
      The term "foveation" derives from "fovea", the area of higher-resolution vision in the human retina.
@@ -640,6 +669,10 @@
     <!-- This string labels the button in the privacy option panel that open the dialog to add/remove
          pop-up blocked sites. -->
     <string name="security_options_block_pup_up_settings">Geavanceerd</string>
+
+    <!-- This string labels the button in the privacy option panel that enables/disables Virtual Reality
+        Devices access to websites (WebXR). -->
+    <string name="security_options_permission_webxr">Virtual Reality-apparaten (WebXR)</string>
 
     <!-- This string is a label above the group of switches that indicates that the switches below
          relate to Firefox data collection and use. -->
@@ -979,6 +1012,9 @@
     <!-- This string is displayed in the second line of a text that's displayed in the middle of allowed pop-ups panel instead of the exceptions list
          when there are no exceptions. -->
     <string name="privacy_options_popups_list_empty_second">Een lijst van websites met machtigingen zal hier verschijnen.</string>
+
+    <!-- This string is used to label radio buttons for setting ETP in. -->
+    <string name="privacy_options_tracking">Verbeterde bescherming tegen volgen. (&lt;a href=&quot;%1$s&quot;&gt;Meer info&lt;/a&gt;)</string>
 
     <!-- This string labels the button in the privacy option panel that opens the dialog to add/remove
          Tracking protection exceptions. -->
@@ -1427,6 +1463,13 @@ the Select` button. When clicked it closes all the previously selected tabs -->
        it continues to wait for execution of the web page script that caused the slow down. -->
     <string name="slow_script_dialog_action_wait">Wachten</string>
 
+
+    <!-- This string is displayed in the title of the quick WebXR blocking dialog, accessed from the VR icon in the URL bar.
+     '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="webxr_block_dialog_message">‘%1$s’ wil toegang tot de WebXR-API</string>
+
+    <!-- This string is displayed in the title of the quick Tracking Protection dialog, accessed from the Tracking Protection icon in the URL bar. -->
+    <string name="tracking_dialog_message">Verbeterde bescherming tegen volgen is %1$s voor deze website. (&lt;a href=&quot;%2$s&quot;&gt;Meer info&lt;/a&gt;)</string>
 
     <!-- This string is displayed in the enable button of the quick Tracking Protection dialog, accessed from the Tracking Protection icon in the URL bar. -->
     <string name="tracking_dialog_button_enable">Inschakelen</string>
