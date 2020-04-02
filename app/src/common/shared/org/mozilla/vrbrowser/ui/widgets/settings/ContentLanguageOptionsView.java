@@ -21,10 +21,6 @@ import org.mozilla.vrbrowser.ui.callbacks.LanguageItemCallback;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
-import org.mozilla.vrbrowser.utils.ThreadUtils;
-
-import java.util.Collections;
-import java.util.List;
 
 public class ContentLanguageOptionsView extends SettingsView {
 
@@ -126,7 +122,7 @@ public class ContentLanguageOptionsView extends SettingsView {
     }
 
     private void refreshLanguages() {
-        ThreadUtils.postToUiThread(() -> {
+        post(() -> {
             mPreferredAdapter.setLanguageList(LocaleUtils.getPreferredLanguages(getContext()));
             mAvailableAdapter.setLanguageList(LocaleUtils.getAvailableLanguages(getContext()));
         });

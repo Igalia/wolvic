@@ -16,18 +16,20 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.databinding.LanguageItemBinding;
 import org.mozilla.vrbrowser.ui.callbacks.LanguageItemCallback;
-import org.mozilla.vrbrowser.utils.ThreadUtils;
 import org.mozilla.vrbrowser.utils.ViewUtils;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Executor;
 
 public class LanguagesAdapter extends RecyclerView.Adapter<LanguagesAdapter.LanguageViewHolder> {
 
     private static final int ICON_ANIMATION_DURATION = 200;
 
+    private Executor mMainExecutor;
     private List<Language> mLanguagesList;
     private boolean mIsPreferred;
 
@@ -40,6 +42,7 @@ public class LanguagesAdapter extends RecyclerView.Adapter<LanguagesAdapter.Lang
     private final LanguageItemCallback mLanguageItemCallback;
 
     public LanguagesAdapter(@NonNull Context context, @Nullable LanguageItemCallback clickCallback, boolean isPreferred) {
+        mMainExecutor = ((VRBrowserApplication)context.getApplicationContext()).getExecutors().mainThread();
         mLanguageItemCallback = clickCallback;
         mIsPreferred = isPreferred;
 
@@ -67,7 +70,7 @@ public class LanguagesAdapter extends RecyclerView.Adapter<LanguagesAdapter.Lang
         notifyItemInserted(mLanguagesList.indexOf(language));
         // This shouldn't be necessary but for some reason the last list item is not refreshed
         // if we don't do a full refresh. Might be another RecyclerView bug.
-        ThreadUtils.postToUiThread(() -> notifyDataSetChanged());
+        mMainExecutor.execute(this::notifyDataSetChanged);
     }
 
     public void addItemAlphabetical(Language language) {

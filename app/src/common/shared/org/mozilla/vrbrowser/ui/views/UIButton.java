@@ -29,7 +29,6 @@ import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.ui.widgets.TooltipWidget;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
-import org.mozilla.vrbrowser.utils.ThreadUtils;
 import org.mozilla.vrbrowser.utils.ViewUtils;
 
 public class UIButton extends AppCompatImageButton implements CustomUIButton {
@@ -150,11 +149,11 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
     public boolean onHoverEvent(MotionEvent event) {
         if (getTooltipText() != null) {
             if (event.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
-                ThreadUtils.postDelayedToUiThread(mShowTooltipRunnable, mTooltipDelay);
+                postDelayed(mShowTooltipRunnable, mTooltipDelay);
 
             } else if (event.getAction() == MotionEvent.ACTION_HOVER_EXIT) {
-                ThreadUtils.removeCallbacksFromUiThread(mShowTooltipRunnable);
-                ThreadUtils.postToUiThread(mHideTooltipRunnable);
+                removeCallbacks(mShowTooltipRunnable);
+                post(mHideTooltipRunnable);
             }
         }
 

@@ -33,7 +33,6 @@ import org.mozilla.vrbrowser.databinding.VoiceSearchDialogBinding;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
-import org.mozilla.vrbrowser.utils.ThreadUtils;
 
 public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate.PermissionListener,
         Application.ActivityLifecycleCallbacks {
@@ -298,7 +297,7 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
                         if (index == PromptDialogWidget.POSITIVE) {
                             SettingsStore.getInstance(getContext()).setSpeechDataCollectionEnabled(true);
                         }
-                        ThreadUtils.postToUiThread(() -> show(aShowFlags));
+                        post(() -> show(aShowFlags));
                     },
                     () -> {
                         mWidgetManager.openNewTabForeground(getResources().getString(R.string.private_policy_url));

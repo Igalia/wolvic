@@ -10,9 +10,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.widgets.NotificationManager.Notification.NotificationPosition;
-import org.mozilla.vrbrowser.utils.ThreadUtils;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -166,7 +166,7 @@ public class NotificationManager {
         }
 
         Runnable hideTask = () -> hide(notificationId);
-        ThreadUtils.postDelayedToUiThread(hideTask, notification.mDuration);
+        notification.mView.postDelayed(hideTask, notification.mDuration);
 
         mData.put(notificationId, new NotificationData(notificationView, notification, hideTask));
     }
@@ -192,7 +192,7 @@ public class NotificationManager {
     }
 
     private static void hideNotification(@NonNull NotificationData data) {
-        ThreadUtils.removeCallbacksFromUiThread(data.mHideTask);
+        data.mNotificationView.removeCallbacks(data.mHideTask);
 
         data.mNotificationView.hide(UIWidget.REMOVE_WIDGET);
 

@@ -121,7 +121,7 @@ public class AnimationHelper {
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
                 if (aCallback != null)
-                    ThreadUtils.postToUiThread(aCallback);
+                    aView.post(aCallback);
             }
         }).setUpdateListener(animation -> aView.invalidate());
     }
@@ -134,7 +134,7 @@ public class AnimationHelper {
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
                 if (aCallback != null)
-                    ThreadUtils.postToUiThread(aCallback);
+                    aView.post(aCallback);
             }
         }).setUpdateListener(animation -> aView.invalidate());
     }
@@ -142,7 +142,7 @@ public class AnimationHelper {
     public static void scaleTo(@NonNull View aView, float scaleX, float scaleY, long duration, long delay, final Runnable aCallback) {
         if (aView.getScaleX() == scaleX && aView.getScaleY() == scaleY) {
             if (aCallback != null) {
-                ThreadUtils.postToUiThread(aCallback);
+                aView.post(aCallback);
             }
             return;
         }
@@ -151,7 +151,7 @@ public class AnimationHelper {
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
                 if (aCallback != null) {
-                    ThreadUtils.postToUiThread(aCallback);
+                    aView.post(aCallback);
                 }
             }
         }).setUpdateListener(animation -> aView.invalidate());
