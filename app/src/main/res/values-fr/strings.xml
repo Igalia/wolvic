@@ -667,6 +667,10 @@
          pop-up blocked sites. -->
     <string name="security_options_block_pup_up_settings">Avancé</string>
 
+    <!-- This string labels the button in the privacy option panel that enables/disables Virtual Reality
+        Devices access to websites (WebXR). -->
+    <string name="security_options_permission_webxr">Dispositifs de réalité virtuelle (WebXR)</string>
+
     <!-- This string is a label above the group of switches that indicates that the switches below
          relate to Firefox data collection and use. -->
     <string name="security_options_speech_data_collection_title">Collecte et utilisation de données par %1$s</string>
