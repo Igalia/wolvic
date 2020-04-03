@@ -148,12 +148,11 @@ struct DeviceDelegateOculusVR::State {
     initialized = true;
     std::string version = vrapi_GetVersionString();
     if (version.find("1.1.32.0") != std::string::npos) {
-      VRB_ERROR("Disable layers due to driver bug. VRAPI Runtime Version: %s", vrapi_GetVersionString());
-      layersEnabled = false;
-      VRBrowser::DisableLayers();
-    } else {
-      layersEnabled = VRBrowser::AreLayersEnabled();
+      VRB_ERROR("Force layer clip due to driver bug. VRAPI Runtime Version: %s",vrapi_GetVersionString());
+      OculusLayer::sForceClip = true;
     }
+
+    layersEnabled = VRBrowser::AreLayersEnabled();
     SetRenderSize(device::RenderMode::StandAlone);
 
     for (int i = 0; i < VRAPI_EYE_COUNT; ++i) {

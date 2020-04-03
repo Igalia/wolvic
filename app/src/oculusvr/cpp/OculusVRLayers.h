@@ -30,6 +30,7 @@ typedef std::weak_ptr<SurfaceChangedTarget> SurfaceChangedTargetWeakPtr;
 
 class OculusLayer {
 public:
+  static bool sForceClip;
   virtual void Init(JNIEnv *aEnv, vrb::RenderContextPtr &aContext) = 0;
   virtual void Update(const ovrTracking2 &aTracking, ovrTextureSwapChain *aClearSwapChain) = 0;
   virtual ovrTextureSwapChain *GetSwapChain() const = 0;
