@@ -594,11 +594,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             return;
         }
 
-        if (!mAttachedWindow.isFullScreen()) {
-            mTrayViewModel.setShouldBeVisible(true);
-            return;
-        }
-
         // We need to add a delay for the exitFullScreen() call to solve some viewport scaling issues,
         // See https://github.com/MozillaReality/FirefoxReality/issues/833 for more info.
         postDelayed(() -> {
