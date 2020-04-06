@@ -1038,7 +1038,7 @@
     <string name="language_options_voice_search_language_title">음성 검색 언어:</string>
 
     <!-- This string labels the description in the Content Language button in the main language setting dialog. -->
-    <string name="language_options_content_language_title">웹페이지 표시를 위한 기본 언어:</string>
+    <string name="language_options_content_language_title">웹 사이트 표시를 위한 기본 언어:</string>
 
     <!-- This string labels the description in the Display Language button in the main language setting dialog. -->
     <string name="language_options_display_language_title">앱의 표시 언어:</string>

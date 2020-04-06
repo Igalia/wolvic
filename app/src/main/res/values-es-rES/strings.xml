@@ -114,6 +114,32 @@
          allowed pop-up sites. -->
     <string name="settings_privacy_policy_popups_description">Puedes especificar qué sitios web tienen permitido abrir ventanas emergentes</string>
 
+    <!-- This string is used as the title of the WebXR dialog used to do not allow websites to access WebXR devices. -->
+    <string name="settings_privacy_policy_webxr_title">Permisos de realidad virtual</string>
+
+    <!-- This string is displayed under the title the  WebXR dialog used to do not allow websites to access WebXR devices. -->
+    <string name="settings_privacy_policy_webxr_description">Los siguientes sitios no permiten que la API de WebXR acceda a tu dispositivo de realidad virtual.</string>
+
+    <!-- This string is displayed in the first line of a text that's displayed in the middle of allowed pop-ups panel instead of the exceptions list
+     when there are no exceptions. -->
+    <string name="settings_privacy_policy_webxr_empty_description">Cuando abres un sitio web que usa WebXR, puedes abrir un cuadro de diálogo que te permite bloquear WebXR en ese sitio.</string>
+
+    <!-- This string labels the Reset button that removes all the sites not allowed to access WebXR -->
+    <string name="settings_privacy_policy_webxr_reset">Restablecer los sitios no autorizados para acceder a dispositivos de realidad virtual.</string>
+
+    <!-- This string is used as the title of the Tracking dialog used to do not allow websites to bypass tracking protection. -->
+    <string name="settings_privacy_policy_tracking_title">Excepciones para la protección mejorada contra el rastreo</string>
+
+    <!-- This string is displayed under the title the  Tracking dialog used to do not allow websites to bypass tracking protection. -->
+    <string name="settings_privacy_policy_tracking_description">Has desactivado las protecciones en estos sitios web.</string>
+
+    <!-- This string is displayed in the first line of a text that's displayed in the middle of the etp exceptions instead of the exceptions list
+     when there are no exceptions. -->
+    <string name="settings_privacy_policy_tracking_empty_description">Cuando permites que un sitio web rastree tu actividad, aparecerán aquí.</string>
+
+    <!-- This string labels the Reset button that removes all the sites not allowed to access WebXR -->
+    <string name="settings_privacy_policy_tracking_reset">Restablecer las excepciones para la protección mejorada contra el rastreo</string>
+
     <!-- This string is displayed in the switch of each item of the the pop-up blocking list when the site is allowed. -->
     <string name="pop_up_site_switch_allow">Permitir</string>
 
@@ -358,6 +384,12 @@
     -->
     <string name="bypass_cache_on_reload_switch">Ignorar la caché al recargar la página</string>
 
+    <!-- This string labels an On/Off switch in the developer options dialog and is used to toggle
+         Multi-e10s. Multi-e10s allocates a process for each open window instead of having only one
+         process for all windows.
+    -->
+    <string name="multi_e10s_switch">Activar Multi-e10s</string>
+
     <!-- The string labels an On/Off switch in the developer options dialog and is used to toggle enabling Servo. -->
     <string name="developer_options_servo">Habilitar Servo</string>
 
@@ -419,6 +451,24 @@
 
     <!-- This string is used to label the 'VR' radio button of the 'User-Agent Mode' settings option. -->
     <string name="developer_options_ua_vr">VR</string>
+
+    <!-- This string is used to label the 'Standard' radio button of the 'Enhanced Tracking protection' settings option. -->
+    <string name="privacy_options_tracking_etp">Estándar</string>
+
+    <!-- This string is used as the description of the 'Standard' radio button of the 'Enhanced Tracking protection' settings option. -->
+    <string name="privacy_options_tracking_etp_description">Equilibrado para protección y rendimiento. Las páginas se cargarán con normalidad.</string>
+
+    <!-- This string is used to label the 'Strict' radio button of the 'Tracking protection' settings option. -->
+    <string name="privacy_options_tracking_strict">Estricto</string>
+
+    <!-- This string is used as the description of the 'Strict' radio button of the 'Enhanced Tracking protection' settings option. -->
+    <string name="privacy_options_tracking_strict_description">Protege más, pero también puede provocar que algunos sitios o contenido dejen de funcionar.</string>
+
+    <!-- This string is used to label the 'Off' radio button of the 'Tracking protection' settings option. -->
+    <string name="privacy_options_tracking_off">Desactivado</string>
+
+    <!-- This string is used as the description of the 'Off' radio button of the 'Enhanced Tracking protection' settings option. -->
+    <string name="privacy_options_tracking_off_description">Permitir que cada página te siga en línea para recopilar tus hábitos e intereses de navegación.</string>
 
     <!-- This string is used to label radio buttons for setting fixed-foveated-rendering (FFR) level.
      The term "foveation" derives from "fovea", the area of higher-resolution vision in the human retina.
@@ -616,6 +666,10 @@
     <!-- This string labels the button in the privacy option panel that open the dialog to add/remove
          pop-up blocked sites. -->
     <string name="security_options_block_pup_up_settings">Avanzado</string>
+
+    <!-- This string labels the button in the privacy option panel that enables/disables Virtual Reality
+        Devices access to websites (WebXR). -->
+    <string name="security_options_permission_webxr">Dispositivos de realidad virtual (WebXR)</string>
 
     <!-- This string is a label above the group of switches that indicates that the switches below
          relate to Firefox data collection and use. -->
@@ -955,6 +1009,13 @@
          when there are no exceptions. -->
     <string name="privacy_options_popups_list_empty_second">Una lista de sitios con permisos aparecerá aquí.</string>
 
+    <!-- This string is used to label radio buttons for setting ETP in. -->
+    <string name="privacy_options_tracking">Protección mejorada contra el rastreo. (&lt;a href=&quot;%1$s&quot;&gt;Saber más&lt;/a&gt;)</string>
+
+    <!-- This string labels the button in the privacy option panel that opens the dialog to add/remove
+         Tracking protection exceptions. -->
+    <string name="privacy_options_tracking_exceptions">Excepciones</string>
+
     <!-- This string labels the Reset button that restores the default controller settings values. -->
     <string name="controller_options_reset">Restablecer ajustes del controlador</string>
 
@@ -1062,6 +1123,22 @@
     <!-- This string is for the tooltip that appears upon hovering the 'Resize' button in the browser's navigation bar.
          'Resize' refers to the button used to resize the browset window. -->
     <string name="resize_tooltip">Cambiar tamaño</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'WebXR' button in the
+     browser's navigation bar. The button it labels, when pressed, Shows the WebXR permission dialog. -->
+    <string name="webxr_allowed_tooltip">WebXR permitido</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'WebXR' button in the
+ browser's navigation bar. The button it labels, when pressed, Shows the WebXR permission dialog. -->
+    <string name="webxr_blocked_tooltip">WebXR bloqueado</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Tracking' button in the
+     browser's navigation bar. The button it labels, when pressed, Shows the Tracking dialog. -->
+    <string name="tracking_allowed_tooltip">La protección contra rastreo está activada</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Tracking Protection' button in the
+ browser's navigation bar. The button it labels, when pressed, Shows the Tracking Protection dialog. -->
+    <string name="tracking_disabled_tooltip">La protección contra rastreo está desactivada</string>
 
     <!-- This string is for the tooltip that appears when the user is not in the browser's Private Browsing mode
          and hovers over the 'Private Browsing' icon in the browser's tray menu. -->
@@ -1377,4 +1454,18 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed as a button below the slow script dialog description message. When clicked
        it continues to wait for execution of the web page script that caused the slow down. -->
     <string name="slow_script_dialog_action_wait">Esperar</string>
+
+
+    <!-- This string is displayed in the title of the quick WebXR blocking dialog, accessed from the VR icon in the URL bar.
+     '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="webxr_block_dialog_message">‘%1$s’ quiere acceder a la API de WebXR</string>
+
+    <!-- This string is displayed in the title of the quick Tracking Protection dialog, accessed from the Tracking Protection icon in the URL bar. -->
+    <string name="tracking_dialog_message">La protección mejorada contra el rastreo está %1$s para este sitio. (&lt;a href=&quot;%2$s&quot;&gt;Saber más&lt;/a&gt;)</string>
+
+    <!-- This string is displayed in the enable button of the quick Tracking Protection dialog, accessed from the Tracking Protection icon in the URL bar. -->
+    <string name="tracking_dialog_button_enable">Activar</string>
+
+    <!-- This string is displayed in the disable button of the quick Tracking Protection dialog, accessed from the Tracking Protection icon in the URL bar. -->
+    <string name="tracking_dialog_button_disable">Desactivar</string>
 </resources>
