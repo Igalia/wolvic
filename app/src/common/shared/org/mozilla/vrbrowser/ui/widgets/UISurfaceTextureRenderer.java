@@ -20,11 +20,12 @@ public class UISurfaceTextureRenderer {
     private SurfaceTexture mSurfaceTexture;
     private Surface mSurface;
     private Canvas mSurfaceCanvas;
-    private static boolean sUseHarwareAcceleration;
+    private boolean mIsHardwareAccelerationEnabled;
+    private static boolean sUseHardwareAcceleration;
     private static boolean sRenderActive = true;
 
     public static void setUseHardwareAcceleration(boolean aEnabled) {
-        sUseHarwareAcceleration = aEnabled;
+        sUseHardwareAcceleration = aEnabled;
     }
 
     public static void setRenderActive(boolean aActive) {
@@ -37,6 +38,7 @@ public class UISurfaceTextureRenderer {
         mSurfaceTexture = aTexture;
         mSurfaceTexture.setDefaultBufferSize(aWidth, aHeight);
         mSurface = new Surface(mSurfaceTexture);
+        mIsHardwareAccelerationEnabled = sUseHardwareAcceleration;
     }
 
     UISurfaceTextureRenderer(Surface aSurface, int aWidth, int aHeight) {
@@ -78,7 +80,7 @@ public class UISurfaceTextureRenderer {
         }
         if (mSurface != null) {
             try {
-                if (sUseHarwareAcceleration) {
+                if (sUseHardwareAcceleration && mIsHardwareAccelerationEnabled) {
                     mSurfaceCanvas = mSurface.lockHardwareCanvas();
                 } else {
                     mSurfaceCanvas = mSurface.lockCanvas(null);
@@ -110,6 +112,14 @@ public class UISurfaceTextureRenderer {
 
     int height() {
         return mTextureHeight;
+    }
+
+    /**
+     * Override global hardware acceleration per view.
+     * @param aEnabled Enable/Disable Hardware acceleration for this view.
+     */
+    public void setIsHardwareAccelerationEnabled(boolean aEnabled) {
+        mIsHardwareAccelerationEnabled = aEnabled;
     }
 
 }

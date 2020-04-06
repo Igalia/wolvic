@@ -52,6 +52,7 @@ public abstract class UIWidget extends FrameLayout implements Widget {
     private Runnable mFirstDrawCallback;
     protected boolean mResizing = false;
     protected boolean mReleased = false;
+    private Boolean mIsHardwareAccelerationEnabled;
 
     public UIWidget(Context aContext) {
         super(aContext);
@@ -132,6 +133,9 @@ public abstract class UIWidget extends FrameLayout implements Widget {
         }
         if (aTexture != null) {
             mRenderer = new UISurfaceTextureRenderer(aTexture, aWidth, aHeight);
+            if (mIsHardwareAccelerationEnabled != null) {
+                mRenderer.setIsHardwareAccelerationEnabled(mIsHardwareAccelerationEnabled);
+            }
         }
         setWillNotDraw(mRenderer == null);
     }
@@ -145,6 +149,9 @@ public abstract class UIWidget extends FrameLayout implements Widget {
         }
         if (aSurface != null) {
             mRenderer = new UISurfaceTextureRenderer(aSurface, aWidth, aHeight);
+            if (mIsHardwareAccelerationEnabled != null) {
+                mRenderer.setIsHardwareAccelerationEnabled(mIsHardwareAccelerationEnabled);
+            }
         }
         setWillNotDraw(mRenderer == null);
     }
@@ -433,6 +440,10 @@ public abstract class UIWidget extends FrameLayout implements Widget {
 
     protected float getWorldWidth() {
         return mWorldWidth;
+    }
+
+    public void setIsHardwareAccelerationEnabled(boolean enabled) {
+        mIsHardwareAccelerationEnabled = enabled;
     }
 
 }

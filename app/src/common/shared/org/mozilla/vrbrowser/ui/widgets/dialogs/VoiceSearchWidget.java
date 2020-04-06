@@ -6,17 +6,17 @@ import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.drawable.AnimatedVectorDrawable;
 import android.graphics.drawable.ClipDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.animation.Animation;
-import android.view.animation.LinearInterpolator;
-import android.view.animation.RotateAnimation;
 
 import androidx.core.app.ActivityCompat;
 import androidx.databinding.DataBindingUtil;
@@ -61,7 +61,7 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
     private MozillaSpeechService mMozillaSpeechService;
     private VoiceSearchDelegate mDelegate;
     private ClipDrawable mVoiceInputClipDrawable;
-    private RotateAnimation mSearchingAnimation;
+    private AnimatedVectorDrawable mSearchingAnimation;
     private boolean mIsSpeechRecognitionRunning = false;
     private boolean mWasSpeechRecognitionRunning = false;
 
@@ -81,6 +81,9 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
     }
 
     private void initialize(Context aContext) {
+        // AnimatedVectorDrawable doesn't work with a Hardware Accelerated canvas, we disable it for this view.
+        setIsHardwareAccelerationEnabled(false);
+
         updateUI();
 
         mWidgetManager.addPermissionListener(this);
@@ -89,13 +92,7 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
         mMozillaSpeechService.setGeckoWebExecutor(EngineProvider.INSTANCE.createGeckoWebExecutor(getContext()));
         mMozillaSpeechService.setProductTag(getContext().getString(R.string.voice_app_id));
 
-        mSearchingAnimation = new RotateAnimation(0, 360f,
-                Animation.RELATIVE_TO_SELF, 0.5f,
-                Animation.RELATIVE_TO_SELF, 0.5f);
-
-        mSearchingAnimation.setInterpolator(new LinearInterpolator());
-        mSearchingAnimation.setDuration(ANIMATION_DURATION);
-        mSearchingAnimation.setRepeatCount(Animation.INFINITE);
+        mSearchingAnimation = (AnimatedVectorDrawable) mBinding.voiceSearchAnimationSearching.getDrawable();
 
         mMozillaSpeechService.addListener(mVoiceSearchListener);
         ((Application)aContext.getApplicationContext()).registerActivityLifecycleCallbacks(this);
@@ -297,11 +294,9 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
                         if (index == PromptDialogWidget.POSITIVE) {
                             SettingsStore.getInstance(getContext()).setSpeechDataCollectionEnabled(true);
                         }
-                        post(() -> show(aShowFlags));
+                        new Handler(Looper.getMainLooper()).post(() -> show(aShowFlags));
                     },
-                    () -> {
-                        mWidgetManager.openNewTabForeground(getResources().getString(R.string.private_policy_url));
-                    });
+                    () -> mWidgetManager.openNewTabForeground(getResources().getString(R.string.private_policy_url)));
         }
     }
 
@@ -315,13 +310,13 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
 
     private void setStartListeningState() {
         mBinding.setState(State.LISTENING);
-        mBinding.voiceSearchAnimationSearching.clearAnimation();
+        mSearchingAnimation.stop();
         mBinding.executePendingBindings();
     }
 
     private void setDecodingState() {
         mBinding.setState(State.SEARCHING);
-        mBinding.voiceSearchAnimationSearching.startAnimation(mSearchingAnimation);
+        mSearchingAnimation.start();
         mBinding.executePendingBindings();
     }
 
@@ -330,7 +325,7 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
 
         postDelayed(() -> {
             mBinding.setState(State.ERROR);
-            mBinding.voiceSearchAnimationSearching.clearAnimation();
+            mSearchingAnimation.stop();
             mBinding.executePendingBindings();
 
             startVoiceSearch();
@@ -339,7 +334,7 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
 
     private void setPermissionNotGranted() {
         mBinding.setState(State.PERMISSIONS);
-        mBinding.voiceSearchAnimationSearching.clearAnimation();
+        mSearchingAnimation.stop();
         mBinding.executePendingBindings();
     }
 

@@ -37,12 +37,12 @@
 
             <ImageView
                 android:id="@+id/voiceSearchAnimationSearching"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
                 android:layout_gravity="center_horizontal"
-                android:src="@drawable/ic_voice_search_searching"
+                android:src="@drawable/spinner"
                 visibleInvisible="@{state == State.SEARCHING }"
-                tools:src="@drawable/ic_voice_search_searching" />
+                tools:src="@drawable/spinner" />
         </FrameLayout>
 
         <FrameLayout
