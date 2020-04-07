@@ -105,16 +105,22 @@ public class TrackingProtectionStore implements DefaultLifecycleObserver,
             return;
         }
 
-        final List<ContentBlockingException> exceptionsList = new ArrayList<>();
-        mContentBlockingController.clearExceptionList();
         for (int i=0; i<count; i++) {
             SitePermission permission = mSitePermissions.get(position + i);
             ContentBlockingException exception = toContentBlockingException(permission);
             if (exception != null) {
-                exceptionsList.add(exception);
                 mListeners.forEach(listener -> listener.onExcludedTrackingProtectionChange(
                         UrlUtils.getHost(exception.uri),
                         true));
+            }
+        }
+
+        final List<ContentBlockingException> exceptionsList = new ArrayList<>();
+        mContentBlockingController.clearExceptionList();
+        for (SitePermission permission: mSitePermissions) {
+            ContentBlockingException exception = toContentBlockingException(permission);
+            if (exception != null) {
+                exceptionsList.add(exception);
             }
         }
         mContentBlockingController.restoreExceptionList(exceptionsList);
