@@ -65,14 +65,18 @@ public abstract class MenuWidget extends UIWidget implements WidgetManagerDelega
     public void show(@ShowFlags int aShowFlags) {
         super.show(aShowFlags);
 
-        mWidgetManager.addFocusChangeListener(this);
+        if (mWidgetManager != null) {
+            mWidgetManager.addFocusChangeListener(this);
+        }
     }
 
     @Override
     public void hide(@HideFlags int aHideFlags) {
         super.hide(aHideFlags);
 
-        mWidgetManager.removeFocusChangeListener(this);
+        if (mWidgetManager != null) {
+            mWidgetManager.removeFocusChangeListener(this);
+        }
     }
 
     public void updateMenuItems(ArrayList<MenuItem> aItems) {
