@@ -115,7 +115,6 @@
                 android:id="@+id/description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
                 android:text="@string/voice_search_example"
                 android:textColor="@color/rhino"
                 android:textSize="12sp"
