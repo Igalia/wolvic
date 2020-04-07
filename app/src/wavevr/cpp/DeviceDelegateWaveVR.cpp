@@ -224,6 +224,22 @@ struct DeviceDelegateWaveVR::State {
     ReleaseTextureQueues();
   }
 
+  void UpdateStandingMatrix() {
+    if (!immersiveDisplay) {
+      return;
+    }
+    WVR_PoseState_t head;
+    WVR_PoseState_t ground;
+    WVR_GetPoseState(WVR_DeviceType_HMD, WVR_PoseOriginModel_OriginOnHead, 0, &head);
+    WVR_GetPoseState(WVR_DeviceType_HMD, WVR_PoseOriginModel_OriginOnGround, 0, &ground);
+    if (!head.isValidPose || !ground.isValidPose) {
+      immersiveDisplay->SetSittingToStandingTransform(vrb::Matrix::Translation(kAverageHeight));
+      return;
+    }
+    const float delta = ground.poseMatrix.m[1][3] - head.poseMatrix.m[1][3];
+    immersiveDisplay->SetSittingToStandingTransform(vrb::Matrix::Translation(vrb::Vector(0.0f, delta, 0.0f)));
+  }
+
   void CreateController(Controller& aController) {
     if (!delegate) {
       VRB_ERROR("Failed to create controller. No ControllerDelegate has been set.");
@@ -458,7 +474,7 @@ DeviceDelegateWaveVR::RegisterImmersiveDisplay(ImmersiveDisplayPtr aDisplay) {
 
   m.immersiveDisplay->SetCapabilityFlags(flags);
   m.immersiveDisplay->SetEyeResolution(m.renderWidth, m.renderHeight);
-  m.immersiveDisplay->SetSittingToStandingTransform(vrb::Matrix::Translation(kAverageHeight));
+  m.UpdateStandingMatrix();
   m.UpdateBoundary();
   m.InitializeCameras();
   m.immersiveDisplay->CompleteEnumeration();
@@ -636,6 +652,7 @@ DeviceDelegateWaveVR::ProcessEvents() {
         WVR_InAppRecenter(WVR_RecenterType_YawAndPosition);
         m.recentered = !m.ignoreNextRecenter;
         m.ignoreNextRecenter = false;
+        m.UpdateStandingMatrix();
       }
         break;
       case WVR_EventType_RecenterFail: {

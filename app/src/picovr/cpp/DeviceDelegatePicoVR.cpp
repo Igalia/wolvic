@@ -28,6 +28,8 @@
 namespace crow {
 
 static const vrb::Vector kAverageHeight(0.0f, 1.7f, 0.0f);
+// TODO: Get real sitting to standing transform when SDK provides it
+static const vrb::Vector kAverageSittingToStanding(0.0f, 1.2f, 0.0f);
 // TODO: support different controllers & buttons
 static const int32_t kMaxControllerCount = 3;
 static const int32_t kNumButtons = 6;
@@ -282,10 +284,12 @@ DeviceDelegatePicoVR::RegisterImmersiveDisplay(ImmersiveDisplayPtr aDisplay) {
   }
 
   m.immersiveDisplay->SetDeviceName("Pico");
-  device::CapabilityFlags flags = device::Orientation | device::Present | device::ImmersiveVRSession | device::InlineSession;
+  device::CapabilityFlags flags = device::Orientation | device::Present |
+          device::ImmersiveVRSession | device::InlineSession;
   if (m.type == k6DofHeadSet) {
-    flags |= device::Position;
+    flags |= device::Position | device::StageParameters;
   }
+  m.immersiveDisplay->SetSittingToStandingTransform(vrb::Matrix::Translation(kAverageSittingToStanding));
   m.immersiveDisplay->SetCapabilityFlags(flags);
   m.immersiveDisplay->SetEyeResolution(m.renderWidth / 2, m.renderHeight / 2);
   m.immersiveDisplay->CompleteEnumeration();
