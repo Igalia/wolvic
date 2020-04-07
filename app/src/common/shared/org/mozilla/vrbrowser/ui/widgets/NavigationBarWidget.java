@@ -113,6 +113,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     private Executor mUIThreadExecutor;
     private ArrayList<NavigationListener> mNavigationListeners;
     private TrackingProtectionStore mTrackingDelegate;
+    private boolean mIsWindowAttached;
 
     public NavigationBarWidget(Context aContext) {
         super(aContext);
@@ -137,6 +138,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
                 .get(TrayViewModel.class);
 
         updateUI();
+
+        mIsWindowAttached = false;
 
         mAppContext = aContext.getApplicationContext();
 
@@ -489,6 +492,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             mViewModel.getUrl().removeObserver(mUrlObserver);
             mViewModel = null;
         }
+
+        mIsWindowAttached = false;
     }
 
     @Override
@@ -524,6 +529,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             setUpSession(getSession());
         }
         handleWindowResize();
+
+        mIsWindowAttached = true;
     }
 
     private Session getSession() {
@@ -798,6 +805,10 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     // Content delegate
 
     private Observer<ObservableBoolean> mIsFullscreenObserver = isFullScreen -> {
+        if (!mIsWindowAttached) {
+            return;
+        }
+
         if (isFullScreen.get()) {
             enterFullScreenMode();
 
