@@ -42,7 +42,7 @@
         <Key android:codes="126" android:keyLabel="~"/>
         <Key android:codes="39" android:keyLabel="'"/>
         <Key android:codes="34" android:keyLabel="&quot;"/>
-        <Key android:codes="58" android:keyLabel="\\"/>
+        <Key android:codes="92" android:keyLabel="\\"/>
         <Key android:codes="45" android:keyLabel="-" />
         <Key android:codes="43" android:keyLabel="+" />
         <Key android:codes="47" android:keyLabel="/" />
