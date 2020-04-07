@@ -87,7 +87,7 @@ void
 OculusLayerCylinder::Update(const ovrTracking2& aTracking, ovrTextureSwapChain* aClearSwapChain)  {
   OculusLayerSurface<VRLayerCylinderPtr, ovrLayerCylinder2>::Update(aTracking, aClearSwapChain);
   ovrLayer.HeadPose = aTracking.HeadPose;
-  ovrLayer.Header.SrcBlend = VRAPI_FRAME_LAYER_BLEND_ONE;
+  ovrLayer.Header.SrcBlend = VRAPI_FRAME_LAYER_BLEND_SRC_ALPHA;
   ovrLayer.Header.DstBlend = VRAPI_FRAME_LAYER_BLEND_ONE_MINUS_SRC_ALPHA;
 
   for ( int i = 0; i < VRAPI_FRAME_LAYER_EYE_MAX; i++ ) {

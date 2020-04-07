@@ -146,11 +146,6 @@ struct DeviceDelegateOculusVR::State {
       return;
     }
     initialized = true;
-    std::string version = vrapi_GetVersionString();
-    if (version.find("1.1.32.0") != std::string::npos) {
-      VRB_ERROR("Force layer clip due to driver bug. VRAPI Runtime Version: %s",vrapi_GetVersionString());
-      OculusLayer::sForceClip = true;
-    }
 
     layersEnabled = VRBrowser::AreLayersEnabled();
     SetRenderSize(device::RenderMode::StandAlone);
@@ -1018,7 +1013,7 @@ DeviceDelegateOculusVR::EndFrame(const FrameEndMode aEndMode) {
 
   ovrLayerProjection2 projection = vrapi_DefaultLayerProjection2();
   projection.HeadPose = tracking.HeadPose;
-  projection.Header.SrcBlend = VRAPI_FRAME_LAYER_BLEND_ONE;
+  projection.Header.SrcBlend = VRAPI_FRAME_LAYER_BLEND_SRC_ALPHA;
   projection.Header.DstBlend = VRAPI_FRAME_LAYER_BLEND_ONE_MINUS_SRC_ALPHA;
   for (int i = 0; i < VRAPI_FRAME_LAYER_EYE_MAX; ++i) {
     const auto &eyeSwapChain = m.eyeSwapChains[i];

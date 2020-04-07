@@ -174,7 +174,7 @@ public:
   void Init(JNIEnv *aEnv, vrb::RenderContextPtr &aContext) override {
     this->jniEnv = aEnv;
     this->contextWeak = aContext;
-    this->ovrLayer.Header.SrcBlend = VRAPI_FRAME_LAYER_BLEND_ONE;
+    this->ovrLayer.Header.SrcBlend = VRAPI_FRAME_LAYER_BLEND_SRC_ALPHA;
     this->ovrLayer.Header.DstBlend = VRAPI_FRAME_LAYER_BLEND_ONE_MINUS_SRC_ALPHA;
     if (this->swapChain) {
       return;
