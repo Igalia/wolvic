@@ -26,6 +26,7 @@ import com.mozilla.speechlibrary.MozillaSpeechService;
 import com.mozilla.speechlibrary.STTResult;
 
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.VRBrowserActivity;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.browser.engine.EngineProvider;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
@@ -105,6 +106,7 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
 
         // Inflate this data binding layout
         mBinding = DataBindingUtil.inflate(inflater, R.layout.voice_search_dialog, this, true);
+        mBinding.setLifecycleOwner((VRBrowserActivity)getContext());
 
         Drawable mVoiceInputBackgroundDrawable = getResources().getDrawable(R.drawable.ic_voice_search_volume_input_black, getContext().getTheme());
         mVoiceInputClipDrawable = new ClipDrawable(getContext().getDrawable(R.drawable.ic_voice_search_volume_input_clip), Gravity.START, ClipDrawable.HORIZONTAL);
