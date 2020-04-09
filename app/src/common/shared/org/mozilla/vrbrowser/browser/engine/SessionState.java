@@ -28,6 +28,12 @@ public class SessionState {
     public static final int WEBXR_ALLOWED = 1;
     public static final int WEBXR_BLOCKED = 2;
 
+    @IntDef(value = { POPUP_UNUSED, POPUP_ALLOWED, POPUP_BLOCKED})
+    public @interface PopupState {}
+    public static final int POPUP_UNUSED = 0;
+    public static final int POPUP_ALLOWED = 1;
+    public static final int POPUP_BLOCKED = 2;
+
     private transient boolean mIsActive;
     public boolean mCanGoBack;
     public boolean mCanGoForward;
@@ -43,6 +49,7 @@ public class SessionState {
     public SessionSettings mSettings;
     public transient ArrayList<Media> mMediaElements = new ArrayList<>();
     public transient @WebXRState int mWebXRState = WEBXR_UNUSED;
+    public transient @PopupState int mPopUpState = POPUP_UNUSED;
     @JsonAdapter(SessionState.GeckoSessionStateAdapter.class)
     public GeckoSession.SessionState mSessionState;
     public long mLastUse;

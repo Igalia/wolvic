@@ -1012,7 +1012,7 @@
 
     <!-- This string labels the button in the privacy option panel that opens the dialog to add/remove
          Tracking protection exceptions. -->
-    <string name="privacy_options_tracking_exceptions">例外</string>
+    <string name="privacy_options_tracking_exceptions_v1">例外</string>
 
     <!-- This string labels the Reset button that restores the default controller settings values. -->
     <string name="controller_options_reset">重置控制器设置</string>

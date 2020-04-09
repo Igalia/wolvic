@@ -55,6 +55,7 @@ public class WindowViewModel extends AndroidViewModel {
     private MutableLiveData<ObservableBoolean> isFocused;
     private MutableLiveData<ObservableBoolean> isUrlEmpty;
     private MutableLiveData<ObservableBoolean> isPopUpAvailable;
+    private MutableLiveData<ObservableBoolean> isPopUpBlocked;
     private MutableLiveData<ObservableBoolean> canGoForward;
     private MutableLiveData<ObservableBoolean> canGoBack;
     private MutableLiveData<ObservableBoolean> isInVRVideo;
@@ -68,6 +69,7 @@ public class WindowViewModel extends AndroidViewModel {
     private MutableLiveData<ObservableBoolean> isWebXRUsed;
     private MutableLiveData<ObservableBoolean> isWebXRBlocked;
     private MutableLiveData<ObservableBoolean> isTrackingEnabled;
+    private MutableLiveData<ObservableBoolean> isDrmUsed;
 
     public WindowViewModel(Application application) {
         super(application);
@@ -131,6 +133,7 @@ public class WindowViewModel extends AndroidViewModel {
         isFocused = new MutableLiveData<>(new ObservableBoolean(false));
         isUrlEmpty = new MutableLiveData<>(new ObservableBoolean(true));
         isPopUpAvailable = new MutableLiveData<>(new ObservableBoolean(false));
+        isPopUpBlocked = new MutableLiveData<>(new ObservableBoolean(false));
         canGoForward = new MutableLiveData<>(new ObservableBoolean(false));
         canGoBack = new MutableLiveData<>(new ObservableBoolean(false));
         isInVRVideo = new MutableLiveData<>(new ObservableBoolean(false));
@@ -161,6 +164,7 @@ public class WindowViewModel extends AndroidViewModel {
         isWebXRBlocked = new MutableLiveData<>(new ObservableBoolean(false));
 
         isTrackingEnabled = new MutableLiveData<>(new ObservableBoolean(true));
+        isDrmUsed = new MutableLiveData<>(new ObservableBoolean(false));
     }
 
     private Observer<ObservableBoolean> mIsTopBarVisibleObserver = new Observer<ObservableBoolean>() {
@@ -303,6 +307,7 @@ public class WindowViewModel extends AndroidViewModel {
         isFocused.postValue(isFocused.getValue());
         isUrlEmpty.postValue(isUrlEmpty.getValue());
         isPopUpAvailable.postValue(isPopUpAvailable.getValue());
+        isPopUpBlocked.postValue(isPopUpBlocked.getValue());
         canGoForward.postValue(canGoForward.getValue());
         canGoBack.postValue(canGoBack.getValue());
         isInVRVideo.postValue(isInVRVideo.getValue());
@@ -313,6 +318,7 @@ public class WindowViewModel extends AndroidViewModel {
         isWebXRUsed.postValue(isWebXRUsed.getValue());
         isWebXRBlocked.postValue(isWebXRBlocked.getValue());
         isTrackingEnabled.postValue(isTrackingEnabled.getValue());
+        isDrmUsed.postValue(isDrmUsed.getValue());
     }
 
     @NonNull
@@ -668,11 +674,29 @@ public class WindowViewModel extends AndroidViewModel {
     }
 
     @NonNull
+    public MutableLiveData<ObservableBoolean> getIsPopUpBlocked() {
+        return isPopUpBlocked;
+    }
+
+    public void setIsPopUpBlocked(boolean isPopUpBlocked) {
+        this.isPopUpBlocked.postValue(new ObservableBoolean(isPopUpBlocked));
+    }
+
+    @NonNull
     public MutableLiveData<ObservableBoolean> getIsTrackingEnabled() {
         return isTrackingEnabled;
     }
 
     public void setIsTrackingEnabled(boolean isTrackingEnabled) {
         this.isTrackingEnabled.postValue(new ObservableBoolean(isTrackingEnabled));
+    }
+
+    @NonNull
+    public MutableLiveData<ObservableBoolean> getIsDrmUsed() {
+        return isDrmUsed;
+    }
+
+    public void setIsDrmUsed(boolean isEnabled) {
+        this.isDrmUsed.postValue(new ObservableBoolean(isEnabled));
     }
 }

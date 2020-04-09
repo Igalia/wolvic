@@ -1,77 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
         <variable
-            name="blockButtonVisible"
+            name="isBlocked"
             type="Boolean" />
+        <variable
+            name="onText"
+            type="String" />
+        <variable
+            name="offText"
+            type="String" />
     </data>
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout_width="@dimen/quick_permission_width"
-        tools:layout_height="@dimen/quick_permission_height"
+        android:layout_width="@dimen/quick_permission_width"
+        android:layout_height="@dimen/quick_permission_height"
         android:orientation="vertical">
         <RelativeLayout
             android:id="@+id/selectionMenuContainer"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="100"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:orientation="vertical"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="15dp"
             android:background="@drawable/context_menu_background">
             <org.mozilla.vrbrowser.ui.views.LinkTextView
                 android:id="@+id/message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:layout_marginBottom="20dp"
-                android:gravity="center_horizontal"
+                android:layout_centerInParent="true"
+                android:layout_alignParentTop="true"
+                android:layout_above="@id/enableSwitch"
+                android:gravity="center"
+                android:layout_marginTop="25dp"
                 android:paddingStart="20dp"
                 android:paddingEnd="20dp"
                 android:text="@string/webxr_permission_dialog_message"
                 android:textStyle="bold"
                 android:textColor="@color/fog"
                 android:textSize="@dimen/text_bigger_size" />
-
-            <Button
-                android:id="@+id/allowButton"
-                android:layout_width="156dp"
-                android:layout_height="50dp"
+            <Switch
+                android:id="@+id/enableSwitch"
+                style="@style/settingsSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@id/message"
-                android:background="@drawable/dialog_highlighted_button_background"
-                android:fontFamily="sans-serif"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="25dp"
                 android:scaleType="fitCenter"
-                android:textSize="@dimen/text_bigger_size"
-                android:text="@string/pop_up_site_switch_allow"
-                android:textColor="@drawable/dialog_button_text_color"
-                android:textStyle="bold"
-                visibleGone="@{blockButtonVisible}"/>
-
-            <Button
-                android:id="@+id/blockButton"
-                android:layout_width="156dp"
-                android:layout_height="50dp"
-                android:layout_centerHorizontal="true"
-                android:layout_below="@id/message"
-                android:background="@drawable/dialog_highlighted_button_background"
-                android:fontFamily="sans-serif"
-                android:scaleType="fitCenter"
-                android:textSize="@dimen/text_bigger_size"
-                android:text="@string/pop_up_site_switch_block"
-                android:textColor="@drawable/dialog_button_text_color"
-                android:textStyle="bold"
-                visibleGone="@{!blockButtonVisible}"/>
+                android:switchPadding="5dp"
+                android:scaleX="1.5"
+                android:scaleY="1.5"
+                android:text="@{isBlocked ? offText : onText}" />
         </RelativeLayout>
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="-1dp">
+            android:layout_marginTop="-16dp">
             <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="30dp"
                 android:layout_height="15dp"

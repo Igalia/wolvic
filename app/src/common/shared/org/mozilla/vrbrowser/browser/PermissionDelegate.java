@@ -105,7 +105,7 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
                     .findFirst().orElse(null);
         }
 
-        if (site == null || site.allowed) {
+        if (site == null) {
             aCallback.grant();
             session.setWebXRState(SessionState.WEBXR_ALLOWED);
         } else {
@@ -127,11 +127,11 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
     public void onAndroidPermissionsRequest(GeckoSession aSession, String[] permissions, Callback aCallback) {
         Log.d(LOGTAG, "onAndroidPermissionsRequest: " + Arrays.toString(permissions));
         ArrayList<String> missingPermissions = new ArrayList<>();
-        ArrayList<String> filteredPemissions = new ArrayList<>();
+        ArrayList<String> filteredPermissions = new ArrayList<>();
         for (String permission: permissions) {
             if (PlatformActivity.filterPermission(permission)) {
                 Log.d(LOGTAG, "Skipping permission: " + permission);
-                filteredPemissions.add(permission);
+                filteredPermissions.add(permission);
                 continue;
             }
             Log.d(LOGTAG, "permission = " + permission);
@@ -141,7 +141,7 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
         }
 
         if (missingPermissions.size() == 0) {
-            if (filteredPemissions.size() == 0) {
+            if (filteredPermissions.size() == 0) {
                 Log.d(LOGTAG, "Android permissions granted");
                 aCallback.grant();
             } else {
@@ -178,7 +178,21 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
         } else if (aType == PERMISSION_GEOLOCATION) {
             type = PermissionWidget.PermissionType.Location;
         } else if (aType == PERMISSION_MEDIA_KEY_SYSTEM_ACCESS) {
-            callback.grant();
+            WindowWidget windowWidget = mWidgetManager.getFocusedWindow();
+            Runnable enableDrm = () -> {
+                if (SettingsStore.getInstance(mContext).isDrmContentPlaybackEnabled()) {
+                    callback.grant();
+                } else {
+                    callback.reject();
+                }
+            };
+            if (SettingsStore.getInstance(mContext).isDrmContentPlaybackSet()) {
+                enableDrm.run();
+
+            } else {
+                windowWidget.showFirstTimeDrmDialog(enableDrm);
+            }
+            windowWidget.setDrmUsed(true);
             return;
         } else {
             Log.e(LOGTAG, "onContentPermissionRequest unknown permission: " + aType);
@@ -274,24 +288,35 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
         }
     }
 
-    public void setPermissionAllowed(String uri, @SitePermission.Category int category, boolean allowed) {
+    public void addPermissionException(String uri, @SitePermission.Category int category) {
         @Nullable SitePermission site = mSitePermissions.stream()
                 .filter((item) -> item.category == category && item.url.equals(uri))
                 .findFirst().orElse(null);
-        boolean wasAllowed = site == null || site.allowed;
-        if (allowed == wasAllowed) {
-            return;
+
+        if (site == null) {
+            site = new SitePermission(uri, uri, category);
+            mSitePermissions.add(site);
         }
-        if (allowed) {
-            mSitePermissions.removeIf(sitePermission -> sitePermission.url.equals(uri));
-            mSitePermissionModel.deleteSite(site);
-        } else {
-            if (site == null) {
-                site = new SitePermission(uri, uri, false, category);
-                mSitePermissions.add(site);
+        mSitePermissionModel.insertSite(site);
+
+        // Reload URIs with the same domain
+        for (WindowWidget window: mWidgetManager.getWindows().getCurrentWindows()) {
+            Session session = window.getSession();
+            if (uri.equalsIgnoreCase(UrlUtils.getHost(session.getCurrentUri()))) {
+                session.reload(GeckoSession.LOAD_FLAGS_BYPASS_CACHE);
             }
-            site.allowed = false;
-            mSitePermissionModel.insertSite(site);
+        }
+
+    }
+
+    public void removePermissionException(String uri, @SitePermission.Category int category) {
+        @Nullable SitePermission site = mSitePermissions.stream()
+                .filter((item) -> item.category == category && item.url.equals(uri))
+                .findFirst().orElse(null);
+
+        mSitePermissions.removeIf(sitePermission -> sitePermission.url.equals(uri));
+        if (site != null) {
+            mSitePermissionModel.deleteSite(site);
         }
 
         // Reload URIs with the same domain

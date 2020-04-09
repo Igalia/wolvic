@@ -76,25 +76,19 @@ class SitePermissionsOptionsView extends SettingsView {
         switch (mCategory) {
             case SitePermission.SITE_PERMISSION_POPUP:
                 mBinding.headerLayout.setTitle(R.string.settings_privacy_policy_popups_title);
-                mBinding.headerLayout.setDescription(R.string.privacy_options_popups_list_header);
-                mBinding.contentText.setText(R.string.privacy_options_popups_list_header);
+                mBinding.contentText.setText(R.string.privacy_options_popups_list_header_v1);
                 mBinding.emptyText.setText(R.string.privacy_options_popups_list_empty_first);
-                mBinding.footerLayout.setDescription(R.string.privacy_options_popups_reset);
                 break;
             case SitePermission.SITE_PERMISSION_WEBXR:
                 mBinding.headerLayout.setTitle(R.string.settings_privacy_policy_webxr_title);
-                mBinding.headerLayout.setDescription(R.string.settings_privacy_policy_webxr_description);
                 mBinding.contentText.setText(R.string.settings_privacy_policy_webxr_description);
                 mBinding.emptyText.setText(R.string.settings_privacy_policy_webxr_empty_description);
-                mBinding.footerLayout.setDescription(R.string.settings_privacy_policy_webxr_reset);
                 break;
             case SitePermission.SITE_PERMISSION_TRACKING:
                 mBinding.headerLayout.setTitle(R.string.settings_privacy_policy_tracking_title);
-                mBinding.headerLayout.setDescription(R.string.settings_privacy_policy_tracking_description);
                 mBinding.contentText.setText(R.string.settings_privacy_policy_tracking_description);
                 mBinding.emptyText.setText(R.string.settings_privacy_policy_tracking_empty_description);
                 mBinding.emptySecondText.setVisibility(GONE);
-                mBinding.footerLayout.setDescription(R.string.settings_privacy_policy_tracking_reset);
                 break;
         }
 

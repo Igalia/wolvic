@@ -99,6 +99,7 @@ public class NavigationURLBar extends FrameLayout {
         void onPopUpButtonClicked();
         void onWebXRButtonClicked();
         void onTrackingButtonClicked();
+        void onDrmButtonClicked();
     }
 
     public NavigationURLBar(Context context, AttributeSet attrs) {
@@ -229,6 +230,7 @@ public class NavigationURLBar extends FrameLayout {
         mBinding.popup.setOnClickListener(mPopUpListener);
         mBinding.webxr.setOnClickListener(mWebXRButtonClick);
         mBinding.tracking.setOnClickListener(mTrackingButtonClick);
+        mBinding.drm.setOnClickListener(mDrmButtonClick);
 
         // Bookmarks
         mBinding.bookmarkButton.setOnClickListener(v -> handleBookmarkClick());
@@ -342,12 +344,16 @@ public class NavigationURLBar extends FrameLayout {
         return mBinding.popup;
     }
 
-    public UIButton getWebxRButton() {
+    public UIButton getWebXRButton() {
         return mBinding.webxr;
     }
 
-    public UIButton getTrackingRButton() {
+    public UIButton getTrackingButton() {
         return mBinding.tracking;
+    }
+
+    public UIButton getDrmButton() {
+        return mBinding.drm;
     }
 
     public  void handleURLEdit(String text) {
@@ -431,6 +437,16 @@ public class NavigationURLBar extends FrameLayout {
 
         if (mDelegate != null) {
             mDelegate.onTrackingButtonClicked();
+        }
+    };
+
+    private OnClickListener mDrmButtonClick = view -> {
+        if (mAudio != null) {
+            mAudio.playSound(AudioEngine.Sound.CLICK);
+        }
+
+        if (mDelegate != null) {
+            mDelegate.onDrmButtonClicked();
         }
     };
 

@@ -183,8 +183,7 @@ public class TrackingProtectionStore implements DefaultLifecycleObserver,
                 SitePermission olSite = mSitePermissions.get(oldItemPosition);
                 return newSite.url.equals(olSite.url)
                         && Objects.equals(newSite.category, olSite.category)
-                        && Objects.equals(newSite.principal, olSite.principal)
-                        && newSite.allowed == olSite.allowed;
+                        && Objects.equals(newSite.principal, olSite.principal);
             }
         });
 
@@ -281,7 +280,6 @@ public class TrackingProtectionStore implements DefaultLifecycleObserver,
             return new SitePermission(
                     json.getString("uri"),
                     json.getString("principal"),
-                    false,
                     SitePermission.SITE_PERMISSION_TRACKING);
 
         } catch (JSONException e) {

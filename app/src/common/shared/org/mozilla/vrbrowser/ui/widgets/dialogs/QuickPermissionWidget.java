@@ -4,11 +4,11 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.CompoundButton;
 
-import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
+
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.databinding.QuickPermissionDialogBinding;
 import org.mozilla.vrbrowser.db.SitePermission;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
@@ -24,7 +24,7 @@ public class QuickPermissionWidget extends UIWidget implements WidgetManagerDele
 
     private Delegate mDelegate;
     private String mDomain = "";
-    QuickPermissionDialogBinding mBinding;
+    private QuickPermissionDialogBinding mBinding;
     private @SitePermission.Category int mCategory = SitePermission.SITE_PERMISSION_WEBXR;
 
     public QuickPermissionWidget(Context aContext) {
@@ -35,49 +35,58 @@ public class QuickPermissionWidget extends UIWidget implements WidgetManagerDele
     private void initialize() {
         LayoutInflater inflater = LayoutInflater.from(getContext());
         mBinding = DataBindingUtil.inflate(inflater, R.layout.quick_permission_dialog, this, true);
-        mBinding.setBlockButtonVisible(false);
-        mBinding.allowButton.setOnClickListener(v -> {
-            if (mDelegate != null) {
-                mDelegate.onAllow();
-            }
-        });
-        mBinding.blockButton.setOnClickListener(v -> {
-            if (mDelegate != null) {
-                mDelegate.onBlock();
-            }
-        });
+        mBinding.setIsBlocked(false);
         updateUI();
     }
 
     public void setData(String uri, int aCategory, boolean aBlocked) {
         mCategory = aCategory;
         mDomain = uri;
-        mBinding.setBlockButtonVisible(aBlocked);
+        mBinding.setIsBlocked(aBlocked);
         updateUI();
     }
 
     public void updateUI() {
         switch (mCategory) {
+            case SitePermission.SITE_PERMISSION_POPUP: {
+                mBinding.message.setText(
+                        getResources().getString(R.string.popup_permission_dialog_message,
+                                mBinding.getIsBlocked() ?
+                                        getResources().getString(R.string.off).toUpperCase() :
+                                        getResources().getString(R.string.on).toUpperCase()));
+                mBinding.setOnText(getResources().getString(R.string.popup_dialog_button_on));
+                mBinding.setOffText(getResources().getString(R.string.popup_dialog_button_off));
+                break;
+            }
             case SitePermission.SITE_PERMISSION_WEBXR: {
                 mBinding.message.setText(
                         getResources().getString(R.string.webxr_permission_dialog_message,
-                                mBinding.getBlockButtonVisible() ?
+                                mBinding.getIsBlocked() ?
                                         getResources().getString(R.string.off).toUpperCase() :
                                         getResources().getString(R.string.on).toUpperCase(),
                                 getResources().getString(R.string.sumo_webxr_url)));
-                mBinding.allowButton.setText(R.string.permission_allow);
-                mBinding.blockButton.setText(R.string.pop_up_site_switch_block);
+                mBinding.setOnText(getResources().getString(R.string.webxr_dialog_button_on));
+                mBinding.setOffText(getResources().getString(R.string.webxr_dialog_button_off));
                 break;
             }
             case SitePermission.SITE_PERMISSION_TRACKING: {
                 mBinding.message.setText(
                         getResources().getString(R.string.tracking_dialog_message,
-                        mBinding.getBlockButtonVisible() ?
-                                getResources().getString(R.string.on).toUpperCase() :
-                                getResources().getString(R.string.off).toUpperCase(),
+                        mBinding.getIsBlocked() ?
+                                getResources().getString(R.string.off).toUpperCase() :
+                                getResources().getString(R.string.on).toUpperCase(),
                                 getResources().getString(R.string.sumo_etp_url)));
-                mBinding.allowButton.setText(R.string.tracking_dialog_button_disable);
-                mBinding.blockButton.setText(R.string.tracking_dialog_button_enable);
+                mBinding.setOnText(getResources().getString(R.string.tracking_dialog_button_on));
+                mBinding.setOffText(getResources().getString(R.string.tracking_dialog_button_off));
+                break;
+            }
+            case SitePermission.SITE_PERMISSION_DRM: {
+                mBinding.message.setText(
+                        getResources().getString(R.string.drm_dialog_message,
+                                getResources().getString(R.string.app_name),
+                                getResources().getString(R.string.sumo_drm_url)));
+                mBinding.setOnText(getResources().getString(R.string.drm_dialog_button_on));
+                mBinding.setOffText(getResources().getString(R.string.drm_dialog_button_off));
                 break;
             }
         }
@@ -86,6 +95,10 @@ public class QuickPermissionWidget extends UIWidget implements WidgetManagerDele
             mWidgetManager.openNewTabForeground(url);
             onDismiss();
         });
+
+        mBinding.enableSwitch.setOnCheckedChangeListener (null);
+        mBinding.enableSwitch.setChecked(!mBinding.getIsBlocked());
+        mBinding.enableSwitch.setOnCheckedChangeListener(mSwitchListener);
 
         mBinding.executePendingBindings();
     }
@@ -131,7 +144,21 @@ public class QuickPermissionWidget extends UIWidget implements WidgetManagerDele
         mWidgetManager.removeFocusChangeListener(this);
     }
 
+    private CompoundButton.OnCheckedChangeListener mSwitchListener = new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (mDelegate != null) {
+                if (isChecked) {
+                    mDelegate.onAllow();
+                } else {
+                    mDelegate.onBlock();
+                }
+            }
+        }
+    };
+
     // WidgetManagerDelegate.FocusChangeListener
+
     @Override
     public void onGlobalFocusChanged(View oldFocus, View newFocus) {
         if (!ViewUtils.isEqualOrChildrenOf(this, newFocus)) {

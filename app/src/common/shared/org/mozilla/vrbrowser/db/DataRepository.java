@@ -25,7 +25,7 @@ public class DataRepository implements LifecycleOwner {
         mDatabase = database;
         mExecutors = executors;
         mLifeCycle = new LifecycleRegistry(this);
-        mLifeCycle.markState(Lifecycle.State.STARTED);
+        mLifeCycle.setCurrentState(Lifecycle.State.STARTED);
         mObservablePopUps = new MediatorLiveData<>();
 
         mObservablePopUps.addSource(mDatabase.sitePermissionDao().loadAll(),

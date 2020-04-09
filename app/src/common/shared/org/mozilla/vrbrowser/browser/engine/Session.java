@@ -77,6 +77,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     private transient CopyOnWriteArrayList<BitmapChangedListener> mBitmapChangedListeners;
     private transient CopyOnWriteArrayList<GeckoSession.SelectionActionDelegate> mSelectionActionListeners;
     private transient CopyOnWriteArrayList<WebXRStateChangedListener> mWebXRStateListeners;
+    private transient CopyOnWriteArrayList<PopUpStateChangedListener> mPopUpStateStateListeners;
 
     private SessionState mState;
     private transient CopyOnWriteArrayList<Runnable> mQueuedCalls = new CopyOnWriteArrayList<>();
@@ -96,6 +97,10 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
     public interface WebXRStateChangedListener {
         void onWebXRStateChanged(Session aSession, @SessionState.WebXRState int aWebXRState);
+    }
+
+    public interface PopUpStateChangedListener {
+        void onPopUpStateChanged(Session aSession, @SessionState.PopupState int aPopUpState);
     }
 
     @IntDef(value = { SESSION_OPEN, SESSION_DO_NOT_OPEN})
@@ -129,6 +134,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         mSelectionActionListeners = new CopyOnWriteArrayList<>();
         mBitmapChangedListeners = new CopyOnWriteArrayList<>();
         mWebXRStateListeners = new CopyOnWriteArrayList<>();
+        mPopUpStateStateListeners = new CopyOnWriteArrayList<>();
 
         if (mPrefs != null) {
             mPrefs.registerOnSharedPreferenceChangeListener(this);
@@ -174,6 +180,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         mSelectionActionListeners.clear();
         mBitmapChangedListeners.clear();
         mWebXRStateListeners.clear();
+        mPopUpStateStateListeners.clear();
 
         if (mPrefs != null) {
             mPrefs.unregisterOnSharedPreferenceChangeListener(this);
@@ -196,6 +203,10 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         }
 
         for (WebXRStateChangedListener listener: mWebXRStateListeners) {
+            dumpState(listener);
+        }
+
+        for (PopUpStateChangedListener listener: mPopUpStateStateListeners) {
             dumpState(listener);
         }
     }
@@ -230,6 +241,10 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
     private void dumpState(WebXRStateChangedListener aListener) {
         aListener.onWebXRStateChanged(this, mState.mWebXRState);
+    }
+
+    private void dumpState(PopUpStateChangedListener aListener) {
+        aListener.onPopUpStateChanged(this, mState.mPopUpState);
     }
 
     private void flushQueuedEvents() {
@@ -326,6 +341,15 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
     public void removeWebXRStateChangedListener(WebXRStateChangedListener aListener) {
         mWebXRStateListeners.remove(aListener);
+    }
+
+    public void addPopUpStateChangedListener(PopUpStateChangedListener aListener) {
+        mPopUpStateStateListeners.add(aListener);
+        dumpState(aListener);
+    }
+
+    public void removePopUpStateChangedListener(PopUpStateChangedListener aListener) {
+        mPopUpStateStateListeners.remove(aListener);
     }
 
     private void setupSessionListeners(GeckoSession aSession) {
@@ -806,6 +830,17 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         return mState.mWebXRState;
     }
 
+    public void setPopUpState(@SessionState.PopupState int aPopUpstate) {
+        mState.mPopUpState = aPopUpstate;
+        for (PopUpStateChangedListener listener: mPopUpStateStateListeners) {
+            dumpState(listener);
+        }
+    }
+
+    public @SessionState.PopupState int getPopUpState() {
+        return mState.mPopUpState;
+    }
+
     // Session Settings
 
     protected void setServo(final boolean enabled) {
@@ -900,6 +935,8 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         if (mState.mSession != aSession) {
             return;
         }
+
+        setPopUpState(SessionState.POPUP_UNUSED);
 
         mState.mPreviousUri = mState.mUri;
         mState.mUri = aUri;

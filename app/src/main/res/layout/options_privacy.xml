@@ -2,6 +2,10 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <data>
+        <import type="org.mozilla.vrbrowser.utils.DeviceType"/>
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -46,6 +50,13 @@
                     app:description="@string/settings_privacy_policy" />
 
                 <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                    android:id="@+id/drmContentPlaybackSwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:description="@string/security_options_drm_content_v1"
+                    visibleGone="@{!DeviceType.picoVR}"/>
+
+                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
                     android:id="@+id/restoreTabsSwitch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -61,7 +72,7 @@
                     android:id="@+id/popUpsBlockingExceptionsButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:buttonText="@string/security_options_block_pup_up_settings" />
+                    app:buttonText="@string/security_options_block_pup_up_settings_v2" />
 
                 <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
                     android:id="@+id/webxrSwitch"
@@ -73,13 +84,13 @@
                     android:id="@+id/webxrExceptionsButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:buttonText="@string/security_options_block_pup_up_settings" />
+                    app:buttonText="@string/security_options_webxr_settings" />
 
                 <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
                     android:id="@+id/trackingProtectionButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:buttonText="@string/privacy_options_tracking_exceptions"
+                    app:buttonText="@string/privacy_options_tracking_exceptions_v1"
                     app:description="@string/privacy_options_tracking"/>
 
                 <org.mozilla.vrbrowser.ui.views.settings.RadioGroupVSetting
@@ -105,13 +116,6 @@
                     android:layout_height="wrap_content"
                     app:buttonText="@string/developer_options_clear_cache"
                     app:description="@string/developer_options_clear_cache_web_content_description" />
-
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
-                    android:id="@+id/drmContentPlaybackSwitch"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    app:description="@string/security_options_drm_content" />
 
                 <TextView
                     android:id="@+id/permissionsTitle"

@@ -332,9 +332,15 @@ public class SessionStore implements GeckoSession.PermissionDelegate{
         }
     }
 
-    public void setPermissionAllowed(String uri, @SitePermission.Category int category, boolean allowed) {
+    public void addPermissionException(String uri, @SitePermission.Category int category) {
         if (mPermissionDelegate != null) {
-            mPermissionDelegate.setPermissionAllowed(uri, category, allowed);
+            mPermissionDelegate.addPermissionException(uri, category);
+        }
+    }
+
+    public void removePermissionException(String uri, @SitePermission.Category int category) {
+        if (mPermissionDelegate != null) {
+            mPermissionDelegate.removePermissionException(uri, category);
         }
     }
 }

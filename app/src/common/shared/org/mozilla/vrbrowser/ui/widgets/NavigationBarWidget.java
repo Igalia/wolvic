@@ -33,12 +33,11 @@ import org.mozilla.vrbrowser.VRBrowserActivity;
 import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.Media;
-import org.mozilla.vrbrowser.browser.PromptDelegate;
 import org.mozilla.vrbrowser.browser.SessionChangeListener;
 import org.mozilla.vrbrowser.browser.SettingsStore;
+import org.mozilla.vrbrowser.browser.content.TrackingProtectionStore;
 import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
-import org.mozilla.vrbrowser.browser.content.TrackingProtectionStore;
 import org.mozilla.vrbrowser.databinding.NavigationBarBinding;
 import org.mozilla.vrbrowser.db.SitePermission;
 import org.mozilla.vrbrowser.search.suggestions.SuggestionsProvider;
@@ -64,6 +63,8 @@ import java.util.ArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static org.mozilla.vrbrowser.db.SitePermission.SITE_PERMISSION_DRM;
+import static org.mozilla.vrbrowser.db.SitePermission.SITE_PERMISSION_POPUP;
 import static org.mozilla.vrbrowser.db.SitePermission.SITE_PERMISSION_TRACKING;
 import static org.mozilla.vrbrowser.ui.widgets.menus.VideoProjectionMenuWidget.VIDEO_PROJECTION_NONE;
 
@@ -475,7 +476,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         }
         if (mAttachedWindow != null) {
             mAttachedWindow.removeWindowListener(this);
-            mAttachedWindow.setPopUpDelegate(null);
         }
         mAttachedWindow = null;
         if (mAwesomeBar != null && mAwesomeBar.isVisible()) {
@@ -489,6 +489,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         if (mViewModel != null) {
             mViewModel.getIsFullscreen().removeObserver(mIsFullscreenObserver);
             mViewModel.getIsActiveWindow().removeObserver(mIsActiveWindowObserver);
+            mViewModel.getIsPopUpBlocked().removeObserver(mIsPopUpBlockedListener);
             mViewModel.getUrl().removeObserver(mUrlObserver);
             mViewModel = null;
         }
@@ -515,13 +516,13 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
         mViewModel.getIsFullscreen().observeForever( mIsFullscreenObserver);
         mViewModel.getIsActiveWindow().observeForever(mIsActiveWindowObserver);
+        mViewModel.getIsPopUpBlocked().observeForever(mIsPopUpBlockedListener);
         mViewModel.getUrl().observeForever(mUrlObserver);
         mBinding.navigationBarNavigation.urlBar.attachToWindow(mAttachedWindow);
 
         mTrackingDelegate.addListener(mTrackingListener);
 
         mAttachedWindow.addWindowListener(this);
-        mAttachedWindow.setPopUpDelegate(mPopUpDelegate);
 
         clearFocus();
 
@@ -555,8 +556,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     @Override
     public void onSessionChanged(@NonNull Session aOldSession, @NonNull Session aSession) {
-        mViewModel.setIsPopUpAvailable(mAttachedWindow.hasPendingPopUps());
-
         cleanSession(aOldSession);
         setUpSession(aSession);
     }
@@ -838,6 +837,15 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     private Observer<ObservableBoolean> mIsActiveWindowObserver = aIsActiveWindow -> updateTrackingProtection();
 
+    private Observer<ObservableBoolean> mIsPopUpBlockedListener = observableBoolean -> {
+        if (observableBoolean.get()) {
+            showPopUpsBlockedNotification();
+
+        } else {
+            hidePopUpsBlockedNotification();
+        }
+    };
+
     private void updateTrackingProtection() {
         if (getSession() != null) {
             mTrackingDelegate.contains(getSession(), isExcluded -> {
@@ -850,7 +858,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
             mTrackingDelegate.fetchAll(sitePermissions -> {
                 Log.d(LOGTAG, "Start");
-                sitePermissions.forEach(site -> Log.d(LOGTAG, site.url + " - " + site.allowed));
+                sitePermissions.forEach(site -> Log.d(LOGTAG, site.url));
                 Log.d(LOGTAG, "End");
 
                 return null;
@@ -965,21 +973,30 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     @Override
     public void onPopUpButtonClicked() {
-        mAttachedWindow.showPopUps();
+        toggleQuickPermission(mBinding.navigationBarNavigation.urlBar.getWebXRButton(),
+                SitePermission.SITE_PERMISSION_POPUP,
+                !mViewModel.getIsPopUpBlocked().getValue().get());
     }
 
     @Override
     public void onWebXRButtonClicked() {
-        toggleQuickPermission(mBinding.navigationBarNavigation.urlBar.getWebxRButton(),
+        toggleQuickPermission(mBinding.navigationBarNavigation.urlBar.getWebXRButton(),
                 SitePermission.SITE_PERMISSION_WEBXR,
                 mViewModel.getIsWebXRBlocked().getValue().get());
     }
 
     @Override
     public void onTrackingButtonClicked() {
-        toggleQuickPermission(mBinding.navigationBarNavigation.urlBar.getTrackingRButton(),
+        toggleQuickPermission(mBinding.navigationBarNavigation.urlBar.getTrackingButton(),
                 SitePermission.SITE_PERMISSION_TRACKING,
-                mViewModel.getIsTrackingEnabled().getValue().get());
+                !mViewModel.getIsTrackingEnabled().getValue().get());
+    }
+
+    @Override
+    public void onDrmButtonClicked() {
+        toggleQuickPermission(mBinding.navigationBarNavigation.urlBar.getTrackingButton(),
+                SitePermission.SITE_PERMISSION_DRM,
+                !SettingsStore.getInstance(getContext()).isDrmContentPlaybackEnabled());
     }
 
     // VoiceSearch Delegate
@@ -1135,20 +1152,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mSendTabDialog.show(UIWidget.REQUEST_FOCUS);
     }
 
-    private PromptDelegate.PopUpDelegate mPopUpDelegate = new PromptDelegate.PopUpDelegate() {
-        @Override
-        public void onPopUpAvailable() {
-            showPopUpsBlockedNotification();
-            mViewModel.setIsPopUpAvailable(true);
-        }
-
-        @Override
-        public void onPopUpsCleared() {
-            mViewModel.setIsPopUpAvailable(false);
-            hidePopUpsBlockedNotification();
-        }
-    };
-
     public void showPopUpsBlockedNotification() {
         final int POP_UP_NOTIFICATION_DELAY = 800;
         mBlockedCount++;
@@ -1242,11 +1245,17 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             public void onBlock() {
                 if (aCategory == SITE_PERMISSION_TRACKING) {
                     if (getSession() != null) {
-                        mTrackingDelegate.remove(getSession());
+                        mTrackingDelegate.add(getSession());
                     }
 
+                } else if (aCategory == SITE_PERMISSION_DRM) {
+                    SettingsStore.getInstance(getContext()).setDrmContentPlaybackEnabled(false);
+
+                } else if (aCategory == SITE_PERMISSION_POPUP) {
+                    SessionStore.get().addPermissionException(uri, aCategory);
+
                 } else {
-                    SessionStore.get().setPermissionAllowed(uri, aCategory, false);
+                    SessionStore.get().addPermissionException(uri, aCategory);
                 }
                 mQuickPermissionWidget.onDismiss();
             }
@@ -1255,11 +1264,17 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             public void onAllow() {
                 if (aCategory == SITE_PERMISSION_TRACKING) {
                     if (getSession() != null) {
-                        mTrackingDelegate.add(getSession());
+                        mTrackingDelegate.remove(getSession());
                     }
 
+                } else if (aCategory == SITE_PERMISSION_DRM) {
+                    SettingsStore.getInstance(getContext()).setDrmContentPlaybackEnabled(true);
+
+                } else if (aCategory == SITE_PERMISSION_POPUP) {
+                    SessionStore.get().removePermissionException(uri, aCategory);
+
                 } else {
-                    SessionStore.get().setPermissionAllowed(uri, aCategory, true);
+                    SessionStore.get().removePermissionException(uri, aCategory);
                 }
                 mQuickPermissionWidget.onDismiss();
             }

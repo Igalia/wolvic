@@ -9,16 +9,16 @@ import androidx.room.PrimaryKey;
 
 @Entity
 public class SitePermission {
-    @IntDef(value = { SITE_PERMISSION_POPUP, SITE_PERMISSION_WEBXR, SITE_PERMISSION_TRACKING})
+    @IntDef(value = { SITE_PERMISSION_POPUP, SITE_PERMISSION_WEBXR, SITE_PERMISSION_TRACKING, SITE_PERMISSION_DRM})
     public @interface Category {}
     public static final int SITE_PERMISSION_POPUP = 0;
     public static final int SITE_PERMISSION_WEBXR = 1;
     public static final int SITE_PERMISSION_TRACKING = 2;
+    public static final int SITE_PERMISSION_DRM = 3;
 
-    public SitePermission(@NonNull String url, @NonNull String principal, boolean allowed, @Category int category) {
+    public SitePermission(@NonNull String url, @NonNull String principal, @Category int category) {
         this.url = url;
         this.principal = principal;
-        this.allowed = allowed;
         this.category = category;
     }
 
@@ -31,9 +31,6 @@ public class SitePermission {
     @NonNull
     @ColumnInfo(name = "principal")
     public String principal;
-
-    @ColumnInfo(name = "allowed")
-    public boolean allowed;
 
     @ColumnInfo(name = "category")
     public @Category int category;

@@ -2,12 +2,15 @@ package org.mozilla.vrbrowser.browser;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Observable;
 import android.graphics.Color;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.databinding.ObservableBoolean;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import org.json.JSONArray;
@@ -17,7 +20,6 @@ import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.telemetry.TelemetryHolder;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserActivity;
-import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.ui.viewmodel.SettingsViewModel;
@@ -219,10 +221,16 @@ public class SettingsStore {
                 mContext.getString(R.string.settings_key_drm_playback), DRM_PLAYBACK_DEFAULT);
     }
 
+    public boolean isDrmContentPlaybackSet() {
+        return mPrefs.contains(mContext.getString(R.string.settings_key_drm_playback));
+    }
+
     public void setDrmContentPlaybackEnabled(boolean isEnabled) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_drm_playback), isEnabled);
         editor.commit();
+
+        mSettingsViewModel.setIsDrmEnabled(isEnabled);
     }
 
     public int getTrackingProtectionLevel() {
@@ -616,6 +624,8 @@ public class SettingsStore {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_pop_up_blocking), isEnabled);
         editor.commit();
+
+        mSettingsViewModel.setIsPopUpBlockingEnabled(isEnabled);
     }
 
     public boolean isWebXREnabled() {
@@ -626,6 +636,8 @@ public class SettingsStore {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_webxr), isEnabled);
         editor.commit();
+
+        mSettingsViewModel.setIsWebXREnabled(isEnabled);
     }
 
     public void setWhatsNewDisplayed(boolean isEnabled) {

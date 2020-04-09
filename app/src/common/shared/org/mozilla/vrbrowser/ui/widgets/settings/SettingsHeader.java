@@ -55,23 +55,21 @@ public class SettingsHeader extends FrameLayout {
         // Inflate this data binding layout
         mBinding = DataBindingUtil.inflate(inflater, R.layout.options_header, this, true);
 
-        if (attributes != null) {
-            String title = attributes.getString(R.styleable.SettingsHeader_title);
-            String description = attributes.getString(R.styleable.SettingsHeader_description);
-            int helpVisibility = attributes.getInt(R.styleable.SettingsHeader_helpVisibility, VISIBLE);
+        String title = attributes.getString(R.styleable.SettingsHeader_title);
+        String description = attributes.getString(R.styleable.SettingsHeader_description);
+        int helpVisibility = attributes.getInt(R.styleable.SettingsHeader_helpVisibility, VISIBLE);
 
-            if (title != null) {
-                mBinding.setTitle(title);
-            }
-
-            if (description != null) {
-                mBinding.setDescription(description);
-            } else {
-                mBinding.displayLanguageDescription.setVisibility(View.GONE);
-            }
-
-            mBinding.setHelpVisibility(helpVisibility);
+        if (title != null) {
+            mBinding.setTitle(title);
         }
+
+        if (description != null) {
+            mBinding.setDescription(description);
+        } else {
+            mBinding.displayLanguageDescription.setVisibility(View.GONE);
+        }
+
+        mBinding.setHelpVisibility(helpVisibility);
     }
 
     public void setBackClickListener(@NonNull View.OnClickListener listener) {
@@ -92,10 +90,12 @@ public class SettingsHeader extends FrameLayout {
 
     public void setDescription(@NonNull String text) {
         mBinding.setDescription(text);
+        mBinding.displayLanguageDescription.setVisibility(View.VISIBLE);
     }
 
     public void setDescription(@StringRes int textRes) {
         mBinding.setDescription(getResources().getString(textRes));
+        mBinding.displayLanguageDescription.setVisibility(View.VISIBLE);
     }
 
 }

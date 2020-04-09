@@ -105,6 +105,7 @@ class PrivacyOptionsView extends SettingsView {
         }
 
         mBinding.drmContentPlaybackSwitch.setOnCheckedChangeListener(mDrmContentListener);
+        mBinding.drmContentPlaybackSwitch.setDescription(getResources().getString(R.string.security_options_drm_content_v1, getResources().getString(R.string.sumo_drm_url)));
         mBinding.drmContentPlaybackSwitch.setLinkClickListener((widget, url) -> {
             mWidgetManager.openNewTabForeground(url);
             exitWholeSettings();
@@ -246,7 +247,6 @@ class PrivacyOptionsView extends SettingsView {
 
         if (doApply) {
             SettingsStore.getInstance(getContext()).setDrmContentPlaybackEnabled(value);
-            // TODO Enable/Disable DRM content playback
         }
     }
 
