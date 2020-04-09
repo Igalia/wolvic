@@ -693,7 +693,22 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             return;
         }
         if (!mWindows.handleBack()) {
-            super.onBackPressed();
+            if (DeviceType.isPicoVR()) {
+                mWindows.getFocusedWindow().showConfirmPrompt(
+                        getString(R.string.app_name),
+                        getString(R.string.exit_confirm_dialog_body, getString(R.string.app_name)),
+                        new String[]{
+                                getString(R.string.exit_confirm_dialog_button_cancel),
+                                getString(R.string.exit_confirm_dialog_button_quit),
+                        }, index -> {
+                            if (index == PromptDialogWidget.POSITIVE) {
+                                VRBrowserActivity.super.onBackPressed();
+                            }
+                        });
+
+            } else {
+                super.onBackPressed();
+            }
         }
     }
 

@@ -42,6 +42,7 @@ public:
   void EndFrame(const FrameEndMode aMode) override;
   bool IsInGazeMode() const override;
   int32_t GazeModeIndex() const override;
+  bool IsControllerLightEnabled() const override;
   // Custom methods
   void Pause();
   void Resume();

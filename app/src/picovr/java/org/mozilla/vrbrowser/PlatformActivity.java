@@ -149,7 +149,7 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
 
     @Override
     public void onBackPressed() {
-        // Eat the back button.
+        super.onBackPressed();
     }
 
     @Override

@@ -373,13 +373,13 @@ const std::string
 DeviceDelegatePicoVR::GetControllerModelName(const int32_t aModelIndex) const {
   if (m.type == k6DofHeadSet) {
     if (aModelIndex == 0) {
-      return "left_controller.obj";
+      return "neo2_left.obj";
     } else if (aModelIndex == 1) {
-      return "right_controller.obj";
+      return "neo2_right.obj";
     }
     return "";
   } else {
-    return "g2-Controller.obj";
+    return "g2.obj";
   }
 }
 
@@ -447,6 +447,11 @@ DeviceDelegatePicoVR::IsInGazeMode() const {
 int32_t
 DeviceDelegatePicoVR::GazeModeIndex() const {
   return m.gazeIndex;
+}
+
+bool
+DeviceDelegatePicoVR::IsControllerLightEnabled() const {
+  return false;
 }
 
 void
@@ -539,7 +544,7 @@ DeviceDelegatePicoVR::UpdateControllerButtons(const int aIndex, const int32_t aB
 }
 
 void
-DeviceDelegatePicoVR:: Recenter() {
+DeviceDelegatePicoVR::Recenter() {
     m.recentered = true;
     m.setHeadOffset = true;
 }

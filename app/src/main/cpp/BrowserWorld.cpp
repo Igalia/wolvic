@@ -204,7 +204,6 @@ struct BrowserWorld::State {
     rootOpaqueParent->AddNode(rootOpaque);
     //rootOpaque->AddLight(light);
     //rootTransparent->AddLight(light);
-    rootController->AddLight(light);
     cullVisitor = CullVisitor::Create(create);
     drawList = DrawableList::Create(create);
     controllers = ControllerContainer::Create(create, rootTransparent);
@@ -804,6 +803,9 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
     m.controllers->SetPointerColor(vrb::Color(VRBrowser::GetPointerColor()));
     m.loadingAnimation->LoadModels(m.loader);
     m.rootController->AddNode(m.controllers->GetRoot());
+    if (m.device->IsControllerLightEnabled()) {
+      m.rootController->AddLight(m.light);
+    }
 #if !defined(SNAPDRAGONVR)
     UpdateEnvironment();
     // Don't load the env model, we are going for skyboxes in v1.0
