@@ -335,7 +335,7 @@ struct DeviceDelegateWaveVR::State {
             controller.gripPressedCount = -1;
           }
         } else {
-          delegate->SetButtonState(controller.index, ControllerDelegate::BUTTON_OTHERS, device::kImmersiveButtonSqueeze,
+          delegate->SetButtonState(controller.index, ControllerDelegate::BUTTON_SQUEEZE, device::kImmersiveButtonSqueeze,
                   gripPressed, gripPressed);
           controller.gripPressedCount = 0;
         }

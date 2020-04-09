@@ -484,7 +484,7 @@ struct DeviceDelegateOculusVR::State {
         controller->SetScrolledDelta(controllerState.index, -trackpadX, trackpadY);
 
         const bool gripPressed = (controllerState.inputState.Buttons & ovrButton_GripTrigger) != 0;
-        controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_OTHERS, device::kImmersiveButtonSqueeze,
+        controller->SetButtonState(controllerState.index, ControllerDelegate::BUTTON_SQUEEZE, device::kImmersiveButtonSqueeze,
                 gripPressed, gripPressed, controllerState.inputState.GripTrigger);
         if (controllerState.hand == ElbowModel::HandEnum::Left) {
           const bool xPressed = (controllerState.inputState.Buttons & ovrButton_X) != 0;

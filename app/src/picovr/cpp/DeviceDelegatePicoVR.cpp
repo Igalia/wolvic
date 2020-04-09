@@ -191,7 +191,7 @@ struct DeviceDelegatePicoVR::State {
         controllerDelegate->SetSelectActionStop(i);
       }
       if (type == k6DofHeadSet) {
-        controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_OTHERS, device::kImmersiveButtonSqueeze, gripPressed,
+        controllerDelegate->SetButtonState(i, ControllerDelegate::BUTTON_SQUEEZE, device::kImmersiveButtonSqueeze, gripPressed,
                                            gripPressed, gripPressed ? 20.0f : 0.0f);
         if (gripPressed && renderMode == device::RenderMode::Immersive) {
           controllerDelegate->SetSqueezeActionStart(i);
