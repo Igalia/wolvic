@@ -121,6 +121,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     private Accounts mAccounts;
     private Services mServices;
     private PromptDialogWidget mNoInternetDialog;
+    private boolean mCompositorPaused = false;
 
     private enum PanelType {
         NONE,
@@ -428,6 +429,10 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     }
 
     public void pauseCompositor() {
+        if (mCompositorPaused) {
+            return;
+        }
+        mCompositorPaused = true;
         for (WindowWidget window: mRegularWindows) {
             window.pauseCompositor();
         }
@@ -437,6 +442,10 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     }
 
     public void resumeCompositor() {
+        if (!mCompositorPaused) {
+            return;
+        }
+        mCompositorPaused = false;
         for (WindowWidget window: mRegularWindows) {
             window.resumeCompositor();
         }
@@ -453,6 +462,9 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
     public void onResume() {
         mIsPaused = false;
+        if (mCompositorPaused) {
+            resumeCompositor();
+        }
 
         TelemetryWrapper.resetOpenedWindowsCount(mRegularWindows.size(), false);
         TelemetryWrapper.resetOpenedWindowsCount(mPrivateWindows.size(), true);
