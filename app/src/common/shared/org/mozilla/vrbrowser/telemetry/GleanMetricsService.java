@@ -46,14 +46,13 @@ public class GleanMetricsService {
         initialized = true;
 
         final boolean telemetryEnabled = SettingsStore.getInstance(aContext).isTelemetryEnabled();
-        Configuration config = new Configuration(Configuration.DEFAULT_TELEMETRY_ENDPOINT, BuildConfig.BUILD_TYPE);
-        Glean.INSTANCE.initialize(aContext, telemetryEnabled, config);
-
         if (telemetryEnabled) {
             GleanMetricsService.start();
         } else {
             GleanMetricsService.stop();
         }
+        Configuration config = new Configuration(Configuration.DEFAULT_TELEMETRY_ENDPOINT, BuildConfig.BUILD_TYPE);
+        Glean.INSTANCE.initialize(aContext, true, config);
     }
 
     // It would be called when users turn on/off the setting of telemetry.
