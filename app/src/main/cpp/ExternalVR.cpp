@@ -127,7 +127,7 @@ struct ExternalVR::State {
   vrb::Vector eyeOffsets[device::EyeCount];
   uint64_t lastFrameId = 0;
   bool firstPresentingFrame = false;
-  bool compositorEnabled = false;
+  bool compositorEnabled = true;
   bool waitingForExit = false;
 
   State() {

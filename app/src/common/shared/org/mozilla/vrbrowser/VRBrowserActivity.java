@@ -961,7 +961,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             return;
         }
         mIsPresentingImmersive = true;
-        mWindows.enterImmersiveMode();
+        runOnUiThread(() -> mWindows.enterImmersiveMode());
+
         TelemetryWrapper.startImmersive();
         GleanMetricsService.startImmersive();
         PauseCompositorRunnable runnable = new PauseCompositorRunnable();
@@ -985,7 +986,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             return;
         }
         mIsPresentingImmersive = false;
-        mWindows.exitImmersiveMode();
+        runOnUiThread(() -> mWindows.exitImmersiveMode());
+
         // Show the window in front of you when you exit immersive mode.
         resetUIYaw();
 
