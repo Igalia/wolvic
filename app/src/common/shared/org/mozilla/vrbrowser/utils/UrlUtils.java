@@ -10,7 +10,6 @@ import android.util.Base64;
 import android.util.Patterns;
 import android.webkit.URLUtil;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import org.mozilla.vrbrowser.R;
@@ -76,12 +75,15 @@ public class UrlUtils {
 
     private static Pattern ipPattern = Pattern.compile("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(:[0-9]+)?(/[^ ]*)?");
     private static Pattern localhostPattern = Pattern.compile("^(localhost)(:[0-9]+)?(/[^ ]*)?", Pattern.CASE_INSENSITIVE);
-    public static boolean isIPUri(@NonNull String aUri) {
+    public static boolean isIPUri(@Nullable String aUri) {
+        if (aUri == null) {
+            return false;
+        }
         String uri = stripProtocol(aUri).trim();
         return localhostPattern.matcher(uri).find() || ipPattern.matcher(uri).find();
     }
 
-    public static boolean isLocalIP(@NonNull String aUri) {
+    public static boolean isLocalIP(@Nullable String aUri) {
         if (!isIPUri(aUri)) {
             return false;
         }
@@ -92,24 +94,24 @@ public class UrlUtils {
                localhostPattern.matcher(uri).find();
     }
 
-    public static boolean isPrivateAboutPage(@NonNull Context context,  @NonNull String uri) {
+    public static boolean isPrivateAboutPage(@Nullable Context context,  @Nullable String uri) {
         InternalPages.PageResources pageResources = InternalPages.PageResources.create(R.raw.private_mode, R.raw.private_style);
         byte[] privatePageBytes = InternalPages.createAboutPage(context, pageResources);
-        return uri.equals("data:text/html;base64," + Base64.encodeToString(privatePageBytes, Base64.NO_WRAP));
+        return uri != null && uri.equals("data:text/html;base64," + Base64.encodeToString(privatePageBytes, Base64.NO_WRAP));
     }
 
-    public static Boolean isHomeUri(@NonNull Context context, @Nullable String aUri) {
-        return aUri != null && aUri.toLowerCase().startsWith(
+    public static Boolean isHomeUri(@Nullable Context context, @Nullable String aUri) {
+        return aUri != null && context != null && aUri.toLowerCase().startsWith(
                 SettingsStore.getInstance(context).getHomepage()
         );
     }
 
-    public static Boolean isDataUri(@NonNull String aUri) {
-        return aUri.startsWith("data");
+    public static Boolean isDataUri(@Nullable String aUri) {
+        return aUri != null && aUri.startsWith("data");
     }
 
-    public static Boolean isBlankUri(@NonNull Context context, @NonNull String aUri) {
-        return aUri.equals(context.getString(R.string.about_blank));
+    public static Boolean isBlankUri(@Nullable Context context, @Nullable String aUri) {
+        return aUri != null && context != null && aUri.equals(context.getString(R.string.about_blank));
     }
 
     public static String titleBarUrl(@Nullable String aUri) {
@@ -138,31 +140,19 @@ public class UrlUtils {
     public static final String ABOUT_HISTORY = "about://history";
 
     public static boolean isHistoryUrl(@Nullable String url) {
-        if (url == null) {
-            return false;
-        }
-
-        return url.equalsIgnoreCase(ABOUT_HISTORY);
+        return url != null && url.equalsIgnoreCase(ABOUT_HISTORY);
     }
 
     public static final String ABOUT_BOOKMARKS = "about://bookmarks";
 
     public static boolean isBookmarksUrl(@Nullable String url) {
-        if (url == null) {
-            return false;
-        }
-
-        return url.equalsIgnoreCase(ABOUT_BOOKMARKS);
+        return url != null && url.equalsIgnoreCase(ABOUT_BOOKMARKS);
     }
 
     public static final String ABOUT_PRIVATE = "about://privatebrowsing";
 
     public static boolean isPrivateUrl(@Nullable String url) {
-        if (url == null) {
-            return false;
-        }
-
-        return url.equalsIgnoreCase(ABOUT_PRIVATE);
+        return url != null && url.equalsIgnoreCase(ABOUT_PRIVATE);
     }
 
     public static boolean isAboutPage(@Nullable String url) {
