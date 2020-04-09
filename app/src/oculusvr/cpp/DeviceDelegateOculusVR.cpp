@@ -1058,7 +1058,7 @@ DeviceDelegateOculusVR::CreateLayerQuad(int32_t aWidth, int32_t aHeight,
     return nullptr;
   }
   VRLayerQuadPtr layer = VRLayerQuad::Create(aWidth, aHeight, aSurfaceType);
-  OculusLayerQuadPtr oculusLayer = OculusLayerQuad::Create(layer);
+  OculusLayerQuadPtr oculusLayer = OculusLayerQuad::Create(m.java.Env, layer);
   m.AddUILayer(oculusLayer, aSurfaceType);
   return layer;
 }
@@ -1074,7 +1074,7 @@ DeviceDelegateOculusVR::CreateLayerQuad(const VRLayerSurfacePtr& aMoveLayer) {
 
   for (int i = 0; i < m.uiLayers.size(); ++i) {
     if (m.uiLayers[i]->GetLayer() == aMoveLayer) {
-      oculusLayer = OculusLayerQuad::Create(layer, m.uiLayers[i]);
+      oculusLayer = OculusLayerQuad::Create(m.java.Env, layer, m.uiLayers[i]);
       m.uiLayers.erase(m.uiLayers.begin() + i);
       break;
     }
@@ -1092,7 +1092,7 @@ DeviceDelegateOculusVR::CreateLayerCylinder(int32_t aWidth, int32_t aHeight,
     return nullptr;
   }
   VRLayerCylinderPtr layer = VRLayerCylinder::Create(aWidth, aHeight, aSurfaceType);
-  OculusLayerCylinderPtr oculusLayer = OculusLayerCylinder::Create(layer);
+  OculusLayerCylinderPtr oculusLayer = OculusLayerCylinder::Create(m.java.Env, layer);
   m.AddUILayer(oculusLayer, aSurfaceType);
   return layer;
 }
@@ -1108,7 +1108,7 @@ DeviceDelegateOculusVR::CreateLayerCylinder(const VRLayerSurfacePtr& aMoveLayer)
 
   for (int i = 0; i < m.uiLayers.size(); ++i) {
     if (m.uiLayers[i]->GetLayer() == aMoveLayer) {
-      oculusLayer = OculusLayerCylinder::Create(layer, m.uiLayers[i]);
+      oculusLayer = OculusLayerCylinder::Create(m.java.Env, layer, m.uiLayers[i]);
       m.uiLayers.erase(m.uiLayers.begin() + i);
       break;
     }

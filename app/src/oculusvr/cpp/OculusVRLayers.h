@@ -246,8 +246,9 @@ public:
   }
 
 protected:
-  void TakeSurface(const OculusLayerPtr &aSource) {
+  void TakeSurface(JNIEnv * aEnv, const OculusLayerPtr &aSource) {
     this->swapChain = aSource->GetSwapChain();
+    this->jniEnv = aEnv;
     this->surface = aSource->GetSurface();
     this->surfaceChangedTarget = aSource->GetSurfaceChangedTarget();
     if (this->surfaceChangedTarget) {
@@ -307,7 +308,7 @@ typedef std::shared_ptr<OculusLayerQuad> OculusLayerQuadPtr;
 class OculusLayerQuad : public OculusLayerSurface<VRLayerQuadPtr, ovrLayerProjection2> {
 public:
   static OculusLayerQuadPtr
-  Create(const VRLayerQuadPtr &aLayer, const OculusLayerPtr &aSource = nullptr);
+  Create(JNIEnv *aEnv, const VRLayerQuadPtr &aLayer, const OculusLayerPtr &aSource = nullptr);
   void Init(JNIEnv *aEnv, vrb::RenderContextPtr &aContext) override;
   void Update(const ovrTracking2 &aTracking, ovrTextureSwapChain *aClearSwapChain) override;
 };
@@ -320,7 +321,7 @@ typedef std::shared_ptr<OculusLayerCylinder> OculusLayerCylinderPtr;
 class OculusLayerCylinder : public OculusLayerSurface<VRLayerCylinderPtr, ovrLayerCylinder2> {
 public:
   static OculusLayerCylinderPtr
-  Create(const VRLayerCylinderPtr &aLayer, const OculusLayerPtr &aSource = nullptr);
+  Create(JNIEnv *aEnv, const VRLayerCylinderPtr &aLayer, const OculusLayerPtr &aSource = nullptr);
   void Init(JNIEnv *aEnv, vrb::RenderContextPtr &aContext) override;
   void Update(const ovrTracking2 &aTracking, ovrTextureSwapChain *aClearSwapChain) override;
 };
