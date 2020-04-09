@@ -294,7 +294,6 @@ public class WindowViewModel extends AndroidViewModel {
         isWindowVisible.postValue(isWindowVisible.getValue());
         placement.postValue(placement.getValue());
         isOnlyWindow.postValue(isOnlyWindow.getValue());
-        isFullscreen.postValue(isFullscreen.getValue());
         isResizeMode.postValue(isResizeMode.getValue());
         isPrivateSession.postValue(isPrivateSession.getValue());
         isInsecure.postValue(isInsecure.getValue());
