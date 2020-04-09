@@ -123,7 +123,7 @@ class LanguageOptionsView extends SettingsView {
             return text.indexOf("[");
         }
 
-        return text.length() - 1;
+        return text.length();
     }
 
     private SpannableStringBuilder getSpannedLanguageText(@NonNull String language) {
