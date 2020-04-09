@@ -482,10 +482,10 @@ Cylinder::ConvertToQuadCoordinates(const vrb::Vector& point, float& aX, float& a
     if (ratioX < 0.0f) {
       ratioX = 0.0f;
     }
-
-    aX = ratioX * m.textureWidth;
-    aY = ratioY * m.textureHeight;
   }
+
+  aX = ratioX * m.textureWidth;
+  aY = ratioY * m.textureHeight;
 }
 
 void

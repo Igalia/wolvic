@@ -53,7 +53,7 @@ public:
   void GetWorldSize(float& aWidth, float& aHeight) const;
   bool TestControllerIntersection(const vrb::Vector& aStartPoint, const vrb::Vector& aDirection, vrb::Vector& aResult, vrb::Vector& aNormal,
                                   const bool aClamp, bool& aIsInWidget, float& aDistance) const;
-  void ConvertToWidgetCoordinates(const vrb::Vector& aPoint, float& aX, float& aY) const;
+  void ConvertToWidgetCoordinates(const vrb::Vector& aPoint, float& aX, float& aY, bool aClamp = true) const;
   vrb::Vector ConvertToWorldCoordinates(const vrb::Vector& aLocalPoint) const;
   vrb::Vector ConvertToWorldCoordinates(const float aWidgetX, const float aWidgetY) const;
   const vrb::Matrix GetTransform() const;

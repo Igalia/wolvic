@@ -338,12 +338,12 @@ Widget::TestControllerIntersection(const vrb::Vector& aStartPoint, const vrb::Ve
 }
 
 void
-Widget::ConvertToWidgetCoordinates(const vrb::Vector& point, float& aX, float& aY) const {
+Widget::ConvertToWidgetCoordinates(const vrb::Vector& point, float& aX, float& aY, bool aClamp) const {
   bool clamp = !m.resizing;
   if (m.quad) {
-    m.quad->ConvertToQuadCoordinates(point, aX, aY, clamp);
+    m.quad->ConvertToQuadCoordinates(point, aX, aY, clamp && aClamp);
   } else {
-    m.cylinder->ConvertToQuadCoordinates(point, aX, aY, clamp);
+    m.cylinder->ConvertToQuadCoordinates(point, aX, aY, clamp && aClamp);
   }
 }
 
