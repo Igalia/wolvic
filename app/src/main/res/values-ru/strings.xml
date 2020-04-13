@@ -469,7 +469,7 @@
     <string name="privacy_options_tracking_off">Отключена</string>
 
     <!-- This string is used as the description of the 'Off' radio button of the 'Enhanced Tracking protection' settings option. -->
-    <string name="privacy_options_tracking_off_description">Позволяет каждый странице отслеживать вас в Интернете, чтобы собирать данные о вашем поведении и интересах при веб-сёрфинге.</string>
+    <string name="privacy_options_tracking_off_description">Позволяет любой странице отслеживать вас в Интернете для сбора данных о вашем поведении и интересах при веб-сёрфинге.</string>
 
     <!-- This string is used to label radio buttons for setting fixed-foveated-rendering (FFR) level.
      The term "foveation" derives from "fovea", the area of higher-resolution vision in the human retina.

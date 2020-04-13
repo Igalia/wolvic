@@ -577,7 +577,7 @@
     <string name="fxa_account_options_bookmarks_sync">북마크</string>
 
     <!-- This string is used to in the FxA account manage panel as a description for the History sync switch. -->
-    <string name="fxa_account_options_history_sync">방문 기록</string>
+    <string name="fxa_account_options_history_sync">기록</string>
 
     <!-- This string is used to in the FxA account manage panel as a description for the Sign In/Out button. -->
     <string name="fxa_account_options_reset">초기화</string>
@@ -890,16 +890,16 @@
     <string name="bookmarks_sync">동기화</string>
 
     <!-- This string is displayed as the title of the history list, which contains the user's visited websites. -->
-    <string name="history_title">방문 기록</string>
+    <string name="history_title">기록</string>
 
     <!-- This string is displayed as the title of the history list when the history is empty. -->
-    <string name="history_empty">방문 기록이 비어있습니다</string>
+    <string name="history_empty">기록이 비어 있습니다</string>
 
     <!-- This string is displayed under the history title in the history list. -->
     <string name="history_description">여기에서 방문 기록에 액세스 할 수 있습니다</string>
 
     <!-- This string is displayed in the middle of the history list while the history is being loaded. -->
-    <string name="history_loading">방문 기록 로딩 중</string>
+    <string name="history_loading">기록 로딩 중</string>
 
     <!-- This string is displayed as the section title in the history list for history entries that happened today. -->
     <string name="history_section_today">오늘</string>
@@ -915,7 +915,7 @@
 
     <!-- This string is displayed is the "Clear History" button in the history list. When pressed a dialog for
          clearing history is displayed. -->
-    <string name="history_clear">방문 기록 삭제</string>
+    <string name="history_clear">기록 삭제</string>
 
     <!-- This string is displayed is the "Sync" button in the history panel. When pressed the
          history is synced with the Firefox account. -->
@@ -928,11 +928,11 @@
     <string name="fxa_signout_confirmation_title">Firefox 계정에서 로그아웃 하시겠습니까?</string>
 
     <!-- This string is displayed in the body of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
-    <string name="fxa_signout_confirmation_body">로그 아웃하면 다른 기기에서 탭을 보내거나 받을 수 없습니다. 북마크와 방문 기록도 동기화가 중지됩니다.</string>
+    <string name="fxa_signout_confirmation_body">로그 아웃하면 다른 기기에서 탭을 보내거나 받을 수 없습니다. 북마크와 기록도 동기화가 중지됩니다.</string>
 
     <!-- This string is displayed in the checkbox text of the FxA sign out dialog displayed when the user clicks on the Sign out button.
          When checked the history and Bookmarks will be deleted from gthe device after signing in. -->
-    <string name="fxa_signout_confirmation_checkbox">이 기기에서 방문기록 및 북마크 지우기</string>
+    <string name="fxa_signout_confirmation_checkbox">이 기기에서 기록 및 북마크 지우기</string>
 
     <!-- This string is displayed in the cancel button of the FxA sign out dialog displayed when the user clicks on the Sign out button.
          If clicked the user will be signed out from their FxA account and the dialog will be dismissed. -->
@@ -1206,11 +1206,11 @@
     <!-- This string is for the tooltip that appears when the user hovers over the 'History' icon in the
          tray and the History view is closed. The button it labels, when pressed, opens a list view of the user's visited
          pages. -->
-    <string name="open_history_tooltip">방문 기록 열기</string>
+    <string name="open_history_tooltip">기록 열기</string>
 
     <!-- This string is for the tooltip that appears when the user hovers over the 'History' icon in the
          tray and the History view is closed. The button it labels, when pressed, closes the History view. -->
-    <string name="close_history_tooltip">방문 기록 닫기</string>
+    <string name="close_history_tooltip">기록 닫기</string>
 
     <!-- This string is displayed in any button used for removing all the items in the current context. -->
     <string name="remove_all">모두 삭제</string>
@@ -1304,7 +1304,7 @@
     <string name="url_bookmarks_title">북마크</string>
 
     <!-- This string is displayed in the URL bar when the user is in the history panel -->
-    <string name="url_history_title">방문 기록</string>
+    <string name="url_history_title">기록</string>
 
     <!-- This string is displayed in the Clear button on top of the window when in private mode. It only appears
          when there is one window left. When clicked, it closes the private session -->
@@ -1431,7 +1431,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body_sub_1">Firefox 계정을 사용하면 모든 기기에서 북마크와 방문 기록을 동기화 할 수 있습니다.</string>
+    <string name="whats_new_body_sub_1">Firefox 계정을 사용하면 모든 기기에서 북마크와 기록을 동기화 할 수 있습니다.</string>
 
 
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
