@@ -62,6 +62,14 @@
                     android:layout_height="wrap_content"
                     app:description="@string/security_options_restore_tabs" />
 
+                <org.mozilla.vrbrowser.ui.views.settings.RadioGroupSetting
+                    android:id="@+id/downloads_storage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:description="@string/security_options_downloads_storage"
+                    app:options="@array/privacy_options_downloads_storage"
+                    app:values="@array/privacy_options_downloads_storage_values" />
+
                 <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
                     android:id="@+id/popUpsBlockingSwitch"
                     android:layout_width="match_parent"

@@ -102,6 +102,7 @@ tabs:
       - received
       - pre_existing
       - browser
+      - downloads
     bugs:
       - https://github.com/MozillaReality/FirefoxReality/issues/1609
     data_reviews:

@@ -87,6 +87,7 @@
                 android:layout_width="@{historyViewModel.isNarrow ? @dimen/library_icon_size_narrow : @dimen/library_icon_size_wide, default=wrap_content}"
                 android:layout_height="@{historyViewModel.isNarrow ? @dimen/library_icon_size_narrow : @dimen/library_icon_size_wide, default=wrap_content}"
                 android:src="@drawable/ic_icon_history"
+                android:tint="@color/concrete"
                 app:srcCompat="@drawable/ic_icon_history" />
 
             <TextView
@@ -109,7 +110,7 @@
                 android:text="@string/history_description"
                 android:textAlignment="center"
                 android:textAllCaps="false"
-                android:textColor="@color/fog"
+                android:textColor="@color/concrete"
                 android:textSize="@dimen/text_medium_big_size"
                 android:textStyle="normal"
                 android:maxWidth="360dp" />

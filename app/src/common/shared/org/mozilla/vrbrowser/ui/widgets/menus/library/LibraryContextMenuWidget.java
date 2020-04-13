@@ -1,4 +1,4 @@
-package org.mozilla.vrbrowser.ui.widgets.menus;
+package org.mozilla.vrbrowser.ui.widgets.menus.library;
 
 import android.content.Context;
 import android.content.res.Configuration;
@@ -6,30 +6,24 @@ import android.content.res.Configuration;
 import androidx.annotation.NonNull;
 
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.ui.callbacks.LibraryItemContextMenuClickCallback;
+import org.mozilla.vrbrowser.ui.callbacks.LibraryContextMenuCallback;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
+import org.mozilla.vrbrowser.ui.widgets.menus.MenuWidget;
 import org.mozilla.vrbrowser.utils.AnimationHelper;
 
 import java.util.ArrayList;
 import java.util.Optional;
 
-public class LibraryMenuWidget extends MenuWidget {
-
-    public enum LibraryItemType {
-        BOOKMARKS,
-        HISTORY
-    }
+public abstract class LibraryContextMenuWidget extends MenuWidget {
 
     public static class LibraryContextMenuItem {
 
         private String url;
         private String title;
-        private LibraryItemType type;
 
-        public LibraryContextMenuItem(@NonNull String url, String title, LibraryItemType type) {
+        public LibraryContextMenuItem(@NonNull String url, String title) {
             this.url = url;
             this.title = title;
-            this.type = type;
         }
 
         public String getUrl() {
@@ -40,18 +34,14 @@ public class LibraryMenuWidget extends MenuWidget {
             return title;
         }
 
-        public LibraryItemType getType() {
-            return type;
-        }
-
     }
 
     ArrayList<MenuItem> mItems;
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    Optional<LibraryItemContextMenuClickCallback> mItemDelegate;
+    Optional<LibraryContextMenuCallback> mItemDelegate;
     LibraryContextMenuItem mItem;
 
-    public LibraryMenuWidget(Context aContext, LibraryContextMenuItem item, boolean canOpenWindows, boolean isBookmarked) {
+    public LibraryContextMenuWidget(Context aContext, LibraryContextMenuItem item, boolean canOpenWindows, boolean isBookmarked) {
         super(aContext, R.layout.library_menu);
         initialize();
 
@@ -91,7 +81,7 @@ public class LibraryMenuWidget extends MenuWidget {
 
     @Override
     public void hide(int aHideFlags) {
-        AnimationHelper.scaleOut(findViewById(R.id.menuContainer), 100, 0, () -> LibraryMenuWidget.super.hide(aHideFlags));
+        AnimationHelper.scaleOut(findViewById(R.id.menuContainer), 100, 0, () -> LibraryContextMenuWidget.super.hide(aHideFlags));
     }
 
     @Override
@@ -107,7 +97,7 @@ public class LibraryMenuWidget extends MenuWidget {
         aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.context_menu_z_distance);
     }
 
-    public void setItemDelegate(LibraryItemContextMenuClickCallback delegate) {
+    public void setItemDelegate(LibraryContextMenuCallback delegate) {
         mItemDelegate = Optional.ofNullable(delegate);;
     }
 
@@ -126,24 +116,14 @@ public class LibraryMenuWidget extends MenuWidget {
                 R.drawable.ic_icon_newtab,
                 () -> mItemDelegate.ifPresent((present -> mItemDelegate.get().onOpenInNewTabClick(mItem)))));
 
-        if (mItem.type == LibraryItemType.HISTORY) {
-            mItems.add(new MenuItem(getContext().getString(
-                    isBookmarked ? R.string.history_context_remove_bookmarks : R.string.history_context_add_bookmarks),
-                    isBookmarked ? R.drawable.ic_icon_bookmarked_active : R.drawable.ic_icon_bookmarked,
-                    () -> mItemDelegate.ifPresent((present -> {
-                        if (isBookmarked) {
-                            mItemDelegate.get().onRemoveFromBookmarks(mItem);
-
-                        } else {
-                            mItemDelegate.get().onAddToBookmarks(mItem);
-                        }
-                    }))));
-        }
+        setupCustomMenuItems(canOpenWindows, isBookmarked);
 
         super.updateMenuItems(mItems);
 
         mWidgetPlacement.height = mItems.size() * WidgetPlacement.dpDimension(getContext(), R.dimen.library_menu_item_height);
         mWidgetPlacement.height += mBorderWidth * 2;
     }
+
+    protected void setupCustomMenuItems(boolean canOpenWindows, boolean isBookmarked) {}
 
 }

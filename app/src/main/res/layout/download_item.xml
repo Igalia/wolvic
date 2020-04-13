@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="org.mozilla.vrbrowser.downloads.Download"/>
+        <import type="android.widget.LinearLayout"/>
+
+        <variable
+            name="item"
+            type="org.mozilla.vrbrowser.downloads.Download" />
+
+        <variable
+            name="callback"
+            type="org.mozilla.vrbrowser.ui.callbacks.DownloadItemCallback" />
+
+        <variable
+            name="isHovered"
+            type="boolean" />
+
+        <variable
+            name="isNarrow"
+            type="boolean" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/library_item_row_height"
+        app:layout_height="@{isNarrow ? @dimen/library_item_row_height_narrow : @dimen/library_item_row_height}"
+        android:layout_marginEnd="20dp"
+        android:background="@color/void_color">
+
+        <RelativeLayout
+            android:id="@+id/layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/library_item_background_color"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:onClick="@{(view) ->  callback.onClick(view, item)}"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:soundEffectsEnabled="false"
+            android:addStatesFromChildren="true">
+
+            <LinearLayout
+                android:id="@+id/title_url"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@id/time_buttons"
+                android:gravity="center_vertical"
+                android:orientation="@{isNarrow ? LinearLayout.VERTICAL : LinearLayout.HORIZONTAL}">
+
+                <TextView
+                    android:id="@+id/url"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="middle"
+                    android:paddingEnd="20dp"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
+                    android:text="@{item.filename}"
+                    android:textColor="@color/library_panel_title_text_color"
+                    android:textSize="@dimen/library_item_title_text_size"
+                    android:textStyle="bold"
+                    tools:text="http://mozilla.org" />
+
+                <TextView
+                    android:id="@+id/progress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:ellipsize="end"
+                    android:paddingEnd="20dp"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
+                    android:gravity="end"
+                    android:text="@{Download.progressString(context, item)}"
+                    android:textColor="@color/library_panel_description_color"
+                    android:textSize="@dimen/library_item_url_text_size"
+                    tools:text="1MB" />
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/time_buttons"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:gravity="center_vertical"
+                android:addStatesFromChildren="true">
+
+                <TextView
+                    android:id="@+id/time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|end"
+                    android:ellipsize="end"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
+                    android:textColor="@color/library_panel_description_color"
+                    android:textSize="@dimen/library_item_date_text_size"
+                    app:bindDate="@{item.lastModified}"
+                    app:visibleInvisible="@{!isHovered}"
+                    tools:text="8/2/19, 2:18 PM" />
+
+                <LinearLayout
+                    android:id="@+id/buttons_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:orientation="horizontal"
+                    app:visibleInvisible="@{isHovered}"
+                    android:addStatesFromChildren="true">
+
+                    <ImageView
+                        android:id="@+id/trash"
+                        android:layout_width="@dimen/library_item_row_height"
+                        android:layout_height="@dimen/library_item_row_height"
+                        android:layout_gravity="center_vertical|end"
+                        android:padding="@dimen/library_icon_padding_max"
+                        android:soundEffectsEnabled="false"
+                        android:src="@drawable/ic_icon_trash"
+                        android:tint="@color/library_panel_icon_color"
+                        app:srcCompat="@drawable/ic_icon_trash" />
+
+                    <ImageView
+                        android:id="@+id/more"
+                        android:layout_width="@dimen/library_item_row_height"
+                        android:layout_height="@dimen/library_item_row_height"
+                        android:layout_gravity="center_vertical|end"
+                        android:padding="@dimen/library_icon_padding_max"
+                        android:soundEffectsEnabled="false"
+                        android:src="@drawable/ic_icon_more_options"
+                        android:tint="@color/library_panel_icon_color"
+                        app:srcCompat="@drawable/ic_icon_more_options" />
+                </LinearLayout>
+            </FrameLayout>
+        </RelativeLayout>
+    </FrameLayout>
+</layout>

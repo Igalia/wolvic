@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="android.view.View"/>
+
+        <variable
+            name="downloadsViewModel"
+            type="org.mozilla.vrbrowser.ui.viewmodel.DownloadsViewModel" />
+
+        <variable
+            name="callback"
+            type="org.mozilla.vrbrowser.ui.callbacks.DownloadsCallback" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/panel_background"
+        android:orientation="vertical"
+        android:paddingTop="30dp"
+        android:paddingBottom="30dp">
+
+        <include
+            android:id="@+id/downloads_narrow"
+            layout="@layout/downloads_narrow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="50dp"
+            android:layout_marginBottom="20dp"
+            app:isEmpty="@{downloadsViewModel.isEmpty}"
+            app:isNarrow="@{downloadsViewModel.isNarrow}"
+            app:callback="@{callback}" />
+
+        <include
+            android:id="@+id/downloads_wide"
+            layout="@layout/downloads_wide"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="50dp"
+            android:layout_marginBottom="20dp"
+            app:isEmpty="@{downloadsViewModel.isEmpty}"
+            app:isNarrow="@{downloadsViewModel.isNarrow}"
+            app:callback="@{callback}" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical|center_horizontal"
+            android:orientation="vertical"
+            app:visibleGone="@{!downloadsViewModel.isLoading &amp;&amp; downloadsViewModel.isEmpty}">
+
+            <ImageView
+                android:layout_width="@{downloadsViewModel.isNarrow ? @dimen/library_icon_size_narrow : @dimen/library_icon_size_wide, default=wrap_content}"
+                android:layout_height="@{downloadsViewModel.isNarrow ? @dimen/library_icon_size_narrow : @dimen/library_icon_size_wide, default=wrap_content}"
+                android:src="@drawable/ic_icon_downloads"
+                android:tint="@color/concrete"
+                app:srcCompat="@drawable/ic_icon_downloads" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="35dp"
+                android:fontFamily="sans-serif"
+                android:text="@string/downloads_empty"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textColor="@color/fog"
+                android:textSize="@dimen/text_biggest_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="35dp"
+                android:fontFamily="sans-serif"
+                android:text="@string/downloads_description"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textColor="@color/concrete"
+                android:textSize="@dimen/text_medium_big_size"
+                android:textStyle="normal"
+                android:maxWidth="360dp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/loading_tv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/downloads_loading"
+            android:gravity="center_vertical|center_horizontal"
+            android:text="@string/downloads_loading"
+            android:textAlignment="center"
+            android:textColor="@color/fog"
+            android:visibility="gone"
+            app:visibleGone="@{downloadsViewModel.isLoading}" />
+
+        <org.mozilla.vrbrowser.ui.views.CustomRecyclerView
+            android:id="@+id/downloads_list"
+            style="@style/customRecyclerViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:contentDescription="Downloads"
+            android:fadingEdgeLength="60dp"
+            android:requiresFadingEdge="vertical"
+            app:layoutManager="org.mozilla.vrbrowser.ui.adapters.CustomLinearLayoutManager"
+            app:visibleGone="@{!downloadsViewModel.isLoading &amp;&amp; !downloadsViewModel.isEmpty}" />
+
+    </LinearLayout>
+</layout>

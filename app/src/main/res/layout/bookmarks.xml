@@ -86,6 +86,7 @@
                 android:layout_width="@{bookmarksViewModel.isNarrow ? @dimen/library_icon_size_narrow : @dimen/library_icon_size_wide, default=wrap_content}"
                 android:layout_height="@{bookmarksViewModel.isNarrow ? @dimen/library_icon_size_narrow : @dimen/library_icon_size_wide, default=wrap_content}"
                 android:src="@drawable/ic_icon_bookmarks"
+                android:tint="@color/concrete"
                 app:srcCompat="@drawable/ic_icon_bookmarks" />
 
             <TextView
@@ -107,7 +108,7 @@
                 android:fontFamily="sans-serif"
                 android:textAlignment="center"
                 android:textAllCaps="false"
-                android:textColor="@color/fog"
+                android:textColor="@color/concrete"
                 android:textSize="@dimen/text_medium_big_size"
                 android:textStyle="normal"
                 android:maxWidth="360dp"

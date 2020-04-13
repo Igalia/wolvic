@@ -14,8 +14,11 @@ import androidx.annotation.Dimension;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.BindingAdapter;
+import androidx.databinding.ObservableList;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.downloads.Download;
 import org.mozilla.vrbrowser.ui.views.HoneycombButton;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.views.UITextButton;
@@ -193,6 +196,14 @@ public class BindingAdapters {
     @BindingAdapter("android:tooltipText")
     public static void setTooltipText(@NonNull UIButton button, @Nullable String text){
         button.setTooltipText(text);
+    }
+
+    @BindingAdapter("items")
+    public static void bindAdapterWithDefaultBinder(@NonNull RecyclerView recyclerView, @Nullable ObservableList<Download> items) {
+        DownloadsAdapter adapter = (DownloadsAdapter)recyclerView.getAdapter();
+        if (adapter != null) {
+            adapter.setDownloadsList(items);
+        }
     }
 
  }

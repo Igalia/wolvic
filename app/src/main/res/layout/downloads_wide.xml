@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="isEmpty"
+            type="boolean" />
+
+        <variable
+            name="isNarrow"
+            type="boolean" />
+
+        <variable
+            name="callback"
+            type="org.mozilla.vrbrowser.ui.callbacks.DownloadsCallback" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:visibleGone="@{!isNarrow &amp;&amp; !isEmpty}">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/icon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentStart="true"
+                android:src="@drawable/ic_icon_downloads"
+                android:tint="@color/concrete"
+                app:srcCompat="@drawable/ic_icon_downloads" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/icon"
+                android:gravity="center_vertical"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:text="@string/downloads_title"
+                android:textColor="@color/smoke"
+                android:textSize="@dimen/text_biggest_size"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/deleteButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@+id/sortingButton"
+                android:layout_centerVertical="true"
+                android:background="@drawable/content_panel_button_background"
+                android:fontFamily="sans-serif"
+                android:gravity="center"
+                android:onClick="@{(view) ->  callback != null ? callback.onDeleteDownloads(view) : void}"
+                android:padding="5dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:layout_marginEnd="10dp"
+                android:text="@string/downloads_delete"
+                android:textColor="@color/library_panel_button_text_color"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:enabled="@{!isEmpty}"/>
+
+            <Button
+                android:id="@+id/sortingButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/sorting_button_background"
+                android:fontFamily="sans-serif"
+                android:gravity="center"
+                android:onClick="@{(view) ->  callback != null ? callback.onShowSortingContextMenu(view) : void}"
+                android:padding="5dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:text="@string/downloads_sort"
+                android:textColor="@color/sorting_panel_content_color"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:drawableEnd="@drawable/ic_icon_dropdown"
+                android:drawableTint="@color/sorting_panel_content_color"
+                android:drawablePadding="10dp"
+                android:enabled="@{!isEmpty}"/>
+        </RelativeLayout>
+
+    </LinearLayout>
+</layout>

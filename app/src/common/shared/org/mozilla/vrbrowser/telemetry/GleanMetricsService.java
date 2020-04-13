@@ -205,10 +205,11 @@ public class GleanMetricsService {
             TABS_DIALOG,        // Tab opened from the tabs dialog
             BOOKMARKS,          // Tab opened from the bookmarks panel
             HISTORY,            // Tab opened from the history panel
+            DOWNLOADS,          // Tab opened from the downloads panel
             FXA_LOGIN,          // Tab opened by the FxA login flow
             RECEIVED,           // Tab opened by FxA when a tab is received
             PRE_EXISTING,       // Tab opened as a result of restoring the last session
-            BROWSER             // Tab opened by the browser as a result of a new window open
+            BROWSER,            // Tab opened by the browser as a result of a new window open
         }
 
         public static void openedCounter(@NonNull TabSource source) {

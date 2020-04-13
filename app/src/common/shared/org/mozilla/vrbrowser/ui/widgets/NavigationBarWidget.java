@@ -1077,6 +1077,19 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         }
     }
 
+    @Override
+    public void onDownloadsClicked() {
+        if (mAttachedWindow.isResizing()) {
+            exitResizeMode(ResizeAction.RESTORE_SIZE);
+
+        } else if (mAttachedWindow.isFullScreen()) {
+            exitFullScreenMode();
+
+        } else if (mViewModel.getIsInVRVideo().getValue().get()) {
+            exitVRVideo();
+        }
+    }
+
     private void finishWidgetResize() {
         mWidgetManager.finishWidgetResize(mAttachedWindow);
     }

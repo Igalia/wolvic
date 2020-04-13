@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.vrbrowser.ui.views;
+package org.mozilla.vrbrowser.ui.views.library;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -11,7 +11,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,7 +18,6 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.RecyclerView.OnScrollListener;
 
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.R;
@@ -34,12 +32,17 @@ import org.mozilla.vrbrowser.databinding.HistoryBinding;
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.ui.adapters.HistoryAdapter;
 import org.mozilla.vrbrowser.ui.callbacks.HistoryCallback;
+import org.mozilla.vrbrowser.ui.callbacks.HistoryContextMenuCallback;
 import org.mozilla.vrbrowser.ui.callbacks.HistoryItemCallback;
 import org.mozilla.vrbrowser.ui.viewmodel.HistoryViewModel;
-import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
+import org.mozilla.vrbrowser.ui.widgets.UIWidget;
+import org.mozilla.vrbrowser.ui.widgets.WindowWidget;
+import org.mozilla.vrbrowser.ui.widgets.Windows;
+import org.mozilla.vrbrowser.ui.widgets.dialogs.ClearHistoryDialogWidget;
+import org.mozilla.vrbrowser.ui.widgets.menus.library.HistoryContextMenuWidget;
+import org.mozilla.vrbrowser.ui.widgets.menus.library.LibraryContextMenuWidget;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.GregorianCalendar;
@@ -47,7 +50,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executor;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -62,49 +64,48 @@ import mozilla.components.service.fxa.SyncEngine;
 import mozilla.components.service.fxa.sync.SyncReason;
 import mozilla.components.service.fxa.sync.SyncStatusObserver;
 
-public class HistoryView extends FrameLayout implements HistoryStore.HistoryListener {
+import static org.mozilla.vrbrowser.ui.widgets.settings.SettingsView.SettingViewType.FXA;
+
+public class HistoryView extends LibraryView implements HistoryStore.HistoryListener {
 
     private static final String LOGTAG = SystemUtils.createLogtag(HistoryView.class);
 
     private static final boolean ACCOUNTS_UI_ENABLED = false;
 
-    private HistoryViewModel mViewModel;
     private HistoryBinding mBinding;
     private Accounts mAccounts;
     private HistoryAdapter mHistoryAdapter;
-    private ArrayList<HistoryCallback> mHistoryViewListeners;
-    private Executor mUIThreadExecutor;
+    private ClearHistoryDialogWidget mClearHistoryDialog;
+    private HistoryViewModel mViewModel;
 
     public HistoryView(Context aContext) {
         super(aContext);
-        initialize(aContext);
+        initialize();
     }
 
     public HistoryView(Context aContext, AttributeSet aAttrs) {
         super(aContext, aAttrs);
-        initialize(aContext);
+        initialize();
     }
 
     public HistoryView(Context aContext, AttributeSet aAttrs, int aDefStyle) {
         super(aContext, aAttrs, aDefStyle);
-        initialize(aContext);
+        initialize();
     }
 
-    private void initialize(Context aContext) {
-        mViewModel = new ViewModelProvider(
-                (VRBrowserActivity)getContext(),
-                ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
-                .get(HistoryViewModel.class);
-
-        mUIThreadExecutor = ((VRBrowserApplication)getContext().getApplicationContext()).getExecutors().mainThread();
-
-        mHistoryViewListeners = new ArrayList<>();
+    protected void initialize() {
+        super.initialize();
 
         mAccounts = ((VRBrowserApplication)getContext().getApplicationContext()).getAccounts();
         if (ACCOUNTS_UI_ENABLED) {
             mAccounts.addAccountListener(mAccountListener);
             mAccounts.addSyncListener(mSyncListener);
         }
+
+        mViewModel = new ViewModelProvider(
+                (VRBrowserActivity)getContext(),
+                ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
+                .get(HistoryViewModel.class);
 
         SessionStore.get().getHistoryStore().addListener(this);
 
@@ -119,6 +120,8 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
 
         // Inflate this data binding layout
         mBinding = DataBindingUtil.inflate(inflater, R.layout.history, this, true);
+        mBinding.setLifecycleOwner((VRBrowserActivity)getContext());
+        mBinding.setHistoryViewModel(mViewModel);
         mBinding.setCallback(mHistoryCallback);
         mHistoryAdapter = new HistoryAdapter(mHistoryItemCallback, getContext());
         mBinding.historyList.setAdapter(mHistoryAdapter);
@@ -153,6 +156,7 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
         });
     }
 
+    @Override
     public void onDestroy() {
         SessionStore.get().getHistoryStore().removeListener(this);
 
@@ -164,20 +168,10 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
         }
     }
 
+    @Override
     public void onShow() {
         updateLayout();
     }
-
-    private OnScrollListener mScrollListener = new OnScrollListener() {
-        @Override
-        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
-
-            if (recyclerView.getScrollState() != RecyclerView.SCROLL_STATE_SETTLING) {
-                recyclerView.requestFocus();
-            }
-        }
-    };
 
     private final HistoryItemCallback mHistoryItemCallback = new HistoryItemCallback() {
         @Override
@@ -187,7 +181,8 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
             Session session = SessionStore.get().getActiveSession();
             session.loadUri(item.getUrl());
 
-            mHistoryViewListeners.forEach((listener) -> listener.onClickItem(view, item));
+            WindowWidget window = mWidgetManager.getFocusedWindow();
+            window.hidePanel(Windows.PanelType.HISTORY);
         }
 
         @Override
@@ -214,26 +209,32 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
                 }
             }
 
-            mBinding.getCallback().onShowContextMenu(
-                    row.itemView,
-                    item,
-                    isLastVisibleItem);
+            if (row != null) {
+                mBinding.getCallback().onShowContextMenu(
+                        row.itemView,
+                        item,
+                        isLastVisibleItem);
+            }
         }
     };
 
     private HistoryCallback mHistoryCallback = new HistoryCallback() {
         @Override
         public void onClearHistory(@NonNull View view) {
-            mHistoryViewListeners.forEach((listener) -> listener.onClearHistory(view));
+            view.requestFocusFromTouch();
+            showClearCacheDialog();
+            hideContextMenu();
         }
 
         @Override
         public void onSyncHistory(@NonNull View view) {
+            view.requestFocusFromTouch();
             mAccounts.syncNowAsync(SyncReason.User.INSTANCE, false);
         }
 
         @Override
         public void onFxALogin(@NonNull View view) {
+            view.requestFocusFromTouch();
             if (mAccounts.getAccountStatus() == Accounts.AccountStatus.SIGNED_IN) {
                 mAccounts.logoutAsync();
 
@@ -246,12 +247,12 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
 
                         } else {
                             mAccounts.setLoginOrigin(Accounts.LoginOrigin.HISTORY);
-                            WidgetManagerDelegate widgetManager = ((VRBrowserActivity) getContext());
-                            widgetManager.openNewTabForeground(url);
-                            widgetManager.getFocusedWindow().getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
+                            mWidgetManager.openNewTabForeground(url);
+                            mWidgetManager.getFocusedWindow().getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
                             GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.FXA_LOGIN);
 
-                            mHistoryViewListeners.forEach((listener) -> listener.onFxALogin(view));
+                            WindowWidget window = mWidgetManager.getFocusedWindow();
+                            window.hidePanel(Windows.PanelType.HISTORY);
                         }
 
                     }, mUIThreadExecutor).exceptionally(throwable -> {
@@ -265,24 +266,36 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
 
         @Override
         public void onFxASynSettings(@NonNull View view) {
-            mHistoryViewListeners.forEach((listener) -> listener.onFxASynSettings(view));
+            view.requestFocusFromTouch();
+            mWidgetManager.getTray().showSettingsDialog(FXA);
         }
 
         @Override
         public void onShowContextMenu(@NonNull View view, @NonNull VisitInfo item, boolean isLastVisibleItem) {
-            mHistoryViewListeners.forEach((listener) -> listener.onShowContextMenu(view, item, isLastVisibleItem));
+            SessionStore.get().getBookmarkStore().isBookmarked(item.getUrl()).thenAcceptAsync((isBookmarked -> {
+                showContextMenu(
+                        view,
+                        new HistoryContextMenuWidget(getContext(),
+                                new HistoryContextMenuWidget.LibraryContextMenuItem(
+                                        item.getUrl(),
+                                        item.getTitle()),
+                                mWidgetManager.canOpenNewWindow(),
+                                isBookmarked),
+                        mCallback,
+                        isLastVisibleItem);
+
+            }), mUIThreadExecutor).exceptionally(throwable -> {
+                Log.d(LOGTAG, "Error getting the bookmarked status: " + throwable.getLocalizedMessage());
+                throwable.printStackTrace();
+                return null;
+            });
+        }
+
+        @Override
+        public void onHideContextMenu(@NonNull View view) {
+            hideContextMenu();
         }
     };
-
-    public void addHistoryListener(@NonNull HistoryCallback listener) {
-        if (!mHistoryViewListeners.contains(listener)) {
-            mHistoryViewListeners.add(listener);
-        }
-    }
-
-    public void removeHistoryListener(@NonNull HistoryCallback listener) {
-        mHistoryViewListeners.remove(listener);
-    }
 
     private SyncStatusObserver mSyncListener = new SyncStatusObserver() {
         @Override
@@ -404,16 +417,12 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
             mViewModel.setIsLoading(false);
             mHistoryAdapter.setHistoryList(historyItems);
         }
+
+        mBinding.executePendingBindings();
     }
 
     @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        super.onLayout(changed, left, top, right, bottom);
-
-        updateLayout();
-    }
-
-    private void updateLayout() {
+    protected void updateLayout() {
         post(() -> {
             double width = Math.ceil(getWidth()/getContext().getResources().getDisplayMetrics().density);
             boolean isNarrow = width < SettingsStore.WINDOW_WIDTH_DEFAULT;
@@ -430,6 +439,40 @@ public class HistoryView extends FrameLayout implements HistoryStore.HistoryList
                 requestLayout();
             }
         });
+    }
+
+    private HistoryContextMenuCallback mCallback = new HistoryContextMenuCallback() {
+        @Override
+        public void onOpenInNewWindowClick(LibraryContextMenuWidget.LibraryContextMenuItem item) {
+            mWidgetManager.openNewWindow(item.getUrl());
+            hideContextMenu();
+        }
+
+        @Override
+        public void onOpenInNewTabClick(LibraryContextMenuWidget.LibraryContextMenuItem item) {
+            mWidgetManager.openNewTabForeground(item.getUrl());
+            GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.BOOKMARKS);
+            hideContextMenu();
+        }
+
+        @Override
+        public void onAddToBookmarks(LibraryContextMenuWidget.LibraryContextMenuItem item) {
+            SessionStore.get().getBookmarkStore().addBookmark(item.getUrl(), item.getTitle());
+            hideContextMenu();
+        }
+
+        @Override
+        public void onRemoveFromBookmarks(LibraryContextMenuWidget.LibraryContextMenuItem item) {
+            SessionStore.get().getBookmarkStore().deleteBookmarkByURL(item.getUrl());
+            hideContextMenu();
+        }
+    };
+
+    public void showClearCacheDialog() {
+        if (mClearHistoryDialog == null) {
+            mClearHistoryDialog = new ClearHistoryDialogWidget(getContext());
+        }
+        mClearHistoryDialog.show(UIWidget.REQUEST_FOCUS);
     }
 
     // HistoryStore.HistoryListener

@@ -16,6 +16,8 @@
     </declare-styleable>
 
     <declare-styleable name="UIButton">
+        <attr name="clipDrawable" format="reference" />
+        <attr name="clipColor" format="color" />
         <attr name="tintColorList" format="reference|color" />
         <attr name="privateModeTintColorList" format="reference|color" />
         <attr name="activeModeTintColorList" format="reference|color" />

@@ -90,4 +90,6 @@ public interface WidgetManagerDelegate {
     void removeConnectivityListener(ConnectivityReceiver.Delegate aListener);
     void saveState();
     void updateLocale(@NonNull Context context);
+    @NonNull
+    AppServicesProvider getServicesProvider();
 }

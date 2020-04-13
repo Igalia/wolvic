@@ -11,8 +11,11 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.net.Uri;
 
-import org.mozilla.geckoview.GeckoSession;
+import androidx.annotation.StringRes;
+
+import org.mozilla.geckoview.GeckoSession.ContentDelegate.ContextElement;
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.downloads.DownloadJob;
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
@@ -74,7 +77,7 @@ public class ContextMenuWidget extends MenuWidget {
         mDismissCallback = aCallback;
     }
 
-    public void setContextElement(GeckoSession.ContentDelegate.ContextElement aContextElement) {
+    public void setContextElement(ContextElement aContextElement) {
         mItems = new ArrayList<>();
         mItems.add(new MenuWidget.MenuItem(aContextElement.linkUri, 0, null));
         final WidgetManagerDelegate widgetManager = mWidgetManager;
@@ -93,22 +96,59 @@ public class ContextMenuWidget extends MenuWidget {
             }
             onDismiss();
         }));
+        if (!StringUtils.isEmpty(aContextElement.linkUri)) {
+            mItems.add(new MenuWidget.MenuItem(getContext().getString(R.string.context_menu_download_link), 0, () -> {
+                DownloadJob job = DownloadJob.fromLink(aContextElement);
+                widgetManager.getFocusedWindow().startDownload(job, false);
+                // TODO Add Download from context menu Telemetry
+                onDismiss();
+            }));
+        }
+        if (!StringUtils.isEmpty(aContextElement.srcUri)) {
+            @StringRes int srcText;
+            switch (aContextElement.type) {
+                case ContextElement.TYPE_IMAGE:
+                    srcText = R.string.context_menu_download_image;
+                    break;
+                case ContextElement.TYPE_VIDEO:
+                    srcText = R.string.context_menu_download_video;
+                    break;
+                case ContextElement.TYPE_AUDIO:
+                    srcText = R.string.context_menu_download_audio;
+                    break;
+                default:
+                    srcText = R.string.context_menu_download_link;
+                    break;
+            }
+            mItems.add(new MenuWidget.MenuItem(getContext().getString(srcText), 0, () -> {
+                DownloadJob job = DownloadJob.fromSrc(aContextElement);
+                widgetManager.getFocusedWindow().startDownload(job, false);
+                // TODO Add Download from context menu Telemetry
+                onDismiss();
+            }));
+        }
         mItems.add(new MenuWidget.MenuItem(getContext().getString(R.string.context_menu_copy_link), 0, () -> {
             ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+            Uri uri;
             if (aContextElement.linkUri != null) {
-                Uri uri = Uri.parse(aContextElement.linkUri);
-                if (uri != null) {
-                    String label = aContextElement.title;
-                    if (StringUtils.isEmpty(label)) {
-                        label = aContextElement.altText;
-                    }
-                    if (StringUtils.isEmpty(label)) {
-                        label = aContextElement.altText;
-                    }
-                    if (StringUtils.isEmpty(label)) {
-                        label = aContextElement.linkUri;
-                    }
-                    ClipData clip = ClipData.newRawUri(label, uri);
+                uri = Uri.parse(aContextElement.linkUri);
+
+            } else {
+                uri = Uri.parse(aContextElement.srcUri);
+            }
+            if (uri != null) {
+                String label = aContextElement.title;
+                if (StringUtils.isEmpty(label)) {
+                    label = aContextElement.altText;
+                }
+                if (StringUtils.isEmpty(label)) {
+                    label = aContextElement.altText;
+                }
+                if (StringUtils.isEmpty(label)) {
+                    label = uri.toString();
+                }
+                ClipData clip = ClipData.newRawUri(label, uri);
+                if (clipboard != null) {
                     clipboard.setPrimaryClip(clip);
                 }
             }

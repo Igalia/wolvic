@@ -14,19 +14,22 @@ import org.mozilla.vrbrowser.browser.Places;
 import org.mozilla.vrbrowser.browser.Services;
 import org.mozilla.vrbrowser.db.AppDatabase;
 import org.mozilla.vrbrowser.db.DataRepository;
+import org.mozilla.vrbrowser.downloads.DownloadsManager;
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.ui.adapters.Language;
+import org.mozilla.vrbrowser.ui.widgets.AppServicesProvider;
 import org.mozilla.vrbrowser.utils.BitmapCache;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
 
-public class VRBrowserApplication extends Application {
+public class VRBrowserApplication extends Application implements AppServicesProvider {
 
     private AppExecutors mAppExecutors;
     private BitmapCache mBitmapCache;
     private Services mServices;
     private Places mPlaces;
     private Accounts mAccounts;
+    private DownloadsManager mDownloadsManager;
 
     @Override
     public void onCreate() {
@@ -42,6 +45,7 @@ public class VRBrowserApplication extends Application {
         mPlaces = new Places(this);
         mServices = new Services(this, mPlaces);
         mAccounts = new Accounts(this);
+        mDownloadsManager = new DownloadsManager(this);
     }
 
     @Override
@@ -67,7 +71,7 @@ public class VRBrowserApplication extends Application {
         return mPlaces;
     }
 
-    private AppDatabase getDatabase() {
+    public AppDatabase getDatabase() {
         return AppDatabase.getAppDatabase(this, mAppExecutors);
     }
 
@@ -85,5 +89,9 @@ public class VRBrowserApplication extends Application {
 
     public Accounts getAccounts() {
         return mAccounts;
+    }
+
+    public DownloadsManager getDownloadsManager() {
+        return mDownloadsManager;
     }
 }

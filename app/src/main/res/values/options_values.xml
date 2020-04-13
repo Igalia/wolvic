@@ -60,6 +60,17 @@
         <item>2</item>
     </integer-array>
 
+    <!-- Downloads Storage Options -->
+    <string-array name="privacy_options_downloads_storage" translatable="false">
+        <item>@string/privacy_options_downloads_storage_internal</item>
+        <item>@string/privacy_options_downloads_storage_external</item>
+    </string-array>
+
+    <integer-array name="privacy_options_downloads_storage_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+    </integer-array>
+
     <!-- MSAA Options -->
     <string-array name="developer_options_msaa" translatable="false">
         <item>@string/developer_options_msaa_disabled</item>

@@ -5,12 +5,17 @@
 
 package org.mozilla.vrbrowser.ui.views;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
+import android.graphics.drawable.ClipDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -51,11 +56,15 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
     private boolean mIsPrivate;
     private boolean mIsActive;
     private boolean mIsNotification;
+    private ClipDrawable mClipDrawable;
+    private Drawable mDrawable;
+    private int mClipColor;
 
     public UIButton(Context context, AttributeSet attrs) {
         this(context, attrs, R.attr.imageButtonStyle);
     }
 
+    @SuppressLint("ResourceType")
     public UIButton(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
@@ -80,10 +89,19 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
             mTooltipText = arr.getString(0);
         }
         mTooltipLayout = attributes.getResourceId(R.styleable.UIButton_tooltipLayout, R.layout.tooltip);
+        mClipDrawable = (ClipDrawable)attributes.getDrawable(R.styleable.UIButton_clipDrawable);
+        mClipColor = attributes.getColor(R.styleable.UIButton_clipColor, 0);
         attributes.recycle();
 
         if (mBackground == null) {
             mBackground = getBackground();
+        }
+
+        if (mClipDrawable != null) {
+            Drawable[] layers = new Drawable[] { mDrawable, mClipDrawable };
+            setImageDrawable(new LayerDrawable(layers));
+            mClipDrawable.setLevel(0);
+            mClipDrawable.setTint(R.color.azure);
         }
 
         // Android >8 doesn't perform a click when long clicking in ImageViews even if long click is disabled
@@ -161,21 +179,31 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
     }
 
     public void setTintColorList(int aColorListId) {
+        if (mDrawable == null) {
+            return;
+        }
         mTintColorList = getContext().getResources().getColorStateList(
                 aColorListId,
                 getContext().getTheme());
-        if (mTintColorList != null) {
-            int color = mTintColorList.getColorForState(getDrawableState(), 0);
-            setColorFilter(color);
+        int color = mTintColorList.getColorForState(getDrawableState(), 0);
+        mDrawable.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.MULTIPLY));
+        if (mClipDrawable != null) {
+            mClipDrawable.setColorFilter(new PorterDuffColorFilter(mClipColor, PorterDuff.Mode.MULTIPLY));
         }
     }
 
     @Override
     protected void drawableStateChanged() {
         super.drawableStateChanged();
+        if (mDrawable == null) {
+            return;
+        }
         if (mTintColorList != null && mTintColorList.isStateful()) {
             int color = mTintColorList.getColorForState(getDrawableState(), 0);
-            setColorFilter(color);
+            mDrawable.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.MULTIPLY));
+            if (mClipDrawable != null) {
+                mClipDrawable.setColorFilter(new PorterDuffColorFilter(mClipColor, PorterDuff.Mode.MULTIPLY));
+            }
         }
     }
 
@@ -336,5 +364,15 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
         super.setEnabled(enabled);
 
         setHovered(false);
+    }
+
+    @Override
+    public void setImageDrawable(@Nullable Drawable drawable) {
+        super.setImageDrawable(drawable);
+        mDrawable = drawable;
+    }
+
+    public boolean setLevel(int level) {
+        return mClipDrawable.setLevel(level);
     }
 }

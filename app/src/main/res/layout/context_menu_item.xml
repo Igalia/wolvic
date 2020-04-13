@@ -19,6 +19,7 @@
         android:textColor="@color/fog"
         android:layout_marginStart="8dp"
         android:singleLine="true"
+        android:ellipsize="middle"
         android:duplicateParentState="true"
         android:focusable="false"/>
 

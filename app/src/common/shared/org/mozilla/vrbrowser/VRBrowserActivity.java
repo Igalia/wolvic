@@ -60,6 +60,7 @@ import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.ui.OffscreenDisplay;
 import org.mozilla.vrbrowser.ui.adapters.Language;
+import org.mozilla.vrbrowser.ui.widgets.AppServicesProvider;
 import org.mozilla.vrbrowser.ui.widgets.KeyboardWidget;
 import org.mozilla.vrbrowser.ui.widgets.NavigationBarWidget;
 import org.mozilla.vrbrowser.ui.widgets.RootWidget;
@@ -303,6 +304,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         checkForCrash();
 
         mLifeCycle.setCurrentState(Lifecycle.State.CREATED);
+
+        getServicesProvider().getDownloadsManager().init();
     }
 
     protected void initializeWidgets() {
@@ -486,6 +489,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         BitmapCache.getInstance(this).onDestroy();
 
         SessionStore.get().onDestroy();
+
+        getServicesProvider().getDownloadsManager().end();
 
         super.onDestroy();
         mLifeCycle.setCurrentState(Lifecycle.State.DESTROYED);
@@ -1590,6 +1595,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Override
     public void updateLocale(@NonNull Context context) {
         onConfigurationChanged(context.getResources().getConfiguration());
+    }
+
+    @Override
+    @NonNull
+    public AppServicesProvider getServicesProvider() {
+        return (AppServicesProvider)getApplication();
     }
 
     private native void addWidgetNative(int aHandle, WidgetPlacement aPlacement);

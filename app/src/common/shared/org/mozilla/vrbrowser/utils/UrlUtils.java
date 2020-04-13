@@ -110,8 +110,12 @@ public class UrlUtils {
         return aUri != null && aUri.startsWith("data");
     }
 
+    public static Boolean isFileUri(@Nullable String aUri) {
+        return aUri != null && aUri.startsWith("file");
+    }
+
     public static Boolean isBlankUri(@Nullable Context context, @Nullable String aUri) {
-        return aUri != null && context != null && aUri.equals(context.getString(R.string.about_blank));
+        return context != null && aUri != null && aUri.equals(context.getString(R.string.about_blank));
     }
 
     public static String titleBarUrl(@Nullable String aUri) {
@@ -149,6 +153,16 @@ public class UrlUtils {
         return url != null && url.equalsIgnoreCase(ABOUT_BOOKMARKS);
     }
 
+    public static final String ABOUT_DOWNLOADS = "about://downloads";
+
+    public static boolean isDownloadsUrl(@Nullable String url) {
+        if (url == null) {
+            return false;
+        }
+
+        return url.equalsIgnoreCase(ABOUT_DOWNLOADS);
+    }
+
     public static final String ABOUT_PRIVATE = "about://privatebrowsing";
 
     public static boolean isPrivateUrl(@Nullable String url) {
@@ -156,7 +170,7 @@ public class UrlUtils {
     }
 
     public static boolean isAboutPage(@Nullable String url) {
-        return isHistoryUrl(url) || isBookmarksUrl(url) || isPrivateUrl(url);
+        return isHistoryUrl(url) || isBookmarksUrl(url) || isDownloadsUrl(url) || isPrivateUrl(url);
     }
 
     public static boolean isContentFeed(Context aContext, @Nullable String url) {

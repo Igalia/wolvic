@@ -87,8 +87,13 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             tabIndex = aTabIndex;
             if (aWindow.isBookmarksVisible()) {
                 panelType = PanelType.BOOKMARKS;
+
             } else if (aWindow.isHistoryVisible()) {
                 panelType = PanelType.HISTORY;
+
+            } else if (aWindow.isDownloadsVisible()) {
+                panelType = PanelType.DOWNLOADS;
+
             } else {
                 panelType = PanelType.NONE;
             }
@@ -123,10 +128,11 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     private PromptDialogWidget mNoInternetDialog;
     private boolean mCompositorPaused = false;
 
-    private enum PanelType {
+    public enum PanelType {
         NONE,
         BOOKMARKS,
-        HISTORY
+        HISTORY,
+        DOWNLOADS
     }
 
     public enum WindowPlacement{
@@ -296,14 +302,19 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         newWindow.getPlacement().worldWidth = aState.worldWidth;
         newWindow.setRestored(true);
         placeWindow(newWindow, aState.placement);
-        if (aState.panelType != null) {
-            switch (aState.panelType) {
-                case BOOKMARKS:
-                    newWindow.getSession().loadUri(UrlUtils.ABOUT_BOOKMARKS);
-                    break;
-                case HISTORY:
-                    newWindow.getSession().loadUri(UrlUtils.ABOUT_HISTORY);
-                    break;
+        if (newWindow.getSession() != null) {
+            if (aState.panelType != null) {
+                switch (aState.panelType) {
+                    case BOOKMARKS:
+                        newWindow.getSession().loadUri(UrlUtils.ABOUT_BOOKMARKS);
+                        break;
+                    case HISTORY:
+                        newWindow.getSession().loadUri(UrlUtils.ABOUT_HISTORY);
+                        break;
+                    case DOWNLOADS:
+                        newWindow.getSession().loadUri(UrlUtils.ABOUT_DOWNLOADS);
+                        break;
+                }
             }
         }
         updateCurvedMode(true);
@@ -317,8 +328,9 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         WindowWidget leftWindow = getLeftWindow();
         WindowWidget rightWindow = getRightWindow();
 
-        aWindow.hideBookmarks();
-        aWindow.hideHistory();
+        aWindow.hidePanel(PanelType.BOOKMARKS);
+        aWindow.hidePanel(PanelType.HISTORY);
+        aWindow.hidePanel(PanelType.DOWNLOADS);
 
         if (leftWindow == aWindow) {
             removeWindow(leftWindow);
@@ -954,7 +966,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     // Tray Listener
     @Override
     public void onBookmarksClicked() {
-        mFocusedWindow.switchBookmarks();
+        mFocusedWindow.switchPanel(PanelType.BOOKMARKS);
     }
 
     @Override
@@ -976,7 +988,12 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
     @Override
     public void onHistoryClicked() {
-        mFocusedWindow.switchHistory();
+        mFocusedWindow.switchPanel(PanelType.HISTORY);
+    }
+
+    @Override
+    public void onDownloadsClicked() {
+        mFocusedWindow.switchPanel(PanelType.DOWNLOADS);
     }
 
     @Override

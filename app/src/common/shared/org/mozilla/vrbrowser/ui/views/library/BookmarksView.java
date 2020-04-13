@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.vrbrowser.ui.views;
+package org.mozilla.vrbrowser.ui.views.library;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -11,7 +11,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -36,14 +35,17 @@ import org.mozilla.vrbrowser.ui.adapters.BookmarkAdapter;
 import org.mozilla.vrbrowser.ui.adapters.CustomLinearLayoutManager;
 import org.mozilla.vrbrowser.ui.callbacks.BookmarkItemCallback;
 import org.mozilla.vrbrowser.ui.callbacks.BookmarksCallback;
+import org.mozilla.vrbrowser.ui.callbacks.LibraryContextMenuCallback;
 import org.mozilla.vrbrowser.ui.viewmodel.BookmarksViewModel;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
+import org.mozilla.vrbrowser.ui.widgets.WindowWidget;
+import org.mozilla.vrbrowser.ui.widgets.Windows;
+import org.mozilla.vrbrowser.ui.widgets.menus.library.BookmarksContextMenuWidget;
+import org.mozilla.vrbrowser.ui.widgets.menus.library.LibraryContextMenuWidget;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 
 import mozilla.appservices.places.BookmarkRoot;
 import mozilla.components.concept.storage.BookmarkNode;
@@ -55,50 +57,49 @@ import mozilla.components.service.fxa.SyncEngine;
 import mozilla.components.service.fxa.sync.SyncReason;
 import mozilla.components.service.fxa.sync.SyncStatusObserver;
 
-public class BookmarksView extends FrameLayout implements BookmarksStore.BookmarkListener {
+import static org.mozilla.vrbrowser.ui.widgets.settings.SettingsView.SettingViewType.FXA;
+
+public class BookmarksView extends LibraryView implements BookmarksStore.BookmarkListener {
 
     private static final String LOGTAG = SystemUtils.createLogtag(BookmarksView.class);
 
     private static final boolean ACCOUNTS_UI_ENABLED = false;
 
-    private BookmarksViewModel mViewModel;
     private BookmarksBinding mBinding;
     private Accounts mAccounts;
     private BookmarkAdapter mBookmarkAdapter;
-    private ArrayList<BookmarksCallback> mBookmarksViewListeners;
     private CustomLinearLayoutManager mLayoutManager;
-    private Executor mUIThreadExecutor;
+    private BookmarksViewModel mViewModel;
 
     public BookmarksView(Context aContext) {
         super(aContext);
-        initialize(aContext);
+        initialize();
     }
 
     public BookmarksView(Context aContext, AttributeSet aAttrs) {
         super(aContext, aAttrs);
-        initialize(aContext);
+        initialize();
     }
 
     public BookmarksView(Context aContext, AttributeSet aAttrs, int aDefStyle) {
         super(aContext, aAttrs, aDefStyle);
-        initialize(aContext);
+        initialize();
     }
 
-    private void initialize(Context aContext) {
-        mViewModel = new ViewModelProvider(
-                (VRBrowserActivity)getContext(),
-                ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
-                .get(BookmarksViewModel.class);
-
-        mUIThreadExecutor = ((VRBrowserApplication)getContext().getApplicationContext()).getExecutors().mainThread();
-
-        mBookmarksViewListeners = new ArrayList<>();
+    @Override
+    protected void initialize() {
+        super.initialize();
 
         mAccounts = ((VRBrowserApplication)getContext().getApplicationContext()).getAccounts();
         if (ACCOUNTS_UI_ENABLED) {
             mAccounts.addAccountListener(mAccountListener);
             mAccounts.addSyncListener(mSyncListener);
         }
+
+        mViewModel = new ViewModelProvider(
+                (VRBrowserActivity)getContext(),
+                ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
+                .get(BookmarksViewModel.class);
 
         SessionStore.get().getBookmarkStore().addListener(this);
 
@@ -113,7 +114,8 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
 
         // Inflate this data binding layout
         mBinding = DataBindingUtil.inflate(inflater, R.layout.bookmarks, this, true);
-
+        mBinding.setLifecycleOwner((VRBrowserActivity)getContext());
+        mBinding.setBookmarksViewModel(mViewModel);
         mBinding.setCallback(mBookmarksCallback);
         mBookmarkAdapter = new BookmarkAdapter(mBookmarkItemCallback, getContext());
         mBinding.bookmarksList.setAdapter(mBookmarkAdapter);
@@ -150,10 +152,12 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
         });
     }
 
+    @Override
     public void onShow() {
         updateLayout();
     }
 
+    @Override
     public void onDestroy() {
         SessionStore.get().getBookmarkStore().removeListener(this);
 
@@ -165,17 +169,6 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
         }
     }
 
-    private RecyclerView.OnScrollListener mScrollListener = new RecyclerView.OnScrollListener() {
-        @Override
-        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
-
-            if (recyclerView.getScrollState() != RecyclerView.SCROLL_STATE_SETTLING) {
-                recyclerView.requestFocus();
-            }
-        }
-    };
-
     private final BookmarkItemCallback mBookmarkItemCallback = new BookmarkItemCallback() {
         @Override
         public void onClick(@NonNull View view, @NonNull Bookmark item) {
@@ -184,7 +177,8 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
             Session session = SessionStore.get().getActiveSession();
             session.loadUri(item.getUrl());
 
-            mBookmarksViewListeners.forEach((listener) -> listener.onClickItem(view, item));
+            WindowWidget window = mWidgetManager.getFocusedWindow();
+            window.hidePanel(Windows.PanelType.BOOKMARKS);
         }
 
         @Override
@@ -225,18 +219,16 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
     };
 
     private BookmarksCallback mBookmarksCallback = new BookmarksCallback() {
-        @Override
-        public void onClearBookmarks(@NonNull View view) {
-            mBookmarksViewListeners.forEach((listener) -> listener.onClearBookmarks(view));
-        }
 
         @Override
         public void onSyncBookmarks(@NonNull View view) {
+            view.requestFocusFromTouch();
             mAccounts.syncNowAsync(SyncReason.User.INSTANCE, false);
         }
 
         @Override
         public void onFxALogin(@NonNull View view) {
+            view.requestFocusFromTouch();
             if (mAccounts.getAccountStatus() == Accounts.AccountStatus.SIGNED_IN) {
                 mAccounts.logoutAsync();
 
@@ -254,7 +246,8 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
                             widgetManager.getFocusedWindow().getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
                             GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.FXA_LOGIN);
 
-                            mBookmarksViewListeners.forEach((listener) -> listener.onFxALogin(view));
+                            WindowWidget window = mWidgetManager.getFocusedWindow();
+                            window.hidePanel(Windows.PanelType.BOOKMARKS);
                         }
 
                     }, mUIThreadExecutor).exceptionally(throwable -> {
@@ -268,24 +261,28 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
 
         @Override
         public void onFxASynSettings(@NonNull View view) {
-            mBookmarksViewListeners.forEach((listener) -> listener.onFxASynSettings(view));
+            view.requestFocusFromTouch();
+            mWidgetManager.getTray().showSettingsDialog(FXA);
         }
 
         @Override
         public void onShowContextMenu(@NonNull View view, Bookmark item, boolean isLastVisibleItem) {
-            mBookmarksViewListeners.forEach((listener) -> listener.onShowContextMenu(view, item, isLastVisibleItem));
+            showContextMenu(
+                    view,
+                    new BookmarksContextMenuWidget(getContext(),
+                            new BookmarksContextMenuWidget.LibraryContextMenuItem(
+                                    item.getUrl(),
+                                    item.getTitle()),
+                            mWidgetManager.canOpenNewWindow()),
+                    mCallback,
+                    isLastVisibleItem);
+        }
+
+        @Override
+        public void onHideContextMenu(@NonNull View view) {
+            hideContextMenu();
         }
     };
-
-    public void addBookmarksListener(@NonNull BookmarksCallback listener) {
-        if (!mBookmarksViewListeners.contains(listener)) {
-            mBookmarksViewListeners.add(listener);
-        }
-    }
-
-    public void removeBookmarksListener(@NonNull BookmarksCallback listener) {
-        mBookmarksViewListeners.remove(listener);
-    }
 
     private SyncStatusObserver mSyncListener = new SyncStatusObserver() {
         @Override
@@ -362,6 +359,8 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
             mViewModel.setIsLoading(false);
             mBookmarkAdapter.setBookmarkList(aBookmarks);
         }
+
+        mBinding.executePendingBindings();
     }
 
     @Override
@@ -371,7 +370,8 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
         updateLayout();
     }
 
-    private void updateLayout() {
+    @Override
+    protected void updateLayout() {
         post(() -> {
             double width = Math.ceil(getWidth()/getContext().getResources().getDisplayMetrics().density);
             boolean isNarrow = width < SettingsStore.WINDOW_WIDTH_DEFAULT;
@@ -389,6 +389,21 @@ public class BookmarksView extends FrameLayout implements BookmarksStore.Bookmar
             }
         });
     }
+
+    private LibraryContextMenuCallback mCallback = new LibraryContextMenuCallback() {
+        @Override
+        public void onOpenInNewWindowClick(LibraryContextMenuWidget.LibraryContextMenuItem item) {
+            mWidgetManager.openNewWindow(item.getUrl());
+            hideContextMenu();
+        }
+
+        @Override
+        public void onOpenInNewTabClick(LibraryContextMenuWidget.LibraryContextMenuItem item) {
+            mWidgetManager.openNewTabForeground(item.getUrl());
+            GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.BOOKMARKS);
+            hideContextMenu();
+        }
+    };
 
     // BookmarksStore.BookmarksViewListener
 

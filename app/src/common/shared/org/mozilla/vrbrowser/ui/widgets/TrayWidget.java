@@ -29,6 +29,8 @@ import org.mozilla.vrbrowser.browser.BookmarksStore;
 import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.databinding.TrayBinding;
+import org.mozilla.vrbrowser.downloads.Download;
+import org.mozilla.vrbrowser.downloads.DownloadsManager;
 import org.mozilla.vrbrowser.ui.viewmodel.TrayViewModel;
 import org.mozilla.vrbrowser.ui.viewmodel.WindowViewModel;
 import org.mozilla.vrbrowser.ui.views.UIButton;
@@ -40,13 +42,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class TrayWidget extends UIWidget implements WidgetManagerDelegate.UpdateListener {
+public class TrayWidget extends UIWidget implements WidgetManagerDelegate.UpdateListener, DownloadsManager.DownloadsListener {
 
     private static final int ICON_ANIMATION_DURATION = 200;
 
     private static final int TAB_ADDED_NOTIFICATION_ID = 0;
     private static final int TAB_SENT_NOTIFICATION_ID = 1;
     private static final int BOOKMARK_ADDED_NOTIFICATION_ID = 2;
+    private static final int DOWNLOAD_COMPLETED_NOTIFICATION_ID = 3;
 
     private WindowViewModel mViewModel;
     private TrayViewModel mTrayViewModel;
@@ -75,6 +78,9 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
     }
 
     private void initialize(Context aContext) {
+        // Downloads icon progress clipping doesn't work if HW acceleration is enabled.
+        setIsHardwareAccelerationEnabled(false);
+
         mTrayViewModel = new ViewModelProvider(
                 (VRBrowserActivity)getContext(),
                 ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
@@ -91,6 +97,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
         mAudio = AudioEngine.fromContext(aContext);
 
         mWidgetManager.addUpdateListener(this);
+        mWidgetManager.getServicesProvider().getDownloadsManager().addListener(this);
     }
 
     public void updateUI() {
@@ -172,6 +179,17 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
             notifyAddWindowClicked();
         });
         mBinding.addwindowButton.setCurvedTooltip(false);
+
+        mBinding.downloadsButton.setOnHoverListener(mButtonScaleHoverListener);
+        mBinding.downloadsButton.setOnClickListener(view -> {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
+
+            notifyDownloadsClicked();
+            view.requestFocusFromTouch();
+        });
+        mBinding.downloadsButton.setCurvedTooltip(false);
     }
 
     Observer<ObservableBoolean> mIsVisibleObserver = aVisible -> {
@@ -287,6 +305,11 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
         mTrayListeners.forEach(TrayListener::onAddWindowClicked);
     }
 
+    private void notifyDownloadsClicked() {
+        hideNotifications();
+        mTrayListeners.forEach(TrayListener::onDownloadsClicked);
+    }
+
     @Override
     protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
         Context context = getContext();
@@ -311,6 +334,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
     @Override
     public void releaseWidget() {
         mWidgetManager.removeUpdateListener(this);
+        mWidgetManager.getServicesProvider().getDownloadsManager().removeListener(this);
         mTrayListeners.clear();
 
         if (mTrayViewModel != null) {
@@ -358,6 +382,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
         if (mViewModel != null) {
             mViewModel.getIsBookmarksVisible().removeObserver(mIsBookmarksVisible);
             mViewModel.getIsHistoryVisible().removeObserver(mIsHistoryVisible);
+            mViewModel.getIsDownloadsVisible().removeObserver(mIsDownloadsVisible);
             mViewModel = null;
         }
     }
@@ -379,6 +404,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
                 .get(String.valueOf(mAttachedWindow.hashCode()), WindowViewModel.class);
         mViewModel.getIsBookmarksVisible().observe((VRBrowserActivity)getContext(), mIsBookmarksVisible);
         mViewModel.getIsHistoryVisible().observe((VRBrowserActivity)getContext(), mIsHistoryVisible);
+        mViewModel.getIsDownloadsVisible().observe((VRBrowserActivity)getContext(), mIsDownloadsVisible);
 
         mBinding.setViewmodel(mViewModel);
 
@@ -398,6 +424,14 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
             animateViewPadding(mBinding.historyButton, mMaxPadding, mMinPadding, ICON_ANIMATION_DURATION);
         } else {
             animateViewPadding(mBinding.historyButton, mMinPadding, mMaxPadding, ICON_ANIMATION_DURATION);
+        }
+    };
+
+    private Observer<ObservableBoolean> mIsDownloadsVisible = aBoolean -> {
+        if (aBoolean.get()) {
+            animateViewPadding(mBinding.downloadsButton, mMaxPadding, mMinPadding, ICON_ANIMATION_DURATION);
+        } else {
+            animateViewPadding(mBinding.downloadsButton, mMinPadding, mMaxPadding, ICON_ANIMATION_DURATION);
         }
     };
 
@@ -455,11 +489,21 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
         showNotification(BOOKMARK_ADDED_NOTIFICATION_ID, mBinding.bookmarksButton, R.string.bookmarks_saved_notification);
     }
 
+    public void showDownloadCompletedNotification(String filename) {
+        showNotification(DOWNLOAD_COMPLETED_NOTIFICATION_ID,
+                mBinding.downloadsButton,
+                getContext().getString(R.string.download_completed_notification, filename));
+    }
+
     private void showNotification(int notificationId, UIButton button, int stringRes) {
+        showNotification(notificationId, button, getContext().getString(stringRes));
+    }
+
+    private void showNotification(int notificationId, UIButton button, String string) {
         NotificationManager.Notification notification = new NotificationManager.Builder(this)
                 .withView(button)
                 .withDensity(R.dimen.tray_tooltip_density)
-                .withString(stringRes)
+                .withString(string)
                 .withPosition(NotificationManager.Notification.TOP)
                 .withZTranslation(25.0f).build();
         NotificationManager.show(notificationId, notification);
@@ -480,4 +524,26 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
             mWidgetManager.getWindows().showBookmarkAddedNotification();
         }
     };
+
+    // DownloadsManager.DownloadsListener
+
+    @Override
+    public void onDownloadsUpdate(@NonNull List<Download> downloads) {
+        long inProgressNum = downloads.stream().filter(item -> item.getStatus() == Download.RUNNING).count();
+        mTrayViewModel.setDownloadsNumber((int)inProgressNum);
+        if (inProgressNum == 0) {
+            mBinding.downloadsButton.setLevel(0);
+
+        } else {
+            long size = downloads.stream().filter(item -> item.getStatus() == Download.RUNNING).mapToLong(Download::getSizeBytes).sum();
+            long downloaded = downloads.stream().filter(item -> item.getStatus() == Download.RUNNING).mapToLong(Download::getDownloadedBytes).sum();
+            long percent = downloaded*100/size;
+            mBinding.downloadsButton.setLevel((int)percent*100);
+        }
+    }
+
+    @Override
+    public void onDownloadCompleted(@NonNull Download download) {
+        showDownloadCompletedNotification(download.getFilename());
+    }
 }

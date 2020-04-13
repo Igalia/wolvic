@@ -16,7 +16,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.ui.widgets.Windows;
 import org.mozilla.vrbrowser.utils.ServoUtils;
@@ -24,11 +23,8 @@ import org.mozilla.vrbrowser.utils.UrlUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.concurrent.Executor;
 
 public class WindowViewModel extends AndroidViewModel {
-
-    private Executor mUIThreadExecutor;
 
     private int mURLProtocolColor;
     private int mURLWebsiteColor;
@@ -48,6 +44,7 @@ public class WindowViewModel extends AndroidViewModel {
     private MediatorLiveData<ObservableBoolean> isTitleBarVisible;
     private MutableLiveData<ObservableBoolean> isBookmarksVisible;
     private MutableLiveData<ObservableBoolean> isHistoryVisible;
+    private MutableLiveData<ObservableBoolean> isDownloadsVisible;
     private MediatorLiveData<ObservableBoolean> isLibraryVisible;
     private MutableLiveData<ObservableBoolean> isLoading;
     private MutableLiveData<ObservableBoolean> isMicrophoneEnabled;
@@ -73,8 +70,6 @@ public class WindowViewModel extends AndroidViewModel {
 
     public WindowViewModel(Application application) {
         super(application);
-
-        mUIThreadExecutor = ((VRBrowserApplication)application).getExecutors().mainThread();
 
         TypedValue typedValue = new TypedValue();
         Resources.Theme theme = application.getTheme();
@@ -121,10 +116,12 @@ public class WindowViewModel extends AndroidViewModel {
 
         isBookmarksVisible = new MutableLiveData<>(new ObservableBoolean(false));
         isHistoryVisible = new MutableLiveData<>(new ObservableBoolean(false));
+        isDownloadsVisible = new MutableLiveData<>(new ObservableBoolean(false));
 
         isLibraryVisible = new MediatorLiveData<>();
         isLibraryVisible.addSource(isBookmarksVisible, mIsLibraryVisibleObserver);
         isLibraryVisible.addSource(isHistoryVisible, mIsLibraryVisibleObserver);
+        isLibraryVisible.addSource(isDownloadsVisible, mIsLibraryVisibleObserver);
         isLibraryVisible.setValue(new ObservableBoolean(false));
 
         isLoading = new MutableLiveData<>(new ObservableBoolean(false));
@@ -208,7 +205,11 @@ public class WindowViewModel extends AndroidViewModel {
     private Observer<ObservableBoolean> mIsLibraryVisibleObserver = new Observer<ObservableBoolean>() {
         @Override
         public void onChanged(ObservableBoolean o) {
-            isLibraryVisible.postValue(new ObservableBoolean(isBookmarksVisible.getValue().get() || isHistoryVisible.getValue().get()));
+            isLibraryVisible.postValue(new ObservableBoolean(
+                    isBookmarksVisible.getValue().get() ||
+                            isHistoryVisible.getValue().get() ||
+                            isDownloadsVisible.getValue().get()
+                    ));
 
             // We use this to force dispatch a title bar and navigation bar URL refresh when library is opened
             url.postValue(url.getValue());
@@ -234,6 +235,9 @@ public class WindowViewModel extends AndroidViewModel {
             } else if (isHistoryVisible.getValue().get()) {
                 url = getApplication().getString(R.string.url_history_title);
 
+            } else if (isDownloadsVisible.getValue().get()) {
+                url = getApplication().getString(R.string.url_downloads_title);
+
             } else {
                 if (UrlUtils.isPrivateAboutPage(getApplication(), url) ||
                         (UrlUtils.isDataUri(url) && isPrivateSession.getValue().get())) {
@@ -258,6 +262,7 @@ public class WindowViewModel extends AndroidViewModel {
             if (isInsecure.getValue().get()) {
                 if (UrlUtils.isPrivateAboutPage(getApplication(), aUrl) ||
                         (UrlUtils.isDataUri(aUrl) && isPrivateSession.getValue().get()) ||
+                        UrlUtils.isFileUri(aUrl) ||
                         UrlUtils.isHomeUri(getApplication(), aUrl) ||
                         isLibraryVisible.getValue().get() ||
                         UrlUtils.isBlankUri(getApplication(), aUrl)) {
@@ -403,6 +408,9 @@ public class WindowViewModel extends AndroidViewModel {
         } else if (isHistoryVisible.getValue().get()) {
             return getApplication().getString(R.string.url_history_title);
 
+        } else if (isDownloadsVisible.getValue().get()) {
+            return getApplication().getString(R.string.url_downloads_title);
+
         } else {
             return getApplication().getString(R.string.search_placeholder);
         }
@@ -519,6 +527,29 @@ public class WindowViewModel extends AndroidViewModel {
 
     public void setIsHistoryVisible(boolean isHistoryVisible) {
         this.isHistoryVisible.postValue(new ObservableBoolean(isHistoryVisible));
+    }
+
+    @NonNull
+    public MutableLiveData<ObservableBoolean> getIsDownloadsVisible() {
+        return isDownloadsVisible;
+    }
+
+    public void setIsDownloadsVisible(boolean isDownloadsVisible) {
+        this.isDownloadsVisible.postValue(new ObservableBoolean(isDownloadsVisible));
+    }
+
+    public void setIsPanelVisible(@NonNull Windows.PanelType panelType, boolean isVisible) {
+        switch (panelType) {
+            case BOOKMARKS:
+                setIsBookmarksVisible(isVisible);
+                break;
+            case HISTORY:
+                setIsHistoryVisible(isVisible);
+                break;
+            case DOWNLOADS:
+                setIsDownloadsVisible(isVisible);
+                break;
+        }
     }
 
     @NonNull

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/rhino" android:state_enabled="false" />
+    <item android:color="@color/fog" android:state_pressed="true" />
+    <item android:color="@color/asphalt" android:state_hovered="true" />
+    <item android:color="@color/fog" />
+</selector>
