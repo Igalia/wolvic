@@ -217,22 +217,13 @@ struct DeviceDelegatePicoVR::State {
       }
 
       vrb::Matrix transform = controller.transform;
-      if (renderMode == device::RenderMode::StandAlone) {
-        if (isInGazeMode) {
-          if (i == gazeIndex) {
-            vrb::Matrix head = vrb::Matrix::Rotation(orientation);
-            head.PreMultiplyInPlace(vrb::Matrix::Position(headOffset));
-            controller.transform = head;
-            transform = controller.transform;
-          }
+      if ((renderMode == device::RenderMode::StandAlone) && (i != gazeIndex)) {
+        if (type == k6DofHeadSet) {
+          transform.TranslateInPlace(headOffset);
         } else {
-          if (type == k6DofHeadSet) {
-            transform.TranslateInPlace(headOffset);
-          } else {
-            vrb::Matrix head = vrb::Matrix::Rotation(orientation);
-            head.PreMultiplyInPlace(vrb::Matrix::Position(headOffset));
-            transform = elbow->GetTransform(controller.hand, head, transform);
-          }
+          vrb::Matrix head = vrb::Matrix::Rotation(orientation);
+          head.PreMultiplyInPlace(vrb::Matrix::Position(headOffset));
+          transform = elbow->GetTransform(controller.hand, head, transform);
         }
       }
 
@@ -421,7 +412,7 @@ DeviceDelegatePicoVR::StartFrame(const FramePrediction aPrediction) {
 
   if (m.isInGazeMode) {
     m.controllers[m.gazeIndex].enabled = m.isInGazeMode;
-    m.controllers[m.gazeIndex].transform = GetHeadTransform();
+    m.controllers[m.gazeIndex].transform = head;
   }
 
   m.UpdateControllers();
