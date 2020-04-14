@@ -27,7 +27,6 @@
                 android:id="@+id/mediaBackButton"
                 style="?attr/mediaControlsButtonStyle"
                 android:layout_weight="1"
-                android:tint="@color/midnight"
                 android:src="@drawable/ic_icon_back" />
 
             <org.mozilla.vrbrowser.ui.views.UIButton

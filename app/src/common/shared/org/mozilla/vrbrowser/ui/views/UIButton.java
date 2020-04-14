@@ -370,6 +370,7 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
     public void setImageDrawable(@Nullable Drawable drawable) {
         super.setImageDrawable(drawable);
         mDrawable = drawable;
+        updateButtonColor();
     }
 
     public boolean setLevel(int level) {
