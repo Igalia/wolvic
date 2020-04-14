@@ -479,7 +479,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         }
         mAttachedWindow = null;
         if (mAwesomeBar != null && mAwesomeBar.isVisible()) {
-            mAwesomeBar.hideNoAnim(UIWidget.KEEP_WIDGET);
+            mAwesomeBar.hideNoAnim(UIWidget.REMOVE_WIDGET);
         }
 
         mBinding.navigationBarNavigation.urlBar.detachFromWindow();
