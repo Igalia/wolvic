@@ -55,9 +55,9 @@ Environment::LoadModels(const vrb::ModelLoaderAndroidPtr& aLoader) {
   m.root->AddNode(m.room);
   m.root->AddNode(m.fan1);
   m.root->AddNode(m.fan2);
-  aLoader->LoadModel("environments/Room.obj", m.room);
-//  aLoader->LoadModel("environments/Fan.obj", m.fan1);
-//  aLoader->LoadModel("environments/Fan.obj", m.fan2);
+  aLoader->LoadModel("environments/Room2/Room2.obj", m.room);
+//  aLoader->LoadModel("environments/Room/Fan.obj", m.fan1);
+//  aLoader->LoadModel("environments/Room/Fan.obj", m.fan2);
 
   vrb::Matrix transform = vrb::Matrix::Identity();
   m.room->SetTransform(transform);
