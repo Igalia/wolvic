@@ -1004,6 +1004,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         final GeckoResult<AllowOrDeny> result = new GeckoResult<>();
         AtomicInteger count = new AtomicInteger(0);
         AtomicBoolean allowed = new AtomicBoolean(false);
+        final int listenerCount = mNavigationListeners.size() - 1;
         for (GeckoSession.NavigationDelegate listener: mNavigationListeners) {
             GeckoResult<AllowOrDeny> listenerResult = listener.onLoadRequest(aSession, aRequest);
             if (listenerResult != null) {
@@ -1011,7 +1012,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
                     if (AllowOrDeny.ALLOW.equals(value)) {
                         allowed.set(true);
                     }
-                    if (count.getAndIncrement() == mNavigationListeners.size() - 1) {
+                    if (count.getAndIncrement() == listenerCount) {
                         result.complete(allowed.get() ? AllowOrDeny.ALLOW : AllowOrDeny.DENY);
                     }
 
@@ -1020,7 +1021,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
             } else {
                 allowed.set(true);
-                if (count.getAndIncrement() == mNavigationListeners.size() - 1) {
+                if (count.getAndIncrement() == listenerCount) {
                     result.complete(allowed.get() ? AllowOrDeny.ALLOW : AllowOrDeny.DENY);
                 }
             }
