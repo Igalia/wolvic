@@ -1303,7 +1303,7 @@
 
     <!-- This string is for the tooltip that appears when the user hovers over the 'Downloads' icon in the
          tray and the Downloads view is closed. The button it labels, when pressed, opens a list view of the user's downloads. -->
-    <string name="open_downloads_tooltip">Open History</string>
+    <string name="open_downloads_tooltip">Open Downloads</string>
 
     <!-- This string is for the tooltip that appears when the user hovers over the 'Downloads' icon in the
          tray and the Downloads view is closed. The button it labels, when pressed, closes the Downloads view. -->
