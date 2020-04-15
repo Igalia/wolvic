@@ -1222,8 +1222,7 @@
     <!-- This string is used as the body of the Private Browsing page that is opened when the
          Private Browsing Mode button from the tray is clicked.
          '%1$s' will be replaced at runtime with the app's name. -->
-    <string name="private_browsing_body"><![CDATA[
-<p>사생활 보호 창으로 브라우징할 경우, %1$s은(는) <strong>다음을 저장하지 않습니다</strong>:</p>
+    <string name="private_browsing_body"><![CDATA[<p>사생활 보호 창으로 탐색할 경우, %1$s은(는) <strong>다음을 저장하지 않습니다</strong>:</p>
 <ul class="two-column">
 	<li>방문한 웹페이지</li>
 	<li>검색</li>
@@ -1231,8 +1230,7 @@
 	<li>임시 파일</li>
 </ul>
 <p>사생활 보호 모드<strong>가 인터넷 상에서 사용자를 완전히 감추어주는 것은 아닙니다</strong>. 사용자의 고용주 또는 인터넷 서비스 제공자는 사용자가 방문하는 웹페이지를 알 수 있습니다.</p>
-<p class="about-info">사생활 보호 모드 더 알아보기<a id="learnMore"></a>.</p>
-     ]]></string>
+<p class="about-info">사생활 보호 모드 더 알아보기<a id="learnMore"></a>.</p>]]></string>
 
     <!-- This string is displayed in any button used for removing all the items in the current context.
          '%1$s' will be replaced at runtime with the app's name. -->
@@ -1440,7 +1438,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 
     <!-- This string is displayed a button of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. If clicked the dialog is dismissed. -->
-    <string name="whats_new_button_start_browsing">브라우징 시작</string>
+    <string name="whats_new_button_start_browsing">탐색 시작</string>
 
 
     <!-- This string is displayed in the title of the slow script dialog. -->
