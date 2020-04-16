@@ -973,7 +973,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     @Override
     public void onPopUpButtonClicked() {
-        toggleQuickPermission(mBinding.navigationBarNavigation.urlBar.getWebXRButton(),
+        toggleQuickPermission(mBinding.navigationBarNavigation.urlBar.getPopUpButton(),
                 SitePermission.SITE_PERMISSION_POPUP,
                 !mViewModel.getIsPopUpBlocked().getValue().get());
     }
@@ -994,7 +994,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     @Override
     public void onDrmButtonClicked() {
-        toggleQuickPermission(mBinding.navigationBarNavigation.urlBar.getTrackingButton(),
+        toggleQuickPermission(mBinding.navigationBarNavigation.urlBar.getDrmButton(),
                 SitePermission.SITE_PERMISSION_DRM,
                 !SettingsStore.getInstance(getContext()).isDrmContentPlaybackEnabled());
     }
@@ -1246,9 +1246,11 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             mQuickPermissionWidget = new QuickPermissionWidget(getContext());
         }
 
-        if (mQuickPermissionWidget.isVisible() && mQuickPermissionWidget.getCategory() == aCategory) {
+        if (mQuickPermissionWidget.isVisible()) {
             mQuickPermissionWidget.hide(KEEP_WIDGET);
-            return;
+            if (mQuickPermissionWidget.getCategory() == aCategory) {
+                return;
+            }
         }
 
         String uri = UrlUtils.getHost(mAttachedWindow.getSession().getCurrentUri());
