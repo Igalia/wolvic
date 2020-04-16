@@ -52,6 +52,7 @@
                 android:layout_centerVertical="true"
                 android:gravity="center_vertical"
                 android:layout_toStartOf="@id/buttons_container"
+                android:addStatesFromChildren="true"
                 android:orientation="@{isNarrow ? LinearLayout.VERTICAL : LinearLayout.HORIZONTAL}">
 
                 <TextView

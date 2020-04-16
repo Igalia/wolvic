@@ -120,7 +120,7 @@ public class DownloadsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return 0;
     }
 
-    @SuppressLint("ClickableViewAccessibility")
+    @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         DownloadItemBinding binding = DataBindingUtil
@@ -129,15 +129,31 @@ public class DownloadsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         binding.setCallback(mDownloadItemCallback);
         binding.setIsHovered(false);
         binding.setIsNarrow(mIsNarrowLayout);
+
+        return new DownloadItemViewHolder(binding);
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    @Override
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        DownloadItemViewHolder item = (DownloadItemViewHolder) holder;
+        DownloadItemBinding binding = item.binding;
+        item.binding.setItem(mDownloadsList.get(position));
+        item.binding.setIsNarrow(mIsNarrowLayout);
         binding.layout.setOnHoverListener((view, motionEvent) -> {
             int ev = motionEvent.getActionMasked();
             switch (ev) {
                 case MotionEvent.ACTION_HOVER_ENTER:
                     binding.setIsHovered(true);
+                    view.getBackground().setState(new int[]{android.R.attr.state_hovered});
+                    view.postInvalidate();
                     return false;
 
+                case MotionEvent.ACTION_CANCEL:
                 case MotionEvent.ACTION_HOVER_EXIT:
+                    view.getBackground().setState(new int[]{android.R.attr.state_active});
                     binding.setIsHovered(false);
+                    view.postInvalidate();
                     return false;
             }
 
@@ -207,15 +223,6 @@ public class DownloadsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             }
             return false;
         });
-
-        return new DownloadItemViewHolder(binding);
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        DownloadItemViewHolder item = (DownloadItemViewHolder) holder;
-        item.binding.setItem(mDownloadsList.get(position));
-        item.binding.setIsNarrow(mIsNarrowLayout);
     }
 
     @Override

@@ -155,7 +155,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         return 0;
     }
 
-    @SuppressLint("ClickableViewAccessibility")
+    @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == BookmarkNodeType.ITEM.ordinal()) {
@@ -166,15 +166,52 @@ public class BookmarkAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             binding.setCallback(mBookmarkItemCallback);
             binding.setIsHovered(false);
             binding.setIsNarrow(mIsNarrowLayout);
+
+            return new BookmarkViewHolder(binding);
+
+        } else if (viewType == BookmarkNodeType.FOLDER.ordinal()) {
+            BookmarkItemFolderBinding binding = DataBindingUtil
+                    .inflate(LayoutInflater.from(parent.getContext()), R.layout.bookmark_item_folder,
+                            parent, false);
+            binding.setCallback(mBookmarkItemFolderCallback);
+
+            return new BookmarkFolderViewHolder(binding);
+
+        } else if (viewType == BookmarkNodeType.SEPARATOR.ordinal()) {
+            BookmarkSeparatorBinding binding = DataBindingUtil
+                    .inflate(LayoutInflater.from(parent.getContext()), R.layout.bookmark_separator,
+                            parent, false);
+
+            return new BookmarkSeparatorViewHolder(binding);
+        }
+
+        throw new IllegalArgumentException("Invalid view Type");
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    @Override
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        Bookmark item = mDisplayList.get(position);
+
+        if (holder instanceof BookmarkViewHolder) {
+            BookmarkViewHolder bookmarkHolder = (BookmarkViewHolder) holder;
+            BookmarkItemBinding binding = bookmarkHolder.binding;
+            binding.setItem(item);
+            binding.setIsNarrow(mIsNarrowLayout);
             binding.layout.setOnHoverListener((view, motionEvent) -> {
                 int ev = motionEvent.getActionMasked();
                 switch (ev) {
                     case MotionEvent.ACTION_HOVER_ENTER:
                         binding.setIsHovered(true);
+                        view.getBackground().setState(new int[]{android.R.attr.state_hovered});
+                        view.postInvalidate();
                         return false;
 
+                    case MotionEvent.ACTION_CANCEL:
                     case MotionEvent.ACTION_HOVER_EXIT:
+                        view.getBackground().setState(new int[]{android.R.attr.state_active});
                         binding.setIsHovered(false);
+                        view.postInvalidate();
                         return false;
                 }
 
@@ -245,40 +282,27 @@ public class BookmarkAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 return false;
             });
 
-            return new BookmarkViewHolder(binding);
-
-        } else if (viewType == BookmarkNodeType.FOLDER.ordinal()) {
-            BookmarkItemFolderBinding binding = DataBindingUtil
-                    .inflate(LayoutInflater.from(parent.getContext()), R.layout.bookmark_item_folder,
-                            parent, false);
-            binding.setCallback(mBookmarkItemFolderCallback);
-
-            return new BookmarkFolderViewHolder(binding);
-
-        } else if (viewType == BookmarkNodeType.SEPARATOR.ordinal()) {
-            BookmarkSeparatorBinding binding = DataBindingUtil
-                    .inflate(LayoutInflater.from(parent.getContext()), R.layout.bookmark_separator,
-                            parent, false);
-
-            return new BookmarkSeparatorViewHolder(binding);
-        }
-
-        throw new IllegalArgumentException("Invalid view Type");
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        Bookmark item = mDisplayList.get(position);
-
-        if (holder instanceof BookmarkViewHolder) {
-            BookmarkViewHolder bookmarkHolder = (BookmarkViewHolder) holder;
-            bookmarkHolder.binding.setItem(item);
-            bookmarkHolder.binding.setIsNarrow(mIsNarrowLayout);
-
         } else if (holder instanceof BookmarkFolderViewHolder) {
             BookmarkFolderViewHolder bookmarkHolder = (BookmarkFolderViewHolder) holder;
             bookmarkHolder.binding.setItem(item);
             bookmarkHolder.binding.executePendingBindings();
+            bookmarkHolder.binding.layout.setOnHoverListener((view, motionEvent) -> {
+                int ev = motionEvent.getActionMasked();
+                switch (ev) {
+                    case MotionEvent.ACTION_HOVER_ENTER:
+                        view.getBackground().setState(new int[]{android.R.attr.state_hovered});
+                        view.postInvalidate();
+                        return false;
+
+                    case MotionEvent.ACTION_CANCEL:
+                    case MotionEvent.ACTION_HOVER_EXIT:
+                        view.getBackground().setState(new int[]{android.R.attr.state_active});
+                        view.postInvalidate();
+                        return false;
+                }
+
+                return false;
+            });
 
         } else if (holder instanceof BookmarkSeparatorViewHolder) {
             BookmarkSeparatorViewHolder bookmarkHolder = (BookmarkSeparatorViewHolder) holder;

@@ -127,7 +127,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return 0;
     }
 
-    @SuppressLint("ClickableViewAccessibility")
+    @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == TYPE_ITEM) {
@@ -137,15 +137,44 @@ public class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             binding.setCallback(mHistoryItemCallback);
             binding.setIsHovered(false);
             binding.setIsNarrow(mIsNarrowLayout);
+
+            return new HistoryItemViewHolder(binding);
+
+         } else if (viewType == TYPE_HEADER){
+            HistoryItemHeaderBinding binding = DataBindingUtil
+                    .inflate(LayoutInflater.from(parent.getContext()), R.layout.history_item_header,
+                            parent, false);
+
+            return new HistoryItemViewHeaderHolder(binding);
+        }
+
+        throw new RuntimeException("there is no type that matches the type " + viewType + " + make sure your using types correctly");
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    @Override
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        VisitInfo item = mHistoryList.get(position);
+
+        if (holder instanceof HistoryItemViewHolder) {
+            HistoryItemViewHolder historyHolder = (HistoryItemViewHolder) holder;
+            HistoryItemBinding binding = historyHolder.binding;
+            binding.setItem(item);
+            binding.setIsNarrow(mIsNarrowLayout);
             binding.layout.setOnHoverListener((view, motionEvent) -> {
                 int ev = motionEvent.getActionMasked();
                 switch (ev) {
                     case MotionEvent.ACTION_HOVER_ENTER:
                         binding.setIsHovered(true);
+                        view.getBackground().setState(new int[]{android.R.attr.state_hovered});
+                        view.postInvalidate();
                         return false;
 
+                    case MotionEvent.ACTION_CANCEL:
                     case MotionEvent.ACTION_HOVER_EXIT:
+                        view.getBackground().setState(new int[]{android.R.attr.state_active});
                         binding.setIsHovered(false);
+                        view.postInvalidate();
                         return false;
                 }
 
@@ -216,29 +245,9 @@ public class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 return false;
             });
 
-            return new HistoryItemViewHolder(binding);
-
-         } else if (viewType == TYPE_HEADER){
-            HistoryItemHeaderBinding binding = DataBindingUtil
-                    .inflate(LayoutInflater.from(parent.getContext()), R.layout.history_item_header,
-                            parent, false);
-
-            return new HistoryItemViewHeaderHolder(binding);
-        }
-
-        throw new RuntimeException("there is no type that matches the type " + viewType + " + make sure your using types correctly");
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        if (holder instanceof HistoryItemViewHolder) {
-            HistoryItemViewHolder item = (HistoryItemViewHolder) holder;
-            item.binding.setItem(mHistoryList.get(position));
-            item.binding.setIsNarrow(mIsNarrowLayout);
-
         } else if (holder instanceof HistoryItemViewHeaderHolder) {
-            HistoryItemViewHeaderHolder item = (HistoryItemViewHeaderHolder) holder;
-            item.binding.setTitle(mHistoryList.get(position).getTitle());
+            HistoryItemViewHeaderHolder historyHolder = (HistoryItemViewHeaderHolder) holder;
+            historyHolder.binding.setTitle(item.getTitle());
         }
     }
 
