@@ -719,7 +719,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        if (mKeyboard.dispatchKeyEvent(event)) {
+        if (isNotSpecialKey(event) && mKeyboard.dispatchKeyEvent(event)) {
             return true;
         }
         final int keyCode = event.getKeyCode();

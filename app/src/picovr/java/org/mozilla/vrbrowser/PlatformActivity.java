@@ -40,18 +40,23 @@ import org.mozilla.vrbrowser.utils.SystemUtils;
 
 public class PlatformActivity extends VRActivity implements RenderInterface, CVControllerListener {
     static String LOGTAG = SystemUtils.createLogtag(PlatformActivity.class);
+    private static final int CONFIRM_BUTTON = 1001;
 
     public static boolean filterPermission(final String aPermission) {
-        if (aPermission.equals(Manifest.permission.CAMERA)) {
-            return true;
-        }
-        return false;
+        return aPermission.equals(Manifest.permission.CAMERA);
+    }
+
+    public static boolean isNotSpecialKey(KeyEvent event) {
+        return event.getKeyCode() != CONFIRM_BUTTON;
     }
 
     private BroadcastReceiver mKeysReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String s = intent.getStringExtra("reason");
+            if (s == null) {
+                return;
+            }
             if (s.equalsIgnoreCase("recenter")) {
                 nativeRecenter();
             }
@@ -70,6 +75,7 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
     private final int BUTTON_AX        = 1 << 3;
     private final int BUTTON_BY        = 1 << 4;
     private final int BUTTON_GRIP      = 1 << 5;
+
 
     private static final int GAZE_INDEX = 2;
 
@@ -154,7 +160,7 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        if (event.getKeyCode() == 1001) {
+        if (event.getKeyCode() == CONFIRM_BUTTON) {
             int buttons = 0;
             buttons |= event.getAction() == KeyEvent.ACTION_DOWN ? BUTTON_TRIGGER : 0;
             nativeUpdateControllerState(GAZE_INDEX, true, buttons, 0, 0, 0, false);
