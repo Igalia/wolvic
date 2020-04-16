@@ -80,7 +80,7 @@
                         android:paddingEnd="2dp"
                         android:src="@{settingsViewmodel.isDrmEnabled ? @drawable/ic_icon_drm_allowed : @drawable/ic_icon_drm_blocked}"
                         android:tint="@color/fog"
-                        android:tooltipText="@{settingsViewmodel.isTrackingProtectionEnabled ? @string/drm_enabled_tooltip : @string/drm_disabled_tooltip}"
+                        android:tooltipText="@{settingsViewmodel.isDrmEnabled ? @string/drm_enabled_tooltip : @string/drm_disabled_tooltip}"
                         app:privateMode="@{viewmodel.isPrivateSession}" />
                 </LinearLayout>
 
