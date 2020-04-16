@@ -1039,14 +1039,14 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
         final GeckoResult<AllowOrDeny> result = new GeckoResult<>();
         AtomicInteger count = new AtomicInteger(0);
-        AtomicBoolean allowed = new AtomicBoolean(false);
+        AtomicBoolean allowed = new AtomicBoolean(true);
         final int listenerCount = mNavigationListeners.size() - 1;
         for (GeckoSession.NavigationDelegate listener: mNavigationListeners) {
             GeckoResult<AllowOrDeny> listenerResult = listener.onLoadRequest(aSession, aRequest);
             if (listenerResult != null) {
                 listenerResult.then(value -> {
-                    if (AllowOrDeny.ALLOW.equals(value)) {
-                        allowed.set(true);
+                    if (AllowOrDeny.DENY.equals(value)) {
+                        allowed.set(false);
                     }
                     if (count.getAndIncrement() == listenerCount) {
                         result.complete(allowed.get() ? AllowOrDeny.ALLOW : AllowOrDeny.DENY);
