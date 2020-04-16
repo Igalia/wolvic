@@ -33,7 +33,7 @@ public class PromptDialogWidget extends UIDialog {
 
     protected PromptDialogBinding mBinding;
     private Delegate mAppDialogDelegate;
-    private Runnable mLinkDelegate;
+    private ViewUtils.LinkClickableSpan mLinkDelegate;
 
     public PromptDialogWidget(Context aContext) {
         super(aContext);
@@ -98,7 +98,7 @@ public class PromptDialogWidget extends UIDialog {
         mAppDialogDelegate = delegate;
     }
 
-    public void setLinkDelegate(@NonNull Runnable delegate) {
+    public void setLinkDelegate(@NonNull ViewUtils.LinkClickableSpan delegate) {
         mLinkDelegate = delegate;
     }
 
@@ -125,7 +125,7 @@ public class PromptDialogWidget extends UIDialog {
     public void setBody(@NonNull String body) {
         ViewUtils.setTextViewHTML(mBinding.body, body, (widget, url) -> {
             if (mLinkDelegate != null) {
-                mLinkDelegate.run();
+                mLinkDelegate.onClick(PromptDialogWidget.this, url);
             }
         });
     }
@@ -133,7 +133,7 @@ public class PromptDialogWidget extends UIDialog {
     public void setBody(@StringRes int body) {
         ViewUtils.setTextViewHTML(mBinding.body, getResources().getString(body), (widget, url) -> {
             if (mLinkDelegate != null) {
-                mLinkDelegate.run();
+                mLinkDelegate.onClick(PromptDialogWidget.this, url);
             }
         });
     }

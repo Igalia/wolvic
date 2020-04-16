@@ -78,6 +78,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     private transient CopyOnWriteArrayList<GeckoSession.SelectionActionDelegate> mSelectionActionListeners;
     private transient CopyOnWriteArrayList<WebXRStateChangedListener> mWebXRStateListeners;
     private transient CopyOnWriteArrayList<PopUpStateChangedListener> mPopUpStateStateListeners;
+    private transient CopyOnWriteArrayList<DrmStateChangedListener> mDrmStateStateListeners;
 
     private SessionState mState;
     private transient CopyOnWriteArrayList<Runnable> mQueuedCalls = new CopyOnWriteArrayList<>();
@@ -101,6 +102,10 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
     public interface PopUpStateChangedListener {
         void onPopUpStateChanged(Session aSession, @SessionState.PopupState int aPopUpState);
+    }
+
+    public interface DrmStateChangedListener {
+        void onDrmStateChanged(Session aSession, @SessionState.DrmState int aDrmState);
     }
 
     @IntDef(value = { SESSION_OPEN, SESSION_DO_NOT_OPEN})
@@ -135,6 +140,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         mBitmapChangedListeners = new CopyOnWriteArrayList<>();
         mWebXRStateListeners = new CopyOnWriteArrayList<>();
         mPopUpStateStateListeners = new CopyOnWriteArrayList<>();
+        mDrmStateStateListeners = new CopyOnWriteArrayList<>();
 
         if (mPrefs != null) {
             mPrefs.registerOnSharedPreferenceChangeListener(this);
@@ -181,6 +187,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         mBitmapChangedListeners.clear();
         mWebXRStateListeners.clear();
         mPopUpStateStateListeners.clear();
+        mDrmStateStateListeners.clear();
 
         if (mPrefs != null) {
             mPrefs.unregisterOnSharedPreferenceChangeListener(this);
@@ -207,6 +214,10 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         }
 
         for (PopUpStateChangedListener listener: mPopUpStateStateListeners) {
+            dumpState(listener);
+        }
+
+        for (DrmStateChangedListener listener: mDrmStateStateListeners) {
             dumpState(listener);
         }
     }
@@ -245,6 +256,10 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
     private void dumpState(PopUpStateChangedListener aListener) {
         aListener.onPopUpStateChanged(this, mState.mPopUpState);
+    }
+
+    private void dumpState(DrmStateChangedListener aListener) {
+        aListener.onDrmStateChanged(this, mState.mDrmState);
     }
 
     private void flushQueuedEvents() {
@@ -350,6 +365,15 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
     public void removePopUpStateChangedListener(PopUpStateChangedListener aListener) {
         mPopUpStateStateListeners.remove(aListener);
+    }
+
+    public void addDrmStateChangedListener(DrmStateChangedListener aListener) {
+        mDrmStateStateListeners.add(aListener);
+        dumpState(aListener);
+    }
+
+    public void removeDrmStateChangedListener(DrmStateChangedListener aListener) {
+        mDrmStateStateListeners.remove(aListener);
     }
 
     private void setupSessionListeners(GeckoSession aSession) {
@@ -841,6 +865,17 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         return mState.mPopUpState;
     }
 
+    public void setDrmState(@SessionState.DrmState int aDrmState) {
+        mState.mDrmState = aDrmState;
+        for (DrmStateChangedListener listener: mDrmStateStateListeners) {
+            dumpState(listener);
+        }
+    }
+
+    public @SessionState.DrmState int getDrmState() {
+        return mState.mDrmState;
+    }
+
     // Session Settings
 
     protected void setServo(final boolean enabled) {
@@ -937,6 +972,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         }
 
         setPopUpState(SessionState.POPUP_UNUSED);
+        setDrmState(SessionState.DRM_UNUSED);
 
         mState.mPreviousUri = mState.mUri;
         mState.mUri = aUri;

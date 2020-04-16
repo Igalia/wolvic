@@ -79,7 +79,7 @@ public class SwitchSetting extends LinearLayout {
     };
 
     public void setLinkClickListener(@NonNull ViewUtils.LinkClickableSpan listener) {
-        ViewUtils.setTextViewHTML(mSwitchDescription, mText, listener::onClick);
+        ViewUtils.setTextViewHTML(mSwitchDescription, mSwitchDescription.getText().toString(), listener);
     }
 
     public void setValue(boolean value, boolean doApply) {

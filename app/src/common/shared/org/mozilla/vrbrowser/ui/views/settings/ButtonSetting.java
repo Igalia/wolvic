@@ -125,6 +125,6 @@ public class ButtonSetting extends LinearLayout {
     }
 
     public void setLinkClickListener(@NonNull ViewUtils.LinkClickableSpan listener) {
-        ViewUtils.setTextViewHTML(mDescriptionView, mDescriptionView.getText().toString(), listener::onClick);
+        ViewUtils.setTextViewHTML(mDescriptionView, mDescriptionView.getText().toString(), listener);
     }
 }

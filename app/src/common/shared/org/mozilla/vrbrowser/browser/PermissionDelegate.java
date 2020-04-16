@@ -180,9 +180,16 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
         } else if (aType == PERMISSION_MEDIA_KEY_SYSTEM_ACCESS) {
             WindowWidget windowWidget = mWidgetManager.getFocusedWindow();
             Runnable enableDrm = () -> {
+                Session session = SessionStore.get().getSession(aSession);
                 if (SettingsStore.getInstance(mContext).isDrmContentPlaybackEnabled()) {
+                    if (session != null) {
+                        session.setDrmState(SessionState.DRM_ALLOWED);
+                    }
                     callback.grant();
                 } else {
+                    if (session != null) {
+                        session.setDrmState(SessionState.DRM_BLOCKED);
+                    }
                     callback.reject();
                 }
             };

@@ -614,11 +614,7 @@
          when that the content was just synced some time ago. -->
     <string name="fxa_account_last_synced">Last synced %1$d minutes ago</string>
 
-    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
-     and is used to enable or disable playback of DRM controlled content. -->
-    <string name="security_options_drm_content">Play DRM-Controlled Content (&lt;a href="http://somesite.com/">Learn More&lt;/a>)</string>
-
-    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
+        <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable playback of DRM controlled content. -->
     <string name="security_options_drm_content_v1">Automatically allow sites to identify your device to play DRM-controlled content. (&lt;a href="%1$s">Learn More&lt;/a>)</string>
 
@@ -1599,19 +1595,20 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 
     <!-- This string is displayed as the title of a dialog that is displayed the first time a user access DRM content if they haven't
          explicitly enable/Disable the DRM setting yet. -->
-    <string name="drm_first_use_title">DRM</string>
+    <string name="drm_first_use_title_v1">This site contains DRM content.</string>
 
     <!-- This string is displayed as the body of a dialog that is displayed the first time a user access DRM content if they haven't
-         explicitly enable/Disable the DRM setting yet. -->
-    <string name="drm_first_use_body">You need to enable DRM to play some audio or video on this page</string>
+         explicitly enable/Disable the DRM setting yet.
+         '%1$s' will be replaced at runtime with the Learn More page link. -->
+    <string name="drm_first_use_body_v1">Allowing DRM permits this site to identify this device every time you visit. &lt;a href="%1$s">Learn More&lt;/a></string>
   
     <!-- This string is displayed in the enable button that is displayed inside the dialog that is displayed the first time a user access
          access DRM content if they haven't explicitly enable/Disable the DRM setting yet. -->
-    <string name="drm_first_use_enable">Enable</string>
+    <string name="drm_first_use_allow">Allow</string>
   
     <!-- This string is displayed in the do not enable button that is displayed inside the dialog that is displayed the first time a user access
          access DRM content if they haven't explicitly enable/Disable the DRM setting yet. -->
-    <string name="drm_first_use_do_not_enable">Don\'t enable</string>
+    <string name="drm_first_use_do_not_allow">Don’t allow</string>
 
     <!-- This string is displayed in the disable button of the quick Tracking Protection dialog, accessed from the Tracking Protection icon in the URL bar. -->
     <string name="tracking_dialog_button_disable">Disable</string>

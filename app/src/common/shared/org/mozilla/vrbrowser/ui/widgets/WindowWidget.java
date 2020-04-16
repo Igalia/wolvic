@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -86,7 +87,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         GeckoSession.ContentDelegate, GeckoSession.NavigationDelegate, VideoAvailabilityListener,
         GeckoSession.HistoryDelegate, GeckoSession.ProgressDelegate, GeckoSession.SelectionActionDelegate,
         Session.WebXRStateChangedListener, Session.PopUpStateChangedListener,
-        SharedPreferences.OnSharedPreferenceChangeListener {
+        Session.DrmStateChangedListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
     @IntDef(value = { SESSION_RELEASE_DISPLAY, SESSION_DO_NOT_RELEASE_DISPLAY})
     public @interface OldSessionDisplayAction {}
@@ -256,6 +257,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         aSession.addSelectionActionListener(this);
         aSession.addWebXRStateChangedListener(this);
         aSession.addPopUpStateChangedListener(this);
+        aSession.addDrmStateChangedListener(this);
     }
 
     void cleanListeners(Session aSession) {
@@ -268,6 +270,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         aSession.removeSelectionActionListener(this);
         aSession.removeWebXRStateChangedListener(this);
         aSession.removePopUpStateChangedListener(this);
+        aSession.removeDrmStateChangedListener(this);
     }
 
     @Override
@@ -1266,31 +1269,38 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             mAlertDialog.releaseWidget();
             mAlertDialog = null;
         });
+        mAlertDialog.setLinkDelegate((widget, url) ->  {
+            mWidgetManager.openNewTabForeground(url);
+            mAlertDialog.hide(REMOVE_WIDGET);
+            mAlertDialog.releaseWidget();
+            mAlertDialog = null;
+        });
         mAlertDialog.show(REQUEST_FOCUS);
     }
 
-    public void showConfirmPrompt(String title, @NonNull String msg, @NonNull String[] btnMsg, @Nullable PromptDialogWidget.Delegate callback) {
-        if (mConfirmDialog == null) {
-            mConfirmDialog = new PromptDialogWidget(getContext());
-            mConfirmDialog.setButtons(new int[] {
-                    R.string.cancel_button,
-                    R.string.ok_button
-            });
-            mConfirmDialog.setCheckboxVisible(false);
-            mConfirmDialog.setDescriptionVisible(false);
-        }
-        mConfirmDialog.setTitle(title);
-        mConfirmDialog.setBody(msg);
-        mConfirmDialog.setButtons(btnMsg);
-        mConfirmDialog.setButtonsDelegate(index -> {
-            mConfirmDialog.hide(REMOVE_WIDGET);
-            if (callback != null) {
-                callback.onButtonClicked(index);
-            }
-            mConfirmDialog.releaseWidget();
-            mConfirmDialog = null;
-        });
-        mConfirmDialog.show(REQUEST_FOCUS);
+    public void showConfirmPrompt(@NonNull String title,
+                                  @NonNull String msg,
+                                  @NonNull String[] btnMsg,
+                                  @Nullable PromptDialogWidget.Delegate callback) {
+        showConfirmPrompt(-1,
+                title,
+                msg,
+                btnMsg,
+                null,
+                callback);
+    }
+
+    public void showConfirmPrompt(@DrawableRes int icon,
+                                  @NonNull String title,
+                                  @NonNull String msg,
+                                  @NonNull String[] btnMsg,
+                                  @Nullable PromptDialogWidget.Delegate callback) {
+        showConfirmPrompt(icon,
+                title,
+                msg,
+                btnMsg,
+                null,
+                callback);
     }
 
     public void showConfirmPrompt(@NonNull String title,
@@ -1298,14 +1308,34 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                                   @NonNull String[] btnMsg,
                                   @NonNull String checkBoxText,
                                   @Nullable PromptDialogWidget.Delegate callback) {
+        showConfirmPrompt(-1,
+                title,
+                msg,
+                btnMsg,
+                checkBoxText,
+                callback);
+    }
+
+    public void showConfirmPrompt(@DrawableRes int icon,
+                                  @NonNull String title,
+                                  @NonNull String msg,
+                                  @NonNull String[] btnMsg,
+                                  @Nullable String checkBoxText,
+                                  @Nullable PromptDialogWidget.Delegate callback) {
         if (mConfirmDialog == null) {
             mConfirmDialog = new PromptDialogWidget(getContext());
             mConfirmDialog.setButtons(new int[] {
                     R.string.cancel_button,
                     R.string.ok_button
             });
-            mConfirmDialog.setCheckboxVisible(true);
-            mConfirmDialog.setCheckboxText(checkBoxText);
+            mConfirmDialog.setCheckboxVisible(false);
+            if (checkBoxText != null) {
+                mConfirmDialog.setCheckboxVisible(true);
+                mConfirmDialog.setCheckboxText(checkBoxText);
+            }
+            if (icon != -1) {
+                mConfirmDialog.setIcon(icon);
+            }
             mConfirmDialog.setDescriptionVisible(false);
         }
         mConfirmDialog.setTitle(title);
@@ -1319,10 +1349,16 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             mConfirmDialog.releaseWidget();
             mConfirmDialog = null;
         });
+        mConfirmDialog.setLinkDelegate((widget, url) ->  {
+            mWidgetManager.openNewTabForeground(url);
+            mConfirmDialog.hide(REMOVE_WIDGET);
+            mConfirmDialog.releaseWidget();
+            mConfirmDialog = null;
+        });
         mConfirmDialog.show(REQUEST_FOCUS);
     }
 
-    public void showDialog(@NonNull String title, @NonNull @StringRes int  description, @NonNull  @StringRes int [] btnMsg,
+    public void showDialog(@NonNull String title, @StringRes int  description, @NonNull  @StringRes int [] btnMsg,
                            @Nullable PromptDialogWidget.Delegate buttonsCallback, @Nullable Runnable linkCallback) {
         mAppDialog = new PromptDialogWidget(getContext());
         mAppDialog.setIconVisible(false);
@@ -1338,7 +1374,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             }
             mAppDialog.releaseWidget();
         });
-        mAppDialog.setLinkDelegate(() -> {
+        mConfirmDialog.setLinkDelegate((widget, url) -> {
+            mWidgetManager.openNewTabForeground(url);
             mAppDialog.hide(REMOVE_WIDGET);
             if (linkCallback != null) {
                 linkCallback.run();
@@ -1351,11 +1388,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     public void showFirstTimeDrmDialog(@NonNull Runnable callback) {
         showConfirmPrompt(
-                getContext().getString(R.string.drm_first_use_title),
-                getContext().getString(R.string.drm_first_use_body),
+                R.drawable.ic_icon_drm_allowed,
+                getContext().getString(R.string.drm_first_use_title_v1),
+                getContext().getString(R.string.drm_first_use_body_v1, getResources().getString(R.string.sumo_drm_url)),
                 new String[]{
-                        getContext().getString(R.string.drm_first_use_do_not_enable),
-                        getContext().getString(R.string.drm_first_use_enable),
+                        getContext().getString(R.string.drm_first_use_do_not_allow),
+                        getContext().getString(R.string.drm_first_use_allow),
                 },
                 index -> {
                     // We remove the prefs listener before the first DRM update to avoid reloading the session
@@ -1493,6 +1531,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         Runnable download = () -> {
             if (showConfirmDialog) {
                 mWidgetManager.getFocusedWindow().showConfirmPrompt(
+                        R.drawable.ic_icon_downloads,
                         getResources().getString(R.string.download_confirm_title),
                         downloadJob.getFilename(),
                         new String[]{
@@ -1987,5 +2026,13 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     public void onPopUpStateChanged(Session aSession, @SessionState.PopupState int aPopUpState) {
         mViewModel.setIsPopUpBlocked(aPopUpState == SessionState.POPUP_BLOCKED);
         mViewModel.setIsPopUpAvailable(aPopUpState != SessionState.POPUP_UNUSED);
+    }
+
+    // DrmStateChangedListener
+
+    @Override
+    public void onDrmStateChanged(Session aSession, @SessionState.DrmState int aDrmState) {
+        mViewModel.setIsDrmUsed(aDrmState == SessionState.DRM_BLOCKED ||
+                aDrmState == SessionState.DRM_ALLOWED);
     }
 }
