@@ -8,6 +8,7 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 import org.mozilla.gecko.GeckoProfile;
+import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
@@ -43,8 +44,10 @@ class SessionUtils {
             // Disable WebRender until it works with FxR
             out.write("pref(\"gfx.webrender.force-disabled\", true);\n".getBytes());
             out.write("pref(\"signon.rememberSignons\", false);\n".getBytes());
-            int processCount = SettingsStore.getInstance(aContext).isMultiE10s() ? 3 : 1;
-            out.write(("pref(\"dom.ipc.processCount\", " +  processCount + ");\n").getBytes());
+            if (BuildConfig.DEBUG) {
+                int processCount = SettingsStore.getInstance(aContext).isMultiE10s() ? 3 : 1;
+                out.write(("pref(\"dom.ipc.processCount\", " + processCount + ");\n").getBytes());
+            }
             int msaa = SettingsStore.getInstance(aContext).getMSAALevel();
             if (msaa > 0) {
                 int msaaLevel = msaa == 2 ? 4 : 2;

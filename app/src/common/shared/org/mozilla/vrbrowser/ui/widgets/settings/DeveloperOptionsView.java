@@ -69,12 +69,13 @@ class DeveloperOptionsView extends SettingsView {
         mBinding.bypassCacheOnReloadSwitch.setOnCheckedChangeListener(mBypassCacheOnReloadListener);
         setBypassCacheOnReload(SettingsStore.getInstance(getContext()).isBypassCacheOnReloadEnabled(), false);
 
-        mBinding.multiE10sSwitch.setOnCheckedChangeListener(mMultiE10sListener);
-        setMultiE10s(SettingsStore.getInstance(getContext()).isMultiE10s(), false);
-
         if (BuildConfig.DEBUG) {
             mBinding.debugLoggingSwitch.setVisibility(View.GONE);
+            mBinding.multiE10sSwitch.setOnCheckedChangeListener(mMultiE10sListener);
+            setMultiE10s(SettingsStore.getInstance(getContext()).isMultiE10s(), false);
         } else {
+            mBinding.multiE10sSwitch.setVisibility(View.GONE);
+            mBinding.debugLoggingSwitch.setOnCheckedChangeListener(mDebugLogginListener);
             setDebugLogging(SettingsStore.getInstance(getContext()).isDebugLoggingEnabled(), false);
         }
 
