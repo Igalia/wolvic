@@ -45,6 +45,7 @@ public class UISurfaceTextureRenderer {
         mTextureWidth = aWidth;
         mTextureHeight = aHeight;
         mSurface = aSurface;
+        mIsHardwareAccelerationEnabled = sUseHardwareAcceleration;
     }
 
     void resize(int aWidth, int aHeight) {
