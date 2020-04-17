@@ -1374,7 +1374,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             }
             mAppDialog.releaseWidget();
         });
-        mConfirmDialog.setLinkDelegate((widget, url) -> {
+        mAppDialog.setLinkDelegate((widget, url) -> {
             mWidgetManager.openNewTabForeground(url);
             mAppDialog.hide(REMOVE_WIDGET);
             if (linkCallback != null) {
