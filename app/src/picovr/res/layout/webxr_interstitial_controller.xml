@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="org.mozilla.vrbrowser.utils.DeviceType"/>
+        <import type="org.mozilla.vrbrowser.ui.widgets.WebXRInterstitialController"/>
+        <variable
+            name="model"
+            type="int" />
+        <variable
+            name="hand"
+            type="int" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#00000000"
+        android:padding="5dp">
+
+        <!-- Neo Left Controller -->
+        <RelativeLayout
+            app:visibleGone="@{model == DeviceType.PicoNeo2 &amp;&amp; hand == WebXRInterstitialController.HAND_LEFT}"
+            tools:visibility="gone"
+            android:layout_width="200dp"
+            android:layout_height="130dp"
+            >
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/controller_neo2_left"
+                tools:ignore="RtlHardcoded" />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="54dp"
+                android:layout_marginTop="32dp"
+                android:paddingBottom="16dp"
+                android:rotation="-30"
+                android:layout_alignParentTop="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_webxr_controller_arrow"
+                tools:ignore="RtlHardcoded,RtlSymmetry"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="textEnd"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="100dp"
+                android:layout_marginTop="23dp"
+                android:layout_alignParentTop="true"
+                android:textSize="18sp"
+                tools:ignore="RtlHardcoded,RtlSymmetry"
+                android:text="@string/webxr_interstitial_exit_webxr"/>
+        </RelativeLayout>
+
+        <!-- Neo Right Controller -->
+        <RelativeLayout
+            app:visibleGone="@{model == DeviceType.PicoNeo2 &amp;&amp; hand == WebXRInterstitialController.HAND_RIGHT}"
+            tools:visibility="gone"
+            android:layout_width="200dp"
+            android:layout_height="130dp"
+            >
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/controller_neo2_right"
+                tools:ignore="RtlHardcoded" />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="55dp"
+                android:layout_marginTop="35dp"
+                android:paddingBottom="16dp"
+                android:scaleX="-1"
+                android:rotation="30"
+                android:layout_alignParentTop="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_webxr_controller_arrow"
+                tools:ignore="RtlHardcoded,RtlSymmetry"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="textStart"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="100dp"
+                android:layout_marginTop="26dp"
+                android:layout_alignParentTop="true"
+                android:textSize="18sp"
+                tools:ignore="RtlHardcoded,RtlSymmetry"
+                android:text="@string/webxr_interstitial_exit_webxr"/>
+        </RelativeLayout>
+
+        <!-- G2 Controller -->
+        <RelativeLayout
+            app:visibleGone="@{model == DeviceType.PicoG2 }"
+            tools:visibility="visible"
+            android:layout_width="250dp"
+            android:layout_height="120dp"
+            >
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/controller_g2"
+                tools:ignore="RtlHardcoded" />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:rotation="20"
+                android:paddingRight="30dp"
+                android:layout_marginBottom="60dp"
+                android:layout_centerHorizontal="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_webxr_controller_arrow"
+                tools:ignore="RtlHardcoded,RtlSymmetry"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="textEnd"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="5dp"
+                android:paddingRight="125dp"
+                android:layout_centerHorizontal="true"
+                android:textSize="18sp"
+                tools:ignore="RtlHardcoded,RtlSymmetry"
+                android:text="@string/webxr_interstitial_exit_webxr"/>
+        </RelativeLayout>
+
+    </FrameLayout>
+
+</layout>

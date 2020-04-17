@@ -7,6 +7,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.AnimatedVectorDrawable;
 import android.os.Build;
 import android.text.Html;
 import android.text.Layout;
@@ -15,6 +16,7 @@ import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.URLSpan;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +29,11 @@ import androidx.core.text.HtmlCompat;
 
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 
+import java.lang.reflect.Method;
+
 public class ViewUtils {
+
+    private static final String LOGTAG = SystemUtils.createLogtag(ViewUtils.class);
 
     public interface LinkClickableSpan {
         void onClick(@NonNull View widget, @NonNull String url);
@@ -237,5 +243,15 @@ public class ViewUtils {
         canvas.drawBitmap(bitmap, 0, 0, paintImage);
 
         return output;
+    }
+
+    public static void forceAnimationOnUI(@NonNull AnimatedVectorDrawable drawable) {
+        try {
+            Method forceAnimationOnUI = AnimatedVectorDrawable.class.getMethod("forceAnimationOnUI");
+            forceAnimationOnUI.invoke(drawable);
+
+        } catch (Exception e) {
+            Log.e(LOGTAG, "Failed to call AnimatedVectorDrawable::forceAnimationOnUI: " + e);
+        }
     }
 }

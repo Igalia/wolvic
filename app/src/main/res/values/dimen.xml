@@ -257,4 +257,12 @@
     <!-- Navigation Bar icons -->
     <dimen name="navigation_bar_icon_padding_small">2dp</dimen>
     <dimen name="navigation_bar_icon_padding_big">6dp</dimen>
+
+    <!-- WebXR Interstitial -->
+    <dimen name="webxr_interstitial_width">80dp</dimen>
+    <dimen name="webxr_interstitial_height">80dp</dimen>
+    <dimen name="webxr_interstitial_controller_margin_h">5dp</dimen>
+    <dimen name="webxr_interstitial_controller_margin_v">5dp</dimen>
+    <item name="webxr_interstitial_world_y" format="float" type="dimen">0.0</item>
+    <item name="webxr_interstitial_world_z" format="float" type="dimen">-2.5</item>
 </resources>

@@ -92,7 +92,6 @@ public abstract class LibraryContextMenuWidget extends MenuWidget {
         aPlacement.parentAnchorY = 1.0f;
         aPlacement.anchorX = 1.0f;
         aPlacement.anchorY = 1.0f;
-        aPlacement.opaque = false;
         aPlacement.cylinder = true;
         aPlacement.translationZ = WidgetPlacement.unitFromMeters(getContext(), R.dimen.context_menu_z_distance);
     }

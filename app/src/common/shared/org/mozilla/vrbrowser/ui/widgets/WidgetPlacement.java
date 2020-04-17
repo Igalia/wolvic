@@ -11,6 +11,7 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
 
+import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 
 import org.mozilla.vrbrowser.R;
@@ -18,6 +19,12 @@ import org.mozilla.vrbrowser.browser.SettingsStore;
 
 public class WidgetPlacement {
     static final float WORLD_DPI_RATIO = 2.0f/720.0f;
+
+    @IntDef(value = { SCENE_ROOT_TRANSPARENT, SCENE_ROOT_OPAQUE, SCENE_WEBXR_INTERSTITIAL})
+    public @interface Scene {}
+    public static final int SCENE_ROOT_TRANSPARENT = 0;
+    public static final int SCENE_ROOT_OPAQUE = 1;
+    public static final int SCENE_WEBXR_INTERSTITIAL = 2;
 
     private WidgetPlacement() {}
     public WidgetPlacement(Context aContext) {
@@ -43,7 +50,7 @@ public class WidgetPlacement {
     public float parentAnchorX = 0.5f;
     public float parentAnchorY = 0.5f;
     public boolean visible = true;
-    public boolean opaque = false;
+    public @Scene int scene = SCENE_ROOT_TRANSPARENT;
     public boolean showPointer = true;
     public boolean composited = false;
     public boolean layer = true;
@@ -88,7 +95,7 @@ public class WidgetPlacement {
         this.parentAnchorX = w.parentAnchorX;
         this.parentAnchorY = w.parentAnchorY;
         this.visible = w.visible;
-        this.opaque = w.opaque;
+        this.scene = w.scene;
         this.showPointer = w.showPointer;
         this.composited = w.composited;
         this.layer = w.layer;
@@ -171,6 +178,10 @@ public class WidgetPlacement {
 
     public static float worldToWindowRatio(Context aContext){
         return (WidgetPlacement.floatDimension(aContext, R.dimen.window_world_width) / SettingsStore.WINDOW_WIDTH_DEFAULT)/ WORLD_DPI_RATIO;
+    }
+
+    public static float worldToDpRatio(Context aContext){
+        return (WidgetPlacement.floatDimension(aContext, R.dimen.window_world_width) / SettingsStore.WINDOW_WIDTH_DEFAULT);
     }
 
     public static float viewToWidgetRatio(@NonNull Context context, @NonNull UIWidget widget) {

@@ -12,7 +12,6 @@
 #include "ExternalBlitter.h"
 #include "ExternalVR.h"
 #include "GeckoSurfaceTexture.h"
-#include "LoadingAnimation.h"
 #include "Skybox.h"
 #include "SplashAnimation.h"
 #include "Pointer.h"
@@ -158,6 +157,7 @@ struct BrowserWorld::State {
   GroupPtr rootOpaqueParent;
   TransformPtr rootOpaque;
   TransformPtr rootTransparent;
+  TransformPtr rootWebXRInterstitial;
   GroupPtr rootController;
   LightPtr light;
   ControllerContainerPtr controllers;
@@ -179,7 +179,6 @@ struct BrowserWorld::State {
   uint32_t loaderDelay;
   bool exitImmersiveRequested;
   WidgetPtr resizingWidget;
-  LoadingAnimationPtr loadingAnimation;
   SplashAnimationPtr splashAnimation;
   VRVideoPtr vrVideo;
   PerformanceMonitorPtr monitor;
@@ -189,6 +188,7 @@ struct BrowserWorld::State {
   std::function<void(device::Eye)> drawHandler;
   std::function<void()> frameEndHandler;
   bool wasInGazeMode = false;
+  WebXRInterstialState webXRInterstialState;
 
   State() : paused(true), glInitialized(false), modelsLoaded(false), env(nullptr), cylinderDensity(0.0f), nearClip(0.1f),
             farClip(300.0f), activity(nullptr), windowsInitialized(false), exitImmersiveRequested(false), loaderDelay(0) {
@@ -202,6 +202,7 @@ struct BrowserWorld::State {
     light = Light::Create(create);
     rootOpaqueParent = Group::Create(create);
     rootOpaqueParent->AddNode(rootOpaque);
+    rootWebXRInterstitial = Transform::Create(create);
     //rootOpaque->AddLight(light);
     //rootTransparent->AddLight(light);
     cullVisitor = CullVisitor::Create(create);
@@ -210,11 +211,11 @@ struct BrowserWorld::State {
     externalVR = ExternalVR::Create();
     blitter = ExternalBlitter::Create(create);
     fadeAnimation = FadeAnimation::Create(create);
-    loadingAnimation = LoadingAnimation::Create(create);
     splashAnimation = SplashAnimation::Create(create);
     monitor = PerformanceMonitor::Create(create);
     monitor->AddPerformanceMonitorObserver(std::make_shared<PerformanceObserver>());
     wasInGazeMode = false;
+    webXRInterstialState = WebXRInterstialState::FORCED;
 #if defined(WAVEVR)
     monitor->SetPerformanceDelta(15.0);
 #endif
@@ -226,6 +227,7 @@ struct BrowserWorld::State {
   void ChangeControllerFocus(const Controller& aController);
   void UpdateGazeModeState();
   void UpdateControllers(bool& aRelayoutWidgets);
+  void ClearWebXRControllerData();
   WidgetPtr GetWidget(int32_t aHandle) const;
   WidgetPtr FindWidget(const std::function<bool(const WidgetPtr&)>& aCondition) const;
   bool IsParent(const Widget& aChild, const Widget& aParent) const;
@@ -238,15 +240,19 @@ struct BrowserWorld::State {
 void
 BrowserWorld::State::CheckBackButton() {
   for (Controller& controller: controllers->GetControllers()) {
-    if (!controller.enabled || (controller.index < 0)) {
-      continue;
-    }
+      if (!controller.enabled || (controller.index < 0)) {
+          continue;
+      }
 
-    if (!(controller.lastButtonState & ControllerDelegate::BUTTON_APP) &&
-        (controller.buttonState & ControllerDelegate::BUTTON_APP)) {
+      if (!(controller.lastButtonState & ControllerDelegate::BUTTON_APP) &&
+          (controller.buttonState & ControllerDelegate::BUTTON_APP)) {
+          VRBrowser::HandleBack();
+      } else if (webXRInterstialState == WebXRInterstialState::ALLOW_DISMISS
+                 && controller.lastButtonState == 0 && controller.buttonState) {
+          VRBrowser::OnDismissWebXRInterstitial();
+          webXRInterstialState = WebXRInterstialState::HIDDEN;
+      }
       controller.lastButtonState = controller.buttonState;
-      VRBrowser::HandleBack();
-    }
   }
 }
 
@@ -567,6 +573,20 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
   }
 }
 
+void
+BrowserWorld::State::ClearWebXRControllerData() {
+    for (Controller& controller: controllers->GetControllers()) {
+        if (!controller.enabled || (controller.index < 0)) {
+            continue;
+        };
+        controller.immersiveTouchedState = 0;
+        controller.immersivePressedState = 0;
+        for (int i = 0; i < controller.numAxes; ++i) {
+            controller.immersiveAxes[i] = 0;
+        }
+    }
+}
+
 WidgetPtr
 BrowserWorld::State::GetWidget(int32_t aHandle) const {
   return FindWidget([=](const WidgetPtr& aWidget){
@@ -820,7 +840,6 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
     }
     m.controllers->InitializeBeam();
     m.controllers->SetPointerColor(vrb::Color(VRBrowser::GetPointerColor()));
-    m.loadingAnimation->LoadModels(m.loader);
     m.rootController->AddNode(m.controllers->GetRoot());
     if (m.device->IsControllerLightEnabled()) {
       m.rootController->AddLight(m.light);
@@ -1068,10 +1087,16 @@ BrowserWorld::AddWidget(int32_t aHandle, const WidgetPlacementPtr& aPlacement) {
     widget = Widget::Create(m.context, aHandle, aPlacement, textureWidth, textureHeight, quad);
   }
 
-  if (aPlacement->opaque) {
-    m.rootOpaque->AddNode(widget->GetRoot());
-  } else {
-    m.rootTransparent->AddNode(widget->GetRoot());
+  switch (aPlacement->GetScene()) {
+      case WidgetPlacement::Scene::ROOT_TRANSPARENT:
+        m.rootTransparent->AddNode(widget->GetRoot());
+        break;
+      case WidgetPlacement::Scene::ROOT_OPAQUE:
+        m.rootOpaque->AddNode(widget->GetRoot());
+        break;
+      case WidgetPlacement::Scene::WEBXR_INTERSTITIAL:
+        m.rootWebXRInterstitial->AddNode(widget->GetRoot());
+        break;
   }
 
   m.widgets.push_back(widget);
@@ -1372,6 +1397,11 @@ BrowserWorld::SetCPULevel(const device::CPULevel aLevel) {
 }
 
 void
+BrowserWorld::SetWebXRInterstitalState(const WebXRInterstialState aState) {
+  m.webXRInterstialState = aState;
+}
+
+void
 BrowserWorld::SetIsServo(const bool aIsServo) {
   m.externalVR->SetSourceBrowser(aIsServo ? ExternalVR::VRBrowserType::Servo : ExternalVR::VRBrowserType::Gecko);
 }
@@ -1446,11 +1476,14 @@ BrowserWorld::TickImmersive() {
 
   const bool supportsFrameAhead = m.device->SupportsFramePrediction(DeviceDelegate::FramePrediction::ONE_FRAME_AHEAD);
   auto framePrediction = DeviceDelegate::FramePrediction::ONE_FRAME_AHEAD;
-  VRB_GL_CHECK(glDepthMask(GL_FALSE));
-  if (!supportsFrameAhead || (m.externalVR->GetVRState() != ExternalVR::VRState::Rendering)) {
+  if (!supportsFrameAhead || (m.externalVR->GetVRState() != ExternalVR::VRState::Rendering) || m.webXRInterstialState != WebXRInterstialState::HIDDEN) {
       // Do not use one frame ahead prediction if not supported or we are rendering the spinner.
       framePrediction = DeviceDelegate::FramePrediction::NO_FRAME_AHEAD;
       m.device->StartFrame(framePrediction);
+      if (m.webXRInterstialState != WebXRInterstialState::HIDDEN) {
+          // Hide controller input until the interstitial is hidden.
+          m.ClearWebXRControllerData();
+      }
       m.externalVR->PushFramePoses(m.device->GetHeadTransform(), m.controllers->GetControllers(),
                                    m.context->GetTimestamp());
   }
@@ -1479,9 +1512,13 @@ BrowserWorld::TickImmersive() {
         m.device->SetImmersiveSize((uint32_t) textureWidth/2, (uint32_t) textureHeight);
       }
       m.blitter->StartFrame(surfaceHandle, leftEye, rightEye);
-      m.drawHandler = [=](device::Eye aEye) {
-        DrawImmersive(aEye);
-      };
+      if (m.webXRInterstialState != WebXRInterstialState::HIDDEN) {
+        TickWebXRInterstitial();
+      } else {
+        m.drawHandler = [=](device::Eye aEye) {
+            DrawImmersive(aEye);
+        };
+      }
     }
     m.frameEndHandler = [=]() {
       m.device->EndFrame(aDiscardFrame ? DeviceDelegate::FrameEndMode::DISCARD : DeviceDelegate::FrameEndMode::APPLY);
@@ -1491,7 +1528,7 @@ BrowserWorld::TickImmersive() {
     if (surfaceHandle != 0) {
       m.blitter->CancelFrame(surfaceHandle);
     }
-    TickLoadingAnimation();
+    TickWebXRInterstitial();
   }
 }
 
@@ -1502,20 +1539,22 @@ BrowserWorld::DrawImmersive(device::Eye aEye) {
 }
 
 void
-BrowserWorld::TickLoadingAnimation() {
-  m.loadingAnimation->Update();
+BrowserWorld::TickWebXRInterstitial() {
+  m.rootWebXRInterstitial->SetTransform(m.device->GetReorientTransform());
   m.drawHandler = [=](device::Eye eye) {
-    DrawLoadingAnimation(eye);
+      DrawWebXRInterstitial(eye);
   };
 }
 
 void
-BrowserWorld::DrawLoadingAnimation(device::Eye aEye) {
-  VRB_GL_CHECK(glDepthMask(GL_TRUE));
-  m.drawList->Reset();
-  m.loadingAnimation->GetRoot()->Cull(*m.cullVisitor, *m.drawList);
+BrowserWorld::DrawWebXRInterstitial(crow::device::Eye aEye) {
+  const CameraPtr camera = aEye == device::Eye::Left ? m.leftCamera : m.rightCamera;
   m.device->BindEye(aEye);
-  m.drawList->Draw(aEye == device::Eye::Left ? *m.leftCamera : *m.rightCamera);
+  VRB_GL_CHECK(glDepthMask(GL_FALSE));
+  m.drawList->Reset();
+  m.rootWebXRInterstitial->Cull(*m.cullVisitor, *m.drawList);
+  m.drawList->Draw(*camera);
+  VRB_GL_CHECK(glDepthMask(GL_TRUE));
 }
 
 void
@@ -1711,7 +1750,6 @@ JNI_METHOD(void, setCylinderDensityNative)
   crow::BrowserWorld::Instance().SetCylinderDensity(aDensity);
 }
 
-
 JNI_METHOD(void, runCallbackNative)
 (JNIEnv*, jobject, jlong aCallback) {
   if (aCallback) {
@@ -1726,9 +1764,24 @@ JNI_METHOD(void, setCPULevelNative)
   crow::BrowserWorld::Instance().SetCPULevel(static_cast<crow::device::CPULevel>(aCPULevel));
 }
 
+JNI_METHOD(void, setWebXRIntersitialStateNative)
+(JNIEnv*, jobject, jint aState) {
+  crow::BrowserWorld::WebXRInterstialState value;
+  if (aState == 0) {
+    value = crow::BrowserWorld::WebXRInterstialState::FORCED;
+  } else if (aState == 1) {
+    value = crow::BrowserWorld::WebXRInterstialState::ALLOW_DISMISS;
+  } else {
+    value = crow::BrowserWorld::WebXRInterstialState::HIDDEN;
+  }
+  crow::BrowserWorld::Instance().SetWebXRInterstitalState(value);
+}
+
 JNI_METHOD(void, setIsServo)
 (JNIEnv*, jobject, jboolean aIsServo) {
   crow::BrowserWorld::Instance().SetIsServo(aIsServo);
 }
+
+
 
 } // extern "C"

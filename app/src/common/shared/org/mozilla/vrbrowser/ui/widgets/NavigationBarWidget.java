@@ -448,7 +448,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         aPlacement.parentAnchorX = 0.5f;
         aPlacement.parentAnchorY = 0.0f;
         aPlacement.translationY = -35;
-        aPlacement.opaque = false;
         aPlacement.cylinder = true;
     }
 

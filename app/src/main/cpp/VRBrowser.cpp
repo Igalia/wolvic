@@ -30,10 +30,12 @@ const char* kHandleBackEventName = "handleBack";
 const char* kHandleBackEventSignature = "()V";
 const char* kRegisterExternalContextName = "registerExternalContext";
 const char* kRegisterExternalContextSignature = "(J)V";
-const char* kPauseCompositorName = "pauseGeckoViewCompositor";
-const char* kPauseCompositorSignature = "()V";
-const char* kResumeCompositorName = "resumeGeckoViewCompositor";
-const char* kResumeCompositorSignature = "()V";
+const char* kOnEnterWebXRName = "onEnterWebXR";
+const char* kOnEnterWebXRSignature = "()V";
+const char* kOnExitWebXRName = "onExitWebXR";
+const char* kOnExitWebXRSignature = "()V";
+const char* kOnDismissWebXRInterstitialName = "onDismissWebXRInterstitial";
+const char* kOnDismissWebXRInterstitialSignature = "()V";
 const char* kRenderPointerLayerName = "renderPointerLayer";
 const char* kRenderPointerLayerSignature = "(Landroid/view/Surface;J)V";
 const char* kGetStorageAbsolutePathName = "getStorageAbsolutePath";
@@ -70,8 +72,9 @@ jmethodID sHandleResize = nullptr;
 jmethodID sHandleMoveEnd = nullptr;
 jmethodID sHandleBack = nullptr;
 jmethodID sRegisterExternalContext = nullptr;
-jmethodID sPauseCompositor = nullptr;
-jmethodID sResumeCompositor = nullptr;
+jmethodID sOnEnterWebXR = nullptr;
+jmethodID sOnExitWebXR = nullptr;
+jmethodID sOnDismissWebXRInterstitial = nullptr;
 jmethodID sRenderPointerLayer = nullptr;
 jmethodID sGetStorageAbsolutePath = nullptr;
 jmethodID sIsOverrideEnvPathEnabled = nullptr;
@@ -112,8 +115,9 @@ VRBrowser::InitializeJava(JNIEnv* aEnv, jobject aActivity) {
   sHandleMoveEnd = FindJNIMethodID(sEnv, sBrowserClass, kHandleMoveEndName, kHandleMoveEndSignature);
   sHandleBack = FindJNIMethodID(sEnv, sBrowserClass, kHandleBackEventName, kHandleBackEventSignature);
   sRegisterExternalContext = FindJNIMethodID(sEnv, sBrowserClass, kRegisterExternalContextName, kRegisterExternalContextSignature);
-  sPauseCompositor = FindJNIMethodID(sEnv, sBrowserClass, kPauseCompositorName, kPauseCompositorSignature);
-  sResumeCompositor = FindJNIMethodID(sEnv, sBrowserClass, kResumeCompositorName, kResumeCompositorSignature);
+  sOnEnterWebXR = FindJNIMethodID(sEnv, sBrowserClass, kOnEnterWebXRName, kOnEnterWebXRSignature);
+  sOnExitWebXR = FindJNIMethodID(sEnv, sBrowserClass, kOnExitWebXRName, kOnExitWebXRSignature);
+  sOnDismissWebXRInterstitial = FindJNIMethodID(sEnv, sBrowserClass, kOnDismissWebXRInterstitialName, kOnDismissWebXRInterstitialSignature);
   sRenderPointerLayer = FindJNIMethodID(sEnv, sBrowserClass, kRenderPointerLayerName, kRenderPointerLayerSignature);
   sGetStorageAbsolutePath = FindJNIMethodID(sEnv, sBrowserClass, kGetStorageAbsolutePathName, kGetStorageAbsolutePathSignature);
   sIsOverrideEnvPathEnabled = FindJNIMethodID(sEnv, sBrowserClass, kIsOverrideEnvPathEnabledName, kIsOverrideEnvPathEnabledSignature);
@@ -149,8 +153,9 @@ VRBrowser::ShutdownJava() {
   sHandleMoveEnd = nullptr;
   sHandleBack = nullptr;
   sRegisterExternalContext = nullptr;
-  sPauseCompositor = nullptr;
-  sResumeCompositor = nullptr;
+  sOnEnterWebXR = nullptr;
+  sOnExitWebXR = nullptr;
+  sOnDismissWebXRInterstitial = nullptr;
   sRenderPointerLayer = nullptr;
   sGetStorageAbsolutePath = nullptr;
   sIsOverrideEnvPathEnabled = nullptr;
@@ -241,16 +246,22 @@ VRBrowser::RegisterExternalContext(jlong aContext) {
 }
 
 void
-VRBrowser::PauseCompositor() {
-  if (!ValidateMethodID(sEnv, sActivity, sPauseCompositor, __FUNCTION__)) { return; }
-  sEnv->CallVoidMethod(sActivity, sPauseCompositor);
+VRBrowser::OnEnterWebXR() {
+  if (!ValidateMethodID(sEnv, sActivity, sOnEnterWebXR, __FUNCTION__)) { return; }
+  sEnv->CallVoidMethod(sActivity, sOnEnterWebXR);
   CheckJNIException(sEnv, __FUNCTION__);
 }
 
 void
-VRBrowser::ResumeCompositor() {
-  if (!ValidateMethodID(sEnv, sActivity, sResumeCompositor, __FUNCTION__)) { return; }
-  sEnv->CallVoidMethod(sActivity, sResumeCompositor);
+VRBrowser::OnExitWebXR() {
+  if (!ValidateMethodID(sEnv, sActivity, sOnExitWebXR, __FUNCTION__)) { return; }
+  sEnv->CallVoidMethod(sActivity, sOnExitWebXR);
+  CheckJNIException(sEnv, __FUNCTION__);
+}
+
+void VRBrowser::OnDismissWebXRInterstitial() {
+  if (!ValidateMethodID(sEnv, sActivity, sOnDismissWebXRInterstitial, __FUNCTION__)) { return; }
+  sEnv->CallVoidMethod(sActivity, sOnDismissWebXRInterstitial);
   CheckJNIException(sEnv, __FUNCTION__);
 }
 

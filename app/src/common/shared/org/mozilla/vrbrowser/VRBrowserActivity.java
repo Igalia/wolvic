@@ -67,6 +67,7 @@ import org.mozilla.vrbrowser.ui.widgets.RootWidget;
 import org.mozilla.vrbrowser.ui.widgets.TrayWidget;
 import org.mozilla.vrbrowser.ui.widgets.UISurfaceTextureRenderer;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
+import org.mozilla.vrbrowser.ui.widgets.WebXRInterstitialWidget;
 import org.mozilla.vrbrowser.ui.widgets.Widget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
@@ -167,11 +168,13 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     NavigationBarWidget mNavigationBar;
     CrashDialogWidget mCrashDialog;
     TrayWidget mTray;
+    WebXRInterstitialWidget mWebXRInterstitial;
     PermissionDelegate mPermissionDelegate;
     LinkedList<UpdateListener> mWidgetUpdateListeners;
     LinkedList<PermissionListener> mPermissionListeners;
     LinkedList<FocusChangeListener> mFocusChangeListeners;
     LinkedList<WorldClickListener> mWorldClickListeners;
+    LinkedList<WebXRListener> mWebXRListeners;
     CopyOnWriteArrayList<Delegate> mConnectivityListeners;
     LinkedList<Runnable> mBackHandlers;
     private boolean mIsPresentingImmersive = false;
@@ -261,6 +264,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mPermissionListeners = new LinkedList<>();
         mFocusChangeListeners = new LinkedList<>();
         mWorldClickListeners = new LinkedList<>();
+        mWebXRListeners = new LinkedList<>();
         mBackHandlers = new LinkedList<>();
         mBrightnessQueue = new LinkedList<>();
         mConnectivityListeners = new CopyOnWriteArrayList<>();
@@ -326,6 +330,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         // Create keyboard widget
         mKeyboard = new KeyboardWidget(this);
 
+        // Create the WebXR interstitial
+        mWebXRInterstitial = new WebXRInterstitialWidget(this);
+
         // Windows
         mWindows = new Windows(this);
         mWindows.setDelegate(new Windows.Delegate() {
@@ -369,7 +376,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         attachToWindow(mWindows.getFocusedWindow(), null);
 
-        addWidgets(Arrays.asList(mRootWidget, mNavigationBar, mKeyboard, mTray));
+        addWidgets(Arrays.asList(mRootWidget, mNavigationBar, mKeyboard, mTray, mWebXRInterstitial));
 
         // Show the what's upp dialog if we haven't showed it yet and this is v6.
         if (!SettingsStore.getInstance(this).isWhatsNewDisplayed()) {
@@ -976,15 +983,20 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Keep
     @SuppressWarnings("unused")
-    void pauseGeckoViewCompositor() {
+    void onEnterWebXR() {
         if (Thread.currentThread() == mUiThread) {
             return;
         }
         mIsPresentingImmersive = true;
-        runOnUiThread(() -> mWindows.enterImmersiveMode());
-
+        runOnUiThread(() -> {
+            mWindows.enterImmersiveMode();
+            for (WebXRListener listener: mWebXRListeners) {
+                listener.onEnterWebXR();
+            }
+        });
         TelemetryWrapper.startImmersive();
         GleanMetricsService.startImmersive();
+
         PauseCompositorRunnable runnable = new PauseCompositorRunnable();
 
         synchronized (mCompositorLock) {
@@ -1001,12 +1013,17 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Keep
     @SuppressWarnings("unused")
-    void resumeGeckoViewCompositor() {
+    void onExitWebXR() {
         if (Thread.currentThread() == mUiThread) {
             return;
         }
         mIsPresentingImmersive = false;
-        runOnUiThread(() -> mWindows.exitImmersiveMode());
+        runOnUiThread(() -> {
+            mWindows.exitImmersiveMode();
+            for (WebXRListener listener: mWebXRListeners) {
+                listener.onExitWebXR();
+            }
+        });
 
         // Show the window in front of you when you exit immersive mode.
         resetUIYaw();
@@ -1021,6 +1038,18 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 Log.d(LOGTAG, "Compositor resume end");
             }
         }, 20);
+    }
+    @Keep
+    @SuppressWarnings("unused")
+    void onDismissWebXRInterstitial() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                for (WebXRListener listener: mWebXRListeners) {
+                    listener.onDismissWebXRInterstitial();
+                }
+            }
+        });
     }
 
     @Keep
@@ -1091,8 +1120,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Keep
     @SuppressWarnings("unused")
     private void setDeviceType(int aType) {
-
-        runOnUiThread(() -> DeviceType.setType(aType));
+        if (DeviceType.isOculusBuild()) {
+            runOnUiThread(() -> DeviceType.setType(aType));
+        }
     }
 
     @Keep
@@ -1387,6 +1417,21 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
+    public void addWebXRListener(WebXRListener aListener) {
+        mWebXRListeners.add(aListener);
+    }
+
+    @Override
+    public void removeWebXRListener(WebXRListener aListener) {
+        mWebXRListeners.remove(aListener);
+    }
+
+    @Override
+    public void setWebXRIntersitialState(@WebXRInterstitialState int aState) {
+        queueRunnable(() -> setWebXRIntersitialStateNative(aState));
+    }
+
+    @Override
     public void addConnectivityListener(Delegate aListener) {
         if (!mConnectivityListeners.contains(aListener)) {
             mConnectivityListeners.add(aListener);
@@ -1624,5 +1669,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private native void runCallbackNative(long aCallback);
     private native void setCylinderDensityNative(float aDensity);
     private native void setCPULevelNative(@CPULevelFlags int aCPULevel);
+    private native void setWebXRIntersitialStateNative(@WebXRInterstitialState int aState);
     private native void setIsServo(boolean aIsServo);
 }

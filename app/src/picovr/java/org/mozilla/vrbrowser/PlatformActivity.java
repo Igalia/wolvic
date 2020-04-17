@@ -94,7 +94,9 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
             mType = 1; // 6Dof Headset
             // Enable high res
             PicovrSDK.SetEyeBufferSize(1920, 1920);
+            DeviceType.setType(DeviceType.PicoNeo2);
         } else {
+            DeviceType.setType(DeviceType.PicoG2);
             mHbManager = new HbManager(this);
             mHbManager.InitServices();
             mHbManager.setHbListener(new HbListener() {

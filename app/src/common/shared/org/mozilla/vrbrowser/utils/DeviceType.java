@@ -2,25 +2,48 @@ package org.mozilla.vrbrowser.utils;
 
 import android.util.Log;
 
+import androidx.annotation.IntDef;
+
 import org.mozilla.vrbrowser.BuildConfig;
 
 public class DeviceType {
     // These values need to match those in Device.h
+    @IntDef(value = { Unknown, OculusGo, OculusQuest, ViveFocusPlus, PicoNeo2, PicoG2 })
+    public @interface Type {}
     public static final int Unknown = 0;
     public static final int OculusGo = 1;
     public static final int OculusQuest = 2;
-    private static int mType = Unknown;
-    public static void setType(int aType) {
-        String name = "Unknown Type";
-        if (aType == OculusGo) {
-            name = "Oculus Go";
-        } else if (aType == OculusQuest) {
-            name = "Oculus Quest";
+    public static final int ViveFocusPlus = 3;
+    public static final int PicoNeo2 = 4;
+    public static final int PicoG2 = 5;
+
+    private static @Type int mType = Unknown;
+
+    public static void setType(@Type int aType) {
+        String name;
+        switch (aType) {
+            case OculusGo:
+                name = "Oculus Go";
+                break;
+            case OculusQuest:
+                name = "Oculus Quest";
+                break;
+            case ViveFocusPlus:
+                name = "Vive Focus Plus";
+                break;
+            case PicoNeo2:
+                name = "Pico Neo 2";
+                break;
+            case PicoG2:
+                name = "Pico G2";
+                break;
+            default:
+                name = "Unknown Type";
         }
         Log.d("VRB", "Setting device type to: " + name);
         mType = aType;
     }
-    public static int getType() {
+    public static @Type int getType() {
         return mType;
     }
 

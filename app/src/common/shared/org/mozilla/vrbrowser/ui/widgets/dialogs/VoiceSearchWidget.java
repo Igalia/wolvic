@@ -33,7 +33,9 @@ import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.databinding.VoiceSearchDialogBinding;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
+import org.mozilla.vrbrowser.utils.DeviceType;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
+import org.mozilla.vrbrowser.utils.ViewUtils;
 
 public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate.PermissionListener,
         Application.ActivityLifecycleCallbacks {
@@ -94,6 +96,9 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
         mMozillaSpeechService.setProductTag(getContext().getString(R.string.voice_app_id));
 
         mSearchingAnimation = (AnimatedVectorDrawable) mBinding.voiceSearchAnimationSearching.getDrawable();
+        if (DeviceType.isPicoVR()) {
+            ViewUtils.forceAnimationOnUI(mSearchingAnimation);
+        }
 
         mMozillaSpeechService.addListener(mVoiceSearchListener);
         ((Application)aContext.getApplicationContext()).registerActivityLifecycleCallbacks(this);

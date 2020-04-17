@@ -29,6 +29,12 @@ public interface WidgetManagerDelegate {
         void onWorldClick();
     }
 
+    interface WebXRListener {
+        void onEnterWebXR();
+        void onExitWebXR();
+        void onDismissWebXRInterstitial();
+    }
+
     float DEFAULT_DIM_BRIGHTNESS = 0.25f;
     float DEFAULT_NO_DIM_BRIGHTNESS = 1.0f;
 
@@ -42,6 +48,12 @@ public interface WidgetManagerDelegate {
     @interface CPULevelFlags {}
     int CPU_LEVEL_NORMAL = 0;
     int CPU_LEVEL_HIGH = 1;
+
+    @IntDef(value = { WEBXR_INTERSTITIAL_FORCED, WEBXR_INTERSTITIAL_ALLOW_DISMISS, WEBXR_INTERSTITIAL_HIDDEN})
+    @interface WebXRInterstitialState {}
+    int WEBXR_INTERSTITIAL_FORCED = 0;
+    int WEBXR_INTERSTITIAL_ALLOW_DISMISS = 1;
+    int WEBXR_INTERSTITIAL_HIDDEN = 2;
 
     int newWidgetHandle();
     void addWidget(Widget aWidget);
@@ -76,6 +88,9 @@ public interface WidgetManagerDelegate {
     void removePermissionListener(PermissionListener aListener);
     void addWorldClickListener(WorldClickListener aListener);
     void removeWorldClickListener(WorldClickListener aListener);
+    void addWebXRListener(WebXRListener aListener);
+    void removeWebXRListener(WebXRListener aListener);
+    void setWebXRIntersitialState(@WebXRInterstitialState int aState);
     boolean isPermissionGranted(@NonNull String permission);
     void requestPermission(String uri, @NonNull String permission, GeckoSession.PermissionDelegate.Callback aCallback);
     boolean canOpenNewWindow();

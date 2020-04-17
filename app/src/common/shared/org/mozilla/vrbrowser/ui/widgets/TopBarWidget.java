@@ -70,7 +70,6 @@ public class TopBarWidget extends UIWidget {
         aPlacement.anchorY = 0.0f;
         aPlacement.parentAnchorX = 0.5f;
         aPlacement.parentAnchorY = 1.0f;
-        aPlacement.opaque = false;
     }
 
     private void updateUI() {

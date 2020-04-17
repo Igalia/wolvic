@@ -17,6 +17,12 @@ class WidgetPlacement;
 typedef std::shared_ptr<WidgetPlacement> WidgetPlacementPtr;
 
 struct WidgetPlacement {
+  enum class Scene {
+    ROOT_TRANSPARENT,
+    ROOT_OPAQUE,
+    WEBXR_INTERSTITIAL
+  };
+
   int32_t width;
   int32_t height;
   vrb::Vector anchor;
@@ -28,7 +34,7 @@ struct WidgetPlacement {
   float density;
   float worldWidth;
   bool visible;
-  bool opaque;
+  int scene;
   bool showPointer;
   bool composited;
   bool layer;
@@ -45,6 +51,7 @@ struct WidgetPlacement {
   int32_t GetTextureHeight() const;
   vrb::Color GetTintColor() const;
   vrb::Color GetClearColor() const;
+  WidgetPlacement::Scene GetScene() const;
 
   static const float kWorldDPIRatio;
   static WidgetPlacementPtr FromJava(JNIEnv* aEnv, jobject& aObject);

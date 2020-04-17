@@ -67,6 +67,8 @@ public:
   void SetControllersVisible(const bool aVisible);
   void ResetUIYaw();
   void SetCylinderDensity(const float aDensity);
+  enum class WebXRInterstialState { FORCED, ALLOW_DISMISS, HIDDEN };
+  void SetWebXRInterstitalState(const WebXRInterstialState aState);
   void SetIsServo(const bool aIsServo);
   void SetCPULevel(const device::CPULevel aLevel);
   JNIEnv* GetJNIEnv() const;
@@ -78,10 +80,10 @@ protected:
   void TickWorld();
   void TickImmersive();
   void TickSplashAnimation();
-  void TickLoadingAnimation();
+  void TickWebXRInterstitial();
   void DrawWorld(device::Eye aEye);
   void DrawImmersive(device::Eye aEye);
-  void DrawLoadingAnimation(device::Eye aEye);
+  void DrawWebXRInterstitial(device::Eye aEye);
   void DrawSplashAnimation(device::Eye aEye);
   void CreateSkyBox(const std::string& aBasePath, const std::string& aExtension);
 private:
