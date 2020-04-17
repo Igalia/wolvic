@@ -168,9 +168,9 @@ struct DeviceDelegatePicoVR::State {
       }
       auto& controller = controllers[i];
       device::CapabilityFlags flags = device::Orientation;
-      if (controller.is6DoF) {
+      //if (controller.is6DoF) {
         flags |= device::Position;
-      }
+      //}
       controllerDelegate->SetCapabilityFlags(i, flags);
       const bool appPressed = (controller.buttonsState & kButtonApp) > 0;
       const bool triggerPressed = (controller.buttonsState & kButtonTrigger) > 0;
@@ -231,12 +231,17 @@ struct DeviceDelegatePicoVR::State {
       }
 
       vrb::Matrix transform = controller.transform;
-      if ((renderMode == device::RenderMode::StandAlone) && (i != gazeIndex)) {
+      //if ((renderMode == device::RenderMode::StandAlone) && (i != gazeIndex)) {
+      if (i != gazeIndex) {
         if (type == k6DofHeadSet) {
-          transform.TranslateInPlace(headOffset);
+          if(renderMode == device::RenderMode::StandAlone) {
+            transform.TranslateInPlace(headOffset);
+          }
         } else {
           vrb::Matrix head = vrb::Matrix::Rotation(orientation);
-          head.PreMultiplyInPlace(vrb::Matrix::Position(headOffset));
+          if (renderMode == device::RenderMode::StandAlone) {
+            head.PreMultiplyInPlace(vrb::Matrix::Position(headOffset));
+          }
           transform = elbow->GetTransform(controller.hand, head, transform);
         }
       }
@@ -293,6 +298,8 @@ DeviceDelegatePicoVR::RegisterImmersiveDisplay(ImmersiveDisplayPtr aDisplay) {
           device::ImmersiveVRSession | device::InlineSession;
   if (m.type == k6DofHeadSet) {
     flags |= device::Position | device::StageParameters;
+  } else {
+    flags |= device::Position;
   }
   m.immersiveDisplay->SetSittingToStandingTransform(vrb::Matrix::Translation(kAverageSittingToStanding));
   m.immersiveDisplay->SetCapabilityFlags(flags);
