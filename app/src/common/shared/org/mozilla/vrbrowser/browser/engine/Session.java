@@ -1192,9 +1192,14 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
     @Override
     public void onCrash(@NonNull GeckoSession session) {
-        Log.e(LOGTAG,"Child crashed. Creating new session");
+        Log.e(LOGTAG,"Child crashed. Recreating session");
         recreateSession();
-        loadUri(getHomeUri());
+    }
+
+    @Override
+    public void onKill(@NonNull GeckoSession session) {
+        Log.e(LOGTAG,"Child killed. Recreating session");
+        recreateSession();
     }
 
     @Override

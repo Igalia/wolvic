@@ -417,6 +417,19 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         GleanMetricsService.sessionStop();
     }
 
+    public void flushBackHandlers() {
+        int backCount = mBackHandlers.size();
+        while (backCount > 0) {
+            mBackHandlers.getLast().run();
+            int newBackCount = mBackHandlers.size();
+            if (newBackCount == backCount) {
+                Log.e(LOGTAG, "Back counter is not decreasing,");
+                break;
+            }
+            backCount = newBackCount;
+        }
+    }
+
     @Override
     protected void onPause() {
         if (mIsPresentingImmersive) {
@@ -424,6 +437,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             // Also prevents a deadlock in onDestroy when the BrowserWidget is released.
             exitImmersiveSync();
         }
+        // If we are in fullscreen or immersive VR video, we need to consume their back handlers
+        // before pausing to prevent the windows from getting stuck in fullscreen mode.
+        flushBackHandlers();
+
         mAudioEngine.pauseEngine();
 
         mWindows.onPause();
