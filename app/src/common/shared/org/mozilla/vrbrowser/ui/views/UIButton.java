@@ -57,7 +57,6 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
     private boolean mIsActive;
     private boolean mIsNotification;
     private ClipDrawable mClipDrawable;
-    private Drawable mDrawable;
     private int mClipColor;
 
     public UIButton(Context context, AttributeSet attrs) {
@@ -70,9 +69,6 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
 
         TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.UIButton, defStyleAttr, 0);
         mTintColorListRes = attributes.getResourceId(R.styleable.UIButton_tintColorList, 0);
-        if (mTintColorListRes != 0) {
-            setTintColorList(mTintColorListRes);
-        }
         mBackground = attributes.getDrawable(R.styleable.UIButton_regularModeBackground);
         mPrivateModeBackground = attributes.getDrawable(R.styleable.UIButton_privateModeBackground);
         mActiveModeBackground = attributes.getDrawable(R.styleable.UIButton_activeModeBackground);
@@ -98,10 +94,12 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
         }
 
         if (mClipDrawable != null) {
-            Drawable[] layers = new Drawable[] { mDrawable, mClipDrawable };
+            Drawable[] layers = new Drawable[] { getDrawable(), mClipDrawable };
             setImageDrawable(new LayerDrawable(layers));
-            mClipDrawable.setLevel(0);
-            mClipDrawable.setTint(R.color.azure);
+        }
+
+        if (mTintColorListRes != 0) {
+            setTintColorList(mTintColorListRes);
         }
 
         // Android >8 doesn't perform a click when long clicking in ImageViews even if long click is disabled
@@ -179,30 +177,25 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
     }
 
     public void setTintColorList(int aColorListId) {
-        if (mDrawable == null) {
+        if (getDrawable() == null) {
             return;
         }
         mTintColorList = getContext().getResources().getColorStateList(
                 aColorListId,
                 getContext().getTheme());
-        int color = mTintColorList.getColorForState(getDrawableState(), 0);
-        mDrawable.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.MULTIPLY));
-        if (mClipDrawable != null) {
-            mClipDrawable.setColorFilter(new PorterDuffColorFilter(mClipColor, PorterDuff.Mode.MULTIPLY));
-        }
+        refreshDrawableState();
     }
 
     @Override
     protected void drawableStateChanged() {
         super.drawableStateChanged();
-        if (mDrawable == null) {
-            return;
-        }
         if (mTintColorList != null && mTintColorList.isStateful()) {
             int color = mTintColorList.getColorForState(getDrawableState(), 0);
-            mDrawable.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.MULTIPLY));
+            getDrawable().setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.MULTIPLY));
             if (mClipDrawable != null) {
                 mClipDrawable.setColorFilter(new PorterDuffColorFilter(mClipColor, PorterDuff.Mode.MULTIPLY));
+            } else {
+                setColorFilter(color);
             }
         }
     }
@@ -368,8 +361,14 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
 
     @Override
     public void setImageDrawable(@Nullable Drawable drawable) {
-        super.setImageDrawable(drawable);
-        mDrawable = drawable;
+        Drawable image = drawable;
+        if (mClipDrawable != null) {
+            Drawable[] layers = new Drawable[] { drawable, mClipDrawable };
+            image = new LayerDrawable(layers);
+            mClipDrawable.setLevel(0);
+            mClipDrawable.setTint(getResources().getColor(R.color.azure, getContext().getTheme()));
+        }
+        super.setImageDrawable(image);
         updateButtonColor();
     }
 
