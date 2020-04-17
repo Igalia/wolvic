@@ -747,6 +747,8 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             setFirstPaint(aWindow, aWindow.getSession());
         }
         aWindow.setVisible(aVisible);
+        aWindow.getTitleBar().setVisible(aVisible);
+        aWindow.getTopBar().setVisible(aVisible);
     }
 
     private void placeWindow(@NonNull WindowWidget aWindow, WindowPlacement aPosition) {
