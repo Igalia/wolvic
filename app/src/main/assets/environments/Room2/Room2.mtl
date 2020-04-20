@@ -10,7 +10,7 @@ Ke 1.000000 1.000000 1.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd milky-way.ktx
+map_Kd Space.ktx
 
 newmtl Room21
 Ns 323.999994
