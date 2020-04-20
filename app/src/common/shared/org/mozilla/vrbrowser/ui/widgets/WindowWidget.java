@@ -917,8 +917,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     public void restoreBeforeFullscreenPlacement() {
+        // We need to process `composited` separately to handle GV content process onCrash/onKill.
+        // Composited is false after a content crash but it was true when the placement was saved.
+        boolean composited = mWidgetPlacement.composited;
         mWindowPlacement = mWindowPlacementBeforeFullscreen;
         mWidgetPlacement.copyFrom(mPlacementBeforeFullscreen);
+        mWidgetPlacement.composited = composited;
     }
 
     public WidgetPlacement getBeforeFullscreenPlacement() {

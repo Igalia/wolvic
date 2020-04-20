@@ -557,6 +557,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     public void onSessionChanged(@NonNull Session aOldSession, @NonNull Session aSession) {
         cleanSession(aOldSession);
         setUpSession(aSession);
+        exitFullScreenMode();
     }
 
     @Override

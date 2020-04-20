@@ -512,6 +512,8 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     }
 
     public void recreateSession() {
+        boolean wasFullScreen = mState.mFullScreen;
+
         SessionState previous = mState;
         mState = mState.recreate();
 
@@ -528,6 +530,12 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
         for (SessionChangeListener listener : mSessionChangeListeners) {
             listener.onCurrentSessionChange(previousGeckoSession, mState.mSession);
+        }
+
+        if (wasFullScreen != mState.mFullScreen) {
+            for (GeckoSession.ContentDelegate listener : mContentListeners) {
+                listener.onFullScreen(mState.mSession, mState.mFullScreen);
+            }
         }
     }
 
