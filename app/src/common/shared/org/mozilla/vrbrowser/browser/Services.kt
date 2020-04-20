@@ -30,8 +30,8 @@ import org.mozilla.geckoview.GeckoResult
 import org.mozilla.geckoview.GeckoSession
 import org.mozilla.vrbrowser.R
 import org.mozilla.vrbrowser.browser.engine.EngineProvider
-import org.mozilla.vrbrowser.utils.SystemUtils
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService
+import org.mozilla.vrbrowser.utils.SystemUtils
 
 
 class Services(val context: Context, places: Places): GeckoSession.NavigationDelegate {
@@ -128,10 +128,22 @@ class Services(val context: Context, places: Places): GeckoSession.NavigationDel
                 val state = parsedUri.getQueryParameter("state") as String
                 val action = parsedUri.getQueryParameter("action") as String
 
-                // Notify the state machine about our success.
-                accountManager.finishAuthenticationAsync(FxaAuthData(action.toAuthType(), code = code, state = state))
+                val geckoResult = GeckoResult<AllowOrDeny>()
 
-                return GeckoResult.ALLOW
+                // Notify the state machine about our success.
+                val result = accountManager.finishAuthenticationAsync(FxaAuthData(action.toAuthType(), code = code, state = state))
+                CoroutineScope(Dispatchers.Main).launch {
+                    if (!result.await()) {
+                        android.util.Log.e(LOGTAG, "Authentication finish error.")
+                        geckoResult.complete(AllowOrDeny.DENY)
+
+                    } else {
+                        android.util.Log.e(LOGTAG, "Authentication successfully completed.")
+                        geckoResult.complete(AllowOrDeny.ALLOW)
+                    }
+                }
+
+                return geckoResult
             }
             return GeckoResult.DENY
         }
