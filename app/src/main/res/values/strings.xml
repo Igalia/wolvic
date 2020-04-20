@@ -1698,5 +1698,21 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="download_error_body">An error occurred while downloading %1$s. Please try again.</string>
 
     <!-- This string is displayed in the button to dismiss the download error dialog. -->
-    <string name="download_error_ok">OK</string>
+    <string name="download_error_ok">Ok</string>
+
+    <!-- This string is displayed in the downloads panel, in the download status when the download has failed. -->
+    <string name="download_status_failed">Failed</string>
+
+    <!-- This string is displayed in the downloads panel, in the download status when the download is paused. -->
+    <string name="download_status_paused">Paused</string>
+
+    <!-- This string is displayed in the downloads panel, in the download status when the download is pending. -->
+    <string name="download_status_pending">Pending</string>
+
+    <!-- This string is displayed in the downloads panel, in the download status when the resource is no longer available. -->
+    <string name="download_status_unavailable">Unavailable</string>
+
+    <!-- This string is displayed in the downloads panel, in the download status when an unknown error happened. -->
+    <string name="download_status_unknown_error">Unknown error</string>
+
 </resources>

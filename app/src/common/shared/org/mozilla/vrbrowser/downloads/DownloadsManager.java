@@ -217,10 +217,7 @@ public class DownloadsManager {
             Cursor c = mDownloadManager.query(query);
 
             while (c.moveToNext()) {
-                int status = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_STATUS));
-                if (status == DownloadManager.STATUS_RUNNING) {
-                    mMainHandler.post(() -> notifyDownloadsUpdate());
-                }
+                mMainHandler.post(() -> notifyDownloadsUpdate());
             }
             c.close();
         }

@@ -7,6 +7,7 @@ import android.database.Cursor;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 
+import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.ui.adapters.Language;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
 
@@ -37,6 +38,7 @@ public class Download {
     private String mDescription;
     private @Status int mStatus;
     private long mLastModified;
+    private String mReason;
 
     public static Download from(Cursor cursor) {
         Download download = new Download();
@@ -69,6 +71,7 @@ public class Download {
         download.mSizeBytes = cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
         download.mDownloadedBytes = cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
         download.mLastModified = cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_LAST_MODIFIED_TIMESTAMP));
+        download.mReason = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_REASON));
         return download;
     }
 
@@ -140,7 +143,7 @@ public class Download {
 
     public String getFilename() {
         try {
-            File f = new File(new URL(mOutputFile).getPath());
+            File f = new File(new URL(mUri).getPath());
             return f.getName();
 
         } catch (Exception e) {
@@ -153,30 +156,51 @@ public class Download {
         }
     }
 
+    public String getReason() {
+        return mReason;
+    }
+
     @NonNull
     public static String progressString(@NonNull Context context, @NonNull Download download) {
+
         Language language = LocaleUtils.getDisplayLanguage(context);
-        if (download.mStatus == RUNNING) {
-            if (download.mSizeBytes < MEGABYTE) {
-                return String.format(language.getLocale(), "%.2f/%.2fKb (%d%%)",
-                        ((double)download.mDownloadedBytes / (double)KILOBYTE),
-                        ((double)download.mSizeBytes / (double)KILOBYTE),
-                        (download.mDownloadedBytes*100)/download.mSizeBytes);
+        switch (download.mStatus) {
+            case Download.RUNNING:
+                if (download.mSizeBytes < MEGABYTE) {
+                    return String.format(language.getLocale(), "%.2f/%.2fKb (%d%%)",
+                            ((double)download.mDownloadedBytes / (double)KILOBYTE),
+                            ((double)download.mSizeBytes / (double)KILOBYTE),
+                            (download.mDownloadedBytes*100)/download.mSizeBytes);
 
-            } else {
-                return String.format(language.getLocale(), "%.2f/%.2fMB (%d%%)",
-                        ((double)download.mDownloadedBytes / (double)MEGABYTE),
-                        ((double)download.mSizeBytes / (double)MEGABYTE),
-                        (download.mDownloadedBytes*100)/download.mSizeBytes);
-            }
+                } else {
+                    return String.format(language.getLocale(), "%.2f/%.2fMB (%d%%)",
+                            ((double)download.mDownloadedBytes / (double)MEGABYTE),
+                            ((double)download.mSizeBytes / (double)MEGABYTE),
+                            (download.mDownloadedBytes*100)/download.mSizeBytes);
+                }
 
-        } else {
-            if (download.mSizeBytes < MEGABYTE) {
-                return String.format(language.getLocale(), "%.2fKb", ((double)download.mSizeBytes / (double)KILOBYTE));
+            case Download.SUCCESSFUL:
+                if (download.mSizeBytes < MEGABYTE) {
+                    return String.format(language.getLocale(), "%.2fKb", ((double)download.mSizeBytes / (double)KILOBYTE));
 
-            } else {
-                return String.format(language.getLocale(), "%.2fMB", ((double)download.mSizeBytes / (double)MEGABYTE));
-            }
+                } else {
+                    return String.format(language.getLocale(), "%.2fMB", ((double)download.mSizeBytes / (double)MEGABYTE));
+                }
+
+            case Download.FAILED:
+                return context.getString(R.string.download_status_failed);
+
+            case Download.PAUSED:
+                return context.getString(R.string.download_status_paused);
+
+            case Download.PENDING:
+                return context.getString(R.string.download_status_pending);
+
+            case Download.UNAVAILABLE:
+                return context.getString(R.string.download_status_unavailable);
+
+            default:
+                return context.getString(R.string.download_status_unknown_error);
         }
     }
 }
