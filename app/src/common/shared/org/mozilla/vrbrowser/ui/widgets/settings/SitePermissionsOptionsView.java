@@ -75,7 +75,7 @@ class SitePermissionsOptionsView extends SettingsView {
 
         switch (mCategory) {
             case SitePermission.SITE_PERMISSION_POPUP:
-                mBinding.headerLayout.setTitle(R.string.settings_privacy_policy_popups_title);
+                mBinding.headerLayout.setTitle(R.string.settings_privacy_policy_popups_title_v1);
                 mBinding.contentText.setText(R.string.privacy_options_popups_list_header_v1);
                 mBinding.emptyText.setText(R.string.privacy_options_popups_list_empty_first);
                 break;

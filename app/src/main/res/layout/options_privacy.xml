@@ -80,7 +80,7 @@
                     android:id="@+id/popUpsBlockingExceptionsButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:buttonText="@string/security_options_block_pup_up_settings_v2" />
+                    app:buttonText="@string/security_options_block_pup_up_settings" />
 
                 <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
                     android:id="@+id/webxrSwitch"

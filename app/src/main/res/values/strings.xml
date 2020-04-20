@@ -104,7 +104,7 @@
 
     <!-- This string is used as the title of the pop-ups dialog used to remove sites from the currently
          allowed pop-up sites. -->
-    <string name="settings_privacy_policy_popups_title">Exceptions for Pop-Ups</string>
+    <string name="settings_privacy_policy_popups_title_v1">Exceptions for Pop-Ups</string>
 
     <!-- This string is displayed under the title the pop-ups dialog used to remove sites from the currently
          allowed pop-up sites. -->
@@ -671,7 +671,7 @@
 
     <!-- This string labels the button in the privacy option panel that open the dialog to add/remove
          pop-up blocked sites. -->
-    <string name="security_options_block_pup_up_settings_v2">Advanced</string>
+    <string name="security_options_block_pup_up_settings">Advanced</string>
 
     <!-- This string labels the button in the privacy option panel that enables/disables Virtual Reality
         Devices access to websites (WebXR). -->
@@ -877,7 +877,7 @@
     <string name="bookmarks_saved_notification">Saved to Bookmarks!</string>
 
     <!-- This string is displayed in a notification that appears in the tray bar on top of the
-         downloads tray button then a download finishes. -->
+         downloads tray button then a download finishes. %1$s will be replaced with the downloaded file name. -->
     <string name="download_completed_notification">%1$s Downloaded</string>
 
     <!-- This string is displayed in a tooltip that appears when a user hovers
@@ -986,7 +986,7 @@
     <string name="fxa_signout_confirmation_title">Sign out of your Firefox Account?</string>
 
     <!-- This string is displayed in the body of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
-    <string name="fxa_signout_confirmation_body">When you sign out, you won\'t be able to send or receive tabs from other devices. Your bookmarks and history will also stop syncing.</string>
+    <string name="fxa_signout_confirmation_body">When you sign out, you won’t be able to send or receive tabs from other devices. Your bookmarks and history will also stop syncing.</string>
 
     <!-- This string is displayed in the checkbox text of the FxA sign out dialog displayed when the user clicks on the Sign out button.
          When checked the history and Bookmarks will be deleted from gthe device after signing in. -->
@@ -1558,7 +1558,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="slow_script_dialog_action_wait">Wait</string>
 
     <!-- This string is displayed in the title of the quick PopUp blocking dialog, accessed from the PopUp icon in the URL bar.
-     '%1$s' will be replaced at runtime with the app's name. -->
+     '%1$s' will be replaced at runtime with the status of the setting. -->
     <string name="popup_permission_dialog_message">Popup blocking is %1$s for this site.</string>
 
     <!-- This string is displayed in the on button of the quick Popup blocking dialog when it's in enabled state. It's accessed from the Popup icon in the URL bar. -->
@@ -1620,7 +1620,8 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed in the disable button of the quick Tracking Protection dialog, accessed from the Tracking Protection icon in the URL bar. -->
     <string name="tracking_dialog_button_disable">Disable</string>
 
-    <!-- This string is displayed in the body of the confirm dialog shown in some platforms when the back button is pressed to quit the app.  -->
+    <!-- This string is displayed in the body of the confirm dialog shown in some platforms when the back button is pressed to quit the app.
+         '%1$s' will be replaced at runtime with the app name. -->
     <string name="exit_confirm_dialog_body">Are you sure you want to exit %1$s?</string>
 
     <!-- This string is displayed in the Cancel button of the confirm dialog shown in some platforms when the back button is pressed to quit the app.  -->
@@ -1692,9 +1693,10 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed in the title of the download error dialog. -->
     <string name="download_error_title">There was an error</string>
 
-    <!-- This string is displayed in the body of the download error dialog. -->
+    <!-- This string is displayed in the body of the download error dialog.
+         '%1$s' will be replaced at runtime with the name of the downloaded file. -->
     <string name="download_error_body">An error occurred while downloading %1$s. Please try again.</string>
 
     <!-- This string is displayed in the button to dismiss the download error dialog. -->
-    <string name="download_error_ok">Ok</string>
+    <string name="download_error_ok">OK</string>
 </resources>
