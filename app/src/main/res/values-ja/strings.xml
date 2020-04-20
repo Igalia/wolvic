@@ -114,11 +114,21 @@
          allowed pop-up sites. -->
     <string name="settings_privacy_policy_popups_description">ポップアップウィンドウの表示を許可するウェブサイトを指定してください</string>
 
+    <!-- This string is used as the title of the WebXR dialog used to do not allow websites to access WebXR devices. -->
+    <string name="settings_privacy_policy_webxr_title">VR の許可設定</string>
+
     <!-- This string is used as the title of the Tracking dialog used to do not allow websites to bypass tracking protection. -->
     <string name="settings_privacy_policy_tracking_title">強化型トラッキング防止機能の例外</string>
 
     <!-- This string is displayed under the title the  Tracking dialog used to do not allow websites to bypass tracking protection. -->
     <string name="settings_privacy_policy_tracking_description">これらのウェブサイトでは、保護をオフに設定しています。</string>
+
+    <!-- This string is displayed in the first line of a text that's displayed in the middle of the etp exceptions instead of the exceptions list
+     when there are no exceptions. -->
+    <string name="settings_privacy_policy_tracking_empty_description">あなたの行動追跡をウェブサイトに許可した場合、ここにそれらが表示されます。</string>
+
+    <!-- This string labels the Reset button that removes all the sites not allowed to access WebXR -->
+    <string name="settings_privacy_policy_tracking_reset">強化型トラッキング防止の例外をリセットします。</string>
 
     <!-- This string is displayed in the switch of each item of the the pop-up blocking list when the site is allowed. -->
     <string name="pop_up_site_switch_allow">許可</string>
@@ -638,6 +648,10 @@
          pop-up blocked sites. -->
     <string name="security_options_block_pup_up_settings">詳細</string>
 
+    <!-- This string labels the button in the privacy option panel that enables/disables Virtual Reality
+        Devices access to websites (WebXR). -->
+    <string name="security_options_permission_webxr">VR デバイス (WebXR)</string>
+
     <!-- This string is a label above the group of switches that indicates that the switches below
          relate to Firefox data collection and use. -->
     <string name="security_options_speech_data_collection_title">%1$s のデータの収集と使用</string>
@@ -975,6 +989,13 @@
          when there are no exceptions. -->
     <string name="privacy_options_popups_list_empty_second">許可したサイトのリストがここに表示されます。</string>
 
+    <!-- This string is used to label radio buttons for setting ETP in. -->
+    <string name="privacy_options_tracking">強化型トラッキング防止。 (&lt;a href=&quot;%1$s&quot;&gt;詳細情報&lt;/a&gt;)</string>
+
+    <!-- This string labels the button in the privacy option panel that opens the dialog to add/remove
+         Tracking protection exceptions. -->
+    <string name="privacy_options_tracking_exceptions">例外</string>
+
     <!-- This string labels the Reset button that restores the default controller settings values. -->
     <string name="controller_options_reset">コントローラーの設定をリセット</string>
 
@@ -1082,6 +1103,14 @@
     <!-- This string is for the tooltip that appears upon hovering the 'Resize' button in the browser's navigation bar.
          'Resize' refers to the button used to resize the browset window. -->
     <string name="resize_tooltip">サイズ変更します</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Tracking' button in the
+     browser's navigation bar. The button it labels, when pressed, Shows the Tracking dialog. -->
+    <string name="tracking_allowed_tooltip">トラッキング防止は有効です</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Tracking Protection' button in the
+ browser's navigation bar. The button it labels, when pressed, Shows the Tracking Protection dialog. -->
+    <string name="tracking_disabled_tooltip">トラッキング防止は無効です</string>
 
     <!-- This string is for the tooltip that appears when the user is not in the browser's Private Browsing mode
          and hovers over the 'Private Browsing' icon in the browser's tray menu. -->
@@ -1398,6 +1427,9 @@ the Select` button. When clicked it closes all the previously selected tabs -->
        it continues to wait for execution of the web page script that caused the slow down. -->
     <string name="slow_script_dialog_action_wait">待機</string>
 
+
+    <!-- This string is displayed in the title of the quick Tracking Protection dialog, accessed from the Tracking Protection icon in the URL bar. -->
+    <string name="tracking_dialog_message">このサイトでの強化型トラッキング防止は %1$s です。 (&lt;a href=&quot;%2$s&quot;&gt;詳細情報&lt;/a&gt;)</string>
 
     <!-- This string is displayed in the enable button of the quick Tracking Protection dialog, accessed from the Tracking Protection icon in the URL bar. -->
     <string name="tracking_dialog_button_enable">有効化</string>
