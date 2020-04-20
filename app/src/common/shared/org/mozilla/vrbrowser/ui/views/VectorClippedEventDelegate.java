@@ -138,7 +138,7 @@ public class VectorClippedEventDelegate implements View.OnHoverListener, View.On
     }
 
     public boolean isInside(MotionEvent event) {
-        return mRegion.contains((int)event.getX(),(int) event.getY());
+        return event != null && mRegion != null && mRegion.contains((int)event.getX(),(int) event.getY());
     }
 
 }

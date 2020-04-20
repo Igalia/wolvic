@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:background="@drawable/resize_bar_background"
-        android:visibility="gone">
+        app:visibleGone="@{viewmodel.isFullscreen}">
 
         <FrameLayout
             android:layout_width="5dp"
