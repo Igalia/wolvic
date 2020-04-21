@@ -49,10 +49,12 @@ import org.mozilla.vrbrowser.utils.UrlUtils;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Comparator;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
 import static org.mozilla.vrbrowser.utils.ServoUtils.createServoSession;
@@ -247,7 +249,9 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     }
 
     private void dumpState(VideoAvailabilityListener aListener) {
-        aListener.onVideoAvailabilityChanged(mState.mMediaElements != null && mState.mMediaElements.size() > 0);
+        mState.mMediaElements.forEach(element -> {
+            aListener.onVideoAvailabilityChanged(element,true);
+        });
     }
 
     private void dumpState(WebXRStateChangedListener aListener) {
@@ -690,6 +694,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         return mFirstContentfulPaint;
     }
 
+    @Nullable
     public Media getFullScreenVideo() {
         for (Media media: mState.mMediaElements) {
             if (media.isFullscreen()) {
@@ -701,6 +706,19 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         }
 
         return null;
+    }
+
+    @Nullable
+    public Media getActiveVideo() {
+        for (Media media: mState.mMediaElements) {
+            if (media.isFullscreen()) {
+                return media;
+            }
+        }
+        return mState.mMediaElements.stream()
+                .sorted((o1, o2) -> (int)o2.getLastStateUpdate() - (int)o1.getLastStateUpdate())
+                .filter(Media::isPlayed)
+                .findFirst().orElse(null);
     }
 
     public boolean isInputActive() {
@@ -1448,7 +1466,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         mState.mMediaElements.add(media);
 
         for (VideoAvailabilityListener listener: mVideoAvailabilityListeners) {
-            listener.onVideoAvailabilityChanged(true);
+            listener.onVideoAvailabilityChanged(media, true);
         }
     }
 
@@ -1462,10 +1480,8 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
             if (media.getMediaElement() == element) {
                 media.unload();
                 mState.mMediaElements.remove(i);
-                if (mState.mMediaElements.size() == 0) {
-                    for (VideoAvailabilityListener listener: mVideoAvailabilityListeners) {
-                        listener.onVideoAvailabilityChanged(false);
-                    }
+                for (VideoAvailabilityListener listener: mVideoAvailabilityListeners) {
+                    listener.onVideoAvailabilityChanged(media, false);
                 }
                 return;
             }

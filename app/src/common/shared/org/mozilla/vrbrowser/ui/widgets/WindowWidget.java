@@ -1668,37 +1668,29 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     // VideoAvailabilityListener
 
-    private Media mMedia;
-
     @Override
-    public void onVideoAvailabilityChanged(boolean aVideosAvailable) {
+    public void onVideoAvailabilityChanged(@NonNull Media aMedia, boolean aVideoAvailable) {
         boolean mediaAvailable;
         if (mSession != null) {
-            if (mMedia != null) {
-                mMedia.removeMediaListener(mMediaDelegate);
-            }
-
-            mMedia = mSession.getFullScreenVideo();
-            if (aVideosAvailable && mMedia != null) {
-                mMedia.addMediaListener(mMediaDelegate);
-                mediaAvailable = true;
+            if (aVideoAvailable) {
+                aMedia.addMediaListener(mMediaDelegate);
 
             } else {
-                mediaAvailable = false;
+                aMedia.removeMediaListener(mMediaDelegate);
             }
+            mediaAvailable = mSession.getActiveVideo() != null;
 
         } else {
             mediaAvailable = false;
         }
 
         if (mediaAvailable) {
-            if (mSession.getFullScreenVideo().isPlayed()) {
-                mViewModel.setIsMediaAvailable(true);
+            if (mSession.getActiveVideo().isPlayed()) {
                 mViewModel.setIsMediaPlaying(true);
             }
+            mViewModel.setIsMediaAvailable(true);
 
         } else {
-            mMedia = null;
             mViewModel.setIsMediaAvailable(false);
             mViewModel.setIsMediaPlaying(false);
         }
@@ -1754,6 +1746,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     public void onLocationChange(@NonNull GeckoSession session, @Nullable String url) {
         mViewModel.setUrl(url);
         mViewModel.setIsDrmUsed(false);
+        mViewModel.setIsMediaAvailable(false);
+        mViewModel.setIsMediaPlaying(false);
 
         if (StringUtils.isEmpty(url)) {
             mViewModel.setIsBookmarked(false);

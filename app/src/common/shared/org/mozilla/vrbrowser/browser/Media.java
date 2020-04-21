@@ -23,11 +23,13 @@ public class Media implements MediaElement.Delegate {
     private MediaElement mMedia;
     private CopyOnWriteArrayList<MediaElement.Delegate> mMediaListeners;
     private ResizeDelegate mResizeDelegate;
+    private long mLastStateUpdate;
 
     public Media(@NonNull MediaElement aMediaElement) {
         mMedia = aMediaElement;
         mMediaListeners = new CopyOnWriteArrayList<>();
         aMediaElement.setDelegate(this);
+        mLastStateUpdate = 0;
     }
 
     public void addMediaListener(MediaElement.Delegate aListener) {
@@ -113,6 +115,10 @@ public class Media implements MediaElement.Delegate {
         mMedia.setMuted(aIsMuted);
     }
 
+    public long getLastStateUpdate() {
+        return mLastStateUpdate;
+    }
+
     public void unload() {
         mIsUnloaded = true;
         mMediaListeners.clear();
@@ -149,6 +155,7 @@ public class Media implements MediaElement.Delegate {
             mPlaying = false;
             mIsUnloaded = true;
         }
+        mLastStateUpdate = System.currentTimeMillis();
         mMediaListeners.forEach(listener -> listener.onPlaybackStateChange(mediaElement, playbackState));
     }
 

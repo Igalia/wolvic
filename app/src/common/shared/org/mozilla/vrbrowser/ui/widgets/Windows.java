@@ -1085,8 +1085,10 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     @Override
     public void onMediaPlayClicked(@NonNull TitleBarWidget titleBar) {
         for (WindowWidget window : getCurrentWindows()) {
-            if (window.getTitleBar() == titleBar) {
-                window.getSession().getFullScreenVideo().play();
+            if (window.getTitleBar() == titleBar &&
+                    window.getSession() != null &&
+                    window.getSession().getActiveVideo() != null) {
+                window.getSession().getActiveVideo().play();
             }
         }
     }
@@ -1094,8 +1096,10 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     @Override
     public void onMediaPauseClicked(@NonNull TitleBarWidget titleBar) {
         for (WindowWidget window : getCurrentWindows()) {
-            if (window.getTitleBar() == titleBar) {
-                window.getSession().getFullScreenVideo().pause();
+            if (window.getTitleBar() == titleBar &&
+                    window.getSession() != null &&
+                    window.getSession().getActiveVideo() != null) {
+                window.getSession().getActiveVideo().pause();
             }
         }
     }
