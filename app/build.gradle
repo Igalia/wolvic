@@ -186,7 +186,7 @@ android {
             externalNativeBuild {
                 cmake {
                     cppFlags " -DPICOVR"
-                    arguments "-DVR_SDK_LIB=picovr-lib", "-DPICOVR=ON"
+                    arguments "-DPICOVR=ON"
                 }
             }
         }
@@ -435,7 +435,7 @@ dependencies {
     testImplementation deps.work.testing
 
     // Pico
-    picovrImplementation fileTree(dir: "${project.rootDir}/third_party/picovr/", include: ['*.jar'])
+    picovrImplementation fileTree(dir: "${project.rootDir}/third_party/picovr/", include: ['*.aar'])
 }
 
 if (findProject(':servo')) {

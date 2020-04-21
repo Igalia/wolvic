@@ -128,11 +128,6 @@ add_library(wavevr-lib SHARED IMPORTED)
 set_target_properties(wavevr-lib PROPERTIES IMPORTED_LOCATION
                       ${CMAKE_SOURCE_DIR}/../third_party/wavesdk/build/wvr_client/jni/${ANDROID_ABI}/libwvr_api.so )
 
-add_library(picovr-lib SHARED IMPORTED)
-set_target_properties(picovr-lib PROPERTIES IMPORTED_LOCATION
-        ${CMAKE_SOURCE_DIR}/../third_party/picovr/${ANDROID_ABI}/libPvr_NativeSDK.so )
-
-
 # Specifies libraries CMake should link to your target library. You
 # can link multiple libraries, such as libraries you define in this
 # build script, prebuilt third-party libraries, or system libraries.
