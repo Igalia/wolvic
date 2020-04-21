@@ -247,6 +247,7 @@ BrowserWorld::State::CheckBackButton() {
       if (!(controller.lastButtonState & ControllerDelegate::BUTTON_APP) &&
           (controller.buttonState & ControllerDelegate::BUTTON_APP)) {
           VRBrowser::HandleBack();
+          webXRInterstialState = WebXRInterstialState::HIDDEN;
       } else if (webXRInterstialState == WebXRInterstialState::ALLOW_DISMISS
                  && controller.lastButtonState == 0 && controller.buttonState) {
           VRBrowser::OnDismissWebXRInterstitial();
