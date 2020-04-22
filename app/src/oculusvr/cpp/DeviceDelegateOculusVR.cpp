@@ -148,6 +148,11 @@ struct DeviceDelegateOculusVR::State {
     }
     initialized = true;
 
+    std::string version = vrapi_GetVersionString();
+    std::string notes = "Oculus Driver Version: ";
+    notes += version;
+    VRBrowser::AppendAppNotesToCrashLog(notes);
+
     layersEnabled = VRBrowser::AreLayersEnabled();
     SetRenderSize(device::RenderMode::StandAlone);
 

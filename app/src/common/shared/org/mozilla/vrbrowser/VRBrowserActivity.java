@@ -49,6 +49,7 @@ import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.Accounts;
 import org.mozilla.vrbrowser.browser.PermissionDelegate;
 import org.mozilla.vrbrowser.browser.SettingsStore;
+import org.mozilla.vrbrowser.browser.engine.EngineProvider;
 import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.crashreporting.CrashReporterService;
@@ -251,6 +252,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         SessionStore.get().initializeServices();
         SessionStore.get().initializeStores(this);
         SessionStore.get().setLocales(LocaleUtils.getPreferredLanguageTags(this));
+
+        EngineProvider.INSTANCE.getOrCreateRuntime(this).appendAppNotesToCrashReport("Firefox Reality " + BuildConfig.VERSION_NAME + "-" + BuildConfig.VERSION_CODE + "-" + BuildConfig.FLAVOR + "-" + BuildConfig.BUILD_TYPE + " (" + BuildConfig.GIT_HASH + ")");
 
         // Create broadcast receiver for getting crash messages from crash process
         IntentFilter intentFilter = new IntentFilter();
@@ -1207,6 +1210,12 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         runOnUiThread(() -> {
             SettingsStore.getInstance(this).setDisableLayers(true);
         });
+    }
+
+    @Keep
+    @SuppressWarnings("unused")
+    private void appendAppNotesToCrashReport(String aNotes) {
+        runOnUiThread(() -> EngineProvider.INSTANCE.getOrCreateRuntime(VRBrowserActivity.this).appendAppNotesToCrashReport(aNotes));
     }
 
     private SurfaceTexture createSurfaceTexture() {

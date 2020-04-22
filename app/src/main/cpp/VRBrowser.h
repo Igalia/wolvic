@@ -42,6 +42,7 @@ void HaltActivity(const jint aReason);
 void HandlePoorPerformance();
 void OnAppLink(const std::string& aJSON);
 void DisableLayers();
+void AppendAppNotesToCrashLog(const std::string& aNotes);
 } // namespace VRBrowser;
 
 } // namespace crow
