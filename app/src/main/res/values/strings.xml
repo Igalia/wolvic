@@ -1206,7 +1206,8 @@
     <string name="webxr_blocked_tooltip">WebXR Blocked</string>
 
     <!-- This string appears in the WebXR interstial next to an arrow pointing to the controller button that
-     has to be used to exit from WebXR. It's preferred to separate it in two lines if possible. -->
+     has to be used to exit from WebXR. It's preferred to separate it in two lines if possible.
+     \n is used to create a new line  -->
     <string name="webxr_interstitial_exit_webxr">Exit\nWebXR</string>
 
     <!-- This string appears in the WebXR interstitial. -->
