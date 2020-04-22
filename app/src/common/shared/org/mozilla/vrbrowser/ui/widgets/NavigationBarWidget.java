@@ -152,11 +152,15 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
         mNavigationListeners = new ArrayList<>();
 
-        mFullScreenBackHandler = this::exitFullScreenMode;
+        mFullScreenBackHandler = () -> {
+            if (mAttachedWindow != null) {
+                mAttachedWindow.setIsFullScreen(false);
+            }
+        };
         mVRVideoBackHandler = () -> {
             exitVRVideo();
-            if (mViewModel.getAutoEnteredVRVideo().getValue().get()) {
-                exitFullScreenMode();
+            if (mAttachedWindow != null) {
+                mAttachedWindow.setIsFullScreen(false);
             }
         };
 
@@ -278,7 +282,9 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
         mBinding.navigationBarFullscreen.fullScreenExitButton.setOnClickListener(view -> {
             view.requestFocusFromTouch();
-            exitFullScreenMode();
+            if (mAttachedWindow != null) {
+                mAttachedWindow.setIsFullScreen(false);
+            }
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
@@ -601,7 +607,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     private void exitFullScreenMode() {
-        if (mAttachedWindow == null || !mViewModel.getIsFullscreen().getValue().get()) {
+        if (mAttachedWindow == null) {
             return;
         }
 
