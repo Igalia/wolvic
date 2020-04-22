@@ -21,10 +21,11 @@ distribution:
       - https://github.com/MozillaReality/FirefoxReality/issues/1420
     data_reviews:
       - https://github.com/MozillaReality/FirefoxReality/pull/1854#issuecomment-546214568
+      - https://github.com/MozillaReality/FirefoxReality/pull/3199#issuecomment-617938749
     notification_emails:
       - fxr-telemetry@mozilla.com
       - dmu@mozilla.com
-    expires: "2020-05-01"
+    expires: "2020-11-01"
 
 url:
   domains:
@@ -37,10 +38,11 @@ url:
       - https://github.com/MozillaReality/FirefoxReality/issues/2230
     data_reviews:
       - https://github.com/MozillaReality/FirefoxReality/pull/2241#issuecomment-557740258
+      - https://github.com/MozillaReality/FirefoxReality/pull/3199#issuecomment-617938749
     notification_emails:
       - fxr-telemetry@mozilla.com
       - dmu@mozilla.com
-    expires: "2020-05-01"
+    expires: "2020-11-01"
   visits:
     type: counter
     send_in_pings:
@@ -51,10 +53,11 @@ url:
       - https://github.com/MozillaReality/FirefoxReality/issues/2230
     data_reviews:
       - https://github.com/MozillaReality/FirefoxReality/pull/2241#issuecomment-557740258
+      - https://github.com/MozillaReality/FirefoxReality/pull/3199#issuecomment-617938749
     notification_emails:
       - fxr-telemetry@mozilla.com
       - dmu@mozilla.com
-    expires: "2020-05-01"
+    expires: "2020-11-01"
   query_type:
     type: labeled_counter
     description: >
@@ -67,10 +70,11 @@ url:
       - https://github.com/MozillaReality/FirefoxReality/issues/2230
     data_reviews:
       - https://github.com/MozillaReality/FirefoxReality/pull/2241#issuecomment-557740258
+      - https://github.com/MozillaReality/FirefoxReality/pull/3199#issuecomment-617938749
     notification_emails:
       - fxr-telemetry@mozilla.com
       - dmu@mozilla.com
-    expires: "2020-05-01"
+    expires: "2020-11-01"
 
 searches:
   counts:
@@ -81,10 +85,11 @@ searches:
       - https://github.com/MozillaReality/FirefoxReality/issues/2230
     data_reviews:
       - https://github.com/MozillaReality/FirefoxReality/pull/2241#issuecomment-557740258
+      - https://github.com/MozillaReality/FirefoxReality/pull/3199#issuecomment-617938749
     notification_emails:
       - fxr-telemetry@mozilla.com
       - dmu@mozilla.com
-    expires: "2020-05-01"
+    expires: "2020-11-01"
 
 tabs:
   opened:
@@ -107,10 +112,11 @@ tabs:
       - https://github.com/MozillaReality/FirefoxReality/issues/1609
     data_reviews:
       - https://github.com/MozillaReality/FirefoxReality/pull/2327#issuecomment-559103837
+      - https://github.com/MozillaReality/FirefoxReality/pull/3199#issuecomment-617938749
     notification_emails:
       - fxr-telemetry@mozilla.com
       - manmartin@mozilla.com
-    expires: "2020-05-01"
+    expires: "2020-11-01"
   activated:
     type: counter
     description: >
@@ -121,10 +127,11 @@ tabs:
       - https://github.com/MozillaReality/FirefoxReality/issues/1609
     data_reviews:
       - https://github.com/MozillaReality/FirefoxReality/pull/2327#issuecomment-559103837
+      - https://github.com/MozillaReality/FirefoxReality/pull/3199#issuecomment-617938749
     notification_emails:
       - fxr-telemetry@mozilla.com
       - manmartin@mozilla.com
-    expires: "2020-05-01"
+    expires: "2020-11-01"
 
 firefox_account:
   sign_in:
@@ -135,10 +142,11 @@ firefox_account:
       - https://github.com/MozillaReality/FirefoxReality/issues/1610
     data_reviews:
       - https://github.com/MozillaReality/FirefoxReality/pull/2327#issuecomment-559103837
+      - https://github.com/MozillaReality/FirefoxReality/pull/3199#issuecomment-617938749
     notification_emails:
       - fxr-telemetry@mozilla.com
       - manmartin@mozilla.com
-    expires: "2020-05-01"
+    expires: "2020-11-01"
   sign_in_result:
     type: event
     description: >
@@ -150,10 +158,11 @@ firefox_account:
       - https://github.com/MozillaReality/FirefoxReality/issues/1610
     data_reviews:
       - https://github.com/MozillaReality/FirefoxReality/pull/2327#issuecomment-559103837
+      - https://github.com/MozillaReality/FirefoxReality/pull/3199#issuecomment-617938749
     notification_emails:
       - fxr-telemetry@mozilla.com
       - manmartin@mozilla.com
-    expires: "2020-05-01"
+    expires: "2020-11-01"
   sign_out:
     type: event
     description: >
@@ -162,10 +171,11 @@ firefox_account:
       - https://github.com/MozillaReality/FirefoxReality/issues/1610
     data_reviews:
       - https://github.com/MozillaReality/FirefoxReality/pull/2327#issuecomment-559103837
+      - https://github.com/MozillaReality/FirefoxReality/pull/3199#issuecomment-617938749
     notification_emails:
       - fxr-telemetry@mozilla.com
       - manmartin@mozilla.com
-    expires: "2020-05-01"
+    expires: "2020-11-01"
   bookmarks_sync_status:
     type: boolean
     lifetime: application
@@ -175,10 +185,11 @@ firefox_account:
       - https://github.com/MozillaReality/FirefoxReality/issues/1610
     data_reviews:
       - https://github.com/MozillaReality/FirefoxReality/pull/2327#issuecomment-559103837
+      - https://github.com/MozillaReality/FirefoxReality/pull/3199#issuecomment-617938749
     notification_emails:
       - fxr-telemetry@mozilla.com
       - manmartin@mozilla.com
-    expires: "2020-05-01"
+    expires: "2020-11-01"
   history_sync_status:
     type: boolean
     lifetime: application
@@ -188,10 +199,11 @@ firefox_account:
       - https://github.com/MozillaReality/FirefoxReality/issues/1610
     data_reviews:
       - https://github.com/MozillaReality/FirefoxReality/pull/2327#issuecomment-559103837
+      - https://github.com/MozillaReality/FirefoxReality/pull/3199#issuecomment-617938749
     notification_emails:
       - fxr-telemetry@mozilla.com
       - manmartin@mozilla.com
-    expires: "2020-05-01"
+    expires: "2020-11-01"
   tab_sent:
     type: counter
     description: >
@@ -200,10 +212,11 @@ firefox_account:
       - https://github.com/MozillaReality/FirefoxReality/issues/1610
     data_reviews:
       - https://github.com/MozillaReality/FirefoxReality/pull/2327#issuecomment-559103837
+      - https://github.com/MozillaReality/FirefoxReality/pull/3199#issuecomment-617938749
     notification_emails:
       - fxr-telemetry@mozilla.com
       - manmartin@mozilla.com
-    expires: "2020-05-01"
+    expires: "2020-11-01"
   received_tab:
     type: labeled_counter
     description: >
@@ -219,10 +232,11 @@ firefox_account:
       - https://github.com/MozillaReality/FirefoxReality/issues/1610
     data_reviews:
       - https://github.com/MozillaReality/FirefoxReality/pull/2327#issuecomment-559103837
+      - https://github.com/MozillaReality/FirefoxReality/pull/3199#issuecomment-617938749
     notification_emails:
       - fxr-telemetry@mozilla.com
       - manmartin@mozilla.com
-    expires: "2020-05-01"
+    expires: "2020-11-01"
 
 control:
   open_new_window:
@@ -235,7 +249,8 @@ control:
       - https://github.com/MozillaReality/FirefoxReality/issues/2347
     data_reviews:
       - https://github.com/MozillaReality/FirefoxReality/pull/2348#issuecomment-564736919
+      - https://github.com/MozillaReality/FirefoxReality/pull/3199#issuecomment-617938749
     notification_emails:
       - fxr-telemetry@mozilla.com
       - dmu@mozilla.com
-    expires: "2020-05-01"
+    expires: "2020-11-01"
