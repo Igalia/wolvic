@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -128,16 +129,22 @@ public class UrlUtils {
         }
 
         if (URLUtil.isValidUrl(aUri)) {
-            try {
-                URI uri = URI.create(aUri);
-                URL url = new URL(
-                        uri.getScheme() != null ? uri.getScheme() : "",
-                        uri.getAuthority() != null ? uri.getAuthority() : "",
-                        "");
-                return url.toString();
+            if (UrlUtils.isFileUri(aUri)) {
+                File file = new File(aUri);
+                return file.getName();
 
-            } catch (MalformedURLException | IllegalArgumentException e) {
-                return "";
+            } else {
+                try {
+                    URI uri = URI.create(aUri);
+                    URL url = new URL(
+                            uri.getScheme() != null ? uri.getScheme() : "",
+                            uri.getAuthority() != null ? uri.getAuthority() : "",
+                            "");
+                    return url.toString();
+
+                } catch (MalformedURLException | IllegalArgumentException e) {
+                    return "";
+                }
             }
 
         } else {

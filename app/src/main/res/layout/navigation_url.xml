@@ -41,7 +41,7 @@
                 android:layout_marginStart="2dp"
                 android:addStatesFromChildren="true"
                 android:orientation="horizontal"
-                app:visibleGone="@{!viewmodel.isLibraryVisible &amp;&amp; !UrlUtils.isContentFeed(context, viewmodel.url.toString())}">
+                app:visibleGone="@{!viewmodel.isFocused &amp;&amp; viewmodel.isUrlBarButtonsVisible}">
 
                 <org.mozilla.vrbrowser.ui.views.UIButton
                     android:id="@+id/tracking"
@@ -143,8 +143,7 @@
                 <View
                     android:layout_width="4dp"
                     android:layout_height="match_parent"
-                    app:visibleGone="@{!UrlUtils.isHomeUri(context, viewmodel.url.toString())}"/>
-
+                    app:visibleGone="@{!viewmodel.isUrlBarIconsVisible}"/>
             </LinearLayout>
 
             <View
@@ -152,7 +151,7 @@
                 android:layout_width="15dp"
                 android:layout_height="match_parent"
                 android:layout_toEndOf="@id/startButtonsLayout"
-                app:visibleGone="@{(!settingsViewmodel.isTrackingProtectionEnabled &amp;&amp; !viewmodel.isPopUpAvailable &amp;&amp; !viewmodel.isWebXRUsed) || viewmodel.isLibraryVisible || UrlUtils.isHomeUri(context, viewmodel.url.toString())}"/>
+                app:visibleGone="@{!viewmodel.isUrlBarButtonsVisible || viewmodel.isFocused}"/>
 
             <LinearLayout
                 android:id="@+id/icons"
@@ -161,7 +160,7 @@
                 android:orientation="horizontal"
                 android:layout_toEndOf="@id/padding"
                 android:layout_centerVertical="true"
-                app:visibleGone="@{!viewmodel.isFocused}">
+                app:visibleGone="@{viewmodel.isUrlBarIconsVisible &amp;&amp; !viewmodel.isFocused}">
                 <ImageView
                     android:id="@+id/loadingView"
                     android:layout_width="24dp"

@@ -15,6 +15,7 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
+import org.mozilla.geckoview.ContentBlocking;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.ui.widgets.Windows;
@@ -67,6 +68,8 @@ public class WindowViewModel extends AndroidViewModel {
     private MutableLiveData<ObservableBoolean> isWebXRBlocked;
     private MutableLiveData<ObservableBoolean> isTrackingEnabled;
     private MutableLiveData<ObservableBoolean> isDrmUsed;
+    private MediatorLiveData<ObservableBoolean> isUrlBarButtonsVisible;
+    private MediatorLiveData<ObservableBoolean> isUrlBarIconsVisible;
 
     public WindowViewModel(Application application) {
         super(application);
@@ -162,6 +165,15 @@ public class WindowViewModel extends AndroidViewModel {
 
         isTrackingEnabled = new MutableLiveData<>(new ObservableBoolean(true));
         isDrmUsed = new MutableLiveData<>(new ObservableBoolean(false));
+
+        isUrlBarButtonsVisible = new MediatorLiveData<>();
+        isUrlBarButtonsVisible.addSource(url, mIsUrlBarButtonsVisibleObserver);
+        isUrlBarButtonsVisible.setValue(new ObservableBoolean(false));
+
+        isUrlBarIconsVisible = new MediatorLiveData<>();
+        isUrlBarIconsVisible.addSource(isLoading, mIsUrlBarIconsVisibleObserver);
+        isUrlBarIconsVisible.addSource(isInsecureVisible, mIsUrlBarIconsVisibleObserver);
+        isUrlBarIconsVisible.setValue(new ObservableBoolean(false));
     }
 
     private Observer<ObservableBoolean> mIsTopBarVisibleObserver = new Observer<ObservableBoolean>() {
@@ -294,6 +306,34 @@ public class WindowViewModel extends AndroidViewModel {
             }
 
             hint.postValue(getHintValue());
+        }
+    };
+
+    private Observer<Spannable> mIsUrlBarButtonsVisibleObserver = new Observer<Spannable>() {
+        @Override
+        public void onChanged(Spannable aUrl) {
+            isUrlBarButtonsVisible.postValue(new ObservableBoolean(
+                    !isFocused.getValue().get() &&
+                            !isLibraryVisible.getValue().get() &&
+                            !UrlUtils.isContentFeed(getApplication(), aUrl.toString()) &&
+                            !UrlUtils.isFileUri(aUrl.toString()) &&
+                            (
+                                    (SettingsStore.getInstance(getApplication()).getTrackingProtectionLevel() != ContentBlocking.EtpLevel.NONE) ||
+                                    isPopUpAvailable.getValue().get() ||
+                                    isDrmUsed.getValue().get() ||
+                                    isWebXRUsed.getValue().get()
+                            )
+            ));
+        }
+    };
+
+    private Observer<ObservableBoolean> mIsUrlBarIconsVisibleObserver = new Observer<ObservableBoolean>() {
+        @Override
+        public void onChanged(ObservableBoolean o) {
+            isUrlBarIconsVisible.postValue(new ObservableBoolean(
+                    isLoading.getValue().get() ||
+                            isInsecureVisible.getValue().get()
+            ));
         }
     };
 
@@ -729,5 +769,15 @@ public class WindowViewModel extends AndroidViewModel {
 
     public void setIsDrmUsed(boolean isEnabled) {
         this.isDrmUsed.postValue(new ObservableBoolean(isEnabled));
+    }
+
+    @NonNull
+    public MutableLiveData<ObservableBoolean> getIsUrlBarButtonsVisible() {
+        return isUrlBarButtonsVisible;
+    }
+
+    @NonNull
+    public MutableLiveData<ObservableBoolean> getIsUrlBarIconsVisible() {
+        return isUrlBarIconsVisible;
     }
 }
