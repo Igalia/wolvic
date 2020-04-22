@@ -10,16 +10,19 @@
 
 namespace {
 
-const char* sUpdateHapticsName = "updateHaptics";
-const char* sUpdateHapticsSignature = "(IFF)V";
-const char* sCancelAllHapticsName = "cancelAllHaptics";
-const char* sCancelAllHapticsSignature = "()V";
+const char* const sUpdateHapticsName = "updateHaptics";
+const char* const sUpdateHapticsSignature = "(IFF)V";
+const char* const sCancelAllHapticsName = "cancelAllHaptics";
+const char* const sCancelAllHapticsSignature = "()V";
+const char* const kGetGazeIndex = "getGazeIndex";
+const char* const kGetGazeIndexSignature = "()I";
 
 JNIEnv* sEnv = nullptr;
 jclass sBrowserClass = nullptr;
 jobject sActivity = nullptr;
 jmethodID sUpdateHaptics = nullptr;
 jmethodID sCancelAllHaptics = nullptr;
+jmethodID sGetGazeIndex = nullptr;
 }
 
 namespace crow {
