@@ -171,7 +171,7 @@ VRBrowser::ShutdownJava() {
   sOnAppLink = nullptr;
   sDisableLayers = nullptr;
   sEnv = nullptr;
-  kAppendAppNotesToCrashReport = nullptr;
+  sAppendAppNotesToCrashReport = nullptr;
 }
 
 void
