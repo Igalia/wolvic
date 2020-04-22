@@ -8,12 +8,14 @@ package org.mozilla.vrbrowser.ui.widgets;
 import android.content.Context;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import org.mozilla.telemetry.schedule.jobscheduler.TelemetryJobService;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.geckoview.MediaElement;
 import org.mozilla.vrbrowser.browser.Media;
@@ -42,6 +44,10 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
     private boolean mPlayOnSeekEnd;
     private Rect mOffsetViewBounds;
     private VideoProjectionMenuWidget mProjectionMenu;
+    static long VOLUME_SLIDER_CHECK_DELAY = 1000;
+    private Handler mVolumeCtrlHandler = new Handler();
+    private boolean mHideVolumeSlider = false;
+    private Runnable mVolumeCtrlRunnable;
 
     public MediaControlsWidget(Context aContext) {
         super(aContext);
@@ -75,6 +81,13 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
         mMutedIcon = aContext.getDrawable(R.drawable.ic_icon_media_volume_muted);
         mVolumeIcon = aContext.getDrawable(R.drawable.ic_icon_media_volume);
         mOffsetViewBounds = new Rect();
+
+        mVolumeCtrlRunnable = () -> {
+            if ((mHideVolumeSlider) && (mVolumeControl.getVisibility() == View.VISIBLE)) {
+                mVolumeControl.setVisibility(View.INVISIBLE);
+                stopVolumeCtrlHandler();
+            }
+        };
 
         mMediaPlayButton.setOnClickListener(v -> {
             if (mMedia.isEnded()) {
@@ -179,8 +192,8 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
                 childView.getDrawingRect(mOffsetViewBounds);
                 MediaControlsWidget.this.offsetDescendantRectToMyCoords(childView, mOffsetViewBounds);
 
-                FrameLayout.LayoutParams params =  (FrameLayout.LayoutParams)mMediaSeekLabel.getLayoutParams();
-                params.setMarginStart(mOffsetViewBounds.left + (int)(aRatio * mOffsetViewBounds.width()) - mMediaSeekLabel.getMeasuredWidth() / 2);
+                FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mMediaSeekLabel.getLayoutParams();
+                params.setMarginStart(mOffsetViewBounds.left + (int) (aRatio * mOffsetViewBounds.width()) - mMediaSeekLabel.getMeasuredWidth() / 2);
                 mMediaSeekLabel.setLayoutParams(params);
             }
         });
@@ -192,37 +205,38 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
             }
             mVolumeControl.requestFocusFromTouch();
         });
-
-        this.setOnHoverListener((v, event) -> {
-            if (mMedia == null) {
-                return false;
-            }
-            if (event.getAction() == MotionEvent.ACTION_HOVER_MOVE || event.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
-                float threshold = (float)MediaControlsWidget.this.getMeasuredWidth() * 0.65f;
-                boolean isVisible = mVolumeControl.getVisibility() == View.VISIBLE;
-                boolean makeVisible = event.getX() >= threshold;
-                if (isVisible != makeVisible) {
-                    mVolumeControl.setVisibility(makeVisible ? View.VISIBLE : View.GONE);
-                }
-            } else if (event.getAction() == MotionEvent.ACTION_HOVER_EXIT && !mMediaVolumeButton.isHovered() && this.isInTouchMode()) {
-                mVolumeControl.setVisibility(View.INVISIBLE);
-            }
-            return false;
-        });
-
         mMediaVolumeButton.setOnHoverListener((v, event) -> {
-            if (event.getAction() == MotionEvent.ACTION_HOVER_ENTER || event.getAction() == MotionEvent.ACTION_HOVER_MOVE) {
+            float startY = v.getY();
+            float maxY = startY + v.getHeight();
+            //for this we only hide on the left side of volume button or outside y area of button
+            if ((event.getX() <= 0) || (event.getX() >= v.getWidth()) || (!(event.getY() > startY && event.getY() < maxY))) {
+                mHideVolumeSlider = true;
+                startVolumeCtrlHandler();
+
+            } else {
                 mVolumeControl.setVisibility(View.VISIBLE);
+                mHideVolumeSlider = false;
+                stopVolumeCtrlHandler();
             }
             return false;
         });
 
-        mMediaProjectionButton.setOnHoverListener((v, event) -> {
-            if (event.getAction() == MotionEvent.ACTION_HOVER_ENTER || event.getAction() == MotionEvent.ACTION_HOVER_MOVE) {
-                mVolumeControl.setVisibility(View.INVISIBLE);
+        mVolumeControl.setOnHoverListener((v, event) -> {
+            float startY = 0;
+            float maxY = startY + v.getHeight();
+            if ((event.getX() > 0 && event.getX() < v.getWidth()) && (event.getY() > startY && event.getY() < maxY)) {
+                mHideVolumeSlider = false;
+                stopVolumeCtrlHandler();
+            }
+            //for this we only hide on the right side of volume button or outside y area of button
+            else if ((event.getX() <= 0) || (event.getX() >= v.getWidth()) || (!(event.getY() > startY && event.getY() < maxY))) {
+                mHideVolumeSlider = true;
+                startVolumeCtrlHandler();
             }
             return false;
         });
+
+
     }
 
     @Override
@@ -322,7 +336,7 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
     @Override
     public void onLoadProgress(MediaElement mediaElement, MediaElement.LoadProgressInfo progressInfo) {
         if (progressInfo.buffered != null) {
-            mSeekBar.setBuffered(progressInfo.buffered[progressInfo.buffered.length -1].end);
+            mSeekBar.setBuffered(progressInfo.buffered[progressInfo.buffered.length - 1].end);
         }
     }
 
@@ -353,4 +367,11 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
     public void onError(MediaElement mediaElement, int code) {
     }
 
+    private void startVolumeCtrlHandler() {
+        mVolumeCtrlHandler.postDelayed(mVolumeCtrlRunnable, VOLUME_SLIDER_CHECK_DELAY);
+    }
+
+    public void stopVolumeCtrlHandler() {
+        mVolumeCtrlHandler.removeCallbacks(mVolumeCtrlRunnable);
+    }
 }
