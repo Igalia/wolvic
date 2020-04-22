@@ -1207,7 +1207,7 @@
 
     <!-- This string appears in the WebXR interstial next to an arrow pointing to the controller button that
      has to be used to exit from WebXR. It's preferred to separate it in two lines if possible. -->
-    <string name="webxr_interstitial_exit_webxr">Exit\nWebXR"</string>
+    <string name="webxr_interstitial_exit_webxr">Exit\nWebXR</string>
 
     <!-- This string appears in the WebXR interstitial. -->
     <string name="webxr_interstitial_how_to_continue_1">Press any other button to continue</string>
