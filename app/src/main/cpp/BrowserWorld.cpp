@@ -249,7 +249,7 @@ BrowserWorld::State::CheckBackButton() {
           VRBrowser::HandleBack();
           webXRInterstialState = WebXRInterstialState::HIDDEN;
       } else if (webXRInterstialState == WebXRInterstialState::ALLOW_DISMISS
-                 && controller.lastButtonState == 0 && controller.buttonState) {
+                 && controller.lastButtonState && controller.buttonState == 0) {
           VRBrowser::OnDismissWebXRInterstitial();
           webXRInterstialState = WebXRInterstialState::HIDDEN;
       }
@@ -582,6 +582,10 @@ BrowserWorld::State::ClearWebXRControllerData() {
         };
         controller.immersiveTouchedState = 0;
         controller.immersivePressedState = 0;
+        controller.selectActionStartFrameId = 0;
+        controller.selectActionStopFrameId = 0;
+        controller.squeezeActionStartFrameId = 0;
+        controller.squeezeActionStopFrameId = 0;
         for (int i = 0; i < controller.numAxes; ++i) {
             controller.immersiveAxes[i] = 0;
         }
@@ -949,6 +953,9 @@ BrowserWorld::StartFrame() {
   m.context->Update();
   m.externalVR->PullBrowserState();
   m.externalVR->SetHapticState(m.controllers);
+
+  const uint64_t frameId = m.externalVR->GetFrameId();
+  m.controllers->SetFrameId(frameId);
   m.CheckExitImmersive();
 
   if (m.splashAnimation) {

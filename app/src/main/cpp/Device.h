@@ -22,6 +22,7 @@ const CapabilityFlags PositionEmulated = 1u << 9u;
 const CapabilityFlags InlineSession = 1u << 10u;
 const CapabilityFlags ImmersiveVRSession = 1u << 11u;
 const CapabilityFlags ImmersiveARSession = 1u << 12u;
+const CapabilityFlags GripSpacePosition = 1u << 13u;
 enum class Eye { Left, Right };
 enum class RenderMode { StandAlone, Immersive };
 enum class CPULevel { Normal = 0, High };
@@ -32,6 +33,31 @@ typedef int32_t DeviceType;
 const DeviceType UnknownType = 0;
 const DeviceType OculusGo = 1;
 const DeviceType OculusQuest = 2;
+const DeviceType ViveFocus = 3;
+const DeviceType ViveFocusPlus = 4;
+const DeviceType PicoGaze = 5;
+const DeviceType PicoNeo2 = 6;
+const DeviceType PicoG2 = 7;
+
+enum class TargetRayMode : uint8_t { Gaze, TrackedPointer, Screen };
+
+// Placeholder buttons for WebXR
+// https://www.w3.org/TR/webxr-gamepads-module-1/#xr-standard-gamepad-mapping
+const uint8_t kImmersiveButtonTrigger = 0;
+const uint8_t kImmersiveButtonSqueeze = 1;
+const uint8_t kImmersiveButtonTouchpad = 2;
+const uint8_t kImmersiveButtonThumbstick = 3;
+const uint8_t kImmersiveButtonA = 4;
+const uint8_t kImmersiveButtonB = 5;
+const uint8_t kImmersiveButtonThumbrest = 6;
+
+// Placeholder axes for WebXR
+// https://www.w3.org/TR/webxr-gamepads-module-1/#xr-standard-gamepad-mapping
+const uint8_t kImmersiveAxisTouchpadX = 0;
+const uint8_t kImmersiveAxisTouchpadY = 1;
+const uint8_t kImmersiveAxisThumbstickX = 2;
+const uint8_t kImmersiveAxisThumbstickY = 3;
+
 struct EyeRect {
   float mX, mY;
   float mWidth, mHeight;
