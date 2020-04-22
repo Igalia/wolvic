@@ -1589,6 +1589,11 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     public void onContextMenu(GeckoSession session, int screenX, int screenY, ContextElement element) {
         hideContextMenus();
 
+        // We don't show the menu for blobs
+        if (UrlUtils.isBlobUri(element.srcUri)) {
+            return;
+        }
+
         mContextMenu = new ContextMenuWidget(getContext());
         mContextMenu.mWidgetPlacement.parentHandle = getHandle();
         mContextMenu.setDismissCallback(this::hideContextMenus);

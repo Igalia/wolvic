@@ -114,6 +114,10 @@ public class UrlUtils {
         return aUri != null && aUri.startsWith("file");
     }
 
+    public static Boolean isBlobUri(@Nullable String aUri) {
+        return aUri != null && aUri.startsWith("blob");
+    }
+
     public static Boolean isBlankUri(@Nullable Context context, @Nullable String aUri) {
         return context != null && aUri != null && aUri.equals(context.getString(R.string.about_blank));
     }

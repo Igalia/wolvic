@@ -10,6 +10,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.net.Uri;
+import android.webkit.URLUtil;
 
 import androidx.annotation.StringRes;
 
@@ -20,6 +21,7 @@ import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.utils.StringUtils;
+import org.mozilla.vrbrowser.utils.UrlUtils;
 
 import java.util.ArrayList;
 
@@ -79,32 +81,36 @@ public class ContextMenuWidget extends MenuWidget {
 
     public void setContextElement(ContextElement aContextElement) {
         mItems = new ArrayList<>();
-        mItems.add(new MenuWidget.MenuItem(aContextElement.linkUri, 0, null));
         final WidgetManagerDelegate widgetManager = mWidgetManager;
-        if (mWidgetManager.canOpenNewWindow()) {
-            mItems.add(new MenuWidget.MenuItem(getContext().getString(R.string.context_menu_open_new_window_1), 0, () -> {
+        if (aContextElement.linkUri != null && !aContextElement.linkUri.isEmpty()) {
+            mItems.add(new MenuWidget.MenuItem(aContextElement.linkUri, 0, null));
+            if (mWidgetManager.canOpenNewWindow()) {
+                mItems.add(new MenuWidget.MenuItem(getContext().getString(R.string.context_menu_open_new_window_1), 0, () -> {
+                    if (!StringUtils.isEmpty(aContextElement.linkUri)) {
+                        widgetManager.openNewWindow(aContextElement.linkUri);
+                    }
+                    onDismiss();
+                }));
+            }
+            mItems.add(new MenuWidget.MenuItem(getContext().getString(R.string.context_menu_open_new_tab_1), 0, () -> {
                 if (!StringUtils.isEmpty(aContextElement.linkUri)) {
-                    widgetManager.openNewWindow(aContextElement.linkUri);
+                    widgetManager.openNewTab(aContextElement.linkUri);
+                    GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.CONTEXT_MENU);
                 }
                 onDismiss();
             }));
-        }
-        mItems.add(new MenuWidget.MenuItem(getContext().getString(R.string.context_menu_open_new_tab_1), 0, () -> {
             if (!StringUtils.isEmpty(aContextElement.linkUri)) {
-                widgetManager.openNewTab(aContextElement.linkUri);
-                GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.CONTEXT_MENU);
+                mItems.add(new MenuWidget.MenuItem(getContext().getString(R.string.context_menu_download_link), 0, () -> {
+                    DownloadJob job = DownloadJob.fromLink(aContextElement);
+                    widgetManager.getFocusedWindow().startDownload(job, false);
+                    // TODO Add Download from context menu Telemetry
+                    onDismiss();
+                }));
             }
-            onDismiss();
-        }));
-        if (!StringUtils.isEmpty(aContextElement.linkUri)) {
-            mItems.add(new MenuWidget.MenuItem(getContext().getString(R.string.context_menu_download_link), 0, () -> {
-                DownloadJob job = DownloadJob.fromLink(aContextElement);
-                widgetManager.getFocusedWindow().startDownload(job, false);
-                // TODO Add Download from context menu Telemetry
-                onDismiss();
-            }));
+        } else {
+            mItems.add(new MenuWidget.MenuItem(aContextElement.srcUri, 0, null));
         }
-        if (!StringUtils.isEmpty(aContextElement.srcUri)) {
+        if (URLUtil.isHttpUrl(aContextElement.srcUri) || URLUtil.isHttpsUrl(aContextElement.srcUri)) {
             @StringRes int srcText;
             switch (aContextElement.type) {
                 case ContextElement.TYPE_IMAGE:
