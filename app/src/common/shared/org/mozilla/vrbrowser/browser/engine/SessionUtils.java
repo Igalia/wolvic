@@ -45,6 +45,8 @@ class SessionUtils {
             // Disable WebRender until it works with FxR
             out.write("pref(\"gfx.webrender.force-disabled\", true);\n".getBytes());
             out.write("pref(\"signon.rememberSignons\", false);\n".getBytes());
+            // Disable web extension process until it is able to restart.
+            out.write("pref(\"extensions.webextensions.remote\", false);\n".getBytes());
             if (BuildConfig.DEBUG) {
                 int processCount = SettingsStore.getInstance(aContext).isMultiE10s() ? 3 : 1;
                 out.write(("pref(\"dom.ipc.processCount\", " + processCount + ");\n").getBytes());
