@@ -1210,7 +1210,7 @@
     <string name="webxr_interstitial_exit_webxr">Exit\nWebXR"</string>
 
     <!-- This string appears in the WebXR interstitial. -->
-    <string name="webxr_interstitial_how_to_continue">Press any button to continue</string>
+    <string name="webxr_interstitial_how_to_continue_1">Press any other button to continue</string>
 
     <!-- This string is for the tooltip that appears upon hovering the 'Tracking' button in the
      browser's navigation bar. The button it labels, when pressed, Shows the Tracking dialog. -->

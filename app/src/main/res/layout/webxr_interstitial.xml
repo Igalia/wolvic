@@ -38,7 +38,7 @@
             android:textAlignment="center"
             android:textSize="20sp"
             android:background="@color/black"
-            android:text="@string/webxr_interstitial_how_to_continue"/>
+            android:text="@string/webxr_interstitial_how_to_continue_1"/>
     </RelativeLayout>
 
 </layout>
