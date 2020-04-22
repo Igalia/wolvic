@@ -85,6 +85,7 @@ public abstract class SettingsView extends FrameLayout {
         if (mScrollbar != null) {
             mScrollbar.fullScroll(ScrollView.FOCUS_UP);
             mScrollbar.setSmoothScrollingEnabled(true);
+            mScrollbar.smoothScrollTo(0,0);
         }
 
         setFocusableInTouchMode(true);
