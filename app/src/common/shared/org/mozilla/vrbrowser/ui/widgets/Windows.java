@@ -197,10 +197,9 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
                     .filter(sessionState -> SAVE_BLACKLIST.stream().noneMatch(uri -> sessionState.mUri.startsWith(uri)))
                     .collect(Collectors.toCollection(ArrayList::new));
             for (WindowWidget window : mRegularWindows) {
-                if (window.getSession() != null &&
-                        SAVE_BLACKLIST.stream().noneMatch(uri -> window.getSession().getCurrentUri().startsWith(uri))) {
+                if (window.getSession() != null) {
                     WindowState windowState = new WindowState();
-                    windowState.load(window, state, sessions.indexOf(window.getSession()));
+                    windowState.load(window, state, state.tabs.indexOf(window.getSession().getSessionState()));
                     state.regularWindowsState.add(windowState);
                 }
             }
@@ -303,12 +302,14 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         return newWindow;
     }
 
-    private WindowWidget addRestoredWindow(@NonNull WindowState aState, @NonNull Session aSession) {
+    private WindowWidget addRestoredWindow(@NonNull WindowState aState, @Nullable Session aSession) {
         if (getCurrentWindows().size() >= MAX_WINDOWS) {
             return null;
         }
 
-        aSession.setActive(true);
+        if (aSession != null) {
+            aSession.setActive(true);
+        }
         WindowWidget newWindow = createWindow(aSession);
         newWindow.getPlacement().width = aState.textureWidth;
         newWindow.getPlacement().height = aState.textureHeight;
@@ -709,6 +710,11 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             for (WindowState windowState : windowsState.regularWindowsState) {
                 if (windowState.tabIndex >= 0 && windowState.tabIndex < restoredSessions.size()) {
                     addRestoredWindow(windowState, restoredSessions.get(windowState.tabIndex));
+                } else if (windowState.tabIndex < 0) {
+                    WindowWidget widget = addRestoredWindow(windowState, null);
+                    if ((widget != null) && (widget.getSession() != null)) {
+                        widget.getSession().loadHomePage();
+                    }
                 }
             }
             mPrivateMode = !windowsState.privateMode;
