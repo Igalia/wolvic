@@ -522,7 +522,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         mState = mState.recreate();
 
         TrackingProtectionPolicy policy = TrackingProtectionStore.getTrackingProtectionPolicy(mContext);
-        mState.mSettings.setTrackingProtectionEnabled(policy.shouldBlockContent());
+        mState.mSettings.setTrackingProtectionEnabled(mState.mSettings.isPrivateBrowsingEnabled() || policy.shouldBlockContent());
 
         restore();
 

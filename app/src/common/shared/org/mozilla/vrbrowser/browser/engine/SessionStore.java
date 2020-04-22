@@ -70,7 +70,7 @@ public class SessionStore implements GeckoSession.PermissionDelegate{
                 mSessions.forEach(existingSession -> {
                     String existingHost = UrlUtils.getHost(existingSession.getCurrentUri());
                     if (existingHost.equals(host)) {
-                        existingSession.recreateSession();
+                        existingSession.reload(GeckoSession.LOAD_FLAGS_BYPASS_CACHE);
                     }
                 });
             }

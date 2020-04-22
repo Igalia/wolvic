@@ -226,18 +226,26 @@ public class TrackingProtectionStore implements DefaultLifecycleObserver,
 
     public void add(@NonNull Session session) {
         mContentBlockingController.addException(session.getGeckoSession());
-        mListeners.forEach(listener -> listener.onExcludedTrackingProtectionChange(
-                UrlUtils.getHost(session.getCurrentUri()),
-                true));
-        persist();
+        // Private sessions don't persist to the content blocking controller exceptions list so we just notify
+        if (session.isPrivateMode()) {
+            mListeners.forEach(listener -> listener.onExcludedTrackingProtectionChange(
+                    UrlUtils.getHost(session.getCurrentUri()),
+                    true));
+        } else {
+            persist();
+        }
     }
 
     public void remove(@NonNull Session session) {
         mContentBlockingController.removeException(session.getGeckoSession());
-        mListeners.forEach(listener -> listener.onExcludedTrackingProtectionChange(
-                UrlUtils.getHost(session.getCurrentUri()),
-                false));
-        persist();
+        // Private sessions don't persist to the content blocking controller exceptions list so we just notify
+        if (session.isPrivateMode()) {
+            mListeners.forEach(listener -> listener.onExcludedTrackingProtectionChange(
+                    UrlUtils.getHost(session.getCurrentUri()),
+                    true));
+        } else {
+            persist();
+        }
     }
 
     public void remove(@NonNull SitePermission permission) {

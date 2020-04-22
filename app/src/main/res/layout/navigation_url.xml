@@ -53,7 +53,7 @@
                     android:src="@{viewmodel.isTrackingEnabled ? @drawable/ic_icon_tracking_enabled : @drawable/ic_icon_tracking_disabled}"
                     app:privateMode="@{viewmodel.isPrivateSession}"
                     android:tint="@color/fog"
-                    app:visibleGone="@{settingsViewmodel.isTrackingProtectionEnabled}"
+                    app:visibleGone="@{!UrlUtils.isPrivateAboutPage(context, viewmodel.url.toString()) &amp;&amp; settingsViewmodel.isTrackingProtectionEnabled &amp;&amp; !UrlUtils.isContentFeed(context, viewmodel.url.toString())}"
                     android:tooltipText="@{viewmodel.isTrackingEnabled ? @string/tracking_allowed_tooltip : @string/tracking_disabled_tooltip}" />
 
                 <LinearLayout

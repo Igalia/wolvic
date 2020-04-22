@@ -317,6 +317,7 @@ public class WindowViewModel extends AndroidViewModel {
                             !isLibraryVisible.getValue().get() &&
                             !UrlUtils.isContentFeed(getApplication(), aUrl.toString()) &&
                             !UrlUtils.isFileUri(aUrl.toString()) &&
+                            !UrlUtils.isPrivateAboutPage(getApplication(), aUrl.toString()) &&
                             (
                                     (SettingsStore.getInstance(getApplication()).getTrackingProtectionLevel() != ContentBlocking.EtpLevel.NONE) ||
                                     isPopUpAvailable.getValue().get() ||

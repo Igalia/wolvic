@@ -89,11 +89,13 @@ class SessionSettings {
 
         public Builder withPrivateBrowsing(boolean enabled) {
             isPrivateBrowsingEnabled = enabled;
+            isTrackingProtectionEnabled = isPrivateBrowsingEnabled || isTrackingProtectionEnabled;
+
             return this;
         }
 
         public Builder withTrackingProtection(boolean isTrackingProtectionEnabled){
-            this.isTrackingProtectionEnabled = isTrackingProtectionEnabled;
+            this.isTrackingProtectionEnabled = isPrivateBrowsingEnabled || isTrackingProtectionEnabled;
             return this;
         }
 

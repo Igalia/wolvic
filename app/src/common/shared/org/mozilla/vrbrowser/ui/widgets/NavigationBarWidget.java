@@ -491,7 +491,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             mViewModel.getIsFullscreen().removeObserver(mIsFullscreenObserver);
             mViewModel.getIsActiveWindow().removeObserver(mIsActiveWindowObserver);
             mViewModel.getIsPopUpBlocked().removeObserver(mIsPopUpBlockedListener);
-            mViewModel.getUrl().removeObserver(mUrlObserver);
             mViewModel = null;
         }
 
@@ -518,7 +517,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mViewModel.getIsFullscreen().observeForever( mIsFullscreenObserver);
         mViewModel.getIsActiveWindow().observeForever(mIsActiveWindowObserver);
         mViewModel.getIsPopUpBlocked().observeForever(mIsPopUpBlockedListener);
-        mViewModel.getUrl().observeForever(mUrlObserver);
         mBinding.navigationBarNavigation.urlBar.attachToWindow(mAttachedWindow);
 
         mTrackingDelegate.addListener(mTrackingListener);
@@ -803,6 +801,15 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         }
     }
 
+    // NavigationDelegate
+
+    @Override
+    public void onLocationChange(@NonNull GeckoSession geckoSession, @Nullable String s) {
+        if (getSession() != null && getSession().getGeckoSession() == geckoSession) {
+            updateTrackingProtection();
+        }
+    }
+
     // Content delegate
 
     private Observer<ObservableBoolean> mIsFullscreenObserver = isFullScreen -> {
@@ -834,8 +841,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             exitFullScreenMode();
         }
     };
-
-    private Observer<Spannable> mUrlObserver = sitePermissions -> updateTrackingProtection();
 
     private Observer<ObservableBoolean> mIsActiveWindowObserver = aIsActiveWindow -> updateTrackingProtection();
 
