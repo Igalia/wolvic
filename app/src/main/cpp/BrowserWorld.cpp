@@ -260,6 +260,7 @@ BrowserWorld::State::CheckBackButton() {
 bool
 BrowserWorld::State::CheckExitImmersive() {
   if (exitImmersiveRequested && externalVR->IsPresenting()) {
+    webXRInterstialState = WebXRInterstialState::HIDDEN;
     externalVR->StopPresenting();
     blitter->StopPresenting();
     exitImmersiveRequested = false;
