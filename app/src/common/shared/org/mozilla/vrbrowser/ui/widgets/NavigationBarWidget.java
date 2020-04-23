@@ -494,7 +494,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mTrackingDelegate.removeListener(mTrackingListener);
 
         if (mViewModel != null) {
-            mViewModel.getIsFullscreen().removeObserver(mIsFullscreenObserver);
             mViewModel.getIsActiveWindow().removeObserver(mIsActiveWindowObserver);
             mViewModel.getIsPopUpBlocked().removeObserver(mIsPopUpBlockedListener);
             mViewModel = null;
@@ -520,7 +519,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
         mBinding.setViewmodel(mViewModel);
 
-        mViewModel.getIsFullscreen().observeForever( mIsFullscreenObserver);
         mViewModel.getIsActiveWindow().observeForever(mIsActiveWindowObserver);
         mViewModel.getIsPopUpBlocked().observeForever(mIsPopUpBlockedListener);
         mBinding.navigationBarNavigation.urlBar.attachToWindow(mAttachedWindow);
@@ -567,6 +565,33 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     @Override
+    public void onFullScreen(@NonNull WindowWidget aWindow, boolean aFullScreen) {
+        if (aFullScreen) {
+            enterFullScreenMode();
+
+            if (mAttachedWindow.isResizing()) {
+                exitResizeMode(ResizeAction.KEEP_SIZE);
+            }
+            AtomicBoolean autoEnter = new AtomicBoolean(false);
+            mAutoSelectedProjection = VideoProjectionMenuWidget.getAutomaticProjection(getSession().getCurrentUri(), autoEnter);
+            if (mAutoSelectedProjection != VIDEO_PROJECTION_NONE && autoEnter.get()) {
+                mViewModel.setAutoEnteredVRVideo(true);
+                postDelayed(() -> enterVRVideo(mAutoSelectedProjection), 300);
+            } else {
+                mViewModel.setAutoEnteredVRVideo(false);
+                if (mProjectionMenu != null) {
+                    mProjectionMenu.setSelectedProjection(mAutoSelectedProjection);
+                }
+            }
+        } else {
+            if (mViewModel.getIsInVRVideo().getValue().get()) {
+                exitVRVideo();
+            }
+            exitFullScreenMode();
+        }
+    }
+
+    @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
     }
@@ -607,7 +632,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     private void exitFullScreenMode() {
-        if (mAttachedWindow == null) {
+        if (mAttachedWindow == null || !mAttachedWindow.isFullScreen()) {
             return;
         }
 
@@ -817,36 +842,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     // Content delegate
-
-    private Observer<ObservableBoolean> mIsFullscreenObserver = isFullScreen -> {
-        if (!mIsWindowAttached) {
-            return;
-        }
-
-        if (isFullScreen.get()) {
-            enterFullScreenMode();
-
-            if (mAttachedWindow.isResizing()) {
-                exitResizeMode(ResizeAction.KEEP_SIZE);
-            }
-            AtomicBoolean autoEnter = new AtomicBoolean(false);
-            mAutoSelectedProjection = VideoProjectionMenuWidget.getAutomaticProjection(getSession().getCurrentUri(), autoEnter);
-            if (mAutoSelectedProjection != VIDEO_PROJECTION_NONE && autoEnter.get()) {
-                mViewModel.setAutoEnteredVRVideo(true);
-                postDelayed(() -> enterVRVideo(mAutoSelectedProjection), 300);
-            } else {
-                mViewModel.setAutoEnteredVRVideo(false);
-                if (mProjectionMenu != null) {
-                    mProjectionMenu.setSelectedProjection(mAutoSelectedProjection);
-                }
-            }
-        } else {
-            if (mViewModel.getIsInVRVideo().getValue().get()) {
-                exitVRVideo();
-            }
-            exitFullScreenMode();
-        }
-    };
 
     private Observer<ObservableBoolean> mIsActiveWindowObserver = aIsActiveWindow -> updateTrackingProtection();
 
