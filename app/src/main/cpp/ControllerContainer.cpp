@@ -552,6 +552,10 @@ ControllerContainer::SetFrameId(const uint64_t aFrameId) {
     m.lastImmersiveFrameId = aFrameId ? aFrameId : m.immersiveFrameId;
   } else {
     m.lastImmersiveFrameId = 0;
+    for (Controller& controller: m.list) {
+      controller.selectActionStartFrameId = controller.selectActionStopFrameId = 0;
+      controller.squeezeActionStartFrameId = controller.squeezeActionStopFrameId = 0;
+    }
   }
   m.immersiveFrameId = aFrameId;
 }
