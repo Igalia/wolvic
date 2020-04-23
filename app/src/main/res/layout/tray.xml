@@ -102,7 +102,7 @@
                     app:autoSizeMaxTextSize="10sp"
                     app:autoSizeStepGranularity="2sp"
                     android:background="@drawable/downloads_badge"
-                    android:text="@{(traymodel.downloadsNumber &lt; 100) ? String.valueOf(traymodel.downloadsNumber) : '&#8230;'}"
+                    android:text="@{(traymodel.downloadsNumber &lt; 100) ? String.valueOf(traymodel.downloadsNumber) : @string/ellipsis"
                     visibleGone="@{traymodel.downloadsNumber > 0}"/>
             </RelativeLayout>
 

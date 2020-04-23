@@ -81,6 +81,7 @@
     <string name="voice_app_id" translatable="false">fxr</string>
     <string name="keyboard_mode_change" translatable="false">ABC</string>
     <string name="keyboard_symbol" translatable="false">%&amp;=</string>
+    <string name="ellipsis" translatable="false">…</string>
 
     <string name="pinyin_spacebar_selection" translatable="false">选定</string>
     <string name="pinyin_spacebar_space" translatable="false">空格</string>
