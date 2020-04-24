@@ -72,6 +72,10 @@ public class DataRepository implements LifecycleOwner {
         mExecutors.diskIO().execute(() -> mDatabase.sitePermissionDao().delete(site));
     }
 
+    public void deleteSites(final @NonNull List<SitePermission> sites) {
+        mExecutors.diskIO().execute(() -> mDatabase.sitePermissionDao().delete(sites));
+    }
+
     public void deleteAllSitePermission(@SitePermission.Category int category) {
         mExecutors.diskIO().execute(() -> mDatabase.sitePermissionDao().deleteAll(category));
     }

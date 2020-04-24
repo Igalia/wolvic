@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,8 +11,6 @@ import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.ListUpdateCallback;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,18 +24,19 @@ import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.db.SitePermission;
 import org.mozilla.vrbrowser.ui.viewmodel.SitePermissionViewModel;
-import org.mozilla.vrbrowser.utils.UrlUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static org.mozilla.vrbrowser.db.SitePermission.SITE_PERMISSION_TRACKING;
 
 public class TrackingProtectionStore implements DefaultLifecycleObserver,
-        SharedPreferences.OnSharedPreferenceChangeListener, ListUpdateCallback {
+        SharedPreferences.OnSharedPreferenceChangeListener {
 
     public interface TrackingProtectionListener {
-        default void onExcludedTrackingProtectionChange(@NonNull String uri, boolean excluded) {};
+        default void onExcludedTrackingProtectionChange(@NonNull String url, boolean excluded, boolean isPrivate) {};
         default void onTrackingProtectionLevelUpdated(int level) {};
     }
 
@@ -56,8 +54,8 @@ public class TrackingProtectionStore implements DefaultLifecycleObserver,
     private SitePermissionViewModel mViewModel;
     private List<TrackingProtectionListener> mListeners;
     private SharedPreferences mPrefs;
-    private List<SitePermission> mCurrentSitePermissions;
     private List<SitePermission> mSitePermissions;
+    private boolean mIsFirstUpdate;
 
     public TrackingProtectionStore(@NonNull Context context,
                                    @NonNull GeckoRuntime runtime) {
@@ -65,8 +63,8 @@ public class TrackingProtectionStore implements DefaultLifecycleObserver,
         mRuntime = runtime;
         mContentBlockingController = mRuntime.getContentBlockingController();
         mListeners = new ArrayList<>();
-        mCurrentSitePermissions = new ArrayList<>();
         mSitePermissions = new ArrayList<>();
+        mIsFirstUpdate = true;
 
         mLifeCycle = ((VRBrowserActivity) context).getLifecycle();
         mLifeCycle.addObserver(this);
@@ -97,100 +95,24 @@ public class TrackingProtectionStore implements DefaultLifecycleObserver,
         mViewModel.getAll(SitePermission.SITE_PERMISSION_TRACKING).removeObserver(mSitePermissionObserver);
     }
 
-    private Observer<List<SitePermission>> mSitePermissionObserver = this::notifyDiff;
+    private Observer<List<SitePermission>> mSitePermissionObserver = new Observer<List<SitePermission>>() {
+        @Override
+        public void onChanged(List<SitePermission> sitePermissions) {
+            if (sitePermissions != null) {
+                mSitePermissions = sitePermissions;
 
-    @Override
-    public void onInserted(int position, int count) {
-        if (mSitePermissions == null) {
-            return;
-        }
-
-        for (int i=0; i<count; i++) {
-            SitePermission permission = mSitePermissions.get(position + i);
-            ContentBlockingException exception = toContentBlockingException(permission);
-            if (exception != null) {
-                mListeners.forEach(listener -> listener.onExcludedTrackingProtectionChange(
-                        UrlUtils.getHost(exception.uri),
-                        true));
+                // Restore the site list on the permissions storage notification
+                if (mIsFirstUpdate) {
+                    List<ContentBlockingException> exceptions = sitePermissions
+                            .stream()
+                            .map(TrackingProtectionStore::toContentBlockingException)
+                            .collect(Collectors.toList());
+                    mContentBlockingController.restoreExceptionList(exceptions);
+                    mIsFirstUpdate = false;
+                }
             }
         }
-
-        final List<ContentBlockingException> exceptionsList = new ArrayList<>();
-        mContentBlockingController.clearExceptionList();
-        for (SitePermission permission: mSitePermissions) {
-            ContentBlockingException exception = toContentBlockingException(permission);
-            if (exception != null) {
-                exceptionsList.add(exception);
-            }
-        }
-        mContentBlockingController.restoreExceptionList(exceptionsList);
-    }
-
-    @Override
-    public void onRemoved(int position, int count) {
-        if (mCurrentSitePermissions == null) {
-            return;
-        }
-
-        for (int i=0; i<count; i++) {
-            SitePermission permission = mCurrentSitePermissions.get(position + i);
-            ContentBlockingException exception = toContentBlockingException(permission);
-            if (exception != null) {
-                mContentBlockingController.removeException(exception);
-                mListeners.forEach(listener -> listener.onExcludedTrackingProtectionChange(
-                        UrlUtils.getHost(exception.uri),
-                        false));
-            }
-        }
-    }
-
-    @Override
-    public void onMoved(int fromPosition, int toPosition) {
-        // We never move from the exceptions list
-    }
-
-    @Override
-    public void onChanged(int position, int count, @Nullable Object payload) {
-        // We never update from the exceptions list
-    }
-
-    private void notifyDiff(List<SitePermission> newList) {
-        if (newList == null) {
-            return;
-        }
-
-        DiffUtil.DiffResult result = DiffUtil.calculateDiff(new DiffUtil.Callback() {
-            @Override
-            public int getOldListSize() {
-                return mSitePermissions.size();
-            }
-
-            @Override
-            public int getNewListSize() {
-                return newList.size();
-            }
-
-            @Override
-            public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-                return mSitePermissions.get(oldItemPosition).url.equals(newList.get(newItemPosition).url) &&
-                        mSitePermissions.get(oldItemPosition).principal.equals(newList.get(newItemPosition).principal) &&
-                        mSitePermissions.get(oldItemPosition).category == newList.get(newItemPosition).category;
-            }
-
-            @Override
-            public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-                SitePermission newSite = newList.get(newItemPosition);
-                SitePermission olSite = mSitePermissions.get(oldItemPosition);
-                return newSite.url.equals(olSite.url)
-                        && Objects.equals(newSite.category, olSite.category)
-                        && Objects.equals(newSite.principal, olSite.principal);
-            }
-        });
-
-        mCurrentSitePermissions = mSitePermissions;
-        mSitePermissions = newList;
-        result.dispatchUpdatesTo(this);
-    }
+    };
 
     @Override
     public void onDestroy(@NonNull LifecycleOwner owner) {
@@ -226,55 +148,47 @@ public class TrackingProtectionStore implements DefaultLifecycleObserver,
 
     public void add(@NonNull Session session) {
         mContentBlockingController.addException(session.getGeckoSession());
-        // Private sessions don't persist to the content blocking controller exceptions list so we just notify
-        if (session.isPrivateMode()) {
-            mListeners.forEach(listener -> listener.onExcludedTrackingProtectionChange(
-                    UrlUtils.getHost(session.getCurrentUri()),
-                    true));
-        } else {
-            persist();
-        }
+        mListeners.forEach(listener -> listener.onExcludedTrackingProtectionChange(
+                session.getCurrentUri(),
+                true,
+                session.isPrivateMode()));
+        saveExceptions();
     }
 
     public void remove(@NonNull Session session) {
         mContentBlockingController.removeException(session.getGeckoSession());
-        // Private sessions don't persist to the content blocking controller exceptions list so we just notify
-        if (session.isPrivateMode()) {
-            mListeners.forEach(listener -> listener.onExcludedTrackingProtectionChange(
-                    UrlUtils.getHost(session.getCurrentUri()),
-                    true));
-        } else {
-            persist();
-        }
+        mListeners.forEach(listener -> listener.onExcludedTrackingProtectionChange(
+                session.getCurrentUri(),
+                false,
+                session.isPrivateMode()));
+        saveExceptions();
     }
 
     public void remove(@NonNull SitePermission permission) {
         ContentBlockingException exception = toContentBlockingException(permission);
         if (exception != null) {
             mContentBlockingController.removeException(exception);
-            persist();
         }
+        mListeners.forEach(listener -> listener.onExcludedTrackingProtectionChange(
+                permission.url,
+                false,
+                false));
+        saveExceptions();
     }
 
-    public void removeAll(@NonNull List<Session> activeSessions) {
-        mContentBlockingController.clearExceptionList();
-        activeSessions.forEach(session ->
-                mListeners.forEach(listener ->
-                        listener.onExcludedTrackingProtectionChange(
-                                UrlUtils.getHost(session.getCurrentUri()),
-                                false)));
-        persist();
+    public void removeAll() {
+        // We can't use clearExceptionList as that clears also the private browsing exceptions
+        mSitePermissions.forEach(this::remove);
     }
 
-    private void persist() {
-        mViewModel.deleteAll(SitePermission.SITE_PERMISSION_TRACKING);
+    private void saveExceptions() {
         mRuntime.getContentBlockingController().saveExceptionList().accept(contentBlockingExceptions -> {
-            if (contentBlockingExceptions != null && !contentBlockingExceptions.isEmpty()) {
+            mViewModel.deleteAll(SITE_PERMISSION_TRACKING);
+            if (contentBlockingExceptions != null) {
                 contentBlockingExceptions.forEach(exception -> {
-                    Log.d("TrackingProtectionStore", "Excluded site: " + exception.uri);
-                    SitePermission site = toSitePermission(exception);
-                    if (site != null) {
-                        mViewModel.insertSite(site);
+                    SitePermission permission = toSitePermission(exception);
+                    if (permission != null) {
+                        mViewModel.insertSite(permission);
                     }
                 });
             }

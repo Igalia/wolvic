@@ -59,6 +59,10 @@ public class SitePermissionViewModel extends AndroidViewModel {
         mRepository.deleteSitePermission(site);
     }
 
+    public void deleteSites(@NonNull List<SitePermission> sites) {
+        mRepository.deleteSites(sites);
+    }
+
     public void deleteAll(@SitePermission.Category int category) {
         mRepository.deleteAllSitePermission(category);
     }

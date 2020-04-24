@@ -294,14 +294,13 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
             }
         }
     }
-
-    public void addPermissionException(String uri, @SitePermission.Category int category) {
+    public void addPermissionException(@NonNull String uri, @SitePermission.Category int category) {
         @Nullable SitePermission site = mSitePermissions.stream()
                 .filter((item) -> item.category == category && item.url.equals(uri))
                 .findFirst().orElse(null);
 
         if (site == null) {
-            site = new SitePermission(uri, uri, category);
+            site = new SitePermission(uri,null, category);
             mSitePermissions.add(site);
         }
         mSitePermissionModel.insertSite(site);

@@ -385,11 +385,12 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     TrackingProtectionStore.TrackingProtectionListener mTrackingListener = new TrackingProtectionStore.TrackingProtectionListener() {
         @Override
-        public void onExcludedTrackingProtectionChange(@NonNull String host, boolean excluded) {
+        public void onExcludedTrackingProtectionChange(@NonNull String url, boolean excluded, boolean isPrivate) {
             Session currentSession = getSession();
             if (currentSession != null) {
-                String existingHost = UrlUtils.getHost(currentSession.getCurrentUri());
-                if (existingHost.equals(host)) {
+                String currentSessionHost = UrlUtils.getHost(currentSession.getCurrentUri());
+                String sessionHost = UrlUtils.getHost(url);
+                if (currentSessionHost.equals(sessionHost) && currentSession.isPrivateMode() == isPrivate) {
                     mViewModel.setIsTrackingEnabled(!excluded);
                 }
             }

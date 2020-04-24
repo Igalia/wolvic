@@ -23,6 +23,9 @@ public interface SitePermissionDao {
     @Delete
     void delete(SitePermission site);
 
+    @Delete
+    void delete(List<SitePermission> sites);
+
     @Query("DELETE FROM SitePermission WHERE url = :url AND category = :category")
     void deleteByUrl(String url, @SitePermission.Category int category);
 
