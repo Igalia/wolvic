@@ -17,6 +17,7 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.URLUtil;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
@@ -1155,7 +1156,12 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
                 hideMenu();
             }
         });
-        mHamburgerMenu.setSendTabEnabled(!UrlUtils.isPrivateAboutPage(getContext(), mAttachedWindow.getSession().getCurrentUri()));
+        boolean isSendTabEnabled = false;
+        if (URLUtil.isHttpUrl(mAttachedWindow.getSession().getCurrentUri()) ||
+                URLUtil.isHttpsUrl(mAttachedWindow.getSession().getCurrentUri())) {
+            isSendTabEnabled = true;
+        }
+        mHamburgerMenu.setSendTabEnabled(isSendTabEnabled);
         mHamburgerMenu.setUAMode(mAttachedWindow.getSession().getUaMode());
         mHamburgerMenu.show(UIWidget.KEEP_FOCUS);
     }
