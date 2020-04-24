@@ -729,7 +729,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                         new String[]{
                                 getString(R.string.exit_confirm_dialog_button_cancel),
                                 getString(R.string.exit_confirm_dialog_button_quit),
-                        }, index -> {
+                        }, (index, isChecked) -> {
                             if (index == PromptDialogWidget.POSITIVE) {
                                 VRBrowserActivity.super.onBackPressed();
                             }
@@ -1150,7 +1150,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 mWindows.getFocusedWindow().showAlert(
                         getString(R.string.not_entitled_title),
                         getString(R.string.not_entitled_message, getString(R.string.app_name)),
-                        index -> finish());
+                        (index, isChecked) -> finish());
             }
         });
     }
@@ -1176,7 +1176,10 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             }
             window.getSession().loadHomePage();
             final String[] buttons = {getString(R.string.ok_button), getString(R.string.performance_unblock_page)};
-            window.showConfirmPrompt(getString(R.string.performance_title), getString(R.string.performance_message), buttons, index -> {
+            window.showConfirmPrompt(getString(R.string.performance_title),
+                    getString(R.string.performance_message),
+                    buttons,
+                    (index, isChecked) -> {
                 if (index == PromptDialogWidget.NEGATIVE) {
                     mPoorPerformanceWhiteList.add(originalUri);
                     window.getSession().loadUri(originalUri);

@@ -47,7 +47,7 @@ public class SignOutDialogWidget extends PromptDialogWidget {
                 R.string.fxa_signout_confirmation_signout,
                 R.string.fxa_signout_confirmation_cancel
         });
-        setButtonsDelegate(index -> {
+        setButtonsDelegate((index, isChecked) -> {
             if (index == PromptDialogWidget.NEGATIVE) {
                 try {
                     Objects.requireNonNull(mAccounts.logoutAsync()).thenAcceptAsync(unit -> {

@@ -1265,10 +1265,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
         mAlertDialog.setTitle(title);
         mAlertDialog.setBody(msg);
-        mAlertDialog.setButtonsDelegate(index -> {
+        mAlertDialog.setButtonsDelegate((index, isChecked) -> {
             mAlertDialog.hide(REMOVE_WIDGET);
             if (callback != null) {
-                callback.onButtonClicked(index);
+                callback.onButtonClicked(index, isChecked);
             }
             mAlertDialog.releaseWidget();
             mAlertDialog = null;
@@ -1345,10 +1345,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mConfirmDialog.setTitle(title);
         mConfirmDialog.setBody(msg);
         mConfirmDialog.setButtons(btnMsg);
-        mConfirmDialog.setButtonsDelegate(index -> {
+        mConfirmDialog.setButtonsDelegate((index, isChecked) -> {
             mConfirmDialog.hide(REMOVE_WIDGET);
             if (callback != null) {
-                callback.onButtonClicked(index);
+                callback.onButtonClicked(index, isChecked);
             }
             mConfirmDialog.releaseWidget();
             mConfirmDialog = null;
@@ -1371,10 +1371,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mAppDialog.setTitle(title);
         mAppDialog.setBody(description);
         mAppDialog.setButtons(btnMsg);
-        mAppDialog.setButtonsDelegate(index -> {
+        mAppDialog.setButtonsDelegate((index, isChecked) -> {
             mAppDialog.hide(REMOVE_WIDGET);
             if (buttonsCallback != null) {
-                buttonsCallback.onButtonClicked(index);
+                buttonsCallback.onButtonClicked(index, isChecked);
             }
             mAppDialog.releaseWidget();
         });
@@ -1399,7 +1399,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                         getContext().getString(R.string.drm_first_use_do_not_allow),
                         getContext().getString(R.string.drm_first_use_allow),
                 },
-                index -> {
+                (index, isChecked) -> {
                     // We remove the prefs listener before the first DRM update to avoid reloading the session
                     mPrefs.unregisterOnSharedPreferenceChangeListener(this);
                     SettingsStore.getInstance(getContext()).setDrmContentPlaybackEnabled(index == PromptDialogWidget.POSITIVE);
@@ -1541,7 +1541,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                         new String[]{
                                 getResources().getString(R.string.download_confirm_cancel),
                                 getResources().getString(R.string.download_confirm_download)},
-                        index ->  {
+                        (index, isChecked) ->  {
                             if (index == PromptDialogWidget.POSITIVE) {
                                 mDownloadsManager.startDownload(downloadJob);
                             }
@@ -1649,7 +1649,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                     new String[]{
                             getResources().getString(R.string.download_open_file_unsupported_cancel),
                             getResources().getString(R.string.download_open_file_unsupported_open)
-                    }, index -> {
+                    }, (index, isChecked) -> {
                         if (index == PromptDialogWidget.POSITIVE) {
                             Uri contentUri = FileProvider.getUriForFile(
                                     getContext(),

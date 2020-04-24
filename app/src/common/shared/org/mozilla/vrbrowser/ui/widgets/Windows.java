@@ -1360,7 +1360,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             mNoInternetDialog.setDescriptionVisible(false);
             mNoInternetDialog.setTitle(R.string.no_internet_title);
             mNoInternetDialog.setBody(R.string.no_internet_message);
-            mNoInternetDialog.setButtonsDelegate(index -> {
+            mNoInternetDialog.setButtonsDelegate((index, isChecked) -> {
                 mNoInternetDialog.hide(UIWidget.REMOVE_WIDGET);
                 mNoInternetDialog.releaseWidget();
                 mNoInternetDialog = null;

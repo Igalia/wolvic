@@ -25,7 +25,7 @@ public class RestartDialogWidget extends PromptDialogWidget {
                 R.string.restart_later_dialog_button,
                 R.string.restart_now_dialog_button
         });
-        setButtonsDelegate(index -> {
+        setButtonsDelegate((index, isChecked) -> {
             if (index == PromptDialogWidget.NEGATIVE) {
                 onDismiss();
 

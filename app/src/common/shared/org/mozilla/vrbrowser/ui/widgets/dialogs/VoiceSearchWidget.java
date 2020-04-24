@@ -296,7 +296,7 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
                     new int[]{
                             R.string.voice_samples_collect_dialog_do_not_allow,
                             R.string.voice_samples_collect_dialog_allow},
-                    index -> {
+                    (index, isChecked) -> {
                         SettingsStore.getInstance(getContext()).setSpeechDataCollectionReviewed(true);
                         if (index == PromptDialogWidget.POSITIVE) {
                             SettingsStore.getInstance(getContext()).setSpeechDataCollectionEnabled(true);

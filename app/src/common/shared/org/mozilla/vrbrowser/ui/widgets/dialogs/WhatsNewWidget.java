@@ -46,7 +46,7 @@ public class WhatsNewWidget extends PromptDialogWidget {
                 R.string.whats_new_button_start_browsing,
                 R.string.whats_new_button_sign_in
         });
-        setButtonsDelegate(index -> {
+        setButtonsDelegate((index, isChecked) -> {
             if (index == PromptDialogWidget.NEGATIVE) {
                 onDismiss();
 

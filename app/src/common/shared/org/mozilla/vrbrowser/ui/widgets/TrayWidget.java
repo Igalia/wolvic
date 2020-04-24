@@ -499,13 +499,15 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
     }
 
     private void showNotification(int notificationId, UIButton button, String string) {
-        NotificationManager.Notification notification = new NotificationManager.Builder(this)
-                .withView(button)
-                .withDensity(R.dimen.tray_tooltip_density)
-                .withString(string)
-                .withPosition(NotificationManager.Notification.TOP)
-                .withZTranslation(25.0f).build();
-        NotificationManager.show(notificationId, notification);
+        if (isVisible()) {
+            NotificationManager.Notification notification = new NotificationManager.Builder(this)
+                    .withView(button)
+                    .withDensity(R.dimen.tray_tooltip_density)
+                    .withString(string)
+                    .withPosition(NotificationManager.Notification.TOP)
+                    .withZTranslation(25.0f).build();
+            NotificationManager.show(notificationId, notification);
+        }
     }
 
     private void hideNotifications() {
@@ -528,16 +530,26 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
 
     @Override
     public void onDownloadsUpdate(@NonNull List<Download> downloads) {
-        long inProgressNum = downloads.stream().filter(item -> item.getStatus() == Download.RUNNING).count();
+        long inProgressNum = downloads.stream().filter(item ->
+                item.getStatus() == Download.RUNNING ||
+                        item.getStatus() == Download.PAUSED ||
+                        item.getStatus() == Download.PENDING).count();
         mTrayViewModel.setDownloadsNumber((int)inProgressNum);
         if (inProgressNum == 0) {
             mBinding.downloadsButton.setLevel(0);
 
         } else {
-            long size = downloads.stream().filter(item -> item.getStatus() == Download.RUNNING).mapToLong(Download::getSizeBytes).sum();
-            long downloaded = downloads.stream().filter(item -> item.getStatus() == Download.RUNNING).mapToLong(Download::getDownloadedBytes).sum();
-            long percent = downloaded*100/size;
-            mBinding.downloadsButton.setLevel((int)percent*100);
+            long size = downloads.stream()
+                    .filter(item -> item.getStatus() == Download.RUNNING)
+                    .mapToLong(Download::getSizeBytes)
+                    .sum();
+            long downloaded = downloads.stream().filter(item -> item.getStatus() == Download.RUNNING)
+                    .mapToLong(Download::getDownloadedBytes)
+                    .sum();
+            if (size > 0) {
+                long percent = downloaded*100/size;
+                mBinding.downloadsButton.setLevel((int)percent*100);
+            }
         }
     }
 

@@ -161,9 +161,9 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
                             getContext().getString(R.string.download_delete_confirm_delete)
                     },
                     getContext().getString(R.string.download_delete_file_confirm_checkbox),
-                    index -> {
+                    (index, isChecked) -> {
                         if (index == PromptDialogWidget.POSITIVE) {
-                            mDownloadsManager.removeDownload(item.getId());
+                            mDownloadsManager.removeDownload(item.getId(), isChecked);
                         }
                     }
             );
@@ -207,9 +207,10 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
                             getContext().getString(R.string.download_delete_confirm_delete)
                     },
                     getContext().getString(R.string.download_delete_all_confirm_checkbox),
-                    index -> {
+                    (index, isChecked) -> {
                         if (index == PromptDialogWidget.POSITIVE) {
-                            mDownloadsManager.clearAllDownloads();
+                            mViewModel.setIsEmpty(true);
+                            post(() -> mDownloadsManager.removeAllDownloads(isChecked));
                         }
                     }
             );
@@ -293,9 +294,9 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
                             getContext().getString(R.string.download_delete_confirm_delete)
                     },
                     getContext().getString(R.string.download_delete_file_confirm_checkbox),
-                    index -> {
+                    (index, isChecked) -> {
                         if (index == PromptDialogWidget.POSITIVE) {
-                            mDownloadsManager.removeDownload(item.getDownloadsId());
+                            mDownloadsManager.removeDownload(item.getDownloadsId(), isChecked);
                         }
                     }
             );
@@ -380,7 +381,7 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
     public void onDownloadError(@NonNull String error, @NonNull String filename) {
         Log.e(LOGTAG, error);
         mWidgetManager.getFocusedWindow().showAlert(
-                getContext().getString(R.string.download_error_title, filename),
+                getContext().getString(R.string.download_error_title),
                 error,
                 null
         );

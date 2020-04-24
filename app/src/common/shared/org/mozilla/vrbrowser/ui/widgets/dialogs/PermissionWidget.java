@@ -43,7 +43,7 @@ public class PermissionWidget extends PromptDialogWidget {
                 R.string.permission_reject,
                 R.string.permission_allow
         });
-        setButtonsDelegate(index -> {
+        setButtonsDelegate((index, isChecked) -> {
             if (index == PromptDialogWidget.NEGATIVE) {
                 // Do not allow
                 handlePermissionResult(false);

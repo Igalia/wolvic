@@ -77,18 +77,16 @@ public class DownloadsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                 @Override
                 public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-                    return mDownloadsList.get(oldItemPosition).getUri().equals(downloadsList.get(newItemPosition).getUri());
+                    return mDownloadsList.get(oldItemPosition).getId() == downloadsList.get(newItemPosition).getId();
                 }
 
                 @Override
                 public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
                     Download newDownloadItem = downloadsList.get(newItemPosition);
                     Download oldDownloadItem = mDownloadsList.get(oldItemPosition);
-                    return newDownloadItem.getLastModified() == oldDownloadItem.getLastModified()
-                            && Objects.equals(newDownloadItem.getTitle(), oldDownloadItem.getTitle())
-                            && Objects.equals(newDownloadItem.getDescription(), oldDownloadItem.getDescription())
-                            && Objects.equals(newDownloadItem.getOutputFile(), oldDownloadItem.getOutputFile())
-                            && Objects.equals(newDownloadItem.getUri(), oldDownloadItem.getUri());
+                    return newDownloadItem.getProgress() == oldDownloadItem.getProgress()
+                            && newDownloadItem.getStatus() == oldDownloadItem.getStatus()
+                            && newDownloadItem.getFilename().equals(oldDownloadItem.getFilename());
                 }
             });
 
