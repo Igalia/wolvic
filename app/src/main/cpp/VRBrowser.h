@@ -31,6 +31,7 @@ void RegisterExternalContext(jlong aContext);
 void OnEnterWebXR();
 void OnExitWebXR();
 void OnDismissWebXRInterstitial();
+void OnWebXRRenderStateChange(const bool aRendering);
 void RenderPointerLayer(jobject aSurface, const std::function<void()>& aFirstCompositeCallback);
 std::string GetStorageAbsolutePath(const std::string& aRelativePath);
 bool isOverrideEnvPathEnabled();

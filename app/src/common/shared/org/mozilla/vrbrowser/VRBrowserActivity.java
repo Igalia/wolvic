@@ -1077,12 +1077,19 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Keep
     @SuppressWarnings("unused")
     void onDismissWebXRInterstitial() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                for (WebXRListener listener: mWebXRListeners) {
-                    listener.onDismissWebXRInterstitial();
-                }
+        runOnUiThread(() -> {
+            for (WebXRListener listener: mWebXRListeners) {
+                listener.onDismissWebXRInterstitial();
+            }
+        });
+    }
+
+    @Keep
+    @SuppressWarnings("unused")
+    void onWebXRRenderStateChange(boolean aRendering) {
+        runOnUiThread(() -> {
+            for (WebXRListener listener: mWebXRListeners) {
+                listener.onWebXRRenderStateChange(aRendering);
             }
         });
     }

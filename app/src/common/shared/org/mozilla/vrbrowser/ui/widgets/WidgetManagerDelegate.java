@@ -33,6 +33,7 @@ public interface WidgetManagerDelegate {
         void onEnterWebXR();
         void onExitWebXR();
         void onDismissWebXRInterstitial();
+        void onWebXRRenderStateChange(boolean aRendering);
     }
 
     float DEFAULT_DIM_BRIGHTNESS = 0.25f;

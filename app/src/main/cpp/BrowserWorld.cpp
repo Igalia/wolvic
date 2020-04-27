@@ -189,6 +189,7 @@ struct BrowserWorld::State {
   std::function<void()> frameEndHandler;
   bool wasInGazeMode = false;
   WebXRInterstialState webXRInterstialState;
+  bool wasWebXRRendering = false;
 
   State() : paused(true), glInitialized(false), modelsLoaded(false), env(nullptr), cylinderDensity(0.0f), nearClip(0.1f),
             farClip(300.0f), activity(nullptr), windowsInitialized(false), exitImmersiveRequested(false), loaderDelay(0) {
@@ -261,6 +262,10 @@ bool
 BrowserWorld::State::CheckExitImmersive() {
   if (exitImmersiveRequested && externalVR->IsPresenting()) {
     webXRInterstialState = WebXRInterstialState::HIDDEN;
+    if (wasWebXRRendering) {
+      VRBrowser::OnWebXRRenderStateChange(false);
+      wasWebXRRendering = false;
+    }
     externalVR->StopPresenting();
     blitter->StopPresenting();
     exitImmersiveRequested = false;
@@ -1524,6 +1529,11 @@ BrowserWorld::TickImmersive() {
       if (m.webXRInterstialState != WebXRInterstialState::HIDDEN) {
         TickWebXRInterstitial();
       } else {
+        if (!m.wasWebXRRendering) {
+          // Disable Spinner animation in Java to avoid triggering superfluous Android Draw calls.
+          VRBrowser::OnWebXRRenderStateChange(true);
+          m.wasWebXRRendering = true;
+        }
         m.drawHandler = [=](device::Eye aEye) {
             DrawImmersive(aEye);
         };

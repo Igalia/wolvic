@@ -19,6 +19,8 @@ public class WebXRInterstitialWidget extends UIWidget implements WidgetManagerDe
     private ArrayList<WebXRInterstitialController> mControllers = new ArrayList<>();
     private boolean firstEnterXR = true;
     private AnimatedVectorDrawable mSpinnerAnimation;
+    private boolean mWebXRRendering = false;
+    private boolean mInterstitialDismissed = false;
 
     public WebXRInterstitialWidget(Context aContext) {
         super(aContext);
@@ -151,8 +153,22 @@ public class WebXRInterstitialWidget extends UIWidget implements WidgetManagerDe
 
     @Override
     public void onDismissWebXRInterstitial() {
+        mInterstitialDismissed = true;
         setHowToVisible(false);
         hideControllers();
+        if (!mWebXRRendering) {
+            stopAnimation();
+        }
         mWidgetManager.updateWidget(this);
+    }
+
+    @Override
+    public void onWebXRRenderStateChange(boolean aRendering) {
+        mWebXRRendering = aRendering;
+        if (aRendering && mInterstitialDismissed) {
+            stopAnimation();
+        } else if (!aRendering) {
+            startAnimation();
+        }
     }
 }

@@ -36,6 +36,8 @@ const char* const kOnExitWebXRName = "onExitWebXR";
 const char* const kOnExitWebXRSignature = "()V";
 const char* const kOnDismissWebXRInterstitialName = "onDismissWebXRInterstitial";
 const char* const kOnDismissWebXRInterstitialSignature = "()V";
+const char* const kOnWebXRRenderStateChangeName = "onWebXRRenderStateChange";
+const char* const kOnWebXRRenderStateChangeSignature = "(Z)V";
 const char* const kRenderPointerLayerName = "renderPointerLayer";
 const char* const kRenderPointerLayerSignature = "(Landroid/view/Surface;J)V";
 const char* const kGetStorageAbsolutePathName = "getStorageAbsolutePath";
@@ -77,6 +79,7 @@ jmethodID sRegisterExternalContext = nullptr;
 jmethodID sOnEnterWebXR = nullptr;
 jmethodID sOnExitWebXR = nullptr;
 jmethodID sOnDismissWebXRInterstitial = nullptr;
+jmethodID sOnWebXRRenderStateChange = nullptr;
 jmethodID sRenderPointerLayer = nullptr;
 jmethodID sGetStorageAbsolutePath = nullptr;
 jmethodID sIsOverrideEnvPathEnabled = nullptr;
@@ -121,6 +124,7 @@ VRBrowser::InitializeJava(JNIEnv* aEnv, jobject aActivity) {
   sOnEnterWebXR = FindJNIMethodID(sEnv, sBrowserClass, kOnEnterWebXRName, kOnEnterWebXRSignature);
   sOnExitWebXR = FindJNIMethodID(sEnv, sBrowserClass, kOnExitWebXRName, kOnExitWebXRSignature);
   sOnDismissWebXRInterstitial = FindJNIMethodID(sEnv, sBrowserClass, kOnDismissWebXRInterstitialName, kOnDismissWebXRInterstitialSignature);
+  sOnWebXRRenderStateChange = FindJNIMethodID(sEnv, sBrowserClass, kOnWebXRRenderStateChangeName, kOnWebXRRenderStateChangeSignature);
   sRenderPointerLayer = FindJNIMethodID(sEnv, sBrowserClass, kRenderPointerLayerName, kRenderPointerLayerSignature);
   sGetStorageAbsolutePath = FindJNIMethodID(sEnv, sBrowserClass, kGetStorageAbsolutePathName, kGetStorageAbsolutePathSignature);
   sIsOverrideEnvPathEnabled = FindJNIMethodID(sEnv, sBrowserClass, kIsOverrideEnvPathEnabledName, kIsOverrideEnvPathEnabledSignature);
@@ -160,6 +164,7 @@ VRBrowser::ShutdownJava() {
   sOnEnterWebXR = nullptr;
   sOnExitWebXR = nullptr;
   sOnDismissWebXRInterstitial = nullptr;
+  sOnWebXRRenderStateChange = nullptr;
   sRenderPointerLayer = nullptr;
   sGetStorageAbsolutePath = nullptr;
   sIsOverrideEnvPathEnabled = nullptr;
@@ -267,6 +272,12 @@ VRBrowser::OnExitWebXR() {
 void VRBrowser::OnDismissWebXRInterstitial() {
   if (!ValidateMethodID(sEnv, sActivity, sOnDismissWebXRInterstitial, __FUNCTION__)) { return; }
   sEnv->CallVoidMethod(sActivity, sOnDismissWebXRInterstitial);
+  CheckJNIException(sEnv, __FUNCTION__);
+}
+
+void VRBrowser::OnWebXRRenderStateChange(const bool aRendering) {
+  if (!ValidateMethodID(sEnv, sActivity, sOnWebXRRenderStateChange, __FUNCTION__)) { return; }
+  sEnv->CallVoidMethod(sActivity, sOnWebXRRenderStateChange, (jboolean) aRendering);
   CheckJNIException(sEnv, __FUNCTION__);
 }
 
