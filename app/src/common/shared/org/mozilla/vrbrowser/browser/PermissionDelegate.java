@@ -300,7 +300,7 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
                 .findFirst().orElse(null);
 
         if (site == null) {
-            site = new SitePermission(uri,null, category);
+            site = new SitePermission(uri, "", category);
             mSitePermissions.add(site);
         }
         mSitePermissionModel.insertSite(site);
