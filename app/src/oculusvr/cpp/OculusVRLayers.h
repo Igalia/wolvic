@@ -77,9 +77,11 @@ public:
   virtual void
   Update(const ovrTracking2 &aTracking, ovrTextureSwapChain *aClearSwapChain) override {
     vrb::Color tintColor = layer->GetTintColor();
-    if (!IsComposited() && layer->GetClearColor().Alpha()) {
+    if (!IsComposited() && (layer->GetClearColor().Alpha() > 0.0f)) {
       tintColor = layer->GetClearColor();
+      tintColor.SetRGBA(convertColor(tintColor.Red()), convertColor(tintColor.Green()), convertColor(tintColor.Blue()), tintColor.Alpha());
     }
+
     ovrLayer.Header.ColorScale.x = tintColor.Red();
     ovrLayer.Header.ColorScale.y = tintColor.Green();
     ovrLayer.Header.ColorScale.z = tintColor.Blue();
@@ -158,7 +160,17 @@ public:
     return (IsComposited() || layer->GetClearColor().Alpha() == 0) ? swapChain : aClearSwapChain;
   }
 
+protected:
   virtual ~OculusLayerBase() {}
+
+  // Convert sRGB to linear RGB. Used to work around bug in Oculus compositor.
+  float convertColor(const float color) {
+    if (color > 0.04045f) {
+      return powf(color + 0.055f, 2.4f) / 1.055f;
+    } else {
+       return color / 12.92f;
+    }
+  }
 };
 
 
