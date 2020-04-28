@@ -251,16 +251,11 @@ public class PromptDelegate implements
                 final String uri = UrlUtils.getHost(session.getCurrentUri());
                 SitePermission site = mAllowedPopUpSites.stream().filter((item) -> item.url.equals(uri)).findFirst().orElse(null);
                 if (site != null) {
-                    mAttachedWindow.postDelayed(() -> {
-                        result.complete(popupPrompt.confirm(AllowOrDeny.ALLOW));
-                        session.setPopUpState(SessionState.POPUP_ALLOWED);
-                    }, 500);
-
+                    result.complete(popupPrompt.confirm(AllowOrDeny.ALLOW));
+                    session.setPopUpState(SessionState.POPUP_ALLOWED);
                 } else {
-                    mAttachedWindow.postDelayed(() -> {
-                        result.complete(popupPrompt.confirm(AllowOrDeny.DENY));
-                        session.setPopUpState(SessionState.POPUP_BLOCKED);
-                    }, 500);
+                    result.complete(popupPrompt.confirm(AllowOrDeny.DENY));
+                    session.setPopUpState(SessionState.POPUP_BLOCKED);
                 }
 
             } else {
