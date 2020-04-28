@@ -160,7 +160,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         };
         mVRVideoBackHandler = () -> {
             exitVRVideo();
-            if (mAttachedWindow != null) {
+            if (mAttachedWindow != null &&
+                    mViewModel.getAutoEnteredVRVideo().getValue().get()) {
                 mAttachedWindow.setIsFullScreen(false);
             }
         };
