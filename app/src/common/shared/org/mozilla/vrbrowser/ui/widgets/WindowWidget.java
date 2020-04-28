@@ -1727,8 +1727,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     @Override
     public void onPageStart(@NonNull GeckoSession geckoSession, @NonNull String aUri) {
         mCaptureOnPageStop = true;
-
-        mViewModel.setUrl(aUri);
         mViewModel.setIsLoading(true);
     }
 
