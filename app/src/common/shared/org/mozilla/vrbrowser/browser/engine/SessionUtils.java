@@ -54,7 +54,10 @@ class SessionUtils {
             int msaa = SettingsStore.getInstance(aContext).getMSAALevel();
             if (msaa > 0) {
                 int msaaLevel = msaa == 2 ? 4 : 2;
-                out.write(("pref(\"gl.msaa-level\"," + msaaLevel + ");\n").getBytes());
+                out.write(("pref(\"webgl.msaa-samples\"," + msaaLevel + ");\n").getBytes());
+                out.write("pref(\"webgl.msaa-force\", true);\n".getBytes());
+            } else {
+                out.write("pref(\"webgl.msaa-force\", false);\n".getBytes());
             }
             addOptionalPref(out, "dom.vr.require-gesture", aExtras);
             addOptionalPref(out, "privacy.reduceTimerPrecision", aExtras);

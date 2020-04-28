@@ -24,7 +24,7 @@
     <string name="settings_key_env" translatable="false">settings_env</string>
     <string name="settings_key_pointer_color" translatable="false">settings_pointer_color</string>
     <string name="settings_key_scroll_direction" translatable="false">settings_scroll_direction</string>
-    <string name="settings_key_msaa" translatable="false">settings_gfx_msaa</string>
+    <string name="settings_key_msaa" translatable="false">settings_gfx_msaa_v2</string>
     <string name="settings_key_audio" translatable="false">settings_audio</string>
     <string name="settings_key_voice_search_language" translatable="false">settings_voice_search_language</string>
     <string name="settings_key_display_language" translatable="false">settings_display_language</string>

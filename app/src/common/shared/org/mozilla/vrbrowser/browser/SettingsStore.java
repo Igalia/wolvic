@@ -84,7 +84,7 @@ public class SettingsStore {
     public final static int POINTER_COLOR_DEFAULT_DEFAULT = Color.parseColor("#FFFFFF");
     public final static int SCROLL_DIRECTION_DEFAULT = 0;
     public final static String ENV_DEFAULT = "offworld";
-    public final static int MSAA_DEFAULT_LEVEL = 1;
+    public final static int MSAA_DEFAULT_LEVEL = 0;
     public final static boolean AUDIO_ENABLED = false;
     public final static float CYLINDER_DENSITY_ENABLED_DEFAULT = 4680.0f;
     private final static long CRASH_RESTART_DELTA = 2000;
