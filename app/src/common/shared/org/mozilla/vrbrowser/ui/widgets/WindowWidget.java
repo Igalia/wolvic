@@ -1117,12 +1117,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             } else {
                 onCurrentSessionChange(null, aSession.getGeckoSession());
             }
-            setupListeners(mSession);
             for (WindowListener listener: mListeners) {
                 listener.onSessionChanged(oldSession, aSession);
             }
-
-
         }
         mCaptureOnPageStop = false;
         hideLibraryPanels();
@@ -1152,6 +1149,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         // e.g. tab opened via window.open()
         aSession.updateLastUse();
         Session current = mSession;
+        setupListeners(aSession);
         setSession(aSession);
         SessionStore.get().setActiveSession(aSession);
         current.captureBackgroundBitmap(getWindowWidth(), getWindowHeight()).thenAccept(aVoid -> current.setActive(false));
@@ -1164,6 +1162,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     public void onUnstackSession(Session aSession, Session aParent) {
         if (mSession == aSession) {
             aParent.setActive(true);
+            setupListeners(aParent);
             setSession(aParent);
             SessionStore.get().setActiveSession(aParent);
             SessionStore.get().destroySession(aSession);
