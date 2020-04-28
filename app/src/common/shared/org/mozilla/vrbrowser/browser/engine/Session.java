@@ -121,7 +121,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         mRuntime = aRuntime;
         initialize();
         mState = createSession(aSettings, aOpenMode);
-        mState.setActive(true);
+        mState.setActive(aOpenMode == SESSION_OPEN);
     }
 
     protected Session(Context aContext, GeckoRuntime aRuntime, @NonNull SessionState aRestoreState) {
