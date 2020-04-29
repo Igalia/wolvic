@@ -53,7 +53,7 @@ public class SitePermissionAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public void setSites(@NonNull List<SitePermission> sites) {
         if (mDisplayList == null) {
             mDisplayList = sites;
-            notifyItemRangeChanged(0, sites.size());
+            notifyDataSetChanged();
 
         } else {
             notifyDiff(sites);
@@ -78,7 +78,7 @@ public class SitePermissionAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
             @Override
             public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-                return mDisplayList.get(oldItemPosition).url.equals(newDisplayList.get(newItemPosition).url);
+                return mDisplayList.get(oldItemPosition).id == newDisplayList.get(newItemPosition).id;
             }
 
             @Override
@@ -123,6 +123,11 @@ public class SitePermissionAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         PermissionSiteViewHolder siteHolder = (PermissionSiteViewHolder) holder;
         SitePermission site = mDisplayList.get(position);
         siteHolder.binding.setItem(site);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return mDisplayList.get(position).id;
     }
 
     @Override
