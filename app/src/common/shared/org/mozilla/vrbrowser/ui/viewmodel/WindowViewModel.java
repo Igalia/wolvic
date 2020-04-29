@@ -6,6 +6,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.util.TypedValue;
+import android.webkit.URLUtil;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -316,8 +317,8 @@ public class WindowViewModel extends AndroidViewModel {
                     !isFocused.getValue().get() &&
                             !isLibraryVisible.getValue().get() &&
                             !UrlUtils.isContentFeed(getApplication(), aUrl.toString()) &&
-                            !UrlUtils.isFileUri(aUrl.toString()) &&
                             !UrlUtils.isPrivateAboutPage(getApplication(), aUrl.toString()) &&
+                            (URLUtil.isHttpUrl(aUrl.toString()) || URLUtil.isHttpsUrl(aUrl.toString())) &&
                             (
                                     (SettingsStore.getInstance(getApplication()).getTrackingProtectionLevel() != ContentBlocking.EtpLevel.NONE) ||
                                     isPopUpAvailable.getValue().get() ||
@@ -332,8 +333,9 @@ public class WindowViewModel extends AndroidViewModel {
         @Override
         public void onChanged(ObservableBoolean o) {
             isUrlBarIconsVisible.postValue(new ObservableBoolean(
-                    isLoading.getValue().get() ||
-                            isInsecureVisible.getValue().get()
+                    !isLibraryVisible.getValue().get() &&
+                            (isLoading.getValue().get() ||
+                                    isInsecureVisible.getValue().get())
             ));
         }
     };
@@ -388,10 +390,6 @@ public class WindowViewModel extends AndroidViewModel {
         }
 
         String aURL = url.toString();
-
-        if (isLibraryVisible.getValue().get()) {
-            return;
-        }
 
         int index = -1;
         try {
