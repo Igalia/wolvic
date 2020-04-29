@@ -194,7 +194,9 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             ArrayList<Session> sessions = SessionStore.get().getSortedSessions(false);
             state.tabs = sessions.stream()
                     .map(Session::getSessionState)
-                    .filter(sessionState -> SAVE_BLACKLIST.stream().noneMatch(uri -> sessionState.mUri.startsWith(uri)))
+                    .filter(sessionState -> SAVE_BLACKLIST.stream().noneMatch(uri ->
+                        sessionState.mUri != null && sessionState.mUri.startsWith(uri)
+                    ))
                     .collect(Collectors.toCollection(ArrayList::new));
             for (WindowWidget window : mRegularWindows) {
                 if (window.getSession() != null) {
