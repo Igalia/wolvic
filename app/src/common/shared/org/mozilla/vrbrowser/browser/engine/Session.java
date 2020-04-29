@@ -408,6 +408,16 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         aSession.setContentBlockingDelegate(null);
     }
 
+    public void updateTrackingProtection() {
+        if ((mState != null) && (mState.mSettings != null)) {
+            TrackingProtectionPolicy policy = TrackingProtectionStore.getTrackingProtectionPolicy(mContext);
+            mState.mSettings.setTrackingProtectionEnabled(mState.mSettings.isPrivateBrowsingEnabled() || policy.shouldBlockContent());
+            if (mState.mSession != null) {
+                mState.mSession.getSettings().setUseTrackingProtection(mState.mSettings.isTrackingProtectionEnabled());
+            }
+        }
+    }
+
     public void suspend() {
         if (mState.isActive()) {
             Log.e(LOGTAG, "Active Sessions can not be suspended");
@@ -450,6 +460,8 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
             settings = new SessionSettings.Builder()
                     .withDefaultSettings(mContext)
                     .build();
+        } else {
+            updateTrackingProtection();
         }
 
         mState.mSession = createGeckoSession(settings);
@@ -520,9 +532,6 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
         SessionState previous = mState;
         mState = mState.recreate();
-
-        TrackingProtectionPolicy policy = TrackingProtectionStore.getTrackingProtectionPolicy(mContext);
-        mState.mSettings.setTrackingProtectionEnabled(mState.mSettings.isPrivateBrowsingEnabled() || policy.shouldBlockContent());
 
         restore();
 

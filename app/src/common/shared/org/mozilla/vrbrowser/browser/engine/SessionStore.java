@@ -79,7 +79,14 @@ public class SessionStore implements GeckoSession.PermissionDelegate{
 
             @Override
             public void onTrackingProtectionLevelUpdated(int level) {
-                mSessions.forEach(Session::recreateSession);
+                mSessions.forEach(session -> {
+                    if (session.isActive()) {
+                        session.updateTrackingProtection();
+                        session.reload(GeckoSession.LOAD_FLAGS_BYPASS_CACHE);
+                    } else {
+                        session.suspend();
+                    }
+                });
             }
         });
     }
