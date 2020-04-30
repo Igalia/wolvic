@@ -168,7 +168,10 @@ public class WindowViewModel extends AndroidViewModel {
         isDrmUsed = new MutableLiveData<>(new ObservableBoolean(false));
 
         isUrlBarButtonsVisible = new MediatorLiveData<>();
-        isUrlBarButtonsVisible.addSource(url, mIsUrlBarButtonsVisibleObserver);
+        isUrlBarButtonsVisible.addSource(isTrackingEnabled, mIsUrlBarButtonsVisibleObserver);
+        isUrlBarButtonsVisible.addSource(isDrmUsed, mIsUrlBarButtonsVisibleObserver);
+        isUrlBarButtonsVisible.addSource(isPopUpAvailable, mIsUrlBarButtonsVisibleObserver);
+        isUrlBarButtonsVisible.addSource(isWebXRUsed, mIsUrlBarButtonsVisibleObserver);
         isUrlBarButtonsVisible.setValue(new ObservableBoolean(false));
 
         isUrlBarIconsVisible = new MediatorLiveData<>();
@@ -310,15 +313,16 @@ public class WindowViewModel extends AndroidViewModel {
         }
     };
 
-    private Observer<Spannable> mIsUrlBarButtonsVisibleObserver = new Observer<Spannable>() {
+    private Observer<ObservableBoolean> mIsUrlBarButtonsVisibleObserver = new Observer<ObservableBoolean>() {
         @Override
-        public void onChanged(Spannable aUrl) {
+        public void onChanged(ObservableBoolean o) {
+            String aUrl = url.getValue().toString();
             isUrlBarButtonsVisible.postValue(new ObservableBoolean(
                     !isFocused.getValue().get() &&
                             !isLibraryVisible.getValue().get() &&
-                            !UrlUtils.isContentFeed(getApplication(), aUrl.toString()) &&
-                            !UrlUtils.isPrivateAboutPage(getApplication(), aUrl.toString()) &&
-                            (URLUtil.isHttpUrl(aUrl.toString()) || URLUtil.isHttpsUrl(aUrl.toString())) &&
+                            !UrlUtils.isContentFeed(getApplication(), aUrl) &&
+                            !UrlUtils.isPrivateAboutPage(getApplication(), aUrl) &&
+                            (URLUtil.isHttpUrl(aUrl) || URLUtil.isHttpsUrl(aUrl)) &&
                             (
                                     (SettingsStore.getInstance(getApplication()).getTrackingProtectionLevel() != ContentBlocking.EtpLevel.NONE) ||
                                     isPopUpAvailable.getValue().get() ||

@@ -51,6 +51,7 @@
                     android:paddingTop="6dp"
                     android:paddingBottom="6dp"
                     android:src="@{viewmodel.isTrackingEnabled ? @drawable/ic_icon_tracking_enabled : @drawable/ic_icon_tracking_disabled}"
+                    tools:src="@drawable/ic_icon_tracking_enabled"
                     app:privateMode="@{viewmodel.isPrivateSession}"
                     android:tint="@color/fog"
                     app:visibleGone="@{!UrlUtils.isPrivateAboutPage(context, viewmodel.url.toString()) &amp;&amp; settingsViewmodel.isTrackingProtectionEnabled &amp;&amp; !UrlUtils.isContentFeed(context, viewmodel.url.toString())}"
@@ -79,6 +80,7 @@
                         android:paddingStart="@{settingsViewmodel.isTrackingProtectionEnabled ? @dimen/navigation_bar_icon_padding_small : @dimen/navigation_bar_icon_padding_big}"
                         android:paddingEnd="2dp"
                         android:src="@{settingsViewmodel.isDrmEnabled ? @drawable/ic_icon_drm_allowed : @drawable/ic_icon_drm_blocked}"
+                        tools:src="@drawable/ic_icon_drm_allowed"
                         android:tint="@color/fog"
                         android:tooltipText="@{settingsViewmodel.isDrmEnabled ? @string/drm_enabled_tooltip : @string/drm_disabled_tooltip}"
                         app:privateMode="@{viewmodel.isPrivateSession}" />
@@ -107,6 +109,7 @@
                         android:paddingStart="@{settingsViewmodel.isTrackingProtectionEnabled || (settingsViewmodel.isDrmEnabled &amp;&amp; viewmodel.isDrmUsed) ? @dimen/navigation_bar_icon_padding_small : @dimen/navigation_bar_icon_padding_big}"
                         android:paddingEnd="2dp"
                         android:src="@{viewmodel.isPopUpBlocked ? @drawable/ic_icon_popup_blocked : @drawable/ic_icon_popup}"
+                        tools:src="@drawable/ic_icon_popup_blocked"
                         android:tint="@color/fog"
                         android:tooltipText="@string/popup_tooltip"
                         app:privateMode="@{viewmodel.isPrivateSession}" />
@@ -135,6 +138,7 @@
                         android:paddingStart="@{settingsViewmodel.isTrackingProtectionEnabled || (settingsViewmodel.isPopUpBlockingEnabled &amp;&amp; viewmodel.isPopUpBlocked) || (settingsViewmodel.isDrmEnabled &amp;&amp; viewmodel.isDrmUsed) ? @dimen/navigation_bar_icon_padding_small : @dimen/navigation_bar_icon_padding_big}"
                         android:paddingEnd="2dp"
                         android:src="@{viewmodel.isWebXRBlocked ? @drawable/ic_icon_webxr_blocked : @drawable/ic_icon_webxr_allowed}"
+                        tools:src="@drawable/ic_icon_webxr_blocked"
                         app:privateMode="@{viewmodel.isPrivateSession}"
                         android:tint="@color/fog"
                         android:tooltipText="@{viewmodel.isWebXRBlocked ? @string/webxr_blocked_tooltip : @string/webxr_allowed_tooltip}" />

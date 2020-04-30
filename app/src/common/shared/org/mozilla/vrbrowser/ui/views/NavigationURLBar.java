@@ -375,6 +375,8 @@ public class NavigationURLBar extends FrameLayout {
             GleanMetricsService.urlBarEvent(false);
         }
 
+        mViewModel.setUrl(url);
+
         mSession.loadUri(url);
 
         if (mDelegate != null) {
