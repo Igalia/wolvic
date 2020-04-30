@@ -308,7 +308,8 @@ DeviceDelegatePicoVR::RegisterImmersiveDisplay(ImmersiveDisplayPtr aDisplay) {
     m.immersiveDisplay->SetSittingToStandingTransform(vrb::Matrix::Translation(kAverageHeight));
   }
   m.immersiveDisplay->SetCapabilityFlags(flags);
-  m.immersiveDisplay->SetEyeResolution(m.renderWidth / 2, m.renderHeight / 2);
+  const float scale = 1.0f;
+  m.immersiveDisplay->SetEyeResolution(int(m.renderWidth * scale), int(m.renderHeight * scale));
   m.immersiveDisplay->CompleteEnumeration();
 }
 
