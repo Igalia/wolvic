@@ -189,22 +189,6 @@
     <string name="keyboard_nl_NL_popup_u" translatable="false">uúüûùūůų</string>
     <string name="keyboard_nl_NL_popup_i" translatable="false">ìíiïîįī</string>
 
-    <!-- SEARCH ENGINES -->
-    <!-- Google -->
-    <string name="search_google_params" translatable="false">q=%1$s&amp;client=firefox-b-o</string>
-    <string name="search_google_us_params" translatable="false">q=%1$s&amp;client=firefox-b-1-o</string>
-    <string name="search_google" translatable="false">https://www.google.com/search</string>
-    <string name="search_google_us" translatable="false">https://www.google.com/search</string>
-    <!-- Baidu -->
-    <string name="search_baidu_params" translatable="false">wd=%1$s&amp;tn=monline_dg&amp;ie=utf-8</string>
-    <string name="search_baidu_cn" translatable="false">https://www.baidu.com/baidu</string>
-    <!-- Yandex -->
-    <string name="search_yandex_params" translatable="false">searchbar=2186618&amp;keyword=2186621&amp;contextmenu=2186623&amp;homepage=2186617&amp;newtab=2186620&amp;text=%1$s</string>
-    <string name="search_yandex_ru" translatable="false">https://yandex.ru/search</string>
-    <string name="search_yandex_by" translatable="false">https://yandex.by/search</string>
-    <string name="search_yandex_tr" translatable="false">https://yandex.com.tr/search</string>
-    <string name="search_yandex_kz" translatable="false">https://yandex.kz/search</string>
-
     <!-- Settings Survey link -->
     <string name="survey_link" translatable="false">https://qsurvey.mozilla.com/s3/FxR</string>
 </resources>
