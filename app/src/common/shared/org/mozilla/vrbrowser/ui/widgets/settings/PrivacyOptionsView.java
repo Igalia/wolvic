@@ -215,7 +215,7 @@ class PrivacyOptionsView extends SettingsView {
             setDrmContent(SettingsStore.DRM_PLAYBACK_DEFAULT, true);
         }
 
-        if (!mBinding.trackingProtectionRadio.getValueForId(mBinding.trackingProtectionRadio.getCheckedRadioButtonId()).equals(SettingsStore.MSAA_DEFAULT_LEVEL)) {
+        if (!mBinding.trackingProtectionRadio.getValueForId(mBinding.trackingProtectionRadio.getCheckedRadioButtonId()).equals(SettingsStore.TRACKING_DEFAULT)) {
             setTrackingProtection(mBinding.trackingProtectionRadio.getIdForValue(SettingsStore.TRACKING_DEFAULT), true);
         }
 
