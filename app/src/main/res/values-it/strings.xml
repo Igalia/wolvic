@@ -681,6 +681,10 @@
         Devices access to websites (WebXR). -->
     <string name="security_options_permission_webxr">Dispositivi per realtà virtuale (WebXR)</string>
 
+    <!-- This string labels the button in the privacy option panel that open the dialog to add/remove
+         webxr blocked sites. -->
+    <string name="security_options_webxr_settings">Avanzate...</string>
+
     <!-- This string is a label above the group of switches that indicates that the switches below
          relate to Firefox data collection and use. -->
     <string name="security_options_speech_data_collection_title">Raccolta e utilizzo dati di %1$s</string>
@@ -1072,6 +1076,10 @@
 
     <!-- This string is used to label radio buttons for setting ETP in. -->
     <string name="privacy_options_tracking">Protezione antitracciamento avanzata. (&lt;a href=&quot;%1$s&quot;&gt;Ulteriori informazioni&lt;/a&gt;)</string>
+
+    <!-- This string labels the button in the privacy option panel that opens the dialog to add/remove
+         Tracking protection exceptions. -->
+    <string name="privacy_options_tracking_exceptions_v1">Avanzate...</string>
 
     <!-- This string labels the Reset button that restores the default controller settings values. -->
     <string name="controller_options_reset">Ripristina impostazioni controller</string>
