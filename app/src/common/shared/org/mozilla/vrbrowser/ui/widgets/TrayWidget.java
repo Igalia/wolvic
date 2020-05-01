@@ -61,6 +61,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
     private int mMaxPadding;
     private Session mSession;
     private WindowWidget mAttachedWindow;
+    private boolean mIsWindowAttached;
 
     public TrayWidget(Context aContext) {
         super(aContext);
@@ -88,6 +89,8 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
         mTrayViewModel.getIsVisible().observe((VRBrowserActivity) getContext(), mIsVisibleObserver);
 
         updateUI();
+
+        mIsWindowAttached = false;
 
         mTrayListeners = new ArrayList<>();
 
@@ -221,11 +224,15 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
         int ev = motionEvent.getActionMasked();
         switch (ev) {
             case MotionEvent.ACTION_HOVER_ENTER:
-                animateViewPadding(view, mMaxPadding, mMinPadding, ICON_ANIMATION_DURATION);
+                if (!view.isPressed() && ViewUtils.isInsideView(view, (int)motionEvent.getRawX(), (int)motionEvent.getRawY())) {
+                    animateViewPadding(view, mMaxPadding, mMinPadding, ICON_ANIMATION_DURATION);
+                }
                 return false;
 
             case MotionEvent.ACTION_HOVER_EXIT:
-                animateViewPadding(view, mMinPadding, mMaxPadding, ICON_ANIMATION_DURATION);
+                if (!ViewUtils.isInsideView(view, (int)motionEvent.getRawX(), (int)motionEvent.getRawY())) {
+                    animateViewPadding(view, mMinPadding, mMaxPadding, ICON_ANIMATION_DURATION);
+                }
                 return false;
         }
 
@@ -233,6 +240,11 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
     };
 
     private void animateViewPadding(View view, int paddingStart, int paddingEnd, int duration) {
+        if (view.isPressed() || !mIsWindowAttached) {
+            view.setPadding(paddingEnd, paddingEnd, paddingEnd, paddingEnd);
+            return;
+        }
+
         ValueAnimator animation = ValueAnimator.ofInt(paddingStart, paddingEnd);
         animation.setDuration(duration);
         animation.setInterpolator(new AccelerateDecelerateInterpolator());
@@ -384,6 +396,8 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
             mViewModel.getIsDownloadsVisible().removeObserver(mIsDownloadsVisible);
             mViewModel = null;
         }
+
+        mIsWindowAttached = false;
     }
 
     @Override
@@ -408,9 +422,14 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
         mBinding.setViewmodel(mViewModel);
 
         SessionStore.get().getBookmarkStore().addListener(mBookmarksListener);
+
+        mIsWindowAttached = true;
     }
 
     private Observer<ObservableBoolean> mIsBookmarksVisible = aBoolean -> {
+        if (mBinding.bookmarksButton.isHovered()) {
+            return;
+        }
         if (aBoolean.get()) {
             animateViewPadding(mBinding.bookmarksButton, mMaxPadding, mMinPadding, ICON_ANIMATION_DURATION);
         } else {
@@ -419,14 +438,21 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
     };
 
     private Observer<ObservableBoolean> mIsHistoryVisible = aBoolean -> {
+        if (mBinding.historyButton.isHovered()) {
+            return;
+        }
         if (aBoolean.get()) {
             animateViewPadding(mBinding.historyButton, mMaxPadding, mMinPadding, ICON_ANIMATION_DURATION);
+
         } else {
             animateViewPadding(mBinding.historyButton, mMinPadding, mMaxPadding, ICON_ANIMATION_DURATION);
         }
     };
 
     private Observer<ObservableBoolean> mIsDownloadsVisible = aBoolean -> {
+        if (mBinding.downloadsButton.isHovered()) {
+            return;
+        }
         if (aBoolean.get()) {
             animateViewPadding(mBinding.downloadsButton, mMaxPadding, mMinPadding, ICON_ANIMATION_DURATION);
         } else {

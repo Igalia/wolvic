@@ -492,8 +492,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             case BOOKMARKS:
                 if (mViewModel.getIsHistoryVisible().getValue().get() ||
                         mViewModel.getIsDownloadsVisible().getValue().get()) {
-                    hidePanel(Windows.PanelType.HISTORY, false);
-                    hidePanel(Windows.PanelType.DOWNLOADS, false);
+                    if (isHistoryVisible()) {
+                        hidePanel(Windows.PanelType.HISTORY, false);
+                    }
+                    if (isDownloadsVisible()) {
+                        hidePanel(Windows.PanelType.DOWNLOADS, false);
+                    }
                     showPanel(Windows.PanelType.BOOKMARKS, false);
 
                 } else if (mViewModel.getIsBookmarksVisible().getValue().get()) {
@@ -506,8 +510,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             case HISTORY:
                 if (mViewModel.getIsBookmarksVisible().getValue().get() ||
                         mViewModel.getIsDownloadsVisible().getValue().get()) {
-                    hidePanel(Windows.PanelType.BOOKMARKS, false);
-                    hidePanel(Windows.PanelType.DOWNLOADS, false);
+                    if (isBookmarksVisible()) {
+                        hidePanel(Windows.PanelType.BOOKMARKS, false);
+                    }
+                    if (isDownloadsVisible()) {
+                        hidePanel(Windows.PanelType.DOWNLOADS, false);
+                    }
                     showPanel(Windows.PanelType.HISTORY, false);
 
                 } else if (mViewModel.getIsHistoryVisible().getValue().get()) {
@@ -520,8 +528,12 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             case DOWNLOADS:
                 if (mViewModel.getIsBookmarksVisible().getValue().get() ||
                         mViewModel.getIsHistoryVisible().getValue().get()) {
-                    hidePanel(Windows.PanelType.BOOKMARKS, false);
-                    hidePanel(Windows.PanelType.HISTORY, false);
+                    if (isBookmarksVisible()) {
+                        hidePanel(Windows.PanelType.BOOKMARKS, false);
+                    }
+                    if (isHistoryVisible()) {
+                        hidePanel(Windows.PanelType.HISTORY, false);
+                    }
                     showPanel(Windows.PanelType.DOWNLOADS, false);
 
                 } else if (mViewModel.getIsDownloadsVisible().getValue().get()) {
