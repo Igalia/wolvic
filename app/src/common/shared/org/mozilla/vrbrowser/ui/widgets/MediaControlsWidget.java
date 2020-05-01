@@ -19,6 +19,7 @@ import org.mozilla.telemetry.schedule.jobscheduler.TelemetryJobService;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.geckoview.MediaElement;
 import org.mozilla.vrbrowser.browser.Media;
+import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.ui.views.MediaSeekBar;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.views.VolumeControl;
@@ -123,6 +124,7 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
             placement.parentAnchorX = 0.65f;
             placement.parentAnchorY = 0.4f;
             placement.cylinderMapRadius = 0.0f;
+            placement.cylinder = SettingsStore.getInstance(getContext()).isCurvedModeEnabled();
             if (mWidgetManager.getCylinderDensity() > 0) {
                 placement.rotationAxisY = 1.0f;
                 placement.rotation = (float) Math.toRadians(-7);
