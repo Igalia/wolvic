@@ -72,6 +72,7 @@
                 android:paddingEnd="5dp"
                 android:requiresFadingEdge="horizontal"
                 android:singleLine="true"
+                android:textColor="@color/fog"
                 tools:text="@{viewmodel.titleBarUrl}" />
         </LinearLayout>
 

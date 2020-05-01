@@ -551,7 +551,7 @@ public class WindowViewModel extends AndroidViewModel {
     }
 
     public void setIsActiveWindow(boolean isActiveWindow) {
-        this.isActiveWindow.postValue(new ObservableBoolean(isActiveWindow));
+        this.isActiveWindow.setValue(new ObservableBoolean(isActiveWindow));
     }
 
     @NonNull
