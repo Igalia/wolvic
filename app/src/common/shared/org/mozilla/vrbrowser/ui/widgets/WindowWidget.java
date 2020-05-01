@@ -1393,7 +1393,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         showConfirmPrompt(
                 R.drawable.ic_icon_drm_allowed,
                 getContext().getString(R.string.drm_first_use_title_v1),
-                getContext().getString(R.string.drm_first_use_body_v1, getResources().getString(R.string.sumo_drm_url)),
+                getContext().getString(R.string.drm_first_use_body_v2, getResources().getString(R.string.sumo_drm_url)),
                 new String[]{
                         getContext().getString(R.string.drm_first_use_do_not_allow),
                         getContext().getString(R.string.drm_first_use_allow),

@@ -1608,7 +1608,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed as the body of a dialog that is displayed the first time a user access DRM content if they haven't
          explicitly enable/Disable the DRM setting yet.
          '%1$s' will be replaced at runtime with the Learn More page link. -->
-    <string name="drm_first_use_body_v1">Allowing DRM permits this site to identify this device every time you visit. &lt;a href="%1$s">Learn More&lt;/a></string>
+    <string name="drm_first_use_body_v2">Allowing DRM permits sites to identify this device every time you visit. &lt;a href="%1$s">Learn More&lt;/a></string>
   
     <!-- This string is displayed in the enable button that is displayed inside the dialog that is displayed the first time a user access
          access DRM content if they haven't explicitly enable/Disable the DRM setting yet. -->
