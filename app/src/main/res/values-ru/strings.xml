@@ -444,6 +444,10 @@
          User-Agent (UA) string of the browser. -->
     <string name="developer_options_ua_mode">User-Agent</string>
 
+    <!-- This string is used to label a set of radio buttons that allow the user to change the
+         default downloads storage. -->
+    <string name="security_options_downloads_storage">Хранилище загрузок по умолчанию</string>
+
     <!-- This string is used to label the 'Desktop' radio button of the 'User-Agent Mode' settings option. -->
     <string name="developer_options_ua_desktop">Компьютер</string>
 
@@ -452,6 +456,12 @@
 
     <!-- This string is used to label the 'VR' radio button of the 'User-Agent Mode' settings option. -->
     <string name="developer_options_ua_vr">VR-шлем</string>
+
+    <!-- This string is used to label the 'Internal Storage' radio button of the 'Downloads Storage' settings option. -->
+    <string name="privacy_options_downloads_storage_internal">Встроенное</string>
+
+    <!-- This string is used to label the 'External Storage' radio button of the 'Downloads Storage' settings option. -->
+    <string name="privacy_options_downloads_storage_external">Внешнее</string>
 
     <!-- This string is used to label the 'Standard' radio button of the 'Enhanced Tracking protection' settings option. -->
     <string name="privacy_options_tracking_etp">Стандартная</string>
@@ -610,6 +620,10 @@
     <string name="fxa_account_last_synced">Последняя синхронизация: %1$d минут назад</string>
 
         <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
+     and is used to enable or disable playback of DRM controlled content. -->
+    <string name="security_options_drm_content_v1">Разрешать сайтам идентифицировать ваше устройство для воспроизведения DRM-управляемого содержимого автоматически. (&lt;a href=&quot;%1$s&quot;&gt;Узнать больше&lt;/a&gt;)</string>
+
+    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable the tabs restoration after a fresh app start. -->
     <string name="security_options_restore_tabs">Восстанавливать вкладки и окна после перезапуска</string>
 
@@ -667,6 +681,10 @@
     <!-- This string labels the button in the privacy option panel that enables/disables Virtual Reality
         Devices access to websites (WebXR). -->
     <string name="security_options_permission_webxr">Устройства виртуальной реальности (WebXR)</string>
+
+    <!-- This string labels the button in the privacy option panel that open the dialog to add/remove
+         webxr blocked sites. -->
+    <string name="security_options_webxr_settings">Дополнительно</string>
 
     <!-- This string is a label above the group of switches that indicates that the switches below
          relate to Firefox data collection and use. -->
@@ -862,6 +880,10 @@
          bookmarks tray button then a new item is bookmarked. -->
     <string name="bookmarks_saved_notification">Сохранено в закладках!</string>
 
+    <!-- This string is displayed in a notification that appears in the tray bar on top of the
+         downloads tray button then a download finishes. %1$s will be replaced with the downloaded file name. -->
+    <string name="download_completed_notification">%1$s загружен</string>
+
     <!-- This string is displayed in a tooltip that appears when a user hovers
          over an icon representing 'Edit This Bookmark' for an individual bookmark
          item listed in the Bookmarks List. -->
@@ -912,6 +934,50 @@
     <!-- This string is displayed is the "Clear History" button in the history list. When pressed a dialog for
          clearing history is displayed. -->
     <string name="history_clear">Удалить историю</string>
+
+    <!-- This string is displayed as the title of the downloads list, which contains the user's downloaded files. -->
+    <string name="downloads_title">Загрузки</string>
+
+    <!-- This string is displayed as the title of the downloads list when the downloads is empty. -->
+    <string name="downloads_empty">Ваш список загрузок пуст</string>
+
+    <!-- This string is displayed under the downloads title in the downloads list. -->
+    <string name="downloads_description">Вы можете получить доступ к загрузкам здесь</string>
+
+    <!-- This string is displayed in the middle of the downloads list while the downloads is being loaded. -->
+    <string name="downloads_loading">Обработка загрузок</string>
+
+    <!-- This string is displayed in the "Delete All" button in the downloads list.
+         When pressed the all the downloads in the list are deleted both from the list and the disk. -->
+    <string name="downloads_delete">Удалить все</string>
+
+    <!-- This string is displayed in the "Sort By" button in the downloads list.
+         When pressed a dropdown menu is displayed with the sorting options. -->
+    <string name="downloads_sort">Сортировать по</string>
+
+    <!-- This string is displayed as an option in the downloads sorting menu
+         When pressed the download list is sorted in alphabetical order from A to Z. -->
+    <string name="downloads_filename_sort_az">Имени (от А до Я)</string>
+
+    <!-- This string is displayed as an option in the downloads sorting menu
+         When pressed the download list is sorted in alphabetically order from Z to A. -->
+    <string name="downloads_filename_sort_za">Имени (от Я до А)</string>
+
+    <!-- This string is displayed as an option in the downloads sorting menu
+         When pressed the download list is sorted in download date ascending order. -->
+    <string name="downloads_sort_download_date_asc">От старых к новым</string>
+
+    <!-- This string is displayed as an option in the downloads sorting menu
+         When pressed the download list is sorted in download date descending order. -->
+    <string name="downloads_sort_download_date_desc">От новых к старым</string>
+
+    <!-- This string is displayed as an option in the downloads sorting menu
+         When pressed the download list is sorted in download date ascending order. -->
+    <string name="downloads_sort_download_size_asc">От мелких к крупным</string>
+
+    <!-- This string is displayed as an option in the downloads sorting menu
+         When pressed the download list is sorted in download date descending order. -->
+    <string name="downloads_sort_download_size_desc">От крупных к мелким</string>
 
     <!-- This string is displayed is the "Sync" button in the history panel. When pressed the
          history is synced with the Firefox account. -->
@@ -982,6 +1048,11 @@
          the more button is pressed in a history item. It removes the selected item from favorites. -->
     <string name="history_context_remove_bookmarks">Удалить из закладок</string>
 
+    <!-- This string is displayed is the downloads context menu that is displayed when
+         the more button is pressed in a downloads item. It deletes the selected item from the downloads list
+         and also from disk. -->
+    <string name="download_context_delete">Удалить</string>
+
     <!-- This string labels the Reset button that restores the default display settings values. -->
     <string name="display_options_reset">Сбросить настройки отображения</string>
 
@@ -994,6 +1065,9 @@
     <!-- This string labels the Reset button that removes all the sites from the stored allowed pop-ups sites. -->
     <string name="privacy_options_popups_reset">Сброс настроек блокировки всплывающих окон</string>
 
+    <!-- This string is displayed on top of the allowed sites list in the allowed pop-ups panel. -->
+    <string name="privacy_options_popups_list_header_v1">Следующие сайты могут открывать всплывающие окна:</string>
+
     <!-- This string is displayed in the first line of a text that's displayed in the middle of allowed pop-ups panel instead of the exceptions list
          when there are no exceptions. -->
     <string name="privacy_options_popups_list_empty_first">Открыв веб-сайт со всплывающими окнами, вы увидите сообщение с предложением заблокировать всплывающие окна.</string>
@@ -1004,6 +1078,10 @@
 
     <!-- This string is used to label radio buttons for setting ETP in. -->
     <string name="privacy_options_tracking">Улучшенная защита от отслеживания. (&lt;a href=&quot;%1$s&quot;&gt;Подробнее&lt;/a&gt;)</string>
+
+    <!-- This string labels the button in the privacy option panel that opens the dialog to add/remove
+         Tracking protection exceptions. -->
+    <string name="privacy_options_tracking_exceptions_v1">Дополнительно</string>
 
     <!-- This string labels the Reset button that restores the default controller settings values. -->
     <string name="controller_options_reset">Сбросить настройки контроллера</string>
@@ -1102,6 +1180,16 @@
          browser's navigation bar. The button it labels, when pressed, Shows the pop-up blocked dialog. -->
     <string name="popup_tooltip">Всплывающее окно заблокировано</string>
 
+    <!-- This string is for the tooltip that appears upon hovering the 'DRM' button in the
+         browser's navigation bar when DRM is allowed for the site. The button it labels, when pressed,
+         shows the DRM bubble on top of the button. -->
+    <string name="drm_enabled_tooltip">DRM разрешён</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'DRM' button in the
+         browser's navigation bar when DRM not allowed for the site. The button it labels, when pressed,
+         shows the DRM bubble on top of the button. -->
+    <string name="drm_disabled_tooltip">DRM запрещён</string>
+
     <!-- This string is for the tooltip that when clicking the 'Info' (ⓘ) icon visible next to the current website's
          URL in the URL bar. The button it labels, when pressed, shows information about the site. -->
     <string name="site_info_tooltip">Показать информацию о сайте.</string>
@@ -1121,6 +1209,14 @@
     <!-- This string is for the tooltip that appears upon hovering the 'WebXR' button in the
  browser's navigation bar. The button it labels, when pressed, Shows the WebXR permission dialog. -->
     <string name="webxr_blocked_tooltip">WebXR запрещён</string>
+
+    <!-- This string appears in the WebXR interstial next to an arrow pointing to the controller button that
+     has to be used to exit from WebXR. It's preferred to separate it in two lines if possible.
+     \n is used to create a new line  -->
+    <string name="webxr_interstitial_exit_webxr">Выйти из\nWebXR</string>
+
+    <!-- This string appears in the WebXR interstitial. -->
+    <string name="webxr_interstitial_how_to_continue_1">Чтобы продолжить, нажмите любую кнопку</string>
 
     <!-- This string is for the tooltip that appears upon hovering the 'Tracking' button in the
      browser's navigation bar. The button it labels, when pressed, Shows the Tracking dialog. -->
@@ -1143,6 +1239,18 @@
 
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the target url in a new tab. -->
     <string name="context_menu_open_new_tab_1">Открыть в новой вкладке</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it triggers a linked element download. -->
+    <string name="context_menu_download_link">Загрузить ссылку</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it triggers the video element download. -->
+    <string name="context_menu_download_video">Загрузить видео</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it triggers the audio element download. -->
+    <string name="context_menu_download_audio">Загрузить аудио</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it triggers the image element download. -->
+    <string name="context_menu_download_image">Загрузить изображение</string>
 
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it copies the target to the clipboard -->
     <string name="context_menu_copy_link">Копировать ссылку</string>
@@ -1201,6 +1309,14 @@
     <!-- This string is for the tooltip that appears when the user hovers over the 'History' icon in the
          tray and the History view is closed. The button it labels, when pressed, closes the History view. -->
     <string name="close_history_tooltip">Закрыть историю</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Downloads' icon in the
+         tray and the Downloads view is closed. The button it labels, when pressed, opens a list view of the user's downloads. -->
+    <string name="open_downloads_tooltip">Открыть загрузки</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Downloads' icon in the
+         tray and the Downloads view is closed. The button it labels, when pressed, closes the Downloads view. -->
+    <string name="close_downloads_tooltip">Закрыть загрузки</string>
 
     <!-- This string is displayed in any button used for removing all the items in the current context. -->
     <string name="remove_all">Удалить всё</string>
@@ -1292,6 +1408,9 @@
 
     <!-- This string is displayed in the URL bar when the user is in the history panel -->
     <string name="url_history_title">История</string>
+
+    <!-- This string is displayed in the URL bar when the user is in the downloads panel -->
+    <string name="url_downloads_title">Загрузки</string>
 
     <!-- This string is displayed in the Clear button on top of the window when in private mode. It only appears
          when there is one window left. When clicked, it closes the private session -->
@@ -1444,12 +1563,162 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="slow_script_dialog_action_wait">Подождать</string>
 
 
+    <!-- This string is displayed in the title of the quick PopUp blocking dialog, accessed from the PopUp icon in the URL bar.
+     '%1$s' will be replaced at runtime with the status of the setting. -->
+    <string name="popup_permission_dialog_message">Блокировка всплывающих окон %1$s для этого сайта.</string>
+
+    <!-- This string is displayed in the on button of the quick Popup blocking dialog when it's in enabled state. It's accessed from the Popup icon in the URL bar. -->
+    <string name="popup_dialog_button_on">включена</string>
+
+    <!-- This string is displayed in the off button of the quick Popup blocking dialog when it's in disabled state. It's accessed from the Popup icon in the URL bar. -->
+    <string name="popup_dialog_button_off">отключена</string>
+
+    <!-- This string is displayed in the title of the quick WebXR blocking dialog, accessed from the VR icon in the URL bar.
+     '%1$s' will be replaced at runtime with the status of the setting.
+     '%2$s' will be replaced at runtime with the Learn More page link. -->
+    <string name="webxr_permission_dialog_message">WebXR %1$s для этого сайта. &lt;a href=&quot;%2$s&quot;&gt;Узнать больше&lt;/a&gt;</string>
+
+    <!-- This string is displayed in the on button of the quick WebXR blocking dialog when it's in enabled state. It's accessed from the WebXR icon in the URL bar. -->
+    <string name="webxr_dialog_button_on">включён</string>
+
+    <!-- This string is displayed in the off button of the quick WebXR blocking dialog when it's in disabled state. It's accessed from the WebXR icon in the URL bar. -->
+    <string name="webxr_dialog_button_off">отключён</string>
+
     <!-- This string is displayed in the title of the quick Tracking Protection dialog, accessed from the Tracking Protection icon in the URL bar.
          '%1$s' will be replaced at runtime with the status of the setting.
          '%2$s' will be replaced at runtime with the Learn More page link. -->
     <string name="tracking_dialog_message">Улучшенная защита от отслеживания %1$s для этого веб-сайта. (&lt;a href=&quot;%2$s&quot;&gt;Подробнее&lt;/a&gt;)</string>
   
+    <!-- This string is displayed in the on button of the quick Tracking Protection dialog when it's in enabled state. It's accessed from the Tracking Protection icon in the URL bar. -->
+    <string name="tracking_dialog_button_on">Включена</string>
+
+    <!-- This string is displayed in the off button of the quick Tracking Protection dialog when it's in disabled state. It's accessed from the Tracking Protection icon in the URL bar. -->
+    <string name="tracking_dialog_button_off">Отключена</string>
+
+    <!-- This string is displayed in the title of the quick DRM dialog, accessed from the DRM icon in the URL bar.
+         '%1$s' will be replaced at runtime with the status of the setting.
+         '%2$s' will be replaced at runtime with the Learn More page link. -->
+    <string name="drm_dialog_message">Некоторое аудио или видео на этом сайте использует программу DRM, что может ограничить возможности, предоставляемые вам %1$s. &lt;a href=&quot;%2$s&quot;&gt;Узнать больше&lt;/a&gt;</string>
+
+    <!-- This string is displayed in the switch button of the quick DRM dialog when it's in enabled state. It's accessed from the DRM icon in the URL bar. -->
+    <string name="drm_dialog_button_on">Включён</string>
+
+    <!-- This string is displayed in the switch button of the quick DRM dialog when it's in disabled state. It's accessed from the DRM icon in the URL bar. -->
+    <string name="drm_dialog_button_off">Отключён</string>
+
+    <!-- This string is displayed as the title of a dialog that is displayed the first time a user access DRM content if they haven't
+         explicitly enable/Disable the DRM setting yet. -->
+    <string name="drm_first_use_title_v1">Этот сайт содержит содержимое DRM.</string>
+
+    <!-- This string is displayed as the body of a dialog that is displayed the first time a user access DRM content if they haven't
+         explicitly enable/Disable the DRM setting yet.
+         '%1$s' will be replaced at runtime with the Learn More page link. -->
+    <string name="drm_first_use_body_v1">Разрешение DRM позволяет этому сайту идентифицировать это устройство каждый раз, когда вы на него заходите. &lt;a href=&quot;%1$s&quot;&gt;Узнать больше&lt;/a&gt;</string>
+  
+    <!-- This string is displayed in the enable button that is displayed inside the dialog that is displayed the first time a user access
+         access DRM content if they haven't explicitly enable/Disable the DRM setting yet. -->
+    <string name="drm_first_use_allow">Разрешить</string>
+  
+    <!-- This string is displayed in the do not enable button that is displayed inside the dialog that is displayed the first time a user access
+         access DRM content if they haven't explicitly enable/Disable the DRM setting yet. -->
+    <string name="drm_first_use_do_not_allow">Не разрешать</string>
+
     <!-- This string is displayed in the disable button of the quick Tracking Protection dialog, accessed from the Tracking Protection icon in the URL bar. -->
     <string name="tracking_dialog_button_disable">Отключить</string>
 
-    </resources>
+    <!-- This string is displayed in the body of the confirm dialog shown in some platforms when the back button is pressed to quit the app.
+         '%1$s' will be replaced at runtime with the app name. -->
+    <string name="exit_confirm_dialog_body">Вы уверены, что хотите выйти из %1$s?</string>
+
+    <!-- This string is displayed in the Cancel button of the confirm dialog shown in some platforms when the back button is pressed to quit the app.  -->
+    <string name="exit_confirm_dialog_button_cancel">Отмена</string>
+
+    <!-- This string is displayed in the Quit button of the confirm dialog shown in some platforms when the back button is pressed to quit the app.  -->
+    <string name="exit_confirm_dialog_button_quit">Выйти</string>
+
+    <!-- This string is displayed in the title of the dialog displayed when the user tries to open an unsupported
+         file from the Downloads library panel. -->
+    <string name="download_open_file_unsupported_title">Неподдерживаемый тип файла</string>
+
+    <!-- This string is displayed in the body of the dialog displayed when the user tries to open an unsupported
+         file from the Downloads library panel. -->
+    <string name="download_open_file_unsupported_body">Этот файл не может быть открыт. Хотели бы вы открыть его с помощью стороннего приложения?</string>
+
+    <!-- This string is displayed in the cancel button of the dialog displayed when the user tries to open an unsupported
+         file from the Downloads library panel. When clicked the dialog is closed.-->
+    <string name="download_open_file_unsupported_cancel">Отмена</string>
+
+    <!-- This string is displayed in the cancel button of the dialog displayed when the user tries to open an unsupported
+         file from the Downloads library panel. When clicked we hand over the file open to the system.-->
+    <string name="download_open_file_unsupported_open">Открыть</string>
+
+    <!-- This string is displayed in the title of the dialog displayed when we try to hand over the file open to
+         the system but the system can't handle it either. -->
+    <string name="download_open_file_error_title">Ошибка</string>
+
+    <!-- This string is displayed in the body of the dialog displayed when we try to hand over the file open to
+         the system but the system can't handle it either. -->
+    <string name="download_open_file_error_body">Для данного типа файла ни одного приложения не найдено.</string>
+
+    <!-- This string is displayed in the title of the dialog displayed when a download has been requested
+         so the user can confirm if they want to actually download the file. -->
+    <string name="download_confirm_title">Вы хотите загрузить этот файл?</string>
+
+    <!-- This string is displayed in the "Cancel" button of the dialog displayed when a download has been requested
+         so the user can confirm if they want to actually download the file. If clicked the download is not started. -->
+    <string name="download_confirm_cancel">Отмена</string>
+
+    <!-- This string is displayed in the "Download" button of the dialog displayed when a download has been requested
+         so the user can confirm if they want to actually download the file. If clicked the download is queued. -->
+    <string name="download_confirm_download">Загрузить</string>
+
+    <!-- This string is displayed in the confirmation dialog when a downloaded file is deleted from the downloads list. -->
+    <string name="download_delete_file_confirm_title">Удалить файл</string>
+
+    <!-- This string is displayed in the confirmation dialog when a downloaded file is deleted from the downloads list. -->
+    <string name="download_delete_file_confirm_body">Вы действительно хотите удалить этот файл?</string>
+
+    <!-- This string is displayed in the confirmation dialog checkbox to also delete the file from disk. -->
+    <string name="download_delete_file_confirm_checkbox">Также удалить файл с диска</string>
+
+    <!-- This string is displayed in the confirmation dialog when the delete all button is clicked in the downloads list. -->
+    <string name="download_delete_all_confirm_title">Удалить все загруженные файлы</string>
+
+    <!-- This string is displayed in the confirmation dialog when the delete all button is clicked in the downloads list. -->
+    <string name="download_delete_all_confirm_body">Вы уверены, что хотите удалить все загруженные файлы?</string>
+
+    <!-- This string is displayed in the delete download confirmation dialog checkbox to also delete the file from disk. -->
+    <string name="download_delete_all_confirm_checkbox">Также удалить файлы с диска</string>
+
+    <!-- This string is displayed in the delete download confirmation dialog cancel button. -->
+    <string name="download_delete_confirm_cancel">Отмена</string>
+
+    <!-- This string is displayed in the confirmation dialog delete button. -->
+    <string name="download_delete_confirm_delete">Удалить</string>
+
+    <!-- This string is displayed in the title of the download error dialog. -->
+    <string name="download_error_title">Произошла ошибка</string>
+
+    <!-- This string is displayed in the body of the download error dialog.
+         '%1$s' will be replaced at runtime with the name of the downloaded file. -->
+    <string name="download_error_body">При загрузке %1$s произошла ошибка. Пожалуйста, попробуйте ещё раз.</string>
+
+    <!-- This string is displayed in the button to dismiss the download error dialog. -->
+    <string name="download_error_ok">Ок</string>
+
+    <!-- This string is displayed in the downloads panel, in the download status when the download has failed. -->
+    <string name="download_status_failed">Неудача</string>
+
+    <!-- This string is displayed in the downloads panel, in the download status when the download is paused. -->
+    <string name="download_status_paused">Приостановлено</string>
+
+    <!-- This string is displayed in the downloads panel, in the download status when the download is pending. -->
+    <string name="download_status_pending">В ожидании</string>
+
+    <!-- This string is displayed in the downloads panel, in the download status when the resource is no longer available. -->
+    <string name="download_status_unavailable">Недоступно</string>
+
+    <!-- This string is displayed in the downloads panel, in the download status when an unknown error happened. -->
+    <string name="download_status_unknown_error">Неизвестная ошибка</string>
+
+</resources>
