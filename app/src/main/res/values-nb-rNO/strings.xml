@@ -107,9 +107,39 @@
     <string name="settings_privacy_policy">Personvernbestemmelser</string>
 
 
+    <!-- This string is used as the title of the pop-ups dialog used to remove sites from the currently
+         allowed pop-up sites. -->
+    <string name="settings_privacy_policy_popups_title_v1">Unntak for sprettopp-vinduer</string>
+
     <!-- This string is displayed under the title the pop-ups dialog used to remove sites from the currently
          allowed pop-up sites. -->
     <string name="settings_privacy_policy_popups_description">Du kan spesifisere hvilke nettsteder som kan åpne sprettoppvinduer</string>
+
+    <!-- This string is used as the title of the WebXR dialog used to do not allow websites to access WebXR devices. -->
+    <string name="settings_privacy_policy_webxr_title">Tillatelser for virtuell virkelighet</string>
+
+    <!-- This string is displayed under the title the  WebXR dialog used to do not allow websites to access WebXR devices. -->
+    <string name="settings_privacy_policy_webxr_description">Følgende nettsteder er blokkert fra å la WebXR API få tilgang til VR-enheten din.</string>
+
+    <!-- This string is displayed in the first line of a text that's displayed in the middle of allowed pop-ups panel instead of the exceptions list
+     when there are no exceptions. -->
+    <string name="settings_privacy_policy_webxr_empty_description">Når du åpner et nettsted som bruker WebXR, kan du åpne en dialog som lar deg blokkere WebXR på det nettstedet.</string>
+
+    <!-- This string labels the Reset button that removes all the sites not allowed to access WebXR -->
+    <string name="settings_privacy_policy_webxr_reset">Tilbakestill nettstedene som ikke har tilgang til virtuell virkelighet-enheter.</string>
+
+    <!-- This string is used as the title of the Tracking dialog used to do not allow websites to bypass tracking protection. -->
+    <string name="settings_privacy_policy_tracking_title">Unntak for utvidet sporingsbeskyttelse</string>
+
+    <!-- This string is displayed under the title the  Tracking dialog used to do not allow websites to bypass tracking protection. -->
+    <string name="settings_privacy_policy_tracking_description">Du har slått av beskyttelsen på disse nettstedene.</string>
+
+    <!-- This string is displayed in the first line of a text that's displayed in the middle of the etp exceptions instead of the exceptions list
+     when there are no exceptions. -->
+    <string name="settings_privacy_policy_tracking_empty_description">Når du lar et nettsted spore aktiviteten din, vil de vises her.</string>
+
+    <!-- This string labels the Reset button that removes all the sites not allowed to access WebXR -->
+    <string name="settings_privacy_policy_tracking_reset">Tilbakestill unntakene for utvidet sporingsbeskyttelse.</string>
 
     <!-- This string is displayed in the switch of each item of the the pop-up blocking list when the site is allowed. -->
     <string name="pop_up_site_switch_allow">Tillat</string>
@@ -590,6 +620,10 @@
     <string name="fxa_account_last_synced">Sist synkronisert for %1$d minutt siden</string>
 
         <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
+     and is used to enable or disable playback of DRM controlled content. -->
+    <string name="security_options_drm_content_v1">La nettsteder automatisk identifisere enheten din for å spille av DRM-kontrollert innhold. (&lt;a href=&quot;%1$s&quot;&gt;Les mer&lt;/a&gt;)</string>
+
+    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable the tabs restoration after a fresh app start. -->
     <string name="security_options_restore_tabs">Gjenopprett faner og vinduer etter omstart</string>
 

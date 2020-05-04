@@ -106,10 +106,6 @@
          describes Mozilla's Privacy Policy. -->
     <string name="settings_privacy_policy">Politique de confidentialité</string>
 
-    <!-- This string is used as the title of the pop-ups dialog used to remove sites from the currently
-         allowed pop-up sites. -->
-    <string name="settings_privacy_policy_popups_title">Autorisations popups</string>
-
     <!-- This string is displayed under the title the pop-ups dialog used to remove sites from the currently
          allowed pop-up sites. -->
     <string name="settings_privacy_policy_popups_description">Vous pouvez spécifier quels sites web sont autorisés à ouvrir des fenêtres popup.</string>
@@ -608,11 +604,7 @@
          when that the content was just synced some time ago. -->
     <string name="fxa_account_last_synced">Dernière synchronisation : il y a %1$d minutes</string>
 
-    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
-     and is used to enable or disable playback of DRM controlled content. -->
-    <string name="security_options_drm_content">Lire du contenu contrôlé par DRM (&lt;a href=&quot;http://somesite.com/&quot;&gt;En savoir plus&lt;/a&gt;)</string>
-
-    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
+        <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable the tabs restoration after a fresh app start. -->
     <string name="security_options_restore_tabs">Restaurer les onglets et les fenêtres après le redémarrage</string>
 
@@ -748,7 +740,7 @@
 
     <!-- This string explains why Mozilla would like the user to allow the crash data to be uploaded.
          '%1$s' will be replaced at runtime with the app's domain name. -->
-    <string name="crash_dialog_message">Aidez Mozilla à améliorer %1$s en envoyant vos données de plantage.</string>
+    <string name="crash_dialog_message">Aidez Mozilla à améliorer %1$s en envoyant vos données de plantage. &lt;a href=&quot;more&quot;&gt;En savoir plus&lt;/a&gt;</string>
 
     <!-- This string labels a checkbox in the crash dialog box. When checked, the user will no longer
          be prompted for permission to upload crash data after an application crash. -->
@@ -863,6 +855,10 @@
     <!-- This string is displayed in a tooltip that appears in the tray bar on top of the
          bookmarks tray button then a new item is bookmarked. -->
     <string name="bookmarks_saved_notification">Enregistré dans les marque-pages !</string>
+
+    <!-- This string is displayed in a notification that appears in the tray bar on top of the
+         downloads tray button then a download finishes. %1$s will be replaced with the downloaded file name. -->
+    <string name="download_completed_notification">%1$s téléchargé</string>
 
     <!-- This string is displayed in a tooltip that appears when a user hovers
          over an icon representing 'Edit This Bookmark' for an individual bookmark
@@ -996,9 +992,6 @@
     <!-- This string labels the Reset button that removes all the sites from the stored allowed pop-ups sites. -->
     <string name="privacy_options_popups_reset">Réinitialiser les paramètres de blocage des fenêtres popup</string>
 
-    <!-- This string is displayed on top of the allowed sites list in the allowed pop-ups panel. -->
-    <string name="privacy_options_popups_list_header">Les sites web suivants ont demandé à ouvrir des fenêtres popup :</string>
-
     <!-- This string is displayed in the first line of a text that's displayed in the middle of allowed pop-ups panel instead of the exceptions list
          when there are no exceptions. -->
     <string name="privacy_options_popups_list_empty_first">Lorsque vous ouvrirez un site web avec des fenêtres popup, vous verrez une boîte de dialogue vous permettant de bloquer les fenêtres popup.</string>
@@ -1009,10 +1002,6 @@
 
     <!-- This string is used to label radio buttons for setting ETP in. -->
     <string name="privacy_options_tracking">Protection renforcée contre le pistage. (&lt;a href=&quot;%1$s&quot;&gt;En savoir plus&lt;/a&gt;)</string>
-
-    <!-- This string labels the button in the privacy option panel that opens the dialog to add/remove
-         Tracking protection exceptions. -->
-    <string name="privacy_options_tracking_exceptions">Exceptions</string>
 
     <!-- This string labels the Reset button that restores the default controller settings values. -->
     <string name="controller_options_reset">Réinitialiser les paramètres du contrôleur</string>
@@ -1452,16 +1441,12 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="slow_script_dialog_action_wait">Patienter</string>
 
 
-    <!-- This string is displayed in the title of the quick WebXR blocking dialog, accessed from the VR icon in the URL bar.
-     '%1$s' will be replaced at runtime with the app's name. -->
-    <string name="webxr_block_dialog_message">« %1$s » souhaite accéder à l’API WebXR</string>
-
-    <!-- This string is displayed in the title of the quick Tracking Protection dialog, accessed from the Tracking Protection icon in the URL bar. -->
+    <!-- This string is displayed in the title of the quick Tracking Protection dialog, accessed from the Tracking Protection icon in the URL bar.
+         '%1$s' will be replaced at runtime with the status of the setting.
+         '%2$s' will be replaced at runtime with the Learn More page link. -->
     <string name="tracking_dialog_message">La protection renforcée contre le pistage est %1$s pour ce site. (&lt;a href=&quot;%2$s&quot;&gt;En savoir plus&lt;/a&gt;)</string>
-
-    <!-- This string is displayed in the enable button of the quick Tracking Protection dialog, accessed from the Tracking Protection icon in the URL bar. -->
-    <string name="tracking_dialog_button_enable">Activer</string>
-
+  
     <!-- This string is displayed in the disable button of the quick Tracking Protection dialog, accessed from the Tracking Protection icon in the URL bar. -->
     <string name="tracking_dialog_button_disable">Désactiver</string>
-</resources>
+
+    </resources>

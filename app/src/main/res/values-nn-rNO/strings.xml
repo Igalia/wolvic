@@ -106,10 +106,6 @@
          describes Mozilla's Privacy Policy. -->
     <string name="settings_privacy_policy">Personvernpraksis</string>
 
-    <!-- This string is used as the title of the pop-ups dialog used to remove sites from the currently
-         allowed pop-up sites. -->
-    <string name="settings_privacy_policy_popups_title">Løyve for sprettoppvindauge</string>
-
     <!-- This string is displayed under the title the pop-ups dialog used to remove sites from the currently
          allowed pop-up sites. -->
     <string name="settings_privacy_policy_popups_description">Du kan spesifisere kva for nettstadar som kan opne sprettoppvindauge</string>
@@ -552,11 +548,7 @@
          when that the content was just synced some time ago. -->
     <string name="fxa_account_last_synced">Sist synkronisert for %1$d minutt sidan</string>
 
-    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
-     and is used to enable or disable playback of DRM controlled content. -->
-    <string name="security_options_drm_content">Spel av DRM-kontrollert innhald (&lt;a href=&quot;http://somesite.com/&quot;&gt;les meir&lt;/a&gt;)</string>
-
-    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
+        <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable the tabs restoration after a fresh app start. -->
     <string name="security_options_restore_tabs">Rett oppatt faner og vindauge etter omstart</string>
 
@@ -936,9 +928,6 @@
 
     <!-- This string labels the Reset button that removes all the sites from the stored allowed pop-ups sites. -->
     <string name="privacy_options_popups_reset">Tilbakestill innstillingane for Blokker sprettoppvindauge</string>
-
-    <!-- This string is displayed on top of the allowed sites list in the allowed pop-ups panel. -->
-    <string name="privacy_options_popups_list_header">Følgjande nettstadar har bedt om å opne sprettoppvindauge:</string>
 
     <!-- This string is displayed in the first line of a text that's displayed in the middle of allowed pop-ups panel instead of the exceptions list
          when there are no exceptions. -->
@@ -1367,6 +1356,8 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed as a button below the slow script dialog description message. When clicked
        it continues to wait for execution of the web page script that caused the slow down. -->
     <string name="slow_script_dialog_action_wait">Vent</string>
-
+  
+    <!-- This string is displayed in the confirmation dialog when the delete all button is clicked in the downloads list. -->
+    <string name="download_delete_all_confirm_body">Er du sikker på at du vil slette alle nedlasta filer?</string>
 
     </resources>
