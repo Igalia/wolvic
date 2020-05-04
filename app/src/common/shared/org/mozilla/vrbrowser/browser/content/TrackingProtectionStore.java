@@ -178,7 +178,17 @@ public class TrackingProtectionStore implements DefaultLifecycleObserver,
 
     public void removeAll() {
         // We can't use clearExceptionList as that clears also the private browsing exceptions
-        mSitePermissions.forEach(this::remove);
+        mSitePermissions.forEach(permission -> {
+            ContentBlockingException exception = toContentBlockingException(permission);
+            if (exception != null) {
+                mContentBlockingController.removeException(exception);
+            }
+            mListeners.forEach(listener -> listener.onExcludedTrackingProtectionChange(
+                    permission.url,
+                    false,
+                    false));
+        });
+        saveExceptions();
     }
 
     private void saveExceptions() {
