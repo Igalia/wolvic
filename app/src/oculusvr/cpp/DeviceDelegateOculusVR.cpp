@@ -371,10 +371,10 @@ struct DeviceDelegateOculusVR::State {
         controllerState.enabled = true;
 
         if (!controllerState.created) {
+          vrb::Matrix beamTransform(vrb::Matrix::Identity());
           if (controllerState.capabilities.ControllerCapabilities &
               ovrControllerCaps_ModelOculusTouch) {
             std::string controllerName;
-            vrb::Matrix beamTransform(vrb::Matrix::Identity());
             if (controllerState.hand == ElbowModel::HandEnum::Left) {
               beamTransform.TranslateInPlace(vrb::Vector(-0.011f, -0.007f, 0.0f));
               controllerName = "Oculus Touch (Left)";
@@ -391,7 +391,6 @@ struct DeviceDelegateOculusVR::State {
             const vrb::Matrix trans = vrb::Matrix::Position(vrb::Vector(0.0f, 0.02f, -0.03f));
             vrb::Matrix transform = vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), -0.77f);
             transform = transform.PostMultiply(trans);
-
             controller->SetImmersiveBeamTransform(controllerState.index, beamTransform.PostMultiply(transform));
           } else {
             // Oculus Go only has one kind of controller model.
@@ -402,6 +401,11 @@ struct DeviceDelegateOculusVR::State {
             // Oculus Go has no haptic feedback.
             controller->SetHapticCount(controllerState.index, 0);
             controller->SetControllerType(controllerState.index, device::OculusGo);
+
+            const vrb::Matrix trans = vrb::Matrix::Position(vrb::Vector(0.0f, 0.028f, -0.072f));
+            vrb::Matrix transform = vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), -0.55f);
+            transform = transform.PostMultiply(trans);
+            controller->SetImmersiveBeamTransform(controllerState.index, beamTransform.PostMultiply(transform));
           }
           controller->SetTargetRayMode(controllerState.index, device::TargetRayMode::TrackedPointer);
           controllerState.created = true;
@@ -458,12 +462,16 @@ struct DeviceDelegateOculusVR::State {
 
       flags |= device::GripSpacePosition;
       controller->SetCapabilityFlags(controllerState.index, flags);
-      if (renderMode == device::RenderMode::Immersive && controllerState.Is6DOF()) {
+      if (renderMode == device::RenderMode::Immersive) {
         static vrb::Matrix transform(vrb::Matrix::Identity());
         if (transform.IsIdentity()) {
-          transform = vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), 0.77f);
-          const vrb::Matrix trans = vrb::Matrix::Position(vrb::Vector(0.0f, 0.0f, 0.025f));
-          transform = transform.PostMultiply(trans);
+          if (controllerState.Is6DOF()) {
+            transform = vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), 0.77f);
+            const vrb::Matrix trans = vrb::Matrix::Position(vrb::Vector(0.0f, 0.0f, 0.025f));
+            transform = transform.PostMultiply(trans);
+          } else {
+            transform = vrb::Matrix::Rotation(vrb::Vector(1.0f, 0.0f, 0.0f), 0.60f);
+          }
         }
         controllerState.transform = controllerState.transform.PostMultiply(transform);
       }
