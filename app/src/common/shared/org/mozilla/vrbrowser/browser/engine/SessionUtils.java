@@ -30,42 +30,42 @@ class SessionUtils {
         String prefFileName = path.getAbsolutePath() + File.separator + "user.js";
         Log.i(LOGTAG, "Creating file: " + prefFileName);
         try (FileOutputStream out = new FileOutputStream(prefFileName)) {
-            out.write("pref(\"dom.vr.enabled\", true);\n".getBytes());
-            out.write("pref(\"dom.vr.external.enabled\", true);\n".getBytes());
-            out.write("pref(\"dom.vr.webxr.enabled\", true);\n".getBytes());
-            out.write("pref(\"webgl.enable-surface-texture\", true);\n".getBytes());
+            out.write("user_pref(\"dom.vr.enabled\", true);\n".getBytes());
+            out.write("user_pref(\"dom.vr.external.enabled\", true);\n".getBytes());
+            out.write("user_pref(\"dom.vr.webxr.enabled\", true);\n".getBytes());
+            out.write("user_pref(\"webgl.enable-surface-texture\", true);\n".getBytes());
             // Enable MultiView draft extension
-            out.write("pref(\"webgl.enable-draft-extensions\", true);\n".getBytes());
-            out.write("pref(\"apz.allow_double_tap_zooming\", false);\n".getBytes());
-            out.write("pref(\"dom.webcomponents.customelements.enabled\", true);\n".getBytes());
-            out.write("pref(\"javascript.options.ion\", true);\n".getBytes());
-            out.write("pref(\"media.webspeech.synth.enabled\", false);\n".getBytes());
+            out.write("user_pref(\"webgl.enable-draft-extensions\", true);\n".getBytes());
+            out.write("user_pref(\"apz.allow_double_tap_zooming\", false);\n".getBytes());
+            out.write("user_pref(\"dom.webcomponents.customelements.enabled\", true);\n".getBytes());
+            out.write("user_pref(\"javascript.options.ion\", true);\n".getBytes());
+            out.write("user_pref(\"media.webspeech.synth.enabled\", false);\n".getBytes());
             // Prevent autozoom when giving a form field focus.
-            out.write("pref(\"formhelper.autozoom\", false);\n".getBytes());
+            out.write("user_pref(\"formhelper.autozoom\", false);\n".getBytes());
             // Disable WebRender until it works with FxR
-            out.write("pref(\"gfx.webrender.force-disabled\", true);\n".getBytes());
-            out.write("pref(\"signon.rememberSignons\", false);\n".getBytes());
+            out.write("user_pref(\"gfx.webrender.force-disabled\", true);\n".getBytes());
+            out.write("user_pref(\"signon.rememberSignons\", false);\n".getBytes());
             // Disable web extension process until it is able to restart.
-            out.write("pref(\"extensions.webextensions.remote\", false);\n".getBytes());
+            out.write("user_pref(\"extensions.webextensions.remote\", false);\n".getBytes());
             if (BuildConfig.DEBUG) {
                 int processCount = SettingsStore.getInstance(aContext).isMultiE10s() ? 3 : 1;
-                out.write(("pref(\"dom.ipc.processCount\", " + processCount + ");\n").getBytes());
+                out.write(("user_pref(\"dom.ipc.processCount\", " + processCount + ");\n").getBytes());
             }
             int msaa = SettingsStore.getInstance(aContext).getMSAALevel();
             if (msaa > 0) {
                 int msaaLevel = msaa == 2 ? 4 : 2;
-                out.write(("pref(\"webgl.msaa-samples\"," + msaaLevel + ");\n").getBytes());
-                out.write("pref(\"webgl.msaa-force\", true);\n".getBytes());
+                out.write(("user_pref(\"webgl.msaa-samples\"," + msaaLevel + ");\n").getBytes());
+                out.write("user_pref(\"webgl.msaa-force\", true);\n".getBytes());
             } else {
-                out.write("pref(\"webgl.msaa-force\", false);\n".getBytes());
+                out.write("user_pref(\"webgl.msaa-force\", false);\n".getBytes());
             }
             addOptionalPref(out, "dom.vr.require-gesture", aExtras);
             addOptionalPref(out, "privacy.reduceTimerPrecision", aExtras);
             if (aExtras != null && aExtras.getBoolean("media.autoplay.enabled", false)) {
                 // Enable playing audios without gesture (used for gfx automated testing)
-                out.write("pref(\"media.autoplay.enabled.user-gestures-needed\", false);\n".getBytes());
-                out.write("pref(\"media.autoplay.enabled.ask-permission\", false);\n".getBytes());
-                out.write("pref(\"media.autoplay.default\", 0);\n".getBytes());
+                out.write("user_pref(\"media.autoplay.enabled.user-gestures-needed\", false);\n".getBytes());
+                out.write("user_pref(\"media.autoplay.enabled.ask-permission\", false);\n".getBytes());
+                out.write("user_pref(\"media.autoplay.default\", 0);\n".getBytes());
             }
         } catch (FileNotFoundException e) {
             Log.e(LOGTAG, "Unable to create file: '" + prefFileName + "' got exception: " + e.toString());
@@ -77,7 +77,7 @@ class SessionUtils {
     private static void addOptionalPref(FileOutputStream out, String aKey, Bundle aExtras) throws IOException {
         if (aExtras != null && aExtras.containsKey(aKey)) {
             boolean value = aExtras.getBoolean(aKey);
-            out.write(String.format("pref(\"%s\", %s);\n", aKey, value ? "true" : "false").getBytes());
+            out.write(String.format("user_pref(\"%s\", %s);\n", aKey, value ? "true" : "false").getBytes());
         }
     }
 }
