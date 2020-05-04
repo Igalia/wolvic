@@ -172,6 +172,8 @@ public class WindowViewModel extends AndroidViewModel {
         isUrlBarButtonsVisible.addSource(isDrmUsed, mIsUrlBarButtonsVisibleObserver);
         isUrlBarButtonsVisible.addSource(isPopUpAvailable, mIsUrlBarButtonsVisibleObserver);
         isUrlBarButtonsVisible.addSource(isWebXRUsed, mIsUrlBarButtonsVisibleObserver);
+        isUrlBarButtonsVisible.addSource(isLibraryVisible, mIsUrlBarButtonsVisibleObserver);
+        isUrlBarButtonsVisible.addSource(isFocused, mIsUrlBarButtonsVisibleObserver);
         isUrlBarButtonsVisible.setValue(new ObservableBoolean(false));
 
         isUrlBarIconsVisible = new MediatorLiveData<>();
