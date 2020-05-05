@@ -1615,7 +1615,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed as the body of a dialog that is displayed the first time a user access DRM content if they haven't
          explicitly enable/Disable the DRM setting yet.
          '%1$s' will be replaced at runtime with the Learn More page link. -->
-    <string name="drm_first_use_body_v1">DRM을 허용하면 이 사이트에서 사용자가 방문할 때마다 이 기기를 식별 할 수 있습니다. &lt;a href=&quot;%1$s&quot;&gt;더 알아보기&lt;/a&gt;</string>
+    <string name="drm_first_use_body_v2">DRM을 허용하면 사이트에서 사용자가 방문할 때마다 이 기기를 식별 할 수 있습니다. &lt;a href=&quot;%1$s&quot;&gt;더 알아보기&lt;/a&gt;</string>
   
     <!-- This string is displayed in the enable button that is displayed inside the dialog that is displayed the first time a user access
          access DRM content if they haven't explicitly enable/Disable the DRM setting yet. -->

@@ -1608,11 +1608,11 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed as the title of a dialog that is displayed the first time a user access DRM content if they haven't
          explicitly enable/Disable the DRM setting yet. -->
     <string name="drm_first_use_title_v1">Denna webbplats innehåller DRM-innehåll.</string>
-
+  
     <!-- This string is displayed as the body of a dialog that is displayed the first time a user access DRM content if they haven't
          explicitly enable/Disable the DRM setting yet.
          '%1$s' will be replaced at runtime with the Learn More page link. -->
-    <string name="drm_first_use_body_v1">Genom att tillåta DRM tillåter denna webbplats att identifiera den här enheten varje gång du besöker. &lt;a href=&quot;%1$s&quot;&gt;Läs mer&lt;/a&gt;</string>
+    <string name="drm_first_use_body_v2">Genom att tillåta DRM tillåter denna webbplats att identifiera den här enheten varje gång du besöker. &lt;a href=&quot;%1$s&quot;&gt;Läs mer&lt;/a&gt;</string>
   
     <!-- This string is displayed in the enable button that is displayed inside the dialog that is displayed the first time a user access
          access DRM content if they haven't explicitly enable/Disable the DRM setting yet. -->
