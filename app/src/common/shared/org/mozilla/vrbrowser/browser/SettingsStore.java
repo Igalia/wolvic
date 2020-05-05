@@ -101,7 +101,7 @@ public class SettingsStore {
     public final static boolean BYPASS_CACHE_ON_RELOAD = false;
     public final static boolean MULTI_E10S = false;
     public final static int DOWNLOADS_STORAGE_DEFAULT = INTERNAL;
-    public final static int DOWNLOADS_SORTING_ORDER_DEFAULT = SortingContextMenuWidget.SORT_FILENAME_AZ;
+    public final static int DOWNLOADS_SORTING_ORDER_DEFAULT = SortingContextMenuWidget.SORT_DATE_ASC;
 
     // Enable telemetry by default (opt-out).
     public final static boolean CRASH_REPORTING_DEFAULT = false;

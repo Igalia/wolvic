@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 public class SortingContextMenuWidget extends MenuWidget {
 
-    @IntDef(value = {SORT_FILENAME_AZ, SORT_FILENAME_ZA, SORT_DATE_ASC, SORT_DATE_DESC})
+    @IntDef(value = {SORT_FILENAME_AZ, SORT_FILENAME_ZA, SORT_DATE_ASC, SORT_DATE_DESC, SORT_SIZE_ASC, SORT_SIZE_DESC})
     public @interface Order {}
     public static final int SORT_FILENAME_AZ = 0;
     public static final int SORT_FILENAME_ZA = 1;
