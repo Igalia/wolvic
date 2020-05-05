@@ -24,6 +24,7 @@ import org.mozilla.vrbrowser.utils.StringUtils;
 import org.mozilla.vrbrowser.utils.UrlUtils;
 
 import java.util.ArrayList;
+import java.util.function.Predicate;
 
 public class ContextMenuWidget extends MenuWidget {
     ArrayList<MenuItem> mItems;
@@ -75,6 +76,10 @@ public class ContextMenuWidget extends MenuWidget {
         }
     }
 
+    public boolean hasActions() {
+        return mItems.stream().anyMatch(menuItem -> menuItem.mCallback != null);
+    }
+
     public void setDismissCallback(Runnable aCallback) {
         mDismissCallback = aCallback;
     }
@@ -110,7 +115,7 @@ public class ContextMenuWidget extends MenuWidget {
         } else {
             mItems.add(new MenuWidget.MenuItem(aContextElement.srcUri, 0, null));
         }
-        if (URLUtil.isHttpUrl(aContextElement.srcUri) || URLUtil.isHttpsUrl(aContextElement.srcUri)) {
+        if (URLUtil.isNetworkUrl(aContextElement.srcUri)) {
             @StringRes int srcText;
             switch (aContextElement.type) {
                 case ContextElement.TYPE_IMAGE:
@@ -133,33 +138,35 @@ public class ContextMenuWidget extends MenuWidget {
                 onDismiss();
             }));
         }
-        mItems.add(new MenuWidget.MenuItem(getContext().getString(R.string.context_menu_copy_link), 0, () -> {
-            ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
-            Uri uri;
-            if (aContextElement.linkUri != null) {
-                uri = Uri.parse(aContextElement.linkUri);
+        if (URLUtil.isNetworkUrl(aContextElement.linkUri) || URLUtil.isNetworkUrl(aContextElement.srcUri)) {
+            mItems.add(new MenuWidget.MenuItem(getContext().getString(R.string.context_menu_copy_link), 0, () -> {
+                ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                Uri uri;
+                if (aContextElement.linkUri != null) {
+                    uri = Uri.parse(aContextElement.linkUri);
 
-            } else {
-                uri = Uri.parse(aContextElement.srcUri);
-            }
-            if (uri != null) {
-                String label = aContextElement.title;
-                if (StringUtils.isEmpty(label)) {
-                    label = aContextElement.altText;
+                } else {
+                    uri = Uri.parse(aContextElement.srcUri);
                 }
-                if (StringUtils.isEmpty(label)) {
-                    label = aContextElement.altText;
+                if (uri != null) {
+                    String label = aContextElement.title;
+                    if (StringUtils.isEmpty(label)) {
+                        label = aContextElement.altText;
+                    }
+                    if (StringUtils.isEmpty(label)) {
+                        label = aContextElement.altText;
+                    }
+                    if (StringUtils.isEmpty(label)) {
+                        label = uri.toString();
+                    }
+                    ClipData clip = ClipData.newRawUri(label, uri);
+                    if (clipboard != null) {
+                        clipboard.setPrimaryClip(clip);
+                    }
                 }
-                if (StringUtils.isEmpty(label)) {
-                    label = uri.toString();
-                }
-                ClipData clip = ClipData.newRawUri(label, uri);
-                if (clipboard != null) {
-                    clipboard.setPrimaryClip(clip);
-                }
-            }
-            onDismiss();
-        }));
+                onDismiss();
+            }));
+        }
         updateMenuItems(mItems);
 
         mWidgetPlacement.height = mItems.size() * WidgetPlacement.dpDimension(getContext(), R.dimen.context_menu_row_height);

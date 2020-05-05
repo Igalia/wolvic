@@ -1609,6 +1609,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mContextMenu.mWidgetPlacement.parentHandle = getHandle();
         mContextMenu.setDismissCallback(this::hideContextMenus);
         mContextMenu.setContextElement(element);
+        if (!mContextMenu.hasActions()) {
+            hideContextMenus();
+            return;
+        }
         mContextMenu.show(REQUEST_FOCUS);
 
         mWidgetPlacement.tintColor = 0x555555FF;
