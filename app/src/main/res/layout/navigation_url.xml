@@ -111,7 +111,7 @@
                         android:src="@{viewmodel.isPopUpBlocked ? @drawable/ic_icon_popup_blocked : @drawable/ic_icon_popup}"
                         tools:src="@drawable/ic_icon_popup_blocked"
                         android:tint="@color/fog"
-                        android:tooltipText="@string/popup_tooltip"
+                        android:tooltipText="@{viewmodel.isPopUpBlocked ? @string/popup_blocked_tooltip : @string/popup_tooltip_v1}"
                         app:privateMode="@{viewmodel.isPrivateSession}" />
                 </LinearLayout>
 

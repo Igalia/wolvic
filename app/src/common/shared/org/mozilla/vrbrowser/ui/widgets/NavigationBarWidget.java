@@ -1204,7 +1204,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
                 showNotification(POPUP_NOTIFICATION_ID,
                         mBinding.navigationBarNavigation.urlBar.getPopUpButton(),
                         NotificationManager.Notification.TOP,
-                        R.string.popup_tooltip);
+                        R.string.popup_blocked_tooltip);
             }
         }, POP_UP_NOTIFICATION_DELAY);
     }
