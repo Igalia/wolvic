@@ -47,10 +47,6 @@ class SessionUtils {
             out.write("user_pref(\"signon.rememberSignons\", false);\n".getBytes());
             // Disable web extension process until it is able to restart.
             out.write("user_pref(\"extensions.webextensions.remote\", false);\n".getBytes());
-            if (BuildConfig.DEBUG) {
-                int processCount = SettingsStore.getInstance(aContext).isMultiE10s() ? 3 : 1;
-                out.write(("user_pref(\"dom.ipc.processCount\", " + processCount + ");\n").getBytes());
-            }
             int msaa = SettingsStore.getInstance(aContext).getMSAALevel();
             if (msaa > 0) {
                 int msaaLevel = msaa == 2 ? 4 : 2;
@@ -59,13 +55,17 @@ class SessionUtils {
             } else {
                 out.write("user_pref(\"webgl.msaa-force\", false);\n".getBytes());
             }
-            addOptionalPref(out, "dom.vr.require-gesture", aExtras);
-            addOptionalPref(out, "privacy.reduceTimerPrecision", aExtras);
-            if (aExtras != null && aExtras.getBoolean("media.autoplay.enabled", false)) {
-                // Enable playing audios without gesture (used for gfx automated testing)
-                out.write("user_pref(\"media.autoplay.enabled.user-gestures-needed\", false);\n".getBytes());
-                out.write("user_pref(\"media.autoplay.enabled.ask-permission\", false);\n".getBytes());
-                out.write("user_pref(\"media.autoplay.default\", 0);\n".getBytes());
+            if (BuildConfig.DEBUG) {
+                int processCount = SettingsStore.getInstance(aContext).isMultiE10s() ? 3 : 1;
+                out.write(("user_pref(\"dom.ipc.processCount\", " + processCount + ");\n").getBytes());
+                addOptionalPref(out, "dom.vr.require-gesture", aExtras);
+                addOptionalPref(out, "privacy.reduceTimerPrecision", aExtras);
+                if (aExtras != null && aExtras.getBoolean("media.autoplay.enabled", false)) {
+                    // Enable playing audios without gesture (used for gfx automated testing)
+                    out.write("user_pref(\"media.autoplay.enabled.user-gestures-needed\", false);\n".getBytes());
+                    out.write("user_pref(\"media.autoplay.enabled.ask-permission\", false);\n".getBytes());
+                    out.write("user_pref(\"media.autoplay.default\", 0);\n".getBytes());
+                }
             }
         } catch (FileNotFoundException e) {
             Log.e(LOGTAG, "Unable to create file: '" + prefFileName + "' got exception: " + e.toString());
