@@ -286,7 +286,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     }
 
     public void addNavigationListener(GeckoSession.NavigationDelegate aListener) {
-        mNavigationListeners.add(aListener);
+        mNavigationListeners.addIfAbsent(aListener);
         dumpState(aListener);
     }
 
@@ -295,7 +295,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     }
 
     public void addProgressListener(GeckoSession.ProgressDelegate aListener) {
-        mProgressListeners.add(aListener);
+        mProgressListeners.addIfAbsent(aListener);
         dumpState(aListener);
     }
 
@@ -304,7 +304,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     }
 
     public void addContentListener(GeckoSession.ContentDelegate aListener) {
-        mContentListeners.add(aListener);
+        mContentListeners.addIfAbsent(aListener);
         dumpState(aListener);
     }
 
@@ -313,7 +313,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     }
 
     public void addSessionChangeListener(SessionChangeListener aListener) {
-        mSessionChangeListeners.add(aListener);
+        mSessionChangeListeners.addIfAbsent(aListener);
     }
 
     public void removeSessionChangeListener(SessionChangeListener aListener) {
@@ -321,7 +321,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     }
 
     public void addTextInputListener(GeckoSession.TextInputDelegate aListener) {
-        mTextInputListeners.add(aListener);
+        mTextInputListeners.addIfAbsent(aListener);
     }
 
     public void removeTextInputListener(GeckoSession.TextInputDelegate aListener) {
@@ -329,7 +329,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     }
 
     public void addVideoAvailabilityListener(VideoAvailabilityListener aListener) {
-        mVideoAvailabilityListeners.add(aListener);
+        mVideoAvailabilityListeners.addIfAbsent(aListener);
         dumpState(aListener);
     }
 
@@ -338,7 +338,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     }
 
     public void addSelectionActionListener(GeckoSession.SelectionActionDelegate aListener) {
-        mSelectionActionListeners.add(aListener);
+        mSelectionActionListeners.addIfAbsent(aListener);
     }
 
     public void removeSelectionActionListener(GeckoSession.ContentDelegate aListener) {
@@ -346,7 +346,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     }
 
     public void addBitmapChangedListener(BitmapChangedListener aListener) {
-        mBitmapChangedListeners.add(aListener);
+        mBitmapChangedListeners.addIfAbsent(aListener);
     }
 
     public void removeBitmapChangedListener(BitmapChangedListener aListener) {
@@ -354,7 +354,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     }
 
     public void addWebXRStateChangedListener(WebXRStateChangedListener aListener) {
-        mWebXRStateListeners.add(aListener);
+        mWebXRStateListeners.addIfAbsent(aListener);
         dumpState(aListener);
     }
 
@@ -363,7 +363,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     }
 
     public void addPopUpStateChangedListener(PopUpStateChangedListener aListener) {
-        mPopUpStateStateListeners.add(aListener);
+        mPopUpStateStateListeners.addIfAbsent(aListener);
         dumpState(aListener);
     }
 
@@ -372,7 +372,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     }
 
     public void addDrmStateChangedListener(DrmStateChangedListener aListener) {
-        mDrmStateStateListeners.add(aListener);
+        mDrmStateStateListeners.addIfAbsent(aListener);
         dumpState(aListener);
     }
 

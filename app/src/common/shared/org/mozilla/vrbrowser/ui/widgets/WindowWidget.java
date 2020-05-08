@@ -1158,12 +1158,17 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     @Override
     public void onStackSession(Session aSession) {
+        if (aSession == mSession) {
+            Log.e(LOGTAG, "Attempting to stack same session.");
+            return;
+        }
         // e.g. tab opened via window.open()
         aSession.updateLastUse();
         Session current = mSession;
         setupListeners(aSession);
         setSession(aSession);
         SessionStore.get().setActiveSession(aSession);
+        aSession.setActive(true);
         current.captureBackgroundBitmap(getWindowWidth(), getWindowHeight()).thenAccept(aVoid -> current.setActive(false));
         mWidgetManager.getWindows().showTabAddedNotification();
 
