@@ -473,7 +473,7 @@
     <string name="privacy_options_tracking_strict">Строгая</string>
 
     <!-- This string is used as the description of the 'Strict' radio button of the 'Enhanced Tracking protection' settings option. -->
-    <string name="privacy_options_tracking_strict_description">Усиленная защита может вызывать проблемы с некоторыми веб-сайтами и их содержимым.</string>
+    <string name="privacy_options_tracking_strict_description">Усиленная защита может вызывать проблемы с некоторыми сайтами и их содержимым.</string>
 
     <!-- This string is used to label the 'Off' radio button of the 'Tracking protection' settings option. -->
     <string name="privacy_options_tracking_off">Отключена</string>
