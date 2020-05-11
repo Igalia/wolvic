@@ -63,6 +63,16 @@ The following metrics are added to the ping:
 This ping is sent at the end of a session (when Firefox Reality switches to the background). We usually send search and UI control metrics at the end of a session.
 
 
+This ping includes the [client id](https://mozilla.github.io/glean/book/user/pings/index.html#the-client_info-section).
+
+**Data reviews for this ping:**
+
+- <https://github.com/MozillaReality/FirefoxReality/pull/2241#issuecomment-557740258>
+
+**Bugs related to this ping:**
+
+- <https://github.com/MozillaReality/FirefoxReality/issues/2230>
+
 The following metrics are added to the ping:
 
 | Name | Type | Description | Data reviews | Extras | Expiration |

@@ -84,9 +84,9 @@ public class GleanMetricsService {
             }
 
             if (domainMap.add(UrlUtils.stripCommonSubdomains(uriLink.getHost()))) {
-                Url.INSTANCE.getDomains().add();
+                Url.INSTANCE.domains().add();
             }
-            Url.INSTANCE.getVisits().add();
+            Url.INSTANCE.visits().add();
 
         } catch (IllegalArgumentException e) {
             Log.e(LOGTAG, "Invalid URL", e);
@@ -96,7 +96,7 @@ public class GleanMetricsService {
 
     public static void sessionStop() {
         domainMap.clear();
-        Pings.INSTANCE.getSessionEnd().send();
+        Pings.INSTANCE.sessionEnd().send();
     }
 
     @UiThread
@@ -153,11 +153,11 @@ public class GleanMetricsService {
     }
 
     public static void newWindowOpenEvent() {
-        Control.INSTANCE.getOpenNewWindow().add();
+        Control.INSTANCE.openNewWindow().add();
     }
 
     private static void setStartupMetrics() {
-        Distribution.INSTANCE.getChannelName().set(DeviceType.isOculusBuild() ? "oculusvr" : BuildConfig.FLAVOR_platform);
+        Distribution.INSTANCE.channelName().set(DeviceType.isOculusBuild() ? "oculusvr" : BuildConfig.FLAVOR_platform);
     }
 
     @VisibleForTesting
@@ -168,29 +168,29 @@ public class GleanMetricsService {
     public static class FxA {
 
         public static void signIn() {
-            FirefoxAccount.INSTANCE.getSignIn().record();
+            FirefoxAccount.INSTANCE.signIn().record();
         }
 
         public static void signInResult(boolean status) {
             Map<FirefoxAccount.signInResultKeys, String> map = new HashMap<>();
             map.put(FirefoxAccount.signInResultKeys.state, String.valueOf(status));
-            FirefoxAccount.INSTANCE.getSignInResult().record(map);
+            FirefoxAccount.INSTANCE.signInResult().record(map);
         }
 
         public static void signOut() {
-            FirefoxAccount.INSTANCE.getSignOut().record();
+            FirefoxAccount.INSTANCE.signOut().record();
         }
 
         public static void bookmarksSyncStatus(boolean status) {
-            FirefoxAccount.INSTANCE.getBookmarksSyncStatus().set(status);
+            FirefoxAccount.INSTANCE.bookmarksSyncStatus().set(status);
         }
 
         public static void historySyncStatus(boolean status) {
-            FirefoxAccount.INSTANCE.getHistorySyncStatus().set(status);
+            FirefoxAccount.INSTANCE.historySyncStatus().set(status);
         }
 
         public static void sentTab() {
-            FirefoxAccount.INSTANCE.getTabSent().add();
+            FirefoxAccount.INSTANCE.tabSent().add();
         }
 
         public static void receivedTab(@NonNull mozilla.components.concept.sync.DeviceType source) {
@@ -217,7 +217,7 @@ public class GleanMetricsService {
         }
 
         public static void activatedEvent() {
-            org.mozilla.vrbrowser.GleanMetrics.Tabs.INSTANCE.getActivated().add();
+            org.mozilla.vrbrowser.GleanMetrics.Tabs.INSTANCE.activated().add();
         }
     }
 }

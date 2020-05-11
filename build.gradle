@@ -4,7 +4,7 @@ buildscript {
     apply from: 'versions.gradle'
     addRepos(repositories)
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.6.1'
+        classpath 'com.android.tools.build:gradle:3.6.3'
         classpath "org.mozilla.components:tooling-glean-gradle:$versions.android_components"
         classpath "$deps.kotlin.plugin"
 

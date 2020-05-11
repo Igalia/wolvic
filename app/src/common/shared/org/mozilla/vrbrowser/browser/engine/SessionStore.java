@@ -278,7 +278,7 @@ public class SessionStore implements GeckoSession.PermissionDelegate{
             mRuntime.configurationChanged(newConfig);
         }
 
-        mBookmarksStore.onConfigurationChanged(newConfig);
+        mBookmarksStore.onConfigurationChanged();
     }
 
     // Session Settings

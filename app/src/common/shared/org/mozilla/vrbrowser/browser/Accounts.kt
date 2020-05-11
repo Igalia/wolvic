@@ -296,7 +296,7 @@ class Accounts constructor(val context: Context) {
 
     fun pollForEventsAsync(): CompletableFuture<Boolean?>? {
         return CoroutineScope(Dispatchers.Main).future {
-            services.accountManager.authenticatedAccount()?.deviceConstellation()?.pollForEventsAsync()?.await()
+            services.accountManager.authenticatedAccount()?.deviceConstellation()?.pollForCommandsAsync()?.await()
         }
     }
 
@@ -368,8 +368,8 @@ class Accounts constructor(val context: Context) {
                 }
 
                 targets?.forEach { it ->
-                    constellation.sendEventToDeviceAsync(
-                            it.id, DeviceEventOutgoing.SendTab(title, url)
+                    constellation.sendCommandToDeviceAsync(
+                            it.id, DeviceCommandOutgoing.SendTab(title, url)
                     ).await().also { if (it) GleanMetricsService.FxA.sentTab() }
                 }
             }

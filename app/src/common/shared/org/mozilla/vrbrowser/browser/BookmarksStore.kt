@@ -83,7 +83,7 @@ class BookmarksStore constructor(val context: Context) {
     }
 
     // Update the folder strings after a language update
-    fun onConfigurationChanged(newConfig: Configuration) {
+    fun onConfigurationChanged() {
         titles = rootTitles(context)
     }
 
