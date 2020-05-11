@@ -1687,4 +1687,20 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         }
         mState.mDisplay.surfaceChanged(surface, left, top, width, height);
     }
+
+    public void logState() {
+        if (mState == null) {
+            Log.d(LOGTAG, "Session state is null");
+            return;
+        }
+        Log.d(LOGTAG, "Session: " + (mState.mSession != null ? mState.mSession.hashCode() : "null"));
+        Log.d(LOGTAG, "\tActive: " + mState.isActive());
+        Log.d(LOGTAG, "\tUri: " + (mState.mUri != null ? mState.mUri : "null"));
+        Log.d(LOGTAG, "\tFullscreen: " + mState.mFullScreen);
+        Log.d(LOGTAG, "\tCan go back: " + mState.mCanGoBack);
+        Log.d(LOGTAG, "\tCan go forward: " + mState.mCanGoForward);
+        if (mState.mSettings != null) {
+            Log.d(LOGTAG, "\tPrivate Browsing: " + mState.mSettings.isPrivateBrowsingEnabled());
+        }
+    }
 }
