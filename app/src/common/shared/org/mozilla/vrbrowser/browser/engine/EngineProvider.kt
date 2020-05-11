@@ -38,6 +38,8 @@ object EngineProvider {
             builder.screenSizeOverride(SettingsStore.getInstance(context).maxWindowWidth,
                     SettingsStore.getInstance(context).maxWindowHeight)
             builder.useMultiprocess(true)
+            builder.inputAutoZoomEnabled(false)
+            builder.doubleTapZoomingEnabled(false)
 
             if (SettingsStore.getInstance(context).transparentBorderWidth > 0) {
                 builder.useMaxScreenDepth(true)
