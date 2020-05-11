@@ -36,15 +36,11 @@ class SessionUtils {
             out.write("user_pref(\"webgl.enable-surface-texture\", true);\n".getBytes());
             // Enable MultiView draft extension
             out.write("user_pref(\"webgl.enable-draft-extensions\", true);\n".getBytes());
-            out.write("user_pref(\"apz.allow_double_tap_zooming\", false);\n".getBytes());
             out.write("user_pref(\"dom.webcomponents.customelements.enabled\", true);\n".getBytes());
             out.write("user_pref(\"javascript.options.ion\", true);\n".getBytes());
             out.write("user_pref(\"media.webspeech.synth.enabled\", false);\n".getBytes());
-            // Prevent autozoom when giving a form field focus.
-            out.write("user_pref(\"formhelper.autozoom\", false);\n".getBytes());
             // Disable WebRender until it works with FxR
             out.write("user_pref(\"gfx.webrender.force-disabled\", true);\n".getBytes());
-            out.write("user_pref(\"signon.rememberSignons\", false);\n".getBytes());
             // Disable web extension process until it is able to restart.
             out.write("user_pref(\"extensions.webextensions.remote\", false);\n".getBytes());
             int msaa = SettingsStore.getInstance(aContext).getMSAALevel();
