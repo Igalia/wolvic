@@ -249,7 +249,7 @@ public class PromptDelegate implements
             Session session = mAttachedWindow.getSession();
             if (session != null) {
                 final String uri = UrlUtils.getHost(session.getCurrentUri());
-                SitePermission site = mAllowedPopUpSites.stream().filter((item) -> item.url.equals(uri)).findFirst().orElse(null);
+                SitePermission site = mAllowedPopUpSites.stream().filter((item) -> UrlUtils.getHost(item.url).equals(uri)).findFirst().orElse(null);
                 if (site != null) {
                     result.complete(popupPrompt.confirm(AllowOrDeny.ALLOW));
                     session.setPopUpState(SessionState.POPUP_ALLOWED);
