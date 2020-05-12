@@ -1008,7 +1008,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         public void run() {
             synchronized (mCompositorLock) {
                 Log.d(LOGTAG, "About to pause Compositor");
-                mWindows.pauseCompositor();
+                mWindows.onEnterWebXR();
                 Log.d(LOGTAG, "Compositor Paused");
                 done = true;
                 mCompositorLock.notify();
@@ -1069,7 +1069,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         handler.postDelayed(() -> {
             if (!mWindows.isPaused()) {
                 Log.d(LOGTAG, "Compositor resume begin");
-                mWindows.resumeCompositor();
+                mWindows.onExitWebXR();
                 Log.d(LOGTAG, "Compositor resume end");
             }
         }, 20);

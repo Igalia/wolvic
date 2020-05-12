@@ -39,7 +39,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -456,28 +455,50 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         }
     }
 
-    public void pauseCompositor() {
+    public void onEnterWebXR() {
         if (mCompositorPaused) {
             return;
         }
         mCompositorPaused = true;
+
+        Session activeSession = SessionStore.get().getActiveSession();
+
         for (WindowWidget window: mRegularWindows) {
+            Session session = window.getSession();
+            if (session != null && session != activeSession) {
+                session.setActive(false);
+            }
             window.pauseCompositor();
         }
         for (WindowWidget window: mPrivateWindows) {
+            Session session = window.getSession();
+            if (session != null && session != activeSession) {
+                session.setActive(false);
+            }
             window.pauseCompositor();
         }
     }
 
-    public void resumeCompositor() {
+    public void onExitWebXR() {
         if (!mCompositorPaused) {
             return;
         }
         mCompositorPaused = false;
+
+        Session activeSession = SessionStore.get().getActiveSession();
+
         for (WindowWidget window: mRegularWindows) {
+            Session session = window.getSession();
+            if (!mPrivateMode && session != null && session != activeSession) {
+                session.setActive(true);
+            }
             window.resumeCompositor();
         }
         for (WindowWidget window: mPrivateWindows) {
+            Session session = window.getSession();
+            if (mPrivateMode && session != null && session != activeSession) {
+                session.setActive(true);
+            }
             window.resumeCompositor();
         }
     }
@@ -491,7 +512,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     public void onResume() {
         mIsPaused = false;
         if (mCompositorPaused) {
-            resumeCompositor();
+            onExitWebXR();
         }
 
         TelemetryWrapper.resetOpenedWindowsCount(mRegularWindows.size(), false);
