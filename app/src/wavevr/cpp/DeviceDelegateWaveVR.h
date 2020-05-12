@@ -15,6 +15,7 @@ class DeviceDelegateWaveVR : public DeviceDelegate {
 public:
   static DeviceDelegateWaveVRPtr Create(vrb::RenderContextPtr& aContext);
   // DeviceDelegate interface
+  device::DeviceType GetDeviceType() override;
   void SetRenderMode(const device::RenderMode aMode) override;
   device::RenderMode GetRenderMode() override;
   void RegisterImmersiveDisplay(ImmersiveDisplayPtr aDisplay) override;

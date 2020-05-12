@@ -36,7 +36,6 @@ public class PlatformActivity extends VRActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DeviceType.setType(DeviceType.ViveFocusPlus);
 
         queueRunnable(new Runnable() {
             @Override

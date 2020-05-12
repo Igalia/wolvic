@@ -20,8 +20,8 @@
         android:background="#00000000"
         android:padding="5dp">
 
-        <!-- Vive Left Controller -->
-        <!-- vive Right Controller -->
+        <!-- Vive Focus Plus Left Controller -->
+        <!-- vive Focus Plus Right Controller -->
         <RelativeLayout
             app:visibleGone="@{model == DeviceType.ViveFocusPlus &amp;&amp; hand == WebXRInterstitialController.HAND_LEFT}"
             tools:visibility="gone"
@@ -34,7 +34,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:scaleType="fitCenter"
-                android:src="@drawable/controller_focus_left"
+                android:src="@drawable/controller_focus_plus_left"
                 tools:ignore="RtlHardcoded" />
             <ImageView
                 android:layout_width="wrap_content"
@@ -62,7 +62,7 @@
                 android:text="@string/webxr_interstitial_exit_webxr"/>
         </RelativeLayout>
 
-        <!-- Vive Right Controller -->
+        <!-- Vive Focus Plus Right Controller -->
         <RelativeLayout
             app:visibleGone="@{model == DeviceType.ViveFocusPlus &amp;&amp; hand == WebXRInterstitialController.HAND_RIGHT}"
             tools:visibility="visible"
@@ -74,7 +74,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:scaleType="fitCenter"
-                android:src="@drawable/controller_focus_right"
+                android:src="@drawable/controller_focus_plus_right"
                 tools:ignore="RtlHardcoded" />
             <ImageView
                 android:layout_width="wrap_content"
@@ -96,6 +96,42 @@
                 android:layout_marginRight="105dp"
                 android:layout_marginTop="25dp"
                 android:layout_alignParentTop="true"
+                android:textSize="18sp"
+                tools:ignore="RtlHardcoded,RtlSymmetry"
+                android:text="@string/webxr_interstitial_exit_webxr"/>
+        </RelativeLayout>
+        <!-- Vive Focus Controller -->
+        <RelativeLayout
+            app:visibleGone="@{model == DeviceType.ViveFocus }"
+            tools:visibility="gone"
+            android:layout_width="250dp"
+            android:layout_height="120dp"
+            >
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/controller_focus"
+                tools:ignore="RtlHardcoded" />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:paddingRight="70dp"
+                android:layout_marginBottom="60dp"
+                android:layout_centerHorizontal="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_webxr_controller_arrow"
+                tools:ignore="RtlHardcoded,RtlSymmetry"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="textEnd"
+                android:layout_alignParentTop="true"
+                android:paddingRight="140dp"
+                android:layout_centerHorizontal="true"
                 android:textSize="18sp"
                 tools:ignore="RtlHardcoded,RtlSymmetry"
                 android:text="@string/webxr_interstitial_exit_webxr"/>
