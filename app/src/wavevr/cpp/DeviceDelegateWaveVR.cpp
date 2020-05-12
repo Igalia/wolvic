@@ -90,6 +90,7 @@ struct DeviceDelegateWaveVR::State {
   GestureDelegatePtr gestures;
   std::array<Controller, kMaxControllerCount> controllers;
   ImmersiveDisplayPtr immersiveDisplay;
+  device::DeviceType deviceType;
   bool lastSubmitDiscarded;
   bool recentered;
   vrb::Matrix reorientMatrix;
@@ -110,6 +111,7 @@ struct DeviceDelegateWaveVR::State {
       , renderHeight(0)
       , devicePairs {}
       , controllers {}
+      , deviceType(device::UnknownType)
       , lastSubmitDiscarded(false)
       , recentered(false)
       , ignoreNextRecenter(false)
@@ -131,6 +133,11 @@ struct DeviceDelegateWaveVR::State {
       if (controllers[index].is6DoF) {
         sixDoFControllerCount++;
       }
+    }
+    if (sixDoFControllerCount) {
+      deviceType = device::ViveFocusPlus;
+    } else {
+      deviceType = device::ViveFocus;
     }
     reorientMatrix = vrb::Matrix::Identity();
   }
@@ -452,6 +459,11 @@ DeviceDelegateWaveVR::Create(vrb::RenderContextPtr& aContext) {
   result->m.context = aContext;
   result->m.Initialize();
   return result;
+}
+
+device::DeviceType
+DeviceDelegateWaveVR::GetDeviceType() {
+  return m.deviceType;
 }
 
 void

@@ -93,6 +93,8 @@ public class WebXRInterstitialWidget extends UIWidget implements WidgetManagerDe
             addController(DeviceType.PicoNeo2, WebXRInterstitialController.HAND_RIGHT);
         } else if (deviceType == DeviceType.PicoG2) {
             addController(DeviceType.PicoG2, WebXRInterstitialController.HAND_NONE);
+        } else if (deviceType == DeviceType.ViveFocus) {
+            addController(DeviceType.ViveFocus, WebXRInterstitialController.HAND_NONE);
         } else if (deviceType == DeviceType.ViveFocusPlus) {
             addController(DeviceType.ViveFocusPlus, WebXRInterstitialController.HAND_LEFT);
             addController(DeviceType.ViveFocusPlus, WebXRInterstitialController.HAND_RIGHT);

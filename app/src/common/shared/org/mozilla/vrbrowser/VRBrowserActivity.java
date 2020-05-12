@@ -1162,7 +1162,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Keep
     @SuppressWarnings("unused")
     private void setDeviceType(int aType) {
-        if (DeviceType.isOculusBuild()) {
+        if (DeviceType.isOculusBuild() || DeviceType.isWaveBuild()) {
             runOnUiThread(() -> DeviceType.setType(aType));
         }
     }
