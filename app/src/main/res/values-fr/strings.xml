@@ -1174,8 +1174,14 @@
     <string name="clear_tooltip">Effacer</string>
 
     <!-- This string is for the tooltip that appears upon hovering the 'Pop-Up' button in the
-         browser's navigation bar. The button it labels, when pressed, Shows the pop-up blocked dialog. -->
-    <string name="popup_tooltip">Fenêtre popup bloquée</string>
+         browser's navigation bar if popups are not blocked for the site.
+         The button it labels, when pressed, Shows the pop-up dialog. -->
+    <string name="popup_tooltip_v1">Fenêtres popup non bloquées</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Pop-Up' button in the
+         browser's navigation bar if popups are blocked for the site.
+         The button it labels, when pressed, Shows the pop-up dialog. -->
+    <string name="popup_blocked_tooltip">Fenêtres popup bloquées</string>
 
     <!-- This string is for the tooltip that appears upon hovering the 'DRM' button in the
          browser's navigation bar when DRM is allowed for the site. The button it labels, when pressed,
@@ -1606,6 +1612,11 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed as the title of a dialog that is displayed the first time a user access DRM content if they haven't
          explicitly enable/Disable the DRM setting yet. -->
     <string name="drm_first_use_title_v1">Ce site contient du contenu DRM.</string>
+  
+    <!-- This string is displayed as the body of a dialog that is displayed the first time a user access DRM content if they haven't
+         explicitly enable/Disable the DRM setting yet.
+         '%1$s' will be replaced at runtime with the Learn More page link. -->
+    <string name="drm_first_use_body_v2">Autoriser les DRM permet aux sites d’identifier cet appareil à chaque fois que vous les visitez. &lt;a href=&quot;%1$s&quot;&gt;En savoir plus&lt;/a&gt;</string>
   
     <!-- This string is displayed in the enable button that is displayed inside the dialog that is displayed the first time a user access
          access DRM content if they haven't explicitly enable/Disable the DRM setting yet. -->
