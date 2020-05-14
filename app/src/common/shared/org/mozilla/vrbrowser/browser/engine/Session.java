@@ -767,6 +767,12 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     }
 
     public void setActive(boolean aActive) {
+        if (!aActive && mState.mSession != null && !mState.isActive()) {
+            // Prevent duplicated setActive(false) calls. There is a GV
+            // bug that makes the session not to be resumed correctly.
+            // See https://github.com/MozillaReality/FirefoxReality/issues/3375.
+            return;
+        }
         // Flush the events queued while the session was inactive
         if (mState.mSession != null && !mState.isActive() && aActive) {
             flushQueuedEvents();
