@@ -33,7 +33,7 @@ const char* const kRegisterExternalContextSignature = "(J)V";
 const char* const kOnEnterWebXRName = "onEnterWebXR";
 const char* const kOnEnterWebXRSignature = "()V";
 const char* const kOnExitWebXRName = "onExitWebXR";
-const char* const kOnExitWebXRSignature = "()V";
+const char* const kOnExitWebXRSignature = "(J)V";
 const char* const kOnDismissWebXRInterstitialName = "onDismissWebXRInterstitial";
 const char* const kOnDismissWebXRInterstitialSignature = "()V";
 const char* const kOnWebXRRenderStateChangeName = "onWebXRRenderStateChange";
@@ -263,9 +263,13 @@ VRBrowser::OnEnterWebXR() {
 }
 
 void
-VRBrowser::OnExitWebXR() {
+VRBrowser::OnExitWebXR(const std::function<void()>& aCallback) {
   if (!ValidateMethodID(sEnv, sActivity, sOnExitWebXR, __FUNCTION__)) { return; }
-  sEnv->CallVoidMethod(sActivity, sOnExitWebXR);
+  jlong callback = 0;
+  if (aCallback) {
+    callback = reinterpret_cast<jlong>(new std::function<void()>(aCallback));
+  }
+  sEnv->CallVoidMethod(sActivity, sOnExitWebXR, callback);
   CheckJNIException(sEnv, __FUNCTION__);
 }
 

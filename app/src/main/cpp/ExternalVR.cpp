@@ -378,9 +378,17 @@ ExternalVR::SetCompositorEnabled(bool aEnabled) {
   }
   m.compositorEnabled = aEnabled;
   if (aEnabled) {
-    VRBrowser::OnExitWebXR();
+    // Set suppressFrames to avoid a deadlock between the sync surfaceChanged call
+    // and the gecko VRManager SubmitFrame result wait.
+    m.system.displayState.suppressFrames = true;
+    PushSystemState();
+    VRBrowser::OnExitWebXR([=]{
+        m.system.displayState.suppressFrames = false;
+        PushSystemState();
+    });
   } else {
-    // Set suppressFrames to avoid a deadlock between the compositor sync pause call and the gfxVRExternal SubmitFrame result wait.
+    // Set suppressFrames to avoid a deadlock between the compositor sync pause call
+    // and the gecko VRManager SubmitFrame result wait.
     m.system.displayState.suppressFrames = true;
     m.system.displayState.lastSubmittedFrameId = 0;
     m.lastFrameId = 0;
