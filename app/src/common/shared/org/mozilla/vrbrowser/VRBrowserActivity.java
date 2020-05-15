@@ -1048,7 +1048,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Keep
     @SuppressWarnings("unused")
-    void onExitWebXR() {
+    void onExitWebXR(long aCallback) {
         if (Thread.currentThread() == mUiThread) {
             return;
         }
@@ -1070,6 +1070,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             if (!mWindows.isPaused()) {
                 Log.d(LOGTAG, "Compositor resume begin");
                 mWindows.resumeCompositor();
+                if (aCallback != 0) {
+                    queueRunnable(() -> runCallbackNative(aCallback));
+                }
                 Log.d(LOGTAG, "Compositor resume end");
             }
         }, 20);

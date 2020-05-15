@@ -29,7 +29,7 @@ void HandleMoveEnd(jint aWidgetHandle, jfloat aX, jfloat aY, jfloat aZ, jfloat a
 void HandleBack();
 void RegisterExternalContext(jlong aContext);
 void OnEnterWebXR();
-void OnExitWebXR();
+void OnExitWebXR(const std::function<void()>& aCallback);
 void OnDismissWebXRInterstitial();
 void OnWebXRRenderStateChange(const bool aRendering);
 void RenderPointerLayer(jobject aSurface, const std::function<void()>& aFirstCompositeCallback);
