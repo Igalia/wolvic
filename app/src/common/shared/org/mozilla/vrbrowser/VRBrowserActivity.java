@@ -93,9 +93,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import static org.mozilla.vrbrowser.ui.widgets.UIWidget.REMOVE_WIDGET;
 
@@ -392,6 +394,20 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             mWhatsNewWidget.getPlacement().parentHandle = mWindows.getFocusedWindow().getHandle();
             mWhatsNewWidget.show(UIWidget.REQUEST_FOCUS);
         }
+
+        EngineProvider.INSTANCE.loadExtensions()
+                .thenAcceptAsync(aVoid -> {
+                    Log.d(LOGTAG, "WebExtensions loaded");
+                    mWindows.restoreSessions();
+                }, getServicesProvider().getExecutors().mainThread())
+                .exceptionally(throwable -> {
+                    String msg = throwable.getLocalizedMessage();
+                    if (msg != null) {
+                        Log.e(LOGTAG, "Extensions load error: " + msg);
+                    }
+                    mWindows.restoreSessions();
+                    return null;
+                });
     }
 
     private void attachToWindow(@NonNull WindowWidget aWindow, @Nullable WindowWidget aPrevWindow) {

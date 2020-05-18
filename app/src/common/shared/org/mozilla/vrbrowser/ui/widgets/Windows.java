@@ -39,7 +39,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -134,6 +133,8 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     private Services mServices;
     private PromptDialogWidget mNoInternetDialog;
     private boolean mCompositorPaused = false;
+    private WindowsState mWindowsState;
+    private boolean mIsRestoreEnabled;
 
     public enum PanelType {
         NONE,
@@ -182,6 +183,8 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
         mWidgetManager.addConnectivityListener(mConnectivityDelegate);
 
+        mIsRestoreEnabled = SettingsStore.getInstance(mContext).isRestoreTabsEnabled();
+        mWindowsState = restoreState();
         restoreWindows();
     }
 
@@ -698,35 +701,12 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     }
 
     private void restoreWindows() {
-        boolean restoreEnabled = SettingsStore.getInstance(mContext).isRestoreTabsEnabled();
-        WindowsState windowsState = restoreState();
-        if (restoreEnabled && windowsState != null) {
-            ArrayList<Session> restoredSessions = new ArrayList<>();
-            if (windowsState.tabs != null) {
-                windowsState.tabs.forEach(state -> {
-                    restoredSessions.add(SessionStore.get().createSuspendedSession(state));
-                    GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.PRE_EXISTING);
-                });
-            }
-            mPrivateMode = false;
-            for (WindowState windowState : windowsState.regularWindowsState) {
-                if (windowState.tabIndex >= 0 && windowState.tabIndex < restoredSessions.size()) {
-                    addRestoredWindow(windowState, restoredSessions.get(windowState.tabIndex));
-                } else if (windowState.tabIndex < 0) {
-                    WindowWidget widget = addRestoredWindow(windowState, null);
-                    if ((widget != null) && (widget.getSession() != null)) {
-                        widget.getSession().loadHomePage();
-                    }
-                }
-            }
-            mPrivateMode = !windowsState.privateMode;
-            if (windowsState.privateMode) {
-                enterPrivateMode();
-            } else {
-                exitPrivateMode();
+        if (mIsRestoreEnabled && mWindowsState != null) {
+            for (WindowState windowState : mWindowsState.regularWindowsState) {
+                addRestoredWindow(windowState, null);
             }
 
-            WindowWidget windowToFocus = getWindowWithPlacement(windowsState.focusedWindowPlacement);
+            WindowWidget windowToFocus = getWindowWithPlacement(mWindowsState.focusedWindowPlacement);
             if (windowToFocus == null) {
                 windowToFocus = getFrontWindow();
                 if (windowToFocus == null && getCurrentWindows().size() > 0) {
@@ -744,6 +724,43 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         }
         updateMaxWindowScales();
         updateViews();
+    }
+
+    public void restoreSessions() {
+        if (mIsRestoreEnabled && mWindowsState != null) {
+            ArrayList<Session> restoredSessions = new ArrayList<>();
+            if (mWindowsState.tabs != null) {
+                mWindowsState.tabs.forEach(state -> {
+                    restoredSessions.add(SessionStore.get().createSuspendedSession(state));
+                    GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.PRE_EXISTING);
+                });
+            }
+
+            for (WindowState windowState : mWindowsState.regularWindowsState) {
+                WindowWidget targetWindow = getWindowWithPlacement(windowState.placement);
+                if (targetWindow != null) {
+                    if (windowState.tabIndex >= 0 && windowState.tabIndex < restoredSessions.size()) {
+                        Session defaultSession = targetWindow.getSession();
+                        Session session = restoredSessions.get(windowState.tabIndex);
+                        targetWindow.setupListeners(session);
+                        session.setActive(true);
+                        targetWindow.setSession(session);
+                        SessionStore.get().setActiveSession(session);
+                        // Destroy the default blank session
+                        SessionStore.get().destroySession(defaultSession);
+
+                    } else {
+                        targetWindow.loadHome();
+                    }
+                }
+            }
+
+            if (mWindowsState.privateMode) {
+                enterPrivateMode();
+            } else {
+                exitPrivateMode();
+            }
+        }
     }
 
     private void removeWindow(@NonNull WindowWidget aWindow) {
