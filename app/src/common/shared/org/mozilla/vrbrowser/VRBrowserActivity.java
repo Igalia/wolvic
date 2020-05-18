@@ -539,6 +539,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         super.onDestroy();
         mLifeCycle.setCurrentState(Lifecycle.State.DESTROYED);
         mViewModelStore.clear();
+        // Always exit to work around https://github.com/MozillaReality/FirefoxReality/issues/3363
+        finish();
+        System.exit(0);
     }
 
     @Override
