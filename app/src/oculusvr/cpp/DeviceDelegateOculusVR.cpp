@@ -1272,7 +1272,9 @@ DeviceDelegateOculusVR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
     return;
   }
 
-  m.clearColorSwapChain = m.CreateClearColorSwapChain(800, 450);
+  if (!m.clearColorSwapChain) {
+      m.clearColorSwapChain = m.CreateClearColorSwapChain(800, 450);
+  }
 
   vrb::RenderContextPtr render = m.context.lock();
   for (int i = 0; i < VRAPI_EYE_COUNT; ++i) {
