@@ -3,6 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 version: 1
+reporting: checks-v1
 policy:
   pullRequests: public
 tasks:
