@@ -89,7 +89,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:paddingRight="40dp"
+                android:paddingRight="60dp"
                 android:layout_marginBottom="80dp"
                 android:layout_centerHorizontal="true"
                 android:scaleType="fitCenter"
