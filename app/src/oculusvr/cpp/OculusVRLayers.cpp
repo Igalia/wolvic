@@ -221,6 +221,7 @@ OculusLayerEquirect::Update(const ovrTracking2& aTracking, ovrTextureSwapChain* 
   OculusLayerBase<VRLayerEquirectPtr, ovrLayerEquirect2>::Update(aTracking, aClearSwapChain);
 
   vrb::Quaternion q(layer->GetModelTransform(device::Eye::Left));
+  q = q.Inverse();
   ovrLayer.HeadPose.Pose.Orientation.x  = q.x();
   ovrLayer.HeadPose.Pose.Orientation.y  = q.y();
   ovrLayer.HeadPose.Pose.Orientation.z  = q.z();

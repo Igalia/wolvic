@@ -56,6 +56,11 @@ public interface WidgetManagerDelegate {
     int WEBXR_INTERSTITIAL_ALLOW_DISMISS = 1;
     int WEBXR_INTERSTITIAL_HIDDEN = 2;
 
+    @IntDef(value = { YAW_TARGET_ALL, YAW_TARGET_WIDGETS})
+    @interface YawTarget {}
+    int YAW_TARGET_ALL = 0; // Targets widgets and VR videos.
+    int YAW_TARGET_WIDGETS = 1; // Targets widgets only.
+
     int newWidgetHandle();
     void addWidget(Widget aWidget);
     void updateWidget(Widget aWidget);
@@ -80,7 +85,7 @@ public interface WidgetManagerDelegate {
     void updatePointerColor();
     void showVRVideo(int aWindowHandle, @VideoProjectionMenuWidget.VideoProjectionFlags int aVideoProjection);
     void hideVRVideo();
-    void resetUIYaw();
+    void recenterUIYaw(@YawTarget int target);
     void setCylinderDensity(float aDensity);
     float getCylinderDensity();
     void addFocusChangeListener(@NonNull FocusChangeListener aListener);

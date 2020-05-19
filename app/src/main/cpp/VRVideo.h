@@ -44,6 +44,7 @@ public:
   void SelectEye(device::Eye aEye);
   vrb::NodePtr GetRoot() const;
   void Exit();
+  void SetReorientTransform(const vrb::Matrix& transform);
 protected:
   struct State;
   VRVideo(State& aState, vrb::CreationContextPtr& aContext);

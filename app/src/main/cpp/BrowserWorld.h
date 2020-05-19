@@ -65,7 +65,8 @@ public:
   void ShowVRVideo(const int aWindowHandle, const int aVideoProjection);
   void HideVRVideo();
   void SetControllersVisible(const bool aVisible);
-  void ResetUIYaw();
+  enum class YawTarget { ALL, WIDGETS };
+  void RecenterUIYaw(const YawTarget aTarget);
   void SetCylinderDensity(const float aDensity);
   enum class WebXRInterstialState { FORCED, ALLOW_DISMISS, HIDDEN };
   void SetWebXRInterstitalState(const WebXRInterstialState aState);

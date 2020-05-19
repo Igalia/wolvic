@@ -189,6 +189,7 @@ struct BrowserWorld::State {
   std::function<void()> frameEndHandler;
   bool wasInGazeMode = false;
   WebXRInterstialState webXRInterstialState;
+  vrb::Matrix widgetsYaw;
   bool wasWebXRRendering = false;
 
   State() : paused(true), glInitialized(false), modelsLoaded(false), env(nullptr), cylinderDensity(0.0f), nearClip(0.1f),
@@ -217,6 +218,7 @@ struct BrowserWorld::State {
     monitor->AddPerformanceMonitorObserver(std::make_shared<PerformanceObserver>());
     wasInGazeMode = false;
     webXRInterstialState = WebXRInterstialState::FORCED;
+    widgetsYaw = vrb::Matrix::Identity();
 #if defined(WAVEVR)
     monitor->SetPerformanceDelta(15.0);
 #endif
@@ -463,7 +465,7 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
       if (hitWidget) {
         vrb::Matrix translation = vrb::Matrix::Translation(hitPoint);
         vrb::Matrix localRotation = vrb::Matrix::Rotation(hitNormal);
-        vrb::Matrix reorient = device->GetReorientTransform();
+        vrb::Matrix reorient = rootTransparent->GetTransform();
         controller.pointer->SetTransform(reorient.AfineInverse().PostMultiply(translation).PostMultiply(localRotation));
         controller.pointer->SetScale(hitPoint, device->GetHeadTransform());
       }
@@ -1388,13 +1390,20 @@ BrowserWorld::SetControllersVisible(const bool aVisible) {
 }
 
 void
-BrowserWorld::ResetUIYaw() {
+BrowserWorld::RecenterUIYaw(const YawTarget aTarget) {
   vrb::Matrix head = m.device->GetHeadTransform();
-  vrb::Vector vector = head.MultiplyDirection(vrb::Vector(1.0f, 0.0f, 0.0f));
-  const float yaw = atan2(vector.z(), vector.x());
 
-  vrb::Matrix matrix = vrb::Matrix::Rotation(vrb::Vector(0.0f, 1.0f, 0.0f), -yaw);
-  m.device->SetReorientTransform(matrix);
+  if (aTarget == YawTarget::ALL) {
+    vrb::Vector vector = head.MultiplyDirection(vrb::Vector(1.0f, 0.0f, 0.0f));
+    float yaw = atan2(vector.z(), vector.x());
+    vrb::Matrix matrix = vrb::Matrix::Rotation(vrb::Vector(0.0f, 1.0f, 0.0f), -yaw);
+    m.device->SetReorientTransform(matrix);
+    m.widgetsYaw = vrb::Matrix::Identity();
+  } else {
+    vrb::Vector vector = m.device->GetReorientTransform().AfineInverse().PostMultiply(head).MultiplyDirection(vrb::Vector(1.0f, 0.0f, 0.0f));
+    const float yaw = atan2(vector.z(), vector.x());
+    m.widgetsYaw = vrb::Matrix::Rotation(vrb::Vector(0.0f, 1.0f, 0.0f), -yaw);
+  }
 }
 
 void
@@ -1453,7 +1462,10 @@ BrowserWorld::TickWorld() {
   m.SortWidgets();
   m.device->StartFrame();
   m.rootOpaque->SetTransform(m.device->GetReorientTransform());
-  m.rootTransparent->SetTransform(m.device->GetReorientTransform());
+  m.rootTransparent->SetTransform(m.device->GetReorientTransform().PostMultiply(m.widgetsYaw));
+  if (m.vrVideo) {
+    m.vrVideo->SetReorientTransform(m.device->GetReorientTransform());
+  }
 
   m.drawHandler = [=](device::Eye aEye) {
     DrawWorld(aEye);
@@ -1759,9 +1771,13 @@ JNI_METHOD(void, setControllersVisibleNative)
   crow::BrowserWorld::Instance().SetControllersVisible(aVisible);
 }
 
-JNI_METHOD(void, resetUIYawNative)
-(JNIEnv*, jobject) {
-  crow::BrowserWorld::Instance().ResetUIYaw();
+JNI_METHOD(void, recenterUIYawNative)
+(JNIEnv*, jobject, jint aTarget) {
+  crow::BrowserWorld::YawTarget value = crow::BrowserWorld::YawTarget::ALL;
+  if (aTarget == 1) {
+    value = crow::BrowserWorld::YawTarget::WIDGETS;
+  }
+  crow::BrowserWorld::Instance().RecenterUIYaw(value);
 }
 
 JNI_METHOD(void, setCylinderDensityNative)

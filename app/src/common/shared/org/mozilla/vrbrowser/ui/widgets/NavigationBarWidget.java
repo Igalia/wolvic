@@ -11,7 +11,6 @@ import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.preference.PreferenceManager;
-import android.text.Spannable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.Pair;
@@ -828,7 +827,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mMediaControlsWidget.setVisible(false);
 
         // Reposition UI in front of the user when exiting a VR video.
-        mWidgetManager.resetUIYaw();
+        mWidgetManager.recenterUIYaw(WidgetManagerDelegate.YAW_TARGET_ALL);
     }
 
     private void setResizePreset(float aMultiplier) {
@@ -1049,7 +1048,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
                 if (mMediaControlsWidget.isVisible()) {
                     // Reorient the MediaControl UI when the users clicks to show it.
                     // So you can look at any point of the 180/360 video and the UI always shows in front of you.
-                    mWidgetManager.resetUIYaw();
+                    mWidgetManager.recenterUIYaw(WidgetManagerDelegate.YAW_TARGET_WIDGETS);
                 }
             }
 

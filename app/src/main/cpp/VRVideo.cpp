@@ -33,7 +33,7 @@ struct VRVideo::State {
   std::weak_ptr<DeviceDelegate> deviceWeak;
   WidgetPtr window;
   VRVideoProjection projection;
-  vrb::TogglePtr root;
+  vrb::TransformPtr root;
   vrb::TogglePtr leftEye;
   vrb::TogglePtr rightEye;
   VRLayerPtr layer;
@@ -50,7 +50,7 @@ struct VRVideo::State {
     vrb::CreationContextPtr create = context.lock();
     window = aWindow;
     projection = aProjection;
-    root = vrb::Toggle::Create(create);
+    root = vrb::Transform::Create(create);
     VRLayerSurfacePtr windowLayer = aWindow->GetLayer();
     if (windowLayer) {
       layerTextureBackup[0] = windowLayer->GetTextureRect(device::Eye::Left);
@@ -360,6 +360,11 @@ VRVideo::Exit() {
     DeviceDelegatePtr device = m.deviceWeak.lock();
     device->DeleteLayer(m.layer);
   }
+}
+
+void
+VRVideo::SetReorientTransform(const vrb::Matrix& transform) {
+  m.root->SetTransform(transform);
 }
 
 VRVideoPtr
