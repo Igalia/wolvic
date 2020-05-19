@@ -9,6 +9,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -1664,30 +1665,39 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             startDownload(job, true);
 
         } else {
-            showConfirmPrompt(getResources().getString(R.string.download_open_file_unsupported_title),
-                    getResources().getString(R.string.download_open_file_unsupported_body),
-                    new String[]{
-                            getResources().getString(R.string.download_open_file_unsupported_cancel),
-                            getResources().getString(R.string.download_open_file_unsupported_open)
-                    }, (index, isChecked) -> {
-                        if (index == PromptDialogWidget.POSITIVE) {
-                            Uri contentUri = FileProvider.getUriForFile(
-                                    getContext(),
-                                    getContext().getApplicationContext().getPackageName() + ".provider",
-                                    new File(webResponseInfo.uri.substring("file://".length())));
-                            Intent newIntent = new Intent(Intent.ACTION_VIEW);
-                            newIntent.setDataAndType(contentUri, webResponseInfo.contentType);
-                            newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                            try {
-                                getContext().startActivity(newIntent);
-                            } catch (ActivityNotFoundException ex) {
-                                showAlert(
-                                        getResources().getString(R.string.download_open_file_error_title),
-                                        getResources().getString(R.string.download_open_file_error_body),
-                                        null);
+            Uri contentUri = FileProvider.getUriForFile(
+                    getContext(),
+                    getContext().getApplicationContext().getPackageName() + ".provider",
+                    new File(webResponseInfo.uri.substring("file://".length())));
+            Intent newIntent = new Intent(Intent.ACTION_VIEW);
+            newIntent.setDataAndType(contentUri, webResponseInfo.contentType);
+            newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+            PackageManager packageManager = getContext().getPackageManager();
+            if (newIntent.resolveActivity(packageManager) != null) {
+                showConfirmPrompt(getResources().getString(R.string.download_open_file_unsupported_title),
+                        getResources().getString(R.string.download_open_file_unsupported_body),
+                        new String[]{
+                                getResources().getString(R.string.download_open_file_unsupported_cancel),
+                                getResources().getString(R.string.download_open_file_unsupported_open)
+                        }, (index, isChecked) -> {
+                            if (index == PromptDialogWidget.POSITIVE) {
+                                try {
+                                    getContext().startActivity(newIntent);
+                                } catch (ActivityNotFoundException ignored) {
+                                    showAlert(
+                                            getResources().getString(R.string.download_open_file_error_title),
+                                            getResources().getString(R.string.download_open_file_error_body),
+                                            null);
+                                }
                             }
-                        }
-                    });
+                        });
+            } else {
+                showAlert(
+                        getResources().getString(R.string.download_open_file_error_title),
+                        getResources().getString(R.string.download_open_file_open_unsupported_body),
+                        null);
+            }
         }
     }
 
