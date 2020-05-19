@@ -286,6 +286,8 @@ public class LocaleUtils {
         mSupportedLanguagesCache = new LinkedHashMap<String, Language>() {{
             Locale locale = new Locale("en","US");
             put(locale.toLanguageTag(), new Language(locale, StringUtils.getStringByLocale(context, R.string.settings_language_english, locale)));
+            locale = new Locale("en","GB");
+            put(locale.toLanguageTag(), new Language(locale, StringUtils.getStringByLocale(context, R.string.settings_language_english_uk, locale)));
             locale = new Locale.Builder().setLanguage("zh").setScript("Hant").setRegion("TW").build();
             put(locale.toLanguageTag(), new Language(locale, StringUtils.getStringByLocale(context, R.string.settings_language_traditional_chinese, locale)));
             locale = new Locale.Builder().setLanguage("zh").setScript("Hans").setRegion("CN").build();
@@ -297,6 +299,8 @@ public class LocaleUtils {
             locale = new Locale("de","DE");
             put(locale.toLanguageTag(), new Language(locale, StringUtils.getStringByLocale(context, R.string.settings_language_german, locale)));
             locale = new Locale("es","ES");
+            put(locale.toLanguageTag(), new Language(locale, StringUtils.getStringByLocale(context, R.string.settings_language_spanish_spain, locale)));
+            locale = new Locale("es");
             put(locale.toLanguageTag(), new Language(locale, StringUtils.getStringByLocale(context, R.string.settings_language_spanish, locale)));
             locale = new Locale("ru","RU");
             put(locale.toLanguageTag(), new Language(locale, StringUtils.getStringByLocale(context, R.string.settings_language_russian, locale)));
@@ -309,7 +313,9 @@ public class LocaleUtils {
             locale = new Locale("pl","PL");
             put(locale.toLanguageTag(), new Language(locale, StringUtils.getStringByLocale(context, R.string.settings_language_polish, locale)));
             locale = new Locale("nb","NO");
-            put(locale.toLanguageTag(), new Language(locale, StringUtils.getStringByLocale(context, R.string.settings_language_norwegian, locale)));
+            put(locale.toLanguageTag(), new Language(locale, StringUtils.getStringByLocale(context, R.string.settings_language_norwegian_bokmaal, locale)));
+            locale = new Locale("nn","NO");
+            put(locale.toLanguageTag(), new Language(locale, StringUtils.getStringByLocale(context, R.string.settings_language_norwegian_nynorsk, locale)));
             locale = new Locale("sv","SE");
             put(locale.toLanguageTag(), new Language(locale, StringUtils.getStringByLocale(context, R.string.settings_language_swedish, locale)));
             locale = new Locale("fi","FI");
