@@ -76,7 +76,7 @@ tasks:
             - "secrets:get:project/firefoxreality/fr/mls-key"
           routes:
             - notify.email.fxr-releng@mozilla.com.on-any
-            - route.index.project.firefoxreality.master
+            - index.project.firefoxreality.master
           payload:
             maxRunTime: 14400
             image: 'mozillamixedreality/firefoxreality:200316-SDK29'
