@@ -66,4 +66,17 @@ public class DeviceType {
     public static boolean isPicoVR() {
         return BuildConfig.FLAVOR_platform.toLowerCase().contains("picovr");
     }
+
+    public static String getDeviceTypeId() {
+        String type = BuildConfig.FLAVOR_platform;
+        if (DeviceType.isOculusBuild()) {
+            type = "oculusvr";
+        } else if (DeviceType.isPicoVR()) {
+            type = "picovr";
+        } else if (DeviceType.isWaveBuild()) {
+            type = "wavevrStore";
+        }
+
+        return type;
+    }
 }

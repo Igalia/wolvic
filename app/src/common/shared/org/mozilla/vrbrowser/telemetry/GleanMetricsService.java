@@ -157,7 +157,7 @@ public class GleanMetricsService {
     }
 
     private static void setStartupMetrics() {
-        Distribution.INSTANCE.channelName().set(DeviceType.isOculusBuild() ? "oculusvr" : BuildConfig.FLAVOR_platform);
+        Distribution.INSTANCE.channelName().set(DeviceType.getDeviceTypeId());
     }
 
     @VisibleForTesting

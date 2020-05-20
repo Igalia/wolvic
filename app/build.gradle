@@ -168,7 +168,7 @@ android {
                     arguments "-DVR_SDK_LIB=wavevr-lib", "-DWAVEVR=ON"
                 }
             }
-            applicationIdSuffix ".wavevr"
+            applicationIdSuffix ".internal"
         }
 
         wavevrStore {
@@ -184,6 +184,17 @@ android {
         }
 
         picovr {
+            dimension "platform"
+            externalNativeBuild {
+                cmake {
+                    cppFlags " -DPICOVR"
+                    arguments "-DPICOVR=ON"
+                }
+            }
+            applicationIdSuffix ".internal"
+        }
+
+        picovrStore {
             dimension "platform"
             externalNativeBuild {
                 cmake {
@@ -229,6 +240,8 @@ android {
                 'oculusvr3dofStoreArm64Release',
                 'picovrArm64Debug',
                 'picovrArm64Release',
+                'picovrStoreArm64Debug',
+                'picovrStoreArm64Release',
                 'wavevrArm64Debug',
                 'wavevrArm64Release',
                 'wavevrStoreArm64Debug',
@@ -345,6 +358,19 @@ android {
             jniLibs.srcDirs = ["${project.rootDir}/third_party/picovr"]
         }
 
+        picovrStore {
+            java.srcDirs = [
+                    'src/picovr/java'
+            ]
+            assets.srcDirs = [
+                    'src/picovr/assets'
+            ]
+            res.srcDirs = [
+                    'src/picovr/res'
+            ]
+            jniLibs.srcDirs = ["${project.rootDir}/third_party/picovr"]
+        }
+
         noapi {
             java.srcDirs = [
                     'src/noapi/java'
@@ -438,6 +464,7 @@ dependencies {
 
     // Pico
     picovrImplementation fileTree(dir: "${project.rootDir}/third_party/picovr/", include: ['*.aar'])
+    picovrStoreImplementation fileTree(dir: "${project.rootDir}/third_party/picovr/", include: ['*.aar'])
 }
 
 if (findProject(':servo')) {
