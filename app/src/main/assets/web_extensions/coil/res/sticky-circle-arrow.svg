@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="34.388" height="34.388" viewBox="0 0 34.388 34.388">
+  <g id="Group_37" transform="translate(-1049.483 -382)">
+    <g id="Group_38">
+      <g id="Group_35" transform="translate(61.483 -86.159)">
+        <g id="Group_27" transform="translate(965 468.159)">
+          <path id="play_circle_outline" d="M19.21,33.015a13.8,13.8,0,1,0-13.8-13.8A13.851,13.851,0,0,0,19.21,33.015Zm0-31A17.194,17.194,0,1,1,2.016,19.21,17.157,17.157,0,0,1,19.21,2.016Z" transform="translate(20.984 -2.016)" fill="#50555d"/>
+        </g>
+      </g>
+      <path id="forward" d="M21.614,8.919,14.6,15.669V11.579c-2.125,0-7.536.047-7.536,5.611A6.031,6.031,0,0,0,11.875,23.1a9.015,9.015,0,0,1-7.828-8.92c0-8.5,9.086-8.577,10.55-8.577V2.118Z" transform="translate(1053.436 385.882)" fill="#50555d"/>
+    </g>
+  </g>
+</svg>

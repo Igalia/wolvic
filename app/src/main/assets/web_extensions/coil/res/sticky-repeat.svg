@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="34.388" height="34.388" viewBox="0 0 34.388 34.388">
+  <g id="Group_40" transform="translate(-1093.483 -302)">
+    <path id="retweet" d="M5.855,17.988V12.167H8.726L4.417,7.135l-4.4,5.033H2.9v8.686H15.654l-2.864-2.865H5.855Zm14.62-2.214V7.043H7.675l2.91,2.91h6.934v5.822H14.648l4.309,5.033,4.4-5.033H20.476Z" transform="translate(1098.466 304.957)" fill="#50555d"/>
+    <g id="Group_39" transform="translate(105.483 -166.159)">
+      <g id="Group_27" transform="translate(965 468.159)">
+        <path id="play_circle_outline" d="M19.21,33.015a13.8,13.8,0,1,0-13.8-13.8A13.851,13.851,0,0,0,19.21,33.015Zm0-31A17.194,17.194,0,1,1,2.016,19.21,17.157,17.157,0,0,1,19.21,2.016Z" transform="translate(20.984 -2.016)" fill="#50555d"/>
+      </g>
+    </g>
+  </g>
+</svg>
