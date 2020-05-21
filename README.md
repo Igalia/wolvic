@@ -6,13 +6,7 @@ You can find us in [#fxr:mozilla.org on the Matrix](https://chat.mozilla.org/#/r
 
 ## Download developer APKs
 
-**[Download](https://community-tc.services.mozilla.com/api/github/v1/repository/MozillaReality/FirefoxReality/master/latest)** [bleeding-edge](https://github.com/MozillaReality/FirefoxReality/commits/master) developer APKs for Firefox Reality.
-
-### Advanced
-
-1. Load [this TaskCluster URL](https://community-tc.services.mozilla.com/api/github/v1/repository/MozillaReality/FirefoxReality/master/latest).
-2. Click the `Firefox Reality for Android - Build - Master update →` link.
-3. Click the `Run Artifacts` tab, and click to download the APK for your platform of choice.
+**[Download](https://community-tc.services.mozilla.com/tasks/index/project.firefoxreality/master)** developer APKs for Firefox Reality generated from latest [master](https://github.com/MozillaReality/FirefoxReality/commits/master).
 
 ## Locale support
 
