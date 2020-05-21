@@ -609,7 +609,9 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
         Runnable cleanResources = () -> {
             display.surfaceDestroyed();
-            mState.mSession.releaseDisplay(display);
+            if (mState.mSession != null) {
+                mState.mSession.releaseDisplay(display);
+            }
             BitmapCache.getInstance(mContext).releaseCaptureSurface();
         };
 
