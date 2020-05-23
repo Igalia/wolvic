@@ -228,6 +228,10 @@
          changes the app and the language of the speech-recognition-based search to 'English (US)'. -->
     <string name="settings_language_english">英語（美國）</string>
 
+    <!-- This string is used to label a radio button in the 'Settings' Language dialog that, when pressed,
+         changes the app and the language of the speech-recognition-based search to 'English (UK)'. -->
+    <string name="settings_language_english_uk">英語（英國）</string>
+
     <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
          changes the app and the language of the speech-recognition-based search to 'Chinese (Traditional/Zhuyin)'. -->
     <string name="settings_language_traditional_chinese">中文（正體／注音）</string>
@@ -253,6 +257,10 @@
     <string name="settings_language_spanish">西班牙語</string>
 
     <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+         changes the app and the language of the speech-recognition-based search to 'Spanish (Spain)'. -->
+    <string name="settings_language_spanish_spain">西班牙語（西班牙）</string>
+
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
          changes the app and the language of the speech-recognition-based search to 'Korean'. -->
     <string name="settings_language_korean">韓語</string>
 
@@ -275,6 +283,14 @@
     <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
      changes the app and the language of the speech-recognition-based search to 'Norwegian'. -->
     <string name="settings_language_norwegian">挪威語</string>
+  
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+ changes the app and the language of the speech-recognition-based search to 'Norwegian (Bokmaal)'. -->
+    <string name="settings_language_norwegian_bokmaal">挪威語（書面語）</string>
+
+    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
+ changes the app and the language of the speech-recognition-based search to 'Norwegian (Nynorsk)'. -->
+    <string name="settings_language_norwegian_nynorsk">挪威語（耐諾斯克）</string>
   
     <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
      changes the app and the language of the speech-recognition-based search to 'Danish'. -->
@@ -1659,6 +1675,10 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed in the title of the dialog displayed when we try to hand over the file open to
          the system but the system can't handle it either. -->
     <string name="download_open_file_error_title">錯誤</string>
+
+    <!-- This string is displayed in the body of the dialog displayed when the file type cannot be opened and
+     there is no system app available to handle it either. -->
+    <string name="download_open_file_open_unsupported_body">不支援的檔案類型。</string>
 
     <!-- This string is displayed in the body of the dialog displayed when we try to hand over the file open to
          the system but the system can't handle it either. -->
