@@ -11,6 +11,7 @@
 #include "VrApi.h"
 #include "VrApi_Helpers.h"
 #include "VrApi_SystemUtils.h"
+#include "../../../../../../../../Applications/android-sdk/ndk/21.0.6113669/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/include/c++/v1/memory"
 #include <memory>
 
 namespace crow {
@@ -58,7 +59,7 @@ template<class T, class U>
 class OculusLayerBase : public OculusLayer {
 public:
   ovrTextureSwapChain *swapChain = nullptr;
-  SurfaceChangedTargetPtr surfaceChangedTarget;
+  std::shared_ptr<SurfaceChangedTarget> surfaceChangedTarget;
   T layer;
   U ovrLayer;
 
