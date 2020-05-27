@@ -77,6 +77,8 @@ public:
   }
   virtual void StartFrame(const FramePrediction aPrediction = FramePrediction::NO_FRAME_AHEAD) = 0;
   virtual void BindEye(const device::Eye aWhich) = 0;
+  virtual void BindProjection(const device::Eye aWhich) {};
+  virtual void UnbindProjection(const device::Eye aWhich) {};
   virtual void EndFrame(const FrameEndMode aMode = FrameEndMode::APPLY) = 0;
   virtual bool IsInGazeMode() const { return false; };
   virtual int32_t GazeModeIndex() const { return -1; };

@@ -156,6 +156,7 @@ struct BrowserWorld::State {
   CreationContextPtr create;
   ModelLoaderAndroidPtr loader;
   GroupPtr rootOpaqueParent;
+  TransformPtr rootEnvironment;
   TransformPtr rootOpaque;
   TransformPtr rootTransparent;
   TransformPtr rootWebXRInterstitial;
@@ -198,6 +199,7 @@ struct BrowserWorld::State {
     create = context->GetRenderThreadCreationContext();
     loader = ModelLoaderAndroid::Create(context);
     context->GetProgramFactory()->SetLoaderThread(loader);
+    rootEnvironment = Transform::Create(create);
     rootOpaque = Transform::Create(create);
     rootTransparent = Transform::Create(create);
     rootController = Group::Create(create);
@@ -1451,6 +1453,7 @@ BrowserWorld::TickWorld() {
 
   m.SortWidgets();
   m.device->StartFrame();
+  m.rootEnvironment->SetTransform(m.device->GetReorientTransform());
   m.rootOpaque->SetTransform(m.device->GetReorientTransform());
   m.rootTransparent->SetTransform(m.device->GetReorientTransform());
 
@@ -1463,6 +1466,11 @@ void
 BrowserWorld::DrawWorld(device::Eye aEye) {
   const CameraPtr camera = aEye == device::Eye::Left ? m.leftCamera : m.rightCamera;
   m.device->BindEye(aEye);
+  m.device->BindProjection(aEye);
+  m.drawList->Reset();
+  m.rootEnvironment->Cull(*m.cullVisitor, *m.drawList);
+  m.drawList->Draw(*camera);
+  m.device->UnbindProjection(aEye);
   m.drawList->Reset();
   m.rootOpaqueParent->Cull(*m.cullVisitor, *m.drawList);
   m.drawList->Draw(*camera);
@@ -1643,7 +1651,7 @@ void
 BrowserWorld::CreateFloor() {
   ASSERT_ON_RENDER_THREAD();
   m.environment->LoadModels(m.loader);
-  m.rootOpaque->AddNode(m.environment->GetRoot());
+  m.rootEnvironment->AddNode(m.environment->GetRoot());
 }
 
 } // namespace crow

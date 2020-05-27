@@ -433,10 +433,10 @@ public class SettingsStore {
     public boolean getLayersEnabled() {
         if (DeviceType.isOculusBuild() && !mDisableLayers) {
             Log.i(LOGTAG, "Layers are enabled");
-            return false;
+            return true;
         }
         Log.i(LOGTAG, "Layers are not supported");
-        return false;
+        return true;
     }
 
     public int getTransparentBorderWidth() {

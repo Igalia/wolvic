@@ -79,6 +79,7 @@ struct DeviceDelegateOculusVR::State {
   ovrJava java = {};
   ovrMobile* ovr = nullptr;
   OculusEyeSwapChainPtr eyeSwapChains[VRAPI_EYE_COUNT];
+  OculusEyeSwapChainPtr envSwapChains[VRAPI_EYE_COUNT];
   OculusLayerCubePtr cubeLayer;
   OculusLayerEquirectPtr equirectLayer;
   std::vector<OculusLayerPtr> uiLayers;
@@ -159,6 +160,7 @@ struct DeviceDelegateOculusVR::State {
     for (int i = 0; i < VRAPI_EYE_COUNT; ++i) {
       cameras[i] = vrb::CameraEye::Create(localContext->GetRenderThreadCreationContext());
       eyeSwapChains[i] = OculusEyeSwapChain::create();
+      envSwapChains[i] = OculusEyeSwapChain::create();
     }
     UpdatePerspective();
 
@@ -1027,6 +1029,37 @@ DeviceDelegateOculusVR::BindEye(const device::Eye aWhich) {
   }
 }
 
+void DeviceDelegateOculusVR::BindProjection(const device::Eye aWhich) {
+  m.previousFBO = m.currentFBO;
+  if (m.envSwapChains[0]->swapChainLength == 0) {
+    auto render = m.context.lock();
+    for (int i = 0; i < VRAPI_EYE_COUNT; ++i) {
+      m.envSwapChains[i]->Init(render, device::RenderMode::StandAlone, m.renderWidth, m.renderHeight);
+    }
+  }
+  int32_t index = device::EyeIndex(aWhich);
+  const auto &swapChain = m.envSwapChains[index];
+  int swapChainIndex = m.frameIndex % swapChain->swapChainLength;
+  m.currentFBO = swapChain->fbos[swapChainIndex];
+  if (m.currentFBO) {
+    m.currentFBO->Bind();
+    VRB_GL_CHECK(glViewport(0, 0, m.renderWidth, m.renderHeight));
+    VRB_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+  } else {
+    VRB_LOG("No Swap chain FBO found");
+  }
+
+}
+void DeviceDelegateOculusVR::UnbindProjection(const device::Eye aWhich) {
+  if (m.currentFBO) {
+    m.currentFBO->Unbind();
+  }
+  m.currentFBO = m.previousFBO;
+  if (m.previousFBO) {
+    m.previousFBO->Bind();
+  }
+}
+
 void
 DeviceDelegateOculusVR::EndFrame(const FrameEndMode aEndMode) {
   if (!m.ovr) {
@@ -1056,19 +1089,32 @@ DeviceDelegateOculusVR::EndFrame(const FrameEndMode aEndMode) {
     m.discardCount = 0;
   }
 
+
+  const float fovX = vrapi_GetSystemPropertyFloat(&m.java, VRAPI_SYS_PROP_SUGGESTED_EYE_FOV_DEGREES_X);
+  const float fovY = vrapi_GetSystemPropertyFloat(&m.java, VRAPI_SYS_PROP_SUGGESTED_EYE_FOV_DEGREES_Y);
+  const ovrMatrix4f projectionMatrix = ovrMatrix4f_CreateProjectionFov(fovX, fovY, 0.0f, 0.0f, VRAPI_ZNEAR, 0.0f);
+
   uint32_t layerCount = 0;
   const ovrLayerHeader2* layers[ovrMaxLayerCount] = {};
 
-  if (m.cubeLayer && m.cubeLayer->IsLoaded() && m.cubeLayer->IsDrawRequested()) {
+  if (m.envSwapChains[0]->swapChainLength) {
+    ovrLayerProjection2 environment = vrapi_DefaultLayerProjection2();
+    environment.HeadPose = tracking.HeadPose;
+    environment.Header.SrcBlend = VRAPI_FRAME_LAYER_BLEND_SRC_ALPHA;
+    environment.Header.DstBlend = VRAPI_FRAME_LAYER_BLEND_ONE_MINUS_SRC_ALPHA;
+    for (int i = 0; i < VRAPI_FRAME_LAYER_EYE_MAX; ++i) {
+      const auto &eyeSwapChain = m.envSwapChains[i];
+      const int swapChainIndex = m.frameIndex % eyeSwapChain->swapChainLength;
+      // Set up OVR layer textures
+      environment.Textures[i].ColorSwapChain = eyeSwapChain->ovrSwapChain;
+      environment.Textures[i].SwapChainIndex = swapChainIndex;
+      environment.Textures[i].TexCoordsFromTanAngles = ovrMatrix4f_TanAngleMatrixFromProjection(&projectionMatrix);
+    }
+    layers[layerCount++] = &environment.Header;
+  } else if (m.cubeLayer && m.cubeLayer->IsLoaded() && m.cubeLayer->IsDrawRequested()) {
     m.cubeLayer->Update(tracking, m.clearColorSwapChain);
     layers[layerCount++] = m.cubeLayer->Header();
     m.cubeLayer->ClearRequestDraw();
-  }
-
-  if (m.equirectLayer && m.equirectLayer->IsDrawRequested()) {
-    m.equirectLayer->Update(tracking, m.clearColorSwapChain);
-    layers[layerCount++] = m.equirectLayer->Header();
-    m.equirectLayer->ClearRequestDraw();
   }
 
   // Sort quad layers by draw priority
@@ -1086,9 +1132,6 @@ DeviceDelegateOculusVR::EndFrame(const FrameEndMode aEndMode) {
   }
 
   // Add main eye buffer layer
-  const float fovX = vrapi_GetSystemPropertyFloat(&m.java, VRAPI_SYS_PROP_SUGGESTED_EYE_FOV_DEGREES_X);
-  const float fovY = vrapi_GetSystemPropertyFloat(&m.java, VRAPI_SYS_PROP_SUGGESTED_EYE_FOV_DEGREES_Y);
-  const ovrMatrix4f projectionMatrix = ovrMatrix4f_CreateProjectionFov(fovX, fovY, 0.0f, 0.0f, VRAPI_ZNEAR, 0.0f);
 
   ovrLayerProjection2 projection = vrapi_DefaultLayerProjection2();
   projection.HeadPose = tracking.HeadPose;

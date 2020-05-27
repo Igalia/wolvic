@@ -44,6 +44,8 @@ public:
   bool SupportsFramePrediction(FramePrediction aPrediction) const override;
   void StartFrame(const FramePrediction aPrediction) override;
   void BindEye(const device::Eye aWhich) override;
+  void BindProjection(const device::Eye aWhich) override;
+  void UnbindProjection(const device::Eye aWhich) override;
   void EndFrame(const FrameEndMode aMode) override;
   VRLayerQuadPtr CreateLayerQuad(int32_t aWidth, int32_t aHeight,
                                  VRLayerSurface::SurfaceType aSurfaceType) override;
