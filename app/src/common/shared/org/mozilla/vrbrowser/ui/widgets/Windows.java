@@ -742,10 +742,8 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
                     if (windowState.tabIndex >= 0 && windowState.tabIndex < restoredSessions.size()) {
                         Session defaultSession = targetWindow.getSession();
                         Session session = restoredSessions.get(windowState.tabIndex);
-                        targetWindow.setupListeners(session);
+                        targetWindow.setSession(session, WindowWidget.DEACTIVATE_CURRENT_SESSION);
                         session.setActive(true);
-                        targetWindow.setSession(session);
-                        SessionStore.get().setActiveSession(session);
                         // Destroy the default blank session
                         SessionStore.get().destroySession(defaultSession);
 
