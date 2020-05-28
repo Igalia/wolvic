@@ -207,6 +207,25 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
             }
             mVolumeControl.requestFocusFromTouch();
         });
+
+
+        this.setOnHoverListener((v, event) -> {
+            if (mMedia == null) {
+                return false;
+            }
+           /*this handles the case where the user
+              holds the volume slider up/down past the volume control
+              control then hovers, which wont be picked up by the
+              volume control hover listener.  in this case the widget itself
+              needs to handle this case
+            */
+            if ((event.getX() < 0) || (event.getY() < 0)) {
+                mHideVolumeSlider = true;
+                startVolumeCtrlHandler();
+            }
+
+            return false;
+        });
         mMediaVolumeButton.setOnHoverListener((v, event) -> {
             float startY = v.getY();
             float maxY = startY + v.getHeight();
@@ -214,7 +233,6 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
             if ((event.getX() <= 0) || (event.getX() >= v.getWidth()) || (!(event.getY() > startY && event.getY() < maxY))) {
                 mHideVolumeSlider = true;
                 startVolumeCtrlHandler();
-
             } else {
                 mVolumeControl.setVisibility(View.VISIBLE);
                 mHideVolumeSlider = false;
