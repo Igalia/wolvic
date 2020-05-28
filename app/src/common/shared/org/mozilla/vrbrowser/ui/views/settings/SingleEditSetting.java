@@ -62,12 +62,7 @@ public class SingleEditSetting extends LinearLayout {
         mEdit1 = findViewById(R.id.editValue1);
         mEdit1.setHighlightedTextColor(mHighlightedTextColor);
         mEdit1.setOnEditorActionListener(mInternalEditorActionListener);
-        mEdit1.setOnClickListener(view -> {
-            if (mEdit1.getText().toString().equals(mEdit1.getHint())) {
-                mEdit1.requestFocus();
-                mEdit1.selectAll();
-            }
-        });
+
         if (mMaxLength != 0) {
             mEdit1.setFilters(new InputFilter[]{
                     new InputFilter.LengthFilter(mMaxLength)
