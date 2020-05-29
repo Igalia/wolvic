@@ -329,7 +329,7 @@ Widget::TestControllerIntersection(const vrb::Vector& aStartPoint, const vrb::Ve
   } else {
     result = m.cylinder->TestIntersection(aStartPoint, aDirection, aResult, aNormal, aClamp, aIsInWidget, aDistance);
   }
-  if (result && m.resizing && !aIsInWidget) {
+  if (result && m.resizing && m.resizer && !aIsInWidget) {
     // Handle extra intersections while resizing
     aIsInWidget = m.resizer->TestIntersection(aResult);
   }
