@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 
 import org.mozilla.vrbrowser.R;
-import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.widgets.NotificationManager.Notification.NotificationPosition;
 
@@ -88,6 +87,7 @@ public class NotificationManager {
 
         public Builder(@NonNull UIWidget parent) {
             this.parent = parent;
+            this.view = parent;
             this.density = R.dimen.tooltip_default_density;
         }
 

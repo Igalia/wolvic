@@ -1165,6 +1165,19 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         mViewModel.setIsPrivateSession(aSession.getSettings().getUsePrivateMode());
 
+        // Update the title bar media controls state
+        boolean mediaAvailable = mSession.getActiveVideo() != null;
+        if (mediaAvailable) {
+            if (mSession.getActiveVideo().isPlayed()) {
+                mViewModel.setIsMediaPlaying(true);
+            }
+            mViewModel.setIsMediaAvailable(true);
+
+        } else {
+            mViewModel.setIsMediaAvailable(false);
+            mViewModel.setIsMediaPlaying(false);
+        }
+
         waitForFirstPaint();
     }
 
@@ -1179,7 +1192,11 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         Session current = mSession;
         setSession(aSession, WindowWidget.DEACTIVATE_CURRENT_SESSION);
         current.captureBackgroundBitmap(getWindowWidth(), getWindowHeight()).thenAccept(aVoid -> current.setActive(false));
-        mWidgetManager.getWindows().showTabAddedNotification();
+
+        // Delay the notification so it it's displayed in the tray when a link in
+        // full screen ones in a new tab. Otherwise the navigation bar has not the correct size and
+        // the notification is misplaced.
+        postDelayed(() -> mWidgetManager.getWindows().showTabAddedNotification(), 500);
 
         GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.BROWSER);
     }

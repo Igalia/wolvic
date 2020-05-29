@@ -486,7 +486,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             exitResizeMode(ResizeAction.RESTORE_SIZE);
         }
         if (mAttachedWindow != null && mAttachedWindow.isFullScreen()) {
-            exitFullScreenMode();
+            mAttachedWindow.setIsFullScreen(false);
         }
 
         if (getSession() != null) {
@@ -570,7 +570,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     public void onSessionChanged(@NonNull Session aOldSession, @NonNull Session aSession) {
         cleanSession(aOldSession);
         setUpSession(aSession);
-        exitFullScreenMode();
+        mAttachedWindow.setIsFullScreen(false);
     }
 
     @Override
@@ -613,6 +613,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     private void enterFullScreenMode() {
+        hideAllNotifications();
+
         mWidgetManager.pushBackHandler(mFullScreenBackHandler);
 
         AnimationHelper.fadeIn(mBinding.navigationBarFullscreen.fullScreenModeContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
@@ -648,6 +650,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     private void exitFullScreenMode() {
+        hideAllNotifications();
+
         if (mAttachedWindow == null || !mAttachedWindow.isFullScreen()) {
             return;
         }
@@ -675,6 +679,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     private void enterResizeMode() {
+        hideAllNotifications();
+
         if (mAttachedWindow.isResizing()) {
             return;
         }
@@ -720,8 +726,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
                         getContext().getDrawable(R.drawable.fullscreen_button_private));
             }
         }
-
-        hideAllNotifications();
 
         // Update preset styles
     }
