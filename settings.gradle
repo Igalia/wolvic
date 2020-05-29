@@ -1,4 +1,7 @@
-include ':app'
+include ':app', ':mozillaspeechlibrary', 'mozillaspeechutils'
+
+project(':mozillaspeechlibrary').projectDir = new File('../androidspeech/mozillaspeechlibrary/')
+project(':mozillaspeechutils').projectDir = new File('../androidspeech/mozillaspeechutils/')
 
 def wavebuild = new File('third_party/wavesdk/build.gradle')
 

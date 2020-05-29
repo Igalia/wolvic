@@ -102,6 +102,7 @@ public class SettingsStore {
     public final static boolean MULTI_E10S = false;
     public final static int DOWNLOADS_STORAGE_DEFAULT = INTERNAL;
     public final static int DOWNLOADS_SORTING_ORDER_DEFAULT = SortingContextMenuWidget.SORT_DATE_ASC;
+    public final static boolean USE_DEEP_SPEECH = false;
 
     // Enable telemetry by default (opt-out).
     public final static boolean CRASH_REPORTING_DEFAULT = false;
@@ -747,6 +748,16 @@ public class SettingsStore {
 
     public @Storage int getDownloadsSortingOrder() {
         return mPrefs.getInt(mContext.getString(R.string.settings_key_downloads_sorting_order), DOWNLOADS_SORTING_ORDER_DEFAULT);
+    }
+
+    public void setDeepSpeechEnabled(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_deep_speech), isEnabled);
+        editor.commit();
+    }
+
+    public boolean isDeepSpeechEnabled() {
+        return mPrefs.getBoolean(mContext.getString(R.string.settings_key_deep_speech), USE_DEEP_SPEECH);
     }
 }
 

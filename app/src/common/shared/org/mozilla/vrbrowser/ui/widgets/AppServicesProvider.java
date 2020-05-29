@@ -1,5 +1,7 @@
 package org.mozilla.vrbrowser.ui.widgets;
 
+import com.mozilla.speechlibrary.SpeechService;
+
 import org.mozilla.vrbrowser.AppExecutors;
 import org.mozilla.vrbrowser.browser.Accounts;
 import org.mozilla.vrbrowser.browser.Places;
@@ -19,5 +21,5 @@ public interface AppServicesProvider {
     BitmapCache getBitmapCache();
     Accounts getAccounts();
     DownloadsManager getDownloadsManager();
-
+    SpeechService getSpeechService();
 }

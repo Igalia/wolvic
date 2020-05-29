@@ -1026,7 +1026,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     // VoiceSearch Delegate
 
     @Override
-    public void OnVoiceSearchResult(String transcription, float confidance) {
+    public void OnVoiceSearchResult(String transcription, float confidence) {
         mBinding.navigationBarNavigation.urlBar.handleURLEdit(transcription);
     }
 

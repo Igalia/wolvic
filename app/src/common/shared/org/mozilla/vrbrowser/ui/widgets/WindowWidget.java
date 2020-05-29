@@ -553,7 +553,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
     }
 
-    private void showPanel(@NonNull Windows.PanelType panelType) {
+    public void showPanel(@NonNull Windows.PanelType panelType) {
         showPanel(panelType, true);
     }
 

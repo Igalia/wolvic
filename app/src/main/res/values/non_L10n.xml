@@ -52,6 +52,7 @@
     <string name="settings_key_restore_tabs" translatable="false">settings_key_restore_tabs</string>
     <string name="settings_key_bypass_cache_on_reload" translatable="false">settings_key_bypass_cache_on_reload</string>
     <string name="settings_key_multi_e10s" translatable="false">settings_key_multi_e10s</string>
+    <string name="settings_key_deep_speech" translatable="false">settings_key_deep_speech</string>
     <string name="settings_key_downloads_external" translatable="false">settings_key_downloads_external</string>
     <string name="settings_key_downloads_sorting_order" translatable="false">settings_key_downloads_sorting_order</string>
     <string name="environment_override_help_url" translatable="false">https://github.com/MozillaReality/FirefoxReality/wiki/Environments</string>

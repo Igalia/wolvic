@@ -1257,15 +1257,10 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
     // VoiceSearch Delegate
     @Override
-    public void OnVoiceSearchResult(String aTranscription, float confidance) {
+    public void OnVoiceSearchResult(String aTranscription, float confidence) {
         if (aTranscription != null && !aTranscription.isEmpty()) {
             handleText(aTranscription);
         }
-        exitVoiceInputMode();
-    }
-
-    @Override
-    public void OnVoiceSearchCanceled() {
         exitVoiceInputMode();
     }
 

@@ -50,6 +50,14 @@
                     app:description="@string/settings_privacy_policy" />
 
                 <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                    android:id="@+id/deepSpeechSwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:on_text="@string/on"
+                    app:off_text="@string/off"
+                    app:description="Use Deep Speech for voice search" />
+
+                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
                     android:id="@+id/drmContentPlaybackSwitch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -211,7 +219,6 @@
                     app:on_text="@string/permission_allow"
                     app:off_text="@string/permission_reject"
                     app:description="@{String.format(@string/security_options_crash_reports_send_data, @string/app_name)}" />
-
             </LinearLayout>
         </org.mozilla.vrbrowser.ui.views.CustomScrollView>
 

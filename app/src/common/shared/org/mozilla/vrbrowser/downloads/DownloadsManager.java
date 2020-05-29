@@ -1,6 +1,6 @@
 package org.mozilla.vrbrowser.downloads;
 
-import  android.app.DownloadManager;
+import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,9 +10,9 @@ import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.webkit.URLUtil;
 
+import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -97,6 +97,10 @@ public class DownloadsManager {
     }
 
     public void startDownload(@NonNull DownloadJob job) {
+        startDownload(job, SettingsStore.getInstance(mContext).getDownloadsStorage());
+    }
+
+    public void startDownload(@NonNull DownloadJob job, @SettingsStore.Storage int storageType) {
         if (!URLUtil.isHttpUrl(job.getUri()) && !URLUtil.isHttpsUrl(job.getUri())) {
             notifyDownloadError("Cannot download non http/https files", job.getFilename());
             return;
@@ -109,16 +113,21 @@ public class DownloadsManager {
         request.setMimeType(job.getContentType());
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         request.setVisibleInDownloadsUi(false);
-        if (SettingsStore.getInstance(mContext).getDownloadsStorage() == SettingsStore.EXTERNAL) {
-            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, job.getFilename());
+        if (job.getOutputPath() == null) {
+            if (storageType == SettingsStore.EXTERNAL) {
+                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, job.getFilename());
+
+            } else {
+                String outputPath = getOutputPathForJob(job);
+                if (outputPath == null) {
+                    notifyDownloadError("Cannot create output file", job.getFilename());
+                    return;
+                }
+                request.setDestinationUri(Uri.parse(outputPath));
+            }
 
         } else {
-            String outputPath = getOutputPathForJob(job);
-            if (outputPath == null) {
-                notifyDownloadError("Cannot create output file", job.getFilename());
-                return;
-            }
-            request.setDestinationUri(Uri.parse(outputPath));
+            request.setDestinationUri(Uri.parse("file://" + job.getOutputPath()));
         }
 
         mDownloadManager.enqueue(request);

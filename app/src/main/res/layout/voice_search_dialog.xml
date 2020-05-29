@@ -85,7 +85,7 @@
                 android:textColor="@color/white"
                 android:textSize="24sp"
                 android:typeface="sans"
-                visibleInvisible="@{state == State.ERROR}"
+                visibleInvisible="@{state == State.SPEECH_ERROR}"
                 android:layout_gravity="center_horizontal"
                 android:gravity="center_horizontal"
                 tools:text='@{String.format("%s %s", @string/voice_search_error, @string/voice_search_try_again)}' />
@@ -110,7 +110,7 @@
             android:layout_height="wrap_content"
             android:layout_above="@id/buttonsContainer"
             android:layout_marginBottom="15dp"
-            visibleGone="@{state == State.LISTENING || state == State.ERROR}">
+            visibleGone="@{state == State.LISTENING || state == State.SPEECH_ERROR}">
             <TextView
                 android:id="@+id/description"
                 android:layout_width="wrap_content"

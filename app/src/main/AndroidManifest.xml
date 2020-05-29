@@ -13,6 +13,8 @@
 
     <permission android:name="${applicationId}.CRASH_RECEIVER_PERMISSION"
                 android:protectionLevel="signature"/>
+    <permission android:name="com.mozilla.speechlibrary.SPEECH_QUERY"
+        android:protectionLevel="signature"/>
 
     <application
         android:name=".VRBrowserApplication"
