@@ -924,6 +924,9 @@
     <!-- This string is displayed under the downloads title in the downloads list. -->
     <string name="downloads_description">Du får tilgang til nedlastningane dine her</string>
 
+    <!-- This string is displayed in the middle of the downloads list while the downloads is being loaded. -->
+    <string name="downloads_loading">Lastar nedlastingar</string>
+
     <!-- This string is displayed in the "Delete All" button in the downloads list.
          When pressed the all the downloads in the list are deleted both from the list and the disk. -->
     <string name="downloads_delete">Slett alle</string>
@@ -1042,6 +1045,9 @@
     <!-- This string labels the Reset button that removes all the sites from the stored allowed pop-ups sites. -->
     <string name="privacy_options_popups_reset">Tilbakestill innstillingane for Blokker sprettoppvindauge</string>
 
+    <!-- This string is displayed on top of the allowed sites list in the allowed pop-ups panel. -->
+    <string name="privacy_options_popups_list_header_v1">Følgjande nettstadar har løyve til å opne sprettoppvindauge:</string>
+
     <!-- This string is displayed in the first line of a text that's displayed in the middle of allowed pop-ups panel instead of the exceptions list
          when there are no exceptions. -->
     <string name="privacy_options_popups_list_empty_first">Når du opnar ein nettstad med sprettoppvindauge, vil du sjå ein dialog som lar deg velje å blokkere sprettoppvindauge.</string>
@@ -1049,6 +1055,9 @@
     <!-- This string is displayed in the second line of a text that's displayed in the middle of allowed pop-ups panel instead of the exceptions list
          when there are no exceptions. -->
     <string name="privacy_options_popups_list_empty_second">Ei liste over nettstadar med løyve vert viste her.</string>
+
+    <!-- This string is used to label radio buttons for setting ETP in. -->
+    <string name="privacy_options_tracking">Utvida sporingsvern. (&lt;a href=&quot;%1$s&quot;&gt;Les meir&lt;/a&gt;)</string>
 
     <!-- This string labels the button in the privacy option panel that opens the dialog to add/remove
          Tracking protection exceptions. -->
@@ -1190,6 +1199,17 @@
      has to be used to exit from WebXR. It's preferred to separate it in two lines if possible.
      \n is used to create a new line  -->
     <string name="webxr_interstitial_exit_webxr">Avslutt\nWebXR</string>
+
+    <!-- This string appears in the WebXR interstitial. -->
+    <string name="webxr_interstitial_how_to_continue_1">Trykk på kva som helst annan knapp for å fortsetje</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Tracking' button in the
+     browser's navigation bar. The button it labels, when pressed, Shows the Tracking dialog. -->
+    <string name="tracking_allowed_tooltip">Sporingsvern er slått på</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Tracking Protection' button in the
+ browser's navigation bar. The button it labels, when pressed, Shows the Tracking Protection dialog. -->
+    <string name="tracking_disabled_tooltip">Sporingsvern er slått av</string>
 
     <!-- This string is for the tooltip that appears when the user is not in the browser's Private Browsing mode
          and hovers over the 'Private Browsing' icon in the browser's tray menu. -->
@@ -1531,6 +1551,10 @@ the Select` button. When clicked it closes all the previously selected tabs -->
        it continues to wait for execution of the web page script that caused the slow down. -->
     <string name="slow_script_dialog_action_wait">Vent</string>
   
+    <!-- This string is displayed in the title of the quick PopUp blocking dialog, accessed from the PopUp icon in the URL bar.
+     '%1$s' will be replaced at runtime with the status of the setting. -->
+    <string name="popup_permission_dialog_message">Blokkering av sprettoppvindauge er %1$s for denne nettstaden.</string>
+
     <!-- This string is displayed in the on button of the quick Popup blocking dialog when it's in enabled state. It's accessed from the Popup icon in the URL bar. -->
     <string name="popup_dialog_button_on">På</string>
 
@@ -1548,6 +1572,11 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed in the off button of the quick WebXR blocking dialog when it's in disabled state. It's accessed from the WebXR icon in the URL bar. -->
     <string name="webxr_dialog_button_off">Av</string>
   
+    <!-- This string is displayed in the title of the quick Tracking Protection dialog, accessed from the Tracking Protection icon in the URL bar.
+         '%1$s' will be replaced at runtime with the status of the setting.
+         '%2$s' will be replaced at runtime with the Learn More page link. -->
+    <string name="tracking_dialog_message">Utvida sporingsvern er %1$s for denne nettstaden. &lt;a href=&quot;%2$s&quot;&gt;Les meir&lt;/a&gt;</string>
+
     <!-- This string is displayed in the on button of the quick Tracking Protection dialog when it's in enabled state. It's accessed from the Tracking Protection icon in the URL bar. -->
     <string name="tracking_dialog_button_on">På</string>
 
@@ -1585,6 +1614,10 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed in the Quit button of the confirm dialog shown in some platforms when the back button is pressed to quit the app.  -->
     <string name="exit_confirm_dialog_button_quit">Avslutt</string>
 
+    <!-- This string is displayed in the title of the dialog displayed when the user tries to open an unsupported
+         file from the Downloads library panel. -->
+    <string name="download_open_file_unsupported_title">Ustøtta filtype</string>
+
     <!-- This string is displayed in the cancel button of the dialog displayed when the user tries to open an unsupported
          file from the Downloads library panel. When clicked the dialog is closed.-->
     <string name="download_open_file_unsupported_cancel">Avbryt</string>
@@ -1596,6 +1629,14 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed in the title of the dialog displayed when we try to hand over the file open to
          the system but the system can't handle it either. -->
     <string name="download_open_file_error_title">Feil</string>
+
+    <!-- This string is displayed in the body of the dialog displayed when the file type cannot be opened and
+     there is no system app available to handle it either. -->
+    <string name="download_open_file_open_unsupported_body">Filtype ikkje støtta.</string>
+
+    <!-- This string is displayed in the body of the dialog displayed when we try to hand over the file open to
+         the system but the system can't handle it either. -->
+    <string name="download_open_file_error_body">Fann ingen applikasjonar for å handtere denne filtypen.</string>
 
     <!-- This string is displayed in the title of the dialog displayed when a download has been requested
          so the user can confirm if they want to actually download the file. -->
