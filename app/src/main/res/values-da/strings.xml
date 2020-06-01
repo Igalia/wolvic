@@ -459,6 +459,10 @@
          User-Agent (UA) string of the browser. -->
     <string name="developer_options_ua_mode">User Agent-tilstand</string>
 
+    <!-- This string is used to label a set of radio buttons that allow the user to change the
+         default downloads storage. -->
+    <string name="security_options_downloads_storage">Standard-lager for filhentninger</string>
+
     <!-- This string is used to label the 'Desktop' radio button of the 'User-Agent Mode' settings option. -->
     <string name="developer_options_ua_desktop">Computer</string>
 
@@ -632,6 +636,10 @@
     <string name="fxa_account_last_synced">Senest synkroniseret for %1$d minutter siden</string>
 
         <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
+     and is used to enable or disable playback of DRM controlled content. -->
+    <string name="security_options_drm_content_v1">Tillad automatisk websteder at identificere din enhed for at afspille DRM-kontrolleret indhold (&lt;a href=&quot;%1$s&quot;&gt;Læs mere &lt;/a&gt;)</string>
+
+    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable the tabs restoration after a fresh app start. -->
     <string name="security_options_restore_tabs">Gendan faneblade og vinduer efter genstart</string>
 
@@ -948,6 +956,12 @@
     <!-- This string is displayed as the title of the downloads list when the downloads is empty. -->
     <string name="downloads_empty">Din liste med filhentninger er tom</string>
 
+    <!-- This string is displayed under the downloads title in the downloads list. -->
+    <string name="downloads_description">Du kan se dine filhentninger her</string>
+
+    <!-- This string is displayed in the middle of the downloads list while the downloads is being loaded. -->
+    <string name="downloads_loading">Indlæser filhentninger</string>
+
     <!-- This string is displayed in the "Delete All" button in the downloads list.
          When pressed the all the downloads in the list are deleted both from the list and the disk. -->
     <string name="downloads_delete">Slet alle</string>
@@ -1175,6 +1189,16 @@
     <!-- This string is for the tooltip that appears upon hovering the 'Clear' button in the
          browser's navigation bar. The button it labels, when pressed, clears the navigation bar text. -->
     <string name="clear_tooltip">Ryd</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Pop-Up' button in the
+         browser's navigation bar if popups are not blocked for the site.
+         The button it labels, when pressed, Shows the pop-up dialog. -->
+    <string name="popup_tooltip_v1">Pop op-vinduer ikke blokeret</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Pop-Up' button in the
+         browser's navigation bar if popups are blocked for the site.
+         The button it labels, when pressed, Shows the pop-up dialog. -->
+    <string name="popup_blocked_tooltip">Pop op-vinduer blokeret</string>
 
     <!-- This string is for the tooltip that appears upon hovering the 'DRM' button in the
          browser's navigation bar when DRM is allowed for the site. The button it labels, when pressed,
@@ -1586,14 +1610,31 @@ the Select` button. When clicked it closes all the previously selected tabs -->
          '%2$s' will be replaced at runtime with the Learn More page link. -->
     <string name="tracking_dialog_message">Udvidet beskyttelse mod sporing er %1$s for dette websted.  (&lt;a href=&quot;%2$s&quot;&gt;Læs mere&lt;/a&gt;)</string>
 
+    <!-- This string is displayed in the on button of the quick Tracking Protection dialog when it's in enabled state. It's accessed from the Tracking Protection icon in the URL bar. -->
+    <string name="tracking_dialog_button_on">Til</string>
+
+    <!-- This string is displayed in the off button of the quick Tracking Protection dialog when it's in disabled state. It's accessed from the Tracking Protection icon in the URL bar. -->
+    <string name="tracking_dialog_button_off">Fra</string>
+
     <!-- This string is displayed in the title of the quick DRM dialog, accessed from the DRM icon in the URL bar.
          '%1$s' will be replaced at runtime with the status of the setting.
          '%2$s' will be replaced at runtime with the Learn More page link. -->
     <string name="drm_dialog_message">Noget lyd- eller videoindhold på dette websted bruger DRM-software, hvilken kan begrænse hvad %1$s kan lade dig gøre med det. &lt;a href=&quot;%2$s&quot;&gt;Læs mere&lt;/a&gt;</string>
 
+    <!-- This string is displayed in the switch button of the quick DRM dialog when it's in enabled state. It's accessed from the DRM icon in the URL bar. -->
+    <string name="drm_dialog_button_on">Til</string>
+
+    <!-- This string is displayed in the switch button of the quick DRM dialog when it's in disabled state. It's accessed from the DRM icon in the URL bar. -->
+    <string name="drm_dialog_button_off">Fra</string>
+
     <!-- This string is displayed as the title of a dialog that is displayed the first time a user access DRM content if they haven't
          explicitly enable/Disable the DRM setting yet. -->
     <string name="drm_first_use_title_v1">Dette websted indeholder DRM-indhold.</string>
+  
+    <!-- This string is displayed as the body of a dialog that is displayed the first time a user access DRM content if they haven't
+         explicitly enable/Disable the DRM setting yet.
+         '%1$s' will be replaced at runtime with the Learn More page link. -->
+    <string name="drm_first_use_body_v2">Hvis du tillader DRM, kan websteder identificere denne enhed ved hvert besøg. &lt;a href=&quot;%1$s&quot;&gt;Læs mere &lt;/a&gt;</string>
   
     <!-- This string is displayed in the enable button that is displayed inside the dialog that is displayed the first time a user access
          access DRM content if they haven't explicitly enable/Disable the DRM setting yet. -->
@@ -1635,6 +1676,14 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed in the title of the dialog displayed when we try to hand over the file open to
          the system but the system can't handle it either. -->
     <string name="download_open_file_error_title">Fejl</string>
+
+    <!-- This string is displayed in the body of the dialog displayed when the file type cannot be opened and
+     there is no system app available to handle it either. -->
+    <string name="download_open_file_open_unsupported_body">Filtypen understøttes ikke.</string>
+
+    <!-- This string is displayed in the body of the dialog displayed when we try to hand over the file open to
+         the system but the system can't handle it either. -->
+    <string name="download_open_file_error_body">Ingen applikationer blev fundet, der kan håndtere denne filtype.</string>
 
     <!-- This string is displayed in the title of the dialog displayed when a download has been requested
          so the user can confirm if they want to actually download the file. -->
@@ -1687,6 +1736,9 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 
     <!-- This string is displayed in the downloads panel, in the download status when the download is paused. -->
     <string name="download_status_paused">Sat på pause</string>
+
+    <!-- This string is displayed in the downloads panel, in the download status when the download is pending. -->
+    <string name="download_status_pending">Afventer</string>
 
     <!-- This string is displayed in the downloads panel, in the download status when the resource is no longer available. -->
     <string name="download_status_unavailable">Ikke tilgængelig</string>

@@ -117,6 +117,29 @@
     <!-- This string is used as the title of the WebXR dialog used to do not allow websites to access WebXR devices. -->
     <string name="settings_privacy_policy_webxr_title">Løyve for virtuell røyndom</string>
 
+    <!-- This string is displayed under the title the  WebXR dialog used to do not allow websites to access WebXR devices. -->
+    <string name="settings_privacy_policy_webxr_description">Følgjande nettstadar er blokkerte frå å la WebXR API få tilgang til VR-eininga di.</string>
+
+    <!-- This string is displayed in the first line of a text that's displayed in the middle of allowed pop-ups panel instead of the exceptions list
+     when there are no exceptions. -->
+    <string name="settings_privacy_policy_webxr_empty_description">Når du opnar ein nettstad som brukar WebXR, kan du opne ein dialog som lar deg blokkere WebXR på den nettstaden.</string>
+
+    <!-- This string labels the Reset button that removes all the sites not allowed to access WebXR -->
+    <string name="settings_privacy_policy_webxr_reset">Tilbakestill nettstadane som ikkje har tilgang til virtuell røyndom-einingar.</string>
+
+    <!-- This string is used as the title of the Tracking dialog used to do not allow websites to bypass tracking protection. -->
+    <string name="settings_privacy_policy_tracking_title">Unntak for utvida sporingsvern</string>
+
+    <!-- This string is displayed under the title the  Tracking dialog used to do not allow websites to bypass tracking protection. -->
+    <string name="settings_privacy_policy_tracking_description">Du har slått av vern på desse nettstadane.</string>
+
+    <!-- This string is displayed in the first line of a text that's displayed in the middle of the etp exceptions instead of the exceptions list
+     when there are no exceptions. -->
+    <string name="settings_privacy_policy_tracking_empty_description">Når du lar ein nettstad spore aktiviteten din, vil det visast her.</string>
+
+    <!-- This string labels the Reset button that removes all the sites not allowed to access WebXR -->
+    <string name="settings_privacy_policy_tracking_reset">Tilbakestill unntaka for utvida sporingsvern.</string>
+
     <!-- This string is displayed in the switch of each item of the the pop-up blocking list when the site is allowed. -->
     <string name="pop_up_site_switch_allow">Tillat</string>
 
@@ -459,11 +482,20 @@
     <!-- This string is used to label the 'Standard' radio button of the 'Enhanced Tracking protection' settings option. -->
     <string name="privacy_options_tracking_etp">Standard</string>
 
+    <!-- This string is used as the description of the 'Standard' radio button of the 'Enhanced Tracking protection' settings option. -->
+    <string name="privacy_options_tracking_etp_description">Balansert for vern og yting. Sider vert lasta normalt.</string>
+
     <!-- This string is used to label the 'Strict' radio button of the 'Tracking protection' settings option. -->
     <string name="privacy_options_tracking_strict">Streng</string>
 
+    <!-- This string is used as the description of the 'Strict' radio button of the 'Enhanced Tracking protection' settings option. -->
+    <string name="privacy_options_tracking_strict_description">Sterkare vern, men kan føre til at nokre nettstadar eller innhald ikkje vil fungere.</string>
+
     <!-- This string is used to label the 'Off' radio button of the 'Tracking protection' settings option. -->
     <string name="privacy_options_tracking_off">Av</string>
+
+    <!-- This string is used as the description of the 'Off' radio button of the 'Enhanced Tracking protection' settings option. -->
+    <string name="privacy_options_tracking_off_description">Tillat kvar side å følgje deg rundt på nettet for å samle inn informasjon om vanane og interessene dine.</string>
 
     <!-- This string is used to label radio buttons for setting fixed-foveated-rendering (FFR) level.
      The term "foveation" derives from "fovea", the area of higher-resolution vision in the human retina.
@@ -604,6 +636,10 @@
     <string name="fxa_account_last_synced">Sist synkronisert for %1$d minutt sidan</string>
 
         <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
+     and is used to enable or disable playback of DRM controlled content. -->
+    <string name="security_options_drm_content_v1">La nettstadar automatisk identifisere eininga di for å spele av DRM-kontrollert innhald. (&lt;a href=&quot;%1$s&quot;&gt;Les melr&lt;/a&gt;)</string>
+
+    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable the tabs restoration after a fresh app start. -->
     <string name="security_options_restore_tabs">Rett oppatt faner og vindauge etter omstart</string>
 
@@ -1583,6 +1619,11 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed in the off button of the quick Tracking Protection dialog when it's in disabled state. It's accessed from the Tracking Protection icon in the URL bar. -->
     <string name="tracking_dialog_button_off">Av</string>
 
+    <!-- This string is displayed in the title of the quick DRM dialog, accessed from the DRM icon in the URL bar.
+         '%1$s' will be replaced at runtime with the status of the setting.
+         '%2$s' will be replaced at runtime with the Learn More page link. -->
+    <string name="drm_dialog_message">Noko lyd eller video på denne sida brukar DRM-programvare, som kan avgrense kva %1$s lèt deg gjere med han. &lt;a href=&quot;%2$s&quot;&gt;Les meir&lt;/a&gt;</string>
+
     <!-- This string is displayed in the switch button of the quick DRM dialog when it's in enabled state. It's accessed from the DRM icon in the URL bar. -->
     <string name="drm_dialog_button_on">På</string>
 
@@ -1592,6 +1633,11 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed as the title of a dialog that is displayed the first time a user access DRM content if they haven't
          explicitly enable/Disable the DRM setting yet. -->
     <string name="drm_first_use_title_v1">Denne nettstaden inneheld DRM-innhald.</string>
+  
+    <!-- This string is displayed as the body of a dialog that is displayed the first time a user access DRM content if they haven't
+         explicitly enable/Disable the DRM setting yet.
+         '%1$s' will be replaced at runtime with the Learn More page link. -->
+    <string name="drm_first_use_body_v2">Dersom du tillèt DRM, kan nettstadar identifisere denne eininga kvar gong du besøkjer. &lt;a href=&quot;%1$s&quot;&gt;Les meir&lt;/a&gt;</string>
   
     <!-- This string is displayed in the enable button that is displayed inside the dialog that is displayed the first time a user access
          access DRM content if they haven't explicitly enable/Disable the DRM setting yet. -->
@@ -1617,6 +1663,10 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed in the title of the dialog displayed when the user tries to open an unsupported
          file from the Downloads library panel. -->
     <string name="download_open_file_unsupported_title">Ustøtta filtype</string>
+
+    <!-- This string is displayed in the body of the dialog displayed when the user tries to open an unsupported
+         file from the Downloads library panel. -->
+    <string name="download_open_file_unsupported_body">Fila kan ikkje opnast. Vil du opne henne med ein ekstern applikasjon?</string>
 
     <!-- This string is displayed in the cancel button of the dialog displayed when the user tries to open an unsupported
          file from the Downloads library panel. When clicked the dialog is closed.-->
@@ -1676,6 +1726,10 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 
     <!-- This string is displayed in the title of the download error dialog. -->
     <string name="download_error_title">Ein feil oppstod</string>
+
+    <!-- This string is displayed in the body of the download error dialog.
+         '%1$s' will be replaced at runtime with the name of the downloaded file. -->
+    <string name="download_error_body">Det oppstod ein feil under nedlasting av %1$s. Prøv på nytt.</string>
 
     <!-- This string is displayed in the button to dismiss the download error dialog. -->
     <string name="download_error_ok">Ok</string>
