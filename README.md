@@ -118,6 +118,13 @@ npm install
 npm run compress
 ```
 
+## Enable OpenXR builds
+You can enable OpenXR API for Oculus by adding this property to your `user.properties` file:
+
+```ini
+openxr=true
+```
+
 ## Development troubleshooting
 
 ### `Device supports , but APK only supports armeabi-v7a[...]`

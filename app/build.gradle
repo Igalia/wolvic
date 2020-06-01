@@ -40,6 +40,20 @@ def getUseDebugSigningOnRelease = { ->
     return false
 }
 
+def getOpenXRFlags = { ->
+    if (gradle.hasProperty("userProperties.openxr")) {
+        return gradle."userProperties.openxr" == "true" ? " -DOPENXR" : ""
+    }
+    return ""
+}
+
+def getOpenXRCMakeFlags = { ->
+    if (gradle.hasProperty("userProperties.openxr")) {
+        return gradle."userProperties.openxr" == "true" ? "-DOPENXR=ON" : ""
+    }
+    return ""
+}
+
 // Glean: Generate markdown docs for the collected metrics.
 ext.gleanGenerateMarkdownDocs = true
 ext.gleanDocsDirectory = "$rootDir/docs"
@@ -120,11 +134,8 @@ android {
             dimension "platform"
             externalNativeBuild {
                 cmake {
-                    cppFlags " -I" + file("${project.rootDir}/third_party/ovr_mobile/VrApi/Include").absolutePath +
-                            " -I" + file("${project.rootDir}/third_party/OVRPlatformSDK/Include").absolutePath +
-                            " -I" + file("${project.rootDir}/app/src/oculusvr/cpp").absolutePath +
-                            " -DOCULUSVR -DSTORE_BUILD=0"
-                    arguments "-DVR_SDK_LIB=oculusvr-lib", "-DVR_SDK_EXTRA_LIB=ovrplatform-lib", "-DOCULUSVR=ON"
+                    cppFlags "-DOCULUSVR -DSTORE_BUILD=0" + getOpenXRFlags()
+                    arguments "-DVR_SDK_LIB=oculusvr-lib", "-DVR_SDK_EXTRA_LIB=ovrplatform-lib", "-DOCULUSVR=ON", getOpenXRCMakeFlags()
                 }
             }
             manifestPlaceholders = [ headtrackingRequired:"false", permissionToRemove:"android.permission.RECEIVE_BOOT_COMPLETED" ]
@@ -134,11 +145,8 @@ android {
             dimension "platform"
             externalNativeBuild {
                 cmake {
-                    cppFlags " -I" + file("${project.rootDir}/third_party/ovr_mobile/VrApi/Include").absolutePath +
-                            " -I" + file("${project.rootDir}/third_party/OVRPlatformSDK/Include").absolutePath +
-                            " -I" + file("${project.rootDir}/app/src/oculusvr/cpp").absolutePath +
-                            " -DOCULUSVR -DSTORE_BUILD=1"
-                    arguments "-DVR_SDK_LIB=oculusvr-lib", "-DVR_SDK_EXTRA_LIB=ovrplatform-lib", "-DOCULUSVR=ON"
+                    cppFlags "-DOCULUSVR -DSTORE_BUILD=1" + getOpenXRFlags()
+                    arguments "-DVR_SDK_LIB=oculusvr-lib", "-DVR_SDK_EXTRA_LIB=ovrplatform-lib", "-DOCULUSVR=ON", getOpenXRCMakeFlags()
                 }
             }
             manifestPlaceholders = [ headtrackingRequired:"false", permissionToRemove:"android.permission.RECEIVE_BOOT_COMPLETED" ]
@@ -148,11 +156,8 @@ android {
             dimension "platform"
             externalNativeBuild {
                 cmake {
-                    cppFlags " -I" + file("${project.rootDir}/third_party/ovr_mobile/VrApi/Include").absolutePath +
-                            " -I" + file("${project.rootDir}/third_party/OVRPlatformSDK/Include").absolutePath +
-                            " -I" + file("${project.rootDir}/app/src/oculusvr/cpp").absolutePath +
-                            " -DOCULUSVR -DSTORE_BUILD=1"
-                    arguments "-DVR_SDK_LIB=oculusvr-lib", "-DVR_SDK_EXTRA_LIB=ovrplatform-lib", "-DOCULUSVR=ON"
+                    cppFlags "-DOCULUSVR -DSTORE_BUILD=1" + getOpenXRFlags()
+                    arguments "-DVR_SDK_LIB=oculusvr-lib", "-DVR_SDK_EXTRA_LIB=ovrplatform-lib", "-DOCULUSVR=ON", getOpenXRCMakeFlags()
                 }
             }
             manifestPlaceholders = [ headtrackingRequired:"false", permissionToRemove:"android.permission.CAMERA" ]
