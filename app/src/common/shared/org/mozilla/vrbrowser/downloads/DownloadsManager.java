@@ -57,7 +57,8 @@ public class DownloadsManager {
         mContext.registerReceiver(mDownloadReceiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
         List<Download> downloads = getDownloads();
         downloads.forEach(download -> {
-            if (!new File(UrlUtils.stripProtocol(download.getOutputFile())).exists()) {
+            if (mDownloadManager != null &&
+                    !new File(UrlUtils.stripProtocol(download.getOutputFile())).exists()) {
                 mDownloadManager.remove(download.getId());
             }
         });
@@ -121,8 +122,10 @@ public class DownloadsManager {
             request.setDestinationUri(Uri.parse(outputPath));
         }
 
-        mDownloadManager.enqueue(request);
-        scheduleUpdates();
+        if (mDownloadManager != null) {
+            mDownloadManager.enqueue(request);
+            scheduleUpdates();
+        }
     }
 
     @Nullable
@@ -144,15 +147,21 @@ public class DownloadsManager {
                 if (file.exists()) {
                     File newFile = new File(UrlUtils.stripProtocol(download.getOutputFile().concat(".bak")));
                     file.renameTo(newFile);
-                    mDownloadManager.remove(downloadId);
+                    if (mDownloadManager != null) {
+                        mDownloadManager.remove(downloadId);
+                    }
                     newFile.renameTo(file);
 
                 } else {
-                    mDownloadManager.remove(downloadId);
+                    if (mDownloadManager != null) {
+                        mDownloadManager.remove(downloadId);
+                    }
                 }
 
             } else {
-                mDownloadManager.remove(downloadId);
+                if (mDownloadManager != null) {
+                    mDownloadManager.remove(downloadId);
+                }
             }
         }
         notifyDownloadsUpdate();
@@ -166,13 +175,17 @@ public class DownloadsManager {
     public Download getDownload(long downloadId) {
         Download download = null;
 
-        DownloadManager.Query query = new DownloadManager.Query();
-        query.setFilterById(downloadId);
-        Cursor c = mDownloadManager.query(query);
-        if (c.moveToFirst()) {
-            download = Download.from(c);
+        if (mDownloadManager != null) {
+            DownloadManager.Query query = new DownloadManager.Query();
+            query.setFilterById(downloadId);
+            Cursor c = mDownloadManager.query(query);
+            if (c != null) {
+                if (c.moveToFirst()) {
+                    download = Download.from(c);
+                }
+                c.close();
+            }
         }
-        c.close();
 
         return download;
     }
@@ -180,12 +193,16 @@ public class DownloadsManager {
     public List<Download> getDownloads() {
         List<Download> downloads = new ArrayList<>();
 
-        DownloadManager.Query query = new DownloadManager.Query();
-        Cursor c = mDownloadManager.query(query);
-        while (c.moveToNext()) {
-            downloads.add(Download.from(c));
+        if (mDownloadManager != null) {
+            DownloadManager.Query query = new DownloadManager.Query();
+            Cursor c = mDownloadManager.query(query);
+            if (c != null) {
+                while (c.moveToNext()) {
+                    downloads.add(Download.from(c));
+                }
+                c.close();
+            }
         }
-        c.close();
 
         return downloads;
     }
@@ -196,15 +213,17 @@ public class DownloadsManager {
             String action = intent.getAction();
             long downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
 
-            if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
+            if (mDownloadManager != null && DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
                 DownloadManager.Query query = new DownloadManager.Query();
                 query.setFilterById(downloadId);
                 Cursor c = mDownloadManager.query(query);
-                if (c.moveToFirst()) {
-                    notifyDownloadsUpdate();
-                    notifyDownloadCompleted(Download.from(c));
+                if (c != null) {
+                    if (c.moveToFirst()) {
+                        notifyDownloadsUpdate();
+                        notifyDownloadCompleted(Download.from(c));
+                    }
+                    c.close();
                 }
-                c.close();
             }
         }
     };
