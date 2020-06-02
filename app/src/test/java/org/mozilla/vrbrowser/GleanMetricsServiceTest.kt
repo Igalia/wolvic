@@ -7,8 +7,10 @@ import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mozilla.telemetry.TelemetryHolder
 import org.mozilla.vrbrowser.GleanMetrics.Distribution
 import org.mozilla.vrbrowser.GleanMetrics.FirefoxAccount
+import org.mozilla.vrbrowser.GleanMetrics.LegacyTelemetry
 import org.mozilla.vrbrowser.GleanMetrics.Tabs
 import org.mozilla.vrbrowser.GleanMetrics.Url
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService
@@ -119,22 +121,30 @@ class GleanMetricsServiceTest {
         assertTrue(FirefoxAccount.tabSent.testHasValue())
         assertEquals(FirefoxAccount.tabSent.testGetValue(), 1)
 
-        assertFalse(FirefoxAccount.receivedTab[DeviceType.MOBILE.name].testHasValue())
+        assertFalse(FirefoxAccount.receivedTab[DeviceType.MOBILE.name.toLowerCase()].testHasValue())
         GleanMetricsService.FxA.receivedTab(DeviceType.MOBILE)
-        assertTrue(FirefoxAccount.receivedTab[DeviceType.MOBILE.name].testHasValue())
-        assertEquals(FirefoxAccount.receivedTab[DeviceType.MOBILE.name].testGetValue(), 1)
+        assertTrue(FirefoxAccount.receivedTab[DeviceType.MOBILE.name.toLowerCase()].testHasValue())
+        assertEquals(FirefoxAccount.receivedTab[DeviceType.MOBILE.name.toLowerCase()].testGetValue(), 1)
     }
 
     @Test
     fun testTabTelemetry() {
-        assertFalse(Tabs.opened[GleanMetricsService.Tabs.TabSource.BOOKMARKS.name].testHasValue())
+        assertFalse(Tabs.opened[GleanMetricsService.Tabs.TabSource.BOOKMARKS.name.toLowerCase()].testHasValue())
         GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.BOOKMARKS)
-        assertTrue(Tabs.opened[GleanMetricsService.Tabs.TabSource.BOOKMARKS.name].testHasValue())
-        assertEquals(Tabs.opened[GleanMetricsService.Tabs.TabSource.BOOKMARKS.name].testGetValue(), 1)
+        assertTrue(Tabs.opened[GleanMetricsService.Tabs.TabSource.BOOKMARKS.name.toLowerCase()].testHasValue())
+        assertEquals(Tabs.opened[GleanMetricsService.Tabs.TabSource.BOOKMARKS.name.toLowerCase()].testGetValue(), 1)
 
         assertFalse(Tabs.activated.testHasValue())
         GleanMetricsService.Tabs.activatedEvent()
         assertTrue(Tabs.activated.testHasValue())
         assertEquals(Tabs.activated.testGetValue(), 1)
+    }
+
+    @Test
+    fun testLegacyTelemetry() {
+        assertFalse(LegacyTelemetry.clientId.testHasValue())
+        LegacyTelemetry.clientId.set(java.util.UUID.fromString(TelemetryHolder.get().getClientId()))
+        assertTrue(LegacyTelemetry.clientId.testHasValue())
+        assertEquals(LegacyTelemetry.clientId.testGetValue().toString(), TelemetryHolder.get().getClientId())
     }
 }

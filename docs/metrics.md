@@ -8,6 +8,7 @@ This means you might have to go searching through the dependency tree to get a f
 # Pings
 
  - [baseline](#baseline)
+ - [deletion-request](#deletion-request)
  - [events](#events)
  - [metrics](#metrics)
  - [session-end](#session-end)
@@ -24,6 +25,14 @@ The following metrics are added to the ping:
 | Name | Type | Description | Data reviews | Extras | Expiration |
 | --- | --- | --- | --- | --- | --- |
 | distribution.channel_name |[string](https://mozilla.github.io/glean/book/user/metrics/string.html) |The distribution channel name of this application. We use this field to recognize Firefox Reality is distributed to which channels, such as wavevr, oculusvr, etc.  |[1](https://github.com/MozillaReality/FirefoxReality/pull/1854#issuecomment-546214568), [2](https://github.com/MozillaReality/FirefoxReality/pull/3199#issuecomment-617938749)||2020-11-01 |
+
+## deletion-request
+
+The following metrics are added to the ping:
+
+| Name | Type | Description | Data reviews | Extras | Expiration |
+| --- | --- | --- | --- | --- | --- |
+| legacy_telemetry.client_id |[uuid](https://mozilla.github.io/glean/book/user/metrics/uuid.html) |A UUID uniquely identifying the legacy telemetry client id. This is used for supporting legacy telemetry in the `deletion-request` ping.  |[1](https://github.com/MozillaReality/FirefoxReality/pull/2348#issuecomment-564736919)||2020-11-01 |
 
 ## events
 

@@ -7,9 +7,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.UiThread;
 import androidx.annotation.VisibleForTesting;
 
+import org.mozilla.telemetry.TelemetryHolder;
 import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.GleanMetrics.Distribution;
 import org.mozilla.vrbrowser.GleanMetrics.FirefoxAccount;
+import org.mozilla.vrbrowser.GleanMetrics.LegacyTelemetry;
 import org.mozilla.vrbrowser.GleanMetrics.Pings;
 import org.mozilla.vrbrowser.GleanMetrics.Searches;
 import org.mozilla.vrbrowser.GleanMetrics.Url;
@@ -24,6 +26,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.UUID;
 
 import mozilla.components.service.glean.Glean;
 import mozilla.components.service.glean.config.Configuration;
@@ -51,6 +54,8 @@ public class GleanMetricsService {
         } else {
             GleanMetricsService.stop();
         }
+
+        LegacyTelemetry.INSTANCE.clientId().set(UUID.fromString(TelemetryHolder.get().getClientId()));
         Configuration config = new Configuration(Configuration.DEFAULT_TELEMETRY_ENDPOINT, BuildConfig.BUILD_TYPE);
         Glean.INSTANCE.initialize(aContext, true, config);
     }
@@ -194,7 +199,7 @@ public class GleanMetricsService {
         }
 
         public static void receivedTab(@NonNull mozilla.components.concept.sync.DeviceType source) {
-            FirefoxAccount.INSTANCE.getReceivedTab().get(source.name()).add();
+            FirefoxAccount.INSTANCE.getReceivedTab().get(source.name().toLowerCase()).add();
         }
     }
 
@@ -213,7 +218,7 @@ public class GleanMetricsService {
         }
 
         public static void openedCounter(@NonNull TabSource source) {
-            org.mozilla.vrbrowser.GleanMetrics.Tabs.INSTANCE.getOpened().get(source.name()).add();
+            org.mozilla.vrbrowser.GleanMetrics.Tabs.INSTANCE.getOpened().get(source.name().toLowerCase()).add();
         }
 
         public static void activatedEvent() {

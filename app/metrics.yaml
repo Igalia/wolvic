@@ -80,7 +80,8 @@ searches:
   counts:
     type: labeled_counter
     description: >
-      Counting how many searches are queried in a specific search engine. The search engine `identifier`s are used as keys for this metric.
+      Counting how many searches are queried in a specific search engine.
+      The search engine `identifier`s are used as keys for this metric.
     bugs:
       - https://github.com/MozillaReality/FirefoxReality/issues/2230
     data_reviews:
@@ -250,6 +251,23 @@ control:
     data_reviews:
       - https://github.com/MozillaReality/FirefoxReality/pull/2348#issuecomment-564736919
       - https://github.com/MozillaReality/FirefoxReality/pull/3199#issuecomment-617938749
+    notification_emails:
+      - fxr-telemetry@mozilla.com
+      - dmu@mozilla.com
+    expires: "2020-11-01"
+
+legacy_telemetry:
+  client_id:
+    type: uuid
+    description: >
+      A UUID uniquely identifying the legacy telemetry client id.
+      This is used for supporting legacy telemetry in the `deletion-request` ping.
+    send_in_pings:
+      - deletion-request
+    bugs:
+      - https://github.com/MozillaReality/FirefoxReality/issues/2347
+    data_reviews:
+      - https://github.com/MozillaReality/FirefoxReality/pull/2348#issuecomment-564736919
     notification_emails:
       - fxr-telemetry@mozilla.com
       - dmu@mozilla.com
