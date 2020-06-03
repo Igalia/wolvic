@@ -204,7 +204,7 @@ public class HistoryView extends LibraryView implements HistoryStore.HistoryList
                 int lastItem = mHistoryAdapter.getItemCount();
                 if ((rowPosition == layoutManager.findLastVisibleItemPosition() || rowPosition == layoutManager.findLastCompletelyVisibleItemPosition() ||
                         rowPosition == layoutManager.findLastVisibleItemPosition()-1 || rowPosition == layoutManager.findLastCompletelyVisibleItemPosition()-1)
-                        && rowPosition != lastItem) {
+                        && (rowPosition != lastItem && rowPosition != 1)) {
                     isLastVisibleItem = true;
                 }
             }
