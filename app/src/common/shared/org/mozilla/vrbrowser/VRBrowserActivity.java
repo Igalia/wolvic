@@ -93,11 +93,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import static org.mozilla.vrbrowser.ui.widgets.UIWidget.REMOVE_WIDGET;
 
@@ -549,12 +547,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         Log.d(LOGTAG,"VRBrowserActivity onNewIntent");
         super.onNewIntent(intent);
         setIntent(intent);
-        final String action = intent.getAction();
-        if (Intent.ACTION_VIEW.equals(action)) {
-            loadFromIntent(intent);
 
-        } else if (GeckoRuntime.ACTION_CRASHED.equals(intent.getAction())) {
+        if (GeckoRuntime.ACTION_CRASHED.equals(intent.getAction())) {
             Log.e(LOGTAG, "Restarted after a crash");
+        } else {
+            loadFromIntent(intent);
         }
     }
 
@@ -600,7 +597,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         Uri uri = intent.getData();
 
         boolean openInWindow = false;
-        boolean openInTab = false;
         boolean openInBackground = false;
 
         Bundle extras = intent.getExtras();
@@ -614,14 +610,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             if (extras.containsKey("homepage")) {
                 Uri homepageUri = Uri.parse(extras.getString("homepage"));
                 SettingsStore.getInstance(this).setHomepage(homepageUri.toString());
-            }
-
-            // Open the provided URL in a new tab, if there is no URL provided we just open the homepage
-            if (extras.containsKey("create_new_tab")) {
-                openInTab = extras.getBoolean("create_new_tab", false);
-                if (uri == null) {
-                    uri = Uri.parse(SettingsStore.getInstance(this).getHomepage());
-                }
             }
 
             // Open the tab in background/foreground, if there is no URL provided we just open the homepage
@@ -659,21 +647,14 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         if (uri != null) {
             Log.d(LOGTAG, "Loading URI from intent: " + uri.toString());
 
+            int location = Windows.OPEN_IN_FOREGROUND;
+
             if (openInWindow) {
-                openNewWindow(uri.toString());
-
-            } else if (openInTab) {
-                if (openInBackground) {
-                    openNewTab(uri.toString());
-
-                } else {
-                    openNewTabForeground(uri.toString());
-                }
-
-            } else {
-                SessionStore.get().getActiveSession().loadUri(uri.toString());
+                location = Windows.OPEN_IN_NEW_WINDOW;
+            } else if (openInBackground) {
+                location = Windows.OPEN_IN_BACKGROUND;
             }
-
+            mWindows.openNewTabAfterRestore(uri.toString(), location);
         } else {
             mWindows.getFocusedWindow().loadHomeIfNotRestored();
         }

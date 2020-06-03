@@ -3,6 +3,7 @@ package org.mozilla.vrbrowser.ui.widgets;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -54,6 +55,13 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         WindowWidget.WindowListener, TabsWidget.TabDelegate, Services.TabReceivedDelegate {
 
     private static final String LOGTAG = SystemUtils.createLogtag(Windows.class);
+
+    @IntDef(value = { OPEN_IN_FOREGROUND, OPEN_IN_BACKGROUND, OPEN_IN_NEW_WINDOW})
+    public @interface NewTabLocation {}
+    public static final int OPEN_IN_FOREGROUND = 0;
+    public static final int OPEN_IN_BACKGROUND = 1;
+    public static final int OPEN_IN_NEW_WINDOW = 2;
+
 
     private static final String WINDOWS_SAVE_FILENAME = "windows_state.json";
 
@@ -135,6 +143,9 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     private boolean mCompositorPaused = false;
     private WindowsState mWindowsState;
     private boolean mIsRestoreEnabled;
+    private boolean mAfterRestore;
+    private String mAddedTabUri;
+    private @NewTabLocation int mAddedTabLocation = OPEN_IN_FOREGROUND;
 
     public enum PanelType {
         NONE,
@@ -759,6 +770,13 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
                 exitPrivateMode();
             }
         }
+
+        if (mAddedTabUri != null) {
+            openNewTab(mAddedTabUri, mAddedTabLocation);
+            mAddedTabUri = null;
+        }
+
+        mAfterRestore = true;
     }
 
     private void removeWindow(@NonNull WindowWidget aWindow) {
@@ -1241,6 +1259,30 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
     public void addTab(WindowWidget targetWindow) {
         addTab(targetWindow, null);
+    }
+
+    public void openNewTabAfterRestore(@NonNull String aUri, @NewTabLocation int aLocation) {
+        if (mAfterRestore) {
+            openNewTab(aUri, aLocation);
+        } else {
+            mAddedTabUri = aUri;
+            mAddedTabLocation = aLocation;
+        }
+    }
+
+    private void openNewTab(@NonNull String aUri, @NewTabLocation int aLocation) {
+        if (aLocation == OPEN_IN_NEW_WINDOW) {
+            WindowWidget newWindow = addWindow();
+            if ((newWindow != null) && (newWindow.getSession() != null)) {
+                newWindow.getSession().loadUri(aUri);
+            }
+        } else if (mFocusedWindow != null) {
+            if (aLocation == OPEN_IN_FOREGROUND) {
+                addTab(mFocusedWindow, aUri);
+            } else if (aLocation == OPEN_IN_BACKGROUND) {
+                addBackgroundTab(mFocusedWindow, aUri);
+            }
+        }
     }
 
     public void addTab(@NonNull WindowWidget targetWindow, @Nullable String aUri) {
