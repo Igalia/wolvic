@@ -166,7 +166,6 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
             int buttons = 0;
             buttons |= event.getAction() == KeyEvent.ACTION_DOWN ? BUTTON_TRIGGER : 0;
             nativeUpdateControllerState(GAZE_INDEX, true, buttons, 0, 0, 0, false);
-            return true;
         }
 
         return super.dispatchKeyEvent(event);
