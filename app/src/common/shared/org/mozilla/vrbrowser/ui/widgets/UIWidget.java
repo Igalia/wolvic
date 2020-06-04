@@ -382,7 +382,9 @@ public abstract class UIWidget extends FrameLayout implements Widget {
             return;
         }
         mWidgetPlacement.visible = aVisible;
-        mWidgetManager.updateWidget(this);
+        if (mWidgetManager != null) {
+            mWidgetManager.updateWidget(this);
+        }
         if (!aVisible) {
             clearFocus();
         }
