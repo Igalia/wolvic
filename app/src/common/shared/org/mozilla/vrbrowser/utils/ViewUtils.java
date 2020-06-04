@@ -176,9 +176,7 @@ public class ViewUtils {
             return;
         }
 
-        int start = Math.min(offset1, offset2);
-        int end = Math.max(offset1, offset2);
-        aView.setSelection(start, end);
+        aView.setSelection(offset1, offset2);
     }
 
     static class StickyClickListener implements View.OnTouchListener {

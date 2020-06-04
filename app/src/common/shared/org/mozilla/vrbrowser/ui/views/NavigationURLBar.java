@@ -201,7 +201,7 @@ public class NavigationURLBar extends FrameLayout {
         mBinding.urlEditText.setOnSelectionChangedCallback((start, end) -> {
             if (mSelectionMenu != null) {
                 boolean hasCopy = mSelectionMenu.hasAction(GeckoSession.SelectionActionDelegate.ACTION_COPY);
-                boolean showCopy = end > start;
+                boolean showCopy = end != start;
                 if (hasCopy != showCopy) {
                     showSelectionMenu();
 
@@ -209,12 +209,6 @@ public class NavigationURLBar extends FrameLayout {
                     mDelegate.onURLSelectionAction(mBinding.urlEditText, getSelectionCenterX(), mSelectionMenu);
                     mSelectionMenu.updateWidget();
                 }
-            }
-        });
-
-        mBinding.urlEditText.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
-            if (mLongPressed) {
-                hideSelectionMenu();
             }
         });
 
@@ -502,7 +496,7 @@ public class NavigationURLBar extends FrameLayout {
 
     private void showSelectionMenu() {
         Collection<String> actions = new HashSet<>();
-        if (mBinding.urlEditText.getSelectionEnd() > mBinding.urlEditText.getSelectionStart()) {
+        if (mBinding.urlEditText.getSelectionEnd() != mBinding.urlEditText.getSelectionStart()) {
             actions.add(GeckoSession.SelectionActionDelegate.ACTION_CUT);
             actions.add(GeckoSession.SelectionActionDelegate.ACTION_COPY);
         }
@@ -586,11 +580,13 @@ public class NavigationURLBar extends FrameLayout {
             start = ViewUtils.GetLetterPositionX(mBinding.urlEditText, mBinding.urlEditText.getSelectionStart(), true);
         }
         float end = start;
-        if (mBinding.urlEditText.getSelectionEnd() > mBinding.urlEditText.getSelectionStart()) {
+        if (mBinding.urlEditText.getSelectionEnd() >= 0) {
             end = ViewUtils.GetLetterPositionX(mBinding.urlEditText, mBinding.urlEditText.getSelectionEnd(), true);
         }
         if (end < start) {
+            float tmp = end;
             end = start;
+            start = tmp;
         }
         return start + (end - start) * 0.5f;
     }
