@@ -131,7 +131,7 @@ class YoutubeExtension {
     }
 
     overrideClick(event) {
-        this.playerFixes();
+        this.overrideVideoProjection();
         const player = this.getPlayer();
         if (!this.isWatchingPage() || !this.hasVideoProjection() || document.fullscreenElement || !player) {
             return; // Only override click in the Youtube watching page for 360 videos.
