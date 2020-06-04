@@ -1460,11 +1460,11 @@
     <string name="private_clear_button">清除</string>
 
     <!-- This string is displayed in the title of the pop-up blocking dialog.
-         '%1$s' will be replaced at runtime with the app's name. -->
-    <string name="popup_block_title">%1$s 已阻止此网站的弹出窗口</string>
+        '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="popup_block_title_v1">%1$s 已阻止此网站的弹出窗口</string>
 
     <!-- This string is displayed as a description below the title of the pop-up blocking dialog. -->
-    <string name="popup_block_description">仍要显示这些窗口吗？</string>
+    <string name="popup_block_description_v1">仍要显示这些窗口吗？</string>
 
     <!-- This string is displayed on the right of the checkbox in the the pop-up blocking dialog.
          If the checkbox is checked Firefox will never ask again to block pop-ups for this site -->

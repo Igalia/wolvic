@@ -1273,7 +1273,7 @@
     <string name="context_menu_view_video">Visa video</string>
 
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the audio in the current window. -->
-    <string name="context_menu_view_audio">Visa ljud</string>
+    <string name="context_menu_view_audio">Spela upp ljud</string>
 
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it triggers a linked element download. -->
     <string name="context_menu_download_link">Ladda ner länk</string>
