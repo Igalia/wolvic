@@ -118,6 +118,8 @@ class YoutubeExtension {
             this.updateVideoStyle();
             logDebug(`Video projection set to: ${qs.get(VIDEO_PROJECTION_PARAM)}`);
         } else {
+            qs.delete('mozVideoProjection');
+            this.updateURL(qs);
             logDebug(`Video is flat, no projection selected`);
         }
     }

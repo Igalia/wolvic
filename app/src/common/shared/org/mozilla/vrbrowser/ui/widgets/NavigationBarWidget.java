@@ -15,7 +15,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.URLUtil;
 import android.widget.EditText;
@@ -29,6 +28,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoSessionSettings;
+import org.mozilla.geckoview.MediaElement;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserActivity;
 import org.mozilla.vrbrowser.VRBrowserApplication;
@@ -36,6 +36,7 @@ import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.Media;
 import org.mozilla.vrbrowser.browser.SessionChangeListener;
 import org.mozilla.vrbrowser.browser.SettingsStore;
+import org.mozilla.vrbrowser.browser.VideoAvailabilityListener;
 import org.mozilla.vrbrowser.browser.content.TrackingProtectionStore;
 import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
@@ -74,7 +75,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         WidgetManagerDelegate.UpdateListener, SessionChangeListener,
         NavigationURLBar.NavigationURLBarDelegate, VoiceSearchWidget.VoiceSearchDelegate,
         SharedPreferences.OnSharedPreferenceChangeListener, SuggestionsWidget.URLBarPopupDelegate,
-        TrayListener, WindowWidget.WindowListener {
+        TrayListener, WindowWidget.WindowListener, VideoAvailabilityListener {
 
     private static final int TAB_ADDED_NOTIFICATION_ID = 0;
     private static final int TAB_SENT_NOTIFICATION_ID = 1;
@@ -557,6 +558,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         aSession.addSessionChangeListener(this);
         aSession.addNavigationListener(this);
         aSession.addContentListener(this);
+        aSession.addVideoAvailabilityListener(this);
         mBinding.navigationBarNavigation.urlBar.setSession(getSession());
     }
 
@@ -564,6 +566,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         aSession.removeSessionChangeListener(this);
         aSession.removeNavigationListener(this);
         aSession.removeContentListener(this);
+        aSession.removeVideoAvailabilityListener(this);
     }
 
     @Override
@@ -821,6 +824,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mProjectionMenu.getPlacement().copyFrom(mProjectionMenuPlacement);
         mProjectionMenu.getPlacement().composited = composited;
         mProjectionMenu.setSelectedProjection(VIDEO_PROJECTION_NONE);
+        mProjectionMenu.resetProjectionOverride();
         mWidgetManager.updateWidget(mProjectionMenu);
         closeFloatingMenus();
         mWidgetManager.setControllersVisible(true);
@@ -1336,4 +1340,64 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mQuickPermissionWidget.getPlacement().parentAnchorX = x / getWidth();
         mQuickPermissionWidget.show(REQUEST_FOCUS);
     }
+
+    // VideoAvailabilityListener
+
+    @Override
+    public void onVideoAvailabilityChanged(@NonNull Media aMedia, boolean aVideoAvailable) {
+        if (getSession() != null) {
+            if (aVideoAvailable) {
+                aMedia.addMediaListener(mMediaDelegate);
+
+            } else {
+                aMedia.removeMediaListener(mMediaDelegate);
+            }
+        }
+    }
+
+    MediaElement.Delegate mMediaDelegate = new MediaElement.Delegate() {
+        @Override
+        public void onPlaybackStateChange(@NonNull MediaElement mediaElement, int state) {
+            // This should handle the case where a video is being played in full-screen mode and a new
+            // video is played. That could happen because the user clicks on the previous/next buttons
+            // of the video controls or because the current video ends an the next video plays in case
+            // auto-play is enabled.
+            if (mViewModel.getIsFullscreen().getValue().get()) {
+                if (state == MediaElement.MEDIA_STATE_PLAYING){
+                    AtomicBoolean autoEnter = new AtomicBoolean(false);
+                    mAutoSelectedProjection = VideoProjectionMenuWidget.getAutomaticProjection(getSession().getCurrentUri(), autoEnter);
+                    if (mViewModel.getIsInVRVideo().getValue().get()) {
+                        if (mProjectionMenu.isIsProjectionOverridden()) {
+                            // // Fullscreen && VRMode && ProjectionOverridden
+                            mWidgetManager.showVRVideo(mAttachedWindow.getHandle(), mProjectionMenu.getSelectedProjection());
+
+                        } else {
+                            if (mAutoSelectedProjection == VIDEO_PROJECTION_NONE) {
+                                // Fullscreen && VRMode && VIDEO_PROJECTION_NONE
+                                // Exit VR video mode.
+                                exitVRVideo();
+
+                            } else {
+                                // Fullscreen && VRMode && !VIDEO_PROJECTION_NONE
+                                // Update the projection.
+                                mProjectionMenu.setSelectedProjection(mAutoSelectedProjection);
+                                mWidgetManager.showVRVideo(mAttachedWindow.getHandle(), mAutoSelectedProjection);
+                            }
+                        }
+
+                    } else {
+                        // Fullscreen && VRMode && !VIDEO_PROJECTION_NONE
+                        // Enter VR Video mode.
+                        if (mAutoSelectedProjection != VIDEO_PROJECTION_NONE) {
+                            enterVRVideo(mAutoSelectedProjection);
+                        }
+                    }
+
+                } else if (state == MediaElement.MEDIA_STATE_ENDED) {
+                    // Clear the menu override flag when the video ends
+                    mProjectionMenu.resetProjectionOverride();
+                }
+            }
+        }
+    };
 }

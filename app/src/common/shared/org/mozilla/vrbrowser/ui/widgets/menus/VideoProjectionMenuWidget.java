@@ -47,6 +47,7 @@ public class VideoProjectionMenuWidget extends MenuWidget {
     ArrayList<MenuItem> mItems;
     Delegate mDelegate;
     @VideoProjectionFlags int mSelectedProjection = VIDEO_PROJECTION_3D_SIDE_BY_SIDE;
+    boolean mIsProjectionOverridden = false;
 
     public VideoProjectionMenuWidget(Context aContext) {
         super(aContext, R.layout.menu);
@@ -118,6 +119,7 @@ public class VideoProjectionMenuWidget extends MenuWidget {
 
     private void handleClick(@VideoProjectionFlags int aVideoProjection) {
         mSelectedProjection = aVideoProjection;
+        mIsProjectionOverridden = true;
         if (mDelegate != null) {
             mDelegate.onVideoProjectionClick(aVideoProjection);
         }
@@ -172,6 +174,14 @@ public class VideoProjectionMenuWidget extends MenuWidget {
         }
 
         return VIDEO_PROJECTION_NONE;
+    }
+
+    public void resetProjectionOverride () {
+        mIsProjectionOverridden = false;
+    }
+
+    public boolean isIsProjectionOverridden() {
+        return mIsProjectionOverridden;
     }
 
     @Override
