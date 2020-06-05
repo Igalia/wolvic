@@ -1463,11 +1463,11 @@
     <string name="private_clear_button">Удалить</string>
 
     <!-- This string is displayed in the title of the pop-up blocking dialog.
-         '%1$s' will be replaced at runtime with the app's name. -->
-    <string name="popup_block_title">%1$s скрыл всплывающее окно с этого сайта</string>
+        '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="popup_block_title_v1">%1$s скрыл всплывающие окна с этого сайта</string>
 
     <!-- This string is displayed as a description below the title of the pop-up blocking dialog. -->
-    <string name="popup_block_description">Всё равно их открыть?</string>
+    <string name="popup_block_description_v1">Всё равно их открыть?</string>
 
     <!-- This string is displayed on the right of the checkbox in the the pop-up blocking dialog.
          If the checkbox is checked Firefox will never ask again to block pop-ups for this site -->

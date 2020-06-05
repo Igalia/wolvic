@@ -1259,6 +1259,21 @@
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the target url in a new tab. -->
     <string name="context_menu_open_new_tab_1">Ouvrir dans un nouvel onglet</string>
 
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the target url in a new window. -->
+    <string name="context_menu_open_link_new_window_1">Ouvrir le lien dans une nouvelle fenêtre</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the target url in a new tab. -->
+    <string name="context_menu_open_link_new_tab_1">Ouvrir le lien dans un nouvel onglet</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the image in the current window. -->
+    <string name="context_menu_view_image">Afficher l’image</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the video in the current window. -->
+    <string name="context_menu_view_video">Afficher la vidéo</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the audio in the current window. -->
+    <string name="context_menu_view_audio">Afficher l’audio</string>
+
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it triggers a linked element download. -->
     <string name="context_menu_download_link">Télécharger la cible du lien</string>
 
@@ -1273,6 +1288,15 @@
 
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it copies the target to the clipboard -->
     <string name="context_menu_copy_link">Copier le lien</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it copies the image uri to the clipboard -->
+    <string name="context_menu_copy_image_location">Copier l’adresse de l’image</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it copies the video uri to the clipboard -->
+    <string name="context_menu_copy_video_location">Copier l’adresse de la vidéo</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it copies the audio uri to the clipboard -->
+    <string name="context_menu_copy_audio_location">Copier l’adresse de l’audio</string>
 
     <!-- This string is shown in the context menu after a longpress on a text. When clicked it cuts the selected text and can be pasted later. -->
     <string name="context_menu_cut_text">Couper</string>
@@ -1435,11 +1459,11 @@
     <string name="private_clear_button">Effacer</string>
 
     <!-- This string is displayed in the title of the pop-up blocking dialog.
-         '%1$s' will be replaced at runtime with the app's name. -->
-    <string name="popup_block_title">%1$s a empêché ce site d’ouvrir une fenêtre popup</string>
+        '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="popup_block_title_v1">%1$s a empêché ce site d’ouvrir des fenêtres popup</string>
 
     <!-- This string is displayed as a description below the title of the pop-up blocking dialog. -->
-    <string name="popup_block_description">Voulez-vous les afficher tout de même ?</string>
+    <string name="popup_block_description_v1">Voulez-vous les afficher tout de même ?</string>
 
     <!-- This string is displayed on the right of the checkbox in the the pop-up blocking dialog.
          If the checkbox is checked Firefox will never ask again to block pop-ups for this site -->
