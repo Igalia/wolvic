@@ -55,8 +55,8 @@ class DeveloperOptionsView extends SettingsView {
         mBinding.remoteDebuggingSwitch.setOnCheckedChangeListener(mRemoteDebuggingListener);
         setRemoteDebugging(SettingsStore.getInstance(getContext()).isRemoteDebuggingEnabled(), false);
 
-        mBinding.showConsoleSwitch.setOnCheckedChangeListener(mConsoleLogsListener);
-        setConsoleLogs(SettingsStore.getInstance(getContext()).isConsoleLogsEnabled(), false);
+        mBinding.debugLoggingSwitch.setOnCheckedChangeListener(mDebugLogginListener);
+        setDebugLogging(SettingsStore.getInstance(getContext()).isDebugLoggingEnabled(), false);
 
         mBinding.performanceMonitorSwitch.setOnCheckedChangeListener(mPerformanceListener);
         setPerformance(SettingsStore.getInstance(getContext()).isPerformanceMonitorEnabled(), false);
@@ -70,13 +70,10 @@ class DeveloperOptionsView extends SettingsView {
         setBypassCacheOnReload(SettingsStore.getInstance(getContext()).isBypassCacheOnReloadEnabled(), false);
 
         if (BuildConfig.DEBUG) {
-            mBinding.debugLoggingSwitch.setVisibility(View.GONE);
             mBinding.multiE10sSwitch.setOnCheckedChangeListener(mMultiE10sListener);
             setMultiE10s(SettingsStore.getInstance(getContext()).isMultiE10s(), false);
         } else {
             mBinding.multiE10sSwitch.setVisibility(View.GONE);
-            mBinding.debugLoggingSwitch.setOnCheckedChangeListener(mDebugLogginListener);
-            setDebugLogging(SettingsStore.getInstance(getContext()).isDebugLoggingEnabled(), false);
         }
 
         if (!isServoAvailable()) {
@@ -90,10 +87,6 @@ class DeveloperOptionsView extends SettingsView {
 
     private SwitchSetting.OnCheckedChangeListener mRemoteDebuggingListener = (compoundButton, value, doApply) -> {
         setRemoteDebugging(value, doApply);
-    };
-
-    private SwitchSetting.OnCheckedChangeListener mConsoleLogsListener = (compoundButton, value, doApply) -> {
-        setConsoleLogs(value, doApply);
     };
 
     private SwitchSetting.OnCheckedChangeListener mPerformanceListener = (compoundButton, value, doApply) -> {
@@ -124,10 +117,6 @@ class DeveloperOptionsView extends SettingsView {
         boolean restart = false;
         if (mBinding.remoteDebuggingSwitch.isChecked() != SettingsStore.REMOTE_DEBUGGING_DEFAULT) {
             setRemoteDebugging(SettingsStore.REMOTE_DEBUGGING_DEFAULT, true);
-        }
-
-        if (mBinding.showConsoleSwitch.isChecked() != SettingsStore.CONSOLE_LOGS_DEFAULT) {
-            setConsoleLogs(SettingsStore.CONSOLE_LOGS_DEFAULT, true);
         }
 
         if (mBinding.servoSwitch.isChecked() != SettingsStore.SERVO_DEFAULT) {
@@ -166,18 +155,6 @@ class DeveloperOptionsView extends SettingsView {
 
         if (doApply) {
             SessionStore.get().setRemoteDebugging(value);
-        }
-    }
-
-    private void setConsoleLogs(boolean value, boolean doApply) {
-        mBinding.showConsoleSwitch.setOnCheckedChangeListener(null);
-        mBinding.showConsoleSwitch.setValue(value, doApply);
-        mBinding.showConsoleSwitch.setOnCheckedChangeListener(mConsoleLogsListener);
-
-        SettingsStore.getInstance(getContext()).setConsoleLogsEnabled(value);
-
-        if (doApply) {
-            SessionStore.get().setConsoleOutputEnabled(value);
         }
     }
 

@@ -44,12 +44,6 @@
                     app:description="@string/developer_options_remote_debugging" />
 
                 <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
-                    android:id="@+id/show_console_switch"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:description="@string/developer_options_show_console" />
-
-                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
                     android:id="@+id/performance_monitor_switch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

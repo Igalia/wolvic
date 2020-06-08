@@ -19,6 +19,7 @@ import org.json.JSONObject;
 import org.mozilla.geckoview.ContentBlocking;
 import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.telemetry.TelemetryHolder;
+import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserActivity;
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
@@ -62,7 +63,6 @@ public class SettingsStore {
 
     // Developer options default values
     public final static boolean REMOTE_DEBUGGING_DEFAULT = false;
-    public final static boolean CONSOLE_LOGS_DEFAULT = false;
     public final static boolean ENV_OVERRIDE_DEFAULT = false;
     public final static boolean UI_HARDWARE_ACCELERATION_DEFAULT = true;
     public final static boolean UI_HARDWARE_ACCELERATION_DEFAULT_WAVEVR = false;
@@ -89,7 +89,7 @@ public class SettingsStore {
     public final static float CYLINDER_DENSITY_ENABLED_DEFAULT = 4680.0f;
     private final static long CRASH_RESTART_DELTA = 2000;
     public final static boolean AUTOPLAY_ENABLED = false;
-    public final static boolean DEBUG_LOGGING_DEFAULT = false;
+    public final static boolean DEBUG_LOGGING_DEFAULT = BuildConfig.DEBUG;
     public final static boolean POP_UPS_BLOCKING_DEFAULT = true;
     public final static boolean WEBXR_ENABLED_DEFAULT = true;
     public final static boolean TELEMETRY_STATUS_UPDATE_SENT_DEFAULT = false;
@@ -214,16 +214,6 @@ public class SettingsStore {
         editor.commit();
     }
 
-    public boolean isConsoleLogsEnabled() {
-        return mPrefs.getBoolean(
-                mContext.getString(R.string.settings_key_console_logs), CONSOLE_LOGS_DEFAULT);
-    }
-
-    public void setConsoleLogsEnabled(boolean isEnabled) {
-        SharedPreferences.Editor editor = mPrefs.edit();
-        editor.putBoolean(mContext.getString(R.string.settings_key_console_logs), isEnabled);
-        editor.commit();
-    }
 
     public boolean isDrmContentPlaybackEnabled() {
         return mPrefs.getBoolean(

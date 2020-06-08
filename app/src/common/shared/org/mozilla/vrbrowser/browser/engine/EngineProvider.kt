@@ -32,7 +32,6 @@ object EngineProvider {
                     .antiTracking(policy.antiTrackingPolicy)
                     .enhancedTrackingProtectionLevel(SettingsStore.getInstance(context).trackingProtectionLevel)
                     .build())
-            builder.consoleOutput(SettingsStore.getInstance(context).isConsoleLogsEnabled)
             builder.displayDensityOverride(SettingsStore.getInstance(context).displayDensity)
             builder.remoteDebuggingEnabled(SettingsStore.getInstance(context).isRemoteDebuggingEnabled)
             builder.displayDpiOverride(SettingsStore.getInstance(context).displayDpi)
@@ -41,6 +40,8 @@ object EngineProvider {
             builder.useMultiprocess(true)
             builder.inputAutoZoomEnabled(false)
             builder.doubleTapZoomingEnabled(false)
+            builder.debugLogging(SettingsStore.getInstance(context).isDebugLoggingEnabled)
+            builder.consoleOutput(SettingsStore.getInstance(context).isDebugLoggingEnabled)
 
             if (SettingsStore.getInstance(context).transparentBorderWidth > 0) {
                 builder.useMaxScreenDepth(true)
@@ -48,10 +49,7 @@ object EngineProvider {
 
             if (BuildConfig.DEBUG) {
                 builder.arguments(arrayOf("-purgecaches"))
-                builder.debugLogging(true)
                 builder.aboutConfigEnabled(true)
-            } else {
-                builder.debugLogging(SettingsStore.getInstance(context).isDebugLoggingEnabled)
             }
 
             runtime = GeckoRuntime.create(context, builder.build())
