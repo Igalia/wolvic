@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="39.44" height="39.382" viewBox="0 0 39.44 39.382">
+  <g id="Group_31" data-name="Group 31" transform="translate(-1058 -356.544)">
+    <path id="map-pin" d="M7.633,16.221A8.068,8.068,0,0,0,9.542,16v9.765a.961.961,0,0,1-.954.954H6.679a.961.961,0,0,1-.954-.954V16a8.068,8.068,0,0,0,1.908.223ZM7.633,0A7.633,7.633,0,1,1,0,7.633,7.629,7.629,0,0,1,7.633,0Z" transform="translate(1086.644 356.544) rotate(45)" fill="#50555d"/>
+    <path id="popin" d="M21.273,11.413ZM39.8,24.564l-3.257-3.3L36.6,36.54l-27.166.015.027-27.1,15.2-.066L21.267,6H9.393A3.394,3.394,0,0,0,6,9.393V36.533a3.394,3.394,0,0,0,3.393,3.393H36.533a3.394,3.394,0,0,0,3.393-3.393Z" transform="translate(1052 356)" fill="#50555d"/>
+    <g id="Group_30" data-name="Group 30" transform="translate(69.517 -106.603)">
+      <g id="Group_27" data-name="Group 27" transform="translate(965 468.159)">
+        <path id="play_circle_outline" d="M15.738,26.96V11.46l10.333,7.75Z" transform="translate(20.984 -2.016)" fill="#50555d"/>
+      </g>
+    </g>
+  </g>
+</svg>

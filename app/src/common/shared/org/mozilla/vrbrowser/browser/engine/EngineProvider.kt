@@ -15,7 +15,7 @@ import java.util.concurrent.CompletableFuture
 
 object EngineProvider {
 
-    private val WEB_EXTENSIONS = arrayOf("webcompat_vimeo", "webcompat_youtube")
+    private val WEB_EXTENSIONS = arrayOf("webcompat_vimeo", "webcompat_youtube", "coil" )
 
     private var runtime: GeckoRuntime? = null
     private var executor: GeckoWebExecutor? = null
