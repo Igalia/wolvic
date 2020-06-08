@@ -43,6 +43,7 @@ class SessionUtils {
             out.write("user_pref(\"gfx.webrender.force-disabled\", true);\n".getBytes());
             // Disable web extension process until it is able to restart.
             out.write("user_pref(\"extensions.webextensions.remote\", false);\n".getBytes());
+            out.write("user_pref(\"media.cubeb.output_voice_routing\", false);\n)".getBytes());
             int msaa = SettingsStore.getInstance(aContext).getMSAALevel();
             if (msaa > 0) {
                 int msaaLevel = msaa == 2 ? 4 : 2;
