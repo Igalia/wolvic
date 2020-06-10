@@ -104,7 +104,7 @@
 
     <!-- This string is used to label a button that, when pressed, loads a website that
          describes Mozilla's Privacy Policy. -->
-    <string name="settings_privacy_policy">개인 정보 보호 정책</string>
+    <string name="settings_privacy_policy">개인정보 보호정책</string>
 
     <!-- This string is used as the title of the pop-ups dialog used to remove sites from the currently
          allowed pop-up sites. -->
@@ -366,10 +366,6 @@
     <!-- This string labels an On/Off switch in the 'Developer Options' dialog
          and is used to toggle remote debugging of website content in the application. -->
     <string name="developer_options_remote_debugging">원격 디버깅 활성화</string>
-
-    <!-- This string labels an On/Off switch in the 'Developer Options' dialog
-         and is used to toggle redirecting JavaScript Console output to the Android Logcat (i.e., `adb logcat`). -->
-    <string name="developer_options_show_console">콘솔을 로그캣으로 리다이렉트하기</string>
 
     <!-- This string labels an On/Off switch in the developer options dialog
          and is used to customize background environments of the app. -->
