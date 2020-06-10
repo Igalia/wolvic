@@ -9,6 +9,8 @@ import android.app.Application;
 import android.content.Context;
 import android.content.res.Configuration;
 
+import com.mozilla.speechlibrary.SpeechService;
+
 import org.mozilla.vrbrowser.browser.Accounts;
 import org.mozilla.vrbrowser.browser.Places;
 import org.mozilla.vrbrowser.browser.Services;
@@ -30,6 +32,7 @@ public class VRBrowserApplication extends Application implements AppServicesProv
     private Places mPlaces;
     private Accounts mAccounts;
     private DownloadsManager mDownloadsManager;
+    private SpeechService mSpeechService;
 
     @Override
     public void onCreate() {
@@ -46,6 +49,7 @@ public class VRBrowserApplication extends Application implements AppServicesProv
         mServices = new Services(this, mPlaces);
         mAccounts = new Accounts(this);
         mDownloadsManager = new DownloadsManager(this);
+        mSpeechService = new SpeechService(this);
     }
 
     @Override
@@ -93,5 +97,10 @@ public class VRBrowserApplication extends Application implements AppServicesProv
 
     public DownloadsManager getDownloadsManager() {
         return mDownloadsManager;
+    }
+
+    @Override
+    public SpeechService getSpeechService() {
+        return mSpeechService;
     }
 }

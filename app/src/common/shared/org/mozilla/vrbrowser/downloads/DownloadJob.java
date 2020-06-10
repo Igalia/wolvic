@@ -17,9 +17,16 @@ public class DownloadJob {
     private String mFilename;
     private String mTitle;
     private String mDescription;
+    private String mOutputPath;
 
     public static DownloadJob create(@NonNull String uri, @Nullable String contentType,
                                      long contentLength, @Nullable String filename) {
+        return create(uri, contentType, contentLength, filename, null);
+    }
+
+    public static DownloadJob create(@NonNull String uri, @Nullable String contentType,
+                                     long contentLength, @Nullable String filename,
+                                     @Nullable String outputPath) {
         DownloadJob job = new DownloadJob();
         job.mUri = uri;
         job.mContentType = contentType;
@@ -37,6 +44,7 @@ public class DownloadJob {
         }
         job.mTitle = filename;
         job.mDescription = filename;
+        job.mOutputPath = outputPath;
         return job;
     }
 
@@ -155,5 +163,10 @@ public class DownloadJob {
 
     public void setDescription(String mDescription) {
         this.mDescription = mDescription;
+    }
+
+    @Nullable
+    public String getOutputPath() {
+        return mOutputPath;
     }
 }

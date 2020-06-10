@@ -32,7 +32,7 @@ versions.android_components = "40.0.0"
 // that we depend on directly for its rustlog package, and it's important
 // that it be kept insync with the version used by android-components above.
 versions.mozilla_appservices = "0.58.2"
-versions.mozilla_speech = "1.0.11"
+versions.mozilla_speech = "2.0.1"
 versions.openwnn = "1.3.7"
 versions.room = "2.2.0"
 versions.lifecycle = "2.0.0"
@@ -83,7 +83,10 @@ def app_services = [:]
 app_services.rustlog = "org.mozilla.appservices:rustlog:${versions.mozilla_appservices}"
 deps.app_services = app_services
 
-deps.mozilla_speech = "com.github.mozilla:mozillaspeechlibrary:$versions.mozilla_speech"
+def mozilla_speech = [:]
+mozilla_speech.library = "com.github.mozilla:mozillaspeechlibrary:$versions.mozilla_speech"
+mozilla_speech.utils = "com.github.mozilla:mozillaspeechutils:$versions.mozilla_speech"
+deps.mozilla_speech = mozilla_speech
 
 deps.openwnn = "jp.co.omronsoft.openwnn:openwnn:$versions.openwnn"
 
