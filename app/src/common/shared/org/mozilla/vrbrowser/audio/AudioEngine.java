@@ -15,7 +15,7 @@ public class AudioEngine {
     private Context mContext;
     private AudioEngineImpl mEngine;
     private ConcurrentHashMap<Sound, Integer> mSourceIds;
-    private float mMasterVolume = 1.0f;
+    private float mMainVolume = 1.0f;
     private static ConcurrentHashMap<Context, AudioEngine> mEngines = new ConcurrentHashMap<>();
     private boolean mEnabled;
     private static final String LOGTAG = SystemUtils.createLogtag(AudioEngine.class);
@@ -123,13 +123,13 @@ public class AudioEngine {
         playSound(aSound, 1.0f,false);
     }
 
-    public void setMasterVolume(float aVolume) {
-        mMasterVolume = aVolume;
+    public void setMainVolume(float aVolume) {
+        mMainVolume = aVolume;
     }
 
     public void playSound(Sound aSound, float aVolume, boolean aLoop) {
         if (mEnabled && mEngine != null) {
-            mEngine.playSound(aSound, aVolume * mMasterVolume, aLoop);
+            mEngine.playSound(aSound, aVolume * mMainVolume, aLoop);
         }
     }
 

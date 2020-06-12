@@ -191,7 +191,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private boolean mConnectionAvailable = true;
     private AudioManager mAudioManager;
     private Widget mActiveDialog;
-    private Set<String> mPoorPerformanceWhiteList;
+    private Set<String> mPoorPerformanceAllowList;
     private float mCurrentCylinderDensity = 0;
     private boolean mHideWebXRIntersitial = false;
 
@@ -311,7 +311,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         GeolocationWrapper.INSTANCE.update(this);
 
         mConnectivityReceiver = new ConnectivityReceiver();
-        mPoorPerformanceWhiteList = new HashSet<>();
+        mPoorPerformanceAllowList = new HashSet<>();
         checkForCrash();
 
         mLifeCycle.setCurrentState(Lifecycle.State.CREATED);
@@ -1199,7 +1199,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 return;
             }
             final String originalUri = window.getSession().getCurrentUri();
-            if (mPoorPerformanceWhiteList.contains(originalUri)) {
+            if (mPoorPerformanceAllowList.contains(originalUri)) {
                 return;
             }
             window.getSession().loadHomePage();
@@ -1209,7 +1209,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                     buttons,
                     (index, isChecked) -> {
                 if (index == PromptDialogWidget.NEGATIVE) {
-                    mPoorPerformanceWhiteList.add(originalUri);
+                    mPoorPerformanceAllowList.add(originalUri);
                     window.getSession().loadUri(originalUri);
                 }
             });

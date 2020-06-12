@@ -69,8 +69,8 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     private static final int TAB_SENT_NOTIFICATION_ID = 1;
     private static final int BOOKMARK_ADDED_NOTIFICATION_ID = 2;
 
-    // Restore URLs blacklist
-    private static final List<String> SAVE_BLACKLIST = Stream.of(
+    // Restore URLs blocklist
+    private static final List<String> SAVE_BLOCKLIST = Stream.of(
       "https://accounts.firefox.com/oauth/"
     ).collect(Collectors.toList());
 
@@ -208,7 +208,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             ArrayList<Session> sessions = SessionStore.get().getSortedSessions(false);
             state.tabs = sessions.stream()
                     .map(Session::getSessionState)
-                    .filter(sessionState -> SAVE_BLACKLIST.stream().noneMatch(uri ->
+                    .filter(sessionState -> SAVE_BLOCKLIST.stream().noneMatch(uri ->
                         sessionState.mUri != null && sessionState.mUri.startsWith(uri)
                     ))
                     .collect(Collectors.toCollection(ArrayList::new));

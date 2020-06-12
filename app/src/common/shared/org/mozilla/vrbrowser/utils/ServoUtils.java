@@ -12,9 +12,9 @@ import java.lang.reflect.Method;
 
 public class ServoUtils {
     private static final String SESSION_CLASSNAME = "org.mozilla.servo.ServoSession";
-    private static final String WHITELIST_CLASSNAME = "org.mozilla.servo.ServoWhiteList";
+    private static final String ALLOWLIST_CLASSNAME = "org.mozilla.servo.ServoAllowList";
     private static final String LOGTAG = "ServoUtils";
-    private static Object mServoWhiteList = null;
+    private static Object mServoAllowList = null;
     private static long mVRContext;
 
     public static boolean isServoAvailable() {
@@ -50,18 +50,18 @@ public class ServoUtils {
         }
     }
 
-    public static boolean isUrlInServoWhiteList(Context context, String url) {
+    public static boolean isUrlInServoAllowList(Context context, String url) {
         if (isServoAvailable()) {
             try {
-                Class clazz = Class.forName(WHITELIST_CLASSNAME);
-                if (mServoWhiteList == null) {
+                Class clazz = Class.forName(ALLOWLIST_CLASSNAME);
+                if (mServoAllowList == null) {
                     Constructor<?> constructor = clazz.getConstructor(Context.class);
-                    mServoWhiteList = constructor.newInstance(context);
+                    mServoAllowList = constructor.newInstance(context);
                 }
                 Method isAllowed = clazz.getMethod("isAllowed", String.class);
-                return (boolean) isAllowed.invoke(mServoWhiteList, url);
+                return (boolean) isAllowed.invoke(mServoAllowList, url);
             } catch (Exception e) {
-                Log.e(LOGTAG, "Failed to call ServoWhiteList::isAllowed: " + e);
+                Log.e(LOGTAG, "Failed to call ServoAllowList::isAllowed: " + e);
                 return false;
             }
         } else {

@@ -238,8 +238,8 @@ public class WindowViewModel extends AndroidViewModel {
         @Override
         public void onChanged(Spannable url) {
             boolean isPrefEnabled = SettingsStore.getInstance(getApplication()).isServoEnabled();
-            boolean isUrlWhiteListed = ServoUtils.isUrlInServoWhiteList(getApplication(), url.toString());
-            isServoAvailable.postValue(new ObservableBoolean(isPrefEnabled && isUrlWhiteListed));
+            boolean isUrlAllowListed = ServoUtils.isUrlInServoAllowList(getApplication(), url.toString());
+            isServoAvailable.postValue(new ObservableBoolean(isPrefEnabled && isUrlAllowListed));
         }
     };
 

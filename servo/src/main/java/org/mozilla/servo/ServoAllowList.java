@@ -8,10 +8,10 @@ import java.util.Arrays;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-public class ServoWhiteList {
+public class ServoAllowList {
     private final Pattern[] mRules;
 
-    public ServoWhiteList(Context context) {
+    public ServoAllowList(Context context) {
         Resources res = context.getResources();
         Stream<String> rules = Stream.of(res.getStringArray(R.array.servo_white_list));
         mRules = rules.map(Pattern::compile).toArray(Pattern[]::new);
