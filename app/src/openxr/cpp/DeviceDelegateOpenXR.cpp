@@ -118,6 +118,26 @@ struct DeviceDelegateOpenXR::State {
     loaderData.applicationActivity = jniEnv->NewGlobalRef(app->activity->clazz);
     xrInitializeLoaderOCULUS(&loaderData);
 #endif
+    VRB_LOG("XrEnumerate");
+    uint32_t apiLayerPropCount;
+    int ret = xrEnumerateApiLayerProperties(0, &apiLayerPropCount, nullptr);
+    VRB_LOG("EnumerateApiLayerProperties %d", ret);
+    std::vector<XrApiLayerProperties> apiProperties;
+    apiProperties.resize(apiLayerPropCount, {XR_TYPE_API_LAYER_PROPERTIES});
+    xrEnumerateApiLayerProperties(apiLayerPropCount, &apiLayerPropCount, apiProperties.data());
+    for(auto& property: apiProperties) {
+      VRB_LOG("API Property: %s %d %d %s", property.layerName, (int)property.layerVersion, (int)property.specVersion, property.description);
+    }
+
+    uint32_t insExtensionCount;
+    ret = xrEnumerateInstanceExtensionProperties(nullptr, 0, &insExtensionCount, nullptr);
+    VRB_LOG("EnumerateInstanceExtensionProperties %d %d", ret, insExtensionCount);
+    std::vector<XrExtensionProperties> extProperties;
+    extProperties.resize(insExtensionCount, {XR_TYPE_EXTENSION_PROPERTIES});
+    xrEnumerateInstanceExtensionProperties(nullptr, insExtensionCount, &insExtensionCount, extProperties.data());
+    for(auto& property: extProperties) {
+      VRB_LOG("Extension Property: %s %d", property.extensionName, property.extensionVersion);
+    }
 
     // Initialize the XrInstance
     std::vector<const char *> extensions = OpenXRExtensions::ExtensionNames();
@@ -159,9 +179,43 @@ struct DeviceDelegateOpenXR::State {
   // xrGet*GraphicsRequirementsKHR check must be called prior to xrCreateSession
   // xrCreateSession fails if we don't call it.
   void CheckGraphicsRequirements() {
+    VRB_LOG("reb calling CheckGraphicsRequirements");
+    VRB_LOG("XrGetSystemProps");
+    XrSystemProperties properties{XR_TYPE_SYSTEM_PROPERTIES};
+    xrGetSystemProperties(instance, system, &properties);
 
+    uint32_t viewConfigTypeCount;
+    xrEnumerateViewConfigurations(instance, system, 0, &viewConfigTypeCount, nullptr);
+
+    std::vector<XrViewConfigurationType> viewConfigTypes(viewConfigTypeCount);
+    xrEnumerateViewConfigurations(instance, system, viewConfigTypeCount, &viewConfigTypeCount,viewConfigTypes.data());
+
+
+    VRB_LOG("XrGetViewConfigProps");
+    XrViewConfigurationType viewConfigType = XR_VIEW_CONFIGURATION_TYPE_PRIMARY_STEREO;
+    XrViewConfigurationProperties viewConfigProperties{XR_TYPE_VIEW_CONFIGURATION_PROPERTIES};
+    xrGetViewConfigurationProperties(instance, system, viewConfigType, &viewConfigProperties);
+
+    VRB_LOG("XrEnumViewConfigViews");
+    uint32_t viewCount;
+    std::vector<XrViewConfigurationView> viewConfigViews;
+    xrEnumerateViewConfigurationViews(instance, system, viewConfigType, 0, &viewCount, nullptr);
+
+    viewConfigViews.resize(viewCount, {XR_TYPE_VIEW_CONFIGURATION_VIEW});
+    xrEnumerateViewConfigurationViews(instance, system, viewConfigType, viewCount, &viewCount, viewConfigViews.data());
+
+
+    VRB_LOG("XrEnumBlendModes");
+    uint32_t blendModeCount;
+    xrEnumerateEnvironmentBlendModes(instance, system, viewConfigType, 0, &blendModeCount, nullptr);
+
+    std::vector<XrEnvironmentBlendMode> blendModes(blendModeCount);
+    xrEnumerateEnvironmentBlendModes(instance, system, viewConfigType, blendModeCount, &blendModeCount, blendModes.data());
     XrGraphicsRequirementsOpenGLESKHR graphicsRequirements{XR_TYPE_GRAPHICS_REQUIREMENTS_OPENGL_ES_KHR};
-    CHECK_XRCMD(OpenXRExtensions::sXrGetOpenGLESGraphicsRequirementsKHR(instance, system, &graphicsRequirements));
+    //CHECK_XRCMD(OpenXRExtensions::sXrGetOpenGLESGraphicsRequirementsKHR(instance, system, &graphicsRequirements));
+
+    VRB_LOG("XrGetOpenGLESGraphicsRequirementsKHR");
+    xrGetOpenGLESGraphicsRequirementsKHR(instance, system, &graphicsRequirements);
 
     GLint major = 0;
     GLint minor = 0;
@@ -237,6 +291,7 @@ struct DeviceDelegateOpenXR::State {
     }
 
     XrSwapchainCreateInfo info{XR_TYPE_SWAPCHAIN_CREATE_INFO};
+    info.createFlags = 0;
     info.arraySize = 1;
     info.format = colorFormat;
     info.width = w;
@@ -382,7 +437,7 @@ struct DeviceDelegateOpenXR::State {
         to_string(sessionState), to_string(event.state), event.session, event.time);
     sessionState = event.state;
 
-    CHECK(session == event.session);
+    //CHECK(session == event.session);
 
     switch (sessionState) {
       case XR_SESSION_STATE_READY: {
@@ -965,6 +1020,7 @@ DeviceDelegateOpenXR::DeleteLayer(const VRLayerPtr& aLayer) {
 
 void
 DeviceDelegateOpenXR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
+  VRB_LOG("*************** ENTER VR **********************");
   // Reset reorientation after Enter VR
   m.reorientMatrix = vrb::Matrix::Identity();
 
@@ -977,16 +1033,17 @@ DeviceDelegateOpenXR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
   CHECK(m.instance != XR_NULL_HANDLE && m.system != XR_NULL_SYSTEM_ID);
   m.CheckGraphicsRequirements();
 
+  m.graphicsBinding.next = nullptr;
   m.graphicsBinding.context = aEGLContext.Context();
   m.graphicsBinding.display = aEGLContext.Display();
-  m.graphicsBinding.config = (EGLConfig)0;
+  m.graphicsBinding.config = aEGLContext.Config();
 
   XrSessionCreateInfo createInfo{XR_TYPE_SESSION_CREATE_INFO};
   createInfo.next = reinterpret_cast<const XrBaseInStructure*>(&m.graphicsBinding);
   createInfo.systemId = m.system;
   CHECK_XRCMD(xrCreateSession(m.instance, &createInfo, &m.session));
   CHECK(m.session != XR_NULL_HANDLE);
-  VRB_LOG("OpenXR session created succesfully");
+  VRB_LOG("OpenXR session created successfully");
 
   m.input->Initialize(m.session);
   m.UpdateSpaces();

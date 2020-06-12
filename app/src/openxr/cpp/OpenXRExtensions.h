@@ -11,8 +11,9 @@ namespace crow {
   public:
     static void Initialize(XrInstance instance);
     static std::vector<const char*> ExtensionNames();
-
+/*
     static PFN_xrGetOpenGLESGraphicsRequirementsKHR sXrGetOpenGLESGraphicsRequirementsKHR;
     static PFN_xrCreateSwapchainAndroidSurfaceKHR sXrCreateSwapchainAndroidSurfaceKHR;
+    */
   };
 } // namespace crow

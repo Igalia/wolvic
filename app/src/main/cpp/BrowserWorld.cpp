@@ -1007,6 +1007,7 @@ BrowserWorld::EndFrame() {
 
 void
 BrowserWorld::Draw(device::Eye aEye) {
+  //VRB_LOG("********************** DRAW EYE: %s *********************", (aEye == device::Eye::Left ? "LEFT" : "RIGHT"));
   ASSERT_ON_RENDER_THREAD();
   if (m.drawHandler) {
     m.drawHandler(aEye);
