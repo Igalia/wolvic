@@ -252,9 +252,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         BitmapCache.getInstance(this).onCreate();
 
         Bundle extras = getIntent() != null ? getIntent().getExtras() : null;
-        SessionStore.get().setContext(this, extras);
-        SessionStore.get().initializeServices();
-        SessionStore.get().initializeStores(this);
+        SessionStore.get().initialize(this, extras);
         SessionStore.get().setLocales(LocaleUtils.getPreferredLanguageTags(this));
 
         EngineProvider.INSTANCE.getOrCreateRuntime(this).appendAppNotesToCrashReport("Firefox Reality " + BuildConfig.VERSION_NAME + "-" + BuildConfig.VERSION_CODE + "-" + BuildConfig.FLAVOR + "-" + BuildConfig.BUILD_TYPE + " (" + BuildConfig.GIT_HASH + ")");
@@ -393,19 +391,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             mWhatsNewWidget.show(UIWidget.REQUEST_FOCUS);
         }
 
-        EngineProvider.INSTANCE.loadExtensions()
-                .thenAcceptAsync(aVoid -> {
-                    Log.d(LOGTAG, "WebExtensions loaded");
-                    mWindows.restoreSessions();
-                }, getServicesProvider().getExecutors().mainThread())
-                .exceptionally(throwable -> {
-                    String msg = throwable.getLocalizedMessage();
-                    if (msg != null) {
-                        Log.e(LOGTAG, "Extensions load error: " + msg);
-                    }
-                    mWindows.restoreSessions();
-                    return null;
-                });
+        mWindows.restoreSessions();
     }
 
     private void attachToWindow(@NonNull WindowWidget aWindow, @Nullable WindowWidget aPrevWindow) {

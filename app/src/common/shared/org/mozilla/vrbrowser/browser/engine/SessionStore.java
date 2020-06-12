@@ -15,18 +15,39 @@ import org.mozilla.vrbrowser.browser.BookmarksStore;
 import org.mozilla.vrbrowser.browser.HistoryStore;
 import org.mozilla.vrbrowser.browser.PermissionDelegate;
 import org.mozilla.vrbrowser.browser.Services;
+import org.mozilla.vrbrowser.browser.SessionChangeListener;
+import org.mozilla.vrbrowser.browser.adapter.ComponentsAdapter;
+import org.mozilla.vrbrowser.browser.components.GeckoWebExtensionRuntime;
 import org.mozilla.vrbrowser.browser.content.TrackingProtectionStore;
+import org.mozilla.vrbrowser.browser.extensions.VimeoExtension;
+import org.mozilla.vrbrowser.browser.extensions.YoutubeExtension;
 import org.mozilla.vrbrowser.db.SitePermission;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 import org.mozilla.vrbrowser.utils.UrlUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Executor;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class SessionStore implements GeckoSession.PermissionDelegate{
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
+import mozilla.components.concept.engine.EngineSession;
+import mozilla.components.concept.engine.webextension.Action;
+import mozilla.components.concept.engine.webextension.WebExtension;
+import mozilla.components.concept.engine.webextension.WebExtensionDelegate;
+import mozilla.components.feature.accounts.FxaCapability;
+import mozilla.components.feature.accounts.FxaWebChannelFeature;
+import mozilla.components.feature.webcompat.WebCompatFeature;
+
+public class SessionStore implements
+        GeckoSession.PermissionDelegate,
+        WebExtensionDelegate,
+        SessionChangeListener {
+
     private static final String LOGTAG = SystemUtils.createLogtag(SessionStore.class);
     private static final int MAX_GECKO_SESSIONS = 5;
 
@@ -50,12 +71,14 @@ public class SessionStore implements GeckoSession.PermissionDelegate{
     private Services mServices;
     private boolean mSuspendPending;
     private TrackingProtectionStore mTrackingProtectionStore;
+    private GeckoWebExtensionRuntime mWebExtensionRuntime;
+    private FxaWebChannelFeature mWebChannelsFeature;
 
     private SessionStore() {
         mSessions = new ArrayList<>();
     }
 
-    public void setContext(Context context, Bundle aExtras) {
+    public void initialize(Context context, Bundle aExtras) {
         mContext = context;
         mMainExecutor = ((VRBrowserApplication)context.getApplicationContext()).getExecutors().mainThread();
 
@@ -89,15 +112,29 @@ public class SessionStore implements GeckoSession.PermissionDelegate{
                 });
             }
         });
-    }
 
-    public void initializeServices() {
-        mServices = ((VRBrowserApplication)mContext.getApplicationContext()).getServices();
-    }
+        mWebExtensionRuntime = new GeckoWebExtensionRuntime(mContext, mRuntime);
+        mWebExtensionRuntime.registerWebExtensionDelegate(this);
 
-    public void initializeStores(Context context) {
+        mServices = ((VRBrowserApplication)context.getApplicationContext()).getServices();
+
         mBookmarksStore = new BookmarksStore(context);
         mHistoryStore = new HistoryStore(context);
+
+        // Web Extensions initialization
+        YoutubeExtension.install(mWebExtensionRuntime);
+        VimeoExtension.install(mWebExtensionRuntime);
+        WebCompatFeature.INSTANCE.install(mWebExtensionRuntime);
+        mWebChannelsFeature = new FxaWebChannelFeature(
+                mContext,
+                null,
+                mWebExtensionRuntime,
+                ComponentsAdapter.Companion.get().getStore(),
+                mServices.getAccountManager(),
+                mServices.getServerConfig(),
+                Collections.singleton(FxaCapability.CHOOSE_WHAT_TO_SYNC));
+
+        mWebChannelsFeature.start();
     }
 
     @NonNull
@@ -106,6 +143,7 @@ public class SessionStore implements GeckoSession.PermissionDelegate{
         aSession.addNavigationListener(mServices);
         mSessions.add(aSession);
         sessionActiveStateChanged();
+
         return aSession;
     }
 
@@ -116,13 +154,28 @@ public class SessionStore implements GeckoSession.PermissionDelegate{
     }
 
     @NonNull
-    /* package */ Session createSession(@NonNull SessionSettings aSettings, @Session.SessionOpenModeFlags int aOpenMode) {
-        return addSession(new Session(mContext, mRuntime, aSettings, aOpenMode));
+    public Session createSession(boolean openSession, boolean aPrivateMode) {
+        SessionSettings settings = new SessionSettings(new SessionSettings.Builder().withDefaultSettings(mContext).withPrivateBrowsing(aPrivateMode));
+        return createSession(settings, openSession ? Session.SESSION_OPEN : Session.SESSION_DO_NOT_OPEN);
+    }
+
+    @NonNull
+    Session createSession(@NonNull SessionSettings aSettings, @Session.SessionOpenModeFlags int aOpenMode) {
+        Session session = new Session(mContext, mRuntime, aSettings);
+        session.addSessionChangeListener(this);
+        if (aOpenMode == Session.SESSION_OPEN) {
+            onSessionAdded(session);
+            session.openSession();
+            session.setActive(true);
+        }
+        return addSession(session);
     }
 
     @NonNull
     public Session createSuspendedSession(SessionState aRestoreState) {
-        return addSession(new Session(mContext, mRuntime, aRestoreState));
+        Session session = new Session(mContext, mRuntime, aRestoreState);
+        session.addSessionChangeListener(this);
+        return addSession(session);
     }
 
     @NonNull
@@ -131,12 +184,12 @@ public class SessionStore implements GeckoSession.PermissionDelegate{
         state.mUri = aUri;
         state.mSettings = new SessionSettings(new SessionSettings.Builder().withDefaultSettings(mContext).withPrivateBrowsing(aPrivateMode));
         Session session = new Session(mContext, mRuntime, state);
+        session.addSessionChangeListener(this);
         return addSession(session);
     }
 
     private void shutdownSession(@NonNull Session aSession) {
         aSession.setPermissionDelegate(null);
-        aSession.removeNavigationListener(mServices);
         aSession.shutdown();
     }
 
@@ -253,6 +306,10 @@ public class SessionStore implements GeckoSession.PermissionDelegate{
         return mTrackingProtectionStore;
     }
 
+    public GeckoWebExtensionRuntime getWebExtensionRuntime() {
+        return mWebExtensionRuntime;
+    }
+
     public void purgeSessionHistory() {
         for (Session session: mSessions) {
             session.purgeHistory();
@@ -270,6 +327,10 @@ public class SessionStore implements GeckoSession.PermissionDelegate{
 
         if (mHistoryStore != null) {
             mHistoryStore.removeAllListeners();
+        }
+
+        if (mWebChannelsFeature != null) {
+            mWebChannelsFeature.stop();
         }
     }
 
@@ -358,5 +419,142 @@ public class SessionStore implements GeckoSession.PermissionDelegate{
         if (mPermissionDelegate != null) {
             mPermissionDelegate.removePermissionException(uri, category);
         }
+    }
+
+    // WebExtensionDelegate
+
+    @Override
+    public void onInstalled(@NonNull WebExtension webExtension) {
+        Log.d(LOGTAG, "onInstalled: " + webExtension.getId());
+        if (webExtension.getMetadata() != null) {
+            webExtension.getMetadata().getHostPermissions().forEach(permission -> {
+                mSessions.forEach(session -> {
+                    Pattern domainPattern = Pattern.compile(Pattern.quote(permission));
+                    if (domainPattern.matcher(session.getCurrentUri()).find()) {
+                        session.reload();
+                    }
+                });
+            });
+        }
+    }
+
+    @Override
+    public void onUninstalled(@NonNull WebExtension webExtension) {
+        Log.d(LOGTAG, "onUninstalled: " + webExtension.getId());
+        if (webExtension.getMetadata() != null) {
+            webExtension.getMetadata().getHostPermissions().forEach(permission -> {
+                mSessions.forEach(session -> {
+                    Pattern domainPattern = Pattern.compile(Pattern.quote(permission));
+                    if (domainPattern.matcher(session.getCurrentUri()).find()) {
+                        session.reload();
+                    }
+                });
+            });
+        }
+    }
+
+    @Override
+    public void onEnabled(@NonNull WebExtension webExtension) {
+
+    }
+
+    @Override
+    public void onDisabled(@NonNull WebExtension webExtension) {
+
+    }
+
+    @Override
+    public void onAllowedInPrivateBrowsingChanged(@NonNull WebExtension webExtension) {
+
+    }
+
+    @Override
+    public void onNewTab(@NonNull WebExtension webExtension, @NonNull EngineSession engineSession, boolean b, @NonNull String s) {
+
+    }
+
+    @Override
+    public void onBrowserActionDefined(@NonNull WebExtension webExtension, @NonNull Action action) {
+
+    }
+
+    @Override
+    public void onPageActionDefined(@NonNull WebExtension webExtension, @NonNull Action action) {
+
+    }
+
+    @Nullable
+    @Override
+    public EngineSession onToggleActionPopup(@NonNull WebExtension webExtension, @NonNull EngineSession engineSession, @NonNull Action action) {
+        return null;
+    }
+
+    @Override
+    public boolean onInstallPermissionRequest(@NonNull WebExtension webExtension) {
+        return false;
+    }
+
+    @Override
+    public void onUpdatePermissionRequest(@NonNull WebExtension webExtension, @NonNull WebExtension webExtension1, @NonNull List<String> list, @NonNull Function1<? super Boolean, Unit> function1) {
+
+    }
+
+    @Override
+    public void onExtensionListUpdated() {
+
+    }
+
+    // SessionChangeListener
+
+    @Override
+    public void onSessionAdded(Session aSession) {
+        ComponentsAdapter.Companion.get().addSession(aSession);
+    }
+
+    @Override
+    public void onSessionOpened(Session aSession) {
+        ComponentsAdapter.Companion.get().link(aSession.getId(), aSession.getGeckoSession());
+    }
+
+    @Override
+    public void onSessionClosed(Session aSession) {
+        ComponentsAdapter.Companion.get().link(aSession.getId(), aSession.getGeckoSession());
+    }
+
+    @Override
+    public void onSessionRemoved(Session aSession) {
+        ComponentsAdapter.Companion.get().removeSession(aSession);
+    }
+
+    @Override
+    public void onSessionStateChanged(Session aSession, boolean aActive) {
+        if (aActive) {
+            ComponentsAdapter.Companion.get().selectSession(aSession);
+        }
+    }
+
+    @Override
+    public void onCurrentSessionChange(GeckoSession aOldSession, GeckoSession aSession) {
+        Session oldSession = getSession(aOldSession);
+        Session newSession = getSession(aSession);
+        if (oldSession != null) {
+            ComponentsAdapter.Companion.get().unlink(oldSession.getId());
+        }
+        if (newSession != null) {
+            ComponentsAdapter.Companion.get().link(newSession.getId(), aSession);
+        }
+
+    }
+
+    @Override
+    public void onStackSession(Session aSession) {
+        ComponentsAdapter.Companion.get().addSession(aSession);
+        ComponentsAdapter.Companion.get().link(aSession.getId(), aSession.getGeckoSession());
+    }
+
+    @Override
+    public void onUnstackSession(Session aSession, Session aParent) {
+        // unlink/remove are called by destroySession
+        destroySession(aSession);
     }
 }

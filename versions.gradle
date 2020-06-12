@@ -25,7 +25,7 @@ def versions = [:]
 // GeckoView versions can be found here:
 // https://maven.mozilla.org/?prefix=maven2/org/mozilla/geckoview/
 versions.gecko_view = "79.0.20200604092907"
-versions.android_components = "41.0.0"
+versions.android_components = "44.0.0"
 // Note that android-components also depends on application-services,
 // and in fact is our main source of appservices-related functionality.
 // The version number below tracks the application-services version
@@ -66,15 +66,19 @@ android_components.telemetry = "org.mozilla.components:service-telemetry:$versio
 android_components.glean = "org.mozilla.components:service-glean:$versions.android_components"
 android_components.browser_errorpages = "org.mozilla.components:browser-errorpages:$versions.android_components"
 android_components.browser_search = "org.mozilla.components:browser-search:$versions.android_components"
+android_components.browser_state = "org.mozilla.components:browser-state:$versions.android_components"
 android_components.browser_storage = "org.mozilla.components:browser-storage-sync:$versions.android_components"
 android_components.browser_domains = "org.mozilla.components:browser-domains:$versions.android_components"
 android_components.service_accounts = "org.mozilla.components:service-firefox-accounts:$versions.android_components"
 android_components.mozilla_service_location = "org.mozilla.components:service-location:${versions.android_components}"
 android_components.ui_autocomplete = "org.mozilla.components:ui-autocomplete:$versions.android_components"
+android_components.concept_engine = "org.mozilla.components:concept-engine:$versions.android_components"
 android_components.concept_fetch = "org.mozilla.components:concept-fetch:$versions.android_components"
 android_components.lib_fetch = "org.mozilla.components:lib-fetch-httpurlconnection:$versions.android_components"
 android_components.support_rustlog = "org.mozilla.components:support-rustlog:$versions.android_components"
 android_components.support_rusthttp = "org.mozilla.components:support-rusthttp:$versions.android_components"
+android_components.feature_accounts = "org.mozilla.components:feature-accounts:$versions.android_components"
+android_components.feature_webcompat = "org.mozilla.components:feature-webcompat:$versions.android_components"
 android_components.support_test = "org.mozilla.components:support-test:$versions.android_components"
 android_components.support_test_appservices = "org.mozilla.components:support-test-appservices:$versions.android_components"
 deps.android_components = android_components

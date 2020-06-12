@@ -2,7 +2,6 @@ package org.mozilla.vrbrowser.browser;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.database.Observable;
 import android.graphics.Color;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
@@ -10,8 +9,6 @@ import android.util.Log;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
-import androidx.databinding.ObservableBoolean;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import org.json.JSONArray;
@@ -102,6 +99,7 @@ public class SettingsStore {
     public final static boolean MULTI_E10S = false;
     public final static int DOWNLOADS_STORAGE_DEFAULT = INTERNAL;
     public final static int DOWNLOADS_SORTING_ORDER_DEFAULT = SortingContextMenuWidget.SORT_DATE_ASC;
+    public final static boolean FXA_WEBCHANNELS_ENABLED = true;
 
     // Enable telemetry by default (opt-out).
     public final static boolean CRASH_REPORTING_DEFAULT = false;
@@ -737,6 +735,16 @@ public class SettingsStore {
 
     public @Storage int getDownloadsSortingOrder() {
         return mPrefs.getInt(mContext.getString(R.string.settings_key_downloads_sorting_order), DOWNLOADS_SORTING_ORDER_DEFAULT);
+    }
+
+    public void setFxAWebChannelsEnabled(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_webchannels_enabled), isEnabled);
+        editor.commit();
+    }
+
+    public boolean isFxAWebChannelsEnabled() {
+        return mPrefs.getBoolean(mContext.getString(R.string.settings_key_webchannels_enabled), FXA_WEBCHANNELS_ENABLED);
     }
 }
 
