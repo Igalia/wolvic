@@ -124,6 +124,12 @@ public class ChinesePinyinKeyboard extends BaseKeyboard {
                 tempKey = tempKey.substring(0, tempKey.length() - 1);
             }
         }
+
+        // We can't find available candidates, so using the composing text
+        // as the only item of candidates.
+        if (candidate.length() == 0) {
+            candidate.append(aComposingText);
+        }
         words.add(new Words(syllables, code.toString(), candidate.toString()));
 
         // Extra candidates
@@ -186,6 +192,11 @@ public class ChinesePinyinKeyboard extends BaseKeyboard {
                     return "";
                 }
             }
+        }
+        // If we don't have a text code from the code book,
+        // just return an empty string to do composing.
+        if (aCode.isEmpty()) {
+            return "";
         }
         return aComposing.replaceFirst(Pattern.quote(aCode), "");
     }
