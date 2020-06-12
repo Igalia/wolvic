@@ -8,11 +8,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.telemetry.TelemetryHolder
-import org.mozilla.vrbrowser.GleanMetrics.Distribution
-import org.mozilla.vrbrowser.GleanMetrics.FirefoxAccount
-import org.mozilla.vrbrowser.GleanMetrics.LegacyTelemetry
-import org.mozilla.vrbrowser.GleanMetrics.Tabs
-import org.mozilla.vrbrowser.GleanMetrics.Url
+import org.mozilla.vrbrowser.GleanMetrics.*
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
@@ -146,5 +142,115 @@ class GleanMetricsServiceTest {
         LegacyTelemetry.clientId.set(java.util.UUID.fromString(TelemetryHolder.get().getClientId()))
         assertTrue(LegacyTelemetry.clientId.testHasValue())
         assertEquals(LegacyTelemetry.clientId.testGetValue().toString(), TelemetryHolder.get().getClientId())
+    }
+
+    fun testPages() {
+        assertFalse(Pages.pageLoad.testHasValue())
+        GleanMetricsService.startPageLoadTime("www.example.com")
+        assertFalse(Pages.pageLoad.testHasValue())
+        GleanMetricsService.stopPageLoadTimeWithURI("www.example.com")
+        assertTrue(Pages.pageLoad.testHasValue())
+    }
+
+    @Test
+    fun testImmersive() {
+        assertFalse(Immersive.duration.testHasValue())
+        GleanMetricsService.startImmersive()
+        assertFalse(Immersive.duration.testHasValue())
+        GleanMetricsService.stopImmersive()
+        assertTrue(Immersive.duration.testHasValue())
+    }
+
+    @Test
+    fun testMultiWindow() {
+        assertFalse(Windows.duration.testHasValue())
+        GleanMetricsService.openWindowEvent(1)
+        assertFalse(Windows.duration.testHasValue())
+        GleanMetricsService.closeWindowEvent(1)
+        assertTrue(Windows.duration.testHasValue())
+
+        assertFalse(Windows.movement.testHasValue())
+        GleanMetricsService.windowsMoveEvent()
+        assertTrue(Windows.movement.testHasValue())
+        assertEquals(Windows.movement.testGetValue(), 1)
+
+        assertFalse(Windows.resize.testHasValue())
+        GleanMetricsService.windowsResizeEvent()
+        assertTrue(Windows.resize.testHasValue())
+        assertEquals(Windows.resize.testGetValue(), 1)
+
+        assertFalse(Windows.activeInFrontTime.testHasValue())
+        GleanMetricsService.activePlacementEvent(0, true)
+        assertFalse(Windows.activeInFrontTime.testHasValue())
+        GleanMetricsService.activePlacementEvent(0, false)
+        assertTrue(Windows.activeInFrontTime.testHasValue())
+
+        assertFalse(Windows.activeInLeftTime.testHasValue())
+        GleanMetricsService.activePlacementEvent(1, true)
+        assertFalse(Windows.activeInLeftTime.testHasValue())
+        GleanMetricsService.activePlacementEvent(1, false)
+        assertTrue(Windows.activeInLeftTime.testHasValue())
+
+        assertFalse(Windows.activeInRightTime.testHasValue())
+        GleanMetricsService.activePlacementEvent(2, true)
+        assertFalse(Windows.activeInRightTime.testHasValue())
+        GleanMetricsService.activePlacementEvent(2, false)
+        assertTrue(Windows.activeInRightTime.testHasValue())
+
+        assertFalse(Windows.openedWindowCount["single"].testHasValue())
+        assertFalse(Windows.singleWindowOpenedTime.testHasValue())
+        GleanMetricsService.openWindowsEvent(0, 1,false)
+        assertTrue(Windows.openedWindowCount["single"].testHasValue())
+        assertEquals(Windows.openedWindowCount["single"].testGetValue(), 1)
+        assertFalse(Windows.singleWindowOpenedTime.testHasValue())
+        assertFalse(Windows.doubleWindowOpenedTime.testHasValue())
+        assertFalse(Windows.openedWindowCount["double"].testHasValue())
+        GleanMetricsService.openWindowsEvent(1, 2, false)
+        assertTrue(Windows.openedWindowCount["double"].testHasValue())
+        assertEquals(Windows.openedWindowCount["double"].testGetValue(), 1)
+        assertTrue(Windows.singleWindowOpenedTime.testHasValue())
+        assertFalse(Windows.doubleWindowOpenedTime.testHasValue())
+        assertFalse(Windows.tripleWindowOpenedTime.testHasValue())
+        assertFalse(Windows.openedWindowCount["triple"].testHasValue())
+        GleanMetricsService.openWindowsEvent(2, 3, false)
+        assertTrue(Windows.openedWindowCount["triple"].testHasValue())
+        assertEquals(Windows.openedWindowCount["triple"].testGetValue(), 1)
+        assertTrue(Windows.doubleWindowOpenedTime.testHasValue())
+        assertFalse(Windows.tripleWindowOpenedTime.testHasValue())
+        GleanMetricsService.openWindowsEvent(3, 2, false)
+        assertEquals(Windows.openedWindowCount["double"].testGetValue(), 2)
+        assertTrue(Windows.tripleWindowOpenedTime.testHasValue())
+        Pings.sessionEnd.submit();
+        // Windows.openedWindowCount will reset when a session is ended.
+        GleanMetricsService.resetOpenedWindowsCount(2, false)
+        assertEquals(Windows.openedWindowCount["double"].testGetValue(), 1)
+
+        assertFalse(Windows.openedPriWindowCount["single"].testHasValue())
+        assertFalse(Windows.singlePriWindowOpenedTime.testHasValue())
+        GleanMetricsService.openWindowsEvent(0, 1,true)
+        assertTrue(Windows.openedPriWindowCount["single"].testHasValue())
+        assertEquals(Windows.openedPriWindowCount["single"].testGetValue(), 1)
+        assertFalse(Windows.singlePriWindowOpenedTime.testHasValue())
+        assertFalse(Windows.doublePriWindowOpenedTime.testHasValue())
+        assertFalse(Windows.openedPriWindowCount["double"].testHasValue())
+        GleanMetricsService.openWindowsEvent(1, 2, true)
+        assertTrue(Windows.openedPriWindowCount["double"].testHasValue())
+        assertEquals(Windows.openedPriWindowCount["double"].testGetValue(), 1)
+        assertTrue(Windows.singlePriWindowOpenedTime.testHasValue())
+        assertFalse(Windows.doublePriWindowOpenedTime.testHasValue())
+        assertFalse(Windows.triplePriWindowOpenedTime.testHasValue())
+        assertFalse(Windows.openedPriWindowCount["triple"].testHasValue())
+        GleanMetricsService.openWindowsEvent(2, 3, true)
+        assertTrue(Windows.openedPriWindowCount["triple"].testHasValue())
+        assertEquals(Windows.openedPriWindowCount["triple"].testGetValue(), 1)
+        assertTrue(Windows.doublePriWindowOpenedTime.testHasValue())
+        assertFalse(Windows.triplePriWindowOpenedTime.testHasValue())
+        GleanMetricsService.openWindowsEvent(3, 2, true)
+        assertEquals(Windows.openedPriWindowCount["double"].testGetValue(), 2)
+        assertTrue(Windows.triplePriWindowOpenedTime.testHasValue())
+        Pings.sessionEnd.submit();
+        // Windows.openedPriWindowCount will reset when a session is ended.
+        GleanMetricsService.resetOpenedWindowsCount(2, true)
+        assertEquals(Windows.openedPriWindowCount["double"].testGetValue(), 1)
     }
 }

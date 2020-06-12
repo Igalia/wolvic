@@ -26,9 +26,11 @@ class Places(var context: Context) {
         val files = context.filesDir.listFiles { _, name ->
             name.matches("places\\.sqlite.*".toRegex())
         }
-        for (file in files) {
-            if (!file.delete()) {
-                Logger(LOGTAG).debug("Can't remove " + file.absolutePath)
+        if (files != null) {
+            for (file in files) {
+                if (!file.delete()) {
+                    Logger(LOGTAG).debug("Can't remove " + file.absolutePath)
+                }
             }
         }
 

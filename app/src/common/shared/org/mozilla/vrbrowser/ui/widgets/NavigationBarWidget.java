@@ -42,6 +42,7 @@ import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.databinding.NavigationBarBinding;
 import org.mozilla.vrbrowser.db.SitePermission;
 import org.mozilla.vrbrowser.search.suggestions.SuggestionsProvider;
+import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.ui.viewmodel.TrayViewModel;
 import org.mozilla.vrbrowser.ui.viewmodel.WindowViewModel;
@@ -758,6 +759,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
         if (aResizeAction == ResizeAction.KEEP_SIZE) {
             TelemetryWrapper.windowsResizeEvent();
+            GleanMetricsService.windowsResizeEvent();
         }
     }
 

@@ -16,20 +16,27 @@ import org.mozilla.vrbrowser.GleanMetrics.Pings;
 import org.mozilla.vrbrowser.GleanMetrics.Searches;
 import org.mozilla.vrbrowser.GleanMetrics.Url;
 import org.mozilla.vrbrowser.GleanMetrics.Control;
+import org.mozilla.vrbrowser.GleanMetrics.Pages;
+import org.mozilla.vrbrowser.GleanMetrics.Immersive;
+import org.mozilla.vrbrowser.GleanMetrics.Windows;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.search.SearchEngineWrapper;
 import org.mozilla.vrbrowser.utils.DeviceType;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 import org.mozilla.vrbrowser.utils.UrlUtils;
+import static org.mozilla.vrbrowser.ui.widgets.Windows.WindowPlacement;
+import static org.mozilla.vrbrowser.ui.widgets.Windows.MAX_WINDOWS;
 
 import java.net.URI;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Map;
 import java.util.UUID;
 
 import mozilla.components.service.glean.Glean;
 import mozilla.components.service.glean.config.Configuration;
+import mozilla.telemetry.glean.GleanTimerId;
 
 
 public class GleanMetricsService {
@@ -39,6 +46,12 @@ public class GleanMetricsService {
     private static boolean initialized = false;
     private static Context context = null;
     private static HashSet<String> domainMap = new HashSet<String>();
+    private static Map<String, GleanTimerId> loadingTimerId = new Hashtable<>();
+    private static GleanTimerId immersiveTimerId;
+    private static Map<Integer, GleanTimerId> windowLifeTimerId = new Hashtable<>();
+    private static GleanTimerId activeWindowTimerId[] = new GleanTimerId[MAX_WINDOWS];
+    private static GleanTimerId openWindowTimerId[] = new GleanTimerId[MAX_WINDOWS];
+    private static GleanTimerId openPrivateWindowTimerId[] = new GleanTimerId[MAX_WINDOWS];
 
     // We should call this at the application initial stage.
     public static void init(Context aContext) {
@@ -73,14 +86,19 @@ public class GleanMetricsService {
         Glean.INSTANCE.setUploadEnabled(false);
     }
 
-    public static void startPageLoadTime() {
-       // TODO: Blocked by Bug 1595914.
-       // pageLoadingTimerId = Pages.INSTANCE.getPageLoad().start();
+    public static void startPageLoadTime(String aUrl) {
+        GleanTimerId pageLoadingTimerId = Pages.INSTANCE.pageLoad().start();
+        loadingTimerId.put(aUrl, pageLoadingTimerId);
     }
 
     public static void stopPageLoadTimeWithURI(String uri) {
-        // TODO: Blocked by Bug 1595914.
-        // Pages.INSTANCE.getPageLoad().stopAndAccumulate(pageLoadingTimerId);
+        if (loadingTimerId.containsKey(uri)) {
+            GleanTimerId pageLoadingTimerId = loadingTimerId.get(uri);
+            Pages.INSTANCE.pageLoad().stopAndAccumulate(pageLoadingTimerId);
+            loadingTimerId.remove(uri);
+        } else {
+            Log.e(LOGTAG, "Can't find page loading url.");
+        }
 
         try {
             URI uriLink = URI.create(uri);
@@ -92,16 +110,179 @@ public class GleanMetricsService {
                 Url.INSTANCE.domains().add();
             }
             Url.INSTANCE.visits().add();
-
         } catch (IllegalArgumentException e) {
             Log.e(LOGTAG, "Invalid URL", e);
         }
+    }
 
+    public static void windowsResizeEvent() {
+        Windows.INSTANCE.resize().add();
+    }
+
+    public static void windowsMoveEvent() {
+        Windows.INSTANCE.movement().add();
+    }
+
+    public static void activePlacementEvent(int from, boolean active) {
+        if (active) {
+            if (from == WindowPlacement.FRONT.getValue()) {
+                activeWindowTimerId[from] =
+                        Windows.INSTANCE.activeInFrontTime().start();
+            } else if (from == WindowPlacement.LEFT.getValue()) {
+                activeWindowTimerId[from] =
+                        Windows.INSTANCE.activeInLeftTime().start();
+            } else if (from == WindowPlacement.RIGHT.getValue()) {
+                activeWindowTimerId[from] =
+                        Windows.INSTANCE.activeInRightTime().start();
+            } else {
+                Log.d(LOGTAG,"Undefined WindowPlacement type: " +  from);
+            }
+        } else if (activeWindowTimerId[from] != null) {
+            if (from == WindowPlacement.FRONT.getValue()) {
+                Windows.INSTANCE.activeInFrontTime().
+                        stopAndAccumulate(activeWindowTimerId[from]);
+            } else if (from == WindowPlacement.LEFT.getValue()) {
+                Windows.INSTANCE.activeInLeftTime().
+                        stopAndAccumulate(activeWindowTimerId[from]);
+            } else if (from == WindowPlacement.RIGHT.getValue()) {
+                Windows.INSTANCE.activeInRightTime().
+                        stopAndAccumulate(activeWindowTimerId[from]);
+            } else {
+                Log.d(LOGTAG,"Undefined WindowPlacement type: " +  from);
+            }
+        }
+    }
+
+    public static void openWindowsEvent(int from, int to, boolean isPrivate) {
+        if (isPrivate) {
+            if (from > 0 && openPrivateWindowTimerId[from - 1] != null) {
+                switch (from) {
+                    case 1:
+                        Windows.INSTANCE.singlePriWindowOpenedTime().
+                                stopAndAccumulate(openPrivateWindowTimerId[from - 1]);
+                        break;
+                    case 2:
+                        Windows.INSTANCE.doublePriWindowOpenedTime().
+                                stopAndAccumulate(openPrivateWindowTimerId[from - 1]);
+                        break;
+                    case 3:
+                        Windows.INSTANCE.triplePriWindowOpenedTime().
+                                stopAndAccumulate(openPrivateWindowTimerId[from - 1]);
+                        break;
+                    default:
+                        Log.d(LOGTAG,"Undefined PriWindowOpenedTime type: " +  from);
+                        break;
+                }
+            }
+            if (to > 0) {
+                String label = "";
+                switch (to) {
+                    case 1:
+                        label = "single";
+                        openPrivateWindowTimerId[to - 1] =
+                                Windows.INSTANCE.singlePriWindowOpenedTime().start();
+                        break;
+                    case 2:
+                        label = "double";
+                        openPrivateWindowTimerId[to - 1] =
+                                Windows.INSTANCE.doublePriWindowOpenedTime().start();
+                        break;
+                    case 3:
+                        label = "triple";
+                        openPrivateWindowTimerId[to - 1] =
+                                Windows.INSTANCE.triplePriWindowOpenedTime().start();
+                        break;
+                    default:
+                        Log.d(LOGTAG,"Undefined OpenedPriWindowCount type: " +  to);
+                        break;
+                }
+                Windows.INSTANCE.getOpenedPriWindowCount().get(label).add();
+            }
+        } else {
+            if (from > 0 && openWindowTimerId[from - 1] != null) {
+                switch (from) {
+                    case 1:
+                        Windows.INSTANCE.singleWindowOpenedTime().
+                                stopAndAccumulate(openWindowTimerId[from - 1]);
+                        break;
+                    case 2:
+                        Windows.INSTANCE.doubleWindowOpenedTime().
+                                stopAndAccumulate(openWindowTimerId[from - 1]);
+                        break;
+                    case 3:
+                        Windows.INSTANCE.tripleWindowOpenedTime().
+                                stopAndAccumulate(openWindowTimerId[from - 1]);
+                        break;
+                    default:
+                        Log.d(LOGTAG,"Undefined WindowOpenedTime type: " +  from);
+                        break;
+                }
+            }
+            if (to > 0) {
+                String label = "";
+                switch (to) {
+                    case 1:
+                        label = "single";
+                        openWindowTimerId[to - 1] =
+                                Windows.INSTANCE.singleWindowOpenedTime().start();
+                        break;
+                    case 2:
+                        label = "double";
+                        openWindowTimerId[to - 1] =
+                                Windows.INSTANCE.doubleWindowOpenedTime().start();
+                        break;
+                    case 3:
+                        label = "triple";
+                        openWindowTimerId[to - 1] =
+                                Windows.INSTANCE.tripleWindowOpenedTime().start();
+                        break;
+                    default:
+                        Log.d(LOGTAG,"Undefined OpenedWindowCount type: " +  to);
+                        break;
+                }
+                Windows.INSTANCE.getOpenedWindowCount().get(label).add();
+            }
+        }
+    }
+
+    public static void resetOpenedWindowsCount(int number, boolean isPrivate) {
+        if (number == 0) {
+            return;
+        }
+
+        String label = "";
+        switch (number) {
+            case 1:
+                label = "single";
+                break;
+            case 2:
+                label = "double";
+                break;
+            case 3:
+                label = "triple";
+                break;
+            default:
+                Log.d(LOGTAG, String.format("Undefined OpenedWindowCount type: %d, private? %d",
+                        number, isPrivate == true ? 1: 0));
+                break;
+        }
+
+        if (isPrivate) {
+            Windows.INSTANCE.getOpenedPriWindowCount().get(label).add();
+        } else {
+            Windows.INSTANCE.getOpenedWindowCount().get(label).add();
+        }
     }
 
     public static void sessionStop() {
         domainMap.clear();
-        Pings.INSTANCE.sessionEnd().send();
+        loadingTimerId.clear();
+        windowLifeTimerId.clear();
+        activeWindowTimerId = new GleanTimerId[MAX_WINDOWS];
+        openWindowTimerId = new GleanTimerId[MAX_WINDOWS];
+        openPrivateWindowTimerId = new GleanTimerId[MAX_WINDOWS];
+
+        Pings.INSTANCE.sessionEnd().submit();
     }
 
     @UiThread
@@ -126,31 +307,26 @@ public class GleanMetricsService {
     }
 
     public static void startImmersive() {
-        // TODO: Blocked by Bug 1595914 and 1595723.
-        // immersiveTimerId = Durarion.INSTANCE.getImmersiveMode().start();
+        immersiveTimerId =  Immersive.INSTANCE.duration().start();
     }
 
     public static void stopImmersive() {
-        // TODO: Blocked by Bug 1595914 and 1595723.
-        // Durarion.INSTANCE.getImmersiveMode().stopAndAccumulate(immersiveTimerId);
+        Immersive.INSTANCE.duration().stopAndAccumulate(immersiveTimerId);
     }
 
-    // TODO: Confirm if we don't need multiple metrics for tracking window open duration.
-    // like WindowLifetime1 ~ WindowLifetimeN for multiple windows.
     public static void openWindowEvent(int windowId) {
-        // TODO: Blocked by Bug 1595914 and Bug 1595723.
-        // GleanTimerId id = Durarion.INSTANCE.getWindowLifetime().start();
-        // windowLifetimeId.put(windowId, id);
+         GleanTimerId timerId = Windows.INSTANCE.duration().start();
+         windowLifeTimerId.put(windowId, timerId);
     }
 
     public static void closeWindowEvent(int windowId) {
-        // TODO: Blocked by Bug 1595914 and Bug 1595723.
-        // if (windowLifetimeId.containsKey(windowId)) {
-        //    Durarion.INSTANCE.getWindowLifetime().stopAndAccumulate(windowLifetimeId.get(windowId));
-        //    windowLifetimeId.remove(windowId);
-        // } else {
-        //    Log.e(LOGTAG, "Can't find window id.");
-        // }
+        if (windowLifeTimerId.containsKey((windowId))) {
+            GleanTimerId timerId = windowLifeTimerId.get(windowId);
+            Windows.INSTANCE.duration().stopAndAccumulate(timerId);
+            windowLifeTimerId.remove(windowId);
+        } else {
+            Log.e(LOGTAG, "Can't find close window id.");
+        }
     }
 
     private static String getDefaultSearchEngineIdentifierForTelemetry() {

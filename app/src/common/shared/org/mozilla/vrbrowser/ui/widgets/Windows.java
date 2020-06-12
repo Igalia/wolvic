@@ -510,6 +510,8 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
         TelemetryWrapper.resetOpenedWindowsCount(mRegularWindows.size(), false);
         TelemetryWrapper.resetOpenedWindowsCount(mPrivateWindows.size(), true);
+        GleanMetricsService.resetOpenedWindowsCount(mRegularWindows.size(), false);
+        GleanMetricsService.resetOpenedWindowsCount(mPrivateWindows.size(), true);
     }
 
     public boolean isPaused() {
@@ -791,8 +793,10 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
         if (mPrivateMode) {
             TelemetryWrapper.openWindowsEvent(mPrivateWindows.size() + 1, mPrivateWindows.size(), true);
+            GleanMetricsService.openWindowsEvent(mPrivateWindows.size() + 1, mPrivateWindows.size(), true);
         } else {
             TelemetryWrapper.openWindowsEvent(mRegularWindows.size() + 1, mRegularWindows.size(), false);
+            GleanMetricsService.openWindowsEvent(mRegularWindows.size() + 1, mRegularWindows.size(), false);
         }
     }
 
@@ -953,8 +957,10 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
         if (mPrivateMode) {
             TelemetryWrapper.openWindowsEvent(mPrivateWindows.size() - 1, mPrivateWindows.size(), true);
+            GleanMetricsService.openWindowsEvent(mPrivateWindows.size() - 1, mPrivateWindows.size(), true);
         } else {
             TelemetryWrapper.openWindowsEvent(mRegularWindows.size() - 1, mRegularWindows.size(), false);
+            GleanMetricsService.openWindowsEvent(mRegularWindows.size() - 1, mRegularWindows.size(), false);
         }
 
         mForcedCurvedMode = getCurrentWindows().size() > 1;
@@ -1100,6 +1106,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         WindowWidget window = aWidget.getAttachedWindow();
         if (window != null) {
             TelemetryWrapper.windowsMoveEvent();
+            GleanMetricsService.windowsMoveEvent();
 
             moveWindowLeft(window);
         }
@@ -1110,6 +1117,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         WindowWidget window = aWidget.getAttachedWindow();
         if (window != null) {
             TelemetryWrapper.windowsMoveEvent();
+            GleanMetricsService.windowsMoveEvent();
 
             moveWindowRight(window);
         }
