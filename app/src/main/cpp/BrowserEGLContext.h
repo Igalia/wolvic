@@ -31,6 +31,7 @@ public:
 
   EGLDisplay Display() const { return mDisplay; }
   EGLContext Context() const { return mContext; }
+  EGLConfig Config() const { return mConfig; }
 
   BrowserEGLContext();
 private:

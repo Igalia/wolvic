@@ -135,7 +135,9 @@ OpenXRInput::Initialize(XrSession session) {
   {
     XrPath khrSimpleInteractionProfilePath;
     CHECK_XRCMD(
-        xrStringToPath(instance, "/interaction_profiles/khr/simple_controller", &khrSimpleInteractionProfilePath));
+        //xrStringToPath(instance, "/interaction_profiles/khr/simple_controller", &khrSimpleInteractionProfilePath));
+    xrStringToPath(instance, "/interaction_profiles/huawei/controller", &khrSimpleInteractionProfilePath));
+
     std::vector<XrActionSuggestedBinding> bindings{{// Generic controller mappings
                                                      {actionPose[Hand::Left], posePath[Hand::Left]},
                                                      {actionPose[Hand::Right], posePath[Hand::Right]},
@@ -149,7 +151,7 @@ OpenXRInput::Initialize(XrSession session) {
     suggestedBindings.countSuggestedBindings = (uint32_t)bindings.size();
     CHECK_XRCMD(xrSuggestInteractionProfileBindings(instance, &suggestedBindings));
   }
-
+#if 0
   // Suggest bindings for Oculus Go controller
   {
 
@@ -195,6 +197,7 @@ OpenXRInput::Initialize(XrSession session) {
     suggestedBindings.countSuggestedBindings = (uint32_t)bindings.size();
     CHECK_XRCMD(xrSuggestInteractionProfileBindings(instance, &suggestedBindings));
   }
+#endif
 
   // Initialize pose actions
   {
@@ -222,6 +225,7 @@ OpenXRInput::Initialize(XrSession session) {
 void OpenXRInput::Update(XrSession session, XrTime predictedDisplayTime, XrSpace baseSpace, device::RenderMode renderMode, ControllerDelegatePtr& delegate) {
   CHECK(session != XR_NULL_HANDLE);
 
+  return;
   // Sync actions
   const XrActiveActionSet activeActionSet{actionSet, XR_NULL_PATH};
   XrActionsSyncInfo syncInfo{XR_TYPE_ACTIONS_SYNC_INFO};
@@ -421,6 +425,8 @@ void OpenXRInput::Update(XrSession session, XrTime predictedDisplayTime, XrSpace
 int32_t OpenXRInput::GetControllerModelCount() const {
 #ifdef OCULUSVR
   return systemProperties.trackingProperties.positionTracking ? 2 : 1;
+#elif defined(HVR)
+  return 1;
 #else
 #error Platform controller not implemented
 #endif
@@ -441,6 +447,8 @@ const std::string OpenXRInput::GetControllerModelName(const int32_t aModelIndex)
   } else {
     return "vr_controller_oculusgo.obj";
   }
+#elif defined(HVR)
+  return "";
 #else
 #error Platform controller not implemented
 #endif

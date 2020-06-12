@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="org.mozilla.vrbrowser.utils.DeviceType"/>
+        <import type="org.mozilla.vrbrowser.ui.widgets.WebXRInterstitialController"/>
+        <variable
+            name="model"
+            type="int" />
+        <variable
+            name="hand"
+            type="int" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp">
+    </FrameLayout>
+</layout>

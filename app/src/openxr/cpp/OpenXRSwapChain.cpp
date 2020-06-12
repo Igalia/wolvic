@@ -45,7 +45,7 @@ OpenXRSwapChain::InitAndroidSurface(JNIEnv* aEnv, XrSession aSession, const XrSw
   session = aSession;
   CHECK(aSession != XR_NULL_HANDLE);
   CHECK_MSG(env, "JNIEnv must be not null");
-  CHECK_XRCMD(OpenXRExtensions::sXrCreateSwapchainAndroidSurfaceKHR(aSession, &info, &swapchain, &surface));
+  //CHECK_XRCMD(OpenXRExtensions::sXrCreateSwapchainAndroidSurfaceKHR(aSession, &info, &swapchain, &surface));
   CHECK(surface);
   CHECK(swapchain != XR_NULL_HANDLE);
   surface = env->NewGlobalRef(surface);
