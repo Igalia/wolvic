@@ -265,9 +265,9 @@ legacy_telemetry:
     send_in_pings:
       - deletion-request
     bugs:
-      - https://github.com/MozillaReality/FirefoxReality/issues/2347
+      - https://github.com/MozillaReality/FirefoxReality/issues/3324
     data_reviews:
-      - https://github.com/MozillaReality/FirefoxReality/pull/2348#issuecomment-564736919
+      - https://github.com/MozillaReality/FirefoxReality/pull/3467#issuecomment-642847632
     notification_emails:
       - fxr-telemetry@mozilla.com
       - dmu@mozilla.com
