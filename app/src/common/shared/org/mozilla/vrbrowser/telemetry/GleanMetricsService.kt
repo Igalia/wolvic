@@ -4,10 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.annotation.UiThread
 import androidx.annotation.VisibleForTesting
-//import mozilla.components.service.glean.Glean
-//import mozilla.components.service.glean.config.Configuration
-//import mozilla.telemetry.glean.GleanTimerId
-//import mozilla.components.service.glean.Glean
+import mozilla.components.lib.fetch.httpurlconnection.HttpURLConnectionClient
 import org.mozilla.telemetry.TelemetryHolder
 import org.mozilla.vrbrowser.BuildConfig
 import org.mozilla.vrbrowser.GleanMetrics.*
@@ -24,12 +21,11 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Map;
 import java.util.UUID;
 
 import mozilla.components.service.glean.Glean;
 import mozilla.components.service.glean.config.Configuration;
-import mozilla.telemetry.glean.GleanInternalAPI
+import mozilla.components.service.glean.net.ConceptFetchHttpUploader
 import mozilla.telemetry.glean.GleanTimerId;
 
 
@@ -64,8 +60,11 @@ open class GleanMetricsServiceInternal internal constructor () {
         }
 
         LegacyTelemetry.clientId.set(UUID.fromString(TelemetryHolder.get().getClientId()))
-        val config = Configuration(Configuration.DEFAULT_TELEMETRY_ENDPOINT, BuildConfig.BUILD_TYPE)
-        Glean.initialize(aContext, true, config)
+
+        val config = Configuration(
+                channel = BuildConfig.BUILD_TYPE,
+                httpClient = ConceptFetchHttpUploader(lazy { HttpURLConnectionClient() }))
+        Glean.initialize(applicationContext = aContext, uploadEnabled = true, configuration = config)
     }
 
     // It would be called when users turn on/off the setting of telemetry.

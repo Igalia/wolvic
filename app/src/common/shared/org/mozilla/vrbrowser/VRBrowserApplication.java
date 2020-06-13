@@ -40,8 +40,8 @@ public class VRBrowserApplication extends Application implements AppServicesProv
         mAppExecutors = new AppExecutors();
         mBitmapCache = new BitmapCache(this, mAppExecutors.diskIO(), mAppExecutors.mainThread());
 
-//        TelemetryWrapper.init(this);
-//        GleanMetricsService.INSTANCE.init(this);
+        TelemetryWrapper.init(this);
+        GleanMetricsService.INSTANCE.init(this);
     }
 
     protected void onActivityCreate() {
@@ -51,8 +51,8 @@ public class VRBrowserApplication extends Application implements AppServicesProv
         mDownloadsManager = new DownloadsManager(this);
         mSpeechService = new SpeechService(this);
 
-        TelemetryWrapper.init(this);
-        GleanMetricsService.init(this);
+//        TelemetryWrapper.init(this);
+//        GleanMetricsService.INSTANCE.init(this);
     }
 
     @Override
