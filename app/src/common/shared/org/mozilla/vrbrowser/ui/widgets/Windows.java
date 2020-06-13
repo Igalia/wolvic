@@ -313,7 +313,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
         // We are only interested in general windows opened.
         if (!isInPrivateMode()) {
-            GleanMetricsService.newWindowOpenEvent();
+            GleanMetricsService.INSTANCE.newWindowOpenEvent();
         }
         return newWindow;
     }
@@ -510,8 +510,8 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
         TelemetryWrapper.resetOpenedWindowsCount(mRegularWindows.size(), false);
         TelemetryWrapper.resetOpenedWindowsCount(mPrivateWindows.size(), true);
-        GleanMetricsService.resetOpenedWindowsCount(mRegularWindows.size(), false);
-        GleanMetricsService.resetOpenedWindowsCount(mPrivateWindows.size(), true);
+        GleanMetricsService.INSTANCE.resetOpenedWindowsCount(mRegularWindows.size(), false);
+        GleanMetricsService.INSTANCE.resetOpenedWindowsCount(mPrivateWindows.size(), true);
     }
 
     public boolean isPaused() {
@@ -744,8 +744,8 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             ArrayList<Session> restoredSessions = new ArrayList<>();
             if (mWindowsState.tabs != null) {
                 mWindowsState.tabs.forEach(state -> {
-                    restoredSessions.add(SessionStore.get().createSuspendedSession(state));
-                    GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.PRE_EXISTING);
+                    restoredSessions.add(SessionStore.get().createSuspendedSession(state)); //TabSource.PRE_EXISTING
+                    GleanMetricsService.INSTANCE.getTabs().openedCounter(GleanMetricsService.TabSource.PRE_EXISTING);
                 });
             }
 
@@ -793,10 +793,10 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
         if (mPrivateMode) {
             TelemetryWrapper.openWindowsEvent(mPrivateWindows.size() + 1, mPrivateWindows.size(), true);
-            GleanMetricsService.openWindowsEvent(mPrivateWindows.size() + 1, mPrivateWindows.size(), true);
+            GleanMetricsService.INSTANCE.openWindowsEvent(mPrivateWindows.size() + 1, mPrivateWindows.size(), true);
         } else {
             TelemetryWrapper.openWindowsEvent(mRegularWindows.size() + 1, mRegularWindows.size(), false);
-            GleanMetricsService.openWindowsEvent(mRegularWindows.size() + 1, mRegularWindows.size(), false);
+            GleanMetricsService.INSTANCE.openWindowsEvent(mRegularWindows.size() + 1, mRegularWindows.size(), false);
         }
     }
 
@@ -957,10 +957,10 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
         if (mPrivateMode) {
             TelemetryWrapper.openWindowsEvent(mPrivateWindows.size() - 1, mPrivateWindows.size(), true);
-            GleanMetricsService.openWindowsEvent(mPrivateWindows.size() - 1, mPrivateWindows.size(), true);
+            GleanMetricsService.INSTANCE.openWindowsEvent(mPrivateWindows.size() - 1, mPrivateWindows.size(), true);
         } else {
             TelemetryWrapper.openWindowsEvent(mRegularWindows.size() - 1, mRegularWindows.size(), false);
-            GleanMetricsService.openWindowsEvent(mRegularWindows.size() - 1, mRegularWindows.size(), false);
+            GleanMetricsService.INSTANCE.openWindowsEvent(mRegularWindows.size() - 1, mRegularWindows.size(), false);
         }
 
         mForcedCurvedMode = getCurrentWindows().size() > 1;
@@ -1106,7 +1106,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         WindowWidget window = aWidget.getAttachedWindow();
         if (window != null) {
             TelemetryWrapper.windowsMoveEvent();
-            GleanMetricsService.windowsMoveEvent();
+            GleanMetricsService.INSTANCE.windowsMoveEvent();
 
             moveWindowLeft(window);
         }
@@ -1117,7 +1117,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         WindowWidget window = aWidget.getAttachedWindow();
         if (window != null) {
             TelemetryWrapper.windowsMoveEvent();
-            GleanMetricsService.windowsMoveEvent();
+            GleanMetricsService.INSTANCE.windowsMoveEvent();
 
             moveWindowRight(window);
         }
@@ -1243,7 +1243,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     @Override
     public void onTabSelect(Session aTab) {
         if (mFocusedWindow.getSession() != aTab) {
-            GleanMetricsService.Tabs.activatedEvent();
+            GleanMetricsService.INSTANCE.getTabs().activatedEvent();
         }
 
         WindowWidget targetWindow = mFocusedWindow;
@@ -1314,7 +1314,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     @Override
     public void onTabAdd() {
         addTab(mFocusedWindow, null);
-        GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.TABS_DIALOG);
+        GleanMetricsService.INSTANCE.getTabs().openedCounter(GleanMetricsService.TabSource.TABS_DIALOG);
     }
 
     @Override
@@ -1388,7 +1388,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             session.loadUri(aTabs.get(i).getUrl());
             session.updateLastUse();
 
-            GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.RECEIVED);
+            GleanMetricsService.INSTANCE.getTabs().openedCounter(GleanMetricsService.TabSource.RECEIVED);
 
             if (i == 0 && !fullscreen) {
                 // Set the first received tab of the list the current one.

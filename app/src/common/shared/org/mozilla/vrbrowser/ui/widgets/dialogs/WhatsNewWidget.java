@@ -92,7 +92,7 @@ public class WhatsNewWidget extends PromptDialogWidget {
                         mWidgetManager.openNewTabForeground(url);
                         mWidgetManager.getFocusedWindow().getSession().loadUri(url);
                         mWidgetManager.getFocusedWindow().getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_VR);
-                        GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.FXA_LOGIN);
+                        GleanMetricsService.INSTANCE.getTabs().openedCounter(GleanMetricsService.TabSource.FXA_LOGIN);
                     }
 
                 }, mUIThreadExecutor).exceptionally(throwable -> {

@@ -249,7 +249,7 @@ public class HistoryView extends LibraryView implements HistoryStore.HistoryList
                             mAccounts.setLoginOrigin(Accounts.LoginOrigin.HISTORY);
                             mWidgetManager.openNewTabForeground(url);
                             mWidgetManager.getFocusedWindow().getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
-                            GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.FXA_LOGIN);
+                            GleanMetricsService.INSTANCE.getTabs().openedCounter(GleanMetricsService.TabSource.FXA_LOGIN);
 
                             WindowWidget window = mWidgetManager.getFocusedWindow();
                             window.hidePanel(Windows.PanelType.HISTORY);
@@ -451,7 +451,7 @@ public class HistoryView extends LibraryView implements HistoryStore.HistoryList
         @Override
         public void onOpenInNewTabClick(LibraryContextMenuWidget.LibraryContextMenuItem item) {
             mWidgetManager.openNewTabForeground(item.getUrl());
-            GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.BOOKMARKS);
+            GleanMetricsService.INSTANCE.getTabs().openedCounter(GleanMetricsService.TabSource.BOOKMARKS);
             hideContextMenu();
         }
 

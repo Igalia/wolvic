@@ -1143,7 +1143,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         Log.d(LOGTAG, "Session onPageStart");
         mState.mIsLoading = true;
         TelemetryWrapper.startPageLoadTime();
-        GleanMetricsService.startPageLoadTime(aUri);
+        GleanMetricsService.INSTANCE.startPageLoadTime(aUri);
 
         setWebXRState(SessionState.WEBXR_UNUSED);
         for (GeckoSession.ProgressDelegate listener : mProgressListeners) {
@@ -1160,7 +1160,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         mState.mIsLoading = false;
         if (!SessionUtils.isLocalizedContent(mState.mUri)) {
             TelemetryWrapper.uploadPageLoadToHistogram(mState.mUri);
-            GleanMetricsService.stopPageLoadTimeWithURI(mState.mUri);
+            GleanMetricsService.INSTANCE.stopPageLoadTimeWithURI(mState.mUri);
         }
 
         for (GeckoSession.ProgressDelegate listener : mProgressListeners) {

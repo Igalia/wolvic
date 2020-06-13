@@ -10,6 +10,7 @@ import org.junit.runner.RunWith
 import org.mozilla.telemetry.TelemetryHolder
 import org.mozilla.vrbrowser.GleanMetrics.*
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService
+import org.mozilla.vrbrowser.telemetry.GleanMetricsServiceInternal
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
@@ -125,10 +126,10 @@ class GleanMetricsServiceTest {
 
     @Test
     fun testTabTelemetry() {
-        assertFalse(Tabs.opened[GleanMetricsService.Tabs.TabSource.BOOKMARKS.name.toLowerCase()].testHasValue())
-        GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.BOOKMARKS)
-        assertTrue(Tabs.opened[GleanMetricsService.Tabs.TabSource.BOOKMARKS.name.toLowerCase()].testHasValue())
-        assertEquals(Tabs.opened[GleanMetricsService.Tabs.TabSource.BOOKMARKS.name.toLowerCase()].testGetValue(), 1)
+        assertFalse(Tabs.opened[GleanMetricsServiceInternal.TabSource.BOOKMARKS.name.toLowerCase()].testHasValue())
+        GleanMetricsService.Tabs.openedCounter(GleanMetricsServiceInternal.TabSource.BOOKMARKS)
+        assertTrue(Tabs.opened[GleanMetricsServiceInternal.TabSource.BOOKMARKS.name.toLowerCase()].testHasValue())
+        assertEquals(Tabs.opened[GleanMetricsServiceInternal.TabSource.BOOKMARKS.name.toLowerCase()].testGetValue(), 1)
 
         assertFalse(Tabs.activated.testHasValue())
         GleanMetricsService.Tabs.activatedEvent()

@@ -230,7 +230,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         setFocusable(true);
 
         TelemetryWrapper.openWindowEvent(mWindowId);
-        GleanMetricsService.openWindowEvent(mWindowId);
+        GleanMetricsService.INSTANCE.openWindowEvent(mWindowId);
 
         if (mSession.getGeckoSession() != null) {
             onCurrentSessionChange(null, mSession.getGeckoSession());
@@ -360,7 +360,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     public void close() {
         TelemetryWrapper.closeWindowEvent(mWindowId);
-        GleanMetricsService.closeWindowEvent(mWindowId);
+        GleanMetricsService.INSTANCE.closeWindowEvent(mWindowId);
         hideContextMenus();
         releaseWidget();
         mBookmarksView.onDestroy();
@@ -666,13 +666,13 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     public void setWindowPlacement(@NonNull Windows.WindowPlacement aPlacement) {
         if (mActive) {
             TelemetryWrapper.activePlacementEvent(mWindowPlacement.getValue(), false);
-            GleanMetricsService.activePlacementEvent(mWindowPlacement.getValue(), false);
+            GleanMetricsService.INSTANCE.activePlacementEvent(mWindowPlacement.getValue(), false);
         }
         mWindowPlacement = aPlacement;
         mViewModel.setPlacement(mWindowPlacement);
         if (mActive) {
             TelemetryWrapper.activePlacementEvent(mWindowPlacement.getValue(), true);
-            GleanMetricsService.activePlacementEvent(mWindowPlacement.getValue(), true);
+            GleanMetricsService.INSTANCE.activePlacementEvent(mWindowPlacement.getValue(), true);
         }
     }
 
@@ -732,7 +732,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         hideContextMenus();
 
         TelemetryWrapper.activePlacementEvent(mWindowPlacement.getValue(), mActive);
-        GleanMetricsService.activePlacementEvent(mWindowPlacement.getValue(), mActive);
+        GleanMetricsService.INSTANCE.activePlacementEvent(mWindowPlacement.getValue(), mActive);
         updateBorder();
 
         mViewModel.setIsActiveWindow(active);
@@ -1198,7 +1198,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         // the notification is misplaced.
         postDelayed(() -> mWidgetManager.getWindows().showTabAddedNotification(), 500);
 
-        GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.BROWSER);
+        GleanMetricsService.INSTANCE.getTabs().openedCounter(GleanMetricsService.TabSource.BROWSER);
     }
 
     @Override

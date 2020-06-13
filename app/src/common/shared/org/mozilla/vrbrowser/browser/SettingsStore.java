@@ -170,9 +170,9 @@ public class SettingsStore {
         // We send after enabling in case of opting-in
         if (isEnabled) {
             TelemetryWrapper.telemetryStatus(true);
-            GleanMetricsService.start();
+            GleanMetricsService.INSTANCE.start();
         } else {
-            GleanMetricsService.stop();
+            GleanMetricsService.INSTANCE.stop();
         }
 
         // Update the status sent flag

@@ -759,7 +759,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
         if (aResizeAction == ResizeAction.KEEP_SIZE) {
             TelemetryWrapper.windowsResizeEvent();
-            GleanMetricsService.windowsResizeEvent();
+            GleanMetricsService.INSTANCE.windowsResizeEvent();
         }
     }
 

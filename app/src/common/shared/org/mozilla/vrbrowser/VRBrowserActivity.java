@@ -435,7 +435,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         super.onStop();
 
         TelemetryWrapper.stop();
-        GleanMetricsService.sessionStop();
+        GleanMetricsService.INSTANCE.sessionStop();
     }
 
     public void flushBackHandlers() {
@@ -1030,7 +1030,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             }
         });
         TelemetryWrapper.startImmersive();
-        GleanMetricsService.startImmersive();
+        GleanMetricsService.INSTANCE.startImmersive();
 
         PauseCompositorRunnable runnable = new PauseCompositorRunnable();
 
@@ -1064,7 +1064,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         recenterUIYaw(WidgetManagerDelegate.YAW_TARGET_ALL);
 
         TelemetryWrapper.uploadImmersiveToHistogram();
-        GleanMetricsService.stopImmersive();
+        GleanMetricsService.INSTANCE.stopImmersive();
         Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(() -> {
             if (!mWindows.isPaused()) {

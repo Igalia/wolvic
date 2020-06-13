@@ -358,7 +358,7 @@ public class NavigationURLBar extends FrameLayout {
         if ((UrlUtils.isDomain(text) || UrlUtils.isIPUri(text)) && !text.contains(" ")) {
             url = text;
             TelemetryWrapper.urlBarEvent(true);
-            GleanMetricsService.urlBarEvent(true);
+            GleanMetricsService.INSTANCE.urlBarEvent(true);
         } else if (text.startsWith("about:") || text.startsWith("resource://")) {
             url = text;
         } else {
@@ -366,7 +366,7 @@ public class NavigationURLBar extends FrameLayout {
 
             // Doing search in the URL bar, so sending "aIsURL: false" to telemetry.
             TelemetryWrapper.urlBarEvent(false);
-            GleanMetricsService.urlBarEvent(false);
+            GleanMetricsService.INSTANCE.urlBarEvent(false);
         }
 
         mViewModel.setUrl(url);
@@ -396,7 +396,7 @@ public class NavigationURLBar extends FrameLayout {
         }
 
         TelemetryWrapper.voiceInputEvent();
-        GleanMetricsService.voiceInputEvent();
+        GleanMetricsService.INSTANCE.voiceInputEvent();
     };
 
     private OnClickListener mClearListener = view -> {

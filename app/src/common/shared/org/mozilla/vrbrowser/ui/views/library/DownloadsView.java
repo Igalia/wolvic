@@ -280,7 +280,7 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
         @Override
         public void onOpenInNewTabClick(LibraryContextMenuWidget.LibraryContextMenuItem item) {
             mWidgetManager.openNewTabForeground(item.getUrl());
-            GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.DOWNLOADS);
+            GleanMetricsService.INSTANCE.getTabs().openedCounter(GleanMetricsService.TabSource.DOWNLOADS);
             hideContextMenu();
         }
 

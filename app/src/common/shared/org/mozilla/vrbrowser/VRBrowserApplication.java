@@ -41,7 +41,7 @@ public class VRBrowserApplication extends Application implements AppServicesProv
         mBitmapCache = new BitmapCache(this, mAppExecutors.diskIO(), mAppExecutors.mainThread());
 
         TelemetryWrapper.init(this);
-        GleanMetricsService.init(this);
+        GleanMetricsService.INSTANCE.init(this);
     }
 
     protected void onActivityCreate() {

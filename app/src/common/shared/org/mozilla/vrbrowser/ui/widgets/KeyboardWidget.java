@@ -1014,7 +1014,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         }
         mIsInVoiceInput = true;
         TelemetryWrapper.voiceInputEvent();
-        GleanMetricsService.voiceInputEvent();
+        GleanMetricsService.INSTANCE.voiceInputEvent();
         mVoiceSearchWidget.show(CLEAR_FOCUS);
         mWidgetPlacement.visible = false;
         mWidgetManager.updateWidget(this);
