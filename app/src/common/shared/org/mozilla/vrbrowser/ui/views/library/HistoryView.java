@@ -96,14 +96,14 @@ public class HistoryView extends LibraryView implements HistoryStore.HistoryList
     protected void initialize() {
         super.initialize();
 
-        mAccounts = ((VRBrowserApplication)getContext().getApplicationContext()).getAccounts();
+        mAccounts = ((VRBrowserApplication) getContext().getApplicationContext()).getAccounts();
         if (ACCOUNTS_UI_ENABLED) {
             mAccounts.addAccountListener(mAccountListener);
             mAccounts.addSyncListener(mSyncListener);
         }
 
         mViewModel = new ViewModelProvider(
-                (VRBrowserActivity)getContext(),
+                (VRBrowserActivity) getContext(),
                 ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
                 .get(HistoryViewModel.class);
 
@@ -120,7 +120,7 @@ public class HistoryView extends LibraryView implements HistoryStore.HistoryList
 
         // Inflate this data binding layout
         mBinding = DataBindingUtil.inflate(inflater, R.layout.history, this, true);
-        mBinding.setLifecycleOwner((VRBrowserActivity)getContext());
+        mBinding.setLifecycleOwner((VRBrowserActivity) getContext());
         mBinding.setHistoryViewModel(mViewModel);
         mBinding.setCallback(mHistoryCallback);
         mHistoryAdapter = new HistoryAdapter(mHistoryItemCallback, getContext());
@@ -203,8 +203,8 @@ public class HistoryView extends LibraryView implements HistoryStore.HistoryList
                 LinearLayoutManager layoutManager = (LinearLayoutManager) mBinding.historyList.getLayoutManager();
                 int lastItem = mHistoryAdapter.getItemCount();
                 if ((rowPosition == layoutManager.findLastVisibleItemPosition() || rowPosition == layoutManager.findLastCompletelyVisibleItemPosition() ||
-                        rowPosition == layoutManager.findLastVisibleItemPosition()-1 || rowPosition == layoutManager.findLastCompletelyVisibleItemPosition()-1)
-                        && (rowPosition != lastItem && rowPosition != 1)) {
+                        rowPosition == layoutManager.findLastVisibleItemPosition() - 1 || rowPosition == layoutManager.findLastCompletelyVisibleItemPosition() - 1)
+                        && (rowPosition != lastItem && rowPosition > 2)) {
                     isLastVisibleItem = true;
                 }
             }
@@ -372,7 +372,7 @@ public class HistoryView extends LibraryView implements HistoryStore.HistoryList
         SessionStore.get().getHistoryStore().getDetailedHistory().thenAcceptAsync((items) -> {
             List<VisitInfo> orderedItems = items.stream()
                     .sorted(Comparator.comparing(VisitInfo::getVisitTime)
-                    .reversed())
+                            .reversed())
                     .filter(distinctByUrl(VisitInfo::getUrl))
                     .collect(Collectors.toList());
 
@@ -391,7 +391,7 @@ public class HistoryView extends LibraryView implements HistoryStore.HistoryList
     }
 
     private void addSection(final @NonNull List<VisitInfo> items, @NonNull String section, long rangeStart, long rangeEnd) {
-        for (int i=0; i< items.size(); i++) {
+        for (int i = 0; i < items.size(); i++) {
             if (items.get(i).getVisitTime() == rangeStart && items.get(i).getVisitType() == VisitType.NOT_A_VISIT)
                 break;
 
@@ -424,7 +424,7 @@ public class HistoryView extends LibraryView implements HistoryStore.HistoryList
     @Override
     protected void updateLayout() {
         post(() -> {
-            double width = Math.ceil(getWidth()/getContext().getResources().getDisplayMetrics().density);
+            double width = Math.ceil(getWidth() / getContext().getResources().getDisplayMetrics().density);
             boolean isNarrow = width < SettingsStore.WINDOW_WIDTH_DEFAULT;
 
             if (isNarrow != mViewModel.getIsNarrow().getValue().get()) {

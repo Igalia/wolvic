@@ -78,7 +78,7 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
 
         mDownloadsManager = ((VRBrowserActivity) getContext()).getServicesProvider().getDownloadsManager();
         mViewModel = new ViewModelProvider(
-                (VRBrowserActivity)getContext(),
+                (VRBrowserActivity) getContext(),
                 ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
                 .get(DownloadsViewModel.class);
 
@@ -95,7 +95,7 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
 
         // Inflate this data binding layout
         mBinding = DataBindingUtil.inflate(inflater, R.layout.downloads, this, true);
-        mBinding.setLifecycleOwner((VRBrowserActivity)getContext());
+        mBinding.setLifecycleOwner((VRBrowserActivity) getContext());
         mBinding.setCallback(mDownloadsCallback);
         mBinding.setDownloadsViewModel(mViewModel);
         mDownloadsAdapter = new DownloadsAdapter(mDownloadItemCallback, getContext());
@@ -180,8 +180,8 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
                 LinearLayoutManager layoutManager = (LinearLayoutManager) mBinding.downloadsList.getLayoutManager();
                 int lastItem = mDownloadsAdapter.getItemCount();
                 if ((rowPosition == layoutManager.findLastVisibleItemPosition() || rowPosition == layoutManager.findLastCompletelyVisibleItemPosition() ||
-                        rowPosition == layoutManager.findLastVisibleItemPosition()-1 || rowPosition == layoutManager.findLastCompletelyVisibleItemPosition()-1)
-                        && rowPosition != lastItem) {
+                        rowPosition == layoutManager.findLastVisibleItemPosition() - 1 || rowPosition == layoutManager.findLastCompletelyVisibleItemPosition() - 1)
+                        && ((rowPosition == (lastItem - 1)) && rowPosition > 2)) {
                     isLastVisibleItem = true;
                 }
             }
@@ -252,7 +252,7 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
     @Override
     protected void updateLayout() {
         post(() -> {
-            double width = Math.ceil(getWidth()/getContext().getResources().getDisplayMetrics().density);
+            double width = Math.ceil(getWidth() / getContext().getResources().getDisplayMetrics().density);
             boolean isNarrow = width < SettingsStore.WINDOW_WIDTH_DEFAULT;
 
             if (isNarrow != mViewModel.getIsNarrow().getValue().get()) {
@@ -329,8 +329,8 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
         PointF position = new PointF(
                 (offsetViewBounds.left + view.getWidth()) * ratio,
                 -(offsetViewBounds.top + view.getHeight()) * ratio);
-        menu.getPlacement().translationX = position.x - (menu.getWidth()/menu.getPlacement().density);
-        menu.getPlacement().translationY = position.y + getResources().getDimension(R.dimen.library_menu_top_margin)/menu.getPlacement().density;
+        menu.getPlacement().translationX = position.x - (menu.getWidth() / menu.getPlacement().density);
+        menu.getPlacement().translationY = position.y + getResources().getDimension(R.dimen.library_menu_top_margin) / menu.getPlacement().density;
         menu.show(UIWidget.REQUEST_FOCUS);
     }
 
@@ -355,12 +355,12 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
 
     // DownloadsManager.DownloadsListener
 
-    private Comparator<Download> mDownloadIdComparator = (o1, o2) -> (int)(o1.getId() - o2.getId());
+    private Comparator<Download> mDownloadIdComparator = (o1, o2) -> (int) (o1.getId() - o2.getId());
 
     private Comparator<Download> mAZFileNameComparator = (o1, o2) -> {
         int nameDiff = o1.getFilename().compareTo(o2.getFilename());
         if (nameDiff == 0) {
-            return  mDownloadIdComparator.compare(o1, o2);
+            return mDownloadIdComparator.compare(o1, o2);
 
         } else {
             return nameDiff;
@@ -369,7 +369,7 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
     private Comparator<Download> mZAFilenameComparator = (o1, o2) -> {
         int nameDiff = o2.getFilename().compareTo(o1.getFilename());
         if (nameDiff == 0) {
-            return  mDownloadIdComparator.compare(o1, o2);
+            return mDownloadIdComparator.compare(o1, o2);
 
         } else {
             return nameDiff;
@@ -378,16 +378,16 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
     private Comparator<Download> mDownloadDateAscComparator = (o1, o2) -> mDownloadIdComparator.compare(o1, o2);
     private Comparator<Download> mDownloadDateDescComparator = (o1, o2) -> mDownloadIdComparator.compare(o2, o1);
     private Comparator<Download> mDownloadSizeAscComparator = (o1, o2) -> {
-        int sizeDiff = (int)(o1.getSizeBytes() - o2.getSizeBytes());
+        int sizeDiff = (int) (o1.getSizeBytes() - o2.getSizeBytes());
         if (sizeDiff == 0) {
-            return  mDownloadIdComparator.compare(o1, o2);
+            return mDownloadIdComparator.compare(o1, o2);
 
         } else {
             return sizeDiff;
         }
     };
     private Comparator<Download> mDownloadSizeDescComparator = (o1, o2) -> {
-        int sizeDiff = (int)(o2.getSizeBytes() - o1.getSizeBytes());
+        int sizeDiff = (int) (o2.getSizeBytes() - o1.getSizeBytes());
         if (sizeDiff == 0) {
             return mDownloadIdComparator.compare(o1, o2);
 
