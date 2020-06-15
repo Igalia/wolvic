@@ -527,7 +527,12 @@ public class NavigationURLBar extends FrameLayout {
                 public void onAction(String action) {
                     int startSelection = mBinding.urlEditText.getSelectionStart();
                     int endSelection = mBinding.urlEditText.getSelectionEnd();
-                    boolean selectionValid = endSelection > startSelection;
+                    boolean selectionValid = endSelection != startSelection;
+                    if (startSelection > endSelection) {
+                        int tmp = endSelection;
+                        endSelection = startSelection;
+                        startSelection = tmp;
+                    }
 
                     if (action.equals(GeckoSession.SelectionActionDelegate.ACTION_CUT) && selectionValid) {
                         String selectedText = mBinding.urlEditText.getText().toString().substring(startSelection, endSelection);
