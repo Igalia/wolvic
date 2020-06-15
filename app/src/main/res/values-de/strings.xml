@@ -188,7 +188,7 @@
          the user to choose as their preferred language for the browser's speech-to-text 'Voice Search' system.
          Based on the user's selection, the printed language is mapped to its ISO 639-1 code
          (e.g., `Español` is mapped to `es`) when configured in the 'Voice Search' system. -->
-    <string name="settings_language_choose_language_voice_search">Wählen Sie Ihre bevorzugte Sprache für die gesprochene Suche</string>
+    <string name="settings_language_choose_language_voice_search">Wählen Sie Ihre bevorzugte Sprache für die Sprachsuche</string>
 
     <!-- This string is used to label a text label that appears in the header of 'Language Settings' ->
          'Firefox Display Language' dialog window (accessible from the browser's Settings dialog window).
@@ -206,13 +206,13 @@
          'Voice Search Language' dialog window (accessible from the browser's Settings dialog window).
          Below this string appears a list of locales for the user to choose as their preferred voice search
          language. -->
-    <string name="settings_language_choose_language_voice_search_title">Sprache für gesprochene Suche</string>
+    <string name="settings_language_choose_language_voice_search_title">Sprache für Sprachsuche</string>
 
     <!-- This string is used to label a text label that appears in the header description of 'Language Settings' ->
          'Voice Search Language' dialog window (accessible from the browser's Settings dialog window).
          Below this string appears a list of locales for the user to choose as their preferred voice search
          language. -->
-    <string name="settings_language_choose_language_voice_search_description">Wählen Sie Ihre bevorzugte Sprache für die gesprochene Suche.</string>
+    <string name="settings_language_choose_language_voice_search_description">Wählen Sie Ihre bevorzugte Sprache für die Sprachsuche.</string>
 
     <!-- This string is used to label a text label that appears in the header of 'Language Settings' ->
          'Preferred Language for Displaying Websites' dialog window (accessible from the browser's Settings dialog window).
@@ -366,10 +366,6 @@
     <!-- This string labels an On/Off switch in the 'Developer Options' dialog
          and is used to toggle remote debugging of website content in the application. -->
     <string name="developer_options_remote_debugging">Externes Debugging aktivieren</string>
-
-    <!-- This string labels an On/Off switch in the 'Developer Options' dialog
-         and is used to toggle redirecting JavaScript Console output to the Android Logcat (i.e., `adb logcat`). -->
-    <string name="developer_options_show_console">Konsole auf Logcat umleiten</string>
 
     <!-- This string labels an On/Off switch in the developer options dialog
          and is used to customize background environments of the app. -->
@@ -1105,7 +1101,7 @@
     <string name="environment_options_reset">Umgebungseinstellungen zurücksetzen</string>
 
     <!-- This string labels the Reset button that restores the default voice search language settings values. -->
-    <string name="language_options_reset">Spracheinstellungen für gesprochene Suche zurücksetzen</string>
+    <string name="language_options_reset">Spracheinstellungen für Sprachsuche zurücksetzen</string>
 
     <!-- This string labels the Reset button that restores the default display language settings values. -->
     <string name="display_language_options_reset">Anzeigesprache zurücksetzen</string>
@@ -1117,7 +1113,7 @@
     <string name="all_language_options_reset">Alle Spracheinstellungen zurücksetzen</string>
 
     <!-- This string labels the description in the Voice Search Language button in the main language setting dialog. -->
-    <string name="language_options_voice_search_language_title">Sprache für gesprochene Suche:</string>
+    <string name="language_options_voice_search_language_title">Sprache für Sprachsuche:</string>
 
     <!-- This string labels the description in the Content Language button in the main language setting dialog. -->
     <string name="language_options_content_language_title">Bevorzugte Sprache für die Anzeige von Websites:</string>
@@ -1180,7 +1176,7 @@
     <!-- This string is for the tooltip that appears upon hovering the 'Voice Search' (microphone) button in the
          browser's navigation bar. 'Voice Search' refers to the browser's system for searching the Web using
          speech-to-text recognition. -->
-    <string name="voice_search_tooltip">Gesprochene Suche</string>
+    <string name="voice_search_tooltip">Sprachsuche</string>
 
     <!-- This string is for the tooltip that appears upon hovering the 'Request desktop site' button in the
          browser's navigation bar. The button it labels, when pressed, change the currently used user agent. -->
