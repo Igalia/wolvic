@@ -200,12 +200,23 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
             }
         });
 
-        mVolumeControl.setDelegate(v -> {
-            mMedia.setVolume(v);
-            if (mMedia.isMuted()) {
-                mMedia.setMuted(false);
+
+        mVolumeControl.setDelegate(new VolumeControl.Delegate() {
+
+            @Override
+            public void onVolumeChange(double aVolume) {
+                mMedia.setVolume(aVolume);
+                if (mMedia.isMuted()) {
+                    mMedia.setMuted(false);
+                }
+                mVolumeControl.requestFocusFromTouch();
             }
-            mVolumeControl.requestFocusFromTouch();
+
+            @Override
+            public void onSeekBarActionCancelled() {
+                mHideVolumeSlider = true;
+                startVolumeCtrlHandler();
+            }
         });
 
 

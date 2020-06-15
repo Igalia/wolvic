@@ -3,7 +3,9 @@ package org.mozilla.vrbrowser.ui.views;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.SeekBar;
 
@@ -38,10 +40,6 @@ public class VolumeControl extends FrameLayout implements SeekBar.OnSeekBarChang
         initialize();
     }
 
-    public interface Delegate {
-        void onVolumeChange(double aVolume);
-    }
-
     @SuppressLint("ClickableViewAccessibility")
     private void initialize() {
         inflate(getContext(), R.layout.volume_control, this);
@@ -49,7 +47,12 @@ public class VolumeControl extends FrameLayout implements SeekBar.OnSeekBarChang
         mSeekBar.setProgress(100);
         mSeekBar.setOnSeekBarChangeListener(this);
         mSeekBar.setOnTouchListener((v, event) -> {
-            if (event.getAction() == MotionEvent.ACTION_UP) {
+
+            if ((event.getAction() == MotionEvent.ACTION_UP) || (event.getAction() == MotionEvent.ACTION_CANCEL)) {
+                if ((event.getAction() == MotionEvent.ACTION_CANCEL) && (mDelegate != null)) {
+                    mDelegate.onSeekBarActionCancelled();
+                }
+
                 return true;
             }
             return false;
@@ -59,7 +62,6 @@ public class VolumeControl extends FrameLayout implements SeekBar.OnSeekBarChang
     public void setDelegate(Delegate aDelegate) {
         mDelegate = aDelegate;
     }
-
 
     public void setVolume(double aVolume) {
         mVolume = aVolume;
@@ -100,5 +102,11 @@ public class VolumeControl extends FrameLayout implements SeekBar.OnSeekBarChang
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         mTouching = false;
+    }
+
+    public interface Delegate {
+        void onVolumeChange(double aVolume);
+
+        void onSeekBarActionCancelled();
     }
 }
