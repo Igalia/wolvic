@@ -68,6 +68,8 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
     private ClipDrawable mVoiceInputClipDrawable;
     private AnimatedVectorDrawable mSearchingAnimation;
     private VRBrowserApplication mApplication;
+    private boolean mIsSpeechRecognitionRunning = false;
+    private boolean mWasSpeechRecognitionRunning = false;
 
     public VoiceSearchWidget(Context aContext) {
         super(aContext);
@@ -231,6 +233,8 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
                 storeData = false;
             }
 
+            mIsSpeechRecognitionRunning = true;
+
             SpeechServiceSettings.Builder builder = new SpeechServiceSettings.Builder()
                     .withLanguage(locale)
                     .withStoreSamples(storeData)
@@ -250,6 +254,8 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
             Log.d(LOGTAG, e.getLocalizedMessage() != null ? e.getLocalizedMessage() : "Unknown voice error");
             e.printStackTrace();
         }
+
+        mIsSpeechRecognitionRunning = false;
     }
 
     @Override
@@ -355,12 +361,17 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
 
     @Override
     public void onActivityResumed(Activity activity) {
-        startVoiceSearch();
+        if (mWasSpeechRecognitionRunning) {
+            startVoiceSearch();
+        }
     }
 
     @Override
     public void onActivityPaused(Activity activity) {
-        stopVoiceSearch();
+        mWasSpeechRecognitionRunning = mIsSpeechRecognitionRunning;
+        if (mIsSpeechRecognitionRunning) {
+            stopVoiceSearch();
+        }
     }
 
     @Override
