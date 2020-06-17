@@ -54,6 +54,8 @@
     <string name="settings_key_multi_e10s" translatable="false">settings_key_multi_e10s</string>
     <string name="settings_key_downloads_external" translatable="false">settings_key_downloads_external</string>
     <string name="settings_key_downloads_sorting_order" translatable="false">settings_key_downloads_sorting_order</string>
+    <string name="settings_key_remote_props_version_name" translatable="false">settings_key_remote_props_version_name</string>
+    <string name="settings_key_remote_props" translatable="false">settings_key_remote_props</string>
     <string name="environment_override_help_url" translatable="false">https://github.com/MozillaReality/FirefoxReality/wiki/Environments</string>
     <string name="private_policy_url" translatable="false">https://www.mozilla.org/privacy/firefox/</string>
     <string name="private_report_url" translatable="false">https://mixedreality.mozilla.org/fxr/report?src=browser-fxr&amp;label=browser-firefox-reality&amp;url=%1$s</string>
@@ -82,6 +84,7 @@
     <string name="keyboard_mode_change" translatable="false">ABC</string>
     <string name="keyboard_symbol" translatable="false">%&amp;=</string>
     <string name="ellipsis" translatable="false">…</string>
+    <string name="release_notes_url" translatable="false">https://github.com/MozillaReality/FirefoxReality/wiki/Release-notes-for-version-%1$s</string>
 
     <string name="pinyin_spacebar_selection" translatable="false">选定</string>
     <string name="pinyin_spacebar_space" translatable="false">空格</string>

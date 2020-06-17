@@ -2,6 +2,13 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <data>
+        <variable
+            name="settingsmodel"
+            type="org.mozilla.vrbrowser.ui.viewmodel.SettingsViewModel" />
+        <import type="org.mozilla.vrbrowser.BuildConfig"/>
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/optionsLayout"
         android:layout_width="@dimen/settings_width"
@@ -96,7 +103,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginStart="108dp"
             android:layout_marginTop="10dp"
-            android:layout_marginEnd="108dp"
+            android:layout_marginEnd="118dp"
             android:scrollbars="none"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -188,6 +195,27 @@
                             app:honeycombButtonIcon="@drawable/ic_settings_help"
                             app:honeycombButtonText="@string/settings_help"
                             app:honeycombButtonTextSize="@dimen/settings_main_button_text_width" />
+
+                        <RelativeLayout
+                            android:layout_width="136dp"
+                            android:layout_height="136dp"
+                            android:layout_marginEnd="-10dp">
+                            <org.mozilla.vrbrowser.ui.views.HoneycombButton
+                                android:id="@+id/whatsNewButton"
+                                style="?attr/honeycombButtonStyle"
+                                app:honeycombButtonIcon="@drawable/ic_whats_new"
+                                app:honeycombButtonText="@string/settings_whats_new"
+                                app:honeycombButtonTextSize="@dimen/settings_main_button_text_width" />
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:layout_width="6dp"
+                                android:layout_height="6dp"
+                                android:layout_marginTop="48dp"
+                                android:layout_marginEnd="58dp"
+                                android:layout_alignParentTop="true"
+                                android:layout_alignParentEnd="true"
+                                android:background="@drawable/downloads_badge"
+                                app:visibleGone="@{settingsmodel.isWhatsNewVisible}"/>
+                        </RelativeLayout>
 
                         <org.mozilla.vrbrowser.ui.views.HoneycombButton
                             android:id="@+id/reportIssueButton"

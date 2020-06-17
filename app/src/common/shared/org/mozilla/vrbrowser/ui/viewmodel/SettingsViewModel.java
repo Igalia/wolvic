@@ -7,8 +7,18 @@ import androidx.databinding.ObservableBoolean;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+
 import org.mozilla.geckoview.ContentBlocking;
+import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.browser.SettingsStore;
+import org.mozilla.vrbrowser.utils.RemoteProperties;
+
+import java.lang.reflect.Type;
+import java.util.Collections;
+import java.util.Map;
 
 public class SettingsViewModel extends AndroidViewModel {
 
@@ -16,6 +26,9 @@ public class SettingsViewModel extends AndroidViewModel {
     private MutableLiveData<ObservableBoolean> isDRMEnabled;
     private MutableLiveData<ObservableBoolean> isPopupBlockingEnabled;
     private MutableLiveData<ObservableBoolean> isWebXREnabled;
+    private MutableLiveData<String> propsVersionName;
+    private MutableLiveData<Map<String, RemoteProperties>> props;
+    private MutableLiveData<ObservableBoolean> isWhatsNewVisible;
 
     public SettingsViewModel(@NonNull Application application) {
         super(application);
@@ -24,21 +37,36 @@ public class SettingsViewModel extends AndroidViewModel {
         isDRMEnabled = new MutableLiveData<>(new ObservableBoolean(false));
         isPopupBlockingEnabled = new MutableLiveData<>(new ObservableBoolean(false));
         isWebXREnabled = new MutableLiveData<>(new ObservableBoolean(false));
+        propsVersionName = new MutableLiveData<>();
+        props = new MutableLiveData<>(Collections.emptyMap());
+        isWhatsNewVisible = new MutableLiveData<>(new ObservableBoolean(false));
+
+        propsVersionName.observeForever(props -> isWhatsNewVisible());
+        props.observeForever(versionName -> isWhatsNewVisible());
     }
 
     public void refresh() {
         int level = SettingsStore.getInstance(getApplication().getBaseContext()).getTrackingProtectionLevel();
         boolean isEnabled = level != ContentBlocking.EtpLevel.NONE;
-        isTrackingProtectionEnabled.setValue(new ObservableBoolean(isEnabled));
+        isTrackingProtectionEnabled.postValue(new ObservableBoolean(isEnabled));
 
         boolean drmEnabled = SettingsStore.getInstance(getApplication().getBaseContext()).isDrmContentPlaybackEnabled();
-        isDRMEnabled = new MutableLiveData<>(new ObservableBoolean(drmEnabled));
+        isDRMEnabled.postValue(new ObservableBoolean(drmEnabled));
 
         boolean popupBlockingEnabled = SettingsStore.getInstance(getApplication().getBaseContext()).isPopUpsBlockingEnabled();
-        isPopupBlockingEnabled = new MutableLiveData<>(new ObservableBoolean(popupBlockingEnabled));
+        isPopupBlockingEnabled.postValue(new ObservableBoolean(popupBlockingEnabled));
 
         boolean webxrEnabled = SettingsStore.getInstance(getApplication().getBaseContext()).isWebXREnabled();
-        isWebXREnabled = new MutableLiveData<>(new ObservableBoolean(webxrEnabled));
+        isWebXREnabled.postValue(new ObservableBoolean(webxrEnabled));
+
+        String appVersionName = SettingsStore.getInstance(getApplication().getBaseContext()).getRemotePropsVersionName();
+        propsVersionName.postValue(appVersionName);
+    }
+
+    private void isWhatsNewVisible() {
+        boolean value = !BuildConfig.VERSION_NAME.equals(propsVersionName.getValue()) &&
+                props.getValue().containsKey(BuildConfig.VERSION_NAME);
+        isWhatsNewVisible.postValue(new ObservableBoolean(value));
     }
 
     public void setIsTrackingProtectionEnabled(boolean isEnabled) {
@@ -71,6 +99,28 @@ public class SettingsViewModel extends AndroidViewModel {
 
     public MutableLiveData<ObservableBoolean> getIsWebXREnabled() {
         return isWebXREnabled;
+    }
+
+    public void setPropsVersionName(String appVersionName) {
+        this.propsVersionName.setValue(appVersionName);
+    }
+
+    public MutableLiveData<String> getPropsVersionName() {
+        return propsVersionName;
+    }
+
+    public void setProps(String json) {
+        Gson gson = new GsonBuilder().create();
+        Type type = new TypeToken<Map<String, RemoteProperties>>() {}.getType();
+        this.props.postValue(gson.fromJson(json, type));
+    }
+
+    public MutableLiveData<Map<String, RemoteProperties>> getProps() {
+        return props;
+    }
+
+    public MutableLiveData<ObservableBoolean> getIsWhatsNewVisible() {
+        return isWhatsNewVisible;
     }
 
 }

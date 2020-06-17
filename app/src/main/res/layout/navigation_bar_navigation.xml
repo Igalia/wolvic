@@ -2,9 +2,13 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
+        <import type="org.mozilla.vrbrowser.BuildConfig"/>
         <variable
             name="viewmodel"
             type="org.mozilla.vrbrowser.ui.viewmodel.WindowViewModel" />
+        <variable
+            name="settingsmodel"
+            type="org.mozilla.vrbrowser.ui.viewmodel.SettingsViewModel" />
     </data>
     <LinearLayout
         android:id="@+id/navigationBarContainer"
@@ -70,6 +74,30 @@
             android:tooltipText="@string/servo_tooltip"
             visibleGone="@{viewmodel.isServoAvailable}"
             app:privateMode="@{viewmodel.isPrivateSession}"/>
+
+        <RelativeLayout
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:layout_marginStart="10dp"
+            android:scaleType="fitCenter"
+            android:layout_gravity="center_vertical"
+            app:visibleGone="@{settingsmodel.isWhatsNewVisible &amp;&amp; viewmodel.width > 640}">
+            <org.mozilla.vrbrowser.ui.views.UIButton
+                android:id="@+id/whatsNew"
+                style="?attr/navigationBarButtonStyle"
+                android:src="@drawable/ic_whats_new"
+                android:tooltipText="@string/whats_new_tooltip"
+                app:privateMode="@{viewmodel.isPrivateSession}"/>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="6dp"
+                android:layout_height="6dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginRight="10dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:background="@drawable/downloads_badge"/>
+        </RelativeLayout>
 
         <org.mozilla.vrbrowser.ui.views.UIButton
             android:id="@+id/menuButton"

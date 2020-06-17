@@ -2,7 +2,6 @@ package org.mozilla.vrbrowser.browser;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.database.Observable;
 import android.graphics.Color;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
@@ -10,8 +9,6 @@ import android.util.Log;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
-import androidx.databinding.ObservableBoolean;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import org.json.JSONArray;
@@ -22,6 +19,8 @@ import org.mozilla.telemetry.TelemetryHolder;
 import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserActivity;
+import org.mozilla.vrbrowser.VRBrowserApplication;
+import org.mozilla.vrbrowser.browser.engine.EngineProvider;
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.ui.viewmodel.SettingsViewModel;
@@ -30,10 +29,15 @@ import org.mozilla.vrbrowser.utils.DeviceType;
 import org.mozilla.vrbrowser.utils.StringUtils;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+
+import mozilla.components.concept.fetch.Request;
+import mozilla.components.concept.fetch.Response;
 
 import static org.mozilla.vrbrowser.utils.ServoUtils.isServoAvailable;
 
@@ -125,6 +129,46 @@ public class SettingsStore {
                 ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) context).getApplication()))
                 .get(SettingsViewModel.class);
         mSettingsViewModel.refresh();
+        update();
+    }
+
+    /**
+     * Synchronizes the remote properties with the settings storage and notifies the model.
+     * Any consumer listening to the SettingsViewModel will get notified of the properties updates.
+     */
+    private void update() {
+        ((VRBrowserApplication) mContext.getApplicationContext()).getExecutors().backgroundThread().post(() -> {
+            Request request = new Request(
+                    BuildConfig.PROPS_ENDPOINT,
+                    Request.Method.GET,
+                    null,
+                    null,
+                    null,
+                    null,
+                    Request.Redirect.FOLLOW,
+                    Request.CookiePolicy.INCLUDE,
+                    false
+            );
+            try {
+                Response response = EngineProvider.INSTANCE.getDefaultClient(mContext).fetch(request);
+                if (response.getStatus() == 200) {
+                    String json = response.getBody().string(StandardCharsets.UTF_8);
+                    SharedPreferences.Editor editor = mPrefs.edit();
+                    editor.putString(mContext.getString(R.string.settings_key_remote_props), json);
+                    editor.commit();
+
+                    mSettingsViewModel.setProps(json);
+
+                } else {
+                    String json = mPrefs.getString(mContext.getString(R.string.settings_key_remote_props), null);
+                    mSettingsViewModel.setProps(json);
+                }
+
+            } catch (IOException e) {
+                String json = mPrefs.getString(mContext.getString(R.string.settings_key_remote_props), null);
+                mSettingsViewModel.setProps(json);
+            }
+        });
     }
 
     public boolean isCrashReportingEnabled() {
@@ -738,5 +782,17 @@ public class SettingsStore {
     public @Storage int getDownloadsSortingOrder() {
         return mPrefs.getInt(mContext.getString(R.string.settings_key_downloads_sorting_order), DOWNLOADS_SORTING_ORDER_DEFAULT);
     }
-}
 
+    public void setRemotePropsVersionName(String versionName) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putString(mContext.getString(R.string.settings_key_remote_props_version_name), versionName);
+        editor.commit();
+
+        mSettingsViewModel.setPropsVersionName(versionName);
+    }
+
+    public String getRemotePropsVersionName() {
+        return mPrefs.getString(mContext.getString(R.string.settings_key_remote_props_version_name), "0");
+    }
+
+}

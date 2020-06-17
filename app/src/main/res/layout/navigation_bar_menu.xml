@@ -5,6 +5,9 @@
         <variable
             name="viewmodel"
             type="org.mozilla.vrbrowser.ui.viewmodel.WindowViewModel" />
+        <variable
+            name="settingsmodel"
+            type="org.mozilla.vrbrowser.ui.viewmodel.SettingsViewModel" />
     </data>
     <LinearLayout
         android:id="@+id/resizeModeContainer"

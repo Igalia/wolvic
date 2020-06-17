@@ -187,7 +187,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         mDownloadsManager = mWidgetManager.getServicesProvider().getDownloadsManager();
 
-                // ModelView creation and observers setup
+        // ModelView creation and observers setup
         mViewModel = new ViewModelProvider(
                 (VRBrowserActivity)getContext(),
                 ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
@@ -235,6 +235,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         if (mSession.getGeckoSession() != null) {
             onCurrentSessionChange(null, mSession.getGeckoSession());
         }
+
+        mViewModel.setWidth(mWidgetPlacement.width);
+        mViewModel.setHeight(mWidgetPlacement.height);
     }
 
     @Override
@@ -646,6 +649,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mWidgetPlacement.width = aVideoWidth + mBorderWidth * 2;
         mWidgetPlacement.height = aVideoHeight + mBorderWidth * 2;
         mWidgetManager.updateWidget(this);
+
+        mViewModel.setWidth(mWidgetPlacement.width);
+        mViewModel.setHeight(mWidgetPlacement.height);
     }
 
     public void disableVRVideoMode() {
@@ -661,6 +667,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mWidgetPlacement.width = mWidthBackup;
         mWidgetPlacement.height = mHeightBackup;
         mWidgetManager.updateWidget(this);
+
+        mViewModel.setWidth(mWidgetPlacement.width);
+        mViewModel.setHeight(mWidgetPlacement.height);
     }
 
     public void setWindowPlacement(@NonNull Windows.WindowPlacement aPlacement) {
@@ -1010,6 +1019,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mWidgetPlacement.worldWidth = aWorldWidth;
         mWidgetManager.updateWidget(this);
         mWidgetManager.updateVisibleWidgets();
+
+        mViewModel.setWidth(mWidgetPlacement.width);
+        mViewModel.setHeight(mWidgetPlacement.height);
     }
 
     @Override
@@ -1459,6 +1471,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 mWidgetPlacement.worldWidth = maxSize.first;
                 mWidgetPlacement.width = getWindowWidth(maxSize.first);
                 mWidgetPlacement.height = (int) Math.ceil((float)mWidgetPlacement.width / currentAspect);
+
+                mViewModel.setWidth(mWidgetPlacement.width);
+                mViewModel.setHeight(mWidgetPlacement.height);
             }
         }
     }

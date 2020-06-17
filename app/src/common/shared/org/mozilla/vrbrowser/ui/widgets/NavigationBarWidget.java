@@ -15,7 +15,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.URLUtil;
 import android.widget.EditText;
@@ -29,6 +28,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoSessionSettings;
+import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserActivity;
 import org.mozilla.vrbrowser.VRBrowserApplication;
@@ -44,6 +44,7 @@ import org.mozilla.vrbrowser.db.SitePermission;
 import org.mozilla.vrbrowser.search.suggestions.SuggestionsProvider;
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
+import org.mozilla.vrbrowser.ui.viewmodel.SettingsViewModel;
 import org.mozilla.vrbrowser.ui.viewmodel.TrayViewModel;
 import org.mozilla.vrbrowser.ui.viewmodel.WindowViewModel;
 import org.mozilla.vrbrowser.ui.views.NavigationURLBar;
@@ -59,6 +60,7 @@ import org.mozilla.vrbrowser.ui.widgets.menus.HamburgerMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.menus.VideoProjectionMenuWidget;
 import org.mozilla.vrbrowser.utils.AnimationHelper;
 import org.mozilla.vrbrowser.utils.ConnectivityReceiver;
+import org.mozilla.vrbrowser.utils.RemoteProperties;
 import org.mozilla.vrbrowser.utils.UrlUtils;
 
 import java.util.ArrayList;
@@ -92,6 +94,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     private WindowViewModel mViewModel;
     private TrayViewModel mTrayViewModel;
+    private SettingsViewModel mSettingsViewModel;
     private NavigationBarBinding mBinding;
     private AudioEngine mAudio;
     private WindowWidget mAttachedWindow;
@@ -251,6 +254,14 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             getSession().toggleServo();
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
+        });
+
+        mBinding.navigationBarNavigation.whatsNew.setOnClickListener(v -> {
+            SettingsStore.getInstance(getContext()).setRemotePropsVersionName(BuildConfig.VERSION_NAME);
+            RemoteProperties props = mSettingsViewModel.getProps().getValue().get(BuildConfig.VERSION_NAME);
+            if (props != null) {
+                mWidgetManager.openNewTabForeground(props.getWhatsNewUrl());
             }
         });
 
@@ -510,6 +521,10 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             mViewModel.getIsPopUpBlocked().removeObserver(mIsPopUpBlockedListener);
             mViewModel = null;
         }
+
+        if (mSettingsViewModel != null) {
+            mSettingsViewModel = null;
+        }
     }
 
     @Override
@@ -526,8 +541,15 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
                 (VRBrowserActivity)getContext(),
                 ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
                 .get(String.valueOf(mAttachedWindow.hashCode()), WindowViewModel.class);
+        mSettingsViewModel = new ViewModelProvider(
+                (VRBrowserActivity)getContext(),
+                ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
+                .get(SettingsViewModel.class);
 
         mBinding.setViewmodel(mViewModel);
+        mBinding.setSettingsmodel(mSettingsViewModel);
+
+        mSettingsViewModel.refresh();
 
         mViewModel.getIsActiveWindow().observeForever(mIsActiveWindowObserver);
         mViewModel.getIsPopUpBlocked().observeForever(mIsPopUpBlockedListener);

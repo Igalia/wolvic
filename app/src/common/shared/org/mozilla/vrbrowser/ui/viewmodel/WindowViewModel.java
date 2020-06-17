@@ -11,6 +11,7 @@ import android.webkit.URLUtil;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.ObservableBoolean;
+import androidx.databinding.ObservableInt;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -71,6 +72,8 @@ public class WindowViewModel extends AndroidViewModel {
     private MutableLiveData<ObservableBoolean> isDrmUsed;
     private MediatorLiveData<ObservableBoolean> isUrlBarButtonsVisible;
     private MediatorLiveData<ObservableBoolean> isUrlBarIconsVisible;
+    private MutableLiveData<ObservableInt> mWidth;
+    private MutableLiveData<ObservableInt> mHeight;
 
     public WindowViewModel(Application application) {
         super(application);
@@ -180,6 +183,9 @@ public class WindowViewModel extends AndroidViewModel {
         isUrlBarIconsVisible.addSource(isLoading, mIsUrlBarIconsVisibleObserver);
         isUrlBarIconsVisible.addSource(isInsecureVisible, mIsUrlBarIconsVisibleObserver);
         isUrlBarIconsVisible.setValue(new ObservableBoolean(false));
+
+        mWidth = new MutableLiveData<>(new ObservableInt());
+        mHeight = new MutableLiveData<>(new ObservableInt());
     }
 
     private Observer<ObservableBoolean> mIsTopBarVisibleObserver = new Observer<ObservableBoolean>() {
@@ -373,6 +379,8 @@ public class WindowViewModel extends AndroidViewModel {
         isWebXRBlocked.postValue(isWebXRBlocked.getValue());
         isTrackingEnabled.postValue(isTrackingEnabled.getValue());
         isDrmUsed.postValue(isDrmUsed.getValue());
+        mWidth.postValue(mWidth.getValue());
+        mHeight.postValue(mHeight.getValue());
     }
 
     @NonNull
@@ -784,5 +792,23 @@ public class WindowViewModel extends AndroidViewModel {
     @NonNull
     public MutableLiveData<ObservableBoolean> getIsUrlBarIconsVisible() {
         return isUrlBarIconsVisible;
+    }
+
+    @NonNull
+    public MutableLiveData<ObservableInt> getWidth() {
+        return mWidth;
+    }
+
+    public void setWidth(int width) {
+        this.mWidth.setValue(new ObservableInt(width));
+    }
+
+    @NonNull
+    public MutableLiveData<ObservableInt> getHeight() {
+        return mHeight;
+    }
+
+    public void setHeight(int height) {
+        this.mHeight.setValue(new ObservableInt(height));
     }
 }

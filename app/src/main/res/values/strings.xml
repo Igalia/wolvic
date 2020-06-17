@@ -339,6 +339,10 @@
          Most common reason for this state is that the account password was changed on another device. -->
     <string name="settings_accounts_reconnect">Reconnect</string>
 
+    <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
+        opens the Release Notes web site for the current app version. -->
+    <string name="settings_whats_new">What’s New</string>
+
     <!-- This string is the title of a dialog box shown to the user when a settings
          change requires the application to restart. -->
     <string name="restart_dialog_restart">Restart Required</string>
@@ -1354,6 +1358,10 @@
     <!-- This string is for the tooltip that appears when the user hovers over the 'Downloads' icon in the
          tray and the Downloads view is closed. The button it labels, when pressed, closes the Downloads view. -->
     <string name="close_downloads_tooltip">Close Downloads</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'What's New' icon in the
+         Navigation Bar. The button it labels, when pressed, open the release notes page. -->
+    <string name="whats_new_tooltip">What’s New</string>
 
     <!-- This string is displayed in any button used for removing all the items in the current context. -->
     <string name="remove_all">Remove All</string>

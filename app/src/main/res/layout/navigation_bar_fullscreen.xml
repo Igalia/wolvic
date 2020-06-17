@@ -6,6 +6,9 @@
             name="viewmodel"
             type="org.mozilla.vrbrowser.ui.viewmodel.WindowViewModel" />
         <variable
+            name="settingsmodel"
+            type="org.mozilla.vrbrowser.ui.viewmodel.SettingsViewModel" />
+        <variable
             name="ab"
             type="boolean" />
     </data>

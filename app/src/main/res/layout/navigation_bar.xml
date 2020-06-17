@@ -5,6 +5,9 @@
         <variable
             name="viewmodel"
             type="org.mozilla.vrbrowser.ui.viewmodel.WindowViewModel" />
+        <variable
+            name="settingsmodel"
+            type="org.mozilla.vrbrowser.ui.viewmodel.SettingsViewModel" />
     </data>
     <FrameLayout
         android:layout_width="match_parent"
@@ -12,16 +15,19 @@
         <include
             android:id="@+id/navigation_bar_navigation"
             layout="@layout/navigation_bar_navigation"
-            app:viewmodel="@{viewmodel}"/>
+            app:viewmodel="@{viewmodel}"
+            app:settingsmodel="@{settingsmodel}"/>
 
         <include
             android:id="@+id/navigation_bar_fullscreen"
             layout="@layout/navigation_bar_fullscreen"
-            app:viewmodel="@{viewmodel}"/>
+            app:viewmodel="@{viewmodel}"
+            app:settingsmodel="@{settingsmodel}"/>
 
         <include
             android:id="@+id/navigation_bar_menu"
             layout="@layout/navigation_bar_menu"
-            app:viewmodel="@{viewmodel}"/>
+            app:viewmodel="@{viewmodel}"
+            app:settingsmodel="@{settingsmodel}"/>
     </FrameLayout>
 </layout>
