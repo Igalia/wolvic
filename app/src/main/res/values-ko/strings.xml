@@ -999,7 +999,7 @@
     <string name="fxa_syncing">동기화 중…</string>
 
     <!-- This string is displayed in the title of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
-    <string name="fxa_signout_confirmation_title">Firefox 계정에서 로그아웃 하시겠습니까?</string>
+    <string name="fxa_signout_confirmation_title">Firefox 계정에서 로그아웃하시겠습니까?</string>
 
     <!-- This string is displayed in the body of the FxA sign out dialog displayed when the user clicks on the Sign out button. -->
     <string name="fxa_signout_confirmation_body">로그 아웃하면 다른 기기에서 탭을 보내거나 받을 수 없습니다. 북마크와 기록도 동기화가 중지됩니다.</string>
@@ -1710,7 +1710,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 
     <!-- This string is displayed in the title of the dialog displayed when a download has been requested
          so the user can confirm if they want to actually download the file. -->
-    <string name="download_confirm_title">이 파일을 다운로드 하시겠습니까?</string>
+    <string name="download_confirm_title">이 파일을 다운로드하시겠습니까?</string>
 
     <!-- This string is displayed in the "Cancel" button of the dialog displayed when a download has been requested
          so the user can confirm if they want to actually download the file. If clicked the download is not started. -->
