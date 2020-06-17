@@ -1470,6 +1470,16 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         return GeckoResult.fromValue(filePrompt.dismiss());
     }
 
+    @Nullable
+    @Override
+    public GeckoResult<PromptResponse> onBeforeUnloadPrompt(@NonNull GeckoSession aSession, @NonNull BeforeUnloadPrompt prompt) {
+        if (mPromptDelegate != null) {
+            return mPromptDelegate.onBeforeUnloadPrompt(aSession, prompt);
+        }
+        return GeckoResult.fromValue(prompt.dismiss());
+    }
+
+
     // MediaDelegate
 
     @Override

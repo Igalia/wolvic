@@ -25,6 +25,7 @@ import org.mozilla.vrbrowser.ui.widgets.prompts.ChoicePromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.ConfirmPromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.PromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.TextPromptWidget;
+import org.mozilla.vrbrowser.utils.StringUtils;
 import org.mozilla.vrbrowser.utils.UrlUtils;
 
 import java.util.ArrayList;
@@ -301,6 +302,41 @@ public class PromptDelegate implements
             mSlowScriptPrompt = null;
             return GeckoResult.fromValue(value);
         });
+    }
+
+    @Nullable
+    @Override
+    public GeckoResult<PromptResponse> onBeforeUnloadPrompt(@NonNull GeckoSession session, @NonNull BeforeUnloadPrompt prompt) {
+        final GeckoResult<PromptResponse> result = new GeckoResult<>();
+
+        mPrompt = new ConfirmPromptWidget(mContext);
+        mPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
+        mPrompt.getPlacement().parentAnchorY = 0.0f;
+        mPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.js_prompt_y_distance);
+        String message = mContext.getString(R.string.before_unload_prompt_message);
+        if (!StringUtils.isEmpty(prompt.title)) {
+            message = prompt.title;
+        }
+        mPrompt.setTitle(mContext.getString(R.string.before_unload_prompt_title));
+        mPrompt.setMessage(message);
+        ((ConfirmPromptWidget)mPrompt).setButtons(new String[] {
+                mContext.getResources().getText(R.string.before_unload_prompt_leave).toString(),
+                mContext.getResources().getText(R.string.before_unload_prompt_stay).toString()
+        });
+        mPrompt.setPromptDelegate(new ConfirmPromptWidget.ConfirmPromptDelegate() {
+            @Override
+            public void confirm(int index) {
+                result.complete(prompt.confirm(index == 0 ? AllowOrDeny.ALLOW : AllowOrDeny.DENY));
+            }
+
+            @Override
+            public void dismiss() {
+                result.complete(prompt.dismiss());
+            }
+        });
+        mPrompt.show(UIWidget.REQUEST_FOCUS);
+
+        return result;
     }
 
     // WindowWidget.WindowListener
