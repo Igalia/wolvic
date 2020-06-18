@@ -31,6 +31,7 @@ public:
   XrInstance instance = XR_NULL_HANDLE;
   XrActionSet actionSet = XR_NULL_HANDLE;
   std::array<XrAction , Hand::Count> actionPose;
+  std::array<XrAction , Hand::Count> actionHomeClick;
   std::array<XrAction , Hand::Count> actionMenuClick;
   std::array<XrAction , Hand::Count> actionTriggerClick;
   std::array<XrAction , Hand::Count> actionTriggerTouch;

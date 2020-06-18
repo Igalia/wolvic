@@ -68,6 +68,7 @@ OpenXRInput::Initialize(XrSession session) {
   // Create an input action for getting the left and right hand poses.
   createPoseAction("hand_pose", actionPose);
 
+  createBooleanAction("home", actionHomeClick);
   // Create input actions for menu click detection, usually used for back action.
   createBooleanAction("menu", actionMenuClick);
 
@@ -112,6 +113,7 @@ OpenXRInput::Initialize(XrSession session) {
   DECLARE_PATH("input/squeeze/click", squeezeClickPath);
   DECLARE_PATH("input/aim/pose", posePath);
   DECLARE_PATH("output/haptic", hapticPath);
+  DECLARE_PATH("input/home/click", homeClickPath);
   DECLARE_PATH("input/menu/click", menuClickPath);
   DECLARE_PATH("input/back/click", backClickPath);
   DECLARE_PATH("input/trackpad/click", trackpadClickPath);
@@ -141,6 +143,8 @@ OpenXRInput::Initialize(XrSession session) {
     std::vector<XrActionSuggestedBinding> bindings{{// Generic controller mappings
                                                      {actionPose[Hand::Left], posePath[Hand::Left]},
                                                      {actionPose[Hand::Right], posePath[Hand::Right]},
+                                                     {actionHomeClick[Hand::Left], homeClickPath[Hand::Left]},
+                                                     {actionHomeClick[Hand::Right], homeClickPath[Hand::Right]},
                                                      {actionMenuClick[Hand::Left], menuClickPath[Hand::Left]},
                                                      {actionMenuClick[Hand::Right], menuClickPath[Hand::Right]},
                                                      {actionTriggerClick[Hand::Left], selectClickPath[Hand::Left]},
@@ -225,7 +229,7 @@ OpenXRInput::Initialize(XrSession session) {
 void OpenXRInput::Update(XrSession session, XrTime predictedDisplayTime, XrSpace baseSpace, device::RenderMode renderMode, ControllerDelegatePtr& delegate) {
   CHECK(session != XR_NULL_HANDLE);
 
-  return;
+  // return;
   // Sync actions
   const XrActiveActionSet activeActionSet{actionSet, XR_NULL_PATH};
   XrActionsSyncInfo syncInfo{XR_TYPE_ACTIONS_SYNC_INFO};
@@ -289,6 +293,7 @@ void OpenXRInput::Update(XrSession session, XrTime predictedDisplayTime, XrSpace
       }
       delegate->SetCapabilityFlags(index, caps);
       // set up pose
+      VRB_LOG("reb controller %d %f %f %f %f", index, spaceLocation.pose.orientation.x, spaceLocation.pose.orientation.y, spaceLocation.pose.orientation.z, spaceLocation.pose.orientation.w);
       vrb::Matrix transform = XrPoseToMatrix(spaceLocation.pose);
       if (renderMode == device::RenderMode::StandAlone) {
         transform.TranslateInPlace(vrb::Vector(0.0f, 1.7f, 0.0f));
@@ -321,6 +326,7 @@ void OpenXRInput::Update(XrSession session, XrTime predictedDisplayTime, XrSpace
     }
 
     // Query buttons and axes
+    QUERY_BOOLEAN_STATE(homeClick, actionHomeClick);
     QUERY_BOOLEAN_STATE(menuClick, actionMenuClick);
     QUERY_BOOLEAN_STATE(triggerClick, actionTriggerClick);
     QUERY_BOOLEAN_STATE(triggerTouch, actionTriggerTouch);
@@ -342,6 +348,10 @@ void OpenXRInput::Update(XrSession session, XrTime predictedDisplayTime, XrSpace
 
     // Map to controller delegate
     std::array<float, 4> axes;
+
+    if (homeClick.isActive) {
+      VRB_LOG("reb HOME CLICK ACTIVE: %s", (homeClick.currentState == 0 ? "NOT PRESSED" : "PRESSED"));
+    }
 
     if (menuClick.isActive) {
       const bool pressed = menuClick.currentState != 0;
@@ -450,7 +460,7 @@ const std::string OpenXRInput::GetControllerModelName(const int32_t aModelIndex)
     return "vr_controller_oculusgo.obj";
   }
 #elif defined(HVR)
-  return "";
+  return "vr_controller_focus.obj";
 #else
 #error Platform controller not implemented
 #endif
