@@ -15,6 +15,7 @@ import android.view.KeyEvent;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
@@ -48,6 +49,12 @@ public class PlatformActivity extends NativeActivity {
         setContentView(mSurfaceView);
 
         //System.loadLibrary("native-lib");
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Log.i(LOGTAG, "reb on key: " + KeyEvent.keyCodeToString(event.getKeyCode()));
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override

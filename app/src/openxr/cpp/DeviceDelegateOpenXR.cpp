@@ -192,7 +192,7 @@ struct DeviceDelegateOpenXR::State {
 
 
     VRB_LOG("XrGetViewConfigProps");
-    XrViewConfigurationType viewConfigType = XR_VIEW_CONFIGURATION_TYPE_PRIMARY_STEREO;
+    //XrViewConfigurationType viewConfigType = XR_VIEW_CONFIGURATION_TYPE_PRIMARY_STEREO;
     XrViewConfigurationProperties viewConfigProperties{XR_TYPE_VIEW_CONFIGURATION_PROPERTIES};
     xrGetViewConfigurationProperties(instance, system, viewConfigType, &viewConfigProperties);
 
@@ -350,6 +350,7 @@ struct DeviceDelegateOpenXR::State {
       CHECK_XRCMD(xrCreateReferenceSpace(session, &create, &localSpace));
     }
 
+    /*
     if (layersSpace == XR_NULL_HANDLE) {
       CHECK_MSG(supportsSpace(XR_REFERENCE_SPACE_TYPE_LOCAL), "XR_REFERENCE_SPACE_TYPE_LOCAL not supported");
       XrReferenceSpaceCreateInfo create{XR_TYPE_REFERENCE_SPACE_CREATE_INFO};
@@ -362,12 +363,13 @@ struct DeviceDelegateOpenXR::State {
     }
 
     // Optionally create a stageSpace to be used in WebXR room scale apps.
-    if (stageSpace == XR_NULL_HANDLE && supportsSpace(XR_REFERENCE_SPACE_TYPE_LOCAL)) {
+    if (stageSpace == XR_NULL_HANDLE && supportsSpace(XR_REFERENCE_SPACE_TYPE_STAGE)) {
       XrReferenceSpaceCreateInfo create{XR_TYPE_REFERENCE_SPACE_CREATE_INFO};
       create.poseInReferenceSpace = XrPoseIdentity();
       create.referenceSpaceType = XR_REFERENCE_SPACE_TYPE_STAGE;
       CHECK_XRCMD(xrCreateReferenceSpace(session, &create, &stageSpace));
     }
+     */
   }
 
   void AddUILayer(const OpenXRLayerPtr& aLayer, VRLayerSurface::SurfaceType aSurfaceType) {
@@ -725,15 +727,17 @@ DeviceDelegateOpenXR::StartFrame(const FramePrediction aPrediction) {
   XrViewLocateInfo viewLocateInfo{XR_TYPE_VIEW_LOCATE_INFO};
   viewLocateInfo.viewConfigurationType = m.viewConfigType;
   viewLocateInfo.displayTime = m.predictedDisplayTime;
-  viewLocateInfo.space = m.viewSpace;
+  viewLocateInfo.space = m.localSpace; //  m.viewSpace;
   CHECK_XRCMD(xrLocateViews(m.session, &viewLocateInfo, &viewState, viewCapacityInput, &viewCountOutput, m.views.data()));
 
   for (int i = 0; i < m.views.size(); ++i) {
     const XrView& view = m.views[i];
 
-    vrb::Matrix eyeTransform = XrPoseToMatrix(view.pose);
-    m.cameras[i]->SetEyeTransform(eyeTransform);
+    vrb::Matrix eyeTransform = vrb::Matrix::Identity(); // XrPoseToMatrix(view.pose);
+    eyeTransform.TranslateInPlace(vrb::Vector(0.032 * (i == 0 ? -1.0f : 1.0f), 0.0f, 0.0f));
+    // VRB_LOG("reb %f %f %f", view.pose.position.x, view.pose.position.y, view.pose.position.z);
 
+    m.cameras[i]->SetEyeTransform(eyeTransform);
 
     vrb::Matrix perspective = vrb::Matrix::PerspectiveMatrix(fabsf(view.fov.angleLeft), view.fov.angleRight,
         view.fov.angleUp, fabsf(view.fov.angleDown), m.near, m.far);
@@ -845,10 +849,12 @@ DeviceDelegateOpenXR::EndFrame(const FrameEndMode aEndMode) {
     projectionLayerViews[i].subImage.swapchain = viewSwapChain->SwapChain();
     projectionLayerViews[i].subImage.imageRect.offset = {0, 0};
     projectionLayerViews[i].subImage.imageRect.extent = {viewSwapChain->Width(), viewSwapChain->Height()};
-    projectionLayer.space = m.viewSpace;
-    projectionLayer.viewCount = (uint32_t)projectionLayerViews.size();
-    projectionLayer.views = projectionLayerViews.data();
   }
+
+  projectionLayer.next = nullptr;
+  projectionLayer.space = m.localSpace; // m.viewSpace;
+  projectionLayer.viewCount = (uint32_t)projectionLayerViews.size();
+  projectionLayer.views = projectionLayerViews.data();
   layers.push_back(reinterpret_cast<XrCompositionLayerBaseHeader*>(&projectionLayer));
 
   // Add front UI layers
