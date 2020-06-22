@@ -33,12 +33,14 @@ public:
   std::array<XrAction , Hand::Count> actionPose;
   std::array<XrAction , Hand::Count> actionHomeClick;
   std::array<XrAction , Hand::Count> actionMenuClick;
+  std::array<XrAction , Hand::Count> actionBackClick;
   std::array<XrAction , Hand::Count> actionTriggerClick;
   std::array<XrAction , Hand::Count> actionTriggerTouch;
   std::array<XrAction , Hand::Count> actionTriggerValue;
   std::array<XrAction , Hand::Count> actionSqueezeClick;
   std::array<XrAction , Hand::Count> actionSqueezeValue;
   std::array<XrAction , Hand::Count> actionTrackpadClick;
+  std::array<XrAction , Hand::Count> actionTrackpadValue;
   std::array<XrAction , Hand::Count> actionTrackpadTouch;
   std::array<XrAction , Hand::Count> actionTrackpadX;
   std::array<XrAction , Hand::Count> actionTrackpadY;
@@ -50,6 +52,10 @@ public:
   std::array<XrAction , Hand::Count> actionButtonBClick;
   std::array<XrAction , Hand::Count> actionButtonATouch;
   std::array<XrAction , Hand::Count> actionButtonBTouch;
+  std::array<XrAction , Hand::Count> actionHaptic;
+  std::array<XrAction , Hand::Count> actionVolumeUp;
+  std::array<XrAction , Hand::Count> actionVolumeDown;
+
 
   std::array<XrPath, Hand::Count> handSubactionPath;
   std::array<ControllerState, Hand::Count> controllerState;

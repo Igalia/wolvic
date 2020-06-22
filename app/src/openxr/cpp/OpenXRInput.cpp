@@ -64,6 +64,18 @@ OpenXRInput::Initialize(XrSession session) {
     }
   };
 
+  auto createVector2FAction = [&](const char* name, std::array<XrAction, 2>& action) {
+    for (auto hand: {Hand::Left, Hand::Right}) {
+      createAction(name, hand, XR_ACTION_TYPE_VECTOR2F_INPUT, &action[hand]);
+    }
+  };
+
+  auto createVibrationAction = [&](const char* name, std::array<XrAction, 2>& action) {
+    for (auto hand: {Hand::Left, Hand::Right}) {
+      createAction(name, hand, XR_ACTION_TYPE_VIBRATION_OUTPUT, &action[hand]);
+    }
+  };
+
   // Create actions. We try to mimic https://www.w3.org/TR/webxr-gamepads-module-1/#xr-standard-gamepad-mapping
   // Create an input action for getting the left and right hand poses.
   createPoseAction("hand_pose", actionPose);
@@ -71,6 +83,7 @@ OpenXRInput::Initialize(XrSession session) {
   createBooleanAction("home", actionHomeClick);
   // Create input actions for menu click detection, usually used for back action.
   createBooleanAction("menu", actionMenuClick);
+  createBooleanAction("back", actionBackClick);
 
   // Create an input action for trigger click, touch and value detection
   createBooleanAction("trigger_click", actionTriggerClick);
@@ -83,6 +96,7 @@ OpenXRInput::Initialize(XrSession session) {
 
   // Create an input action for trackpad click, touch and values detection
   createBooleanAction("trackpad_click", actionTrackpadClick);
+  createVector2FAction("trackpad_value", actionTrackpadValue);
   createBooleanAction("trackpad_touch", actionTrackpadTouch);
   createFloatAction("trackpad_value_x", actionTrackpadX);
   createFloatAction("trackpad_value_y", actionTrackpadY);
@@ -99,39 +113,47 @@ OpenXRInput::Initialize(XrSession session) {
   createBooleanAction("button_b_click", actionButtonBClick);
   createBooleanAction("button_b_touch", actionButtonBTouch);
 
+  createVibrationAction("vibrate", actionHaptic);
+
+  createBooleanAction("volume_up", actionVolumeUp);
+  createBooleanAction("volume_down", actionVolumeDown);
+
   // See https://www.khronos.org/registry/OpenXR/specs/1.0/html/xrspec.html#semantic-path-interaction-profiles
 #define DECLARE_PATH(subpath, variable) \
   std::array<XrPath, Hand::Count> variable; \
   CHECK_XRCMD(xrStringToPath(instance, "/user/hand/left/" subpath, &variable[Hand::Left])); \
   CHECK_XRCMD(xrStringToPath(instance, "/user/hand/right/" subpath, &variable[Hand::Right]));
 
-  DECLARE_PATH("input/select/click", selectClickPath);
+  //DECLARE_PATH("input/select/click", selectClickPath);
   DECLARE_PATH("input/trigger/value", triggerValuePath);
   DECLARE_PATH("input/trigger/touch", triggerTouchPath);
   DECLARE_PATH("input/trigger/click", triggerClickPath);
-  DECLARE_PATH("input/squeeze/value", squeezeValuePath);
-  DECLARE_PATH("input/squeeze/click", squeezeClickPath);
+  //DECLARE_PATH("input/squeeze/value", squeezeValuePath);
+  //DECLARE_PATH("input/squeeze/click", squeezeClickPath);
   DECLARE_PATH("input/aim/pose", posePath);
   DECLARE_PATH("output/haptic", hapticPath);
   DECLARE_PATH("input/home/click", homeClickPath);
-  DECLARE_PATH("input/menu/click", menuClickPath);
+  //DECLARE_PATH("input/menu/click", menuClickPath);
   DECLARE_PATH("input/back/click", backClickPath);
   DECLARE_PATH("input/trackpad/click", trackpadClickPath);
+  DECLARE_PATH("input/trackpad/value", trackpadValuePath);
   DECLARE_PATH("input/trackpad/touch", trackpadTouchPath);
   DECLARE_PATH("input/trackpad/x", trackpadXPath);
   DECLARE_PATH("input/trackpad/y", trackpadYPath);
-  DECLARE_PATH("input/thumbstick/click", thumbstickClickPath);
-  DECLARE_PATH("input/thumbstick/touch", thumbstickTouchPath);
-  DECLARE_PATH("input/thumbstick/x", thumbstickXPath);
-  DECLARE_PATH("input/thumbstick/y", thumbstickYPath);
-  DECLARE_PATH("input/a/click", buttonAClickPath);
-  DECLARE_PATH("input/a/touch", buttonATouchPath);
-  DECLARE_PATH("input/b/click", buttonBClickPath);
-  DECLARE_PATH("input/b/touch", buttonBTouchPath);
-  DECLARE_PATH("input/x/click", buttonXClickPath);
-  DECLARE_PATH("input/x/touch", buttonXTouchPath);
-  DECLARE_PATH("input/y/click", buttonYClickPath);
-  DECLARE_PATH("input/y/touch", buttonYTouchPath);
+  //DECLARE_PATH("input/thumbstick/click", thumbstickClickPath);
+  //DECLARE_PATH("input/thumbstick/touch", thumbstickTouchPath);
+  //DECLARE_PATH("input/thumbstick/x", thumbstickXPath);
+  //DECLARE_PATH("input/thumbstick/y", thumbstickYPath);
+  //DECLARE_PATH("input/a/click", buttonAClickPath);
+  //DECLARE_PATH("input/a/touch", buttonATouchPath);
+  //DECLARE_PATH("input/b/click", buttonBClickPath);
+  //DECLARE_PATH("input/b/touch", buttonBTouchPath);
+  //DECLARE_PATH("input/x/click", buttonXClickPath);
+  //DECLARE_PATH("input/x/touch", buttonXTouchPath);
+  //DECLARE_PATH("input/y/click", buttonYClickPath);
+  //DECLARE_PATH("input/y/touch", buttonYTouchPath);
+  DECLARE_PATH("input/volume_up/click", volumeUpClickPath);
+  DECLARE_PATH("input/volume_down/click", volumeDownClickPath);
 
   // Suggest bindings for KHR Simple. Default fallback when we have not implemented a specific controller binding.
   {
@@ -139,7 +161,7 @@ OpenXRInput::Initialize(XrSession session) {
     CHECK_XRCMD(
         //xrStringToPath(instance, "/interaction_profiles/khr/simple_controller", &khrSimpleInteractionProfilePath));
     xrStringToPath(instance, "/interaction_profiles/huawei/controller", &khrSimpleInteractionProfilePath));
-
+/*
     std::vector<XrActionSuggestedBinding> bindings{{// Generic controller mappings
                                                      {actionPose[Hand::Left], posePath[Hand::Left]},
                                                      {actionPose[Hand::Right], posePath[Hand::Right]},
@@ -149,6 +171,26 @@ OpenXRInput::Initialize(XrSession session) {
                                                      {actionMenuClick[Hand::Right], menuClickPath[Hand::Right]},
                                                      {actionTriggerClick[Hand::Left], selectClickPath[Hand::Left]},
                                                      {actionTriggerClick[Hand::Right], selectClickPath[Hand::Right]}}};
+                                                     */
+#define ADD_ACTION(action, path) \
+  bindings.push_back({action[Hand::Left], path[Hand::Left]}); \
+  bindings.push_back({action[Hand::Right], path[Hand::Right]});
+
+    std::vector<XrActionSuggestedBinding> bindings;
+    ADD_ACTION(actionHomeClick, homeClickPath);
+    ADD_ACTION(actionTriggerValue, triggerValuePath);
+    ADD_ACTION(actionTrackpadValue, trackpadValuePath);
+    ADD_ACTION(actionPose, posePath);
+    ADD_ACTION(actionHaptic, hapticPath);
+    ADD_ACTION(actionBackClick, backClickPath);
+    ADD_ACTION(actionVolumeUp, volumeUpClickPath);
+    ADD_ACTION(actionVolumeDown, volumeDownClickPath);
+    ADD_ACTION(actionTrackpadClick, trackpadClickPath);
+    ADD_ACTION(actionTriggerClick, triggerClickPath);
+    ADD_ACTION(actionTrackpadTouch, trackpadTouchPath);
+    ADD_ACTION(actionTrackpadX, trackpadXPath);
+    ADD_ACTION(actionTrackpadY, trackpadYPath);
+
     XrInteractionProfileSuggestedBinding suggestedBindings{XR_TYPE_INTERACTION_PROFILE_SUGGESTED_BINDING};
     suggestedBindings.interactionProfile = khrSimpleInteractionProfilePath;
     suggestedBindings.suggestedBindings = bindings.data();
@@ -207,14 +249,26 @@ OpenXRInput::Initialize(XrSession session) {
   {
     XrActionSpaceCreateInfo actionSpaceInfo{XR_TYPE_ACTION_SPACE_CREATE_INFO};
     actionSpaceInfo.action = actionPose[Hand::Left];
+    actionSpaceInfo.poseInActionSpace.orientation.x = 0.f;
+    actionSpaceInfo.poseInActionSpace.orientation.y = 0.f;
+    actionSpaceInfo.poseInActionSpace.orientation.z = 0.f;
     actionSpaceInfo.poseInActionSpace.orientation.w = 1.f;
+    actionSpaceInfo.poseInActionSpace.position.x = 0.f;
+    actionSpaceInfo.poseInActionSpace.position.y = 0.f;
+    actionSpaceInfo.poseInActionSpace.position.z = 0.f;
     actionSpaceInfo.subactionPath = handSubactionPath[Hand::Left];
     CHECK_XRCMD(xrCreateActionSpace(session, &actionSpaceInfo, &controllerState[Hand::Left].space));
   }
   {
     XrActionSpaceCreateInfo actionSpaceInfo{XR_TYPE_ACTION_SPACE_CREATE_INFO};
     actionSpaceInfo.action = actionPose[Hand::Right];
+    actionSpaceInfo.poseInActionSpace.orientation.x = 0.f;
+    actionSpaceInfo.poseInActionSpace.orientation.y = 0.f;
+    actionSpaceInfo.poseInActionSpace.orientation.z = 0.f;
     actionSpaceInfo.poseInActionSpace.orientation.w = 1.f;
+    actionSpaceInfo.poseInActionSpace.position.x = 0.f;
+    actionSpaceInfo.poseInActionSpace.position.y = 0.f;
+    actionSpaceInfo.poseInActionSpace.position.z = 0.f;
     actionSpaceInfo.subactionPath = handSubactionPath[Hand::Right];
     CHECK_XRCMD(xrCreateActionSpace(session, &actionSpaceInfo, &controllerState[Hand::Right].space));
   }
@@ -224,12 +278,27 @@ OpenXRInput::Initialize(XrSession session) {
   attachInfo.countActionSets = 1;
   attachInfo.actionSets = &actionSet;
   CHECK_XRCMD(xrAttachSessionActionSets(session, &attachInfo));
+
+  {
+    XrPath interactionProfilepath;
+    XrInteractionProfileState interactionProfile{XR_TYPE_INTERACTION_PROFILE_STATE};
+    XrResult ret_xrGetCurrent = xrGetCurrentInteractionProfile(session, handSubactionPath[0], &interactionProfile);
+    VRB_LOG("ret_xrGetCurrent: %d", ret_xrGetCurrent);
+
+    //xrPathToString
+    interactionProfilepath = interactionProfile.interactionProfile;
+    uint32_t pathCount;
+    xrPathToString(instance, interactionProfilepath, 0, &pathCount, nullptr);
+    std::string pathStr(pathCount,'\0');
+    xrPathToString(instance, interactionProfilepath, pathCount, &pathCount, &pathStr.front());
+    pathStr.resize(pathCount - 1);
+    VRB_LOG("ret interaction profile path pathStr: %s", &pathStr.front());
+  }
 }
 
 void OpenXRInput::Update(XrSession session, XrTime predictedDisplayTime, XrSpace baseSpace, device::RenderMode renderMode, ControllerDelegatePtr& delegate) {
   CHECK(session != XR_NULL_HANDLE);
 
-  // return;
   // Sync actions
   const XrActiveActionSet activeActionSet{actionSet, XR_NULL_PATH};
   XrActionsSyncInfo syncInfo{XR_TYPE_ACTIONS_SYNC_INFO};
@@ -325,24 +394,25 @@ void OpenXRInput::Update(XrSession session, XrTime predictedDisplayTime, XrSpace
 
     // Query buttons and axes
     QUERY_BOOLEAN_STATE(homeClick, actionHomeClick);
-    QUERY_BOOLEAN_STATE(menuClick, actionMenuClick);
+    QUERY_BOOLEAN_STATE(backClick, actionBackClick);
+    //QUERY_BOOLEAN_STATE(menuClick, actionMenuClick);
     QUERY_BOOLEAN_STATE(triggerClick, actionTriggerClick);
-    QUERY_BOOLEAN_STATE(triggerTouch, actionTriggerTouch);
+    //QUERY_BOOLEAN_STATE(triggerTouch, actionTriggerTouch);
     QUERY_FLOAT_STATE(triggerValue, actionTriggerValue);
-    QUERY_BOOLEAN_STATE(squeezeClick, actionSqueezeClick);
-    QUERY_FLOAT_STATE(squeezeValue, actionSqueezeValue);
+    //QUERY_BOOLEAN_STATE(squeezeClick, actionSqueezeClick);
+    //QUERY_FLOAT_STATE(squeezeValue, actionSqueezeValue);
     QUERY_BOOLEAN_STATE(trackpadClick, actionTrackpadClick);
     QUERY_BOOLEAN_STATE(trackpadTouch, actionTrackpadTouch);
     QUERY_FLOAT_STATE(trackpadX, actionTrackpadX);
     QUERY_FLOAT_STATE(trackpadY, actionTrackpadY);
-    QUERY_BOOLEAN_STATE(thumbStickClick, actionThumbstickTouch);
-    QUERY_BOOLEAN_STATE(thumbstickTouch, actionThumbstickTouch);
-    QUERY_FLOAT_STATE(thumbstickX, actionThumbstickX);
-    QUERY_FLOAT_STATE(thumbstickY, actionThumbstickY);
-    QUERY_BOOLEAN_STATE(buttonAClick, actionButtonAClick);
-    QUERY_BOOLEAN_STATE(buttonATouch, actionButtonATouch);
-    QUERY_BOOLEAN_STATE(buttonBClick, actionButtonBClick);
-    QUERY_BOOLEAN_STATE(buttonBTouch, actionButtonBTouch);
+    //QUERY_BOOLEAN_STATE(thumbStickClick, actionThumbstickTouch);
+    //QUERY_BOOLEAN_STATE(thumbstickTouch, actionThumbstickTouch);
+    //QUERY_FLOAT_STATE(thumbstickX, actionThumbstickX);
+    //QUERY_FLOAT_STATE(thumbstickY, actionThumbstickY);
+    //QUERY_BOOLEAN_STATE(buttonAClick, actionButtonAClick);
+    //QUERY_BOOLEAN_STATE(buttonATouch, actionButtonATouch);
+    //QUERY_BOOLEAN_STATE(buttonBClick, actionButtonBClick);
+    //QUERY_BOOLEAN_STATE(buttonBTouch, actionButtonBTouch);
 
     // Map to controller delegate
     std::array<float, 4> axes;
@@ -351,19 +421,21 @@ void OpenXRInput::Update(XrSession session, XrTime predictedDisplayTime, XrSpace
       VRB_LOG("reb HOME CLICK ACTIVE: %s", (homeClick.currentState == 0 ? "NOT PRESSED" : "PRESSED"));
     }
 
+#if 0
     if (menuClick.isActive) {
       const bool pressed = menuClick.currentState != 0;
       delegate->SetButtonState(index, ControllerDelegate::BUTTON_APP, -1, pressed, pressed);
     }
+#endif // 0
 
-    if (triggerValue.isActive || triggerClick.isActive || triggerTouch.isActive) {
+    if (triggerValue.isActive || triggerClick.isActive) { // } || triggerTouch.isActive) {
       bool pressed = triggerClick.isActive && triggerClick.currentState != 0;
       if (!triggerClick.isActive) {
         pressed |= triggerValue.isActive && triggerValue.currentState > kPressThreshold;
       }
       bool touched = pressed;
       touched |= triggerValue.isActive && triggerValue.currentState > 0.0f;
-      touched |= triggerTouch.isActive && triggerTouch.currentState != 0;
+      //touched |= triggerTouch.isActive && triggerTouch.currentState != 0;
       float value = pressed ? 1.0f : 0.0f;
       if (triggerValue.isActive) {
         value = triggerValue.currentState;
@@ -377,6 +449,7 @@ void OpenXRInput::Update(XrSession session, XrTime predictedDisplayTime, XrSpace
       }
     }
 
+#if 0
     if (squeezeClick.isActive || squeezeValue.isActive) {
       bool pressed = squeezeClick.isActive && squeezeClick.currentState != 0;
       if (!squeezeClick.isActive) {
@@ -393,6 +466,7 @@ void OpenXRInput::Update(XrSession session, XrTime predictedDisplayTime, XrSpace
         delegate->SetSqueezeActionStop(index);
       }
     }
+#endif // 0
 
     if (trackpadClick.isActive || trackpadTouch.isActive || trackpadX.isActive || trackpadY.isActive) {
       bool pressed = trackpadClick.isActive && trackpadClick.currentState != 0;
@@ -405,6 +479,7 @@ void OpenXRInput::Update(XrSession session, XrTime predictedDisplayTime, XrSpace
       delegate->SetScrolledDelta(index, x, y);
     }
 
+#if 0
     if (thumbStickClick.isActive || thumbstickTouch.isActive || thumbstickX.isActive || thumbstickY.isActive) {
       bool pressed = thumbStickClick.isActive && thumbStickClick.currentState != 0;
       bool touched = pressed || (thumbstickTouch.isActive && thumbstickTouch.currentState != 0);
@@ -427,6 +502,7 @@ void OpenXRInput::Update(XrSession session, XrTime predictedDisplayTime, XrSpace
       const bool touched = pressed || (buttonBTouch.isActive && buttonBTouch.currentState != 0);
       delegate->SetButtonState(index, ControllerDelegate::BUTTON_B, device::kImmersiveButtonB, pressed, touched);
     }
+#endif // 0
 
     delegate->SetAxes(index, axes.data(), axes.size());
   }
