@@ -1064,6 +1064,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             setAutoCompletionVisible(candidates != null && candidates.words.size() > 0);
             mAutoCompletionView.setItems(candidates != null ? candidates.words : null);
             if (candidates != null && candidates.action == KeyboardInterface.CandidatesResult.Action.AUTO_COMPOSE) {
+                setAutoCompletionVisible(false);
                 onAutoCompletionItemClick(candidates.words.get(0));
             } else if (candidates != null) {
                 postInputCommand(() -> displayComposingText(candidates.composing, ComposingAction.DO_NOT_FINISH));
@@ -1141,6 +1142,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mComposingDisplayText = aText;
         if (aAction == ComposingAction.FINISH) {
             mInputConnection.finishComposingText();
+            mComposingText = "";
         }
     }
 

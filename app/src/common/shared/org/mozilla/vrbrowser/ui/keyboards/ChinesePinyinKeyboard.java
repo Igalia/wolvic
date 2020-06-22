@@ -36,9 +36,6 @@ public class ChinesePinyinKeyboard extends BaseKeyboard {
     private DBHelper mDB;
     private HashMap<String, KeyMap> mKeymaps = new HashMap<>();
     private HashMap<String, KeyMap> mExtraKeymaps = new HashMap<>();
-    private List<Character> mAutocompleteEndings = Arrays.asList(
-            ' ', '，', '。','!','?','ー'
-    );
 
     public ChinesePinyinKeyboard(Context aContext) {
         super(aContext);
@@ -78,15 +75,8 @@ public class ChinesePinyinKeyboard extends BaseKeyboard {
         }
 
         // Autocomplete when special characters are clicked
-        final char kBackslashCode = 92;
-        char lastChar = aComposingText.charAt(aComposingText.length() - 1);
-
-        // When using backslashes ({@code \}) in the replacement string
-        // will cause crash at `replaceFirst()`, so we need to replace it first.
-        if (lastChar == kBackslashCode) {
-            aComposingText = aComposingText.replace("\\", "\\\\");
-        }
-        boolean autocomponse = mAutocompleteEndings.indexOf(lastChar) >= 0;
+        final char lastChar = aComposingText.charAt(aComposingText.length() - 1);
+        final boolean autocompose = ("" + lastChar).matches("[^a-z]");
 
         aComposingText = aComposingText.replaceAll("\\s","");
         if (aComposingText.isEmpty()) {
@@ -149,11 +139,21 @@ public class ChinesePinyinKeyboard extends BaseKeyboard {
 
         CandidatesResult result = new CandidatesResult();
         result.words = words;
-        result.action = autocomponse ? CandidatesResult.Action.AUTO_COMPOSE : CandidatesResult.Action.SHOW_CANDIDATES;
+        result.action = autocompose ? CandidatesResult.Action.AUTO_COMPOSE : CandidatesResult.Action.SHOW_CANDIDATES;
         result.composing = aComposingText;
         if (result.words.size() > 0) {
-            String codeWithoutSpaces = StringUtils.removeSpaces(result.words.get(0).code);
-            result.composing = aComposingText.replaceFirst(Pattern.quote(codeWithoutSpaces), result.words.get(0).code);
+            final char kBackslashCode = 92;
+            String newCode = result.words.get(0).code;
+
+            // When using backslashes ({@code \}) in the replacement string
+            // will cause crash at `replaceFirst()`, so we need to replace it first.
+            if (result.words.get(0).code.charAt(result.words.get(0).code.length() - 1)
+                    == kBackslashCode) {
+                newCode = result.words.get(0).code.replace("\\", "\\\\");
+                aComposingText = aComposingText.replace("\\", "\\\\");
+            }
+            String codeWithoutSpaces = StringUtils.removeSpaces(newCode);
+            result.composing = aComposingText.replaceFirst(Pattern.quote(codeWithoutSpaces), newCode);
         }
 
         return result;

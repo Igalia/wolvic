@@ -83,7 +83,8 @@ public class ChineseZhuyinKeyboard extends BaseKeyboard {
 
         // If using non-Zhuyin symbols like numeric, abc, special symbols,
         // we just need to compose them.
-        if (aComposingText.matches(nonZhuyinReg)) {
+        String lastChar = "" + aComposingText.charAt(aComposingText.length() - 1);
+        if (lastChar.matches(nonZhuyinReg)) {
             CandidatesResult result = new CandidatesResult();
             result.words = getDisplays(aComposingText);
             result.action = CandidatesResult.Action.AUTO_COMPOSE;
@@ -224,12 +225,6 @@ public class ChineseZhuyinKeyboard extends BaseKeyboard {
         return mContext.getString(R.string.zhuyin_keyboard_mode_change);
     }
 
-//    private String getNonZhuyinReg() {
-//        // For characters that not belong to Zhuyin input.
-//        final String reg = "[^ㄅ-ㄩ˙ˊˇˋˉ]";
-//        return reg;
-//    }
-
     private List<Words> getDisplays(String aKey) {
         // Allow completion of uppercase/lowercase letters numbers, and symbols
         // aKey.length() > 1 only happens when switching from other keyboard.
@@ -242,7 +237,22 @@ public class ChineseZhuyinKeyboard extends BaseKeyboard {
         code = GetTransCode(code);
         loadKeymapIfNotLoaded(code);
         KeyMap map = mKeymaps.get(code);
-        return map != null ? map.displays : null;
+
+        if (map == null) {
+            return Collections.singletonList(new Words(1, aKey, aKey));
+        }
+        // When detecting special symbols at the last character, and
+        // because special symbols are not defined in our code book. We
+        // need to add it back to our generated word for doing following
+        // AUTO_COMPOSE.
+        final String lastChar = "" + aKey.charAt(aKey.length()-1);
+        if (map != null && lastChar.matches(nonZhuyinReg))
+        {
+           Words word = map.displays.get(0);
+           return Collections.singletonList(new Words(1,
+                   word.code + lastChar, word.value + lastChar));
+        }
+        return map.displays;
     }
 
 
