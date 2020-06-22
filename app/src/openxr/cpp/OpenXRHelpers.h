@@ -91,8 +91,13 @@ inline XrResult CheckXrResult(XrResult res, const char* originator = nullptr, co
 }
 
 #define THROW_XR(xr, cmd) ThrowXrResult(xr, #cmd, FILE_AND_LINE);
-#define CHECK_XRCMD(cmd) CheckXrResult(cmd, #cmd, FILE_AND_LINE);
-#define CHECK_XRRESULT(res, cmdStr) CheckXrResult(res, cmdStr, FILE_AND_LINE);
+#define CHECK_XRCMD(cmd) \
+VRB_LOG("Calling %s", #cmd); \
+CheckXrResult(cmd, #cmd, FILE_AND_LINE);
+
+#define CHECK_XRRESULT(res, cmdStr) \
+VRB_LOG("Called: %s", cmdStr); \
+CheckXrResult(res, cmdStr, FILE_AND_LINE);
 
 
 inline XrPosef XrPoseIdentity() {
