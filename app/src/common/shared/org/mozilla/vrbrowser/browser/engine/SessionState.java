@@ -56,7 +56,7 @@ public class SessionState {
     public transient ArrayList<Media> mMediaElements = new ArrayList<>();
     public transient @WebXRState int mWebXRState = WEBXR_UNUSED;
     public transient @PopupState int mPopUpState = POPUP_UNUSED;
-    public transient @PopupState int mDrmState = DRM_UNUSED;
+    public transient @DrmState int mDrmState = DRM_UNUSED;
     @JsonAdapter(SessionState.GeckoSessionStateAdapter.class)
     public GeckoSession.SessionState mSessionState;
     public long mLastUse;

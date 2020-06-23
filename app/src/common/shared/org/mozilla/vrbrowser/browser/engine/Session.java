@@ -49,12 +49,10 @@ import org.mozilla.vrbrowser.utils.UrlUtils;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Comparator;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
 import static org.mozilla.vrbrowser.utils.ServoUtils.createServoSession;
@@ -116,12 +114,11 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     public static final int SESSION_DO_NOT_OPEN = 1;
 
     protected Session(Context aContext, GeckoRuntime aRuntime,
-                      @NonNull SessionSettings aSettings, @SessionOpenModeFlags int aOpenMode) {
+                      @NonNull SessionSettings aSettings) {
         mContext = aContext;
         mRuntime = aRuntime;
         initialize();
-        mState = createSession(aSettings, aOpenMode);
-        mState.setActive(aOpenMode == SESSION_OPEN);
+        mState = createSession(aSettings);
     }
 
     protected Session(Context aContext, GeckoRuntime aRuntime, @NonNull SessionState aRestoreState) {
@@ -161,16 +158,13 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
     protected void shutdown() {
         if (mState.mSession != null) {
-            if (mState.mSession.isOpen()) {
-                mState.mSession.close();
-            }
-            mState.mDisplay = null;
+            closeSession(mState);
+            mSessionChangeListeners.forEach(listener -> {
+                listener.onSessionRemoved(mState.mId);
+            });
             mState.mSession = null;
         }
 
-        for (SessionChangeListener listener : mSessionChangeListeners) {
-            listener.onRemoveSession(this);
-        }
         if (mState.mParentId != null) {
             Session parent = SessionStore.get().getSession(mState.mParentId);
             if (parent != null) {
@@ -465,9 +459,14 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         }
 
         mState.mSession = createGeckoSession(settings);
-        if (!mState.mSession.isOpen()) {
-            mState.mSession.open(mRuntime);
+
+        // We call restore when a session is first activated and when it's recreated.
+        // We only need to notify of the session creation if it's not a recreation.
+        if (mState.mSessionState == null) {
+            mSessionChangeListeners.forEach(listener -> listener.onSessionAdded(this));
         }
+
+        openSession();
 
         // data:text URLs can not be restored.
         if (mState.mSessionState != null && ((mState.mUri == null) || mState.mUri.startsWith("data:text"))) {
@@ -489,18 +488,15 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         }
 
         dumpAllState();
+
         mState.setActive(true);
     }
 
 
-    private SessionState createSession(@NonNull SessionSettings aSettings, @SessionOpenModeFlags int aOpenMode) {
+    private SessionState createSession(@NonNull SessionSettings aSettings) {
         SessionState state = new SessionState();
         state.mSettings = aSettings;
         state.mSession = createGeckoSession(aSettings);
-
-        if (aOpenMode == SESSION_OPEN && !state.mSession.isOpen()) {
-            state.mSession.open(mRuntime);
-        }
 
         return state;
     }
@@ -521,24 +517,29 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
             session = new GeckoSession(geckoSettings);
         }
 
-        session.getSettings().setUserAgentOverride(aSettings.getUserAgentOverride());
+        if (session != null) {
+            session.getSettings().setUserAgentOverride(aSettings.getUserAgentOverride());
+        }
         setupSessionListeners(session);
 
         return session;
     }
 
-    public void recreateSession() {
+    void recreateSession() {
         boolean wasFullScreen = mState.mFullScreen;
 
-        SessionState previous = mState;
+        GeckoSession previousGeckoSession = null;
+        if (mState.mSession != null) {
+            previousGeckoSession = mState.mSession;
+            closeSession(mState);
+        }
+
         mState = mState.recreate();
 
         restore();
 
-        GeckoSession previousGeckoSession = null;
-        if (previous.mSession != null) {
-            previousGeckoSession = previous.mSession;
-            closeSession(previous);
+        for (SessionChangeListener listener: mSessionChangeListeners) {
+            listener.onSessionStateChanged(this, true);
         }
 
         for (SessionChangeListener listener : mSessionChangeListeners) {
@@ -552,8 +553,18 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         }
     }
 
+    void openSession() {
+        if (!mState.mSession.isOpen()) {
+            mState.mSession.open(mRuntime);
+        }
+
+        mSessionChangeListeners.forEach(listener -> {
+            listener.onSessionOpened(this);
+        });
+    }
+
     private void closeSession(@NonNull SessionState aState) {
-        if (aState.mSession == null) {
+        if (aState.mSession == null || !aState.mSession.isOpen()) {
             return;
         }
         cleanSessionListeners(aState.mSession);
@@ -567,6 +578,8 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         aState.mSession.close();
         aState.setActive(false);
         mFirstContentfulPaint = false;
+
+        mSessionChangeListeners.forEach(listener -> listener.onSessionClosed(aState.mId));
     }
 
     public void captureBitmap() {
@@ -783,6 +796,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         if (mState.mSession != null) {
             mState.mSession.setActive(aActive);
             mState.setActive(aActive);
+
         } else if (aActive) {
             restore();
         } else {
@@ -790,7 +804,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         }
 
         for (SessionChangeListener listener: mSessionChangeListeners) {
-            listener.onActiveStateChange(this, aActive);
+            listener.onSessionStateChanged(this, aActive);
         }
     }
 
@@ -848,9 +862,15 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
                 .withServo(!isInstanceOfServoSession(mState.mSession))
                 .build();
 
-        mState = createSession(settings, SESSION_OPEN);
+        mState = createSession(settings);
+        openSession();
         closeSession(previous);
+
         mState.setActive(true);
+        for (SessionChangeListener listener: mSessionChangeListeners) {
+            listener.onSessionStateChanged(this, true);
+        }
+
         loadUri(uri);
     }
 
@@ -1658,7 +1678,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     // SessionChangeListener
 
     @Override
-    public void onRemoveSession(Session aParent) {
+    public void onSessionRemoved(String aId) {
         if (mState.mParentId != null) {
             mState.mParentId = null;
             // Parent stack session closed. Notify canGoBack state changed
@@ -1669,7 +1689,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     }
 
     @Override
-    public void onActiveStateChange(Session aSession, boolean aActive) {
+    public void onSessionStateChanged(Session aSession, boolean aActive) {
         if (mState.mParentId != null) {
             // Parent stack session has been attached/detached. Notify canGoBack state changed
             for (GeckoSession.NavigationDelegate listener : mNavigationListeners) {

@@ -40,7 +40,7 @@ class Services(val context: Context, places: Places): GeckoSession.NavigationDel
 
     companion object {
         const val CLIENT_ID = "7ad9917f6c55fb77"
-        const val REDIRECT_URL = "https://accounts.firefox.com/oauth/success/$CLIENT_ID"
+        const val REDIRECT_URL = "urn:ietf:wg:oauth:2.0:oob:oauth-redirect-webchannel"
     }
     interface TabReceivedDelegate {
         fun onTabsReceived(uri: List<TabData>)
@@ -98,9 +98,11 @@ class Services(val context: Context, places: Places): GeckoSession.NavigationDel
             }
         }
     }
+    public val serverConfig = ServerConfig(Server.RELEASE, CLIENT_ID, REDIRECT_URL)
+
     val accountManager = FxaAccountManager(
         context = context,
-        serverConfig = ServerConfig(Server.RELEASE, CLIENT_ID, REDIRECT_URL),
+        serverConfig = serverConfig,
         deviceConfig = DeviceConfig(
             // This is a default name, and can be changed once user is logged in.
             // E.g. accountManager.authenticatedAccount()?.deviceConstellation()?.setDeviceNameAsync("new name")
@@ -150,4 +152,5 @@ class Services(val context: Context, places: Places): GeckoSession.NavigationDel
 
         return GeckoResult.ALLOW
     }
+
 }

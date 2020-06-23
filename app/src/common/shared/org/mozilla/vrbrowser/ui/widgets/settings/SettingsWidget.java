@@ -52,6 +52,7 @@ import java.net.URLEncoder;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
+import mozilla.components.Build;
 import mozilla.components.concept.sync.AccountObserver;
 import mozilla.components.concept.sync.AuthType;
 import mozilla.components.concept.sync.OAuthAccount;
@@ -76,7 +77,9 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
 
         @Override
         public boolean onDown (MotionEvent e) {
-            mBinding.buildText.setText(mIsHash ? StringUtils.versionCodeToDate(getContext(), BuildConfig.VERSION_CODE) : BuildConfig.GIT_HASH);
+            mBinding.buildText.setText(mIsHash ?
+                    StringUtils.versionCodeToDate(getContext(), BuildConfig.VERSION_CODE) :
+                    BuildConfig.GIT_HASH + " (AC " + Build.version + ")");
 
             mIsHash = !mIsHash;
 

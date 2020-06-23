@@ -14,6 +14,7 @@ import com.mozilla.speechlibrary.SpeechService;
 import org.mozilla.vrbrowser.browser.Accounts;
 import org.mozilla.vrbrowser.browser.Places;
 import org.mozilla.vrbrowser.browser.Services;
+import org.mozilla.vrbrowser.browser.engine.EngineProvider;
 import org.mozilla.vrbrowser.db.AppDatabase;
 import org.mozilla.vrbrowser.db.DataRepository;
 import org.mozilla.vrbrowser.downloads.DownloadsManager;
@@ -37,11 +38,6 @@ public class VRBrowserApplication extends Application implements AppServicesProv
     @Override
     public void onCreate() {
         super.onCreate();
-        mAppExecutors = new AppExecutors();
-        mBitmapCache = new BitmapCache(this, mAppExecutors.diskIO(), mAppExecutors.mainThread());
-
-        TelemetryWrapper.init(this);
-        GleanMetricsService.init(this);
     }
 
     protected void onActivityCreate() {
@@ -50,6 +46,11 @@ public class VRBrowserApplication extends Application implements AppServicesProv
         mAccounts = new Accounts(this);
         mDownloadsManager = new DownloadsManager(this);
         mSpeechService = new SpeechService(this);
+        mAppExecutors = new AppExecutors();
+        mBitmapCache = new BitmapCache(this, mAppExecutors.diskIO(), mAppExecutors.mainThread());
+
+        TelemetryWrapper.init(this, EngineProvider.INSTANCE.getDefaultClient(this));
+        GleanMetricsService.init(this, EngineProvider.INSTANCE.getDefaultClient(this));
     }
 
     @Override

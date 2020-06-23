@@ -205,7 +205,7 @@ public class SettingsStore {
         // If the state of Telemetry is not the same, we reinitialize it.
         final boolean hasEnabled = isTelemetryEnabled();
         if (hasEnabled != isEnabled) {
-            TelemetryWrapper.init(mContext);
+            TelemetryWrapper.init(mContext, EngineProvider.INSTANCE.getDefaultClient(mContext));
         }
 
         TelemetryHolder.get().getConfiguration().setUploadEnabled(isEnabled);

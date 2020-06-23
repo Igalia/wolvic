@@ -9,23 +9,21 @@ import androidx.annotation.VisibleForTesting;
 
 import org.mozilla.telemetry.TelemetryHolder;
 import org.mozilla.vrbrowser.BuildConfig;
+import org.mozilla.vrbrowser.GleanMetrics.Control;
 import org.mozilla.vrbrowser.GleanMetrics.Distribution;
 import org.mozilla.vrbrowser.GleanMetrics.FirefoxAccount;
+import org.mozilla.vrbrowser.GleanMetrics.Immersive;
 import org.mozilla.vrbrowser.GleanMetrics.LegacyTelemetry;
+import org.mozilla.vrbrowser.GleanMetrics.Pages;
 import org.mozilla.vrbrowser.GleanMetrics.Pings;
 import org.mozilla.vrbrowser.GleanMetrics.Searches;
 import org.mozilla.vrbrowser.GleanMetrics.Url;
-import org.mozilla.vrbrowser.GleanMetrics.Control;
-import org.mozilla.vrbrowser.GleanMetrics.Pages;
-import org.mozilla.vrbrowser.GleanMetrics.Immersive;
 import org.mozilla.vrbrowser.GleanMetrics.Windows;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.search.SearchEngineWrapper;
 import org.mozilla.vrbrowser.utils.DeviceType;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 import org.mozilla.vrbrowser.utils.UrlUtils;
-import static org.mozilla.vrbrowser.ui.widgets.Windows.WindowPlacement;
-import static org.mozilla.vrbrowser.ui.widgets.Windows.MAX_WINDOWS;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -34,9 +32,14 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.UUID;
 
+import mozilla.components.concept.fetch.Client;
 import mozilla.components.service.glean.Glean;
 import mozilla.components.service.glean.config.Configuration;
+import mozilla.components.service.glean.net.ConceptFetchHttpUploader;
 import mozilla.telemetry.glean.GleanTimerId;
+
+import static org.mozilla.vrbrowser.ui.widgets.Windows.MAX_WINDOWS;
+import static org.mozilla.vrbrowser.ui.widgets.Windows.WindowPlacement;
 
 
 public class GleanMetricsService {
@@ -54,7 +57,7 @@ public class GleanMetricsService {
     private static GleanTimerId openPrivateWindowTimerId[] = new GleanTimerId[MAX_WINDOWS];
 
     // We should call this at the application initial stage.
-    public static void init(Context aContext) {
+    public static void init(@NonNull Context aContext, @NonNull Client client) {
         if (initialized)
             return;
 
@@ -69,7 +72,11 @@ public class GleanMetricsService {
         }
 
         LegacyTelemetry.INSTANCE.clientId().set(UUID.fromString(TelemetryHolder.get().getClientId()));
-        Configuration config = new Configuration(Configuration.DEFAULT_TELEMETRY_ENDPOINT, BuildConfig.BUILD_TYPE);
+
+        Configuration config = new Configuration(
+                ConceptFetchHttpUploader.fromClient(client),
+                Configuration.DEFAULT_TELEMETRY_ENDPOINT,
+                BuildConfig.BUILD_TYPE);
         Glean.INSTANCE.initialize(aContext, true, config);
     }
 

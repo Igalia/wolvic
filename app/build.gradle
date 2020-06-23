@@ -397,7 +397,6 @@ android {
 configurations {
     armImplementation
     x86Implementation
-    all*.exclude group: 'androidx.appcompat', module: 'appcompat'
 }
 
 repositories {
@@ -414,8 +413,7 @@ dependencies {
     implementation deps.lifecycle.runtime
     implementation deps.lifecycle.viewmodel
     implementation deps.support.cardview
-    //implementation deps.support.app_compat
-    implementation(name:'appcompat', ext:'aar')
+    implementation deps.support.app_compat
     implementation deps.support.vector_drawable
     implementation deps.support.annotations
     implementation deps.constraint_layout
@@ -429,20 +427,21 @@ dependencies {
     implementation deps.android_components.telemetry
     implementation deps.android_components.browser_errorpages
     implementation deps.android_components.browser_search
+    implementation deps.android_components.browser_state
     implementation deps.android_components.browser_storage
     implementation deps.android_components.browser_domains
     implementation deps.android_components.service_accounts
     implementation deps.android_components.mozilla_service_location
     implementation deps.android_components.ui_autocomplete
+    implementation deps.android_components.concept_engine
     implementation deps.android_components.concept_fetch
     implementation deps.android_components.lib_fetch
     implementation deps.android_components.support_rustlog
     implementation deps.android_components.support_rusthttp
+    implementation deps.android_components.feature_accounts
+    implementation deps.android_components.feature_webcompat
     implementation deps.android_components.glean
     implementation deps.app_services.rustlog
-
-    // TODO this should not be necessary at all, see Services.kt
-    implementation deps.work.runtime
 
     // TODO this should not be necessary at all, see Services.kt
     implementation deps.work.runtime

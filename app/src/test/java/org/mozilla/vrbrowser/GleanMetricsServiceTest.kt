@@ -2,14 +2,17 @@ package org.mozilla.vrbrowser
 
 import androidx.test.core.app.ApplicationProvider
 import mozilla.components.concept.sync.DeviceType
+import mozilla.components.lib.fetch.httpurlconnection.HttpURLConnectionClient
 import mozilla.components.service.glean.testing.GleanTestRule
 import org.junit.Assert.*
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.telemetry.TelemetryHolder
 import org.mozilla.vrbrowser.GleanMetrics.*
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService
+import org.mozilla.vrbrowser.telemetry.TelemetryWrapper
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
@@ -20,6 +23,16 @@ class GleanMetricsServiceTest {
 
     @get:Rule
     val gleanRule = GleanTestRule(ApplicationProvider.getApplicationContext())
+
+    @Before
+    fun setup() {
+        val app = ApplicationProvider.getApplicationContext<VRBrowserApplication>()
+        // We use the HttpURLConnectionClient for tests as the GeckoWebExecutor based client needs
+        // full GeckoRuntime initialization and it crashes in the test environment.
+        val client = HttpURLConnectionClient()
+        TelemetryWrapper.init(app, client)
+        GleanMetricsService.init(app, client)
+    }
 
     @Test
     fun testURLTelemetry() {
@@ -138,8 +151,6 @@ class GleanMetricsServiceTest {
 
     @Test
     fun testLegacyTelemetry() {
-        assertFalse(LegacyTelemetry.clientId.testHasValue())
-        LegacyTelemetry.clientId.set(java.util.UUID.fromString(TelemetryHolder.get().getClientId()))
         assertTrue(LegacyTelemetry.clientId.testHasValue())
         assertEquals(LegacyTelemetry.clientId.testGetValue().toString(), TelemetryHolder.get().getClientId())
     }

@@ -24,6 +24,7 @@ import org.mozilla.telemetry.storage.FileTelemetryStorage;
 import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.SettingsStore;
+import org.mozilla.vrbrowser.browser.engine.EngineProvider;
 import org.mozilla.vrbrowser.search.SearchEngineWrapper;
 import org.mozilla.vrbrowser.utils.DeviceType;
 import org.mozilla.vrbrowser.utils.SystemUtils;
@@ -34,6 +35,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import mozilla.components.concept.fetch.Client;
 import mozilla.components.lib.fetch.httpurlconnection.HttpURLConnectionClient;
 
 import static java.lang.Math.toIntExact;
@@ -136,7 +138,7 @@ public class TelemetryWrapper {
     // We should call this at the application initial stage. Instead,
     // it would be called when users turn on/off the setting of telemetry.
     // e.g., SettingsStore.getInstance(context).setTelemetryEnabled();
-    public static void init(Context aContext) {
+    public static void init(@NonNull Context aContext, @NonNull Client client) {
         // When initializing the telemetry library it will make sure that all directories exist and
         // are readable/writable.
         final StrictMode.ThreadPolicy threadPolicy = StrictMode.allowThreadDiskWrites();
@@ -162,9 +164,8 @@ public class TelemetryWrapper {
             } else {
                 scheduler = new JobSchedulerTelemetryScheduler();
             }
-            final TelemetryClient client = new TelemetryClient(new HttpURLConnectionClient());
 
-            TelemetryHolder.set(new Telemetry(configuration, storage, client, scheduler)
+            TelemetryHolder.set(new Telemetry(configuration, storage, new TelemetryClient(client), scheduler)
                     .addPingBuilder(new TelemetryCorePingBuilder(configuration))
                     .addPingBuilder(new TelemetryMobileEventPingBuilder(configuration)));
 

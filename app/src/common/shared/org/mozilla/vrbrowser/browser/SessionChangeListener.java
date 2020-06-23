@@ -4,9 +4,12 @@ import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.browser.engine.Session;
 
 public interface SessionChangeListener {
-    default void onRemoveSession(Session aSession) {}
+    default void onSessionAdded(Session aSession) {}
+    default void onSessionOpened(Session aSession) {}
+    default void onSessionClosed(String aId) {}
+    default void onSessionRemoved(String aId) {}
+    default void onSessionStateChanged(Session aSession, boolean aActive) {}
     default void onCurrentSessionChange(GeckoSession aOldSession, GeckoSession aSession) {}
     default void onStackSession(Session aSession) {}
     default void onUnstackSession(Session aSession, Session aParent) {}
-    default void onActiveStateChange(Session aSession, boolean aActive) {}
 }
