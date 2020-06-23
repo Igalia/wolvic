@@ -66,6 +66,7 @@ WidgetPlacement::FromJava(JNIEnv* aEnv, jobject& aObject) {
   GET_BOOLEAN_FIELD(showPointer);
   GET_BOOLEAN_FIELD(composited);
   GET_BOOLEAN_FIELD(layer);
+  GET_INT_FIELD(layerPriority);
   GET_BOOLEAN_FIELD(proxifyLayer);
   GET_FLOAT_FIELD(textureScale, "textureScale");
   GET_BOOLEAN_FIELD(cylinder);

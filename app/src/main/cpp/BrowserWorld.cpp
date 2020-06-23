@@ -686,12 +686,17 @@ BrowserWorld::State::SortWidgets() {
       }
     }
     if (!target) {
+      bool isPointer = false;
       for (Controller& controller: controllers->GetControllers()) {
         if (controller.pointer && controller.pointer->GetRoot() == node) {
-          target = controller.pointer->GetHitWidget().get();
-          zDelta = 0.02f;
+          isPointer = true;
           break;
         }
+      }
+      if (isPointer) {
+        // Always render the pointer on top
+        depthSorting.emplace(node.get(), std::make_pair(target, 0.0f));
+        continue;
       }
     }
 
@@ -717,12 +722,14 @@ BrowserWorld::State::SortWidgets() {
     Widget* wa = da->second.first;
     Widget* wb = db->second.first;
 
-    // Parenting sort
+    // Parenting or layer priority sort
     if (wa && wb && wa->IsVisible() && wb->IsVisible()) {
       if (IsParent(*wa, *wb)) {
         return true;
       } else if (IsParent(*wb, *wa)) {
         return false;
+      } else if (wa->GetPlacement()->layerPriority != wb->GetPlacement()->layerPriority) {
+        return wa->GetPlacement()->layerPriority > wb->GetPlacement()->layerPriority;
       }
     }
 

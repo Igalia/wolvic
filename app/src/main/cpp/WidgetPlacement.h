@@ -38,6 +38,7 @@ struct WidgetPlacement {
   bool showPointer;
   bool composited;
   bool layer;
+  int32_t layerPriority;
   bool proxifyLayer;
   float textureScale;
   bool cylinder;

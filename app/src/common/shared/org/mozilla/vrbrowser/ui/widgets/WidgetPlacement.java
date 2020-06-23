@@ -54,6 +54,7 @@ public class WidgetPlacement {
     public boolean showPointer = true;
     public boolean composited = false;
     public boolean layer = true;
+    public int layerPriority = 0; // Used for depth sorting
     public boolean proxifyLayer = false;
     public float textureScale = 0.7f;
     // Widget will be curved if enabled.
@@ -99,6 +100,7 @@ public class WidgetPlacement {
         this.showPointer = w.showPointer;
         this.composited = w.composited;
         this.layer = w.layer;
+        this.layerPriority = w.layerPriority;
         this.proxifyLayer = w.proxifyLayer;
         this.textureScale = w.textureScale;
         this.cylinder = w.cylinder;

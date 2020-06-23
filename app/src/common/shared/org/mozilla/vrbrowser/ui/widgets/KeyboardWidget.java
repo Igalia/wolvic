@@ -391,6 +391,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         aPlacement.worldWidth = WidgetPlacement.floatDimension(context, R.dimen.keyboard_world_width);
         aPlacement.visible = false;
         aPlacement.cylinder = true;
+        aPlacement.layerPriority = 1;
     }
 
     @Override
