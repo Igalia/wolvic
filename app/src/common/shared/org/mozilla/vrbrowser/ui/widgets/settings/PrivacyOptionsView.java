@@ -149,6 +149,9 @@ class PrivacyOptionsView extends SettingsView {
         @SettingsStore.Storage int downloadsStorage = SettingsStore.getInstance(getContext()).getDownloadsStorage();
         mBinding.downloadsStorage.setOnCheckedChangeListener(mDownloadsStorageListener);
         setDownloadsStorage(mBinding.downloadsStorage.getIdForValue(downloadsStorage), false);
+
+        mBinding.deepSpeechSwitch.setOnCheckedChangeListener(mDeepSpeechListener);
+        setDeepSpeech(SettingsStore.getInstance(getContext()).isDeepSpeechEnabled(), false);
     }
 
     private void togglePermission(SwitchSetting aButton, String aPermission) {
@@ -210,6 +213,10 @@ class PrivacyOptionsView extends SettingsView {
         setDownloadsStorage(checkedId, true);
     };
 
+    private SwitchSetting.OnCheckedChangeListener mDeepSpeechListener = (compoundButton, value, doApply) -> {
+        setDeepSpeech(value, doApply);
+    };
+
     private void resetOptions() {
         if (mBinding.drmContentPlaybackSwitch.isChecked() != SettingsStore.DRM_PLAYBACK_DEFAULT) {
             setDrmContent(SettingsStore.DRM_PLAYBACK_DEFAULT, true);
@@ -249,6 +256,10 @@ class PrivacyOptionsView extends SettingsView {
 
         if (!mBinding.downloadsStorage.getValueForId(mBinding.downloadsStorage.getCheckedRadioButtonId()).equals(SettingsStore.DOWNLOADS_STORAGE_DEFAULT)) {
             setDownloadsStorage(mBinding.downloadsStorage.getIdForValue(SettingsStore.DOWNLOADS_STORAGE_DEFAULT), true);
+        }
+
+        if (mBinding.deepSpeechSwitch.isChecked() != SettingsStore.USE_DEEP_SPEECH) {
+            setDeepSpeech(SettingsStore.USE_DEEP_SPEECH, true);
         }
     }
 
@@ -351,6 +362,16 @@ class PrivacyOptionsView extends SettingsView {
         mBinding.downloadsStorage.setOnCheckedChangeListener(mDownloadsStorageListener);
 
         SettingsStore.getInstance(getContext()).setDownloadsStorage((Integer)mBinding.downloadsStorage.getValueForId(checkId));
+    }
+
+    private void setDeepSpeech(boolean value, boolean doApply) {
+        mBinding.deepSpeechSwitch.setOnCheckedChangeListener(null);
+        mBinding.deepSpeechSwitch.setValue(value, false);
+        mBinding.deepSpeechSwitch.setOnCheckedChangeListener(mDeepSpeechListener);
+
+        if (doApply) {
+            SettingsStore.getInstance(getContext()).setDeepSpeechEnabled(value);
+        }
     }
 
     @Override

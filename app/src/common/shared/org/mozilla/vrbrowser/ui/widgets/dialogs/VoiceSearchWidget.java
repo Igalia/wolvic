@@ -3,6 +3,7 @@ package org.mozilla.vrbrowser.ui.widgets.dialogs;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Application;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -18,6 +19,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.databinding.DataBindingUtil;
@@ -26,6 +28,9 @@ import com.mozilla.speechlibrary.SpeechResultCallback;
 import com.mozilla.speechlibrary.SpeechService;
 import com.mozilla.speechlibrary.SpeechServiceSettings;
 import com.mozilla.speechlibrary.stt.STTResult;
+import com.mozilla.speechlibrary.utils.ModelUtils;
+import com.mozilla.speechlibrary.utils.zip.UnzipCallback;
+import com.mozilla.speechlibrary.utils.zip.UnzipTask;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserActivity;
@@ -34,14 +39,23 @@ import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.browser.engine.EngineProvider;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.databinding.VoiceSearchDialogBinding;
+import org.mozilla.vrbrowser.downloads.Download;
+import org.mozilla.vrbrowser.downloads.DownloadJob;
+import org.mozilla.vrbrowser.downloads.DownloadsManager;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
+import org.mozilla.vrbrowser.ui.widgets.Windows;
 import org.mozilla.vrbrowser.utils.DeviceType;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
 import org.mozilla.vrbrowser.utils.ViewUtils;
 
-public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate.PermissionListener,
-        Application.ActivityLifecycleCallbacks {
+import java.io.File;
+
+public class VoiceSearchWidget extends UIDialog implements
+        WidgetManagerDelegate.PermissionListener,
+        Application.ActivityLifecycleCallbacks,
+        DownloadsManager.DownloadsListener,
+        UnzipCallback {
 
     public enum State {
         LISTENING,
@@ -52,6 +66,8 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
     }
 
     private static final int VOICE_SEARCH_AUDIO_REQUEST_CODE = 7455;
+
+    private static final @SettingsStore.Storage int MODELS_STORAGE = SettingsStore.INTERNAL;
 
     private static int MAX_CLIPPING = 10000;
     private static int MAX_DB = 130;
@@ -68,8 +84,8 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
     private ClipDrawable mVoiceInputClipDrawable;
     private AnimatedVectorDrawable mSearchingAnimation;
     private VRBrowserApplication mApplication;
-    private boolean mIsSpeechRecognitionRunning = false;
-    private boolean mWasSpeechRecognitionRunning = false;
+    private DownloadsManager mDownloadsManager;
+    private UnzipTask mUnzip;
 
     public VoiceSearchWidget(Context aContext) {
         super(aContext);
@@ -100,6 +116,12 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
         if (DeviceType.isPicoVR()) {
             ViewUtils.forceAnimationOnUI(mSearchingAnimation);
         }
+
+        mUnzip = new UnzipTask(getContext());
+        mUnzip.addListener(this);
+
+        mDownloadsManager = mApplication.getDownloadsManager();
+        mDownloadsManager.addListener(this);
 
         mMozillaSpeechService = mApplication.getSpeechService();
 
@@ -139,6 +161,9 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
     public void releaseWidget() {
         mWidgetManager.removePermissionListener(this);
         mApplication.unregisterActivityLifecycleCallbacks(this);
+
+        mUnzip.removeListener(this);
+        mDownloadsManager.removeListener(this);
 
         mMozillaSpeechService.stop();
 
@@ -233,16 +258,104 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
                 storeData = false;
             }
 
-            mIsSpeechRecognitionRunning = true;
-
+            boolean useDeepSpeech = SettingsStore.getInstance(getContext()).isDeepSpeechEnabled();
             SpeechServiceSettings.Builder builder = new SpeechServiceSettings.Builder()
                     .withLanguage(locale)
                     .withStoreSamples(storeData)
                     .withStoreTranscriptions(storeData)
-                    .withProductTag(getContext().getString(R.string.voice_app_id));
+                    .withProductTag(getContext().getString(R.string.voice_app_id))
+                    .withUseDeepSpeech(useDeepSpeech);
+            if (useDeepSpeech) {
+                handleDeepSpeechModel(builder, locale);
+
+            } else {
+                mMozillaSpeechService.start(builder.build(),
+                        EngineProvider.INSTANCE.getDefaultGeckoWebExecutor(getContext()),
+                        mResultCallback);
+            }
+        }
+    }
+
+    private void handleDeepSpeechModel(@NonNull SpeechServiceSettings.Builder builder, @NonNull String language) {
+        String modelPath = ModelUtils.modelPath(getContext(), language);
+
+        if (ModelUtils.isReady(modelPath)) {
+            // The model is already downloaded and unzipped
+            builder.withModelPath(modelPath);
             mMozillaSpeechService.start(builder.build(),
                     EngineProvider.INSTANCE.getDefaultGeckoWebExecutor(getContext()),
                     mResultCallback);
+
+        } else {
+            hide(KEEP_WIDGET);
+            String zipPath = ModelUtils.modelDownloadOutputPath(
+                    getContext(),
+                    language,
+                    MODELS_STORAGE);
+            if (new File(zipPath).exists()) {
+                if (mUnzip.isIsRunning()) {
+                    mWidgetManager.getFocusedWindow().showAlert(
+                            "Voice search",
+                            language + " model unzipping still in progress",
+                            null
+                    );
+
+                } else {
+                    // Model download is ready, start unzipping
+                    mWidgetManager.getFocusedWindow().showAlert(
+                            "Voice search",
+                            "Start " + language + " model unzip",
+                            (index, isChecked) -> mUnzip.start(zipPath)
+                    );
+                }
+
+            } else {
+                // The model needs to be downloaded
+                handleModelDownload(language);
+            }
+        }
+    }
+
+    private void handleModelDownload(@NonNull String language) {
+        String modelUrl = ModelUtils.modelDownloadUrl(language);
+
+        // Check if the model is already downloaded
+        Download download = mDownloadsManager.getDownloads().stream()
+                .filter(item ->
+                        item.getStatus() == DownloadManager.STATUS_SUCCESSFUL &&
+                                item.getUri().equals(modelUrl))
+                .findFirst().orElse(null);
+        if (download != null) {
+            onDownloadCompleted(download);
+
+        } else {
+            // Check if the model is in progress
+            boolean isInProgress = mDownloadsManager.getDownloads().stream()
+                    .anyMatch(item ->
+                            item.getStatus() != DownloadManager.STATUS_FAILED &&
+                                    item.getUri().equals(modelUrl));
+            if (!isInProgress) {
+                // Download model
+                DownloadJob job = DownloadJob.create(
+                        ModelUtils.modelDownloadUrl(language),
+                        "application/zip",
+                        0,
+                        null);
+                mDownloadsManager.startDownload(job, MODELS_STORAGE);
+                mWidgetManager.getFocusedWindow().showAlert(
+                        "Voice search",
+                        language + " model download started",
+                        (index, isChecked) -> mWidgetManager.getFocusedWindow().showPanel(Windows.PanelType.DOWNLOADS)
+                );
+
+            } else {
+                // Model download is already in progress
+                mWidgetManager.getFocusedWindow().showAlert(
+                        "Voice search",
+                        language + " model download in progress",
+                        null
+                );
+            }
         }
     }
 
@@ -251,11 +364,9 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
             mMozillaSpeechService.stop();
 
         } catch (Exception e) {
-            Log.d(LOGTAG, e.getLocalizedMessage() != null ? e.getLocalizedMessage() : "Unknown voice error");
+            Log.d(LOGTAG, e.getLocalizedMessage());
             e.printStackTrace();
         }
-
-        mIsSpeechRecognitionRunning = false;
     }
 
     @Override
@@ -335,6 +446,10 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
             if (errorType == SpeechResultCallback.SPEECH_ERROR) {
                 mBinding.setState(State.SPEECH_ERROR);
                 startVoiceSearch();
+
+            } else {
+                mBinding.setState(State.MODEL_NOT_FOUND);
+                handleModelDownload(LocaleUtils.getVoiceSearchLanguageTag(getContext()));
             }
             mSearchingAnimation.stop();
             mBinding.executePendingBindings();
@@ -361,17 +476,12 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
 
     @Override
     public void onActivityResumed(Activity activity) {
-        if (mWasSpeechRecognitionRunning) {
-            startVoiceSearch();
-        }
+        startVoiceSearch();
     }
 
     @Override
     public void onActivityPaused(Activity activity) {
-        mWasSpeechRecognitionRunning = mIsSpeechRecognitionRunning;
-        if (mIsSpeechRecognitionRunning) {
-            stopVoiceSearch();
-        }
+        stopVoiceSearch();
     }
 
     @Override
@@ -388,4 +498,61 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
     public void onActivityDestroyed(Activity activity) {
 
     }
+
+    // DownloadsListener
+
+    @Override
+    public void onDownloadCompleted(@NonNull Download download) {
+        if (ModelUtils.isModelUri(download.getUri())) {
+            File file = new File(download.getOutputFilePath());
+            if (file.exists()) {
+                String language = ModelUtils.languageForUri(download.getUri());
+                mWidgetManager.getFocusedWindow().showAlert(
+                        "Voice search",
+                        "Start " + language + " model unzip",
+                        (index, isChecked) -> mUnzip.start(file.getAbsolutePath())
+                );
+
+            } else {
+                mDownloadsManager.removeDownload(download.getId(), true);
+            }
+        }
+    }
+
+    // UnzipCallback
+
+    @Override
+    public void onUnzipStart(@NonNull String zipFile) {
+
+    }
+
+    @Override
+    public void onUnzipProgress(@NonNull String zipFile, double progress) {
+
+    }
+
+    @Override
+    public void onUnzipFinish(@NonNull String zipFile, @NonNull String outputPath) {
+        File file = new File(zipFile);
+        if (file.exists()) {
+            file.delete();
+        }
+
+        mWidgetManager.getFocusedWindow().showAlert(
+                "Voice search",
+                "Model successfully unzipped.",
+                null
+        );
+    }
+
+    @Override
+    public void onUnzipCancelled(@NonNull String zipFile) {
+
+    }
+
+    @Override
+    public void onUnzipError(@NonNull String zipFile, @Nullable String error) {
+
+    }
+
 }
