@@ -117,6 +117,16 @@
     <!-- This string is used as the title of the WebXR dialog used to do not allow websites to access WebXR devices. -->
     <string name="settings_privacy_policy_webxr_title">VR の許可設定</string>
 
+    <!-- This string is displayed under the title the  WebXR dialog used to do not allow websites to access WebXR devices. -->
+    <string name="settings_privacy_policy_webxr_description">以下のサイトは、WebXR API による VR デバイスへアクセスがブロックされています。</string>
+
+    <!-- This string is displayed in the first line of a text that's displayed in the middle of allowed pop-ups panel instead of the exceptions list
+     when there are no exceptions. -->
+    <string name="settings_privacy_policy_webxr_empty_description">WebXR を使用するサイトを開くと、そのサイト上の WebXR をブロックするためのダイアログを開けます。</string>
+
+    <!-- This string labels the Reset button that removes all the sites not allowed to access WebXR -->
+    <string name="settings_privacy_policy_webxr_reset">VR デバイスへのアクセスが許可されていないサイトをリセットします。</string>
+
     <!-- This string is used as the title of the Tracking dialog used to do not allow websites to bypass tracking protection. -->
     <string name="settings_privacy_policy_tracking_title">強化型トラッキング防止機能の例外</string>
 
@@ -949,6 +959,30 @@
          When pressed a dropdown menu is displayed with the sorting options. -->
     <string name="downloads_sort">並べ替え</string>
 
+    <!-- This string is displayed as an option in the downloads sorting menu
+         When pressed the download list is sorted in alphabetical order from A to Z. -->
+    <string name="downloads_filename_sort_az">名前 (昇順)</string>
+
+    <!-- This string is displayed as an option in the downloads sorting menu
+         When pressed the download list is sorted in alphabetically order from Z to A. -->
+    <string name="downloads_filename_sort_za">名前 (降順)</string>
+
+    <!-- This string is displayed as an option in the downloads sorting menu
+         When pressed the download list is sorted in download date ascending order. -->
+    <string name="downloads_sort_download_date_asc">日付 (昇順)</string>
+
+    <!-- This string is displayed as an option in the downloads sorting menu
+         When pressed the download list is sorted in download date descending order. -->
+    <string name="downloads_sort_download_date_desc">日付 (降順)</string>
+
+    <!-- This string is displayed as an option in the downloads sorting menu
+         When pressed the download list is sorted in download date ascending order. -->
+    <string name="downloads_sort_download_size_asc">サイズ (昇順)</string>
+
+    <!-- This string is displayed as an option in the downloads sorting menu
+         When pressed the download list is sorted in download date descending order. -->
+    <string name="downloads_sort_download_size_desc">サイズ (降順)</string>
+
     <!-- This string is displayed is the "Sync" button in the history panel. When pressed the
          history is synced with the Firefox account. -->
     <string name="fxa_sync">同期</string>
@@ -1034,6 +1068,9 @@
 
     <!-- This string labels the Reset button that removes all the sites from the stored allowed pop-ups sites. -->
     <string name="privacy_options_popups_reset">ポップアップウィンドウのブロック設定をリセット</string>
+
+    <!-- This string is displayed on top of the allowed sites list in the allowed pop-ups panel. -->
+    <string name="privacy_options_popups_list_header_v1">次のウェブサイトはポップアップウィンドウの表示が許可されています:</string>
 
     <!-- This string is displayed in the first line of a text that's displayed in the middle of allowed pop-ups panel instead of the exceptions list
          when there are no exceptions. -->
@@ -1142,6 +1179,26 @@
          browser's navigation bar. The button it labels, when pressed, clears the navigation bar text. -->
     <string name="clear_tooltip">消去します</string>
 
+    <!-- This string is for the tooltip that appears upon hovering the 'Pop-Up' button in the
+         browser's navigation bar if popups are not blocked for the site.
+         The button it labels, when pressed, Shows the pop-up dialog. -->
+    <string name="popup_tooltip_v1">ポップアップがブロックされていません</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'Pop-Up' button in the
+         browser's navigation bar if popups are blocked for the site.
+         The button it labels, when pressed, Shows the pop-up dialog. -->
+    <string name="popup_blocked_tooltip">ポップアップがブロックされています</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'DRM' button in the
+         browser's navigation bar when DRM is allowed for the site. The button it labels, when pressed,
+         shows the DRM bubble on top of the button. -->
+    <string name="drm_enabled_tooltip">DRM が許可されています</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'DRM' button in the
+         browser's navigation bar when DRM not allowed for the site. The button it labels, when pressed,
+         shows the DRM bubble on top of the button. -->
+    <string name="drm_disabled_tooltip">DRM が許可されていません</string>
+
     <!-- This string is for the tooltip that when clicking the 'Info' (ⓘ) icon visible next to the current website's
          URL in the URL bar. The button it labels, when pressed, shows information about the site. -->
     <string name="site_info_tooltip">サイトの情報を表示</string>
@@ -1154,10 +1211,21 @@
          'Resize' refers to the button used to resize the browset window. -->
     <string name="resize_tooltip">サイズ変更します</string>
 
+    <!-- This string is for the tooltip that appears upon hovering the 'WebXR' button in the
+     browser's navigation bar. The button it labels, when pressed, Shows the WebXR permission dialog. -->
+    <string name="webxr_allowed_tooltip">WebXR が許可されています</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'WebXR' button in the
+ browser's navigation bar. The button it labels, when pressed, Shows the WebXR permission dialog. -->
+    <string name="webxr_blocked_tooltip">WebXR がブロックされています</string>
+
     <!-- This string appears in the WebXR interstial next to an arrow pointing to the controller button that
      has to be used to exit from WebXR. It's preferred to separate it in two lines if possible.
      \n is used to create a new line  -->
     <string name="webxr_interstitial_exit_webxr">WebXR\nを終了</string>
+
+    <!-- This string appears in the WebXR interstitial. -->
+    <string name="webxr_interstitial_how_to_continue_1">続行するには他のボタンを押してください</string>
 
     <!-- This string is for the tooltip that appears upon hovering the 'Tracking' button in the
      browser's navigation bar. The button it labels, when pressed, Shows the Tracking dialog. -->
@@ -1210,6 +1278,15 @@
 
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it copies the target to the clipboard -->
     <string name="context_menu_copy_link">リンクをコピー</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it copies the image uri to the clipboard -->
+    <string name="context_menu_copy_image_location">画像の URL をコピー</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it copies the video uri to the clipboard -->
+    <string name="context_menu_copy_video_location">動画の URL をコピー</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it copies the audio uri to the clipboard -->
+    <string name="context_menu_copy_audio_location">音声の URL をコピー</string>
 
     <!-- This string is shown in the context menu after a longpress on a text. When clicked it cuts the selected text and can be pasted later. -->
     <string name="context_menu_cut_text">切り取り</string>
@@ -1366,9 +1443,19 @@
     <!-- This string is displayed in the URL bar when the user is in the history panel -->
     <string name="url_history_title">履歴</string>
 
+    <!-- This string is displayed in the URL bar when the user is in the downloads panel -->
+    <string name="url_downloads_title">ダウンロード</string>
+
     <!-- This string is displayed in the Clear button on top of the window when in private mode. It only appears
          when there is one window left. When clicked, it closes the private session -->
     <string name="private_clear_button">消去</string>
+
+    <!-- This string is displayed in the title of the pop-up blocking dialog.
+        '%1$s' will be replaced at runtime with the app's name. -->
+    <string name="popup_block_title_v1">%1$s がこのサイトのポップアップをブロックしました</string>
+
+    <!-- This string is displayed as a description below the title of the pop-up blocking dialog. -->
+    <string name="popup_block_description_v1">ポップアップを表示しますか？</string>
 
     <!-- This string is displayed on the right of the checkbox in the the pop-up blocking dialog.
          If the checkbox is checked Firefox will never ask again to block pop-ups for this site -->
@@ -1511,13 +1598,136 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <string name="slow_script_dialog_action_wait">待機</string>
 
 
+    <!-- This string is displayed in the title of the quick PopUp blocking dialog, accessed from the PopUp icon in the URL bar.
+     '%1$s' will be replaced at runtime with the status of the setting. -->
+    <string name="popup_permission_dialog_message">このサイトでポップアップブロックは%1$sです。</string>
+
+    <!-- This string is displayed in the on button of the quick Popup blocking dialog when it's in enabled state. It's accessed from the Popup icon in the URL bar. -->
+    <string name="popup_dialog_button_on">オン</string>
+
+    <!-- This string is displayed in the off button of the quick Popup blocking dialog when it's in disabled state. It's accessed from the Popup icon in the URL bar. -->
+    <string name="popup_dialog_button_off">オフ</string>
+
+    <!-- This string is displayed in the title of the quick WebXR blocking dialog, accessed from the VR icon in the URL bar.
+     '%1$s' will be replaced at runtime with the status of the setting.
+     '%2$s' will be replaced at runtime with the Learn More page link. -->
+    <string name="webxr_permission_dialog_message">このサイトで WebXR は%1$sです。&lt;a href=&quot;%2$s&quot;&gt;詳細情報&lt;/a&gt;</string>
+
+    <!-- This string is displayed in the on button of the quick WebXR blocking dialog when it's in enabled state. It's accessed from the WebXR icon in the URL bar. -->
+    <string name="webxr_dialog_button_on">オン</string>
+
+    <!-- This string is displayed in the off button of the quick WebXR blocking dialog when it's in disabled state. It's accessed from the WebXR icon in the URL bar. -->
+    <string name="webxr_dialog_button_off">オフ</string>
+
     <!-- This string is displayed in the title of the quick Tracking Protection dialog, accessed from the Tracking Protection icon in the URL bar.
          '%1$s' will be replaced at runtime with the status of the setting.
          '%2$s' will be replaced at runtime with the Learn More page link. -->
     <string name="tracking_dialog_message">このサイトでの強化型トラッキング防止は %1$s です。 (&lt;a href=&quot;%2$s&quot;&gt;詳細情報&lt;/a&gt;)</string>
   
+    <!-- This string is displayed in the on button of the quick Tracking Protection dialog when it's in enabled state. It's accessed from the Tracking Protection icon in the URL bar. -->
+    <string name="tracking_dialog_button_on">オン</string>
+
+    <!-- This string is displayed in the off button of the quick Tracking Protection dialog when it's in disabled state. It's accessed from the Tracking Protection icon in the URL bar. -->
+    <string name="tracking_dialog_button_off">オフ</string>
+
+    <!-- This string is displayed in the title of the quick DRM dialog, accessed from the DRM icon in the URL bar.
+         '%1$s' will be replaced at runtime with the status of the setting.
+         '%2$s' will be replaced at runtime with the Learn More page link. -->
+    <string name="drm_dialog_message">このサイトの音声や動画には DRM ソフトウェアが使用されているため、%1$s での視聴が制限される可能性があります。&lt;a href=&quot;%2$s&quot;&gt;詳細情報&lt;/a&gt;</string>
+
+    <!-- This string is displayed in the switch button of the quick DRM dialog when it's in enabled state. It's accessed from the DRM icon in the URL bar. -->
+    <string name="drm_dialog_button_on">オン</string>
+
+    <!-- This string is displayed in the switch button of the quick DRM dialog when it's in disabled state. It's accessed from the DRM icon in the URL bar. -->
+    <string name="drm_dialog_button_off">オフ</string>
+
+    <!-- This string is displayed as the title of a dialog that is displayed the first time a user access DRM content if they haven't
+         explicitly enable/Disable the DRM setting yet. -->
+    <string name="drm_first_use_title_v1">このサイトには DRM コンテンツが含まれています。</string>
+
+    <!-- This string is displayed as the body of a dialog that is displayed the first time a user access DRM content if they haven't
+         explicitly enable/Disable the DRM setting yet.
+         '%1$s' will be replaced at runtime with the Learn More page link. -->
+    <string name="drm_first_use_body_v2">DRM を許可すると、サイトを開くたびにサイトがこの端末を識別できるようになります。&lt;a href=&quot;%1$s&quot;&gt;詳細情報&lt;/a&gt;</string>
+  
+    <!-- This string is displayed in the enable button that is displayed inside the dialog that is displayed the first time a user access
+         access DRM content if they haven't explicitly enable/Disable the DRM setting yet. -->
+    <string name="drm_first_use_allow">許可する</string>
+  
+    <!-- This string is displayed in the do not enable button that is displayed inside the dialog that is displayed the first time a user access
+         access DRM content if they haven't explicitly enable/Disable the DRM setting yet. -->
+    <string name="drm_first_use_do_not_allow">許可しない</string>
+
     <!-- This string is displayed in the disable button of the quick Tracking Protection dialog, accessed from the Tracking Protection icon in the URL bar. -->
     <string name="tracking_dialog_button_disable">無効化</string>
+
+    <!-- This string is displayed in the body of the confirm dialog shown in some platforms when the back button is pressed to quit the app.
+         '%1$s' will be replaced at runtime with the app name. -->
+    <string name="exit_confirm_dialog_body">本当に %1$s を終了してもよろしいですか？</string>
+
+    <!-- This string is displayed in the Cancel button of the confirm dialog shown in some platforms when the back button is pressed to quit the app.  -->
+    <string name="exit_confirm_dialog_button_cancel">キャンセル</string>
+
+    <!-- This string is displayed in the Quit button of the confirm dialog shown in some platforms when the back button is pressed to quit the app.  -->
+    <string name="exit_confirm_dialog_button_quit">終了</string>
+
+    <!-- This string is displayed in the title of the dialog displayed when the user tries to open an unsupported
+         file from the Downloads library panel. -->
+    <string name="download_open_file_unsupported_title">サポートされていないファイル形式</string>
+
+    <!-- This string is displayed in the body of the dialog displayed when the user tries to open an unsupported
+         file from the Downloads library panel. -->
+    <string name="download_open_file_unsupported_body">このファイルを開けません。外部アプリケーションで開きますか？</string>
+
+    <!-- This string is displayed in the cancel button of the dialog displayed when the user tries to open an unsupported
+         file from the Downloads library panel. When clicked the dialog is closed.-->
+    <string name="download_open_file_unsupported_cancel">キャンセル</string>
+
+    <!-- This string is displayed in the cancel button of the dialog displayed when the user tries to open an unsupported
+         file from the Downloads library panel. When clicked we hand over the file open to the system.-->
+    <string name="download_open_file_unsupported_open">開く</string>
+
+    <!-- This string is displayed in the title of the dialog displayed when we try to hand over the file open to
+         the system but the system can't handle it either. -->
+    <string name="download_open_file_error_title">エラー</string>
+
+    <!-- This string is displayed in the body of the dialog displayed when the file type cannot be opened and
+     there is no system app available to handle it either. -->
+    <string name="download_open_file_open_unsupported_body">このファイル形式はサポートされていません。</string>
+
+    <!-- This string is displayed in the body of the dialog displayed when we try to hand over the file open to
+         the system but the system can't handle it either. -->
+    <string name="download_open_file_error_body">この種類のファイルを扱えるアプリケーションが見つかりませんでした。</string>
+
+    <!-- This string is displayed in the title of the dialog displayed when a download has been requested
+         so the user can confirm if they want to actually download the file. -->
+    <string name="download_confirm_title">このファイルをダウンロードしますか？</string>
+
+    <!-- This string is displayed in the "Cancel" button of the dialog displayed when a download has been requested
+         so the user can confirm if they want to actually download the file. If clicked the download is not started. -->
+    <string name="download_confirm_cancel">キャンセル</string>
+
+    <!-- This string is displayed in the "Download" button of the dialog displayed when a download has been requested
+         so the user can confirm if they want to actually download the file. If clicked the download is queued. -->
+    <string name="download_confirm_download">ダウンロード</string>
+
+    <!-- This string is displayed in the confirmation dialog when a downloaded file is deleted from the downloads list. -->
+    <string name="download_delete_file_confirm_title">ファイルを削除</string>
+
+    <!-- This string is displayed in the confirmation dialog when a downloaded file is deleted from the downloads list. -->
+    <string name="download_delete_file_confirm_body">本当にこのファイルを削除してもよろしいですか？</string>
+
+    <!-- This string is displayed in the confirmation dialog checkbox to also delete the file from disk. -->
+    <string name="download_delete_file_confirm_checkbox">ディスクからもファイルを削除する</string>
+
+    <!-- This string is displayed in the confirmation dialog when the delete all button is clicked in the downloads list. -->
+    <string name="download_delete_all_confirm_title">ダウンロードしたすべてのファイルを削除します</string>
+
+    <!-- This string is displayed in the confirmation dialog when the delete all button is clicked in the downloads list. -->
+    <string name="download_delete_all_confirm_body">本当にダウンロードしたすべてのファイルを削除してもよろしいですか？</string>
+
+    <!-- This string is displayed in the delete download confirmation dialog checkbox to also delete the file from disk. -->
+    <string name="download_delete_all_confirm_checkbox">ディスクからもファイルを削除する</string>
 
     <!-- This string is displayed in the delete download confirmation dialog cancel button. -->
     <string name="download_delete_confirm_cancel">キャンセル</string>
