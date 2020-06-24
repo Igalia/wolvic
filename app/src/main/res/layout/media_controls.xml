@@ -1,95 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
-    <LinearLayout
-        android:layout_width="@dimen/media_controls_panel_width"
-        android:layout_height="@dimen/media_controls_panel_height"
-        android:layout_gravity="left"
-        android:orientation="vertical"
-        android:background="@drawable/media_controls_background"
-        android:layout_marginTop="15dp"
-        android:paddingTop="12dp"
-        android:paddingBottom="0dp"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp">
-
-        <org.mozilla.vrbrowser.ui.views.MediaSeekBar
-            android:id="@+id/mediaControlSeekBar"
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:gravity="center_vertical">
-        </org.mozilla.vrbrowser.ui.views.MediaSeekBar>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="playing"
+            type="boolean" />
+        <variable
+            name="muted"
+            type="boolean" />
+    </data>
+    <FrameLayout
+        android:layout_width="@dimen/media_controls_container_width"
+        android:layout_height="@dimen/media_controls_container_height">
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="44dp"
-            android:orientation="horizontal"
-            android:layout_marginTop="1dp">
-            <org.mozilla.vrbrowser.ui.views.UIButton
-                android:id="@+id/mediaBackButton"
-                style="?attr/mediaControlsButtonStyle"
-                android:layout_weight="1"
-                android:src="@drawable/ic_icon_back" />
+            android:layout_width="@dimen/media_controls_panel_width"
+            android:layout_height="@dimen/media_controls_panel_height"
+            android:layout_gravity="left"
+            android:orientation="vertical"
+            android:background="@drawable/media_controls_background"
+            android:layout_marginTop="15dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="0dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp">
 
-            <org.mozilla.vrbrowser.ui.views.UIButton
-                android:id="@+id/mediaSeekBackwardButton"
-                style="?attr/mediaControlsButtonStyle"
-                android:layout_weight="1"
-                android:src="@drawable/ic_icon_media_seek_backward_10" />
+            <org.mozilla.vrbrowser.ui.views.MediaSeekBar
+                android:id="@+id/mediaControlSeekBar"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:gravity="center_vertical">
+            </org.mozilla.vrbrowser.ui.views.MediaSeekBar>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:orientation="horizontal"
+                android:layout_marginTop="1dp">
+                <org.mozilla.vrbrowser.ui.views.UIButton
+                    android:id="@+id/mediaBackButton"
+                    style="?attr/mediaControlsButtonStyle"
+                    android:layout_weight="1"
+                    android:src="@drawable/ic_icon_back"
+                    android:tooltipText="@string/video_controls_exit"
+                    app:tooltipDensity="@dimen/tray_tooltip_density"
+                    app:tooltipPosition="bottom"
+                    app:tooltipLayout="@layout/tooltip_tray"/>
 
-            <org.mozilla.vrbrowser.ui.views.UIButton
-                android:id="@+id/mediaPlayButton"
-                style="?attr/mediaControlsButtonStyle"
-                android:layout_weight="1"
-                android:src="@drawable/ic_icon_media_play" />
+                <org.mozilla.vrbrowser.ui.views.UIButton
+                    android:id="@+id/mediaSeekBackwardButton"
+                    style="?attr/mediaControlsButtonStyle"
+                    android:layout_weight="1"
+                    android:src="@drawable/ic_icon_media_seek_backward_10"
+                    android:tooltipText="@{String.format(@string/video_controls_seek_backward, 10)}"
+                    app:tooltipDensity="@dimen/tray_tooltip_density"
+                    app:tooltipPosition="bottom"
+                    app:tooltipLayout="@layout/tooltip_tray"/>
 
-            <org.mozilla.vrbrowser.ui.views.UIButton
-                android:id="@+id/mediaSeekForwardButton"
-                style="?attr/mediaControlsButtonStyle"
-                android:layout_weight="1"
-                android:src="@drawable/ic_icon_media_seek_forward_30" />
+                <org.mozilla.vrbrowser.ui.views.UIButton
+                    android:id="@+id/mediaPlayButton"
+                    style="?attr/mediaControlsButtonStyle"
+                    android:layout_weight="1"
+                    android:src="@{playing ? @drawable/ic_icon_media_pause : @drawable/ic_icon_media_play}"
+                    android:tooltipText="@{playing ? @string/video_controls_pause : @string/video_controls_play}"
+                    app:tooltipDensity="@dimen/tray_tooltip_density"
+                    app:tooltipPosition="bottom"
+                    app:tooltipLayout="@layout/tooltip_tray"/>
 
-            <org.mozilla.vrbrowser.ui.views.UIButton
-                android:id="@+id/mediaProjectionButton"
-                style="?attr/mediaControlsButtonStyle"
-                android:layout_weight="1"
-                android:src="@drawable/ic_icon_vr_projection" />
+                <org.mozilla.vrbrowser.ui.views.UIButton
+                    android:id="@+id/mediaSeekForwardButton"
+                    style="?attr/mediaControlsButtonStyle"
+                    android:layout_weight="1"
+                    android:src="@drawable/ic_icon_media_seek_forward_30"
+                    android:tooltipText="@{String.format(@string/video_controls_seek_forward, 10)}"
+                    app:tooltipDensity="@dimen/tray_tooltip_density"
+                    app:tooltipPosition="bottom"
+                    app:tooltipLayout="@layout/tooltip_tray"/>
 
-            <org.mozilla.vrbrowser.ui.views.UIButton
-                android:id="@+id/mediaVolumeButton"
-                style="?attr/mediaControlsButtonStyle"
-                android:layout_weight="1"
-                android:src="@drawable/ic_icon_media_volume" />
+                <org.mozilla.vrbrowser.ui.views.UIButton
+                    android:id="@+id/mediaProjectionButton"
+                    style="?attr/mediaControlsButtonStyle"
+                    android:layout_weight="1"
+                    android:src="@drawable/ic_icon_vr_projection"
+                    android:tooltipText="@string/video_controls_projection"
+                    app:tooltipDensity="@dimen/tray_tooltip_density"
+                    app:tooltipPosition="bottom"
+                    app:tooltipLayout="@layout/tooltip_tray"/>
+
+                <org.mozilla.vrbrowser.ui.views.UIButton
+                    android:id="@+id/mediaVolumeButton"
+                    style="?attr/mediaControlsButtonStyle"
+                    android:layout_weight="1"
+                    android:src="@{muted ? @drawable/ic_icon_media_volume_muted : @drawable/ic_icon_media_volume}"
+                    android:tooltipText="@{muted ? @string/video_controls_unmute : @string/video_controls_mute}"
+                    app:tooltipDensity="@dimen/tray_tooltip_density"
+                    app:tooltipPosition="bottom"
+                    app:tooltipLayout="@layout/tooltip_tray"/>
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
 
-    <org.mozilla.vrbrowser.ui.views.VolumeControl
-        android:id="@+id/volumeControl"
-        android:layout_width="20dp"
-        android:layout_height="@dimen/media_controls_panel_height"
-        android:layout_marginTop="15dp"
-        android:layout_marginRight="10dp"
-        android:layout_gravity="right"
-        android:visibility="invisible"
-        android:background="@drawable/media_controls_background">
+        <org.mozilla.vrbrowser.ui.views.VolumeControl
+            android:id="@+id/volumeControl"
+            android:layout_width="20dp"
+            android:layout_height="@dimen/media_controls_panel_height"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="right"
+            android:visibility="invisible"
+            android:background="@drawable/media_controls_background">
 
-    </org.mozilla.vrbrowser.ui.views.VolumeControl>
+        </org.mozilla.vrbrowser.ui.views.VolumeControl>
 
-    <TextView
-        android:id="@+id/mediaControlSeekLabel"
-        android:visibility="gone"
-        android:minWidth="45dp"
-        android:layout_width="wrap_content"
-        android:layout_height="24dp"
-        android:layout_gravity="top"
-        android:layout_marginTop="2dp"
-        android:layout_marginLeft="40dp"
-        android:background="@drawable/media_seekbar_label_background"
-        android:textColor="@color/white"
-        android:fontFamily="sans-serif"
-        android:textStyle="normal"
-        android:textSize="11dp"
-        android:textAlignment="center"
-        android:paddingStart="2dp"
-        android:paddingEnd="2dp"
-        android:paddingTop="3dp"
-        />
-</merge>
+        <TextView
+            android:id="@+id/mediaControlSeekLabel"
+            android:visibility="gone"
+            android:minWidth="45dp"
+            android:layout_width="wrap_content"
+            android:layout_height="24dp"
+            android:layout_gravity="top"
+            android:layout_marginTop="2dp"
+            android:layout_marginLeft="40dp"
+            android:background="@drawable/media_seekbar_label_background"
+            android:textColor="@color/white"
+            android:fontFamily="sans-serif"
+            android:textStyle="normal"
+            android:textSize="11dp"
+            android:textAlignment="center"
+            android:paddingStart="2dp"
+            android:paddingEnd="2dp"
+            android:paddingTop="3dp"
+            />
+    </FrameLayout>
+</layout>

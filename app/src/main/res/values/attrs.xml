@@ -29,6 +29,7 @@
         <attr name="tooltipPosition" />
         <attr name="tooltipDensity" />
         <attr name="tooltipLayout" />
+        <attr name="tooltipCurved" />
     </declare-styleable>
 
     <attr name="buttonText" format="string" />
@@ -44,6 +45,7 @@
     </attr>
     <attr name="tooltipDensity" format="dimension" />
     <attr name="tooltipLayout" format="reference" />
+    <attr name="tooltipCurved" format="boolean" />
 
     <declare-styleable name="SwitchSetting">
         <attr name="description" />

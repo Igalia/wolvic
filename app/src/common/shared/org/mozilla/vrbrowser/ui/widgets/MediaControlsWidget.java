@@ -7,40 +7,27 @@ package org.mozilla.vrbrowser.ui.widgets;
 
 import android.content.Context;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
-import org.mozilla.telemetry.schedule.jobscheduler.TelemetryJobService;
-import org.mozilla.vrbrowser.R;
+import androidx.databinding.DataBindingUtil;
+
 import org.mozilla.geckoview.MediaElement;
+import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.Media;
 import org.mozilla.vrbrowser.browser.SettingsStore;
+import org.mozilla.vrbrowser.databinding.MediaControlsBinding;
 import org.mozilla.vrbrowser.ui.views.MediaSeekBar;
-import org.mozilla.vrbrowser.ui.views.UIButton;
 import org.mozilla.vrbrowser.ui.views.VolumeControl;
 import org.mozilla.vrbrowser.ui.widgets.menus.VideoProjectionMenuWidget;
 
 public class MediaControlsWidget extends UIWidget implements MediaElement.Delegate {
 
+    private MediaControlsBinding mBinding;
     private Media mMedia;
-    private MediaSeekBar mSeekBar;
-    private VolumeControl mVolumeControl;
-    private UIButton mMediaPlayButton;
-    private UIButton mMediaSeekBackButton;
-    private UIButton mMediaSeekForwardButton;
-    private UIButton mMediaProjectionButton;
-    private UIButton mMediaVolumeButton;
-    private UIButton mMediaBackButton;
-    private TextView mMediaSeekLabel;
-    private Drawable mPlayIcon;
-    private Drawable mPauseIcon;
-    private Drawable mVolumeIcon;
-    private Drawable mMutedIcon;
     private Runnable mBackHandler;
     private boolean mPlayOnSeekEnd;
     private Rect mOffsetViewBounds;
@@ -66,31 +53,21 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
     }
 
     private void initialize(Context aContext) {
-        inflate(aContext, R.layout.media_controls, this);
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.media_controls, this, true);
+        mBinding.setPlaying(true);
+        mBinding.setMuted(false);
 
-        mSeekBar = findViewById(R.id.mediaControlSeekBar);
-        mVolumeControl = findViewById(R.id.volumeControl);
-        mMediaPlayButton = findViewById(R.id.mediaPlayButton);
-        mMediaSeekBackButton = findViewById(R.id.mediaSeekBackwardButton);
-        mMediaSeekForwardButton = findViewById(R.id.mediaSeekForwardButton);
-        mMediaProjectionButton = findViewById(R.id.mediaProjectionButton);
-        mMediaVolumeButton = findViewById(R.id.mediaVolumeButton);
-        mMediaBackButton = findViewById(R.id.mediaBackButton);
-        mMediaSeekLabel = findViewById(R.id.mediaControlSeekLabel);
-        mPlayIcon = aContext.getDrawable(R.drawable.ic_icon_media_play);
-        mPauseIcon = aContext.getDrawable(R.drawable.ic_icon_media_pause);
-        mMutedIcon = aContext.getDrawable(R.drawable.ic_icon_media_volume_muted);
-        mVolumeIcon = aContext.getDrawable(R.drawable.ic_icon_media_volume);
         mOffsetViewBounds = new Rect();
 
         mVolumeCtrlRunnable = () -> {
-            if ((mHideVolumeSlider) && (mVolumeControl.getVisibility() == View.VISIBLE)) {
-                mVolumeControl.setVisibility(View.INVISIBLE);
+            if ((mHideVolumeSlider) && (mBinding.volumeControl.getVisibility() == View.VISIBLE)) {
+                mBinding.volumeControl.setVisibility(View.INVISIBLE);
                 stopVolumeCtrlHandler();
             }
         };
 
-        mMediaPlayButton.setOnClickListener(v -> {
+        mBinding.mediaPlayButton.setOnClickListener(v -> {
             if (mMedia.isEnded()) {
                 mMedia.seek(0);
                 mMedia.play();
@@ -100,24 +77,24 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
                 mMedia.play();
             }
 
-            mMediaPlayButton.requestFocusFromTouch();
+            mBinding.mediaPlayButton.requestFocusFromTouch();
         });
 
-        mMediaSeekBackButton.setOnClickListener(v -> {
+        mBinding.mediaSeekBackwardButton.setOnClickListener(v -> {
             mMedia.seek(Math.max(0, mMedia.getCurrentTime() - 10.0f));
-            mMediaSeekBackButton.requestFocusFromTouch();
+            mBinding.mediaSeekBackwardButton.requestFocusFromTouch();
         });
 
-        mMediaSeekForwardButton.setOnClickListener(v -> {
+        mBinding.mediaSeekForwardButton.setOnClickListener(v -> {
             double t = mMedia.getCurrentTime() + 30;
             if (mMedia.getDuration() > 0) {
                 t = Math.min(mMedia.getDuration(), t);
             }
             mMedia.seek(t);
-            mMediaSeekForwardButton.requestFocusFromTouch();
+            mBinding.mediaSeekForwardButton.requestFocusFromTouch();
         });
 
-        mMediaProjectionButton.setOnClickListener(v -> {
+        mBinding.mediaProjectionButton.setOnClickListener(v -> {
             WidgetPlacement placement = mProjectionMenu.getPlacement();
             placement.parentHandle = this.getHandle();
             placement.worldWidth = 0.5f;
@@ -138,30 +115,30 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
             mWidgetManager.updateWidget(mProjectionMenu);
         });
 
-        mMediaVolumeButton.setOnClickListener(v -> {
+        mBinding.mediaVolumeButton.setOnClickListener(v -> {
             if (mMedia.isMuted()) {
                 mMedia.setMuted(false);
             } else {
                 mMedia.setMuted(true);
-                mVolumeControl.setVolume(0);
+                mBinding.volumeControl.setVolume(0);
             }
-            mMediaVolumeButton.requestFocusFromTouch();
+            mBinding.mediaVolumeButton.requestFocusFromTouch();
         });
 
-        mMediaBackButton.setOnClickListener(v -> {
+        mBinding.mediaBackButton.setOnClickListener(v -> {
             if (mBackHandler != null) {
                 mBackHandler.run();
             }
-            mMediaBackButton.requestFocusFromTouch();
+            mBinding.mediaBackButton.requestFocusFromTouch();
         });
 
-        mSeekBar.setDelegate(new MediaSeekBar.Delegate() {
+        mBinding.mediaControlSeekBar.setDelegate(new MediaSeekBar.Delegate() {
             @Override
             public void onSeekDragStart() {
                 mPlayOnSeekEnd = mMedia.isPlaying();
-                mMediaSeekLabel.setVisibility(View.VISIBLE);
+                mBinding.mediaControlSeekLabel.setVisibility(View.VISIBLE);
                 mMedia.pause();
-                mSeekBar.requestFocusFromTouch();
+                mBinding.mediaControlSeekBar.requestFocusFromTouch();
             }
 
             @Override
@@ -174,34 +151,34 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
                 if (mPlayOnSeekEnd) {
                     mMedia.play();
                 }
-                mMediaSeekLabel.setVisibility(View.GONE);
+                mBinding.mediaControlSeekLabel.setVisibility(View.GONE);
             }
 
             @Override
             public void onSeekHoverStart() {
-                mMediaSeekLabel.setVisibility(View.VISIBLE);
+                mBinding.mediaControlSeekLabel.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void onSeekHoverEnd() {
-                mMediaSeekLabel.setVisibility(View.GONE);
+                mBinding.mediaControlSeekLabel.setVisibility(View.GONE);
             }
 
             @Override
             public void onSeekPreview(String aText, double aRatio) {
-                mMediaSeekLabel.setText(aText);
-                View childView = mSeekBar.getSeekBarView();
+                mBinding.mediaControlSeekLabel.setText(aText);
+                View childView = mBinding.mediaControlSeekBar.getSeekBarView();
                 childView.getDrawingRect(mOffsetViewBounds);
                 MediaControlsWidget.this.offsetDescendantRectToMyCoords(childView, mOffsetViewBounds);
 
-                FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mMediaSeekLabel.getLayoutParams();
-                params.setMarginStart(mOffsetViewBounds.left + (int) (aRatio * mOffsetViewBounds.width()) - mMediaSeekLabel.getMeasuredWidth() / 2);
-                mMediaSeekLabel.setLayoutParams(params);
+                FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mBinding.mediaControlSeekLabel.getLayoutParams();
+                params.setMarginStart(mOffsetViewBounds.left + (int) (aRatio * mOffsetViewBounds.width()) - mBinding.mediaControlSeekLabel.getMeasuredWidth() / 2);
+                mBinding.mediaControlSeekLabel.setLayoutParams(params);
             }
         });
 
 
-        mVolumeControl.setDelegate(new VolumeControl.Delegate() {
+        mBinding.volumeControl.setDelegate(new VolumeControl.Delegate() {
 
             @Override
             public void onVolumeChange(double aVolume) {
@@ -209,7 +186,7 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
                 if (mMedia.isMuted()) {
                     mMedia.setMuted(false);
                 }
-                mVolumeControl.requestFocusFromTouch();
+                mBinding.volumeControl.requestFocusFromTouch();
             }
 
             @Override
@@ -237,7 +214,7 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
 
             return false;
         });
-        mMediaVolumeButton.setOnHoverListener((v, event) -> {
+        mBinding.mediaVolumeButton.setOnHoverListener((v, event) -> {
             float startY = v.getY();
             float maxY = startY + v.getHeight();
             //for this we only hide on the left side of volume button or outside y area of button
@@ -245,14 +222,14 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
                 mHideVolumeSlider = true;
                 startVolumeCtrlHandler();
             } else {
-                mVolumeControl.setVisibility(View.VISIBLE);
+                mBinding.volumeControl.setVisibility(View.VISIBLE);
                 mHideVolumeSlider = false;
                 stopVolumeCtrlHandler();
             }
             return false;
         });
 
-        mVolumeControl.setOnHoverListener((v, event) -> {
+        mBinding.volumeControl.setOnHoverListener((v, event) -> {
             float startY = 0;
             float maxY = startY + v.getHeight();
             if ((event.getX() > 0 && event.getX() < v.getWidth()) && (event.getY() > startY && event.getY() < maxY)) {
@@ -273,6 +250,7 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
     @Override
     protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
         Context context = getContext();
+        aPlacement.worldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.media_controls_world_width);
         aPlacement.width = WidgetPlacement.dpDimension(context, R.dimen.media_controls_container_width);
         aPlacement.height = WidgetPlacement.dpDimension(context, R.dimen.media_controls_container_height);
         aPlacement.translationY = WidgetPlacement.unitFromMeters(getContext(), R.dimen.settings_world_y) -
@@ -311,11 +289,11 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
         }
         mMedia = aMedia;
         boolean enabled = mMedia != null;
-        mMediaPlayButton.setEnabled(enabled);
-        mMediaVolumeButton.setEnabled(enabled);
-        mMediaSeekForwardButton.setEnabled(enabled);
-        mMediaSeekBackButton.setEnabled(enabled);
-        mSeekBar.setEnabled(enabled);
+        mBinding.mediaPlayButton.setEnabled(enabled);
+        mBinding.mediaVolumeButton.setEnabled(enabled);
+        mBinding.mediaSeekForwardButton.setEnabled(enabled);
+        mBinding.mediaSeekBackwardButton.setEnabled(enabled);
+        mBinding.mediaControlSeekBar.setEnabled(enabled);
 
         if (mMedia == null) {
             return;
@@ -330,16 +308,16 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
     }
 
     public void setProjectionSelectorEnabled(boolean aEnabled) {
-        mMediaProjectionButton.setEnabled(aEnabled);
+        mBinding.mediaProjectionButton.setEnabled(aEnabled);
     }
 
     // Media Element delegate
     @Override
     public void onPlaybackStateChange(MediaElement mediaElement, int playbackState) {
         if (playbackState == MediaElement.MEDIA_STATE_PLAY) {
-            mMediaPlayButton.setImageDrawable(mPauseIcon);
+            mBinding.setPlaying(true);
         } else if (playbackState == MediaElement.MEDIA_STATE_PAUSE) {
-            mMediaPlayButton.setImageDrawable(mPlayIcon);
+            mBinding.setPlaying(false);
         }
     }
 
@@ -354,36 +332,36 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
         if (metaData == null) {
             return;
         }
-        mSeekBar.setDuration(metaData.duration);
+        mBinding.mediaControlSeekBar.setDuration(metaData.duration);
         if (metaData.audioTrackCount == 0) {
-            mMediaVolumeButton.setImageDrawable(mMutedIcon);
-            mMediaVolumeButton.setEnabled(false);
+            mBinding.setMuted(true);
+            mBinding.mediaVolumeButton.setEnabled(false);
         } else {
-            mMediaVolumeButton.setEnabled(true);
+            mBinding.mediaVolumeButton.setEnabled(true);
         }
-        mSeekBar.setSeekable(metaData.isSeekable);
+        mBinding.mediaControlSeekBar.setSeekable(metaData.isSeekable);
     }
 
     @Override
     public void onLoadProgress(MediaElement mediaElement, MediaElement.LoadProgressInfo progressInfo) {
         if (progressInfo.buffered != null) {
-            mSeekBar.setBuffered(progressInfo.buffered[progressInfo.buffered.length - 1].end);
+            mBinding.mediaControlSeekBar.setBuffered(progressInfo.buffered[progressInfo.buffered.length - 1].end);
         }
     }
 
     @Override
     public void onVolumeChange(MediaElement mediaElement, double volume, boolean muted) {
-        if (!mMediaVolumeButton.isEnabled()) {
+        if (!mBinding.mediaVolumeButton.isEnabled()) {
             return;
         }
-        mMediaVolumeButton.setImageDrawable(muted ? mMutedIcon : mVolumeIcon);
-        mVolumeControl.setVolume(volume);
-        mVolumeControl.setMuted(muted);
+        mBinding.setMuted(muted);
+        mBinding.volumeControl.setVolume(volume);
+        mBinding.volumeControl.setMuted(muted);
     }
 
     @Override
     public void onTimeChange(MediaElement mediaElement, double time) {
-        mSeekBar.setCurrentTime(time);
+        mBinding.mediaControlSeekBar.setCurrentTime(time);
     }
 
     @Override

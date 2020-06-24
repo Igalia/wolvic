@@ -123,7 +123,6 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
             notifyPrivateBrowsingClicked();
             view.requestFocusFromTouch();
         });
-        mBinding.privateButton.setCurvedTooltip(false);
 
         mBinding.settingsButton.setOnHoverListener(mButtonScaleHoverListener);
         mBinding.settingsButton.setOnClickListener(view -> {
@@ -136,7 +135,6 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
                 view.requestFocusFromTouch();
             }
         });
-        mBinding.settingsButton.setCurvedTooltip(false);
 
         mBinding.bookmarksButton.setOnHoverListener(mButtonScaleHoverListener);
         mBinding.bookmarksButton.setOnClickListener(view -> {
@@ -147,7 +145,6 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
             notifyBookmarksClicked();
             view.requestFocusFromTouch();
         });
-        mBinding.bookmarksButton.setCurvedTooltip(false);
 
         mBinding.historyButton.setOnHoverListener(mButtonScaleHoverListener);
         mBinding.historyButton.setOnClickListener(view -> {
@@ -158,7 +155,6 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
             notifyHistoryClicked();
             view.requestFocusFromTouch();
         });
-        mBinding.historyButton.setCurvedTooltip(false);
 
         mBinding.tabsButton.setOnHoverListener(mButtonScaleHoverListener);
         mBinding.tabsButton.setOnClickListener(view -> {
@@ -169,7 +165,6 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
             view.requestFocusFromTouch();
             notifyTabsClicked();
         });
-        mBinding.tabsButton.setCurvedTooltip(false);
 
         mBinding.addwindowButton.setOnHoverListener(mButtonScaleHoverListener);
         mBinding.addwindowButton.setOnClickListener(view -> {
@@ -181,7 +176,6 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
 
             notifyAddWindowClicked();
         });
-        mBinding.addwindowButton.setCurvedTooltip(false);
 
         mBinding.downloadsButton.setOnHoverListener(mButtonScaleHoverListener);
         mBinding.downloadsButton.setOnClickListener(view -> {
@@ -192,7 +186,6 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
             notifyDownloadsClicked();
             view.requestFocusFromTouch();
         });
-        mBinding.downloadsButton.setCurvedTooltip(false);
     }
 
     Observer<ObservableBoolean> mIsVisibleObserver = aVisible -> {

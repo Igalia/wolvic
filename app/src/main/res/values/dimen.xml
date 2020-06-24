@@ -86,6 +86,7 @@
     <dimen name="brightness_menu_width">150dp</dimen>
 
     <!-- Media Controls Widget -->
+    <item name="media_controls_world_width" format="float" type="dimen">1</item>
     <dimen name="media_controls_container_width">324dp</dimen>
     <dimen name="media_controls_container_height">105dp</dimen>
     <dimen name="media_controls_panel_width">284dp</dimen>
