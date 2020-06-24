@@ -142,6 +142,10 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
                 (VRBrowserActivity)getContext(),
                 ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
                 .get(TrayViewModel.class);
+        mSettingsViewModel = new ViewModelProvider(
+                (VRBrowserActivity)getContext(),
+                ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
+                .get(SettingsViewModel.class);
 
         updateUI();
 
@@ -189,6 +193,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mBinding = DataBindingUtil.inflate(inflater, R.layout.navigation_bar, this, true);
         mBinding.setLifecycleOwner((VRBrowserActivity)getContext());
         mBinding.setViewmodel(mViewModel);
+        mBinding.setSettingsmodel(mSettingsViewModel);
 
         mBinding.navigationBarNavigation.backButton.setOnClickListener(v -> {
             v.requestFocusFromTouch();
@@ -424,6 +429,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         super.onConfigurationChanged(newConfig);
 
         updateUI();
+
+        mSettingsViewModel.refresh();
     }
 
     @Override
@@ -521,10 +528,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             mViewModel.getIsPopUpBlocked().removeObserver(mIsPopUpBlockedListener);
             mViewModel = null;
         }
-
-        if (mSettingsViewModel != null) {
-            mSettingsViewModel = null;
-        }
     }
 
     @Override
@@ -541,15 +544,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
                 (VRBrowserActivity)getContext(),
                 ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
                 .get(String.valueOf(mAttachedWindow.hashCode()), WindowViewModel.class);
-        mSettingsViewModel = new ViewModelProvider(
-                (VRBrowserActivity)getContext(),
-                ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
-                .get(SettingsViewModel.class);
 
         mBinding.setViewmodel(mViewModel);
-        mBinding.setSettingsmodel(mSettingsViewModel);
-
-        mSettingsViewModel.refresh();
 
         mViewModel.getIsActiveWindow().observeForever(mIsActiveWindowObserver);
         mViewModel.getIsPopUpBlocked().observeForever(mIsPopUpBlockedListener);

@@ -104,6 +104,11 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
 
     @SuppressLint("ClickableViewAccessibility")
     private void initialize() {
+        mSettingsViewModel = new ViewModelProvider(
+                (VRBrowserActivity)getContext(),
+                ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
+                .get(SettingsViewModel.class);
+
         updateUI();
 
         mOpenDialog = SettingsView.SettingViewType.MAIN;
@@ -129,12 +134,6 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
 
         // Inflate this data binding layout
         mBinding = DataBindingUtil.inflate(inflater, R.layout.settings, this, true);
-
-        mSettingsViewModel = new ViewModelProvider(
-                (VRBrowserActivity)getContext(),
-                ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
-                .get(SettingsViewModel.class);
-
         mBinding.setSettingsmodel(mSettingsViewModel);
 
         mBinding.backButton.setOnClickListener(v -> {

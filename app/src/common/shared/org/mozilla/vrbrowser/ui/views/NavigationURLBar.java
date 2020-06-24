@@ -109,6 +109,11 @@ public class NavigationURLBar extends FrameLayout {
 
     @SuppressLint("ClickableViewAccessibility")
     private void initialize(Context aContext) {
+        mSettingsViewModel = new ViewModelProvider(
+                (VRBrowserActivity)getContext(),
+                ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
+                .get(SettingsViewModel.class);
+
         mAudio = AudioEngine.fromContext(aContext);
 
         mUIThreadExecutor = ((VRBrowserApplication)getContext().getApplicationContext()).getExecutors().mainThread();
@@ -120,6 +125,7 @@ public class NavigationURLBar extends FrameLayout {
         // Layout setup
         mBinding = DataBindingUtil.inflate(LayoutInflater.from(getContext()), R.layout.navigation_url, this, true);
         mBinding.setLifecycleOwner((VRBrowserActivity)getContext());
+        mBinding.setSettingsViewmodel(mSettingsViewModel);
 
         // Use Domain autocomplete provider from components
         mAutocompleteProvider = new ShippedDomainsProvider();
@@ -239,9 +245,6 @@ public class NavigationURLBar extends FrameLayout {
             mViewModel.getIsBookmarked().removeObserver(mIsBookmarkedObserver);
             mViewModel = null;
         }
-        if (mSettingsViewModel != null) {
-            mSettingsViewModel = null;
-        }
     }
 
     public void attachToWindow(@NonNull WindowWidget aWindow) {
@@ -249,15 +252,8 @@ public class NavigationURLBar extends FrameLayout {
                 (VRBrowserActivity)getContext(),
                 ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
                 .get(String.valueOf(aWindow.hashCode()), WindowViewModel.class);
-        mSettingsViewModel = new ViewModelProvider(
-                (VRBrowserActivity)getContext(),
-                ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
-                .get(SettingsViewModel.class);
 
         mBinding.setViewmodel(mViewModel);
-        mBinding.setSettingsViewmodel(mSettingsViewModel);
-
-        mSettingsViewModel.refresh();
 
         mViewModel.getIsLoading().observe((VRBrowserActivity)getContext(), mIsLoadingObserver);
         mViewModel.getIsBookmarked().observe((VRBrowserActivity)getContext(), mIsBookmarkedObserver);
