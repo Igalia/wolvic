@@ -1228,7 +1228,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mBlockedCount++;
         final int currentCount = mBlockedCount;
         postDelayed(() -> {
-            if (currentCount == mBlockedCount) {
+            if (currentCount == mBlockedCount && !mViewModel.getIsLibraryVisible().getValue().get()) {
                 showNotification(POPUP_NOTIFICATION_ID,
                         mBinding.navigationBarNavigation.urlBar.getPopUpButton(),
                         NotificationManager.Notification.TOP,
