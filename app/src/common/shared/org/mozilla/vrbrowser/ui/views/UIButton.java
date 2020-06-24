@@ -46,6 +46,7 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
     private @IdRes int mPrivateModeTintColorListRes;
     private @IdRes int mActiveModeTintColorListRes;
     private @IdRes int mNotificationModeTintColorListRes;
+    private @IdRes int mPrivateNotificationModeTintColorListRes;
     private TooltipWidget mTooltipView;
     private String mTooltipText;
     private int mTooltipDelay;
@@ -76,6 +77,7 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
         mPrivateModeTintColorListRes = attributes.getResourceId(R.styleable.UIButton_privateModeTintColorList, 0);
         mActiveModeTintColorListRes = attributes.getResourceId(R.styleable.UIButton_activeModeTintColorList, 0);
         mNotificationModeTintColorListRes = attributes.getResourceId(R.styleable.UIButton_notificationModeTintColorList, 0);
+        mPrivateNotificationModeTintColorListRes = attributes.getResourceId(R.styleable.UIButton_privateNotificationModeTintColorList, 0);
         mTooltipDelay = attributes.getInt(R.styleable.UIButton_tooltipDelay, getResources().getInteger(R.integer.tooltip_delay));
         mTooltipPosition = ViewUtils.TooltipPosition.fromId(attributes.getInt(R.styleable.UIButton_tooltipPosition, ViewUtils.TooltipPosition.BOTTOM.ordinal()));
         TypedValue densityValue = new TypedValue();
@@ -263,7 +265,10 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
     }
 
     private void setNotification() {
-        if (mActiveModeTintColorListRes != 0) {
+        if (mIsPrivate && mPrivateNotificationModeTintColorListRes != 0) {
+            setTintColorList(mPrivateNotificationModeTintColorListRes);
+
+        } else if (mNotificationModeTintColorListRes != 0) {
             setTintColorList(mNotificationModeTintColorListRes);
         }
     }

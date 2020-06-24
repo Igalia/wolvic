@@ -22,6 +22,7 @@
         <attr name="privateModeTintColorList" format="reference|color" />
         <attr name="activeModeTintColorList" format="reference|color" />
         <attr name="notificationModeTintColorList" format="reference|color" />
+        <attr name="privateNotificationModeTintColorList" format="reference|color" />
         <attr name="privateModeBackground" format="integer" />
         <attr name="activeModeBackground" format="integer" />
         <attr name="regularModeBackground" format="integer" />

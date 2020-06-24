@@ -58,6 +58,7 @@
         <item name="privateModeTintColorList">@drawable/main_button_icon_color_private</item>
         <item name="activeModeTintColorList">@drawable/main_button_icon_color_active</item>
         <item name="notificationModeTintColorList">@drawable/main_button_icon_color_notification</item>
+        <item name="privateNotificationModeTintColorList">@drawable/main_button_icon_color_notification_private</item>
         <item name="clipColor">@color/azure</item>
     </style>
 
@@ -184,6 +185,7 @@
         <item name="privateModeTintColorList">@drawable/main_button_icon_color_private</item>
         <item name="activeModeTintColorList">@drawable/main_button_icon_color_active</item>
         <item name="notificationModeTintColorList">@drawable/main_button_icon_color_notification</item>
+        <item name="privateNotificationModeTintColorList">@drawable/main_button_icon_color_notification_private</item>
     </style>
 
     <style name="urlBarIconThemeStart">
@@ -197,6 +199,7 @@
         <item name="privateModeTintColorList">@drawable/main_button_icon_color_private</item>
         <item name="activeModeTintColorList">@drawable/main_button_icon_color_active</item>
         <item name="notificationModeTintColorList">@drawable/main_button_icon_color_notification</item>
+        <item name="privateNotificationModeTintColorList">@drawable/main_button_icon_color_notification_private</item>
     </style>
 
     <style name="urlBarIconThemeEnd">
@@ -210,6 +213,7 @@
         <item name="privateModeTintColorList">@drawable/main_button_icon_color_private</item>
         <item name="activeModeTintColorList">@drawable/main_button_icon_color_active</item>
         <item name="notificationModeTintColorList">@drawable/main_button_icon_color_notification</item>
+        <item name="privateNotificationModeTintColorList">@drawable/main_button_icon_color_notification_private</item>
     </style>
 
     <style name="scrollbar">
