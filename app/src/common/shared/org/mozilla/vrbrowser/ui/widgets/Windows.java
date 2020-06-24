@@ -56,6 +56,9 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
     private static final String LOGTAG = SystemUtils.createLogtag(Windows.class);
 
+    public static final int WHITE = 0xFFFFFFFF;
+    public static final int GRAY = 0x555555FF;
+
     @IntDef(value = { OPEN_IN_FOREGROUND, OPEN_IN_BACKGROUND, OPEN_IN_NEW_WINDOW})
     public @interface NewTabLocation {}
     public static final int OPEN_IN_FOREGROUND = 0;
