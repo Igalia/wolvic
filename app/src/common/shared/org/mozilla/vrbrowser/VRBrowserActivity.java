@@ -228,6 +228,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Bundle extras = getIntent() != null ? getIntent().getExtras() : null;
+        SessionStore.prefOverrides(this, extras);
         ((VRBrowserApplication)getApplication()).onActivityCreate();
         SettingsStore.getInstance(getBaseContext()).setPid(Process.myPid());
         // Fix for infinite restart on startup crashes.
@@ -251,8 +253,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         BitmapCache.getInstance(this).onCreate();
 
-        Bundle extras = getIntent() != null ? getIntent().getExtras() : null;
-        SessionStore.get().initialize(this, extras);
+        SessionStore.get().initialize(this);
         SessionStore.get().setLocales(LocaleUtils.getPreferredLanguageTags(this));
 
         EngineProvider.INSTANCE.getOrCreateRuntime(this).appendAppNotesToCrashReport("Firefox Reality " + BuildConfig.VERSION_NAME + "-" + BuildConfig.VERSION_CODE + "-" + BuildConfig.FLAVOR + "-" + BuildConfig.BUILD_TYPE + " (" + BuildConfig.GIT_HASH + ")");

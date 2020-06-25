@@ -87,12 +87,14 @@ public class SessionStore implements
         mSessions = new ArrayList<>();
     }
 
-    public void initialize(Context context, Bundle aExtras) {
-        mContext = context;
-        mMainExecutor = ((VRBrowserApplication)context.getApplicationContext()).getExecutors().mainThread();
-
+    public static void prefOverrides(Context context, Bundle aExtras) {
         // FIXME: Once GeckoView has a prefs API
         SessionUtils.vrPrefsWorkAround(context, aExtras);
+    }
+
+    public void initialize(Context context) {
+        mContext = context;
+        mMainExecutor = ((VRBrowserApplication)context.getApplicationContext()).getExecutors().mainThread();
 
         mRuntime = EngineProvider.INSTANCE.getOrCreateRuntime(context);
 
