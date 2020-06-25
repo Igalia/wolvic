@@ -344,6 +344,10 @@
          Most common reason for this state is that the account password was changed on another device. -->
     <string name="settings_accounts_reconnect">Połącz ponownie</string>
 
+    <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
+        opens the Release Notes web site for the current app version. -->
+    <string name="settings_whats_new">Co nowego</string>
+
     <!-- This string is the title of a dialog box shown to the user when a settings
          change requires the application to restart. -->
     <string name="restart_dialog_restart">Wymagane jest ponowne uruchomienie</string>
@@ -1360,6 +1364,10 @@
          tray and the Downloads view is closed. The button it labels, when pressed, closes the Downloads view. -->
     <string name="close_downloads_tooltip">Zamknij listę pobranych plików</string>
 
+    <!-- This string is for the tooltip that appears when the user hovers over the 'What's New' icon in the
+         Navigation Bar. The button it labels, when pressed, open the release notes page. -->
+    <string name="whats_new_tooltip">Co nowego</string>
+
     <!-- This string is displayed in any button used for removing all the items in the current context. -->
     <string name="remove_all">Usuń wszystko</string>
 
@@ -1416,6 +1424,16 @@
     <!-- This string is displayed in the message body of the alert dialog shown when the user does not have permission to run the application on the device.
          '%1$s' will be replace at runtime with the app's name. -->
     <string name="not_entitled_message">%1$s nie ma uprawnienia do uruchamiania na tym urządzeniu i zakończy działanie.</string>
+
+
+    <!-- This string is displayed in the title of an Before Unload prompt, which asks for confirmation to stay or leave the current page. -->
+    <string name="before_unload_prompt_title">Opuścić stronę?</string>
+    <!-- This string is displayed in the message of an Before Unload prompt, which asks for confirmation to stay or leave the current page. -->
+    <string name="before_unload_prompt_message">Ta strona prosi o potwierdzenie decyzji jej opuszczenia. Wprowadzone dane mogły nie zostać zapisane.</string>
+    <!-- This string is displayed in a button of the Before Unload prompt. Clicking it cancels the navigation and stays on the same page. -->
+    <string name="before_unload_prompt_stay">Zostań na stronie</string>
+    <!-- This string is displayed in a button of the Before Unload prompt. Clicking it confirms the navigation and leaves the page. -->
+    <string name="before_unload_prompt_leave">Opuść stronę</string>
 
     <!-- This string is displayed in a button that when pressed allows a user to view a page that has been blocked from being displayed.-->
     <string name="performance_unblock_page">Odblokuj stronę</string>
