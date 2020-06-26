@@ -643,7 +643,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             }
             mWindows.openNewTabAfterRestore(uri.toString(), location);
         } else {
-            mWindows.getFocusedWindow().loadHomeIfNotRestored();
+            mWindows.getFocusedWindow().loadHomeIfBlank();
         }
     }
 

@@ -333,7 +333,6 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         newWindow.getPlacement().width = aState.textureWidth;
         newWindow.getPlacement().height = aState.textureHeight;
         newWindow.getPlacement().worldWidth = aState.worldWidth;
-        newWindow.setRestored(true);
         placeWindow(newWindow, aState.placement);
         if (newWindow.getSession() != null) {
             if (aState.panelType != null) {

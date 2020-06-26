@@ -126,7 +126,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private Windows.WindowPlacement mWindowPlacement = Windows.WindowPlacement.FRONT;
     private Windows.WindowPlacement mWindowPlacementBeforeFullscreen = Windows.WindowPlacement.FRONT;
     private float mMaxWindowScale = 3;
-    private boolean mIsRestored = false;
     private CopyOnWriteArrayList<WindowListener> mListeners;
     boolean mActive = false;
     boolean mHovered = false;
@@ -382,8 +381,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mListeners.clear();
     }
 
-    public void loadHomeIfNotRestored() {
-        if (!mIsRestored) {
+    public void loadHomeIfBlank() {
+        final String currentUri = mSession.getCurrentUri();
+        if ((currentUri == null) || currentUri.isEmpty() || UrlUtils.isBlankUri(getContext(), mSession.getCurrentUri())) {
             loadHome();
         }
     }
@@ -395,10 +395,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         } else {
             mSession.loadUri(SettingsStore.getInstance(getContext()).getHomepage());
         }
-    }
-
-    protected void setRestored(boolean restored) {
-        mIsRestored = restored;
     }
 
     private void setView(View view, boolean switchSurface) {
