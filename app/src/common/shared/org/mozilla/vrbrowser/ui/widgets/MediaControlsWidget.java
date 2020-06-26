@@ -18,7 +18,6 @@ import androidx.databinding.DataBindingUtil;
 import org.mozilla.geckoview.MediaElement;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.Media;
-import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.databinding.MediaControlsBinding;
 import org.mozilla.vrbrowser.ui.views.MediaSeekBar;
 import org.mozilla.vrbrowser.ui.views.VolumeControl;
@@ -100,12 +99,7 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
             placement.worldWidth = 0.5f;
             placement.parentAnchorX = 0.65f;
             placement.parentAnchorY = 0.4f;
-            placement.cylinderMapRadius = 0.0f;
-            placement.cylinder = SettingsStore.getInstance(getContext()).isCurvedModeEnabled();
-            if (mWidgetManager.getCylinderDensity() > 0) {
-                placement.rotationAxisY = 1.0f;
-                placement.rotation = (float) Math.toRadians(-7);
-            }
+            placement.cylinder = false;
             if (mProjectionMenu.isVisible()) {
                 mProjectionMenu.hide(KEEP_WIDGET);
 
@@ -260,7 +254,7 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
         aPlacement.anchorY = 0.5f;
         aPlacement.parentAnchorX = 0.5f;
         aPlacement.parentAnchorY = 0.0f;
-        aPlacement.cylinderMapRadius = 0.0f; // Do not map X when this widget uses cylindrical layout.
+        aPlacement.cylinder = false;
     }
 
     public void setParentWidget(int aHandle) {

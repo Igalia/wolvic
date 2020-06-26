@@ -70,7 +70,7 @@
                     style="?attr/mediaControlsButtonStyle"
                     android:layout_weight="1"
                     android:src="@drawable/ic_icon_media_seek_forward_30"
-                    android:tooltipText="@{String.format(@string/video_controls_seek_forward, 10)}"
+                    android:tooltipText="@{String.format(@string/video_controls_seek_forward, 30)}"
                     app:tooltipDensity="@dimen/tray_tooltip_density"
                     app:tooltipPosition="bottom"
                     app:tooltipLayout="@layout/tooltip_tray"/>

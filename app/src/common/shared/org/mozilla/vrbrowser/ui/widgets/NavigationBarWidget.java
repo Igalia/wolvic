@@ -827,7 +827,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mMediaControlsWidget.setMedia(mFullScreenMedia);
         mMediaControlsWidget.setParentWidget(mAttachedWindow.getHandle());
         mMediaControlsWidget.setProjectionSelectorEnabled(true);
-        mMediaControlsWidget.getPlacement().cylinder = SettingsStore.getInstance(getContext()).isCurvedModeEnabled();
         mWidgetManager.updateWidget(mMediaControlsWidget);
         mWidgetManager.showVRVideo(mAttachedWindow.getHandle(), aProjection);
     }
