@@ -837,6 +837,9 @@
     <string name="video_controls_play">Воспроизвести</string>
 
     <!-- This string is displayed in a tooltip in the video controls UI. -->
+    <string name="video_controls_exit">Выйти</string>
+
+    <!-- This string is displayed in a tooltip in the video controls UI. -->
     <string name="video_controls_pause">Приостановить</string>
 
     <!-- This string is displayed in a tooltip in the video controls UI. -->
