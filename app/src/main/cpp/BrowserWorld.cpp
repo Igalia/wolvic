@@ -686,17 +686,12 @@ BrowserWorld::State::SortWidgets() {
       }
     }
     if (!target) {
-      bool isPointer = false;
       for (Controller& controller: controllers->GetControllers()) {
         if (controller.pointer && controller.pointer->GetRoot() == node) {
-          isPointer = true;
+          target = controller.pointer->GetHitWidget().get();
+          zDelta = 0.02f;
           break;
         }
-      }
-      if (isPointer) {
-        // Always render the pointer on top
-        depthSorting.emplace(node.get(), std::make_pair(target, 0.0f));
-        continue;
       }
     }
 
