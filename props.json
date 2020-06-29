@@ -1,6 +1,62 @@
 {
     "11": {
-        "whatsNewUrl": "https://blog.mozvr.com/firefox-reality-11/"
+        "whatsNewUrl": "https://blog.mozvr.com/firefox-reality-11/",
+        "environments": [
+            {
+                "value": "space",
+                "title": "Space",
+                "thumbnail": "https://keianhzo.github.io/FirefoxReality/envs/space/thumbnail.jpg",
+                "payload": "https://keianhzo.github.io/FirefoxReality/envs/space/space.zip"
+            },
+            {
+                "value": "cave",
+                "title": "Cave",
+                "thumbnail": "https://keianhzo.github.io/FirefoxReality/envs/cave/thumbnail.png",
+                "payload": "https://keianhzo.github.io/FirefoxReality/envs/cave/cave.zip"
+            },
+            {
+                "value": "meadow",
+                "title": "Meadow",
+                "thumbnail": "https://keianhzo.github.io/FirefoxReality/envs/meadow/thumbnail.png",
+                "payload": "https://keianhzo.github.io/FirefoxReality/envs/meadow/meadow.zip"
+            },
+            {
+                "value": "underwater",
+                "title": "Underwater",
+                "thumbnail": "https://keianhzo.github.io/FirefoxReality/envs/underwater/thumbnail.png",
+                "payload": "https://keianhzo.github.io/FirefoxReality/envs/underwater/underwater.zip"
+            },
+            {
+                "value": "winter",
+                "title": "Winter",
+                "thumbnail": "https://keianhzo.github.io/FirefoxReality/envs/winter/thumbnail.png",
+                "payload": "https://keianhzo.github.io/FirefoxReality/envs/winter/winter.zip"
+            },
+            {
+                "value": "season_winter",
+                "title": "Seasons: Winter",
+                "thumbnail": "https://keianhzo.github.io/FirefoxReality/envs/season_winter/thumbnail.jpg",
+                "payload": "https://keianhzo.github.io/FirefoxReality/envs/season_winter/season_winter.zip"
+            },
+            {
+                "value": "season_spring",
+                "title": "Seasons: Spring",
+                "thumbnail": "https://keianhzo.github.io/FirefoxReality/envs/season_spring/thumbnail.jpg",
+                "payload": "https://keianhzo.github.io/FirefoxReality/envs/season_spring/season_spring.zip"
+            },
+            {
+                "value": "season_summer",
+                "title": "Seasons: Summer",
+                "thumbnail": "https://keianhzo.github.io/FirefoxReality/envs/season_summer/thumbnail.jpg",
+                "payload": "https://keianhzo.github.io/FirefoxReality/envs/season_summer/season_summer.zip"
+            },
+            {
+                "value": "season_autumn",
+                "title": "Seasons: Autumn",
+                "thumbnail": "https://keianhzo.github.io/FirefoxReality/envs/season_autumn/thumbnail.jpg",
+                "payload": "https://keianhzo.github.io/FirefoxReality/envs/season_autumn/season_autumn.zip"
+            }
+        ]
     },
     "10": {
         "whatsNewUrl": "https://blog.mozvr.com/firefox-reality-10/"
