@@ -106,6 +106,7 @@ public class SettingsStore {
     public final static boolean MULTI_E10S = false;
     public final static int DOWNLOADS_STORAGE_DEFAULT = INTERNAL;
     public final static int DOWNLOADS_SORTING_ORDER_DEFAULT = SortingContextMenuWidget.SORT_DATE_ASC;
+    public final static boolean AUTOCOMPLETE_ENABLED = true;
 
     // Enable telemetry by default (opt-out).
     public final static boolean CRASH_REPORTING_DEFAULT = false;
@@ -793,6 +794,16 @@ public class SettingsStore {
 
     public String getRemotePropsVersionName() {
         return mPrefs.getString(mContext.getString(R.string.settings_key_remote_props_version_name), "0");
+    }
+
+    public void setAutocompleteEnabled(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_autocomplete), isEnabled);
+        editor.commit();
+    }
+
+    public boolean isAutocompleteEnabled() {
+        return mPrefs.getBoolean(mContext.getString(R.string.settings_key_autocomplete), AUTOCOMPLETE_ENABLED);
     }
 
 }

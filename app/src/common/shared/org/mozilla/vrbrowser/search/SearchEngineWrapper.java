@@ -12,9 +12,12 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.VRBrowserActivity;
 import org.mozilla.vrbrowser.browser.SettingsStore;
+import org.mozilla.vrbrowser.browser.engine.Session;
+import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.geolocation.GeolocationData;
-import org.mozilla.vrbrowser.search.suggestions.SearchSuggestionsCLientKt;
+import org.mozilla.vrbrowser.search.suggestions.SearchSuggestionsClientKt;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.util.ArrayList;
@@ -64,10 +67,12 @@ public class SearchEngineWrapper implements SharedPreferences.OnSharedPreference
     private SearchEngine mSearchEngine;
     private SearchSuggestionClient mSuggestionsClient;
     private SharedPreferences mPrefs;
+    private boolean mAutocompleteEnabled;
 
     private SearchEngineWrapper(@NonNull Context aContext) {
         mContext = aContext;
         mPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+        mAutocompleteEnabled = SettingsStore.getInstance(mContext).isAutocompleteEnabled();
 
         setupSearchEngine(aContext, EMPTY);
     }
@@ -100,8 +105,7 @@ public class SearchEngineWrapper implements SharedPreferences.OnSharedPreference
     }
 
     public CompletableFuture<List<String>> getSuggestions(String aQuery) {
-        String query = mSearchEngine.buildSuggestionsURL(aQuery);
-        return SearchSuggestionsCLientKt.getSuggestionsAsync(mSuggestionsClient, query != null ? query : "");
+        return SearchSuggestionsClientKt.getSuggestionsAsync(mSuggestionsClient, aQuery != null ? aQuery : "");
     }
 
     public String getResourceURL() {
@@ -167,7 +171,14 @@ public class SearchEngineWrapper implements SharedPreferences.OnSharedPreference
 
         // A name can be used if the user get's to choose among the available engines
         mSearchEngine = mSearchEngineManager.getDefaultSearchEngine(aContext, userPref);
-        mSuggestionsClient = new SearchSuggestionClient(mSearchEngine, (s, continuation) -> null);
+        mSuggestionsClient = new SearchSuggestionClient(
+                mSearchEngine,
+                (searchUrl, continuation) -> {
+                    return (mAutocompleteEnabled && !((VRBrowserActivity)mContext).getWindows().isInPrivateMode()) ?
+                            SearchSuggestionsClientKt.fetchSearchSuggestions(mContext, searchUrl) :
+                            null;
+                }
+        );
     }
 
     private String getEngine(String aCountryCode) {
@@ -181,6 +192,9 @@ public class SearchEngineWrapper implements SharedPreferences.OnSharedPreference
         if (mContext != null) {
             if (key.equals(mContext.getString(R.string.settings_key_geolocation_data))) {
                 setupSearchEngine(mContext, EMPTY);
+
+            } else if (key.equals(mContext.getString(R.string.settings_key_autocomplete))) {
+                mAutocompleteEnabled = SettingsStore.getInstance(mContext).isAutocompleteEnabled();
             }
         }
     }

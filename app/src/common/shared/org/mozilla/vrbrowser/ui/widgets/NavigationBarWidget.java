@@ -989,7 +989,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
                 .whenCompleteAsync((items, ex) -> {
                     if (mBinding.navigationBarNavigation.urlBar.hasFocus()) {
                         mAwesomeBar.updateItems(items);
-                        mAwesomeBar.setHighlightedText(originalText);
+                        mAwesomeBar.setHighlightedText(mBinding.navigationBarNavigation.urlBar.getOriginalText().trim());
 
                         if (!mAwesomeBar.isVisible()) {
                             mAwesomeBar.updatePlacement((int) WidgetPlacement.convertPixelsToDp(getContext(), mBinding.navigationBarNavigation.urlBar.getWidth()));

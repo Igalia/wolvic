@@ -134,7 +134,7 @@ public class SuggestionsProvider {
         CompletableFuture<List<SuggestionItem>> future = new CompletableFuture<>();
 
         // Completion from browser-domains
-        if (!mText.equals(mFilterText)) {
+        if (!mText.equals(mFilterText) && UrlUtils.isDomain(mText)) {
             items.add(SuggestionItem.create(
                     mText,
                     getSearchURLOrDomain(mText),
