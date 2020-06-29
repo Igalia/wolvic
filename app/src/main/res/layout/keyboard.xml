@@ -125,7 +125,7 @@
                     android:padding="15dp"
                     android:layout_gravity="center"
                     android:background="@drawable/dialog_background"
-                    android:alpha="0.5"
+                    android:alpha="0.0"
                     android:visibility="gone"/>
             </FrameLayout>
 

@@ -101,6 +101,8 @@
     <string name="japanese_enter_completion" translatable="false">確定</string>
     <string name="japanese_keyboard_mode_change" translatable="false">かな</string>
 
+    <string name="thai_keyboard_mode_change" translatable="false">กขค</string>
+
     <!-- Keyboard -->
     <string name="keyboard_popup_a" translatable="false">aáàäãåâąæā</string>
     <string name="keyboard_popup_b" translatable="false">bƀḃḅḇ</string>

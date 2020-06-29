@@ -58,6 +58,7 @@ import org.mozilla.vrbrowser.ui.keyboards.PolishKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.RussianKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.SpanishKeyboard;
 import org.mozilla.vrbrowser.ui.keyboards.SwedishKeyboard;
+import org.mozilla.vrbrowser.ui.keyboards.ThaiKeyboard;
 import org.mozilla.vrbrowser.ui.views.AutoCompletionView;
 import org.mozilla.vrbrowser.ui.views.CustomKeyboardView;
 import org.mozilla.vrbrowser.ui.views.KeyboardSelectorView;
@@ -294,6 +295,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         mKeyboards.add(new SwedishKeyboard(aContext));
         mKeyboards.add(new FinnishKeyboard(aContext));
         mKeyboards.add(new DutchKeyboard(aContext));
+        mKeyboards.add(new ThaiKeyboard(aContext));
 
         mDefaultKeyboardSymbols = new CustomKeyboard(aContext.getApplicationContext(), R.xml.keyboard_symbols);
         mKeyboardNumeric = new CustomKeyboard(aContext.getApplicationContext(), R.xml.keyboard_numeric);
@@ -377,9 +379,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     protected void initializeWidgetPlacement(WidgetPlacement aPlacement) {
         Context context = getContext();
         aPlacement.width = getKeyboardWidth(WidgetPlacement.dpDimension(context, R.dimen.keyboard_alphabetic_width));
-        aPlacement.height = WidgetPlacement.dpDimension(context, R.dimen.keyboard_height);
-        aPlacement.height += WidgetPlacement.dpDimension(context, R.dimen.autocompletion_widget_line_height);
-        aPlacement.height += WidgetPlacement.dpDimension(context, R.dimen.keyboard_layout_padding);
+        aPlacement.height = getKeyboardHeight(WidgetPlacement.dpDimension(context, R.dimen.keyboard_height));
         aPlacement.anchorX = 0.5f;
         aPlacement.anchorY = 0.0f;
         aPlacement.parentAnchorY = 0.0f;
@@ -428,6 +428,13 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         width += WidgetPlacement.dpDimension(getContext(), R.dimen.keyboard_key_width); // Close button
         return (int) width;
     }
+
+     private int getKeyboardHeight(float aAlphabeticHeight) {
+        float height = aAlphabeticHeight;
+        height += WidgetPlacement.dpDimension(getContext(), R.dimen.autocompletion_widget_line_height);
+        height += WidgetPlacement.dpDimension(getContext(), R.dimen.keyboard_layout_padding);
+        return (int) height;
+     }
 
     private void resetKeyboardLayout() {
         if ((mEditorInfo.inputType & EditorInfo.TYPE_CLASS_NUMBER) == EditorInfo.TYPE_CLASS_NUMBER) {
@@ -735,6 +742,16 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     }
 
     private void handleShift(boolean isShifted) {
+        final boolean statusChanged = mKeyboardView.isShifted() != isShifted;
+
+        if (mCurrentKeyboard.getAlphabeticCapKeyboard() != null) {
+            if (isShifted || mIsCapsLock) {
+                mKeyboardView.setKeyboard(mCurrentKeyboard.getAlphabeticCapKeyboard());
+            } else {
+                mKeyboardView.setKeyboard(mCurrentKeyboard.getAlphabeticKeyboard());
+            }
+        }
+
         CustomKeyboard keyboard = (CustomKeyboard) mKeyboardView.getKeyboard();
         int[] shiftIndices = keyboard.getShiftKeyIndices();
         for (int shiftIndex: shiftIndices) {
@@ -760,7 +777,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
         // setShifted trigger a full keyboard redraw.
         // To avoid this we only call setShifted if it's state has changed.
-        if (mKeyboardView.isShifted() != isShifted) {
+        if (statusChanged) {
             mKeyboardView.setShifted(isShifted || mIsCapsLock);
         }
     }
@@ -859,18 +876,29 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
         mCurrentKeyboard = aKeyboard;
         final int width = getKeyboardWidth(mCurrentKeyboard.getAlphabeticKeyboardWidth());
-        if (width != mWidgetPlacement.width) {
+        final int height = getKeyboardHeight(mCurrentKeyboard.getAlphabeticKeyboardHeight());
+        if (width != mWidgetPlacement.width || height != mWidgetPlacement.height) {
             mWidgetPlacement.width = width;
-            float defaultWorldWidth = WidgetPlacement.floatDimension(getContext(), R.dimen.keyboard_world_width);
+            mWidgetPlacement.height = height;
+            mWidgetPlacement.translationY = mCurrentKeyboard.getKeyboardTranslateYInWorld() -
+                                            WidgetPlacement.unitFromMeters(getContext(), R.dimen.window_world_y);
+            float defaultWorldWidth = mCurrentKeyboard.getKeyboardWorldWidth();
             int defaultKeyboardWidth = getKeyboardWidth(mKeyboards.get(0).getAlphabeticKeyboardWidth());
             mWidgetPlacement.worldWidth = defaultWorldWidth * ((float) width / (float) defaultKeyboardWidth);
             mWidgetManager.updateWidget(this);
             ViewGroup.LayoutParams params = mKeyboardContainer.getLayoutParams();
             params.width = WidgetPlacement.convertDpToPixel(getContext(), mCurrentKeyboard.getAlphabeticKeyboardWidth());
+            params.height = WidgetPlacement.convertDpToPixel(getContext(), mCurrentKeyboard.getAlphabeticKeyboardHeight());
             mKeyboardContainer.setLayoutParams(params);
         }
 
+        final int pixelHeight = WidgetPlacement.convertDpToPixel(getContext(), mCurrentKeyboard.getAlphabeticKeyboardHeight());
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)mKeyboardLayout.getLayoutParams();
+        if (pixelHeight != params.height) {
+            // We can consider to make mKeyboardLayout height is the maximum of height value in the future
+            // then we can avoid resize.
+            params.height = pixelHeight;
+        }
         params.topMargin = mCurrentKeyboard.supportsAutoCompletion() ? WidgetPlacement.pixelDimension(getContext(), R.dimen.keyboard_margin_top_without_autocompletion) : 0;
         mKeyboardLayout.setLayoutParams(params);
 
@@ -932,7 +960,6 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             mFocusedView.clearFocus();
         }
     }
-
 
     private void handleModeChange() {
         Keyboard current = mKeyboardView.getKeyboard();

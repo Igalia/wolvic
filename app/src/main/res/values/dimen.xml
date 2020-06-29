@@ -23,21 +23,21 @@
 
     <!-- Keyboard -->
     <item name="keyboard_world_width" format="float" type="dimen">3.25</item>
+    <item name="keyboard_world_extra_row_width" format="float" type="dimen">3.43</item>
     <item name="keyboard_x" format="float" type="dimen">-0.15</item>
     <item name="keyboard_y" format="float" type="dimen">-0.45</item>
-    <item name="zhuyin_keyboard_y" format="float" type="dimen">-0.63</item>
+    <item name="keyboard_y_extra_row" format="float" type="dimen">-0.72</item>
     <item name="keyboard_z" format="float" type="dimen">-2.5</item>
     <item name="keyboard_world_rotation" format="float" type="dimen">-35.0</item>
-    <dimen name="keyboard_height">188dp</dimen>
+    <dimen name="keyboard_height">186dp</dimen>
     <dimen name="keyboard_alphabetic_width">526dp</dimen>
     <dimen name="keyboard_alphabetic_width_danish">540dp</dimen>
     <dimen name="keyboard_alphabetic_width_norwegian">540dp</dimen>
     <dimen name="keyboard_alphabetic_width_swedish">540dp</dimen>
     <dimen name="keyboard_alphabetic_width_finnish">540dp</dimen>
-    <dimen name="keyboard_alphabetic_width_zhuyin">470dp</dimen>
     <dimen name="keyboard_alphabetic_width_extra_column">564dp</dimen>
+    <dimen name="keyboard_alphabetic_height_thai">226dp</dimen>
     <dimen name="keyboard_numeric_width">144dp</dimen>
-    <dimen name="keyboard_zhuyin_height">228dp</dimen>
     <dimen name="keyboard_horizontal_gap">4dp</dimen>
     <dimen name="keyboard_vertical_gap">4dp</dimen>
     <dimen name="keyboard_key_width">36dp</dimen>
@@ -49,6 +49,8 @@
     <dimen name="keyboard_key_zhuyin_space_width">50dp</dimen>
     <dimen name="keyboard_key_zhuyin_space_height">70dp</dimen>
     <dimen name="keyboard_key_zhuyin_enter_width">74dp</dimen>
+    <dimen name="keyboard_key_thai_enter_width">50dp</dimen>
+    <dimen name="keyboard_key_thai_enter_height">72dp</dimen>
     <dimen name="keyboard_key_backspace_width">50dp</dimen>
     <dimen name="keyboard_key_enter_width">72dp</dimen>
     <dimen name="keyboard_key_enter_width_small">62dp</dimen>

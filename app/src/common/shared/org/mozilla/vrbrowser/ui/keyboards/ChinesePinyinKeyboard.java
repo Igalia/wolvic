@@ -484,4 +484,9 @@ public class ChinesePinyinKeyboard extends BaseKeyboard {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
         }
     }
+
+    @Override
+    public String[] getDomains(String... domains) {
+        return super.getDomains(".cn");
+    }
 }

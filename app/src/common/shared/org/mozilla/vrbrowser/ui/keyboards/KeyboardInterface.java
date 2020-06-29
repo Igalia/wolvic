@@ -30,6 +30,10 @@ public interface KeyboardInterface {
     }
     @NonNull CustomKeyboard getAlphabeticKeyboard();
     float getAlphabeticKeyboardWidth();
+    float getAlphabeticKeyboardHeight();
+    float getKeyboardTranslateYInWorld();
+    float getKeyboardWorldWidth();
+    default @Nullable CustomKeyboard getAlphabeticCapKeyboard() { return null; }
     default @Nullable CustomKeyboard getSymbolsKeyboard() { return null; }
     default @Nullable CandidatesResult getCandidates(String aComposingText) { return null; }
     default @Nullable String overrideAddText(String aTextBeforeCursor, String aNextText) { return null; }
