@@ -10,6 +10,7 @@ import org.mozilla.vrbrowser.db.AppDatabase;
 import org.mozilla.vrbrowser.db.DataRepository;
 import org.mozilla.vrbrowser.downloads.DownloadsManager;
 import org.mozilla.vrbrowser.utils.BitmapCache;
+import org.mozilla.vrbrowser.utils.EnvironmentsManager;
 
 public interface AppServicesProvider {
 
@@ -22,4 +23,5 @@ public interface AppServicesProvider {
     Accounts getAccounts();
     DownloadsManager getDownloadsManager();
     SpeechService getSpeechService();
+    EnvironmentsManager getEnvironmentsManager();
 }

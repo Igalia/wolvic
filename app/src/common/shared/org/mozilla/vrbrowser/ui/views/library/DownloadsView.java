@@ -145,7 +145,7 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
         public void onClick(@NonNull View view, @NonNull Download item) {
             mBinding.downloadsList.requestFocusFromTouch();
 
-            SessionStore.get().getActiveSession().loadUri(item.getOutputFile());
+            SessionStore.get().getActiveSession().loadUri(item.getOutputFileUri());
 
             WindowWidget window = mWidgetManager.getFocusedWindow();
             window.hidePanel(Windows.PanelType.HISTORY);
@@ -223,7 +223,7 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
                     view,
                     new DownloadsContextMenuWidget(getContext(),
                             new DownloadsContextMenuWidget.DownloadsContextMenuItem(
-                                    item.getOutputFile(),
+                                    item.getOutputFileUri(),
                                     item.getTitle(),
                                     item.getId()),
                             mWidgetManager.canOpenNewWindow()),

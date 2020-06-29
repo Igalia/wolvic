@@ -1,6 +1,6 @@
 package org.mozilla.vrbrowser.downloads;
 
-import  android.app.DownloadManager;
+import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,13 +10,10 @@ import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.webkit.URLUtil;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import com.mozilla.speechlibrary.utils.StorageUtils;
 
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.utils.UrlUtils;
@@ -60,7 +57,7 @@ public class DownloadsManager {
         List<Download> downloads = getDownloads();
         downloads.forEach(download -> {
             if (mDownloadManager != null &&
-                    !new File(UrlUtils.stripProtocol(download.getOutputFile())).exists()) {
+                    !new File(UrlUtils.stripProtocol(download.getOutputFileUri())).exists()) {
                 mDownloadManager.remove(download.getId());
             }
         });
@@ -154,9 +151,9 @@ public class DownloadsManager {
         Download download = getDownload(downloadId);
         if (download != null) {
             if (!deleteFiles) {
-                File file = new File(UrlUtils.stripProtocol(download.getOutputFile()));
+                File file = new File(UrlUtils.stripProtocol(download.getOutputFileUri()));
                 if (file.exists()) {
-                    File newFile = new File(UrlUtils.stripProtocol(download.getOutputFile().concat(".bak")));
+                    File newFile = new File(UrlUtils.stripProtocol(download.getOutputFileUri().concat(".bak")));
                     file.renameTo(newFile);
                     if (mDownloadManager != null) {
                         mDownloadManager.remove(downloadId);

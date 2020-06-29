@@ -32,7 +32,7 @@ versions.android_components = "44.0.0"
 // that we depend on directly for its rustlog package, and it's important
 // that it be kept insync with the version used by android-components above.
 versions.mozilla_appservices = "0.58.2"
-versions.mozilla_speech = "2.0.1"
+versions.mozilla_speech = "2.0.4"
 versions.openwnn = "1.3.7"
 versions.room = "2.2.0"
 versions.lifecycle = "2.0.0"

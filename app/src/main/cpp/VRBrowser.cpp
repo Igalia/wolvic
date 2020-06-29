@@ -338,7 +338,7 @@ VRBrowser::GetActiveEnvironment() {
   std::string str = std::string(cstr);
   sEnv->ReleaseStringUTFChars(jStr, cstr);
 
-  return "cubemap/" + str;
+  return str;
 }
 
 int32_t

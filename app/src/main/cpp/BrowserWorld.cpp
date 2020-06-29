@@ -1023,7 +1023,7 @@ void
 BrowserWorld::UpdateEnvironment() {
   ASSERT_ON_RENDER_THREAD();
   std::string skyboxPath = VRBrowser::GetActiveEnvironment();
-  std::string extension;
+  std::string extension = Skybox::ValidateCustomSkyboxAndFindFileExtension(skyboxPath);
   if (VRBrowser::isOverrideEnvPathEnabled()) {
     std::string storagePath = VRBrowser::GetStorageAbsolutePath(INJECT_SKYBOX_PATH);
     if (std::ifstream(storagePath)) {

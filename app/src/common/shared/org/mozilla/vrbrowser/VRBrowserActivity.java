@@ -230,7 +230,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     protected void onCreate(Bundle savedInstanceState) {
         Bundle extras = getIntent() != null ? getIntent().getExtras() : null;
         SessionStore.prefOverrides(this, extras);
-        ((VRBrowserApplication)getApplication()).onActivityCreate();
+        ((VRBrowserApplication)getApplication()).onActivityCreate(this);
         SettingsStore.getInstance(getBaseContext()).setPid(Process.myPid());
         // Fix for infinite restart on startup crashes.
         long count = SettingsStore.getInstance(getBaseContext()).getCrashRestartCount();
@@ -316,6 +316,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mLifeCycle.setCurrentState(Lifecycle.State.CREATED);
 
         getServicesProvider().getDownloadsManager().init();
+        getServicesProvider().getEnvironmentsManager().start();
     }
 
     protected void initializeWidgets() {
@@ -519,6 +520,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         SessionStore.get().onDestroy();
 
+        getServicesProvider().getEnvironmentsManager().stop();
         getServicesProvider().getDownloadsManager().end();
 
         super.onDestroy();
@@ -1140,7 +1142,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Keep
     @SuppressWarnings("unused")
     public String getActiveEnvironment() {
-        return SettingsStore.getInstance(this).getEnvironment();
+        return getServicesProvider().getEnvironmentsManager().getOrDownloadEnvironment();
     }
 
     @Keep

@@ -11,10 +11,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 
+import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
+
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 
-import androidx.annotation.IdRes;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ImageRadioGroupSetting extends LinearLayout {
 
@@ -23,11 +27,11 @@ public class ImageRadioGroupSetting extends LinearLayout {
     }
 
     private AudioEngine mAudio;
-    private CharSequence[] mOptions;
-    private Object[] mValues;
+    private ArrayList<CharSequence> mOptions;
+    private ArrayList<Object> mValues;
     private Drawable[] mImages;
     private OnCheckedChangeListener mRadioGroupListener;
-    private ImageRadioButton[] mItems;
+    private ArrayList<ImageRadioButton> mItems;
 
     public ImageRadioGroupSetting(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -37,18 +41,18 @@ public class ImageRadioGroupSetting extends LinearLayout {
         super(context, attrs, defStyleAttr);
 
         TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.RadioGroupSetting, defStyleAttr, 0);
-        mOptions = attributes.getTextArray(R.styleable.RadioGroupSetting_options);
+        mOptions = new ArrayList<>(Arrays.asList(attributes.getTextArray(R.styleable.RadioGroupSetting_options)));
         int id = attributes.getResourceId(R.styleable.RadioGroupSetting_values, 0);
         TypedArray array = context.getResources().obtainTypedArray(id);
         if (array.getType(0) == TypedValue.TYPE_STRING) {
-            mValues = getResources().getStringArray(id);
+            mValues = new ArrayList<>(Arrays.asList(getResources().getStringArray(id)));
 
         } else if (array.getType(0) == TypedValue.TYPE_INT_HEX ||
                 array.getType(0) == TypedValue.TYPE_INT_DEC) {
             int [] values = getResources().getIntArray(id);
-            mValues = new Integer[values.length];
-            for (int i=0; i<values.length; i++) {
-                mValues[i] = values[i];
+            mValues = new ArrayList<>(Arrays.asList(new Integer[values.length]));
+            for (int value : values) {
+                mValues.add(value);
             }
         }
         array.recycle();
@@ -56,8 +60,8 @@ public class ImageRadioGroupSetting extends LinearLayout {
         id = attributes.getResourceId(R.styleable.RadioGroupSetting_images, 0);
 
         array = context.getResources().obtainTypedArray(id);
-        mImages = new Drawable[mOptions.length];
-        for (int i = 0; i < mOptions.length; ++i) {
+        mImages = new Drawable[mOptions.size()];
+        for (int i = 0; i < mOptions.size(); ++i) {
             mImages[i] = array.getDrawable(i);
         }
         array.recycle();
@@ -69,11 +73,11 @@ public class ImageRadioGroupSetting extends LinearLayout {
     protected void initialize(Context aContext) {
         mAudio = AudioEngine.fromContext(aContext);
         setOrientation(LinearLayout.VERTICAL);
-        mItems = new ImageRadioButton[mOptions.length];
+        mItems = new ArrayList<>();
 
-        for (int i= 0; i < mOptions.length; i++) {
+        for (int i= 0; i < mOptions.size(); i++) {
             ImageRadioButton button = new ImageRadioButton(aContext);
-            button.setValues(i, mOptions[i].toString(), mImages[i]);
+            button.setValues(i, mOptions.get(i).toString(), mImages[i]);
             button.setChecked(false);
             final int checkedId = i;
             button.setOnClickListener(v -> {
@@ -84,7 +88,7 @@ public class ImageRadioGroupSetting extends LinearLayout {
 
             });
             addView(button);
-            mItems[i] = button;
+            mItems.add(button);
         }
     }
 
@@ -128,8 +132,8 @@ public class ImageRadioGroupSetting extends LinearLayout {
     }
 
     public void setChecked(@IdRes int checkedId, boolean doApply) {
-        for (int i = 0; i < mItems.length; i++) {
-            mItems[i].setChecked(i == checkedId);
+        for (int i = 0; i < mItems.size(); i++) {
+            mItems.get(i).setChecked(i == checkedId);
         }
 
         if (mRadioGroupListener != null && doApply) {
@@ -142,12 +146,12 @@ public class ImageRadioGroupSetting extends LinearLayout {
     }
 
     public Object getValueForId(@IdRes int checkId) {
-        return mValues[checkId];
+        return mValues.get(checkId);
     }
 
     public int getIdForValue(Object value) {
-        for (int i = 0; i < mValues.length; i++) {
-            if (mValues[i].equals(value)) {
+        for (int i = 0; i < mValues.size(); i++) {
+            if (mValues.get(i).equals(value)) {
                 return i;
             }
         }
@@ -156,12 +160,38 @@ public class ImageRadioGroupSetting extends LinearLayout {
     }
 
     public int getCheckedRadioButtonId() {
-        for (int i = 0; i < mItems.length; ++i) {
-            if (mItems[i].isChecked()) {
+        for (int i = 0; i < mItems.size(); ++i) {
+            if (mItems.get(i).isChecked()) {
                 return i;
             }
         }
         return  -1;
+    }
+
+    public void addOption(@NonNull Object value, @NonNull String title, Drawable thumbnail) {
+        int id = mItems.size();
+        ImageRadioButton button = new ImageRadioButton(getContext());
+        button.setValues(id, title, thumbnail);
+        button.setChecked(false);
+        final int checkedId = id;
+        button.setOnClickListener(v -> {
+            if (mAudio != null) {
+                mAudio.playSound(AudioEngine.Sound.CLICK);
+            }
+            setChecked(checkedId, true);
+
+        });
+        addView(button);
+
+        mValues.add(value);
+        mOptions.add(title);
+        mItems.add(button);
+    }
+
+    public void updateOption(@NonNull Object value, @NonNull String title, Drawable thumbnail) {
+        int index = mValues.indexOf(value);
+        mOptions.set(index, title);
+        mItems.get(index).mImage.setImageDrawable(thumbnail);
     }
 
 }

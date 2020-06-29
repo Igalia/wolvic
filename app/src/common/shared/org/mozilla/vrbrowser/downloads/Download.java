@@ -12,6 +12,7 @@ import org.mozilla.vrbrowser.ui.adapters.Language;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
 
 import java.io.File;
+import java.net.URI;
 import java.net.URL;
 
 public class Download {
@@ -95,8 +96,16 @@ public class Download {
         return mDownloadedBytes;
     }
 
-    public String getOutputFile() {
+    public String getOutputFileUri() {
         return mOutputFile;
+    }
+
+    public String getOutputFilePath() {
+        if (mOutputFile != null) {
+            return URI.create(mOutputFile).getPath();
+        }
+
+        return null;
     }
 
     public String getTitle() {

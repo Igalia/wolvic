@@ -19,6 +19,10 @@ public class DownloadJob {
     private String mDescription;
     private String mOutputPath;
 
+    public static DownloadJob create(@NonNull String uri) {
+        return create(uri, null, 0, null, null);
+    }
+
     public static DownloadJob create(@NonNull String uri, @Nullable String contentType,
                                      long contentLength, @Nullable String filename) {
         return create(uri, contentType, contentLength, filename, null);

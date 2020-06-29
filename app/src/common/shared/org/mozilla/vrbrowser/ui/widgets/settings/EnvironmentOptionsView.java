@@ -6,22 +6,35 @@
 package org.mozilla.vrbrowser.ui.widgets.settings;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.view.LayoutInflater;
 
 import androidx.databinding.DataBindingUtil;
 
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.databinding.OptionsEnvironmentBinding;
 import org.mozilla.vrbrowser.ui.views.settings.ImageRadioGroupSetting;
 import org.mozilla.vrbrowser.ui.views.settings.SwitchSetting;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
+import org.mozilla.vrbrowser.utils.BitmapCache;
+import org.mozilla.vrbrowser.utils.Environment;
+import org.mozilla.vrbrowser.utils.EnvironmentUtils;
+import org.mozilla.vrbrowser.utils.EnvironmentsManager;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.Arrays;
 
 class EnvironmentOptionsView extends SettingsView {
 
     private OptionsEnvironmentBinding mBinding;
     private ImageRadioGroupSetting mEnvironmentsRadio;
+    private EnvironmentsManager mEnvironmentsManager;
 
     public EnvironmentOptionsView(Context aContext, WidgetManagerDelegate aWidgetManager) {
         super(aContext, aWidgetManager);
@@ -38,6 +51,8 @@ class EnvironmentOptionsView extends SettingsView {
 
         LayoutInflater inflater = LayoutInflater.from(getContext());
 
+        mEnvironmentsManager = mWidgetManager.getServicesProvider().getEnvironmentsManager();
+
         // Inflate this data binding layout
         mBinding = DataBindingUtil.inflate(inflater, R.layout.options_environment, this, true);
 
@@ -49,10 +64,9 @@ class EnvironmentOptionsView extends SettingsView {
         // Footer
         mBinding.footerLayout.setFooterButtonClickListener(mResetListener);
 
-        String env = SettingsStore.getInstance(getContext()).getEnvironment();
         mEnvironmentsRadio = findViewById(R.id.environmentRadio);
         mEnvironmentsRadio.setOnCheckedChangeListener(mEnvsListener);
-        setEnv(mEnvironmentsRadio.getIdForValue(env), false);
+        updateEnvironments();
 
         mBinding.envOverrideSwitch.setOnCheckedChangeListener(mEnvOverrideListener);
         setEnvOverride(SettingsStore.getInstance(getContext()).isEnvironmentOverrideEnabled());
@@ -105,25 +119,74 @@ class EnvironmentOptionsView extends SettingsView {
         setEnvOverride(value);
     };
 
-    private ImageRadioGroupSetting.OnCheckedChangeListener mEnvsListener = (checkedId, doApply) -> {
-        setEnv(checkedId, doApply);
-    };
+    private ImageRadioGroupSetting.OnCheckedChangeListener mEnvsListener = this::setEnv;
 
     private void setEnv(int checkedId, boolean doApply) {
         mEnvironmentsRadio.setOnCheckedChangeListener(null);
         mEnvironmentsRadio.setChecked(checkedId, doApply);
         mEnvironmentsRadio.setOnCheckedChangeListener(mEnvsListener);
 
-        SettingsStore.getInstance(getContext()).setEnvironment((String) mEnvironmentsRadio.getValueForId(checkedId));
+        String value = (String) mEnvironmentsRadio.getValueForId(checkedId);
+        SettingsStore.getInstance(getContext()).setEnvironment(value);
 
-        if (doApply) {
-            mWidgetManager.updateEnvironment();
-        }
+        mEnvironmentsManager.setOrDownloadEnvironment(value);
     }
 
     @Override
     protected SettingViewType getType() {
         return SettingViewType.ENVIRONMENT;
+    }
+
+    /**
+     * Called every time the environments panel is opened. This method loads the cached remote properties
+     * environments for the current app version and add all the existing environments to the environments list.
+     */
+    private void updateEnvironments() {
+        String env = SettingsStore.getInstance(getContext()).getEnvironment();
+
+        Environment[] properties = EnvironmentUtils.getExternalEnvironments(getContext());
+        if (properties != null) {
+            Arrays.stream(properties).forEach(environment -> {
+                mEnvironmentsRadio.addOption(
+                        environment.getValue(),
+                        environment.getTitle(),
+                        getContext().getDrawable(R.color.asphalt));
+
+                BitmapCache.getInstance(getContext()).getBitmap(environment.getThumbnail()).thenAccept(bitmap -> {
+                    if (bitmap == null) {
+                        ((VRBrowserApplication) getContext().getApplicationContext()).getExecutors().backgroundThread().post(() -> {
+                            try {
+                                URL url = new URL(environment.getThumbnail());
+                                Bitmap thumbnail = BitmapFactory.decodeStream(url.openStream());
+                                ((VRBrowserApplication) getContext().getApplicationContext()).getExecutors().mainThread().execute(() -> {
+                                    mEnvironmentsRadio.updateOption(
+                                            environment.getValue(),
+                                            environment.getTitle(),
+                                            new BitmapDrawable(getContext().getResources(), thumbnail)
+                                    );
+                                    BitmapCache.getInstance(getContext()).addBitmap(environment.getThumbnail(), thumbnail);
+                                });
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        });
+
+                    } else {
+                        mEnvironmentsRadio.updateOption(
+                                environment.getValue(),
+                                environment.getValue(),
+                                new BitmapDrawable(getContext().getResources(), bitmap)
+                        );
+                    }
+                }).exceptionally(throwable -> {
+                    throwable.printStackTrace();
+                    return null;
+                });
+            });
+        }
+
+        setEnv(mEnvironmentsRadio.getIdForValue(env), false);
     }
 
 }

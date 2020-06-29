@@ -9,7 +9,12 @@ import android.util.Log;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -26,15 +31,18 @@ import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.ui.viewmodel.SettingsViewModel;
 import org.mozilla.vrbrowser.ui.widgets.menus.library.SortingContextMenuWidget;
 import org.mozilla.vrbrowser.utils.DeviceType;
+import org.mozilla.vrbrowser.utils.RemoteProperties;
 import org.mozilla.vrbrowser.utils.StringUtils;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import mozilla.components.concept.fetch.Request;
 import mozilla.components.concept.fetch.Response;
@@ -88,6 +96,7 @@ public class SettingsStore {
     public final static int POINTER_COLOR_DEFAULT_DEFAULT = Color.parseColor("#FFFFFF");
     public final static int SCROLL_DIRECTION_DEFAULT = 0;
     public final static String ENV_DEFAULT = "offworld";
+    public final static boolean ENV_EXTERNAL_DEFAULT = false;
     public final static int MSAA_DEFAULT_LEVEL = 0;
     public final static boolean AUDIO_ENABLED = false;
     public final static float CYLINDER_DENSITY_ENABLED_DEFAULT = 4680.0f;
@@ -129,7 +138,13 @@ public class SettingsStore {
                 (VRBrowserActivity)context,
                 ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) context).getApplication()))
                 .get(SettingsViewModel.class);
+
+        // Setup the stored properties until we get updated ones
+        String json = mPrefs.getString(mContext.getString(R.string.settings_key_remote_props), null);
+        mSettingsViewModel.setProps(json);
+
         mSettingsViewModel.refresh();
+
         update();
     }
 
@@ -150,6 +165,7 @@ public class SettingsStore {
                     Request.CookiePolicy.INCLUDE,
                     false
             );
+
             try {
                 Response response = EngineProvider.INSTANCE.getDefaultClient(mContext).fetch(request);
                 if (response.getStatus() == 200) {
@@ -159,15 +175,10 @@ public class SettingsStore {
                     editor.commit();
 
                     mSettingsViewModel.setProps(json);
-
-                } else {
-                    String json = mPrefs.getString(mContext.getString(R.string.settings_key_remote_props), null);
-                    mSettingsViewModel.setProps(json);
                 }
 
             } catch (IOException e) {
-                String json = mPrefs.getString(mContext.getString(R.string.settings_key_remote_props), null);
-                mSettingsViewModel.setProps(json);
+                Log.d(LOGTAG, "Remote properties error: " + e.getLocalizedMessage());
             }
         });
     }
@@ -804,6 +815,28 @@ public class SettingsStore {
 
     public boolean isAutocompleteEnabled() {
         return mPrefs.getBoolean(mContext.getString(R.string.settings_key_autocomplete), AUTOCOMPLETE_ENABLED);
+    }
+
+    @Nullable
+    public Map<String, RemoteProperties> getRemoteProperties() {
+        String json = mPrefs.getString(mContext.getString(R.string.settings_key_remote_props), null);
+
+        Gson gson = new GsonBuilder().create();
+        Type type = new TypeToken<Map<String, RemoteProperties>>() {}.getType();
+
+        Map<String, RemoteProperties> propertiesMap = null;
+        try {
+            propertiesMap = gson.fromJson(json, type);
+
+        } catch (Exception ignored) { }
+
+        return propertiesMap;
+    }
+    
+    public void setRemoteProperties(@Nullable String json) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putString(mContext.getString(R.string.settings_key_remote_props), json);
+        editor.commit();
     }
 
 }

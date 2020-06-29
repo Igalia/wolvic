@@ -9,6 +9,8 @@ import android.app.Application;
 import android.content.Context;
 import android.content.res.Configuration;
 
+import androidx.annotation.NonNull;
+
 import com.mozilla.speechlibrary.SpeechService;
 
 import org.mozilla.vrbrowser.browser.Accounts;
@@ -23,6 +25,7 @@ import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.ui.adapters.Language;
 import org.mozilla.vrbrowser.ui.widgets.AppServicesProvider;
 import org.mozilla.vrbrowser.utils.BitmapCache;
+import org.mozilla.vrbrowser.utils.EnvironmentsManager;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
 
 public class VRBrowserApplication extends Application implements AppServicesProvider {
@@ -34,13 +37,14 @@ public class VRBrowserApplication extends Application implements AppServicesProv
     private Accounts mAccounts;
     private DownloadsManager mDownloadsManager;
     private SpeechService mSpeechService;
+    private EnvironmentsManager mEnvironmentsManager;
 
     @Override
     public void onCreate() {
         super.onCreate();
     }
 
-    protected void onActivityCreate() {
+    protected void onActivityCreate(@NonNull Context activityContext) {
         mPlaces = new Places(this);
         mServices = new Services(this, mPlaces);
         mAccounts = new Accounts(this);
@@ -48,6 +52,7 @@ public class VRBrowserApplication extends Application implements AppServicesProv
         mSpeechService = new SpeechService(this);
         mAppExecutors = new AppExecutors();
         mBitmapCache = new BitmapCache(this, mAppExecutors.diskIO(), mAppExecutors.mainThread());
+        mEnvironmentsManager = new EnvironmentsManager(activityContext);
 
         TelemetryWrapper.init(this, EngineProvider.INSTANCE.getDefaultClient(this));
         GleanMetricsService.init(this, EngineProvider.INSTANCE.getDefaultClient(this));
@@ -103,5 +108,10 @@ public class VRBrowserApplication extends Application implements AppServicesProv
     @Override
     public SpeechService getSpeechService() {
         return mSpeechService;
+    }
+
+    @Override
+    public EnvironmentsManager getEnvironmentsManager() {
+        return mEnvironmentsManager;
     }
 }
