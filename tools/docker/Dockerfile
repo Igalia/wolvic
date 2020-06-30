@@ -60,12 +60,12 @@ RUN git config --global user.email "noreply@mozilla.com"
 RUN git config --global user.name "No Reply"
 RUN echo sdk.dir=/opt > local.properties && echo ndk.dir=/opt/ndk-bundle >> local.properties
 RUN git checkout -b update origin/gradle
-RUN git rebase origin/master
+RUN git rebase origin/main
 RUN git submodule init
 RUN git submodule update
 RUN ./gradlew --no-daemon assembleNoapi
 RUN ./gradlew --no-daemon clean
-RUN git checkout master
+RUN git checkout main
 
 # -- Cleanup ----------------------------------------------------------------------------
 

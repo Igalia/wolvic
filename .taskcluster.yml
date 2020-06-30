@@ -50,20 +50,20 @@ tasks:
           owner: noreply@mozilla.com
           source: ${repository}
 ###############################################################################
-# Task: Master builds
+# Task: Main builds
 #
-# Triggered whenever something is pushed/merged to the master branch.
+# Triggered whenever something is pushed/merged to the main branch.
 # Produces APKs signed with the staging key. These APKs are for
 # testing only and should not be uploaded to App Stores.
 #
 ###############################################################################
-    - $if: 'tasks_for == "github-push" && (event["ref"] == "refs/heads/master" || isFeatureBranch == true)'
+    - $if: 'tasks_for == "github-push" && (event["ref"] == "refs/heads/main" || isFeatureBranch == true)'
       then:
         $let:
           featureName:
             $if: 'isFeatureBranch == true'
             then: "-f ${event.ref[19:]}"
-            else: "-f master"
+            else: "-f main"
         in:
           provisionerId: 'proj-firefoxreality'
           workerType: 'ci-linux'
@@ -76,7 +76,7 @@ tasks:
             - "secrets:get:project/firefoxreality/fr/mls-key"
           routes:
             - notify.email.fxr-releng@mozilla.com.on-any
-            - index.project.firefoxreality.master
+            - index.project.firefoxreality.main
           payload:
             maxRunTime: 14400
             image: 'mozillamixedreality/firefoxreality:200316-SDK29'

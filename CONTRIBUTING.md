@@ -13,7 +13,7 @@ Head over to [Good First Bugs](https://github.com/MozillaReality/FirefoxReality/
 
 ## Pull Request Checklist
 
-- Branch from the [master](https://github.com/mozillareality/firefoxreality/tree/master) branch and, if needed, [rebase](https://help.github.com/en/articles/about-git-rebase) to the current master branch before submitting your pull request. If it doesn't merge cleanly with master, you may be asked to [rebase](https://help.github.com/en/articles/about-git-rebase) your changes.
+- Branch from the [main](https://github.com/mozillareality/firefoxreality/tree/main) branch and, if needed, [rebase](https://help.github.com/en/articles/about-git-rebase) to the current main branch before submitting your pull request. If it doesn't merge cleanly with main, you may be asked to [rebase](https://help.github.com/en/articles/about-git-rebase) your changes.
 
 - Commits should be as small as possible, while ensuring that each commit is correct independently (i.e., each commit should compile and pass tests). 
 

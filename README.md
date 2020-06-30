@@ -6,7 +6,7 @@ You can find us in [#fxr:mozilla.org on the Matrix](https://chat.mozilla.org/#/r
 
 ## Download developer APKs
 
-**[Download](https://community-tc.services.mozilla.com/tasks/index/project.firefoxreality/master)** developer APKs for Firefox Reality generated from latest [master](https://github.com/MozillaReality/FirefoxReality/commits/master).
+**[Download](https://community-tc.services.mozilla.com/tasks/index/project.firefoxreality/main)** developer APKs for Firefox Reality generated from latest [main](https://github.com/MozillaReality/FirefoxReality/commits/main).
 
 ## Locale support
 
@@ -39,7 +39,7 @@ This repo is only available to Mozilla employees. If you have access to the rele
 The [repo in `third_party`](https://github.com/MozillaReality/FirefoxReality-android-third-party) can be updated like so:
 
 ```bash
-pushd third_party && git fetch && git checkout master && git rebase origin/master && popd
+pushd third_party && git fetch && git checkout main && git rebase origin/main && popd
 ```
 
 *Fetch Git submodules.*
