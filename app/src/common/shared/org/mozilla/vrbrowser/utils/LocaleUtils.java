@@ -322,6 +322,8 @@ public class LocaleUtils {
             put(locale.toLanguageTag(), new Language(locale, StringUtils.getStringByLocale(context, R.string.settings_language_finnish, locale)));
             locale = new Locale("nl","NL");
             put(locale.toLanguageTag(), new Language(locale, StringUtils.getStringByLocale(context, R.string.settings_language_dutch, locale)));
+            locale = new Locale("th","TH");
+            put(locale.toLanguageTag(), new Language(locale, StringUtils.getStringByLocale(context, R.string.settings_language_thai, locale)));
         }};
 
         Locale locale = getDeviceLocale();
