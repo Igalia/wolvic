@@ -223,7 +223,11 @@ struct DeviceDelegatePicoVR::State {
         }
       } else {
         const int32_t kNumAxes = 2;
-        float axes[kNumAxes] = { controller.axisX , -controller.axisY };
+        float axes[kNumAxes] = { 0.0f, 0.0f };
+        if (controller.touched) {
+          axes[device::kImmersiveAxisTouchpadX] = (2.0f * controller.axisX) - 1.0f;
+          axes[device::kImmersiveAxisTouchpadY] = (2.0f * controller.axisY) - 1.0f;
+        }
         controllerDelegate->SetAxes(i, axes, controller.index != GazeModeIndex() ? kNumAxes : 0);
 
         if (controller.touched) {
