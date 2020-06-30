@@ -343,6 +343,10 @@
          Most common reason for this state is that the account password was changed on another device. -->
     <string name="settings_accounts_reconnect">再接続</string>
 
+    <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
+        opens the Release Notes web site for the current app version. -->
+    <string name="settings_whats_new">新着情報</string>
+
     <!-- This string is the title of a dialog box shown to the user when a settings
          change requires the application to restart. -->
     <string name="restart_dialog_restart">再起動が必要です</string>
@@ -489,6 +493,9 @@
     <!-- This string is used to label the 'Off' radio button of the 'Tracking protection' settings option. -->
     <string name="privacy_options_tracking_off">オフ</string>
 
+    <!-- This string is used as the description of the 'Off' radio button of the 'Enhanced Tracking protection' settings option. -->
+    <string name="privacy_options_tracking_off_description">あなたのオンライン行動を追跡して閲覧の習慣や興味を集めることをすべてのページに許可します。</string>
+
     <!-- This string is used to label radio buttons for setting fixed-foveated-rendering (FFR) level.
      The term "foveation" derives from "fovea", the area of higher-resolution vision in the human retina.
      Higher values of this option result in larger parts of the peripheral vision being rendered
@@ -628,6 +635,10 @@
     <string name="fxa_account_last_synced">最終同期日時: %1$d 分前</string>
 
         <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
+     and is used to enable or disable playback of DRM controlled content. -->
+    <string name="security_options_drm_content_v1">自動的にあなたの端末を識別して DRM で制御されたコンテンツを再生することをサイトに許可します。(&lt;a href=&quot;%1$s&quot;&gt;詳細情報&lt;/a&gt;)</string>
+
+    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable the tabs restoration after a fresh app start. -->
     <string name="security_options_restore_tabs">再起動後にタブとウィンドウを復元する</string>
 
@@ -825,6 +836,9 @@
     <string name="video_controls_play">再生</string>
 
     <!-- This string is displayed in a tooltip in the video controls UI. -->
+    <string name="video_controls_exit">閉じる</string>
+
+    <!-- This string is displayed in a tooltip in the video controls UI. -->
     <string name="video_controls_pause">停止</string>
 
     <!-- This string is displayed in a tooltip in the video controls UI. -->
@@ -835,6 +849,9 @@
 
     <!-- This string is displayed in a tooltip below the video controls UI. -->
     <string name="video_controls_volume">音量</string>
+
+    <!-- This string is displayed in a tooltip below the video controls UI. -->
+    <string name="video_controls_projection">ビデオ投影</string>
 
     <!-- This string is displayed in a tooltip in the video controls UI (e.g., 'Seek +30 seconds').
     '%1$s' will be replaced at runtime with a duration in seconds (e.g., '30'). -->
@@ -1351,6 +1368,10 @@
          tray and the Downloads view is closed. The button it labels, when pressed, closes the Downloads view. -->
     <string name="close_downloads_tooltip">ダウンロードリストを閉じます</string>
 
+    <!-- This string is for the tooltip that appears when the user hovers over the 'What's New' icon in the
+         Navigation Bar. The button it labels, when pressed, open the release notes page. -->
+    <string name="whats_new_tooltip">新着情報</string>
+
     <!-- This string is displayed in any button used for removing all the items in the current context. -->
     <string name="remove_all">すべて削除</string>
 
@@ -1406,6 +1427,17 @@
     <!-- This string is displayed in the message body of the alert dialog shown when the user does not have permission to run the application on the device.
          '%1$s' will be replace at runtime with the app's name. -->
     <string name="not_entitled_message">%1$s にこの端末で実行する権限がないため終了します。</string>
+
+
+    <!-- This string is displayed in the title of an Before Unload prompt, which asks for confirmation to stay or leave the current page. -->
+    <string name="before_unload_prompt_title">別のページへ移動しますか？</string>
+
+    <!-- This string is displayed in the message of an Before Unload prompt, which asks for confirmation to stay or leave the current page. -->
+    <string name="before_unload_prompt_message">別のページへ移動すると、入力したデータは保存されません。</string>
+    <!-- This string is displayed in a button of the Before Unload prompt. Clicking it cancels the navigation and stays on the same page. -->
+    <string name="before_unload_prompt_stay">このページに留まる</string>
+    <!-- This string is displayed in a button of the Before Unload prompt. Clicking it confirms the navigation and leaves the page. -->
+    <string name="before_unload_prompt_leave">別のページへ移動する</string>
 
     <!-- This string is displayed in a button that when pressed allows a user to view a page that has been blocked from being displayed.-->
     <string name="performance_unblock_page">ページのブロックを解除します</string>
