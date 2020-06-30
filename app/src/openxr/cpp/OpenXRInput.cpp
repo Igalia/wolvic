@@ -14,6 +14,7 @@ OpenXRInputPtr OpenXRInput::Create(XrInstance instance, XrSystemProperties syste
   auto result = std::make_shared<OpenXRInput>();
   result->instance = instance;
   result->systemProperties = systemProperties;
+  result->elbowModel = ElbowModel::Create();
   return result;
 }
 
@@ -365,7 +366,8 @@ void OpenXRInput::Update(XrSession session, XrTime predictedDisplayTime, XrSpace
       VRB_LOG("reb controller %d %f %f %f %f", index, spaceLocation.pose.orientation.x, spaceLocation.pose.orientation.y, spaceLocation.pose.orientation.z, spaceLocation.pose.orientation.w);
       vrb::Matrix transform = XrPoseToMatrix(spaceLocation.pose);
       if (renderMode == device::RenderMode::StandAlone) {
-        transform.TranslateInPlace(vrb::Vector(0.0f, 1.7f, 0.0f));
+        transform = elbowModel->GetTransform(hand != Hand::Left ? ElbowModel::HandEnum::Left : ElbowModel::HandEnum::Right, vrb::Matrix::Identity(), transform);
+        transform.TranslateInPlace(vrb::Vector(0.0f, 1.4f, 0.0f));
       }
       delegate->SetTransform(index, transform);
     } else {
