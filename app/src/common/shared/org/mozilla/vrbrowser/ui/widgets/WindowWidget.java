@@ -5,10 +5,9 @@
 
 package org.mozilla.vrbrowser.ui.widgets;
 
-import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
@@ -1720,7 +1719,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                             if (index == PromptDialogWidget.POSITIVE) {
                                 try {
                                     getContext().startActivity(newIntent);
-                                } catch (ActivityNotFoundException ignored) {
+                                } catch (Exception ignored) {
                                     showAlert(
                                             getResources().getString(R.string.download_open_file_error_title),
                                             getResources().getString(R.string.download_open_file_error_body),
