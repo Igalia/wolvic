@@ -61,6 +61,8 @@ public:
   std::array<ControllerState, Hand::Count> controllerState;
   XrSystemProperties systemProperties;
 
+  ElbowModelPtr elbowModel;
+
   static OpenXRInputPtr Create(XrInstance instance, XrSystemProperties systemProperties);
   void Initialize(XrSession session);
   void Update(XrSession session, XrTime predictedDisplayTime, XrSpace baseSpace, device::RenderMode renderMode, ControllerDelegatePtr& delegate);
