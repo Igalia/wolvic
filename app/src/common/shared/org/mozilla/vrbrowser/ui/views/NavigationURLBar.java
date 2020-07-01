@@ -348,22 +348,7 @@ public class NavigationURLBar extends FrameLayout {
     }
 
     public  void handleURLEdit(String text) {
-        text = text.trim();
-
-        String url;
-        if ((UrlUtils.isDomain(text) || UrlUtils.isIPUri(text)) && !text.contains(" ")) {
-            url = text;
-            TelemetryWrapper.urlBarEvent(true);
-            GleanMetricsService.urlBarEvent(true);
-        } else if (text.startsWith("about:") || text.startsWith("resource://")) {
-            url = text;
-        } else {
-            url = SearchEngineWrapper.get(getContext()).getSearchURL(text);
-
-            // Doing search in the URL bar, so sending "aIsURL: false" to telemetry.
-            TelemetryWrapper.urlBarEvent(false);
-            GleanMetricsService.urlBarEvent(false);
-        }
+        String url = UrlUtils.urlForText(getContext(), text.trim());
 
         mViewModel.setUrl(url);
 

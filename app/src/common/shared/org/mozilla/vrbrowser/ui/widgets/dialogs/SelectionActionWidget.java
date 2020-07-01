@@ -13,10 +13,12 @@ import androidx.annotation.Nullable;
 
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.search.SearchEngineWrapper;
 import org.mozilla.vrbrowser.ui.views.UITextButton;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
+import org.mozilla.vrbrowser.utils.UrlUtils;
 import org.mozilla.vrbrowser.utils.ViewUtils;
 
 import java.util.ArrayList;
@@ -30,12 +32,15 @@ public class SelectionActionWidget extends UIWidget implements WidgetManagerDele
         void onDismiss();
     }
 
+    public static final String ACTION_WEB_SEARCH = "ACTION_WEB_SEARCH";
+
     private Delegate mDelegate;
     private Point mPosition;
     private LinearLayout mContainer;
     private int mMinButtonWidth;
     private int mMaxButtonWidth;
     private Collection<String> mActions;
+    private String mSelectionText;
 
     public SelectionActionWidget(Context aContext) {
         super(aContext);
@@ -117,22 +122,43 @@ public class SelectionActionWidget extends UIWidget implements WidgetManagerDele
         }
     }
 
+    public void setSelectionText(String text) {
+        mSelectionText = text;
+    }
+
     public void setActions(@NonNull Collection<String> aActions) {
         mActions = aActions;
         mContainer.removeAllViews();
         ArrayList<UITextButton> buttons = new ArrayList<>();
 
         if (aActions.contains(GeckoSession.SelectionActionDelegate.ACTION_CUT)) {
-            buttons.add(createButton(R.string.context_menu_cut_text, GeckoSession.SelectionActionDelegate.ACTION_CUT, this::handleAction));
+            buttons.add(createButton(
+                    getContext().getString(R.string.context_menu_cut_text),
+                    GeckoSession.SelectionActionDelegate.ACTION_CUT, this::handleAction));
         }
         if (aActions.contains(GeckoSession.SelectionActionDelegate.ACTION_COPY)) {
-            buttons.add(createButton(R.string.context_menu_copy_text, GeckoSession.SelectionActionDelegate.ACTION_COPY, this::handleAction));
+            buttons.add(createButton(
+                    getContext().getString(R.string.context_menu_copy_text),
+                    GeckoSession.SelectionActionDelegate.ACTION_COPY, this::handleAction));
         }
         if (aActions.contains(GeckoSession.SelectionActionDelegate.ACTION_PASTE)) {
-            buttons.add(createButton(R.string.context_menu_paste_text, GeckoSession.SelectionActionDelegate.ACTION_PASTE, this::handleAction));
+            buttons.add(createButton(
+                    getContext().getString(R.string.context_menu_paste_text),
+                    GeckoSession.SelectionActionDelegate.ACTION_PASTE, this::handleAction));
         }
         if (aActions.contains(GeckoSession.SelectionActionDelegate.ACTION_SELECT_ALL)) {
-            buttons.add(createButton(R.string.context_menu_select_all_text, GeckoSession.SelectionActionDelegate.ACTION_SELECT_ALL, this::handleAction));
+            buttons.add(createButton(
+                    getContext().getString(R.string.context_menu_select_all_text),
+                    GeckoSession.SelectionActionDelegate.ACTION_SELECT_ALL, this::handleAction));
+        }
+
+        if (mSelectionText != null && !mSelectionText.trim().isEmpty()) {
+            buttons.add(createButton(
+                    getContext().getString(
+                            R.string.context_menu_web_search,
+                            SearchEngineWrapper.get(getContext()).getEngineName()),
+                    ACTION_WEB_SEARCH,
+                    this::handleAction));
         }
 
         for (int i = 0; i < buttons.size(); ++i) {
@@ -161,7 +187,7 @@ public class SelectionActionWidget extends UIWidget implements WidgetManagerDele
         return (mActions != null) && mActions.containsAll(aActions) && (mActions.size() == aActions.size());
     }
 
-    private UITextButton createButton(int aStringId, String aAction, OnClickListener aHandler) {
+    private UITextButton createButton(String aString, String aAction, OnClickListener aHandler) {
         UITextButton button = new UITextButton(getContext(), null, R.attr.selectionActionButtonStyle);
         button.setBackground(getContext().getDrawable(R.drawable.autocompletion_item_background));
         if (aHandler != null) {
@@ -173,7 +199,7 @@ public class SelectionActionWidget extends UIWidget implements WidgetManagerDele
         params.gravity = CENTER_VERTICAL;
         button.setLayoutParams(params);
         button.setTag(aAction);
-        button.setText(getContext().getString(aStringId));
+        button.setText(aString);
 
         return button;
     }
@@ -189,8 +215,15 @@ public class SelectionActionWidget extends UIWidget implements WidgetManagerDele
     }
 
     private void handleAction(View sender) {
+        String action = (String)sender.getTag();
+        if (action.equals(ACTION_WEB_SEARCH) && mSelectionText != null) {
+            mWidgetManager.getWindows().addTab(
+                    mWidgetManager.getWindows().getFocusedWindow(),
+                    UrlUtils.urlForText(getContext(), mSelectionText));
+        }
+
         if (mDelegate != null) {
-            mDelegate.onAction((String)sender.getTag());
+            mDelegate.onAction(action);
         }
     }
 

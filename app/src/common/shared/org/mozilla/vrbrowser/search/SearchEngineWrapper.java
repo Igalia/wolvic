@@ -117,6 +117,10 @@ public class SearchEngineWrapper implements SharedPreferences.OnSharedPreference
         return mSearchEngine.getIdentifier();
     }
 
+    public String getEngineName() {
+        return mSearchEngine.getName();
+    }
+
     // Receiver for locale updates
     private BroadcastReceiver mLocaleChangedReceiver = new BroadcastReceiver() {
         @Override

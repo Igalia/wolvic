@@ -1297,6 +1297,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
     public void addTab(@NonNull WindowWidget targetWindow, @Nullable String aUri) {
         Session session = SessionStore.get().createSuspendedSession(aUri, targetWindow.getSession().isPrivateMode());
+        session.setParentSession(targetWindow.getSession());
         setFirstPaint(targetWindow, session);
         targetWindow.setSession(session, WindowWidget.DEACTIVATE_CURRENT_SESSION);
         if (aUri == null || aUri.isEmpty()) {
@@ -1315,7 +1316,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
     @Override
     public void onTabAdd() {
-        addTab(mFocusedWindow, null);
+        addTab(mFocusedWindow);
         GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.TABS_DIALOG);
     }
 
@@ -1365,7 +1366,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
                 available.remove(0);
             } else {
                 // We don't have more tabs available for the front window, load home.
-                addTab(window, null);
+                addTab(window);
             }
         }
 

@@ -1024,6 +1024,10 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         return mState;
     }
 
+    public void setParentSession(@NonNull Session parentSession) {
+        mState.mParentId = parentSession.getId();
+    }
+
     // NavigationDelegate
 
     @Override

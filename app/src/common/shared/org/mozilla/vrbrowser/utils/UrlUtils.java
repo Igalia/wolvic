@@ -10,10 +10,14 @@ import android.util.Base64;
 import android.util.Patterns;
 import android.webkit.URLUtil;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.SettingsStore;
+import org.mozilla.vrbrowser.search.SearchEngineWrapper;
+import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
+import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -196,5 +200,24 @@ public class UrlUtils {
         } catch (MalformedURLException e) {
             return uri;
         }
+    }
+
+    public static String urlForText(@NonNull Context context, @NonNull String text) {
+        String url = text.trim();
+        if ((UrlUtils.isDomain(text) || UrlUtils.isIPUri(text)) && !text.contains(" ")) {
+            url = text;
+            TelemetryWrapper.urlBarEvent(true);
+            GleanMetricsService.urlBarEvent(true);
+        } else if (text.startsWith("about:") || text.startsWith("resource://")) {
+            url = text;
+        } else {
+            url = SearchEngineWrapper.get(context).getSearchURL(text);
+
+            // Doing search in the URL bar, so sending "aIsURL: false" to telemetry.
+            TelemetryWrapper.urlBarEvent(false);
+            GleanMetricsService.urlBarEvent(false);
+        }
+
+        return url;
     }
 }
