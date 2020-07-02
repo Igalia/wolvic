@@ -17,6 +17,8 @@ import mozilla.components.support.base.log.logger.Logger
 import org.mozilla.vrbrowser.VRBrowserApplication
 import org.mozilla.vrbrowser.utils.SystemUtils
 import java.util.concurrent.CompletableFuture
+import java.util.stream.Collectors
+import java.util.stream.Stream
 
 class HistoryStore constructor(val context: Context) {
 
@@ -24,6 +26,14 @@ class HistoryStore constructor(val context: Context) {
 
     private var listeners = ArrayList<HistoryListener>()
     private var storage = (context.applicationContext as VRBrowserApplication).places.history
+
+    companion object {
+        @JvmStatic
+        val BLOCK_LIST: MutableList<String> = Stream.of(
+                "https://accounts.firefox.com/authorization",
+                "https://accounts.firefox.com/oauth"
+        ).collect(Collectors.toList())
+    }
 
     // Bookmarks might have changed during sync, so notify our listeners.
     private val syncStatusObserver = object : SyncStatusObserver {
@@ -93,13 +103,21 @@ class HistoryStore constructor(val context: Context) {
     }
 
     fun recordVisit(aURL: String, pageVisit: PageVisit) = GlobalScope.future {
-        storage.recordVisit(aURL, pageVisit)
-        notifyListeners()
+        if(BLOCK_LIST.stream().noneMatch {
+                    aURL.startsWith(it)
+                }) {
+            storage.recordVisit(aURL, pageVisit)
+            notifyListeners()
+        }
     }
 
     fun recordObservation(aURL: String, observation: PageObservation) = GlobalScope.future {
-        storage.recordObservation(aURL, observation)
-        notifyListeners()
+        if(BLOCK_LIST.stream().noneMatch {
+                    aURL.startsWith(it)
+                }) {
+            storage.recordObservation(aURL, observation)
+            notifyListeners()
+        }
     }
 
     fun deleteHistory(aUrl: String, timestamp: Long) = GlobalScope.future {
