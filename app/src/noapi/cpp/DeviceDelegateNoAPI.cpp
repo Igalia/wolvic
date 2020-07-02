@@ -185,6 +185,7 @@ DeviceDelegateNoAPI::SetControllerDelegate(ControllerDelegatePtr& aController) {
   m.controller->SetEnabled(kControllerIndex, true);
   m.controller->SetCapabilityFlags(kControllerIndex, device::Orientation | device::Position);
   m.controller->SetButtonCount(kControllerIndex, 5);
+  m.controller->SetTargetRayMode(kControllerIndex, device::TargetRayMode::TrackedPointer);
   static const float data[2] = {0.0f, 0.0f};
   m.controller->SetAxes(kControllerIndex, data, 2);
 }
@@ -384,7 +385,13 @@ DeviceDelegateNoAPI::ControllerButtonPressed(const bool aDown) {
     return;
   }
 
-  m.controller->SetButtonState(kControllerIndex, ControllerDelegate::BUTTON_TOUCHPAD, 1, aDown, aDown);
+  m.controller->SetButtonState(kControllerIndex, ControllerDelegate::BUTTON_TRIGGER, device::kImmersiveButtonTrigger, aDown, aDown);
+  if (aDown && m.renderMode == device::RenderMode::Immersive) {
+    m.controller->SetSelectActionStart(kControllerIndex);
+  } else {
+    m.controller->SetSelectActionStop(kControllerIndex);
+  }
+
 }
 
 DeviceDelegateNoAPI::DeviceDelegateNoAPI(State& aState) : m(aState) {}
