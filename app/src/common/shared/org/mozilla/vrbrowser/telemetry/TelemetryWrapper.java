@@ -31,6 +31,7 @@ import org.mozilla.vrbrowser.utils.SystemUtils;
 import org.mozilla.vrbrowser.utils.UrlUtils;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -307,7 +308,7 @@ public class TelemetryWrapper {
         }
 
         try {
-            URI uriLink = URI.create(uri);
+            URI uriLink = UrlUtils.parseUri(uri);
             if (uriLink.getHost() == null) {
                 return;
             }
@@ -332,7 +333,7 @@ public class TelemetryWrapper {
 
             loadingTimeHistogram[histogramLoadIndex]++;
 
-        } catch (IllegalArgumentException e) {
+        } catch (URISyntaxException e) {
             Log.e(LOGTAG, "Invalid URL", e);
         }
     }

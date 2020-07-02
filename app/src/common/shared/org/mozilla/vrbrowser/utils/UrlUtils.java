@@ -22,6 +22,7 @@ import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.regex.Pattern;
 
@@ -139,14 +140,14 @@ public class UrlUtils {
 
             } else {
                 try {
-                    URI uri = URI.create(aUri);
+                    URI uri = parseUri(aUri);
                     URL url = new URL(
                             uri.getScheme() != null ? uri.getScheme() : "",
                             uri.getAuthority() != null ? uri.getAuthority() : "",
                             "");
                     return url.toString();
 
-                } catch (MalformedURLException | IllegalArgumentException e) {
+                } catch (MalformedURLException | URISyntaxException e) {
                     return "";
                 }
             }
@@ -199,6 +200,21 @@ public class UrlUtils {
             return url.getHost();
         } catch (MalformedURLException e) {
             return uri;
+        }
+    }
+
+    public static URI parseUri(String aUri) throws URISyntaxException {
+        try {
+            return new URI(aUri);
+        } catch (URISyntaxException e) {
+            if (!StringUtils.isEmpty(aUri) && StringUtils.charCount(aUri, '#') >= 2) {
+                // Browsers are able to handle URLs with double # by ignoring everything after the
+                // second # occurrence. But Java implementation considers it an invalid URL.
+                // Remove everything after the second #.
+                int index = aUri.indexOf("#", aUri.indexOf("#") + 1);
+                return parseUri(aUri.substring(0, index));
+            }
+            throw e;
         }
     }
 

@@ -76,6 +76,10 @@ public class StringUtils {
         return false;
     }
 
+    public static long charCount(@NonNull String aString, char target) {
+        return aString.chars().filter(ch -> ch == target).count();
+    }
+
     /**
      * The version code is composed like: yDDDHHmm
      *  * y   = Double digit year, with 16 substracted: 2017 -> 17 -> 1
