@@ -24,7 +24,9 @@ ext.deps = [:]
 def versions = [:]
 // GeckoView versions can be found here:
 // https://maven.mozilla.org/?prefix=maven2/org/mozilla/geckoview/
-versions.gecko_view = "79.0.20200625094452"
+versions.gecko_view_nightly = "79.0.20200625094452"
+versions.gecko_view_beta = "79.0.20200630191632"
+versions.gecko_view_release = "78.0.20200630195452"
 versions.android_components = "44.0.0"
 // Note that android-components also depends on application-services,
 // and in fact is our main source of appservices-related functionality.
@@ -56,9 +58,12 @@ ext.versions = versions
 def deps = [:]
 
 def gecko_view = [:]
-gecko_view.nightly_armv7a = "org.mozilla.geckoview:geckoview-nightly-armeabi-v7a:$versions.gecko_view"
-gecko_view.nightly_arm64 = "org.mozilla.geckoview:geckoview-nightly-arm64-v8a:$versions.gecko_view"
-gecko_view.nightly_x86_64 = "org.mozilla.geckoview:geckoview-nightly-x86_64:$versions.gecko_view"
+gecko_view.nightly_arm64 = "org.mozilla.geckoview:geckoview-nightly-arm64-v8a:$versions.gecko_view_nightly"
+gecko_view.nightly_x86_64 = "org.mozilla.geckoview:geckoview-nightly-x86_64:$versions.gecko_view_nightly"
+gecko_view.beta_arm64 = "org.mozilla.geckoview:geckoview-beta-arm64-v8a:$versions.gecko_view_beta"
+gecko_view.beta_x86_64 = "org.mozilla.geckoview:geckoview-beta-x86_64:$versions.gecko_view_beta"
+gecko_view.release_arm64 = "org.mozilla.geckoview:geckoview-arm64-v8a:$versions.gecko_view_release"
+gecko_view.release_x86_64 = "org.mozilla.geckoview:geckoview-x86_64:$versions.gecko_view_release"
 deps.gecko_view = gecko_view
 
 def android_components = [:]
