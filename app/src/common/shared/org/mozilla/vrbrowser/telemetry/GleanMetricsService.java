@@ -26,6 +26,7 @@ import org.mozilla.vrbrowser.utils.SystemUtils;
 import org.mozilla.vrbrowser.utils.UrlUtils;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -108,7 +109,7 @@ public class GleanMetricsService {
         }
 
         try {
-            URI uriLink = URI.create(uri);
+            URI uriLink = UrlUtils.parseUri(uri);
             if (uriLink.getHost() == null) {
                 return;
             }
@@ -117,7 +118,7 @@ public class GleanMetricsService {
                 Url.INSTANCE.domains().add();
             }
             Url.INSTANCE.visits().add();
-        } catch (IllegalArgumentException e) {
+        } catch (URISyntaxException e) {
             Log.e(LOGTAG, "Invalid URL", e);
         }
     }
