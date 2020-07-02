@@ -493,7 +493,7 @@ if (findProject(':wavesdk')) {
 
 dependencies {
     // "nightly" or "beta" or "release"
-    def branch = "nightly"
+    def branch = "beta"
     arm64Implementation deps.gecko_view."${branch}_arm64"
     x86_64Implementation deps.gecko_view."${branch}_x86_64"
 }
