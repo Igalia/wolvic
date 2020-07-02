@@ -492,11 +492,10 @@ if (findProject(':wavesdk')) {
 }
 
 dependencies {
-    // To see what the latest geckoview-nightly version is go here:
-    // https://maven.mozilla.org/?prefix=maven2/org/mozilla/geckoview/geckoview-nightly-armeabi-v7a/
-    armImplementation deps.gecko_view.nightly_armv7a
-    arm64Implementation deps.gecko_view.nightly_arm64
-    x86_64Implementation deps.gecko_view.nightly_x86_64
+    // "nightly" or "beta" or "release"
+    def branch = "nightly"
+    arm64Implementation deps.gecko_view."${branch}_arm64"
+    x86_64Implementation deps.gecko_view."${branch}_x86_64"
 }
 
 if (gradle.hasProperty('geckoViewLocalArm') || gradle.hasProperty('geckoViewLocalX86')) {
