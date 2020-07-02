@@ -15,6 +15,7 @@ import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.browser.Accounts;
+import org.mozilla.vrbrowser.browser.HistoryStore;
 import org.mozilla.vrbrowser.browser.Media;
 import org.mozilla.vrbrowser.browser.Services;
 import org.mozilla.vrbrowser.browser.SettingsStore;
@@ -41,7 +42,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import mozilla.components.concept.sync.AccountObserver;
 import mozilla.components.concept.sync.AuthType;
@@ -71,11 +71,6 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     private static final int TAB_ADDED_NOTIFICATION_ID = 0;
     private static final int TAB_SENT_NOTIFICATION_ID = 1;
     private static final int BOOKMARK_ADDED_NOTIFICATION_ID = 2;
-
-    // Restore URLs blocklist
-    private static final List<String> SAVE_BLOCKLIST = Stream.of(
-      "https://accounts.firefox.com/oauth/"
-    ).collect(Collectors.toList());
 
     class WindowState {
         WindowPlacement placement;
@@ -211,7 +206,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             ArrayList<Session> sessions = SessionStore.get().getSortedSessions(false);
             state.tabs = sessions.stream()
                     .map(Session::getSessionState)
-                    .filter(sessionState -> SAVE_BLOCKLIST.stream().noneMatch(uri ->
+                    .filter(sessionState -> HistoryStore.getBLOCK_LIST().stream().noneMatch(uri ->
                         sessionState.mUri != null && sessionState.mUri.startsWith(uri)
                     ))
                     .collect(Collectors.toCollection(ArrayList::new));
