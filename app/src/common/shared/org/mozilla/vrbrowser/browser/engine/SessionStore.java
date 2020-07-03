@@ -149,8 +149,12 @@ public class SessionStore implements
         if (BuildConfig.DEBUG) {
             mStoreSubscription = ComponentsAdapter.get().getStore().observeManually(browserState -> {
                 Log.d(LOGTAG, "Session status BEGIN");
-                browserState.getTabs().forEach(tabSessionState -> Log.d(LOGTAG, "BrowserStore Session: " + tabSessionState.getId()));
-                mSessions.forEach(session -> Log.d(LOGTAG, "SessionStore Session: " + session.getId()));
+                for (int i=0; i<browserState.getTabs().size(); i++) {
+                    Log.d(LOGTAG, "BrowserStore Session: " + browserState.getTabs().get(i).getId());
+                }
+                for (int i=0; i<mSessions.size(); i++) {
+                    Log.d(LOGTAG, "SessionStore Session: " + mSessions.get(i).getId());
+                }
                 Log.d(LOGTAG, "Session status END");
                 return null;
             });
