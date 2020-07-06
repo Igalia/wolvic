@@ -431,6 +431,11 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     }
 
     private boolean shouldLoadDefaultPage(@NonNull SessionState aState) {
+        // data:text URLs can not be restored.
+        if (mState.mSessionState != null && ((mState.mUri == null) || mState.mUri.startsWith("data:text"))) {
+            return true;
+        }
+
         if (aState.mUri != null && aState.mUri.length() != 0 && !aState.mUri.equals(mContext.getString(R.string.about_blank))) {
             return false;
         }
@@ -467,12 +472,6 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         }
 
         openSession();
-
-        // data:text URLs can not be restored.
-        if (mState.mSessionState != null && ((mState.mUri == null) || mState.mUri.startsWith("data:text"))) {
-            mState.mSessionState = null;
-            mState.mUri = null;
-        }
 
         if (shouldLoadDefaultPage(mState)) {
             loadDefaultPage();
