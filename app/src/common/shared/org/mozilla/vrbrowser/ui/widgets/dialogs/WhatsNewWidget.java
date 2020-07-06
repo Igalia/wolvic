@@ -8,11 +8,11 @@ package org.mozilla.vrbrowser.ui.widgets.dialogs;
 import android.content.Context;
 import android.util.Log;
 
-import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.browser.Accounts;
 import org.mozilla.vrbrowser.browser.SettingsStore;
+import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 
 import java.util.concurrent.CompletableFuture;
@@ -88,10 +88,12 @@ public class WhatsNewWidget extends PromptDialogWidget {
                         mAccounts.logoutAsync();
 
                     } else {
-                        mAccounts.setLoginOrigin(mLoginOrigin);
                         mWidgetManager.openNewTabForeground(url);
-                        mWidgetManager.getFocusedWindow().getSession().loadUri(url);
-                        mWidgetManager.getFocusedWindow().getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_VR);
+                        Session currentSession = mWidgetManager.getFocusedWindow().getSession();
+                        String sessionId = currentSession != null ? currentSession.getId() : null;
+
+                        mAccounts.setOrigin(mLoginOrigin, sessionId);
+
                         GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.FXA_LOGIN);
                     }
 
