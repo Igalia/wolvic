@@ -263,6 +263,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         });
 
         mBinding.navigationBarNavigation.whatsNew.setOnClickListener(v -> {
+            v.requestFocusFromTouch();
             SettingsStore.getInstance(getContext()).setRemotePropsVersionName(BuildConfig.VERSION_NAME);
             RemoteProperties props = mSettingsViewModel.getProps().getValue().get(BuildConfig.VERSION_NAME);
             if (props != null) {

@@ -672,6 +672,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             GleanMetricsService.activePlacementEvent(mWindowPlacement.getValue(), false);
         }
         mWindowPlacement = aPlacement;
+        mViewModel.setWidth(mWidgetPlacement.width);
+        mViewModel.setHeight(mWidgetPlacement.height);
         mViewModel.setPlacement(mWindowPlacement);
         if (mActive) {
             TelemetryWrapper.activePlacementEvent(mWindowPlacement.getValue(), true);
@@ -943,6 +945,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mWindowPlacement = mWindowPlacementBeforeFullscreen;
         mWidgetPlacement.copyFrom(mPlacementBeforeFullscreen);
         mWidgetPlacement.composited = composited;
+        mViewModel.setWidth(mWidgetPlacement.width);
+        mViewModel.setHeight(mWidgetPlacement.height);
     }
 
     public WidgetPlacement getBeforeFullscreenPlacement() {
@@ -955,6 +959,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     public void restoreBeforeResizePlacement() {
         mWidgetPlacement.copyFrom(mPlacementBeforeResize);
+        mViewModel.setWidth(mWidgetPlacement.width);
+        mViewModel.setHeight(mWidgetPlacement.height);
     }
 
     public WidgetPlacement getBeforeResizePlacement() {
