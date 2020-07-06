@@ -31,6 +31,7 @@ public interface KeyboardInterface {
     @NonNull CustomKeyboard getAlphabeticKeyboard();
     float getAlphabeticKeyboardWidth();
     float getAlphabeticKeyboardHeight();
+    float getSymbolKeyboardHeight();
     float getKeyboardTranslateYInWorld();
     float getKeyboardWorldWidth();
     default @Nullable CustomKeyboard getAlphabeticCapKeyboard() { return null; }

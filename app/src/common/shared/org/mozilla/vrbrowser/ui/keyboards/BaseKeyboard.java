@@ -67,6 +67,10 @@ public abstract class BaseKeyboard implements KeyboardInterface {
         return WidgetPlacement.dpDimension(mContext, R.dimen.keyboard_height);
     }
 
+    public float  getSymbolKeyboardHeight() {
+        return WidgetPlacement.dpDimension(mContext, R.dimen.keyboard_height);
+    }
+
     @Override
     public String[] getDomains(String... domains) {
         return Stream.of(new String[]{".com", ".net", ".org", ".co"}, domains).flatMap(Stream::of)
