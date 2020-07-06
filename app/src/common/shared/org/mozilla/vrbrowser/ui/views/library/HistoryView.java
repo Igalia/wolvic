@@ -19,7 +19,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserActivity;
 import org.mozilla.vrbrowser.VRBrowserApplication;
@@ -246,9 +245,12 @@ public class HistoryView extends LibraryView implements HistoryStore.HistoryList
                             mAccounts.logoutAsync();
 
                         } else {
-                            mAccounts.setLoginOrigin(Accounts.LoginOrigin.HISTORY);
                             mWidgetManager.openNewTabForeground(url);
-                            mWidgetManager.getFocusedWindow().getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
+                            Session currentSession = mWidgetManager.getFocusedWindow().getSession();
+                            String sessionId = currentSession != null ? currentSession.getId() : null;
+
+                            mAccounts.setOrigin(Accounts.LoginOrigin.HISTORY, sessionId);
+
                             GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.FXA_LOGIN);
 
                             WindowWidget window = mWidgetManager.getFocusedWindow();

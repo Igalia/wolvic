@@ -19,7 +19,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserActivity;
 import org.mozilla.vrbrowser.VRBrowserApplication;
@@ -37,7 +36,6 @@ import org.mozilla.vrbrowser.ui.callbacks.BookmarkItemCallback;
 import org.mozilla.vrbrowser.ui.callbacks.BookmarksCallback;
 import org.mozilla.vrbrowser.ui.callbacks.LibraryContextMenuCallback;
 import org.mozilla.vrbrowser.ui.viewmodel.BookmarksViewModel;
-import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WindowWidget;
 import org.mozilla.vrbrowser.ui.widgets.Windows;
 import org.mozilla.vrbrowser.ui.widgets.menus.library.BookmarksContextMenuWidget;
@@ -240,10 +238,12 @@ public class BookmarksView extends LibraryView implements BookmarksStore.Bookmar
                             mAccounts.logoutAsync();
 
                         } else {
-                            mAccounts.setLoginOrigin(Accounts.LoginOrigin.BOOKMARKS);
-                            WidgetManagerDelegate widgetManager = ((VRBrowserActivity) getContext());
-                            widgetManager.openNewTabForeground(url);
-                            widgetManager.getFocusedWindow().getSession().setUaMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE);
+                            mWidgetManager.openNewTabForeground(url);
+                            Session currentSession = mWidgetManager.getFocusedWindow().getSession();
+                            String sessionId = currentSession != null ? currentSession.getId() : null;
+
+                            mAccounts.setOrigin(Accounts.LoginOrigin.BOOKMARKS, sessionId);
+
                             GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.FXA_LOGIN);
 
                             WindowWidget window = mWidgetManager.getFocusedWindow();

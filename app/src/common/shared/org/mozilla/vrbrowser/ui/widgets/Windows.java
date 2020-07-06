@@ -39,7 +39,6 @@ import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -991,9 +990,11 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         public void onAuthenticated(@NonNull OAuthAccount oAuthAccount, @NonNull AuthType authType) {
             if (authType == AuthType.Signin.INSTANCE || authType == AuthType.Signup.INSTANCE) {
                 UIDialog.closeAllDialogs();
-                Session session = mFocusedWindow.getSession();
-                addTab(mFocusedWindow, mAccounts.getConnectionSuccessURL());
-                onTabsClose(new ArrayList<>(Collections.singletonList(session)));
+
+                Session fxaSession = SessionStore.get().getSession(mAccounts.getOriginSessionId());
+                if (fxaSession != null) {
+                    fxaSession.loadUri(mAccounts.getConnectionSuccessURL(), GeckoSession.LOAD_FLAGS_REPLACE_HISTORY);
+                }
 
                 switch (mAccounts.getLoginOrigin()) {
                     case BOOKMARKS:

@@ -330,8 +330,12 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
                                 mAccounts.logoutAsync();
 
                             } else {
-                                mAccounts.setLoginOrigin(Accounts.LoginOrigin.SETTINGS);
                                 mWidgetManager.openNewTabForeground(url);
+                                Session currentSession = mWidgetManager.getFocusedWindow().getSession();
+                                String sessionId = currentSession != null ? currentSession.getId() : null;
+
+                                mAccounts.setOrigin(Accounts.LoginOrigin.SETTINGS, sessionId);
+
                                 GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.FXA_LOGIN);
                             }
 
