@@ -879,10 +879,12 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     // NavigationDelegate
 
     @Override
-    public void onLocationChange(@NonNull GeckoSession geckoSession, @Nullable String s) {
+    public void onLocationChange(@NonNull GeckoSession geckoSession, @Nullable String url) {
         if (getSession() != null && getSession().getGeckoSession() == geckoSession) {
             updateTrackingProtection();
         }
+
+        mBinding.navigationBarNavigation.reloadButton.setEnabled(!UrlUtils.isPrivateAboutPage(getContext(), url));
     }
 
     // Content delegate
