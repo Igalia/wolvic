@@ -634,9 +634,10 @@
          when that the content was just synced some time ago. -->
     <string name="fxa_account_last_synced">Last synced %1$d minutes ago</string>
 
-        <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
-     and is used to enable or disable playback of DRM controlled content. -->
-    <string name="security_options_drm_content_v1">Automatically allow sites to identify your device to play DRM-controlled content. (&lt;a href="%1$s">Learn More&lt;/a>)</string>
+    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
+         and is used to enable or disable playback of DRM controlled content.
+         '%1$s' Will be replaced at runtime with the DRM Learn More url. -->
+    <string name="security_options_drm_content_v1"><![CDATA[Automatically allow sites to identify your device to play DRM-controlled content. (<a href="%1$s">Learn More</a>)]]></string>
 
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable the tabs restoration after a fresh app start. -->
@@ -784,7 +785,7 @@
 
     <!-- This string explains why Mozilla would like the user to allow the crash data to be uploaded.
          '%1$s' will be replaced at runtime with the app's domain name. -->
-    <string name="crash_dialog_message">Please help Mozilla improve %1$s by sending your crash data. &lt;a href="more">Learn More&lt;/a></string>
+    <string name="crash_dialog_message"><![CDATA[Please help Mozilla improve %1$s by sending your crash data. <a href="more">Learn More</a>]]></string>
 
     <!-- This string labels a checkbox in the crash dialog box. When checked, the user will no longer
          be prompted for permission to upload crash data after an application crash. -->
@@ -1102,8 +1103,9 @@
          when there are no exceptions. -->
     <string name="privacy_options_popups_list_empty_second">A list of sites with permissions will appear here.</string>
 
-    <!-- This string is used to label radio buttons for setting ETP in. -->
-    <string name="privacy_options_tracking">Enhanced Tracking Protection. (&lt;a href="%1$s">Learn More&lt;/a>)</string>
+    <!-- This string is used to label radio buttons for setting ETP in.
+         '%1$' Will be replaced at runtime with the Learn More url for ETP. -->
+    <string name="privacy_options_tracking"><![CDATA[Enhanced Tracking Protection. (<a href="%1$s">Learn More</a>)]]></string>
 
     <!-- This string labels the button in the privacy option panel that opens the dialog to add/remove
          Tracking protection exceptions. -->
@@ -1459,7 +1461,7 @@
 
     <!-- This string is displayed in the description of the Voice Search samples collect dialog. That dialog is shown the first time
          a user tries to use the voice search. -->
-    <string name="voice_samples_collect_dialog_description2">In order to improve our voice recognition and other services, we need to collect voice samples for research. We store your data securely and without identifying information. You’ll always be able to use voice search, even if you don’t allow collection.&lt;a href="privacy">Learn More&lt;/a></string>
+    <string name="voice_samples_collect_dialog_description2"><![CDATA[In order to improve our voice recognition and other services, we need to collect voice samples for research. We store your data securely and without identifying information. You’ll always be able to use voice search, even if you don’t allow collection. <a href="">Learn More</a>]]></string>
 
     <!-- This string is displayed in the button of the Voice Search samples collect dialog.
          When clicked the user opts in to the voice data collection. -->
@@ -1648,7 +1650,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed in the title of the quick WebXR blocking dialog, accessed from the VR icon in the URL bar.
      '%1$s' will be replaced at runtime with the status of the setting.
      '%2$s' will be replaced at runtime with the Learn More page link. -->
-    <string name="webxr_permission_dialog_message">WebXR is %1$s for this site. &lt;a href="%2$s">Learn More&lt;/a></string>
+    <string name="webxr_permission_dialog_message"><![CDATA[WebXR is %1$s for this site. <a href="%2$s">Learn More</a>]]></string>
 
     <!-- This string is displayed in the on button of the quick WebXR blocking dialog when it's in enabled state. It's accessed from the WebXR icon in the URL bar. -->
     <string name="webxr_dialog_button_on">On</string>
@@ -1659,7 +1661,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed in the title of the quick Tracking Protection dialog, accessed from the Tracking Protection icon in the URL bar.
          '%1$s' will be replaced at runtime with the status of the setting.
          '%2$s' will be replaced at runtime with the Learn More page link. -->
-    <string name="tracking_dialog_message">Enhanced Tracking Protection is %1$s for this site. &lt;a href="%2$s">Learn More&lt;/a></string>
+    <string name="tracking_dialog_message"><![CDATA[Enhanced Tracking Protection is %1$s for this site. <a href="%2$s">Learn More</a>]]></string>
 
     <!-- This string is displayed in the on button of the quick Tracking Protection dialog when it's in enabled state. It's accessed from the Tracking Protection icon in the URL bar. -->
     <string name="tracking_dialog_button_on">On</string>
@@ -1670,7 +1672,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed in the title of the quick DRM dialog, accessed from the DRM icon in the URL bar.
          '%1$s' will be replaced at runtime with the status of the setting.
          '%2$s' will be replaced at runtime with the Learn More page link. -->
-    <string name="drm_dialog_message">Some audio or video on this site uses DRM software, which may limit what %1$s can let you do with it. &lt;a href="%2$s">Learn More&lt;/a></string>
+    <string name="drm_dialog_message"><![CDATA[Some audio or video on this site uses DRM software, which may limit what %1$s can let you do with it. <a href="%2$s">Learn More</a>]]></string>
 
     <!-- This string is displayed in the switch button of the quick DRM dialog when it's in enabled state. It's accessed from the DRM icon in the URL bar. -->
     <string name="drm_dialog_button_on">On</string>
@@ -1685,7 +1687,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed as the body of a dialog that is displayed the first time a user access DRM content if they haven't
          explicitly enable/Disable the DRM setting yet.
          '%1$s' will be replaced at runtime with the Learn More page link. -->
-    <string name="drm_first_use_body_v2">Allowing DRM permits sites to identify this device every time you visit. &lt;a href="%1$s">Learn More&lt;/a></string>
+    <string name="drm_first_use_body_v2"><![CDATA[Allowing DRM permits sites to identify this device every time you visit. <a href="%1$s">Learn More</a>]]></string>
   
     <!-- This string is displayed in the enable button that is displayed inside the dialog that is displayed the first time a user access
          access DRM content if they haven't explicitly enable/Disable the DRM setting yet. -->
