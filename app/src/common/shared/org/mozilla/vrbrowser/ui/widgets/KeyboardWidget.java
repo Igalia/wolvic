@@ -744,7 +744,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private void handleShift(boolean isShifted) {
         final boolean statusChanged = mKeyboardView.isShifted() != isShifted;
 
-        if (mCurrentKeyboard.getAlphabeticCapKeyboard() != null) {
+        if (mKeyboardView.getKeyboard() != getSymbolsKeyboard()) {
             if (isShifted || mIsCapsLock) {
                 mKeyboardView.setKeyboard(mCurrentKeyboard.getAlphabeticCapKeyboard());
             } else {
@@ -875,11 +875,19 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         cleanComposingText();
 
         mCurrentKeyboard = aKeyboard;
+
+        // For the case when switching from a symbol keyboard to a alphabetic keyboard.
+        float currentHeight = 0.0f;
+        if (mKeyboardView.getKeyboard() == mCurrentKeyboard.getSymbolsKeyboard()) {
+            currentHeight = mCurrentKeyboard.getSymbolKeyboardHeight();
+        } else {
+            currentHeight = mCurrentKeyboard.getAlphabeticKeyboardHeight();
+        }
         final int width = getKeyboardWidth(mCurrentKeyboard.getAlphabeticKeyboardWidth());
-        final int height = getKeyboardHeight(mCurrentKeyboard.getAlphabeticKeyboardHeight());
+        final int height = getKeyboardHeight(currentHeight);
         if (width != mWidgetPlacement.width || height != mWidgetPlacement.height) {
             mWidgetPlacement.width = width;
-            mWidgetPlacement.height = height;
+            mWidgetPlacement.height = getKeyboardHeight(mCurrentKeyboard.getAlphabeticKeyboardHeight());
             mWidgetPlacement.translationY = mCurrentKeyboard.getKeyboardTranslateYInWorld() -
                                             WidgetPlacement.unitFromMeters(getContext(), R.dimen.window_world_y);
             float defaultWorldWidth = mCurrentKeyboard.getKeyboardWorldWidth();
@@ -964,10 +972,25 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
     private void handleModeChange() {
         Keyboard current = mKeyboardView.getKeyboard();
         Keyboard alphabetic = mCurrentKeyboard.getAlphabeticKeyboard();
-        mKeyboardView.setKeyboard(current == alphabetic ? getSymbolsKeyboard() : alphabetic);
+        Keyboard alphabetiCap = mCurrentKeyboard.getAlphabeticCapKeyboard();
+        final boolean isAlphabeticMode = current == alphabetic || current == alphabetiCap;
+
+        mKeyboardView.setKeyboard(isAlphabeticMode ? getSymbolsKeyboard() : alphabetic);
         mKeyboardView.setLayoutParams(mKeyboardView.getLayoutParams());
         if (current == alphabetic) {
             mCurrentKeyboard.getAlphabeticKeyboard().setSpaceKeyLabel("");
+        }
+
+        // Adjust the layout of the keyboard container because it might be changed by alphabetic keyboards
+        // which have various height.
+        if (isAlphabeticMode) {
+            ViewGroup.LayoutParams params = mKeyboardContainer.getLayoutParams();
+            params.height = WidgetPlacement.convertDpToPixel(getContext(), mCurrentKeyboard.getSymbolKeyboardHeight());
+            mKeyboardContainer.setLayoutParams(params);
+        } else {
+            ViewGroup.LayoutParams params = mKeyboardContainer.getLayoutParams();
+            params.height = WidgetPlacement.convertDpToPixel(getContext(), mCurrentKeyboard.getAlphabeticKeyboardHeight());
+            mKeyboardContainer.setLayoutParams(params);
         }
     }
 
@@ -1023,7 +1046,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             postInputCommand(() -> connection.commitText(text, 1));
         }
 
-        if (!mIsCapsLock) {
+        if (!mIsCapsLock && mCurrentKeyboard.getAlphabeticCapKeyboard() == null) {
             handleShift(false);
         }
 
@@ -1118,6 +1141,10 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         String enterText = mCurrentKeyboard.getEnterKeyText(mEditorInfo.imeOptions, mComposingText);
         String modeChangeText = mCurrentKeyboard.getModeChangeKeyText();
         boolean changed = mCurrentKeyboard.getAlphabeticKeyboard().setEnterKeyLabel(enterText);
+
+        if (mCurrentKeyboard.getAlphabeticCapKeyboard() != null) {
+            mCurrentKeyboard.getAlphabeticCapKeyboard().setEnterKeyLabel(enterText);
+        }
         CustomKeyboard symbolsKeyboard = getSymbolsKeyboard();
         changed |= symbolsKeyboard.setModeChangeKeyLabel(modeChangeText);
         symbolsKeyboard.setEnterKeyLabel(enterText);

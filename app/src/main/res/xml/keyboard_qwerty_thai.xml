@@ -6,7 +6,7 @@
     android:keyHeight="@dimen/keyboard_key_height">
     <Row>
         <Key android:keyLabel="ๅ" android:keyEdgeFlags="left"/>
-        <Key android:keyLabel="/" android:popupCharacters="/\\" android:popupKeyboard="@xml/keyboard_popup"/>
+        <Key android:keyLabel="/"/>
         <Key android:keyLabel="-"/>
         <Key android:keyLabel="ภ"/>
         <Key android:keyLabel="ถ"/>
