@@ -394,11 +394,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
         mBinding.navigationBarNavigation.urlBar.setDelegate(this);
 
-        if (mVoiceSearchWidget != null) {
-            mVoiceSearchWidget.releaseWidget();
-            mVoiceSearchWidget = null;
-        }
-
         if (mAttachedWindow != null) {
             mBinding.navigationBarNavigation.urlBar.attachToWindow(mAttachedWindow);
         }
@@ -964,6 +959,11 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         if (mVoiceSearchWidget == null) {
             mVoiceSearchWidget = new VoiceSearchWidget(getContext());
             mVoiceSearchWidget.setDelegate(this);
+            mVoiceSearchWidget.setDelegate(() -> {
+                mVoiceSearchWidget.hide(UIWidget.REMOVE_WIDGET);
+                mVoiceSearchWidget.releaseWidget();
+                mVoiceSearchWidget = null;
+            });
         }
 
         mVoiceSearchWidget.getPlacement().parentHandle = mAttachedWindow.getHandle();
