@@ -43,7 +43,7 @@
         <Key android:codes="126" android:keyLabel="~"/>
         <Key android:codes="0x2018" android:keyLabel="‘"/>
         <Key android:codes="0x201C" android:keyLabel="“"/>
-        <Key android:codes="34" android:keyLabel="&quot;"/>
+        <Key android:codes="59" android:keyLabel=";"/>
         <Key android:codes="95" android:keyLabel="_" />
         <Key android:codes="45" android:keyLabel="-" />
         <Key android:codes="43" android:keyLabel="+" />
