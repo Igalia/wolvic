@@ -177,10 +177,10 @@ public class PlatformActivity extends Activity {
     protected void onDestroy() {
         Log.d(LOGTAG, "PlatformActivity onDestroy");
         super.onDestroy();
-        synchronized (activityDestroyedRunnable) {
+        synchronized (mRenderLock) {
             queueRunnable(activityDestroyedRunnable);
             try {
-                activityDestroyedRunnable.wait();
+                mRenderLock.wait();
             } catch(InterruptedException e) {
                 Log.e(LOGTAG, "activityDestroyedRunnable interrupted: " + e.toString());
             }
