@@ -6,6 +6,7 @@
 package org.mozilla.vrbrowser.ui.widgets;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.util.AttributeSet;
@@ -38,20 +39,26 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
 
     public MediaControlsWidget(Context aContext) {
         super(aContext);
-        initialize(aContext);
+        initialize();
     }
 
     public MediaControlsWidget(Context aContext, AttributeSet aAttrs) {
         super(aContext, aAttrs);
-        initialize(aContext);
+        initialize();
     }
 
     public MediaControlsWidget(Context aContext, AttributeSet aAttrs, int aDefStyle) {
         super(aContext, aAttrs, aDefStyle);
-        initialize(aContext);
+        initialize();
     }
 
-    private void initialize(Context aContext) {
+    private void initialize() {
+        updateUI();
+    }
+
+    private void updateUI() {
+        removeAllViews();
+
         LayoutInflater inflater = LayoutInflater.from(getContext());
         mBinding = DataBindingUtil.inflate(inflater, R.layout.media_controls, this, true);
         mBinding.setPlaying(true);
@@ -237,8 +244,13 @@ public class MediaControlsWidget extends UIWidget implements MediaElement.Delega
             }
             return false;
         });
+    }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
 
+        updateUI();
     }
 
     @Override
