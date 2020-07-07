@@ -15,9 +15,92 @@
         android:layout_height="@dimen/tray_height"
         android:gravity="center">
 
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_alignStart="@+id/tray_buttons"
+            android:layout_alignEnd="@+id/tray_buttons"
+            android:layout_above="@+id/tray_buttons"
+            android:background="@drawable/tray_background_top"
+            android:padding="5dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:gravity="center_vertical">
+            <ImageView
+                android:id="@+id/battery_icon"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_alignParentStart="true"
+                android:src="@drawable/ic_tray_battery_out"
+                android:tint="@color/concrete"
+                android:scaleType="fitCenter"/>
+            <TextView
+                android:id="@+id/battery_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/battery_icon"
+                android:layout_marginEnd="5dp"
+                android:textSize="@dimen/text_smallest_size"
+                android:tint="@color/concrete"
+                android:text="50%"/>
+            <ImageView
+                android:id="@+id/controller_right_icon"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_toEndOf="@+id/battery_text"
+                android:src="@drawable/ic_tray_controller"
+                android:tint="@color/concrete"
+                android:scaleType="fitCenter"/>
+            <TextView
+                android:id="@+id/controller_right_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/controller_right_icon"
+                android:textSize="@dimen/text_smallest_size"
+                android:tint="@color/concrete"
+                android:text="50%"/>
+            <ImageView
+                android:id="@+id/controller_left_icon"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_toEndOf="@+id/controller_right_text"
+                android:src="@drawable/ic_tray_controller"
+                android:tint="@color/concrete"
+                android:scaleType="fitCenter"/>
+            <TextView
+                android:id="@+id/controller_left_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/controller_left_icon"
+                android:textSize="@dimen/text_smallest_size"
+                android:tint="@color/concrete"
+                android:text="50%"/>
+            <ImageView
+                android:id="@+id/internet_icon"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_toStartOf="@+id/time_text"
+                android:layout_marginEnd="5dp"
+                android:src="@drawable/ic_tray_internet"
+                android:tint="@color/concrete"
+                android:scaleType="fitCenter"/>
+            <TextView
+                android:id="@+id/time_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:textSize="@dimen/text_smallest_size"
+                android:tint="@color/concrete"
+                android:text="18:30"/>
+        </RelativeLayout>
+
         <LinearLayout
+            android:id="@+id/tray_buttons"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/tray_background_bottom"
             android:orientation="horizontal">
 
             <org.mozilla.vrbrowser.ui.views.UIButton
