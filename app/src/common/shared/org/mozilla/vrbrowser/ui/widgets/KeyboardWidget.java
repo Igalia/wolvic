@@ -746,7 +746,10 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
         if (mKeyboardView.getKeyboard() != getSymbolsKeyboard()) {
             if (isShifted || mIsCapsLock) {
-                mKeyboardView.setKeyboard(mCurrentKeyboard.getAlphabeticCapKeyboard());
+                if (mCurrentKeyboard.getAlphabeticCapKeyboard() != null) {
+                    mKeyboardView.setKeyboard(mCurrentKeyboard.getAlphabeticCapKeyboard());
+                }
+
             } else {
                 mKeyboardView.setKeyboard(mCurrentKeyboard.getAlphabeticKeyboard());
             }
@@ -1046,7 +1049,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             postInputCommand(() -> connection.commitText(text, 1));
         }
 
-        if (!mIsCapsLock && mCurrentKeyboard.getAlphabeticCapKeyboard() == null) {
+        if (!mIsCapsLock) {
             handleShift(false);
         }
 
