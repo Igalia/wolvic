@@ -472,6 +472,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         if (showKeyboard != keyboardIsVisible) {
             if (showKeyboard) {
                 mWidgetManager.pushBackHandler(mBackHandler);
+                handleShowKeyboard(mCurrentKeyboard.getAlphabeticKeyboard());
             } else {
                 mWidgetManager.popBackHandler(mBackHandler);
                 mWidgetManager.keyboardDismissed();
@@ -972,29 +973,40 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
         }
     }
 
+    private void handleShowKeyboard(Keyboard aKeyboard) {
+        Keyboard alphabetic = mCurrentKeyboard.getAlphabeticKeyboard();
+        Keyboard alphabetiCap = mCurrentKeyboard.getAlphabeticCapKeyboard();
+        final boolean switchToAlphabeticMode = aKeyboard == alphabetic || aKeyboard == alphabetiCap;
+
+        mKeyboardView.setKeyboard(aKeyboard);
+        mKeyboardView.setLayoutParams(mKeyboardView.getLayoutParams());
+
+        // Adjust the layout of the keyboard container because it might be changed by alphabetic keyboards
+        // which have various height.
+        if (switchToAlphabeticMode) {
+            ViewGroup.LayoutParams params = mKeyboardContainer.getLayoutParams();
+            params.height = WidgetPlacement.convertDpToPixel(getContext(), mCurrentKeyboard.getAlphabeticKeyboardHeight());
+            mKeyboardContainer.setLayoutParams(params);
+        } else {
+            ViewGroup.LayoutParams params = mKeyboardContainer.getLayoutParams();
+            params.height = WidgetPlacement.convertDpToPixel(getContext(), mCurrentKeyboard.getSymbolKeyboardHeight());
+            mKeyboardContainer.setLayoutParams(params);
+        }
+    }
+
     private void handleModeChange() {
         Keyboard current = mKeyboardView.getKeyboard();
         Keyboard alphabetic = mCurrentKeyboard.getAlphabeticKeyboard();
-        Keyboard alphabetiCap = mCurrentKeyboard.getAlphabeticCapKeyboard();
-        final boolean isAlphabeticMode = current == alphabetic || current == alphabetiCap;
+        Keyboard alphabeticCap = mCurrentKeyboard.getAlphabeticCapKeyboard();
+        final boolean switchToSymbolMode = current == alphabetic || current == alphabeticCap;
 
-        mKeyboardView.setKeyboard(isAlphabeticMode ? getSymbolsKeyboard() : alphabetic);
-        mKeyboardView.setLayoutParams(mKeyboardView.getLayoutParams());
+        // We currently don't need to take care of presenting the space key label
+        // on an alphabetic cap keyboard.
         if (current == alphabetic) {
             mCurrentKeyboard.getAlphabeticKeyboard().setSpaceKeyLabel("");
         }
 
-        // Adjust the layout of the keyboard container because it might be changed by alphabetic keyboards
-        // which have various height.
-        if (isAlphabeticMode) {
-            ViewGroup.LayoutParams params = mKeyboardContainer.getLayoutParams();
-            params.height = WidgetPlacement.convertDpToPixel(getContext(), mCurrentKeyboard.getSymbolKeyboardHeight());
-            mKeyboardContainer.setLayoutParams(params);
-        } else {
-            ViewGroup.LayoutParams params = mKeyboardContainer.getLayoutParams();
-            params.height = WidgetPlacement.convertDpToPixel(getContext(), mCurrentKeyboard.getAlphabeticKeyboardHeight());
-            mKeyboardContainer.setLayoutParams(params);
-        }
+        handleShowKeyboard(switchToSymbolMode ? getSymbolsKeyboard() : alphabetic);
     }
 
     private void handleKey(int primaryCode, int[] keyCodes) {
