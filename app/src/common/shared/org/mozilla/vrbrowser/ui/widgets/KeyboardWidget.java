@@ -750,7 +750,7 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
                     mKeyboardView.setKeyboard(mCurrentKeyboard.getAlphabeticCapKeyboard());
                 }
 
-            } else {
+            } else if (mKeyboardView.getKeyboard() != mCurrentKeyboard.getAlphabeticKeyboard()) {
                 mKeyboardView.setKeyboard(mCurrentKeyboard.getAlphabeticKeyboard());
             }
         }
