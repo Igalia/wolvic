@@ -18,7 +18,7 @@ import org.robolectric.annotation.Config
 
 
 @RunWith(RobolectricTestRunner::class)
-@Config(manifest = Config.NONE)
+@Config(manifest = Config.NONE, application = TestApplication::class)
 class GleanMetricsServiceTest {
 
     @get:Rule
@@ -26,7 +26,7 @@ class GleanMetricsServiceTest {
 
     @Before
     fun setup() {
-        val app = ApplicationProvider.getApplicationContext<VRBrowserApplication>()
+        val app = ApplicationProvider.getApplicationContext<TestApplication>()
         // We use the HttpURLConnectionClient for tests as the GeckoWebExecutor based client needs
         // full GeckoRuntime initialization and it crashes in the test environment.
         val client = HttpURLConnectionClient()

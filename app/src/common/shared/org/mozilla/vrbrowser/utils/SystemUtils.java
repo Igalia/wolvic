@@ -1,9 +1,11 @@
 package org.mozilla.vrbrowser.utils;
 
+import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Process;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -111,6 +113,18 @@ public class SystemUtils {
             Log.e(LOGTAG, "Deleting crash file: " + file);
             context.deleteFile(file);
         }
+    }
+
+    public static boolean isMainProcess(@NonNull Context context) {
+        int pid = Process.myPid();
+
+        final ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        if (activityManager == null) {
+            return false;
+        }
+
+        return activityManager.getRunningAppProcesses().stream().anyMatch(processInfo ->
+                processInfo.pid == pid && processInfo.processName.equals(context.getPackageName()));
     }
 
 }

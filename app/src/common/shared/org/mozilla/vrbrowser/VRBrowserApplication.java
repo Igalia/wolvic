@@ -27,6 +27,7 @@ import org.mozilla.vrbrowser.ui.widgets.AppServicesProvider;
 import org.mozilla.vrbrowser.utils.BitmapCache;
 import org.mozilla.vrbrowser.utils.EnvironmentsManager;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
+import org.mozilla.vrbrowser.utils.SystemUtils;
 
 public class VRBrowserApplication extends Application implements AppServicesProvider {
 
@@ -42,6 +43,17 @@ public class VRBrowserApplication extends Application implements AppServicesProv
     @Override
     public void onCreate() {
         super.onCreate();
+
+        if (!SystemUtils.isMainProcess(this)) {
+            // If this is not the main process then do not continue with the initialization here. Everything that
+            // follows only needs to be done in our app's main process and should not be done in other processes like
+            // a GeckoView child process or the crash handling process. Most importantly we never want to end up in a
+            // situation where we create a GeckoRuntime from the Gecko child process.
+            return;
+        }
+
+        TelemetryWrapper.init(this, EngineProvider.INSTANCE.getDefaultClient(this));
+        GleanMetricsService.init(this, EngineProvider.INSTANCE.getDefaultClient(this));
     }
 
     protected void onActivityCreate(@NonNull Context activityContext) {
@@ -53,9 +65,6 @@ public class VRBrowserApplication extends Application implements AppServicesProv
         mAppExecutors = new AppExecutors();
         mBitmapCache = new BitmapCache(this, mAppExecutors.diskIO(), mAppExecutors.mainThread());
         mEnvironmentsManager = new EnvironmentsManager(activityContext);
-
-        TelemetryWrapper.init(this, EngineProvider.INSTANCE.getDefaultClient(this));
-        GleanMetricsService.init(this, EngineProvider.INSTANCE.getDefaultClient(this));
     }
 
     @Override

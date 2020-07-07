@@ -17,7 +17,7 @@ import java.io.File
 
 
 @RunWith(RobolectricTestRunner::class)
-@Config(manifest = Config.NONE)
+@Config(manifest = Config.NONE, application = TestApplication::class)
 class EnvironmentsTest {
 
     @get:Rule
@@ -27,7 +27,7 @@ class EnvironmentsTest {
 
     @Before
     fun setup() {
-        val app = ApplicationProvider.getApplicationContext<VRBrowserApplication>()
+        val app = ApplicationProvider.getApplicationContext<TestApplication>()
         settingStore = SettingsStore.getInstance(app)
         context = ApplicationProvider.getApplicationContext()
     }
