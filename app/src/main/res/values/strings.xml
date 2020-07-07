@@ -1327,7 +1327,8 @@
     <!-- This string is shown in the context menu after a longpress on a text. When clicked it unselects the selected text. -->
     <string name="context_menu_unselect">Unselect</string>
 
-    <!-- This string is shown in the context menu after a longpress on a text. When clicked search for the selected text in the active search engine. -->
+    <!-- This string is shown in the context menu after a longpress on a text. When clicked search for the selected text in the active search engine.
+         '%1$s' will be replaced at runtime with the search engine name. -->
     <string name="context_menu_web_search">Search with %1$s</string>
 
     <!-- This string is for the tooltip that appears when the user hovers over the 'Bookmark' icon in the
