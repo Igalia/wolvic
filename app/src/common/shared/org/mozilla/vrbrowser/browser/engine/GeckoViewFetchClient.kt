@@ -28,10 +28,13 @@ class GeckoViewFetchClient(
 ) : Client() {
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    internal var executor: GeckoWebExecutor = EngineProvider.createGeckoWebExecutor(context)
+    internal var executor: GeckoWebExecutor? = null
 
     @Throws(IOException::class)
     override fun fetch(request: Request): Response {
+        if (executor == null) {
+            throw IOException("GeckoWebExecutor not initialized")
+        }
         val webRequest = request.toWebRequest(defaultHeaders)
 
         val readTimeOut = request.readTimeout ?: maxReadTimeOut
@@ -47,7 +50,7 @@ class GeckoViewFetchClient(
             if (request.redirect == Request.Redirect.MANUAL) {
                 fetchFlags += GeckoWebExecutor.FETCH_FLAGS_NO_REDIRECTS
             }
-            val webResponse = executor.fetch(webRequest, fetchFlags).poll(readTimeOutMillis)
+            val webResponse = executor!!.fetch(webRequest, fetchFlags).poll(readTimeOutMillis)
             webResponse?.toResponse() ?: throw IOException("Fetch failed with null response")
         } catch (e: TimeoutException) {
             throw SocketTimeoutException()

@@ -63,20 +63,24 @@ object EngineProvider {
         return runtime != null
     }
 
-    fun createGeckoWebExecutor(context: Context): GeckoWebExecutor {
+    private fun createGeckoWebExecutor(context: Context): GeckoWebExecutor {
         return GeckoWebExecutor(getOrCreateRuntime(context))
     }
 
-    fun getDefaultGeckoWebExecutor(context: Context): GeckoWebExecutor {
+     fun getDefaultGeckoWebExecutor(context: Context): GeckoWebExecutor {
         if (executor == null) {
             executor = createGeckoWebExecutor(context)
+            client?.let { it.executor = executor }
+
         }
 
         return executor!!
     }
 
     fun createClient(context: Context): GeckoViewFetchClient {
-        return GeckoViewFetchClient(context)
+        val client = GeckoViewFetchClient(context)
+        client.executor = executor
+        return client
     }
 
     fun getDefaultClient(context: Context): GeckoViewFetchClient {
