@@ -87,9 +87,9 @@ public class SessionStore implements
         mSessions = new ArrayList<>();
     }
 
-    public static void prefOverrides(Context context, Bundle aExtras) {
+    public static void prefOverrides(Context context) {
         // FIXME: Once GeckoView has a prefs API
-        SessionUtils.vrPrefsWorkAround(context, aExtras);
+        SessionUtils.vrPrefsWorkAround(context);
     }
 
     public void initialize(Context context) {

@@ -25,7 +25,11 @@ class SessionUtils {
         return url != null && (url.startsWith("about:") || url.startsWith("data:"));
     }
 
-    public static void vrPrefsWorkAround(Context aContext, Bundle aExtras) {
+    public static void vrPrefsWorkAround(Context aContext) {
+        if (EngineProvider.INSTANCE.isRuntimeCreated()) {
+            throw new IllegalStateException("vrPrefsWorkAround must be called before creating the runtime");
+        }
+
         File path = GeckoProfile.initFromArgs(aContext, null).getDir();
         String prefFileName = path.getAbsolutePath() + File.separator + "user.js";
         Log.i(LOGTAG, "Creating file: " + prefFileName);
@@ -51,18 +55,6 @@ class SessionUtils {
                 out.write("user_pref(\"webgl.msaa-force\", true);\n".getBytes());
             } else {
                 out.write("user_pref(\"webgl.msaa-force\", false);\n".getBytes());
-            }
-            if (BuildConfig.DEBUG) {
-                int processCount = SettingsStore.getInstance(aContext).isMultiE10s() ? 3 : 1;
-                out.write(("user_pref(\"dom.ipc.processCount\", " + processCount + ");\n").getBytes());
-                addOptionalPref(out, "dom.vr.require-gesture", aExtras);
-                addOptionalPref(out, "privacy.reduceTimerPrecision", aExtras);
-                if (aExtras != null && aExtras.getBoolean("media.autoplay.enabled", false)) {
-                    // Enable playing audios without gesture (used for gfx automated testing)
-                    out.write("user_pref(\"media.autoplay.enabled.user-gestures-needed\", false);\n".getBytes());
-                    out.write("user_pref(\"media.autoplay.enabled.ask-permission\", false);\n".getBytes());
-                    out.write("user_pref(\"media.autoplay.default\", 0);\n".getBytes());
-                }
             }
         } catch (FileNotFoundException e) {
             Log.e(LOGTAG, "Unable to create file: '" + prefFileName + "' got exception: " + e.toString());

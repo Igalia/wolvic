@@ -17,6 +17,7 @@ import org.mozilla.vrbrowser.browser.Accounts;
 import org.mozilla.vrbrowser.browser.Places;
 import org.mozilla.vrbrowser.browser.Services;
 import org.mozilla.vrbrowser.browser.engine.EngineProvider;
+import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.db.AppDatabase;
 import org.mozilla.vrbrowser.db.DataRepository;
 import org.mozilla.vrbrowser.downloads.DownloadsManager;
@@ -52,6 +53,7 @@ public class VRBrowserApplication extends Application implements AppServicesProv
             return;
         }
 
+        SessionStore.prefOverrides(this);
         TelemetryWrapper.init(this, EngineProvider.INSTANCE.getDefaultClient(this));
         GleanMetricsService.init(this, EngineProvider.INSTANCE.getDefaultClient(this));
     }

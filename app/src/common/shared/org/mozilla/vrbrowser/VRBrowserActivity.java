@@ -228,8 +228,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Bundle extras = getIntent() != null ? getIntent().getExtras() : null;
-        SessionStore.prefOverrides(this, extras);
         ((VRBrowserApplication)getApplication()).onActivityCreate(this);
         SettingsStore.getInstance(getBaseContext()).setPid(Process.myPid());
         // Fix for infinite restart on startup crashes.
