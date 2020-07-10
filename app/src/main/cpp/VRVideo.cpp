@@ -231,7 +231,7 @@ struct VRVideo::State {
   vrb::TogglePtr create180LayerToggle(const VRLayerEquirectPtr& aLayer) {
     vrb::CreationContextPtr create = context.lock();
     vrb::TogglePtr result = vrb::Toggle::Create(create);
-    vrb::Matrix rotation = vrb::Matrix::Rotation(vrb::Vector(0.0f, 1.0f, 0.0f), (float)M_PI * 0.5f);
+    vrb::Matrix rotation = vrb::Matrix::Rotation(vrb::Vector(0.0f, 1.0f, 0.0f), -(float)M_PI * 0.5f);
     vrb::TransformPtr transform = vrb::Transform::Create(create);
     transform->AddNode(VRLayerNode::Create(create, aLayer));
     transform->SetTransform(rotation);
