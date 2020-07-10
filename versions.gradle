@@ -24,7 +24,7 @@ ext.deps = [:]
 def versions = [:]
 // GeckoView versions can be found here:
 // https://maven.mozilla.org/?prefix=maven2/org/mozilla/geckoview/
-versions.gecko_view_nightly = "80.0.20200708094217"
+versions.gecko_view_nightly = "80.0.20200709093347"
 versions.gecko_view_beta = "79.0.20200630191632"
 versions.gecko_view_release = "78.0.20200630195452"
 versions.android_components = "44.0.0"
