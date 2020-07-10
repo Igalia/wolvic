@@ -25,6 +25,7 @@ import org.mozilla.vrbrowser.utils.BitmapCache;
 import org.mozilla.vrbrowser.utils.UrlUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TabsWidget extends UIDialog {
     protected BitmapCache mBitmapCache;
@@ -50,7 +51,7 @@ public class TabsWidget extends UIDialog {
     public interface TabDelegate {
         void onTabSelect(Session aTab);
         void onTabAdd();
-        void onTabsClose(ArrayList<Session> aTabs);
+        void onTabsClose(List<Session> aTabs);
     }
 
     public TabsWidget(Context aContext) {

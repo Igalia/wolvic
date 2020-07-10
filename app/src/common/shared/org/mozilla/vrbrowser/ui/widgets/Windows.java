@@ -39,6 +39,8 @@ import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -677,13 +679,17 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         }
     }
 
+    public ArrayList<WindowWidget> getCurrentWindows(boolean privateMode) {
+        return privateMode ? mPrivateWindows : mRegularWindows;
+    }
+
     public ArrayList<WindowWidget> getCurrentWindows() {
-        return mPrivateMode ? mPrivateWindows : mRegularWindows;
+        return getCurrentWindows(mPrivateMode);
     }
 
     @Nullable
-    private WindowWidget getWindowWithPlacement(WindowPlacement aPlacement) {
-        for (WindowWidget window: getCurrentWindows()) {
+    private WindowWidget getWindowWithPlacement(WindowPlacement aPlacement, boolean privateMode) {
+        for (WindowWidget window: privateMode ? mPrivateWindows : mRegularWindows) {
             if (window.getWindowPlacement() == aPlacement) {
                 return window;
             }
@@ -692,11 +698,21 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     }
 
     @Nullable
-    private WindowWidget getFrontWindow() {
+    private WindowWidget getWindowWithPlacement(WindowPlacement aPlacement) {
+        return getWindowWithPlacement(aPlacement, mPrivateMode);
+    }
+
+    @Nullable
+    private WindowWidget getFrontWindow(boolean privateMode) {
         if (mFullscreenWindow != null) {
             return mFullscreenWindow;
         }
-        return getWindowWithPlacement(WindowPlacement.FRONT);
+        return getWindowWithPlacement(WindowPlacement.FRONT, privateMode);
+    }
+
+    @Nullable
+    private WindowWidget getFrontWindow() {
+        return getFrontWindow(mPrivateMode);
     }
 
     @Nullable
@@ -993,7 +1009,9 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
                 Session fxaSession = SessionStore.get().getSession(mAccounts.getOriginSessionId());
                 if (fxaSession != null) {
-                    fxaSession.loadUri(mAccounts.getConnectionSuccessURL(), GeckoSession.LOAD_FLAGS_REPLACE_HISTORY);
+                    Session originSession = SessionStore.get().getSession(fxaSession.getId());
+                    closeTabs(Collections.singletonList(originSession), fxaSession.isPrivateMode());
+                    addTab(getFocusedWindow(), mAccounts.getConnectionSuccessURL());
                 }
 
                 switch (mAccounts.getLoginOrigin()) {
@@ -1182,13 +1200,18 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     }
 
     @Nullable
-    private WindowWidget getWindowWithSession(Session aSession) {
-        for (WindowWidget window: getCurrentWindows()) {
+    private WindowWidget getWindowWithSession(Session aSession, boolean privateMode) {
+        for (WindowWidget window: getCurrentWindows(privateMode)) {
             if (window.getSession() == aSession) {
                 return window;
             }
         }
         return null;
+    }
+
+    @Nullable
+    private WindowWidget getWindowWithSession(Session aSession) {
+        return getWindowWithSession(aSession, mPrivateMode);
     }
 
     // WindowWidget.Delegate
@@ -1298,8 +1321,6 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         targetWindow.setSession(session, WindowWidget.DEACTIVATE_CURRENT_SESSION);
         if (aUri == null || aUri.isEmpty()) {
             session.loadHomePage();
-        } else {
-            session.loadUri(aUri);
         }
     }
 
@@ -1317,16 +1338,20 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     }
 
     @Override
-    public void onTabsClose(ArrayList<Session> aTabs) {
+    public void onTabsClose(List<Session> aTabs) {
+        closeTabs(aTabs, mPrivateMode);
+    }
+
+    private void closeTabs(List<Session> aTabs, boolean privateMode) {
         WindowWidget targetWindow = mFocusedWindow;
         // Prepare available tabs to choose from
-        ArrayList<Session> available = SessionStore.get().getSortedSessions(mPrivateMode);
+        ArrayList<Session> available = SessionStore.get().getSortedSessions(privateMode);
         available.removeAll(aTabs);
-        available.removeIf(session -> getWindowWithSession(session) != null);
+        available.removeIf(session -> getWindowWithSession(session, privateMode) != null);
 
         // Sort windows by priority to take an available tab
-        WindowWidget front = getFrontWindow();
-        ArrayList<WindowWidget> windows =  new ArrayList<>(getCurrentWindows());
+        WindowWidget front = getFrontWindow(privateMode);
+        ArrayList<WindowWidget> windows =  getCurrentWindows(privateMode);
         windows.sort((w1, w2) -> {
             // Max priority for the target window
             if (w1 == targetWindow) {
