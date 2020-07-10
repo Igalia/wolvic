@@ -36,8 +36,6 @@ public class ClearHistoryDialogWidget extends SettingDialogWidget {
     @Override
     protected void initialize(Context aContext) {
         super.initialize(aContext);
-
-
     }
 
     @Override

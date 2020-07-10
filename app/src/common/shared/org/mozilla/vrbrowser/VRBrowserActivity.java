@@ -76,6 +76,7 @@ import org.mozilla.vrbrowser.ui.widgets.WindowWidget;
 import org.mozilla.vrbrowser.ui.widgets.Windows;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.CrashDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.PromptDialogWidget;
+import org.mozilla.vrbrowser.ui.widgets.dialogs.SendTabDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.WhatsNewWidget;
 import org.mozilla.vrbrowser.ui.widgets.menus.VideoProjectionMenuWidget;
 import org.mozilla.vrbrowser.utils.BitmapCache;
@@ -552,6 +553,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         SessionStore.get().onConfigurationChanged(newConfig);
         mWidgets.forEach((i, widget) -> widget.onConfigurationChanged(newConfig));
+        SendTabDialogWidget.getInstance(this).onConfigurationChanged(newConfig);
 
         super.onConfigurationChanged(newConfig);
     }
