@@ -6,6 +6,7 @@
 package org.mozilla.vrbrowser.ui.widgets.dialogs;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -63,8 +64,6 @@ public class SendTabDialogWidget extends SettingDialogWidget implements
     protected void initialize(@NonNull Context aContext) {
         super.initialize(aContext);
 
-        updateUI();
-
         mAccounts = ((VRBrowserApplication)getContext().getApplicationContext()).getAccounts();
     }
 
@@ -94,6 +93,13 @@ public class SendTabDialogWidget extends SettingDialogWidget implements
         if (isVisible()) {
             mAccounts.refreshDevicesAsync();
         }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        updateUI();
     }
 
     @Override
