@@ -91,6 +91,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     private transient byte[] mPrivatePage;
     private transient boolean mFirstContentfulPaint;
     private transient long mKeepAlive;
+    private transient boolean mSessionRemoved;
 
     public interface BitmapChangedListener {
         void onBitmapChanged(Session aSession, Bitmap aBitmap);
@@ -159,9 +160,6 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     protected void shutdown() {
         if (mState.mSession != null) {
             closeSession(mState);
-            mSessionChangeListeners.forEach(listener -> {
-                listener.onSessionRemoved(mState.mId);
-            });
             mState.mSession = null;
         }
 
@@ -170,6 +168,13 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
             if (parent != null) {
                 parent.mSessionChangeListeners.remove(this);
             }
+        }
+
+        if (!mSessionRemoved) {
+            mSessionChangeListeners.forEach(listener -> {
+                listener.onSessionRemoved(mState.mId);
+            });
+            mSessionRemoved = true;
         }
 
         mQueuedCalls.clear();
@@ -467,8 +472,9 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
         // We call restore when a session is first activated and when it's recreated.
         // We only need to notify of the session creation if it's not a recreation.
-        if (mState.mSessionState == null) {
+        if (mSessionRemoved) {
             mSessionChangeListeners.forEach(listener -> listener.onSessionAdded(this));
+            mSessionRemoved = false;
         }
 
         openSession();
