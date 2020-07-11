@@ -220,88 +220,120 @@
          Below this string appears a list of locales for the user to choose as their preferred languages for web content. -->
     <string name="settings_language_choose_language_content_description">Web pages are sometimes offered in more than one language. Choose the languages you want to display in order of preference to the left side.</string>
 
-    <!-- This string is used to label a radio button in the 'Settings' Language dialog that, when pressed,
-         changes the app and the language of the speech-recognition-based search to 'English (US)'. -->
-    <string name="settings_language_english">English (US)</string>
+    <!-- The string is used in the keyboard space bar to show the current keyboard language and in
+    the keyboard languages panel list. -->
+    <string name="settings_language_english">English</string>
 
-    <!-- This string is used to label a radio button in the 'Settings' Language dialog that, when pressed,
-         changes the app and the language of the speech-recognition-based search to 'English (UK)'. -->
+    <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
+    changes the app and the language of the speech-recognition-based search to 'English (US)'. -->
+    <string name="settings_language_english_us">English (US)</string>
+
+    <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
+    changes the app and the language of the speech-recognition-based search to 'English (UK)'. -->
     <string name="settings_language_english_uk">English (UK)</string>
 
-    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
-         changes the app and the language of the speech-recognition-based search to 'Chinese (Traditional/Zhuyin)'. -->
+    <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
+    changes the app and the language of the speech-recognition-based search to 'Chinese (Traditional/Zhuyin)'.
+    The string is also used in the keyboard space bar to show the current keyboard language and in
+    the keyboard languages panel list. -->
     <string name="settings_language_traditional_chinese">Chinese (Traditional/Zhuyin)</string>
 
-    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
-         changes the app and the language of the speech-recognition-based search to 'Chinese (Simplified/Pinyin)'. -->
+    <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
+    changes the app and the language of the speech-recognition-based search to 'Chinese (Simplified/Pinyin)'.
+    The string is also used in the keyboard space bar to show the current keyboard language and in
+    the keyboard languages panel list. -->
     <string name="settings_language_simplified_chinese">Chinese (Simplified/Pinyin)</string>
 
-    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
-         changes the app and the language of the speech-recognition-based search to 'Japanese'. -->
+    <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
+    changes the app and the language of the speech-recognition-based search to 'Japanese'.
+    The string is also used in the keyboard space bar to show the current keyboard language and in
+    the keyboard languages panel list. -->
     <string name="settings_language_japanese">Japanese</string>
 
-    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
-         changes the app and the language of the speech-recognition-based search to 'French'. -->
+    <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
+    changes the app and the language of the speech-recognition-based search to 'French'.
+    The string is also used in the keyboard space bar to show the current keyboard language and in
+    the keyboard languages panel list. -->
     <string name="settings_language_french">French</string>
 
-    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
-         changes the app and the language of the speech-recognition-based search to 'German'. -->
+    <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
+    changes the app and the language of the speech-recognition-based search to 'German'.
+    The string is also used in the keyboard space bar to show the current keyboard language and in
+    the keyboard languages panel list. -->
     <string name="settings_language_german">German</string>
 
-    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
-         changes the app and the language of the speech-recognition-based search to 'Spanish'. -->
+    <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
+    changes the app and the language of the speech-recognition-based search to 'Spanish'.
+    The string is also used in the keyboard space bar to show the current keyboard language and in
+    the keyboard languages panel list. -->
     <string name="settings_language_spanish">Spanish</string>
 
-    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
-         changes the app and the language of the speech-recognition-based search to 'Spanish (Spain)'. -->
+    <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
+    changes the app and the language of the speech-recognition-based search to 'Spanish (Spain)'. -->
     <string name="settings_language_spanish_spain">Spanish (Spain)</string>
 
-    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
-         changes the app and the language of the speech-recognition-based search to 'Korean'. -->
+    <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
+    changes the app and the language of the speech-recognition-based search to 'Korean'.
+    The string is also used in the keyboard space bar to show the current keyboard language and in
+    the keyboard languages panel list. -->
     <string name="settings_language_korean">Korean</string>
 
-    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
-         changes the app and the language of the speech-recognition-based search to 'Italian'. -->
+    <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
+    changes the app and the language of the speech-recognition-based search to 'Italian'.
+    The string is also used in the keyboard space bar to show the current keyboard language and in
+    the keyboard languages panel list. -->
     <string name="settings_language_italian">Italian</string>
 
-    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
-     changes the app and the language of the speech-recognition-based search to 'Russian'. -->
+    <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
+    changes the app and the language of the speech-recognition-based search to 'Russian'.
+    The string is also used in the keyboard space bar to show the current keyboard language and in
+    the keyboard languages panel list. -->
     <string name="settings_language_russian">Russian</string>
 
-    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
-     changes the app and the language of the speech-recognition-based search to 'Polish'. -->
+    <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
+    changes the app and the language of the speech-recognition-based search to 'Polish'.
+    The string is also used in the keyboard space bar to show the current keyboard language and in
+    the keyboard languages panel list. -->
     <string name="settings_language_polish">Polish</string>
 
-    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
-     changes the app and the language of the speech-recognition-based search to 'Danish'. -->
+    <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
+    changes the app and the language of the speech-recognition-based search to 'Danish'.
+    The string is also used in the keyboard space bar to show the current keyboard language and in
+    the keyboard languages panel list. -->
     <string name="settings_language_danish">Danish</string>
 
-    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
-     changes the app and the language of the speech-recognition-based search to 'Norwegian'. -->
+    <!-- The string is used in the keyboard space bar to show the current keyboard language and in
+    the keyboard languages panel list. -->
     <string name="settings_language_norwegian">Norwegian</string>
 
-    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
- changes the app and the language of the speech-recognition-based search to 'Norwegian (Bokmaal)'. -->
+    <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
+    changes the app and the language of the speech-recognition-based search to 'Norwegian (Bokmaal)'. -->
     <string name="settings_language_norwegian_bokmaal">Norwegian (Bokmaal)</string>
 
-    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
- changes the app and the language of the speech-recognition-based search to 'Norwegian (Nynorsk)'. -->
+    <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
+    changes the app and the language of the speech-recognition-based search to 'Norwegian (Nynorsk)'. -->
     <string name="settings_language_norwegian_nynorsk">Norwegian (Nynorsk)</string>
-  
-    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
-     changes the app and the language of the speech-recognition-based search to 'Danish'. -->
+
+    <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
+    changes the app and the language of the speech-recognition-based search to 'Swedish'.
+    The string is also used in the keyboard space bar to show the current keyboard language and in
+    the keyboard languages panel list. -->
     <string name="settings_language_swedish">Swedish</string>
 
-    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
-     changes the app and the language of the speech-recognition-based search to 'Finnish'. -->
+    <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
+    changes the app and the language of the speech-recognition-based search to 'Finnish'.
+    The string is also used in the keyboard space bar to show the current keyboard language and in
+    the keyboard languages panel list. -->
     <string name="settings_language_finnish">Finnish</string>
-  
-    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
-     changes the app and the language of the speech-recognition-based search to 'Dutch'. -->
+
+    <!-- This string is used to label a radio button in the 'Settings' Voice Search and the Display Language dialogs that, when pressed,
+    changes the app and the language of the speech-recognition-based search to 'Dutch'.
+    The string is also used in the keyboard space bar to show the current keyboard language and in
+    the keyboard languages panel list. -->
     <string name="settings_language_dutch">Dutch</string>
 
-    <!-- This string is used to label a radio button in the settings language dialog that, when pressed,
-         changes the app and the language of the speech-recognition-based search to 'Thai'. -->
+    <!-- The string is used in the keyboard space bar to show the current keyboard language and in
+    the keyboard languages panel list. -->
     <string name="settings_language_thai">Thai</string>
 
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,

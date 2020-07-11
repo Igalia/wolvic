@@ -285,7 +285,7 @@ public class LocaleUtils {
     private static Map<String, Language> getSupportedLocalizedLanguages(@NonNull Context context) {
         mSupportedLanguagesCache = new LinkedHashMap<String, Language>() {{
             Locale locale = new Locale("en","US");
-            put(locale.toLanguageTag(), new Language(locale, StringUtils.getStringByLocale(context, R.string.settings_language_english, locale)));
+            put(locale.toLanguageTag(), new Language(locale, StringUtils.getStringByLocale(context, R.string.settings_language_english_us, locale)));
             locale = new Locale("en","GB");
             put(locale.toLanguageTag(), new Language(locale, StringUtils.getStringByLocale(context, R.string.settings_language_english_uk, locale)));
             locale = new Locale.Builder().setLanguage("zh").setScript("Hant").setRegion("TW").build();
