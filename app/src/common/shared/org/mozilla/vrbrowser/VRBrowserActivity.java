@@ -42,6 +42,7 @@ import androidx.lifecycle.ViewModelStore;
 import androidx.lifecycle.ViewModelStoreOwner;
 
 import org.json.JSONObject;
+import org.mozilla.gecko.PrefsHelper;
 import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoVRManager;
@@ -316,6 +317,9 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         getServicesProvider().getDownloadsManager().init();
         getServicesProvider().getEnvironmentsManager().start();
+
+        // Temporary hack to enable EME on Beta GeckoView
+        PrefsHelper.setPref("media.eme.enabled", true);
     }
 
     protected void initializeWidgets() {
