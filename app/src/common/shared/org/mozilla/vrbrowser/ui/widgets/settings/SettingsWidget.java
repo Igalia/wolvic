@@ -144,10 +144,6 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
             onDismiss();
         });
 
-        mBinding.reportIssueButton.setOnClickListener(v -> {
-            onSettingsReportClick();
-            onDismiss();
-        });
 
         mBinding.languageButton.setOnClickListener(view -> {
             if (mAudio != null) {
