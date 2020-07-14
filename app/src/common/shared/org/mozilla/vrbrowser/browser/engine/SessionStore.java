@@ -2,7 +2,6 @@ package org.mozilla.vrbrowser.browser.engine;
 
 import android.content.Context;
 import android.content.res.Configuration;
-import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
 
@@ -149,12 +148,21 @@ public class SessionStore implements
         if (BuildConfig.DEBUG) {
             mStoreSubscription = ComponentsAdapter.get().getStore().observeManually(browserState -> {
                 Log.d(LOGTAG, "Session status BEGIN");
+                Log.d(LOGTAG, "[Total] BrowserStore: " + browserState.getTabs().size() + ", SessionStore: " + mSessions.size());
                 for (int i=0; i<browserState.getTabs().size(); i++) {
-                    Log.d(LOGTAG, "BrowserStore Session: " + browserState.getTabs().get(i).getId());
+                    boolean isPrivate = browserState.getTabs().get(i).getContent().getPrivate();
+                    Log.d(LOGTAG, "BrowserStore Session: " + browserState.getTabs().get(i).getId() + (isPrivate ? " (PB)" : ""));
                 }
+                int suspendedCount = 0;
                 for (int i=0; i<mSessions.size(); i++) {
-                    Log.d(LOGTAG, "SessionStore Session: " + mSessions.get(i).getId());
+                    boolean suspended = mSessions.get(i).getSessionState().mSession == null && !mSessions.get(i).isActive();
+                    boolean isPrivate = mSessions.get(i).isPrivateMode();
+                    Log.d(LOGTAG, "SessionStore Session: " + mSessions.get(i).getId() + (isPrivate ? " (PB)" : "") + (suspended ? " (suspended)" : ""));
+                    if (suspended) {
+                        suspendedCount++;
+                    }
                 }
+                Log.d(LOGTAG, "[Alive] BrowserStore: " + browserState.getTabs().size() + ", SessionStore: " + (mSessions.size() - suspendedCount));
                 Log.d(LOGTAG, "Session status END");
                 return null;
             });
@@ -168,6 +176,10 @@ public class SessionStore implements
         aSession.addNavigationListener(mServices);
         mSessions.add(aSession);
         sessionActiveStateChanged();
+
+        if (BuildConfig.DEBUG) {
+            mStoreSubscription.resume();
+        }
 
         return aSession;
     }
@@ -186,20 +198,13 @@ public class SessionStore implements
 
     @NonNull
     Session createSession(@NonNull SessionSettings aSettings, @Session.SessionOpenModeFlags int aOpenMode) {
-        Session session = new Session(mContext, mRuntime, aSettings);
-        session.addSessionChangeListener(this);
-        if (aOpenMode == Session.SESSION_OPEN) {
-            onSessionAdded(session);
-            session.openSession();
-            session.setActive(true);
-        }
+        Session session = Session.createSession(mContext, mRuntime, aSettings, aOpenMode, this);
         return addSession(session);
     }
 
     @NonNull
     public Session createSuspendedSession(SessionState aRestoreState) {
-        Session session = new Session(mContext, mRuntime, aRestoreState);
-        session.addSessionChangeListener(this);
+        Session session = Session.createSuspendedSession(mContext, mRuntime, aRestoreState, this);
         return addSession(session);
     }
 
@@ -208,14 +213,16 @@ public class SessionStore implements
         SessionState state = new SessionState();
         state.mUri = aUri;
         state.mSettings = new SessionSettings(new SessionSettings.Builder().withDefaultSettings(mContext).withPrivateBrowsing(aPrivateMode));
-        Session session = new Session(mContext, mRuntime, state);
-        session.addSessionChangeListener(this);
+        Session session = Session.createSuspendedSession(mContext, mRuntime, state, this);
         return addSession(session);
     }
 
     private void shutdownSession(@NonNull Session aSession) {
         aSession.setPermissionDelegate(null);
         aSession.shutdown();
+        if (BuildConfig.DEBUG) {
+            mStoreSubscription.resume();
+        }
     }
 
     public void destroySession(Session aSession) {
@@ -240,6 +247,9 @@ public class SessionStore implements
             if (!session.isActive()) {
                 session.suspend();
             }
+        }
+        if (BuildConfig.DEBUG) {
+            mStoreSubscription.resume();
         }
     }
 
