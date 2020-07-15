@@ -585,7 +585,6 @@ public class SessionStore implements
 
     @Override
     public void onStackSession(Session aSession) {
-        ComponentsAdapter.get().addSession(aSession);
         ComponentsAdapter.get().link(aSession.getId(), aSession.getGeckoSession());
     }
 
