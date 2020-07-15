@@ -441,11 +441,11 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
             return;
         }
 
-        mSessionChangeListeners.forEach(listener -> listener.onSessionRemoved(mState.mId));
-
         Log.d(LOGTAG, "Suspending Session: " + mState.mId);
         closeSession(mState);
         mState.mSession = null;
+
+        mSessionChangeListeners.forEach(listener -> listener.onSessionRemoved(mState.mId));
     }
 
     private boolean shouldLoadDefaultPage(@NonNull SessionState aState) {
