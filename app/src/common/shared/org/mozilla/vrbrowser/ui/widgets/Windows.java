@@ -23,7 +23,6 @@ import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.browser.engine.SessionState;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
-import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.PromptDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.UIDialog;
 import org.mozilla.vrbrowser.utils.BitmapCache;
@@ -506,8 +505,6 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             resumeCompositor();
         }
 
-        TelemetryWrapper.resetOpenedWindowsCount(mRegularWindows.size(), false);
-        TelemetryWrapper.resetOpenedWindowsCount(mPrivateWindows.size(), true);
         GleanMetricsService.resetOpenedWindowsCount(mRegularWindows.size(), false);
         GleanMetricsService.resetOpenedWindowsCount(mPrivateWindows.size(), true);
     }
@@ -804,10 +801,8 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         updateCurvedMode(true);
 
         if (mPrivateMode) {
-            TelemetryWrapper.openWindowsEvent(mPrivateWindows.size() + 1, mPrivateWindows.size(), true);
             GleanMetricsService.openWindowsEvent(mPrivateWindows.size() + 1, mPrivateWindows.size(), true);
         } else {
-            TelemetryWrapper.openWindowsEvent(mRegularWindows.size() + 1, mRegularWindows.size(), false);
             GleanMetricsService.openWindowsEvent(mRegularWindows.size() + 1, mRegularWindows.size(), false);
         }
     }
@@ -968,10 +963,8 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         window.getTitleBar().setDelegate(this);
 
         if (mPrivateMode) {
-            TelemetryWrapper.openWindowsEvent(mPrivateWindows.size() - 1, mPrivateWindows.size(), true);
             GleanMetricsService.openWindowsEvent(mPrivateWindows.size() - 1, mPrivateWindows.size(), true);
         } else {
-            TelemetryWrapper.openWindowsEvent(mRegularWindows.size() - 1, mRegularWindows.size(), false);
             GleanMetricsService.openWindowsEvent(mRegularWindows.size() - 1, mRegularWindows.size(), false);
         }
 
@@ -1121,9 +1114,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     public void onMoveLeftClicked(TopBarWidget aWidget) {
         WindowWidget window = aWidget.getAttachedWindow();
         if (window != null) {
-            TelemetryWrapper.windowsMoveEvent();
             GleanMetricsService.windowsMoveEvent();
-
             moveWindowLeft(window);
         }
     }
@@ -1132,7 +1123,6 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     public void onMoveRightClicked(TopBarWidget aWidget) {
         WindowWidget window = aWidget.getAttachedWindow();
         if (window != null) {
-            TelemetryWrapper.windowsMoveEvent();
             GleanMetricsService.windowsMoveEvent();
 
             moveWindowRight(window);

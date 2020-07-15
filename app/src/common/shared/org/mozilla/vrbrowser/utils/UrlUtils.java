@@ -17,7 +17,6 @@ import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.search.SearchEngineWrapper;
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
-import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -222,7 +221,6 @@ public class UrlUtils {
         String url = text.trim();
         if ((UrlUtils.isDomain(text) || UrlUtils.isIPUri(text)) && !text.contains(" ")) {
             url = text;
-            TelemetryWrapper.urlBarEvent(true);
             GleanMetricsService.urlBarEvent(true);
         } else if (text.startsWith("about:") || text.startsWith("resource://")) {
             url = text;
@@ -230,7 +228,6 @@ public class UrlUtils {
             url = SearchEngineWrapper.get(context).getSearchURL(text);
 
             // Doing search in the URL bar, so sending "aIsURL: false" to telemetry.
-            TelemetryWrapper.urlBarEvent(false);
             GleanMetricsService.urlBarEvent(false);
         }
 

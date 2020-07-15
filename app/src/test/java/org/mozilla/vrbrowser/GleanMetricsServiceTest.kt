@@ -9,10 +9,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mozilla.telemetry.TelemetryHolder
 import org.mozilla.vrbrowser.GleanMetrics.*
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService
-import org.mozilla.vrbrowser.telemetry.TelemetryWrapper
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
@@ -30,7 +28,6 @@ class GleanMetricsServiceTest {
         // We use the HttpURLConnectionClient for tests as the GeckoWebExecutor based client needs
         // full GeckoRuntime initialization and it crashes in the test environment.
         val client = HttpURLConnectionClient()
-        TelemetryWrapper.init(app, client)
         GleanMetricsService.init(app, client)
     }
 
@@ -147,12 +144,6 @@ class GleanMetricsServiceTest {
         GleanMetricsService.Tabs.activatedEvent()
         assertTrue(Tabs.activated.testHasValue())
         assertEquals(Tabs.activated.testGetValue(), 1)
-    }
-
-    @Test
-    fun testLegacyTelemetry() {
-        assertTrue(LegacyTelemetry.clientId.testHasValue())
-        assertEquals(LegacyTelemetry.clientId.testGetValue().toString(), TelemetryHolder.get().getClientId())
     }
 
     fun testPages() {

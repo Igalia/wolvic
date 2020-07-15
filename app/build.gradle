@@ -428,7 +428,6 @@ dependencies {
     // Android Components
     implementation deps.mozilla_speech.library
     implementation deps.mozilla_speech.utils
-    implementation deps.android_components.telemetry
     implementation deps.android_components.browser_errorpages
     implementation deps.android_components.browser_search
     implementation deps.android_components.browser_state

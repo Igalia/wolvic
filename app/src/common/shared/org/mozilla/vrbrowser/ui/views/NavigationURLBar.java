@@ -37,9 +37,7 @@ import org.mozilla.vrbrowser.browser.BookmarksStore;
 import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.databinding.NavigationUrlBinding;
-import org.mozilla.vrbrowser.search.SearchEngineWrapper;
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
-import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.ui.viewmodel.SettingsViewModel;
 import org.mozilla.vrbrowser.ui.viewmodel.WindowViewModel;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
@@ -376,7 +374,6 @@ public class NavigationURLBar extends FrameLayout {
             mDelegate.onVoiceSearchClicked();
         }
 
-        TelemetryWrapper.voiceInputEvent();
         GleanMetricsService.voiceInputEvent();
     };
 

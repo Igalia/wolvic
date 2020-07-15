@@ -55,7 +55,6 @@ import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.downloads.DownloadJob;
 import org.mozilla.vrbrowser.downloads.DownloadsManager;
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
-import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.ui.viewmodel.WindowViewModel;
 import org.mozilla.vrbrowser.ui.views.library.BookmarksView;
 import org.mozilla.vrbrowser.ui.views.library.DownloadsView;
@@ -225,8 +224,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mPromptDelegate.attachToWindow(this);
 
         setFocusable(true);
-
-        TelemetryWrapper.openWindowEvent(mWindowId);
         GleanMetricsService.openWindowEvent(mWindowId);
 
         if (mSession.getGeckoSession() != null) {
@@ -359,7 +356,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     public void close() {
-        TelemetryWrapper.closeWindowEvent(mWindowId);
         GleanMetricsService.closeWindowEvent(mWindowId);
         hideContextMenus();
         releaseWidget();
@@ -668,7 +664,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     public void setWindowPlacement(@NonNull Windows.WindowPlacement aPlacement) {
         if (mActive) {
-            TelemetryWrapper.activePlacementEvent(mWindowPlacement.getValue(), false);
             GleanMetricsService.activePlacementEvent(mWindowPlacement.getValue(), false);
         }
         mWindowPlacement = aPlacement;
@@ -676,7 +671,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         mViewModel.setHeight(mWidgetPlacement.height);
         mViewModel.setPlacement(mWindowPlacement);
         if (mActive) {
-            TelemetryWrapper.activePlacementEvent(mWindowPlacement.getValue(), true);
             GleanMetricsService.activePlacementEvent(mWindowPlacement.getValue(), true);
         }
     }
@@ -736,7 +730,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
         hideContextMenus();
 
-        TelemetryWrapper.activePlacementEvent(mWindowPlacement.getValue(), mActive);
         GleanMetricsService.activePlacementEvent(mWindowPlacement.getValue(), mActive);
         updateBorder();
 

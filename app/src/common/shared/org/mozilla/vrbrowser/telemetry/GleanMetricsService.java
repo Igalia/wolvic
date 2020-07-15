@@ -7,13 +7,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.UiThread;
 import androidx.annotation.VisibleForTesting;
 
-import org.mozilla.telemetry.TelemetryHolder;
 import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.GleanMetrics.Control;
 import org.mozilla.vrbrowser.GleanMetrics.Distribution;
 import org.mozilla.vrbrowser.GleanMetrics.FirefoxAccount;
 import org.mozilla.vrbrowser.GleanMetrics.Immersive;
-import org.mozilla.vrbrowser.GleanMetrics.LegacyTelemetry;
 import org.mozilla.vrbrowser.GleanMetrics.Pages;
 import org.mozilla.vrbrowser.GleanMetrics.Pings;
 import org.mozilla.vrbrowser.GleanMetrics.Searches;
@@ -31,7 +29,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Map;
-import java.util.UUID;
 
 import mozilla.components.concept.fetch.Client;
 import mozilla.components.service.glean.Glean;
@@ -71,9 +68,6 @@ public class GleanMetricsService {
         } else {
             GleanMetricsService.stop();
         }
-
-        LegacyTelemetry.INSTANCE.clientId().set(UUID.fromString(TelemetryHolder.get().getClientId()));
-
         Configuration config = new Configuration(
                 ConceptFetchHttpUploader.fromClient(client),
                 Configuration.DEFAULT_TELEMETRY_ENDPOINT,

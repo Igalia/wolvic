@@ -58,7 +58,6 @@ import org.mozilla.vrbrowser.geolocation.GeolocationWrapper;
 import org.mozilla.vrbrowser.input.MotionEventGenerator;
 import org.mozilla.vrbrowser.search.SearchEngineWrapper;
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
-import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.ui.OffscreenDisplay;
 import org.mozilla.vrbrowser.ui.adapters.Language;
 import org.mozilla.vrbrowser.ui.widgets.AppServicesProvider;
@@ -412,7 +411,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     protected void onStart() {
         SettingsStore.getInstance(getBaseContext()).setPid(Process.myPid());
         super.onStart();
-        TelemetryWrapper.start();
         mLifeCycle.setCurrentState(Lifecycle.State.STARTED);
     }
 
@@ -420,8 +418,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     protected void onStop() {
         SettingsStore.getInstance(getBaseContext()).setPid(0);
         super.onStop();
-
-        TelemetryWrapper.stop();
         GleanMetricsService.sessionStop();
     }
 
@@ -1018,7 +1014,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
                 listener.onEnterWebXR();
             }
         });
-        TelemetryWrapper.startImmersive();
         GleanMetricsService.startImmersive();
 
         PauseCompositorRunnable runnable = new PauseCompositorRunnable();
@@ -1052,7 +1047,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         // Show the window in front of you when you exit immersive mode.
         recenterUIYaw(WidgetManagerDelegate.YAW_TARGET_ALL);
 
-        TelemetryWrapper.uploadImmersiveToHistogram();
         GleanMetricsService.stopImmersive();
         Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(() -> {

@@ -20,14 +20,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.mozilla.geckoview.ContentBlocking;
 import org.mozilla.geckoview.GeckoSessionSettings;
-import org.mozilla.telemetry.TelemetryHolder;
 import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserActivity;
 import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.browser.engine.EngineProvider;
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
-import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.ui.viewmodel.SettingsViewModel;
 import org.mozilla.vrbrowser.ui.widgets.menus.library.SortingContextMenuWidget;
 import org.mozilla.vrbrowser.utils.DeviceType;
@@ -209,23 +207,8 @@ public class SettingsStore {
         editor.putBoolean(mContext.getString(R.string.settings_key_telemetry), isEnabled);
         editor.commit();
 
-        // We send before disabling in case of opting-out
-        if (!isEnabled) {
-            TelemetryWrapper.telemetryStatus(false);
-        }
-
-        // If the state of Telemetry is not the same, we reinitialize it.
-        final boolean hasEnabled = isTelemetryEnabled();
-        if (hasEnabled != isEnabled) {
-            TelemetryWrapper.init(mContext, EngineProvider.INSTANCE.getDefaultClient(mContext));
-        }
-
-        TelemetryHolder.get().getConfiguration().setUploadEnabled(isEnabled);
-        TelemetryHolder.get().getConfiguration().setCollectionEnabled(isEnabled);
-
         // We send after enabling in case of opting-in
         if (isEnabled) {
-            TelemetryWrapper.telemetryStatus(true);
             GleanMetricsService.start();
         } else {
             GleanMetricsService.stop();

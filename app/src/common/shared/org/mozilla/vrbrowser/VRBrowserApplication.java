@@ -23,7 +23,6 @@ import org.mozilla.vrbrowser.db.AppDatabase;
 import org.mozilla.vrbrowser.db.DataRepository;
 import org.mozilla.vrbrowser.downloads.DownloadsManager;
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
-import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.ui.adapters.Language;
 import org.mozilla.vrbrowser.ui.widgets.AppServicesProvider;
 import org.mozilla.vrbrowser.utils.BitmapCache;
@@ -61,7 +60,6 @@ public class VRBrowserApplication extends Application implements AppServicesProv
         Looper.getMainLooper().getThread();
 
         SessionStore.prefOverrides(this);
-        TelemetryWrapper.init(this, EngineProvider.INSTANCE.getDefaultClient(this));
         GleanMetricsService.init(this, EngineProvider.INSTANCE.getDefaultClient(this));
     }
 

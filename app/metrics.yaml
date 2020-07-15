@@ -261,24 +261,6 @@ control:
       - dmu@mozilla.com
     expires: "2020-11-01"
 
-legacy_telemetry:
-  client_id:
-    type: uuid
-    description: >
-      A UUID uniquely identifying the legacy telemetry client id.
-      This is used for supporting legacy telemetry in the `deletion-request`
-      ping.
-    send_in_pings:
-      - deletion-request
-    bugs:
-      - https://github.com/MozillaReality/FirefoxReality/issues/3324
-    data_reviews:
-      - https://github.com/MozillaReality/FirefoxReality/pull/3467#issuecomment-642847632
-    notification_emails:
-      - fxr-telemetry@mozilla.com
-      - dmu@mozilla.com
-    expires: "2020-11-01"
-
 pages:
   page_load:
     type: timing_distribution
