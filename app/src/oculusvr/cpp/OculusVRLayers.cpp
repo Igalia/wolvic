@@ -136,8 +136,8 @@ OculusLayerCube::Init(JNIEnv * aEnv, vrb::RenderContextPtr& aContext) {
   ovrLayer.Offset.x = 0.0f;
   ovrLayer.Offset.y = 0.0f;
   ovrLayer.Offset.z = 0.0f;
-  swapChain = vrapi_CreateTextureSwapChain3(VRAPI_TEXTURE_TYPE_CUBE, glFormat, layer->GetWidth(), layer->GetHeight(), 1, 1);
-  layer->SetTextureHandle(vrapi_GetTextureSwapChainHandle(swapChain, 0));
+  swapChain = OculusSwapChain::CreateCubemap(glFormat, layer->GetWidth(), layer->GetHeight());
+  layer->SetTextureHandle(swapChain->TextureHandle(0));
   OculusLayerBase<VRLayerCubePtr, ovrLayerCube2>::Init(aEnv, aContext);
 }
 

@@ -11,6 +11,7 @@
 #include "VrApi.h"
 #include "VrApi_Helpers.h"
 #include "VrApi_SystemUtils.h"
+#include "OculusSwapChain.h"
 #include <memory>
 
 namespace crow {
@@ -33,7 +34,7 @@ public:
   static bool sForceClip;
   virtual void Init(JNIEnv *aEnv, vrb::RenderContextPtr &aContext) = 0;
   virtual void Update(const ovrTracking2 &aTracking, ovrTextureSwapChain *aClearSwapChain) = 0;
-  virtual ovrTextureSwapChain *GetSwapChain() const = 0;
+  virtual const OculusSwapChainPtr& GetSwapChain() const = 0;
   virtual const ovrLayerHeader2 *Header() const = 0;
   virtual void SetCurrentEye(device::Eye aEye) = 0;
   virtual bool IsDrawRequested() const = 0;
@@ -43,13 +44,12 @@ public:
   virtual void SetComposited(bool aValue) = 0;
   virtual VRLayerPtr GetLayer() const = 0;
   virtual void Destroy() = 0;
-  typedef std::function<void(const vrb::FBOPtr &, GLenum aTarget, bool aBound)> BindDelegate;
+  typedef std::function<void(const OculusSwapChainPtr&, GLenum aTarget, bool aBound)> BindDelegate;
   virtual void SetBindDelegate(const BindDelegate &aDelegate) = 0;
-  virtual jobject GetSurface() const = 0;
   virtual SurfaceChangedTargetPtr GetSurfaceChangedTarget() const = 0;
 
   virtual void
-  HandleResize(ovrTextureSwapChain *newSwapChain, jobject newSurface, vrb::FBOPtr newFBO) = 0;
+  HandleResize(const OculusSwapChainPtr& newSwapChain) = 0;
 
   virtual ~OculusLayer() {}
 };
@@ -57,7 +57,7 @@ public:
 template<class T, class U>
 class OculusLayerBase : public OculusLayer {
 public:
-  ovrTextureSwapChain *swapChain = nullptr;
+  OculusSwapChainPtr swapChain;
   SurfaceChangedTargetPtr surfaceChangedTarget;
   T layer;
   U ovrLayer;
@@ -88,7 +88,7 @@ public:
     ovrLayer.Header.ColorScale.w = tintColor.Alpha();
   }
 
-  virtual ovrTextureSwapChain *GetSwapChain() const override {
+  virtual const OculusSwapChainPtr& GetSwapChain() const override {
     return swapChain;
   }
 
@@ -134,10 +134,7 @@ public:
   }
 
   void Destroy() override {
-    if (swapChain != nullptr) {
-      vrapi_DestroyTextureSwapChain(swapChain);
-      swapChain = nullptr;
-    }
+    swapChain = nullptr;
     layer->SetInitialized(false);
     SetComposited(false);
     layer->NotifySurfaceChanged(VRLayer::SurfaceChange::Destroy, nullptr);
@@ -145,19 +142,14 @@ public:
 
   void SetBindDelegate(const BindDelegate &aDelegate) override {}
 
-  jobject GetSurface() const override {
-    return nullptr;
-  }
-
   SurfaceChangedTargetPtr GetSurfaceChangedTarget() const override {
     return surfaceChangedTarget;
   }
 
-  void HandleResize(ovrTextureSwapChain *newSwapChain, jobject newSurface,
-                    vrb::FBOPtr newFBO) override {}
+  void HandleResize(const OculusSwapChainPtr& newSwapChain) override {}
 
   ovrTextureSwapChain *GetTargetSwapChain(ovrTextureSwapChain *aClearSwapChain) {
-    return (IsComposited() || layer->GetClearColor().Alpha() == 0) ? swapChain : aClearSwapChain;
+    return (IsComposited() || layer->GetClearColor().Alpha() == 0) ? swapChain->SwapChain() : aClearSwapChain;
   }
 
 protected:
@@ -177,8 +169,6 @@ protected:
 template<typename T, typename U>
 class OculusLayerSurface : public OculusLayerBase<T, U> {
 public:
-  jobject surface = nullptr;
-  vrb::FBOPtr fbo;
   vrb::RenderContextWeak contextWeak;
   JNIEnv *jniEnv = nullptr;
   OculusLayer::BindDelegate bindDelegate;
@@ -192,7 +182,7 @@ public:
       return;
     }
 
-    InitSwapChain(this->swapChain, this->surface, this->fbo);
+    this->swapChain = CreateSwapChain();
     this->layer->SetResizeDelegate([=] {
       Resize();
     });
@@ -205,42 +195,26 @@ public:
     }
     // Delay the destruction of the current swapChain until the new one is composited.
     // This is required to prevent a black flicker when resizing.
-    ovrTextureSwapChain *newSwapChain = nullptr;
-    jobject newSurface = nullptr;
-    vrb::FBOPtr newFBO;
-    InitSwapChain(newSwapChain, newSurface, newFBO);
-    this->layer->SetSurface(newSurface);
+    OculusSwapChainPtr newSwapChain = CreateSwapChain();
+    this->layer->SetSurface(newSwapChain->AndroidSurface());
 
     SurfaceChangedTargetWeakPtr weakTarget = this->surfaceChangedTarget;
     this->layer->NotifySurfaceChanged(VRLayer::SurfaceChange::Create, [=]() {
       SurfaceChangedTargetPtr target = weakTarget.lock();
       if (target && target->layer) {
-        target->layer->HandleResize(newSwapChain, newSurface, newFBO);
+        target->layer->HandleResize(newSwapChain);
       }
     });
   }
 
   void
-  HandleResize(ovrTextureSwapChain *newSwapChain, jobject newSurface, vrb::FBOPtr newFBO) override {
-    if (this->surface) {
-      jniEnv->DeleteGlobalRef(this->surface);
-    }
-    if (this->swapChain) {
-      vrapi_DestroyTextureSwapChain(this->swapChain);
-    }
+  HandleResize(const OculusSwapChainPtr& newSwapChain) override {
     this->swapChain = newSwapChain;
-    this->surface = newSurface;
-    this->fbo = newFBO;
     this->SetComposited(true);
   }
 
   void Destroy() override {
-    this->fbo = nullptr;
-    if (this->surface) {
-      this->jniEnv->DeleteGlobalRef(surface);
-      this->surface = nullptr;
-      this->layer->SetSurface(nullptr);
-    }
+    this->layer->SetSurface(nullptr);
     OculusLayerBase<T, U>::Destroy();
   }
 
@@ -248,20 +222,15 @@ public:
     bindDelegate = aDelegate;
     this->layer->SetBindDelegate([=](GLenum aTarget, bool aBind) {
       if (bindDelegate) {
-        bindDelegate(this->fbo, aTarget, aBind);
+        bindDelegate(this->swapChain, aTarget, aBind);
       }
     });
-  }
-
-  virtual jobject GetSurface() const override {
-    return surface;
   }
 
 protected:
   void TakeSurface(JNIEnv * aEnv, const OculusLayerPtr &aSource) {
     this->swapChain = aSource->GetSwapChain();
     this->jniEnv = aEnv;
-    this->surface = aSource->GetSurface();
     this->surfaceChangedTarget = aSource->GetSurfaceChangedTarget();
     if (this->surfaceChangedTarget) {
       // Indicate that the first composite notification should be notified to this layer.
@@ -275,42 +244,30 @@ protected:
   }
 
 private:
-  void InitSwapChain(ovrTextureSwapChain *&swapChainOut, jobject &surfaceOut, vrb::FBOPtr &fboOut) {
+  OculusSwapChainPtr CreateSwapChain() {
+    OculusSwapChainPtr result;
     if (this->layer->GetSurfaceType() == VRLayerQuad::SurfaceType::AndroidSurface) {
-      swapChainOut = vrapi_CreateAndroidSurfaceSwapChain(this->layer->GetWidth(),
-                                                         this->layer->GetHeight());
-      surfaceOut = vrapi_GetTextureSwapChainAndroidSurface(swapChainOut);
-      surfaceOut = this->jniEnv->NewGlobalRef(surfaceOut);
-      this->layer->SetSurface(surface);
+      result = OculusSwapChain::CreateAndroidSurface(this->jniEnv, this->layer->GetWidth(), this->layer->GetHeight());
+      this->layer->SetSurface(result->AndroidSurface());
     } else {
-      swapChainOut = vrapi_CreateTextureSwapChain(VRAPI_TEXTURE_TYPE_2D, VRAPI_TEXTURE_FORMAT_8888,
-                                                  this->layer->GetWidth(), this->layer->GetHeight(),
-                                                  1, false);
       vrb::RenderContextPtr ctx = this->contextWeak.lock();
-      fboOut = vrb::FBO::Create(ctx);
-      GLuint texture = vrapi_GetTextureSwapChainHandle(swapChainOut, 0);
-      VRB_GL_CHECK(glBindTexture(GL_TEXTURE_2D, texture));
-      VRB_GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-      VRB_GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-      VRB_GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-      VRB_GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-      vrb::FBO::Attributes attributes;
-      attributes.depth = false;
-      attributes.samples = 0;
-      VRB_GL_CHECK(
-          fboOut->SetTextureHandle(texture, this->layer->GetWidth(), this->layer->GetHeight(),
-                                   attributes));
-      if (fboOut->IsValid()) {
-        fboOut->Bind();
-        VRB_GL_CHECK(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
-        VRB_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT));
-        fboOut->Unbind();
-      } else {
-        VRB_WARN("FAILED to make valid FBO for OculusLayerSurface");
-      }
-    }
-  }
 
+      vrb::FBO::Attributes attributes;
+      bool buffered;
+      if (this->layer->GetLayerType() == VRLayer::LayerType::PROJECTION) {
+        buffered = true;
+        attributes.samples = 4;
+        attributes.depth = true;
+      } else {
+        buffered = false;
+        attributes.samples = 0;
+        attributes.depth = 0;
+      }
+      result = OculusSwapChain::CreateFBO(ctx, attributes,
+          this->layer->GetWidth(), this->layer->GetHeight(), buffered);
+    }
+    return result;
+  }
 };
 
 class OculusLayerQuad;
