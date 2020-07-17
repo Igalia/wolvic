@@ -26,72 +26,64 @@
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
             android:gravity="center_vertical">
-            <ImageView
-                android:id="@+id/battery_icon"
-                android:layout_width="10dp"
-                android:layout_height="10dp"
-                android:layout_alignParentStart="true"
-                android:src="@drawable/ic_tray_battery_out"
-                android:tint="@color/concrete"
-                android:scaleType="fitCenter"/>
-            <TextView
-                android:id="@+id/battery_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toEndOf="@+id/battery_icon"
-                android:layout_marginEnd="5dp"
-                android:textSize="@dimen/text_smallest_size"
-                android:tint="@color/concrete"
-                android:text="50%"/>
-            <ImageView
-                android:id="@+id/controller_right_icon"
-                android:layout_width="10dp"
-                android:layout_height="10dp"
-                android:layout_toEndOf="@+id/battery_text"
-                android:src="@drawable/ic_tray_controller"
-                android:tint="@color/concrete"
-                android:scaleType="fitCenter"/>
-            <TextView
-                android:id="@+id/controller_right_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toEndOf="@+id/controller_right_icon"
-                android:textSize="@dimen/text_smallest_size"
-                android:tint="@color/concrete"
-                android:text="50%"/>
-            <ImageView
-                android:id="@+id/controller_left_icon"
-                android:layout_width="10dp"
-                android:layout_height="10dp"
-                android:layout_toEndOf="@+id/controller_right_text"
-                android:src="@drawable/ic_tray_controller"
-                android:tint="@color/concrete"
-                android:scaleType="fitCenter"/>
-            <TextView
-                android:id="@+id/controller_left_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toEndOf="@+id/controller_left_icon"
-                android:textSize="@dimen/text_smallest_size"
-                android:tint="@color/concrete"
-                android:text="50%"/>
-            <ImageView
-                android:id="@+id/internet_icon"
-                android:layout_width="10dp"
-                android:layout_height="10dp"
-                android:layout_toStartOf="@+id/time_text"
-                android:layout_marginEnd="5dp"
-                android:src="@drawable/ic_tray_internet"
-                android:tint="@color/concrete"
-                android:scaleType="fitCenter"/>
             <TextView
                 android:id="@+id/time_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
+                android:layout_alignParentStart="true"
                 android:textSize="@dimen/text_smallest_size"
                 android:tint="@color/concrete"
-                android:text="18:30"/>
+                android:text="18:30 pm"/>
+            <ImageView
+                android:id="@+id/wifi_icon"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_toEndOf="@+id/time_text"
+                android:layout_marginEnd="5dp"
+                android:src="@drawable/ic_icon_statusbar_wifi"
+                android:tint="@color/concrete"
+                android:scaleType="fitCenter"/>
+            <LinearLayout
+                android:id="@+id/right_controller"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_toStartOf="@+id/headset"
+                android:layout_marginEnd="10dp">
+                <ImageView
+                    android:id="@+id/right_controller_icon"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:src="@drawable/ic_icon_statusbar_rightcontroller"
+                    android:tint="@color/concrete"/>
+                <ImageView
+                    android:id="@+id/right_controller_battery_indicator"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:src="@drawable/ic_icon_statusbar_indicator"
+                    android:tint="@color/concrete"
+                    android:scaleType="fitCenter"/>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/headset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_alignParentEnd="true">
+                <ImageView
+                    android:id="@+id/headset_icon"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:src="@drawable/ic_icon_statusbar_headset_normal"
+                    android:tint="@color/concrete"/>
+                <ImageView
+                    android:id="@+id/headset_battery_indicator"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:src="@drawable/ic_icon_statusbar_indicator"
+                    android:tint="@color/concrete"
+                    android:scaleType="fitCenter"/>
+            </LinearLayout>
         </RelativeLayout>
 
         <LinearLayout
