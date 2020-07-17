@@ -182,7 +182,7 @@ OpenXRInput::Initialize(XrSession session) {
     ADD_ACTION(actionTriggerValue, triggerValuePath);
     ADD_ACTION(actionTrackpadValue, trackpadValuePath);
     ADD_ACTION(actionPose, posePath);
-    ADD_ACTION(actionHaptic, hapticPath);
+    //ADD_ACTION(actionHaptic, hapticPath);
     ADD_ACTION(actionBackClick, backClickPath);
     ADD_ACTION(actionVolumeUp, volumeUpClickPath);
     ADD_ACTION(actionVolumeDown, volumeDownClickPath);
@@ -425,6 +425,11 @@ void OpenXRInput::Update(XrSession session, XrTime predictedDisplayTime, XrSpace
       VRB_LOG("reb HOME CLICK ACTIVE: %s", (homeClick.currentState == 0 ? "NOT PRESSED" : "PRESSED"));
     }
 
+    if (backClick.isActive) {
+      bool value = backClick.currentState != 0;
+      delegate->SetButtonState(index, ControllerDelegate::BUTTON_APP, -1, value, value);
+    }
+
 #if 0
     if (menuClick.isActive) {
       const bool pressed = menuClick.currentState != 0;
@@ -477,6 +482,7 @@ void OpenXRInput::Update(XrSession session, XrTime predictedDisplayTime, XrSpace
       bool touched = pressed || (trackpadTouch.isActive && trackpadTouch.currentState != 0);
       const float x = trackpadX.isActive ? trackpadX.currentState : 0.0f;
       const float y = trackpadY.isActive ? trackpadY.currentState : 0.0f;
+      VRB_LOG("reb x: %f y: %f", trackpadX.currentState, trackpadY.currentState);
       delegate->SetButtonState(index, ControllerDelegate::BUTTON_TOUCHPAD, device::kImmersiveButtonTouchpad, pressed, touched);
       axes[device::kImmersiveAxisTouchpadX] = x;
       axes[device::kImmersiveAxisTouchpadY] = y;
