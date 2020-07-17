@@ -1832,4 +1832,14 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed in the downloads panel, in the download status when an unknown error happened. -->
     <string name="download_status_unknown_error">Unknown error</string>
 
+    <!-- This string is shown in the body of the error dialog displayed when the user is trying to download an environment in the external storage
+    but hasn't granted the permission. -->
+    <string name="environment_download_permission_error_body">Permission to write the external storage is required to download the environment.</string>
+
+    <!-- This string is shown in the body of the error dialog displayed when the environment unzipping fails. -->
+    <string name="environment_download_unzip_error_body">An error occurred while unzipping the environment.</string>
+
+    <!-- This string is shown in the title of the error dialog displayed if there is any error during an environment setup. -->
+    <string name="environment__error_title">Environment error</string>
+
 </resources>
