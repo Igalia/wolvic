@@ -194,6 +194,11 @@ struct DeviceDelegateWaveVR::State {
     cameras[device::EyeIndex(device::Eye::Left)] = vrb::CameraEye::Create(create);
     cameras[device::EyeIndex(device::Eye::Right)] = vrb::CameraEye::Create(create);
     InitializeCameras();
+
+    elbow = ElbowModel::Create();
+  }
+
+  void InitializeRender() {
     WVR_GetRenderTargetSize(&renderWidth, &renderHeight);
     VRB_GL_CHECK(glViewport(0, 0, renderWidth, renderHeight));
     VRB_DEBUG("Recommended size is %ux%u", renderWidth, renderHeight);
@@ -201,8 +206,10 @@ struct DeviceDelegateWaveVR::State {
       VRB_ERROR("Please check Wave server configuration");
       return;
     }
+    if (immersiveDisplay) {
+      immersiveDisplay->SetEyeResolution(renderWidth, renderHeight);
+    }
     InitializeTextureQueues();
-    elbow = ElbowModel::Create();
   }
 
   void InitializeTextureQueues() {
@@ -459,6 +466,10 @@ DeviceDelegateWaveVR::Create(vrb::RenderContextPtr& aContext) {
   result->m.context = aContext;
   result->m.Initialize();
   return result;
+}
+
+void DeviceDelegateWaveVR::InitializeRender() {
+  m.InitializeRender();
 }
 
 device::DeviceType
