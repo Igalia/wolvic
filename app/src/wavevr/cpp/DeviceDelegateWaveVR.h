@@ -14,6 +14,7 @@ typedef std::shared_ptr<DeviceDelegateWaveVR> DeviceDelegateWaveVRPtr;
 class DeviceDelegateWaveVR : public DeviceDelegate {
 public:
   static DeviceDelegateWaveVRPtr Create(vrb::RenderContextPtr& aContext);
+  void InitializeRender();
   // DeviceDelegate interface
   device::DeviceType GetDeviceType() override;
   void SetRenderMode(const device::RenderMode aMode) override;

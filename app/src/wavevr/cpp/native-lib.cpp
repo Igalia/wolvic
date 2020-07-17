@@ -45,16 +45,17 @@ JNI_METHOD(void, activityResumed)
 int main(int argc, char *argv[]) {
   sQueue->AttachToThread();
   VRB_LOG("Call WVR_Init");
-  sDevice = DeviceDelegateWaveVR::Create(BrowserWorld::Instance().GetRenderContext());
-  BrowserWorld::Instance().RegisterDeviceDelegate(sDevice);
-  while(!sJavaInitialized) {
-    sQueue->ProcessRunnables();
-  }
 
   WVR_InitError eError = WVR_Init(WVR_AppType_VRContent);
   if (eError != WVR_InitError_None) {
     VRB_LOG("Unable to init VR runtime: %s", WVR_GetInitErrorString(eError));
     return 1;
+  }
+
+  sDevice = DeviceDelegateWaveVR::Create(BrowserWorld::Instance().GetRenderContext());
+  BrowserWorld::Instance().RegisterDeviceDelegate(sDevice);
+  while(!sJavaInitialized) {
+    sQueue->ProcessRunnables();
   }
 
   WVR_InputAttribute inputIdAndTypes[] = {
@@ -76,6 +77,7 @@ int main(int argc, char *argv[]) {
   if (pError != WVR_RenderError_None) {
     VRB_LOG("Present init failed - Error[%d]", pError);
   }
+  sDevice->InitializeRender();
   VRB_GL_CHECK(glEnable(GL_DEPTH_TEST));
   VRB_GL_CHECK(glEnable(GL_CULL_FACE));
   VRB_GL_CHECK(glEnable(GL_BLEND));
