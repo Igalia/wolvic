@@ -9,6 +9,7 @@ import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.text.format.DateFormat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -38,9 +39,15 @@ import org.mozilla.vrbrowser.ui.widgets.settings.SettingsView;
 import org.mozilla.vrbrowser.ui.widgets.settings.SettingsWidget;
 import org.mozilla.vrbrowser.utils.ViewUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public class TrayWidget extends UIWidget implements WidgetManagerDelegate.UpdateListener, DownloadsManager.DownloadsListener {
 
@@ -62,6 +69,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
     private Session mSession;
     private WindowWidget mAttachedWindow;
     private boolean mIsWindowAttached;
+    private ScheduledFuture<?> mTimerFuture;
 
     public TrayWidget(Context aContext) {
         super(aContext);
@@ -101,6 +109,8 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
 
         mWidgetManager.addUpdateListener(this);
         mWidgetManager.getServicesProvider().getDownloadsManager().addListener(this);
+
+        mTimerFuture = mWidgetManager.getServicesProvider().getExecutors().scheduled().scheduleAtFixedRate(timerTask, 0, 1, TimeUnit.MINUTES);
     }
 
     public void updateUI() {
@@ -362,6 +372,8 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
         mWidgetManager.getServicesProvider().getDownloadsManager().removeListener(this);
         mTrayListeners.clear();
 
+        mTimerFuture.cancel(true);
+
         if (mTrayViewModel != null) {
             mTrayViewModel.getIsVisible().removeObserver(mIsVisibleObserver);
             mTrayViewModel = null;
@@ -621,4 +633,24 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
     public void onDownloadCompleted(@NonNull Download download) {
         showDownloadCompletedNotification(download.getFilename());
     }
+
+    private Runnable timerTask = new Runnable() {
+        @Override
+        public void run() {
+            long timestamp = System.currentTimeMillis();
+            String androidDateTime = DateFormat.getTimeFormat(getContext()).format(new Date(timestamp));
+            String AmPm = "";
+            SimpleDateFormat format = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            if(!Character.isDigit(androidDateTime.charAt(androidDateTime.length()-1))) {
+                if(androidDateTime.contains(format.getDateFormatSymbols().getAmPmStrings()[Calendar.AM])){
+                    AmPm = " " + format.getDateFormatSymbols().getAmPmStrings()[Calendar.AM];
+                }else{
+                    AmPm = " " + format.getDateFormatSymbols().getAmPmStrings()[Calendar.PM];
+                }
+                androidDateTime = androidDateTime.replace(AmPm, "");
+            }
+            mTrayViewModel.setTime(androidDateTime);
+            mTrayViewModel.setPm(AmPm);
+        }
+    };
 }

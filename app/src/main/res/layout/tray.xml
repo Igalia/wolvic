@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tool="http://schemas.android.com/tools">
     <data>
         <variable
             name="viewmodel"
@@ -22,44 +23,85 @@
             android:layout_alignEnd="@+id/tray_buttons"
             android:layout_above="@+id/tray_buttons"
             android:background="@drawable/tray_background_top"
-            android:padding="5dp"
             android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            android:gravity="center_vertical">
-            <TextView
-                android:id="@+id/time_text"
+            android:paddingEnd="10dp">
+            <LinearLayout
+                android:id="@+id/time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:textSize="@dimen/text_smallest_size"
-                android:tint="@color/concrete"
-                android:text="18:30 pm"/>
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="12dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/time_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_smallest_size"
+                    android:tint="@color/concrete"
+                    android:text="@{traymodel.time}"
+                    tool:text="18:30"/>
+                <TextView
+                    android:id="@+id/time_pm_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="5sp"
+                    android:gravity="bottom"
+                    android:tint="@color/concrete"
+                    android:text="@{traymodel.pm}"
+                    tool:text="pm"/>
+            </LinearLayout>
             <ImageView
                 android:id="@+id/wifi_icon"
-                android:layout_width="10dp"
-                android:layout_height="10dp"
-                android:layout_toEndOf="@+id/time_text"
-                android:layout_marginEnd="5dp"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_toEndOf="@+id/time"
+                android:layout_centerVertical="true"
                 android:src="@drawable/ic_icon_statusbar_wifi"
                 android:tint="@color/concrete"
                 android:scaleType="fitCenter"/>
+            <LinearLayout
+                android:id="@+id/left_controller"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@+id/right_controller"
+                android:layout_marginEnd="12dp">
+                <ImageView
+                    android:id="@+id/left_controller_icon"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/ic_icon_statusbar_leftcontroller"
+                    android:tint="@color/concrete"
+                    android:scaleType="fitCenter"/>
+                <ImageView
+                    android:id="@+id/left_controller_battery_indicator"
+                    android:layout_width="5dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/ic_icon_statusbar_indicator"
+                    android:tint="@color/concrete"
+                    android:scaleType="fitCenter"/>
+            </LinearLayout>
             <LinearLayout
                 android:id="@+id/right_controller"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:layout_centerVertical="true"
                 android:layout_toStartOf="@+id/headset"
-                android:layout_marginEnd="10dp">
+                android:layout_marginEnd="12dp">
                 <ImageView
                     android:id="@+id/right_controller_icon"
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
                     android:src="@drawable/ic_icon_statusbar_rightcontroller"
-                    android:tint="@color/concrete"/>
+                    android:tint="@color/concrete"
+                    android:scaleType="fitCenter"/>
                 <ImageView
                     android:id="@+id/right_controller_battery_indicator"
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"
+                    android:layout_width="5dp"
+                    android:layout_height="12dp"
                     android:src="@drawable/ic_icon_statusbar_indicator"
                     android:tint="@color/concrete"
                     android:scaleType="fitCenter"/>
@@ -69,17 +111,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:layout_centerVertical="true"
                 android:layout_alignParentEnd="true">
                 <ImageView
                     android:id="@+id/headset_icon"
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
                     android:src="@drawable/ic_icon_statusbar_headset_normal"
-                    android:tint="@color/concrete"/>
+                    android:tint="@color/concrete"
+                    android:scaleType="fitCenter"/>
                 <ImageView
                     android:id="@+id/headset_battery_indicator"
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"
+                    android:layout_width="5dp"
+                    android:layout_height="12dp"
                     android:src="@drawable/ic_icon_statusbar_indicator"
                     android:tint="@color/concrete"
                     android:scaleType="fitCenter"/>

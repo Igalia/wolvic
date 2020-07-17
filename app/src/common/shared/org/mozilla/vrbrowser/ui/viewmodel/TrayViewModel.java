@@ -17,6 +17,8 @@ public class TrayViewModel extends AndroidViewModel {
     private MutableLiveData<ObservableBoolean> isKeyboardVisible;
     private MutableLiveData<ObservableInt> downloadsNumber;
     private MediatorLiveData<ObservableBoolean> isVisible;
+    private MutableLiveData<String> time;
+    private MutableLiveData<String> pm;
 
     public TrayViewModel(@NonNull Application application) {
         super(application);
@@ -29,6 +31,9 @@ public class TrayViewModel extends AndroidViewModel {
         isVisible.addSource(shouldBeVisible, mIsVisibleObserver);
         isVisible.addSource(isKeyboardVisible, mIsVisibleObserver);
         isVisible.setValue(new ObservableBoolean(false));
+        time = new MutableLiveData<>();
+        pm = new MutableLiveData<>();
+        pm = new MutableLiveData<>();
     }
 
     Observer<ObservableBoolean> mIsVisibleObserver = new Observer<ObservableBoolean>() {
@@ -45,6 +50,8 @@ public class TrayViewModel extends AndroidViewModel {
         isMaxWindows.setValue(isMaxWindows.getValue());
         shouldBeVisible.setValue(shouldBeVisible.getValue());
         isKeyboardVisible.setValue(isKeyboardVisible.getValue());
+        time.postValue(time.getValue());
+        pm.postValue(pm.getValue());
     }
 
     public void setIsMaxWindows(boolean isMaxWindows) {
@@ -78,6 +85,22 @@ public class TrayViewModel extends AndroidViewModel {
 
     public MutableLiveData<ObservableInt> getDownloadsNumber() {
         return downloadsNumber;
+    }
+
+    public void setTime(String time) {
+        this.time.postValue(time);
+    }
+
+    public MutableLiveData<String> getTime() {
+        return time;
+    }
+
+    public void setPm(String pm) {
+        this.pm.postValue(pm);
+    }
+
+    public MutableLiveData<String> getPm() {
+        return pm;
     }
 
 }
