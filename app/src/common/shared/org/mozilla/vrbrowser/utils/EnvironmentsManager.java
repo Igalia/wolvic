@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import com.mozilla.speechlibrary.utils.zip.UnzipCallback;
 import com.mozilla.speechlibrary.utils.zip.UnzipTask;
 
+import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.downloads.Download;
@@ -19,19 +20,39 @@ import org.mozilla.vrbrowser.downloads.DownloadsManager;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 
 import java.io.File;
+import java.util.ArrayList;
 
 public class EnvironmentsManager implements DownloadsManager.DownloadsListener, SharedPreferences.OnSharedPreferenceChangeListener {
+
+    public interface EnvironmentListener {
+        default void onEnvironmentSetSuccess(@NonNull String envId) {}
+        default void onEnvironmentSetError(@NonNull String error) {}
+    }
 
     private WidgetManagerDelegate mApplicationDelegate;
     private Context mContext;
     private DownloadsManager mDownloadManager;
     private SharedPreferences mPrefs;
+    private ArrayList<EnvironmentListener> mListeners;
 
     public EnvironmentsManager(@NonNull Context context) {
         mContext = context;
         mApplicationDelegate = ((WidgetManagerDelegate)context);
         mDownloadManager = mApplicationDelegate.getServicesProvider().getDownloadsManager();
         mPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+        mListeners = new ArrayList<>();
+    }
+
+    public void addListener(@NonNull EnvironmentListener listener) {
+        if (!mListeners.contains(listener)) {
+            mListeners.add(listener);
+        }
+    }
+
+    public void removeListener(@NonNull EnvironmentListener listener) {
+        if (mListeners.contains(listener)) {
+            mListeners.remove(listener);
+        }
     }
 
     public void start() {
@@ -46,11 +67,15 @@ public class EnvironmentsManager implements DownloadsManager.DownloadsListener, 
 
     public void setOrDownloadEnvironment(@NonNull String envId) {
         if (EnvironmentUtils.isBuiltinEnvironment(mContext, envId)) {
+            SettingsStore.getInstance(mContext).setEnvironment(envId);
+            mListeners.forEach(environmentListener -> environmentListener.onEnvironmentSetSuccess(envId));
             mApplicationDelegate.updateEnvironment();
 
         } else {
             if (EnvironmentUtils.isExternalEnvReady(mContext, envId)) {
                 // If the environment is ready, call native to update
+                SettingsStore.getInstance(mContext).setEnvironment(envId);
+                mListeners.forEach(environmentListener -> environmentListener.onEnvironmentSetSuccess(envId));
                 mApplicationDelegate.updateEnvironment();
 
             } else {
@@ -98,7 +123,29 @@ public class EnvironmentsManager implements DownloadsManager.DownloadsListener, 
             if (!isDownloading) {
                 // If the env is not being downloaded, start downloading it
                 DownloadJob job = DownloadJob.create(environment.getPayload());
-                mDownloadManager.startDownload(job);
+                @SettingsStore.Storage int storage = SettingsStore.getInstance(mContext).getDownloadsStorage();
+                if (storage == SettingsStore.EXTERNAL &&
+                        !mApplicationDelegate.isPermissionGranted(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    mApplicationDelegate.requestPermission(
+                                job.getUri(),
+                                android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                new GeckoSession.PermissionDelegate.Callback() {
+                                    @Override
+                                    public void grant() {
+                                        mDownloadManager.startDownload(job);
+                                    }
+
+                                    @Override
+                                    public void reject() {
+                                        mListeners.forEach(listener -> listener.onEnvironmentSetError(
+                                                mContext.getString(R.string.environment_download_permission_error_body)
+                                        ));
+                                    }
+                                });
+
+                } else {
+                    mDownloadManager.startDownload(job);
+                }
             }
         }
     }
@@ -130,17 +177,23 @@ public class EnvironmentsManager implements DownloadsManager.DownloadsListener, 
                     file.delete();
 
                     // the environment is ready, call native to update the current env.
+                    SettingsStore.getInstance(mContext).setEnvironment(env.getValue());
+                    mListeners.forEach(environmentListener -> environmentListener.onEnvironmentSetSuccess(env.getValue()));
                     mApplicationDelegate.updateEnvironment();
                 }
 
                 @Override
                 public void onUnzipCancelled(@NonNull String zipFile) {
-
+                    mListeners.forEach(listener -> listener.onEnvironmentSetError(
+                            mContext.getString(R.string.environment_download_unzip_error_body)
+                    ));
                 }
 
                 @Override
                 public void onUnzipError(@NonNull String zipFile, @Nullable String error) {
-
+                    mListeners.forEach(listener -> listener.onEnvironmentSetError(
+                            mContext.getString(R.string.environment_download_unzip_error_body)
+                    ));
                 }
             });
             String zipOutputPath = EnvironmentUtils.getEnvPath(mContext, env.getValue());

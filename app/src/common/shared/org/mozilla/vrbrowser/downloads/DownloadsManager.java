@@ -131,7 +131,12 @@ public class DownloadsManager {
         }
 
         if (mDownloadManager != null) {
-            mDownloadManager.enqueue(request);
+            try {
+                mDownloadManager.enqueue(request);
+            } catch (SecurityException e) {
+                notifyDownloadError("Cannot create output file", job.getFilename());
+                return;
+            }
             scheduleUpdates();
         }
     }

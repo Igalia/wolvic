@@ -11,6 +11,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.view.LayoutInflater;
 
+import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 
 import org.mozilla.vrbrowser.R;
@@ -30,7 +31,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
 
-class EnvironmentOptionsView extends SettingsView {
+class EnvironmentOptionsView extends SettingsView implements EnvironmentsManager.EnvironmentListener {
 
     private OptionsEnvironmentBinding mBinding;
     private ImageRadioGroupSetting mEnvironmentsRadio;
@@ -80,13 +81,14 @@ class EnvironmentOptionsView extends SettingsView {
     public void onShown() {
         super.onShown();
 
+        mEnvironmentsManager.addListener(this);
         mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_NO_DIM_BRIGHTNESS);
     }
-
 
     @Override
     public void onHidden() {
         mWidgetManager.popWorldBrightness(this);
+        mEnvironmentsManager.removeListener(this);
     }
 
     private void setEnvOverride(boolean value) {
@@ -127,7 +129,6 @@ class EnvironmentOptionsView extends SettingsView {
         mEnvironmentsRadio.setOnCheckedChangeListener(mEnvsListener);
 
         String value = (String) mEnvironmentsRadio.getValueForId(checkedId);
-        SettingsStore.getInstance(getContext()).setEnvironment(value);
 
         mEnvironmentsManager.setOrDownloadEnvironment(value);
     }
@@ -189,4 +190,18 @@ class EnvironmentOptionsView extends SettingsView {
         setEnv(mEnvironmentsRadio.getIdForValue(env), false);
     }
 
+    @Override
+    public void onEnvironmentSetSuccess(@NonNull String envId) {
+        
+    }
+
+    @Override
+    public void onEnvironmentSetError(@NonNull String error) {
+        setEnv(mEnvironmentsRadio.getIdForValue(SettingsStore.getInstance(getContext()).getEnvironment()), false);
+        mWidgetManager.getFocusedWindow().showAlert(
+                getContext().getString(R.string.environment__error_title),
+                error,
+                null
+        );
+    }
 }
