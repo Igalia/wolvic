@@ -110,9 +110,7 @@ support.core_utils = "androidx.legacy:legacy-support-core-utils:$versions.suppor
 support.vector_drawable = "androidx.vectordrawable:vectordrawable:$versions.support"
 deps.support = support
 
-// TODO this should not be necessary at all, see Services.kt
 def work = [:]
-work.runtime = "androidx.work:work-runtime-ktx:$versions.work"
 work.testing = "androidx.work:work-testing:$versions.work"
 deps.work = work
 

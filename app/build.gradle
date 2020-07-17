@@ -446,9 +446,6 @@ dependencies {
     implementation deps.android_components.glean
     implementation deps.app_services.rustlog
 
-    // TODO this should not be necessary at all, see Services.kt
-    implementation deps.work.runtime
-
     // Kotlin dependency
     implementation deps.kotlin.stdlib
     implementation deps.kotlin.coroutines
