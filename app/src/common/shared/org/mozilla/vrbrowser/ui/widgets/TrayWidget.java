@@ -9,6 +9,10 @@ import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.drawable.LayerDrawable;
+import android.graphics.drawable.VectorDrawable;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.text.format.DateFormat;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -111,6 +115,10 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
         mWidgetManager.getServicesProvider().getDownloadsManager().addListener(this);
 
         mTimerFuture = mWidgetManager.getServicesProvider().getExecutors().scheduled().scheduleAtFixedRate(timerTask, 0, 1, TimeUnit.MINUTES);
+
+        LayerDrawable layerDrawable = (LayerDrawable) mBinding.wifiIcon.getDrawable();
+        VectorDrawable drawable = (VectorDrawable) layerDrawable.findDrawableByLayerId(R.id.wifi_layer1);
+        drawable.setAlpha(0);
     }
 
     public void updateUI() {
@@ -651,6 +659,19 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
             }
             mTrayViewModel.setTime(androidDateTime);
             mTrayViewModel.setPm(AmPm);
+        }
+    };
+
+    private Runnable wifiSignalTask = new Runnable() {
+        @Override
+        public void run() {
+            WifiManager wifiManager = (WifiManager) getContext().getSystemService(Context.WIFI_SERVICE);
+            if (wifiManager != null) {
+                int numberOfLevels = 5;
+                WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+                int level = WifiManager.calculateSignalLevel(wifiInfo.getRssi(), 4);
+                
+            }
         }
     };
 }

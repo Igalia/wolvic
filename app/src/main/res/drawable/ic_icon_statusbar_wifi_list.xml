@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/wifi_layer1" android:drawable="@drawable/ic_icon_statusbar_wifi1"/>
+    <item android:id="@+id/wifi_layer2" android:drawable="@drawable/ic_icon_statusbar_wifi2"/>
+    <item android:id="@+id/wifi_layer3" android:drawable="@drawable/ic_icon_statusbar_wifi3"/>
+    <item android:id="@+id/wifi_layer4" android:drawable="@drawable/ic_icon_statusbar_wifi4"/>
+</layer-list>

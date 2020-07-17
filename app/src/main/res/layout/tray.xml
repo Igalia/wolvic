@@ -40,6 +40,7 @@
                     android:textSize="@dimen/text_smallest_size"
                     android:tint="@color/concrete"
                     android:text="@{traymodel.time}"
+                    android:textColor="@color/concrete"
                     tool:text="18:30"/>
                 <TextView
                     android:id="@+id/time_pm_text"
@@ -47,19 +48,29 @@
                     android:layout_height="wrap_content"
                     android:textSize="5sp"
                     android:gravity="bottom"
-                    android:tint="@color/concrete"
+                    android:textColor="@color/concrete"
                     android:text="@{traymodel.pm}"
                     tool:text="pm"/>
             </LinearLayout>
-            <ImageView
-                android:id="@+id/wifi_icon"
+            <FrameLayout
                 android:layout_width="12dp"
                 android:layout_height="12dp"
                 android:layout_toEndOf="@+id/time"
-                android:layout_centerVertical="true"
-                android:src="@drawable/ic_icon_statusbar_wifi"
-                android:tint="@color/concrete"
-                android:scaleType="fitCenter"/>
+                android:layout_centerVertical="true">
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_icon_statusbar_wifi_list"
+                    android:tint="@color/iron"
+                    android:scaleType="fitCenter"/>
+                <ImageView
+                    android:id="@+id/wifi_icon"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_icon_statusbar_wifi_list"
+                    android:tint="@color/concrete"
+                    android:scaleType="fitCenter"/>
+            </FrameLayout>
             <LinearLayout
                 android:id="@+id/left_controller"
                 android:layout_width="wrap_content"
