@@ -380,6 +380,7 @@ android {
                     'src/picovr/res'
             ]
             jniLibs.srcDirs = ["${project.rootDir}/third_party/picovr"]
+            manifest.srcFile "src/picovr/AndroidManifest.xml"
         }
 
         noapi {
