@@ -401,6 +401,28 @@ VRLayerCylinder::VRLayerCylinder(State& aState): VRLayerSurface(aState, LayerTyp
 
 VRLayerCylinder::~VRLayerCylinder() {}
 
+// Layer Projection
+
+struct VRLayerProjection::State: public VRLayerSurface::State {
+  State() {}
+};
+
+VRLayerProjectionPtr
+VRLayerProjection::Create(const int32_t aWidth, const int32_t aHeight, VRLayerSurface::SurfaceType aSurfaceType) {
+  auto result = std::make_shared<vrb::ConcreteClass<VRLayerProjection, VRLayerProjection::State>>();
+  result->m.width = aWidth;
+  result->m.height = aHeight;
+  result->m.surfaceType = aSurfaceType;
+  return result;
+}
+
+
+VRLayerProjection::VRLayerProjection(State& aState): VRLayerSurface(aState, LayerType::PROJECTION), m(aState) {
+}
+
+VRLayerProjection::~VRLayerProjection() {
+}
+
 // Layer Cube
 
 struct VRLayerCube::State: public VRLayer::State {

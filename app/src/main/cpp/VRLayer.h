@@ -156,7 +156,7 @@ class VRLayerProjection;
 
   class VRLayerProjection: public VRLayerSurface {
   public:
-    static VRLayerQuadPtr Create(VRLayerSurface::SurfaceType aSurfaceType);
+    static VRLayerProjectionPtr Create(const int32_t aWidth, const int32_t aHeight, VRLayerSurface::SurfaceType aSurfaceType);
   protected:
     struct State;
     VRLayerProjection(State& aState);

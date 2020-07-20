@@ -51,6 +51,7 @@ public:
   VRLayerCylinderPtr CreateLayerCylinder(int32_t aWidth, int32_t aHeight,
                                          VRLayerSurface::SurfaceType aSurfaceType) override;
   VRLayerCylinderPtr CreateLayerCylinder(const VRLayerSurfacePtr& aMoveLayer) override;
+  VRLayerProjectionPtr CreateLayerProjection(VRLayerSurface::SurfaceType aSurfaceType) override;
   VRLayerCubePtr CreateLayerCube(int32_t aWidth, int32_t aHeight, GLint aInternalFormat) override;
   VRLayerEquirectPtr CreateLayerEquirect(const VRLayerPtr &aSource) override;
   void DeleteLayer(const VRLayerPtr& aLayer) override;

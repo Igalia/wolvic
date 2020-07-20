@@ -33,8 +33,8 @@ OculusLayerQuad::Init(JNIEnv * aEnv, vrb::RenderContextPtr& aContext) {
 }
 
 void
-OculusLayerQuad::Update(const ovrTracking2& aTracking, ovrTextureSwapChain* aClearSwapChain)  {
-  OculusLayerSurface<VRLayerQuadPtr, ovrLayerProjection2>::Update(aTracking, aClearSwapChain);
+OculusLayerQuad::Update(uint32_t aFrameIndex, const ovrTracking2& aTracking, ovrTextureSwapChain* aClearSwapChain)  {
+  OculusLayerSurface<VRLayerQuadPtr, ovrLayerProjection2>::Update(aFrameIndex, aTracking, aClearSwapChain);
   const float w = layer->GetWorldWidth();
   const float h = layer->GetWorldHeight();
 
@@ -84,8 +84,8 @@ OculusLayerCylinder::Init(JNIEnv * aEnv, vrb::RenderContextPtr& aContext) {
 }
 
 void
-OculusLayerCylinder::Update(const ovrTracking2& aTracking, ovrTextureSwapChain* aClearSwapChain)  {
-  OculusLayerSurface<VRLayerCylinderPtr, ovrLayerCylinder2>::Update(aTracking, aClearSwapChain);
+OculusLayerCylinder::Update(uint32_t aFrameIndex, const ovrTracking2& aTracking, ovrTextureSwapChain* aClearSwapChain)  {
+  OculusLayerSurface<VRLayerCylinderPtr, ovrLayerCylinder2>::Update(aFrameIndex, aTracking, aClearSwapChain);
   ovrLayer.HeadPose = aTracking.HeadPose;
   ovrLayer.Header.SrcBlend = VRAPI_FRAME_LAYER_BLEND_SRC_ALPHA;
   ovrLayer.Header.DstBlend = VRAPI_FRAME_LAYER_BLEND_ONE_MINUS_SRC_ALPHA;
@@ -115,6 +115,60 @@ OculusLayerCylinder::Update(const ovrTracking2& aTracking, ovrTextureSwapChain* 
   }
 }
 
+
+// OculusLayerProjection
+
+OculusLayerProjectionPtr
+OculusLayerProjection::Create(JNIEnv *aEnv, const VRLayerProjectionPtr& aLayer) {
+  auto result = std::make_shared<OculusLayerProjection>();
+  result->layer = aLayer;
+  return result;
+}
+
+void
+OculusLayerProjection::Init(JNIEnv * aEnv, vrb::RenderContextPtr& aContext) {
+  ovrLayer = vrapi_DefaultLayerProjection2();
+  this->jniEnv = aEnv;
+  this->contextWeak = aContext;
+  this->ovrLayer.Header.SrcBlend = VRAPI_FRAME_LAYER_BLEND_SRC_ALPHA;
+  this->ovrLayer.Header.DstBlend = VRAPI_FRAME_LAYER_BLEND_ONE_MINUS_SRC_ALPHA;
+  if (this->swapChain && this->secondSwapChain) {
+    return;
+  }
+
+  this->swapChain = CreateSwapChain();
+  this->secondSwapChain = CreateSwapChain();
+  OculusLayerBase<VRLayerProjectionPtr, ovrLayerProjection2>::Init(aEnv, aContext);
+}
+
+void
+OculusLayerProjection::Update(uint32_t aFrameIndex, const ovrTracking2& aTracking, ovrTextureSwapChain* aClearSwapChain)  {
+  OculusLayerSurface<VRLayerProjectionPtr, ovrLayerProjection2>::Update(aFrameIndex, aTracking, aClearSwapChain);
+
+  ovrLayer.HeadPose = aTracking.HeadPose;
+  ovrLayer.Header.SrcBlend = VRAPI_FRAME_LAYER_BLEND_SRC_ALPHA;
+  ovrLayer.Header.DstBlend = VRAPI_FRAME_LAYER_BLEND_ONE_MINUS_SRC_ALPHA;
+  for (int i = 0; i < VRAPI_FRAME_LAYER_EYE_MAX; ++i) {
+    const auto &eyeSwapChain = i == 0 ? this->swapChain : this->secondSwapChain;
+    const int swapChainIndex = aFrameIndex % eyeSwapChain->SwapChainLength();
+    // Set up OVR layer textures
+    ovrLayer.Textures[i].ColorSwapChain = eyeSwapChain->SwapChain();
+    ovrLayer.Textures[i].SwapChainIndex = swapChainIndex;
+    ovrLayer.Textures[i].TexCoordsFromTanAngles = ovrMatrix4f_TanAngleMatrixFromProjection(&projectionMatrix);
+  }
+}
+
+void
+OculusLayerProjection::SetBindDelegate(const OculusLayer::BindDelegate &aDelegate) {
+  bindDelegate = aDelegate;
+  this->layer->SetBindDelegate([=](GLenum aTarget, bool aBind) {
+    if (bindDelegate) {
+      this->layer->SetComposited(true);
+      OculusSwapChainPtr surface = this->layer->GetCurrentEye() == device::Eye::Left ? this->swapChain : this->secondSwapChain;
+      bindDelegate(surface, aTarget, aBind);
+    }
+  });
+}
 
 // OculusLayerCube
 
@@ -157,8 +211,8 @@ OculusLayerCube::IsLoaded() const {
 }
 
 void
-OculusLayerCube::Update(const ovrTracking2& aTracking, ovrTextureSwapChain* aClearSwapChain)  {
-  OculusLayerBase<VRLayerCubePtr, ovrLayerCube2>::Update(aTracking, aClearSwapChain);
+OculusLayerCube::Update(uint32_t aFrameIndex, const ovrTracking2& aTracking, ovrTextureSwapChain* aClearSwapChain)  {
+  OculusLayerBase<VRLayerCubePtr, ovrLayerCube2>::Update(aFrameIndex, aTracking, aClearSwapChain);
   const ovrMatrix4f centerEyeViewMatrix = vrapi_GetViewMatrixFromPose(&aTracking.HeadPose.Pose);
   const ovrMatrix4f cubeMatrix = ovrMatrix4f_TanAngleMatrixForCubeMap(&centerEyeViewMatrix);
   ovrLayer.HeadPose = aTracking.HeadPose;
@@ -213,12 +267,12 @@ OculusLayerEquirect::IsDrawRequested() const {
 }
 
 void
-OculusLayerEquirect::Update(const ovrTracking2& aTracking, ovrTextureSwapChain* aClearSwapChain) {
+OculusLayerEquirect::Update(uint32_t aFrameIndex, const ovrTracking2& aTracking, ovrTextureSwapChain* aClearSwapChain) {
   OculusLayerPtr source = sourceLayer.lock();
   if (source) {
     swapChain = source->GetSwapChain();
   }
-  OculusLayerBase<VRLayerEquirectPtr, ovrLayerEquirect2>::Update(aTracking, aClearSwapChain);
+  OculusLayerBase<VRLayerEquirectPtr, ovrLayerEquirect2>::Update(aFrameIndex, aTracking, aClearSwapChain);
 
   vrb::Quaternion q(layer->GetModelTransform(device::Eye::Left));
   q = q.Inverse();

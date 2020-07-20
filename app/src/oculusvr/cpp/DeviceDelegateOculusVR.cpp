@@ -82,6 +82,7 @@ struct DeviceDelegateOculusVR::State {
   OculusLayerCubePtr cubeLayer;
   OculusLayerEquirectPtr equirectLayer;
   std::vector<OculusLayerPtr> uiLayers;
+  std::vector<OculusLayerProjectionPtr> projectionLayers;
   OculusSwapChainPtr clearColorSwapChain;
   device::RenderMode renderMode = device::RenderMode::StandAlone;
   vrb::FBOPtr currentFBO;
@@ -1078,17 +1079,30 @@ DeviceDelegateOculusVR::EndFrame(const FrameEndMode aEndMode) {
   const ovrLayerHeader2* layers[ovrMaxLayerCount] = {};
 
   if (m.cubeLayer && m.cubeLayer->IsLoaded() && m.cubeLayer->IsDrawRequested()) {
-    m.cubeLayer->Update(tracking, m.clearColorSwapChain->SwapChain());
+    m.cubeLayer->Update(m.frameIndex, tracking, m.clearColorSwapChain->SwapChain());
     layers[layerCount++] = m.cubeLayer->Header();
     m.cubeLayer->ClearRequestDraw();
   }
 
   if (m.equirectLayer && m.equirectLayer->IsDrawRequested()) {
-    m.equirectLayer->Update(tracking, m.clearColorSwapChain->SwapChain());
+    m.equirectLayer->Update(m.frameIndex, tracking, m.clearColorSwapChain->SwapChain());
     layers[layerCount++] = m.equirectLayer->Header();
     m.equirectLayer->ClearRequestDraw();
   }
 
+  const float fovX = vrapi_GetSystemPropertyFloat(&m.java, VRAPI_SYS_PROP_SUGGESTED_EYE_FOV_DEGREES_X);
+  const float fovY = vrapi_GetSystemPropertyFloat(&m.java, VRAPI_SYS_PROP_SUGGESTED_EYE_FOV_DEGREES_Y);
+  const ovrMatrix4f projectionMatrix = ovrMatrix4f_CreateProjectionFov(fovX, fovY, 0.0f, 0.0f, VRAPI_ZNEAR, 0.0f);
+
+  // Add projection layers
+  for (const OculusLayerProjectionPtr& layer: m.projectionLayers) {
+    if (layer->IsDrawRequested() && (layerCount < ovrMaxLayerCount - 1)) {
+      layer->SetProjectionMatrix(projectionMatrix);
+      layer->Update(m.frameIndex, tracking, m.clearColorSwapChain->SwapChain());
+      layers[layerCount++] = layer->Header();
+      layer->ClearRequestDraw();
+    }
+  }
   // Sort quad layers by draw priority
   std::sort(m.uiLayers.begin(), m.uiLayers.end(), [](const OculusLayerPtr & a, OculusLayerPtr & b) -> bool {
     return a->GetLayer()->ShouldDrawBefore(*b->GetLayer());
@@ -1097,17 +1111,13 @@ DeviceDelegateOculusVR::EndFrame(const FrameEndMode aEndMode) {
   // Draw back layers
   for (const OculusLayerPtr& layer: m.uiLayers) {
     if (!layer->GetDrawInFront() && layer->IsDrawRequested() && (layerCount < ovrMaxLayerCount - 1)) {
-      layer->Update(tracking, m.clearColorSwapChain->SwapChain());
+      layer->Update(m.frameIndex, tracking, m.clearColorSwapChain->SwapChain());
       layers[layerCount++] = layer->Header();
       layer->ClearRequestDraw();
     }
   }
 
   // Add main eye buffer layer
-  const float fovX = vrapi_GetSystemPropertyFloat(&m.java, VRAPI_SYS_PROP_SUGGESTED_EYE_FOV_DEGREES_X);
-  const float fovY = vrapi_GetSystemPropertyFloat(&m.java, VRAPI_SYS_PROP_SUGGESTED_EYE_FOV_DEGREES_Y);
-  const ovrMatrix4f projectionMatrix = ovrMatrix4f_CreateProjectionFov(fovX, fovY, 0.0f, 0.0f, VRAPI_ZNEAR, 0.0f);
-
   ovrLayerProjection2 projection = vrapi_DefaultLayerProjection2();
   projection.HeadPose = tracking.HeadPose;
   projection.Header.SrcBlend = VRAPI_FRAME_LAYER_BLEND_SRC_ALPHA;
@@ -1118,19 +1128,19 @@ DeviceDelegateOculusVR::EndFrame(const FrameEndMode aEndMode) {
     // Set up OVR layer textures
     projection.Textures[i].ColorSwapChain = eyeSwapChain->SwapChain();
     projection.Textures[i].SwapChainIndex = swapChainIndex;
-    projection.Textures[i].TexCoordsFromTanAngles = ovrMatrix4f_TanAngleMatrixFromProjection(&projectionMatrix);
+    projection.Textures[i].TexCoordsFromTanAngles = ovrMatrix4f_TanAngleMatrixFromProjection(
+        &projectionMatrix);
   }
   layers[layerCount++] = &projection.Header;
 
   // Draw front layers
   for (const OculusLayerPtr& layer: m.uiLayers) {
     if (layer->GetDrawInFront() && layer->IsDrawRequested() && layerCount < ovrMaxLayerCount) {
-      layer->Update(tracking, m.clearColorSwapChain->SwapChain());
+      layer->Update(m.frameIndex, tracking, m.clearColorSwapChain->SwapChain());
       layers[layerCount++] = layer->Header();
       layer->ClearRequestDraw();
     }
   }
-
 
   // Submit all layers to TimeWarp
   ovrSubmitFrameDescription2 frameDesc = {};
@@ -1216,6 +1226,26 @@ DeviceDelegateOculusVR::CreateLayerCylinder(const VRLayerSurfacePtr& aMoveLayer)
   return layer;
 }
 
+VRLayerProjectionPtr
+DeviceDelegateOculusVR::CreateLayerProjection(crow::VRLayerSurface::SurfaceType aSurfaceType) {
+  if (!m.layersEnabled) {
+    return nullptr;
+  }
+  uint32_t width = 0;
+  uint32_t height = 0;
+  m.GetStandaloneRenderSize(width, height);
+  VRLayerProjectionPtr layer = VRLayerProjection::Create(width, height, aSurfaceType);
+  OculusLayerProjectionPtr oculusLayer = OculusLayerProjection::Create(m.java.Env, layer);
+  oculusLayer->SetBindDelegate([=](const OculusSwapChainPtr& aSwapChain, GLenum aTarget, bool bound){
+    if (aSwapChain) {
+      m.HandleLayerBind(aSwapChain, aTarget, bound);
+    }
+  });
+  m.projectionLayers.push_back(oculusLayer);
+
+  return layer;
+}
+
 
 VRLayerCubePtr
 DeviceDelegateOculusVR::CreateLayerCube(int32_t aWidth, int32_t aHeight, GLint aInternalFormat) {
@@ -1274,6 +1304,13 @@ DeviceDelegateOculusVR::DeleteLayer(const VRLayerPtr& aLayer) {
       return;
     }
   }
+  for (int i = 0; i < m.projectionLayers.size(); ++i) {
+    if (m.projectionLayers[i]->GetLayer() == aLayer) {
+      m.projectionLayers[i]->Destroy();
+      m.projectionLayers.erase(m.projectionLayers.begin() + i);
+      return;
+    }
+  }
 }
 
 void
@@ -1291,6 +1328,9 @@ DeviceDelegateOculusVR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
     m.eyeSwapChains[i] = OculusSwapChain::CreateFBO(render, m.RenderModeAttributes(), m.renderWidth, m.renderHeight);
   }
   vrb::RenderContextPtr context = m.context.lock();
+  for (OculusLayerProjectionPtr& layer: m.projectionLayers) {
+    layer->Init(m.java.Env, context);
+  }
   for (OculusLayerPtr& layer: m.uiLayers) {
     layer->Init(m.java.Env, context);
   }
@@ -1340,6 +1380,9 @@ DeviceDelegateOculusVR::LeaveVR() {
 void
 DeviceDelegateOculusVR::OnDestroy() {
   for (OculusLayerPtr& layer: m.uiLayers) {
+    layer->Destroy();
+  }
+  for (OculusLayerProjectionPtr& layer: m.projectionLayers) {
     layer->Destroy();
   }
   for (int i = 0; i < VRAPI_EYE_COUNT; ++i) {

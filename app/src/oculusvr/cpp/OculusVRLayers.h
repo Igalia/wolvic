@@ -33,7 +33,7 @@ class OculusLayer {
 public:
   static bool sForceClip;
   virtual void Init(JNIEnv *aEnv, vrb::RenderContextPtr &aContext) = 0;
-  virtual void Update(const ovrTracking2 &aTracking, ovrTextureSwapChain *aClearSwapChain) = 0;
+  virtual void Update(uint32_t aFrameIndex, const ovrTracking2 &aTracking, ovrTextureSwapChain *aClearSwapChain) = 0;
   virtual const OculusSwapChainPtr& GetSwapChain() const = 0;
   virtual const ovrLayerHeader2 *Header() const = 0;
   virtual void SetCurrentEye(device::Eye aEye) = 0;
@@ -75,7 +75,7 @@ public:
   }
 
   virtual void
-  Update(const ovrTracking2 &aTracking, ovrTextureSwapChain *aClearSwapChain) override {
+  Update(uint32_t aFrameIndex, const ovrTracking2 &aTracking, ovrTextureSwapChain *aClearSwapChain) override {
     vrb::Color tintColor = layer->GetTintColor();
     if (!IsComposited() && (layer->GetClearColor().Alpha() > 0.0f)) {
       tintColor = layer->GetClearColor();
@@ -243,7 +243,6 @@ protected:
     });
   }
 
-private:
   OculusSwapChainPtr CreateSwapChain() {
     OculusSwapChainPtr result;
     if (this->layer->GetSurfaceType() == VRLayerQuad::SurfaceType::AndroidSurface) {
@@ -279,7 +278,7 @@ public:
   static OculusLayerQuadPtr
   Create(JNIEnv *aEnv, const VRLayerQuadPtr &aLayer, const OculusLayerPtr &aSource = nullptr);
   void Init(JNIEnv *aEnv, vrb::RenderContextPtr &aContext) override;
-  void Update(const ovrTracking2 &aTracking, ovrTextureSwapChain *aClearSwapChain) override;
+  void Update(uint32_t aFrameIndex, const ovrTracking2 &aTracking, ovrTextureSwapChain *aClearSwapChain) override;
 };
 
 
@@ -292,9 +291,25 @@ public:
   static OculusLayerCylinderPtr
   Create(JNIEnv *aEnv, const VRLayerCylinderPtr &aLayer, const OculusLayerPtr &aSource = nullptr);
   void Init(JNIEnv *aEnv, vrb::RenderContextPtr &aContext) override;
-  void Update(const ovrTracking2 &aTracking, ovrTextureSwapChain *aClearSwapChain) override;
+  void Update(uint32_t aFrameIndex, const ovrTracking2 &aTracking, ovrTextureSwapChain *aClearSwapChain) override;
 };
 
+class OculusLayerProjection;
+
+typedef std::shared_ptr<OculusLayerProjection> OculusLayerProjectionPtr;
+
+class OculusLayerProjection : public OculusLayerSurface<VRLayerProjectionPtr, ovrLayerProjection2> {
+public:
+  static OculusLayerProjectionPtr
+  Create(JNIEnv *aEnv, const VRLayerProjectionPtr &aLayer);
+  void Init(JNIEnv *aEnv, vrb::RenderContextPtr &aContext) override;
+  void Update(uint32_t aFrameIndex, const ovrTracking2 &aTracking, ovrTextureSwapChain *aClearSwapChain) override;
+  void SetBindDelegate(const OculusLayer::BindDelegate &aDelegate) override;
+  inline void SetProjectionMatrix(const ovrMatrix4f& aMatrix) { projectionMatrix = aMatrix; }
+protected:
+  OculusSwapChainPtr secondSwapChain;
+  ovrMatrix4f projectionMatrix;
+};
 
 class OculusLayerCube;
 
@@ -304,7 +319,7 @@ class OculusLayerCube : public OculusLayerBase<VRLayerCubePtr, ovrLayerCube2> {
 public:
   static OculusLayerCubePtr Create(const VRLayerCubePtr &aLayer, GLint aInternalFormat);
   void Init(JNIEnv *aEnv, vrb::RenderContextPtr &aContext) override;
-  void Update(const ovrTracking2 &aTracking, ovrTextureSwapChain *aClearSwapChain) override;
+  void Update(uint32_t aFrameIndex, const ovrTracking2 &aTracking, ovrTextureSwapChain *aClearSwapChain) override;
   void Destroy() override;
   bool IsLoaded() const;
 
@@ -323,7 +338,7 @@ public:
   static OculusLayerEquirectPtr
   Create(const VRLayerEquirectPtr &aLayer, const OculusLayerPtr &aSourceLayer);
   void Init(JNIEnv *aEnv, vrb::RenderContextPtr &aContext) override;
-  void Update(const ovrTracking2 &aTracking, ovrTextureSwapChain *aClearSwapChain) override;
+  void Update(uint32_t aFrameIndex, const ovrTracking2 &aTracking, ovrTextureSwapChain *aClearSwapChain) override;
   void Destroy() override;
   bool IsDrawRequested() const override;
 };
