@@ -199,7 +199,7 @@ class EnvironmentOptionsView extends SettingsView implements EnvironmentsManager
     public void onEnvironmentSetError(@NonNull String error) {
         setEnv(mEnvironmentsRadio.getIdForValue(SettingsStore.getInstance(getContext()).getEnvironment()), false);
         mWidgetManager.getFocusedWindow().showAlert(
-                getContext().getString(R.string.environment__error_title),
+                getContext().getString(R.string.environment_error_title),
                 error,
                 null
         );

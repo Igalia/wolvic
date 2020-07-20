@@ -15,6 +15,7 @@ import android.webkit.URLUtil;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.utils.UrlUtils;
 
@@ -102,7 +103,7 @@ public class DownloadsManager {
 
     public void startDownload(@NonNull DownloadJob job, @SettingsStore.Storage int storageType) {
         if (!URLUtil.isHttpUrl(job.getUri()) && !URLUtil.isHttpsUrl(job.getUri())) {
-            notifyDownloadError("Cannot download non http/https files", job.getFilename());
+            notifyDownloadError(mContext.getString(R.string.download_error_protocol), job.getFilename());
             return;
         }
 
@@ -120,7 +121,7 @@ public class DownloadsManager {
             } else {
                 String outputPath = getOutputPathForJob(job);
                 if (outputPath == null) {
-                    notifyDownloadError("Cannot create output file", job.getFilename());
+                    notifyDownloadError(mContext.getString(R.string.download_error_output), job.getFilename());
                     return;
                 }
                 request.setDestinationUri(Uri.parse(outputPath));
@@ -134,7 +135,7 @@ public class DownloadsManager {
             try {
                 mDownloadManager.enqueue(request);
             } catch (SecurityException e) {
-                notifyDownloadError("Cannot create output file", job.getFilename());
+                notifyDownloadError(mContext.getString(R.string.download_error_output), job.getFilename());
                 return;
             }
             scheduleUpdates();

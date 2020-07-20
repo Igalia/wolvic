@@ -1612,8 +1612,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                         @Override
                         public void reject() {
                             mWidgetManager.getFocusedWindow().showAlert(
-                                    "Permission error",
-                                    "External storage write permission is required to download files to the external storage",
+                                    getContext().getString(R.string.download_error_title_v1),
+                                    getContext().getString(R.string.download_error_external_storage),
                                     null
                             );
                         }
