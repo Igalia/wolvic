@@ -864,8 +864,7 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
     }
 #if !defined(SNAPDRAGONVR)
     UpdateEnvironment();
-    // Don't load the env model, we are going for skyboxes in v1.0
-    // Create6DOFEnvironment();
+    Create6DOFEnvironment();
 #endif
     m.fadeAnimation->SetFadeChangeCallback([=](const vrb::Color& aTintColor) {
       if (m.skybox) {
@@ -1697,6 +1696,9 @@ void BrowserWorld::Create6DOFEnvironment() {
   m.loader->LoadModel("FirefoxPlatform2_low.obj", model);
   m.rootEnvironment->AddNode(model);
   vrb::Matrix transform = vrb::Matrix::Identity();
+  transform.ScaleInPlace(Vector(40.0, 40.0, 40.0));
+  transform.TranslateInPlace(Vector(0.0, -2.5f, 1.0));
+  transform.PostMultiplyInPlace(vrb::Matrix::Rotation(Vector(1.0, 0.0, 0.0), float(M_PI * 0.5)));
   model->SetTransform(transform);
 
   m.layerEnvironment = m.device->CreateLayerProjection(VRLayerSurface::SurfaceType::FBO);
