@@ -116,6 +116,9 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
 
         mBinding.privateButton.setOnHoverListener(mButtonScaleHoverListener);
         mBinding.privateButton.setOnClickListener(view -> {
+            if (isImmersive()) {
+                return;
+            }
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
@@ -126,6 +129,9 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
 
         mBinding.settingsButton.setOnHoverListener(mButtonScaleHoverListener);
         mBinding.settingsButton.setOnClickListener(view -> {
+            if (isImmersive()) {
+                return;
+            }
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
@@ -138,6 +144,9 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
 
         mBinding.bookmarksButton.setOnHoverListener(mButtonScaleHoverListener);
         mBinding.bookmarksButton.setOnClickListener(view -> {
+            if (isImmersive()) {
+                return;
+            }
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
@@ -148,6 +157,9 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
 
         mBinding.historyButton.setOnHoverListener(mButtonScaleHoverListener);
         mBinding.historyButton.setOnClickListener(view -> {
+            if (isImmersive()) {
+                return;
+            }
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
@@ -158,6 +170,9 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
 
         mBinding.tabsButton.setOnHoverListener(mButtonScaleHoverListener);
         mBinding.tabsButton.setOnClickListener(view -> {
+            if (isImmersive()) {
+                return;
+            }
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
@@ -168,6 +183,9 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
 
         mBinding.addwindowButton.setOnHoverListener(mButtonScaleHoverListener);
         mBinding.addwindowButton.setOnClickListener(view -> {
+            if (isImmersive()) {
+                return;
+            }
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
@@ -179,6 +197,9 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
 
         mBinding.downloadsButton.setOnHoverListener(mButtonScaleHoverListener);
         mBinding.downloadsButton.setOnClickListener(view -> {
+            if (isImmersive()) {
+                return;
+            }
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
@@ -544,6 +565,17 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
 
     private void hideNotifications() {
         NotificationManager.hideAll();
+    }
+
+    private boolean isImmersive() {
+        if (mWidgetManager != null && mWidgetManager.isWebXRPresenting()) {
+            return true;
+        }
+
+        if (mViewModel != null) {
+            return mViewModel.getIsFullscreen().getValue().get();
+        }
+        return false;
     }
 
     private BookmarksStore.BookmarkListener mBookmarksListener = new BookmarksStore.BookmarkListener() {

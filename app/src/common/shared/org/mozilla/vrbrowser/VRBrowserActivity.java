@@ -1474,6 +1474,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     @Override
+    public boolean isWebXRPresenting() {
+        return mIsPresentingImmersive;
+    }
+
+    @Override
     public void addConnectivityListener(Delegate aListener) {
         if (!mConnectivityListeners.contains(aListener)) {
             mConnectivityListeners.add(aListener);

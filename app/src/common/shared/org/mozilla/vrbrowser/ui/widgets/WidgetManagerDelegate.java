@@ -98,6 +98,7 @@ public interface WidgetManagerDelegate {
     void removeWebXRListener(WebXRListener aListener);
     void setWebXRIntersitialState(@WebXRInterstitialState int aState);
     boolean isWebXRIntersitialHidden();
+    boolean isWebXRPresenting();
     boolean isPermissionGranted(@NonNull String permission);
     void requestPermission(String uri, @NonNull String permission, GeckoSession.PermissionDelegate.Callback aCallback);
     boolean canOpenNewWindow();
