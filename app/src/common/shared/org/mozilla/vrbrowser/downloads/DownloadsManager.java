@@ -116,7 +116,7 @@ public class DownloadsManager {
         request.setVisibleInDownloadsUi(false);
         if (job.getOutputPath() == null) {
             if (storageType == SettingsStore.EXTERNAL) {
-                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, job.getFilename());
+                request.setDestinationInExternalFilesDir(mContext, Environment.DIRECTORY_DOWNLOADS, job.getFilename());
 
             } else {
                 String outputPath = getOutputPathForJob(job);
