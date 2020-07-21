@@ -33,6 +33,7 @@ import androidx.appcompat.widget.AppCompatImageButton;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.ui.widgets.TooltipWidget;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
+import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.utils.ViewUtils;
 
@@ -161,6 +162,9 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
 
     @Override
     public boolean onHoverEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
+            ((WidgetManagerDelegate)getContext()).hapticPulse(event.getDeviceId());
+        }
         if (getTooltipText() != null) {
             if (event.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
                 postDelayed(mShowTooltipRunnable, mTooltipDelay);

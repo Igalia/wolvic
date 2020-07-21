@@ -614,7 +614,7 @@ struct DeviceDelegateOculusVR::State {
         controllerState.lastHapticUpdateTimeStamp = timeStamp;
       }
 
-      if (controllerState.remainingVibrateTime > 0.0f && renderMode == device::RenderMode::Immersive) {
+      if (controllerState.remainingVibrateTime > 0.0f) {
         if (vrapi_SetHapticVibrationSimple(ovr, controllerState.deviceId, pulseIntensity > 1.0f ? 1.0f : pulseIntensity)
             == ovrError_InvalidOperation) {
           VRB_ERROR("vrapi_SetHapticVibrationBuffer failed.");

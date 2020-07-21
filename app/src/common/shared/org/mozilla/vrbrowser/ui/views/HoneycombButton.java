@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.utils.DeviceType;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
@@ -124,6 +125,7 @@ public class HoneycombButton extends LinearLayout {
         switch (event.getAction()) {
             case MotionEvent.ACTION_HOVER_ENTER:
                 if (mIcon != null && mText != null) {
+                    ((WidgetManagerDelegate)getContext()).hapticPulse(event.getDeviceId());
                     if (mButtonIconHover) {
                         mIcon.setColorFilter(new PorterDuffColorFilter(getResources().getColor(R.color.asphalt, getContext().getTheme()), PorterDuff.Mode.MULTIPLY));
                     }

@@ -72,6 +72,7 @@ public:
   void SetWebXRInterstitalState(const WebXRInterstialState aState);
   void SetIsServo(const bool aIsServo);
   void SetCPULevel(const device::CPULevel aLevel);
+  void HapticPulse(const int aControllerIndex, const float aDuration, const float aIntensity);
   JNIEnv* GetJNIEnv() const;
 protected:
   struct State;

@@ -47,6 +47,7 @@ import androidx.annotation.NonNull;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.input.CustomKeyboard;
+import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
@@ -1268,6 +1269,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
         int currentHovered = mHoveredKey[event.getDeviceId()];
         if (currentHovered != NOT_A_KEY && prevHovered != currentHovered) {
             invalidateKey(currentHovered);
+            ((WidgetManagerDelegate) getContext()).hapticPulse(event.getDeviceId());
         }
         if (prevHovered != NOT_A_KEY && prevHovered != currentHovered) {
             invalidateKey(prevHovered);

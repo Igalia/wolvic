@@ -962,7 +962,6 @@ BrowserWorld::StartFrame() {
   m.device->ProcessEvents();
   m.context->Update();
   m.externalVR->PullBrowserState();
-  m.externalVR->SetHapticState(m.controllers);
 
   const uint64_t frameId = m.externalVR->GetFrameId();
   m.controllers->SetFrameId(frameId);
@@ -971,6 +970,7 @@ BrowserWorld::StartFrame() {
   if (m.splashAnimation) {
     TickSplashAnimation();
   } else if (m.externalVR->IsPresenting()) {
+    m.externalVR->SetHapticState(m.controllers);
     m.CheckBackButton();
     TickImmersive();
   } else {
@@ -1427,6 +1427,21 @@ BrowserWorld::SetWebXRInterstitalState(const WebXRInterstialState aState) {
 }
 
 void
+BrowserWorld::HapticPulse(const int aControllerIndex, const float aDuration, const float aIntensity) {
+  if (m.controllers->GetHapticCount(aControllerIndex) < 1) {
+    return; // Controller doesn't support haptic feedback.
+  }
+
+  uint64_t inputFrame = 0;
+  float currentDuration = 0;
+  float currentIntensity = 0;
+  m.controllers->GetHapticFeedback(aControllerIndex, inputFrame, currentDuration, currentIntensity);
+
+
+  m.controllers->SetHapticFeedback(aControllerIndex, inputFrame + 1, aDuration, aIntensity);
+}
+
+void
 BrowserWorld::SetIsServo(const bool aIsServo) {
   m.externalVR->SetSourceBrowser(aIsServo ? ExternalVR::VRBrowserType::Servo : ExternalVR::VRBrowserType::Gecko);
 }
@@ -1812,6 +1827,11 @@ JNI_METHOD(void, setWebXRIntersitialStateNative)
     value = crow::BrowserWorld::WebXRInterstialState::HIDDEN;
   }
   crow::BrowserWorld::Instance().SetWebXRInterstitalState(value);
+}
+
+JNI_METHOD(void, hapticPulseNative)
+(JNIEnv*, jobject, jint aControllerIndex, jfloat aDuration, jfloat aIntensity) {
+  crow::BrowserWorld::Instance().HapticPulse(aControllerIndex, aDuration, aIntensity);
 }
 
 JNI_METHOD(void, setIsServo)

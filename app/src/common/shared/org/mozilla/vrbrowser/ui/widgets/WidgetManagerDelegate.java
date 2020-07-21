@@ -113,6 +113,10 @@ public interface WidgetManagerDelegate {
     void removeConnectivityListener(ConnectivityReceiver.Delegate aListener);
     void saveState();
     void updateLocale(@NonNull Context context);
+    default void hapticPulse(int aControllerIndex) {
+        hapticPulse(aControllerIndex, 0.01f, 0.75f);
+    }
+    void hapticPulse(int aControllerIndex, float aDuration, float aIntensity);
     @NonNull
     AppServicesProvider getServicesProvider();
 }

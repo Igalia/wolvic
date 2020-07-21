@@ -27,6 +27,7 @@ import android.os.Process;
 import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -538,6 +539,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
             loadFromIntent(intent);
         }
     }
+
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -1695,6 +1697,11 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         return (AppServicesProvider)getApplication();
     }
 
+    @Override
+    public void hapticPulse(int aControllerIndex, float aDuration, float aIntensity) {
+        queueRunnable(() -> hapticPulseNative(aControllerIndex, aDuration, aIntensity));
+    }
+
     private native void addWidgetNative(int aHandle, WidgetPlacement aPlacement);
     private native void updateWidgetNative(int aHandle, WidgetPlacement aPlacement);
     private native void updateVisibleWidgetsNative();
@@ -1717,5 +1724,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private native void setCylinderDensityNative(float aDensity);
     private native void setCPULevelNative(@CPULevelFlags int aCPULevel);
     private native void setWebXRIntersitialStateNative(@WebXRInterstitialState int aState);
+    private native void hapticPulseNative(int aControllerIndex, float aDuration, float aIntensity);
     private native void setIsServo(boolean aIsServo);
 }

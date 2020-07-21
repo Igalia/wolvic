@@ -10,8 +10,10 @@ import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 
 import androidx.annotation.IdRes;
 import androidx.appcompat.widget.AppCompatButton;
@@ -160,5 +162,13 @@ public class UITextButton extends AppCompatButton implements CustomUIButton {
         if (mActiveModeTintColorListRes != 0) {
             setTintColorList(mActiveModeTintColorListRes);
         }
+    }
+
+    @Override
+    public boolean onHoverEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
+            ((WidgetManagerDelegate)getContext()).hapticPulse(event.getDeviceId());
+        }
+        return super.onHoverEvent(event);
     }
 }
