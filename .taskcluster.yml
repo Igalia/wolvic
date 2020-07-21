@@ -41,7 +41,7 @@ tasks:
               git fetch ${repository} ${event.pull_request.head.ref}
               && git config advice.detachedHead false
               && git checkout ${event.pull_request.head.sha}
-              && git submodule update
+              && git submodule update --init --recursive
               && ./gradlew --no-daemon --console=plain clean `python tools/taskcluster/build_targets.py =all+noapi=all`
               && ./gradlew app:testNoapiArm64DebugUnitTest
         metadata:
@@ -91,7 +91,7 @@ tasks:
                 && git config advice.detachedHead false
                 && git checkout -b build-${event.after} ${event.after}
                 && rm -rf gvr-android-sdk && git clone https://github.com/MozillaReality/FirefoxReality-gvr-android-sdk.git gvr-android-sdk
-                && git submodule update
+                && git submodule update --init --recursive
                 && . tools/taskcluster/get_third_party.sh
                 && python tools/taskcluster/fetch_secret.py -s project/firefoxreality/fr/mls-key -o .mls_token -n key
                 && cp tools/gradle/taskcluster.properties ./user.properties
@@ -143,7 +143,7 @@ tasks:
               && git config advice.detachedHead false
               && git checkout ${event.release.tag_name}
               && rm -rf gvr-android-sdk && git clone https://github.com/MozillaReality/FirefoxReality-gvr-android-sdk.git gvr-android-sdk
-              && git submodule update
+              && git submodule update --init --recursive
               && . tools/taskcluster/get_third_party.sh
               && python tools/taskcluster/fetch_secret.py -s project/firefoxreality/fr/mls-key -o .mls_token -n key
               && cp tools/gradle/taskcluster.properties ./user.properties
