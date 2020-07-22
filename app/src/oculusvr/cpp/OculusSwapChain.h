@@ -16,11 +16,13 @@ class OculusEyeSwapChain {
 public:
   ovrTextureSwapChain *ovrSwapChain = nullptr;
   int swapChainLength = 0;
-  std::vector<vrb::FBOPtr> fbos;
 
   static OculusEyeSwapChainPtr create();
   void Init(vrb::RenderContextPtr &aContext, device::RenderMode aMode, uint32_t aWidth, uint32_t aHeight);
   void Destroy();
+  vrb::FBOPtr FBO(const int32_t aIndex);
+private:
+  std::vector<vrb::FBOPtr> fbos;
 };
 
 }

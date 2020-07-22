@@ -56,4 +56,11 @@ OculusEyeSwapChain::Destroy() {
   swapChainLength = 0;
 }
 
+vrb::FBOPtr OculusEyeSwapChain::FBO(const int32_t aIndex) {
+  if (aIndex >=0 && aIndex < fbos.size()) {
+    return fbos[aIndex];
+  }
+  return nullptr;
+}
+
 }
