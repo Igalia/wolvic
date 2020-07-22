@@ -859,11 +859,9 @@ BrowserWorld::InitializeJava(JNIEnv* aEnv, jobject& aActivity, jobject& aAssetMa
     if (m.device->IsControllerLightEnabled()) {
       m.rootController->AddLight(m.light);
     }
-#if !defined(SNAPDRAGONVR)
+
     UpdateEnvironment();
-    // Don't load the env model, we are going for skyboxes in v1.0
-//    CreateFloor();
-#endif
+
     m.fadeAnimation->SetFadeChangeCallback([=](const vrb::Color& aTintColor) {
       if (m.skybox) {
         m.skybox->SetTintColor(aTintColor);
