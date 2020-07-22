@@ -1020,7 +1020,15 @@ DeviceDelegateOculusVR::BindEye(const device::Eye aWhich) {
 
   const auto &swapChain = m.eyeSwapChains[index];
   int swapChainIndex = m.frameIndex % swapChain->swapChainLength;
-  m.currentFBO = swapChain->fbos[swapChainIndex];
+  m.currentFBO = swapChain->FBO(swapChainIndex);
+  if (!m.currentFBO || !m.currentFBO->IsValid()) {
+    // See https://github.com/MozillaReality/FirefoxReality/issues/3712
+    // There are some crash reports of invalid eye SwapChain FBOs. Try to recreate it.
+    VRB_LOG("Recreate SwapChain because no valid FBO was found");
+    auto render = m.context.lock();
+    swapChain->Init(render, m.renderMode, m.renderWidth, m.renderHeight);
+    m.currentFBO = swapChain->FBO(swapChainIndex);
+  }
 
   if (m.currentFBO) {
     m.currentFBO->Bind();
