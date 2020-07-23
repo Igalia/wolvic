@@ -24,6 +24,7 @@
 #include "VRBrowser.h"
 #include "VRVideo.h"
 #include "VRLayer.h"
+#include "VRLayerNode.h"
 #include "vrb/CameraSimple.h"
 #include "vrb/Color.h"
 #include "vrb/ConcreteClass.h"
@@ -158,6 +159,8 @@ struct BrowserWorld::State {
   TransformPtr rootOpaque;
   TransformPtr rootTransparent;
   TransformPtr rootWebXRInterstitial;
+  TransformPtr rootEnvironment;
+  VRLayerProjectionPtr layerEnvironment;
   GroupPtr rootController;
   LightPtr light;
   ControllerContainerPtr controllers;
@@ -1463,6 +1466,9 @@ BrowserWorld::TickWorld() {
   m.device->StartFrame();
   m.rootOpaque->SetTransform(m.device->GetReorientTransform());
   m.rootTransparent->SetTransform(m.device->GetReorientTransform().PostMultiply(m.widgetsYaw));
+  if (m.rootEnvironment) {
+    m.rootEnvironment->SetTransform(m.device->GetReorientTransform());
+  }
   if (m.vrVideo) {
     m.vrVideo->SetReorientTransform(m.device->GetReorientTransform());
   }
@@ -1476,15 +1482,38 @@ void
 BrowserWorld::DrawWorld(device::Eye aEye) {
   const CameraPtr camera = aEye == device::Eye::Left ? m.leftCamera : m.rightCamera;
   m.device->BindEye(aEye);
+
+  // Draw skybox
   m.drawList->Reset();
   m.rootOpaqueParent->Cull(*m.cullVisitor, *m.drawList);
   m.drawList->Draw(*camera);
+
+  // Draw environment if available
+  if (m.layerEnvironment) {
+    m.layerEnvironment->SetCurrentEye(aEye);
+    m.layerEnvironment->Bind();
+    VRB_GL_CHECK(glViewport(0, 0, m.layerEnvironment->GetWidth(), m.layerEnvironment->GetHeight()));
+    VRB_GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+
+  }
+  if (m.rootEnvironment) {
+    m.drawList->Reset();
+    m.rootEnvironment->Cull(*m.cullVisitor, *m.drawList);
+    m.drawList->Draw(*camera);
+  }
+  if (m.layerEnvironment) {
+    m.layerEnvironment->Unbind();
+  }
+
+  // Draw equirect video
   if (m.vrVideo) {
     m.vrVideo->SelectEye(aEye);
     m.drawList->Reset();
     m.vrVideo->GetRoot()->Cull(*m.cullVisitor, *m.drawList);
     m.drawList->Draw(*camera);
   }
+
+  // Draw controllers
   m.drawList->Reset();
   m.rootController->Cull(*m.cullVisitor, *m.drawList);
   m.drawList->Draw(*camera);
@@ -1654,6 +1683,23 @@ BrowserWorld::CreateSkyBox(const std::string& aBasePath, const std::string& aExt
     m.skybox = Skybox::Create(m.create, layer);
     m.rootOpaqueParent->AddNode(m.skybox->GetRoot());
     m.skybox->Load(m.loader, aBasePath, extension);
+  }
+}
+
+void BrowserWorld::CreateEnvironment() {
+  ASSERT_ON_RENDER_THREAD();
+  m.rootEnvironment = Transform::Create(m.create);
+  m.rootEnvironment->AddLight(Light::Create(m.create));
+
+  vrb::TransformPtr model = Transform::Create(m.create);
+  m.loader->LoadModel("FirefoxPlatform2_low.obj", model);
+  m.rootEnvironment->AddNode(model);
+  vrb::Matrix transform = vrb::Matrix::Identity();
+  model->SetTransform(transform);
+
+  m.layerEnvironment = m.device->CreateLayerProjection(VRLayerSurface::SurfaceType::FBO);
+  if (m.layerEnvironment) {
+    m.rootEnvironment->AddNode(VRLayerNode::Create(m.create, m.layerEnvironment));
   }
 }
 

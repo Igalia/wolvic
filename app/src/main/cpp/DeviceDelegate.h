@@ -86,6 +86,7 @@ public:
   virtual VRLayerCylinderPtr CreateLayerCylinder(int32_t aWidth, int32_t aHeight,
                                                 VRLayerSurface::SurfaceType aSurfaceType) { return nullptr; }
   virtual VRLayerCylinderPtr CreateLayerCylinder(const VRLayerSurfacePtr& aMoveLayer) { return nullptr; }
+  virtual VRLayerProjectionPtr CreateLayerProjection(VRLayerSurface::SurfaceType aSurfaceType) { return nullptr; }
   virtual VRLayerCubePtr CreateLayerCube(int32_t aWidth, int32_t aHeight, GLint aInternalFormat) { return nullptr; }
   virtual VRLayerEquirectPtr CreateLayerEquirect(const VRLayerPtr &aSource) { return nullptr; }
   virtual void DeleteLayer(const VRLayerPtr& aLayer) {};

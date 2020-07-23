@@ -26,7 +26,8 @@ public:
   enum class LayerType {
     QUAD,
     CUBEMAP,
-    EQUIRECTANGULAR
+    EQUIRECTANGULAR,
+    PROJECTION
   };
 
   enum class SurfaceChange {
@@ -150,6 +151,20 @@ private:
   VRB_NO_DEFAULTS(VRLayerCylinder)
 };
 
+class VRLayerProjection;
+  typedef std::shared_ptr<VRLayerProjection> VRLayerProjectionPtr;
+
+  class VRLayerProjection: public VRLayerSurface {
+  public:
+    static VRLayerProjectionPtr Create(const int32_t aWidth, const int32_t aHeight, VRLayerSurface::SurfaceType aSurfaceType);
+  protected:
+    struct State;
+    VRLayerProjection(State& aState);
+    virtual ~VRLayerProjection();
+  private:
+    State& m;
+    VRB_NO_DEFAULTS(VRLayerProjection)
+};
 
 class VRLayerCube;
 typedef std::shared_ptr<VRLayerCube> VRLayerCubePtr;
