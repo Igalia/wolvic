@@ -54,8 +54,7 @@ public class SessionStore implements
     private static final int MAX_GECKO_SESSIONS = 5;
 
     private static final List<Pair<String, String>> BUILTIN_WEB_EXTENSIONS = Arrays.asList(
-            new Pair<>("fxr-webcompat_youtube@mozilla.org", "resource://android/assets/extensions/fxr_youtube/"),
-            new Pair<>("fxr-webcompat_vimeo@mozilla.org", "resource://android/assets/extensions/fxr_vimeo/")
+            new Pair<>("fxr-webcompat_youtube@mozilla.org", "resource://android/assets/extensions/fxr_youtube/")
     );
 
     private static SessionStore mInstance;
