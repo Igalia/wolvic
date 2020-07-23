@@ -1073,8 +1073,11 @@ DeviceDelegateOpenXR::EnterVR(const crow::BrowserEGLContext& aEGLContext) {
 
 void
 DeviceDelegateOpenXR::LeaveVR() {
+  VRB_LOG("*************** LEAVE VR **********************");
   CHECK_MSG(!m.boundSwapChain, "Eye swapChain not released before LeaveVR");
   ProcessEvents();
+  //CHECK_XRCMD(xrRequestExitSession(m.session));
+  //m.vrReady = false;
 }
 
 void
@@ -1089,6 +1092,8 @@ DeviceDelegateOpenXR::IsInVRMode() const {
 
 bool
 DeviceDelegateOpenXR::ExitApp() {
+  CHECK_XRCMD(xrRequestExitSession(m.session));
+  m.vrReady = false;
   return true;
 }
 

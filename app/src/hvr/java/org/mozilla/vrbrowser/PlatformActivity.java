@@ -98,7 +98,6 @@ public class PlatformActivity extends NativeActivity {
                 });
     }
 
-
     protected native void queueRunnable(Runnable aRunnable);
     protected native boolean platformExit();
 }
