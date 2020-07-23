@@ -38,6 +38,7 @@ class SessionUtils {
             out.write("user_pref(\"dom.vr.external.enabled\", true);\n".getBytes());
             out.write("user_pref(\"dom.vr.webxr.enabled\", true);\n".getBytes());
             out.write("user_pref(\"webgl.enable-surface-texture\", true);\n".getBytes());
+            out.write("user_pref(\"webgl.out-of-process\", true);\n".getBytes());
             // Enable MultiView draft extension
             out.write("user_pref(\"webgl.enable-draft-extensions\", true);\n".getBytes());
             out.write("user_pref(\"dom.webcomponents.customelements.enabled\", true);\n".getBytes());
