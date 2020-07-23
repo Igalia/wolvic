@@ -308,7 +308,7 @@ void OpenXRInput::Update(XrSession session, XrTime predictedDisplayTime, XrSpace
   CHECK_XRCMD(xrSyncActions(session, &syncInfo));
 
   // Query actions and pose state for each hand
-  for (auto hand : {Hand::Left, Hand::Right}) {
+  for (auto hand : {Hand::Left }) { // }, Hand::Right}) {
     const int index = hand;
     ControllerState& controller = controllerState[hand];
 
@@ -396,9 +396,19 @@ void OpenXRInput::Update(XrSession session, XrTime predictedDisplayTime, XrSpace
         CHECK_XRCMD(xrGetActionStateFloat(session, &info, &variable)); \
     }
 
+#define QUERY_VECTOR2F_STATE(variable, actionName) \
+    XrActionStateVector2f variable{XR_TYPE_ACTION_STATE_VECTOR2F}; \
+    { \
+        XrActionStateGetInfo info{XR_TYPE_ACTION_STATE_GET_INFO}; \
+        info.subactionPath = handSubactionPath[hand]; \
+        info.action = actionName[hand]; \
+        CHECK_XRCMD(xrGetActionStateVector2f(session, &info, &variable)); \
+    }
+
     // Query buttons and axes
     QUERY_BOOLEAN_STATE(homeClick, actionHomeClick);
     QUERY_BOOLEAN_STATE(backClick, actionBackClick);
+    QUERY_VECTOR2F_STATE(trackpadValue, actionTrackpadValue);
     //QUERY_BOOLEAN_STATE(menuClick, actionMenuClick);
     QUERY_BOOLEAN_STATE(triggerClick, actionTriggerClick);
     //QUERY_BOOLEAN_STATE(triggerTouch, actionTriggerTouch);
@@ -488,6 +498,9 @@ void OpenXRInput::Update(XrSession session, XrTime predictedDisplayTime, XrSpace
       axes[device::kImmersiveAxisTouchpadY] = y;
       delegate->SetScrolledDelta(index, x, y);
     }
+    //if (trackpadValue.isActive) {
+      VRB_LOG("TRACKPAD VALUE %f, %f", trackpadValue.currentState.x, trackpadValue.currentState.x);
+    //}
 
 #if 0
     if (thumbStickClick.isActive || thumbstickTouch.isActive || thumbstickX.isActive || thumbstickY.isActive) {
