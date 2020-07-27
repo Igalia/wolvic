@@ -171,21 +171,25 @@ public class Download {
 
     @NonNull
     public static String progressString(@NonNull Context context, @NonNull Download download) {
-
         Language language = LocaleUtils.getDisplayLanguage(context);
         switch (download.mStatus) {
             case Download.RUNNING:
-                if (download.mSizeBytes < MEGABYTE) {
-                    return String.format(language.getLocale(), "%.2f/%.2fKb (%d%%)",
-                            ((double)download.mDownloadedBytes / (double)KILOBYTE),
-                            ((double)download.mSizeBytes / (double)KILOBYTE),
-                            (download.mDownloadedBytes*100)/download.mSizeBytes);
+                try {
+                    if (download.mSizeBytes < MEGABYTE) {
+                        return String.format(language.getLocale(), "%.2f/%.2fKb (%d%%)",
+                                ((double)download.mDownloadedBytes / (double)KILOBYTE),
+                                ((double)download.mSizeBytes / (double)KILOBYTE),
+                                (download.mDownloadedBytes*100)/download.mSizeBytes);
 
-                } else {
-                    return String.format(language.getLocale(), "%.2f/%.2fMB (%d%%)",
-                            ((double)download.mDownloadedBytes / (double)MEGABYTE),
-                            ((double)download.mSizeBytes / (double)MEGABYTE),
-                            (download.mDownloadedBytes*100)/download.mSizeBytes);
+                    } else {
+                        return String.format(language.getLocale(), "%.2f/%.2fMB (%d%%)",
+                                ((double)download.mDownloadedBytes / (double)MEGABYTE),
+                                ((double)download.mSizeBytes / (double)MEGABYTE),
+                                (download.mDownloadedBytes*100)/download.mSizeBytes);
+                    }
+
+                } catch (Exception e) {
+                    return "-/-";
                 }
 
             case Download.SUCCESSFUL:
