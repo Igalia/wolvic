@@ -195,6 +195,7 @@ struct Widget::State {
       resizer->GetRoot()->RemoveFromParents();
       resizer = nullptr;
     }
+    resizing = false;
   }
 
   void RemoveBorder() {
@@ -507,7 +508,9 @@ Widget::FinishResize() {
     return;
   }
   m.resizing = false;
-  m.resizer->ToggleVisible(false);
+  if (m.resizer) {
+    m.resizer->ToggleVisible(false);
+  }
   if (m.quad) {
     m.quad->SetScaleMode(Quad::ScaleMode::Fill);
     m.quad->SetBackgroundColor(vrb::Color(0.0f, 0.0f, 0.0f, 0.0f));
@@ -521,11 +524,14 @@ Widget::IsResizing() const {
 
 bool
 Widget::IsResizingActive() const {
-  return m.resizing && m.resizer->IsActive();
+  return m.resizing && m.resizer && m.resizer->IsActive();
 }
 
 void
 Widget::HandleResize(const vrb::Vector& aPoint, bool aPressed, bool& aResized, bool &aResizeEnded) {
+  if (!m.resizing || !m.resizer) {
+    return;
+  }
   m.resizer->HandleResizeGestures(aPoint, aPressed, aResized, aResizeEnded);
   if (aResized || aResizeEnded) {
     m.min = m.resizer->GetResizeMin();
@@ -541,7 +547,7 @@ Widget::HandleResize(const vrb::Vector& aPoint, bool aPressed, bool& aResized, b
 
 void
 Widget::HoverExitResize() {
-  if (m.resizing) {
+  if (m.resizing && m.resizer) {
     m.resizer->HoverExitResize();
   }
 }
