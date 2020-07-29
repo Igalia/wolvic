@@ -544,7 +544,6 @@ DeviceDelegatePicoVR::UpdateControllerConnected(const int aIndex, const bool aCo
     controller.enabled = aConnected;
     m.controllerDelegate->SetLeftHanded(aIndex, !controller.IsRightHand());
     m.controllerDelegate->SetEnabled(aIndex, aConnected);
-    m.controllerDelegate->SetVisible(aIndex, aConnected);
     if (m.focusIndex == aIndex) {
       m.controllerDelegate->SetFocused(aIndex);
       m.focusIndex = -1; // Do not set focus again;

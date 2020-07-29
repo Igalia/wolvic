@@ -194,6 +194,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
         mBinding.setViewmodel(mViewModel);
         mBinding.setSettingsmodel(mSettingsViewModel);
 
+        mBinding.navigationBarFullscreen.fullScreenModeContainer.setVisibility(View.GONE);
+
         mBinding.navigationBarNavigation.backButton.setOnClickListener(v -> {
             v.requestFocusFromTouch();
 
@@ -631,8 +633,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
         mWidgetManager.pushBackHandler(mFullScreenBackHandler);
 
-        AnimationHelper.fadeIn(mBinding.navigationBarFullscreen.fullScreenModeContainer, AnimationHelper.FADE_ANIMATION_DURATION, null);
-
+        mWidgetManager.setControllersVisible(false);
         AnimationHelper.fadeOut(mBinding.navigationBarNavigation.navigationBarContainer, 0, null);
 
         mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
@@ -670,6 +671,8 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             return;
         }
 
+        mWidgetManager.setControllersVisible(true);
+
         // We need to add a delay for the exitFullScreen() call to solve some viewport scaling issues,
         // See https://github.com/MozillaReality/FirefoxReality/issues/833 for more info.
         postDelayed(() -> {
@@ -686,7 +689,6 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
         mWidgetManager.popWorldBrightness(this);
         AnimationHelper.fadeOut(mBinding.navigationBarFullscreen.fullScreenModeContainer, 0, null);
-
         mTrayViewModel.setShouldBeVisible(true);
         closeFloatingMenus();
         mWidgetManager.popWorldBrightness(mBrightnessWidget);
@@ -1085,6 +1087,14 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
                 mWidgetManager.setControllersVisible(true);
             } else if (mProjectionMenu.getSelectedProjection() != VideoProjectionMenuWidget.VIDEO_PROJECTION_3D_SIDE_BY_SIDE) {
                 mWidgetManager.setControllersVisible(false);
+            }
+        } else if (mViewModel.getIsFullscreen().getValue().get()) {
+            if (mBinding.navigationBarFullscreen.fullScreenModeContainer.getVisibility() == View.VISIBLE) {
+                mWidgetManager.setControllersVisible(false);
+                AnimationHelper.fadeOut(mBinding.navigationBarFullscreen.fullScreenModeContainer, 0, null);
+            } else {
+                mWidgetManager.setControllersVisible(true);
+                AnimationHelper.fadeIn(mBinding.navigationBarFullscreen.fullScreenModeContainer, 0, null);
             }
         }
         closeFloatingMenus();

@@ -277,7 +277,6 @@ void OpenXRInput::Update(XrSession session, XrTime predictedDisplayTime, XrSpace
     if (XR_UNQUALIFIED_SUCCESS(res)) {
       controller.enabled = true;
       delegate->SetEnabled(index, true);
-      delegate->SetVisible(hand, true);
       // set up controller capability caps
       device::CapabilityFlags caps = device::Orientation;
       if (spaceLocation.locationFlags & XR_SPACE_LOCATION_POSITION_VALID_BIT) {
@@ -293,7 +292,6 @@ void OpenXRInput::Update(XrSession session, XrTime predictedDisplayTime, XrSpace
     } else {
       controller.enabled = false;
       delegate->SetEnabled(hand, false);
-      delegate->SetVisible(hand, false);
       // Tracking lost or inactive, skip.
       continue;
     }

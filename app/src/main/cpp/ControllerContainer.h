@@ -40,7 +40,6 @@ public:
   void DestroyController(const int32_t aControllerIndex) override;
   void SetCapabilityFlags(const int32_t aControllerIndex, const device::CapabilityFlags aFlags) override;
   void SetEnabled(const int32_t aControllerIndex, const bool aEnabled) override;
-  void SetVisible(const int32_t aControllerIndex, const bool aVisible) override;
   void SetControllerType(const int32_t aControllerIndex, device::DeviceType aType) override;
   void SetTargetRayMode(const int32_t aControllerIndex, device::TargetRayMode aMode) override;
   void SetTransform(const int32_t aControllerIndex, const vrb::Matrix& aTransform) override;
@@ -60,7 +59,8 @@ public:
   void EndTouch(const int32_t aControllerIndex) override;
   void SetScrolledDelta(const int32_t aControllerIndex, const float aScrollDeltaX, const float aScrollDeltaY) override;
   void SetPointerColor(const vrb::Color& color) const;
-  void SetVisible(const bool aVisible);
+  bool IsVisible() const override;
+  void SetVisible(const bool aVisible) override;
   void SetGazeModeIndex(const int32_t aControllerIndex) override;
   void SetFrameId(const uint64_t aFrameId);
 protected:

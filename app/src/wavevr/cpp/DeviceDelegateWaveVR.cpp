@@ -288,6 +288,12 @@ struct DeviceDelegateWaveVR::State {
       return;
     }
 
+    const bool systemHasFocus = WVR_IsInputFocusCapturedBySystem();
+    delegate->SetVisible(systemHasFocus == 0);
+    if (systemHasFocus) {
+      return;
+    }
+
     for (Controller& controller: controllers) {
       const bool is6DoF = WVR_GetDegreeOfFreedom(controller.type) == WVR_NumDoF_6DoF;
       if (controller.is6DoF != is6DoF) {
@@ -319,11 +325,8 @@ struct DeviceDelegateWaveVR::State {
         }
         controller.enabled = true;
         delegate->SetEnabled(controller.index, true);
-        delegate->SetVisible(controller.index, true);
         delegate->SetCapabilityFlags(controller.index, flags);
       }
-
-      delegate->SetVisible(controller.index, !WVR_IsInputFocusCapturedBySystem());
 
       const bool bumperPressed = (controller.is6DoF) ? WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Trigger)
                                   : WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Digital_Trigger);

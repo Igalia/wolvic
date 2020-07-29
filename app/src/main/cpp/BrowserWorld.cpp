@@ -363,12 +363,10 @@ BrowserWorld::State::UpdateGazeModeState() {
     if (isInGazeMode && gazeIndex >= 0) {
       VRB_LOG("Gaze mode ON")
       controllers->SetEnabled(gazeIndex, true);
-      controllers->SetVisible(gazeIndex, true);
 
     } else {
       VRB_LOG("Gaze mode OFF")
       controllers->SetEnabled(gazeIndex, false);
-      controllers->SetVisible(gazeIndex, false);
     }
     wasInGazeMode = isInGazeMode;
   }
@@ -429,7 +427,7 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
         hitPoint = result;
         hitNormal = normal;
       }
-    } else {
+    } else if (controllers->IsVisible()){
       for (const WidgetPtr& widget: widgets) {
         if (controller.focused) {
           if (isResizing && resizingWidget != widget) {

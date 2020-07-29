@@ -350,9 +350,6 @@ struct DeviceDelegateOculusVR::State {
     }
 
     if (!hasEventFocus) {
-      for (ControllerState& controllerState: controllerStateList) {
-        controller->SetVisible(controllerState.index, controllerState.enabled);
-      }
       return;
     }
 
@@ -428,7 +425,6 @@ struct DeviceDelegateOculusVR::State {
     for (ControllerState& controllerState: controllerStateList) {
       controller->SetLeftHanded(controllerState.index, controllerState.hand == ElbowModel::HandEnum::Left);
       controller->SetEnabled(controllerState.index, controllerState.enabled);
-      controller->SetVisible(controllerState.index, controllerState.enabled);
     }
   }
 
@@ -881,6 +877,9 @@ DeviceDelegateOculusVR::ProcessEvents() {
         // input focus. This may be due to a system overlay relinquishing focus
         // back to the application.
         m.hasEventFocus = true;
+        if (m.controller) {
+          m.controller->SetVisible(true);
+        }
         break;
       case VRAPI_EVENT_FOCUS_LOST:
         // FOCUS_LOST is sent when the application is no longer in the foreground and
@@ -888,6 +887,9 @@ DeviceDelegateOculusVR::ProcessEvents() {
         // focus from the application. The application should take appropriate action when
         // this occurs.
         m.hasEventFocus = false;
+        if (m.controller) {
+          m.controller->SetVisible(false);
+        }
         break;
       default:
         break;
