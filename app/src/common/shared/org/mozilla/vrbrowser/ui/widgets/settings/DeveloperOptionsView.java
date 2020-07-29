@@ -141,6 +141,11 @@ class DeveloperOptionsView extends SettingsView {
             setBypassCacheOnReload(SettingsStore.BYPASS_CACHE_ON_RELOAD, true);
         }
 
+        if (BuildConfig.DEBUG && mBinding.webglOutOfProcessSwitch.isChecked() != SettingsStore.WEBGL_OUT_OF_PROCESS) {
+            setWebGLOutOfProcess(SettingsStore.WEBGL_OUT_OF_PROCESS, true);
+            restart = true;
+        }
+
         if (restart) {
             showRestartDialog();
         }
