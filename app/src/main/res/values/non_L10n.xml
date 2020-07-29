@@ -57,6 +57,8 @@
     <string name="settings_key_remote_props_version_name" translatable="false">settings_key_remote_props_version_name</string>
     <string name="settings_key_remote_props" translatable="false">settings_key_remote_props</string>
     <string name="settings_key_autocomplete" translatable="false">settings_key_autocomplete</string>
+    <string name="settings_key_webgl_out_of_process" translatable="false">settings_key_webgl_out_of_processe</string>
+    <string name="enable_webgl_out_of_process_switch" translatable="false">Out of Process WebGL</string>
     <string name="environment_override_help_url" translatable="false">https://github.com/MozillaReality/FirefoxReality/wiki/Environments</string>
     <string name="private_policy_url" translatable="false">https://www.mozilla.org/privacy/firefox-reality/</string>
     <string name="private_report_url" translatable="false">https://mixedreality.mozilla.org/fxr/report?src=browser-fxr&amp;label=browser-firefox-reality&amp;url=%1$s</string>

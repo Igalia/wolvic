@@ -70,10 +70,10 @@ class DeveloperOptionsView extends SettingsView {
         setBypassCacheOnReload(SettingsStore.getInstance(getContext()).isBypassCacheOnReloadEnabled(), false);
 
         if (BuildConfig.DEBUG) {
-            mBinding.multiE10sSwitch.setOnCheckedChangeListener(mMultiE10sListener);
-            setMultiE10s(SettingsStore.getInstance(getContext()).isMultiE10s(), false);
+            mBinding.webglOutOfProcessSwitch.setOnCheckedChangeListener(mWebGLOutOfProcessListener);
+            setWebGLOutOfProcess(SettingsStore.getInstance(getContext()).isWebGLOutOfProcess(), false);
         } else {
-            mBinding.multiE10sSwitch.setVisibility(View.GONE);
+            mBinding.webglOutOfProcessSwitch.setVisibility(View.GONE);
         }
 
         if (!isServoAvailable()) {
@@ -105,8 +105,8 @@ class DeveloperOptionsView extends SettingsView {
         setBypassCacheOnReload(value, doApply);
     };
 
-    private SwitchSetting.OnCheckedChangeListener mMultiE10sListener = (compundButton, value, doApply) -> {
-        setMultiE10s(value, doApply);
+    private SwitchSetting.OnCheckedChangeListener mWebGLOutOfProcessListener = (compundButton, value, doApply) -> {
+        setWebGLOutOfProcess(value, doApply);
     };
 
     private SwitchSetting.OnCheckedChangeListener mServoListener = (compoundButton, b, doApply) -> {
@@ -200,13 +200,13 @@ class DeveloperOptionsView extends SettingsView {
         }
     }
 
-    private void setMultiE10s(boolean value, boolean doApply) {
-        mBinding.multiE10sSwitch.setOnCheckedChangeListener(null);
-        mBinding.multiE10sSwitch.setValue(value, false);
-        mBinding.multiE10sSwitch.setOnCheckedChangeListener(mMultiE10sListener);
+    private void setWebGLOutOfProcess(boolean value, boolean doApply) {
+        mBinding.webglOutOfProcessSwitch.setOnCheckedChangeListener(null);
+        mBinding.webglOutOfProcessSwitch.setValue(value, false);
+        mBinding.webglOutOfProcessSwitch.setOnCheckedChangeListener(mWebGLOutOfProcessListener);
 
         if (doApply) {
-            SettingsStore.getInstance(getContext()).setMultiE10s(value);
+            SettingsStore.getInstance(getContext()).setWebGLOutOfProcess(value);
             showRestartDialog();
         }
     }

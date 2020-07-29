@@ -94,7 +94,6 @@ public class SettingsStore {
     public final static int POINTER_COLOR_DEFAULT_DEFAULT = Color.parseColor("#FFFFFF");
     public final static int SCROLL_DIRECTION_DEFAULT = 0;
     public final static String ENV_DEFAULT = "offworld";
-    public final static boolean ENV_EXTERNAL_DEFAULT = false;
     public final static int MSAA_DEFAULT_LEVEL = 0;
     public final static boolean AUDIO_ENABLED = false;
     public final static float CYLINDER_DENSITY_ENABLED_DEFAULT = 4680.0f;
@@ -110,10 +109,10 @@ public class SettingsStore {
     public final static long FXA_LAST_SYNC_NEVER = 0;
     public final static boolean RESTORE_TABS_ENABLED = true;
     public final static boolean BYPASS_CACHE_ON_RELOAD = false;
-    public final static boolean MULTI_E10S = false;
     public final static int DOWNLOADS_STORAGE_DEFAULT = INTERNAL;
     public final static int DOWNLOADS_SORTING_ORDER_DEFAULT = SortingContextMenuWidget.SORT_DATE_ASC;
     public final static boolean AUTOCOMPLETE_ENABLED = true;
+    public final static boolean WEBGL_OUT_OF_PROCESS = false;
 
     // Enable telemetry by default (opt-out).
     public final static boolean CRASH_REPORTING_DEFAULT = false;
@@ -748,16 +747,6 @@ public class SettingsStore {
         return mPrefs.getBoolean(mContext.getString(R.string.settings_key_bypass_cache_on_reload), BYPASS_CACHE_ON_RELOAD);
     }
 
-    public void setMultiE10s(boolean isEnabled) {
-        SharedPreferences.Editor editor = mPrefs.edit();
-        editor.putBoolean(mContext.getString(R.string.settings_key_multi_e10s), isEnabled);
-        editor.commit();
-    }
-
-    public boolean isMultiE10s() {
-        return mPrefs.getBoolean(mContext.getString(R.string.settings_key_multi_e10s), MULTI_E10S);
-    }
-
     public void setDownloadsStorage(@Storage int storage) {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putInt(mContext.getString(R.string.settings_key_downloads_external), storage);
@@ -798,6 +787,16 @@ public class SettingsStore {
 
     public boolean isAutocompleteEnabled() {
         return mPrefs.getBoolean(mContext.getString(R.string.settings_key_autocomplete), AUTOCOMPLETE_ENABLED);
+    }
+
+    public void setWebGLOutOfProcess(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_webgl_out_of_process), isEnabled);
+        editor.commit();
+    }
+
+    public boolean isWebGLOutOfProcess() {
+        return mPrefs.getBoolean(mContext.getString(R.string.settings_key_webgl_out_of_process), WEBGL_OUT_OF_PROCESS);
     }
 
     @Nullable
