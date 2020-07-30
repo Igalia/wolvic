@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import org.mozilla.gecko.GeckoProfile;
@@ -25,12 +26,38 @@ class SessionUtils {
         return url != null && (url.startsWith("about:") || url.startsWith("data:"));
     }
 
+    private static void checkPrefsFile(Context aContext, @NonNull String path) {
+        int lastVersionCode = SettingsStore.getInstance(aContext).getPrefsLastResetVersionCode();
+        if (BuildConfig.VERSION_CODE > lastVersionCode) {
+            try {
+                File prefsFile = new File(path);
+                if (prefsFile.exists()) {
+                    if (prefsFile.delete()) {
+                        Log.d(LOGTAG, "Deleted prefs cache: " + path);
+                        SettingsStore.getInstance(aContext).setPrefsLastResetVersionCode(BuildConfig.VERSION_CODE);
+                        return;
+                    }
+                    Log.e(LOGTAG, "Failed to delete prefs cache file.");
+                }
+            } catch (Exception e) {
+                Log.e(LOGTAG, "Failed to delete prefs cache file. Caught: " + e.getLocalizedMessage());
+            }
+        } else {
+            Log.d(LOGTAG, "Version code is unchanged.");
+        }
+    }
+
     public static void vrPrefsWorkAround(Context aContext) {
         if (EngineProvider.INSTANCE.isRuntimeCreated()) {
             throw new IllegalStateException("vrPrefsWorkAround must be called before creating the runtime");
         }
 
         File path = GeckoProfile.initFromArgs(aContext, null).getDir();
+
+        if (BuildConfig.TASKCLUSTER_BUILD) {
+            checkPrefsFile(aContext, path.getAbsolutePath() + File.separator + "prefs.js");
+        }
+
         String prefFileName = path.getAbsolutePath() + File.separator + "user.js";
         Log.i(LOGTAG, "Creating file: " + prefFileName);
         try (FileOutputStream out = new FileOutputStream(prefFileName)) {

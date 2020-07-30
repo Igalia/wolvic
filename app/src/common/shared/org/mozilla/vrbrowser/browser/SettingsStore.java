@@ -113,6 +113,7 @@ public class SettingsStore {
     public final static int DOWNLOADS_SORTING_ORDER_DEFAULT = SortingContextMenuWidget.SORT_DATE_ASC;
     public final static boolean AUTOCOMPLETE_ENABLED = true;
     public final static boolean WEBGL_OUT_OF_PROCESS = false;
+    public final static int PREFS_LAST_RESET_VERSION_CODE = 0;
 
     // Enable telemetry by default (opt-out).
     public final static boolean CRASH_REPORTING_DEFAULT = false;
@@ -797,6 +798,16 @@ public class SettingsStore {
 
     public boolean isWebGLOutOfProcess() {
         return mPrefs.getBoolean(mContext.getString(R.string.settings_key_webgl_out_of_process), WEBGL_OUT_OF_PROCESS);
+    }
+
+    public int getPrefsLastResetVersionCode() {
+        return mPrefs.getInt(mContext.getString(R.string.settings_key_prefs_last_reset_version_code), PREFS_LAST_RESET_VERSION_CODE);
+    }
+
+    public void setPrefsLastResetVersionCode(int versionCode) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putInt(mContext.getString(R.string.settings_key_prefs_last_reset_version_code), versionCode);
+        editor.commit();
     }
 
     @Nullable

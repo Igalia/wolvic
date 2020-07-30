@@ -19,6 +19,13 @@ def getGitHash = { ->
     return stdout.toString().trim()
 }
 
+def getTaskclusterBuild = { ->
+    if (gradle.hasProperty("userProperties.taskclusterBuild")) {
+        return gradle."userProperties.taskclusterBuild"
+    }
+    return "false"
+}
+
 def getCrashRestartDisabled = { ->
     if (gradle.hasProperty("userProperties.disableCrashRestart")) {
         return gradle."userProperties.disableCrashRestart"
@@ -68,6 +75,7 @@ android {
         versionName "12"
         buildConfigField "String", "GIT_HASH", "\"${getGitHash()}\""
         buildConfigField "Boolean", "DISABLE_CRASH_RESTART", getCrashRestartDisabled()
+        buildConfigField "Boolean", "TASKCLUSTER_BUILD", getTaskclusterBuild()
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
