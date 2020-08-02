@@ -946,6 +946,9 @@
          downloads tray button then a download finishes. %1$s will be replaced with the downloaded file name. -->
     <string name="download_completed_notification">%1$s をダウンロードしました</string>
 
+    <!-- This string is displayed in an error alert dialog when the user tries to download non http/https files. -->
+    <string name="download_error_protocol">http / https のダウンロードのみがサポートされています</string>
+
     <!-- This string is displayed in a tooltip that appears when a user hovers
          over an icon representing 'Edit This Bookmark' for an individual bookmark
          item listed in the Bookmarks List. -->
@@ -1813,9 +1816,6 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed in the confirmation dialog delete button. -->
     <string name="download_delete_confirm_delete">削除</string>
 
-    <!-- This string is displayed in the title of the download error dialog. -->
-    <string name="download_error_title">エラーが発生しました</string>
-
     <!-- This string is displayed in the body of the download error dialog.
          '%1$s' will be replaced at runtime with the name of the downloaded file. -->
     <string name="download_error_body">%1$s のダウンロード中にエラーが発生しました。もう一度試してください。</string>
@@ -1838,4 +1838,4 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed in the downloads panel, in the download status when an unknown error happened. -->
     <string name="download_status_unknown_error">原因不明のエラーです</string>
 
-</resources>
+    </resources>
