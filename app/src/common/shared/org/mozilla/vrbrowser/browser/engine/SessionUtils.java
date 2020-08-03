@@ -38,6 +38,10 @@ class SessionUtils {
                         return;
                     }
                     Log.e(LOGTAG, "Failed to delete prefs cache file.");
+                } else {
+                    // Probably the first run. Set the version code so we do not delete the newly created pref cache
+                    // on the next run.
+                    SettingsStore.getInstance(aContext).setPrefsLastResetVersionCode(BuildConfig.VERSION_CODE);
                 }
             } catch (Exception e) {
                 Log.e(LOGTAG, "Failed to delete prefs cache file. Caught: " + e.getLocalizedMessage());
