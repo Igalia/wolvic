@@ -156,6 +156,7 @@ struct ExternalVR::State {
     data.size = sizeof(mozilla::gfx::VRExternalShmem);
     system.displayState.isConnected = true;
     system.displayState.isMounted = true;
+    system.displayState.nativeFramebufferScaleFactor = 1.0f;
     const vrb::Matrix identity = vrb::Matrix::Identity();
     memcpy(&(system.sensorState.leftViewMatrix), identity.Data(), sizeof(system.sensorState.leftViewMatrix));
     memcpy(&(system.sensorState.rightViewMatrix), identity.Data(), sizeof(system.sensorState.rightViewMatrix));
@@ -331,6 +332,11 @@ void
 ExternalVR::SetEyeResolution(const int32_t aWidth, const int32_t aHeight) {
   m.system.displayState.eyeResolution.width = aWidth;
   m.system.displayState.eyeResolution.height = aHeight;
+}
+
+void
+ExternalVR::SetNativeFramebufferScaleFactor(const float aScale) {
+  m.system.displayState.nativeFramebufferScaleFactor = aScale;
 }
 
 void

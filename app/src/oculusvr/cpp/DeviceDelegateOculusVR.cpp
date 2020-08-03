@@ -753,6 +753,12 @@ DeviceDelegateOculusVR::RegisterImmersiveDisplay(ImmersiveDisplayPtr aDisplay) {
   uint32_t width, height;
   m.GetImmersiveRenderSize(width, height);
   m.immersiveDisplay->SetEyeResolution(width, height);
+  // The maxScaleFactor that can be applied to the recommended render size.
+  // Oculus Browser uses a 1.68 maxScale factor.
+  // We didn't find a Oculus API to get the 1.68 ratio without using hardcoded values.
+  // We use the 4K resolution value (4096 pixels wide and 2048 per eye).
+  const float maxScaleFactor = 2048.0f / width;
+  m.immersiveDisplay->SetNativeFramebufferScaleFactor(maxScaleFactor);
   m.immersiveDisplay->SetSittingToStandingTransform(vrb::Matrix::Translation(kAverageOculusHeight));
   m.UpdateBoundary();
   m.UpdatePerspective();
