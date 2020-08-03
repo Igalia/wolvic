@@ -949,6 +949,9 @@
     <!-- This string is displayed in an error alert dialog when the user tries to download non http/https files. -->
     <string name="download_error_protocol">http / https のダウンロードのみがサポートされています</string>
 
+    <!-- This string is displayed in an error alert dialog when the downloaded output file cannot be created. -->
+    <string name="download_error_output">ダウンロードした出力ファイルを作成できません</string>
+
     <!-- This string is displayed in a tooltip that appears when a user hovers
          over an icon representing 'Edit This Bookmark' for an individual bookmark
          item listed in the Bookmarks List. -->
@@ -1815,6 +1818,9 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 
     <!-- This string is displayed in the confirmation dialog delete button. -->
     <string name="download_delete_confirm_delete">削除</string>
+
+    <!-- This string is displayed in the title of the download error dialog. -->
+    <string name="download_error_title_v1">ダウンロードエラー</string>
 
     <!-- This string is displayed in the body of the download error dialog.
          '%1$s' will be replaced at runtime with the name of the downloaded file. -->
