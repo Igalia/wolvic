@@ -1089,12 +1089,14 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
                 mWidgetManager.setControllersVisible(false);
             }
         } else if (mViewModel.getIsFullscreen().getValue().get()) {
-            if (mBinding.navigationBarFullscreen.fullScreenModeContainer.getVisibility() == View.VISIBLE) {
-                mWidgetManager.setControllersVisible(false);
-                AnimationHelper.fadeOut(mBinding.navigationBarFullscreen.fullScreenModeContainer, 0, null);
-            } else {
-                mWidgetManager.setControllersVisible(true);
-                AnimationHelper.fadeIn(mBinding.navigationBarFullscreen.fullScreenModeContainer, 0, null);
+            if (!mAttachedWindow.isResizing()) {
+                if (mBinding.navigationBarFullscreen.fullScreenModeContainer.getVisibility() == View.VISIBLE) {
+                    mWidgetManager.setControllersVisible(false);
+                    AnimationHelper.fadeOut(mBinding.navigationBarFullscreen.fullScreenModeContainer, 0, null);
+                } else {
+                    mWidgetManager.setControllersVisible(true);
+                    AnimationHelper.fadeIn(mBinding.navigationBarFullscreen.fullScreenModeContainer, 0, null);
+                }
             }
         }
         closeFloatingMenus();
