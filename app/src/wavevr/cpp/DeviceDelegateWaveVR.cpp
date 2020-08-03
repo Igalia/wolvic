@@ -288,9 +288,13 @@ struct DeviceDelegateWaveVR::State {
       return;
     }
 
-    const bool systemHasFocus = WVR_IsInputFocusCapturedBySystem();
-    delegate->SetVisible(systemHasFocus == 0);
-    if (systemHasFocus) {
+    if (WVR_IsInputFocusCapturedBySystem()) {
+      for (Controller& controller: controllers) {
+        if (controller.enabled) {
+          delegate->SetEnabled(controller.index, false);
+          controller.enabled = false;
+        }
+      }
       return;
     }
 
