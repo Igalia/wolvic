@@ -104,7 +104,7 @@
 
     <!-- This string is used to label a button that, when pressed, loads a website that
          describes Mozilla's Privacy Policy. -->
-    <string name="settings_privacy_policy">개인정보 보호정책</string>
+    <string name="settings_privacy_policy">개인정보처리방침</string>
 
     <!-- This string is used as the title of the pop-ups dialog used to remove sites from the currently
          allowed pop-up sites. -->
