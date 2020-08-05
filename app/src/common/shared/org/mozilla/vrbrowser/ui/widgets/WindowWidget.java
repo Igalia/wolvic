@@ -2052,7 +2052,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
                 if (aSelection.isActionAvailable(action)) {
                     aSelection.execute(action);
 
-                } else {
+                } else if (aSelection.isActionAvailable(GeckoSession.SelectionActionDelegate.ACTION_UNSELECT)) {
                     aSelection.unselect();
                 }
 
