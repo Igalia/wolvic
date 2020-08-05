@@ -948,6 +948,9 @@
     <!-- This string is displayed in an error alert dialog when the user tries to download non http/https files. -->
     <string name="download_error_protocol">Seuls les téléchargements http / https sont pris en charge</string>
 
+    <!-- This string is displayed in an error alert dialog when the downloaded output file cannot be created. -->
+    <string name="download_error_output">Impossible de créer le fichier de sortie du téléchargement</string>
+
     <!-- This string is displayed in an error alert dialog when the user is trying to download to the
     external storage but the WRITE_EXTERNAL_STORAGE permission has not been granted. -->
     <string name="download_error_external_storage">Une autorisation d’écriture sur le stockage externe est nécessaire pour télécharger des fichiers sur le stockage externe</string>
