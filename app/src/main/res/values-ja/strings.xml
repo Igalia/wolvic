@@ -952,6 +952,10 @@
     <!-- This string is displayed in an error alert dialog when the downloaded output file cannot be created. -->
     <string name="download_error_output">ダウンロードした出力ファイルを作成できません</string>
 
+    <!-- This string is displayed in an error alert dialog when the user is trying to download to the
+    external storage but the WRITE_EXTERNAL_STORAGE permission has not been granted. -->
+    <string name="download_error_external_storage">ファイルを外部ストレージにダウンロードするには、外部ストレージへの書き込み権限が必要です。</string>
+
     <!-- This string is displayed in a tooltip that appears when a user hovers
          over an icon representing 'Edit This Bookmark' for an individual bookmark
          item listed in the Bookmarks List. -->
@@ -1844,4 +1848,14 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed in the downloads panel, in the download status when an unknown error happened. -->
     <string name="download_status_unknown_error">原因不明のエラーです</string>
 
-    </resources>
+    <!-- This string is shown in the body of the error dialog displayed when the user is trying to download an environment in the external storage
+    but hasn't granted the permission. -->
+    <string name="environment_download_permission_error_body">環境をダウンロードするには、外部ストレージへの書き込み権限が必要です。</string>
+
+    <!-- This string is shown in the body of the error dialog displayed when the environment unzipping fails. -->
+    <string name="environment_download_unzip_error_body">環境の展開中にエラーが発生しました。</string>
+
+    <!-- This string is shown in the title of the error dialog displayed if there is any error during an environment setup. -->
+    <string name="environment_error_title">環境エラー</string>
+
+</resources>
