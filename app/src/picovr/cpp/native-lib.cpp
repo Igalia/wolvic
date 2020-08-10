@@ -131,12 +131,13 @@ JNI_METHOD(void, nativeUpdateControllerPose)
 }
 
 JNI_METHOD(void, nativeUpdateControllerState)
-(JNIEnv*, jobject, jint index, jboolean connected, jint buttons, jfloat grip, jfloat axisX, jfloat axisY, jboolean touched) {
+(JNIEnv*, jobject, jint index, jboolean connected, jint buttons, jfloat grip, jfloat axisX, jfloat axisY, jboolean touched, jint batteryLevel) {
   if (gDestroyed) {
     return;
   }
   sDevice->UpdateControllerConnected(index, connected);
   sDevice->UpdateControllerButtons(index, buttons, grip, axisX, axisY, touched);
+  sDevice->UpdateControllerBatteryLevel(index, batteryLevel);
 }
 
 JNI_METHOD(void, nativeRecenter)

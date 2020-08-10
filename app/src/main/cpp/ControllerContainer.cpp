@@ -514,6 +514,13 @@ ControllerContainer::SetScrolledDelta(const int32_t aControllerIndex, const floa
   controller.scrollDeltaY = aScrollDeltaY;
 }
 
+void
+ControllerContainer::SetBatteryLevel(const int32_t aControllerIndex, const int32_t aBatteryLevel) {
+  if (!m.Contains(aControllerIndex)) {
+    return;
+  }
+  m.list[aControllerIndex].batteryLevel = aBatteryLevel;
+}
 void ControllerContainer::SetPointerColor(const vrb::Color& aColor) const {
   m.pointerColor = aColor;
   for (Controller& controller: m.list) {
@@ -544,7 +551,8 @@ ControllerContainer::SetVisible(const bool aVisible) {
   }
 }
 
-void ControllerContainer::SetGazeModeIndex(const int32_t aControllerIndex) {
+void
+ControllerContainer::SetGazeModeIndex(const int32_t aControllerIndex) {
   m.gazeIndex = aControllerIndex;
 }
 

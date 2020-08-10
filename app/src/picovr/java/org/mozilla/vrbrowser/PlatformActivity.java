@@ -165,7 +165,7 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
         if (event.getKeyCode() == CONFIRM_BUTTON) {
             int buttons = 0;
             buttons |= event.getAction() == KeyEvent.ACTION_DOWN ? BUTTON_TRIGGER : 0;
-            nativeUpdateControllerState(GAZE_INDEX, true, buttons, 0, 0, 0, false);
+            nativeUpdateControllerState(GAZE_INDEX, true, buttons, 0, 0, 0, false, -1);
         }
 
         return super.dispatchKeyEvent(event);
@@ -216,15 +216,17 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
         }
 
         if (controller.getConnectState() < 2) {
-            nativeUpdateControllerState(0, false, 0, 0, 0, 0, false);
+            nativeUpdateControllerState(0, false, 0, 0, 0, 0, false, -1);
             return;
         }
         int hand = VrActivity.getPvrHandness(this);
         if (mHand != hand) {
-            nativeUpdateControllerState(mHand, false, 0, 0, 0, 0, false);
+            nativeUpdateControllerState(mHand, false, 0, 0, 0, 0, false, -1);
             mHand = hand;
         }
         controller.update();
+
+        int battery = controller.getBattaryLevel() * 25;
 
         float axisX = 0;
         float axisY = 0;
@@ -241,7 +243,7 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
         buttons |= controller.getButtonState(HbTool.ButtonNum.click) ? BUTTON_TOUCHPAD : 0;
         buttons |= trigger > 0 ? BUTTON_TRIGGER : 0;
 
-        nativeUpdateControllerState(mHand, true, buttons, (float)trigger, axisX, axisY, touched);
+        nativeUpdateControllerState(mHand, true, buttons, (float)trigger, axisX, axisY, touched, battery);
 
         Orientation q = controller.getOrientation();
         nativeUpdateControllerPose(mHand, false, 0.0f, 0.0f, 0.0f, q.x, q.y, q.z, q.w);
@@ -252,7 +254,7 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
         final float kHalfMax = kMax / 2.0f;
         boolean connected = aController.getConnectState() > 0;
         if (!connected) {
-            nativeUpdateControllerState(aIndex, false, 0, 0, 0, 0, false);
+            nativeUpdateControllerState(aIndex, false, 0, 0, 0, 0, false, -1);
             return;
         }
         float axisX = 0.0f;
@@ -278,7 +280,7 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
         buttons |= aController.getButtonState(ButtonNum.buttonLG) ? BUTTON_GRIP : 0;
         buttons |= aController.getButtonState(ButtonNum.click) ? BUTTON_TOUCHPAD : 0;
 
-        nativeUpdateControllerState(aIndex, true, buttons, trigger, axisX, axisY, (stick[0] != 0 ) || (stick[1] != 0));
+        nativeUpdateControllerState(aIndex, true, buttons, trigger, axisX, axisY, (stick[0] != 0 ) || (stick[1] != 0), aController.getBatteryLevel());
 
         boolean supports6Dof = aController.get6DofAbility() > 0;
         float[] q = aController.getOrientation();
@@ -401,7 +403,7 @@ public class PlatformActivity extends VRActivity implements RenderInterface, CVC
     protected native void nativePause();
     protected native void nativeResume();
     protected native void nativeSetFocusedController(int index);
-    protected native void nativeUpdateControllerState(int index, boolean connected, int buttons, float grip, float axisX, float axisY, boolean touched);
+    protected native void nativeUpdateControllerState(int index, boolean connected, int buttons, float grip, float axisX, float axisY, boolean touched, int batteryLevel);
     protected native void nativeUpdateControllerPose(int index, boolean dof6, float px, float py, float pz, float qx, float qy, float qz, float qw);
     protected native void nativeRecenter();
     protected native void queueRunnable(Runnable aRunnable);

@@ -44,6 +44,7 @@ void HandlePoorPerformance();
 void OnAppLink(const std::string& aJSON);
 void DisableLayers();
 void AppendAppNotesToCrashLog(const std::string& aNotes);
+void UpdateControllerBatteryLevels(const jint aLeftBatteryLevel, const jint aRightBatteryLevel);
 } // namespace VRBrowser;
 
 } // namespace crow

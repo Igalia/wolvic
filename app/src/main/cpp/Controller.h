@@ -70,6 +70,8 @@ struct Controller {
   uint64_t squeezeActionStartFrameId;
   uint64_t squeezeActionStopFrameId;
 
+  int32_t batteryLevel;
+
   vrb::Vector StartPoint() const;
   vrb::Vector Direction() const;
 

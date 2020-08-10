@@ -10,6 +10,8 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
+import org.mozilla.vrbrowser.R;
+
 public class TrayViewModel extends AndroidViewModel {
 
     private MutableLiveData<ObservableBoolean> isMaxWindows;
@@ -17,6 +19,16 @@ public class TrayViewModel extends AndroidViewModel {
     private MutableLiveData<ObservableBoolean> isKeyboardVisible;
     private MutableLiveData<ObservableInt> downloadsNumber;
     private MediatorLiveData<ObservableBoolean> isVisible;
+    private MutableLiveData<String> time;
+    private MutableLiveData<String> pm;
+    private MutableLiveData<ObservableBoolean> wifiConnected;
+    private MutableLiveData<ObservableInt> headsetIcon;
+    private MutableLiveData<ObservableInt> headsetBatteryLevel;
+    private MutableLiveData<ObservableInt> leftControllerIcon;
+    private MutableLiveData<ObservableInt> leftControllerBatteryLevel;
+    private MutableLiveData<ObservableInt> rightControllerIcon;
+    private MutableLiveData<ObservableInt> rightControllerBatteryLevel;
+
 
     public TrayViewModel(@NonNull Application application) {
         super(application);
@@ -29,6 +41,16 @@ public class TrayViewModel extends AndroidViewModel {
         isVisible.addSource(shouldBeVisible, mIsVisibleObserver);
         isVisible.addSource(isKeyboardVisible, mIsVisibleObserver);
         isVisible.setValue(new ObservableBoolean(false));
+        time = new MutableLiveData<>();
+        pm = new MutableLiveData<>();
+        pm = new MutableLiveData<>();
+        wifiConnected = new MutableLiveData<>(new ObservableBoolean(true));
+        headsetIcon = new MutableLiveData<>(new ObservableInt(R.drawable.ic_icon_statusbar_headset_normal));
+        headsetBatteryLevel = new MutableLiveData<>(new ObservableInt(R.drawable.ic_icon_statusbar_indicator));
+        leftControllerIcon = new MutableLiveData<>(new ObservableInt(R.drawable.ic_icon_statusbar_controller_generic));
+        leftControllerBatteryLevel = new MutableLiveData<>(new ObservableInt(R.drawable.ic_icon_statusbar_indicator));
+        rightControllerIcon = new MutableLiveData<>(new ObservableInt(R.drawable.ic_icon_statusbar_controller_generic));
+        rightControllerBatteryLevel = new MutableLiveData<>(new ObservableInt(R.drawable.ic_icon_statusbar_indicator));
     }
 
     Observer<ObservableBoolean> mIsVisibleObserver = new Observer<ObservableBoolean>() {
@@ -45,6 +67,15 @@ public class TrayViewModel extends AndroidViewModel {
         isMaxWindows.setValue(isMaxWindows.getValue());
         shouldBeVisible.setValue(shouldBeVisible.getValue());
         isKeyboardVisible.setValue(isKeyboardVisible.getValue());
+        time.postValue(time.getValue());
+        pm.postValue(pm.getValue());
+        wifiConnected.postValue(wifiConnected.getValue());
+        headsetIcon.setValue(headsetIcon.getValue());
+        headsetBatteryLevel.setValue(headsetBatteryLevel.getValue());
+        leftControllerIcon.setValue(leftControllerIcon.getValue());
+        leftControllerBatteryLevel.setValue(leftControllerBatteryLevel.getValue());
+        rightControllerIcon.setValue(rightControllerIcon.getValue());
+        rightControllerBatteryLevel.setValue(rightControllerBatteryLevel.getValue());
     }
 
     public void setIsMaxWindows(boolean isMaxWindows) {
@@ -80,4 +111,75 @@ public class TrayViewModel extends AndroidViewModel {
         return downloadsNumber;
     }
 
+    public void setTime(String time) {
+        this.time.postValue(time);
+    }
+
+    public MutableLiveData<String> getTime() {
+        return time;
+    }
+
+    public void setPm(String pm) {
+        this.pm.postValue(pm);
+    }
+
+    public MutableLiveData<String> getPm() {
+        return pm;
+    }
+
+    public void setWifiConnected(boolean connected) {
+        this.wifiConnected.setValue(new ObservableBoolean(connected));
+    }
+
+    public MutableLiveData<ObservableBoolean> getWifiConnected() {
+        return wifiConnected;
+    }
+
+    public void setHeadsetIcon(int image) {
+        this.headsetIcon.setValue(new ObservableInt(image));
+    }
+
+    public MutableLiveData<ObservableInt> getHeadsetIcon() {
+        return headsetIcon;
+    }
+
+    public void setHeadsetBatteryLevel(int image) {
+        this.headsetBatteryLevel.setValue(new ObservableInt(image));
+    }
+
+    public MutableLiveData<ObservableInt> getHeadsetBatteryLevel() {
+        return headsetBatteryLevel;
+    }
+
+    public void setLeftControllerIcon(int image) {
+        this.leftControllerIcon.setValue(new ObservableInt(image));
+    }
+
+    public MutableLiveData<ObservableInt> getLeftControllerIcon() {
+        return leftControllerIcon;
+    }
+
+    public void setLeftControllerBatteryLevel(int image) {
+        this.leftControllerBatteryLevel.setValue(new ObservableInt(image));
+    }
+
+    public MutableLiveData<ObservableInt> getLeftControllerBatteryLevel() {
+        return leftControllerBatteryLevel;
+    }
+
+    public void setRightControllerIcon(int image) {
+        this.rightControllerIcon.setValue(new ObservableInt(image));
+    }
+
+    public MutableLiveData<ObservableInt> getRightControllerIcon() {
+        return rightControllerIcon;
+    }
+
+    public void setRightControllerBatteryLevel(int image) {
+        this.rightControllerBatteryLevel.setValue(new ObservableInt(image));
+    }
+
+    public MutableLiveData<ObservableInt> getRightControllerBatteryLevel() {
+        return rightControllerBatteryLevel;
+    }
 }

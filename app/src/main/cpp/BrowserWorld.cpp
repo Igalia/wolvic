@@ -194,6 +194,7 @@ struct BrowserWorld::State {
   WebXRInterstialState webXRInterstialState;
   vrb::Matrix widgetsYaw;
   bool wasWebXRRendering = false;
+  double lastBatteryLevelUpdate = -1.0;
 
   State() : paused(true), glInitialized(false), modelsLoaded(false), env(nullptr), cylinderDensity(0.0f), nearClip(0.1f),
             farClip(300.0f), activity(nullptr), windowsInitialized(false), exitImmersiveRequested(false), loaderDelay(0) {
@@ -375,9 +376,18 @@ BrowserWorld::State::UpdateGazeModeState() {
 void
 BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
   EnsureControllerFocused();
+  int leftBatteryLevel = -1;
+  int rightBatteryLevel = -1;
   for (Controller& controller: controllers->GetControllers()) {
     if (!controller.enabled || (controller.index < 0)) {
       continue;
+    }
+    if (controller.index != device->GazeModeIndex()) {
+      if (controller.leftHanded) {
+        leftBatteryLevel = controller.batteryLevel;
+      } else {
+        rightBatteryLevel = controller.batteryLevel;
+      }
     }
     if (controller.pointer && !controller.pointer->IsLoaded()) {
       controller.pointer->Load(device);
@@ -565,6 +575,10 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
       }
     }
     controller.lastButtonState = controller.buttonState;
+  }
+  if ((context->GetTimestamp() - lastBatteryLevelUpdate) > 1.0) {
+    VRBrowser::UpdateControllerBatteryLevels(leftBatteryLevel, rightBatteryLevel);
+    lastBatteryLevelUpdate = context->GetTimestamp();
   }
   if (gestures) {
     const int32_t gestureCount = gestures->GetGestureCount();

@@ -59,6 +59,7 @@ public:
   virtual void SetTouchPosition(const int32_t aControllerIndex, const float aTouchX, const float aTouchY) = 0;
   virtual void EndTouch(const int32_t aControllerIndex) = 0;
   virtual void SetScrolledDelta(const int32_t aControllerIndex, const float aScrollDeltaX, const float aScrollDeltaY) = 0;
+  virtual void SetBatteryLevel(const int32_t aControllerIndex, const int32_t aBatteryLevel) = 0;
   virtual bool IsVisible() const = 0;
   virtual void SetVisible(const bool aVisible) = 0;
   virtual void SetGazeModeIndex(const int32_t aControllerIndex) = 0;

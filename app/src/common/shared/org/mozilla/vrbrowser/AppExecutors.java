@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 public class AppExecutors {
 
@@ -20,17 +21,21 @@ public class AppExecutors {
     private final HandlerThread mBackgroundThread;
     private Handler mBackgroundHandler;
 
-    private AppExecutors(Executor diskIO, Executor networkIO, Executor mainThread) {
+    private final ScheduledExecutorService mScheduled;
+
+    private AppExecutors(Executor diskIO, Executor networkIO, Executor mainThread, ScheduledExecutorService scheduled) {
         this.mDiskIO = diskIO;
         this.mNetworkIO = networkIO;
         this.mMainThread = mainThread;
+        this.mScheduled = scheduled;
         mBackgroundThread = new HandlerThread("BackgroundThread");
     }
 
     public AppExecutors() {
         this(Executors.newSingleThreadExecutor(),
                 Executors.newFixedThreadPool(3),
-                new MainThreadExecutor());
+                new MainThreadExecutor(),
+                Executors.newSingleThreadScheduledExecutor());
     }
 
     public Executor diskIO() {
@@ -43,6 +48,10 @@ public class AppExecutors {
 
     public Executor mainThread() {
         return mMainThread;
+    }
+
+    public ScheduledExecutorService scheduled() {
+        return mScheduled;
     }
 
     public Handler backgroundThread() {

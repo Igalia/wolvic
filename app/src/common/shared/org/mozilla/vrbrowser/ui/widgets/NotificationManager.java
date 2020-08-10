@@ -57,6 +57,7 @@ public class NotificationManager {
         private @LayoutRes int mLayoutRes;
         private int mDuration;
         private boolean mCurved;
+        private boolean mAutoHide;
 
         public Notification(@NonNull Builder builder) {
             mParent = builder.parent;
@@ -69,6 +70,7 @@ public class NotificationManager {
             mLayoutRes = builder.layoutRes;
             mDuration = builder.duration;
             mCurved = builder.curved;
+            mAutoHide = builder.autoHide;
         }
     }
 
@@ -84,6 +86,7 @@ public class NotificationManager {
         private @LayoutRes int layoutRes = R.layout.library_notification;
         private int duration = DEFAULT_DURATION;
         private boolean curved = false;
+        private boolean autoHide = true;
 
         public Builder(@NonNull UIWidget parent) {
             this.parent = parent;
@@ -136,6 +139,11 @@ public class NotificationManager {
             return this;
         }
 
+        public Builder withAutoHide(boolean hide) {
+            this.autoHide = hide;
+            return this;
+        }
+
         public Builder withCurved(boolean curved) {
             this.curved = curved;
             return this;
@@ -166,9 +174,10 @@ public class NotificationManager {
         }
 
         Runnable hideTask = () -> hide(notificationId);
-
-        if (notification.mView != null) {
-            notification.mView.postDelayed(hideTask, notification.mDuration);
+        if (notification.mAutoHide) {
+            if (notification.mView != null) {
+                notification.mView.postDelayed(hideTask, notification.mDuration);
+            }
         }
 
         mData.put(notificationId, new NotificationData(notificationView, notification, hideTask));

@@ -489,6 +489,13 @@ struct DeviceDelegateOculusVR::State {
       controllerState.inputState.Header.ControllerType = ovrControllerType_TrackedRemote;
       vrapi_GetCurrentInputState(ovr, controllerState.deviceId, &controllerState.inputState.Header);
 
+      int32_t level = controllerState.inputState.BatteryPercentRemaining;
+      if (!IsOculusGo()) {
+        float value = (float)level / 100.0f;
+        level = (int)std::round((value * value) * 10.0f) * 10;
+      }
+      controller->SetBatteryLevel(controllerState.index,level);
+
       reorientCount = controllerState.inputState.RecenterCount;
       bool triggerPressed = false, triggerTouched = false;
       bool trackpadPressed = false, trackpadTouched = false;

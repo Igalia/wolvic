@@ -821,6 +821,8 @@ DeviceDelegateWaveVR::StartFrame(const FramePrediction aPrediction) {
     if (!controller.enabled) {
       continue;
     }
+    float level = WVR_GetDeviceBatteryPercentage(controller.type);
+    m.delegate->SetBatteryLevel(controller.index, (int)(level * 100.0f));
     const WVR_PoseState_t &pose = m.devicePairs[id].pose;
     if (!pose.isValidPose) {
       continue;

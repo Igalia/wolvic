@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tool="http://schemas.android.com/tools">
     <data>
         <variable
             name="viewmodel"
@@ -15,9 +16,138 @@
         android:layout_height="@dimen/tray_height"
         android:gravity="center">
 
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_alignStart="@+id/tray_buttons"
+            android:layout_alignEnd="@+id/tray_buttons"
+            android:layout_above="@+id/tray_buttons"
+            android:background="@drawable/tray_background_top"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp">
+            <LinearLayout
+                android:id="@+id/time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="12dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/time_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_smallest_size"
+                    android:tint="@color/concrete"
+                    android:text="@{traymodel.time}"
+                    android:textColor="@color/concrete"
+                    tool:text="18:30"/>
+                <TextView
+                    android:id="@+id/time_pm_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="5sp"
+                    android:gravity="bottom"
+                    android:textColor="@color/concrete"
+                    android:text="@{traymodel.pm}"
+                    tool:text="pm"/>
+            </LinearLayout>
+            <FrameLayout
+                android:id="@+id/wifi"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_toEndOf="@+id/time"
+                android:layout_centerVertical="true">
+                <ImageView
+                    android:id="@+id/wifi_icon_background"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@{traymodel.wifiConnected ? @drawable/ic_icon_statusbar_wifi_list : @drawable/ic_icon_statusbar_nowifi}"
+                    android:tint="@color/iron"
+                    android:scaleType="fitCenter"/>
+                <ImageView
+                    android:id="@+id/wifi_icon"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_icon_statusbar_wifi_list"
+                    android:tint="@color/concrete"
+                    android:scaleType="fitCenter"
+                    app:visibleGone="@{traymodel.wifiConnected}"/>
+            </FrameLayout>
+            <LinearLayout
+                android:id="@+id/left_controller"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@+id/right_controller"
+                android:layout_marginEnd="12dp">
+                <ImageView
+                    android:id="@+id/left_controller_icon"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:src="@{traymodel.leftControllerIcon}"
+                    android:tint="@color/concrete"
+                    android:scaleType="fitCenter"/>
+                <ImageView
+                    android:id="@+id/left_controller_battery_indicator"
+                    android:layout_width="5dp"
+                    android:layout_height="12dp"
+                    android:src="@{traymodel.leftControllerBatteryLevel}"
+                    android:scaleType="fitCenter"/>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/right_controller"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@+id/headset"
+                android:layout_marginEnd="12dp">
+                <ImageView
+                    android:id="@+id/right_controller_icon"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:src="@{traymodel.rightControllerIcon}"
+                    android:tint="@color/concrete"
+                    android:scaleType="fitCenter"/>
+                <ImageView
+                    android:id="@+id/right_controller_battery_indicator"
+                    android:layout_width="5dp"
+                    android:layout_height="12dp"
+                    android:src="@{traymodel.rightControllerBatteryLevel}"
+                    android:scaleType="fitCenter"/>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/headset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true">
+                <ImageView
+                    android:id="@+id/headset_icon"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:src="@{traymodel.headsetIcon}"
+                    android:tint="@color/concrete"
+                    android:scaleType="fitCenter"/>
+                <ImageView
+                    android:id="@+id/headset_battery_indicator"
+                    android:layout_width="5dp"
+                    android:layout_height="12dp"
+                    android:src="@{traymodel.headsetBatteryLevel}"
+                    android:scaleType="fitCenter"/>
+            </LinearLayout>
+        </RelativeLayout>
+
         <LinearLayout
+            android:id="@+id/tray_buttons"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/tray_background_bottom"
             android:orientation="horizontal">
 
             <org.mozilla.vrbrowser.ui.views.UIButton

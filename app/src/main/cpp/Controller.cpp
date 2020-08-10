@@ -73,6 +73,7 @@ Controller::operator=(const Controller& aController) {
   selectActionStopFrameId = aController.selectActionStopFrameId;
   squeezeActionStartFrameId = aController.squeezeActionStartFrameId;
   squeezeActionStopFrameId = aController.squeezeActionStopFrameId;
+  batteryLevel = aController.batteryLevel;
   return *this;
 }
 
@@ -117,6 +118,7 @@ Controller::Reset() {
   selectActionStopFrameId = 0;
   squeezeActionStartFrameId = 0;
   squeezeActionStopFrameId = 0;
+  batteryLevel = -1;
 }
 
 vrb::Vector Controller::StartPoint() const {

@@ -58,6 +58,7 @@ public:
   void SetTouchPosition(const int32_t aControllerIndex, const float aTouchX, const float aTouchY) override;
   void EndTouch(const int32_t aControllerIndex) override;
   void SetScrolledDelta(const int32_t aControllerIndex, const float aScrollDeltaX, const float aScrollDeltaY) override;
+  void SetBatteryLevel(const int32_t aControllerIndex, const int32_t aBatteryLevel) override;
   void SetPointerColor(const vrb::Color& color) const;
   bool IsVisible() const override;
   void SetVisible(const bool aVisible) override;

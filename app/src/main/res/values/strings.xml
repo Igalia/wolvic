@@ -2112,4 +2112,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is displayed in any edit text field where the value should be a password. -->
     <string name="password_hint">password</string>
 
+    <!-- This string is shown in the tooltip of the wifi icon in the tray whenever WiFi is not connected to a WiFi network. -->
+    <string name="tray_wifi_no_connection">No Connection</string>
+
 </resources>

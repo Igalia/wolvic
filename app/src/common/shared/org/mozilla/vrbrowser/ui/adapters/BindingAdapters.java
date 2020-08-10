@@ -212,4 +212,8 @@ public class BindingAdapters {
         view.setImageResource(drawableRes);
     }
 
+    @BindingAdapter("android:src")
+    public static void setImageResource(ImageView imageView, int resource){
+        imageView.setImageResource(resource);
+    }
  }

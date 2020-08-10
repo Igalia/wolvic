@@ -57,6 +57,7 @@ struct DeviceDelegatePicoVR::State {
     float axisY = 0;
     ElbowModel::HandEnum hand;
     int hapticFrameID = 0;
+    int battery = -1;
     Controller()
         : index(-1)
         , created(false)
@@ -255,6 +256,8 @@ struct DeviceDelegatePicoVR::State {
       }
 
       controllerDelegate->SetTransform(i, transform);
+
+      controllerDelegate->SetBatteryLevel(i, controller.battery);
 
       if (controllerDelegate->GetHapticCount(i)) {
         UpdateHaptics(controllers[i]);
@@ -567,6 +570,11 @@ DeviceDelegatePicoVR::UpdateControllerButtons(const int aIndex, const int32_t aB
   m.controllers[aIndex].axisX = axisX;
   m.controllers[aIndex].axisY = axisY;
   m.controllers[aIndex].touched = touched;
+}
+
+void
+DeviceDelegatePicoVR::UpdateControllerBatteryLevel(const int aIndex, const int aBatteryLevel) {
+  m.controllers[aIndex].battery = aBatteryLevel;
 }
 
 void
