@@ -146,6 +146,9 @@ public class SessionStore implements
 
         if (BuildConfig.DEBUG) {
             mStoreSubscription = ComponentsAdapter.get().getStore().observeManually(browserState -> {
+                if (mSessions == null || browserState == null) {
+                    return null;
+                }
                 Log.d(LOGTAG, "Session status BEGIN");
                 Log.d(LOGTAG, "[Total] BrowserStore: " + browserState.getTabs().size() + ", SessionStore: " + mSessions.size());
                 for (int i=0; i<browserState.getTabs().size(); i++) {
