@@ -231,6 +231,7 @@ class PrivacyOptionsView extends SettingsView {
         if (mBinding.speechDataSwitch.isChecked() != SettingsStore.SPEECH_DATA_COLLECTION_DEFAULT) {
             setSpeechData(SettingsStore.SPEECH_DATA_COLLECTION_DEFAULT, true);
         }
+        SettingsStore.getInstance(getContext()).setSpeechDataCollectionReviewed(false);
 
         if (mBinding.telemetryDataSwitch.isChecked() != SettingsStore.TELEMETRY_DEFAULT) {
             setTelemetry(SettingsStore.TELEMETRY_DEFAULT, true);
