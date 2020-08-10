@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="androidx.appcompat.widget.AppCompatToggleButton"/>
+        <variable
+            name="login"
+            type="mozilla.components.concept.storage.Login" />
+    </data>
+    <RelativeLayout
+        android:id="@+id/layout"
+        android:layout_width="@dimen/autofill_dialog_width"
+        android:layout_height="@dimen/autofill_dialog_height"
+        android:background="@drawable/dialog_background"
+        android:paddingStart="@dimen/autofill_dialog_padding_sides"
+        android:paddingTop="@dimen/autofill_dialog_padding_top"
+        android:paddingEnd="@dimen/autofill_dialog_padding_sides"
+        android:paddingBottom="@dimen/autofill_dialog_padding_bottom">
+
+        <FrameLayout
+            android:id="@+id/titleContainer"
+            android:layout_width="322dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentTop="true">
+            <TextView
+                android:id="@+id/titleText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                tools:text="http://mozilla.org"
+                android:text="@{login.origin}"
+                android:textStyle="bold"
+                android:textColor="@color/fog"
+                android:textSize="@dimen/text_bigger_size" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_below="@id/titleContainer"
+            android:layout_above="@id/buttonsLayout"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+            <LinearLayout
+                android:id="@+id/subtitleContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginEnd="10dp"
+                    android:tint="@color/concrete"
+                    android:src="@drawable/ic_login"/>
+                <TextView
+                    android:id="@+id/subtitleText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/autofill_dialog_save_title"
+                    android:lineSpacingMultiplier="1.25"
+                    android:textAlignment="textStart"
+                    android:textColor="@color/fog"
+                    android:textSize="@dimen/text_medium_size" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/usernameContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="20dp"
+                android:gravity="center_vertical">
+                <TextView
+                    android:id="@+id/usernameTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="textStart"
+                    android:layout_weight="1"
+                    android:text="@string/autofill_dialog_save_username_text"
+                    android:textColor="@color/fog"
+                    android:textSize="@dimen/text_medium_size" />
+                <TextView
+                    android:id="@+id/usernameText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="2"
+                    tools:text="user@mozilla.org"
+                    android:text="@{login.username}"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:textAlignment="textStart"
+                    android:textColor="@color/rhino"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/text_medium_size" />
+                <View
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/passwordContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <TextView
+                    android:id="@+id/passwordTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="textStart"
+                    android:layout_weight="1"
+                    android:text="@string/autofill_dialog_save_password_text"
+                    android:textColor="@color/fog"
+                    android:textSize="@dimen/text_medium_size" />
+                <TextView
+                    android:id="@+id/passwordText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="2"
+                    android:text="@{login.password}"
+                    android:inputType="textPassword"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:textAlignment="textStart"
+                    android:textColor="@color/rhino"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/text_medium_size" />
+                <androidx.appcompat.widget.AppCompatToggleButton
+                    android:id="@+id/password_toggle"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:backgroundTint="@color/concrete"
+                    android:background="@drawable/password_toggle"
+                    android:checked="false"
+                    android:textOn=""
+                    android:textOff=""/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/buttonsLayout"
+            android:layout_width="322dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/neverButton"
+                android:layout_width="156dp"
+                android:layout_height="36dp"
+                android:layout_alignParentStart="true"
+                android:background="@drawable/dialog_regular_button_background"
+                android:fontFamily="sans-serif"
+                android:scaleType="fitCenter"
+                android:text="@string/autofill_dialog_never_save_button_text"
+                android:textColor="@drawable/dialog_button_text_color"
+                android:textStyle="bold"/>
+
+            <Button
+                android:id="@+id/saveButton"
+                android:layout_width="156dp"
+                android:layout_height="36dp"
+                android:layout_alignParentEnd="true"
+                android:background="@drawable/dialog_highlighted_button_background"
+                android:fontFamily="sans-serif"
+                android:scaleType="fitCenter"
+                android:text="@string/autofill_dialog_save_button_text"
+                android:textColor="@drawable/dialog_button_text_color"
+                android:textStyle="bold"/>
+        </RelativeLayout>
+    </RelativeLayout>
+</layout>

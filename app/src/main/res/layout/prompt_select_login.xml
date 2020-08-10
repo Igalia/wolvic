@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <RelativeLayout
+        android:id="@+id/layout"
+        android:layout_width="@dimen/autofill_dialog_width"
+        android:layout_height="@dimen/autofill_dialog_height"
+        android:background="@drawable/dialog_background"
+        android:paddingStart="@dimen/autofill_dialog_padding_sides"
+        android:paddingTop="@dimen/autofill_dialog_padding_top"
+        android:paddingEnd="@dimen/autofill_dialog_padding_sides"
+        android:paddingBottom="@dimen/autofill_dialog_padding_bottom">
+
+        <FrameLayout
+            android:id="@+id/titleContainer"
+            android:layout_width="322dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentTop="true">
+            <TextView
+                android:id="@+id/titleText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:text="@string/autofill_dialog_use_login_title_text"
+                android:textStyle="bold"
+                android:textColor="@color/fog"
+                android:textSize="@dimen/text_bigger_size" />
+        </FrameLayout>
+
+        <org.mozilla.vrbrowser.ui.views.CustomRecyclerView
+            android:id="@+id/loginsList"
+            style="@style/customRecyclerViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/titleContainer"
+            android:layout_above="@+id/buttonsLayout"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:contentDescription="Saved Logins list"
+            android:fadingEdgeLength="60dp"
+            android:requiresFadingEdge="vertical"
+            android:background="@color/asphalt"
+            app:layoutManager="org.mozilla.vrbrowser.ui.adapters.CustomLinearLayoutManager" />
+
+        <RelativeLayout
+            android:id="@+id/buttonsLayout"
+            android:layout_width="322dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true">
+
+            <Button
+                android:id="@+id/settings"
+                android:layout_width="156dp"
+                android:layout_height="36dp"
+                android:layout_alignParentEnd="true"
+                android:background="@drawable/dialog_regular_button_background"
+                android:fontFamily="sans-serif"
+                android:scaleType="fitCenter"
+                android:text="@string/autofill_dialog_use_login_settings_button"
+                android:textColor="@drawable/dialog_button_text_color"
+                android:textStyle="bold"/>
+        </RelativeLayout>
+    </RelativeLayout>
+</layout>

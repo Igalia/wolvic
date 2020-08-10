@@ -4,6 +4,7 @@ import com.mozilla.speechlibrary.SpeechService;
 
 import org.mozilla.vrbrowser.AppExecutors;
 import org.mozilla.vrbrowser.browser.Accounts;
+import org.mozilla.vrbrowser.browser.LoginStorage;
 import org.mozilla.vrbrowser.browser.Places;
 import org.mozilla.vrbrowser.browser.Services;
 import org.mozilla.vrbrowser.db.AppDatabase;
@@ -24,4 +25,5 @@ public interface AppServicesProvider {
     DownloadsManager getDownloadsManager();
     SpeechService getSpeechService();
     EnvironmentsManager getEnvironmentsManager();
+    LoginStorage getLoginStorage();
 }

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="org.mozilla.vrbrowser.utils.DeviceType"/>
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/dialog_background"
+        android:paddingStart="30dp"
+        android:paddingEnd="30dp">
+
+        <org.mozilla.vrbrowser.ui.widgets.settings.SettingsHeader
+            android:id="@+id/header_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:helpVisibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:title="@string/settings_privacy_logins" />
+
+        <!-- ScrollView doesn't support fast scrollbar so we need to use a custom implementation -->
+        <org.mozilla.vrbrowser.ui.views.CustomScrollView
+            android:id="@+id/scrollbar"
+            style="@style/customScrollViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:paddingEnd="30dp"
+            app:layout_constraintBottom_toTopOf="@id/footer_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/header_layout">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                    android:id="@+id/autocompleteSwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:description="@string/security_options_login_save" />
+
+                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                    android:id="@+id/autofillSwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:description="@string/security_options_login_autofill"/>
+
+                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                    android:id="@+id/login_sync_switch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:description="@string/security_options_login_sync"
+                    android:visibility="gone"/>
+
+                <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                    android:id="@+id/accountButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:buttonText="@string/security_options_login_fxa"
+                    android:visibility="gone"/>
+
+                <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                    android:id="@+id/savedLoginsButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:buttonText="@string/security_options_login_saved" />
+
+                <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                    android:id="@+id/exceptionsButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:buttonText="@string/security_options_login_exceptions" />
+            </LinearLayout>
+        </org.mozilla.vrbrowser.ui.views.CustomScrollView>
+
+        <org.mozilla.vrbrowser.ui.widgets.settings.SettingsFooter
+            android:id="@+id/footer_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:description="@string/privacy_options_saved_logins_reset"
+            app:buttonText="@string/developer_options_reset_button"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -268,4 +268,11 @@
     <dimen name="webxr_interstitial_controller_margin_v">5dp</dimen>
     <item name="webxr_interstitial_world_y" format="float" type="dimen">0.0</item>
     <item name="webxr_interstitial_world_z" format="float" type="dimen">-2.5</item>
+
+    <!-- Auto-fill dialog -->
+    <dimen name="autofill_dialog_width">450dp</dimen>
+    <dimen name="autofill_dialog_height">280dp</dimen>
+    <dimen name="autofill_dialog_padding_top">20dp</dimen>
+    <dimen name="autofill_dialog_padding_bottom">42dp</dimen>
+    <dimen name="autofill_dialog_padding_sides">64dp</dimen>
 </resources>

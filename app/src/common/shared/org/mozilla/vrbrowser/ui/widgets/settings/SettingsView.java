@@ -7,6 +7,7 @@ import android.widget.FrameLayout;
 import android.widget.ScrollView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.ui.views.CustomScrollView;
@@ -29,7 +30,11 @@ public abstract class SettingsView extends FrameLayout {
         FXA,
         ENVIRONMENT,
         CONTROLLER,
-        TRACKING_EXCEPTION
+        TRACKING_EXCEPTION,
+        LOGINS_AND_PASSWORDS,
+        SAVED_LOGINS,
+        LOGIN_EXCEPTIONS,
+        LOGIN_EDIT
     }
 
     protected Delegate mDelegate;
@@ -42,6 +47,7 @@ public abstract class SettingsView extends FrameLayout {
         void showRestartDialog();
         void showAlert(String aTitle, String aMessage);
         void showView(SettingsView.SettingViewType type);
+        void showView(SettingsView.SettingViewType type, @Nullable Object extras);
     }
 
     public SettingsView(@NonNull Context context, WidgetManagerDelegate aWidgetManager) {

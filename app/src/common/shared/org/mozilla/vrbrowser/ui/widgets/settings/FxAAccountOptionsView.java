@@ -17,7 +17,6 @@ import androidx.databinding.DataBindingUtil;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.browser.Accounts;
-import org.mozilla.vrbrowser.browser.Places;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.databinding.OptionsFxaAccountBinding;
 import org.mozilla.vrbrowser.ui.views.settings.SwitchSetting;
@@ -43,7 +42,6 @@ class FxAAccountOptionsView extends SettingsView {
 
     private OptionsFxaAccountBinding mBinding;
     private Accounts mAccounts;
-    private Places mPlaces;
     private Executor mUIThreadExecutor;
     private SignOutDialogWidget mSignOutDialog;
 
@@ -71,7 +69,6 @@ class FxAAccountOptionsView extends SettingsView {
         mBinding.headerLayout.setBackClickListener(view -> onDismiss());
 
         mAccounts = ((VRBrowserApplication)getContext().getApplicationContext()).getAccounts();
-        mPlaces = ((VRBrowserApplication)getContext().getApplicationContext()).getPlaces();
 
         mUIThreadExecutor = ((VRBrowserApplication)getContext().getApplicationContext()).getExecutors().mainThread();
 
@@ -83,6 +80,7 @@ class FxAAccountOptionsView extends SettingsView {
 
         mBinding.bookmarksSyncSwitch.setOnCheckedChangeListener(mBookmarksSyncListener);
         mBinding.historySyncSwitch.setOnCheckedChangeListener(mHistorySyncListener);
+        mBinding.loginsSyncSwitch.setOnCheckedChangeListener(mLoginsSyncListener);
 
         updateCurrentAccountState();
 
@@ -99,6 +97,7 @@ class FxAAccountOptionsView extends SettingsView {
 
         mBinding.bookmarksSyncSwitch.setValue(mAccounts.isEngineEnabled(SyncEngine.Bookmarks.INSTANCE), false);
         mBinding.historySyncSwitch.setValue(mAccounts.isEngineEnabled(SyncEngine.History.INSTANCE), false);
+        mBinding.loginsSyncSwitch.setValue(mAccounts.isEngineEnabled(SyncEngine.Passwords.INSTANCE), false);
 
         updateSyncBindings(mAccounts.isSyncing());
     }
@@ -121,9 +120,15 @@ class FxAAccountOptionsView extends SettingsView {
         mAccounts.syncNowAsync(SyncReason.EngineChange.INSTANCE, false);
     };
 
+    private SwitchSetting.OnCheckedChangeListener mLoginsSyncListener = (compoundButton, value, apply) -> {
+        mAccounts.setSyncStatus(SyncEngine.Passwords.INSTANCE, value);
+        mAccounts.syncNowAsync(SyncReason.EngineChange.INSTANCE, false);
+    };
+
     private void resetOptions() {
         mBinding.bookmarksSyncSwitch.setValue(SettingsStore.BOOKMARKS_SYNC_DEFAULT, true);
         mBinding.historySyncSwitch.setValue(SettingsStore.HISTORY_SYNC_DEFAULT, true);
+        mBinding.loginsSyncSwitch.setValue(SettingsStore.LOGIN_SYNC_DEFAULT, true);
     }
 
     private SyncStatusObserver mSyncListener = new SyncStatusObserver() {
@@ -138,12 +143,14 @@ class FxAAccountOptionsView extends SettingsView {
 
             mBinding.bookmarksSyncSwitch.setValue(mAccounts.isEngineEnabled(SyncEngine.Bookmarks.INSTANCE), false);
             mBinding.historySyncSwitch.setValue(mAccounts.isEngineEnabled(SyncEngine.History.INSTANCE), false);
+            mBinding.loginsSyncSwitch.setValue(mAccounts.isEngineEnabled(SyncEngine.Passwords.INSTANCE), false);
 
             // This shouldn't be necessary but for some reason the buttons stays hovered after the sync.
             // I guess Android restoring it to the latest state (hovered) before being disabled
             // Probably an Android bindings bug.
             mBinding.bookmarksSyncSwitch.setHovered(false);
             mBinding.historySyncSwitch.setHovered(false);
+            mBinding.loginsSyncSwitch.setHovered(false);
             mBinding.syncButton.setHovered(false);
         }
 

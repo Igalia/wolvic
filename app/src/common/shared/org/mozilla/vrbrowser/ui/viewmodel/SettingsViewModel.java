@@ -1,6 +1,7 @@
 package org.mozilla.vrbrowser.ui.viewmodel;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.ObservableBoolean;
@@ -15,12 +16,15 @@ import org.mozilla.geckoview.ContentBlocking;
 import org.mozilla.vrbrowser.BuildConfig;
 import org.mozilla.vrbrowser.browser.SettingsStore;
 import org.mozilla.vrbrowser.utils.RemoteProperties;
+import org.mozilla.vrbrowser.utils.SystemUtils;
 
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.Map;
 
 public class SettingsViewModel extends AndroidViewModel {
+
+    private static final String LOGTAG = SystemUtils.createLogtag(SettingsViewModel.class);
 
     private MutableLiveData<ObservableBoolean> isTrackingProtectionEnabled;
     private MutableLiveData<ObservableBoolean> isDRMEnabled;
@@ -111,9 +115,14 @@ public class SettingsViewModel extends AndroidViewModel {
     }
 
     public void setProps(String json) {
-        Gson gson = new GsonBuilder().create();
-        Type type = new TypeToken<Map<String, RemoteProperties>>() {}.getType();
-        this.props.postValue(gson.fromJson(json, type));
+        try {
+            Gson gson = new GsonBuilder().create();
+            Type type = new TypeToken<Map<String, RemoteProperties>>() {}.getType();
+            this.props.postValue(gson.fromJson(json, type));
+
+        } catch (Exception e) {
+            Log.e(LOGTAG, String.valueOf(e.getLocalizedMessage()));
+        }
     }
 
     public MutableLiveData<Map<String, RemoteProperties>> getProps() {

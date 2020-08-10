@@ -98,6 +98,13 @@
          opens a dialog box that contains privacy and security related settings. -->
     <string name="settings_privacy_security">Privacy &amp; Security</string>
 
+    <!-- This string is used to label a button in the 'Saved Logins' dialog window that, when pressed,
+         opens a dialog box that contains a list of saved logins. -->
+    <string name="settings_privacy_saved_logins">Saved Logins</string>
+
+    <!-- This string is used inm the title of the settings panel for the Logins and Passwords management. -->
+    <string name="settings_privacy_logins">Logins And Passwords</string>
+
     <!-- This string is used to label a button that, when pressed, loads a website that
          describes Mozilla's Privacy Policy. -->
     <string name="settings_privacy_policy">Privacy Policy</string>
@@ -135,6 +142,19 @@
 
     <!-- This string labels the Reset button that removes all the sites not allowed to access WebXR -->
     <string name="settings_privacy_policy_tracking_reset">Reset the Exceptions for Enhanced Tracking Protection.</string>
+
+    <!-- This string is used as the title of the Tracking dialog used to do not allow websites to bypass tracking protection. -->
+    <string name="settings_privacy_policy_login_exceptions_title">Login Exceptions</string>
+
+    <!-- This string is displayed under the title the  Tracking dialog used to do not allow websites to bypass tracking protection. -->
+    <string name="settings_privacy_policy_login_exceptions_description">Logins that are not saved will be shown here</string>
+
+    <!-- This string is displayed in the first line of a text that's displayed in the middle of the etp exceptions instead of the exceptions list
+     when there are no exceptions. -->
+    <string name="settings_privacy_policy_login_exceptions_empty_description">Logins that are not saved will be shown here.</string>
+
+    <!-- This string labels the Reset button that removes all the sites not allowed to access WebXR -->
+    <string name="settings_privacy_policy_login_exceptions_reset">Reset the Login exceptions.</string>
 
     <!-- This string is displayed in the switch of each item of the the pop-up blocking list when the site is allowed. -->
     <string name="pop_up_site_switch_allow">Allow</string>
@@ -637,6 +657,9 @@
     <!-- This string is used to in the FxA account manage panel as a description for the History sync switch. -->
     <string name="fxa_account_options_history_sync">History</string>
 
+    <!-- This string is used to in the FxA account manage panel as a description for the Logins sync switch. -->
+    <string name="fxa_account_options_logins_sync">Logins</string>
+
     <!-- This string is used to in the FxA account manage panel as a description for the Sign In/Out button. -->
     <string name="fxa_account_options_reset">Reset</string>
 
@@ -678,6 +701,33 @@
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable the address bar autocomplete. -->
     <string name="security_options_autocomplete">Address Bar Auto-complete</string>
+
+    <!-- This string labels an Allow/Don't Allow switch in the Logins And Passwords settings dialog
+     and is used to enable or disable logins and passwords saving. If disabled the user won't be prompted
+     when a new login/password pair is eligible to be saved by the browser -->
+    <string name="security_options_login_save">Save logins and passwords</string>
+
+    <!-- This string labels an Allow/Don't Allow switch in the Logins And Passwords settings dialog
+     and is used to enable or disable login auto-fill. If disabled the logins forms won't be auto-filled. -->
+    <string name="security_options_login_autofill">Autofill</string>
+
+    <!-- This string labels an Allow/Don't Allow switch in the Logins And Passwords settings dialog
+     and is used to enable or disable login sync with Firefox Account. If disabled the logins
+     won't be synced with the Firefox Account. -->
+    <string name="security_options_login_sync">Sync logins with Firefox Accounts</string>
+
+    <!-- This string labels a button in the Logins And Passwords settings dialog
+     that when clicked opens the Firefox Accounts settings panel. -->
+    <string name="security_options_login_fxa">Account…</string>
+
+    <!-- This string labels a button in the Logins And Passwords settings dialog
+     that when clicked opens the saved logins panel which lists all the stored logins/password entries. -->
+    <string name="security_options_login_saved">Saved Logins…</string>
+
+    <!-- This string labels a button in the Logins And Passwords settings dialog
+     that when clicked opens the login exceptions panel which lists all the save login exceptions
+     that are added when clicking on the "Never Save" button in the login save dialog. -->
+    <string name="security_options_login_exceptions">Exceptions…</string>
 
     <!-- This string labels an On/Off switch in the Privacy and Security settings dialog
      and is used to enable or disable tracking protection. -->
@@ -1063,7 +1113,7 @@
 
     <!-- This string is displayed in the checkbox text of the FxA sign out dialog displayed when the user clicks on the Sign out button.
          When checked the history and Bookmarks will be deleted from gthe device after signing in. -->
-    <string name="fxa_signout_confirmation_checkbox">Clear history and bookmarks from this device</string>
+    <string name="fxa_signout_confirmation_checkbox_v1">Clear history, bookmarks and logins from this device</string>
 
     <!-- This string is displayed in the cancel button of the FxA sign out dialog displayed when the user clicks on the Sign out button.
          If clicked the user will be signed out from their FxA account and the dialog will be dismissed. -->
@@ -1145,6 +1195,26 @@
          when there are no exceptions. -->
     <string name="privacy_options_popups_list_empty_second">A list of sites with permissions will appear here.</string>
 
+    <!-- This string is displayed on top of the saved logins list in the Saved Logins panel. -->
+    <string name="privacy_options_saved_logins_list_header">Saved logins:</string>
+
+    <!-- This string is displayed in the first line of a text that's displayed in the middle of the saved logins panel instead of the logins list
+         when there are saved logins. -->
+    <string name="privacy_options_saved_logins_list_empty_first">When a login can be saved, you will see a dialog that let you save it.</string>
+
+    <!-- This string is displayed in the second line of a text that's displayed in the middle of the saved logins instead of the logins list
+         when there are no saved logins. -->
+    <string name="privacy_options_saved_logins_list_empty_second">A list of the saved logins will appear here.</string>
+
+    <!-- This string labels the Reset button that restores the default saved logins settings values. -->
+    <string name="privacy_options_saved_logins_reset">Reset Saved Logins Settings</string>
+
+    <!-- This string labels the Clear All button that removes all the saved logins from the stored saved logins. -->
+    <string name="privacy_options_saved_logins_clear_all">Clear All</string>
+
+    <!-- This string labels the Delete button from the Login edit dialog deletes the current login. -->
+    <string name="privacy_options_saved_login_delete">Delete</string>
+
     <!-- This string is used to label radio buttons for setting ETP in.
          '%1$' Will be replaced at runtime with the Learn More url for ETP. -->
     <string name="privacy_options_tracking"><![CDATA[Enhanced Tracking Protection. (<a href="%1$s">Learn More</a>)]]></string>
@@ -1152,6 +1222,12 @@
     <!-- This string labels the button in the privacy option panel that opens the dialog to add/remove
          Tracking protection exceptions. -->
     <string name="privacy_options_tracking_exceptions_v1">Advanced</string>
+
+    <!-- This string labels the description of the button in the privacy option panel that opens the dialog to manage the logins and passwords. -->
+    <string name="privacy_options_logins">Logins And Passwords</string>
+
+    <!-- This string labels the button in the privacy option panel that opens the dialog to manage the logins and passwords. -->
+    <string name="privacy_options_logins_button">Advanced</string>
 
     <!-- This string labels the Reset button that restores the default controller settings values. -->
     <string name="controller_options_reset">Reset Controller Settings</string>
@@ -1851,5 +1927,46 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 
     <!-- This string is shown in the title of the error dialog displayed if there is any error during an environment setup. -->
     <string name="environment_error_title">Environment error</string>
+
+    <!-- This string is shown in the title of the auto-fill save dialog. This dialog is displayed when the user send a login form and the system
+    prompts the user to save that login to auto-fill the future. -->
+    <string name="autofill_dialog_save_title">Save this login?</string>
+
+    <!-- This string is shown in the "Save" button of the auto-fill login save dialog. When pressed this will save the login information into the storage. -->
+    <string name="autofill_dialog_save_button_text">Save</string>
+
+    <!-- This string is shown in the "Never Save" button of the auto-fill llgin save dialog. When pressed this won't save the login information into the storage and also
+    add an exception rule so the user is not prompted in the future for that site. -->
+    <string name="autofill_dialog_never_save_button_text">Never Save</string>
+
+    <!-- This string is shown in the "username" field name of the auto-fill login save dialog. -->
+    <string name="autofill_dialog_save_username_text">Username</string>
+
+    <!-- This string is shown in the "password" field name of the auto-fill login save dialog. -->
+    <string name="autofill_dialog_save_password_text">Password</string>
+
+    <!-- This string is shown in the title of the select login dialog. -->
+    <string name="autofill_dialog_use_login_title_text">Use Saved Login</string>
+
+    <!-- This string is shown in the "settings" button of the select login dialog. When pressed the saved logins settings panel would be displayed.-->
+    <string name="autofill_dialog_use_login_settings_button">Settings…</string>
+
+    <!-- This string is shown inside the "Open" button of the edit login dialog. When pressed the site URL is opened.-->
+    <string name="login_edit_dialog_site_button">Open</string>
+
+    <!-- This string is shown in the "Open" button desicription of the edit login dialog. -->
+    <string name="login_edit_dialog_site_description">Site</string>
+
+    <!-- This string is shown in the "Open" button desicription of the edit login dialog. -->
+    <string name="login_edit_dialog_username_description">Username</string>
+
+    <!-- This string is shown in the "Open" button desicription of the edit login dialog. -->
+    <string name="login_edit_dialog_password_description">Password</string>
+
+    <!-- This string is displayed in any edit text field where the value should be a username. -->
+    <string name="username_hint">username</string>
+
+    <!-- This string is displayed in any edit text field where the value should be a password. -->
+    <string name="password_hint">password</string>
 
 </resources>

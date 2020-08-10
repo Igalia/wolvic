@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
@@ -17,8 +19,8 @@ import org.mozilla.vrbrowser.ui.views.settings.SettingsEditText;
 public class AuthPromptWidget extends PromptWidget {
 
     public interface AuthPromptDelegate extends PromptDelegate {
-        void confirm(String password);
-        void confirm(String username, String password);
+        default void confirm(String password) {}
+        default void confirm(String username, String password) {}
     }
 
     private AudioEngine mAudio;
@@ -117,6 +119,14 @@ public class AuthPromptWidget extends PromptWidget {
         } else {
             mTitle.setText(title);
         }
+    }
+
+    public void setUsername(@NonNull String username) {
+        mUsernameText.setText(username);
+    }
+
+    public void setPassword(@NonNull String password) {
+        mPasswordText.setText(password);
     }
 
 }

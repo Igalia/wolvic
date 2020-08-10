@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -53,6 +54,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
 import mozilla.components.Build;
+import mozilla.components.concept.storage.Login;
 import mozilla.components.concept.sync.AccountObserver;
 import mozilla.components.concept.sync.AuthType;
 import mozilla.components.concept.sync.OAuthAccount;
@@ -419,6 +421,11 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
 
     @Override
     public void showView(SettingsView.SettingViewType aType) {
+        showView(aType, null);
+    }
+
+    @Override
+    public void showView(SettingsView.SettingViewType aType, @Nullable Object extras) {
         switch (aType) {
             case MAIN:
                 showView((SettingsView) null);
@@ -461,6 +468,20 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
                 break;
             case TRACKING_EXCEPTION:
                 showView(new TrackingPermissionsOptionsView(getContext(), mWidgetManager));
+                break;
+            case LOGINS_AND_PASSWORDS:
+                showView(new LoginAndPasswordsOptionsView(getContext(), mWidgetManager));
+                break;
+            case LOGIN_EXCEPTIONS:
+                showView(new SitePermissionsOptionsView(getContext(), mWidgetManager, SitePermission.SITE_PERMISSION_AUTOFILL));
+                break;
+            case SAVED_LOGINS:
+                showView(new SavedLoginsOptionsView(getContext(), mWidgetManager));
+                break;
+            case LOGIN_EDIT:
+                if (extras != null) {
+                    showView(new LoginEditOptionsView(getContext(), mWidgetManager, (Login)extras));
+                }
                 break;
         }
     }
@@ -520,6 +541,12 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
                 } else if (isPrivacySubView(mCurrentView)) {
                     showView(SettingsView.SettingViewType.PRIVACY);
 
+                } else if (isLoginsSubview(mCurrentView)) {
+                    showView(SettingsView.SettingViewType.LOGINS_AND_PASSWORDS);
+
+                } else if (isSavedLoginsSubview(mCurrentView)) {
+                    showView(SettingsView.SettingViewType.SAVED_LOGINS);
+
                 } else {
                     showView(SettingsView.SettingViewType.MAIN);
                 }
@@ -550,21 +577,25 @@ public class SettingsWidget extends UIDialog implements SettingsView.Delegate {
     }
 
     private boolean isLanguagesSubView(View view) {
-        if (view instanceof DisplayLanguageOptionsView ||
+        return view instanceof DisplayLanguageOptionsView ||
                 view instanceof ContentLanguageOptionsView ||
-                view instanceof  VoiceSearchLanguageOptionsView) {
-            return true;
-        }
-
-        return false;
+                view instanceof VoiceSearchLanguageOptionsView;
     }
 
     private boolean isPrivacySubView(View view) {
-        if (view instanceof SitePermissionsOptionsView) {
-            return true;
-        }
+        return (view instanceof SitePermissionsOptionsView &&
+                ((SitePermissionsOptionsView)view).getType() != SettingsView.SettingViewType.LOGIN_EXCEPTIONS) ||
+                view instanceof LoginAndPasswordsOptionsView;
+    }
 
-        return false;
+    private boolean isLoginsSubview(View view) {
+        return (view instanceof SitePermissionsOptionsView &&
+                ((SitePermissionsOptionsView)view).getType() == SettingsView.SettingViewType.LOGIN_EXCEPTIONS) ||
+                view instanceof SavedLoginsOptionsView;
+    }
+
+    private boolean isSavedLoginsSubview(View view) {
+        return view instanceof LoginEditOptionsView;
     }
 
 }

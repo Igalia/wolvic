@@ -150,6 +150,8 @@ class PrivacyOptionsView extends SettingsView {
         @SettingsStore.Storage int downloadsStorage = SettingsStore.getInstance(getContext()).getDownloadsStorage();
         mBinding.downloadsStorage.setOnCheckedChangeListener(mDownloadsStorageListener);
         setDownloadsStorage(mBinding.downloadsStorage.getIdForValue(downloadsStorage), false);
+
+        mBinding.loginsAndPasswords.setOnClickListener(view -> mDelegate.showView(SettingViewType.LOGINS_AND_PASSWORDS));
     }
 
     private void togglePermission(SwitchSetting aButton, String aPermission) {

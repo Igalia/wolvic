@@ -61,9 +61,7 @@ class SitePermissionsOptionsView extends SettingsView {
         mBinding = DataBindingUtil.inflate(inflater, R.layout.options_exceptions, this, true);
 
         // Header
-        mBinding.headerLayout.setBackClickListener(view -> {
-            mDelegate.showView(SettingViewType.PRIVACY);
-        });
+        mBinding.headerLayout.setBackClickListener(view -> onDismiss());
 
         // Adapters
         mBinding.siteList.setAdapter(mAdapter);
@@ -86,6 +84,11 @@ class SitePermissionsOptionsView extends SettingsView {
                 mBinding.headerLayout.setTitle(R.string.settings_privacy_policy_tracking_title);
                 mBinding.contentText.setText(R.string.settings_privacy_policy_tracking_description);
                 mBinding.emptyText.setText(R.string.settings_privacy_policy_tracking_empty_description);
+                mBinding.emptySecondText.setVisibility(GONE);
+            case SitePermission.SITE_PERMISSION_AUTOFILL:
+                mBinding.headerLayout.setTitle(R.string.settings_privacy_policy_login_exceptions_title);
+                mBinding.contentText.setText(R.string.settings_privacy_policy_login_exceptions_description);
+                mBinding.emptyText.setText(R.string.settings_privacy_policy_login_exceptions_empty_description);
                 mBinding.emptySecondText.setVisibility(GONE);
                 break;
         }
@@ -138,6 +141,9 @@ class SitePermissionsOptionsView extends SettingsView {
             case SitePermission.SITE_PERMISSION_WEBXR:
                 return SettingViewType.WEBXR_EXCEPTIONS;
             case SitePermission.SITE_PERMISSION_POPUP:
+                return SettingViewType.POPUP_EXCEPTIONS;
+            case SitePermission.SITE_PERMISSION_AUTOFILL:
+                return SettingViewType.LOGIN_EXCEPTIONS;
             default:
                 return SettingViewType.POPUP_EXCEPTIONS;
         }

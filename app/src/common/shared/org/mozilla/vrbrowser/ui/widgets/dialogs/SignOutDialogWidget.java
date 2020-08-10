@@ -75,7 +75,7 @@ public class SignOutDialogWidget extends PromptDialogWidget {
 
         setTitle(R.string.fxa_signout_confirmation_title);
         setBody(R.string.fxa_signout_confirmation_body);
-        setCheckboxText(R.string.fxa_signout_confirmation_checkbox);
+        setCheckboxText(R.string.fxa_signout_confirmation_checkbox_v1);
     }
 
     @Override

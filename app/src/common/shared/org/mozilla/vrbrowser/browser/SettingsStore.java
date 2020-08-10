@@ -104,6 +104,7 @@ public class SettingsStore {
     public final static boolean WEBXR_ENABLED_DEFAULT = true;
     public final static boolean TELEMETRY_STATUS_UPDATE_SENT_DEFAULT = false;
     public final static boolean BOOKMARKS_SYNC_DEFAULT = true;
+    public final static boolean LOGIN_SYNC_DEFAULT = true;
     public final static boolean HISTORY_SYNC_DEFAULT = true;
     public final static boolean WHATS_NEW_DISPLAYED = false;
     public final static long FXA_LAST_SYNC_NEVER = 0;
@@ -114,6 +115,9 @@ public class SettingsStore {
     public final static boolean AUTOCOMPLETE_ENABLED = true;
     public final static boolean WEBGL_OUT_OF_PROCESS = false;
     public final static int PREFS_LAST_RESET_VERSION_CODE = 0;
+    public final static boolean PASSWORDS_ENCRYPTION_KEY_GENERATED = false;
+    public final static boolean AUTOFILL_ENABLED = true;
+    public final static boolean LOGIN_AUTOCOMPLETE_ENABLED = true;
 
     // Enable telemetry by default (opt-out).
     public final static boolean CRASH_REPORTING_DEFAULT = false;
@@ -830,6 +834,46 @@ public class SettingsStore {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putString(mContext.getString(R.string.settings_key_remote_props), json);
         editor.commit();
+    }
+
+    public void recordPasswordsEncryptionKeyGenerated() {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_passwords_encryption_key_generated), true);
+        editor.commit();
+    }
+
+    public boolean isPasswordsEncryptionKeyGenerated() {
+        return mPrefs.getBoolean(mContext.getString(R.string.settings_key_passwords_encryption_key_generated), PASSWORDS_ENCRYPTION_KEY_GENERATED);
+    }
+
+    public void setAutoFillEnabled(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_autofill_enabled), isEnabled);
+        editor.commit();
+    }
+
+    public boolean isAutoFillEnabled() {
+        return mPrefs.getBoolean(mContext.getString(R.string.settings_key_autofill_enabled), AUTOFILL_ENABLED);
+    }
+
+    public void setLoginAutocompleteEnabled(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_login_autocomplete_enabled), isEnabled);
+        editor.commit();
+    }
+
+    public boolean isLoginAutocompleteEnabled() {
+        return mPrefs.getBoolean(mContext.getString(R.string.settings_key_login_autocomplete_enabled), LOGIN_AUTOCOMPLETE_ENABLED);
+    }
+
+    public void setLoginSyncEnabled(boolean isEnabled) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(mContext.getString(R.string.settings_key_login_sync_enabled), isEnabled);
+        editor.commit();
+    }
+
+    public boolean isLoginSyncEnabled() {
+        return mPrefs.getBoolean(mContext.getString(R.string.settings_key_login_sync_enabled), LOGIN_SYNC_DEFAULT);
     }
 
 }

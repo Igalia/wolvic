@@ -82,7 +82,7 @@ class Services(val context: Context, places: Places): GeckoSession.NavigationDel
             }
         }
     }
-    public val serverConfig = ServerConfig(Server.RELEASE, CLIENT_ID, REDIRECT_URL)
+    val serverConfig = ServerConfig(Server.RELEASE, CLIENT_ID, REDIRECT_URL)
 
     val accountManager = FxaAccountManager(
         context = context,
@@ -94,7 +94,7 @@ class Services(val context: Context, places: Places): GeckoSession.NavigationDel
             type = DeviceType.VR,
             capabilities = setOf(DeviceCapability.SEND_TAB)
         ),
-        syncConfig = SyncConfig(setOf(SyncEngine.History, SyncEngine.Bookmarks), syncPeriodInMinutes = 1440L)
+        syncConfig = SyncConfig(setOf(SyncEngine.History, SyncEngine.Bookmarks, SyncEngine.Passwords), syncPeriodInMinutes = 1440L)
 
     ).also {
         it.registerForAccountEvents(deviceEventObserver, ProcessLifecycleOwner.get(), true)

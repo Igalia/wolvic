@@ -49,6 +49,13 @@
                     app:buttonText="@string/developer_options_show"
                     app:description="@string/settings_privacy_policy" />
 
+                <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                    android:id="@+id/loginsAndPasswords"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:buttonText="@string/privacy_options_logins_button"
+                    app:description="@string/privacy_options_logins"/>
+
                 <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
                     android:id="@+id/autocompleteSwitch"
                     android:layout_width="match_parent"

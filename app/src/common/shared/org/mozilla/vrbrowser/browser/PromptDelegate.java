@@ -8,15 +8,19 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 
 import org.mozilla.geckoview.AllowOrDeny;
+import org.mozilla.geckoview.Autocomplete;
 import org.mozilla.geckoview.GeckoResult;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.SlowScriptResponse;
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.browser.components.GeckoLoginDelegateWrapper;
 import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.browser.engine.SessionState;
+import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.db.SitePermission;
 import org.mozilla.vrbrowser.ui.viewmodel.SitePermissionViewModel;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
+import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.ui.widgets.WindowWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.AlertPromptWidget;
@@ -24,12 +28,19 @@ import org.mozilla.vrbrowser.ui.widgets.prompts.AuthPromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.ChoicePromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.ConfirmPromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.PromptWidget;
+import org.mozilla.vrbrowser.ui.widgets.prompts.SaveLoginPromptWidget;
+import org.mozilla.vrbrowser.ui.widgets.prompts.SelectLoginPromptWidget;
 import org.mozilla.vrbrowser.ui.widgets.prompts.TextPromptWidget;
+import org.mozilla.vrbrowser.ui.widgets.settings.SettingsView;
 import org.mozilla.vrbrowser.utils.StringUtils;
 import org.mozilla.vrbrowser.utils.UrlUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import mozilla.components.concept.storage.Login;
 
 public class PromptDelegate implements
         GeckoSession.PromptDelegate,
@@ -42,12 +53,16 @@ public class PromptDelegate implements
     private Context mContext;
     private WindowWidget mAttachedWindow;
     private List<SitePermission> mAllowedPopUpSites;
+    private List<SitePermission> mSavedLoginBlockedSites;
     private SitePermissionViewModel mViewModel;
+    private WidgetManagerDelegate mWidgetManager;
 
     public PromptDelegate(@NonNull Context context) {
         mContext = context;
+        mWidgetManager = (WidgetManagerDelegate) mContext;
         mViewModel = new SitePermissionViewModel(((Application)context.getApplicationContext()));
         mAllowedPopUpSites = new ArrayList<>();
+        mSavedLoginBlockedSites = new ArrayList<>();
     }
 
     public void attachToWindow(@NonNull WindowWidget window) {
@@ -59,6 +74,7 @@ public class PromptDelegate implements
         mAttachedWindow = window;
         mAttachedWindow.addWindowListener(this);
         mViewModel.getAll(SitePermission.SITE_PERMISSION_POPUP).observeForever(mPopUpSiteObserver);
+        mViewModel.getAll(SitePermission.SITE_PERMISSION_AUTOFILL).observeForever(mSavedLoginExceptionsObserver);
 
         if (getSession() != null) {
             setUpSession(getSession());
@@ -75,6 +91,7 @@ public class PromptDelegate implements
             mAttachedWindow = null;
         }
         mViewModel.getAll(SitePermission.SITE_PERMISSION_POPUP).removeObserver(mPopUpSiteObserver);
+        mViewModel.getAll(SitePermission.SITE_PERMISSION_AUTOFILL).removeObserver(mSavedLoginExceptionsObserver);
     }
 
     private Session getSession() {
@@ -238,6 +255,10 @@ public class PromptDelegate implements
         mAllowedPopUpSites = sites;
     };
 
+    private Observer<List<SitePermission>> mSavedLoginExceptionsObserver = sites -> {
+        mSavedLoginBlockedSites = sites;
+    };
+
     @Nullable
     @Override
     public GeckoResult<PromptResponse> onPopupPrompt(@NonNull GeckoSession geckoSession, @NonNull PopupPrompt popupPrompt) {
@@ -262,6 +283,78 @@ public class PromptDelegate implements
             } else {
                 result.complete(popupPrompt.confirm(AllowOrDeny.DENY));
             }
+        }
+
+        return result;
+    }
+
+    @Nullable
+    @Override
+    public GeckoResult<PromptResponse> onLoginSave(@NonNull GeckoSession geckoSession, final @NonNull AutocompleteRequest<Autocomplete.LoginSaveOption> autocompleteRequest) {
+        final GeckoResult<PromptResponse> result = new GeckoResult<>();
+
+        // We always get at least one item, at the moment only one item is support.
+        if (autocompleteRequest.options.length > 0) {
+            Autocomplete.LoginSaveOption saveOption = autocompleteRequest.options[0];
+            boolean originHasException = mSavedLoginBlockedSites.stream().anyMatch(site -> site.url.equals(saveOption.value.origin));
+            if (originHasException || !SettingsStore.getInstance(mContext).isLoginAutocompleteEnabled()) {
+                result.complete(autocompleteRequest.dismiss());
+
+            } else {
+                SaveLoginPromptWidget mSaveLoginPrompt = new SaveLoginPromptWidget(mContext, new SaveLoginPromptWidget.Delegate() {
+                    @Override
+                    public void dismiss(@NonNull Login login) {
+                        result.complete(autocompleteRequest.dismiss());
+                        SessionStore.get().addPermissionException(login.getOrigin(), SitePermission.SITE_PERMISSION_AUTOFILL);
+                    }
+
+                    @Override
+                    public void confirm(@NonNull Login login) {
+                        result.complete(autocompleteRequest.confirm(new Autocomplete.LoginSelectOption(GeckoLoginDelegateWrapper.toLoginEntry(login))));
+                    }
+                });
+                mSaveLoginPrompt.setDelegate(() -> result.complete(autocompleteRequest.dismiss()));
+                mSaveLoginPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
+                mSaveLoginPrompt.getPlacement().parentAnchorY = 0.0f;
+                mSaveLoginPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.js_prompt_y_distance);
+                mSaveLoginPrompt.setLogin(GeckoLoginDelegateWrapper.toLogin(saveOption.value));
+                mSaveLoginPrompt.show(UIWidget.REQUEST_FOCUS);
+            }
+
+        } else {
+            result.complete(autocompleteRequest.dismiss());
+        }
+
+        return result;
+    }
+
+    @Nullable
+    @Override
+    public GeckoResult<PromptResponse> onLoginSelect(@NonNull GeckoSession geckoSession, final @NonNull AutocompleteRequest<Autocomplete.LoginSelectOption> autocompleteRequest) {
+        final GeckoResult<PromptResponse> result = new GeckoResult<>();
+
+        if (autocompleteRequest.options.length > 1) {
+            List<Login> logins = Arrays.stream(autocompleteRequest.options).map(item -> GeckoLoginDelegateWrapper.toLogin(item.value)).collect(Collectors.toList());
+            SelectLoginPromptWidget mSelectLoginPrompt = new SelectLoginPromptWidget(mContext, new SelectLoginPromptWidget.Delegate() {
+                @Override
+                public void onLoginSelected(@NonNull Login login) {
+                    result.complete(autocompleteRequest.confirm(new Autocomplete.LoginSelectOption(GeckoLoginDelegateWrapper.toLoginEntry(login))));
+                }
+
+                @Override
+                public void onSettingsClicked() {
+                    result.complete(autocompleteRequest.dismiss());
+                    mWidgetManager.getTray().toggleSettingsDialog(SettingsView.SettingViewType.LOGINS_AND_PASSWORDS);
+                }
+            }, logins);
+            mSelectLoginPrompt.setDelegate(() -> result.complete(autocompleteRequest.dismiss()));
+            mSelectLoginPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
+            mSelectLoginPrompt.getPlacement().parentAnchorY = 0.0f;
+            mSelectLoginPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.js_prompt_y_distance);
+            mSelectLoginPrompt.show(UIWidget.REQUEST_FOCUS);
+
+        } else {
+            result.complete(autocompleteRequest.dismiss());
         }
 
         return result;

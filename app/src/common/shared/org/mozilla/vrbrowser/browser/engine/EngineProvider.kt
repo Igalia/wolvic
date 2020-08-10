@@ -25,25 +25,26 @@ object EngineProvider {
     fun getOrCreateRuntime(context: Context): GeckoRuntime {
         if (runtime == null) {
             val builder = GeckoRuntimeSettings.Builder()
+            val settingsStore = SettingsStore.getInstance(context)
 
             val policy : TrackingProtectionPolicy = TrackingProtectionStore.getTrackingProtectionPolicy(context);
             builder.crashHandler(CrashReporterService::class.java)
             builder.contentBlocking(ContentBlocking.Settings.Builder()
                     .antiTracking(policy.antiTrackingPolicy)
-                    .enhancedTrackingProtectionLevel(SettingsStore.getInstance(context).trackingProtectionLevel)
+                    .enhancedTrackingProtectionLevel(settingsStore.trackingProtectionLevel)
                     .build())
-            builder.displayDensityOverride(SettingsStore.getInstance(context).displayDensity)
-            builder.remoteDebuggingEnabled(SettingsStore.getInstance(context).isRemoteDebuggingEnabled)
-            builder.displayDpiOverride(SettingsStore.getInstance(context).displayDpi)
-            builder.screenSizeOverride(SettingsStore.getInstance(context).maxWindowWidth,
-                    SettingsStore.getInstance(context).maxWindowHeight)
+            builder.displayDensityOverride(settingsStore.displayDensity)
+            builder.remoteDebuggingEnabled(settingsStore.isRemoteDebuggingEnabled)
+            builder.displayDpiOverride(settingsStore.displayDpi)
+            builder.screenSizeOverride(settingsStore.maxWindowWidth, settingsStore.maxWindowHeight)
             builder.useMultiprocess(true)
             builder.inputAutoZoomEnabled(false)
             builder.doubleTapZoomingEnabled(false)
-            builder.debugLogging(SettingsStore.getInstance(context).isDebugLoggingEnabled)
-            builder.consoleOutput(SettingsStore.getInstance(context).isDebugLoggingEnabled)
+            builder.debugLogging(settingsStore.isDebugLoggingEnabled)
+            builder.consoleOutput(settingsStore.isDebugLoggingEnabled)
+            builder.loginAutofillEnabled(settingsStore.isAutoFillEnabled)
 
-            if (SettingsStore.getInstance(context).transparentBorderWidth > 0) {
+            if (settingsStore.transparentBorderWidth > 0) {
                 builder.useMaxScreenDepth(true)
             }
 

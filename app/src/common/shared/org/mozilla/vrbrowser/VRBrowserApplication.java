@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import com.mozilla.speechlibrary.SpeechService;
 
 import org.mozilla.vrbrowser.browser.Accounts;
+import org.mozilla.vrbrowser.browser.LoginStorage;
 import org.mozilla.vrbrowser.browser.Places;
 import org.mozilla.vrbrowser.browser.Services;
 import org.mozilla.vrbrowser.browser.engine.EngineProvider;
@@ -32,9 +33,14 @@ import org.mozilla.vrbrowser.utils.SystemUtils;
 
 public class VRBrowserApplication extends Application implements AppServicesProvider {
 
+    private static final int KEY_STRENGTH = 256;
+    private static final String KEY_STORAGE_NAME = "core_prefs";
+    private static final String PASSWORDS_KEY = "passwords";
+
     private AppExecutors mAppExecutors;
     private BitmapCache mBitmapCache;
     private Services mServices;
+    private LoginStorage mLoginStorage;
     private Places mPlaces;
     private Accounts mAccounts;
     private DownloadsManager mDownloadsManager;
@@ -67,6 +73,7 @@ public class VRBrowserApplication extends Application implements AppServicesProv
         EngineProvider.INSTANCE.getDefaultGeckoWebExecutor(activityContext);
         mPlaces = new Places(this);
         mServices = new Services(this, mPlaces);
+        mLoginStorage = new LoginStorage(this);
         mAccounts = new Accounts(this);
         mDownloadsManager = new DownloadsManager(this);
         mSpeechService = new SpeechService(this);
@@ -92,6 +99,10 @@ public class VRBrowserApplication extends Application implements AppServicesProv
 
     public Services getServices() {
         return mServices;
+    }
+
+    public LoginStorage getLoginStorage() {
+        return mLoginStorage;
     }
 
     public Places getPlaces() {

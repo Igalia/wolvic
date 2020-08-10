@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/dialog_background"
+        android:paddingStart="30dp"
+        android:paddingEnd="30dp">
+
+        <org.mozilla.vrbrowser.ui.widgets.settings.SettingsHeader
+            android:id="@+id/header_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:helpVisibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:title="@string/settings_display" />
+
+        <!-- ScrollView doesn't support fast scrollbar so we need to use a custom implementation -->
+        <org.mozilla.vrbrowser.ui.views.CustomScrollView
+            android:id="@+id/scrollbar"
+            style="@style/customScrollViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:paddingEnd="30dp"
+            app:layout_constraintBottom_toTopOf="@id/footer_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/header_layout">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/originDescription"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:ellipsize="end"
+                        android:scrollHorizontally="true"
+                        android:singleLine="true"
+                        android:layout_marginEnd="10dp"
+                        android:text="@string/login_edit_dialog_site_description"
+                        android:textColor="@color/library_panel_title_text_color"
+                        android:textSize="@dimen/settings_text_size"
+                        tools:text="@string/login_edit_dialog_site_description" />
+                    <TextView
+                        android:id="@+id/originText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:ellipsize="end"
+                        android:scrollHorizontally="true"
+                        android:singleLine="true"
+                        android:textStyle="bold"
+                        android:textColor="@color/library_panel_description_color"
+                        android:textSize="@dimen/settings_text_size"
+                        tools:text="http://mozilla.org" />
+                    <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                        android:id="@+id/siteButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:buttonText="@string/login_edit_dialog_site_button"/>
+                </LinearLayout>
+
+                <org.mozilla.vrbrowser.ui.views.settings.SingleEditSetting
+                    android:id="@+id/username_edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:width="300dp"
+                    android:inputType="text"
+                    app:description="@string/login_edit_dialog_username_description"
+                    app:highlightedTextColor="@color/fog" />
+
+                <org.mozilla.vrbrowser.ui.views.settings.SingleEditSetting
+                    android:id="@+id/password_edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:width="300dp"
+                    android:inputType="text|textPassword"
+                    app:description="@string/login_edit_dialog_password_description"
+                    app:highlightedTextColor="@color/fog" />
+
+            </LinearLayout>
+        </org.mozilla.vrbrowser.ui.views.CustomScrollView>
+
+        <org.mozilla.vrbrowser.ui.widgets.settings.SettingsFooter
+            android:id="@+id/footer_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:buttonText="@string/privacy_options_saved_login_delete"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

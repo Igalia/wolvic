@@ -22,6 +22,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 
 import org.mozilla.geckoview.AllowOrDeny;
+import org.mozilla.geckoview.Autocomplete;
 import org.mozilla.geckoview.ContentBlocking;
 import org.mozilla.geckoview.GeckoDisplay;
 import org.mozilla.geckoview.GeckoResult;
@@ -1515,6 +1516,23 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         return GeckoResult.fromValue(prompt.dismiss());
     }
 
+    @Nullable
+    @Override
+    public GeckoResult<PromptResponse> onLoginSelect(@NonNull GeckoSession geckoSession, @NonNull AutocompleteRequest<Autocomplete.LoginSelectOption> autocompleteRequest) {
+        if (mPromptDelegate != null) {
+            return mPromptDelegate.onLoginSelect(geckoSession, autocompleteRequest);
+        }
+        return GeckoResult.fromValue(autocompleteRequest.dismiss());
+    }
+
+    @Nullable
+    @Override
+    public GeckoResult<PromptResponse> onLoginSave(@NonNull GeckoSession geckoSession, @NonNull AutocompleteRequest<Autocomplete.LoginSaveOption> autocompleteRequest) {
+        if (mPromptDelegate != null) {
+            return mPromptDelegate.onLoginSave(geckoSession, autocompleteRequest);
+        }
+        return GeckoResult.fromValue(autocompleteRequest.dismiss());
+    }
 
     // MediaDelegate
 

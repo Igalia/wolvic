@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="isEmpty"
+            type="boolean" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="@dimen/settings_dialog_width"
+        android:layout_height="@dimen/settings_dialog_height"
+        android:background="@drawable/dialog_background"
+        android:paddingStart="30dp"
+        android:paddingEnd="30dp">
+
+        <org.mozilla.vrbrowser.ui.widgets.settings.SettingsHeader
+            android:id="@+id/header_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:helpVisibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:title="@string/settings_privacy_saved_logins" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintBottom_toTopOf="@id/footer_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/header_layout">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_marginLeft="110dp"
+                android:layout_marginRight="110dp"
+                visibleGone="@{isEmpty}">
+                <TextView
+                    style="@style/settingsText"
+                    android:id="@+id/empty_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:textAlignment="center"
+                    android:paddingBottom="15dp"
+                    android:textColor="@color/rhino"
+                    android:layout_gravity="center"
+                    android:text="@string/privacy_options_saved_logins_list_empty_first"
+                    tools:text="@string/privacy_options_saved_logins_list_empty_first" />
+                <TextView
+                    style="@style/settingsText"
+                    android:id="@+id/empty_second_Text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:textAlignment="center"
+                    android:textColor="@color/rhino"
+                    android:layout_gravity="center"
+                    android:text="@string/privacy_options_saved_logins_list_empty_second"
+                    tools:text="@string/privacy_options_saved_logins_list_empty_second" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                visibleGone="@{!isEmpty}">
+                <TextView
+                    style="@style/settingsText"
+                    android:id="@+id/content_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:paddingBottom="5dp"
+                    android:text="@string/privacy_options_saved_logins_list_header"
+                    tools:text="@string/privacy_options_saved_logins_list_header" />
+
+                <org.mozilla.vrbrowser.ui.views.CustomRecyclerView
+                    android:id="@+id/logins_list"
+                    style="@style/customRecyclerViewStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/asphalt"
+                    android:contentDescription="Logins List"
+                    android:paddingEnd="15dp"
+                    app:layoutManager="org.mozilla.vrbrowser.ui.adapters.CustomLinearLayoutManager" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <org.mozilla.vrbrowser.ui.widgets.settings.SettingsFooter
+            android:id="@+id/footer_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:buttonText="@string/privacy_options_saved_logins_clear_all"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

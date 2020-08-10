@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="login"
+            type="mozilla.components.concept.storage.Login" />
+        <variable
+            name="delegate"
+            type="org.mozilla.vrbrowser.ui.adapters.LoginsAdapter.Delegate" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/library_item_row_height">
+
+        <RelativeLayout
+            android:id="@+id/layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/autofill_item_background"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:onClick="@{(view) ->  delegate.onLoginSelected(view, login)}"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:soundEffectsEnabled="false"
+            android:addStatesFromChildren="true">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:tint="@color/concrete"
+                android:src="@drawable/ic_login"/>
+
+            <TextView
+                android:id="@+id/username"
+                style="@style/settingsText"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_toEndOf="@id/icon"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:singleLine="true"
+                android:text="@{login.username}"
+                tools:text="user@mozilla.org"/>
+        </RelativeLayout>
+    </FrameLayout>
+</layout>

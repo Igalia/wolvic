@@ -443,11 +443,13 @@ dependencies {
     implementation deps.android_components.browser_storage
     implementation deps.android_components.browser_domains
     implementation deps.android_components.service_accounts
+    implementation deps.android_components.service_sync_logins
     implementation deps.android_components.mozilla_service_location
     implementation deps.android_components.ui_autocomplete
     implementation deps.android_components.concept_engine
     implementation deps.android_components.concept_fetch
     implementation deps.android_components.lib_fetch
+    implementation deps.android_components.lib_dataprotect
     implementation deps.android_components.support_rustlog
     implementation deps.android_components.support_rusthttp
     implementation deps.android_components.feature_accounts

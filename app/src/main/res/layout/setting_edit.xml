@@ -1,35 +1,39 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingTop="5dp"
         android:paddingBottom="5dp"
-        android:orientation="vertical">
+        android:gravity="center_vertical">
 
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="10dp"
+            android:layout_toStartOf="@+id/settingButton"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/setting_description"
+                style="@style/settingsText"
+                android:layout_marginEnd="5dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:text="@string/developer_options_display_dpi"
+                tools:text="Setting Description" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:layout_marginEnd="10dp"
-                android:layout_toLeftOf="@+id/settingButton"
+                android:layout_toEndOf="@id/setting_description"
+                android:layout_toStartOf="@id/password_toggle"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/setting_description"
-                    style="@style/settingsText"
-                    android:layout_marginEnd="5dp"
-                    android:text="@string/developer_options_display_dpi"
-                    tools:text="Setting Description" />
-
                 <TextView
                     android:id="@+id/textValue1"
                     style="@style/settingsValue"
@@ -67,12 +71,27 @@
                     tools:text="Value" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/settingButton"
-                style="@style/settingsButton"
+            <androidx.appcompat.widget.AppCompatToggleButton
+                android:id="@+id/password_toggle"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true" />
+                android:layout_centerVertical="true"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/concrete"
+                android:background="@drawable/password_toggle"
+                android:checked="false"
+                android:textOn=""
+                android:textOff=""
+                android:layout_marginStart="5dp"
+                android:visibility="invisible"/>
         </RelativeLayout>
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/settingButton"
+            style="@style/settingsButton"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true" />
+    </RelativeLayout>
 </merge>

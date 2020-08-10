@@ -8,16 +8,17 @@ import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
+import androidx.appcompat.widget.AppCompatToggleButton;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 
-public class SingleEditSetting extends LinearLayout {
+public class SingleEditSetting extends RelativeLayout {
 
     private AudioEngine mAudio;
     private String mDescription;
@@ -31,6 +32,7 @@ public class SingleEditSetting extends LinearLayout {
     private OnClickListener mListener;
     protected int mHighlightedTextColor;
     private String mDefaultFirstValue;
+    private AppCompatToggleButton mPasswordToggle;
 
     public SingleEditSetting(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -70,6 +72,7 @@ public class SingleEditSetting extends LinearLayout {
         }
         if (mInputType != InputType.TYPE_NULL) {
             mEdit1.setInputType(mInputType);
+            mText1.setInputType(mInputType);
         }
         if (mWidth > 0) {
             mEdit1.setWidth((int)mWidth);
@@ -77,11 +80,23 @@ public class SingleEditSetting extends LinearLayout {
 
         mButton = findViewById(R.id.settingButton);
         mButton.setOnClickListener(mInternalClickListener);
+
+        mPasswordToggle = findViewById(R.id.password_toggle);
+        mPasswordToggle.setOnCheckedChangeListener((compoundButton, checked) -> {
+            if (checked) {
+                mEdit1.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                mText1.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+
+            } else {
+                mEdit1.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                mText1.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            }
+        });
     }
 
     private OnClickListener mText1ClickListener = v -> mButton.performClick();
 
-    private View.OnClickListener mInternalClickListener = v -> onClickListener(v);
+    private View.OnClickListener mInternalClickListener = this::onClickListener;
 
     protected TextView.OnEditorActionListener mInternalEditorActionListener = new TextView.OnEditorActionListener() {
         @Override
@@ -159,6 +174,10 @@ public class SingleEditSetting extends LinearLayout {
 
     public boolean contains(@NonNull View view) {
         return findViewById(view.getId()) == view;
+    }
+
+    public void setPasswordToggleVisibility(int visibility) {
+        mPasswordToggle.setVisibility(visibility);
     }
 
 }

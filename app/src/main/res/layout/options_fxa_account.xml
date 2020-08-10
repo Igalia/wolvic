@@ -102,6 +102,15 @@
                     app:on_text="@string/sync"
                     app:off_text="@string/do_not_sync"/>
 
+                <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                    android:id="@+id/logins_sync_switch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="50dp"
+                    app:description="@string/fxa_account_options_logins_sync"
+                    app:on_text="@string/sync"
+                    app:off_text="@string/do_not_sync"/>
+
             </LinearLayout>
         </org.mozilla.vrbrowser.ui.views.CustomScrollView>
 
