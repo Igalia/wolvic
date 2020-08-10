@@ -188,7 +188,7 @@ public class AddonsListView extends RecyclerView.ViewHolder implements AddonsMan
                         mWidgetManager.getServicesProvider().getExecutors().mainThread().execute(() -> {
                             CancellableOperation installTask = mWidgetManager.getServicesProvider().getAddons().getAddonManager().installAddon(addon, addon1 -> {
                                 showDownloadingAddonSuccessDialog(addon1);
-                                mAdapter.updateAddon(addon1);
+                                updateAddons();
                                 return null;
 
                             }, (s, throwable) -> {
