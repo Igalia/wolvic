@@ -63,8 +63,15 @@ class GleanMetricsServiceTest {
         GleanMetricsService.testSetStartupMetrics()
         assertTrue(Distribution.channelName.testHasValue())
         assertEquals(Distribution.channelName.testGetValue(),
-                if (org.mozilla.vrbrowser.utils.DeviceType.isOculusBuild()) "oculusvr"
-                else BuildConfig.FLAVOR_platform)
+                org.mozilla.vrbrowser.utils.DeviceType.getDeviceTypeId());
+
+        // Make sure the distribution channel name is set after
+        // the telemetry system is switch off/on.
+        GleanMetricsService.stop();
+        GleanMetricsService.start();
+        assertTrue(Distribution.channelName.testHasValue())
+        assertEquals(Distribution.channelName.testGetValue(),
+                org.mozilla.vrbrowser.utils.DeviceType.getDeviceTypeId());
     }
 
     @Test
