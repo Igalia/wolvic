@@ -223,7 +223,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
                         .withLayout(R.layout.tooltip)
                         .withString(mWifiSSID)
                         .withAutoHide(false)
-                        .withMargin(-20.0f)
+                        .withMargin(-15.0f)
                         .withPosition(NotificationManager.Notification.TOP).build();
                 NotificationManager.show(WIFI_NOTIFICATION_ID, notification);
 
@@ -242,7 +242,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
                         .withLayout(R.layout.tooltip)
                         .withString(String.format(Locale.getDefault(), "%d%%", mLeftControllerBatteryLevel))
                         .withAutoHide(false)
-                        .withMargin(-20.0f)
+                        .withMargin(-15.0f)
                         .withPosition(NotificationManager.Notification.TOP).build();
                 NotificationManager.show(LEFT_CONTROLLER_NOTIFICATION_ID, notification);
 
@@ -261,7 +261,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
                         .withLayout(R.layout.tooltip)
                         .withString(String.format(Locale.getDefault(), "%d%%", mRightControllerBatteryLevel))
                         .withAutoHide(false)
-                        .withMargin(-20.0f)
+                        .withMargin(-15.0f)
                         .withPosition(NotificationManager.Notification.TOP).build();
                 NotificationManager.show(RIGHT_CONTROLLER_NOTIFICATION_ID, notification);
 
@@ -280,7 +280,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
                         .withLayout(R.layout.tooltip)
                         .withString(String.format(Locale.getDefault(), "%d%%", mHeadsetBatteryLevel))
                         .withAutoHide(false)
-                        .withMargin(-20.0f)
+                        .withMargin(-15.0f)
                         .withPosition(NotificationManager.Notification.TOP).build();
                 NotificationManager.show(HEADSET_NOTIFICATION_ID, notification);
 
@@ -299,7 +299,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
                         .withLayout(R.layout.tooltip)
                         .withString(getFormattedDate())
                         .withAutoHide(false)
-                        .withMargin(-20.0f)
+                        .withMargin(-15.0f)
                         .withPosition(NotificationManager.Notification.TOP).build();
                 NotificationManager.show(TIME_NOTIFICATION_ID, notification);
 
@@ -644,7 +644,8 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
                     .withDensity(R.dimen.tray_tooltip_density)
                     .withString(string)
                     .withPosition(NotificationManager.Notification.TOP)
-                    .withZTranslation(25.0f).build();
+                    .withMargin(-75.0f)
+                    .withZTranslation(20.0f).build();
             NotificationManager.show(notificationId, notification);
         }
     }

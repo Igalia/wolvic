@@ -127,7 +127,7 @@
     <item name="tray_world_z" format="float" type="dimen">-2.5</item>
     <item name="tray_world_width" format="float" type="dimen">1.2</item>
     <dimen name="tray_width">204dp</dimen>
-    <dimen name="tray_height">64dp</dimen>
+    <dimen name="tray_height">66dp</dimen>
     <item name="tray_tooltip_density" format="float" type="dimen">4.0</item>
     <dimen name="tray_tooltip_padding_h">20dp</dimen>
     <dimen name="tray_tooltip_padding_v">10dp</dimen>
