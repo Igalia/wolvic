@@ -974,8 +974,8 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
 
     private void handleShowKeyboard(Keyboard aKeyboard) {
         Keyboard alphabetic = mCurrentKeyboard.getAlphabeticKeyboard();
-        Keyboard alphabetiCap = mCurrentKeyboard.getAlphabeticCapKeyboard();
-        final boolean switchToAlphabeticMode = aKeyboard == alphabetic || aKeyboard == alphabetiCap;
+        Keyboard alphabeticCap = mCurrentKeyboard.getAlphabeticCapKeyboard();
+        final boolean switchToAlphabeticMode = aKeyboard == alphabetic || aKeyboard == alphabeticCap;
 
         mKeyboardView.setKeyboard(aKeyboard);
         mKeyboardView.setLayoutParams(mKeyboardView.getLayoutParams());
@@ -1005,6 +1005,10 @@ public class KeyboardWidget extends UIWidget implements CustomKeyboardView.OnKey
             mCurrentKeyboard.getAlphabeticKeyboard().setSpaceKeyLabel("");
         }
 
+        if (!switchToSymbolMode && alphabeticCap != null &&
+                alphabeticCap.isShifted()) {
+            alphabetic = alphabeticCap;
+        }
         handleShowKeyboard(switchToSymbolMode ? getSymbolsKeyboard() : alphabetic);
     }
 
