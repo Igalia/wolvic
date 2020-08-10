@@ -74,6 +74,7 @@
     <string name="sumo_etp_url" translatable="false">https://support.mozilla.org/kb/enhanced-tracking-protection-firefox-desktop</string>
     <string name="sumo_drm_url" translatable="false">https://support.mozilla.org/kb/enable-drm</string>
     <string name="sumo_webxr_url" translatable="false">https://support.mozilla.org/en-US/kb/webxr-permission-info-page</string>
+    <string name="sumo_addons_permissions" translatable="false">https://support.mozilla.org/kb/permission-request-messages-firefox-extensions</string>
     <string name="list_item_view_tag" translatable="false">view</string>
     <string name="position_tag" translatable="false">position</string>
     <string name="view_id_tag" translatable="false">view_id</string>

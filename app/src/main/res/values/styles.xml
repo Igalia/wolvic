@@ -107,6 +107,26 @@
         <item name="activeModeBackground">@drawable/tray_background_ckecked_end</item>
     </style>
 
+    <style name="libraryButtonTheme">
+        <item name="android:padding">@dimen/library_button_padding</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:layout_width">70dp</item>
+        <item name="android:layout_height">70dp</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="tintColorList">@drawable/library_button_icon_color</item>
+        <item name="activeModeTintColorList">@drawable/library_button_icon_color_active</item>
+    </style>
+
+    <style name="libraryButtonStartTheme" parent="libraryButtonTheme">
+        <item name="android:background">@drawable/library_button_background_start</item>
+        <item name="activeModeBackground">@drawable/library_button_active_background_start</item>
+    </style>
+
+    <style name="libraryButtonMiddleTheme" parent="libraryButtonTheme">
+        <item name="android:background">@drawable/library_button_background</item>
+        <item name="activeModeBackground">@drawable/library_button_active_background</item>
+    </style>
+
     <style name="honeycombButtonTheme">
         <item name="android:orientation">vertical</item>
         <item name="android:layout_width">136dp</item>

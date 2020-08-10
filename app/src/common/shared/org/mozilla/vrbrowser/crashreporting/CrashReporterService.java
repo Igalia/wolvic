@@ -134,4 +134,8 @@ public class CrashReporterService extends JobIntentService {
         Log.d(LOGTAG, "Crash reporter job finished");
     }
 
+    public static void submitCaughtException(@NonNull Exception exception) {
+
+    }
+
 }

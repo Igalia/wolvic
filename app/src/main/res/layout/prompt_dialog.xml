@@ -46,8 +46,10 @@
                 android:textSize="@dimen/text_bigger_size" />
         </FrameLayout>
 
-        <FrameLayout
+        <org.mozilla.vrbrowser.ui.views.CustomScrollView
             android:id="@+id/bodyContainer"
+            style="@style/customScrollViewStyle"
+            android:fastScrollAlwaysVisible="false"
             android:layout_width="322dp"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
@@ -61,10 +63,9 @@
                 android:layout_gravity="center_horizontal"
                 android:gravity="center_horizontal"
                 tools:text="Body"
-                android:lineSpacingMultiplier="1.25"
                 android:textColor="@color/fog"
                 android:textSize="@dimen/text_medium_size" />
-        </FrameLayout>
+        </org.mozilla.vrbrowser.ui.views.CustomScrollView>
 
         <FrameLayout
             android:id="@+id/descriptionContainer"

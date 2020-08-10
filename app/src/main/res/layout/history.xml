@@ -34,51 +34,14 @@
             type="org.mozilla.vrbrowser.ui.callbacks.HistoryCallback" />
     </data>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/panel_background"
-        android:orientation="vertical"
-        android:paddingTop="30dp"
-        android:paddingBottom="30dp">
-
-        <include
-            android:id="@+id/history_narrow"
-            layout="@layout/history_narrow"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
-            android:layout_marginEnd="50dp"
-            android:layout_marginBottom="20dp"
-            app:isAccountsUIEnabled="@{isAccountsUIEnabled}"
-            app:isEmpty="@{historyViewModel.isEmpty}"
-            app:isSignedIn="@{isSignedIn}"
-            app:isSyncEnabled="@{isSyncEnabled}"
-            app:lastSync="@{lastSync}"
-            app:isSyncing="@{isSyncing}"
-            app:isNarrow="@{historyViewModel.isNarrow}"
-            app:callback="@{callback}" />
-
-        <include
-            android:id="@+id/history_wide"
-            layout="@layout/history_wide"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
-            android:layout_marginEnd="50dp"
-            android:layout_marginBottom="20dp"
-            app:isAccountsUIEnabled="@{isAccountsUIEnabled}"
-            app:isEmpty="@{historyViewModel.isEmpty}"
-            app:isSignedIn="@{isSignedIn}"
-            app:isSyncEnabled="@{isSyncEnabled}"
-            app:lastSync="@{lastSync}"
-            app:isSyncing="@{isSyncing}"
-            app:isNarrow="@{historyViewModel.isNarrow}"
-            app:callback="@{callback}" />
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_centerInParent="true"
             android:gravity="center_vertical|center_horizontal"
             android:orientation="vertical"
             app:visibleGone="@{!historyViewModel.isLoading &amp;&amp; historyViewModel.isEmpty}">
@@ -121,6 +84,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:contentDescription="@string/history_loading"
+            android:layout_centerInParent="true"
             android:gravity="center_vertical|center_horizontal"
             android:text="@string/history_loading"
             android:textAlignment="center"
@@ -133,13 +97,47 @@
             style="@style/customRecyclerViewStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="30dp"
-            android:layout_marginEnd="30dp"
+            android:layout_alignParentTop="true"
+            android:layout_above="@+id/header"
             android:contentDescription="History feed"
             android:fadingEdgeLength="60dp"
             android:requiresFadingEdge="vertical"
             app:layoutManager="org.mozilla.vrbrowser.ui.adapters.CustomLinearLayoutManager"
             app:visibleGone="@{!historyViewModel.isLoading &amp;&amp; !historyViewModel.isEmpty}" />
 
-    </LinearLayout>
+        <FrameLayout
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_alignParentBottom="true">
+            <include
+                android:id="@+id/history_narrow"
+                layout="@layout/history_narrow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:isAccountsUIEnabled="@{isAccountsUIEnabled}"
+                app:isEmpty="@{historyViewModel.isEmpty}"
+                app:isSignedIn="@{isSignedIn}"
+                app:isSyncEnabled="@{isSyncEnabled}"
+                app:lastSync="@{lastSync}"
+                app:isSyncing="@{isSyncing}"
+                app:isNarrow="@{historyViewModel.isNarrow}"
+                app:callback="@{callback}" />
+
+            <include
+                android:id="@+id/history_wide"
+                layout="@layout/history_wide"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:isAccountsUIEnabled="@{isAccountsUIEnabled}"
+                app:isEmpty="@{historyViewModel.isEmpty}"
+                app:isSignedIn="@{isSignedIn}"
+                app:isSyncEnabled="@{isSyncEnabled}"
+                app:lastSync="@{lastSync}"
+                app:isSyncing="@{isSyncing}"
+                app:isNarrow="@{historyViewModel.isNarrow}"
+                app:callback="@{callback}" />
+        </FrameLayout>
+    </RelativeLayout>
 </layout>

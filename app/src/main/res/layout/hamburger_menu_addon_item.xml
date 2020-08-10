@@ -1,0 +1,74 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <import type="mozilla.components.concept.engine.webextension.Action"/>
+        <variable
+            name="item"
+            type="org.mozilla.vrbrowser.ui.adapters.HamburgerMenuAdapter.MenuItem" />
+    </data>
+
+    <RelativeLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/context_menu_row_height"
+        android:background="@drawable/context_menu_item_background"
+        android:paddingStart="45dp"
+        android:paddingEnd="15dp"
+        android:focusable="true"
+        android:clickable="true">
+
+        <ImageView
+            android:id="@+id/listItemImage"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:scaleType="fitCenter"
+            android:duplicateParentState="true"
+            android:focusable="false"
+            android:padding="4dp"
+            android:background="@drawable/hamburger_menu_addon_background"
+            app:drawable="@{item.icon}"/>
+
+        <TextView
+            android:id="@+id/listItemText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toEndOf="@id/listItemImage"
+            android:layout_toStartOf="@id/badge"
+            android:layout_centerVertical="true"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:shadowColor="@color/text_shadow"
+            android:gravity="center_vertical"
+            android:textColor="@color/fog"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:singleLine="true"
+            android:duplicateParentState="true"
+            android:focusable="false"
+            android:text="@{item.title}"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/badge"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:textAlignment="gravity"
+            android:ellipsize="end"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
+            app:autoSizeTextType="uniform"
+            app:autoSizeMinTextSize="12sp"
+            app:autoSizeMaxTextSize="20sp"
+            app:autoSizeStepGranularity="2sp"
+            android:background="@color/asphalt"
+            app:visibleGone="@{(item.action.badgeText != null &amp;&amp; !item.action.badgeText.isEmpty())}"
+            android:textColor="@{item.action.badgeTextColor != null ? item.action.badgeTextColor : @color/fog}"
+            android:text="@{item.action.badgeText}"/>
+
+    </RelativeLayout>
+</layout>

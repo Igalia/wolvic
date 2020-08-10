@@ -221,6 +221,13 @@ public class DownloadsManager {
         return downloads;
     }
 
+    public boolean isDownloading() {
+        return getDownloads().stream()
+                .filter(item ->
+                        item.getStatus() == DownloadManager.STATUS_RUNNING)
+                .findFirst().orElse(null) != null;
+    }
+
     private BroadcastReceiver mDownloadReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {

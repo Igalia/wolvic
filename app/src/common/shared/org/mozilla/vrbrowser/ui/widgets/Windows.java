@@ -19,9 +19,12 @@ import org.mozilla.vrbrowser.browser.HistoryStore;
 import org.mozilla.vrbrowser.browser.Media;
 import org.mozilla.vrbrowser.browser.Services;
 import org.mozilla.vrbrowser.browser.SettingsStore;
+import org.mozilla.vrbrowser.browser.adapter.ComponentsAdapter;
+import org.mozilla.vrbrowser.browser.components.GeckoEngineSession;
 import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.browser.engine.SessionState;
 import org.mozilla.vrbrowser.browser.engine.SessionStore;
+import org.mozilla.vrbrowser.downloads.DownloadsManager;
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.PromptDialogWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.UIDialog;
@@ -38,7 +41,6 @@ import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -78,9 +80,9 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         int textureHeight;
         float worldWidth;
         int tabIndex = -1;
-        PanelType panelType;
+        @PanelType int panelType = Windows.NONE;
 
-        public void load(WindowWidget aWindow, WindowsState aState, int aTabIndex) {
+        public void load(@NonNull WindowWidget aWindow, WindowsState aState, int aTabIndex) {
             WidgetPlacement widgetPlacement;
             if (aWindow.isFullScreen()) {
                 widgetPlacement = aWindow.getBeforeFullscreenPlacement();
@@ -97,17 +99,11 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
             textureHeight = widgetPlacement.height;
             worldWidth = widgetPlacement.worldWidth;
             tabIndex = aTabIndex;
-            if (aWindow.isBookmarksVisible()) {
-                panelType = PanelType.BOOKMARKS;
-
-            } else if (aWindow.isHistoryVisible()) {
-                panelType = PanelType.HISTORY;
-
-            } else if (aWindow.isDownloadsVisible()) {
-                panelType = PanelType.DOWNLOADS;
+            if (aWindow.isLibraryVisible()) {
+                panelType = aWindow.getSelectedPanel();
 
             } else {
-                panelType = PanelType.NONE;
+                panelType = Windows.NONE;
             }
         }
     }
@@ -144,13 +140,15 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     private boolean mAfterRestore;
     private String mAddedTabUri;
     private @NewTabLocation int mAddedTabLocation = OPEN_IN_FOREGROUND;
+    private DownloadsManager mDownloadsManager;
 
-    public enum PanelType {
-        NONE,
-        BOOKMARKS,
-        HISTORY,
-        DOWNLOADS
-    }
+    @IntDef(value = { NONE, BOOKMARKS, HISTORY, DOWNLOADS, ADDONS})
+    public @interface PanelType {}
+    public static final int NONE = 0;
+    public static final int BOOKMARKS = 1;
+    public static final int HISTORY = 2;
+    public static final int DOWNLOADS = 3;
+    public static final int ADDONS = 4;
 
     public enum WindowPlacement{
         FRONT(0),
@@ -191,6 +189,8 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         mServices.setTabReceivedDelegate(this);
 
         mWidgetManager.addConnectivityListener(mConnectivityDelegate);
+
+        mDownloadsManager = mWidgetManager.getServicesProvider().getDownloadsManager();
 
         mIsRestoreEnabled = SettingsStore.getInstance(mContext).isRestoreTabsEnabled();
         mWindowsState = restoreState();
@@ -330,18 +330,21 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         newWindow.getPlacement().worldWidth = aState.worldWidth;
         placeWindow(newWindow, aState.placement);
         if (newWindow.getSession() != null) {
-            if (aState.panelType != null) {
-                switch (aState.panelType) {
-                    case BOOKMARKS:
-                        newWindow.getSession().loadUri(UrlUtils.ABOUT_BOOKMARKS);
-                        break;
-                    case HISTORY:
-                        newWindow.getSession().loadUri(UrlUtils.ABOUT_HISTORY);
-                        break;
-                    case DOWNLOADS:
-                        newWindow.getSession().loadUri(UrlUtils.ABOUT_DOWNLOADS);
-                        break;
-                }
+            switch (aState.panelType) {
+                case BOOKMARKS:
+                    newWindow.getSession().loadUri(UrlUtils.ABOUT_BOOKMARKS);
+                    break;
+                case HISTORY:
+                    newWindow.getSession().loadUri(UrlUtils.ABOUT_HISTORY);
+                    break;
+                case DOWNLOADS:
+                    newWindow.getSession().loadUri(UrlUtils.ABOUT_DOWNLOADS);
+                    break;
+                case ADDONS:
+                    newWindow.getSession().loadUri(UrlUtils.ABOUT_ADDONS);
+                    break;
+                case NONE:
+                    break;
             }
         }
         updateCurvedMode(true);
@@ -355,9 +358,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         WindowWidget leftWindow = getLeftWindow();
         WindowWidget rightWindow = getRightWindow();
 
-        aWindow.hidePanel(PanelType.BOOKMARKS);
-        aWindow.hidePanel(PanelType.HISTORY);
-        aWindow.hidePanel(PanelType.DOWNLOADS);
+        aWindow.hidePanel();
 
         if (leftWindow == aWindow) {
             removeWindow(leftWindow);
@@ -1037,10 +1038,6 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     };
 
     // Tray Listener
-    @Override
-    public void onBookmarksClicked() {
-        mFocusedWindow.switchPanel(PanelType.BOOKMARKS);
-    }
 
     @Override
     public void onPrivateBrowsingClicked() {
@@ -1060,13 +1057,13 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     }
 
     @Override
-    public void onHistoryClicked() {
-        mFocusedWindow.switchPanel(PanelType.HISTORY);
-    }
+    public void onLibraryClicked() {
+        if (mDownloadsManager.isDownloading()) {
+            mFocusedWindow.switchPanel(Windows.DOWNLOADS);
 
-    @Override
-    public void onDownloadsClicked() {
-        mFocusedWindow.switchPanel(PanelType.DOWNLOADS);
+        } else {
+            mFocusedWindow.switchPanel(Windows.NONE);
+        }
     }
 
     @Override
@@ -1274,7 +1271,21 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
         } else {
             setFirstPaint(targetWindow, aTab);
-            targetWindow.setSession(aTab, WindowWidget.DEACTIVATE_CURRENT_SESSION);
+            // The Web Extensions require an active target session so we need to make sure we always keep the
+            // Web Extension target session active when switching tabs.
+            Session currentWindowSession = targetWindow.getSession();
+            Session popUpSession = ComponentsAdapter.get().getStore().getState().getExtensions().values().stream()
+                    .filter(extensionState -> extensionState.getPopupSession() != null)
+                    .map(extensionState -> ((GeckoEngineSession) extensionState.getPopupSession()).getSession())
+                    .findFirst().orElse(null);
+            Session parentPopupSession = null;
+            if (popUpSession != null) {
+                parentPopupSession = SessionStore.get().getSession(popUpSession.getSessionState().mParentId);
+            }
+            targetWindow.setSession(aTab,
+                    (popUpSession == null && aTab.isWebExtensionSession()) || parentPopupSession == currentWindowSession ?
+                            WindowWidget.LEAVE_CURRENT_SESSION_ACTIVE :
+                            WindowWidget.DEACTIVATE_CURRENT_SESSION);
         }
     }
 

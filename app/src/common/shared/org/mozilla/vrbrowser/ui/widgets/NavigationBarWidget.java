@@ -1112,38 +1112,12 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     // TrayListener
 
     @Override
-    public void onBookmarksClicked() {
-        if (mAttachedWindow.isResizing()) {
-            exitResizeMode(ResizeAction.RESTORE_SIZE);
-
-        } else if (mAttachedWindow.isFullScreen()) {
-            exitFullScreenMode();
-
-        } else if (mViewModel.getIsInVRVideo().getValue().get()) {
-            exitVRVideo();
-        }
-    }
-
-    @Override
     public void onPrivateBrowsingClicked() {
 
     }
 
     @Override
-    public void onHistoryClicked() {
-        if (mAttachedWindow.isResizing()) {
-            exitResizeMode(ResizeAction.RESTORE_SIZE);
-
-        } else if (mAttachedWindow.isFullScreen()) {
-            exitFullScreenMode();
-
-        } else if (mViewModel.getIsInVRVideo().getValue().get()) {
-            exitVRVideo();
-        }
-    }
-
-    @Override
-    public void onDownloadsClicked() {
+    public void onLibraryClicked() {
         if (mAttachedWindow.isResizing()) {
             exitResizeMode(ResizeAction.RESTORE_SIZE);
 
@@ -1209,6 +1183,18 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
                 }
 
                 hideMenu();
+            }
+
+            @Override
+            public void onAddons() {
+                hideMenu();
+
+                if (!mAttachedWindow.isLibraryVisible()) {
+                    mAttachedWindow.switchPanel(Windows.ADDONS);
+
+                } else if (mAttachedWindow.getSelectedPanel() != Windows.ADDONS){
+                    mAttachedWindow.showPanel(Windows.ADDONS);
+                }
             }
         });
         boolean isSendTabEnabled = false;

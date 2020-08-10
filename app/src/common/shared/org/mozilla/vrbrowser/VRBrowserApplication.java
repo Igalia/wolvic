@@ -16,6 +16,7 @@ import com.mozilla.speechlibrary.SpeechService;
 
 import org.mozilla.vrbrowser.browser.Accounts;
 import org.mozilla.vrbrowser.browser.LoginStorage;
+import org.mozilla.vrbrowser.browser.Addons;
 import org.mozilla.vrbrowser.browser.Places;
 import org.mozilla.vrbrowser.browser.Services;
 import org.mozilla.vrbrowser.browser.engine.EngineProvider;
@@ -33,10 +34,7 @@ import org.mozilla.vrbrowser.utils.SystemUtils;
 
 public class VRBrowserApplication extends Application implements AppServicesProvider {
 
-    private static final int KEY_STRENGTH = 256;
-    private static final String KEY_STORAGE_NAME = "core_prefs";
-    private static final String PASSWORDS_KEY = "passwords";
-
+    private SessionStore mSessionStore;
     private AppExecutors mAppExecutors;
     private BitmapCache mBitmapCache;
     private Services mServices;
@@ -46,6 +44,7 @@ public class VRBrowserApplication extends Application implements AppServicesProv
     private DownloadsManager mDownloadsManager;
     private SpeechService mSpeechService;
     private EnvironmentsManager mEnvironmentsManager;
+    private Addons mAddons;
 
     @Override
     public void onCreate() {
@@ -71,15 +70,19 @@ public class VRBrowserApplication extends Application implements AppServicesProv
 
     protected void onActivityCreate(@NonNull Context activityContext) {
         EngineProvider.INSTANCE.getDefaultGeckoWebExecutor(activityContext);
-        mPlaces = new Places(this);
-        mServices = new Services(this, mPlaces);
-        mLoginStorage = new LoginStorage(this);
-        mAccounts = new Accounts(this);
-        mDownloadsManager = new DownloadsManager(this);
-        mSpeechService = new SpeechService(this);
         mAppExecutors = new AppExecutors();
-        mBitmapCache = new BitmapCache(this, mAppExecutors.diskIO(), mAppExecutors.mainThread());
+        mPlaces = new Places(activityContext);
+        mServices = new Services(activityContext, mPlaces);
+        mLoginStorage = new LoginStorage(this);
+        mAccounts = new Accounts(activityContext);
+        mSessionStore = SessionStore.get();
+        mSessionStore.initialize(activityContext);
+        mSessionStore.setLocales(LocaleUtils.getPreferredLanguageTags(activityContext));
+        mDownloadsManager = new DownloadsManager(activityContext);
+        mSpeechService = new SpeechService(activityContext);
+        mBitmapCache = new BitmapCache(activityContext, mAppExecutors.diskIO(), mAppExecutors.mainThread());
         mEnvironmentsManager = new EnvironmentsManager(activityContext);
+        mAddons = new Addons(activityContext, mSessionStore);
     }
 
     @Override
@@ -141,5 +144,15 @@ public class VRBrowserApplication extends Application implements AppServicesProv
     @Override
     public EnvironmentsManager getEnvironmentsManager() {
         return mEnvironmentsManager;
+    }
+
+    @Override
+    public Addons getAddons() {
+        return mAddons;
+    }
+
+    @Override
+    public SessionStore getSessionStore() {
+        return mSessionStore;
     }
 }

@@ -114,15 +114,6 @@
                 app:visibleGone="@{isSignedIn &amp;&amp; !isSyncEnabled}" />
         </FrameLayout>
 
-        <ImageView
-            android:id="@+id/icon"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignParentStart="true"
-            android:src="@drawable/ic_icon_bookmarks"
-            android:tint="@color/concrete"
-            app:srcCompat="@drawable/ic_icon_bookmarks" />
-
         <TextView
             android:id="@+id/syncDescription"
             android:layout_width="wrap_content"
@@ -138,19 +129,5 @@
             android:textStyle="italic"
             app:lastSync="@{lastSync}"
             app:visibleGone="@{isAccountsUIEnabled &amp;&amp; isSignedIn &amp;&amp; isSyncEnabled &amp;&amp; !isSyncing}" />
-
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toEndOf="@id/icon"
-            android:gravity="center_vertical"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            android:text="@string/bookmarks_title"
-            android:textColor="@color/smoke"
-            android:textSize="@dimen/text_biggest_size"
-            android:textStyle="bold" />
     </RelativeLayout>
 </layout>

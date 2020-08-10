@@ -142,32 +142,6 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
             }
         });
 
-        mBinding.bookmarksButton.setOnHoverListener(mButtonScaleHoverListener);
-        mBinding.bookmarksButton.setOnClickListener(view -> {
-            if (isImmersive()) {
-                return;
-            }
-            if (mAudio != null) {
-                mAudio.playSound(AudioEngine.Sound.CLICK);
-            }
-
-            notifyBookmarksClicked();
-            view.requestFocusFromTouch();
-        });
-
-        mBinding.historyButton.setOnHoverListener(mButtonScaleHoverListener);
-        mBinding.historyButton.setOnClickListener(view -> {
-            if (isImmersive()) {
-                return;
-            }
-            if (mAudio != null) {
-                mAudio.playSound(AudioEngine.Sound.CLICK);
-            }
-
-            notifyHistoryClicked();
-            view.requestFocusFromTouch();
-        });
-
         mBinding.tabsButton.setOnHoverListener(mButtonScaleHoverListener);
         mBinding.tabsButton.setOnClickListener(view -> {
             if (isImmersive()) {
@@ -195,16 +169,13 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
             notifyAddWindowClicked();
         });
 
-        mBinding.downloadsButton.setOnHoverListener(mButtonScaleHoverListener);
-        mBinding.downloadsButton.setOnClickListener(view -> {
-            if (isImmersive()) {
-                return;
-            }
+        mBinding.libraryButton.setOnHoverListener(mButtonScaleHoverListener);
+        mBinding.libraryButton.setOnClickListener(view -> {
             if (mAudio != null) {
                 mAudio.playSound(AudioEngine.Sound.CLICK);
             }
 
-            notifyDownloadsClicked();
+            notifyLibraryClicked();
             view.requestFocusFromTouch();
         });
     }
@@ -306,16 +277,6 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
         mTrayListeners.removeAll(Arrays.asList(listeners));
     }
 
-    private void notifyBookmarksClicked() {
-        hideNotifications();
-        mTrayListeners.forEach(TrayListener::onBookmarksClicked);
-    }
-
-    private void notifyHistoryClicked() {
-        hideNotifications();
-        mTrayListeners.forEach(TrayListener::onHistoryClicked);
-    }
-
     private void notifyTabsClicked() {
         hideNotifications();
         mTrayListeners.forEach(TrayListener::onTabsClicked);
@@ -331,9 +292,9 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
         mTrayListeners.forEach(TrayListener::onAddWindowClicked);
     }
 
-    private void notifyDownloadsClicked() {
+    private void notifyLibraryClicked() {
         hideNotifications();
-        mTrayListeners.forEach(TrayListener::onDownloadsClicked);
+        mTrayListeners.forEach(TrayListener::onLibraryClicked);
     }
 
     @Override
@@ -405,9 +366,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
         mWidgetPlacement.parentHandle = -1;
 
         if (mViewModel != null) {
-            mViewModel.getIsBookmarksVisible().removeObserver(mIsBookmarksVisible);
-            mViewModel.getIsHistoryVisible().removeObserver(mIsHistoryVisible);
-            mViewModel.getIsDownloadsVisible().removeObserver(mIsDownloadsVisible);
+            mViewModel.getIsLibraryVisible().removeObserver(mIsLibraryVisible);
             mViewModel.getIsPrivateSession().removeObserver(mIsPrivateSession);
             mViewModel = null;
         }
@@ -430,9 +389,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
                 (VRBrowserActivity)getContext(),
                 ViewModelProvider.AndroidViewModelFactory.getInstance(((VRBrowserActivity) getContext()).getApplication()))
                 .get(String.valueOf(mAttachedWindow.hashCode()), WindowViewModel.class);
-        mViewModel.getIsBookmarksVisible().observe((VRBrowserActivity)getContext(), mIsBookmarksVisible);
-        mViewModel.getIsHistoryVisible().observe((VRBrowserActivity)getContext(), mIsHistoryVisible);
-        mViewModel.getIsDownloadsVisible().observe((VRBrowserActivity)getContext(), mIsDownloadsVisible);
+        mViewModel.getIsLibraryVisible().observe((VRBrowserActivity)getContext(), mIsLibraryVisible);
         mViewModel.getIsPrivateSession().observe((VRBrowserActivity)getContext(), mIsPrivateSession);
 
         mBinding.setViewmodel(mViewModel);
@@ -442,37 +399,14 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
         mIsWindowAttached = true;
     }
 
-    private Observer<ObservableBoolean> mIsBookmarksVisible = aBoolean -> {
-        if (mBinding.bookmarksButton.isHovered()) {
+    private Observer<ObservableBoolean> mIsLibraryVisible = aBoolean -> {
+        if (mBinding.libraryButton.isHovered()) {
             return;
         }
         if (aBoolean.get()) {
-            animateViewPadding(mBinding.bookmarksButton, mMaxPadding, mMinPadding, ICON_ANIMATION_DURATION);
+            animateViewPadding(mBinding.libraryButton, mMaxPadding, mMinPadding, ICON_ANIMATION_DURATION);
         } else {
-            animateViewPadding(mBinding.bookmarksButton, mMinPadding, mMaxPadding, ICON_ANIMATION_DURATION);
-        }
-    };
-
-    private Observer<ObservableBoolean> mIsHistoryVisible = aBoolean -> {
-        if (mBinding.historyButton.isHovered()) {
-            return;
-        }
-        if (aBoolean.get()) {
-            animateViewPadding(mBinding.historyButton, mMaxPadding, mMinPadding, ICON_ANIMATION_DURATION);
-
-        } else {
-            animateViewPadding(mBinding.historyButton, mMinPadding, mMaxPadding, ICON_ANIMATION_DURATION);
-        }
-    };
-
-    private Observer<ObservableBoolean> mIsDownloadsVisible = aBoolean -> {
-        if (mBinding.downloadsButton.isHovered()) {
-            return;
-        }
-        if (aBoolean.get()) {
-            animateViewPadding(mBinding.downloadsButton, mMaxPadding, mMinPadding, ICON_ANIMATION_DURATION);
-        } else {
-            animateViewPadding(mBinding.downloadsButton, mMinPadding, mMaxPadding, ICON_ANIMATION_DURATION);
+            animateViewPadding(mBinding.libraryButton, mMinPadding, mMaxPadding, ICON_ANIMATION_DURATION);
         }
     };
 
@@ -538,12 +472,12 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
     }
 
     public void showBookmarkAddedNotification() {
-        showNotification(BOOKMARK_ADDED_NOTIFICATION_ID, mBinding.bookmarksButton, R.string.bookmarks_saved_notification);
+        showNotification(BOOKMARK_ADDED_NOTIFICATION_ID, mBinding.libraryButton, R.string.bookmarks_saved_notification);
     }
 
     public void showDownloadCompletedNotification(String filename) {
         showNotification(DOWNLOAD_COMPLETED_NOTIFICATION_ID,
-                mBinding.downloadsButton,
+                mBinding.libraryButton,
                 getContext().getString(R.string.download_completed_notification, filename));
     }
 
@@ -600,7 +534,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
                         item.getStatus() == Download.PENDING).count();
         mTrayViewModel.setDownloadsNumber((int)inProgressNum);
         if (inProgressNum == 0) {
-            mBinding.downloadsButton.setLevel(0);
+            mBinding.libraryButton.setLevel(0);
 
         } else {
             long size = downloads.stream()
@@ -612,7 +546,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
                     .sum();
             if (size > 0) {
                 long percent = downloaded*100/size;
-                mBinding.downloadsButton.setLevel((int)percent*100);
+                mBinding.libraryButton.setLevel((int)percent*100);
             }
         }
     }

@@ -63,6 +63,7 @@ public class SessionState {
     public String mRegion;
     public String mId = UUID.randomUUID().toString();
     public String mParentId; // Parent session stack Id.
+    public transient boolean mIsWebExtensionSession = false;
 
     public SessionState recreate() {
         SessionState result = new SessionState();
@@ -75,6 +76,7 @@ public class SessionState {
         result.mRegion = mRegion;
         result.mId = mId;
         result.mParentId = mParentId;
+        result.mIsWebExtensionSession = mIsWebExtensionSession;
 
         return result;
     }

@@ -228,8 +228,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ((VRBrowserApplication)getApplication()).onActivityCreate(this);
         SettingsStore.getInstance(getBaseContext()).setPid(Process.myPid());
+        ((VRBrowserApplication)getApplication()).onActivityCreate(this);
         // Fix for infinite restart on startup crashes.
         long count = SettingsStore.getInstance(getBaseContext()).getCrashRestartCount();
         boolean cancelRestart = count > CrashReporterService.MAX_RESTART_COUNT;
@@ -250,9 +250,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mUiThread = Thread.currentThread();
 
         BitmapCache.getInstance(this).onCreate();
-
-        SessionStore.get().initialize(this);
-        SessionStore.get().setLocales(LocaleUtils.getPreferredLanguageTags(this));
 
         EngineProvider.INSTANCE.getOrCreateRuntime(this).appendAppNotesToCrashReport("Firefox Reality " + BuildConfig.VERSION_NAME + "-" + BuildConfig.VERSION_CODE + "-" + BuildConfig.FLAVOR + "-" + BuildConfig.BUILD_TYPE + " (" + BuildConfig.GIT_HASH + ")");
 
@@ -507,6 +504,8 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         if (mPermissionDelegate != null) {
             mPermissionDelegate.release();
         }
+
+        mTray.removeListeners(mWindows);
 
         // Remove all widget listeners
         mWindows.onDestroy();

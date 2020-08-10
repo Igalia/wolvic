@@ -7,7 +7,6 @@ package org.mozilla.vrbrowser.ui.views.library;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,8 +35,8 @@ import org.mozilla.vrbrowser.ui.callbacks.HistoryItemCallback;
 import org.mozilla.vrbrowser.ui.viewmodel.HistoryViewModel;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WindowWidget;
-import org.mozilla.vrbrowser.ui.widgets.Windows;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.ClearHistoryDialogWidget;
+import org.mozilla.vrbrowser.ui.widgets.menus.MenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.menus.library.HistoryContextMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.menus.library.LibraryContextMenuWidget;
 import org.mozilla.vrbrowser.utils.SystemUtils;
@@ -77,18 +76,8 @@ public class HistoryView extends LibraryView implements HistoryStore.HistoryList
     private ClearHistoryDialogWidget mClearHistoryDialog;
     private HistoryViewModel mViewModel;
 
-    public HistoryView(Context aContext) {
-        super(aContext);
-        initialize();
-    }
-
-    public HistoryView(Context aContext, AttributeSet aAttrs) {
-        super(aContext, aAttrs);
-        initialize();
-    }
-
-    public HistoryView(Context aContext, AttributeSet aAttrs, int aDefStyle) {
-        super(aContext, aAttrs, aDefStyle);
+    public HistoryView(Context aContext, @NonNull LibraryPanel delegate) {
+        super(aContext, delegate);
         initialize();
     }
 
@@ -170,6 +159,7 @@ public class HistoryView extends LibraryView implements HistoryStore.HistoryList
     @Override
     public void onShow() {
         updateLayout();
+        mBinding.historyList.smoothScrollToPosition(0);
     }
 
     private final HistoryItemCallback mHistoryItemCallback = new HistoryItemCallback() {
@@ -181,7 +171,7 @@ public class HistoryView extends LibraryView implements HistoryStore.HistoryList
             session.loadUri(item.getUrl());
 
             WindowWidget window = mWidgetManager.getFocusedWindow();
-            window.hidePanel(Windows.PanelType.HISTORY);
+            window.hidePanel();
         }
 
         @Override
@@ -254,7 +244,7 @@ public class HistoryView extends LibraryView implements HistoryStore.HistoryList
                             GleanMetricsService.Tabs.openedCounter(GleanMetricsService.Tabs.TabSource.FXA_LOGIN);
 
                             WindowWidget window = mWidgetManager.getFocusedWindow();
-                            window.hidePanel(Windows.PanelType.HISTORY);
+                            window.hidePanel();
                         }
 
                     }, mUIThreadExecutor).exceptionally(throwable -> {

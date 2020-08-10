@@ -6,7 +6,7 @@
     <data>
         <import type="org.mozilla.vrbrowser.downloads.Download"/>
         <import type="android.widget.LinearLayout"/>
-
+        <import type="android.view.Gravity"/>
         <variable
             name="item"
             type="org.mozilla.vrbrowser.downloads.Download" />
@@ -80,7 +80,7 @@
                     android:paddingEnd="20dp"
                     android:scrollHorizontally="true"
                     android:singleLine="true"
-                    android:gravity="end"
+                    android:gravity="@{isNarrow ? Gravity.START : Gravity.END}"
                     android:text="@{Download.progressString(context, item)}"
                     android:textColor="@color/library_panel_description_color"
                     android:textSize="@dimen/library_item_url_text_size"

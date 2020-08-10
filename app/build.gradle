@@ -76,6 +76,7 @@ android {
         buildConfigField "String", "GIT_HASH", "\"${getGitHash()}\""
         buildConfigField "Boolean", "DISABLE_CRASH_RESTART", getCrashRestartDisabled()
         buildConfigField "Boolean", "TASKCLUSTER_BUILD", getTaskclusterBuild()
+        buildConfigField "String", "AMO_COLLECTION", "\"3204bb44a6ef44d39ee34917f28055\""
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
@@ -93,7 +94,7 @@ android {
                         "room.expandProjection":"true"]
             }
         }
-
+        vectorDrawables.useSupportLibrary = true
     }
 
     if (gradle.hasProperty('userProperties.taskclusterBuild')) {
@@ -452,8 +453,12 @@ dependencies {
     implementation deps.android_components.lib_dataprotect
     implementation deps.android_components.support_rustlog
     implementation deps.android_components.support_rusthttp
+    implementation deps.android_components.support_webextensions
+    implementation deps.android_components.support_ktx
     implementation deps.android_components.feature_accounts
     implementation deps.android_components.feature_webcompat
+    implementation deps.android_components.feature_webcompat_reporter
+    implementation deps.android_components.feature_addons
     implementation deps.android_components.glean
     implementation deps.app_services.rustlog
 
@@ -499,6 +504,9 @@ if (findProject(':wavesdk')) {
 }
 
 dependencies {
+
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.viewpager2:viewpager2:1.0.0'
     // "nightly" or "beta" or "release"
     def branch = "nightly"
     arm64Implementation deps.gecko_view."${branch}_arm64"

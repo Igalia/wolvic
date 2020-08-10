@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="addon"
+            type="mozilla.components.feature.addons.Addon" />
+    </data>
+    <org.mozilla.vrbrowser.ui.views.ScrollBlockingLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <org.mozilla.vrbrowser.ui.views.CustomScrollView
+                style="@style/customScrollViewStyle"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintWidth_max="500dp"
+                android:paddingEnd="20dp"
+                android:layout_gravity="center_horizontal">
+                <LinearLayout
+                    android:layout_width="500dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+                    <org.mozilla.vrbrowser.ui.views.CustomRecyclerView
+                        android:id="@+id/permissions_list"
+                        style="@style/customRecyclerViewStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="Addons List"
+                        android:paddingEnd="20dp"
+                        android:fadingEdgeLength="60dp"
+                        android:requiresFadingEdge="vertical"
+                        app:layoutManager="org.mozilla.vrbrowser.ui.adapters.CustomLinearLayoutManager"/>
+                    <TextView
+                        android:id="@+id/learn_more_link"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/addons_permissions_learn_more"
+                        android:textAlignment="center"
+                        android:textColorHighlight="@android:color/transparent"
+                        android:textColorLink="@color/azure"
+                        android:textColor="@color/azure"
+                        android:autoLink="all"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+            </org.mozilla.vrbrowser.ui.views.CustomScrollView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </org.mozilla.vrbrowser.ui.views.ScrollBlockingLayout>
+</layout>

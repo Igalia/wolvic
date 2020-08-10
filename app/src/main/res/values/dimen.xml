@@ -67,7 +67,7 @@
     <!-- Settings Dialog -->
     <item name="settings_world_y" format="float" type="dimen">1.6</item>
     <item name="settings_world_z" format="float" type="dimen">-2.0</item>
-    <dimen name="settings_width">770dp</dimen>
+    <dimen name="settings_width">680dp</dimen>
     <dimen name="settings_height">490dp</dimen>
     <dimen name="settings_main_button_text_width">125dp</dimen>
 
@@ -126,7 +126,7 @@
     <item name="tray_world_y" format="float" type="dimen">0.25</item>
     <item name="tray_world_z" format="float" type="dimen">-2.5</item>
     <item name="tray_world_width" format="float" type="dimen">1.42</item>
-    <dimen name="tray_width">300dp</dimen>
+    <dimen name="tray_width">220dp</dimen>
     <dimen name="tray_height">44dp</dimen>
     <item name="tray_tooltip_density" format="float" type="dimen">4.0</item>
     <dimen name="tray_tooltip_padding_h">20dp</dimen>
@@ -189,6 +189,7 @@
     <dimen name="library_icon_padding_min">8dp</dimen>
     <dimen name="library_icon_size_wide">75dp</dimen>
     <dimen name="library_icon_size_narrow">65dp</dimen>
+    <dimen name="library_button_padding">15dp</dimen>
 
     <!-- Language -->
     <dimen name="language_row_icon_size">20dp</dimen>
@@ -207,7 +208,7 @@
     <!-- Library Menu -->
     <dimen name="library_menu_width">320dp</dimen>
     <dimen name="library_menu_item_height">60dp</dimen>
-    <dimen name="library_menu_top_margin">4dp</dimen>
+    <dimen name="library_menu_top_margin">10dp</dimen>
 
     <!-- Sorting Menu -->
     <dimen name="context_menu_sorting_width">200dp</dimen>
@@ -275,4 +276,9 @@
     <dimen name="autofill_dialog_padding_top">20dp</dimen>
     <dimen name="autofill_dialog_padding_bottom">42dp</dimen>
     <dimen name="autofill_dialog_padding_sides">64dp</dimen>
+
+    <!-- Addons -->
+    <dimen name="addon_item_title_size">20sp</dimen>
+    <dimen name="addon_item_body_size">16sp</dimen>
+    <dimen name="addon_item_users_size">12sp</dimen>
 </resources>

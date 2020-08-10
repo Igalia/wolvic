@@ -4,16 +4,16 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import org.mozilla.gecko.CrashHandler;
 import org.mozilla.vrbrowser.utils.SystemUtils;
-
-import androidx.annotation.NonNull;
 
 public class GlobalExceptionHandler {
 
     private static final String LOGTAG = SystemUtils.createLogtag(GlobalExceptionHandler.class);
 
-    private static GlobalExceptionHandler mInstance;
+    public static GlobalExceptionHandler mInstance;
 
     public static synchronized @NonNull
     GlobalExceptionHandler register(Context aContext) {
@@ -39,5 +39,5 @@ public class GlobalExceptionHandler {
         return mInstance;
     }
 
-    private CrashHandler mCrashHandler;
+    public CrashHandler mCrashHandler;
 }

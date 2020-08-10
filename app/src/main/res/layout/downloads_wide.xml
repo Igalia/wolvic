@@ -26,29 +26,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/icon"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_alignParentStart="true"
-                android:src="@drawable/ic_icon_downloads"
-                android:tint="@color/concrete"
-                app:srcCompat="@drawable/ic_icon_downloads" />
-
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toEndOf="@id/icon"
-                android:gravity="center_vertical"
-                android:paddingStart="15dp"
-                android:paddingEnd="15dp"
-                android:text="@string/downloads_title"
-                android:textColor="@color/smoke"
-                android:textSize="@dimen/text_biggest_size"
-                android:textStyle="bold" />
-
             <Button
                 android:id="@+id/deleteButton"
                 android:layout_width="wrap_content"

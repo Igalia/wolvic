@@ -15,7 +15,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/library_item_row_height"
-        app:leftMargin="@{item.level*100}"
+        app:startMargin="@{item.level*100}"
         android:layout_marginEnd="20dp"
         android:paddingStart="10dp"
         android:gravity="center">

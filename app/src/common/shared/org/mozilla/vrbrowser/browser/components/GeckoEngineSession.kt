@@ -9,17 +9,19 @@ import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.EngineSessionState
 import mozilla.components.concept.engine.Settings
 import org.json.JSONObject
+import org.mozilla.geckoview.GeckoRuntime
 import org.mozilla.geckoview.GeckoSession
+import org.mozilla.vrbrowser.browser.engine.Session
 import org.mozilla.vrbrowser.browser.engine.SessionStore
 
 class GeckoEngineSession(
-        val geckoSession: GeckoSession
+        val session: Session
 ): EngineSession() {
-    constructor() :
-        this(SessionStore.get().createSession(false, false).geckoSession)
+
+    val geckoSession: GeckoSession = session.geckoSession
 
     override fun loadUrl(url: String, parent: EngineSession?, flags: LoadUrlFlags, additionalHeaders: Map<String, String>?) {
-        geckoSession.loadUri(url)
+        session.loadUri(url, flags.value)
     }
 
     override val settings: Settings = object : Settings() {}
@@ -31,9 +33,10 @@ class GeckoEngineSession(
     override fun findNext(forward: Boolean) = Unit
     override fun goBack() = Unit
     override fun goForward() = Unit
+    override fun goToHistoryIndex(index: Int) = Unit
     override fun loadData(data: String, mimeType: String, encoding: String) = Unit
     override fun recoverFromCrash(): Boolean = true
-    override fun reload() = Unit
+    override fun reload(flags: LoadUrlFlags) = Unit
     override fun restoreState(state: EngineSessionState) = true
     override fun saveState(): EngineSessionState = DummyEngineSessionState()
     override fun stopLoading() = Unit

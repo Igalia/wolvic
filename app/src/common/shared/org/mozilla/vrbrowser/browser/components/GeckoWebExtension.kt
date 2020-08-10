@@ -10,10 +10,8 @@ import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.webextension.*
 import mozilla.components.support.base.log.logger.Logger
 import org.json.JSONObject
-import org.mozilla.geckoview.AllowOrDeny
-import org.mozilla.geckoview.GeckoResult
-import org.mozilla.geckoview.GeckoRuntime
-import org.mozilla.geckoview.GeckoSession
+import org.mozilla.geckoview.*
+import org.mozilla.vrbrowser.browser.engine.Session
 import org.mozilla.vrbrowser.browser.engine.SessionStore
 import org.mozilla.geckoview.WebExtension as GeckoNativeWebExtension
 import org.mozilla.geckoview.WebExtension.Action as GeckoNativeWebExtensionAction
@@ -24,25 +22,12 @@ import org.mozilla.geckoview.WebExtension.Action as GeckoNativeWebExtensionActio
  */
 @Suppress("TooManyFunctions")
 class GeckoWebExtension(
-        id: String,
-        url: String,
-        val runtime: GeckoRuntime,
-        allowContentMessaging: Boolean = true,
-        supportActions: Boolean = false,
-        @Suppress("Deprecation") // https://github.com/mozilla-mobile/android-components/issues/6356
-        val nativeExtension: GeckoNativeWebExtension = GeckoNativeWebExtension(
-                url,
-                id,
-                createWebExtensionFlags(allowContentMessaging),
-                runtime.webExtensionController
-        ),
-        private val connectedPorts: MutableMap<PortId, Port> = mutableMapOf()
-) : WebExtension(id, url, supportActions) {
+        val nativeExtension: GeckoNativeWebExtension,
+        val runtime: GeckoRuntime
+) : WebExtension(nativeExtension.id, nativeExtension.location, true) {
 
+    private val connectedPorts: MutableMap<PortId, Port> = mutableMapOf()
     private val logger = Logger("GeckoWebExtension")
-
-    constructor(native: GeckoNativeWebExtension, runtime: GeckoRuntime) :
-            this(native.id, native.location, runtime, true, true, native)
 
     /**
      * Uniquely identifies a port using its name and the session it
@@ -262,8 +247,10 @@ class GeckoWebExtension(
                     ext: GeckoNativeWebExtension,
                     tabDetails: GeckoNativeWebExtension.CreateTabDetails
             ): GeckoResult<GeckoSession>? {
-                val geckoSession: GeckoSession = SessionStore.get().createSession(false, false).geckoSession
-                val geckoEngineSession: GeckoEngineSession = GeckoEngineSession(geckoSession)
+                val activeSession: Session = SessionStore.get().activeSession
+                val session: Session = SessionStore.get().createSession(false, activeSession.isPrivateMode)
+                session.setParentSession(activeSession)
+                val geckoEngineSession = GeckoEngineSession(session)
                 tabHandler.onNewTab(
                         this@GeckoWebExtension,
                         geckoEngineSession,
@@ -271,6 +258,22 @@ class GeckoWebExtension(
                         tabDetails.url ?: ""
                 )
                 return GeckoResult.fromValue(geckoEngineSession.geckoSession)
+            }
+
+            override fun onOpenOptionsPage(ext: GeckoNativeWebExtension) {
+                val activeSession: Session = SessionStore.get().activeSession;
+                val session: Session = SessionStore.get().createWebExtensionSession(false, activeSession.isPrivateMode);
+                session.setParentSession(activeSession)
+                session.uaMode = GeckoSessionSettings.USER_AGENT_MODE_DESKTOP
+                val geckoEngineSession = GeckoEngineSession(session)
+                ext.metaData?.optionsPageUrl?.let { optionsPageUrl ->
+                    tabHandler.onNewTab(
+                            this@GeckoWebExtension,
+                            geckoEngineSession,
+                            true,
+                            optionsPageUrl
+                    )
+                }
             }
         }
 
@@ -324,6 +327,14 @@ class GeckoWebExtension(
     }
 
     /**
+     * See [WebExtension.hasTabHandler].
+     */
+    override fun hasTabHandler(session: EngineSession): Boolean {
+        val geckoSession = (session as GeckoEngineSession).geckoSession
+        return geckoSession.webExtensionController.getTabDelegate(nativeExtension) != null
+    }
+
+    /**
      * See [WebExtension.getMetadata].
      */
     override fun getMetadata(): Metadata? {
@@ -336,13 +347,18 @@ class GeckoWebExtension(
                     homePageUrl = it.homepageUrl,
                     version = it.version,
                     permissions = it.permissions.toList(),
-                    hostPermissions = it.origins.toList(),
+                    // Origins is marked as @NonNull but may be null: https://bugzilla.mozilla.org/show_bug.cgi?id=1629957
+                    hostPermissions = it.origins.orEmpty().toList(),
                     disabledFlags = DisabledFlags.select(it.disabledFlags),
                     optionsPageUrl = it.optionsPageUrl,
                     openOptionsPageInTab = it.openOptionsPageInTab,
                     baseUrl = it.baseUrl
             )
         }
+    }
+
+    override fun isBuiltIn(): Boolean {
+        return nativeExtension.isBuiltIn
     }
 
     override fun isEnabled(): Boolean {
@@ -376,14 +392,6 @@ class GeckoPort(
 
     override fun disconnect() {
         nativePort.disconnect()
-    }
-}
-
-private fun createWebExtensionFlags(allowContentMessaging: Boolean): Long {
-    return if (allowContentMessaging) {
-        GeckoNativeWebExtension.Flags.ALLOW_CONTENT_MESSAGING
-    } else {
-        GeckoNativeWebExtension.Flags.NONE
     }
 }
 

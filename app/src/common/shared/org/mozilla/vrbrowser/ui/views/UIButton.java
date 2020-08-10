@@ -312,6 +312,7 @@ public class UIButton extends AppCompatImageButton implements CustomUIButton {
             Rect offsetViewBounds = new Rect();
             getDrawingRect(offsetViewBounds);
             UIWidget parent = ViewUtils.getParentWidget(UIButton.this);
+            assert parent != null;
             parent.offsetDescendantRectToMyCoords(UIButton.this, offsetViewBounds);
 
             // Use parent curved mode unless it has been overridden in the tooltip XML properties

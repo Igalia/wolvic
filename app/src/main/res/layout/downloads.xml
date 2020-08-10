@@ -14,41 +14,14 @@
             type="org.mozilla.vrbrowser.ui.callbacks.DownloadsCallback" />
     </data>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/panel_background"
-        android:orientation="vertical"
-        android:paddingTop="30dp"
-        android:paddingBottom="30dp">
-
-        <include
-            android:id="@+id/downloads_narrow"
-            layout="@layout/downloads_narrow"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
-            android:layout_marginEnd="50dp"
-            android:layout_marginBottom="20dp"
-            app:isEmpty="@{downloadsViewModel.isEmpty}"
-            app:isNarrow="@{downloadsViewModel.isNarrow}"
-            app:callback="@{callback}" />
-
-        <include
-            android:id="@+id/downloads_wide"
-            layout="@layout/downloads_wide"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
-            android:layout_marginEnd="50dp"
-            android:layout_marginBottom="20dp"
-            app:isEmpty="@{downloadsViewModel.isEmpty}"
-            app:isNarrow="@{downloadsViewModel.isNarrow}"
-            app:callback="@{callback}" />
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_centerInParent="true"
             android:gravity="center_vertical|center_horizontal"
             android:orientation="vertical"
             app:visibleGone="@{!downloadsViewModel.isLoading &amp;&amp; downloadsViewModel.isEmpty}">
@@ -91,6 +64,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:contentDescription="@string/downloads_loading"
+            android:layout_centerInParent="true"
             android:gravity="center_vertical|center_horizontal"
             android:text="@string/downloads_loading"
             android:textAlignment="center"
@@ -103,13 +77,37 @@
             style="@style/customRecyclerViewStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="30dp"
-            android:layout_marginEnd="30dp"
+            android:layout_alignParentTop="true"
+            android:layout_above="@+id/header"
             android:contentDescription="Downloads"
             android:fadingEdgeLength="60dp"
             android:requiresFadingEdge="vertical"
             app:layoutManager="org.mozilla.vrbrowser.ui.adapters.CustomLinearLayoutManager"
             app:visibleGone="@{!downloadsViewModel.isLoading &amp;&amp; !downloadsViewModel.isEmpty}" />
 
-    </LinearLayout>
+        <FrameLayout
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_alignParentBottom="true">
+            <include
+                android:id="@+id/downloads_narrow"
+                layout="@layout/downloads_narrow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:isEmpty="@{downloadsViewModel.isEmpty}"
+                app:isNarrow="@{downloadsViewModel.isNarrow}"
+                app:callback="@{callback}" />
+
+            <include
+                android:id="@+id/downloads_wide"
+                layout="@layout/downloads_wide"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:isEmpty="@{downloadsViewModel.isEmpty}"
+                app:isNarrow="@{downloadsViewModel.isNarrow}"
+                app:callback="@{callback}" />
+        </FrameLayout>
+    </RelativeLayout>
 </layout>

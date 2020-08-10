@@ -3,12 +3,10 @@ package org.mozilla.vrbrowser.ui.views.library;
 import android.content.Context;
 import android.graphics.PointF;
 import android.graphics.Rect;
-import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.mozilla.vrbrowser.R;
@@ -20,6 +18,7 @@ import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.ui.widgets.WindowWidget;
 import org.mozilla.vrbrowser.ui.widgets.menus.library.LibraryContextMenuWidget;
+import org.mozilla.vrbrowser.utils.ViewUtils;
 
 import java.util.concurrent.Executor;
 
@@ -28,21 +27,16 @@ public abstract class LibraryView extends FrameLayout {
     protected WidgetManagerDelegate mWidgetManager;
     protected LibraryContextMenuWidget mContextMenu;
     protected Executor mUIThreadExecutor;
+    protected LibraryPanel mRootPanel;
 
     public LibraryView(@NonNull Context context) {
         super(context);
     }
 
-    public LibraryView(@NonNull Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
-    }
+    public LibraryView(@NonNull Context context, @NonNull LibraryPanel delegate) {
+        super(context);
 
-    public LibraryView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-    }
-
-    public LibraryView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
+        mRootPanel = delegate;
     }
 
     protected void initialize() {
@@ -58,7 +52,11 @@ public abstract class LibraryView extends FrameLayout {
 
     public void onHide() {}
 
-    protected abstract void updateLayout();
+    public boolean onBack() { return false; }
+
+    public boolean canGoBack() { return false; }
+
+    protected void updateLayout() {}
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
@@ -91,8 +89,10 @@ public abstract class LibraryView extends FrameLayout {
         float ratio = WidgetPlacement.viewToWidgetRatio(getContext(), window);
 
         Rect offsetViewBounds = new Rect();
-        getDrawingRect(offsetViewBounds);
-        offsetDescendantRectToMyCoords(view, offsetViewBounds);
+        UIWidget parent = ViewUtils.getParentWidget(view);
+        assert parent != null;
+        parent.getDrawingRect(offsetViewBounds);
+        parent.offsetDescendantRectToMyCoords(view, offsetViewBounds);
 
         mContextMenu = menu;
         mContextMenu.getPlacement().parentHandle = window.getHandle();

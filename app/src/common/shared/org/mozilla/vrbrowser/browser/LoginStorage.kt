@@ -24,10 +24,7 @@ class LoginStorage(
 
     init {
         EngineProvider.getOrCreateRuntime(context).loginStorageDelegate = GeckoLoginDelegateWrapper(
-                GeckoLoginStorageDelegate(
-                        places.logins,
-                        isAutofillEnabled = { SettingsStore.getInstance(context).isAutoFillEnabled }
-                ))
+                GeckoLoginStorageDelegate(places.logins))
         GlobalScope.launch(Dispatchers.IO) {
             places.logins.value.warmUp()
         }

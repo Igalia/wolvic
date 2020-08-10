@@ -31,24 +31,19 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Executor;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
-import mozilla.components.concept.engine.EngineSession;
-import mozilla.components.concept.engine.webextension.Action;
-import mozilla.components.concept.engine.webextension.WebExtension;
-import mozilla.components.concept.engine.webextension.WebExtensionDelegate;
+import mozilla.components.browser.state.state.BrowserState;
 import mozilla.components.feature.accounts.FxaCapability;
 import mozilla.components.feature.accounts.FxaWebChannelFeature;
 import mozilla.components.feature.webcompat.WebCompatFeature;
+import mozilla.components.feature.webcompat.reporter.WebCompatReporterFeature;
 import mozilla.components.lib.state.Store;
 
 public class SessionStore implements
         GeckoSession.PermissionDelegate,
-        WebExtensionDelegate,
-        SessionChangeListener {
+        SessionChangeListener,
+        ComponentsAdapter.StoreUpdatesListener {
 
     private static final String LOGTAG = SystemUtils.createLogtag(SessionStore.class);
     private static final int MAX_GECKO_SESSIONS = 5;
@@ -123,7 +118,6 @@ public class SessionStore implements
         });
 
         mWebExtensionRuntime = new GeckoWebExtensionRuntime(mContext, mRuntime);
-        mWebExtensionRuntime.registerWebExtensionDelegate(this);
 
         mServices = ((VRBrowserApplication)context.getApplicationContext()).getServices();
 
@@ -133,6 +127,7 @@ public class SessionStore implements
         // Web Extensions initialization
         BUILTIN_WEB_EXTENSIONS.forEach(extension -> BuiltinExtension.install(mWebExtensionRuntime, extension.first, extension.second));
         WebCompatFeature.INSTANCE.install(mWebExtensionRuntime);
+        WebCompatReporterFeature.INSTANCE.install(mWebExtensionRuntime);
         mWebChannelsFeature = new FxaWebChannelFeature(
                 mContext,
                 null,
@@ -143,6 +138,8 @@ public class SessionStore implements
                 Collections.singleton(FxaCapability.CHOOSE_WHAT_TO_SYNC));
 
         mWebChannelsFeature.start();
+
+        ComponentsAdapter.get().addStoreUpdatesListener(this);
 
         if (BuildConfig.DEBUG) {
             mStoreSubscription = ComponentsAdapter.get().getStore().observeManually(browserState -> {
@@ -184,6 +181,29 @@ public class SessionStore implements
         }
 
         return aSession;
+    }
+
+    @NonNull
+    public Session createWebExtensionSession(boolean aPrivateMode) {
+        SessionSettings settings = new SessionSettings(new SessionSettings.Builder().withDefaultSettings(mContext).withPrivateBrowsing(aPrivateMode));
+        Session session = Session.createWebExtensionSession(
+                mContext,
+                mRuntime,
+                settings,
+                Session.SESSION_OPEN,
+                this);
+        return addSession(session);
+    }
+
+    @NonNull
+    public Session createWebExtensionSession(boolean openSession, boolean aPrivateMode) {
+        SessionSettings settings = new SessionSettings(new SessionSettings.Builder().withDefaultSettings(mContext).withPrivateBrowsing(aPrivateMode));
+        Session session = Session.createWebExtensionSession(
+                mContext,
+                mRuntime,
+                settings, openSession ? Session.SESSION_OPEN : Session.SESSION_DO_NOT_OPEN,
+                this);
+        return addSession(session);
     }
 
     @NonNull
@@ -234,6 +254,10 @@ public class SessionStore implements
         }
     }
 
+    public void destroySession(@NonNull String sessionId) {
+        mSessions.stream().filter(session -> session.getId().equals(sessionId)).findFirst().ifPresent(this::destroySession);
+    }
+
     public void destroyPrivateSessions() {
         mSessions.removeIf(session -> {
             if (!session.isPrivateMode()) {
@@ -277,6 +301,12 @@ public class SessionStore implements
         mActiveSession = aSession;
     }
 
+    public void setActiveSession(@NonNull String sessionId) {
+        Session session = getSession(sessionId);
+        if (session != null) {
+            setActiveSession(session);
+        }
+    }
 
     private void limitInactiveSessions() {
         Log.d(LOGTAG, "Limiting Inactive Sessions");
@@ -373,6 +403,8 @@ public class SessionStore implements
         if (BuildConfig.DEBUG && mStoreSubscription != null) {
             mStoreSubscription.unsubscribe();
         }
+
+        ComponentsAdapter.get().removeStoreUpdatesListener(this);
     }
 
     public void onConfigurationChanged(Configuration newConfig) {
@@ -462,89 +494,6 @@ public class SessionStore implements
         }
     }
 
-    // WebExtensionDelegate
-
-    @Override
-    public void onInstalled(@NonNull WebExtension webExtension) {
-        Log.d(LOGTAG, "onInstalled: " + webExtension.getId());
-        if (webExtension.getMetadata() != null) {
-            webExtension.getMetadata().getHostPermissions().forEach(permission -> {
-                mSessions.forEach(session -> {
-                    Pattern domainPattern = Pattern.compile(Pattern.quote(permission));
-                    if (domainPattern.matcher(session.getCurrentUri()).find()) {
-                        session.reload();
-                    }
-                });
-            });
-        }
-    }
-
-    @Override
-    public void onUninstalled(@NonNull WebExtension webExtension) {
-        Log.d(LOGTAG, "onUninstalled: " + webExtension.getId());
-        if (webExtension.getMetadata() != null) {
-            webExtension.getMetadata().getHostPermissions().forEach(permission -> {
-                mSessions.forEach(session -> {
-                    Pattern domainPattern = Pattern.compile(Pattern.quote(permission));
-                    if (domainPattern.matcher(session.getCurrentUri()).find()) {
-                        session.reload();
-                    }
-                });
-            });
-        }
-    }
-
-    @Override
-    public void onEnabled(@NonNull WebExtension webExtension) {
-
-    }
-
-    @Override
-    public void onDisabled(@NonNull WebExtension webExtension) {
-
-    }
-
-    @Override
-    public void onAllowedInPrivateBrowsingChanged(@NonNull WebExtension webExtension) {
-
-    }
-
-    @Override
-    public void onNewTab(@NonNull WebExtension webExtension, @NonNull EngineSession engineSession, boolean b, @NonNull String s) {
-
-    }
-
-    @Override
-    public void onBrowserActionDefined(@NonNull WebExtension webExtension, @NonNull Action action) {
-
-    }
-
-    @Override
-    public void onPageActionDefined(@NonNull WebExtension webExtension, @NonNull Action action) {
-
-    }
-
-    @Nullable
-    @Override
-    public EngineSession onToggleActionPopup(@NonNull WebExtension webExtension, @NonNull EngineSession engineSession, @NonNull Action action) {
-        return null;
-    }
-
-    @Override
-    public boolean onInstallPermissionRequest(@NonNull WebExtension webExtension) {
-        return false;
-    }
-
-    @Override
-    public void onUpdatePermissionRequest(@NonNull WebExtension webExtension, @NonNull WebExtension webExtension1, @NonNull List<String> list, @NonNull Function1<? super Boolean, Unit> function1) {
-
-    }
-
-    @Override
-    public void onExtensionListUpdated() {
-
-    }
-
     // SessionChangeListener
 
     @Override
@@ -554,12 +503,12 @@ public class SessionStore implements
 
     @Override
     public void onSessionOpened(Session aSession) {
-        ComponentsAdapter.get().link(aSession.getId(), aSession.getGeckoSession());
+        ComponentsAdapter.get().link(aSession);
     }
 
     @Override
-    public void onSessionClosed(String aId) {
-        ComponentsAdapter.get().unlink(aId);
+    public void onSessionClosed(Session aSession) {
+        ComponentsAdapter.get().unlink(aSession);
     }
 
     @Override
@@ -576,18 +525,20 @@ public class SessionStore implements
 
     @Override
     public void onCurrentSessionChange(GeckoSession aOldSession, GeckoSession aSession) {
-        if (aOldSession != null && getSession(aOldSession) != null) {
-            ComponentsAdapter.get().unlink(getSession(aOldSession).getId());
+        Session oldSession = getSession(aOldSession);
+        Session newSession = getSession(aSession);
+        if (oldSession != null) {
+            ComponentsAdapter.get().unlink(oldSession);
         }
-        if (aSession != null && getSession(aSession) != null) {
-            ComponentsAdapter.get().link(getSession(aSession).getId(), aSession);
+        if (newSession != null) {
+            ComponentsAdapter.get().link(newSession);
         }
 
     }
 
     @Override
     public void onStackSession(Session aSession) {
-        ComponentsAdapter.get().link(aSession.getId(), aSession.getGeckoSession());
+        ComponentsAdapter.get().link(aSession);
     }
 
     @Override
@@ -595,4 +546,10 @@ public class SessionStore implements
         // unlink/remove are called by destroySession
         destroySession(aSession);
     }
+
+    // StoreUpdatesListener
+
+    @Override
+    public void onTabSelected(@NonNull BrowserState state, @Nullable mozilla.components.browser.state.state.SessionState tab) { }
+
 }

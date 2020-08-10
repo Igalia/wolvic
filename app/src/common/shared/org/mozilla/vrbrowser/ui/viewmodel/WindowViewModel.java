@@ -45,10 +45,7 @@ public class WindowViewModel extends AndroidViewModel {
     private MutableLiveData<ObservableBoolean> isInsecure;
     private MutableLiveData<ObservableBoolean> isActiveWindow;
     private MediatorLiveData<ObservableBoolean> isTitleBarVisible;
-    private MutableLiveData<ObservableBoolean> isBookmarksVisible;
-    private MutableLiveData<ObservableBoolean> isHistoryVisible;
-    private MutableLiveData<ObservableBoolean> isDownloadsVisible;
-    private MediatorLiveData<ObservableBoolean> isLibraryVisible;
+    private MutableLiveData<ObservableBoolean> isLibraryVisible;
     private MutableLiveData<ObservableBoolean> isLoading;
     private MutableLiveData<ObservableBoolean> isMicrophoneEnabled;
     private MutableLiveData<ObservableBoolean> isBookmarked;
@@ -121,15 +118,7 @@ public class WindowViewModel extends AndroidViewModel {
         isTitleBarVisible.addSource(isOnlyWindow, mIsTitleBarVisibleObserver);
         isTitleBarVisible.setValue(new ObservableBoolean(true));
 
-        isBookmarksVisible = new MutableLiveData<>(new ObservableBoolean(false));
-        isHistoryVisible = new MutableLiveData<>(new ObservableBoolean(false));
-        isDownloadsVisible = new MutableLiveData<>(new ObservableBoolean(false));
-
-        isLibraryVisible = new MediatorLiveData<>();
-        isLibraryVisible.addSource(isBookmarksVisible, mIsLibraryVisibleObserver);
-        isLibraryVisible.addSource(isHistoryVisible, mIsLibraryVisibleObserver);
-        isLibraryVisible.addSource(isDownloadsVisible, mIsLibraryVisibleObserver);
-        isLibraryVisible.setValue(new ObservableBoolean(false));
+        isLibraryVisible = new MutableLiveData<>(new ObservableBoolean(false));
 
         isLoading = new MutableLiveData<>(new ObservableBoolean(false));
         isMicrophoneEnabled = new MutableLiveData<>(new ObservableBoolean(true));
@@ -226,20 +215,6 @@ public class WindowViewModel extends AndroidViewModel {
         }
     };
 
-    private Observer<ObservableBoolean> mIsLibraryVisibleObserver = new Observer<ObservableBoolean>() {
-        @Override
-        public void onChanged(ObservableBoolean o) {
-            isLibraryVisible.postValue(new ObservableBoolean(
-                    isBookmarksVisible.getValue().get() ||
-                            isHistoryVisible.getValue().get() ||
-                            isDownloadsVisible.getValue().get()
-                    ));
-
-            // We use this to force dispatch a title bar and navigation bar URL refresh when library is opened
-            url.postValue(url.getValue());
-        }
-    };
-
     private Observer<Spannable> mIsServoAvailableObserver = new Observer<Spannable>() {
         @Override
         public void onChanged(Spannable url) {
@@ -253,14 +228,8 @@ public class WindowViewModel extends AndroidViewModel {
         @Override
         public void onChanged(Spannable aUrl) {
             String url = aUrl.toString();
-            if (isBookmarksVisible.getValue().get()) {
-                url = getApplication().getString(R.string.url_bookmarks_title);
-
-            } else if (isHistoryVisible.getValue().get()) {
-                url = getApplication().getString(R.string.url_history_title);
-
-            } else if (isDownloadsVisible.getValue().get()) {
-                url = getApplication().getString(R.string.url_downloads_title);
+            if (isLibraryVisible.getValue().get()) {
+                url = getApplication().getString(R.string.url_library_title);
 
             } else {
                 if (UrlUtils.isPrivateAboutPage(getApplication(), url) ||
@@ -269,6 +238,9 @@ public class WindowViewModel extends AndroidViewModel {
 
                 } else if (UrlUtils.isHomeUri(getApplication(), aUrl.toString())) {
                     url = getApplication().getString(R.string.url_home_title, getApplication().getString(R.string.app_name));
+
+                } else if (UrlUtils.isWebExtensionUrl(aUrl.toString())) {
+                    url = getApplication().getString(R.string.web_extensions_title);
 
                 } else if (UrlUtils.isBlankUri(getApplication(), aUrl.toString())) {
                     url = "";
@@ -316,8 +288,6 @@ public class WindowViewModel extends AndroidViewModel {
             } else {
                 navigationBarUrl.postValue(url);
             }
-
-            hint.postValue(getHintValue());
         }
     };
 
@@ -338,6 +308,7 @@ public class WindowViewModel extends AndroidViewModel {
                                     isWebXRUsed.getValue().get()
                             )
             ));
+            hint.postValue(getHintValue());
         }
     };
 
@@ -455,14 +426,8 @@ public class WindowViewModel extends AndroidViewModel {
     }
 
     private String getHintValue() {
-        if (isBookmarksVisible.getValue().get()) {
-            return getApplication().getString(R.string.url_bookmarks_title);
-
-        } else if (isHistoryVisible.getValue().get()) {
-            return getApplication().getString(R.string.url_history_title);
-
-        } else if (isDownloadsVisible.getValue().get()) {
-            return getApplication().getString(R.string.url_downloads_title);
+        if (isLibraryVisible.getValue().get()) {
+            return getApplication().getString(R.string.url_library_title);
 
         } else {
             return getApplication().getString(R.string.search_placeholder);
@@ -564,45 +529,12 @@ public class WindowViewModel extends AndroidViewModel {
         this.isActiveWindow.setValue(new ObservableBoolean(isActiveWindow));
     }
 
-    @NonNull
-    public MutableLiveData<ObservableBoolean> getIsBookmarksVisible() {
-        return isBookmarksVisible;
+    public void setIsLibraryVisible(boolean isLibraryVisible) {
+        this.isLibraryVisible.postValue(new ObservableBoolean(isLibraryVisible));
     }
 
-    public void setIsBookmarksVisible(boolean isBookmarksVisible) {
-        this.isBookmarksVisible.postValue(new ObservableBoolean(isBookmarksVisible));
-    }
-
-    @NonNull
-    public MutableLiveData<ObservableBoolean> getIsHistoryVisible() {
-        return isHistoryVisible;
-    }
-
-    public void setIsHistoryVisible(boolean isHistoryVisible) {
-        this.isHistoryVisible.postValue(new ObservableBoolean(isHistoryVisible));
-    }
-
-    @NonNull
-    public MutableLiveData<ObservableBoolean> getIsDownloadsVisible() {
-        return isDownloadsVisible;
-    }
-
-    public void setIsDownloadsVisible(boolean isDownloadsVisible) {
-        this.isDownloadsVisible.postValue(new ObservableBoolean(isDownloadsVisible));
-    }
-
-    public void setIsPanelVisible(@NonNull Windows.PanelType panelType, boolean isVisible) {
-        switch (panelType) {
-            case BOOKMARKS:
-                setIsBookmarksVisible(isVisible);
-                break;
-            case HISTORY:
-                setIsHistoryVisible(isVisible);
-                break;
-            case DOWNLOADS:
-                setIsDownloadsVisible(isVisible);
-                break;
-        }
+    public void setIsPanelVisible(boolean isVisible) {
+        setIsLibraryVisible(isVisible);
     }
 
     @NonNull

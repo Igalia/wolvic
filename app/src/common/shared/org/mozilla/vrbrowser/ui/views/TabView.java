@@ -16,12 +16,14 @@ import androidx.annotation.Nullable;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.browser.engine.Session;
+import org.mozilla.vrbrowser.browser.engine.SessionStore;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.utils.AnimationHelper;
 import org.mozilla.vrbrowser.utils.BitmapCache;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 import org.mozilla.vrbrowser.utils.UrlUtils;
 
+import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
 
 public class TabView extends RelativeLayout implements GeckoSession.ContentDelegate, Session.BitmapChangedListener {
@@ -290,6 +292,13 @@ public class TabView extends RelativeLayout implements GeckoSession.ContentDeleg
     public void onTitleChange(@NonNull GeckoSession session, @Nullable String title) {
         if (!mShowAddTab) {
             mTitle.setText(title);
+        }
+    }
+
+    @Override
+    public void onCloseRequest(@NonNull GeckoSession geckoSession) {
+        if (mSession.getGeckoSession() == geckoSession) {
+            mDelegate.onClose(this);
         }
     }
 

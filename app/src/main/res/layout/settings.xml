@@ -216,14 +216,6 @@
                                 android:background="@drawable/downloads_badge"
                                 app:visibleGone="@{settingsmodel.isWhatsNewVisible}"/>
                         </RelativeLayout>
-
-                        <org.mozilla.vrbrowser.ui.views.HoneycombButton
-                            android:id="@+id/reportIssueButton"
-                            style="?attr/honeycombButtonStyle"
-                            app:honeycombButtonIcon="@drawable/ic_settings_reportissue"
-                            app:honeycombButtonText="@string/settings_report_issue"
-                            app:honeycombSecondaryText="@string/bug_report_url"
-                            app:honeycombButtonTextSize="@dimen/settings_main_button_text_width" />
                     </LinearLayout>
                 </RelativeLayout>
             </HorizontalScrollView>

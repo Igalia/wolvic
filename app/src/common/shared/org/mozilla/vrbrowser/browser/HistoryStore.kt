@@ -31,7 +31,8 @@ class HistoryStore constructor(val context: Context) {
         @JvmStatic
         val BLOCK_LIST: MutableList<String> = Stream.of(
                 "https://accounts.firefox.com/authorization",
-                "https://accounts.firefox.com/oauth"
+                "https://accounts.firefox.com/oauth",
+                "moz-extension://"
         ).collect(Collectors.toList())
     }
 

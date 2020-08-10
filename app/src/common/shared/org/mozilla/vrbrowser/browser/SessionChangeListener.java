@@ -6,7 +6,7 @@ import org.mozilla.vrbrowser.browser.engine.Session;
 public interface SessionChangeListener {
     default void onSessionAdded(Session aSession) {}
     default void onSessionOpened(Session aSession) {}
-    default void onSessionClosed(String aId) {}
+    default void onSessionClosed(Session aSession) {}
     default void onSessionRemoved(String aId) {}
     default void onSessionStateChanged(Session aSession, boolean aActive) {}
     default void onCurrentSessionChange(GeckoSession aOldSession, GeckoSession aSession) {}

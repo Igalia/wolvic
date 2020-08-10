@@ -82,10 +82,6 @@ public class ViewUtils {
     }
 
     public static UIWidget getParentWidget(@NonNull View view) {
-        if (view == null) {
-            return null;
-        }
-
         ViewParent v = view.getParent();
         if (v instanceof UIWidget) {
             return (UIWidget)v;

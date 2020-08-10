@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="android.view.View"/>
+
+        <variable
+            name="viewModel"
+            type="org.mozilla.vrbrowser.ui.viewmodel.LibraryViewModel" />
+    </data>
+
+    <org.mozilla.vrbrowser.ui.views.ScrollBlockingLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/loading_tv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/addons_loading"
+            android:gravity="center_vertical|center_horizontal"
+            android:text="@string/addons_loading"
+            android:textAlignment="center"
+            android:textColor="@color/fog"
+            android:visibility="gone"
+            app:visibleGone="@{viewModel.isLoading}" />
+
+        <org.mozilla.vrbrowser.ui.views.CustomRecyclerView
+            android:id="@+id/addons_list"
+            style="@style/customRecyclerViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="Addons List"
+            android:orientation="vertical"
+            android:fadingEdgeLength="60dp"
+            android:requiresFadingEdge="vertical"
+            app:layoutManager="org.mozilla.vrbrowser.ui.adapters.CustomLinearLayoutManager"
+            app:visibleGone="@{!viewModel.isLoading}" />
+
+    </org.mozilla.vrbrowser.ui.views.ScrollBlockingLayout>
+</layout>

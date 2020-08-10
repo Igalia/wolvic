@@ -24,7 +24,7 @@ public class BuiltinExtension {
      * Installs the web extension in the runtime through the WebExtensionRuntime install method
      */
     public static void install(@NonNull WebExtensionRuntime runtime, @NonNull String extensionId, @NonNull String extensionUrl) {
-        runtime.installWebExtension(extensionId, extensionUrl, false, false, webExtension -> {
+        runtime.installWebExtension(extensionId, extensionUrl, webExtension -> {
             Log.i(LOGTAG, extensionId + " Web Extension successfully installed");
             return null;
         }, (s, throwable) -> {

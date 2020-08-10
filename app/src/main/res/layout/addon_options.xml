@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="addon"
+            type="mozilla.components.feature.addons.Addon" />
+        <variable
+            name="delegate"
+            type="org.mozilla.vrbrowser.addons.delegates.AddonOptionsViewDelegate" />
+    </data>
+    <org.mozilla.vrbrowser.ui.views.ScrollBlockingLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <org.mozilla.vrbrowser.ui.views.CustomScrollView
+                style="@style/customScrollViewStyle"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintWidth_max="500dp"
+                android:paddingEnd="20dp"
+                android:layout_gravity="center_horizontal">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentTop="true"
+                        android:orientation="vertical">
+                        <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                            android:id="@+id/addon_enabled"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:description="@string/addons_details_enabled" />
+                        <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
+                            android:id="@+id/addon_private_mode"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:description="@string/addons_details_private_mode"
+                            visibleGone="@{addon.enabled}" />
+                        <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                            android:id="@+id/addon_settings"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:buttonText="@string/addons_details_settings"
+                            android:onClick="@{(view) ->  delegate != null ? delegate.onAddonSettingsButtonClicked(view, addon) : void}"/>
+                        <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                            android:id="@+id/addon_detail"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:buttonText="@string/addons_details_details"
+                            android:onClick="@{(view) ->  delegate != null ? delegate.onAddonDetailsButtonClicked(view, addon) : void}"/>
+                        <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                            android:id="@+id/addon_permissions"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:buttonText="@string/addons_details_permissions"
+                            android:onClick="@{(view) ->  delegate != null ? delegate.onAddonPermissionsButtonClicked(view, addon) : void}"/>
+                        <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
+                            android:id="@+id/addon_removeAddon"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentBottom="true"
+                            app:buttonText="@string/addons_details_remove"
+                            android:onClick="@{(view) ->  delegate != null ? delegate.onRemoveAddonButtonClicked(view, addon) : void}"/>
+                    </LinearLayout>
+            </org.mozilla.vrbrowser.ui.views.CustomScrollView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </org.mozilla.vrbrowser.ui.views.ScrollBlockingLayout>
+</layout>

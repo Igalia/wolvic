@@ -178,6 +178,26 @@ public class UrlUtils {
         return url.equalsIgnoreCase(ABOUT_DOWNLOADS);
     }
 
+    public static final String ABOUT_ADDONS = "about://addons";
+
+    public static boolean isAddonsUrl(@Nullable String url) {
+        if (url == null) {
+            return false;
+        }
+
+        return url.equalsIgnoreCase(ABOUT_ADDONS);
+    }
+
+    public static final String WEB_EXTENSION_URL = "moz-extension://";
+
+    public static boolean isWebExtensionUrl(@Nullable String url) {
+        if (url == null) {
+            return false;
+        }
+
+        return url.startsWith(WEB_EXTENSION_URL);
+    }
+
     public static final String ABOUT_PRIVATE = "about://privatebrowsing";
 
     public static boolean isPrivateUrl(@Nullable String url) {
@@ -185,7 +205,7 @@ public class UrlUtils {
     }
 
     public static boolean isAboutPage(@Nullable String url) {
-        return isHistoryUrl(url) || isBookmarksUrl(url) || isDownloadsUrl(url) || isPrivateUrl(url);
+        return isHistoryUrl(url) || isBookmarksUrl(url) || isDownloadsUrl(url) || isAddonsUrl(url) || isPrivateUrl(url);
     }
 
     public static boolean isContentFeed(Context aContext, @Nullable String url) {

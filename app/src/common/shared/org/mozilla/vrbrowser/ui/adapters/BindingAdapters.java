@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.Dimension;
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.BindingAdapter;
@@ -91,8 +92,8 @@ public class BindingAdapters {
         view.setLayoutParams(params);
     }
 
-    @BindingAdapter("leftMargin")
-    public static void setLeftMargin(@NonNull View view, @NonNull @Dimension float margin) {
+    @BindingAdapter("startMargin")
+    public static void setStartMargin(@NonNull View view, @NonNull @Dimension float margin) {
         if (view.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
             if (params.getMarginStart() != Math.round(margin)) {
@@ -204,6 +205,11 @@ public class BindingAdapters {
         if (adapter != null) {
             adapter.setDownloadsList(items);
         }
+    }
+
+    @BindingAdapter("drawable")
+    public static void setDrawable(@NonNull ImageView view, @DrawableRes int drawableRes) {
+        view.setImageResource(drawableRes);
     }
 
  }

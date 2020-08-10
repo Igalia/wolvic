@@ -5,20 +5,35 @@
 
 package org.mozilla.vrbrowser.browser.adapter
 
+import kotlinx.coroutines.flow.collect
 import mozilla.components.browser.state.action.EngineAction
 import mozilla.components.browser.state.action.TabListAction
-import mozilla.components.browser.state.state.ContentState
-import mozilla.components.browser.state.state.EngineState
-import mozilla.components.browser.state.state.ReaderState
-import mozilla.components.browser.state.state.TabSessionState
+import mozilla.components.browser.state.action.WebExtensionAction
+import mozilla.components.browser.state.selector.selectedTab
+import mozilla.components.browser.state.state.*
 import mozilla.components.browser.state.store.BrowserStore
-import org.mozilla.geckoview.GeckoSession
+import mozilla.components.lib.state.ext.flowScoped
+import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import org.mozilla.vrbrowser.browser.components.GeckoEngineSession
 import org.mozilla.vrbrowser.browser.engine.Session
 
 class ComponentsAdapter private constructor(
         val store: BrowserStore = BrowserStore()
 ) {
+    interface StoreUpdatesListener {
+        fun onTabSelected(state: BrowserState, tab: SessionState?) {}
+    }
+
+    private val storeUpdatesListeners = arrayListOf<StoreUpdatesListener>()
+
+    fun addStoreUpdatesListener(listener: StoreUpdatesListener) {
+        storeUpdatesListeners.add(listener)
+    }
+
+    fun removeStoreUpdatesListener(listener: StoreUpdatesListener) {
+        storeUpdatesListeners.remove(listener)
+    }
+
     companion object {
         private val instance: ComponentsAdapter = ComponentsAdapter()
 
@@ -44,17 +59,50 @@ class ComponentsAdapter private constructor(
         ))
     }
 
-    fun link(tabId: String, geckoSession: GeckoSession) {
+    fun link(session: Session) {
         store.dispatch(EngineAction.LinkEngineSessionAction(
-                tabId,
-                GeckoEngineSession(geckoSession)
+                session.id,
+                GeckoEngineSession(session)
         ))
     }
 
-    fun unlink(tabId: String) {
+    fun unlink(session: Session) {
+        // Whenever a extension popup is closed we have to notify to unset the popupSession
+        store.state.extensions.map { it.value }.forEach {
+            it.popupSession?.let {
+                engineSession ->
+                if ((engineSession as GeckoEngineSession).session == session) {
+                    store.dispatch(
+                            WebExtensionAction.UpdatePopupSessionAction(it.id, popupSession = null)
+                    )
+                }
+            }
+        }
         store.dispatch(EngineAction.UnlinkEngineSessionAction(
-                tabId
+                session.id
         ))
+    }
+
+    init {
+        // This flow calls listeners when an Add-On request a Session selection
+        store.flowScoped { flow ->
+            flow.ifChanged { it.selectedTab }
+                    .collect { state ->
+                        storeUpdatesListeners.forEach { listener ->
+                            listener.onTabSelected(state, state.selectedTab)
+                        }
+                    }
+        }
+    }
+
+    fun getSessionStateForSession(session: Session?): SessionState? {
+        return store.state.tabs.firstOrNull() {
+            it.id == session?.id
+        }
+    }
+
+    fun getSortedEnabledExtensions(): List<WebExtensionState> {
+        return store.state.extensions.values.filter { it.enabled }.sortedBy { it.name }
     }
 }
 
@@ -70,7 +118,7 @@ private fun Session.toTabSessionState(): TabSessionState {
             extensionState = emptyMap(),
             readerState = ReaderState(),
             engineState = EngineState(
-                    GeckoEngineSession(geckoSession),
+                    GeckoEngineSession(this),
                     null
             )
     )
