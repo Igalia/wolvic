@@ -54,11 +54,13 @@ public class HamburgerMenuWidget extends UIWidget implements
     boolean mSendTabEnabled = false;
     private ArrayList<HamburgerMenuAdapter.MenuItem> mItems;
     private MenuDelegate mDelegate;
+    private int mCurrentUAMode;
 
     public HamburgerMenuWidget(@NonNull Context aContext) {
         super(aContext);
 
         mItems = new ArrayList<>();
+        mCurrentUAMode = SettingsStore.getInstance(aContext).getUaMode();
 
         updateUI();
     }
@@ -135,6 +137,7 @@ public class HamburgerMenuWidget extends UIWidget implements
     }
 
     public void setUAMode(int uaMode) {
+        mCurrentUAMode = uaMode;
         HamburgerMenuAdapter.MenuItem item = getSwitchModeIndex();
         if (item != null) {
             switch (uaMode) {
@@ -224,7 +227,7 @@ public class HamburgerMenuWidget extends UIWidget implements
                     .build());
         }
 
-        mItems.add(new HamburgerMenuAdapter.MenuItem.Builder(
+        HamburgerMenuAdapter.MenuItem item = new HamburgerMenuAdapter.MenuItem.Builder(
                 HamburgerMenuAdapter.MenuItem.TYPE_DEFAULT,
                 (menuItem) -> {
                     if (mDelegate != null) {
@@ -234,8 +237,20 @@ public class HamburgerMenuWidget extends UIWidget implements
                 })
                 .withId(SWITCH_ITEM_ID)
                 .withTitle(getContext().getString(R.string.hamburger_menu_switch_to_desktop))
-                .withIcon(R.drawable.ic_icon_ua_default)
-                .build());
+                .build();
+        switch (mCurrentUAMode) {
+            case GeckoSessionSettings.USER_AGENT_MODE_DESKTOP: {
+                item.setIcon(R.drawable.ic_icon_ua_desktop);
+            }
+            break;
+
+            case GeckoSessionSettings.USER_AGENT_MODE_MOBILE:
+            case GeckoSessionSettings.USER_AGENT_MODE_VR: {
+                item.setIcon(R.drawable.ic_icon_ua_default);
+            }
+            break;
+        }
+        mItems.add(item);
 
         mAdapter.setItems(mItems);
         mAdapter.notifyDataSetChanged();
