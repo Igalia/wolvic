@@ -353,6 +353,9 @@ public class PromptDelegate implements
             mSelectLoginPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.js_prompt_y_distance);
             mSelectLoginPrompt.show(UIWidget.REQUEST_FOCUS);
 
+        } else if (autocompleteRequest.options.length == 1) {
+            result.complete(autocompleteRequest.confirm(new Autocomplete.LoginSelectOption(autocompleteRequest.options[0].value)));
+
         } else {
             result.complete(autocompleteRequest.dismiss());
         }
