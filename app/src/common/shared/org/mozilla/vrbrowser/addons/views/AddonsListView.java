@@ -139,6 +139,7 @@ public class AddonsListView extends RecyclerView.ViewHolder implements AddonsMan
             mViewModel.setIsEmpty(false);
             mViewModel.setIsLoading(false);
             mAdapter.updateAddons(addonItems);
+            mAdapter.notifyDataSetChanged();
             mBinding.addonsList.smoothScrollToPosition(0);
         }
 
