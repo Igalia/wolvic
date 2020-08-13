@@ -192,13 +192,6 @@ class GeckoWebExtensionRuntime(
             } ?: emptyList()
 
             extensions.forEach { extension ->
-                // As a workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=1621385,
-                // we set all installed extensions to be allowed in private browsing mode.
-                // We need to revert back to false which is now the default.
-                if (!extension.isBuiltIn() && extension.isAllowedInPrivateBrowsing()) {
-                    setAllowedInPrivateBrowsing(extension, false)
-                }
-
                 extension.registerActionHandler(webExtensionActionHandler)
                 extension.registerTabHandler(webExtensionTabHandler)
             }
