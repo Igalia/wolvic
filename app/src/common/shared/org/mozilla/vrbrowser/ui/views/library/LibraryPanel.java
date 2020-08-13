@@ -222,10 +222,13 @@ public class LibraryPanel extends FrameLayout {
     }
 
     private void selectAddons() {
+        boolean alreadySelected = mCurrentView == mAddonsView;
         mCurrentView = mAddonsView;
         mBinding.addons.setActiveMode(true);
         mBinding.tabcontent.addView(mAddonsView);
-        mBinding.title.setText(R.string.addons_title);
+        if (!alreadySelected) {
+            mBinding.title.setText(R.string.addons_title);
+        }
     }
 
     public void onViewUpdated(@NonNull String title) {
