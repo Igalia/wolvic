@@ -73,17 +73,20 @@ public class LibraryPanel extends FrameLayout {
         mBinding.setDelegate(new LibraryNavigationDelegate() {
             @Override
             public void onClose(@NonNull View view) {
+                requestFocus();
                 mWidgetManager.getFocusedWindow().hidePanel();
             }
 
             @Override
             public void onBack(@NonNull View view) {
+                requestFocus();
                 mCurrentView.onBack();
                 mBinding.setCanGoBack(mCurrentView.canGoBack());
             }
 
             @Override
             public void onButtonClick(@NonNull View view) {
+                requestFocus();
                 selectTab(view);
             }
         });

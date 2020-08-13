@@ -814,6 +814,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             return;
         }
 
+        if (aEvent.getAction() == MotionEvent.ACTION_SCROLL) {
+            requestFocusFromTouch();
+        }
+
         if (mView != null) {
             super.handleHoverEvent(aEvent);
 
