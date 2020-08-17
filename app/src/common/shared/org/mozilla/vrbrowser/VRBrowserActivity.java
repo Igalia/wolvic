@@ -81,7 +81,6 @@ import org.mozilla.vrbrowser.ui.widgets.dialogs.WhatsNewWidget;
 import org.mozilla.vrbrowser.ui.widgets.menus.VideoProjectionMenuWidget;
 import org.mozilla.vrbrowser.utils.BitmapCache;
 import org.mozilla.vrbrowser.utils.ConnectivityReceiver;
-import org.mozilla.vrbrowser.utils.ConnectivityReceiver.Delegate;
 import org.mozilla.vrbrowser.utils.DeviceType;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
 import org.mozilla.vrbrowser.utils.ServoUtils;
@@ -95,7 +94,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
 import static org.mozilla.vrbrowser.ui.widgets.UIWidget.REMOVE_WIDGET;
@@ -180,7 +178,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     LinkedList<FocusChangeListener> mFocusChangeListeners;
     LinkedList<WorldClickListener> mWorldClickListeners;
     LinkedList<WebXRListener> mWebXRListeners;
-    CopyOnWriteArrayList<Delegate> mConnectivityListeners;
     LinkedList<Runnable> mBackHandlers;
     private boolean mIsPresentingImmersive = false;
     private Thread mUiThread;
@@ -188,7 +185,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     private Pair<Object, Float> mCurrentBrightness;
     private SearchEngineWrapper mSearchEngineWrapper;
     private SettingsStore mSettings;
-    private ConnectivityReceiver mConnectivityReceiver;
     private boolean mConnectionAvailable = true;
     private AudioManager mAudioManager;
     private Widget mActiveDialog;
@@ -269,7 +265,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mWebXRListeners = new LinkedList<>();
         mBackHandlers = new LinkedList<>();
         mBrightnessQueue = new LinkedList<>();
-        mConnectivityListeners = new CopyOnWriteArrayList<>();
         mCurrentBrightness = Pair.create(null, 1.0f);
 
         mWidgets = new HashMap<>();
@@ -303,16 +298,14 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mSearchEngineWrapper = SearchEngineWrapper.get(this);
         mSearchEngineWrapper.registerForUpdates();
 
+        getServicesProvider().getConnectivityReceiver().addListener(mConnectivityDelegate);
+
         GeolocationWrapper.INSTANCE.update(this);
 
-        mConnectivityReceiver = new ConnectivityReceiver();
         mPoorPerformanceAllowList = new HashSet<>();
         checkForCrash();
 
         mLifeCycle.setCurrentState(Lifecycle.State.CREATED);
-
-        getServicesProvider().getDownloadsManager().init();
-        getServicesProvider().getEnvironmentsManager().start();
     }
 
     protected void initializeWidgets() {
@@ -376,7 +369,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         mTray = new TrayWidget(this);
         mTray.addListeners(mWindows);
         mTray.setAddWindowVisible(mWindows.canOpenNewWindow());
-        addConnectivityListener(mTray);
         attachToWindow(mWindows.getFocusedWindow(), null);
 
         addWidgets(Arrays.asList(mRootWidget, mNavigationBar, mKeyboard, mTray, mWebXRInterstitial));
@@ -455,7 +447,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         for (Widget widget: mWidgets.values()) {
             widget.onPause();
         }
-        mConnectivityReceiver.unregister(this);
         // Reset so the dialog will show again on resume.
         mConnectionAvailable = true;
         if (mOffscreenDisplay != null) {
@@ -481,8 +472,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
         for (Widget widget: mWidgets.values()) {
             widget.onResume();
         }
-        mConnectivityListeners.forEach((listener) -> listener.OnConnectivityChanged(ConnectivityReceiver.isNetworkAvailable(this)));
-        mConnectivityReceiver.register(this, mConnectivityDelegate);
 
         // If we're signed-in, poll for any new device events (e.g. received tabs) on activity resume.
         // There's no push support right now, so this helps with the perception of speedy tab delivery.
@@ -495,6 +484,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
     @Override
     protected void onDestroy() {
+        ((VRBrowserApplication)getApplication()).onActivityDestroy();
         SettingsStore.getInstance(getBaseContext()).setPid(0);
         // Unregister the crash service broadcast receiver
         unregisterReceiver(mCrashReceiver);
@@ -523,8 +513,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
 
         SessionStore.get().onDestroy();
 
-        getServicesProvider().getEnvironmentsManager().stop();
-        getServicesProvider().getDownloadsManager().end();
+        getServicesProvider().getConnectivityReceiver().removeListener(mConnectivityDelegate);
 
         super.onDestroy();
         mLifeCycle.setCurrentState(Lifecycle.State.DESTROYED);
@@ -654,7 +643,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     }
 
     private ConnectivityReceiver.Delegate mConnectivityDelegate = connected -> {
-        mConnectivityListeners.forEach((listener) -> listener.OnConnectivityChanged(connected));
         mConnectionAvailable = connected;
     };
 
@@ -1499,18 +1487,6 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Override
     public boolean isWebXRPresenting() {
         return mIsPresentingImmersive;
-    }
-
-    @Override
-    public void addConnectivityListener(Delegate aListener) {
-        if (!mConnectivityListeners.contains(aListener)) {
-            mConnectivityListeners.add(aListener);
-        }
-    }
-
-    @Override
-    public void removeConnectivityListener(Delegate aListener) {
-        mConnectivityListeners.remove(aListener);
     }
 
     @Override

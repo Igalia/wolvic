@@ -141,6 +141,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
     private String mAddedTabUri;
     private @NewTabLocation int mAddedTabLocation = OPEN_IN_FOREGROUND;
     private DownloadsManager mDownloadsManager;
+    private ConnectivityReceiver mConnectivityReceived;
 
     @IntDef(value = { NONE, BOOKMARKS, HISTORY, DOWNLOADS, ADDONS})
     public @interface PanelType {}
@@ -183,12 +184,13 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
         mStoredCurvedMode = SettingsStore.getInstance(mContext).getCylinderDensity() > 0.0f;
 
-        mAccounts = ((VRBrowserApplication)mContext.getApplicationContext()).getAccounts();
+        mAccounts = mWidgetManager.getServicesProvider().getAccounts();
         mAccounts.addAccountListener(mAccountObserver);
-        mServices = ((VRBrowserApplication)mContext.getApplicationContext()).getServices();
+        mServices = mWidgetManager.getServicesProvider().getServices();
         mServices.setTabReceivedDelegate(this);
 
-        mWidgetManager.addConnectivityListener(mConnectivityDelegate);
+        mConnectivityReceived = mWidgetManager.getServicesProvider().getConnectivityReceiver();
+        mConnectivityReceived.addListener(mConnectivityDelegate);
 
         mDownloadsManager = mWidgetManager.getServicesProvider().getDownloadsManager();
 
@@ -528,7 +530,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         }
         mAccounts.removeAccountListener(mAccountObserver);
         mServices.setTabReceivedDelegate(null);
-        mWidgetManager.removeConnectivityListener(mConnectivityDelegate);
+        mConnectivityReceived.removeListener(mConnectivityDelegate);
     }
 
     public boolean isInPrivateMode() {

@@ -109,8 +109,6 @@ public interface WidgetManagerDelegate {
     TrayWidget getTray();
     NavigationBarWidget getNavigationBar();
     Windows getWindows();
-    void addConnectivityListener(ConnectivityReceiver.Delegate aListener);
-    void removeConnectivityListener(ConnectivityReceiver.Delegate aListener);
     void saveState();
     void updateLocale(@NonNull Context context);
     @NonNull

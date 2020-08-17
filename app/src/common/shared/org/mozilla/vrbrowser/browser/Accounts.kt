@@ -31,6 +31,7 @@ import org.mozilla.vrbrowser.utils.SystemUtils
 import org.mozilla.vrbrowser.utils.ViewUtils
 import java.net.URL
 import java.util.concurrent.CompletableFuture
+import kotlin.concurrent.thread
 
 const val PROFILE_PICTURE_TAG = "fxa_profile_picture"
 
@@ -210,7 +211,7 @@ class Accounts constructor(val context: Context) {
     }
 
     private fun loadProfilePicture(profile: Profile) {
-        CoroutineScope(Dispatchers.IO).launch {
+        thread {
             try {
                 val url = URL(profile.avatar!!.url)
                 BitmapFactory.decodeStream(url.openStream())?.let {

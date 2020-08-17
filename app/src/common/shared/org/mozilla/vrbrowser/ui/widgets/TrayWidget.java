@@ -33,6 +33,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserActivity;
+import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.audio.AudioEngine;
 import org.mozilla.vrbrowser.browser.BookmarksStore;
 import org.mozilla.vrbrowser.browser.engine.Session;
@@ -88,6 +89,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
     private int mHeadsetBatteryLevel;
     private int mLeftControllerBatteryLevel;
     private int mRightControllerBatteryLevel;
+    private ConnectivityReceiver mConnectivityReceived;
 
     public TrayWidget(Context aContext) {
         super(aContext);
@@ -128,6 +130,9 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
 
         mWidgetManager.addUpdateListener(this);
         mWidgetManager.getServicesProvider().getDownloadsManager().addListener(this);
+
+        mConnectivityReceived = ((VRBrowserApplication)getContext().getApplicationContext()).getConnectivityReceiver();
+        mConnectivityReceived.addListener(this);
 
         mWifiSSID = getContext().getString(R.string.tray_wifi_no_connection);
 
@@ -473,6 +478,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
     public void releaseWidget() {
         mWidgetManager.removeUpdateListener(this);
         mWidgetManager.getServicesProvider().getDownloadsManager().removeListener(this);
+        mWidgetManager.getServicesProvider().getConnectivityReceiver().removeListener(this);
         mTrayListeners.clear();
 
         if (mTrayViewModel != null) {

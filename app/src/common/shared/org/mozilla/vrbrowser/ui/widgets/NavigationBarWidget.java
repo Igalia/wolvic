@@ -173,7 +173,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
         mWidgetManager.addUpdateListener(this);
         mWidgetManager.addWorldClickListener(this);
-        mWidgetManager.addConnectivityListener(mConnectivityDelegate);
+        mWidgetManager.getServicesProvider().getConnectivityReceiver().addListener(mConnectivityDelegate);
 
         mSuggestionsProvider = new SuggestionsProvider(getContext());
 
@@ -448,7 +448,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     public void releaseWidget() {
         mWidgetManager.removeUpdateListener(this);
         mWidgetManager.removeWorldClickListener(this);
-        mWidgetManager.removeConnectivityListener(mConnectivityDelegate);
+        mWidgetManager.getServicesProvider().getConnectivityReceiver().removeListener(mConnectivityDelegate);
         mPrefs.unregisterOnSharedPreferenceChangeListener(this);
         
         if (mAttachedWindow != null && mAttachedWindow.isFullScreen()) {

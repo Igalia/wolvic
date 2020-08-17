@@ -28,6 +28,7 @@ import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.ui.adapters.Language;
 import org.mozilla.vrbrowser.ui.widgets.AppServicesProvider;
 import org.mozilla.vrbrowser.utils.BitmapCache;
+import org.mozilla.vrbrowser.utils.ConnectivityReceiver;
 import org.mozilla.vrbrowser.utils.EnvironmentsManager;
 import org.mozilla.vrbrowser.utils.LocaleUtils;
 import org.mozilla.vrbrowser.utils.SystemUtils;
@@ -45,6 +46,7 @@ public class VRBrowserApplication extends Application implements AppServicesProv
     private SpeechService mSpeechService;
     private EnvironmentsManager mEnvironmentsManager;
     private Addons mAddons;
+    private ConnectivityReceiver mConnectivityManager;
 
     @Override
     public void onCreate() {
@@ -71,6 +73,8 @@ public class VRBrowserApplication extends Application implements AppServicesProv
     protected void onActivityCreate(@NonNull Context activityContext) {
         EngineProvider.INSTANCE.getDefaultGeckoWebExecutor(activityContext);
         mAppExecutors = new AppExecutors();
+        mConnectivityManager = new ConnectivityReceiver(activityContext);
+        mConnectivityManager.init();
         mPlaces = new Places(activityContext);
         mServices = new Services(activityContext, mPlaces);
         mLoginStorage = new LoginStorage(this);
@@ -79,10 +83,18 @@ public class VRBrowserApplication extends Application implements AppServicesProv
         mSessionStore.initialize(activityContext);
         mSessionStore.setLocales(LocaleUtils.getPreferredLanguageTags(activityContext));
         mDownloadsManager = new DownloadsManager(activityContext);
+        mDownloadsManager.init();
         mSpeechService = new SpeechService(activityContext);
         mBitmapCache = new BitmapCache(activityContext, mAppExecutors.diskIO(), mAppExecutors.mainThread());
         mEnvironmentsManager = new EnvironmentsManager(activityContext);
+        mEnvironmentsManager.init();
         mAddons = new Addons(activityContext, mSessionStore);
+    }
+
+    protected void onActivityDestroy() {
+        mConnectivityManager.end();
+        mDownloadsManager.end();
+        mEnvironmentsManager.end();
     }
 
     @Override
@@ -154,5 +166,10 @@ public class VRBrowserApplication extends Application implements AppServicesProv
     @Override
     public SessionStore getSessionStore() {
         return mSessionStore;
+    }
+
+    @Override
+    public ConnectivityReceiver getConnectivityReceiver() {
+        return mConnectivityManager;
     }
 }

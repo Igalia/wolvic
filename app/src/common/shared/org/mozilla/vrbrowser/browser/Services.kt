@@ -27,8 +27,11 @@ import org.mozilla.geckoview.AllowOrDeny
 import org.mozilla.geckoview.GeckoResult
 import org.mozilla.geckoview.GeckoSession
 import org.mozilla.vrbrowser.R
+import org.mozilla.vrbrowser.VRBrowserActivity
 import org.mozilla.vrbrowser.browser.engine.EngineProvider
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService
+import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate
+import org.mozilla.vrbrowser.utils.ConnectivityReceiver
 import org.mozilla.vrbrowser.utils.SystemUtils
 
 
@@ -101,6 +104,18 @@ class Services(val context: Context, places: Places): GeckoSession.NavigationDel
     }
 
     init {
+        if (ConnectivityReceiver.isNetworkAvailable(context)) {
+            init()
+        }
+
+        (context as WidgetManagerDelegate).servicesProvider.connectivityReceiver.addListener {
+            if (it) {
+                init()
+            }
+        }
+    }
+
+    private fun init() {
         CoroutineScope(Dispatchers.Main).launch {
             accountManager.initAsync().await()
         }

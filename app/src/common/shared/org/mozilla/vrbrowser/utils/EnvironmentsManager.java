@@ -55,12 +55,12 @@ public class EnvironmentsManager implements DownloadsManager.DownloadsListener, 
         }
     }
 
-    public void start() {
+    public void init() {
         mDownloadManager.addListener(this);
         mPrefs.registerOnSharedPreferenceChangeListener(this);
     }
 
-    public void stop() {
+    public void end() {
         mDownloadManager.removeListener(this);
         mPrefs.unregisterOnSharedPreferenceChangeListener(this);
     }
