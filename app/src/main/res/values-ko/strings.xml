@@ -780,7 +780,7 @@
 
     <!-- This string is displayed in the voice-search dialog box that is shown to the user when they press the
          button used to initiate Voice Search. -->
-    <string name="voice_search_example">예: &quot;360 동영상, 날시, 뉴스…&quot;라고 말하세요</string>
+    <string name="voice_search_example">예: &quot;360 동영상, 날씨, 뉴스…&quot;라고 말하세요</string>
 
     <!-- This string is displayed in a dialog box show to the user while the Voice Search is being
          performed. It indicates that the search query is running and they should wait for the result. -->

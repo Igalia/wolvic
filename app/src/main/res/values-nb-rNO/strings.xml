@@ -1656,7 +1656,7 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
-    <string name="whats_new_body_1">Logg inn eller opprett en ny Firefox-konto for å sende faner fra Firefox på din datamaskin eller mobilenhet til headsettet.</string>
+    <string name="whats_new_body_1">Logg inn eller opprett en ny Firefox-konto for å sende faner fra Firefox på din datamaskin eller mobilenhet til hodesettet.</string>
 
     <!-- This string is displayed in the body of the what's new dialog that is displayed if the user has updated
          or updated the app and hasn't signed it yet. -->
