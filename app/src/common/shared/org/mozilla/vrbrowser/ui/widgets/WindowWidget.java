@@ -339,7 +339,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
-        mLibrary.updateUI();
+        mLibrary.onConfigurationChanged(newConfig);
 
         mViewModel.refresh();
     }

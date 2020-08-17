@@ -33,6 +33,7 @@ public class LibraryPanel extends FrameLayout {
     private DownloadsView mDownloadsView;
     private AddonsView mAddonsView;
     private LibraryView mCurrentView;
+    private @Windows.PanelType int mCurrentPanel;
 
     public LibraryPanel(@NonNull Context context) {
         super(context);
@@ -57,6 +58,7 @@ public class LibraryPanel extends FrameLayout {
         mHistoryView = new HistoryView(getContext(), this);
         mDownloadsView = new DownloadsView(getContext(), this);
         mAddonsView = new AddonsView(getContext(), this);
+        mCurrentPanel = Windows.BOOKMARKS;
 
         updateUI();
     }
@@ -92,7 +94,7 @@ public class LibraryPanel extends FrameLayout {
         });
         mBinding.executePendingBindings();
 
-        selectBookmarks();
+        selectPanel(mCurrentPanel);
 
         setOnTouchListener((v, event) -> {
             v.requestFocusFromTouch();
@@ -104,10 +106,16 @@ public class LibraryPanel extends FrameLayout {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
+        if (mBinding != null) {
+            mBinding.tabcontent.removeAllViews();
+        }
+
         mHistoryView.updateUI();
         mBookmarksView.updateUI();
         mDownloadsView.updateUI();
         mAddonsView.updateUI();
+
+        updateUI();
     }
 
     public void onShow() {
@@ -180,6 +188,8 @@ public class LibraryPanel extends FrameLayout {
     }
 
     public void selectPanel(@Windows.PanelType int panelType) {
+        mCurrentPanel = panelType;
+
         if (panelType == Windows.NONE) {
             panelType = getSelectedPanelType();
         }
