@@ -92,12 +92,16 @@ class Addons(val context: Context, private val sessionStore: SessionStore) {
                     onCloseTabOverride = {
                         _, sessionId ->
                         val session: Session? = sessionStore.getSession(sessionId)
-                        delegate.windows.onTabsClose(listOf(session))
+                        if (session != null) {
+                            delegate.windows.closeTab(session)
+                        }
                     },
                     onSelectTabOverride = {
                         _, sessionId ->
                         val session: Session? = sessionStore.getSession(sessionId)
-                        delegate.windows.onTabSelect(session)
+                        if (session != null) {
+                            delegate.windows.selectTab(session)
+                        }
                     },
                     onExtensionsLoaded = { extensions ->
                         addonUpdater.registerForFutureUpdates(extensions)

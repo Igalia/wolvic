@@ -28,18 +28,15 @@ public class AddonOptionsPermissionsView extends RecyclerView.ViewHolder {
     private AddonsOptionsPermissionsViewAdapter mAdapter;
     private WidgetManagerDelegate mWidgetManager;
 
+    @SuppressLint("ClickableViewAccessibility")
     public AddonOptionsPermissionsView(@NonNull Context context, @NonNull AddonOptionsPermissionsBinding binding) {
         super(binding.getRoot());
 
         mContext = context;
         mBinding = binding;
         mWidgetManager = ((VRBrowserActivity)context);
-    }
 
-    @SuppressLint("ClickableViewAccessibility")
-    public void bind(Addon addon) {
         mBinding.setLifecycleOwner((VRBrowserActivity) mContext);
-        mBinding.setAddon(addon);
         mAdapter = new AddonsOptionsPermissionsViewAdapter();
         mBinding.permissionsList.setAdapter(mAdapter);
         mBinding.permissionsList.setOnTouchListener((v, event) -> {
@@ -51,7 +48,10 @@ public class AddonOptionsPermissionsView extends RecyclerView.ViewHolder {
         mBinding.permissionsList.setItemViewCacheSize(20);
         mBinding.permissionsList.setDrawingCacheEnabled(true);
         mBinding.permissionsList.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
-        mBinding.executePendingBindings();
+    }
+
+    public void bind(Addon addon) {
+        mBinding.setAddon(addon);
 
         // Update permissions list
         if (addon != null) {
@@ -66,6 +66,8 @@ public class AddonOptionsPermissionsView extends RecyclerView.ViewHolder {
                     .sorted()
                     .collect(Collectors.toList()));
         }
+
+        mBinding.executePendingBindings();
     }
 
     protected RecyclerView.OnScrollListener mScrollListener = new RecyclerView.OnScrollListener() {

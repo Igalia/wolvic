@@ -1036,7 +1036,15 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         setSession(aSession, SESSION_RELEASE_DISPLAY, previousSessionState);
     }
 
+    public void setSession(@NonNull Session aSession, @SetSessionActiveState int previousSessionState, boolean hidePanel) {
+        setSession(aSession, SESSION_RELEASE_DISPLAY, previousSessionState, hidePanel);
+    }
+
     public void setSession(@NonNull Session aSession, @OldSessionDisplayAction int aDisplayAction, @SetSessionActiveState int previousSessionState) {
+        setSession(aSession, SESSION_RELEASE_DISPLAY, previousSessionState, true);
+    }
+
+    public void setSession(@NonNull Session aSession, @OldSessionDisplayAction int aDisplayAction, @SetSessionActiveState int previousSessionState, boolean hidePanel) {
         if (mSession != aSession) {
             Session oldSession = mSession;
             if (oldSession != null) {
@@ -1056,17 +1064,23 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
             mViewModel.setIsPrivateSession(mSession.isPrivateMode());
 
-            if (oldSession != null) {
-                onCurrentSessionChange(oldSession.getGeckoSession(), aSession.getGeckoSession());
-            } else {
-                onCurrentSessionChange(null, aSession.getGeckoSession());
+            if (hidePanel) {
+                if (oldSession != null) {
+                    onCurrentSessionChange(oldSession.getGeckoSession(), aSession.getGeckoSession());
+                } else {
+                    onCurrentSessionChange(null, aSession.getGeckoSession());
+                }
             }
+
             for (WindowListener listener: mListeners) {
                 listener.onSessionChanged(oldSession, aSession);
             }
         }
         mCaptureOnPageStop = false;
-        hideLibraryPanel();
+
+        if (hidePanel) {
+            hideLibraryPanel();
+        }
     }
 
     public void setDrmUsed(boolean isEnabled) {

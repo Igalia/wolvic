@@ -597,15 +597,22 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         } else {
             mRegularWindowPlacement = WindowPlacement.FRONT;
         }
-        for (WindowWidget window: mRegularWindows) {
+        for (int i=0; i<mRegularWindows.size(); i++) {
+            WindowWidget window = mRegularWindows.get(i);
             setWindowVisible(window, false);
         }
 
         updateViews();
         updateCurvedMode(true);
 
-        for (WindowWidget window: mPrivateWindows) {
+        for (int i=0; i<mPrivateWindows.size(); i++) {
+            WindowWidget window = mPrivateWindows.get(i);
             setWindowVisible(window, true);
+
+            // Make sure that if the Window session it's been closed we restore a valid session
+            if (SessionStore.get().getSession(window.getSession().getId()) == null) {
+                onTabsClose(Collections.singletonList(window.getSession()));
+            }
         }
 
         if (mPrivateWindows.size() == 0) {
@@ -633,15 +640,22 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         } else {
             mPrivateWindowPlacement = WindowPlacement.FRONT;
         }
-        for (WindowWidget window: mPrivateWindows) {
+        for (int i=0; i<mPrivateWindows.size(); i++) {
+            WindowWidget window = mPrivateWindows.get(i);
             setWindowVisible(window, false);
         }
 
         updateViews();
         updateCurvedMode(true);
 
-        for (WindowWidget window: mRegularWindows) {
+        for (int i=0; i<mRegularWindows.size(); i++) {
+            WindowWidget window = mRegularWindows.get(i);
             setWindowVisible(window, true);
+
+            // Make sure that if the Window session it's been closed we restore a valid session
+            if (SessionStore.get().getSession(window.getSession().getId()) == null) {
+                onTabsClose(Collections.singletonList(window.getSession()));
+            }
         }
         WindowWidget window = getWindowWithPlacement(mRegularWindowPlacement);
         if (window != null) {
@@ -1008,7 +1022,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
                 Session fxaSession = SessionStore.get().getSession(mAccounts.getOriginSessionId());
                 if (fxaSession != null) {
                     Session originSession = SessionStore.get().getSession(fxaSession.getId());
-                    closeTabs(Collections.singletonList(originSession), fxaSession.isPrivateMode());
+                    closeTabs(Collections.singletonList(originSession), fxaSession.isPrivateMode(), true);
                     addTab(getFocusedWindow(), mAccounts.getConnectionSuccessURL());
                 }
 
@@ -1252,6 +1266,10 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
         }
     }
 
+public void selectTab(@NonNull Session aTab) {
+        onTabSelect(aTab);
+    }
+
     @Override
     public void onTabSelect(Session aTab) {
         if (mFocusedWindow.getSession() != aTab) {
@@ -1344,10 +1362,18 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
 
     @Override
     public void onTabsClose(List<Session> aTabs) {
-        closeTabs(aTabs, mPrivateMode);
+        closeTabs(aTabs, mPrivateMode, true);
     }
 
-    private void closeTabs(List<Session> aTabs, boolean privateMode) {
+    public void closeTab(@NonNull Session aTab) {
+        if (isSessionFocused(aTab)) {
+            closeTabs(Collections.singletonList(aTab), mPrivateMode, true);
+        } else {
+            closeTabs(Collections.singletonList(aTab), mPrivateMode, false);
+        }
+    }
+
+    private void closeTabs(List<Session> aTabs, boolean privateMode, boolean hidePanel) {
         WindowWidget targetWindow = mFocusedWindow;
         // Prepare available tabs to choose from
         ArrayList<Session> available = SessionStore.get().getSortedSessions(privateMode);
@@ -1386,7 +1412,7 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
                 Session tab = available.get(0);
                 if (tab != null) {
                     setFirstPaint(window, tab);
-                    window.setSession(tab, WindowWidget.LEAVE_CURRENT_SESSION_ACTIVE);
+                    window.setSession(tab, WindowWidget.LEAVE_CURRENT_SESSION_ACTIVE, hidePanel);
                 }
 
                 available.remove(0);
@@ -1514,5 +1540,10 @@ public class Windows implements TrayListener, TopBarWidget.Delegate, TitleBarWid
                 NotificationManager.show(BOOKMARK_ADDED_NOTIFICATION_ID, notification);
             }
         }
+    }
+
+    public boolean isSessionFocused(@NonNull Session session) {
+        return mRegularWindows.stream().anyMatch(window -> window.getSession() == session && !window.isLibraryVisible() && session.isPrivateMode() == mPrivateMode) ||
+                mPrivateWindows.stream().anyMatch(window -> window.getSession() == session && !window.isLibraryVisible() && session.isPrivateMode() == mPrivateMode );
     }
 }

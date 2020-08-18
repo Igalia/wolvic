@@ -49,12 +49,11 @@ public class AddonOptionsDetailsView extends RecyclerView.ViewHolder {
         mContext = context;
         mBinding = binding;
         mWidgetManager = ((VRBrowserActivity)context);
+
+        mBinding.setLifecycleOwner((VRBrowserActivity) mContext);
     }
 
     public void bind(Addon addon) {
-        mBinding.setLifecycleOwner((VRBrowserActivity) mContext);
-        mBinding.executePendingBindings();
-
         // Update addon
         if (addon != null) {
             // If the addon is not installed we set the homepage link

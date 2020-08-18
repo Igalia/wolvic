@@ -38,13 +38,13 @@ public class AddonOptionsView extends RecyclerView.ViewHolder implements AddonOp
         mBinding = binding;
         mDelegate = delegate;
         mWidgetManager = ((VRBrowserActivity)context);
+
+        mBinding.setLifecycleOwner((VRBrowserActivity) mContext);
+        mBinding.setDelegate(this);
     }
 
     public void bind(Addon addon) {
-        mBinding.setLifecycleOwner((VRBrowserActivity) mContext);
         mBinding.setAddon(addon);
-        mBinding.setDelegate(this);
-        mBinding.executePendingBindings();
 
         // Update addon bindings
         if (addon != null) {
@@ -64,13 +64,17 @@ public class AddonOptionsView extends RecyclerView.ViewHolder implements AddonOp
                     addon.getInstalledState() != null &&
                             addon.getInstalledState().getOptionsPageUrl() != null);
         }
+
+        mBinding.executePendingBindings();
     }
 
     private void setAddonEnabled(@NonNull Addon addon, boolean isEnabled) {
         if (isEnabled) {
             mWidgetManager.getServicesProvider().getAddons().getAddonManager().enableAddon(addon, EnableSource.USER, addon1 -> {
+                mBinding.setAddon(addon1);
                 mBinding.addonPrivateMode.setVisibility(View.VISIBLE);
                 mBinding.addonSettings.setVisibility(View.VISIBLE);
+                mBinding.addonSettings.setEnabled(true);
                 return null;
 
             }, throwable -> {
@@ -80,8 +84,10 @@ public class AddonOptionsView extends RecyclerView.ViewHolder implements AddonOp
 
         } else {
             mWidgetManager.getServicesProvider().getAddons().getAddonManager().disableAddon(addon, EnableSource.USER, addon1 -> {
+                mBinding.setAddon(addon1);
                 mBinding.addonPrivateMode.setVisibility(View.GONE);
                 mBinding.addonSettings.setVisibility(View.GONE);
+                mBinding.addonSettings.setEnabled(false);
                 return null;
 
             }, throwable -> {

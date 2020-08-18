@@ -47,6 +47,7 @@ public class AddonsListView extends RecyclerView.ViewHolder implements AddonsMan
     private AddonsDelegate mDelegate;
     private WidgetManagerDelegate mWidgetManager;
 
+    @SuppressLint("ClickableViewAccessibility")
     public AddonsListView(@NonNull Context context, @NonNull AddonsListBinding binding, @NonNull AddonsDelegate delegate) {
         super(binding.getRoot());
 
@@ -65,10 +66,7 @@ public class AddonsListView extends RecyclerView.ViewHolder implements AddonsMan
         );
         mBinding = binding;
         mUIThreadExecutor = ((VRBrowserActivity) mContext).getServicesProvider().getExecutors().mainThread();
-    }
 
-    @SuppressLint("ClickableViewAccessibility")
-    public void bind() {
         mBinding.setLifecycleOwner((VRBrowserActivity) mContext);
         mBinding.setViewModel(mViewModel);
         mBinding.addonsList.setAdapter(mAdapter);
@@ -83,15 +81,28 @@ public class AddonsListView extends RecyclerView.ViewHolder implements AddonsMan
         mBinding.addonsList.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
         mViewModel.setIsLoading(true);
+    }
 
-        mBinding.executePendingBindings();
+    public void bind() {
+        ((VRBrowserActivity) mContext).getServicesProvider().getAddons().getAddons(true).thenApplyAsync(addons -> {
+            if (addons == null || addons.size() == 0) {
+                mViewModel.setIsEmpty(true);
+                mViewModel.setIsLoading(false);
 
-        mBinding.addonsList.setOnTouchListener((v, event) -> {
-            v.requestFocusFromTouch();
-            return false;
+            } else {
+                mViewModel.setIsEmpty(false);
+                mViewModel.setIsLoading(false);
+                mAdapter.updateAddons(addons);
+                mBinding.getRoot().post(() -> mBinding.addonsList.scrollToPosition(0));
+            }
+
+            mBinding.executePendingBindings();
+            return null;
+            
+        }, mUIThreadExecutor).exceptionally(throwable -> {
+            Log.d(LOGTAG, String.valueOf(throwable.getMessage()));
+            return null;
         });
-
-        updateAddons();
     }
 
     protected RecyclerView.OnScrollListener mScrollListener = new RecyclerView.OnScrollListener() {
@@ -118,32 +129,6 @@ public class AddonsListView extends RecyclerView.ViewHolder implements AddonsMan
                 R.color.fog,
                 R.drawable.ic_icon_tray_private_browsing_v2
         );
-    }
-
-    private void updateAddons() {
-        ((VRBrowserActivity) mContext).getServicesProvider().getAddons().getAddons(true).thenApplyAsync(addons -> {
-            showAddons(addons);
-            return null;
-        }, mUIThreadExecutor).exceptionally(throwable -> {
-            Log.d(LOGTAG, String.valueOf(throwable.getMessage()));
-            return null;
-        });
-    }
-
-    private void showAddons(List<Addon> addonItems) {
-        if (addonItems == null || addonItems.size() == 0) {
-            mViewModel.setIsEmpty(true);
-            mViewModel.setIsLoading(false);
-
-        } else {
-            mViewModel.setIsEmpty(false);
-            mViewModel.setIsLoading(false);
-            mAdapter.updateAddons(addonItems);
-            mAdapter.notifyDataSetChanged();
-            mBinding.addonsList.smoothScrollToPosition(0);
-        }
-
-        mBinding.executePendingBindings();
     }
 
     // AddonsViewDelegate
@@ -189,7 +174,8 @@ public class AddonsListView extends RecyclerView.ViewHolder implements AddonsMan
                         mWidgetManager.getServicesProvider().getExecutors().mainThread().execute(() -> {
                             CancellableOperation installTask = mWidgetManager.getServicesProvider().getAddons().getAddonManager().installAddon(addon, addon1 -> {
                                 showDownloadingAddonSuccessDialog(addon1);
-                                updateAddons();
+                                mAdapter.updateAddon(addon1);
+                                mBinding.getRoot().post(() -> mBinding.addonsList.smoothScrollToPosition(0));
                                 return null;
 
                             }, (s, throwable) -> {
@@ -232,17 +218,20 @@ public class AddonsListView extends RecyclerView.ViewHolder implements AddonsMan
                 })
                 .withCheckboxText(mContext.getString(R.string.addons_download_success_dialog_checkbox))
                 .withCallback((index, isChecked) -> {
-                    mWidgetManager.getServicesProvider().getAddons().getAddonManager().setAddonAllowedInPrivateBrowsing(
-                            addon,
-                            isChecked,
-                            addon1 -> {
-                                mAdapter.updateAddon(addon1);
-                                return null;
+                    if (isChecked) {
+                        mWidgetManager.getServicesProvider().getAddons().getAddonManager().setAddonAllowedInPrivateBrowsing(
+                                addon,
+                                true,
+                                addon1 -> {
+                                    mAdapter.updateAddon(addon1);
+                                    mBinding.getRoot().post(() -> mBinding.addonsList.smoothScrollToPosition(0));
+                                    return null;
                                 },
-                            throwable -> {
-                                Log.d(LOGTAG, String.valueOf(throwable.getMessage()));
-                                return null;
-                            });
+                                throwable -> {
+                                    Log.d(LOGTAG, String.valueOf(throwable.getMessage()));
+                                    return null;
+                                });
+                    }
                 })
                 .build();
         mWidgetManager.getFocusedWindow().showConfirmPrompt(data);
