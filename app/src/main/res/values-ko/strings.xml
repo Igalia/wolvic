@@ -96,7 +96,7 @@
 
     <!-- This string is displayed in the Settings dialog box and is used to label an
          On/Off switch which toggles whether browser-level Telemetry is reported back to Mozilla. -->
-    <string name="settings_telemetry">원격 측정</string>
+    <string name="settings_telemetry">데이터 수집</string>
 
     <!-- This string is used to label a button in the 'Settings' dialog window that, when pressed,
          opens a dialog box that contains privacy and security related settings. -->
