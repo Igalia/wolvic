@@ -496,6 +496,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     @Override
     public void detachFromWindow() {
+        hideMenu();
         hideAllNotifications();
 
         if (mAttachedWindow != null && mAttachedWindow.isResizing()) {
@@ -629,6 +630,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     private void enterFullScreenMode() {
+        hideMenu();
         hideAllNotifications();
 
         mWidgetManager.pushBackHandler(mFullScreenBackHandler);
@@ -665,6 +667,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     private void exitFullScreenMode() {
+        hideMenu();
         hideAllNotifications();
 
         if (mAttachedWindow == null || !mAttachedWindow.isFullScreen()) {
@@ -695,6 +698,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     }
 
     private void enterResizeMode() {
+        hideMenu();
         hideAllNotifications();
 
         if (mAttachedWindow.isResizing()) {
@@ -1209,7 +1213,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
     private void hideMenu() {
         if (mHamburgerMenu != null) {
-            mHamburgerMenu.hide(UIWidget.REMOVE_WIDGET);
+            mHamburgerMenu.hide(UIWidget.REMOVE_WIDGET, false);
         }
     }
 

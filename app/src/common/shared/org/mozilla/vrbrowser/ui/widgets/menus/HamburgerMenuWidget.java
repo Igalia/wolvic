@@ -113,7 +113,17 @@ public class HamburgerMenuWidget extends UIWidget implements
 
     @Override
     public void hide(int aHideFlags) {
-        AnimationHelper.scaleOut(findViewById(R.id.menuContainer), 100, 0, () -> HamburgerMenuWidget.super.hide(aHideFlags));
+        hide(aHideFlags, true);
+    }
+
+    public void hide(int aHideFlags, boolean anim) {
+        if (anim) {
+            AnimationHelper.scaleOut(findViewById(R.id.menuContainer), 100, 0, () -> HamburgerMenuWidget.super.hide(aHideFlags));
+
+        } else {
+            HamburgerMenuWidget.super.hide(aHideFlags);
+        }
+
         mWidgetPlacement.proxifyLayer = false;
 
         if (mWidgetManager != null) {
