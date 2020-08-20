@@ -80,7 +80,7 @@ public class AddonsView extends LibraryView implements AddonsDelegate {
     }
 
     public boolean onBack() {
-        if (mBinding != null) {
+        if (mBinding != null && !mBinding.pager.isFakeDragging()) {
             int currentItem = mBinding.pager.getCurrentItem();
             setView(mBinding.pager.getCurrentItem());
             return currentItem != AddonsViewAdapter.ADDONS_LEVEL_0;
