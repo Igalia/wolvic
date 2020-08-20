@@ -531,6 +531,7 @@ public class WindowViewModel extends AndroidViewModel {
 
     public void setIsLibraryVisible(boolean isLibraryVisible) {
         this.isLibraryVisible.postValue(new ObservableBoolean(isLibraryVisible));
+        this.url.postValue(this.getUrl().getValue());
     }
 
     public void setIsPanelVisible(boolean isVisible) {
@@ -678,7 +679,6 @@ public class WindowViewModel extends AndroidViewModel {
     public MutableLiveData<String> getNavigationBarUrl() {
         return navigationBarUrl;
     }
-
 
     @NonNull
     public MutableLiveData<ObservableBoolean> getIsPopUpAvailable() {
