@@ -6,6 +6,7 @@ import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.URLSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -16,6 +17,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserActivity;
+import org.mozilla.vrbrowser.VRBrowserApplication;
+import org.mozilla.vrbrowser.addons.delegates.AddonsDelegate;
+import org.mozilla.vrbrowser.browser.Addons;
 import org.mozilla.vrbrowser.databinding.AddonOptionsDetailsBinding;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.utils.SystemUtils;
@@ -26,12 +30,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
 import mozilla.components.feature.addons.Addon;
 import mozilla.components.feature.addons.ui.ExtensionsKt;
 
-public class AddonOptionsDetailsView extends RecyclerView.ViewHolder {
+public class AddonOptionsDetailsView extends RecyclerView.ViewHolder implements Addons.AddonsListener {
 
     private static final String LOGTAG = SystemUtils.createLogtag(AddonOptionsDetailsView.class);
 
@@ -42,22 +47,30 @@ public class AddonOptionsDetailsView extends RecyclerView.ViewHolder {
     private Context mContext;
     private AddonOptionsDetailsBinding mBinding;
     private WidgetManagerDelegate mWidgetManager;
+    private AddonsDelegate mDelegate;
+    private Executor mUIThreadExecutor;
 
-    public AddonOptionsDetailsView(@NonNull Context context, @NonNull AddonOptionsDetailsBinding binding) {
+    public AddonOptionsDetailsView(@NonNull Context context, @NonNull AddonOptionsDetailsBinding binding, @NonNull AddonsDelegate delegate) {
         super(binding.getRoot());
 
         mContext = context;
         mBinding = binding;
+        mDelegate = delegate;
         mWidgetManager = ((VRBrowserActivity)context);
+        mUIThreadExecutor = ((VRBrowserApplication)context.getApplicationContext()).getExecutors().mainThread();
 
         mBinding.setLifecycleOwner((VRBrowserActivity) mContext);
     }
 
     public void bind(Addon addon) {
+        mBinding.setAddon(addon);
+
+        mWidgetManager.getServicesProvider().getAddons().addListener(this);
+
         // Update addon
         if (addon != null) {
             // If the addon is not installed we set the homepage link
-            mBinding.homepage.setOnClickListener(view -> mWidgetManager.openNewTabForeground(addon.getSiteUrl()));
+            mBinding.homepage.setOnClickListener(view -> mWidgetManager.openNewTabForeground(mBinding.getAddon().getSiteUrl()));
 
             bindTranslatedDescription(mBinding.addonDescription, addon);
             bindAuthors(mBinding.authorsText, addon);
@@ -66,6 +79,10 @@ public class AddonOptionsDetailsView extends RecyclerView.ViewHolder {
             bindLastUpdated(mBinding.lastUpdatedText, addon);
             bindVersion(mBinding.versionText, addon);
         }
+    }
+
+    public void unbind() {
+        mWidgetManager.getServicesProvider().getAddons().removeListener(this);
     }
 
     private void bindTranslatedDescription(@NonNull TextView view, Addon addon) {
@@ -160,6 +177,26 @@ public class AddonOptionsDetailsView extends RecyclerView.ViewHolder {
                 view.setOnLongClickListener(null);
             }
         }
+    }
+
+    @Override
+    public void onAddonsUpdated() {
+        mWidgetManager.getServicesProvider().getAddons().getAddons(true).thenAcceptAsync(addons -> {
+            Addon addon = addons.stream()
+                    .filter(item -> item.getId().equals(mBinding.getAddon().getId()))
+                    .findFirst().orElse(null);
+
+            if (addon == null || !addon.isInstalled()) {
+                mDelegate.showAddonsList();
+
+            } else {
+                bind(addon);
+            }
+
+        }, mUIThreadExecutor).exceptionally(throwable -> {
+            Log.d(LOGTAG, String.valueOf(throwable.getMessage()));
+            return null;
+        });
     }
 
 }

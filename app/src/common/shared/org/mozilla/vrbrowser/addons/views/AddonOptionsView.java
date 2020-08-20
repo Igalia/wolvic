@@ -9,20 +9,24 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserActivity;
+import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.addons.adapters.AddonsViewAdapter;
 import org.mozilla.vrbrowser.addons.delegates.AddonOptionsViewDelegate;
 import org.mozilla.vrbrowser.addons.delegates.AddonsDelegate;
+import org.mozilla.vrbrowser.browser.Addons;
 import org.mozilla.vrbrowser.browser.engine.Session;
 import org.mozilla.vrbrowser.databinding.AddonOptionsBinding;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.prompts.PromptData;
 import org.mozilla.vrbrowser.utils.SystemUtils;
 
+import java.util.concurrent.Executor;
+
 import mozilla.components.concept.engine.webextension.EnableSource;
 import mozilla.components.feature.addons.Addon;
 import mozilla.components.feature.addons.ui.ExtensionsKt;
 
-public class AddonOptionsView extends RecyclerView.ViewHolder implements AddonOptionsViewDelegate {
+public class AddonOptionsView extends RecyclerView.ViewHolder implements AddonOptionsViewDelegate, Addons.AddonsListener {
 
     private static final String LOGTAG = SystemUtils.createLogtag(AddonOptionsView.class);
 
@@ -30,6 +34,7 @@ public class AddonOptionsView extends RecyclerView.ViewHolder implements AddonOp
     private AddonOptionsBinding mBinding;
     private WidgetManagerDelegate mWidgetManager;
     private AddonsDelegate mDelegate;
+    private Executor mUIThreadExecutor;
 
     public AddonOptionsView(@NonNull Context context, @NonNull AddonOptionsBinding binding, @NonNull AddonsDelegate delegate) {
         super(binding.getRoot());
@@ -38,6 +43,7 @@ public class AddonOptionsView extends RecyclerView.ViewHolder implements AddonOp
         mBinding = binding;
         mDelegate = delegate;
         mWidgetManager = ((VRBrowserActivity)context);
+        mUIThreadExecutor = ((VRBrowserApplication)context.getApplicationContext()).getExecutors().mainThread();
 
         mBinding.setLifecycleOwner((VRBrowserActivity) mContext);
         mBinding.setDelegate(this);
@@ -45,6 +51,8 @@ public class AddonOptionsView extends RecyclerView.ViewHolder implements AddonOp
 
     public void bind(Addon addon) {
         mBinding.setAddon(addon);
+
+        mWidgetManager.getServicesProvider().getAddons().addListener(this);
 
         // Update addon bindings
         if (addon != null) {
@@ -54,42 +62,29 @@ public class AddonOptionsView extends RecyclerView.ViewHolder implements AddonOp
 
             // Addon private mode
             mBinding.addonPrivateMode.setValue(addon.isAllowedInPrivateBrowsing(), false);
-            mBinding.addonPrivateMode.setOnCheckedChangeListener((compoundButton, b, apply) -> mWidgetManager.getServicesProvider().getAddons().getAddonManager().setAddonAllowedInPrivateBrowsing(addon, b, addon12 -> null, throwable ->  {
-                Log.d(LOGTAG, throwable.getMessage() != null ? throwable.getMessage() : "");
+            mBinding.addonPrivateMode.setOnCheckedChangeListener((compoundButton, b, apply) -> mWidgetManager.getServicesProvider().getAddons().setAddonAllowedInPrivateBrowsing(addon, b, addon1 -> null, throwable ->  {
+                Log.d(LOGTAG, String.valueOf(throwable.getMessage()));
                 return null;
             }));
-
-            setAddonEnabled(addon, addon.isEnabled());
         }
 
         mBinding.executePendingBindings();
     }
 
+    public void unbind() {
+        mWidgetManager.getServicesProvider().getAddons().removeListener(this);
+    }
+
     private void setAddonEnabled(@NonNull Addon addon, boolean isEnabled) {
         if (isEnabled) {
-            mWidgetManager.getServicesProvider().getAddons().getAddonManager().enableAddon(addon, EnableSource.USER, addon1 -> {
-                mBinding.setAddon(addon1);
-                mBinding.addonPrivateMode.setVisibility(View.VISIBLE);
-                mBinding.addonSettings.setVisibility(View.VISIBLE);
-                mBinding.addonSettings.setEnabled(addon1.getInstalledState() != null &&
-                        addon1.getInstalledState().getOptionsPageUrl() != null);
-                return null;
-
-            }, throwable -> {
-                Log.d(LOGTAG, throwable.getMessage() != null ? throwable.getMessage() : "");
+            mWidgetManager.getServicesProvider().getAddons().enableAddon(addon, EnableSource.USER, addon1 -> null, throwable -> {
+                Log.d(LOGTAG, String.valueOf(throwable.getMessage()));
                 return null;
             });
 
         } else {
-            mWidgetManager.getServicesProvider().getAddons().getAddonManager().disableAddon(addon, EnableSource.USER, addon1 -> {
-                mBinding.setAddon(addon1);
-                mBinding.addonPrivateMode.setVisibility(View.GONE);
-                mBinding.addonSettings.setVisibility(View.GONE);
-                mBinding.addonSettings.setEnabled(false);
-                return null;
-
-            }, throwable -> {
-                Log.d(LOGTAG, throwable.getMessage() != null ? throwable.getMessage() : "");
+            mWidgetManager.getServicesProvider().getAddons().disableAddon(addon, EnableSource.USER, addon1 -> null, throwable -> {
+                Log.d(LOGTAG, String.valueOf(throwable.getMessage()));
                 return null;
             });
         }
@@ -97,7 +92,7 @@ public class AddonOptionsView extends RecyclerView.ViewHolder implements AddonOp
 
     @Override
     public void onRemoveAddonButtonClicked(@NonNull View view, @NonNull Addon addon) {
-        mWidgetManager.getServicesProvider().getAddons().getAddonManager().uninstallAddon(addon, () -> {
+        mWidgetManager.getServicesProvider().getAddons().uninstallAddon(addon, () -> {
             showRemoveAddonSuccessDialog(addon);
             return null;
 
@@ -109,7 +104,6 @@ public class AddonOptionsView extends RecyclerView.ViewHolder implements AddonOp
     }
 
     private void showRemoveAddonSuccessDialog(@NonNull Addon addon) {
-        mDelegate.showAddonsList();
         PromptData data = new PromptData.Builder()
                 .withIconRes(R.drawable.ic_icon_addons)
                 .withTitle(mContext.getString(
@@ -123,7 +117,6 @@ public class AddonOptionsView extends RecyclerView.ViewHolder implements AddonOp
     }
 
     private void showRemoveAddonErrorDialog(@NonNull Addon addon) {
-        mDelegate.showAddonsList();
         PromptData data = new PromptData.Builder()
                 .withIconRes(R.drawable.ic_icon_addons)
                 .withTitle(mContext.getString(
@@ -163,5 +156,25 @@ public class AddonOptionsView extends RecyclerView.ViewHolder implements AddonOp
     @Override
     public void onAddonPermissionsButtonClicked(@NonNull View view, @NonNull Addon addon) {
         mDelegate.showAddonOptionsPermissions(addon);
+    }
+
+    @Override
+    public void onAddonsUpdated() {
+        mWidgetManager.getServicesProvider().getAddons().getAddons(true).thenAcceptAsync(addons -> {
+            Addon addon = addons.stream()
+                    .filter(item -> item.getId().equals(mBinding.getAddon().getId()))
+                    .findFirst().orElse(null);
+
+            if (addon != null && addon.isInstalled()) {
+                bind(addon);
+
+            } else {
+                mDelegate.showAddonsList();
+            }
+
+        }, mUIThreadExecutor).exceptionally(throwable -> {
+            Log.d(LOGTAG, String.valueOf(throwable.getMessage()));
+            return null;
+        });
     }
 }

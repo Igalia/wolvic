@@ -89,6 +89,11 @@ public class AddonsView extends LibraryView implements AddonsDelegate {
         }
     }
 
+    @Override
+    public void onHide() {
+        super.onHide();
+    }
+
     public boolean onBack() {
         if (mBinding != null && !mBinding.pager.isFakeDragging()) {
             int currentItem = mBinding.pager.getCurrentItem();
@@ -111,23 +116,24 @@ public class AddonsView extends LibraryView implements AddonsDelegate {
     }
 
     private void setView(@AddonsViewAdapter.AddonsViews int fromViewId) {
-        switch (fromViewId) {
-            case AddonsViewAdapter.ADDON_OPTIONS_DETAILS: {
-                if (mAdapter.getCurrentAddon() != null && mAdapter.getCurrentAddon().isInstalled()) {
-                    showAddonOptions(mAdapter.getCurrentAddon());
+         if (mBinding.pager.isFakeDragging()) {
+             return;
+         }
 
-                } else {
-                    showAddonsList();
-                }
-            }
-            case AddonsViewAdapter.ADDON_OPTIONS_PERMISSIONS: {
+        if (fromViewId == AddonsViewAdapter.ADDON_OPTIONS_DETAILS) {
+            if (mAdapter.getCurrentAddon() != null && mAdapter.getCurrentAddon().isInstalled()) {
                 showAddonOptions(mAdapter.getCurrentAddon());
-                break;
-            }
-            default: {
+
+            } else {
                 showAddonsList();
-                break;
             }
+            showAddonOptions(mAdapter.getCurrentAddon());
+
+        } else if (fromViewId == AddonsViewAdapter.ADDON_OPTIONS_PERMISSIONS) {
+            showAddonOptions(mAdapter.getCurrentAddon());
+
+        } else {
+            showAddonsList();
         }
     }
 
@@ -172,4 +178,5 @@ public class AddonsView extends LibraryView implements AddonsDelegate {
             mRootPanel.onViewUpdated(ExtensionsKt.getTranslatedName(addon));
         }
     }
+
 }

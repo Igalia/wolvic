@@ -17,6 +17,7 @@ import org.mozilla.vrbrowser.VRBrowserActivity;
 import org.mozilla.vrbrowser.addons.adapters.AddonsManagerAdapter;
 import org.mozilla.vrbrowser.addons.adapters.AddonsViewAdapter;
 import org.mozilla.vrbrowser.addons.delegates.AddonsDelegate;
+import org.mozilla.vrbrowser.browser.Addons;
 import org.mozilla.vrbrowser.databinding.AddonsListBinding;
 import org.mozilla.vrbrowser.ui.viewmodel.LibraryViewModel;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
@@ -35,7 +36,7 @@ import mozilla.components.feature.addons.Addon;
 import mozilla.components.feature.addons.ui.AddonsManagerAdapterDelegate;
 import mozilla.components.feature.addons.ui.ExtensionsKt;
 
-public class AddonsListView extends RecyclerView.ViewHolder implements AddonsManagerAdapterDelegate {
+public class AddonsListView extends RecyclerView.ViewHolder implements AddonsManagerAdapterDelegate, Addons.AddonsListener {
 
     private static final String LOGTAG = SystemUtils.createLogtag(AddonsListView.class);
 
@@ -84,6 +85,8 @@ public class AddonsListView extends RecyclerView.ViewHolder implements AddonsMan
     }
 
     public void bind() {
+        mWidgetManager.getServicesProvider().getAddons().addListener(this);
+
         ((VRBrowserActivity) mContext).getServicesProvider().getAddons().getAddons(true).thenApplyAsync(addons -> {
             if (addons == null || addons.size() == 0) {
                 mViewModel.setIsEmpty(true);
@@ -116,8 +119,10 @@ public class AddonsListView extends RecyclerView.ViewHolder implements AddonsMan
         }
     };
 
-    public void onDestroy() {
+    public void unbind() {
         mBinding.addonsList.removeOnScrollListener(mScrollListener);
+
+        mWidgetManager.getServicesProvider().getAddons().removeListener(this);
     }
 
     private AddonsManagerAdapter.Style createAddonStyle(@NonNull Context context) {
@@ -172,7 +177,7 @@ public class AddonsListView extends RecyclerView.ViewHolder implements AddonsMan
                 .withCallback((index, isChecked) -> {
                     if (index == PromptDialogWidget.POSITIVE) {
                         mWidgetManager.getServicesProvider().getExecutors().mainThread().execute(() -> {
-                            CancellableOperation installTask = mWidgetManager.getServicesProvider().getAddons().getAddonManager().installAddon(addon, addon1 -> {
+                            CancellableOperation installTask = mWidgetManager.getServicesProvider().getAddons().installAddon(addon, addon1 -> {
                                 showDownloadingAddonSuccessDialog(addon1);
                                 mAdapter.updateAddon(addon1);
                                 mBinding.getRoot().post(() -> mBinding.addonsList.smoothScrollToPosition(0));
@@ -219,7 +224,7 @@ public class AddonsListView extends RecyclerView.ViewHolder implements AddonsMan
                 .withCheckboxText(mContext.getString(R.string.addons_download_success_dialog_checkbox))
                 .withCallback((index, isChecked) -> {
                     if (isChecked) {
-                        mWidgetManager.getServicesProvider().getAddons().getAddonManager().setAddonAllowedInPrivateBrowsing(
+                        mWidgetManager.getServicesProvider().getAddons().setAddonAllowedInPrivateBrowsing(
                                 addon,
                                 true,
                                 addon1 -> {
@@ -251,6 +256,18 @@ public class AddonsListView extends RecyclerView.ViewHolder implements AddonsMan
     @Override
     public void onNotYetSupportedSectionClicked(@NonNull List<Addon> unsupportedAddons) {
         // Nothing to do in FxR,this is Fenix/Fennec migration specific
+    }
+
+    @Override
+    public void onAddonsUpdated() {
+        mWidgetManager.getServicesProvider().getAddons().getAddons(true).thenAcceptAsync(addons -> {
+            mAdapter.updateAddons(addons);
+            mAdapter.notifyDataSetChanged();
+
+        }, mUIThreadExecutor).exceptionally(throwable -> {
+            Log.d(LOGTAG, String.valueOf(throwable.getMessage()));
+            return null;
+        });
     }
 
 }

@@ -4,12 +4,17 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import androidx.appcompat.content.res.AppCompatResources
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.future.future
+import mozilla.components.concept.engine.CancellableOperation
 import mozilla.components.concept.engine.webextension.Action
+import mozilla.components.concept.engine.webextension.EnableSource
 import mozilla.components.feature.addons.Addon
 import mozilla.components.feature.addons.AddonManager
 import mozilla.components.feature.addons.amo.AddonCollectionProvider
@@ -21,6 +26,7 @@ import mozilla.components.support.webextensions.WebExtensionSupport
 import org.mozilla.geckoview.GeckoSession
 import org.mozilla.vrbrowser.BuildConfig
 import org.mozilla.vrbrowser.R
+import org.mozilla.vrbrowser.addons.views.AddonsListView
 import org.mozilla.vrbrowser.browser.adapter.ComponentsAdapter
 import org.mozilla.vrbrowser.browser.components.GeckoEngineSession
 import org.mozilla.vrbrowser.browser.engine.EngineProvider
@@ -28,6 +34,7 @@ import org.mozilla.vrbrowser.browser.engine.Session
 import org.mozilla.vrbrowser.browser.engine.SessionStore
 import org.mozilla.vrbrowser.crashreporting.GlobalExceptionHandler
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate
+import java.util.concurrent.CancellationException
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
@@ -35,7 +42,12 @@ private const val DAY_IN_MINUTES = 24 * 60L
 
 class Addons(val context: Context, private val sessionStore: SessionStore) {
 
+    interface AddonsListener {
+        fun onAddonsUpdated()
+    }
+
     val delegate: WidgetManagerDelegate = (context as WidgetManagerDelegate)
+    val listeners: ArrayList<AddonsListener> = ArrayList()
 
     val addonCollectionProvider by lazy {
         if (BuildConfig.AMO_COLLECTION.isNotEmpty()) {
@@ -54,11 +66,11 @@ class Addons(val context: Context, private val sessionStore: SessionStore) {
     }
 
     @Suppress("MagicNumber")
-    val addonUpdater by lazy {
+    private val addonUpdater by lazy {
         DefaultAddonUpdater(context, AddonUpdater.Frequency(12, TimeUnit.HOURS))
     }
 
-    val addonManager by lazy {
+    private val addonManager by lazy {
         AddonManager(
                 ComponentsAdapter.get().store,
                 sessionStore.webExtensionRuntime,
@@ -110,6 +122,90 @@ class Addons(val context: Context, private val sessionStore: SessionStore) {
             )
         } catch (e: UnsupportedOperationException) {
             Logger.error("Failed to initialize web extension support", e)
+        }
+    }
+
+    fun addListener(listener: AddonsListener) {
+        if (!listeners.contains(listener)) {
+            listeners.add(listener)
+        }
+    }
+
+    fun removeListener(listener: AddonsListener) {
+        listeners.remove(listener)
+    }
+
+    fun installAddon(addon: Addon,
+                     onSuccess: ((Addon) -> Unit) = { },
+                     onError: ((String, Throwable) -> Unit) = { _, _ -> }): CancellableOperation {
+        return addonManager.installAddon(addon, { addon1: Addon ->
+            onSuccess.invoke(addon1)
+            notifyListeners()
+
+        }, { s: String, throwable: Throwable ->
+            onError.invoke(s, throwable)
+        })
+    }
+
+    fun uninstallAddon(addon: Addon,
+                       onSuccess: (() -> Unit) = { },
+                       onError: ((String, Throwable) -> Unit) = { _, _ -> }) {
+        addonManager.uninstallAddon(addon, {
+            onSuccess.invoke()
+            notifyListeners()
+
+        }, { s: String, throwable: Throwable ->
+            onError.invoke(s, throwable)
+        })
+    }
+
+    fun setAddonAllowedInPrivateBrowsing(addon: Addon,
+                                         allowed: Boolean,
+                                         onSuccess: ((Addon) -> Unit) = { },
+                                         onError: ((Throwable) -> Unit) = { }) {
+        addonManager.setAddonAllowedInPrivateBrowsing(addon, allowed, {
+            onSuccess.invoke(it)
+            notifyListeners()
+
+        }, { throwable: Throwable ->
+            onError.invoke(throwable)
+        })
+    }
+
+    fun enableAddon(addon: Addon,
+                    source: EnableSource = EnableSource.USER,
+                    onSuccess: ((Addon) -> Unit) = { },
+                    onError: ((Throwable) -> Unit) = { }) {
+            addonManager.enableAddon(addon, source, {
+            onSuccess.invoke(it)
+            notifyListeners()
+
+        }, { throwable: Throwable ->
+            onError.invoke(throwable)
+        })
+    }
+
+    fun disableAddon(addon: Addon,
+                    source: EnableSource = EnableSource.USER,
+                    onSuccess: ((Addon) -> Unit) = { },
+                    onError: ((Throwable) -> Unit) = { }) {
+        addonManager.disableAddon(addon, source, {
+            onSuccess.invoke(it)
+            notifyListeners()
+
+        }, { throwable: Throwable ->
+            onError.invoke(throwable)
+        })
+    }
+
+    private fun notifyListeners() {
+        if (listeners.size > 0) {
+            val listenersCopy = ArrayList(listeners)
+            Handler(Looper.getMainLooper()).post {
+                for (listener in listenersCopy) {
+                    listener.onAddonsUpdated()
+                }
+            }
         }
     }
 

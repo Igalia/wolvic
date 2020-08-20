@@ -83,18 +83,37 @@ public class AddonsViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 AddonOptionsDetailsBinding binding = DataBindingUtil
                         .inflate(LayoutInflater.from(parent.getContext()), R.layout.addon_options_details,
                                 parent, false);
-                return new AddonOptionsDetailsView(parent.getContext(), binding);
+                return new AddonOptionsDetailsView(parent.getContext(), binding, mDelegate);
             }
 
             case ADDON_OPTIONS_PERMISSIONS: {
                 AddonOptionsPermissionsBinding binding = DataBindingUtil
                         .inflate(LayoutInflater.from(parent.getContext()), R.layout.addon_options_permissions,
                                 parent, false);
-                return new AddonOptionsPermissionsView(parent.getContext(), binding);
+                return new AddonOptionsPermissionsView(parent.getContext(), binding, mDelegate);
             }
         }
 
         throw new RuntimeException("there is no type that matches the type " + viewType + " + make sure your using types correctly");
+    }
+
+    @Override
+    public void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
+        super.onViewRecycled(holder);
+
+        if (holder instanceof AddonsListView) {
+            ((AddonsListView)holder).unbind();
+
+        } else if (holder instanceof AddonOptionsView) {
+            ((AddonOptionsView)holder).unbind();
+
+        } else if (holder instanceof AddonOptionsDetailsView) {
+            ((AddonOptionsDetailsView)holder).unbind();
+
+        } else if (holder instanceof AddonOptionsPermissionsView) {
+            ((AddonOptionsPermissionsView)holder).unbind();
+
+        }
     }
 
     @Override
@@ -118,6 +137,11 @@ public class AddonsViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 ((AddonOptionsPermissionsView) holder).bind(mCurrentAddon);
             }
         }
+    }
+
+    @Override
+    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
     }
 
     @Override

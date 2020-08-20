@@ -2,6 +2,11 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="addon"
+            type="mozilla.components.feature.addons.Addon" />
+    </data>
     <org.mozilla.vrbrowser.ui.views.ScrollBlockingLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">

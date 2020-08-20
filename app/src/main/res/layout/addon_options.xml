@@ -47,6 +47,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             app:buttonText="@string/addons_details_settings"
+                            app:visibleGone="@{addon.enabled}"
+                            android:enabled="@{addon.installedState != null &amp;&amp; addon.installedState.optionsPageUrl != null}"
                             android:onClick="@{(view) ->  delegate != null ? delegate.onAddonSettingsButtonClicked(view, addon) : void}"/>
                         <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
                             android:id="@+id/addon_detail"

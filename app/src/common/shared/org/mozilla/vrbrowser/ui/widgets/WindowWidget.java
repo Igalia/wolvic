@@ -1771,7 +1771,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     @Override
     public void onLocationChange(@NonNull GeckoSession session, @Nullable String url) {
-        if (mPromptDelegate != null && !UrlUtils.getHost(url).equals(UrlUtils.getHost(mViewModel.getUrl().getValue().toString()))){
+        if (mPromptDelegate != null &&
+                mViewModel.getUrl().getValue() != null &&
+                UrlUtils.getHost(url) != null &&
+                !UrlUtils.getHost(url).equals(UrlUtils.getHost(mViewModel.getUrl().getValue().toString()))){
             mPromptDelegate.hideAllPrompts();
         }
 
