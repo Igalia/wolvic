@@ -124,6 +124,8 @@ class LoginEditOptionsView extends SettingsView {
 
     private OnClickListener mDelete = (view) -> {
         mWidgetManager.getServicesProvider().getLoginStorage().delete(mLogin);
+        mBinding.usernameEdit.cancel();
+        mBinding.passwordEdit.cancel();
         onDismiss();
     };
 
