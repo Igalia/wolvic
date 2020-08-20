@@ -21,6 +21,7 @@ import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 public class EnvironmentsManager implements DownloadsManager.DownloadsListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -34,6 +35,7 @@ public class EnvironmentsManager implements DownloadsManager.DownloadsListener, 
     private DownloadsManager mDownloadManager;
     private SharedPreferences mPrefs;
     private ArrayList<EnvironmentListener> mListeners;
+    private long mEnvDownloadId = -1;
 
     public EnvironmentsManager(@NonNull Context context) {
         mContext = context;
@@ -66,6 +68,10 @@ public class EnvironmentsManager implements DownloadsManager.DownloadsListener, 
     }
 
     public void setOrDownloadEnvironment(@NonNull String envId) {
+        if (mEnvDownloadId != -1) {
+            mDownloadManager.removeDownload(mEnvDownloadId, true);
+        }
+
         if (EnvironmentUtils.isBuiltinEnvironment(mContext, envId)) {
             SettingsStore.getInstance(mContext).setEnvironment(envId);
             mListeners.forEach(environmentListener -> environmentListener.onEnvironmentSetSuccess(envId));
@@ -152,10 +158,21 @@ public class EnvironmentsManager implements DownloadsManager.DownloadsListener, 
 
     // DownloadsManager
 
+
+    @Override
+    public void onDownloadsUpdate(@NonNull List<Download> downloads) {
+        Download envDownload = downloads.stream().filter(download -> EnvironmentUtils.getExternalEnvironmentByPayload(mContext, download.getUri()) != null).findFirst().orElse(null);
+        if (envDownload != null) {
+            mEnvDownloadId = envDownload.getId();
+        }
+    }
+
     @Override
     public void onDownloadCompleted(@NonNull Download download) {
         Environment env = EnvironmentUtils.getExternalEnvironmentByPayload(mContext, download.getUri());
         if (env != null) {
+            mEnvDownloadId = -1;
+
             // We don't want the download to be left in the downloads list, so we just remove it when the download is done.
             mDownloadManager.removeDownload(download.getId(), false);
             UnzipTask unzip = new UnzipTask(mContext);
