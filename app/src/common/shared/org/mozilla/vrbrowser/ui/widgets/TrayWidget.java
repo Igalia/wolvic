@@ -722,8 +722,8 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
     }
 
     private void updateTime() {
-        long timestamp = System.currentTimeMillis();
-        String androidDateTime = DateFormat.getTimeFormat(getContext()).format(new Date(timestamp));
+        Date currentTime = Calendar.getInstance().getTime();
+        String androidDateTime = DateFormat.getTimeFormat(getContext()).format(currentTime);
         String AmPm = "";
         SimpleDateFormat format = new SimpleDateFormat("HH:mm", Locale.getDefault());
         if (!Character.isDigit(androidDateTime.charAt(androidDateTime.length() - 1))) {
