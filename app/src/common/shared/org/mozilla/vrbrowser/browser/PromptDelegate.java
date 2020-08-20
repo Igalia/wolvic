@@ -296,7 +296,7 @@ public class PromptDelegate implements
         final GeckoResult<PromptResponse> result = new GeckoResult<>();
 
         // We always get at least one item, at the moment only one item is support.
-        if (autocompleteRequest.options.length > 0) {
+        if (autocompleteRequest.options.length > 0 && SettingsStore.getInstance(mContext).isAutoFillEnabled()) {
             Autocomplete.LoginSaveOption saveOption = autocompleteRequest.options[0];
             boolean originHasException = mSavedLoginBlockedSites.stream().anyMatch(site -> site.url.equals(saveOption.value.origin));
             if (originHasException || !SettingsStore.getInstance(mContext).isLoginAutocompleteEnabled()) {
@@ -335,7 +335,7 @@ public class PromptDelegate implements
     public GeckoResult<PromptResponse> onLoginSelect(@NonNull GeckoSession geckoSession, final @NonNull AutocompleteRequest<Autocomplete.LoginSelectOption> autocompleteRequest) {
         final GeckoResult<PromptResponse> result = new GeckoResult<>();
 
-        if (autocompleteRequest.options.length > 1) {
+        if (autocompleteRequest.options.length > 1 && SettingsStore.getInstance(mContext).isAutoFillEnabled()) {
             List<Login> logins = Arrays.stream(autocompleteRequest.options).map(item -> GeckoLoginDelegateWrapper.toLogin(item.value)).collect(Collectors.toList());
             mSelectLoginPrompt = new SelectLoginPromptWidget(mContext, new SelectLoginPromptWidget.Delegate() {
                 @Override
