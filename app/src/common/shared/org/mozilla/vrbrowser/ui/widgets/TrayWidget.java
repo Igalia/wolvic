@@ -314,6 +314,12 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
 
             return false;
         });
+
+        mBinding.leftController.setVisibility(mLeftControllerBatteryLevel < 0 ? View.GONE : View.VISIBLE);
+        mBinding.rightController.setVisibility(mRightControllerBatteryLevel < 0 ? View.GONE : View.VISIBLE);
+
+        updateTime();
+        updateWifi();
     }
 
     public void start(Context context) {
@@ -569,7 +575,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
     };
 
     private Observer<ObservableBoolean> mIsPrivateSession = aBoolean -> {
-        if (mBinding.privateButton.isHovered()) {
+        if (mBinding.privateButton.isHovered() || mViewModel.getIsPrivateSession().getValue().get() == aBoolean.get()) {
             return;
         }
         if (aBoolean.get()) {
