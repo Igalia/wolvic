@@ -51,7 +51,7 @@ class GeckoLoginDelegateWrapper(private val storageDelegate: LoginStorageDelegat
         @JvmStatic
         fun Autocomplete.LoginEntry.toLogin() = Login(
                 guid = guid,
-                origin = origin,
+                origin = origin.orEmpty(),
                 formActionOrigin = formActionOrigin,
                 httpRealm = httpRealm,
                 username = username,

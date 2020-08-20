@@ -353,10 +353,7 @@ public class PromptDelegate implements
             mSelectLoginPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
             mSelectLoginPrompt.getPlacement().parentAnchorY = 0.0f;
             mSelectLoginPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.js_prompt_y_distance);
-            mSelectLoginPrompt.show(UIWidget.REQUEST_FOCUS, true);
-
-        } else if (autocompleteRequest.options.length == 1) {
-            result.complete(autocompleteRequest.confirm(new Autocomplete.LoginSelectOption(autocompleteRequest.options[0].value)));
+            mSelectLoginPrompt.show(UIWidget.KEEP_FOCUS, true);
 
         } else {
             result.complete(autocompleteRequest.dismiss());
