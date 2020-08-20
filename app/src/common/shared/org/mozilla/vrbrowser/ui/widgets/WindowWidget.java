@@ -361,6 +361,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
             mTitleBar.setDelegate((TitleBarWidget.Delegate) null);
         }
         mListeners.clear();
+
+        if (mPromptDelegate != null){
+            mPromptDelegate.hideAllPrompts();
+        }
     }
 
     public void loadHomeIfBlank() {
@@ -1767,6 +1771,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     @Override
     public void onLocationChange(@NonNull GeckoSession session, @Nullable String url) {
+        if (mPromptDelegate != null && !UrlUtils.getHost(url).equals(UrlUtils.getHost(mViewModel.getUrl().getValue().toString()))){
+            mPromptDelegate.hideAllPrompts();
+        }
+
         mViewModel.setUrl(url);
         mViewModel.setIsDrmUsed(false);
         mViewModel.setIsMediaAvailable(false);

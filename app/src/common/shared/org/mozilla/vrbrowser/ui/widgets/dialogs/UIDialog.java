@@ -47,16 +47,28 @@ public abstract class UIDialog extends UIWidget implements WidgetManagerDelegate
 
     @Override
     public void show(int aShowFlags) {
+        show(aShowFlags, false);
+    }
+
+    public void show(int aShowFlags, boolean addLast) {
         if (!isVisible()) {
-            super.show(aShowFlags);
+            boolean showFront = !addLast || mDialogs.size() == 0;
 
-            mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
+            if (showFront){
+                super.show(aShowFlags);
 
-            UIDialog head = mDialogs.peek();
-            if (head != null && head.isVisible()) {
-                head.hide();
+                mWidgetManager.pushWorldBrightness(this, WidgetManagerDelegate.DEFAULT_DIM_BRIGHTNESS);
+
+                UIDialog head = mDialogs.peek();
+                if (head != null && head.isVisible()) {
+                    head.hide();
+                }
+
+                mDialogs.push(this);
+
+            } else {
+                mDialogs.addLast(this);
             }
-            mDialogs.push(this);
         }
     }
 

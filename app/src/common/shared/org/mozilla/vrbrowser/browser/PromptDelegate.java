@@ -56,6 +56,8 @@ public class PromptDelegate implements
     private List<SitePermission> mSavedLoginBlockedSites;
     private SitePermissionViewModel mViewModel;
     private WidgetManagerDelegate mWidgetManager;
+    private SaveLoginPromptWidget mSaveLoginPrompt;
+    private SelectLoginPromptWidget mSelectLoginPrompt;
 
     public PromptDelegate(@NonNull Context context) {
         mContext = context;
@@ -125,7 +127,7 @@ public class PromptDelegate implements
         mPrompt.setTitle(alertPrompt.title);
         mPrompt.setMessage(alertPrompt.message);
         mPrompt.setPromptDelegate(() -> result.complete(alertPrompt.dismiss()));
-        mPrompt.show(UIWidget.REQUEST_FOCUS);
+        mPrompt.show(UIWidget.REQUEST_FOCUS, true);
 
         return result;
     }
@@ -156,7 +158,7 @@ public class PromptDelegate implements
                 result.complete(buttonPrompt.dismiss());
             }
         });
-        mPrompt.show(UIWidget.REQUEST_FOCUS);
+        mPrompt.show(UIWidget.REQUEST_FOCUS, true);
 
         return result;
     }
@@ -184,7 +186,7 @@ public class PromptDelegate implements
                 result.complete(textPrompt.dismiss());
             }
         });
-        mPrompt.show(UIWidget.REQUEST_FOCUS);
+        mPrompt.show(UIWidget.REQUEST_FOCUS, true);
 
         return result;
     }
@@ -217,7 +219,7 @@ public class PromptDelegate implements
                 result.complete(authPrompt.confirm(username, password));
             }
         });
-        mPrompt.show(UIWidget.REQUEST_FOCUS);
+        mPrompt.show(UIWidget.REQUEST_FOCUS, true);
 
         return result;
     }
@@ -246,7 +248,7 @@ public class PromptDelegate implements
                 result.complete(choicePrompt.dismiss());
             }
         });
-        mPrompt.show(UIWidget.REQUEST_FOCUS);
+        mPrompt.show(UIWidget.REQUEST_FOCUS, true);
 
         return result;
     }
@@ -301,7 +303,7 @@ public class PromptDelegate implements
                 result.complete(autocompleteRequest.dismiss());
 
             } else {
-                SaveLoginPromptWidget mSaveLoginPrompt = new SaveLoginPromptWidget(mContext, new SaveLoginPromptWidget.Delegate() {
+                mSaveLoginPrompt = new SaveLoginPromptWidget(mContext, new SaveLoginPromptWidget.Delegate() {
                     @Override
                     public void dismiss(@NonNull Login login) {
                         result.complete(autocompleteRequest.dismiss());
@@ -318,7 +320,7 @@ public class PromptDelegate implements
                 mSaveLoginPrompt.getPlacement().parentAnchorY = 0.0f;
                 mSaveLoginPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.js_prompt_y_distance);
                 mSaveLoginPrompt.setLogin(GeckoLoginDelegateWrapper.toLogin(saveOption.value));
-                mSaveLoginPrompt.show(UIWidget.REQUEST_FOCUS);
+                mSaveLoginPrompt.show(UIWidget.REQUEST_FOCUS, true);
             }
 
         } else {
@@ -335,7 +337,7 @@ public class PromptDelegate implements
 
         if (autocompleteRequest.options.length > 1) {
             List<Login> logins = Arrays.stream(autocompleteRequest.options).map(item -> GeckoLoginDelegateWrapper.toLogin(item.value)).collect(Collectors.toList());
-            SelectLoginPromptWidget mSelectLoginPrompt = new SelectLoginPromptWidget(mContext, new SelectLoginPromptWidget.Delegate() {
+            mSelectLoginPrompt = new SelectLoginPromptWidget(mContext, new SelectLoginPromptWidget.Delegate() {
                 @Override
                 public void onLoginSelected(@NonNull Login login) {
                     result.complete(autocompleteRequest.confirm(new Autocomplete.LoginSelectOption(GeckoLoginDelegateWrapper.toLoginEntry(login))));
@@ -351,7 +353,7 @@ public class PromptDelegate implements
             mSelectLoginPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
             mSelectLoginPrompt.getPlacement().parentAnchorY = 0.0f;
             mSelectLoginPrompt.getPlacement().translationY = WidgetPlacement.unitFromMeters(mContext, R.dimen.js_prompt_y_distance);
-            mSelectLoginPrompt.show(UIWidget.REQUEST_FOCUS);
+            mSelectLoginPrompt.show(UIWidget.REQUEST_FOCUS, true);
 
         } else if (autocompleteRequest.options.length == 1) {
             result.complete(autocompleteRequest.confirm(new Autocomplete.LoginSelectOption(autocompleteRequest.options[0].value)));
@@ -388,7 +390,7 @@ public class PromptDelegate implements
                     result.complete(SlowScriptResponse.CONTINUE);
                 }
             });
-            mSlowScriptPrompt.show(UIWidget.REQUEST_FOCUS);
+            mSlowScriptPrompt.show(UIWidget.REQUEST_FOCUS, true);
         }
 
         return result.then(value -> {
@@ -430,9 +432,24 @@ public class PromptDelegate implements
                 result.complete(prompt.dismiss());
             }
         });
-        mPrompt.show(UIWidget.REQUEST_FOCUS);
+        mPrompt.show(UIWidget.REQUEST_FOCUS, true);
 
         return result;
+    }
+
+    public void hideAllPrompts() {
+        if (mPrompt != null) {
+            mPrompt.hide(UIWidget.REMOVE_WIDGET);
+        }
+        if (mSlowScriptPrompt != null) {
+            mSlowScriptPrompt.hide(UIWidget.REMOVE_WIDGET);
+        }
+        if (mSaveLoginPrompt != null) {
+            mSaveLoginPrompt.hide(UIWidget.REMOVE_WIDGET);
+        }
+        if (mSelectLoginPrompt != null) {
+            mSelectLoginPrompt.hide(UIWidget.REMOVE_WIDGET);
+        }
     }
 
     // WindowWidget.WindowListener
