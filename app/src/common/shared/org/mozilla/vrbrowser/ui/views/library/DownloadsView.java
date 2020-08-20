@@ -36,7 +36,6 @@ import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.ui.widgets.WindowWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.PromptDialogWidget;
-import org.mozilla.vrbrowser.ui.widgets.menus.MenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.menus.library.DownloadsContextMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.menus.library.LibraryContextMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.menus.library.SortingContextMenuWidget;
@@ -121,6 +120,9 @@ public class DownloadsView extends LibraryView implements DownloadsManager.Downl
         mDownloadsManager.addListener(this);
         onDownloadsUpdate(mDownloadsManager.getDownloads());
         updateLayout();
+        if (mRootPanel != null) {
+            mRootPanel.onViewUpdated(getContext().getString(R.string.downloads_title));
+        }
     }
 
     @Override

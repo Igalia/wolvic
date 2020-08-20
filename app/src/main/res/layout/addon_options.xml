@@ -35,7 +35,7 @@
                             android:id="@+id/addon_enabled"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            app:description="@string/addons_details_enabled" />
+                            app:description="@{addon.enabled ? @string/addons_details_enabled : @string/addons_details_disabled}" />
                         <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
                             android:id="@+id/addon_private_mode"
                             android:layout_width="match_parent"

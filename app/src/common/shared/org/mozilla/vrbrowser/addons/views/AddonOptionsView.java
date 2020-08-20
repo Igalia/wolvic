@@ -59,10 +59,7 @@ public class AddonOptionsView extends RecyclerView.ViewHolder implements AddonOp
                 return null;
             }));
 
-
-            mBinding.addonSettings.setEnabled(
-                    addon.getInstalledState() != null &&
-                            addon.getInstalledState().getOptionsPageUrl() != null);
+            setAddonEnabled(addon, addon.isEnabled());
         }
 
         mBinding.executePendingBindings();
@@ -74,7 +71,8 @@ public class AddonOptionsView extends RecyclerView.ViewHolder implements AddonOp
                 mBinding.setAddon(addon1);
                 mBinding.addonPrivateMode.setVisibility(View.VISIBLE);
                 mBinding.addonSettings.setVisibility(View.VISIBLE);
-                mBinding.addonSettings.setEnabled(true);
+                mBinding.addonSettings.setEnabled(addon1.getInstalledState() != null &&
+                        addon1.getInstalledState().getOptionsPageUrl() != null);
                 return null;
 
             }, throwable -> {
@@ -111,6 +109,7 @@ public class AddonOptionsView extends RecyclerView.ViewHolder implements AddonOp
     }
 
     private void showRemoveAddonSuccessDialog(@NonNull Addon addon) {
+        mDelegate.showAddonsList();
         PromptData data = new PromptData.Builder()
                 .withIconRes(R.drawable.ic_icon_addons)
                 .withTitle(mContext.getString(
@@ -119,12 +118,12 @@ public class AddonOptionsView extends RecyclerView.ViewHolder implements AddonOp
                 .withBtnMsg(new String[]{
                         mContext.getString(R.string.addons_remove_success_dialog_ok)
                 })
-                .withCallback((index, isChecked) -> mDelegate.showAddonsList())
                 .build();
         mWidgetManager.getFocusedWindow().showConfirmPrompt(data);
     }
 
     private void showRemoveAddonErrorDialog(@NonNull Addon addon) {
+        mDelegate.showAddonsList();
         PromptData data = new PromptData.Builder()
                 .withIconRes(R.drawable.ic_icon_addons)
                 .withTitle(mContext.getString(
@@ -133,7 +132,6 @@ public class AddonOptionsView extends RecyclerView.ViewHolder implements AddonOp
                 .withBtnMsg(new String[]{
                         mContext.getString(R.string.addons_remove_error_dialog_ok)
                 })
-                .withCallback((index, isChecked) -> mDelegate.showAddonsList())
                 .build();
         mWidgetManager.getFocusedWindow().showConfirmPrompt(data);
     }

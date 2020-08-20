@@ -214,31 +214,24 @@ public class LibraryPanel extends FrameLayout {
         mCurrentView = mBookmarksView;
         mBinding.bookmarks.setActiveMode(true);
         mBinding.tabcontent.addView(mBookmarksView);
-        mBinding.title.setText(R.string.bookmarks_title);
     }
 
     private void selectHistory() {
         mCurrentView = mHistoryView;
         mBinding.history.setActiveMode(true);
         mBinding.tabcontent.addView(mHistoryView);
-        mBinding.title.setText(R.string.history_title);
     }
 
     private void selectDownloads() {
         mCurrentView = mDownloadsView;
         mBinding.downloads.setActiveMode(true);
         mBinding.tabcontent.addView(mDownloadsView);
-        mBinding.title.setText(R.string.downloads_title);
     }
 
     private void selectAddons() {
-        boolean alreadySelected = mCurrentView == mAddonsView;
         mCurrentView = mAddonsView;
         mBinding.addons.setActiveMode(true);
         mBinding.tabcontent.addView(mAddonsView);
-        if (!alreadySelected) {
-            mBinding.title.setText(R.string.addons_title);
-        }
     }
 
     public void onViewUpdated(@NonNull String title) {

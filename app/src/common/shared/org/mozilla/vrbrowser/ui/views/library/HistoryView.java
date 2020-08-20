@@ -36,7 +36,6 @@ import org.mozilla.vrbrowser.ui.viewmodel.HistoryViewModel;
 import org.mozilla.vrbrowser.ui.widgets.UIWidget;
 import org.mozilla.vrbrowser.ui.widgets.WindowWidget;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.ClearHistoryDialogWidget;
-import org.mozilla.vrbrowser.ui.widgets.menus.MenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.menus.library.HistoryContextMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.menus.library.LibraryContextMenuWidget;
 import org.mozilla.vrbrowser.utils.SystemUtils;
@@ -160,6 +159,9 @@ public class HistoryView extends LibraryView implements HistoryStore.HistoryList
     public void onShow() {
         updateLayout();
         mBinding.historyList.smoothScrollToPosition(0);
+        if (mRootPanel != null) {
+            mRootPanel.onViewUpdated(getContext().getString(R.string.history_title));
+        }
     }
 
     private final HistoryItemCallback mHistoryItemCallback = new HistoryItemCallback() {

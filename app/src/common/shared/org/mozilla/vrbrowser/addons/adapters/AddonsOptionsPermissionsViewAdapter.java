@@ -5,7 +5,6 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
-import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.mozilla.vrbrowser.R;
@@ -24,38 +23,8 @@ public class AddonsOptionsPermissionsViewAdapter extends RecyclerView.Adapter<Re
     }
 
     public void setPermissionsList(final List<String> permissionsList) {
-        if (mPermissionsList == null) {
-            mPermissionsList = permissionsList;
-            notifyItemRangeInserted(0, permissionsList.size());
-
-        } else {
-            DiffUtil.DiffResult result = DiffUtil.calculateDiff(new DiffUtil.Callback() {
-                @Override
-                public int getOldListSize() {
-                    return mPermissionsList.size();
-                }
-
-                @Override
-                public int getNewListSize() {
-                    return permissionsList.size();
-                }
-
-                @Override
-                public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-                    return mPermissionsList.get(oldItemPosition).equals(permissionsList.get(newItemPosition));
-                }
-
-                @Override
-                public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-                    String newPermissionItem = permissionsList.get(newItemPosition);
-                    String oldHPermissionItem = mPermissionsList.get(oldItemPosition);
-                    return newPermissionItem.equals(oldHPermissionItem);
-                }
-            });
-
-            mPermissionsList = permissionsList;
-            result.dispatchUpdatesTo(this);
-        }
+        mPermissionsList = permissionsList;
+        notifyDataSetChanged();
     }
 
     @NonNull

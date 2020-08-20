@@ -77,6 +77,16 @@ public class AddonsView extends LibraryView implements AddonsDelegate {
     @Override
     public void onShow() {
         updateLayout();
+
+        if (mBinding.pager.getCurrentItem() == AddonsViewAdapter.ADDONS_LEVEL_0) {
+            if (mRootPanel != null) {
+                mRootPanel.onViewUpdated(getContext().getString(R.string.addons_title));
+            }
+        } else {
+            if (mRootPanel != null) {
+                mRootPanel.onViewUpdated(ExtensionsKt.getTranslatedName(mAdapter.getCurrentAddon()));
+            }
+        }
     }
 
     public boolean onBack() {

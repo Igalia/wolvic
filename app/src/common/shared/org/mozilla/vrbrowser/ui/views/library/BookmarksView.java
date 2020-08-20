@@ -36,7 +36,6 @@ import org.mozilla.vrbrowser.ui.callbacks.BookmarksCallback;
 import org.mozilla.vrbrowser.ui.callbacks.LibraryContextMenuCallback;
 import org.mozilla.vrbrowser.ui.viewmodel.BookmarksViewModel;
 import org.mozilla.vrbrowser.ui.widgets.WindowWidget;
-import org.mozilla.vrbrowser.ui.widgets.menus.MenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.menus.library.BookmarksContextMenuWidget;
 import org.mozilla.vrbrowser.ui.widgets.menus.library.LibraryContextMenuWidget;
 import org.mozilla.vrbrowser.utils.SystemUtils;
@@ -143,6 +142,9 @@ public class BookmarksView extends LibraryView implements BookmarksStore.Bookmar
     public void onShow() {
         updateLayout();
         mBinding.bookmarksList.smoothScrollToPosition(0);
+        if (mRootPanel != null) {
+            mRootPanel.onViewUpdated(getContext().getString(R.string.bookmarks_title));
+        }
     }
 
     @Override

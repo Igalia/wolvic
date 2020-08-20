@@ -1137,8 +1137,11 @@
          'Close' refers to closing the Addons panel and showing the latest active tab. -->
     <string name="addons_close_tooltip">Close Add-Ons</string>
 
-    <!-- This string is displayed in the Addon Details enable/disable switch text that determines the global status of the Addon. -->
+    <!-- This string is displayed in the Addon Details enable/disable switch text that determines the global status of the Addon when the addon is enabled. -->
     <string name="addons_details_enabled">Enabled</string>
+
+    <!-- This string is displayed in the Addon Details enable/disable switch text that determines the global status of the Addon when the addon is disabled. -->
+    <string name="addons_details_disabled">Disabled</string>
 
     <!-- This string is displayed in the Addon Details "Run in private browsing" switch text that determines if the Addon will run in private browsing mode. -->
     <string name="addons_details_private_mode">Run in private browsing</string>
