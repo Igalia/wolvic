@@ -48,6 +48,7 @@ import org.mozilla.vrbrowser.ui.widgets.settings.SettingsView;
 import org.mozilla.vrbrowser.ui.widgets.settings.SettingsWidget;
 import org.mozilla.vrbrowser.utils.ConnectivityReceiver;
 import org.mozilla.vrbrowser.utils.DeviceType;
+import org.mozilla.vrbrowser.utils.LocaleUtils;
 import org.mozilla.vrbrowser.utils.ViewUtils;
 
 import java.text.SimpleDateFormat;
@@ -56,7 +57,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class TrayWidget extends UIWidget implements WidgetManagerDelegate.UpdateListener, DownloadsManager.DownloadsListener, ConnectivityReceiver.Delegate {
 
@@ -245,7 +245,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
                         .withView(mBinding.leftController)
                         .withDensity(R.dimen.tray_tooltip_density)
                         .withLayout(R.layout.tooltip)
-                        .withString(String.format(Locale.getDefault(), "%d%%", mLeftControllerBatteryLevel))
+                        .withString(String.format(LocaleUtils.getDisplayLanguage(getContext()).getLocale(), "%d%%", mLeftControllerBatteryLevel))
                         .withAutoHide(false)
                         .withMargin(-15.0f)
                         .withPosition(NotificationManager.Notification.TOP).build();
@@ -264,7 +264,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
                         .withView(mBinding.rightController)
                         .withDensity(R.dimen.tray_tooltip_density)
                         .withLayout(R.layout.tooltip)
-                        .withString(String.format(Locale.getDefault(), "%d%%", mRightControllerBatteryLevel))
+                        .withString(String.format(LocaleUtils.getDisplayLanguage(getContext()).getLocale(), "%d%%", mRightControllerBatteryLevel))
                         .withAutoHide(false)
                         .withMargin(-15.0f)
                         .withPosition(NotificationManager.Notification.TOP).build();
@@ -283,7 +283,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
                         .withView(mBinding.headset)
                         .withDensity(R.dimen.tray_tooltip_density)
                         .withLayout(R.layout.tooltip)
-                        .withString(String.format(Locale.getDefault(), "%d%%", mHeadsetBatteryLevel))
+                        .withString(String.format(LocaleUtils.getDisplayLanguage(getContext()).getLocale(), "%d%%", mHeadsetBatteryLevel))
                         .withAutoHide(false)
                         .withMargin(-15.0f)
                         .withPosition(NotificationManager.Notification.TOP).build();
@@ -732,7 +732,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
         Date currentTime = Calendar.getInstance().getTime();
         String androidDateTime = DateFormat.getTimeFormat(getContext()).format(currentTime);
         String AmPm = "";
-        SimpleDateFormat format = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm", LocaleUtils.getDisplayLanguage(getContext()).getLocale());
         if (!Character.isDigit(androidDateTime.charAt(androidDateTime.length() - 1))) {
             if (androidDateTime.contains(format.getDateFormatSymbols().getAmPmStrings()[Calendar.AM])) {
                 AmPm = " " + format.getDateFormatSymbols().getAmPmStrings()[Calendar.AM];
@@ -852,7 +852,7 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
 
     @NonNull
     private String getFormattedDate() {
-        SimpleDateFormat format = new SimpleDateFormat("EEEE, dd MMMM yyyy", Locale.getDefault());
+        SimpleDateFormat format = new SimpleDateFormat("EEEE, dd MMMM yyyy", LocaleUtils.getDisplayLanguage(getContext()).getLocale());
         return format.format(new Date());
     }
 }

@@ -112,7 +112,7 @@ public class TrayViewModel extends AndroidViewModel {
     }
 
     public void setTime(String time) {
-        this.time.postValue(time);
+        this.time.setValue(time);
     }
 
     public MutableLiveData<String> getTime() {
@@ -120,7 +120,7 @@ public class TrayViewModel extends AndroidViewModel {
     }
 
     public void setPm(String pm) {
-        this.pm.postValue(pm);
+        this.pm.setValue(pm);
     }
 
     public MutableLiveData<String> getPm() {
