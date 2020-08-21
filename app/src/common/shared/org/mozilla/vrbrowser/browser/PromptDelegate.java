@@ -65,6 +65,8 @@ public class PromptDelegate implements
         mViewModel = new SitePermissionViewModel(((Application)context.getApplicationContext()));
         mAllowedPopUpSites = new ArrayList<>();
         mSavedLoginBlockedSites = new ArrayList<>();
+        mSaveLoginPrompt = null;
+        mSelectLoginPrompt = null;
     }
 
     public void attachToWindow(@NonNull WindowWidget window) {
@@ -303,7 +305,10 @@ public class PromptDelegate implements
                 result.complete(autocompleteRequest.dismiss());
 
             } else {
-                mSaveLoginPrompt = new SaveLoginPromptWidget(mContext, new SaveLoginPromptWidget.Delegate() {
+                if (mSaveLoginPrompt == null) {
+                    mSaveLoginPrompt = new SaveLoginPromptWidget(mContext);
+                }
+                mSaveLoginPrompt.setPromptDelegate(new SaveLoginPromptWidget.Delegate() {
                     @Override
                     public void dismiss(@NonNull Login login) {
                         result.complete(autocompleteRequest.dismiss());
@@ -337,7 +342,10 @@ public class PromptDelegate implements
 
         if (autocompleteRequest.options.length > 1 && SettingsStore.getInstance(mContext).isAutoFillEnabled()) {
             List<Login> logins = Arrays.stream(autocompleteRequest.options).map(item -> GeckoLoginDelegateWrapper.toLogin(item.value)).collect(Collectors.toList());
-            mSelectLoginPrompt = new SelectLoginPromptWidget(mContext, new SelectLoginPromptWidget.Delegate() {
+            if (mSelectLoginPrompt == null) {
+                mSelectLoginPrompt = new SelectLoginPromptWidget(mContext);
+            }
+            mSelectLoginPrompt.setPromptDelegate(new SelectLoginPromptWidget.Delegate() {
                 @Override
                 public void onLoginSelected(@NonNull Login login) {
                     result.complete(autocompleteRequest.confirm(new Autocomplete.LoginSelectOption(GeckoLoginDelegateWrapper.toLoginEntry(login))));
@@ -348,7 +356,8 @@ public class PromptDelegate implements
                     result.complete(autocompleteRequest.dismiss());
                     mWidgetManager.getTray().toggleSettingsDialog(SettingsView.SettingViewType.LOGINS_AND_PASSWORDS);
                 }
-            }, logins);
+            });
+            mSelectLoginPrompt.setItems(logins);
             mSelectLoginPrompt.setDelegate(() -> result.complete(autocompleteRequest.dismiss()));
             mSelectLoginPrompt.getPlacement().parentHandle = mAttachedWindow.getHandle();
             mSelectLoginPrompt.getPlacement().parentAnchorY = 0.0f;

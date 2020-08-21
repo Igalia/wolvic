@@ -25,12 +25,16 @@ public class SaveLoginPromptWidget extends UIDialog {
     }
 
     private PromptSaveLoginBinding mBinding;
-    private Delegate mDelegate;
+    private Delegate mPromptDelegate;
 
-    public SaveLoginPromptWidget(@NonNull Context aContext, @NonNull Delegate delegate) {
+    public SaveLoginPromptWidget(@NonNull Context aContext) {
         super(aContext);
-        mDelegate = delegate;
+
         initialize(aContext);
+    }
+
+    public void setPromptDelegate(@NonNull Delegate delegate) {
+        mPromptDelegate = delegate;
     }
 
     protected void initialize(Context aContext) {
@@ -45,12 +49,12 @@ public class SaveLoginPromptWidget extends UIDialog {
         // Inflate this data binding layout
         mBinding = DataBindingUtil.inflate(inflater, R.layout.prompt_save_login, this, true);
         mBinding.neverButton.setOnClickListener(view -> {
-            mDelegate.dismiss(mBinding.getLogin());
-            hide(REMOVE_WIDGET);
+            mPromptDelegate.dismiss(mBinding.getLogin());
+            hide(KEEP_WIDGET);
         });
         mBinding.saveButton.setOnClickListener(view -> {
-            mDelegate.confirm(mBinding.getLogin());
-            hide(REMOVE_WIDGET);
+            mPromptDelegate.confirm(mBinding.getLogin());
+            hide(KEEP_WIDGET);
         });
         mBinding.passwordToggle.setOnCheckedChangeListener((compoundButton, checked) -> {
             if (checked) {
@@ -60,6 +64,15 @@ public class SaveLoginPromptWidget extends UIDialog {
                 mBinding.passwordText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
             }
         });
+    }
+
+    @Override
+    protected void onDismiss() {
+        hide(KEEP_WIDGET);
+
+        if (mDelegate != null) {
+            mDelegate.onDismiss();
+        }
     }
 
     @Override

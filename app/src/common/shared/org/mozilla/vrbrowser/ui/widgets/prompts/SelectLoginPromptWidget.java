@@ -14,6 +14,7 @@ import org.mozilla.vrbrowser.ui.adapters.LoginsAdapter;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
 import org.mozilla.vrbrowser.ui.widgets.dialogs.UIDialog;
 
+import java.util.Collections;
 import java.util.List;
 
 import mozilla.components.concept.storage.Login;
@@ -26,15 +27,25 @@ public class SelectLoginPromptWidget extends UIDialog implements LoginsAdapter.D
         void onSettingsClicked();
     }
 
-    private Delegate mDelegate;
+    private Delegate mPromptDelegate;
     private List<Login> mItems;
+    private LoginsAdapter mAdapter;
 
-    public SelectLoginPromptWidget(@NonNull Context aContext, @NonNull Delegate delegate, @NonNull List<Login> items) {
+    public SelectLoginPromptWidget(@NonNull Context aContext) {
         super(aContext);
 
-        mDelegate = delegate;
-        mItems = items;
+        mItems = Collections.emptyList();
+
         initialize(aContext);
+    }
+
+    public void setPromptDelegate(@NonNull Delegate delegate) {
+        mPromptDelegate = delegate;
+    }
+
+    public void setItems(@NonNull List<Login> items) {
+        mItems = items;
+        mAdapter.setItems(mItems);
     }
 
     protected void initialize(Context aContext) {
@@ -46,16 +57,27 @@ public class SelectLoginPromptWidget extends UIDialog implements LoginsAdapter.D
 
         LayoutInflater inflater = LayoutInflater.from(getContext());
 
-        LoginsAdapter mAdapter = new LoginsAdapter(getContext(), this, LoginsAdapter.SELECTION_LIST);
+        mAdapter = new LoginsAdapter(getContext(), this, LoginsAdapter.SELECTION_LIST);
         mAdapter.setItems(mItems);
 
         // Inflate this data binding layout
         org.mozilla.vrbrowser.databinding.PromptSelectLoginBinding mBinding = DataBindingUtil.inflate(inflater, R.layout.prompt_select_login, this, true);
         mBinding.settings.setOnClickListener(view -> {
-            mDelegate.onSettingsClicked();
-            hide(REMOVE_WIDGET);
+            if (mPromptDelegate != null) {
+                mPromptDelegate.onSettingsClicked();
+            }
+            hide(KEEP_WIDGET);
         });
         mBinding.loginsList.setAdapter(mAdapter);
+    }
+
+    @Override
+    protected void onDismiss() {
+        hide(KEEP_WIDGET);
+
+        if (mDelegate != null) {
+            mDelegate.onDismiss();
+        }
     }
 
     @Override
@@ -91,8 +113,10 @@ public class SelectLoginPromptWidget extends UIDialog implements LoginsAdapter.D
 
     @Override
     public void onLoginSelected(@NonNull View view, @NonNull Login login) {
-        mDelegate.onLoginSelected(login);
-        hide(REMOVE_WIDGET);
+        if (mPromptDelegate != null) {
+            mPromptDelegate.onLoginSelected(login);
+        }
+        hide(KEEP_WIDGET);
     }
 
 }
