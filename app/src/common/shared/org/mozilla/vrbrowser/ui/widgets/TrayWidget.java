@@ -481,6 +481,13 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        updateTime();
+    }
+
+    @Override
     public void releaseWidget() {
         mWidgetManager.removeUpdateListener(this);
         mWidgetManager.getServicesProvider().getDownloadsManager().removeListener(this);
