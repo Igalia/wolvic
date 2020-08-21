@@ -140,6 +140,7 @@ public class AddonsListView extends RecyclerView.ViewHolder implements AddonsMan
 
     @Override
     public void onAddonItemClicked(Addon addon) {
+        mBinding.addonsList.requestFocusFromTouch();
         if (addon.isInstalled()) {
             mDelegate.showAddonOptions(addon);
 
@@ -150,6 +151,7 @@ public class AddonsListView extends RecyclerView.ViewHolder implements AddonsMan
 
     @Override
     public void onInstallAddonButtonClicked(@NonNull Addon addon) {
+        mBinding.addonsList.requestFocusFromTouch();
         showInstallAddonDialog(addon);
     }
 
@@ -255,6 +257,7 @@ public class AddonsListView extends RecyclerView.ViewHolder implements AddonsMan
 
     @Override
     public void onNotYetSupportedSectionClicked(@NonNull List<Addon> unsupportedAddons) {
+        mBinding.addonsList.requestFocusFromTouch();
         // Nothing to do in FxR,this is Fenix/Fennec migration specific
     }
 

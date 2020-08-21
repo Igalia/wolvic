@@ -1,5 +1,6 @@
 package org.mozilla.vrbrowser.addons.views;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
@@ -36,6 +37,7 @@ public class AddonOptionsView extends RecyclerView.ViewHolder implements AddonOp
     private AddonsDelegate mDelegate;
     private Executor mUIThreadExecutor;
 
+    @SuppressLint("ClickableViewAccessibility")
     public AddonOptionsView(@NonNull Context context, @NonNull AddonOptionsBinding binding, @NonNull AddonsDelegate delegate) {
         super(binding.getRoot());
 
@@ -47,6 +49,11 @@ public class AddonOptionsView extends RecyclerView.ViewHolder implements AddonOp
 
         mBinding.setLifecycleOwner((VRBrowserActivity) mContext);
         mBinding.setDelegate(this);
+
+        mBinding.scrollview.setOnTouchListener((v, event) -> {
+            v.requestFocusFromTouch();
+            return false;
+        });
     }
 
     public void bind(Addon addon) {
@@ -92,6 +99,7 @@ public class AddonOptionsView extends RecyclerView.ViewHolder implements AddonOp
 
     @Override
     public void onRemoveAddonButtonClicked(@NonNull View view, @NonNull Addon addon) {
+        mBinding.getRoot().requestFocusFromTouch();
         mWidgetManager.getServicesProvider().getAddons().uninstallAddon(addon, () -> {
             showRemoveAddonSuccessDialog(addon);
             return null;
@@ -131,11 +139,13 @@ public class AddonOptionsView extends RecyclerView.ViewHolder implements AddonOp
 
     @Override
     public void onAddonDetailsButtonClicked(@NonNull View view, @NonNull Addon addon) {
+        mBinding.getRoot().requestFocusFromTouch();
         mDelegate.showAddonOptionsDetails(addon, AddonsViewAdapter.ADDONS_LEVEL_2);
     }
 
     @Override
     public void onAddonSettingsButtonClicked(@NonNull View view, @NonNull Addon addon) {
+        mBinding.getRoot().requestFocusFromTouch();
         if (addon.getInstalledState() != null) {
             boolean openInTab = addon.getInstalledState().getOpenOptionsPageInTab();
             String settingsUrl = addon.getInstalledState().getOptionsPageUrl();
@@ -155,6 +165,7 @@ public class AddonOptionsView extends RecyclerView.ViewHolder implements AddonOp
 
     @Override
     public void onAddonPermissionsButtonClicked(@NonNull View view, @NonNull Addon addon) {
+        mBinding.getRoot().requestFocusFromTouch();
         mDelegate.showAddonOptionsPermissions(addon);
     }
 

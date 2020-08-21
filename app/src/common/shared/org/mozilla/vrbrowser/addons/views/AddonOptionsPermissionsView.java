@@ -57,7 +57,15 @@ public class AddonOptionsPermissionsView extends RecyclerView.ViewHolder impleme
         mBinding.permissionsList.setItemViewCacheSize(20);
         mBinding.permissionsList.setDrawingCacheEnabled(true);
         mBinding.permissionsList.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
-        mBinding.learnMoreLink.setOnClickListener(view -> mWidgetManager.openNewTabForeground(mContext.getString(R.string.sumo_addons_permissions)));
+        mBinding.learnMoreLink.setOnClickListener(view -> {
+            view.requestFocusFromTouch();
+            mWidgetManager.openNewTabForeground(mContext.getString(R.string.sumo_addons_permissions));
+        });
+
+        mBinding.scrollview.setOnTouchListener((v, event) -> {
+            v.requestFocusFromTouch();
+            return false;
+        });
     }
 
     public void bind(Addon addon) {

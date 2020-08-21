@@ -1,5 +1,6 @@
 package org.mozilla.vrbrowser.addons.views;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -50,6 +51,7 @@ public class AddonOptionsDetailsView extends RecyclerView.ViewHolder implements 
     private AddonsDelegate mDelegate;
     private Executor mUIThreadExecutor;
 
+    @SuppressLint("ClickableViewAccessibility")
     public AddonOptionsDetailsView(@NonNull Context context, @NonNull AddonOptionsDetailsBinding binding, @NonNull AddonsDelegate delegate) {
         super(binding.getRoot());
 
@@ -60,6 +62,11 @@ public class AddonOptionsDetailsView extends RecyclerView.ViewHolder implements 
         mUIThreadExecutor = ((VRBrowserApplication)context.getApplicationContext()).getExecutors().mainThread();
 
         mBinding.setLifecycleOwner((VRBrowserActivity) mContext);
+
+        mBinding.scrollview.setOnTouchListener((v, event) -> {
+            v.requestFocusFromTouch();
+            return false;
+        });
     }
 
     public void bind(Addon addon) {
@@ -70,7 +77,10 @@ public class AddonOptionsDetailsView extends RecyclerView.ViewHolder implements 
         // Update addon
         if (addon != null) {
             // If the addon is not installed we set the homepage link
-            mBinding.homepage.setOnClickListener(view -> mWidgetManager.openNewTabForeground(mBinding.getAddon().getSiteUrl()));
+            mBinding.homepage.setOnClickListener(view -> {
+                view.requestFocusFromTouch();
+                mWidgetManager.openNewTabForeground(mBinding.getAddon().getSiteUrl());
+            });
 
             bindTranslatedDescription(mBinding.addonDescription, addon);
             bindAuthors(mBinding.authorsText, addon);
@@ -112,6 +122,7 @@ public class AddonOptionsDetailsView extends RecyclerView.ViewHolder implements 
         ClickableSpan clickable = new ClickableSpan() {
             @Override
             public void onClick(@NonNull View view) {
+                view.requestFocusFromTouch();
                 view.setOnClickListener(view1 -> mWidgetManager.openNewTabForeground(link.getURL()));
             }
         };
@@ -169,9 +180,8 @@ public class AddonOptionsDetailsView extends RecyclerView.ViewHolder implements 
             view.setText(version);
 
             if (addon.isInstalled()) {
-                view.setOnClickListener(view1 -> {
-                    // Show Updater status
-                });
+                // Show Updater status
+                view.setOnClickListener(View::requestFocusFromTouch);
 
             } else {
                 view.setOnLongClickListener(null);
