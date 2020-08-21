@@ -8,7 +8,7 @@
         android:background="@drawable/dialog_background"
         android:paddingStart="@dimen/autofill_dialog_padding_sides"
         android:paddingTop="@dimen/autofill_dialog_padding_top"
-        android:paddingEnd="@dimen/autofill_dialog_padding_sides"
+        android:paddingEnd="44dp"
         android:paddingBottom="@dimen/autofill_dialog_padding_bottom">
 
         <FrameLayout
@@ -32,7 +32,7 @@
         <org.mozilla.vrbrowser.ui.views.CustomRecyclerView
             android:id="@+id/loginsList"
             style="@style/customRecyclerViewStyle"
-            android:layout_width="match_parent"
+            android:layout_width="340dp"
             android:layout_height="match_parent"
             android:layout_below="@id/titleContainer"
             android:layout_above="@+id/buttonsLayout"

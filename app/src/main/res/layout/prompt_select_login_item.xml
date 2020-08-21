@@ -14,7 +14,9 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/library_item_row_height">
+        android:layout_height="@dimen/library_item_row_height"
+        android:layout_marginEnd="20dp"
+        android:background="@color/asphalt">
 
         <RelativeLayout
             android:id="@+id/layout"
