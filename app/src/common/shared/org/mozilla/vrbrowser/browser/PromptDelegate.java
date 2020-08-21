@@ -296,7 +296,7 @@ public class PromptDelegate implements
         final GeckoResult<PromptResponse> result = new GeckoResult<>();
 
         // We always get at least one item, at the moment only one item is support.
-        if (autocompleteRequest.options.length > 0 && SettingsStore.getInstance(mContext).isAutoFillEnabled()) {
+        if (autocompleteRequest.options.length > 0 && SettingsStore.getInstance(mContext).isLoginAutocompleteEnabled()) {
             Autocomplete.LoginSaveOption saveOption = autocompleteRequest.options[0];
             boolean originHasException = mSavedLoginBlockedSites.stream().anyMatch(site -> site.url.equals(saveOption.value.origin));
             if (originHasException || !SettingsStore.getInstance(mContext).isLoginAutocompleteEnabled()) {
