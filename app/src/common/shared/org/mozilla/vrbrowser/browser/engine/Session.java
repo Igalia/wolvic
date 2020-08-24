@@ -49,6 +49,9 @@ import org.mozilla.vrbrowser.utils.UrlUtils;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -91,6 +94,8 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     private transient byte[] mPrivatePage;
     private transient boolean mFirstContentfulPaint;
     private transient long mKeepAlive;
+
+    private static final List<String> FORCE_MOBILE = Collections.singletonList(".youtube.com");
 
     public interface BitmapChangedListener {
         void onBitmapChanged(Session aSession, Bitmap aBitmap);
@@ -1037,7 +1042,8 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         mState.mSettings.setUserAgentMode(mode);
         mState.mSession.getSettings().setUserAgentMode(mode);
         String overrideUri = null;
-        if (mode == GeckoSessionSettings.USER_AGENT_MODE_DESKTOP) {
+        boolean forceMobile = FORCE_MOBILE.stream().anyMatch(uri -> mState.mUri.contains(uri));
+        if (mode == GeckoSessionSettings.USER_AGENT_MODE_DESKTOP && !forceMobile) {
             mState.mSettings.setViewportMode(GeckoSessionSettings.VIEWPORT_MODE_DESKTOP);
             overrideUri = checkForMobileSite(mState.mUri);
         } else {

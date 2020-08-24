@@ -1,4 +1,4 @@
-const CUSTOM_USER_AGENT = 'Mozilla/5.0 (Linux; Android 7.1.1; Quest) AppleWebKit/537.36 (KHTML, like Gecko) OculusBrowser/7.0.13.186866463 SamsungBrowser/4.0 Chrome/77.0.3865.126 Mobile VR Safari/537.36';
+const CUSTOM_USER_AGENT = 'Mozilla/5.0 (Linux; Android 7.1.1; Quest) AppleWebKit/537.36 (KHTML, like Gecko) OculusBrowser/11.1.0.1.64.238873877 SamsungBrowser/4.0 Chrome/84.0.4147.125 Mobile VR Safari/537.36';
 const targetUrls = [
     "https://*.youtube.com/*",
     "https://*.youtube-nocookie.com/*"
