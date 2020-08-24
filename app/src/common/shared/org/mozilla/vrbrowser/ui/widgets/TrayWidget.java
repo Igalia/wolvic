@@ -245,7 +245,15 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
                         .withView(mBinding.leftController)
                         .withDensity(R.dimen.tray_tooltip_density)
                         .withLayout(R.layout.tooltip)
-                        .withString(String.format(LocaleUtils.getDisplayLanguage(getContext()).getLocale(), "%d%%", mLeftControllerBatteryLevel))
+                        .withString(getContext().getString(
+                                R.string.tray_status_left_controller,
+                                String.format(
+                                        LocaleUtils.getDisplayLanguage(
+                                                getContext()).getLocale(),
+                                        "%d%%",
+                                        mLeftControllerBatteryLevel
+                                )
+                        ))
                         .withAutoHide(false)
                         .withMargin(-15.0f)
                         .withPosition(NotificationManager.Notification.TOP).build();
@@ -264,7 +272,15 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
                         .withView(mBinding.rightController)
                         .withDensity(R.dimen.tray_tooltip_density)
                         .withLayout(R.layout.tooltip)
-                        .withString(String.format(LocaleUtils.getDisplayLanguage(getContext()).getLocale(), "%d%%", mRightControllerBatteryLevel))
+                        .withString(getContext().getString(
+                                R.string.tray_status_right_controller,
+                                String.format(
+                                        LocaleUtils.getDisplayLanguage(
+                                                getContext()).getLocale(),
+                                        "%d%%",
+                                        mRightControllerBatteryLevel
+                                )
+                        ))
                         .withAutoHide(false)
                         .withMargin(-15.0f)
                         .withPosition(NotificationManager.Notification.TOP).build();
@@ -283,7 +299,15 @@ public class TrayWidget extends UIWidget implements WidgetManagerDelegate.Update
                         .withView(mBinding.headset)
                         .withDensity(R.dimen.tray_tooltip_density)
                         .withLayout(R.layout.tooltip)
-                        .withString(String.format(LocaleUtils.getDisplayLanguage(getContext()).getLocale(), "%d%%", mHeadsetBatteryLevel))
+                        .withString(getContext().getString(
+                                R.string.tray_status_headset,
+                                String.format(
+                                        LocaleUtils.getDisplayLanguage(
+                                                getContext()).getLocale(),
+                                        "%d%%",
+                                        mHeadsetBatteryLevel
+                                )
+                        ))
                         .withAutoHide(false)
                         .withMargin(-15.0f)
                         .withPosition(NotificationManager.Notification.TOP).build();

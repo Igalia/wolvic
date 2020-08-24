@@ -2121,4 +2121,13 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is shown in the tooltip of the wifi icon in the tray whenever WiFi is not connected to a WiFi network. -->
     <string name="tray_wifi_no_connection">No Connection</string>
 
+    <!-- This string is shown in the tooltip of the left controller status bar icon when hovered. -->
+    <string name="tray_status_left_controller">Left Controller: %1$s</string>
+
+    <!-- This string is shown in the tooltip of the right controller status bar icon when hovered. -->
+    <string name="tray_status_right_controller">Right Controller: %1$s</string>
+
+    <!-- This string is shown in the tooltip of the headset status bar icon when hovered. -->
+    <string name="tray_status_headset">Headset: %1$s</string>
+
 </resources>
