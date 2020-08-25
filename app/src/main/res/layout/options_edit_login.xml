@@ -80,7 +80,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:width="300dp"
-                    android:inputType="text"
+                    android:inputType="text|textNoSuggestions"
                     app:description="@string/login_edit_dialog_username_description"
                     app:highlightedTextColor="@color/fog" />
 
@@ -89,7 +89,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:width="300dp"
-                    android:inputType="text|textPassword"
+                    android:inputType="text|textPassword|textNoSuggestions"
                     app:description="@string/login_edit_dialog_password_description"
                     app:highlightedTextColor="@color/fog" />
 
