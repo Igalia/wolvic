@@ -555,7 +555,7 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
 
         mBeforeFullscreenPlacement = mWidgetPlacement;
 
-        clearFocus();
+        requestFocusFromTouch();
 
         if (getSession() != null) {
             setUpSession(getSession());
