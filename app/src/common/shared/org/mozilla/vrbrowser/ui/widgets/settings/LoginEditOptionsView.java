@@ -8,6 +8,7 @@ package org.mozilla.vrbrowser.ui.widgets.settings;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Point;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -15,20 +16,28 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 
 import org.mozilla.vrbrowser.R;
+import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.databinding.OptionsEditLoginBinding;
 import org.mozilla.vrbrowser.ui.widgets.WidgetManagerDelegate;
 import org.mozilla.vrbrowser.ui.widgets.WidgetPlacement;
+import org.mozilla.vrbrowser.utils.SystemUtils;
+
+import java.util.concurrent.Executor;
 
 import mozilla.components.concept.storage.Login;
 
 @SuppressLint("ViewConstructor")
 class LoginEditOptionsView extends SettingsView {
 
+    static final String LOGTAG = SystemUtils.createLogtag(LoginEditOptionsView.class);
+
     private OptionsEditLoginBinding mBinding;
     private Login mLogin;
+    private Executor mUIThreadExecutor;
 
     public LoginEditOptionsView(@NonNull Context aContext, @NonNull WidgetManagerDelegate aWidgetManager, @NonNull Login login) {
         super(aContext, aWidgetManager);
+        mUIThreadExecutor = ((VRBrowserApplication)getContext().getApplicationContext()).getExecutors().mainThread();
         mLogin = login;
         initialize(aContext);
     }
@@ -114,13 +123,9 @@ class LoginEditOptionsView extends SettingsView {
         mWidgetManager.openNewTabForeground(mLogin.getOrigin());
     };
 
-    private OnClickListener mUsernameListener = (view) -> {
-        setUsername(mBinding.usernameEdit.getFirstText());
-    };
+    private OnClickListener mUsernameListener = (view) -> setUsername(mBinding.usernameEdit.getFirstText());
 
-    private OnClickListener mPasswordListener = (view) -> {
-        setPassword(mBinding.passwordEdit.getFirstText());
-    };
+    private OnClickListener mPasswordListener = (view) -> setPassword(mBinding.passwordEdit.getFirstText());
 
     private OnClickListener mDelete = (view) -> {
         mWidgetManager.getServicesProvider().getLoginStorage().delete(mLogin);
@@ -147,30 +152,45 @@ class LoginEditOptionsView extends SettingsView {
                 mLogin.getUsernameField(),
                 mLogin.getPasswordField()
         );
-        mWidgetManager.getServicesProvider().getLoginStorage().update(newLogin);
-        mBinding.usernameEdit.setFirstText(username);
+        mWidgetManager.getServicesProvider().getLoginStorage().update(newLogin)
+                .thenAcceptAsync(unit -> mBinding.usernameEdit.setFirstText(username), mUIThreadExecutor)
+                .exceptionally(throwable -> {
+                    Log.d(LOGTAG, String.valueOf(throwable.getMessage()));
+                    return null;
+                });
     }
 
     private void setPassword(String password) {
-        mBinding.passwordEdit.setOnClickListener(null);
-        mBinding.passwordEdit.setFirstText(password);
-        mBinding.passwordEdit.setOnClickListener(mPasswordListener);
-        final Login newLogin = mLogin.copy(
-                mLogin.getGuid(),
-                mLogin.getOrigin(),
-                mLogin.getFormActionOrigin(),
-                mLogin.getHttpRealm(),
-                mLogin.getUsername(),
-                password,
-                mLogin.getTimesUsed(),
-                mLogin.getTimeCreated(),
-                mLogin.getTimeLastUsed(),
-                mLogin.getTimePasswordChanged(),
-                mLogin.getUsernameField(),
-                mLogin.getPasswordField()
-        );
-        mWidgetManager.getServicesProvider().getLoginStorage().update(newLogin);
-        mBinding.passwordEdit.setFirstText(password);
+        if (password.isEmpty()) {
+            mBinding.passwordEdit.cancel();
+            mBinding.passwordError.setVisibility(View.VISIBLE);
+
+        } else {
+            mBinding.passwordError.setVisibility(View.GONE);
+            mBinding.passwordEdit.setOnClickListener(null);
+            mBinding.passwordEdit.setFirstText(password);
+            mBinding.passwordEdit.setOnClickListener(mPasswordListener);
+            final Login newLogin = mLogin.copy(
+                    mLogin.getGuid(),
+                    mLogin.getOrigin(),
+                    mLogin.getFormActionOrigin(),
+                    mLogin.getHttpRealm(),
+                    mLogin.getUsername(),
+                    password,
+                    mLogin.getTimesUsed(),
+                    mLogin.getTimeCreated(),
+                    mLogin.getTimeLastUsed(),
+                    mLogin.getTimePasswordChanged(),
+                    mLogin.getUsernameField(),
+                    mLogin.getPasswordField()
+            );
+            mWidgetManager.getServicesProvider().getLoginStorage().update(newLogin)
+                    .thenAcceptAsync(unit -> mBinding.passwordEdit.setFirstText(password), mUIThreadExecutor)
+                    .exceptionally(throwable -> {
+                        Log.d(LOGTAG, String.valueOf(throwable.getMessage()));
+                        return null;
+                    });
+        }
     }
 
     @Override

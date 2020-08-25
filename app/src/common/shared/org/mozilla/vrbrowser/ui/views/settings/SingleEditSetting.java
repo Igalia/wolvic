@@ -141,12 +141,12 @@ public class SingleEditSetting extends RelativeLayout {
             mText1.setText(mEdit1.getHint());
             mEdit1.setText(mEdit1.getHint());
             mEdit1.requestFocus();
-            mEdit1.selectAll();
 
         } else {
             mText1.setText(text);
             mEdit1.setText(text);
         }
+        mEdit1.selectAll();
     }
 
     public void setHint1(String hint) {

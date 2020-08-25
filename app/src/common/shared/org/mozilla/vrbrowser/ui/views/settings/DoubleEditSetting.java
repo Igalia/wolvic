@@ -93,6 +93,7 @@ public class DoubleEditSetting extends SingleEditSetting {
             mText2.setText(text);
             mEdit2.setText(text);
         }
+        mEdit2.selectAll();
     }
 
     public void setHint2(String hint) {

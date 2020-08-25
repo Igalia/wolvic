@@ -2103,14 +2103,17 @@ the Select` button. When clicked it closes all the previously selected tabs -->
     <!-- This string is shown inside the "Open" button of the edit login dialog. When pressed the site URL is opened.-->
     <string name="login_edit_dialog_site_button">Open</string>
 
-    <!-- This string is shown in the "Open" button desicription of the edit login dialog. -->
+    <!-- This string is shown in the "Open" button description of the edit login dialog. -->
     <string name="login_edit_dialog_site_description">Site</string>
 
-    <!-- This string is shown in the "Open" button desicription of the edit login dialog. -->
+    <!-- This string is shown in the "Open" button description of the edit login dialog. -->
     <string name="login_edit_dialog_username_description">Username</string>
 
     <!-- This string is shown in the "Open" button desicription of the edit login dialog. -->
     <string name="login_edit_dialog_password_description">Password</string>
+
+    <!-- This string is shown under the password text edit in the Login edit dialog when the password is left empty. -->
+    <string name="login_edit_password_empty_error">The password cannot be empty</string>
 
     <!-- This string is displayed in any edit text field where the value should be a username. -->
     <string name="username_hint">username</string>
