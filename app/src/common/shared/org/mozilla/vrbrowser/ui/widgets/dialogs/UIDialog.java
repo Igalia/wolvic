@@ -76,7 +76,9 @@ public abstract class UIDialog extends UIWidget implements WidgetManagerDelegate
     public void hide(int aHideFlags) {
         super.hide(aHideFlags);
 
-        mWidgetManager.popWorldBrightness(this);
+        if (mWidgetManager != null) {
+            mWidgetManager.popWorldBrightness(this);
+        }
 
         mDialogs.remove(this);
         UIDialog head = mDialogs.peek();
