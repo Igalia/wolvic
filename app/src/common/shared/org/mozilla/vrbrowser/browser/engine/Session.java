@@ -49,7 +49,6 @@ import org.mozilla.vrbrowser.utils.UrlUtils;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -95,7 +94,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
     private transient boolean mFirstContentfulPaint;
     private transient long mKeepAlive;
 
-    private static final List<String> FORCE_MOBILE = Collections.singletonList(".youtube.com");
+    private static final List<String> FORCE_MOBILE_VIEWPORT = Collections.singletonList(".youtube.com");
 
     public interface BitmapChangedListener {
         void onBitmapChanged(Session aSession, Bitmap aBitmap);
@@ -1042,8 +1041,7 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         mState.mSettings.setUserAgentMode(mode);
         mState.mSession.getSettings().setUserAgentMode(mode);
         String overrideUri = null;
-        boolean forceMobile = FORCE_MOBILE.stream().anyMatch(uri -> mState.mUri.contains(uri));
-        if (mode == GeckoSessionSettings.USER_AGENT_MODE_DESKTOP && !forceMobile) {
+        if (mode == GeckoSessionSettings.USER_AGENT_MODE_DESKTOP) {
             mState.mSettings.setViewportMode(GeckoSessionSettings.VIEWPORT_MODE_DESKTOP);
             overrideUri = checkForMobileSite(mState.mUri);
         } else {
@@ -1088,6 +1086,13 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
 
         mState.mPreviousUri = mState.mUri;
         mState.mUri = aUri;
+
+        boolean forceMobileViewport = FORCE_MOBILE_VIEWPORT.stream().anyMatch(aUri::contains);
+        if (forceMobileViewport) {
+            mState.mSession.getSettings().setViewportMode(GeckoSessionSettings.VIEWPORT_MODE_MOBILE);
+        } else {
+            mState.mSession.getSettings().setViewportMode(mState.mSettings.getViewportMode());
+        }
 
         for (GeckoSession.NavigationDelegate listener : mNavigationListeners) {
             listener.onLocationChange(aSession, aUri);
