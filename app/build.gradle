@@ -76,7 +76,7 @@ android {
         buildConfigField "String", "GIT_HASH", "\"${getGitHash()}\""
         buildConfigField "Boolean", "DISABLE_CRASH_RESTART", getCrashRestartDisabled()
         buildConfigField "Boolean", "TASKCLUSTER_BUILD", getTaskclusterBuild()
-        buildConfigField "String", "AMO_COLLECTION", "\"3204bb44a6ef44d39ee34917f28055\""
+        buildConfigField "String", "AMO_COLLECTION", "\"fxr\""
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
