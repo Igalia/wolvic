@@ -56,7 +56,7 @@
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's camera.
          '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_camera">Czy udostępnić obraz z kamery witrynie „%1$s”?</string>
+    <string name="permission_camera">Czy udostępnić obraz z aparatu witrynie „%1$s”?</string>
 
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's microphone.
@@ -66,7 +66,7 @@
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's camera and microphone.
          '%1$s' will be replaced at runtime with the website's domain name. -->
-    <string name="permission_camera_and_microphone">Czy udostępnić obraz z kamery i dźwięk z mikrofonu witrynie „%1$s”?</string>
+    <string name="permission_camera_and_microphone">Czy udostępnić obraz z aparatu i dźwięk z mikrofonu witrynie „%1$s”?</string>
 
     <!-- This string will be displayed in a dialog box presented to the user
          when the application needs to request permission to access the device's geographic location.
@@ -705,7 +705,7 @@
 
     <!-- This string labels the button that displays or enables application access to the device's
          camera, if a camera is present. -->
-    <string name="security_options_permission_camera">Kamera</string>
+    <string name="security_options_permission_camera">Aparat</string>
 
     <!-- This string labels the button that displays or enables application access to the device's
          microphone, if a microphone is present. -->
@@ -726,7 +726,7 @@
 
     <!-- This string labels the button that displays or enables application access to the device's
          camera and microphone, if present. -->
-    <string name="security_options_permission_camera_and_microphone">Kamera i mikrofon</string>
+    <string name="security_options_permission_camera_and_microphone">Aparat i mikrofon</string>
 
     <!-- This string labels the button in the privacy option panel that enables/disables the pop-up
          blocking. -->
