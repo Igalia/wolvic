@@ -1473,7 +1473,7 @@
     <!-- This string is displayed in the message of the notification message shown when the user tries to open a new window and
       it has already opened the maximum number of allowed windows. %1$s expands to a integer value that represent the maximum windows
       that can be opened (initially 3) -->
-    <string name="max_windows_msg">Может быть открыто не более %1$s окон. Закройте одно, чтобы открыть другое.</string>
+    <string name="max_windows_msg">Можно открыть не более %1$s окон. Закройте одно, чтобы открыть другое.</string>
 
     <!-- This string is displayed in the button of the notification message shown when the user tries to open a new window and
       it has already opened the maximum number of allowed windows. -->

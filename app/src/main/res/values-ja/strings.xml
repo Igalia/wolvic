@@ -986,7 +986,7 @@
     <string name="history_empty">履歴はありません</string>
 
     <!-- This string is displayed under the history title in the history list. -->
-    <string name="history_description">ここからブラウジング履歴にアクセスできます</string>
+    <string name="history_description">ここから閲覧履歴にアクセスできます</string>
 
     <!-- This string is displayed in the middle of the history list while the history is being loaded. -->
     <string name="history_loading">履歴を読み込んでいます</string>
