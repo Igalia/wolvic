@@ -214,7 +214,11 @@ public class LocaleUtils {
 
     public static Language getVoiceSearchLanguage(@NonNull Context aContext) {
         String languageId = getVoiceSearchLanguageId(aContext);
-        return mSupportedLanguagesCache.get(languageId);
+        Language language = mSupportedLanguagesCache.get(languageId);
+        if (language == null) {
+            language = mSupportedLanguagesCache.get(FALLBACK_LANGUAGE_TAG);
+        }
+        return language;
     }
 
     public static void setVoiceSearchLanguageId(@NonNull Context context, @NonNull String languageId) {
@@ -245,7 +249,11 @@ public class LocaleUtils {
 
     public static Language getDisplayLanguage(@NonNull Context aContext) {
         String languageId = getDisplayLanguageId(aContext);
-        return mSupportedLanguagesCache.get(languageId);
+        Language language = mSupportedLanguagesCache.get(languageId);
+        if (language == null) {
+            language = mSupportedLanguagesCache.get(FALLBACK_LANGUAGE_TAG);
+        }
+        return language;
     }
 
     public static void setDisplayLanguageId(@NonNull Context context, @NonNull String languageId) {

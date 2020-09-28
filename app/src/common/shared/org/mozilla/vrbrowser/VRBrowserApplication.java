@@ -15,8 +15,8 @@ import androidx.annotation.NonNull;
 import com.mozilla.speechlibrary.SpeechService;
 
 import org.mozilla.vrbrowser.browser.Accounts;
-import org.mozilla.vrbrowser.browser.LoginStorage;
 import org.mozilla.vrbrowser.browser.Addons;
+import org.mozilla.vrbrowser.browser.LoginStorage;
 import org.mozilla.vrbrowser.browser.Places;
 import org.mozilla.vrbrowser.browser.Services;
 import org.mozilla.vrbrowser.browser.engine.EngineProvider;
@@ -71,6 +71,7 @@ public class VRBrowserApplication extends Application implements AppServicesProv
     }
 
     protected void onActivityCreate(@NonNull Context activityContext) {
+        onConfigurationChanged(activityContext.getResources().getConfiguration());
         EngineProvider.INSTANCE.getDefaultGeckoWebExecutor(activityContext);
         mAppExecutors = new AppExecutors();
         mConnectivityManager = new ConnectivityReceiver(activityContext);
@@ -95,12 +96,6 @@ public class VRBrowserApplication extends Application implements AppServicesProv
         mConnectivityManager.end();
         mDownloadsManager.end();
         mEnvironmentsManager.end();
-    }
-
-    @Override
-    protected void attachBaseContext(Context base) {
-        Context context = LocaleUtils.init(base);
-        super.attachBaseContext(context);
     }
 
     @Override

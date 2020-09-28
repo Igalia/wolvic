@@ -1686,6 +1686,7 @@ public class VRBrowserActivity extends PlatformActivity implements WidgetManager
     @Override
     public void updateLocale(@NonNull Context context) {
         onConfigurationChanged(context.getResources().getConfiguration());
+        getApplication().onConfigurationChanged(context.getResources().getConfiguration());
     }
 
     @Override
