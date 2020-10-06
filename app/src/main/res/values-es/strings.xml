@@ -120,6 +120,12 @@
          opens a dialog box that contains settings that an application or Web developer might want to change. -->
     <string name="settings_developer_options">Opciones para desarrolladores</string>
 
+    <!-- This string is used in the 'Settings' window when user is not signed into a Firefox Account -->
+    <string name="settings_fxa_account_sign_in">Iniciar sesión en cuenta</string>
+
+    <!-- This string is used in the 'Settings' window when user is signed into a Firefox Account -->
+    <string name="settings_fxa_account_manage">Administrar cuenta</string>
+
     <!-- This string is used in the 'Account' window when user is signed into a Firefox Account -->
     <string name="settings_fxa_account_sign_out">Cerrar sesión</string>
 
