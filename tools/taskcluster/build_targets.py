@@ -12,7 +12,7 @@ Some examples of {{ event.version }} and the resultant output from this script.
 This is the default behaviour with no options. Only the Release build of each
 architecture for each supported platform is built:
 $ python build_targets.py 1.1.4a
-assembleNoapiArm64Release assembleNoapiX86_64Release assembleOculusvrArm64Release assembleWavevrstoreArm64Release assemblePicovrArm64Release assemblePicovrStoreArm64Release assembleOculusvrstoreArm64Release assembleWavevrArm64Release assembleOculusvr3dofstoreArm64Release
+assembleNoapiArm64Release assembleNoapiX86_64Release assembleOculusvrArm64Release assembleWavevrstoreArm64Release assemblePicovrArm64Release assemblePicovrStoreArm64Release assembleOculusvrstoreArm64Release assembleWavevrArm64Release
 
 Specifies only build the OculusVR platform:
 $ python build_targets.py 1.1.4b+oculusvr
@@ -20,7 +20,7 @@ assembleOculusvrArm64Release
 
 Specifies all build types including Release and Debug:
 $ python build_targets.py 1.1.4c=all
-assembleNoapiArm64 assembleNoapiX86_64 assembleOculusvrArm64 assembleWavevrstoreArm64 assemblePicovrArm64 assemblePicovrStoreArm64 assembleOculusvrstoreArm64 assembleWavevrArm64 assembleOculusvr3dofstoreArm64
+assembleNoapiArm64 assembleNoapiX86_64 assembleOculusvrArm64 assembleWavevrstoreArm64 assemblePicovrArm64 assemblePicovrStoreArm64 assembleOculusvrstoreArm64 assembleWavevrArm64
 
 Specifies Release builds of Arm64 OculusVR, Arm64 WaveVR, and x86_64 NoAPI:
 $ python build_targets.py 1.1.4d+oculusvr+wavevr+noapi=x86_64
@@ -35,7 +35,6 @@ import sys
 platforms = {
    'oculusvr': ['arm64'],
    'oculusvrStore': ['arm64'],
-   'oculusvr3dofStore': ['arm64'],
    'wavevr': ['arm64'],
    'wavevrStore': ['arm64'],
    'picovr': ['arm64'],

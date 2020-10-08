@@ -12,10 +12,6 @@ import subprocess
 import sys
 import time
 
-v1_platforms = {
-   'oculusvr3dofstore',
-}
-
 def main(name, argv):
    token = ''
    v1_token = ''
@@ -62,12 +58,6 @@ def main(name, argv):
 
       if not release:
          target = target.replace('-release-', '-staging-' + feature_name)
-      else:
-         for platform in v1_platforms:
-            if platform in target.lower():
-               print "Using v1 signing on target:", target
-               cred = v1_token
-               align = True
 
       print "Signing", apk
       print "Target ", target
